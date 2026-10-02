@@ -77,3 +77,142 @@ begin
 exception when invalid_text_representation or numeric_value_out_of_range or invalid_parameter_value then return false;
 end $$;
 revoke all on function turn_private.planning_v2_json_string_v1(text),turn_private.planning_v2_binding_bytes_v1(jsonb),turn_private.planning_v2_valid_ms_v1(jsonb),turn_private.planning_v2_integer_bytes_v1(jsonb,bigint,boolean),turn_private.serialize_planning_v2_request_v1(jsonb,uuid,jsonb),turn_private.validate_planning_v2_output_v1(jsonb,jsonb) from public,anon,authenticated,service_role;
+
+create table turn_private.planning_v2_model_local_journal (
+ request_id uuid primary key,
+ owner_id uuid not null references auth.users(id) on delete cascade,
+ task_id uuid not null references turn_private.service_tasks(id) on delete cascade,
+ turn_id uuid unique not null references turn_private.planning_comparisons(turn_id) on delete cascade,
+ scope_id uuid not null,attempt_id uuid not null,
+ binding jsonb not null,payload_digest text not null check(payload_digest ~ '^[a-f0-9]{64}$'),
+ request_digest text unique not null check(request_digest ~ '^[a-f0-9]{64}$'),
+ phase text not null check(phase in ('intent_saved','send_ack_recorded','response_recorded')),
+ revision bigint not null check(revision between 1 and 2147483647),
+ intent_at timestamptz not null default clock_timestamp(),send_at timestamptz,response_at timestamptz,unknown_at timestamptz,
+ send_observation jsonb,response_observation jsonb,output_wire jsonb,unknown_reason text,
+ unique(scope_id,attempt_id),foreign key(scope_id,attempt_id) references public.model_budget_attempts(scope_id,attempt_id) on delete cascade,
+ check((send_at is null)=(send_observation is null)),check((response_at is null)=(response_observation is null)),check((response_at is null)=(output_wire is null)),
+ check((unknown_at is null)=(unknown_reason is null)),
+ check((phase='intent_saved' and send_at is null and response_at is null) or (phase='send_ack_recorded' and send_at is not null and response_at is null) or (phase='response_recorded' and send_at is not null and response_at is not null))
+);
+alter table turn_private.planning_v2_model_local_journal enable row level security;
+revoke all on turn_private.planning_v2_model_local_journal from public,anon,authenticated,service_role;
+create index planning_v2_local_journal_owner on turn_private.planning_v2_model_local_journal(owner_id,request_id);
+create function turn_private.planning_v2_server_ms_v1(v timestamptz) returns text language sql immutable set search_path='' as $$select case when v is null then null else to_char(date_trunc('milliseconds',v) at time zone 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') end$$;
+create function turn_private.planning_v2_journal_wire_v1(r turn_private.planning_v2_model_local_journal) returns jsonb language sql stable set search_path='' as $$
+ select jsonb_build_object('kind','model_request_journal','schemaVersion','planning-v2-model-journal/1','binding',r.binding,'requestId',r.request_id,'requestDigest',r.request_digest,'payloadDigest',r.payload_digest,'phase',r.phase,'revision',r.revision,
+  'intentRecordedAt',turn_private.planning_v2_server_ms_v1(r.intent_at),'sendAckRecordedAt',turn_private.planning_v2_server_ms_v1(r.send_at),'responseRecordedAt',turn_private.planning_v2_server_ms_v1(r.response_at),'unknownAt',turn_private.planning_v2_server_ms_v1(r.unknown_at),
+  'sendAckObservation',r.send_observation,'responseObservation',r.response_observation,'outputWire',r.output_wire,'providerOriginVerified',false,'executionAvailable',false,'readyForPublication',false,'reconciliationRequired',true)
+$$;
+create function turn_private.planning_v2_local_observation_v1(v jsonb,p_kind text,p_request uuid,p_digest text) returns boolean language plpgsql immutable set search_path='' as $$
+begin
+ if jsonb_typeof(v) is distinct from 'object' then return false;end if;
+ return coalesce(v-array['schemaVersion','source','kind','requestId','requestDigest','observedAt']='{}'::jsonb and (select count(*) from jsonb_object_keys(v))=6
+  and v->>'schemaVersion'='planning-v2-local-observation/1' and v->>'source'='local_observation' and v->>'kind'=p_kind
+  and v->>'requestId'=p_request::text and v->>'requestDigest'=p_digest and turn_private.planning_v2_valid_ms_v1(v->'observedAt'),false);
+end $$;
+create function turn_private.guard_planning_v2_local_journal_v1() returns trigger language plpgsql set search_path='' as $$
+begin
+ if TG_OP='INSERT' then
+  if new.phase<>'intent_saved' or new.revision<>1 or new.unknown_at is not null or turn_private.planning_v2_binding_bytes_v1(new.binding) is null
+   or new.binding->>'owner'<>new.owner_id::text or new.binding->>'task'<>new.task_id::text or new.binding->>'turn'<>new.turn_id::text or new.binding->>'scope'<>new.scope_id::text or new.binding->>'attempt'<>new.attempt_id::text
+   or not exists(select 1 from turn_private.planning_v2_model_attempt_bindings b where b.turn_id=new.turn_id and b.owner_id=new.owner_id and b.task_id=new.task_id and b.scope_id=new.scope_id and b.attempt_id=new.attempt_id and b.claim_lease::text=new.binding->>'lease') then raise exception 'JOURNAL_IDENTITY_CONFLICT';end if;
+ else
+  if (to_jsonb(new)-array['phase','revision','send_at','response_at','unknown_at','send_observation','response_observation','output_wire','unknown_reason']) is distinct from (to_jsonb(old)-array['phase','revision','send_at','response_at','unknown_at','send_observation','response_observation','output_wire','unknown_reason'])
+   or new.revision<>old.revision+1 or old.unknown_at is not null then raise exception 'IMMUTABLE_LOCAL_JOURNAL';end if;
+  if new.unknown_at is not null then
+   if new.phase<>old.phase or new.send_observation is distinct from old.send_observation or new.response_observation is distinct from old.response_observation or new.output_wire is distinct from old.output_wire or new.send_at is distinct from old.send_at or new.response_at is distinct from old.response_at or new.unknown_at>clock_timestamp() or new.unknown_reason not in ('timeout','disconnected','ack_lost','uncertain_local_effect') then raise exception 'IMMUTABLE_LOCAL_JOURNAL';end if;
+  elsif old.phase='intent_saved' and new.phase='send_ack_recorded' then
+   if not turn_private.planning_v2_local_observation_v1(new.send_observation,'send_ack',new.request_id,new.request_digest) then raise exception 'INVALID_LOCAL_OBSERVATION';end if;
+  elsif old.phase='send_ack_recorded' and new.phase='response_recorded' then
+   if new.send_observation is distinct from old.send_observation or not turn_private.planning_v2_local_observation_v1(new.response_observation,'response_received',new.request_id,new.request_digest) or not turn_private.validate_planning_v2_output_v1(new.output_wire,new.binding) then raise exception 'INVALID_LOCAL_OUTPUT';end if;
+  else raise exception 'IMMUTABLE_LOCAL_JOURNAL';end if;
+ end if;
+ return new;
+end $$;
+create trigger guard_planning_v2_local_journal before insert or update on turn_private.planning_v2_model_local_journal for each row execute function turn_private.guard_planning_v2_local_journal_v1();
+
+create function turn_private.create_planning_v2_request_intent_v1(p_owner uuid,p_task uuid,p_turn uuid,p_lease uuid,p_text_policy uuid,p_planning_policy uuid,p_scope uuid,p_attempt uuid,p_provider text,p_model text,p_price_version text,p_intake_digest text,p_planning_digest text,p_request_id uuid,p_payload_text text,p_payload_digest text,p_request_digest text,p_expected_revision bigint) returns jsonb language plpgsql security definer set search_path='' as $$
+declare q jsonb;t jsonb;v jsonb;r turn_private.planning_v2_model_local_journal%rowtype;live jsonb;
+begin
+ q:=turn_private.read_planning_v2_model_binding_v1(p_owner,p_task,p_turn,p_lease,p_text_policy,p_planning_policy,p_scope,p_attempt,p_provider,p_model,p_price_version,p_intake_digest,p_planning_digest);if q->>'kind' is distinct from 'model_attempt_binding' then return jsonb_build_object('kind','blocked');end if;t:=jsonb_build_object('owner',p_owner,'task',p_task,'turn',p_turn,'lease',p_lease,'textPolicy',p_text_policy,'planningPolicy',p_planning_policy,'scope',p_scope,'attempt',p_attempt,'provider',p_provider,'model',p_model,'priceVersion',p_price_version,'intakeDigest',p_intake_digest,'planningDigest',p_planning_digest);
+ if p_request_id is null or p_payload_text is null or octet_length(p_payload_text)>65536 or p_expected_revision is null or p_payload_digest is null or p_request_digest is null then return jsonb_build_object('kind','blocked');end if;
+ v:=turn_private.serialize_planning_v2_request_v1(t,p_request_id,p_payload_text::jsonb);
+ if v is null or v->>'body' is distinct from p_payload_text or v->>'payloadDigest' is distinct from p_payload_digest or v->>'requestDigest' is distinct from p_request_digest then return jsonb_build_object('kind','blocked');end if;
+ select * into r from turn_private.planning_v2_model_local_journal where request_id=p_request_id for update nowait;
+ if found then
+  if r.binding is distinct from t or r.payload_digest<>p_payload_digest or r.request_digest<>p_request_digest or r.phase<>'intent_saved' or r.unknown_at is not null or q->'unknown'='true'::jsonb or p_expected_revision<>0 then return jsonb_build_object('kind','conflict');end if;
+  return turn_private.planning_v2_journal_wire_v1(r)||jsonb_build_object('reused',true);
+ end if;
+ live:=turn_private.planning_v2_model_binding_basis_v1(p_owner,p_task,p_turn,p_lease,p_text_policy,p_planning_policy,p_scope,p_attempt,p_provider,p_model,p_price_version,p_intake_digest,p_planning_digest);
+ if p_expected_revision<>0 or q->>'ledgerStatus'<>'reserved' or q->'unknown'='true'::jsonb or live->'scopeLive' is distinct from 'true'::jsonb then return jsonb_build_object('kind','blocked');end if;
+ insert into turn_private.planning_v2_model_local_journal(request_id,owner_id,task_id,turn_id,scope_id,attempt_id,binding,payload_digest,request_digest,phase,revision) values(p_request_id,p_owner,p_task,p_turn,p_scope,p_attempt,t,p_payload_digest,p_request_digest,'intent_saved',1) returning * into r;
+ return turn_private.planning_v2_journal_wire_v1(r)||jsonb_build_object('reused',false);
+exception when lock_not_available or unique_violation then return jsonb_build_object('kind','conflict');when data_exception then return jsonb_build_object('kind','blocked');
+end $$;
+revoke all on function turn_private.create_planning_v2_request_intent_v1(uuid,uuid,uuid,uuid,uuid,uuid,uuid,uuid,text,text,text,text,text,uuid,text,text,text,bigint) from public,anon,authenticated,service_role;
+
+create function turn_private.read_planning_v2_request_journal_v1(p_owner uuid,p_task uuid,p_turn uuid,p_lease uuid,p_text_policy uuid,p_planning_policy uuid,p_scope uuid,p_attempt uuid,p_provider text,p_model text,p_price_version text,p_intake_digest text,p_planning_digest text,p_request_id uuid,p_request_digest text,p_expected_output_digest text,p_expected_usage_digest text) returns jsonb language plpgsql security definer set search_path='' as $$
+declare q jsonb;t jsonb;r turn_private.planning_v2_model_local_journal%rowtype;
+begin
+ q:=turn_private.read_planning_v2_model_binding_v1(p_owner,p_task,p_turn,p_lease,p_text_policy,p_planning_policy,p_scope,p_attempt,p_provider,p_model,p_price_version,p_intake_digest,p_planning_digest);if q->>'kind' is distinct from 'model_attempt_binding' then return jsonb_build_object('kind','blocked');end if;t:=jsonb_build_object('owner',p_owner,'task',p_task,'turn',p_turn,'lease',p_lease,'textPolicy',p_text_policy,'planningPolicy',p_planning_policy,'scope',p_scope,'attempt',p_attempt,'provider',p_provider,'model',p_model,'priceVersion',p_price_version,'intakeDigest',p_intake_digest,'planningDigest',p_planning_digest);
+ select * into r from turn_private.planning_v2_model_local_journal where request_id=p_request_id for share nowait;
+ if not found or r.binding is distinct from t or r.request_digest is distinct from p_request_digest then return jsonb_build_object('kind','blocked');end if;
+ if q->'unknown'='true'::jsonb or (q->>'ledgerStatus'='settled' and r.output_wire is not null and q->'actualMicros' is distinct from r.output_wire->'usageReceipt'->'actualMicros') then return jsonb_build_object('kind','blocked');end if;
+ if (p_expected_output_digest is null)<>(p_expected_usage_digest is null) then return jsonb_build_object('kind','blocked');end if;
+ if p_expected_output_digest is not null and (r.output_wire is null or r.output_wire->>'outputDigest' is distinct from p_expected_output_digest or r.output_wire->>'usageDigest' is distinct from p_expected_usage_digest) then return jsonb_build_object('kind','conflict');end if;
+ return turn_private.planning_v2_journal_wire_v1(r);
+exception when lock_not_available then return jsonb_build_object('kind','blocked');end $$;
+revoke all on function turn_private.read_planning_v2_request_journal_v1(uuid,uuid,uuid,uuid,uuid,uuid,uuid,uuid,text,text,text,text,text,uuid,text,text,text) from public,anon,authenticated,service_role;
+
+create function turn_private.record_planning_v2_send_ack_v1(p_owner uuid,p_task uuid,p_turn uuid,p_lease uuid,p_text_policy uuid,p_planning_policy uuid,p_scope uuid,p_attempt uuid,p_provider text,p_model text,p_price_version text,p_intake_digest text,p_planning_digest text,p_request_id uuid,p_request_digest text,p_expected_revision bigint,p_local_observation jsonb) returns jsonb language plpgsql security definer set search_path='' as $$
+declare q jsonb;t jsonb;r turn_private.planning_v2_model_local_journal%rowtype;
+begin
+ q:=turn_private.read_planning_v2_model_binding_v1(p_owner,p_task,p_turn,p_lease,p_text_policy,p_planning_policy,p_scope,p_attempt,p_provider,p_model,p_price_version,p_intake_digest,p_planning_digest);if q->>'kind' is distinct from 'model_attempt_binding' then return jsonb_build_object('kind','blocked');end if;t:=jsonb_build_object('owner',p_owner,'task',p_task,'turn',p_turn,'lease',p_lease,'textPolicy',p_text_policy,'planningPolicy',p_planning_policy,'scope',p_scope,'attempt',p_attempt,'provider',p_provider,'model',p_model,'priceVersion',p_price_version,'intakeDigest',p_intake_digest,'planningDigest',p_planning_digest);
+ if p_expected_revision is null or not turn_private.planning_v2_local_observation_v1(p_local_observation,'send_ack',p_request_id,p_request_digest) then return jsonb_build_object('kind','blocked');end if;
+
+ select * into r from turn_private.planning_v2_model_local_journal where request_id=p_request_id for update nowait;
+ if not found or r.binding is distinct from t or r.request_digest is distinct from p_request_digest then return jsonb_build_object('kind','blocked');end if;
+ if r.unknown_at is not null or q->'unknown'='true'::jsonb then return jsonb_build_object('kind','blocked');end if;
+ if r.phase='send_ack_recorded' and r.send_observation=p_local_observation and p_expected_revision=r.revision-1 then return turn_private.planning_v2_journal_wire_v1(r)||jsonb_build_object('reused',true);end if;
+ if r.phase<>'intent_saved' or r.revision<>p_expected_revision then return jsonb_build_object('kind','conflict');end if;
+ if q->>'ledgerStatus' not in ('dispatched','pending') then return jsonb_build_object('kind','blocked');end if;
+ update turn_private.planning_v2_model_local_journal set phase='send_ack_recorded',send_observation=p_local_observation,send_at=clock_timestamp(),revision=revision+1 where request_id=p_request_id returning * into r;
+ return turn_private.planning_v2_journal_wire_v1(r)||jsonb_build_object('reused',false);
+exception when lock_not_available then return jsonb_build_object('kind','blocked');end $$;
+revoke all on function turn_private.record_planning_v2_send_ack_v1(uuid,uuid,uuid,uuid,uuid,uuid,uuid,uuid,text,text,text,text,text,uuid,text,bigint,jsonb) from public,anon,authenticated,service_role;
+
+create function turn_private.record_planning_v2_response_v1(p_owner uuid,p_task uuid,p_turn uuid,p_lease uuid,p_text_policy uuid,p_planning_policy uuid,p_scope uuid,p_attempt uuid,p_provider text,p_model text,p_price_version text,p_intake_digest text,p_planning_digest text,p_request_id uuid,p_request_digest text,p_expected_revision bigint,p_local_observation jsonb,p_output_wire jsonb) returns jsonb language plpgsql security definer set search_path='' as $$
+declare q jsonb;t jsonb;r turn_private.planning_v2_model_local_journal%rowtype;
+begin
+ q:=turn_private.read_planning_v2_model_binding_v1(p_owner,p_task,p_turn,p_lease,p_text_policy,p_planning_policy,p_scope,p_attempt,p_provider,p_model,p_price_version,p_intake_digest,p_planning_digest);if q->>'kind' is distinct from 'model_attempt_binding' then return jsonb_build_object('kind','blocked');end if;t:=jsonb_build_object('owner',p_owner,'task',p_task,'turn',p_turn,'lease',p_lease,'textPolicy',p_text_policy,'planningPolicy',p_planning_policy,'scope',p_scope,'attempt',p_attempt,'provider',p_provider,'model',p_model,'priceVersion',p_price_version,'intakeDigest',p_intake_digest,'planningDigest',p_planning_digest);
+ if p_expected_revision is null or not turn_private.planning_v2_local_observation_v1(p_local_observation,'response_received',p_request_id,p_request_digest) then return jsonb_build_object('kind','blocked');end if;
+ if not turn_private.validate_planning_v2_output_v1(p_output_wire,t) or (q->>'ledgerStatus'='settled' and q->'actualMicros' is distinct from p_output_wire->'usageReceipt'->'actualMicros') then return jsonb_build_object('kind','blocked');end if;
+ select * into r from turn_private.planning_v2_model_local_journal where request_id=p_request_id for update nowait;
+ if not found or r.binding is distinct from t or r.request_digest is distinct from p_request_digest then return jsonb_build_object('kind','blocked');end if;
+ if r.unknown_at is not null or q->'unknown'='true'::jsonb then return jsonb_build_object('kind','blocked');end if;
+ if r.phase='response_recorded' and r.response_observation=p_local_observation and r.output_wire=p_output_wire and p_expected_revision=r.revision-1 then return turn_private.planning_v2_journal_wire_v1(r)||jsonb_build_object('reused',true);end if;
+ if r.phase<>'send_ack_recorded' or r.revision<>p_expected_revision then return jsonb_build_object('kind','conflict');end if;
+ if q->>'ledgerStatus' not in ('dispatched','pending','settled') then return jsonb_build_object('kind','blocked');end if;
+ update turn_private.planning_v2_model_local_journal set phase='response_recorded',response_observation=p_local_observation,output_wire=p_output_wire,response_at=clock_timestamp(),revision=revision+1 where request_id=p_request_id returning * into r;
+ return turn_private.planning_v2_journal_wire_v1(r)||jsonb_build_object('reused',false);
+exception when lock_not_available then return jsonb_build_object('kind','blocked');end $$;
+revoke all on function turn_private.record_planning_v2_response_v1(uuid,uuid,uuid,uuid,uuid,uuid,uuid,uuid,text,text,text,text,text,uuid,text,bigint,jsonb,jsonb) from public,anon,authenticated,service_role;
+
+create function turn_private.unknown_planning_v2_request_v1(p_owner uuid,p_task uuid,p_turn uuid,p_lease uuid,p_text_policy uuid,p_planning_policy uuid,p_scope uuid,p_attempt uuid,p_provider text,p_model text,p_price_version text,p_intake_digest text,p_planning_digest text,p_request_id uuid,p_request_digest text,p_expected_revision bigint,p_reason text) returns jsonb language plpgsql security definer set search_path='' as $$
+declare q jsonb;t jsonb;r turn_private.planning_v2_model_local_journal%rowtype;
+begin
+ q:=turn_private.read_planning_v2_model_binding_v1(p_owner,p_task,p_turn,p_lease,p_text_policy,p_planning_policy,p_scope,p_attempt,p_provider,p_model,p_price_version,p_intake_digest,p_planning_digest);if q->>'kind' is distinct from 'model_attempt_binding' then return jsonb_build_object('kind','blocked');end if;t:=jsonb_build_object('owner',p_owner,'task',p_task,'turn',p_turn,'lease',p_lease,'textPolicy',p_text_policy,'planningPolicy',p_planning_policy,'scope',p_scope,'attempt',p_attempt,'provider',p_provider,'model',p_model,'priceVersion',p_price_version,'intakeDigest',p_intake_digest,'planningDigest',p_planning_digest);
+ if p_expected_revision is null or p_reason is null or p_reason not in ('timeout','disconnected','ack_lost','uncertain_local_effect') then return jsonb_build_object('kind','blocked');end if;
+ select * into r from turn_private.planning_v2_model_local_journal where request_id=p_request_id for update nowait;
+ if not found or r.binding is distinct from t or r.request_digest is distinct from p_request_digest then return jsonb_build_object('kind','blocked');end if;
+ if r.unknown_at is not null then
+  if r.unknown_reason<>p_reason or p_expected_revision<>r.revision-1 then return jsonb_build_object('kind','conflict');end if;
+  return turn_private.planning_v2_journal_wire_v1(r)||jsonb_build_object('reused',true);
+ end if;
+ if r.revision<>p_expected_revision then return jsonb_build_object('kind','conflict');end if;
+ update turn_private.planning_v2_model_local_journal set unknown_at=clock_timestamp(),unknown_reason=p_reason,revision=revision+1 where request_id=p_request_id returning * into r;
+ return turn_private.planning_v2_journal_wire_v1(r)||jsonb_build_object('reused',false);
+exception when lock_not_available then return jsonb_build_object('kind','blocked');end $$;
+revoke all on function turn_private.unknown_planning_v2_request_v1(uuid,uuid,uuid,uuid,uuid,uuid,uuid,uuid,text,text,text,text,text,uuid,text,bigint,text) from public,anon,authenticated,service_role;
+revoke all on function turn_private.planning_v2_server_ms_v1(timestamptz),turn_private.planning_v2_journal_wire_v1(turn_private.planning_v2_model_local_journal),turn_private.planning_v2_local_observation_v1(jsonb,text,uuid,text),turn_private.guard_planning_v2_local_journal_v1() from public,anon,authenticated,service_role;

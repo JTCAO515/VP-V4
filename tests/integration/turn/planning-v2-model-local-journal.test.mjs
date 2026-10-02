@@ -49,9 +49,9 @@ const bound=async(a,r,lease=null)=>JSON.parse(await db(`select turn_private.read
 
 const svc=async(name,p)=>JSON.parse(await db("set role service_role;set request.jwt.claim.role='service_role';select public."+name+'('+Object.entries(p).map(([k,v])=>k+'=>'+lit(v)).join(',')+');'));
 async function fixture(memory=false,mode='v2'){const a=await owner('local_synthetic','en','Synthetic model binding fixture',memory),r=mode==='v2'?await call(a,'submit_planning_comparison_v2',v2(a)):await call(a,'submit_planning_comparison_v1',planning(a)),lease=uuid(),scope=uuid(),attempt=uuid();await db(`update turn_private.work set state='leased',lease_token='${lease}',expires_at=clock_timestamp()+interval '120 seconds' where turn_id='${r.turnId}';
- insert into public.model_budget_scopes(id,owner_id,currency,limit_micros,task_limit_micros,task_attempt_limit,concurrency_limit,enabled,expires_at) values('${scope}','${a.owner}','CNY',10000,1000,3,3,true,now()+interval '1 day');insert into public.model_budget_provider_limits(scope_id,provider,model,price_version,limit_micros,attempt_limit_micros,enabled) values('${scope}','qwen','synthetic-model','synthetic-v1',10000,1000,true);`);
- assert.deepEqual(await svc('reserve_model_budget',{p_scope_id:scope,p_owner_id:a.owner,p_task_id:r.taskId,p_attempt_id:attempt,p_provider:'qwen',p_model:'synthetic-model',p_price_version:'synthetic-v1',p_reserved_micros:10}),{kind:'reserved'});return {a,r,lease,scope,attempt};}
-const blocked={kind:'blocked'},args=x=>[x.a.owner,x.r.taskId,x.r.turnId,x.lease,x.a.policy,x.a.planningPolicy,x.scope,x.attempt,'qwen','synthetic-model','synthetic-v1',x.r.intakeContextDigest,x.r.planningContextDigest];
+ insert into public.model_budget_scopes(id,owner_id,currency,limit_micros,task_limit_micros,task_attempt_limit,concurrency_limit,enabled,expires_at) values('${scope}','${a.owner}','CNY',10000,1000,3,3,true,now()+interval '1 day');insert into public.model_budget_provider_limits(scope_id,provider,model,price_version,limit_micros,attempt_limit_micros,enabled) values('${scope}','qwen','qwen3.7-plus-2026-05-26','synthetic-v1',10000,1000,true);`);
+ assert.deepEqual(await svc('reserve_model_budget',{p_scope_id:scope,p_owner_id:a.owner,p_task_id:r.taskId,p_attempt_id:attempt,p_provider:'qwen',p_model:'qwen3.7-plus-2026-05-26',p_price_version:'synthetic-v1',p_reserved_micros:10}),{kind:'reserved'});return {a,r,lease,scope,attempt};}
+const blocked={kind:'blocked'},args=x=>[x.a.owner,x.r.taskId,x.r.turnId,x.lease,x.a.policy,x.a.planningPolicy,x.scope,x.attempt,'qwen','qwen3.7-plus-2026-05-26','synthetic-v1',x.r.intakeContextDigest,x.r.planningContextDigest];
 const privateQuery=(name,p)=>`select turn_private.${name}(${p.map(lit).join(',')});`;
 const invoke=async(name,x,p=args(x))=>JSON.parse(await db(privateQuery(name,p)));
 const bind=x=>invoke('bind_planning_v2_model_attempt_v1',x),read=x=>invoke('read_planning_v2_model_binding_v1',x),unknown=x=>invoke('unknown_planning_v2_model_attempt_v1',x);
@@ -83,4 +83,52 @@ run('SQL independently validates closed output and recomputes exact fixed TS dig
  const w=create(raw,binding);assert.ok(w);const valid=async v=>await db(`select turn_private.validate_planning_v2_output_v1(${lit(v)}::jsonb,${lit(binding)}::jsonb);`)==='t';assert.equal(await valid(w),true);
  for(const v of [{...w,output:{highlight:'jingan'}},{...w,usageReceipt:{...w.usageReceipt,actualMicros:1}},{...w,usageDigest:'0'.repeat(64)},{...w,binding:{...binding,owner:'ABCDEFAB-0000-0000-0000-000000000001'}},{...w,extra:true}])assert.equal(await valid(v),false);
  const changed=create({...raw,output:{highlight:'jingan'},usageReceipt:{...raw.usageReceipt,usage:{...raw.usageReceipt.usage,cachedInputTokens:0,uncachedInputTokens:12,reasoningTokens:0},actualMicros:3}},binding);assert.ok(changed);assert.equal(await valid(changed),true);
+});
+
+const jt=x=>({owner:x.a.owner,task:x.r.taskId,turn:x.r.turnId,lease:x.lease,textPolicy:x.a.policy,planningPolicy:x.a.planningPolicy,scope:x.scope,attempt:x.attempt,provider:'qwen',model:'qwen3.7-plus-2026-05-26',priceVersion:'synthetic-v1',intakeDigest:x.r.intakeContextDigest,planningDigest:x.r.planningContextDigest});
+const journalArgs=x=>[x.a.owner,x.r.taskId,x.r.turnId,x.lease,x.a.policy,x.a.planningPolicy,x.scope,x.attempt,'qwen','qwen3.7-plus-2026-05-26','synthetic-v1',x.r.intakeContextDigest,x.r.planningContextDigest];
+const rpcJournal=(name,x,extra)=>db(`select turn_private.${name}(${journalArgs(x).concat(extra).map(lit).join(',')});`).then(JSON.parse);
+async function makeIntent(){const x=await fixture();await bind(x);x.id=uuid();x.request=await serialize(jt(x),x.id,{...payload('本地test-only 😀'),model:jt(x).model});const r=await rpcJournal('create_planning_v2_request_intent_v1',x,[x.id,x.request.body,x.request.payloadDigest,x.request.requestDigest,0]);assert.equal(r.phase,'intent_saved');assert.equal(r.reused,false);return x;}
+const readJournal=(x,wire=null)=>rpcJournal('read_planning_v2_request_journal_v1',x,[x.id,x.request.requestDigest,wire?.outputDigest??null,wire?.usageDigest??null]);
+const local=(x,kind)=>({schemaVersion:'planning-v2-local-observation/1',source:'local_observation',kind,requestId:x.id,requestDigest:x.request.requestDigest,observedAt:new Date().toISOString()});
+const send=(x,m,rev=1)=>rpcJournal('record_planning_v2_send_ack_v1',x,[x.id,x.request.requestDigest,rev,m]);
+const response=(x,m,w,rev=2)=>rpcJournal('record_planning_v2_response_v1',x,[x.id,x.request.requestDigest,rev,m,w]);
+const uncertain=(x,rev,reason='timeout')=>rpcJournal('unknown_planning_v2_request_v1',x,[x.id,x.request.requestDigest,rev,reason]);
+let outputModule;
+async function output(x,micros=0,highlight='none'){
+ if(!outputModule){const source=gunzipSync(readFileSync('tests/integration/turn/fixtures/planning-v2-pure-output-9c9c96cc.ts.gz'));const folder=mkdtempSync(join(tmpdir(),'journal-output-'));const file=join(folder,'pure.ts');writeFileSync(file,source.toString().replace('"../model-gateway/budget/usage-receipt.ts"',JSON.stringify(pathToFileURL(resolve('lib/server/model-gateway/budget/usage-receipt.ts')).href)));outputModule=await import(pathToFileURL(file).href);rmSync(folder,{recursive:true,force:true});}
+ const t=jt(x),now=new Date().toISOString(),r=outputModule.createPlanningV2ModelOutputReceipt({schemaVersion:'planning-v2-model-output/1',binding:t,output:{highlight},observedAt:now,usageReceipt:{schemaVersion:'validated-planning-usage/1',attempt:{scopeId:t.scope,ownerId:t.owner,taskId:t.task,attemptId:t.attempt,provider:t.provider,model:t.model,priceVersion:t.priceVersion,reservedMicros:10,timeoutMs:1000},turnId:t.turn,policyId:t.planningPolicy,usage:{inputTokens:12,outputTokens:8,totalTokens:20,cachedInputTokens:null,uncachedInputTokens:null,reasoningTokens:null,cost:'unknown'},actualMicros:micros,observedAt:now}},t);assert.ok(r);return r;
+}
+function closed(r,keys){assert.equal(Object.keys(r).length,keys);assert.equal(r.providerOriginVerified,false);assert.equal(r.executionAvailable,false);assert.equal(r.readyForPublication,false);assert.equal(r.reconciliationRequired,true);for(const k of ['intentRecordedAt','sendAckRecordedAt','responseRecordedAt','unknownAt'])if(r[k]!==null)assert.match(r[k],/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);}
+run('real journal phases, no raw prompt storage, exact loss-ack readback and closed UTCms wire',async()=>{
+ const x=await makeIntent(),before=await ledger(x),first=await readJournal(x);closed(first,19);assert.equal(first.sendAckRecordedAt,null);assert.equal(first.outputWire,null);assert.equal(first.unknownAt,null);
+ const duplicate=await rpcJournal('create_planning_v2_request_intent_v1',x,[x.id,x.request.body,x.request.payloadDigest,x.request.requestDigest,0]);closed(duplicate,20);assert.equal(duplicate.reused,true);
+ await dispatch(x);const sent=local(x,'send_ack');let r=await send(x,sent);closed(r,20);assert.equal(r.revision,2);assert.equal((await send(x,sent)).reused,true);
+ const w=await output(x),received=local(x,'response_received');r=await response(x,received,w);closed(r,20);assert.equal(r.phase,'response_recorded');assert.equal(r.revision,3);const actualLedger=await ledger(x);
+ const exact=await readJournal(x,w);closed(exact,19);assert.deepEqual(exact.outputWire,w);assert.equal((await response(x,received,w)).reused,true);assert.equal(await ledger(x),actualLedger);
+ assert.equal((await response(x,{...received,observedAt:'2026-10-03T00:00:00.000Z'},w)).kind,'conflict');assert.equal((await readJournal(x,await output(x,1))).kind,'conflict');
+ assert.equal(await db("select count(*) from information_schema.columns where table_schema='turn_private' and table_name='planning_v2_model_local_journal' and column_name in ('payload_text','prompt','credential');"),'0');
+ assert.equal(await db("select turn_private.planning_v2_server_ms_v1('2026-10-03T00:00:00.123456Z'::timestamptz);"),'2026-10-03T00:00:00.123Z');assert.notEqual(before,actualLedger,'only fixture dispatch moved real ledger; journal helper did not settle');
+});
+run('settled amount must match, unknown sticky survives settlement, old lease refuses read/write',async()=>{
+ const x=await makeIntent();await dispatch(x);await send(x,local(x,'send_ack'));await finish(x,'settle',3);const before=await ledger(x);
+ assert.equal((await response(x,local(x,'response_received'),await output(x,0))).kind,'blocked');assert.equal((await response(x,local(x,'response_received'),await output(x,3))).phase,'response_recorded');assert.equal(await ledger(x),before);
+ const y=await makeIntent();await dispatch(y);let r=await uncertain(y,1);closed(r,20);assert.equal(r.unknownAt!==null,true);assert.equal((await uncertain(y,1)).reused,true);await finish(y,'settle',0);r=await readJournal(y);assert.equal(r.unknownAt!==null,true);assert.equal((await send(y,local(y,'send_ack'),2)).kind,'blocked');
+ await db(`update turn_private.work set lease_token='${uuid()}' where turn_id='${y.r.turnId}';`);assert.deepEqual(await readJournal(y),{kind:'blocked'});assert.equal((await uncertain(y,2)).kind,'blocked');
+});
+run('concurrent response CAS has one winner, malformed/foreign observations and digests rejected',async()=>{
+ const x=await makeIntent();await dispatch(x);await send(x,local(x,'send_ack'));const before=await ledger(x),w1=await output(x,0,'none'),w2=await output(x,0,'jingan');
+ const results=await Promise.all([response(x,local(x,'response_received'),w1),response(x,local(x,'response_received'),w2)]);assert.deepEqual(results.map(r=>r.kind).sort(),['conflict','model_request_journal']);assert.equal(await ledger(x),before);
+ const y=await makeIntent();await dispatch(y);assert.equal((await send(y,{...local(y,'send_ack'),source:'trusted_provider'})).kind,'blocked');assert.equal((await send(y,{...local(y,'send_ack'),requestId:uuid()})).kind,'blocked');
+});
+
+run('malformed payload/observation, revised settled amount, expired lease and API roles remain closed',async()=>{
+ const x=await fixture();await bind(x);x.id=uuid();x.request=await serialize(jt(x),x.id,payload('valid'));
+ for(const text of ['{}',x.request.body+'\n',x.request.body.replace('valid','bad\\u0000value')]){const r=await rpcJournal('create_planning_v2_request_intent_v1',x,[x.id,text,x.request.payloadDigest,x.request.requestDigest,0]);assert.equal(r.kind,'blocked');}
+ const y=await makeIntent();await dispatch(y);for(const m of [null,[],{},local(y,'response_received'),{...local(y,'send_ack'),providerOriginVerified:true}])assert.equal((await send(y,m)).kind,'blocked');
+ const sm=local(y,'send_ack');await send(y,sm);await response(y,local(y,'response_received'),await output(y,0));await finish(y,'settle',3);assert.equal((await readJournal(y)).kind,'blocked','later settlement cannot endorse a different recorded usage amount');
+ const z=await makeIntent();await db(`update turn_private.work set expires_at=clock_timestamp()-interval '1 second' where turn_id='${z.r.turnId}';`);assert.equal((await readJournal(z)).kind,'blocked');
+ for(const role of ['anon','authenticated','service_role'])assert.equal(await db(`select has_table_privilege('${role}','turn_private.planning_v2_model_local_journal','SELECT,INSERT,UPDATE,DELETE');`),'f');
+ const signatures=await db("select string_agg(p.oid::regprocedure::text,E'\n') from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='turn_private' and p.proname in ('create_planning_v2_request_intent_v1','record_planning_v2_send_ack_v1','record_planning_v2_response_v1','read_planning_v2_request_journal_v1','unknown_planning_v2_request_v1');");
+ for(const role of ['anon','authenticated','service_role'])for(const sig of signatures.split('\n'))assert.equal(await db(`select has_function_privilege('${role}',${lit(sig)},'EXECUTE');`),'f');
 });
