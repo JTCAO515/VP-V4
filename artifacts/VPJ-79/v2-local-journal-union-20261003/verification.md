@@ -26,3 +26,10 @@ Mainauthorizeddedicated561four-filecommit `5e135e44e9fd837dced195c2fb81d46e8a2c3
 Only newaffectedtest ran: `VP_TURN_DB_TEST=1 node --experimental-strip-types --test tests/integration/turn/planning-v2-local-model-flow.test.mjs`3/3PASS0fail/skip/cancelled/todo7654ms. Real127.0.0.1ephemeralloopbackHTTP receivesexactbodybytes/payloadSHA, Nodefinishrecordsonecaller-localACK, actualSQLresponsecommitthencontrolledthrow simulateslostwriteACK; sameuniquejournalrow exactreadback recoversrevision3/norepeatHTTP. Timeout/disconnectedleaveunknownsticky/noretry/oldleaseblocked andledgerstilldispatched/unchanged; noartifact/Turncompletion/settlement. Ownloopbackservers/sockets/network-nonePG cleaned. Thisfake-providerlocalobservation isnevertrustedproviderorigin orpaidpermit; allfalseflags/truereconciliationretain.
 
 Prior0436fullregisteredlane228/228sourceevidence remainspre-increment; it was **not** blindlyrerun forone newfile. Currentregistry31fileswouldincludeadditional3cases; finalheadwhole-laneCI231countremainsUNRUNuntilactualCI, notclaimedfromsum. Typecheck/lint/docsfrom0436unchangedruntimecontentreused; only MJSloading/registration changedhere. PRstillwaitslegal627merge.
+
+
+## Dependency released / normal main sync
+
+Mainnormallymerged627 as `b77a134acf8d8be588ad7a3723f9ddda1f7f82f6`. Normalfetch/rebaseontoactualmain succeeded. Exact treecomparison againstd62shows onlyupstream627fourdiagnosticpaths; allthisbatchTS/060000/registeredtests/golden/registry unchanged. FinalPRdiff relativeactualmain contains onlythisbatch060000/TS/registeredtests/contracts/evidence; no duplicated627/050000/worker/runtimechanges. Historicalintermittentserver500rootcauseUNKNOWN andfailureevidence preserved, neverclaimedfixed.
+
+Approvedreuse:0436wholepostgres228 andd62newlocalHTTP3 remainaccurateatdistinctsources; no blindlocalfullrerunforunrelateddiagnosticrebasedelta. FreshPRrequiredCI forfinalhead remainsmandatory/pending, includingwholecurrent31filepostgreslane. No production/target/providerorigin/paidpermit/worker/completion grant.
