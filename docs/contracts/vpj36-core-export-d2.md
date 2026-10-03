@@ -273,3 +273,12 @@ Final integrated CI must run against all current checkout migrations. A historic
 source override is used only for this pre-integration joint checkpoint and must
 not be accepted by final CI. Real-account Auth, API EXECUTE activation, shared
 Staging/production execution, native download UI and operator deployment are UNRUN.
+
+
+Current joint entry rejects VP_CORE_EXPORT_SQL_SOURCE and loads all current checkout
+migrations in order. The historical source-bound command above belongs only to its
+recorded pre-integration checkpoint and is not the final runnable CI command.
+Final command: `VP_TURN_DB_TEST=1 node --experimental-strip-types --test tests/integration/privacy/core-export-consumer.test.mjs`.
+SQL-owner core-export-d2 and producer core-export-consumer entries are registered
+as independent privacy additions in the existing isolated-Postgres lane;215 registry
+entries are preserved when current main is merged for final integration.

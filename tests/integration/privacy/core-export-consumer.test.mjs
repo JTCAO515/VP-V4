@@ -23,9 +23,8 @@ before(async()=>{
  const r=await command('docker',['run','--pull=never','--rm','-d','--network','none','--name',container,'--user','postgres','--entrypoint','/bin/sh','public.ecr.aws/supabase/postgres:17.6.1.159','-c','umask 077;mkdir /tmp/vpj59-socket;initdb -D /tmp/vpj59-db -A trust --no-locale -E UTF8 >/tmp/init.log 2>&1 && exec postgres -D /tmp/vpj59-db -c listen_addresses= -c unix_socket_directories=/tmp/vpj59-socket -c unix_socket_permissions=0700']);assert.equal(r.code,0,r.stderr);created=true;
  for(let n=0;n<100;n++){if((await command('docker',['exec',container,'pg_isready','-h','/tmp/vpj59-socket','-U','postgres'])).code===0)break;await new Promise(r=>setTimeout(r,100));}
  await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));await db("create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;create schema extensions;create extension pgcrypto with schema extensions;");
- let source;
- if(process.env.VP_CORE_EXPORT_SQL_SOURCE){assert.match(process.env.VP_CORE_EXPORT_SQL_SOURCE,/^[0-9a-f]{40}$/);const r=await command('git',['show',`${process.env.VP_CORE_EXPORT_SQL_SOURCE}:supabase/migrations/${migration}`]);assert.equal(r.code,0,r.stderr);source=r.stdout;}
- else source=readFileSync('supabase/migrations/'+migration,'utf8');
+ if(process.env.VP_CORE_EXPORT_SQL_SOURCE)throw Error('Historical SQL source overrides are forbidden; use current checkout migrations.');
+ const source=readFileSync('supabase/migrations/'+migration,'utf8');
  for(const f of [...new Set([...readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')),migration])].sort())await db('begin;'+(f===migration?source:readFileSync('supabase/migrations/'+f,'utf8'))+'commit;');
  // A synthetic local administrator seed is not target policy activation or a role grant.
  await db(`insert into export_private.core_policies_v1(id,revision,enabled,environment,key_id,max_run_ms,artifact_ttl_ms,ticket_ttl_ms,max_pages,page_size,max_bytes,valid_until)values('${randomUUID()}',1,true,'staging','${keyConfig.keyId}',60000,60000,30000,100,100,50000,clock_timestamp()+interval '1 hour');`);
