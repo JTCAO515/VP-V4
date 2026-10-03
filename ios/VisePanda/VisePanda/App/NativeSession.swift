@@ -34,6 +34,7 @@ final class NativeSession {
     private(set) var dataGeneration = 0
     private var assistantNavigation: NativeAssistantNavigation?
     let memoryPreferences=NativeMemoryPreferencesStore()
+    let offlineTrips=NativeOfflineTripStore()
     private(set) var exploreAskHandoff:NativeExploreAskHandoff?
     private var credential: NativeCredential?
     private let endpoint: URL?
@@ -359,6 +360,18 @@ final class NativeSession {
         return bytes
     }
 
+    func offlineTripTextCommand(tripID:String,action:String,body:Data)async throws->Data {
+        guard NativeMemoryWire.uuid(tripID),["proposal","revoke"].contains(action),body.count<=8192 else{throw NativeDataError.invalidResponse}
+        let path="api/trips/native/v2/"+tripID+"/offline-text/"+action
+        return try await dataRequest(prefix:"api/trips/native/v2",path:path,method:"POST",body:body)
+    }
+
+    func offlineTripRead(tripID:String,headVersion:Int,nonce:String)async throws->Data {
+        guard NativeMemoryWire.uuid(tripID),headVersion>0,NativeMemoryWire.uuid(nonce) else{throw NativeDataError.invalidResponse}
+        let path="api/trips/native/v2/"+tripID+"/offline-read"
+        return try await dataRequest(prefix:"api/trips/native/v2",path:path,method:"GET",queryItems:[.init(name:"expectedHeadVersion",value:String(headVersion)),.init(name:"requestNonce",value:nonce)])
+    }
+
     func libraryPlaceRequest(provider:NativePlaceProvider,providerID:String,tripID:String)async throws->Data {
         guard !providerID.isEmpty,providerID.utf16.count<=128,NativeMemoryWire.uuid(tripID) else{throw NativeDataError.invalidResponse}
         let path="api/library/native/v1/place"
@@ -651,6 +664,7 @@ final class NativeSession {
 
     func logout() async {
         guard !busy else { return }
+        do{try offlineTrips.eraseAll()}catch{failureCode="offlineCleanupRequired";return}
         let generation = dataGeneration
         busy = true
         defer { busy = false }
@@ -749,6 +763,7 @@ final class NativeSession {
         return value
     }
     @discardableResult private func clear() -> Bool {
+        do{try offlineTrips.eraseAll()}catch{failureCode="offlineCleanupRequired";status="storageError";return false}
         dataGeneration += 1
         assistantNavigation=nil
         memoryPreferences.clear()
