@@ -1,0 +1,20 @@
+Test Suite 'Selected tests' started at 2026-10-03 13:13:06.888.
+Test Suite 'VisePandaTests.xctest' started at 2026-10-03 13:13:06.889.
+Test Suite 'NativeLibrarySourcesTests' started at 2026-10-03 13:13:06.889.
+Test Case '-[VisePandaTests.NativeLibrarySourcesTests testCursorBindsSourceAndExactQueryWithoutUnicodeNormalization]' started.
+Test Case '-[VisePandaTests.NativeLibrarySourcesTests testCursorBindsSourceAndExactQueryWithoutUnicodeNormalization]' passed (0.003 seconds).
+Test Case '-[VisePandaTests.NativeLibrarySourcesTests testExactProjectionPreservesTranslationIdentityAndRejectsOtherItem]' started.
+Test Case '-[VisePandaTests.NativeLibrarySourcesTests testExactProjectionPreservesTranslationIdentityAndRejectsOtherItem]' passed (0.003 seconds).
+Test Case '-[VisePandaTests.NativeLibrarySourcesTests testLateActorAndRequestDurationCannotPublishMetadata]' started.
+Test Case '-[VisePandaTests.NativeLibrarySourcesTests testLateActorAndRequestDurationCannotPublishMetadata]' passed (0.004 seconds).
+Test Case '-[VisePandaTests.NativeLibrarySourcesTests testMissingReaderNullIsNotAnEmptySearchOrCrossSourcePage]' started.
+Test Case '-[VisePandaTests.NativeLibrarySourcesTests testMissingReaderNullIsNotAnEmptySearchOrCrossSourcePage]' passed (0.001 seconds).
+Test Case '-[VisePandaTests.NativeLibrarySourcesTests testPlaceCapabilitiesCannotGrantWritersOrFollowArbitraryHref]' started.
+Test Case '-[VisePandaTests.NativeLibrarySourcesTests testPlaceCapabilitiesCannotGrantWritersOrFollowArbitraryHref]' passed (0.001 seconds).
+Test Suite 'NativeLibrarySourcesTests' passed at 2026-10-03 13:13:06.902.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.012 (0.013) seconds
+Test Suite 'VisePandaTests.xctest' passed at 2026-10-03 13:13:06.902.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.012 (0.013) seconds
+Test Suite 'Selected tests' passed at 2026-10-03 13:13:06.902.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.012 (0.014) seconds
+** TEST SUCCEEDED **

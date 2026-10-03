@@ -34,6 +34,7 @@ final class NativeSession {
     private(set) var dataGeneration = 0
     private var assistantNavigation: NativeAssistantNavigation?
     let memoryPreferences=NativeMemoryPreferencesStore()
+    private(set) var exploreAskHandoff:NativeExploreAskHandoff?
     private var credential: NativeCredential?
     private let endpoint: URL?
     let askMode: NativeAskMode
@@ -59,6 +60,11 @@ final class NativeSession {
         configuration.urlCache = nil
         transport = URLSession(configuration: configuration, delegate: NativeRedirectBlocker(), delegateQueue: nil)
     }
+
+    func prepareExploreAsk(_ handoff:NativeExploreAskHandoff) {
+        guard handoff.scope==dataScope,handoff.valid else{return};exploreAskHandoff=handoff
+    }
+    func clearExploreAsk(){exploreAskHandoff=nil}
 
     // Navigation pointers only; no conversation, result or Memory content cache.
     func assistantNavigationSelection() -> NativeAssistantNavigation? {
@@ -351,6 +357,27 @@ final class NativeSession {
         let bytes = try await dataRequest(prefix: path, path: path, method: "POST", body: body)
         guard bytes.count <= 12_000 else { throw NativeDataError.invalidResponse }
         return bytes
+    }
+
+    func libraryPlaceRequest(provider:NativePlaceProvider,providerID:String,tripID:String)async throws->Data {
+        guard !providerID.isEmpty,providerID.utf16.count<=128,NativeMemoryWire.uuid(tripID) else{throw NativeDataError.invalidResponse}
+        let path="api/library/native/v1/place"
+        return try await dataRequest(prefix:path,path:path,method:"GET",queryItems:[.init(name:"provider",value:provider.rawValue),.init(name:"providerPoiId",value:providerID),.init(name:"tripId",value:tripID)])
+    }
+
+    func librarySourcesRequest(source:NativeLibrarySource,query:String,cursor:String?)async throws->Data {
+        guard query.utf16.count<=120,cursor==nil || NativeLibraryCursor.valid(cursor!,source:source,query:query.isEmpty ? nil:query) else{throw NativeDataError.invalidResponse}
+        let path="api/library/native/v1/items"
+        var q=[URLQueryItem(name:"source",value:source.rawValue)]
+        if !query.isEmpty{q.append(.init(name:"query",value:query))};if let cursor{q.append(.init(name:"cursor",value:cursor))}
+        return try await dataRequest(prefix:path,path:path,method:"GET",queryItems:q)
+    }
+    func librarySourceItem(_ reference:NativeLibraryMetadata)async throws->Data {
+        guard reference.valid else{throw NativeDataError.invalidResponse}
+        let path="api/library/native/v1/item"
+        var q=[URLQueryItem(name:"source",value:reference.source.rawValue),URLQueryItem(name:"id",value:reference.id)]
+        if let revision=reference.revision{q.append(.init(name:"revision",value:String(revision)))}
+        return try await dataRequest(prefix:path,path:path,method:"GET",queryItems:q)
     }
 
     func fiveResultReference(field: String, id: String) async throws -> Data {
@@ -725,6 +752,7 @@ final class NativeSession {
         dataGeneration += 1
         assistantNavigation=nil
         memoryPreferences.clear()
+        exploreAskHandoff=nil
         if let owner = credential?.subject ?? defaults.string(forKey: storageKey) {
             let result = vault.remove(service: vaultService, owner: owner)
             guard result == errSecSuccess || result == errSecItemNotFound else {

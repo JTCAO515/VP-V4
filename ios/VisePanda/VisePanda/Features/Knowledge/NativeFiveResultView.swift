@@ -10,9 +10,11 @@ import Observation
     private var pendingBody: Data?
     private var submitting = false
     private var deadline:TimeInterval=0
+    private let uptime:()->TimeInterval
+    init(uptime:@escaping()->TimeInterval={ProcessInfo.processInfo.systemUptime}){self.uptime=uptime}
     struct Key:Equatable {let scope:NativeDataScope;let artifactID:String;let revision:Int}
     func clear(){generation=UUID();record=nil;key=nil;deadline=0;pendingChoice=nil;choiceNotice=nil;pendingBody=nil;submitting=false}
-    func visible(_ scope:NativeDataScope?)->NativeFiveResultRecord?{guard scope==key?.scope,scope != nil,ProcessInfo.processInfo.systemUptime<deadline else{return nil};return record}
+    func visible(_ scope:NativeDataScope?)->NativeFiveResultRecord?{guard scope==key?.scope,scope != nil,uptime()<deadline else{return nil};return record}
     func choose(option:String,comparison:NativeFiveResultRecord?,current:@escaping()->Key?,post:(Data)async throws->Data,read:(String,Int)async throws->Data)async{
         guard !submitting,let authority=key,authority==current(),let selected=visible(authority.scope),selected.current,let scope=key?.scope,
               case .decision(let decision)=selected.content,decision.state=="pending",let comparison,comparison.current,
@@ -27,10 +29,11 @@ import Observation
             if data["kind"] as? String=="unavailable"{guard Set(data.keys)==Set(["kind"]) else{throw NativeDataError.invalidResponse};clear();return}
             guard Set(data.keys)==Set(["kind","artifactId","revision","reused"]),data["kind"] as? String=="selected",data["artifactId"] as? String==request.artifactId,
                   data["revision"] as? Int==request.expectedRevision+1,data["reused"] is Bool else{throw NativeDataError.invalidResponse}
+            let readStarted=uptime()
             let next=try NativeFiveResultRecord.decode(await read(request.artifactId,request.expectedRevision+1),artifactID:request.artifactId,revision:request.expectedRevision+1)
             guard generation==own,current()==authority,!Task.isCancelled else{return}
-            guard let next,next.current,case .decision(let chosen)=next.content,chosen.state=="chosen",chosen.chosenOptionID==option else{throw NativeDataError.invalidResponse}
-            record=next;key = .init(scope:scope,artifactID:next.artifactID,revision:next.revision);deadline=ProcessInfo.processInfo.systemUptime+30;pendingChoice=nil;pendingBody=nil
+            guard uptime()-readStarted<30,let next,next.current,case .decision(let chosen)=next.content,chosen.state=="chosen",chosen.chosenOptionID==option else{throw NativeDataError.invalidResponse}
+            record=next;key = .init(scope:scope,artifactID:next.artifactID,revision:next.revision);deadline=readStarted+30;pendingChoice=nil;pendingBody=nil
         }catch{guard generation==own,current()==authority else{return};choiceFailed(error)}
     }
     func retryChoice(current:@escaping()->Key?,post:(Data)async throws->Data,read:(String,Int)async throws->Data)async{
@@ -42,10 +45,11 @@ import Observation
             if data["kind"] as? String=="unavailable"{guard Set(data.keys)==Set(["kind"]) else{throw NativeDataError.invalidResponse};clear();return}
             guard Set(data.keys)==Set(["kind","artifactId","revision","reused"]),data["kind"] as? String=="selected",data["artifactId"] as? String==request.artifactId,
                   data["revision"] as? Int==request.expectedRevision+1,data["reused"] is Bool else{throw NativeDataError.invalidResponse}
+            let readStarted=uptime()
             let next=try NativeFiveResultRecord.decode(await read(request.artifactId,request.expectedRevision+1),artifactID:request.artifactId,revision:request.expectedRevision+1)
             guard generation==own,current()==authority,!Task.isCancelled else{return}
-            guard let next,next.current,case .decision(let chosen)=next.content,chosen.state=="chosen",chosen.chosenOptionID==request.optionId else{throw NativeDataError.invalidResponse}
-            record=next;key = .init(scope:scope,artifactID:next.artifactID,revision:next.revision);deadline=ProcessInfo.processInfo.systemUptime+30;pendingChoice=nil;pendingBody=nil;choiceNotice=nil
+            guard uptime()-readStarted<30,let next,next.current,case .decision(let chosen)=next.content,chosen.state=="chosen",chosen.chosenOptionID==request.optionId else{throw NativeDataError.invalidResponse}
+            record=next;key = .init(scope:scope,artifactID:next.artifactID,revision:next.revision);deadline=readStarted+30;pendingChoice=nil;pendingBody=nil;choiceNotice=nil
         }catch{guard generation==own,current()==authority else{return};choiceFailed(error)}
     }
     private func choiceFailed(_ error: Error) {
@@ -54,9 +58,10 @@ import Observation
     }
     func load(key requested:Key,current:@escaping ()->Key?,request:()async throws->Data)async{
         clear();guard requested==current(),UUID(uuidString:requested.artifactID) != nil,(1...1000).contains(requested.revision) else{return}
-        let own=generation;key=requested
+        let own=generation,started=uptime();key=requested
         do{let bytes=try await request();guard generation==own,requested==current(),!Task.isCancelled else{return}
-            record=try NativeFiveResultRecord.decode(bytes,artifactID:requested.artifactID,revision:requested.revision);deadline=ProcessInfo.processInfo.systemUptime+30
+            guard uptime()-started<30 else{throw NativeDataError.invalidResponse}
+            record=try NativeFiveResultRecord.decode(bytes,artifactID:requested.artifactID,revision:requested.revision);deadline=started+30
         }catch{if generation==own{record=nil;deadline=0}}
     }
 }

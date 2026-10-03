@@ -602,6 +602,19 @@ struct NativeAssistantConversationView: View {
                 if !entryBlocking && session.dataScope != nil && (policy?.consentState == .accepted || selection.conversationID != nil) {
                     conversationControls
                 }
+                if let source=session.exploreAskHandoff,source.scope==session.dataScope,source.valid {
+                    Text(chinese ? "已选地点：\(source.name)。身份与行程版本需重新核对；尚未发出消息。":"Selected place: \(source.name). Identity and Trip version need rechecking; no message has been sent.")
+                    Button(chinese ? "明确采用为本次输入":"Use explicitly for this input"){
+                        guard pending==nil,selectedSources.pending==nil else{return}
+                        let input=exploreInput(source)
+                        guard input.utf16.count<=4000 else{return}
+                        draft=input
+                        if goalHasCurrentMessage{operation="follow_up"}
+                        session.clearExploreAsk()
+                    }.disabled(pending != nil || selectedSources.pending != nil || exploreInput(source).utf16.count>4000)
+                    if exploreInput(source).utf16.count>4000 {Text(chinese ? "请先缩短当前输入，再加入地点引用。":"Shorten the current input before adding the place reference.").font(.caption)}
+                    Button(chinese ? "放弃此来源交接":"Discard this source handoff"){session.clearExploreAsk()}
+                }
                 if entryBlocking {
                     goalEntryStatus
                 } else if let policy {
@@ -1009,6 +1022,11 @@ struct NativeAssistantConversationView: View {
             guard session.dataScope==resume.scope,selection.owns(own) else{return}
             selectedSources.sources.artifact=nil;referencedResultUntil=0;resultNotice="unavailable";retainNavigation()
         }
+    }
+
+    private func exploreInput(_ source:NativeExploreAskHandoff)->String {
+        let added=(chinese ? "请帮我讨论我明确选择的地点：":"Please help me discuss this explicitly selected place: ")+source.name+"\ncanonical POI: "+source.poiID+"\nTrip: "+source.tripID+" · v"+String(source.tripVersion)+"\nProvider: "+source.provider.rawValue+" / "+source.providerPoiID+"\nrecheck_required"
+        return draft.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty ? added:draft+"\n\n"+added
     }
 
     private var qualifiedMemoryBasis:[NativeTravelMemoryReference] {

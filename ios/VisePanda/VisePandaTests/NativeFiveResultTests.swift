@@ -60,4 +60,16 @@ nonisolated final class NativeFiveResultTests:XCTestCase {
         XCTAssertNil(store.visible(scope));XCTAssertNil(store.pendingChoice)
     }
 
+    @MainActor func testExactOpenClockIncludesNetworkDelayAndRejectsExpiredRead()async throws{
+        let id=UUID().uuidString,scope=NativeDataScope(endpoint:"http://127.0.0.1:63251",subject:UUID().uuidString,mobileEpoch:1,generation:1)
+        let key=NativeFiveResultStore.Key(scope:scope,artifactID:id,revision:1)
+        var now:TimeInterval=0
+        let store=NativeFiveResultStore(uptime:{now}),bytes=try record(comparison(),id:id)
+        await store.load(key:key,current:{key},request:{now=20;return bytes})
+        XCTAssertNotNil(store.visible(scope));now=30;XCTAssertNil(store.visible(scope))
+        now=100
+        await store.load(key:key,current:{key},request:{now=131;return bytes})
+        XCTAssertNil(store.record);XCTAssertNil(store.visible(scope))
+    }
+
 }
