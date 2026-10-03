@@ -3,8 +3,10 @@ import assert from 'node:assert/strict';
 import net from 'node:net';
 import {spawnSync} from 'node:child_process';
 import {readFileSync} from 'node:fs';
-import {nativeHTTPPorts,nativeHTTPOptions,nativeHTTPChildEnv,nativeHTTPEnvironmentPorts,
+import {nativeHTTPPorts,nativeHTTPOptions,nativeHTTPPortObservation,nativeHTTPChildEnv,nativeHTTPEnvironmentPorts,
   nativeHTTPSupabaseConfig,assertNativeHTTPPortsFree} from '../../integration/turn/native-http-ports.mjs';
+
+import {LANES} from '../../../scripts/ci-suites/db-integration.mjs';
 
 const source=readFileSync('supabase/config.toml','utf8');
 test('default retains 59620; selected base consistently derives DB and native API env',()=>{
@@ -76,4 +78,15 @@ test('two owned ranges remain independent; runner collision fails before Docker 
     await closeAll(b.servers);b.servers=[];
     await assertNativeHTTPPortsFree(b.plan);
   }finally{await closeAll(a.servers);if(b)await closeAll(b.servers);}
+});
+
+test('CI shared native HTTP runners explicitly use a tuple outside the observed Linux ephemeral range',()=>{
+  const steps=LANES['supabase-http-native'].steps.filter(step=>step.runner?.includes('tests/integration/turn/run-native-http.mjs'));
+  assert.equal(steps.length,5);
+  for(const step of steps){
+    const args=step.runner.slice(step.runner.indexOf('tests/integration/turn/run-native-http.mjs')+1);
+    const selected=nativeHTTPOptions(args).ports;
+    assert.equal(selected.base,64420);
+    for(const port of selected.ports)assert.equal(nativeHTTPPortObservation(port,{platform:'linux',read:path=>path.endsWith('ip_local_port_range')?'32768 60999':'header\n'}).inEphemeralRange,false);
+  }
 });
