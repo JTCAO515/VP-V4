@@ -227,3 +227,20 @@ struct NativeTripSupportRenewReceipt: Decodable {
         return result
     }
 }
+
+struct NativeTripSupportConfirmJournal: Codable {
+    let endpoint: String
+    let owner: String
+    let epoch: Int
+    let tripID: String
+    let body: Data
+    func request() throws -> NativeSupportedTripConfirmRequest {
+        guard NativeMemoryWire.uuid(owner),NativeMemoryWire.uuid(tripID),epoch>0,body.count<=65_536,
+              let raw=try JSONSerialization.jsonObject(with:body) as? [String:Any],Set(raw.keys)==Set(["proposalId","idempotencyKey","digest","expectedProposalRevision","expectedBaseVersion","supportSelection"]),
+              let choices=raw["supportSelection"] as? [[String:Any]],choices.allSatisfy({Set($0.keys)==Set(["receiptId","version","sourceDigest"])}) else { throw NativeDataError.invalidResponse }
+        let request=try JSONDecoder().decode(NativeSupportedTripConfirmRequest.self,from:body)
+        guard request.valid else { throw NativeDataError.invalidResponse }
+        return request
+    }
+    func matches(_ actor:NativeDataScope) -> Bool { endpoint==actor.endpoint && owner==actor.subject && epoch==actor.mobileEpoch }
+}

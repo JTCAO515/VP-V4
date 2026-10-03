@@ -66,6 +66,8 @@ struct NativeTripView: View {
     @State private var inboxCleanupFailed = false
     @State private var supportStore = NativeTripSupportStore()
     @State private var confirmVisible = false
+    @State private var supportConfirmVisible = false
+    @State private var reviewedSupportSelection: String?
     @State private var reviewedReference: String?
     @State private var discardVisible = false
     @State private var archiveVisible = false
@@ -307,6 +309,12 @@ struct NativeTripView: View {
                 cleanupAbandonedScreenshots()
             }
         }
+        .confirmationDialog(text("Save the reviewed proposal with these exact receipts?", "连同明确选择的回执保存已审阅提议？"),isPresented:$supportConfirmVisible,titleVisibility:.visible) {
+            Button(text("Confirm proposal and selected references", "确认提议及所选参考")) {
+                if let reviewedReference,let reviewedSupportSelection { Task { await store.confirmSupported(reviewedReference:reviewedReference,reviewedSelection:reviewedSupportSelection,support:supportStore,using:session) } }
+            }
+            Button(text("Keep reviewing", "继续审阅"),role:.cancel) {}
+        } message: { Text(text("Only the reviewed patch and explicitly selected receipt IDs are adopted. Source status may require recheck; this does not verify the entire plan.", "仅采用已审阅修改和明确选择的回执ID。来源状态可能需要重核；不验证整份行程。")) }
         .confirmationDialog(text("Apply the reviewed proposal?", "应用刚刚审阅的提议？"), isPresented: $confirmVisible, titleVisibility: .visible) {
             Button(text("Confirm and save", "确认并保存")) {
                 if let reviewedReference { Task { await store.confirm(reviewedReference: reviewedReference, using: session) } }
@@ -680,6 +688,11 @@ struct NativeTripView: View {
                             NativeTripSupportView(session:session,tripID:pending.trip.id,tripVersion:pending.proposal.baseTripVersion,dayID:day.dayId,itemID:item.itemId,proposal:pending.proposal,store:supportStore,chinese:settings.selectedLocale == .zh,ports:.init(read:{try await session.tripSupportRead($0)}))
                         }
                     }
+                }
+                if let selection=supportStore.selectionReference {
+                    Button(text("Confirm with the selected references", "连同所选参考确认")) {
+                        reviewedReference=store.confirmationReference;reviewedSupportSelection=selection;supportConfirmVisible=true
+                    }.disabled(supportStore.confirmationUnknown || store.busy || !store.canEdit || pending.proposal.stale || store.detail?.trip.headVersion != pending.proposal.baseTripVersion)
                 }
                 Button(text("Confirm this proposal", "确认此提议")) { reviewedReference = store.confirmationReference; confirmVisible = true }
                     .buttonStyle(.borderedProminent)

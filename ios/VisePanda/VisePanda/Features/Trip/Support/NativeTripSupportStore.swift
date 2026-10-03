@@ -12,6 +12,7 @@ final class NativeTripSupportStore {
     private(set) var confirmationUnknown = false
     private var generation = 0
     private var proposalReference: String?
+    private(set) var frozenRequest: NativeSupportedTripConfirmRequest?
     private var frozenChoices: [NativeTripSupportChoice]?
     private(set) var confirmationKey: String?
 
@@ -31,7 +32,7 @@ final class NativeTripSupportStore {
         proposalReference=reference
         read=nil; busy=false; notice=nil
         if !sameProposal {
-            prepared=[]; selectedIDs=[]; frozenChoices=nil; confirmationKey=nil; confirmationUnknown=false
+            prepared=[]; selectedIDs=[]; frozenChoices=nil; frozenRequest=nil; confirmationKey=nil; confirmationUnknown=false
         }
     }
     func refresh(current: () -> NativeDataScope?, get: (NativeTripSupportTarget) async throws -> Data) async {
@@ -78,13 +79,15 @@ final class NativeTripSupportStore {
         guard receipts.count==selectedIDs.count, receipts.allSatisfy({ NativeKnowledgeRead.date($0.expiresAt).map({ $0>now })==true && $0.tripId==target.tripID && $0.proposalId==proposal.id && $0.proposalRevision==proposal.revision && $0.baseVersion==target.tripVersion }) else { throw NativeDataError.invalidResponse }
         let choices=receipts.map(\.selection)
         frozenChoices=choices
-        confirmationKey=UUID().uuidString.lowercased()
+        let key=UUID().uuidString.lowercased()
+        confirmationKey=key
+        frozenRequest=NativeSupportedTripConfirmRequest(proposalId:proposal.id,idempotencyKey:key,digest:proposal.digest,expectedProposalRevision:proposal.revision,expectedBaseVersion:proposal.baseTripVersion,supportSelection:choices)
         confirmationUnknown=true
         return choices
     }
     func confirmed(key: String, choices: [NativeTripSupportChoice]) throws {
         guard confirmationUnknown, key==confirmationKey, choices==frozenChoices else { throw NativeDataError.invalidResponse }
-        confirmationUnknown=false; frozenChoices=nil; confirmationKey=nil; prepared=[]; selectedIDs=[]
+        confirmationUnknown=false; frozenChoices=nil; frozenRequest=nil; confirmationKey=nil; prepared=[]; selectedIDs=[]
     }
     func unavailable() { notice="supportUnavailable" }
 }

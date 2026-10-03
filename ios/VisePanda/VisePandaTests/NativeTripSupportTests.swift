@@ -54,6 +54,27 @@ nonisolated final class NativeTripSupportTests: XCTestCase {
         try store.confirmed(key:XCTUnwrap(store.confirmationKey),choices:choices)
         XCTAssertFalse(store.confirmationUnknown)
     }
+    @MainActor func testConfirmationJournalPreservesBytesAndExactBindingReceipt() throws {
+        let request=NativeSupportedTripConfirmRequest(proposalId:proposalID,idempotencyKey:"66666666-2222-3333-4444-555555555555",digest:digest,expectedProposalRevision:2,expectedBaseVersion:3,supportSelection:[.init(receiptId:receiptID,version:1,sourceDigest:digest)])
+        let original=try JSONEncoder().encode(request)
+        let journal=NativeTripSupportConfirmJournal(endpoint:actor.endpoint,owner:actor.subject,epoch:1,tripID:trip,body:original)
+        let restored=try JSONDecoder().decode(NativeTripSupportConfirmJournal.self,from:JSONEncoder().encode(journal))
+        XCTAssertEqual(restored.body,original)
+        XCTAssertEqual(try restored.request(),request)
+        XCTAssertTrue(restored.matches(actor))
+        XCTAssertFalse(restored.matches(.init(endpoint:actor.endpoint,subject:actor.subject,mobileEpoch:2,generation:0)))
+        var receipt:[String:Any]=["kind":"confirmed","outcome":"applied","tripId":trip,"proposalId":proposalID,"resultingVersion":4,"supports":[["supportId":proposalID,"receiptId":receiptID,"version":1,"status":"recheck_required"]]]
+        XCTAssertEqual(try NativeSupportedTripConfirmReceipt.decode(bytes(receipt),tripID:trip,request:request).supports.first?.status,.recheck)
+        receipt["resultingVersion"]=5
+        XCTAssertThrowsError(try NativeSupportedTripConfirmReceipt.decode(bytes(receipt),tripID:trip,request:request))
+        receipt["resultingVersion"]=4
+        receipt["supports"]=[["supportId":proposalID,"receiptId":trip,"version":1,"status":"reference_current"]]
+        XCTAssertThrowsError(try NativeSupportedTripConfirmReceipt.decode(bytes(receipt),tripID:trip,request:request))
+        var raw=try XCTUnwrap(JSONSerialization.jsonObject(with:original) as? [String:Any]);raw["ownerId"]=actor.subject
+        let altered=NativeTripSupportConfirmJournal(endpoint:actor.endpoint,owner:actor.subject,epoch:1,tripID:trip,body:try bytes(raw))
+        XCTAssertThrowsError(try altered.request())
+    }
+
     @MainActor func testLateActorReadNeverPublishesAndPreparedRejectsScopeExpiryOrExtraKeys() async throws {
         let store=NativeTripSupportStore();store.bind(target,proposal:proposal)
         var current:NativeDataScope?=actor

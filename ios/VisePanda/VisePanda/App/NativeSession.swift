@@ -167,6 +167,42 @@ final class NativeSession {
     }
 
     /// The Trip consumer receives response bytes, never the Keychain credential.
+    private var tripSupportConfirmVaultService: String { keychainService + ".trip-support-confirm." + (endpoint?.absoluteString ?? "disabled") }
+    func tripSupportConfirmationRecovery() throws -> NativeTripSupportConfirmJournal? {
+        guard let actor=dataScope else { throw NativeDataError.sessionUnavailable }
+        let (status,bytes)=vault.read(service:tripSupportConfirmVaultService,owner:actor.subject)
+        if status==errSecItemNotFound { return nil }
+        guard status==errSecSuccess,let bytes,bytes.count<=100_000 else { throw NativeDataError.sessionUnavailable }
+        let journal=try JSONDecoder().decode(NativeTripSupportConfirmJournal.self,from:bytes)
+        guard journal.matches(actor) else { throw NativeDataError.staleSessionResponse }
+        _=try journal.request()
+        return journal
+    }
+    func rememberTripSupportConfirmation(_ request:NativeSupportedTripConfirmRequest,tripID:String,actor:NativeDataScope) throws -> NativeTripSupportConfirmJournal {
+        guard request.valid,NativeMemoryWire.uuid(tripID),dataScope==actor else { throw NativeDataError.sessionUnavailable }
+        let journal=NativeTripSupportConfirmJournal(endpoint:actor.endpoint,owner:actor.subject,epoch:actor.mobileEpoch,tripID:tripID,body:try JSONEncoder().encode(request))
+        if let existing=try tripSupportConfirmationRecovery() {
+            guard existing.tripID==tripID,try existing.request()==request else { throw NativeDataError.server(code:"SUPPORT_CONFIRM_RECOVERY_REQUIRED") }
+            return existing // Preserve the first original request bytes, not a reserialization.
+        }
+        let bytes=try JSONEncoder().encode(journal)
+        guard bytes.count<=100_000,vault.write(bytes,service:tripSupportConfirmVaultService,owner:actor.subject)==errSecSuccess else { throw NativeDataError.sessionUnavailable }
+        return journal
+    }
+    func tripSupportConfirm(_ journal:NativeTripSupportConfirmJournal,actor:NativeDataScope) async throws -> Data {
+        guard journal.matches(actor),dataScope==actor,let existing=try tripSupportConfirmationRecovery(),existing.body==journal.body,existing.tripID==journal.tripID else { throw NativeDataError.sessionUnavailable }
+        _=try journal.request()
+        return try await tripSupportPost(action:"confirm",tripID:journal.tripID,body:journal.body,actor:actor)
+    }
+    func completeTripSupportConfirmation(_ journal:NativeTripSupportConfirmJournal,receipt:NativeSupportedTripConfirmReceipt,actor:NativeDataScope) throws {
+        guard dataScope==actor,journal.matches(actor),let existing=try tripSupportConfirmationRecovery(),existing.body==journal.body,existing.tripID==journal.tripID else { throw NativeDataError.staleSessionResponse }
+        let request=try journal.request()
+        guard receipt.tripId==journal.tripID,receipt.proposalId==request.proposalId,receipt.resultingVersion==request.expectedBaseVersion+1,
+              Set(receipt.supports.map(\.receiptId))==Set(request.supportSelection.map(\.receiptId)) else { throw NativeDataError.invalidResponse }
+        let status=vault.remove(service:tripSupportConfirmVaultService,owner:actor.subject)
+        guard status==errSecSuccess || status==errSecItemNotFound else { throw NativeDataError.sessionUnavailable }
+    }
+
     func tripSupportPrepare(_ request: NativeTripSupportPrepareRequest, target: NativeTripSupportTarget, proposal: NativeTripPending.Proposal) async throws -> Data {
         guard request.valid, target.valid, dataScope==target.actor, request.dayId==target.dayID, request.itemId==target.itemID,
               request.expectedBaseVersion==target.tripVersion, request.proposalId==proposal.id, request.expectedProposalRevision==proposal.revision, request.expectedProposalDigest==proposal.digest else { throw NativeDataError.invalidResponse }
@@ -920,6 +956,8 @@ final class NativeSession {
         memoryPreferences.clear()
         exploreAskHandoff=nil
         if let owner = credential?.subject ?? defaults.string(forKey: storageKey) {
+            let support=vault.remove(service:tripSupportConfirmVaultService,owner:owner)
+            guard support==errSecSuccess || support==errSecItemNotFound else { failureCode="keychain:\(support)";status="storageError";return false }
             let linked=vault.remove(service:linkedDeleteVaultService,owner:owner)
             guard linked==errSecSuccess || linked==errSecItemNotFound else{subject=nil;mobileEpoch=nil;displayName=nil;failureCode="keychain:\(linked)";status="storageError";return false}
             let result = vault.remove(service: vaultService, owner: owner)
