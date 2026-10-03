@@ -372,6 +372,48 @@ final class NativeSession {
         return try await dataRequest(prefix:"api/trips/native/v2",path:path,method:"GET",queryItems:[.init(name:"expectedHeadVersion",value:String(headVersion)),.init(name:"requestNonce",value:nonce)])
     }
 
+    func coreExportRequest(requestID:String,create:Bool)async throws->Data {
+        guard NativeMemoryWire.uuid(requestID) else{throw NativeDataError.invalidResponse}
+        let path="api/privacy/native/v1/exports"
+        let body=create ? try JSONSerialization.data(withJSONObject:["requestId":requestID,"confirmed":true]):nil
+        return try await coreExportTransport(path:path,method:create ? "POST":"GET",body:body,query:create ? []:[.init(name:"requestId",value:requestID)],headers:[:],limit:64_000,expected:[200,202]).0
+    }
+    func coreExportTicket(requestID:String)async throws->Data {
+        guard NativeMemoryWire.uuid(requestID) else{throw NativeDataError.invalidResponse}
+        return try await coreExportTransport(path:"api/privacy/native/v1/exports/"+requestID+"/download-ticket",method:"POST",body:Data("{}".utf8),query:[],headers:[:],limit:4096,expected:[200]).0
+    }
+    func coreExportDownload(requestID:String,operationID:String,token:String)async throws->NativeCoreExportDownload {
+        guard NativeMemoryWire.uuid(requestID),NativeMemoryWire.uuid(operationID),token.range(of:"^[A-Za-z0-9_-]{43}$",options:.regularExpression) != nil else{throw NativeDataError.invalidResponse}
+        let (bytes,http)=try await coreExportTransport(path:"api/privacy/native/v1/exports/"+requestID+"/download",method:"GET",body:nil,query:[],headers:["X-Export-Operation-ID":operationID,"X-Export-Download-Token":token],limit:8_388_608,expected:[200])
+        return .init(bytes:bytes,status:http.statusCode,contentType:http.value(forHTTPHeaderField:"Content-Type"),disposition:http.value(forHTTPHeaderField:"Content-Disposition"),cacheControl:http.value(forHTTPHeaderField:"Cache-Control"))
+    }
+    private func coreExportTransport(path:String,method:String,body:Data?,query:[URLQueryItem],headers:[String:String],limit:Int,expected:[Int])async throws->(Data,HTTPURLResponse) {
+        guard enabled,!busy,let initial=dataScope else{throw NativeDataError.sessionUnavailable}
+        if let credential,credential.expiresAt<=Date().timeIntervalSince1970+10{await validate()}
+        guard dataScope==initial,let credential,let endpoint,path=="api/privacy/native/v1/exports" || path.hasPrefix("api/privacy/native/v1/exports/"),!path.contains(".."),!path.contains("?"),!path.contains("#") else{throw NativeDataError.sessionUnavailable}
+        var components=URLComponents(url:endpoint.appendingPathComponent(path),resolvingAgainstBaseURL:false);components?.queryItems=query.isEmpty ? nil:query
+        guard let url=components?.url else{throw NativeDataError.invalidResponse}
+        var request=URLRequest(url:url);request.httpMethod=method;request.httpBody=body;request.httpShouldHandleCookies=false;request.timeoutInterval=30
+        request.setValue("Bearer \(credential.accessToken)",forHTTPHeaderField:"Authorization");request.setValue("application/json",forHTTPHeaderField:"Content-Type")
+        for (key,value) in headers{request.setValue(value,forHTTPHeaderField:key)}
+        let (stream,response)=try await transport.bytes(for:request)
+        guard let http=response as? HTTPURLResponse,dataScope==initial else{stream.task.cancel();throw NativeDataError.staleSessionResponse}
+        let accepted=expected.contains(http.statusCode),cap=accepted ? limit:4096
+        if accepted,http.expectedContentLength>Int64(cap){stream.task.cancel();throw NativeDataError.invalidResponse}
+        var bytes=Data();bytes.reserveCapacity(min(cap,64_000))
+        for try await byte in stream {
+            guard dataScope==initial,!Task.isCancelled,bytes.count<cap else{stream.task.cancel();throw NativeDataError.staleSessionResponse}
+            bytes.append(byte)
+        }
+        guard dataScope==initial else{throw NativeDataError.staleSessionResponse}
+        if !accepted {
+            let code=(try? JSONDecoder().decode(NativeDataFailure.self,from:bytes).error.code) ?? "HTTP_\(http.statusCode)"
+            if http.statusCode==401,code != "REAUTHENTICATION_REQUIRED"{handle(SessionError.denied)}
+            throw NativeDataError.server(code:code)
+        }
+        return (bytes,http)
+    }
+
     func libraryPlaceRequest(provider:NativePlaceProvider,providerID:String,tripID:String)async throws->Data {
         guard !providerID.isEmpty,providerID.utf16.count<=128,NativeMemoryWire.uuid(tripID) else{throw NativeDataError.invalidResponse}
         let path="api/library/native/v1/place"
