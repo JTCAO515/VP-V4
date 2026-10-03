@@ -74,3 +74,28 @@ Ready artifacts that actually contain Memory revalidate that source on every tic
 prepare and consume. Jobs that never exported Memory carry no new fence and retain
 existing D2 semantics. A separate explicit request creates a new eligible artifact;
 old request replay never retrofits Memory, expands scope or refreshes deadlines.
+
+
+## Native material responsibilities observed (read-only)
+
+NativeScreenshotInbox is a real persistent device producer: owner-hash directory,
+protected atomic bytes, backup exclusion, <=12MB/digest check, <=24h TTL and access
+recheck. Review cancel/disappear/success deletes its owned receipt; Trip view calls
+deleteAll for local account/deletion/abandoned-review events and blocks continuation
+on cleanup failure. No server copy or raw OCR is implied. That is existing lifecycle
+code, not full-account acceptance: cleanup hooks are view-scoped, and NativeSession
+has no independently registered ScreenshotInbox export/account-handler dispatcher.
+D2 core export currently has no owner-explicit local material-selection/original
+file export handler. Device-side crash/relaunch/global account cleanup and integrating
+those files into an accurate all-module receipt remain distinct Native/material
+scope for its future sole owner. No N/A claim, no server-material invention, no Swift
+change or device validation in this Memory backend slice.
+
+
+Producer mirrors the SQL private reader progress: pages/rows count genuine validated
+pages once per exact section/cursor/limit request, all6 terminal sections are needed
+for complete/LIVE_TRAVERSAL. A bounded partial preserves a real nonzero collected
+prefix only. If the byte cap rejects a just-read page, producer refuses publication
+rather than lowering manifest counters to hide that SQL read. Missing authority is
+never terminal empty data. No source-counter or collection authority is created
+from this local accounting; SQL remains the atomic authority.
