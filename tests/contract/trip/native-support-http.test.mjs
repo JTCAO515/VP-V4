@@ -19,11 +19,14 @@ async function fixture(t){
   if(path.startsWith('/rest/v1/rpc/')&&path.includes('support')){
    const params=await r.json();seen.push({path,params,authorization:r.headers.get('authorization')});
    if(denied)return Response.json({message:'permission denied for function',code:'42501'},{status:403});
+   if(path.endsWith('/read_trip_item_support_context_v1'))return Response.json({kind:'support_context',tripId:trip,tripVersion:3,proposalId:proposal,proposalRevision:1,baseVersion:3,proposalDigest:hash,itemDigest:hash,dayId:'Day_UPPER-1',itemId:'Item_1',canonicalPlaceReferences:[{referenceId:receipt,canonicalPoiId:support,display:{en:'Real canonical display',zh:null}}]});
+   if(path.endsWith('/read_trip_item_support_candidates_v1'))return Response.json({kind:'candidates',tripId:trip,tripVersion:3,placeReferenceId:receipt,contextDigest:hash,entries:[],nextCursor:null});
+   if(path.endsWith('/read_supported_trip_confirmation_receipt_v1'))return Response.json({kind:'confirmation_receipt',historicalOnly:true,currentEligibilityRequiresRead:true,receipt:{kind:'confirmed',outcome:'applied',tripId:trip,proposalId:proposal,resultingVersion:3,selectionDigest:hash,supports:[{supportId:support,receiptId:receipt,version:1,status:'recheck_required'}]}});
    if(path.endsWith('/prepare_trip_item_support_v1'))return Response.json({kind:'blocked'});
    if(path.endsWith('/revoke_trip_item_support_preparation_v1'))return Response.json({kind:'revoked',receiptId:receipt,version:2});
    if(path.endsWith('/read_trip_item_support_v1'))return Response.json({kind:'support',tripId:trip,tripVersion:3,dayId:'Day_UPPER-1',itemId:'Item_1',entries:[badClaim?{...entry,claim:{claimType:'address',value:'withdrawn'}}:entry]});
    if(path.endsWith('/renew_trip_item_support_v1'))return Response.json({kind:'renewed',supportId:support,version:2,receiptId:receipt});
-   if(path.endsWith('/confirm_and_apply_supported_trip_proposal_v1'))return Response.json({kind:'confirmed',outcome:'applied',tripId:trip,proposalId:proposal,resultingVersion:3,supports:[{supportId:support,receiptId:receipt,version:1,status:'recheck_required'}]});
+   if(path.endsWith('/confirm_and_apply_supported_trip_proposal_v1'))return Response.json({kind:'confirmed',outcome:'applied',tripId:trip,proposalId:proposal,resultingVersion:3,selectionDigest:hash,supports:[{supportId:support,receiptId:receipt,version:1,status:'recheck_required'}]});
   }
   return prior(input,init);
  });
@@ -59,4 +62,25 @@ test('supported confirm uses explicit selected receipts and true own proposal pa
  const f=await fixture(t);f.wrongTrip=true;assert.deepEqual(await (await nativeTripSupportHTTP(f.request(confirm),'confirm',trip)).json(),{kind:'blocked'});assert.equal(f.seen.length,0);
  f.wrongTrip=false;const r=await nativeTripSupportHTTP(f.request(confirm),'confirm',trip);assert.equal(r.status,200);assert.equal((await r.json()).outcome,'applied');
  assert.deepEqual(f.seen[0].params,{p_proposal_id:proposal,p_idempotency_key:receipt,p_digest:hash,p_support_selection:confirm.supportSelection});
+});
+
+test('candidate getter forwards exact owner context and opaque cursor without mapping writes',async t=>{
+ const f=await fixture(t),q=`?expectedTripVersion=3&placeReferenceId=${receipt}&city=shanghai&scene=attraction&locale=zh&limit=10`;
+ const r=await nativeTripSupportHTTP(f.request(undefined,q),'candidates',trip);assert.equal(r.status,200);assert.deepEqual((await r.json()).entries,[]);
+ assert.deepEqual(f.seen[0].params,{p_trip:trip,p_expected_trip_version:3,p_place_reference:receipt,p_city:'shanghai',p_scene:'attraction',p_locale:'zh',p_cursor:null,p_limit:10});
+ assert.equal((await nativeTripSupportHTTP(f.request(undefined,q+'&contextDigest='+hash),'candidates',trip)).status,400);
+});
+test('read-only lost ACK uses original selected array and returns historical receipt without confirm RPC',async t=>{
+ const f=await fixture(t),r=await nativeTripSupportHTTP(f.request(confirm),'confirmation_receipt',trip);assert.equal(r.status,200);
+ const data=await r.json();assert.equal(data.historicalOnly,true);assert.equal(data.currentEligibilityRequiresRead,true);
+ assert.equal(f.seen.length,1);assert.ok(f.seen[0].path.endsWith('/read_supported_trip_confirmation_receipt_v1'));
+ assert.deepEqual(f.seen[0].params,{p_idempotency_key:receipt,p_proposal_id:proposal,p_proposal_digest:hash,p_support_selection:confirm.supportSelection});
+});
+
+test('owner context uses current exact proposal/item and actual canonical references, no client hash',async t=>{
+ const f=await fixture(t),query=`?expectedTripVersion=3&proposalId=${proposal}&expectedProposalRevision=1&dayId=Day_UPPER-1&itemId=Item_1`;
+ const r=await nativeTripSupportHTTP(f.request(undefined,query),'context',trip);assert.equal(r.status,200);
+ assert.equal((await r.json()).canonicalPlaceReferences[0].referenceId,receipt);
+ assert.deepEqual(f.seen[0].params,{p_trip:trip,p_expected_trip_version:3,p_proposal:proposal,p_expected_proposal_revision:1,p_day:'Day_UPPER-1',p_item:'Item_1'});
+ assert.equal((await nativeTripSupportHTTP(f.request(undefined,query+'&itemDigest='+hash),'context',trip)).status,400);
 });
