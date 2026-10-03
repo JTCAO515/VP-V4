@@ -54,8 +54,8 @@ exception when lock_not_available then return null;end $$;
 create function knowledge_review_private.impact_graph(p_source uuid) returns jsonb language sql security definer set search_path='' as $$
  with linked as(select st.statement_id,st.revision,st.payload,p.fact_id,p.version publication_version,p.state publication_state from knowledge_review_private.statement_sources ss join knowledge_review_private.statements st on st.candidate_id=ss.candidate_id left join knowledge_review_private.publications p on p.candidate_id=st.candidate_id where ss.source_revision_id=p_source),
  targets as(
- select 'wiki_revision:'||r.id||':'||r.version key,jsonb_build_object('kind','wiki_revision','id',r.id,'version',r.version,'payloadHash',knowledge_review_private.impact_hash(jsonb_build_object('draft',r.draft_content,'sources',r.source_revision_ids,'statements',r.statement_refs,'validation',r.validation_status,'publishedVersion',p.published_version)),'claimRefs','[]'::jsonb) target
- from knowledge_review_private.wiki_page_revisions r join knowledge_review_private.wiki_pages p on p.id=r.page_id where r.source_revision_ids @> array[p_source] and r.version in(p.version,p.version-1,p.published_version)
+ select 'wiki_revision:'||r.id||':'||r.version key,jsonb_build_object('kind','wiki_revision','id',r.id,'version',r.version,'payloadHash',knowledge_review_private.impact_hash(jsonb_build_object('draft',r.draft_content,'sources',r.source_revision_ids,'statements',r.statement_refs,'validation',r.validation_status,'pageVersion',p.version)),'claimRefs','[]'::jsonb) target
+ from knowledge_review_private.wiki_page_revisions r join knowledge_review_private.wiki_pages p on p.id=r.page_id where r.source_revision_ids @> array[p_source]
  union all
  select 'wiki_job:'||j.id||':1',jsonb_build_object('kind','wiki_job','id',j.id,'version',1,'payloadHash',knowledge_review_private.impact_hash(jsonb_build_object('status',j.status,'inputDigest',j.input_digest,'sources',j.source_revision_ids,'startedAt',j.started_at,'costTokens',j.cost_tokens,'costUnknown',j.cost_unknown)),'claimRefs','[]'::jsonb)
  from knowledge_review_private.wiki_generation_jobs j where j.source_revision_ids @> array[p_source] and j.status in('queued','running')
@@ -119,7 +119,7 @@ begin
  select * into s from knowledge_review_private.source_impact_sets where id=p_set for update nowait;if not found or p_decision is null or p_decision not in('approve','reject') then return jsonb_build_object('kind','blocked');end if;
  if u=s.author_id or u::text=s.source_snapshot->>'submittedBy' then return jsonb_build_object('kind','blocked');end if;
  if not knowledge_review_private.impact_current(s.id) then return jsonb_build_object('kind','stale');end if;
- if s.status<>'pending' then if s.reviewer_id=u and s.review_base_version=p_expected_version and s.digest=p_expected_digest and s.status=case p_decision when 'approve' then 'approved' else 'rejected' end then return jsonb_build_object('kind','reviewed','setId',s.id,'version',s.version,'decision',p_decision,'digest',s.digest);else return jsonb_build_object('kind','conflict');end if;end if;
+ if s.status<>'pending' then if s.reviewer_id=u and s.review_base_version=p_expected_version and s.digest=p_expected_digest and s.status=(case p_decision when 'approve' then 'approved' else 'rejected' end) then return jsonb_build_object('kind','reviewed','setId',s.id,'version',s.version,'decision',p_decision,'digest',s.digest);else return jsonb_build_object('kind','conflict');end if;end if;
  if not s.complete or s.version is distinct from p_expected_version or s.digest is distinct from p_expected_digest then return jsonb_build_object('kind','conflict');end if;
  select revision into mr from knowledge_review_private.members where actor_id=u and active for share nowait;
  update knowledge_review_private.source_impact_sets set status=case p_decision when 'approve' then 'approved' else 'rejected' end,version=version+1,reviewer_id=u,reviewer_member_revision=mr,review_base_version=p_expected_version,reviewed_at=clock_timestamp() where id=s.id returning * into s;
@@ -139,9 +139,12 @@ begin
  more:=next_key is not null and exists(select 1 from knowledge_review_private.source_impact_items where set_id=s.id and target_key>next_key);
  return jsonb_build_object('kind','set','setId',s.id,'version',s.version,'digest',s.digest,'status',s.status,'items',page,'nextCursor',case when more then next_key else null end,'complete',s.complete,'unsupportedConsumers',jsonb_build_array('retrieval_index','cache','media','explore','seo','trip_item_support'));
 end $$;
-create function knowledge_review_private.impact_review_current(p_set uuid) returns boolean language sql security definer set search_path='' as $$
- select coalesce((select s.status='approved' and s.complete and m.active and m.revision=s.reviewer_member_revision and knowledge_review_private.impact_current(s.id) from knowledge_review_private.source_impact_sets s join knowledge_review_private.members m on m.actor_id=s.reviewer_id where s.id=p_set),false)
-$$;
+create function knowledge_review_private.impact_review_current(p_set uuid) returns boolean language plpgsql security definer set search_path='' as $$
+declare valid boolean;
+begin
+ select true into valid from knowledge_review_private.source_impact_sets s join knowledge_review_private.members m on m.actor_id=s.reviewer_id where s.id=p_set and s.status='approved' and s.complete and m.active and m.revision=s.reviewer_member_revision for share of m nowait;
+ if valid is distinct from true then return false;end if;return knowledge_review_private.impact_current(p_set);
+exception when lock_not_available then return false;end $$;
 create function knowledge_review_private.impact_delivery_wire(p_delivery uuid) returns jsonb language sql security definer set search_path='' as $$
  select jsonb_build_object('kind','delivery','deliveryId',o.id,'setId',o.set_id,'reviewVersion',o.review_version,'sourceDigest',o.digest,'target',i.target,'state',o.state,'leaseToken',o.lease_token,'attempt',o.attempt,'receiptId',o.receipt_id) from knowledge_review_private.source_impact_outbox o join knowledge_review_private.source_impact_items i on i.id=o.item_id where o.id=p_delivery
 $$;
