@@ -208,7 +208,7 @@ final class NativeSession {
     }
 
     func planFeasibility(_ target:NativePlanFeasibilityTarget,body:Data) async throws -> Data {
-        guard target.valid,dataScope==target.actor,body.count<=8192 else{throw NativeDataError.invalidResponse}
+        guard target.valid,dataScope==target.actor,body.count<=24000 else{throw NativeDataError.invalidResponse}
         let bytes=try await tripRequest(path:"api/trips/native/v2/\(target.tripId)/feasibility",method:"POST",body:body)
         guard dataScope==target.actor,bytes.count<=262_144 else{throw NativeDataError.staleSessionResponse}
         return bytes
