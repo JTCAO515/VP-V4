@@ -1,0 +1,22 @@
+# #559 selected-source ordinary message/context backend checkpoint
+
+2026-10-03. Dedicatedbranch codex/vpj78-selected-source-conversation-closeout-20261003, initialmainb77a134a, normalsync main1dce22ac via7ca5573a beforefreeze. NativeSwift/resultdomain/Memoryauthority/oldappliedSQL/080/registry untouched. Stablewire ceeedc453a7bbbe3bb3ddec35eeae693eff9b9a4 describes additivev6exact14request/11accepted andcontext5selectors; Nativeowner receivesindependentbackend source afterthischeckpoint.
+
+Coreimplementation:090appendimmutablemessage-bound reference receipt; authenticatedordinaryv2 closedrefs qualification fromexistingexact result/proposal/ownedTrip/publishedknowledge readers, existingoldmessageadmission onceandrefs inone transaction; samekey changedrefs conflict/failedsourcesrollback. No newpaidTask/queue/budget/Tripcopy/write. Oldv5/v1 wire/relationship/ID/terminalsemantics preserved. Goal/message/currentselectedMemory plusallowedTrip/selectedresult/evidence/currenttaskmetadata/ownedhistory enterboundedpreview withsourceIDversions/hashes/omissions. Previous result onlyfirst_party/thread-purposeprevious_result_reference/exactrev/originGoal/currentfalse, no currentrecommendation/confirm/execute. NativecontextsourceIDs immutable andfreshread/domain/sessionrechecked; oldrev/withdraw/Memory/Trip/evidence change rejects, no latestfallback.
+
+## Actual evidence and source boundaries
+
+- BasePG run originally3/3PASS; laterfile withadded evidence produced3PASS/1fixtureFAIL. pg.log.gz preserves that truthfulsourceboundary, not calledfullgreen. Evidencefixture wrongURN/action corrected legally; affectedqualifiedpublishedscope/version/revoke target1/1PASS, evidence.log.gz. No domainrule loosened.
+- Separateaffectedrevision1/1PASS: artifactrev2 cannotreplacecapturedev1, immutable refreceipt, actualconversationdeletecascade. revision.log.gz.
+- SeparateMemory1/1PASS: domainhistorical-readableownamend staysprevious; paused/changedMemory orwithdrawnartifact blocks, memory.log.gz.
+- HTTP security8/8PASS0skip: exact14/refs/mappingonce/no newtask, late replaced/malformedsession, malformedacceptedshape, previous-purpose/currentfalse, sourcemixedgeneration409, producerrollbackretainsownercontextread. http.log.gz.
+- ActualnativeAuth→HTTP→currentmigratedSQL1/1PASS0skip: ordinaryGoal+Tripselectedfollowup+context/actor/CAS/newgoalscope/replacednative session, zeroServiceTask/work/provider/TripPatch; ownedprojectvp-native-ask-902820e5, API64751/DB64741, cleanupPASS. auth.log.gz. Thisis backend/ordinaryshortchain, notphysicalNative/user/provideracceptance.
+- Typecheck/sourcepolicy lint/docs/diffPASS. Latestnormalmain mergechangedunrelatedCI/private006; existingmatching evidence retainednotrepeated. Formalunion/nativejoint stillseparate.
+
+FAILs preserved: evidencefixtureinvalidURN/revokeaction; HTTPpreviousref omittedunderoldthread100 budget; actualAuth replacedSESSION mapped503 not401. Correctedbyrespectingexistingdomainfixture shape, v2-onlyboundedpreviewpolicy+shortUnicode-safeexcerpt, andnewsession errorclassification. Oldv1/providers notrelaxed; no hiddenfailedtestororacledeletion. Rootoldbudgetfailure provesneedforv2policy: contextVersionassistant-selected-source-context-plan/2,total9700char-tokenunits (thread4128/user4000/tool512,otherfixed), legacy1420unchanged. Relevance/constraints/allowedsource filtering stillcurrent; no prompt/modelpermission. Explicitbudget omissions retained, fullMemorymanagement neveroutside. Currentdispatch only acceptsitsown versionedprivateinput, notthispreviewgrant.
+
+No targetdeployment/newfee/provider/Tripconfirmation/newownerpermission action. NewordinaryauthenticatedSQLgrants arelocalcode contract only; liveapplication NOTRUN. Moduleexport isboundedserviceonlyreference seam, no privacyrequestcompletionclaim. Parent#559codeclose recommendation followsafterindependentbackend/nativeadapterreview; target/provider/humanfacts tracked187withoutextraacceptancestatus. Developerclosure notclaimedfromaprovisionalunreviewedcheckpoint.
+
+Requiredregistration coordinatedlater: selected-message-sources.test.mjs toexistingpostgresfilelist; run-selected-source-auth-http.mjs tosupabaseHTTPnative lane. RegistryownerMain/coord, unchangedhere. Owned64720tuple released afteractualAuthrun. NewgeneratedNextAGENTS/next-envchanges restored; dependencylink removedbeforefreeze.
+
+SQLSHA256: 4e7d2cd56be437c0325dc8087938cc6ae4778416e3946b4aca87c7ec1b4c256e
