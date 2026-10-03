@@ -34,9 +34,12 @@ before(async()=>{
  const r=await command('docker',['run','--pull=never','--rm','-d','--network','none','--name',container,'--user','postgres','--entrypoint','/bin/sh','public.ecr.aws/supabase/postgres:17.6.1.159','-c','umask 077;mkdir /tmp/vpj59-socket;initdb -D /tmp/vpj59-db -A trust --no-locale -E UTF8 >/tmp/init.log 2>&1 && exec postgres -D /tmp/vpj59-db -c listen_addresses= -c unix_socket_directories=/tmp/vpj59-socket -c unix_socket_permissions=0700']);assert.equal(r.code,0,r.stderr);created=true;
  for(let n=0;n<100;n++){if((await command('docker',['exec',container,'pg_isready','-h','/tmp/vpj59-socket','-U','postgres'])).code===0)break;await new Promise(r=>setTimeout(r,100));}
  await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));await db("create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;create schema extensions;create extension pgcrypto with schema extensions;");
- for(const f of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&f!==mine).sort())await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;');
+ const migrations=readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort();
+ for(const f of migrations.filter(f=>f<mine))await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;');
 
  const m=readFileSync('supabase/migrations/'+mine,'utf8');await db('begin;'+m+'rollback;');assert.equal(await db("select to_regclass('turn_private.planning_v2_model_attempt_bindings') is null;"),'t');await db('begin;'+m+'commit;');
+ // Apply every later dependent migration only after the original rollback/apply probe.
+ for(const f of migrations.filter(f=>f>mine))await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;');
 });
 after(async()=>{if(created)assert.equal((await command('docker',['rm','-f',container])).code,0);});
 const run=(name,fn)=>test(name,{skip:!enabled,timeout:120000},fn);

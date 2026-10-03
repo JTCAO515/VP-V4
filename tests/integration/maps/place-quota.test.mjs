@@ -32,6 +32,7 @@ before(async () => {
   for (let i = 0; i < 60; i++) { if ((await command('docker', ['exec', container, 'pg_isready', '-h', '/tmp/vpj59-socket', '-U', 'postgres'])).code === 0) { ready = true; break; } await new Promise(r => setTimeout(r, 250)); }
   assert.ok(ready);
   await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql', 'utf8'));
+ await db("create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;");
   await db('alter table auth.users add column is_anonymous boolean default false;');
   for (const f of readdirSync('supabase/migrations').filter(f => f.endsWith('.sql')).sort()) {
     const text = readFileSync('supabase/migrations/' + f, 'utf8');

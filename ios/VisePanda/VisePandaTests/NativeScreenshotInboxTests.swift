@@ -140,7 +140,8 @@ nonisolated final class NativeScreenshotInboxTests: XCTestCase {
         let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
         defer { defaults.removePersistentDomain(forName: suite) }
         MaterialLogoutProtocol.reset()
-        let session = NativeSession(arguments: ["-VisePandaNativeAPI", "http://127.0.0.1:63221"], defaults: defaults, configuration: configuration, bundleConfiguration: [:], vault: MaterialLogoutVault(), deviceMaterials: materials)
+        let vault = MaterialLogoutVault()
+        let session = NativeSession(arguments: ["-VisePandaNativeAPI", "http://127.0.0.1:63221"], defaults: defaults, configuration: configuration, bundleConfiguration: [:], vault: vault, deviceMaterials: materials)
         await session.login(email: "synthetic", password: "synthetic")
         let scope = try XCTUnwrap(session.dataScope)
         let image = UIGraphicsImageRenderer(size: CGSize(width: 20, height: 20)).image { context in
@@ -164,6 +165,19 @@ nonisolated final class NativeScreenshotInboxTests: XCTestCase {
         XCTAssertFalse(session.prepareDeviceMaterials())
         XCTAssertThrowsError(try session.receiveDeviceScreenshot(image, owner: scope.subject))
         XCTAssertTrue(try inbox.receipts(owner: scope.subject).isEmpty)
+        let restartConfiguration = URLSessionConfiguration.ephemeral
+        restartConfiguration.protocolClasses = [MaterialLogoutProtocol.self]
+        let restarted = NativeSession(arguments: ["-VisePandaNativeAPI", "http://127.0.0.1:63221"], defaults: defaults, configuration: restartConfiguration, bundleConfiguration: [:], vault: vault, deviceMaterials: materials)
+        await restarted.restore()
+        XCTAssertEqual(MaterialLogoutProtocol.refreshes, 1, "Persistent logout intent prevents automatic credential validation")
+        XCTAssertNil(restarted.dataScope)
+        XCTAssertFalse(restarted.prepareDeviceMaterials())
+        XCTAssertThrowsError(try restarted.receiveDeviceScreenshot(image, owner: scope.subject))
+        await restarted.login(email: "synthetic", password: "synthetic")
+        let signedIn = try XCTUnwrap(restarted.dataScope)
+        XCTAssertEqual(signedIn.subject, scope.subject)
+        XCTAssertTrue(restarted.prepareDeviceMaterials())
+        _ = try restarted.receiveDeviceScreenshot(image, owner: signedIn.subject)
     }
 
     func testPhysicalFileProtectionAttribute() throws {
