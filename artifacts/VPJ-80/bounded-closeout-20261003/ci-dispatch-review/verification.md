@@ -1,0 +1,11 @@
+# #632 independent review: duplicate post-dispatch authorization defect
+
+Main review found a real core bug, distinct from the fixture migration-order failure: after await attemptBudget dispatch, the TS wrapper repeated model_dispatch authorization which SQL deliberately grants only while reserved. The actual ledger was already dispatched, so this returned blocked and prevented provider entry. Previous mocked authority accepted both states and did not expose this leftover duplicate.
+
+Only the duplicate post-dispatch authorizer removed. Preserve the reserved-stage fresh current+actual authorization, real dispatched result recognition, protocol-before-effect fresh current and single captured decision consumption. Actual credential→configured collector SQL authority/one-shot remains mandatory before HTTP. SQL reserved-only contract unchanged.
+
+Added one selected regression in the existing actual SQL file: ordinary admission/current profile/real map-allowance checkpoint, actual SQL authorization/binding and planning_intake_budget_v1 bridge, formal runPlanningV2ModelStep. Provider returns an explicit mock Qwen response; destination phases go through actual SQL local administrator fixture. Assert real ledger dispatched before supplier port, actual SQL reserved-only authorizer still rejects dispatched state, producer calls it exactly once before dispatch, supplier port once, primary output/usage persists and ledger settles20 synthetic micros. Assert permanent origin_kind local_admin_fixture, no signed collector/provider/real fee claim.
+
+Initial setup FAIL preserved: test tried to save a zero-call place without consuming real external leaf allowance; SQL returned false at the setup save, before model step. Corrected to existing same-file1-call fixture with actual authorize_planning_intake_external_read_v1, not a fabricated permission or weakened save assertion.
+
+PASS1/1 selected actual SQL model-step regression,6.036s; PASS8/8 affected TS worker negative/recovery tests. Syntax/diff PASS. No original wide matrix repeated. #561 remains Closed. Original formal CI failure and review defect not erased. Same PR includes main631 and fixture-order commit004c03; new-head formal CI/Main review still required before merge.

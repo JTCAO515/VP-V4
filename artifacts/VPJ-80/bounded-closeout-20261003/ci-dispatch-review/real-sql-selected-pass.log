@@ -1,0 +1,10 @@
+✔ actual model step authorizes reserved SQL before dispatch and reaches mock provider once without post-dispatch permission forgery (5897.315708ms)
+ℹ ACTUAL_SQL_AUTHORITY_AND_BUDGET_BRIDGE; administrator local fixture + mock supplier response only, no signed collector or real provider/fees
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6035.639

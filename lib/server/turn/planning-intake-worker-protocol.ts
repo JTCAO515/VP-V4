@@ -47,7 +47,7 @@ function observation(v:unknown,l:V2Lease,now:number):v is Row{
  if(!Number.isFinite(now)||!obj(v)||!exact(v,['schemaVersion','source','observedAt','providerCalls','areas'])||v.schemaVersion!=='planning-place/1'||v.source!==(l.environment==='staging'?'amap':'synthetic_fixture')||!text(v.observedAt,40)||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?Z$/.test(v.observedAt)||!Number.isFinite(Date.parse(v.observedAt))||new Date(v.observedAt).toISOString().slice(0,19)!==v.observedAt.slice(0,19)||now-Date.parse(v.observedAt)>300000||Date.parse(v.observedAt)-now>5000||!int(v.providerCalls,0,13)||!Array.isArray(v.areas)||v.areas.length!==2)return false;
  return new Set(v.areas.map(a=>obj(a)?a.id:null)).size===2&&v.areas.every(a=>obj(a)&&exact(a,['id','label','railMinutes','transfers'])&&member(a.id,['jingan','peoples_square'])&&text(a.label,80)&&(a.railMinutes===null||int(a.railMinutes,0,180))&&(a.transfers===null||int(a.transfers,0,5)));
 }
-function prepared(v:unknown,r:V2Read,l:V2Lease,place:Row,now:number):v is Row{
+export function validPlanningV2PreparedProjection(v:unknown,r:V2Read,l:V2Lease,place:Row,now:number):v is Row{
  if(!obj(v)||!exact(v,['schemaVersion','request','binding','observation','coverage','content','readyForProvider','readyForPublication'])||v.schemaVersion!=='qualified-intake-comparison-projection/1'||v.readyForProvider!==false||v.readyForPublication!==false||!same(v.request,r.qualifiedIntake.intake)||!obj(v.binding)||!exact(v.binding,[...sourceKeys,'contextDigest'])||v.binding.contextDigest!==l.intakeContextDigest)return false;
  for(const k of sourceKeys)if(!same(v.binding[k],(l.source as unknown as Row)[k]))return false;
  if(!observation(v.observation,l,now)||!obj(v.coverage)||!exact(v.coverage,['scope','evidence','observedFields','unknown'])||v.coverage.scope!=='transport_screening'||v.coverage.evidence!=='not_integrated'||!Array.isArray(v.coverage.observedFields)||!Array.isArray(v.coverage.unknown))return false;
@@ -94,6 +94,13 @@ export async function runPlanningV2LocalProtocol(lease:V2Lease,ports:V2ProtocolP
   try{const value=await ports.place(signal,permit);await fresh();if(!observation(value,lease,ports.now()))throw Error('invalid observation');place=value;if(!await ports.savePlace(lease,place,signal))return outcome('checkpoint_pending');}
   catch{try{await ports.unknownPlace(lease);}catch{}return outcome('unknown_effect');}
  }else return outcome('blocked');
- try{read=await fresh();const value=await ports.prepare(lease,place,signal);if(!prepared(value,read,lease,place,ports.now())||!await ports.verifyPreparation(lease,place,value.content,signal))return outcome('blocked');await fresh();return {kind:'prepared',preparation:value,readyForPublication:false,executionAvailable:false};}
+ try{read=await fresh();const value=await ports.prepare(lease,place,signal);if(!validPlanningV2PreparedProjection(value,read,lease,place,ports.now())||!await ports.verifyPreparation(lease,place,value.content,signal))return outcome('blocked');await fresh();return {kind:'prepared',preparation:value,readyForPublication:false,executionAvailable:false};}
  catch{return outcome('blocked');}
+}
+
+/** Authority-neutral decoder shared by controlled host consumers. */
+export function decodePlanningV2Checkpoints(v:unknown,l:V2Lease,now:number):Row|null{
+ if(!validPlanningV2Lease(l)||!obj(v)||!exact(v,['schemaVersion','ownerId','taskId','turnId','intakeContextDigest','planningContextDigest','place','modelAttempt'])||v.schemaVersion!=='planning-v2-checkpoints/1'||['ownerId','taskId','turnId','intakeContextDigest','planningContextDigest'].some(k=>v[k]!==(l as unknown as Row)[k])||!obj(v.place)||!member(v.modelAttempt,['none','released','reserved','dispatched','pending','settled']))return null;
+ if(v.place.state==='completed')return exact(v.place,['state','observation'])&&observation(v.place.observation,l,now)?v:null;
+ return member(v.place.state,['missing','started','unknown'])&&exact(v.place,['state'])?v:null;
 }
