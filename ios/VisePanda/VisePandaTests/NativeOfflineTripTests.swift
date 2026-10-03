@@ -68,4 +68,15 @@ nonisolated final class NativeOfflineTripTests:XCTestCase {
         let command=try NativeOfflineTextSubmission(headVersion:2,date:"2026-10-04",title:" New entry ")
         let body=try XCTUnwrap(JSONSerialization.jsonObject(with:JSONEncoder().encode(command)) as? [String:Any]);XCTAssertEqual(Set(body.keys),Set(["operationId","expectedHeadVersion","date","title","saveOffline"]));XCTAssertNil(body["author"]);XCTAssertNil(body["patch"])
     }
+    @MainActor func testFixedTypeScriptProducerCanonicalSignatureInterop()throws {
+        let env=ProcessInfo.processInfo.environment
+        guard let encoded=env["VP_OFFLINE_TS_GOLDEN"],let publicEncoded=env["VP_OFFLINE_TS_PUBLIC"],let canonical=env["VP_OFFLINE_TS_CANONICAL"] else{throw XCTSkip("UNRUN: explicit fixed TS producer fixture required")}
+        let wire=try XCTUnwrap(Data(base64Encoded:encoded)),info=try XCTUnwrap(JSONSerialization.jsonObject(with:Data(base64Encoded:publicEncoded)!) as? [String:String])
+        let key=try XCTUnwrap(Data(base64Encoded:try XCTUnwrap(info["rawKey"]))),keyID=try XCTUnwrap(info["keyId"])
+        let namespace=try NativeOfflineTripNamespace(scope:scope,tripID:trip),permit=try NativeOfflinePermitVerifier(trustedKeys:[keyID:key]).verify(wire,namespace:namespace,headVersion:2,nonce:nonce)
+        XCTAssertEqual(permit.payload.days.count,1);XCTAssertEqual(permit.payload.days[0].id,"Day_A");XCTAssertEqual(permit.payload.days[0].items[0].id,"Item_1");XCTAssertEqual(permit.coverage,"partial");XCTAssertEqual(permit.generation,0)
+        var root=try XCTUnwrap(JSONSerialization.jsonObject(with:wire) as? [String:Any]);root.removeValue(forKey:"proof")
+        XCTAssertEqual(try NativeOfflineCanonicalJSON.data(root),try XCTUnwrap(Data(base64Encoded:canonical)))
+    }
+
 }

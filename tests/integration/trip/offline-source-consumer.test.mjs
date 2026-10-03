@@ -9,7 +9,6 @@ import {parseOfflineProvenance,offlineTextError} from '../../../lib/server/today
 import {productionOfflinePorts} from '../../../lib/server/today/offline-production.ts';
 import {issueOfflineRead,offlineCanonical,offlineDigest} from '../../../lib/server/today/offline-read.ts';
 const enabled=process.env.VP_TURN_DB_TEST==='1',container='vpj25-ts-consumer-'+randomUUID().slice(0,8);
-const migration='20261003160000_vpj25_controlled_offline_text_provenance.sql';
 let created=false;
 const db=async q=>{const r=await sql(container,q);assert.equal(r.code,0,r.stderr);return r.stdout.trim();};
 const literal=v=>v===null?'null':typeof v==='number'||typeof v==='boolean'?String(v):"'"+(typeof v==='object'?JSON.stringify(v):String(v)).replaceAll("'","''")+"'";
@@ -23,11 +22,8 @@ before(async()=>{
   for(let n=0;n<100;n++){if((await command('docker',['exec',container,'pg_isready','-h','/tmp/vpj59-socket','-U','postgres'])).code===0)break;await new Promise(r=>setTimeout(r,100));}
   await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));
   await db("create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;create schema extensions;create extension pgcrypto with schema extensions;");
-  const pinned=process.env.VP_OFFLINE_SQL_SOURCE;
-  let source;
-  if(pinned){assert.match(pinned,/^[0-9a-f]{40}$/);const out=await command('git',['show',`${pinned}:supabase/migrations/${migration}`]);assert.equal(out.code,0,out.stderr);source=out.stdout;}
-  else source=readFileSync('supabase/migrations/'+migration,'utf8');
-  for(const f of [...new Set([...readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')),migration])].sort())await db('begin;'+(f===migration?source:readFileSync('supabase/migrations/'+f,'utf8'))+'commit;');
+  assert.equal(process.env.VP_OFFLINE_SQL_SOURCE,undefined,'Historical SQL overrides are forbidden in the final checkout/CI');
+  for(const f of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort())await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;');
 });
 after(async()=>{if(created)assert.equal((await command('docker',['rm','-f',container])).code,0);});
 async function owner(){
