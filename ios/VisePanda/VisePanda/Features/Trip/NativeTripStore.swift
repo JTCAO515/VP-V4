@@ -152,6 +152,12 @@ final class NativeTripStore {
         }
     }
 
+    func hideLinkedDeletionScope(_ tripID:String) {
+        guard let scope else{return}
+        if let namespace=try? NativeOfflineTripNamespace(scope:scope,tripID:tripID){try? NativeOfflineTripStore().removeTrip(namespace,scope:scope)}
+        clearDeletedTripCache(tripID)
+    }
+
     private func clearDeletedTripCache(_ tripID: String) {
         trips.removeAll { $0.id == tripID }
         guard selectedID == tripID else { return }
