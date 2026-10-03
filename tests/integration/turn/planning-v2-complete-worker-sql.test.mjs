@@ -102,6 +102,7 @@ run('late capacity/publisher failures rollback all completion writes, wrong cont
  const bad={...f.complete,p_content:{...f.complete.p_content,title:'Forged'}};assert.equal((await adm('complete_planning_intake_comparison_v1',bad)).kind,'blocked');assert.equal(await snapshot(f),before);
  assert.equal((await adm('complete_planning_intake_comparison_v1',f.complete)).kind,'published');assert.equal(await db(`select turn_private.valid_current_v2_completion_proof('${f.b.turn}');`),'f');
  const changed={...f.read,p_output_digest:'0'.repeat(64)};assert.equal((await adm('read_completed_planning_intake_receipt_v1',changed)).kind,'stale');
+ await db(`update public.model_budget_attempts set price_version='wrong-counterpart' where scope_id='${f.b.scope}' and attempt_id='${f.b.attempt}';`);assert.equal((await adm('read_completed_planning_intake_receipt_v1',f.read)).kind,'stale');
 });
 
 run('fresh completed place and trusted settled output recover under a new qualified lease without a second paid attempt',async()=>{
