@@ -12,9 +12,12 @@ const failure = (code: FailureCode) => response({ error: { code } }, FAILURE_TAX
 export async function nativeOfflineReadHTTP(request: NextRequest, tripId: string) {
   const params = request.nextUrl.searchParams;
   const head = params.get("expectedHeadVersion");
+  const nonce = params.get("requestNonce");
   if (request.method !== "GET" || request.headers.has("cookie") || request.headers.has("origin") || !isUuid(tripId)
-    || [...params].some(([key]) => key !== "expectedHeadVersion") || params.getAll("expectedHeadVersion").length !== 1
+    || [...params].some(([key]) => !["expectedHeadVersion", "requestNonce"].includes(key)) || params.getAll("expectedHeadVersion").length !== 1
+    || params.getAll("requestNonce").length !== 1 || nonce === null || !isUuid(nonce)
     || head === null || !/^[1-9][0-9]*$/.test(head) || !Number.isSafeInteger(Number(head))) return failure("INVALID_INPUT");
+  const requestNonce = nonce.toLowerCase();
   const config = getNativeRuntimeConfig(request, "trip", "trip");
   if (!config) return failure("PROVIDER_UNAVAILABLE");
   const scope = nativeRequestScope(request.signal);
@@ -45,7 +48,7 @@ export async function nativeOfflineReadHTTP(request: NextRequest, tripId: string
             items: day.items.map(item => ({ id: item.id, title: item.title })) })) },
         };
       };
-      const result = await issueOfflineRead(tripId.toLowerCase(), Number(head), { readCurrent });
+      const result = await issueOfflineRead(tripId.toLowerCase(), Number(head), requestNonce, { readCurrent });
       if (readError) return failure(readError);
       // Also recheck the closed production response before publishing it.
       const final = await readCurrent();

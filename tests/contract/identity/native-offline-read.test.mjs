@@ -8,6 +8,7 @@ import { nativeOfflineReadHTTP } from '../../../lib/server/today/offline-native-
 
 const tripId='314b8576-e9e7-49aa-aa66-94eac6ba6544';
 const subject='214b8576-e9e7-49aa-aa66-94eac6ba6544';
+const nonce='614b8576-e9e7-49aa-aa66-94eac6ba6544';
 const dayId='414b8576-e9e7-49aa-aa66-94eac6ba6544';
 const itemId='514b8576-e9e7-49aa-aa66-94eac6ba6544';
 const now=Date.parse('2026-10-03T00:00:00.000Z');
@@ -25,16 +26,20 @@ function fixture() {
 }
 test('closed production authority and stale basis never invoke signer',async()=>{
   const f=fixture();
-  assert.deepEqual(await issueOfflineRead(tripId,2,{readCurrent:f.ports.readCurrent}),{kind:'unavailable',reason:'POLICY_UNCONFIGURED'});
-  assert.deepEqual(await issueOfflineRead(tripId,3,f.ports),{kind:'unavailable',reason:'STALE_BASIS'});
+  assert.deepEqual(await issueOfflineRead(tripId,2,nonce,{readCurrent:f.ports.readCurrent}),{kind:'unavailable',reason:'POLICY_UNCONFIGURED'});
+  assert.deepEqual(await issueOfflineRead(tripId,3,nonce,f.ports),{kind:'unavailable',reason:'STALE_BASIS'});
   assert.equal(f.signs,0);
 });
 test('qualified read signs exact canonical UTF-8 scope, no raw locations or OCR',async()=>{
-  const f=fixture(),result=await issueOfflineRead(tripId,2,f.ports);
+  const f=fixture(),result=await issueOfflineRead(tripId,2,nonce,f.ports);
   assert.equal(result.kind,'offline_trip_read/1');
   const {proof,...unsigned}=result;
   assert.equal(verify(null,Buffer.from(offlineCanonical(unsigned)),f.keys.publicKey,Buffer.from(proof.signature,'base64url')),true);
   assert.equal(result.snapshotDigest,offlineDigest(result.payload));
+  assert.equal(result.requestNonce,nonce);
+  assert.equal(result.serverTime,new Date(now).toISOString());
+  assert.equal(verify(null,Buffer.from(offlineCanonical({...unsigned,requestNonce:tripId})),f.keys.publicKey,Buffer.from(proof.signature,'base64url')),false);
+  assert.equal(verify(null,Buffer.from(offlineCanonical({...unsigned,serverTime:new Date(now-1).toISOString()})),f.keys.publicKey,Buffer.from(proof.signature,'base64url')),false);
   assert.equal(offlineCanonical({z:'我的 / 😀\n',a:2}),' {"a":2,"z":"我的 / 😀\\n"}'.slice(1));
   assert.equal(f.reads,3);
   assert.equal(f.policyCalls,2);
@@ -47,12 +52,12 @@ for(const [label,mutate]of Object.entries({
 }))test(`issuance rejects ${label} change while signer is awaited`,async()=>{
   const f=fixture(),original=f.ports.sign;
   f.ports.sign=async bytes=>{const proof=await original(bytes);mutate(f);return proof;};
-  assert.deepEqual(await issueOfflineRead(tripId,2,f.ports),{kind:'unavailable',reason:'STALE_BASIS'});
+  assert.deepEqual(await issueOfflineRead(tripId,2,nonce,f.ports),{kind:'unavailable',reason:'STALE_BASIS'});
 });
 test('session revocation during final policy lookup is rechecked',async()=>{
   const f=fixture(),original=f.ports.policy;
   f.ports.policy=async b=>{const p=await original(b);if(f.policyCalls===2)f.basis.sessionEpoch++;return p;};
-  assert.equal((await issueOfflineRead(tripId,2,f.ports)).kind,'unavailable');
+  assert.equal((await issueOfflineRead(tripId,2,nonce,f.ports)).kind,'unavailable');
 });
 for(const [label,mutate]of Object.entries({
   unknownProvenance:f=>f.policy.userAuthoredItemIds=[],unprovenDate:f=>f.policy.userAuthoredDayIds=[],
@@ -64,18 +69,18 @@ for(const [label,mutate]of Object.entries({
   oversize:f=>f.basis.payload.days[0].items[0].title='x'.repeat(2001),
 }))test(`does not sign ${label}`,async()=>{
   const f=fixture();mutate(f);
-  assert.equal((await issueOfflineRead(tripId,2,f.ports)).kind,'unavailable');
+  assert.equal((await issueOfflineRead(tripId,2,nonce,f.ports)).kind,'unavailable');
   assert.equal(f.signs,0);
 });
 test('unknown signer algorithm and malformed proof do not become a permit',async()=>{
   for(const proof of [{algorithm:'sha256',keyId:'hash',signature:'a'.repeat(86)},{algorithm:'Ed25519',keyId:'key',signature:'short'}]){
     const f=fixture();f.ports.sign=async()=>proof;
-    assert.equal((await issueOfflineRead(tripId,2,f.ports)).reason,'POLICY_UNCONFIGURED');
+    assert.equal((await issueOfflineRead(tripId,2,nonce,f.ports)).reason,'POLICY_UNCONFIGURED');
   }
 });
 test('strict Native query rejects caller owner/ttl, ambiguity and browser credentials before transport',async()=>{
   for(const [query,headers]of [['expectedHeadVersion=2&owner='+subject,{}],['expectedHeadVersion=2&ttl=1',{}],['expectedHeadVersion=2&expectedHeadVersion=2',{}],['expectedHeadVersion=0',{}],['expectedHeadVersion=02',{}],['expectedHeadVersion=2',{cookie:'session=synthetic'}],['expectedHeadVersion=2',{origin:'https://example.com'}]]){
-    const r=await nativeOfflineReadHTTP(new NextRequest('https://example.com/offline?'+query,{headers}),tripId);
+    const r=await nativeOfflineReadHTTP(new NextRequest('https://example.com/offline?'+query+'&requestNonce='+nonce,{headers}),tripId);
     assert.equal(r.status,400);
   }
 });
@@ -108,7 +113,7 @@ async function httpFixture(t, mutate=()=>{}) {
     if(path==='/rest/v1/trip_audit_events'||path==='/rest/v1/memory_consumer_receipts')return Response.json([]);
     return intercepted(input,init);
   });
-  return {seen,request:new NextRequest(`https://${host}/api/trips/native/v2/${tripId}/offline-read?expectedHeadVersion=2`,{headers:{authorization:'Bearer '+f.token}})};
+  return {seen,request:new NextRequest(`https://${host}/api/trips/native/v2/${tripId}/offline-read?expectedHeadVersion=2&requestNonce=${nonce}`,{headers:{authorization:'Bearer '+f.token}})};
 }
 test('actual production HTTP uses active session/RLS read then rechecks, no cache permit or writes',async t=>{
   const f=await httpFixture(t);
@@ -129,4 +134,38 @@ test('final session revocation returns credential failure, not any offline respo
   const f=await httpFixture(t,s=>{if(s.path.endsWith('/native_session_v2')&&s.tripReads>=3)s.response=Response.json({subject:nativeSubject,sessionId:tripId,mobileEpoch:8});});
   const r=await nativeOfflineReadHTTP(f.request,tripId);
   assert.equal(r.status,401);
+});
+
+test('old policy issue time does not restart lease at signing or response receipt',async()=>{
+  const f=fixture();
+  f.policy.issuedAt=new Date(now-50000).toISOString();
+  f.policy.expiresAt=new Date(now+10000).toISOString();
+  const original=f.ports.sign;
+  f.ports.sign=async bytes=>{f.time=now+5000;return original(bytes);};
+  const result=await issueOfflineRead(tripId,2,nonce,f.ports);
+  assert.equal(result.kind,'offline_trip_read/1');
+  assert.equal(result.serverTime,new Date(now).toISOString());
+  assert.equal(Date.parse(result.expiresAt)-Date.parse(result.serverTime),10000);
+  assert.equal(result.issuedAt,new Date(now-50000).toISOString());
+});
+test('server clock rollback during signing fails closed',async()=>{
+  const f=fixture();f.policy.issuedAt=new Date(now-1000).toISOString();
+  f.policy.maxLeaseMs=61000;
+  const original=f.ports.sign;
+  f.ports.sign=async bytes=>{f.time=now-1;return original(bytes);};
+  assert.deepEqual(await issueOfflineRead(tripId,2,nonce,f.ports),{kind:'unavailable',reason:'STALE_BASIS'});
+});
+test('expiry during final authority read cannot publish previously signed permit',async()=>{
+  const f=fixture(),original=f.ports.readCurrent;
+  f.ports.readCurrent=async()=>{const b=await original();if(f.reads===3)f.time=now+60000;return b;};
+  assert.deepEqual(await issueOfflineRead(tripId,2,nonce,f.ports),{kind:'unavailable',reason:'STALE_BASIS'});
+});
+test('nonce is required, UUID validated, unique in query and carries no cache rights',async()=>{
+  const f=fixture();
+  for(const value of ['', 'not-a-uuid'])assert.equal((await issueOfflineRead(tripId,2,value,f.ports)).kind,'unavailable');
+  assert.equal(f.reads,0);
+  for(const query of ['expectedHeadVersion=2','expectedHeadVersion=2&requestNonce=bad',`expectedHeadVersion=2&requestNonce=${nonce}&requestNonce=${nonce}`]){
+    const r=await nativeOfflineReadHTTP(new NextRequest('https://example.com/offline?'+query),tripId);
+    assert.equal(r.status,400);
+  }
 });

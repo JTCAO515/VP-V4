@@ -14,6 +14,7 @@ export type OfflinePolicy = {
 export type OfflinePackage = {
   kind: "offline_trip_read/1"; subject: string; sessionEpoch: number; tripId: string; headVersion: number;
   policyId: string; policyRevision: number; issuedAt: string; expiresAt: string;
+  serverTime: string; requestNonce: string;
   fieldAllowlist: typeof OFFLINE_FIELDS; snapshotDigest: string; payload: OfflinePayload;
   proof: { algorithm: "Ed25519"; keyId: string; signature: string };
 };
@@ -65,8 +66,8 @@ function validPolicy(p: OfflinePolicy, b: OfflineBasis, now: number): boolean {
 }
 
 /** Read-only issuance; ports are server authority. No client metadata can grant cache rights. */
-export async function issueOfflineRead(tripId: string, expectedHeadVersion: number, ports: OfflinePorts): Promise<OfflinePackage | OfflineUnavailable> {
-  if (!uuid.test(tripId) || !positive(expectedHeadVersion)) return unavailable("NOT_ELIGIBLE");
+export async function issueOfflineRead(tripId: string, expectedHeadVersion: number, requestNonce: string, ports: OfflinePorts): Promise<OfflinePackage | OfflineUnavailable> {
+  if (!uuid.test(tripId) || !positive(expectedHeadVersion) || !uuid.test(requestNonce)) return unavailable("NOT_ELIGIBLE");
   const now = ports.now ?? Date.now;
   try {
     const initial = await ports.readCurrent();
@@ -80,11 +81,15 @@ export async function issueOfflineRead(tripId: string, expectedHeadVersion: numb
     const policy = await ports.policy(structuredClone(basis));
     if (!policy) return unavailable("POLICY_UNCONFIGURED");
     const pinnedPolicy = structuredClone(policy);
-    if (!validPolicy(pinnedPolicy, basis, now())) return unavailable("NOT_ELIGIBLE");
+    // Pin the trusted server clock before asynchronous signing; never renew on response receipt.
+    const signingTime = now();
+    if (!Number.isSafeInteger(signingTime) || !validPolicy(pinnedPolicy, basis, signingTime)) return unavailable("NOT_ELIGIBLE");
+    const serverTime = new Date(signingTime).toISOString();
+    if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(serverTime)) return unavailable("NOT_ELIGIBLE");
     const unsigned = {
       kind: "offline_trip_read/1" as const, subject: basis.subject, sessionEpoch: basis.sessionEpoch,
       tripId, headVersion: expectedHeadVersion, policyId: pinnedPolicy.policyId, policyRevision: pinnedPolicy.policyRevision,
-      issuedAt: pinnedPolicy.issuedAt, expiresAt: pinnedPolicy.expiresAt,
+      issuedAt: pinnedPolicy.issuedAt, expiresAt: pinnedPolicy.expiresAt, serverTime, requestNonce,
       fieldAllowlist: OFFLINE_FIELDS, snapshotDigest: offlineDigest(basis.payload), payload: basis.payload,
     };
     const proof = await ports.sign(Buffer.from(offlineCanonical(unsigned), "utf8"));
@@ -96,6 +101,9 @@ export async function issueOfflineRead(tripId: string, expectedHeadVersion: numb
     const settled = await ports.readCurrent();
     if (!settled || !validBasis(settled, tripId, expectedHeadVersion) || offlineCanonical(settled) !== offlineCanonical(basis) || !validPolicy(currentPolicy, settled, now())) return unavailable("STALE_BASIS");
     const result = { ...unsigned, proof: structuredClone(proof) };
-    return Buffer.byteLength(offlineCanonical(result), "utf8") <= 128_000 ? result : unavailable("NOT_ELIGIBLE");
+    if (Buffer.byteLength(offlineCanonical(result), "utf8") > 128_000) return unavailable("NOT_ELIGIBLE");
+    const completedAt = now();
+    if (!Number.isSafeInteger(completedAt) || completedAt < signingTime || !validPolicy(currentPolicy, settled, completedAt)) return unavailable("STALE_BASIS");
+    return result;
   } catch { return unavailable("NOT_ELIGIBLE"); }
 }
