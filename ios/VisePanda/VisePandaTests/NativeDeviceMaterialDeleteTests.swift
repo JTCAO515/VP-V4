@@ -52,6 +52,43 @@ nonisolated final class NativeDeviceMaterialDeleteTests:XCTestCase {
         _=try restarted.executeDeviceMaterialDeletion(request)
         XCTAssertEqual(try inbox.read(newCopy.digest,owner:actor.subject),white,"Completed replay must not delete newly imported same-digest bytes")
     }
+    @MainActor func testSelectedDeleteErasesControlledExportCopyBeforeCompletion() async throws {
+        let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString);defer{try? FileManager.default.removeItem(at:root)}
+        let suite="vpj36.delete-copy."+UUID().uuidString;let defaults=try XCTUnwrap(UserDefaults(suiteName:suite));defer{defaults.removePersistentDomain(forName:suite)}
+        let inbox=NativeScreenshotInbox(root:root.appendingPathComponent("inbox")),vault=DeleteTestVault()
+        let materials=NativeDeviceMaterials(inbox:inbox,exportRoot:root.appendingPathComponent("exports"))
+        let current=session(defaults:defaults,vault:vault,materials:materials);await current.login(email:"synthetic",password:"synthetic")
+        let actor=try XCTUnwrap(current.dataScope);let imported=try current.receiveDeviceScreenshot(image(),owner:actor.subject)
+        let copy=try materials.prepare(digest:imported.digest,scope:actor,confirmed:true)
+        let request=try NativeDeviceMaterialDeleteRequest(actor:actor,files:current.previewDeviceMaterialDeletion())
+        try current.rememberDeviceMaterialDeletion(request)
+        XCTAssertTrue(try current.executeDeviceMaterialDeletion(request).matches(request))
+        XCTAssertFalse(FileManager.default.fileExists(atPath:copy.url.path))
+        XCTAssertThrowsError(try materials.file(for:copy,scope:actor))
+        XCTAssertNil(materials.delivery)
+    }
+    @MainActor func testControlledCopyCleanupFailureKeepsPendingAndGetterDenied() async throws {
+        let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString);defer{try? FileManager.default.removeItem(at:root)}
+        let suite="vpj36.delete-copy."+UUID().uuidString;let defaults=try XCTUnwrap(UserDefaults(suiteName:suite));defer{defaults.removePersistentDomain(forName:suite)}
+        let inbox=NativeScreenshotInbox(root:root.appendingPathComponent("inbox")),vault=DeleteTestVault();var fail=false
+        let materials=NativeDeviceMaterials(inbox:inbox,exportRoot:root.appendingPathComponent("exports"),removeExport:{url in
+            if fail && url.pathExtension=="png"{throw InboxError.invalidInput}
+            try FileManager.default.removeItem(at:url)
+        })
+        let current=session(defaults:defaults,vault:vault,materials:materials);await current.login(email:"synthetic",password:"synthetic")
+        let actor=try XCTUnwrap(current.dataScope),data=image();let imported=try current.receiveDeviceScreenshot(data,owner:actor.subject)
+        let copy=try materials.prepare(digest:imported.digest,scope:actor,confirmed:true)
+        let request=try NativeDeviceMaterialDeleteRequest(actor:actor,files:current.previewDeviceMaterialDeletion())
+        try current.rememberDeviceMaterialDeletion(request);fail=true
+        XCTAssertThrowsError(try current.executeDeviceMaterialDeletion(request))
+        XCTAssertEqual(try current.pendingDeviceMaterialDeletion(),request);XCTAssertNil(try current.lastDeviceMaterialDeletionReceipt())
+        XCTAssertTrue(FileManager.default.fileExists(atPath:copy.url.path));XCTAssertThrowsError(try materials.file(for:copy,scope:actor))
+        XCTAssertEqual(try inbox.read(imported.digest,owner:actor.subject),data)
+        fail=false
+        XCTAssertTrue(try current.executeDeviceMaterialDeletion(request).matches(request))
+        XCTAssertFalse(FileManager.default.fileExists(atPath:copy.url.path))
+    }
+
     @MainActor func testChangedFileWrongOwnerAndJournalWriteFailureNeverDelete() async throws {
         let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString);defer{try? FileManager.default.removeItem(at:root)}
         let suite="vpj36.delete."+UUID().uuidString;let defaults=try XCTUnwrap(UserDefaults(suiteName:suite));defer{defaults.removePersistentDomain(forName:suite)}

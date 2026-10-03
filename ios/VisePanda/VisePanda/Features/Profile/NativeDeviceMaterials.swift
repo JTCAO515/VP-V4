@@ -19,13 +19,16 @@ final class NativeDeviceMaterials {
     }
     private let inbox: NativeScreenshotInbox
     private let exportRoot: URL
+    private let removeExport:(URL) throws -> Void
+    private var pendingExportCleanup:Delivery?
     private let deleteFile: (NativeScreenshotInbox.FileSelection,String) throws -> Void
     private let eraseInbox: () throws -> Void
     private var accessed = false
     private(set) var delivery: Delivery?
 
-    init(inbox: NativeScreenshotInbox = NativeScreenshotInbox(), exportRoot: URL? = nil, eraseInbox: (() throws -> Void)? = nil, deleteFile: ((NativeScreenshotInbox.FileSelection,String) throws -> Void)? = nil) {
+    init(inbox: NativeScreenshotInbox = NativeScreenshotInbox(), exportRoot: URL? = nil, eraseInbox: (() throws -> Void)? = nil, deleteFile: ((NativeScreenshotInbox.FileSelection,String) throws -> Void)? = nil, removeExport: ((URL) throws -> Void)? = nil) {
         self.inbox = inbox
+        self.removeExport = removeExport ?? {try FileManager.default.removeItem(at:$0)}
         self.deleteFile = deleteFile ?? { try inbox.deleteSelected($0,owner:$1) }
         self.eraseInbox = eraseInbox ?? { try inbox.deleteAll() }
         self.exportRoot = exportRoot ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
@@ -47,7 +50,8 @@ final class NativeDeviceMaterials {
     func clearDelivery() throws {
         delivery = nil
         do {
-            if FileManager.default.fileExists(atPath: exportRoot.path) { try FileManager.default.removeItem(at: exportRoot) }
+            try removeExportVerified(exportRoot)
+            pendingExportCleanup=nil
         } catch { accessed = false; throw error }
     }
     func deletionSelections(scope:NativeDataScope) throws -> [NativeScreenshotInbox.FileSelection] {
@@ -57,7 +61,26 @@ final class NativeDeviceMaterials {
         for file in files { _=try inbox.read(file.digest,owner:scope.subject) }
         try inbox.validate(files,owner:scope.subject)
     }
+    private func exportExists(_ url:URL) throws -> Bool {
+        do {_=try FileManager.default.attributesOfItem(atPath:url.path);return true}
+        catch let error as NSError {
+            if error.domain==NSCocoaErrorDomain && [NSFileReadNoSuchFileError,NSFileNoSuchFileError].contains(error.code){return false}
+            throw error
+        }
+    }
+    private func removeExportVerified(_ url:URL) throws {
+        if try exportExists(url){try removeExport(url)}
+        guard try !exportExists(url) else{throw InboxError.invalidInput}
+    }
     func executeDeletion(_ files:[NativeScreenshotInbox.FileSelection],scope:NativeDataScope) throws {
+        if let current=delivery,NativeDeviceMaterialDeleteNamespace(current.scope).matches(scope),files.contains(where:{$0.digest==current.digest}) {
+            pendingExportCleanup=current;delivery=nil // No getter may return this controlled copy while cleanup is pending.
+        }
+        if let copy=pendingExportCleanup,NativeDeviceMaterialDeleteNamespace(copy.scope).matches(scope),files.contains(where:{$0.digest==copy.digest}) {
+            guard copy.url.deletingLastPathComponent().standardizedFileURL.path==exportRoot.standardizedFileURL.path else{throw InboxError.invalidInput}
+            try removeExportVerified(copy.url)
+            pendingExportCleanup=nil
+        }
         for file in files { try deleteFile(file,scope.subject) }
         for file in files { guard try inbox.selection(file.digest,owner:scope.subject)==nil else{throw InboxError.invalidInput} }
     }
@@ -95,7 +118,8 @@ final class NativeDeviceMaterials {
         } catch { try? clearDelivery(); throw error }
     }
     func file(for receipt: Delivery, scope: NativeDataScope?, now: Date = Date()) throws -> URL {
-        guard receipt == delivery, receipt.scope == scope, receipt.expiresAt > now else { try clearDelivery(); throw InboxError.expired }
+        guard receipt==delivery else{throw InboxError.expired}
+        guard receipt.scope==scope,receipt.expiresAt>now else{try clearDelivery();throw InboxError.expired}
         let size = try receipt.url.resourceValues(forKeys: [.fileSizeKey]).fileSize
         guard size == receipt.bytes, receipt.bytes <= 12_000_000 else { throw InboxError.invalidInput }
         let data = try Data(contentsOf: receipt.url)

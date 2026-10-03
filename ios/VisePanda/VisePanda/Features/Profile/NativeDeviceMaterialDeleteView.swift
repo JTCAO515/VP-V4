@@ -11,7 +11,7 @@ struct NativeDeviceMaterialDeleteView:View {
     var body:some View {
         Form {
             Section(t("只删除所选本机审阅副本", "Delete selected device review copies only")) {
-                Text(t("仅操作当前账号、当前接入与会话下的本机截图收件箱。不删除照片图库、其他账号、未选择的文件、已导出的外部副本或服务器资料；不代表全部账号数据删除。", "Only this account/connection/session's device screenshot inbox is affected. Photo library, other owners, unselected files, external exported copies and server data are excluded. This does not complete all-account erasure."))
+                Text(t("删除当前账号、当前接入与会话下所选的本机截图审阅副本，以及对应的应用临时导出副本。不删除照片图库、其他账号、未选择来源、外部保存副本或服务器资料；不代表全部账号数据删除。", "Deletes selected device screenshot review copies and their matching app-controlled temporary exports for this account/connection/session. Photo library, other owners, unselected sources, externally saved copies and server data are excluded. This does not complete all-account erasure."))
                 Button(t("刷新精确文件预览", "Refresh exact file preview")){reviewedDigest=nil;confirmVisible=false;store.refresh(using:session)}.disabled(store.busy)
                 ForEach(store.available,id:\.digest){file in
                     Toggle(isOn:Binding(get:{store.selected.contains(file.digest)},set:{store.select(file.digest,chosen:$0);reviewedDigest=nil})) {
@@ -55,6 +55,6 @@ struct NativeDeviceMaterialDeleteView:View {
         .confirmationDialog(t("确认删除这组所选本机文件？", "Delete this exact selected device-file set?"),isPresented:$confirmVisible,titleVisibility:.visible){
             Button(t("确认同一选择并删除", "Confirm this selection and delete"),role:.destructive){if let reviewedDigest{store.confirm(reviewedDigest:reviewedDigest,using:session)}}
             Button(t("继续核对", "Keep checking"),role:.cancel){}
-        }message:{Text(t("先保留本机请求，再删除并逐个核验不存在。只影响刚才预览并选择的文件身份；错误或中断保留待恢复状态。", "Persist the local request first, then delete and verify absence. Only previewed/selected file identities are affected; errors or interruption remain pending for recovery."))}
+        }message:{Text(t("先保留本机请求，再删除并逐个核验不存在。只影响刚才预览并选择的文件身份及对应的受控临时导出副本；错误或中断保留待恢复状态。", "Persist the local request first, then delete and verify absence. Only previewed/selected file identities and their matching controlled temporary exports are affected; errors or interruption remain pending for recovery."))}
     }
 }
