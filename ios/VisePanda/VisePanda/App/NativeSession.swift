@@ -63,6 +63,10 @@ final class NativeSession {
         configuration.httpShouldSetCookies = false
         configuration.urlCache = nil
         transport = URLSession(configuration: configuration, delegate: NativeRedirectBlocker(), delegateQueue: nil)
+        // Endpoint-scoped record contains the signing-out owner only, never credentials.
+        // Any surviving/corrupt intent is a fence until deliberate login clears it.
+        deviceMaterialSignOutFence = defaults.object(forKey: storageKey + ".signOutIntent") != nil
+        if deviceMaterialSignOutFence { status = "signingOut" }
     }
 
     func prepareExploreAsk(_ handoff:NativeExploreAskHandoff) {
@@ -712,7 +716,8 @@ final class NativeSession {
         defer { busy = false }
         // A deliberate account change clears all old account data before sending the new request.
         guard clear() else { return }
-        deviceMaterialSignOutFence = false // Only a deliberate new login reopens consumption.
+        defaults.removeObject(forKey: storageKey + ".signOutIntent")
+        deviceMaterialSignOutFence = false // Only a deliberate new login after cleanup reopens consumption.
         let attempt = UUID().uuidString
         let generation = dataGeneration
         do {
@@ -764,6 +769,7 @@ final class NativeSession {
 
     func logout() async {
         guard !busy else { return }
+        defaults.set(credential?.subject ?? defaults.string(forKey: storageKey) ?? "unbound", forKey: storageKey + ".signOutIntent")
         deviceMaterialSignOutFence = true
         subject=nil; mobileEpoch=nil; displayName=nil; status="signingOut"
         do { try deviceMaterials.eraseAll() }
