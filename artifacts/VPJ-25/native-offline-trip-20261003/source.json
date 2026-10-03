@@ -1,0 +1,13 @@
+{
+  "nativeCore": "8c0214e07f7251fc56c0da848f01c6d2c6187f4d",
+  "tsFinal": "1513fb956a20ad87c50af9a1cf43d39d14559797",
+  "sqlFinal": "1ac619525c2b6f46520fb41fb36e05f9311af730",
+  "files": {
+    "ios/VisePanda/VisePanda/Features/Today/NativeOfflineTripStore.swift": "aeda3a412a0cb537db1809821ada86d2eddacb84c0bd21441167c7f363004b84",
+    "ios/VisePanda/VisePanda/Features/Today/NativeOfflineReadPermit.swift": "f118fdd8db8ae2e5ba9c5f947ebc5ea626be4a8cdca3da3294d22265a662454e",
+    "ios/VisePanda/VisePanda/Features/Today/NativeOfflineTodayView.swift": "6ccdf4e25160838df9c5e5d5e0e887865475c09c453eb3da922068f8552d5195",
+    "ios/VisePanda/VisePanda/Features/Trip/NativeTripStore.swift": "67fba817500a694b627a681269442725bb2a2a0981a504b41185658c40dae1ee",
+    "ios/VisePanda/VisePanda/Features/Trip/NativeTripView.swift": "f1a47232b5901a446a2a02d04a4ad63bbc4d2d7f52e7d2ec10a1a013b01aec2e",
+    "ios/VisePanda/VisePanda/App/NativeSession.swift": "679aee359b6772377f648c2d323ed1bd8330e01679d3842c8038dc3f0b3c99ca"
+  }
+}

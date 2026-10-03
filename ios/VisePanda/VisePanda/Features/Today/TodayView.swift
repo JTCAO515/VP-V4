@@ -13,6 +13,7 @@ struct TodayView: View {
                 BrandHeader()
                 hero
                 PreviewStatusBanner()
+                NavigationLink {NativeOfflineSavedTripsView()} label:{Label("offline.pack.title",systemImage:"arrow.down.document")}
 
                 Text("today.quick_actions")
                     .font(.title3.weight(.bold))
@@ -97,6 +98,7 @@ struct NativeTodayView: View {
                     Text(text("There is no confirmed Trip to show.", "目前没有可展示的已确认行程。"))
                         .accessibilityIdentifier("today.noConfirmedTrip")
                 }
+                NativeOfflineTodayPanel(tripID:tripID,currentDetail:detail,tripStore:store)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(VPSpacing.standard)
@@ -137,7 +139,7 @@ struct NativeTodayView: View {
                             .foregroundStyle(.secondary)
                             .accessibilityIdentifier("today.lastRead")
                     }
-                    Text(text("Refresh to check for changes. Today has no offline copy.", "刷新可检查更新；今日页尚未保存离线副本。"))
+                    Text(text("Refresh to check changes. Any permitted offline text is separately labeled below.", "刷新可检查更新；获准离线文字在下方单独标明。"))
                         .font(.footnote).foregroundStyle(.secondary)
                 }
             }
