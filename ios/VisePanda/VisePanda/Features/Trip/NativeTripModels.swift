@@ -91,6 +91,7 @@ struct NativeTripPending: Decodable {
         let stale: Bool
         let evidence: String
         let assumptions: String
+        var after: NativeTripContent? = nil // Read-only server after-diff snapshot; never a local writer.
     }
     let version: Int
     let trip: NativeTripSummary

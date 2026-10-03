@@ -223,6 +223,7 @@ final class NativeSession {
     private func removeDeviceMaterialDeleteRequest(owner:String) throws {
         let status=vault.remove(service:materialDeleteRequestService,owner:owner)
         guard status==errSecSuccess || status==errSecItemNotFound else{throw NativeDataError.sessionUnavailable}
+    }
     private var tripSupportConfirmVaultService: String { keychainService + ".trip-support-confirm." + (endpoint?.absoluteString ?? "disabled") }
     func tripSupportConfirmationRecovery() throws -> NativeTripSupportConfirmJournal? {
         guard let actor=dataScope else { throw NativeDataError.sessionUnavailable }
@@ -257,6 +258,13 @@ final class NativeSession {
               Set(receipt.supports.map(\.receiptId))==Set(request.supportSelection.map(\.receiptId)) else { throw NativeDataError.invalidResponse }
         let status=vault.remove(service:tripSupportConfirmVaultService,owner:actor.subject)
         guard status==errSecSuccess || status==errSecItemNotFound else { throw NativeDataError.sessionUnavailable }
+    }
+
+    func planFeasibility(_ target:NativePlanFeasibilityTarget,body:Data) async throws -> Data {
+        guard target.valid,dataScope==target.actor,body.count<=8192 else{throw NativeDataError.invalidResponse}
+        let bytes=try await tripRequest(path:"api/trips/native/v2/\(target.tripId)/feasibility",method:"POST",body:body)
+        guard dataScope==target.actor,bytes.count<=262_144 else{throw NativeDataError.staleSessionResponse}
+        return bytes
     }
 
     func tripSupportContext(target:NativeTripSupportTarget,proposal:NativeTripPending.Proposal) async throws -> Data {
