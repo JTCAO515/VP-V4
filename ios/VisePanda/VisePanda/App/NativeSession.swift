@@ -32,6 +32,8 @@ final class NativeSession {
     private(set) var status = "signedOut"
     private(set) var failureCode: String?
     private(set) var dataGeneration = 0
+    private var assistantNavigation: NativeAssistantNavigation?
+    let memoryPreferences=NativeMemoryPreferencesStore()
     private var credential: NativeCredential?
     private let endpoint: URL?
     let askMode: NativeAskMode
@@ -56,6 +58,14 @@ final class NativeSession {
         configuration.httpShouldSetCookies = false
         configuration.urlCache = nil
         transport = URLSession(configuration: configuration, delegate: NativeRedirectBlocker(), delegateQueue: nil)
+    }
+
+    // Navigation pointers only; no conversation, result or Memory content cache.
+    func assistantNavigationSelection() -> NativeAssistantNavigation? {
+        guard let value=assistantNavigation,value.scope==dataScope else{return nil};return value
+    }
+    func retainAssistantNavigation(_ value:NativeAssistantNavigation) {
+        guard value.scope==dataScope else{return};assistantNavigation=value
     }
 
     /// Remote destinations come only from the installed build, never launch arguments or user input.
@@ -436,6 +446,16 @@ final class NativeSession {
             : assistantTaskHistory ? "api/chat/native/v2" : mode.base
     }
 
+    func memoryProfilesRequest()async throws->Data {
+        let path="api/memory/native/v1/profiles"
+        return try await dataRequest(prefix:path,path:path,method:"GET")
+    }
+    func memoryProfilesCommand(_ body:Data)async throws->Data {
+        guard body.count<=8192 else{throw NativeDataError.invalidResponse}
+        let path="api/memory/native/v1/profiles"
+        return try await dataRequest(prefix:path,path:path,method:"POST",body:body)
+    }
+
     func memoryRequest(path: String = "api/memory/native/v1/travel-pace", method: String, body: Data? = nil) async throws -> Data {
         try await dataRequest(prefix: "api/memory/native/v1/travel-pace", path: path, method: method, body: body)
     }
@@ -703,6 +723,8 @@ final class NativeSession {
     }
     @discardableResult private func clear() -> Bool {
         dataGeneration += 1
+        assistantNavigation=nil
+        memoryPreferences.clear()
         if let owner = credential?.subject ?? defaults.string(forKey: storageKey) {
             let result = vault.remove(service: vaultService, owner: owner)
             guard result == errSecSuccess || result == errSecItemNotFound else {

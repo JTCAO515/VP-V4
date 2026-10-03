@@ -1,0 +1,21 @@
+{
+  "result": "PASS",
+  "scope": "actual NativeSession owner Auth -> consentCreate/create -> same-profile update -> updateUndo -> pause/resume -> revoke/masked currentread -> logout",
+  "sameProfile": true,
+  "revisionSequence": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    5
+  ],
+  "profiles": 1,
+  "providerCalls": 0,
+  "taskAdmissions": 0,
+  "unrun": [
+    "device gestures",
+    "VoiceOver/human",
+    "provider/target"
+  ]
+}

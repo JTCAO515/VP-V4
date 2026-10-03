@@ -1,0 +1,12 @@
+{
+  "head": "a8c1f1512fa51f98202b3707c9d4522a671b2e65",
+  "kind": "ACTUAL_NATIVE_AUTH_MEMORY_API_STATE_NOT_DEVICE_GESTURES",
+  "device": "5DB8E4CE-76AA-48A7-8F9C-861AF1A25E6E",
+  "dd": "/tmp/vpj81-native-task-activity-20261002",
+  "base": 63220,
+  "files": {
+    "ios/VisePanda/VisePanda/Features/Profile/NativeMemoryPreferences.swift": "ae28f5184edba0b887c94f73724246b6efcde92e34456e533728b27c960f2778",
+    "ios/VisePanda/VisePanda/App/NativeSession.swift": "da9c54b57d4da8905570d82aa3dd2f3cc87f70de43643879a8a4db7d2642fe2d",
+    "ios/VisePanda/VisePandaTests/NativeMemoryPreferencesTests.swift": "49fecebb9e9f320f62b79b74514c31b83e4e476d744705a755d9c70768489474"
+  }
+}
