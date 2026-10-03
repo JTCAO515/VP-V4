@@ -18,6 +18,7 @@ test('grounded Turn: durable scope, private results and historical eligibility',
  const lit=v=>v===null?'null':typeof v==='number'?String(v):"'"+String(v).replaceAll("'","''")+"'";
  let ready=false;for(let i=0;i<60;i++){if((await command('docker',['exec',container,'pg_isready','-h','/tmp/vpj59-socket','-U','postgres'])).code===0){ready=true;break;}await new Promise(r=>setTimeout(r,100));}assert.ok(ready);
  await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));
+ await db("create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;");
  await db('create schema extensions;create extension pgcrypto with schema extensions;');
  const migrations=readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort();
  for(const f of migrations){const content=readFileSync('supabase/migrations/'+f,'utf8');if(f.endsWith('_vpj_16_grounded_turn.sql')){await db('begin;'+content+'rollback;');assert.equal(await db("select to_regclass('turn_private.grounded_turns') is null;"),'t');}if(f.endsWith('_vpj_16_cancelled_work_projection.sql')){

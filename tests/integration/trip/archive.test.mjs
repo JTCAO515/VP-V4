@@ -20,6 +20,7 @@ test('archive SQL: owner isolation, atomic retries, failure preservation, servic
   }
   assert.ok(ready);
   await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql', 'utf8') + '\ngrant usage on schema auth to authenticated, service_role;');
+ await db("create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;");
   for (const file of readdirSync('supabase/migrations').filter(f => f.endsWith('.sql')).sort()) {
     await db('begin;\n' + readFileSync('supabase/migrations/' + file, 'utf8') + '\ncommit;');
   }

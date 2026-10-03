@@ -275,6 +275,15 @@ struct NativeTripView: View {
                 archiveVisible = false; archiveReference = nil
             }
         }
+        .toolbar {
+            ToolbarItem(placement:.topBarTrailing) {
+                if let journal=try? session.linkedTripDeletionRecovery() {
+                    NavigationLink(text("Linked deletion status", "协同删除状态")) {
+                        NativeLinkedTripDeletionView(tripID:journal.tripID,headVersion:(try? journal.decodedRequest().expectedVersion) ?? 0)
+                    }.accessibilityIdentifier("trip.linkedDeletion.recovery")
+                }
+            }
+        }
         .onChange(of: store.selectedID) { _, _ in
             outlineGeneration = UUID(); outline = nil; outlineTitles = []; outlinePaceBasis = nil
         }
@@ -572,6 +581,10 @@ struct NativeTripView: View {
                         deleteReference = reference; deleteVisible = true
                     }
                     .accessibilityIdentifier("trip.deletion.begin")
+                    NavigationLink {
+                        NativeLinkedTripDeletionView(tripID:detail.trip.id,headVersion:detail.trip.headVersion,onQueued:{id in store.hideLinkedDeletionScope(id)})
+                    } label:{Label(text("Review linked-chat deletion scope…", "预览关联聊天协同删除范围…"),systemImage:"trash")}
+                    .accessibilityIdentifier("trip.linkedDeletion.begin")
                 }
                 Text(detail.trip.title).font(.title2.bold()).accessibilityIdentifier("trip.confirmed.title")
                 Text(detail.trip.id).font(.caption).textSelection(.enabled).accessibilityIdentifier("trip.selected.id")
@@ -724,7 +737,7 @@ struct NativeTripView: View {
         case "INVALID_INPUT": text("Check the title, dates and item details.", "请检查名称、日期与项目内容。")
         case "FORBIDDEN": text("This account cannot access that trip.", "此账号无权访问该行程。")
         case "REAUTHENTICATION_REQUIRED": text("Sign out and sign in again in Profile, then check this same deletion request within five minutes.", "请在「我的」退出并重新登录，并在五分钟内查询同一删除请求。")
-        case "TRIP_HAS_CHAT_REFERENCES": text("This Trip has linked chats. Coordinated deletion is not available yet; nothing was deleted.", "此行程有关联聊天，协同删除尚不可用；未删除任何内容。")
+        case "TRIP_HAS_CHAT_REFERENCES": text("This legacy deletion path rejects linked chats. Use the separate exact linked-deletion preview; nothing was deleted by this request.", "旧删除路径不处理关联聊天，请使用单独的精确协同删除预览；本请求未删除任何内容。")
         case "DELETION_ALREADY_REQUESTED": text("A deletion request already exists for this Trip. Contact support with the Trip ID if its receipt is unavailable.", "此行程已有删除请求。若无法读取原回执，请携带行程 ID 联系支持团队。")
         case "IDEMPOTENCY_KEY_REUSE": text("The request conflicts with an earlier submission. Reload before retrying.", "此请求与先前提交冲突，请重载后再试。")
         case "invalidResponse": text("The trip response could not be verified. Reload to try again.", "无法核实行程响应，请重载后再试。")

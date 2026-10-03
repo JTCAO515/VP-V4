@@ -25,7 +25,7 @@ const db=async q=>{const r=await sql(container,q);assert.equal(r.code,0,r.stderr
 const lit=v=>v===null||v===undefined?'null':typeof v==='number'||typeof v==='boolean'?String(v):"'"+String(v).replaceAll("'","''")+"'";
 const call=(role,actor)=>async(name,p={})=>{
  assert.match(name,/^[a-z_]+$/);
- const claims=actor?`set request.jwt.claim.sub='${actor.owner}';set request.jwt.claims='${JSON.stringify({session_id:actor.session})}';`:'';
+ const claims=`set request.jwt.claim.role='${role}';`+(actor?`set request.jwt.claim.sub='${actor.owner}';set request.jwt.claims='${JSON.stringify({role,session_id:actor.session})}';`:'');
  const value=await db(claims+'set role '+role+';select public.'+name+'('+Object.entries(p).map(([k,v])=>k+'=>'+lit(v)).join(',')+');');
  return ['cancel_chat_turn'].includes(name)?value:JSON.parse(value);
 };
@@ -79,7 +79,7 @@ before(async()=>{
  assert.equal(r.code,0,r.stderr);created=true;
  let ready=false;for(let i=0;i<60;i++){if((await command('docker',['exec',container,'pg_isready','-h','/tmp/vpj59-socket','-U','postgres'])).code===0){ready=true;break;}await new Promise(r=>setTimeout(r,250));}assert.ok(ready);
  await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));
- await db('create schema extensions;create extension pgcrypto with schema extensions;');
+ await db("create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;create schema extensions;create extension pgcrypto with schema extensions;");
  const migrations=readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort();
  const mine=migrations.findIndex(f=>f.endsWith('_vpj_07_hosted_text_worker.sql'));assert.ok(mine>0);
  for(const f of migrations.slice(0,mine))await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;');

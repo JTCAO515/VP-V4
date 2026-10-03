@@ -34,6 +34,7 @@ before(async()=>{
   assert.equal(JSON.parse((await command('docker',['inspect',container])).stdout)[0].HostConfig.NetworkMode,'none');
   let ready=false;for(let i=0;i<40;i++){if((await command('docker',['exec',container,'pg_isready','-h','/tmp/vpj59-socket','-U','postgres'])).code===0){ready=true;break;}await new Promise(r=>setTimeout(r,250));}assert.ok(ready);
   await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));
+ await db("create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;");
   const migrations=readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort();
   for(const file of migrations.slice(0,-1)) await db('begin;'+readFileSync('supabase/migrations/'+file,'utf8')+'commit;');
   const preserved=await fixture();
