@@ -71,9 +71,16 @@ All new RPCs remain defaultrevoked; no target/policy/role enablement is implied.
 
 
 Final current-support read entries strictly add placeReferenceId from the actual
-support receipt's preparation binding. Exact field list (11 keys after adding placeReferenceId): supportId,receiptId,
+support receipt's preparation binding. Final72 exact12 keys: supportId,receiptId,
 placeReferenceId,version,scope,applicability,status,claimRevision,payloadHash,
-sourceDigest,claim. Missing old shape without placeReferenceId fails closed, without dual-schema
+sourceDigest,sourceRefs,claim. Missing old shape fails closed, without dual-schema
 fallback. Recheck retains this own-reference metadata but claim remains null.
 A confirmed item/relaunch uses this true reference → qualified candidates → explicit
 renewal, with no pending proposal, synthesized reference or title match needed.
+
+
+Final SQL72eb5790eee5724cca016729f216465ccabae63c includes sourceRefs in current
+support entries. Strict12 keys above; sourceRefs bounded8 only exact
+{sourceRevisionId,revisionLabel,snippetHash}, no submittedBy/staff identity/extra Ops
+fields. Even when recheck retains these minimal owned references, claim stays null.
+This replaces the intermediate11-key HTTP expectation; no lenient schema fallback.

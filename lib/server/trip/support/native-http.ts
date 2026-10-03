@@ -92,9 +92,11 @@ function decodeResult(action: NativeSupportAction, value: unknown, tripId: strin
       || value.dayId !== input.dayId || value.itemId !== input.itemId || !Array.isArray(value.entries) || value.entries.length > 8) return null;
     const ids = new Set<string>();
     for (const e of value.entries) {
-      if (!record(e) || !exact(e,["supportId","receiptId","placeReferenceId","version","scope","applicability","status","claimRevision","payloadHash","sourceDigest","claim"]) || !uuid(e.supportId) || !uuid(e.receiptId) || !uuid(e.placeReferenceId)
+      if (!record(e) || !exact(e,["supportId","receiptId","placeReferenceId","version","scope","applicability","status","claimRevision","payloadHash","sourceDigest","sourceRefs","claim"]) || !uuid(e.supportId) || !uuid(e.receiptId) || !uuid(e.placeReferenceId)
         || !integer(e.version) || !integer(e.claimRevision) || !hash(e.payloadHash) || !hash(e.sourceDigest) || !scopes.includes(String(e.scope)) || !statuses.includes(String(e.status))
         || !["unverified","matched"].includes(String(e.applicability)) || ids.has(e.supportId) || (e.status === "reference_current" ? !typedClaim(e.claim,e.scope) : e.claim !== null)) return null;
+      if (!Array.isArray(e.sourceRefs) || e.sourceRefs.length>8 || new Set(e.sourceRefs.map(r=>record(r)?r.sourceRevisionId:null)).size!==e.sourceRefs.length
+        || !e.sourceRefs.every(r=>record(r)&&exact(r,["sourceRevisionId","revisionLabel","snippetHash"])&&uuid(r.sourceRevisionId)&&typeof r.revisionLabel==="string"&&r.revisionLabel.length>0&&[...r.revisionLabel].length<=120&&hash(r.snippetHash))) return null;
       ids.add(e.supportId);
     }
   } else {
