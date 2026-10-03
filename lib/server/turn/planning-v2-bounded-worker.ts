@@ -38,7 +38,7 @@ export async function runPlanningV2BoundedWorker(config:PlanningV2WorkerConfig,p
   if(!row(claim)||!exact(claim,['kind','lease','execution'])||claim.kind!=='leased'||!validPlanningV2Lease(claim.lease)||claim.lease.ownerId!==config.ownerId||claim.lease.planningPolicyId!==config.planningPolicyId)return 'blocked' as const;
   lease=claim.lease;
   if(!row(claim.execution))return await pause('blocked');
-  const e=claim.execution,expected={schemaVersion:'planning-v2-execution/1',currency:'CNY',unit:'micros',inputTokenUpperBound:1048576,...config.execution,textPolicyId:config.textPolicyId,scopeId:config.scopeId,provider:'qwen',model:PROTOCOL_MODELS.qwen,priceVersion:config.priceVersion,reservedMicros:config.reservedMicros,timeoutMs:config.timeoutMs,maxOutputTokens:config.maxOutputTokens,maxMapCalls:13,maxSteps:4,maxRetries:0,deadlineMs:120000};
+  const e=claim.execution,expected={schemaVersion:'planning-v2-execution/1',...config.execution,textPolicyId:config.textPolicyId,scopeId:config.scopeId,provider:'qwen',model:PROTOCOL_MODELS.qwen,priceVersion:config.priceVersion,reservedMicros:config.reservedMicros,timeoutMs:config.timeoutMs,maxOutputTokens:config.maxOutputTokens,maxMapCalls:13,maxSteps:4,maxRetries:0,deadlineMs:120000};
   if(!exact(e,[...Object.keys(expected),'executionId','profileRevision'])||!uuid(e.executionId)||!Number.isSafeInteger(e.profileRevision)||Number(e.profileRevision)<1||Object.entries(expected).some(([k,v])=>e[k]!==v))return await pause('blocked');
   const l=lease;
   const current=async()=>{if(controller.signal.aborted)throw Error('Planning stopped');const q=decodePlanningV2Read(await invoke('read_planning_intake_work_v1',six(l)),l);if(!q)throw Error('Planning basis unavailable');return q;};

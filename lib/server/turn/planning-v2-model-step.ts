@@ -50,17 +50,19 @@ export async function runPlanningV2ModelStep(input:PlanningV2ModelStepInput,port
   const initial=await current(signal);if(!initial||!authority(await ports.authorize('model_reserve',b,signal),'model_reserve',b))return {kind:'blocked'} as const;
   const attempt:BudgetAttempt={scopeId:b.scope,ownerId:b.owner,taskId:b.task,attemptId:b.attempt,provider:b.provider,model:b.model,priceVersion:b.priceVersion,reservedMicros:input.reservedMicros,timeoutMs:input.timeoutMs};
   const guard=new CostGuard({windowMs:120000,perUserAttempts:8,perTaskAttempts:8,turnDeadlineMs:120000,maxModelSteps:1,maxToolSteps:4}).startTurn({userId:b.owner,taskId:b.task});if(guard.kind!=='turn')return {kind:'blocked'} as const;
+  let dispatchAuthorized=false;
   const attemptBudget=ports.budgetForAttempt(b);
   const budget:BudgetRpc=async(name,p)=>{
-   if(name==='dispatch_model_budget'&&(signal.aborted||!await current(signal)))return {kind:'blocked'};
+   if(name==='dispatch_model_budget'&&(signal.aborted||!await current(signal)||!authority(await ports.authorize('model_dispatch',b,signal),'model_dispatch',b)))return {kind:'blocked'};
    if(name==='reserve_model_budget'&&(!await current(signal)||!authority(await ports.authorize('model_reserve',b,signal),'model_reserve',b)))return {kind:'blocked'};
    const result=await attemptBudget(name,p);
-   if(name==='dispatch_model_budget'&&(signal.aborted||!await current(signal)))return {kind:'blocked'};
+   if(name==='dispatch_model_budget')dispatchAuthorized=row(result)&&result.kind==='dispatched';
+   if(name==='dispatch_model_budget'&&(signal.aborted||!await current(signal)||!authority(await ports.authorize('model_dispatch',b,signal),'model_dispatch',b)))return {kind:'blocked'};
    if(name==='reserve_model_budget'&&row(result)&&result.kind==='reserved'&&!reservedBinding(await ports.bindReserved(b,signal),b,input.reservedMicros))return {kind:'blocked'};
    return result;
   };
   const result=await runWithDurableBudget<Awaited<ReturnType<typeof invokePlanningComparisonProtocol>>>(attempt,budget,async s=>{
-   const value=await invokePlanningComparisonProtocol({requestId:b.attempt,text:input.prompt},{provider:b.provider,endpoint:String(initial.endpoint),maxOutputTokens:input.maxOutputTokens,timeoutMs:input.timeoutMs},async()=>Boolean(await current(s))&&authority(await ports.authorize('model_dispatch',b,s),'model_dispatch',b),guard,ports.transportForAttempt(b),s);
+   const value=await invokePlanningComparisonProtocol({requestId:b.attempt,text:input.prompt},{provider:b.provider,endpoint:String(initial.endpoint),maxOutputTokens:input.maxOutputTokens,timeoutMs:input.timeoutMs},async()=>{if(!dispatchAuthorized)return false;dispatchAuthorized=false;return Boolean(await current(s));},guard,ports.transportForAttempt(b),s);
    if(value.kind!=='protocol_validated'||value.usage.inputTokens>1048576||value.usage.outputTokens>input.maxOutputTokens)return {value,actualMicros:null};
    const actual=ports.price(value.usage);if(actual===null)return {value,actualMicros:null};
    const observedAt=new Date().toISOString(),receipt=validatedPlanningUsageReceipt({schemaVersion:'validated-planning-usage/1',attempt,turnId:b.turn,policyId:b.planningPolicy,usage:value.usage,actualMicros:actual,observedAt},{taskId:b.task,turnId:b.turn,planningPolicyId:b.planningPolicy});
