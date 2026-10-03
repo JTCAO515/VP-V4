@@ -79,3 +79,25 @@ export async function loadCanonicalMappingLookup(
     dbError,
   };
 }
+
+/** Resolve only existing explicit AMap identity rows for two qualified canonical
+ * POIs. No provider lookup or guessed name, and multiple rows remain ambiguous. */
+export async function resolveCanonicalRouteEndpoints(
+  client: SupabaseClient,
+  originCanonicalPoiId: string,
+  destinationCanonicalPoiId: string,
+): Promise<{originId:string;destinationId:string}|null> {
+  if(originCanonicalPoiId===destinationCanonicalPoiId)return null;
+  try {
+    const {data,error}=await client.from("provider_poi_mappings")
+      .select("provider_poi_id,canonical_poi_id").eq("provider","amap")
+      .in("canonical_poi_id",[originCanonicalPoiId,destinationCanonicalPoiId]).limit(3);
+    if(error||!Array.isArray(data)||data.length!==2)return null;
+    const origin=data.filter(r=>r.canonical_poi_id===originCanonicalPoiId);
+    const destination=data.filter(r=>r.canonical_poi_id===destinationCanonicalPoiId);
+    if(origin.length!==1||destination.length!==1
+      ||![origin[0].provider_poi_id,destination[0].provider_poi_id].every(id=>typeof id==="string"&&/^[A-Za-z0-9_-]{1,128}$/.test(id))
+      ||origin[0].provider_poi_id===destination[0].provider_poi_id)return null;
+    return {originId:origin[0].provider_poi_id,destinationId:destination[0].provider_poi_id};
+  } catch {return null;}
+}

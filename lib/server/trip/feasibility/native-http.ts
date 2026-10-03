@@ -22,9 +22,8 @@ export function feasibilityRequest(value:unknown):{proposalId:string;expectedPro
   &&typeof c.dayId==="string"&&/^[A-Za-z0-9_-]{1,64}$/.test(c.dayId)&&typeof c.itemId==="string"&&/^[A-Za-z0-9_-]{1,64}$/.test(c.itemId)&&uuid(c.placeReferenceId)&&uuid(c.mappingId)&&integer(c.expectedMappingVersion,1,Number.MAX_SAFE_INTEGER)
   &&(KNOWLEDGE_CITIES as readonly unknown[]).includes(c.city)&&(KNOWLEDGE_SCENES as readonly unknown[]).includes(c.scene)&&["zh","en"].includes(String(c.locale)))||new Set(value.placeChoices.map(c=>c.itemId)).size!==value.placeChoices.length)return null;
  if(Object.hasOwn(value,"routeRequests")&&(!Array.isArray(value.routeRequests)||value.routeRequests.length>1||!value.routeRequests.every(r=>record(r)
-  &&exact(r,["fromItemId","toItemId","originProviderPoiId","destinationProviderPoiId","mode","departure","mapConsent"])
+  &&exact(r,["fromItemId","toItemId","mode","departure","mapConsent"])
   &&[r.fromItemId,r.toItemId].every(id=>typeof id==="string"&&/^[A-Za-z0-9_-]{1,64}$/.test(id))&&r.fromItemId!==r.toItemId
-  &&[r.originProviderPoiId,r.destinationProviderPoiId].every(id=>typeof id==="string"&&/^[A-Za-z0-9_-]{1,128}$/.test(id))
   &&["walking","transit","driving"].includes(String(r.mode))&&r.departure==="now"&&r.mapConsent===true)))return null;
  const n=value.needs;
  if(!integer(n.partySize,1,20)||typeof n.currency!=="string"||!/^[A-Z]{3}$/.test(n.currency)||!(n.maxBudgetMinor===null||integer(n.maxBudgetMinor,0,100000000))

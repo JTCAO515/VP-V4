@@ -72,10 +72,10 @@ test('explicit now route reuses Maps transport: exact time binds, references sta
  {id:'to',dayId:'day',title:'Destination',startsAt:'2026-10-04T03:00:00.000Z',endsAt:'2026-10-04T04:00:00.000Z'}];
  const places=[{itemId:'from',canonicalPoiId:reference,current:true,entityBound:true,opening:'unknown',reservation:'unknown',reservationCurrent:false},
  {itemId:'to',canonicalPoiId:mapping,current:true,entityBound:true,opening:'unknown',reservation:'unknown',reservationCurrent:false}];
- const req={fromItemId:'from',toItemId:'to',originProviderPoiId:'start',destinationProviderPoiId:'end',mode:'walking',departure:'now',mapConsent:true};
+ const req={fromItemId:'from',toItemId:'to',mode:'walking',departure:'now',mapConsent:true};
  const env={VISEPANDA_FEASIBILITY_ROUTES_ENABLED:'true',AMAP_ROUTES_ENABLED:'true',AMAP_DETAIL_ENABLED:'true',AMAP_WEB_SERVICE_KEY:'synthetic'};
  let calls=0,guards=0,allowed=true,wrongIdentity=false;
- const deps={env,signal:new AbortController().signal,canonicalMapping:async()=> (_provider,id)=>wrongIdentity?'wrong':id==='start'?reference:mapping,beforeRequest:async()=>{guards++;return allowed;},fetcher:async(input)=>{
+ const deps={env,signal:new AbortController().signal,resolveEndpoints:async(origin,destination)=>{assert.equal(origin,reference);assert.equal(destination,mapping);return wrongIdentity?null:{originId:'start',destinationId:'end'};},beforeRequest:async()=>{guards++;return allowed;},fetcher:async(input)=>{
   calls++;const url=new URL(input);
   if(url.pathname.includes('place/detail')){const id=url.searchParams.get('id');return Response.json({status:'1',infocode:'10000',pois:[{id,name:id,citycode:'021',address:'Address',location:id==='start'?'121.4,31.2':'121.5,31.3'}]});}
   const transit=url.pathname.includes('transit');return Response.json({status:'1',infocode:'10000',route:{origin:'121.4,31.2',destination:'121.5,31.3',[transit?'transits':'paths']:[{distance:'1000',cost:{duration:'600'},steps:[{instruction:'Walk'}],segments:[{walking:{distance:'100',steps:[{instruction:'Walk'}]},bus:{buslines:[{name:'Metro',departure_stop:{name:'A'},arrival_stop:{name:'B'}}]}}]}]}});
@@ -93,4 +93,17 @@ test('explicit now route reuses Maps transport: exact time binds, references sta
  const body={proposalId:basis.proposalId,expectedProposalRevision:1,expectedBaseVersion:0,needs,placeChoices:[],routeRequests:[req]};
  assert.ok(feasibilityRequest(body));assert.equal(feasibilityRequest({...body,routeRequests:[{...req,mapConsent:false}]}),null);
  assert.equal(feasibilityRequest({...body,routeRequests:[req,req]}),null);
+});
+
+import {resolveCanonicalRouteEndpoints} from '../../../lib/server/maps/canonical-mapping-repository.ts';
+test('existing canonical route identity resolution requires exactly one valid mapping per selected canonical POI',async()=>{
+ let rows=[{canonical_poi_id:reference,provider_poi_id:'start'},{canonical_poi_id:mapping,provider_poi_id:'end'}],denied=false;const calls=[];
+ const query={select(columns){calls.push(['select',columns]);return this;},eq(column,value){calls.push(['eq',column,value]);return this;},in(column,ids){calls.push(['in',column,ids]);return this;},async limit(n){calls.push(['limit',n]);return {data:rows,error:denied?{code:'42501'}:null};}};
+ const client={from(table){assert.equal(table,'provider_poi_mappings');return query;}};
+ assert.deepEqual(await resolveCanonicalRouteEndpoints(client,reference,mapping),{originId:'start',destinationId:'end'});
+ assert.ok(calls.some(c=>c[0]==='in'&&c[1]==='canonical_poi_id'&&JSON.stringify(c[2])===JSON.stringify([reference,mapping])));
+ for(const invalid of [rows.slice(0,1),[...rows,{canonical_poi_id:reference,provider_poi_id:'second'}],[rows[0],{canonical_poi_id:mapping,provider_poi_id:'start'}],[rows[0],{canonical_poi_id:mapping,provider_poi_id:'unsafe/id'}]]){
+  rows=invalid;assert.equal(await resolveCanonicalRouteEndpoints(client,reference,mapping),null);
+ }
+ denied=true;assert.equal(await resolveCanonicalRouteEndpoints(client,reference,mapping),null);
 });

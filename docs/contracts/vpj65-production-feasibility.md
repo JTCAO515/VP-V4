@@ -32,7 +32,8 @@ supports opening; outside a positive opening window stays unknown, because these
 sources do not assert complete closing hours; qualified address/window is not route, live admission/reservation,
 price, walking duration or timetable authority. Current installed route read targets
 "now"/two stay-area candidates and has no exact proposed-departure binding; it is
-not called or upgraded into a future whole-plan feasibility assertion.
+never upgraded into a future whole-plan feasibility assertion; the optional
+foreground path below consumes only its actual current observations.
 
 Door-to-door route, last connection, walking and required buffer conditions remain
 pending without qualified sources. Route+explicit minimum/baggage/appointment buffers
@@ -66,12 +67,11 @@ development while these broader planning behaviors are incomplete.
 ## Optional explicit foreground Maps operation
 
 The original five request keys remain valid. Optional routeRequests is an array
-of zero or one entry, exactly fromItemId,toItemId,originProviderPoiId,
-destinationProviderPoiId,mode:walking|transit|driving,departure:now,mapConsent:true.
-Provider IDs are expected identities chosen from actual existing Maps results,
-never authority or manually inferred names. The server requires both own selected
-canonical place receipts and exact provider_poi_mappings matches before any route
-egress. User foreground consent is necessary but cannot qualify evidence.
+of zero or one entry, exactly fromItemId,toItemId,mode:walking|transit|driving,departure:now,mapConsent:true.
+Provider IDs are resolved only on the server from both own selected canonical
+place receipts and existing provider_poi_mappings rows. Exactly one valid AMap
+identity per canonical POI is required; missing or multiple mappings dispatch
+nothing. Caller provider IDs and names are not accepted. User foreground consent is necessary but cannot qualify evidence.
 
 VISEPANDA_FEASIBILITY_ROUTES_ENABLED defaults off. Existing AMAP_ROUTES_ENABLED,
 AMAP_DETAIL_ENABLED, server key, ordinary actor place quota, current positive session

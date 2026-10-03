@@ -1,16 +1,15 @@
 import { compareRoutes, type RouteMode } from "../../maps/route-comparison.ts";
 import { createMapsServiceRoleClient } from "../../maps/service-role-client.ts";
-import { loadCanonicalMappingLookup } from "../../maps/canonical-mapping-repository.ts";
+import { resolveCanonicalRouteEndpoints } from "../../maps/canonical-mapping-repository.ts";
 import type { FeasibilityBasis, PlanEvidence, TransferEvidence } from "./assembly.ts";
 
 export type ExplicitRouteRequest = {
-  fromItemId: string; toItemId: string; originProviderPoiId: string;
-  destinationProviderPoiId: string; mode: RouteMode; departure: "now"; mapConsent: true;
+  fromItemId: string; toItemId: string; mode: RouteMode; departure: "now"; mapConsent: true;
 };
 type Dependencies = {
   env: Readonly<Record<string,string|undefined>>; signal: AbortSignal;
   fetcher: typeof fetch; beforeRequest: () => Promise<boolean>;
-  canonicalMapping?: (ids: readonly string[]) => Promise<(provider: "amap", id: string) => string|null>;
+  resolveEndpoints?: (originCanonicalPoiId:string,destinationCanonicalPoiId:string) => Promise<{originId:string;destinationId:string}|null>;
 };
 const enabled = (env: Dependencies["env"]) => env.VISEPANDA_FEASIBILITY_ROUTES_ENABLED==="true"
   && env.AMAP_ROUTES_ENABLED==="true" && env.AMAP_DETAIL_ENABLED==="true" && !!env.AMAP_WEB_SERVICE_KEY?.trim();
@@ -36,16 +35,14 @@ export async function readPlanRouteEvidence(
     const origin=places.find(p=>p.itemId===from.id&&p.current&&p.entityBound)?.canonicalPoiId;
     const destination=places.find(p=>p.itemId===to.id&&p.current&&p.entityBound)?.canonicalPoiId;
     if (!origin || !destination || origin===destination) continue;
-    let lookup: (provider:"amap",id:string)=>string|null;
-    if (deps.canonicalMapping) lookup=await deps.canonicalMapping([selected.originProviderPoiId,selected.destinationProviderPoiId]);
+    let endpoints: {originId:string;destinationId:string}|null;
+    if (deps.resolveEndpoints) endpoints=await deps.resolveEndpoints(origin,destination);
     else {
       const client=createMapsServiceRoleClient(deps.env);
       if (!client) continue;
-      const checked=await loadCanonicalMappingLookup(client,"amap",[selected.originProviderPoiId,selected.destinationProviderPoiId]);
-      if (checked.dbError) continue;
-      lookup=checked.lookupMapping;
+      endpoints=await resolveCanonicalRouteEndpoints(client,origin,destination);
     }
-    if (lookup("amap",selected.originProviderPoiId)!==origin || lookup("amap",selected.destinationProviderPoiId)!==destination) continue;
+    if (!endpoints) continue;
     let calls=0, stopped=false;
     const fetcher: typeof fetch=async(input,init)=>{
       if(stopped || deps.signal.aborted || !enabled(deps.env) || calls>=5 || !await deps.beforeRequest()) {
@@ -54,8 +51,8 @@ export async function readPlanRouteEvidence(
       calls++;
       return deps.fetcher(input,{...init,redirect:"error",signal:AbortSignal.any([deps.signal,...(init?.signal?[init.signal]:[])])});
     };
-    const response=await compareRoutes(new URLSearchParams({provider:"amap",originId:selected.originProviderPoiId,
-      destinationId:selected.destinationProviderPoiId,departure:"now"}),{env:deps.env,fetcher});
+    const response=await compareRoutes(new URLSearchParams({provider:"amap",originId:endpoints.originId,
+      destinationId:endpoints.destinationId,departure:"now"}),{env:deps.env,fetcher});
     const body: unknown=response.body;
     if(stopped || deps.signal.aborted || response.status!==200 || !record(body)
       || body.provider!=="amap" || body.evidenceKind!=="provider_observation" || body.departure!=="now"
