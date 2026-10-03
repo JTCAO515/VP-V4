@@ -46,6 +46,11 @@ struct NativeTripView: View {
         let deleting: Bool
         let active: Bool
     }
+    var offlineUserDraft:NativeOfflineTripDraft? = nil
+    @State private var offlineDraftLoaded=false
+    @State private var offlineTextDate=""
+    @State private var offlineTextTitle=""
+    @State private var offlineTextConsent=false
     var initialPlanningRequest: String? = nil
     var initialTripID: String? = nil
     var initialTripScope: NativeDataScope? = nil
@@ -178,6 +183,23 @@ struct NativeTripView: View {
                         }
                         NativeTravelRemindersView(detail: detail, session: session, chinese: chinese)
                             .id("reminders-\(detail.trip.id)-\(session.dataScope?.subject ?? "")")
+                        if store.canEdit,store.draft==nil,store.pending==nil {
+                            DisclosureGroup(text("New date/text explicitly eligible for offline capture", "新日期／项目文字的明确离线来源提交")) {
+                                TextField(text("New date YYYY-MM-DD", "新日期 YYYY-MM-DD"),text:$offlineTextDate).disabled(store.offlineTextPending)
+                                TextField(text("New item text", "新项目文字"),text:$offlineTextTitle,axis:.vertical).disabled(store.offlineTextPending)
+                                Toggle(text("Submit this new text for offline capture", "明确提交这些新文字用于离线来源记录"),isOn:$offlineTextConsent)
+                                Text(text("Only newly submitted date/item text enters this controlled proposal. Existing dates conflict; old Trip/OCR/imported content gains no permission. Review the original diff and confirm separately.", "仅新提交日期／项目文字进入受控提案；同日已存在则冲突，旧行程／OCR／导入内容不补授。仍须查看原差异并另行确认。"))
+                                Button(store.offlineTextPending ? text("Retry the same controlled submission", "重试同一受控提交"):text("Create controlled text proposal", "创建受控文字提案")) {
+                                    Task{_ = await store.proposeOfflineText(date:offlineTextDate,title:offlineTextTitle,saveOffline:offlineTextConsent,using:session)}
+                                }.disabled(!offlineTextConsent || store.busy)
+                            }
+                        }
+                        if let offlineUserDraft,!offlineDraftLoaded {
+                            Button(text("Check current version and load this local draft", "核对当前版本并导入这份本地稿")){
+                                Task{offlineDraftLoaded=await store.restoreOfflineUserDraft(offlineUserDraft,using:session)}
+                            }.disabled(store.busy || store.draft != nil || store.pending != nil)
+                            Text(text("This imports only your local edits. It does not submit or confirm; conflicts keep the saved local draft.", "仅导入用户本地编辑，不提交／确认；冲突仍保留已存本地稿。"))
+                        }
                         if initialPlanningRequest == nil && store.canEdit && store.draft == nil && store.pending == nil { outlineComposer }
                         if let pending = store.pending { proposal(pending) }
                         if let draft = store.draft {

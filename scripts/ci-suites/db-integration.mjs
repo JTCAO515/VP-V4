@@ -79,6 +79,8 @@ export const LANES = {
           "tests/integration/privacy/core-export-consumer.test.mjs",
           "tests/integration/translate/history.test.mjs",
           "tests/integration/trip/archive.test.mjs",
+          "tests/integration/trip/offline-text-provenance.test.mjs",
+          "tests/integration/trip/offline-source-consumer.test.mjs",
           "tests/integration/turn/durable-work.test.mjs",
           "tests/integration/turn/five-result-lifecycle.test.mjs",
           "tests/integration/turn/selected-source-result-v2-compat.test.mjs",

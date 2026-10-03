@@ -1,0 +1,12 @@
+Test Suite 'Selected tests' started at 2026-10-03 16:54:54.558.
+Test Suite 'VisePandaTests.xctest' started at 2026-10-03 16:54:54.559.
+Test Suite 'NativeOfflineTripTests' started at 2026-10-03 16:54:54.559.
+Test Case '-[VisePandaTests.NativeOfflineTripTests testFixedTypeScriptProducerCanonicalSignatureInterop]' started.
+Test Case '-[VisePandaTests.NativeOfflineTripTests testFixedTypeScriptProducerCanonicalSignatureInterop]' passed (0.006 seconds).
+Test Suite 'NativeOfflineTripTests' passed at 2026-10-03 16:54:54.565.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.006 (0.007) seconds
+Test Suite 'VisePandaTests.xctest' passed at 2026-10-03 16:54:54.566.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.006 (0.007) seconds
+Test Suite 'Selected tests' passed at 2026-10-03 16:54:54.566.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.006 (0.007) seconds
+** TEST EXECUTE SUCCEEDED **
