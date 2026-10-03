@@ -32,6 +32,7 @@ final class NativeSession {
     private(set) var status = "signedOut"
     private(set) var failureCode: String?
     private(set) var dataGeneration = 0
+    private var assistantNavigation: NativeAssistantNavigation?
     private var credential: NativeCredential?
     private let endpoint: URL?
     let askMode: NativeAskMode
@@ -56,6 +57,14 @@ final class NativeSession {
         configuration.httpShouldSetCookies = false
         configuration.urlCache = nil
         transport = URLSession(configuration: configuration, delegate: NativeRedirectBlocker(), delegateQueue: nil)
+    }
+
+    // Navigation pointers only; no conversation, result or Memory content cache.
+    func assistantNavigationSelection() -> NativeAssistantNavigation? {
+        guard let value=assistantNavigation,value.scope==dataScope else{return nil};return value
+    }
+    func retainAssistantNavigation(_ value:NativeAssistantNavigation) {
+        guard value.scope==dataScope else{return};assistantNavigation=value
     }
 
     /// Remote destinations come only from the installed build, never launch arguments or user input.
@@ -703,6 +712,7 @@ final class NativeSession {
     }
     @discardableResult private func clear() -> Bool {
         dataGeneration += 1
+        assistantNavigation=nil
         if let owner = credential?.subject ?? defaults.string(forKey: storageKey) {
             let result = vault.remove(service: vaultService, owner: owner)
             guard result == errSecSuccess || result == errSecItemNotFound else {

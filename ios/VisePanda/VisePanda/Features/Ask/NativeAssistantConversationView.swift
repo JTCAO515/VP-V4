@@ -51,6 +51,14 @@ struct AssistantConversationSelection {
     func owns(_ token: UUID) -> Bool { generation == token }
 }
 
+struct NativeAssistantNavigation {
+    let scope:NativeDataScope
+    let conversationID:String
+    let goal:NativeJourneyGoalEntry?
+    let artifact:NativeSelectedSources.Artifact?
+    var viewedArtifact:NativeSelectedSources.Artifact? = nil
+}
+
 private struct AssistantConversationSummary: Decodable, Identifiable {
     let conversationId: String
     let createdAt: String
@@ -438,6 +446,8 @@ struct NativeAssistantConversationView: View {
     @State private var conversationsNotice: String?
     @State private var fiveResultSelection: LibraryResultSelection?
     @State private var fiveResultRequestGeneration = UUID()
+    @State private var referencedResultUntil:TimeInterval=0
+    @State private var lastViewedArtifact:NativeSelectedSources.Artifact?
     @State private var showEvidenceSelection = false
     @State private var selectedSources = NativeSelectedMessageStore()
     @State private var paceOperationBlocked = false
@@ -603,6 +613,11 @@ struct NativeAssistantConversationView: View {
                             if goal.scopeVersion < 10001 { tripControls(goal) }
                             else { Text(chinese ? "此终止目标只读。" : "This terminal goal is read only.") }
                         }
+                        TimelineView(.periodic(from:.now,by:1)){_ in vpPhase}
+                        if let artifact=selectedSources.sources.artifact ?? lastViewedArtifact {
+                            Button(chinese ? "打开已选成果":"Open selected result") {fiveResultSelection = .init(artifactID:artifact.artifactId,revision:artifact.revision)}
+                                .accessibilityIdentifier("assistant.result.selected.open")
+                        }
                         NativeVPTravelPaceView(session: session, chinese: chinese, active: resultActive,
                             selection: travelIntakeSelection, currentSelection: { travelIntakeSelection }, accepted: { await reload() },
                             linkedTripID: tripLink?.current == true ? tripLink?.tripId : nil,
@@ -658,6 +673,8 @@ struct NativeAssistantConversationView: View {
                 guard scope==session.dataScope,selectedSources.pending==nil else{return}
                 selectedSources.sources.artifact = .init(artifactId:id,revision:revision)
                 if goalHasCurrentMessage{operation="follow_up"}
+                referencedResultUntil=ProcessInfo.processInfo.systemUptime+30
+                retainNavigation()
             })
         }
         .sheet(isPresented: $showEvidenceSelection) {
@@ -794,7 +811,9 @@ struct NativeAssistantConversationView: View {
             // A temporary offline scope may retain a pending immutable intake.
             // Keep its selected ID only for that exact retained account/epoch/generation.
             if explicitGoalEntry?.scope != session.retainedDataScope { explicitGoalEntry = nil; entryFailed = false; entryConfirm = nil }
-            selection.select(boundScope == session.retainedDataScope ? selection.conversationID : nil)
+            let resume = boundScope == nil && goalEntry.wrappedValue == nil ? session.assistantNavigationSelection():nil
+            selection.select(boundScope == session.retainedDataScope ? selection.conversationID : resume?.conversationID)
+            if let resume { explicitGoalEntry=resume.goal;lastViewedArtifact=resume.viewedArtifact }
             conversations = []; conversationsNotice = nil
             if boundScope != session.retainedDataScope {
                 pending = nil; draft = ""; boundScope = session.retainedDataScope
@@ -812,8 +831,13 @@ struct NativeAssistantConversationView: View {
                 guard !Task.isCancelled, session.dataScope == requested else { return }
             }
             await reload()
+            if let resume {await restoreNavigationSource(resume)}
         }
-        .onChange(of: selection.generation) { _, _ in selectedSources.clear() }
+        .onChange(of: selection.generation) { _, _ in selectedSources.clear();referencedResultUntil=0 }
+        .onChange(of: selectedSources.sources.artifact) { _, _ in retainNavigation() }
+        .onChange(of: fiveResultSelection?.id) { _, _ in
+            if let value=fiveResultSelection {lastViewedArtifact = .init(artifactId:value.artifactID,revision:value.revision);retainNavigation()}
+        }
         .onChange(of: shellSwitchBlocked, initial: true) { _, blocked in onSwitchBlock?(blocked) }
         .onChange(of: session.busy) { wasBusy, isBusy in
             if wasBusy && !isBusy && session.dataScope != nil {
@@ -929,6 +953,51 @@ struct NativeAssistantConversationView: View {
         }
     }
 
+    private var vpPhaseLabels:(label:String,help:String)? {
+        guard composerScopeCurrent,let read=conversation else{return nil}
+            let label:String
+            let help:String
+            if read.messages.isEmpty && taskMessages.isEmpty {
+                label=chinese ? "首次开始":"Start here"
+                help=chinese ? "告诉 VP 你的方向；日期和行程可以稍后补充。":"Tell VP your direction. Dates and a Trip can follow later."
+            }else if taskTurns.contains(where:{$0.waiting && $0.goalScopeCurrent}) {
+                label=chinese ? "任务中":"Task in progress"
+                help=chinese ? "任务状态来自服务记录，你仍可继续提问或补充。":"Task status comes from its service record. You can keep asking or adding details."
+            }else if selectedSources.sources.artifact != nil && ProcessInfo.processInfo.systemUptime<referencedResultUntil || selectedResult != nil && resultFence.isCurrent(scope:session.dataScope,active:resultActive,now:ProcessInfo.processInfo.systemUptime) {
+                label=chinese ? "有结果":"Result available"
+                help=chinese ? "已读取选中成果；继续或改口仍会核对这个精确版本。":"The selected result was read. Continuing or amending rechecks this exact version."
+            }else if !taskMessages.isEmpty {
+                label=chinese ? "无新进展":"No new progress"
+                help=chinese ? "当前没有进行中的任务；完成、失败或取消的记录仍可查看，成果需单独核对。":"No task is currently running. Completed, failed or cancelled records remain readable; results are checked separately."
+            }else {
+                label=chinese ? "探索中":"Exploring"
+                help=chinese ? "继续补充目标或提出独立问题，明确委托后才接纳任务。":"Add to your goal or ask an independent question. Tasks require an explicit request."
+            }
+        return (label,help)
+    }
+    @ViewBuilder private var vpPhase:some View {
+        if let labels=vpPhaseLabels {VStack(alignment:.leading,spacing:4){Text(labels.label).font(.headline);Text(labels.help).font(.footnote)}.accessibilityIdentifier("assistant.phase")}
+    }
+
+    private func restoreNavigationSource(_ resume:NativeAssistantNavigation)async {
+        guard let artifact=resume.artifact,session.dataScope==resume.scope,conversation?.conversationId==resume.conversationID else{return}
+        let own=selection.generation,started=ProcessInfo.processInfo.systemUptime
+        do {
+            let bytes=try await session.fiveResultRequest(artifactID:artifact.artifactId,revision:artifact.revision)
+            guard session.dataScope==resume.scope,selection.owns(own),conversation?.conversationId==resume.conversationID else{return}
+            guard let read=try NativeFiveResultRecord.decode(bytes,artifactID:artifact.artifactId,revision:artifact.revision),read.current,ProcessInfo.processInfo.systemUptime-started<30 else{throw NativeDataError.invalidResponse}
+            selectedSources.sources.artifact=artifact;referencedResultUntil=started+30;retainNavigation()
+        }catch{
+            guard session.dataScope==resume.scope,selection.owns(own) else{return}
+            selectedSources.sources.artifact=nil;referencedResultUntil=0;resultNotice="unavailable";retainNavigation()
+        }
+    }
+
+    private func retainNavigation() {
+        guard let scope=session.dataScope,let id=selection.conversationID else{return}
+        session.retainAssistantNavigation(.init(scope:scope,conversationID:id,goal:explicitGoalEntry,artifact:selectedSources.sources.artifact,viewedArtifact:lastViewedArtifact))
+    }
+
     private func selectConversation(_ id: String?) {
         guard !busy, !planningBusy, !tripBusy else { return }
         explicitGoalEntry = nil; entryFailed = false; entryConfirm = nil; goalEntry.wrappedValue = nil
@@ -947,6 +1016,7 @@ struct NativeAssistantConversationView: View {
     }
 
     private func clearConversationContext() {
+        lastViewedArtifact=nil
         clearConversationProjection()
         pending = nil; draft = ""; operation = "independent_question"; notice = nil
         planningPending = nil; planningDraft = ""; planningAgreed = false; planningNotice = nil
@@ -1363,6 +1433,7 @@ struct NativeAssistantConversationView: View {
             guard ownsRefresh(initial, generation, refreshToken) else { return }
             conversation = read
             selection.conversationID = read.conversationId
+            retainNavigation()
             do {
                 let bytes = try await session.assistantConversationRequest(list: true)
                 guard ownsRefresh(initial, generation, refreshToken) else { return }
