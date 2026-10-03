@@ -342,6 +342,8 @@ final class NativeTripStore {
 
     func confirm(reviewedReference: String, using session: NativeSession) async {
         guard canEdit, confirmationReference == reviewedReference, let pending, !pending.proposal.stale, pending.proposal.status == "pending", detail?.trip.headVersion == pending.proposal.baseTripVersion else { notice = "PROPOSAL_NOT_CONFIRMABLE"; return }
+        do { if let recovery=try session.tripSupportConfirmationRecovery(),recovery.tripID==pending.trip.id { notice="SUPPORT_CONFIRM_RECOVERY_REQUIRED";return } }
+        catch { notice="sessionUnavailable";return }
         let proposal = pending.proposal
         await perform(session) { scope in
             let keyID = "\(proposal.id):\(proposal.revision):\(proposal.digest)"
@@ -361,6 +363,8 @@ final class NativeTripStore {
 
     func confirmSupported(reviewedReference:String,reviewedSelection:String,support:NativeTripSupportStore,using session:NativeSession) async {
         guard canEdit,confirmationReference==reviewedReference,let pending,!pending.proposal.stale,pending.proposal.status=="pending",detail?.trip.headVersion==pending.proposal.baseTripVersion else { notice="PROPOSAL_NOT_CONFIRMABLE";return }
+        do { if try session.tripSupportConfirmationRecovery() != nil { notice="SUPPORT_CONFIRM_RECOVERY_REQUIRED";return } }
+        catch { notice="sessionUnavailable";return }
         let proposal=pending.proposal
         await perform(session) { actor in
             let choices=try support.freezeConfirmation(reviewedSelection:reviewedSelection,proposal:proposal,current:actor)
