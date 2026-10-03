@@ -1,4 +1,5 @@
 import XCTest
+import Security
 @testable import VisePanda
 
 nonisolated final class NativeMemoryPreferencesTests:XCTestCase {
@@ -67,5 +68,38 @@ nonisolated final class NativeMemoryPreferencesTests:XCTestCase {
             return try self.write(command,row:self.row(revision:2,summary:"Correction"))
         })
         XCTAssertTrue(store.profiles.isEmpty);XCTAssertNil(store.pending);XCTAssertNil(store.undo);XCTAssertNil(store.toast)
+    }
+}
+
+@MainActor private final class MemoryPreferencesFixtureVault:NativeCredentialVault {
+    var bytes:Data?
+    func write(_ data:Data,service:String,owner:String)->OSStatus{bytes=data;return errSecSuccess}
+    func read(service:String,owner:String)->(OSStatus,Data?){bytes==nil ? (errSecItemNotFound,nil):(errSecSuccess,bytes)}
+    func remove(service:String,owner:String)->OSStatus{bytes=nil;return errSecSuccess}
+}
+nonisolated final class NativeMemoryPreferencesIntegrationTests:XCTestCase {
+    @MainActor func testActualNativeOwnerCreateCorrectionUndoPauseResumeAndRevoke()async throws {
+        let env=ProcessInfo.processInfo.environment
+        guard env["VP_NATIVE_MEMORY_FIXTURE"]=="1" else{throw XCTSkip("UNRUN: owned local Auth fixture required")}
+        let api=try XCTUnwrap(env["VP_NATIVE_MEMORY_API"]),email=try XCTUnwrap(env["VP_NATIVE_MEMORY_EMAIL"])
+        guard URL(string:api)?.host=="127.0.0.1",URL(string:api)?.port==63251 else{throw NativeDataError.invalidResponse}
+        let session=NativeSession(arguments:["-VisePandaNativeAPI",api,"-VisePandaAssistantConversation"],defaults:try XCTUnwrap(UserDefaults(suiteName:"native-memory-"+UUID().uuidString)),bundleConfiguration:[:],vault:MemoryPreferencesFixtureVault())
+        await session.login(email:email,password:"VPJ07-Local-Synthetic-Only-195!")
+        let scope=try XCTUnwrap(session.dataScope),store=session.memoryPreferences
+        await store.load(scope:scope,current:{session.dataScope},get:{try await session.memoryProfilesRequest()})
+        XCTAssertTrue(store.profiles.isEmpty)
+        await store.create(summary:"Prefer quiet stays",kind:"preference",current:{session.dataScope},post:{try await session.memoryProfilesCommand($0)})
+        let created=try XCTUnwrap(store.visible(scope).first);XCTAssertEqual(created.revision,1);XCTAssertEqual(created.summary,"Prefer quiet stays");XCTAssertNotNil(store.usableUndo(scope))
+        await store.change("update",profile:created,summary:"Prefer quiet stays near transit",current:{session.dataScope},post:{try await session.memoryProfilesCommand($0)})
+        let updated=try XCTUnwrap(store.visible(scope).first);XCTAssertEqual(updated.id,created.id);XCTAssertEqual(updated.sourceReceiptId,created.sourceReceiptId);XCTAssertEqual(updated.revision,2);XCTAssertEqual(updated.summary,"Prefer quiet stays near transit");XCTAssertNotNil(store.usableUndo(scope)?.updateOperationID)
+        await store.undoSave(current:{session.dataScope},post:{try await session.memoryProfilesCommand($0)})
+        let restored=try XCTUnwrap(store.visible(scope).first);XCTAssertEqual(restored.id,created.id);XCTAssertEqual(restored.revision,3);XCTAssertEqual(restored.summary,created.summary);XCTAssertNil(store.undo)
+        await store.change("state",profile:restored,summary:"paused",current:{session.dataScope},post:{try await session.memoryProfilesCommand($0)})
+        let paused=try XCTUnwrap(store.visible(scope).first);XCTAssertEqual(paused.revision,4);XCTAssertEqual(paused.state,"paused");XCTAssertFalse(paused.eligible)
+        await store.change("state",profile:paused,summary:"explicit",current:{session.dataScope},post:{try await session.memoryProfilesCommand($0)})
+        let resumed=try XCTUnwrap(store.visible(scope).first);XCTAssertEqual(resumed.revision,5);XCTAssertTrue(resumed.eligible)
+        await store.change("revoke",profile:resumed,current:{session.dataScope},post:{try await session.memoryProfilesCommand($0)})
+        let revoked=try XCTUnwrap(store.visible(scope).first);XCTAssertEqual(revoked.id,created.id);XCTAssertEqual(revoked.revision,5);XCTAssertEqual(revoked.consentStatus,"revoked");XCTAssertNil(revoked.summary);XCTAssertNil(store.toast);XCTAssertNil(store.undo)
+        await session.logout();XCTAssertNil(session.dataScope);XCTAssertTrue(store.profiles.isEmpty);XCTAssertNil(store.pending)
     }
 }

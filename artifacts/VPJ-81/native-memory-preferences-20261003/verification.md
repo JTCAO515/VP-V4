@@ -11,3 +11,9 @@ Explicitly selected current eligible Memory references (at most3) supply IDs to 
 PASS: full native build and8/8 selected tests (Memory4 + existing selected-message4), zero skipped, owned Simulator/derived data. /tmp/vpj81-memory-native-unit2.xcresult. Tests exercise same-profile update vs createUndo, separate updateUndo CAS, same-byte unknown-write retry, canonical current readback after withdrawal and late actor fencing. git diff --check PASS. Original backend actualPG4/AuthHTTP1/security7/ACL11 evidence is source-owned and reusable; it is not relabeled as Native Auth evidence.
 
 UNRUN: Native actual Auth against the combined130000 backend source, physical/accessibility/human/provider/target. No merge/release/user-acceptance claim. Native compilation/tests and backend source integration are separate evidence; no SQL/CI/domain writer changes are authored by Native.
+
+## Actual Native Auth follow-up on the combined source
+
+PASS:1/1 actual NativeSession Auth test, zero skipped, /tmp/vpj81-memory-native-actual2/tests.xcresult. Same-profile create1 → update2 → updateUndo3 → pause4 → resume5 → revoke5 (summarynull) → logout/cacheclear. Ordinary Auth/HTTP and current readback were real against the disposable current-migration stack; in-memory credential vault was used. No Task admission/providercall/Tripwrite. Instance vp-native-ask-be2ed5e0, ownedbase63220, cleanupPASS. Source hashes and summary copied alongside this record. First attempt failed only the fixture port-environment contract before creating any stack; retained /tmp/vpj81-memory-native-actual1.log. Fixed by using the existing owned stack wrapper rather than an incomplete direct invocation. Generated nextdev AGENTS/next-env changes were inspected and restored after cleanup.
+
+Physical/human/VoiceOver/provider/target remainUNRUN. This test does not imply those outcomes.

@@ -1,0 +1,12 @@
+Test Suite 'Selected tests' started at 2026-10-03 12:03:30.453.
+Test Suite 'VisePandaTests.xctest' started at 2026-10-03 12:03:30.454.
+Test Suite 'NativeMemoryPreferencesIntegrationTests' started at 2026-10-03 12:03:30.454.
+Test Case '-[VisePandaTests.NativeMemoryPreferencesIntegrationTests testActualNativeOwnerCreateCorrectionUndoPauseResumeAndRevoke]' started.
+Test Case '-[VisePandaTests.NativeMemoryPreferencesIntegrationTests testActualNativeOwnerCreateCorrectionUndoPauseResumeAndRevoke]' passed (0.787 seconds).
+Test Suite 'NativeMemoryPreferencesIntegrationTests' passed at 2026-10-03 12:03:31.241.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.787 (0.787) seconds
+Test Suite 'VisePandaTests.xctest' passed at 2026-10-03 12:03:31.241.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.787 (0.788) seconds
+Test Suite 'Selected tests' passed at 2026-10-03 12:03:31.242.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.787 (0.788) seconds
+** TEST EXECUTE SUCCEEDED **
