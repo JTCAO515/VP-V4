@@ -13,6 +13,8 @@ import test from "node:test";
 const ANON = ["public.research_intake_v1(jsonb)"];
 
 const AUTHENTICATED = [
+  "public.read_assistant_message_sources_v2(uuid,uuid,uuid,uuid,integer)",
+  "public.submit_assistant_message_sources_v2(uuid,uuid,uuid,uuid,text,text,text,uuid,integer,uuid,uuid,uuid,jsonb)",
   "public.submit_assistant_travel_intake_v1(uuid,uuid,uuid,uuid,integer,integer,uuid,uuid,text,text,text,jsonb,jsonb)",
   "public.read_assistant_travel_intake_v1(uuid,uuid,uuid)",
   "public.read_assistant_travel_intake_write_basis_v1(uuid,uuid,uuid)",
@@ -127,6 +129,11 @@ test("repository functions grant EXECUTE to anon and authenticated only through 
 
   await t.test("authenticated executes exactly the reviewed caller list", () => {
     assert.deepEqual(sql(executable("authenticated")), [...AUTHENTICATED].sort());
+  });
+
+  await t.test("selected-source export remains exactly service-only and source storage private",()=>{
+    assert.deepEqual(sql("select has_function_privilege('anon','public.assistant_message_source_export_owner_v2(uuid,uuid,integer)'::regprocedure,'EXECUTE'),has_function_privilege('authenticated','public.assistant_message_source_export_owner_v2(uuid,uuid,integer)'::regprocedure,'EXECUTE'),has_function_privilege('service_role','public.assistant_message_source_export_owner_v2(uuid,uuid,integer)'::regprocedure,'EXECUTE');"),["f|f|t"]);
+    for(const role of ["anon","authenticated","service_role"])assert.deepEqual(sql(`select has_table_privilege('${role}','turn_private.assistant_message_source_receipts','SELECT,INSERT,UPDATE,DELETE');`),["f"]);
   });
 
   await t.test("internal Trip content helpers are not callable by any API role", () => {
