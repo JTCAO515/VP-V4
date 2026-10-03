@@ -436,6 +436,7 @@ struct NativeAssistantConversationView: View {
     @State private var selection = AssistantConversationSelection()
     @State private var conversations: [AssistantConversationSummary] = []
     @State private var conversationsNotice: String?
+    @State private var paceOperationBlocked = false
     @State private var draft = ""
     @State private var planningDraft = ""
     @State private var planningPolicy: AssistantPlanningPolicy?
@@ -478,7 +479,7 @@ struct NativeAssistantConversationView: View {
     private var resultActive: Bool { isActive && scenePhase == .active }
     private var refreshBusy: Bool { refreshState.busy }
     private var shellSwitchBlocked: Bool {
-        AssistantShellSwitchGate.blocked(busy: busy || planningBusy || tripBusy || entryBlocking,
+        AssistantShellSwitchGate.blocked(busy: busy || planningBusy || tripBusy || entryBlocking || paceOperationBlocked,
             intakePending: pending != nil, planningPending: planningPending != nil, tripPending: pendingTripMutation != nil)
     }
     private var composerScopeCurrent: Bool { session.dataScope != nil && boundScope == session.dataScope }
@@ -598,6 +599,11 @@ struct NativeAssistantConversationView: View {
                             if goal.scopeVersion < 10001 { tripControls(goal) }
                             else { Text(chinese ? "此终止目标只读。" : "This terminal goal is read only.") }
                         }
+                        NativeVPTravelPaceView(session: session, chinese: chinese, active: resultActive,
+                            selection: travelIntakeSelection, currentSelection: { travelIntakeSelection }, accepted: { await reload() },
+                            linkedTripID: tripLink?.current == true ? tripLink?.tripId : nil,
+                            onPendingChange: { scope, blocked in if scope == session.dataScope { paceOperationBlocked = blocked } },
+                            artifactID: selectedResult?.artifactId, artifactRevision: selectedResult?.revision)
                         ForEach(conversation?.messages ?? []) { message in
                             VStack(alignment: .leading, spacing: 8) {
                                 Text(message.text).font(.body).accessibilityIdentifier("assistant.message.\(message.sequence)")
@@ -750,6 +756,7 @@ struct NativeAssistantConversationView: View {
         }
         .task(id: session.dataScope) {
             let requested = session.dataScope
+            paceOperationBlocked = false
             refreshState.invalidate()
             // Reappearance under the same actor is not a conversation switch.
             // Preserve immutable recovery and drafts; an entry owns its own read.
