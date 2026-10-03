@@ -124,8 +124,10 @@ end $$;
 
 -- New personal reports follow actual source loss, including retained Task tombstones.
 create function readiness_private.cleanup_source_v1() returns trigger language plpgsql security definer set search_path='' as $$
-declare r jsonb:=to_jsonb(new);owner uuid;policy uuid;
 begin
+ if tg_op='DELETE' then
+ delete from readiness_private.scopes_v1 where task_turn_id=old.turn_id or root_turn_id=old.turn_id;
+ return old;end if;
  if tg_table_name='text_content' then
  if new.hidden_at is not null and old.hidden_at is null then delete from readiness_private.scopes_v1 where task_turn_id=new.turn_id or root_turn_id=new.turn_id;end if;
  elsif tg_table_name='turns' then
@@ -148,6 +150,7 @@ begin
  return new;
 end $$;
 create trigger readiness_terminal_cleanup after update on public.turns for each row execute function readiness_private.cleanup_source_v1();
+create trigger readiness_text_delete_cleanup after delete on turn_private.text_content for each row execute function readiness_private.cleanup_source_v1();
 create trigger readiness_hide_cleanup after update on turn_private.text_content for each row execute function readiness_private.cleanup_source_v1();
 create trigger readiness_consent_cleanup after update on turn_private.text_consents for each row execute function readiness_private.cleanup_source_v1();
 create trigger readiness_policy_cleanup after update on turn_private.text_policies for each row execute function readiness_private.cleanup_source_v1();
