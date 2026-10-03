@@ -1,0 +1,7 @@
+# Quality PR old governance oracle sync
+
+2026-10-03. ActualGHA run37087875332/job111101800100 failedunitcase51 becauseoldgovernance demandedpnpmtest:contractunconditionallyinbothscopes. Localexactoracle reproducedthatfailure; approvedJTdocs-onlypolicy intentionallyrunsnecessarylint/governance/docs/artifactclassification instead. Productassertionsarenotremovedorrewritten.
+
+Onlyfirstcaseinlaunch-01-ci.test.mjs updated:bothscopesstillrequireunconditionallint/docs/artifact;allfull/unknownflags+commandsexistandrun;actualdocsplanhasnolanes/unrelatedcontract;realclassify/select/failure/cancelaggregateguardsasserted;requiredname/nomaskederrors/buildreuseandallotherLAUNCHbusinessassertions retained. An accidentalglobalimportreplacement brieflybroke thetest'sinternalfixture string; restoredexactfixture,FAILsaved.
+
+PASS singleaffectedfile+relatedselector/DBgovernance command25/25,0fail/skip/cancelled/todo319ms. DiffwhitespacePASS. Noappbuild/Web/native/SQLwide rerun, andno policyreversiontocostlydocscontract. FinalPRheadnormalCIawaitsrealchecks,notlocalPASSsubstitution.

@@ -1,0 +1,22 @@
+# Complete journal SQL→TS: pre-fix exact-source evidence
+
+2026-10-03, base actualb930. New ownerprep only; input fullcurrentbase migrations + exact unmerged050000/060000 from `e039e357035ba45d9a628aad73a5bf20e3cae311`.050000 SHA256 `124c1b37b33f8c89edcb3a0f65c8896add98fe9a47d69ff4dacd368d673f257c`;060000 `78d2c48efe1c2f5fb5205e2fe5993528a1dd62b736aba50a5fb41696b7b65432`. Actual current request/output/journalconsumer modules imported. Real typed admission/current source/active original lease/privatebinding; existing ledgerreserve/dispatch/settle synthetic setup. No fakeSQL or API/provider/fee/target effect.
+
+Actual command `VP_TURN_DB_TEST=1 node --experimental-strip-types --test tests/preparation/planning-v2-real-journal-consumer.test.mjs`:3 legal integration groups +1 expected defect reproduction all observed (4/4 test assertions,0skip,7446ms), **not e039 safety/full acceptance**. PinnedPG17.6.1.159 networknone owncontainer cleaned. Syntax/diff PASS. Initial unused borrowedworkerimport had wrong relative depth→ERR_MODULE_NOT_FOUND beforePG/teststart, then removed only newfixture import; failure log saved. Runtime code/SQL unchanged.
+
+Legal evidence: actual intent→sendack→response produce19-keyread/20-keywrite parsed bystrictconsumer; controlled discardedwrite-return then qualifiedexactreadback recovers samecontent/revision, exactretries reusedtrue and1journalrow, noprovider invocation. Paired output/usage digest mismatch conflicts. Actualservermshelper .123987→.123 andNULL, actualcomposite journalwire parseswithphaseNULLs; internalmicro value is123987. Unknown/oldoriginallease/ordinarytypedsourcecorrection block adoption/read, settledactual7 vs reported0 blocks andkeepsackphase; matchingreported7 adoptsaslocalrecord withfalseorigin/truereconcile. Zeroartifactpublication.
+
+Actual Main-review finding reproduced: e039 output/usageDigest JSONnull makesvalidator returnSQLNULL;record_response/trigger IF NOT acceptsbadwire andjournaladvancestoresponse_recorded. StrictTSread/write rejects the resultingwire. This defect reproduction PASS means the unsafe oldSQLbehavior was observed, **not** that it is acceptable. SoleSQLowner559 is fixing strictfalse + IS DISTINCT FROM true; finalfixedSHA/null-difference test remain UNRUN until frozen source arrives. Do not changeSQL here or claimvalid3cases close this finding.
+
+UNCHANGED/REUSED: priorc6 canonical3cases/hardcoded bytes andplainTScontracts; notwide-rerun. OtherSQL/fullcurrentcheckoutCI/providerorigin/paidpermit/worker/completion/target/fullparentUNRUN. Mainreceivesexactsource/logs before finalrepair integration.
+
+
+## Fixed NULL difference — actual0d949
+
+The pre-fix e039source/log/reproduction remains frozen at ownercommit `5fa87f24133da3c0a7deca28a65c0f9d717dfe61`. Finalprep input now uses exact unmergedrepair `0d949ad96e2bcb46ae712c9507df69812217fb8c` for both actual050000/060000.060000 SHA256 `6120eafe95fc529cfbc95050038e727d1bde82145f64dbbdec2923d07fd80563`;050000 unchanged. Reviewed exactdiff: addsstrictdigeststring/lowerSHA guards+coalescefalse, andfunction/trigger rejectvalidator IS DISTINCT FROM true. Requestcanonicalization, wire/time/lock/read/CAS/ledger state paths and validwire digestdomains unchanged; legal3groups above reused by precise source/diff, not claimed freshlyrerun.
+
+PASS targeted actual command `VP_TURN_DB_TEST=1 node --experimental-strip-types --test --test-name-pattern='fixed NULL digest rejection' tests/preparation/planning-v2-real-journal-consumer.test.mjs`:1/1,0fail/skip/cancelled/todo5488ms. Syntax/diffPASS, owncontainercleanup0. Only requireddifference run, notwide matrix.
+
+Threeactualpatches outputDigest:null /usageDigest:null /both:null all returnstrictSQLfalse;actualrecord_response returns exactblocked parsedasclosedfailure byTS. Fulljournal+ledgerJSONsnapshot isunchanged aftereachattempt. Badwire embedded in a forgedresponse shape is rejected byTS. A privilegedfixture directresponseUPDATE hits actualINVALID_LOCAL_OUTPUT triggerexception androllsback; finalactualread remains send_ack_recorded/revision2/outputWire:null. No adoptedbadwire, release/charge/output/publication or extraeffect. SoleSQLowner'srepair was consumedunchanged; thisownernevereditedSQL.
+
+This closes the demonstrated e039NULLadoption finding on this fixed localSQLsource. It does notestablishproviderorigin/paidpermit/executor/completion/mergedcurrentcheckoutCI/target/fullparentacceptance. E039reproduction remains historicalunsafeevidence, notcurrentacceptance.
