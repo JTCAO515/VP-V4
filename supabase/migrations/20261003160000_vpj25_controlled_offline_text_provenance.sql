@@ -232,3 +232,32 @@ language sql stable security definer set search_path='' as $$
 $$;
 revoke all on function offline_private.export_trip_text_sources_v1(uuid,uuid,integer) from public,anon,authenticated,service_role;
 notify pgrst,'reload schema';
+
+-- Independent export module, still default-revoked; existing assistant exports unchanged.
+alter table offline_private.text_version_bindings_v1 add column id uuid not null default gen_random_uuid() unique;
+create function public.export_offline_trip_text_metadata_v1(p_owner uuid,p_section text,p_after_id uuid default null,p_limit integer default 100) returns jsonb
+language plpgsql stable security definer set search_path='' as $$
+declare page jsonb;more boolean;cursor uuid;
+begin
+ if auth.role() is distinct from 'service_role' or p_owner is null then raise exception 'FORBIDDEN';end if;
+ if p_section is null or p_section not in ('commands','sources','bindings','state') or p_limit is null or p_limit not between 1 and 100 then raise exception 'INVALID_INPUT';end if;
+ if p_after_id is not null and not exists(
+  select 1 from offline_private.text_commands_v1 where p_section='commands' and owner_id=p_owner and operation_id=p_after_id
+  union all select 1 from offline_private.text_sources_v1 where p_section='sources' and owner_id=p_owner and id=p_after_id
+  union all select 1 from offline_private.text_version_bindings_v1 where p_section='bindings' and owner_id=p_owner and id=p_after_id
+  union all select 1 from offline_private.trip_text_state_v1 where p_section='state' and owner_id=p_owner and trip_id=p_after_id
+ ) then raise exception 'INVALID_EXPORT_CURSOR';end if;
+ with candidates as (
+  select operation_id as id,to_jsonb(c)-'owner_id' as item from offline_private.text_commands_v1 c where p_section='commands' and owner_id=p_owner and (p_after_id is null or operation_id>p_after_id)
+  union all select id,to_jsonb(s)-'owner_id' as item from offline_private.text_sources_v1 s where p_section='sources' and owner_id=p_owner and (p_after_id is null or id>p_after_id)
+  union all select id,to_jsonb(b)-'owner_id' as item from offline_private.text_version_bindings_v1 b where p_section='bindings' and owner_id=p_owner and (p_after_id is null or id>p_after_id)
+  union all select trip_id as id,to_jsonb(t)-'owner_id' as item from offline_private.trip_text_state_v1 t where p_section='state' and owner_id=p_owner and (p_after_id is null or trip_id>p_after_id)
+ ), windowed as(select * from candidates order by id limit p_limit+1),delivered as(select * from windowed order by id limit p_limit)
+ select coalesce((select jsonb_agg(item order by id) from delivered),'[]'),(select count(*)>p_limit from windowed),(select id from delivered order by id desc limit 1) into page,more,cursor;
+ return jsonb_build_object('schemaVersion','offline-trip-text-export/1','section',p_section,'items',page,'hasMore',more,'nextCursor',case when more then cursor else null end,'sectionComplete',not more,'cachePermission',false);
+end $$;
+revoke all on function public.export_offline_trip_text_metadata_v1(uuid,text,uuid,integer) from public,anon,authenticated,service_role;
+
+create index offline_text_command_owner_cursor on offline_private.text_commands_v1(owner_id,operation_id);
+create index offline_text_source_owner_cursor on offline_private.text_sources_v1(owner_id,id);
+create index offline_text_binding_owner_cursor on offline_private.text_version_bindings_v1(owner_id,id);
