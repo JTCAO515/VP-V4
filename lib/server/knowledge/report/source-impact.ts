@@ -2,7 +2,7 @@
 export type SourceImpactClaim=Readonly<{factId:string;assertionId:string;revision:number;payloadHash:string}>;
 export type SourceImpactTarget=Readonly<{kind:'wiki_revision'|'wiki_job'|'statement'|'historical_answer';id:string;version:number;payloadHash:string;claimRefs:readonly SourceImpactClaim[]}>;
 export type SourceImpactLease=Readonly<{kind:'leased';deliveryId:string;setId:string;reviewVersion:number;sourceDigest:string;target:SourceImpactTarget;leaseToken:string;attempt:number}>;
-export type SourceImpactDelivery=Readonly<Omit<SourceImpactLease,'kind'|'leaseToken'>&{kind:'delivery';state:'queued'|'leased'|'failed'|'acked'|'unsupported'|'exhausted';leaseToken:string|null;receiptId:string|null}>;
+export type SourceImpactDelivery=Readonly<Omit<SourceImpactLease,'kind'|'leaseToken'>&{kind:'delivery';state:'queued'|'leased'|'failed'|'acked'|'unsupported'|'exhausted'|'stale';leaseToken:string|null;receiptId:string|null}>;
 const row=(v:unknown):v is Record<string,unknown>=>v!==null&&typeof v==='object'&&!Array.isArray(v);
 const exact=(v:Record<string,unknown>,keys:readonly string[])=>Object.keys(v).length===keys.length&&keys.every(k=>Object.hasOwn(v,k));
 export const sourceImpactUuid=(v:unknown):v is string=>typeof v==='string'&&/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(v);
@@ -16,7 +16,7 @@ const identityKeys=['deliveryId','setId','reviewVersion','sourceDigest','target'
 function identity(v:Record<string,unknown>,minAttempt:number){return sourceImpactUuid(v.deliveryId)&&sourceImpactUuid(v.setId)&&integer(v.reviewVersion,1,Number.MAX_SAFE_INTEGER)&&hash(v.sourceDigest)&&target(v.target)&&integer(v.attempt,minAttempt,8);}
 export function decodeSourceImpactLease(v:unknown):SourceImpactLease|null{return row(v)&&exact(v,['kind',...identityKeys])&&v.kind==='leased'&&identity(v,1)&&sourceImpactUuid(v.leaseToken)?v as SourceImpactLease:null;}
 export function decodeSourceImpactDelivery(v:unknown):SourceImpactDelivery|null{
- if(!row(v)||!exact(v,['kind',...identityKeys,'state','receiptId'])||v.kind!=='delivery'||!identity(v,0)||!['queued','leased','failed','acked','unsupported','exhausted'].includes(String(v.state))||v.leaseToken!==null&&!sourceImpactUuid(v.leaseToken)||v.receiptId!==null&&!sourceImpactUuid(v.receiptId))return null;
+ if(!row(v)||!exact(v,['kind',...identityKeys,'state','receiptId'])||v.kind!=='delivery'||!identity(v,0)||!['queued','leased','failed','acked','unsupported','exhausted','stale'].includes(String(v.state))||v.leaseToken!==null&&!sourceImpactUuid(v.leaseToken)||v.receiptId!==null&&!sourceImpactUuid(v.receiptId))return null;
  if(v.state==='acked'&&(!sourceImpactUuid(v.receiptId)||!sourceImpactUuid(v.leaseToken)||!integer(v.attempt,1,8)))return null;
  return v as SourceImpactDelivery;
 }

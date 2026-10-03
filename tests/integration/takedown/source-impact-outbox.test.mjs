@@ -26,7 +26,7 @@ async function fixture(count=2){
  }
  await rpc(submitter,'ops_source_revision_withdraw_v1',{p_input:{operationId:uuid(),sourceRevisionId:source,reason:'Synthetic explicit withdrawal'}});
  const snapshot=JSON.parse(await db(`select jsonb_build_object('at',withdrawn_at,'hash',snippet_hash,'label',revision_label) from knowledge_review_private.source_revisions where id='${source}';`));
- const capture=limit=>rpc(author,'capture_source_impact_v1',{p_operation:uuid(),p_source:source,p_expected_label:snapshot.label,p_expected_hash:snapshot.hash,p_expected_withdrawn_at:snapshot.at,p_kind:'withdrawn',p_replacement:null,p_limit:limit});
+ const capture=(limit,actor=author)=>rpc(actor,'capture_source_impact_v1',{p_operation:uuid(),p_source:source,p_expected_label:snapshot.label,p_expected_hash:snapshot.hash,p_expected_withdrawn_at:snapshot.at,p_kind:'withdrawn',p_replacement:null,p_limit:limit});
  return {author,reviewer,submitter,source,statements,snapshot,capture};
 }
 run('actual withdrawal signal captures bounded graph, independent review, persistent effect+ACK and no fake unsupported consumer',async()=>{
@@ -79,10 +79,35 @@ run('historical payload mismatch stays a source-linked recheck candidate, withou
  const reviewed=await rpc(f.reviewer,'review_source_impact_v1',{p_set:set.setId,p_expected_version:set.version,p_expected_digest:set.digest,p_decision:'approve'});assert.equal(reviewed.kind,'reviewed');
  assert.deepEqual(JSON.parse(await db(`select basis->'publications' from turn_private.grounded_turns where turn_id='${turn}';`)),[ref]);
  assert.equal(await db(`select original_outcome from turn_private.grounded_turns where turn_id='${turn}';`),'answered');
+ for(let n=0;n<2;n++)assert.equal(await runSourceImpactConsumer({enabled:true,rpc:(name,p)=>rpc(f.author,name,p)},new AbortController().signal),'acked');
 });
 run('hard graph1000+sentinel overflow cannot approve or silently become a100-item whole set',async()=>{
  const f=await fixture(0);
  await db(`with created as(insert into knowledge_review_private.candidates(id,author_id,title,content,status,version,reviewer_id,review_note,reviewed_at) select gen_random_uuid(),'${f.submitter.id}','Synthetic capacity item','metadata only','reviewed',2,'${f.reviewer.id}','fixture',now() from generate_series(1,1001) returning id),statements as(insert into knowledge_review_private.statements(candidate_id,payload) select id,'{"bounded":true}'::jsonb from created returning candidate_id) insert into knowledge_review_private.statement_sources(candidate_id,source_revision_id) select candidate_id,'${f.source}' from statements;`);
  const result=await f.capture(100);assert.deepEqual(result,{kind:'blocked',reason:'capacity'});
  assert.equal(await db(`select count(*) from knowledge_review_private.source_impact_sets where source_id='${f.source}';`),'0');
+});
+
+async function historyFor(f){
+ const policy=uuid(),turn=uuid(),task=uuid();await db(`insert into turn_private.text_policies(id,provider,recipient,endpoint,source_region,processing_region,storage_region,terms_version,notice_version,notice_hash,notice_zh,notice_en,retention,effective_at,expires_at,terms_recheck_at) values('${policy}','qwen','synthetic only','https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions','fixture','fixture','fixture','test','test','${'a'.repeat(64)}','合成','Synthetic','retain_after_hide_v1',now()-interval '1 hour',now()+interval '1 day',now()+interval '1 day');`);
+ await rpc(f.author,'accept_text_policy',{p_policy_id:policy,p_notice_hash:'a'.repeat(64)});await rpc(f.author,'submit_service_task_turn',{p_thread_id:uuid(),p_turn_id:turn,p_idempotency_key:uuid(),p_policy_id:policy,p_locale:'en',p_text:'Synthetic private historical linkage',p_task_id:task,p_scope_version:1,p_relationship:'new_goal',p_parent_turn_id:null});
+ const ref={factId:f.statements[0].fact,assertionId:f.statements[0].statement,revision:1,payloadHash:'f'.repeat(64)};await db(`insert into turn_private.grounded_turns(turn_id,owner_id,task_id,city,locale,scope_version,intent,request_scope,original_outcome,basis,completed_at) values('${turn}','${f.author.id}','${task}','shanghai','en',1,'rail_boarding_documents','single','answered',${lit({publications:[ref],claims:[]})},now());`);return turn;
+}
+run('new derived historical metadata sanitizes on hide/turn delete, invalidates old review/cursors and retains public audit',async()=>{
+ for(const path of ['pending_hide','confirmed_turn_delete','owner_delete','text_delete']){
+  const f=await fixture(1),turn=await historyFor(f),s=await f.capture(path==='pending_hide'?1:100);let oldLease;
+  if(path==='pending_hide'){assert.ok(s.nextCursor.includes(turn));assert.equal(s.complete,false);}
+  else{
+   await rpc(f.reviewer,'review_source_impact_v1',{p_set:s.setId,p_expected_version:s.version,p_expected_digest:s.digest,p_decision:'approve'});
+   oldLease=await rpc(f.author,'claim_source_impact_delivery_v1',{p_consumer:'knowledge_recheck_projection',p_limit:1,p_lease_ms:15000});assert.equal(oldLease.setId,s.setId);assert.equal(oldLease.target.id,turn);
+   for(let n=0;n<2;n++){const delivered=await runSourceImpactConsumer({enabled:true,rpc:(name,p)=>rpc(f.author,name,p)},new AbortController().signal);if(delivered==='idle')break;assert.equal(delivered,'acked');}
+   // Apply the held historical lease so deletion also exercises existing projection/request/receipt cleanup.
+   assert.equal((await rpc(path==='owner_delete'?f.reviewer:f.author,'apply_source_impact_projection_v1',{p_delivery:oldLease.deliveryId,p_lease:oldLease.leaseToken,p_expected_attempt:oldLease.attempt,p_expected_digest:oldLease.sourceDigest})).kind,'applied');
+  }
+  if(path==='pending_hide')await db(`update turn_private.text_content set hidden_at=clock_timestamp() where turn_id='${turn}';`);else if(path==='owner_delete')await db(`delete from auth.users where id='${f.author.id}';`);else if(path==='text_delete')await db(`begin;delete from turn_private.grounded_turns where turn_id='${turn}';delete from turn_private.service_task_turns where turn_id='${turn}';delete from turn_private.service_task_capacity where task_id in(select id from turn_private.service_tasks where goal_turn_id='${turn}');delete from turn_private.service_tasks where goal_turn_id='${turn}';delete from turn_private.text_content where turn_id='${turn}';commit;`);else await db(`delete from public.turns where id='${turn}';`);
+  const state=JSON.parse(await db(`select jsonb_build_object('status',status,'complete',complete,'nextCursor',next_cursor,'graph',graph_snapshot,'version',version,'digest',digest) from knowledge_review_private.source_impact_sets where id='${s.setId}';`));assert.equal(state.status,'invalidated');assert.equal(state.complete,false);assert.equal(state.nextCursor,null);assert.ok(state.version>s.version);assert.notEqual(state.digest,s.digest);assert.ok(!JSON.stringify(state).includes(turn));
+  assert.equal(await db(`select count(*) from knowledge_review_private.source_impact_items where set_id='${s.setId}' and target->>'kind'='historical_answer';`),'0');assert.equal(await db(`select count(*) from knowledge_review_private.source_impact_pages where set_id='${s.setId}';`),'0');assert.equal(await db(`select count(*) from knowledge_review_private.source_impact_projections where set_id='${s.setId}' and target->>'id'='${turn}';`),'0');
+  if(oldLease){assert.equal(await db(`select count(*) from knowledge_review_private.source_impact_review_requests where delivery_id='${oldLease.deliveryId}';`),'0');assert.equal((await rpc(path==='owner_delete'?f.reviewer:f.author,'apply_source_impact_projection_v1',{p_delivery:oldLease.deliveryId,p_lease:oldLease.leaseToken,p_expected_attempt:oldLease.attempt,p_expected_digest:oldLease.sourceDigest})).kind,'blocked');assert.equal(await db(`select count(*) from knowledge_review_private.source_impact_projections where set_id='${s.setId}' and target->>'kind'='statement';`),'1');}
+  assert.equal(await db(`select count(*) from knowledge_review_private.source_impact_items where set_id='${s.setId}' and target->>'kind'='statement';`),path==='pending_hide'?'0':'1');assert.ok(state.graph.some(x=>x.target.kind==='statement'));assert.equal((await rpc(f.reviewer,'review_source_impact_v1',{p_set:s.setId,p_expected_version:state.version,p_expected_digest:state.digest,p_decision:'approve'})).kind,'stale');const fresh=await f.capture(100,path==='owner_delete'?f.reviewer:f.author);assert.equal(fresh.itemCount,1);assert.equal(await db(`select count(*) from knowledge_review_private.publications where candidate_id='${f.statements[0].candidate}' and state='published';`),'1');
+ }
 });

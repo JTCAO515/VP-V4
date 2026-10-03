@@ -5,11 +5,11 @@ create table knowledge_review_private.source_impact_sets(
  source_id uuid not null references knowledge_review_private.source_revisions(id),replacement_id uuid references knowledge_review_private.source_revisions(id),
  signal_kind text not null check(signal_kind in ('withdrawn','new_revision_available','observation_unavailable','parsing_difference')),
  source_snapshot jsonb not null,graph_snapshot jsonb not null,digest text not null check(digest ~ '^[a-f0-9]{64}$'),
- author_id uuid not null,status text not null default 'pending' check(status in ('pending','approved','rejected')),
+ author_id uuid not null,status text not null default 'pending' check(status in ('pending','approved','rejected','invalidated')),
  version bigint not null default 1 check(version>0),complete boolean not null default false,next_cursor text,item_count integer not null default 0 check(item_count between 0 and 1000),
  reviewer_id uuid,reviewer_member_revision bigint,review_base_version bigint,created_at timestamptz not null default clock_timestamp(),reviewed_at timestamptz,
  check(jsonb_typeof(graph_snapshot)='array' and jsonb_array_length(graph_snapshot)<=1000),
- check((status='pending')=(reviewer_id is null))
+ check(status='invalidated' or (status='pending')=(reviewer_id is null))
 );
 create table knowledge_review_private.source_impact_items(
  id uuid primary key default gen_random_uuid(),set_id uuid not null references knowledge_review_private.source_impact_sets(id) on delete cascade,
@@ -21,7 +21,7 @@ create table knowledge_review_private.source_impact_pages(
 create table knowledge_review_private.source_impact_outbox(
  id uuid primary key default gen_random_uuid(),set_id uuid not null references knowledge_review_private.source_impact_sets(id) on delete cascade,
  item_id uuid not null references knowledge_review_private.source_impact_items(id) on delete cascade,consumer text not null,
- review_version bigint not null,digest text not null,state text not null check(state in ('queued','leased','failed','acked','unsupported','exhausted')),
+ review_version bigint not null,digest text not null,state text not null check(state in ('queued','leased','failed','acked','unsupported','exhausted','stale')),
  attempt integer not null default 0 check(attempt between 0 and 8),lease_token uuid,expires_at timestamptz,next_attempt_at timestamptz not null default clock_timestamp(),error_code text,
  receipt_id uuid,created_at timestamptz not null default clock_timestamp(),acked_at timestamptz,unique(set_id,item_id,consumer)
 );
@@ -64,14 +64,14 @@ create function knowledge_review_private.impact_graph(p_source uuid) returns jso
  union all
  select 'historical_answer:'||g.turn_id||':'||g.scope_version,jsonb_build_object('kind','historical_answer','id',g.turn_id,'version',g.scope_version,'payloadHash',knowledge_review_private.impact_hash(jsonb_build_object('publications',g.basis->'publications','completedAt',g.completed_at)),
  'claimRefs',(select coalesce(jsonb_agg(b order by b->>'factId'),'[]'::jsonb) from jsonb_array_elements(g.basis->'publications') b join linked l on b->>'factId'=l.fact_id::text and b->>'assertionId'=l.statement_id::text and b->>'revision'=l.revision::text))
- from turn_private.grounded_turns g where g.completed_at is not null and jsonb_typeof(g.basis->'publications')='array' and exists(select 1 from jsonb_array_elements(g.basis->'publications') b join linked l on b->>'factId'=l.fact_id::text and b->>'assertionId'=l.statement_id::text and b->>'revision'=l.revision::text)
+ from turn_private.grounded_turns g join turn_private.text_content tc on tc.turn_id=g.turn_id join public.turns live_turn on live_turn.id=g.turn_id and live_turn.owner_id=g.owner_id where tc.hidden_at is null and g.completed_at is not null and jsonb_typeof(g.basis->'publications')='array' and exists(select 1 from jsonb_array_elements(g.basis->'publications') b join linked l on b->>'factId'=l.fact_id::text and b->>'assertionId'=l.statement_id::text and b->>'revision'=l.revision::text)
  ),bounded as(select * from targets order by key limit 1001)
  select coalesce(jsonb_agg(jsonb_build_object('key',key,'target',target) order by key),'[]'::jsonb) from bounded
 $$;
 create function knowledge_review_private.impact_current(p_set uuid) returns boolean language plpgsql security definer set search_path='' as $$
 declare s knowledge_review_private.source_impact_sets%rowtype;source jsonb;graph jsonb;
 begin
- select * into s from knowledge_review_private.source_impact_sets where id=p_set;if not found then return false;end if;
+ select * into s from knowledge_review_private.source_impact_sets where id=p_set;if not found or s.status='invalidated' then return false;end if;
  source:=knowledge_review_private.impact_source(s.source_id,s.replacement_id);if source is null or source is distinct from s.source_snapshot then return false;end if;
  graph:=knowledge_review_private.impact_graph(s.source_id);if jsonb_array_length(graph)>1000 or graph is distinct from s.graph_snapshot then return false;end if;
  return s.digest=knowledge_review_private.impact_hash(jsonb_build_object('source',source,'kind',s.signal_kind,'graph',graph));
@@ -201,3 +201,34 @@ create trigger immutable_source_impact_item before update on knowledge_review_pr
 create trigger immutable_source_impact_page before update on knowledge_review_private.source_impact_pages for each row execute function knowledge_review_private.immutable_source_impact_effect();
 revoke all on function knowledge_review_private.impact_hash(jsonb),knowledge_review_private.impact_source(uuid,uuid),knowledge_review_private.impact_graph(uuid),knowledge_review_private.impact_current(uuid),knowledge_review_private.impact_receipt(uuid),knowledge_review_private.impact_review_current(uuid),knowledge_review_private.impact_delivery_wire(uuid),knowledge_review_private.immutable_source_impact_effect() from public,anon,authenticated,service_role;
 revoke all on function public.capture_source_impact_v1(uuid,uuid,text,text,timestamptz,text,uuid,integer),public.append_source_impact_v1(uuid,bigint,text,text,integer),public.read_source_impact_v1(uuid,text,integer),public.review_source_impact_v1(uuid,bigint,text,text),public.claim_source_impact_delivery_v1(text,integer,integer),public.apply_source_impact_projection_v1(uuid,uuid,integer,text),public.fail_source_impact_delivery_v1(uuid,uuid,integer,text,text),public.read_source_impact_delivery_v1(uuid) from public,anon,authenticated,service_role;
+
+
+-- These new derived historical identifiers are private data, not exempt audit.
+-- Existing hide/delete handlers remain unchanged; their actual text lifecycle
+-- invokes this new narrowly scoped cleanup only for new180 descendants.
+create function knowledge_review_private.clear_source_impact_private_turn(p_turn uuid) returns void language plpgsql security definer set search_path='' as $$
+declare s knowledge_review_private.source_impact_sets%rowtype;graph jsonb;
+begin
+ for s in select * from knowledge_review_private.source_impact_sets where exists(select 1 from jsonb_array_elements(graph_snapshot) x where x->'target'->>'kind'='historical_answer' and x->'target'->>'id'=p_turn::text) order by id for update loop
+  -- Lock deliveries before removing children, so concurrent apply cannot insert
+  -- an effect after our child DELETE snapshot or make privacy cleanup fail FK.
+  perform 1 from knowledge_review_private.source_impact_outbox o join knowledge_review_private.source_impact_items i on i.id=o.item_id where o.set_id=s.id and i.target->>'kind'='historical_answer' and i.target->>'id'=p_turn::text order by o.id for update of o;
+  delete from knowledge_review_private.source_impact_review_requests r using knowledge_review_private.source_impact_outbox o,knowledge_review_private.source_impact_items i where r.delivery_id=o.id and o.item_id=i.id and o.set_id=s.id and i.target->>'kind'='historical_answer' and i.target->>'id'=p_turn::text;
+  delete from knowledge_review_private.source_impact_projections p using knowledge_review_private.source_impact_outbox o,knowledge_review_private.source_impact_items i where p.delivery_id=o.id and o.item_id=i.id and o.set_id=s.id and i.target->>'kind'='historical_answer' and i.target->>'id'=p_turn::text;
+  delete from knowledge_review_private.source_impact_outbox o using knowledge_review_private.source_impact_items i where o.item_id=i.id and o.set_id=s.id and i.target->>'kind'='historical_answer' and i.target->>'id'=p_turn::text;
+  delete from knowledge_review_private.source_impact_items where set_id=s.id and target->>'kind'='historical_answer' and target->>'id'=p_turn::text;
+  delete from knowledge_review_private.source_impact_pages where set_id=s.id;
+  select coalesce(jsonb_agg(x order by x->>'key'),'[]'::jsonb) into graph from jsonb_array_elements(s.graph_snapshot) x where not(x->'target'->>'kind'='historical_answer' and x->'target'->>'id'=p_turn::text);
+  update knowledge_review_private.source_impact_sets set graph_snapshot=graph,digest=knowledge_review_private.impact_hash(jsonb_build_object('source',source_snapshot,'kind',signal_kind,'graph',graph)),version=version+1,status='invalidated',complete=false,next_cursor=null,item_count=(select count(*) from knowledge_review_private.source_impact_items where set_id=s.id) where id=s.id;
+  update knowledge_review_private.source_impact_outbox set state='stale',error_code='private_source_removed',lease_token=null,expires_at=null where set_id=s.id and state<>'acked';
+ end loop;
+end $$;
+create function knowledge_review_private.source_impact_text_lifecycle() returns trigger language plpgsql security definer set search_path='' as $$
+begin
+ if TG_OP='DELETE' then perform knowledge_review_private.clear_source_impact_private_turn(OLD.turn_id);
+ elsif OLD.hidden_at is null and NEW.hidden_at is not null then perform knowledge_review_private.clear_source_impact_private_turn(NEW.turn_id);end if;
+ return null;
+end $$;
+create trigger clear_source_impact_on_text_hide after update of hidden_at on turn_private.text_content for each row execute function knowledge_review_private.source_impact_text_lifecycle();
+create trigger clear_source_impact_on_text_delete after delete on turn_private.text_content for each row execute function knowledge_review_private.source_impact_text_lifecycle();
+revoke all on function knowledge_review_private.clear_source_impact_private_turn(uuid),knowledge_review_private.source_impact_text_lifecycle() from public,anon,authenticated,service_role;
