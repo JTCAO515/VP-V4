@@ -122,6 +122,12 @@ struct NativeFiveResultCard:View {
             case .practical(let value):Text(t("已保存翻译","Saved translation")).font(.headline);Text("\(value.sourceLocale) → \(value.targetLocale)");Text(value.translation).textSelection(.enabled);Text(t("回译：","Back translation: ")+value.backTranslation)
             }
             Text(t("记录依据：","Recorded basis: ")+t("记忆 \(record.memories.count) 项，证据 \(record.evidence.count) 项","\(record.memories.count) Memory references, \(record.evidence.count) evidence references"))
+            if !record.memories.isEmpty {
+                DisclosureGroup(t("此成果的记忆引用","Memory references recorded with this result")) {
+                    ForEach(record.memories,id:\.id){ref in Text("\(ref.id) · r\(ref.revision)").font(.caption).textSelection(.enabled)}
+                    Text(t("这是成果记录的精确版本引用，不表示每个选项都已证明受它影响。","These are exact recorded versions; they do not prove influence on every option.")).font(.caption)
+                }
+            }
             Text(t("以上是此成果记录的参考资料。","These are the references recorded with this result."))
         }
     }

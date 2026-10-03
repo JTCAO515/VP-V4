@@ -451,6 +451,8 @@ struct NativeAssistantConversationView: View {
     @State private var showEvidenceSelection = false
     @State private var selectedSources = NativeSelectedMessageStore()
     @State private var paceOperationBlocked = false
+    @State private var memoryOperationBlocked=false
+    @State private var selectedMemoryBasis:[NativeTravelMemoryReference]=[]
     @State private var draft = ""
     @State private var planningDraft = ""
     @State private var planningPolicy: AssistantPlanningPolicy?
@@ -493,7 +495,7 @@ struct NativeAssistantConversationView: View {
     private var resultActive: Bool { isActive && scenePhase == .active }
     private var refreshBusy: Bool { refreshState.busy }
     private var shellSwitchBlocked: Bool {
-        AssistantShellSwitchGate.blocked(busy: busy || planningBusy || tripBusy || entryBlocking || paceOperationBlocked,
+        AssistantShellSwitchGate.blocked(busy: busy || planningBusy || tripBusy || entryBlocking || paceOperationBlocked || memoryOperationBlocked,
             intakePending: pending != nil || selectedSources.pending != nil, planningPending: planningPending != nil, tripPending: pendingTripMutation != nil)
     }
     private var composerScopeCurrent: Bool { session.dataScope != nil && boundScope == session.dataScope }
@@ -612,6 +614,17 @@ struct NativeAssistantConversationView: View {
                                 .accessibilityIdentifier("assistant.intake.open")
                             if goal.scopeVersion < 10001 { tripControls(goal) }
                             else { Text(chinese ? "此终止目标只读。" : "This terminal goal is read only.") }
+                        }
+                        DisclosureGroup(chinese ? "明确偏好／纠正记忆":"Explicit preferences / correct Memory") {
+                            NativeMemoryPreferencesView(session:session,chinese:chinese,active:resultActive,currentInput:draft,selectedMemoryIDs:selectedMemoryBasis.map(\.id),onThisTime:{text in
+                                guard selectedSources.pending==nil,pending==nil else{return}
+                                draft=text
+                                if goalHasCurrentMessage {operation="amendment"}
+                            },onUse:{profile in
+                                guard selectedSources.pending==nil,planningPending==nil else{return}
+                                if selectedMemoryBasis.contains(where:{$0.id==profile.id}) {selectedMemoryBasis.removeAll{$0.id==profile.id}}
+                                else if selectedMemoryBasis.count<3 {selectedMemoryBasis.append(.init(id:profile.id,revision:profile.revision))}
+                            },onPending:{scope,blocked in if scope==session.dataScope{memoryOperationBlocked=blocked}})
                         }
                         TimelineView(.periodic(from:.now,by:1)){_ in vpPhase}
                         if let artifact=selectedSources.sources.artifact ?? lastViewedArtifact {
@@ -796,6 +809,8 @@ struct NativeAssistantConversationView: View {
         .task(id: session.dataScope) {
             let requested = session.dataScope
             paceOperationBlocked = false
+            memoryOperationBlocked=false
+            if boundScope != session.retainedDataScope {selectedMemoryBasis=[]}
             selectedSources.bind(requested)
             fiveResultSelection = nil
             fiveResultRequestGeneration = UUID()
@@ -834,6 +849,9 @@ struct NativeAssistantConversationView: View {
             if let resume {await restoreNavigationSource(resume)}
         }
         .onChange(of: selection.generation) { _, _ in selectedSources.clear();referencedResultUntil=0 }
+        .onChange(of:session.memoryPreferences.profiles){_,rows in
+            selectedMemoryBasis.removeAll{ref in !rows.contains(where:{$0.id==ref.id && $0.revision==ref.revision && $0.eligible})}
+        }
         .onChange(of: selectedSources.sources.artifact) { _, _ in retainNavigation() }
         .onChange(of: fiveResultSelection?.id) { _, _ in
             if let value=fiveResultSelection {lastViewedArtifact = .init(artifactId:value.artifactID,revision:value.revision);retainNavigation()}
@@ -991,6 +1009,11 @@ struct NativeAssistantConversationView: View {
             guard session.dataScope==resume.scope,selection.owns(own) else{return}
             selectedSources.sources.artifact=nil;referencedResultUntil=0;resultNotice="unavailable";retainNavigation()
         }
+    }
+
+    private var qualifiedMemoryBasis:[NativeTravelMemoryReference] {
+        let rows=session.memoryPreferences.visible(session.dataScope)
+        return selectedMemoryBasis.filter{ref in rows.contains(where:{$0.id==ref.id && $0.revision==ref.revision && $0.eligible})}
     }
 
     private func retainNavigation() {
@@ -1585,7 +1608,7 @@ struct NativeAssistantConversationView: View {
               boundScope == initial,
               conversation != nil || (pending != nil && pending?.conversationId == selection.conversationID) else { return }
         if let pending, pending.conversationId != selection.conversationID || pending.policyId != policy.id { return }
-        if !selectedSources.sources.empty || selectedSources.pending != nil {
+        if !selectedSources.sources.empty || !selectedMemoryBasis.isEmpty || selectedSources.pending != nil {
             await sendSelectedSources(initial: initial, policyID: policy.id)
             return
         }
@@ -1635,7 +1658,8 @@ struct NativeAssistantConversationView: View {
                 parentMessageId:parent?.messageId,turnId:operation == "independent_question" ? UUID().uuidString.lowercased():nil,selectedSources:selectedSources.sources)
         }
         do {
-            _ = try selectedSources.prepare(request); busy=true; refreshState.invalidate(); selection.conversationID=request.conversationId
+            guard selectedSources.pending != nil || qualifiedMemoryBasis.count==selectedMemoryBasis.count else{notice="retry";return}
+            _ = try selectedSources.prepare(request,memoryIDs:selectedMemoryBasis.map(\.id)); busy=true; refreshState.invalidate(); selection.conversationID=request.conversationId
             let accepted = try await selectedSources.send(currentScope:{session.dataScope},post:{try await session.selectedSourceMessageRequest($0)},context:{try await session.selectedSourceContextRequest($0)})
             guard session.dataScope==initial, accepted.messageID==request.messageId else { throw NativeDataError.staleSessionResponse }
             draft=""; notice=nil
@@ -1670,6 +1694,7 @@ struct NativeAssistantConversationView: View {
         let request: AssistantPlanningSubmission
         if let planningPending { request = planningPending }
         else {
+            guard qualifiedMemoryBasis.count==selectedMemoryBasis.count else{planningNotice="retry";return}
             let input = planningDraft.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !input.isEmpty, input.utf16.count <= 4000,
                   let parent = AssistantPlanningEligibility.parent(for: currentGoal, messages: conversation?.messages ?? [])
@@ -1679,7 +1704,7 @@ struct NativeAssistantConversationView: View {
                 messageId: UUID().uuidString.lowercased(), messageKey: UUID().uuidString.lowercased(),
                 threadId: UUID().uuidString.lowercased(), turnId: UUID().uuidString.lowercased(),
                 taskId: UUID().uuidString.lowercased(), taskKey: UUID().uuidString.lowercased(),
-                planningPolicyId: policyID, locale: chinese ? "zh" : "en", text: input, memoryBasis: [])
+                planningPolicyId: policyID, locale: chinese ? "zh" : "en", text: input, memoryBasis: qualifiedMemoryBasis.map(\.id))
             planningPending = request
         }
         refreshState.invalidate()

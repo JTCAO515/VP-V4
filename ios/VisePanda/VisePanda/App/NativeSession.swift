@@ -33,6 +33,7 @@ final class NativeSession {
     private(set) var failureCode: String?
     private(set) var dataGeneration = 0
     private var assistantNavigation: NativeAssistantNavigation?
+    let memoryPreferences=NativeMemoryPreferencesStore()
     private var credential: NativeCredential?
     private let endpoint: URL?
     let askMode: NativeAskMode
@@ -445,6 +446,16 @@ final class NativeSession {
             : assistantTaskHistory ? "api/chat/native/v2" : mode.base
     }
 
+    func memoryProfilesRequest()async throws->Data {
+        let path="api/memory/native/v1/profiles"
+        return try await dataRequest(prefix:path,path:path,method:"GET")
+    }
+    func memoryProfilesCommand(_ body:Data)async throws->Data {
+        guard body.count<=8192 else{throw NativeDataError.invalidResponse}
+        let path="api/memory/native/v1/profiles"
+        return try await dataRequest(prefix:path,path:path,method:"POST",body:body)
+    }
+
     func memoryRequest(path: String = "api/memory/native/v1/travel-pace", method: String, body: Data? = nil) async throws -> Data {
         try await dataRequest(prefix: "api/memory/native/v1/travel-pace", path: path, method: method, body: body)
     }
@@ -713,6 +724,7 @@ final class NativeSession {
     @discardableResult private func clear() -> Bool {
         dataGeneration += 1
         assistantNavigation=nil
+        memoryPreferences.clear()
         if let owner = credential?.subject ?? defaults.string(forKey: storageKey) {
             let result = vault.remove(service: vaultService, owner: owner)
             guard result == errSecSuccess || result == errSecItemNotFound else {
