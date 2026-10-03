@@ -77,7 +77,7 @@ Every input is a closed object. No action accepts caller owner/session/epoch.
 | --- | --- | --- | --- |
 | request | requestId, confirmed:true | current owner + recent server Auth session | privacy_export_job/1 receipt |
 | read | requestId | current owner/session | privacy_export_job/1 receipt |
-| claim | requestId, operationId, maxRunMs | service, operator-disabled worker | privacy_export_lease/1 or unavailable |
+| claim | requestId, operationId, maxRunMs, expectedEnvironment, expectedKeyId | service, operator-disabled worker | privacy_export_lease/1 or unavailable |
 | validate | requestId, leaseId, generation | service, current durable lease | privacy_export_lease_state/1 {current:boolean} |
 | trip_page | requestId, leaseId, generation, afterTripId:null|UUID, limit:1..100 | service, current lease, owner from job | trip-core-export/1 page |
 | commit | requestId, leaseId, generation, artifact, modules, coverage | service, current lease + session/owner recheck | privacy_export_job/1 ready receipt |
@@ -177,3 +177,43 @@ extend beyond either SQL cap or immutable artifact deadline. Server HTTP policy
 may choose shorter durations; missing/disabled policy still does nothing.
 SQL final ticket/consume validation must be current even if the caller supplies
 maximal durations. Ticket issuing/consuming never updates artifactExpiresAt.
+
+## Producer configuration and operation-ID binding
+
+Server-only `VISEPANDA_CORE_EXPORT_POLICY` has exactly enabled/environment/maxRunMs/
+artifactTtlMs/downloadTicketTtlMs/maxPages/pageSize/maxBytes and no defaults; every
+number is positive and subject to the hard limits above. `VISEPANDA_CORE_EXPORT_KEY`
+(for HTTP decryption) or the private worker key file supplies exactly
+`{algorithm:"AES-256-GCM",keyId,key:canonicalBase64url32bytes}`. No default/random
+production key. Private SQL policy remains independently disabled without an
+operator seed, and validates every action limit/keyId against its immutable snapshot;
+server configuration does not grant access or seed it.
+
+Download includes `X-Export-Operation-ID` matching the acknowledged ticket
+operationId, alongside secret `X-Export-Download-Token`. UUID/base64url full-value
+validation rejects duplicate-combined headers. Owner/session/epoch always come
+from authenticated SQL authority, not this public operation-ID correlation value.
+No query token, new download operation or fallback to a different ticket.
+
+`node --experimental-strip-types lib/server/privacy/export-runner.mjs REQUEST_UUID`
+is the bounded operator consumer, default disabled with no scheduler. It requires
+explicit `VP_PRIVACY_EXPORT_WORKER=true`, local|staging environment matching policy,
+trusted DB URL (staging hard-bound), absolute0600 DB/key files and an already-admitted
+request. Local additionally requires the existing disposable-stack flag and
+loopback URL. Production is not enabled by this runner. It claims one job, validates
+its exact lease between module reads, collects real existing export RPCs plus the
+new job-bound Trip reader, encrypts then commits one artifact. No secret or module
+text is printed, and unknown completion is not reported as success.
+
+
+## Fixed claim environment/key expectation (Main)
+
+Service claim requires expectedEnvironment and expectedKeyId in addition to request/
+operation/maxRun. Environment comes only from the validated server target; keyId
+comes only from the validated server encryption provider after enabled policy.
+SQL compares both exactly with its enabled private policy, never selects/overwrites
+policy from them. Old claim shapes are rejected, with no inferred default environment
+or key. Successful claim freezes the policy revision/snapshot internally. Validate,
+Trip reads, commit and service execution_receipt require both the frozen snapshot
+and currently enabled/unrevoked policy; a policy change blocks publication/recovery.
+No new owner field, public private-policy read or expectedPolicyRevision is added.
