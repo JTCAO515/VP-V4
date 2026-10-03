@@ -27,6 +27,7 @@ create function privacy_private.memory_delete_graph_v1(u uuid,ids uuid[],seed js
 #variable_conflict use_variable
 declare refs uuid[];arts uuid[];outs uuid[];exps uuid[];tasks uuid[];s jsonb;counts jsonb;c jsonb:='[]';g jsonb;
 begin
+ if cardinality(ids)>100 then return jsonb_build_object('selection',jsonb_build_object('memories','[]'::jsonb,'consumerReferenceIds','[]'::jsonb,'artifactIds','[]'::jsonb,'generatedTurnIds','[]'::jsonb,'exportRequestIds','[]'::jsonb),'counts',jsonb_build_object('memories',0,'consumerReferences',0,'artifacts',0,'generatedTurns',0,'exports',0),'conflicts','["SCOPE_TOO_LARGE"]'::jsonb,'graph','{}'::jsonb);end if;
  if exists(select 1 from unnest(ids) x where not exists(select 1 from public.memory_profiles m where m.id=x and m.owner_id=u)) then raise exception 'FORBIDDEN';end if;
  select coalesce(array_agg(id order by id),'{}') into refs from (select id from public.memory_consumer_receipts where memory_id=any(ids) order by id limit 1001) q;
  select coalesce(array_agg(id order by id),'{}') into arts from (select a.id from turn_private.result_artifacts a where exists(select 1 from turn_private.result_revisions r cross join lateral jsonb_array_elements(r.memory_basis) b where r.artifact_id=a.id and b->>'id'=any(ids::text[])) order by a.id limit 1001) q;
@@ -38,7 +39,9 @@ begin
  if exists(select 1 from public.memory_consumer_receipts where id=any(refs) and owner_id<>u)
  or exists(select 1 from turn_private.result_artifacts where id=any(arts) and owner_id<>u)
  or exists(select 1 from turn_private.result_revisions where artifact_id=any(arts) and owner_id<>u)
- or exists(select 1 from turn_private.text_content where turn_id=any(outs) and owner_id<>u) then c:=c||'"FOREIGN_REFERENCE"'::jsonb;end if;
+ or exists(select 1 from turn_private.text_content where turn_id=any(outs) and owner_id<>u) then
+ -- A conflict never discloses opaque identifiers belonging to a different owner.
+ return jsonb_build_object('selection',jsonb_build_object('memories',(select coalesce(jsonb_agg(jsonb_build_object('memoryId',id,'revision',revision,'sourceReceiptId',source_receipt_id) order by id),'[]') from public.memory_profiles where id=any(ids) and owner_id=u),'consumerReferenceIds','[]'::jsonb,'artifactIds','[]'::jsonb,'generatedTurnIds','[]'::jsonb,'exportRequestIds','[]'::jsonb),'counts',jsonb_build_object('memories',cardinality(ids),'consumerReferences',0,'artifacts',0,'generatedTurns',0,'exports',0),'conflicts',c||'"FOREIGN_REFERENCE"'::jsonb,'graph','{}'::jsonb);end if;
  -- Include every referenced Turn in activity checks, even if it has no output yet.
  if exists(select 1 from public.turns t join public.memory_consumer_receipts r on r.turn_id=t.id where r.id=any(refs) and (t.owner_id<>u or t.status not in ('completed','proposal_ready','unavailable','failed','cancelled')))
  or exists(select 1 from turn_private.work w where (w.turn_id=any(outs) or exists(select 1 from public.memory_consumer_receipts r where r.id=any(refs) and r.turn_id=w.turn_id) or exists(select 1 from turn_private.result_revisions r where r.artifact_id=any(arts) and r.task_turn_id=w.turn_id)) and w.state in ('queued','leased')) then c:=c||'"ACTIVE_WORK"'::jsonb;end if;
@@ -117,13 +120,13 @@ begin
  if jsonb_typeof(p_input->'limit') is distinct from 'number' or p_input->>'limit' !~ '^[1-9][0-9]{0,2}$' or (p_input->>'limit')::integer>100 then raise exception 'INVALID_INPUT';end if;
  delete from privacy_private.memory_delete_plans_v1 where id in(select x.id from privacy_private.memory_delete_plans_v1 x where expires_at<=clock_timestamp() and not exists(select 1 from privacy_private.memory_delete_jobs_v1 q where q.plan_id=x.id) order by x.id limit (p_input->>'limit')::integer for update of x skip locked);get diagnostics n=row_count;return jsonb_build_object('kind','memory_delete_purge/1','removedPlans',n);end if;
  if p_action='preview' then
- if jsonb_typeof(p_input->'memoryIds') is distinct from 'array' or jsonb_array_length(p_input->'memoryIds')=0 or jsonb_array_length(p_input->'memoryIds')>101 or exists(select 1 from jsonb_array_elements(p_input->'memoryIds') v where jsonb_typeof(v) is distinct from 'string' or v#>>'{}' !~ '^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$') then raise exception 'INVALID_INPUT';end if;
+ if jsonb_typeof(p_input->'memoryIds') is distinct from 'array' or jsonb_array_length(p_input->'memoryIds')=0 or jsonb_array_length(p_input->'memoryIds')>5000 or exists(select 1 from jsonb_array_elements(p_input->'memoryIds') v where jsonb_typeof(v) is distinct from 'string' or v#>>'{}' !~ '^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$') then raise exception 'INVALID_INPUT';end if;
  ids:=privacy_private.linked_delete_array_v1(p_input->'memoryIds');if (select count(distinct x) from unnest(ids) x)<>cardinality(ids) then raise exception 'INVALID_INPUT';end if;
  insert into export_private.memory_source_revisions_v1(owner_id) values(u) on conflict do nothing;select revision into rev from export_private.memory_source_revisions_v1 where owner_id=u for share nowait;
  g:=privacy_private.memory_delete_graph_v1(u,ids);s:=g->'selection';
  select coalesce(jsonb_object_agg(v->>'memoryId',gen_random_uuid()),'{}') into ops from jsonb_array_elements(s->'memories') v;
  insert into privacy_private.memory_delete_plans_v1(owner_id,session_id,session_epoch,source_revision,scope_digest,selection,counts,conflicts,graph,operations,expires_at) values(u,(actor->>'sessionId')::uuid,(actor->>'mobileEpoch')::bigint,rev,encode(sha256(convert_to(jsonb_build_array(u,rev,g)::text,'UTF8')),'hex'),s,g->'counts',g->'conflicts',g->'graph',ops,clock_timestamp()+interval '5 minutes') returning * into p;
- return jsonb_build_object('kind','memory_delete_plan/1','planId',p.id,'sourceRevision',p.source_revision,'scopeDigest',p.scope_digest,'expiresAt',export_private.ms_v1(p.expires_at),'selection',p.selection,'counts',p.counts,'conflicts',p.conflicts,'retained',privacy_private.memory_delete_receipt_v1(null::privacy_private.memory_delete_jobs_v1)->'retained') || jsonb_build_object('retained','["FINANCIAL_RECORDS","USER_TRIP_INTENT","ORIGINAL_CHAT_INPUT","EXTERNAL_COPIES","PROVIDER_ERASURE_UNKNOWN","BACKUP_ERASURE_NOT_VERIFIED"]'::jsonb);
+ return jsonb_build_object('kind','memory_delete_plan/1','planId',p.id,'sourceRevision',p.source_revision,'scopeDigest',p.scope_digest,'expiresAt',export_private.ms_v1(p.expires_at),'selection',p.selection,'counts',p.counts,'conflicts',p.conflicts,'retained','["FINANCIAL_RECORDS","USER_TRIP_INTENT","ORIGINAL_CHAT_INPUT","EXTERNAL_COPIES","PROVIDER_ERASURE_UNKNOWN","BACKUP_ERASURE_NOT_VERIFIED"]'::jsonb);
  end if;
  if p_action='confirm' then
  if p_input->'confirmed' is distinct from 'true'::jsonb then raise exception 'INVALID_INPUT';end if;
@@ -175,8 +178,8 @@ begin
  delete from turn_private.result_artifacts where id=any(privacy_private.linked_delete_array_v1(p.selection->'artifactIds')) and owner_id=j.owner_id;get diagnostics n=row_count;erased:=jsonb_set(erased,'{artifacts}',to_jsonb(n));
  update turn_private.text_content set output_text=null,output_kind=null where turn_id=any(privacy_private.linked_delete_array_v1(p.selection->'generatedTurnIds')) and owner_id=j.owner_id;get diagnostics n=row_count;erased:=jsonb_set(erased,'{generatedOutputs}',to_jsonb(n));
  delete from public.memory_consumer_receipts where id=any(privacy_private.linked_delete_array_v1(p.selection->'consumerReferenceIds')) and owner_id=j.owner_id;get diagnostics n=row_count;erased:=jsonb_set(erased,'{consumerReferences}',to_jsonb(n));
- delete from export_private.core_artifacts_v1 where request_id=any(privacy_private.linked_delete_array_v1(p.selection->'exportRequestIds')) and owner_id=j.owner_id;
  delete from export_private.core_tickets_v1 where request_id=any(privacy_private.linked_delete_array_v1(p.selection->'exportRequestIds')) and owner_id=j.owner_id;get diagnostics n=row_count;erased:=jsonb_set(erased,'{tickets}',to_jsonb(n));
+ delete from export_private.core_artifacts_v1 where request_id=any(privacy_private.linked_delete_array_v1(p.selection->'exportRequestIds')) and owner_id=j.owner_id;
  update export_private.core_jobs_v1 set state='expired',lease_id=null,lease_expires_at=null,artifact_digest=null,artifact_bytes=null,artifact_expires_at=null,modules='[]' where request_id=any(privacy_private.linked_delete_array_v1(p.selection->'exportRequestIds')) and owner_id=j.owner_id;get diagnostics n=row_count;erased:=jsonb_set(erased,'{exports}',to_jsonb(n));
  update privacy_private.memory_delete_jobs_v1 set state='completed',completed_at=clock_timestamp(),erased_counts=erased,execution_xid=null,execution_digest=null,expected_graph='{}' where request_id=request returning * into j;
  update privacy_private.memory_delete_plans_v1 set graph='{}',operations='{}' where id=p.id;

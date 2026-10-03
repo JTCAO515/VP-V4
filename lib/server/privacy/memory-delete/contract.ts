@@ -17,7 +17,7 @@ export function memoryDeleteSelection(v:unknown):v is MemoryDeleteSelection {
 }
 export function memoryDeleteCommand(v:unknown):v is Record<string,unknown> {
  if(!record(v))return false;
- if(v.action==='preview')return exact(v,['action','memoryIds'])&&Array.isArray(v.memoryIds)&&v.memoryIds.length>=1&&v.memoryIds.length<=101&&v.memoryIds.every(uuid)&&new Set(v.memoryIds).size===v.memoryIds.length;
+ if(v.action==='preview')return exact(v,['action','memoryIds'])&&Array.isArray(v.memoryIds)&&v.memoryIds.length>=1&&v.memoryIds.length<=5000&&v.memoryIds.every(uuid)&&new Set(v.memoryIds).size===v.memoryIds.length;
  return v.action==='confirm'&&exact(v,['action','requestId','planId','scopeDigest','confirmed','selection'])&&uuid(v.requestId)&&uuid(v.planId)&&digest(v.scopeDigest)&&v.confirmed===true&&memoryDeleteSelection(v.selection)&&v.selection.memories.length>0;
 }
 export type MemoryDeletePlan=Record<string,unknown>&{selection:MemoryDeleteSelection;conflicts:string[]};
