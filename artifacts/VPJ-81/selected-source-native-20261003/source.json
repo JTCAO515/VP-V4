@@ -1,0 +1,16 @@
+{
+  "A": "9e1b933d7704ebcc801347add23a5e2794d31f97",
+  "backend": "7a132c355c0ddaa7c1971922f4dbac819351325b",
+  "tests": "/tmp/vpj81-selected-source-complete-unit2.xcresult",
+  "passed": 4,
+  "failed": 0,
+  "skipped": 0,
+  "actualAuth": "UNRUN separately pending short integration",
+  "files": {
+    "ios/VisePanda/VisePanda/Features/Ask/NativeSelectedMessageModels.swift": "efcc2bcbf5c00f649c2f63d1d14a6d9efadb58e865492a410eab97e482c57522",
+    "ios/VisePanda/VisePanda/Features/Ask/NativeSelectedMessageStore.swift": "f7cee348336422fc3f0fb7a87a0b842aed3fa29f3f82787c168338123b09e3ee",
+    "ios/VisePanda/VisePanda/Features/Ask/NativeSelectedSourcesView.swift": "301f8f5be279cfed02ea17a703ff182ce4b66a49bd9efc6bceb4c96ac94eee25",
+    "ios/VisePanda/VisePanda/Features/Ask/NativeSelectedEvidencePicker.swift": "dbcbb1a31297317f4bae3ded7b57f8ce88bb5c591d925c98a34f46d8b62a66d6",
+    "ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift": "e424519ec8592b966b35e491ad3fb8e1b5019fe3904e7b82a655cadf688a5a20"
+  }
+}

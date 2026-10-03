@@ -1,0 +1,22 @@
+{
+  "result": "PASS",
+  "scope": "actual NativeSession ordinary Auth -> existing pace and current intake APIs/SQL; in-memory vault",
+  "currentInput": [
+    "balanced",
+    "relaxed"
+  ],
+  "longTerm": "packed save/readback -> exact Undo -> relaxed save -> pause -> revoke",
+  "localPreview": "actual saved Profile source/revision/operation; preview only",
+  "unchangedFields": true,
+  "tripHead": 0,
+  "fixtureTripCreated": 1,
+  "consumerTripWrites": 0,
+  "providerCalls": 0,
+  "taskAdmissions": 0,
+  "modelAttempts": 0,
+  "unrun": [
+    "XCUITest gestures",
+    "physical/VoiceOver",
+    "provider/target/full #562/#564 B"
+  ]
+}

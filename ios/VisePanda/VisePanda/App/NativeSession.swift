@@ -343,6 +343,17 @@ final class NativeSession {
         return bytes
     }
 
+    func selectedSourceMessageRequest(_ body: Data) async throws -> Data {
+        guard askMode == .assistant, body.count <= 16_384 else { throw NativeDataError.invalidResponse }
+        let path = "api/chat/native/v6/conversation"
+        return try await dataRequest(prefix: path, path: path, method: "POST", body: body)
+    }
+    func selectedSourceContextRequest(_ body: Data) async throws -> Data {
+        guard askMode == .assistant, body.count <= 8192 else { throw NativeDataError.invalidResponse }
+        let path = "api/chat/native/v6/context"
+        return try await dataRequest(prefix: path, path: path, method: "POST", body: body)
+    }
+
     func travelIntakeRequest(conversationID: String, goalID: String) async throws -> Data {
         guard askMode == .assistant, UUID(uuidString: conversationID) != nil,
               UUID(uuidString: goalID) != nil else { throw NativeDataError.invalidResponse }

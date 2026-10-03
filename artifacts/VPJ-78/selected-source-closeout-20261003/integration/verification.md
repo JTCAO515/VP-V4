@@ -1,0 +1,7 @@
+# Same-ticket backend + A + nativev6 integration
+
+2026-10-03. Dedicatedintegrationbranch from exactmain1dce22ac. Backendonlyceeed/7a132/8a036 mappedto a987a4a6/6c385354/1c68236c; registry97b2bc01 addsonepostgresfile andoneHTTPnative step, nootherregistry entries. NativeA9e1b933d→9357eb94, Nativev6c3f4a27a→f49ee675; didnotduplicateitsbackendparentb8d8372f orcheckout itsowner'sdirty560futurefive-types work.
+
+Necessarycherry/diffPASS, unionTypecheckPASS, actualcurrentregistrygovernance9/9PASS0skip (not5; olderregistrytestcount superseded). Request14/accepted11/context11 root/8manifest keys andprevious-result metadata mapping manuallycheckedagainstfixedbackend7a/nativec3; stableplan/contextversions match. Originalbackend6PG/8HTTP/1realAuth andNativeA/v6owner build/4focusedcodec/store evidence reused, notrerun. No localblanketbuild/Simulator/CIwaiting usedasdeveloperclosuregate. Mainalreadyclosed559devcompleteaftercorecodepresent; no deploymentclaim.
+
+One coherentuserresult batch includesordinaryselectedartifact/Trip/evidence messagecontinue/amend andsafecontext, currentpace/MemoryUndo entryneededbynativeA. Newfirst-partycontextreadyfalse doesnotgrantprovider/paidTask/Tripconfirm/resultcompletion. No backend/SQL changesduringcherry; Nativeproduct source unchangedfromownerfixedcommits. FormalnewPRCI/review/merge areengineeringfacts; target/provider/device/humanunrunfacts remain187, no separatependingacceptancestatus.
