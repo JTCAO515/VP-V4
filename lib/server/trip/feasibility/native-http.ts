@@ -46,6 +46,7 @@ export async function nativePlanFeasibilityHTTP(request:NextRequest,tripId:strin
   const selected=await adapter.getPendingProposal(tripId,input.proposalId);if("error"in selected)return failure(selected.error,selected.error==="FORBIDDEN"?403:503);
   const p=selected.data.proposal;
   if(p.id!==input.proposalId||p.revision!==input.expectedProposalRevision||p.baseTripVersion!==input.expectedBaseVersion||p.stale||!p.after||!p.digest)return reply({kind:"unavailable",reason:"STALE_BASIS"});
+  if(p.after.days.reduce((count,day)=>count+(day.items?.length??0),0)>500)return failure("PROVIDER_UNAVAILABLE");
   const basis={tripId,proposalId:p.id,proposalRevision:p.revision,baseVersion:p.baseTripVersion,proposalDigest:p.digest,after:p.after};
   const rpc=async(name:string,params:Record<string,unknown>)=>{const r=await credentials.client.rpc(name,params).abortSignal(scope.signal);scope.check();return {data:r.data as unknown,error:r.error};};
   const preferenceContext=planPreferenceContext(await adapter.getUserProfile(),input.needs);scope.check();
@@ -73,6 +74,7 @@ export async function nativePlanFeasibilityHTTP(request:NextRequest,tripId:strin
   if("error"in still)return failure(still.error,still.error==="UNAUTHENTICATED"?401:503);
   if("error"in current||current.data.proposal.digest!==p.digest||current.data.proposal.revision!==p.revision||current.data.proposal.stale||still.data!==actor.data)return reply({kind:"unavailable",reason:"STALE_BASIS"});
   if(routeEvidence.bindings.some(b=>record(b)&&typeof b.expiresAt==="string"&&Date.parse(b.expiresAt)<=Date.now()))return reply({kind:"unavailable",reason:"STALE_EVIDENCE"});
+  if(result.lines.length>2048 || new TextEncoder().encode(JSON.stringify(result)).byteLength>262144)return failure("PROVIDER_UNAVAILABLE");
   return reply(result);
  });}catch{return failure("PROVIDER_UNAVAILABLE");}finally{scope.dispose();}
 }
