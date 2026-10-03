@@ -4,7 +4,7 @@ import test,{before,after} from 'node:test';import assert from 'node:assert/stri
 import {randomUUID as uuid} from 'node:crypto';import {readFileSync,readdirSync} from 'node:fs';
 import {command,sql} from '../cost/fixtures/postgres-rpc.mjs';
 import {runSourceImpactConsumer} from '../../../lib/server/jobs/source-impact-consumer.ts';
-const enabled=process.env.VP_TAKEDOWN_DB_TEST==='1',container='vpj17-impact-'+uuid().slice(0,8);let created=false;
+const enabled=process.env.VP_TURN_DB_TEST==='1',container='vpj17-impact-'+uuid().slice(0,8);let created=false;
 const db=async q=>{const r=await sql(container,q);assert.equal(r.code,0,r.stderr);return r.stdout.trim();};
 const lit=v=>v===null?'null':typeof v==='number'||typeof v==='boolean'?String(v):"'"+(typeof v==='object'?JSON.stringify(v):String(v)).replaceAll("'","''")+"'";
 const rpc=async(actor,name,p)=>JSON.parse(await db(`begin;set request.jwt.claim.role='authenticated';set request.jwt.claim.sub='${actor.id}';set request.jwt.claims='${JSON.stringify({session_id:actor.session})}';select public.${name}(`+Object.entries(p).map(([k,v])=>k+'=>'+lit(v)).join(',')+');commit;'));
