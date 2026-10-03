@@ -74,6 +74,7 @@ export const LANES = {
           "tests/integration/observability/ops-ledger.test.mjs",
           "tests/integration/privacy/assistant-data-rights.test.mjs",
           "tests/integration/privacy/result-data-rights.test.mjs",
+          "tests/integration/takedown/source-impact-outbox.test.mjs",
           "tests/integration/privacy/trip-deletion.test.mjs",
           "tests/integration/privacy/core-export-d2.test.mjs",
           "tests/integration/privacy/core-export-consumer.test.mjs",
