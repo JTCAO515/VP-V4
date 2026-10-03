@@ -642,6 +642,51 @@ final class NativeSession {
             : assistantTaskHistory ? "api/chat/native/v2" : mode.base
     }
 
+    private var memoryDeleteVaultService:String {keychainService+".memory-bulk-delete."+(endpoint?.absoluteString ?? "disabled")}
+    func memoryDeletionRecovery() throws -> NativeMemoryDeleteJournal? {
+        guard let scope=dataScope else{throw NativeDataError.sessionUnavailable}
+        let (status,bytes)=vault.read(service:memoryDeleteVaultService,owner:scope.subject)
+        if status==errSecItemNotFound{return nil}
+        guard status==errSecSuccess,let bytes,bytes.count<=262_144 else{throw NativeDataError.sessionUnavailable}
+        let journal=try JSONDecoder().decode(NativeMemoryDeleteJournal.self,from:bytes)
+        guard journal.matches(scope) else{throw NativeDataError.staleSessionResponse}
+        _=try journal.command();return journal
+    }
+    func rememberMemoryDeletion(_ command:NativeMemoryDeleteCommand,body:Data) throws {
+        guard let scope=dataScope,try NativeMemoryDeleteCommand.decode(body)==command else{throw NativeDataError.sessionUnavailable}
+        if let existing=try memoryDeletionRecovery(){
+            guard existing.body==body,try existing.command()==command else{throw NativeDataError.server(code:"MEMORY_DELETE_RECOVERY_REQUIRED")};return
+        }
+        let journal=NativeMemoryDeleteJournal(endpoint:scope.endpoint,owner:scope.subject,epoch:scope.mobileEpoch,body:body)
+        let bytes=try JSONEncoder().encode(journal)
+        guard bytes.count<=262_144,vault.write(bytes,service:memoryDeleteVaultService,owner:scope.subject)==errSecSuccess else{throw NativeDataError.sessionUnavailable}
+    }
+    func completeMemoryDeletion(_ receipt:NativeMemoryDeleteReceipt) throws {
+        guard let scope=dataScope,let journal=try memoryDeletionRecovery(),receipt.state=="completed" else{throw NativeDataError.invalidResponse}
+        let command=try journal.command()
+        guard receipt.requestId==command.requestId,receipt.planId==command.planId,receipt.scopeDigest==command.scopeDigest,receipt.selection==command.selection,receipt.sourceTombstoned,!receipt.cleanupPending else{throw NativeDataError.invalidResponse}
+        let status=vault.remove(service:memoryDeleteVaultService,owner:scope.subject)
+        guard status==errSecSuccess || status==errSecItemNotFound else{throw NativeDataError.sessionUnavailable}
+    }
+    func memoryDeletionRequest(body:Data?=nil,requestID:String?=nil) async throws -> Data {
+        guard enabled,!busy,let initial=dataScope,body==nil || body!.count<=192_000,requestID==nil || NativeMemoryWire.uuid(requestID!),body != nil || requestID != nil,body==nil || requestID==nil else{throw NativeDataError.sessionUnavailable}
+        if let credential,credential.expiresAt<=Date().timeIntervalSince1970+10{await validate()}
+        guard dataScope==initial,let credential,let endpoint else{throw NativeDataError.sessionUnavailable}
+        var components=URLComponents(url:endpoint.appendingPathComponent("api/privacy/native/v1/memories/delete"),resolvingAgainstBaseURL:false)
+        if let requestID{components?.queryItems=[.init(name:"requestId",value:requestID)]}
+        guard let url=components?.url else{throw NativeDataError.invalidResponse}
+        var request=URLRequest(url:url);request.httpMethod=body==nil ? "GET":"POST";request.httpBody=body;request.httpShouldHandleCookies=false;request.timeoutInterval=30
+        request.setValue("application/json",forHTTPHeaderField:"Content-Type");request.setValue("Bearer \(credential.accessToken)",forHTTPHeaderField:"Authorization")
+        let (bytes,response)=try await transport.data(for:request)
+        guard dataScope==initial,let http=response as? HTTPURLResponse,bytes.count<=512_000 else{throw NativeDataError.staleSessionResponse}
+        guard [200,202].contains(http.statusCode) else{
+            let code=(try? JSONDecoder().decode(NativeDataFailure.self,from:bytes).error.code) ?? "HTTP_\(http.statusCode)"
+            if http.statusCode==401,code != "REAUTHENTICATION_REQUIRED"{handle(SessionError.denied)}
+            throw NativeDataError.server(code:code)
+        }
+        return bytes
+    }
+
     func memoryProfilesRequest()async throws->Data {
         let path="api/memory/native/v1/profiles"
         return try await dataRequest(prefix:path,path:path,method:"GET")
@@ -966,6 +1011,8 @@ final class NativeSession {
                 let result=vault.remove(service:service,owner:owner)
                 guard result==errSecSuccess || result==errSecItemNotFound else{failureCode="keychain:\(result)";status="storageError";return false}
             }
+            let memoryDelete=vault.remove(service:memoryDeleteVaultService,owner:owner)
+            guard memoryDelete==errSecSuccess || memoryDelete==errSecItemNotFound else{failureCode="keychain:\(memoryDelete)";status="storageError";return false}
             let linked=vault.remove(service:linkedDeleteVaultService,owner:owner)
             guard linked==errSecSuccess || linked==errSecItemNotFound else{subject=nil;mobileEpoch=nil;displayName=nil;failureCode="keychain:\(linked)";status="storageError";return false}
             let result = vault.remove(service: vaultService, owner: owner)
