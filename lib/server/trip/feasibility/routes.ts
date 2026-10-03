@@ -35,13 +35,12 @@ export async function readPlanRouteEvidence(
     const origin=places.find(p=>p.itemId===from.id&&p.current&&p.entityBound)?.canonicalPoiId;
     const destination=places.find(p=>p.itemId===to.id&&p.current&&p.entityBound)?.canonicalPoiId;
     if (!origin || !destination || origin===destination) continue;
-    let endpoints: {originId:string;destinationId:string}|null;
-    if (deps.resolveEndpoints) endpoints=await deps.resolveEndpoints(origin,destination);
-    else {
+    const resolve=async()=>{
+      if (deps.resolveEndpoints) return deps.resolveEndpoints(origin,destination);
       const client=createMapsServiceRoleClient(deps.env);
-      if (!client) continue;
-      endpoints=await resolveCanonicalRouteEndpoints(client,origin,destination);
-    }
+      return client ? resolveCanonicalRouteEndpoints(client,origin,destination) : null;
+    };
+    const endpoints=await resolve();
     if (!endpoints) continue;
     let calls=0, stopped=false;
     const fetcher: typeof fetch=async(input,init)=>{
@@ -63,6 +62,8 @@ export async function readPlanRouteEvidence(
     const option=body.options.find(o=>record(o)&&o.mode===selected.mode&&o.status==="observed");
     if (!record(option) || typeof option.durationSeconds!=="number" || !Number.isFinite(option.durationSeconds)
       || option.durationSeconds<0 || option.departureAt!==body.observedAt) continue;
+    const currentEndpoints=await resolve();
+    if(!currentEndpoints || currentEndpoints.originId!==endpoints.originId || currentEndpoints.destinationId!==endpoints.destinationId)continue;
     // Total walking duration is known only for the walking mode. Transit walking
     // distance is never converted into invented walking minutes.
     if (body.observedAt===from.endsAt) routes.push({fromItemId:from.id,toItemId:to.id,current:true,actualDeparture:from.endsAt!,
