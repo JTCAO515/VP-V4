@@ -1,22 +1,15 @@
 name: Budget PostgreSQL
 
+# PR coverage is deduplicated into DB Integration's selected postgres lane.
 on:
-  pull_request:
-    paths:
-      - 'lib/server/model-gateway/budget/**'
-      - 'lib/server/model-gateway/adapters/**'
-      - 'supabase/migrations/**'
-      - 'tests/**/cost/**'
-      - 'lib/server/turn/**'
-      - 'tests/**/turn/**'
-      - 'lib/server/observability/**'
-      - 'apps/ops/**'
-      - 'tests/**/observability/**'
-      - '.github/workflows/budget-postgres.yml'
   workflow_dispatch:
 
 permissions:
   contents: read
+
+concurrency:
+  group: budget-postgres-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   durable-budget:

@@ -1,0 +1,14 @@
+✔ exact serializer bytes make one loopback HTTP round trip and strict real SQL response readback survives lost write ACK (5247.82475ms)
+ℹ {"SQL_SOURCE":"aa759054bfc83aa2d4d367234a2d35a93b7571ba","TS_SOURCE":"b64ec9458fed017265ab705a6a155310c5b49f2b","providerSends":1,"exactBytes":true,"readRevision":3,"providerOriginVerified":false,"actualMicros":"synthetic known zero; ledger remains dispatched"}
+✔ local transport timeout becomes sticky unknown without retry or lease adoption (1551.209542ms)
+ℹ {"mode":"timeout","providerSends":1,"stickyUnknown":true,"providerOriginVerified":false,"ledgerUnchanged":true}
+✔ local transport disconnected becomes sticky unknown without retry or lease adoption (773.297584ms)
+ℹ {"mode":"disconnected","providerSends":1,"stickyUnknown":true,"providerOriginVerified":false,"ledgerUnchanged":true}
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7712.703292
