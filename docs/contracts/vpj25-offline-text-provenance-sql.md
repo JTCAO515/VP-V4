@@ -1,0 +1,37 @@
+# #215 controlled offline text provenance SQL / fixed wire
+
+Base main d93c5c2db604d2c5112b5b3b9b4d91f4d41423a2. Main authorised sole append SQL/local tests only. This records **values explicitly submitted through a controlled user-text entry**, not keyboard observation, objective authorship, copyright ownership or third-party licence proof. Existing `userAuthored*` terminology must be corrected by the TS owner to this narrower semantics. No historic confirmed snapshot gets retroactive provenance.
+
+## Signatures and reachability
+
+- `public.submit_offline_trip_text_proposal_v1(p_trip_id uuid,p_operation_id uuid,p_expected_head_version integer,p_date text,p_title text,p_save_offline boolean) returns jsonb`
+- `public.read_offline_trip_text_provenance_v1(p_trip_id uuid,p_expected_head_version integer,p_expected_epoch bigint) returns jsonb`
+- `public.revoke_offline_trip_text_provenance_v1(p_trip_id uuid,p_expected_epoch bigint,p_operation_id uuid) returns jsonb`
+
+All three entries and every private helper/table initially revoke EXECUTE/access from PUBLIC/anon/authenticated/service_role. Future minimal API decision is authenticated EXECUTE on exactly these three signatures; no table/schema/helper or service-role grants. This contract/source does not make the HTTP route reachable. Local administrator tests simulate ordinary JWT claims against actual SQL; they are not live signed Auth/cache permits. Main reviews any later permission code/target application separately.
+
+HTTP proposal shape supplied by TS owner: POST `/api/trips/native/v2/{tripId}/offline-text/proposal`, exact `{operationId,expectedHeadVersion,date,title,saveOffline:true}`. No owner, author, sourceKind, licence, receipt ID, patch or opaque ID from client. UUID canonical lowercase; head is 0..999999999 (existing Patch integer/version bound), ISO actual Gregorian date, trimmed title 1..160 UTF-16 units. SQL pins actual current native session/positive mobileEpoch; no client can supply the capture epoch.
+
+## Controlled new-day rule and proposal receipt
+
+`dayId = "ofd_" + operationId without hyphens`, `itemId = "ofi_" + operationId without hyphens`; case-sensitive opaque domain IDs, not inferred from title/date. Current snapshot must contain neither generated ID nor the submitted date. Existing same date returns OFFLINE_DATE_EXISTS; pending competing proposal returns existing PROPOSAL_NOT_CONFIRMABLE. Never overwrite/reuse an unselected existing day/item or grant its date. First version-zero Trip may add this new day/item, but version-zero title/legacy content is not cached.
+
+Server creates the closed Patch from only this new `upsert_day` and `upsert_item` and calls existing `create_trip_proposal_patch`. It stores private candidate source receipts for exactly `days[dayId].date` and `days[dayId].items[itemId].title`, owner/trip/proposal ID+revision/base/patch digest/value digest, server-minted source receipt UUID, actual capture epoch and revocation generation, purpose `offline_cache`. Operation identity binds canonical input, same operation/different input conflicts. Existing imported/OCR/general proposal paths cannot insert these private receipts.
+
+SQL success exact `{kind:"offline_text_proposal/1",operationId,proposalId,proposalRevision,baseTripVersion,sessionEpoch,dayId,itemId,provenanceState:"candidate",reused}`. Candidate is neither a Trip write nor an offline grant. HTTP maps to existing `{version:2,proposalId,revision,baseTripVersion,reused}`; GET proposal/diff and original confirm route remain unchanged. No controlled automatic revise: old ordinary revision supersedes the parent and receives no candidate provenance; reject/recreate through this controlled entry for another explicit submission.
+
+## Confirmation binding and current read
+
+A private AFTER INSERT trigger on existing `trip_idempotency` binds sources only after the original confirm transaction has updated status to applied, written exact snapshot/event and created matching proposal/digest/resultingVersion receipt. It verifies owner/trip/proposal/revision/base/patch digest/frozen v2 confirmation digest, actual native epoch, current generation and exact resulting field hashes. Any late failure rolls the original confirm transaction back. No signature, writer role, confirmation contract or already-applied retry semantics change.
+
+Each resulting version may inherit a previous version's still-valid receipt only for an exactly unchanged field (same case-sensitive IDs/value digest, epoch and generation). Unknown fields never inherit. Rollback carries no provenance, even when values happen to match. Ordinary revision/deletion of a source field cannot create provenance. Archive/deletion/tombstone/current epoch/revocation blocks read; metadata cascades with existing owner/Trip/proposal lifecycle. No photo/POI/location/order/OCR/Memory data is copied.
+
+Read pins owner/native epoch, exact Trip head and confirmed snapshot/event/receipt. Success exact `{kind:"offline_text_provenance/1",sourceSemantics:"controlled_user_text_submission",subject,sessionEpoch,tripId,headVersion,purpose:"offline_cache",generation,payload,payloadDigest,fields,partialCoverage}`. Payload is only `{days:[{id,date,items:[{id,title}]}]}`: a day is emitted only with a valid date receipt; only valid title-receipt items are emitted. Missing coverage is omitted, never attributed. No eligible day returns `{kind:"unavailable",reason:"NO_PROVENANCE"}`. `fields` entries `{field:"days.date"|"days.items.title",dayId,itemId:null|string,sourceReceiptId,valueDigest}`. Day/item original exact IDs preserved; deterministic date/id and item/id order. payloadDigest is SHA256 UTF-8 existing recursively ASCII-key-sorted canonical payload JSON. partialCoverage signals omitted current days/items. TS must issue/sign this subset and compare this same subset during final requalification; it must not apply provenance IDs to the unfiltered whole Trip.
+
+Revoke receipt `{kind:"offline_text_revoked/1",tripId,sessionEpoch,generation,operationId,reused}` increments the private Trip generation once, invalidating all old candidates and bound receipts. Replay never refreshes permission. New controlled edited submissions can capture a later generation; plain SaveOffline of old text cannot.
+
+## Locks / errors
+
+Common prefix: auth.users KEY SHARE NOWAIT -> mobile account via guard/native_session -> Trip UPDATE (writers) or SHARE (reader). Proposal creation uses existing Trip-first create RPC; confirmation trigger runs under original confirmation's already-held account/proposal/Trip locks and acquires only its private receipt/generation rows, never reverses into a new actor/Trip lock. No auth row upgrade, caller GUC or bypass flag. New candidate command/revoke/reader lock the private Trip state only after Trip. Existing confirm writer remains intact; trigger is the only append adaptation.
+
+Errors: INVALID_INPUT, UNAUTHENTICATED/SESSION_REPLACED, FORBIDDEN, STALE_TRIP_VERSION, OFFLINE_DATE_EXISTS, PROPOSAL_NOT_CONFIRMABLE, IDEMPOTENCY_KEY_REUSE. Reader also returns unavailable for archive/deletion/epoch/source/confirmation mismatch, without content. Snapshot/provenance mismatch in the confirm trigger fails atomically. Permissions deny until a separate exact authenticated grant is authorised. Source metadata export/delete must use the existing lifecycle; receipt export must not grant cache rights.
