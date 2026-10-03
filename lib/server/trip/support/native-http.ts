@@ -156,10 +156,12 @@ export async function nativeTripSupportHTTP(request: NextRequest, action: Native
       if (!credentials) return failure("UNAUTHENTICATED",401);
       const active=async()=>{
         const s=await credentials.client.rpc("native_session_v2",{p_action:"session"}).abortSignal(scope.signal);scope.check();
-        if (s.error) {if (/\b(UNAUTHENTICATED|SESSION_REPLACED)\b/.test(s.error.message)) return "UNAUTHENTICATED";return "PROVIDER_UNAVAILABLE";}
-        return s.data?.subject===credentials.subject && s.data?.sessionId===credentials.sessionId ? null:"UNAUTHENTICATED";
+        if (s.error) {if (/\b(UNAUTHENTICATED|SESSION_REPLACED)\b/.test(s.error.message)) return {error:"UNAUTHENTICATED",epoch:null};return {error:"PROVIDER_UNAVAILABLE",epoch:null};}
+        if (s.data?.subject!==credentials.subject || s.data?.sessionId!==credentials.sessionId) return {error:"UNAUTHENTICATED",epoch:null};
+        if (!integer(s.data?.mobileEpoch)) return {error:"PROVIDER_UNAVAILABLE",epoch:null};
+        return {error:null,epoch:s.data.mobileEpoch as number};
       };
-      const initial=await active();if (initial) return failure(initial,initial==="UNAUTHENTICATED"?401:503);
+      const initial=await active();if (initial.error) return failure(initial.error,initial.error==="UNAUTHENTICATED"?401:503);
       const rpc=async(name: string,p: Record<string,unknown>)=>credentials.client.rpc(name,p).abortSignal(scope.signal);
       if (action === "confirm" || action === "confirmation_receipt") {
         // Existing ordinary owner SELECT preserves path binding for exact already-applied replay too.
@@ -176,7 +178,8 @@ export async function nativeTripSupportHTTP(request: NextRequest, action: Native
       const names={context:"read_trip_item_support_context_v1",candidates:"read_trip_item_support_candidates_v1",confirmation_receipt:"read_supported_trip_confirmation_receipt_v1",prepare:"prepare_trip_item_support_v1",revoke:"revoke_trip_item_support_preparation_v1",read:"read_trip_item_support_v1",renew:"renew_trip_item_support_v1",confirm:"confirm_and_apply_supported_trip_proposal_v1"};
       const p=action==="context"?{p_trip:tripId,p_expected_trip_version:input.expectedTripVersion,p_proposal:input.proposalId,p_expected_proposal_revision:input.expectedProposalRevision,p_day:input.dayId,p_item:input.itemId}:action==="candidates"?{p_trip:tripId,p_expected_trip_version:input.expectedTripVersion,p_place_reference:input.placeReferenceId,p_city:input.city,p_scene:input.scene,p_locale:input.locale,p_cursor:input.cursor,p_limit:input.limit}:action==="confirmation_receipt"?{p_idempotency_key:input.idempotencyKey,p_proposal_id:input.proposalId,p_proposal_digest:input.digest,p_support_selection:input.supportSelection}:action==="prepare"?{p_input:{...input,tripId}}:action==="renew"?{p_input:input}:action==="revoke"?{p_receipt:input.receiptId,p_expected_version:input.expectedVersion}:action==="read"?{p_trip:tripId,p_expected_trip_version:input.expectedTripVersion,p_day:input.dayId,p_item:input.itemId}:{p_proposal_id:input.proposalId,p_idempotency_key:input.idempotencyKey,p_digest:input.digest,p_support_selection:input.supportSelection};
       const result=await rpc(names[action],p);scope.check();
-      const final=await active();if (final) return failure(final,final==="UNAUTHENTICATED"?401:503);
+      const final=await active();if (final.error) return failure(final.error,final.error==="UNAUTHENTICATED"?401:503);
+      if (final.epoch!==initial.epoch) return failure("UNAUTHENTICATED",401);
       if (result.error) {
         if (/\b(UNAUTHENTICATED|SESSION_REPLACED)\b/.test(result.error.message)) return failure("UNAUTHENTICATED",401);
         if (/\bFORBIDDEN\b/.test(result.error.message)) return failure("FORBIDDEN",403);

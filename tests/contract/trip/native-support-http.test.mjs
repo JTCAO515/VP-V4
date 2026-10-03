@@ -10,11 +10,11 @@ const database='https://dzqdzetcctkhbrhlxxgn.supabase.co',host='vp-v4-supportfix
 async function fixture(t){
  const f=await nativeFixture(t,database),env={VERCEL_ENV:'preview',VERCEL_URL:host,VISEPANDA_NATIVE_STAGING:'true',VISEPANDA_TRIP_PROTOCOL_V2:'true',NEXT_PUBLIC_SUPABASE_URL:database,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:f.config.publishableKey};
  const old=Object.fromEntries(Object.keys(env).map(k=>[k,process.env[k]]));t.after(()=>{for(const[k,v]of Object.entries(old))v===undefined?delete process.env[k]:process.env[k]=v;});Object.assign(process.env,env);
- const prior=globalThis.fetch,seen=[];let replaced=false,denied=false,wrongTrip=false,badClaim=false;
+ const prior=globalThis.fetch,seen=[];let replaced=false,denied=false,wrongTrip=false,badClaim=false,epochChange=false,missingEpoch=false,epochCalls=0;
  const entry={supportId:support,receiptId:receipt,placeReferenceId:receipt,version:1,scope:'address_reference',applicability:'unverified',status:'recheck_required',claimRevision:1,payloadHash:hash,sourceDigest:hash,sourceRefs:[{sourceRevisionId:receipt,revisionLabel:'one',snippetHash:hash}],claim:null};
  t.mock.method(globalThis,'fetch',async(input,init)=>{
   const r=new Request(input,init),path=new URL(r.url).pathname;
-  if(path.endsWith('/native_session_v2'))return Response.json({subject,sessionId:replaced?trip:sessionId,mobileEpoch:1});
+  if(path.endsWith('/native_session_v2')){epochCalls++;return Response.json({subject,sessionId:replaced?trip:sessionId,...(missingEpoch?{}:{mobileEpoch:epochChange&&epochCalls>1?2:1})});}
   if(path==='/rest/v1/trip_proposals')return Response.json([{trip_id:wrongTrip?receipt:trip,revision:1,base_trip_version:2}]);
   if(path.startsWith('/rest/v1/rpc/')&&path.includes('support')){
    const params=await r.json();seen.push({path,params,authorization:r.headers.get('authorization')});
@@ -30,7 +30,7 @@ async function fixture(t){
   }
   return prior(input,init);
  });
- return {seen,request:(body,query='')=>new NextRequest(`https://${host}/api/trips/native/v2/${trip}/support${query}`,{method:body===undefined?'GET':'POST',headers:{authorization:'Bearer '+f.token},...(body===undefined?{}:{body:JSON.stringify(body)})}),set replaced(v){replaced=v;},set denied(v){denied=v;},set wrongTrip(v){wrongTrip=v;},set badClaim(v){badClaim=v;}};
+ return {seen,request:(body,query='')=>new NextRequest(`https://${host}/api/trips/native/v2/${trip}/support${query}`,{method:body===undefined?'GET':'POST',headers:{authorization:'Bearer '+f.token},...(body===undefined?{}:{body:JSON.stringify(body)})}),set replaced(v){replaced=v;},set denied(v){denied=v;},set wrongTrip(v){wrongTrip=v;},set badClaim(v){badClaim=v;},set epochChange(v){epochChange=v;},set missingEpoch(v){missingEpoch=v;}};
 }
 test('closed request rejects caller ownership/claim, missing explicit selection, duplicates and excess receipts',()=>{
  assert.ok(nativeSupportInput('prepare',prepare));assert.equal(nativeSupportInput('prepare',{...prepare,ownerId:subject}),null);assert.equal(nativeSupportInput('prepare',{...prepare,claim:{eligible:true}}),null);
@@ -83,4 +83,12 @@ test('owner context uses current exact proposal/item and actual canonical refere
  assert.equal((await r.json()).canonicalPlaceReferences[0].referenceId,receipt);
  assert.deepEqual(f.seen[0].params,{p_trip:trip,p_expected_trip_version:3,p_proposal:proposal,p_expected_proposal_revision:1,p_day:'Day_UPPER-1',p_item:'Item_1'});
  assert.equal((await nativeTripSupportHTTP(f.request(undefined,query+'&itemDigest='+hash),'context',trip)).status,400);
+});
+
+test('same-subject/session epoch drift never delivers a support result; absent epoch blocks before RPC',async t=>{
+ const f=await fixture(t);f.epochChange=true;
+ const changed=await nativeTripSupportHTTP(f.request(prepare),'prepare',trip);
+ assert.equal(changed.status,401);assert.deepEqual(await changed.json(),{error:{code:'UNAUTHENTICATED'}});assert.equal(f.seen.length,1);
+ f.missingEpoch=true;f.seen.length=0;
+ const absent=await nativeTripSupportHTTP(f.request(prepare),'prepare',trip);assert.equal(absent.status,503);assert.equal(f.seen.length,0);
 });
