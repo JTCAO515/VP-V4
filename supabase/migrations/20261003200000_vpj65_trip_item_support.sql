@@ -19,7 +19,7 @@ create table trip_support_private.preparations(
  proposal_revision integer not null,base_version integer not null,proposal_digest text not null,day_id text not null,item_id text not null,item_digest text not null,
  scope text not null check(scope in('address_reference','opening_window_reference')),applicability text not null check(applicability in('unverified','matched')),
  city text not null,scene text not null,locale text not null,statement_id uuid not null,claim_revision integer not null,payload_hash text not null,
- source_digest text not null,source_refs jsonb not null,typed_claim jsonb not null,request_digest text not null,
+ source_digest text not null,source_refs jsonb not null,request_digest text not null,
  version bigint not null default 1,status text not null default 'prepared' check(status in('prepared','revoked','consumed')),expires_at timestamptz not null,created_at timestamptz not null default clock_timestamp(),
  unique(owner_id,operation_id),check(day_id ~ '^[A-Za-z0-9_-]{1,64}$' and item_id ~ '^[A-Za-z0-9_-]{1,64}$')
 );
@@ -38,12 +38,16 @@ create table trip_support_private.item_supports(
  version bigint not null default 1,claim_revision integer not null,payload_hash text not null,source_digest text not null,source_refs jsonb not null,
  created_at timestamptz not null default clock_timestamp(),check(day_id ~ '^[A-Za-z0-9_-]{1,64}$' and item_id ~ '^[A-Za-z0-9_-]{1,64}$')
 );
+create table trip_support_private.confirmation_receipts(
+ owner_id uuid not null references auth.users(id) on delete cascade,trip_id uuid not null references public.trips(id) on delete cascade,proposal_id uuid not null references public.trip_proposals(id) on delete cascade,
+ idempotency_key text not null,proposal_digest text not null,selection_digest text not null,receipt jsonb not null,primary key(owner_id,idempotency_key)
+);
 create table trip_support_private.support_receipts(
  id uuid primary key default gen_random_uuid(),support_id uuid not null references trip_support_private.item_supports(id) on delete cascade,
  version bigint not null,action text not null check(action in('bound','recheck','renewed','revoked')),source_digest text not null,
  created_at timestamptz not null default clock_timestamp(),unique(support_id,version)
 );
-do $$declare t text;begin foreach t in array array['entity_mappings','preparations','confirm_proofs','item_supports','support_receipts'] loop execute format('alter table trip_support_private.%I enable row level security',t);execute format('revoke all on trip_support_private.%I from public,anon,authenticated,service_role',t);end loop;end $$;
+do $$declare t text;begin foreach t in array array['entity_mappings','preparations','confirm_proofs','item_supports','support_receipts','confirmation_receipts'] loop execute format('alter table trip_support_private.%I enable row level security',t);execute format('revoke all on trip_support_private.%I from public,anon,authenticated,service_role',t);end loop;end $$;
 
 create function trip_support_private.hash(p_value jsonb) returns text language sql immutable set search_path='' as $$select encode(sha256(convert_to(p_value::text,'UTF8')),'hex')$$;
 create function trip_support_private.owner() returns uuid language plpgsql security definer set search_path='' as $$
@@ -112,6 +116,7 @@ begin
  if p_scope='address_reference' and payload->'assertion'->>'predicate'='located_at' and payload->'assertion'->>'objectId'='place_address' then kind:='address';
  elsif p_scope='opening_window_reference' and payload->'assertion'->>'predicate'='opens_during' and payload->'assertion'->>'objectId'='opening_hours' then kind:='time_window';else return null;end if;
  value:=payload->'value';if jsonb_typeof(value) is distinct from 'object' then return null;end if;
+ if trip_support_private.valid_typed_value(kind,value) is distinct from true then return null;end if;
  return jsonb_build_object('claimType',kind,'subjectId',payload->'assertion'->>'subjectId','value',value,'asOf',p_basis->'receipt'->'reviewedAt','evidence',jsonb_build_array(p_basis->'receipt'));
 end $$;
 revoke all on function public.submit_trip_support_entity_mapping_v1(jsonb),public.review_trip_support_entity_mapping_v1(uuid,bigint,text,text),trip_support_private.mapping_basis(uuid,boolean),trip_support_private.item(jsonb,text,text),trip_support_private.typed_claim(jsonb,text) from public,anon,authenticated,service_role;
@@ -134,8 +139,8 @@ begin
  request_hash:=trip_support_private.hash(p_input);select * into s from trip_support_private.preparations where owner_id=u and operation_id=(p_input->>'operationId')::uuid for update nowait;
  if found then if s.request_digest<>request_hash or s.status<>'prepared' then return jsonb_build_object('kind','conflict');end if;
  else
- insert into trip_support_private.preparations(operation_id,owner_id,trip_id,proposal_id,place_reference_id,mapping_id,mapping_version,proposal_revision,base_version,proposal_digest,day_id,item_id,item_digest,scope,applicability,city,scene,locale,statement_id,claim_revision,payload_hash,source_digest,source_refs,typed_claim,request_digest,expires_at)
- values((p_input->>'operationId')::uuid,u,t.id,p.id,r.id,m.id,m.version,p.revision,p.base_trip_version,fingerprint,p_input->>'dayId',p_input->>'itemId',p_input->>'expectedItemDigest',p_input->>'scope',trip_support_private.applicability(item,p_input->>'scope',claim),p_input->>'city',p_input->>'scene',p_input->>'locale',m.statement_id,m.claim_revision,m.payload_hash,m.source_digest,m.source_refs,claim,request_hash,least(p.expires_at,(basis->'receipt'->>'expiresAt')::timestamptz)) returning * into s;
+ insert into trip_support_private.preparations(operation_id,owner_id,trip_id,proposal_id,place_reference_id,mapping_id,mapping_version,proposal_revision,base_version,proposal_digest,day_id,item_id,item_digest,scope,applicability,city,scene,locale,statement_id,claim_revision,payload_hash,source_digest,source_refs,request_digest,expires_at)
+ values((p_input->>'operationId')::uuid,u,t.id,p.id,r.id,m.id,m.version,p.revision,p.base_trip_version,fingerprint,p_input->>'dayId',p_input->>'itemId',p_input->>'expectedItemDigest',p_input->>'scope',trip_support_private.applicability(item,p_input->>'scope',claim),p_input->>'city',p_input->>'scene',p_input->>'locale',m.statement_id,m.claim_revision,m.payload_hash,m.source_digest,m.source_refs,request_hash,least(p.expires_at,(basis->'receipt'->>'expiresAt')::timestamptz)) returning * into s;
  end if;
  return jsonb_build_object('kind','prepared','receiptId',s.id,'version',s.version,'tripId',s.trip_id,'proposalId',s.proposal_id,'proposalRevision',s.proposal_revision,'baseVersion',s.base_version,'dayId',s.day_id,'itemId',s.item_id,'scope',s.scope,'applicability',s.applicability,'claim',claim,'sourceDigest',s.source_digest,'expiresAt',s.expires_at);
 exception when lock_not_available then return jsonb_build_object('kind','blocked');end $$;
@@ -165,10 +170,14 @@ begin
 end $$;
 create constraint trigger trip_support_confirmed_event after insert on public.trip_events deferrable initially deferred for each row execute function trip_support_private.bind_confirmed_event();
 create function public.confirm_and_apply_supported_trip_proposal_v1(p_proposal_id uuid,p_idempotency_key text,p_digest text,p_support_selection jsonb) returns jsonb language plpgsql security definer set search_path='' as $$
-declare u uuid:=trip_support_private.owner();p public.trip_proposals%rowtype;t public.trips%rowtype;s trip_support_private.preparations%rowtype;chosen jsonb;result record;supports jsonb;
+declare u uuid:=trip_support_private.owner();p public.trip_proposals%rowtype;t public.trips%rowtype;s trip_support_private.preparations%rowtype;chosen jsonb;result record;supports jsonb;prior trip_support_private.confirmation_receipts%rowtype;answer jsonb;
 begin
  if jsonb_typeof(p_support_selection) is distinct from 'array' or jsonb_array_length(p_support_selection) not between 1 and 8 or (select count(distinct x->>'receiptId') from jsonb_array_elements(p_support_selection) x)<>jsonb_array_length(p_support_selection) then return jsonb_build_object('kind','blocked');end if;
- select * into p from public.trip_proposals where id=p_proposal_id and owner_id=u;if not found then return jsonb_build_object('kind','blocked');end if;
+ perform pg_advisory_xact_lock(hashtextextended(u::text||':'||p_idempotency_key,0));
+ select * into prior from trip_support_private.confirmation_receipts where owner_id=u and idempotency_key=p_idempotency_key;
+ if found then if prior.proposal_id is distinct from p_proposal_id or prior.proposal_digest is distinct from p_digest or prior.selection_digest is distinct from trip_support_private.hash(p_support_selection) then return jsonb_build_object('kind','conflict');end if;return prior.receipt;end if;
+ if exists(select 1 from public.trip_idempotency where owner_id=u and idempotency_key=p_idempotency_key) then return jsonb_build_object('kind','conflict');end if;
+ select * into p from public.trip_proposals where id=p_proposal_id and owner_id=u and status='pending';if not found then return jsonb_build_object('kind','blocked');end if;
  select * into t from public.trips where id=p.trip_id and owner_id=u for update nowait;select * into p from public.trip_proposals where id=p_proposal_id and owner_id=u for update nowait;
  for chosen in select value from jsonb_array_elements(p_support_selection) order by value->>'receiptId' loop
   if not knowledge_review_private.closed_object(chosen,array['receiptId','version','sourceDigest']) then return jsonb_build_object('kind','blocked');end if;
@@ -177,9 +186,10 @@ begin
  end loop;
  insert into trip_support_private.confirm_proofs(transaction_id,owner_id,trip_id,proposal_id,proposal_revision,base_version,proposal_digest,selection) values(pg_current_xact_id(),u,t.id,p.id,p.revision,p.base_trip_version,p_digest,p_support_selection);
  select * into result from public.confirm_and_apply_trip_proposal(p_proposal_id,p_idempotency_key,p_digest);
- set constraints trip_support_confirmed_event immediate;
+ set constraints public.trip_support_confirmed_event immediate;
  select coalesce(jsonb_agg(jsonb_build_object('supportId',id,'receiptId',receipt_id,'version',version,'status',status) order by id),'[]'::jsonb) into supports from trip_support_private.item_supports where proposal_id=p.id and owner_id=u;
- return jsonb_build_object('kind','confirmed','outcome',result.outcome,'tripId',t.id,'proposalId',p.id,'resultingVersion',result.resulting_version,'supports',supports);
+ answer:=jsonb_build_object('kind','confirmed','outcome',result.outcome,'tripId',t.id,'proposalId',p.id,'resultingVersion',result.resulting_version,'supports',supports);
+ insert into trip_support_private.confirmation_receipts values(u,t.id,p.id,p_idempotency_key,p_digest,trip_support_private.hash(p_support_selection),answer);return answer;
 exception when lock_not_available then return jsonb_build_object('kind','blocked');end $$;
 revoke all on function public.prepare_trip_item_support_v1(jsonb),public.revoke_trip_item_support_preparation_v1(uuid,bigint),trip_support_private.bind_confirmed_event(),public.confirm_and_apply_supported_trip_proposal_v1(uuid,text,text,jsonb) from public,anon,authenticated,service_role;
 
@@ -209,7 +219,7 @@ begin
  return jsonb_build_object('kind','rechecked','supportId',s.id,'version',s.version,'receiptId',receipt);
 exception when lock_not_available then return jsonb_build_object('kind','blocked');end $$;
 create function public.renew_trip_item_support_v1(p_input jsonb) returns jsonb language plpgsql security definer set search_path='' as $$
-declare u uuid:=trip_support_private.owner();s trip_support_private.item_supports%rowtype;r trip_support_private.preparations%rowtype;t public.trips%rowtype;m trip_support_private.entity_mappings%rowtype;basis jsonb;content jsonb;item jsonb;receipt uuid;new_receipt uuid;
+declare u uuid:=trip_support_private.owner();s trip_support_private.item_supports%rowtype;r trip_support_private.preparations%rowtype;t public.trips%rowtype;m trip_support_private.entity_mappings%rowtype;basis jsonb;content jsonb;item jsonb;receipt uuid;new_receipt uuid;new_applicability text;
 begin
  if not knowledge_review_private.closed_object(p_input,array['operationId','supportId','expectedVersion','tripVersion','dayId','itemId','mappingId','expectedMappingVersion','expectedMappingDigest','expectedClaimRevision','expectedPayloadHash','expectedSourceDigest']) then return jsonb_build_object('kind','blocked');end if;
  select trip_id into t.id from trip_support_private.item_supports where id=(p_input->>'supportId')::uuid and owner_id=u;
@@ -221,10 +231,11 @@ begin
  if not found or m.version is distinct from (p_input->>'expectedMappingVersion')::bigint or m.request_digest is distinct from p_input->>'expectedMappingDigest' or m.claim_revision is distinct from (p_input->>'expectedClaimRevision')::integer or m.payload_hash is distinct from p_input->>'expectedPayloadHash' or m.source_digest is distinct from p_input->>'expectedSourceDigest' or m.canonical_poi_id is distinct from (select canonical_poi_id from public.trip_place_references where id=r.place_reference_id and owner_id=u and trip_id=t.id) then return jsonb_build_object('kind','stale');end if;
  basis:=trip_support_private.mapping_basis(m.id);if basis is null or trip_support_private.typed_claim(basis,s.scope) is null then return jsonb_build_object('kind','stale');end if;
  select snap.content into content from public.trip_version_snapshots snap where snap.trip_id=t.id and snap.version=t.head_version;item:=trip_support_private.item(content,s.day_id,s.item_id);if item is null or trip_support_private.hash(item)<>s.item_digest then return jsonb_build_object('kind','stale');end if;
+ new_applicability:=trip_support_private.applicability(item,s.scope,trip_support_private.typed_claim(basis,s.scope));
  -- A reviewed current replacement receipt renews support only, never Trip content.
- update trip_support_private.item_supports set version=version+1,status='reference_current',claim_revision=m.claim_revision,payload_hash=m.payload_hash,source_digest=m.source_digest,source_refs=m.source_refs where id=s.id returning * into s;
- insert into trip_support_private.preparations(operation_id,owner_id,trip_id,proposal_id,place_reference_id,mapping_id,mapping_version,proposal_revision,base_version,proposal_digest,day_id,item_id,item_digest,scope,applicability,city,scene,locale,statement_id,claim_revision,payload_hash,source_digest,source_refs,typed_claim,request_digest,status,expires_at)
- values((p_input->>'operationId')::uuid,u,r.trip_id,r.proposal_id,r.place_reference_id,m.id,m.version,r.proposal_revision,r.base_version,r.proposal_digest,r.day_id,r.item_id,r.item_digest,r.scope,r.applicability,r.city,r.scene,r.locale,m.statement_id,m.claim_revision,m.payload_hash,m.source_digest,m.source_refs,trip_support_private.typed_claim(basis,s.scope),trip_support_private.hash(p_input),'consumed',(basis->'receipt'->>'expiresAt')::timestamptz) returning id into new_receipt;
+ update trip_support_private.item_supports set version=version+1,status='reference_current',applicability=new_applicability,claim_revision=m.claim_revision,payload_hash=m.payload_hash,source_digest=m.source_digest,source_refs=m.source_refs where id=s.id returning * into s;
+ insert into trip_support_private.preparations(operation_id,owner_id,trip_id,proposal_id,place_reference_id,mapping_id,mapping_version,proposal_revision,base_version,proposal_digest,day_id,item_id,item_digest,scope,applicability,city,scene,locale,statement_id,claim_revision,payload_hash,source_digest,source_refs,request_digest,status,expires_at)
+ values((p_input->>'operationId')::uuid,u,r.trip_id,r.proposal_id,r.place_reference_id,m.id,m.version,r.proposal_revision,r.base_version,r.proposal_digest,r.day_id,r.item_id,r.item_digest,r.scope,new_applicability,r.city,r.scene,r.locale,m.statement_id,m.claim_revision,m.payload_hash,m.source_digest,m.source_refs,trip_support_private.hash(p_input),'consumed',(basis->'receipt'->>'expiresAt')::timestamptz) returning id into new_receipt;
  update trip_support_private.item_supports set receipt_id=new_receipt where id=s.id;
  insert into trip_support_private.support_receipts(support_id,version,action,source_digest) values(s.id,s.version,'renewed',s.source_digest) returning id into receipt;
  return jsonb_build_object('kind','renewed','supportId',s.id,'version',s.version,'receiptId',receipt);
@@ -236,6 +247,7 @@ create function trip_support_private.applicability(p_item jsonb,p_scope text,p_c
 declare value jsonb:=p_claim->'value';first_at timestamptz;last_at timestamptz;zone text;
 begin
  -- Entity linkage is already independently reviewed and explicitly selected.
+ if trip_support_private.valid_typed_value(p_claim->>'claimType',value) is distinct from true then return 'unverified';end if;
  if p_scope='address_reference' then return 'matched';end if;
  if p_scope<>'opening_window_reference' or p_item->'day'->>'date' is null or p_item->'day'->>'timeZone' is null or p_item->'item'->>'startsAt' is null or p_item->'item'->>'endsAt' is null then return 'unverified';end if;
  zone:=value->>'timeZone';if zone is distinct from p_item->'day'->>'timeZone' or zone<>'Asia/Shanghai' then return 'unverified';end if;
@@ -243,3 +255,35 @@ begin
  if last_at<=first_at or first_at<(value->>'startsAt')::timestamptz or last_at>(value->>'endsAt')::timestamptz or (first_at at time zone zone)::date::text is distinct from p_item->'day'->>'date' then return 'unverified';end if;return 'matched';
 exception when invalid_datetime_format or datetime_field_overflow then return 'unverified';end $$;
 revoke all on function trip_support_private.applicability(jsonb,text,jsonb) from public,anon,authenticated,service_role;
+
+
+create function trip_support_private.valid_typed_value(p_kind text,p_value jsonb) returns boolean language plpgsql immutable set search_path='' as $$
+declare first_at timestamptz;last_at timestamptz;
+begin
+ if jsonb_typeof(p_value) is distinct from 'object' then return false;end if;
+ if p_kind='address' then
+  if p_value-array['lines','countryCode','locality']<>'{}'::jsonb or jsonb_typeof(p_value->'lines') is distinct from 'array' or jsonb_array_length(p_value->'lines') not between 1 and 3 or p_value->>'countryCode' is distinct from 'CN' then return false;end if;
+  if exists(select 1 from jsonb_array_elements(p_value->'lines') line where jsonb_typeof(line) is distinct from 'string' or char_length(line#>>'{}') not between 1 and 160 or btrim(line#>>'{}') is distinct from line#>>'{}') then return false;end if;
+  if p_value ? 'locality' and (jsonb_typeof(p_value->'locality') is distinct from 'string' or char_length(p_value->>'locality') not between 1 and 120) then return false;end if;return true;
+ end if;
+ if p_kind<>'time_window' or not knowledge_review_private.closed_object(p_value,array['startsAt','endsAt','timeZone']) or jsonb_typeof(p_value->'startsAt') is distinct from 'string' or jsonb_typeof(p_value->'endsAt') is distinct from 'string' or p_value->>'timeZone' is distinct from 'Asia/Shanghai' then return false;end if;
+ if p_value->>'startsAt' !~ '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$' or p_value->>'endsAt' !~ '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$' then return false;end if;
+ first_at:=(p_value->>'startsAt')::timestamptz;last_at:=(p_value->>'endsAt')::timestamptz;
+ return last_at>first_at and last_at-first_at<=interval '1 day';
+exception when invalid_datetime_format or datetime_field_overflow then return false;end $$;
+revoke all on function trip_support_private.valid_typed_value(text,jsonb) from public,anon,authenticated,service_role;
+
+
+-- Minimal owner metadata only; no copied typed body, source text or staff audit.
+-- Not yet a D2 delivery-module enrollment; handler dependency remains explicit.
+create function public.trip_item_support_owner_metadata_v1(p_trip uuid,p_after uuid default null,p_limit integer default 50) returns jsonb language plpgsql security definer set search_path='' as $$
+declare u uuid:=trip_support_private.owner();rows jsonb;next_id uuid;has_more boolean;
+begin
+ if p_limit is null or p_limit not between 1 and 100 or not exists(select 1 from public.trips where id=p_trip and owner_id=u) then return jsonb_build_object('kind','blocked');end if;
+ if p_after is not null and not exists(select 1 from trip_support_private.preparations where id=p_after and trip_id=p_trip and owner_id=u) then return jsonb_build_object('kind','blocked');end if;
+ select coalesce(jsonb_agg(jsonb_build_object('receiptId',id,'version',version,'proposalId',proposal_id,'dayId',day_id,'itemId',item_id,'scope',scope,'applicability',applicability,'status',status,'claimRevision',claim_revision,'payloadHash',payload_hash,'sourceDigest',source_digest,'createdAt',created_at) order by id),'[]'::jsonb) into rows from(select * from trip_support_private.preparations where owner_id=u and trip_id=p_trip and (p_after is null or id>p_after) order by id limit p_limit) r;
+ select (x->>'receiptId')::uuid into next_id from jsonb_array_elements(rows) x order by x->>'receiptId' desc limit 1;
+ has_more:=next_id is not null and exists(select 1 from trip_support_private.preparations where owner_id=u and trip_id=p_trip and id>next_id);
+ return jsonb_build_object('kind','metadata','tripId',p_trip,'rows',rows,'nextCursor',case when has_more then next_id else null end);
+end $$;
+revoke all on function public.trip_item_support_owner_metadata_v1(uuid,uuid,integer) from public,anon,authenticated,service_role;

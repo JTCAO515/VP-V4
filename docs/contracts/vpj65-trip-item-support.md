@@ -48,3 +48,5 @@ New preparation/support/proof/receipt rows use actual owner/trip/proposal/event 
 ## Index/cache applicability
 
 Actual online source consumers requery SQL current qualification; wiki lexical scorer consumes caller-provided eligible corpus and has no persistent index/cache backend. No fake eviction ACK, useless new cache or new search engine. Only a real retained consumer/read path can justify a future invalidation adapter.
+
+Privacy inventory checkpoint: preparations retain only exact IDs/hash/link/scope/application/status metadata; no redundant typed_claim/source text copy. Current reads mint allowed typed values from current qualification, otherwise minimal recheck marker. New default-revoked owner metadata keyset helper is not automatically enrolled into D2 export delivery; that actual module/handler dependency remains partial, not falsely complete account export. Actual owner/Trip/event/proposal-before-Trip delete cascades require local PG evidence, not schema declarations alone.
