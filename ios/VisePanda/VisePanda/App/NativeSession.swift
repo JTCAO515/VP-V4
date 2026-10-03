@@ -359,6 +359,12 @@ final class NativeSession {
         return bytes
     }
 
+    func libraryPlaceRequest(provider:NativePlaceProvider,providerID:String,tripID:String)async throws->Data {
+        guard !providerID.isEmpty,providerID.utf16.count<=128,NativeMemoryWire.uuid(tripID) else{throw NativeDataError.invalidResponse}
+        let path="api/library/native/v1/place"
+        return try await dataRequest(prefix:path,path:path,method:"GET",queryItems:[.init(name:"provider",value:provider.rawValue),.init(name:"providerPoiId",value:providerID),.init(name:"tripId",value:tripID)])
+    }
+
     func librarySourcesRequest(source:NativeLibrarySource,query:String,cursor:String?)async throws->Data {
         guard query.utf16.count<=120,cursor==nil || NativeLibraryCursor.valid(cursor!,source:source,query:query.isEmpty ? nil:query) else{throw NativeDataError.invalidResponse}
         let path="api/library/native/v1/items"

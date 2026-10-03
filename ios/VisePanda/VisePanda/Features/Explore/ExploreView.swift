@@ -398,6 +398,8 @@ private struct NativeExploreAskAction:View {
     @State private var scope:NativeDataScope?
     @State private var generation=UUID()
     @State private var deadline:TimeInterval=0
+    @State private var checking=false
+    @State private var notice=false
     private func t(_ zh:String,_ en:String)->String{chinese ? zh:en}
     private var readable:Bool{active && phase == .active && scope==session.dataScope && scope != nil && ProcessInfo.processInfo.systemUptime<deadline}
     var body:some View {
@@ -411,18 +413,30 @@ private struct NativeExploreAskAction:View {
             if candidate.matchedCanonicalPoiId != nil {
                 if readable {Picker(t("讨论所关联的行程","Trip for this discussion"),selection:$selectedTrip){Text(t("明确选择行程","Choose a Trip explicitly")).tag(String?.none);ForEach(trips){trip in Text(trip.title).tag(Optional(trip.id))}}}
                 Button(t("在同一个 VP 讨论此地点","Discuss this place in the same VP")){
-                    guard readable,let scope,let poi=candidate.matchedCanonicalPoiId,let trip=trips.first(where:{$0.id==selectedTrip}) else{return}
-                    session.prepareExploreAsk(.init(scope:scope,tripID:trip.id,tripVersion:trip.headVersion,poiID:poi,provider:candidate.provider,providerPoiID:candidate.providerPoiId,name:candidate.rawName))
-                }.disabled(!readable || selectedTrip==nil)
+                    guard readable,!checking,let scope,let trip=trips.first(where:{$0.id==selectedTrip}) else{return}
+                    let own=generation,started=ProcessInfo.processInfo.systemUptime
+                    checking=true;notice=false
+                    Task {
+                        defer{if generation==own{checking=false}}
+                        do {
+                            let bytes=try await session.libraryPlaceRequest(provider:candidate.provider,providerID:candidate.providerPoiId,tripID:trip.id)
+                            guard generation==own,selectedTrip==trip.id,scope==session.dataScope,active,phase == .active,!Task.isCancelled,ProcessInfo.processInfo.systemUptime-started<30 else{return}
+                            let value=try NativeLibraryPlace.decode(bytes,provider:candidate.provider,providerID:candidate.providerPoiId,tripID:trip.id)
+                            guard value.available,let poi=value.canonicalPoiID,value.askTripID==trip.id,let name=value.name else{notice=true;return}
+                            session.prepareExploreAsk(.init(scope:scope,tripID:trip.id,tripVersion:trip.headVersion,poiID:poi,provider:candidate.provider,providerPoiID:candidate.providerPoiId,name:name))
+                        }catch{if generation==own,scope==session.dataScope{notice=true}}
+                    }
+                }.disabled(!readable || selectedTrip==nil || checking)
                     .accessibilityIdentifier("explore.place.ask")
+                if notice {Text(t("当前实体或行程资格未确认，请重新选择；也可手动提问。","Current entity or Trip authority was not confirmed. Reselect or ask manually.")).font(.caption)}
                 Button(t("重新读取行程","Reread Trips")){Task{await load()}}
             }else {Text(t("此供应商结果未映射为 canonical 地点。请保留具体地址，重新选择已映射结果。","This provider result has no canonical mapping. Keep its specific address and reselect a mapped result.")).font(.caption)}
         }
-        .task(id:Key(scope:session.dataScope,active:active && phase == .active)){await load()}
-        .onDisappear{generation=UUID();trips=[];scope=nil;selectedTrip=nil;deadline=0}
+        .task(id:Key(scope:session.dataScope,active:active && phase == .active,selectionID:candidate.id)){await load()}
+        .onDisappear{generation=UUID();trips=[];scope=nil;selectedTrip=nil;deadline=0;checking=false;notice=false}
     }
     private func load()async {
-        generation=UUID();trips=[];selectedTrip=nil;scope=nil;deadline=0
+        generation=UUID();trips=[];selectedTrip=nil;scope=nil;deadline=0;checking=false;notice=false
         guard active,phase == .active,let selected=session.dataScope,candidate.valid(),candidate.matchedCanonicalPoiId != nil else{return}
         let own=generation,started=ProcessInfo.processInfo.systemUptime
         do {
@@ -433,7 +447,7 @@ private struct NativeExploreAskAction:View {
             trips=read.trips;scope=selected;deadline=started+30
         }catch{if generation==own{trips=[];scope=nil;deadline=0}}
     }
-    private struct Key:Equatable{let scope:NativeDataScope?;let active:Bool}
+    private struct Key:Equatable{let scope:NativeDataScope?;let active:Bool;let selectionID:String}
 }
 
 private struct NativePlaceSearchView: View {

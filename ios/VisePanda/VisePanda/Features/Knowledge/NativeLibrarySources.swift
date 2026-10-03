@@ -202,3 +202,36 @@ private struct NativeLibraryExactSourceView:View {
     }
     private struct Load:Equatable{let scope:NativeDataScope?;let reference:NativeLibraryMetadata;let refresh:UUID}
 }
+
+struct NativeLibraryPlace {
+    let name:String?
+    let canonicalPoiID:String?
+    let askTripID:String?
+    let available:Bool
+    static func decode(_ bytes:Data,provider:NativePlaceProvider,providerID:String,tripID:String)throws->Self {
+        guard bytes.count<=64_000,let root=try JSONSerialization.jsonObject(with:bytes) as? [String:Any],Set(root.keys)==Set(["version","kind","status","reason","entity","capabilities"]),NativeFiveResultContent.integer(root["version"])==1,root["kind"] as? String=="library_place",
+              let caps=root["capabilities"] as? [String:Any],Set(caps.keys)==Set(["ask","save","add","visual"]) else{throw NativeDataError.invalidResponse}
+        for (key,reason) in [("save","DOMAIN_WRITER_MISSING"),("add","NO_ELIGIBLE_EVIDENCE"),("visual","NO_LICENSED_VISUAL")] {
+            guard let value=caps[key] as? [String:Any],Set(value.keys)==Set(["status","reason"]),value["status"] as? String=="unavailable",value["reason"] as? String==reason else{throw NativeDataError.invalidResponse}
+        }
+        guard let ask=caps["ask"] as? [String:Any] else{throw NativeDataError.invalidResponse}
+        let unavailableAsk=Set(ask.keys)==Set(["status","reason"]) && ask["status"] as? String=="unavailable" && ask["reason"] as? String=="CANONICAL_OR_TRIP_AUTHORITY_MISSING"
+        if root["status"] as? String=="unavailable" {
+            guard root["reason"] as? String=="DOMAIN_UNAVAILABLE",root["entity"] is NSNull,unavailableAsk else{throw NativeDataError.invalidResponse}
+            return .init(name:nil,canonicalPoiID:nil,askTripID:nil,available:false)
+        }
+        guard root["status"] as? String=="available",root["reason"] is NSNull,let entity=root["entity"] as? [String:Any],Set(entity.keys)==Set(["provider","providerPoiId","canonicalPoiId","name","address","location","observedAt"]),entity["provider"] as? String==provider.rawValue,entity["providerPoiId"] as? String==providerID,
+              let name=entity["name"] as? String,!name.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty,name.utf16.count<=500 else{throw NativeDataError.invalidResponse}
+        let canonical=entity["canonicalPoiId"] as? String
+        guard entity["canonicalPoiId"] is NSNull || canonical.map(NativeMemoryWire.uuid)==true,
+              entity["address"] is NSNull || (entity["address"] as? String).map{$0.utf16.count<=2000}==true,
+              entity["observedAt"] is NSNull || (entity["observedAt"] as? String).flatMap(NativeKnowledgeRead.date) != nil else{throw NativeDataError.invalidResponse}
+        if !(entity["location"] is NSNull) {
+            guard let point=entity["location"] as? [String:Any],Set(point.keys)==Set(["lat","lng","coordinateSystem"]),let lat=point["lat"] as? Double,let lng=point["lng"] as? Double,lat.isFinite,lng.isFinite,(-90...90).contains(lat),(-180...180).contains(lng),["gcj02","wgs84","bd09"].contains(point["coordinateSystem"] as? String ?? "") else{throw NativeDataError.invalidResponse}
+        }
+        if unavailableAsk {return .init(name:name,canonicalPoiID:canonical,askTripID:nil,available:true)}
+        guard Set(ask.keys)==Set(["status","reference","handoff"]),ask["status"] as? String=="available",let reference=ask["reference"] as? [String:Any],Set(reference.keys)==Set(["tripId","canonicalPoiId"]),reference["tripId"] as? String==tripID,NativeMemoryWire.uuid(tripID),let canonical,reference["canonicalPoiId"] as? String==canonical,
+              let handoff=ask["handoff"] as? [String:Any],Set(handoff.keys)==Set(["kind","href","poiId","readiness"]),handoff["kind"] as? String=="ask_ready",handoff["poiId"] as? String==canonical,handoff["readiness"] as? String=="recheck_required",handoff["href"] as? String=="/visepanda/ask?tripId="+tripID+"&poiId="+canonical else{throw NativeDataError.invalidResponse}
+        return .init(name:name,canonicalPoiID:canonical,askTripID:tripID,available:true)
+    }
+}
