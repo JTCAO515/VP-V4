@@ -171,6 +171,152 @@ final class NativeSession {
     }
 
     /// The Trip consumer receives response bytes, never the Keychain credential.
+    private var tripSupportConfirmVaultService: String { keychainService + ".trip-support-confirm." + (endpoint?.absoluteString ?? "disabled") }
+    func tripSupportConfirmationRecovery() throws -> NativeTripSupportConfirmJournal? {
+        guard let actor=dataScope else { throw NativeDataError.sessionUnavailable }
+        let (status,bytes)=vault.read(service:tripSupportConfirmVaultService,owner:actor.subject)
+        if status==errSecItemNotFound { return nil }
+        guard status==errSecSuccess,let bytes,bytes.count<=100_000 else { throw NativeDataError.sessionUnavailable }
+        let journal=try JSONDecoder().decode(NativeTripSupportConfirmJournal.self,from:bytes)
+        guard journal.matches(actor) else { throw NativeDataError.staleSessionResponse }
+        _=try journal.request()
+        return journal
+    }
+    func rememberTripSupportConfirmation(_ request:NativeSupportedTripConfirmRequest,tripID:String,actor:NativeDataScope) throws -> NativeTripSupportConfirmJournal {
+        guard request.valid,NativeMemoryWire.uuid(tripID),dataScope==actor else { throw NativeDataError.sessionUnavailable }
+        let journal=NativeTripSupportConfirmJournal(endpoint:actor.endpoint,owner:actor.subject,epoch:actor.mobileEpoch,tripID:tripID,body:try JSONEncoder().encode(request))
+        if let existing=try tripSupportConfirmationRecovery() {
+            guard existing.tripID==tripID,try existing.request()==request else { throw NativeDataError.server(code:"SUPPORT_CONFIRM_RECOVERY_REQUIRED") }
+            return existing // Preserve the first original request bytes, not a reserialization.
+        }
+        let bytes=try JSONEncoder().encode(journal)
+        guard bytes.count<=100_000,vault.write(bytes,service:tripSupportConfirmVaultService,owner:actor.subject)==errSecSuccess else { throw NativeDataError.sessionUnavailable }
+        return journal
+    }
+    func tripSupportConfirm(_ journal:NativeTripSupportConfirmJournal,actor:NativeDataScope) async throws -> Data {
+        guard journal.matches(actor),dataScope==actor,let existing=try tripSupportConfirmationRecovery(),existing.body==journal.body,existing.tripID==journal.tripID else { throw NativeDataError.sessionUnavailable }
+        _=try journal.request()
+        return try await tripSupportPost(action:"confirm",tripID:journal.tripID,body:journal.body,actor:actor)
+    }
+    func completeTripSupportConfirmation(_ journal:NativeTripSupportConfirmJournal,receipt:NativeSupportedTripConfirmReceipt,actor:NativeDataScope) throws {
+        guard dataScope==actor,journal.matches(actor),let existing=try tripSupportConfirmationRecovery(),existing.body==journal.body,existing.tripID==journal.tripID else { throw NativeDataError.staleSessionResponse }
+        let request=try journal.request()
+        guard receipt.tripId==journal.tripID,receipt.proposalId==request.proposalId,receipt.resultingVersion==request.expectedBaseVersion+1,
+              Set(receipt.supports.map(\.receiptId))==Set(request.supportSelection.map(\.receiptId)) else { throw NativeDataError.invalidResponse }
+        let status=vault.remove(service:tripSupportConfirmVaultService,owner:actor.subject)
+        guard status==errSecSuccess || status==errSecItemNotFound else { throw NativeDataError.sessionUnavailable }
+    }
+
+    func tripSupportContext(target:NativeTripSupportTarget,proposal:NativeTripPending.Proposal) async throws -> Data {
+        guard target.valid,dataScope==target.actor,NativeMemoryWire.uuid(proposal.id),proposal.revision>0,proposal.baseTripVersion==target.tripVersion,!proposal.stale else { throw NativeDataError.invalidResponse }
+        let bytes=try await tripRequest(path:"api/trips/native/v2/\(target.tripID)/support/context",method:"GET",queryItems:[.init(name:"expectedTripVersion",value:String(target.tripVersion)),.init(name:"proposalId",value:proposal.id),.init(name:"expectedProposalRevision",value:String(proposal.revision)),.init(name:"dayId",value:target.dayID),.init(name:"itemId",value:target.itemID)])
+        guard dataScope==target.actor,bytes.count<=262_144 else { throw NativeDataError.staleSessionResponse }
+        return bytes
+    }
+
+    func tripSupportConfirmationRead(_ journal:NativeTripSupportConfirmJournal,actor:NativeDataScope) async throws -> Data {
+        guard journal.matches(actor),dataScope==actor else { throw NativeDataError.sessionUnavailable }
+        _=try journal.request()
+        let bytes=try await tripRequest(path:"api/trips/native/v2/\(journal.tripID)/support/confirmation-receipt",method:"POST",body:journal.body)
+        guard dataScope==actor,bytes.count<=131_072 else { throw NativeDataError.staleSessionResponse }
+        return bytes
+    }
+    func tripSupportCandidates(target:NativeTripSupportTarget,placeReferenceID:String,city:String,scene:String,locale:String,cursor:NativeTripSupportCandidates.Cursor?=nil) async throws -> Data {
+        guard target.valid,dataScope==target.actor,NativeMemoryWire.uuid(placeReferenceID),["shanghai","beijing","guangzhou","chongqing"].contains(city),
+              ["arrival","airport_transport","payment","connectivity","public_transport","taxi","rail","attraction","accommodation","emergency"].contains(scene),["zh","en"].contains(locale),
+              cursor.map({NativeQualifiedDelegationRPC.digest($0.contextDigest) && NativeMemoryWire.uuid($0.afterMappingId)}) ?? true else { throw NativeDataError.invalidResponse }
+        var query=[URLQueryItem(name:"expectedTripVersion",value:String(target.tripVersion)),.init(name:"placeReferenceId",value:placeReferenceID),.init(name:"city",value:city),.init(name:"scene",value:scene),.init(name:"locale",value:locale),.init(name:"limit",value:"50")]
+        if let cursor { query += [.init(name:"contextDigest",value:cursor.contextDigest),.init(name:"afterMappingId",value:cursor.afterMappingId)] }
+        let bytes=try await tripRequest(path:"api/trips/native/v2/\(target.tripID)/support/candidates",method:"GET",queryItems:query)
+        guard dataScope==target.actor,bytes.count<=512_000 else { throw NativeDataError.staleSessionResponse }
+        return bytes
+    }
+
+    func tripSupportPrepare(_ request: NativeTripSupportPrepareRequest, target: NativeTripSupportTarget, proposal: NativeTripPending.Proposal) async throws -> Data {
+        guard request.valid, target.valid, dataScope==target.actor, request.dayId==target.dayID, request.itemId==target.itemID,
+              request.expectedBaseVersion==target.tripVersion, request.proposalId==proposal.id, request.expectedProposalRevision==proposal.revision, request.expectedProposalDigest==proposal.digest else { throw NativeDataError.invalidResponse }
+        return try await tripSupportPost(action:"prepare",tripID:target.tripID,body:JSONEncoder().encode(request),actor:target.actor)
+    }
+    func tripSupportRenew(_ request: NativeTripSupportRenewRequest, target: NativeTripSupportTarget) async throws -> Data {
+        guard request.valid, target.valid, dataScope==target.actor, request.tripVersion==target.tripVersion, request.dayId==target.dayID, request.itemId==target.itemID else { throw NativeDataError.invalidResponse }
+        return try await tripSupportPost(action:"renew",tripID:target.tripID,body:JSONEncoder().encode(request),actor:target.actor)
+    }
+    func tripSupportRevoke(_ receipt: NativePreparedTripSupport, actor: NativeDataScope) async throws -> Data {
+        guard dataScope==actor, NativeMemoryWire.uuid(receipt.receiptId), receipt.version>0 else { throw NativeDataError.sessionUnavailable }
+        struct Revoke:Encodable { let receiptId:String;let expectedVersion:Int }
+        let bytes=try await tripRequest(path:"api/trips/native/v2/support/preparations/revoke",method:"POST",body:JSONEncoder().encode(Revoke(receiptId:receipt.receiptId,expectedVersion:receipt.version)))
+        guard dataScope==actor,bytes.count<=4096 else { throw NativeDataError.staleSessionResponse }
+        return bytes
+    }
+    private func tripSupportPost(action:String,tripID:String,body:Data,actor:NativeDataScope) async throws -> Data {
+        guard ["prepare","renew","confirm"].contains(action), NativeMemoryWire.uuid(tripID),dataScope==actor,body.count<=65_536 else { throw NativeDataError.invalidResponse }
+        let bytes=try await tripRequest(path:"api/trips/native/v2/\(tripID)/support/\(action)",method:"POST",body:body)
+        guard dataScope==actor,bytes.count<=131_072 else { throw NativeDataError.staleSessionResponse }
+        return bytes
+    }
+
+    func tripSupportRead(_ target: NativeTripSupportTarget) async throws -> Data {
+        guard target.valid, dataScope==target.actor else { throw NativeDataError.sessionUnavailable }
+        let bytes=try await tripRequest(path:"api/trips/native/v2/\(target.tripID)/support",method:"GET",queryItems:[
+            .init(name:"expectedTripVersion",value:String(target.tripVersion)),.init(name:"dayId",value:target.dayID),.init(name:"itemId",value:target.itemID)])
+        guard dataScope==target.actor, bytes.count<=131_072 else { throw NativeDataError.staleSessionResponse }
+        return bytes
+    }
+
+    private var materialDeleteRequestService:String { keychainService+".device-delete-request."+(endpoint?.absoluteString ?? "disabled") }
+    private var materialDeleteReceiptService:String { keychainService+".device-delete-receipt."+(endpoint?.absoluteString ?? "disabled") }
+    func pendingDeviceMaterialDeletion() throws -> NativeDeviceMaterialDeleteRequest? {
+        guard let actor=dataScope else{throw NativeDataError.sessionUnavailable}
+        let (status,bytes)=vault.read(service:materialDeleteRequestService,owner:actor.subject)
+        if status==errSecItemNotFound{return nil}
+        guard status==errSecSuccess,let bytes else{throw NativeDataError.sessionUnavailable}
+        let request=try NativeDeviceMaterialDeleteRequest.decode(bytes)
+        guard request.namespace.matches(actor) else{throw NativeDataError.staleSessionResponse}
+        return request
+    }
+    func lastDeviceMaterialDeletionReceipt() throws -> NativeDeviceMaterialDeleteReceipt? {
+        guard let actor=dataScope else{throw NativeDataError.sessionUnavailable}
+        let (status,bytes)=vault.read(service:materialDeleteReceiptService,owner:actor.subject)
+        if status==errSecItemNotFound{return nil}
+        guard status==errSecSuccess,let bytes else{throw NativeDataError.sessionUnavailable}
+        return try NativeDeviceMaterialDeleteReceipt.decode(bytes,actor:actor)
+    }
+    func previewDeviceMaterialDeletion() throws -> [NativeScreenshotInbox.FileSelection] {
+        guard let actor=dataScope,prepareDeviceMaterials(),try pendingDeviceMaterialDeletion()==nil else{throw NativeDataError.sessionUnavailable}
+        return try deviceMaterials.deletionSelections(scope:actor)
+    }
+    func rememberDeviceMaterialDeletion(_ request:NativeDeviceMaterialDeleteRequest) throws {
+        guard request.valid,let actor=dataScope,request.namespace.matches(actor),prepareDeviceMaterials() else{throw NativeDataError.sessionUnavailable}
+        if let existing=try pendingDeviceMaterialDeletion(){
+            guard existing==request else{throw NativeDataError.server(code:"DEVICE_DELETE_RECOVERY_REQUIRED")}
+            return
+        }
+        if let receipt=try lastDeviceMaterialDeletionReceipt(),receipt.matches(request){return}
+        try deviceMaterials.validateDeletion(request.files,scope:actor)
+        let bytes=try JSONEncoder().encode(request)
+        guard bytes.count<=NativeDeviceMaterialDeleteRequest.maximumBytes,vault.write(bytes,service:materialDeleteRequestService,owner:actor.subject)==errSecSuccess else{throw NativeDataError.sessionUnavailable}
+    }
+    func executeDeviceMaterialDeletion(_ request:NativeDeviceMaterialDeleteRequest) throws -> NativeDeviceMaterialDeleteReceipt {
+        guard request.valid,let actor=dataScope,request.namespace.matches(actor),prepareDeviceMaterials() else{throw NativeDataError.sessionUnavailable}
+        let pending=try pendingDeviceMaterialDeletion()
+        if let receipt=try lastDeviceMaterialDeletionReceipt(),receipt.matches(request){
+            if let pending{guard pending==request else{throw NativeDataError.server(code:"DEVICE_DELETE_RECOVERY_REQUIRED")};try removeDeviceMaterialDeleteRequest(owner:actor.subject)}
+            return receipt // Replay proves the earlier request only; never delete a newly imported copy.
+        }
+        guard pending==request else{throw NativeDataError.server(code:"DEVICE_DELETE_RECOVERY_REQUIRED")}
+        try deviceMaterials.executeDeletion(request.files,scope:actor)
+        guard dataScope==actor else{throw NativeDataError.staleSessionResponse}
+        let receipt=NativeDeviceMaterialDeleteReceipt(request:request)
+        let bytes=try JSONEncoder().encode(receipt)
+        guard bytes.count<=8192,vault.write(bytes,service:materialDeleteReceiptService,owner:actor.subject)==errSecSuccess else{throw NativeDataError.sessionUnavailable}
+        try removeDeviceMaterialDeleteRequest(owner:actor.subject)
+        return receipt
+    }
+    private func removeDeviceMaterialDeleteRequest(owner:String) throws {
+        let status=vault.remove(service:materialDeleteRequestService,owner:owner)
+        guard status==errSecSuccess || status==errSecItemNotFound else{throw NativeDataError.sessionUnavailable}
+    }
+
     func tripRequest(path: String, method: String, body: Data? = nil, queryItems: [URLQueryItem] = []) async throws -> Data {
         try await dataRequest(prefix: "api/trips/native/v2", path: path, method: method, body: body, queryItems: queryItems)
     }
@@ -874,12 +1020,25 @@ final class NativeSession {
     }
     @discardableResult func prepareDeviceMaterials() -> Bool {
         guard !deviceMaterialSignOutFence else { return false }
-        do { try deviceMaterials.firstAccess(); return true }
+        do {
+            var preserve=false
+            if let owner=credential?.subject ?? defaults.string(forKey:storageKey) {
+                let (status,bytes)=vault.read(service:materialDeleteRequestService,owner:owner)
+                if status==errSecSuccess {
+                    guard let bytes else{throw InboxError.invalidInput}
+                    let pending=try NativeDeviceMaterialDeleteRequest.decode(bytes)
+                    let stored=try credential ?? read(owner:owner)
+                    guard pending.namespace.owner==owner,pending.namespace.endpoint==endpoint?.absoluteString,pending.namespace.epoch==stored.mobileEpoch else{throw InboxError.invalidInput}
+                    preserve=true // Recover only selected files; bootstrap must not erase unselected copies.
+                } else if status != errSecItemNotFound { throw NativeDataError.sessionUnavailable }
+            }
+            try deviceMaterials.firstAccess(preservingInbox:preserve);return true
+        }
         catch { failureCode="deviceMaterialCleanupRequired"; return false }
     }
 
     func receiveDeviceScreenshot(_ data: Data, owner: String) throws -> NativeScreenshotInbox.Receipt {
-        guard let scope = dataScope, scope.subject == owner, prepareDeviceMaterials() else { throw InboxError.invalidInput }
+        guard let scope = dataScope, scope.subject == owner, prepareDeviceMaterials(),try pendingDeviceMaterialDeletion()==nil else { throw InboxError.invalidInput }
         return try deviceMaterials.receive(data, scope: scope)
     }
 
@@ -895,6 +1054,12 @@ final class NativeSession {
         memoryPreferences.clear()
         exploreAskHandoff=nil
         if let owner = credential?.subject ?? defaults.string(forKey: storageKey) {
+            let support=vault.remove(service:tripSupportConfirmVaultService,owner:owner)
+            guard support==errSecSuccess || support==errSecItemNotFound else { failureCode="keychain:\(support)";status="storageError";return false }
+            for service in [materialDeleteRequestService,materialDeleteReceiptService] {
+                let result=vault.remove(service:service,owner:owner)
+                guard result==errSecSuccess || result==errSecItemNotFound else{failureCode="keychain:\(result)";status="storageError";return false}
+            }
             let linked=vault.remove(service:linkedDeleteVaultService,owner:owner)
             guard linked==errSecSuccess || linked==errSecItemNotFound else{subject=nil;mobileEpoch=nil;displayName=nil;failureCode="keychain:\(linked)";status="storageError";return false}
             let result = vault.remove(service: vaultService, owner: owner)
