@@ -9,3 +9,7 @@ Strict job decoder follows final producer: failed completedAt is terminal time, 
 PASS: initial full native build;5/5 targeted NativeCoreExportTests zero skipped /tmp/vpj36-native-export-unit2.xcresult. Covered queued/failed/no-all-data claims, ticket generation/body/header tamper, unknown download no-repeat/no-new-ticket, late actor cache denial, verified file/expiry removal. Final transport cancellation/view-gating cleanup build /tmp/vpj36-native-export-core-final-build.log is separately recorded; tests are not relabeled a later run. git diff --check PASS.
 
 UNRUN/default unavailable: real-account D2 admission/freshAuth/download, live policy/key/API EXECUTE activation, device/file-save human actions/provider/target. Local tests use explicit synthetic bytes and are not real export success. Producer beea currentcheckout5/5 belongs original TS source and may be reused by its integrator; no duplicated matrix or all-data privacy202 completion claim.
+
+## Final closure-type repair
+
+The last transport-cancellation/view cleanup initially failed compilation (NativeCoreExportView:65 closure type lacked required parentheses/spacing); /tmp/vpj36-native-export-core-final-build.log is retained asFAIL. Exact local repair uses @MainActor () async -> Void. PASS: /tmp/vpj36-native-export-core-final-build2.log full affected native build. Earlier5unitcases remain evidence for their tested store/model source, not a relabeled post-repair test run. No extra matrix or real account export was performed. Native owned code is complete; TS remains sole final D2 integrator.

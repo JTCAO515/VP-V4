@@ -62,7 +62,7 @@ struct NativeCoreExportView:View {
         .onDisappear{transportTask?.cancel();activity=nil;store.clear()}
         .sheet(item:$activity,onDismiss:{store.clear();confirmed=false}){source in NativeCoreExportActivity(url:source.url)}
     }
-    private func run(_ operation:@escaping @MainActor()async->Void){transportTask?.cancel();transportTask=Task{await operation()}}
+    private func run(_ operation:@escaping @MainActor () async -> Void){transportTask?.cancel();transportTask=Task{await operation()}}
     private func state(_ state:String)->String {
         switch state {
         case "queued":return t("已排队，尚未完成","Queued; not completed")
