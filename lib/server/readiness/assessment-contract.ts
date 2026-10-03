@@ -6,7 +6,7 @@ export type ReadinessAssessment={
  ruleVersion:string;ontologyVersion:string;declarationRevision:number;assessmentDigest:string;evaluatedAt:string;expiresAt:string;
  knowledgeAvailability:"available"|"unknown";userReadiness:"unknown"|"satisfied"|"not_satisfied"|"not_applicable";
  actionTiming:"now"|"not_yet"|"unknown"|"not_applicable";declaration:ReadinessDeclaration;
- declarationBasis:"explicit_user_report";evidence:ReadinessEvidence[];actions:ReadinessAction[];
+ declarationBasis:"explicit_user_report";declarationState:"empty"|"current"|"stale";evidence:ReadinessEvidence[];actions:ReadinessAction[];
 };
 export type ReadinessActionResult=
  | {kind:"material";evidence:ReadinessEvidence}
