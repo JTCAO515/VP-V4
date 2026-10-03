@@ -1,0 +1,11 @@
+{
+  "producerFinal": "beea04f5ede65bb250a354e366246a9b67ec831d",
+  "kind": "NATIVE_D2_CORE_SOURCE_LOCAL_TESTS_NOT_REAL_EXPORT",
+  "files": {
+    "ios/VisePanda/VisePanda/Features/Profile/NativeCoreExportStore.swift": "d139e3155dfa145ea989c459bec0dd99dda7f9dae2b3828db62602172569ffa0",
+    "ios/VisePanda/VisePanda/Features/Profile/NativeCoreExportView.swift": "67ecda906b26f36ecd13c6139a281bc694c0b81483d062248d89df964d0e9f45",
+    "ios/VisePanda/VisePanda/Features/Profile/ProfileView.swift": "ccbf0f3fc313eede97d2e46b997004a9bc722016bea1944dfa3afadc83e56449",
+    "ios/VisePanda/VisePanda/App/NativeSession.swift": "00eb002f91457b042adb1d09cd9ab48f52ef97f161ee3b498eaa646e4d67cd71",
+    "ios/VisePanda/VisePandaTests/NativeCoreExportTests.swift": "1b66c6ae2fe1a8c3f34dbeb86d6d8d9f0fbc6de1623dcbde1f1e5de8cd756f6d"
+  }
+}

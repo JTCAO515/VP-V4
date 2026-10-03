@@ -166,6 +166,9 @@ struct ProfileView: View {
             }
 
             Section("profile.privacy") {
+                NavigationLink {NativeCoreExportView()} label:{
+                    Label(chinese ? "导出当前账号核心资料":"Export this account’s core data",systemImage:"square.and.arrow.up")
+                }.accessibilityIdentifier("profile.core-export.open")
                 LabeledContent("profile.data_storage") {
                     storageCaption
                 }
