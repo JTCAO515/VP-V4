@@ -263,6 +263,60 @@ final class NativeSession {
         return bytes
     }
 
+    private var materialDeleteRequestService:String { keychainService+".device-delete-request."+(endpoint?.absoluteString ?? "disabled") }
+    private var materialDeleteReceiptService:String { keychainService+".device-delete-receipt."+(endpoint?.absoluteString ?? "disabled") }
+    func pendingDeviceMaterialDeletion() throws -> NativeDeviceMaterialDeleteRequest? {
+        guard let actor=dataScope else{throw NativeDataError.sessionUnavailable}
+        let (status,bytes)=vault.read(service:materialDeleteRequestService,owner:actor.subject)
+        if status==errSecItemNotFound{return nil}
+        guard status==errSecSuccess,let bytes else{throw NativeDataError.sessionUnavailable}
+        let request=try NativeDeviceMaterialDeleteRequest.decode(bytes)
+        guard request.namespace.matches(actor) else{throw NativeDataError.staleSessionResponse}
+        return request
+    }
+    func lastDeviceMaterialDeletionReceipt() throws -> NativeDeviceMaterialDeleteReceipt? {
+        guard let actor=dataScope else{throw NativeDataError.sessionUnavailable}
+        let (status,bytes)=vault.read(service:materialDeleteReceiptService,owner:actor.subject)
+        if status==errSecItemNotFound{return nil}
+        guard status==errSecSuccess,let bytes else{throw NativeDataError.sessionUnavailable}
+        return try NativeDeviceMaterialDeleteReceipt.decode(bytes,actor:actor)
+    }
+    func previewDeviceMaterialDeletion() throws -> [NativeScreenshotInbox.FileSelection] {
+        guard let actor=dataScope,prepareDeviceMaterials(),try pendingDeviceMaterialDeletion()==nil else{throw NativeDataError.sessionUnavailable}
+        return try deviceMaterials.deletionSelections(scope:actor)
+    }
+    func rememberDeviceMaterialDeletion(_ request:NativeDeviceMaterialDeleteRequest) throws {
+        guard request.valid,let actor=dataScope,request.namespace.matches(actor),prepareDeviceMaterials() else{throw NativeDataError.sessionUnavailable}
+        if let existing=try pendingDeviceMaterialDeletion(){
+            guard existing==request else{throw NativeDataError.server(code:"DEVICE_DELETE_RECOVERY_REQUIRED")}
+            return
+        }
+        if let receipt=try lastDeviceMaterialDeletionReceipt(),receipt.matches(request){return}
+        try deviceMaterials.validateDeletion(request.files,scope:actor)
+        let bytes=try JSONEncoder().encode(request)
+        guard bytes.count<=NativeDeviceMaterialDeleteRequest.maximumBytes,vault.write(bytes,service:materialDeleteRequestService,owner:actor.subject)==errSecSuccess else{throw NativeDataError.sessionUnavailable}
+    }
+    func executeDeviceMaterialDeletion(_ request:NativeDeviceMaterialDeleteRequest) throws -> NativeDeviceMaterialDeleteReceipt {
+        guard request.valid,let actor=dataScope,request.namespace.matches(actor),prepareDeviceMaterials() else{throw NativeDataError.sessionUnavailable}
+        let pending=try pendingDeviceMaterialDeletion()
+        if let receipt=try lastDeviceMaterialDeletionReceipt(),receipt.matches(request){
+            if let pending{guard pending==request else{throw NativeDataError.server(code:"DEVICE_DELETE_RECOVERY_REQUIRED")};try removeDeviceMaterialDeleteRequest(owner:actor.subject)}
+            return receipt // Replay proves the earlier request only; never delete a newly imported copy.
+        }
+        guard pending==request else{throw NativeDataError.server(code:"DEVICE_DELETE_RECOVERY_REQUIRED")}
+        try deviceMaterials.executeDeletion(request.files,scope:actor)
+        guard dataScope==actor else{throw NativeDataError.staleSessionResponse}
+        let receipt=NativeDeviceMaterialDeleteReceipt(request:request)
+        let bytes=try JSONEncoder().encode(receipt)
+        guard bytes.count<=8192,vault.write(bytes,service:materialDeleteReceiptService,owner:actor.subject)==errSecSuccess else{throw NativeDataError.sessionUnavailable}
+        try removeDeviceMaterialDeleteRequest(owner:actor.subject)
+        return receipt
+    }
+    private func removeDeviceMaterialDeleteRequest(owner:String) throws {
+        let status=vault.remove(service:materialDeleteRequestService,owner:owner)
+        guard status==errSecSuccess || status==errSecItemNotFound else{throw NativeDataError.sessionUnavailable}
+    }
+
     func tripRequest(path: String, method: String, body: Data? = nil, queryItems: [URLQueryItem] = []) async throws -> Data {
         try await dataRequest(prefix: "api/trips/native/v2", path: path, method: method, body: body, queryItems: queryItems)
     }
@@ -966,12 +1020,25 @@ final class NativeSession {
     }
     @discardableResult func prepareDeviceMaterials() -> Bool {
         guard !deviceMaterialSignOutFence else { return false }
-        do { try deviceMaterials.firstAccess(); return true }
+        do {
+            var preserve=false
+            if let owner=credential?.subject ?? defaults.string(forKey:storageKey) {
+                let (status,bytes)=vault.read(service:materialDeleteRequestService,owner:owner)
+                if status==errSecSuccess {
+                    guard let bytes else{throw InboxError.invalidInput}
+                    let pending=try NativeDeviceMaterialDeleteRequest.decode(bytes)
+                    let stored=try credential ?? read(owner:owner)
+                    guard pending.namespace.owner==owner,pending.namespace.endpoint==endpoint?.absoluteString,pending.namespace.epoch==stored.mobileEpoch else{throw InboxError.invalidInput}
+                    preserve=true // Recover only selected files; bootstrap must not erase unselected copies.
+                } else if status != errSecItemNotFound { throw NativeDataError.sessionUnavailable }
+            }
+            try deviceMaterials.firstAccess(preservingInbox:preserve);return true
+        }
         catch { failureCode="deviceMaterialCleanupRequired"; return false }
     }
 
     func receiveDeviceScreenshot(_ data: Data, owner: String) throws -> NativeScreenshotInbox.Receipt {
-        guard let scope = dataScope, scope.subject == owner, prepareDeviceMaterials() else { throw InboxError.invalidInput }
+        guard let scope = dataScope, scope.subject == owner, prepareDeviceMaterials(),try pendingDeviceMaterialDeletion()==nil else { throw InboxError.invalidInput }
         return try deviceMaterials.receive(data, scope: scope)
     }
 
@@ -989,6 +1056,10 @@ final class NativeSession {
         if let owner = credential?.subject ?? defaults.string(forKey: storageKey) {
             let support=vault.remove(service:tripSupportConfirmVaultService,owner:owner)
             guard support==errSecSuccess || support==errSecItemNotFound else { failureCode="keychain:\(support)";status="storageError";return false }
+            for service in [materialDeleteRequestService,materialDeleteReceiptService] {
+                let result=vault.remove(service:service,owner:owner)
+                guard result==errSecSuccess || result==errSecItemNotFound else{failureCode="keychain:\(result)";status="storageError";return false}
+            }
             let linked=vault.remove(service:linkedDeleteVaultService,owner:owner)
             guard linked==errSecSuccess || linked==errSecItemNotFound else{subject=nil;mobileEpoch=nil;displayName=nil;failureCode="keychain:\(linked)";status="storageError";return false}
             let result = vault.remove(service: vaultService, owner: owner)
