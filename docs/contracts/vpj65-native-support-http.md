@@ -68,3 +68,12 @@ Native must keep historical ACK recovery separate from fresh item eligibility re
 Closed context → explicit reference picker → candidates → prepare → visible diff /
 explicit chosen receipts confirm → original-selection readonlyACK is one owner flow.
 All new RPCs remain defaultrevoked; no target/policy/role enablement is implied.
+
+
+Final current-support read entries strictly add placeReferenceId from the actual
+support receipt's preparation binding. Exact field list (11 keys after adding placeReferenceId): supportId,receiptId,
+placeReferenceId,version,scope,applicability,status,claimRevision,payloadHash,
+sourceDigest,claim. Missing old shape without placeReferenceId fails closed, without dual-schema
+fallback. Recheck retains this own-reference metadata but claim remains null.
+A confirmed item/relaunch uses this true reference → qualified candidates → explicit
+renewal, with no pending proposal, synthesized reference or title match needed.

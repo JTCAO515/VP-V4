@@ -11,7 +11,7 @@ async function fixture(t){
  const f=await nativeFixture(t,database),env={VERCEL_ENV:'preview',VERCEL_URL:host,VISEPANDA_NATIVE_STAGING:'true',VISEPANDA_TRIP_PROTOCOL_V2:'true',NEXT_PUBLIC_SUPABASE_URL:database,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:f.config.publishableKey};
  const old=Object.fromEntries(Object.keys(env).map(k=>[k,process.env[k]]));t.after(()=>{for(const[k,v]of Object.entries(old))v===undefined?delete process.env[k]:process.env[k]=v;});Object.assign(process.env,env);
  const prior=globalThis.fetch,seen=[];let replaced=false,denied=false,wrongTrip=false,badClaim=false;
- const entry={supportId:support,receiptId:receipt,version:1,scope:'address_reference',applicability:'unverified',status:'recheck_required',claimRevision:1,payloadHash:hash,sourceDigest:hash,claim:null};
+ const entry={supportId:support,receiptId:receipt,placeReferenceId:receipt,version:1,scope:'address_reference',applicability:'unverified',status:'recheck_required',claimRevision:1,payloadHash:hash,sourceDigest:hash,claim:null};
  t.mock.method(globalThis,'fetch',async(input,init)=>{
   const r=new Request(input,init),path=new URL(r.url).pathname;
   if(path.endsWith('/native_session_v2'))return Response.json({subject,sessionId:replaced?trip:sessionId,mobileEpoch:1});
