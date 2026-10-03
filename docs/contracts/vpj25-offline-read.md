@@ -199,3 +199,18 @@ bytes using the existing canonical escaping, without normalization or PG jsonb::
 whitespace. Source receipt IDs are unique lowercase UUIDs; every included field
 requires one matching locator and hash. Historical/ordinary/OCR paths cannot qualify
 through client flags, and reader responses containing unknown fields fail closed.
+
+
+## Joint source evidence
+
+TS runtime source checkpoint `1378721d` was checked against immutable SQL source
+`0511b706683a2bbcb03565f52b50e8a13d204bb0` using
+`VP_TURN_DB_TEST=1 VP_OFFLINE_SQL_SOURCE=<SQL commit> node --experimental-strip-types --test tests/integration/trip/offline-source-consumer.test.mjs`.
+Two affected checks pass: actual isolated SQL candidate→original explicit confirm→
+partial reader receipt→strict TS field hash/coverage decoder→Ed25519 signed subset;
+and actual authenticated EXECUTE denial on all three RPCs mapped to unavailable.
+Positive SQL calls are administrator-only Unix-socket fixtures with simulated
+ordinary claims; no real Auth, role grant, live private key, policy activation or
+provider deployment is established. The independent HTTP/RPC contract simulations
+pass separately. Full real-account HTTP authorization is UNRUN while API execution
+remains revoked. SQL owner's existing lifecycle matrix is reused separately.

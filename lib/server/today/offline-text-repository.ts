@@ -27,7 +27,7 @@ export function parseOfflineProvenance(value: unknown, basis: OfflineBasis): Off
     || !integer(value.generation) || !isOfflinePayload(value.qualifiedPayload) || value.qualifiedPayloadDigest !== offlineDigest(value.qualifiedPayload)
     || !record(value.coverage) || !exact(value.coverage, ["kind", "excludedDays", "excludedItems"])
     || !integer(value.coverage.excludedDays) || !integer(value.coverage.excludedItems)
-    || !["partial", "full"].includes(String(value.coverage.kind))
+    || typeof value.coverage.kind !== "string" || !["partial", "full"].includes(value.coverage.kind)
     || (value.coverage.kind === "full" ? value.coverage.excludedDays !== 0 || value.coverage.excludedItems !== 0 : value.coverage.excludedDays + value.coverage.excludedItems === 0)
     || !qualifiedSubsetMatches(basis.payload, value.qualifiedPayload, value.coverage.kind as "partial" | "full") || !Array.isArray(value.fields)) return null;
   const payload = value.qualifiedPayload;
@@ -39,7 +39,9 @@ export function parseOfflineProvenance(value: unknown, basis: OfflineBasis): Off
   if (value.fields.length !== expected.size) return null;
   const seen = new Set<string>(), receiptIds = new Set<string>();
   for (const f of value.fields) {
-    if (!record(f) || !exact(f, ["field", "dayId", "itemId", "sourceReceiptId", "valueDigest"]) || !uuid(f.sourceReceiptId)) return null;
+    if (!record(f) || !exact(f, ["field", "dayId", "itemId", "sourceReceiptId", "valueDigest"]) || !uuid(f.sourceReceiptId)
+      || typeof f.field !== "string" || !["days.date", "days.items.title"].includes(f.field) || typeof f.dayId !== "string"
+      || (f.itemId !== null && typeof f.itemId !== "string") || typeof f.valueDigest !== "string" || !/^[0-9a-f]{64}$/.test(f.valueDigest)) return null;
     const key = offlineCanonical([f.field, f.dayId, f.itemId]);
     if (seen.has(key) || receiptIds.has(f.sourceReceiptId) || expected.get(key) !== f.valueDigest) return null;
     seen.add(key); receiptIds.add(f.sourceReceiptId);
