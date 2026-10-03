@@ -1,6 +1,6 @@
 /** Persistent source impact DTOs. Qualification does not authorize publication. */
 export type SourceImpactClaim=Readonly<{factId:string;assertionId:string;revision:number;payloadHash:string}>;
-export type SourceImpactTarget=Readonly<{kind:'wiki_revision'|'wiki_job'|'statement'|'historical_answer';id:string;version:number;payloadHash:string;claimRefs:readonly SourceImpactClaim[]}>;
+export type SourceImpactTarget=Readonly<{kind:'wiki_revision'|'wiki_job'|'statement'|'historical_answer'|'trip_item_support';id:string;version:number;payloadHash:string;claimRefs:readonly SourceImpactClaim[]}>;
 export type SourceImpactLease=Readonly<{kind:'leased';deliveryId:string;setId:string;reviewVersion:number;sourceDigest:string;target:SourceImpactTarget;leaseToken:string;attempt:number}>;
 export type SourceImpactDelivery=Readonly<Omit<SourceImpactLease,'kind'|'leaseToken'>&{kind:'delivery';state:'queued'|'leased'|'failed'|'acked'|'unsupported'|'exhausted'|'stale';leaseToken:string|null;receiptId:string|null}>;
 const row=(v:unknown):v is Record<string,unknown>=>v!==null&&typeof v==='object'&&!Array.isArray(v);
@@ -9,7 +9,7 @@ export const sourceImpactUuid=(v:unknown):v is string=>typeof v==='string'&&/^[a
 const hash=(v:unknown)=>typeof v==='string'&&/^[a-f0-9]{64}$/.test(v);
 const integer=(v:unknown,min:number,max:number)=>Number.isSafeInteger(v)&&Number(v)>=min&&Number(v)<=max;
 function target(v:unknown):v is SourceImpactTarget{
- if(!row(v)||!exact(v,['kind','id','version','payloadHash','claimRefs'])||!['wiki_revision','wiki_job','statement','historical_answer'].includes(String(v.kind))||!sourceImpactUuid(v.id)||!integer(v.version,1,Number.MAX_SAFE_INTEGER)||!hash(v.payloadHash)||!Array.isArray(v.claimRefs)||v.claimRefs.length>50)return false;
+ if(!row(v)||!exact(v,['kind','id','version','payloadHash','claimRefs'])||!['wiki_revision','wiki_job','statement','historical_answer','trip_item_support'].includes(String(v.kind))||!sourceImpactUuid(v.id)||!integer(v.version,1,Number.MAX_SAFE_INTEGER)||!hash(v.payloadHash)||!Array.isArray(v.claimRefs)||v.claimRefs.length>50)return false;
  return v.claimRefs.every(c=>row(c)&&exact(c,['factId','assertionId','revision','payloadHash'])&&sourceImpactUuid(c.factId)&&sourceImpactUuid(c.assertionId)&&integer(c.revision,1,Number.MAX_SAFE_INTEGER)&&hash(c.payloadHash))&&new Set(v.claimRefs.map(c=>c.factId)).size===v.claimRefs.length;
 }
 const identityKeys=['deliveryId','setId','reviewVersion','sourceDigest','target','leaseToken','attempt'];

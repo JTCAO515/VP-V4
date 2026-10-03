@@ -85,6 +85,8 @@ export const LANES = {
           "tests/integration/privacy/entitlement-export-d5.test.mjs",
           "tests/integration/translate/history.test.mjs",
           "tests/integration/trip/archive.test.mjs",
+          "tests/integration/trip/trip-item-support.test.mjs",
+          "tests/integration/trip/native-support-http-read.test.mjs",
           "tests/integration/trip/offline-text-provenance.test.mjs",
           "tests/integration/trip/offline-source-consumer.test.mjs",
           "tests/integration/turn/durable-work.test.mjs",
