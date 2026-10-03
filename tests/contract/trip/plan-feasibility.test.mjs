@@ -96,6 +96,8 @@ test('explicit now route reuses Maps transport: exact time binds, references sta
  allowed=true;mappingChanges=true;mappingReads=0;assert.deepEqual((await readPlanRouteEvidence(b,places,[req],deps)).bindings,[]);
  const body={proposalId:basis.proposalId,expectedProposalRevision:1,expectedBaseVersion:0,needs,placeChoices:[],routeRequests:[req]};
  assert.ok(feasibilityRequest(body));assert.equal(feasibilityRequest({...body,routeRequests:[{...req,mapConsent:false}]}),null);
+ assert.equal(feasibilityRequest({...body,routeRequests:[{...req,mode:['walking']}]}),null);
+ assert.equal(feasibilityRequest({...body,placeChoices:[{...choice,locale:['en']}]}),null);
  assert.equal(feasibilityRequest({...body,routeRequests:[req,req]}),null);
 });
 
