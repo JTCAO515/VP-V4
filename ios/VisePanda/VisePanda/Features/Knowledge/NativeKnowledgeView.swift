@@ -7,10 +7,7 @@ struct NativeKnowledgeView: View {
     @Environment(AppSettings.self) private var settings
     @Environment(\.scenePhase) private var scenePhase
     @State private var store = NativeKnowledgeStore()
-    @State private var resultStore = NativeLibrarySearchStore()
     @State private var search = ""
-    @State private var cursor: String?
-    @State private var openedResult: LibraryResultSelection?
     @State private var city = "shanghai"
     @State private var scene = "arrival"
     @State private var refresh = UUID()
@@ -24,7 +21,6 @@ struct NativeKnowledgeView: View {
     private var selection: NativeKnowledgeSelection { .init(city: city, scene: question ? "rail" : scene, locale: chinese ? "zh" : "en") }
     private func text(_ en: String, _ zh: String) -> String { chinese ? zh : en }
     private var loadKey: LoadKey { .init(scope: session.dataScope, selection: selection, active: scenePhase == .active && isActive, refresh: refresh) }
-    private var resultLoadKey: ResultLoadKey { .init(scope: session.dataScope, active: scenePhase == .active && isActive, refresh: refresh, search: search, cursor: cursor) }
 
     var body: some View {
         ScrollView {
@@ -48,7 +44,7 @@ struct NativeKnowledgeView: View {
                         Text(chinese ? ["入境", "机场交通", "支付", "手机与网络", "公共交通", "出租车", "高铁", "景点", "住宿", "紧急求助"][index] : ["Arrival", "Airport transport", "Payment", "Phone and internet", "Public transport", "Taxis", "Rail", "Attractions", "Accommodation", "Emergency help"][index]).tag(value)
                     }
                 }.accessibilityIdentifier("knowledge.scene") }
-                Button(text("Refresh", "刷新")) { store.clear(); resultStore.clear(); openedResult = nil; cursor = nil; refresh = UUID() }
+                Button(text("Refresh", "刷新")) { store.clear(); refresh = UUID() }
                     .buttonStyle(.bordered).accessibilityIdentifier("knowledge.refresh")
                 TimelineView(.periodic(from: .now, by: 1)) { _ in
                     VStack(alignment: .leading, spacing: VPSpacing.section) {
@@ -58,7 +54,7 @@ struct NativeKnowledgeView: View {
             }.padding(VPSpacing.standard)
         }
         .background(Color.vpBackground)
-        .vpNavigationTitle(question ? "tab.ask" : "tab.explore")
+        .vpNavigationTitle(question ? "tab.ask" : "tab.library")
         .navigationBarTitleDisplayMode(.inline)
         .task(id: loadKey) {
             let key = loadKey
@@ -77,26 +73,8 @@ struct NativeKnowledgeView: View {
                 catch { return }
             } while !Task.isCancelled && loadKey == key
         }
-        .task(id: resultLoadKey) {
-            let key = resultLoadKey
-            guard key.active, !question else { resultStore.clear(); return }
-            if !search.isEmpty {
-                do { try await Task.sleep(for: .milliseconds(250)) } catch { return }
-                guard !Task.isCancelled, resultLoadKey == key else { return }
-            }
-            await resultStore.load(scope: key.scope, query: key.search, cursor: key.cursor) {
-                guard session.dataScope == key.scope else { throw NativeDataError.staleSessionResponse }
-                let bytes = try await session.fiveResultSearchRequest(query: key.search, cursor: key.cursor)
-                guard session.dataScope == key.scope else { throw NativeDataError.staleSessionResponse }
-                return bytes
-            }
-        }
-        .sheet(item: $openedResult, onDismiss: { resultStore.clear(); refresh = UUID() }) { selection in
-            NativeFiveResultDetail(artifactID:selection.artifactID,revision:selection.revision,session:session,chinese:chinese,active:isActive)
-        }
-        .onChange(of: Data(search.utf8)) { _, _ in resultStore.clear(); openedResult = nil; cursor = nil }
-        .onChange(of: session.dataScope) { _, _ in resultStore.clear(); openedResult = nil; search = ""; cursor = nil }
-        .onDisappear { store.clear(); resultStore.clear(); openedResult = nil }
+        .onChange(of: session.dataScope) { _, _ in search = "" }
+        .onDisappear { store.clear() }
     }
 
     @ViewBuilder private var content: some View {
@@ -144,44 +122,7 @@ struct NativeKnowledgeView: View {
         if search.utf16.count > 120 {
             Text(text("Use a search of up to 120 characters.", "搜索内容最多 120 个字符。"))
         }
-        Text(text("Confirmed uploaded materials", "已确认上传资料")).font(.headline)
-        Text(text("Uploaded-material lookup is unavailable in this version. Saved translations and generated results remain searchable below.", "此版本暂不能查询上传资料，仍可在下方查找已存翻译和生成成果。"))
-            .font(.footnote).accessibilityIdentifier("library.materials.unavailable")
-        NativeLibraryPhrasePanel(isActive: isActive, query: search)
-        Text(text("Generated results", "生成成果")).font(.headline)
-        Text(text("Current eligible results across journeys, up to 20 per page. Opening rechecks the same ID and revision.", "各旅程中当前有效的成果，每页最多 20 份；打开时重新核对同一 ID 与版本。"))
-            .font(.footnote).foregroundStyle(Color.vpSecondaryText)
-        if session.dataScope == nil {
-            Text(text("Sign in to find your results.", "登录后可查找自己的成果。"))
-        } else if scenePhase == .active && isActive && resultStore.isCurrent(session.dataScope, query: search, cursor: cursor) {
-            if resultStore.rows.isEmpty {
-                Text(text("No matching result is currently available.", "当前没有可读的匹配成果。"))
-            }
-            ForEach(resultStore.rows) { result in
-                Button {
-                    openedResult = LibraryResultSelection(artifactID: result.artifactId, revision: result.revision)
-                    resultStore.clear()
-                } label: {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(result.title).font(.headline)
-                        Text(result.summary).lineLimit(2).font(.footnote)
-                        Text(result.tripId.map{text("Trip: ", "行程：")+$0+" · v"+String(result.tripVersion ?? 0)} ?? text("Not linked to a Trip", "未关联行程"))
-                            .font(.caption2).foregroundStyle(Color.vpSecondaryText)
-                    }.frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .accessibilityIdentifier("library.result.open")
-            }
-            if let next = resultStore.nextCursor {
-                Button(text("Next page", "下一页")) { resultStore.clear(); openedResult = nil; cursor = next }
-                    .accessibilityIdentifier("library.results.next")
-            }
-        } else if resultStore.state == "unavailable" {
-            Text(text("Results unavailable. Check your session and refresh. This search may also be incomplete because its scan limit was reached.", "成果暂不可用，请检查登录状态并刷新。也可能因达到扫描上限而暂不能完成搜索。"))
-        } else if resultStore.state == "result_search" {
-            Text(text("Refresh to check your current results.", "请刷新以核对当前成果。"))
-        } else {
-            ProgressView().accessibilityLabel(text("Checking my results", "正在核对我的成果"))
-        }
+        NativeLibrarySourcesView(session:session,chinese:chinese,active:isActive,query:search)
     }
 
     private struct LoadKey: Equatable {
@@ -191,17 +132,7 @@ struct NativeKnowledgeView: View {
         let refresh: UUID
     }
 
-    private struct ResultLoadKey: Equatable {
-        let scope: NativeDataScope?
-        let active: Bool
-        let refresh: UUID
-        let search: String
-        let cursor: String?
-        static func == (lhs: Self, rhs: Self) -> Bool {
-            lhs.scope == rhs.scope && lhs.active == rhs.active && lhs.refresh == rhs.refresh
-            && lhs.cursor == rhs.cursor && lhs.search.utf8.elementsEqual(rhs.search.utf8)
-        }
-    }
+
 }
 
 struct LibraryResultSelection: Identifiable {

@@ -359,6 +359,21 @@ final class NativeSession {
         return bytes
     }
 
+    func librarySourcesRequest(source:NativeLibrarySource,query:String,cursor:String?)async throws->Data {
+        guard query.utf16.count<=120,cursor==nil || NativeLibraryCursor.valid(cursor!,source:source,query:query.isEmpty ? nil:query) else{throw NativeDataError.invalidResponse}
+        let path="api/library/native/v1/items"
+        var q=[URLQueryItem(name:"source",value:source.rawValue)]
+        if !query.isEmpty{q.append(.init(name:"query",value:query))};if let cursor{q.append(.init(name:"cursor",value:cursor))}
+        return try await dataRequest(prefix:path,path:path,method:"GET",queryItems:q)
+    }
+    func librarySourceItem(_ reference:NativeLibraryMetadata)async throws->Data {
+        guard reference.valid else{throw NativeDataError.invalidResponse}
+        let path="api/library/native/v1/item"
+        var q=[URLQueryItem(name:"source",value:reference.source.rawValue),URLQueryItem(name:"id",value:reference.id)]
+        if let revision=reference.revision{q.append(.init(name:"revision",value:String(revision)))}
+        return try await dataRequest(prefix:path,path:path,method:"GET",queryItems:q)
+    }
+
     func fiveResultReference(field: String, id: String) async throws -> Data {
         guard ["task", "trip"].contains(field), UUID(uuidString:id) != nil else { throw NativeDataError.invalidResponse }
         let path = "api/results/native/v2/" + field
