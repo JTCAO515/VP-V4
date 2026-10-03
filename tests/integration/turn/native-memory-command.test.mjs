@@ -51,3 +51,16 @@ run('existing create Undo operation relation and least privilege; receipts conta
  assert.equal(await db(`select has_table_privilege('authenticated','memory_private.native_update_preimages_v1','SELECT') or has_table_privilege('authenticated','public.memory_profiles','UPDATE');`),'f');
  assert.equal(await db(`select bool_or(receipt::text like '%Relaxed pace%') from memory_private.native_command_receipts_v1;`),'f');
 });
+
+run('two actual sessions: worker owner KEY SHARE/account wait and Memory account holder never upgrade owner lock',async()=>{
+ const a=await owner(),input={action:'consentCreate',operationId:uuid()};
+ const actor=`set role authenticated;set request.jwt.claim.role='authenticated';set request.jwt.claim.sub='${a.owner}';set request.jwt.claims='${JSON.stringify({role:'authenticated',is_anonymous:false,session_id:a.session})}';`;
+ const one=sql(container,`set application_name='memory_lock_a';begin;select 1 from identity_private.mobile_accounts where owner_id='${a.owner}' for update;select pg_sleep(1.0);${actor}select public.native_memory_command_v1('${JSON.stringify(input)}'::jsonb);commit;`);
+ // Private table ACL is intentionally not opened. The preload runs as administrator;
+ // the actual Memory command then runs with the ordinary authenticated role.
+ const ready=async name=>{for(let i=0;i<80;i++){if(await db(`select exists(select 1 from pg_stat_activity where application_name='${name}' and wait_event_type in ('Timeout','Lock'));`)==='t')return;await new Promise(r=>setTimeout(r,10));}assert.fail('bounded interleaving not observed');};
+ await ready('memory_lock_a');
+ const two=sql(container,`set application_name='memory_lock_b';begin;select 1 from auth.users where id='${a.owner}' for key share nowait;select 1 from identity_private.mobile_accounts where owner_id='${a.owner}' for update;commit;`);
+ await ready('memory_lock_b');const results=await Promise.all([one,two]);for(const r of results){assert.equal(r.code,0,r.stderr);assert.doesNotMatch(r.stderr,/deadlock/i);}
+ assert.equal(await db(`select count(*) from memory_private.native_command_receipts_v1 where owner_id='${a.owner}' and operation_id='${input.operationId}';`),'1');assert.equal((await call(a,input)).reused,true);
+});

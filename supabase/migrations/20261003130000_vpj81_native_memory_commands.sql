@@ -57,6 +57,9 @@ declare
  pre memory_private.native_update_preimages_v1%rowtype; prior text; r record;
  receipt jsonb; available boolean:=false; state text; v_summary text;
 begin
+ if actor is null then raise exception 'UNAUTHENTICATED'; end if;
+ perform 1 from auth.users where id=actor for key share nowait;
+ if not found then raise exception 'UNAUTHENTICATED'; end if;
  perform identity_private.guard_mobile_rpc_v2();
  perform public.native_session_v2('session');
  if actor is null then raise exception 'UNAUTHENTICATED'; end if;
@@ -100,8 +103,7 @@ begin
  if a='state' and coalesce(p_input->>'state','') not in ('explicit','confirmed','rejected','paused','deleted') then raise exception 'INVALID_INPUT'; end if;
  if a='updateUndo' and (jsonb_typeof(p_input->'updateOperationId') is distinct from 'string' or (p_input->>'updateOperationId') !~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$') then raise exception 'INVALID_INPUT'; end if;
  digest:=encode(extensions.digest(convert_to(p_input::text,'UTF8'),'sha256'),'hex');
- -- Serialise each owner's operations; native_session_v2 already locks mobile account.
- perform 1 from auth.users where id=actor for update;
+ -- Mobile account already serialises this owner's commands. Never upgrade auth.users:
  select * into rec from memory_private.native_command_receipts_v1 where operation_id=op;
  if found then
    if rec.owner_id<>actor then raise exception 'FORBIDDEN'; end if;
