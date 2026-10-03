@@ -43,6 +43,7 @@ before(async()=>{
  assert.equal(r.code,0,r.stderr);created=true;
  let ready=false;for(let i=0;i<40;i++){if((await command('docker',['exec',container,'pg_isready','-h','/tmp/vpj59-socket','-U','postgres'])).code===0){ready=true;break;}await new Promise(r=>setTimeout(r,250));}assert.ok(ready);
  await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));
+ await db("create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;");
  const migrations=readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort();
  const scopedIndex=migrations.findIndex(f=>f.endsWith('_vpj_07_scoped_text_claim.sql'));assert.ok(scopedIndex>0);
  const stagingIndex=migrations.findIndex(f=>f.endsWith('_vpj_37_ops_scope_read_model.sql'));assert.equal(stagingIndex,32);
