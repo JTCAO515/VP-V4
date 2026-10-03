@@ -38,4 +38,17 @@ nonisolated final class NativeLibrarySourcesTests:XCTestCase {
         now=100;await store.load(key:key,current:{current},request:{now=131;return raw});XCTAssertNil(store.page)
         await store.load(key:key,current:{current},request:{current=nil;store.clear();return raw});XCTAssertNil(store.page);XCTAssertNil(store.visible(key))
     }
+    @MainActor func testPlaceCapabilitiesCannotGrantWritersOrFollowArbitraryHref()throws {
+        let trip="22345678-1234-4234-8234-123456789abc"
+        let ask:[String:Any]=["status":"available","reference":["tripId":trip,"canonicalPoiId":id],"handoff":["kind":"ask_ready","href":"/visepanda/ask?tripId="+trip+"&poiId="+id,"poiId":id,"readiness":"recheck_required"]]
+        let caps:[String:Any]=["ask":ask,"save":["status":"unavailable","reason":"DOMAIN_WRITER_MISSING"],"add":["status":"unavailable","reason":"NO_ELIGIBLE_EVIDENCE"],"visual":["status":"unavailable","reason":"NO_LICENSED_VISUAL"]]
+        let root:[String:Any]=["version":1,"kind":"library_place","status":"available","reason":NSNull(),"entity":["provider":"amap","providerPoiId":"provider-1","canonicalPoiId":id,"name":"Observed Hall","address":NSNull(),"location":NSNull(),"observedAt":NSNull()],"capabilities":caps]
+        let value=try NativeLibraryPlace.decode(bytes(root),provider:.amap,providerID:"provider-1",tripID:trip);XCTAssertEqual(value.askTripID,trip);XCTAssertEqual(value.canonicalPoiID,id)
+        var bad=root,changed=caps;changed["save"]=["status":"available"];bad["capabilities"]=changed;XCTAssertThrowsError(try NativeLibraryPlace.decode(bytes(bad),provider:.amap,providerID:"provider-1",tripID:trip))
+        var evil=ask;var handoff=try XCTUnwrap(ask["handoff"] as? [String:Any]);handoff["href"]="https://invalid.example/action";evil["handoff"]=handoff;changed=caps;changed["ask"]=evil;bad=root;bad["capabilities"]=changed
+        XCTAssertThrowsError(try NativeLibraryPlace.decode(bytes(bad),provider:.amap,providerID:"provider-1",tripID:trip))
+        XCTAssertThrowsError(try NativeLibraryPlace.decode(bytes(root),provider:.amap,providerID:"other-place",tripID:trip))
+        XCTAssertThrowsError(try NativeLibraryPlace.decode(bytes(root),provider:.amap,providerID:"provider-1",tripID:id))
+    }
+
 }

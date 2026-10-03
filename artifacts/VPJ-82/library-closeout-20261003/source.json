@@ -1,0 +1,19 @@
+{
+  "kind": "NATIVE_LIBRARY_AGGREGATION_TESTED_SOURCE_NOT_PROVIDER_TARGET_ACCEPTANCE",
+  "backendCore": [
+    "cc4b608e1ddaafb107a64f6ddcd275f58a75256e",
+    "42b54186da11f4b50c0ba9b1626c94d37923d0b3"
+  ],
+  "backendEvidence": "c7ac5291cb33765dd1e7e9c96ec6a775293a6b24",
+  "files": {
+    "ios/VisePanda/VisePanda/Features/Knowledge/NativeLibrarySources.swift": "e1736536c5f295be547eb677f47ed3f146d2d060c2c4b2c40b930fe457f22c84",
+    "ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeView.swift": "61da44fcd43a766f6c306e95ae3ffa3ad267fc4e70dd8ec3868942ac903fb004",
+    "ios/VisePanda/VisePanda/Features/Knowledge/NativeFiveResultView.swift": "56a9841c4ef443903ceefa66f932aec537705817b1770d2620f3772776a21cc7",
+    "ios/VisePanda/VisePanda/Features/Explore/ExploreView.swift": "65aba234e7f623ff1d0da49b244768866443dc04c8f6fb099ffb61f46aba5805",
+    "ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift": "8b4a05534ba8ba2891407f8a7c852a515de5e57175c20de6059722e5a9d49520",
+    "ios/VisePanda/VisePanda/App/AppShellView.swift": "e2c812f7b4e91c976b78577c4edacd8fe9a0d5cac281f86ca859847edcc213c5",
+    "ios/VisePanda/VisePanda/App/NativeSession.swift": "e5a543309eb8b122f620b086e766fcb98a2cdd334a5f245462747f6855648c7f",
+    "ios/VisePanda/VisePanda/Navigation/AppRoute.swift": "10e86e7183f5c073e391e6992e8be3949ca06061709f8dca256a6ba6d21425ca",
+    "ios/VisePanda/VisePandaTests/NativeLibrarySourcesTests.swift": "a43a06ebb252d1ff94e5b7a21dfe4423a6b88747f5752edeace3e8f4a17df246"
+  }
+}
