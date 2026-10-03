@@ -19,3 +19,5 @@ SQL implementation slot: 20261003170000_vpj36_core_export_d2.sql, after verifyin
 Failed receipt rule: state failed has completedAt UTCms terminal time, artifactDigest/artifactBytes/artifactExpiresAt null, modules=[], allUserDataCompleted=false; never a success. Independent job保存deadline=min(policy.validUntil,admissionTime+2*explicit policy.artifactTtlMs), hard48h, not90s lease. Commit immutable expiry clamps to requested expiry/commitServerTime+policyTTL/jobdeadline; replay binds original commit-input digest.
 
 Trip content export explicitly projects days id/date/optionaltimeZone/items id/dayId/title/optionalstartsAt/endsAt; future snapshot keys do not widen output. Trip page traversal has no snapshot guarantee and must remain LIVE_TRAVERSAL in TS coverage.
+
+Late source denial after >=1 collected page is module partial/SOURCE_UNAVAILABLE with retained data/digest; a zero-page denial is failed/SOURCE_UNAVAILABLE with zero rows. SQL accepts this exact TS dispatcher distinction and commits ready_partial, never drops earlier pages or claims complete.

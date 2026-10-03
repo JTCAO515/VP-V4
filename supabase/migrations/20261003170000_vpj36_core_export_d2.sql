@@ -111,7 +111,7 @@ begin
    if m->>'reason'<>'HANDLER_MISSING' or m->'digest' is distinct from 'null'::jsonb or (m->>'pages')::integer<>0 or (m->>'rows')::integer<>0 then return false;end if;
   else
    if jsonb_typeof(m->'digest') is distinct from 'string' or m->>'digest' !~ '^[a-f0-9]{64}$' then return false;end if;
-   if m->>'status'='complete' and (m->>'reason'<>'NONE' or (m->>'pages')::integer<1) or m->>'status'='partial' and m->>'reason' not in ('BOUNDED_LIMIT','LIVE_TRAVERSAL') or m->>'status'='failed' and m->>'reason'<>'SOURCE_UNAVAILABLE' then return false;end if;
+   if m->>'status'='complete' and (m->>'reason'<>'NONE' or (m->>'pages')::integer<1) or m->>'status'='partial' and (m->>'reason' not in ('BOUNDED_LIMIT','LIVE_TRAVERSAL','SOURCE_UNAVAILABLE') or m->>'reason'='SOURCE_UNAVAILABLE' and (m->>'pages')::integer<1) or m->>'status'='failed' and (m->>'reason'<>'SOURCE_UNAVAILABLE' or (m->>'pages')::integer<>0 or (m->>'rows')::integer<>0) then return false;end if;
   end if;
  end loop;
  return pages<=max_pages;
