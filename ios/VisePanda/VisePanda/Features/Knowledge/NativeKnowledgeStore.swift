@@ -94,7 +94,8 @@ final class NativeLibrarySearchStore {
             guard generation == own, !Task.isCancelled else { return }
             guard bytes.count <= 100_000 else { throw NativeDataError.invalidResponse }
             let envelope = try JSONDecoder().decode(NativeLibrarySearchEnvelope.self, from: bytes)
-            guard envelope.version == 1, envelope.data.valid, uptime() - started < 30 else { throw NativeDataError.invalidResponse }
+            if envelope.version==2 {try NativeFiveResultSearch.validate(bytes)}
+            guard [1,2].contains(envelope.version), envelope.data.valid, uptime() - started < 30 else { throw NativeDataError.invalidResponse }
             rows = envelope.data.results ?? []; nextCursor = envelope.data.nextCursor
             state = envelope.data.kind; deadline = state == "result_search" ? started + 30 : 0
         } catch {

@@ -1,0 +1,16 @@
+Test Suite 'Selected tests' started at 2026-10-03 11:07:06.857.
+Test Suite 'VisePandaTests.xctest' started at 2026-10-03 11:07:06.857.
+Test Suite 'NativeFiveResultTests' started at 2026-10-03 11:07:06.857.
+Test Case '-[VisePandaTests.NativeFiveResultTests testExactIdentityActorAndHistoricalCurrentnessAreIndependent]' started.
+Test Case '-[VisePandaTests.NativeFiveResultTests testExactIdentityActorAndHistoricalCurrentnessAreIndependent]' passed (0.015 seconds).
+Test Case '-[VisePandaTests.NativeFiveResultTests testFiveClosedTypesAndInertActionsNoFutureOrHtmlAction]' started.
+Test Case '-[VisePandaTests.NativeFiveResultTests testFiveClosedTypesAndInertActionsNoFutureOrHtmlAction]' passed (0.001 seconds).
+Test Case '-[VisePandaTests.NativeFiveResultTests testOwnerChoiceCasExactNextReadAndIdempotentRetry]' started.
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj81-conversation-selection/ios/VisePanda/VisePandaTests/NativeFiveResultTests.swift:39: error: -[VisePandaTests.NativeFiveResultTests testOwnerChoiceCasExactNextReadAndIdempotentRetry] : XCTAssertEqual failed: ("142 bytes") is not equal to ("142 bytes")
+Test Case '-[VisePandaTests.NativeFiveResultTests testOwnerChoiceCasExactNextReadAndIdempotentRetry]' failed (0.066 seconds).
+Test Suite 'NativeFiveResultTests' failed at 2026-10-03 11:07:06.940.
+	 Executed 3 tests, with 1 failure (0 unexpected) in 0.082 (0.083) seconds
+Test Suite 'VisePandaTests.xctest' failed at 2026-10-03 11:07:06.940.
+	 Executed 3 tests, with 1 failure (0 unexpected) in 0.082 (0.084) seconds
+Test Suite 'Selected tests' failed at 2026-10-03 11:07:06.941.
+	 Executed 3 tests, with 1 failure (0 unexpected) in 0.082 (0.084) seconds

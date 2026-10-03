@@ -145,7 +145,7 @@ function selectedDomainCandidates(data:Row,actor:string):SelectedGoalContextSour
  if(!record(data.capturedSources)||!Array.isArray(data.evidence)||!Array.isArray(data.tasks)||!Array.isArray(data.history))throw new ContextReadError("PROVIDER_UNAVAILABLE");const out:SelectedGoalContextSource[]=[];
  if(data.trip!==null){if(!record(data.trip)||!uuid(data.trip.tripId)||!Number.isSafeInteger(data.trip.headVersion)||typeof data.trip.title!=="string")throw new ContextReadError("PROVIDER_UNAVAILABLE");out.push({id:`trip:${data.trip.tripId}`,kind:"trip",ownerId:actor,sourceVersion:`head:${data.trip.headVersion}`,text:`Owned Trip reference, not a new confirmation: ${data.trip.title}; revision ${data.trip.headVersion}.`});}
  if(data.artifact!==null){const a=data.artifact,ref=data.capturedSources.artifact;if(!record(a)||a.kind!=="result_artifact"||!uuid(a.artifactId)||!Number.isSafeInteger(a.revision)||a.historicalReadable!==true||!record(a.content)||!record(ref)||ref.artifactId!==a.artifactId||ref.revision!==a.revision||!record(a.source))throw new ContextReadError("PROVIDER_UNAVAILABLE");const previous=ref.purpose==="previous_result_reference";if(!previous&&a.current!==true)throw new ContextReadError("SERVICE_TASK_CONFLICT");
-  const c=a.content,excerpt=(v:unknown,n:number)=>typeof v==="string"?Array.from(v).slice(0,n).join(""):"",text=[excerpt(c.title,12),excerpt(c.summary,12)].join("; ");
+  const c=a.content,text=selectedResultExcerptV2(c);
   out.push({id:`artifact:${a.artifactId}`,kind:previous?"thread":"proposal",ownerId:actor,sourceVersion:`revision:${a.revision}:originGoal:${a.source.goalVersion}:purpose:${ref.purpose}`,text:`${previous?"Previous; no actions":"Selected; no actions"}. ${text}`,purpose:previous?"previous_result_reference":"current_context",artifactId:a.artifactId,revision:Number(a.revision),originGoalVersion:Number(a.source.goalVersion),current:previous?false:a.current===true,recipient:"first_party"});
  }
  for(const item of data.evidence){if(!record(item)||!record(item.reference)||!record(item.version)||typeof item.text!=="string"||item.recipient!=="first_party")throw new ContextReadError("PROVIDER_UNAVAILABLE");out.push({id:`evidence:${item.reference.factId}`,kind:"evidence",ownerId:null,sourceVersion:`assertion:${item.reference.assertionId}:revision:${item.reference.assertionRevision}:digest:${createHash("sha256").update(JSON.stringify(item.version)).digest("hex")}`,text:[item.text,JSON.stringify(item.conditions),JSON.stringify(item.exclusions)].join("\n"),recipient:"first_party"});}
@@ -158,4 +158,26 @@ function getSelectedSourceContextConfig(request:NextRequest){
  const config=getNativeTextConfig(request);if(!config)return null;
  const enabled=process.env.VISEPANDA_NATIVE_STAGING==="true"?process.env.VISEPANDA_NATIVE_STAGING_GOAL_CONTEXT:process.env.VISEPANDA_NATIVE_PRODUCTION==="true"?process.env.VISEPANDA_NATIVE_PRODUCTION_GOAL_CONTEXT:process.env.VISEPANDA_NATIVE_LOCAL_GOAL_CONTEXT;
  return enabled==="true"?config:null;
+}
+
+/** Domain-qualified inert content only. Typed short excerpts are not action adapters. */
+export function selectedResultExcerptV2(content:Record<string,unknown>):string{
+ const short=(v:unknown,n=18)=>typeof v==="string"?Array.from(v).slice(0,n).join(""):"";
+ switch(content.schemaVersion){
+  case "comparison/1": return [short(content.title,12),short(content.summary,12)].join("; ");
+  case "journey-draft/1": {
+   if(!record(content.draft)||!Array.isArray(content.draft.days))throw new ContextReadError("PROVIDER_UNAVAILABLE");
+   const first=content.draft.days.find(record);return `Draft ${short(content.title,12)}: ${content.draft.days.length} days; ${first?short(first.date,10):"undated"}. Not a saved Trip.`;
+  }
+  case "decision/1": {
+   if(!record(content.comparisonRef)||!["pending","chosen"].includes(String(content.state)))throw new ContextReadError("PROVIDER_UNAVAILABLE");
+   return `Decision ${short(content.title,10)}: ${content.state}${content.state==="chosen"?` ${short(content.chosenOptionId,12)}`:""}; comparison r${content.comparisonRef.revision}. No Trip confirmation.`;
+  }
+  case "practical/1": {
+   if(content.kind!=="translation"||typeof content.translation!=="string"||typeof content.backTranslation!=="string")throw new ContextReadError("PROVIDER_UNAVAILABLE");
+   return `Translation ${content.sourceLocale}→${content.targetLocale}: ${short(content.translation,16)}; back: ${short(content.backTranslation,12)}.`;
+  }
+  case "change-proposal-reference/1": return `Unconfirmed Trip proposal r${content.proposalRevision}; ${short(content.title,12)}. No confirm action.`;
+  default: throw new ContextReadError("PROVIDER_UNAVAILABLE");
+ }
 }

@@ -81,13 +81,13 @@ struct NativeKnowledgeView: View {
             }
             await resultStore.load(scope: key.scope, query: key.search, cursor: key.cursor) {
                 guard session.dataScope == key.scope else { throw NativeDataError.staleSessionResponse }
-                let bytes = try await session.resultSearchRequest(query: key.search, cursor: key.cursor)
+                let bytes = try await session.fiveResultSearchRequest(query: key.search, cursor: key.cursor)
                 guard session.dataScope == key.scope else { throw NativeDataError.staleSessionResponse }
                 return bytes
             }
         }
         .sheet(item: $openedResult, onDismiss: { resultStore.clear(); refresh = UUID() }) { selection in
-            NativeLibraryResultDetail(selection: selection, scope: session.dataScope, chinese: chinese, session: session)
+            NativeFiveResultDetail(artifactID:selection.artifactID,revision:selection.revision,session:session,chinese:chinese,active:isActive)
         }
         .onChange(of: Data(search.utf8)) { _, _ in resultStore.clear(); openedResult = nil; cursor = nil }
         .onChange(of: session.dataScope) { _, _ in resultStore.clear(); openedResult = nil; search = ""; cursor = nil }

@@ -436,6 +436,8 @@ struct NativeAssistantConversationView: View {
     @State private var selection = AssistantConversationSelection()
     @State private var conversations: [AssistantConversationSummary] = []
     @State private var conversationsNotice: String?
+    @State private var fiveResultSelection: LibraryResultSelection?
+    @State private var fiveResultRequestGeneration = UUID()
     @State private var showEvidenceSelection = false
     @State private var selectedSources = NativeSelectedMessageStore()
     @State private var paceOperationBlocked = false
@@ -651,6 +653,13 @@ struct NativeAssistantConversationView: View {
                 }
             }.padding(VPSpacing.standard)
         }
+        .sheet(item: $fiveResultSelection) { value in
+            NativeFiveResultDetail(artifactID:value.artifactID,revision:value.revision,session:session,chinese:chinese,active:resultActive,onReference:{scope,id,revision in
+                guard scope==session.dataScope,selectedSources.pending==nil else{return}
+                selectedSources.sources.artifact = .init(artifactId:id,revision:revision)
+                if goalHasCurrentMessage{operation="follow_up"}
+            })
+        }
         .sheet(isPresented: $showEvidenceSelection) {
             NativeSelectedEvidencePicker(session: session, chinese: chinese, selected: selectedSources.sources.evidence) { scope, evidence in
                 guard scope == session.dataScope, selectedSources.pending == nil else { return }
@@ -771,6 +780,8 @@ struct NativeAssistantConversationView: View {
             let requested = session.dataScope
             paceOperationBlocked = false
             selectedSources.bind(requested)
+            fiveResultSelection = nil
+            fiveResultRequestGeneration = UUID()
             showEvidenceSelection = false
             refreshState.invalidate()
             // Reappearance under the same actor is not a conversation switch.
@@ -1642,6 +1653,15 @@ struct NativeAssistantConversationView: View {
         guard resultActive, let initial = session.dataScope, UUID(uuidString: taskID) != nil,
               taskMessages.contains(where: { $0.taskId == taskID }),
               taskTurns.contains(where: { $0.serviceTaskId == taskID && $0.status == "completed" && $0.goalScopeCurrent }) else { return }
+        let requestGeneration=UUID();fiveResultRequestGeneration=requestGeneration;fiveResultSelection=nil
+        do {
+            let bytes=try await session.fiveResultReference(field:"task",id:taskID)
+            guard fiveResultRequestGeneration==requestGeneration,session.dataScope==initial,resultActive else{return}
+            if let reference=try NativeFiveResultReference.decode(bytes,field:"taskId",expectedID:taskID){fiveResultSelection = .init(artifactID:reference.artifactID,revision:reference.revision)}
+            else{resultNotice="unavailable"}
+        }catch{if fiveResultRequestGeneration==requestGeneration,session.dataScope==initial{resultNotice="unavailable"}}
+    }
+    private func openLegacyResult(for taskID: String, initial: NativeDataScope) async {
         selectedTaskID = taskID; selectedResult = nil; resultNotice = nil
         let generation = resultFence.begin(scope: initial, now: ProcessInfo.processInfo.systemUptime)
         do {
