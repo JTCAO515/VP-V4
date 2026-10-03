@@ -90,3 +90,24 @@ for plan checking. Different instants remain independent reference observations
 with the plan route line pending. No tolerance window is invented. Walking
 duration is qualified only for walking mode; transit walking distance does not
 become walking minutes. Last-service and reservation checks remain pending.
+
+## Current saved Profile soft reference
+
+Success may additionally include preferenceContext exactly
+kind:profile_preference_context/1,status:current|unknown|unavailable,
+travelPace:null|relaxed|balanced|packed,currency:null|string,
+defaultDepartureTime:null|HH:mm,updatedAt:null|string,
+influence:soft_reference_only,explicitInputPriority:current_explicit_input,hints:string[].
+The production route includes this field and reads it twice through the existing
+ordinary owner Profile adapter. Changed Profile context returns STALE_EVIDENCE.
+Missing/invalid values are unknown, read errors unavailable, never synthesized
+defaults. Only the existing travel pace, currency and default departure reference
+are returned; unrelated profile identity fields stay outside this result.
+
+Hints are PROFILE_PACE_RELAXED_SOFT_REFERENCE, PROFILE_PACE_BALANCED_SOFT_REFERENCE,
+or PROFILE_PACE_PACKED_SOFT_REFERENCE; EXPLICIT_CURRENCY_MATCHES_PROFILE or
+EXPLICIT_CURRENCY_OVERRIDES_PROFILE; PROFILE_DEPARTURE_REFERENCE_ONLY.
+Display this preview separately from current explicit needs, with existing Profile
+correction/navigation or current-input editing. Applying a preview to input requires
+the user's explicit selection. Profile hints never count as supported feasibility
+lines and never change constraints, times or Trip data.

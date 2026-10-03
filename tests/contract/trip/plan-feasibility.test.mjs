@@ -46,10 +46,11 @@ test('production HTTP uses owned exact proposal and JWT reads; changed same-sess
  const env={VERCEL_ENV:'preview',VERCEL_URL:host,VISEPANDA_NATIVE_STAGING:'true',VISEPANDA_TRIP_PROTOCOL_V2:'true',NEXT_PUBLIC_SUPABASE_URL:database,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:f.config.publishableKey};
  const old=Object.fromEntries(Object.keys(env).map(k=>[k,process.env[k]]));Object.assign(process.env,env);
  t.after(()=>{for(const[k,v]of Object.entries(old))v===undefined?delete process.env[k]:process.env[k]=v;});
- const prior=globalThis.fetch;let epochCalls=0,replace=false;const seen=[];
+ const prior=globalThis.fetch;let epochCalls=0,replace=false,profileMoves=false,profileCalls=0;const seen=[];
  t.mock.method(globalThis,'fetch',async(input,init)=>{
   const req=new Request(input,init),path=new URL(req.url).pathname;
   if(path.endsWith('/native_session_v2')){epochCalls++;return Response.json({version:2,subject,sessionId,mobileEpoch:replace&&epochCalls>1?2:1});}
+  if(path==='/rest/v1/user_profiles'){profileCalls++;return Response.json({travel_pace:'relaxed',currency:profileMoves&&profileCalls>1?'USD':'CNY',default_departure_time:'09:00:00',updated_at:'2026-10-03T00:00:00Z'});}
   if(path==='/rest/v1/trips')return Response.json({id:basis.tripId,title:'Current proposal',head_version:0,updated_at:'2026-10-03T00:00:00Z'});
   if(path.endsWith('/read_trip_proposal_v2')){seen.push({params:await req.json(),authorization:req.headers.get('authorization')});return Response.json([{digest:hash,proposal:{id:basis.proposalId,trip_id:basis.tripId,revision:1,base_trip_version:0,status:'pending',patch:{expectedVersion:0,operations:[{kind:'set_title',title:'Proposed'}]},created_at:'2026-10-03T00:00:00Z',expires_at:'2099-01-01T00:00:00Z',rollback_snapshot_version:null}}]);}
   if(path==='/rest/v1/trip_version_snapshots')return Response.json({version:0,title:basis.after.title,content:{title:basis.after.title,days:basis.after.days}});
@@ -57,10 +58,12 @@ test('production HTTP uses owned exact proposal and JWT reads; changed same-sess
  });
  const request=()=>new NextRequest(`https://${host}/api/trips/native/v2/${basis.tripId}/feasibility`,{method:'POST',headers:{authorization:'Bearer '+f.token},body:JSON.stringify({proposalId:basis.proposalId,expectedProposalRevision:1,expectedBaseVersion:0,needs,placeChoices:[]})});
  const response=await nativePlanFeasibilityHTTP(request(),basis.tripId);const result=await response.json();
+ assert.equal(result.preferenceContext.status,'current');assert.equal(result.preferenceContext.influence,'soft_reference_only');
  assert.equal(response.status,200);assert.equal(result.kind,'plan_feasibility/1');assert.equal(result.status,'pending');assert.equal(result.basis.proposalDigest,hash);
  assert.deepEqual(seen[0].params,{p_proposal_id:basis.proposalId});assert.equal(seen[0].authorization,'Bearer '+f.token);
  replace=true;epochCalls=0;const revoked=await nativePlanFeasibilityHTTP(request(),basis.tripId);
  assert.equal(revoked.status,401);assert.deepEqual(await revoked.json(),{error:{code:'UNAUTHENTICATED'}});
+ replace=false;profileMoves=true;profileCalls=0;const changed=await nativePlanFeasibilityHTTP(request(),basis.tripId);assert.deepEqual(await changed.json(),{kind:'unavailable',reason:'STALE_EVIDENCE'});
 });
 
 import {readPlanRouteEvidence} from '../../../lib/server/trip/feasibility/routes.ts';
@@ -106,4 +109,19 @@ test('existing canonical route identity resolution requires exactly one valid ma
   rows=invalid;assert.equal(await resolveCanonicalRouteEndpoints(client,reference,mapping),null);
  }
  denied=true;assert.equal(await resolveCanonicalRouteEndpoints(client,reference,mapping),null);
+});
+
+import {planPreferenceContext} from '../../../lib/server/trip/feasibility/preferences.ts';
+test('saved Profile is a soft current reference; explicit needs prevail and missing or denied sources never default',()=>{
+ const before=structuredClone(needs);
+ const p={travelPace:'relaxed',currency:'USD',defaultDepartureTime:'09:00',updatedAt:'2026-10-03T00:00:00Z'};
+ const reference=planPreferenceContext({data:p},needs);
+ assert.equal(reference.status,'current');assert.equal(reference.explicitInputPriority,'current_explicit_input');
+ assert.ok(reference.hints.includes('EXPLICIT_CURRENCY_OVERRIDES_PROFILE'));assert.deepEqual(needs,before);
+ assert.equal(assemblePlanFeasibility(basis,needs,[],[]).status,'pending');
+ for(const read of [{data:null},{data:{...p,travelPace:'invented'}}]){
+  const unknown=planPreferenceContext(read,needs);assert.equal(unknown.status,'unknown');assert.equal(unknown.travelPace,null);assert.deepEqual(unknown.hints,[]);
+ }
+ const unavailable=planPreferenceContext({error:'FORBIDDEN'},needs);
+ assert.equal(unavailable.status,'unavailable');assert.equal(unavailable.currency,null);
 });

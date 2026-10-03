@@ -6,6 +6,7 @@ import {createOfflineNativeAuthority} from "../../today/offline-native-authority
 import {verifyNativeCredentials} from "../../identity/native-credentials.ts";
 import {KNOWLEDGE_CITIES,KNOWLEDGE_SCENES} from "../../knowledge/publication/statement.ts";
 import {readPlanPlaceEvidence,type ExplicitPlaceChoice} from "./evidence.ts";
+import {planPreferenceContext} from "./preferences.ts";
 import {readPlanRouteEvidence,type ExplicitRouteRequest} from "./routes.ts";
 import {consumePlaceQuota} from "../../maps/place-quota.ts";
 import { assemblePlanFeasibility, type ExplicitPlanNeeds } from "./assembly.ts";
@@ -47,6 +48,7 @@ export async function nativePlanFeasibilityHTTP(request:NextRequest,tripId:strin
   if(p.id!==input.proposalId||p.revision!==input.expectedProposalRevision||p.baseTripVersion!==input.expectedBaseVersion||p.stale||!p.after||!p.digest)return reply({kind:"unavailable",reason:"STALE_BASIS"});
   const basis={tripId,proposalId:p.id,proposalRevision:p.revision,baseVersion:p.baseTripVersion,proposalDigest:p.digest,after:p.after};
   const rpc=async(name:string,params:Record<string,unknown>)=>{const r=await credentials.client.rpc(name,params).abortSignal(scope.signal);scope.check();return {data:r.data as unknown,error:r.error};};
+  const preferenceContext=planPreferenceContext(await adapter.getUserProfile(),input.needs);scope.check();
   const evidence=await readPlanPlaceEvidence(basis,input.placeChoices,rpc);
   let quotaAllowed=false;
   const routeEvidence=await readPlanRouteEvidence(basis,evidence.items,input.routeRequests??[],{
@@ -58,11 +60,13 @@ export async function nativePlanFeasibilityHTTP(request:NextRequest,tripId:strin
       return true;
     },
   });
-  const result=assemblePlanFeasibility(basis,input.needs,evidence.items,routeEvidence.routes,[...evidence.bindings,...routeEvidence.bindings]);
+  const result={...assemblePlanFeasibility(basis,input.needs,evidence.items,routeEvidence.routes,[...evidence.bindings,...routeEvidence.bindings]),preferenceContext};
   // Current route observations with different departure times are references only.
   // Reservation and last-service timetable have no qualified installed reader.
   const requalified=await readPlanPlaceEvidence(basis,input.placeChoices,rpc);
   if(JSON.stringify(evidence.bindings)!==JSON.stringify(requalified.bindings))return reply({kind:"unavailable",reason:"STALE_EVIDENCE"});
+  const currentPreferences=planPreferenceContext(await adapter.getUserProfile(),input.needs);scope.check();
+  if(JSON.stringify(currentPreferences)!==JSON.stringify(preferenceContext))return reply({kind:"unavailable",reason:"STALE_EVIDENCE"});
   const final=await authority.read();if("error"in final)return failure(final.error,final.error==="UNAUTHENTICATED"?401:503);
   if(final.data.sessionEpoch!==initial.data.sessionEpoch||final.data.subject!==initial.data.subject||final.data.sessionId!==initial.data.sessionId)return failure("UNAUTHENTICATED",401);
   const current=await adapter.getPendingProposal(tripId,input.proposalId),still=await adapter.authenticated();scope.check();
