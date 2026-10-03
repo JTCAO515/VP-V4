@@ -4,6 +4,7 @@ import { readFileSync, mkdtempSync, mkdirSync, writeFileSync, rmSync } from "nod
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import test from "node:test";
+import {selectCheckPlan} from "../../../scripts/ci-change-scope.mjs";
 
 const read = (path) => readFileSync(path, "utf8");
 
@@ -14,18 +15,34 @@ test("Quality PR preserves every full-scope gate and a bounded documentation pat
     const command = step.match(/^\s*(?:- )?run: (.+)$/m)?.[1];
     return command ? [[command, step]] : [];
   }));
-  for (const command of ["pnpm lint", "pnpm test:contract", "pnpm docs:check"]) {
+  for (const command of ["pnpm lint", "pnpm docs:check", "pnpm check:artifacts"]) {
     assert.ok(commandSteps.has(command), command);
     assert.ok(!commandSteps.get(command).includes("if:"), `${command} must run in both scopes`);
   }
-  for (const command of ["pnpm typecheck", "pnpm build", "pnpm test", "pnpm test:unit",
+  const checkFlags = {"pnpm typecheck":"typecheck", "pnpm build":"build", "pnpm test":"test", "pnpm test:unit":"unit",
+    "pnpm test:contract":"contract", "pnpm test:integration":"integration", "pnpm test:security":"security", "pnpm test:e2e":"e2e",
+    "pnpm evals":"evals", "pnpm check:flags":"flags", "pnpm check:assets":"assets", "pnpm exec playwright install chromium":"browser",
+    "pnpm exec playwright test --config playwright.config.mjs --workers=1":"browser"};
+  for (const command of ["pnpm typecheck", "pnpm build", "pnpm test", "pnpm test:unit", "pnpm test:contract",
     "pnpm test:integration", "pnpm test:security", "pnpm test:e2e", "pnpm evals",
     "pnpm check:flags", "pnpm check:assets", "pnpm exec playwright install chromium",
     "pnpm exec playwright test --config playwright.config.mjs --workers=1"]) {
     assert.ok(commandSteps.has(command), command);
-    assert.ok(commandSteps.get(command).includes("if: steps.scope.outputs.scope != 'documentation'"),
+    assert.ok(commandSteps.get(command).includes(`if: steps.scope.outputs.${checkFlags[command]} == 'true'`),
       `${command} must run for full or unknown scope`);
   }
+  const docs = selectCheckPlan(["README.md", "docs/agents/development-workflow.md"], "pull_request");
+  assert.equal(docs.profile, "documentation"); assert.deepEqual(docs.dbLanes, []); assert.equal(docs.checks.contract, false);
+  for (const input of [["unknown.file"], [".github/workflows/quality-pr.yml"]]) {
+    const full = selectCheckPlan(input, "pull_request"); assert.equal(full.profile, "full");
+    for (const flag of Object.values(checkFlags)) assert.equal(full.checks[flag], true, flag);
+  }
+  assert.match(workflow, /^  deterministic-pr-gates:/m);
+  assert.doesNotMatch(workflow, /continue-on-error:\s*true/);
+  const selector = read("scripts/ci-change-scope.mjs");
+  assert.match(selector, /classification\.problems\.length\)throw Error/);
+  const db = read(".github/workflows/db-integration.yml");
+  assert.match(db, /test "\$SELECT_RESULT" = success/); assert.match(db, /test "\$LANE_RESULT" = success/); assert.match(db, /exit 1/);
   assert.ok(commandSteps.has("node scripts/ci-change-scope.mjs"));
   assert.ok(commandSteps.get("node --test tests/unit/governance/*.test.mjs")
     .includes("if: steps.scope.outputs.scope == 'documentation'"));
