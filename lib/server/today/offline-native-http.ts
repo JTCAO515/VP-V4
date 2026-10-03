@@ -5,6 +5,7 @@ import { createNativeTripDataAdapter } from "../identity/user-data-adapter.ts";
 import { isUuid } from "../identity/request-guards.ts";
 import { FAILURE_TAXONOMY, type FailureCode } from "../contracts/errors/index.ts";
 import { createOfflineNativeAuthority, type OfflineNativeActor } from "./offline-native-authority.ts";
+import { productionOfflinePorts } from "./offline-production.ts";
 import { issueOfflineRead, type OfflineBasis } from "./offline-read.ts";
 
 const response = (data: unknown, status = 200) => Response.json(data, { status, headers: { "Cache-Control": "private, no-store" } });
@@ -62,7 +63,7 @@ export async function nativeOfflineReadHTTP(request: NextRequest, tripId: string
             items: day.items.map(item => ({ id: item.id, title: item.title })) })) },
         };
       };
-      const result = await issueOfflineRead(tripId.toLowerCase(), Number(head), requestNonce, { readCurrent });
+      const result = await issueOfflineRead(tripId.toLowerCase(), Number(head), requestNonce, productionOfflinePorts(readCurrent, config.environment ?? "local"));
       if (readError) return failure(readError);
       // Also recheck the closed production response before publishing it.
       const final = await readCurrent();

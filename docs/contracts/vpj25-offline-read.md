@@ -16,8 +16,8 @@ A digest is SHA-256 over canonical payload only, for integrity comparison.
 
 Only provenance-proven user-authored, confirmed Trip date/text fields are eligible.
 Unknown provenance, third-party locations/addresses/translations, images, orders,
-OCR text and Memory are excluded. The production adapter currently has no provenance
-policy/signer and therefore issues no offline packages. The readonly authority adapter
+OCR text and Memory are excluded. The production composition reads strict policy/signer
+providers but has no real provenance reader and therefore issues no offline packages. The readonly authority adapter
 uses the existing JWT-bound `native_session_v2` RPC with `p_action:"session"`, whose
 version-2 response binds subject/sessionId/mobileEpoch. It validates the verified
 credential subject/sessionId and a positive safe-integer mobileEpoch, and checks
@@ -84,3 +84,50 @@ fails closed and requires an online revalidation. Reopening a cached package mus
 not restart a deadline. Policy issuedAt retains its original policy meaning and
 is never the basis of a fresh lease beginning at response receipt. Slow signing,
 transport or validation can only shorten the effective remaining validity.
+
+## Server configuration composition
+
+The HTTP route installs `productionOfflinePorts`, using the environment selected by
+the existing validated Native runtime configuration. Requests cannot select an
+environment, provider, key, policy, duration or provenance. There is no activation
+default. The following named variables are server-only providers; no target variable
+or key is installed by this change.
+
+`VISEPANDA_OFFLINE_READ_POLICY` is JSON (<=8192 UTF-8 bytes), with exactly:
+
+```json
+{"version":"offline_read_policy/1","environment":"local|staging|production","enabled":true,"revoked":false,"policyId":"ASCII_identifier","policyRevision":1,"fieldAllowlist":["days.date","days.items.title"],"issuedAt":"YYYY-MM-DDTHH:mm:ss.sssZ","expiresAt":"YYYY-MM-DDTHH:mm:ss.sssZ","maxLeaseMs":60000}
+```
+
+The duration above illustrates a shape, not a default or approved live duration.
+Policy ID uses `[A-Za-z0-9_.:-]{1,128}`. Revision and duration must be positive safe
+integers; enabled/revoked are strict booleans. Environment must match the validated
+server target. UTC times are strict and issued <= now < expiry; expiry-issued <=
+maxLeaseMs. Unknown fields, unknown target, wrong allowlist, missing/disabled/revoked
+policy or invalid interval returns unavailable. A configuration cannot assert
+user authorship: that requires the separate trusted provenance authority below.
+Policy is re-read after provenance lookup and again during final issuance checks.
+
+`VISEPANDA_OFFLINE_READ_SIGNER` is JSON (<=12288 UTF-8 bytes), with exactly:
+
+```json
+{"version":"offline_read_signer/1","environment":"local|staging|production","algorithm":"Ed25519","keyId":"ed25519:<lowercase_SHA256_of_derived_public_SPKI>","publicKeySpki":"unpadded_canonical_base64url_DER_SPKI","privateKeyPkcs8Pem":"bounded_unencrypted_PKCS8_PEM"}
+```
+
+PEM is <=4096 UTF-8 bytes with a single PRIVATE KEY block; decoded public SPKI
+is <=128 bytes. Both keys must be Ed25519. Declared public DER must exactly match
+public DER derived from the private key, and keyId must match its SHA-256 fingerprint.
+Wrong key type, mismatched pair/fingerprint, malformed, oversized or unknown fields
+are rejected. Crypto exceptions/provider values are never logged or returned.
+The signer reads the named private provider only after independent provenance
+qualification; it re-reads and validates the provider before signing. Key rotation
+or withdrawal is detected during final policy/provenance requalification. Native
+trusts only its independently configured public-key registry, never a package key.
+No JWT secrets, public env variables, generated production keys or request keys are used.
+
+The composition's provenance port must bind current subject/sessionEpoch/tripId/
+headVersion and canonical payload digest, and supply exact user-authored day/item
+IDs. The actual HTTP route currently has no such source reader and therefore stays
+unavailable even with configured policy/signer. Local tests inject a scoped synthetic
+receipt and ephemeral in-memory keys to verify composition, not real authorship or
+live offline rights. No fake source is installed in the production route.

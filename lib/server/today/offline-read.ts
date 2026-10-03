@@ -8,6 +8,7 @@ export type OfflineBasis = {
 };
 export type OfflinePolicy = {
   policyId: string; policyRevision: number; issuedAt: string; expiresAt: string; maxLeaseMs: number;
+  signingKeyId?: string;
   // Trusted provenance authority, never inferred from item text or caller input.
   userAuthoredDayIds: readonly string[]; userAuthoredItemIds: readonly string[];
 };
@@ -94,7 +95,7 @@ export async function issueOfflineRead(tripId: string, expectedHeadVersion: numb
       fieldAllowlist: OFFLINE_FIELDS, snapshotDigest: offlineDigest(basis.payload), payload: basis.payload,
     };
     const proof = await ports.sign(Buffer.from(offlineCanonical(unsigned), "utf8"));
-    if (!proof || proof.algorithm !== "Ed25519" || !text(proof.keyId, 128) || !/^[A-Za-z0-9_-]{86}$/.test(proof.signature) || Buffer.from(proof.signature, "base64url").length !== 64 || Buffer.from(proof.signature, "base64url").toString("base64url") !== proof.signature || Object.keys(proof).length !== 3) return unavailable("POLICY_UNCONFIGURED");
+    if (!proof || (pinnedPolicy.signingKeyId !== undefined && proof.keyId !== pinnedPolicy.signingKeyId) || proof.algorithm !== "Ed25519" || !text(proof.keyId, 128) || !/^[A-Za-z0-9_-]{86}$/.test(proof.signature) || Buffer.from(proof.signature, "base64url").length !== 64 || Buffer.from(proof.signature, "base64url").toString("base64url") !== proof.signature || Object.keys(proof).length !== 3) return unavailable("POLICY_UNCONFIGURED");
     const final = await ports.readCurrent();
     if (!final || !validBasis(final, tripId, expectedHeadVersion) || offlineCanonical(final) !== offlineCanonical(basis)) return unavailable("STALE_BASIS");
     const currentPolicy = await ports.policy(structuredClone(final));

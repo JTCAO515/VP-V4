@@ -1,9 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { generateKeyPairSync, sign, verify } from 'node:crypto';
+import { generateKeyPairSync, createHash, sign, verify } from 'node:crypto';
 import { NextRequest } from 'next/server.js';
 import { issueOfflineRead, offlineCanonical, offlineDigest } from '../../../lib/server/today/offline-read.ts';
 import { nativeFixture, subject as nativeSubject, sessionId } from './native-fixture.ts';
+import { productionOfflinePorts, readOfflinePolicy, readOfflineSigner } from '../../../lib/server/today/offline-production.ts';
 import { createOfflineNativeAuthority } from '../../../lib/server/today/offline-native-authority.ts';
 import { nativeOfflineReadHTTP } from '../../../lib/server/today/offline-native-http.ts';
 
@@ -227,4 +228,66 @@ test('opaque ID boundary rejects illegal and duplicate IDs before signing',async
     assert.equal((await issueOfflineRead(tripId,2,nonce,f.ports)).kind,'unavailable');
     assert.equal(f.signs,0);
   }
+});
+
+function productionFixture() {
+  const f=fixture(),publicDer=f.keys.publicKey.export({format:'der',type:'spki'});
+  const policy={version:'offline_read_policy/1',environment:'local',enabled:true,revoked:false,policyId:'test-policy',policyRevision:1,fieldAllowlist:['days.date','days.items.title'],issuedAt:new Date(now).toISOString(),expiresAt:new Date(now+60000).toISOString(),maxLeaseMs:60000};
+  const signer={version:'offline_read_signer/1',environment:'local',algorithm:'Ed25519',keyId:'ed25519:'+createHash('sha256').update(publicDer).digest('hex'),publicKeySpki:publicDer.toString('base64url'),privateKeyPkcs8Pem:f.keys.privateKey.export({format:'pem',type:'pkcs8'})};
+  let privateReads=0;
+  const configuration={readPolicy:()=>JSON.stringify(policy),readSigner:()=>{privateReads++;return JSON.stringify(signer);}};
+  const provenance=async b=>({subject:b.subject,sessionEpoch:b.sessionEpoch,tripId:b.tripId,headVersion:b.headVersion,snapshotDigest:offlineDigest(b.payload),userAuthoredDayIds:[dayId],userAuthoredItemIds:[itemId]});
+  return {f,policy,signer,configuration,provenance,get privateReads(){return privateReads;}};
+}
+test('production composition actually reads strict policy and Ed25519 provider and verifies signature',async()=>{
+  const p=productionFixture();
+  const result=await issueOfflineRead(tripId,2,nonce,productionOfflinePorts(p.f.ports.readCurrent,'local',p.configuration,p.provenance,()=>now));
+  assert.equal(result.kind,'offline_trip_read/1');
+  assert.equal(result.proof.keyId,p.signer.keyId);
+  const {proof,...unsigned}=result;
+  assert.equal(verify(null,Buffer.from(offlineCanonical(unsigned)),p.f.keys.publicKey,Buffer.from(proof.signature,'base64url')),true);
+});
+test('missing or mismatched provenance rejects before private provider is read',async()=>{
+  const p=productionFixture();
+  for(const provenance of [undefined,async()=>null,async b=>({...await p.provenance(b),subject:tripId}),async b=>({...await p.provenance(b),snapshotDigest:'a'.repeat(64)})]){
+    assert.deepEqual(await issueOfflineRead(tripId,2,nonce,productionOfflinePorts(p.f.ports.readCurrent,'local',p.configuration,provenance,()=>now)),{kind:'unavailable',reason:'POLICY_UNCONFIGURED'});
+  }
+  assert.equal(p.privateReads,0);
+});
+test('policy missing, disabled, revoked, malformed or target mismatched does not read private keys',async()=>{
+  const p=productionFixture();
+  for(const raw of [undefined,'{',JSON.stringify({...p.policy,enabled:false}),JSON.stringify({...p.policy,enabled:'true'}),JSON.stringify({...p.policy,revoked:true}),JSON.stringify({...p.policy,revoked:'false'}),JSON.stringify({...p.policy,environment:'production'}),JSON.stringify({...p.policy,policyRevision:0}),JSON.stringify({...p.policy,issuedAt:'2026-10-03T00:00:00Z'}),JSON.stringify({...p.policy,issuedAt:new Date(now+1).toISOString()}),JSON.stringify({...p.policy,expiresAt:new Date(now).toISOString()}),JSON.stringify({...p.policy,maxLeaseMs:1}),JSON.stringify({...p.policy,fieldAllowlist:['photos']}),JSON.stringify({...p.policy,owner:subject}),' '.repeat(8193)]){
+    const config={readPolicy:()=>raw,readSigner:p.configuration.readSigner};
+    assert.equal((await issueOfflineRead(tripId,2,nonce,productionOfflinePorts(p.f.ports.readCurrent,'local',config,p.provenance,()=>now))).kind,'unavailable');
+  }
+  assert.equal(p.privateReads,0);
+  assert.equal(readOfflinePolicy(JSON.stringify(p.policy),'unknown',now),null);
+});
+test('revocation while provenance is awaited rejects before reading private keys',async()=>{
+  const p=productionFixture();
+  const provenance=async b=>{const r=await p.provenance(b);p.policy.revoked=true;return r;};
+  assert.equal((await issueOfflineRead(tripId,2,nonce,productionOfflinePorts(p.f.ports.readCurrent,'local',p.configuration,provenance,()=>now))).kind,'unavailable');
+  assert.equal(p.privateReads,0);
+});
+test('signer enforces Ed25519, key fingerprint, derived public match, environment and size',()=>{
+  const p=productionFixture(),other=generateKeyPairSync('ed25519'),rsa=generateKeyPairSync('rsa',{modulusLength:1024});
+  for(const raw of [undefined,'{',JSON.stringify({...p.signer,keyId:'ed25519:'+'0'.repeat(64)}),JSON.stringify({...p.signer,publicKeySpki:other.publicKey.export({format:'der',type:'spki'}).toString('base64url')}),JSON.stringify({...p.signer,algorithm:'RS256'}),JSON.stringify({...p.signer,privateKeyPkcs8Pem:rsa.privateKey.export({format:'pem',type:'pkcs8'})}),JSON.stringify({...p.signer,privateKeyPkcs8Pem:'secret-invalid-key'}),JSON.stringify({...p.signer,environment:'production'}),JSON.stringify({...p.signer,publicKeySpki:p.signer.publicKeySpki+'='}),JSON.stringify({...p.signer,privateKeyPkcs8Pem:'x'.repeat(4097)}),JSON.stringify({...p.signer,secretExtra:'forbidden'}),' '.repeat(12289)])assert.equal(readOfflineSigner(raw,'local'),null);
+  assert.ok(readOfflineSigner(JSON.stringify(p.signer),'local'));
+  assert.equal(readOfflineSigner(JSON.stringify(p.signer),'unknown'),null);
+});
+test('final policy or provenance revocation prevents publishing signed production package',async()=>{
+  for(const changed of ['policy','provenance','signer']){
+    const p=productionFixture();let reads=0;
+    const read=async()=>{const b=await p.f.ports.readCurrent();if(++reads===2){if(changed==='policy')p.policy.revoked=true;if(changed==='signer')p.signer.keyId='ed25519:'+'0'.repeat(64);}return b;};
+    const provenance=async b=>changed==='provenance'&&reads>=2?null:p.provenance(b);
+    assert.deepEqual(await issueOfflineRead(tripId,2,nonce,productionOfflinePorts(read,'local',p.configuration,provenance,()=>now)),{kind:'unavailable',reason:'STALE_BASIS'});
+  }
+});
+test('actual HTTP composition cannot grant authorship from configured policy alone',async t=>{
+  const f=await httpFixture(t),p=productionFixture(),old=process.env.VISEPANDA_OFFLINE_READ_POLICY;
+  t.after(()=>{old===undefined?delete process.env.VISEPANDA_OFFLINE_READ_POLICY:process.env.VISEPANDA_OFFLINE_READ_POLICY=old;});
+  process.env.VISEPANDA_OFFLINE_READ_POLICY=JSON.stringify({...p.policy,environment:'staging',issuedAt:new Date(Date.now()-1000).toISOString(),expiresAt:new Date(Date.now()+50000).toISOString()});
+  const r=await nativeOfflineReadHTTP(f.request,tripId);
+  assert.equal(r.status,200);
+  assert.deepEqual(await r.json(),{kind:'unavailable',reason:'POLICY_UNCONFIGURED'});
 });
