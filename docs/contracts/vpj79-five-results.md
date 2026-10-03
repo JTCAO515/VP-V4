@@ -1,0 +1,23 @@
+# Five result lifecycle — server/native wire checkpoint
+
+2026-10-03; #560 full feature batch. Base currentmain b77a134a; unique result-domain110000 migration reserved. This checkpoint freezes content/reader shape for parallel Native implementation, not schema-only feature completion. No generic artifact editor: user edits mean existing Trip/Proposal/input/Memory changes invalidate currentness.
+
+## Closed content union
+
+All generated content is inert `actions:[]`; no URL/HTML/action fields or confirmation payload. Comparison and proposal-reference/1 retain existing shapes.
+
+- `journey-draft/1`: exactly `{schemaVersion,title,summary,draft,source,actions}`. `draft` uses the existing TripSnapshot `{version,title,days}`; days/id/date/optionaltimeZone/items and items/id/dayId/title/optionalstartsAt/endsAt stay the existing domain vocabulary, strictly closed, ≤30 days/50itemsperday. Draft is immutable preview, never a second editable Trip. `source` exactly one of `{kind:"task_output",taskTurnId}`, `{kind:"trip_snapshot",tripId,tripVersion}`, `{kind:"proposal_preview",proposalId,proposalRevision}`. Actual source adapter must match the typed draft to the existing completed Task output/Trip snapshot/Proposal preview; no confirmation operations copied. Null-Trip task draft uses version0; linked Trip/version and Proposal eligibility remain domain-owned.
+- `decision/1`: exactly `{schemaVersion,title,summary,comparisonRef:{artifactId,revision},state:"pending"|"chosen",chosenOptionId:string|null,actions}`. pending requiresnull; chosen requires explicit owner selection+CAS and eligible ownedcomparison existingoption.id. Service/model cannot set chosen by inference. Display text is projected from the source comparison and selection, not model freeform. A dedicated choice operation is part of this batch, not a generic edit API or Trip confirmation.
+- `practical/1`: exactly `{schemaVersion,kind:"translation",sourceTurnId,sourceLocale:"zh"|"en",targetLocale:"zh"|"en",translation,backTranslation,actions}`. Locale pair differs. Only the actual existing savedtranslation producer/readback/projectTranslation is supported; text must equal its authorized completed projection. No arbitrary tool/URL or copied UserArtifact material. Numeric/uncertainty constraints are reused.
+
+## Shared envelope and source basis
+
+Generic exact read uses the existing eleven-field result envelope: kind/artifactId/revision/currentRevision/current/historicalReadable/lifecycle/source/basis/content/createdAt; source retains current eightfields taskId/taskTurnId/goalId/goalVersion/inputMessageId/inputSequence/tripId/tripVersion. Native HTTP generic endpoint planned `/api/results/native/v2` (GET exact artifactId+revision), outer `{version:2,data}`. No latest/globalfallback. Legacyv1comparison and dedicated proposal readers remain failclosed/compatible.
+
+`basis` exactly `{memories:[{id,revision}],evidence:[{factId,assertionId,assertionRevision,city,scene}]}`. Evidence descriptor is identical to559v6. factId is the actual canonicalknowledge fact string, assertionId the canonical UUID, assertionRevision the actual publication revision; city/scene are the existing published-corpus scope enums. Empty array means no recorded evidence, not model-invented proof. Existing EvidencePack2 statementId maps to knowledge factId, publicationId to assertionId; revision must come from the same authorized canonical knowledge row, never from a quote or guessedsourceversion. Retrieval/publication/source withdrawal/current eligibility is rechecked by the server. No independent new evidence library or copiedsourcebody.
+
+Currentness extends the reused Task/input/goal/Trip/Memory gates across allfive: nestedcomparison/draft/proposal/translation/evidence references must remain eligible; no oldversion confirmation. Historical readability remains independent and content is hidden on actor/consent/source withdrawal/deletion. SQL CAS/revisions/events, generic exact reader/index/search/export/delete and three typed adapters are thisbatch implementation work. Native owner uses one safe five-case renderer from VP/Journeys/Library with exact sameID/revision; supportedWebcomparison stays compatible.
+
+## Development closure
+
+The present parser checkpoint is not the whole implementation: actualwriter/read/index/export/currentness/choice+nativeconsumer remain to ship. Target/provider/human/device facts are recorded later and do not block code-complete development closure; core missingcode still keeps560Open. Necessary permission/data/CAS/source-revoke checks run as targeted engineering work; requiredmergeCI is separate.
