@@ -57,7 +57,6 @@ export async function runPlanningV2ModelStep(input:PlanningV2ModelStepInput,port
    if(name==='reserve_model_budget'&&(!await current(signal)||!authority(await ports.authorize('model_reserve',b,signal),'model_reserve',b)))return {kind:'blocked'};
    const result=await attemptBudget(name,p);
    if(name==='dispatch_model_budget')dispatchAuthorized=row(result)&&result.kind==='dispatched';
-   if(name==='dispatch_model_budget'&&(signal.aborted||!await current(signal)||!authority(await ports.authorize('model_dispatch',b,signal),'model_dispatch',b)))return {kind:'blocked'};
    if(name==='reserve_model_budget'&&row(result)&&result.kind==='reserved'&&!reservedBinding(await ports.bindReserved(b,signal),b,input.reservedMicros))return {kind:'blocked'};
    return result;
   };

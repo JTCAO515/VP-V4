@@ -1,0 +1,16 @@
+✔ default off worker and hosted job do zero I/O and credential lookup (1.791458ms)
+✔ full mocked SQL/provider flow binds before dispatch, records real-protocol usage/output before settlement then completes (9.575916ms)
+✔ lost output and completion ACK recover exact receipts without replay; restart reuses completed tool/model (1.085792ms)
+✔ unknown tool, changed dispatch authority and unknown price cannot produce settled completion or a replacement call (0.981125ms)
+✔ caller reservation cannot override the claimed server execution snapshot (0.091208ms)
+✔ controlled host uses real HTTP transport but mock destinations: configured recipient gate after credential blocks supplier egress (2.525542ms)
+✔ false qualification or local fixture permit cannot become reserve authority; foreign attempt cannot dispatch (0.44175ms)
+✔ foreign output acknowledgement and revoked current source cannot publish or repeat supplier calls (0.548042ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 97.85475

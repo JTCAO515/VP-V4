@@ -3,6 +3,8 @@ import test,{before,after} from 'node:test';
 import assert from 'node:assert/strict';
 import {randomUUID as uuid,createHash} from 'node:crypto';
 import {readFileSync,readdirSync} from 'node:fs';
+import {runPlanningV2ModelStep} from '../../../lib/server/turn/planning-v2-model-step.ts';
+import {createPlanningV2ModelRequest} from '../../../lib/server/turn/planning-v2-model-request.ts';
 import {createPlanningV2ModelOutputReceipt as create} from '../../../lib/server/turn/planning-v2-model-output-receipt.ts';
 import {command,sql} from '../cost/fixtures/postgres-rpc.mjs';
 const enabled=process.env.VP_TURN_DB_TEST==='1',container='vpj80-full-sql-'+uuid().slice(0,8);
@@ -124,4 +126,30 @@ run('publication proof cannot be reused in its transaction; ordinary roles denie
  const a=await owner(),p=planning(a),r=await call(a,'submit_planning_comparison_v1',p);await db(`update turn_private.text_content set output_kind='answered',output_text='Legacy synthetic publisher fixture' where turn_id='${r.turnId}';select turn_private.terminal('${r.turnId}','completed',1);`);
  const artifact=uuid(),content={schemaVersion:'comparison/1',title:'Legacy synthetic comparison',summary:'Synthetic contract evidence only',options:[{id:'jingan',title:'Jingan',tradeoff:'Unknown lodging'},{id:'peoples_square',title:'Square',tradeoff:'Unknown lodging'}],actions:[]};
  const legacy=JSON.parse(await db("set role service_role;set request.jwt.claim.role='service_role';select public.publish_comparison_result_v1("+[a.owner,artifact,0,uuid(),r.taskId,a.goal,p.p_message_id,null,null,1,[],content].map(lit).join(',')+');'));assert.equal(legacy.kind,'published');assert.equal(legacy.reused,false);
+});
+
+run('actual model step authorizes reserved SQL before dispatch and reaches mock provider once without post-dispatch permission forgery',async t=>{
+ const f=await fixture(),p={schemaVersion:'planning-place/1',source:'synthetic_fixture',observedAt:new Date().toISOString(),providerCalls:1,areas:[{id:'jingan',label:"Jing'an",railMinutes:12,transfers:0},{id:'peoples_square',label:"People's Square",railMinutes:18,transfers:1}]};
+ assert.equal((await adm('claim_planning_intake_place_v1',f.six)).kind,'claimed');assert.equal((await adm('authorize_planning_intake_external_read_v1',{...f.six,p_scope:f.b.scope,p_max_calls:13})).kind,'authorized');assert.equal(await adm('save_planning_intake_place_v1',{...f.six,p_observation:p}),true);
+ const input=await adm('read_planning_intake_work_v1',f.six),prompt=JSON.stringify({goal:input.goalText,delegation:input.delegation,intake:input.qualifiedIntake.intake,observation:p,unknown:['hotel_price','availability','safety','quietness','food','photography','pace_suitability']});
+ let sends=0;const authorizations=[],audit=[];
+ const run=await runPlanningV2ModelStep({enabled:true,lease:f.l,binding:f.b,reservedMicros:f.e.reservedMicros,timeoutMs:f.e.timeoutMs,maxOutputTokens:f.e.maxOutputTokens,prompt},{
+  read:()=>adm('read_planning_intake_work_v1',f.six),authorize:async effect=>{const result=await adm('authorize_planning_intake_model_v1',{...f.tuple,p_effect:effect});authorizations.push(effect);return result;},bindReserved:()=>adm('bind_planning_intake_model_attempt_v1',f.tuple),
+  budgetForAttempt:b=>async(name,params)=>adm('planning_intake_budget_v1',{p_effect:name==='reserve_model_budget'?'reserve':name==='dispatch_model_budget'?'dispatch':'finish',p_binding:b,p_reserved_micros:params.p_reserved_micros??null,p_actual_micros:params.p_actual_micros??null,p_outcome:params.p_action??null}),
+  transportForAttempt:b=>async request=>{
+   sends++;assert.equal(await db(`select status from public.model_budget_attempts where scope_id='${b.scope}' and attempt_id='${b.attempt}';`),'dispatched');
+   // The actual reserved-only SQL authorizer still denies this state. The producer must not call it here.
+   assert.equal((await adm('authorize_planning_intake_model_v1',{...f.tuple,p_effect:'model_dispatch'})).kind,'blocked');
+   const canonical=createPlanningV2ModelRequest({schemaVersion:'planning-v2-model-request/1',binding:b,requestId:b.attempt,payload:JSON.parse(request.body)},b);assert.ok(canonical);assert.equal(canonical.body,request.body);
+   const invocation=uuid();for(const phase of ['configured','attempted','response_buffered']){
+    const destination={schemaVersion:'provider-destination/1',invocationId:invocation,provider:b.provider,model:b.model,endpoint:f.e.endpoint,configurationId:f.e.providerConfigurationId,configurationVersion:f.e.providerConfigurationVersion,phase,observedAt:new Date().toISOString()};
+    const stored=await adm('record_planning_intake_provider_destination_v1',{...f.tuple,p_destination:destination,p_request_id:b.attempt,p_request_digest:canonical.requestDigest,p_payload_digest:canonical.payloadDigest,p_payload_text:canonical.body});assert.equal(stored.kind,'destination_recorded',JSON.stringify(stored));
+   }
+   return Response.json({model:b.model,choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:'{"highlight":"jingan"}'}}],usage:{prompt_tokens:12,completion_tokens:8,total_tokens:20}});
+  },price:()=>20,recordUsage:async receipt=>{audit.push(receipt);},persistOutput:o=>adm('record_planning_intake_model_output_v1',{...f.tuple,p_output_wire:o}),readOutput:o=>adm('read_planning_intake_model_output_receipt_v1',{...f.tuple,p_output_digest:o.outputDigest,p_usage_digest:o.usageDigest}),
+ },new AbortController().signal);
+ assert.equal(run.kind,'settled');assert.equal(sends,1);assert.equal(authorizations.filter(x=>x==='model_dispatch').length,1);assert.equal(audit.length,1);
+ assert.equal(await db(`select status||':'||actual_micros from public.model_budget_attempts where scope_id='${f.b.scope}' and attempt_id='${f.b.attempt}';`),'settled:20');
+ assert.equal(await db(`select origin_kind from turn_private.planning_v2_collector_origins where attempt_id='${f.b.attempt}';`),'local_admin_fixture');
+ t.diagnostic('ACTUAL_SQL_AUTHORITY_AND_BUDGET_BRIDGE; administrator local fixture + mock supplier response only, no signed collector or real provider/fees');
 });
