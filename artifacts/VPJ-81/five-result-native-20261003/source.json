@@ -1,0 +1,17 @@
+{
+  "backendSchemaCheckpoint": "f58a409d8ae0cf6d0850eaac5ed0bc5b6f46f3b2",
+  "backendDecisionCheckpoint": "12911883ef60f84d8299798557afea037dfea9d9",
+  "kind": "NATIVE_FIVE_RESULT_CORE_LOCAL_TESTS_NOT_TARGET_ACCEPTANCE",
+  "sourceSha256": {
+    "ios/VisePanda/VisePanda/Features/Knowledge/NativeFiveResultModels.swift": "967f1394b0888dcc458c80cf2b029b6c72aecf7cf2e63d0436ce4a3d202b0ddb",
+    "ios/VisePanda/VisePanda/Features/Knowledge/NativeFiveResultView.swift": "5b269b99be60e8200a2066cd72f7464d65af74e3e78952432b4debd51e29bec1",
+    "ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeStore.swift": "8081f7417cfaa53b6c0e29c8635c4710d6d3be44cebdcd64fb7145d1e763c93b",
+    "ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeView.swift": "19eb80dc930eb8df48deef34aff60b076b99a7077df721c8c2fc1953a6faba59",
+    "ios/VisePanda/VisePanda/Features/Journeys/NativeJourneysView.swift": "460faa920bdd229f271ecc570655cb50312bd74bb8cea2e20169ed06c3ac85b0",
+    "ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift": "0b32a783b402f3e55a45747f8a9fd173945226aedc9b46d63eb9846301c6a974",
+    "ios/VisePanda/VisePanda/Features/Ask/NativeSelectedMessageModels.swift": "d514654fdc6652c0613fd1ca45b1699bbf597fc377e053617aed023e8eb32565",
+    "ios/VisePanda/VisePanda/App/NativeSession.swift": "b79ee08a0632ec53d4129f87c5e9981ce17f3989c808dcc0f891e71e57e6fae6",
+    "ios/VisePanda/VisePandaTests/NativeFiveResultTests.swift": "563ecbfccdbed596e7ab292a7c0a0644efdbbb6bf758a8e7e824c0688580c5d6",
+    "ios/VisePanda/VisePanda.xcodeproj/project.pbxproj": "41c671de87eaff66d38bc03379b6d1f33bb910cb10107cf3a7f3226b090bf18c"
+  }
+}
