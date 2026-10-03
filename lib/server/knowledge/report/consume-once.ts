@@ -15,7 +15,7 @@ export async function handleSourceImpactConsumeOnce(request:Request,options:Read
   reader=request.body?.getReader();if(!reader)return reply('INVALID_INPUT',400);const chunks:Uint8Array[]=[];let bytes=0;
   for(;;){const part=await lifetime.run(()=>reader!.read());if(part.done)break;bytes+=part.value.byteLength;if(bytes>512)return reply('INVALID_INPUT',413);chunks.push(part.value);}
   let input:unknown;try{input=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(Buffer.concat(chunks)));}catch{return reply('INVALID_INPUT',400);}
-  if(input===null||typeof input!=='object'||Array.isArray(input)||Object.keys(input).length!==1||!['knowledge_recheck_projection','trip_item_support'].includes(String((input as {consumer?:unknown}).consumer)))return reply('INVALID_INPUT',400);
+  if(input===null||typeof input!=='object'||Array.isArray(input)||Object.keys(input).length!==1||typeof (input as {consumer?:unknown}).consumer!=='string'||!['knowledge_recheck_projection','trip_item_support'].includes((input as {consumer:string}).consumer))return reply('INVALID_INPUT',400);
   const consumer=(input as {consumer:'knowledge_recheck_projection'|'trip_item_support'}).consumer,client=options.createRpc(lifetime),actor=await lifetime.run(()=>client.authenticate());if(!actor)return reply('UNAUTHENTICATED',401);
   const expected=request.headers.get('x-ops-expected-actor');if(expected!==null&&expected!==actor)return reply('OPS_FORBIDDEN',403);
   const rpc:SourceImpactRpc=async(name,p,signal)=>{
