@@ -19,18 +19,21 @@ final class NativeDeviceMaterials {
     }
     private let inbox: NativeScreenshotInbox
     private let exportRoot: URL
+    private let deleteFile: (NativeScreenshotInbox.FileSelection,String) throws -> Void
     private let eraseInbox: () throws -> Void
     private var accessed = false
     private(set) var delivery: Delivery?
 
-    init(inbox: NativeScreenshotInbox = NativeScreenshotInbox(), exportRoot: URL? = nil, eraseInbox: (() throws -> Void)? = nil) {
+    init(inbox: NativeScreenshotInbox = NativeScreenshotInbox(), exportRoot: URL? = nil, eraseInbox: (() throws -> Void)? = nil, deleteFile: ((NativeScreenshotInbox.FileSelection,String) throws -> Void)? = nil) {
         self.inbox = inbox
+        self.deleteFile = deleteFile ?? { try inbox.deleteSelected($0,owner:$1) }
         self.eraseInbox = eraseInbox ?? { try inbox.deleteAll() }
         self.exportRoot = exportRoot ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
             .appendingPathComponent("DeviceMaterialExport", isDirectory: true)
     }
-    func firstAccess() throws {
+    func firstAccess(preservingInbox:Bool=false) throws {
         guard !accessed else { return }
+        if preservingInbox { try clearDelivery();accessed=true;return }
         // Startup cleanup covers expired and unexpired abandoned review copies.
         try eraseAll()
     }
@@ -46,6 +49,17 @@ final class NativeDeviceMaterials {
         do {
             if FileManager.default.fileExists(atPath: exportRoot.path) { try FileManager.default.removeItem(at: exportRoot) }
         } catch { accessed = false; throw error }
+    }
+    func deletionSelections(scope:NativeDataScope) throws -> [NativeScreenshotInbox.FileSelection] {
+        try firstAccess();return try inbox.selections(owner:scope.subject)
+    }
+    func validateDeletion(_ files:[NativeScreenshotInbox.FileSelection],scope:NativeDataScope) throws {
+        for file in files { _=try inbox.read(file.digest,owner:scope.subject) }
+        try inbox.validate(files,owner:scope.subject)
+    }
+    func executeDeletion(_ files:[NativeScreenshotInbox.FileSelection],scope:NativeDataScope) throws {
+        for file in files { try deleteFile(file,scope.subject) }
+        for file in files { guard try inbox.selection(file.digest,owner:scope.subject)==nil else{throw InboxError.invalidInput} }
     }
     func receive(_ data: Data, scope: NativeDataScope) throws -> NativeScreenshotInbox.Receipt {
         try firstAccess()
@@ -103,6 +117,11 @@ struct NativeDeviceMaterialExportView: View {
     private func t(_ zh: String, _ en: String) -> String { chinese ? zh : en }
     var body: some View {
         Form {
+            Section {
+                NavigationLink(t("预览并删除所选本机副本", "Preview and delete selected device copies")) {
+                    NativeDeviceMaterialDeleteView(session:session,chinese:chinese)
+                }
+            }
             Section {
                 Text(t("只包含当前账号在本机审阅期间保留的截图原文件，不含服务器资料或照片图库。关闭截图审阅会删除原文件。已保存到外部的副本无法召回。", "Only original screenshots retained during this account’s device review are included. Server data and the photo library are excluded. Closing screenshot review removes originals. External copies cannot be recalled."))
                 Toggle(t("明确导出所选本机原文件", "Explicitly export the selected device original"), isOn: $confirmed)
