@@ -67,6 +67,67 @@ nonisolated final class NativeScreenshotInboxTests: XCTestCase {
         XCTAssertEqual(try inbox.read(second.digest, owner: owner), black)
     }
 
+    @MainActor
+    func testDeviceDeliveryOriginalBytesScopeExpiryAndCrashCleanup() throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let inbox = NativeScreenshotInbox(root: root.appendingPathComponent("inbox"))
+        let exportRoot = root.appendingPathComponent("export")
+        let materials = NativeDeviceMaterials(inbox: inbox, exportRoot: exportRoot)
+        let scope = NativeDataScope(endpoint: "http://localhost", subject: UUID().uuidString, mobileEpoch: 1, generation: 0)
+        try materials.firstAccess()
+        let image = UIGraphicsImageRenderer(size: CGSize(width: 20, height: 20)).image { context in
+            UIColor.white.setFill(); context.fill(CGRect(x: 0, y: 0, width: 20, height: 20))
+        }.pngData()!
+        let receipt = try inbox.receive(image, owner: scope.subject)
+        XCTAssertThrowsError(try materials.prepare(digest: receipt.digest, scope: scope, confirmed: false))
+        let delivery = try materials.prepare(digest: receipt.digest, scope: scope, confirmed: true)
+        XCTAssertEqual(delivery.bytes, image.count)
+        XCTAssertEqual(try Data(contentsOf: materials.file(for: delivery, scope: scope)), image)
+        XCTAssertEqual(try delivery.url.resourceValues(forKeys: [.isExcludedFromBackupKey]).isExcludedFromBackup, true)
+        XCTAssertThrowsError(try materials.file(for: delivery, scope: scope, now: delivery.expiresAt))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: delivery.url.path))
+        let newDelivery = try materials.prepare(digest: receipt.digest, scope: scope, confirmed: true)
+        let wrongScope = NativeDataScope(endpoint: scope.endpoint, subject: UUID().uuidString, mobileEpoch: 1, generation: 0)
+        XCTAssertThrowsError(try materials.file(for: newDelivery, scope: wrongScope))
+        _ = try materials.prepare(digest: receipt.digest, scope: scope, confirmed: true)
+        let restarted = NativeDeviceMaterials(inbox: inbox, exportRoot: exportRoot)
+        try restarted.firstAccess()
+        XCTAssertTrue(try restarted.receipts(scope: scope).isEmpty)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: exportRoot.path))
+    }
+
+    @MainActor
+    func testSessionLogoutCleansMaterialsWithoutMountedTripAndCleanupFailureDeniesAccess() async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let inbox = NativeScreenshotInbox(root: root.appendingPathComponent("inbox"))
+        let materials = NativeDeviceMaterials(inbox: inbox, exportRoot: root.appendingPathComponent("export"))
+        let session = NativeSession(arguments: [], bundleConfiguration: [:], deviceMaterials: materials)
+        XCTAssertTrue(session.prepareDeviceMaterials())
+        let scope = NativeDataScope(endpoint: "http://localhost", subject: UUID().uuidString, mobileEpoch: 1, generation: 0)
+        let image = UIGraphicsImageRenderer(size: CGSize(width: 20, height: 20)).image { context in
+            UIColor.white.setFill(); context.fill(CGRect(x: 0, y: 0, width: 20, height: 20))
+        }.pngData()!
+        let receipt = try inbox.receive(image, owner: scope.subject)
+        let delivery = try materials.prepare(digest: receipt.digest, scope: scope, confirmed: true)
+        await session.logout()
+        XCTAssertNil(materials.delivery)
+        XCTAssertThrowsError(try inbox.read(receipt.digest, owner: scope.subject))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: delivery.url.path))
+        // Simulate a protected-file cleanup error at the dispatcher seam.
+        let failedMaterials = NativeDeviceMaterials(inbox: inbox, exportRoot: root.appendingPathComponent("blocked-export"), eraseInbox: { throw InboxError.invalidInput })
+        let failedSession = NativeSession(arguments: [], bundleConfiguration: [:], deviceMaterials: failedMaterials)
+        await failedSession.logout()
+        XCTAssertEqual(failedSession.status, "storageError")
+        XCTAssertEqual(failedSession.failureCode, "deviceMaterialCleanupRequired")
+        XCTAssertNil(failedSession.dataScope)
+        XCTAssertFalse(failedSession.prepareDeviceMaterials())
+        XCTAssertThrowsError(try failedMaterials.receipts(scope: scope))
+        XCTAssertThrowsError(try failedMaterials.prepare(digest: receipt.digest, scope: scope, confirmed: true))
+
+    }
+
     func testPhysicalFileProtectionAttribute() throws {
 #if targetEnvironment(simulator)
         throw XCTSkip("UNRUN: simulator does not report the file-protection attribute; validate on an unlocked physical device")

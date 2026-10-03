@@ -1,0 +1,13 @@
+# Native device-private materials D4 — 2026-10-03
+
+Owned scope is the existing NativeScreenshotInbox producer only; no new server material domain, Storage, source deletion, permissions, real account or provider operation. Original screenshot import still stays device-private and closes/deletes with review. Separate sheet export in screenshot review avoids navigating away from and deleting the source. D2 Profile export explicitly separates server bundles from device originals.
+
+NativeDeviceMaterials first access removes abandoned crash-review originals and temporary export files; active reads purge producer TTL. Original bytes are owner-scoped, digest checked, bounded to 12MB, protected/excluded from backup. Explicit confirmation prepares an exact original image with UUID/digest/byte-count/time/expiry receipt, max5min or original expiry; system handoff is separately acknowledged and never proves external file save or all-user-data completion. Share cancel/background/expiry/account/view cleanup clears temporary bytes; external saved copies cannot be recalled. Receipt metadata is memory-only and fenced to exact session scope.
+
+NativeSession owns an independent dispatcher: restore/first producer access cleans crash remnants; logout fences consumers and cleans before network, and common account replacement/denial clearing cleans without any mounted Trip view. Cleanup error rejects material reads/preparation and blocks account clear/login, with storageError rather than fake completion. Existing Trip hooks remain additional cleanup, not whole-account authority.
+
+PASS: material3 affected build and six NativeScreenshotInboxTests executed, five PASS, one SKIP (physical device file-protection attribute). New cases cover original byte/digest copy, explicit confirmation, exact owner scope, TTL temp removal, restart orphan cleanup, Session logout with no Trip view and injected protected-file cleanup failure denying future access. material1 before new cases and material2 before final negative are not claimed to cover the final negative. Later UI sheet/receipt-only adjustments receive a separate affected build; existing runtime evidence is reused.
+
+UNRUN: physical device protection, real screenshot picker/system external save, real signed account lifecycle, server material erasure and all-account D4–D5 completion. Whole #228 remains open. No fresh grant, worker activation, payment or release. D3 remains independent PR638 owned by Main for merge.
+
+Final UI source BUILD SUCCEEDED: final-build.log.gz; tests: material3-tests.log.gz. git diff --check and project plist syntax PASS. No whole-device or unrelated suite replay.
