@@ -37,3 +37,11 @@ Success is exactly `{version:2,data:{kind:"selected",artifactId,revision:expecte
 Exact/search/reference endpoints implemented here: GET `/api/results/native/v2` (mandatory artifactId+revision), `/v2/search` (query≤120,cursornullable), `/v2/task?taskId=...`, `/v2/trip?tripId=...`; allversion2 outer and currentactor/private-no-store. Search rows add known schemaVersion to existing ID/revision/title/summary/Trip tuple. Task/Trip discovery returns `{kind:"result_reference",artifactId,revision,taskId|tripId}` then exact GET, same ID/revision across pages. Legacyv1 endpoints remain unchanged.
 
 Current source checkpoint: new110000 passes first localPG3/3 covering comparison/decision ownerCAS/idempotency/foreignowner/servicechosen-denial, taskdraft and actualsavedtranslation projection/hiding, schema/migrationACL. Existingdomains/supplementalTrip/proposal/evidence/rollback negatives and fullNativeconsumer integration are still thissamebatch work, not schema-only closure. Typecheckpassed. Native neednotwait for allremaining localchecks to implement this fixed operation.
+
+
+## Final server compatibility details
+
+Generic source inputSequence and Memory revisions accept safepositivebigint values (matching legacy domain), not an invented32-bit limit. Evidence factId/assertionId bothareactualcanonicalUUIDs; otherfields/scopesunchanged. Mid-choice sessionloss maps401. Publisher exactretry rechecks currenteligiblebasis before returning reused; withdrawn/changedsource cannotmanufacturea freshcompletionreceipt. Formal postgres testcase is `tests/integration/turn/five-result-lifecycle.test.mjs`, currentcheckout allmigrations/normalimports, no historicalfixtureSQL.
+
+
+Server source adapters/persistence/lifecycle are now implemented in110000; taskdraft/Trip/proposal/translation contents are validatedagainsttheirrealtypedsource, newjourney/decisiondisplaytextisdomainprojected, evidencecurrentknowledgequalification/index/export/deleteallwired. Sameartifacttype cannotretargetonrevision;freshpublishretryrevalidatescurrentbasis. Whole560closurewaitsonremainingconsumer code (Native/context), nottarget/humanobservations.

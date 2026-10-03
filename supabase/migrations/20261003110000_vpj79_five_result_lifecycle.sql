@@ -133,6 +133,17 @@ begin
  return jsonb_build_object('readable',domain->'readable','current',state->>'current'='true' and domain->>'current'='true');
 end $$;
 
+create function turn_private.project_result_display_v2(v jsonb,p_locale text) returns jsonb language plpgsql security definer set search_path='' as $$
+declare comparison jsonb;label text;
+begin
+ if v->>'schemaVersion'='journey-draft/1' then return v||jsonb_build_object('title',left(v->'draft'->>'title',120),'summary',case when p_locale='zh' then '行程草稿：' else 'Journey draft: ' end||jsonb_array_length(v->'draft'->'days')::text||case when p_locale='zh' then '天，未写入行程。' else ' days; no Trip write.' end);end if;
+ if v->>'schemaVersion'='decision/1' then
+  select content into comparison from turn_private.result_revisions where artifact_id=(v->'comparisonRef'->>'artifactId')::uuid and revision=(v->'comparisonRef'->>'revision')::integer;
+  if v->>'state'='chosen' then select x->>'title' into label from jsonb_array_elements(comparison->'options') x where x->>'id'=v->>'chosenOptionId';return v||jsonb_build_object('title',case when p_locale='zh' then '已选择：' else 'Selected: ' end||left(label,110),'summary',case when p_locale='zh' then '用户明确选择，未写入行程。' else 'Explicit owner selection; no Trip write.' end);end if;
+  return v||jsonb_build_object('title',case when p_locale='zh' then '下一项决定' else 'Next decision' end,'summary',left(case when p_locale='zh' then '请选择：' else 'Choose: ' end||coalesce(comparison->>'title',''),1000));
+ end if;return v;
+end $$;
+
 create function turn_private.publish_result_v2(
   p_owner_id uuid,p_artifact_id uuid,p_expected_revision integer,p_idempotency_key uuid,
   p_task_id uuid,p_goal_id uuid,p_input_message_id uuid,p_trip_id uuid,p_trip_version integer,
@@ -142,7 +153,7 @@ declare a turn_private.result_artifacts%rowtype; r turn_private.result_revisions
   source turn_private.assistant_messages%rowtype; task turn_private.service_tasks%rowtype;
   trip public.trips%rowtype; linked turn_private.assistant_goal_trip_links%rowtype;
   goal turn_private.assistant_goals%rowtype; receipt turn_private.assistant_goal_trip_receipts%rowtype;
-  digest text; new_revision integer; m jsonb; reference_id uuid;
+  digest text; new_revision integer; m jsonb; reference_id uuid; content_locale text;
 begin
   if ((select auth.role())<>'service_role' and not (p_owner_choice and (select auth.role())='authenticated' and p_owner_id=turn_private.text_owner())) or p_owner_id is null or p_artifact_id is null or p_idempotency_key is null
     or p_task_id is null or p_goal_id is null or p_input_message_id is null or p_expected_revision is null
@@ -164,11 +175,15 @@ begin
       where p.id=(m->>'id')::uuid and p.owner_id=p_owner_id and p.revision=(m->>'revision')::bigint and p.state in ('explicit','confirmed') and p.summary is not null)
       then raise exception 'STALE_BASIS'; end if;
   end loop;
+  select locale into content_locale from turn_private.assistant_messages where id=p_input_message_id and owner_id=p_owner_id;
+  p_content:=turn_private.project_result_display_v2(p_content,content_locale);
   digest:=encode(pg_catalog.sha256(convert_to(jsonb_build_array(p_owner_id,p_artifact_id,p_expected_revision,p_task_id,p_goal_id,p_input_message_id,p_trip_id,p_trip_version,p_goal_version,p_memory_basis,p_content,p_evidence_basis)::text,'UTF8')),'hex');
   perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended('result-idempotency:'||p_owner_id||':'||p_idempotency_key,0));
   select * into r from turn_private.result_revisions where owner_id=p_owner_id and idempotency_key=p_idempotency_key;
   if found then
     if r.request_digest<>digest or r.artifact_id<>p_artifact_id then raise exception 'IDEMPOTENCY_KEY_REUSE'; end if;
+    select * into a from turn_private.result_artifacts where id=r.artifact_id and owner_id=p_owner_id;
+    if not found or a.lifecycle<>'active' or a.current_revision<>r.revision or turn_private.result_state_v2(a,r)->>'current'<>'true' then raise exception 'STALE_BASIS';end if;
     return jsonb_build_object('kind','published','artifactId',r.artifact_id,'revision',r.revision,'reused',true);
   end if;
   if p_trip_id is not null then
@@ -230,6 +245,7 @@ begin
     new_revision:=1;
   else
     if not found or a.owner_id<>p_owner_id or a.lifecycle<>'active' or a.current_revision<>p_expected_revision
+      or (select content->>'schemaVersion' from turn_private.result_revisions where artifact_id=a.id and revision=a.current_revision) is distinct from p_content->>'schemaVersion'
       or a.proposal_id is distinct from reference_id
       or a.source_result_id is distinct from (case when p_content->>'schemaVersion'='decision/1' then (p_content->'comparisonRef'->>'artifactId')::uuid end)
       or a.source_turn_id is distinct from (case when p_content->>'schemaVersion'='practical/1' then (p_content->>'sourceTurnId')::uuid when p_content->>'schemaVersion'='journey-draft/1' and p_content->'source'->>'kind'='task_output' then (p_content->'source'->>'taskTurnId')::uuid end)
@@ -469,6 +485,6 @@ grant execute on function public.result_artifact_export_owner_v1(uuid,text,jsonb
 
 -- Private helpers are not an API. Existing actor-bound public reads/choice are the only new user operations.
 do $$declare f regprocedure;begin
- for f in select p.oid::regprocedure from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='turn_private' and p.proname in ('result_uuid_v2','result_int_v2','valid_result_evidence_v2','result_evidence_current_v2','valid_result_draft_v2','valid_result_content_v2','translation_numbers_v2','result_translation_projection_v2','result_domain_state_v2','result_state_v2','result_title_v2','result_summary_v2') loop execute 'revoke all on function '||f||' from public,anon,authenticated,service_role';end loop;
+ for f in select p.oid::regprocedure from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='turn_private' and p.proname in ('result_uuid_v2','result_int_v2','valid_result_evidence_v2','result_evidence_current_v2','valid_result_draft_v2','valid_result_content_v2','translation_numbers_v2','result_translation_projection_v2','result_domain_state_v2','result_state_v2','result_title_v2','result_summary_v2','project_result_display_v2') loop execute 'revoke all on function '||f||' from public,anon,authenticated,service_role';end loop;
 end $$;
 notify pgrst,'reload schema';

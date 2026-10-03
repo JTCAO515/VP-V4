@@ -44,7 +44,7 @@ export function parseResultContent(v:unknown):ResultContent|null{
 }
 export function parseResultEvidenceRefs(v:unknown):readonly ResultEvidenceRef[]|null{
  if(!Array.isArray(v)||v.length>20)return null;const seen=new Set();
- for(const r of v){if(!obj(r)||!exact(r,['factId','assertionId','assertionRevision','city','scene'])||!text(r.factId,200)||!uuid(r.assertionId)||!integer(r.assertionRevision)||typeof r.city!=='string'||!['shanghai','beijing','guangzhou','chongqing'].includes(r.city)||typeof r.scene!=='string'||!['arrival','airport_transport','payment','connectivity','public_transport','taxi','rail','attraction','accommodation','emergency'].includes(r.scene))return null;
+ for(const r of v){if(!obj(r)||!exact(r,['factId','assertionId','assertionRevision','city','scene'])||!uuid(r.factId)||!uuid(r.assertionId)||!integer(r.assertionRevision)||typeof r.city!=='string'||!['shanghai','beijing','guangzhou','chongqing'].includes(r.city)||typeof r.scene!=='string'||!['arrival','airport_transport','payment','connectivity','public_transport','taxi','rail','attraction','accommodation','emergency'].includes(r.scene))return null;
   const key=JSON.stringify([r.factId,r.assertionId,r.assertionRevision,r.city,r.scene]);if(seen.has(key))return null;seen.add(key);
  }return v as readonly ResultEvidenceRef[];
 }

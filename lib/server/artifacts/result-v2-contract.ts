@@ -4,7 +4,7 @@ export type ResultArtifactReadV2=Omit<ResultArtifactRead,'content'|'basis'>&Read
 const obj=(v:unknown):v is Record<string,unknown>=>v!==null&&typeof v==='object'&&!Array.isArray(v);
 const exact=(v:Record<string,unknown>,ks:readonly string[])=>Object.keys(v).length===ks.length&&ks.every(k=>Object.hasOwn(v,k));
 const uuid=(v:unknown):v is string=>typeof v==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(v);
-const int=(v:unknown,min=1):v is number=>typeof v==='number'&&Number.isSafeInteger(v)&&v>=min&&v<=2147483647;
+const int=(v:unknown,min=1):v is number=>typeof v==='number'&&Number.isSafeInteger(v)&&v>=min;
 export function parseResultArtifactReadV2(v:unknown):ResultArtifactReadV2|null{
  if(!obj(v)||!exact(v,['kind','artifactId','revision','currentRevision','current','historicalReadable','lifecycle','source','basis','content','createdAt'])||v.kind!=='result_artifact'||!uuid(v.artifactId)||!int(v.revision)||v.revision>1000||!int(v.currentRevision)||v.currentRevision>1000||v.revision>v.currentRevision||typeof v.current!=='boolean'||v.historicalReadable!==true||(v.lifecycle!=='active'&&v.lifecycle!=='withdrawn')||typeof v.createdAt!=='string'||v.createdAt.length>64||!Number.isFinite(Date.parse(v.createdAt))||!obj(v.source)||!obj(v.basis))return null;
  const s=v.source,b=v.basis;

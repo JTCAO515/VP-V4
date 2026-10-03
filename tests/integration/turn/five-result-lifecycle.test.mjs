@@ -1,12 +1,12 @@
-import {parseResultArtifactReadV2,parseResultSearchPageV2} from '../../lib/server/artifacts/result-v2-contract.ts';
-import {translationPrompt} from '../../lib/server/media-translation/text/contract.ts';
+import {parseResultArtifactReadV2,parseResultSearchPageV2} from '../../../lib/server/artifacts/result-v2-contract.ts';
+import {translationPrompt} from '../../../lib/server/media-translation/text/contract.ts';
 // Current repository migrations on disposable PostgreSQL; synthetic actor
 // claims/providers only. No historical Git objects or target fallback.
 import test,{before,after} from 'node:test';
 import assert from 'node:assert/strict';
 import {randomUUID as uuid} from 'node:crypto';
 import {readFileSync,readdirSync} from 'node:fs';
-import {command,sql} from '../integration/cost/fixtures/postgres-rpc.mjs';
+import {command,sql} from '../cost/fixtures/postgres-rpc.mjs';
 const enabled=process.env.VP_TURN_DB_TEST==='1',container='vpj79-five-results-'+uuid().slice(0,8);
 const migrationSource='supabase/migrations (current checkout, lexical order)';
 let created=false;
@@ -73,4 +73,37 @@ run('journey task draft is immutable domain preview; practical content comes fro
  await db(`update turn_private.text_content set output_kind='answered',output_text='{"translation":"3号门","backTranslation":"Gate 3"}' where turn_id='${t}';select turn_private.terminal('${t}','completed',1);`);
  const practical={schemaVersion:'practical/1',kind:'translation',sourceTurnId:t,sourceLocale:'en',targetLocale:'zh',translation:'3号门',backTranslation:'Gate 3',actions:[]},id=uuid();await svc('publish_result_artifact_v2',params(x,practical,id));assert.ok(parseResultArtifactReadV2(await read(x,id)));
  await db(`update turn_private.text_content set hidden_at=now() where turn_id='${t}';`);assert.equal((await read(x,id)).kind,'unavailable');
+});
+run('Trip snapshot/proposal preview/reference share real domain basis; new Trip/proposal bases invalidate without executing a change',async()=>{
+ const a=await owner('local_synthetic'),trip=uuid();await db(`insert into public.trips(id,owner_id,title) values('${trip}','${a.owner}','Owned Trip');`);
+ await call(a,'set_assistant_goal_trip_link_v1',{p_operation_id:uuid(),p_conversation_id:a.conversation,p_goal_id:a.goal,p_source_message_id:a.source,p_expected_goal_scope_version:1,p_expected_link_version:0,p_action:'link',p_trip_id:trip,p_expected_trip_version:0,p_confirmed:true});
+ const task=uuid(),turn=uuid(),thread=uuid(),message=uuid();await call(a,'submit_service_task_turn',{p_thread_id:thread,p_turn_id:turn,p_idempotency_key:uuid(),p_policy_id:a.policy,p_locale:'en',p_text:'Typed Trip draft',p_task_id:task,p_scope_version:1,p_relationship:'new_goal',p_parent_turn_id:null});
+ await call(a,'submit_assistant_message_v1',{p_conversation_id:a.conversation,p_message_id:message,p_idempotency_key:uuid(),p_policy_id:a.policy,p_locale:'en',p_text:'Trip draft result',p_relationship:'follow_up',p_goal_id:a.goal,p_expected_goal_version:2,p_task_id:task,p_parent_message_id:a.source,p_turn_id:null});
+ await db(`update turn_private.text_content set output_kind='answered',output_text='Typed result' where turn_id='${turn}';select turn_private.terminal('${turn}','completed',1);`);
+ const x={a,r:{taskId:task,turnId:turn,messageId:message,goalVersion:2}},snap=JSON.parse(await db(`select content||jsonb_build_object('version',0) from public.trip_version_snapshots where trip_id='${trip}' and version=0;`)),id=uuid(),content={schemaVersion:'journey-draft/1',title:'Owned Trip',summary:'Immutable snapshot',draft:snap,source:{kind:'trip_snapshot',tripId:trip,tripVersion:0},actions:[]};
+ const bound=(c,id)=>({...params(x,c,id),p_trip_id:trip,p_trip_version:0});await svc('publish_result_artifact_v2',bound(content,id));assert.ok(parseResultArtifactReadV2(await read(x,id)));
+ const proposal=uuid();await db(`insert into public.trip_proposals(id,owner_id,trip_id,revision,base_trip_version,status,patch,expires_at) values('${proposal}','${a.owner}','${trip}',1,0,'pending','{"title":"Preview Title"}',now()+interval '1 day');`);
+ const preview=JSON.parse(await db(`select public.apply_trip_content_patch(content,'{"title":"Preview Title"}')||jsonb_build_object('version',1) from public.trip_version_snapshots where trip_id='${trip}' and version=0;`)),draftId=uuid(),previewContent={schemaVersion:'journey-draft/1',title:'Preview Title',summary:'Not confirmed',draft:preview,source:{kind:'proposal_preview',proposalId:proposal,proposalRevision:1},actions:[]};
+ await svc('publish_result_artifact_v2',bound(previewContent,draftId));assert.ok(parseResultArtifactReadV2(await read(x,draftId)));
+ const reference=uuid();await svc('publish_result_artifact_v2',bound({schemaVersion:'change-proposal-reference/1',proposalId:proposal,proposalRevision:1,actions:[]},reference));assert.ok(parseResultArtifactReadV2(await read(x,reference)));
+ assert.equal(await db(`select head_version from public.trips where id='${trip}';`),'0');
+ await db(`update public.trip_proposals set revision=2 where id='${proposal}';`);assert.equal((await read(x,reference)).kind,'unavailable');assert.equal((await read(x,draftId)).current,false);
+ // Synthetic committed new domain base: this result writer itself never calls Trip confirmation/mutation.
+ await db(`update public.trips set head_version=1 where id='${trip}';`);assert.equal((await read(x,id)).current,false);
+});
+run('canonical knowledge evidence revocation, CAS rollback, export and cascading source deletion protect every result',async()=>{
+ const x=await fixture(),author=await owner('local_synthetic'),reviewer=await owner('local_synthetic');
+ await db(`update knowledge_review_private.settings set enabled=true;update knowledge_review_private.publication_settings set enabled=true;insert into knowledge_review_private.members(actor_id,active) values('${author.owner}',true),('${reviewer.owner}',true);`);
+ const source={sourceKey:'result-evidence-fixture',revisionLabel:'one',publisher:'Synthetic',uri:'urn:vpj15:synthetic:results',locator:'Fixture',snippet:'PRIVATE SOURCE MUST NOT COPY',usageDeclaration:'Synthetic'},statement={schemaVersion:'knowledge-statement/1',assertion:{subjectId:'rail_eticket_boarding',predicate:'requires_document',objectId:'original_valid_booking_id',conditions:[],exclusions:[]},scope:{cities:['shanghai'],scene:'rail',audience:'international_independent_traveler'},expressions:{en:{text:'Synthetic evidence',conditions:[],exclusions:[]},zh:{text:'合成依据',conditions:[],exclusions:[]}},sources:[source]},candidate=uuid();
+ await call(author,'ops_review_workspace',{p_input:{action:'submit_statement',operationId:uuid(),candidateId:candidate,title:'Evidence',statement}});await call(reviewer,'ops_review_workspace',{p_input:{action:'review',operationId:uuid(),candidateId:candidate,expectedVersion:1,decision:'reviewed',note:'Independent synthetic review'}});await call(reviewer,'ops_review_workspace',{p_input:{action:'publish_statement',operationId:uuid(),candidateId:candidate,expectedVersion:2,expiresAt:new Date(Date.now()+3600000).toISOString(),useBasis:'original_factual_summary',useNote:'Synthetic'}});
+ const evidence=JSON.parse(await db(`select jsonb_build_object('factId',p.fact_id,'assertionId',s.statement_id,'assertionRevision',s.revision,'city','shanghai','scene','rail') from knowledge_review_private.publications p join knowledge_review_private.statements s using(candidate_id) where candidate_id='${candidate}';`)),id=uuid(),p={...params(x,comparison,id),p_evidence_basis:[evidence]};await svc('publish_result_artifact_v2',p);const got=await read(x,id);assert.deepEqual(got.basis.evidence,[evidence]);assert.ok(parseResultArtifactReadV2(got));
+ const exported=await svc('result_artifact_export_owner_v1',{p_owner:x.a.owner,p_section:'revisions',p_cursor:null,p_limit:100});assert.ok(JSON.stringify(exported).includes('evidenceBasis'));assert.equal(JSON.stringify(exported).includes('PRIVATE SOURCE'),false);
+ const before=await db(`select count(*) from turn_private.result_events where artifact_id='${id}';`),invalid={...p,p_expected_revision:9,p_idempotency_key:uuid()};const failed=await sql(container,"set role service_role;set request.jwt.claim.role='service_role';select public.publish_result_artifact_v2("+Object.entries(invalid).map(([k,v])=>k+'=>'+lit(v)).join(',')+');');assert.notEqual(failed.code,0);assert.match(failed.stderr,/REVISION_CONFLICT/);assert.equal(await db(`select count(*) from turn_private.result_events where artifact_id='${id}';`),before);
+ await call(reviewer,'ops_review_workspace',{p_input:{action:'revoke_statement',operationId:uuid(),candidateId:candidate,expectedPublicationVersion:1,note:'Withdrawn synthetic'}});assert.equal((await read(x,id)).kind,'unavailable');assert.equal((await call(x.a,'search_result_artifacts_v2',{p_query:'',p_cursor:null})).results.length,0);
+ const y=await fixture(),cmp=uuid(),dec=uuid();await svc('publish_result_artifact_v2',params(y,comparison,cmp));await svc('publish_result_artifact_v2',params(y,{schemaVersion:'decision/1',title:'Choice',summary:'Pending',comparisonRef:{artifactId:cmp,revision:1},state:'pending',chosenOptionId:null,actions:[]},dec));await db(`delete from turn_private.result_artifacts where id='${cmp}';`);assert.equal(await db(`select count(*) from turn_private.result_artifacts where id='${dec}';`),'0');
+});
+run('publication retry cannot manufacture a current receipt after source consent withdrawal',async()=>{
+ const x=await fixture(),p=params(x,comparison);await svc('publish_result_artifact_v2',p);assert.equal((await svc('publish_result_artifact_v2',p)).reused,true);
+ await db(`update turn_private.text_consents set revoked_at=now() where owner_id='${x.a.owner}' and policy_id='${x.a.policy}';`);
+ const r=await sql(container,"set role service_role;set request.jwt.claim.role='service_role';select public.publish_result_artifact_v2("+Object.entries(p).map(([k,v])=>k+'=>'+lit(v)).join(',')+');');assert.notEqual(r.code,0);assert.match(r.stderr,/STALE_BASIS/);assert.equal(await db(`select count(*) from turn_private.result_revisions where artifact_id='${p.p_artifact_id}';`),'1');
 });

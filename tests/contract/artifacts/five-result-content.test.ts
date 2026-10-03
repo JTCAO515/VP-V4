@@ -16,6 +16,6 @@ test('draft domain invariants and explicit decision shape reject malformed data'
  assert.equal(parseResultContent({...practical,kind:'arbitrary_tool'}),null);assert.equal(parseResultContent({...practical,targetLocale:'en'}),null);
 });
 test('evidence uses canonical v6 descriptor with no copied quote or invented source revision',()=>{
- const ref={factId:'canonical-fact',assertionId:id,assertionRevision:2,city:'shanghai',scene:'rail'};assert.deepEqual(parseResultEvidenceRefs([ref]),[ref]);assert.deepEqual(parseResultEvidenceRefs([]),[]);
+ const ref={factId:'87654321-1234-4234-8234-123456789abc',assertionId:id,assertionRevision:2,city:'shanghai',scene:'rail'};assert.deepEqual(parseResultEvidenceRefs([ref]),[ref]);assert.deepEqual(parseResultEvidenceRefs([]),[]);
  for(const bad of [{...ref,quote:'source body'},{...ref,assertionRevision:0},{...ref,city:['shanghai']},{...ref,scene:'invented'}])assert.equal(parseResultEvidenceRefs([bad]),null);assert.equal(parseResultEvidenceRefs([ref,ref]),null);
 });
