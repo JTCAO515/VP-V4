@@ -1,0 +1,18 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {randomUUID as uuid} from 'node:crypto';
+import {createNativeTextEnvironment} from './native-text-environment.mjs';
+test('actual Native Auth → ordinary Memory long-term save/correction/Undo/revocation/current read',{skip:process.env.VP_NATIVE_MEMORY_HTTP!=='true',timeout:180000},async t=>{
+ const e=await createNativeTextEnvironment();t.after(()=>e.cleanup());
+ const call=async(token,body,headers={})=>{const r=await fetch(e.api+'/api/memory/native/v1/profiles',{method:body===undefined?'GET':'POST',headers:{Authorization:'Bearer '+token,...(body===undefined?{}:{'Content-Type':'application/json'}),...headers},...(body===undefined?{}:{body:JSON.stringify(body)})});return {status:r.status,body:await r.json()};};
+ const login=async u=>{const attemptId=uuid();let r=await fetch(e.api+'/api/auth/native/v2/credentials',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:u.email,password:u.password,attemptId})});assert.equal(r.status,200);const b=await r.json();r=await fetch(e.api+'/api/auth/native/v2/login',{method:'POST',headers:{Authorization:'Bearer '+b.accessToken,'Content-Type':'application/json'},body:JSON.stringify({attemptId})});assert.equal(r.status,200);return b.accessToken;};
+ const token=await login(e.users[0]),other=await login(e.users[1]);
+ let r=await call(token,{action:'consentCreate',operationId:uuid()});assert.equal(r.status,200,JSON.stringify(r));const consentId=r.body.receipt.consentId;
+ const create={action:'create',operationId:uuid(),memoryId:uuid(),receiptId:uuid(),consentId,constraintKind:'preference',summary:'Relaxed pace',saveLongTerm:true};r=await call(token,create);assert.equal(r.status,200,JSON.stringify(r));assert.equal(r.body.profiles[0].summary,'Relaxed pace');assert.equal(r.body.receipt.undoAvailable,true);
+ const update={action:'update',operationId:uuid(),memoryId:create.memoryId,sourceReceiptId:create.receiptId,expectedRevision:1,summary:'Balanced pace',saveLongTerm:true};r=await call(token,update);assert.equal(r.status,200,JSON.stringify(r));assert.equal(r.body.profiles[0].revision,2);assert.equal(r.body.profiles[0].summary,'Balanced pace');assert.equal((await call(token,update)).body.receipt.reused,true);
+ assert.equal((await call(other,{...update,operationId:uuid(),expectedRevision:2})).status,403);assert.equal((await call(token,{...update,operationId:uuid()})).status,409);
+ r=await call(token,{action:'updateUndo',operationId:uuid(),memoryId:create.memoryId,sourceReceiptId:create.receiptId,expectedRevision:2,updateOperationId:update.operationId});assert.equal(r.status,200,JSON.stringify(r));assert.equal(r.body.profiles[0].revision,3);assert.equal(r.body.profiles[0].summary,'Relaxed pace');
+ r=await call(token,{action:'revoke',operationId:uuid(),memoryId:create.memoryId,sourceReceiptId:create.receiptId,expectedRevision:3});assert.equal(r.status,200,JSON.stringify(r));assert.equal(r.body.profiles[0].summary,null);assert.equal(r.body.profiles[0].consentStatus,'revoked');
+ assert.equal((await call(token)).body.profiles[0].summary,null);r=await call(token,create);assert.equal(r.status,200);assert.equal(r.body.receipt.undoAvailable,false);assert.equal(r.body.profiles[0].summary,null);
+ assert.equal((await call(token,undefined,{Origin:'http://localhost'})).status,400);assert.equal((await call(token,{...create,saveLongTerm:false})).status,400);
+ await login(e.users[0]);r=await call(token);assert.equal(r.status,401,JSON.stringify(r));assert.equal(JSON.stringify(r.body).includes('Relaxed'),false);assert.equal(e.counts.http,0);
+ t.diagnostic('NATIVE_MEMORY_AUTH_HTTP_SQL_PASS; current migrated disposable stack; zero external provider/Trip writes');
+});
