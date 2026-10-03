@@ -1,0 +1,9 @@
+# Existing-domain Library adapter code
+
+2026-10-03. Independentbranch codex/vpj82-library-source-adapters-20261003/baseactualmain9b36. Only lib/server/library/**, app/api/library/native/**,closedcontract/dedicatedtests/evidence;noSQL/559150/Memory/Swift/worker/631registry.
+
+Implemented metadata/list/search/exact aggregate delegates existing Native resultv2 andtranslationhistoryv2 readers, authinitial/finalsession+domainqualification, private-no-store, bounded20metadata/query120/source-queryboundopaquecursor4000, domaincandidate/nextcursorsemantics retained. Emptyincompletehistory doesnotmean globalnorecords;unavailableitemsnull,noleakedtitlecount/no pagefilter-as-completesearch. Exactresultrequiresrevision, translationrequiresexactturnID; domainwithdrawaldoesnotfakeopen/latestfallback.
+
+Materials/ordersgenuineabsentpersistenttable/RPC/writer scopedbyMain to originaldomain, authenticatedDOMAIN_READER_MISSING/itemsnull honestcapability; notprocessMapmasqueradedaspersistence. Placeusestheexistingbutton-requestdetail/quota/canonicalmapping/nativeownedunarchivedTripqualification;Ask typedrecheckrequirednavigationonly, noautoMessage/Task/Tripwrite. SaveDOMAIN_WRITER_MISSING/AddNO_ELIGIBLE_EVIDENCE/visualNO_LICENSED_VISUAL intentionalcapability,notfakebuttons/inventory/photo/license. Existingserviceclientusedonlycanonicalmapping,neveruserdataTripaccess;Tripstaysactor/RLSadapter.
+
+Observedcontracts:firstmetadata3/3PASS126ms, opaque-sourcecursorfinal4/4PASS95ms, placecapabilities/URLdenial2/2PASS94ms;typecheckPASS. Thesearecontrolledcontract/IOboundarynegatives,notrealprovider/resourceproof. No realprovider/target/userrawupload/credentials/licensingprocurement. Fixedcc4items/item and42placecodecontract handedNativeearly; noawaitalltestspuremoduleaswholefeatureclaim. Backendadaptercorecomplete;Nativefullpage/item/placeconsumption adoption remains ticketcompletioncode,notunboundedmissinguploaddomain.
