@@ -76,3 +76,15 @@ run('actual SQL failed terminal receipt decodes as failure with timestamp and no
  assert.deepEqual(parseExportJob(receipt,requestId),receipt);
  const ownerRead=await call(ready.a,'read',{requestId});assert.ok(parseExportJob(ownerRead,requestId));
 });
+
+run('real SQL commit accepts partial SOURCE_UNAVAILABLE after existing conversation pages',async()=>{
+ const requestId=randomUUID();await call(ready.a,'request',{requestId,confirmed:true});
+ const modules=async(name,input)=>{
+  if(name==='assistant_message_source_export_owner_v2')throw Error('synthetic later source unavailable');
+  const params=Object.entries(input).map(([k,v])=>k+'=>'+(v===null?'null':typeof v==='number'?String(v):"'"+String(v).replaceAll("'","''")+"'")).join(',');
+  return JSON.parse(await db(claims(null)+`select public.${name}(${params});`));
+ };
+ const receipt=await runCoreExportJob(requestId,randomUUID(),policy,parseExportKey(keyConfig),(action,input)=>call(null,action,input),modules,new AbortController().signal);
+ assert.equal(receipt.state,'ready_partial','actual partial SOURCE_UNAVAILABLE commit must succeed');
+ const conversation=receipt.modules.find(m=>m.module==='conversations');assert.equal(conversation.status,'partial');assert.equal(conversation.reason,'SOURCE_UNAVAILABLE');assert.ok(conversation.pages>0);
+});

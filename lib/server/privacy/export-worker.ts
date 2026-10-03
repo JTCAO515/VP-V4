@@ -16,7 +16,7 @@ export function parseExportLease(value: unknown, requestId: string): ExportLease
 /** One claimed durable job. Missing policy/key does zero RPC; no unbounded retry or publish. */
 export async function runCoreExportJob(requestId: string, operationId: string, policy: ExportPolicy | null, key: ExportKey | null,
   domain: ExportDomainRPC, modules: ExportRPC, signal: AbortSignal): Promise<unknown> {
-  if (!policy || !parseExportPolicy(JSON.stringify(policy), policy.environment) || !key || key.key.length !== 32 || !/^[A-Za-z0-9_.:-]{1,128}$/.test(key.keyId) || !uuid(requestId) || !uuid(operationId) || signal.aborted) return { kind: "unavailable" };
+  if (!policy || !parseExportPolicy(JSON.stringify(policy), policy.environment) || !key || key.key.length !== 32 || !/^[!-~]{1,128}$/.test(key.keyId) || !uuid(requestId) || !uuid(operationId) || signal.aborted) return { kind: "unavailable" };
   const bounded = AbortSignal.any([signal, AbortSignal.timeout(policy.maxRunMs)]);
   const lease = parseExportLease(await domain("claim", { requestId, operationId, maxRunMs: policy.maxRunMs, expectedEnvironment: policy.environment, expectedKeyId: key.keyId }, bounded), requestId);
   if (!lease) return { kind: "unavailable" };

@@ -19,8 +19,9 @@ export function parseExportJob(value: unknown, requestId: string): ExportJobRece
       const m = value.modules[i];
       if (!exportRecord(m) || !exportExact(m, ["module", "status", "reason", "pages", "rows", "digest"]) || m.module !== CORE_EXPORT_MODULES[i]
         || typeof m.status !== "string" || !["complete", "partial", "unavailable", "failed"].includes(m.status) || typeof m.reason !== "string" || !["NONE", "HANDLER_MISSING", "BOUNDED_LIMIT", "LIVE_TRAVERSAL", "SOURCE_UNAVAILABLE"].includes(m.reason)
-        || typeof m.pages !== "number" || !Number.isSafeInteger(m.pages) || m.pages < 0 || m.pages > 1000 || typeof m.rows !== "number" || !Number.isSafeInteger(m.rows) || m.rows < 0 || m.rows > 100000
-        || (m.digest !== null && !exportSHA(m.digest)) || (m.status === "complete" ? m.reason !== "NONE" || m.digest === null : m.reason === "NONE")
+        || typeof m.pages !== "number" || !Number.isSafeInteger(m.pages) || m.pages < 0 || m.pages > 1000 || typeof m.rows !== "number" || !Number.isSafeInteger(m.rows) || m.rows < 0 || m.rows > 100000 || m.rows > m.pages * 100
+        || (m.digest !== null && !exportSHA(m.digest)) || (m.status === "complete" ? m.reason !== "NONE" || m.digest === null || m.pages < 1 : m.reason === "NONE")
+        || (m.status === "partial" && m.reason === "SOURCE_UNAVAILABLE" && m.pages < 1) || (m.status === "failed" && (m.reason !== "SOURCE_UNAVAILABLE" || m.pages !== 0))
         || (m.status === "unavailable" && (m.reason !== "HANDLER_MISSING" || m.pages !== 0 || m.rows !== 0 || m.digest !== null))) return null;
     }
     const complete = value.modules.every(m => m.status === "complete");
@@ -37,7 +38,7 @@ export function parseExportJob(value: unknown, requestId: string): ExportJobRece
         || typeof m.status !== "string" || !["complete", "partial", "unavailable", "failed"].includes(m.status)
         || typeof m.reason !== "string" || !["NONE", "HANDLER_MISSING", "BOUNDED_LIMIT", "LIVE_TRAVERSAL", "SOURCE_UNAVAILABLE"].includes(m.reason)
         || typeof m.pages !== "number" || !Number.isSafeInteger(m.pages) || m.pages < 0 || m.pages > 1000
-        || typeof m.rows !== "number" || !Number.isSafeInteger(m.rows) || m.rows < 0 || m.rows > 100000 || (m.digest !== null && !exportSHA(m.digest))) return null;
+        || typeof m.rows !== "number" || !Number.isSafeInteger(m.rows) || m.rows < 0 || m.rows > 100000 || m.rows > m.pages * 100 || (m.digest !== null && !exportSHA(m.digest))) return null;
     }
   } else if (value.state !== "expired" && ((value.state === "failed" ? !exportUTC(value.completedAt) : value.completedAt !== null) || value.artifactDigest !== null || value.artifactBytes !== null || value.artifactExpiresAt !== null || value.modules.length !== 0)) return null;
   return structuredClone(value) as ExportJobReceipt;

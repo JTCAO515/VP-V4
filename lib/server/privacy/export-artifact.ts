@@ -14,7 +14,7 @@ function base64(raw: unknown, min: number, max: number): Buffer | null {
 export function parseExportKey(value: unknown): ExportKey | null {
   if (!value || typeof value !== "object" || Array.isArray(value)) return null;
   const v = value as Record<string, unknown>;
-  if (Object.keys(v).sort().join() !== "algorithm,key,keyId" || v.algorithm !== "AES-256-GCM" || typeof v.keyId !== "string" || !/^[A-Za-z0-9_.:-]{1,128}$/.test(v.keyId)) return null;
+  if (Object.keys(v).sort().join() !== "algorithm,key,keyId" || v.algorithm !== "AES-256-GCM" || typeof v.keyId !== "string" || !/^[!-~]{1,128}$/.test(v.keyId)) return null;
   const key = base64(v.key, 32, 32);
   return key ? { keyId: v.keyId, key } : null;
 }
