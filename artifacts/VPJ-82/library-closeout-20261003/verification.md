@@ -22,3 +22,9 @@ Source boundary refinement: lib/server/explore/exact-id-handoff.ts is the reusab
 #631 integration repair is isolated at vpj81-native-memory-pr-integration-20261003. Normal merge of fixed parent92c7239518e7123158a979868afb963affdced5d produced43dd1d29021ed01e3b5cb3276badceaf11826631 and normal push. Delta only existing source-migration-order test setup/evidence; no new SQL/ACL loosening or old-head rerun. This #563 branch is unchanged by that merge.
 
 PASS: affected empty-state native build /tmp/vpj82-library-empty-state-build.log; git diff --check. No new rights or disabled action is represented as enabled.
+
+## Existing typed Ask alternative and domain boundary
+
+The exact-ID navigation contract is now consumed natively for a canonical-mapped selected POI and an explicitly selected owned Trip/version. Actor/foreground/read-start30second qualification gates the transient source pointer; AppShell returns to the same VP. VP shows recheck_required and requires an explicit user action to adopt bounded ID/name/provider metadata as current input; it never auto-sends, pays, grants evidence or links/writes a Trip. Unmapped/no-Trip cases retain a manual same-VP Ask alternative using the existing static entry deep link (no private text/IDs in URLs). Save remains disabled because no persistent writer exists; Add remains disabled for NO_ELIGIBLE_EVIDENCE/original Proposal confirmation. This is not a new Save/Add implementation responsibility for #563.
+
+PASS: affected native build /tmp/vpj82-library-ask-handoff-build.log; diff inspection. The only remaining #563 client integration is the backend's fixed owner-qualified Library material metadata/exact adapter. Upload/transaction/domain writer implementation is excluded. Visual source absence is a truthful empty state, not new rights procurement or a fabricated photo feed. Backend Library adapter owner has been assigned by Main; endpoints and discriminated source wire are awaited, not guessed.

@@ -602,6 +602,16 @@ struct NativeAssistantConversationView: View {
                 if !entryBlocking && session.dataScope != nil && (policy?.consentState == .accepted || selection.conversationID != nil) {
                     conversationControls
                 }
+                if let source=session.exploreAskHandoff,source.scope==session.dataScope,source.valid {
+                    Text(chinese ? "已选地点：\(source.name)。身份与行程版本需重新核对；尚未发出消息。":"Selected place: \(source.name). Identity and Trip version need rechecking; no message has been sent.")
+                    Button(chinese ? "明确采用为本次输入":"Use explicitly for this input"){
+                        guard pending==nil,selectedSources.pending==nil else{return}
+                        draft=(chinese ? "请帮我讨论我明确选择的地点：":"Please help me discuss this explicitly selected place: ")+source.name+"\ncanonical POI: "+source.poiID+"\nTrip: "+source.tripID+" · v"+String(source.tripVersion)+"\nProvider: "+source.provider.rawValue+" / "+source.providerPoiID+"\nrecheck_required"
+                        if goalHasCurrentMessage{operation="follow_up"}
+                        session.clearExploreAsk()
+                    }.disabled(pending != nil || selectedSources.pending != nil)
+                    Button(chinese ? "放弃此来源交接":"Discard this source handoff"){session.clearExploreAsk()}
+                }
                 if entryBlocking {
                     goalEntryStatus
                 } else if let policy {

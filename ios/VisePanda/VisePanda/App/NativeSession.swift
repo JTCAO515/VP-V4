@@ -34,6 +34,7 @@ final class NativeSession {
     private(set) var dataGeneration = 0
     private var assistantNavigation: NativeAssistantNavigation?
     let memoryPreferences=NativeMemoryPreferencesStore()
+    private(set) var exploreAskHandoff:NativeExploreAskHandoff?
     private var credential: NativeCredential?
     private let endpoint: URL?
     let askMode: NativeAskMode
@@ -59,6 +60,11 @@ final class NativeSession {
         configuration.urlCache = nil
         transport = URLSession(configuration: configuration, delegate: NativeRedirectBlocker(), delegateQueue: nil)
     }
+
+    func prepareExploreAsk(_ handoff:NativeExploreAskHandoff) {
+        guard handoff.scope==dataScope,handoff.valid else{return};exploreAskHandoff=handoff
+    }
+    func clearExploreAsk(){exploreAskHandoff=nil}
 
     // Navigation pointers only; no conversation, result or Memory content cache.
     func assistantNavigationSelection() -> NativeAssistantNavigation? {
@@ -725,6 +731,7 @@ final class NativeSession {
         dataGeneration += 1
         assistantNavigation=nil
         memoryPreferences.clear()
+        exploreAskHandoff=nil
         if let owner = credential?.subject ?? defaults.string(forKey: storageKey) {
             let result = vault.remove(service: vaultService, owner: owner)
             guard result == errSecSuccess || result == errSecItemNotFound else {

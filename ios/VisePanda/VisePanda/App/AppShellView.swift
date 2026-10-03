@@ -55,6 +55,10 @@ struct AppShellView: View {
             presentedEntry = nil
             selectedTab = assistantShell ? .defaultSelection : .ask
         }
+        .onChange(of:settings.nativeSession.exploreAskHandoff?.id){_,_ in
+            guard let source=settings.nativeSession.exploreAskHandoff,source.scope==settings.nativeSession.dataScope,source.valid else{return}
+            open(.ask)
+        }
         .task { await settings.nativeSession.restore() }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { Task { await settings.nativeSession.validate() } }
