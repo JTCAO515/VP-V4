@@ -47,6 +47,10 @@ final class NativeDeviceMaterials {
             if FileManager.default.fileExists(atPath: exportRoot.path) { try FileManager.default.removeItem(at: exportRoot) }
         } catch { accessed = false; throw error }
     }
+    func receive(_ data: Data, scope: NativeDataScope) throws -> NativeScreenshotInbox.Receipt {
+        try firstAccess()
+        return try inbox.receive(data, owner: scope.subject)
+    }
     func receipts(scope: NativeDataScope, now: Date = Date()) throws -> [NativeScreenshotInbox.Receipt] {
         try firstAccess()
         if let delivery, delivery.scope != scope || delivery.expiresAt <= now { try clearDelivery() }

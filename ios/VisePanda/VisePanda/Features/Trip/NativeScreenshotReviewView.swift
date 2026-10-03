@@ -325,8 +325,8 @@ struct NativeScreenshotReviewView: View {
             guard loadID == id else { return }
             let imageData: Data
             if let owner = source.ownerID {
-                guard let session, session.dataScope?.subject == owner, session.prepareDeviceMaterials() else { throw InboxError.invalidInput }
-                let receipt = try inbox.receive(data, owner: owner)
+                guard let session else { throw InboxError.invalidInput }
+                let receipt = try session.receiveDeviceScreenshot(data, owner: owner)
                 guard loadID == id else { try? inbox.delete(receipt.digest, owner: owner); return }
                 inboxReceipt = receipt
                 imageData = try inbox.read(receipt.digest, owner: owner)

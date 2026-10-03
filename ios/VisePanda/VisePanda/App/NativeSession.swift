@@ -37,6 +37,7 @@ final class NativeSession {
     let offlineTrips=NativeOfflineTripStore()
     let deviceMaterials: NativeDeviceMaterials
     private(set) var exploreAskHandoff:NativeExploreAskHandoff?
+    private var deviceMaterialSignOutFence = false
     private var credential: NativeCredential?
     private let endpoint: URL?
     let askMode: NativeAskMode
@@ -109,7 +110,7 @@ final class NativeSession {
 
     /// Changes on denial/account clearing even if the same owner later signs in again.
     var dataScope: NativeDataScope? {
-        guard status == "active", let subject, let mobileEpoch,
+        guard !deviceMaterialSignOutFence, status == "active", let subject, let mobileEpoch,
               let retained = retainedDataScope, retained.subject == subject, retained.mobileEpoch == mobileEpoch else { return nil }
         return retained
     }
@@ -711,6 +712,7 @@ final class NativeSession {
         defer { busy = false }
         // A deliberate account change clears all old account data before sending the new request.
         guard clear() else { return }
+        deviceMaterialSignOutFence = false // Only a deliberate new login reopens consumption.
         let attempt = UUID().uuidString
         let generation = dataGeneration
         do {
@@ -762,6 +764,7 @@ final class NativeSession {
 
     func logout() async {
         guard !busy else { return }
+        deviceMaterialSignOutFence = true
         subject=nil; mobileEpoch=nil; displayName=nil; status="signingOut"
         do { try deviceMaterials.eraseAll() }
         catch { failureCode="deviceMaterialCleanupRequired";status="storageError";return }
@@ -804,7 +807,7 @@ final class NativeSession {
         credential = value
         subject = value.subject
         mobileEpoch = value.mobileEpoch
-        status = "active"
+        status = deviceMaterialSignOutFence ? "signingOut" : "active"
     }
 
     private func ensureCurrent(_ generation: Int) throws {
@@ -864,8 +867,14 @@ final class NativeSession {
         return value
     }
     @discardableResult func prepareDeviceMaterials() -> Bool {
+        guard !deviceMaterialSignOutFence else { return false }
         do { try deviceMaterials.firstAccess(); return true }
         catch { failureCode="deviceMaterialCleanupRequired"; return false }
+    }
+
+    func receiveDeviceScreenshot(_ data: Data, owner: String) throws -> NativeScreenshotInbox.Receipt {
+        guard let scope = dataScope, scope.subject == owner, prepareDeviceMaterials() else { throw InboxError.invalidInput }
+        return try deviceMaterials.receive(data, scope: scope)
     }
 
     @discardableResult private func clear() -> Bool {

@@ -128,6 +128,44 @@ nonisolated final class NativeScreenshotInboxTests: XCTestCase {
 
     }
 
+    @MainActor
+    func testExpiredCredentialRefreshKeepsLogoutFencedThroughDelayedFailure() async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let inbox = NativeScreenshotInbox(root: root.appendingPathComponent("inbox"))
+        let materials = NativeDeviceMaterials(inbox: inbox, exportRoot: root.appendingPathComponent("export"))
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [MaterialLogoutProtocol.self]
+        let suite = "vpj36.material-logout." + UUID().uuidString
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        MaterialLogoutProtocol.reset()
+        let session = NativeSession(arguments: ["-VisePandaNativeAPI", "http://127.0.0.1:63221"], defaults: defaults, configuration: configuration, bundleConfiguration: [:], vault: MaterialLogoutVault(), deviceMaterials: materials)
+        await session.login(email: "synthetic", password: "synthetic")
+        let scope = try XCTUnwrap(session.dataScope)
+        let image = UIGraphicsImageRenderer(size: CGSize(width: 20, height: 20)).image { context in
+            UIColor.white.setFill(); context.fill(CGRect(x: 0, y: 0, width: 20, height: 20))
+        }.pngData()!
+        _ = try session.receiveDeviceScreenshot(image, owner: scope.subject)
+        let logout = Task { await session.logout() }
+        for _ in 0..<200 {
+            if MaterialLogoutProtocol.logoutPending { break }
+            try await Task.sleep(for: .milliseconds(10))
+        }
+        XCTAssertTrue(MaterialLogoutProtocol.logoutPending)
+        XCTAssertEqual(MaterialLogoutProtocol.refreshes, 1, "Expired credential exercised accept(refresh)")
+        XCTAssertNil(session.dataScope)
+        XCTAssertFalse(session.prepareDeviceMaterials())
+        XCTAssertThrowsError(try session.receiveDeviceScreenshot(image, owner: scope.subject))
+        XCTAssertTrue(try inbox.receipts(owner: scope.subject).isEmpty)
+        MaterialLogoutProtocol.failLogout()
+        await logout.value
+        XCTAssertNil(session.dataScope)
+        XCTAssertFalse(session.prepareDeviceMaterials())
+        XCTAssertThrowsError(try session.receiveDeviceScreenshot(image, owner: scope.subject))
+        XCTAssertTrue(try inbox.receipts(owner: scope.subject).isEmpty)
+    }
+
     func testPhysicalFileProtectionAttribute() throws {
 #if targetEnvironment(simulator)
         throw XCTSkip("UNRUN: simulator does not report the file-protection attribute; validate on an unlocked physical device")
@@ -143,5 +181,41 @@ nonisolated final class NativeScreenshotInboxTests: XCTestCase {
         let stored = try XCTUnwrap(FileManager.default.contentsOfDirectory(at: folder, includingPropertiesForKeys: nil).first)
         XCTAssertEqual(try FileManager.default.attributesOfItem(atPath: stored.path)[.protectionKey] as? FileProtectionType, .complete)
 #endif
+    }
+}
+
+@MainActor private final class MaterialLogoutVault: NativeCredentialVault {
+    private var records: [String: Data] = [:]
+    func write(_ data: Data, service: String, owner: String) -> OSStatus { records[service+owner]=data; return errSecSuccess }
+    func read(service: String, owner: String) -> (OSStatus, Data?) { let data=records[service+owner]; return (data == nil ? errSecItemNotFound : errSecSuccess, data) }
+    func remove(service: String, owner: String) -> OSStatus { records.removeValue(forKey: service+owner); return errSecSuccess }
+}
+nonisolated private final class MaterialLogoutProtocol: URLProtocol, @unchecked Sendable {
+    private static let lock = NSLock()
+    nonisolated(unsafe) private static var pending: MaterialLogoutProtocol?
+    nonisolated(unsafe) private static var refreshCount = 0
+    static let owner = "11111111-2222-3333-4444-555555555555"
+    static var logoutPending: Bool { lock.withLock { pending != nil } }
+    static var refreshes: Int { lock.withLock { refreshCount } }
+    static func reset() { lock.withLock { pending=nil; refreshCount=0 } }
+    static func failLogout() { let value = lock.withLock { let value=pending; pending=nil; return value }; value?.reply(status: 503, body: [:]) }
+    override class func canInit(with request: URLRequest) -> Bool { true }
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+    override func stopLoading() {}
+    override func startLoading() {
+        let path = request.url?.lastPathComponent
+        if path == "logout" { Self.lock.withLock { Self.pending=self }; return }
+        if path == "credentials" || path == "refresh" {
+            if path == "refresh" { Self.lock.withLock { Self.refreshCount += 1 } }
+            reply(status: 200, body: ["subject":Self.owner,"accessToken":"fixture-access","refreshToken":"fixture-refresh","expiresAt":Date().timeIntervalSince1970-60,"mobileEpoch":1])
+        } else if path == "login" { reply(status: 200, body: ["subject":Self.owner,"mobileEpoch":1]) }
+        else if path == "profile" { reply(status: 200, body: ["subject":Self.owner,"displayName":"Fixture"]) }
+        else { reply(status: 404, body: [:]) }
+    }
+    private func reply(status: Int, body: [String: Any]) {
+        guard let url=request.url, let response=HTTPURLResponse(url: url, statusCode: status, httpVersion: "HTTP/1.1", headerFields: ["Content-Type":"application/json"]), let data=try? JSONSerialization.data(withJSONObject: body) else { return }
+        client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+        client?.urlProtocol(self, didLoad: data)
+        client?.urlProtocolDidFinishLoading(self)
     }
 }
