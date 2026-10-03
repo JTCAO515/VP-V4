@@ -75,7 +75,8 @@ begin
  perform 1 from turn_private.text_content where turn_id=any(array[s.goal_turn_id,s.last_turn_id]) and owner_id=u order by turn_id for share nowait;
  perform 1 from turn_private.assistant_messages where id=m.id for share nowait;
  perform 1 from turn_private.text_consents where owner_id=u and policy_id in (c.policy_id,s.policy_id) order by policy_id for share nowait;
- member:=turn_private.assistant_task_member_v1(u,c.id,m.id);if member is null then return null;end if;
+ member:=turn_private.assistant_task_member_v1(u,c.id,m.id);if member is null or member->'turn'->>'status' in ('cancelled','failed','unavailable') then return null;end if;
+ if exists(select 1 from public.trip_days where trip_id=trip and owner_id<>u) then return null;end if;
  select coalesce(jsonb_agg(jsonb_build_array(to_char(trip_date,'YYYY-MM-DD'),time_zone) order by trip_date,day_id),'[]') into dates from public.trip_days where trip_id=trip and owner_id=u;
  digest:=encode(sha256(convert_to(jsonb_build_array(task,s.scope_version,s.thread_id,s.goal_turn_id,s.last_turn_id,s.policy_id,s.consent_id,c.id,c.policy_id,c.consent_id,m.id,m.sequence,m.scope_version,g.id,g.scope_version,l.operation_id,l.link_version,l.source_kind)::text,'UTF8')),'hex');
  basis:=jsonb_build_object('taskId',task,'taskTurnId',s.last_turn_id,'conversationId',c.id,'goalId',g.id,'goalVersion',g.scope_version,'tripId',trip,'tripVersion',t.head_version,'dateBasis',encode(sha256(convert_to(dates::text,'UTF8')),'hex'),'taskBasisDigest',digest);
@@ -127,6 +128,8 @@ declare r jsonb:=to_jsonb(new);owner uuid;policy uuid;
 begin
  if tg_table_name='text_content' then
  if new.hidden_at is not null and old.hidden_at is null then delete from readiness_private.scopes_v1 where task_turn_id=new.turn_id or root_turn_id=new.turn_id;end if;
+ elsif tg_table_name='turns' then
+ if new.status in ('cancelled','failed','unavailable') and old.status is distinct from new.status then delete from readiness_private.scopes_v1 where task_turn_id=new.id or root_turn_id=new.id;end if;
  elsif tg_table_name='text_consents' then
  if new.revoked_at is not null and old.revoked_at is null then
  delete from readiness_private.scopes_v1 d using turn_private.service_tasks t where d.task_id=t.id and t.owner_id=new.owner_id and t.policy_id=new.policy_id;
@@ -144,6 +147,7 @@ begin
  end if;
  return new;
 end $$;
+create trigger readiness_terminal_cleanup after update on public.turns for each row execute function readiness_private.cleanup_source_v1();
 create trigger readiness_hide_cleanup after update on turn_private.text_content for each row execute function readiness_private.cleanup_source_v1();
 create trigger readiness_consent_cleanup after update on turn_private.text_consents for each row execute function readiness_private.cleanup_source_v1();
 create trigger readiness_policy_cleanup after update on turn_private.text_policies for each row execute function readiness_private.cleanup_source_v1();
@@ -157,7 +161,7 @@ create function readiness_private.export_metadata_v1(p_request_id uuid,p_lease_i
 declare j export_private.core_jobs_v1%rowtype;rows jsonb;more boolean;cursor uuid;
 begin
  if auth.role() is distinct from 'service_role' then raise exception 'FORBIDDEN';end if;
- if p_request_id is null or p_lease_id is null or p_generation is null or p_limit not between 1 and 100 then raise exception 'INVALID_INPUT';end if;
+ if p_request_id is null or p_lease_id is null or p_generation is null or p_limit is null or p_limit not between 1 and 100 then raise exception 'INVALID_INPUT';end if;
  j:=export_private.lock_job_v1(p_request_id,true);
  if j.request_id is null or export_private.live_lease_v1(j,p_lease_id,p_generation) is distinct from true then return jsonb_build_object('kind','unavailable');end if;
  if p_after_task_id is not null and not exists(select 1 from readiness_private.scopes_v1 where owner_id=j.owner_id and task_id=p_after_task_id) then raise exception 'INVALID_EXPORT_CURSOR';end if;
