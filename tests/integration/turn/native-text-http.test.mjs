@@ -151,7 +151,8 @@ test('v5 comparison binds only a confirmed goal Trip and reads one exact revisio
  assert.equal(attempts.filter(x=>x.status===200).length,1,'concurrent CAS has one winner');
  const lost=attempts.find(x=>x.status!==200);
  assert.ok(lost && ((lost.status===400&&lost.body.message==='REVISION_CONFLICT')
-  || (lost.status===409&&lost.body.code==='23505'&&/result_artifacts_pkey/.test(lost.body.message))));
+  || (lost.status===409&&lost.body.code==='23505'&&/result_artifacts_pkey/.test(lost.body.message))),JSON.stringify({status:lost?.status,code:lost?.body?.code,message:lost?.body?.message}));
+ console.log('RESULT_CAS_LOSER '+JSON.stringify({case:'linked-trip',status:lost.status,code:lost.body.code??null,message:lost.body.message}));
  assert.equal(e.sql(`select count(*) from turn_private.result_revisions where artifact_id='${artifactA}';`),'1');
  assert.equal(e.sql(`select count(*) from turn_private.result_events where artifact_id='${artifactA}';`),'1');
  const exactA='/api/results/native/v1?artifactId='+artifactA+'&revision=1';
@@ -426,7 +427,8 @@ test('v5 conversation persists independent answer and versioned goal changes wit
  const loser=racedPublish.find(x=>x.status!==200);
  assert.ok(loser && ((loser.status===400 && loser.body.message==='REVISION_CONFLICT')
    || (loser.status===409 && loser.body.code==='23505' && /result_artifacts_pkey/.test(loser.body.message))),
-   'loser must be an explicit revision or artifact-key conflict');
+   'loser must be an explicit revision or artifact-key conflict: '+JSON.stringify({status:loser?.status,code:loser?.body?.code,message:loser?.body?.message}));
+ console.log('RESULT_CAS_LOSER '+JSON.stringify({case:'conversation',status:loser.status,code:loser.body.code??null,message:loser.body.message}));
  assert.equal(e.sql(`select count(*) from turn_private.result_revisions where artifact_id='${raceId}';`),'1');
  assert.equal(e.sql(`select count(*) from turn_private.result_events where artifact_id='${raceId}';`),'1');
  await waitUntil(()=>e.sql(`select status from public.turns where id='${taskTurns[1]}';`)==='completed',10000,'second task completed before publication');
