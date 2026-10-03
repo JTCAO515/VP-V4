@@ -94,7 +94,7 @@ export async function collectCoreExport(
     if (!await current()) return null;
     data[module] = sections;
     if (reason === "NONE" && handler.consistency === "live_bounded") reason = "LIVE_TRAVERSAL";
-    modules.push({ module, status: reason === "NONE" ? "complete" : reason === "SOURCE_UNAVAILABLE" ? "failed" : "partial", reason, pages, rows, digest: digest(sections) });
+    modules.push({ module, status: reason === "NONE" ? "complete" : reason === "SOURCE_UNAVAILABLE" ? (pages > 0 ? "partial" : "failed") : "partial", reason, pages, rows, digest: digest(sections) });
   }
   if (!await current()) return null;
   const bundle: ExportBundle = { schemaVersion: "privacy-core-export/1", requestId: lease.requestId,

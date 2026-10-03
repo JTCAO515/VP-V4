@@ -25,7 +25,7 @@ function workerFixture(){
   if(action==='execution_receipt')return {kind:'privacy_export_execution_receipt/1',outcome:'terminal',receipt:stored};
   throw Error('unexpected action');
  };
- const modules=async(name,input)=>empty(name.startsWith('assistant')?'assistant-conversation-export/1':'result-artifact-export/1',input.p_section);
+ const modules=async(name,input)=>{if(name==='assistant_message_source_export_owner_v2'||name==='assistant_travel_intake_export_owner_v1'){const v=empty(name.includes('message_source')?'assistant-message-sources-export/2':'assistant-travel-intake-export/1',undefined);delete v.section;return v;}return empty(name.startsWith('assistant')?'assistant-conversation-export/1':'result-artifact-export/1',input.p_section);};
  return {requestId,lease,key,actions,domain,modules,set loseAck(v){loseAck=v;}};
 }
 test('production worker composition uses durable scope/actual modules/encryption and clamped SQL expiry',async()=>{

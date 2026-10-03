@@ -8,9 +8,9 @@ function setup(){const lease={requestId:randomUUID(),ownerId:randomUUID(),leaseI
 const envelope=(schemaVersion,section,items=[],nextCursor=null)=>({schemaVersion,section,items,nextCursor,hasMore:nextCursor!==null,sectionComplete:nextCursor===null});
 test('existing module adapters collect every section and report live/absent modules explicitly partial',async()=>{
   const f=setup(),seen=[];
-  const rpc=async(name,input)=>{seen.push({name,input});return envelope(name.startsWith('assistant')?'assistant-conversation-export/1':'result-artifact-export/1',input.p_section);};
+  const rpc=async(name,input)=>{seen.push({name,input});if(name==='assistant_message_source_export_owner_v2'||name==='assistant_travel_intake_export_owner_v1'){const v=envelope(name.includes('message_source')?'assistant-message-sources-export/2':'assistant-travel-intake-export/1',undefined);delete v.section;return v;}return envelope(name.startsWith('assistant')?'assistant-conversation-export/1':'result-artifact-export/1',input.p_section);};
   const bundle=await collectCoreExport(f.lease,existingExportHandlers(f.lease,rpc),f.limits,async()=>true,f.signal);
-  assert.equal(seen.length,8);assert.ok(seen.every(s=>s.input.p_owner===f.lease.ownerId));
+  assert.equal(seen.length,10);assert.ok(seen.every(s=>s.input.p_owner===f.lease.ownerId));
   assert.equal(bundle.coverage,'partial');assert.equal(bundle.allUserDataCompleted,false);
   assert.equal(bundle.modules.find(m=>m.module==='conversations').reason,'LIVE_TRAVERSAL');
   assert.equal(bundle.modules.find(m=>m.module==='trip').reason,'HANDLER_MISSING');
@@ -21,7 +21,7 @@ test('terminal page alone cannot substitute for earlier pages; repeated/foreign 
   const bundle=await collectCoreExport(f.lease,{trip:handler},f.limits,async()=>true,f.signal);
   assert.equal(bundle.modules[0].pages,2);assert.equal(bundle.modules[0].rows,2);
   calls=0;handler.page=async()=>({items:[{id}],hasMore:true,nextCursor:id,sectionComplete:false});
-  assert.equal((await collectCoreExport(f.lease,{trip:handler},f.limits,async()=>true,f.signal)).modules[0].status,'failed');
+  assert.equal((await collectCoreExport(f.lease,{trip:handler},f.limits,async()=>true,f.signal)).modules[0].reason,'SOURCE_UNAVAILABLE');
 });
 test('disabled execution does not invoke handlers or lease RPC',async()=>{
   const f=setup();let calls=0;
@@ -59,4 +59,25 @@ test('actual HTTP transport is exact POST/no redirect/no retries and bounds stre
   await assert.rejects(()=>rpc('unknown_rpc',{},new AbortController().signal));assert.equal(calls,1);
   const huge=existingExportRPC({url:'http://127.0.0.1:54321',serviceKey:'synthetic-test-service-key'},async()=>new Response('x'.repeat(1048577),{headers:{'content-type':'application/json'}}));
   await assert.rejects(()=>huge('result_artifact_export_owner_v1',{},new AbortController().signal));
+});
+
+test('message source/intake sections use exact existing RPCs, keysets and fail partially when a later source denies',async()=>{
+ const f=setup(),id='10000000-0000-0000-0000-000000000001',seen=[];
+ let wrong=false;
+ const rpc=async(name,input)=>{
+  seen.push({name,input});
+  const source=name==='assistant_message_source_export_owner_v2';
+  const items=source?[{messageId:id,inputReferences:[],capturedReferences:[],createdAt:'2026-10-03T00:00:00Z'}]:[{message_id:id,intake_revision:1,goal_id:id,conversation_id:id,message_sequence:1,goal_version:1,intake:{},memory_basis:[],created_at:'2026-10-03T00:00:00Z'}];
+  return {schemaVersion:source?'assistant-message-sources-export/2':'assistant-travel-intake-export/1',items,hasMore:true,nextCursor:wrong?'20000000-0000-0000-0000-000000000001':id,sectionComplete:false};
+ };
+ const handler=existingExportHandlers(f.lease,rpc).conversations;
+ await handler.page('messageSources',null,100,f.signal);await handler.page('travelIntakes',null,100,f.signal);
+ assert.deepEqual(seen.map(s=>s.input),[{p_owner:f.lease.ownerId,p_after_message:null,p_limit:100},{p_owner:f.lease.ownerId,p_after_id:null,p_limit:100}]);
+ wrong=true;await assert.rejects(()=>handler.page('messageSources',null,100,f.signal));
+ const partialRPC=async(name,input)=>{
+  if(name==='assistant_message_source_export_owner_v2')throw Error('synthetic permission denied');
+  return envelope('assistant-conversation-export/1',input.p_section);
+ };
+ const bundle=await collectCoreExport(f.lease,existingExportHandlers(f.lease,partialRPC),f.limits,async()=>true,f.signal);
+ assert.equal(bundle.modules.find(m=>m.module==='conversations').status,'partial');assert.equal(bundle.modules.find(m=>m.module==='conversations').reason,'SOURCE_UNAVAILABLE');
 });

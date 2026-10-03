@@ -230,3 +230,18 @@ Ready/download replies expose the actual clamped artifact expiry; TS accepts a
 shorter future expiry and uses the authoritative returned value, not equality to
 its original submitted time. Commit recovery remains pinned to original request/
 lease/generation/plaintext digest. This code rule supplies no enabled live TTL.
+
+
+## Existing Conversation-associated export sections
+
+Conversation includes its original five sections plus messageSources and travelIntakes.
+The two additions use only already-authorized service-only domain functions:
+assistant_message_source_export_owner_v2(owner, after_message, limit), schema
+assistant-message-sources-export/2 with last item messageId; and
+assistant_travel_intake_export_owner_v1(owner, after_id, limit), schema
+assistant-travel-intake-export/1 with last item message_id. Their closed page envelope
+has no section field. Owner always derives from validated job lease; exact UUID
+keysets/100-page rows and repeated/backward/last-anchor guards apply. No broad RPC
+allowlist match, new permission or215 private metadata is added. A later source
+failure after collected pages preserves a partial/SOURCE_UNAVAILABLE module receipt,
+not a false complete section. All live-traversal limitations remain explicit.
