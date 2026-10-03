@@ -9,7 +9,10 @@ label semantics follow [`triage-labels.md`](triage-labels.md).
 - Product Issues use their VPJ rows. Explicit maintenance uses a compact goal/scope/checks/
   acceptance/rollback brief — never a second program for a small fix.
 - Use `Related to` on partial PRs and keep the unverified checklist. An available interface may
-  support a scoped preparation PR while its parent stays open; record the retained integration gate.
+  support a scoped preparation PR while the parent implementation is incomplete; record the retained integration gate.
+- Per JT (2026-10-03), close development Issues after the whole owned code scope and necessary affected checks
+  are complete. Closure is distinct from merged/released/accepted. Keep remaining target/provider/human/device
+  evidence and its owner in #187 / #233 / #242; preserve unverified checklist items and failures.
 - Future expand tasks require `activationEvidence` even after their dependencies complete.
 - External PRs are not a feature-request triage surface; collaborator PRs get normal review.
 

@@ -55,7 +55,7 @@ waiting in the Issue/PR, so efficiency claims have a basis.
 A missing technical behavior blocks its parent Issue's acceptance, not every independent slice.
 For an independent preparation slice, record inputs, paths, unavailable checks and remaining
 integration work in the linked Issue/PR before editing. Preparation must not invent identity,
-end-user consent, retained data or an unmerged interface, and must leave the parent open.
+end-user consent, retained data or an unmerged interface. A partial slice leaves its development parent open until that parent's complete implementation scope is delivered.
 
 Check native dependencies and relevant PRs before selecting work. Verify readiness against
 interfaces, environment, ownership and external decisions rather than against labels; reconcile
@@ -65,8 +65,12 @@ stale labels yourself. Future `expand` tasks still need their recorded activatio
 
 One coherent outcome per branch/PR. A primary Issue may have several incremental PRs; small
 directly related fixes may share one PR when every affected Issue and acceptance is listed. Keep
-independent features and unrelated refactors separate. Close an Issue only when all of its
-acceptance is met; a preparation PR uses `Related to`, never a closing keyword.
+independent features and unrelated refactors separate. Per JT (2026-10-03), close a development Issue when its
+complete owned implementation and necessary affected checks are done; target/provider/human/device acceptance
+does not keep a code-complete development Issue open. A partial preparation still uses `Related to`.
+Development closure does not mean merged, released or accepted. Record unresolved PASS/FAIL/UNRUN and
+the follow-up owner in the existing acceptance home #187 / #233 / #242; do not erase an unobserved checklist.
+Related small fixes share the current batch; do not create a process or module PR for every fragment.
 
 Use an isolated worktree when another task is active, the working tree is dirty, or isolation
 prevents a collision. Never overwrite another session's or the user's changes.
@@ -86,7 +90,10 @@ policies retain their protections; a substantive change needs a new ADR or expli
 
 The VPJ row's check list describes full Issue acceptance. Select local PR checks from the changed
 behavior and explain the selection in the PR. Repository-required checks still run and must pass.
-Reuse CI evidence for the same tested code instead of repeating it locally.
+Reuse CI evidence for the same tested code instead of repeating it locally. PR CI uses actual changed paths
+to run necessary affected checks/DB lanes; unknown scope or selector errors fail closed or run full.
+Required merge checks and targeted permissions/data/migration negatives remain mandatory. Human/device
+acceptance is deferred to the whole-development acceptance batch; it is not a routine per-fragment gate.
 
 | Change | Local evidence |
 | --- | --- |

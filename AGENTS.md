@@ -53,3 +53,13 @@ The rule files state boundaries, not a procedure to follow step by step. Within 
 choose the reading, the slice, the checks and the sequence yourself, and record what you actually
 ran. When a rule and an observed repository or runtime fact disagree, the observation wins and the
 rule file gets corrected in the same PR.
+
+
+## Development closure and CI selection (JT, 2026-10-03)
+
+Close a development Issue after its complete owned implementation and necessary affected checks; a partial
+slice is insufficient. Development closure is distinct from merged/released/accepted. Record outstanding
+target/provider/human/device PASS/FAIL/UNRUN in #187 / #233 / #242 for unified acceptance after development.
+Batch related small fixes. Select CI from actual changed paths, reuse unchanged evidence, and keep required
+merge checks plus affected permission/data/migration negatives; unknown scope fails closed or runs full.
+No remote branch-protection, production, payment or permission change follows from this rule.

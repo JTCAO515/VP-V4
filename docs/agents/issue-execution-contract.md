@@ -9,12 +9,15 @@ command registry and the red-line suite registry.
 
 Read the current Issue/PR, its VPJ row and the affected interfaces and code. The row's checks
 describe full Issue acceptance; select the local checks for each PR by actual impact. Applicable
-CI, required checks and runtime acceptance remain in force. A missing environment is UNRUN;
+required merge CI and affected permissions/data/migration checks remain in force. Development closure
+follows JT's 2026-10-03 rule: complete implementation plus necessary affected checks; unified runtime/human/device
+acceptance is tracked separately in #187 / #233 / #242. A missing environment is UNRUN;
 passing fixtures complete neither integration nor release.
 
 Product implementation uses its VPJ row. Explicit maintenance outside the manifest uses a compact
 Issue/PR brief with goal, paths, checks, acceptance and rollback. A scoped preparation slice
-records its inputs and retained runtime blockers before editing and does not close its parent.
+records its inputs and retained runtime blockers before editing. Partial implementation does not close its
+development parent; a code-complete parent may close while recorded target/human/device acceptance remains UNRUN.
 
 Primary paths guide ownership: document necessary adjacent edits and coordinate actual concurrent
 owners. Accepted ADRs, archived evidence, applied migrations, secrets and data/permission
@@ -45,7 +48,7 @@ Record important commands and results in the Issue/PR or `artifacts/<task>/`, fo
 `VP_ARTIFACT_ISSUE=VPJ-01 node scripts/record-command.mjs node --version` (the recorder supports
 VPJ and GOV identifiers). Keep useful raw logs and screenshots; summarize failed, skipped and
 unavailable evidence. Do not duplicate unchanged evidence. Full task acceptance still requires the
-artifacts named by its row.
+artifacts named by its row in the unified acceptance home; it is not the development-Issue closure gate.
 
 ## Red-line suite registry
 
