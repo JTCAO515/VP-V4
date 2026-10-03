@@ -54,8 +54,10 @@ export async function runCoreExportJob(requestId: string, operationId: string, p
     // Dedicated service recovery, no user JWT, no re-export or lease renewal. Never claim unknown committed.
     if (bounded.aborted) return { kind: "unknown" };
     const recovery = await domain("execution_receipt", { ...binding, expectedArtifactDigest: artifact.plaintextDigest }, bounded);
-    return exportRecord(recovery) && exportExact(recovery, ["kind", "outcome", "receipt"])
-      && recovery.kind === "privacy_export_execution_receipt/1" && recovery.outcome === "terminal"
-      && committed(recovery.receipt) ? committed(recovery.receipt) : { kind: "unknown" };
+    if (!exportRecord(recovery) || !exportExact(recovery, ["kind", "outcome", "receipt"])
+      || recovery.kind !== "privacy_export_execution_receipt/1" || recovery.outcome !== "terminal") return { kind: "unknown" };
+    const recovered = parseExportJob(recovery.receipt, requestId);
+    if (recovered?.state === "failed" && recovered.generation === lease.generation) return recovered;
+    return committed(recovery.receipt) ?? { kind: "unknown" };
   }
 }

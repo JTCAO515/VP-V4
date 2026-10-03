@@ -39,6 +39,6 @@ export function parseExportJob(value: unknown, requestId: string): ExportJobRece
         || typeof m.pages !== "number" || !Number.isSafeInteger(m.pages) || m.pages < 0 || m.pages > 1000
         || typeof m.rows !== "number" || !Number.isSafeInteger(m.rows) || m.rows < 0 || m.rows > 100000 || (m.digest !== null && !exportSHA(m.digest))) return null;
     }
-  } else if (value.state !== "expired" && (value.completedAt !== null || value.artifactDigest !== null || value.artifactBytes !== null || value.artifactExpiresAt !== null || value.modules.length !== 0)) return null;
+  } else if (value.state !== "expired" && ((value.state === "failed" ? !exportUTC(value.completedAt) : value.completedAt !== null) || value.artifactDigest !== null || value.artifactBytes !== null || value.artifactExpiresAt !== null || value.modules.length !== 0)) return null;
   return structuredClone(value) as ExportJobReceipt;
 }

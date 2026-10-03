@@ -100,7 +100,9 @@ generation:positiveSafeInt, createdAt:UTCms, completedAt:null|UTCms,
 artifactDigest:null|lowerSHA256, artifactBytes:null|nonnegativeSafeInt,
 artifactExpiresAt:null|UTCms, modules:moduleReceipt[], allUserDataCompleted:false.
 No owner/session/credential/lease token or private-body disclosure in owner receipts.
-Before commit modules=[], artifact fields=null, completedAt=null. Ready state must
+Queued/running: modules=[], artifact fields=null, completedAt=null. Failed is a
+terminal error with UTC completedAt but modules=[] and every artifact field=null;
+its termination timestamp never implies successful completion or delivery. Ready state must
 agree with module coverage, committed artifact and completedAt; expired retains
 only minimal receipt metadata. complete covers declared D2 modules only, never
 all user data or D3–D5.
@@ -245,3 +247,29 @@ keysets/100-page rows and repeated/backward/last-anchor guards apply. No broad R
 allowlist match, new permission or215 private metadata is added. A later source
 failure after collected pages preserves a partial/SOURCE_UNAVAILABLE module receipt,
 not a false complete section. All live-traversal limitations remain explicit.
+
+## Source-bound local validation
+
+Producer checkpoint53978d66 was jointly exercised with immutable SQL
+cd9b324d56db4611bbbb6dd3157f84dd59df4c90 using
+`VP_TURN_DB_TEST=1 VP_CORE_EXPORT_SQL_SOURCE=cd9b324d56db4611bbbb6dd3157f84dd59df4c90 node --experimental-strip-types --test tests/integration/privacy/core-export-consumer.test.mjs`.
+Four affected cases pass: real SQL admission/lease/modules→production worker/AES
+commit and strict receipt; real protected artifact/ticket/consume→HTTP bytes with
+explicit synthetic credentials; real authenticated/service_role EXECUTE denial;
+and real failed terminal receipt→TS validation. Positive SQL uses administrator
+synthetic claims and a disposable private policy seed in a network-none container,
+not target policy activation, real GoTrue or API permission evidence. No GRANT or
+roles were added. Old privacy intent remains requested/not_started.
+
+Failed now correctly retains UTC completedAt as an error termination time, with
+all artifact fields null/modules empty; queued/running completion time stays null.
+It is not successful export completion. Ready receipts use actual SQL clamped
+expiry. API/root tests also separately cover disabled/no-secret-read, ignored
+cancellation deadlines, bounded pages/bytes, source cursor/row checks, crypto/AAD
+binding, wrong owner/expired/duplicate ticket headers, malformed and network-lost
+consume ACK, and original service-lease recovery without re-export.
+
+Final integrated CI must run against all current checkout migrations. A historical
+source override is used only for this pre-integration joint checkpoint and must
+not be accepted by final CI. Real-account Auth, API EXECUTE activation, shared
+Staging/production execution, native download UI and operator deployment are UNRUN.
