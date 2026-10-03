@@ -108,7 +108,10 @@ begin
 exception when lock_not_available then return jsonb_build_object('kind','blocked');end $$;
 -- Extract an exact user-created case-sensitive item; never infer a place from title.
 create function trip_support_private.item(p_content jsonb,p_day text,p_item text) returns jsonb language sql immutable set search_path='' as $$
- select jsonb_build_object('day',d-'items','item',i) from jsonb_array_elements(p_content->'days') d cross join lateral jsonb_array_elements(d->'items') i where d->>'id'=p_day and i->>'id'=p_item
+ select jsonb_build_object('day',d-'items','item',i
+ ||case when i->>'startsAt' is not null then jsonb_build_object('startsAt',to_char((i->>'startsAt')::timestamptz at time zone 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"')) else '{}'::jsonb end
+ ||case when i->>'endsAt' is not null then jsonb_build_object('endsAt',to_char((i->>'endsAt')::timestamptz at time zone 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"')) else '{}'::jsonb end)
+ from jsonb_array_elements(p_content->'days') d cross join lateral jsonb_array_elements(d->'items') i where d->>'id'=p_day and i->>'id'=p_item
 $$;
 create function trip_support_private.typed_claim(p_basis jsonb,p_scope text) returns jsonb language plpgsql immutable set search_path='' as $$
 declare payload jsonb:=p_basis->'payload';kind text;value jsonb;
