@@ -3,7 +3,7 @@ import type { TripSnapshot } from "../patch/contract.ts";
 
 export type ExplicitPlanNeeds = { partySize: number; currency: string; maxBudgetMinor: number | null; minTransferMinutes: number; baggageBufferMinutes: number; appointmentBufferMinutes: number; maxWalkingMinutes: number | null };
 export type PlanEvidence = {
-  itemId: string; current: boolean; entityBound: boolean; opening: "open" | "closed" | "unknown";
+  itemId: string; canonicalPoiId?: string; current: boolean; entityBound: boolean; opening: "open" | "closed" | "unknown";
   reservation: "available" | "not_required" | "unknown"; reservationCurrent: boolean;
 };
 export type TransferEvidence = { fromItemId: string; toItemId: string; current: boolean; actualDeparture: string; minutes: number; walkingMinutes: number | null; lastConnectionCurrent: boolean };

@@ -62,3 +62,35 @@ test('production HTTP uses owned exact proposal and JWT reads; changed same-sess
  replace=true;epochCalls=0;const revoked=await nativePlanFeasibilityHTTP(request(),basis.tripId);
  assert.equal(revoked.status,401);assert.deepEqual(await revoked.json(),{error:{code:'UNAUTHENTICATED'}});
 });
+
+import {readPlanRouteEvidence} from '../../../lib/server/trip/feasibility/routes.ts';
+test('explicit now route reuses Maps transport: exact time binds, references stay pending, future/default-off/identity/quota dispatch nothing',async t=>{
+ const instant=new Date('2026-10-04T01:00:00.000Z');
+ t.mock.timers.enable({apis:['Date'],now:instant});
+ const b=structuredClone(basis);b.after.days[0].date='2026-10-04';
+ b.after.days[0].items=[{id:'from',dayId:'day',title:'Original',startsAt:'2026-10-04T00:00:00.000Z',endsAt:instant.toISOString()},
+ {id:'to',dayId:'day',title:'Destination',startsAt:'2026-10-04T03:00:00.000Z',endsAt:'2026-10-04T04:00:00.000Z'}];
+ const places=[{itemId:'from',canonicalPoiId:reference,current:true,entityBound:true,opening:'unknown',reservation:'unknown',reservationCurrent:false},
+ {itemId:'to',canonicalPoiId:mapping,current:true,entityBound:true,opening:'unknown',reservation:'unknown',reservationCurrent:false}];
+ const req={fromItemId:'from',toItemId:'to',originProviderPoiId:'start',destinationProviderPoiId:'end',mode:'walking',departure:'now',mapConsent:true};
+ const env={VISEPANDA_FEASIBILITY_ROUTES_ENABLED:'true',AMAP_ROUTES_ENABLED:'true',AMAP_DETAIL_ENABLED:'true',AMAP_WEB_SERVICE_KEY:'synthetic'};
+ let calls=0,guards=0,allowed=true,wrongIdentity=false;
+ const deps={env,signal:new AbortController().signal,canonicalMapping:async()=> (_provider,id)=>wrongIdentity?'wrong':id==='start'?reference:mapping,beforeRequest:async()=>{guards++;return allowed;},fetcher:async(input)=>{
+  calls++;const url=new URL(input);
+  if(url.pathname.includes('place/detail')){const id=url.searchParams.get('id');return Response.json({status:'1',infocode:'10000',pois:[{id,name:id,citycode:'021',address:'Address',location:id==='start'?'121.4,31.2':'121.5,31.3'}]});}
+  const transit=url.pathname.includes('transit');return Response.json({status:'1',infocode:'10000',route:{origin:'121.4,31.2',destination:'121.5,31.3',[transit?'transits':'paths']:[{distance:'1000',cost:{duration:'600'},steps:[{instruction:'Walk'}],segments:[{walking:{distance:'100',steps:[{instruction:'Walk'}]},bus:{buslines:[{name:'Metro',departure_stop:{name:'A'},arrival_stop:{name:'B'}}]}}]}]}});
+ }};
+ const exact=await readPlanRouteEvidence(b,places,[req],deps);
+ assert.equal(calls,5);assert.equal(guards,5);assert.equal(exact.routes[0].minutes,10);assert.equal(exact.routes[0].walkingMinutes,10);
+ assert.equal(exact.bindings[0].timeBinding,'exact');assert.ok(assemblePlanFeasibility(b,needs,places,exact.routes).lines.some(l=>l.constraint==='door_to_door_route'&&l.status==='supported'));
+ b.after.days[0].items[0].endsAt='2026-10-04T00:59:59.000Z';const referenceOnly=await readPlanRouteEvidence(b,places,[req],deps);
+ assert.deepEqual(referenceOnly.routes,[]);assert.equal(referenceOnly.bindings[0].timeBinding,'reference_only');
+ b.after.days[0].items[0].endsAt='2026-10-04T01:01:00.000Z';calls=0;assert.deepEqual((await readPlanRouteEvidence(b,places,[req],deps)).routes,[]);assert.equal(calls,0);
+ b.after.days[0].items[0].endsAt=instant.toISOString();env.VISEPANDA_FEASIBILITY_ROUTES_ENABLED='false';
+ await readPlanRouteEvidence(b,places,[req],deps);assert.equal(calls,0);env.VISEPANDA_FEASIBILITY_ROUTES_ENABLED='true';
+ wrongIdentity=true;await readPlanRouteEvidence(b,places,[req],deps);assert.equal(calls,0);wrongIdentity=false;
+ allowed=false;assert.deepEqual((await readPlanRouteEvidence(b,places,[req],deps)).bindings,[]);assert.equal(calls,0);
+ const body={proposalId:basis.proposalId,expectedProposalRevision:1,expectedBaseVersion:0,needs,placeChoices:[],routeRequests:[req]};
+ assert.ok(feasibilityRequest(body));assert.equal(feasibilityRequest({...body,routeRequests:[{...req,mapConsent:false}]}),null);
+ assert.equal(feasibilityRequest({...body,routeRequests:[req,req]}),null);
+});

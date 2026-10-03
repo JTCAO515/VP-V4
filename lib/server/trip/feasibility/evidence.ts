@@ -14,6 +14,7 @@ export async function readPlanPlaceEvidence(basis:FeasibilityBasis,choices:reado
   const context=ctx.data;
   if(ctx.error||!record(context)||context.kind!=="support_context"||context.tripId!==basis.tripId||context.proposalId!==basis.proposalId||context.tripVersion!==basis.baseVersion||context.proposalRevision!==basis.proposalRevision||context.baseVersion!==basis.baseVersion||context.proposalDigest!==basis.proposalDigest
    ||context.dayId!==choice.dayId||context.itemId!==choice.itemId||!Array.isArray(context.canonicalPlaceReferences)||!context.canonicalPlaceReferences.some(r=>record(r)&&r.referenceId===choice.placeReferenceId&&id(r.canonicalPoiId)))continue;
+  const reference = context.canonicalPlaceReferences.find(r=>record(r)&&r.referenceId===choice.placeReferenceId) as Record<string,unknown>;
   let selected: Record<string,unknown> | undefined;
   let result: Record<string,unknown> | undefined;
   let cursor: unknown = null;
@@ -33,7 +34,7 @@ export async function readPlanPlaceEvidence(basis:FeasibilityBasis,choices:reado
   let opening:"open"|"closed"|"unknown"="unknown";
   if(selected.scope==="opening_window_reference"&&selected.claim.claimType==="time_window"&&record(selected.claim.value)&&item.startsAt&&item.endsAt&&day.timeZone===selected.claim.value.timeZone
    &&typeof selected.claim.value.startsAt==="string"&&typeof selected.claim.value.endsAt==="string")opening=Date.parse(item.startsAt)>=Date.parse(selected.claim.value.startsAt)&&Date.parse(item.endsAt)<=Date.parse(selected.claim.value.endsAt)?"open":"unknown";
-  items.push({itemId:item.id,current:true,entityBound:true,opening,reservation:"unknown",reservationCurrent:false});
+  items.push({itemId:item.id,canonicalPoiId:reference.canonicalPoiId as string,current:true,entityBound:true,opening,reservation:"unknown",reservationCurrent:false});
   bindings.push({itemId:item.id,placeReferenceId:choice.placeReferenceId,mappingId:selected.mappingId,mappingVersion:selected.mappingVersion,sourceDigest:selected.sourceDigest,contextDigest:result.contextDigest,claimType:selected.claim.claimType,facts:(selected.claim as GroundedClaim).evidence.filter(e=>e.kind==="fact").map(e=>e.kind==="fact"?{factId:e.factId,version:e.version,expiresAt:e.expiresAt}:null)});
  }
  return {items,bindings};

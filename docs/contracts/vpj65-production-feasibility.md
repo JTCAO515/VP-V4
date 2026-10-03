@@ -62,3 +62,31 @@ timetable reader was found in the affected planning path. These require actual
 qualified authority before their pending checks can become supported. No provider
 call or paid acquisition is introduced by this adapter. Whole #219 remains in
 development while these broader planning behaviors are incomplete.
+
+## Optional explicit foreground Maps operation
+
+The original five request keys remain valid. Optional routeRequests is an array
+of zero or one entry, exactly fromItemId,toItemId,originProviderPoiId,
+destinationProviderPoiId,mode:walking|transit|driving,departure:now,mapConsent:true.
+Provider IDs are expected identities chosen from actual existing Maps results,
+never authority or manually inferred names. The server requires both own selected
+canonical place receipts and exact provider_poi_mappings matches before any route
+egress. User foreground consent is necessary but cannot qualify evidence.
+
+VISEPANDA_FEASIBILITY_ROUTES_ENABLED defaults off. Existing AMAP_ROUTES_ENABLED,
+AMAP_DETAIL_ENABLED, server key, ordinary actor place quota, current positive session
+epoch before each provider request, request cancellation and five-call bound all
+apply. No environment flag/key is enabled or installed by this change. Only one
+explicit leg is queried with the existing compareRoutes now interface. Fixed
+departure in the future dispatches zero provider calls; past departure outside the
+existing five-minute observation lifetime is unsupported.
+
+evidenceBasis may additionally contain a route variant exactly
+kind:route_observation,fromItemId,toItemId,originCanonicalPoiId,
+destinationCanonicalPoiId,provider:amap,mode:walking|transit|driving,departure:now,
+actualDeparture,timeBinding:exact|reference_only,observedAt,expiresAt.
+Only observedAt exactly equal to the original from-item endsAt qualifies a route
+for plan checking. Different instants remain independent reference observations
+with the plan route line pending. No tolerance window is invented. Walking
+duration is qualified only for walking mode; transit walking distance does not
+become walking minutes. Last-service and reservation checks remain pending.
