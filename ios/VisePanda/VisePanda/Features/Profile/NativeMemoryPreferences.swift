@@ -220,6 +220,9 @@ struct NativeMemoryPreferencesView: View {
     var body:some View {
         VStack(alignment:.leading,spacing:10){
             Text(t("明确偏好与记忆","Explicit preferences and Memory")).font(.headline)
+            NavigationLink(t("选择记忆并预览完整删除范围", "Select Memory and preview full deletion scope")) {
+                NativeMemoryDeletionView(session:session,chinese:chinese)
+            }
             if foreground,store.toast != nil,let undo=store.usableUndo(session.dataScope) {
                 HStack {
                     Text(t("已加入记忆","Saved to memory"))
