@@ -167,7 +167,9 @@ begin
  lease:=(p_input->>'leaseId')::uuid;if j.lease_id is distinct from lease or j.lease_expires_at<=clock_timestamp() then return jsonb_build_object('kind','blocked');end if;
  select revision into rev from export_private.memory_source_revisions_v1 where owner_id=j.owner_id;
  g:=privacy_private.memory_delete_graph_v1(j.owner_id,privacy_private.memory_delete_ids_v1(p.selection),p.selection);
- if rev<>j.post_source_revision or g->'graph' is distinct from j.expected_graph or g->'conflicts'<>'[]'::jsonb or exists(select 1 from public.memory_profiles where id=any(privacy_private.memory_delete_ids_v1(p.selection)) and (state<>'deleted' or summary is not null)) then raise exception 'SCOPE_CHANGED';end if;
+ -- Unselected Memory writes may advance the owner counter. Selected post-delete tuples
+ -- and exact derived graph remain authoritative; queued fences prevent new selected edges.
+ if g->'graph' is distinct from j.expected_graph or g->'conflicts'<>'[]'::jsonb or exists(select 1 from public.memory_profiles where id=any(privacy_private.memory_delete_ids_v1(p.selection)) and (state<>'deleted' or summary is not null)) then raise exception 'SCOPE_CHANGED';end if;
  update privacy_private.memory_delete_jobs_v1 set execution_xid=pg_current_xact_id(),execution_digest=p.scope_digest where request_id=request;
  erased:=jsonb_build_object('consumerReferences',0,'artifacts',0,'generatedOutputs',0,'exports',0,'tickets',0);
  delete from turn_private.result_artifacts where id=any(privacy_private.linked_delete_array_v1(p.selection->'artifactIds')) and owner_id=j.owner_id;get diagnostics n=row_count;erased:=jsonb_set(erased,'{artifacts}',to_jsonb(n));

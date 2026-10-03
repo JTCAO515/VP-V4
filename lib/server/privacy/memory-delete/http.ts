@@ -2,7 +2,7 @@ import { getNativeRuntimeConfig,nativeTargetAllowed,type NativeConfig } from '..
 import { verifyNativeCredentials } from '../../identity/native-credentials.ts';
 import { nativeRequestScope } from '../../identity/native-request.ts';
 import { isUuid } from '../../identity/request-guards.ts';
-import { memoryDeleteCommand,memoryDeletePlan,memoryDeleteReceipt } from './contract.ts';
+import { memoryDeleteCommand,memoryDeletePlan,memoryDeleteReceipt,selectionEqual } from './contract.ts';
 const reply=(v:unknown,status=200)=>Response.json(v,{status,headers:{'Cache-Control':'private, no-store'}});
 class MemoryHTTPError extends Error {}
 const fail=(code:string)=>reply({error:{code}},['UNAUTHENTICATED','SESSION_REPLACED','REAUTHENTICATION_REQUIRED'].includes(code)?401:code==='FORBIDDEN'?403:code==='INVALID_INPUT'?400:['PLAN_EXPIRED','SCOPE_CHANGED','SCOPE_CONFLICT','SCOPE_NOT_COMPLETE','IDEMPOTENCY_KEY_REUSE','MEMORY_DELETION_PENDING'].includes(code)?409:503);
@@ -21,6 +21,7 @@ export async function memoryDeletionHTTP(request:Request,config:NativeConfig|nul
   const result=await rpc('privacy_memory_delete_v1',{p_action:action,p_input:input});if(await session()!==epoch)throw new MemoryHTTPError('UNAUTHENTICATED');if(result.error)return fail(mapped(result.error.message));
   if(action==='preview'?!memoryDeletePlan(result.data):!memoryDeleteReceipt(result.data))return fail('UNAVAILABLE');
   if(action==='preview'&&(JSON.stringify(result.data.selection?.memories?.map((m:{memoryId:string})=>m.memoryId))!==JSON.stringify([...(input.memoryIds as string[])].sort())&&!(result.data.conflicts as string[]).includes('SCOPE_TOO_LARGE'))||action!=='preview'&&result.data.requestId!==input.requestId)return fail('UNAVAILABLE');
+  if(action==='confirm'&&(result.data.planId!==input.planId||result.data.scopeDigest!==input.scopeDigest||!selectionEqual(result.data.selection,input.selection)))return fail('UNAVAILABLE');
   return reply(result.data,action==='confirm'&&result.data.state==='queued'?202:200);
  }catch(e){return fail(e instanceof MemoryHTTPError?e.message:'UNAVAILABLE');}finally{scope.dispose();}
 }

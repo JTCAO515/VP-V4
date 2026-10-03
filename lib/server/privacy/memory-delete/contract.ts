@@ -4,7 +4,7 @@ const exact=(v:Record<string,unknown>,keys:readonly string[])=>Object.keys(v).le
 const uuid=(v:unknown):v is string=>typeof v==='string'&&isUuid(v)&&v===v.toLowerCase();
 const digest=(v:unknown)=>typeof v==='string'&&/^[a-f0-9]{64}$/.test(v);
 const positive=(v:unknown)=>Number.isSafeInteger(v)&&Number(v)>0&&Number(v)<=9007199254740990;
-const date=(v:unknown)=>typeof v==='string'&&/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(v)&&new Date(v).toISOString()===v;
+const date=(v:unknown)=>typeof v==='string'&&/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(v)&&Number.isFinite(Date.parse(v))&&new Date(v).toISOString()===v;
 const arrayKeys=['consumerReferenceIds','artifactIds','generatedTurnIds','exportRequestIds'] as const;
 const retainedKeys=['FINANCIAL_RECORDS','USER_TRIP_INTENT','ORIGINAL_CHAT_INPUT','EXTERNAL_COPIES','PROVIDER_ERASURE_UNKNOWN','BACKUP_ERASURE_NOT_VERIFIED'];
 const conflicts=['SCOPE_TOO_LARGE','TERMINAL_MEMORY','FOREIGN_REFERENCE','ACTIVE_WORK','CROSS_SCOPE_REFERENCE'];
@@ -32,4 +32,9 @@ export function memoryDeleteReceipt(v:unknown):v is Record<string,unknown>&{sele
  if(v.state==='queued')return v.cleanupPending===true&&v.completedAt===null&&v.erasedCounts===null;
  if(v.state!=='completed'||v.cleanupPending!==false||!date(v.completedAt)||!record(v.erasedCounts)||!exact(v.erasedCounts,['consumerReferences','artifacts','generatedOutputs','exports','tickets']))return false;
  const e=v.erasedCounts,s=v.selection;return e.consumerReferences===s.consumerReferenceIds.length&&e.artifacts===s.artifactIds.length&&e.generatedOutputs===s.generatedTurnIds.length&&e.exports===s.exportRequestIds.length&&Number.isSafeInteger(e.tickets)&&Number(e.tickets)>=0;
+}
+
+export function selectionEqual(a:unknown,b:unknown):boolean {
+ if(!memoryDeleteSelection(a)||!memoryDeleteSelection(b))return false;
+ return a.memories.length===b.memories.length&&a.memories.every((m,i)=>m.memoryId===b.memories[i].memoryId&&m.revision===b.memories[i].revision&&m.sourceReceiptId===b.memories[i].sourceReceiptId)&&arrayKeys.every(k=>a[k].length===b[k].length&&a[k].every((id,i)=>id===b[k][i]));
 }
