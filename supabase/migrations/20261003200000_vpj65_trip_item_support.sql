@@ -398,3 +398,21 @@ begin
  return jsonb_build_object('kind','confirmation_receipt','receipt',r.receipt,'historicalOnly',true,'currentEligibilityRequiresRead',true);
 end $$;
 revoke all on function public.read_trip_item_support_candidates_v1(uuid,integer,uuid,text,text,text,jsonb,integer),public.read_supported_trip_confirmation_receipt_v1(text,uuid,text,jsonb) from public,anon,authenticated,service_role;
+
+create function public.read_trip_item_support_context_v1(p_trip uuid,p_expected_trip_version integer,p_proposal uuid,p_expected_proposal_revision integer,p_day text,p_item text) returns jsonb language plpgsql security definer set search_path='' as $$
+declare u uuid:=trip_support_private.owner();t public.trips%rowtype;p public.trip_proposals%rowtype;content jsonb;item jsonb;digest text;refs jsonb;count_refs integer;
+begin
+ if p_day is null or p_item is null or p_day !~ '^[A-Za-z0-9_-]{1,64}$' or p_item !~ '^[A-Za-z0-9_-]{1,64}$' then return jsonb_build_object('kind','blocked');end if;
+ select * into t from public.trips where id=p_trip and owner_id=u for share nowait;if not found then return jsonb_build_object('kind','blocked');end if;
+ select * into p from public.trip_proposals where id=p_proposal and trip_id=t.id and owner_id=u for share nowait;
+ if not found or t.head_version is distinct from p_expected_trip_version or p.revision is distinct from p_expected_proposal_revision or p.base_trip_version<>t.head_version or p.status<>'pending' or p.expires_at<=clock_timestamp() then return jsonb_build_object('kind','stale');end if;
+ select r.digest into digest from public.read_trip_proposal_v2(p.id) r;
+ if p.rollback_snapshot_version is not null then select s.content into content from public.trip_version_snapshots s where s.trip_id=t.id and s.version=p.rollback_snapshot_version;
+ else content:=public.apply_trip_content_patch(public.trip_content_snapshot(t.id,t.title),p.patch);end if;
+ item:=trip_support_private.item(content,p_day,p_item);if item is null then return jsonb_build_object('kind','blocked');end if;
+ select count(*) into count_refs from(select id from public.trip_place_references where trip_id=t.id and owner_id=u and reference_kind='canonical' order by id limit 101) x;
+ if count_refs>100 then return jsonb_build_object('kind','unavailable','reason','capacity');end if;
+ select coalesce(jsonb_agg(jsonb_build_object('referenceId',r.id,'canonicalPoiId',r.canonical_poi_id,'display',jsonb_build_object('en',poi.primary_name_en,'zh',poi.primary_name_zh)) order by r.id),'[]'::jsonb) into refs from public.trip_place_references r join public.canonical_pois poi on poi.id=r.canonical_poi_id where r.trip_id=t.id and r.owner_id=u and r.reference_kind='canonical';
+ return jsonb_build_object('kind','support_context','tripId',t.id,'tripVersion',t.head_version,'proposalId',p.id,'proposalRevision',p.revision,'baseVersion',p.base_trip_version,'proposalDigest',digest,'itemDigest',trip_support_private.hash(item),'dayId',p_day,'itemId',p_item,'canonicalPlaceReferences',refs);
+exception when lock_not_available then return jsonb_build_object('kind','blocked');end $$;
+revoke all on function public.read_trip_item_support_context_v1(uuid,integer,uuid,integer,text,text) from public,anon,authenticated,service_role;
