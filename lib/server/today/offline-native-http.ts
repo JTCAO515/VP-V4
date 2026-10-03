@@ -5,6 +5,7 @@ import { createNativeTripDataAdapter } from "../identity/user-data-adapter.ts";
 import { isUuid } from "../identity/request-guards.ts";
 import { FAILURE_TAXONOMY, type FailureCode } from "../contracts/errors/index.ts";
 import { createOfflineNativeAuthority, type OfflineNativeActor } from "./offline-native-authority.ts";
+import { createOfflineTextRepository } from "./offline-text-repository.ts";
 import { productionOfflinePorts } from "./offline-production.ts";
 import { issueOfflineRead, type OfflineBasis } from "./offline-read.ts";
 
@@ -18,7 +19,7 @@ export async function nativeOfflineReadHTTP(request: NextRequest, tripId: string
   if (request.method !== "GET" || request.headers.has("cookie") || request.headers.has("origin") || !isUuid(tripId)
     || [...params].some(([key]) => !["expectedHeadVersion", "requestNonce"].includes(key)) || params.getAll("expectedHeadVersion").length !== 1
     || params.getAll("requestNonce").length !== 1 || nonce === null || !isUuid(nonce)
-    || head === null || !/^[1-9][0-9]*$/.test(head) || !Number.isSafeInteger(Number(head))) return failure("INVALID_INPUT");
+    || head === null || !/^[1-9][0-9]*$/.test(head) || !Number.isSafeInteger(Number(head)) || Number(head) > 999999999) return failure("INVALID_INPUT");
   const requestNonce = nonce.toLowerCase();
   const config = getNativeRuntimeConfig(request, "trip", "trip");
   if (!config) return failure("PROVIDER_UNAVAILABLE");
@@ -31,6 +32,9 @@ export async function nativeOfflineReadHTTP(request: NextRequest, tripId: string
       const authority = await createOfflineNativeAuthority(request, config, scope.fetch, scope.unavailable);
       scope.check();
       if (!authority) return failure("UNAUTHENTICATED");
+      const repository = await createOfflineTextRepository(request, config, scope.fetch, scope.unavailable);
+      scope.check();
+      if (!repository) return failure("UNAUTHENTICATED");
       let pinnedActor: OfflineNativeActor | null = null;
       let readError: FailureCode | null = null;
       const readCurrent = async (): Promise<OfflineBasis | null> => {
@@ -63,7 +67,12 @@ export async function nativeOfflineReadHTTP(request: NextRequest, tripId: string
             items: day.items.map(item => ({ id: item.id, title: item.title })) })) },
         };
       };
-      const result = await issueOfflineRead(tripId.toLowerCase(), Number(head), requestNonce, productionOfflinePorts(readCurrent, config.environment ?? "local"));
+      const result = await issueOfflineRead(tripId.toLowerCase(), Number(head), requestNonce, productionOfflinePorts(readCurrent, config.environment ?? "local", undefined, async basis => {
+        const result = await repository.read(basis);
+        scope.check();
+        if ("error" in result) { readError = result.error === "OFFLINE_DATE_EXISTS" ? "PROVIDER_UNAVAILABLE" : result.error; return null; }
+        return result.data;
+      }));
       if (readError) return failure(readError);
       // Also recheck the closed production response before publishing it.
       const final = await readCurrent();

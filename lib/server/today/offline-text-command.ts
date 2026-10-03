@@ -9,7 +9,7 @@ export function parseOfflineTextCommand(value: unknown): OfflineTextCommand | nu
   const v = value as Record<string, unknown>;
   if (Object.keys(v).length !== keys.length || !keys.every(key => Object.hasOwn(v, key))
     || typeof v.operationId !== "string" || !uuid.test(v.operationId)
-    || typeof v.expectedHeadVersion !== "number" || !Number.isSafeInteger(v.expectedHeadVersion) || v.expectedHeadVersion < 0
+    || typeof v.expectedHeadVersion !== "number" || !Number.isSafeInteger(v.expectedHeadVersion) || v.expectedHeadVersion < 0 || v.expectedHeadVersion > 999999999
     || typeof v.date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(v.date)
     || typeof v.title !== "string" || v.title.length > 2048 || v.saveOffline !== true) return null;
   const title = v.title.trim();

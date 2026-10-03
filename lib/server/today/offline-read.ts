@@ -9,13 +9,14 @@ export type OfflineBasis = {
 export type OfflinePolicy = {
   policyId: string; policyRevision: number; issuedAt: string; expiresAt: string; maxLeaseMs: number;
   signingKeyId?: string;
-  // Trusted provenance authority, never inferred from item text or caller input.
-  userAuthoredDayIds: readonly string[]; userAuthoredItemIds: readonly string[];
+  qualifiedPayload: OfflinePayload; coverage: "partial" | "full";
+  sourceSemantics: "controlled_user_text_submission"; generation: number; provenanceBinding: string;
 };
 export type OfflinePackage = {
   kind: "offline_trip_read/1"; subject: string; sessionEpoch: number; tripId: string; headVersion: number;
   policyId: string; policyRevision: number; issuedAt: string; expiresAt: string;
   serverTime: string; requestNonce: string;
+  coverage: "partial" | "full"; sourceSemantics: "controlled_user_text_submission"; generation: number;
   fieldAllowlist: typeof OFFLINE_FIELDS; snapshotDigest: string; payload: OfflinePayload;
   proof: { algorithm: "Ed25519"; keyId: string; signature: string };
 };
@@ -44,18 +45,43 @@ export function offlineCanonical(value: unknown): string {
 export const offlineDigest = (payload: OfflinePayload) => createHash("sha256").update(offlineCanonical(payload), "utf8").digest("hex");
 function validBasis(b: OfflineBasis, tripId: string, head: number): boolean {
   if (!uuid.test(b.subject) || (b.sessionEpoch === null || !positive(b.sessionEpoch)) || b.tripId !== tripId || b.headVersion !== head || b.active !== true || b.confirmed !== true) return false;
-  if (!Array.isArray(b.payload.days) || b.payload.days.length === 0 || b.payload.days.length > 60) return false;
+  return validPayload(b.payload, false);
+}
+export function isOfflinePayload(value: unknown): value is OfflinePayload {
+  try { return validPayload(value as OfflinePayload, true); } catch { return false; }
+}
+function validPayload(payload: OfflinePayload, bounded: boolean): boolean {
+  if (!Array.isArray(payload.days) || payload.days.length === 0 || (bounded && payload.days.length > 60)) return false;
   const days = new Set<string>(), items = new Set<string>();
-  for (const day of b.payload.days) {
-    if (!tripContentId.test(day.id) || days.has(day.id) || typeof day.date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(day.date) || new Date(day.date).toISOString().slice(0, 10) !== day.date || !Array.isArray(day.items) || day.items.length > 100) return false;
+  for (const day of payload.days) {
+    if (typeof day.id !== "string" || !tripContentId.test(day.id) || days.has(day.id) || typeof day.date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(day.date) || new Date(day.date).toISOString().slice(0, 10) !== day.date || !Array.isArray(day.items) || (bounded && day.items.length > 100)) return false;
     days.add(day.id);
     for (const item of day.items) {
-      if (!tripContentId.test(item.id) || items.has(item.id) || !text(item.title, 2000) || Object.keys(item).some(k => !["id", "title"].includes(k))) return false;
+      if (typeof item.id !== "string" || !tripContentId.test(item.id) || items.has(item.id) || !text(item.title, 2000) || Object.keys(item).some(k => !["id", "title"].includes(k))) return false;
       items.add(item.id);
     }
     if (Object.keys(day).some(k => !["id", "date", "items"].includes(k))) return false;
   }
-  return Object.keys(b.payload).length === 1 && Buffer.byteLength(offlineCanonical(b.payload), "utf8") <= 128_000;
+  return Object.keys(payload).length === 1 && (!bounded || Buffer.byteLength(offlineCanonical(payload), "utf8") <= 128_000);
+}
+/** Preserve exact current values/order; omit every field lacking a qualified receipt. */
+export function projectOfflinePayload(payload: OfflinePayload, dayIds: readonly string[], itemIds: readonly string[]): OfflinePayload {
+  return { days: payload.days.filter(day => dayIds.includes(day.id)).map(day => ({
+    id: day.id, date: day.date,
+    items: day.items.filter(item => itemIds.includes(item.id)).map(item => ({ id: item.id, title: item.title })),
+  })) };
+}
+export function qualifiedSubsetMatches(full: OfflinePayload, subset: OfflinePayload, coverage: "partial" | "full"): boolean {
+  if (coverage !== "partial" && coverage !== "full") return false;
+  let includedItems = 0;
+  for (const day of subset.days) {
+    const original = full.days.find(d => d.id === day.id);
+    if (!original || original.date !== day.date) return false;
+    for (const item of day.items) if (!original.items.some(i => i.id === item.id && i.title === item.title)) return false;
+    includedItems += day.items.length;
+  }
+  const isFull = subset.days.length === full.days.length && includedItems === full.days.reduce((n, d) => n + d.items.length, 0);
+  return coverage === (isFull ? "full" : "partial");
 }
 function validPolicy(p: OfflinePolicy, b: OfflineBasis, now: number): boolean {
   const issued = Date.parse(p.issuedAt), expires = Date.parse(p.expiresAt);
@@ -64,12 +90,15 @@ function validPolicy(p: OfflinePolicy, b: OfflineBasis, now: number): boolean {
     && Number.isFinite(issued) && Number.isFinite(expires)
     && new Date(issued).toISOString() === p.issuedAt && new Date(expires).toISOString() === p.expiresAt
     && issued <= now && now < expires && expires > issued && expires - issued <= p.maxLeaseMs
-    && b.payload.days.every(d => p.userAuthoredDayIds.includes(d.id) && d.items.every(i => p.userAuthoredItemIds.includes(i.id)));
+    && p.sourceSemantics === "controlled_user_text_submission" && Number.isSafeInteger(p.generation) && p.generation >= 0
+    && /^[0-9a-f]{64}$/.test(p.provenanceBinding) && isOfflinePayload(p.qualifiedPayload)
+    && qualifiedSubsetMatches(b.payload, p.qualifiedPayload, p.coverage);
+
 }
 
 /** Read-only issuance; ports are server authority. No client metadata can grant cache rights. */
 export async function issueOfflineRead(tripId: string, expectedHeadVersion: number, requestNonce: string, ports: OfflinePorts): Promise<OfflinePackage | OfflineUnavailable> {
-  if (!uuid.test(tripId) || !positive(expectedHeadVersion) || !uuid.test(requestNonce)) return unavailable("NOT_ELIGIBLE");
+  if (!uuid.test(tripId) || !positive(expectedHeadVersion) || expectedHeadVersion > 999999999 || !uuid.test(requestNonce)) return unavailable("NOT_ELIGIBLE");
   const now = ports.now ?? Date.now;
   try {
     const initial = await ports.readCurrent();
@@ -88,11 +117,13 @@ export async function issueOfflineRead(tripId: string, expectedHeadVersion: numb
     if (!Number.isSafeInteger(signingTime) || !validPolicy(pinnedPolicy, basis, signingTime)) return unavailable("NOT_ELIGIBLE");
     const serverTime = new Date(signingTime).toISOString();
     if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(serverTime)) return unavailable("NOT_ELIGIBLE");
+    const permittedPayload = pinnedPolicy.qualifiedPayload;
+    const coverage = pinnedPolicy.coverage;
     const unsigned = {
       kind: "offline_trip_read/1" as const, subject: basis.subject, sessionEpoch: basis.sessionEpoch,
       tripId, headVersion: expectedHeadVersion, policyId: pinnedPolicy.policyId, policyRevision: pinnedPolicy.policyRevision,
       issuedAt: pinnedPolicy.issuedAt, expiresAt: pinnedPolicy.expiresAt, serverTime, requestNonce,
-      fieldAllowlist: OFFLINE_FIELDS, snapshotDigest: offlineDigest(basis.payload), payload: basis.payload,
+      coverage, sourceSemantics: pinnedPolicy.sourceSemantics, generation: pinnedPolicy.generation, fieldAllowlist: OFFLINE_FIELDS, snapshotDigest: offlineDigest(permittedPayload), payload: permittedPayload,
     };
     const proof = await ports.sign(Buffer.from(offlineCanonical(unsigned), "utf8"));
     if (!proof || (pinnedPolicy.signingKeyId !== undefined && proof.keyId !== pinnedPolicy.signingKeyId) || proof.algorithm !== "Ed25519" || !text(proof.keyId, 128) || !/^[A-Za-z0-9_-]{86}$/.test(proof.signature) || Buffer.from(proof.signature, "base64url").length !== 64 || Buffer.from(proof.signature, "base64url").toString("base64url") !== proof.signature || Object.keys(proof).length !== 3) return unavailable("POLICY_UNCONFIGURED");

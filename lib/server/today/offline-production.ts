@@ -1,5 +1,5 @@
 import { createHash, createPrivateKey, createPublicKey, sign as cryptoSign, type KeyObject } from "node:crypto";
-import { OFFLINE_FIELDS, offlineCanonical, offlineDigest, type OfflineBasis, type OfflinePolicy, type OfflinePorts } from "./offline-read.ts";
+import { OFFLINE_FIELDS, offlineCanonical, offlineDigest, isOfflinePayload, qualifiedSubsetMatches, type OfflinePayload, type OfflineBasis, type OfflinePolicy, type OfflinePorts } from "./offline-read.ts";
 
 type Environment = "local" | "staging" | "production";
 type PolicyConfiguration = {
@@ -8,9 +8,13 @@ type PolicyConfiguration = {
   issuedAt: string; expiresAt: string; maxLeaseMs: number;
 };
 export type OfflineProvenance = {
-  subject: string; sessionEpoch: number; tripId: string; headVersion: number; snapshotDigest: string;
-  userAuthoredDayIds: readonly string[]; userAuthoredItemIds: readonly string[];
+  kind: "offline_text_provenance/1"; sourceSemantics: "controlled_user_text_submission"; purpose: "offline_cache";
+  subject: string; sessionEpoch: number; tripId: string; headVersion: number; generation: number;
+  qualifiedPayload: OfflinePayload; qualifiedPayloadDigest: string;
+  fields: { field: "days.date" | "days.items.title"; dayId: string; itemId: string | null; sourceReceiptId: string; valueDigest: string }[];
+  coverage: { kind: "partial" | "full"; excludedDays: number; excludedItems: number };
 };
+
 export type OfflineConfigurationProvider = {
   readPolicy: () => string | undefined;
   readSigner: () => string | undefined;
@@ -79,10 +83,11 @@ export function productionOfflinePorts(
       const config = readOfflinePolicy(configuration.readPolicy(), environment, now());
       if (!config || !provenance) return null;
       const receipt = await provenance(structuredClone(basis));
-      if (!receipt || receipt.subject !== basis.subject || receipt.sessionEpoch !== basis.sessionEpoch
-        || receipt.tripId !== basis.tripId || receipt.headVersion !== basis.headVersion || receipt.snapshotDigest !== offlineDigest(basis.payload)
-        || !Array.isArray(receipt.userAuthoredDayIds) || !Array.isArray(receipt.userAuthoredItemIds)
-        || !basis.payload.days.every(d => receipt.userAuthoredDayIds.includes(d.id) && d.items.every(i => receipt.userAuthoredItemIds.includes(i.id)))) return null;
+      if (!receipt || receipt.sourceSemantics !== "controlled_user_text_submission" || receipt.purpose !== "offline_cache"
+        || receipt.subject !== basis.subject || receipt.sessionEpoch !== basis.sessionEpoch
+        || receipt.tripId !== basis.tripId || receipt.headVersion !== basis.headVersion
+        || !isOfflinePayload(receipt.qualifiedPayload) || receipt.qualifiedPayloadDigest !== offlineDigest(receipt.qualifiedPayload)
+        || !qualifiedSubsetMatches(basis.payload, receipt.qualifiedPayload, receipt.coverage.kind)) return null;
       const currentConfig = readOfflinePolicy(configuration.readPolicy(), environment, now());
       if (!currentConfig || offlineCanonical(currentConfig) !== offlineCanonical(config)) return null;
       // Do not read private-key configuration until independently qualified provenance exists.
@@ -92,7 +97,9 @@ export function productionOfflinePorts(
       return {
         policyId: config.policyId, policyRevision: config.policyRevision, issuedAt: config.issuedAt,
         expiresAt: config.expiresAt, maxLeaseMs: config.maxLeaseMs, signingKeyId: signer.keyId,
-        userAuthoredDayIds: [...receipt.userAuthoredDayIds], userAuthoredItemIds: [...receipt.userAuthoredItemIds],
+        qualifiedPayload: structuredClone(receipt.qualifiedPayload), coverage: receipt.coverage.kind,
+        sourceSemantics: receipt.sourceSemantics, generation: receipt.generation,
+        provenanceBinding: createHash("sha256").update(offlineCanonical(receipt), "utf8").digest("hex"),
       } satisfies OfflinePolicy;
     },
     sign: async bytes => {

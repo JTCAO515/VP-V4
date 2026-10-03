@@ -7,17 +7,20 @@ No client owner, lease duration, cache rights or payload inputs.
 Response is a closed union:
 
 - `{kind:"unavailable",reason:"POLICY_UNCONFIGURED"|"NOT_ELIGIBLE"|"STALE_BASIS"}`.
-- `{kind:"offline_trip_read/1",subject,sessionEpoch,tripId,headVersion,policyId,policyRevision,issuedAt,expiresAt,serverTime,requestNonce,fieldAllowlist:["days.date","days.items.title"],snapshotDigest,payload:{days:[{id,date,items:[{id,title}]}]},proof:{algorithm,keyId,signature}}`.
+- `{kind:"offline_trip_read/1",subject,sessionEpoch,tripId,headVersion,policyId,policyRevision,issuedAt,expiresAt,serverTime,requestNonce,coverage:"partial"|"full",sourceSemantics:"controlled_user_text_submission",generation,fieldAllowlist:["days.date","days.items.title"],snapshotDigest,payload:{days:[{id,date,items:[{id,title}]}]},proof:{algorithm,keyId,signature}}`.
 
 A trusted server policy supplies explicit expiry and maximum lease duration; a trusted
 signer signs the canonical whole response excluding proof. No default lease, generated
 key or digest-as-signature. Missing policy or signer returns POLICY_UNCONFIGURED.
 A digest is SHA-256 over canonical payload only, for integrity comparison.
 
-Only provenance-proven user-authored, confirmed Trip date/text fields are eligible.
+Only confirmed date/text values submitted through the controlled user-text path
+with explicit offline_cache purpose and valid current receipts are eligible. This
+proves a submission path, not actual keyboard use, original authorship or copyright.
 Unknown provenance, third-party locations/addresses/translations, images, orders,
 OCR text and Memory are excluded. The production composition reads strict policy/signer
-providers but has no real provenance reader and therefore issues no offline packages. The readonly authority adapter
+providers and consumes the exact provenance RPC. The new RPCs currently revoke
+EXECUTE from every API role; no permission is activated by this implementation. The readonly authority adapter
 uses the existing JWT-bound `native_session_v2` RPC with `p_action:"session"`, whose
 version-2 response binds subject/sessionId/mobileEpoch. It validates the verified
 credential subject/sessionId and a positive safe-integer mobileEpoch, and checks
@@ -125,9 +128,74 @@ or withdrawal is detected during final policy/provenance requalification. Native
 trusts only its independently configured public-key registry, never a package key.
 No JWT secrets, public env variables, generated production keys or request keys are used.
 
-The composition's provenance port must bind current subject/sessionEpoch/tripId/
-headVersion and canonical payload digest, and supply exact user-authored day/item
-IDs. The actual HTTP route currently has no such source reader and therefore stays
+The composition consumes the strict provenance reader response, bound to current
+subject/sessionEpoch/tripId/headVersion, sourceSemantics and generation. It verifies
+qualifiedPayloadDigest and every exact field locator/valueDigest, then signs the
+reader-qualified payload. Without callable authority or eligible receipts it stays
 unavailable even with configured policy/signer. Local tests inject a scoped synthetic
-receipt and ephemeral in-memory keys to verify composition, not real authorship or
+receipt and ephemeral in-memory keys to verify composition, not real keyboard authorship or
 live offline rights. No fake source is installed in the production route.
+
+
+## Partial coverage
+
+The signed `coverage` is exactly `partial` or `full`. The read authority returns a
+qualified subset of the current exact head: include only days with valid date
+receipts, and within those days include only items with valid title receipts.
+Preserve original IDs, values and order. Older unqualified fields remain online
+and are omitted from offline payload. No qualified date means no offline package.
+An eligible date may appear with zero eligible item titles. `full` means every
+field in the current date/title payload is qualified; it never implies all Trip
+resources, images, orders or addresses are cached. Native must disclose partial
+coverage and must not describe a partial package as the whole Trip.
+
+Payload digest and signature cover only the permitted projection. The full current
+snapshot digest belongs to source/currentness binding and is never reused as the
+subset's snapshotDigest. Initial/final checks still compare the complete online
+basis, including omitted fields, actor, epoch and exact head. Removing qualification
+or changing an omitted online field during issuance prevents publishing. Package
+limits apply to the subset; online-only history does not consume its capacity.
+The producer signs the reader-qualified payload directly after matching its exact
+values to the current snapshot; it does not apply a receipt ID list to the full
+Trip as a substitute for the reader projection. Policy configuration does not
+grant source or purpose to old fields.
+
+
+## Controlled text commands and exact source RPC
+
+POST `/api/trips/native/v2/{tripId}/offline-text/proposal` accepts only
+`{operationId,expectedHeadVersion,date,title,saveOffline:true}`. Operation UUID is
+lowercase. Base head is an integer in 0..999999999. Title is trimmed once and then
+validated as 1..160 UTF-16 units; raw input is bounded to 2048 units. No source,
+author, owner, licence, receipt, patch or field IDs are accepted from clients.
+The SQL command derives `ofd_`/`ofi_` IDs from the operation UUID and creates only
+new-day+item candidates. An existing date conflicts (OFFLINE_DATE_EXISTS/409)
+without overwriting its content or granting its date. The exact pending Proposal
+GET, visible diff and original explicit confirm remain required. Success maps to
+`{version:2,proposalId,revision,baseTripVersion,reused}` from the fixed SQL receipt.
+A candidate is neither a Trip write nor an offline permit.
+
+POST `/api/trips/native/v2/{tripId}/offline-text/revoke` accepts only `{operationId}`;
+epoch comes from current Native authority. Response is the exact
+`offline_text_revoked/1` receipt with tripId/sessionEpoch/generation/operationId/reused.
+
+RPCs and receipts are fixed by SQL owner's `vpj25-offline-text-provenance-sql.md`:
+submit_offline_trip_text_proposal_v1, read_offline_trip_text_provenance_v1 and
+revoke_offline_trip_text_provenance_v1. All calls use ordinary JWT-bound clients,
+within the same bounded request/cancellation scope. No fallback, service-role key,
+new grant or direct Trip writer is introduced. Missing EXECUTE/RPC remains503.
+
+Reader `qualifiedPayload` maps to signed payload; canonical digest is locally
+recomputed and must equal qualifiedPayloadDigest before becoming snapshotDigest.
+Exact coverage object `{kind,excludedDays,excludedItems}` is validated against the
+current basis; nonnegative counts, full implies zero counts, partial implies at
+least one positive count. Only its kind reaches the signed Native package, with
+sourceSemantics `controlled_user_text_submission` and nonnegative safe generation.
+Receipt generation and complete reader authority (fields, values, coverage) must
+match initial/final requalification. Generation is not a Trip snapshot version.
+Field hashes are SHA256 UTF-8 canonical JSON of the exact 4-tuple
+`[field,dayId,itemId|null,exactScalarValue]`. Dates have itemId=null. Preserve string
+bytes using the existing canonical escaping, without normalization or PG jsonb::text
+whitespace. Source receipt IDs are unique lowercase UUIDs; every included field
+requires one matching locator and hash. Historical/ordinary/OCR paths cannot qualify
+through client flags, and reader responses containing unknown fields fail closed.
