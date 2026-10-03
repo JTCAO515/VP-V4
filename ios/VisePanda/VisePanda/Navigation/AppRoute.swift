@@ -176,20 +176,31 @@ struct AppEntryView: View {
 
 // Search delegates to the existing bounded search consumers. It is never a tab.
 private struct GlobalSearchView: View {
-    var body: some View {
+    @Environment(AppSettings.self) private var settings
+    @State private var query=""
+    private var chinese:Bool{settings.selectedLocale == .zh}
+    private func t(_ zh:String,_ en:String)->String{chinese ? zh:en}
+    var body:some View {
         List {
-            NavigationLink {
-                ExploreView()
-            } label: {
-                Label("shell.search.places", systemImage: "mappin.and.ellipse")
-            }.accessibilityIdentifier("shell.search.places")
-            NavigationLink {
-                NativeKnowledgeView()
-            } label: {
-                Label("shell.search.library", systemImage: "books.vertical")
-            }.accessibilityIdentifier("shell.search.library")
-            Text("shell.search.scope").font(.footnote).foregroundStyle(Color.vpSecondaryText)
+            Section {
+                TextField(t("搜索地点、资料或成果","Search places, materials or results"),text:$query)
+                    .textInputAutocapitalization(.never).autocorrectionDisabled()
+                    .accessibilityIdentifier("shell.search.query")
+            }
+            Section(t("外部已支持地点","Supported external places")) {
+                NavigationLink {ExploreView(initialQuery:query)} label: {
+                    Label(t("查找地点与中文地址","Find places and Chinese addresses"),systemImage:"mappin.and.ellipse")
+                }.accessibilityIdentifier("shell.search.places")
+                Text(t("地点查询沿用已有供应商服务；详情打开时重新读取所选实体。","Place search uses existing provider services. Opening reads the selected entity again.")).font(.footnote)
+            }
+            Section(t("我的私有资料与成果","My private materials and results")) {
+                NavigationLink {NativeKnowledgeView(initialSearch:query)} label: {
+                    Label(t("搜索已存翻译与生成成果","Search saved translations and generated results"),systemImage:"books.vertical")
+                }.accessibilityIdentifier("shell.search.library")
+                Text(t("仅本账号当前可读资料；查询与打开都会核对权限，未登录时不会展示标题或数量。","Only currently readable material on this account. Query and open recheck authority; signed-out users see no private titles or counts.")).font(.footnote)
+            }
         }
         .vpNavigationTitle("shell.search")
+        .onChange(of:settings.nativeSession.dataScope){_,_ in query=""}
     }
 }

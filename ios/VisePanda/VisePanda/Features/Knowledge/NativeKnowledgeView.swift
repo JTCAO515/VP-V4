@@ -14,6 +14,11 @@ struct NativeKnowledgeView: View {
     @State private var city = "shanghai"
     @State private var scene = "arrival"
     @State private var refresh = UUID()
+    init(isActive:Bool=true,question:Bool=false,initialSearch:String="") {
+        self.isActive=isActive;self.question=question
+        _search=State(initialValue:initialSearch)
+    }
+
     private var chinese: Bool { settings.selectedLocale == .zh }
     private var session: NativeSession { settings.nativeSession }
     private var selection: NativeKnowledgeSelection { .init(city: city, scene: question ? "rail" : scene, locale: chinese ? "zh" : "en") }
@@ -125,17 +130,23 @@ struct NativeKnowledgeView: View {
             Label(text("Translation and saved phrases", "翻译与已存短语"), systemImage: "character.bubble")
         }
         .accessibilityIdentifier("library.tool.translation")
+        NavigationLink {ExploreView(isActive:isActive)} label: {
+            Label(text("Place search and Chinese address", "地点查询与中文地址"),systemImage:"mappin.and.ellipse")
+        }.accessibilityIdentifier("library.tool.address")
+        NavigationLink {ToolsView()} label: {Label(text("All existing tools", "所有已有工具"),systemImage:"wrench.and.screwdriver")}
+            .accessibilityIdentifier("library.tools.all")
+        Text(text("eSIM ordering is not available here. Use the reviewed connectivity guidance or your carrier.", "此处尚不能购买 eSIM，可查看已审核通信指引或咨询运营商。")).font(.footnote)
         Text(text("My materials and results", "我的资料与成果")).font(.title2.bold())
         TextField(text("Search my materials and results", "搜索我的资料与成果"), text: $search)
             .textFieldStyle(.roundedBorder).accessibilityIdentifier("library.search")
-        Text(text("Search current comparisons and saved translations within their supported scan windows.", "在支持的扫描窗口内查找当前比较成果与已存翻译。"))
+        Text(text("Search your saved translations and all five supported result types across Trips within their authorized scan windows.", "在授权扫描窗口内跨行程查找已存翻译与五类成果。"))
             .font(.footnote).foregroundStyle(Color.vpSecondaryText)
         if search.utf16.count > 120 {
             Text(text("Use a search of up to 120 characters.", "搜索内容最多 120 个字符。"))
         }
         NativeLibraryPhrasePanel(isActive: isActive, query: search)
-        Text(text("Comparison results", "比较成果")).font(.headline)
-        Text(text("Current comparisons across journeys, up to 20 per page.", "各旅程中当前有效的比较成果，每页最多 20 份。"))
+        Text(text("Generated results", "生成成果")).font(.headline)
+        Text(text("Current eligible results across journeys, up to 20 per page. Opening rechecks the same ID and revision.", "各旅程中当前有效的成果，每页最多 20 份；打开时重新核对同一 ID 与版本。"))
             .font(.footnote).foregroundStyle(Color.vpSecondaryText)
         if session.dataScope == nil {
             Text(text("Sign in to find your results.", "登录后可查找自己的成果。"))
@@ -151,7 +162,7 @@ struct NativeKnowledgeView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(result.title).font(.headline)
                         Text(result.summary).lineLimit(2).font(.footnote)
-                        Text(result.tripId == nil ? text("Not linked to a Trip", "未关联行程") : text("Linked to a Trip", "已关联行程"))
+                        Text(result.tripId.map{text("Trip: ", "行程：")+$0+" · v"+String(result.tripVersion ?? 0)} ?? text("Not linked to a Trip", "未关联行程"))
                             .font(.caption2).foregroundStyle(Color.vpSecondaryText)
                     }.frame(maxWidth: .infinity, alignment: .leading)
                 }

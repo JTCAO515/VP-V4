@@ -388,6 +388,10 @@ private struct NativePlaceSearchView: View {
     @State private var detailTask: Task<Void, Never>?
     @State private var category = "restroom"
     @State private var showMap = false
+    init(isActive:Bool,initialQuery:String="") {
+        self.isActive=isActive
+        _query=State(initialValue:initialQuery)
+    }
     private var chinese: Bool { settings.selectedLocale == .zh }
     private var session: NativeSession { settings.nativeSession }
     private func text(_ en: String, _ zh: String) -> String { chinese ? zh : en }
@@ -556,6 +560,7 @@ private struct PreviewPlace: Identifiable {
 
 struct ExploreView: View {
     var isActive = true
+    var initialQuery=""
     @Environment(AppSettings.self) private var settings
     private let places = [
         PreviewPlace(id: "beijing", title: "explore.beijing", subtitle: "explore.beijing.subtitle", imageName: "building.columns"),
@@ -564,7 +569,7 @@ struct ExploreView: View {
     ]
 
     var body: some View {
-        if settings.nativeSession.enabled { NativePlaceSearchView(isActive: isActive) } else { previewBody }
+        if settings.nativeSession.enabled { NativePlaceSearchView(isActive: isActive,initialQuery:initialQuery) } else { previewBody }
     }
 
     private var previewBody: some View {
