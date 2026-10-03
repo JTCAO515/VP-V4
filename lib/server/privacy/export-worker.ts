@@ -1,4 +1,5 @@
 import { parseExportJob, exportRecord, exportExact } from "./export-contract.ts";
+import { memoryExportHandler } from "./export-memory.ts";
 import { collectCoreExport, type ExportLease } from "./export-dispatcher.ts";
 import { encryptExportArtifact, type ExportKey } from "./export-artifact.ts";
 import { existingExportHandlers, type ExportRPC } from "./export-modules.ts";
@@ -33,8 +34,14 @@ export async function runCoreExportJob(requestId: string, operationId: string, p
       || typeof v.hasMore !== "boolean" || v.sectionComplete !== !v.hasMore || (v.hasMore ? !uuid(v.nextCursor) : v.nextCursor !== null)) throw Error("Trip export unavailable");
     return { items: v.items, hasMore: v.hasMore, nextCursor: v.nextCursor, sectionComplete: !v.hasMore };
   } };
-  const bundle = await collectCoreExport(lease, { ...handlers, trip }, policy, valid, bounded);
+  const memory = memoryExportHandler(lease, domain);
+  const bundle = await collectCoreExport(lease, { ...handlers, trip, memory }, policy, valid, bounded);
   if (!bundle) return { kind: "unavailable" }; // Unknown/expired lease cannot be failed or completed by this caller.
+  const memoryReceipt=bundle.modules.find(module=>module.module==="memory"), progress=memory.progress();
+  if (!memoryReceipt || memoryReceipt.pages!==progress.pages || memoryReceipt.rows!==progress.rows
+    || ((memoryReceipt.status==="complete" || memoryReceipt.reason==="LIVE_TRAVERSAL") && progress.terminalSections!==6)
+    || (memoryReceipt.status==="partial" && progress.pages===0)) return {kind:"unavailable"};
+  // Never drop an already-read page from counters when byte capacity prevented collecting it.
   const artifact = encryptExportArtifact(bundle, lease, key, new Date(Date.now() + policy.artifactTtlMs).toISOString());
   if (!artifact || !await valid()) return { kind: "unavailable" };
   const input = { ...binding, artifact, modules: bundle.modules, coverage: bundle.coverage };
