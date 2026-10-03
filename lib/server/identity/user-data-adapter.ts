@@ -237,7 +237,7 @@ export async function createNativeTripDataAdapter(request: Pick<NextRequest, "he
   };
   const operations = createDataOperations(credentials.client, authenticated, response => response, true);
   return { ...tripArchiveOperations(credentials.client, authenticated), authenticated, listTrips: operations.listTrips, createTrip: operations.createTrip,
-    getTrip: operations.getTrip, getPendingProposal: operations.getPendingProposal,
+    getTrip: operations.getTrip, getPendingProposal: operations.getPendingProposal, getUserProfile: operations.getUserProfile,
     createPendingProposal: operations.createPendingProposal, revisePendingProposalPatch: operations.revisePendingProposalPatch,
     rejectPendingProposal: operations.rejectPendingProposal, confirm: operations.confirm };
 }

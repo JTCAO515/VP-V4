@@ -672,6 +672,9 @@ struct NativeTripView: View {
     private func proposal(_ pending: NativeTripPending) -> some View {
         VisePandaCard {
             VStack(alignment: .leading, spacing: 14) {
+                NavigationLink(text("Check this proposal's constraints", "核验这份提议的约束")) {
+                    NativePlanFeasibilityView(session:session,tripStore:store,chinese:settings.selectedLocale == .zh)
+                }.disabled(store.busy || pending.proposal.stale)
                 Text(text("Review before saving", "保存前审阅")).font(.title2.bold())
                 Text(text("Proposal \(pending.proposal.revision), based on version \(pending.proposal.baseTripVersion)", "提议 \(pending.proposal.revision)，基于版本 \(pending.proposal.baseTripVersion)"))
                     .accessibilityIdentifier("trip.proposal.version")

@@ -207,6 +207,13 @@ final class NativeSession {
         guard status==errSecSuccess || status==errSecItemNotFound else { throw NativeDataError.sessionUnavailable }
     }
 
+    func planFeasibility(_ target:NativePlanFeasibilityTarget,body:Data) async throws -> Data {
+        guard target.valid,dataScope==target.actor,body.count<=24000 else{throw NativeDataError.invalidResponse}
+        let bytes=try await tripRequest(path:"api/trips/native/v2/\(target.tripId)/feasibility",method:"POST",body:body)
+        guard dataScope==target.actor,bytes.count<=262_144 else{throw NativeDataError.staleSessionResponse}
+        return bytes
+    }
+
     func tripSupportContext(target:NativeTripSupportTarget,proposal:NativeTripPending.Proposal) async throws -> Data {
         guard target.valid,dataScope==target.actor,NativeMemoryWire.uuid(proposal.id),proposal.revision>0,proposal.baseTripVersion==target.tripVersion,!proposal.stale else { throw NativeDataError.invalidResponse }
         let bytes=try await tripRequest(path:"api/trips/native/v2/\(target.tripID)/support/context",method:"GET",queryItems:[.init(name:"expectedTripVersion",value:String(target.tripVersion)),.init(name:"proposalId",value:proposal.id),.init(name:"expectedProposalRevision",value:String(proposal.revision)),.init(name:"dayId",value:target.dayID),.init(name:"itemId",value:target.itemID)])
