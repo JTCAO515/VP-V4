@@ -60,4 +60,49 @@ nonisolated final class NativeCoreExportTests:XCTestCase {
         store.bind(nil);XCTAssertNil(store.requestID);XCTAssertNil(store.receipt);XCTAssertNil(store.fileURL)
     }
 
+    @MainActor func testRelaunchAndAccountChangePurgeFutureAndUnmappedPrivateFolders()throws {
+        let root=FileManager.default.temporaryDirectory.appendingPathComponent("export-crash-test-"+UUID().uuidString)
+        let outside=FileManager.default.temporaryDirectory.appendingPathComponent("export-outside-test-"+UUID().uuidString)
+        defer{try? FileManager.default.removeItem(at:root);try? FileManager.default.removeItem(at:outside)}
+        try FileManager.default.createDirectory(at:outside,withIntermediateDirectories:true)
+        let sentinel=outside.appendingPathComponent("sentinel.json");try Data("outside".utf8).write(to:sentinel)
+        let abandoned=root.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at:abandoned,withIntermediateDirectories:true)
+        try Data("old-account plaintext".utf8).write(to:abandoned.appendingPathComponent("orphan.json"))
+        try Data(String(Date().addingTimeInterval(3600).timeIntervalSince1970).utf8).write(to:abandoned.appendingPathComponent("expires.txt"))
+        let link=root.appendingPathComponent(UUID().uuidString);try FileManager.default.createSymbolicLink(at:link,withDestinationURL:outside)
+        let store=NativeCoreExportStore(root:root);XCTAssertTrue(store.storageReady)
+        XCTAssertFalse(FileManager.default.fileExists(atPath:abandoned.path));XCTAssertFalse(FileManager.default.fileExists(atPath:link.path));XCTAssertTrue(FileManager.default.fileExists(atPath:sentinel.path))
+        store.bind(scope)
+        let untracked=root.appendingPathComponent(UUID().uuidString);try FileManager.default.createDirectory(at:untracked,withIntermediateDirectories:true);try Data("unmapped private bytes".utf8).write(to:untracked.appendingPathComponent("orphan.json"))
+        store.bind(nil);XCTAssertTrue(store.storageReady);XCTAssertFalse(FileManager.default.fileExists(atPath:untracked.path));XCTAssertNil(store.fileURL)
+    }
+    @MainActor func testPartialMarkerWriteFailureCleansUnpublishedPlaintext()async throws {
+        let root=FileManager.default.temporaryDirectory.appendingPathComponent("export-write-failure-"+UUID().uuidString);defer{try? FileManager.default.removeItem(at:root)}
+        var sawPlaintext=false
+        let store=NativeCoreExportStore(root:root,beforeMarkerWrite:{folder in
+            sawPlaintext=(try FileManager.default.contentsOfDirectory(at:folder,includingPropertiesForKeys:nil)).contains{$0.pathExtension=="json"}
+            try FileManager.default.createDirectory(at:folder.appendingPathComponent("expires.txt"),withIntermediateDirectories:false)
+        }),selected=scope;store.bind(selected)
+        await store.request(confirmed:true,current:{selected},post:{raw in let request=try XCTUnwrap((try JSONSerialization.jsonObject(with:raw) as? [String:Any])?["requestId"] as? String);return try self.ready(request:request,body:self.bundle(request:request))})
+        let request=try XCTUnwrap(store.requestID),body=try bundle(request:request)
+        await store.refresh(current:{selected},get:{_ in try self.ready(request:request,body:body)})
+        let receipt=try XCTUnwrap(store.receipt);await store.getTicket(current:{selected},post:{_ in try self.ticket(receipt)})
+        await store.download(current:{selected},get:{request,_,_ in .init(bytes:body,status:200,contentType:"application/json; charset=utf-8",disposition:"attachment; filename=\"visepanda-export-"+request+".json\"",cacheControl:"private, no-store")})
+        XCTAssertTrue(sawPlaintext);XCTAssertNil(store.fileURL);XCTAssertEqual(store.notice,"unconfirmed");XCTAssertTrue(store.storageReady)
+        XCTAssertTrue(try FileManager.default.contentsOfDirectory(at:root,includingPropertiesForKeys:nil).isEmpty)
+    }
+    @MainActor func testCleanupFailureAndRootSymlinkBlockPrivateAccess()async throws {
+        let root=FileManager.default.temporaryDirectory.appendingPathComponent("export-cleanup-failure-"+UUID().uuidString)
+        let link=FileManager.default.temporaryDirectory.appendingPathComponent("export-root-link-"+UUID().uuidString)
+        defer{try? FileManager.default.removeItem(at:link);try? FileManager.default.removeItem(at:root)}
+        let abandoned=root.appendingPathComponent(UUID().uuidString);try FileManager.default.createDirectory(at:abandoned,withIntermediateDirectories:true)
+        try Data("private".utf8).write(to:abandoned.appendingPathComponent("orphan.json"))
+        let store=NativeCoreExportStore(root:root,removeOwnedItem:{_ in throw CocoaError(.fileWriteNoPermission)});let selected=scope;store.bind(selected)
+        var calls=0;await store.request(confirmed:true,current:{selected},post:{_ in calls+=1;return Data()})
+        XCTAssertFalse(store.storageReady);XCTAssertEqual(calls,0);XCTAssertNil(store.selectedFile(selected));XCTAssertEqual(store.notice,"unconfirmed")
+        try FileManager.default.createSymbolicLink(at:link,withDestinationURL:root)
+        let linked=NativeCoreExportStore(root:link);XCTAssertFalse(linked.storageReady);XCTAssertTrue(FileManager.default.fileExists(atPath:abandoned.path));XCTAssertNil(linked.fileURL)
+    }
+
 }

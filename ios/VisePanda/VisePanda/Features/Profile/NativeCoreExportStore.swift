@@ -1,4 +1,5 @@
 import CryptoKit
+import Darwin
 import Foundation
 import Observation
 
@@ -73,58 +74,92 @@ struct NativeCoreExportDownload {
     private(set) var busy=false
     private(set) var notice:String?
     private let root:URL
-    init(root:URL?=nil){
-        self.root=root ?? FileManager.default.temporaryDirectory.appendingPathComponent("NativeCoreExport",isDirectory:true)
-        if let folders=try? FileManager.default.contentsOfDirectory(at:self.root,includingPropertiesForKeys:[.isSymbolicLinkKey]) {
-            for folder in folders where UUID(uuidString:folder.lastPathComponent) != nil {
-                guard (try? folder.resourceValues(forKeys:[.isSymbolicLinkKey]).isSymbolicLink) != true else{continue}
-                let marker=try? String(contentsOf:folder.appendingPathComponent("expires.txt"),encoding:.utf8)
-                if let value=marker.flatMap(Double.init),value>Date().timeIntervalSince1970{continue}
-                try? FileManager.default.removeItem(at:folder)
-            }
+    private let removeOwnedItem:(URL)throws->Void
+    private let beforeMarkerWrite:((URL)throws->Void)?
+    private(set) var storageReady=false
+    init(root:URL?=nil,removeOwnedItem:((URL)throws->Void)?=nil,beforeMarkerWrite:((URL)throws->Void)?=nil){
+        self.root=(root ?? FileManager.default.temporaryDirectory.appendingPathComponent("NativeCoreExport",isDirectory:true)).standardizedFileURL
+        self.removeOwnedItem=removeOwnedItem ?? {try FileManager.default.removeItem(at:$0)}
+        self.beforeMarkerWrite=beforeMarkerWrite
+        // This feature declares no persisted owner/resume mapping: every prior UUID entry is abandoned.
+        do{try purgeOwnedFolders();storageReady=true}catch{notice="unconfirmed"}
+    }
+    private func checkedRoot()throws {
+        guard root.isFileURL else{throw NativeDataError.invalidResponse}
+        var info=stat()
+        if lstat(root.path,&info)==0 {
+            guard info.st_mode & S_IFMT == S_IFDIR else{throw NativeDataError.invalidResponse}
+        }else if errno==ENOENT {
+            try FileManager.default.createDirectory(at:root,withIntermediateDirectories:true,attributes:[.protectionKey:FileProtectionType.complete,.posixPermissions:0o700])
+            guard lstat(root.path,&info)==0,info.st_mode & S_IFMT == S_IFDIR else{throw NativeDataError.invalidResponse}
+        }else{throw NativeDataError.invalidResponse}
+    }
+    private func purgeOwnedFolders()throws {
+        try checkedRoot()
+        let folders=try FileManager.default.contentsOfDirectory(at:root,includingPropertiesForKeys:nil)
+        for folder in folders where UUID(uuidString:folder.lastPathComponent) != nil {
+            guard folder.standardizedFileURL.deletingLastPathComponent().path==root.path else{throw NativeDataError.invalidResponse}
+            // removeItem unlinks a symlink itself; never resolve its target or read an expiry marker.
+            try removeOwnedItem(folder)
         }
+        guard !(try FileManager.default.contentsOfDirectory(at:root,includingPropertiesForKeys:nil)).contains(where:{UUID(uuidString:$0.lastPathComponent) != nil}) else{throw NativeDataError.invalidResponse}
+    }
+    private func removePendingFolder(_ folder:URL)throws {
+        try checkedRoot()
+        guard folder.standardizedFileURL.deletingLastPathComponent().path==root.path,UUID(uuidString:folder.lastPathComponent) != nil else{throw NativeDataError.invalidResponse}
+        var info=stat()
+        if lstat(folder.path,&info)==0{try removeOwnedItem(folder)}else if errno != ENOENT{throw NativeDataError.invalidResponse}
     }
     func bind(_ next:NativeDataScope?){if next != scope{clear();scope=next}}
     func clear(){generation=UUID();requestID=nil;receipt=nil;ticket=nil;notice=nil;busy=false;removeFile()}
-    private func removeFile(){if let fileURL{try? FileManager.default.removeItem(at:fileURL.deletingLastPathComponent())};fileURL=nil;fileDeadline=nil}
-    func selectedFile(_ current:NativeDataScope?,now:Date=Date())->URL?{guard current != nil,current==scope,let fileDeadline,now<fileDeadline else{removeFile();return nil};return fileURL}
-    func hasTicket(_ current:NativeDataScope?,now:Date=Date())->Bool{guard current==scope,let ticket,let expires=NativeCoreExportReceipt.utc(ticket.expiresAt),now<expires else{self.ticket=nil;return false};return true}
+    private func removeFile(){
+        fileURL=nil;fileDeadline=nil;storageReady=false
+        do{try purgeOwnedFolders();storageReady=true}catch{notice="unconfirmed"}
+    }
+    func selectedFile(_ current:NativeDataScope?,now:Date=Date())->URL?{guard storageReady else{return nil};guard current != nil,current==scope,let fileDeadline,now<fileDeadline else{removeFile();return nil};return fileURL}
+    func hasTicket(_ current:NativeDataScope?,now:Date=Date())->Bool{guard storageReady,current==scope,let ticket,let expires=NativeCoreExportReceipt.utc(ticket.expiresAt),now<expires else{self.ticket=nil;return false};return true}
     func request(confirmed:Bool,current:@escaping()->NativeDataScope?,post:(Data)async throws->Data)async {
-        guard confirmed,!busy,let scope,current()==scope else{return};if requestID==nil{requestID=UUID().uuidString.lowercased()}
+        guard storageReady,confirmed,!busy,let scope,current()==scope else{return};if requestID==nil{requestID=UUID().uuidString.lowercased()}
         guard let requestID else{return};let body=try? JSONSerialization.data(withJSONObject:["requestId":requestID,"confirmed":true])
         guard let body else{return};await readOrRequest(requestID,current:current){try await post(body)}
     }
     func refresh(current:@escaping()->NativeDataScope?,get:(String)async throws->Data)async{guard let requestID else{return};await readOrRequest(requestID,current:current){try await get(requestID)}}
     private func readOrRequest(_ requested:String,current:@escaping()->NativeDataScope?,request:()async throws->Data)async {
-        guard !busy,let scope,current()==scope else{return};let own=generation;busy=true;defer{if generation==own{busy=false}}
+        guard storageReady,!busy,let scope,current()==scope else{return};let own=generation;busy=true;defer{if generation==own{busy=false}}
         do {
             let bytes=try await request();guard generation==own,current()==scope,!Task.isCancelled,requestID==requested else{return}
             let value=try NativeCoreExportReceipt.decode(bytes,requestID:requested)
             if value.artifactDigest != receipt?.artifactDigest || value.generation != receipt?.generation || !value.ready{ticket=nil;removeFile()}
-            receipt=value;notice=nil
+            guard storageReady else{return};receipt=value;notice=nil
         }catch{if generation==own,current()==scope{failed(error)}}
     }
     func getTicket(current:@escaping()->NativeDataScope?,post:(String)async throws->Data)async {
-        guard !busy,let scope,current()==scope,let receipt,receipt.ready,let expires=receipt.artifactExpiresAt.flatMap(NativeCoreExportReceipt.utc),Date()<expires else{return}
-        let own=generation;ticket=nil;removeFile();busy=true;defer{if generation==own{busy=false}}
+        guard storageReady,!busy,let scope,current()==scope,let receipt,receipt.ready,let expires=receipt.artifactExpiresAt.flatMap(NativeCoreExportReceipt.utc),Date()<expires else{return}
+        let own=generation;ticket=nil;removeFile();guard storageReady else{return};busy=true;defer{if generation==own{busy=false}}
         do{let bytes=try await post(receipt.requestId);guard generation==own,current()==scope,!Task.isCancelled else{return};ticket=try .decode(bytes,receipt:receipt);notice=nil}
         catch{if generation==own,current()==scope{ticket=nil;failed(error)}}
     }
     func download(current:@escaping()->NativeDataScope?,get:(String,String,String)async throws->NativeCoreExportDownload)async {
-        guard !busy,let scope,current()==scope,let receipt,let ticket,hasTicket(scope) else{return}
-        let own=generation;self.ticket=nil;removeFile();busy=true;defer{if generation==own{busy=false}}
+        guard storageReady,!busy,let scope,current()==scope,let receipt,let ticket,hasTicket(scope) else{return}
+        let own=generation;self.ticket=nil;removeFile();guard storageReady else{return};busy=true;defer{if generation==own{busy=false}}
+        var pendingFolder:URL?
+        defer{if let pendingFolder{do{try removePendingFolder(pendingFolder)}catch{storageReady=false;fileURL=nil;fileDeadline=nil;notice="unconfirmed"}}}
         do {
             let data=try await get(ticket.requestId,ticket.operationId,ticket.token)
             guard generation==own,current()==scope,!Task.isCancelled else{return};try data.validate(ticket:ticket,receipt:receipt)
             guard let deadline=NativeCoreExportReceipt.utc(ticket.expiresAt),Date()<deadline else{throw NativeDataError.invalidResponse}
+            try checkedRoot()
             let folder=root.appendingPathComponent(UUID().uuidString,isDirectory:true)
+            pendingFolder=folder
             try FileManager.default.createDirectory(at:folder,withIntermediateDirectories:true,attributes:[.protectionKey:FileProtectionType.complete,.posixPermissions:0o700])
             var excluded=URLResourceValues();excluded.isExcludedFromBackup=true;var directory=folder;try directory.setResourceValues(excluded)
             let file=folder.appendingPathComponent("visepanda-export-"+receipt.requestId+".json")
             try data.bytes.write(to:file,options:[.atomic,.completeFileProtection]);try FileManager.default.setAttributes([.posixPermissions:0o600],ofItemAtPath:file.path);var target=file;try target.setResourceValues(excluded)
+            try beforeMarkerWrite?(folder)
             let marker=folder.appendingPathComponent("expires.txt")
             try Data(String(deadline.timeIntervalSince1970).utf8).write(to:marker,options:[.atomic,.completeFileProtection]);try FileManager.default.setAttributes([.posixPermissions:0o600],ofItemAtPath:marker.path);var expiryMarker=marker;try expiryMarker.setResourceValues(excluded)
-            fileURL=file;fileDeadline=deadline;notice="downloaded"
+            guard generation==own,current()==scope,!Task.isCancelled,Date()<deadline else{throw NativeDataError.staleSessionResponse}
+            fileURL=file;fileDeadline=deadline;notice="downloaded";pendingFolder=nil
         }catch{if generation==own,current()==scope{failed(error)}}
     }
     func discardSelected(){clear()}
