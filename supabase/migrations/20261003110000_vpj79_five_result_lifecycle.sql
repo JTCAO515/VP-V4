@@ -117,7 +117,7 @@ begin
   if not found then return jsonb_build_object('readable',false,'current',false);end if;
   select * into rr from turn_private.result_revisions where artifact_id=ra.id and owner_id=p_owner and revision=(v->'comparisonRef'->>'revision')::integer;
   if not found or not coalesce(turn_private.valid_comparison_v1(rr.content),false) then return jsonb_build_object('readable',false,'current',false);end if;
-  state:=turn_private.result_basis_state(ra,rr);
+  state:=turn_private.comparison_common_basis_state(ra,rr);
   if state->>'readable'<>'true' or not turn_private.result_evidence_current_v2(rr.evidence_basis) then return jsonb_build_object('readable',false,'current',false);end if;
   if v->>'state'='chosen' and not exists(select 1 from jsonb_array_elements(rr.content->'options') x where x->>'id'=v->>'chosenOptionId') then return jsonb_build_object('readable',false,'current',false);end if;
   if state->>'current'<>'true' or ra.current_revision<>rr.revision then return jsonb_build_object('readable',true,'current',false);end if;
@@ -488,3 +488,13 @@ do $$declare f regprocedure;begin
  for f in select p.oid::regprocedure from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='turn_private' and p.proname in ('result_uuid_v2','result_int_v2','valid_result_evidence_v2','result_evidence_current_v2','valid_result_draft_v2','valid_result_content_v2','translation_numbers_v2','result_translation_projection_v2','result_domain_state_v2','result_state_v2','result_title_v2','result_summary_v2','project_result_display_v2') loop execute 'revoke all on function '||f||' from public,anon,authenticated,service_role';end loop;
 end $$;
 notify pgrst,'reload schema';
+
+-- Legacy comparison-only consumers do not understand canonical v2 evidence refs.
+-- Fail closed rather than silently projecting a populated evidence basis as [].
+alter function turn_private.result_basis_state(turn_private.result_artifacts,turn_private.result_revisions) rename to legacy_result_basis_state_v2;
+create function turn_private.result_basis_state(a turn_private.result_artifacts,r turn_private.result_revisions) returns jsonb language plpgsql security definer set search_path='' as $$
+begin
+ if r.evidence_basis<>'[]'::jsonb then return jsonb_build_object('readable',false,'current',false);end if;
+ return turn_private.legacy_result_basis_state_v2(a,r);
+end $$;
+revoke all on function turn_private.result_basis_state(turn_private.result_artifacts,turn_private.result_revisions) from public,anon,authenticated,service_role;
