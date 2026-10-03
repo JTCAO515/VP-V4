@@ -4,7 +4,7 @@ revoke all on schema export_private from public,anon,authenticated,service_role;
 create table export_private.core_policies_v1 (
  id uuid primary key,revision integer not null check(revision>0),enabled boolean not null default false,revoked_at timestamptz,
  environment text not null check(environment in ('local','staging','production')),
- key_id text not null check(key_id ~ '^[A-Za-z0-9._-]{1,128}$'),
+ key_id text not null check(octet_length(key_id) between 1 and 128 and key_id !~ '[^!-~]'),
  max_run_ms integer not null check(max_run_ms between 1 and 90000),artifact_ttl_ms integer not null check(artifact_ttl_ms between 1 and 86400000),
  ticket_ttl_ms integer not null check(ticket_ttl_ms between 1 and 300000),max_pages integer not null check(max_pages between 1 and 1000),
  page_size integer not null check(page_size between 1 and 100),max_bytes integer not null check(max_bytes between 1 and 8388608),valid_until timestamptz not null
@@ -105,16 +105,30 @@ begin
   if jsonb_typeof(m) is distinct from 'object' or m-array['module','status','reason','pages','rows','digest']<>'{}' or (select count(*) from jsonb_object_keys(m))<>6
   or m->>'module' is distinct from names[n] or coalesce(m->>'status','') not in ('complete','partial','unavailable','failed') or coalesce(m->>'reason','') not in ('NONE','HANDLER_MISSING','BOUNDED_LIMIT','LIVE_TRAVERSAL','SOURCE_UNAVAILABLE')
   or jsonb_typeof(m->'pages') is distinct from 'number' or m->>'pages' !~ '^(0|[1-9][0-9]{0,3})$' or jsonb_typeof(m->'rows') is distinct from 'number' or m->>'rows' !~ '^(0|[1-9][0-9]{0,5})$'
-  or (m->>'rows')::integer>100000 then return false;end if;
+  or (m->>'rows')::integer>100000 or (m->>'rows')::integer>(m->>'pages')::integer*100 then return false;end if;
   pages:=pages+(m->>'pages')::integer;
   if m->>'status'='unavailable' then
    if m->>'reason'<>'HANDLER_MISSING' or m->'digest' is distinct from 'null'::jsonb or (m->>'pages')::integer<>0 or (m->>'rows')::integer<>0 then return false;end if;
   else
    if jsonb_typeof(m->'digest') is distinct from 'string' or m->>'digest' !~ '^[a-f0-9]{64}$' then return false;end if;
-   if m->>'status'='complete' and m->>'reason'<>'NONE' or m->>'status'='partial' and m->>'reason' not in ('BOUNDED_LIMIT','LIVE_TRAVERSAL') or m->>'status'='failed' and m->>'reason'<>'SOURCE_UNAVAILABLE' then return false;end if;
+   if m->>'status'='complete' and (m->>'reason'<>'NONE' or (m->>'pages')::integer<1) or m->>'status'='partial' and m->>'reason' not in ('BOUNDED_LIMIT','LIVE_TRAVERSAL') or m->>'status'='failed' and m->>'reason'<>'SOURCE_UNAVAILABLE' then return false;end if;
   end if;
  end loop;
  return pages<=max_pages;
+end $$;
+
+create function export_private.trip_content_v1(v jsonb) returns jsonb language plpgsql immutable set search_path='' as $$
+declare d jsonb;i jsonb;days jsonb:='[]';items jsonb;
+begin
+ if jsonb_typeof(v->'days') is distinct from 'array' then raise exception 'SOURCE_UNAVAILABLE';end if;
+ for d in select value from jsonb_array_elements(v->'days') loop
+  if jsonb_typeof(d) is distinct from 'object' or jsonb_typeof(d->'id') is distinct from 'string' or jsonb_typeof(d->'date') is distinct from 'string' or jsonb_typeof(d->'items') is distinct from 'array' then raise exception 'SOURCE_UNAVAILABLE';end if;
+  items:='[]';for i in select value from jsonb_array_elements(d->'items') loop
+   if jsonb_typeof(i) is distinct from 'object' or jsonb_typeof(i->'id') is distinct from 'string' or jsonb_typeof(i->'title') is distinct from 'string' then raise exception 'SOURCE_UNAVAILABLE';end if;
+   items:=items||jsonb_build_array(jsonb_build_object('id',i->'id','dayId',d->'id','title',i->'title')||case when i ? 'startsAt' then jsonb_build_object('startsAt',i->'startsAt') else '{}'::jsonb end||case when i ? 'endsAt' then jsonb_build_object('endsAt',i->'endsAt') else '{}'::jsonb end);
+  end loop;
+  days:=days||jsonb_build_array(jsonb_build_object('id',d->'id','date',d->'date','items',items)||case when d ? 'timeZone' then jsonb_build_object('timeZone',d->'timeZone') else '{}'::jsonb end);
+ end loop;return jsonb_build_object('days',days);
 end $$;
 
 create function public.privacy_core_export_v1(p_action text,p_input jsonb) returns jsonb
@@ -226,7 +240,7 @@ begin
   if cursor is not null and not exists(select 1 from public.trips where id=cursor and owner_id=j.owner_id and not exists(select 1 from privacy_private.trip_deletions where trip_id=cursor)) then raise exception 'INVALID_EXPORT_CURSOR';end if;
   if exists(select 1 from public.trips t left join public.trip_version_snapshots s on s.trip_id=t.id and s.version=t.head_version and s.owner_id=t.owner_id where t.owner_id=j.owner_id and (cursor is null or t.id>cursor) and not exists(select 1 from privacy_private.trip_deletions where trip_id=t.id) and (s.trip_id is null or s.title<>t.title) order by t.id limit limit_n+1) then raise exception 'SOURCE_UNAVAILABLE';end if;
   with candidates as (
-   select t.id,jsonb_build_object('tripId',t.id,'title',t.title,'headVersion',t.head_version,'confirmationState',case when t.head_version=0 then 'initial' when exists(select 1 from public.trip_events e join public.trip_proposals p on p.id=e.proposal_id and p.owner_id=e.owner_id join public.trip_idempotency r on r.proposal_id=p.id and r.owner_id=p.owner_id and r.resulting_version=e.resulting_version where e.trip_id=t.id and e.owner_id=t.owner_id and e.resulting_version=t.head_version and p.status='applied' and p.base_trip_version+1=t.head_version) then 'confirmed' else 'unknown' end,'content',jsonb_build_object('days',s.content->'days')) as item
+   select t.id,jsonb_build_object('tripId',t.id,'title',t.title,'headVersion',t.head_version,'confirmationState',case when t.head_version=0 then 'initial' when exists(select 1 from public.trip_events e join public.trip_proposals p on p.id=e.proposal_id and p.owner_id=e.owner_id join public.trip_idempotency r on r.proposal_id=p.id and r.owner_id=p.owner_id and r.resulting_version=e.resulting_version where e.trip_id=t.id and e.owner_id=t.owner_id and e.resulting_version=t.head_version and p.status='applied' and p.base_trip_version+1=t.head_version) then 'confirmed' else 'unknown' end,'content',export_private.trip_content_v1(s.content)) as item
    from public.trips t join public.trip_version_snapshots s on s.trip_id=t.id and s.version=t.head_version and s.owner_id=t.owner_id where t.owner_id=j.owner_id and (cursor is null or t.id>cursor) and not exists(select 1 from privacy_private.trip_deletions where trip_id=t.id) order by t.id limit limit_n+1
   ),delivered as(select * from candidates order by id limit limit_n)
   select coalesce((select jsonb_agg(item order by id) from delivered),'[]'),(select count(*)>limit_n from candidates),(select id from delivered order by id desc limit 1) into page,more,next_id;
