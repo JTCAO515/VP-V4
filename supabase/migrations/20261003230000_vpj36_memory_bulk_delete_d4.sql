@@ -82,6 +82,17 @@ begin
  r:=case when tg_op='DELETE' then to_jsonb(old) else to_jsonb(new) end;oldr:=case when tg_op='UPDATE' then to_jsonb(old) else r end;
  for u in select distinct x from unnest(array[(r->>'owner_id')::uuid,(oldr->>'owner_id')::uuid]) x where x is not null order by x loop
  if not exists(select 1 from auth.users where id=u) then continue;end if;
+ -- Preserve original result CAS for unrelated publications. A result with no
+ -- Memory basis and no queued cleanup needs no new account lock. Memory-bearing
+ -- revisions ALWAYS serialize, including before a confirm installs its job;
+ -- existing Memory-bearing parents and every queued owner keep the full fence.
+ if tg_table_schema='turn_private' and tg_table_name in ('result_artifacts','result_revisions')
+ and not exists(select 1 from privacy_private.memory_delete_jobs_v1 q where q.owner_id=u and q.state='queued')
+ and coalesce(jsonb_array_length(r->'memory_basis'),0)=0
+ and coalesce(jsonb_array_length(oldr->'memory_basis'),0)=0
+ and not exists(select 1 from turn_private.result_revisions basis where basis.artifact_id in
+   ((r->>'artifact_id')::uuid,(oldr->>'artifact_id')::uuid,(r->>'id')::uuid,(oldr->>'id')::uuid)
+   and jsonb_array_length(basis.memory_basis)>0) then continue;end if;
  perform 1 from auth.users where id=u for key share nowait;perform 1 from identity_private.mobile_accounts where owner_id=u for update nowait;
  for j in select q.request_id,p.scope_digest,p.selection from privacy_private.memory_delete_jobs_v1 q join privacy_private.memory_delete_plans_v1 p on p.id=q.plan_id where q.owner_id=u and q.state='queued' loop
  hit:=false;
