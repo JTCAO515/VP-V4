@@ -389,11 +389,12 @@ begin
  select x->>'mappingId' into next_id from jsonb_array_elements(page) x order by x->>'mappingId' desc limit 1;has_more:=next_id is not null and exists(select 1 from jsonb_array_elements(all_rows) x where x->>'mappingId'>next_id);
  return jsonb_build_object('kind','candidates','tripId',t.id,'tripVersion',t.head_version,'placeReferenceId',r.id,'contextDigest',context,'entries',page,'nextCursor',case when has_more then jsonb_build_object('contextDigest',context,'afterMappingId',next_id) else null end);
 exception when lock_not_available then return jsonb_build_object('kind','blocked');end $$;
-create function public.read_supported_trip_confirmation_receipt_v1(p_idempotency_key text,p_proposal_id uuid,p_proposal_digest text,p_selection_digest text) returns jsonb language plpgsql security definer set search_path='' as $$
+create function public.read_supported_trip_confirmation_receipt_v1(p_idempotency_key text,p_proposal_id uuid,p_proposal_digest text,p_support_selection jsonb) returns jsonb language plpgsql security definer set search_path='' as $$
 declare u uuid:=trip_support_private.owner();r trip_support_private.confirmation_receipts%rowtype;
 begin
+ if jsonb_typeof(p_support_selection) is distinct from 'array' or jsonb_array_length(p_support_selection) not between 1 and 8 or exists(select 1 from jsonb_array_elements(p_support_selection) x where not knowledge_review_private.closed_object(x,array['receiptId','version','sourceDigest'])) or (select count(distinct x->>'receiptId') from jsonb_array_elements(p_support_selection) x)<>jsonb_array_length(p_support_selection) then return jsonb_build_object('kind','blocked');end if;
  select * into r from trip_support_private.confirmation_receipts where owner_id=u and idempotency_key=p_idempotency_key and proposal_id=p_proposal_id;
- if not found or r.proposal_digest is distinct from p_proposal_digest or r.selection_digest is distinct from p_selection_digest or not exists(select 1 from public.trips where id=r.trip_id and owner_id=u) then return jsonb_build_object('kind','blocked');end if;
+ if not found or r.proposal_digest is distinct from p_proposal_digest or r.selection_digest is distinct from trip_support_private.hash(p_support_selection) or not exists(select 1 from public.trips where id=r.trip_id and owner_id=u) then return jsonb_build_object('kind','blocked');end if;
  return jsonb_build_object('kind','confirmation_receipt','receipt',r.receipt,'historicalOnly',true,'currentEligibilityRequiresRead',true);
 end $$;
-revoke all on function public.read_trip_item_support_candidates_v1(uuid,integer,uuid,text,text,text,jsonb,integer),public.read_supported_trip_confirmation_receipt_v1(text,uuid,text,text) from public,anon,authenticated,service_role;
+revoke all on function public.read_trip_item_support_candidates_v1(uuid,integer,uuid,text,text,text,jsonb,integer),public.read_supported_trip_confirmation_receipt_v1(text,uuid,text,jsonb) from public,anon,authenticated,service_role;
