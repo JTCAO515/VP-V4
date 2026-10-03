@@ -204,7 +204,7 @@ begin
   select * into r from trip_support_private.preparations where id=s.receipt_id;
   basis:=trip_support_private.mapping_basis(r.mapping_id);status:=s.status;
   if status='reference_current' and (basis is null or basis->>'mappingVersion' is distinct from r.mapping_version::text or basis->>'sourceDigest' is distinct from s.source_digest or trip_support_private.hash(item)<>s.item_digest or r.expires_at<=clock_timestamp()) then status:='recheck_required';end if;
-  entries:=entries||jsonb_build_array(jsonb_build_object('supportId',s.id,'receiptId',r.id,'version',s.version,'scope',s.scope,'applicability',s.applicability,'status',status,'claimRevision',s.claim_revision,'payloadHash',s.payload_hash,'sourceDigest',s.source_digest,'claim',case when status='reference_current' then trip_support_private.typed_claim(basis,s.scope) else null end));
+  entries:=entries||jsonb_build_array(jsonb_build_object('supportId',s.id,'receiptId',r.id,'placeReferenceId',r.place_reference_id,'version',s.version,'scope',s.scope,'applicability',s.applicability,'status',status,'claimRevision',s.claim_revision,'payloadHash',s.payload_hash,'sourceDigest',s.source_digest,'sourceRefs',(select coalesce(jsonb_agg(x-'submittedBy' order by x->>'sourceRevisionId'),'[]'::jsonb) from jsonb_array_elements(s.source_refs) x),'claim',case when status='reference_current' then trip_support_private.typed_claim(basis,s.scope) else null end));
  end loop;return jsonb_build_object('kind','support','tripId',t.id,'tripVersion',t.head_version,'dayId',p_day,'itemId',p_item,'entries',entries);
 exception when lock_not_available then return jsonb_build_object('kind','blocked');end $$;
 create function public.apply_trip_item_source_impact_v1(p_support uuid,p_expected_version bigint,p_source uuid,p_expected_source_digest text) returns jsonb language plpgsql security definer set search_path='' as $$
@@ -416,3 +416,23 @@ begin
  return jsonb_build_object('kind','support_context','tripId',t.id,'tripVersion',t.head_version,'proposalId',p.id,'proposalRevision',p.revision,'baseVersion',p.base_trip_version,'proposalDigest',digest,'itemDigest',trip_support_private.hash(item),'dayId',p_day,'itemId',p_item,'canonicalPlaceReferences',refs);
 exception when lock_not_available then return jsonb_build_object('kind','blocked');end $$;
 revoke all on function public.read_trip_item_support_context_v1(uuid,integer,uuid,integer,text,text) from public,anon,authenticated,service_role;
+
+-- New private support identifiers in reviewed graphs follow real support/Trip
+-- deletion; bounded NOWAIT lock conflicts abort for retry, never skip cleanup.
+create function trip_support_private.clear_deleted_support_impact() returns trigger language plpgsql security definer set search_path='' as $$
+declare setrow knowledge_review_private.source_impact_sets%rowtype;graph jsonb;
+begin
+ for setrow in select * from knowledge_review_private.source_impact_sets where exists(select 1 from jsonb_array_elements(graph_snapshot) x where x->'target'->>'kind'='trip_item_support' and x->'target'->>'id'=OLD.id::text) order by id for update nowait loop
+  perform 1 from knowledge_review_private.source_impact_outbox o join knowledge_review_private.source_impact_items i on i.id=o.item_id where o.set_id=setrow.id and i.target->>'kind'='trip_item_support' and i.target->>'id'=OLD.id::text order by o.id for update of o nowait;
+  delete from knowledge_review_private.source_impact_review_requests r using knowledge_review_private.source_impact_outbox o,knowledge_review_private.source_impact_items i where r.delivery_id=o.id and o.item_id=i.id and o.set_id=setrow.id and i.target->>'id'=OLD.id::text and i.target->>'kind'='trip_item_support';
+  delete from knowledge_review_private.source_impact_projections p using knowledge_review_private.source_impact_outbox o,knowledge_review_private.source_impact_items i where p.delivery_id=o.id and o.item_id=i.id and o.set_id=setrow.id and i.target->>'id'=OLD.id::text and i.target->>'kind'='trip_item_support';
+  delete from knowledge_review_private.source_impact_outbox o using knowledge_review_private.source_impact_items i where o.item_id=i.id and o.set_id=setrow.id and i.target->>'kind'='trip_item_support' and i.target->>'id'=OLD.id::text;
+  delete from knowledge_review_private.source_impact_items where set_id=setrow.id and target->>'kind'='trip_item_support' and target->>'id'=OLD.id::text;
+  delete from knowledge_review_private.source_impact_pages where set_id=setrow.id;
+  select coalesce(jsonb_agg(x order by x->>'key'),'[]'::jsonb) into graph from jsonb_array_elements(setrow.graph_snapshot) x where not(x->'target'->>'kind'='trip_item_support' and x->'target'->>'id'=OLD.id::text);
+  update knowledge_review_private.source_impact_sets set graph_snapshot=graph,digest=knowledge_review_private.impact_hash(jsonb_build_object('source',source_snapshot,'kind',signal_kind,'graph',graph)),version=version+1,status='invalidated',complete=false,next_cursor=null,item_count=(select count(*) from knowledge_review_private.source_impact_items where set_id=setrow.id) where id=setrow.id;
+  update knowledge_review_private.source_impact_outbox set state='stale',lease_token=null,expires_at=null,error_code='private_support_removed' where set_id=setrow.id and state<>'acked';
+ end loop;return null;
+end $$;
+create trigger clear_source_impact_support_after_delete after delete on trip_support_private.item_supports for each row execute function trip_support_private.clear_deleted_support_impact();
+revoke all on function trip_support_private.clear_deleted_support_impact() from public,anon,authenticated,service_role;
