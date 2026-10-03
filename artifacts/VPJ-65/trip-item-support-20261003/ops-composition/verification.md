@@ -1,0 +1,9 @@
+# Actual Ops finite caller / precise support-derived deletion
+
+7394bdd product composition: app/api/ops/source-impact/consume-once/route.ts uses existing opsRuntimeConfig, same-origin and Web cookie createWebRpc auth path; no service-role key or owner JWT. Feature defaultoff returns before client/credentials/RPC. Input exactly consumer string enum, max512bytes; each consumer has4SQLRPC allowlist, one delivery, shared15s lifetime, reply262144bytes. SQL current_actor/review/membership/source/outbox provenance remains effect authority. No scheduler or permissions enabled.66f8fac single-line review fix requires real typeof string, rejects arrays that String coercion previously accepted.
+
+Actual composed HTTP handler→persistent SQL selected case PASS1/1,0skip12.598s. Two supports in one reviewed source set, first actual composed effect plus exact lostACK replay/read, second valid persistent effect, real owner renewal invalidates old graph. Authentication context is an explicit isolated administrator fixture, not deployed signed Ops acceptance.
+
+Necessary support-delete cleanup extension in the same selected case PASS1/1,0skip7.295s: original event/proposal/Trip deletion ordering removes private supports and source-impact derived support targets/pages, marks old set invalidated/completefalse and old digest authorization unavailable, preserves unrelated statement target/audit. No graph private supportID remains. Code uses bounded NOWAIT failures for competing cleanup/effect locks; no skip or broad table lock. No old writer/body or source policy alteration.
+
+Type/diff PASS. Current actual deployment/grants/target/human/supplier fees UNRUN, no scope enlargement. #207 code-complete determination independent of these operational gates; #219 broader plan feasibility and full privacy delivery enrollment are not asserted. Primary fixed product sources7394bdd+66f8fac delivered immediately before optional evidence arrangement.
