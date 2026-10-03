@@ -35,7 +35,9 @@ final class NativeSession {
     private var assistantNavigation: NativeAssistantNavigation?
     let memoryPreferences=NativeMemoryPreferencesStore()
     let offlineTrips=NativeOfflineTripStore()
+    let deviceMaterials: NativeDeviceMaterials
     private(set) var exploreAskHandoff:NativeExploreAskHandoff?
+    private var deviceMaterialSignOutFence = false
     private var credential: NativeCredential?
     private let endpoint: URL?
     let askMode: NativeAskMode
@@ -45,7 +47,7 @@ final class NativeSession {
     private let storageKey: String
     private let keychainService = "com.visepanda.native.local-session.v2"
 
-    init(arguments: [String] = ProcessInfo.processInfo.arguments, defaults: UserDefaults = .standard, configuration: URLSessionConfiguration = .ephemeral, bundleConfiguration: [String: String] = Bundle.main.infoDictionary?.compactMapValues { $0 as? String } ?? [:], vault: any NativeCredentialVault = NativeKeychainVault()) {
+    init(arguments: [String] = ProcessInfo.processInfo.arguments, defaults: UserDefaults = .standard, configuration: URLSessionConfiguration = .ephemeral, bundleConfiguration: [String: String] = Bundle.main.infoDictionary?.compactMapValues { $0 as? String } ?? [:], vault: any NativeCredentialVault = NativeKeychainVault(), deviceMaterials: NativeDeviceMaterials? = nil) {
         endpoint = Self.resolveEndpoint(arguments: arguments, bundleConfiguration: bundleConfiguration)
         let installed = bundleConfiguration["VisePandaNativeTaskContext", default: ""]
         if !installed.isEmpty { askMode = NativeAskMode(rawValue: installed) ?? .unavailable }
@@ -55,11 +57,16 @@ final class NativeSession {
         else { askMode = .currentInput }
         self.defaults = defaults
         self.vault = vault
+        self.deviceMaterials = deviceMaterials ?? NativeDeviceMaterials()
         storageKey = "native.v2.activeSubject.\(endpoint?.absoluteString ?? "disabled")"
         configuration.httpCookieStorage = nil
         configuration.httpShouldSetCookies = false
         configuration.urlCache = nil
         transport = URLSession(configuration: configuration, delegate: NativeRedirectBlocker(), delegateQueue: nil)
+        // Endpoint-scoped record contains the signing-out owner only, never credentials.
+        // Any surviving/corrupt intent is a fence until deliberate login clears it.
+        deviceMaterialSignOutFence = defaults.object(forKey: storageKey + ".signOutIntent") != nil
+        if deviceMaterialSignOutFence { status = "signingOut" }
     }
 
     func prepareExploreAsk(_ handoff:NativeExploreAskHandoff) {
@@ -107,7 +114,7 @@ final class NativeSession {
 
     /// Changes on denial/account clearing even if the same owner later signs in again.
     var dataScope: NativeDataScope? {
-        guard status == "active", let subject, let mobileEpoch,
+        guard !deviceMaterialSignOutFence, status == "active", let subject, let mobileEpoch,
               let retained = retainedDataScope, retained.subject == subject, retained.mobileEpoch == mobileEpoch else { return nil }
         return retained
     }
@@ -690,6 +697,7 @@ final class NativeSession {
     }
 
     func restore() async {
+        guard prepareDeviceMaterials() else { return }
         guard enabled, !busy, credential == nil, let owner = defaults.string(forKey: storageKey) else { return }
         do {
             credential = try read(owner: owner)
@@ -708,6 +716,8 @@ final class NativeSession {
         defer { busy = false }
         // A deliberate account change clears all old account data before sending the new request.
         guard clear() else { return }
+        defaults.removeObject(forKey: storageKey + ".signOutIntent")
+        deviceMaterialSignOutFence = false // Only a deliberate new login after cleanup reopens consumption.
         let attempt = UUID().uuidString
         let generation = dataGeneration
         do {
@@ -759,6 +769,11 @@ final class NativeSession {
 
     func logout() async {
         guard !busy else { return }
+        defaults.set(credential?.subject ?? defaults.string(forKey: storageKey) ?? "unbound", forKey: storageKey + ".signOutIntent")
+        deviceMaterialSignOutFence = true
+        subject=nil; mobileEpoch=nil; displayName=nil; status="signingOut"
+        do { try deviceMaterials.eraseAll() }
+        catch { failureCode="deviceMaterialCleanupRequired";status="storageError";return }
         do{try offlineTrips.eraseAll()}catch{failureCode="offlineCleanupRequired";return}
         let generation = dataGeneration
         busy = true
@@ -798,7 +813,7 @@ final class NativeSession {
         credential = value
         subject = value.subject
         mobileEpoch = value.mobileEpoch
-        status = "active"
+        status = deviceMaterialSignOutFence ? "signingOut" : "active"
     }
 
     private func ensureCurrent(_ generation: Int) throws {
@@ -857,7 +872,23 @@ final class NativeSession {
               value.pendingAsk == nil || (value.pendingAsk?.valid == true && value.pendingAsk?.mobileEpoch == value.mobileEpoch) else { throw SessionError.storage(errSecDecode) }
         return value
     }
+    @discardableResult func prepareDeviceMaterials() -> Bool {
+        guard !deviceMaterialSignOutFence else { return false }
+        do { try deviceMaterials.firstAccess(); return true }
+        catch { failureCode="deviceMaterialCleanupRequired"; return false }
+    }
+
+    func receiveDeviceScreenshot(_ data: Data, owner: String) throws -> NativeScreenshotInbox.Receipt {
+        guard let scope = dataScope, scope.subject == owner, prepareDeviceMaterials() else { throw InboxError.invalidInput }
+        return try deviceMaterials.receive(data, scope: scope)
+    }
+
     @discardableResult private func clear() -> Bool {
+        // Fence consumers before cleanup; a locked file is not proof of erasure.
+        dataGeneration += 1
+        subject=nil; mobileEpoch=nil; displayName=nil
+        do { try deviceMaterials.eraseAll() }
+        catch { failureCode="deviceMaterialCleanupRequired";status="storageError";return false }
         do{try offlineTrips.eraseAll()}catch{failureCode="offlineCleanupRequired";status="storageError";return false}
         dataGeneration += 1
         assistantNavigation=nil
