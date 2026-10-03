@@ -1,0 +1,9 @@
+# Complete five-result code union
+
+2026-10-03. Fixed stacked parent #629 `151285987313efdcab9d46440503bf9881ee5b66` is OPEN/unmerged. Only four dedicated server result commits (f58/129/68 same-source rebased + defaa legacy-evidence downgrade), Native73aacc dedicated commit, original559 compat62c852 + evidence815d858 selected; no other-owner historical parent merges copied. #560 Closed by Main for complete owned code; this integration/PR/CI is normal engineering, not a third Issue state or closure prerequisite.
+
+Code adopted: closed five schemas/domainprojections/110000 CAS+immutable/event/currentness/explicit owner choice/exact/search/index/export/delete, genericNativeHTTP2, sharedNativefivecase renderer/decision/VP-Journeys-Library same-ID/rev, selectedcontext120 v2-reader/excerpt compatibility. No generic artifact editor/Trip confirmation copy or model action. Legacyv1 populated-evidence safelydegrades; genericv2 retainsfullcanonicalqualification. ExplicitprimarysourceID/revision/currentactor/session/Memory/Trip/knowledge refs remain.
+
+Necessary adoption checks: allrealintegrationtestsclassified, new120PGfile registeredexistingpostgresstep withoutlosingotherentries. PBXplutil syntax and actualfile→PBXBuildFile→PBXSourcesBuildPhase refs passed. A first filename-count heuristic was invalid because project references are ID-based, correctedthecheck (notprojectsource); no code failure. Existing serverPG/contracts,Native4/4,120PG3/3/excerpt/HTTP8 source-bound evidence reused; no wide duplicate matrix. Branch protectsserver/native/context singlewriters andcurrentcheckoutordinaryimports/allmigrations. Whole final requiredCI/target/provider/human/device facts retained separately.
+
+Parent629 legalmerge will trigger normal retargetmain andsamebatchdiffcheck. No production/activation/paidpermission/070/080/executor change. MergeCI independence unchanged. Main owns whole-diff/protectedmerge.
