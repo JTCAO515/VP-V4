@@ -144,8 +144,8 @@ struct NativeSelectedContextManifest: Decodable {
               [v.conversationId,v.goalId,v.messageId].allSatisfy({UUID(uuidString:$0) != nil}), (1...10000).contains(v.goalScopeVersion),
               (1...1_000_000).contains(v.messageSequence), (0...3).contains(v.selectedMemoryCount),
               v.context.contextVersion == "assistant-selected-source-context-plan/2", v.context.compactionVersion == "context-compaction-v1",
-              Set(v.context.sectionTokenCounts.keys) == sections, v.context.sectionTokenCounts.values.allSatisfy({(0...50_000).contains($0)}),
-              (1...50_000).contains(v.context.totalTokens), v.context.sourceVersions.count <= 64, v.context.contentHashes.count <= 64,
+              Set(v.context.sectionTokenCounts.keys) == sections, v.context.sectionTokenCounts.values.allSatisfy({(0...9_700).contains($0)}),
+              (1...9_700).contains(v.context.totalTokens), v.context.sourceVersions.count <= 64, v.context.contentHashes.count <= 64,
               v.context.contentHashes.allSatisfy(NativeQualifiedDelegationRPC.digest), v.context.omittedReasons.count <= 100 else { throw NativeDataError.invalidResponse }
         for s in v.context.sourceRefs {
             guard sections.union(["user_artifact"]).contains(s.kind), !s.id.isEmpty, s.id.utf16.count <= 120, !s.sourceVersion.isEmpty, s.sourceVersion.utf16.count <= 8192,

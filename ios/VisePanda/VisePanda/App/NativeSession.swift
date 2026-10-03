@@ -343,6 +343,30 @@ final class NativeSession {
         return bytes
     }
 
+    func fiveResultReference(field: String, id: String) async throws -> Data {
+        guard ["task", "trip"].contains(field), UUID(uuidString:id) != nil else { throw NativeDataError.invalidResponse }
+        let path = "api/results/native/v2/" + field
+        return try await dataRequest(prefix:path,path:path,method:"GET",queryItems:[URLQueryItem(name:field+"Id",value:id)])
+    }
+    func fiveResultSearchRequest(query: String, cursor: String?) async throws -> Data {
+        guard query.utf16.count<=120,cursor==nil || UUID(uuidString:cursor!) != nil else {throw NativeDataError.invalidResponse}
+        let path="api/results/native/v2/search"
+        var q=[URLQueryItem(name:"query",value:query)];if let cursor{q.append(URLQueryItem(name:"cursor",value:cursor))}
+        return try await dataRequest(prefix:path,path:path,method:"GET",queryItems:q)
+    }
+    func chooseFiveResultDecision(_ body: Data) async throws -> Data {
+        guard body.count<=2048 else {throw NativeDataError.invalidResponse}
+        let path="api/results/native/v2/decision"
+        return try await dataRequest(prefix:path,path:path,method:"POST",body:body)
+    }
+
+    func fiveResultRequest(artifactID: String, revision: Int) async throws -> Data {
+        guard UUID(uuidString: artifactID) != nil, (1...1000).contains(revision) else { throw NativeDataError.invalidResponse }
+        let path = "api/results/native/v2"
+        let bytes = try await dataRequest(prefix: path, path: path, method: "GET", queryItems: [URLQueryItem(name:"artifactId",value:artifactID),URLQueryItem(name:"revision",value:String(revision))])
+        guard bytes.count <= 100_000 else { throw NativeDataError.invalidResponse }; return bytes
+    }
+
     func selectedSourceMessageRequest(_ body: Data) async throws -> Data {
         guard askMode == .assistant, body.count <= 16_384 else { throw NativeDataError.invalidResponse }
         let path = "api/chat/native/v6/conversation"

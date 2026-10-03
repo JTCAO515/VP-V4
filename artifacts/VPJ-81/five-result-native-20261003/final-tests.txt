@@ -1,0 +1,18 @@
+Test Suite 'Selected tests' started at 2026-10-03 11:15:33.020.
+Test Suite 'VisePandaTests.xctest' started at 2026-10-03 11:15:33.020.
+Test Suite 'NativeFiveResultTests' started at 2026-10-03 11:15:33.020.
+Test Case '-[VisePandaTests.NativeFiveResultTests testExactIdentityActorAndHistoricalCurrentnessAreIndependent]' started.
+Test Case '-[VisePandaTests.NativeFiveResultTests testExactIdentityActorAndHistoricalCurrentnessAreIndependent]' passed (0.021 seconds).
+Test Case '-[VisePandaTests.NativeFiveResultTests testFiveClosedTypesAndInertActionsNoFutureOrHtmlAction]' started.
+Test Case '-[VisePandaTests.NativeFiveResultTests testFiveClosedTypesAndInertActionsNoFutureOrHtmlAction]' passed (0.002 seconds).
+Test Case '-[VisePandaTests.NativeFiveResultTests testLateChoiceAfterExactSelectionChangeCannotPublishAndActorDenialClearsRetry]' started.
+Test Case '-[VisePandaTests.NativeFiveResultTests testLateChoiceAfterExactSelectionChangeCannotPublishAndActorDenialClearsRetry]' passed (0.004 seconds).
+Test Case '-[VisePandaTests.NativeFiveResultTests testOwnerChoiceCasExactNextReadAndIdempotentRetry]' started.
+Test Case '-[VisePandaTests.NativeFiveResultTests testOwnerChoiceCasExactNextReadAndIdempotentRetry]' passed (0.004 seconds).
+Test Suite 'NativeFiveResultTests' passed at 2026-10-03 11:15:33.052.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.031 (0.032) seconds
+Test Suite 'VisePandaTests.xctest' passed at 2026-10-03 11:15:33.052.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.031 (0.032) seconds
+Test Suite 'Selected tests' passed at 2026-10-03 11:15:33.052.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.031 (0.033) seconds
+** TEST SUCCEEDED **
