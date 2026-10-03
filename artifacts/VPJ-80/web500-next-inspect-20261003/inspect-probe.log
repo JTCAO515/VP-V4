@@ -1,0 +1,4 @@
+{"showIgnoreListed":false,"originalHasNextFrame":true,"inspectedHasNextFrame":false,"safeFrames":["JSON.parse (<anonymous>)"]}
+{"showIgnoreListed":true,"originalHasNextFrame":true,"inspectedHasNextFrame":true,"safeFrames":["JSON.parse (<anonymous>)","node_modules/next/dist/server/load-manifest.external.js:54:25"]}
+{"controlledStage":"truncate_before_write","bytes":0,"sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","name":"SyntaxError"}
+{"controlledStage":"complete_write","parse":"ok"}

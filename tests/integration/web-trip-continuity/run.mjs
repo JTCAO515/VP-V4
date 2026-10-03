@@ -45,7 +45,8 @@ try{
   const state=identityLocalEnv();
   for(const key of Object.keys(testEnv))before[key]===undefined?delete process.env[key]:process.env[key]=before[key];
   server=spawn(process.execPath,['node_modules/next/dist/bin/next','dev','--webpack','--hostname','127.0.0.1','--port',String(base+31)],{cwd:repo,
-    env:{...testEnv,NEXT_PUBLIC_SUPABASE_URL:state.API_URL,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:state.PUBLISHABLE_KEY||state.ANON_KEY,
+    // Diagnostic only: Next normally hides framework frames before our safe observer sees them.
+    env:{...testEnv,__NEXT_SHOW_IGNORE_LISTED:'true',NEXT_PUBLIC_SUPABASE_URL:state.API_URL,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:state.PUBLISHABLE_KEY||state.ANON_KEY,
       VISEPANDA_NATIVE_STAGING:'false',VISEPANDA_NATIVE_PRODUCTION:'false',VISEPANDA_NATIVE_LOCAL_SESSION:'true',VISEPANDA_NATIVE_LOCAL_TRIP:'true',VISEPANDA_NATIVE_LOCAL_SERVICE_KEY:state.SERVICE_ROLE_KEY},stdio:['ignore','pipe','pipe']});
   server.stdout.on('data',chunk=>safeServer.write('stdout',chunk));server.stderr.on('data',chunk=>safeServer.write('stderr',chunk));server.stdout.on('end',()=>safeServer.end('stdout'));server.stderr.on('end',()=>safeServer.end('stderr'));
   const {waitForNativeAPI}=await import('../identity/native-api-readiness.mjs');
