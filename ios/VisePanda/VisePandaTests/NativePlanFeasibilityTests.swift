@@ -38,6 +38,30 @@ nonisolated final class NativePlanFeasibilityTests:XCTestCase {
         await store.check(needs:needs,after:after,current:{current},post:{_ in current=nil;return try self.bytes(self.response(target))})
         XCTAssertNil(store.result)
     }
+    @MainActor func testOptionalRouteAndSavedPreferencesRemainReferenceOnly() throws {
+        let target=target(actor)
+        let choices=[NativePlanPlaceChoice(dayId:"Day_1",itemId:"Item_A",placeReferenceId:trip,mappingId:proposal,expectedMappingVersion:1,city:"shanghai",scene:"attraction",locale:"en"),NativePlanPlaceChoice(dayId:"Day_1",itemId:"Item_B",placeReferenceId:owner,mappingId:proposal,expectedMappingVersion:1,city:"shanghai",scene:"attraction",locale:"en")]
+        let route=NativePlanRouteRequest(fromItemId:"Item_A",toItemId:"Item_B",mode:"walking",departure:"now",mapConsent:true)
+        let request=try NativePlanFeasibilityRequest(target:target,needs:needs,choices:choices,route:route)
+        let encoded=try XCTUnwrap(JSONSerialization.jsonObject(with:JSONEncoder().encode(request)) as? [String:Any]),routes=try XCTUnwrap(encoded["routeRequests"] as? [[String:Any]])
+        XCTAssertEqual(routes.count,1);XCTAssertEqual(Set(routes[0].keys),Set(["fromItemId","toItemId","mode","departure","mapConsent"]))
+        XCTAssertThrowsError(try NativePlanFeasibilityRequest(target:target,needs:needs,choices:choices,route:.init(fromItemId:"Item_A",toItemId:"Item_B",mode:"walking",departure:"now",mapConsent:false)))
+        let f=ISO8601DateFormatter();f.formatOptions=[.withInternetDateTime,.withFractionalSeconds]
+        let originalDeparture=f.string(from:Date().addingTimeInterval(-60)),observed=f.string(from:Date().addingTimeInterval(-1)),expiry=f.string(from:Date().addingTimeInterval(240))
+        var raw=response(target)
+        var lines=try XCTUnwrap(raw["lines"] as? [[String:Any]]);lines.append(["itemId":"Item_B","constraint":"door_to_door_route","status":"pending","reason":"QUALIFIED_ROUTE_MISSING"]);raw["lines"]=lines
+        raw["missingEvidence"]=[["itemId":"Item_A","constraint":"actual_place","reason":"EXACT_PLACE_EVIDENCE_MISSING"],["itemId":"Item_B","constraint":"door_to_door_route","reason":"QUALIFIED_ROUTE_MISSING"]]
+        raw["userDecisions"]=[["dayId":"Day_1","itemId":"Item_A","startsAt":f.string(from:Date().addingTimeInterval(-3600)),"endsAt":originalDeparture,"disposition":"preserved"],["dayId":"Day_1","itemId":"Item_B","startsAt":f.string(from:Date().addingTimeInterval(600)),"endsAt":f.string(from:Date().addingTimeInterval(3600)),"disposition":"preserved"]]
+        raw["evidenceBasis"]=[["kind":"route_observation","fromItemId":"Item_A","toItemId":"Item_B","originCanonicalPoiId":trip,"destinationCanonicalPoiId":owner,"provider":"amap","mode":"walking","departure":"now","actualDeparture":originalDeparture,"timeBinding":"reference_only","observedAt":observed,"expiresAt":expiry]]
+        raw["preferenceContext"]=["kind":"profile_preference_context/1","status":"current","travelPace":"relaxed","currency":"USD","defaultDepartureTime":"09:00","updatedAt":"2026-10-03T00:00:00Z","influence":"soft_reference_only","explicitInputPriority":"current_explicit_input","hints":["PROFILE_PACE_RELAXED_SOFT_REFERENCE","EXPLICIT_CURRENCY_OVERRIDES_PROFILE","PROFILE_DEPARTURE_REFERENCE_ONLY"]]
+        let result=try XCTUnwrap(NativePlanFeasibilityRead.decode(bytes(raw),target:target,choices:choices,route:route,explicitCurrency:"CNY"))
+        XCTAssertEqual(result.status,"pending");XCTAssertEqual(result.preferenceContext?.currency,"USD");XCTAssertEqual(request.needs.currency,"CNY");XCTAssertEqual(result.userDecisions.first?.endsAt,originalDeparture)
+        lines[2]["status"]="supported";raw["lines"]=lines;raw["missingEvidence"]=[["itemId":"Item_A","constraint":"actual_place","reason":"EXACT_PLACE_EVIDENCE_MISSING"]]
+        XCTAssertThrowsError(try NativePlanFeasibilityRead.decode(bytes(raw),target:target,choices:choices,route:route,explicitCurrency:"CNY"))
+        var profile=try XCTUnwrap(raw["preferenceContext"] as? [String:Any]);profile["influence"]="hard_constraint";raw["preferenceContext"]=profile
+        XCTAssertThrowsError(try NativePlanFeasibilityRead.decode(bytes(raw),target:target,choices:choices,route:route,explicitCurrency:"CNY"))
+    }
+
     @MainActor func testActualSessionPostsReadOnlyExactProposalRequest()async throws {
         let suite="vpj65.feasibility."+UUID().uuidString,defaults=try XCTUnwrap(UserDefaults(suiteName:suite));defer{defaults.removePersistentDomain(forName:suite)}
         let configuration=URLSessionConfiguration.ephemeral;configuration.protocolClasses=[FeasibilityProtocol.self]

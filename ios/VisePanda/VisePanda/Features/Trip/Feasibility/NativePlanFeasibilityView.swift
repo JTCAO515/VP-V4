@@ -15,6 +15,11 @@ struct NativePlanFeasibilityView:View {
     @State private var transfer=15
     @State private var baggage=0
     @State private var appointment=0
+    @State private var routeEnabled=false
+    @State private var fromItem=""
+    @State private var toItem=""
+    @State private var routeMode="walking"
+    @State private var mapConsent=false
     @State private var acknowledged=false
     @State private var task:Task<Void,Never>?
     private var target:NativePlanFeasibilityTarget? {
@@ -26,7 +31,12 @@ struct NativePlanFeasibilityView:View {
         let value=NativePlanNeeds(partySize:partySize,currency:currency,maxBudgetMinor:budgetEnabled ? Int(budget):nil,minTransferMinutes:transfer,baggageBufferMinutes:baggage,appointmentBufferMinutes:appointment,maxWalkingMinutes:walkingEnabled ? Int(walking):nil)
         return value.valid ? value:nil
     }
-    private var inputIdentity:String {"\(partySize)|\(currency)|\(budgetEnabled)|\(budget)|\(transfer)|\(baggage)|\(appointment)|\(walkingEnabled)|\(walking)"}
+    private var route:NativePlanRouteRequest? {
+        guard routeEnabled,mapConsent,store.choices.contains(where:{$0.itemId==fromItem}),store.choices.contains(where:{$0.itemId==toItem}) else{return nil}
+        let request=NativePlanRouteRequest(fromItemId:fromItem,toItemId:toItem,mode:routeMode,departure:"now",mapConsent:true)
+        return request.valid ? request:nil
+    }
+    private var inputIdentity:String {"\(partySize)|\(currency)|\(budgetEnabled)|\(budget)|\(transfer)|\(baggage)|\(appointment)|\(walkingEnabled)|\(walking)|\(routeEnabled)|\(fromItem)|\(toItem)|\(routeMode)|\(mapConsent)"}
     private func t(_ zh:String,_ en:String)->String{chinese ? zh:en}
     private func constraintName(_ key:String)->String {
         let labels:[String:(String,String)]=["calendar_timezone":("日期与时区","Date and timezone"),"actual_place":("真实地点","Actual place"),"door_to_door_route":("门到门交通","Door-to-door route"),"baggage_appointment_buffers":("行李与预约缓冲","Baggage/appointment buffers"),"last_connection":("末班衔接","Last connection"),"walking_limit":("步行上限","Walking limit"),"plan_items":("计划条目","Plan items"),"opening":("开放时间","Opening hours"),"reservation":("预约资格","Reservation"),"route":("换乘依据","Transfer evidence"),"budget":("总预算","Total budget")]
@@ -65,21 +75,50 @@ struct NativePlanFeasibilityView:View {
                     }
                 }
             }else{Text(t("尚无服务端 after-diff 快照，不能猜测条目或地点关系。", "Server after-diff snapshot unavailable; item/place relationships cannot be guessed."))}
+            Section(t("可选的前台即时路线观测", "Optional foreground current route observation")) {
+                Toggle(t("明确选择查询一段现在的路线", "Explicitly request one route departing now"),isOn:$routeEnabled)
+                if routeEnabled {
+                    Picker(t("出发条目", "From item"),selection:$fromItem){Text(t("请选择", "Choose")).tag("");ForEach(store.choices){Text("\($0.dayId)/\($0.itemId)").tag($0.itemId)}}
+                    Picker(t("到达条目", "To item"),selection:$toItem){Text(t("请选择", "Choose")).tag("");ForEach(store.choices){Text("\($0.dayId)/\($0.itemId)").tag($0.itemId)}}
+                    Picker(t("路线模式", "Route mode"),selection:$routeMode){Text(t("步行", "Walking")).tag("walking");Text(t("公共交通", "Transit")).tag("transit");Text(t("驾车", "Driving")).tag("driving")}
+                    Text(t("地点必须来自上方真实来源选择。此次会将这段地点交由高德查询当前路线，仅在已允许的权限／配额下执行；不查询未来时刻，不改原预约，末班与预约资格仍可能待核验。", "Endpoints must come from real evidence choices above. This sends those places to AMap for a current-route observation under existing permission/quota gates. Future departures are not queried, original appointments are unchanged, and last-service/reservation eligibility may remain pending."))
+                    Toggle(t("明确同意本次前台 Maps 查询用途", "Explicitly consent to this foreground Maps query"),isOn:$mapConsent)
+                    if store.choices.count<2{Text(t("先为两个真实条目选择地点来源。", "Choose place evidence for two real items first."))}
+                }
+            }.disabled(store.busy)
             Button(t("按这组明确输入核验当前提议", "Check this proposal with these explicit needs")) {
                 guard let needs else{return}
-                task?.cancel();task=Task{await store.check(needs:needs,after:tripStore.pending?.proposal.after,current:{target},post:{bytes in guard let target else{throw NativeDataError.sessionUnavailable};return try await session.planFeasibility(target,body:bytes)})}
-            }.disabled(!acknowledged || needs==nil || target==nil || store.busy)
+                task?.cancel();task=Task{await store.check(needs:needs,route:route,after:tripStore.pending?.proposal.after,current:{target},post:{bytes in guard let target else{throw NativeDataError.sessionUnavailable};return try await session.planFeasibility(target,body:bytes)})}
+            }.disabled((routeEnabled && route==nil) || !acknowledged || needs==nil || target==nil || store.busy)
             TimelineView(.periodic(from:.now,by:1)){_ in
                 if let result=store.visible(target) {
+                    Section(t("已保存基础偏好（软参考）", "Saved basic preferences (soft reference)")) {
+                        if let preference=result.preferenceContext,preference.status=="current" {
+                            Text(t("已保存旅行节奏：", "Saved travel pace: ")+(preference.travelPace ?? ""))
+                            Text(t("已保存货币：", "Saved currency: ")+(preference.currency ?? ""))
+                            Text(t("默认出发时间仅参考：", "Default departure time is reference only: ")+(preference.defaultDepartureTime ?? ""))
+                            Text(preference.updatedAt ?? "").font(.caption)
+                            Text(t("本次明确输入始终优先；软偏好不改变原时间或硬条件，也不是可行性证据。", "Current explicit input takes priority. Soft preferences do not alter original times/hard constraints and are not feasibility evidence."))
+                            if preference.currency != currency {Text(t("本次货币与已保存值不同，按本次输入核验。", "Current currency differs from saved value; current input is used."))}
+                            if let saved=preference.currency {Button(t("本次明确采用已保存货币", "Explicitly use saved currency for this check")){currency=saved;acknowledged=false;store.invalidate()}}
+                        }else{Text(t("基础偏好未知或不可读取；不以伪默认替代。", "Saved preferences unknown/unavailable; no fabricated default is used."))}
+                        NavigationLink(t("查看／纠正已保存旅行节奏", "Review/correct saved travel pace")){NativeTravelPaceView()}
+                    }
                     Section(t("服务端逐约束结果", "Server constraint results")) {
                         Text(result.status=="infeasible" ? t("有约束冲突", "Constraint conflict found"):result.status=="pending" ? t("仍有待核验项", "Some constraints remain pending"):t("所列约束已获支持", "Listed constraints supported"))
                         ForEach(Array(result.lines.enumerated()),id:\.offset){_,line in
                             VStack(alignment:.leading){Text("\(line.itemId ?? t("计划层", "Plan level")) · \(constraintName(line.constraint))");Text(line.status=="supported" ? t("此项获支持", "This constraint supported"):line.status=="violated" ? t("此项冲突", "This constraint violated"):t("此项待核验", "This constraint pending"));Text(line.reason).font(.caption)}
                         }
-                        ForEach(result.evidenceBasis,id:\.itemId){evidence in
-                            Text("\(evidence.itemId) · \(evidence.placeReferenceId) · \(evidence.mappingId) v\(evidence.mappingVersion) · \(evidence.claimType)").font(.caption).textSelection(.enabled)
-                            Text("\(evidence.sourceDigest) · \(evidence.contextDigest)").font(.caption)
-                            ForEach(evidence.facts,id:\.factId){fact in Text("\(fact.factId) v\(fact.version) · \(fact.expiresAt)").font(.caption)}
+                        ForEach(result.evidenceBasis){evidence in
+                            if evidence.isRoute {
+                                Text(t("即时路线观测：", "Current route observation: ")+"\(evidence.fromItemId ?? "") → \(evidence.toItemId ?? "") · \(evidence.mode ?? "")").font(.caption)
+                                Text(evidence.timeBinding=="exact" ? t("观测时刻严格匹配原出发时间；只支持这段已列约束。", "Observation exactly matches original departure; supports only listed leg constraints."):t("时刻不匹配，仅为即时参考；未来路线可行性仍待核验。", "Times differ: current reference only; future route feasibility remains pending."))
+                                Text("\(evidence.observedAt ?? "") → \(evidence.expiresAt ?? "")").font(.caption)
+                            }else {
+                                Text("\(evidence.itemId ?? "") · \(evidence.placeReferenceId ?? "") · \(evidence.mappingId ?? "") v\(evidence.mappingVersion ?? 0) · \(evidence.claimType ?? "")").font(.caption).textSelection(.enabled)
+                                Text("\(evidence.sourceDigest ?? "") · \(evidence.contextDigest ?? "")").font(.caption)
+                                ForEach(evidence.facts ?? [],id:\.factId){fact in Text("\(fact.factId) v\(fact.version) · \(fact.expiresAt)").font(.caption)}
+                            }
                         }
                         ForEach(Array(result.missingEvidence.enumerated()),id:\.offset){_,missing in Text(t("待补来源：", "Missing evidence: ")+"\(missing.itemId ?? "plan") · \(missing.constraint) · \(missing.reason)").font(.caption)}
                         ForEach(result.userDecisions,id:\.itemId){decision in Text(t("保留原时间：", "Original time preserved: ")+"\(decision.dayId)/\(decision.itemId) · \(decision.startsAt ?? "—") → \(decision.endsAt ?? "—")").font(.caption)}
@@ -90,6 +129,7 @@ struct NativePlanFeasibilityView:View {
             if store.notice != nil{Text(t("核验来源、权限或提议依据未确认；没有声明可行，也没有修改提议。输入过大时请明确减少来源选择。", "Evidence/authority/proposal basis unconfirmed; feasibility is not claimed and proposal is unchanged. Explicitly reduce evidence choices if input is too large."))}
         }.navigationTitle(t("计划约束核验", "Plan constraint check"))
         .task(id:target){store.bind(target);acknowledged=false}
+        .onChange(of:store.choices){_,_ in acknowledged=false;mapConsent=false}
         .onChange(of:inputIdentity){_,_ in store.invalidate();acknowledged=false}
         .onChange(of:target){_,value in task?.cancel();store.bind(value);acknowledged=false}
         .onChange(of:phase){_,value in if value != .active{task?.cancel();store.bind(nil);acknowledged=false}else{store.bind(target)}}
