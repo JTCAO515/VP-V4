@@ -79,6 +79,7 @@ export const LANES = {
           "tests/integration/privacy/linked-trip-delete-d3.test.mjs",
           "tests/integration/privacy/core-export-d2.test.mjs",
           "tests/integration/privacy/core-export-consumer.test.mjs",
+          "tests/integration/privacy/memory-delete-d4.test.mjs",
           "tests/integration/privacy/memory-export-d4.test.mjs",
           "tests/integration/privacy/memory-export-consumer-d4.test.mjs",
           "tests/integration/privacy/entitlement-export-d5.test.mjs",
