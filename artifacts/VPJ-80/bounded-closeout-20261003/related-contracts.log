@@ -1,0 +1,32 @@
+✔ invalid and pre-cancelled attempts never reserve or invoke (0.857958ms)
+✔ uncertain reserve or dispatch acknowledgments fail closed without releasing possible spend (0.52675ms)
+✔ transport failures and invalid costs retain uncertainty without exposing raw errors (0.404959ms)
+✔ cancel while settlement commits suppresses output without reverting accounted cost (0.196375ms)
+✔ cancel or timeout while unknown-cost pending commits never returns late output (32.265667ms)
+✔ planning receipt preserves SQL-captured ServiceTask, Turn and planning policy separately (2.251792ms)
+✔ planning receipt rejects wrong binding, collision, extra fields and unknown accounting (0.2095ms)
+✔ explicit HTTP bindings preserve all three protocol dialects and closed destination evidence (17.013958ms)
+✔ provider, exact endpoint and model mismatches fail before credentials or HTTP (0.645834ms)
+✔ existing C0 policy/budget and C2 policy-endpoint authority remain ahead of HTTP (1.151666ms)
+✔ credential and receipt exceptions are redacted; unavailable preparation sends nothing (1.54225ms)
+✔ ignored credential or configured-sink cancellation never causes late HTTP (12.668208ms)
+✔ failed post-dispatch sink cancels HTTP and does not emit successful destination evidence (0.828708ms)
+✔ bounded transport strips error details, redirects, raw headers and oversized streams (0.857166ms)
+✔ late ignored fetch responses are cancelled after the factory deadline (7.15425ms)
+✔ post-response receipt failure leaves existing durable budget accounting unknown (1.976833ms)
+✔ default off worker and hosted job do zero I/O and credential lookup (2.78725ms)
+✔ full mocked SQL/provider flow binds before dispatch, records real-protocol usage/output before settlement then completes (19.715417ms)
+✔ lost output and completion ACK recover exact receipts without replay; restart reuses completed tool/model (2.245375ms)
+✔ unknown tool, changed dispatch authority and unknown price cannot produce settled completion or a replacement call (1.866958ms)
+✔ caller reservation cannot override the claimed server execution snapshot (0.171042ms)
+✔ controlled host uses real HTTP transport but mock destinations: configured recipient gate after credential blocks supplier egress (4.383042ms)
+✔ false qualification or local fixture permit cannot become reserve authority; foreign attempt cannot dispatch (0.768917ms)
+✔ foreign output acknowledgement and revoked current source cannot publish or repeat supplier calls (1.307833ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 162.732167
