@@ -17,3 +17,7 @@ Early fixture used nonexistent text-policy columns, then a wrong goal version an
 **UNRUN** target migrations, RPC permission activation, scheduled worker, real account deletion, provider/external/backup erasure, human/device acceptance. Completed receipts always retain those limits and `allUserDataCompleted:false`. Native complete source and its evidence belong to the final same-outcome PR; no claim that all #228 scope is accepted follows from these checks.
 
 Integration registry: only the Memory delete PG file was added to the existing postgres lane; classification and its governance unit suite **PASS** 9/9. Shared main entries were preserved.
+
+## Final same-outcome integration
+
+Native immutable `4115ab9cdbaa4b9cceda5cd331adaf6c08d9f0e8` was normally merged into integration `799497d08157167d5a734ac12ffd4a77086db89b` from main6c588b99. No merge conflict or contract delta; `git diff --exit-code 4115ab9 HEAD -- ios artifacts/VPJ-36/native-memory-delete-d4-20261003` confirms its complete source/evidence are identical. Original 130/210/220 migrations are identical to main. Project plist and complete diff checks **PASS**. Native's 3 model/store/journal cases plus actual Session transport case and build evidence are reused unchanged; see the adjacent Native evidence document. No repeated SQL/Native matrix, independent micro PR or dirty-source adoption. Main owns formal review and protected merge.
