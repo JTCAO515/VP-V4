@@ -203,6 +203,31 @@ final class NativeSession {
         guard status==errSecSuccess || status==errSecItemNotFound else { throw NativeDataError.sessionUnavailable }
     }
 
+    func tripSupportContext(target:NativeTripSupportTarget,proposal:NativeTripPending.Proposal) async throws -> Data {
+        guard target.valid,dataScope==target.actor,NativeMemoryWire.uuid(proposal.id),proposal.revision>0,proposal.baseTripVersion==target.tripVersion,!proposal.stale else { throw NativeDataError.invalidResponse }
+        let bytes=try await tripRequest(path:"api/trips/native/v2/\(target.tripID)/support/context",method:"GET",queryItems:[.init(name:"expectedTripVersion",value:String(target.tripVersion)),.init(name:"proposalId",value:proposal.id),.init(name:"expectedProposalRevision",value:String(proposal.revision)),.init(name:"dayId",value:target.dayID),.init(name:"itemId",value:target.itemID)])
+        guard dataScope==target.actor,bytes.count<=262_144 else { throw NativeDataError.staleSessionResponse }
+        return bytes
+    }
+
+    func tripSupportConfirmationRead(_ journal:NativeTripSupportConfirmJournal,actor:NativeDataScope) async throws -> Data {
+        guard journal.matches(actor),dataScope==actor else { throw NativeDataError.sessionUnavailable }
+        _=try journal.request()
+        let bytes=try await tripRequest(path:"api/trips/native/v2/\(journal.tripID)/support/confirmation-receipt",method:"POST",body:journal.body)
+        guard dataScope==actor,bytes.count<=131_072 else { throw NativeDataError.staleSessionResponse }
+        return bytes
+    }
+    func tripSupportCandidates(target:NativeTripSupportTarget,placeReferenceID:String,city:String,scene:String,locale:String,cursor:NativeTripSupportCandidates.Cursor?=nil) async throws -> Data {
+        guard target.valid,dataScope==target.actor,NativeMemoryWire.uuid(placeReferenceID),["shanghai","beijing","guangzhou","chongqing"].contains(city),
+              ["arrival","airport_transport","payment","connectivity","public_transport","taxi","rail","attraction","accommodation","emergency"].contains(scene),["zh","en"].contains(locale),
+              cursor.map({NativeQualifiedDelegationRPC.digest($0.contextDigest) && NativeMemoryWire.uuid($0.afterMappingId)}) ?? true else { throw NativeDataError.invalidResponse }
+        var query=[URLQueryItem(name:"expectedTripVersion",value:String(target.tripVersion)),.init(name:"placeReferenceId",value:placeReferenceID),.init(name:"city",value:city),.init(name:"scene",value:scene),.init(name:"locale",value:locale),.init(name:"limit",value:"50")]
+        if let cursor { query += [.init(name:"contextDigest",value:cursor.contextDigest),.init(name:"afterMappingId",value:cursor.afterMappingId)] }
+        let bytes=try await tripRequest(path:"api/trips/native/v2/\(target.tripID)/support/candidates",method:"GET",queryItems:query)
+        guard dataScope==target.actor,bytes.count<=512_000 else { throw NativeDataError.staleSessionResponse }
+        return bytes
+    }
+
     func tripSupportPrepare(_ request: NativeTripSupportPrepareRequest, target: NativeTripSupportTarget, proposal: NativeTripPending.Proposal) async throws -> Data {
         guard request.valid, target.valid, dataScope==target.actor, request.dayId==target.dayID, request.itemId==target.itemID,
               request.expectedBaseVersion==target.tripVersion, request.proposalId==proposal.id, request.expectedProposalRevision==proposal.revision, request.expectedProposalDigest==proposal.digest else { throw NativeDataError.invalidResponse }

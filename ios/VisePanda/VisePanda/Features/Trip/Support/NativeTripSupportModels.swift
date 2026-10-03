@@ -57,10 +57,12 @@ struct NativeTripSupportClaim: Decodable {
     }
 }
 struct NativeTripSupportRead: Decodable {
+    struct SourceReference:Decodable { let sourceRevisionId:String;let revisionLabel:String;let snippetHash:String }
     struct Entry: Decodable, Identifiable {
         var id: String { supportId }
         let supportId: String
         let receiptId: String
+        let placeReferenceId: String
         let version: Int
         let scope: NativeTripSupportScope
         let applicability: NativeTripSupportApplicability
@@ -68,6 +70,7 @@ struct NativeTripSupportRead: Decodable {
         let claimRevision: Int
         let payloadHash: String
         let sourceDigest: String
+        let sourceRefs:[SourceReference]
         let claim: NativeTripSupportClaim?
     }
     let kind: String
@@ -79,12 +82,14 @@ struct NativeTripSupportRead: Decodable {
     static func decode(_ bytes: Data, target: NativeTripSupportTarget, now: Date = Date()) throws -> Self {
         guard target.valid, bytes.count<=131_072, let raw=try JSONSerialization.jsonObject(with: bytes) as? [String:Any],
               Set(raw.keys)==Set(["kind","tripId","tripVersion","dayId","itemId","entries"]), let entries=raw["entries"] as? [[String:Any]], entries.count<=8,
-              entries.allSatisfy({ Set($0.keys)==Set(["supportId","receiptId","version","scope","applicability","status","claimRevision","payloadHash","sourceDigest","claim"]) }) else { throw NativeDataError.invalidResponse }
+              entries.allSatisfy({ Set($0.keys)==Set(["supportId","receiptId","placeReferenceId","version","scope","applicability","status","claimRevision","payloadHash","sourceDigest","sourceRefs","claim"]) }) else { throw NativeDataError.invalidResponse }
         let result=try JSONDecoder().decode(Self.self,from:bytes)
         guard result.kind=="support", result.tripId==target.tripID, result.tripVersion==target.tripVersion, result.dayId==target.dayID, result.itemId==target.itemID,
               Set(result.entries.map(\.supportId)).count==entries.count, Set(result.entries.map(\.receiptId)).count==entries.count else { throw NativeDataError.invalidResponse }
         for (index, entry) in result.entries.enumerated() {
-            guard NativeMemoryWire.uuid(entry.supportId), NativeMemoryWire.uuid(entry.receiptId), (1...999_999_999).contains(entry.version), (1...999_999_999).contains(entry.claimRevision),
+            guard let refs=entries[index]["sourceRefs"] as? [[String:Any]],refs.count<=64,refs.allSatisfy({Set($0.keys)==Set(["sourceRevisionId","revisionLabel","snippetHash"])}),
+                  entry.sourceRefs.allSatisfy({NativeMemoryWire.uuid($0.sourceRevisionId) && !$0.revisionLabel.isEmpty && $0.revisionLabel.utf16.count<=256 && NativeQualifiedDelegationRPC.digest($0.snippetHash)}) else { throw NativeDataError.invalidResponse }
+            guard NativeMemoryWire.uuid(entry.supportId), NativeMemoryWire.uuid(entry.receiptId), NativeMemoryWire.uuid(entry.placeReferenceId), (1...999_999_999).contains(entry.version), (1...999_999_999).contains(entry.claimRevision),
                   NativeQualifiedDelegationRPC.digest(entry.payloadHash), NativeQualifiedDelegationRPC.digest(entry.sourceDigest) else { throw NativeDataError.invalidResponse }
             if entry.status == .current {
                 try NativeTripSupportClaim.validate(entries[index]["claim"] as Any, scope:entry.scope,now:now)
@@ -204,12 +209,13 @@ struct NativeSupportedTripConfirmReceipt: Decodable {
     let proposalId: String
     let resultingVersion: Int
     let supports: [Binding]
+    let selectionDigest: String
     static func decode(_ bytes:Data,tripID:String,request:NativeSupportedTripConfirmRequest) throws -> Self {
-        guard request.valid, bytes.count<=131_072, let raw=try JSONSerialization.jsonObject(with:bytes) as? [String:Any], Set(raw.keys)==Set(["kind","outcome","tripId","proposalId","resultingVersion","supports"]),
+        guard request.valid, bytes.count<=131_072, let raw=try JSONSerialization.jsonObject(with:bytes) as? [String:Any], Set(raw.keys)==Set(["kind","outcome","tripId","proposalId","resultingVersion","supports","selectionDigest"]),
               let supports=raw["supports"] as? [[String:Any]], supports.count==request.supportSelection.count,
               supports.allSatisfy({ Set($0.keys)==Set(["supportId","receiptId","version","status"]) }) else { throw NativeDataError.invalidResponse }
         let result=try JSONDecoder().decode(Self.self,from:bytes)
-        guard result.kind=="confirmed", ["applied","already_applied"].contains(result.outcome), result.tripId==tripID, result.proposalId==request.proposalId, result.resultingVersion==request.expectedBaseVersion+1,
+        guard result.kind=="confirmed", NativeQualifiedDelegationRPC.digest(result.selectionDigest), ["applied","already_applied"].contains(result.outcome), result.tripId==tripID, result.proposalId==request.proposalId, result.resultingVersion==request.expectedBaseVersion+1,
               Set(result.supports.map(\.receiptId))==Set(request.supportSelection.map(\.receiptId)), Set(result.supports.map(\.supportId)).count==result.supports.count,
               result.supports.allSatisfy({ NativeMemoryWire.uuid($0.supportId) && NativeMemoryWire.uuid($0.receiptId) && (1...9_007_199_254_740_991).contains($0.version) }) else { throw NativeDataError.invalidResponse }
         return result
@@ -243,4 +249,82 @@ struct NativeTripSupportConfirmJournal: Codable {
         return request
     }
     func matches(_ actor:NativeDataScope) -> Bool { endpoint==actor.endpoint && owner==actor.subject && epoch==actor.mobileEpoch }
+}
+
+struct NativeTripSupportCandidates: Decodable {
+    struct Cursor: Codable, Equatable { let contextDigest:String;let afterMappingId:String }
+    struct Entry: Decodable, Identifiable {
+        var id:String { mappingId }
+        let mappingId:String
+        let mappingVersion:Int
+        let mappingDigest:String
+        let statementId:String
+        let claimRevision:Int
+        let payloadHash:String
+        let sourceDigest:String
+        let scope:NativeTripSupportScope
+        let claim:NativeTripSupportClaim
+    }
+    let kind:String
+    let tripId:String
+    let tripVersion:Int
+    let placeReferenceId:String
+    let contextDigest:String
+    let entries:[Entry]
+    let nextCursor:Cursor?
+    static func decode(_ bytes:Data,target:NativeTripSupportTarget,placeReferenceID:String,cursor:Cursor?=nil,now:Date=Date()) throws -> Self {
+        guard target.valid, NativeMemoryWire.uuid(placeReferenceID),bytes.count<=512_000,let raw=try JSONSerialization.jsonObject(with:bytes) as? [String:Any],Set(raw.keys)==Set(["kind","tripId","tripVersion","placeReferenceId","contextDigest","entries","nextCursor"]),
+              let entries=raw["entries"] as? [[String:Any]],entries.count<=50,entries.allSatisfy({Set($0.keys)==Set(["mappingId","mappingVersion","mappingDigest","statementId","claimRevision","payloadHash","sourceDigest","scope","claim"])}) else { throw NativeDataError.invalidResponse }
+        if let next=raw["nextCursor"] as? [String:Any] { guard Set(next.keys)==Set(["contextDigest","afterMappingId"]) else { throw NativeDataError.invalidResponse } }
+        else { guard raw["nextCursor"] is NSNull else { throw NativeDataError.invalidResponse } }
+        let result=try JSONDecoder().decode(Self.self,from:bytes)
+        guard result.kind=="candidates",result.tripId==target.tripID,result.tripVersion==target.tripVersion,result.placeReferenceId==placeReferenceID,NativeQualifiedDelegationRPC.digest(result.contextDigest),cursor==nil || cursor?.contextDigest==result.contextDigest,
+              result.entries.map(\.id)==result.entries.map(\.id).sorted(),Set(result.entries.map(\.id)).count==entries.count else { throw NativeDataError.invalidResponse }
+        for (index,entry) in result.entries.enumerated() {
+            guard NativeMemoryWire.uuid(entry.mappingId),NativeMemoryWire.uuid(entry.statementId),(1...9_007_199_254_740_991).contains(entry.mappingVersion),(1...2_147_483_647).contains(entry.claimRevision),
+                  [entry.mappingDigest,entry.payloadHash,entry.sourceDigest].allSatisfy(NativeQualifiedDelegationRPC.digest),cursor.map({entry.mappingId>$0.afterMappingId}) ?? true else { throw NativeDataError.invalidResponse }
+            try NativeTripSupportClaim.validate(entries[index]["claim"] as Any,scope:entry.scope,now:now)
+        }
+        if let next=result.nextCursor { guard next.contextDigest==result.contextDigest,NativeMemoryWire.uuid(next.afterMappingId),next.afterMappingId==result.entries.last?.id else { throw NativeDataError.invalidResponse } }
+        return result
+    }
+}
+enum NativeTripSupportHistoricalReceipt {
+    static func decode(_ bytes:Data,journal:NativeTripSupportConfirmJournal) throws -> NativeSupportedTripConfirmReceipt {
+        guard bytes.count<=131_072,let raw=try JSONSerialization.jsonObject(with:bytes) as? [String:Any],Set(raw.keys)==Set(["kind","receipt","historicalOnly","currentEligibilityRequiresRead"]),raw["kind"] as? String=="confirmation_receipt",raw["historicalOnly"] as? Bool==true,raw["currentEligibilityRequiresRead"] as? Bool==true,let receipt=raw["receipt"] as? [String:Any] else { throw NativeDataError.invalidResponse }
+        return try NativeSupportedTripConfirmReceipt.decode(JSONSerialization.data(withJSONObject:receipt),tripID:journal.tripID,request:journal.request())
+    }
+}
+
+struct NativeTripSupportContext: Decodable {
+    struct Reference: Decodable, Identifiable {
+        struct Display: Decodable { let en:String?;let zh:String? }
+        var id:String { referenceId }
+        let referenceId:String
+        let canonicalPoiId:String
+        let display:Display
+    }
+    let kind:String
+    let tripId:String
+    let tripVersion:Int
+    let proposalId:String
+    let proposalRevision:Int
+    let baseVersion:Int
+    let proposalDigest:String
+    let itemDigest:String
+    let dayId:String
+    let itemId:String
+    let canonicalPlaceReferences:[Reference]
+    static func decode(_ bytes:Data,target:NativeTripSupportTarget,proposal:NativeTripPending.Proposal) throws -> Self {
+        guard target.valid,bytes.count<=262_144,let raw=try JSONSerialization.jsonObject(with:bytes) as? [String:Any],Set(raw.keys)==Set(["kind","tripId","tripVersion","proposalId","proposalRevision","baseVersion","proposalDigest","itemDigest","dayId","itemId","canonicalPlaceReferences"]),
+              let refs=raw["canonicalPlaceReferences"] as? [[String:Any]],refs.count<=100,refs.allSatisfy({ ref in
+                  guard Set(ref.keys)==Set(["referenceId","canonicalPoiId","display"]),let display=ref["display"] as? [String:Any],Set(display.keys)==Set(["en","zh"]) else{return false}
+                  return display.values.allSatisfy { $0 is NSNull || ($0 as? String).map({$0.utf16.count<=2000})==true }
+              }) else { throw NativeDataError.invalidResponse }
+        let result=try JSONDecoder().decode(Self.self,from:bytes)
+        guard result.kind=="support_context",result.tripId==target.tripID,result.tripVersion==target.tripVersion,result.baseVersion==target.tripVersion,result.proposalId==proposal.id,result.proposalRevision==proposal.revision,result.proposalDigest==proposal.digest,result.baseVersion==proposal.baseTripVersion,
+              result.dayId==target.dayID,result.itemId==target.itemID,NativeQualifiedDelegationRPC.digest(result.itemDigest),Set(result.canonicalPlaceReferences.map(\.id)).count==refs.count,result.canonicalPlaceReferences.map(\.id)==result.canonicalPlaceReferences.map(\.id).sorted(),
+              result.canonicalPlaceReferences.allSatisfy({NativeMemoryWire.uuid($0.referenceId) && NativeMemoryWire.uuid($0.canonicalPoiId)}) else { throw NativeDataError.invalidResponse }
+        return result
+    }
 }

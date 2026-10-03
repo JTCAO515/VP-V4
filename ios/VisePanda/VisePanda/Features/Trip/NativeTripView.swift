@@ -280,6 +280,11 @@ struct NativeTripView: View {
         }
         .toolbar {
             ToolbarItem(placement:.topBarTrailing) {
+                NavigationLink(text("Reference save receipt", "参考保存回执")) {
+                    NativeTripSupportRecoveryView(session:session,chinese:settings.selectedLocale == .zh,readReceipt:{try await session.tripSupportConfirmationRead($0,actor:$1)},onResolved:{supportStore.bind(nil);await store.reload(using:session)})
+                }
+            }
+            ToolbarItem(placement:.topBarTrailing) {
                 if let journal=try? session.linkedTripDeletionRecovery() {
                     NavigationLink(text("Linked deletion status", "协同删除状态")) {
                         NativeLinkedTripDeletionView(tripID:journal.tripID,headVersion:(try? journal.decodedRequest().expectedVersion) ?? 0)
@@ -625,7 +630,7 @@ struct NativeTripView: View {
                         ForEach(day.items) { item in
                             VStack(alignment: .leading, spacing: 4) {
                                 NavigationLink(text("Item source references", "条目来源参考")) {
-                                    NativeTripSupportView(session:session,tripID:detail.trip.id,tripVersion:detail.trip.headVersion,dayID:day.id,itemID:item.id,proposal:nil,store:supportStore,chinese:settings.selectedLocale == .zh,ports:.init(read:{try await session.tripSupportRead($0)}))
+                                    NativeTripSupportView(session:session,tripID:detail.trip.id,tripVersion:detail.trip.headVersion,dayID:day.id,itemID:item.id,proposal:nil,store:supportStore,chinese:settings.selectedLocale == .zh,ports:.init(read:{try await session.tripSupportRead($0)},context:{try await session.tripSupportContext(target:$0,proposal:$1)}))
                                 }
                                 Text(item.title).accessibilityIdentifier("trip.confirmed.item.\(item.id)")
                                 if let start = item.startsAt { Text(start).font(.caption) }
@@ -685,7 +690,7 @@ struct NativeTripView: View {
                 ForEach(pending.proposal.dayDiffs,id:\.dayId) { day in
                     ForEach(day.items,id:\.itemId) { item in
                         NavigationLink(text("Review sources for \(day.dayId)/\(item.itemId)", "审阅条目来源 \(day.dayId)/\(item.itemId)")) {
-                            NativeTripSupportView(session:session,tripID:pending.trip.id,tripVersion:pending.proposal.baseTripVersion,dayID:day.dayId,itemID:item.itemId,proposal:pending.proposal,store:supportStore,chinese:settings.selectedLocale == .zh,ports:.init(read:{try await session.tripSupportRead($0)}))
+                            NativeTripSupportView(session:session,tripID:pending.trip.id,tripVersion:pending.proposal.baseTripVersion,dayID:day.dayId,itemID:item.itemId,proposal:pending.proposal,store:supportStore,chinese:settings.selectedLocale == .zh,ports:.init(read:{try await session.tripSupportRead($0)},context:{try await session.tripSupportContext(target:$0,proposal:$1)}))
                         }
                     }
                 }

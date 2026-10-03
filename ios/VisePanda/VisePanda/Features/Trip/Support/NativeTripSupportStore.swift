@@ -63,6 +63,20 @@ final class NativeTripSupportStore {
         prepared=other+receipts; frozenChoices=nil; confirmationKey=nil
         notice=receipts.isEmpty ? "noMappedSupport" : nil
     }
+    func addPrepared(_ bytes:Data,target:NativeTripSupportTarget,proposal:NativeTripPending.Proposal) throws {
+        guard !confirmationUnknown,self.target==target,proposalReference==Self.reference(proposal) else { throw NativeDataError.invalidResponse }
+        let receipt=try NativePreparedTripSupport.decode(bytes,target:target,proposal:proposal)
+        let old=prepared.filter { $0.dayId==receipt.dayId && $0.itemId==receipt.itemId && $0.scope==receipt.scope }
+        prepared.removeAll { old.map(\.id).contains($0.id) }
+        selectedIDs.subtract(old.map(\.id))
+        guard prepared.count<64 else { throw NativeDataError.invalidResponse }
+        prepared.append(receipt);frozenChoices=nil;frozenRequest=nil;confirmationKey=nil
+    }
+    func removeRevoked(_ receipt:NativePreparedTripSupport,bytes:Data) throws {
+        guard !confirmationUnknown,let raw=try JSONSerialization.jsonObject(with:bytes) as? [String:Any],Set(raw.keys)==Set(["kind","receiptId","version"]),raw["kind"] as? String=="revoked",raw["receiptId"] as? String==receipt.receiptId,(raw["version"] as? Int)==receipt.version+1 else { throw NativeDataError.invalidResponse }
+        prepared.removeAll { $0.id==receipt.id };selectedIDs.remove(receipt.id)
+    }
+
     func select(_ receiptID: String, chosen: Bool, now: Date=Date()) {
         guard !busy, !confirmationUnknown, let receipt=prepared.first(where:{ $0.id==receiptID }),
               NativeKnowledgeRead.date(receipt.expiresAt).map({ $0>now })==true else { return }
