@@ -167,6 +167,29 @@ final class NativeSession {
     }
 
     /// The Trip consumer receives response bytes, never the Keychain credential.
+    func tripSupportPrepare(_ request: NativeTripSupportPrepareRequest, target: NativeTripSupportTarget, proposal: NativeTripPending.Proposal) async throws -> Data {
+        guard request.valid, target.valid, dataScope==target.actor, request.dayId==target.dayID, request.itemId==target.itemID,
+              request.expectedBaseVersion==target.tripVersion, request.proposalId==proposal.id, request.expectedProposalRevision==proposal.revision, request.expectedProposalDigest==proposal.digest else { throw NativeDataError.invalidResponse }
+        return try await tripSupportPost(action:"prepare",tripID:target.tripID,body:JSONEncoder().encode(request),actor:target.actor)
+    }
+    func tripSupportRenew(_ request: NativeTripSupportRenewRequest, target: NativeTripSupportTarget) async throws -> Data {
+        guard request.valid, target.valid, dataScope==target.actor, request.tripVersion==target.tripVersion, request.dayId==target.dayID, request.itemId==target.itemID else { throw NativeDataError.invalidResponse }
+        return try await tripSupportPost(action:"renew",tripID:target.tripID,body:JSONEncoder().encode(request),actor:target.actor)
+    }
+    func tripSupportRevoke(_ receipt: NativePreparedTripSupport, actor: NativeDataScope) async throws -> Data {
+        guard dataScope==actor, NativeMemoryWire.uuid(receipt.receiptId), receipt.version>0 else { throw NativeDataError.sessionUnavailable }
+        struct Revoke:Encodable { let receiptId:String;let expectedVersion:Int }
+        let bytes=try await tripRequest(path:"api/trips/native/v2/support/preparations/revoke",method:"POST",body:JSONEncoder().encode(Revoke(receiptId:receipt.receiptId,expectedVersion:receipt.version)))
+        guard dataScope==actor,bytes.count<=4096 else { throw NativeDataError.staleSessionResponse }
+        return bytes
+    }
+    private func tripSupportPost(action:String,tripID:String,body:Data,actor:NativeDataScope) async throws -> Data {
+        guard ["prepare","renew","confirm"].contains(action), NativeMemoryWire.uuid(tripID),dataScope==actor,body.count<=65_536 else { throw NativeDataError.invalidResponse }
+        let bytes=try await tripRequest(path:"api/trips/native/v2/\(tripID)/support/\(action)",method:"POST",body:body)
+        guard dataScope==actor,bytes.count<=131_072 else { throw NativeDataError.staleSessionResponse }
+        return bytes
+    }
+
     func tripSupportRead(_ target: NativeTripSupportTarget) async throws -> Data {
         guard target.valid, dataScope==target.actor else { throw NativeDataError.sessionUnavailable }
         let bytes=try await tripRequest(path:"api/trips/native/v2/\(target.tripID)/support",method:"GET",queryItems:[

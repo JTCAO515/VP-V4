@@ -125,3 +125,105 @@ struct NativeTripSupportChoice: Codable, Equatable {
     let version: Int
     let sourceDigest: String
 }
+
+struct NativeTripSupportPrepareRequest: Codable {
+    let operationId: String
+    let placeReferenceId: String
+    let dayId: String
+    let itemId: String
+    let proposalId: String
+    let expectedProposalRevision: Int
+    let expectedBaseVersion: Int
+    let expectedProposalDigest: String
+    let expectedItemDigest: String
+    let mappingId: String
+    let expectedMappingVersion: Int
+    let expectedMappingDigest: String
+    let city: String
+    let scene: String
+    let locale: String
+    let scope: NativeTripSupportScope
+    let expectedClaimRevision: Int
+    let expectedPayloadHash: String
+    let expectedSourceDigest: String
+    var valid: Bool {
+        [operationId,placeReferenceId,proposalId,mappingId].allSatisfy(NativeMemoryWire.uuid) &&
+        [expectedProposalDigest,expectedItemDigest,expectedMappingDigest,expectedPayloadHash,expectedSourceDigest].allSatisfy(NativeQualifiedDelegationRPC.digest) &&
+        NativeTripSupportTarget.item(dayId) && NativeTripSupportTarget.item(itemId) &&
+        (1...2_147_483_647).contains(expectedProposalRevision) && (0...999_999_999).contains(expectedBaseVersion) &&
+        (1...9_007_199_254_740_991).contains(expectedMappingVersion) && (1...2_147_483_647).contains(expectedClaimRevision) &&
+        ["shanghai","beijing","guangzhou","chongqing"].contains(city) &&
+        ["arrival","airport_transport","payment","connectivity","public_transport","taxi","rail","attraction","accommodation","emergency"].contains(scene) && ["zh","en"].contains(locale)
+    }
+}
+struct NativeTripSupportRenewRequest: Codable {
+    let operationId: String
+    let supportId: String
+    let expectedVersion: Int
+    let tripVersion: Int
+    let dayId: String
+    let itemId: String
+    let mappingId: String
+    let expectedMappingVersion: Int
+    let expectedMappingDigest: String
+    let expectedClaimRevision: Int
+    let expectedPayloadHash: String
+    let expectedSourceDigest: String
+    var valid: Bool {
+        [operationId,supportId,mappingId].allSatisfy(NativeMemoryWire.uuid) &&
+        [expectedMappingDigest,expectedPayloadHash,expectedSourceDigest].allSatisfy(NativeQualifiedDelegationRPC.digest) &&
+        NativeTripSupportTarget.item(dayId) && NativeTripSupportTarget.item(itemId) &&
+        (1...9_007_199_254_740_991).contains(expectedVersion) && (0...999_999_999).contains(tripVersion) &&
+        (1...9_007_199_254_740_991).contains(expectedMappingVersion) && (1...2_147_483_647).contains(expectedClaimRevision)
+    }
+}
+struct NativeSupportedTripConfirmRequest: Codable, Equatable {
+    let proposalId: String
+    let idempotencyKey: String
+    let digest: String
+    let expectedProposalRevision: Int
+    let expectedBaseVersion: Int
+    let supportSelection: [NativeTripSupportChoice]
+    var valid: Bool {
+        NativeMemoryWire.uuid(proposalId) && NativeMemoryWire.uuid(idempotencyKey) && NativeQualifiedDelegationRPC.digest(digest) &&
+        (1...2_147_483_647).contains(expectedProposalRevision) && (0...999_999_999).contains(expectedBaseVersion) &&
+        (1...8).contains(supportSelection.count) && Set(supportSelection.map(\.receiptId)).count==supportSelection.count &&
+        supportSelection.allSatisfy({ NativeMemoryWire.uuid($0.receiptId) && (1...9_007_199_254_740_991).contains($0.version) && NativeQualifiedDelegationRPC.digest($0.sourceDigest) })
+    }
+}
+struct NativeSupportedTripConfirmReceipt: Decodable {
+    struct Binding: Decodable {
+        let supportId: String
+        let receiptId: String
+        let version: Int
+        let status: NativeTripSupportStatus
+    }
+    let kind: String
+    let outcome: String
+    let tripId: String
+    let proposalId: String
+    let resultingVersion: Int
+    let supports: [Binding]
+    static func decode(_ bytes:Data,tripID:String,request:NativeSupportedTripConfirmRequest) throws -> Self {
+        guard request.valid, bytes.count<=131_072, let raw=try JSONSerialization.jsonObject(with:bytes) as? [String:Any], Set(raw.keys)==Set(["kind","outcome","tripId","proposalId","resultingVersion","supports"]),
+              let supports=raw["supports"] as? [[String:Any]], supports.count==request.supportSelection.count,
+              supports.allSatisfy({ Set($0.keys)==Set(["supportId","receiptId","version","status"]) }) else { throw NativeDataError.invalidResponse }
+        let result=try JSONDecoder().decode(Self.self,from:bytes)
+        guard result.kind=="confirmed", ["applied","already_applied"].contains(result.outcome), result.tripId==tripID, result.proposalId==request.proposalId, result.resultingVersion==request.expectedBaseVersion+1,
+              Set(result.supports.map(\.receiptId))==Set(request.supportSelection.map(\.receiptId)), Set(result.supports.map(\.supportId)).count==result.supports.count,
+              result.supports.allSatisfy({ NativeMemoryWire.uuid($0.supportId) && NativeMemoryWire.uuid($0.receiptId) && (1...9_007_199_254_740_991).contains($0.version) }) else { throw NativeDataError.invalidResponse }
+        return result
+    }
+}
+struct NativeTripSupportRenewReceipt: Decodable {
+    let kind: String
+    let supportId: String
+    let version: Int
+    let receiptId: String
+    static func decode(_ bytes:Data,request:NativeTripSupportRenewRequest) throws -> Self {
+        guard request.valid, bytes.count<=4096, let raw=try JSONSerialization.jsonObject(with:bytes) as? [String:Any], Set(raw.keys)==Set(["kind","supportId","version","receiptId"]) else { throw NativeDataError.invalidResponse }
+        let result=try JSONDecoder().decode(Self.self,from:bytes)
+        guard result.kind=="renewed", result.supportId==request.supportId, result.version==request.expectedVersion+1, NativeMemoryWire.uuid(result.receiptId) else { throw NativeDataError.invalidResponse }
+        return result
+    }
+}
