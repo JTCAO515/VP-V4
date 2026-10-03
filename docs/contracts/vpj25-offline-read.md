@@ -34,8 +34,11 @@ storing; logout, revoke, deletion and account changes remove local packages.
 
 ## Exact wire and signature bytes
 
-All IDs are lowercase UUID strings except policyId/keyId (nonempty, <=128 UTF-16
-code units). sessionEpoch/policyRevision/headVersion are positive safe integers
+subject/tripId/requestNonce are lowercase UUID strings. Payload day/item IDs use
+the existing Trip domain opaque ID grammar `^[A-Za-z0-9_-]{1,64}$`, are case-sensitive
+and retain their exact original value and order. Provenance ID membership is exact
+and case-sensitive; never normalize these IDs. policyId/keyId are nonempty strings
+<=128 UTF-16 code units. sessionEpoch/policyRevision/headVersion are positive safe integers
 (1..9007199254740991). subject is the current authenticated actor. Missing epoch
 binding is ineligible for success. head zero is an initial, unconfirmed Trip.
 Dates are non-null valid `YYYY-MM-DD`. issuedAt/expiresAt/serverTime are non-null UTC

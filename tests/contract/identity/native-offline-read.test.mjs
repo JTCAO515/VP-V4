@@ -196,3 +196,35 @@ test('authority upstream error retains503 instead of clearing credentials',async
   const f=await httpFixture(t,s=>{if(s.path.endsWith('/native_session_v2'))s.response=Response.json({message:'synthetic authority outage'},{status:503});});
   assert.equal((await nativeOfflineReadHTTP(f.request,tripId)).status,503);
 });
+
+test('real Trip opaque IDs and uppercase UUIDs remain exact in signed payload and provenance',async()=>{
+  const f=fixture(),day=f.basis.payload.days[0];
+  day.id='Day_1-A';
+  day.items[0].id=itemId.toUpperCase();
+  f.policy.userAuthoredDayIds=[day.id];
+  f.policy.userAuthoredItemIds=[day.items[0].id];
+  const result=await issueOfflineRead(tripId,2,nonce,f.ports);
+  assert.equal(result.kind,'offline_trip_read/1');
+  assert.equal(result.payload.days[0].id,'Day_1-A');
+  assert.equal(result.payload.days[0].items[0].id,itemId.toUpperCase());
+  f.policy.userAuthoredDayIds=['day_1-a'];
+  assert.equal((await issueOfflineRead(tripId,2,nonce,f.ports)).kind,'unavailable');
+});
+test('opaque ID boundary rejects illegal and duplicate IDs before signing',async()=>{
+  for(const id of ['', 'x'.repeat(65), 'contains space', '含中文', 'slash/id']){
+    for(const field of ['day','item']){
+      const f=fixture(),day=f.basis.payload.days[0];
+      if(field==='day'){day.id=id;f.policy.userAuthoredDayIds=[id];}
+      else{day.items[0].id=id;f.policy.userAuthoredItemIds=[id];}
+      assert.equal((await issueOfflineRead(tripId,2,nonce,f.ports)).kind,'unavailable');
+      assert.equal(f.signs,0);
+    }
+  }
+  for(const field of ['day','item']){
+    const f=fixture(),day=f.basis.payload.days[0];
+    if(field==='day')f.basis.payload.days.push(structuredClone(day));
+    else day.items.push(structuredClone(day.items[0]));
+    assert.equal((await issueOfflineRead(tripId,2,nonce,f.ports)).kind,'unavailable');
+    assert.equal(f.signs,0);
+  }
+});

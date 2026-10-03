@@ -27,6 +27,7 @@ export type OfflinePorts = {
 };
 const unavailable = (reason: OfflineUnavailable["reason"]): OfflineUnavailable => ({ kind: "unavailable", reason });
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+const tripContentId = /^[A-Za-z0-9_-]{1,64}$/;
 const positive = (n: number) => Number.isSafeInteger(n) && n > 0;
 const text = (s: string, max: number) => typeof s === "string" && s.length > 0 && s.length <= max && !/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/u.test(s);
 
@@ -45,10 +46,10 @@ function validBasis(b: OfflineBasis, tripId: string, head: number): boolean {
   if (!Array.isArray(b.payload.days) || b.payload.days.length === 0 || b.payload.days.length > 60) return false;
   const days = new Set<string>(), items = new Set<string>();
   for (const day of b.payload.days) {
-    if (!uuid.test(day.id) || days.has(day.id) || typeof day.date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(day.date) || new Date(day.date).toISOString().slice(0, 10) !== day.date || !Array.isArray(day.items) || day.items.length > 100) return false;
+    if (!tripContentId.test(day.id) || days.has(day.id) || typeof day.date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(day.date) || new Date(day.date).toISOString().slice(0, 10) !== day.date || !Array.isArray(day.items) || day.items.length > 100) return false;
     days.add(day.id);
     for (const item of day.items) {
-      if (!uuid.test(item.id) || items.has(item.id) || !text(item.title, 2000) || Object.keys(item).some(k => !["id", "title"].includes(k))) return false;
+      if (!tripContentId.test(item.id) || items.has(item.id) || !text(item.title, 2000) || Object.keys(item).some(k => !["id", "title"].includes(k))) return false;
       items.add(item.id);
     }
     if (Object.keys(day).some(k => !["id", "date", "items"].includes(k))) return false;
