@@ -1,0 +1,11 @@
+# Actual reviewed source-set / support effect bridge
+
+200-only guarded append: exact merged180 graph prosrc fingerprint, same capped metadata universe, support targets join real stored sourceRefs, no shadow queue. Existing currentOps+independent review/member revision/set digest+delivery lease/generation authenticates the cross-owner metadata effect; no owner JWT or private typed-value read.
+
+Provenance generation uses immutable current receipt/claim/source/item identity; eligibility state version/effect receipt is separate. Claim captures current state version; effect CAS rejects other state changes. Real effect+support receipt+original outbox ACK same transaction; exact duplicate/lost ACK reads original actual effect, not another send/update. New reviewed receipt or deletion changes provenance/current graph and makes old set stale.
+
+Selected actual PG1/1 PASS0FAIL0SKIP6.337s: one real reviewed source set contains two supports; first effect plus lost ACK resolves same receipt, second effect remains eligible in same set; actual newly published/reviewed mapping and user renewal invalidates old graph. Mocked permission is not substituted; actor/source/Trip APIs and private source-set/outbox/ledger metadata are actual isolated SQL. No deployed signed users or fees.
+
+Real bug resolved: unchanged Item_A was serialized by original Trip snapshot1 with UTC Z, and snapshot2 after adding Item_B with +00. Day/date/timezone/id/title and actual instants were unchanged; raw JSON digest incorrectly blocked renewal. Only200-owned common item basis now normalizes validated timestamps to fixed UTC microsecond instants. Context/prepare/sidecar/read/renew share it. Original Trip writer/content untouched; no stored digest hand update, time field omission or stale-assert weakening. Synthetic structure failure logs retained.
+
+Owner candidate/context and full-ACK-loss read wires are implemented default-revoked; actual API/Native consumers integrate separately. Known remaining engineering: exact support-delete derived metadata cleanup check, owner module/export enrollment and Native interop evidence. Whole219 plan-feasibility scope is not asserted. No role/GRANT/target/source publication/fee activation.
