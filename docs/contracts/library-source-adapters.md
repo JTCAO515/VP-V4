@@ -1,0 +1,13 @@
+# Library existing-source adapter — Native minimum wire
+
+2026-10-03. Branch library-source-adapters/baseactualmain9b36. Solebackendadapterwriter; no559150/MemorySQL/Swift/631registry changes. Existingdomainreaders/writersareauthority;thisadapterdoesnotcreateupload/material/order/Save/Add/rights.
+
+GET `/api/library/native/v1/items?source=results|translations|materials|orders&query=...&cursor=...`; NativeBearer/currentnative-session, noCookie/Origin; query≤120, opaque`l1`source+exactqueryboundcursor≤4000. Actualdomainnextcursorsemanticsarepreserved;wrongsource/query rejects400. Resultsdelegatesexistinggenericresultv2search/exact;translationsdelegatesexistinghistoryHTTP2withactualquery search/scopedcursor—notfilteringonepageascomplete. Eachdomainreadandadapterfinalsessioncheckrequalifyactor/currentauthority. Noowner/totals/rawmaterial bodyinmetadata.
+
+Pageexactwire `{version:1,kind:"library_page",source,status:"available"|"unavailable",reason:null|"DOMAIN_READER_MISSING"|"DOMAIN_UNAVAILABLE",items:[{source,id,revision:number|null,title≤120,summary≤240,createdAt:null,tripId:UUID|null}]|null,nextCursor:string|null}`. resultsrevisionpositive;translationturnimmutableIDrevisionnull. Unavailableitemsnull,nofake[]/count/title. currentdomainmetadata timestampsnotprovided→explicitnull,notinventeddate.
+
+GET `/api/library/native/v1/item?source=results&id=UUID&revision=N` mandatoryexactrevision; translationsexactonlysource+id(no revision/query). Success `{version:1,kind:"library_item",source,id,revision,projection:unchangedauthorizeddomainEnvelope}`. Sourcewithdrawal/deletion/actorloss returnsunavailable/no metadata;no global/latestfallback. Resultsprojectionouterversion2+exactresult;translationprojectionversion2kindtranslation/authorizedphrase. Renderercontinuesexistingdomainview,notrawHTML/actionURLs.
+
+Concreteabsentdomains: UserArtifactImportStore/screenshotpreviewareonlyprocessMaps;private-mediahelperexplicitlyhasnoauthenticatedPolicyReceipt/Storagecapability;no persistentownerUserArtifact/uploadorderlist/exactRPC/table. `materials`/`orders` authenticatedcapability=`DOMAIN_READER_MISSING`,itemsnull;originaldomainowns futurewriter/Storage. Mainapprovedthisresponsibilityboundary;563doesnotexpandupload/licensing/transactions. LicensedPOIvisualnotregistered→NO_LICENSED_VISUAL;SavedPlacewriterabsent→DOMAIN_WRITER_MISSING;Explore Add onlyNO_ELIGIBLE_EVIDENCE;Ask requiresactualcanonical/entitymapping+ownedTrip andrecheckrequirednavonly.
+
+Initialmetadata/invalidquerytests3PASS;source/querycursoraddition4PASS. ActualRPCdomainflowandplacecapabilityadapterarecontinuingthissamebatch;thisminimumwirecheckpointreleasesNativeworkwithoutwaitinglongtests. No target/provider/human waitasdevclosinggate.
