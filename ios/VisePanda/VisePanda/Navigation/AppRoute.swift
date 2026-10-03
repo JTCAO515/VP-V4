@@ -187,6 +187,15 @@ private struct GlobalSearchView: View {
                     .textInputAutocapitalization(.never).autocorrectionDisabled()
                     .accessibilityIdentifier("shell.search.query")
             }
+            if query.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty {
+                Section(t("地点发现","Place discovery")) {
+                    ContentUnavailableView {
+                        Label(t("地点图片暂不可用","Place images are unavailable"),systemImage:"photo")
+                    } description: {
+                        Text(t("可以先查询已有地点与中文地址。","You can search existing places and Chinese addresses."))
+                    }.accessibilityIdentifier("shell.discovery.unavailable")
+                }
+            }
             Section(t("外部已支持地点","Supported external places")) {
                 NavigationLink {ExploreView(initialQuery:query)} label: {
                     Label(t("查找地点与中文地址","Find places and Chinese addresses"),systemImage:"mappin.and.ellipse")

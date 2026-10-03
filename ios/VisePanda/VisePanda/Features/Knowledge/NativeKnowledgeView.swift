@@ -144,6 +144,9 @@ struct NativeKnowledgeView: View {
         if search.utf16.count > 120 {
             Text(text("Use a search of up to 120 characters.", "搜索内容最多 120 个字符。"))
         }
+        Text(text("Confirmed uploaded materials", "已确认上传资料")).font(.headline)
+        Text(text("Uploaded-material lookup is unavailable in this version. Saved translations and generated results remain searchable below.", "此版本暂不能查询上传资料，仍可在下方查找已存翻译和生成成果。"))
+            .font(.footnote).accessibilityIdentifier("library.materials.unavailable")
         NativeLibraryPhrasePanel(isActive: isActive, query: search)
         Text(text("Generated results", "生成成果")).font(.headline)
         Text(text("Current eligible results across journeys, up to 20 per page. Opening rechecks the same ID and revision.", "各旅程中当前有效的成果，每页最多 20 份；打开时重新核对同一 ID 与版本。"))
