@@ -81,3 +81,11 @@ test('disabled HTTP does not parse private key or verify/network credentials',as
  const r=await coreExportHTTP(new Request('https://example.com/exports'),'read',undefined,{policy:()=>undefined,key:()=>{keys++;throw Error('secret getter');}});
  assert.equal(r.status,503);assert.equal(keys,0);
 });
+test('old privacy202 intent and malformed expired metadata cannot become export completion',async()=>{
+ const {parseExportJob}=await import('../../../lib/server/privacy/export-contract.ts');
+ const requestId=randomUUID();
+ assert.equal(parseExportJob({requestId,action:'export',status:'requested',execution:'not_started'},requestId),null);
+ const expired={kind:'privacy_export_job/1',requestId,scope:'core-export-d2/1',state:'expired',generation:1,createdAt:new Date().toISOString(),completedAt:null,artifactDigest:null,artifactBytes:null,artifactExpiresAt:null,modules:[],allUserDataCompleted:false};
+ assert.deepEqual(parseExportJob(expired,requestId),expired);
+ for(const v of [{...expired,artifactBytes:'8388608'},{...expired,artifactDigest:'not-hash'},{...expired,allUserDataCompleted:true},{...expired,modules:[{module:'trip',payload:'secret source text'}]}])assert.equal(parseExportJob(v,requestId),null);
+});
