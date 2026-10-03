@@ -1,0 +1,15 @@
+SAFE_SERVER_DIAGNOSTIC {"at":"2026-10-03T01:15:22.081Z","stream":"stdout","buildEvent":"compile"}
+✔ canonical barrier completes fulfillment before removal and preserves response errors (1.049ms)
+✔ canonical diagnostic exposes only fixed failure categories and transport phase (0.393125ms)
+✔ canonical barrier has a bounded failure when no arrival occurs (12.218ms)
+✔ V5 result consumer cannot retarget canonical Web/native Trip confirmation (3054.9445ms)
+ℹ POST_201_REVIEW_BARRIER {"postStatus":201,"canonicalGetStatus":200,"canonicalBase":3,"canonicalStale":false,"delivered":false}
+ℹ WEB1_V5_CANONICAL_CONFIRM_PASS: real local cookie/Bearer/Trip receipts; unknown schema seam; immutable revision and stale head rejects, no extra events
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3246.987541
