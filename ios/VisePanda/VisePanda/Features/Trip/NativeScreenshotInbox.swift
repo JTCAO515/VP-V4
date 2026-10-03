@@ -97,6 +97,50 @@ nonisolated struct NativeScreenshotInbox: Sendable {
         }
     }
 
+    struct FileSelection: Codable, Equatable, Sendable {
+        let digest: String
+        let fileIdentity: String
+        let bytes: Int
+        var valid: Bool { NativeScreenshotInbox.validDigest(digest) && NativeScreenshotInbox.validDigest(fileIdentity) && (1...12_000_000).contains(bytes) }
+    }
+    func selections(owner:String) throws -> [FileSelection] {
+        let receipts=try receipts(owner:owner)
+        guard receipts.count<=100 else { throw InboxError.invalidInput }
+        return try receipts.map { receipt in
+            guard let selection=try selection(receipt.digest,owner:owner) else { throw InboxError.invalidInput }
+            return selection
+        }
+    }
+    func selection(_ digest:String,owner:String) throws -> FileSelection? {
+        guard UUID(uuidString:owner) != nil,Self.validDigest(digest) else { throw InboxError.invalidInput }
+        let file=ownerFolder(owner).appendingPathComponent(digest+".image")
+        let attributes:[FileAttributeKey:Any]
+        do { attributes=try FileManager.default.attributesOfItem(atPath:file.path) }
+        catch let error as NSError {
+            if error.domain==NSCocoaErrorDomain && error.code==NSFileReadNoSuchFileError { return nil }
+            throw error // Permission/locked storage is not absence.
+        }
+        guard attributes[.type] as? FileAttributeType == .typeRegular,
+              let inode=attributes[.systemFileNumber] as? NSNumber,let device=attributes[.systemNumber] as? NSNumber,
+              let created=attributes[.creationDate] as? Date,let size=attributes[.size] as? NSNumber,(1...12_000_000).contains(size.intValue) else { throw InboxError.invalidInput }
+        let data=try Data(contentsOf:file)
+        guard data.count==size.intValue,Self.digest(data)==digest else { throw InboxError.invalidInput }
+        let identity=Self.digest(Data("\(device.uint64Value):\(inode.uint64Value):\(created.timeIntervalSince1970.bitPattern)".utf8))
+        return FileSelection(digest:digest,fileIdentity:identity,bytes:data.count)
+    }
+    func validate(_ files:[FileSelection],owner:String) throws {
+        guard (1...100).contains(files.count),Set(files.map(\.digest)).count==files.count,files.allSatisfy(\.valid) else { throw InboxError.invalidInput }
+        for file in files { guard try selection(file.digest,owner:owner)==file else { throw InboxError.invalidInput } }
+    }
+    func deleteSelected(_ file:FileSelection,owner:String) throws {
+        guard file.valid else { throw InboxError.invalidInput }
+        if let current=try selection(file.digest,owner:owner) {
+            guard current==file else { throw InboxError.invalidInput } // A replacement file is outside this request.
+            try delete(file.digest,owner:owner)
+        }
+        guard try selection(file.digest,owner:owner)==nil else { throw InboxError.invalidInput }
+    }
+
     private func ownerFolder(_ owner: String) -> URL {
         let key = Self.digest(Data(owner.lowercased().utf8))
         return root.appendingPathComponent(key, isDirectory: true)

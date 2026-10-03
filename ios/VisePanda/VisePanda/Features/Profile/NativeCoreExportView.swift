@@ -15,6 +15,9 @@ struct NativeCoreExportView:View {
         Form {
             Section(t("本机材料文件", "Device material files")) {
                 Text(t("服务器核心包不含本机截图原文件；本机文件由你另行选择并明确导出。", "Server core bundles do not include original device screenshots. Select and export device files separately."))
+                NavigationLink(t("预览并删除所选本机材料", "Preview and delete selected device materials")) {
+                    NativeDeviceMaterialDeleteView(session:session,chinese:chinese)
+                }
                 NavigationLink(t("查看并导出本机材料", "Review and export device materials")) {
                     NativeDeviceMaterialExportView(session: session, chinese: chinese)
                 }
