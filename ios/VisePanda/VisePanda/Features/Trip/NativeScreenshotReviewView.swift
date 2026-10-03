@@ -92,6 +92,7 @@ struct NativeScreenshotReviewView: View {
     @State private var loadID = UUID()
     @State private var loadTask: Task<Void, Never>?
     @State private var recognitionTask: Task<[NativeScreenshotLine], Error>?
+    @State private var deviceExportVisible = false
     @State private var inboxReceipt: NativeScreenshotInbox.Receipt?
     @State private var submitting = false
     @State private var submitError = false
@@ -135,6 +136,9 @@ struct NativeScreenshotReviewView: View {
                         Label(chooseTitle, systemImage: "photo")
                     }
                     .accessibilityIdentifier("screenshot.choose")
+                    if inboxReceipt != nil, session != nil {
+                        Button(text("Export this device's private screenshot", "导出本机私有截图")) { deviceExportVisible = true }
+                    }
                     if let inboxReceipt {
                         Text(inboxReceipt.duplicate
                              ? text("This screenshot was already imported on this device.", "这张截图已在本机导入。")
@@ -251,6 +255,9 @@ struct NativeScreenshotReviewView: View {
                 status = .loading
                 loadTask = Task { await load(item, id: currentID) }
             }
+            .sheet(isPresented: $deviceExportVisible) {
+                if let session { NavigationStack { NativeDeviceMaterialExportView(session: session, chinese: chinese) } }
+            }
             .onDisappear { _ = clear() }
             .interactiveDismissDisabled(inboxReceipt != nil)
             .task(id: expiryTaskID) {
@@ -318,7 +325,8 @@ struct NativeScreenshotReviewView: View {
             guard loadID == id else { return }
             let imageData: Data
             if let owner = source.ownerID {
-                let receipt = try inbox.receive(data, owner: owner)
+                guard let session else { throw InboxError.invalidInput }
+                let receipt = try session.receiveDeviceScreenshot(data, owner: owner)
                 guard loadID == id else { try? inbox.delete(receipt.digest, owner: owner); return }
                 inboxReceipt = receipt
                 imageData = try inbox.read(receipt.digest, owner: owner)
@@ -350,6 +358,7 @@ struct NativeScreenshotReviewView: View {
 
     @discardableResult
     private func discardInbox() -> Bool {
+        deviceExportVisible = false
         if let owner = source.ownerID, let receipt = inboxReceipt {
             do { try inbox.delete(receipt.digest, owner: owner) }
             catch { deletionFailed = true; return false }

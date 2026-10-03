@@ -85,6 +85,18 @@ nonisolated struct NativeScreenshotInbox: Sendable {
         }
     }
 
+    func receipts(owner: String, now: Date = Date()) throws -> [Receipt] {
+        try purge(owner: owner, now: now)
+        let folder = ownerFolder(owner)
+        guard FileManager.default.fileExists(atPath: folder.path) else { return [] }
+        return try FileManager.default.contentsOfDirectory(at: folder, includingPropertiesForKeys: [.creationDateKey]).sorted { $0.lastPathComponent < $1.lastPathComponent }.map { file in
+            let digest = file.deletingPathExtension().lastPathComponent
+            _ = try read(digest, owner: owner, now: now)
+            guard let created = try file.resourceValues(forKeys: [.creationDateKey]).creationDate else { throw InboxError.invalidInput }
+            return Receipt(digest: digest, duplicate: false, expiresAt: created.addingTimeInterval(lifetime))
+        }
+    }
+
     private func ownerFolder(_ owner: String) -> URL {
         let key = Self.digest(Data(owner.lowercased().utf8))
         return root.appendingPathComponent(key, isDirectory: true)

@@ -35,7 +35,9 @@ final class NativeSession {
     private var assistantNavigation: NativeAssistantNavigation?
     let memoryPreferences=NativeMemoryPreferencesStore()
     let offlineTrips=NativeOfflineTripStore()
+    let deviceMaterials: NativeDeviceMaterials
     private(set) var exploreAskHandoff:NativeExploreAskHandoff?
+    private var deviceMaterialSignOutFence = false
     private var credential: NativeCredential?
     private let endpoint: URL?
     let askMode: NativeAskMode
@@ -45,7 +47,7 @@ final class NativeSession {
     private let storageKey: String
     private let keychainService = "com.visepanda.native.local-session.v2"
 
-    init(arguments: [String] = ProcessInfo.processInfo.arguments, defaults: UserDefaults = .standard, configuration: URLSessionConfiguration = .ephemeral, bundleConfiguration: [String: String] = Bundle.main.infoDictionary?.compactMapValues { $0 as? String } ?? [:], vault: any NativeCredentialVault = NativeKeychainVault()) {
+    init(arguments: [String] = ProcessInfo.processInfo.arguments, defaults: UserDefaults = .standard, configuration: URLSessionConfiguration = .ephemeral, bundleConfiguration: [String: String] = Bundle.main.infoDictionary?.compactMapValues { $0 as? String } ?? [:], vault: any NativeCredentialVault = NativeKeychainVault(), deviceMaterials: NativeDeviceMaterials? = nil) {
         endpoint = Self.resolveEndpoint(arguments: arguments, bundleConfiguration: bundleConfiguration)
         let installed = bundleConfiguration["VisePandaNativeTaskContext", default: ""]
         if !installed.isEmpty { askMode = NativeAskMode(rawValue: installed) ?? .unavailable }
@@ -55,11 +57,16 @@ final class NativeSession {
         else { askMode = .currentInput }
         self.defaults = defaults
         self.vault = vault
+        self.deviceMaterials = deviceMaterials ?? NativeDeviceMaterials()
         storageKey = "native.v2.activeSubject.\(endpoint?.absoluteString ?? "disabled")"
         configuration.httpCookieStorage = nil
         configuration.httpShouldSetCookies = false
         configuration.urlCache = nil
         transport = URLSession(configuration: configuration, delegate: NativeRedirectBlocker(), delegateQueue: nil)
+        // Endpoint-scoped record contains the signing-out owner only, never credentials.
+        // Any surviving/corrupt intent is a fence until deliberate login clears it.
+        deviceMaterialSignOutFence = defaults.object(forKey: storageKey + ".signOutIntent") != nil
+        if deviceMaterialSignOutFence { status = "signingOut" }
     }
 
     func prepareExploreAsk(_ handoff:NativeExploreAskHandoff) {
@@ -107,7 +114,7 @@ final class NativeSession {
 
     /// Changes on denial/account clearing even if the same owner later signs in again.
     var dataScope: NativeDataScope? {
-        guard status == "active", let subject, let mobileEpoch,
+        guard !deviceMaterialSignOutFence, status == "active", let subject, let mobileEpoch,
               let retained = retainedDataScope, retained.subject == subject, retained.mobileEpoch == mobileEpoch else { return nil }
         return retained
     }
@@ -372,6 +379,58 @@ final class NativeSession {
         return try await dataRequest(prefix:"api/trips/native/v2",path:path,method:"GET",queryItems:[.init(name:"expectedHeadVersion",value:String(headVersion)),.init(name:"requestNonce",value:nonce)])
     }
 
+    func rememberLinkedTripDeletion(_ command:NativeLinkedTripDeleteRequest,body:Data,target:NativeLinkedTripDeleteSelection)throws {
+        guard target.scope==dataScope,command.selection.valid,command.expectedVersion==target.headVersion else{throw NativeDataError.sessionUnavailable}
+        let journal=NativeLinkedTripDeleteJournal(endpoint:target.scope.endpoint,owner:target.scope.subject,epoch:target.scope.mobileEpoch,tripID:target.tripID,body:body)
+        guard try journal.decodedRequest()==command else{throw NativeDataError.invalidResponse}
+        let existing=try linkedTripDeletionRecovery()
+        try NativeLinkedTripDeleteJournal.validateReplacement(existing:existing,incoming:journal)
+        let bytes=try JSONEncoder().encode(journal)
+        guard bytes.count<=NativeLinkedTripDeleteJournal.maximumBytes,vault.write(bytes,service:linkedDeleteVaultService,owner:target.scope.subject)==errSecSuccess else{throw NativeDataError.sessionUnavailable}
+    }
+    func linkedTripDeletionRecovery()throws->NativeLinkedTripDeleteJournal? {
+        guard let scope=dataScope else{throw NativeDataError.sessionUnavailable}
+        let (status,bytes)=vault.read(service:linkedDeleteVaultService,owner:scope.subject)
+        if status==errSecItemNotFound{return nil}
+        guard status==errSecSuccess,let bytes,bytes.count<=NativeLinkedTripDeleteJournal.maximumBytes else{throw NativeDataError.sessionUnavailable}
+        let journal=try JSONDecoder().decode(NativeLinkedTripDeleteJournal.self,from:bytes)
+        guard journal.endpoint==scope.endpoint,journal.owner==scope.subject,journal.epoch==scope.mobileEpoch,NativeMemoryWire.uuid(journal.tripID) else{throw NativeDataError.invalidResponse}
+        _=try journal.decodedRequest();return journal
+    }
+    func pendingLinkedTripDeletion(target:NativeLinkedTripDeleteSelection)throws->NativeLinkedTripDeleteJournal? {
+        guard target.scope==dataScope else{throw NativeDataError.sessionUnavailable}
+        guard let journal=try linkedTripDeletionRecovery() else{return nil}
+        guard try journal.matches(target) else{throw NativeDataError.server(code:"LINKED_DELETION_RECOVERY_REQUIRED")};return journal
+    }
+    func completeLinkedTripDeletion(_ receipt:NativeLinkedTripDeleteReceipt,target:NativeLinkedTripDeleteSelection)throws {
+        guard target.scope==dataScope,receipt.state=="completed",let journal=try linkedTripDeletionRecovery(),try journal.matches(target) else{throw NativeDataError.invalidResponse}
+        let request=try journal.decodedRequest()
+        guard receipt.requestId==request.requestId,receipt.planId==request.planId,receipt.tripId==journal.tripID,receipt.scopeDigest==request.scopeDigest,receipt.selection==request.selection else{throw NativeDataError.invalidResponse}
+        let result=vault.remove(service:linkedDeleteVaultService,owner:target.scope.subject)
+        guard result==errSecSuccess || result==errSecItemNotFound else{throw NativeDataError.sessionUnavailable}
+    }
+    private var linkedDeleteVaultService:String{keychainService+".linked-trip-delete."+(endpoint?.absoluteString ?? "disabled")}
+
+    func linkedTripDeletionRequest(body:Data?=nil,requestID:String?=nil)async throws->Data {
+        guard (body==nil) != (requestID==nil),body==nil || body!.count<=192_000,requestID==nil || NativeMemoryWire.uuid(requestID!) else{throw NativeDataError.invalidResponse}
+        guard !busy,let initial=dataScope else{throw NativeDataError.sessionUnavailable}
+        if let credential,credential.expiresAt<=Date().timeIntervalSince1970+10{await validate()}
+        guard dataScope==initial,let credential,let endpoint else{throw NativeDataError.sessionUnavailable}
+        var components=URLComponents(url:endpoint.appendingPathComponent("api/privacy/native/v1/linked-trips"),resolvingAgainstBaseURL:false)
+        if let requestID{components?.queryItems=[.init(name:"requestId",value:requestID)]}
+        guard let url=components?.url else{throw NativeDataError.invalidResponse}
+        var request=URLRequest(url:url);request.httpMethod=body==nil ? "GET":"POST";request.httpBody=body;request.httpShouldHandleCookies=false;request.timeoutInterval=30
+        request.setValue("application/json",forHTTPHeaderField:"Content-Type");request.setValue("Bearer \(credential.accessToken)",forHTTPHeaderField:"Authorization")
+        let (data,response)=try await transport.data(for:request)
+        guard dataScope==initial,let http=response as? HTTPURLResponse,data.count<=512_000 else{throw NativeDataError.staleSessionResponse}
+        guard [200,202].contains(http.statusCode) else {
+            let code=(try? JSONDecoder().decode(NativeDataFailure.self,from:data).error.code) ?? "HTTP_\(http.statusCode)"
+            if http.statusCode==401,code != "REAUTHENTICATION_REQUIRED"{handle(SessionError.denied)}
+            throw NativeDataError.server(code:code)
+        }
+        return data
+    }
+
     func coreExportRequest(requestID:String,create:Bool)async throws->Data {
         guard NativeMemoryWire.uuid(requestID) else{throw NativeDataError.invalidResponse}
         let path="api/privacy/native/v1/exports"
@@ -412,6 +471,7 @@ final class NativeSession {
             throw NativeDataError.server(code:code)
         }
         return (bytes,http)
+
     }
 
     func libraryPlaceRequest(provider:NativePlaceProvider,providerID:String,tripID:String)async throws->Data {
@@ -637,6 +697,7 @@ final class NativeSession {
     }
 
     func restore() async {
+        guard prepareDeviceMaterials() else { return }
         guard enabled, !busy, credential == nil, let owner = defaults.string(forKey: storageKey) else { return }
         do {
             credential = try read(owner: owner)
@@ -655,6 +716,8 @@ final class NativeSession {
         defer { busy = false }
         // A deliberate account change clears all old account data before sending the new request.
         guard clear() else { return }
+        defaults.removeObject(forKey: storageKey + ".signOutIntent")
+        deviceMaterialSignOutFence = false // Only a deliberate new login after cleanup reopens consumption.
         let attempt = UUID().uuidString
         let generation = dataGeneration
         do {
@@ -706,6 +769,11 @@ final class NativeSession {
 
     func logout() async {
         guard !busy else { return }
+        defaults.set(credential?.subject ?? defaults.string(forKey: storageKey) ?? "unbound", forKey: storageKey + ".signOutIntent")
+        deviceMaterialSignOutFence = true
+        subject=nil; mobileEpoch=nil; displayName=nil; status="signingOut"
+        do { try deviceMaterials.eraseAll() }
+        catch { failureCode="deviceMaterialCleanupRequired";status="storageError";return }
         do{try offlineTrips.eraseAll()}catch{failureCode="offlineCleanupRequired";return}
         let generation = dataGeneration
         busy = true
@@ -745,7 +813,7 @@ final class NativeSession {
         credential = value
         subject = value.subject
         mobileEpoch = value.mobileEpoch
-        status = "active"
+        status = deviceMaterialSignOutFence ? "signingOut" : "active"
     }
 
     private func ensureCurrent(_ generation: Int) throws {
@@ -804,13 +872,31 @@ final class NativeSession {
               value.pendingAsk == nil || (value.pendingAsk?.valid == true && value.pendingAsk?.mobileEpoch == value.mobileEpoch) else { throw SessionError.storage(errSecDecode) }
         return value
     }
+    @discardableResult func prepareDeviceMaterials() -> Bool {
+        guard !deviceMaterialSignOutFence else { return false }
+        do { try deviceMaterials.firstAccess(); return true }
+        catch { failureCode="deviceMaterialCleanupRequired"; return false }
+    }
+
+    func receiveDeviceScreenshot(_ data: Data, owner: String) throws -> NativeScreenshotInbox.Receipt {
+        guard let scope = dataScope, scope.subject == owner, prepareDeviceMaterials() else { throw InboxError.invalidInput }
+        return try deviceMaterials.receive(data, scope: scope)
+    }
+
     @discardableResult private func clear() -> Bool {
+        // Fence consumers before cleanup; a locked file is not proof of erasure.
+        dataGeneration += 1
+        subject=nil; mobileEpoch=nil; displayName=nil
+        do { try deviceMaterials.eraseAll() }
+        catch { failureCode="deviceMaterialCleanupRequired";status="storageError";return false }
         do{try offlineTrips.eraseAll()}catch{failureCode="offlineCleanupRequired";status="storageError";return false}
         dataGeneration += 1
         assistantNavigation=nil
         memoryPreferences.clear()
         exploreAskHandoff=nil
         if let owner = credential?.subject ?? defaults.string(forKey: storageKey) {
+            let linked=vault.remove(service:linkedDeleteVaultService,owner:owner)
+            guard linked==errSecSuccess || linked==errSecItemNotFound else{subject=nil;mobileEpoch=nil;displayName=nil;failureCode="keychain:\(linked)";status="storageError";return false}
             let result = vault.remove(service: vaultService, owner: owner)
             guard result == errSecSuccess || result == errSecItemNotFound else {
                 subject = nil; mobileEpoch = nil; displayName = nil

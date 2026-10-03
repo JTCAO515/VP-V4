@@ -13,6 +13,12 @@ struct NativeCoreExportView:View {
     private func t(_ zh:String,_ en:String)->String{chinese ? zh:en}
     var body:some View {
         Form {
+            Section(t("本机材料文件", "Device material files")) {
+                Text(t("服务器核心包不含本机截图原文件；本机文件由你另行选择并明确导出。", "Server core bundles do not include original device screenshots. Select and export device files separately."))
+                NavigationLink(t("查看并导出本机材料", "Review and export device materials")) {
+                    NativeDeviceMaterialExportView(session: session, chinese: chinese)
+                }
+            }
             Section(t("账号核心资料导出","Account core export")) {
                 Text(t("仅导出当前请求已交付的核心模块；不是全部用户数据完成，也不删除源数据。需要最近重新登录，刷新 token 不等于重新认证。","Exports only the core modules delivered for this request. This is not completion of all-user-data export and deletes no source data. A recent sign-in is required; token refresh is not reauthentication."))
                 Toggle(t("明确请求导出当前账号资料","Explicitly request this account’s export"),isOn:$confirmed)
