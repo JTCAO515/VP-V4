@@ -21,3 +21,19 @@ Currentness extends the reused Task/input/goal/Trip/Memory gates across allfive:
 ## Development closure
 
 The present parser checkpoint is not the whole implementation: actualwriter/read/index/export/currentness/choice+nativeconsumer remain to ship. Target/provider/human/device facts are recorded later and do not block code-complete development closure; core missingcode still keeps560Open. Necessary permission/data/CAS/source-revoke checks run as targeted engineering work; requiredmergeCI is separate.
+
+## Frozen decision owner operation / Native handoff
+
+`POST /api/results/native/v2/decision`, application/json, native credentials; Cookie/Origin and URL query parameters forbidden. Body has exactly four mandatory keys:
+
+```json
+{"artifactId":"canonical UUID","expectedRevision":1,"operationId":"new UUID idempotency key","optionId":"existing eligible comparison option.id"}
+```
+
+expectedRevision1..999; optionId `[a-z0-9_-]{1,40}`. Native reuses the same body/operationId on transport retry, never generates a new operation automatically. Server calls only authenticated `choose_result_decision_v2(artifactId,expectedRevision,operationId,optionId)`, preserving existing owner/session/currentbasis and current eligible nestedcomparison, not model selection. Service publication cannot set chosen.
+
+Success is exactly `{version:2,data:{kind:"selected",artifactId,revision:expectedRevision+1,reused:boolean}}`. It is an atomic immutable revision/CAS/event receipt; Native must GET `/api/results/native/v2?artifactId=...&revision=...` and render its actual chosen content, not infer it from the submitted option. Same exact operation returns reused:true while its resulting revision remains current/eligible. Changed operation content is409REVISION_CONFLICT; invalid/nonexistent option400INVALID_INPUT. Stale/ineligible decision returns200 `{version:2,data:{kind:"unavailable"}}` and requires clearing/refreshing, never fallback to latest or auto-changingCAS. Actor denial401UNAUTHENTICATED, unavailable/malformed response503RESULT_UNAVAILABLE. No confirmation material, generic artifact editor, Trip mutation or model action.
+
+Exact/search/reference endpoints implemented here: GET `/api/results/native/v2` (mandatory artifactId+revision), `/v2/search` (query≤120,cursornullable), `/v2/task?taskId=...`, `/v2/trip?tripId=...`; allversion2 outer and currentactor/private-no-store. Search rows add known schemaVersion to existing ID/revision/title/summary/Trip tuple. Task/Trip discovery returns `{kind:"result_reference",artifactId,revision,taskId|tripId}` then exact GET, same ID/revision across pages. Legacyv1 endpoints remain unchanged.
+
+Current source checkpoint: new110000 passes first localPG3/3 covering comparison/decision ownerCAS/idempotency/foreignowner/servicechosen-denial, taskdraft and actualsavedtranslation projection/hiding, schema/migrationACL. Existingdomains/supplementalTrip/proposal/evidence/rollback negatives and fullNativeconsumer integration are still thissamebatch work, not schema-only closure. Typecheckpassed. Native neednotwait for allremaining localchecks to implement this fixed operation.
