@@ -28,7 +28,8 @@ Production adapter actually reads owned pending after-diff, current typed SQL ow
 context/reviewed candidates, passes server-qualified selected place/time-window
 facts to existing evaluateFeasibility, then rechecks evidence/basis/actor+epoch.
 Date is checked against local start in exact timezone. Only current covering window
-supports opening; qualified address/window is not route, live admission/reservation,
+supports opening; outside a positive opening window stays unknown, because these
+sources do not assert complete closing hours; qualified address/window is not route, live admission/reservation,
 price, walking duration or timetable authority. Current installed route read targets
 "now"/two stay-area candidates and has no exact proposed-departure binding; it is
 not called or upgraded into a future whole-plan feasibility assertion.
@@ -43,3 +44,21 @@ claimed complete from reference-only evidence or local contract checks.
 No new provider fees, source acquisition, Ops mapping publication, Trip writer,
 role/grant/target configuration or dynamic external DSL. Native consumes exact
 Proposal reference and all supported/pending/violated lines with explicit gaps.
+
+## Verification and remaining source dependencies
+
+Local contract tests cover exact owned HTTP proposal reads with ordinary JWT,
+positive epoch replacement rejection, current/expired/wrong-context opening receipts,
+opaque Trip IDs, and fixed overlapping appointment windows without rescheduling.
+HTTP transport and keys are synthetic; no target deployment/device/provider acceptance
+is claimed. Candidate lookup follows at most ten current SQL pages (500 entries) and
+fails to pending when the selection cannot be requalified. Request body is bounded
+to 24000 bytes.
+
+The existing maps route-comparison reader explicitly rejects future departures and
+returns observations for departure=now. No installed persisted exact-future-departure
+route receipt reader, live appointment/reservation availability reader, or last-service
+timetable reader was found in the affected planning path. These require actual
+qualified authority before their pending checks can become supported. No provider
+call or paid acquisition is introduced by this adapter. Whole #219 remains in
+development while these broader planning behaviors are incomplete.

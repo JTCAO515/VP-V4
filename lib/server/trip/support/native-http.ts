@@ -47,7 +47,7 @@ function typedClaim(value: unknown, scope: unknown): boolean {
   if (!record(value) || (scope === "address_reference" ? value.claimType !== "address" : value.claimType !== "time_window")) return false;
   try { assertGroundedClaim(value as GroundedClaim);return true; } catch { return false; }
 }
-function decodeResult(action: NativeSupportAction, value: unknown, tripId: string | undefined, input: Record<string,unknown>): unknown | null {
+export function decodeNativeSupportResult(action: NativeSupportAction, value: unknown, tripId: string | undefined, input: Record<string,unknown>): unknown | null {
   if (!record(value)) return null;
   if (exact(value,["kind"]) && ["blocked","stale","conflict"].includes(String(value.kind))) return value;
   if (action === "context") {
@@ -77,7 +77,7 @@ function decodeResult(action: NativeSupportAction, value: unknown, tripId: strin
     if (value.nextCursor!==null && (!record(value.nextCursor) || !exact(value.nextCursor,["contextDigest","afterMappingId"]) || value.nextCursor.contextDigest!==value.contextDigest || value.nextCursor.afterMappingId!==previous || previous===null)) return null;
   } else if (action === "confirmation_receipt") {
     if (!exact(value,["kind","receipt","historicalOnly","currentEligibilityRequiresRead"]) || value.kind!=="confirmation_receipt" || value.historicalOnly!==true || value.currentEligibilityRequiresRead!==true
-      || decodeResult("confirm",value.receipt,tripId,input)===null) return null;
+      || decodeNativeSupportResult("confirm",value.receipt,tripId,input)===null) return null;
   } else if (action === "prepare") {
     if (!exact(value,["kind","receiptId","version","tripId","proposalId","proposalRevision","baseVersion","dayId","itemId","scope","applicability","claim","sourceDigest","expiresAt"])
       || value.kind !== "prepared" || !uuid(value.receiptId) || !integer(value.version) || value.tripId !== tripId || value.proposalId !== input.proposalId
@@ -172,7 +172,7 @@ export async function nativeTripSupportHTTP(request: NextRequest, action: Native
       if (action === "renew") {
         const current=await rpc("read_trip_item_support_v1",{p_trip:tripId,p_expected_trip_version:input.tripVersion,p_day:input.dayId,p_item:input.itemId});
         if (current.error) return failure("PROVIDER_UNAVAILABLE");
-        const read=decodeResult("read",current.data,tripId,{expectedTripVersion:input.tripVersion,dayId:input.dayId,itemId:input.itemId});
+        const read=decodeNativeSupportResult("read",current.data,tripId,{expectedTripVersion:input.tripVersion,dayId:input.dayId,itemId:input.itemId});
         if (!record(read) || !Array.isArray(read.entries) || !read.entries.some(e=>e.supportId===input.supportId && e.version===input.expectedVersion)) return json({kind:"blocked"});
       }
       const names={context:"read_trip_item_support_context_v1",candidates:"read_trip_item_support_candidates_v1",confirmation_receipt:"read_supported_trip_confirmation_receipt_v1",prepare:"prepare_trip_item_support_v1",revoke:"revoke_trip_item_support_preparation_v1",read:"read_trip_item_support_v1",renew:"renew_trip_item_support_v1",confirm:"confirm_and_apply_supported_trip_proposal_v1"};
@@ -185,7 +185,7 @@ export async function nativeTripSupportHTTP(request: NextRequest, action: Native
         if (/\bFORBIDDEN\b/.test(result.error.message)) return failure("FORBIDDEN",403);
         return failure("PROVIDER_UNAVAILABLE");
       }
-      const decoded=decodeResult(action,result.data,tripId,input);
+      const decoded=decodeNativeSupportResult(action,result.data,tripId,input);
       return decoded === null ? failure("PROVIDER_UNAVAILABLE"):json(decoded);
     });
   } catch {return failure("PROVIDER_UNAVAILABLE");} finally {scope.dispose();}
