@@ -10,8 +10,9 @@ command registry and the red-line suite registry.
 Read the current Issue/PR, its VPJ row and the affected interfaces and code. The row's checks
 describe full Issue acceptance; select the local checks for each PR by actual impact. Applicable
 required merge CI and affected permissions/data/migration checks remain in force. Development closure
-follows JT's 2026-10-03 rule: complete implementation plus necessary affected checks; unified runtime/human/device
-acceptance is tracked separately in #187 / #233 / #242. A missing environment is UNRUN;
+follows JT's 2026-10-03 rule: complete owned implementation means Closed; code still in development means Open; unified runtime/human/device
+facts are recorded in #187 / #233 / #242 without a third Issue state. PASS/FAIL/UNRUN do not gate
+development-Issue closure; required merge CI and targeted risk checks remain independent. A missing environment is UNRUN;
 passing fixtures complete neither integration nor release.
 
 Product implementation uses its VPJ row. Explicit maintenance outside the manifest uses a compact
@@ -30,6 +31,9 @@ boundaries retain their protection.
 `test:security`, `test:e2e`, `test:e2e:frontend` and `evals` by affected behavior.
 
 - `test:e2e` is source/contract inspection; only `test:e2e:frontend` runs browser flows.
+- PR selectors choose affected lanes from actual changed paths; unknown/failed selection runs full or fails.
+  `deterministic-pr-gates` and `db-integration` remain stable required checks, including documentation-only
+  real classification. Manual/full batches keep full coverage; no FAIL/skip is converted to PASS.
 - `test:integration` skips its gated database files; `test:integration:db --lane <lane>` runs
   them on disposable local stacks and fails on any skip (lanes and the reasoned allowlist:
   `tests/integration/README.md`; CI check `db-integration`).

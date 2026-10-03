@@ -57,8 +57,9 @@ rule file gets corrected in the same PR.
 
 ## Development closure and CI selection (JT, 2026-10-03)
 
-Close a development Issue after its complete owned implementation and necessary affected checks; a partial
-slice is insufficient. Development closure is distinct from merged/released/accepted. Record outstanding
+Development Issues have exactly Open (code still in development) and Closed (complete owned implementation); a partial
+slice is insufficient. Necessary risk checks still run, but PASS/FAIL/UNRUN are factual notes rather than
+Issue-closing gates or a third pending-acceptance state. Development closure is distinct from merged/released/accepted. Record outstanding
 target/provider/human/device PASS/FAIL/UNRUN in #187 / #233 / #242 for unified acceptance after development.
 Batch related small fixes. Select CI from actual changed paths, reuse unchanged evidence, and keep required
 merge checks plus affected permission/data/migration negatives; unknown scope fails closed or runs full.

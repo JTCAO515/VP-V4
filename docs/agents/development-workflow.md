@@ -46,6 +46,8 @@ waiting in the Issue/PR, so efficiency claims have a basis.
 
 ## 2. Preparation, integration and release
 
+These describe engineering actions and evidence, not Issue states; development Issues remain only Open/Closed.
+
 | Stage | May proceed when | Completion means |
 | --- | --- | --- |
 | Repository preparation | A bounded task has an available contract; its preparation inputs exist | Reviewed code/fixtures/docs for that scope; no live capability claim |
@@ -66,10 +68,12 @@ stale labels yourself. Future `expand` tasks still need their recorded activatio
 One coherent outcome per branch/PR. A primary Issue may have several incremental PRs; small
 directly related fixes may share one PR when every affected Issue and acceptance is listed. Keep
 independent features and unrelated refactors separate. Per JT (2026-10-03), close a development Issue when its
-complete owned implementation and necessary affected checks are done; target/provider/human/device acceptance
+complete owned implementation is done; target/provider/human/device acceptance
 does not keep a code-complete development Issue open. A partial preparation still uses `Related to`.
+Development Issues have only Open (code still in development) and Closed (code complete).
+Necessary risk checks still run, but PASS/FAIL/UNRUN are factual notes, not an Issue-closing gate or a third state.
 Development closure does not mean merged, released or accepted. Record unresolved PASS/FAIL/UNRUN and
-the follow-up owner in the existing acceptance home #187 / #233 / #242; do not erase an unobserved checklist.
+the follow-up owner in #187 / #233 / #242 as engineering facts, not a pending-acceptance state; do not erase an unobserved checklist.
 Related small fixes share the current batch; do not create a process or module PR for every fragment.
 
 Use an isolated worktree when another task is active, the working tree is dirty, or isolation
@@ -119,11 +123,14 @@ Use an independent review for permission, data integrity, money, migration/rollb
 shared contracts, or a concrete unresolved risk. Repository-required reviews remain in force; this
 never authorizes self-approval or bypass.
 
-Quality PR narrows to a documentation path (source-policy lint, governance tests, contract tests,
-docs checks) for known navigation, workflow and task-definition files, including the master product
-plan and the named experience/brand planning pages. Code, tests, CI, dependencies, ADRs, runtime
-data, unknown paths and manual runs keep the full check set. The full path builds once and reuses
-that output for browser tests; a newer commit cancels an older run for the same PR.
+Quality PR selects affected checks from the actual Git diff. Documentation/evidence prose runs lint,
+governance/classification, docs and artifact checks; backend/UI/native/tests select their relevant checks.
+SQL selects all database lanes conservatively. Unknown dependencies, unavailable diff, selector/workflow
+changes and manual/full batches run the full superset. The stable required checks still execute real
+selection/classification and selected checks; no synthetic PASS substitutes for a lane. A newer same-branch
+run cancels older runs. Full builds are reused for their browser checks. Native PRs use `scripts/ios/ci.py` unsigned build-only or actual changed/critical unit tests; unknown
+native/test mappings retain the whole unit target. Manual dispatch retains the full Simulator suite. Native source still receives its
+affected automated build/code checks; human/physical-device evidence is recorded later as facts.
 
 ## 5. Report only what changed
 

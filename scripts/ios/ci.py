@@ -23,12 +23,66 @@ RUNTIME = "com.apple.CoreSimulator.SimRuntime.iOS-26-5"
 DEVICE = "iPhone 17 Pro"
 
 
+# PR code checks only; human/physical-device/full UI matrices are a later batch.
+CRITICAL_TESTS = ["NativeAskStateTests", "NativeKnowledgeTests", "NativeTripStateTests",
+                  "NativeProposalReferenceTests", "NativeQualifiedDelegationTests", "NativeQualifiedDelegationTransportTests",
+                  "NativeAskPersistenceTests", "NativeTravelIntakeTests", "NativeTravelPaceTests"]
+def checked_test_names(file):
+    if not file.is_file():
+        return []
+    source = file.read_text()
+    names = re.findall(r"\bclass\s+(\w+)\s*:\s*XCTestCase", source)
+    # Swift Testing suites in this repository use their file's declared type name.
+    # A classless/free-function/ambiguous suite falls back to the whole unit target.
+    if "import Testing" in source and "@Test" in source and re.search(r"\b(?:struct|class|enum)\s+" + re.escape(file.stem) + r"\b", source):
+        names.append(file.stem)
+    return sorted(set(names))
+
+def pr_test_selection(files):
+    native = [f for f in files if f.startswith("ios/")]
+    if not native:
+        return []
+    changed_classes = set()
+    for f in native:
+        if "/VisePandaTests/" in f and f.endswith(".swift"):
+            file = Path(f)
+            names = checked_test_names(file)
+            if not names:
+                return ["VisePandaTests"]  # Unknown/deleted/classless test: full unit target, never silently omit it.
+            changed_classes.update("VisePandaTests/" + name for name in names)
+        elif f.endswith(".swift") and not any(part in f for part in ("/App/", "/Features/", "/DesignSystem/", "/VisePandaUITests/")):
+            return ["VisePandaTests"]  # Unknown native source retains all unit code checks.
+    risk = bool(changed_classes) or any("/App/" in f or "Models" in f or "/Features/" in f or f.endswith((".pbxproj", ".plist")) for f in native)
+    if risk:
+        changed_classes.update("VisePandaTests/" + name for name in CRITICAL_TESTS)
+    return sorted(changed_classes)
+
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--preflight", action="store_true", help="Inspect toolchain and devices only")
     parser.add_argument("--local-text-environment", type=Path, help="Explicit synthetic loopback test profile; no credentials accepted")
+    parser.add_argument("--build-only", action="store_true", help="Unsigned generic build only; no Simulator/test PASS claim")
+    parser.add_argument("--only-testing", action="append", default=[], help="Explicit affected VisePandaTests/Class; no full suite claim")
+    parser.add_argument("--pr-base", help="Actual PR base SHA, selects minimal code checks")
+    parser.add_argument("--pr-head", help="Actual PR head SHA")
     args = parser.parse_args()
+    if args.pr_base is not None or args.pr_head is not None:
+        if not all(isinstance(v, str) and re.fullmatch(r"[a-f0-9]{40}", v) for v in (args.pr_base, args.pr_head)):
+            raise RuntimeError("Valid actual PR comparison is required; no narrow fallback")
+        files = subprocess.check_output(["git", "diff", "--name-only", "--no-renames", "-z", args.pr_base, args.pr_head, "--"], text=True).split("\0")
+        args.only_testing = pr_test_selection(files)
+        args.build_only = not args.only_testing
+    if any(not re.fullmatch(r"VisePandaTests(?:/[A-Za-z_][A-Za-z0-9_]*)?", t) for t in args.only_testing) or (args.build_only and args.only_testing):
+        raise RuntimeError("Invalid build/test selection")
+    if args.build_only and args.local_text_environment:
+        raise RuntimeError("Build-only cannot claim local text integration")
+    allowed_tests = {"VisePandaTests/" + name for file in Path("ios/VisePanda/VisePandaTests").glob("*.swift")
+                     for name in checked_test_names(file)}
+    if any(t != "VisePandaTests" and t not in allowed_tests for t in args.only_testing):
+        raise RuntimeError("Selected class/suite is not a real checked-in test")
     text_environment = None
     if args.local_text_environment:
         text_environment = json.loads(args.local_text_environment.read_text())
@@ -69,18 +123,23 @@ def main():
     if version not in XCODE_VERSIONS:
         raise RuntimeError(f"Expected one of {sorted(XCODE_VERSIONS)!r}, found {version!r}; no automatic fallback")
     run(["xcodebuild", "-list", "-project", PROJECT], "project")
-    devices = json.loads(run(["xcrun", "simctl", "list", "devices", "available", "--json"], "devices"))
-    matches = [d for d in devices["devices"].get(RUNTIME, [])
-               if d.get("isAvailable") and d["name"] == DEVICE]
-    if not matches:
-        raise RuntimeError(f"Required installed {DEVICE} / {RUNTIME} is absent; no download or fallback")
-    udid = matches[0]["udid"]
+    matches = []
+    udid = None
+    if not args.build_only:
+        devices = json.loads(run(["xcrun", "simctl", "list", "devices", "available", "--json"], "devices"))
+        matches = [d for d in devices["devices"].get(RUNTIME, [])
+                   if d.get("isAvailable") and d["name"] == DEVICE]
+        if not matches:
+            raise RuntimeError(f"Required installed {DEVICE} / {RUNTIME} is absent; no download or fallback")
+        udid = matches[0]["udid"]
     metadata = {"commit": run(["git", "rev-parse", "HEAD"], "commit").strip(),
-                "xcode": version, "runtime": RUNTIME, "deviceName": DEVICE, "deviceUDID": udid,
+                "xcode": version, "runtime": None if args.build_only else RUNTIME,
+                "deviceName": None if args.build_only else DEVICE, "deviceUDID": udid,
                 "runnerImageVersion": os.environ.get("ImageVersion"), "preflightOnly": args.preflight,
                 "distributionSigned": False, "genericBuildSigning": "disabled",
-                "simulatorTestSigning": "ad-hoc", "simulatorTestSigningVerified": False,
-                "localTextIntegration": text_environment is not None}
+                "simulatorTestSigning": None if args.build_only else "ad-hoc", "simulatorTestSigningVerified": False,
+                "localTextIntegration": text_environment is not None, "buildOnly": args.build_only,
+                "selectedTests": args.only_testing, "simulatorTestsRun": False}
     (output / "environment.json").write_text(json.dumps(metadata, indent=2) + "\n")
     if args.preflight:
         return
@@ -94,6 +153,8 @@ def main():
         info = plistlib.load(stream)
     (output / "bundle-version.json").write_text(json.dumps({key: info[key] for key in
         ["CFBundleIdentifier", "CFBundleShortVersionString", "CFBundleVersion"]}, indent=2) + "\n")
+    if args.build_only:
+        return  # No runtime/device/signing/test operation or full-test claim.
     run(["xcodebuild", "build-for-testing", *common, "-destination", "generic/platform=iOS Simulator",
          "CODE_SIGNING_ALLOWED=YES", "CODE_SIGN_IDENTITY=-",
          "-resultBundlePath", str(output / "test-build.xcresult")], "test-build")
@@ -136,11 +197,15 @@ def main():
             patched_run.chmod(0o600)
             test_selection = ["-xctestrun", str(patched_run)]
         run(["xcrun", "simctl", "bootstatus", udid, "-b"], "simulator-boot")
-        run(["xcodebuild", "test-without-building", *test_selection,
+        test_log = run(["xcodebuild", "test-without-building", *test_selection,
              "-destination", f"platform=iOS Simulator,id={udid}",
              "CODE_SIGNING_ALLOWED=YES", "CODE_SIGN_IDENTITY=-",
              "-parallel-testing-enabled", "NO",
+             *["-only-testing:" + name for name in args.only_testing],
              "-resultBundlePath", str(output / "tests.xcresult")], "tests")
+        if args.only_testing and not re.search(r"(?:Executed|Test run with) [1-9][0-9]* tests?", test_log):
+            raise RuntimeError("Targeted code check executed zero tests; no PASS claim")
+        metadata["simulatorTestsRun"] = True
     finally:
         if patched_run is not None:
             patched_run.unlink(missing_ok=True)

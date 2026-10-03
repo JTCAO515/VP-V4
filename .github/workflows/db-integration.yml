@@ -23,14 +23,38 @@ env:
   PG_CLIENT_VERSION: 8.13.1
 
 jobs:
+  select:
+    runs-on: ubuntu-24.04
+    outputs:
+      has_db: ${{ steps.scope.outputs.has_db }}
+      lanes: ${{ steps.scope.outputs.db_lanes_json }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate selector and classify actual changed paths
+        id: scope
+        env:
+          VP_CI_EVENT: ${{ github.event_name }}
+          VP_CI_BASE: ${{ github.event.pull_request.base.sha }}
+          VP_CI_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: node scripts/ci-change-scope.mjs
+      - run: node --test tests/unit/governance/ci-change-scope.test.mjs tests/unit/governance/db-integration-ci.test.mjs
+      - run: node scripts/ci-suites/db-integration.mjs --list
   lane:
+    needs: select
+    if: needs.select.outputs.has_db == 'true'
     name: lane (${{ matrix.lane }})
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
-        lane: [postgres, postgres-native, supabase-rls, supabase-http-native, supabase-http-ops]
+        lane: ${{ fromJSON(needs.select.outputs.lanes) }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -92,10 +116,20 @@ jobs:
   # Single stable check name for branch protection.
   db-integration:
     if: always()
-    needs: lane
+    needs: [select, lane]
     runs-on: ubuntu-24.04
     steps:
       - name: All lanes passed
         env:
-          RESULT: ${{ needs.lane.result }}
-        run: test "$RESULT" = success
+          SELECT_RESULT: ${{ needs.select.result }}
+          HAS_DB: ${{ needs.select.outputs.has_db }}
+          LANE_RESULT: ${{ needs.lane.result }}
+        run: |
+          test "$SELECT_RESULT" = success
+          if [ "$HAS_DB" = true ]; then
+            test "$LANE_RESULT" = success
+          elif [ "$HAS_DB" = false ]; then
+            test "$LANE_RESULT" = skipped
+          else
+            exit 1
+          fi

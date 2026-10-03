@@ -1,13 +1,8 @@
 name: Community PostgreSQL
+# PR coverage is deduplicated into DB Integration's selected postgres lane.
 on:
-  pull_request:
-    paths:
-      - 'lib/server/community/**'
-      - 'app/api/ops/community/**'
-      - 'supabase/migrations/**'
-      - 'tests/**/community/**'
-      - '.github/workflows/community-postgres.yml'
   workflow_dispatch:
+
 permissions:
   contents: read
 concurrency:

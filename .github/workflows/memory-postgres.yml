@@ -1,11 +1,8 @@
 name: Memory PostgreSQL
+# PR coverage is deduplicated into DB Integration's selected postgres lane.
 on:
-  pull_request:
-    paths:
-      - 'lib/server/memory/**'
-      - 'supabase/migrations/**'
-      - 'tests/**/memory/**'
-      - '.github/workflows/memory-postgres.yml'
+  workflow_dispatch:
+
 permissions:
   contents: read
 concurrency:
