@@ -217,3 +217,16 @@ or key. Successful claim freezes the policy revision/snapshot internally. Valida
 Trip reads, commit and service execution_receipt require both the frozen snapshot
 and currently enabled/unrevoked policy; a policy change blocks publication/recovery.
 No new owner field, public private-policy read or expectedPolicyRevision is added.
+
+
+## SQL execution deadline versus delivered artifact expiry
+
+SQL stores internal jobDeadline=min(policy.validUntil, admissionTime+2*policyTTL),
+with <=48h hard bound. Execution lease is capped by supplied maxRun, policy90s cap
+and jobDeadline. Commit requires a live lease but artifact expiry is independently
+clamped to min(workerExplicitExpiry, commitServerTime+policyTTL, jobDeadline), never
+to leaseExpiresAt. Worker explicit expiry must be future and <=24h hard cap.
+Ready/download replies expose the actual clamped artifact expiry; TS accepts a
+shorter future expiry and uses the authoritative returned value, not equality to
+its original submitted time. Commit recovery remains pinned to original request/
+lease/generation/plaintext digest. This code rule supplies no enabled live TTL.
