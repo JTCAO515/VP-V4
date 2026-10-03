@@ -44,7 +44,9 @@ struct NativeTripSupportView: View {
             if store.target==target, let read=store.read {
                 ForEach(read.entries) { entry in
                     Section(entry.scope == .address ? t("地址参考", "Address reference") : t("开放时间参考", "Opening-window reference")) {
-                        Text(status(entry.status))
+                        TimelineView(.periodic(from:.now,by:1)) { _ in
+                            Text(status(entry.status == .current && entry.claim?.evidence.contains(where:{NativeKnowledgeRead.date($0.expiresAt).map({$0<=Date()}) != false})==true ? .recheck:entry.status))
+                        }
                         Text(entry.applicability == .matched ? t("与所选条目明确关系匹配", "Explicit selected-item relation matched") : t("条目适用性未验证", "Item applicability unverified"))
                         Text(entry.receiptId).font(.caption).textSelection(.enabled)
                         Text("v\(entry.version) · \(entry.sourceDigest)").font(.caption)
@@ -123,15 +125,24 @@ struct NativeTripSupportView: View {
         .onChange(of:city) { _,_ in resetCandidates() }
         .onChange(of:scene) { _,_ in resetCandidates() }
         .onChange(of:session.dataScope) { _,_ in context=nil;resetCandidates();prepareRequest=nil;renewingEntry=nil;renewRequest=nil;renewalReceipt=nil;store.bind(target,proposal:proposal) }
-        .onChange(of:phase) { _,value in if value != .active { store.bind(nil) } }
+        .onChange(of:phase) { _,value in
+            if value != .active { context=nil;resetCandidates();prepareRequest=nil;renewingEntry=nil;renewRequest=nil;renewalReceipt=nil;store.bind(nil) }
+            else { Task { await refresh() } }
+        }
     }
     @ViewBuilder private func claimView(_ claim:NativeTripSupportClaim)->some View {
-        if let lines=claim.value.lines { ForEach(Array(lines.enumerated()),id:\.offset) { _,line in Text(line) } }
-        if let start=claim.value.startsAt { Text(start) }
-        if let end=claim.value.endsAt { Text(end) }
-        if let zone=claim.value.timeZone { Text(zone) }
-        ForEach(Array(claim.evidence.enumerated()),id:\.offset) { _,fact in
-            Text("\(fact.factId) · v\(fact.version) · \(fact.reviewedAt) → \(fact.expiresAt)").font(.caption).textSelection(.enabled)
+        TimelineView(.periodic(from:.now,by:1)) { _ in
+            if claim.evidence.allSatisfy({NativeKnowledgeRead.date($0.expiresAt).map({$0>Date()})==true}) {
+                VStack(alignment:.leading) {
+                    if let lines=claim.value.lines { ForEach(Array(lines.enumerated()),id:\.offset) { _,line in Text(line) } }
+                    if let start=claim.value.startsAt { Text(start) }
+                    if let end=claim.value.endsAt { Text(end) }
+                    if let zone=claim.value.timeZone { Text(zone) }
+                    ForEach(Array(claim.evidence.enumerated()),id:\.offset) { _,fact in
+                        Text("\(fact.factId) · v\(fact.version) · \(fact.reviewedAt) → \(fact.expiresAt)").font(.caption).textSelection(.enabled)
+                    }
+                }
+            } else { Text(t("来源回执已到期，请重新核对；旧值不再显示。", "Source receipt expired; recheck. Old values are hidden.")) }
         }
     }
     private func refresh() async {
@@ -290,7 +301,7 @@ struct NativeTripSupportRecoveryView: View {
         .navigationTitle(t("参考保存回执", "Reference save receipt"))
         .task(id:session.dataScope) { load() }
         .onChange(of:session.dataScope) { _,_ in clear();load() }
-        .onChange(of:phase) { _,value in if value != .active { clear() } }
+        .onChange(of:phase) { _,value in if value != .active { clear() } else { load() } }
         .confirmationDialog(t("明确重试这次同一请求？", "Explicitly retry this same request?"),isPresented:$retryVisible,titleVisibility:.visible) {
             Button(t("重试同一原始字节和选择", "Retry original bytes and selection")) { if let journal { Task { await retry(journal) } } }
             Button(t("继续核对", "Keep checking"),role:.cancel) {}

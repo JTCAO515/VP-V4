@@ -117,6 +117,10 @@ nonisolated final class NativeTripSupportTests: XCTestCase {
         XCTAssertTrue(support.confirmationUnknown)
         XCTAssertEqual(SupportFlowProtocol.confirmPosts,1)
         let original=try XCTUnwrap(session.tripSupportConfirmationRecovery())
+        support.bind(nil) // A recreated/background-cleared view cannot bypass the durable unresolved operation.
+        await tripStore.confirm(reviewedReference:reviewed,using:session)
+        XCTAssertEqual(SupportFlowProtocol.ordinaryPosts,0)
+        XCTAssertEqual(tripStore.notice,"SUPPORT_CONFIRM_RECOVERY_REQUIRED")
         let restartConfiguration=URLSessionConfiguration.ephemeral;restartConfiguration.protocolClasses=[SupportFlowProtocol.self]
         let restarted=NativeSession(arguments:["-VisePandaNativeAPI","http://127.0.0.1:63221"],defaults:defaults,configuration:restartConfiguration,bundleConfiguration:[:],vault:vault,deviceMaterials:materials)
         await restarted.restore()
@@ -168,11 +172,12 @@ nonisolated final class NativeTripSupportTests: XCTestCase {
 nonisolated private final class SupportFlowProtocol:URLProtocol,@unchecked Sendable {
     private static let lock=NSLock()
     nonisolated(unsafe) private static var documents:[String:Data]=[:]
-    nonisolated(unsafe) private static var owner="",trip="",posts=0,bad=false,readBody:Data?
+    nonisolated(unsafe) private static var owner="",trip="",posts=0,ordinary=0,bad=false,readBody:Data?
     static var confirmPosts:Int{lock.withLock{posts}}
+    static var ordinaryPosts:Int{lock.withLock{ordinary}}
     static var badHeaders:Bool{lock.withLock{bad}}
     static var lastReadBody:Data?{lock.withLock{readBody}}
-    static func configure(owner:String,trip:String,documents:[String:Data]){lock.withLock{Self.owner=owner;Self.trip=trip;Self.documents=documents;posts=0;bad=false;readBody=nil}}
+    static func configure(owner:String,trip:String,documents:[String:Data]){lock.withLock{Self.owner=owner;Self.trip=trip;Self.documents=documents;posts=0;ordinary=0;bad=false;readBody=nil}}
     override class func canInit(with request:URLRequest)->Bool{true}
     override class func canonicalRequest(for request:URLRequest)->URLRequest{request}
     override func stopLoading(){}
@@ -190,6 +195,7 @@ nonisolated private final class SupportFlowProtocol:URLProtocol,@unchecked Senda
                 return(200,json(["kind":"confirmation_receipt","receipt":receipt,"historicalOnly":true,"currentEligibilityRequiresRead":true]))
             }
             if path.hasSuffix("/support/confirm"){Self.posts+=1;return(503,json(["error":["code":"SYNTHETIC_ACK_LOSS"]]))}
+            if path.hasSuffix("/confirm"){Self.ordinary+=1;return(503,json(["error":["code":"UNEXPECTED_ORDINARY_CONFIRM"]]))}
             if path.hasSuffix("/support/renew"){return(200,json(["kind":"renewed","supportId":"33333333-2222-3333-4444-555555555555","version":2,"receiptId":"88888888-2222-3333-4444-555555555555"]))}
             if path.hasSuffix("/support/context"){return(200,Self.documents["context"]!)}
             if path.hasSuffix("/support/candidates"){
