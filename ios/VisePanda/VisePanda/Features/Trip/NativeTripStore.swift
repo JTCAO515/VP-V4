@@ -359,6 +359,25 @@ final class NativeTripStore {
         }
     }
 
+    func confirmSupported(reviewedReference:String,reviewedSelection:String,support:NativeTripSupportStore,using session:NativeSession) async {
+        guard canEdit,confirmationReference==reviewedReference,let pending,!pending.proposal.stale,pending.proposal.status=="pending",detail?.trip.headVersion==pending.proposal.baseTripVersion else { notice="PROPOSAL_NOT_CONFIRMABLE";return }
+        let proposal=pending.proposal
+        await perform(session) { actor in
+            let choices=try support.freezeConfirmation(reviewedSelection:reviewedSelection,proposal:proposal,current:actor)
+            guard let request=support.frozenRequest else { throw NativeDataError.invalidResponse }
+            let journal=try session.rememberTripSupportConfirmation(request,tripID:pending.trip.id,actor:actor)
+            let bytes=try await session.tripSupportConfirm(journal,actor:actor)
+            let result=try NativeSupportedTripConfirmReceipt.decode(bytes,tripID:pending.trip.id,request:request)
+            try session.completeTripSupportConfirmation(journal,receipt:result,actor:actor)
+            try support.confirmed(key:request.idempotencyKey,choices:choices)
+            self.pending=nil;self.draft=nil
+            try await self.loadList(session,actor)
+            try await self.loadSelected(session,actor)
+            guard self.detail?.trip.headVersion == result.resultingVersion,self.detail?.confirmationState=="confirmed" else { throw NativeDataError.invalidResponse }
+            self.notice="confirmed"
+        }
+    }
+
     func reject(using session: NativeSession) async {
         guard let pending else { return }
         await perform(session) { scope in

@@ -64,7 +64,10 @@ struct NativeTripView: View {
     @State private var shareSource: NativeTripShareSource?
     @State private var screenshotReviewSource: NativeScreenshotReviewSource?
     @State private var inboxCleanupFailed = false
+    @State private var supportStore = NativeTripSupportStore()
     @State private var confirmVisible = false
+    @State private var supportConfirmVisible = false
+    @State private var reviewedSupportSelection: String?
     @State private var reviewedReference: String?
     @State private var discardVisible = false
     @State private var archiveVisible = false
@@ -277,6 +280,11 @@ struct NativeTripView: View {
         }
         .toolbar {
             ToolbarItem(placement:.topBarTrailing) {
+                NavigationLink(text("Reference save receipt", "参考保存回执")) {
+                    NativeTripSupportRecoveryView(session:session,chinese:settings.selectedLocale == .zh,readReceipt:{try await session.tripSupportConfirmationRead($0,actor:$1)},onResolved:{supportStore.bind(nil);await store.reload(using:session)})
+                }
+            }
+            ToolbarItem(placement:.topBarTrailing) {
                 if let journal=try? session.linkedTripDeletionRecovery() {
                     NavigationLink(text("Linked deletion status", "协同删除状态")) {
                         NativeLinkedTripDeletionView(tripID:journal.tripID,headVersion:(try? journal.decodedRequest().expectedVersion) ?? 0)
@@ -297,12 +305,21 @@ struct NativeTripView: View {
                 Task { await store.reload(using: session) }
             }
         }
+        .onChange(of:session.dataScope) { _,_ in supportStore.bind(nil) }
+        .onChange(of:store.selectedID) { _,_ in supportStore.bind(nil) }
+        .onChange(of:store.confirmationReference) { _,_ in supportStore.bind(nil) }
         .onChange(of: store.deletionRequest) { _, request in
             if request != nil {
                 shareSource = nil; screenshotReviewSource = nil
                 cleanupAbandonedScreenshots()
             }
         }
+        .confirmationDialog(text("Save the reviewed proposal with these exact receipts?", "连同明确选择的回执保存已审阅提议？"),isPresented:$supportConfirmVisible,titleVisibility:.visible) {
+            Button(text("Confirm proposal and selected references", "确认提议及所选参考")) {
+                if let reviewedReference,let reviewedSupportSelection { Task { await store.confirmSupported(reviewedReference:reviewedReference,reviewedSelection:reviewedSupportSelection,support:supportStore,using:session) } }
+            }
+            Button(text("Keep reviewing", "继续审阅"),role:.cancel) {}
+        } message: { Text(text("Only the reviewed patch and explicitly selected receipt IDs are adopted. Source status may require recheck; this does not verify the entire plan.", "仅采用已审阅修改和明确选择的回执ID。来源状态可能需要重核；不验证整份行程。")) }
         .confirmationDialog(text("Apply the reviewed proposal?", "应用刚刚审阅的提议？"), isPresented: $confirmVisible, titleVisibility: .visible) {
             Button(text("Confirm and save", "确认并保存")) {
                 if let reviewedReference { Task { await store.confirm(reviewedReference: reviewedReference, using: session) } }
@@ -612,6 +629,9 @@ struct NativeTripView: View {
                         if let zone = day.timeZone { Text(zone).font(.caption) }
                         ForEach(day.items) { item in
                             VStack(alignment: .leading, spacing: 4) {
+                                NavigationLink(text("Item source references", "条目来源参考")) {
+                                    NativeTripSupportView(session:session,tripID:detail.trip.id,tripVersion:detail.trip.headVersion,dayID:day.id,itemID:item.id,proposal:nil,store:supportStore,chinese:settings.selectedLocale == .zh,ports:.init(read:{try await session.tripSupportRead($0)},context:{try await session.tripSupportContext(target:$0,proposal:$1)}))
+                                }
                                 Text(item.title).accessibilityIdentifier("trip.confirmed.item.\(item.id)")
                                 if let start = item.startsAt { Text(start).font(.caption) }
                                 if let end = item.endsAt { Text(end).font(.caption) }
@@ -666,10 +686,23 @@ struct NativeTripView: View {
                 Text(text("Expires: \(formattedExpiry(pending.proposal.expiresAt))", "到期：\(formattedExpiry(pending.proposal.expiresAt))"))
                     .font(.caption)
                 if pending.proposal.stale { Text(message("STALE_TRIP_VERSION")) }
+                NativeTripSupportSelectionView(store:supportStore,chinese:settings.selectedLocale == .zh)
+                ForEach(pending.proposal.dayDiffs,id:\.dayId) { day in
+                    ForEach(day.items,id:\.itemId) { item in
+                        NavigationLink(text("Review sources for \(day.dayId)/\(item.itemId)", "审阅条目来源 \(day.dayId)/\(item.itemId)")) {
+                            NativeTripSupportView(session:session,tripID:pending.trip.id,tripVersion:pending.proposal.baseTripVersion,dayID:day.dayId,itemID:item.itemId,proposal:pending.proposal,store:supportStore,chinese:settings.selectedLocale == .zh,ports:.init(read:{try await session.tripSupportRead($0)},context:{try await session.tripSupportContext(target:$0,proposal:$1)}))
+                        }
+                    }
+                }
+                if let selection=supportStore.selectionReference {
+                    Button(text("Confirm with the selected references", "连同所选参考确认")) {
+                        reviewedReference=store.confirmationReference;reviewedSupportSelection=selection;supportConfirmVisible=true
+                    }.disabled(supportStore.confirmationUnknown || store.busy || !store.canEdit || pending.proposal.stale || store.detail?.trip.headVersion != pending.proposal.baseTripVersion)
+                }
                 Button(text("Confirm this proposal", "确认此提议")) { reviewedReference = store.confirmationReference; confirmVisible = true }
                     .buttonStyle(.borderedProminent)
                     .accessibilityIdentifier("trip.proposal.confirm")
-                    .disabled(store.busy || !store.canEdit || pending.proposal.stale || store.notice == "STALE_TRIP_VERSION" || store.detail?.trip.headVersion != pending.proposal.baseTripVersion)
+                    .disabled(!supportStore.selectedIDs.isEmpty || supportStore.confirmationUnknown || store.busy || !store.canEdit || pending.proposal.stale || store.notice == "STALE_TRIP_VERSION" || store.detail?.trip.headVersion != pending.proposal.baseTripVersion)
                 Button(text("Reject proposal; keep local draft", "拒绝提议并保留本机草稿")) { Task { await store.reject(using: session) } }
                     .accessibilityIdentifier("trip.proposal.reject").disabled(store.busy)
             }
