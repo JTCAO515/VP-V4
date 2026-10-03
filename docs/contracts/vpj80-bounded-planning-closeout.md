@@ -1,0 +1,75 @@
+# VPJ-80 complete controlled v2 worker contract checkpoint
+
+Implementation draft for Main / sole SQL owner559. No installed authority, API grant, target activation or completion guard removal follows from this document. v6 first_party preview/selected references are not provider-scope authorization; the v2 worker prompt accepts only020000 qualification and fresh allowed tool observations. Existing v1 worker/ledger remain unchanged.
+
+## Parameter groups
+
+SIX = p_owner uuid,p_task uuid,p_turn uuid,p_lease uuid,p_intake_digest text,p_planning_digest text.
+THIRTEEN = p_owner uuid,p_task uuid,p_turn uuid,p_lease uuid,p_text_policy uuid,p_planning_policy uuid,p_scope uuid,p_attempt uuid,p_provider text,p_model text,p_price_version text,p_intake_digest text,p_planning_digest text. Exact TS binding keys: owner,task,turn,lease,textPolicy,planningPolicy,scope,attempt,provider,model,priceVersion,intakeDigest,planningDigest.
+
+All wrapper names below are proposed new trusted-worker service entry points, default closed. Roles/grants/config must be reviewed as a separate deployment decision. They may delegate to existing private020000/030000/040000/050000 primitives; never v1dispatch or local070/080 record authority.
+
+| RPC | Complete parameters | Closed success / failure |
+| --- | --- | --- |
+| claim_planning_intake_work_v1 | p_owner_id uuid,p_planning_policy_id uuid,p_execution_profile_id uuid | {kind:leased,lease:exact V2Lease,execution:exact planning-v2-execution/1}; {kind:idle/blocked/unknown_effect} |
+| read_planning_intake_work_v1 | SIX | the unchanged020000 planning_intake_input wire listed below; {kind:blocked} |
+| read_planning_intake_checkpoints_v1 | SIX | exact planning-v2-checkpoints/1 from040000; {kind:blocked} |
+| claim_planning_intake_place_v1 | SIX | {kind:claimed/duplicate/unknown/blocked} |
+| save_planning_intake_place_v1 | SIX,p_observation jsonb | strict true/false |
+| unknown_planning_intake_place_v1 | SIX | strict true/false |
+| authorize_planning_intake_external_read_v1 | SIX,p_scope uuid,p_max_calls integer | {schemaVersion:planning-v2-tool-authority/1,kind:authorized,binding:exact SIX TS identity,scopeId:uuid,maxCalls:13}; {kind:blocked} |
+| authorize_planning_intake_model_v1 | THIRTEEN,p_effect text(model_reserve/model_dispatch) | {schemaVersion:planning-v2-effect-authority/1,kind:authorized,effect:same,binding:exact THIRTEEN}; {kind:blocked} |
+| bind_planning_intake_model_attempt_v1 | THIRTEEN | frozen050000 model_attempt_binding plus reused; {kind:blocked} |
+| record_planning_intake_provider_destination_v1 | THIRTEEN,p_destination jsonb(existing provider-destination/1) | {kind:destination_recorded,attemptId:uuid,invocationId:uuid,phase:configured/attempted/response_buffered}; {kind:blocked/conflict} |
+| record_planning_intake_model_output_v1 | THIRTEEN,p_output_wire jsonb | {kind:output_recorded,binding:exact THIRTEEN,outputDigest:hash,usageDigest:hash}; {kind:blocked/conflict} |
+| read_planning_intake_model_output_receipt_v1 | THIRTEEN,p_output_digest text,p_usage_digest text | exact output_recorded acknowledgement as above; {kind:blocked/conflict} |
+| read_planning_intake_model_output_v1 | SIX,p_scope uuid,p_text_policy uuid,p_price_version text | {kind:model_state,state:none/reserved/dispatched/pending/unknown}; or {kind:model_state,state:settled,binding:original exact THIRTEEN,output:strict planning-v2-model-output/1}; {kind:blocked} |
+| project_planning_intake_comparison_v1 | SIX,p_observation jsonb | exact qualified-intake-comparison-projection/1 from030000; {kind:blocked} |
+| claim_planning_intake_result_v1 | SIX,p_action_key text,p_content_digest text | {kind:claimed/duplicate/unknown/blocked} |
+| complete_planning_intake_comparison_v1 | SIX,p_action_key text,p_scope uuid,p_attempt uuid,p_output_digest text,p_usage_digest text,p_content jsonb | {kind:published,taskId:uuid,turnId:uuid,artifactId:uuid,revision:integer}; {kind:blocked/stale/unknown} |
+| read_completed_planning_intake_receipt_v1 | p_owner uuid,p_task uuid,p_turn uuid,p_artifact uuid,p_intake_digest text,p_planning_digest text,p_scope uuid,p_attempt uuid,p_output_digest text,p_usage_digest text | exact {kind:published,taskId,turnId,artifactId,revision} only when current-readable; {kind:blocked/stale} |
+| pause_planning_intake_work_v1 | SIX,p_reason text(waiting/reconciliation/stale/blocked) | {kind:paused,taskId:uuid,turnId:uuid}; {kind:blocked} |
+
+## Transaction and effect invariants
+
+Claim uses existing work table/mode planning_intake_comparison_v2, existing bounded lease/attempt/capacity; no second coordinator. Account→Task→020000 current session/source/Turn/thread/work→scope/attempt/provider→binding/checkpoint locks, preserve accepted NOWAIT behavior. Never checkpoint/output→Task/work reverse lock order. Exact owner/session/recipient-policy consent/current goal/intake/Memory/visibility and dual digest checks on every operation. Cancellation/stop/source change blocks new effects. Pause releases worker lease/capacity as appropriate without erasing spent cost or original goal.
+
+Map authority must independently check approved recipient/purpose/fee window and consume bounded call allowance≤13 immediately before each actual leaf HTTP request. A prior outer action authorization does not license later requests. started/unknown never retry; completed fresh same-basis place may be reused under a new qualified lease.
+
+Model reserve authority verifies current source/live scope/worst-case reservation; existing reserve ledger creates actual attempt.050000 binding must commit while reserved before dispatch. Model dispatch authority rechecks original lease/exact attempt/scope/price/provider/credential recipient/current source and checks persistent single-attempt dispatch eligibility. Local fixture080 authorization is never substituted. After credential retrieval, record_destination configured must atomically recheck current source/lease/scope/recipient/configuration and consume unique invocation send permission before actual HTTP. Duplicate configured phase may not grant another egress. attempted is only local fetch invocation; response_buffered is validated transport receive. Neither is a supplier charge assertion. Per-attempt transport closures capture binding; no global/latest invocation fallback. Lost configured ACK means zero send and unresolved checkpoint, not reauthorize/retry. Price unknown retains actualMicros NULL/pending; no synthetic zero.
+
+Real usage receipt is recorded by existing RecordPlanningUsage before settlement. New output persistence verifies same attempt/receipt/known cost/actual protocol output and durable trustworthy origin provenance (distinct from hash integrity or a local false-origin journal). Lost ACK can read only the same immutable output identity. No second HTTP or replacement attempt. Unknown original effect stays unresolved across lease changes. Completed output recovery may use new lease only after SQL requalifies current source and original real settled ledger/output/usage; never adopts an in-flight attempt.
+
+Completion is a single reviewed transaction: current authority, dedicated result action, fresh completed place/tool proof, exact030000 projection/validator, original real provider output/origin+sameattempt settled usage/price+source/policy proof, canonical Task/capacity/turn terminal/artifact/event/outbox. Idempotent completion receipt resolves lost ACK; does not replay provider or create another result. Retain020000 completion fence until this sole legitimate path is installed; do not forge a v1 row or broadly disable the trigger. Tool-only no-model completion is not included.
+
+## Boundaries and complete batch
+
+TS owner561: full state-machine/adapters/host composition, default off, no live caller, no grants/deployment/fees; whole-feature tests with mock provider explicitly labelled plus sole559 real SQL union integration after implementation. SQL owner559: all authority/checkpoint/output/completion wrappers above in one append-only batch; no additional writer. Main: contract review, accepted union integration/registry and full affected batch CI. Development closure reflects complete code, while real fee/provider/host/target/device acceptance remains separately UNRUN.
+
+## Main review clarifications (same checkpoint)
+
+### Exact existing qualification / lease wires
+
+read success is byte-schema-compatible with actual020000 private read_planning_qualified_intake_v1, as decoded at lib/server/turn/planning-intake-worker-protocol.ts:decodePlanningV2Read. Exact outer keys: kind=planning_intake_input,schemaVersion=planning-intake-context/2,ownerId,turnId,taskId,artifactId,planningPolicyId,provider=qwen,endpoint,goalText,delegation,planningActionBasis,qualifiedIntake,intakeContextDigest,executionAvailable=false,readyForProvider=false,planningContextDigest. No execution-ready rewrite or second preview wire. qualifiedIntake retains its original assistant-travel-current-basis/1/version5 keys/readiness/sourceKind and false flag.
+
+V2Lease exact keys (no invented schemaVersion): ownerId,taskId,turnId,leaseToken,artifactId,planningPolicyId,intakeContextDigest,planningContextDigest,source,environment,locale. source exact conversationId,goalId,goalVersion,messageId,messageSequence,intakeRevision,memoryBasis. Existing validator validPlanningV2Lease is the schema authority. Claim adds a separate execution object; never inserts these fields into020000 qualification.
+
+### Server-owned execution and budget inputs
+
+Sole SQL owner creates private immutable planning_v2_execution_profiles (operator-owned, enabled=false initially) and planning_v2_execution_runs (claim-generated, one exact task/turn/source profile snapshot). No ordinary caller can insert/update; no automatic enabled seed. Claim names an execution profile, verifies trusted collector principal and existing scope/provider tariff, then captures the run. Caller THIRTEEN never proves its own cost authority.
+
+execution exact wire: schemaVersion=planning-v2-execution/1,executionId,profileId,profileRevision,textPolicyId,scopeId,provider=qwen,model,providerConfigurationId,providerConfigurationVersion,endpoint,priceVersion,reservedMicros,timeoutMs,maxOutputTokens,inputMicrosPerMillion,cachedInputMicrosPerMillion(nullable),outputMicrosPerMillion,maxMapCalls=13,maxSteps=4,maxRetries=0,deadlineMs=120000. Identities are UUID, profile/config revision positive integer, prices nonnegative integer, reservation positive integer. This object is emitted only from immutable SQL run joined to still enabled/current operator profile; worker checks it against explicit host config before any effect.
+
+Run stores owner/Task/Turn/original lease/current dual/source binding, collectorPrincipalId, profile snapshot/version, existing scope/currency/provider/model/priceVersion, recipient/endpoint/config ID/version, same bounded budget parameters and separate map fee-window identity/limit. SQL authorize_reserve joins this run/profile/live scope/provider limits and validates worst-case reservation >= ceil((1048576*max(inputRate,cachedRate)+maxOutputTokens*outputRate)/1e6), using captured registered tariff. Claim and subsequent authorization reject caller mismatch. Scope concurrency/cumulative attempt and cost remain existing ledger limits; retries=0/no second paid attempt. Actual observed usage unknown never becomes zero.
+
+### Concrete trusted collector origin
+
+Profile binds a registered server collectorPrincipalId and allowed signed service JWT role/subject; only future explicitly granted planning_worker_v2_collector may call collector wrappers. Match trusted JWT principal to SQL profile/run, not a caller-supplied field or boolean. Default all APIs revoked/disabled; existing generic service_role/local fixture APIs do not acquire this privilege.
+
+New private origin table captures executionId,collectorPrincipalId,owner/task/turn/originalLease,scope/attempt/provider/model/priceVersion,intake/planning digests,invocationId,providerConfigurationId/version,endpoint,phase timestamps,immutable outputDigest/usageDigest,real usage receipt reference. SQL receives no providerOriginVerified parameter. Its origin kind is assigned internally controlled_collector only after current run/principal qualification and unique configured→attempted→response_buffered observation chain from the same per-attempt transport. configured rechecks current authority after credential retrieval and atomically consumes invocation send eligibility before fetch. Missing/lost configured ACK means no send and reconciliation; cannot authorize a replacement invocation. attempted alone does not prove provider receipt/charge.
+
+record_model_output accepts only that current original execution/principal/attempt, response_buffered provenance and exact validated real usage/output wire. It does not promote060000 local observation journal or its false-origin flag. Read output gates requalify current owner visibility/source and immutable origin+same actual ledger settlement/usage. A new lease may read completed trusted output, never take over unresolved dispatch. Completion requires this record; absent record returns blocked even if output hashes/usage look valid.
+
+### Completion ACK loss and completed-state authority
+
+complete is invoked once; on uncertain ACK worker calls read_completed_planning_intake_receipt_v1 with exact task/turn/artifact/source/attempt/output/usage identities. This read uses a dedicated current-readable authority check which works after Task/work completion: owner/account/session/visibility/policy/source-current and canonical artifact revision/event/receipt join. It must NOT call an accepted-only020000 helper, mint another lease, replay completion, or return old publisher receipt before checking current source. It emits no artifact content and cannot grant new effects. Source/consent/hide/account changes fail closed. A completed receipt is stored in the same atomic completion transaction; after process death ordinary same-artifact consumers can read the durable result without another poll/effect.
