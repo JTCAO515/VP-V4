@@ -436,6 +436,11 @@ struct NativeAssistantConversationView: View {
     @State private var selection = AssistantConversationSelection()
     @State private var conversations: [AssistantConversationSummary] = []
     @State private var conversationsNotice: String?
+    @State private var fiveResultSelection: LibraryResultSelection?
+    @State private var fiveResultRequestGeneration = UUID()
+    @State private var showEvidenceSelection = false
+    @State private var selectedSources = NativeSelectedMessageStore()
+    @State private var paceOperationBlocked = false
     @State private var draft = ""
     @State private var planningDraft = ""
     @State private var planningPolicy: AssistantPlanningPolicy?
@@ -478,8 +483,8 @@ struct NativeAssistantConversationView: View {
     private var resultActive: Bool { isActive && scenePhase == .active }
     private var refreshBusy: Bool { refreshState.busy }
     private var shellSwitchBlocked: Bool {
-        AssistantShellSwitchGate.blocked(busy: busy || planningBusy || tripBusy || entryBlocking,
-            intakePending: pending != nil, planningPending: planningPending != nil, tripPending: pendingTripMutation != nil)
+        AssistantShellSwitchGate.blocked(busy: busy || planningBusy || tripBusy || entryBlocking || paceOperationBlocked,
+            intakePending: pending != nil || selectedSources.pending != nil, planningPending: planningPending != nil, tripPending: pendingTripMutation != nil)
     }
     private var composerScopeCurrent: Bool { session.dataScope != nil && boundScope == session.dataScope }
     private var confirmedConversation: Bool {
@@ -598,6 +603,11 @@ struct NativeAssistantConversationView: View {
                             if goal.scopeVersion < 10001 { tripControls(goal) }
                             else { Text(chinese ? "此终止目标只读。" : "This terminal goal is read only.") }
                         }
+                        NativeVPTravelPaceView(session: session, chinese: chinese, active: resultActive,
+                            selection: travelIntakeSelection, currentSelection: { travelIntakeSelection }, accepted: { await reload() },
+                            linkedTripID: tripLink?.current == true ? tripLink?.tripId : nil,
+                            onPendingChange: { scope, blocked in if scope == session.dataScope { paceOperationBlocked = blocked } },
+                            artifactID: selectedResult?.artifactId, artifactRevision: selectedResult?.revision)
                         ForEach(conversation?.messages ?? []) { message in
                             VStack(alignment: .leading, spacing: 8) {
                                 Text(message.text).font(.body).accessibilityIdentifier("assistant.message.\(message.sequence)")
@@ -642,6 +652,19 @@ struct NativeAssistantConversationView: View {
                     Text(chinese ? "请求未确认，请重试或刷新。" : "Request not confirmed. Retry or refresh.").font(.footnote).accessibilityIdentifier("assistant.notice")
                 }
             }.padding(VPSpacing.standard)
+        }
+        .sheet(item: $fiveResultSelection) { value in
+            NativeFiveResultDetail(artifactID:value.artifactID,revision:value.revision,session:session,chinese:chinese,active:resultActive,onReference:{scope,id,revision in
+                guard scope==session.dataScope,selectedSources.pending==nil else{return}
+                selectedSources.sources.artifact = .init(artifactId:id,revision:revision)
+                if goalHasCurrentMessage{operation="follow_up"}
+            })
+        }
+        .sheet(isPresented: $showEvidenceSelection) {
+            NativeSelectedEvidencePicker(session: session, chinese: chinese, selected: selectedSources.sources.evidence) { scope, evidence in
+                guard scope == session.dataScope, selectedSources.pending == nil else { return }
+                selectedSources.sources.evidence.append(evidence)
+            }
         }
         .sheet(isPresented: $showTravelIntake) {
             NavigationStack {
@@ -722,11 +745,16 @@ struct NativeAssistantConversationView: View {
                     Picker(chinese ? "消息类型" : "Message type", selection: $operation) {
                         ForEach(actions, id: \.self) { action in Text(actionLabel(action)).tag(action) }
                     }.pickerStyle(.menu).accessibilityIdentifier("assistant.operation")
+                    NativeSelectedSourcesView(store: selectedSources, chinese: chinese, selectEvidence: { showEvidenceSelection = true },
+                        linkedTrip: tripLink?.current == true ? tripLink.flatMap { link in
+                            guard let id=link.tripId, let head=link.tripHeadVersion else { return nil }
+                            return NativeSelectedSources.Trip(tripId:id,headVersion:head)
+                        } : nil)
                     HStack {
                         TextField(chinese ? "告诉 VP…" : "Ask VP…", text: $draft, axis: .vertical)
                             .lineLimit(1...5).autocorrectionDisabled().accessibilityIdentifier("assistant.composer")
-                        Button(pending != nil && conversation == nil ? (chinese ? "重试同一次消息" : "Retry same message") : (chinese ? "发送" : "Send")) { Task { await send() } }
-                            .disabled(busy || !composerScopeCurrent || composerWaitingForAuthority || (conversation == nil && pending == nil) || (pending == nil && draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty))
+                        Button(selectedSources.pending != nil ? (chinese ? "重试同一次来源消息" : "Retry same source message") : pending != nil && conversation == nil ? (chinese ? "重试同一次消息" : "Retry same message") : (chinese ? "发送" : "Send")) { Task { await send() } }
+                            .disabled(busy || !composerScopeCurrent || composerWaitingForAuthority || (conversation == nil && pending == nil) || (pending == nil && selectedSources.pending == nil && draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty))
                             .accessibilityIdentifier("assistant.send")
                     }
                 }.padding().background(.bar)
@@ -750,6 +778,11 @@ struct NativeAssistantConversationView: View {
         }
         .task(id: session.dataScope) {
             let requested = session.dataScope
+            paceOperationBlocked = false
+            selectedSources.bind(requested)
+            fiveResultSelection = nil
+            fiveResultRequestGeneration = UUID()
+            showEvidenceSelection = false
             refreshState.invalidate()
             // Reappearance under the same actor is not a conversation switch.
             // Preserve immutable recovery and drafts; an entry owns its own read.
@@ -780,6 +813,7 @@ struct NativeAssistantConversationView: View {
             }
             await reload()
         }
+        .onChange(of: selection.generation) { _, _ in selectedSources.clear() }
         .onChange(of: shellSwitchBlocked, initial: true) { _, blocked in onSwitchBlock?(blocked) }
         .onChange(of: session.busy) { wasBusy, isBusy in
             if wasBusy && !isBusy && session.dataScope != nil {
@@ -1077,6 +1111,13 @@ struct NativeAssistantConversationView: View {
                     Text(chinese ? "此成果需要更新版本的应用查看。" : "Update the app to view this result format.")
                         .font(.footnote)
                 }
+            }
+            if let id=result.artifactId, let revision=result.revision {
+                Button(chinese ? "以此成果继续 / 改口" : "Continue or amend from this result") {
+                    guard resultFence.isCurrent(scope:session.dataScope,active:resultActive,now:ProcessInfo.processInfo.systemUptime), selectedSources.pending == nil else { return }
+                    selectedSources.sources.artifact = .init(artifactId:id,revision:revision)
+                    if goalHasCurrentMessage { operation="follow_up" }
+                }.accessibilityIdentifier("assistant.source.artifact.select")
             }
             Text("\(result.artifactId ?? "") · r\(result.revision ?? 0)")
                 .font(.caption2).textSelection(.enabled).accessibilityIdentifier("assistant.result.identity")
@@ -1473,6 +1514,10 @@ struct NativeAssistantConversationView: View {
               boundScope == initial,
               conversation != nil || (pending != nil && pending?.conversationId == selection.conversationID) else { return }
         if let pending, pending.conversationId != selection.conversationID || pending.policyId != policy.id { return }
+        if !selectedSources.sources.empty || selectedSources.pending != nil {
+            await sendSelectedSources(initial: initial, policyID: policy.id)
+            return
+        }
         let text = draft.trimmingCharacters(in: .whitespacesAndNewlines)
         guard pending != nil || (!text.isEmpty && text.utf16.count <= 4000) else { return }
         let request: AssistantSubmission
@@ -1504,6 +1549,27 @@ struct NativeAssistantConversationView: View {
         } catch { if session.dataScope == initial { notice = "retry" } }
         busy = false
         await reload(replacing: true)
+    }
+    private func sendSelectedSources(initial: NativeDataScope, policyID: String) async {
+        let request: NativeSelectedMessageRequest
+        if let retained=selectedSources.pending { request=retained }
+        else {
+            let related = ["follow_up","amendment","clarification"].contains(operation) ? goal : nil
+            guard related != nil || !["follow_up","amendment","clarification"].contains(operation) else { return }
+            let parent = related.flatMap { current in conversation?.messages.last(where: { $0.goalId==current.goalId && $0.scopeVersion==current.scopeVersion }) }
+            guard related == nil || parent != nil else { return }
+            request = .init(conversationId: conversation?.conversationId ?? UUID().uuidString.lowercased(),messageId:UUID().uuidString.lowercased(),idempotencyKey:UUID().uuidString.lowercased(),policyId:policyID,
+                locale:chinese ? "zh":"en",text:draft.trimmingCharacters(in:.whitespacesAndNewlines),relationship:operation,
+                goalId:operation == "goal_start" ? UUID().uuidString.lowercased():related?.goalId,expectedGoalVersion:related?.scopeVersion,
+                parentMessageId:parent?.messageId,turnId:operation == "independent_question" ? UUID().uuidString.lowercased():nil,selectedSources:selectedSources.sources)
+        }
+        do {
+            _ = try selectedSources.prepare(request); busy=true; refreshState.invalidate(); selection.conversationID=request.conversationId
+            let accepted = try await selectedSources.send(currentScope:{session.dataScope},post:{try await session.selectedSourceMessageRequest($0)},context:{try await session.selectedSourceContextRequest($0)})
+            guard session.dataScope==initial, accepted.messageID==request.messageId else { throw NativeDataError.staleSessionResponse }
+            draft=""; notice=nil
+        } catch { if session.dataScope==initial { notice="retry" } }
+        busy=false; await reload()
     }
     private func acceptPlanning() async {
         guard !planningBusy, planningAgreed, let planningPolicy,
@@ -1587,6 +1653,15 @@ struct NativeAssistantConversationView: View {
         guard resultActive, let initial = session.dataScope, UUID(uuidString: taskID) != nil,
               taskMessages.contains(where: { $0.taskId == taskID }),
               taskTurns.contains(where: { $0.serviceTaskId == taskID && $0.status == "completed" && $0.goalScopeCurrent }) else { return }
+        let requestGeneration=UUID();fiveResultRequestGeneration=requestGeneration;fiveResultSelection=nil
+        do {
+            let bytes=try await session.fiveResultReference(field:"task",id:taskID)
+            guard fiveResultRequestGeneration==requestGeneration,session.dataScope==initial,resultActive else{return}
+            if let reference=try NativeFiveResultReference.decode(bytes,field:"taskId",expectedID:taskID){fiveResultSelection = .init(artifactID:reference.artifactID,revision:reference.revision)}
+            else{resultNotice="unavailable"}
+        }catch{if fiveResultRequestGeneration==requestGeneration,session.dataScope==initial{resultNotice="unavailable"}}
+    }
+    private func openLegacyResult(for taskID: String, initial: NativeDataScope) async {
         selectedTaskID = taskID; selectedResult = nil; resultNotice = nil
         let generation = resultFence.begin(scope: initial, now: ProcessInfo.processInfo.systemUptime)
         do {

@@ -7,6 +7,8 @@ struct NativeJourneysView: View {
     @Environment(AppSettings.self) private var settings
     @Environment(\.scenePhase) private var scenePhase
     @State private var store = NativeJourneysStore()
+    @State private var resultSelection: LibraryResultSelection?
+    @State private var resultRequestGeneration = UUID()
     @State private var refresh = UUID()
     @State private var cursor: String?
     private var session: NativeSession { settings.nativeSession }
@@ -45,6 +47,7 @@ struct NativeJourneysView: View {
                 }
             }
         }
+        .sheet(item:$resultSelection){selection in NativeFiveResultDetail(artifactID:selection.artifactID,revision:selection.revision,session:session,chinese:chinese,active:isActive)}
         .navigationTitle(text("Journeys", "旅程"))
         .task(id: key) {
             let captured = key
@@ -63,9 +66,9 @@ struct NativeJourneysView: View {
                 return try await session.askRequest(path: path, method: "GET")
             }
         }
-        .onChange(of: session.dataScope) { _, _ in store.clear(); cursor = nil }
-        .onChange(of: isActive) { _, active in if !active { store.clear() } }
-        .onChange(of: scenePhase) { _, phase in if phase != .active { store.clear() } }
+        .onChange(of: session.dataScope) { _, _ in store.clear(); cursor = nil; resultSelection = nil; resultRequestGeneration = UUID() }
+        .onChange(of: isActive) { _, active in if !active { store.clear(); resultSelection=nil; resultRequestGeneration=UUID() } }
+        .onChange(of: scenePhase) { _, phase in if phase != .active { store.clear(); resultSelection=nil; resultRequestGeneration=UUID() } }
         .onDisappear { store.clear() }
     }
 
@@ -111,6 +114,16 @@ struct NativeJourneysView: View {
             else if store.trips.isEmpty { Text(text("No saved Trip.", "暂无已保存行程。")) }
             ForEach(store.trips) { trip in
                 if let capturedScope = store.scope {
+                    Button(text("Read this Trip's exact result", "读取此行程的精确成果")) {
+                        let requestGeneration=UUID();resultRequestGeneration=requestGeneration;resultSelection=nil
+                        Task {
+                            do {
+                                let bytes=try await session.fiveResultReference(field:"trip",id:trip.id)
+                                guard resultRequestGeneration==requestGeneration,isActive,scenePhase == .active,session.dataScope==capturedScope,store.isCurrent(session.dataScope) else{return}
+                                if let ref=try NativeFiveResultReference.decode(bytes,field:"tripId",expectedID:trip.id){resultSelection = .init(artifactID:ref.artifactID,revision:ref.revision)}
+                            }catch{if resultRequestGeneration==requestGeneration,session.dataScope==capturedScope{resultSelection=nil}}
+                        }
+                    }.accessibilityIdentifier("journeys.trip.result.\(trip.id)")
                     NavigationLink(value: AppRoute.journeyTrip(.init(tripID: trip.id, scope: capturedScope))) {
                         VStack(alignment: .leading, spacing: 4) {
                             Text(trip.title).font(.headline)

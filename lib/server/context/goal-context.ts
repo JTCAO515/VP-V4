@@ -88,6 +88,37 @@ export function assembleGoalContext(input: GoalContextInput, budgetProfile: "def
     readyForProvider:false,context});
 }
 
+/** v2 preview sources are projected by authenticated domain readers, never client facts.
+ * The legacy v1 assembler and its wire remain unchanged. */
+export type SelectedGoalContextSource = Readonly<{
+  id:string;kind:"trip"|"proposal"|"evidence"|"tool"|"thread";
+  ownerId:string|null;sourceVersion:string;text:string;purpose?:"current_context"|"previous_result_reference";artifactId?:string;revision?:number;originGoalVersion?:number;current?:boolean;recipient?:"first_party";
+}>;
+export function assembleSelectedSourceGoalContext(input:GoalContextInput,sources:readonly SelectedGoalContextSource[],omissions:readonly string[]=[]){
+ if(![input.actorId,input.conversationId,input.goal.id,input.message.id].every(id=>typeof id==="string"&&UUID.test(id))||input.message.goalId!==input.goal.id||input.message.scopeVersion!==input.goal.scopeVersion||!Number.isSafeInteger(input.goal.scopeVersion)||input.goal.scopeVersion<1||!Number.isSafeInteger(input.message.sequence)||input.message.sequence<1||!validText(input.goal.text,4000)||!validText(input.message.text,4000)||input.selectedMemoryIds.length>3||!input.selectedMemoryIds.every(id=>typeof id==="string"&&UUID.test(id))||new Set(input.selectedMemoryIds).size!==input.selectedMemoryIds.length)throw new ContextAssemblyError("Invalid v2 goal scope.");
+ const eligible=new Set(projectRetrievableMemory(input.memories).map(x=>x.id)),focus=input.goal.text+" "+input.message.text,known=new Set<string>();
+ const relevant=input.selectedMemoryIds.map(id=>{const m=input.memories.find(x=>x.id===id&&x.ownerId===input.actorId&&eligible.has(id));if(!m)throw new ContextAssemblyError("Selected memory unavailable.");revision(m);return m;}).filter(m=>m.constraintKind==="hard_constraint"||overlaps(m.summary??"",focus));
+ const additional:ContextCandidate[]=sources.map(source=>{
+  if(!source.id||!source.sourceVersion||source.sourceVersion.length>240||!source.text.trim()||source.text.length>8000
+   ||source.purpose==="previous_result_reference"&&source.kind!=="thread"||known.has(source.id)||source.ownerId!==null&&source.ownerId!==input.actorId||source.ownerId===null&&source.kind!=="evidence")throw new ContextAssemblyError("Invalid selected domain source.");
+  known.add(source.id);return {...source,state:"eligible",...(source.kind==="tool"?{payloadKind:"model_safe_projection"}: {})} as ContextCandidate;
+ });
+ const candidates:ContextCandidate[]=[
+  {id:"goal-context-system",kind:"system",ownerId:null,state:"eligible",sourceVersion:"assistant-goal-context/2",text:SYSTEM_TEXT},
+  {id:"goal-context-policy",kind:"policy",ownerId:null,state:"eligible",sourceVersion:"assistant-goal-context/2",text:POLICY_TEXT},
+  {id:"goal-context-constraints",kind:"constraints",ownerId:input.actorId,state:"eligible",sourceVersion:"assistant-goal-context/2",text:CONSTRAINT_TEXT},
+  {id:`goal:${input.goal.id}`,kind:"thread",ownerId:input.actorId,state:"eligible",sourceVersion:`scope:${input.goal.scopeVersion}`,text:GOAL_MARKER+input.goal.text},
+  {id:`message:${input.message.id}`,kind:"user_message",ownerId:input.actorId,state:"eligible",sourceVersion:`sequence:${input.message.sequence}:scope:${input.message.scopeVersion}`,text:input.message.text},
+  ...relevant.map(m=>({id:`memory:${m.id}`,kind:m.constraintKind==="hard_constraint"?"constraints":"memory",ownerId:input.actorId,state:"eligible",sourceVersion:`revision:${m.revision}:receipt:${m.sourceReceiptId}`,text:`Explicit ${m.constraintKind==="hard_constraint"?"requirement":"preference"}: ${m.summary}`} as ContextCandidate)),...additional,
+ ];
+ const fixed=createContextPlan({taskProfile:"trip_planning",riskClass:"elevated"});
+ // New preview-only policy accommodates a complete bounded current goal/message
+ // plus safe task metadata. It does not change any v1 or model spend budget.
+ const plan:ContextPlan={...fixed,policy:{...fixed.policy,tokenBudgets:{...fixed.policy.tokenBudgets,thread:4128,user_message:4000,tool:512}}};
+ const {manifest:assembled}=assembleContext({plan,actorId:input.actorId,candidates});const manifest={...assembled,contextVersion:"assistant-selected-source-context-plan/2"};
+ return {schemaVersion:"assistant-goal-context/2" as const,conversationId:input.conversationId,goalId:input.goal.id,goalScopeVersion:input.goal.scopeVersion,messageId:input.message.id,messageSequence:input.message.sequence,selectedMemoryCount:manifest.sourceRefs.filter(x=>x.id.startsWith("memory:")).length,readyForProvider:false as const,context:{...manifest,sourceRefs:manifest.sourceRefs.map(ref=>{const source=sources.find(x=>x.id===ref.id);return source?{...ref,...(source.purpose?{purpose:source.purpose}:{}),...(source.recipient?{recipient:source.recipient}:{}),...(source.artifactId?{artifactId:source.artifactId,revision:source.revision,originGoalVersion:source.originGoalVersion,current:source.current,recipient:"first_party"}: {})}:ref;}),omittedReasons:[...manifest.omittedReasons,...omissions]}};
+}
+
 function validText(value: unknown, maximum: number): value is string {
   return typeof value === "string" && value.trim().length > 0 && value.length <= maximum;
 }

@@ -1,0 +1,8 @@
+2026-10-03T03:00:59.9659515Z     # Subtest: authenticated executes exactly the reviewed caller list
+2026-10-03T03:00:59.9668868Z     not ok 2 - authenticated executes exactly the reviewed caller list
+2026-10-03T03:00:59.9680480Z         +   'public.read_assistant_message_sources_v2(uuid,uuid,uuid,uuid,integer)',
+2026-10-03T03:00:59.9686918Z         +   'public.submit_assistant_message_sources_v2(uuid,uuid,uuid,uuid,text,text,text,uuid,integer,uuid,uuid,uuid,jsonb)',
+2026-10-03T03:00:59.9801863Z         40: 'public.read_assistant_message_sources_v2(uuid,uuid,uuid,uuid,integer)'
+2026-10-03T03:00:59.9830787Z         77: 'public.submit_assistant_message_sources_v2(uuid,uuid,uuid,uuid,text,text,text,uuid,integer,uuid,uuid,uuid,jsonb)'
+2026-10-03T03:01:26.4134687Z # pass 21
+2026-10-03T03:01:26.4136426Z # fail 2

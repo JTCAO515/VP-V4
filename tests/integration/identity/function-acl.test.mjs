@@ -13,6 +13,8 @@ import test from "node:test";
 const ANON = ["public.research_intake_v1(jsonb)"];
 
 const AUTHENTICATED = [
+  "public.read_assistant_message_sources_v2(uuid,uuid,uuid,uuid,integer)",
+  "public.submit_assistant_message_sources_v2(uuid,uuid,uuid,uuid,text,text,text,uuid,integer,uuid,uuid,uuid,jsonb)",
   "public.submit_assistant_travel_intake_v1(uuid,uuid,uuid,uuid,integer,integer,uuid,uuid,text,text,text,jsonb,jsonb)",
   "public.read_assistant_travel_intake_v1(uuid,uuid,uuid)",
   "public.read_assistant_travel_intake_write_basis_v1(uuid,uuid,uuid)",
@@ -64,6 +66,11 @@ const AUTHENTICATED = [
   "public.read_journeys_goal_index_v1(uuid,text)",
   "public.read_planning_policy_v1(uuid)",
   "public.read_result_artifacts_v1(uuid,integer)",
+  "public.choose_result_decision_v2(uuid,integer,uuid,text)",
+  "public.read_result_artifact_v2(uuid,integer)",
+  "public.read_task_result_reference_v2(uuid)",
+  "public.read_trip_result_reference_v2(uuid)",
+  "public.search_result_artifacts_v2(text,uuid)",
   "public.read_change_proposal_reference_v1(uuid,integer)",
   "public.read_trip_change_proposal_reference_v1(uuid)",
   "public.read_task_result_reference_v1(uuid)",
@@ -129,6 +136,11 @@ test("repository functions grant EXECUTE to anon and authenticated only through 
     assert.deepEqual(sql(executable("authenticated")), [...AUTHENTICATED].sort());
   });
 
+  await t.test("selected-source export remains exactly service-only and source storage private",()=>{
+    assert.deepEqual(sql("select has_function_privilege('anon','public.assistant_message_source_export_owner_v2(uuid,uuid,integer)'::regprocedure,'EXECUTE'),has_function_privilege('authenticated','public.assistant_message_source_export_owner_v2(uuid,uuid,integer)'::regprocedure,'EXECUTE'),has_function_privilege('service_role','public.assistant_message_source_export_owner_v2(uuid,uuid,integer)'::regprocedure,'EXECUTE');"),["f|f|t"]);
+    for(const role of ["anon","authenticated","service_role"])assert.deepEqual(sql(`select has_table_privilege('${role}','turn_private.assistant_message_source_receipts','SELECT,INSERT,UPDATE,DELETE');`),["f"]);
+  });
+
   await t.test("internal Trip content helpers are not callable by any API role", () => {
     for (const role of ["anon", "authenticated", "service_role"]) {
       assert.deepEqual(sql(`select has_function_privilege('${role}', 'public.trip_content_snapshot(uuid,text)'::regprocedure, 'EXECUTE'), has_function_privilege('${role}', 'public.apply_trip_content_patch(jsonb,jsonb)'::regprocedure, 'EXECUTE');`), ["f|f"], role);
@@ -153,6 +165,19 @@ test("repository functions grant EXECUTE to anon and authenticated only through 
       has_function_privilege('service_role','public.read_result_events_v1(bigint,integer)'::regprocedure,'EXECUTE');`), ["f|f|t"]);
     for (const table of ["result_artifacts", "result_revisions", "result_events"]) {
       assert.deepEqual(sql(`select has_table_privilege('authenticated','turn_private.${table}','SELECT'),has_table_privilege('service_role','turn_private.${table}','SELECT');`), ["f|f"]);
+    }
+  });
+
+  await t.test("five-result v2 exact grants keep publisher/export internal and helpers inaccessible", () => {
+    for (const fn of ["publish_result_artifact_v2(uuid,uuid,integer,uuid,uuid,uuid,uuid,uuid,integer,integer,jsonb,jsonb,jsonb)","result_artifact_export_owner_v1(uuid,text,jsonb,integer)"]) {
+      assert.deepEqual(sql(`select has_function_privilege('anon','public.${fn}'::regprocedure,'EXECUTE'),has_function_privilege('authenticated','public.${fn}'::regprocedure,'EXECUTE'),has_function_privilege('service_role','public.${fn}'::regprocedure,'EXECUTE');`),["f|f|t"],fn);
+    }
+    for(const fn of ["choose_result_decision_v2(uuid,integer,uuid,text)","read_result_artifact_v2(uuid,integer)","read_task_result_reference_v2(uuid)","read_trip_result_reference_v2(uuid)","search_result_artifacts_v2(text,uuid)"]) {
+      assert.deepEqual(sql(`select has_function_privilege('anon','public.${fn}'::regprocedure,'EXECUTE'),has_function_privilege('authenticated','public.${fn}'::regprocedure,'EXECUTE'),has_function_privilege('service_role','public.${fn}'::regprocedure,'EXECUTE');`),["f|t|f"],fn);
+    }
+    for(const role of ["anon","authenticated","service_role"]){
+      assert.deepEqual(sql(`select has_function_privilege('${role}','turn_private.publish_result_v2(uuid,uuid,integer,uuid,uuid,uuid,uuid,uuid,integer,integer,jsonb,jsonb,jsonb,boolean)'::regprocedure,'EXECUTE');`),["f"]);
+      assert.deepEqual(sql(`select count(*) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='turn_private' and p.proname in ('result_uuid_v2','result_int_v2','valid_result_evidence_v2','result_evidence_current_v2','valid_result_draft_v2','valid_result_content_v2','translation_numbers_v2','result_translation_projection_v2','result_domain_state_v2','result_state_v2','result_title_v2','result_summary_v2','project_result_display_v2','legacy_result_basis_state_v2') and has_function_privilege('${role}',p.oid,'EXECUTE');`),["0"]);
     }
   });
 

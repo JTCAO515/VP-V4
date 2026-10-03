@@ -1,0 +1,13 @@
+{
+  "head": "b77a134acf8d8be588ad7a3723f9ddda1f7f82f6",
+  "kind": "ACTUAL_NATIVE_PACE_INTAKE_API_STATE_NOT_DEVICE_GESTURES",
+  "device": "5DB8E4CE-76AA-48A7-8F9C-861AF1A25E6E",
+  "dd": "/tmp/vpj81-native-task-activity-20261002",
+  "base": 63220,
+  "files": {
+    "ios/VisePanda/VisePanda/Features/Ask/NativeVPTravelPaceStore.swift": "d6b5347db3bd95a00f48b499a3df3cee84425607b9415e7a496ec8c72e941fa3",
+    "ios/VisePanda/VisePanda/Features/Ask/NativeVPTravelPaceView.swift": "77488315d8c4291ac213eecc44b823c6eae8a1c582a4513f7f967556f4f00cd9",
+    "ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift": "32ff0c39177758a726fa2a8925b229e547484529661fd7a9665f28e7e0371fa0",
+    "ios/VisePanda/VisePandaTests/NativeVPTravelPaceTests.swift": "bfaf8c8ca39c86ba8955ea8162380897ef9a20646c2f43c7c8b7485f5f8a1605"
+  }
+}
