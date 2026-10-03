@@ -4,6 +4,7 @@ import { getNativeRuntimeConfig } from "../identity/native-config.ts";
 import { createNativeTripDataAdapter } from "../identity/user-data-adapter.ts";
 import { isUuid } from "../identity/request-guards.ts";
 import { FAILURE_TAXONOMY, type FailureCode } from "../contracts/errors/index.ts";
+import { createOfflineNativeAuthority, type OfflineNativeActor } from "./offline-native-authority.ts";
 import { issueOfflineRead, type OfflineBasis } from "./offline-read.ts";
 
 const response = (data: unknown, status = 200) => Response.json(data, { status, headers: { "Cache-Control": "private, no-store" } });
@@ -26,8 +27,15 @@ export async function nativeOfflineReadHTTP(request: NextRequest, tripId: string
       const adapter = await createNativeTripDataAdapter(request, config, scope.fetch, scope.unavailable);
       scope.check();
       if (!adapter) return failure("UNAUTHENTICATED");
+      const authority = await createOfflineNativeAuthority(request, config, scope.fetch, scope.unavailable);
+      scope.check();
+      if (!authority) return failure("UNAUTHENTICATED");
+      let pinnedActor: OfflineNativeActor | null = null;
       let readError: FailureCode | null = null;
       const readCurrent = async (): Promise<OfflineBasis | null> => {
+        const authorized = await authority.read();
+        scope.check();
+        if ("error" in authorized) { readError = authorized.error; return null; }
         const actor = await adapter.authenticated();
         if ("error" in actor) { readError = actor.error; return null; }
         const saved = await adapter.getTrip(tripId.toLowerCase());
@@ -37,12 +45,18 @@ export async function nativeOfflineReadHTTP(request: NextRequest, tripId: string
         const currentActor = await adapter.authenticated();
         scope.check();
         if ("error" in currentActor) { readError = currentActor.error; return null; }
-        if (currentActor.data !== actor.data) { readError = "UNAUTHENTICATED"; return null; }
+        const finalAuthority = await authority.read();
+        scope.check();
+        if ("error" in finalAuthority) { readError = finalAuthority.error; return null; }
+        if (currentActor.data !== actor.data || actor.data !== authorized.data.subject
+          || finalAuthority.data.subject !== authorized.data.subject || finalAuthority.data.sessionId !== authorized.data.sessionId
+          || finalAuthority.data.sessionEpoch !== authorized.data.sessionEpoch
+          || (pinnedActor && (pinnedActor.subject !== authorized.data.subject || pinnedActor.sessionId !== authorized.data.sessionId
+            || pinnedActor.sessionEpoch !== authorized.data.sessionEpoch))) { readError = "UNAUTHENTICATED"; return null; }
+        pinnedActor = authorized.data;
         return {
           subject: actor.data,
-          // The existing adapter gates active session but exposes no signed epoch binding.
-          // No placeholder epoch is eligible for a package; missing authorities stay closed.
-          sessionEpoch: null, tripId: saved.data.trip.id, headVersion: saved.data.trip.headVersion,
+          sessionEpoch: authorized.data.sessionEpoch, tripId: saved.data.trip.id, headVersion: saved.data.trip.headVersion,
           confirmed: saved.data.confirmationState === "confirmed", active: archive.data === null,
           payload: { days: saved.data.content.days.map(day => ({ id: day.id, date: day.date,
             items: day.items.map(item => ({ id: item.id, title: item.title })) })) },

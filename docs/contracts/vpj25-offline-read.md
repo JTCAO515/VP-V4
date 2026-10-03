@@ -17,7 +17,12 @@ A digest is SHA-256 over canonical payload only, for integrity comparison.
 Only provenance-proven user-authored, confirmed Trip date/text fields are eligible.
 Unknown provenance, third-party locations/addresses/translations, images, orders,
 OCR text and Memory are excluded. The production adapter currently has no provenance
-policy/signer and therefore issues no offline packages. Tests inject these authorities;
+policy/signer and therefore issues no offline packages. The readonly authority adapter
+uses the existing JWT-bound `native_session_v2` RPC with `p_action:"session"`, whose
+version-2 response binds subject/sessionId/mobileEpoch. It validates the verified
+credential subject/sessionId and a positive safe-integer mobileEpoch, and checks
+this actor/epoch before and after snapshot reads. Missing/malformed epoch authority
+is unavailable; no epoch is synthesized or incremented. Tests inject these authorities;
 they do not establish live caching rights.
 
 Authenticate and read current owner Trip before policy evaluation, then authenticate

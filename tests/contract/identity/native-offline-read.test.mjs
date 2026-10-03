@@ -4,6 +4,7 @@ import { generateKeyPairSync, sign, verify } from 'node:crypto';
 import { NextRequest } from 'next/server.js';
 import { issueOfflineRead, offlineCanonical, offlineDigest } from '../../../lib/server/today/offline-read.ts';
 import { nativeFixture, subject as nativeSubject, sessionId } from './native-fixture.ts';
+import { createOfflineNativeAuthority } from '../../../lib/server/today/offline-native-authority.ts';
 import { nativeOfflineReadHTTP } from '../../../lib/server/today/offline-native-http.ts';
 
 const tripId='314b8576-e9e7-49aa-aa66-94eac6ba6544';
@@ -97,10 +98,11 @@ async function httpFixture(t, mutate=()=>{}) {
   let tripReads=0;
   t.mock.method(globalThis,'fetch',async(input,init)=>{
     const r=new Request(input,init),path=new URL(r.url).pathname;
-    seen.push({path,method:r.method});
+    const action=path.endsWith('/native_session_v2')?JSON.parse(await r.clone().text()).p_action:null;
+    seen.push({path,method:r.method,action});
     const state={path,tripReads}; mutate(state);
     if(state.response)return state.response;
-    if(path.endsWith('/native_session_v2'))return Response.json({subject:nativeSubject,sessionId,mobileEpoch:7});
+    if(path.endsWith('/native_session_v2'))return Response.json({version:2,subject:nativeSubject,sessionId,mobileEpoch:7});
     if(path==='/rest/v1/trips'){
       tripReads++;
       return Response.json([{id:tripId,title:'Saved',head_version:2,updated_at:'2026-10-03T00:00:00Z'}]);
@@ -131,7 +133,7 @@ test('production rejects archived Trip',async t=>{
   assert.equal((await r.json()).kind,'unavailable');
 });
 test('final session revocation returns credential failure, not any offline response',async t=>{
-  const f=await httpFixture(t,s=>{if(s.path.endsWith('/native_session_v2')&&s.tripReads>=3)s.response=Response.json({subject:nativeSubject,sessionId:tripId,mobileEpoch:8});});
+  const f=await httpFixture(t,s=>{if(s.path.endsWith('/native_session_v2')&&s.tripReads>=3)s.response=Response.json({version:2,subject:nativeSubject,sessionId:tripId,mobileEpoch:8});});
   const r=await nativeOfflineReadHTTP(f.request,tripId);
   assert.equal(r.status,401);
 });
@@ -168,4 +170,29 @@ test('nonce is required, UUID validated, unique in query and carries no cache ri
     const r=await nativeOfflineReadHTTP(new NextRequest('https://example.com/offline?'+query),tripId);
     assert.equal(r.status,400);
   }
+});
+
+test('real readonly authority obtains verified actor and epoch with session action only',async t=>{
+  const f=await httpFixture(t);
+  const authority=await createOfflineNativeAuthority(f.request,{url:database,publishableKey:process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY});
+  assert.ok(authority);
+  assert.deepEqual(await authority.read(),{data:{subject:nativeSubject,sessionId,sessionEpoch:7}});
+  assert.ok(f.seen.every(r=>r.method==='GET'||(r.path.endsWith('/native_session_v2')&&r.action==='session')));
+});
+for(const [label,row]of Object.entries({
+  missingEpoch:{version:2,subject:nativeSubject,sessionId},zeroEpoch:{version:2,subject:nativeSubject,sessionId,mobileEpoch:0},
+  unsafeEpoch:{version:2,subject:nativeSubject,sessionId,mobileEpoch:9007199254740992},wrongVersion:{version:1,subject:nativeSubject,sessionId,mobileEpoch:7},
+}))test(`malformed authority ${label} is503 and never generates epoch or offline permit`,async t=>{
+  const f=await httpFixture(t,s=>{if(s.path.endsWith('/native_session_v2'))s.response=Response.json(row);});
+  const r=await nativeOfflineReadHTTP(f.request,tripId);
+  assert.equal(r.status,503);
+  assert.deepEqual(await r.json(),{error:{code:'PROVIDER_UNAVAILABLE'}});
+});
+test('epoch changes with same actor/session during snapshot read fail closed',async t=>{
+  const f=await httpFixture(t,s=>{if(s.path.endsWith('/native_session_v2'))s.response=Response.json({version:2,subject:nativeSubject,sessionId,mobileEpoch:s.tripReads>=2?8:7});});
+  assert.equal((await nativeOfflineReadHTTP(f.request,tripId)).status,401);
+});
+test('authority upstream error retains503 instead of clearing credentials',async t=>{
+  const f=await httpFixture(t,s=>{if(s.path.endsWith('/native_session_v2'))s.response=Response.json({message:'synthetic authority outage'},{status:503});});
+  assert.equal((await nativeOfflineReadHTTP(f.request,tripId)).status,503);
 });
