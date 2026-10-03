@@ -167,6 +167,14 @@ final class NativeSession {
     }
 
     /// The Trip consumer receives response bytes, never the Keychain credential.
+    func tripSupportRead(_ target: NativeTripSupportTarget) async throws -> Data {
+        guard target.valid, dataScope==target.actor else { throw NativeDataError.sessionUnavailable }
+        let bytes=try await tripRequest(path:"api/trips/native/v2/\(target.tripID)/support",method:"GET",queryItems:[
+            .init(name:"expectedTripVersion",value:String(target.tripVersion)),.init(name:"dayId",value:target.dayID),.init(name:"itemId",value:target.itemID)])
+        guard dataScope==target.actor, bytes.count<=131_072 else { throw NativeDataError.staleSessionResponse }
+        return bytes
+    }
+
     func tripRequest(path: String, method: String, body: Data? = nil, queryItems: [URLQueryItem] = []) async throws -> Data {
         try await dataRequest(prefix: "api/trips/native/v2", path: path, method: method, body: body, queryItems: queryItems)
     }
