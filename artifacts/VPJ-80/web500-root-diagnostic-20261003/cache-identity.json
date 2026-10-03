@@ -1,0 +1,17 @@
+{
+  "worktree": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj80-bounded-execution",
+  "cacheIsSymlink": false,
+  "original": {
+    "inode": 17029443,
+    "device": 16777229,
+    "mtimeNs": 1790864704884860263
+  },
+  "backup": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj80-bounded-execution/.next-web500-original-c220a5a3",
+  "generatedIsolation": "/tmp/vpj80-web500-cold-c220a5a3",
+  "coldGenerated": {
+    "inode": 23793947,
+    "device": 16777229,
+    "mtimeNs": 1790983430479933555
+  },
+  "originalRestored": true
+}
