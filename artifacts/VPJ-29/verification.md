@@ -1,5 +1,56 @@
 # #220 backend evidence — 2026-10-04
 
+## Current closeout on actual main
+
+Final product source: `dffdd97f5e616313f534a4e6ed790ecad659e433`, including actual
+main `e93e61aa31b8a37cc4b6328793d7acde06ab2e65` through normal merge `d500e6c8`.
+Original owner SHAs are source-equivalent cherry-picks, not original-SHA ancestors:
+Maps SQL b58 → b8e08dd9; Maps TS 2970 → 3595a642; Native R2 8bb → beebb365.
+Recovery source af41 is incorporated as 369d2861; final SQL proof b9e as 097c337a.
+
+PASS: actual original reservation confirmation RPC creates one user_reported fixed
+dinner reference; production recovery HTTP generates bounded candidates/diff and
+preserves its exact binding; lost select ACK recovers the same operation; original
+Native confirm applies, same-key retry returns already_applied, final exact receipt
+returns applied/version2 with one event and both fixed dinner/unselected item retained.
+This is real disposable PostgreSQL with synthetic signed JWT/admin SQL transport,
+not target Auth or a supplier-verified booking. 1/1, zero skips.
+
+PASS: combined Session source-method tests 4/4 with actual Recovery and Reservation
+journal implementations, fake Vault and URLProtocol. A 401 preserves both records;
+the historical recovery-only cleanup-owner fallback on a fresh Session locates both
+for explicit logout. Existing reservation cleanup failure and recovery failure tests
+fence identity. This is not full iOS Session/runtime or real Keychain acceptance.
+
+PASS: merged full-app unsigned generic compile, plutil, typecheck, source lint (569),
+docs, final registry classification/governance (9 tests) and diff. Existing unchanged
+Native/Maps/SQL evidence is reused; no repeated full matrix.
+
+Actual HTTP revealed stored UTC timestamps from original SQL OF formatter use +00.
+Read-layer normalization to +00:00 preserves instants and fixes PROJECTION_LAG;
+original writer/applied migrations/new Patch validation are unchanged. Reader
+contracts PASS4 plus updated negative PASS1; invalid date/offset and new Patch short
+offsets remain rejected. Original fixture failure (evidenceTier was nested) and real
+applied-snapshot failure are preserved in final-integration-20261004 logs.
+
+SQL owner's distinct successful-source R1 cases and actual qualified R2 four-case
+package are recorded separately under sql-confirm-guard-20261004. They prove original
+confirm/one-event replay, fixed order preservation, source/stop/revoke/expiry rollback
+and concurrent scope fencing for those actual disposable source versions; they are
+not substituted for this HTTP or Session evidence.
+
+Historical merge preparation also failed an assertion and plutil; shell continuation
+briefly committed conflict markers locally. That unpublished merge was immediately
+amended after repairing project source lists/Session. Current d500 tree is marker-free,
+plutil/build/source-method checks passed. This was not a target runtime failure.
+
+UNRUN: actual licensed provider/policy activation, ordinary target role deployment,
+real iOS HTTPS/Auth/SQL end-to-end, Simulator UI, physical/human/accessibility and
+production. No grants, source seeds/publication, paid calls or production action.
+All prior sections below are version-scoped historical evidence, including their
+then-current UNRUN dependency statements. #646 is now actually merged; the successful
+disposable order/confirmation chain above has run.
+
 Source: TS/API `e72ac95d`, SQL owner `bbd127df` + `87967db9`, integrated as
 `4ee83d36` on actual main `8d30d0ba`. Native owner's exact `9c466e10` is integrated
 without conflicts as `646ff1db`; source review found no additional consumer defect.

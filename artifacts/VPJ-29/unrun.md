@@ -1,8 +1,9 @@
 # Remaining backend/native boundary — #220
 
-- UNRUN: successful real #214 reservation source context/atomic confirmation at
-  main `8d30d0ba`: PR #646 has not normally merged. Missing reader returns pending;
-  no empty-order assertion, no stacked runtime dependency or fabricated reader.
+- The previous #646 main dependency is resolved: actual main e93e61aa is normally
+  merged. Disposable original user-reported order → bounded proposal → original
+  atomic confirm/retry/exact applied receipt is PASS1/1. Actual supplier verification
+  and target environment acceptance remain UNRUN.
 - UNRUN: target environment ordinary-role Auth/RLS/new-RPC activation, native
   device/real supplier/production acceptance. New functions are default revoked;
   no grants or target activation are authorized by this package.
@@ -21,9 +22,9 @@
 - Native Today entry/candidate review/original confirmation/unknown operation UI
   from owner `01a1055a-d2b1-7062-91a8-66b1b61a7ce5` is fixed at `9c466e10` and
   integrated as `646ff1db`. Target/human acceptance remains UNRUN. After normal
-  #646 merge, integrate its fixed Session change while preserving both journal
-  cleanup owners and shared preservePendingJournals behavior; do not independently
-  rewrite the reserved Session lifecycle before the owning task's fixed handoff.
+  #646 merge, its fixed Session change was integrated with both historical cleanup
+  owners and shared preservePendingJournals/material-signout fence intact. Combined
+  source-method checks and full-app generic compile passed; actual iOS runtime is UNRUN.
 - Native R2 source `8bb00f57` is now also integrated, including labelled actual
   owner references, foreground check/refresh/stop, transport preparation journal,
   original review lifecycle and original digest scheme correction. Its generic
