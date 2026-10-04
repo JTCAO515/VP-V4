@@ -215,3 +215,46 @@ relationships, not real external provider origin or licence rights. Successful
 public preparation/selection/confirmation with actual #646, full stop/revoke/expiry
 races through the original event, target grants, signed Auth, device/provider flows
 remain UNRUN. No changes to the ordinary caller/producer ACL or old export egress.
+
+## Final current-main integration and SQL freeze
+
+#646 was normally merged at main `e93e61aa`. This SQL worktree merged that actual
+main before running the earlier UNRUN paths. Its real current reference reader and
+reservation writer were used; no unmerged #646 migration or fake empty-order seam.
+
+The first run exposed PL/pgSQL local variable/query alias `b` ambiguity. The exact
+query alias was qualified. Eight cases passed; two actual order tests then exposed
+JSON operator precedence in `items||page->'items'`: the concatenation became NULL,
+and a NULL length comparison failed to reject incomplete scope. The fix is
+`items||(page->'items')` plus explicit array type/IS DISTINCT count validation.
+No guard, assertion, source tier or mandatory check was weakened. Original FAIL
+logs and the synthetic thin observation (tableCount1, recordsNULL) are retained.
+Only the two failed order cases and the necessary original same-key concurrent
+confirmation case reran: PASS3, zero skip. Together with the unchanged eight
+current-reader cases, the required R1 scope has 11 distinct passing cases.
+
+On actual main e93 + fixed 030000 `af41d7ee` + #366 fixed source `b58ae380`,
+`tests/integration/trip/local-recovery-transport.test.mjs` passed four scoped
+integration cases, zero failures/skips. The public preparation/selection/original
+concurrent confirmation succeeded with the real current reservation basis and
+original reviewed address ItemSupport chain. The immutable original operation read
+returned applied at the exact original proposal/event/version; two same-key calls
+produced one Trip version/event. Fixed reservation and all unselected scope stayed
+unchanged. Confirmation/source reads did not consume another provider request.
+
+The same original writer rolled back Trip/content/snapshot/event/idempotency/audit
+and proof after same-transaction stop (original stop RPC with actual updated head),
+policy/member/source withdrawal, receipt mutation, shortest source deadline expiry,
+and mobile epoch change. Concurrent reservation creation and confirmation either
+committed the qualified original version or rejected confirmation/metadata CAS;
+never an unchecked fixed-order write. Successful deferred proof validation erases
+its temporary proof. These are actual database behaviors with synthetic admin
+Auth/producer/licence fixtures, not signed Auth or real external provider facts.
+
+The evidence manifest distinguishes prior source-only and final current-main
+results. Earlier UNRUN labels are retained as historical facts and superseded only
+for these observed SQL paths. Source/target activation, actual signed Auth/provider
+origin/rights, Native/device/human and broader #220 acceptance remain UNRUN under
+their owners. SQL implementation and required local integration are now complete;
+freeze this task after handing the fixed source/test/evidence to the sole #220
+integrator. No new task, runtime grant, target change or independent PR.

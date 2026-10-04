@@ -41,5 +41,52 @@
     "full transport same-tx stop/revocation/expiry race through original event",
     "actual signed Auth/native/provider/account rights or target deployment"
   ],
-  "ownership": "No 040000/TS/Swift/old migration/registry edits; archived probe is evidence, not a new registry runner"
+  "ownership": "No 040000/TS/Swift/old migration/registry edits; archived probe is evidence, not a new registry runner",
+  "currentMainIntegration": {
+    "mainBase": "e93e61aa31b8a37cc4b6328793d7acde06ab2e65",
+    "recoverySource": "af41d7eeccbc847f00c64dd9abc76a1b3c160608",
+    "trafficSource": "b58ae380d923bf56cf908f6964dbc14c3a7b03d7",
+    "overlay": "/var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/vpj29-r2-current-main-99gse6g8",
+    "R1Test": "tests/integration/trip/local-recovery-guard.test.mjs",
+    "R2Test": "tests/integration/trip/local-recovery-transport.test.mjs",
+    "results": {
+      "initial_current_reader": {
+        "FAIL": 10,
+        "reason": "actual PLpgSQL local b/query b alias ambiguity"
+      },
+      "alias_fixed": {
+        "PASS": 8,
+        "FAIL": 2,
+        "skipped": 0,
+        "reason": "actual JSON || / -> precedence made nonempty reader collection NULL; NULL completeness check failed open"
+      },
+      "basis_fixed_failed_cases_plus_confirm_concurrency": {
+        "PASS": 3,
+        "FAIL": 0,
+        "skipped": 0
+      },
+      "R2_original_writer": {
+        "PASS": 4,
+        "FAIL": 0,
+        "skipped": 0
+      }
+    },
+    "observed": [
+      "actual main #646 current reference reader and original reservation metadata writer used, no mock empty orders",
+      "whole R1 preparation/original confirmation/operation replay/scope preservation; two-process original same-key one event/version",
+      "actual new reservation drift and explicit user-preserved bound order blocks optional deletion without qualification upgrade",
+      "actual public R2 context/selection/original concurrent confirmation with matched reviewed address ItemSupport and fixed current reservation",
+      "same transaction public stop with updated current head, policy/member/source withdrawal and receipt metadata mutation all roll back original Trip/history/idempotency/proof",
+      "earliest source deadline at commit rolls back original writer",
+      "mobile epoch mutation and concurrent order writer cannot bypass current owner/source basis",
+      "successful deferred validation removes proof; source reads/confirm do not dispatch extra provider quota"
+    ],
+    "environment": "network-none actual PostgreSQL/application migrations with synthetic administrator Auth/producer/right grants; not real signed Auth/provider/source rights/target acceptance",
+    "UNRUN": [
+      "target deployment/activation/grants",
+      "actual signed Auth, external provider response and account/licence qualification",
+      "Native/human/device acceptance",
+      "whole #220 acceptance outside this SQL owner"
+    ]
+  }
 }
