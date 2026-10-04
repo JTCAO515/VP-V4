@@ -34,3 +34,14 @@ test('lost ACK preserves original body/op across recovery; actor changes prevent
  let current=true;assert.deepEqual(await dispatchClassificationPending(recovered,{...io,isCurrent:()=>current,send:async()=>{current=false;return {ok:true,status:200,data:{privateReceipt:true}};}}),{kind:'identity_changed'});
  let authReads=0;const result=await handleClassificationOps(new Request('http://localhost/api/ops/lodging-classification',{method:'POST',headers:{'content-type':'application/json','x-ops-expected-actor':candidateId},body:JSON.stringify(input)}),{enabled:true,sameOrigin:true,createRpc:()=>({authenticate:async()=>++authReads===1?candidateId:mappingId,call:async()=>({data:{privateReceipt:true},error:null})})});assert.equal(result.status,503);assert.deepEqual(result.body,{error:'OPS_ACK_UNKNOWN'});
 });
+
+
+test('storage failure prevents first send; lost ACK followed by forbidden preserves pending original operation',async()=>{
+ const {beginClassificationPending,dispatchClassificationPending}=await import('../../../lib/server/knowledge/classification/pending.ts');
+ const input=actions[0];assert.ok(isClassificationOperation(input));const original={actorId:candidateId,input,createdAt:Date.now()};let sends=0;
+ assert.equal(await beginClassificationPending(original,{save:()=>{throw new Error('Storage blocked');},dispatch:async()=>{sends++;}}),false);assert.equal(sends,0);
+ assert.equal(await beginClassificationPending(original,{save:()=>false,dispatch:async()=>{sends++;}}),false);assert.equal(sends,0);
+ let retained:typeof original|null=null;const seen:unknown[]=[];const io={isCurrent:()=>true,currentActor:async()=>candidateId,send:async(body:unknown)=>{seen.push(body);sends++;if(sends===1)throw new Error('Lost committed ACK');return {ok:false,status:403,data:null};}};
+ await beginClassificationPending(original,{save:p=>{retained=p as typeof original;return true;},dispatch:async p=>{assert.deepEqual(await dispatchClassificationPending(p,io),{kind:'unknown'});}});
+ assert.ok(retained);assert.deepEqual(await dispatchClassificationPending(retained,io),{kind:'unknown'});assert.deepEqual(retained,original);assert.deepEqual(seen,[input,input]);
+});
