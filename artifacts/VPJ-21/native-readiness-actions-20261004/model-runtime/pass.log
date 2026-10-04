@@ -1,0 +1,3 @@
+PASS explicit declaration CAS / no fabricated action or digest
+PASS unknown / not-applicable axes stay distinct
+PASS exact action execute / expiry / changed basis / no solved label

@@ -1,164 +1,100 @@
 import SwiftUI
 
-/// Request-local declarations; this view has no Trip writer, profile or memory persistence.
-struct NativeReadinessView: View {
-    let tripID: String
-    let tripVersion: Int
+struct NativeReadinessView:View {
+    let tripID:String
+    let tripVersion:Int
     @Environment(AppSettings.self) private var settings
     @Environment(\.scenePhase) private var phase
-    @State private var city = "shanghai"
-    @State private var applies = "unknown"
-    @State private var documentReady = "unknown"
-    @State private var conditionsChecked = "unknown"
-    @State private var timing = "now"
-    @State private var selectedTime = Date()
-    @State private var requestID: UUID?
-    @State private var result: ReadyReply.Result?
-    @State private var resultOwner: NativeDataScope?
-    @State private var deadline: TimeInterval = 0
-    @State private var loading = false
-    @State private var notice: String?
-    private var session: NativeSession { settings.nativeSession }
-    private var chinese: Bool { settings.selectedLocale == .zh }
-    private func text(_ en: String, _ zh: String) -> String { chinese ? zh : en }
-    private var answersKey: String { [city, applies, documentReady, conditionsChecked, timing, selectedTime.description, chinese.description].joined(separator: "|") }
-
-    var body: some View {
+    @State private var store=NativeReadinessActionsStore()
+    @State private var scenario=NativeReadinessScenario.connectivity
+    @State private var city="shanghai"
+    @State private var subject:String?
+    @State private var subjects:[NativeKnowledgeStatement]=[]
+    @State private var applies="unknown"
+    @State private var resources="unknown"
+    @State private var conditions="unknown"
+    @State private var timing="unknown"
+    @State private var selectedTime=Date()
+    @State private var currentVersion:Int?
+    @State private var task:Task<Void,Never>?
+    @State private var showAction=false
+    private var session:NativeSession{settings.nativeSession}
+    private var chinese:Bool{settings.selectedLocale == .zh}
+    private var version:Int{currentVersion ?? tripVersion}
+    private func t(_ zh:String,_ en:String)->String{chinese ? zh:en}
+    private var declaration:NativeReadinessDeclaration{.init(scenario:scenario,city:city,locale:chinese ? "zh":"en",subjectId:subject,applies:applies,resourcesReady:resources,conditionsChecked:conditions,checkAt:timing=="later" ? ISO8601DateFormatter().string(from:selectedTime):timing)}
+    private var selectionKey:String{"\(scenario.rawValue)|\(city)|\(chinese)"}
+    private var key:String{"\(scenario.rawValue)|\(city)|\(subject ?? "")|\(chinese)"}
+    var body:some View {
         Form {
             Section {
-                Text(text("Carrier SIM document check", "运营商 SIM 证件检查")).font(.headline)
-                Text(text("For an application at a mainland China carrier outlet. Your answers are used only for this check and are not saved. No document number or photo is needed.", "适用于在中国大陆运营商营业厅申请 SIM 卡。回答仅用于本次检查，不会保存。无需提供证件号码或照片。"))
-                Text(text("Trip version \(tripVersion)", "行程版本 \(tripVersion)"))
+                Text(t("准备检查与实际下一步", "Preparation checks and actual next steps"))
+                Text(t("只用当前真实 Task/Trip 和合格来源。未知、不适用、尚未到时分开显示；声明不会变成已通过结论，不新建任务，不自动改行程。", "Uses a real current Task/Trip and qualified sources. Unknown, not applicable and not yet due stay distinct. Declarations are not stored pass verdicts; no new task or automatic Trip change."))
+                Text("\(tripID) · v\(version)").font(.caption)
+                if let task=store.taskId{Text(task).font(.caption).textSelection(.enabled)}else{Text(t("没有可读取的真实关联 Task；不会用随机 UUID 替代。", "No readable real linked Task; no random UUID substitute."))}
+                Button(t("读取真实任务／当前行程并重核", "Read real task/current Trip and recheck")){run{await refresh()}}.disabled(store.busy)
             }
-            Section(text("Your situation", "你的情况")) {
-                Picker(text("City", "城市"), selection: $city) {
-                    ForEach(Array(NativeKnowledgeSelection.cities.enumerated()), id: \.element) { index, value in
-                        Text(chinese ? ["上海", "北京", "广州", "重庆"][index] : ["Shanghai", "Beijing", "Guangzhou", "Chongqing"][index]).tag(value)
+            Section(t("本次场景与声明", "Scenario and declarations")) {
+                Group {
+                Picker(t("准备场景", "Preparation scenario"),selection:$scenario){ForEach(NativeReadinessScenario.allCases){Text($0.label(chinese:chinese)).tag($0)}}
+                Picker(t("城市", "City"),selection:$city){ForEach(NativeKnowledgeSelection.cities,id:\.self){Text($0).tag($0)}}
+                if scenario == .address || scenario == .admission {
+                    Picker(t("明确选择当前合格地点主题", "Explicit qualified place subject"),selection:$subject){Text(t("未知／未选择", "Unknown/not selected")).tag(String?.none);ForEach(subjects){row in Text(row.place.map{chinese ? $0.names.zh:$0.names.en} ?? row.text).tag(Optional(row.assertion.subjectId))}}
+                }
+                answer(t("此准备适用吗？", "Does this preparation apply?"),$applies)
+                answer(t("所需资源／材料已备妥？", "Resources/materials ready?"),$resources)
+                answer(t("已核对当前适用条件？", "Current applicability conditions checked?"),$conditions)
+                Picker(t("何时核对", "When to check"),selection:$timing){Text(t("未知", "Unknown")).tag("unknown");Text(t("现在", "Now")).tag("now");Text(t("明确时间", "Explicit time")).tag("later")}
+                if timing=="later"{DatePicker(t("本人的核对时间（非预约／开门时间）", "Your check time, not booking/opening time"),selection:$selectedTime)}
+                }.disabled(store.pendingSave != nil)
+                Button(store.pendingSave==nil ? t("明确保存这些声明并重核", "Explicitly save declarations and recheck"):t("明确重试同一未决声明保存", "Explicitly retry same pending declaration save")){run{await store.save(tripId:tripID,tripVersion:version,selection:declaration,current:{session.dataScope},post:{try await session.readinessActions(tripId:tripID,body:$0)})}}
+                    .disabled(store.busy || store.assessment==nil || store.taskId==nil)
+            }.disabled(store.busy)
+            TimelineView(.periodic(from:.now,by:1)){_ in
+                if let assessment=store.visibleAssessment(current:session.dataScope,foreground:phase == .active) {
+                    Section(t("三轴结论与依据", "Three-axis assessment and basis")) {
+                        Text(t("知识依据：", "Knowledge: ")+assessment.knowledgeAvailability.rawValue)
+                        Text(t("用户准备（明确声明）：", "Readiness (explicit user report): ")+assessment.userReadiness.rawValue)
+                        Text(t("行动时机：", "Timing: ")+assessment.actionTiming.rawValue)
+                        Text("\(assessment.ruleVersion) · \(assessment.ontologyVersion) · declaration r\(assessment.declarationRevision) · \(assessment.declarationState)").font(.caption)
+                        Text(assessment.basis.dateBasis).font(.caption)
+                        if assessment.declarationState=="stale"{Text(t("日期或 Task 依据变化；旧声明不沿用，请明确重声明。", "Date/task basis changed; old declarations are not reused. Explicitly declare again."))}
+                        ForEach(assessment.evidence,id:\.factId){evidence in Text(evidence.text);ForEach(Array(evidence.conditions.enumerated()),id:\.offset){_,text in Text(text).font(.caption)};ForEach(Array(evidence.exclusions.enumerated()),id:\.offset){_,text in Text(text).font(.caption)}}
                     }
-                }
-                answerPicker(text("Planning to apply at an outlet?", "打算到营业厅办理？"), selection: $applies)
-                answerPicker(text("Document in the current guidance ready?", "当前指引所列证件已备妥？"), selection: $documentReady)
-                answerPicker(text("Current carrier, branch, handset and plan conditions checked?", "已核对运营商、营业厅、手机及套餐条件？"), selection: $conditionsChecked)
-                Picker(text("When to check", "何时检查"), selection: $timing) {
-                    Text(text("Now", "现在")).tag("now")
-                    Text(text("Not decided", "尚未确定")).tag("unknown")
-                    Text(text("Choose a time", "选择时间")).tag("later")
-                }
-                if timing == "later" {
-                    DatePicker(text("Your check time", "你的检查时间"), selection: $selectedTime)
-                    Text(text("Uses your device time zone. This is not the carrier's opening time and does not schedule a reminder.", "使用设备时区。这不是运营商营业时间，也不会安排提醒。"))
-                }
-                Button(text("Check with current evidence", "用当前依据检查")) { requestID = UUID() }
-                    .disabled(loading || session.dataScope == nil)
-                    .accessibilityIdentifier("readiness.check")
-                if loading { ProgressView() }
-                if let notice { Text(notice).accessibilityIdentifier("readiness.notice") }
-            }
-            TimelineView(.periodic(from: .now, by: 1)) { _ in
-                if phase == .active, session.dataScope != nil, resultOwner == session.dataScope, let result, deadline > ProcessInfo.processInfo.systemUptime {
-                    Section(text("Next step", "下一步")) {
-                        Text(text("Knowledge: ", "知识依据：") + state(result.knowledgeAvailability)).accessibilityIdentifier("readiness.knowledge")
-                        Text(text("This preparation check: ", "本项准备检查：") + state(result.userReadiness)).accessibilityIdentifier("readiness.user")
-                        Text(text("Action time: ", "行动时间：") + state(result.actionTiming)).accessibilityIdentifier("readiness.timing")
-                        Text(result.nextStep.text).accessibilityIdentifier("readiness.nextStep")
-                        if let at = result.nextStep.at, let date = NativeKnowledgeRead.date(at) { Text(date.formatted()) }
-                    }
-                    ForEach(result.evidence, id: \.factId) { fact in
-                        Section(text("Reviewed basis and scope", "已审核依据与范围")) {
-                            Text(fact.text)
-                            ForEach(fact.conditions + fact.exclusions, id: \.self) { Text($0).font(.footnote) }
-                            ForEach(fact.sources, id: \.sourceRevisionId) { source in
-                                if let url = source.url { Link(source.publisher + " · " + source.locator, destination: url) }
-                            }
+                    Section(t("可执行下一步", "Executable next step")) {
+                        ForEach(store.visible(current:session.dataScope,foreground:phase == .active)){action in
+                            Button(actionLabel(action)){run{await store.execute(action,tripVersion:version,selection:declaration,current:{session.dataScope},post:{try await session.readinessActions(tripId:tripID,body:$0)});showAction=store.execution != nil && store.route != nil}}
                         }
+                        if assessment.userReadiness == .notApplicable{Text(t("此项不适用，不制造准备风险或新待办。", "Not applicable; no manufactured risk or new task."))}
+                        if assessment.userReadiness == .satisfied{Text(t("仅表示你声明已满足本项，不代表网络已开通、支付／入场获准或全部准备完成。", "Your report satisfies this check only; it does not prove network activation, payment/admission authorization or all preparation completion."))}
                     }
-                } else if result != nil {
-                    Text(text("This check expired. Refresh before using its conclusion.", "本次检查已过期，请刷新后再使用结论。"))
-                        .accessibilityIdentifier("readiness.expired")
                 }
             }
-        }
-        .navigationTitle(text("Preparation check", "准备检查"))
-        .onChange(of: tripID) { _, _ in clear() }
-        .onChange(of: tripVersion) { _, _ in clear(); applies = "unknown"; documentReady = "unknown"; conditionsChecked = "unknown" }
-        .onChange(of: answersKey) { _, _ in clear() }
-        .onChange(of: session.dataScope) { _, _ in clear(); applies = "unknown"; documentReady = "unknown"; conditionsChecked = "unknown" }
-        .onChange(of: phase) { _, value in if value != .active { clear() } }
-        .onDisappear { clear() }
-        .task(id: requestID) {
-            guard let task = requestID, let owner = session.dataScope else { return }
-            let key = answersKey
-            result = nil; deadline = 0; loading = true; notice = nil
-            let started = ProcessInfo.processInfo.systemUptime
-            do {
-                let checkAt = timing == "later" ? ISO8601DateFormatter().string(from: selectedTime) : timing
-                let body = try JSONEncoder().encode(ReadyRequest(taskId: task.uuidString, tripVersion: tripVersion, city: city, locale: chinese ? "zh" : "en", applies: applies, documentReady: documentReady, conditionsChecked: conditionsChecked, checkAt: checkAt))
-                let bytes = try await session.tripRequest(path: "api/trips/native/v2/\(tripID)/readiness", method: "POST", body: body)
-                guard !Task.isCancelled, requestID == task, session.dataScope == owner, key == answersKey, phase == .active else { return }
-                guard bytes.count <= 64_000 else { throw NativeDataError.invalidResponse }
-                let value = try JSONDecoder().decode(ReadyReply.self, from: bytes).data
-                let elapsed = ProcessInfo.processInfo.systemUptime - started
-                guard value.schemaVersion == "readiness/1", value.taskId.lowercased() == task.uuidString.lowercased(), value.tripId.lowercased() == tripID.lowercased(), value.tripVersion == tripVersion,
-                      let evaluated = NativeKnowledgeRead.date(value.evaluatedAt), let expiry = NativeKnowledgeRead.date(value.expiresAt),
-                      value.valid, expiry > evaluated, expiry.timeIntervalSince(evaluated) <= 30,
-                      expiry.timeIntervalSince(evaluated) > elapsed else { throw NativeDataError.invalidResponse }
-                resultOwner = owner
-                result = value
-                deadline = ProcessInfo.processInfo.systemUptime + expiry.timeIntervalSince(evaluated) - elapsed
-                loading = false
-            } catch {
-                guard !Task.isCancelled, requestID == task else { return }
-                result = nil; deadline = 0; loading = false
-                notice = text("Could not verify this check. Reload the saved Trip if it changed, then try again.", "无法核实本次检查。如行程已变化，请先重载已保存行程再试。")
-            }
-        }
+            if store.notice != nil{Text(t("当前 Task、来源、声明版本或权限不可核实。未知不等于未满足，请读取当前依据再明确决定。", "Task/source/declaration version/authority unconfirmed. Unknown is not unsatisfied; reread current basis and decide explicitly."))}
+        }.navigationTitle(t("准备检查", "Preparation check"))
+        .task(id:session.dataScope){await refresh()}
+        .onChange(of:selectionKey){_,_ in applies="unknown";resources="unknown";conditions="unknown";subject=nil;store.invalidateAssessment();run{await read()}}
+        .onChange(of:subject){_,_ in store.invalidateAssessment();run{await read()}}
+        .onChange(of:session.dataScope){_,_ in task?.cancel();applies="unknown";resources="unknown";conditions="unknown";subject=nil;subjects=[];store.bind(session.dataScope)}
+        .onChange(of:tripVersion){_,_ in currentVersion=nil;store.clear();run{await refresh()}}
+        .onChange(of:phase){_,value in if value != .active{task?.cancel();store.clear();subjects=[]}else{run{await refresh()}}}
+        .onDisappear{task?.cancel()}
+        .sheet(isPresented:$showAction,onDismiss:{store.returnedFromAction();run{await refresh()}}){if let route=store.route,let execution=store.execution{NavigationStack{NativeReadinessActionDestination(route:route,execution:execution,basis:execution.basis,session:session,city:city,scenario:scenario,chinese:chinese,currentBasis:{store.visibleAssessment(current:session.dataScope,foreground:phase == .active)?.actionBasis},returned:{})}}}
     }
-    private func clear() { requestID = nil; resultOwner = nil; result = nil; deadline = 0; loading = false; notice = nil }
-    private func answerPicker(_ label: String, selection: Binding<String>) -> some View {
-        Picker(label, selection: selection) {
-            Text(text("Unknown", "未知")).tag("unknown")
-            Text(text("Yes", "是")).tag("yes")
-            Text(text("No", "否")).tag("no")
-        }
+    private func answer(_ label:String,_ value:Binding<String>)->some View{Picker(label,selection:value){Text(t("未知", "Unknown")).tag("unknown");Text(t("是", "Yes")).tag("yes");Text(t("否", "No")).tag("no")}}
+    private func actionLabel(_ action:NativeReadinessAction)->String{switch action.kind{case .readMaterial:t("读取这份精确材料及范围", "Read exact material and scope");case .verifyEntry:t("进入实际核对入口", "Open actual verification entry");case .conditionalCandidate:t("读取条件化候选依据", "Read conditional candidate basis");case .tripProposal:t("核对现有 Proposal 再审阅差异", "Verify existing proposal and review diff")}}
+    private func run(_ operation:@escaping @MainActor ()async->Void){task?.cancel();task=Task{await operation()}}
+    private func refresh()async {
+        guard let actor=session.dataScope else{store.bind(nil);return};store.bind(actor)
+        do{let bytes=try await session.tripRequest(path:"api/trips/native/v2/\(tripID)",method:"GET");guard session.dataScope==actor else{return};let trip=try JSONDecoder().decode(NativeTripDetail.self,from:bytes);guard trip.trip.id==tripID else{throw NativeDataError.invalidResponse};currentVersion=trip.trip.headVersion}catch{store.clear();return}
+        await store.resolveTask(tripId:tripID,tripVersion:version,current:{session.dataScope},reference:{try await session.fiveResultReference(field:"trip",id:tripID)},record:{try await session.fiveResultRequest(artifactID:$0,revision:$1)})
+        await read()
     }
-    private func state(_ value: String) -> String {
-        switch value {
-        case "available": text("Reviewed evidence available", "有已审核依据")
-        case "satisfied": text("This check satisfied — your report", "此项检查已满足 · 用户声明")
-        case "not_satisfied": text("This check not yet satisfied", "此项检查尚未满足")
-        case "not_applicable": text("Not applicable", "不适用")
-        case "now": text("Check now", "现在检查")
-        case "not_yet": text("Selected check time has not arrived", "尚未到你选定的检查时间")
-        default: text("Unknown", "未知")
-        }
-    }
-}
-
-private struct ReadyRequest: Encodable {
-    let taskId: String; let tripVersion: Int; let city: String; let locale: String
-    let applies: String; let documentReady: String; let conditionsChecked: String; let checkAt: String
-}
-private struct ReadyReply: Decodable {
-    let data: Result
-    struct Result: Decodable {
-        let schemaVersion: String; let taskId: String; let tripId: String; let tripVersion: Int
-        let evaluatedAt: String; let expiresAt: String
-        let knowledgeAvailability: String; let userReadiness: String; let actionTiming: String
-        let nextStep: Step; let evidence: [Evidence]
-        var valid: Bool {
-            ["available", "unknown"].contains(knowledgeAvailability) && ["unknown", "satisfied", "not_satisfied", "not_applicable"].contains(userReadiness)
-                && ["now", "not_yet", "unknown", "not_applicable"].contains(actionTiming) && evidence.count <= 1
-                && (knowledgeAvailability == "available" ? evidence.count == 1 : evidence.isEmpty)
-                && !nextStep.text.isEmpty && nextStep.text.count <= 1000
-        }
-    }
-    struct Step: Decodable { let text: String; let at: String? }
-    struct Evidence: Decodable { let factId: String; let text: String; let conditions: [String]; let exclusions: [String]; let sources: [Source] }
-    struct Source: Decodable {
-        let sourceRevisionId: String; let publisher: String; let locator: String; let uri: String
-        var url: URL? {
-            guard let url = URL(string: uri), ["https", "http"].contains(url.scheme), url.host != nil, url.user == nil, url.password == nil else { return nil }
-            return url
+    private func read()async {
+        await store.read(tripId:tripID,tripVersion:version,selection:declaration,current:{session.dataScope},post:{try await session.readinessActions(tripId:tripID,body:$0)})
+        if let read=store.assessment{applies=read.declaration.applies;resources=read.declaration.resourcesReady;conditions=read.declaration.conditionsChecked;timing=read.declaration.checkAt=="now" ? "now":read.declaration.checkAt=="unknown" ? "unknown":"later";if let date=NativeKnowledgeRead.date(read.declaration.checkAt){selectedTime=date}}
+        if scenario == .address || scenario == .admission {
+            do{let bytes=try await session.knowledgeRequest(selection:.init(city:city,scene:"attraction",locale:chinese ? "zh":"en"));let reply=try JSONDecoder().decode(NativeKnowledgeReply.self,from:bytes).data;_=try reply.lifetime(for:reply.scope,elapsed:0);subjects=reply.statements.filter{$0.validPlace}.filter{$0.assertion.predicate==(scenario == .address ? "located_at":"opens_during")}}catch{subjects=[]}
         }
     }
 }

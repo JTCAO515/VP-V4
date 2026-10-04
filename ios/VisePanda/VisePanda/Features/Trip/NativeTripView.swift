@@ -54,6 +54,8 @@ struct NativeTripView: View {
     var initialPlanningRequest: String? = nil
     var initialTripID: String? = nil
     var initialTripScope: NativeDataScope? = nil
+    var initialProposalReference:String? = nil
+    var initialTripVersion:Int? = nil
     @State private var initialTripReady = false
     @State private var initialTripFailed = false
     @Environment(AppSettings.self) private var settings
@@ -105,6 +107,8 @@ struct NativeTripView: View {
                 ContentUnavailableView(text("Trip unavailable", "行程暂不可用"), systemImage: "map",
                     description: Text(text("Return to Journeys and refresh before choosing this Trip again.", "请返回旅程并刷新，再选择本行程。")))
                     .accessibilityIdentifier("journeys.trip.unavailable")
+            } else if initialTripReady, (initialProposalReference != nil && store.confirmationReference != initialProposalReference || initialTripVersion != nil && store.detail?.trip.headVersion != initialTripVersion) {
+                ContentUnavailableView(text("Selected proposal changed", "所选提议已变化"),systemImage:"arrow.clockwise",description:Text(text("Return to the preparation task and recheck its exact basis.", "返回准备任务重新核对精确依据。")))
             } else if initialTripReady {
                 tripBody
             } else {
