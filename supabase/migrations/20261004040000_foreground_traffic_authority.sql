@@ -202,7 +202,8 @@ begin
   select * into sc from traffic_private.scopes_v1 where id=(ctx->>'scopeId')::uuid;
   n:=clock_timestamp();
   if sc.stopped and p_input->>'operation'<>'check' then return jsonb_build_object('kind','unavailable');end if;
-  if sc.unknown_until>n or exists(select 1 from traffic_private.dispatches_v1 where scope_id=sc.id and state in('begun','dispatched') and expires_at>n) then return jsonb_build_object('kind','unknown');end if;
+  if sc.unknown_until>n or exists(select 1 from traffic_private.dispatches_v1 where scope_id=sc.id and
+   (state in('begun','dispatched') and expires_at>n or state='dispatched' and created_at>=sc.window_started_at and sc.window_started_at+interval '5 minutes'>n)) then return jsonb_build_object('kind','unknown');end if;
   if sc.window_started_at+interval '5 minutes'<=n then sc.window_started_at:=n;sc.comparisons:=0;end if;
   if sc.comparisons>=3 or sc.last_begin_at+interval '60 seconds'>n then return jsonb_build_object('kind','limited');end if;
   update traffic_private.scopes_v1 set stopped=false,window_started_at=sc.window_started_at,comparisons=sc.comparisons+1,last_begin_at=n,unknown_until=null where id=sc.id;
@@ -221,6 +222,9 @@ begin
   or p_input->>'endpointKind'<>'detail' and p_input->>'endpointKind'=any(d.requested_endpoints) then return jsonb_build_object('kind','unavailable');end if;
   quota:=traffic_private.quota_v1(p_actor);if quota->'allowed' is distinct from 'true'::jsonb then return jsonb_build_object('kind','limited');end if;
   update traffic_private.dispatches_v1 set request_count=request_count+1,state='dispatched',requested_endpoints=array_append(requested_endpoints,p_input->>'endpointKind') where id=d.id;
+  -- Dispatch ACK can be lost. Hold unknown cost durably until successful completion,
+  -- even if observation TTL expires or purge/stop removes the dispatch row.
+  update traffic_private.scopes_v1 set unknown_until=window_started_at+interval '5 minutes' where id=d.scope_id;
   return jsonb_build_object('kind','request','dispatchId',d.id,'requestIndex',d.request_count+1);
  elsif p_action='unknown' then
   update traffic_private.dispatches_v1 set state='unknown' where id=d.id;
@@ -245,11 +249,12 @@ begin
   select * into prior_d from traffic_private.dispatches_v1 where id=prior.dispatch_id for share nowait;
   if not found or prior_d.owner_id<>d.owner_id or prior_d.session_id<>d.session_id or prior_d.scope is distinct from d.scope or prior_d.endpoints is distinct from d.endpoints or prior_d.stop_epoch<>d.stop_epoch or prior_d.policy_fingerprint<>d.policy_fingerprint or prior_d.source_version<>d.source_version then return jsonb_build_object('kind','unavailable');end if;
   delta:=(p_input->'selected'->>'durationSeconds')::integer-(prior.selected->>'durationSeconds')::integer;
-  if p_input->'selected'->'tmc' is distinct from 'null'::jsonb and prior.selected->'tmc' is distinct from 'null'::jsonb and p_input->'selected'->'tmc' is distinct from prior.selected->'tmc' then change:='route_condition_changed';elsif delta<>0 then change:='route_estimate_changed';end if;
+  if p_input->'selected'->'tmc' is distinct from 'null'::jsonb and prior.selected->'tmc' is distinct from 'null'::jsonb and p_input->'selected'->'tmc' is distinct from prior.selected->'tmc' then change:='route_condition_changed';elsif abs(delta)>=greatest(120,(prior.selected->>'durationSeconds')::numeric*0.2) then change:='route_estimate_changed';end if;
  end if;
  insert into traffic_private.receipts_v1(dispatch_id,fetched_at,expires_at,selected,alternatives,previous_receipt_id,change_kind,duration_delta_seconds)
  values(d.id,fetched,least(d.expires_at,fetched+interval '300 seconds'),p_input->'selected',p_input->'alternatives',previous,change,delta) returning * into r;
  update traffic_private.dispatches_v1 set state='complete' where id=d.id;
+ update traffic_private.scopes_v1 set unknown_until=null where id=d.scope_id;
  return jsonb_build_object('kind','receipt','receipt',traffic_private.receipt_wire_v1(d,r,false));
 exception when lock_not_available or invalid_text_representation or numeric_value_out_of_range or datetime_field_overflow then return jsonb_build_object('kind','unavailable');end $$;
 
@@ -295,6 +300,9 @@ declare ctx jsonb;ep bigint;
 begin
  ctx:=public.read_foreground_traffic_scope_v1(p_scope);if ctx->>'kind' is distinct from 'scope' or p_expected_stop_epoch is null or (ctx->>'stopEpoch')::bigint<>p_expected_stop_epoch then return jsonb_build_object('kind','unavailable');end if;
  ctx:=traffic_private.scope_v1(p_scope);
+ if exists(select 1 from traffic_private.dispatches_v1 where scope_id=(ctx->>'scopeId')::uuid and state='dispatched') then
+  update traffic_private.scopes_v1 set unknown_until=window_started_at+interval '5 minutes' where id=(ctx->>'scopeId')::uuid;
+ end if;
  update traffic_private.scopes_v1 set epoch=epoch+1,stopped=true where id=(ctx->>'scopeId')::uuid returning epoch into ep;
  delete from traffic_private.dispatches_v1 where scope_id=(ctx->>'scopeId')::uuid;
  return jsonb_build_object('kind','stopped','stopEpoch',ep);
@@ -371,6 +379,9 @@ declare n integer;
 begin
  if p_limit is null or p_limit not between 1 and 500 then return 0;end if;
  delete from traffic_private.dispatches_v1 where id in(select id from traffic_private.dispatches_v1 where expires_at<=clock_timestamp() order by expires_at,id limit p_limit for update skip locked);get diagnostics n=row_count;
+ -- Keep only durable user stop epoch; expired accounting/operation metadata is cleared.
+ update traffic_private.scopes_v1 set comparisons=0,last_begin_at=null,unknown_until=null
+ where id in(select id from traffic_private.scopes_v1 where window_started_at+interval '5 minutes'<=clock_timestamp() and not exists(select 1 from traffic_private.dispatches_v1 d where d.scope_id=scopes_v1.id) order by id limit p_limit for update skip locked);
  return n;
 end $$;
 create function traffic_private.export_metadata_v1(p_request uuid,p_lease uuid,p_generation integer,p_after uuid,p_limit integer) returns jsonb language plpgsql security definer set search_path='' set timezone='UTC' as $$

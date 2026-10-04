@@ -66,7 +66,7 @@ sourceVersion, fetchedAt, providerObservedAt:null, expiresAt, selected,
 alternatives, previousReceiptId, changeKind, durationDeltaSeconds,
 routeChangeCaveat:true, r2Qualified:boolean. Prior receipt must have identical
 scope/session/stop/policy/source/current mappings. Duration-only difference is
-route_estimate_changed; changed non-null TMC aggregate is
+route_estimate_changed only when absolute delta >= max(120 seconds, 20 percent of prior duration); smaller deltas remain unchanged; changed non-null TMC aggregate is
 route_condition_changed; otherwise unchanged. Neither is a closure, incident,
 arrival or forecast claim. Query time is fetchedAt.
 
@@ -118,7 +118,7 @@ Account/session/Trip/reference deletion cascades the new owner metadata.
 Policy revocation/change erases stored observation values and makes all old
 versions unreadable; source expiry does likewise on read/purge. Private
 `traffic_private.purge_expired_v1(p_limit integer)` bounded 1..500 erases expired
-dispatches/receipts/windows; no default diagnostic trace retention.
+dispatches/receipts and expired window accounting; minimal user stop epoch remains until session/Trip/account deletion; no default diagnostic trace retention.
 Private `traffic_private.export_metadata_v1(p_request uuid,p_lease uuid,
 p_generation integer,p_after uuid,p_limit integer)` checks the real D2 job,
 active lease, generation/session and eligibility, returning only bounded
@@ -146,3 +146,18 @@ source/member/publication tuples under retained locks and final clock. UTC
 serialization stabilizes timestamp fingerprints. Legitimate original writer
 Trip head/item changes are excluded from this deferred comparison; same-tx
 receipt/value/source mutations, revocation and expiration reject. No GUC proof.
+
+Local evidence (synthetic grants/source content only): core 8 PG cases passed,
+then 3 affected owner-stop/lifecycle/D2 cases passed. Earlier endpoint-variable
+ambiguity, CASE-expression compile failure, and a withdrawal fixture missing
+its consistency fields were FAIL; repaired with the actual withdrawal API and
+subsequent passing checks. No target/provider rights or external HTTP origin
+acceptance follows from these results. Unknown dispatch cost is stored in the
+durable scope on every request and cleared only by a successful completion or
+window expiration; short observation expiry/purge/stop cannot grant a retry.
+
+Final affected verification: lost-ACK request/owner-stop with expiration and
+purge 2/2 PASS, source qualification plus the duration threshold 2/2 PASS.
+The unchanged core and D2/lifecycle evidence above is reused. Current upstream
+main remained 8d30d0ba during this run; 030000's original-writer integration
+belongs to its sole owner and is not represented as installed main here.

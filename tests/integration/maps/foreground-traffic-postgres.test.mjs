@@ -132,7 +132,7 @@ run('actual reviewed ItemSupport chain qualifies changed receipt; deferred proof
  assert.equal((await f.read(first.receipt.receiptId)).receipt.r2Qualified,true);
  // Advance only the fixture throttle, preserving real policy/receipt/source deadlines.
  await db(`update traffic_private.scopes_v1 set last_begin_at=clock_timestamp()-interval '61 seconds' where trip_id='${f.trip}';`);
- const next=await f.begin();await f.call('request',{dispatchId:next.dispatchId,requestIndex:1,endpointKind:'walking'});const changed=await f.complete(next.dispatchId,360,first.receipt.receiptId);assert.equal(changed.receipt.changeKind,'route_estimate_changed');
+ const next=await f.begin();await f.call('request',{dispatchId:next.dispatchId,requestIndex:1,endpointKind:'walking'});const changed=await f.complete(next.dispatchId,450,first.receipt.receiptId);assert.equal(changed.receipt.changeKind,'route_estimate_changed');
  const q=await rpc('postgres','traffic_private.qualify_recovery_v1',[changed.receipt.receiptId,f.scope,f.policyId,1,0],f.actor);assert.equal(q.kind,'qualified',JSON.stringify(q));assert.ok(q.proofBasis);assert.ok(Date.parse(q.expiresAt)<Date.parse(changed.receipt.expiresAt));assert.ok(!JSON.stringify(q.proofBasis).includes('NO REAL SUPPLIER'));
  const args=[changed.receipt.receiptId,f.scope,f.policyId,1,0,q.proofBasis].map(lit).join(',');
  assert.equal(await db(`begin;${actorSql(f.actor)}update public.trips set head_version=head_version+1 where id='${f.trip}';update public.trip_items set title='Confirmed change' where trip_id='${f.trip}';select traffic_private.validate_recovery_proof_v1(${args});rollback;`),'t');
@@ -140,4 +140,46 @@ run('actual reviewed ItemSupport chain qualifies changed receipt; deferred proof
  assert.equal(await db(`begin;${actorSql(f.actor)}update traffic_private.receipts_v1 set selected=jsonb_set(selected,'{durationSeconds}','999') where id='${changed.receipt.receiptId}';select traffic_private.validate_recovery_proof_v1(${args});rollback;`),'f');
  assert.equal(await db(`begin;${actorSql(f.actor)}update traffic_private.scopes_v1 set epoch=epoch+1 where trip_id='${f.trip}';select traffic_private.validate_recovery_proof_v1(${args});rollback;`),'f');
  assert.equal(await db(`begin;${actorSql(f.actor)}update knowledge_review_private.members set active=false where actor_id='${support.reviewer.subject}';select traffic_private.validate_recovery_proof_v1(${args});rollback;`),'f');
+});
+run('owner scope read stops lost ACK without policy; no cross-owner epoch or implicit retry after receipt expiry',async()=>{
+ const f=await fixture(),d=await f.begin();await f.call('request',{dispatchId:d.dispatchId,requestIndex:1,endpointKind:'walking'});
+ await db(`update traffic_private.dispatches_v1 set expires_at=clock_timestamp()-interval '1 second' where id='${d.dispatchId}';update traffic_private.scopes_v1 set last_begin_at=clock_timestamp()-interval '61 seconds' where trip_id='${f.trip}';`);
+ assert.equal((await f.begin()).kind,'unknown');
+ await db('select traffic_private.purge_expired_v1(500);');assert.equal((await f.begin()).kind,'unknown');
+ await db(`update traffic_private.policies_v1 set revoked_at=clock_timestamp() where id='${f.policyId}';`);
+ const current=await rpc('authenticated','public.read_foreground_traffic_scope_v1',[f.scope],f.actor);assert.deepEqual(current,{kind:'scope',stopEpoch:0,stopped:false});
+ assert.equal((await rpc('authenticated','public.stop_foreground_traffic_v1',[f.scope,current.stopEpoch],f.actor)).kind,'stopped');
+ assert.equal((await rpc('authenticated','public.stop_foreground_traffic_v1',[f.scope,current.stopEpoch],f.actor)).kind,'unavailable');
+ const other={subject:uuid(),sessionId:uuid(),mobileEpoch:null};await db(`insert into auth.users(id) values('${other.subject}');insert into auth.sessions(id,user_id) values('${other.sessionId}','${other.subject}');`);
+ assert.equal((await rpc('authenticated','public.read_foreground_traffic_scope_v1',[f.scope],other)).kind,'unavailable');
+});
+run('bounded expiry purge, source-policy expiry, session and Trip cascades erase new metadata',async()=>{
+ const f=await fixture(),d=await f.begin();await f.call('request',{dispatchId:d.dispatchId,requestIndex:1,endpointKind:'walking'});const r=await f.complete(d.dispatchId);
+ await db(`update traffic_private.dispatches_v1 set expires_at=clock_timestamp()-interval '1 second' where id='${d.dispatchId}';`);assert.equal((await f.read(r.receipt.receiptId)).kind,'unavailable');
+ assert.equal(await db('select traffic_private.purge_expired_v1(0);'),'0');assert.equal(await db('select traffic_private.purge_expired_v1(1);'),'1');
+ assert.equal(await db(`select count(*) from traffic_private.receipts_v1 where id='${r.receipt.receiptId}';`),'0');
+ const g=await fixture(),gd=await g.begin();await g.call('request',{dispatchId:gd.dispatchId,requestIndex:1,endpointKind:'walking'});const gr=await g.complete(gd.dispatchId);
+ await db(`delete from auth.sessions where id='${g.actor.sessionId}';`);assert.equal(await db(`select count(*) from traffic_private.scopes_v1 where trip_id='${g.trip}';`),'0');assert.equal((await g.read(gr.receipt.receiptId)).kind,'unavailable');
+ const h=await fixture(),hd=await h.begin();await h.call('request',{dispatchId:hd.dispatchId,requestIndex:1,endpointKind:'walking'});await h.complete(hd.dispatchId);
+ await db(`delete from public.trips where id='${h.trip}';`);assert.equal(await db(`select count(*) from traffic_private.dispatches_v1 where trip_id='${h.trip}';`),'0');
+});
+run('D2 export uses exact real job lease generation session; bounded metadata contains no observation values',async()=>{
+ const f=await fixture({mobile:true}),d=await f.begin();await f.call('request',{dispatchId:d.dispatchId,requestIndex:1,endpointKind:'walking'});await f.complete(d.dispatchId);
+ const req=uuid(),lease=uuid(),pid=uuid();
+ await db(`insert into export_private.core_policies_v1(id,revision,enabled,environment,key_id,max_run_ms,artifact_ttl_ms,ticket_ttl_ms,max_pages,page_size,max_bytes,valid_until) values('${pid}',1,true,'local','synthetic_unactivated',1000,60000,30000,1,10,65536,clock_timestamp()+interval '1 hour');
+ insert into public.privacy_requests(id,owner_id,action,scope_version,status,execution_state) values('${req}','${f.actor.subject}','export','all-user-data-v1','requested','not_started');
+ insert into export_private.core_jobs_v1(request_id,owner_id,session_id,session_epoch,policy_id,policy_snapshot,state,lease_id,lease_expires_at,expires_at) select '${req}','${f.actor.subject}','${f.actor.sessionId}',1,id,to_jsonb(p),'running','${lease}',clock_timestamp()+interval '1 minute',clock_timestamp()+interval '1 hour' from export_private.core_policies_v1 p where id='${pid}';`);
+ const read=(request=req,l=lease,generation=1)=>rpc('postgres','traffic_private.export_metadata_v1',[request,l,generation,null,10]);
+ const out=await read();assert.equal(out.kind,'metadata',JSON.stringify(out));assert.equal(out.items.length,1);assert.equal(out.items[0].id,d.dispatchId);assert.equal(out.allUserDataCompleted,false);assert.equal(out.items[0].selected,undefined);
+ for(const args of [[uuid(),lease,1],[req,uuid(),1],[req,lease,2]])assert.equal((await read(...args)).kind,'unavailable');
+ await db(`update identity_private.mobile_accounts set epoch=2 where owner_id='${f.actor.subject}';`);assert.equal((await read()).kind,'unavailable');
+});
+
+run('duration delta below 120 seconds or 20 percent remains unchanged',async()=>{
+ const f=await fixture(),d=await f.begin();await f.call('request',{dispatchId:d.dispatchId,requestIndex:1,endpointKind:'walking'});const first=await f.complete(d.dispatchId,1000);
+ await db(`update traffic_private.scopes_v1 set last_begin_at=clock_timestamp()-interval '61 seconds' where trip_id='${f.trip}';`);
+ const next=await f.begin();await f.call('request',{dispatchId:next.dispatchId,requestIndex:1,endpointKind:'walking'});const changed=await f.complete(next.dispatchId,1120,first.receipt.receiptId);
+ assert.equal(changed.receipt.changeKind,'unchanged');assert.equal(changed.receipt.durationDeltaSeconds,120);
+ await db(`update traffic_private.scopes_v1 set last_begin_at=clock_timestamp()-interval '61 seconds' where trip_id='${f.trip}';`);
+ const meaningful=await f.begin();await f.call('request',{dispatchId:meaningful.dispatchId,requestIndex:1,endpointKind:'walking'});const result=await f.complete(meaningful.dispatchId,1200,first.receipt.receiptId);assert.equal(result.receipt.changeKind,'route_estimate_changed');
 });
