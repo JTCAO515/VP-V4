@@ -1059,7 +1059,7 @@ final class NativeSession {
         subject = nil
         mobileEpoch = nil
         displayName = nil
-        if case SessionError.denied = error { if clear() { status = "expiredOrReplaced" } }
+        if case SessionError.denied = error { if clear(preserveRecoveryJournal: true) { status = "expiredOrReplaced" } }
         else { status = "retry" }
     }
 
@@ -1122,7 +1122,7 @@ final class NativeSession {
         return try deviceMaterials.receive(data, scope: scope)
     }
 
-    @discardableResult private func clear() -> Bool {
+    @discardableResult private func clear(preserveRecoveryJournal: Bool = false) -> Bool {
         // Fence consumers before cleanup; a locked file is not proof of erasure.
         dataGeneration += 1
         subject=nil; mobileEpoch=nil; displayName=nil
@@ -1133,7 +1133,15 @@ final class NativeSession {
         assistantNavigation=nil
         memoryPreferences.clear()
         exploreAskHandoff=nil
-        if let owner = credential?.subject ?? defaults.string(forKey: storageKey) {
+        if let owner = credential?.subject ?? defaults.string(forKey: storageKey) ?? defaults.string(forKey: storageKey + ".recoveryCleanupOwner") {
+            if preserveRecoveryJournal {
+                // Cleanup ownership only. Never restores credentials or authorizes a read.
+                defaults.set(owner, forKey: storageKey + ".recoveryCleanupOwner")
+            } else {
+                do { try NativeRecoveryJournal(vault: vault).erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner) }
+                catch { failureCode="recoveryJournalCleanupRequired";status="storageError";return false }
+                defaults.removeObject(forKey: storageKey + ".recoveryCleanupOwner")
+            }
             let support=vault.remove(service:tripSupportConfirmVaultService,owner:owner)
             guard support==errSecSuccess || support==errSecItemNotFound else { failureCode="keychain:\(support)";status="storageError";return false }
             for service in [materialDeleteRequestService,materialDeleteReceiptService] {
