@@ -4,6 +4,7 @@ export type ReservationRPC=(name:string,params:Record<string,unknown>)=>Promise<
  * success from a draft, click, local hash, timeout or uncertain write response. */
 export async function confirmReservationReference(tripId:string,input:ReservationCommand,rpc:ReservationRPC){
  if(!parseReservationCommand(input))throw Error("INVALID_INPUT");
+ if(input.source.kind==="artifact_reference")throw Error("RESERVATION_SOURCE_UNAVAILABLE");
  const result=await rpc("confirm_reservation_reference_v1",{p_trip_id:tripId,p_input:input});
  if(result.error)throw Error("RESERVATION_RECEIPT_UNKNOWN");
  const current=parseReservationCurrent(result.data);
