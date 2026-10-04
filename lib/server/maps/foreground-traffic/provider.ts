@@ -1,4 +1,4 @@
-import { compareRoutes, type RouteOption } from "../route-comparison.ts";
+import { compareRoutes, type RouteOption, type RouteMode } from "../route-comparison.ts";
 import { boundedJson } from "../provider-search-adapter.ts";
 import { record, POLICY } from "./contract.ts";
 
@@ -37,28 +37,29 @@ export type ForegroundProviderResult = {
 /** Actual production adapter reuses #364's endpoint/plan validation and whole-route parsing. */
 export async function observeForegroundRoute(endpoints: { originId: string; destinationId: string }, deps: {
   env: Readonly<Record<string, string | undefined>>; signal: AbortSignal; fetcher: typeof fetch;
-  beforeRequest: () => Promise<boolean>;
+  beforeRequest: (kind: "detail" | RouteMode) => Promise<boolean>; includeTraffic?: boolean; modes?: readonly RouteMode[];
 }): Promise<ForegroundProviderResult | null> {
   let calls = 0, failed = false, condition: TrafficCondition = { status: "uncovered", meters: null };
   const fetcher: typeof fetch = async (input, init) => {
     const url = new URL(input instanceof Request ? input.url : input.toString());
+    const kind = url.pathname === "/v3/place/detail" ? "detail" : url.pathname.endsWith("/walking") ? "walking" : url.pathname.endsWith("/driving") ? "driving" : "transit";
     if (failed || deps.signal.aborted || calls >= POLICY.calls || url.protocol !== "https:" || url.hostname !== "restapi.amap.com"
       || !["/v3/place/detail", "/v5/direction/walking", "/v5/direction/driving", "/v5/direction/transit/integrated"].includes(url.pathname)
-      || !await deps.beforeRequest()) { failed = true; throw new Error("Foreground authorization unavailable"); }
+      || !await deps.beforeRequest(kind)) { failed = true; throw new Error("Foreground authorization unavailable"); }
     if (failed || deps.signal.aborted) throw new Error("Foreground stopped");
-    if (url.pathname === "/v5/direction/driving") url.searchParams.set("show_fields", "cost,tmcs");
+    if (deps.includeTraffic && url.pathname === "/v5/direction/driving") url.searchParams.set("show_fields", "cost,tmcs");
     calls++;
     let response: Response;
     try { response = await deps.fetcher(url, { ...init, redirect: "error", signal: AbortSignal.any([deps.signal, ...(init?.signal ? [init.signal] : [])]) }); } catch (error) { failed = true; throw error; }
     if (!response.ok) { failed = true; throw new Error("Provider outcome unavailable"); }
-    if (url.pathname === "/v5/direction/driving") {
+    if (deps.includeTraffic && url.pathname === "/v5/direction/driving") {
       const body = await boundedJson(response);
       condition = readTrafficCondition(body);
       return Response.json(body);
     }
     return response;
   };
-  const result = await compareRoutes(new URLSearchParams({ provider: "amap", ...endpoints, departure: "now" }), { env: deps.env, fetcher });
+  const result = await compareRoutes(new URLSearchParams({ provider: "amap", ...endpoints, departure: "now" }), { env: deps.env, fetcher, modes: deps.modes });
   const body: unknown = result.body;
   if (failed || deps.signal.aborted || result.status !== 200 || !record(body) || !Array.isArray(body.options)
     || !record(body.destination) || typeof body.destination.providerPoiId !== "string"

@@ -7,10 +7,10 @@ const item = (v: unknown): v is string => typeof v === "string" && /^[A-Za-z0-9_
 export type TrafficInput = {
   operation: "check" | "refresh" | "stop"; expectedHeadVersion: number; dayId: string; itemId: string;
   originPlaceReferenceId: string; destinationPlaceReferenceId: string; mode: RouteMode; departure: "now";
-  mapConsent: boolean; foreground: boolean; previousReceiptId: string | null; movementMeters: number;
+  mapConsent: boolean; foreground: boolean; previousReceiptId: string | null; movementMeters: number; expectedStopEpoch: number | null;
 };
 export function parseTrafficInput(v: unknown): TrafficInput | null {
-  const keys = ["operation", "expectedHeadVersion", "dayId", "itemId", "originPlaceReferenceId", "destinationPlaceReferenceId", "mode", "departure", "mapConsent", "foreground", "previousReceiptId", "movementMeters"];
+  const keys = ["operation", "expectedHeadVersion", "dayId", "itemId", "originPlaceReferenceId", "destinationPlaceReferenceId", "mode", "departure", "mapConsent", "foreground", "previousReceiptId", "movementMeters", "expectedStopEpoch"];
   if (!record(v) || Object.keys(v).length !== keys.length || !keys.every(k => Object.hasOwn(v, k))
     || !["check", "refresh", "stop"].includes(v.operation as string) || typeof v.expectedHeadVersion !== "number"
     || !Number.isSafeInteger(v.expectedHeadVersion) || v.expectedHeadVersion < 0 || v.expectedHeadVersion > 999999999
@@ -18,6 +18,7 @@ export function parseTrafficInput(v: unknown): TrafficInput | null {
     || v.originPlaceReferenceId === v.destinationPlaceReferenceId || !["walking", "transit", "driving"].includes(v.mode as string)
     || v.departure !== "now" || typeof v.mapConsent !== "boolean" || typeof v.foreground !== "boolean"
     || (v.previousReceiptId !== null && !uuid(v.previousReceiptId)) || typeof v.movementMeters !== "number"
+    || (v.expectedStopEpoch !== null && (typeof v.expectedStopEpoch !== "number" || !Number.isSafeInteger(v.expectedStopEpoch) || v.expectedStopEpoch < 0))
     || !Number.isFinite(v.movementMeters) || v.movementMeters < 0 || v.movementMeters > 100000) return null;
   return structuredClone(v) as TrafficInput;
 }

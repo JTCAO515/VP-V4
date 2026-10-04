@@ -6,11 +6,11 @@ import {readTrafficCondition} from '../../../lib/server/maps/foreground-traffic/
 
 const origin='514b8576-e9e7-49aa-aa66-94eac6ba6544',destination='614b8576-e9e7-49aa-aa66-94eac6ba6544';
 const binding={actor:'owner',session:'session:1',tripId:'714b8576-e9e7-49aa-aa66-94eac6ba6544',headVersion:0,dayId:'DAY',itemId:'Item-1',originPlaceReferenceId:origin,destinationPlaceReferenceId:destination,mode:'driving',departure:'now'};
-const input={operation:'check',expectedHeadVersion:0,dayId:'DAY',itemId:'Item-1',originPlaceReferenceId:origin,destinationPlaceReferenceId:destination,mode:'driving',departure:'now',mapConsent:true,foreground:true,previousReceiptId:null,movementMeters:0};
+const input={operation:'check',expectedHeadVersion:0,dayId:'DAY',itemId:'Item-1',originPlaceReferenceId:origin,destinationPlaceReferenceId:destination,mode:'driving',departure:'now',mapConsent:true,foreground:true,previousReceiptId:null,movementMeters:0,expectedStopEpoch:null};
 const env={VISEPANDA_FOREGROUND_TRAFFIC_ENABLED:'true',AMAP_ROUTES_ENABLED:'true',AMAP_DETAIL_ENABLED:'true',AMAP_WEB_SERVICE_KEY:'synthetic-only'};
 function fixture() {
   let duration=600,tmc='畅通',offline=false,allowed=true,granted=true;
-  const calls=[],guards=[],rights={policyId:'policy',version:1,sourceId:'source',licenceVersion:'v1',expiresAt:'2099-01-01T00:00:00Z'};
+  const calls=[],guards=[],rights={policyId:'policy',version:1,sourceId:'source',licenceVersion:'v1',expiresAt:'2099-01-01T00:00:00Z',tmcAllowed:true};
   const deps={env,signal:new AbortController().signal,authorize:async()=>{guards.push('scope');return allowed;},quota:async()=>{guards.push('quota');return true;},rights:async()=>granted?rights:null,resolve:async()=>({originId:'start',destinationId:'end'}),fetcher:async(input)=>{
     const url=new URL(input);calls.push(url);
     assert.equal(url.hostname,'restapi.amap.com');
@@ -38,7 +38,7 @@ test('actual Maps fetch chain yields bounded TMC and whole alternatives without 
   t.mock.timers.tick(120000);f.condition('拥堵');
   const second=await s.run(binding,{...input,operation:'refresh',previousReceiptId:first.receiptId},f.deps);
   assert.equal(second.comparison.kind,'route_condition_changed');assert.match(second.comparison.caveat,/not_incident/);
-  assert.equal(second.alternatives.length,2);for(const a of second.alternatives)assert.equal(new URL(a.option.webUrl).hostname,'uri.amap.com');
+  assert.equal(second.alternatives.length,2);for(const a of second.alternatives)assert.ok(['walking','transit'].includes(a.option.mode));
 });
 test('duration-only change is a route estimate, missing closure data stays uncovered',async t=>{
   t.mock.timers.enable({apis:['Date'],now:Date.parse('2026-10-04T06:00:00Z')});
@@ -96,4 +96,13 @@ test('concurrent explicit checks spend only one comparison and stop cancels in-f
 test('TMC incomplete, unknown, malformed, oversized and legacy fields are uncovered',()=>{
   const raw=tmcs=>({status:'1',infocode:'10000',route:{paths:[{distance:'1000',steps:[{tmcs}]}]}});
   for(const tmcs of [[],[{status:'拥堵',distance:'1000'}],[{tmc_status:'封路',tmc_distance:'1000'}],[{tmc_status:'畅通',tmc_distance:'100'}],[{tmc_status:'未知',tmc_distance:'1000'}],Array(1001).fill({tmc_status:'畅通',tmc_distance:'1'})])assert.equal(readTrafficCondition(raw(tmcs)).status,'uncovered');
+});
+test('single-mode endpoint rights dispatch only two detail calls and its whole authorized plan',async()=>{
+  const s=createForegroundTrafficService(),f=fixture(),kinds=[];
+  f.rights.allowedEndpointModes=['walking'];f.rights.tmcAllowed=false;
+  f.deps.quota=async kind=>{kinds.push(kind);return true;};
+  const r=await s.run({...binding,mode:'walking'},{...input,mode:'walking'},f.deps);
+  assert.equal(r.status,'observed');assert.equal(r.selected.mode,'walking');assert.equal(r.selected.tmc,null);
+  assert.deepEqual(kinds,['detail','detail','walking']);assert.equal(f.calls.length,3);
+  assert.ok(!f.calls.some(u=>/driving|transit/.test(u.pathname)));assert.deepEqual(r.alternatives,[]);
 });

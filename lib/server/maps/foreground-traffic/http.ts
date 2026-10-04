@@ -8,22 +8,21 @@ import { verifyNativeCredentials } from "../../identity/native-credentials.ts";
 import { createOfflineNativeAuthority } from "../../today/offline-native-authority.ts";
 import { opsRuntimeConfig } from "../../knowledge/review/local-workspace.ts";
 import { hasSameOrigin } from "../../identity/request-guards.ts";
-import { createMapsServiceRoleClient } from "../service-role-client.ts";
-import { resolveCanonicalRouteEndpoints } from "../canonical-mapping-repository.ts";
-import { consumePlaceQuota } from "../place-quota.ts";
+import { createTrafficAuthority, createTrafficProducerRPC, type TrafficRPC, type TrafficScope } from "./authority.ts";
 import { parseTrafficInput, uuid, type TrafficBinding } from "./contract.ts";
-import { foregroundTrafficService, type FieldRights } from "./service.ts";
+import { parseContextInput, readForegroundContext } from "./context.ts";
+import { foregroundTrafficService } from "./service.ts";
 
 type RPC = (name: string, params: Record<string, unknown>) => Promise<{ data: unknown; error: unknown }>;
 type Dependencies = {
   // Server wiring seams only; HTTP bodies/headers cannot supply them.
-  rights?: (rpc: RPC) => Promise<FieldRights | null>;
+  producer?: TrafficRPC;
   resolve?: (origin: string, destination: string) => Promise<{ originId: string; destinationId: string } | null>;
 };
 const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b);
 /** Ordinary owner foreground caller. Runtime rights remain absent until the separately
  * reviewed SQL source/policy contract is installed; absence denies before Maps traffic. */
-export async function foregroundTrafficHTTP(request: NextRequest, tripId: string, native: boolean, deps: Dependencies = {}) {
+export async function foregroundTrafficHTTP(request: NextRequest, tripId: string, native: boolean, deps: Dependencies = {}, context = false) {
   const reply = (v: unknown, status = 200) => NextResponse.json(v, { status, headers: { "Cache-Control": "private, no-store", Vary: native ? "Authorization" : "Cookie" } });
   const fail = (code: string, status = 503) => reply({ error: { code } }, status);
   if (request.method !== "POST" || !uuid(tripId) || request.nextUrl.searchParams.size
@@ -36,7 +35,7 @@ export async function foregroundTrafficHTTP(request: NextRequest, tripId: string
   try { return await scope.run(async () => {
     const raw = await scope.body(request, 4096); let value: unknown;
     try { value = JSON.parse(raw ?? "null"); } catch { return fail("INVALID_INPUT", 400); }
-    const input = parseTrafficInput(value); if (!input) return fail("INVALID_INPUT", 400);
+    const input = context ? parseContextInput(value, tripId) : parseTrafficInput(value); if (!input) return fail("INVALID_INPUT", 400);
     const web = native ? null : createUserDataAdapter(request, config, scope.fetch);
     const adapter = native ? await createNativeTripDataAdapter(request, config, scope.fetch, scope.unavailable) : web;
     if (!adapter) return fail("UNAUTHENTICATED", 401);
@@ -72,13 +71,6 @@ export async function foregroundTrafficHTTP(request: NextRequest, tripId: string
     if ("error" in before) return fail(before.error, before.error === "FORBIDDEN" ? 403 : 503);
     if (before.data.trip.headVersion !== input.expectedHeadVersion || !before.data.content.days.some(d => d.id === input.dayId && d.items.some(i => i.id === input.itemId))) return fail("STALE_TRIP_VERSION", 409);
     const places = await readPlaces(); if (!places) return fail("EXACT_ENDPOINTS_UNAVAILABLE");
-    const origin = places.find(p => p.id === input.originPlaceReferenceId);
-    const destination = places.find(p => p.id === input.destinationPlaceReferenceId);
-    if (!origin || !destination || origin.canonicalPoiId === destination.canonicalPoiId) return fail("EXACT_ENDPOINTS_UNAVAILABLE");
-    // Actual ordinary session scope; no session identifier comes from the request body.
-    binding = { actor: actor.data, session: session,
-      tripId, headVersion: input.expectedHeadVersion, dayId: input.dayId, itemId: input.itemId,
-      originPlaceReferenceId: input.originPlaceReferenceId, destinationPlaceReferenceId: input.destinationPlaceReferenceId, mode: input.mode, departure: "now" };
     const current = async () => {
       scope.check(); const active = await adapter.authenticated(); scope.check();
       if ("error" in active || active.data !== actor.data) return false;
@@ -91,17 +83,42 @@ export async function foregroundTrafficHTTP(request: NextRequest, tripId: string
       return !("error" in freshTrip) && freshPlaces !== null && !("error" in archive) && !archive.data
         && same(before.data.trip, freshTrip.data.trip) && same(before.data.content, freshTrip.data.content) && same(places, freshPlaces);
     };
+    if ("scope" in input) {
+      if (!await current()) return fail("CURRENT_SCOPE_UNAVAILABLE", 409);
+      const read = await readForegroundContext(tripId, input, before.data.content, places, rpc); scope.check();
+      if (!read || !await current()) return fail("CURRENT_SCOPE_UNAVAILABLE", 409);
+      const fresh = await readForegroundContext(tripId, input, before.data.content, places, rpc); scope.check();
+      if (!fresh || !same(read.sourceBindings, fresh.sourceBindings) || !same(read.data, fresh.data) || !await current()) return fail("CURRENT_SCOPE_UNAVAILABLE", 409);
+      const response = reply({ data: read.data }); return web ? web.applyCookies(response) : response;
+    }
+    const origin = places.find(p => p.id === input.originPlaceReferenceId);
+    const destination = places.find(p => p.id === input.destinationPlaceReferenceId);
+    if (!origin || !destination || origin.canonicalPoiId === destination.canonicalPoiId) return fail("EXACT_ENDPOINTS_UNAVAILABLE");
+    // Actual ordinary session scope; no session identifier comes from the request body.
+    binding = { actor: actor.data, session: session,
+      tripId, headVersion: input.expectedHeadVersion, dayId: input.dayId, itemId: input.itemId,
+      originPlaceReferenceId: input.originPlaceReferenceId, destinationPlaceReferenceId: input.destinationPlaceReferenceId, mode: input.mode, departure: "now" };
+    const trafficScope: TrafficScope = { tripId, expectedHeadVersion: input.expectedHeadVersion, dayId: input.dayId, itemId: input.itemId,
+      originPlaceReferenceId: input.originPlaceReferenceId, destinationPlaceReferenceId: input.destinationPlaceReferenceId, mode: input.mode, departure: "now" };
+    const verifiedActor = { subject: actor.data, sessionId: initial && !("error" in initial) ? initial.data.sessionId : session,
+      mobileEpoch: initial && !("error" in initial) ? initial.data.sessionEpoch : null };
+    const trafficAuthority = createTrafficAuthority(trafficScope, verifiedActor,
+      deps.producer ?? createTrafficProducerRPC(process.env, scope.signal, scope.fetch), rpc);
     const result = await foregroundTrafficService.run(binding, input, { env: process.env, signal: scope.signal, fetcher: scope.fetch,
       authorize: current,
-      quota: async () => {
-        if (credentials) return (await consumePlaceQuota(credentials.client, "places", scope.signal)).kind === "allowed";
-        const result = await rpc("consume_place_quota_v1", { p_bucket: "places", p_minute_limit: 30, p_day_limit: 500 });
-        return !result.error && !!result.data && typeof result.data === "object" && "allowed" in result.data && result.data.allowed === true;
-      },
-      rights: async () => deps.rights ? deps.rights(rpc) : null,
+      // SQL request serializes original global quota exactly once before dispatch.
+      quota: kind => trafficAuthority.request(kind),
+      rights: async () => (await trafficAuthority.policy())?.rights ?? null,
+      durable: trafficAuthority,
       resolve: async () => {
         if (deps.resolve) return deps.resolve(origin.canonicalPoiId, destination.canonicalPoiId);
-        const client = createMapsServiceRoleClient(); return client ? resolveCanonicalRouteEndpoints(client, origin.canonicalPoiId, destination.canonicalPoiId) : null;
+        const currentPolicy = await trafficAuthority.policy();
+        const from = currentPolicy?.endpoints.origin, to = currentPolicy?.endpoints.destination;
+        if (!from || !to || typeof from !== "object" || typeof to !== "object" || !("canonicalPoiId" in from) || !("canonicalPoiId" in to)
+          || from.canonicalPoiId !== origin.canonicalPoiId || to.canonicalPoiId !== destination.canonicalPoiId
+          || !("referenceId" in from) || !("referenceId" in to) || from.referenceId !== input.originPlaceReferenceId || to.referenceId !== input.destinationPlaceReferenceId
+          || !("providerPoiId" in from) || !("providerPoiId" in to) || typeof from.providerPoiId !== "string" || typeof to.providerPoiId !== "string") return null;
+        return { originId: from.providerPoiId, destinationId: to.providerPoiId };
       } });
     if (!await current()) { foregroundTrafficService.forget(binding); return fail("CURRENT_SCOPE_UNAVAILABLE", 409); }
     const response = reply({ data: result }); return web ? web.applyCookies(response) : response;

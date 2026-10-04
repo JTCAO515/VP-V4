@@ -83,7 +83,7 @@ async function route(mode: RouteMode, origin: PlaceDetail, destination: PlaceDet
 }
 
 /** Explicit foreground query only. Two identity resolutions + one call per mode, no retry/cache/Trip write. */
-export async function compareRoutes(params: URLSearchParams, dependencies: { env: Readonly<Record<string, string | undefined>>; fetcher?: typeof fetch }) {
+export async function compareRoutes(params: URLSearchParams, dependencies: { env: Readonly<Record<string, string | undefined>>; fetcher?: typeof fetch; modes?: readonly RouteMode[] }) {
   const failure = (code: string, status: number) => ({ status, body: { error: { code } } });
   const originId = params.get("originId"), destinationId = params.get("destinationId");
   if (params.get("provider") !== "amap" || !originId || !destinationId || !/^[A-Za-z0-9_-]{1,128}$/.test(originId) || !/^[A-Za-z0-9_-]{1,128}$/.test(destinationId) || originId === destinationId) return failure("INVALID_ENDPOINTS", 400);
@@ -95,6 +95,7 @@ export async function compareRoutes(params: URLSearchParams, dependencies: { env
   const [origin, destination] = [endpoints[0].detail, endpoints[1].detail];
   if (!origin.location || !destination.location || origin.location.coordinateSystem !== "gcj02" || destination.location.coordinateSystem !== "gcj02" || coordinate(origin) === coordinate(destination)) return failure("INVALID_ENDPOINTS", 400);
   const observedAt = new Date().toISOString();
-  const options = await Promise.all((["walking", "transit", "driving"] as const).map(mode => route(mode, origin, destination, dependencies.env.AMAP_WEB_SERVICE_KEY!, dependencies.fetcher ?? fetch, observedAt)));
+  const modes = dependencies.modes ?? ["walking", "transit", "driving"] as const;
+  const options = await Promise.all(modes.map(mode => route(mode, origin, destination, dependencies.env.AMAP_WEB_SERVICE_KEY!, dependencies.fetcher ?? fetch, observedAt)));
   return { status: 200, body: { provider: "amap", evidenceKind: "provider_observation", departure: "now", observedAt, expiresAt: new Date(Date.parse(observedAt) + 300_000).toISOString(), origin, destination, options } };
 }
