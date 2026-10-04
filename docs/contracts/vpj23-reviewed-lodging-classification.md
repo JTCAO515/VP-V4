@@ -30,6 +30,13 @@ Register only schema vocabulary: new Ontology range type `lodging_kind` and rela
 - `review_mapping`: `{action,operationId,mappingId,expectedVersion,expectedDigest,decision,note}`, expectedVersion1, decision approved/rejected. Independent reviewer differs from mapping author/candidate author/all source submitters; current live source/publication/rights/canonical/provider identities must still equal pending basis. Store reviewer member revision and v2 immutable review metadata.
 - `revoke_mapping`: `{action,operationId,mappingId,expectedVersion,note}`, expectedVersion2, approved mapping→revoked v3, current Ops actor and audit. Role/member changes or identity/source changes already make reads unavailable even before explicit revoke.
 
+Exact success key sets:
+
+- Candidate submit/review: `{kind:"lodging_classification_candidate",operationId,candidateId,statementId,statementRevision:1,payloadHash,sourceDigest,status:"pending"|"reviewed"|"rejected",version:1|2,reviewerMemberRevision:null|positiveSafeInt}`.
+- Publication publish/revoke: `{kind:"lodging_classification_publication",operationId,candidateId,statementId,statementRevision:1,factId,publicationVersion:1|2,state:"published"|"revoked",sourceDigest,rightsDigest,expiresAt}`.
+- Mapping submit/review/revoke: `{kind:"lodging_classification_mapping",operationId,mappingId,canonicalPoiId,statementId,version:1|2|3,status:"pending"|"approved"|"rejected"|"revoked",digest,sourceDigest,rightsDigest}`.
+- Expected qualification/CAS denials are exactly `{kind:"blocked"}`, `{kind:"conflict"}` or `{kind:"stale"}`. Malformed shape/value raises INVALID_INPUT; existing actor/session/Ops denial codes remain unchanged. UUIDs canonical lower, SHA256 lower64hex, UTC outputs millisecond Z; only current server metadata is returned.
+
 All actions are closed≤24KB, UUID/digest/version bounded, invalid input rejected; role/author denial blocked, CAS/idempotency conflict conflict, changed basis stale. Exact replay rechecks current actor and relevant immutable scope, never revives revoked/pending qualification. Success uses `kind:"lodging_classification_candidate"|"lodging_classification_publication"|"lodging_classification_mapping"`, operationId plus exact entity IDs/status/version/digests/expiry; source IDs and hashes come from server tables. Mapping alone never mints a publication or changes a Trip.
 
 ## Ordinary owner reader
