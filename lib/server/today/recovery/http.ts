@@ -85,7 +85,7 @@ export async function localRecoveryHTTP(request: NextRequest, tripId: string, na
         const original = await adapter.getPendingProposal(tripId, operation.receipt.proposalId); scope.check();
         if ("error" in original) throw new RecoveryServiceError("RECOVERY_RECEIPT_UNKNOWN");
         const p = original.data.proposal, r = operation.receipt;
-        if (p.id !== r.proposalId || p.revision !== r.proposalRevision || p.baseTripVersion !== r.baseVersion || p.stale || !p.digest || !p.patch
+        if (p.id !== r.proposalId || p.revision !== r.proposalRevision || p.baseTripVersion !== r.baseVersion || p.stale || typeof p.digest !== "string" || !/^trip-v2:[0-9a-f]{64}$/.test(p.digest) || !p.patch
           || timestamp(p.expiresAt) !== timestamp(r.expiresAt) || timestamp(r.expiresAt)! <= Date.now()
           || p.patch.operations.some(o => o.kind !== "delete_item")) throw new RecoveryServiceError("RECOVERY_RECEIPT_UNKNOWN");
         data = { kind: "local_recovery_selected/1", operation, proposal: p, tripMutation: "none", nextAction: "review_original_proposal_and_confirm" };

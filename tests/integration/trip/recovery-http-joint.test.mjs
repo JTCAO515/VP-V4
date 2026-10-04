@@ -38,7 +38,7 @@ test('actual SQL/HTTP source qualification and original confirmation; missing re
   const priorEnv=Object.fromEntries(Object.keys(env).map(k=>[k,process.env[k]]));Object.assign(process.env,env);
   t.after(()=>{for(const[k,v]of Object.entries(priorEnv))v===undefined?delete process.env[k]:process.env[k]=v;});
   const previous=globalThis.fetch;let loseACK=false;const seen=[];
-  const allowedRPC=new Set(['native_session_v2','prepare_local_recovery_v1','submit_local_recovery_v1','read_local_recovery_operation_v1','read_trip_proposal_v2','confirm_and_apply_trip_proposal']);
+  const allowedRPC=new Set(['native_session_v2','prepare_local_recovery_v1','prepare_transport_recovery_v1','submit_local_recovery_v1','read_local_recovery_operation_v1','read_trip_proposal_v2','confirm_and_apply_trip_proposal']);
   t.mock.method(globalThis,'fetch',async(value,init)=>{
    const request=new Request(value,init),url=new URL(request.url),path=url.pathname;seen.push(path);
    if(path.startsWith('/rest/v1/rpc/')){
@@ -64,6 +64,12 @@ test('actual SQL/HTTP source qualification and original confirmation; missing re
   const request=(body,suffix='recovery')=>new NextRequest(`https://${host}/api/trips/native/v2/${trip}/${suffix}`,{method:'POST',headers:{authorization:'Bearer '+auth.token},body:JSON.stringify(body)});
   const input={operationId:uuid(),expectedHeadVersion:1,dayId:'DayA',selectedItemIds:['OptionalA','OptionalB'],fixedItemIds:['FixedDinner'],reservationBindings:[],report:{source:'user_report',kind:'fatigue',observedAt:new Date().toISOString()},locale:'en'};
   const result=await localRecoveryHTTP(request({operation:'preview',input}),trip,true),preview=(await result.json()).data;assert.equal(result.status,200);
+  const {report:_report,...localScope}=input;
+  const transport={...localScope,operationId:uuid(),receiptId:uuid(),scope:{tripId:trip,expectedHeadVersion:1,dayId:'DayA',itemId:'OptionalA',originPlaceReferenceId:uuid(),destinationPlaceReferenceId:uuid(),mode:'transit',departure:'now'}};
+  const r2=await localRecoveryHTTP(request({operation:'transport',input:transport}),trip,true),r2data=(await r2.json()).data;
+  assert.equal(r2.status,200);assert.equal(r2data.status,'pending');assert.equal(r2data.reason,'TRANSPORT_RECEIPT_UNAVAILABLE');
+  assert.equal(r2data.report,null);assert.equal(r2data.sourceSemantics,'qualified_foreground_transport');assert.deepEqual(r2data.candidates,[]);
+  assert.deepEqual(r2data.transportReference,{receiptId:transport.receiptId,scope:transport.scope});
   const installed=await db("select to_regprocedure('public.read_reservation_references_v1(uuid,integer,uuid,uuid,integer)') is not null;");
   if(installed!=='t'){
    assert.equal(preview.status,'pending');assert.equal(preview.reason,'RESERVATION_READER_UNAVAILABLE');assert.deepEqual(preview.candidates,[]);

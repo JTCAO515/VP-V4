@@ -52,7 +52,7 @@ async function setup(t: Parameters<typeof nativeFixture>[0]) {
     }
     if (path.endsWith("/read_local_recovery_operation_v1")) return Response.json({ kind: "local_recovery_operation/1", operationId: selection.operationId, tripId: id(3), input: selection,
       receipt: { ...receipt, reused: true }, state: "pending", resultingVersion: null });
-    if (path.endsWith("/read_trip_proposal_v2")) return Response.json([{ digest: "b".repeat(64), proposal: { id: id(5), trip_id: id(3), revision: 1, base_trip_version: 0,
+    if (path.endsWith("/read_trip_proposal_v2")) return Response.json([{ digest: "trip-v2:" + "b".repeat(64), proposal: { id: id(5), trip_id: id(3), revision: 1, base_trip_version: 0,
       status: "pending", patch: { expectedVersion: 0, operations: [{ kind: "delete_item", itemId: "Optional", dayId: "Day-1" }] }, created_at: observedAt, expires_at: expiresAt, rollback_snapshot_version: null } }]);
     return previous(input, init);
   });
@@ -90,7 +90,7 @@ test("native post-source mobile epoch replacement returns no private candidates"
 test("selection returns original Proposal digest/diff; lost ACK preserves exact operation for receipt read", async t => {
   const f = await setup(t);
   const selected = await localRecoveryHTTP(f.request({ operation: "select", input: f.selection }), id(3), true);
-  const s = await selected.json(); assert.equal(selected.status, 200); assert.equal(s.data.proposal.digest, "b".repeat(64));
+  const s = await selected.json(); assert.equal(selected.status, 200); assert.equal(s.data.proposal.digest, "trip-v2:" + "b".repeat(64));
   assert.equal(s.data.nextAction, "review_original_proposal_and_confirm"); assert.equal(s.data.tripMutation, "none");
   f.loseACK();
   const lost = await localRecoveryHTTP(f.request({ operation: "select", input: f.selection }), id(3), true);
