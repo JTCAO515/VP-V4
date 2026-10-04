@@ -47,3 +47,18 @@ test('actual Native handler reads own current Trip; future source gaps remain un
  assert.equal(result.basis.tripId,id);assert.equal(result.areaComparison.futureRoute,'pending');assert.equal(result.tripMutation,'none');assert.deepEqual(writes,[]);
  drift=true;calls=0;const replaced=await lodgingContextHTTP(request(),id,true);assert.equal(replaced.status,401);assert.deepEqual(await replaced.json(),{error:{code:'UNAUTHENTICATED'}});
 });
+
+import {parseLodgingClassifications} from '../../../lib/server/lodging/classification-read.ts';
+test('reviewed hotel receipt alone requires exact scope, current source/mapping/rights receipts; location and caller labels cannot substitute',()=>{
+ const clock=Date.now(),choice={canonicalPoiId:id,provider:'amap',providerPoiId:'hotel'};
+ const request={...input,needs:{...needs,city:'shanghai'},candidates:[choice]};
+ const receipt={canonicalPoiId:id,classification:'hotel',mappingId:other,mappingVersion:2,mappingDigest:'a'.repeat(64),statementId:id,statementRevision:1,payloadHash:'b'.repeat(64),factId:other,publicationVersion:1,sourceDigest:'c'.repeat(64),
+  sourceRefs:[{sourceRevisionId:other,revisionLabel:'reviewed',snippetHash:'d'.repeat(64),publisher:'Reviewed source',uri:'https://example.invalid/source',locator:'Classification section'}],rightsDigest:'e'.repeat(64),reviewedAt:new Date(clock-1000).toISOString(),expiresAt:new Date(clock+20000).toISOString()};
+ const raw={kind:'lodging_classifications',schemaVersion:'reviewed-lodging-classification/1',tripId:id,tripVersion:0,city:'shanghai',locale:'en',evaluatedAt:new Date(clock).toISOString(),items:[receipt]};
+ assert.equal(parseLodgingClassifications(raw,id,request,clock)?.length,1);
+ const identity={...choice,mappingId:other,matchedAt:new Date(clock).toISOString(),label:'Map identity'};
+ const result=buildLodgingContext(id,trip,'confirmed',request,[identity],null,null,null,new Date(clock),[receipt]);
+ assert.equal(result.candidates[0].hotelClassification,'reviewed_hotel');assert.equal(result.candidates[0].availability,'unknown');assert.equal(result.candidates[0].quote,'unknown');assert.equal(result.candidates[0].checkInEligibility,'unknown');
+ assert.equal(buildLodgingContext(id,trip,'confirmed',request,[],null,null,null,new Date(clock),[receipt]).candidates[0].hotelClassification,'unknown');
+ for(const changed of [{...raw,tripVersion:1},{...raw,city:'beijing'},{...raw,items:[{...receipt,classification:'other'}]},{...raw,items:[{...receipt,mappingVersion:1}]},{...raw,items:[{...receipt,expiresAt:new Date(clock-1).toISOString()}]},{...raw,items:[{...receipt,roomsAvailable:true}]}])assert.equal(parseLodgingClassifications(changed,id,request,clock),null);
+});

@@ -10,6 +10,7 @@ import {parseResultArtifactReadV2} from "../artifacts/result-v2-contract.ts";
 import type {TaskTravelPace} from "../memory/travel-pace.ts";
 import {parseLodgingContextInput} from "./contract.ts";
 import {buildLodgingContext,type LodgingComparison} from "./context.ts";
+import {readLodgingClassifications} from "./classification-read.ts";
 import {readLodgingIdentities} from "./identity-read.ts";
 const object=(v:unknown):v is Record<string,unknown>=>v!==null&&typeof v==="object"&&!Array.isArray(v);
 function pace(value:unknown,tripId:string):TaskTravelPace|null{
@@ -71,17 +72,17 @@ export async function lodgingContextHTTP(request:NextRequest,tripId:string,nativ
    const selected=await adapter.getPendingProposal(tripId,ref.proposalId);scope.check();if("error"in selected)return null;
    const p=selected.data.proposal;return p.stale||p.revision!==ref.revision||p.digest!==ref.digest||p.baseTripVersion!==input.expectedTripVersion?null:ref;
   };
-  const profile=await readPace(),identities=await readLodgingIdentities(input.candidates),comparison=await readComparison(),proposal=await readProposal();scope.check();
-  const data=buildLodgingContext(tripId,trip,current.data.confirmationState,input,identities,profile,comparison,proposal,new Date());
+  const profile=await readPace(),identities=await readLodgingIdentities(input.candidates),comparison=await readComparison(),proposal=await readProposal(),classifications=await readLodgingClassifications(tripId,input,rpc);scope.check();
+  const data=buildLodgingContext(tripId,trip,current.data.confirmationState,input,identities,profile,comparison,proposal,new Date(),classifications);
   const latest=await adapter.getTrip(tripId);scope.check();
   if("error"in latest||latest.data.trip.headVersion!==trip.version||JSON.stringify(latest.data.content.days)!==JSON.stringify(trip.days))return failure("STALE_TRIP_VERSION",409);
   if(JSON.stringify(await readPace())!==JSON.stringify(profile)||JSON.stringify(await readLodgingIdentities(input.candidates))!==JSON.stringify(identities)
-   ||JSON.stringify(await readComparison())!==JSON.stringify(comparison)||JSON.stringify(await readProposal())!==JSON.stringify(proposal))return failure("STALE_LODGING_EVIDENCE",409);
+   ||JSON.stringify(await readComparison())!==JSON.stringify(comparison)||JSON.stringify(await readProposal())!==JSON.stringify(proposal)||JSON.stringify(await readLodgingClassifications(tripId,input,rpc))!==JSON.stringify(classifications))return failure("STALE_LODGING_EVIDENCE",409);
   const finalActor=await adapter.authenticated();scope.check();if("error"in finalActor||finalActor.data!==actor.data)return failure("UNAUTHENTICATED",401);
   if(authority&&initial&&!("error"in initial)){
    const final=await authority.read();scope.check();
    if("error"in final||final.data.subject!==initial.data.subject||final.data.sessionId!==initial.data.sessionId||final.data.sessionEpoch!==initial.data.sessionEpoch)return failure("UNAUTHENTICATED",401);
   }
   const response=reply({data});return web?web.applyCookies(response):response;
- });}catch{return failure("LODGING_CONTEXT_UNAVAILABLE");}finally{scope.dispose();}
+ });}catch(error){return error instanceof Error&&error.message==="STALE_TRIP_VERSION"?failure("STALE_TRIP_VERSION",409):failure("LODGING_CONTEXT_UNAVAILABLE");}finally{scope.dispose();}
 }

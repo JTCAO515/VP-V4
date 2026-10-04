@@ -1,3 +1,4 @@
+import type {LodgingClassification} from "./classification-read.ts";
 import {createHash} from "node:crypto";
 import type {LodgingContextInput} from "./contract.ts";
 import {lodgingDay} from "./contract.ts";
@@ -6,7 +7,7 @@ import type {TaskTravelPace} from "../memory/travel-pace.ts";
 export type LodgingIdentity={canonicalPoiId:string;provider:"amap"|"tencent";providerPoiId:string;mappingId:string;matchedAt:string;label:string};
 export type LodgingComparison={artifactId:string;revision:number;taskId:string;goalId:string;goalVersion:number;content:{title:string;summary:string;options:readonly {id:string;title:string;tradeoff:string}[]}}|null;
 export function buildLodgingContext(tripId:string,trip:TripSnapshot,confirmationState:string,input:LodgingContextInput,
- identities:readonly LodgingIdentity[],profile:TaskTravelPace|null,comparison:LodgingComparison,proposal:LodgingContextInput["proposalReference"],now:Date){
+ identities:readonly LodgingIdentity[],profile:TaskTravelPace|null,comparison:LodgingComparison,proposal:LodgingContextInput["proposalReference"],now:Date,classifications:readonly LodgingClassification[]=[]){
  const dateBasis=createHash("sha256").update(JSON.stringify(trip.days.map(d=>({id:d.id,date:d.date,timeZone:d.timeZone??null})))).digest("hex");
  const n=input.needs,nights=n.checkIn&&n.checkOut&&lodgingDay(n.checkIn)&&lodgingDay(n.checkOut)
   ?(Date.parse(n.checkOut+"T00:00:00Z")-Date.parse(n.checkIn+"T00:00:00Z"))/86400000:null;
@@ -30,12 +31,13 @@ export function buildLodgingContext(tripId:string,trip:TripSnapshot,confirmation
  // admission authority. User notes never influence evidence or objective rank.
  const candidates=input.candidates.map(choice=>{
   const identity=identities.find(i=>i.canonicalPoiId===choice.canonicalPoiId&&i.provider===choice.provider&&i.providerPoiId===choice.providerPoiId);
+  const classification=identity?classifications.find(c=>c.canonicalPoiId===choice.canonicalPoiId):undefined;
   return {choice,identity:identity??null,identityStatus:identity?"canonical_mapping_current":"unqualified",
-   hotelClassification:"unknown",availability:"unknown",quote:"unknown",checkInEligibility:"unknown",bedMatch:"unknown",
+   hotelClassification:classification?"reviewed_hotel":"unknown",classificationEvidence:classification??null,availability:"unknown",quote:"unknown",checkInEligibility:"unknown",bedMatch:"unknown",
    routeTiming:"future_pending",rankingBasis:identity?"identity_reference_only":"unqualified_reference"};
  }).sort((a,b)=>Number(b.identity!==null)-Number(a.identity!==null)||a.choice.canonicalPoiId.localeCompare(b.choice.canonicalPoiId));
  return {schemaVersion:"lodging-context/1",basis:{tripId,tripVersion:trip.version,dateBasis},evaluatedAt:now.toISOString(),
-  expiresAt:new Date(now.getTime()+30000).toISOString(),tripDates:trip.days.map(d=>({dayId:d.id,date:d.date,timeZone:d.timeZone??null})),
+  expiresAt:new Date(Math.min(now.getTime()+30000,...classifications.map(c=>Date.parse(c.expiresAt)))).toISOString(),tripDates:trip.days.map(d=>({dayId:d.id,date:d.date,timeZone:d.timeZone??null})),
   confirmationState,suggestedWindow,validation:{status:issues.length?"invalid":missing.length?"missing":"explicit_fields_require_existing_handoff_validation",missing,issues},needs:n,needsBasis:"current_explicit_input",dateStatus,nights:dateStatus==="explicit"?nights:null,
   budget,profilePreview:profile&&profile.source!=="none"?{status:profile.source==="profile"?"available":"current_input",value:profile,usage:"local_preview_only",appliedToRanking:false}:{status:"unknown",value:null,usage:"local_preview_only",appliedToRanking:false},
   candidates,areaComparison:comparison?{status:"exact_current_reference",reference:comparison,transportQualification:"unqualified_prose_reference",futureRoute:"pending"}
