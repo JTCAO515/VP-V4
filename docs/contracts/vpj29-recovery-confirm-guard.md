@@ -186,3 +186,32 @@ scope tests are written but UNRUN until #646 normally reaches main. No unmerged
 migration/reader was installed or treated as current capability. Staging, real JWT,
 provider, device, export delivery, role activation and whole #220 acceptance UNRUN.
 The integration registry belongs to Main/TS integrator and is not edited here.
+
+## R2 source integration evidence
+
+030000 source `e0678c31` compiled and passed rollback/original body+ACL equivalence
+and the closed transport/missing installed qualification probe (2 tests, zero skip).
+A separate prewrite negative proved unqualified traffic rejects BEFORE the first
+Trip update and ordinary clients cannot mint a proof (1 test, zero skip).
+
+The fixed #366 `b58ae380` source was joined with 030000 and current main in an
+isolated network-none source overlay. No #646 migration was copied or installed.
+Only one new protocol case ran; the unchanged #366 matrix was reused, not rerun.
+The actual local review/address mapping/ItemSupport chain produced source metadata
+readable by 030000, exact tx/root/revision/base/actor/session/context proof, and a raw
+source proof that stayed current through a legitimate Trip head/item change and
+became false after same-transaction receipt metadata mutation. Public preparation
+still returned RESERVATION_READER_UNAVAILABLE; the original confirmation wholly
+rolled back because real reservation authority was absent. Protocol case PASS1,
+zero skipped. Its first fixture used a 60-second delta (below max120sec/20%) and
+correctly remained unchanged; that FAIL is retained, corrected fixture delta150sec
+passed. No runtime guard or qualification threshold was relaxed.
+
+Archive/reproduction facts and synthetic-environment boundaries are in
+`artifacts/VPJ-29/sql-confirm-guard-20261004/evidence.json`. The admin context seed in
+this protocol is deliberately unqualified; it never claims public preparation or
+complete Trip confirmation success. Synthetic role/policy/source rows prove code
+relationships, not real external provider origin or licence rights. Successful
+public preparation/selection/confirmation with actual #646, full stop/revoke/expiry
+races through the original event, target grants, signed Auth, device/provider flows
+remain UNRUN. No changes to the ordinary caller/producer ACL or old export egress.

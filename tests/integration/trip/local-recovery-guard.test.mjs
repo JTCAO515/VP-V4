@@ -59,11 +59,11 @@ async function reservation(f,status='reserved'){
 }
 // Lifecycle/export fixture only: direct admin seed is deliberately unqualified.
 // It is never evidence that missing reservation authority admitted a recovery RPC.
-async function lifecycleSeed(){
+async function lifecycleSeed(traffic=null){
  const f=await fixture(),context=uuid(),operation=uuid(),patch={expectedVersion:1,operations:[{kind:'delete_item',dayId:'DayA',itemId:'OptionalA'}]},p=(await rpc(f.a,'create_trip_proposal_patch',{p_trip_id:f.trip,p_patch:patch}))[0].proposal_id;
  await db(`${claims(f.a)}update public.trip_proposals set expires_at=date_trunc('milliseconds',clock_timestamp()+interval '30 seconds'),local_recovery=true where id='${p}';`);
  const selection={operationId:operation,contextId:context,contextDigest:'a'.repeat(64),candidateId:'omit_one'},receipt={kind:'local_recovery_proposal/1',operationId:operation,contextId:context,contextDigest:'a'.repeat(64),candidateId:'omit_one',proposalId:p,proposalRevision:2,baseVersion:1,expiresAt:new Date(Date.now()+30000).toISOString(),reused:false};
- await db(`${claims(f.a)}insert into recovery_private.contexts_v1(id,owner_id,trip_id,operation_id,input,base_version,snapshot,profile_basis,reservation_basis,digest,expires_at) select '${context}','${f.a.id}','${f.trip}','${f.input.operationId}',${lit(f.input)}::jsonb,1,public.trip_content_snapshot(t.id,t.title),recovery_private.profile_v1('${f.a.id}'),'[]','${'a'.repeat(64)}',clock_timestamp()+interval '5 minutes' from public.trips t where id='${f.trip}';insert into recovery_private.operations_v1 values('${f.a.id}','${operation}','${f.trip}','${context}',${lit(selection)}::jsonb,${lit(receipt)}::jsonb,'${p}');insert into recovery_private.lineage_v1 select '${p}','${f.a.id}','${f.trip}','${context}','${operation}',${lit(patch)}::jsonb,digest from public.read_trip_proposal_v2('${p}');`);
+ await db(`${claims(f.a)}insert into recovery_private.contexts_v1(id,owner_id,trip_id,operation_id,input,base_version,snapshot,profile_basis,reservation_basis,traffic_basis,digest,expires_at) select '${context}','${f.a.id}','${f.trip}','${f.input.operationId}',${lit(f.input)}::jsonb,1,public.trip_content_snapshot(t.id,t.title),recovery_private.profile_v1('${f.a.id}'),'[]',${lit(traffic)}::jsonb,'${'a'.repeat(64)}',clock_timestamp()+interval '5 minutes' from public.trips t where id='${f.trip}';insert into recovery_private.operations_v1 values('${f.a.id}','${operation}','${f.trip}','${context}',${lit(selection)}::jsonb,${lit(receipt)}::jsonb,'${p}');insert into recovery_private.lineage_v1 select '${p}','${f.a.id}','${f.trip}','${context}','${operation}',${lit(patch)}::jsonb,digest from public.read_trip_proposal_v2('${p}');`);
  for(const table of ['contexts_v1','operations_v1','lineage_v1'])assert.equal(await db(`select count(*) from recovery_private.${table} where owner_id='${f.a.id}';`),'1');
  return {...f,context,operation,proposal:p};
 }
@@ -102,6 +102,16 @@ run('transport closed source input never fabricates user report; absent real rea
  const noProof=await sql(container,"set role authenticated;select recovery_private.prewrite_transport_v1('00000000-0000-0000-0000-000000000000','arbitrary');");assert.notEqual(noProof.code,0);assert.match(noProof.stderr,/permission denied/);
  assert.equal(await db("select count(*) from recovery_private.transport_proofs_v1;"),'0');
 });
+run('unqualified transport association rejects before first Trip mutation; private proof cannot be client minted',async()=>{
+ const traffic={receiptId:uuid(),scope:{},policyId:uuid(),policyRevision:1,stopEpoch:0,expiresAt:new Date(Date.now()+30000).toISOString(),proofBasis:{}},f=await lifecycleSeed(traffic),before=await fingerprint(f);
+ const read=JSON.parse(await db(`${claims(f.a)}select to_jsonb(r) from public.read_trip_proposal_v2('${f.proposal}')r;`));
+ await db("create function recovery_private.test_first_mutation_v1() returns trigger language plpgsql as $$begin raise exception 'TEST_TRIP_MUTATION_REACHED';end $$;create trigger recovery_test_first_mutation before update on public.trips for each row execute function recovery_private.test_first_mutation_v1();");
+ try {await failure(f.a,'confirm_and_apply_trip_proposal',{p_proposal_id:f.proposal,p_idempotency_key:uuid(),p_digest:read.digest},/RECOVERY_TRANSPORT_GUARD/);} finally {await db('drop trigger recovery_test_first_mutation on public.trips;drop function recovery_private.test_first_mutation_v1();');}
+ assert.equal(await fingerprint(f),before);
+ const spoof=await sql(container,`${claims(f.a)}set role authenticated;insert into recovery_private.transport_proofs_v1(transaction_id,proposal_id,owner_id,trip_id,context_id,root_proposal_id,proposal_digest,proposal_revision,base_version,actor_basis,traffic_basis,checked_at,expires_at) values(pg_current_xact_id(),'${f.proposal}','${f.a.id}','${f.trip}','${f.context}','${f.proposal}','caller-digest',2,1,'{}','{}',clock_timestamp(),clock_timestamp()+interval '1 hour');`);assert.notEqual(spoof.code,0);assert.match(spoof.stderr,/permission denied/);
+ assert.equal(await db('select count(*) from recovery_private.transport_proofs_v1;'),'0');
+ assert.equal(await db(`select recovery_private.transport_proof_current_v1(${lit(traffic)}::jsonb);`),'f');
+});
 run('server context exact replay/current Profile; same operation changed body conflicts',async()=>{
  const f=await fixture(),c=await prepared(f);assert.deepEqual(await prepared(f),c);
  assert.equal((await rpc(f.a,'prepare_local_recovery_v1',{p_trip_id:f.trip,p_input:{...f.input,locale:'en'}})).kind,'conflict');
@@ -128,10 +138,13 @@ run('lost ACK exact submit/read concurrent replay creates one proposal/operation
  assert.equal(await db(`select count(*) from recovery_private.operations_v1 where trip_id='${f.trip}';`),'1');
  assert.equal((await rpc(f.a,'read_local_recovery_operation_v1',{p_trip_id:f.trip,p_operation_id:uuid()})).kind,'unavailable');
 });
-run('Profile change direct legacy and alternate supported confirm reject with full rollback',async()=>{
- for(const supported of [false,true]){const f=await selected(await fixture()),before=await fingerprint(f);await db(`insert into public.user_profiles(owner_id) values('${f.a.id}');`);
- await failure(f.a,supported?'confirm_and_apply_supported_trip_proposal_v1':'confirm_and_apply_trip_proposal',supported?{...f.confirm,p_support_selection:[]}:f.confirm,/RECOVERY_CONFIRM_GUARD/);
- assert.equal(await fingerprint(f),before);assert.equal((await rpc(f.a,'read_local_recovery_operation_v1',{p_trip_id:f.trip,p_operation_id:f.selection.operationId})).state,'stale');}
+run('Profile change direct original confirm rolls back; malformed alternate support cannot bypass the original writer',async()=>{
+ const f=await selected(await fixture()),before=await fingerprint(f);await db(`insert into public.user_profiles(owner_id) values('${f.a.id}');`);
+ await failure(f.a,'confirm_and_apply_trip_proposal',f.confirm,/RECOVERY_CONFIRM_GUARD/);
+ // Empty selection is blocked by the existing supported wrapper before writer
+ // entry; it is not evidence that an accepted support reached the recovery guard.
+ assert.deepEqual(await rpc(f.a,'confirm_and_apply_supported_trip_proposal_v1',{...f.confirm,p_support_selection:[]}),{kind:'blocked'});
+ assert.equal(await fingerprint(f),before);assert.equal((await rpc(f.a,'read_local_recovery_operation_v1',{p_trip_id:f.trip,p_operation_id:f.selection.operationId})).state,'stale');
 });
 run('all recovery revisions including same patch are rejected; title/rollback/expiry cannot bypass',async()=>{
  const f=await selected(await fixture()),before=await fingerprint(f);
