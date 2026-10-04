@@ -156,3 +156,10 @@ Context does not grant route source association or R2 qualification.
 and a successful ordinary SQL scope read. Otherwise its status is unavailable
 and values null. Explicit stop can perform its own fresh epoch read. Context
 performs zero producer/provider calls and leaves Trip unchanged.
+
+Opening the original Proposal review inside the same Recovery flow preserves
+the same exact foreground scope. Cancel the active fetch and stop automatic
+refresh during review; do not send stop or renew receipt expiry merely for
+view disappearance. Leaving that review/flow, backgrounding or changing actor
+does stop and hide the old observation. An unknown stop response is not a
+confirmed revocation. Original confirmation always rechecks SQL authority.
