@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-04",
+  "mainBase": "8d30d0ba645552e6de3251e4d76ba09a78d652b1",
+  "recoverySource": "e0678c312c4b4ed30ac6c54a7957bc905712fb4f",
+  "trafficSource": "b58ae380d923bf56cf908f6964dbc14c3a7b03d7",
+  "probe": "joint-protocol-probe.mjs",
+  "probeOrigins": "040000 reviewed ItemSupport fixture reused; only 220 protocol case selected",
+  "overlay": "/var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/vpj29-r2-protocol-w_mxjnac",
+  "environment": "disposable network-none PostgreSQL; synthetic administrator Auth/producer/policy grants; no target, external source or actual provider qualification",
+  "command": "VP_TRAFFIC_DB_TEST=1 node --experimental-strip-types --test --test-name-pattern=\"220 protocol joint source\" tests/integration/maps/foreground-traffic-postgres.test.mjs",
+  "results": {
+    "hook_body_acl_rollback_and_missing_r2": {
+      "PASS": 2,
+      "skipped": 0
+    },
+    "prewrite_before_first_trip_mutation_client_proof_denied": {
+      "PASS": 1,
+      "skipped": 0
+    },
+    "protocol_first_attempt": {
+      "FAIL": 1,
+      "reason": "fixture used 60s delta; threshold is max(120s,20%); source correctly remained unchanged, helper returned null"
+    },
+    "joint_protocol_450s_vs_300s_fixed_fixture": {
+      "PASS": 1,
+      "skipped": 0
+    }
+  },
+  "observed": [
+    "actual 030000 source helper reads fixed 040000 qualified metadata and minimum deadline",
+    "R2 public preparation fails closed while actual #646 reader is absent",
+    "explicitly unqualified admin context seed only for private prewrite protocol",
+    "exact tx/root/revision/base/actor/session/context proof minted from actual source qualification",
+    "raw source proof stays current through own Trip head/item changes",
+    "same transaction receipt metadata change rejects raw proof",
+    "original confirmation rolls back wholly while reservation authority is absent",
+    "rollback leaves zero private proof rows"
+  ],
+  "UNRUN": [
+    "full public preparation/selection/original confirmation success with actual #646 reader",
+    "full transport same-tx stop/revocation/expiry race through original event",
+    "actual signed Auth/native/provider/account rights or target deployment"
+  ],
+  "ownership": "No 040000/TS/Swift/old migration/registry edits; archived probe is evidence, not a new registry runner"
+}
