@@ -67,12 +67,10 @@ test("actual native and Web handlers qualify owner context, create local diff on
   assert.ok(f.calls.some(c => c.path.endsWith("/prepare_local_recovery_v1") && c.authorization === `Bearer ${f.token}`));
   assert.ok(f.calls.every(c => !/confirm_and_apply|create_trip_proposal|maps|model/.test(c.path)));
 });
-test("missing reservation reader returns real pending; epoch replacement removes candidate response", async t => {
+test("missing reservation reader returns real pending and no executable candidates", async t => {
   const f = await setup(t); f.setAbsent();
   const r = await localRecoveryHTTP(f.request({ operation: "preview", input: f.input }), id(3), true); const body = await r.json();
   assert.equal(r.status, 200); assert.equal(body.data.status, "pending"); assert.equal(body.data.reason, "RESERVATION_READER_UNAVAILABLE"); assert.deepEqual(body.data.candidates, []);
-  f.replace();
-  // Reader pending needs only one prepare, so a dedicated success path below checks the post-read epoch.
 });
 test("native post-source mobile epoch replacement returns no private candidates", async t => {
   const f = await setup(t); f.replace();
