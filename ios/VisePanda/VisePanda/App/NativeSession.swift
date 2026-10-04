@@ -1134,6 +1134,8 @@ final class NativeSession {
         memoryPreferences.clear()
         exploreAskHandoff=nil
         if let owner = credential?.subject ?? defaults.string(forKey: storageKey) {
+            do { try NativeReservationJournalVault.remove(endpoint:endpoint?.absoluteString ?? "disabled",owner:owner,vault:vault) }
+            catch { failureCode="reservationCleanupRequired";status="storageError";return false }
             let support=vault.remove(service:tripSupportConfirmVaultService,owner:owner)
             guard support==errSecSuccess || support==errSecItemNotFound else { failureCode="keychain:\(support)";status="storageError";return false }
             for service in [materialDeleteRequestService,materialDeleteReceiptService] {
