@@ -18,6 +18,9 @@ function pace(value:unknown,tripId:string):TaskTravelPace|null{
  if(value.source==="profile"&&(!(typeof value.sourceRevision==="number"&&Number.isSafeInteger(value.sourceRevision)&&value.sourceRevision>0)
   ||typeof value.sourceOperationId!=="string"||!isUuid(value.sourceOperationId)))return null;
  if(!["profile","current_input","none"].includes(value.source as string)||!(value.travelPace===null||["relaxed","balanced","packed"].includes(value.travelPace as string)))return null;
+ if(value.source==="profile"&&value.travelPace===null)return null;
+ if(value.source!=="profile"&&(value.sourceRevision!==null||value.sourceOperationId!==null))return null;
+ if(value.source==="none"&&value.travelPace!==null||value.source==="current_input"&&value.travelPace===null)return null;
  return value as TaskTravelPace;
 }
 export async function lodgingContextHTTP(request:NextRequest,tripId:string,native:boolean){
@@ -50,6 +53,8 @@ export async function lodgingContextHTTP(request:NextRequest,tripId:string,nativ
   const trip={version:current.data.trip.headVersion,title:current.data.trip.title,days:current.data.content.days};
   const readPace=async()=>{
    const p=input.profileChoice;
+   if(p.currentPace!==null)return {schemaVersion:"task-travel-pace/1",tripId,travelPace:p.currentPace,source:"current_input",sourceRevision:null,sourceOperationId:null,purpose:"local_trip_planning"} as TaskTravelPace;
+   if(!p.useSaved)return {schemaVersion:"task-travel-pace/1",tripId,travelPace:null,source:"none",sourceRevision:null,sourceOperationId:null,purpose:"local_trip_planning"} as TaskTravelPace;
    const result=await rpc("native_task_travel_pace_v1",{p_input:{tripId,currentPace:p.currentPace,useSaved:p.useSaved,...(p.expectedSourceRevision===null?{}:{expectedSourceRevision:p.expectedSourceRevision})}});
    if(result.error)return null;return pace(result.data,tripId);
   };

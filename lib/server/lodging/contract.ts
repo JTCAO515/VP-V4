@@ -37,6 +37,7 @@ export function parseLodgingContextInput(v:unknown):LodgingContextInput|null{
  if(!exact(p,["currentPace","useSaved","expectedSourceRevision"])||typeof p.useSaved!=="boolean"
   ||!(p.currentPace===null||["relaxed","balanced","packed"].includes(p.currentPace as string))
   ||!(p.expectedSourceRevision===null||integer(p.expectedSourceRevision,1,9007199254740990)))return null;
+ if((p.currentPace!==null&&p.useSaved)||(p.expectedSourceRevision!==null&&(!p.useSaved||p.currentPace!==null)))return null;
  if(!Array.isArray(v.candidates)||v.candidates.length>20||!v.candidates.every(c=>record(c)&&exact(c,["canonicalPoiId","provider","providerPoiId"])
   &&typeof c.canonicalPoiId==="string"&&isUuid(c.canonicalPoiId)&&["amap","tencent"].includes(c.provider as string)
   &&typeof c.providerPoiId==="string"&&/^[A-Za-z0-9_-]{1,128}$/.test(c.providerPoiId))
