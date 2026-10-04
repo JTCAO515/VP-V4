@@ -7,6 +7,20 @@ development-stage approvals in [`development-integration-policy.md`](development
 A long-running session selects, implements, verifies and hands off independently executable work
 until no safe frontier remains. An Issue finishing is a scheduling event, not a session stop.
 
+## Task dispatch sessions (JT, 2026-10-04)
+
+Main creates a new development session for every newly dispatched independent task,
+including a distinct task under the same Issue. Each dispatch identifies the Issue,
+branch, exclusive file scope, dependencies and complete delivery criteria. Do not
+assign a new independent task by continuing a previous task's session.
+
+Continue the same session for fixes, review findings, CI repairs and integration
+within that specific task. Do not create a session per message or small edit.
+Preserve the sole writer for work already implemented in flight. Before transferring
+an unstarted task, save its handoff and obtain the old writer's explicit release;
+only then activate the new session. Never create concurrent writers for one scope.
+This changes dispatch granularity, not permission, verification, merge or concurrency gates.
+
 ## 1. Hard prohibitions
 
 The session may never:

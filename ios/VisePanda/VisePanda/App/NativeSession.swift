@@ -995,7 +995,7 @@ final class NativeSession {
 
     func logout() async {
         guard !busy else { return }
-        defaults.set(credential?.subject ?? defaults.string(forKey: storageKey) ?? "unbound", forKey: storageKey + ".signOutIntent")
+        defaults.set(credential?.subject ?? defaults.string(forKey: storageKey) ?? defaults.string(forKey: storageKey + ".pendingJournalCleanupOwner") ?? "unbound", forKey: storageKey + ".signOutIntent")
         deviceMaterialSignOutFence = true
         subject=nil; mobileEpoch=nil; displayName=nil; status="signingOut"
         do { try deviceMaterials.eraseAll() }
@@ -1059,7 +1059,7 @@ final class NativeSession {
         subject = nil
         mobileEpoch = nil
         displayName = nil
-        if case SessionError.denied = error { if clear() { status = "expiredOrReplaced" } }
+        if case SessionError.denied = error { if clear(preservePendingJournals: !deviceMaterialSignOutFence) { status = "expiredOrReplaced" } }
         else { status = "retry" }
     }
 
@@ -1122,7 +1122,7 @@ final class NativeSession {
         return try deviceMaterials.receive(data, scope: scope)
     }
 
-    @discardableResult private func clear() -> Bool {
+    @discardableResult private func clear(preservePendingJournals: Bool = false) -> Bool {
         // Fence consumers before cleanup; a locked file is not proof of erasure.
         dataGeneration += 1
         subject=nil; mobileEpoch=nil; displayName=nil
@@ -1133,7 +1133,14 @@ final class NativeSession {
         assistantNavigation=nil
         memoryPreferences.clear()
         exploreAskHandoff=nil
-        if let owner = credential?.subject ?? defaults.string(forKey: storageKey) {
+        if let owner = credential?.subject ?? defaults.string(forKey: storageKey) ?? defaults.string(forKey: storageKey + ".pendingJournalCleanupOwner") {
+            if preservePendingJournals {
+                // Noncredential cleanup index only. It cannot restore a session or authorize a journal read.
+                defaults.set(owner, forKey: storageKey + ".pendingJournalCleanupOwner")
+            } else {
+                do { try NativeReservationJournalVault.remove(endpoint:endpoint?.absoluteString ?? "disabled",owner:owner,vault:vault) }
+                catch { failureCode="reservationCleanupRequired";status="storageError";return false }
+            }
             let support=vault.remove(service:tripSupportConfirmVaultService,owner:owner)
             guard support==errSecSuccess || support==errSecItemNotFound else { failureCode="keychain:\(support)";status="storageError";return false }
             for service in [materialDeleteRequestService,materialDeleteReceiptService] {
@@ -1154,6 +1161,7 @@ final class NativeSession {
             }
         }
         defaults.removeObject(forKey: storageKey)
+        if !preservePendingJournals { defaults.removeObject(forKey: storageKey + ".pendingJournalCleanupOwner") }
         credential = nil
         subject = nil
         mobileEpoch = nil

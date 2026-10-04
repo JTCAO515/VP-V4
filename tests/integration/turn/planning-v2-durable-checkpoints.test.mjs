@@ -84,7 +84,23 @@ run('save commit lost response recovers through fresh process read only, includi
 });
 run('closed source environment freshness and numeric ranges reject malformed observations without reset',async()=>{
  const x=await leased();await claim(x);const p=place();
- for(const bad of [null,{}, {...p,source:'amap'},{...p,extra:'private'},{...p,observedAt:new Date(Date.now()-301000).toISOString()},{...p,observedAt:new Date(Date.now()+6000).toISOString()},{...p,observedAt:'2026-02-30T00:00:00Z'},{...p,providerCalls:14},{...p,areas:[{...p.areas[0],label:'😀'.repeat(41)},p.areas[1]]},{...p,areas:[p.areas[0],p.areas[0]]},{...p,areas:[{...p.areas[0],railMinutes:181},p.areas[1]]},{...p,areas:[{...p.areas[0],transfers:-1},p.areas[1]]}])assert.equal(await save(x,bad),false);
+ const cases=[
+  ['null',()=>null],['empty',()=>({})],['wrong source',()=>({...p,source:'amap'})],['extra key',()=>({...p,extra:'private'})],
+  ['expired observation',()=>({...p,observedAt:new Date(Date.now()-301000).toISOString()})],
+  ['future observation',()=>({...p,observedAt:new Date(Date.now()+6000).toISOString()})],
+  ['impossible date',()=>({...p,observedAt:'2026-02-30T00:00:00Z'})],['call cap',()=>({...p,providerCalls:14})],
+  ['UTF16 label cap',()=>({...p,areas:[{...p.areas[0],label:'😀'.repeat(41)},p.areas[1]]})],
+  ['duplicate identity',()=>({...p,areas:[p.areas[0],p.areas[0]]})],
+  ['duration cap',()=>({...p,areas:[{...p.areas[0],railMinutes:181},p.areas[1]]})],
+  ['negative transfers',()=>({...p,areas:[{...p.areas[0],transfers:-1},p.areas[1]]})],
+ ];
+ for(const [label,make] of cases){
+  // Relative clocks are created at dispatch, not aged by earlier SQL calls.
+  const bad=make(),accepted=await save(x,bad);
+  if(accepted){const dbEpochMillis=Number(await db("select extract(epoch from clock_timestamp())*1000;"));
+   assert.equal(accepted,false,JSON.stringify({label,observedAt:bad?.observedAt,dbEpochMillis,futureMillis:bad?.observedAt?Date.parse(bad.observedAt)-dbEpochMillis:null}));}
+  assert.equal(accepted,false,label);
+ }
  assert.deepEqual((await read(x)).place,{state:'started'});assert.deepEqual(await claim(x),{kind:'duplicate'});assert.equal(await save(x,p),true);
  const staging=await leased('staging');await claim(staging);assert.equal(await save(staging,place()),false);assert.equal(await save(staging,place('amap')),true);
  const expiring=await leased();await claim(expiring);assert.equal(await save(expiring,place('synthetic_fixture',new Date(Date.now()-299000).toISOString())),true);await db('select pg_sleep(2);');assert.deepEqual(await read(expiring),blocked);assert.deepEqual(await claim(expiring),blocked);
