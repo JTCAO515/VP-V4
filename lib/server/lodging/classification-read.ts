@@ -49,3 +49,9 @@ export async function readLodgingClassifications(tripId:string,input:LodgingCont
  if(object(result.data)&&result.data.kind==="conflict")throw Error("STALE_TRIP_VERSION");
  return parseLodgingClassifications(result.data,tripId,input)??[];
 }
+
+/** The response window is not source identity. Its moving30s expiresAt is checked
+ * on every read, while qualification compares immutable/versioned provenance. */
+export function lodgingClassificationBasis(rows:readonly LodgingClassification[]){
+ return rows.map(({expiresAt:_window,...basis})=>basis).sort((a,b)=>a.canonicalPoiId.localeCompare(b.canonicalPoiId));
+}

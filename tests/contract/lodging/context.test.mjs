@@ -48,7 +48,7 @@ test('actual Native handler reads own current Trip; future source gaps remain un
  drift=true;calls=0;const replaced=await lodgingContextHTTP(request(),id,true);assert.equal(replaced.status,401);assert.deepEqual(await replaced.json(),{error:{code:'UNAUTHENTICATED'}});
 });
 
-import {parseLodgingClassifications} from '../../../lib/server/lodging/classification-read.ts';
+import {parseLodgingClassifications,lodgingClassificationBasis} from '../../../lib/server/lodging/classification-read.ts';
 test('reviewed hotel receipt alone requires exact scope, current source/mapping/rights receipts; location and caller labels cannot substitute',()=>{
  const clock=Date.now(),choice={canonicalPoiId:id,provider:'amap',providerPoiId:'hotel'};
  const request={...input,needs:{...needs,city:'shanghai'},candidates:[choice]};
@@ -56,6 +56,8 @@ test('reviewed hotel receipt alone requires exact scope, current source/mapping/
   sourceRefs:[{sourceRevisionId:other,revisionLabel:'reviewed',snippetHash:'d'.repeat(64),publisher:'Reviewed source',uri:'https://example.invalid/source',locator:'Classification section'}],rightsDigest:'e'.repeat(64),reviewedAt:new Date(clock-1000).toISOString(),expiresAt:new Date(clock+20000).toISOString()};
  const raw={kind:'lodging_classifications',schemaVersion:'reviewed-lodging-classification/1',tripId:id,tripVersion:0,city:'shanghai',locale:'en',evaluatedAt:new Date(clock).toISOString(),items:[receipt]};
  assert.equal(parseLodgingClassifications(raw,id,request,clock)?.length,1);
+ assert.deepEqual(lodgingClassificationBasis([receipt]),lodgingClassificationBasis([{...receipt,expiresAt:new Date(clock+25000).toISOString()}]));
+ assert.notDeepEqual(lodgingClassificationBasis([receipt]),lodgingClassificationBasis([{...receipt,rightsDigest:'f'.repeat(64)}]));
  const identity={...choice,mappingId:other,matchedAt:new Date(clock).toISOString(),label:'Map identity'};
  const result=buildLodgingContext(id,trip,'confirmed',request,[identity],null,null,null,new Date(clock),[receipt]);
  assert.equal(result.candidates[0].hotelClassification,'reviewed_hotel');assert.equal(result.candidates[0].availability,'unknown');assert.equal(result.candidates[0].quote,'unknown');assert.equal(result.candidates[0].checkInEligibility,'unknown');
