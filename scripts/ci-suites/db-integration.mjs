@@ -87,6 +87,8 @@ export const LANES = {
           "tests/integration/trip/archive.test.mjs",
           "tests/integration/trip/trip-item-support.test.mjs",
           "tests/integration/trip/native-support-http-read.test.mjs",
+          "tests/integration/trip/local-recovery-guard.test.mjs",
+          "tests/integration/trip/recovery-http-joint.test.mjs",
           "tests/integration/readiness/declarations-postgres.test.mjs",
           "tests/integration/readiness/native-readiness-actions-joint.test.mjs",
           "tests/integration/trip/offline-text-provenance.test.mjs",

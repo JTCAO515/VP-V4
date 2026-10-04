@@ -94,7 +94,9 @@ and owner/Trip/Proposal deletion cascade.
   seam): current source/Profile/reservation fingerprints, immutable patch/revision,
   exact fixed scope and short expiry checked atomically. Plain confirm, alternate
   confirm, original revise/successor/rollback lineage cannot bypass the guard.
-  Changed recovery proposals must requalify or reject; ordinary historical
+  All recovery revisions/successors, including identical patches, reject. Users
+  reject the old Proposal and prepare a new context; operation applied receipts
+  refer only to their exact original Proposal event. Ordinary historical
   proposals retain their current behavior. No second writer, no old migration edit.
 - Export/delete/cleanup follows the existing owner Trip/Proposal domain: only an
   independently enrolled exact-job/lease private export seam may include bounded
