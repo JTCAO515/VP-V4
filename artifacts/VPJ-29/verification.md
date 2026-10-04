@@ -1,7 +1,8 @@
 # #220 backend evidence — 2026-10-04
 
 Source: TS/API `e72ac95d`, SQL owner `bbd127df` + `87967db9`, integrated as
-`4ee83d36` on actual main `8d30d0ba`. Native implementation is separately owned.
+`4ee83d36` on actual main `8d30d0ba`. Native owner's exact `9c466e10` is integrated
+without conflicts as `646ff1db`; source review found no additional consumer defect.
 
 | Check | Actual result and scope |
 | --- | --- |
@@ -13,6 +14,8 @@ Source: TS/API `e72ac95d`, SQL owner `bbd127df` + `87967db9`, integrated as
 | Documentation check | PASS: existing plan/contracts/archive hashes remain valid. |
 | Real disposable PostgreSQL + production HTTP | PASS 1/1, zero skips, at main 8d30 (reader absent). Full actual migrations and production handler; synthetic signed JWT/admin SQL bridge. Actual missing reservation reader returns pending, zero context/candidates, original Trip head unchanged. Log `/tmp/vpj29-http-joint.log`. No stand-in reservation reader was installed. |
 | SQL owner original package evidence | Owner reported PASS 5/5 zero skips: real full-main DDL transaction/rollback, default ACL/RLS, ordinary writer, missing actual reader, closed input and mandatory marker, private export negatives. Reuse scope is SQL source 87967db9; successful-source chain is not included. |
+| Native owner fixed source | Integrated exact 8-file source `9c466e10`, including Today entry, models/store/view/journal, approved Session cleanup hunks and tests/project registration. Owner/Main reported unsigned generic build PASS and 12 source SwiftTesting cases (15 parameter results), including actual Session-method source projection with URLProtocol. These are not a complete iOS runtime or device/human acceptance. iOS test-module typecheck was still in progress at this record. |
+| Integration classification/governance | PASS: only two new tests appended in existing postgres lane; classification and 9 governance tests, zero skips. No existing entry removed. |
 
 `tests/integration/trip/recovery-http-joint.test.mjs` contains the actual installed
 reader positive path: source context → local candidates/diff → select with lost ACK

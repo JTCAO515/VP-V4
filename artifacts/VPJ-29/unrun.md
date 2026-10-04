@@ -15,9 +15,12 @@
   recovery API. Response marks official channel unavailable and offers the existing
   Trip entry plus generic seek-local-help/original-supplier steps. No invented
   phone, URL, official ID, ETA, venue opening, cancellation, refund or safety claim.
-- Native Today entry/candidate review/original confirmation/unknown operation UI is
-  being implemented by the separately assigned owner `01a1055a-d2b1-7062-91a8-66b1b61a7ce5`;
-  backend evidence does not claim its implementation or human acceptance.
+- Native Today entry/candidate review/original confirmation/unknown operation UI
+  from owner `01a1055a-d2b1-7062-91a8-66b1b61a7ce5` is fixed at `9c466e10` and
+  integrated as `646ff1db`. Target/human acceptance remains UNRUN. After normal
+  #646 merge, integrate its fixed Session change while preserving both journal
+  cleanup owners and shared preservePendingJournals behavior; do not independently
+  rewrite the reserved Session lifecycle before the owning task's fixed handoff.
 - New recovery export seam remains unenrolled and inventory partial. Existing
   source egress/recipient/job/lease/grants are not expanded. Real user export/delete
   delivery is UNRUN; additive source lifecycle is tested separately by SQL owner.
