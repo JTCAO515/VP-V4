@@ -56,6 +56,15 @@ retains the original operation and choice; retry cannot create a second Proposal
 Forbidden/actor drift hides private results and does not mean an earlier write was
 rolled back. Applied confirmation is only an original exact Proposal event/version.
 
+`RECOVERY_RECEIPT_UNKNOWN` is not proof that an operation is absent. It also covers
+unreadable/malformed receipts, lock contention and source/Trip drift during read.
+No failed recovery response may reset the journal to not-dispatched or authorize a
+fresh operation ID. Preparation operations are separate from selection operations:
+the receipt RPC reads selection only and cannot settle a lost preview ACK. The
+original prepare/submit commands support exact same-owner/same-operation/same-body
+idempotent replay; any explicit replay must keep the unknown state and frozen bytes,
+recheck current actor authority, and never be justified by a failed receipt read.
+
 ## Necessary SQL seam — Main review before runtime
 
 No migration is authorized by this document alone. The SQL task uses one additive
