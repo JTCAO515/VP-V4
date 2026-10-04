@@ -53,6 +53,8 @@ export async function readinessActionsService(input:ReadinessActionsInput,tripId
   if(rechecked.assessmentDigest!==input.assessmentDigest||result.assessmentDigest!==input.assessmentDigest)fail("STALE_READINESS_BASIS");
   const action=rechecked.actions.find(a=>a.actionId===input.actionId);
   if(!action)fail("STALE_READINESS_BASIS");
+  const delivery=await load();
+  if(delivery.revision!==current.revision||JSON.stringify(delivery.basis)!==JSON.stringify(current.basis)||JSON.stringify(delivery.declarations)!==JSON.stringify(current.declarations))fail("STALE_READINESS_BASIS");
   return {kind:"readiness_action/1",actionId:action.actionId,basis:action.basis,result:executeReadinessAction(action,rechecked.evidence)};
  }
  return result;

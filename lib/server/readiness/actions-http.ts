@@ -1,4 +1,4 @@
-import {NextResponse,type NextRequest} from "next/server";
+import {NextResponse,type NextRequest} from "next/server.js";
 import {createUserDataAdapter,createNativeTripDataAdapter} from "../identity/user-data-adapter.ts";
 import {getNativeRuntimeConfig} from "../identity/native-config.ts";
 import {nativeRequestScope} from "../identity/native-request.ts";

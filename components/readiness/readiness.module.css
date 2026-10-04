@@ -11,3 +11,5 @@
 .panel dl { display: grid; gap: 1rem; margin: 0; }
 .panel dd { margin: .25rem 0 0; font-weight: 600; }
 .panel li { margin-block: .5rem; }
+
+.panel p { overflow-wrap: anywhere; }

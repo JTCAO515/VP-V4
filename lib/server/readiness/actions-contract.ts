@@ -23,10 +23,11 @@ export function readinessQuestion(scenario:ReadinessScenario,subjectId:string|nu
   if(scenario==="connectivity")return {questionId:"connectivity_getting_started",subjectId:null};
   if(scenario==="payment")return {questionId:"payment_getting_started",subjectId:null};
   if(scenario==="transport")return {questionId:"rail_boarding_documents",subjectId:null};
-  if(!subjectId)return null;
-  return {questionId:scenario==="address"?"place_address":"place_opening_hours",subjectId};
+  if(scenario==="admission"||!subjectId)return null;
+  return {questionId:"place_address",subjectId};
 }
 export function readinessRelations(scenario:ReadinessScenario,subjectId:string|null) {
+  if(scenario==="admission")return subjectId?[{subjectId,...resolveOntologyRelation("permits_admission")}]:[];
   const question=readinessQuestion(scenario,subjectId);
   const definition=question && questionDefinition(question.questionId,question.subjectId);
   return definition?.claims.map(claim=>({claim,...resolveOntologyRelation(claim.predicate)}))??[];

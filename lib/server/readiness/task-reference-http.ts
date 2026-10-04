@@ -1,4 +1,4 @@
-import {NextResponse,type NextRequest} from "next/server";
+import {NextResponse,type NextRequest} from "next/server.js";
 import {createUserDataAdapter} from "../identity/user-data-adapter.ts";
 import {opsRuntimeConfig} from "../knowledge/review/local-workspace.ts";
 import {isUuid,hasSameOrigin} from "../identity/request-guards.ts";

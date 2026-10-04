@@ -12,7 +12,7 @@ const basis={taskId:task,taskTurnId:uuid(3),conversationId:uuid(4),goalId:uuid(5
 const declaration=(scenario:ReadinessDeclaration["scenario"],locale:"zh"|"en"="en"):ReadinessDeclaration=>({scenario,city:"shanghai",locale,subjectId:["address","admission"].includes(scenario)?"selected_place":null,applies:"yes",resourcesReady:"yes",conditionsChecked:"yes",checkAt:"now"});
 function state(d:ReadinessDeclaration):ReadinessDeclarationRead{return {kind:"readiness_declarations",basis,revision:1,declarations:[d],state:"current",ruleVersion:"readiness-actions/1",declarationBasis:"explicit_user_report"};}
 function knowledge(d:ReadinessDeclaration){
- const q=readinessQuestion(d.scenario,d.subjectId)!;
+ const q=readinessQuestion(d.scenario==="admission"?"address":d.scenario,d.subjectId)!;
  const definition=questionDefinition(q.questionId,q.subjectId)!;
  const claims=d.scenario==="admission"?[{subjectId:d.subjectId,predicate:"permits_admission",objectId:"entry_scope"}]:definition.claims;
  const rows=claims.map((claim,i)=>({factId:uuid(20+i),version:1,assertionId:uuid(30+i),assertionRevision:2,assertion:{...claim,conditions:[],exclusions:[]},text:d.locale==="zh"?"已审核适用指引":"Reviewed applicable guidance",conditions:[],exclusions:[],reviewedAt:"2026-10-03T00:00:00Z",publishedAt:"2026-10-03T01:00:00Z",expiresAt:"2026-10-05T00:00:00Z",sources:[{sourceRevisionId:uuid(40+i),publisher:"Official publisher",uri:"https://example.invalid/official",locator:"Section"}]}));

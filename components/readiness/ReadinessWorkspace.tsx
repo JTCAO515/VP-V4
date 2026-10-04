@@ -1,10 +1,12 @@
 "use client";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import {useEffect,useRef,useState} from "react";
 import type {ReadinessAssessment,ReadinessActionResult} from "@/lib/server/readiness/assessment-contract";
 import type {ReadinessAction} from "@/lib/server/readiness/actions-contract";
 import type {ReadinessDeclaration} from "@/lib/server/readiness/declarations-contract";
 import styles from "./readiness.module.css";
+const ProposalReview=dynamic(()=>import("./ReadinessProposalReview").then(module=>module.ReadinessProposalReview));
 type Answer="unknown"|"yes"|"no";
 type TaskReference={taskId:string;tripVersion:number};
 const object=(v:unknown):v is Record<string,unknown>=>v!==null&&typeof v==="object"&&!Array.isArray(v);
@@ -117,12 +119,12 @@ export function ReadinessWorkspace({tripId}:{tripId:string}){
  return <main className={styles.main}>
   <header className={styles.header}><h1>{t("Preparation: a next step for each gap","准备检查：把缺口变成下一步")}</h1><Link href={"/visepanda/trips/"+tripId}>{t("Back to this Trip","返回此行程")}</Link></header>
   <section className={styles.panel}><label>{t("Language","语言")}<select value={locale} onChange={e=>setLocale(e.target.value as "en"|"zh")}><option value="en">English</option><option value="zh">中文</option></select></label>
-   <label>{t("City","城市")}<select value={city} onChange={e=>{setCity(e.target.value);setSubjectId(null);}}>{["shanghai","beijing","guangzhou","chongqing"].map(c=><option key={c}>{c}</option>)}</select></label>
+   <label>{t("City","城市")}<select value={city} onChange={e=>{setCity(e.target.value);setSubjectId(null);}}>{["shanghai","beijing","guangzhou","chongqing"].map((c,i)=><option key={c} value={c}>{locale==="zh"?["上海","北京","广州","重庆"][i]:["Shanghai","Beijing","Guangzhou","Chongqing"][i]}</option>)}</select></label>
    <label>{t("Preparation scope","准备场景")}<select value={scenario} onChange={e=>{setScenario(e.target.value as ReadinessDeclaration["scenario"]);setSubjectId(null);}}>{(["connectivity","payment","admission","address","transport"] as const).map((s,i)=><option key={s} value={s}>{locale==="zh"?["网络","支付","入场","地址","交通"][i]:["Connectivity","Payment","Admission","Address","Transport"][i]}</option>)}</select></label>
    {needsPlace?<label>{t("Choose an actual reviewed knowledge entity","选择实际已审核知识实体")}<select value={subjectId??""} onChange={e=>setSubjectId(e.target.value||null)}><option value="">{t("No qualified entity selected","尚未选择合格实体")}</option>{subjects.map(s=><option key={s.id} value={s.id}>{s.label}</option>)}</select></label>:null}
    <button disabled={busy} onClick={()=>void refresh()}>{t("Reload current scope and evidence","重新读取当前作用域与依据")}</button>
    <button disabled={busy} onClick={()=>{const url=new URL(window.location.href);url.searchParams.delete("readinessTask");window.history.replaceState(window.history.state,"",url);void refresh();}}>{t("Choose the current linked result task again","重新选择当前关联结果的任务")}</button>
-   {task?<p>{t("Uses the existing linked task","复用既有真实任务")} · {task.taskId}</p>:<p>{t("No currently authorized linked task. Continue the existing assistant goal first; no new task is fabricated.","没有当前可用的关联任务。请先继续既有助手目标；这里不会伪造新任务。")}</p>}
+   {task?<details><summary>{t("Linked task reference","关联任务引用")}</summary><p>{task.taskId}</p></details>:<p>{t("No currently authorized linked task. Continue the existing assistant goal first; no new task is fabricated.","没有当前可用的关联任务。请先继续既有助手目标；这里不会伪造新任务。")}</p>}
   </section>
   {snapshot?<section className={styles.panel}><h2>{t("Your explicit reports","你的明确声明")}</h2>
    {answerSelect(t("Does this scope apply to you?","此项是否适用于你？"),applies,setApplies)}
@@ -136,11 +138,11 @@ export function ReadinessWorkspace({tripId}:{tripId:string}){
   {result?<section className={styles.panel}><h2>{t("Current assessment","当前核验")}</h2><dl><div><dt>{t("Knowledge","知识依据")}</dt><dd>{status(result.knowledgeAvailability)}</dd></div><div><dt>{t("Your preparation","你的准备情况")}</dt><dd>{status(result.userReadiness)}</dd></div><div><dt>{t("Action timing","行动时机")}</dt><dd>{status(result.actionTiming)}</dd></div></dl>
    {result.evidence.map(e=><article key={e.factId}><p>{e.text}</p><ul>{[...e.conditions,...e.exclusions].map((line,i)=><li key={i}>{line}</li>)}</ul><p>{e.factId} · v{e.publicationVersion} / r{e.assertionRevision}</p></article>)}
    {result.actions.map(a=><button key={a.actionId} disabled={busy} onClick={()=>void execute(a)}>{({read_material:t("Read authorized material","阅读获准资料"),verify_entry:t("Open the verification entry","打开核实入口"),conditional_candidate:t("Inspect this conditional candidate","查看此条件性候选"),trip_proposal:t("Review the exact existing proposal","审阅这份既有提案")})[a.kind]}</button>)}
-   <p>{result.ruleVersion} · {result.basis.dateBasis}</p>
+   <details><summary>{t("Rule and date basis","规则与日期依据")}</summary><p>{result.ruleVersion} · {result.basis.dateBasis}</p></details>
   </section>:null}
   {material?<section className={styles.panel}><h2>{t("Authorized current material","获准的当前资料")}</h2><p>{material.text}</p><ul>{[...material.conditions,...material.exclusions].map((line,i)=><li key={i}>{line}</li>)}</ul>{material.sources.map(s=><p key={s.sourceRevisionId}><a href={s.uri} target="_blank" rel="noreferrer">{s.publisher} · {s.locator}</a></p>)}</section>:null}
   {actionResult?.kind==="verification_entry"?<section className={styles.panel}><h2>{t("Verification entry","核实入口")}</h2><p>{actionResult.target==="declaration"?t("Update only the reports you can explicitly verify in the form above.","请在上方表单更新你能明确核实的声明。"):t("Refresh guidance or verify with its official source. Missing sources remain unknown.","请刷新指引或通过官方来源核实。缺少来源时仍为未知。")}</p>{actionResult.sources.map(s=><a key={s.sourceRevisionId} href={s.uri} target="_blank" rel="noreferrer">{s.publisher}</a>)}<button disabled={busy} onClick={()=>void refresh()}>{t("Read current guidance again","重新读取当前指引")}</button></section>:null}
-  {actionResult?.kind==="trip_proposal_reference"?<section className={styles.panel}><p>{actionResult.proposalId} · r{actionResult.proposalRevision}</p><p>{t("Use the existing Trip review, visible diff and explicit confirmation. This preparation action does not apply a patch.","请使用既有行程审阅、可见差异和明确确认。本准备动作不会应用修改。")}</p><Link href={"/visepanda/trips/"+tripId}>{t("Open this Trip's existing review","打开此行程的既有审阅")}</Link></section>:null}
+  {actionResult?.kind==="trip_proposal_reference"?<section className={styles.panel}><p>{actionResult.proposalId} · r{actionResult.proposalRevision}</p><p>{t("Use the existing Trip review, visible diff and explicit confirmation. This preparation action does not apply a patch.","请使用既有行程审阅、可见差异和明确确认。本准备动作不会应用修改。")}</p><ProposalReview tripId={tripId} proposalId={actionResult.proposalId} proposalRevision={actionResult.proposalRevision} proposalDigest={actionResult.proposalDigest} locale={locale} onChanged={()=>void refresh()}/></section>:null}
   {notice?<p role="status">{notice==="changed"||notice==="STALE_READINESS_BASIS"||notice==="STALE_TRIP_VERSION"?t("Scope or dates changed. Reload and explicitly report again.","作用域或日期已改变。请重新读取并明确声明。"):notice==="expired"?t("The current check expired. Reload before using actions.","本次核验已到期。使用动作前请重新读取。"):t("Current task, evidence or permission is unavailable. Nothing is marked complete.","当前任务、依据或权限不可用。没有把任何问题标为已解决。")}</p>:null}
  </main>;
 }
