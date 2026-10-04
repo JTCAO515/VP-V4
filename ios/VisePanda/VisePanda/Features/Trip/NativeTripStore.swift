@@ -224,6 +224,20 @@ final class NativeTripStore {
         notice = nil
     }
 
+    /// Hotel selection is not a Trip write. The user names exactly one
+    /// existing first/last-day item; the ordinary Proposal review remains next.
+    func prepareLodgingDraft(expectedTripVersion:Int,dayID:String,itemID:String,title:String,using session:NativeSession) async -> Bool {
+        guard !busy,canEdit,draft==nil,pending==nil,!proposalOutcomeUnknown,
+              let scope=session.dataScope,self.scope==scope,detail?.trip.headVersion==expectedTripVersion else{return false}
+        guard await refreshForSharing(using:session),self.scope==scope,session.dataScope==scope,
+              canEdit,draft==nil,pending==nil,!proposalOutcomeUnknown,let detail,
+              detail.confirmationState=="confirmed",detail.trip.id==selectedID,
+              detail.trip.headVersion==expectedTripVersion else{return false}
+        guard let prepared=NativeLodgingTripAdjustment.prepare(detail:detail,dayID:dayID,itemID:itemID,title:title) else{return false}
+        draft=prepared;notice=nil
+        return true
+    }
+
     var offlineTextPending:Bool{pendingOfflineText != nil}
     func proposeOfflineText(date:String,title:String,saveOffline:Bool,using session:NativeSession)async->Bool {
         guard !busy,canEdit,draft==nil,pending==nil,!proposalOutcomeUnknown,let detail,let scope=session.dataScope,self.scope==scope,detail.trip.id==selectedID,deletionRequest==nil,deletionReceipt==nil,saveOffline else{return false}
