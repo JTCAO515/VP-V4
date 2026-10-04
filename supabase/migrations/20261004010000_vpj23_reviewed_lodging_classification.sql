@@ -62,7 +62,7 @@ begin
  if reviewed then
  select revision into member from knowledge_review_private.members where actor_id=r.reviewer_id and active for share nowait;
  if c.status<>'reviewed' or c.version<>2 or r.reviewer_id is distinct from c.reviewer_id or member is distinct from r.reviewer_member_revision then return null;end if;end if;
- return jsonb_build_object('candidateId',c.id,'statementId',s.statement_id,'statementRevision',s.revision,'payloadHash',r.payload_hash,'sourceDigest',r.source_digest,'sourceRefs',refs,'payload',s.payload,'authorId',c.author_id,'reviewedAt',c.reviewed_at);
+ return jsonb_build_object('candidateId',c.id,'statementId',s.statement_id,'statementRevision',s.revision,'payloadHash',r.payload_hash,'sourceDigest',r.source_digest,'sourceRefs',refs,'payload',s.payload,'authorId',c.author_id,'reviewedAt',export_private.ms_v1(c.reviewed_at));
 exception when lock_not_available then return null;
 end $$;
 create function lodging_classification_private.publication_basis(id uuid,require_enabled boolean default true) returns jsonb language plpgsql security definer set search_path='' as $$
@@ -129,6 +129,7 @@ begin
  elsif act in ('review','publish','revoke') then
  select * into c from knowledge_review_private.candidates where knowledge_review_private.candidates.id=cid for update nowait;if not found then return jsonb_build_object('kind','blocked');end if;
  select statement_id into sid from knowledge_review_private.statements where candidate_id=cid;
+ if not exists(select 1 from lodging_classification_private.statements where candidate_id=cid) then return jsonb_build_object('kind','blocked');end if;
  b:=lodging_classification_private.source_basis(sid,act<>'review');if b is null and act<>'revoke' then return jsonb_build_object('kind','stale');end if;
  if act='review' then
  if p_input->'expectedVersion'<>'1' or p_input->>'decision' not in('reviewed','rejected') or knowledge_review_private.bounded_text(p_input->'note',400) is distinct from true then raise exception 'INVALID_INPUT';end if;
@@ -147,7 +148,7 @@ begin
  answer:=jsonb_build_object('kind','lodging_classification_publication','operationId',op,'candidateId',cid,'statementId',sid,'statementRevision',1,'factId',p.fact_id,'publicationVersion',2,'state','revoked','sourceDigest',(select source_digest from lodging_classification_private.statements where candidate_id=cid),'rightsDigest',lodging_classification_private.hash(jsonb_build_array(p.use_basis,p.use_note,p.version)),'expiresAt',export_private.ms_v1(p.expires_at));end if;
  else
  if act='submit_mapping' then
- if p_input->'expectedStatementRevision'<>'1' or p_input->'expectedPublicationVersion'<>'1' or p_input->>'city' not in('shanghai','beijing','guangzhou','chongqing') or exists(select 1 from unnest(array['expectedPayloadHash','expectedSourceDigest','expectedRightsDigest']) k where jsonb_typeof(p_input->k) is distinct from 'string' or p_input->>k !~ '^[a-f0-9]{64}$') then raise exception 'INVALID_INPUT';end if;
+ if p_input->'expectedStatementRevision'<>'1' or p_input->'expectedPublicationVersion'<>'1' or coalesce(p_input->>'city','') not in('shanghai','beijing','guangzhou','chongqing') or exists(select 1 from unnest(array['expectedPayloadHash','expectedSourceDigest','expectedRightsDigest']) k where jsonb_typeof(p_input->k) is distinct from 'string' or p_input->>k !~ '^[a-f0-9]{64}$') then raise exception 'INVALID_INPUT';end if;
  select * into poi from public.canonical_pois where id=(p_input->>'canonicalPoiId')::uuid for update nowait;if not found then return jsonb_build_object('kind','blocked');end if;
  b:=lodging_classification_private.publication_basis((p_input->>'statementId')::uuid);if b is null or b->>'payloadHash'<>p_input->>'expectedPayloadHash' or b->>'sourceDigest'<>p_input->>'expectedSourceDigest' or b->>'rightsDigest'<>p_input->>'expectedRightsDigest' or not(b->'payload'->'scope'->'cities' ? (p_input->>'city')) then return jsonb_build_object('kind','stale');end if;
  insert into lodging_classification_private.mappings(canonical_poi_id,statement_id,author_id,city,source_digest,rights_digest,payload_hash,canonical_hash,provider_hash,request_digest) values(poi.id,(p_input->>'statementId')::uuid,u,p_input->>'city',b->>'sourceDigest',b->>'rightsDigest',b->>'payloadHash',lodging_classification_private.hash(to_jsonb(poi)),lodging_classification_private.provider_hash(poi.id),lodging_classification_private.hash(p_input)) returning * into m;
@@ -158,7 +159,7 @@ begin
  if m.version::text is distinct from p_input->>'expectedVersion' then return jsonb_build_object('kind','conflict');end if;
  if knowledge_review_private.bounded_text(p_input->'note',400) is distinct from true then raise exception 'INVALID_INPUT';end if;
  if act='review_mapping' then
- if p_input->>'decision' not in('approved','rejected') or p_input->'expectedVersion'<>'1' or p_input->>'expectedDigest' is distinct from m.request_digest then return jsonb_build_object('kind','conflict');end if;
+ if coalesce(p_input->>'decision','') not in('approved','rejected') or p_input->'expectedVersion'<>'1' or p_input->>'expectedDigest' is distinct from m.request_digest then return jsonb_build_object('kind','conflict');end if;
  b:=lodging_classification_private.publication_basis(m.statement_id);
  if b is null or b->>'sourceDigest'<>m.source_digest or b->>'rightsDigest'<>m.rights_digest or b->>'payloadHash'<>m.payload_hash or m.canonical_hash<>(select lodging_classification_private.hash(to_jsonb(poi_row)) from public.canonical_pois poi_row where id=m.canonical_poi_id) or m.provider_hash<>lodging_classification_private.provider_hash(m.canonical_poi_id) then return jsonb_build_object('kind','stale');end if;
  if m.author_id=u or b->>'authorId'=u::text or exists(select 1 from jsonb_array_elements(b->'sourceRefs') x where x->>'submittedBy'=u::text) then return jsonb_build_object('kind','blocked');end if;
