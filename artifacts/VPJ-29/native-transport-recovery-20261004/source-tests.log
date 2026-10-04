@@ -1,0 +1,44 @@
+Building for debugging...
+[Pre-planning 1 / 66]
+[Planning deferred tasks]
+[27 / 50] VisePanda
+[27 / 50]
+[28 / 51] VisePanda
+[37 / 94]
+[40 / 94]
+[45 / 94]
+[47 / 94]
+[51 / 94]
+[53 / 94]
+[56 / 94]
+[59 / 94]
+[61 / 94]
+[62 / 94]
+[71 / 94] VisePanda
+[79 / 94] VisePanda
+[84 / 95] VisePandaTests-product
+[85 / 100]
+[86 / 100]
+[89 / 100] VisePandaTests-product
+[94 / 100] VisePandaTests-product
+[96 / 100] VisePandaTests-product
+[99 / 100] VisePandaTests-product
+Build complete! (12.93秒)
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite "Native qualified transport recovery" started.
+◇ Test transportJournalRequiresNestedExactScopeAndNeverSynthesizesAReport() started.
+✔ Test transportJournalRequiresNestedExactScopeAndNeverSynthesizesAReport() passed after 0.008 seconds.
+◇ Test sourceUnionRejectsMissingNullReportsChangedScopeReceiptAndUnsupportedClaims() started.
+✔ Test sourceUnionRejectsMissingNullReportsChangedScopeReceiptAndUnsupportedClaims() passed after 0.009 seconds.
+◇ Test lostTransportPreparationAckPersistsSameBytesAndDeniedRoundSendsNothing() started.
+✔ Test lostTransportPreparationAckPersistsSameBytesAndDeniedRoundSendsNothing() passed after 0.006 seconds.
+◇ Test qualificationRejectsModeDriftExpiredFutureReceiptAndClientProof() started.
+✔ Test qualificationRejectsModeDriftExpiredFutureReceiptAndClientProof() passed after 0.011 seconds.
+◇ Test trafficScopeStopNeedsNoReceiptAndUnknownStopRemainsUnknown() started.
+✔ Test trafficScopeStopNeedsNoReceiptAndUnknownStopRemainsUnknown() passed after 0.001 seconds.
+◇ Test foregroundAndConsentScopeDriftHideTrafficAndBlockR2() started.
+✔ Test foregroundAndConsentScopeDriftHideTrafficAndBlockR2() passed after 0.006 seconds.
+✔ Suite "Native qualified transport recovery" passed after 0.044 seconds.
+✔ Test run with 6 tests in 1 suite passed after 0.044 seconds.

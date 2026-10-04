@@ -141,6 +141,12 @@ struct NativeTodayView: View {
                     }
                     Text(text("Refresh to check changes. Any permitted offline text is separately labeled below.", "刷新可检查更新；获准离线文字在下方单独标明。"))
                         .font(.footnote).foregroundStyle(.secondary)
+                    NavigationLink {
+                        NativeRecoveryView(tripID: detail.trip.id)
+                    } label: {
+                        Label(text("Report a change and review local recovery", "报告变化并审阅局部恢复"), systemImage: "arrow.triangle.branch")
+                    }
+                    .accessibilityIdentifier("today.localRecovery")
                 }
             }
             VisePandaCard {

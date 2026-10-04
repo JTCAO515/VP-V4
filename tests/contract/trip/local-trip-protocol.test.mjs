@@ -47,3 +47,15 @@ test('stored snapshot title/version must remain internally coherent',()=>{
  assert.equal(readStoredSnapshot({version:2,title:'New',content:{title:'Old',days:[]}}),null);
  assert.deepEqual(readStoredSnapshot({version:2,title:'New',content:{title:'New',days:[]}}),{version:2,title:'New',days:[]});
 });
+test('original SQL whole-hour offsets remain readable without widening new Patch timestamps',()=>{
+ const row={version:2,title:'Trip',content:{title:'Trip',days:[{id:'DayA',date:'2026-10-04',timeZone:'Asia/Shanghai',items:[{id:'Dinner',dayId:'DayA',title:'Fixed dinner',startsAt:'2026-10-04T09:00:00+00',endsAt:'2026-10-04T10:00:00+00'}]}]}};
+ const before=JSON.stringify(row),read=readStoredSnapshot(row);
+ assert.equal(read.days[0].items[0].startsAt,'2026-10-04T09:00:00+00:00');
+ assert.equal(Date.parse(read.days[0].items[0].startsAt),Date.parse('2026-10-04T09:00:00Z'));
+ assert.equal(JSON.stringify(row),before);
+ for(const startsAt of ['2026-10-04T09:00:00+99','2026-10-04T09:00:00',null]){
+  const bad=structuredClone(row);bad.content.days[0].items[0].startsAt=startsAt;assert.equal(readStoredSnapshot(bad),null);
+ }
+ const impossible=structuredClone(row);impossible.content.days[0].date='2026-02-30';assert.equal(readStoredSnapshot(impossible),null);
+ assert.throws(()=>applyPatch(read,{expectedVersion:2,operations:[{kind:'upsert_item',dayId:'DayA',itemId:'Dinner',title:'Fixed dinner',startsAt:'2026-10-04T09:00:00+00'}]}));
+});

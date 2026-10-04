@@ -1,0 +1,13 @@
+Building for debugging...
+[Starting]
+Build complete! (0.53秒)
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite "Native qualified transport recovery" started.
+◇ Test trafficScopeStopNeedsNoReceiptAndUnknownStopRemainsUnknown() started.
+✔ Test trafficScopeStopNeedsNoReceiptAndUnknownStopRemainsUnknown() passed after 0.009 seconds.
+◇ Test foregroundAndConsentScopeDriftHideTrafficAndBlockR2() started.
+✔ Test foregroundAndConsentScopeDriftHideTrafficAndBlockR2() passed after 0.017 seconds.
+✔ Suite "Native qualified transport recovery" passed after 0.026 seconds.
+✔ Test run with 2 tests in 1 suite passed after 0.027 seconds.

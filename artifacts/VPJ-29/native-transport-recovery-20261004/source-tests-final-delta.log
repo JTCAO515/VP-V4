@@ -1,0 +1,24 @@
+Building for debugging...
+[2 / 6] VisePanda
+[3 / 7] VisePanda
+[9 / 13] VisePanda
+[11 / 14] VisePanda
+[12 / 16] VisePandaTests-product
+[14 / 18] VisePandaTests-product
+[20 / 22] VisePandaTests-product
+[22 / 22] VisePandaTests-product
+Build complete! (7.67秒)
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite "Native qualified transport recovery" started.
+◇ Test transportJournalRequiresNestedExactScopeAndNeverSynthesizesAReport() started.
+✔ Test transportJournalRequiresNestedExactScopeAndNeverSynthesizesAReport() passed after 0.018 seconds.
+◇ Test lostTransportPreparationAckPersistsSameBytesAndDeniedRoundSendsNothing() started.
+✔ Test lostTransportPreparationAckPersistsSameBytesAndDeniedRoundSendsNothing() passed after 0.021 seconds.
+◇ Test exactReviewExtendsOnlyOriginalScopeAndBackgroundStopDoesNotUndoAppliedOutcome() started.
+✔ Test exactReviewExtendsOnlyOriginalScopeAndBackgroundStopDoesNotUndoAppliedOutcome() passed after 0.006 seconds.
+◇ Test currentOwnerContextHasReadableLabelsAndCannotGrantRecoveryQualification() started.
+✔ Test currentOwnerContextHasReadableLabelsAndCannotGrantRecoveryQualification() passed after 0.001 seconds.
+✔ Suite "Native qualified transport recovery" passed after 0.048 seconds.
+✔ Test run with 4 tests in 1 suite passed after 0.048 seconds.

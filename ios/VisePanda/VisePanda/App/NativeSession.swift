@@ -995,7 +995,7 @@ final class NativeSession {
 
     func logout() async {
         guard !busy else { return }
-        defaults.set(credential?.subject ?? defaults.string(forKey: storageKey) ?? defaults.string(forKey: storageKey + ".pendingJournalCleanupOwner") ?? "unbound", forKey: storageKey + ".signOutIntent")
+        defaults.set(credential?.subject ?? defaults.string(forKey: storageKey) ?? defaults.string(forKey: storageKey + ".pendingJournalCleanupOwner") ?? defaults.string(forKey: storageKey + ".recoveryCleanupOwner") ?? "unbound", forKey: storageKey + ".signOutIntent")
         deviceMaterialSignOutFence = true
         subject=nil; mobileEpoch=nil; displayName=nil; status="signingOut"
         do { try deviceMaterials.eraseAll() }
@@ -1133,11 +1133,13 @@ final class NativeSession {
         assistantNavigation=nil
         memoryPreferences.clear()
         exploreAskHandoff=nil
-        if let owner = credential?.subject ?? defaults.string(forKey: storageKey) ?? defaults.string(forKey: storageKey + ".pendingJournalCleanupOwner") {
+        if let owner = credential?.subject ?? defaults.string(forKey: storageKey) ?? defaults.string(forKey: storageKey + ".pendingJournalCleanupOwner") ?? defaults.string(forKey: storageKey + ".recoveryCleanupOwner") {
             if preservePendingJournals {
                 // Noncredential cleanup index only. It cannot restore a session or authorize a journal read.
                 defaults.set(owner, forKey: storageKey + ".pendingJournalCleanupOwner")
             } else {
+                do { try NativeRecoveryJournal(vault: vault).erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner) }
+                catch { failureCode="recoveryJournalCleanupRequired";status="storageError";return false }
                 do { try NativeReservationJournalVault.remove(endpoint:endpoint?.absoluteString ?? "disabled",owner:owner,vault:vault) }
                 catch { failureCode="reservationCleanupRequired";status="storageError";return false }
             }
@@ -1161,7 +1163,10 @@ final class NativeSession {
             }
         }
         defaults.removeObject(forKey: storageKey)
-        if !preservePendingJournals { defaults.removeObject(forKey: storageKey + ".pendingJournalCleanupOwner") }
+        if !preservePendingJournals {
+            defaults.removeObject(forKey: storageKey + ".pendingJournalCleanupOwner")
+            defaults.removeObject(forKey: storageKey + ".recoveryCleanupOwner")
+        }
         credential = nil
         subject = nil
         mobileEpoch = nil
