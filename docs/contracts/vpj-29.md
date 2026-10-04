@@ -22,11 +22,14 @@ optional by this request. `fixedItemIds`: 0–64 exact existing items, user-decl
 fixed (including dinner). `reservationBindings`: at most 100 unique
 `{referenceId:UUID,revision:positive_integer,dayId:opaque,itemId:opaque}` mappings
 explicitly supplied by the user to current owner reservation references and actual
-Trip items; no title matching. All reserved/amended references must have a current
-binding. Unknown status, missing reader, incomplete pagination, unbound active
-reference, stale binding, or selected/fixed overlap means pending/no executable
-candidate. Reference tier remains user_reported unless its existing reader proves
-otherwise. Bindings do not prove supplier availability or matching time windows.
+Trip items; no title matching. Bindings mean `user_confirmed_preservation`, not
+source-owned item mapping or supplier proof. Every reserved/amended current
+reference/revision needs exactly one real item binding. Those items are forced
+fixed with every original field intact and cannot be selected. Unknown status,
+missing reader, incomplete pagination, unbound active reference, stale/ambiguous
+binding, explicit date incompatibility, or selected/fixed overlap means pending/no
+executable candidate. Reference tier remains user_reported unless its existing
+reader proves otherwise. Bindings do not prove supplier availability.
 
 Report is exactly `{source:"user_report",kind:"fatigue"|"delay"|"closure"|"high_risk_unwell",observedAt:RFC3339}`.
 A report is valid for at most five minutes from observedAt; future/expired reports
@@ -56,8 +59,9 @@ rolled back. Applied confirmation is only an original exact Proposal event/versi
 ## Necessary SQL seam — Main review before runtime
 
 No migration is authorized by this document alone. The SQL task uses one additive
-slot designated by Main, ordinary owner RPCs, default EXECUTE revoked except the
-explicit owner API, private storage with RLS and owner/Trip/Proposal deletion cascade.
+slot designated by Main, ordinary owner RPCs, default EXECUTE revoked on all new
+public/private functions (no new grant authorization), private storage with RLS
+and owner/Trip/Proposal deletion cascade.
 
 - `prepare_local_recovery_v1(p_trip_id uuid,p_input jsonb)` takes exactly the
   preview `input`. Under current owner/Trip authority it reads the actual current
@@ -92,10 +96,11 @@ explicit owner API, private storage with RLS and owner/Trip/Proposal deletion ca
   confirm, original revise/successor/rollback lineage cannot bypass the guard.
   Changed recovery proposals must requalify or reject; ordinary historical
   proposals retain their current behavior. No second writer, no old migration edit.
-- Export/delete/cleanup follows the existing owner Trip/Proposal domain: include
-  only bounded original report/selection/source metadata in the existing export
-  seam; explicit cascade and bounded cleanup for expired unused preparations.
-  Never introduce a grant or expand private source egress.
+- Export/delete/cleanup follows the existing owner Trip/Proposal domain: only an
+  independently enrolled exact-job/lease private export seam may include bounded
+  original report/selection/source metadata. Until enrolled, export remains
+  partial; old authorized source egress must not expand. Explicit cascade and
+  bounded cleanup cover expired unused preparations. No new grants.
 
 TS independently rereads actor/epoch, exact Trip version/content, lawful Profile
 and source basis before emitting any private response. Returned context must match
