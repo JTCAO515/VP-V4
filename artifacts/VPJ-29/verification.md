@@ -4,6 +4,52 @@ Source: TS/API `e72ac95d`, SQL owner `bbd127df` + `87967db9`, integrated as
 `4ee83d36` on actual main `8d30d0ba`. Native owner's exact `9c466e10` is integrated
 without conflicts as `646ff1db`; source review found no additional consumer defect.
 
+Current complete source integration: `beebb365828ee036038918ff0d0aa0d951f15d6c`.
+This includes R2 TS/API `5c2a657c`, original digest fix `917b198c`, SQL recovery
+`e0678c31` and its `307b5c4b` evidence, Maps authority `b58ae380`, Maps TS/context
+`2970e4da`, Native R2 `8bb00f57`, and registry/negative fixture `82d779bb`.
+All were normal same-result cherry-picks, no conflicts; source tree is clean.
+No second Trip writer, source activation, grant, actual provider call or production action.
+
+## Final integration deltas
+
+- R2 consumes the dedicated source-qualified SQL context with a closed full
+  user-selected scope/mode/references. Its report is null and source branch is
+  separate from user_report. Qualification absence returns pending; original
+  selection/operation receipts remain unchanged.
+- Original Proposal digest is `trip-v2:<64hex>`; context/content hashes remain
+  bare SHA256. Corrected the TS validator and synthetic fixture, with the existing
+  original-ACK case proving wrong-prefix rejection retains the exact unknown
+  operation. This was a source-inspection contract mismatch, not an observed
+  target UI failure. Affected case PASS 1/1, zero skips.
+- R2/R1 targeted consumer run initially had 36 PASS / 1 FAIL / zero skips. The
+  failed drift fixture reused a prior request's read counter, so both reads
+  returned the same changed digest. Resetting that fixture counter made the one
+  failed case PASS 1/1, zero skips; no source guard was weakened. Original log
+  `/tmp/vpj29-r2-consumer-tests-initial-fail.log`, rerun
+  `/tmp/vpj29-r2-consumer-drift-rerun.log`.
+- Actual disposable SQL + production recovery HTTP at 030000 R2 (040000 absent)
+  PASS 1/1, zero skips: real missing-qualification pending branch, null report,
+  exact transport reference and no candidates. It does not prove successful
+  qualified Trip application. Log `/tmp/vpj29-r2-http-joint.log`.
+- Existing postgres lane now includes `VP_TRAFFIC_DB_TEST=1` and the one Maps
+  authority file; both original recovery PG entries are retained. Classification
+  and 9 governance tests PASS, zero skips. Evidence reused from
+  `/tmp/vpj29-r2-registry-tests.log` and `/tmp/vpj29-r2-db-classification.json`.
+- Native R2's 8 source hashes were checked against the integrated files, PASS
+  8/8. Its saved final generic build logs contain BUILD SUCCEEDED. Reuse the
+  owner's bounded 8 R2 source cases, one affected digest case and iOS test-module
+  typecheck evidence in `native-transport-recovery-20261004/verification.md`;
+  no full iOS runtime, device or target claim follows.
+- Maps TS/context and Maps SQL evidence are versioned separately. Their fixed
+  source and tests are included; no local rerun of the already-proved full Maps
+  matrix was requested or performed. See the Maps evidence and the SQL recovery
+  protocol evidence directories for exact scopes and original failures.
+
+The successful reservation-authority → source-qualified candidate → original
+atomic confirmation chain remains UNRUN until #646 normally merges into main.
+Source integration can finish without treating that missing dependency as a pass.
+
 | Check | Actual result and scope |
 | --- | --- |
 | Existing recovery helper + new candidate/service contracts | PASS 29/29, zero skips. Exact opaque selected scope, fixed dinner/all other items, lawful context pace, unavailable/unknown/unbound orders, future/expiry/high-risk, closed wire and exact unknown ACK/operation identities. |
