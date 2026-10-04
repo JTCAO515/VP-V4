@@ -75,8 +75,8 @@ struct NativeRecoveryView: View {
             }
             if active, let pending = store.pending { pendingSection(pending) }
             if active, let notice = store.notice { Text(noticeText(notice)).accessibilityIdentifier("recovery.notice") }
-            Section(t("交通变化与外部出口", "Transport changes and external next steps")) {
-                Text(t("交通变化恢复未支持：当前没有 #366 合格交通回执读取器。不会提供实时到站、取消或退款结论。请回原行程核对已保存地址，并用原供应商／官方渠道核实。当前没有可核实的官方链接。", "Transport-change recovery is unsupported: no qualified #366 receipt reader is installed. No live ETA, cancellation or refund conclusion. Check saved addresses in the original Trip and verify with the original supplier or official channel. No qualified official link is available here."))
+            Section(t("交通变化与核实方式", "Transport changes and where to check")) {
+                Text(t("目前缺少可信的交通变化信息，暂时无法据此调整行程。请返回原行程核对已保存地址，并向原供应商或官方渠道核实到站、退订和退款情况。此处暂未提供可核实的官方链接。", "Reliable transport-change information is unavailable, so it cannot be used to adjust your plan yet. Check saved addresses in the original Trip and ask the original supplier or official channel about arrival times, cancellations and refunds. No verified official link is available here."))
                     .font(.footnote).accessibilityIdentifier("recovery.transport.unsupported")
                 if let actor = session.dataScope {
                     NavigationLink(t("打开原行程和已保存地址", "Open original Trip and saved addresses")) {
@@ -135,7 +135,7 @@ struct NativeRecoveryView: View {
     private var reservationSection: some View {
         Section(t("当前订单保留绑定", "Current reservation preservation bindings")) {
             if !store.reservationComplete {
-                Text(t("订单读取未完成／能力尚未安装：待核验，不可执行候选。", "Reservation read incomplete or capability not installed: pending; candidates cannot execute."))
+                Text(t("暂时无法完整核实订单信息。请稍后重试；核实前不能选择调整方案。", "Reservation information cannot be fully checked right now. Try again later; an adjustment cannot be selected until this is checked."))
             } else if store.reservations.isEmpty {
                 Text(t("当前完整读取没有已登记订单参考；不代表外部没有订单。", "The complete current read has no registered reservation references; this does not prove there are no external bookings."))
             }
@@ -156,7 +156,7 @@ struct NativeRecoveryView: View {
                     }
                 }
             }
-            Text(t("绑定仅表示 user_confirmed_preservation：你要求原项目、日期与时间不变；不会变成供应商证明。未知状态、版本变化、重复绑定或日期不兼容仍待核验。", "Bindings mean user_confirmed_preservation: your instruction to keep the original item, date and time. They do not become supplier proof. Unknown status, changed revisions, duplicate bindings or incompatible dates stay pending."))
+            Text(t("将订单关联到行程项目，只表示你要求保留原项目、日期和时间，不代表供应商已确认。订单状态不明、信息变化、关联重复或日期不一致时，仍需核实。", "Linking a reservation to a Trip item means you want to keep its original details, date and time. It is not confirmation from the supplier. Unknown status, changed information, duplicate links or mismatched dates still need checking."))
                 .font(.footnote)
         }.disabled(store.busy)
     }
@@ -195,23 +195,23 @@ struct NativeRecoveryView: View {
                     if preview.candidates.isEmpty { Text(noticeText(preview.reason ?? "RECOVERY_PENDING")) }
                 }
             } else if store.preview != nil {
-                Text(t("依据已过期，请重新明确报告并核验；不会延长旧上下文。", "Basis expired. Explicitly report and check again; the old context is not extended."))
+                Text(t("这次核验已过期，请重新报告变化并核实；旧结果不能继续使用。", "This check has expired. Report the change and check again; the old result can no longer be used."))
             }
         }
     }
     private func pendingSection(_ pending: NativeRecoveryPending) -> some View {
-        Section(t("同一操作与原提案回执", "Same operation and original proposal receipt")) {
+        Section(t("请求进度与原提案结果", "Request progress and original proposal result")) {
             Text(pending.operationID).font(.caption).textSelection(.enabled)
-            Text(t("未核实 ACK 不等于未写入。所有读失败仍保持结果未知，原请求保留。明确重放会重新核验账号与 epoch，先尝试读原操作，再用冻结原字节取回执；若原请求未提交，可能首次创建原操作对象，不生成新操作或重复创建。失权当轮不重放。", "An unverified ACK does not mean no write occurred. Failed reads keep the result unknown and retain the original request. Explicit replay verifies the account and epoch, tries the original operation read, then uses frozen bytes to obtain a receipt. If the original request never committed, this can first create the original operation object, without a new operation or duplicate. No replay in an access-denied round."))
+            Text(t("请求可能已经处理，但暂时无法确认结果。我们会保留同一请求。请先核对结果；如仍无法确认，可在核实身份后明确重试同一请求。如果此前尚未处理，重试可能首次处理它，不会重复创建结果。当前账号无权访问时不能重试。", "Your request may have been processed, but the result cannot be confirmed yet. The same request is retained. Check the result first; if it is still unclear, you can explicitly retry the same request after your identity is verified. If it was never processed, retrying may process it for the first time without creating a duplicate result. You cannot retry if this account does not have access."))
                 .font(.footnote)
             if pending.stage == "preview" {
-                Text(t("准备操作尚无可用精确回执读取器；选择操作读取失败不能证明准备未发生。", "Preparation has no available exact receipt reader. Failed selection-operation reads cannot prove the preparation did not occur."))
+                Text(t("候选核验的处理结果目前无法直接查询。查不到提案结果，也不代表候选核验没有发生。", "The result of the candidate check cannot be queried directly yet. An unavailable proposal result does not mean the candidate check never happened."))
                     .font(.footnote)
             }
-            Button(t("读取同一操作的精确回执", "Read this operation's exact receipt")) { run { await store.recover(current: { session.dataScope }, post: post) } }
+            Button(t("核对这次请求的结果", "Check this request's result")) { run { await store.recover(current: { session.dataScope }, post: post) } }
                 .disabled(store.busy).accessibilityIdentifier("recovery.receipt")
             if store.outcome == nil {
-                Button(t("结果仍未知，明确重发冻结原请求以取回执", "Result still unknown; explicitly replay frozen request for receipt")) { run {
+                Button(t("结果仍不明确，重试同一请求", "Result still unclear; retry the same request")) { run {
                     await store.replayOriginal(current: { session.dataScope }, verify: {
                         guard !session.busy, let actor = session.dataScope else { return nil }
                         let bytes = try await session.tripRequest(path: "api/trips/native/v2/\(tripID)", method: "GET")
@@ -229,14 +229,14 @@ struct NativeRecoveryView: View {
                     if let version = outcome.operation.resultingVersion { Text(t("原提案实际应用版本：", "Original proposal applied version: ") + String(version)) }
                     if let reference = store.reviewReference, let scope = session.dataScope {
                         Text(t("只审阅这份原提案的差异并明确确认或拒绝。需要改方案，请先拒绝后重新报告核验。", "Review this original proposal's diff and explicitly confirm or reject. To change the plan, reject first and report/check again."))
-                        Button(t("打开精确原提案审阅", "Open exact original proposal review")) {
+                        Button(t("审阅这份原提案", "Review this original proposal")) {
                             navigation = .init(scope: scope, tripID: tripID, reference: reference, version: outcome.operation.receipt.baseVersion)
                         }.accessibilityIdentifier("recovery.review")
                     } else if outcome.operation.state == "pending" {
-                        Text(t("原提案到期或依据不可核实，请读取精确回执；不能继续确认。", "Original proposal expired or basis unverified. Read its exact receipt; confirmation is unavailable."))
+                        Text(t("这份原提案已过期，或相关信息尚未核实。请先核对结果，目前不能确认。", "This original proposal has expired or its information is unverified. Check its result first; it cannot be confirmed right now."))
                     }
                     if ["applied", "rejected", "expired", "stale"].contains(outcome.operation.state) {
-                        Button(t("结束此已核实操作，重新读取后报告", "Finish verified operation; reread before a new report")) {
+                        Button(t("完成这次请求，刷新后报告新变化", "Finish this request; refresh before reporting another change")) {
                             do { try store.finishTerminal(current: session.dataScope); run { await refresh() } } catch { store.suspend() }
                         }.disabled(store.busy)
                     }
@@ -246,7 +246,7 @@ struct NativeRecoveryView: View {
     }
     private func stateText(_ state: String) -> String {
         switch state {
-        case "applied": t("原提案已应用 · 精确回执", "Original proposal applied · exact receipt")
+        case "applied": t("原提案已应用，结果已核实", "Original proposal applied; result verified")
         case "rejected": t("原提案已拒绝，行程未因此改变", "Original proposal rejected; no Trip change from rejection")
         case "expired": t("原提案已过期，不可确认", "Original proposal expired; cannot confirm")
         case "stale": t("原提案依据失效，不可确认", "Original proposal basis stale; cannot confirm")
@@ -259,10 +259,10 @@ struct NativeRecoveryView: View {
             t("订单依据缺失或读取不完整，保持待核验，不可执行候选。", "Reservation basis missing or incomplete. Pending; candidates cannot execute.")
         case "RESERVATION_STATUS_UNKNOWN", "FIXED_RESERVATION_UNBOUND", "RESERVATION_BINDING_STALE", "RESERVATION_BINDING_AMBIGUOUS":
             t("订单状态或保留绑定需核实；请重读当前版本并明确绑定，不推断订单事实。", "Verify reservation status or preservation binding. Reread current revisions and bind explicitly; no inferred booking facts.")
-        case "OTHER_TRIP_OPERATION_PENDING": t("另一份行程有未决操作；请回到该行程读取原回执。", "Another Trip has an unresolved operation. Return to that Trip and read the original receipt.")
-        case "JOURNAL_UNAVAILABLE": t("无法核实本机持久化记录，未开始新请求。请恢复本机存储后重新读取。", "Local durable record could not be verified. No new request started. Restore local storage, then reread.")
+        case "OTHER_TRIP_OPERATION_PENDING": t("另一份行程的请求结果尚未确认。请返回该行程，核对那次请求的结果。", "A request for another Trip is still unconfirmed. Return to that Trip and check that request's result.")
+        case "JOURNAL_UNAVAILABLE": t("暂时无法核实本机保存的请求记录，因此没有发送新请求。请稍后重新核对。", "The request saved on this device cannot be verified right now, so no new request was sent. Try checking again later.")
         case "HIGH_RISK_UNWELL": t("停止并寻求当地官方帮助；当前没有可核实的官方入口。", "Stop and seek local official help; no qualified official entry is available here.")
-        default: t("当前依据或回执待核实（\(code)）。原行程与未决操作保留；不要把技术失败当作已解决。", "Current basis or receipt unverified (\(code)). Original Trip and unresolved operation are retained; technical failure is not resolution.")
+        default: t("相关信息或请求结果尚未确认（\(code)）。原行程和同一请求仍保留；请重新核对，暂时不要视为已解决。", "The information or request result is still unconfirmed (\(code)). Your original Trip and the same request are retained. Check again before treating this as resolved.")
         }
     }
     private func run(_ operation: @escaping @MainActor () async -> Void) { task?.cancel(); task = Task { await operation() } }
