@@ -21,7 +21,7 @@ SQL does not attest the external HTTP origin.
 `destinationPlaceReferenceId`, `mode` (walking/transit/driving), `departure` (now).
 p_actor is built only from actual server-verified request identity, never the public request body.
 Result is `{kind:unavailable}` or `{kind:policy, policyId, policyRevision,
-policy, sourceVersion, accountScope, stopEpoch, stopped, endpoints}`.
+policy, sourceVersion, accountScope, allowedEndpointModes, stopEpoch, stopped, endpoints}`.
 `policy` has exactly existing PolicyReceipt evaluator fields and grants.
 `endpoints` has origin/destination `{referenceId,canonicalPoiId,mappingId,
 canonicalFingerprint,mappingFingerprint,providerPoiId}`. Fingerprints are only
@@ -34,8 +34,8 @@ revision counters, so full current row fingerprints are reread under locks.
   operation,endpoints}`; operation check/refresh. Result unavailable, limited,
   unknown (same dispatched operation), or `{kind:dispatch,dispatchId,stopEpoch}`.
   Explicit check may resume only its observed stopped epoch; refresh cannot.
-- request: closed `{dispatchId,requestIndex}`; index is integer 1..5, exactly
-  next index, with no replay grant. Same SQL transaction locks/rechecks actual
+- request: closed `{dispatchId,requestIndex,endpointKind}`; index is integer 1..5, exactly
+  next index, with no replay grant. endpointKind is detail/walking/transit/driving from the actual fixed server fetch dispatch; detail max two, each explicitly allowed route mode max one. Same SQL transaction locks/rechecks actual
   actor/session/scope/policy/stop and uses a private helper sharing the original place_quota_private.usage actor/minute/day rows and lock order, with fixed `places` quota
   (30/minute,500/day) before returning `{kind:request,dispatchId,requestIndex}`.
   TS calls this immediately before each provider request instead of consuming
@@ -83,14 +83,14 @@ effective/expires/termsRecheck/trial, derivative/combination/redistribution/
 training/shareAlike/retention), and field grants. Required fields are duration,
 distance, tmc, derived_change, receipt_metadata. Each actually used field needs display/explore,
 cache/explore and persist/trip_planning; retention must be durable, derivative
-allowed for trip_planning. TMC null for walking/transit requires no TMC grant; driving requesting TMC checks it before fetch. Unknown/ambiguous/revoked/deadline denies before
+allowed for trip_planning. endpoint_modes is an explicit required 1..3 mode set, no default. Before dispatch request checks that set; complete summaries must use modes actually requested, alternatives differ from selected and cannot repeat. TMC null for walking/transit requires no TMC grant; driving requesting TMC checks it before fetch. Unknown/ambiguous/revoked/deadline denies before
 dispatch. Short value retention expires at min(300s, source/policy deadlines,
 policy retention seconds). No inference/training permission is inferred.
 
 `traffic_private.qualify_recovery_v1(p_receipt uuid,p_scope jsonb,
 p_policy_id uuid,p_policy_revision bigint,p_stop_epoch bigint) returns jsonb`
 is the private exact seam for 030000's owner. Result unavailable or
-`{kind:qualified,receiptId,policyId,policyRevision,stopEpoch,expiresAt}`.
+`{kind:qualified,receiptId,policyId,policyRevision,stopEpoch,expiresAt,proofBasis}`. expiresAt is the minimum receipt/policy/producer/support/publication deadline. proofBasis is opaque server-only DB-captured metadata, never returned through public owner read or the UI.
 It runs inside the ORIGINAL recovery-confirm transaction, after that writer
 locks current Trip, before any mutation. No new writer. It locks/rechecks the
 same auth/Trip/scope/receipt/policy/source rows and clock. Locks stay held through
@@ -128,3 +128,21 @@ egress: export integration remains partial, no old predicate is widened.
 Synthetic/admin fixture grants and sources exercise code only. Installed
 producer/account capability, real provider response/field purposes, target
 migration, export registration and actual provider/native flow remain UNRUN.
+
+`public.read_foreground_traffic_scope_v1(p_scope jsonb)` is an ordinary owner
+RPC returning unavailable or {kind:scope,stopEpoch,stopped}; actual owner JWT,
+session/native epoch, current Trip/head/item and exact same-owner references
+are checked, independent of receipt or policy. Lost ACK/cross-instance/revoked
+policy stop obtains this real epoch and calls the original CAS stop, no guessing
+or retry budget. Privileges remain default revoked.
+
+`traffic_private.validate_recovery_proof_v1(p_receipt uuid,p_scope jsonb,
+p_policy_id uuid,p_policy_revision bigint,p_stop_epoch bigint,p_proof_basis jsonb)`
+returns boolean. 030000's sole owner captures qualify proof in the original
+transaction, binds exact root/context/transaction, then validates immediately
+before transaction completion. It compares current DB receipt and dispatch
+fingerprints plus auth/policy/stop/reference/canonical/provider/support/claim/
+source/member/publication tuples under retained locks and final clock. UTC
+serialization stabilizes timestamp fingerprints. Legitimate original writer
+Trip head/item changes are excluded from this deferred comparison; same-tx
+receipt/value/source mutations, revocation and expiration reject. No GUC proof.
