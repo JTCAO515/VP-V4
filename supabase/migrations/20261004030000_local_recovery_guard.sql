@@ -110,11 +110,11 @@ create function recovery_private.reservations_v1(u uuid,t uuid,head integer) ret
  for n in 1..5 loop
  execute 'select public.read_reservation_references_v1($1,$2,null,$3,20)' into page using t,head,cursor;
  if page->>'kind' is distinct from 'reservation_references/1' or page->>'tripId' is distinct from t::text or page->>'tripVersion' is distinct from head::text or jsonb_typeof(page->'items') is distinct from 'array' then return jsonb_build_object('kind','unavailable');end if;
- items:=items||page->'items';if page->'hasMore'='false'::jsonb then exit;end if;
+ items:=items||(page->'items');if page->'hasMore'='false'::jsonb then exit;end if;
  if page->'hasMore' is distinct from 'true'::jsonb or not recovery_private.uuid_v1(page->'nextCursor') or cursor is not null and (page->>'nextCursor')::uuid<=cursor then return jsonb_build_object('kind','unavailable');end if;
  cursor:=(page->>'nextCursor')::uuid;
  end loop;
- if page->'hasMore' is distinct from 'false'::jsonb or jsonb_array_length(items)<>count_n then return jsonb_build_object('kind','pending','reason','RESERVATION_SCOPE_INCOMPLETE');end if;
+ if page->'hasMore' is distinct from 'false'::jsonb or jsonb_typeof(items) is distinct from 'array' or jsonb_array_length(items) is distinct from count_n then return jsonb_build_object('kind','pending','reason','RESERVATION_SCOPE_INCOMPLETE');end if;
  return jsonb_build_object('kind','basis','records',items,'items',(select coalesce(jsonb_agg(jsonb_build_object('referenceId',x->'referenceId','revision',x->'revision','contentDigest',x->'contentDigest','status',x->'fields'->'status','evidenceTier',x->'evidenceTier') order by x->>'referenceId'),'[]') from jsonb_array_elements(items)x));
 end $$;
 -- SQL derives these identifiers from the installed immutable owner receipt.
@@ -155,7 +155,7 @@ create function recovery_private.prepare_context_v1(p_trip_id uuid,p_input jsonb
  or exists(select 1 from jsonb_array_elements(p_input->'selectedItemIds')x where p_input->'fixedItemIds' @> jsonb_build_array(x)) then return jsonb_build_object('kind','conflict');end if;
  profile:=recovery_private.profile_v1(u);orders:=recovery_private.reservations_v1(u,t.id,t.head_version);if orders->>'kind' is distinct from 'basis' then return orders;end if;
  if exists(select 1 from jsonb_array_elements(orders->'items')x where x->>'status'='unknown' or coalesce(x->>'status','') not in('reserved','amended','cancelled')) then return jsonb_build_object('kind','pending','reason','RESERVATION_STATUS_UNKNOWN');end if;
- if exists(select 1 from jsonb_array_elements(orders->'items')x where x->>'status' in('reserved','amended') and not exists(select 1 from jsonb_array_elements(p_input->'reservationBindings')b where (b->>'referenceId')::uuid::text=x->>'referenceId' and b->'revision'=x->'revision')) then return jsonb_build_object('kind','pending','reason','RESERVATION_SCOPE_UNMAPPED');end if;
+ if exists(select 1 from jsonb_array_elements(orders->'items')x where x->>'status' in('reserved','amended') and not exists(select 1 from jsonb_array_elements(p_input->'reservationBindings')binding_rows(value) where (binding_rows.value->>'referenceId')::uuid::text=x->>'referenceId' and binding_rows.value->'revision'=x->'revision')) then return jsonb_build_object('kind','pending','reason','RESERVATION_SCOPE_UNMAPPED');end if;
  -- A binding is user-confirmed preservation, never supplier or mapping proof.
  if (select count(distinct jsonb_build_array(x->>'dayId',x->>'itemId')) from jsonb_array_elements(p_input->'reservationBindings')x)<>jsonb_array_length(p_input->'reservationBindings') then return jsonb_build_object('kind','pending','reason','RESERVATION_BINDING_AMBIGUOUS');end if;
  for b in select value from jsonb_array_elements(p_input->'reservationBindings') loop

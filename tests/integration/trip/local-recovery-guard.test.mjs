@@ -138,6 +138,14 @@ run('lost ACK exact submit/read concurrent replay creates one proposal/operation
  assert.equal(await db(`select count(*) from recovery_private.operations_v1 where trip_id='${f.trip}';`),'1');
  assert.equal((await rpc(f.a,'read_local_recovery_operation_v1',{p_trip_id:f.trip,p_operation_id:uuid()})).kind,'unavailable');
 });
+run('concurrent same-key original confirmation applies once with one event/version and exact operation recovery',async()=>{
+ const f=await selected(await fixture()),results=await Promise.all([rpc(f.a,'confirm_and_apply_trip_proposal',f.confirm),rpc(f.a,'confirm_and_apply_trip_proposal',f.confirm)]);
+ assert.deepEqual(results.map(x=>x[0].outcome).sort(),['already_applied','applied']);
+ assert.equal(await db(`select count(*) from public.trip_events where proposal_id='${f.receipt.proposalId}';`),'1');
+ assert.equal(await db(`select count(*) from public.trip_idempotency where owner_id='${f.a.id}' and idempotency_key=${lit(f.confirm.p_idempotency_key)};`),'1');
+ assert.equal(await db(`select head_version from public.trips where id='${f.trip}';`),'2');
+ const op=await rpc(f.a,'read_local_recovery_operation_v1',{p_trip_id:f.trip,p_operation_id:f.selection.operationId});assert.equal(op.state,'applied');assert.equal(op.resultingVersion,2);
+});
 run('Profile change direct original confirm rolls back; malformed alternate support cannot bypass the original writer',async()=>{
  const f=await selected(await fixture()),before=await fingerprint(f);await db(`insert into public.user_profiles(owner_id) values('${f.a.id}');`);
  await failure(f.a,'confirm_and_apply_trip_proposal',f.confirm,/RECOVERY_CONFIRM_GUARD/);
