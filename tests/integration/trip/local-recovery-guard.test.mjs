@@ -67,6 +67,14 @@ run('closed typed input future/stale/highrisk/fixed/foreign scope rejects withou
  for(const extra of [{fixedItemIds:['OptionalA']},{selectedItemIds:['ForeignItem']},{dayId:'WrongDay'}])assert.equal((await rpc(f.a,'prepare_local_recovery_v1',{p_trip_id:f.trip,p_input:{...f.input,...extra}})).kind,'conflict');
  const other=await actor();assert.equal((await rpc(other,'prepare_local_recovery_v1',{p_trip_id:f.trip,p_input:f.input})).kind,'unavailable');assert.equal(await fingerprint(f),before);
 });
+run('permanent recovery marker without association rejects direct original confirm and revision; full rollback',async()=>{
+ const f=await fixture(),r=(await rpc(f.a,'create_trip_proposal_patch',{p_trip_id:f.trip,p_patch:{expectedVersion:1,operations:[{kind:'delete_item',dayId:'DayA',itemId:'OptionalA'}]}}))[0];
+ await db(`${claims(f.a)}update public.trip_proposals set local_recovery=true where id='${r.proposal_id}';`);
+ const read=JSON.parse(await db(`${claims(f.a)}select to_jsonb(r) from public.read_trip_proposal_v2('${r.proposal_id}')r;`)),before=await fingerprint(f);
+ await failure(f.a,'confirm_and_apply_trip_proposal',{p_proposal_id:r.proposal_id,p_idempotency_key:uuid(),p_digest:read.digest},/RECOVERY_CONFIRM_GUARD/);
+ await failure(f.a,'revise_trip_proposal_patch',{p_proposal_id:r.proposal_id,p_patch:read.proposal.patch},/RECOVERY_REVISION_SCOPE/);
+ assert.equal(await fingerprint(f),before);assert.equal(await db(`select status from public.trip_proposals where id='${r.proposal_id}';`),'pending');
+});
 run('server context exact replay/current Profile; same operation changed body conflicts',async()=>{
  const f=await fixture(),c=await prepared(f);assert.deepEqual(await prepared(f),c);
  assert.equal((await rpc(f.a,'prepare_local_recovery_v1',{p_trip_id:f.trip,p_input:{...f.input,locale:'en'}})).kind,'conflict');
@@ -98,18 +106,14 @@ run('Profile change direct legacy and alternate supported confirm reject with fu
  await failure(f.a,supported?'confirm_and_apply_supported_trip_proposal_v1':'confirm_and_apply_trip_proposal',supported?{...f.confirm,p_support_selection:[]}:f.confirm,/RECOVERY_CONFIRM_GUARD/);
  assert.equal(await fingerprint(f),before);assert.equal((await rpc(f.a,'read_local_recovery_operation_v1',{p_trip_id:f.trip,p_operation_id:f.selection.operationId})).state,'stale');}
 });
-run('all revision lineage same patch inherits; changed/title/rollback/expiry mutation cannot bypass',async()=>{
+run('all recovery revisions including same patch are rejected; title/rollback/expiry cannot bypass',async()=>{
  const f=await selected(await fixture()),before=await fingerprint(f);
  await failure(f.a,'revise_trip_proposal',{p_proposal_id:f.receipt.proposalId,p_title:'Bypass'},/RECOVERY_REVISION_SCOPE|permission denied/);
  for(const patch of [{expectedVersion:1,operations:[{kind:'delete_item',dayId:'DayA',itemId:'FixedDinner'}]},{expectedVersion:1,operations:[{kind:'set_title',title:'Unscoped'}]}])await failure(f.a,'revise_trip_proposal_patch',{p_proposal_id:f.receipt.proposalId,p_patch:patch},/RECOVERY_REVISION_SCOPE/);
  const mutate=await sql(container,`${claims(f.a)}update public.trip_proposals set local_recovery=false,expires_at=clock_timestamp()+interval '24 hours' where id='${f.receipt.proposalId}';`);assert.notEqual(mutate.code,0);assert.match(mutate.stderr,/RECOVERY_PROPOSAL_IMMUTABLE/);
  const rollback=await sql(container,`${claims(f.a)}insert into public.trip_proposals(owner_id,trip_id,revision,base_trip_version,status,patch,expires_at,parent_proposal_id,rollback_snapshot_version) select owner_id,trip_id,revision+1,base_trip_version,'pending',patch,expires_at,id,0 from public.trip_proposals where id='${f.receipt.proposalId}';`);assert.notEqual(rollback.code,0);assert.match(rollback.stderr,/RECOVERY_REVISION_SCOPE/);
- const child=(await rpc(f.a,'revise_trip_proposal_patch',{p_proposal_id:f.receipt.proposalId,p_patch:f.read.proposal.patch}))[0];assert.equal(child.outcome,'revised');
- assert.equal(await db(`select local_recovery from public.trip_proposals where id='${child.proposal_id}';`),'t');
- const read=JSON.parse(await db(`${claims(f.a)}select to_jsonb(r) from public.read_trip_proposal_v2('${child.proposal_id}')r;`));
- assert.equal((await rpc(f.a,'confirm_and_apply_trip_proposal',{p_proposal_id:child.proposal_id,p_idempotency_key:uuid(),p_digest:read.digest}))[0].outcome,'applied');
- assert.equal((await rpc(f.a,'read_local_recovery_operation_v1',{p_trip_id:f.trip,p_operation_id:f.selection.operationId})).state,'applied');
- assert.notEqual(await fingerprint(f),before);
+ await failure(f.a,'revise_trip_proposal_patch',{p_proposal_id:f.receipt.proposalId,p_patch:f.read.proposal.patch},/RECOVERY_REVISION_SCOPE/);
+ assert.equal(await fingerprint(f),before);
 });
 run('expiry clock at commit rejects original writer even if legacy now() allowed the patch',async()=>{
  const original=await fixture();original.input.report.observedAt=new Date(Date.now()-298500).toISOString();

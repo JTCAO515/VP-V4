@@ -167,27 +167,17 @@ create function public.submit_local_recovery_v1(p_trip_id uuid,p_input jsonb) re
 exception when lock_not_available then return jsonb_build_object('kind','unavailable');end $$;
 
 -- A persistent marker survives privacy cleanup; a missing binding always rejects.
-create function recovery_private.proposal_guard_v1() returns trigger language plpgsql security definer set search_path='' as $$declare parent public.trip_proposals%rowtype;b recovery_private.lineage_v1%rowtype;begin
+create function recovery_private.proposal_guard_v1() returns trigger language plpgsql security definer set search_path='' as $$declare parent public.trip_proposals%rowtype;begin
  if TG_OP='UPDATE' then
  if OLD.local_recovery and (to_jsonb(NEW)-'status') is distinct from (to_jsonb(OLD)-'status') then raise exception 'RECOVERY_PROPOSAL_IMMUTABLE';end if;return NEW;end if;
  if NEW.parent_proposal_id is not null then
  select * into parent from public.trip_proposals where id=NEW.parent_proposal_id;
- if parent.local_recovery then
- select * into b from recovery_private.lineage_v1 where proposal_id=parent.id;
- if not found or NEW.owner_id<>parent.owner_id or NEW.trip_id<>parent.trip_id or NEW.base_trip_version<>parent.base_trip_version or NEW.revision<>parent.revision+1 or NEW.expires_at<>parent.expires_at or NEW.patch<>b.patch or NEW.rollback_snapshot_version is not null then raise exception 'RECOVERY_REVISION_SCOPE';end if;
- NEW.local_recovery:=true;
- end if;end if;return NEW;
-end $$;
-create trigger recovery_proposal_guard before insert or update on public.trip_proposals for each row execute function recovery_private.proposal_guard_v1();
-create function recovery_private.inherit_v1() returns trigger language plpgsql security definer set search_path='' as $$declare b recovery_private.lineage_v1%rowtype;dig text;begin
- if NEW.local_recovery and NEW.parent_proposal_id is not null then
- select * into b from recovery_private.lineage_v1 where proposal_id=NEW.parent_proposal_id;
- if not found then raise exception 'RECOVERY_REVISION_SCOPE';end if;
- select digest into dig from public.read_trip_proposal_v2(NEW.id);
- insert into recovery_private.lineage_v1 values(NEW.id,b.owner_id,b.trip_id,b.context_id,b.operation_id,b.patch,dig);
+ -- A revision requires a fresh recovery preparation/selection. Keeping a child
+ -- would make the immutable original operation ACK name the wrong Proposal.
+ if parent.local_recovery then raise exception 'RECOVERY_REVISION_SCOPE';end if;
  end if;return NEW;
 end $$;
-create trigger recovery_lineage_inherit after insert on public.trip_proposals for each row execute function recovery_private.inherit_v1();
+create trigger recovery_proposal_guard before insert or update on public.trip_proposals for each row execute function recovery_private.proposal_guard_v1();
 
 create function recovery_private.confirm_guard_v1() returns trigger language plpgsql security definer set search_path='' set timezone='UTC' as $$declare p public.trip_proposals%rowtype;b recovery_private.lineage_v1%rowtype;c recovery_private.contexts_v1%rowtype;t public.trips%rowtype;profile jsonb;orders jsonb;dig text;o recovery_private.operations_v1%rowtype;begin
  select * into p from public.trip_proposals where id=NEW.proposal_id;
@@ -212,8 +202,8 @@ create function public.read_local_recovery_operation_v1(p_trip_id uuid,p_operati
  if p_trip_id is null or p_operation_id is null then raise exception 'INVALID_INPUT';end if;
  u:=recovery_private.actor_v1();t:=recovery_private.trip_v1(u,p_trip_id);if t.id is null then return jsonb_build_object('kind','unavailable');end if;
  select * into o from recovery_private.operations_v1 where owner_id=u and trip_id=t.id and operation_id=p_operation_id;if not found then return jsonb_build_object('kind','unavailable');end if;
- -- Revision lineage shares the immutable selection operation; read its actual event.
- select e.resulting_version into version from public.trip_events e join recovery_private.lineage_v1 l on l.proposal_id=e.proposal_id where l.owner_id=u and l.operation_id=o.operation_id and e.owner_id=u and e.trip_id=t.id and e.event_type='proposal_applied' order by e.resulting_version limit 1;
+ -- Read only the original exact Proposal named by this immutable operation ACK.
+ select e.resulting_version into version from public.trip_events e join recovery_private.lineage_v1 l on l.proposal_id=e.proposal_id where l.owner_id=u and l.operation_id=o.operation_id and e.proposal_id=o.proposal_id and e.owner_id=u and e.trip_id=t.id and e.event_type='proposal_applied' order by e.resulting_version limit 1;
  if found then state:='applied';else
  select * into p from public.trip_proposals where id=o.proposal_id;
  select * into c from recovery_private.contexts_v1 where id=o.context_id;

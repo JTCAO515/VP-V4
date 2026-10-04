@@ -66,9 +66,10 @@ amendments. Every item outside the exact selected optional deletions stays ident
 
 Private context, selection-operation and proposal-lineage rows hold server-owned
 snapshot/basis digest, exact patch, proposal identity/digest and short expiry.
-AFTER INSERT revision lineage trigger copies the root context/operation only for
-the exact original candidate patch/base/Trip/owner/expiry; changed patch, rollback,
-or lifetime extension rejects before the child can exist. Immutable proposal
+BEFORE INSERT lineage trigger rejects every child of a marked Proposal, including
+same-patch revisions. A new revision must reject the old Proposal and create a fresh
+context/selection; the original operation ACK cannot name an unrelated child event.
+Title/patch/rollback successors reject before the child can exist. Immutable proposal
 binding prevents changing a marked existing proposal into an ordinary one.
 
 An independent deferred constraint trigger on original `trip_events` checks every
@@ -77,8 +78,7 @@ short clock expiry, live lifecycle, current lawful Profile + complete reservatio
 basis, base+1 version, and actual current Trip content equal to the original
 snapshot with exactly the candidate deletions. Stored patch allows only selected
 optional deletions, with every fixed/unselected item untouched. It uses the original
-proposal event and writer; direct old confirm, supported confirm and same-patch
-revision must pass it. Failure raises RECOVERY_CONFIRM_GUARD and rolls the entire
+proposal event and writer; direct old confirm and supported confirm must pass it; revisions reject. Failure raises RECOVERY_CONFIRM_GUARD and rolls the entire
 transaction back, including Trip/head/event/snapshot/idempotency/audit. Ordinary
 unmarked proposals retain existing behavior. A successful historical same-key retry
 uses the original idempotency receipt and does not require a new live basis.
