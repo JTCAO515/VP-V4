@@ -39,6 +39,17 @@ one-item Trip draft preparation. This is not target acceptance.
 - PASS: 10/10 affected lodging-context and Ops contract tests with
   `node --test tests/contract/lodging/context.test.mjs
   tests/contract/knowledge/lodging-classification-ops.test.ts`.
+- PASS (merge and compile): after merged #646 brought current owner/Trip
+  user-reported reservation references, the Hotel consumer reads exact current
+  pages, preserves unknown across pagination and suppresses new booking prompts
+  for reported reserved/amended lodging. The no-device `build-for-testing`
+  after this consumer and its regression test exited 0 at 2026-10-04 15:51 CST;
+  `VisePandaTests.xctest` was rebuilt. Actual XCTest execution is still UNRUN.
+- PASS on the combined branch after #646: `pnpm check` again passed source-policy
+  lint (567 files), TypeScript, Next production build and 22 static tests;
+  `pnpm docs:check` and `git diff --check` also passed. The first sandboxed
+  docs check hung during pnpm startup and was interrupted without a result;
+  the same command then passed with the normal approved network execution.
 - SQL classification and owner HTTP joint evidence: existing scoped PASS
   records from their owning branches were merged under
   `artifacts/VPJ-23/reviewed-classification-20261004/` and

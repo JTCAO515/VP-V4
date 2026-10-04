@@ -25,6 +25,15 @@ Reading a saved record requires the current owner/endpoint/epoch and exact Trip.
 A changed Trip version preserves the user's stated intention but requires
 explicit review and resave before an exit or proposed Trip edit. Already
 booked, not needed and deferred states suppress comparison and booking prompts.
+The native comparison also reads the current owner/Trip/version-scoped #214
+reservation references. A current user-reported reserved or amended lodging
+reference suppresses fresh booking prompts; it is labelled as the user's report,
+never supplier verification. A failed, stale or incomplete bounded read is
+unknown, not evidence of no booking. An `unknown` lodging status on any page
+remains unknown across later empty pages; an active reserved/amended report
+takes precedence. The user must explicitly acknowledge a
+replacement before comparing while an active or unread report may exist.
+This read does not modify the reference or the confirmed Trip.
 Account sign-out and Trip deletion use the existing vault purge; the same view
 provides deliberate per-Trip deletion and an exact preview of user-entered
 export data. An inaccessible or corrupt record fails closed instead of being

@@ -145,6 +145,11 @@ struct NativeHotelComparisonView: View {
     @State private var lodgingContext: NativeLodgingContext?
     @State private var contextNotice: String?
     @State private var useSavedTravelPace = false
+    @State private var reservationRead = NativeLodgingReservationRead.unread
+    @State private var reservationReadAt: Date?
+    @State private var reservationLoading = false
+    @State private var explicitlyReplacing = false
+    @State private var reservationGeneration = UUID()
     @State private var localNotice: String?
     @State private var localSaving = false
     @State private var localGeneration = UUID()
@@ -247,7 +252,30 @@ struct NativeHotelComparisonView: View {
                             .accessibilityIdentifier("hotel.compare.suppressed")
                     }
                 }
-                if intent == .searching {
+                Section(text("Existing reservation report", "已有订单声明")) {
+                    if reservationRead == .currentUserReportedActive {
+                        Text(text("This Trip has your current report of reserved or amended lodging. Supplier confirmation is unknown; new booking prompts are paused.",
+                                  "此行程有你当前报告的已订或已改住宿。供应商确认仍未知；新的订房引导已暂停。"))
+                            .accessibilityIdentifier("hotel.compare.reportedBooking")
+                    } else if reservationRead == .currentNoActive {
+                        Text(text("No active lodging report appeared in the checked Trip references. This does not prove no external booking exists.",
+                                  "已核的行程引用中未见有效住宿声明；这不能证明外部没有预订。"))
+                    } else {
+                        Text(text("Existing reservation reports could not be fully checked. Comparison stays paused unless you explicitly choose to replace lodging.",
+                                  "尚未完整核对已有订单声明；除非你明确选择更换住宿，否则比较保持暂停。"))
+                    }
+                    if intent == .searching && reservationRead != .currentNoActive {
+                        Toggle(text("I am explicitly considering replacing lodging", "我明确考虑更换住宿"), isOn: $explicitlyReplacing)
+                            .accessibilityIdentifier("hotel.compare.replaceAcknowledgement")
+                    }
+                    Button(text("Refresh current Trip reservation reports", "刷新当前行程订单声明")) {
+                        Task { await readReservationReport() }
+                    }
+                    .disabled(reservationLoading)
+                    .accessibilityIdentifier("hotel.compare.refreshReservation")
+                    if reservationLoading { ProgressView() }
+                }
+                if reservationRead.allowsComparison(intent: intent, explicitlyReplacing: explicitlyReplacing) {
                     requirements
                     places
                     candidate(number: 1, area: $firstArea, hotel: $firstHotel)
@@ -300,7 +328,9 @@ struct NativeHotelComparisonView: View {
             }
         }
         .navigationTitle(text("Compare accommodation", "比较住宿"))
-        .onChange(of: intent) { _, value in if value != .searching { clearPlaces() } }
+        .onChange(of: intent) { _, value in
+            if value != .searching { explicitlyReplacing = false; clearPlaces() }
+        }
         .onChange(of: city) { _, _ in clearPlaces(); hotelResults = []; lodgingContext = nil }
         .onChange(of: useSavedTravelPace) { _, _ in lodgingContext = nil; contextNotice = nil }
         .onChange(of: anchorItemID) { _, _ in clearPlaces() }
@@ -337,10 +367,21 @@ struct NativeHotelComparisonView: View {
             firstHotelChoice = nil; secondHotelChoice = nil
             hotelResults = []; hotelLookupNumber = nil; lodgingContext = nil; contextNotice = nil
             useSavedTravelPace = false
+            reservationRead = .unread; reservationReadAt = nil; reservationLoading = false
+            explicitlyReplacing = false; reservationGeneration = UUID()
             affectedItemID = ""; proposedTitle = ""
             clearPlaces()
         }
-        .task(id: settings.nativeSession.dataScope) { loadLocal() }
+        .task(id: settings.nativeSession.dataScope) {
+            loadLocal()
+            await readReservationReport()
+        }
+        .task(id: reservationReadAt) {
+            guard let readAt = reservationReadAt else { return }
+            try? await Task.sleep(for: .seconds(30))
+            guard !Task.isCancelled, reservationReadAt == readAt else { return }
+            reservationRead = .unread
+        }
         .confirmationDialog(text("Delete device-only lodging input?", "删除仅本机保存的住宿输入？"), isPresented: $showReset) {
             Button(text("Delete on this device", "删除本机记录"), role: .destructive) { resetLocal() }
         }
@@ -566,6 +607,48 @@ struct NativeHotelComparisonView: View {
         generation = UUID(); busy = false; anchorResults = []; firstResults = []; secondResults = []
         anchorPlace = nil; firstPlace = nil; secondPlace = nil
         firstRoute = nil; secondRoute = nil; lookupFailed = false
+    }
+
+    private func readReservationReport() async {
+        guard current, !reservationLoading, let scope = settings.nativeSession.dataScope else { return }
+        let own = UUID(); reservationGeneration = own; reservationLoading = true
+        reservationRead = .unread; reservationReadAt = nil; explicitlyReplacing = false
+        defer { if reservationGeneration == own { reservationLoading = false } }
+        do {
+            guard await store.refreshForSharing(using: settings.nativeSession), current,
+                  settings.nativeSession.dataScope == scope else { throw NativeDataError.staleSessionResponse }
+            var cursor: String?
+            var accumulated = NativeLodgingReservationRead.currentNoActive
+            for _ in 0..<5 {
+                let body = try NativeReservationWire.encode([
+                    "operation": "read", "expectedTripVersion": detail.trip.headVersion,
+                    "afterReferenceId": cursor as Any? ?? NSNull(), "limit": 20
+                ])
+                let bytes = try await settings.nativeSession.tripRequest(
+                    path: "api/trips/native/v2/\(detail.trip.id)/reservations", method: "POST", body: body)
+                guard current, settings.nativeSession.dataScope == scope,
+                      reservationGeneration == own, !Task.isCancelled else { return }
+                let page = try NativeReservationWire.page(bytes, trip: detail.trip.id,
+                    version: detail.trip.headVersion, after: cursor)
+                accumulated = accumulated.combined(with: NativeLodgingReservationRead.from(page.items))
+                if accumulated == .currentUserReportedActive {
+                    reservationRead = .currentUserReportedActive; reservationReadAt = Date()
+                    if savedRecord == nil && intent == .undecided { intent = .booked }
+                    return
+                }
+                guard let next = page.next else {
+                    reservationRead = accumulated
+                    reservationReadAt = accumulated == .currentNoActive ? Date() : nil
+                    return
+                }
+                cursor = next
+            }
+            reservationRead = .unavailable
+        } catch {
+            if reservationGeneration == own && settings.nativeSession.dataScope == scope {
+                reservationRead = .unavailable
+            }
+        }
     }
 
     @ViewBuilder private func selectedHotelSection(_ selection: NativeLodgingSelection) -> some View {

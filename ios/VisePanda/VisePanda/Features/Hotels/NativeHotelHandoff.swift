@@ -6,6 +6,31 @@ enum NativeLodgingIntent: String, Codable, CaseIterable {
     case undecided, searching, booked, notNeeded = "not_needed", deferred
 }
 
+enum NativeLodgingReservationRead: Equatable {
+    case unread, currentNoActive, currentUserReportedActive, unavailable
+
+    static func from(_ items: [NativeReservationCurrent]) -> Self {
+        if items.contains(where: { item in
+            item.valid && item.fields.kind == "lodging" &&
+                ["reserved", "amended"].contains(item.fields.status)
+        }) { return .currentUserReportedActive }
+        if items.contains(where: { !$0.valid || ($0.fields.kind == "lodging" && $0.fields.status == "unknown") }) {
+            return .unavailable
+        }
+        return .currentNoActive
+    }
+
+    func combined(with page: Self) -> Self {
+        if self == .currentUserReportedActive || page == .currentUserReportedActive { return .currentUserReportedActive }
+        if self == .unavailable || page == .unavailable || self == .unread || page == .unread { return .unavailable }
+        return .currentNoActive
+    }
+
+    func allowsComparison(intent: NativeLodgingIntent, explicitlyReplacing: Bool) -> Bool {
+        intent == .searching && (self == .currentNoActive || explicitlyReplacing)
+    }
+}
+
 enum NativeLodgingBedType: String, Codable, CaseIterable {
     case unspecified, double, twin
 }

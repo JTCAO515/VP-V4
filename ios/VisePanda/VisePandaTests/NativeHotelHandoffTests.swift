@@ -18,6 +18,35 @@ nonisolated final class NativeHotelHandoffTests: XCTestCase {
         XCTAssertFalse(NativeLodgingSelection(hotelName:"Public hotel",provider:.amap,providerPoiId:nil,canonicalPoiId:nil,selectedAt:Date()).valid)
     }
 
+    @MainActor func testCurrentUserReportedLodgingSuppressesNewBookingUntilExplicitReplacement() {
+        XCTAssertFalse(NativeLodgingReservationRead.currentUserReportedActive.allowsComparison(intent:.searching,explicitlyReplacing:false))
+        XCTAssertTrue(NativeLodgingReservationRead.currentUserReportedActive.allowsComparison(intent:.searching,explicitlyReplacing:true))
+        XCTAssertTrue(NativeLodgingReservationRead.currentNoActive.allowsComparison(intent:.searching,explicitlyReplacing:false))
+        XCTAssertFalse(NativeLodgingReservationRead.unavailable.allowsComparison(intent:.searching,explicitlyReplacing:false))
+        XCTAssertFalse(NativeLodgingReservationRead.currentNoActive.allowsComparison(intent:.booked,explicitlyReplacing:true))
+        XCTAssertFalse(NativeLodgingReservationRead.currentNoActive.allowsComparison(intent:.notNeeded,explicitlyReplacing:true))
+        XCTAssertFalse(NativeLodgingReservationRead.currentNoActive.allowsComparison(intent:.deferred,explicitlyReplacing:true))
+    }
+
+    @MainActor func testUnknownLodgingOnEarlierPageCannotBeWashedOutByLaterEmptyPage() {
+        func report(_ status: String) -> NativeReservationCurrent {
+            var fields = NativeReservationFields()
+            fields.title = "User report"; fields.status = status
+            return .init(kind:"reservation_reference/1",
+                referenceId:"12345678-1234-4234-8234-123456789abc",
+                tripId:"22345678-1234-4234-8234-123456789abc",tripVersion:7,revision:1,
+                fields:fields,evidenceTier:"user_reported",source:.init(),sourceQualification:"untrusted",
+                confirmedBy:"explicit_user",confirmedAt:"2026-10-04T00:00:00Z",
+                contentDigest:String(repeating:"a",count:64),sourceVersion:nil,
+                planningUse:"confirmed_reference_only",tripMutation:"none")
+        }
+        let unknown = NativeLodgingReservationRead.from([report("unknown")])
+        XCTAssertEqual(unknown,.unavailable)
+        XCTAssertEqual(unknown.combined(with: .from([])),.unavailable)
+        XCTAssertEqual(unknown.combined(with: .from([report("reserved")])),.currentUserReportedActive)
+        XCTAssertEqual(NativeLodgingReservationRead.from([report("cancelled")]),.currentNoActive)
+    }
+
     @MainActor func testHotelAdjustmentPreparesOnlyOneFirstOrLastDayProposalEdit() throws {
         let trip=NativeTripSummary(id:"trip",title:"Trip",headVersion:4,updatedAt:"2026-10-04")
         func day(_ id:String,_ date:String)->NativeTripDay {
