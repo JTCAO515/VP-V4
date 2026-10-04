@@ -21,7 +21,7 @@ async function setup(t: Parameters<typeof nativeFixture>[0]) {
   const selection = { operationId: id(4), contextId: id(2), contextDigest: "a".repeat(64), candidateId: "omit_one" };
   const expiresAt = new Date(Date.parse(observedAt) + 30000).toISOString();
   const receipt = { kind: "local_recovery_proposal/1", ...selection, proposalId: id(5), proposalRevision: 1, baseVersion: 0, expiresAt, reused: false };
-  let epoch = 1, sourceAbsent = false, replaceAfterPrepare = false, prepareCalls = 0, lostACK = false, recovered = false, trafficAvailable = false, trafficDrift = false, trafficReads = 0;
+  let epoch = 1, sourceAbsent = false, replaceAfterPrepare = false, prepareCalls = 0, lostACK = false, recovered = false, trafficAvailable = false, trafficDrift = false, trafficReads = 0, bareProposalDigest = false;
   const previous = globalThis.fetch, calls: { path: string; authorization: string | null; body: unknown }[] = [];
   t.mock.method(globalThis, "fetch", async (input: RequestInfo | URL, init?: RequestInit) => {
     const req = new Request(input, init), url = new URL(req.url), path = url.pathname;
@@ -52,7 +52,7 @@ async function setup(t: Parameters<typeof nativeFixture>[0]) {
     }
     if (path.endsWith("/read_local_recovery_operation_v1")) return Response.json({ kind: "local_recovery_operation/1", operationId: selection.operationId, tripId: id(3), input: selection,
       receipt: { ...receipt, reused: true }, state: "pending", resultingVersion: null });
-    if (path.endsWith("/read_trip_proposal_v2")) return Response.json([{ digest: "trip-v2:" + "b".repeat(64), proposal: { id: id(5), trip_id: id(3), revision: 1, base_trip_version: 0,
+    if (path.endsWith("/read_trip_proposal_v2")) return Response.json([{ digest: (bareProposalDigest ? "" : "trip-v2:") + "b".repeat(64), proposal: { id: id(5), trip_id: id(3), revision: 1, base_trip_version: 0,
       status: "pending", patch: { expectedVersion: 0, operations: [{ kind: "delete_item", itemId: "Optional", dayId: "Day-1" }] }, created_at: observedAt, expires_at: expiresAt, rollback_snapshot_version: null } }]);
     return previous(input, init);
   });
@@ -62,7 +62,7 @@ async function setup(t: Parameters<typeof nativeFixture>[0]) {
   const transport = { ...optionalScope, receiptId: id(6), scope: { tripId: id(3), expectedHeadVersion: 0, dayId: "Day-1", itemId: "Optional",
     originPlaceReferenceId: id(7), destinationPlaceReferenceId: id(8), mode: "transit", departure: "now" } };
   return { request, input, context, selection, transport, calls, token: f.token, setAbsent: () => { sourceAbsent = true; }, replace: () => { replaceAfterPrepare = true; prepareCalls = 0; }, loseACK: () => { lostACK = true; }, wasRecovered: () => recovered,
-    allowTraffic: () => { trafficAvailable = true; }, driftTraffic: () => { trafficDrift = true; trafficReads = 0; } };
+    allowTraffic: () => { trafficAvailable = true; }, driftTraffic: () => { trafficDrift = true; trafficReads = 0; }, useBareProposalDigest: () => { bareProposalDigest = true; } };
 }
 test("actual native and Web handlers qualify owner context, create local diff only, and no model/provider/Trip write", async t => {
   const f = await setup(t);
@@ -98,6 +98,10 @@ test("selection returns original Proposal digest/diff; lost ACK preserves exact 
   assert.ok(f.wasRecovered());
   const recovered = await localRecoveryHTTP(f.request({ operation: "receipt", operationId: f.selection.operationId }), id(3), true);
   assert.equal(recovered.status, 200); assert.equal((await recovered.json()).data.operation.operationId, f.selection.operationId);
+  f.useBareProposalDigest();
+  const invalid = await localRecoveryHTTP(f.request({ operation: "receipt", operationId: f.selection.operationId }), id(3), true);
+  assert.equal(invalid.status, 503); const bad = await invalid.json();
+  assert.equal(bad.error.code, "RECOVERY_RECEIPT_UNKNOWN"); assert.equal(bad.operationId, f.selection.operationId);
 });
 test("credential ambiguity, cross-Origin and caller provider data are rejected before actual recovery dispatch", async t => {
   const f = await setup(t), body = { operation: "preview", input: f.input };
