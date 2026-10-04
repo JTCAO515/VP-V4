@@ -1,3 +1,4 @@
+import {readConfirmedReservationConstraints,reservationConstraintLines,reservationPlanningBasis} from "../../reservations/planning.ts";
 import type { NextRequest } from "next/server";
 import { getNativeRuntimeConfig } from "../../identity/native-config.ts";
 import { nativeRequestScope } from "../../identity/native-request.ts";
@@ -61,13 +62,20 @@ export async function nativePlanFeasibilityHTTP(request:NextRequest,tripId:strin
       return true;
     },
   });
-  const result={...assemblePlanFeasibility(basis,input.needs,evidence.items,routeEvidence.routes,[...evidence.bindings,...routeEvidence.bindings]),preferenceContext};
+  const reservationConstraints=await readConfirmedReservationConstraints(tripId,p.baseTripVersion,rpc);scope.check();
+  const assembled=assemblePlanFeasibility(basis,input.needs,evidence.items,routeEvidence.routes,[...evidence.bindings,...routeEvidence.bindings]);
+  const lines=[...assembled.lines,...reservationConstraintLines(reservationConstraints)];
+  const result={...assembled,lines,status:lines.some(line=>line.status==="violated")?"infeasible":lines.some(line=>line.status==="pending")?"pending":"feasible",
+   missingEvidence:lines.filter(line=>line.status==="pending").map(line=>({itemId:line.itemId,constraint:line.constraint,reason:line.reason})),preferenceContext};
   // Current route observations with different departure times are references only.
-  // Reservation and last-service timetable have no qualified installed reader.
+  // User-confirmed reservation reports are read separately and never upgraded to supplier evidence.
+  // Last-service timetable has no qualified installed reader.
   const requalified=await readPlanPlaceEvidence(basis,input.placeChoices,rpc);
   if(JSON.stringify(evidence.bindings)!==JSON.stringify(requalified.bindings))return reply({kind:"unavailable",reason:"STALE_EVIDENCE"});
   const currentPreferences=planPreferenceContext(await adapter.getUserProfile(),input.needs);scope.check();
   if(JSON.stringify(currentPreferences)!==JSON.stringify(preferenceContext))return reply({kind:"unavailable",reason:"STALE_EVIDENCE"});
+  const currentReservationConstraints=await readConfirmedReservationConstraints(tripId,p.baseTripVersion,rpc);scope.check();
+  if(JSON.stringify(reservationPlanningBasis(currentReservationConstraints))!==JSON.stringify(reservationPlanningBasis(reservationConstraints)))return reply({kind:"unavailable",reason:"STALE_EVIDENCE"});
   const final=await authority.read();if("error"in final)return failure(final.error,final.error==="UNAUTHENTICATED"?401:503);
   if(final.data.sessionEpoch!==initial.data.sessionEpoch||final.data.subject!==initial.data.subject||final.data.sessionId!==initial.data.sessionId)return failure("UNAUTHENTICATED",401);
   const current=await adapter.getPendingProposal(tripId,input.proposalId),still=await adapter.authenticated();scope.check();
