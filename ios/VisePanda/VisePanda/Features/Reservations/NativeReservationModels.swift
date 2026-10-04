@@ -136,6 +136,16 @@ enum NativeReservationWire {
         && value.range(of: "[\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f\\x7f]", options: .regularExpression) == nil
     }
     static func sameUUID(_ a: String, _ b: String) -> Bool { a.lowercased() == b.lowercased() }
+    static func integer(_ value: Any?) -> Int? {
+        guard let number = value as? NSNumber, CFGetTypeID(number) != CFBooleanGetTypeID(),
+              number.doubleValue.isFinite, number.doubleValue.rounded(.towardZero) == number.doubleValue,
+              (0...9007199254740990).contains(number.doubleValue) else { return nil }
+        return number.intValue
+    }
+    static func boolean(_ value: Any?) -> Bool? {
+        guard let number = value as? NSNumber, CFGetTypeID(number) == CFBooleanGetTypeID() else { return nil }
+        return number.boolValue
+    }
     // Swift String equality normalizes Unicode; the wire preserves original bytes.
     static func equal(_ a: Any, _ b: Any) -> Bool {
         if let a = a as? String, let b = b as? String { return a.utf8.elementsEqual(b.utf8) }
@@ -199,7 +209,7 @@ enum NativeReservationWire {
         guard row["kind"] as? String == "reservation_confirmation/1", sameUUID(row["operationId"] as? String ?? "", input.operationId),
               row["tripId"] as? String == trip, sameUUID(row["referenceId"] as? String ?? "", input.referenceId),
               hash(row["commandDigest"] as? String ?? ""), equal(echo.object, input.object),
-              row["resultRevision"] as? Int == input.expectedRevision + 1,
+              integer(row["resultRevision"]) == input.expectedRevision + 1,
               receipt.tripId == trip, sameUUID(receipt.referenceId, input.referenceId), receipt.revision == input.expectedRevision + 1,
               receipt.tripVersion == input.expectedTripVersion, equal(receipt.fields.object, input.fields.object), equal(receipt.source.object, input.source.object)
         else { throw NativeDataError.invalidResponse }; return receipt
@@ -211,8 +221,8 @@ enum NativeReservationWire {
         guard row["kind"] as? String == "reservation_operation/1", sameUUID(row["operationId"] as? String ?? "", input.operationId),
               row["tripId"] as? String == trip, sameUUID(row["referenceId"] as? String ?? "", input.referenceId),
               latest.tripId == trip, latest.referenceId == row["referenceId"] as? String,
-              let applied = row["appliedRevision"] as? Int, applied == input.expectedRevision + 1,
-              row["currentRevision"] as? Int == latest.revision, latest.revision >= applied,
+              let applied = integer(row["appliedRevision"]), applied == input.expectedRevision + 1,
+              integer(row["currentRevision"]) == latest.revision, latest.revision >= applied,
               let digest = row["commandDigest"] as? String, hash(digest), row["tripMutation"] as? String == "none"
         else { throw NativeDataError.invalidResponse }
         if row["result"] as? String == "superseded" {
@@ -231,8 +241,8 @@ enum NativeReservationWire {
     static func page(_ bytes: Data, trip: String, version: Int, after: String?, limit: Int = 20) throws -> Page {
         let row = try exact(root(bytes), ["kind", "tripId", "tripVersion", "items", "hasMore", "nextCursor", "planningConstraints"])
         guard row["kind"] as? String == "reservation_references/1", row["tripId"] as? String == trip,
-              row["tripVersion"] as? Int == version, let raw = row["items"] as? [Any], raw.count <= limit,
-              let more = row["hasMore"] as? Bool, let constraints = row["planningConstraints"] as? [[String: Any]], constraints.count == raw.count
+              integer(row["tripVersion"]) == version, let raw = row["items"] as? [Any], raw.count <= limit,
+              let more = boolean(row["hasMore"]), let constraints = row["planningConstraints"] as? [[String: Any]], constraints.count == raw.count
         else { throw NativeDataError.invalidResponse }
         let items = try raw.map(current); var previous = after
         for (index, item) in items.enumerated() {

@@ -86,6 +86,8 @@ import Testing
         #expect(rejected { _ = try NativeReservationWire.confirmation(envelope(bad), trip: trip, input: input) })
         bad = valid; bad["resultRevision"] = 2
         #expect(rejected { _ = try NativeReservationWire.confirmation(envelope(bad), trip: trip, input: input) })
+        bad = valid; bad["resultRevision"] = true
+        #expect(rejected { _ = try NativeReservationWire.confirmation(envelope(bad), trip: trip, input: input) })
         bad = valid; var receipt = current(input); receipt["tripVersion"] = 4; bad["receipt"] = receipt
         #expect(rejected { _ = try NativeReservationWire.confirmation(envelope(bad), trip: trip, input: input) })
         bad = valid; bad["extra"] = NSNull()
@@ -111,6 +113,8 @@ import Testing
         #expect(rejected { _ = try NativeReservationWire.page(envelope(page(items: [row, row])), trip: trip, version: 3, after: nil) })
         #expect(rejected { _ = try NativeReservationWire.page(envelope(page(items: [row], more: true, cursor: reference)), trip: trip, version: 3, after: nil) })
         var bad = valid; var constraints = bad["planningConstraints"] as! [[String: Any]]; constraints[0]["supplierVerified"] = true; bad["planningConstraints"] = constraints
+        #expect(rejected { _ = try NativeReservationWire.page(envelope(bad), trip: trip, version: 3, after: nil) })
+        bad = valid; bad["hasMore"] = 0
         #expect(rejected { _ = try NativeReservationWire.page(envelope(bad), trip: trip, version: 3, after: nil) })
         #expect(rejected { _ = try NativeReservationWire.page(envelope(valid), trip: trip, version: 4, after: nil) })
     }
