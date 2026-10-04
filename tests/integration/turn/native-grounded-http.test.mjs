@@ -5,6 +5,7 @@ import {createNativeTextEnvironment} from './native-text-environment.mjs';
 import {waitUntil} from '../identity/database-barrier.mjs';
 import {createServerClient} from '@supabase/ssr';
 import {identityLocalEnv} from '../identity/local-supabase.mjs';
+import {FAILURE_TAXONOMY} from '../../../lib/server/contracts/errors/index.ts';
 
 test('grounded native HTTP preserves scope, consent, current-input egress and revalidated durable results',{skip:process.env.VP_NATIVE_GROUNDED_INTEGRATION!=='true',timeout:180000},async t=>{
  const e=await createNativeTextEnvironment({grounded:true});t.after(()=>e.cleanup());
@@ -41,7 +42,16 @@ test('grounded native HTTP preserves scope, consent, current-input egress and re
  const eventsURL=id=>e.api+base+'/turns/'+id+'/events';
  const events=async(id,cursor=0,bearer=token,headers={})=>fetch(eventsURL(id),{headers:{Authorization:'Bearer '+bearer,'Last-Event-ID':String(cursor),...headers}});
  const decode=text=>text.trim().split('\n\n').filter(Boolean).map(block=>({name:/^event: (.+)$/m.exec(block)?.[1],id:/^id: (.+)$/m.exec(block)?.[1],data:JSON.parse(/^data: (.+)$/m.exec(block)[1])}));
- const read=async()=>{const r=await call(base+'/turns',token);assert.equal(r.status,200);assert.equal(r.body.version,4);assert.equal(r.body.kind,'grounded_history');return r.body.turns;};
+ const read=async()=>{
+  const started=Date.now(),r=await call(base+'/turns',token);
+  if(r.status!==200){
+   // Failure-only metadata. Never emit response bodies, credentials or user content.
+   const code=typeof r.body?.error?.code==='string'&&Object.hasOwn(FAILURE_TAXONOMY,r.body.error.code)?r.body.error.code:'UNEXPECTED_RESPONSE';
+   const diagnostic={phase:'grounded_history_read',httpStatus:r.status,errorCode:code,elapsedMs:Date.now()-started};
+   assert.equal(r.status,200,JSON.stringify(diagnostic));
+  }
+  assert.equal(r.status,200);assert.equal(r.body.version,4);assert.equal(r.body.kind,'grounded_history');return r.body.turns;
+ };
  const waitTurn=async(id,outcome)=>{await waitUntil(async()=> (await read()).some(x=>x.turnId===id&&x.outcome===outcome),30000,'grounded durable completion');return (await read()).find(x=>x.turnId===id);};
  const final=await waitTurn(input.turnId,'answered');
  const completed=await events(input.turnId);assert.equal(completed.status,200);assert.match(completed.headers.get('content-type'),/text\/event-stream/);
