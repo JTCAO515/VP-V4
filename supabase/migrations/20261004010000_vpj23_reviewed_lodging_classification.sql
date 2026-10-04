@@ -3,8 +3,8 @@ create schema lodging_classification_private;
 revoke all on schema lodging_classification_private from public,anon,authenticated,service_role;
 insert into knowledge_review_private.ontology_types(type_id,zh_label,en_label) values('lodging_kind','住宿分类','Lodging classification');
 insert into knowledge_review_private.ontology_relations(predicate,domain_type,range_type,zh_label,en_label) values('classified_as','service_entity','lodging_kind','分类为','classified as');
-create function lodging_classification_private.hash(v jsonb) returns text language sql immutable set search_path='' as $$select encode(sha256(convert_to(v::text,'UTF8')),'hex')$$;
-create function lodging_classification_private.statement_valid_v1(v jsonb) returns boolean language plpgsql immutable set search_path='' as $$
+create function lodging_classification_private.hash(v jsonb) returns text language sql immutable set search_path='' set timezone='UTC' as $$select encode(sha256(convert_to(v::text,'UTF8')),'hex')$$;
+create function lodging_classification_private.statement_valid_v1(v jsonb) returns boolean language plpgsql immutable set search_path='' set timezone='UTC' as $$
 declare normalized jsonb;
 begin
  if v->>'schemaVersion' is distinct from 'knowledge-lodging-classification/1' or v->'assertion'->>'predicate' is distinct from 'classified_as' or v->'assertion'->>'objectId' is distinct from 'hotel' or v->'assertion'->'conditions' is distinct from '[]'::jsonb or v->'assertion'->'exclusions' is distinct from '["classification_only","no_price_or_inventory_claim","no_guest_eligibility_claim"]'::jsonb or v->'scope'->>'scene' is distinct from 'lodging_classification' or jsonb_typeof(v->'scope'->'cities') is distinct from 'array' then return false;end if;
@@ -36,9 +36,9 @@ create table lodging_classification_private.mapping_audit (
  mapping_id uuid not null references lodging_classification_private.mappings(id) on delete cascade,version integer not null,actor_id uuid not null,action text not null,note text not null,created_at timestamptz not null default clock_timestamp(),primary key(mapping_id,version)
 );
 do $$declare n text;begin foreach n in array array['statements','mappings','operations','mapping_audit'] loop execute format('alter table lodging_classification_private.%I enable row level security',n);execute format('revoke all on lodging_classification_private.%I from public,anon,authenticated,service_role',n);end loop;end $$;
-create function lodging_classification_private.provider_hash(poi uuid) returns text language sql stable security definer set search_path='' as $$select lodging_classification_private.hash(coalesce(jsonb_agg(to_jsonb(m) order by m.id),'[]')) from public.provider_poi_mappings m where canonical_poi_id=poi$$;
+create function lodging_classification_private.provider_hash(poi uuid) returns text language sql stable security definer set search_path='' set timezone='UTC' as $$select lodging_classification_private.hash(coalesce(jsonb_agg(to_jsonb(m) order by m.id),'[]')) from public.provider_poi_mappings m where canonical_poi_id=poi$$;
 -- Root fence protects qualified mapping-set/provider-set phantoms. No new locks on unrelated legacy writes.
-create function lodging_classification_private.identity_fence() returns trigger language plpgsql security definer set search_path='' as $$
+create function lodging_classification_private.identity_fence() returns trigger language plpgsql security definer set search_path='' set timezone='UTC' as $$
 declare ids uuid[];
 begin
  ids:=case when tg_op='INSERT' then array[new.canonical_poi_id] when tg_op='DELETE' then array[old.canonical_poi_id] else array[old.canonical_poi_id,new.canonical_poi_id] end;
@@ -48,7 +48,7 @@ begin
 end $$;
 create trigger lodging_provider_identity_fence before insert or update or delete on public.provider_poi_mappings for each row execute function lodging_classification_private.identity_fence();
 create trigger lodging_mapping_identity_fence before insert or update or delete on lodging_classification_private.mappings for each row execute function lodging_classification_private.identity_fence();
-create function lodging_classification_private.source_basis(id uuid,reviewed boolean) returns jsonb language plpgsql security definer set search_path='' as $$
+create function lodging_classification_private.source_basis(id uuid,reviewed boolean) returns jsonb language plpgsql security definer set search_path='' set timezone='UTC' as $$
 #variable_conflict use_variable
 declare s knowledge_review_private.statements%rowtype;c knowledge_review_private.candidates%rowtype;r lodging_classification_private.statements%rowtype;refs jsonb;member bigint;
 begin
@@ -65,7 +65,7 @@ begin
  return jsonb_build_object('candidateId',c.id,'statementId',s.statement_id,'statementRevision',s.revision,'payloadHash',r.payload_hash,'sourceDigest',r.source_digest,'sourceRefs',refs,'payload',s.payload,'authorId',c.author_id,'reviewedAt',export_private.ms_v1(c.reviewed_at));
 exception when lock_not_available then return null;
 end $$;
-create function lodging_classification_private.publication_basis(id uuid,require_enabled boolean default true) returns jsonb language plpgsql security definer set search_path='' as $$
+create function lodging_classification_private.publication_basis(id uuid,require_enabled boolean default true) returns jsonb language plpgsql security definer set search_path='' set timezone='UTC' as $$
 #variable_conflict use_variable
 declare b jsonb;p knowledge_review_private.publications%rowtype;rights text;
 begin
@@ -77,7 +77,7 @@ begin
  return b||jsonb_build_object('factId',p.fact_id,'publicationVersion',p.version,'rightsDigest',rights,'expiresAt',export_private.ms_v1(p.expires_at));
 exception when lock_not_available then return null;
 end $$;
-create function lodging_classification_private.mapping_basis(id uuid) returns jsonb language plpgsql security definer set search_path='' as $$
+create function lodging_classification_private.mapping_basis(id uuid) returns jsonb language plpgsql security definer set search_path='' set timezone='UTC' as $$
 #variable_conflict use_variable
 declare m lodging_classification_private.mappings%rowtype;p public.canonical_pois%rowtype;b jsonb;member bigint;
 begin
@@ -88,11 +88,11 @@ begin
  return b||jsonb_build_object('canonicalPoiId',p.id,'mappingId',m.id,'mappingVersion',m.version,'mappingDigest',m.request_digest,'city',m.city);
 exception when lock_not_available then return null;
 end $$;
-create function lodging_classification_private.candidate_reply(op uuid,cid uuid) returns jsonb language sql stable security definer set search_path='' as $$
+create function lodging_classification_private.candidate_reply(op uuid,cid uuid) returns jsonb language sql stable security definer set search_path='' set timezone='UTC' as $$
  select jsonb_build_object('kind','lodging_classification_candidate','operationId',op,'candidateId',c.id,'statementId',s.statement_id,'statementRevision',s.revision,'payloadHash',r.payload_hash,'sourceDigest',r.source_digest,'status',c.status,'version',c.version,'reviewerMemberRevision',r.reviewer_member_revision) from knowledge_review_private.candidates c join knowledge_review_private.statements s on s.candidate_id=c.id join lodging_classification_private.statements r on r.candidate_id=c.id where c.id=cid
 $$;
-create function lodging_classification_private.mapping_reply(op uuid,m lodging_classification_private.mappings) returns jsonb language sql immutable set search_path='' as $$select jsonb_build_object('kind','lodging_classification_mapping','operationId',op,'mappingId',m.id,'canonicalPoiId',m.canonical_poi_id,'statementId',m.statement_id,'version',m.version,'status',m.status,'digest',m.request_digest,'sourceDigest',m.source_digest,'rightsDigest',m.rights_digest)$$;
-create function public.ops_lodging_classification_v1(p_input jsonb) returns jsonb language plpgsql security definer set search_path='' as $$
+create function lodging_classification_private.mapping_reply(op uuid,m lodging_classification_private.mappings) returns jsonb language sql immutable set search_path='' set timezone='UTC' as $$select jsonb_build_object('kind','lodging_classification_mapping','operationId',op,'mappingId',m.id,'canonicalPoiId',m.canonical_poi_id,'statementId',m.statement_id,'version',m.version,'status',m.status,'digest',m.request_digest,'sourceDigest',m.source_digest,'rightsDigest',m.rights_digest)$$;
+create function public.ops_lodging_classification_v1(p_input jsonb) returns jsonb language plpgsql security definer set search_path='' set timezone='UTC' as $$
 #variable_conflict use_variable
 declare u uuid;op uuid;act text;keys text[];cid uuid;sid uuid;src jsonb;v jsonb;b jsonb;refs jsonb;digest text;answer jsonb;prior lodging_classification_private.operations%rowtype;c knowledge_review_private.candidates%rowtype;m lodging_classification_private.mappings%rowtype;poi public.canonical_pois%rowtype;p knowledge_review_private.publications%rowtype;member bigint;
 begin
@@ -175,7 +175,7 @@ begin
  return answer;
 exception when lock_not_available then return jsonb_build_object('kind','blocked');when unique_violation then return jsonb_build_object('kind','conflict');
 end $$;
-create function public.read_reviewed_lodging_classifications_v1(p_trip_id uuid,p_expected_trip_version integer,p_city text,p_locale text,p_canonical_poi_ids uuid[]) returns jsonb language plpgsql security definer set search_path='' as $$
+create function public.read_reviewed_lodging_classifications_v1(p_trip_id uuid,p_expected_trip_version integer,p_city text,p_locale text,p_canonical_poi_ids uuid[]) returns jsonb language plpgsql security definer set search_path='' set timezone='UTC' as $$
 declare u uuid;t public.trips%rowtype;poi uuid;entry record;b jsonb;chosen jsonb;items jsonb:='[]';n integer;examined integer;instant timestamptz:=clock_timestamp();refs jsonb;
 begin
  if p_trip_id is null or p_expected_trip_version is null or p_expected_trip_version<0 or p_city is null or p_city not in('shanghai','beijing','guangzhou','chongqing') or p_locale is null or p_locale not in('zh','en') or p_canonical_poi_ids is null or cardinality(p_canonical_poi_ids) not between 1 and 20 or exists(select 1 from unnest(p_canonical_poi_ids) x where x is null) or (select count(distinct x) from unnest(p_canonical_poi_ids) x)<>cardinality(p_canonical_poi_ids) then raise exception 'INVALID_INPUT';end if;
