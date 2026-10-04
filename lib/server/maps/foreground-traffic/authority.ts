@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { createMapsServiceRoleClient } from "../service-role-client.ts";
 import { randomUUID } from "node:crypto";
 import { createPolicyRegistry, evaluatePolicyDecision } from "../../policy/receipts.ts";
 import { record, uuid, type TrafficBinding } from "./contract.ts";
@@ -16,10 +16,9 @@ const integer = (v: unknown): v is number => typeof v === "number" && Number.isS
  * role capability and SQL EXECUTE remain independently revoked by default.
  * Never use this RPC for ordinary owner reads or forward a public body to it. */
 export function createTrafficProducerRPC(env: Readonly<Record<string, string | undefined>>, signal: AbortSignal, fetcher: typeof fetch): TrafficRPC | null {
-  if (env.VISEPANDA_FOREGROUND_TRAFFIC_ENABLED !== "true" || !env.NEXT_PUBLIC_SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY?.trim()) return null;
-  const client = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, {
-    auth: { persistSession: false, autoRefreshToken: false }, global: { fetch: fetcher },
-  });
+  if (env.VISEPANDA_FOREGROUND_TRAFFIC_ENABLED !== "true") return null;
+  const client = createMapsServiceRoleClient(env, fetcher);
+  if (!client) return null;
   const allowed = new Set(["foreground_traffic_policy_v1", "foreground_traffic_producer_v1"]);
   return async (name, params) => {
     if (!allowed.has(name) || signal.aborted) return { data: null, error: "TRAFFIC_AUTHORITY_UNAVAILABLE" };
