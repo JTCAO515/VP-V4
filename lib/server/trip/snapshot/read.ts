@@ -4,8 +4,26 @@ export function readStoredSnapshot(row: Readonly<{ version: number; title: strin
   if (!row.content || typeof row.content !== "object" || Array.isArray(row.content)) return null;
   const content = row.content as Record<string, unknown>;
   if (content.title !== row.title) return null;
-  const snapshot = { version: row.version, title: row.title, days: content.days };
+  // PostgreSQL's original OF formatter writes whole-hour offsets as +00/+08.
+  // Normalize only that stored representation; the strict snapshot/patch contract
+  // still validates every field and no timestamp instant is changed.
+  const days = Array.isArray(content.days) ? content.days.map(day => {
+    if (!record(day) || !Array.isArray(day.items)) return day;
+    return { ...day, items: day.items.map(item => {
+      if (!record(item)) return item;
+      return { ...item,
+        ...(Object.hasOwn(item, "startsAt") ? { startsAt: storedTimestamp(item.startsAt) } : {}),
+        ...(Object.hasOwn(item, "endsAt") ? { endsAt: storedTimestamp(item.endsAt) } : {}),
+      };
+    }) };
+  }) : content.days;
+  const snapshot = { version: row.version, title: row.title, days };
   try { assertTripSnapshot(snapshot); return snapshot; } catch { return null; }
+}
+
+const record = (v: unknown): v is Record<string, unknown> => v !== null && typeof v === "object" && !Array.isArray(v);
+function storedTimestamp(v: unknown): unknown {
+  return typeof v === "string" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?[+-]\d{2}$/.test(v) ? v + ":00" : v;
 }
 
 /** Display the complete rollback effect through the existing TripPatch/diff vocabulary. */

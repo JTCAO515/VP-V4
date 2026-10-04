@@ -301,13 +301,25 @@ struct NativeRecoveryTests {
         let pending = NativeRecoveryPending(scope: scope, tripID: RecoveryFixture.trip, baseVersion: 4, operationID: input.operationId,
                                              stage: "preview", body: try input.body())
         try journal.save(pending, scope: scope)
+        let reservations = NativeReservationJournalVault(vault: vault)
+        let reservation = try reservations.retain(.init(operationId: UUID().uuidString.lowercased(), referenceId: UUID().uuidString.lowercased(),
+            expectedTripVersion: 4, expectedRevision: 0, fields: .init(title: "Synthetic preservation"), source: .init(), explicitlyConfirmed: true), trip: RecoveryFixture.trip, scope: scope)
         do { _ = try await session.tripRequest(path: "api/trips/native/v2/\(RecoveryFixture.trip)/recovery", method: "POST", body: pending.body) }
-        catch { /* Actual dataRequest → handle(denied) → clear(preserveRecoveryJournal:true). */ }
+        catch { /* Actual dataRequest → handle(denied) → clear(preservePendingJournals:true). */ }
         #expect(session.dataScope == nil); #expect(session.retainedDataScope == nil)
         #expect(session.status == "expiredOrReplaced"); #expect(try journal.read(scope: scope) == pending)
-        // The old credential was removed. Explicit sign out must still locate and erase its journal.
-        await session.logout()
-        #expect(try journal.read(scope: scope) == nil); #expect(session.status == "signedOut")
+        #expect(try reservations.read(scope) == reservation)
+        // Simulate the historical recovery-only index after the credential was removed.
+        let key = "native.v2.activeSubject." + scope.endpoint
+        defaults.removeObject(forKey: key + ".pendingJournalCleanupOwner")
+        defaults.set(scope.subject, forKey: key + ".recoveryCleanupOwner")
+        let relaunched = NativeSession(arguments: ["-VisePandaNativeAPI", scope.endpoint], defaults: defaults,
+            configuration: config, bundleConfiguration: [:], vault: vault)
+        await relaunched.logout()
+        #expect(try journal.read(scope: scope) == nil); #expect(try reservations.read(scope) == nil)
+        #expect(relaunched.status == "signedOut")
+        #expect(defaults.object(forKey: key + ".pendingJournalCleanupOwner") == nil)
+        #expect(defaults.object(forKey: key + ".recoveryCleanupOwner") == nil)
     }
     @Test func actualSessionExplicitCleanupFailureFencesIdentityAndKeepsJournal() async throws {
         let suite = "recovery-session-" + UUID().uuidString, defaults = UserDefaults(suiteName: suite)!

@@ -9,6 +9,7 @@ import {command,sql} from '../cost/fixtures/postgres-rpc.mjs';
 import {nativeFixture,subject,sessionId} from '../../contract/identity/native-fixture.ts';
 import {localRecoveryHTTP} from '../../../lib/server/today/recovery/http.ts';
 import {nativeTripHTTP} from '../../../lib/server/trip/native-http.ts';
+import {readStoredSnapshot} from '../../../lib/server/trip/snapshot/read.ts';
 const literal=v=>v===null?'null':typeof v==='number'||typeof v==='boolean'?String(v):"'"+(typeof v==='object'?JSON.stringify(v):String(v)).replaceAll("'","''")+"'";
 const tables=new Set(['create_trip_proposal_patch','read_trip_proposal_v2','confirm_and_apply_trip_proposal']);
 test('actual SQL/HTTP source qualification and original confirmation; missing reader is pending without invented order scope',{skip:process.env.VP_TURN_DB_TEST!=='1',timeout:120000},async t=>{
@@ -62,7 +63,19 @@ test('actual SQL/HTTP source qualification and original confirmation; missing re
    return previous(value,init);
   });
   const request=(body,suffix='recovery')=>new NextRequest(`https://${host}/api/trips/native/v2/${trip}/${suffix}`,{method:'POST',headers:{authorization:'Bearer '+auth.token},body:JSON.stringify(body)});
-  const input={operationId:uuid(),expectedHeadVersion:1,dayId:'DayA',selectedItemIds:['OptionalA','OptionalB'],fixedItemIds:['FixedDinner'],reservationBindings:[],report:{source:'user_report',kind:'fatigue',observedAt:new Date().toISOString()},locale:'en'};
+  const installed=await db("select to_regprocedure('public.read_reservation_references_v1(uuid,integer,uuid,uuid,integer)') is not null;");
+  const bindings=[];
+  if(installed==='t'){
+   const referenceId=uuid(),order={operationId:uuid(),referenceId,expectedTripVersion:1,expectedRevision:0,explicitlyConfirmed:true,
+    fields:{kind:'activity',supplier:'official',externalReference:'Synthetic-user-checked-order',title:'User-confirmed fixed dinner',startsAt:'2026-10-04T09:00:00Z',endsAt:'2026-10-04T10:00:00Z',timeZone:'Asia/Shanghai',address:null,terms:null,status:'reserved'},
+    source:{kind:'user_reported',localMaterialId:null,localContentHash:null,locator:null}};
+   const confirmed=await call('confirm_reservation_reference_v1',{p_trip_id:trip,p_input:order});
+   assert.equal(confirmed.kind,'reservation_confirmation/1');assert.equal(confirmed.receipt.evidenceTier,'user_reported');
+   assert.equal(confirmed.receipt.sourceQualification,'untrusted');assert.equal(confirmed.receipt.referenceId,referenceId);
+   bindings.push({referenceId,revision:1,dayId:'DayA',itemId:'FixedDinner'});
+   assert.equal(await db(`select head_version from public.trips where id='${trip}';`),'1');
+  }
+  const input={operationId:uuid(),expectedHeadVersion:1,dayId:'DayA',selectedItemIds:['OptionalA','OptionalB'],fixedItemIds:['FixedDinner'],reservationBindings:bindings,report:{source:'user_report',kind:'fatigue',observedAt:new Date().toISOString()},locale:'en'};
   const result=await localRecoveryHTTP(request({operation:'preview',input}),trip,true),preview=(await result.json()).data;assert.equal(result.status,200);
   const {report:_report,...localScope}=input;
   const transport={...localScope,operationId:uuid(),receiptId:uuid(),scope:{tripId:trip,expectedHeadVersion:1,dayId:'DayA',itemId:'OptionalA',originPlaceReferenceId:uuid(),destinationPlaceReferenceId:uuid(),mode:'transit',departure:'now'}};
@@ -70,7 +83,6 @@ test('actual SQL/HTTP source qualification and original confirmation; missing re
   assert.equal(r2.status,200);assert.equal(r2data.status,'pending');assert.equal(r2data.reason,'TRANSPORT_RECEIPT_UNAVAILABLE');
   assert.equal(r2data.report,null);assert.equal(r2data.sourceSemantics,'qualified_foreground_transport');assert.deepEqual(r2data.candidates,[]);
   assert.deepEqual(r2data.transportReference,{receiptId:transport.receiptId,scope:transport.scope});
-  const installed=await db("select to_regprocedure('public.read_reservation_references_v1(uuid,integer,uuid,uuid,integer)') is not null;");
   if(installed!=='t'){
    assert.equal(preview.status,'pending');assert.equal(preview.reason,'RESERVATION_READER_UNAVAILABLE');assert.deepEqual(preview.candidates,[]);
    assert.equal(await db(`select count(*) from recovery_private.contexts_v1 where trip_id='${trip}';`),'0');
@@ -79,6 +91,8 @@ test('actual SQL/HTTP source qualification and original confirmation; missing re
    return; // Actual absent-reader outcome; successful-source chain is explicitly unrun at this base.
   }
   assert.equal(preview.status,'candidates',JSON.stringify(preview));assert.equal(preview.candidates.length,2);
+  assert.equal(preview.reservationBasis.length,1);assert.equal(preview.reservationBasis[0].referenceId,bindings[0].referenceId);
+  assert.equal(preview.reservationBasis[0].evidenceTier,'user_reported');
   const selection={operationId:uuid(),contextId:preview.contextId,contextDigest:preview.contextDigest,candidateId:'omit_one'};
   loseACK=true;const lost=await localRecoveryHTTP(request({operation:'select',input:selection}),trip,true);
   assert.equal(lost.status,503);assert.equal((await lost.json()).operationId,selection.operationId);
@@ -87,7 +101,9 @@ test('actual SQL/HTTP source qualification and original confirmation; missing re
   const confirm={proposalId:original.id,idempotencyKey:uuid(),digest:original.digest};
   const applied=await nativeTripHTTP(request(confirm,'confirm'),'confirm',trip);assert.equal(applied.status,200);assert.equal((await applied.json()).outcome,'applied');
   const retried=await nativeTripHTTP(request(confirm,'confirm'),'confirm',trip);assert.equal(retried.status,200);assert.equal((await retried.json()).outcome,'already_applied');
-  const receipt=await localRecoveryHTTP(request({operation:'receipt',operationId:selection.operationId}),trip,true);assert.equal(receipt.status,200);
+  const stored=JSON.parse(await db(`select to_jsonb(s) from public.trip_version_snapshots s where trip_id='${trip}' and version=2;`));
+  assert.ok(readStoredSnapshot(stored),JSON.stringify(stored));
+  const receipt=await localRecoveryHTTP(request({operation:'receipt',operationId:selection.operationId}),trip,true);assert.equal(receipt.status,200,await receipt.clone().text());
   const settled=(await receipt.json()).data;assert.equal(settled.operation.state,'applied');assert.equal(settled.operation.receipt.proposalId,original.id);assert.equal(settled.operation.resultingVersion,2);
   assert.equal(await db(`select count(*) from public.trip_events where proposal_id='${original.id}';`),'1');
   assert.equal(await db(`select count(*) from public.trip_items where trip_id='${trip}' and item_id in('FixedDinner','OptionalB');`),'2');
