@@ -11,8 +11,15 @@ $$;
 create function reservation_private.integer_v1(v jsonb,lo numeric,hi numeric) returns boolean language plpgsql immutable set search_path='' as $$begin
  return coalesce(jsonb_typeof(v)='number' and (v#>>'{}')::numeric between lo and hi and trunc((v#>>'{}')::numeric)=(v#>>'{}')::numeric,false);
 exception when others then return false;end $$;
+-- Match JS UTF-16 limits and ECMAScript trim whitespace, including NBSP.
+create function reservation_private.whitespace_v1() returns text language sql immutable set search_path='' as $$
+ select U&'\0009\000A\000B\000C\000D\0020\00A0\1680\2000\2001\2002\2003\2004\2005\2006\2007\2008\2009\200A\2028\2029\202F\205F\3000\FEFF'
+$$;
+create function reservation_private.utf16_length_v1(v text) returns bigint language sql immutable set search_path='' as $$
+ select coalesce(sum(case when ascii(c)>65535 then 2 else 1 end),0) from regexp_split_to_table(v,'') c where c<>''
+$$;
 create function reservation_private.text_v1(v jsonb,n integer) returns boolean language sql immutable set search_path='' as $$
- select coalesce(v='null'::jsonb or jsonb_typeof(v)='string' and char_length(v#>>'{}')<=n and v#>>'{}' ~ '[^[:space:]]' and v#>>'{}' !~ '[\x01-\x08\x0B\x0C\x0E-\x1F\x7F]',false)
+ select coalesce(v='null'::jsonb or jsonb_typeof(v)='string' and char_length(v#>>'{}')<=n and reservation_private.utf16_length_v1(v#>>'{}')<=n and btrim(v#>>'{}',reservation_private.whitespace_v1())<>'' and v#>>'{}' !~ '[\x01-\x08\x0B\x0C\x0E-\x1F\x7F]',false)
 $$;
 create function reservation_private.timestamp_v1(v text) returns timestamptz language plpgsql immutable set search_path='' set timezone='UTC' as $$
 declare local_time timestamp;offset_n integer;result timestamptz;
@@ -60,10 +67,10 @@ create function reservation_private.digest_v1(v jsonb) returns text language sql
 create function reservation_private.identity_v1(v jsonb) returns text language plpgsql immutable set search_path='' set timezone='UTC' as $$
 declare normalized jsonb:='{}';k text;s text;
 begin
- if v->>'supplier' in ('booking','trip') and v->'externalReference'<>'null'::jsonb then return reservation_private.digest_v1(jsonb_build_array('supplier_code',v->>'supplier',regexp_replace(v->>'externalReference','^[[:space:]]+|[[:space:]]+$','','g')));end if;
+ if v->>'supplier' in ('booking','trip') and v->'externalReference'<>'null'::jsonb then return reservation_private.digest_v1(jsonb_build_array('supplier_code',v->>'supplier',btrim(v->>'externalReference',reservation_private.whitespace_v1())));end if;
  for k,s in select key,value#>>'{}' from jsonb_each(v) loop
  if k in ('startsAt','endsAt') then normalized:=normalized||jsonb_build_object(k,reservation_private.ms_v1(reservation_private.timestamp_v1(s)));
- else normalized:=normalized||jsonb_build_object(k,case when s is null then null else regexp_replace(regexp_replace(s,'^[[:space:]]+|[[:space:]]+$','','g'),'[[:space:]]+',' ','g') end);end if;end loop;
+ else normalized:=normalized||jsonb_build_object(k,case when s is null then null else regexp_replace(btrim(s,reservation_private.whitespace_v1()),'['||reservation_private.whitespace_v1()||']+',' ','g') end);end if;end loop;
  return reservation_private.digest_v1(jsonb_build_array('complete_fields',normalized));
 end $$;
 create table reservation_private.current_v1(
@@ -129,8 +136,8 @@ begin
  if p_trip_id is null or reservation_private.valid_command_v1(p_input) is distinct from true then raise exception 'INVALID_INPUT';end if;
  u:=reservation_private.actor_v1();head:=reservation_private.trip_v1(u,p_trip_id);if head is null then return jsonb_build_object('kind','unavailable');end if;
  if p_input->'source'->>'kind'='artifact_reference' then raise exception 'RESERVATION_SOURCE_UNAVAILABLE';end if;
- ref:=(p_input->>'referenceId')::uuid;op:=(p_input->>'operationId')::uuid;expected:=(p_input->>'expectedRevision')::bigint;
- cmd:=p_input||jsonb_build_object('expectedTripVersion',(p_input->>'expectedTripVersion')::integer,'expectedRevision',expected);
+ ref:=(p_input->>'referenceId')::uuid;op:=(p_input->>'operationId')::uuid;expected:=(p_input->>'expectedRevision')::numeric::bigint;
+ cmd:=p_input||jsonb_build_object('expectedTripVersion',(p_input->>'expectedTripVersion')::numeric::integer,'expectedRevision',expected);
  digest:=reservation_private.digest_v1(jsonb_build_array(u,p_trip_id,cmd));
  select * into c from reservation_private.current_v1 where owner_id=u and reference_id=ref for update nowait;
  select * into o from reservation_private.operations_v1 where owner_id=u and operation_id=op;
@@ -138,7 +145,7 @@ begin
  if o.trip_id<>p_trip_id or o.reference_id<>ref or o.command_digest<>digest or c.trip_id is distinct from p_trip_id or c.revision is distinct from o.applied_revision then return jsonb_build_object('kind','conflict');end if;
  if reservation_private.digest_v1(jsonb_build_array(u,p_trip_id,reservation_private.command_v1(c,o)))<>digest then return jsonb_build_object('kind','unavailable');end if;
  return reservation_private.confirmation_v1(c,o,cmd);end if;
- if head<>(p_input->>'expectedTripVersion')::integer or coalesce(c.revision,0)<>expected or c.trip_id is not null and c.trip_id<>p_trip_id then return jsonb_build_object('kind','conflict');end if;
+ if head<>(p_input->>'expectedTripVersion')::numeric::integer or coalesce(c.revision,0)<>expected or c.trip_id is not null and c.trip_id<>p_trip_id then return jsonb_build_object('kind','conflict');end if;
  if expected>=9007199254740990 then raise exception 'INVALID_INPUT';end if;
  identity:=reservation_private.identity_v1(p_input->'fields');
  if exists(select 1 from reservation_private.current_v1 where owner_id=u and trip_id=p_trip_id and identity_digest=identity and reference_id<>ref) then return jsonb_build_object('kind','conflict');end if;
