@@ -14,7 +14,7 @@ final class NativeRecoveryStore {
     private(set) var busy = false
     private(set) var notice: String?
     private(set) var readAttempted = false
-    private var previewInput: NativeRecoveryInput?
+    private var previewInput: NativeRecoveryPreparation?
     private var generation = UUID()
     private let journal: NativeRecoveryJournal
     init(journal: NativeRecoveryJournal = NativeRecoveryJournal()) { self.journal = journal }
@@ -81,12 +81,16 @@ final class NativeRecoveryStore {
 
     func prepare(input: NativeRecoveryInput, current get: () -> NativeDataScope?,
                  post: (Data) async throws -> Data) async {
+        await prepare(input: .report(input), current: get, post: post)
+    }
+    func prepare(input: NativeRecoveryPreparation, current get: () -> NativeDataScope?,
+                 post: (Data) async throws -> Data) async {
         guard !busy, pending == nil, let actor = scope, get() == actor, let detail else { return }
         let token = generation; busy = true; preview = nil; outcome = nil; readAttempted = false
         defer { if token == generation { busy = false } }
         do {
             let record = NativeRecoveryPending(scope: actor, tripID: detail.trip.id, baseVersion: input.expectedHeadVersion,
-                                               operationID: input.operationId, stage: "preview", body: try input.body())
+                                               operationID: input.operationId, stage: input.stage, body: try input.body())
             try journal.save(record, scope: actor); pending = record
             let bytes = try await post(record.body)
             guard current(actor, token, get) else { return }
@@ -94,8 +98,8 @@ final class NativeRecoveryStore {
         } catch { if current(actor, token, get) { hideDenied(error); preview = nil; notice = pending == nil ? "JOURNAL_UNAVAILABLE" : "RECOVERY_RECEIPT_UNKNOWN" } }
     }
     private func installPreview(_ bytes: Data, record: NativeRecoveryPending, detail: NativeTripDetail, actor: NativeDataScope) throws {
-        let input = try record.previewInput()
-        let value = try NativeRecoveryWire.decode(NativeRecoveryPreview.self, NativeRecoveryWire.root(bytes))
+        let input = try record.preparation()
+        let value = try NativeRecoveryPreview.decode(bytes, preparation: input)
         try value.validate(input: input, detail: detail, now: Date())
         try journal.remove(record, scope: actor); pending = nil; readAttempted = false
         preview = value; previewInput = input; notice = value.reason
@@ -117,7 +121,7 @@ final class NativeRecoveryStore {
             let selection = NativeRecoverySelection(operationId: UUID().uuidString.lowercased(), contextId: contextID,
                                                    contextDigest: digest, candidateId: candidateID)
             let record = NativeRecoveryPending(scope: actor, tripID: detail.trip.id, baseVersion: preview.baseVersion,
-                                               operationID: selection.operationId, stage: "select", body: try selection.body(), expectedPatch: candidate.patch)
+                                               operationID: selection.operationId, stage: "select", body: try selection.body(), expectedPatch: candidate.patch, transportReference: input.transportReference)
             try journal.save(record, scope: actor); pending = record; self.preview = nil; previewInput = nil
             let bytes = try await post(record.body)
             guard current(actor, token, get) else { return }; try installOutcome(bytes, record: record)

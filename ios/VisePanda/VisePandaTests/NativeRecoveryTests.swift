@@ -103,7 +103,7 @@ private enum RecoveryFixture {
         if state == "pending" {
             value["proposal"] = ["id": proposal, "revision": 1, "baseTripVersion": 4, "status": "pending", "createdAt": date(), "expiresAt": expiry,
                 "titleDiff": ["before": "Trip", "after": "Trip"], "dayDiffs": [], "patch": try NativeRecoveryWire.object(record.expectedPatch!),
-                "digest": digest, "stale": false, "evidence": "User report", "assumptions": "Manual verification required"]
+                "digest": "trip-v2:" + digest, "stale": false, "evidence": "User report", "assumptions": "Manual verification required"]
         }
         return value
     }
@@ -195,12 +195,12 @@ struct NativeRecoveryTests {
             sends += 1; #expect(bytes == original); return try RecoveryFixture.bytes(RecoveryFixture.outcome(record: pending))
         })
         #expect(sends == 1); #expect(reopened.outcome?.operation.state == "pending")
-        #expect(reopened.reviewReference == RecoveryFixture.proposal + ":1:" + RecoveryFixture.digest)
+        #expect(reopened.reviewReference == RecoveryFixture.proposal + ":1:trip-v2:" + RecoveryFixture.digest)
         let restored = try journal.read(scope: RecoveryFixture.scope)
         let acknowledged = try #require(restored)
         #expect(acknowledged.body == pending.body); #expect(acknowledged.operationID == pending.operationID)
         #expect(acknowledged.originalReceipt?.proposalId == RecoveryFixture.proposal)
-        #expect(acknowledged.originalProposalDigest == RecoveryFixture.digest)
+        #expect(acknowledged.originalProposalDigest == "trip-v2:" + RecoveryFixture.digest)
         await reopened.recover(current: { RecoveryFixture.scope }, post: { _ in
             var data = try RecoveryFixture.outcome(record: acknowledged, state: "applied")
             var operation = data["operation"] as! [String: Any], receipt = operation["receipt"] as! [String: Any]
@@ -248,6 +248,11 @@ struct NativeRecoveryTests {
         var proposal = data["proposal"] as! [String: Any]; proposal["id"] = RecoveryFixture.context; data["proposal"] = proposal
         let child = try NativeRecoveryWire.decode(NativeRecoveryOutcome.self, data)
         #expect(throws: (any Error).self) { try child.validate(pending: pending, now: Date()) }
+        var unprefixed = try RecoveryFixture.outcome(record: pending)
+        var wrongDigest = unprefixed["proposal"] as! [String: Any]; wrongDigest["digest"] = RecoveryFixture.digest; unprefixed["proposal"] = wrongDigest
+        let badDigest = try NativeRecoveryWire.decode(NativeRecoveryOutcome.self, unprefixed)
+        #expect(throws: (any Error).self) { try badDigest.validate(pending: pending, now: Date()) }
+        #expect(!NativeRecoveryWire.proposalDigest("trip-v3:" + RecoveryFixture.digest))
     }
     @Test func explicitReplayCannotSkipFreshAuthorityOrOverwriteAnUnknownJournal() async throws {
         let vault = RecoveryTestVault(), journal = NativeRecoveryJournal(vault: vault), pending = try RecoveryFixture.selectionRecord()
@@ -319,5 +324,196 @@ struct NativeRecoveryTests {
         await session.logout()
         #expect(session.dataScope == nil); #expect(session.status == "storageError")
         #expect(session.failureCode == "recoveryJournalCleanupRequired"); #expect(try journal.read(scope: scope) == pending)
+    }
+}
+
+@Suite("Native qualified transport recovery", .serialized)
+@MainActor
+struct NativeTransportRecoveryTests {
+    static let origin = "00000000-0000-4000-8000-000000000031"
+    static let destination = "00000000-0000-4000-8000-000000000032"
+    static let receiptID = "00000000-0000-4000-8000-000000000033"
+    static func scope(mode: String = "driving") -> NativeTransportScope {
+        .init(tripId: RecoveryFixture.trip, expectedHeadVersion: 4, dayId: "day", itemId: "optional",
+              originPlaceReferenceId: origin, destinationPlaceReferenceId: destination, mode: mode, departure: "now")
+    }
+    static func input() -> NativeTransportRecoveryInput {
+        .init(operationId: RecoveryFixture.op, expectedHeadVersion: 4, dayId: "day", selectedItemIds: ["optional"],
+              fixedItemIds: ["dinner"], reservationBindings: [], receiptId: receiptID, scope: scope(), locale: "zh")
+    }
+    static func preview() throws -> [String: Any] {
+        var value = try RecoveryFixture.preview(RecoveryFixture.input())
+        value["report"] = NSNull(); value["sourceSemantics"] = "qualified_foreground_transport"
+        value["transportReference"] = ["receiptId": receiptID, "scope": try NativeRecoveryWire.object(scope())]
+        return value
+    }
+    static func durable(qualified: Bool = true, mode: String = "driving", expiry: String? = nil) throws -> [String: Any] {
+        ["receiptId": receiptID, "dispatchId": RecoveryFixture.context, "scope": try NativeRecoveryWire.object(scope(mode: mode)),
+         "stopEpoch": 3, "policyId": RecoveryFixture.proposal, "policyRevision": 1, "sourceVersion": "source_1",
+         "fetchedAt": RecoveryFixture.date(-2), "providerObservedAt": NSNull(), "expiresAt": expiry ?? RecoveryFixture.date(100),
+         "selected": ["mode": mode, "durationSeconds": 600, "distanceMeters": 3000, "tmc": NSNull()],
+         "alternatives": [], "previousReceiptId": NSNull(), "changeKind": "route_estimate_changed", "durationDeltaSeconds": 180,
+         "routeChangeCaveat": true, "r2Qualified": qualified]
+    }
+    static func observation(qualified: Bool = true) throws -> [String: Any] {
+        let receipt = try durable(qualified: qualified)
+        return ["kind": "foreground_traffic/1", "status": "observed", "receiptId": receiptID,
+                "fetchedAt": receipt["fetchedAt"]!, "expiresAt": receipt["expiresAt"]!, "provider": "amap", "mode": "driving",
+                "departure": "now", "providerObservedAt": NSNull(), "currentness": "fetch_time_only",
+                "traffic": ["status": "uncovered", "meters": NSNull()], "closure": "uncovered", "realtimeTransit": "uncovered",
+                "prediction": "unavailable", "selected": receipt["selected"]!,
+                "comparison": ["kind": "route_estimate_changed", "durationDeltaSeconds": 180, "caveat": "estimate_not_traffic_event"],
+                "alternatives": [], "durableReceipt": receipt, "fallback": "existing_trip_address_and_navigation", "providerCalls": 1,
+                "tripMutation": "none", "qualification": ["status": qualified ? "qualified" : "unavailable", "reason": qualified ? NSNull() : "DURABLE_SOURCE_AUTHORITY_UNAVAILABLE" as Any],
+                "policy": ["policyId": RecoveryFixture.proposal, "version": 1, "sourceId": "amap_source", "licenceVersion": "licence_1", "expiresAt": RecoveryFixture.date(200)]]
+    }
+    @Test func transportJournalRequiresNestedExactScopeAndNeverSynthesizesAReport() throws {
+        let input = Self.input(), body = try input.body()
+        let root = try JSONSerialization.jsonObject(with: body) as! [String: Any]
+        #expect(root["operation"] as? String == "transport")
+        #expect((root["input"] as? [String: Any])?["report"] == nil)
+        let record = NativeRecoveryPending(scope: RecoveryFixture.scope, tripID: RecoveryFixture.trip, baseVersion: 4,
+            operationID: input.operationId, stage: "transport", body: body)
+        try record.validate(); #expect(try record.transportInput() == input)
+        var row = root, changed = root["input"] as! [String: Any]
+        var scope = changed["scope"] as! [String: Any]; scope["callerProof"] = "hash"; changed["scope"] = scope; row["input"] = changed
+        let bad = NativeRecoveryPending(scope: RecoveryFixture.scope, tripID: RecoveryFixture.trip, baseVersion: 4,
+            operationID: input.operationId, stage: "transport", body: try NativeRecoveryWire.encode(row))
+        #expect(throws: (any Error).self) { try bad.validate() }
+    }
+    @Test func sourceUnionRejectsMissingNullReportsChangedScopeReceiptAndUnsupportedClaims() throws {
+        let input = Self.input(), source = try Self.preview(), detail = try RecoveryFixture.detail()
+        let bytes = try RecoveryFixture.bytes(source)
+        let good = try NativeRecoveryPreview.decode(bytes, preparation: .transport(input))
+        try good.validate(input: .transport(input), detail: detail, now: Date())
+        for key in ["report", "sourceSemantics", "transportReference", "expiresAt", "callerProof"] {
+            var bad = source
+            if key == "report" { bad.removeValue(forKey: key) }
+            if key == "sourceSemantics" { bad[key] = "user_report" }
+            if key == "transportReference" { bad[key] = ["receiptId": RecoveryFixture.proposal, "scope": try NativeRecoveryWire.object(Self.scope())] }
+            if key == "expiresAt" { bad[key] = RecoveryFixture.date(-1) }
+            if key == "callerProof" { bad[key] = "hash" }
+            #expect(throws: (any Error).self) {
+                let value = try NativeRecoveryPreview.decode(RecoveryFixture.bytes(bad), preparation: .transport(input))
+                try value.validate(input: .transport(input), detail: detail, now: Date())
+            }
+        }
+        var pending = source
+        pending["tripId"] = NSNull(); pending["status"] = "pending"; pending["reason"] = "RECOVERY_AUTHORITY_UNAVAILABLE"; pending["candidates"] = []
+        for key in ["contextId", "contextDigest", "expiresAt", "reservationBasis"] { pending.removeValue(forKey: key) }
+        let value = try NativeRecoveryPreview.decode(RecoveryFixture.bytes(pending), preparation: .transport(input))
+        try value.validate(input: .transport(input), detail: detail, now: Date())
+    }
+    @Test func lostTransportPreparationAckPersistsSameBytesAndDeniedRoundSendsNothing() async throws {
+        let vault = RecoveryTestVault(), journal = NativeRecoveryJournal(vault: vault), store = NativeRecoveryStore(journal: journal)
+        await RecoveryFixture.load(store)
+        let input = Self.input(); var original: Data?
+        await store.prepare(input: .transport(input), current: { RecoveryFixture.scope }, post: { bytes in original = bytes; throw URLError(.networkConnectionLost) })
+        let pending = try #require(store.pending); #expect(pending.stage == "transport"); #expect(pending.body == original)
+        let reopened = NativeRecoveryStore(journal: journal); await RecoveryFixture.load(reopened)
+        var sends = 0
+        await reopened.replayOriginal(current: { RecoveryFixture.scope }, verify: { RecoveryFixture.scope }, post: { bytes in
+            let row = try JSONSerialization.jsonObject(with: bytes) as! [String: Any]
+            if row["operation"] as? String == "receipt" { throw NativeDataError.server(code: "FORBIDDEN") }
+            sends += 1; return Data()
+        })
+        #expect(sends == 0); #expect(try journal.read(scope: RecoveryFixture.scope) == pending)
+        await RecoveryFixture.load(reopened)
+        await reopened.replayOriginal(current: { RecoveryFixture.scope }, verify: { RecoveryFixture.scope }, post: { bytes in
+            let row = try JSONSerialization.jsonObject(with: bytes) as! [String: Any]
+            if row["operation"] as? String == "receipt" { throw NativeDataError.server(code: "RECOVERY_RECEIPT_UNKNOWN") }
+            sends += 1; #expect(bytes == original); return try RecoveryFixture.bytes(Self.preview())
+        })
+        #expect(sends == 1); #expect(reopened.preview?.sourceSemantics == "qualified_foreground_transport"); #expect(reopened.pending == nil)
+        await reopened.select(candidateID: "omit_one", current: { RecoveryFixture.scope }, post: { _ in throw URLError(.timedOut) })
+        let selection = try #require(reopened.pending)
+        #expect(selection.stage == "select"); #expect(selection.expectedPatch?.operations.first?.itemId == "optional")
+        #expect(selection.transportReference?.receiptId == Self.receiptID); #expect(selection.transportReference?.scope == Self.scope())
+    }
+    @Test func qualificationRejectsModeDriftExpiredFutureReceiptAndClientProof() throws {
+        let raw = try Self.durable()
+        #expect(try NativeTrafficReceipt.decode(raw, scope: Self.scope(), now: Date()).recoveryQualified)
+        for key in ["scope", "expiresAt", "fetchedAt", "providerObservedAt", "callerProof"] {
+            var bad = raw
+            if key == "scope" { bad[key] = try NativeRecoveryWire.object(Self.scope(mode: "transit")) }
+            if key == "expiresAt" { bad[key] = RecoveryFixture.date(-1) }
+            if key == "fetchedAt" { bad[key] = RecoveryFixture.date(30) }
+            if key == "providerObservedAt" { bad[key] = RecoveryFixture.date(-2) }
+            if key == "callerProof" { bad[key] = "hash" }
+            #expect(throws: (any Error).self) { try NativeTrafficReceipt.decode(bad, scope: Self.scope(), now: Date()) }
+        }
+        var falseEvent = try Self.observation(); falseEvent["closure"] = "observed"
+        #expect(throws: (any Error).self) { try NativeTrafficObservation.decode(RecoveryFixture.bytes(falseEvent), scope: Self.scope(), previous: nil, now: Date()) }
+        let good = try NativeTrafficObservation.decode(RecoveryFixture.bytes(Self.observation()), scope: Self.scope(), previous: nil, now: Date())
+        #expect(good.durableReceipt?.receiptId == Self.receiptID)
+        // SQL UTC formatting differs from the producer ISO representation, but the instant is identical.
+        var utc = try Self.observation(), receipt = utc["durableReceipt"] as! [String: Any]
+        receipt["fetchedAt"] = (utc["fetchedAt"] as! String).replacingOccurrences(of: "Z", with: "+00:00")
+        utc["durableReceipt"] = receipt
+        #expect(try NativeTrafficObservation.decode(RecoveryFixture.bytes(utc), scope: Self.scope(), previous: nil, now: Date()).durableReceipt != nil)
+    }
+    @Test func trafficScopeStopNeedsNoReceiptAndUnknownStopRemainsUnknown() async throws {
+        let store = NativeTrafficStore(); store.bind(RecoveryFixture.scope)
+        await store.check(scope: Self.scope(), refresh: false, consent: true, current: { RecoveryFixture.scope }, post: { _ in throw URLError(.timedOut) })
+        #expect(store.observation == nil); #expect(store.attemptedScope == Self.scope())
+        var stops = 0
+        await store.stop(current: { RecoveryFixture.scope }, post: { bytes in
+            let row = try JSONSerialization.jsonObject(with: bytes) as! [String: Any]
+            #expect(row["operation"] as? String == "stop"); #expect(row["expectedStopEpoch"] is NSNull); #expect(row["previousReceiptId"] is NSNull)
+            #expect(row["foreground"] as? Bool == false); stops += 1; throw URLError(.timedOut)
+        })
+        #expect(stops == 1); #expect(store.notice == "DURABLE_STOP_UNAVAILABLE"); #expect(store.attemptedScope != nil)
+    }
+    @Test func exactReviewExtendsOnlyOriginalScopeAndBackgroundStopDoesNotUndoAppliedOutcome() async throws {
+        let store = NativeTrafficStore(); store.bind(RecoveryFixture.scope)
+        store.restoreStopScope(Self.scope())
+        var pending = try RecoveryFixture.selectionRecord()
+        pending.transportReference = .init(receiptId: Self.receiptID, scope: Self.scope())
+        let outcome = try NativeRecoveryWire.decode(NativeRecoveryOutcome.self, RecoveryFixture.outcome(record: pending))
+        try store.beginReview(pending: pending, outcome: outcome, current: RecoveryFixture.scope)
+        #expect(store.reviewReference == RecoveryFixture.proposal + ":1:trip-v2:" + RecoveryFixture.digest)
+        await store.check(scope: Self.scope(), refresh: false, consent: true, current: { RecoveryFixture.scope }, post: { _ in
+            Issue.record("Frozen exact review must not issue a provider check"); return Data()
+        })
+        var stops = 0
+        await store.stop(current: { RecoveryFixture.scope }, post: { bytes in
+            let row = try JSONSerialization.jsonObject(with: bytes) as! [String: Any]
+            #expect(row["operation"] as? String == "stop"); #expect(row["expectedStopEpoch"] is NSNull)
+            stops += 1
+            return try RecoveryFixture.bytes(["kind": "foreground_traffic/1", "status": "stopped", "reason": "FOREGROUND_STOPPED", "tripMutation": "none",
+                "providerCalls": 0, "fallback": "existing_trip_address_and_navigation", "qualification": ["status": "unavailable", "reason": "DURABLE_SOURCE_AUTHORITY_UNAVAILABLE"], "scopeStopConfirmed": true])
+        })
+        #expect(stops == 1); #expect(store.reviewReference == nil); #expect(store.observation == nil)
+        #expect(store.notice == "FOREGROUND_STOPPED")
+        // Stop is no Trip writer and cannot turn an applied original operation into a cancellation.
+        let applied = try NativeRecoveryWire.decode(NativeRecoveryOutcome.self, RecoveryFixture.outcome(record: pending, state: "applied"))
+        try applied.validate(pending: pending, now: Date()); #expect(applied.operation.state == "applied")
+        var changed = pending; changed.transportReference = .init(receiptId: Self.receiptID, scope: Self.scope(mode: "transit"))
+        #expect(throws: (any Error).self) { try store.beginReview(pending: changed, outcome: outcome, current: RecoveryFixture.scope) }
+    }
+    @Test func currentOwnerContextHasReadableLabelsAndCannotGrantRecoveryQualification() throws {
+        let source: [String: Any] = ["kind": "foreground_traffic_context/1", "tripId": RecoveryFixture.trip, "headVersion": 4,
+            "dayId": "day", "itemId": "optional", "references": [
+                ["referenceId": Self.origin, "canonicalPoiId": RecoveryFixture.context, "referenceStatus": "current", "displayStatus": "current", "association": "explicit_selection_required",
+                 "display": ["zh": "起点", "en": "起点", "addressLines": ["已核实地址"], "source": "current_item_support"]],
+                ["referenceId": Self.destination, "canonicalPoiId": RecoveryFixture.proposal, "referenceStatus": "current", "displayStatus": "unavailable", "association": "explicit_selection_required", "display": NSNull()]],
+            "completeness": ["references": "complete", "labels": "partial", "scannedItems": 2, "totalItems": 2],
+            "stop": ["status": "unavailable", "epoch": NSNull(), "stopped": NSNull()], "qualification": "not_granted_by_context", "providerCalls": 0, "tripMutation": "none"]
+        let context = try NativeTrafficContext.decode(RecoveryFixture.bytes(source), trip: RecoveryFixture.trip, version: 4, day: "day", item: "optional")
+        #expect(context.references.filter { $0.display != nil }.count == 1); #expect(context.stop.epoch == nil)
+        var guessed = source; guessed["qualification"] = "qualified"
+        #expect(throws: (any Error).self) { try NativeTrafficContext.decode(RecoveryFixture.bytes(guessed), trip: RecoveryFixture.trip, version: 4, day: "day", item: "optional") }
+        var wrongHead = source; wrongHead["headVersion"] = 5
+        #expect(throws: (any Error).self) { try NativeTrafficContext.decode(RecoveryFixture.bytes(wrongHead), trip: RecoveryFixture.trip, version: 4, day: "day", item: "optional") }
+    }
+    @Test func foregroundAndConsentScopeDriftHideTrafficAndBlockR2() async throws {
+        let store = NativeTrafficStore(); store.bind(RecoveryFixture.scope)
+        await store.check(scope: Self.scope(), refresh: false, consent: true, current: { RecoveryFixture.scope }, post: { _ in try RecoveryFixture.bytes(Self.observation()) })
+        #expect(store.receipt(scope: Self.scope(), foreground: true, now: Date())?.receiptId == Self.receiptID)
+        #expect(store.receipt(scope: Self.scope(mode: "transit"), foreground: true, now: Date()) == nil)
+        #expect(store.receipt(scope: Self.scope(), foreground: false, now: Date()) == nil)
+        store.invalidate(); #expect(store.receipt(scope: Self.scope(), foreground: true, now: Date()) == nil)
+        await store.check(scope: Self.scope(), refresh: false, consent: false, current: { RecoveryFixture.scope }, post: { _ in Issue.record("No consent must not dispatch"); return Data() })
+        #expect(store.observation == nil)
     }
 }

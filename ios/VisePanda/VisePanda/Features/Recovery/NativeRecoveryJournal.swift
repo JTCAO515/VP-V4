@@ -11,14 +11,16 @@ struct NativeRecoveryPending: Codable, Equatable {
     let stage: String
     let body: Data
     let expectedPatch: NativeTripPatch?
+    var transportReference: NativeRecoveryPreview.TransportReference? = nil
     var originalReceipt: NativeRecoveryReceipt? = nil
     var originalProposalDigest: String? = nil
 
     init(scope: NativeDataScope, tripID: String, baseVersion: Int, operationID: String,
-         stage: String, body: Data, expectedPatch: NativeTripPatch? = nil) {
+         stage: String, body: Data, expectedPatch: NativeTripPatch? = nil,
+         transportReference: NativeRecoveryPreview.TransportReference? = nil) {
         endpoint = scope.endpoint; owner = scope.subject; epoch = scope.mobileEpoch
         self.tripID = tripID; self.baseVersion = baseVersion; self.operationID = operationID
-        self.stage = stage; self.body = body; self.expectedPatch = expectedPatch
+        self.stage = stage; self.body = body; self.expectedPatch = expectedPatch; self.transportReference = transportReference
     }
     func matches(_ scope: NativeDataScope) -> Bool {
         endpoint == scope.endpoint && owner == scope.subject && epoch == scope.mobileEpoch
@@ -35,8 +37,20 @@ struct NativeRecoveryPending: Codable, Equatable {
             let value = try NativeRecoveryWire.decode(NativeRecoveryInput.self, input)
             try value.validate()
             guard value.expectedHeadVersion == baseVersion, expectedPatch == nil else { throw NativeDataError.invalidResponse }
+        } else if stage == "transport" {
+            let value = try transportInput()
+            try value.validate()
+            guard value.expectedHeadVersion == baseVersion, value.scope.tripId == tripID,
+                  expectedPatch == nil, originalReceipt == nil, originalProposalDigest == nil else { throw NativeDataError.invalidResponse }
         } else if stage == "select" {
             let input = try selection()
+            if let transportReference {
+                try transportReference.scope.validate()
+                guard NativeRecoveryWire.uuid(transportReference.receiptId), transportReference.scope.tripId == tripID,
+                      transportReference.scope.expectedHeadVersion == baseVersion,
+                      expectedPatch?.operations.allSatisfy({ $0.dayId == transportReference.scope.dayId }) == true
+                else { throw NativeDataError.invalidResponse }
+            }
             if let originalReceipt {
                 guard originalReceipt.operationId == operationID, originalReceipt.contextId == input.contextId,
                       originalReceipt.contextDigest == input.contextDigest, originalReceipt.candidateId == input.candidateId,
@@ -44,7 +58,7 @@ struct NativeRecoveryPending: Codable, Equatable {
                       originalReceipt.proposalRevision > 0, NativeRecoveryWire.date(originalReceipt.expiresAt) != nil
                 else { throw NativeDataError.invalidResponse }
             }
-            guard originalProposalDigest == nil || originalReceipt != nil && NativeRecoveryWire.hash(originalProposalDigest!) else { throw NativeDataError.invalidResponse }
+            guard originalProposalDigest == nil || originalReceipt != nil && NativeRecoveryWire.proposalDigest(originalProposalDigest!) else { throw NativeDataError.invalidResponse }
             guard let expectedPatch, expectedPatch.expectedVersion == baseVersion,
                   (1...8).contains(expectedPatch.operations.count),
                   expectedPatch.operations.allSatisfy({ $0.kind == .deleteItem && $0.dayId.map(NativeRecoveryWire.item) == true && $0.itemId.map(NativeRecoveryWire.item) == true && $0.title == nil && $0.date == nil && $0.timeZone == nil && $0.startsAt == nil && $0.endsAt == nil })
@@ -64,6 +78,20 @@ struct NativeRecoveryPending: Codable, Equatable {
         guard let input = root["input"] as? [String: Any] else { throw NativeDataError.invalidResponse }
         return try NativeRecoveryWire.decode(NativeRecoveryInput.self, input)
     }
+    func transportInput() throws -> NativeTransportRecoveryInput {
+        guard stage == "transport" else { throw NativeDataError.invalidResponse }
+        let root = try NativeRecoveryWire.exact(JSONSerialization.jsonObject(with: body), ["operation", "input"])
+        let input = try NativeRecoveryWire.exact(root["input"] as Any, ["operationId", "expectedHeadVersion", "dayId", "selectedItemIds", "fixedItemIds", "reservationBindings", "receiptId", "scope", "locale"])
+        _ = try NativeRecoveryWire.exact(input["scope"] as Any, ["tripId", "expectedHeadVersion", "dayId", "itemId", "originPlaceReferenceId", "destinationPlaceReferenceId", "mode", "departure"])
+        guard let bindings = input["reservationBindings"] as? [[String: Any]], bindings.count <= 100 else { throw NativeDataError.invalidResponse }
+        for binding in bindings { _ = try NativeRecoveryWire.exact(binding, ["referenceId", "revision", "dayId", "itemId"]) }
+        return try NativeRecoveryWire.decode(NativeTransportRecoveryInput.self, input)
+    }
+    func preparation() throws -> NativeRecoveryPreparation {
+        if stage == "transport" { return .transport(try transportInput()) }
+        return .report(try previewInput())
+    }
+
 }
 
 /// One unresolved operation per owner and endpoint. Never overwrite an unknown ACK.

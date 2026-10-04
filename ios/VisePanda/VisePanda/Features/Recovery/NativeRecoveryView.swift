@@ -5,13 +5,21 @@ struct NativeRecoveryView: View {
     @Environment(AppSettings.self) private var settings
     @Environment(\.scenePhase) private var phase
     @State private var store = NativeRecoveryStore()
+    @State private var traffic = NativeTrafficStore()
+    @State private var trafficItemID = ""
+    @State private var originID = ""
+    @State private var destinationID = ""
+    @State private var mode = "driving"
+    @State private var mapConsent = false
     @State private var dayID = ""
     @State private var selected: [String] = []
     @State private var fixed: Set<String> = []
     @State private var bindings: [String: String] = [:]
     @State private var report = NativeRecoveryReport.fatigue
+    @State private var selectedTransportScope: NativeTransportScope?
     @State private var navigation: Review?
     @State private var task: Task<Void, Never>?
+    @State private var trafficTask: Task<Void, Never>?
     private var session: NativeSession { settings.nativeSession }
     private var chinese: Bool { settings.selectedLocale == .zh }
     private func t(_ zh: String, _ en: String) -> String { chinese ? zh : en }
@@ -26,7 +34,7 @@ struct NativeRecoveryView: View {
         }
     }
     private var canPrepare: Bool {
-        active && !store.busy && store.pending == nil && !selected.isEmpty && selected.count <= 8
+        active && !store.busy && !traffic.busy && store.pending == nil && !selected.isEmpty && selected.count <= 8
         && store.reservationComplete && !store.reservations.contains(where: { $0.status == "unknown" })
         && mapping.count == activeReferences.count && Set(mapping.map(\.itemId)).count == mapping.count
         && Set(selected).isDisjoint(with: fixed.union(forcedFixed)) && fixed.union(forcedFixed).count <= 64
@@ -51,6 +59,7 @@ struct NativeRecoveryView: View {
                 if store.pending == nil {
                     scopeSection(detail)
                     reservationSection
+                    trafficSection
                     Section(t("本次用户报告", "Your report for this check")) {
                         Picker(t("发生了什么", "What changed"), selection: $report) {
                             ForEach(NativeRecoveryReport.allCases) { Text($0.label(chinese: chinese)).tag($0) }
@@ -76,7 +85,7 @@ struct NativeRecoveryView: View {
             if active, let pending = store.pending { pendingSection(pending) }
             if active, let notice = store.notice { Text(noticeText(notice)).accessibilityIdentifier("recovery.notice") }
             Section(t("交通变化与核实方式", "Transport changes and where to check")) {
-                Text(t("目前缺少可信的交通变化信息，暂时无法据此调整行程。请返回原行程核对已保存地址，并向原供应商或官方渠道核实到站、退订和退款情况。此处暂未提供可核实的官方链接。", "Reliable transport-change information is unavailable, so it cannot be used to adjust your plan yet. Check saved addresses in the original Trip and ask the original supplier or official channel about arrival times, cancellations and refunds. No verified official link is available here."))
+                Text(t("前台检查仅用于所选地点之间的整段路线。缺少来源资格、覆盖或当前期限时，不能据此恢复行程。封路、实时公交到站、未来预测、退订和退款须另向原供应商或官方核实。", "Foreground checks cover the selected whole route. Missing source qualification, coverage or current expiry prevents recovery. Check closures, real bus arrivals, forecasts, cancellations and refunds with the original supplier or official channel."))
                     .font(.footnote).accessibilityIdentifier("recovery.transport.unsupported")
                 if let actor = session.dataScope {
                     NavigationLink(t("打开原行程和已保存地址", "Open original Trip and saved addresses")) {
@@ -87,18 +96,165 @@ struct NativeRecoveryView: View {
         }
         .navigationTitle(t("局部恢复", "Local recovery"))
         .task(id: session.dataScope) { await refresh() }
-        .onChange(of: dayID) { _, _ in selected = []; store.clearPreview() }
+        .onChange(of: dayID) { _, _ in selected = []; trafficItemID = ""; originID = ""; destinationID = ""; store.clearPreview(); endTraffic() }
+        .task(id: contextKey) { await loadTrafficContext() }
+        .onChange(of: trafficItemID) { _, _ in originID = ""; destinationID = ""; store.clearPreview(); endTraffic() }
+        .onChange(of: originID) { _, _ in store.clearPreview(); endTraffic() }
+        .onChange(of: destinationID) { _, _ in store.clearPreview(); endTraffic() }
+        .onChange(of: mode) { _, _ in store.clearPreview(); endTraffic() }
+        .onChange(of: mapConsent) { _, consent in if !consent { store.clearPreview(); endTraffic() } }
         .onChange(of: report) { _, _ in store.clearPreview() }
-        .onChange(of: session.dataScope) { _, scope in task?.cancel(); clearInput(); store.bind(scope) }
+        .onChange(of: session.dataScope) { _, scope in task?.cancel(); trafficTask?.cancel(); clearInput(); store.bind(scope); traffic.bind(scope) }
         .onChange(of: phase) { _, value in
-            task?.cancel(); navigation = nil
-            if value == .active { run { await refresh() } } else { store.suspend() }
+            task?.cancel(); trafficTask?.cancel(); navigation = nil
+            if value == .active { run { await refresh() } } else { endTraffic(); traffic.clearContext(); store.suspend() }
         }
-        .onDisappear { task?.cancel(); store.suspend() }
+        .onDisappear {
+            task?.cancel(); trafficTask?.cancel()
+            if traffic.reviewReference == nil { endTraffic(); traffic.clearContext() }
+            store.suspend()
+        }
         .navigationDestination(item: $navigation) { review in
             NativeTripView(initialTripID: review.tripID, initialTripScope: review.scope,
                            initialProposalReference: review.reference, initialTripVersion: review.version)
+                .onDisappear {
+                    if traffic.reviewReference == review.reference { endTraffic(); store.clearPreview() }
+                }
         }
+    }
+
+    private var contextKey: String {
+        "\(session.dataScope.map { "\($0.endpoint)|\($0.subject)|\($0.mobileEpoch)|\($0.generation)" } ?? "")|\(store.detail?.trip.headVersion ?? -1)|\(dayID)|\(trafficItemID)"
+    }
+    private var placeReferences: [NativeTrafficContext.Reference] {
+        guard let detail = store.detail, let context = traffic.context,
+              context.matches(trip: tripID, version: detail.trip.headVersion, day: dayID, item: trafficItemID) else { return [] }
+        return context.references.filter { $0.displayStatus == "current" && $0.display != nil }
+    }
+    private var transportScope: NativeTransportScope? {
+        guard let detail = store.detail, detail.content.days.contains(where: { $0.id == dayID && $0.items.contains(where: { $0.id == trafficItemID }) }),
+              let origin = placeReferences.first(where: { $0.id == originID }), let destination = placeReferences.first(where: { $0.id == destinationID }),
+              origin.id != destination.id, origin.canonicalPoiId != destination.canonicalPoiId else { return nil }
+        return .init(tripId: tripID, expectedHeadVersion: detail.trip.headVersion, dayId: dayID, itemId: trafficItemID,
+                     originPlaceReferenceId: originID, destinationPlaceReferenceId: destinationID, mode: mode, departure: "now")
+    }
+    private var trafficSection: some View {
+        Section(t("明确前台检查交通", "Explicit foreground transport check")) {
+            if let day = store.detail?.content.days.first(where: { $0.id == dayID }) {
+                Picker(t("本次交通关联项目", "Item for this transport check"), selection: $trafficItemID) {
+                    Text(t("请选择", "Choose an item")).tag("")
+                    ForEach(day.items) { item in Text(item.title).tag(item.id) }
+                }
+            }
+            Picker(t("明确选择起点", "Choose origin explicitly"), selection: $originID) {
+                Text(t("请选择已核实地址", "Choose a current address")).tag("")
+                ForEach(placeReferences) { reference in Text(placeLabel(reference)).tag(reference.id) }
+            }
+            Picker(t("明确选择终点", "Choose destination explicitly"), selection: $destinationID) {
+                Text(t("请选择已核实地址", "Choose a current address")).tag("")
+                ForEach(placeReferences) { reference in Text(placeLabel(reference)).tag(reference.id) }
+            }
+            if placeReferences.count < 2 {
+                Text(t("当前可核实地址不足。缺少地址名称或资料未完整读取时，保持待核验；可返回原行程导航。", "Not enough current addresses. Missing labels or incomplete source reads remain pending; use original Trip navigation."))
+                    .font(.footnote).accessibilityIdentifier("recovery.traffic.address.pending")
+            }
+            Picker(t("整段方式 · 现在出发", "Whole-route mode · depart now"), selection: $mode) {
+                Text(t("驾车", "Driving")).tag("driving")
+                Text(t("步行", "Walking")).tag("walking")
+                Text(t("公共交通整段方案", "Whole transit plan")).tag("transit")
+            }
+            Toggle(t("同意本次前台地图检查", "Consent to this foreground Maps check"), isOn: $mapConsent)
+                .accessibilityIdentifier("recovery.traffic.consent")
+            Text(t("起终点由你明确选择，不推断地点关联。仅在此流程前台发送；不读取后台位置。耗时是取回时路线估算，不是公交到站或封路证据。", "You explicitly choose endpoints; no place relation is inferred. Requests run only in this foreground flow, without background location. Duration is a fetch-time route estimate, not bus arrival or closure evidence."))
+                .font(.footnote)
+            Button(t("明确检查现在的整段路线", "Check this whole route now")) { runTraffic { await checkTraffic(refresh: false) } }
+                .disabled(!active || !mapConsent || transportScope == nil || traffic.busy || store.busy)
+                .accessibilityIdentifier("recovery.traffic.check")
+            TimelineView(.periodic(from: .now, by: 1)) { timeline in
+                if let observation = traffic.visible(scope: transportScope, foreground: active && mapConsent, now: timeline.date) {
+                    trafficResult(observation)
+                    Button(t("刷新同一起终点和方式", "Refresh the same endpoints and mode")) { runTraffic { await checkTraffic(refresh: true) } }
+                        .disabled(traffic.busy || store.busy || observation.durableReceipt == nil)
+                        .accessibilityIdentifier("recovery.traffic.refresh")
+                    Button(t("按这份已核实交通参考准备局部候选", "Prepare local candidates using this qualified transport reference")) { run { await prepareTransport() } }
+                        .disabled(!canPrepare || traffic.receipt(scope: transportScope, foreground: active && mapConsent, now: timeline.date) == nil)
+                        .accessibilityIdentifier("recovery.traffic.prepare")
+                } else {
+                    Text(t("尚无当前可核实观察；检查未完成、资格缺失或期限已过均保持待核验。", "No current verified observation. An incomplete check, missing qualification or expiry remains pending."))
+                        .font(.footnote)
+                }
+            }
+            Button(t("停止本范围的前台检查", "Stop foreground checks for this scope")) { endTraffic() }
+                .disabled(traffic.attemptedScope == nil).accessibilityIdentifier("recovery.traffic.stop")
+            if let notice = traffic.notice {
+                Text(notice == "FOREGROUND_STOPPED" ? t("服务器已确认停止本范围。", "Server confirmed this scope stopped.") : t("交通检查或停止尚未核实（\(notice)）。保留原行程导航。", "Transport check or stop remains unverified (\(notice)). Keep original Trip navigation."))
+                    .font(.footnote).accessibilityIdentifier("recovery.traffic.notice")
+            }
+        }.disabled(store.busy || store.pending != nil)
+    }
+    private func placeLabel(_ reference: NativeTrafficContext.Reference) -> String {
+        guard let display = reference.display else { return t("地址待核实", "Address pending") }
+        return (chinese ? display.zh : display.en) + " · " + display.addressLines.joined(separator: ", ")
+    }
+    private func trafficResult(_ observation: NativeTrafficObservation) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(t("高德 · 取回时参考", "AMap · fetch-time reference")).font(.headline)
+            Text(t("取回：", "Fetched: ") + observation.fetchedAt)
+            if let receipt = observation.durableReceipt {
+                Text(t("来源版本：", "Source version: ") + receipt.sourceVersion + " · " + observation.policy.licenceVersion)
+            }
+            Text(t("有效期限：", "Expires: ") + (observation.durableReceipt?.expiresAt ?? observation.expiresAt))
+            Text(t("整段路线估算：\(observation.selected.durationSeconds) 秒 · \(observation.selected.distanceMeters) 米", "Whole-route estimate: \(observation.selected.durationSeconds) sec · \(observation.selected.distanceMeters) m"))
+            if let delta = observation.comparison.durationDeltaSeconds {
+                Text(t("与先前参考的耗时差：\(delta) 秒", "Duration change from previous reference: \(delta) sec"))
+            }
+            if observation.traffic.status == "observed", let meters = observation.traffic.meters {
+                Text(t("返回路线的路况分类米数：未知 \(Int(meters["unknown"] ?? 0))、畅通 \(Int(meters["clear"] ?? 0))、缓慢 \(Int(meters["slow"] ?? 0))、拥堵 \(Int(meters["congested"] ?? 0))、严重拥堵 \(Int(meters["severe"] ?? 0))。", "Returned-route TMC metres: unknown \(Int(meters["unknown"] ?? 0)), clear \(Int(meters["clear"] ?? 0)), slow \(Int(meters["slow"] ?? 0)), congested \(Int(meters["congested"] ?? 0)), severe \(Int(meters["severe"] ?? 0))."))
+            }
+            Text(t("路况分类变化可能来自不同的返回路线，不证明同一道路发生事件。没有供应商观察时间，也不证明封路、到站或未来状况。", "TMC changes may reflect a different returned route; they do not prove an incident on the same road. No provider observation timestamp, closure, arrival or forecast is established."))
+            if observation.qualification.status != "qualified" {
+                Text(t("本参考尚不具备局部恢复来源资格。", "This reference is not qualified for local recovery."))
+            }
+            ForEach(Array(observation.alternatives.enumerated()), id: \.offset) { _, alternative in
+                Text(t("其他整段方式 ", "Alternative whole-route mode ") + alternative.option.mode + " · \(alternative.option.durationSeconds)s · \(alternative.option.distanceMeters)m")
+                Text(t("仅估算，需核实换乘、步行和费用；不会自动更换恢复方式。", "Estimate only; verify transfers, walking and costs. Recovery mode is not changed automatically."))
+            }
+        }.font(.footnote).accessibilityIdentifier("recovery.traffic.observation")
+    }
+    private func loadTrafficContext() async {
+        traffic.bind(session.dataScope)
+        guard active, let detail = store.detail, !dayID.isEmpty, !trafficItemID.isEmpty else { traffic.clearContext(); return }
+        await traffic.loadContext(trip: tripID, version: detail.trip.headVersion, day: dayID, item: trafficItemID,
+                                  scope: nil, current: { session.dataScope }, post: { body in
+            try await session.tripRequest(path: "api/trips/native/v2/\(tripID)/traffic-observations/context", method: "POST", body: body)
+        })
+    }
+    private func checkTraffic(refresh: Bool) async {
+        guard active, mapConsent, let scope = transportScope else { return }
+        if let detail = store.detail {
+            await traffic.loadContext(trip: tripID, version: detail.trip.headVersion, day: dayID, item: trafficItemID,
+                                      scope: scope, current: { session.dataScope }, post: { body in
+                try await session.tripRequest(path: "api/trips/native/v2/\(tripID)/traffic-observations/context", method: "POST", body: body)
+            })
+        }
+        guard active, mapConsent, transportScope == scope, !Task.isCancelled else { return }
+        await traffic.check(scope: scope, refresh: refresh, consent: mapConsent, current: { session.dataScope }, post: trafficPost)
+    }
+    private func trafficPost(_ body: Data) async throws -> Data {
+        try await session.tripRequest(path: "api/trips/native/v2/\(tripID)/traffic-observations", method: "POST", body: body)
+    }
+    private func endTraffic() {
+        trafficTask?.cancel(); traffic.invalidate()
+        Task { await traffic.stop(current: { session.dataScope }, post: trafficPost) }
+    }
+    private func prepareTransport() async {
+        guard canPrepare, let detail = store.detail,
+              let receipt = traffic.receipt(scope: transportScope, foreground: active && mapConsent, now: Date()) else { return }
+        selectedTransportScope = receipt.scope
+        let input = NativeTransportRecoveryInput(operationId: UUID().uuidString.lowercased(), expectedHeadVersion: detail.trip.headVersion,
+            dayId: dayID, selectedItemIds: selected, fixedItemIds: fixed.union(forcedFixed).sorted(), reservationBindings: mapping,
+            receiptId: receipt.receiptId, scope: receipt.scope, locale: chinese ? "zh" : "en")
+        await store.prepare(input: .transport(input), current: { session.dataScope }, post: post)
     }
 
     private func scopeSection(_ detail: NativeTripDetail) -> some View {
@@ -204,7 +360,7 @@ struct NativeRecoveryView: View {
             Text(pending.operationID).font(.caption).textSelection(.enabled)
             Text(t("请求可能已经处理，但暂时无法确认结果。我们会保留同一请求。请先核对结果；如仍无法确认，可在核实身份后明确重试同一请求。如果此前尚未处理，重试可能首次处理它，不会重复创建结果。当前账号无权访问时不能重试。", "Your request may have been processed, but the result cannot be confirmed yet. The same request is retained. Check the result first; if it is still unclear, you can explicitly retry the same request after your identity is verified. If it was never processed, retrying may process it for the first time without creating a duplicate result. You cannot retry if this account does not have access."))
                 .font(.footnote)
-            if pending.stage == "preview" {
+            if pending.stage != "select" {
                 Text(t("候选核验的处理结果目前无法直接查询。查不到提案结果，也不代表候选核验没有发生。", "The result of the candidate check cannot be queried directly yet. An unavailable proposal result does not mean the candidate check never happened."))
                     .font(.footnote)
             }
@@ -230,6 +386,12 @@ struct NativeRecoveryView: View {
                     if let reference = store.reviewReference, let scope = session.dataScope {
                         Text(t("只审阅这份原提案的差异并明确确认或拒绝。需要改方案，请先拒绝后重新报告核验。", "Review this original proposal's diff and explicitly confirm or reject. To change the plan, reject first and report/check again."))
                         Button(t("审阅这份原提案", "Review this original proposal")) {
+                            // Only the exact original proposal extends this foreground recovery flow.
+                            if let pending = store.pending, pending.transportReference != nil {
+                                do { try traffic.beginReview(pending: pending, outcome: outcome, current: session.dataScope) }
+                                catch { store.clearPreview(); return }
+                            }
+                            task?.cancel(); trafficTask?.cancel()
                             navigation = .init(scope: scope, tripID: tripID, reference: reference, version: outcome.operation.receipt.baseVersion)
                         }.accessibilityIdentifier("recovery.review")
                     } else if outcome.operation.state == "pending" {
@@ -265,20 +427,29 @@ struct NativeRecoveryView: View {
         default: t("相关信息或请求结果尚未确认（\(code)）。原行程和同一请求仍保留；请重新核对，暂时不要视为已解决。", "The information or request result is still unconfirmed (\(code)). Your original Trip and the same request are retained. Check again before treating this as resolved.")
         }
     }
+    private func runTraffic(_ operation: @escaping @MainActor () async -> Void) {
+        trafficTask?.cancel(); trafficTask = Task { await operation() }
+    }
     private func run(_ operation: @escaping @MainActor () async -> Void) { task?.cancel(); task = Task { await operation() } }
-    private func clearInput() { dayID = ""; selected = []; fixed = []; bindings = [:]; navigation = nil }
+    private func clearInput() { selectedTransportScope = nil; dayID = ""; selected = []; fixed = []; bindings = [:]; navigation = nil; trafficItemID = ""; originID = ""; destinationID = ""; mapConsent = false; traffic.clearContext() }
     private func refresh() async {
-        store.bind(session.dataScope); clearInput()
+        store.bind(session.dataScope); traffic.bind(session.dataScope); endTraffic(); clearInput()
         await store.refresh(tripID: tripID, current: { session.dataScope }, request: { path, method, body in
             try await session.tripRequest(path: path, method: method, body: body)
         })
-        if store.pending != nil { await store.recover(current: { session.dataScope }, post: post) }
+        if let pending = store.pending {
+            selectedTransportScope = pending.transportReference?.scope
+            if pending.stage == "transport" { selectedTransportScope = try? pending.transportInput().scope }
+            traffic.restoreStopScope(selectedTransportScope)
+            await store.recover(current: { session.dataScope }, post: post)
+        }
     }
     private func post(_ body: Data) async throws -> Data {
         try await session.tripRequest(path: "api/trips/native/v2/\(tripID)/recovery", method: "POST", body: body)
     }
     private func prepare() async {
         guard canPrepare, let detail = store.detail else { return }
+        selectedTransportScope = nil
         let input = NativeRecoveryInput(operationId: UUID().uuidString.lowercased(), expectedHeadVersion: detail.trip.headVersion,
                                         dayId: dayID, selectedItemIds: selected, fixedItemIds: fixed.union(forcedFixed).sorted(),
                                         reservationBindings: mapping,

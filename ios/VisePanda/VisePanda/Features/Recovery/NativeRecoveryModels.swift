@@ -51,6 +51,72 @@ struct NativeRecoveryInput: Codable, Equatable {
     }
 }
 
+struct NativeTransportScope: Codable, Equatable {
+    let tripId: String
+    let expectedHeadVersion: Int
+    let dayId: String
+    let itemId: String
+    let originPlaceReferenceId: String
+    let destinationPlaceReferenceId: String
+    let mode: String
+    let departure: String
+    func validate() throws {
+        guard NativeRecoveryWire.uuid(tripId), (0...999999999).contains(expectedHeadVersion),
+              NativeRecoveryWire.item(dayId), NativeRecoveryWire.item(itemId),
+              NativeRecoveryWire.uuid(originPlaceReferenceId), NativeRecoveryWire.uuid(destinationPlaceReferenceId),
+              originPlaceReferenceId != destinationPlaceReferenceId,
+              ["walking", "transit", "driving"].contains(mode), departure == "now"
+        else { throw NativeDataError.invalidResponse }
+    }
+}
+
+struct NativeTransportRecoveryInput: Codable, Equatable {
+    let operationId: String
+    let expectedHeadVersion: Int
+    let dayId: String
+    let selectedItemIds: [String]
+    let fixedItemIds: [String]
+    let reservationBindings: [NativeRecoveryBinding]
+    let receiptId: String
+    let scope: NativeTransportScope
+    let locale: String
+    func validate() throws {
+        try scope.validate()
+        guard NativeRecoveryWire.uuid(operationId), NativeRecoveryWire.uuid(receiptId),
+              scope.expectedHeadVersion == expectedHeadVersion, scope.dayId == dayId,
+              (1...8).contains(selectedItemIds.count), fixedItemIds.count <= 64,
+              selectedItemIds.allSatisfy(NativeRecoveryWire.item), fixedItemIds.allSatisfy(NativeRecoveryWire.item),
+              Set(selectedItemIds).count == selectedItemIds.count, Set(fixedItemIds).count == fixedItemIds.count,
+              Set(selectedItemIds).isDisjoint(with: fixedItemIds), reservationBindings.count <= 100,
+              Set(reservationBindings.map(\.referenceId)).count == reservationBindings.count,
+              Set(reservationBindings.map { $0.dayId + "/" + $0.itemId }).count == reservationBindings.count,
+              reservationBindings.allSatisfy({ NativeRecoveryWire.uuid($0.referenceId) && (1...999999999).contains($0.revision)
+                  && NativeRecoveryWire.item($0.dayId) && NativeRecoveryWire.item($0.itemId) && !selectedItemIds.contains($0.itemId) }),
+              ["zh", "en"].contains(locale) else { throw NativeDataError.invalidResponse }
+    }
+    func body() throws -> Data {
+        try validate()
+        return try NativeRecoveryWire.encode(["operation": "transport", "input": try NativeRecoveryWire.object(self)])
+    }
+}
+
+enum NativeRecoveryPreparation {
+    case report(NativeRecoveryInput)
+    case transport(NativeTransportRecoveryInput)
+    var operationId: String { switch self { case .report(let i): i.operationId; case .transport(let i): i.operationId } }
+    var expectedHeadVersion: Int { switch self { case .report(let i): i.expectedHeadVersion; case .transport(let i): i.expectedHeadVersion } }
+    var dayId: String { switch self { case .report(let i): i.dayId; case .transport(let i): i.dayId } }
+    var selectedItemIds: [String] { switch self { case .report(let i): i.selectedItemIds; case .transport(let i): i.selectedItemIds } }
+    var fixedItemIds: [String] { switch self { case .report(let i): i.fixedItemIds; case .transport(let i): i.fixedItemIds } }
+    var reservationBindings: [NativeRecoveryBinding] { switch self { case .report(let i): i.reservationBindings; case .transport(let i): i.reservationBindings } }
+    var report: NativeRecoveryInput.Report? { if case .report(let i) = self { return i.report }; return nil }
+    var transportReference: NativeRecoveryPreview.TransportReference? {
+        if case .transport(let i) = self { return .init(receiptId: i.receiptId, scope: i.scope) }; return nil
+    }
+    var stage: String { switch self { case .report: "preview"; case .transport: "transport" } }
+    func body() throws -> Data { switch self { case .report(let i): try i.body(); case .transport(let i): try i.body() } }
+}
+
 struct NativeRecoverySelection: Codable, Equatable {
     let operationId: String
     let contextId: String
@@ -101,7 +167,9 @@ struct NativeRecoveryPreview: Decodable {
     let kind: String
     let tripId: String?
     let baseVersion: Int
-    let report: NativeRecoveryInput.Report
+    struct TransportReference: Codable, Equatable { let receiptId: String; let scope: NativeTransportScope }
+    let report: NativeRecoveryInput.Report?
+    let transportReference: TransportReference?
     let status: String
     let reason: String?
     let contextId: String?
@@ -117,9 +185,29 @@ struct NativeRecoveryPreview: Decodable {
     let officialChannel: Official
     let needsManualVerification: [String]
 
+    static func decode(_ bytes: Data, preparation: NativeRecoveryPreparation) throws -> Self {
+        let row = try NativeRecoveryWire.root(bytes)
+        let common = ["kind", "tripId", "baseVersion", "report", "preferenceContext", "sourceSemantics", "tripMutation", "externalOutcome", "nextStep", "officialChannel", "candidates", "needsManualVerification", "status", "reason"]
+        let context = ["contextId", "contextDigest", "expiresAt", "reservationBasis"]
+        let transport = preparation.report == nil ? ["transportReference"] : []
+        let keys = Set(row.keys)
+        guard keys == Set(common + transport) || keys == Set(common + transport + context) else { throw NativeDataError.invalidResponse }
+        if let ref = preparation.transportReference {
+            guard row["report"] is NSNull else { throw NativeDataError.invalidResponse }
+            let source = try NativeRecoveryWire.exact(row["transportReference"] as Any, ["receiptId", "scope"])
+            _ = try NativeRecoveryWire.exact(source["scope"] as Any, ["tripId", "expectedHeadVersion", "dayId", "itemId", "originPlaceReferenceId", "destinationPlaceReferenceId", "mode", "departure"])
+            guard try NativeRecoveryWire.decode(TransportReference.self, source) == ref else { throw NativeDataError.invalidResponse }
+        } else { _ = try NativeRecoveryWire.exact(row["report"] as Any, ["source", "kind", "observedAt"]) }
+        return try NativeRecoveryWire.decode(Self.self, row)
+    }
+
     func validate(input: NativeRecoveryInput, detail: NativeTripDetail, now: Date) throws {
-        guard kind == "local_recovery/1", tripId == detail.trip.id, baseVersion == input.expectedHeadVersion,
-              report == input.report, sourceSemantics == "user_report", tripMutation == "none", externalOutcome == "unknown",
+        try validate(input: .report(input), detail: detail, now: now)
+    }
+    func validate(input: NativeRecoveryPreparation, detail: NativeTripDetail, now: Date) throws {
+        guard kind == "local_recovery/1", (tripId == detail.trip.id || status == "pending" && tripId == nil), baseVersion == input.expectedHeadVersion,
+              report == input.report, transportReference == input.transportReference,
+              sourceSemantics == (input.report == nil ? "qualified_foreground_transport" : "user_report"), tripMutation == "none", externalOutcome == "unknown",
               officialChannel.status == "unavailable", officialChannel.reason == "NO_QUALIFIED_OFFICIAL_CHANNEL",
               preferenceContext.influence == "soft_reference_only", preferenceContext.explicitInputPriority == "current_explicit_input",
               ["unknown", "current"].contains(preferenceContext.status),
@@ -130,14 +218,20 @@ struct NativeRecoveryPreview: Decodable {
         if status == "pending" {
             guard candidates.isEmpty, reason != nil else { throw NativeDataError.invalidResponse }; return
         }
-        guard status == "candidates", input.report.kind != .highRiskUnwell, (1...2).contains(candidates.count),
+        guard status == "candidates", input.report?.kind != .highRiskUnwell, (1...2).contains(candidates.count),
               Set(candidates.map(\.id)).count == candidates.count, let contextId, NativeRecoveryWire.uuid(contextId),
               let contextDigest, NativeRecoveryWire.hash(contextDigest), let expiresAt,
-              let expiry = NativeRecoveryWire.date(expiresAt), let observed = NativeRecoveryWire.date(input.report.observedAt),
-              observed <= now, expiry > now, expiry <= observed.addingTimeInterval(300), reason == nil,
+              let expiry = NativeRecoveryWire.date(expiresAt),
+              expiry > now, expiry <= (input.report.flatMap { NativeRecoveryWire.date($0.observedAt) } ?? now).addingTimeInterval(300),
+              input.report.map({ NativeRecoveryWire.date($0.observedAt).map { $0 <= now } == true }) ?? true, reason == nil,
               detail.confirmationState == "confirmed", detail.trip.headVersion == input.expectedHeadVersion,
               let day = detail.content.days.first(where: { $0.id == input.dayId }),
               input.selectedItemIds.allSatisfy({ id in day.items.contains(where: { $0.id == id }) }) else { throw NativeDataError.invalidResponse }
+        if let ref = input.transportReference {
+            try ref.scope.validate()
+            guard ref.scope.tripId == detail.trip.id, ref.scope.dayId == input.dayId,
+                  day.items.contains(where: { $0.id == ref.scope.itemId }) else { throw NativeDataError.invalidResponse }
+        }
         let all = detail.content.days.flatMap(\.items)
         guard let reservationBasis, reservationBasis.count <= 100,
               Set(reservationBasis.map(\.referenceId)).count == reservationBasis.count,
@@ -206,7 +300,7 @@ struct NativeRecoveryOutcome: Decodable {
             let r = operation.receipt
             guard kind == "local_recovery_selected/1", tripMutation == "none", let p = proposal, !p.stale,
                   p.status == "pending", p.id == r.proposalId, p.revision == r.proposalRevision,
-                  p.baseTripVersion == r.baseVersion, NativeRecoveryWire.hash(p.digest),
+                  p.baseTripVersion == r.baseVersion, NativeRecoveryWire.proposalDigest(p.digest),
                   NativeRecoveryWire.date(p.expiresAt) == NativeRecoveryWire.date(r.expiresAt),
                   NativeRecoveryWire.date(p.expiresAt).map({ $0 > now }) == true,
                   p.patch == pending.expectedPatch, p.titleDiff.before == p.titleDiff.after
@@ -228,6 +322,7 @@ struct NativeRecoveryReservation: Identifiable {
 enum NativeRecoveryWire {
     static func uuid(_ s: String) -> Bool { UUID(uuidString: s) != nil && s == s.lowercased() }
     static func hash(_ s: String) -> Bool { s.range(of: "^[0-9a-f]{64}$", options: .regularExpression) != nil }
+    static func proposalDigest(_ s: String) -> Bool { s.range(of: "^trip-v2:[0-9a-f]{64}$", options: .regularExpression) != nil }
     static func item(_ s: String) -> Bool { s.range(of: "^[A-Za-z0-9_-]{1,64}$", options: .regularExpression) != nil }
     static func date(_ s: String) -> Date? {
         let f = ISO8601DateFormatter(); f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]

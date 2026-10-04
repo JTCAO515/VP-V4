@@ -1,0 +1,18 @@
+Building for debugging...
+[Starting]
+[1 / 5]
+[2 / 6] VisePanda
+[3 / 7] VisePanda
+[7 / 11] VisePanda
+[10 / 14] VisePandaTests-product
+[12 / 16] VisePandaTests-product
+[17 / 19] VisePandaTests-product
+Build complete! (7.21秒)
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite "Native qualified transport recovery" started.
+◇ Test qualificationRejectsModeDriftExpiredFutureReceiptAndClientProof() started.
+✔ Test qualificationRejectsModeDriftExpiredFutureReceiptAndClientProof() passed after 0.023 seconds.
+✔ Suite "Native qualified transport recovery" passed after 0.023 seconds.
+✔ Test run with 1 test in 1 suite passed after 0.024 seconds.
