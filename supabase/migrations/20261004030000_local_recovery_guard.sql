@@ -16,15 +16,12 @@ create function recovery_private.time_v1(v text) returns timestamptz language pl
  perform substring(v,1,10)::date;t:=v::timestamptz;return t;
 exception when others then return null;end $$;
 create function recovery_private.ms_v1(v timestamptz) returns text language sql immutable set search_path='' as $$select to_char(v at time zone 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')$$;
-create function recovery_private.valid_prepare_v1(v jsonb) returns boolean language plpgsql immutable set search_path='' as $$declare b jsonb;begin
- if not recovery_private.exact_v1(v,array['operationId','expectedHeadVersion','dayId','selectedItemIds','fixedItemIds','reservationBindings','report','locale']) or not recovery_private.uuid_v1(v->'operationId')
- or jsonb_typeof(v->'expectedHeadVersion') is distinct from 'number' or v->>'expectedHeadVersion' !~ '^(0|[1-9][0-9]{0,8})$'
+create function recovery_private.valid_common_v1(v jsonb) returns boolean language plpgsql immutable set search_path='' as $$declare b jsonb;begin
+ if not recovery_private.uuid_v1(v->'operationId') or jsonb_typeof(v->'expectedHeadVersion') is distinct from 'number' or v->>'expectedHeadVersion' !~ '^(0|[1-9][0-9]{0,8})$'
  or jsonb_typeof(v->'dayId') is distinct from 'string' or v->>'dayId' !~ '^[A-Za-z0-9_-]{1,64}$'
  or not recovery_private.ids_v1(v->'selectedItemIds',1,8) or not recovery_private.ids_v1(v->'fixedItemIds',0,64)
  or jsonb_typeof(v->'reservationBindings') is distinct from 'array' or jsonb_array_length(v->'reservationBindings')>100
- or not recovery_private.exact_v1(v->'report',array['source','kind','observedAt']) or v->'report'->>'source' is distinct from 'user_report'
- or coalesce(v->'report'->>'kind','') not in('fatigue','delay','closure','high_risk_unwell')
- or recovery_private.time_v1(v->'report'->>'observedAt') is null or coalesce(v->>'locale','') not in('zh','en') then return false;end if;
+ or coalesce(v->>'locale','') not in('zh','en') then return false;end if;
  for b in select value from jsonb_array_elements(v->'reservationBindings') loop
  if not recovery_private.exact_v1(b,array['referenceId','revision','dayId','itemId']) or not recovery_private.uuid_v1(b->'referenceId')
  or jsonb_typeof(b->'revision') is distinct from 'number' or b->>'revision' !~ '^[1-9][0-9]{0,15}$' or (b->>'revision')::numeric>9007199254740990
@@ -32,13 +29,25 @@ create function recovery_private.valid_prepare_v1(v jsonb) returns boolean langu
  or jsonb_typeof(b->'itemId') is distinct from 'string' or b->>'itemId' !~ '^[A-Za-z0-9_-]{1,64}$' then return false;end if;end loop;
  return (select count(distinct (x->>'referenceId')::uuid) from jsonb_array_elements(v->'reservationBindings')x)=jsonb_array_length(v->'reservationBindings');
 end $$;
+create function recovery_private.valid_prepare_v1(v jsonb) returns boolean language sql immutable set search_path='' as $$select coalesce(
+ recovery_private.exact_v1(v,array['operationId','expectedHeadVersion','dayId','selectedItemIds','fixedItemIds','reservationBindings','report','locale']) and recovery_private.valid_common_v1(v)
+ and recovery_private.exact_v1(v->'report',array['source','kind','observedAt']) and v->'report'->>'source'='user_report'
+ and v->'report'->>'kind' in('fatigue','delay','closure','high_risk_unwell') and recovery_private.time_v1(v->'report'->>'observedAt') is not null,false)$$;
+create function recovery_private.valid_transport_v1(v jsonb) returns boolean language plpgsql immutable set search_path='' as $$declare scope jsonb:=v->'scope';begin
+ return coalesce(recovery_private.exact_v1(v,array['operationId','expectedHeadVersion','dayId','selectedItemIds','fixedItemIds','reservationBindings','receiptId','scope','locale']) and recovery_private.valid_common_v1(v) and recovery_private.uuid_v1(v->'receiptId')
+ and recovery_private.exact_v1(scope,array['tripId','expectedHeadVersion','dayId','itemId','originPlaceReferenceId','destinationPlaceReferenceId','mode','departure'])
+ and recovery_private.uuid_v1(scope->'tripId') and recovery_private.uuid_v1(scope->'originPlaceReferenceId') and recovery_private.uuid_v1(scope->'destinationPlaceReferenceId')
+ and scope->'originPlaceReferenceId'<>scope->'destinationPlaceReferenceId' and scope->'expectedHeadVersion'=v->'expectedHeadVersion' and scope->'dayId'=v->'dayId'
+ and jsonb_typeof(scope->'itemId')='string' and scope->>'itemId' ~ '^[A-Za-z0-9_-]{1,64}$'
+ and scope->>'mode' in('walking','transit','driving') and scope->>'departure'='now',false);
+end $$;
 create function recovery_private.valid_select_v1(v jsonb) returns boolean language sql immutable set search_path='' as $$select coalesce(recovery_private.exact_v1(v,array['operationId','contextId','contextDigest','candidateId']) and recovery_private.uuid_v1(v->'operationId') and recovery_private.uuid_v1(v->'contextId') and jsonb_typeof(v->'contextDigest')='string' and v->>'contextDigest' ~ '^[a-f0-9]{64}$' and v->>'candidateId' in('omit_one','omit_selected'),false)$$;
 
 create table recovery_private.contexts_v1(
  id uuid primary key default gen_random_uuid(),owner_id uuid not null references auth.users(id) on delete cascade,
  trip_id uuid not null references public.trips(id) on delete cascade,operation_id uuid not null,
  input jsonb not null,base_version integer not null,snapshot jsonb not null,profile_basis jsonb not null,reservation_basis jsonb not null,
- digest text not null,created_at timestamptz not null default clock_timestamp(),expires_at timestamptz not null,
+ traffic_basis jsonb,digest text not null,created_at timestamptz not null default clock_timestamp(),expires_at timestamptz not null,
  unique(owner_id,operation_id),unique(id,owner_id,trip_id)
 );
 create table recovery_private.operations_v1(
@@ -54,6 +63,15 @@ create table recovery_private.lineage_v1(
  foreign key(context_id,owner_id,trip_id) references recovery_private.contexts_v1(id,owner_id,trip_id) on delete cascade,
  foreign key(owner_id,operation_id) references recovery_private.operations_v1(owner_id,operation_id) on delete cascade
 );
+create table recovery_private.transport_proofs_v1(
+ transaction_id xid8 not null,proposal_id uuid not null references public.trip_proposals(id) on delete cascade,
+ owner_id uuid not null references auth.users(id) on delete cascade,trip_id uuid not null references public.trips(id) on delete cascade,
+ context_id uuid not null references recovery_private.contexts_v1(id) on delete cascade,root_proposal_id uuid not null,
+ proposal_digest text not null,proposal_revision integer not null,base_version integer not null,actor_basis jsonb not null,traffic_basis jsonb not null,checked_at timestamptz not null,expires_at timestamptz not null,
+ primary key(transaction_id,proposal_id)
+);
+create index recovery_proof_context_v1 on recovery_private.transport_proofs_v1(context_id);
+create index recovery_proof_trip_v1 on recovery_private.transport_proofs_v1(trip_id);
 create index recovery_context_trip_v1 on recovery_private.contexts_v1(trip_id);
 create index recovery_context_expiry_v1 on recovery_private.contexts_v1(expires_at,id);
 create index recovery_operation_trip_v1 on recovery_private.operations_v1(trip_id);
@@ -61,7 +79,7 @@ create index recovery_lineage_trip_v1 on recovery_private.lineage_v1(trip_id);
 create index recovery_lineage_context_v1 on recovery_private.lineage_v1(context_id);
 -- Inserts are confined to owner RPCs. Bodies and original ACKs cannot be renewed.
 create function recovery_private.immutable_v1() returns trigger language plpgsql set search_path='' as $$begin raise exception 'RECOVERY_RECORD_IMMUTABLE';end $$;
-do $$declare t text;begin foreach t in array array['contexts_v1','operations_v1','lineage_v1'] loop
+do $$declare t text;begin foreach t in array array['contexts_v1','operations_v1','lineage_v1','transport_proofs_v1'] loop
  execute format('alter table recovery_private.%I enable row level security',t);
  execute format('revoke all on recovery_private.%I from public,anon,authenticated,service_role',t);
  execute format('create trigger recovery_immutable before update on recovery_private.%I for each row execute function recovery_private.immutable_v1()',t);
@@ -99,17 +117,39 @@ create function recovery_private.reservations_v1(u uuid,t uuid,head integer) ret
  if page->'hasMore' is distinct from 'false'::jsonb or jsonb_array_length(items)<>count_n then return jsonb_build_object('kind','pending','reason','RESERVATION_SCOPE_INCOMPLETE');end if;
  return jsonb_build_object('kind','basis','records',items,'items',(select coalesce(jsonb_agg(jsonb_build_object('referenceId',x->'referenceId','revision',x->'revision','contentDigest',x->'contentDigest','status',x->'fields'->'status','evidenceTier',x->'evidenceTier') order by x->>'referenceId'),'[]') from jsonb_array_elements(items)x));
 end $$;
+-- SQL derives these identifiers from the installed immutable owner receipt.
+-- Caller scope is selection intent; it must equal the actual source receipt scope.
+create function recovery_private.transport_basis_v1(p_receipt uuid,p_scope jsonb) returns jsonb language plpgsql security definer set search_path='' set timezone='UTC' as $$declare read_result jsonb;r jsonb;q jsonb;expiry timestamptz;begin
+ if to_regprocedure('public.read_foreground_traffic_v1(uuid,jsonb)') is null or to_regprocedure('traffic_private.qualify_recovery_v1(uuid,jsonb,uuid,bigint,bigint)') is null or to_regprocedure('traffic_private.validate_recovery_proof_v1(uuid,jsonb,uuid,bigint,bigint,jsonb)') is null then return null;end if;
+ execute 'select public.read_foreground_traffic_v1($1,$2)' into read_result using p_receipt,p_scope;
+ r:=read_result->'receipt';
+ if read_result->>'kind' is distinct from 'receipt' or r->>'receiptId' is distinct from p_receipt::text or r->'scope' is distinct from p_scope or r->'r2Qualified' is distinct from 'true'::jsonb
+ or coalesce(r->>'changeKind','') not in('route_estimate_changed','route_condition_changed') or not recovery_private.uuid_v1(r->'policyId')
+ or jsonb_typeof(r->'policyRevision') is distinct from 'number' or r->>'policyRevision' !~ '^[1-9][0-9]{0,15}$' or (r->>'policyRevision')::numeric>9007199254740990
+ or jsonb_typeof(r->'stopEpoch') is distinct from 'number' or r->>'stopEpoch' !~ '^(0|[1-9][0-9]{0,15})$' or (r->>'stopEpoch')::numeric>9007199254740990 then return null;end if;
+ execute 'select traffic_private.qualify_recovery_v1($1,$2,$3,$4,$5)' into q using p_receipt,r->'scope',(r->>'policyId')::uuid,(r->>'policyRevision')::bigint,(r->>'stopEpoch')::bigint;
+ expiry:=recovery_private.time_v1(q->>'expiresAt');
+ if q->>'kind' is distinct from 'qualified' or q->>'receiptId' is distinct from p_receipt::text or q->'policyId' is distinct from r->'policyId' or q->'policyRevision' is distinct from r->'policyRevision' or q->'stopEpoch' is distinct from r->'stopEpoch'
+ or jsonb_typeof(q->'proofBasis') is distinct from 'object' or pg_column_size(q->'proofBasis')>32768
+ or expiry is null or expiry<=clock_timestamp() or recovery_private.time_v1(r->>'expiresAt') is null or expiry>recovery_private.time_v1(r->>'expiresAt') then return null;end if;
+ return jsonb_build_object('receiptId',q->'receiptId','scope',r->'scope','policyId',q->'policyId','policyRevision',q->'policyRevision','stopEpoch',q->'stopEpoch','expiresAt',q->'expiresAt','proofBasis',q->'proofBasis');
+exception when lock_not_available then return null;end $$;
 create function recovery_private.context_wire_v1(c recovery_private.contexts_v1) returns jsonb language sql stable set search_path='' as $$select jsonb_build_object('kind','local_recovery_context/1','contextId',c.id,'contextDigest',c.digest,'tripId',c.trip_id,'baseVersion',c.base_version,'expiresAt',recovery_private.ms_v1(c.expires_at),'profileBasis',c.profile_basis-array['present','timestamp','revision','state','notice'],'reservationBasis',c.reservation_basis,'input',c.input)$$;
 create function recovery_private.patch_v1(c recovery_private.contexts_v1,choice text) returns jsonb language sql immutable set search_path='' as $$select jsonb_build_object('expectedVersion',c.base_version,'operations',(select jsonb_agg(jsonb_build_object('kind','delete_item','dayId',c.input->>'dayId','itemId',x.value) order by x.ordinality) from jsonb_array_elements(c.input->'selectedItemIds') with ordinality x where choice='omit_selected' or x.ordinality=1))$$;
 
-create function public.prepare_local_recovery_v1(p_trip_id uuid,p_input jsonb) returns jsonb language plpgsql security definer set search_path='' set timezone='UTC' as $$declare u uuid;t public.trips%rowtype;c recovery_private.contexts_v1%rowtype;profile jsonb;orders jsonb;snap jsonb;observed timestamptz;b jsonb;record jsonb;item public.trip_items%rowtype;day public.trip_days%rowtype;zone text;start_date date;end_date date;begin
- if p_trip_id is null or not recovery_private.valid_prepare_v1(p_input) then raise exception 'INVALID_INPUT';end if;
+create function recovery_private.prepare_context_v1(p_trip_id uuid,p_input jsonb,p_traffic jsonb) returns jsonb language plpgsql security definer set search_path='' set timezone='UTC' as $$declare u uuid;t public.trips%rowtype;c recovery_private.contexts_v1%rowtype;profile jsonb;orders jsonb;snap jsonb;observed timestamptz;b jsonb;record jsonb;item public.trip_items%rowtype;day public.trip_days%rowtype;zone text;start_date date;end_date date;begin
+ if p_trip_id is null or (p_traffic is null and not recovery_private.valid_prepare_v1(p_input)) or (p_traffic is not null and not recovery_private.valid_transport_v1(p_input)) then raise exception 'INVALID_INPUT';end if;
  u:=recovery_private.actor_v1();t:=recovery_private.trip_v1(u,p_trip_id);if t.id is null then return jsonb_build_object('kind','unavailable');end if;
  select * into c from recovery_private.contexts_v1 where owner_id=u and operation_id=(p_input->>'operationId')::uuid for update nowait;
  if found and (c.trip_id<>t.id or c.input<>p_input) then return jsonb_build_object('kind','conflict');end if;
  if t.head_version<>(p_input->>'expectedHeadVersion')::integer then return jsonb_build_object('kind','conflict');end if;
- observed:=recovery_private.time_v1(p_input->'report'->>'observedAt');if observed>clock_timestamp() or observed+interval '5 minutes'<=clock_timestamp() or c.id is not null and c.expires_at<=clock_timestamp() then return jsonb_build_object('kind','stale');end if;
+ if p_traffic is null then
+ observed:=recovery_private.time_v1(p_input->'report'->>'observedAt');if observed>clock_timestamp() or observed+interval '5 minutes'<=clock_timestamp() then return jsonb_build_object('kind','stale');end if;
  if p_input->'report'->>'kind'='high_risk_unwell' then return jsonb_build_object('kind','pending','reason','HIGH_RISK_UNWELL');end if;
+ else
+ if p_input->'scope'->>'tripId' is distinct from t.id::text or not exists(select 1 from public.trip_items where trip_id=t.id and owner_id=u and day_id=p_input->>'dayId' and item_id=p_input->'scope'->>'itemId') then return jsonb_build_object('kind','conflict');end if;
+ end if;
+ if c.id is not null and c.expires_at<=clock_timestamp() then return jsonb_build_object('kind','stale');end if;
  if exists(select 1 from jsonb_array_elements_text(p_input->'selectedItemIds')x where not exists(select 1 from public.trip_items i where i.trip_id=t.id and i.owner_id=u and i.day_id=p_input->>'dayId' and i.item_id=x))
  or exists(select 1 from jsonb_array_elements_text(p_input->'fixedItemIds')x where not exists(select 1 from public.trip_items i where i.trip_id=t.id and i.owner_id=u and i.item_id=x))
  or exists(select 1 from jsonb_array_elements(p_input->'selectedItemIds')x where p_input->'fixedItemIds' @> jsonb_build_array(x)) then return jsonb_build_object('kind','conflict');end if;
@@ -137,13 +177,26 @@ create function public.prepare_local_recovery_v1(p_trip_id uuid,p_input jsonb) r
  end loop;
  snap:=public.trip_content_snapshot(t.id,t.title);if pg_column_size(snap)>262144 then return jsonb_build_object('kind','pending','reason','RECOVERY_SCOPE_TOO_LARGE');end if;
  if c.id is not null then
- if c.profile_basis<>profile or c.reservation_basis<>orders->'items' or c.snapshot<>snap then return jsonb_build_object('kind','conflict');end if;return recovery_private.context_wire_v1(c);end if;
- insert into recovery_private.contexts_v1(owner_id,trip_id,operation_id,input,base_version,snapshot,profile_basis,reservation_basis,digest,expires_at)
- values(u,t.id,(p_input->>'operationId')::uuid,p_input,t.head_version,snap,profile,orders->'items',recovery_private.hash_v1(jsonb_build_array(u,t.id,p_input,t.head_version,snap,profile,orders->'items')),least(observed+interval '5 minutes',clock_timestamp()+interval '5 minutes')) returning * into c;
+ if c.profile_basis<>profile or c.reservation_basis<>orders->'items' or c.snapshot<>snap or c.traffic_basis is distinct from p_traffic then return jsonb_build_object('kind','conflict');end if;return recovery_private.context_wire_v1(c);end if;
+ insert into recovery_private.contexts_v1(owner_id,trip_id,operation_id,input,base_version,snapshot,profile_basis,reservation_basis,traffic_basis,digest,expires_at)
+ values(u,t.id,(p_input->>'operationId')::uuid,p_input,t.head_version,snap,profile,orders->'items',p_traffic,recovery_private.hash_v1(jsonb_build_array(u,t.id,p_input,t.head_version,snap,profile,orders->'items')||case when p_traffic is null then '[]'::jsonb else jsonb_build_array(p_traffic) end),least(case when p_traffic is null then observed+interval '5 minutes' else recovery_private.time_v1(p_traffic->>'expiresAt') end,clock_timestamp()+interval '5 minutes')) returning * into c;
  return recovery_private.context_wire_v1(c);
 exception when lock_not_available then return jsonb_build_object('kind','unavailable');end $$;
 
-create function public.submit_local_recovery_v1(p_trip_id uuid,p_input jsonb) returns jsonb language plpgsql security definer set search_path='' set timezone='UTC' as $$declare u uuid;t public.trips%rowtype;c recovery_private.contexts_v1%rowtype;o recovery_private.operations_v1%rowtype;profile jsonb;orders jsonb;patch jsonb;p uuid;rev integer;base integer;expiry timestamptz;receipt jsonb;dig text;begin
+create function public.prepare_local_recovery_v1(p_trip_id uuid,p_input jsonb) returns jsonb language plpgsql security definer set search_path='' set timezone='UTC' as $$begin
+ if p_trip_id is null or not recovery_private.valid_prepare_v1(p_input) then raise exception 'INVALID_INPUT';end if;
+ return recovery_private.prepare_context_v1(p_trip_id,p_input,null);
+end $$;
+create function public.prepare_transport_recovery_v1(p_trip_id uuid,p_input jsonb) returns jsonb language plpgsql security definer set search_path='' set timezone='UTC' as $$declare u uuid;t public.trips%rowtype;basis jsonb;begin
+ if p_trip_id is null or not recovery_private.valid_transport_v1(p_input) or p_input->'scope'->>'tripId' is distinct from p_trip_id::text then raise exception 'INVALID_INPUT';end if;
+ u:=recovery_private.actor_v1();t:=recovery_private.trip_v1(u,p_trip_id);if t.id is null then return jsonb_build_object('kind','unavailable');end if;
+ if t.head_version<>(p_input->>'expectedHeadVersion')::integer or exists(select 1 from recovery_private.contexts_v1 c where c.owner_id=u and c.operation_id=(p_input->>'operationId')::uuid and (c.trip_id<>t.id or c.input<>p_input)) then return jsonb_build_object('kind','conflict');end if;
+ basis:=recovery_private.transport_basis_v1((p_input->>'receiptId')::uuid,p_input->'scope');
+ if basis is null then return jsonb_build_object('kind','pending','reason','TRANSPORT_RECEIPT_UNAVAILABLE');end if;
+ return recovery_private.prepare_context_v1(p_trip_id,p_input,basis);
+exception when lock_not_available then return jsonb_build_object('kind','unavailable');end $$;
+
+create function public.submit_local_recovery_v1(p_trip_id uuid,p_input jsonb) returns jsonb language plpgsql security definer set search_path='' set timezone='UTC' as $$declare u uuid;t public.trips%rowtype;c recovery_private.contexts_v1%rowtype;o recovery_private.operations_v1%rowtype;profile jsonb;orders jsonb;patch jsonb;p uuid;rev integer;base integer;expiry timestamptz;receipt jsonb;dig text;traffic jsonb;begin
  if p_trip_id is null or not recovery_private.valid_select_v1(p_input) then raise exception 'INVALID_INPUT';end if;
  u:=recovery_private.actor_v1();t:=recovery_private.trip_v1(u,p_trip_id);if t.id is null then return jsonb_build_object('kind','unavailable');end if;
  select * into o from recovery_private.operations_v1 where owner_id=u and operation_id=(p_input->>'operationId')::uuid;
@@ -155,6 +208,10 @@ create function public.submit_local_recovery_v1(p_trip_id uuid,p_input jsonb) re
  if t.head_version<>c.base_version or public.trip_content_snapshot(t.id,t.title)<>c.snapshot then return jsonb_build_object('kind','conflict');end if;
  profile:=recovery_private.profile_v1(u);orders:=recovery_private.reservations_v1(u,t.id,t.head_version);if orders->>'kind' is distinct from 'basis' then return orders;end if;
  if profile<>c.profile_basis or orders->'items'<>c.reservation_basis then return jsonb_build_object('kind','conflict');end if;
+ if c.traffic_basis is not null then
+ traffic:=recovery_private.transport_basis_v1((c.traffic_basis->>'receiptId')::uuid,c.traffic_basis->'scope');
+ if traffic is distinct from c.traffic_basis then return jsonb_build_object('kind','pending','reason','TRANSPORT_RECEIPT_UNAVAILABLE');end if;
+ end if;
  patch:=recovery_private.patch_v1(c,p_input->>'candidateId');
  select proposal_id,revision,base_trip_version into p,rev,base from public.create_trip_proposal_patch(t.id,patch);
  expiry:=date_trunc('milliseconds',least(c.expires_at,clock_timestamp()+interval '30 seconds'));
@@ -179,7 +236,37 @@ create function recovery_private.proposal_guard_v1() returns trigger language pl
 end $$;
 create trigger recovery_proposal_guard before insert or update on public.trip_proposals for each row execute function recovery_private.proposal_guard_v1();
 
-create function recovery_private.confirm_guard_v1() returns trigger language plpgsql security definer set search_path='' set timezone='UTC' as $$declare p public.trip_proposals%rowtype;b recovery_private.lineage_v1%rowtype;c recovery_private.contexts_v1%rowtype;t public.trips%rowtype;profile jsonb;orders jsonb;dig text;o recovery_private.operations_v1%rowtype;begin
+-- Called only inside the original writer, before its first Trip/head/day/item mutation.
+create function recovery_private.actor_basis_v1() returns jsonb language sql stable security definer set search_path='' as $$
+ select jsonb_build_object('ownerId',s.user_id,'sessionId',s.id,'sessionCreatedAt',s.created_at,'epoch',a.epoch,'mobileSessionId',a.session_id)
+ from auth.sessions s join identity_private.mobile_accounts a on a.owner_id=s.user_id
+ where s.user_id=auth.uid() and s.id=(auth.jwt()->>'session_id')::uuid
+$$;
+-- Unlike the initial qualifier this rechecks raw source tuples without depending
+-- on the old Trip head/items, which this legitimate writer has already replaced.
+create function recovery_private.transport_proof_current_v1(b jsonb) returns boolean language plpgsql security definer set search_path='' as $$declare ok boolean;begin
+ if to_regprocedure('traffic_private.validate_recovery_proof_v1(uuid,jsonb,uuid,bigint,bigint,jsonb)') is null then return false;end if;
+ execute 'select traffic_private.validate_recovery_proof_v1($1,$2,$3,$4,$5,$6)' into ok using (b->>'receiptId')::uuid,b->'scope',(b->>'policyId')::uuid,(b->>'policyRevision')::bigint,(b->>'stopEpoch')::bigint,b->'proofBasis';
+ return ok is true;
+exception when lock_not_available then return false;end $$;
+create function recovery_private.prewrite_transport_v1(p_proposal uuid,p_digest text) returns void language plpgsql security definer set search_path='' set timezone='UTC' as $$declare p public.trip_proposals%rowtype;b recovery_private.lineage_v1%rowtype;c recovery_private.contexts_v1%rowtype;o recovery_private.operations_v1%rowtype;basis jsonb;dig text;begin
+ select * into p from public.trip_proposals where id=p_proposal;
+ if not p.local_recovery then return;end if;
+ select l.* into b from recovery_private.lineage_v1 l where l.proposal_id=p.id;
+ select x.* into c from recovery_private.contexts_v1 x where x.id=b.context_id;
+ if c.traffic_basis is null then return;end if; -- R1 has no traffic dependency.
+ select * into o from recovery_private.operations_v1 where owner_id=b.owner_id and operation_id=b.operation_id;
+ select digest into dig from public.read_trip_proposal_v2(p.id);
+ if p.owner_id is distinct from auth.uid() or p.owner_id<>b.owner_id or p.trip_id<>b.trip_id or p.parent_proposal_id is not null or o.proposal_id is distinct from p.id
+ or dig is distinct from p_digest or dig is distinct from b.proposal_digest or p.status<>'pending' or p.base_trip_version<>c.base_version
+ or p.expires_at<=clock_timestamp() or c.expires_at<=clock_timestamp() or p.patch<>b.patch then raise exception 'RECOVERY_TRANSPORT_GUARD';end if;
+ basis:=recovery_private.transport_basis_v1((c.traffic_basis->>'receiptId')::uuid,c.traffic_basis->'scope');
+ if basis is null or basis is distinct from c.traffic_basis then raise exception 'RECOVERY_TRANSPORT_GUARD';end if;
+ insert into recovery_private.transport_proofs_v1(transaction_id,proposal_id,owner_id,trip_id,context_id,root_proposal_id,proposal_digest,proposal_revision,base_version,actor_basis,traffic_basis,checked_at,expires_at)
+ values(pg_current_xact_id(),p.id,b.owner_id,b.trip_id,c.id,o.proposal_id,dig,p.revision,p.base_trip_version,recovery_private.actor_basis_v1(),basis,clock_timestamp(),least(p.expires_at,c.expires_at,recovery_private.time_v1(basis->>'expiresAt')));
+end $$;
+
+create function recovery_private.confirm_guard_v1() returns trigger language plpgsql security definer set search_path='' set timezone='UTC' as $$declare p public.trip_proposals%rowtype;b recovery_private.lineage_v1%rowtype;c recovery_private.contexts_v1%rowtype;t public.trips%rowtype;profile jsonb;orders jsonb;dig text;o recovery_private.operations_v1%rowtype;proof recovery_private.transport_proofs_v1%rowtype;begin
  select * into p from public.trip_proposals where id=NEW.proposal_id;
  if not p.local_recovery then return null;end if;
  select * into b from recovery_private.lineage_v1 where proposal_id=p.id;
@@ -192,6 +279,11 @@ create function recovery_private.confirm_guard_v1() returns trigger language plp
  or p.base_trip_version<>c.base_version or NEW.resulting_version<>c.base_version+1 or t.head_version<>NEW.resulting_version or p.status<>'applied' or p.rollback_snapshot_version is not null
  or p.expires_at<=clock_timestamp() or c.expires_at<=clock_timestamp() or p.expires_at>c.expires_at or p.expires_at is distinct from (o.receipt->>'expiresAt')::timestamptz
  or b.patch<>recovery_private.patch_v1(c,o.input->>'candidateId') or public.trip_content_snapshot(t.id,t.title)<>public.apply_trip_content_patch(c.snapshot,b.patch) then raise exception 'RECOVERY_CONFIRM_GUARD';end if;
+ if c.traffic_basis is not null then
+ select * into proof from recovery_private.transport_proofs_v1 where transaction_id=pg_current_xact_id() and proposal_id=p.id;
+ if not found or proof.root_proposal_id is distinct from o.proposal_id or proof.owner_id<>b.owner_id or proof.trip_id<>b.trip_id or proof.context_id<>c.id or proof.proposal_digest is distinct from dig or proof.proposal_revision<>p.revision or proof.base_version<>p.base_trip_version or proof.actor_basis is distinct from recovery_private.actor_basis_v1() or proof.traffic_basis is distinct from c.traffic_basis or proof.checked_at>clock_timestamp() or proof.expires_at<=clock_timestamp() or not recovery_private.transport_proof_current_v1(proof.traffic_basis) then raise exception 'RECOVERY_TRANSPORT_GUARD';end if;
+ delete from recovery_private.transport_proofs_v1 where transaction_id=proof.transaction_id and proposal_id=proof.proposal_id;
+ end if;
  profile:=recovery_private.profile_v1(b.owner_id);orders:=recovery_private.reservations_v1(b.owner_id,b.trip_id,NEW.resulting_version);
  if profile<>c.profile_basis or orders->>'kind' is distinct from 'basis' or orders->'items' is distinct from c.reservation_basis then raise exception 'RECOVERY_CONFIRM_GUARD';end if;
  return null;
@@ -208,6 +300,7 @@ create function public.read_local_recovery_operation_v1(p_trip_id uuid,p_operati
  select * into p from public.trip_proposals where id=o.proposal_id;
  select * into c from recovery_private.contexts_v1 where id=o.context_id;
  state:=case when p.status='rejected' then 'rejected' when p.expires_at<=clock_timestamp() or c.expires_at<=clock_timestamp() or p.status='expired' then 'expired' when p.status<>'pending' or t.head_version<>p.base_trip_version then 'stale' else 'pending' end;
+ if state='pending' and c.traffic_basis is not null and recovery_private.transport_basis_v1((c.traffic_basis->>'receiptId')::uuid,c.traffic_basis->'scope') is distinct from c.traffic_basis then state:='stale';end if;
  if state='pending' then profile:=recovery_private.profile_v1(u);orders:=recovery_private.reservations_v1(u,t.id,t.head_version);if profile<>c.profile_basis or orders->>'kind' is distinct from 'basis' or orders->'items' is distinct from c.reservation_basis then state:='stale';end if;end if;
  end if;
  return jsonb_build_object('kind','local_recovery_operation/1','operationId',o.operation_id,'tripId',o.trip_id,'input',o.input,'receipt',o.receipt||'{"reused":true}','state',state,'resultingVersion',version);
@@ -232,6 +325,19 @@ create function recovery_private.export_metadata_v1(p_request_id uuid,p_lease_id
  return jsonb_build_object('schemaVersion','recovery-export/1','items',items,'hasMore',more,'nextCursor',case when more then cursor else null end,'sectionComplete',not more,'enrolled',false,'inventoryStatus','partial');
 exception when lock_not_available then return jsonb_build_object('kind','unavailable');end $$;
 
+-- Fail closed if the actual writer changed. No old migration or second writer.
+-- The only inserted instruction is proven byte-identical when removed again.
+do $hook$declare f record;anchor text:='  update public.trips set title = next_title, head_version = next_version, updated_at = now() where id = trip.id and head_version = proposal.base_trip_version;';hook text:='  PERFORM recovery_private.prewrite_transport_v1(proposal.id,expected_digest);'||chr(10);changed text;begin
+ select p.prosrc,pg_get_functiondef(p.oid) definition,p.proacl,p.prosecdef into f from pg_proc p where p.oid='public.confirm_and_apply_trip_proposal(uuid,text,text)'::regprocedure;
+ if not f.prosecdef or (length(f.prosrc)-length(replace(f.prosrc,anchor,'')))/length(anchor)<>1 or position('recovery_private.prewrite_transport_v1' in f.prosrc)>0
+ or position('delete from public.trip_days' in f.prosrc)<position(anchor in f.prosrc) or position('insert into public.trip_items' in f.prosrc)<position(anchor in f.prosrc) then raise exception 'RECOVERY_WRITER_HOOK_DRIFT';end if;
+ changed:=replace(f.definition,anchor,hook||anchor);
+ if replace(changed,hook,'') is distinct from f.definition then raise exception 'RECOVERY_WRITER_HOOK_DRIFT';end if;
+ execute changed;
+ if (select p.proacl from pg_proc p where p.oid='public.confirm_and_apply_trip_proposal(uuid,text,text)'::regprocedure) is distinct from f.proacl
+ or (select replace(p.prosrc,hook,'') from pg_proc p where p.oid='public.confirm_and_apply_trip_proposal(uuid,text,text)'::regprocedure) is distinct from f.prosrc then raise exception 'RECOVERY_WRITER_HOOK_DRIFT';end if;
+end $hook$;
+
 revoke all on all functions in schema recovery_private from public,anon,authenticated,service_role;
-revoke all on function public.prepare_local_recovery_v1(uuid,jsonb),public.submit_local_recovery_v1(uuid,jsonb),public.read_local_recovery_operation_v1(uuid,uuid) from public,anon,authenticated,service_role;
+revoke all on function public.prepare_local_recovery_v1(uuid,jsonb),public.prepare_transport_recovery_v1(uuid,jsonb),public.submit_local_recovery_v1(uuid,jsonb),public.read_local_recovery_operation_v1(uuid,uuid) from public,anon,authenticated,service_role;
 notify pgrst,'reload schema';

@@ -104,6 +104,69 @@ original-confirm single event and concurrent replay, transaction rollback, lifec
 and default ACL; exact lease export. Integration registry remains Main-owned.
 This package is integrated into the single complete #220 result; no micro PR.
 
+## R2 exact transport branch and source proof
+
+`public.prepare_transport_recovery_v1(p_trip_id uuid,p_input jsonb) returns jsonb`
+takes exactly `{operationId,expectedHeadVersion,dayId,selectedItemIds,fixedItemIds,
+reservationBindings,receiptId,scope,locale}`. Scope exactly matches #366:
+`{tripId,expectedHeadVersion,dayId,itemId,originPlaceReferenceId,
+destinationPlaceReferenceId,mode:"walking"|"transit"|"driving",departure:"now"}`.
+Top head/day equal scope head/day, scope Trip equals path, and all item selections
+are actual current owner/day items. Reference IDs and mode must match the original
+SQL-owned receipt. Same owner/operation namespace is shared with R1; changed type
+or body conflicts. No caller policy/stop/source/hash or arbitrary proof is accepted.
+
+SQL invokes installed `read_foreground_traffic_v1(receiptId,scope)` and derives
+policy/revision/stop from that actual immutable receipt; it then calls the private
+`traffic_private.qualify_recovery_v1(uuid,jsonb,uuid,bigint,bigint)`. Both a current
+`r2Qualified:true` and a route_estimate_changed/route_condition_changed receipt are
+required. Qualification additionally returns server-only `proofBasis:object`.
+Missing reader/qualifier/deferred callback or qualification returns pending
+TRANSPORT_RECEIPT_UNAVAILABLE, no context/proposal/provider call. No process-memory
+receipt, caller intent or local fingerprint becomes provider origin qualification.
+
+Success uses the same closed local_recovery_context/1 keys with `input` a closed
+UserReportInput | TransportInput union. No report is synthesized. R2 context expiry
+is min(original qualified source deadline, server+5min), replay requalifies the same
+source and does not renew. Selected proposal expiry remains min(context,30sec).
+Selection and exact original operation receipt DTOs are unchanged. The public
+TS/Native preview branch uses `report:null`,
+`sourceSemantics:"qualified_foreground_transport"`, and
+`transportReference:{receiptId,scope}` solely to locate the original Maps read.
+That reader supplies actual fetchedAt/source/tier; route estimates are never
+arrival, closure or supplier cancellation claims. R1 wire remains unchanged;
+legacy flat transport input may only return pending compatibility behavior.
+
+The original writer's current definition is
+20260910002858_vpj_05_confirm_intent_authority.sql. `next_content` on line57 is
+memory JSON. Before its FIRST mutation on line60 (`update public.trips ...`),
+030000 inserts exactly
+`PERFORM recovery_private.prewrite_transport_v1(proposal.id,expected_digest);`.
+The additive migration loads the actual function definition, requires one exact
+anchor before day/item changes, and proves removing only this instruction restores
+the original body bytes and ACL. Drift aborts migration. The supported-confirm
+wrapper calls this same original function; Web/Native/direct legacy confirms all
+pass it. No separate Trip/head trigger or second writer. Ordinary and R1 return
+without a traffic dependency; already_applied exact same-key return stays before
+this hook and produces no new write/source request.
+
+Prewrite qualifies against old head/address ItemSupport BEFORE ANY Trip mutation,
+holding source/owner/session/epoch/policy/stop/reference/mapping/support locks until
+commit. It alone inserts a private proof with current transaction ID, actual actor
+and session/account epoch, exact root proposal/revision/base/digest/context,
+SQL-produced traffic tuple/proofBasis, checkedAt and min(all actual deadlines).
+Default revoked private schema/EXECUTE/table/RLS prevent client proof minting; no
+GUC or public proof RPC. The original deferred event guard requires exact proof,
+current actor tuple and confirmation-time clock. It calls the private
+`traffic_private.validate_recovery_proof_v1(receipt,scope,policyId,policyRevision,
+stopEpoch,proofBasis) returns boolean` to recheck raw receipt/policy/source/stop/
+reference/member/support-source tuples including same-transaction changes. This
+callback must ignore the legitimate new Trip head/derived item state; it does not
+reuse the old-head qualifier after mutation. Absent/NULL/false rejects and rolls
+back the entire original writer. Successful deferred validation removes the proof.
+Private proof rows also cascade on original lifecycle cleanup. UI/export never
+receive proofBasis or actor/session proof data.
+
 ## Observed local evidence, 2026-10-04
 
 At main `8d30d0ba`, #646 is still unmerged. Disposable network-none PostgreSQL:

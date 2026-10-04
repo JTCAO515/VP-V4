@@ -19,13 +19,21 @@ before(async()=>{
  for(let n=0;n<100;n++){if((await command('docker',['exec',container,'pg_isready','-h','/tmp/vpj59-socket','-U','postgres'])).code===0)break;await new Promise(r=>setTimeout(r,100));}
  await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));
  await db("create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;create schema extensions;create extension pgcrypto with schema extensions;");
+ let writer;
  for(const f of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort()){
   const source=readFileSync('supabase/migrations/'+f,'utf8');
   if(f==='20261004030000_local_recovery_guard.sql'){
+   writer=JSON.parse(await db("select jsonb_build_object('body',p.prosrc,'acl',to_jsonb(p.proacl)) from pg_proc p where p.oid='public.confirm_and_apply_trip_proposal(uuid,text,text)'::regprocedure;"));
    await db('begin;'+source+'rollback;');
    assert.equal(await db("select to_regclass('recovery_private.contexts_v1') is null and not exists(select 1 from information_schema.columns where table_schema='public' and table_name='trip_proposals' and column_name='local_recovery');"),'t');
+   const restored=JSON.parse(await db("select jsonb_build_object('body',p.prosrc,'acl',to_jsonb(p.proacl)) from pg_proc p where p.oid='public.confirm_and_apply_trip_proposal(uuid,text,text)'::regprocedure;"));assert.deepEqual(restored,writer);
   }
   await db('begin;'+source+'commit;');
+  if(f==='20261004030000_local_recovery_guard.sql'){
+   const hooked=JSON.parse(await db("select jsonb_build_object('body',p.prosrc,'acl',to_jsonb(p.proacl)) from pg_proc p where p.oid='public.confirm_and_apply_trip_proposal(uuid,text,text)'::regprocedure;"));
+   const hook='  PERFORM recovery_private.prewrite_transport_v1(proposal.id,expected_digest);\n';assert.equal(hooked.body.split(hook).length,2);assert.deepEqual({...hooked,body:hooked.body.replace(hook,'')},writer);
+   assert.ok(hooked.body.indexOf(hook)<hooked.body.indexOf('update public.trips'));
+  }
  }
 });
 after(async()=>{if(created)assert.equal((await command('docker',['rm','-f',container])).code,0);});
@@ -60,7 +68,7 @@ async function lifecycleSeed(){
  return {...f,context,operation,proposal:p};
 }
 run('full migration compile and default revoked ACL/RLS; ordinary original writer unchanged',async()=>{
- const acl=await db("select count(*) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where (n.nspname='recovery_private' or p.proname in('prepare_local_recovery_v1','submit_local_recovery_v1','read_local_recovery_operation_v1')) and (has_function_privilege('anon',p.oid,'EXECUTE') or has_function_privilege('authenticated',p.oid,'EXECUTE') or has_function_privilege('service_role',p.oid,'EXECUTE'));" );assert.equal(acl,'0');
+ const acl=await db("select count(*) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where (n.nspname='recovery_private' or p.proname in('prepare_local_recovery_v1','prepare_transport_recovery_v1','submit_local_recovery_v1','read_local_recovery_operation_v1')) and (has_function_privilege('anon',p.oid,'EXECUTE') or has_function_privilege('authenticated',p.oid,'EXECUTE') or has_function_privilege('service_role',p.oid,'EXECUTE'));" );assert.equal(acl,'0');
  assert.equal(await db("select bool_and(relrowsecurity) from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='recovery_private' and relkind='r';"),'t');
  const f=await fixture();assert.equal(await db(`select head_version from public.trips where id='${f.trip}';`),'1');
 });
@@ -84,6 +92,15 @@ run('permanent recovery marker without association rejects direct original confi
  await failure(f.a,'confirm_and_apply_trip_proposal',{p_proposal_id:r.proposal_id,p_idempotency_key:uuid(),p_digest:read.digest},/RECOVERY_CONFIRM_GUARD/);
  await failure(f.a,'revise_trip_proposal_patch',{p_proposal_id:r.proposal_id,p_patch:read.proposal.patch},/RECOVERY_REVISION_SCOPE/);
  assert.equal(await fingerprint(f),before);assert.equal(await db(`select status from public.trip_proposals where id='${r.proposal_id}';`),'pending');
+});
+run('transport closed source input never fabricates user report; absent real reader/proof callback leaves no context',async()=>{
+ const f=await fixture(),before=await fingerprint(f),input={operationId:uuid(),expectedHeadVersion:1,dayId:'DayA',selectedItemIds:['OptionalA'],fixedItemIds:['FixedDinner'],reservationBindings:[],receiptId:uuid(),scope:{tripId:f.trip,expectedHeadVersion:1,dayId:'DayA',itemId:'OptionalA',originPlaceReferenceId:uuid(),destinationPlaceReferenceId:uuid(),mode:'walking',departure:'now'},locale:'zh'};
+ for(const delta of [{policyId:uuid()},{proofBasis:{}},{report:f.input.report},{scope:{...input.scope,dayId:'Wrong'}},{scope:{...input.scope,departure:'tomorrow'}},{scope:{...input.scope,tripId:uuid()}}])await failure(f.a,'prepare_transport_recovery_v1',{p_trip_id:f.trip,p_input:{...input,...delta}},/INVALID_INPUT/);
+ assert.deepEqual(await rpc(f.a,'prepare_transport_recovery_v1',{p_trip_id:f.trip,p_input:input}),{kind:'pending',reason:'TRANSPORT_RECEIPT_UNAVAILABLE'});
+ assert.equal(await db(`select count(*) from recovery_private.contexts_v1 where owner_id='${f.a.id}';`),'0');assert.equal(await fingerprint(f),before);
+ const seeded=await lifecycleSeed();assert.equal((await rpc(seeded.a,'prepare_transport_recovery_v1',{p_trip_id:seeded.trip,p_input:{...input,operationId:seeded.input.operationId,scope:{...input.scope,tripId:seeded.trip}}})).kind,'conflict');
+ const noProof=await sql(container,"set role authenticated;select recovery_private.prewrite_transport_v1('00000000-0000-0000-0000-000000000000','arbitrary');");assert.notEqual(noProof.code,0);assert.match(noProof.stderr,/permission denied/);
+ assert.equal(await db("select count(*) from recovery_private.transport_proofs_v1;"),'0');
 });
 run('server context exact replay/current Profile; same operation changed body conflicts',async()=>{
  const f=await fixture(),c=await prepared(f);assert.deepEqual(await prepared(f),c);
