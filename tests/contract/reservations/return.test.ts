@@ -34,3 +34,26 @@ test("uncertain write never manufactures a receipt; cancelled and unknown report
  await assert.rejects(confirmReservationReference(trip,input,async()=>({data:{...row,referenceId:trip},error:null})),/RESERVATION_RECEIPT_UNKNOWN/);
  for(const status of ["cancelled","unknown"] as const){const constraint=reservationPlanningConstraint({...row,fields:{...row.fields,status}});assert.equal(constraint.applies,false);assert.equal(constraint.supplierVerified,false);assert.equal(constraint.tripMutation,"none");}
 });
+
+import {parseReservationConfirmation,parseReservationOperation,parseReservationPage} from "../../../lib/server/reservations/receipt.ts";
+test("ACK is bound to exact full frozen command and resulting revision; superseded op has no old fields",()=>{
+ const ack={kind:"reservation_confirmation/1",operationId:input.operationId,tripId:trip,referenceId:reference,resultRevision:1,commandDigest:"c".repeat(64),command:input,receipt:row};
+ assert.ok(parseReservationConfirmation(ack,trip,input));
+ assert.equal(parseReservationConfirmation({...ack,command:{...input,fields:{...input.fields,title:"Other"}}},trip,input),null);
+ assert.equal(parseReservationConfirmation({...ack,resultRevision:2},trip,input),null);
+ const current={...row,revision:2,fields:{...row.fields,status:"cancelled" as const}};
+ const superseded={kind:"reservation_operation/1",operationId:input.operationId,tripId:trip,referenceId:reference,appliedRevision:1,currentRevision:2,commandDigest:"c".repeat(64),command:null,result:"superseded",receipt:null,current,tripMutation:"none"};
+ assert.ok(parseReservationOperation(superseded,trip,input.operationId,input));
+ assert.equal(parseReservationOperation({...superseded,receipt:row},trip,input.operationId,input),null);
+ const applied={...superseded,result:"applied",currentRevision:1,current:row,command:input,receipt:row};
+ assert.ok(parseReservationOperation(applied,trip,input.operationId,input));
+ assert.equal(parseReservationOperation({...applied,operationId:reference},trip,input.operationId,input),null);
+});
+test("list current scope and exact UUID cursor never silently restarts or conflates references",()=>{
+ const page={kind:"reservation_references/1",tripId:trip,tripVersion:1,items:[row],hasMore:false,nextCursor:null};
+ assert.ok(parseReservationPage(page,trip,1,null,20));
+ assert.equal(parseReservationPage(page,trip,2,null,20),null);
+ assert.equal(parseReservationPage({...page,items:[row,row]},trip,1,null,20),null);
+ assert.equal(parseReservationPage({...page,hasMore:true,nextCursor:reference},trip,1,null,20),null);
+ assert.equal(parseReservationPage(page,trip,1,reference,20),null);
+});
