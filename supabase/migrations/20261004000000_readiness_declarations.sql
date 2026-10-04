@@ -74,6 +74,7 @@ begin
  perform 1 from public.turns where id=any(array[s.goal_turn_id,s.last_turn_id]) and owner_id=u order by id for share nowait;
  perform 1 from turn_private.text_content where turn_id=any(array[s.goal_turn_id,s.last_turn_id]) and owner_id=u order by turn_id for share nowait;
  perform 1 from turn_private.assistant_messages where id=m.id for share nowait;
+ perform 1 from turn_private.text_policies where id in (c.policy_id,s.policy_id) order by id for share nowait;
  perform 1 from turn_private.text_consents where owner_id=u and policy_id in (c.policy_id,s.policy_id) order by policy_id for share nowait;
  member:=turn_private.assistant_task_member_v1(u,c.id,m.id);if member is null or member->'turn'->>'status' in ('cancelled','failed','unavailable') then return null;end if;
  if exists(select 1 from public.trip_days where trip_id=trip and owner_id<>u) then return null;end if;
