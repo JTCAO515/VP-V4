@@ -1,7 +1,7 @@
 import {parseResultArtifactReadV2} from "../artifacts/result-v2-contract.ts";
 import {validJourneysGoalIndexPage} from "../turn/native-journeys-goal-index-http.ts";
 import {record} from "./contract.ts";
-import {parseReadinessDeclarationRead} from "./declarations-contract.ts";
+import {parseReadinessDeclarationRead,type ReadinessTaskBasis} from "./declarations-contract.ts";
 import type {ReadinessRPC} from "./actions-service.ts";
 import {isUuid} from "../identity/request-guards.ts";
 export type ReadinessTaskOption={taskId:string;tripVersion:number;goalId:string;goalVersion:number;conversationId:string;label:string};
@@ -22,19 +22,26 @@ export async function selectReadinessTasks(tripId:string,policyId:string|null,rp
   return {kind:"readiness_task_reference/1",taskId:verified.basis.taskId,tripId,tripVersion:verified.basis.tripVersion,artifactId:artifact.artifactId,artifactRevision:artifact.revision};
  }
  if(!record(ref)||ref.kind!=="empty"||!policyId)return {kind:"unavailable"};
+ const qualifiedBases=new Map<string,ReadinessTaskBasis>(),conversationSequences=new Map<string,number>();
  const options:ReadinessTaskOption[]=[],seen=new Set<string>();let cursor:unknown=null,snapshot:string|null=null,complete=false;
  for(let page=0;page<5;page++){
   const goals=await call("read_journeys_goal_index_v1",{p_policy_id:policyId,p_cursor:cursor});
   if(!validJourneysGoalIndexPage(goals)||!record(goals)||!Array.isArray(goals.goals))return {kind:"unavailable"};
   if(snapshot!==null&&snapshot!==goals.snapshot)return {kind:"unavailable"};snapshot=goals.snapshot as string;
   for(const goal of goals.goals){
-   if(!record(goal)||!record(goal.relation)||goal.relation.state!=="linked"||goal.relation.tripId!==tripId)continue;
+   if(!record(goal)||!record(goal.relation)||goal.relation.state==="unlinked"
+    ||(goal.relation.state==="linked"&&goal.relation.tripId!==tripId))continue;
+   // A date change intentionally makes the old Journeys link projection unknown.
+   // Visible goal/member IDs are discovery only; the ledger must independently
+   // prove the existing confirmed link and the current Trip head for every option.
    let taskCursor:unknown=null,sequence:unknown=null,taskComplete=false;const taskSeen=new Set<string>();
    for(let taskPage=0;taskPage<5;taskPage++){
     const tasks=await call("list_assistant_conversation_tasks_v1",{p_policy_id:policyId,p_conversation_id:goal.conversationId,p_cursor:taskCursor});
     if(!record(tasks)||tasks.kind!=="conversation_tasks"||tasks.conversationId!==goal.conversationId||!Array.isArray(tasks.messages)||tasks.messages.length>20
-     ||!Array.isArray(tasks.turns)||tasks.turns.length!==tasks.messages.length)return {kind:"unavailable"};
+     ||!Array.isArray(tasks.turns)||tasks.turns.length!==tasks.messages.length||!Number.isSafeInteger(tasks.conversationSequence))return {kind:"unavailable"};
     if(sequence!==null&&sequence!==tasks.conversationSequence)return {kind:"unavailable"};sequence=tasks.conversationSequence;
+    if(conversationSequences.has(String(goal.conversationId))&&conversationSequences.get(String(goal.conversationId))!==sequence)return {kind:"unavailable"};
+    conversationSequences.set(String(goal.conversationId),sequence as number);
     for(const message of tasks.messages){
      if(!record(message)||typeof message.taskId!=="string"||!isUuid(message.taskId)||taskSeen.has(message.taskId))return {kind:"unavailable"};
      taskSeen.add(message.taskId);
@@ -44,6 +51,7 @@ export async function selectReadinessTasks(tripId:string,policyId:string|null,rp
      const verified=await current(message.taskId);
      if(!verified||verified.basis.tripId!==tripId||verified.basis.goalId!==goal.goalId||verified.basis.goalVersion!==goal.scopeVersion
       ||verified.basis.conversationId!==goal.conversationId)continue;
+     qualifiedBases.set(message.taskId,verified.basis);
      seen.add(message.taskId);options.push({taskId:message.taskId,tripVersion:verified.basis.tripVersion,goalId:verified.basis.goalId,goalVersion:verified.basis.goalVersion,
       conversationId:verified.basis.conversationId,label:String(goal.text)});
      if(options.length>20)return {kind:"unavailable"};
@@ -58,9 +66,14 @@ export async function selectReadinessTasks(tripId:string,policyId:string|null,rp
  if(!complete)return {kind:"unavailable"};
  const finalGoals=await call("read_journeys_goal_index_v1",{p_policy_id:policyId,p_cursor:null});
  if(!record(finalGoals)||finalGoals.snapshot!==snapshot)return {kind:"unavailable"};
+ for(const [conversationId,sequence] of conversationSequences){
+  const final=await call("list_assistant_conversation_tasks_v1",{p_policy_id:policyId,p_conversation_id:conversationId,p_cursor:null});
+  if(!record(final)||final.kind!=="conversation_tasks"||final.conversationId!==conversationId||final.conversationSequence!==sequence)return {kind:"unavailable"};
+ }
  for(const option of options){
   const verified=await current(option.taskId);
-  if(!verified||verified.basis.tripId!==tripId||verified.basis.tripVersion!==option.tripVersion||verified.basis.goalId!==option.goalId
+  if(!verified||Object.entries(qualifiedBases.get(option.taskId)!).some(([key,value])=>(verified.basis as unknown as Record<string,unknown>)[key]!==value)
+   ||verified.basis.tripId!==tripId||verified.basis.tripVersion!==option.tripVersion||verified.basis.goalId!==option.goalId
    ||verified.basis.goalVersion!==option.goalVersion||verified.basis.conversationId!==option.conversationId)return {kind:"unavailable"};
  }
  return {kind:"readiness_task_options/1",tripId,options:options.sort((a,b)=>a.taskId.localeCompare(b.taskId))};

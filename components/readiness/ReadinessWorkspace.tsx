@@ -9,6 +9,7 @@ import styles from "./readiness.module.css";
 const ProposalReview=dynamic(()=>import("./ReadinessProposalReview").then(module=>module.ReadinessProposalReview));
 type Answer="unknown"|"yes"|"no";
 type TaskReference={taskId:string;tripVersion:number};
+type TaskOption=TaskReference&{goalId:string;goalVersion:number;conversationId:string;label:string};
 const object=(v:unknown):v is Record<string,unknown>=>v!==null&&typeof v==="object"&&!Array.isArray(v);
 const uuid=(v:unknown):v is string=>typeof v==="string"&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(v);
 function assessment(v:unknown,task:TaskReference,tripId:string):ReadinessAssessment{
@@ -27,6 +28,7 @@ export function ReadinessWorkspace({tripId}:{tripId:string}){
  const [subjectId,setSubjectId]=useState<string|null>(null),[subjects,setSubjects]=useState<{id:string;label:string}[]>([]);
  const [applies,setApplies]=useState<Answer>("unknown"),[resourcesReady,setResourcesReady]=useState<Answer>("unknown"),[conditionsChecked,setConditionsChecked]=useState<Answer>("unknown");
  const [checkAt,setCheckAt]=useState("unknown"),[selectedTime,setSelectedTime]=useState("");
+ const [taskOptions,setTaskOptions]=useState<TaskOption[]>([]),[selectedTask,setSelectedTask]=useState("");
  const [task,setTask]=useState<TaskReference|null>(null),[snapshot,setSnapshot]=useState<ReadinessAssessment|null>(null),[result,setResult]=useState<ReadinessAssessment|null>(null);
  const [actionResult,setActionResult]=useState<ReadinessActionResult|null>(null),[busy,setBusy]=useState(false),[notice,setNotice]=useState<string|null>(null);
  const request=useRef<AbortController|null>(null),expiry=useRef<ReturnType<typeof setTimeout>|null>(null),retry=useRef<string|null>(null);
@@ -49,7 +51,7 @@ export function ReadinessWorkspace({tripId}:{tripId:string}){
   if(expiry.current)clearTimeout(expiry.current);expiry.current=setTimeout(()=>{setResult(null);setActionResult(null);setNotice("expired");},Math.max(0,Date.parse(value.expiresAt)-Date.now()));
  }
  async function refresh(){
-  stop();setSnapshot(null);resetReport();retry.current=null;setNotice(null);
+  stop();setTask(null);setTaskOptions([]);setSelectedTask("");setSnapshot(null);resetReport();retry.current=null;setNotice(null);
   const controller=new AbortController();request.current=controller;setBusy(true);
   try{
    let target:TaskReference;
@@ -60,12 +62,19 @@ export function ReadinessWorkspace({tripId}:{tripId:string}){
     target={taskId:savedTask,tripVersion:value.trip.headVersion as number};
    }else{
     const value=await json("/api/trips/"+tripId+"/readiness/task",controller);
+    if(object(value)&&value.kind==="readiness_task_options/1"&&value.tripId===tripId&&Array.isArray(value.options)&&value.options.length<=20){
+     const actual=value.options.filter((o):o is TaskOption=>object(o)&&uuid(o.taskId)&&uuid(o.goalId)&&uuid(o.conversationId)&&Number.isSafeInteger(o.tripVersion)
+      &&Number(o.tripVersion)>=0&&Number.isSafeInteger(o.goalVersion)&&Number(o.goalVersion)>0&&typeof o.label==="string"&&o.label.length<=4000);
+     if(actual.length!==value.options.length||new Set(actual.map(o=>o.taskId)).size!==actual.length)throw Error("TASK_UNAVAILABLE");
+     if(controller.signal.aborted||request.current!==controller)return;
+     setTask(null);setTaskOptions(actual);setSelectedTask("");setNotice(actual.length?"chooseTask":"TASK_UNAVAILABLE");return;
+    }
     if(!object(value)||value.kind!=="readiness_task_reference/1"||!uuid(value.taskId)||value.tripId!==tripId||!Number.isSafeInteger(value.tripVersion))throw Error("TASK_UNAVAILABLE");
     target={taskId:value.taskId,tripVersion:value.tripVersion as number};
    }
    const value=assessment(await json("/api/trips/"+tripId+"/readiness/actions",controller,JSON.stringify({...common(target),operation:"read"})),target,tripId);
    if(controller.signal.aborted||request.current!==controller)return;
-   setTask(target);accept(value);
+   setTaskOptions([]);setSelectedTask("");setTask(target);accept(value);
    const url=new URL(window.location.href);url.searchParams.set("readinessTask",target.taskId);window.history.replaceState(window.history.state,"",url);
    if(value.declarationState==="stale")setNotice("changed");
   }catch(error){if(controller.signal.aborted||request.current!==controller)return;setTask(null);setSnapshot(null);resetReport();setNotice(error instanceof Error?error.message:"READINESS_UNAVAILABLE");}
@@ -124,6 +133,7 @@ export function ReadinessWorkspace({tripId}:{tripId:string}){
    {needsPlace?<label>{t("Choose an actual reviewed knowledge entity","选择实际已审核知识实体")}<select value={subjectId??""} onChange={e=>setSubjectId(e.target.value||null)}><option value="">{t("No qualified entity selected","尚未选择合格实体")}</option>{subjects.map(s=><option key={s.id} value={s.id}>{s.label}</option>)}</select></label>:null}
    <button disabled={busy} onClick={()=>void refresh()}>{t("Reload current scope and evidence","重新读取当前作用域与依据")}</button>
    <button disabled={busy} onClick={()=>{const url=new URL(window.location.href);url.searchParams.delete("readinessTask");window.history.replaceState(window.history.state,"",url);void refresh();}}>{t("Choose the current linked result task again","重新选择当前关联结果的任务")}</button>
+   {taskOptions.length?<><label>{t("Select an authorized linked task","选择已获准的关联任务")}<select value={selectedTask} onChange={e=>setSelectedTask(e.target.value)}><option value="">{t("Choose explicitly","请明确选择")}</option>{taskOptions.map(option=><option key={option.taskId} value={option.taskId}>{option.label.slice(0,120)} · {option.taskId}</option>)}</select></label><button disabled={busy||!taskOptions.some(o=>o.taskId===selectedTask)} onClick={()=>{const chosen=taskOptions.find(o=>o.taskId===selectedTask);if(!chosen)return;const url=new URL(window.location.href);url.searchParams.set("readinessTask",chosen.taskId);window.history.replaceState(window.history.state,"",url);void refresh();}}>{t("Use this task and reread its current basis","采用此任务并重读当前依据")}</button></>:null}
    {task?<details><summary>{t("Linked task reference","关联任务引用")}</summary><p>{task.taskId}</p></details>:<p>{t("No currently authorized linked task. Continue the existing assistant goal first; no new task is fabricated.","没有当前可用的关联任务。请先继续既有助手目标；这里不会伪造新任务。")}</p>}
   </section>
   {snapshot?<section className={styles.panel}><h2>{t("Your explicit reports","你的明确声明")}</h2>
@@ -143,6 +153,6 @@ export function ReadinessWorkspace({tripId}:{tripId:string}){
   {material?<section className={styles.panel}><h2>{t("Authorized current material","获准的当前资料")}</h2><p>{material.text}</p><ul>{[...material.conditions,...material.exclusions].map((line,i)=><li key={i}>{line}</li>)}</ul>{material.sources.map(s=><p key={s.sourceRevisionId}><a href={s.uri} target="_blank" rel="noreferrer">{s.publisher} · {s.locator}</a></p>)}</section>:null}
   {actionResult?.kind==="verification_entry"?<section className={styles.panel}><h2>{t("Verification entry","核实入口")}</h2><p>{actionResult.target==="declaration"?t("Update only the reports you can explicitly verify in the form above.","请在上方表单更新你能明确核实的声明。"):t("Refresh guidance or verify with its official source. Missing sources remain unknown.","请刷新指引或通过官方来源核实。缺少来源时仍为未知。")}</p>{actionResult.sources.map(s=><a key={s.sourceRevisionId} href={s.uri} target="_blank" rel="noreferrer">{s.publisher}</a>)}<button disabled={busy} onClick={()=>void refresh()}>{t("Read current guidance again","重新读取当前指引")}</button></section>:null}
   {actionResult?.kind==="trip_proposal_reference"?<section className={styles.panel}><p>{actionResult.proposalId} · r{actionResult.proposalRevision}</p><p>{t("Use the existing Trip review, visible diff and explicit confirmation. This preparation action does not apply a patch.","请使用既有行程审阅、可见差异和明确确认。本准备动作不会应用修改。")}</p><ProposalReview tripId={tripId} proposalId={actionResult.proposalId} proposalRevision={actionResult.proposalRevision} proposalDigest={actionResult.proposalDigest} locale={locale} onChanged={()=>void refresh()}/></section>:null}
-  {notice?<p role="status">{notice==="changed"||notice==="STALE_READINESS_BASIS"||notice==="STALE_TRIP_VERSION"?t("Scope or dates changed. Reload and explicitly report again.","作用域或日期已改变。请重新读取并明确声明。"):notice==="expired"?t("The current check expired. Reload before using actions.","本次核验已到期。使用动作前请重新读取。"):t("Current task, evidence or permission is unavailable. Nothing is marked complete.","当前任务、依据或权限不可用。没有把任何问题标为已解决。")}</p>:null}
+  {notice?<p role="status">{notice==="changed"||notice==="STALE_READINESS_BASIS"||notice==="STALE_TRIP_VERSION"?t("Scope or dates changed. Reload and explicitly report again.","作用域或日期已改变。请重新读取并明确声明。"):notice==="chooseTask"?t("Choose an actual linked task; no automatic task selection is made.","请明确选择实际关联任务；不会自动选取任务。"):notice==="expired"?t("The current check expired. Reload before using actions.","本次核验已到期。使用动作前请重新读取。"):t("Current task, evidence or permission is unavailable. Nothing is marked complete.","当前任务、依据或权限不可用。没有把任何问题标为已解决。")}</p>:null}
  </main>;
 }

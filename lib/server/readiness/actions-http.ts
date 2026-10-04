@@ -55,7 +55,7 @@ export async function readinessActionsHTTP(request:NextRequest,tripId:string,nat
    const final=await authority.read();scope.check();
    if("error"in final||final.data.subject!==initial.data.subject||final.data.sessionId!==initial.data.sessionId||final.data.sessionEpoch!==initial.data.sessionEpoch)return failure("UNAUTHENTICATED",401);
   }
-  if(new TextEncoder().encode(JSON.stringify(data)).byteLength>262144)return failure("READINESS_UNAVAILABLE");
+  if(new TextEncoder().encode(JSON.stringify(data)).byteLength>256000)return failure("READINESS_UNAVAILABLE");
   const response=reply({data});
   return web?web.applyCookies(response):response;
  });}catch(error){

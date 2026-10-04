@@ -13,6 +13,7 @@ export function parseReadinessDeclaration(v:unknown):ReadinessDeclaration|null {
   ||typeof v.scenario!=="string"||!(READINESS_SCENARIOS as readonly string[]).includes(v.scenario)
   ||typeof v.city!=="string"||!(KNOWLEDGE_CITIES as readonly string[]).includes(v.city)||!["zh","en"].includes(v.locale as string)
   ||!(v.subjectId===null||typeof v.subjectId==="string"&&/^[a-z][a-z0-9_-]{0,127}$/.test(v.subjectId))
+  ||(v.subjectId!==null&&!["admission","address"].includes(v.scenario))
   ||![v.applies,v.resourcesReady,v.conditionsChecked].every(a=>a==="unknown"||a==="yes"||a==="no")
   ||!(v.checkAt==="now"||v.checkAt==="unknown"||timestamp(v.checkAt)!==null))return null;
  return v as ReadinessDeclaration;

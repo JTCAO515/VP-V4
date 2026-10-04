@@ -5,6 +5,7 @@ import {randomUUID as uuid} from 'node:crypto';import {readFileSync,readdirSync}
 import {NextRequest} from 'next/server.js';
 import {command,sql} from '../cost/fixtures/postgres-rpc.mjs';
 import {nativeFixture,subject,sessionId} from '../../contract/identity/native-fixture.ts';
+import {readinessTaskReferenceHTTP} from '../../../lib/server/readiness/task-reference-http.ts';
 import {readinessActionsHTTP} from '../../../lib/server/readiness/actions-http.ts';
 const enabled=process.env.VP_TURN_DB_TEST==='1',literal=v=>v===null?'null':typeof v==='number'||typeof v==='boolean'?String(v):"'"+(typeof v==='object'?JSON.stringify(v):String(v)).replaceAll("'","''")+"'";
 test('actual SQL declaration/current date/source permissions survive Native HTTP read/save/lost-ACK retry; no task or Trip writer',{skip:!enabled,timeout:120000},async t=>{
@@ -29,7 +30,7 @@ test('actual SQL declaration/current date/source permissions survive Native HTTP
    select public.submit_assistant_message_v1('${a.conversation}','${a.followup}','${uuid()}','${a.policy}','en','Explicit follow up','follow_up','${a.goal}',2,'${a.task}','${a.message}',null);
    update public.turns set status='completed' where id='${a.turn}';update turn_private.work set state='completed',lease_token=null,expires_at=null where turn_id='${a.turn}';update turn_private.text_content set output_kind='answered',output_text='Synthetic completed answer' where turn_id='${a.turn}';`);
   const database='https://dzqdzetcctkhbrhlxxgn.supabase.co',host='vp-v4-readinessjoint-jtcao515s-projects.vercel.app';
-  const auth=await nativeFixture(t,database),env={VERCEL_ENV:'preview',VERCEL_URL:host,VISEPANDA_NATIVE_STAGING:'true',VISEPANDA_TRIP_PROTOCOL_V2:'true',KNOWLEDGE_STAGING_READ:'1',NEXT_PUBLIC_SUPABASE_URL:database,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:auth.config.publishableKey};
+  const auth=await nativeFixture(t,database),env={VERCEL_ENV:'preview',VERCEL_URL:host,VISEPANDA_NATIVE_STAGING:'true',VISEPANDA_TRIP_PROTOCOL_V2:'true',KNOWLEDGE_STAGING_READ:'1',VISEPANDA_NATIVE_STAGING_TEXT:'true',VISEPANDA_NATIVE_STAGING_TEXT_POLICY:a.policy,NEXT_PUBLIC_SUPABASE_URL:database,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:auth.config.publishableKey};
   const previous=Object.fromEntries(Object.keys(env).map(k=>[k,process.env[k]]));Object.assign(process.env,env);
   t.after(()=>{for(const[k,v]of Object.entries(previous))v===undefined?delete process.env[k]:process.env[k]=v;});
   const prior=globalThis.fetch;let deny=false,lost=false,saveCalls=0;const seen=[];
@@ -37,7 +38,7 @@ test('actual SQL declaration/current date/source permissions survive Native HTTP
    const request=new Request(input,init),path=new URL(request.url).pathname;
    if(!path.startsWith('/rest/v1/rpc/'))return prior(input,init);
    const name=path.split('/').at(-1),params=await request.json();seen.push(name);
-   assert.ok(['native_session_v2','read_readiness_declarations_v1','save_readiness_declaration_v1','knowledge_answer_v1','read_task_result_reference_v2'].includes(name));
+   assert.ok(['native_session_v2','read_readiness_declarations_v1','save_readiness_declaration_v1','knowledge_answer_v1','read_task_result_reference_v2','read_trip_result_reference_v2','read_journeys_goal_index_v1','list_assistant_conversation_tasks_v1'].includes(name));
    const query=(deny&&name.includes('readiness')?'set role authenticated;':'')+claims+`select public.${name}(${Object.entries(params).map(([key,value])=>key+' => '+literal(value)).join(',')});`;
    const executed=await sql(container,query);
    if(executed.code!==0)return Response.json({message:executed.stderr,code:'42501'},{status:403});
@@ -59,9 +60,25 @@ test('actual SQL declaration/current date/source permissions survive Native HTTP
   const webSaved=(await web.json()).data;assert.equal(webSaved.declarationRevision,2);assert.equal(webSaved.userReadiness,'unknown');
   const nativeAfterWeb=(await (await readinessActionsHTTP(request({...common,operation:'read'}),a.trip,true)).json()).data;assert.equal(nativeAfterWeb.declarationRevision,2);
   deny=true;assert.equal((await readinessActionsHTTP(request({...common,operation:'read'}),a.trip,true)).status,503);deny=false;
+  const patch={expectedVersion:0,operations:[{kind:'upsert_day',dayId:'actual_day',date:'2026-10-12',timeZone:'Asia/Shanghai'}]};
+  const proposed=JSON.parse(await db(claims+`select row_to_json(p) from public.create_trip_proposal_patch('${a.trip}',${literal(patch)}) p;`));
+  const proposedDigest=await db(claims+`select digest from public.read_trip_proposal_v2('${proposed.proposal_id}');`);
+  assert.equal(await db(claims+`select outcome from public.confirm_and_apply_trip_proposal('${proposed.proposal_id}','${uuid()}','${proposedDigest}');`),'applied');
+  const discoverRequest=()=>new NextRequest(`https://${host}/api/trips/native/v2/${a.trip}/readiness/task`,{headers:{authorization:'Bearer '+auth.token}});
+  const discovered=await readinessTaskReferenceHTTP(discoverRequest(),a.trip,true);assert.equal(discovered.status,200);
+  const options=(await discovered.json()).data;assert.equal(options.kind,'readiness_task_options/1');assert.equal(options.options.length,1);assert.equal(options.options[0].taskId,a.task);assert.equal(options.options[0].tripVersion,1);
+  const changed=(await (await readinessActionsHTTP(request({...common,expectedTripVersion:1,operation:'read'}),a.trip,true)).json()).data;
+  assert.equal(changed.declarationState,'stale');assert.equal(changed.declaration.applies,'unknown');
+  const secondTask=uuid(),secondThread=uuid(),secondTurn=uuid();
+  await db(claims+`select public.submit_service_task_turn('${secondThread}','${secondTurn}','${uuid()}','${a.policy}','en','Second actual task','${secondTask}',1,'new_goal',null);
+   select public.submit_assistant_message_v1('${a.conversation}','${uuid()}','${uuid()}','${a.policy}','en','Second member','follow_up','${a.goal}',2,'${secondTask}','${a.followup}',null);
+   update public.turns set status='completed' where id='${secondTurn}';update turn_private.work set state='completed',lease_token=null,expires_at=null where turn_id='${secondTurn}';update turn_private.text_content set output_kind='answered',output_text='Synthetic answer' where turn_id='${secondTurn}';`);
+  const multiple=(await (await readinessTaskReferenceHTTP(discoverRequest(),a.trip,true)).json()).data;
+  assert.equal(multiple.kind,'readiness_task_options/1');assert.equal(multiple.options.length,2);
   await db(`update turn_private.text_consents set revoked_at=now() where owner_id='${subject}';`);
   assert.equal((await readinessActionsHTTP(request({...common,operation:'read'}),a.trip,true)).status,403);
-  assert.equal(await db(`select count(*) from turn_private.service_tasks where owner_id='${subject}';`),'1');assert.equal(await db(`select head_version from public.trips where id='${a.trip}';`),'0');
+  assert.equal((await (await readinessTaskReferenceHTTP(discoverRequest(),a.trip,true)).json()).data.kind,'unavailable');
+  assert.equal(await db(`select count(*) from turn_private.service_tasks where owner_id='${subject}';`),'2');assert.equal(await db(`select head_version from public.trips where id='${a.trip}';`),'1');
   assert.ok(!seen.some(name=>name.includes('create_trip')||name.includes('confirm')||name.includes('submit')));
  }finally{if(created)assert.equal((await command('docker',['rm','-f',container])).code,0);}
 });
