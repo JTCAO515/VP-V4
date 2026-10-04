@@ -324,6 +324,12 @@ final class NativeSession {
         guard status==errSecSuccess || status==errSecItemNotFound else{throw NativeDataError.sessionUnavailable}
     }
 
+    func readinessActions(tripId:String,body:Data)async throws->Data {
+        guard NativeMemoryWire.uuid(tripId),body.count<=16000 else{throw NativeDataError.invalidResponse}
+        let bytes=try await tripRequest(path:"api/trips/native/v2/\(tripId)/readiness/actions",method:"POST",body:body)
+        guard bytes.count<=256000 else{throw NativeDataError.invalidResponse};return bytes
+    }
+
     func tripRequest(path: String, method: String, body: Data? = nil, queryItems: [URLQueryItem] = []) async throws -> Data {
         try await dataRequest(prefix: "api/trips/native/v2", path: path, method: method, body: body, queryItems: queryItems)
     }
