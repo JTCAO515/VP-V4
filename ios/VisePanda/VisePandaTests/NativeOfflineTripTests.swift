@@ -14,6 +14,34 @@ nonisolated final class NativeOfflineTripTests:XCTestCase {
     @MainActor private var scope:NativeDataScope{.init(endpoint:"http://127.0.0.1:63251",subject:"12345678-1234-4234-8234-123456789abc",mobileEpoch:1,generation:1)}
     private let trip="22345678-1234-4234-8234-123456789abc"
     private let nonce="32345678-1234-4234-8234-123456789abc"
+    @MainActor func testLodgingRecordIsEncryptedTripBoundVersionedAndRemoved() throws {
+        let root=FileManager.default.temporaryDirectory.appendingPathComponent("lodging-\(UUID().uuidString)")
+        defer {try? FileManager.default.removeItem(at:root)}
+        let vault=OfflineTestVault(),defaults=try XCTUnwrap(UserDefaults(suiteName:"lodging.\(UUID().uuidString)"))
+        let storage=NativeOfflineTripStore(root:root,vault:vault,defaults:defaults)
+        let namespace=try NativeOfflineTripNamespace(scope:scope,tripID:trip)
+        let selection=NativeLodgingSelection(hotelName:"Public hotel name",provider:nil,providerPoiId:nil,canonicalPoiId:nil,selectedAt:Date())
+        let first=NativeLodgingLocalRecord(schemaVersion:"native-lodging-local/1",namespace:namespace,revision:1,tripVersion:7,
+            intent:.deferred,city:"shanghai",checkIn:"2026-10-20",checkOut:"2026-10-22",adults:2,children:0,rooms:1,
+            bedType:.twin,budget:.init(amountMinor:40000,currency:"CNY",basis:.perRoomPerNight),
+            candidateChoices:[selection],selected:selection,updatedAt:Date())
+        XCTAssertTrue(first.valid)
+        try storage.saveLodging(first,expectedRevision:nil,scope:scope)
+        XCTAssertEqual(try storage.readLodging(namespace,scope:scope),first)
+        XCTAssertTrue(first.needsTripRecheck(currentVersion:8))
+        XCTAssertFalse(first.needsTripRecheck(currentVersion:7))
+        let file=root.appendingPathComponent(namespace.accountKey).appendingPathComponent(namespace.tripKey+".lodging.aesgcm")
+        XCTAssertFalse(String(data:try Data(contentsOf:file),encoding:.utf8)?.contains("Public hotel name") ?? false)
+        XCTAssertThrowsError(try storage.saveLodging(first,expectedRevision:nil,scope:scope))
+        let other=NativeDataScope(endpoint:scope.endpoint,subject:"92345678-1234-4234-8234-123456789abc",mobileEpoch:1,generation:1)
+        XCTAssertThrowsError(try storage.readLodging(namespace,scope:other))
+        try storage.removeLodging(namespace,scope:scope)
+        XCTAssertNil(try storage.readLodging(namespace,scope:scope))
+        XCTAssertFalse(try storage.savedTripIDs(scope:scope).contains(trip.lowercased()))
+        try storage.saveLodging(first,expectedRevision:nil,scope:scope)
+        try storage.removeTrip(namespace,scope:scope)
+        XCTAssertNil(try storage.readLodging(namespace,scope:scope))
+    }
     @MainActor private func fixture()throws->(Data,NativeOfflinePermitVerifier,NativeOfflineTripNamespace,Date) {
         let namespace=try NativeOfflineTripNamespace(scope:scope,tripID:trip),signer=Curve25519.Signing.PrivateKey()
         let now=try XCTUnwrap(NativeKnowledgeRead.date("2026-10-03T00:00:00.000Z")),keyID=NativeOfflinePermitVerifier.keyID(signer.publicKey.rawRepresentation)

@@ -6,6 +6,129 @@ nonisolated final class NativeHotelHandoffTests: XCTestCase {
     private var calendar: Calendar { var c = Calendar(identifier: .gregorian); c.timeZone = TimeZone(secondsFromGMT: 0)!; return c }
     private var search: NativeHotelSearch { .init(hotelOrCity: "上海 & aid=evil#fragment", checkIn: "2026-10-20", checkOut: "2026-10-22", adults: 2, rooms: 1, includesChildren: false) }
 
+    @MainActor func testExplicitBudgetUnitsAndTentativeNameDoNotBecomeQuoteOrBooking() {
+        XCTAssertEqual(NativeLodgingBudget.parse("400.50", currency:"CNY", basis:.perRoomPerNight),
+                       .init(amountMinor:40050,currency:"CNY",basis:.perRoomPerNight))
+        for value in ["0", "400.501", "-4", "100000.01", "abc"] {
+            XCTAssertNil(NativeLodgingBudget.parse(value,currency:"CNY",basis:.totalStay))
+        }
+        let typed=NativeLodgingSelection(hotelName:"Public hotel",provider:nil,providerPoiId:nil,canonicalPoiId:nil,selectedAt:Date())
+        XCTAssertTrue(typed.valid)
+        XCTAssertFalse(NativeLodgingSelection(hotelName:"passport\nnotes",provider:nil,providerPoiId:nil,canonicalPoiId:nil,selectedAt:Date()).valid)
+        XCTAssertFalse(NativeLodgingSelection(hotelName:"Public hotel",provider:.amap,providerPoiId:nil,canonicalPoiId:nil,selectedAt:Date()).valid)
+    }
+
+    @MainActor func testCurrentUserReportedLodgingSuppressesNewBookingUntilExplicitReplacement() {
+        XCTAssertFalse(NativeLodgingReservationRead.currentUserReportedActive.allowsComparison(intent:.searching,explicitlyReplacing:false))
+        XCTAssertTrue(NativeLodgingReservationRead.currentUserReportedActive.allowsComparison(intent:.searching,explicitlyReplacing:true))
+        XCTAssertTrue(NativeLodgingReservationRead.currentNoActive.allowsComparison(intent:.searching,explicitlyReplacing:false))
+        XCTAssertFalse(NativeLodgingReservationRead.unavailable.allowsComparison(intent:.searching,explicitlyReplacing:false))
+        XCTAssertFalse(NativeLodgingReservationRead.currentNoActive.allowsComparison(intent:.booked,explicitlyReplacing:true))
+        XCTAssertFalse(NativeLodgingReservationRead.currentNoActive.allowsComparison(intent:.notNeeded,explicitlyReplacing:true))
+        XCTAssertFalse(NativeLodgingReservationRead.currentNoActive.allowsComparison(intent:.deferred,explicitlyReplacing:true))
+    }
+
+    @MainActor func testUnknownLodgingOnEarlierPageCannotBeWashedOutByLaterEmptyPage() {
+        func report(_ status: String) -> NativeReservationCurrent {
+            var fields = NativeReservationFields()
+            fields.title = "User report"; fields.status = status
+            return .init(kind:"reservation_reference/1",
+                referenceId:"12345678-1234-4234-8234-123456789abc",
+                tripId:"22345678-1234-4234-8234-123456789abc",tripVersion:7,revision:1,
+                fields:fields,evidenceTier:"user_reported",source:.init(),sourceQualification:"untrusted",
+                confirmedBy:"explicit_user",confirmedAt:"2026-10-04T00:00:00Z",
+                contentDigest:String(repeating:"a",count:64),sourceVersion:nil,
+                planningUse:"confirmed_reference_only",tripMutation:"none")
+        }
+        let unknown = NativeLodgingReservationRead.from([report("unknown")])
+        XCTAssertEqual(unknown,.unavailable)
+        XCTAssertEqual(unknown.combined(with: .from([])),.unavailable)
+        XCTAssertEqual(unknown.combined(with: .from([report("reserved")])),.currentUserReportedActive)
+        XCTAssertEqual(NativeLodgingReservationRead.from([report("cancelled")]),.currentNoActive)
+    }
+
+    @MainActor func testHotelAdjustmentPreparesOnlyOneFirstOrLastDayProposalEdit() throws {
+        let trip=NativeTripSummary(id:"trip",title:"Trip",headVersion:4,updatedAt:"2026-10-04")
+        func day(_ id:String,_ date:String)->NativeTripDay {
+            .init(id:id,date:date,timeZone:"Asia/Shanghai",items:[.init(id:id+"-item",dayId:id,title:"Existing stop")])
+        }
+        let detail=NativeTripDetail(version:2,trip:trip,content:.init(days:[day("first","2026-10-20"),day("middle","2026-10-21"),day("last","2026-10-22")]),
+                                    hardLocks:.notEnabled,externalOrderStatus:.notConnected,confirmationState:"confirmed")
+        let draft=try XCTUnwrap(NativeLodgingTripAdjustment.prepare(detail:detail,dayID:"first",itemID:"first-item",title:"Possible hotel transfer"))
+        XCTAssertEqual(draft.patch.expectedVersion,4)
+        XCTAssertEqual(draft.patch.operations.count,1)
+        XCTAssertEqual(draft.patch.operations.first?.kind,.upsertItem)
+        XCTAssertEqual(draft.patch.operations.first?.itemId,"first-item")
+        XCTAssertEqual(detail.content.days[0].items[0].title,"Existing stop")
+        XCTAssertNil(NativeLodgingTripAdjustment.prepare(detail:detail,dayID:"middle",itemID:"middle-item",title:"Possible hotel transfer"))
+        XCTAssertNil(NativeLodgingTripAdjustment.prepare(detail:detail,dayID:"last",itemID:"wrong",title:"Possible hotel transfer"))
+    }
+
+    @MainActor func testContextRequestUsesExplicitLocalFieldsAndNullUnknowns() throws {
+        let scope=NativeDataScope(endpoint:"http://127.0.0.1:6000",subject:"12345678-1234-4234-8234-123456789abc",mobileEpoch:1,generation:1)
+        let namespace=try NativeOfflineTripNamespace(scope:scope,tripID:"22345678-1234-4234-8234-123456789abc")
+        let selection=NativeLodgingSelection(hotelName:"My hotel note",provider:.amap,providerPoiId:"amap-1",
+            canonicalPoiId:"32345678-1234-4234-8234-123456789abc",selectedAt:Date())
+        let second=NativeLodgingSelection(hotelName:"Another note",provider:.amap,providerPoiId:"amap-2",
+            canonicalPoiId:"42345678-1234-4234-8234-123456789abc",selectedAt:Date())
+        let record=NativeLodgingLocalRecord(schemaVersion:"native-lodging-local/1",namespace:namespace,revision:1,
+            tripVersion:7,intent:.searching,city:"shanghai",checkIn:nil,checkOut:nil,adults:nil,children:nil,rooms:nil,
+            bedType:nil,budget:nil,candidateChoices:[selection,second],selected:selection,updatedAt:Date())
+        let data=try XCTUnwrap(NativeLodgingContextRequest.make(record:record,locale:"zh",tripVersion:7))
+        let root=try XCTUnwrap(JSONSerialization.jsonObject(with:data) as? [String:Any])
+        XCTAssertEqual(Set(root.keys),Set(["expectedTripVersion","locale","needs","profileChoice","candidates","comparisonReference","proposalReference"]))
+        let needs=try XCTUnwrap(root["needs"] as? [String:Any])
+        XCTAssertTrue(needs["adults"] is NSNull);XCTAssertTrue(needs["budget"] is NSNull)
+        XCTAssertNil(needs["hotelName"]);XCTAssertNil(needs["My hotel note"])
+        let choices=try XCTUnwrap(root["candidates"] as? [[String:Any]])
+        XCTAssertEqual(choices.count,2);XCTAssertEqual(choices.map{$0["providerPoiId"] as? String},["amap-1","amap-2"])
+        let profile=try XCTUnwrap(root["profileChoice"] as? [String:Any])
+        XCTAssertEqual(profile["useSaved"] as? Bool,false)
+        let opted=try XCTUnwrap(NativeLodgingContextRequest.make(record:record,locale:"zh",tripVersion:7,useSavedTravelPace:true))
+        let optedRoot=try XCTUnwrap(JSONSerialization.jsonObject(with:opted) as? [String:Any])
+        XCTAssertEqual((optedRoot["profileChoice"] as? [String:Any])?["useSaved"] as? Bool,true)
+        XCTAssertNil(NativeLodgingContextRequest.make(record:record,locale:"zh",tripVersion:8))
+    }
+
+    @MainActor func testReviewedHotelLabelNeedsMatchingCurrentReceiptAndUnknownCommerce() throws {
+        let canonical="32345678-1234-4234-8234-123456789abc"
+        let hash=String(repeating:"a",count:64)
+        let selection=NativeLodgingSelection(hotelName:"Public hotel",provider:.amap,providerPoiId:"amap-1",
+            canonicalPoiId:canonical,selectedAt:Date())
+        let evidence:[String:Any]=["canonicalPoiId":canonical,"classification":"hotel",
+            "mappingId":"42345678-1234-4234-8234-123456789abc","mappingVersion":2,"mappingDigest":hash,
+            "statementId":"52345678-1234-4234-8234-123456789abc",
+            "statementRevision":1,"payloadHash":hash,"factId":"62345678-1234-4234-8234-123456789abc","publicationVersion":1,
+            "sourceDigest":hash,"sourceRefs":[["sourceRevisionId":"72345678-1234-4234-8234-123456789abc","revisionLabel":"r1",
+                "snippetHash":hash,"publisher":"publisher","uri":"https://example.org/source","locator":"line-1"]],
+            "rightsDigest":hash,"reviewedAt":"2026-10-04T00:00:00.000Z","expiresAt":"2026-10-04T00:01:30.000Z"]
+        func reply(_ choice:String=canonical,_ quote:String="unknown",_ receipt:Any=evidence) throws -> NativeLodgingContext {
+            let body:[String:Any]=["schemaVersion":"lodging-context/1",
+                "basis":["tripId":"22345678-1234-4234-8234-123456789abc","tripVersion":7],
+                "expiresAt":"2026-10-04T00:01:30.000Z",
+                "candidates":[["choice":["canonicalPoiId":choice,"provider":"amap","providerPoiId":"amap-1"],
+                    "identityStatus":"canonical_mapping_current","hotelClassification":"reviewed_hotel",
+                    "classificationEvidence":receipt,"availability":"unknown","quote":quote,"checkInEligibility":"unknown"]],
+                "ranking":["commissionUsed":false,"userNoteUsed":false],
+                "profilePreview":["status":"unknown","value":NSNull(),"usage":"local_preview_only","appliedToRanking":false],
+                "intent":["value":"searching","supplierConfirmed":false],"tripMutation":"none"]
+            return try JSONDecoder().decode(NativeLodgingContext.self,
+                from:JSONSerialization.data(withJSONObject:body))
+        }
+        let now=try XCTUnwrap(ISO8601DateFormatter().date(from:"2026-10-04T00:01:00Z"))
+        let tripID="22345678-1234-4234-8234-123456789abc"
+        func allowed(_ value:NativeLodgingContext)->Bool {
+            value.reviewedHotel(for:selection,tripID:tripID,tripVersion:7,lodgingIntent:.searching,now:now)
+        }
+        XCTAssertTrue(allowed(try reply()))
+        XCTAssertFalse(allowed(try reply("42345678-1234-4234-8234-123456789abc")))
+        XCTAssertFalse(allowed(try reply(canonical,"available")))
+        XCTAssertFalse(allowed(try reply(canonical,"unknown",NSNull())))
+        XCTAssertFalse(try reply().reviewedHotel(for:selection,tripID:tripID,tripVersion:8,lodgingIntent:.searching,now:now))
+        XCTAssertFalse(try reply().reviewedHotel(for:selection,tripID:tripID,tripVersion:7,lodgingIntent:.searching,
+            now:try XCTUnwrap(ISO8601DateFormatter().date(from:"2026-10-04T00:01:30Z"))))
+    }
+
     @MainActor func testOnlyExplicitFieldsAndFixedOfficialDestination() throws {
         let handoff = try NativeHotelHandoff.prepare(search, provider: .booking, now: now, calendar: calendar)
         let url = try XCTUnwrap(URLComponents(url: handoff.url, resolvingAgainstBaseURL: false))
@@ -24,6 +147,10 @@ nonisolated final class NativeHotelHandoffTests: XCTestCase {
     @MainActor func testTripFallbackHasNoParametersOrAttribution() throws {
         let handoff = try NativeHotelHandoff.prepare(search, provider: .trip, now: now, calendar: calendar)
         XCTAssertEqual(handoff.url.absoluteString, "https://www.trip.com/hotels/")
+        var multipleRooms = search; multipleRooms.adults = 1; multipleRooms.rooms = 2
+        let generic = try NativeHotelHandoff.prepare(multipleRooms, provider: .trip, now: now, calendar: calendar)
+        XCTAssertEqual(generic.url.absoluteString, "https://www.trip.com/hotels/")
+        XCTAssertThrowsError(try NativeHotelHandoff.prepare(multipleRooms, provider: .booking, now: now, calendar: calendar))
     }
     @MainActor func testInvalidDatesAndOccupancyFailClosed() {
         for (arrival, departure) in [("2026-02-30","2026-03-02"), ("2026-10-22","2026-10-20"), ("2026-10-20","2026-10-20"), ("2026-01-01","2026-01-02"), ("2026-10-20","2027-10-20"), ("26-10-20","2026-10-22")] {

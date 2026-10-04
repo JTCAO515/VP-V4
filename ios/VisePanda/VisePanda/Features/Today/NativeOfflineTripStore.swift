@@ -95,6 +95,44 @@ struct NativeOfflineTripDraft:Codable,Equatable {
             guard value.valid,value.namespace==namespace else{throw NativeOfflineTripError.corruptFile};return value
         }catch{throw NativeOfflineTripError.corruptFile}
     }
+
+    /// Only explicit, bounded lodging input. The key and associated data use
+    /// the same owner/endpoint/mobile-epoch/Trip namespace as offline edits.
+    func saveLodging(_ record:NativeLodgingLocalRecord,expectedRevision:Int?,scope:NativeDataScope)throws {
+        let namespace=record.namespace
+        guard !defaults.bool(forKey:purgeKey),record.valid,namespace.matches(scope),
+              record.revision==(expectedRevision ?? 0)+1 else{throw NativeOfflineTripError.wrongNamespace}
+        let prior=try readLodging(namespace,scope:scope)
+        guard prior?.revision==expectedRevision else{throw NativeOfflineTripError.versionConflict}
+        let bytes=try JSONEncoder().encode(record)
+        guard bytes.count<=16_000 else{throw NativeOfflineTripError.invalidInput}
+        try prepare(namespace)
+        try writeEncrypted(bytes,namespace:namespace,suffix:".lodging.aesgcm",tag:"native-lodging-local/1")
+        try register(namespace)
+    }
+
+    func readLodging(_ namespace:NativeOfflineTripNamespace,scope:NativeDataScope)throws->NativeLodgingLocalRecord? {
+        guard !defaults.bool(forKey:purgeKey),namespace.valid,namespace.matches(scope) else{throw NativeOfflineTripError.wrongNamespace}
+        guard let bytes=try readEncrypted(namespace:namespace,suffix:".lodging.aesgcm",tag:"native-lodging-local/1") else{return nil}
+        guard bytes.count<=16_000 else{throw NativeOfflineTripError.corruptFile}
+        do {
+            let record=try JSONDecoder().decode(NativeLodgingLocalRecord.self,from:bytes)
+            guard record.valid,record.namespace==namespace else{throw NativeOfflineTripError.corruptFile}
+            return record
+        }catch{throw NativeOfflineTripError.corruptFile}
+    }
+
+    func removeLodging(_ namespace:NativeOfflineTripNamespace,scope:NativeDataScope)throws {
+        guard namespace.valid,namespace.matches(scope) else{throw NativeOfflineTripError.wrongNamespace}
+        let target=root.appendingPathComponent(namespace.accountKey,isDirectory:true).appendingPathComponent(namespace.tripKey+".lodging.aesgcm")
+        if FileManager.default.fileExists(atPath:target.path){try FileManager.default.removeItem(at:target)}
+        guard !FileManager.default.fileExists(atPath:target.path) else{throw NativeOfflineTripError.storageUnavailable}
+        if !FileManager.default.fileExists(atPath:file(namespace).path) &&
+           !FileManager.default.fileExists(atPath:root.appendingPathComponent(namespace.accountKey).appendingPathComponent(namespace.tripKey+".confirmed.aesgcm").path) {
+            let ids=try index(namespace)
+            if ids.contains(namespace.tripID){try writeIndex(ids.filter{$0 != namespace.tripID},namespace:namespace)}
+        }
+    }
     func saveConfirmedText(_ permit:NativeVerifiedOfflinePermit,scope:NativeDataScope,requestStarted:TimeInterval,now:Date=Date(),uptime:TimeInterval=ProcessInfo.processInfo.systemUptime,bootIdentity:String?=NativeOfflineBootIdentity.current())throws {
         guard !defaults.bool(forKey:purgeKey),permit.namespace.matches(scope) else{throw NativeOfflineTripError.wrongNamespace}
         var record=try NativeOfflineCachedText(permit:permit,requestStarted:requestStarted,now:now,uptime:uptime,bootIdentity:bootIdentity)
@@ -141,7 +179,8 @@ struct NativeOfflineTripDraft:Codable,Equatable {
         guard namespace.valid,namespace.matches(scope) else{throw NativeOfflineTripError.wrongNamespace}
         let cache=root.appendingPathComponent(namespace.accountKey,isDirectory:true).appendingPathComponent(namespace.tripKey+".confirmed.aesgcm")
         if FileManager.default.fileExists(atPath:cache.path){try FileManager.default.removeItem(at:cache)}
-        if !FileManager.default.fileExists(atPath:file(namespace).path){let ids=try index(namespace);if ids.contains(namespace.tripID){try writeIndex(ids.filter{$0 != namespace.tripID},namespace:namespace)}}
+        let lodging=root.appendingPathComponent(namespace.accountKey,isDirectory:true).appendingPathComponent(namespace.tripKey+".lodging.aesgcm")
+        if !FileManager.default.fileExists(atPath:file(namespace).path) && !FileManager.default.fileExists(atPath:lodging.path){let ids=try index(namespace);if ids.contains(namespace.tripID){try writeIndex(ids.filter{$0 != namespace.tripID},namespace:namespace)}}
     }
 
     func removeTrip(_ namespace:NativeOfflineTripNamespace,scope:NativeDataScope)throws {
@@ -150,6 +189,8 @@ struct NativeOfflineTripDraft:Codable,Equatable {
         if FileManager.default.fileExists(atPath:target.path){try FileManager.default.removeItem(at:target)}
         let cache=root.appendingPathComponent(namespace.accountKey,isDirectory:true).appendingPathComponent(namespace.tripKey+".confirmed.aesgcm")
         if FileManager.default.fileExists(atPath:cache.path){try FileManager.default.removeItem(at:cache)}
+        let lodging=root.appendingPathComponent(namespace.accountKey,isDirectory:true).appendingPathComponent(namespace.tripKey+".lodging.aesgcm")
+        if FileManager.default.fileExists(atPath:lodging.path){try FileManager.default.removeItem(at:lodging)}
         let ids=try index(namespace)
         if ids.contains(namespace.tripID){try writeIndex(ids.filter{$0 != namespace.tripID},namespace:namespace)}
     }
