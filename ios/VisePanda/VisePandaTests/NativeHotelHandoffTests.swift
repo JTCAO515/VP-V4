@@ -118,6 +118,10 @@ nonisolated final class NativeHotelHandoffTests: XCTestCase {
     @MainActor func testTripFallbackHasNoParametersOrAttribution() throws {
         let handoff = try NativeHotelHandoff.prepare(search, provider: .trip, now: now, calendar: calendar)
         XCTAssertEqual(handoff.url.absoluteString, "https://www.trip.com/hotels/")
+        var multipleRooms = search; multipleRooms.adults = 1; multipleRooms.rooms = 2
+        let generic = try NativeHotelHandoff.prepare(multipleRooms, provider: .trip, now: now, calendar: calendar)
+        XCTAssertEqual(generic.url.absoluteString, "https://www.trip.com/hotels/")
+        XCTAssertThrowsError(try NativeHotelHandoff.prepare(multipleRooms, provider: .booking, now: now, calendar: calendar))
     }
     @MainActor func testInvalidDatesAndOccupancyFailClosed() {
         for (arrival, departure) in [("2026-02-30","2026-03-02"), ("2026-10-22","2026-10-20"), ("2026-10-20","2026-10-20"), ("2026-01-01","2026-01-02"), ("2026-10-20","2027-10-20"), ("26-10-20","2026-10-22")] {

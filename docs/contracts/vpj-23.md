@@ -63,7 +63,11 @@ unqualified Memory value is copied into the local lodging record.
 H4 keeps tentative selection, official search, external opening and Trip edits
 distinct. The selected public name and explicitly confirmed date/party fields
 prefill the existing VPJ-22 allowlisted handoff; the user reviews which fields
-are sent and the supplier remains the source of booking truth. A one-item
+are sent and the supplier remains the source of booking truth.
+Booking.com requires at least one adult per room before its bounded parameter
+link is prepared. For a user-confirmed party with more rooms than adults, the
+Trip.com generic official search remains available without transmitting guest
+or room counts; every condition must be re-entered and verified there. A one-item
 first/last-day Trip draft can be prepared only for an existing user-selected
 item with a user-written replacement title. It uses the existing fresh Trip
 read and Proposal/diff/explicit-confirm writer; selecting a hotel or opening a

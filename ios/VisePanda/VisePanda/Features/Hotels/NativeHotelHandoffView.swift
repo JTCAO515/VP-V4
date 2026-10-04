@@ -92,7 +92,8 @@ struct NativeHotelHandoffView: View {
 
     private func prepare(_ provider: NativeHotelProvider) {
         do { prepared = try NativeHotelHandoff.prepare(search, provider: provider); message = nil }
-        catch { message = text("Enter a hotel or city, today or later dates, a stay of 1–90 nights, and at least one adult per room.", "请填写酒店或城市、今天或之后的入住日期、1–90 晚住宿，以及不少于客房数的成人数。") }
+        catch { message = text("Check the hotel/city, future dates and 1–90 nights. Booking.com also needs at least one adult per room; Trip.com opens a generic search without sending guest or room counts.",
+                               "请核对酒店或城市、今后入住日期及 1–90 晚住宿。Booking.com 还要求每房至少一位成人；Trip.com 会打开不传人数和房间数的通用搜索页。") }
     }
 
     private func open(_ receipt: NativeHotelHandoff) {
@@ -574,7 +575,7 @@ struct NativeHotelComparisonView: View {
                       "这是你暂选的公开名称，不代表推荐、预订、供应商确认、可售房间或已核价格。已确认行程未改变。"))
                 .font(.footnote).foregroundStyle(.secondary)
             if savedRecord?.selected == selection, !localNeedsRecheck, stayConfirmed, partyConfirmed,
-               adults >= rooms, let checkIn = savedRecord?.checkIn, let checkOut = savedRecord?.checkOut {
+               let checkIn = savedRecord?.checkIn, let checkOut = savedRecord?.checkOut {
                 NavigationLink(text("Review official search exit", "核对官方搜索出口")) {
                     NativeHotelHandoffView(initialSearch: .init(hotelOrCity: selection.hotelName,
                         checkIn: checkIn, checkOut: checkOut, adults: adults, rooms: rooms,
