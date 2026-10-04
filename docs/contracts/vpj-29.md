@@ -38,10 +38,32 @@ Locale is zh/en. No free text parser, title heuristic, replacement venue or rout
 
 Transport input is separately closed:
 `{operation:"transport",expectedHeadVersion,dayId,itemId,receiptId:UUID,departure:"now"}`.
-Only an installed ordinary owner #366 receipt reader may qualify it. No such
-durable reader is installed at base 8d30; return pending `TRANSPORT_RECEIPT_READER_UNAVAILABLE`,
-with the existing Trip navigation/official channels, and zero provider calls.
-Future, expired, revoked and absent observations cannot become user reports.
+This legacy flat input remains pending-only compatibility. The executable R2
+consumer uses exactly:
+
+```json
+{"operation":"transport","input":{"operationId":"UUID","expectedHeadVersion":0,"dayId":"opaque_day","selectedItemIds":["opaque_item"],"fixedItemIds":[],"reservationBindings":[],"receiptId":"UUID","scope":{"tripId":"UUID","expectedHeadVersion":0,"dayId":"opaque_day","itemId":"opaque_item","originPlaceReferenceId":"UUID","destinationPlaceReferenceId":"UUID","mode":"transit","departure":"now"},"locale":"zh"}}
+```
+
+Mode and both references are explicit user choices. Top day/head and path Trip
+must exactly match scope, with a real current owner day/item. No caller policy,
+source, hash, report, inferred mode, or future departure. Dedicated
+`prepare_transport_recovery_v1` calls the actual ordinary #366 reader and its
+private qualification seam; missing installed qualification returns pending and
+no candidates. It makes no provider call and does not substitute process-local
+receipt/JSON/duration change for source authority.
+
+Context keeps the same keys with `input: RecoveryInput | TransportRecoveryInput`.
+R2 preview keeps the common local-candidate keys, but has `report:null`,
+`sourceSemantics:"qualified_foreground_transport"`, and
+`transportReference:{receiptId,scope}`. This reference only locates the original
+Maps reader; actual fetched/source times and qualified observation type are
+displayed by that reader. In a pending response, the source branch does not claim
+that qualification succeeded. A route estimate/condition change is never labelled
+as closure, incident, live arrival or forecast. R1 report/source semantics remain
+unchanged. R2 context expiry is SQL-derived from the original qualified source and
+receipt lifetime, never renewed by repeat preparation. Selection/receipt DTOs remain
+unchanged. Future, expired, revoked and absent observations cannot become user reports.
 
 Selection input:
 `{operation:"select",input:{operationId:UUID,contextId:UUID,contextDigest:SHA256,candidateId:"omit_one"|"omit_selected"}}`.

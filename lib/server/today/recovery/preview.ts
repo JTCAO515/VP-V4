@@ -2,7 +2,7 @@ import { applyPatch, assertTripSnapshot, type TripSnapshot, type TripPatch } fro
 import { describeProposalDiff } from "../../trip/proposal/diff.ts";
 import { assemblePlanFeasibility } from "../../trip/feasibility/assembly.ts";
 import type { AdapterResult, UserProfileRead } from "../../identity/user-data-adapter.ts";
-import { parseRecoveryInput, type RecoveryInput, type RecoverySelection } from "./contract.ts";
+import { parseRecoveryPreparationInput, type RecoveryPreparationInput, type RecoverySelection } from "./contract.ts";
 import { timestamp } from "../../readiness/contract.ts";
 
 export type ReservationBasis = { referenceId: string; revision: number; contentDigest: string; status: "reserved" | "amended" | "cancelled" | "unknown"; evidenceTier: "user_reported" | "artifact_confirmed" | "provider_verified" };
@@ -10,7 +10,7 @@ export type RecoverySources = { complete: boolean; reservations: ReservationBasi
 export type RecoveryContext = {
   kind: "local_recovery_context/1"; contextId: string; contextDigest: string; tripId: string; baseVersion: number; expiresAt: string;
   profileBasis: { travelPace: "relaxed" | "balanced" | "packed" | null; updatedAt: string | null };
-  reservationBasis: ReservationBasis[]; input: RecoveryInput;
+  reservationBasis: ReservationBasis[]; input: RecoveryPreparationInput;
 };
 export function recoveryProfile(read: AdapterResult<UserProfileRead | null>, lawfulPace: "relaxed" | "balanced" | "packed" | null = null) {
   const p = "error" in read ? null : read.data;
@@ -19,16 +19,19 @@ export function recoveryProfile(read: AdapterResult<UserProfileRead | null>, law
 }
 export const recoveryNeeds = { partySize: 1, currency: "CNY", maxBudgetMinor: null, minTransferMinutes: 0, baggageBufferMinutes: 0, appointmentBufferMinutes: 0, maxWalkingMinutes: null } as const;
 // No party/budget/buffer claim follows from these internal unknown-screening values.
-export function recoveryScope(snapshot: TripSnapshot, input: RecoveryInput, sources: RecoverySources, now: number) {
-  if (!parseRecoveryInput(input)) return "INVALID_INPUT";
+export function recoveryScope(snapshot: TripSnapshot, input: RecoveryPreparationInput, sources: RecoverySources, now: number) {
+  if (!parseRecoveryPreparationInput(input)) return "INVALID_INPUT";
   try { assertTripSnapshot(snapshot); } catch { return "CURRENT_SNAPSHOT_UNAVAILABLE"; }
   if (snapshot.version !== input.expectedHeadVersion) return "STALE_TRIP_VERSION";
-  const observed = timestamp(input.report.observedAt)!;
-  if (observed > now || observed + 300000 <= now) return "REPORT_RECHECK_REQUIRED";
-  if (input.report.kind === "high_risk_unwell") return "HIGH_RISK_UNWELL";
+  if ("report" in input) {
+    const observed = timestamp(input.report.observedAt)!;
+    if (observed > now || observed + 300000 <= now) return "REPORT_RECHECK_REQUIRED";
+    if (input.report.kind === "high_risk_unwell") return "HIGH_RISK_UNWELL";
+  }
   if (snapshot.days.reduce((n, d) => n + (d.items?.length ?? 0), 0) > 500) return "SCOPE_TOO_LARGE";
   const day = snapshot.days.find(d => d.id === input.dayId);
   if (!day || !input.selectedItemIds.every(id => day.items?.some(i => i.id === id))) return "SELECTED_SCOPE_UNAVAILABLE";
+  if ("scope" in input && !day.items?.some(i => i.id === input.scope.itemId)) return "TRANSPORT_SCOPE_UNAVAILABLE";
   const all = snapshot.days.flatMap(d => d.items ?? []);
   if (!input.fixedItemIds.every(id => all.some(i => i.id === id))) return "FIXED_SCOPE_UNAVAILABLE";
   if (!sources.complete) return "RESERVATION_SCOPE_UNAVAILABLE";
@@ -44,19 +47,22 @@ export function recoveryScope(snapshot: TripSnapshot, input: RecoveryInput, sour
   if (input.selectedItemIds.some(id => fixed.has(id))) return "FIXED_SCOPE_OVERLAP";
   return null;
 }
-export function localRecoveryCandidates(snapshot: TripSnapshot, input: RecoveryInput, sources: RecoverySources, profile: AdapterResult<UserProfileRead | null>, now: number, context: RecoveryContext | null) {
+export function localRecoveryCandidates(snapshot: TripSnapshot, input: RecoveryPreparationInput, sources: RecoverySources, profile: AdapterResult<UserProfileRead | null>, now: number, context: RecoveryContext | null) {
   const reason = recoveryScope(snapshot, input, sources, now);
   const currentProfile = recoveryProfile(profile, context?.profileBasis.travelPace ?? null);
   const preferenceContext = { ...currentProfile, status: currentProfile.travelPace === null ? "unknown" : "current", influence: "soft_reference_only", explicitInputPriority: "current_explicit_input" };
-  const common = { kind: "local_recovery/1", tripId: context?.tripId ?? null, baseVersion: snapshot.version, report: input.report,
-    preferenceContext, sourceSemantics: "user_report", tripMutation: "none", externalOutcome: "unknown",
-    nextStep: input.report.kind === "high_risk_unwell" ? "stop_and_seek_local_help" : "review_optional_items_and_check_original_supplier",
+  const report = "report" in input ? input.report : null;
+  const common = { kind: "local_recovery/1", tripId: context?.tripId ?? null, baseVersion: snapshot.version, report,
+    ...( "scope" in input ? { transportReference: { receiptId: input.receiptId, scope: input.scope } } : {}),
+    preferenceContext, sourceSemantics: report ? "user_report" : "qualified_foreground_transport", tripMutation: "none", externalOutcome: "unknown",
+    nextStep: report?.kind === "high_risk_unwell" ? "stop_and_seek_local_help" : "review_optional_items_and_check_original_supplier",
     officialChannel: { status: "unavailable", reason: "NO_QUALIFIED_OFFICIAL_CHANNEL" },
     candidates: [] as unknown[], needsManualVerification: ["ONWARD_ROUTE", "OPENING", "RESERVATION", "EXTERNAL_CANCELLATION_REFUND"] };
   if (reason || !context) return { ...common, status: "pending", reason: reason ?? "RECOVERY_AUTHORITY_UNAVAILABLE" };
   const profileBasis = recoveryProfile(profile, context.profileBasis.travelPace);
   if (context.baseVersion !== snapshot.version || context.input.operationId !== input.operationId || context.expiresAt === "" || timestamp(context.expiresAt) === null
-    || timestamp(context.expiresAt)! <= now || timestamp(context.expiresAt)! > timestamp(input.report.observedAt)! + 300000
+    || timestamp(context.expiresAt)! <= now || timestamp(context.expiresAt)! > (report ? timestamp(report.observedAt)! : now) + 300000
+    || ("scope" in input && input.scope.tripId !== context.tripId)
     || context.profileBasis.travelPace !== profileBasis.travelPace || timestamp(context.profileBasis.updatedAt) !== timestamp(profileBasis.updatedAt)) return { ...common, status: "pending", reason: "STALE_CONTEXT" };
   const choices: { candidateId: RecoverySelection["candidateId"]; ids: string[] }[] = [{ candidateId: "omit_one", ids: input.selectedItemIds.slice(0, 1) }];
   if (input.selectedItemIds.length > 1) choices.push({ candidateId: "omit_selected", ids: input.selectedItemIds });

@@ -1,5 +1,5 @@
 import { record, timestamp } from "../../readiness/contract.ts";
-import { exact, uuid, hash, integer, parseRecoveryInput, parseRecoverySelection, type RecoveryInput, type RecoverySelection } from "./contract.ts";
+import { exact, uuid, hash, integer, parseRecoveryPreparationInput, parseRecoverySelection, type RecoveryInput, type TransportRecoveryInput, type RecoveryPreparationInput, type RecoverySelection } from "./contract.ts";
 import type { RecoveryContext, ReservationBasis } from "./preview.ts";
 
 export type RecoveryRPC = (name: string, params: Record<string, unknown>) => Promise<{ data: unknown; error: unknown }>;
@@ -28,7 +28,14 @@ function rpcError(error: unknown, uncertain: boolean): never {
   throw new RecoveryServiceError(uncertain ? "RECOVERY_RECEIPT_UNKNOWN" : "RECOVERY_UNAVAILABLE");
 }
 export async function prepareLocalRecovery(tripId: string, input: RecoveryInput, rpc: RecoveryRPC): Promise<RecoveryContext> {
-  const r = await rpc("prepare_local_recovery_v1", { p_trip_id: tripId, p_input: input });
+  return prepareRecoveryContext("prepare_local_recovery_v1", tripId, input, rpc);
+}
+export async function prepareTransportRecovery(tripId: string, input: TransportRecoveryInput, rpc: RecoveryRPC): Promise<RecoveryContext> {
+  if (input.scope.tripId !== tripId) throw new RecoveryServiceError("INVALID_INPUT");
+  return prepareRecoveryContext("prepare_transport_recovery_v1", tripId, input, rpc);
+}
+async function prepareRecoveryContext(name: "prepare_local_recovery_v1" | "prepare_transport_recovery_v1", tripId: string, input: RecoveryPreparationInput, rpc: RecoveryRPC): Promise<RecoveryContext> {
+  const r = await rpc(name, { p_trip_id: tripId, p_input: input });
   if (r.error) rpcError(r.error, false); denial(r.data);
   const v = r.data;
   if (!record(v) || !exact(v, ["kind", "contextId", "contextDigest", "tripId", "baseVersion", "expiresAt", "profileBasis", "reservationBasis", "input"])
@@ -38,7 +45,7 @@ export async function prepareLocalRecovery(tripId: string, input: RecoveryInput,
     || !(v.profileBasis.updatedAt === null || timestamp(v.profileBasis.updatedAt) !== null)
     || !Array.isArray(v.reservationBasis) || v.reservationBasis.length > 100 || !v.reservationBasis.every(isReservationBasis)
     || new Set(v.reservationBasis.map(b => b.referenceId)).size !== v.reservationBasis.length
-    || !parseRecoveryInput(v.input) || !sameRecoveryValue(v.input, input)) throw new RecoveryServiceError("RECOVERY_UNAVAILABLE");
+    || !parseRecoveryPreparationInput(v.input) || !sameRecoveryValue(v.input, input)) throw new RecoveryServiceError("RECOVERY_UNAVAILABLE");
   return structuredClone(v) as RecoveryContext;
 }
 export type RecoveryProposalReceipt = {

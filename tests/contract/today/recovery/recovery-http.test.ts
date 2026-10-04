@@ -21,7 +21,7 @@ async function setup(t: Parameters<typeof nativeFixture>[0]) {
   const selection = { operationId: id(4), contextId: id(2), contextDigest: "a".repeat(64), candidateId: "omit_one" };
   const expiresAt = new Date(Date.parse(observedAt) + 30000).toISOString();
   const receipt = { kind: "local_recovery_proposal/1", ...selection, proposalId: id(5), proposalRevision: 1, baseVersion: 0, expiresAt, reused: false };
-  let epoch = 1, sourceAbsent = false, replaceAfterPrepare = false, prepareCalls = 0, lostACK = false, recovered = false;
+  let epoch = 1, sourceAbsent = false, replaceAfterPrepare = false, prepareCalls = 0, lostACK = false, recovered = false, trafficAvailable = false, trafficDrift = false, trafficReads = 0;
   const previous = globalThis.fetch, calls: { path: string; authorization: string | null; body: unknown }[] = [];
   t.mock.method(globalThis, "fetch", async (input: RequestInfo | URL, init?: RequestInit) => {
     const req = new Request(input, init), url = new URL(req.url), path = url.pathname;
@@ -40,6 +40,12 @@ async function setup(t: Parameters<typeof nativeFixture>[0]) {
       prepareCalls++; if (replaceAfterPrepare && prepareCalls > 1) epoch = 2;
       return Response.json(sourceAbsent ? { kind: "pending", reason: "RESERVATION_READER_UNAVAILABLE" } : context);
     }
+    if (path.endsWith("/prepare_transport_recovery_v1")) {
+      trafficReads++;
+      const body = await req.json() as { p_input: unknown };
+      return Response.json(trafficAvailable ? { ...context, input: body.p_input, contextDigest: trafficDrift && trafficReads > 1 ? "c".repeat(64) : context.contextDigest }
+        : { kind: "pending", reason: "TRAFFIC_RECOVERY_AUTHORITY_UNAVAILABLE" });
+    }
     if (path.endsWith("/submit_local_recovery_v1")) {
       if (lostACK) { recovered = true; return Response.json({ message: "Synthetic lost ACK after accepted submit" }, { status: 503 }); }
       return Response.json(receipt);
@@ -52,7 +58,11 @@ async function setup(t: Parameters<typeof nativeFixture>[0]) {
   });
   const request = (body: unknown, native = true, extra: Record<string, string> = {}) => new NextRequest(`https://${host}/api/trips/${native ? "native/v2/" : ""}${id(3)}/recovery`,
     { method: "POST", headers: { ...(native ? { authorization: `Bearer ${f.token}` } : { cookie: f.cookie(), origin: `https://${host}` }), ...extra }, body: JSON.stringify(body) });
-  return { request, input, context, selection, calls, token: f.token, setAbsent: () => { sourceAbsent = true; }, replace: () => { replaceAfterPrepare = true; prepareCalls = 0; }, loseACK: () => { lostACK = true; }, wasRecovered: () => recovered };
+  const { report: _report, ...optionalScope } = input;
+  const transport = { ...optionalScope, receiptId: id(6), scope: { tripId: id(3), expectedHeadVersion: 0, dayId: "Day-1", itemId: "Optional",
+    originPlaceReferenceId: id(7), destinationPlaceReferenceId: id(8), mode: "transit", departure: "now" } };
+  return { request, input, context, selection, transport, calls, token: f.token, setAbsent: () => { sourceAbsent = true; }, replace: () => { replaceAfterPrepare = true; prepareCalls = 0; }, loseACK: () => { lostACK = true; }, wasRecovered: () => recovered,
+    allowTraffic: () => { trafficAvailable = true; }, driftTraffic: () => { trafficDrift = true; trafficReads = 0; } };
 }
 test("actual native and Web handlers qualify owner context, create local diff only, and no model/provider/Trip write", async t => {
   const f = await setup(t);
@@ -95,4 +105,35 @@ test("credential ambiguity, cross-Origin and caller provider data are rejected b
   assert.equal((await localRecoveryHTTP(f.request(body, false, { origin: "https://untrusted.invalid" }), id(3), false)).status, 400);
   assert.equal((await localRecoveryHTTP(f.request({ ...body, sourceVerified: true }), id(3), true)).status, 400);
   assert.ok(f.calls.every(c => !c.path.includes("local_recovery")));
+});
+test("nested transport consumes only its dedicated authoritative RPC; missing qualification never becomes a user report", async t => {
+  const f = await setup(t);
+  const r = await localRecoveryHTTP(f.request({ operation: "transport", input: f.transport }), id(3), true);
+  assert.equal(r.status, 200); const body = (await r.json()).data;
+  assert.equal(body.status, "pending"); assert.equal(body.reason, "TRAFFIC_RECOVERY_AUTHORITY_UNAVAILABLE"); assert.deepEqual(body.candidates, []);
+  assert.equal(body.report, null); assert.deepEqual(body.transportReference, { receiptId: f.transport.receiptId, scope: f.transport.scope });
+  assert.ok(f.calls.some(c => c.path.endsWith("/prepare_transport_recovery_v1")));
+  assert.ok(!f.calls.some(c => c.path.endsWith("/prepare_local_recovery_v1") || /maps|model|create_trip_proposal/.test(c.path)));
+});
+test("synthetic qualified transport seam emits original local diff with separate source branch and detects reread drift", async t => {
+  const f = await setup(t); f.allowTraffic();
+  const first = await localRecoveryHTTP(f.request({ operation: "transport", input: f.transport }), id(3), true);
+  assert.equal(first.status, 200); const data = (await first.json()).data;
+  assert.equal(data.status, "candidates"); assert.equal(data.report, null); assert.equal(data.sourceSemantics, "qualified_foreground_transport");
+  assert.equal(data.expiresAt, f.context.expiresAt); assert.equal(data.candidates[0].disposition, "candidate_only");
+  assert.deepEqual(data.candidates[0].patch.operations, [{ kind: "delete_item", dayId: "Day-1", itemId: "Optional" }]);
+  f.driftTraffic();
+  const moved = await localRecoveryHTTP(f.request({ operation: "transport", input: f.transport }), id(3), true);
+  assert.equal(moved.status, 409); assert.equal((await moved.json()).error.code, "RECOVERY_STALE");
+});
+test("transport rejects foreign scope, caller policy and future requests before authoritative preparation", async t => {
+  const f = await setup(t);
+  for (const input of [
+    { ...f.transport, scope: { ...f.transport.scope, tripId: id(9) } },
+    { ...f.transport, scope: { ...f.transport.scope, dayId: "OtherDay" } },
+    { ...f.transport, scope: { ...f.transport.scope, departure: "tomorrow" } },
+    { ...f.transport, policyId: id(9) },
+    { ...f.transport, report: f.input.report },
+  ]) assert.equal((await localRecoveryHTTP(f.request({ operation: "transport", input }), id(3), true)).status, 400);
+  assert.ok(!f.calls.some(c => c.path.includes("prepare_transport")));
 });

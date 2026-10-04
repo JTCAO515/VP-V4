@@ -9,7 +9,7 @@ import { isUuid, hasSameOrigin } from "../../identity/request-guards.ts";
 import { timestamp } from "../../readiness/contract.ts";
 import { parseRecoveryHTTPInput } from "./contract.ts";
 import { localRecoveryCandidates } from "./preview.ts";
-import { prepareLocalRecovery, submitLocalRecovery, readLocalRecoveryOperation, RecoveryServiceError, sameRecoveryValue, type RecoveryRPC } from "./service.ts";
+import { prepareLocalRecovery, prepareTransportRecovery, submitLocalRecovery, readLocalRecoveryOperation, RecoveryServiceError, sameRecoveryValue, type RecoveryRPC } from "./service.ts";
 
 /** Ordinary user APIs only. No model, Maps request, inferred scope, or second Trip writer. */
 export async function localRecoveryHTTP(request: NextRequest, tripId: string, native: boolean) {
@@ -49,18 +49,20 @@ export async function localRecoveryHTTP(request: NextRequest, tripId: string, na
     if ("error" in archive || archive.data) return fail("FORBIDDEN", 403);
     const snapshot = { version: before.data.trip.headVersion, title: before.data.trip.title, days: before.data.content.days };
     let data: unknown;
-    if (input.operation === "transport") {
+    if (input.operation === "transport" && !("input" in input)) {
       if (input.expectedHeadVersion !== snapshot.version || !snapshot.days.some(d => d.id === input.dayId && d.items.some(i => i.id === input.itemId))) return fail("STALE_TRIP_VERSION", 409);
       data = { kind: "local_recovery/1", status: "pending", reason: "TRANSPORT_RECEIPT_READER_UNAVAILABLE", tripId, baseVersion: snapshot.version,
         receiptId: input.receiptId, candidates: [], tripMutation: "none", providerCalls: 0,
         navigation: { action: "open_existing_trip", tripId }, officialChannel: { status: "unavailable", reason: "NO_QUALIFIED_OFFICIAL_CHANNEL" } };
-    } else if (input.operation === "preview") {
+    } else if (input.operation === "preview" || input.operation === "transport") {
       if (input.input.expectedHeadVersion !== snapshot.version) return fail("STALE_TRIP_VERSION", 409);
+      if (input.operation === "transport" && (input.input.scope.tripId !== tripId || !snapshot.days.some(d => d.id === input.input.scope.dayId && d.items.some(i => i.id === input.input.scope.itemId)))) return fail("INVALID_INPUT", 400);
       const profile = await adapter.getUserProfile(); scope.check();
+      const prepare = () => input.operation === "preview" ? prepareLocalRecovery(tripId, input.input, rpc) : prepareTransportRecovery(tripId, input.input, rpc);
       try {
-        const context = await prepareLocalRecovery(tripId, input.input, rpc); scope.check();
+        const context = await prepare(); scope.check();
         data = localRecoveryCandidates(snapshot, input.input, { complete: true, reservations: context.reservationBasis }, profile, Date.now(), context);
-        const fresh = await prepareLocalRecovery(tripId, input.input, rpc); scope.check();
+        const fresh = await prepare(); scope.check();
         if (!sameRecoveryValue(context, fresh)) return fail("RECOVERY_STALE", 409);
       } catch (error) {
         if (error instanceof RecoveryServiceError && error.message !== "UNAUTHENTICATED" && error.message !== "FORBIDDEN" && error.message !== "INVALID_INPUT" && error.message !== "RECOVERY_CONFLICT") {
