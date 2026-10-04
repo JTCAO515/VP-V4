@@ -64,3 +64,29 @@ test('reviewed hotel receipt alone requires exact scope, current source/mapping/
  assert.equal(buildLodgingContext(id,trip,'confirmed',request,[],null,null,null,new Date(clock),[receipt]).candidates[0].hotelClassification,'unknown');
  for(const changed of [{...raw,tripVersion:1},{...raw,city:'beijing'},{...raw,items:[{...receipt,classification:'other'}]},{...raw,items:[{...receipt,mappingVersion:1}]},{...raw,items:[{...receipt,expiresAt:new Date(clock-1).toISOString()}]},{...raw,items:[{...receipt,roomsAvailable:true}]}])assert.equal(parseLodgingClassifications(changed,id,request,clock),null);
 });
+
+test('Native double classification read tolerates moving response clocks but rejects changed rights and keeps earliest expiry',async t=>{
+ const database='https://dzqdzetcctkhbrhlxxgn.supabase.co',host='vp-v4-classificationfixture-jtcao515s-projects.vercel.app';
+ const auth=await nativeFixture(t,database),env={VERCEL_ENV:'preview',VERCEL_URL:host,VISEPANDA_NATIVE_STAGING:'true',VISEPANDA_TRIP_PROTOCOL_V2:'true',NEXT_PUBLIC_SUPABASE_URL:database,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:auth.config.publishableKey,SUPABASE_SERVICE_ROLE_KEY:'synthetic-nonprivate-mapping-only'};
+ const priorEnv=Object.fromEntries(Object.keys(env).map(k=>[k,process.env[k]]));Object.assign(process.env,env);t.after(()=>{for(const[k,v]of Object.entries(priorEnv))v===undefined?delete process.env[k]:process.env[k]=v;});
+ const requestBody={...input,needs:{...needs,city:'shanghai'},candidates:[{canonicalPoiId:id,provider:'amap',providerPoiId:'hotel'}]};
+ const prior=globalThis.fetch,matchedAt=new Date(Date.now()-60000).toISOString();let reads=0,changed=false,firstExpiry=0;
+ t.mock.method(globalThis,'fetch',async(value,init)=>{
+  const req=new Request(value,init),path=new URL(req.url).pathname;
+  if(path.endsWith('/native_session_v2'))return Response.json({version:2,subject,sessionId,mobileEpoch:1});
+  if(path==='/rest/v1/trips')return Response.json({id,title:trip.title,head_version:0,updated_at:matchedAt});
+  if(path==='/rest/v1/trip_version_snapshots')return Response.json([{version:0,title:trip.title,content:{title:trip.title,days:trip.days}}]);
+  if(path==='/rest/v1/provider_poi_mappings')return Response.json([{id:other,canonical_poi_id:id,provider:'amap',provider_poi_id:'hotel',raw_name:'Mapped place',matched_at:matchedAt}]);
+  if(path.endsWith('/read_reviewed_lodging_classifications_v1')){
+   reads++;const evaluated=Date.now()-1000+reads,expires=evaluated+30000;if(reads===1)firstExpiry=expires;
+   return Response.json({kind:'lodging_classifications',schemaVersion:'reviewed-lodging-classification/1',tripId:id,tripVersion:0,city:'shanghai',locale:'en',evaluatedAt:new Date(evaluated).toISOString(),
+    items:[{canonicalPoiId:id,classification:'hotel',mappingId:other,mappingVersion:2,mappingDigest:'a'.repeat(64),statementId:id,statementRevision:1,payloadHash:'b'.repeat(64),factId:other,publicationVersion:1,sourceDigest:'c'.repeat(64),sourceRefs:[{sourceRevisionId:other,revisionLabel:'reviewed',snippetHash:'d'.repeat(64),publisher:'Reviewed source',uri:'https://example.invalid/source',locator:'Classification'}],rightsDigest:changed&&reads>1?'f'.repeat(64):'e'.repeat(64),reviewedAt:matchedAt,expiresAt:new Date(expires).toISOString()}]});
+  }
+  if(path.startsWith('/rest/v1/'))return Response.json([]);
+  return prior(value,init);
+ });
+ const request=()=>new NextRequest(`https://${host}/api/trips/native/v2/${id}/lodging/context`,{method:'POST',headers:{authorization:'Bearer '+auth.token},body:JSON.stringify(requestBody)});
+ const accepted=await lodgingContextHTTP(request(),id,true);assert.equal(accepted.status,200);const result=(await accepted.json()).data;
+ assert.equal(reads,2);assert.equal(result.candidates[0].hotelClassification,'reviewed_hotel');assert.ok(Date.parse(result.expiresAt)<=firstExpiry);
+ changed=true;reads=0;const revoked=await lodgingContextHTTP(request(),id,true);assert.equal(revoked.status,409);assert.deepEqual(await revoked.json(),{error:{code:'STALE_LODGING_EVIDENCE'}});
+});
