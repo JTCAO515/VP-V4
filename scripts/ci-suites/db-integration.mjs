@@ -93,6 +93,8 @@ export const LANES = {
           "tests/integration/trip/recovery-http-joint.test.mjs",
           "tests/integration/readiness/declarations-postgres.test.mjs",
           "tests/integration/readiness/native-readiness-actions-joint.test.mjs",
+          "tests/integration/reservations/ledger-postgres.test.mjs",
+          "tests/integration/reservations/native-return-joint.test.mjs",
           "tests/integration/trip/offline-text-provenance.test.mjs",
           "tests/integration/trip/offline-source-consumer.test.mjs",
           "tests/integration/turn/durable-work.test.mjs",

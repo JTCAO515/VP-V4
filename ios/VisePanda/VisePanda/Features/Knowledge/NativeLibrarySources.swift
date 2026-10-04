@@ -125,6 +125,7 @@ struct NativeLibrarySourcesView:View {
     @State private var store=NativeLibrarySourceStore()
     @State private var cursor:String?
     @State private var opened:NativeLibraryMetadata?
+    @State private var reservationsOpen=false
     @State private var refresh=UUID()
     private var key:NativeLibrarySourceStore.Key?{guard active,phase == .active,let scope=session.dataScope else{return nil};return .init(scope:scope,source:source,query:query,cursor:cursor)}
     private func t(_ zh:String,_ en:String)->String{chinese ? zh:en}
@@ -132,6 +133,11 @@ struct NativeLibrarySourcesView:View {
         VStack(alignment:.leading,spacing:10){
             Picker(t("私有来源","Private source"),selection:$source){ForEach(NativeLibrarySource.allCases,id:\.self){value in Text(value.label(chinese)).tag(value)}}
                 .accessibilityIdentifier("library.sources.choice")
+            if source == .orders {
+                Button(t("打开订单引用／报告外部改签或取消","Open reservation references / report external amendment or cancellation")){reservationsOpen=true}
+                    .disabled(key==nil).accessibilityIdentifier("library.reservations.open")
+                Text(t("订单引用在独立行程页面读取。此聚合来源服务仍未接入，不能把下方不可用状态当成没有订单。","Reservation references are read in a dedicated Trip view. This aggregate source reader is not connected; the unavailable state below does not mean there are no orders.")).font(.footnote)
+            }
             Text(t("查询有来源窗口限制；本页没有匹配不代表全部历史没有结果，可继续下一页。打开会重新核对精确身份与权限。","Queries have source-window limits. No match on this page does not mean no match in all history; continue to the next page when available. Opening rechecks exact identity and authority.")).font(.footnote)
             TimelineView(.periodic(from:.now,by:1)){_ in
                 if key==nil {Text(t("请登录后读取自己的资料。","Sign in to read your own materials."))}
@@ -165,6 +171,7 @@ struct NativeLibrarySourcesView:View {
         .onChange(of:session.dataScope){_,_ in store.clear();opened=nil;cursor=nil}
         .onDisappear{store.clear();opened=nil}
         .sheet(item:$opened,onDismiss:{cursor=nil;refresh=UUID()}){reference in NativeLibraryExactSourceView(reference:reference,session:session,chinese:chinese,active:active)}
+        .sheet(isPresented:$reservationsOpen){NativeReservationsView(session:session,chinese:chinese,active:active)}
     }
     private struct Load:Equatable{let key:NativeLibrarySourceStore.Key?;let refresh:UUID}
 }
