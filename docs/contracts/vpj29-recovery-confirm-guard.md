@@ -103,3 +103,23 @@ owner/source/Profile/head/expiry/fixed/revision/alternate-confirm negatives,
 original-confirm single event and concurrent replay, transaction rollback, lifecycle
 and default ACL; exact lease export. Integration registry remains Main-owned.
 This package is integrated into the single complete #220 result; no micro PR.
+
+## Observed local evidence, 2026-10-04
+
+At main `8d30d0ba`, #646 is still unmerged. Disposable network-none PostgreSQL:
+DDL transaction rollback, full migration compilation, default ACL/RLS, ordinary
+original writer, absent real reader/no write, typed/owner/fixed inputs, and permanent
+unbound marker confirmation/revision rollback passed (5 tests, zero skipped).
+Archive, actual deletion-request, account/Trip cascade and exact original D2 export
+lease/cursor/owner isolation passed (2 tests, zero skipped). Those lifecycle/export
+tests use explicitly unqualified admin seed rows; they do not assert recovery
+preparation succeeded without its source authority. The first export fixture failed
+because its synthetic JWT lacked role; adding that claim fixed the fixture, without
+changing runtime permissions or guards.
+
+Successful real-reader context/selection/confirmation, source/Profile drift,
+concurrent operation/confirmation, short-expiry commit rollback and bound-order
+scope tests are written but UNRUN until #646 normally reaches main. No unmerged
+migration/reader was installed or treated as current capability. Staging, real JWT,
+provider, device, export delivery, role activation and whole #220 acceptance UNRUN.
+The integration registry belongs to Main/TS integrator and is not edited here.

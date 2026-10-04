@@ -7,7 +7,7 @@ import {command,sql} from '../cost/fixtures/postgres-rpc.mjs';
 const enabled=process.env.VP_TURN_DB_TEST==='1',container='vpj29-recovery-'+uuid().slice(0,8);let created=false;
 const lit=v=>v===null?'null':typeof v==='number'||typeof v==='boolean'?String(v):"'"+(typeof v==='object'?JSON.stringify(v):String(v)).replaceAll("'","''")+"'";
 const db=async q=>{const r=await sql(container,q);assert.equal(r.code,0,r.stderr);return r.stdout.trim();};
-const claims=a=>`set request.jwt.claim.role='authenticated';set request.jwt.claim.sub='${a.id}';set request.jwt.claims='${JSON.stringify({session_id:a.session,is_anonymous:false})}';`;
+const claims=a=>`set request.jwt.claim.role='authenticated';set request.jwt.claim.sub='${a.id}';set request.jwt.claims='${JSON.stringify({role:'authenticated',session_id:a.session,is_anonymous:false})}';`;
 const tableNames=new Set(['create_trip_proposal_patch','confirm_and_apply_trip_proposal','revise_trip_proposal_patch','revise_trip_proposal']);
 const stmt=(name,p)=>tableNames.has(name)?`select coalesce(jsonb_agg(to_jsonb(r)),'[]') from public.${name}(${Object.entries(p).map(([k,v])=>k+'=>'+lit(v)).join(',')}) r;`:`select public.${name}(${Object.entries(p).map(([k,v])=>k+'=>'+lit(v)).join(',')});`;
 const rpc=async(a,name,p)=>JSON.parse(await db(`begin;${claims(a)}${stmt(name,p)}commit;`));
@@ -48,6 +48,16 @@ async function fingerprint(f){return db(`select jsonb_build_array(t.head_version
 async function reservation(f,status='reserved'){
  const ref=uuid(),input={operationId:uuid(),referenceId:ref,expectedTripVersion:1,expectedRevision:0,fields:{kind:'activity',supplier:'official',externalReference:null,title:'Fixed reservation',startsAt:'2026-10-04T09:00:00Z',endsAt:'2026-10-04T10:00:00Z',timeZone:'Asia/Shanghai',address:null,terms:null,status},source:{kind:'user_reported',localMaterialId:null,localContentHash:null,locator:null},explicitlyConfirmed:true};
  const r=await rpc(f.a,'confirm_reservation_reference_v1',{p_trip_id:f.trip,p_input:input});assert.equal(r.kind,'reservation_confirmation/1',JSON.stringify(r));return {ref,input,r};
+}
+// Lifecycle/export fixture only: direct admin seed is deliberately unqualified.
+// It is never evidence that missing reservation authority admitted a recovery RPC.
+async function lifecycleSeed(){
+ const f=await fixture(),context=uuid(),operation=uuid(),patch={expectedVersion:1,operations:[{kind:'delete_item',dayId:'DayA',itemId:'OptionalA'}]},p=(await rpc(f.a,'create_trip_proposal_patch',{p_trip_id:f.trip,p_patch:patch}))[0].proposal_id;
+ await db(`${claims(f.a)}update public.trip_proposals set expires_at=date_trunc('milliseconds',clock_timestamp()+interval '30 seconds'),local_recovery=true where id='${p}';`);
+ const selection={operationId:operation,contextId:context,contextDigest:'a'.repeat(64),candidateId:'omit_one'},receipt={kind:'local_recovery_proposal/1',operationId:operation,contextId:context,contextDigest:'a'.repeat(64),candidateId:'omit_one',proposalId:p,proposalRevision:2,baseVersion:1,expiresAt:new Date(Date.now()+30000).toISOString(),reused:false};
+ await db(`${claims(f.a)}insert into recovery_private.contexts_v1(id,owner_id,trip_id,operation_id,input,base_version,snapshot,profile_basis,reservation_basis,digest,expires_at) select '${context}','${f.a.id}','${f.trip}','${f.input.operationId}',${lit(f.input)}::jsonb,1,public.trip_content_snapshot(t.id,t.title),recovery_private.profile_v1('${f.a.id}'),'[]','${'a'.repeat(64)}',clock_timestamp()+interval '5 minutes' from public.trips t where id='${f.trip}';insert into recovery_private.operations_v1 values('${f.a.id}','${operation}','${f.trip}','${context}',${lit(selection)}::jsonb,${lit(receipt)}::jsonb,'${p}');insert into recovery_private.lineage_v1 select '${p}','${f.a.id}','${f.trip}','${context}','${operation}',${lit(patch)}::jsonb,digest from public.read_trip_proposal_v2('${p}');`);
+ for(const table of ['contexts_v1','operations_v1','lineage_v1'])assert.equal(await db(`select count(*) from recovery_private.${table} where owner_id='${f.a.id}';`),'1');
+ return {...f,context,operation,proposal:p};
 }
 run('full migration compile and default revoked ACL/RLS; ordinary original writer unchanged',async()=>{
  const acl=await db("select count(*) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where (n.nspname='recovery_private' or p.proname in('prepare_local_recovery_v1','submit_local_recovery_v1','read_local_recovery_operation_v1')) and (has_function_privilege('anon',p.oid,'EXECUTE') or has_function_privilege('authenticated',p.oid,'EXECUTE') or has_function_privilege('service_role',p.oid,'EXECUTE'));" );assert.equal(acl,'0');
@@ -145,6 +155,30 @@ run('account/Trip deletion cascades personal rows; clearing association keeps pe
  const f=await selected(await fixture()),before=await fingerprint(f);await db(`delete from recovery_private.contexts_v1 where trip_id='${f.trip}';`);await failure(f.a,'confirm_and_apply_trip_proposal',f.confirm,/RECOVERY_CONFIRM_GUARD/);assert.equal(await fingerprint(f),before);
  const g=await selected(await fixture());await db(`delete from public.trips where id='${g.trip}';`);assert.equal(await db(`select count(*) from recovery_private.contexts_v1 where owner_id='${g.a.id}';`),'0');assert.equal(await db(`select count(*) from recovery_private.operations_v1 where owner_id='${g.a.id}';`),'0');assert.equal(await db(`select count(*) from recovery_private.lineage_v1 where owner_id='${g.a.id}';`),'0');
  const h=await selected(await fixture());await db(`delete from auth.users where id='${h.a.id}';`);assert.equal(await db(`select count(*) from recovery_private.contexts_v1 where owner_id='${h.a.id}';`),'0');
+});
+run('lifecycle-only unqualified records cascade on real archive/deletion request/account/Trip paths',async()=>{
+ for(const mode of ['archive','request','account','trip']){
+  const f=await lifecycleSeed();
+  if(mode==='archive')await db(`${claims(f.a)}select * from public.archive_trip_v1('${f.trip}',1,'${uuid()}',true);`);
+  if(mode==='request')await rpc(f.a,'request_trip_deletion_v1',{p_request_id:uuid(),p_trip_id:f.trip,p_expected_version:1,p_confirmed:true});
+  if(mode==='account')await db(`delete from auth.users where id='${f.a.id}';`);
+  if(mode==='trip')await db(`delete from public.trips where id='${f.trip}';`);
+  for(const table of ['contexts_v1','operations_v1','lineage_v1'])assert.equal(await db(`select count(*) from recovery_private.${table} where owner_id='${f.a.id}';`),'0');
+  if(mode==='archive'||mode==='request'){
+   assert.equal(await db(`select local_recovery from public.trip_proposals where id='${f.proposal}';`),'t');
+   assert.equal((await rpc(f.a,'read_local_recovery_operation_v1',{p_trip_id:f.trip,p_operation_id:f.operation})).kind,'unavailable');
+  }
+ }
+});
+run('private exact real export lease reads only owned metadata, is partial/unenrolled and rejects wrong lease/cursor',async()=>{
+ const f=await lifecycleSeed(),foreign=await lifecycleSeed(),request=uuid();
+ await db(`update identity_private.mobile_accounts set epoch=1,session_id='${f.a.session}' where owner_id='${f.a.id}';insert into identity_private.mobile_attempts(owner_id,attempt_id,session_id,epoch) values('${f.a.id}','${uuid()}','${f.a.session}',1);insert into export_private.core_policies_v1(id,revision,enabled,environment,key_id,max_run_ms,artifact_ttl_ms,ticket_ttl_ms,max_pages,page_size,max_bytes,valid_until) values('${uuid()}',1,true,'local','synthetic-recovery-key',90000,600000,300000,1000,100,8388608,clock_timestamp()+interval '1 day');`);
+ assert.equal((await rpc(f.a,'privacy_core_export_v1',{p_action:'request',p_input:{requestId:request,confirmed:true}})).state,'queued');
+ const lease=JSON.parse(await db(`set request.jwt.claim.role='service_role';select public.privacy_core_export_v1('claim',${lit({requestId:request,operationId:uuid(),maxRunMs:90000,expectedEnvironment:'local',expectedKeyId:'synthetic-recovery-key'})}::jsonb);`));assert.equal(lease.kind,'privacy_export_lease/1');
+ const call=(id,cursor=null)=>db(`set request.jwt.claim.role='service_role';select recovery_private.export_metadata_v1('${request}','${id}',${lease.generation},${lit(cursor)}::uuid,100);`);
+ const wire=JSON.parse(await call(lease.leaseId));assert.equal(wire.items.length,1);assert.equal(wire.items[0].contextId,f.context);assert.equal(wire.items[0].operations[0].operationId,f.operation);assert.equal(wire.enrolled,false);assert.equal(wire.inventoryStatus,'partial');assert.equal(wire.sectionComplete,true);assert.ok(!JSON.stringify(wire).includes('snapshot'));assert.ok(!JSON.stringify(wire).includes(foreign.context));
+ assert.deepEqual(JSON.parse(await call(uuid())),{kind:'unavailable'});
+ const bad=await sql(container,`set request.jwt.claim.role='service_role';select recovery_private.export_metadata_v1('${request}','${lease.leaseId}',${lease.generation},'${foreign.context}',100);`);assert.notEqual(bad.code,0);assert.match(bad.stderr,/INVALID_EXPORT_CURSOR/);
 });
 run('private export stays partial unenrolled and requires exact live original lease; no ordinary ACL',async()=>{
  const r=await sql(container,`set request.jwt.claim.role='authenticated';select recovery_private.export_metadata_v1('${uuid()}','${uuid()}',1);`);assert.notEqual(r.code,0);assert.match(r.stderr,/FORBIDDEN/);
