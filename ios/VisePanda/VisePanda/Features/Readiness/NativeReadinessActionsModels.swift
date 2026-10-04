@@ -65,6 +65,7 @@ struct NativeReadinessAssessment:Decodable {
         guard bytes.count<=256000,let root=try JSONSerialization.jsonObject(with:bytes) as? [String:Any],Set(root.keys)==Set(["data"]),let r=root["data"] as? [String:Any],Set(r.keys)==Set(["schemaVersion","basis","scenario","ruleVersion","ontologyVersion","declarationRevision","assessmentDigest","evaluatedAt","expiresAt","knowledgeAvailability","userReadiness","actionTiming","declaration","declarationBasis","declarationState","evidence","actions"]),let b=r["basis"] as? [String:Any],Set(b.keys)==NativeReadinessTaskBasis.keys,let d=r["declaration"] as? [String:Any],Set(d.keys)==NativeReadinessDeclaration.keys,let actions=r["actions"] as? [Any],actions.count<=4 else{throw NativeDataError.invalidResponse}
         let value=try JSONDecoder().decode(Self.self,from:JSONSerialization.data(withJSONObject:r))
         guard value.schemaVersion=="readiness/2",value.basis.valid,value.basis.taskId==taskId,value.basis.tripId==tripId,value.basis.tripVersion==tripVersion,value.ruleVersion=="readiness-actions/1",!value.ontologyVersion.isEmpty,value.ontologyVersion.utf8.count<=256,value.declarationRevision>=0,value.declaration.valid,value.scenario==selection.scenario,value.declaration.scenario==selection.scenario,value.declaration.city==selection.city,value.declaration.locale==selection.locale,value.declaration.subjectId==selection.subjectId,value.declarationBasis=="explicit_user_report",["empty","current","stale"].contains(value.declarationState),NativeQualifiedDelegationRPC.digest(value.assessmentDigest),let evaluated=NativeKnowledgeRead.date(value.evaluatedAt),let expires=NativeKnowledgeRead.date(value.expiresAt),expires>evaluated,expires.timeIntervalSince(evaluated)<=30,expires>Date(),value.evidence.count<=50,value.evidence.allSatisfy(\.valid),(value.knowledgeAvailability == .available ? !value.evidence.isEmpty:value.evidence.isEmpty) else{throw NativeDataError.invalidResponse}
+        if value.declarationState != "current" {guard [value.declaration.applies,value.declaration.resourcesReady,value.declaration.conditionsChecked].allSatisfy({$0=="unknown"}),value.declaration.checkAt=="unknown" else{throw NativeDataError.invalidResponse}}
         if value.userReadiness == .notApplicable{guard value.actionTiming == .notApplicable,value.actions.isEmpty else{throw NativeDataError.invalidResponse}}
         if value.knowledgeAvailability == .unknown,value.userReadiness != .notApplicable{guard value.userReadiness == .unknown else{throw NativeDataError.invalidResponse}}
         if let actionBasis=value.actionBasis {
@@ -116,5 +117,34 @@ struct NativeReadinessInput {
             else{guard let action,action.basis==assessment.actionBasis else{throw NativeDataError.invalidResponse};raw["actionId"]=action.actionId;raw["assessmentDigest"]=assessment.assessmentDigest}
         }
         let bytes=try JSONSerialization.data(withJSONObject:raw,options:.sortedKeys);guard bytes.count<=16000 else{throw NativeDataError.invalidResponse};return bytes
+    }
+}
+
+struct NativeReadinessPendingSave:Codable {
+    let endpoint:String;let owner:String;let epoch:Int;let tripId:String;let taskId:String;let body:Data
+    func matches(_ actor:NativeDataScope)->Bool{endpoint==actor.endpoint && owner==actor.subject && epoch==actor.mobileEpoch}
+    func parsed()throws->(basis:NativeReadinessTaskBasis,selection:NativeReadinessDeclaration) {
+        guard NativeMemoryWire.uuid(tripId),NativeMemoryWire.uuid(taskId),body.count<=16000,let raw=try JSONSerialization.jsonObject(with:body) as? [String:Any],Set(raw.keys)==Set(["schemaVersion","operation","taskId","expectedTripVersion","scenario","city","locale","subjectId","operationId","expectedRevision","expectedBasis","declaration"]),raw["schemaVersion"] as? String=="readiness-request/2",raw["operation"] as? String=="save",raw["taskId"] as? String==taskId,let op=raw["operationId"] as? String,NativeMemoryWire.uuid(op),let revision=raw["expectedRevision"] as? Int,revision>=0,let basis=raw["expectedBasis"] as? [String:Any],Set(basis.keys)==NativeReadinessTaskBasis.keys,let declaration=raw["declaration"] as? [String:Any],Set(declaration.keys)==NativeReadinessDeclaration.keys else{throw NativeDataError.invalidResponse}
+        let b=try JSONDecoder().decode(NativeReadinessTaskBasis.self,from:JSONSerialization.data(withJSONObject:basis)),d=try JSONDecoder().decode(NativeReadinessDeclaration.self,from:JSONSerialization.data(withJSONObject:declaration))
+        guard b.valid,b.tripId==tripId,b.taskId==taskId,raw["expectedTripVersion"] as? Int==b.tripVersion,d.valid,raw["scenario"] as? String==d.scenario.rawValue,raw["city"] as? String==d.city,raw["locale"] as? String==d.locale,(raw["subjectId"] as? String)==d.subjectId else{throw NativeDataError.invalidResponse};return(b,d)
+    }
+}
+
+struct NativeReadinessTaskOption:Decodable,Identifiable {
+    var id:String{taskId};let taskId:String;let tripVersion:Int;let goalId:String;let goalVersion:Int;let conversationId:String;let label:String
+}
+enum NativeReadinessTaskDiscovery {
+    case reference(String)
+    case options([NativeReadinessTaskOption])
+    case unavailable
+    static func decode(_ bytes:Data,tripId:String,tripVersion:Int)throws->Self {
+        guard bytes.count<=256000,let root=try JSONSerialization.jsonObject(with:bytes) as? [String:Any],Set(root.keys)==Set(["data"]),let raw=root["data"] as? [String:Any] else{throw NativeDataError.invalidResponse}
+        if raw["kind"] as? String=="unavailable"{guard Set(raw.keys)==Set(["kind"]) else{throw NativeDataError.invalidResponse};return .unavailable}
+        if raw["kind"] as? String=="readiness_task_reference/1" {
+            guard Set(raw.keys)==Set(["kind","taskId","tripId","tripVersion","artifactId","artifactRevision"]),raw["tripId"] as? String==tripId,raw["tripVersion"] as? Int==tripVersion,let task=raw["taskId"] as? String,NativeMemoryWire.uuid(task),let artifact=raw["artifactId"] as? String,NativeMemoryWire.uuid(artifact),let revision=raw["artifactRevision"] as? Int,revision>0 else{throw NativeDataError.invalidResponse};return .reference(task)
+        }
+        guard raw["kind"] as? String=="readiness_task_options/1",Set(raw.keys)==Set(["kind","tripId","options"]),raw["tripId"] as? String==tripId,let options=raw["options"] as? [[String:Any]],options.count<=20,options.allSatisfy({Set($0.keys)==Set(["taskId","tripVersion","goalId","goalVersion","conversationId","label"])}) else{throw NativeDataError.invalidResponse}
+        let values=try JSONDecoder().decode([NativeReadinessTaskOption].self,from:JSONSerialization.data(withJSONObject:options))
+        guard Set(values.map(\.id)).count==values.count,values.allSatisfy({NativeMemoryWire.uuid($0.taskId) && $0.tripVersion==tripVersion && NativeMemoryWire.uuid($0.goalId) && $0.goalVersion>0 && NativeMemoryWire.uuid($0.conversationId) && !$0.label.isEmpty && $0.label.utf8.count<=16000}) else{throw NativeDataError.invalidResponse};return .options(values)
     }
 }

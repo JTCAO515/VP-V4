@@ -1,0 +1,3 @@
+PASS lost ACK / refresh / background / restored original operation bytes retry
+PASS changed current basis unlocks explicit redeclaration / cross-actor clear
+PASS date-entry single candidate stays explicit / unavailable is not first-or-latest

@@ -324,6 +324,28 @@ final class NativeSession {
         guard status==errSecSuccess || status==errSecItemNotFound else{throw NativeDataError.sessionUnavailable}
     }
 
+    private var readinessSaveService:String{keychainService+".readiness-save."+(endpoint?.absoluteString ?? "disabled")}
+    func readinessSaveRecovery()throws->NativeReadinessPendingSave? {
+        guard let actor=dataScope else{throw NativeDataError.sessionUnavailable}
+        let (status,bytes)=vault.read(service:readinessSaveService,owner:actor.subject)
+        if status==errSecItemNotFound{return nil}
+        guard status==errSecSuccess,let bytes,bytes.count<=32000 else{throw NativeDataError.sessionUnavailable}
+        let pending=try JSONDecoder().decode(NativeReadinessPendingSave.self,from:bytes);guard pending.matches(actor) else{throw NativeDataError.staleSessionResponse};_=try pending.parsed();return pending
+    }
+    func rememberReadinessSave(_ pending:NativeReadinessPendingSave)throws {
+        guard let actor=dataScope,pending.matches(actor) else{throw NativeDataError.sessionUnavailable};_=try pending.parsed()
+        if let existing=try readinessSaveRecovery(){guard existing.body==pending.body,existing.tripId==pending.tripId,existing.taskId==pending.taskId else{throw NativeDataError.server(code:"READINESS_SAVE_RECOVERY_REQUIRED")};return}
+        let bytes=try JSONEncoder().encode(pending);guard bytes.count<=32000,vault.write(bytes,service:readinessSaveService,owner:actor.subject)==errSecSuccess else{throw NativeDataError.sessionUnavailable}
+    }
+    func removeReadinessSave(_ pending:NativeReadinessPendingSave)throws {
+        guard let actor=dataScope,pending.matches(actor),let existing=try readinessSaveRecovery(),existing.body==pending.body,existing.tripId==pending.tripId,existing.taskId==pending.taskId else{throw NativeDataError.staleSessionResponse}
+        let status=vault.remove(service:readinessSaveService,owner:actor.subject);guard status==errSecSuccess || status==errSecItemNotFound else{throw NativeDataError.sessionUnavailable}
+    }
+    func readinessTaskDiscovery(tripId:String)async throws->Data {
+        guard NativeMemoryWire.uuid(tripId) else{throw NativeDataError.invalidResponse}
+        let bytes=try await tripRequest(path:"api/trips/native/v2/\(tripId)/readiness/task",method:"GET")
+        guard bytes.count<=256000 else{throw NativeDataError.invalidResponse};return bytes
+    }
     func readinessActions(tripId:String,body:Data)async throws->Data {
         guard NativeMemoryWire.uuid(tripId),body.count<=16000 else{throw NativeDataError.invalidResponse}
         let bytes=try await tripRequest(path:"api/trips/native/v2/\(tripId)/readiness/actions",method:"POST",body:body)
@@ -1118,6 +1140,8 @@ final class NativeSession {
                 let result=vault.remove(service:service,owner:owner)
                 guard result==errSecSuccess || result==errSecItemNotFound else{failureCode="keychain:\(result)";status="storageError";return false}
             }
+            let readiness=vault.remove(service:readinessSaveService,owner:owner)
+            guard readiness==errSecSuccess || readiness==errSecItemNotFound else{failureCode="keychain:\(readiness)";status="storageError";return false}
             let memoryDelete=vault.remove(service:memoryDeleteVaultService,owner:owner)
             guard memoryDelete==errSecSuccess || memoryDelete==errSecItemNotFound else{failureCode="keychain:\(memoryDelete)";status="storageError";return false}
             let linked=vault.remove(service:linkedDeleteVaultService,owner:owner)
