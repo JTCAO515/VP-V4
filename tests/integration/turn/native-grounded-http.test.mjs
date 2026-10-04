@@ -5,7 +5,8 @@ import {createNativeTextEnvironment} from './native-text-environment.mjs';
 import {waitUntil} from '../identity/database-barrier.mjs';
 import {createServerClient} from '@supabase/ssr';
 import {identityLocalEnv} from '../identity/local-supabase.mjs';
-import {FAILURE_TAXONOMY} from '../../../lib/server/contracts/errors/index.ts';
+const groundedReadFailureCodes=new Set(['PROVIDER_UNAVAILABLE','INVALID_INPUT','UNAUTHENTICATED','FORBIDDEN',
+ 'DATA_POLICY_BLOCKED','INTERNAL_ERROR','SERVICE_TASK_CONFLICT','SERVICE_TASK_CAPACITY_EXHAUSTED','IDEMPOTENCY_KEY_REUSE']);
 
 test('grounded native HTTP preserves scope, consent, current-input egress and revalidated durable results',{skip:process.env.VP_NATIVE_GROUNDED_INTEGRATION!=='true',timeout:180000},async t=>{
  const e=await createNativeTextEnvironment({grounded:true});t.after(()=>e.cleanup());
@@ -46,7 +47,7 @@ test('grounded native HTTP preserves scope, consent, current-input egress and re
   const started=Date.now(),r=await call(base+'/turns',token);
   if(r.status!==200){
    // Failure-only metadata. Never emit response bodies, credentials or user content.
-   const code=typeof r.body?.error?.code==='string'&&Object.hasOwn(FAILURE_TAXONOMY,r.body.error.code)?r.body.error.code:'UNEXPECTED_RESPONSE';
+   const code=typeof r.body?.error?.code==='string'&&groundedReadFailureCodes.has(r.body.error.code)?r.body.error.code:'UNEXPECTED_RESPONSE';
    const diagnostic={phase:'grounded_history_read',httpStatus:r.status,errorCode:code,elapsedMs:Date.now()-started};
    assert.equal(r.status,200,JSON.stringify(diagnostic));
   }
