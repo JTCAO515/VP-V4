@@ -82,10 +82,14 @@ test("lost actor prevents output; revoked sources allow owned forget without cur
   const forget = { ...read, action: "forget" as const, operationId: op };
   assert.deepEqual(await runGuide(trip, forget, { current: async () => true, now: () => now,
     rpc: async () => ({ data: { kind: "forgotten", operationId: op }, error: null }) }), { kind: "forgotten", operationId: op });
-  const exported = { kind: "export", version: 1, scope: "guide-metadata/1", tripId: trip, placeReferenceId: ref, records: [{ digest, canonicalPoiId: poi,
+  const exported = { kind: "export", version: 1, scope: "guide_selection_metadata", coverage: "complete_for_selection",
+    excludedModules: ["grounded_history", "use_review_audit"], followUpBindings: [{ turnId: turn, threadId: ref, serviceTaskId: id, operationId: op,
+      tripVersion: 0, locale: "en", interest: "general", guideDigest: digest, parentTurnId: null, completedSegmentIds: [], invalidated: true }],
+    tripId: trip, placeReferenceId: ref, records: [{ digest, canonicalPoiId: poi,
     locale: "en", interest: "general", rightsRevision: 1, completedSegmentIds: [id], expiresAt: new Date(now - 1).toISOString(), updatedAt: new Date(now).toISOString() }] };
   const input = { ...read, action: "export" as const };
   assert.ok(decodeGuideOutcome(exported, trip, input, now));
   assert.equal(decodeGuideOutcome({ ...exported, scope: "all-user-data" }, trip, input, now), null);
+  assert.equal(decodeGuideOutcome({ ...exported, followUpBindings: [{ ...exported.followUpBindings[0], sourceBody: "withdrawn content" }] }, trip, input, now), null);
   assert.equal(decodeGuideOutcome({ ...exported, records: [{ ...exported.records[0], text: "withdrawn content" }] }, trip, input, now), null);
 });

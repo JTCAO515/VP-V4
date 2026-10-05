@@ -40,7 +40,9 @@ export type GuideUnavailable = Readonly<{
 }>;
 export type GuideOutcome = GuideReady | GuideUnavailable
   | Readonly<{ kind: "forgotten"; operationId: string }>
-  | Readonly<{ kind: "export"; version: 1; scope: "guide-metadata/1"; tripId: string; placeReferenceId: string; records: readonly GuideExportRecord[] }>
+  | Readonly<{ kind: "export"; version: 1; scope: "guide_selection_metadata"; coverage: "complete_for_selection";
+      excludedModules: readonly ["grounded_history", "use_review_audit"]; tripId: string; placeReferenceId: string;
+      records: readonly GuideExportRecord[]; followUpBindings: readonly GuideBindingExportRecord[] }>
   | Readonly<{ kind: "submitted"; version: 1; operationId: string; tripId: string; turnId: string; serviceTaskId: string;
       scopeVersion: 1; relationship: "new_goal" | "clarification" | "repair"; parentTurnId: string | null;
       guideDigest: string; reused: boolean; generationCost: null }>;
@@ -48,6 +50,12 @@ export type GuideOutcome = GuideReady | GuideUnavailable
 export type GuideExportRecord = Readonly<{
   digest: string; canonicalPoiId: string; locale: GuideLocale; interest: GuideInterest;
   rightsRevision: number; completedSegmentIds: readonly string[]; expiresAt: string; updatedAt: string;
+}>;
+/** Source/body-free owner metadata. invalidated=false is no eligibility grant. */
+export type GuideBindingExportRecord = Readonly<{
+  turnId: string; threadId: string; serviceTaskId: string; operationId: string; tripVersion: number;
+  locale: GuideLocale; interest: GuideInterest; guideDigest: string; parentTurnId: string | null;
+  completedSegmentIds: readonly string[]; invalidated: boolean;
 }>;
 
 export const uuid = (v: unknown): v is string => typeof v === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(v);
