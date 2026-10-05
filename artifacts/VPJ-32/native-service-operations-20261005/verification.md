@@ -25,6 +25,8 @@ Native ownership only; related to #224 S1/S2. This does not close the whole Issu
 
 - PASS 6 new data-lifecycle/v0 host Swift Testing cases: explicit confirmation/minimal receipt, data-family unknown ACK and original retry, abandon cancelled versus deleted, source/bundle owner-session-request/TTL/coverage, actual file artifact versus source proof/cleanup, initial canonical Trip version zero. Unchanged 15 iOS tests were reused rather than rerun.
 
+- PASS integrator finding repair: companion response bytes now match the locked 512 KiB (`524_288`) bound. One new host regression accepts an otherwise valid JSON response padded to exactly the limit and rejects the same response at limit + 1 byte. Command: `python3 tests/unit/service-cases/native-service-operations-host.py --filter 'NativeServiceOperationTests.dataExportRejectsBytesBeyond512KiB'`. Result 1/1, no failure/skip. Previous compile and 15/6 scoped evidence are reused; no matrix rerun.
+
 ## Unrun and boundaries
 
 Target deployment, staff membership/shift/role/GRANT activation, real operator/provider contacts, real account data, paid actions, real Brief/source producer, physical phone/accessibility and full #224 operational acceptance are UNRUN. Feature activation remains disabled and no staff was enrolled. Backend/RPC/SQL/Ops and protected CI are owned by the paired integrator and their original owners. No new registry or shared TripView edits.

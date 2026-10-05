@@ -250,6 +250,18 @@ import Testing
         var invalid = good; invalid["coverage"] = coverage
         #expect(throws: (any Error).self) { try Self.decodeBundle(invalid) }
     }
+    @Test func dataExportRejectsBytesBeyond512KiB() throws {
+        let bytes = try NativeServiceOperationWire.bytes(["data": Self.bundle()])
+        let limit = 524_288
+        let atLimit = bytes + Data(repeating: 0x20, count: limit - bytes.count)
+        #expect(atLimit.count == limit)
+        #expect(try NativeServiceDataBundle.decode(atLimit, actor: Self.scope, sessionId: Self.exportSession, requestId: Self.exportRequest).rowCount == 1)
+        let oversized = atLimit + Data([0x20])
+        #expect(oversized.count == limit + 1)
+        #expect(throws: (any Error).self) {
+            try NativeServiceDataBundle.decode(oversized, actor: Self.scope, sessionId: Self.exportSession, requestId: Self.exportRequest)
+        }
+    }
     @Test func dataExportDeliversSeparateArtifactAndCleansOnlyOwnedFiles() throws {
         let root = FileManager.default.temporaryDirectory.appendingPathComponent("service-export-test-" + UUID().uuidString)
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)

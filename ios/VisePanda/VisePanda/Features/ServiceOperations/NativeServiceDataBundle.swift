@@ -12,7 +12,7 @@ struct NativeServiceDataBundle {
     let rowCount: Int
     let counts: [String: Int]
     static func decode(_ bytes: Data, actor: NativeDataScope, sessionId: String, requestId: String, now: Date = Date()) throws -> Self {
-        guard bytes.count <= 8_388_608 else { throw NativeDataError.invalidResponse }
+        guard bytes.count <= 524_288 else { throw NativeDataError.invalidResponse }
         let w = NativeServiceOperationWire.self
         let envelope = try w.object(JSONSerialization.jsonObject(with: bytes), keys: ["data"])
         let value = try w.object(envelope["data"] as Any, keys: ["schemaVersion", "kind", "requestId", "ownerId", "sessionId", "capturedAt", "expiresAt", "sourceDigest", "corePackageEnrollment", "allUserDataCompleted", "coverage", "rows"])
