@@ -81,26 +81,28 @@ $$;
 
 create or replace function public.apply_trip_content_patch(p_current jsonb,p_patch jsonb)
 returns jsonb language plpgsql security invoker set search_path='' as $$
-declare result jsonb; stripped jsonb; ops jsonb; d jsonb; i jsonb; old_i jsonb; o jsonb; reordered jsonb; items jsonb; days jsonb:='[]'; slot integer;old_slot integer;
+declare result jsonb; stripped jsonb; ops jsonb; d jsonb; i jsonb; old_i jsonb; o jsonb; reordered jsonb; items jsonb; days jsonb:='[]'; slot integer;old_slot integer;current jsonb:=p_current;current_op jsonb;one_patch jsonb;
 begin
  if not (p_patch ? 'operations') then return scoped_edit_private.legacy_patch_v1(p_current,p_patch);end if;
  if jsonb_typeof(p_patch->'operations') is distinct from 'array' or jsonb_array_length(p_patch->'operations') not between 1 and 128
  or not recovery_private.exact_v1(p_patch,array['expectedVersion','operations']) then raise exception 'INVALID_PATCH';end if;
- select coalesce(jsonb_agg(x),'[]') into ops from jsonb_array_elements(p_patch->'operations')x where x->>'kind'<>'reorder_items';
+ for current_op in select value from jsonb_array_elements(p_patch->'operations') loop
+ days:='[]';one_patch:=jsonb_build_object('expectedVersion',p_patch->'expectedVersion','operations',jsonb_build_array(current_op));
+ ops:=case when current_op->>'kind'='reorder_items' then '[]'::jsonb else jsonb_build_array(current_op) end;
  -- Existing validator enforces the closed ordinary operation language.
  stripped:=jsonb_build_object('expectedVersion',p_patch->'expectedVersion','operations',case when jsonb_array_length(ops)=0 then jsonb_build_array(jsonb_build_object('kind','set_title','title',p_current->'title')) else ops end);
- result:=scoped_edit_private.legacy_patch_v1(p_current,stripped);
+ result:=scoped_edit_private.legacy_patch_v1(current,stripped);
  for d in select value from jsonb_array_elements(result->'days') loop
  items:='[]';
  for i in select value from jsonb_array_elements(d->'items') loop
- select x into old_i from jsonb_array_elements(p_current->'days')dd,jsonb_array_elements(dd->'items')x where dd->>'id'=d->>'id' and x->>'id'=i->>'id';
+ select x into old_i from jsonb_array_elements(current->'days')dd,jsonb_array_elements(dd->'items')x where dd->>'id'=d->>'id' and x->>'id'=i->>'id';
  if old_i ? 'manualOrder' then i:=i||jsonb_build_object('manualOrder',old_i->'manualOrder');end if;
  items:=items||jsonb_build_array(i);
  end loop;
  select coalesce(jsonb_agg(value order by coalesce((value->>'manualOrder')::integer,(ordinality-1)::integer),value->>'id'),'[]') into items from jsonb_array_elements(items) with ordinality;
- select x into o from jsonb_array_elements(p_patch->'operations')x where x->>'kind'='reorder_items' and x->>'dayId'=d->>'id';
+ select x into o from jsonb_array_elements(one_patch->'operations')x where x->>'kind'='reorder_items' and x->>'dayId'=d->>'id';
  if found then
- if (select count(*) from jsonb_array_elements(p_patch->'operations')x where x->>'kind'='reorder_items' and x->>'dayId'=d->>'id')<>1
+ if (select count(*) from jsonb_array_elements(one_patch->'operations')x where x->>'kind'='reorder_items' and x->>'dayId'=d->>'id')<>1
  or not recovery_private.exact_v1(o,array['kind','dayId','itemIds']) or not recovery_private.ids_v1(o->'itemIds',1,500)
  or jsonb_array_length(o->'itemIds')<>jsonb_array_length(items)
  or exists(select 1 from jsonb_array_elements_text(o->'itemIds')x where not exists(select 1 from jsonb_array_elements(items)y where y->>'id'=x)) then raise exception 'INVALID_PATCH';end if;
@@ -115,8 +117,8 @@ begin
  end if;
  days:=days||jsonb_build_array(jsonb_set(d,'{items}',items));
  end loop;
- if exists(select 1 from jsonb_array_elements(p_patch->'operations')x where x->>'kind'='reorder_items' and not exists(select 1 from jsonb_array_elements(result->'days')dd where dd.value->>'id'=x->>'dayId')) then raise exception 'INVALID_PATCH';end if;
- return jsonb_set(result,'{days}',days);
+ if exists(select 1 from jsonb_array_elements(one_patch->'operations')x where x->>'kind'='reorder_items' and not exists(select 1 from jsonb_array_elements(result->'days')dd where dd.value->>'id'=x->>'dayId')) then raise exception 'INVALID_PATCH';end if;
+ current:=jsonb_set(result,'{days}',days);end loop;return current;
 end $$;
 
 -- Profile/Memory/consent state is sealed as metadata; no inferred summary egress.
@@ -197,7 +199,7 @@ begin
  select coalesce(jsonb_agg(distinct x->'itemId'),'[]') into fixed from jsonb_array_elements(source->'fixedBindings')x;
  ts:=clock_timestamp();
  insert into scoped_edit_private.contexts_v1(owner_id,trip_id,base_version,input,snapshot,actor_basis,source_basis,locked_ids,fixed_ids,digest,created_at,expires_at)
- values(u,t.id,t.head_version,p_input,snap,actor,source,locked,fixed,scoped_edit_private.hash_v1(jsonb_build_array(u,t.id,t.head_version,p_input,snap,actor,source,locked,fixed,ts)),ts,ts+interval '10 minutes') returning * into c;
+ values(u,t.id,t.head_version,p_input,snap,actor,source,locked,fixed,scoped_edit_private.hash_v1(jsonb_build_array(u,t.id,t.head_version,p_input,snap,actor,source,locked,fixed,ts)),ts,ts+interval '9 minutes') returning * into c;
  return scoped_edit_private.context_wire_v1(c);
 exception when lock_not_available then return scoped_edit_private.unavailable_v1('stale_basis');end $$;
 create function scoped_edit_private.current_v1(c scoped_edit_private.contexts_v1) returns boolean language plpgsql security definer set search_path='' as $$declare t public.trips%rowtype;src jsonb;begin
@@ -208,17 +210,20 @@ create function scoped_edit_private.current_v1(c scoped_edit_private.contexts_v1
 end $$;
 
 -- Every nonselected or protected item keeps all fields and its absolute day slot.
-create function scoped_edit_private.guard_candidate_v1(c scoped_edit_private.contexts_v1,n jsonb,absolute_slots boolean default false) returns boolean language plpgsql immutable set search_path='' as $$declare d jsonb;i jsonb;nd jsonb;ni jsonb;pos bigint;npos bigint;selected boolean;begin
+create function scoped_edit_private.guard_candidate_v1(c scoped_edit_private.contexts_v1,n jsonb,absolute_slots boolean default false) returns boolean language plpgsql immutable set search_path='' as $$declare d jsonb;i jsonb;nd jsonb;ni jsonb;pos bigint;npos bigint;selected boolean;selected_ids jsonb;before_protected jsonb;after_protected jsonb;begin
+ select coalesce(jsonb_agg(ii->'id'),'[]') into selected_ids from jsonb_array_elements(c.snapshot->'days')dd,jsonb_array_elements(dd->'items')ii where c.input->'scope'->'dayIds' @> jsonb_build_array(dd->'id') or c.input->'scope'->'itemIds' @> jsonb_build_array(ii->'id');
  if n->'title' is distinct from c.snapshot->'title' or jsonb_array_length(n->'days')<>jsonb_array_length(c.snapshot->'days') then return false;end if;
  for d in select value from jsonb_array_elements(c.snapshot->'days') loop
  select value into nd from jsonb_array_elements(n->'days') where value->'id'=d->'id';if not found or (d-'items')<>(nd-'items') then return false;end if;
  for i,pos in select value,ordinality from jsonb_array_elements(d->'items') with ordinality loop
- selected:=c.input->'scope'->'dayIds' @> jsonb_build_array(d->'id') or c.input->'scope'->'itemIds' @> jsonb_build_array(i->'id');
+ selected:=selected_ids @> jsonb_build_array(i->'id');
  if not selected or c.locked_ids @> jsonb_build_array(i->'id') or c.fixed_ids @> jsonb_build_array(i->'id') then
  select value,ordinality into ni,npos from jsonb_array_elements(nd->'items') with ordinality where value->'id'=i->'id';
  if not found or i is distinct from ni or absolute_slots and pos<>npos then return false;end if;
  end if;end loop;
- if (select coalesce(jsonb_agg(x->'id'),'[]') from jsonb_array_elements(d->'items')x where not(c.input->'scope'->'dayIds' @> jsonb_build_array(d->'id') or c.input->'scope'->'itemIds' @> jsonb_build_array(x->'id')) or c.locked_ids @> jsonb_build_array(x->'id') or c.fixed_ids @> jsonb_build_array(x->'id')) is distinct from (select coalesce(jsonb_agg(x->'id'),'[]') from jsonb_array_elements(nd->'items')x where not(c.input->'scope'->'dayIds' @> jsonb_build_array(nd->'id') or c.input->'scope'->'itemIds' @> jsonb_build_array(x->'id')) or c.locked_ids @> jsonb_build_array(x->'id') or c.fixed_ids @> jsonb_build_array(x->'id')) then return false;end if;end loop;
+ select coalesce(jsonb_agg(it.value->'id' order by it.ordinality),'[]') into before_protected from jsonb_array_elements(d->'items') with ordinality it where not(selected_ids @> jsonb_build_array(it.value->'id')) or c.locked_ids @> jsonb_build_array(it.value->'id') or c.fixed_ids @> jsonb_build_array(it.value->'id');
+ select coalesce(jsonb_agg(it.value->'id' order by it.ordinality),'[]') into after_protected from jsonb_array_elements(nd->'items') with ordinality it where (not(selected_ids @> jsonb_build_array(it.value->'id')) or c.locked_ids @> jsonb_build_array(it.value->'id') or c.fixed_ids @> jsonb_build_array(it.value->'id')) and exists(select 1 from jsonb_array_elements(c.snapshot->'days')dd,jsonb_array_elements(dd->'items')ii where ii->'id'=it.value->'id');
+ if before_protected is distinct from after_protected then return false;end if;end loop;
  for d in select value from jsonb_array_elements(n->'days') loop
  for i in select value from jsonb_array_elements(d->'items') loop
  if not exists(select 1 from jsonb_array_elements(c.snapshot->'days')dd,jsonb_array_elements(dd->'items')ii where ii->'id'=i->'id') and not (c.input->'scope'->'dayIds' @> jsonb_build_array(d->'id')) then return false;end if;
@@ -292,14 +297,16 @@ begin
  update scoped_edit_private.operations_v1 set receipt=r where owner_id=u and operation_id=op;return r;
 exception when lock_not_available then return scoped_edit_private.unavailable_v1('stale_basis');end $$;
 
-create function public.read_scoped_trip_edit_operation_v1(p_trip_id uuid,p_operation_id uuid) returns jsonb language plpgsql security definer set search_path='' as $$declare u uuid;t public.trips%rowtype;o scoped_edit_private.operations_v1%rowtype;p public.trip_proposals%rowtype;s text;v integer;begin
+create function public.read_scoped_trip_edit_operation_v1(p_trip_id uuid,p_operation_id uuid) returns jsonb language plpgsql security definer set search_path='' as $$declare u uuid;t public.trips%rowtype;o scoped_edit_private.operations_v1%rowtype;p public.trip_proposals%rowtype;c scoped_edit_private.contexts_v1%rowtype;s text;v integer;begin
  if p_trip_id is null or p_operation_id is null then raise exception 'INVALID_INPUT';end if;
  u:=recovery_private.actor_v1();t:=recovery_private.trip_v1(u,p_trip_id);if t.id is null then return scoped_edit_private.unavailable_v1('stale_basis');end if;
  select * into o from scoped_edit_private.operations_v1 where owner_id=u and operation_id=p_operation_id and trip_id=t.id;
  if not found or o.actor_basis is distinct from recovery_private.actor_basis_v1() then return jsonb_build_object('kind','scoped_edit_operation/1','operationId',p_operation_id,'tripId',t.id,'mutation',null,'receipt',null,'state','unknown','resultingVersion',null);end if;
- if o.cancelled then s:='cancelled';else s:='pending';end if;
+ if o.cancelled then s:='cancelled';elsif o.receipt->>'kind'='scoped_edit_declined/1' then s:='declined';else s:='pending';end if;
+ if not o.cancelled and o.context_id is not null then select * into c from scoped_edit_private.contexts_v1 where id=o.context_id;
+ if not found or c.base_version<>t.head_version then s:='stale';elsif c.expires_at<=clock_timestamp() then s:='expired';elsif not scoped_edit_private.current_v1(c) then s:='stale';end if;end if;
  if o.proposal_id is not null then select * into p from public.trip_proposals where id=o.proposal_id;
- s:=case p.status when 'applied' then 'applied' when 'rejected' then 'rejected' when 'expired' then 'expired' when 'conflicted' then 'stale' else case when p.expires_at<=clock_timestamp() then 'expired' when p.base_trip_version<>t.head_version then 'stale' else 'pending' end end;
+ s:=case p.status when 'applied' then 'applied' when 'rejected' then 'rejected' when 'expired' then 'expired' when 'conflicted' then 'stale' else case when p.expires_at<=clock_timestamp() then 'expired' when p.base_trip_version<>t.head_version then 'stale' else s end end;
  if s='applied' then select resulting_version into v from public.trip_events where proposal_id=p.id and event_type='proposal_applied';end if;
  end if;
  return jsonb_build_object('kind','scoped_edit_operation/1','operationId',o.operation_id,'tripId',o.trip_id,'mutation',o.mutation,'receipt',case when o.receipt is null then null else o.receipt||'{"reused":true}'::jsonb end,'state',s,'resultingVersion',v);
@@ -396,7 +403,7 @@ end $$;
 
 -- Original work queue extension; settings are private, empty and default disabled.
 alter table turn_private.work drop constraint work_execution_mode_check;
-alter table turn_private.work add constraint work_execution_mode_check check(execution_mode in('text','planning_comparison_v1','scoped_trip_edit_v1'));
+alter table turn_private.work add constraint work_execution_mode_check check(execution_mode in('text','planning_comparison_v1','planning_intake_comparison_v2','scoped_trip_edit_v1'));
 create table scoped_edit_private.worker_settings_v1(
  policy_id uuid primary key references turn_private.text_policies(id),planning_policy_id uuid not null references turn_private.planning_policies(id),
  enabled boolean not null default false,notice_hash text not null,scope_id uuid not null references public.model_budget_scopes(id),
@@ -542,7 +549,7 @@ create function public.scoped_trip_edit_budget_v1(p_binding jsonb,p_effect text,
  select * into cfg from scoped_edit_private.worker_settings_v1 where policy_id=j.policy_id;
  if p_effect='finish' then
  -- Accounting must close for the bound attempt even after source revocation.
- if p_outcome='settle' and (j.output is null or j.actual_micros is distinct from p_actual_micros) then return jsonb_build_object('kind','blocked');end if;
+ if p_outcome='settle' and (j.known_usage is null or j.known_actual_micros is distinct from p_actual_micros) then return jsonb_build_object('kind','blocked');end if;
  return public.finish_model_budget(j.scope_id,j.owner_id,j.attempt_id,p_outcome,p_actual_micros);
  end if;
  if public.authorize_scoped_trip_edit_effect_v1(p_binding,p_effect)->>'kind' is distinct from 'authorized' then return jsonb_build_object('kind','blocked');end if;
@@ -592,16 +599,18 @@ end $$;
 
 create function public.record_scoped_trip_edit_output_v1(p_binding jsonb,p_output jsonb,p_usage jsonb,p_actual_micros bigint) returns jsonb language plpgsql security definer set search_path='' as $$declare j scoped_edit_private.work_v1%rowtype;e jsonb;begin
  if not scoped_edit_private.work_current_v1(p_binding) then return jsonb_build_object('kind','pending');end if;
- if p_actual_micros is null or p_actual_micros not between 0 and 2147483647 or not recovery_private.exact_v1(p_usage,array['inputTokens','outputTokens','totalTokens','cachedInputTokens','uncachedInputTokens','reasoningTokens','cost']) or p_usage->>'cost' is distinct from 'unknown' or coalesce(p_usage->>'inputTokens','') !~ '^[0-9]{1,7}$' or coalesce(p_usage->>'outputTokens','') !~ '^[0-9]{1,4}$' or coalesce(p_usage->>'totalTokens','') !~ '^[0-9]{1,7}$' or (p_usage->>'inputTokens')::integer+(p_usage->>'outputTokens')::integer<>(p_usage->>'totalTokens')::integer or (p_usage->>'outputTokens')::integer>4096 then raise exception 'INVALID_OUTPUT';end if;
+ if not scoped_edit_private.valid_usage_v1(p_usage) or p_actual_micros is null or p_actual_micros not between 0 and 1000000000000 or not recovery_private.exact_v1(p_usage,array['inputTokens','outputTokens','totalTokens','cachedInputTokens','uncachedInputTokens','reasoningTokens','cost']) or p_usage->>'cost' is distinct from 'unknown' or coalesce(p_usage->>'inputTokens','') !~ '^[0-9]{1,7}$' or coalesce(p_usage->>'outputTokens','') !~ '^[0-9]{1,4}$' or coalesce(p_usage->>'totalTokens','') !~ '^[0-9]{1,7}$' or (p_usage->>'inputTokens')::integer+(p_usage->>'outputTokens')::integer<>(p_usage->>'totalTokens')::integer or (p_usage->>'outputTokens')::integer>4096 then raise exception 'INVALID_OUTPUT';end if;
  if p_output->>'kind'='candidate' then
  if not recovery_private.exact_v1(p_output,array['kind','edits']) or jsonb_typeof(p_output->'edits') is distinct from 'array' or jsonb_array_length(p_output->'edits') not between 1 and 16 then raise exception 'INVALID_OUTPUT';end if;
  for e in select value from jsonb_array_elements(p_output->'edits') loop
  if not scoped_edit_private.valid_candidate_edit_v1(e) then raise exception 'INVALID_OUTPUT';end if;end loop;
  elsif not recovery_private.exact_v1(p_output,array['kind','reason']) or p_output->>'kind' is distinct from 'cannot_edit' or p_output->>'reason' not in('unsupported_request','no_change') then raise exception 'INVALID_OUTPUT';end if;
  select * into j from scoped_edit_private.work_v1 where binding=p_binding for update;
+ if j.known_outcome is not null and j.known_outcome<>'protocol_validated' then raise exception 'INVALID_OUTPUT';end if;
  if j.output is not null then if j.output<>p_output or j.usage<>p_usage or j.actual_micros<>p_actual_micros then raise exception 'IDEMPOTENCY_KEY_REUSE';end if;
  else
  if not exists(select 1 from public.model_budget_attempts where scope_id=j.scope_id and attempt_id=j.attempt_id and task_id=j.task_id and status='dispatched') then return jsonb_build_object('kind','pending');end if;
+ perform public.record_scoped_trip_edit_usage_v1(p_binding,p_usage,p_actual_micros);
  update scoped_edit_private.work_v1 set output=p_output,usage=p_usage,actual_micros=p_actual_micros where turn_id=j.turn_id;
  end if;
  return public.read_scoped_trip_edit_output_v1(p_binding);
@@ -615,17 +624,6 @@ create function public.read_scoped_trip_edit_output_v1(p_binding jsonb) returns 
  return jsonb_build_object('kind','missing');end if;
  select * into a from public.model_budget_attempts where scope_id=j.scope_id and attempt_id=j.attempt_id and task_id=j.task_id;
  return jsonb_build_object('kind','saved_output','binding',p_binding,'output',j.output,'usage',j.usage,'actualMicros',j.actual_micros,'accounting',case when a.status='settled' and a.actual_micros=j.actual_micros then 'settled' else 'pending' end);
-end $$;
-create function public.record_scoped_trip_edit_destination_v1(p_binding jsonb,p_destination jsonb,p_request_id text default null,p_request_digest text default null,p_payload_digest text default null,p_payload_text text default null) returns jsonb language plpgsql security definer set search_path='' as $$declare j scoped_edit_private.work_v1%rowtype;r scoped_edit_private.requests_v1%rowtype;begin
- if not scoped_edit_private.work_current_v1(p_binding) then return jsonb_build_object('kind','pending');end if;
- select * into j from scoped_edit_private.work_v1 where binding=p_binding;
- if jsonb_typeof(p_destination) is distinct from 'object' or pg_column_size(p_destination)>4096 then raise exception 'INVALID_DESTINATION';end if;
- if p_request_id is null then return jsonb_build_object('kind','authorized');end if;
- if p_request_digest !~ '^[a-f0-9]{64}$' or p_payload_digest !~ '^[a-f0-9]{64}$' or pg_column_size(p_payload_text)>32768 or encode(sha256(convert_to(p_payload_text,'UTF8')),'hex') is distinct from p_payload_digest then raise exception 'INVALID_DESTINATION';end if;
- select * into r from scoped_edit_private.requests_v1 where turn_id=j.turn_id for update;
- if found and (r.binding<>p_binding or r.request_id<>p_request_id or r.request_digest<>p_request_digest or r.payload_digest<>p_payload_digest) then raise exception 'IDEMPOTENCY_KEY_REUSE';end if;
- if not found then insert into scoped_edit_private.requests_v1(turn_id,owner_id,trip_id,binding,request_id,request_digest,payload_digest,destination) values(j.turn_id,j.owner_id,j.trip_id,p_binding,p_request_id,p_request_digest,p_payload_digest,p_destination);end if;
- return jsonb_build_object('kind','authorized');
 end $$;
 create function public.pause_scoped_trip_edit_work_v1(p_binding jsonb,p_reason text) returns jsonb language plpgsql security definer set search_path='' as $$declare j scoped_edit_private.work_v1%rowtype;begin
  if auth.role() is distinct from 'service_role' or p_reason not in('unsupported_request','no_change','provider_unavailable','accounting_unknown','stale_basis') then raise exception 'FORBIDDEN';end if;
@@ -649,14 +647,17 @@ create function public.complete_scoped_trip_edit_work_v1(p_binding jsonb,p_patch
  cid:=j.attempt_id;r:=jsonb_build_object('kind','scoped_edit_candidates/1','operationId',j.operation_id,'tripId',j.trip_id,'contextId',c.id,'contextDigest',c.digest,'baseVersion',c.base_version,'expiresAt',recovery_private.ms_v1(c.expires_at),'returnScope',c.input->'scope','candidates',jsonb_build_array(jsonb_build_object('candidateId',cid,'edits',j.output->'edits','diff',scoped_edit_private.diff_v1(c,step.snapshot))),'reused',false);
  update scoped_edit_private.operations_v1 set receipt=r where owner_id=j.owner_id and operation_id=j.operation_id;
  update scoped_edit_private.work_v1 set candidate_id=cid,candidate_patch=derived,completion=jsonb_build_object('kind','candidate_saved','binding',p_binding,'receipt',r) where turn_id=j.turn_id;
- -- Keep the live lease for same-ACK recovery; no extra provider dispatch is allowed.
+ -- Original generation terminal is independent from the user's later Trip confirmation.
+ perform turn_private.terminal(j.turn_id,'completed',(select attempt from turn_private.work where turn_id=j.turn_id));
  return jsonb_build_object('kind','candidate_saved','binding',p_binding,'receipt',r);
 end $$;
-create function public.read_scoped_trip_edit_completion_v1(p_binding jsonb) returns jsonb language plpgsql security definer set search_path='' as $$declare j scoped_edit_private.work_v1%rowtype;c scoped_edit_private.contexts_v1%rowtype;begin
+create function public.read_scoped_trip_edit_completion_v1(p_binding jsonb) returns jsonb language plpgsql security definer set search_path='' as $$declare j scoped_edit_private.work_v1%rowtype;c scoped_edit_private.contexts_v1%rowtype;o scoped_edit_private.operations_v1%rowtype;begin
  if auth.role() is distinct from 'service_role' then raise exception 'FORBIDDEN';end if;
  select * into j from scoped_edit_private.work_v1 where binding=p_binding;if not found then return jsonb_build_object('kind','pending');end if;
  select * into c from scoped_edit_private.contexts_v1 where id=j.context_id;
  if not found or not scoped_edit_private.service_current_v1(c) or not scoped_edit_private.worker_policy_v1(j.owner_id,j.policy_id,j.scope_id) then return jsonb_build_object('kind','pending');end if;
+ select * into o from scoped_edit_private.operations_v1 where owner_id=j.owner_id and operation_id=j.operation_id;
+ if o.receipt->>'kind'='scoped_edit_declined/1' then return jsonb_build_object('kind','declined','binding',p_binding,'receipt',o.receipt||'{"reused":true}'::jsonb);end if;
  if j.completion is null then return jsonb_build_object('kind','missing');end if;
  return j.completion||jsonb_build_object('binding',p_binding,'receipt',(j.completion->'receipt')||'{"reused":true}'::jsonb);
 end $$;
@@ -677,7 +678,7 @@ do $$declare f text;begin
  f:=replace(f,' if p_input->>''action''=''manual'' then',' if p_input->>''action''=''select_candidate'' then return scoped_edit_private.select_v1(c,op,p_input);end if;'||chr(10)||' if p_input->>''action''=''manual'' then');execute f;
 end $$;
 
-create or replace function public.record_scoped_trip_edit_destination_v1(p_binding jsonb,p_destination jsonb,p_request_id text default null,p_request_digest text default null,p_payload_digest text default null,p_payload_text text default null) returns jsonb language plpgsql security definer set search_path='' as $$
+create function public.record_scoped_trip_edit_destination_v1(p_binding jsonb,p_destination jsonb,p_request_id text default null,p_request_digest text default null,p_payload_digest text default null,p_payload_text text default null) returns jsonb language plpgsql security definer set search_path='' as $$
 declare j scoped_edit_private.work_v1%rowtype;r scoped_edit_private.requests_v1%rowtype;cfg scoped_edit_private.worker_settings_v1%rowtype;tp turn_private.text_policies%rowtype;payload jsonb;input jsonb;user_payload jsonb;expected_digest text;phase text;begin
  if auth.role() is distinct from 'service_role' then raise exception 'FORBIDDEN';end if;
  select * into j from scoped_edit_private.work_v1 where binding=p_binding;
@@ -716,6 +717,70 @@ declare j scoped_edit_private.work_v1%rowtype;r scoped_edit_private.requests_v1%
  return jsonb_build_object('kind','destination_recorded','attemptId',j.attempt_id,'invocationId',p_destination->'invocationId','phase',phase);
 end $$;
 
+create function public.read_scoped_trip_edit_proposal_current_v1(p_proposal_id uuid) returns jsonb language plpgsql security definer set search_path='' as $$declare u uuid;p public.trip_proposals%rowtype;l scoped_edit_private.lineage_v1%rowtype;c scoped_edit_private.contexts_v1%rowtype;d text;ok boolean:=false;begin
+ u:=recovery_private.actor_v1();select * into p from public.trip_proposals where id=p_proposal_id and owner_id=u;
+ if not found or not p.scoped_edit then return scoped_edit_private.unavailable_v1('unsupported');end if;
+ select * into l from scoped_edit_private.lineage_v1 where proposal_id=p.id;select * into c from scoped_edit_private.contexts_v1 where id=l.context_id;
+ select digest into d from public.read_trip_proposal_v2(p.id);
+ if c.id is not null and l.proposal_digest=d and l.proposal_revision=p.revision and l.patch=p.patch and l.base_version=p.base_trip_version and p.status='pending' then ok:=scoped_edit_private.current_v1(c);end if;
+ return jsonb_build_object('kind','scoped_edit_current/1','proposalId',p_proposal_id,'current',ok);
+exception when lock_not_available then return jsonb_build_object('kind','scoped_edit_current/1','proposalId',p_proposal_id,'current',false);end $$;
+
+alter table scoped_edit_private.work_v1 add column known_usage jsonb;
+alter table scoped_edit_private.work_v1 add column known_actual_micros bigint check(known_actual_micros between 0 and 1000000000000);
+create function scoped_edit_private.valid_usage_v1(v jsonb) returns boolean language plpgsql immutable set search_path='' as $$declare k text;begin
+ if not recovery_private.exact_v1(v,array['inputTokens','outputTokens','totalTokens','cachedInputTokens','uncachedInputTokens','reasoningTokens','cost']) or v->>'cost' is distinct from 'unknown' then return false;end if;
+ foreach k in array array['inputTokens','outputTokens','totalTokens'] loop if jsonb_typeof(v->k) is distinct from 'number' or coalesce(v->>k,'') !~ '^[0-9]{1,7}$' then return false;end if;end loop;
+ if (v->>'inputTokens')::integer>1048576 or (v->>'outputTokens')::integer>4096 or (v->>'inputTokens')::integer+(v->>'outputTokens')::integer<>(v->>'totalTokens')::integer then return false;end if;
+ foreach k in array array['cachedInputTokens','uncachedInputTokens','reasoningTokens'] loop if v->k<>'null'::jsonb and (jsonb_typeof(v->k) is distinct from 'number' or coalesce(v->>k,'') !~ '^[0-9]{1,7}$') then return false;end if;end loop;
+ if coalesce((v->>'cachedInputTokens')::integer,0)>(v->>'inputTokens')::integer or coalesce((v->>'uncachedInputTokens')::integer,0)>(v->>'inputTokens')::integer or coalesce((v->>'reasoningTokens')::integer,0)>(v->>'outputTokens')::integer then return false;end if;
+ return true;
+end $$;
+create function public.record_scoped_trip_edit_usage_v1(p_binding jsonb,p_usage jsonb,p_actual_micros bigint,p_outcome text default 'protocol_validated') returns jsonb language plpgsql security definer set search_path='' as $$declare j scoped_edit_private.work_v1%rowtype;begin
+ if auth.role() is distinct from 'service_role' then raise exception 'FORBIDDEN';end if;
+ if coalesce(p_outcome,'') not in('protocol_validated','safety_blocked') or not scoped_edit_private.valid_usage_v1(p_usage) or p_actual_micros is null or p_actual_micros not between 0 and 1000000000000 then raise exception 'INVALID_USAGE';end if;
+ select * into j from scoped_edit_private.work_v1 where binding=p_binding for update;if not found then return jsonb_build_object('kind','pending');end if;
+ if not exists(select 1 from public.model_budget_attempts where scope_id=j.scope_id and attempt_id=j.attempt_id and task_id=j.task_id and provider=p_binding->>'provider' and model=p_binding->>'model' and price_version=p_binding->>'priceVersion' and status in('dispatched','pending','settled')) then return jsonb_build_object('kind','pending');end if;
+ if j.known_usage is not null and (j.known_usage<>p_usage or j.known_actual_micros<>p_actual_micros or j.known_outcome is distinct from p_outcome) then raise exception 'IDEMPOTENCY_KEY_REUSE';end if;
+ update scoped_edit_private.work_v1 set known_usage=p_usage,known_actual_micros=p_actual_micros,known_outcome=p_outcome where turn_id=j.turn_id;
+ return jsonb_build_object('kind','usage_saved');
+end $$;
+create function public.read_scoped_trip_edit_usage_v1(p_binding jsonb) returns jsonb language plpgsql security definer set search_path='' as $$declare j scoped_edit_private.work_v1%rowtype;begin
+ if auth.role() is distinct from 'service_role' then raise exception 'FORBIDDEN';end if;
+ select * into j from scoped_edit_private.work_v1 where binding=p_binding;if not found then return jsonb_build_object('kind','pending');end if;
+ if j.known_usage is null then return jsonb_build_object('kind','missing');end if;
+ return jsonb_build_object('kind','saved_usage','binding',p_binding,'usage',j.known_usage,'actualMicros',j.known_actual_micros,'outcome',j.known_outcome);
+end $$;
+-- Empty registry can be enrolled only through separate operator authority. Enabling
+-- a row cannot rewrite its destination, source permissions, deadline or price.
+create function scoped_edit_private.settings_immutable_v1() returns trigger language plpgsql set search_path='' as $$begin
+ if TG_OP='DELETE' or (to_jsonb(NEW)-'enabled') is distinct from (to_jsonb(OLD)-'enabled') then raise exception 'SCOPED_SETTINGS_IMMUTABLE';end if;return NEW;
+end $$;
+create trigger scoped_settings_immutable before update or delete on scoped_edit_private.worker_settings_v1 for each row execute function scoped_edit_private.settings_immutable_v1();
+
+alter table scoped_edit_private.work_v1 add column known_outcome text check(known_outcome in('protocol_validated','safety_blocked'));
+create or replace function public.pause_scoped_trip_edit_work_v1(p_binding jsonb,p_reason text) returns jsonb language plpgsql security definer set search_path='' as $$declare j scoped_edit_private.work_v1%rowtype;c scoped_edit_private.contexts_v1%rowtype;o scoped_edit_private.operations_v1%rowtype;r jsonb;begin
+ if auth.role() is distinct from 'service_role' or coalesce(p_reason,'') not in('unsupported_request','no_change','safety_refused','provider_unavailable','accounting_unknown','stale_basis') then raise exception 'FORBIDDEN';end if;
+ select * into j from scoped_edit_private.work_v1 where binding=p_binding for update;if not found then return jsonb_build_object('kind','pending');end if;
+ select * into c from scoped_edit_private.contexts_v1 where id=j.context_id;select * into o from scoped_edit_private.operations_v1 where owner_id=j.owner_id and operation_id=j.operation_id;
+ if not found or c.id is null or not scoped_edit_private.service_current_v1(c) or not scoped_edit_private.worker_policy_v1(j.owner_id,j.policy_id,j.scope_id) then return jsonb_build_object('kind','pending');end if;
+ if coalesce(p_reason,'') not in('unsupported_request','no_change','safety_refused') then
+ -- Unknown failures remain recoverable under the original lease/attempt, not declined.
+ return jsonb_build_object('kind','pending');end if;
+ if not exists(select 1 from public.model_budget_attempts where scope_id=j.scope_id and attempt_id=j.attempt_id and task_id=j.task_id and status='settled' and actual_micros=j.known_actual_micros)
+ or p_reason='safety_refused' and (j.known_outcome is distinct from 'safety_blocked' or j.output is not null)
+ or p_reason<>'safety_refused' and (j.output->>'kind' is distinct from 'cannot_edit' or j.output->>'reason' is distinct from p_reason or j.known_outcome is distinct from 'protocol_validated') then return jsonb_build_object('kind','pending');end if;
+ if o.receipt->>'kind'='scoped_edit_declined/1' then
+ if o.receipt->>'reason'<>p_reason then raise exception 'IDEMPOTENCY_KEY_REUSE';end if;
+ return jsonb_build_object('kind','declined','binding',p_binding,'receipt',o.receipt||'{"reused":true}'::jsonb);end if;
+ if j.completion is not null or o.cancelled or o.proposal_id is not null then return jsonb_build_object('kind','pending');end if;
+ r:=jsonb_build_object('kind','scoped_edit_declined/1','operationId',j.operation_id,'tripId',j.trip_id,'contextId',c.id,'contextDigest',c.digest,'baseVersion',c.base_version,'reason',p_reason,'reused',false);
+ update scoped_edit_private.operations_v1 set receipt=r where owner_id=j.owner_id and operation_id=j.operation_id;
+ update scoped_edit_private.work_v1 set paused_reason=p_reason where turn_id=j.turn_id;
+ perform turn_private.terminal(j.turn_id,'completed',(select attempt from turn_private.work where turn_id=j.turn_id));
+ return jsonb_build_object('kind','declined','binding',p_binding,'receipt',r);
+end $$;
+
 -- New functions have no executable default capability, including trusted service seams.
-do $$declare f record;begin for f in select p.oid::regprocedure sig from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='scoped_edit_private' or n.nspname='public' and p.proname in('prepare_scoped_trip_edit_v1','submit_scoped_trip_edit_v1','read_scoped_trip_edit_operation_v1','abandon_scoped_trip_edit_operation_v1','hosted_scoped_trip_edit_target_v1','claim_scoped_trip_edit_work_v1','read_scoped_trip_edit_work_v1','authorize_scoped_trip_edit_effect_v1','scoped_trip_edit_budget_v1','record_scoped_trip_edit_output_v1','read_scoped_trip_edit_output_v1','record_scoped_trip_edit_destination_v1','pause_scoped_trip_edit_work_v1','complete_scoped_trip_edit_work_v1','read_scoped_trip_edit_completion_v1') loop execute format('revoke all on function %s from public,anon,authenticated,service_role',f.sig);end loop;end $$;
+do $$declare f record;begin for f in select p.oid::regprocedure sig from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='scoped_edit_private' or n.nspname='public' and p.proname in('prepare_scoped_trip_edit_v1','submit_scoped_trip_edit_v1','read_scoped_trip_edit_operation_v1','abandon_scoped_trip_edit_operation_v1','hosted_scoped_trip_edit_target_v1','claim_scoped_trip_edit_work_v1','read_scoped_trip_edit_work_v1','authorize_scoped_trip_edit_effect_v1','scoped_trip_edit_budget_v1','record_scoped_trip_edit_output_v1','read_scoped_trip_edit_output_v1','record_scoped_trip_edit_destination_v1','pause_scoped_trip_edit_work_v1','complete_scoped_trip_edit_work_v1','read_scoped_trip_edit_completion_v1','read_scoped_trip_edit_proposal_current_v1','record_scoped_trip_edit_usage_v1','read_scoped_trip_edit_usage_v1') loop execute format('revoke all on function %s from public,anon,authenticated,service_role',f.sig);end loop;end $$;
 notify pgrst,'reload schema';
