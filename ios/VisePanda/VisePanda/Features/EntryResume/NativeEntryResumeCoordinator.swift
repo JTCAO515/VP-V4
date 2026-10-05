@@ -43,7 +43,15 @@ final class NativeEntryResumeCoordinator {
         state.authenticate(scope.map(Self.identity))
         active = scope; receipts = []
         guard let inbox else { message = "unconfigured"; return }
-        guard let scope else { message = "loginRequired"; return }
+        guard let scope else {
+            do {
+                guard state.failure == nil else { message = "unavailable"; return }
+                let anonymous = try inbox.unclaimed()
+                receipts = state.intent.map { intent in anonymous.filter { $0.id == intent.entryID } } ?? anonymous
+                message = "loginRequired"
+            } catch { message = "cleanupRequired" }
+            return
+        }
         if let failure = state.failure { message = String(describing: failure); return }
         do {
             let available = try inbox.available(namespace: Self.namespace(scope))
@@ -53,6 +61,15 @@ final class NativeEntryResumeCoordinator {
             } else { receipts = available }
             message = nil
         } catch { message = "cleanupRequired"; receipts = [] }
+    }
+
+    /// Metadata-only anonymous selection fixes the one original intent before opening existing sign-in.
+    func selectAnonymous(_ receipt: ShareIntakeInbox.Receipt) throws {
+        guard active == nil, receipt.ownerNamespace == nil, receipts.contains(receipt),
+              state.failure != .cleanupRequired, let inbox,
+              try inbox.unclaimedReceipt(id: receipt.id) == receipt else { throw ShareIntakeError.scope }
+        state.clear(cleanupSucceeded: true)
+        state.receive(receipt.id, identity: nil)
     }
 
     /// User must press this action after seeing the currently verified account and original material pointer.

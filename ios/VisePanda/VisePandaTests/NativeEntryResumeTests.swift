@@ -1,8 +1,9 @@
 import XCTest
+import CoreGraphics
 @testable import VisePanda
 
-final class NativeEntryResumeTests: XCTestCase {
-    func testOpaqueLinksAndConfiguredDomainsOnly() {
+nonisolated final class NativeEntryResumeTests: XCTestCase {
+    @MainActor func testOpaqueLinksAndConfiguredDomainsOnly() {
         let id = UUID().uuidString.lowercased()
         guard case .entry = NativeEntryResumeLink.parse(URL(string: "visepanda://resume/\(id)")!, associatedHosts: []) else { return XCTFail("valid pointer") }
         for link in ["visepanda://resume/\(id)?owner=x", "visepanda://resume/\(id)#data", "visepanda://u@resume/\(id)", "visepanda://resume/\(id)/", "https://unconfigured.example/resume/\(id)"] {
@@ -11,7 +12,7 @@ final class NativeEntryResumeTests: XCTestCase {
         XCTAssertEqual(NativeEntryResumeLink.parse(URL(string: "visepanda://trip")!, associatedHosts: []), .unrelated)
         XCTAssertEqual(NativeEntryResumeLink.configuredHosts("good.example,*.bad.example,host/path,user@host"), ["good.example"])
     }
-    func testLoginCannotRetargetBoundMaterialOrExtendTTL() {
+    @MainActor func testLoginCannotRetargetBoundMaterialOrExtendTTL() {
         let now = Date(timeIntervalSince1970: 1_000)
         let a = NativeEntryResumeState.Identity(endpoint: "http://localhost", owner: "A", epoch: 1, generation: 1)
         let b = NativeEntryResumeState.Identity(endpoint: "http://localhost", owner: "B", epoch: 1, generation: 1)
@@ -27,7 +28,7 @@ final class NativeEntryResumeTests: XCTestCase {
         XCTAssertNil(state.intent)
         XCTAssertEqual(state.failure, .accountChanged)
     }
-    func testExpiryAndCleanupFencePreventReplay() {
+    @MainActor func testExpiryAndCleanupFencePreventReplay() {
         let now = Date(timeIntervalSince1970: 1_000)
         let a = NativeEntryResumeState.Identity(endpoint: "http://localhost", owner: "A", epoch: 1, generation: 1)
         var state = NativeEntryResumeState()
@@ -38,5 +39,57 @@ final class NativeEntryResumeTests: XCTestCase {
         state.receive(UUID(), identity: a, now: now)
         XCTAssertNil(state.intent)
         XCTAssertEqual(state.failure, .cleanupRequired)
+    }
+}
+
+nonisolated final class NativeEntryResumeInboxTests: XCTestCase {
+    @MainActor private func fixture() throws -> (ShareIntakeInbox, URL, URL) {
+        let container = FileManager.default.temporaryDirectory.appendingPathComponent("F2-" + UUID().uuidString)
+        try FileManager.default.createDirectory(at: container, withIntermediateDirectories: true)
+        let url = container.appendingPathComponent("original.pdf")
+        let bytes = NSMutableData()
+        var box = CGRect(x: 0, y: 0, width: 200, height: 200)
+        let consumer = try XCTUnwrap(CGDataConsumer(data: bytes))
+        let context = try XCTUnwrap(CGContext(consumer: consumer, mediaBox: &box, nil))
+        context.beginPDFPage(nil); context.endPDFPage(); context.closePDF()
+        try (bytes as Data).write(to: url)
+        return (try ShareIntakeInbox(container: container), container, url)
+    }
+    @MainActor func testInitialLoginPreservesOnlyVerifiedOriginalAndClaimKeepsTTL() async throws {
+        let (inbox, container, file) = try fixture()
+        defer { try? FileManager.default.removeItem(at: container) }
+        let original = try inbox.receive(fileAt: file)
+        _ = try inbox.receive(fileAt: file)
+        let coordinator = NativeEntryResumeCoordinator(inbox: inbox, associatedHosts: [])
+        XCTAssertTrue(coordinator.receive(try XCTUnwrap(URL(string: "visepanda://resume/" + original.id.uuidString)), scope: nil))
+        let preserved = try XCTUnwrap(coordinator.initialLoginPreservation())
+        XCTAssertEqual(preserved, original.id)
+        try coordinator.erase(preservingUnclaimedID: preserved)
+        let a = NativeDataScope(endpoint: "http://localhost", subject: UUID().uuidString, mobileEpoch: 1, generation: 1)
+        coordinator.refresh(scope: a)
+        XCTAssertEqual(coordinator.receipts, [original])
+        let claimed = try coordinator.claim(original, scope: a)
+        XCTAssertEqual(claimed.id, original.id)
+        XCTAssertEqual(claimed.expiresAt, original.expiresAt)
+        XCTAssertEqual(claimed.ownerNamespace, NativePDFWire.namespace(a))
+        XCTAssertEqual(try Data(contentsOf: coordinator.sourceURL(claimed, scope: a)), try Data(contentsOf: file))
+        let b = NativeDataScope(endpoint: a.endpoint, subject: UUID().uuidString, mobileEpoch: 1, generation: 1)
+        coordinator.refresh(scope: b)
+        XCTAssertThrowsError(try coordinator.sourceURL(claimed, scope: b))
+        XCTAssertTrue(try inbox.available(namespace: NativePDFWire.namespace(a)).isEmpty)
+    }
+    @MainActor func testForgedAnonymousPointerCannotAuthorizeLoginPreservation() async throws {
+        let (inbox, container, _) = try fixture()
+        defer { try? FileManager.default.removeItem(at: container) }
+        let coordinator = NativeEntryResumeCoordinator(inbox: inbox, associatedHosts: [])
+        let link = try XCTUnwrap(URL(string: "visepanda://resume/" + UUID().uuidString))
+        XCTAssertTrue(coordinator.receive(link, scope: nil))
+        XCTAssertThrowsError(try coordinator.initialLoginPreservation())
+    }
+    @MainActor func testUnconfiguredBuildShowsFilesFallback() async {
+        let coordinator = NativeEntryResumeCoordinator(inbox: nil, associatedHosts: [])
+        coordinator.openInbox(scope: nil)
+        XCTAssertEqual(coordinator.message, "unconfigured")
+        XCTAssertTrue(coordinator.receipts.isEmpty)
     }
 }

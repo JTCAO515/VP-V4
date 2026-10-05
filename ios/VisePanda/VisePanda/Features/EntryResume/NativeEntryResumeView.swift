@@ -22,6 +22,12 @@ struct NativeEntryResumeView: View {
                     Text(t("系统分享仅保存本机副本。选择当前账号和已有行程后，仍需逐页校正并明确确认原行程差异。", "System sharing keeps a device copy. Choose this account and an existing Trip, then correct fields and explicitly confirm the original Trip diff."))
                     if session.dataScope == nil {
                         Text(t("请先登录，再明确接管原材料。链接不会授予新的行程权限。", "Sign in, then explicitly claim the original material. The link grants no Trip permission."))
+                        ForEach(coordinator.receipts) { receipt in
+                            Button(t("选择原 PDF（\(receipt.pageCount)页）并登录", "Select original PDF (\(receipt.pageCount) pages) and sign in")) {
+                                do { try coordinator.selectAnonymous(receipt); showLogin = true; notice = nil }
+                                catch { notice = "unavailable" }
+                            }.accessibilityIdentifier("entryResume.anonymous.\(receipt.id)")
+                        }
                         Button(t("打开账号登录", "Open account sign-in")) { showLogin = true }
                             .accessibilityIdentifier("entryResume.login")
                     } else {
@@ -73,6 +79,7 @@ struct NativeEntryResumeView: View {
                 selectedReceipt = nil; destination = nil; notice = nil
                 coordinator.refresh(scope: session.dataScope)
                 if let scope = session.dataScope {
+                    showLogin = false
                     trips.reset(for: scope); await trips.list(using: session)
                 } else { trips.reset(for: nil) }
             }
