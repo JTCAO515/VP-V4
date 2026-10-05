@@ -26,7 +26,7 @@ test('existing host loop completes one synthetic candidate using canonical desti
    case 'read_scoped_trip_edit_work_v1':return Response.json(input);
    case 'authorize_scoped_trip_edit_effect_v1':return Response.json({kind:'authorized',binding,effect:p.p_effect});
    case 'read_scoped_trip_edit_output_v1':return Response.json(output??{kind:'missing'});
-   case 'record_scoped_trip_edit_usage_v1':savedUsage={kind:'saved_usage',binding,usage:p.p_usage,actualMicros:p.p_actual_micros};return Response.json({kind:'usage_saved'});
+   case 'record_scoped_trip_edit_usage_v1':savedUsage={kind:'saved_usage',binding,usage:p.p_usage,actualMicros:p.p_actual_micros,outcome:p.p_outcome};return Response.json({kind:'usage_saved'});
    case 'read_scoped_trip_edit_usage_v1':return Response.json(savedUsage??{kind:'missing'});
    case 'scoped_trip_edit_budget_v1':if(p.p_effect==='reserve')return Response.json({kind:'reserved'});if(p.p_effect==='dispatch')return Response.json({kind:'dispatched'});if(p.p_outcome==='settle'){output!.accounting='settled';return Response.json({kind:'settled',overrun:false});}return Response.json({kind:'pending'});
    case 'record_scoped_trip_edit_destination_v1':assert.equal(p.p_request_id,binding.attemptId);assert.match(p.p_payload_digest,/^[a-f0-9]{64}$/);assert.equal(JSON.parse(p.p_payload_text).messages[1].content.includes(input.text),true);return Response.json({kind:'destination_recorded',attemptId:binding.attemptId,invocationId:p.p_destination.invocationId,phase:p.p_destination.phase});

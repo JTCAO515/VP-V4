@@ -17,7 +17,7 @@ export type ScopedExecutorPorts = Readonly<{
 const leaseParams=(l:DurableTurnLease)=>({p_turn_id:l.turnId,p_lease_token:l.leaseToken});
 /** One durable turn/operation/attempt. No claim, scheduler, secret lookup, fallback,
  * second planner, Proposal producer, or Trip confirm. Unknown ACK can only recover original output. */
-export async function executeScopedTripEdit(lease: DurableTurnLease, ports: ScopedExecutorPorts, signal: AbortSignal): Promise<'persisted'|'pending'|'unavailable'> {
+export async function executeScopedTripEdit(lease: DurableTurnLease, ports: ScopedExecutorPorts, signal: AbortSignal): Promise<'persisted'|'declined'|'pending'|'unavailable'> {
   if (signal.aborted) return 'unavailable';
   let input: ScopedInput | null=null;
   const read=async(s:AbortSignal)=>parseInput(await ports.rpc('read_scoped_trip_edit_work_v1',leaseParams(lease),s),lease,ports.now());
@@ -30,6 +30,18 @@ export async function executeScopedTripEdit(lease: DurableTurnLease, ports: Scop
       return next!==null && sameValue(next,input) && !s.aborted;
     };
     const allow=async(effect:'reserve'|'dispatch'|'publish',s:AbortSignal)=>await current(s)&&authorized(await ports.rpc('authorize_scoped_trip_edit_effect_v1',{...params,p_effect:effect},s),b,effect)&&!s.aborted;
+    const decline=async(reason:'unsupported_request'|'no_change'|'safety_refused')=>{
+      const valid=(v:unknown)=>{
+        if(!record(v)||!exact(v,['kind','binding','receipt'])||v.kind!=='declined'||!sameValue(v.binding,b)||!record(v.receipt))return false;
+        const r=v.receipt;
+        return exact(r,['kind','operationId','tripId','contextId','contextDigest','baseVersion','reason','reused'])&&r.kind==='scoped_edit_declined/1'&&r.operationId===b.operationId&&r.tripId===b.tripId&&r.contextId===b.contextId&&r.contextDigest===b.contextDigest&&r.baseVersion===b.baseVersion&&r.reason===reason&&typeof r.reused==='boolean';
+      };
+      let ack:unknown;
+      try {ack=await ports.rpc('pause_scoped_trip_edit_work_v1',{...params,p_reason:reason},signal);} catch { /* Read the same operation; never call the provider again. */ }
+      if(!signal.aborted&&valid(ack))return 'declined' as const;
+      if(signal.aborted)return 'pending' as const;
+      try {return valid(await ports.rpc('read_scoped_trip_edit_completion_v1',params,signal))&&!signal.aborted?'declined' as const:'pending' as const;} catch {return 'pending' as const;}
+    };
     const recover=async(s:AbortSignal):Promise<SavedOutput|null>=>savedOutput(await ports.rpc('read_scoped_trip_edit_output_v1',params,s),b);
     const previous=await ports.rpc('read_scoped_trip_edit_output_v1',params,signal);
     let output=savedOutput(previous,b);
@@ -50,8 +62,10 @@ export async function executeScopedTripEdit(lease: DurableTurnLease, ports: Scop
         const attempt:BudgetAttempt={scopeId:b.scopeId,ownerId:b.ownerId,taskId:b.taskId,attemptId:b.attemptId,provider:b.provider,model:b.model,priceVersion:b.priceVersion,reservedMicros:input.reservedMicros,timeoutMs:input.timeoutMs};
         await ports.recordUsage(validatedPlanningUsageReceipt({schemaVersion:'validated-planning-usage/1',attempt,turnId:b.turnId,policyId:b.policyId,usage:usage.usage,actualMicros:usage.actualMicros,observedAt:new Date(ports.now()).toISOString()},{taskId:b.taskId,turnId:b.turnId,planningPolicyId:b.policyId}),signal);
         await ports.rpc('scoped_trip_edit_budget_v1',{...params,p_effect:'finish',p_reserved_micros:null,p_actual_micros:usage.actualMicros,p_outcome:'settle'},signal).catch(()=>{});
+        return usage.outcome==='safety_blocked'?decline('safety_refused'):'pending';
       }
-      // Cost reconciliation cannot turn unavailable content into a candidate.
+      // SQL accepts this only for a recorded safety-blocked outcome with settled
+      // known usage. Missing or different evidence stays pending.
       return 'pending';
     }
     if (!output) {
@@ -75,9 +89,9 @@ export async function executeScopedTripEdit(lease: DurableTurnLease, ports: Scop
         if(actual===null||!Number.isSafeInteger(actual)||actual<0||actual>1e12)return {value,actualMicros:null};
         const receipt=validatedPlanningUsageReceipt({schemaVersion:'validated-planning-usage/1',attempt:a,turnId:b.turnId,policyId:b.policyId,usage,actualMicros:actual,observedAt:new Date(ports.now()).toISOString()},{taskId:b.taskId,turnId:b.turnId,planningPolicyId:b.policyId});
         await ports.recordUsage(receipt,s);
-        try {await ports.rpc('record_scoped_trip_edit_usage_v1',{...params,p_usage:usage,p_actual_micros:actual},s);} catch { /* Read metadata on the same original attempt. */ }
+        try {await ports.rpc('record_scoped_trip_edit_usage_v1',{...params,p_usage:usage,p_actual_micros:actual,p_outcome:value.kind==='unavailable'?'safety_blocked':'protocol_validated'},s);} catch { /* Read metadata on the same original attempt. */ }
         const observed=savedUsage(await ports.rpc('read_scoped_trip_edit_usage_v1',params,s),b);
-        if(!observed||!sameValue(observed.usage,usage)||observed.actualMicros!==actual)throw Error('Scoped usage acknowledgement unavailable');
+        if(!observed||observed.outcome!==(value.kind==='unavailable'?'safety_blocked':'protocol_validated')||!sameValue(observed.usage,usage)||observed.actualMicros!==actual)throw Error('Scoped usage acknowledgement unavailable');
         if(value.kind!=='protocol_validated')return {value,actualMicros:actual};
         const parsed=parseScopedModelOutput(value.output);if(!parsed)return {value,actualMicros:actual};
         if(parsed.kind==='candidate')candidatePatch(input!,parsed.edits);
@@ -88,13 +102,11 @@ export async function executeScopedTripEdit(lease: DurableTurnLease, ports: Scop
         return {value,actualMicros:actual};
       },signal);
       if(result.kind!=='completed'||result.accounting!=='settled'||signal.aborted)return 'pending';
+      if(result.value.kind==='unavailable'&&result.value.code==='SAFETY_BLOCKED')return decline('safety_refused');
       output=await recover(signal);
     }
     if(!output||output.accounting!=='settled'||!await allow('publish',signal))return 'pending';
-    if(output.output.kind!=='candidate'){
-      await ports.rpc('pause_scoped_trip_edit_work_v1',{...params,p_reason:output.output.reason},signal).catch(()=>{});
-      return 'pending';
-    }
+    if(output.output.kind!=='candidate')return decline(output.output.reason);
     const patch=candidatePatch(input,output.output.edits);
     let completed:unknown;
     try {completed=await ports.rpc('complete_scoped_trip_edit_work_v1',{...params,p_patch:patch},signal);} catch { /* Read receipt below after ambiguous ACK. */ }

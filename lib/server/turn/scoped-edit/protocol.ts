@@ -55,9 +55,9 @@ export function validUsage(value: unknown): value is ProtocolUsage {
     || [u.cachedInputTokens,u.uncachedInputTokens,u.reasoningTokens].some(x=>x!==null&&!integer(x)) || Number(u.cachedInputTokens)>Number(u.inputTokens) || Number(u.reasoningTokens)>Number(u.outputTokens) || Number(u.uncachedInputTokens)>Number(u.inputTokens) || u.cachedInputTokens!==null&&u.uncachedInputTokens!==null&&Number(u.cachedInputTokens)+Number(u.uncachedInputTokens)!==u.inputTokens) return false;
   return true;
 }
-export type SavedUsage=Readonly<{kind:'saved_usage';binding:ScopedBinding;usage:ProtocolUsage;actualMicros:number}>;
+export type SavedUsage=Readonly<{kind:'saved_usage';binding:ScopedBinding;usage:ProtocolUsage;actualMicros:number;outcome:'protocol_validated'|'safety_blocked'}>;
 export function savedUsage(v: unknown,b:ScopedBinding):SavedUsage|null {
-  return record(v)&&exact(v,['kind','binding','usage','actualMicros'])&&v.kind==='saved_usage'&&validBinding(v.binding)&&sameValue(v.binding,b)&&validUsage(v.usage)&&integer(v.actualMicros)?v as SavedUsage:null;
+  return record(v)&&exact(v,['kind','binding','usage','actualMicros','outcome'])&&v.kind==='saved_usage'&&validBinding(v.binding)&&sameValue(v.binding,b)&&validUsage(v.usage)&&integer(v.actualMicros)&&['protocol_validated','safety_blocked'].includes(String(v.outcome))?v as SavedUsage:null;
 }
 /** Translate model edits through the same domain guard as manual editing, then
  * check the entire candidate against the original current snapshot. */

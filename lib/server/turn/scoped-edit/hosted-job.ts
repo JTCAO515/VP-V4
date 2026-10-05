@@ -84,7 +84,7 @@ export function createHostedScopedEditWorker(raw:ScopedHostedProfile,deps:Hosted
         return transport(request);
       };
       const result=await executeScopedTripEdit(lease,{rpc:scopedRpc,transport:wrapped,price:pricing,recordUsage:(receipt,s)=>deps.journal.planningUsage!(configDigest,receipt,s),now:Date.now},stop);
-      if(result==='persisted')return 'persisted';
+      if(result==='persisted'||result==='declined')return 'persisted';
       throw Error('Scoped work pending');
     },signal);
   };

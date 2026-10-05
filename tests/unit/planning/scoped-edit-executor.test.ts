@@ -20,7 +20,7 @@ const candidate={kind:'candidate',edits:[{kind:'move_item',itemId:'editable',toD
 const usage={inputTokens:100,outputTokens:40,totalTokens:140,cachedInputTokens:null,uncachedInputTokens:null,reasoningTokens:null,cost:'unknown'};
 function fixture(options:Record<string,unknown>={}) {
  let calls=0, dispatches=0, saved:unknown=options.pendingOutputRecovery?{kind:'saved_output',binding,output:candidate,usage,actualMicros:120,accounting:'pending'}:null, settled=false, committed=false;
- const log:string[]=[];let savedUsage:unknown=null;
+ const log:string[]=[];let savedUsage:unknown=null,savedOutcome:unknown=null,storedDecline:unknown=null;
  const input=JSON.parse(JSON.stringify(raw));
  const output=options.output??candidate;
  const ports:ScopedExecutorPorts={now:()=>now,price:()=>options.unknownPrice?null:options.knownZero?0:120,recordUsage:async()=>{log.push('usage');if(options.usageAckLost)throw Error('lost');},
@@ -29,8 +29,14 @@ function fixture(options:Record<string,unknown>={}) {
   log.push(name);
   if(name==='read_scoped_trip_edit_work_v1')return options.missingQualification?{kind:'pending'}:input;
   if(name==='authorize_scoped_trip_edit_effect_v1')return options.deny===p.p_effect?{kind:'pending'}:{kind:'authorized',effect:p.p_effect,binding:p.p_binding};
-  if(name==='read_scoped_trip_edit_output_v1')return options.existingUnknown?{kind:'pending'}:saved??{kind:'missing'};
-  if(name==='record_scoped_trip_edit_usage_v1'){savedUsage={kind:'saved_usage',binding:p.p_binding,usage:p.p_usage,actualMicros:p.p_actual_micros};if(options.metadataAckLost)throw Error('lost metadata ACK');return {kind:'usage_saved'};}
+  if(name==='read_scoped_trip_edit_output_v1')return options.existingUnknown?{kind:'pending'}:saved??{kind:dispatches>0?'pending':'missing'};
+  if(name==='record_scoped_trip_edit_usage_v1'){savedOutcome=p.p_outcome;savedUsage={kind:'saved_usage',binding:p.p_binding,usage:p.p_usage,actualMicros:p.p_actual_micros,outcome:p.p_outcome};if(options.metadataAckLost)throw Error('lost metadata ACK');return {kind:'usage_saved'};}
+  if(name==='pause_scoped_trip_edit_work_v1'){
+    const model=output as {kind:string;reason?:string};
+    if(!settled||p.p_reason==='safety_refused'&&savedOutcome!=='safety_blocked'||p.p_reason!=='safety_refused'&&(model.kind!=='cannot_edit'||model.reason!==p.p_reason))return {kind:'pending'};
+    storedDecline={kind:'declined',binding,receipt:{kind:'scoped_edit_declined/1',operationId:options.wrongDeclineAck?id(99):binding.operationId,tripId:binding.tripId,contextId:binding.contextId,contextDigest:binding.contextDigest,baseVersion:binding.baseVersion,reason:p.p_reason,reused:false}};
+    if(options.declineAckLost)throw Error('lost decline ACK');return storedDecline;
+  }
   if(name==='read_scoped_trip_edit_usage_v1')return savedUsage??{kind:'missing'};
   if(name==='scoped_trip_edit_budget_v1'){
    if(p.p_effect==='reserve')return {kind:'reserved'};
@@ -44,7 +50,7 @@ function fixture(options:Record<string,unknown>={}) {
    if(options.outputAckLost)throw Error('lost');return saved;
   }
   if(name==='complete_scoped_trip_edit_work_v1'){assert.ok(settled);committed=true;if(options.completeAckLost)throw Error('lost');return completion();}
-  if(name==='read_scoped_trip_edit_completion_v1')return committed?completion():{kind:'pending'};
+  if(name==='read_scoped_trip_edit_completion_v1')return storedDecline??(committed?completion():{kind:'pending'});
   throw Error('unexpected '+name);
  },};
  function completion(){const input=parseInput(raw,lease,now)!,patch=candidatePatch(input,(output as {edits:CandidateEdit[]}).edits),after=previewScopedPatch(input.context.snapshot,patch,{scope:context.scope,lockedItemIds:context.lockedItemIds,fixedItemIds:context.fixedItemIds});return {kind:'candidate_saved',binding,receipt:{kind:'scoped_edit_candidates/1',operationId:id(7),tripId:id(6),contextId:id(5),contextDigest:'a'.repeat(64),baseVersion:3,expiresAt:'2026-10-05T04:05:00.000Z',returnScope:context.scope,candidates:[{candidateId:id(10),edits:(output as {edits:CandidateEdit[]}).edits,diff:scopedEditDiff(input.context.snapshot,after)}],reused:false}};}
@@ -107,5 +113,11 @@ test('canonical request identity ignores binding property order and lease renewa
  assert.notEqual(scopedRequestIdentity({...input,binding:{...input.binding,attemptId:id(31)}}).requestDigest,first.requestDigest);
 });
 
-test('validated safety-blocked usage settles cost without publishing unavailable content',async()=>{const f=fixture({safetyBlocked:true});assert.equal(await f.run(),'pending');assert.equal(f.calls,1);assert.equal(f.settled,true);assert.equal(f.committed,false);assert.equal(f.log.includes('record_scoped_trip_edit_usage_v1'),true);});
+test('validated safety-blocked usage settles cost without publishing unavailable content',async()=>{const f=fixture({safetyBlocked:true});assert.equal(await f.run(),'declined');assert.equal(f.calls,1);assert.equal(f.settled,true);assert.equal(f.committed,false);assert.equal(f.log.includes('record_scoped_trip_edit_usage_v1'),true);});
 test('lost usage metadata ACK reads the original receipt before cost settlement',async()=>{const f=fixture({metadataAckLost:true});assert.equal(await f.run(),'persisted');assert.equal(f.calls,1);assert.equal(f.settled,true);});
+
+for(const reason of ['unsupported_request','no_change'])test(`settled ${reason} is a durable decline, distinct from pending or user cancellation`,async()=>{const f=fixture({output:{kind:'cannot_edit',reason}});assert.equal(await f.run(),'declined');assert.equal(f.calls,1);assert.equal(f.settled,true);assert.equal(f.committed,false);});
+test('lost decline ACK reads the same operation without another provider call',async()=>{const f=fixture({safetyBlocked:true,declineAckLost:true});assert.equal(await f.run(),'declined');assert.equal(f.calls,1);});
+test('wrong operation in decline ACK cannot claim completion',async()=>{const f=fixture({output:{kind:'cannot_edit',reason:'no_change'},wrongDeclineAck:true});assert.equal(await f.run(),'pending');assert.equal(f.calls,1);});
+
+test('lost safety-blocked settlement ACK reconciles and declines the original operation without another call',async()=>{const f=fixture({safetyBlocked:true,settleAckLost:true});assert.equal(await f.run(),'pending');assert.equal(await f.run(),'declined');assert.equal(f.calls,1);assert.equal(f.committed,false);});
