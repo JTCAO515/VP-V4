@@ -45,11 +45,32 @@ struct AppShellView: View {
             ShellEntrySheet(entry: entry)
                 .id(settings.nativeSession.dataScope)
         }
+        .sheet(item: Binding(get: { presentedEntry == nil ? settings.nativeSession.notifications.destination : nil }, set: { value in
+            if value == nil { settings.nativeSession.notifications.dismissDestination() }
+        })) { destination in
+            NativeNotificationReturnView(destination: destination, session: settings.nativeSession, chinese: settings.selectedLocale == .zh)
+                .id(settings.nativeSession.dataScope)
+        }
+        .alert(settings.selectedLocale == .zh ? "提醒已不可用" : "Reminder unavailable",
+               isPresented: Binding(get: { settings.nativeSession.notifications.resolutionUnavailable }, set: { value in
+                   if !value { settings.nativeSession.notifications.dismissResolutionFailure() }
+               })) {
+            Button(settings.selectedLocale == .zh ? "知道了" : "OK") { settings.nativeSession.notifications.dismissResolutionFailure() }
+        } message: {
+            Text(settings.selectedLocale == .zh ? "来源、行程、权限或有效期已变化，请从当前行程继续。" : "The source, trip, permission or expiry changed. Continue from your current trip.")
+        }
         .onOpenURL { url in
+            if let reference = NativeNotificationWire.opaqueReference(url) {
+                if let scope = settings.nativeSession.dataScope {
+                    Task { await settings.nativeSession.notifications.resolve(reference: reference, scope: scope) }
+                } else { NativeNotificationSystem.shared.receivedWhileRestoring(reference: reference) }
+                return
+            }
             guard let entry = AppEntry.deepLink(url) else { return }
             open(entry)
         }
         .onChange(of: settings.nativeSession.dataScope, initial: true) { _, scope in
+            settings.nativeSession.notifications.attach(session: settings.nativeSession)
             goalEntry = nil
             switchState.actorChanged(to: scope)
             presentedEntry = nil
@@ -59,9 +80,18 @@ struct AppShellView: View {
             guard let source=settings.nativeSession.exploreAskHandoff,source.scope==settings.nativeSession.dataScope,source.valid else{return}
             open(.ask)
         }
-        .task { await settings.nativeSession.restore() }
+        .task {
+            settings.nativeSession.notifications.attach(session: settings.nativeSession)
+            await settings.nativeSession.restore()
+            await settings.nativeSession.notifications.finishRestoration(session: settings.nativeSession)
+        }
         .onChange(of: scenePhase) { _, phase in
-            if phase == .active { Task { await settings.nativeSession.validate() } }
+            if phase == .active {
+                Task {
+                    await settings.nativeSession.validate()
+                    await settings.nativeSession.notifications.refreshPermission(session: settings.nativeSession)
+                }
+            }
         }
     }
     private func switchShell() {

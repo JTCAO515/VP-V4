@@ -2,6 +2,7 @@ import SwiftUI
 
 @main
 struct VisePandaApp: App {
+    @UIApplicationDelegateAdaptor(NativeNotificationDelegate.self) private var notificationDelegate
     @State private var settings = AppSettings()
 
     var body: some Scene {

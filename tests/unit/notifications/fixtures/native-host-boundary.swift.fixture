@@ -1,0 +1,5 @@
+import Foundation
+import Security
+struct NativeDataScope: Hashable, Sendable {let endpoint:String;let subject:String;let mobileEpoch:Int;let generation:Int}
+enum NativeDataError: Error { case sessionUnavailable, staleSessionResponse, invalidResponse;case server(code:String)}
+@MainActor protocol NativeCredentialVault {func write(_ data:Data,service:String,owner:String)->OSStatus;func read(service:String,owner:String)->(OSStatus,Data?);func remove(service:String,owner:String)->OSStatus}
