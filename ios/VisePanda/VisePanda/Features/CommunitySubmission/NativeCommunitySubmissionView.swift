@@ -156,6 +156,11 @@ struct NativeCommunitySubmissionView: View {
             NavigationLink(t("此投稿的安全处置与申诉", "Safety disposition and appeal for this submission")) {
                 NativeCommunitySafetyView(authorSubmissionID: item.id).id(session.dataScope)
             }.accessibilityIdentifier("community.safety.open")
+            if item.status == "published" {
+                NavigationLink(t("明确预览受控发布申请", "Preview a controlled publication request")) {
+                    NativeExperienceView(access: session.communityExperienceAccess, initialSubmissionID: item.id).id(session.dataScope)
+                }.accessibilityIdentifier("community.publication.preview")
+            }
             if item.canWithdraw { Button(t("撤回并清除正文", "Withdraw and clear the text"), role: .destructive) { confirmation = .withdraw(item) }.disabled(store.busy || store.pending != nil || !store.storageReady).accessibilityIdentifier("community.withdraw") }
         }.accessibilityIdentifier("community.detail")
     }

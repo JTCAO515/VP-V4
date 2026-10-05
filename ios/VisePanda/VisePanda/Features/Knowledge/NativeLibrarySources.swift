@@ -127,12 +127,14 @@ struct NativeLibrarySourcesView:View {
     @State private var opened:NativeLibraryMetadata?
     @State private var reservationsOpen=false
     @State private var savedPlacesOpen=false
+    @State private var savedExperiencesOpen=false
     @State private var refresh=UUID()
     private var key:NativeLibrarySourceStore.Key?{guard active,phase == .active,let scope=session.dataScope else{return nil};return .init(scope:scope,source:source,query:query,cursor:cursor)}
     private func t(_ zh:String,_ en:String)->String{chinese ? zh:en}
     var body:some View {
         VStack(alignment:.leading,spacing:10){
             Button(t("已收藏地点引用", "Saved place references")){savedPlacesOpen=true}.disabled(key==nil).accessibilityIdentifier("library.saved.places")
+            Button(t("保存的体验引用", "Saved experience references")){savedExperiencesOpen=true}.disabled(key==nil).accessibilityIdentifier("library.saved.experiences")
             Picker(t("私有来源","Private source"),selection:$source){ForEach(NativeLibrarySource.allCases,id:\.self){value in Text(value.label(chinese)).tag(value)}}
                 .accessibilityIdentifier("library.sources.choice")
             if source == .orders {
@@ -174,6 +176,7 @@ struct NativeLibrarySourcesView:View {
         .onDisappear{store.clear();opened=nil}
         .sheet(item:$opened,onDismiss:{cursor=nil;refresh=UUID()}){reference in NativeLibraryExactSourceView(reference:reference,session:session,chinese:chinese,active:active)}
         .sheet(isPresented:$savedPlacesOpen){NativeSavedPlaceActionsView(session:session,chinese:chinese,active:active)}
+        .sheet(isPresented:$savedExperiencesOpen){NavigationStack{NativeExperienceView(access:session.communityExperienceAccess,savedOnly:true,isActive:active)}}
         .sheet(isPresented:$reservationsOpen){NativeReservationsView(session:session,chinese:chinese,active:active)}
     }
     private struct Load:Equatable{let key:NativeLibrarySourceStore.Key?;let refresh:UUID}

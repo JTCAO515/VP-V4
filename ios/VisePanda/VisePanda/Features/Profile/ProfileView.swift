@@ -151,6 +151,9 @@ struct ProfileView: View {
                         NavigationLink(chinese ? "社区举报、屏蔽与申诉" : "Community reports, blocks and appeals") {
                             NativeCommunitySafetyView().id(settings.nativeSession.dataScope)
                         }.accessibilityIdentifier("profile.community-safety.open")
+                        NavigationLink(chinese ? "受控旅行体验与发布申请" : "Controlled experiences and publication requests") {
+                            NativeExperienceView(access: settings.nativeSession.communityExperienceAccess).id(settings.nativeSession.dataScope)
+                        }.accessibilityIdentifier("profile.community-experience.open")
                     }
                     NavigationLink(chinese ? "旅途支持请求" : "Travel support requests") {
                         NativeServiceCaseView().id(settings.nativeSession.dataScope)
