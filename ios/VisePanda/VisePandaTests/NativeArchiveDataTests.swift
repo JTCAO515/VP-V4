@@ -145,8 +145,8 @@ private final class ArchiveDataFixtureAnchor: NSObject {}
 
 /// Actual Session consumer with an unsigned, synthetic loopback transport.
 /// No real user credentials, grants or server data are used.
-@MainActor final class NativeArchiveDataSessionTests: XCTestCase {
-    func testJournalGateUnknownAckRecoveryHeadersAndLogoutCleanup() async throws {
+nonisolated final class NativeArchiveDataSessionTests: XCTestCase {
+    @MainActor func testJournalGateUnknownAckRecoveryHeadersAndLogoutCleanup() async throws {
         let domain = "vpj58.archive-session." + UUID().uuidString
         let defaults = try XCTUnwrap(UserDefaults(suiteName: domain))
         defer { defaults.removePersistentDomain(forName: domain) }
