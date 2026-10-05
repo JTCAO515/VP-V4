@@ -1,0 +1,23 @@
+✔ notification-metadata/1: from-null traversal, closed original rows, bounded exact proof and 30s same source binding (16.835459ms)
+✔ trip-lifecycle-metadata/1: from-null traversal, closed original rows, bounded exact proof and 30s same source binding (0.330292ms)
+✔ partial/forged proof, changed source/owner/epoch, pagination reorder, hidden fields and capacity fail closed (8.24025ms)
+✔ empty scope still requires terminal page/current proof, and cancellation never creates fresh identity (0.179875ms)
+✔ ugc: real original owner HTTP command/receipt validators, same bytes unknown ACK recovery and no cross-actor completion (8.409458ms)
+✔ safety: real original owner HTTP command/receipt validators, same bytes unknown ACK recovery and no cross-actor completion (1.994208ms)
+✔ publication: real original owner HTTP command/receipt validators, same bytes unknown ACK recovery and no cross-actor completion (1.585125ms)
+✔ closed selection prevents privilege widening; disabled/foreign/session changed denies before a handler (1.446042ms)
+✔ denominator includes missing server/device/external modules and accepts no client device proof (0.294958ms)
+✔ core queued and ready_complete cannot be promoted to delivered all-data export (1.531458ms)
+✔ Case and Brief invoke existing bounded owner bundle double-read; changed source and stale TTL never complete (2.166541ms)
+✔ Case/Brief recovered delete receipt must match original exact bytes, current grant and explicit scope (1.039208ms)
+✔ Guide selected exact Trip/reference-only handler, no unjournaled automatic destructive recovery (0.427416ms)
+✔ Trip queued is not complete; selected Trip and original operation stay bound across GET recovery (0.657375ms)
+✔ linked Trip exact selected arrays compare semantically across JSONB object ordering, never widen the scope (0.529708ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 166.236292
