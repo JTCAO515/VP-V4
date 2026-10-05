@@ -42,6 +42,7 @@ test('source changes, foreign bindings and forged terminal counts never become d
     (v, a) => a === 'proof' ? { ...v, rows: 999 } : v,
     (v, a) => a === 'page' ? { ...v, leaseId: id(90) } : v,
     (v, a) => a === 'page' ? { ...v, pageNumber: 2 } : v,
+    (v, a) => { if (a === 'page' && v.section === 'trip') v.items[0].confirmationState = ['confirmed']; return v; },
   ]) await assert.rejects(() => collectArchiveExport(command, bytes, actor, rpcSource(mutate).rpc, signal, async () => true, () => now + 1), /ARCHIVE_SOURCE_UNAVAILABLE/);
   const source = rpcSource(); let active = true;
   await assert.rejects(() => collectArchiveExport(command, bytes, actor, async (...args) => { const result = await source.rpc(...args); active = false; return result; }, signal, async () => active, () => now + 1), /ARCHIVE_SOURCE_UNAVAILABLE/);

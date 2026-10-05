@@ -25,7 +25,7 @@ export function archiveRowKey(section: string, v: unknown, binding: ArchiveBindi
   if (!record(v)) return null;
   if (section === 'trip') {
     if (!exact(v, ['tripId','title','headVersion','confirmationState','content','lifecycle']) || v.tripId !== binding.tripId
-      || v.headVersion !== binding.tripVersion || !['initial','confirmed','unknown'].includes(String(v.confirmationState))
+      || v.headVersion !== binding.tripVersion || typeof v.confirmationState !== 'string' || !['initial','confirmed','unknown'].includes(v.confirmationState)
       || !isLifecycleTrip(v.lifecycle) || v.lifecycle.state !== 'archived' || v.lifecycle.tripId !== v.tripId
       || v.title !== v.lifecycle.title || v.headVersion !== v.lifecycle.headVersion || !archiveContent(v.content)) return null;
     return v.lifecycle.tripId;
@@ -37,7 +37,7 @@ export function archiveRowKey(section: string, v: unknown, binding: ArchiveBindi
   }
   if (section === 'operations') {
     if (!exact(v, ['operationId','sessionId','receipt','erasedReason']) || !uuid(v.operationId)) return null;
-    if (v.erasedReason !== null) return ['FORBIDDEN','MEMORY_CONFLICT'].includes(String(v.erasedReason)) && v.receipt === null && v.sessionId === null ? v.operationId : null;
+    if (v.erasedReason !== null) return typeof v.erasedReason === 'string' && ['FORBIDDEN','MEMORY_CONFLICT'].includes(v.erasedReason) && v.receipt === null && v.sessionId === null ? v.operationId : null;
     return uuid(v.sessionId) && isLifecycleReceipt(v.receipt) && v.receipt.ownerId === binding.ownerId && v.receipt.operationId === v.operationId
       && v.receipt.sessionId === v.sessionId && v.receipt.tripId === binding.tripId ? v.operationId : null;
   }
@@ -45,7 +45,7 @@ export function archiveRowKey(section: string, v: unknown, binding: ArchiveBindi
     'previewDigest','requestDigest','state','capturedAt','expiresAt','decidedAt','progressErased','progress','receipt'])
     || !uuid(v.objectId) || !binding.objectIds.includes(v.objectId) || v.ownerId !== binding.ownerId || !uuid(v.sessionId) || !positive(v.mobileEpoch)
     || !archiveScope(v.originalScope) || !hash(v.sourceDigest) || !hash(v.previewDigest) || !(v.requestDigest === null || hash(v.requestDigest))
-    || !['previewed','exporting','exported','erased'].includes(String(v.state)) || !positive(v.capturedAt) || !positive(v.expiresAt)
+    || typeof v.state !== 'string' || !['previewed','exporting','exported','erased'].includes(v.state) || !positive(v.capturedAt) || !positive(v.expiresAt)
     || v.expiresAt !== v.capturedAt + ARCHIVE_LIMITS.lifetimeMs || !(v.decidedAt === null || positive(v.decidedAt) && v.decidedAt >= v.capturedAt && v.decidedAt < v.expiresAt)
     || typeof v.progressErased !== 'boolean' || !Array.isArray(v.progress) || v.progress.length > 3) return null;
   if (v.originalScope === 'archived-trip-data/1' ? !uuid(v.tripId) || !positive(v.tripVersion) || v.tripVersion > 2147483647 || !Array.isArray(v.objectIds) || v.objectIds.length !== 0

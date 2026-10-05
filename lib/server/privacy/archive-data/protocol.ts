@@ -37,7 +37,7 @@ export function decodeArchiveList(v: unknown, command: Extract<ArchiveCommand, {
       if (item.tripId <= last) return null; last = item.tripId;
     } else {
       if (!exact(item, ['objectId','originalScope','tripId','tripVersion','state','progressErased']) || !uuid(item.objectId) || item.objectId <= last
-        || !archiveScope(item.originalScope) || !['previewed','exporting','exported','erased'].includes(String(item.state)) || typeof item.progressErased !== 'boolean'
+        || !archiveScope(item.originalScope) || typeof item.state !== 'string' || !['previewed','exporting','exported','erased'].includes(item.state) || typeof item.progressErased !== 'boolean'
         || (item.originalScope === 'archived-trip-data/1' ? !uuid(item.tripId) || !positive(item.tripVersion) || item.tripVersion > 2147483647
           : item.tripId !== null || item.tripVersion !== null)) return null;
       last = item.objectId;
