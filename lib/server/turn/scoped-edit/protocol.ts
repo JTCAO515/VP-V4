@@ -1,7 +1,8 @@
+import { createHash } from 'node:crypto';
 import { exact, record, uuid, digest, integer, type CandidateEdit } from '../../trip/scoped-edit/contract.ts';
 import { parseScopedContext, sameValue, type ScopedEditContext } from '../../trip/scoped-edit/wire.ts';
 import { candidateScopedEditsPatch, selectedItems, type ScopedPatch } from '../../trip/scoped-edit/candidate-guard.ts';
-import { parseScopedModelOutput, type ScopedModelOutput } from './model-output.ts';
+import { parseScopedModelOutput, SCOPED_TRIP_EDIT_PROMPT, type ScopedModelOutput } from './model-output.ts';
 import { PROTOCOL_MODELS, type ProtocolUsage } from '../../model-gateway/adapters/provider-protocol.ts';
 import { isQwenEndpoint } from '../../model-gateway/adapters/provider-endpoints.ts';
 import type { DurableTurnLease } from '../durable-worker.ts';
@@ -53,4 +54,12 @@ export function savedOutput(v: unknown, b: ScopedBinding): SavedOutput | null {
  * check the entire candidate against the original current snapshot. */
 export function candidatePatch(input: ScopedInput, edits: readonly CandidateEdit[]): ScopedPatch {
   return candidateScopedEditsPatch(input.context.snapshot,edits,{scope:input.context.scope,lockedItemIds:input.context.lockedItemIds,fixedItemIds:input.context.fixedItemIds},{contextId:input.binding.contextId,askOperationId:input.binding.operationId,candidateId:input.binding.attemptId});
+}
+
+/** Closed tuple bytes are independent of JSONB/object property serialization. */
+export function scopedRequestIdentity(input: ScopedInput) {
+  const body=JSON.stringify({model:PROTOCOL_MODELS.qwen,messages:[{role:'system',content:SCOPED_TRIP_EDIT_PROMPT},{role:'user',content:promptInput(input)}],stream:false,max_tokens:input.maxOutputTokens,enable_thinking:false,response_format:{type:'json_object'}});
+  const payloadDigest=createHash('sha256').update(body,'utf8').digest('hex');
+  const tuple=bindingKeys.filter(k=>k!=='leaseToken').map(k=>input.binding[k]);
+  return {requestId:input.binding.attemptId,body,payloadDigest,requestDigest:createHash('sha256').update(JSON.stringify(['scoped-trip-edit-request/1',tuple,payloadDigest])).digest('hex')};
 }

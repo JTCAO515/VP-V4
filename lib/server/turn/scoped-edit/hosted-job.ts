@@ -8,7 +8,7 @@ import { runDurableTurnWork } from '../durable-worker.ts';
 import { HOSTED_STAGING_DATABASE_URL, parseHostedWorkerProfile, runHostedTextLoop, type HostedWorkerProfile, type HostedWorkerDependencies, type PollResult } from '../../jobs/hosted-text-worker.ts';
 import { SCOPED_TRIP_EDIT_PROMPT } from './model-output.ts';
 import { executeScopedTripEdit, type ScopedRpc } from './executor.ts';
-import { authorized, validBinding } from './protocol.ts';
+import { authorized, validBinding, parseInput, scopedRequestIdentity, type ScopedInput } from './protocol.ts';
 import { exact, record, uuid } from '../../trip/scoped-edit/contract.ts';
 export type ScopedHostedProfile = Readonly<{schemaVersion:'vpj10-hosted-scoped-edit/1';loop:HostedWorkerProfile;target:Readonly<{ownerId:string;policyId:string;scopeId:string}>}>;
 export function parseScopedHostedProfile(v: unknown): ScopedHostedProfile {
@@ -52,12 +52,15 @@ export function createHostedScopedEditWorker(raw:ScopedHostedProfile,deps:Hosted
       return rpc('claim_scoped_trip_edit_work_v1',{p_owner_id:target.ownerId,p_policy_id:target.policyId,p_scope_id:target.scopeId},signal);
     },async(lease,stop)=>{
       let currentBinding:unknown=null;
+      let currentInput:ScopedInput|null=null;
       let requestIdentity:Readonly<{requestId:string;requestDigest:string;payloadDigest:string;body:string}>|null=null;
       const scopedRpc:ScopedRpc=async(name,p,s)=>{
         const value=await rpc(name,p,s);
         if(name==='read_scoped_trip_edit_work_v1'&&record(value)&&validBinding(value.binding)){
           if(value.binding.ownerId!==target.ownerId||value.binding.policyId!==target.policyId||value.binding.scopeId!==target.scopeId||value.binding.priceVersion!==tariff.priceVersion||value.endpoint!==deps.qwenEndpoint||value.timeoutMs!==tariff.timeoutMs||value.reservedMicros!==tariff.reservedMicros||value.maxOutputTokens!==tariff.maxOutputTokens)throw Error('Scoped host binding unavailable');
-          currentBinding=value.binding;
+          const checked=parseInput(value,lease,Date.now());
+          if(!checked)throw Error('Scoped current input unavailable');
+          currentBinding=checked.binding;currentInput=checked;
         }
         return value;
       };
@@ -72,12 +75,11 @@ export function createHostedScopedEditWorker(raw:ScopedHostedProfile,deps:Hosted
         if(!record(stored)||!exact(stored,['kind','attemptId','invocationId','phase'])||stored.kind!=='destination_recorded'||stored.attemptId!==currentBinding.attemptId||stored.invocationId!==destination.invocationId||stored.phase!==destination.phase)throw Error('Scoped destination unavailable');
       }});
       const wrapped:typeof transport=async request=>{
-        if(!validBinding(currentBinding))throw Error('Scoped request unavailable');
+        if(!validBinding(currentBinding)||!currentInput)throw Error('Scoped request unavailable');
         const body=JSON.parse(request.body);
         if(!record(body)||!exact(body,['model','messages','stream','max_tokens','enable_thinking','response_format'])||body.model!==PROTOCOL_MODELS.qwen||body.stream!==false||body.max_tokens!==tariff.maxOutputTokens||body.enable_thinking!==false||!Array.isArray(body.messages)||body.messages.length!==2||!record(body.messages[0])||body.messages[0].content!==SCOPED_TRIP_EDIT_PROMPT)throw Error('Scoped request unavailable');
-        const payloadDigest=createHash('sha256').update(request.body,'utf8').digest('hex');
-        const stable={...currentBinding,leaseToken:undefined};
-        requestIdentity={requestId:currentBinding.attemptId,payloadDigest,body:request.body,requestDigest:createHash('sha256').update(JSON.stringify(['scoped-trip-edit-request/1',stable,payloadDigest])).digest('hex')};
+        requestIdentity=scopedRequestIdentity(currentInput);
+        if(request.body!==requestIdentity.body)throw Error('Scoped canonical request unavailable');
         return transport(request);
       };
       const result=await executeScopedTripEdit(lease,{rpc:scopedRpc,transport:wrapped,price:pricing,recordUsage:(receipt,s)=>deps.journal.planningUsage!(configDigest,receipt,s),now:Date.now},stop);

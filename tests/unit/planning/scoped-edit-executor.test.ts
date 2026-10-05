@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { executeScopedTripEdit, type ScopedExecutorPorts } from '../../../lib/server/turn/scoped-edit/executor.ts';
 import { parseScopedModelOutput, SCOPED_TRIP_EDIT_PROMPT } from '../../../lib/server/turn/scoped-edit/model-output.ts';
-import { candidatePatch, parseInput, promptInput, type ScopedInput } from '../../../lib/server/turn/scoped-edit/protocol.ts';
+import { candidatePatch, parseInput, promptInput, scopedRequestIdentity, type ScopedInput } from '../../../lib/server/turn/scoped-edit/protocol.ts';
 import { scopedEditDiff } from '../../../lib/server/trip/scoped-edit/diff.ts';
 import { previewScopedPatch } from '../../../lib/server/trip/scoped-edit/candidate-guard.ts';
 import type { CandidateEdit } from '../../../lib/server/trip/scoped-edit/contract.ts';
@@ -96,3 +96,11 @@ test('a verified zero tariff is distinct from unknown cost',async()=>{const f=fi
 
 test('already saved known output reconciles the original pending budget without provider dispatch',async()=>{const f=fixture({pendingOutputRecovery:true});assert.equal(await f.run(),'persisted');assert.equal(f.calls,0);assert.equal(f.log.includes('usage'),true);assert.equal(f.log.includes('record_scoped_trip_edit_output_v1'),false);});
 test('lost settlement ACK reads settled accounting on the original attempt without another call',async()=>{const f=fixture({settleAckLost:true});assert.equal(await f.run(),'pending');assert.equal(f.calls,1);assert.equal(await f.run(),'persisted');assert.equal(f.calls,1);});
+
+test('canonical request identity ignores binding property order and lease renewal',()=>{
+ const input=parseInput(raw,lease,now)!,first=scopedRequestIdentity(input);
+ const reversed={...input,binding:Object.fromEntries(Object.entries(input.binding).reverse()) as typeof input.binding};
+ assert.deepEqual(scopedRequestIdentity(reversed),first);
+ assert.deepEqual(scopedRequestIdentity({...input,binding:{...input.binding,leaseToken:id(30)}}),first);
+ assert.notEqual(scopedRequestIdentity({...input,binding:{...input.binding,attemptId:id(31)}}).requestDigest,first.requestDigest);
+});
