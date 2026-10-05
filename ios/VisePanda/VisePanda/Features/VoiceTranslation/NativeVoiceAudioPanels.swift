@@ -82,6 +82,7 @@ struct NativeVoicePlaybackPanel: View {
     let scope: NativeDataScope?
     @Environment(AppSettings.self) private var settings
     @Environment(\.scenePhase) private var scenePhase
+    @State private var playedPhraseID: String?
     private var audio: NativeVoiceAudioController { settings.nativeSession.voiceAudio }
     private func text(_ en: String, _ zh: String) -> String { settings.selectedLocale == .zh ? zh : en }
 
@@ -93,19 +94,21 @@ struct NativeVoicePlaybackPanel: View {
                 audio.bind(scope: scope)
                 audio.selectFinalTranslation(id: phrase.id, text: translation, localeIdentifier: phrase.targetLocale == "zh" ? "zh-CN" : "en-US")
                 audio.speak()
+                if audio.phase == .speaking { playedPhraseID = phrase.id }
             }.disabled(scenePhase != .active || audio.phase != .idle || audio.cleanupPending)
                 .accessibilityIdentifier("voice.speak")
             Button(text("Stop playback", "停止朗读")) { audio.stopSpeaking() }
                 .disabled(audio.phase != .speaking).accessibilityIdentifier("voice.stopPlayback")
             Text(text("Uses an installed system voice. After a stop or interruption this translation does not restart.", "使用已安装的系统声音，停止或中断后不会重新播放本条译文。"))
                 .font(.caption).foregroundStyle(.secondary)
-            if audio.playbackCharacters > 0 {
+            if playedPhraseID == phrase.id, audio.scope == scope, audio.playbackCharacters > 0 {
                 Text(text("Selected text: \(audio.playbackCharacters) UTF-16 units · system progress: \(audio.spokenCharacters)", "已选译文：\(audio.playbackCharacters) 个 UTF-16 单位 · 系统进度：\(audio.spokenCharacters)"))
                     .font(.caption).accessibilityIdentifier("voice.playbackProgress")
             }
             if audio.failure != nil { Text(text("Playback is unavailable. Read the translation above.", "朗读暂不可用，可阅读上方译文。")) }
         }
         .onChange(of: scenePhase) { _, phase in if phase != .active { audio.stopSpeaking() } }
-        .onDisappear { audio.stopSpeaking() }
+        .onChange(of: phrase.id) { _, _ in playedPhraseID = nil }
+        .onDisappear { playedPhraseID = nil; audio.stopSpeaking() }
     }
 }

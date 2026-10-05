@@ -1,0 +1,16 @@
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj27-native-voice-translation-20261005/ios/VisePanda
+    builtin-swiftStdLibTool --copy --verbose --scan-executable /tmp/vpj27-ui-build/DD/Build/Products/Debug-iphonesimulator/VisePanda.app/VisePanda.debug.dylib --scan-folder /tmp/vpj27-ui-build/DD/Build/Products/Debug-iphonesimulator/VisePanda.app/Frameworks --scan-folder /tmp/vpj27-ui-build/DD/Build/Products/Debug-iphonesimulator/VisePanda.app/PlugIns --scan-folder /tmp/vpj27-ui-build/DD/Build/Products/Debug-iphonesimulator/VisePanda.app/SystemExtensions --scan-folder /tmp/vpj27-ui-build/DD/Build/Products/Debug-iphonesimulator/VisePanda.app/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /tmp/vpj27-ui-build/DD/Build/Products/Debug-iphonesimulator/VisePanda.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /tmp/vpj27-ui-build/DD/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os --back-deploy-swift-span
+Ignoring --strip-bitcode because --sign was not passed
+
+Validate /tmp/vpj27-ui-build/DD/Build/Products/Debug-iphonesimulator/VisePanda.app (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj27-native-voice-translation-20261005/ios/VisePanda
+    builtin-validationUtility /tmp/vpj27-ui-build/DD/Build/Products/Debug-iphonesimulator/VisePanda.app -shallow-bundle -infoplist-subpath Info.plist
+
+PruneExplicitPrecompiledModules /tmp/vpj27-ui-build/DD/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /tmp/vpj27-ui-build/DD/SDKExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /tmp/vpj27-ui-build/DD/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+** BUILD SUCCEEDED **
+
