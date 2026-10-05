@@ -1,6 +1,6 @@
 # VPJ-32 S1/S2 integration — 2026-10-05
 
-Product source frozen at `b46d3253` after the canonical Proposal-currentness fix `6e539461`. This report records scoped repository and disposable-local evidence; target activation and complete operating acceptance are separate.
+Product source frozen at `b46d3253` after the canonical Proposal-currentness fix `6e539461`, then normally integrated with fresh main `2b49b94c` in `2ed9e9d`. This report records scoped repository and disposable-local evidence; target activation and complete operating acceptance are separate.
 
 ## Implemented and directly connected
 
@@ -10,15 +10,15 @@ Existing Case grants → owner Native service progress → qualified Cookie staf
 
 | Check | Observed result |
 | --- | --- |
-| Final disposable real Auth/native HTTP/ordinary browser staff Cookie HTTP, original Trip v0/Proposal confirmation, independent data download/deletion/abandonment | 1 PASS, 0 skips; owned stack `vp-native-ask-f4017cd6`, base 64800, cleanup PASS |
+| Final disposable real Auth/native HTTP/ordinary browser staff Cookie HTTP, original Trip v0/Proposal confirmation, independent data download/deletion/abandonment | 1 PASS, 0 skips before upstream integration; affected full scenario rerun on `2ed9e9d`: 1 PASS, 0 skips; owned stack `vp-native-ask-558c84f2`, base 64800, cleanup PASS |
 | Earlier business-only disposable HTTP scope | 1 PASS, 0 skips; base 64800, cleanup PASS; retained only for that earlier source |
 | SQL full migration replay/rollback/qualification/concurrency/minutes/grant withdrawal/exact-byte recovery/data lifecycle | 17 PASS, 0 skips on original fixed SQL source; [SQL report](sql/verification.md) |
 | SQL canonical Trip v0 focused case and replay/setup | 2 PASS, 0 skips on final version-bound delta; prior 17-case source evidence reused, not reported as a new full run |
 | Native actual iOS 26.5 XCTest execution | 15 PASS, 0 skips on original operations source; owned simulator removed; [Native report](native-service-operations-20261005/verification.md) |
 | Native added data/v0 host cases, 512 KiB boundary | 6 added cases PASS plus 1 focused boundary PASS; prior 15 iOS cases reused |
-| Native full generic Simulator build-for-testing | PASS reported by original sole owner; new file/model/UI compiled; source-equivalent integration |
+| Native full generic Simulator build-for-testing | PASS on the original final owner source, and directly observed `TEST BUILD SUCCEEDED` on fresh-main combined `2ed9e9d` with `/tmp/vpj32-integrator-dd`; actual app/unit/UI targets compiled, not test execution |
 | Ops controller/API boundary tests | 17 PASS, 0 skips; [Ops scope and browser evidence](../../tests/contract/service-cases/ops-workspace-evidence.md) |
-| Required DB test registry governance | 9 PASS, 0 skips; new PG flag/file and HTTP runner/file registered without exclusions |
+| Required DB test registry governance | 9 PASS, 0 skips; rerun after fresh-main integration; new PG flag/file and HTTP runner/file registered without exclusions |
 | All service-case contract tests | 50 PASS, 0 skips before final unchanged Native-only cap/label delta |
 | Repository unit suite | 239 PASS, 0 skips |
 | Repository contract suite | 1059 PASS, 0 skips |
@@ -41,4 +41,6 @@ Original SQL fixture/error-code/currentness failures remain in the committed SQL
 
 The integrated SQL migration, Native ServiceOperations directory and Ops service directory matched the respective original owners' final files exactly by `git diff --no-index`. Shared file deltas were limited to the coordinator's explicit leases; the original service-case HTTP grant RPC and core export package remain unchanged. The CI runner change adds only the actual new mandatory PG environment/file and the fixed 64800 HTTP runner/file.
 
-Final-head hosted CI, independent formal review, fresh-main integration and ordinary repository merge are pending at this record. The source report is delivered before those finish. Target schema deployment, ACL/staff activation, real employees/provider contacts, costs, real user exports/deletion/sharing, physical phone/accessibility and product acceptance remain UNRUN.
+Fresh main was integrated normally, preserving the previous six journals, Trip lifecycle and the new service journal, all failure fences, and CI ports 64460/64600/64800 plus notification settings. Four additive PBX conflicts were resolved as a union, with unique root object definitions/source lists; `plutil`, no-marker and diff checks passed before the merge commit. The combined App/test build and real local HTTP scenario then passed. No shared original Proposal adapter or core export package was edited by this task.
+
+PR [#654](https://github.com/JTCAO515/VP-V4/pull/654) is the sole integrated PR. Final-head hosted CI, independent formal review and ordinary repository merge are pending at this record. The source report is delivered before those finish. Target schema deployment, ACL/staff activation, real employees/provider contacts, costs, real user exports/deletion/sharing, physical phone/accessibility and product acceptance remain UNRUN.
