@@ -33,6 +33,8 @@ test('VPJ-61 SQL lifecycle, existing writers, locks, erasure and versioned expor
  await db(claims(legacyOwner)+`insert into public.trips(id,owner_id,title) values('${legacy}','${legacyOwner.owner}','Historical'),('${legacyDraft}','${legacyOwner.owner}','Unconfirmed legacy');`);
  const confirmed=new Map();
  async function confirm(a,id,title='Saved Trip'){const proposal=JSON.parse(await db(claims(a)+`select row_to_json(r) from public.create_trip_proposal_patch('${id}',jsonb_build_object('expectedVersion',(select head_version from public.trips where id='${id}'),'operations',jsonb_build_array(jsonb_build_object('kind','set_title','title',${literal(title)})))) r;`));const digest=await db(claims(a)+`select digest from public.read_trip_proposal_v2('${proposal.proposal_id}');`);const key=uuid();const receipt=await db(claims(a)+`select * from public.confirm_and_apply_trip_proposal('${proposal.proposal_id}','${key}','${digest}');`);const result={id:proposal.proposal_id,digest,key,receipt};confirmed.set(id,result);return result;}
+ const bulkLegacyOwner=await owner(),bulkLegacyTrip=uuid();await db(`insert into public.trips(id,owner_id,title) values('${bulkLegacyTrip}','${bulkLegacyOwner.owner}','Pre-migration legacy');`);
+ const paginatedLegacyOwner=await owner();await db(`insert into public.trips(owner_id,title) select '${paginatedLegacyOwner.owner}','Legacy page '||n from generate_series(1,55) n;`);
  await confirm(legacyOwner,legacy);
  const resultSignatures=['public.read_trip_result_reference_v1(uuid)','public.read_trip_result_reference_v2(uuid)','public.read_result_artifacts_v1(uuid,integer)','public.read_result_artifact_v2(uuid,integer)','turn_private.comparison_common_basis_state(turn_private.result_artifacts,turn_private.result_revisions)','turn_private.result_state_v2(turn_private.result_artifacts,turn_private.result_revisions)','turn_private.publish_result_v2(uuid,uuid,integer,uuid,uuid,uuid,uuid,uuid,integer,integer,jsonb,jsonb,jsonb,boolean)'];
  const readerState=()=>db(`select jsonb_object_agg(proname,jsonb_build_object('body',prosrc,'acl',proacl)) from pg_proc where oid=any(array[${resultSignatures.map(x=>literal(x)+'::regprocedure').join(',')}]);`).then(JSON.parse);
@@ -58,6 +60,25 @@ test('VPJ-61 SQL lifecycle, existing writers, locks, erasure and versioned expor
   assert.equal((await read(legacyOwner)).capacity.legacyCount,0);
  });
  const a=await owner(),b=await owner(),web=await owner(false);let trip,active,second;
+ await t.test('bulk Trip INSERT validates statement capacity, legacy, RLS and concurrent rollback',async()=>{
+  const rows=(a,n)=>Array.from({length:n},()=>({id:uuid(),owner:a.owner}));
+  const insertion=values=>`insert into public.trips(id,owner_id,title) values ${values.map(x=>`('${x.id}','${x.owner}','Bulk new draft')`).join(',')};`;
+  const countRows=(table,a)=>db(`select count(*) from ${table} where owner_id='${a.owner}';`);
+  for(const n of [2,3]){
+   const a=await owner(),values=rows(a,n),before=await read(a);await db(claims(a)+'set role authenticated;'+insertion(values));
+   const snapshot=await read(a);assert.equal(snapshot.capacity.draftCount,n);assert.equal(snapshot.capacity.legacyCount,0);assert.equal(snapshot.revision,before.revision+1);
+   assert.equal(await countRows('public.trips',a),String(n));assert.equal(await countRows('trip_lifecycle_private.states_v1',a),String(n));
+   assert.equal(await db(`select count(*) from public.trip_version_snapshots where owner_id='${a.owner}' and version=0 and content->'days'='[]'::jsonb;`),String(n));
+  }
+  const full=await owner(),beforeFull=await read(full);await deny(claims(full)+'set role authenticated;'+insertion(rows(full,4)),'TRIP_CAPACITY');
+  assert.deepEqual(await read(full),beforeFull);for(const table of ['public.trips','public.trip_version_snapshots','trip_lifecycle_private.states_v1'])assert.equal(await countRows(table,full),'0','four-row statement fully rolls back '+table);
+  const legacyBefore=await read(bulkLegacyOwner);assert.equal(legacyBefore.capacity.legacyCount,1);await deny(claims(bulkLegacyOwner)+'set role authenticated;'+insertion(rows(bulkLegacyOwner,2)),'LEGACY_RECONCILIATION_REQUIRED');assert.deepEqual(await read(bulkLegacyOwner),legacyBefore);assert.equal(await countRows('trip_lifecycle_private.states_v1',bulkLegacyOwner),'0','old rows are never automatically classified');
+  const mixA=await owner(),mixB=await owner();await db(insertion([...rows(mixA,2),...rows(mixB,2)]));for(const a of [mixA,mixB]){const s=await read(a);assert.equal(s.capacity.draftCount,2);assert.equal(s.revision,1);}
+  const atomicA=await owner(),atomicB=await owner(),aa=await read(atomicA),bb=await read(atomicB);await deny(insertion([...rows(atomicA,3),...rows(atomicB,4)]),'TRIP_CAPACITY');assert.deepEqual(await read(atomicA),aa);assert.deepEqual(await read(atomicB),bb);for(const a of [atomicA,atomicB]){assert.equal(await countRows('public.trips',a),'0');assert.equal(await countRows('trip_lifecycle_private.states_v1',a),'0');}
+  const actor=await owner(),foreign=await owner(),actorBefore=await read(actor),foreignBefore=await read(foreign);await deny(claims(actor)+'set role authenticated;'+insertion([...rows(actor,1),...rows(foreign,1)]),'row-level security');assert.deepEqual(await read(actor),actorBefore);assert.deepEqual(await read(foreign),foreignBefore);
+  const raced=await owner(),first=rows(raced,2),second=rows(raced,2);const outcomes=await Promise.all([sql(container,claims(raced)+'set role authenticated;'+insertion(first)),sql(container,claims(raced)+'set role authenticated;'+insertion(second))]);assert.equal(outcomes.filter(x=>x.code===0).length,1);for(const x of outcomes)if(x.code!==0){assert.match(x.stderr,/TRIP_CAPACITY|LIFECYCLE_LOCK_CONFLICT|could not obtain lock/);assert.doesNotMatch(x.stderr,/LEGACY_RECONCILIATION_REQUIRED|deadlock/);}
+  assert.equal((await read(raced)).capacity.draftCount,2);assert.equal(await countRows('public.trips',raced),'2');assert.equal(await countRows('public.trip_version_snapshots',raced),'2');assert.equal(await countRows('trip_lifecycle_private.states_v1',raced),'2');assert.equal(await db("select deadlocks from pg_stat_database where datname=current_database();"),'0');
+ });
  await t.test('canonical input, exact raw replay, durable rejection and unknown abandon',async()=>{
   trip=uuid();const c=await commandFor(a,'create',trip,{title:'New Trip'});const raw=JSON.stringify(c,null,2);const r=await execute(a,c,raw);
   assert.equal(r.status,'applied');assert.equal(r.requestDigest,sha(raw));assert.equal(r.revision,c.expectedRevision+1);
@@ -123,9 +144,7 @@ test('VPJ-61 SQL lifecycle, existing writers, locks, erasure and versioned expor
   assert.equal(await db(`select count(*) from trip_lifecycle_private.memory_edges_v1 where owner_id='${a.owner}';`),'0');
  });
  await t.test('paginated revision fences real head/delete mutations and old replay survives archive',async()=>{
-  const p=await owner();
-  // Seed historical data through a pre-migration-style fixture, NOT a user path.
-  await db(`alter table public.trips disable trigger a_lifecycle_trip_change_v1;alter table public.trips disable trigger lifecycle_trip_inserted_v1;insert into public.trips(owner_id,title) select '${p.owner}','Legacy page '||n from generate_series(1,55) n;alter table public.trips enable trigger a_lifecycle_trip_change_v1;alter table public.trips enable trigger lifecycle_trip_inserted_v1;`);
+  const p=paginatedLegacyOwner; // Real historical rows seeded before the migration.
   const page=await read(p);assert.equal(page.trips.length,50);assert.equal(page.capacity.legacyCount,55);assert.equal(page.nextTripId,page.trips.at(-1).tripId);
   const last=await call(p,'read',{afterTripId:page.nextTripId,expectedRevision:page.revision});assert.equal(last.trips.length,5);assert.equal(last.nextTripId,null);
   await confirm(p,page.trips[0].tripId);await deny(claims(p)+`select public.trip_lifecycle_v1('read',${json({afterTripId:page.nextTripId,expectedRevision:page.revision})});`,'LIFECYCLE_CONFLICT');

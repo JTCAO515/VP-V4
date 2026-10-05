@@ -215,3 +215,12 @@ The new owned bulk case checks ordinary authenticated 2/3-row creation, atomic
 foreign-owner RLS rollback, and concurrent 2+2 statements without false legacy
 or capacity overflow. Actual affected results are recorded in bulk-insert.txt;
 this scoped repair does not claim a new full 430-case PostgreSQL lane result.
+
+Bulk repair observed results: owned lifecycle PostgreSQL 11/11 PASS, zero skips;
+unchanged CI-failing travel-pace/linked-trip-delete/trip-delete regressions 12/12
+PASS, zero skips. The regressions ran sequentially to avoid simultaneous stacks.
+The first owned repair run exposed the old post-migration pagination seed; its
+historical setup moved before migration, leaving the failing CI modules and all
+assertions untouched. Original 430-case CI failure remains recorded as FAIL; its
+repaired rerun belongs to the sole integrator. Target/phone/provider and actual
+user rights actions remain UNRUN. No additional product changes remain here.
