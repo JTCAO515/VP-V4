@@ -108,22 +108,39 @@ test('Trip deletion SQL: reauthentication, fencing, atomic completion, isolation
   const ar=uuid();await db(call(owner,archived,ar));await db(`set role service_role; set request.jwt.claim.role='service_role'; select public.execute_trip_deletion_v1('${ar}');`);
   assert.equal(await db(`select count(*) from public.trip_archives where trip_id='${archived}';`),'0');
   // Admission versus a new chat link must serialize, never admit both.
+  let chatWinnerCleanup=false;
   for(let i=0;i<3;i++){
     const race=uuid(), key=uuid(); await db(`insert into public.trips(id,owner_id,title) values('${race}','${owner}','Race');`);
-    const outcomes=await Promise.all([sql(container,call(owner,race,key,session,0)),sql(container,`insert into public.chat_threads(owner_id,trip_id) values('${owner}','${race}');`)]);
+    const chatSQL=`insert into public.chat_threads(owner_id,trip_id) values('${owner}','${race}');`;
+    let outcomes;
+    if(i===0){
+      // Keep the chat transaction's real Trip lock until admission has started,
+      // so the owner-only unlink cleanup branch is observed deterministically.
+      const chat=sql(container,`set application_name='vpj36-chat-race'; begin; ${chatSQL} select pg_sleep(2); commit;`);
+      let chatLocked=false;
+      for(let n=0;n<30;n++){
+        if(await db("select count(*) from pg_stat_activity where application_name='vpj36-chat-race' and wait_event='PgSleep';")==='1'){chatLocked=true;break;}
+        await new Promise(resolve=>setTimeout(resolve,20));
+      }
+      assert.ok(chatLocked,'chat insertion acquired the Trip lock before admission');
+      outcomes=await Promise.all([sql(container,call(owner,race,key,session,0)),chat]);
+      assert.equal(outcomes[1].code,0,'controlled chat transaction wins while admission overlaps');
+    }else outcomes=await Promise.all([sql(container,call(owner,race,key,session,0)),sql(container,chatSQL)]);
     assert.equal(outcomes.filter(r=>r.code===0).length,1);
     assert.ok(outcomes.some(r=>r.stderr.includes('TRIP_HAS_CHAT_REFERENCES') || r.stderr.includes('TRIP_DELETION_PENDING_OR_COMPLETED')));
     // Retain the actual race assertions, then release only this iteration's
     // synthetic Trip through the original deletion flow. A chat winner must not
     // consume a draft slot needed by the next independent race.
     if(outcomes[1].code===0){
-      await db(as(owner,`delete from public.chat_threads where owner_id='${owner}' and trip_id='${race}';`));
+      await db(as(owner,`update public.chat_threads set trip_id=null where owner_id='${owner}' and trip_id='${race}';`));
       await db(call(owner,race,key,session,0));
+      chatWinnerCleanup=true;
     }
     const raceReceipt=JSON.parse(await db(`set role service_role; set request.jwt.claim.role='service_role'; select public.execute_trip_deletion_v1('${key}');`));
     assert.equal(raceReceipt.state,'completed');
     assert.equal(await db(`select count(*) from public.trips where id='${race}';`),'0');
   }
+  assert.ok(chatWinnerCleanup,'ordinary owner update cleanup was exercised');
   await db(`delete from auth.sessions where id='${session}';`);
   await denied(as(owner,`select public.read_trip_deletion_v1('${request}');`),'SESSION_REPLACED');
 });
