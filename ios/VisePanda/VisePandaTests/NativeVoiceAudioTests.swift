@@ -220,6 +220,6 @@ import Testing
 }
 
 /// Immutable fail-all remover; there is no shared mutable state behind this test-only FileManager subclass.
-private final class VoiceDeletionFailureManager: FileManager, @unchecked Sendable {
+private nonisolated final class VoiceDeletionFailureManager: FileManager, @unchecked Sendable {
     override func removeItem(at URL: URL) throws { throw NativeVoiceAudioFailure.cleanupRequired }
 }
