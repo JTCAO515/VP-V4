@@ -16,3 +16,6 @@
 {"command": "node direct safeReturnTo/signInHref behavior check", "result": "PASS", "observed": "exact /ops/community/safety allowed;8 unsafe/unleased variants denied"}
 {"command": "node --experimental-strip-types --test tests/contract/identity/launch-04-session-guard.test.ts tests/contract/ops/local-review.test.mjs tests/contract/knowledge/wiki-review-context.test.mjs", "result": "PASS", "observed": "11PASS0skip affectedexistingnavigation"}
 {"command": "VP_COMMUNITY_DB_TEST=1 VP_COMMUNITY_TS_WIRE_ROOT=$PWD node --experimental-strip-types --test --test-name-pattern=full migration replay rollback tests/integration/community/submission-j1-postgres.test.mjs", "result": "PASS", "observed": "1PASS0skip actual originalfullreplay/rollback/ACL/body assertion; ownedDocker cleanup; strongbodyexactpredicateonce"}
+{"command": "direct SafetyOpsController firstACK_UNKNOWN then exactretrySAFETY_DISABLED", "result": "FAIL", "source": "ee211", "observed": "pending true→false; sourceerasure was not terminalproof"}
+{"command": "node --experimental-strip-types --test tests/unit/community/safety/ops-controller.test.mjs", "result": "PASS", "observed": "7PASS0skip; existingrecoverycase deniedretry originalbyte retention then explicitterminalclear"}
+{"command": "pnpm typecheck", "result": "PASS", "observed": "minimal ownedOps recovery followup"}

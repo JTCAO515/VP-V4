@@ -46,7 +46,7 @@ export class SafetyOpsController {
       const after=await this.run(abort.signal,()=>this.deps.identity());if (epoch!==this.epoch || abort.signal.aborted) return;
       if (!after || after.actorId!==identity.actorId || after.sessionId!==identity.sessionId || after.expiresAt<=Date.now()) {this.deps.erase();this.identity=null;this.changed({...emptySafetyView,message:'login',busy:true});return;}
       if ('error' in result) {
-        if (isSafetyMutation(command) && ['INVALID_INPUT','SAFETY_FORBIDDEN','SAFETY_CONFLICT','SAFETY_NOT_FOUND','SAFETY_OPERATION_ABANDONED','SAFETY_DISABLED'].includes(result.error)) {this.deps.erase();pending=null;}
+        if (isSafetyMutation(command) && !retryBytes && ['INVALID_INPUT','SAFETY_FORBIDDEN','SAFETY_CONFLICT','SAFETY_NOT_FOUND','SAFETY_OPERATION_ABANDONED','SAFETY_DISABLED'].includes(result.error)) {this.deps.erase();pending=null;}
         this.changed({pending,message:pending?'unknown':result.error==='SAFETY_CONFLICT'?'conflict':'unavailable'});return;
       }
       const o=decodeSafetyOutcome(result.data);if (!o || !matchesSafetyOutcome(o,command,identity.actorId,identity.sessionId)) throw Error('Reply unavailable');

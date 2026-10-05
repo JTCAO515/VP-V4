@@ -1,0 +1,15 @@
+✔ journal saved before dispatch, timeout keeps exact original, retry/status refuse a new operation (2.382958ms)
+✔ storage write failure prevents all mutation dispatch and malformed journals fail closed (0.234667ms)
+✔ late reply after lifecycle invalidation cannot expose private report details (0.4935ms)
+✔ account/session switch after dispatch clears sensitive view and journal (0.336208ms)
+✔ wrong operation/body rejected as unknown, server denial erases new journal (0.304ms)
+✔ expiry clears previously rendered body and disables stale export (0.175666ms)
+✔ actual browser transport sends credential headers/no-store and rejects foreign response/session (8.2435ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 83.562291

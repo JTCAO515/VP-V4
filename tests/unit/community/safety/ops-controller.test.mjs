@@ -14,6 +14,7 @@ test('journal saved before dispatch, timeout keeps exact original, retry/status 
  await s.c.execute(disposition());const frozen=s.saved().bytes;assert.equal(s.c.view.message,'unknown');
  await s.c.execute({...disposition(),operationId:uuid()});assert.equal(sent.length,1);assert.equal(s.saved().bytes,frozen);
  await s.c.retry();assert.equal(sent[1],frozen);
+ for (const error of ['SAFETY_DISABLED','SAFETY_FORBIDDEN','SAFETY_CONFLICT','SAFETY_NOT_FOUND']) {s.deps.send=async()=>({error});await s.c.retry();assert.equal(s.saved()?.bytes,frozen,'denied retry cannot prove the original unknown attempt never committed');assert.equal(s.c.view.message,'unknown');}
  s.deps.send=async bytes=>{const input=JSON.parse(bytes);assert.equal(input.action,'operation');assert.equal(input.mutationBytes,frozen);return {data:terminal()};};
  await s.c.resolve('operation');assert.equal(s.saved(),null);assert.equal(s.c.view.selected.state,'removed');
 });
