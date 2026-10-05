@@ -11,6 +11,7 @@ import { linkedTripCommand } from '../linked-trip/contract.ts';
 import { memoryDeleteCommand } from '../memory-delete/contract.ts';
 import { validMaterialCoverageSelection } from '../material-references/coverage.ts';
 import { validNotificationDataCoverageSelection } from '../notification-data/coverage.ts';
+import { validArchiveCoverageSelection } from '../archive-data/coverage.ts';
 import { validCoverageProgressCoverageSelection } from '../coverage-progress/coverage.ts';
 
 export const COVERAGE_SCHEMA = 'data-coverage/1' as const;
@@ -51,13 +52,14 @@ export function parseCoverageInput(value: unknown): SelectedCommand | null {
   if (handler === 'notification_data') return validNotificationDataCoverageSelection(input, command) ? { input, command, handler } : null;
   if (handler === 'core') return input.tripId === null && input.phase !== 'preview'
     && exact(command, ['requestId','confirmed']) && command.requestId === input.operationId && command.confirmed === true ? { input, command, handler } : null;
-  if (handler === 'trip') {
+  if (handler === 'archive_data' && !(input.action === 'delete' && uuid(input.tripId))) return validArchiveCoverageSelection(input, command) ? { input, command, handler } : null;
+  if (handler === 'trip' || handler === 'archive_data') {
     if (!uuid(input.tripId)) return null;
     if (linkedTripCommand(command as unknown)) return (input.phase === 'preview' ? command.action === 'preview' && command.tripId === input.tripId : command.action === 'confirm')
       ? { input, command, handler: 'linked_trip' } : null;
     return input.phase !== 'preview' && exact(command, ['requestId','tripId','expectedVersion','confirmed'])
       && command.requestId === input.operationId && command.tripId === input.tripId && Number.isSafeInteger(command.expectedVersion)
-      && Number(command.expectedVersion) >= 0 && command.confirmed === true ? { input, command, handler } : null;
+      && Number(command.expectedVersion) >= 0 && command.confirmed === true ? { input, command, handler: 'trip' } : null;
   }
   if (handler === 'memory') return input.tripId === null && memoryDeleteCommand(command)
     && (input.phase === 'preview' ? command.action === 'preview' : command.action === 'confirm') ? { input, command, handler } : null;
