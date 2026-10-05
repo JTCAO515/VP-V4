@@ -1,0 +1,47 @@
+PR #653 / head eadb8b725ce2f3325a2c4be8c0a4f196fd4a90c9
+Run 37278318273 / job 111660359677 / lane postgres
+Actual first failure retained; no retry or gate reduction.
+
+2026-10-05T07:36:11.0048493Z not ok 66 - explicit cross-trip consent is required; profile defaults are never task inputs; owner/session gates
+2026-10-05T07:36:11.0844673Z not ok 67 - current requirement wins; skip is task-only; correction invalidates queued work and older retries
+2026-10-05T07:36:11.1895868Z not ok 68 - Undo restores exactly the last save; competing corrections and withdrawal prevent revival
+2026-10-05T07:36:11.2839064Z not ok 69 - two devices cannot overwrite each other; legacy change revokes use; replaced session rejects replay
+2026-10-05T07:36:11.3771607Z not ok 70 - failed write rolls back version and preimage; code rollback never restores revoked qualification
+2026-10-05T07:37:21.1542916Z not ok 111 - exact server plan and explicit scoped confirm queue then erase linked Trip with same receipt
+2026-10-05T07:37:21.1557453Z not ok 112 - selected retained Task/capacity identities keep quota but private input/output are truly erased and old readers unavailable
+2026-10-05T07:37:21.1571676Z not ok 113 - shared and active scopes conflict, selection/date changes require preview, queue blocks new related writes
+2026-10-05T07:37:21.1585480Z not ok 114 - explicit export request selection invalidates whole owner-generated copies and blocks old/new collector until erase
+2026-10-05T07:37:21.1604185Z not ok 115 - completed snapshots minimise deleted Trip text; bounded expiry purge preserves queued plans and account cascades new copies only
+2026-10-05T07:37:21.1631346Z not ok 116 - actual server consumer loopback SQL executes one scoped erase after lost ACK; default disabled zero RPC and actual ACL denied
+2026-10-05T07:37:52.7581590Z not ok 133 - Trip deletion SQL: reauthentication, fencing, atomic completion, isolation and tombstone
+
+2026-10-05T07:44:50.9684601Z VP_DB_INTEGRATION_RESULT {"lane":"postgres","step":"isolated-postgres","files":60,"tests":430,"pass":418,"fail":12,"cancelled":0,"skipped":0,"todo":0,"runs":1,"seconds":591,"outcome":"failed","problems":["exit 1","fail=12"]}
+2026-10-05T07:44:50.9687476Z VP_DB_INTEGRATION_RESULT {"lane":"postgres","step":"journeys-pages","files":1,"tests":5,"pass":5,"fail":0,"cancelled":0,"skipped":0,"todo":0,"runs":1,"seconds":10,"outcome":"passed","problems":[]}
+2026-10-05T07:44:50.9689133Z VP_DB_INTEGRATION_RESULT {"lane":"postgres","step":"journeys-goal-index","files":1,"tests":8,"pass":8,"fail":0,"cancelled":0,"skipped":0,"todo":0,"runs":1,"seconds":12,"outcome":"passed","problems":[]}
+
+Root cause: BEFORE EACH ROW capacity/legacy query sees the previous newly inserted row before AFTER ROW lifecycle registration has run at statement end. Valid two-row inserts are mistaken for unreconciled historical Trips. All 12 failures report LEGACY_RECONCILIATION_REQUIRED.
+
+Representative error:
+2026-10-05T07:36:11.0048493Z not ok 66 - explicit cross-trip consent is required; profile defaults are never task inputs; owner/session gates
+2026-10-05T07:36:11.0049216Z   ---
+2026-10-05T07:36:11.0049503Z   duration_ms: 15535.106971
+2026-10-05T07:36:11.0049827Z   type: 'test'
+2026-10-05T07:36:11.0050560Z   location: '/home/runner/work/VP-V4/VP-V4/tests/integration/memory/travel-pace.test.mjs:9:27'
+2026-10-05T07:36:11.0051204Z   failureType: 'testCodeFailure'
+2026-10-05T07:36:11.0051636Z   error: |-
+2026-10-05T07:36:11.0076132Z     ERROR:  LEGACY_RECONCILIATION_REQUIRED
+2026-10-05T07:36:11.0077296Z     CONTEXT:  PL/pgSQL function trip_lifecycle_private.trip_change_v1() line 11 at RAISE
+2026-10-05T07:36:11.0078144Z     
+2026-10-05T07:36:11.0078770Z     
+2026-10-05T07:36:11.0079193Z     3 !== 0
+2026-10-05T07:36:11.0079671Z     
+2026-10-05T07:36:11.0080482Z   code: 'ERR_ASSERTION'
+2026-10-05T07:36:11.0080977Z   name: 'AssertionError'
+2026-10-05T07:36:11.0081567Z   expected: 0
+2026-10-05T07:36:11.0081951Z   actual: 3
+2026-10-05T07:36:11.0082482Z   operator: 'strictEqual'
+2026-10-05T07:36:11.0083118Z   stack: |-
+2026-10-05T07:36:11.0083955Z     db (file:///home/runner/work/VP-V4/VP-V4/tests/integration/memory/travel-pace.test.mjs:11:73)
+2026-10-05T07:36:11.0085164Z     process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-10-05T07:36:11.0086854Z     async actor (file:///home/runner/work/VP-V4/VP-V4/tests/integration/memory/travel-pace.test.mjs:17:3)
+2026-10-05T07:36:11.0088415Z     async TestContext.<anonymous> (file:///home/runner/work/VP-V4/VP-V4/tests/integration/memory/travel-pace.test.mjs:42:13)

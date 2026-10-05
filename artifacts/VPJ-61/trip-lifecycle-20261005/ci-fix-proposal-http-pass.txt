@@ -1,0 +1,25 @@
+VP_NATIVE_HTTP_TARGET {"project":"vp-native-ask-232afe3c","base":63420,"supabaseAPI":"http://127.0.0.1:63441","api":"http://127.0.0.1:63451"}
+✔ existing pending Proposal references save/read exactly without executing or copying confirmation; live scope/lifecycle and comparison compatibility (14048.911875ms)
+ℹ Actual Auth/Next/Postgres canonical Proposal create/exact read/revision/reject, scoped reference publication/read, live invalidation and comparison compatibility PASS; zero Proposal-confirm calls.
+▶ repository functions grant EXECUTE to anon and authenticated only through the reviewed allowlist
+  ✔ anon executes only the public research intake (43.663917ms)
+  ✔ authenticated executes exactly the reviewed caller list (40.241958ms)
+  ✔ selected-source export remains exactly service-only and source storage private (133.514208ms)
+  ✔ internal Trip content helpers are not callable by any API role (93.382375ms)
+  ✔ Memory create/Undo grants only authenticated, never anonymous or service role (61.134458ms)
+  ✔ result publication is internal and result tables have no direct API grants (184.726291ms)
+  ✔ five-result v2 exact grants keep publisher/export internal and helpers inaccessible (403.58125ms)
+  ✔ planning execution stays service-only with private, RLS-enabled storage (427.703667ms)
+  ✔ Memory create/Undo definer RPCs guard replay and read branches against replaced mobile sessions (31.179833ms)
+  ✔ default privileges give a new function no implicit anon, authenticated or PUBLIC EXECUTE (62.663791ms)
+  ✔ PostgREST rejects anonymous calls at the privilege layer and still serves the intake (27.469334ms)
+✔ repository functions grant EXECUTE to anon and authenticated only through the reviewed allowlist (1733.689875ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 18863.316459
+VP_NATIVE_HTTP_CLEANUP {"project":"vp-native-ask-232afe3c","result":"PASS"}

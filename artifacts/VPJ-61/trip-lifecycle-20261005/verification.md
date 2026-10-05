@@ -94,3 +94,46 @@ artifact assembly/delivery, target Pass-expiry readback, real-user rights action
 physical-device/accessibility, provider/fees and user acceptance are UNRUN.
 No applied migration or original dirty checkout was modified. Local qualification
 and source/CI evidence do not authorize those external actions.
+
+
+## First remote CI failure and repair
+
+The first exact-head CI at `eadb8b72` failed PostgreSQL and Native HTTP. PostgreSQL
+isolated step was 430 tests: 418 PASS, 12 FAIL, zero skips. All 12 failures were
+`LEGACY_RECONCILIATION_REQUIRED` in three unchanged Memory/deletion suites. The
+BEFORE ROW check had mistaken an earlier new row in the same bulk INSERT for old
+legacy data before AFTER ROW registration ran. This was a real core defect; Main
+reopened #240. It was not dismissed as a fixture-only failure or retried blindly.
+
+SQL source `509f5fed` keeps owner prelocks and actual-row registration, then
+validates final owner-wide legacy/capacity after the whole INSERT statement via
+its server-created transition table. Valid two/three-row inserts work; four rows,
+foreign ownership/RLS, true legacy and concurrent two-plus-two overflow roll back
+atomically. No role/GUC bypass, deferred FK or synthetic Active is introduced.
+The owner ran the complete repaired lifecycle PG suite 11/11, zero skips, and the
+three CI-failing original suites with unchanged source/assertions 12/12, zero skips.
+See [bulk evidence](../trip-lifecycle-sql-20261005/bulk-insert.txt) and
+[first PostgreSQL failure](ci-postgres-first-fail.txt).
+
+Native HTTP had four separate failures: two old archived-empty assertions and two
+independent fixture sequences creating more than three drafts for one actor.
+The Main-leased four-file repair preserves capacity and all ordinary currentness/
+action assertions. Each completed browser fixture is explicitly archived through
+the original RPC with its exact confirmed head/receipt. Each proposal-negative
+fixture is erased only after every original assertion, scoped to its owned Trip
+and captured goal link in the disposable database. Archived-positive assertions
+now require exact identity/current-false/historical qualification and original
+source withdrawal still rejects reading. This is not a product capacity relaxation.
+
+The first local cleanup attempt failed the canonical link FK restriction; that
+failure is retained. Exact owned-link cleanup was added after all assertions,
+then only the affected runner was rerun. Final local affected results: proposal
+13/13, native/Web/browser same-Trip 2/2, native text/results 8/8; all zero skips.
+The original four locale/viewport browser assertions and source/owner/session
+negatives remain. All owned stacks were stopped/removed. See [first Native HTTP
+failure](ci-native-http-first-fail.txt), [local cleanup failure](ci-fix-proposal-http-first-fail.txt),
+[proposal](ci-fix-proposal-http-pass.txt), [same-Trip/browser](ci-fix-same-trip-http-pass.txt),
+and [text/results](ci-fix-text-http-pass.txt).
+
+The old remote failures remain FAIL. The repaired head requires its own formal
+review and actual CI; no earlier success is relabeled as its remote CI result.
