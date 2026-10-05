@@ -45,10 +45,19 @@ export function authorized(v: unknown, binding: ScopedBinding, effect: 'reserve'
 export type SavedOutput = Readonly<{kind:'saved_output'; binding:ScopedBinding; output:ScopedModelOutput; usage:ProtocolUsage; actualMicros:number; accounting:'settled'|'pending'}>;
 export function savedOutput(v: unknown, b: ScopedBinding): SavedOutput | null {
   if (!record(v) || !exact(v,['kind','binding','output','usage','actualMicros','accounting']) || v.kind !== 'saved_output' || !validBinding(v.binding) || !sameValue(v.binding,b) || !parseScopedModelOutput(v.output) || !record(v.usage) || !integer(v.actualMicros) || !['settled','pending'].includes(String(v.accounting))) return null;
-  const u=v.usage;
-  if (!exact(u,['inputTokens','outputTokens','totalTokens','cachedInputTokens','uncachedInputTokens','reasoningTokens','cost']) || ![u.inputTokens,u.outputTokens,u.totalTokens].every(x=>integer(x)) || Number(u.inputTokens)+Number(u.outputTokens)!==u.totalTokens || Number(u.inputTokens)>1048576 || Number(u.outputTokens)>4096 || u.cost!=='unknown'
-    || [u.cachedInputTokens,u.uncachedInputTokens,u.reasoningTokens].some(x=>x!==null&&!integer(x)) || Number(u.cachedInputTokens)>Number(u.inputTokens) || Number(u.reasoningTokens)>Number(u.outputTokens) || Number(u.uncachedInputTokens)>Number(u.inputTokens) || u.cachedInputTokens!==null&&u.uncachedInputTokens!==null&&Number(u.cachedInputTokens)+Number(u.uncachedInputTokens)!==u.inputTokens) return null;
+  if(!validUsage(v.usage))return null;
   return JSON.parse(JSON.stringify(v)) as SavedOutput;
+}
+export function validUsage(value: unknown): value is ProtocolUsage {
+  if(!record(value))return false;
+  const u=value;
+  if (!exact(u,['inputTokens','outputTokens','totalTokens','cachedInputTokens','uncachedInputTokens','reasoningTokens','cost']) || ![u.inputTokens,u.outputTokens,u.totalTokens].every(x=>integer(x)) || Number(u.inputTokens)+Number(u.outputTokens)!==u.totalTokens || Number(u.inputTokens)>1048576 || Number(u.outputTokens)>4096 || u.cost!=='unknown'
+    || [u.cachedInputTokens,u.uncachedInputTokens,u.reasoningTokens].some(x=>x!==null&&!integer(x)) || Number(u.cachedInputTokens)>Number(u.inputTokens) || Number(u.reasoningTokens)>Number(u.outputTokens) || Number(u.uncachedInputTokens)>Number(u.inputTokens) || u.cachedInputTokens!==null&&u.uncachedInputTokens!==null&&Number(u.cachedInputTokens)+Number(u.uncachedInputTokens)!==u.inputTokens) return false;
+  return true;
+}
+export type SavedUsage=Readonly<{kind:'saved_usage';binding:ScopedBinding;usage:ProtocolUsage;actualMicros:number}>;
+export function savedUsage(v: unknown,b:ScopedBinding):SavedUsage|null {
+  return record(v)&&exact(v,['kind','binding','usage','actualMicros'])&&v.kind==='saved_usage'&&validBinding(v.binding)&&sameValue(v.binding,b)&&validUsage(v.usage)&&integer(v.actualMicros)?v as SavedUsage:null;
 }
 /** Translate model edits through the same domain guard as manual editing, then
  * check the entire candidate against the original current snapshot. */

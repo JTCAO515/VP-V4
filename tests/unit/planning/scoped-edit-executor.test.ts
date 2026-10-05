@@ -20,16 +20,18 @@ const candidate={kind:'candidate',edits:[{kind:'move_item',itemId:'editable',toD
 const usage={inputTokens:100,outputTokens:40,totalTokens:140,cachedInputTokens:null,uncachedInputTokens:null,reasoningTokens:null,cost:'unknown'};
 function fixture(options:Record<string,unknown>={}) {
  let calls=0, dispatches=0, saved:unknown=options.pendingOutputRecovery?{kind:'saved_output',binding,output:candidate,usage,actualMicros:120,accounting:'pending'}:null, settled=false, committed=false;
- const log:string[]=[];
+ const log:string[]=[];let savedUsage:unknown=null;
  const input=JSON.parse(JSON.stringify(raw));
  const output=options.output??candidate;
  const ports:ScopedExecutorPorts={now:()=>now,price:()=>options.unknownPrice?null:options.knownZero?0:120,recordUsage:async()=>{log.push('usage');if(options.usageAckLost)throw Error('lost');},
- transport:async req=>{calls++;log.push('provider');const body=JSON.parse(req.body);assert.equal(body.messages[0].content,SCOPED_TRIP_EDIT_PROMPT);assert.equal(body.response_format.type,'json_object');assert.equal(body.stream,false);if(typeof options.afterProvider==='function')options.afterProvider();if(options.timeout)return new Promise(()=>{});return Response.json({model:options.wrongModel?'unapproved-model':PROTOCOL_MODELS.qwen,usage:{prompt_tokens:100,completion_tokens:40,total_tokens:140},choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:JSON.stringify(output)}}]});},
+ transport:async req=>{calls++;log.push('provider');const body=JSON.parse(req.body);assert.equal(body.messages[0].content,SCOPED_TRIP_EDIT_PROMPT);assert.equal(body.response_format.type,'json_object');assert.equal(body.stream,false);if(typeof options.afterProvider==='function')options.afterProvider();if(options.timeout)return new Promise(()=>{});return Response.json({model:options.wrongModel?'unapproved-model':PROTOCOL_MODELS.qwen,usage:{prompt_tokens:100,completion_tokens:40,total_tokens:140},choices:[{index:0,finish_reason:options.safetyBlocked?'content_filter':'stop',message:{role:'assistant',content:JSON.stringify(output)}}]});},
  rpc:async(name,p)=>{
   log.push(name);
   if(name==='read_scoped_trip_edit_work_v1')return options.missingQualification?{kind:'pending'}:input;
   if(name==='authorize_scoped_trip_edit_effect_v1')return options.deny===p.p_effect?{kind:'pending'}:{kind:'authorized',effect:p.p_effect,binding:p.p_binding};
   if(name==='read_scoped_trip_edit_output_v1')return options.existingUnknown?{kind:'pending'}:saved??{kind:'missing'};
+  if(name==='record_scoped_trip_edit_usage_v1'){savedUsage={kind:'saved_usage',binding:p.p_binding,usage:p.p_usage,actualMicros:p.p_actual_micros};if(options.metadataAckLost)throw Error('lost metadata ACK');return {kind:'usage_saved'};}
+  if(name==='read_scoped_trip_edit_usage_v1')return savedUsage??{kind:'missing'};
   if(name==='scoped_trip_edit_budget_v1'){
    if(p.p_effect==='reserve')return {kind:'reserved'};
    if(p.p_effect==='dispatch'){if(dispatches++||options.alreadyDispatched)return {kind:'duplicate'};return {kind:'dispatched'};}
@@ -47,7 +49,7 @@ function fixture(options:Record<string,unknown>={}) {
  },};
  function completion(){const input=parseInput(raw,lease,now)!,patch=candidatePatch(input,(output as {edits:CandidateEdit[]}).edits),after=previewScopedPatch(input.context.snapshot,patch,{scope:context.scope,lockedItemIds:context.lockedItemIds,fixedItemIds:context.fixedItemIds});return {kind:'candidate_saved',binding,receipt:{kind:'scoped_edit_candidates/1',operationId:id(7),tripId:id(6),contextId:id(5),contextDigest:'a'.repeat(64),baseVersion:3,expiresAt:'2026-10-05T04:05:00.000Z',returnScope:context.scope,candidates:[{candidateId:id(10),edits:(output as {edits:CandidateEdit[]}).edits,diff:scopedEditDiff(input.context.snapshot,after)}],reused:false}};}
 
- return {ports,log,run:(signal=new AbortController().signal)=>executeScopedTripEdit(lease,ports,signal),get calls(){return calls;},get committed(){return committed;}};
+ return {ports,log,run:(signal=new AbortController().signal)=>executeScopedTripEdit(lease,ports,signal),get calls(){return calls;},get committed(){return committed;},get settled(){return settled;}};
 }
 test('closed output refuses extra fields, source or identity claims, unsupported operations and >16 edits',()=>{
  assert.ok(parseScopedModelOutput(candidate));
@@ -104,3 +106,6 @@ test('canonical request identity ignores binding property order and lease renewa
  assert.deepEqual(scopedRequestIdentity({...input,binding:{...input.binding,leaseToken:id(30)}}),first);
  assert.notEqual(scopedRequestIdentity({...input,binding:{...input.binding,attemptId:id(31)}}).requestDigest,first.requestDigest);
 });
+
+test('validated safety-blocked usage settles cost without publishing unavailable content',async()=>{const f=fixture({safetyBlocked:true});assert.equal(await f.run(),'pending');assert.equal(f.calls,1);assert.equal(f.settled,true);assert.equal(f.committed,false);assert.equal(f.log.includes('record_scoped_trip_edit_usage_v1'),true);});
+test('lost usage metadata ACK reads the original receipt before cost settlement',async()=>{const f=fixture({metadataAckLost:true});assert.equal(await f.run(),'persisted');assert.equal(f.calls,1);assert.equal(f.settled,true);});

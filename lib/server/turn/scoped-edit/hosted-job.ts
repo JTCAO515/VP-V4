@@ -17,7 +17,7 @@ export function parseScopedHostedProfile(v: unknown): ScopedHostedProfile {
   if(loop.schemaVersion!=='vpj07-hosted-text-worker/1')throw Error('Scoped host unavailable');
   return Object.freeze({schemaVersion:'vpj10-hosted-scoped-edit/1',loop,target:Object.freeze({...v.target})}) as ScopedHostedProfile;
 }
-const rpcs=new Set(['hosted_worker_heartbeat','hosted_scoped_trip_edit_target_v1','claim_scoped_trip_edit_work_v1','read_scoped_trip_edit_work_v1','authorize_scoped_trip_edit_effect_v1','scoped_trip_edit_budget_v1','read_scoped_trip_edit_output_v1','record_scoped_trip_edit_output_v1','complete_scoped_trip_edit_work_v1','read_scoped_trip_edit_completion_v1','record_scoped_trip_edit_destination_v1','pause_scoped_trip_edit_work_v1']);
+const rpcs=new Set(['hosted_worker_heartbeat','hosted_scoped_trip_edit_target_v1','claim_scoped_trip_edit_work_v1','read_scoped_trip_edit_work_v1','authorize_scoped_trip_edit_effect_v1','scoped_trip_edit_budget_v1','read_scoped_trip_edit_output_v1','record_scoped_trip_edit_output_v1','record_scoped_trip_edit_usage_v1','read_scoped_trip_edit_usage_v1','complete_scoped_trip_edit_work_v1','read_scoped_trip_edit_completion_v1','record_scoped_trip_edit_destination_v1','pause_scoped_trip_edit_work_v1']);
 /** Explicit opt-in composition of the existing host loop, work queue, budget and
  * provider adapter. No key discovery, scheduler, fallback or default enabled mode. */
 export function createHostedScopedEditWorker(raw:ScopedHostedProfile,deps:HostedWorkerDependencies & Readonly<{scopedEditEnabled?:boolean}>) {

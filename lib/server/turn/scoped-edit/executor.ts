@@ -7,7 +7,7 @@ import { record, exact, uuid } from '../../trip/scoped-edit/contract.ts';
 import { scopedEditDiff } from '../../trip/scoped-edit/diff.ts';
 import { previewScopedPatch } from '../../trip/scoped-edit/candidate-guard.ts';
 import { parseScopedModelOutput } from './model-output.ts';
-import { parseInput, promptInput, authorized, savedOutput, candidatePatch, type ScopedBinding, type ScopedInput, type SavedOutput } from './protocol.ts';
+import { parseInput, promptInput, authorized, savedOutput, savedUsage, candidatePatch, type ScopedBinding, type ScopedInput, type SavedOutput } from './protocol.ts';
 import type { DurableTurnLease } from '../durable-worker.ts';
 export type ScopedRpc = (name: string, params: Readonly<Record<string, unknown>>, signal: AbortSignal) => Promise<unknown>;
 export type ScopedExecutorPorts = Readonly<{
@@ -44,6 +44,16 @@ export async function executeScopedTripEdit(lease: DurableTurnLease, ports: Scop
       try {await ports.rpc('scoped_trip_edit_budget_v1',{...params,p_effect:'finish',p_reserved_micros:null,p_actual_micros:actual,p_outcome:'settle'},signal);} catch { /* Read the original accounting state only. */ }
       output=await recover(signal);
     }
+    if(!output&&record(previous)&&exact(previous,['kind'])&&previous.kind==='pending'){
+      const usage=savedUsage(await ports.rpc('read_scoped_trip_edit_usage_v1',params,signal),b);
+      if(usage&&ports.price(usage.usage)===usage.actualMicros){
+        const attempt:BudgetAttempt={scopeId:b.scopeId,ownerId:b.ownerId,taskId:b.taskId,attemptId:b.attemptId,provider:b.provider,model:b.model,priceVersion:b.priceVersion,reservedMicros:input.reservedMicros,timeoutMs:input.timeoutMs};
+        await ports.recordUsage(validatedPlanningUsageReceipt({schemaVersion:'validated-planning-usage/1',attempt,turnId:b.turnId,policyId:b.policyId,usage:usage.usage,actualMicros:usage.actualMicros,observedAt:new Date(ports.now()).toISOString()},{taskId:b.taskId,turnId:b.turnId,planningPolicyId:b.policyId}),signal);
+        await ports.rpc('scoped_trip_edit_budget_v1',{...params,p_effect:'finish',p_reserved_micros:null,p_actual_micros:usage.actualMicros,p_outcome:'settle'},signal).catch(()=>{});
+      }
+      // Cost reconciliation cannot turn unavailable content into a candidate.
+      return 'pending';
+    }
     if (!output) {
       // Only a definitive missing output permits the *same* SQL-owned attempt.
       // Its budget dispatch CAS still denies an already dispatched attempt.
@@ -65,6 +75,9 @@ export async function executeScopedTripEdit(lease: DurableTurnLease, ports: Scop
         if(actual===null||!Number.isSafeInteger(actual)||actual<0||actual>1e12)return {value,actualMicros:null};
         const receipt=validatedPlanningUsageReceipt({schemaVersion:'validated-planning-usage/1',attempt:a,turnId:b.turnId,policyId:b.policyId,usage,actualMicros:actual,observedAt:new Date(ports.now()).toISOString()},{taskId:b.taskId,turnId:b.turnId,planningPolicyId:b.policyId});
         await ports.recordUsage(receipt,s);
+        try {await ports.rpc('record_scoped_trip_edit_usage_v1',{...params,p_usage:usage,p_actual_micros:actual},s);} catch { /* Read metadata on the same original attempt. */ }
+        const observed=savedUsage(await ports.rpc('read_scoped_trip_edit_usage_v1',params,s),b);
+        if(!observed||!sameValue(observed.usage,usage)||observed.actualMicros!==actual)throw Error('Scoped usage acknowledgement unavailable');
         if(value.kind!=='protocol_validated')return {value,actualMicros:actual};
         const parsed=parseScopedModelOutput(value.output);if(!parsed)return {value,actualMicros:actual};
         if(parsed.kind==='candidate')candidatePatch(input!,parsed.edits);
