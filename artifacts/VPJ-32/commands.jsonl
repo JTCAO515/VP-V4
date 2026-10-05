@@ -15,3 +15,8 @@
 {"command":"pnpm lint","source":"b46d3253","result":"PASS","files":637}
 {"command":"pnpm docs:check","source":"b3ad871d","result":"PASS"}
 {"command":"git diff --check","source":"2ed9e9d","result":"PASS"}
+{"command":"GitHub Quality PR run 37285746621 / Run pnpm test:contract","source":"0e3e946d","result":"FAIL","reason":"existing positive traffic fixture recalculated expiry from a later clock, exceeding unchanged strict 300000ms lifetime"}
+{"command":"controlled 10ms mock producer delay using original traffic fixture","source":"0e3e946d","result":"REPRODUCED","excessLifetimeMs":12,"observation":"simulated delay, not the CI runner exact clock"}
+{"command":"node --experimental-strip-types --test tests/contract/maps/foreground-traffic-authority.test.mjs","source":"a017b8f7 working tree plus approved fixture timestamp anchor","result":"PASS","passed":5,"skipped":0}
+{"command":"controlled 10ms mock producer delay with frozen fetchedAt+300000 expiry","source":"a017b8f7 working tree plus approved fixture timestamp anchor","result":"PASS","lifetimeMs":300000,"runtimeChecks":"unchanged"}
+{"command":"pnpm test:contract","source":"a017b8f7 working tree plus approved fixture timestamp anchor","result":"PASS","passed":1067,"skipped":0}

@@ -22,6 +22,7 @@ Existing Case grants → owner Native service progress → qualified Cookie staf
 | All service-case contract tests | 50 PASS, 0 skips before final unchanged Native-only cap/label delta |
 | Repository unit suite | 239 PASS, 0 skips |
 | Repository contract suite | 1059 PASS, 0 skips |
+| Contract suite after fresh-main integration and CI fixture repair | 1067 PASS, 0 skips; focused traffic authority 5 PASS and controlled-delay receipt qualification PASS |
 | Repository security suite | 315 PASS, 1 explicit disposable-Supabase RLS environment skip; INCOMPLETE |
 | Generic integration suite | 45 PASS, 462 explicit environment skips; INCOMPLETE. New mandatory PG/HTTP lanes separately enable actual execution |
 | Web build and static tests | Build PASS; 22 static tests PASS, 0 skips |
@@ -36,6 +37,10 @@ The independent data scenario verifies a real `Content-Disposition` JSON downloa
 The first full head-zero HTTP attempt on `a08b7789` failed at owner Proposal selection with HTTP 409. The integrator had misread the canonical adapter's nested `proposal.stale` property as an outer field. Only the new operations proof was fixed to require literal `pending.data.proposal.stale === false`; the shared adapter was not changed. The same affected full scenario then passed on `6e539461`; both attempts cleaned up their owned stacks. Earlier claims about an outer adapter currentness gap are retracted.
 
 Original SQL fixture/error-code/currentness failures remain in the committed SQL logs. Later focused/full passes do not rewrite them. A failed broad bare Swift compiler command lacked unrelated app declarations and is not a full App build result; the real Xcode build passed, as recorded by its original owner.
+
+On PR head `0e3e946d`, [Quality run 37285746621](https://github.com/JTCAO515/VP-V4/actions/runs/37285746621) failed at `tests/contract/maps/foreground-traffic-authority.test.mjs:32`, where the existing positive fixture expected `a.complete(...)` to succeed. The mock created a fresh expiry clock while preserving an older input `fetchedAt`, exceeding the unchanged 300,000 ms lifetime whenever the timestamps crossed a millisecond boundary. A separate 10 ms injected producer delay reproduced the rejection with 12 ms excess lifetime; this is a controlled reproduction, not a claim about the CI runner's exact clock. The coordinator approved only the fixture's expiry field to use the same input timestamp plus 300,000 ms. Runtime code, TTL, assertion, timeout, runner and skip policy were unchanged. Focused cases, the same controlled delay with a valid exact lifetime, and all 1067 contracts passed locally. Fresh final-head hosted checks remain required.
+
+The sole Ops owner also corrected two minute labels: zero whole minutes can include a registered sub-minute interval, so the UI now describes rounding down rather than falsely claiming no record. This changed wording only; the recorded-time math and 17-case controller evidence remain unchanged.
 
 ## Source equivalence and remaining gates
 

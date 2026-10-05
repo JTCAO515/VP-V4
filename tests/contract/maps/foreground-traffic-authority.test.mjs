@@ -23,7 +23,7 @@ test('server-only actor envelope and ordered request transactions spend quota on
     if(name==='foreground_traffic_policy_v1')return {error:null,data:policy()};
     if(params.p_action==='begin')return {error:null,data:{kind:'dispatch',dispatchId:id(9),stopEpoch:0}};
     if(params.p_action==='request'){await new Promise(r=>setImmediate(r));return {error:null,data:{kind:'request',dispatchId:id(9),requestIndex:params.p_input.requestIndex}};}
-    const p=params.p_input;stored={...receipt(),fetchedAt:p.fetchedAt.replace('Z','+00:00'),selected:Object.fromEntries(Object.entries(p.selected).reverse()),alternatives:p.alternatives,previousReceiptId:p.previousReceiptId};return {error:null,data:{kind:'receipt',receipt:stored}};
+    const p=params.p_input;stored={...receipt(),fetchedAt:p.fetchedAt.replace('Z','+00:00'),expiresAt:new Date(Date.parse(p.fetchedAt)+300000).toISOString(),selected:Object.fromEntries(Object.entries(p.selected).reverse()),alternatives:p.alternatives,previousReceiptId:p.previousReceiptId};return {error:null,data:{kind:'receipt',receipt:stored}};
   };
   const owner=async(name,params)=>{reads.push({name,params});return {error:null,data:{kind:'receipt',receipt:stored}};};
   const a=createTrafficAuthority(scope,actor,producer,owner);assert.ok(await a.policy());assert.equal(await a.begin('check'),true);
