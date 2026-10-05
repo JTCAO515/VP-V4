@@ -129,8 +129,8 @@ enum NativeNotificationDataRows {
         for row in values {
             if row.keys.contains("owner_id"), row["owner_id"] as? String != binding.ownerID { throw NativeDataError.invalidResponse }
             if row.keys.contains("trip_id"), row["trip_id"] as? String != objectID { throw NativeDataError.invalidResponse }
-            let keyName = name == "operations" ? "operation_id" : name == "attempts" ? "notification_id" : name == "dismissals" ? "next_step_id" : "id"
-            let key = row[keyName] as? String ?? ""
+            let keyName = name == "operations" ? "operation_id" : name == "attempts" ? "notification_id" : "id"
+            let key = name == "dismissals" ? ["source_kind", "source_id", "semantic_digest"].map { row[$0] as? String ?? "" }.joined(separator: ":") : row[keyName] as? String ?? ""
             guard key > previous else { throw NativeDataError.invalidResponse }; previous = key
             if name == "operations" {
                 guard let receipt = row["receipt"] as? [String: Any], same(receipt["operationId"], row["operation_id"]),
@@ -166,9 +166,10 @@ enum NativeNotificationDataRows {
         case .boolean: _ = try w.bool(raw)
         case .nullable(let inner): guard let raw else { throw NativeDataError.invalidResponse }; if !(raw is NSNull) { try check(raw, rule: inner) }
         case .one(let values): guard let text = raw as? String, values.contains(text) else { throw NativeDataError.invalidResponse }
-        case .zone: guard let zone = raw as? String, TimeZone(identifier: zone) != nil else { throw NativeDataError.invalidResponse }
+        case .zone: guard let zone = raw as? String, zone.utf16.count <= 100, TimeZone(identifier: zone) != nil else { throw NativeDataError.invalidResponse }
         case .source:
-            _ = try fields(raw, rules: ["kind": .one(["current_trip", "user_reminder", "task_result", "qualified_watch"]), "sourceId": .id, "revision": .natural, "contentDigest": .hash])
+            let source = try fields(raw, rules: ["kind": .one(["current_trip", "user_reminder", "task_result", "qualified_watch"]), "sourceId": .id, "revision": .natural, "contentDigest": .hash])
+            _ = try w.integer(source["revision"], max: 2_147_483_647, minimum: 0)
         case .quiet:
             let v = try w.object(raw as Any, ["startMinute", "endMinute"])
             _ = try w.integer(v["startMinute"], max: 1439, minimum: 0); _ = try w.integer(v["endMinute"], max: 1439, minimum: 0)

@@ -45,3 +45,26 @@ Within existing !preservePendingJournals branch before MaterialReferenceJournal:
 add NotificationDataJournal.erase(endpoint current or disabled, owner, vault),
 failure notificationDataJournalCleanupRequired/storageError/return false.
 Retain existing preservePendingJournals path and cleanup index unchanged.
+
+Concrete caller structure is now implemented in owned Consumer/View/Store. It
+accepts actual catalog module + coverage store + session-created scoped store +
+client + coverage client. Consumer matches current catalog exact module/version/
+scope and records only validated receipt or exact protected-file output. Parent
+scoped export proves prepared server file; system handoff remains explicit and
+cancellation never claims external saved copy. No whole-account completion.
+
+Exact Main caller lease request:
+DataCoverageModuleView.swift destination adds notification scope (scope rawValue
+id), and switch invokes NativeNotificationDataConsumer with module/store,
+session.notificationDataStore(scope: scope), .init(current:{self.actor},
+request:{try await session.notificationDataRequest(body:$0,actor:$1)}), current
+coverage client and chinese. serverActions gets preceding version==notification
+schema + exact sole TS scope + both notification handlers branch to destination.
+Do not alter existing material/core/Memory/Trip/old business consumers. Catalog
+IDs/version/selection must come from the final TS coverage registration only.
+
+Current own source freeze is pending sole TS wire fixed source and Main lease.
+Immediate product commits 5663a38c and 6334d4ad, followed by UI/store/consumer.
+Original notification paths have no Native mutation; old notification local
+journal/device OS copy explicitly excluded. Complete erase send-fencing remains
+sole reviewed server/SQL implementation; Native never enables or sends APNs.
