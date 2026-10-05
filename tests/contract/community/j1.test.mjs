@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
+import {readFileSync} from 'node:fs';
 import {parseCommunityInput,decodeCommunityItem,decodeCommunityOutcome,matchesCommunityOutcome,COMMUNITY_SCHEMA} from '../../../lib/server/community/contract.ts';
 import {handleCommunityJ1} from '../../../lib/server/community/j1-http.ts';
 const actor=randomUUID(),session=randomUUID(),id=randomUUID(),op=randomUUID();
@@ -11,6 +12,10 @@ const request=(body=submit(),headers={})=>new Request('http://localhost/api/comm
 const options=(rpc={},extra={})=>({enabled:true,surface:'native',createRpc:()=>({authenticate:async()=>actor,sessionId:()=>session,current:async()=>true,call:async()=>({data:outcome(),error:null}),...rpc}),...extra});
 test('J1 closed commands bind consent, purpose, version, owner-safe place and raw mutation lookup',()=>{
  assert.ok(parseCommunityInput(submit()));
+ for (const name of ['native-submit','native-operation','native-abandon']) {
+  const raw=readFileSync(new URL(`../../../ios/VisePanda/VisePandaTests/Fixtures/CommunitySubmission/${name}.json`,import.meta.url),'utf8');
+  assert.ok(parseCommunityInput(JSON.parse(raw)),`actual Native DTO builder fixture ${name}`);
+ }
  const place={tripId:id,placeReferenceId:id,expectedTripVersion:0,mappingDigest:'a'.repeat(64)};assert.ok(parseCommunityInput({...submit(),place}));assert.equal(parseCommunityInput({...submit(),place:{...place,expectedTripVersion:-1}}),null);assert.equal(parseCommunityInput({...submit(),place:{...place,mappingDigest:'unknown'}}),null);
  for (const change of [{authorId:actor},{reviewerDisclosure:'employee'},{contentKind:'fact'},{place:{tripId:id,placeReferenceId:id,label:'invented'}},{benefitDisclosure:'x'.repeat(401)},{consent:'public'},{content:'\0'},{title:' '},{content:'😀'.repeat(2001)}]) assert.equal(parseCommunityInput({...submit(),...change}),null);
  const raw=JSON.stringify(submit());assert.ok(parseCommunityInput({action:'operation',operationId:op,mutationBytes:raw}));
