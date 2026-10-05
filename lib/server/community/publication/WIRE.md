@@ -2,6 +2,8 @@
 
 FIRST RUNTIME WRITE: lib/server/community/publication/contract.ts. Branch/WT vpj48-community-publication-server-20261006; base c515848, normal merges of fixed J1 acb5ea21 and J2 ee211ecd. Sole TS integrator chat 01a10cc7-2d87-74e0-9829-b3c84376062e. Code in progress; no PASS or activation claim.
 
+CANONICAL NULLABILITY ALIGNMENT for Main one-time Native relay: Experience.benefitDisclosure is string|null, matching original J1/J2 nullable source. No new keys or bounds; null is honest missing disclosure, never coerced to empty. Main dispatch explicitly preserves original nullable/unknown fields. NativeExperienceModels.benefit currently String/text therefore needs String?/optional decode and honest "not provided" display. Sole TS updated canonical type/decoder and existing rights-output case accepts null; SQL source o carries null correctly without change. Existing new submit requires string, but legacy/retained valid source can be absent; no fabricated identity/interest. This is necessary wire alignment, not target authority.
+
 Main relay requested once to new Native owner 01a10cc7-2f7f-7b92-bd91-4d69e95bc378 and new SQL owner after complete wire review. Canonical typed keys/bounds/actions/outcomes are contract.ts, no aliases. Source-only helper is not the delivered chain. Whole #235/#238 remain open until Main complete-scope audit.
 
 ## Precise shared leases requested, no writes before Main grant

@@ -30,6 +30,7 @@ test('exact recovery retains original bytes and forbids operation substitution a
 });
 test('experience output cannot promote internal approved content or unknown rights into reading entitlement',()=>{
  assert.ok(decodeExperience(experience()));assert.ok(decodePublication(pub()));
+ assert.ok(decodeExperience({...experience(),benefitDisclosure:null}),'retain honestly absent J1/J2 disclosure instead of inventing empty text');
  for(const d of [{copyright:'unknown'},{copyright:'licensed'},{source:'fact'},{retrievalEligible:true},{publiclyVisible:true},{audience:'public'},{authorId:actor},{place:{canonicalPoiId:uuid(),mappingDigest:'a'.repeat(64),label:null,tripId:uuid()}},{publicationVersion:null},{contentKind:'unknown'},{rightsPurpose:'training'}]) assert.equal(decodeExperience({...experience(),...d}),null);
  for(const d of [{state:'withdrawn'},{state:'erased',endedAt:'2026-10-06T00:03:00Z'},{rightsDeclaration:null},{state:'published',publishedAt:null}]) assert.equal(decodePublication({...pub(),...d}),null);
  assert.ok(decodePublication({...pub(),state:'erased',rightsDeclaration:null,rightsNote:null,endedAt:'2026-10-06T00:03:00Z'}));

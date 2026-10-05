@@ -91,12 +91,13 @@ test('owned real Auth + Native/Ops HTTP: controlled consent, independent rights/
  nope(await nc(foreign,{action:'detail',publicationId:first.request.publicationId}));
  const foreignSave={...first.save,operationId:uuid(),referenceId:uuid(),expectedPublicationVersion:999};nope(await nc(foreign,foreignSave));assert.equal(sql(`select count(*) from community_publication_private.operations where operation_id=${literal(foreignSave.operationId)};`),'0');
  const list=ok(await nc(reader,{action:'list',cursor:null,query:'withdrawal'}));assert.ok(list.experiences.some(x=>x.id===first.live.id));assert.equal(ok(await nc(foreign,{action:'list',cursor:null,query:''})).experiences.length,0);
+ const replay=ok(await pc({action:'operation',operationId:first.publish.operationId,mutationBytes:first.publishBytes}));assert.equal(replay.publication.state,'published');
  assert.equal((await call(native,null,{action:'list',cursor:null,query:''})).status,401);assert.equal((await nc(owner,first.publish)).status,403,'native cannot publish');
  // Exact source withdrawal denies Explore/search/old URL/reference/replay body.
  assert.equal((await jc(owner,{action:'withdraw',operationId:uuid(),submissionId:first.submission.submissionId,expectedVersion:2})).status,200);
  nope(await nc(reader,{action:'detail',publicationId:first.live.id}));assert.equal(ok(await nc(reader,{action:'list',cursor:null,query:'withdrawal'})).experiences.length,0);
  const unavailable=ok(await nc(reader,{action:'reference',referenceId:first.save.referenceId})).reference;assert.equal(unavailable.experience,null);assert.equal(unavailable.availability,'unavailable');
- const replay=ok(await pc({action:'operation',operationId:first.publish.operationId,mutationBytes:first.publishBytes}));assert.ok(replay.publication===null || ['invalidated','withdrawn','erased'].includes(replay.publication.state));assert.ok(!JSON.stringify(replay).includes(first.submission.content));
+ const staleReplay=await pc({action:'operation',operationId:first.publish.operationId,mutationBytes:first.publishBytes});nope(staleReplay);assert.ok(!JSON.stringify(staleReplay).includes(first.submission.content),'qualified replay is denied when current source body authority is unavailable');
  const preserved=(await call(readerTrip.api,reader.accessToken)).body;assert.equal(preserved.trip.headVersion,2);assert.deepEqual(preserved.content,confirmedPlan.content,'source invalidation preserves original confirmed user-owned plan');
  const second=await chain('safety restoration');
  const report={action:'report',operationId:uuid(),reportId:uuid(),submissionId:second.submission.submissionId,expectedSubmissionVersion:2,expectedSafetyVersion:0,category:'rights',details:'Synthetic private reporter reason',consent:'internal-safety-v1'};assert.equal((await sc(reader,report)).status,200);
