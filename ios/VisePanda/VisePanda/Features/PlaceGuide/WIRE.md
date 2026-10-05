@@ -1,5 +1,11 @@
 # VPJ-28 native consumer coordination
 
+## Current canonical export correction — supersedes every older export-shape paragraph below
+
+Main21f953/774c3c consumed; Native product fixed immutable `0ccc3f0074548971163990804cc319a76e063a7d`. Exact8 top keys kind/version/scope/coverage/tripId/placeReferenceId/records/bindings, exact11 binding keys turnId/serviceTaskId/operationId/canonicalPoiId/locale/interest/digest/rightsRevision/expiresAt/tripVersion/invalidated. No excludedModules/followUpBindings compatibility path. Historical metadata expiry may be past; rights revision positive; Trip head0; closed arrays<=100 with no truncation; no text/source/credentials in shared output. UI states progress and question references for this selected place/Trip, original question text/answers/rights reviews outside scope. Export consumer validation moved into actual `NativePlaceGuideMetadataExport.decode` in the already-registered Models file, called by the real View action. No other production/shared source changed.
+
+One targeted export consumption case being added. To make positive input a genuine emitted SQL sample rather than hand-written metadata, Main/sole SQL may capture the final export envelope from an already-owned synthetic fixture run to `/tmp/vpj28-native-build/sql-export-envelope.json` (no credentials/source/question content); Native can embed that sanitized immutable example and test exact consumption. Existing15+3 evidence reused, no audio/source/task matrix rerun. Final compile/one affected case status follows.
+
 Owner: official Native chat 01a10c0c-ecaa-76b2-a513-316eb826cf8d; worktree/branch vpj28-native-place-guide-20261005, fresh origin/main e2ea9334. Sole Features/PlaceGuide and its tests. Shared callers require Main lease. No target activation.
 
 Actual first product source: NativePlaceGuideProgress.swift, conservative system-speech progress tied to a segment, bounded UTF-16 positions and explicit replay reset. No acoustic listening claim.
