@@ -8,18 +8,18 @@ Retained failures and repairs:
 - Next run FAIL: jsonb preference subtraction operator precedence. Fixed with parentheses. Other affected checks passed.
 - Expanded replay check FAIL: test incorrectly expected applied instead of original already_applied status. Corrected only test expectation; original writer unchanged.
 - Final source/test run: 9/9 PASS, zero skipped/cancelled/todo.
-- Subsequent Main-approved path relocation changes only test path and relative import. Prior behavior evidence is reused; syntax/import resolution checked without a redundant full rerun.
+- Main-approved path relocation changed only the path/import. A subsequent source review found PostgreSQL E'\v' would trim the literal v; changed to chr(11) and added vacation v acceptance. The current affected run below uses the actual integration path and includes that fix.
 
 ▶ VPJ-61 SQL lifecycle, existing writers, locks, erasure and versioned export
-  ✔ ACL/RLS/default-deny and legacy reconciliation (489.750709ms)
-  ✔ canonical input, exact raw replay, durable rejection and unknown abandon (724.232291ms)
-  ✔ old direct create shares capacity, actual producer confirm, active swaps and rollback (770.002583ms)
-  ✔ original archive atomic failure, keep/skip qualification, services retained and erasure (1211.729791ms)
-  ✔ paginated revision fences real head/delete mutations and old replay survives archive (505.194625ms)
-  ✔ real lock conflicts remain unknown, same-op concurrent create, account replacement and rollback (4242.576125ms)
-  ✔ actual old create/confirm/archive/delete/replacement transactions race the lifecycle entry (4212.826041ms)
-  ✔ v2 export exact lease enrollment, old decoder preservation, source fence and delete cascade (694.9455ms)
-✔ VPJ-61 SQL lifecycle, existing writers, locks, erasure and versioned export (18577.685792ms)
+  ✔ ACL/RLS/default-deny and legacy reconciliation (491.185708ms)
+  ✔ canonical input, exact raw replay, durable rejection and unknown abandon (794.815667ms)
+  ✔ old direct create shares capacity, actual producer confirm, active swaps and rollback (772.210791ms)
+  ✔ original archive atomic failure, keep/skip qualification, services retained and erasure (1206.5065ms)
+  ✔ paginated revision fences real head/delete mutations and old replay survives archive (514.617ms)
+  ✔ real lock conflicts remain unknown, same-op concurrent create, account replacement and rollback (4296.210916ms)
+  ✔ actual old create/confirm/archive/delete/replacement transactions race the lifecycle entry (4231.87625ms)
+  ✔ v2 export exact lease enrollment, old decoder preservation, source fence and delete cascade (693.787833ms)
+✔ VPJ-61 SQL lifecycle, existing writers, locks, erasure and versioned export (18923.18425ms)
 ℹ tests 9
 ℹ suites 0
 ℹ pass 9
@@ -27,4 +27,4 @@ Retained failures and repairs:
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 18618.058416
+ℹ duration_ms 18962.555041

@@ -68,6 +68,7 @@ test('VPJ-61 SQL lifecycle, existing writers, locks, erasure and versioned expor
   assert.deepEqual(await call(a,'abandon',c,raw),r);
   const foreign=await commandFor(b,'archive',trip,{expectedHeadVersion:1,preference:{action:'skip'}});await deny(claims(b)+`select public.trip_lifecycle_v1('execute',${json(foreign)},${literal(JSON.stringify(foreign))});`,'FORBIDDEN');
   assert.equal((await read(web)).sessionId,web.session,'ordinary Web sessions coexist');
+  assert.equal((await execute(web,await commandFor(web,'create',uuid(),{title:'vacation v'}))).status,'applied','PostgreSQL whitespace syntax must not strip the letter v');
   const title=await commandFor(a,'create',uuid(),{title:'😀'.repeat(81)});await deny(claims(a)+`select public.trip_lifecycle_v1('execute',${json(title)},${literal(JSON.stringify(title))});`,'INVALID_INPUT');
  });
  await t.test('old direct create shares capacity, actual producer confirm, active swaps and rollback',async()=>{
