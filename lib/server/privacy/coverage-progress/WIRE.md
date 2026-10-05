@@ -107,7 +107,10 @@ pages,rows,bytes,terminal}}. No nested receipt/bundle or indirect source travers
 Binding exact {schemaVersion,scope,requestId,objectIds,ownerId,sessionId,mobileEpoch,
 sourceDigest,previewDigest,capturedAt,expiresAt,boundaries,allUserDataCompleted:false}.
 Fixed expiresAt=capturedAt+30000, capturedAt<=now<expiresAt for all live reads;
-one SQL clock capture per call. sourceDigest hashes selected current item array +
+one entry clock fixes binding timestamps; fresh deadline checks after source/wrapper
+work, at decision and before return preserve the ORIGINAL expiry. Late effects
+roll back atomically; committedAt=decidedAt uses a fresh decision clock. Immutable
+known receipt recovery stays exempt from the live preview TTL. sourceDigest hashes selected current item array +
 actor/session/epoch/schema/selection, excluding OWN new operation row. previewDigest
 hashes binding/source/selection/capturedAt/expiresAt/boundaries. No clock-derived
 selected row state; source changes including original page advance/cleanup or

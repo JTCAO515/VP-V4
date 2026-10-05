@@ -14,7 +14,9 @@ import { decodeCoverageProgressPreview, decodeCoverageProgressBundle, decodeCove
 import { CATALOG_VERSION, moduleById } from '../../../../lib/server/privacy/coverage/catalog.ts';
 import { matchesCoverageResult } from '../../../../lib/server/privacy/coverage/consumer.ts';
 
-test('signed ordinary Auth -> actual collector inventory -> selected metadata export/erase -> old fences and own inventory -> registered consumer; isolated fixture only', {
+const deadlineOnly = process.env.VP_COVERAGE_PROGRESS_DEADLINE_ONLY === 'true';
+test(deadlineOnly ? 'signed ordinary Auth -> expired SQL decision rollback -> mother coverage unknown ACK; isolated fixture only'
+  : 'signed ordinary Auth -> actual collector inventory -> selected metadata export/erase -> old fences and own inventory -> registered consumer; isolated fixture only', {
   skip: process.env.VP_COVERAGE_PROGRESS_HTTP !== 'true', timeout: 300000,
 }, async t => {
   const ports = nativeHTTPEnvironmentPorts(process.env), local = identityLocalEnv();
@@ -82,6 +84,35 @@ test('signed ordinary Auth -> actual collector inventory -> selected metadata ex
   async function preview(ids) {
     const command={action:'preview',scope,requestId:uuid(),objectIds:[...ids].sort()}, result=await call(path,owner.token,command);
     assert.equal(result.status,200,JSON.stringify(result.body));assert.ok(decodeCoverageProgressPreview(result.body.data,command,owner.actor));return {command,value:result.body.data};
+  }
+  if (deadlineOnly) {
+    const p=await preview([oldRequest]), erase={...p.command,action:'erase',previewDigest:p.value.previewDigest,confirmed:true}, bytes='\t'+JSON.stringify(erase);
+    // Deliberate owned-fixture clock shortening and trigger delay, never target DDL.
+    sql('alter table coverage_progress_private.requests_v1 disable trigger coverage_progress_immutable_v1;'+
+      'with deadline as(select floor(extract(epoch from clock_timestamp())*1000)::bigint+1200 expires) '+
+      'update coverage_progress_private.requests_v1 set captured_at=deadline.expires-30000,expires_at=deadline.expires from deadline where request_id='+literal(erase.requestId)+';'+
+      'alter table coverage_progress_private.requests_v1 enable trigger coverage_progress_immutable_v1;'+
+      'create function coverage_progress_private.owned_http_deadline_delay() returns trigger language plpgsql as $$begin '+
+      'perform pg_sleep(greatest(0,NEW.expires_at::numeric/1000-extract(epoch from clock_timestamp()))+0.05);return NEW;end$$;'+
+      'create trigger owned_http_deadline_delay before update on coverage_progress_private.requests_v1 '+
+      'for each row when(NEW.decision is not null and OLD.decision is null) execute function coverage_progress_private.owned_http_deadline_delay();');
+    const state=()=>sql("select jsonb_build_object('requests',(select jsonb_agg(to_jsonb(r) order by request_id) from coverage_export_private.requests_v1 r),'sections',(select jsonb_agg(to_jsonb(r) order by request_id,section) from coverage_export_private.sections_v1 r),'fences',(select jsonb_agg(to_jsonb(r) order by request_id) from coverage_export_private.request_fences_v1 r),'exit',(select jsonb_agg(to_jsonb(r) order by request_id) from coverage_progress_private.requests_v1 r),'pages',(select jsonb_agg(to_jsonb(r) order by request_id) from coverage_progress_private.pages_v1 r));");
+    try {
+      const before=state(), outer=JSON.stringify({schemaVersion:'data-coverage/1',catalogVersion:CATALOG_VERSION,actorId:owner.id,sessionId:owner.actor.sessionId,mobileEpoch:owner.actor.mobileEpoch,
+        moduleId:'coverage_progress',moduleVersion:scope,operationId:erase.requestId,action:'delete',phase:'execute',confirmed:true,tripId:null,commandBytes:bytes});
+      // SQL18 separately proves the decision-trigger crossing. This focused
+      // signed caller case verifies expiration cannot become a completed receipt.
+      const response=await call('/api/privacy/native/v1/coverage',owner.token,outer);
+      assert.equal(response.status,200);assert.equal(response.body.state,'unknown');assert.equal(response.body.reason,'COVERAGE_PROGRESS_ACK_UNKNOWN');
+      assert.equal(response.body.allUserDataCompleted,false);assert.ok(matchesCoverageResult(response.body,outer));assert.equal(state(),before);
+      assert.equal(sql('select decision is null and request_digest is null and decided_at is null and effects is null from coverage_progress_private.requests_v1 where request_id='+literal(erase.requestId)+';'),'t');
+      const recovered=await call(path,owner.token,{...p.command,action:'recover',mutationBytes:bytes});assert.equal(recovered.status,200);assert.equal(recovered.body.data.kind,'unknown');
+      assert.equal(recovered.body.data.requestDigest,coverageProgressDigest(bytes));assert.equal(state(),before);
+      assert.equal(sql('select count(*) from coverage_export_private.request_fences_v1 where request_id='+literal(oldRequest)+';'),'1');
+      assert.deepEqual((await call('/api/trips/native/v2/'+tripId,owner.token,undefined,'GET')).body,originalTrip);
+      t.diagnostic('Affected deadline only: signed owner/caller returns unknown ACK, complete progress snapshot identical, no decision/receipt, original fence/Trip preserved. Full normal Auth walk not repeated.');
+    } finally { sql('drop trigger owned_http_deadline_delay on coverage_progress_private.requests_v1;drop function coverage_progress_private.owned_http_deadline_delay();'); }
+    return;
   }
   const exp=await preview([oldRequest]);assert.equal(exp.value.items[0].domain,'collector');
   assert.equal(exp.value.items[0].request.ownerId,owner.id);assert.equal(exp.value.items[0].sections.length,2);
