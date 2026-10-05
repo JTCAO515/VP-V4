@@ -2,6 +2,25 @@ import XCTest
 @testable import VisePanda
 
 nonisolated final class NativeFiveResultTests:XCTestCase {
+    @MainActor func testArchiveReferenceProofIsTripOnlyStrictBooleanAndExactShape() throws {
+        let trip=UUID().uuidString.lowercased(),artifact=UUID().uuidString.lowercased()
+        func bytes(_ row:[String:Any]) throws -> Data { try JSONSerialization.data(withJSONObject:["version":2,"data":row]) }
+        let original:[String:Any]=["kind":"result_reference","tripId":trip,"artifactId":artifact,"revision":1]
+        XCTAssertEqual(try NativeFiveResultReference.decode(bytes(original),field:"tripId",expectedID:trip)?.artifactID,artifact)
+        var archived=original;archived["archiveHistorical"]=true
+        XCTAssertEqual(try NativeFiveResultReference.decode(bytes(archived),field:"tripId",expectedID:trip)?.artifactID,artifact)
+        XCTAssertThrowsError(try NativeFiveResultReference.decode(bytes(archived),field:"tripId",expectedID:UUID().uuidString.lowercased()))
+        for invalid in [false as Any,1 as Any,NSNull(),"true" as Any] {
+            var malformed=original;malformed["archiveHistorical"]=invalid
+            XCTAssertThrowsError(try NativeFiveResultReference.decode(bytes(malformed),field:"tripId",expectedID:trip))
+        }
+        var extra=archived;extra["extra"]=true
+        XCTAssertThrowsError(try NativeFiveResultReference.decode(bytes(extra),field:"tripId",expectedID:trip))
+        var task=original;task["tripId"]=nil;task["taskId"]=trip
+        XCTAssertNotNil(try NativeFiveResultReference.decode(bytes(task),field:"taskId",expectedID:trip))
+        task["archiveHistorical"]=true
+        XCTAssertThrowsError(try NativeFiveResultReference.decode(bytes(task),field:"taskId",expectedID:trip))
+    }
     @MainActor private func comparison()->[String:Any]{["schemaVersion":"comparison/1","title":"Comparison","summary":"Supported options","options":[["id":"a","title":"A","tradeoff":"A tradeoff"],["id":"b","title":"B","tradeoff":"B tradeoff"]],"actions":[]]}
     @MainActor private func record(_ content:[String:Any],id:String,revision:Int=1,current:Bool=true)throws->Data{
         try JSONSerialization.data(withJSONObject:["version":2,"data":["kind":"result_artifact","artifactId":id,"revision":revision,"currentRevision":revision,"current":current,"historicalReadable":true,"lifecycle":"active",

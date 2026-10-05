@@ -318,11 +318,31 @@ struct NativeTripResultReference: Decodable {
     let artifactId: String?
     let revision: Int?
     let tripId: String?
+    let archiveHistorical: Bool?
+
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: NativeResultRecordKey.self)
+        kind = try values.decode(String.self, forKey: .init("kind"))
+        artifactId = try values.decodeIfPresent(String.self, forKey: .init("artifactId"))
+        revision = try values.decodeIfPresent(Int.self, forKey: .init("revision"))
+        tripId = try values.decodeIfPresent(String.self, forKey: .init("tripId"))
+        archiveHistorical = try values.decodeIfPresent(Bool.self, forKey: .init("archiveHistorical"))
+        let keys = Set(values.allKeys.map(\.stringValue))
+        if kind == "result_reference" {
+            guard keys == Set(["kind", "artifactId", "revision", "tripId"])
+                    || keys == Set(["kind", "artifactId", "revision", "tripId", "archiveHistorical"]) && archiveHistorical == true else {
+                throw NativeDataError.invalidResponse
+            }
+        } else {
+            guard ["empty", "unavailable"].contains(kind), keys == Set(["kind"]) else { throw NativeDataError.invalidResponse }
+        }
+    }
 
     func valid(for expectedTripID: String) -> Bool {
-        if kind == "empty" || kind == "unavailable" { return artifactId == nil && revision == nil && tripId == nil }
+        if kind == "empty" || kind == "unavailable" { return artifactId == nil && revision == nil && tripId == nil && archiveHistorical == nil }
         guard kind == "result_reference", let artifactId, UUID(uuidString: artifactId) != nil,
-              let revision, (1...1000).contains(revision), tripId == expectedTripID else { return false }
+              let revision, (1...1000).contains(revision), tripId == expectedTripID,
+              archiveHistorical == nil || archiveHistorical == true else { return false }
         return true
     }
 }
@@ -541,7 +561,10 @@ final class NativeResultStore {
             let result = try JSONDecoder().decode(NativeResultEnvelope.self, from: bytes)
             guard result.version == 1, result.data.valid, result.data.kind == "result_artifact",
                   result.data.artifactId == artifactID, result.data.revision == revision,
-                  result.data.current == true, result.data.source?.tripId == tripID,
+                  (reference.data.archiveHistorical == true
+                    ? result.data.current == false && result.data.historicalReadable == true
+                    : result.data.current == true),
+                  result.data.source?.tripId == tripID,
                   result.data.source?.tripVersion != nil else { throw NativeDataError.invalidResponse }
             return bytes
         }
