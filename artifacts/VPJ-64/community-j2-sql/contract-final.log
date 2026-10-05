@@ -1,0 +1,11 @@
+✔ append-only J2 default deny preserves public RPC ACL and no production authority enrollment (0.598625ms)
+✔ durable operation stores only identity generation digest and minimal fence; auth precedes cleanup (0.475667ms)
+✔ full owned-data exit includes separately bounded own notes/grants and removes attribution without foreign body erasure (0.157875ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 40.797583

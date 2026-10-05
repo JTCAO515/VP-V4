@@ -1,0 +1,83 @@
+{
+  "sourceHead": "f167dde82cd2938be9a869a9a0830af34f88baec",
+  "dirtyNativeIntegration": true,
+  "ownedSimulator": "C4242CC5-D852-41EB-8C07-92D6486976AB",
+  "runtime": "iOS26.5",
+  "actions": [
+    {
+      "command": [
+        "xcrun",
+        "simctl",
+        "create",
+        "VPJ64-Safety-1791213431",
+        "com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro",
+        "com.apple.CoreSimulator.SimRuntime.iOS-26-5"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.15
+    },
+    {
+      "command": [
+        "xcrun",
+        "simctl",
+        "boot",
+        "C4242CC5-D852-41EB-8C07-92D6486976AB"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.36
+    },
+    {
+      "command": [
+        "xcrun",
+        "simctl",
+        "bootstatus",
+        "C4242CC5-D852-41EB-8C07-92D6486976AB",
+        "-b"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 15.1
+    },
+    {
+      "command": [
+        "xcodebuild",
+        "test-without-building",
+        "-project",
+        "ios/VisePanda/VisePanda.xcodeproj",
+        "-scheme",
+        "VisePanda",
+        "-destination",
+        "platform=iOS Simulator,id=C4242CC5-D852-41EB-8C07-92D6486976AB",
+        "-derivedDataPath",
+        "/tmp/vpj64-native-community-safety-dd",
+        "-parallel-testing-enabled",
+        "NO",
+        "-only-testing:VisePandaTests/NativeCommunitySubmissionTests/actualSessionHeadersAndDenialEraseOwnJournalBeforeLegacyPreservation()",
+        "-only-testing:VisePandaTests/NativeCommunitySubmissionTests/actualSessionJournalCleanupFailureFencesIdentityAndCanBeRetried()",
+        "CODE_SIGNING_ALLOWED=YES",
+        "CODE_SIGN_IDENTITY=-"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 5.89
+    },
+    {
+      "command": [
+        "xcrun",
+        "simctl",
+        "shutdown",
+        "C4242CC5-D852-41EB-8C07-92D6486976AB"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 3.22
+    },
+    {
+      "command": [
+        "xcrun",
+        "simctl",
+        "delete",
+        "C4242CC5-D852-41EB-8C07-92D6486976AB"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.11
+    }
+  ]
+}

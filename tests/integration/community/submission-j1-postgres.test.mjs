@@ -45,7 +45,11 @@ before(async()=>{
 after(async()=>{if(created)assert.equal((await command('docker',['rm','-f',container])).code,0);});
 run('full migration replay rollback and unchanged signature ACL; module defaults and direct deny',async()=>{
  assert.equal(await db("select proacl::text from pg_proc where oid='public.community_workspace(jsonb)'::regprocedure;"),legacyACL);
- const body=await db("select prosrc from pg_proc where oid='public.community_workspace(jsonb)'::regprocedure;");assert.ok(body.endsWith(legacyBody.slice(legacyBody.indexOf('u:=community_private.current_actor();'))));
+ const body=await db("select prosrc from pg_proc where oid='public.community_workspace(jsonb)'::regprocedure;");const originalSuffix=legacyBody.slice(legacyBody.indexOf('u:=community_private.current_actor();'));
+ const oldPredicate="where (action='mine' and author_id=u) or (action='queue' and status='pending')";
+ const newPredicate="where ((action='mine' and author_id=u) or (action='queue' and status='pending')) and community_safety_private.j1_allowed(u,id)";
+ assert.equal(originalSuffix.split(oldPredicate).length-1,1,'one known legacy listing predicate only');
+ assert.ok(body.endsWith(originalSuffix.replace(oldPredicate,newPredicate)), 'all other original legacy-body bytes preserved');
  for(const role of ['anon','authenticated','service_role']){
  assert.notEqual((await sql(container,`set role ${role};select * from community_private.operations_j1;`)).code,0);
  assert.notEqual((await sql(container,`set role ${role};select community_private.workspace_j1('{}');`)).code,0);

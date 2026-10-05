@@ -167,6 +167,68 @@ final class NativeSession {
         credential = updated
     }
 
+    func communitySafetyActor() throws -> NativeCommunitySafetyActor {
+        guard let scope = dataScope, let credential, credential.expiresAt > Date().timeIntervalSince1970 else { throw NativeDataError.sessionUnavailable }
+        return .init(scope: scope, sessionID: try serviceCaseExportSessionId(actor: scope))
+    }
+    private func communitySafetyJournal() -> NativeCommunitySafetyJournal {
+        NativeCommunitySafetyJournal(vault: vault, validate: { _ = try NativeCommunitySafetyCommand(body: $0) })
+    }
+    func communitySafetyRecovery(actor: NativeCommunitySafetyActor) throws -> NativeCommunitySafetyPending? {
+        guard try communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
+        return try communitySafetyJournal().read(actor.scope, sessionID: actor.sessionID)
+    }
+    func rememberCommunitySafety(body: Data, actor: NativeCommunitySafetyActor) throws -> NativeCommunitySafetyPending {
+        guard try communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
+        return try communitySafetyJournal().retain(body: body, scope: actor.scope, sessionID: actor.sessionID)
+    }
+    func completeCommunitySafety(_ pending: NativeCommunitySafetyPending, actor: NativeCommunitySafetyActor) throws {
+        guard try communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
+        try communitySafetyJournal().complete(pending, scope: actor.scope, sessionID: actor.sessionID)
+    }
+    func communitySafetyRequest(body: Data, actor: NativeCommunitySafetyActor) async throws -> Data {
+        guard body.count <= 49_152, !busy, try communitySafetyActor() == actor else { throw NativeDataError.sessionUnavailable }
+        let input = try NativeCommunitySafetyInput(body: body)
+        if let command = input.mutation {
+            guard try communitySafetyRecovery(actor: actor)?.body == command.body else { throw NativeDataError.sessionUnavailable }
+        }
+        if let command = input.recovery {
+            guard try communitySafetyRecovery(actor: actor)?.body == command.body else { throw NativeDataError.sessionUnavailable }
+        }
+        if let credential, credential.expiresAt <= Date().timeIntervalSince1970 + 10 { await validate() }
+        guard try communitySafetyActor() == actor, let credential, let endpoint else { throw NativeDataError.staleSessionResponse }
+        var request = URLRequest(url: endpoint.appendingPathComponent("api/community/safety/native/v1"))
+        request.httpMethod = "POST"; request.httpBody = body; request.httpShouldHandleCookies = false; request.timeoutInterval = 30
+        request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(credential.accessToken)", forHTTPHeaderField: "Authorization")
+        request.setValue(actor.scope.subject, forHTTPHeaderField: "x-community-safety-expected-actor")
+        request.setValue(actor.sessionID, forHTTPHeaderField: "x-community-safety-expected-session")
+        let started = ProcessInfo.processInfo.systemUptime
+        let (stream, response) = try await transport.bytes(for: request)
+        defer { stream.task.cancel() }
+        guard let http = response as? HTTPURLResponse, try communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
+        let cap = http.statusCode == 200 ? 1_000_000 : 4096
+        guard http.expectedContentLength <= Int64(cap) else { throw NativeDataError.invalidResponse }
+        var bytes = Data()
+        for try await byte in stream {
+            guard bytes.count < cap, try communitySafetyActor() == actor, !Task.isCancelled,
+                  ProcessInfo.processInfo.systemUptime - started < 30 else { throw NativeDataError.staleSessionResponse }
+            bytes.append(byte)
+        }
+        guard try communitySafetyActor() == actor, !Task.isCancelled,
+              ProcessInfo.processInfo.systemUptime - started < 30 else { throw NativeDataError.staleSessionResponse }
+        if http.statusCode != 200 {
+            let value = try? NativeCommunityWire.object(JSONSerialization.jsonObject(with: bytes), ["error"])
+            let code = value?["error"] as? String ?? "SAFETY_UNAVAILABLE"
+            if http.statusCode == 401 { handle(SessionError.denied) }
+            throw NativeDataError.server(code: code)
+        }
+        let outcome = try NativeCommunitySafetyOutcome.decode(bytes, actor: actor)
+        guard try input.matches(outcome) else { throw NativeDataError.invalidResponse }
+        return bytes
+    }
+
     func communityActor() throws -> NativeCommunityActor {
         guard let scope = dataScope else { throw NativeDataError.sessionUnavailable }
         return .init(scope: scope, sessionID: try serviceCaseExportSessionId(actor: scope))
@@ -1455,6 +1517,8 @@ final class NativeSession {
         do { try entryResume.erase(preservingUnclaimedID: preservingAnonymousResume) }
         catch { failureCode="entryResumeCleanupRequired";status="storageError";return false }
         subject=nil; mobileEpoch=nil; displayName=nil
+        do { try NativeCommunitySafetyExportFile.eraseAll() }
+        catch { failureCode="communitySafetyExportCleanupRequired"; status="storageError"; return false }
         do { try NativeCommunityExportFile.eraseAll() }
         catch { failureCode="communityExportCleanupRequired"; status="storageError"; return false }
         do { try NativePDFInbox().eraseAll() }
@@ -1467,6 +1531,8 @@ final class NativeSession {
         memoryPreferences.clear()
         exploreAskHandoff=nil
         if let owner = credential?.subject ?? defaults.string(forKey: storageKey) ?? defaults.string(forKey: storageKey + ".pendingJournalCleanupOwner") ?? defaults.string(forKey: storageKey + ".recoveryCleanupOwner") {
+            do { try NativeCommunitySafetyJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
+            catch { failureCode="communitySafetyJournalCleanupRequired"; status="storageError"; return false }
             do { try NativeCommunityJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
             catch { failureCode="communityJournalCleanupRequired"; status="storageError"; return false }
             if preservePendingJournals {
