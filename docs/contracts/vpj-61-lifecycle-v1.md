@@ -7,6 +7,8 @@ This document is a development contract, not a target-environment result.
 
 Native bearer: `GET/POST /api/trips/native/v2/lifecycle` and
 `GET /api/trips/native/v2/lifecycle/operations/:operationId`.
+`POST /api/trips/native/v2/lifecycle/operations/:operationId/abandon` sends the
+same original command bytes to fence an unresolved operation. Web mirrors it.
 Web same-origin cookie: identical paths under `/api/trips/lifecycle`.
 All replies are private/no-store. Native rejects Cookie/Origin; Web rejects bearer,
 checks same-origin mutations and uses the existing ordinary cookie client.
@@ -42,7 +44,7 @@ new consent. Skip does not withdraw an already-global Memory. New/changed Memory
 continues to use the original #199 writer and qualification projection.
 
 POST returns one immutable receipt, exact fields:
-`version,ownerId,sessionId,operationId,requestDigest,action,revision,tripId,state,
+`status:'applied',version,ownerId,sessionId,operationId,requestDigest,action,revision,tripId,state,
 capacity,archivedVersion,archivedAt,preference,memoryRefs`. `requestDigest` is
 lowercase SHA256 of the **original POST UTF-8 bytes**, including whitespace/key order.
 Preference is `kept|skipped` for archive, `not_requested` otherwise; non-archive refs
@@ -51,6 +53,17 @@ owner revision, not current authority. Recovery exact envelope:
 `version,ownerId,sessionId,operationId,receipt` where null means no committed op.
 An erased/invalidated operation is `MEMORY_CONFLICT`/`FORBIDDEN`, never a null
 encouraging a new write. Same-op replay compares original bytes, not reserialized JSON.
+
+Business rejection is a durable `status:'declined'` receipt returned HTTP 200,
+exact fields `version,ownerId,sessionId,operationId,requestDigest,action,tripId,
+status,reason,revision`. Reasons: `LIFECYCLE_CONFLICT,TRIP_CAPACITY,
+LEGACY_RECONCILIATION_REQUIRED,STALE_TRIP_VERSION,PROPOSAL_NOT_CONFIRMABLE,
+MEMORY_CONFLICT,IDEMPOTENCY_KEY_REUSE,USER_ABANDONED`. The first seven are checked
+under the owner/session lock and recorded without product mutation; a retry cannot
+later apply that declined op. Abandon serializes on the same op and records
+USER_ABANDONED when absent, or returns the exact existing applied/declined receipt.
+It fences a late original POST and does not undo an already-applied transition.
+Path op must equal body op. Receipt null alone never clears a pending journal.
 
 Native must journal the exact bytes and endpoint, owner/session/op/Trip/head/CAS,
 keep one pending write, recover by op after unknown ACK, and accept a receipt only
@@ -71,6 +84,11 @@ never become an empty list, zero capacity or an authentication rejection.
 Requested slot: `20261005040000_vpj61_trip_lifecycle.sql`, one independent SQL
 owner appointed by Main. No old migration edits. RPC:
 `trip_lifecycle_v1(p_action text,p_input jsonb,p_request_bytes text default null)`.
+Abandon uses execute input/raw bytes. Owner/session and operation-byte checks
+precede replay/decline; only confirmed business declines are terminal. Unknown
+schema/transport/internal/auth failures are not converted to declines. If archive
+or source validation needs an exception, use a subtransaction to roll back all
+product writes before persisting the decline while retaining the outer owner lock.
 Read input exactly `{}` or `{afterTripId,expectedRevision}`; execute `p_input` is
 the parsed POST command and `p_request_bytes` is its unmodified text (must parse
 equal to input). Recover input exactly `{operationId}`; no raw bytes for reads.

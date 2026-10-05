@@ -32,7 +32,8 @@ export type LifecycleSnapshot = Readonly<{
   serviceStatus: "unavailable";
 }>;
 /** An immutable operation receipt. It does not grant current Memory/Trip eligibility. */
-export type LifecycleReceipt = Readonly<{
+export type LifecycleAppliedReceipt = Readonly<{
+  status: "applied";
   version: typeof LIFECYCLE_VERSION; ownerId: string; sessionId: string;
   operationId: string; requestDigest: string; action: LifecycleCommand["action"]; revision: number;
   tripId: string; state: Exclude<LifecycleState, "legacy">; capacity: LifecycleCapacity;
@@ -40,6 +41,14 @@ export type LifecycleReceipt = Readonly<{
   preference: "skipped" | "kept" | "not_requested";
   memoryRefs: readonly MemoryReference[];
 }>;
+export const LIFECYCLE_DECLINES = ["LIFECYCLE_CONFLICT", "TRIP_CAPACITY", "LEGACY_RECONCILIATION_REQUIRED",
+  "STALE_TRIP_VERSION", "PROPOSAL_NOT_CONFIRMABLE", "MEMORY_CONFLICT", "IDEMPOTENCY_KEY_REUSE", "USER_ABANDONED"] as const;
+export type LifecycleDeclinedReceipt = Readonly<{
+  version: typeof LIFECYCLE_VERSION; ownerId: string; sessionId: string; operationId: string;
+  requestDigest: string; action: LifecycleCommand["action"]; tripId: string;
+  status: "declined"; reason: typeof LIFECYCLE_DECLINES[number]; revision: number;
+}>;
+export type LifecycleReceipt = LifecycleAppliedReceipt | LifecycleDeclinedReceipt;
 export type LifecycleRecovery = Readonly<{
   version: typeof LIFECYCLE_VERSION; ownerId: string; sessionId: string;
   operationId: string; receipt: LifecycleReceipt | null;
@@ -54,7 +63,7 @@ export const record = (value: unknown): value is Record<string, unknown> => !!va
 export const exact = (value: Record<string, unknown>, keys: readonly string[]) => Object.keys(value).length === keys.length && keys.every(key => Object.hasOwn(value, key));
 export const revision = (value: unknown): value is number => Number.isSafeInteger(value) && Number(value) >= 0 && Number(value) <= 9007199254740990;
 const head = (value: unknown): value is number => revision(value) && value <= 2147483647;
-export const uuid = (value: unknown): value is string => typeof value === "string" && isUuid(value);
+export const uuid = (value: unknown): value is string => typeof value === "string" && isUuid(value) && value === value.toLowerCase();
 const nullableUuid = (value: unknown) => value === null || uuid(value);
 const date = (value: unknown) => typeof value === "string" && /^\d{4}-\d{2}-\d{2}T/.test(value) && Number.isFinite(Date.parse(value));
 
@@ -108,9 +117,9 @@ export function isLifecycleSnapshot(value: unknown): value is LifecycleSnapshot 
     || value.serviceStatus !== "unavailable") return false;
   return true;
 }
-export function isLifecycleReceipt(value: unknown): value is LifecycleReceipt {
-  if (!record(value) || !exact(value, ["version", "ownerId", "sessionId", "operationId", "requestDigest", "action", "revision", "tripId", "state", "capacity", "archivedVersion", "archivedAt", "preference", "memoryRefs"])
-    || value.version !== LIFECYCLE_VERSION || !uuid(value.ownerId) || !uuid(value.sessionId) || !uuid(value.operationId)
+function isAppliedReceipt(value: unknown): value is LifecycleAppliedReceipt {
+  if (!record(value) || !exact(value, ["status", "version", "ownerId", "sessionId", "operationId", "requestDigest", "action", "revision", "tripId", "state", "capacity", "archivedVersion", "archivedAt", "preference", "memoryRefs"])
+    || value.status !== "applied" || value.version !== LIFECYCLE_VERSION || !uuid(value.ownerId) || !uuid(value.sessionId) || !uuid(value.operationId)
     || typeof value.requestDigest !== "string" || !/^[a-f0-9]{64}$/.test(value.requestDigest)
     || !["create", "activate", "reconcile", "archive"].includes(String(value.action)) || !revision(value.revision) || value.revision < 1
     || !uuid(value.tripId) || !isCapacity(value.capacity) || !["draft", "active", "retained", "archived"].includes(String(value.state))) return false;
@@ -123,6 +132,14 @@ export function isLifecycleReceipt(value: unknown): value is LifecycleReceipt {
     && isMemoryReferences(value.memoryRefs) && value.memoryRefs.length === 0
     && (value.action !== "create" || value.state === "draft") && (value.action !== "activate" || value.state === "active")
     && (value.action !== "reconcile" || ["draft", "retained"].includes(String(value.state)));
+}
+export function isLifecycleReceipt(value: unknown): value is LifecycleReceipt {
+  if (isAppliedReceipt(value)) return true;
+  return record(value) && exact(value, ["version", "ownerId", "sessionId", "operationId", "requestDigest", "action", "tripId", "status", "reason", "revision"])
+    && value.version === LIFECYCLE_VERSION && uuid(value.ownerId) && uuid(value.sessionId) && uuid(value.operationId)
+    && typeof value.requestDigest === "string" && /^[a-f0-9]{64}$/.test(value.requestDigest)
+    && ["create", "activate", "reconcile", "archive"].includes(String(value.action)) && uuid(value.tripId)
+    && value.status === "declined" && LIFECYCLE_DECLINES.includes(value.reason as typeof LIFECYCLE_DECLINES[number]) && revision(value.revision);
 }
 export function isLifecycleRecovery(value: unknown): value is LifecycleRecovery {
   return record(value) && exact(value, ["version", "ownerId", "sessionId", "operationId", "receipt"])
