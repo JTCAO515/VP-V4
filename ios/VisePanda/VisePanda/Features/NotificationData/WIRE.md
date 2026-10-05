@@ -239,3 +239,30 @@ immutable8a5840f2 resource, not that legacy metadata sample. Final combined real
 server registration/SQL/GoTrue data path remains sole TS+SQL normal integration;
 Native target UI/human/device/provider/backup/all-account acceptance UNRUN.
 Whole #239/full ALL1 remaining handlers/ALL2 stay OPEN, allUserDataCompletedfalse.
+
+## Same-task exact retained-fence finding and repair
+
+Mainc0316f actual source finding is valid: previous Native0fa92171 retained only
+8 kinds while fixed sole TS/SQLc013 preserve actual outbox_parent/watch_semantic.
+Prior code-complete/source-aligned statement is superseded for this concrete
+consumer gap; earlier6 and12 tests did not cover these real retained rows.
+No TS/SQL reverse narrowing and no other writer or matrix is used to close it.
+
+Normal immutable sole TS6d66ad62 integrated (not its dirty AGENTS/next-env files).
+Actual Native runtime repair b918623b is exactly adding those two kind literals
+in NativeNotificationDataRows.fenceRows. Independent source comparison confirms
+ALL other keys/owner qualification/UUID/hash/sort/cap/TTL guard bytes unchanged,
+and Native10-kind list now equals that exact producer. Existing worker/SQL/API/
+other Native consumers are unchanged by this Native delta.
+
+Sole producer synthetic native-trip-retained-preview.json (approved TS decoder
+PASS) is copied byte-for-byte to owned Native test resources. One unique affected
+NativeNotificationRetainedFenceTests case consumes it for full retained preview
+and complete bundle -> real protected private file readback, plus unknown kind,
+UUID/hash, wrong Trip, extra key, ordering and expiry negatives. Its default
+fixed fixture clock and unsigned app test are not actual user/GoTrue/provider
+or restore-target acceptance. Source includes no sensitive body or token.
+New app/test/resource PBX IDs only; original fixtures/tests/membership unchanged.
+Productb918623b ready NOW for normal Main/soleTS integration; actual owned pinned
+Harness /tmp/vpj58-notification-retained-fence-r1 executing just this1case, result
+pending. Original6 andcatalog/coverage12 evidence are reused separately.
