@@ -89,3 +89,13 @@ file enters the product diff. Real staff, target/config/GRANT, Production, provi
 fees, core account export enrollment/attachments and human/phone acceptance remain
 unrun. Staff rendering has no push: it clears/requalifies on entry/focus/request
 and every 10 seconds while visible, never a zero-latency remote-revoke claim.
+
+## Normal main integration
+
+Dependency #654 actually merged as `7a48a018` at 2026-10-05 10:01:13 UTC.
+Normal origin/main merge `cf097cd2` preserved all #223 product source, both service
+entries, eight journals and existing/new DB lanes. The only inherited differences
+from reviewed `303decef` were accepted upstream `trip-deletion.test.mjs` and #224
+evidence. No product source changed, so no unchanged local PG/Native/HTTP matrix
+was repeated. Working tree and diff checks were clean. Final-head formal review
+and fresh required CI must be checked against the pushed candidate separately.
