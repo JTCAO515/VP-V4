@@ -3229,6 +3229,12 @@
         }
       }
     },
+    "shell.shareInbox": {
+      "localizations": {
+        "en": {"stringUnit": {"state": "translated", "value": "System share inbox"}},
+        "zh-Hans": {"stringUnit": {"state": "translated", "value": "系统分享收件箱"}}
+      }
+    },
     "shell.search": {
       "localizations": {
         "en": {
