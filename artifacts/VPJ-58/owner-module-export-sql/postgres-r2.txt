@@ -1,0 +1,55 @@
+▶ VPJ-58 isolated full replay, owner metadata pagination, proof and adversarial bounds
+  ✖ full-chain transactional rollback and unchanged old functions/tables/ACL (35.438167ms)
+✖ VPJ-58 isolated full replay, owner metadata pagination, proof and adversarial bounds (6077.057125ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6115.43975
+
+✖ failing tests:
+
+test at tests/integration/privacy/owner-module-export-postgres.test.mjs:31:10
+✖ full-chain transactional rollback and unchanged old functions/tables/ACL (35.438167ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  syntax error at or near ";"
+  LINE 12:  ) x;
+               ^
+  
+  
+  3 !== 0
+  
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:21:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:32:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:31:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/owner-module-export-postgres.test.mjs:15:1
+✖ VPJ-58 isolated full replay, owner metadata pagination, proof and adversarial bounds (6077.057125ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'f' !== 't'
+  
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:35:9)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'f',
+    expected: 't',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

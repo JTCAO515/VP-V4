@@ -1,0 +1,393 @@
+▶ VPJ-58 isolated full replay, owner metadata pagination, proof and adversarial bounds
+  ✖ full-chain transactional rollback and unchanged old functions/tables/ACL (36.202125ms)
+  ✖ API ACL/RLS default deny before separate fixture grant (31.556375ms)
+  ✖ authority before UUID/source/cleanup; strict direct SQL NULL and exact DTOs (62.389042ms)
+  ✖ sensitive reauth uses server session creation; cannot refresh iat or future date (94.489ms)
+  ✖ fixed 30s start exact retry; partial proof is never delivery; safe projection (92.653ms)
+  ✖ empty sources require null-to-terminal traversal of all sections (65.163459ms)
+  ✖ lifecycle metadata and operations only, both-section digest and counts (128.862167ms)
+  ✖ global key cross-owner/unknown deny equal; same owner cross-scope conflicts (95.007792ms)
+  ✖ skipped/foreign/wrong-source/changed-limit/reordered cursors reject without counts (95.151417ms)
+  ✖ changed source/removed anchor rejects start/page/proof without storing payload (63.334375ms)
+  ✖ fixed expiry cannot renew before or after cleanup, unauthorized cleanup has no effect (63.774584ms)
+  ✖ mobile epoch/current session required; session and owner FK erase progress/fences (63.140083ms)
+  ✖ sentinel notification/lifecycle row overflow never hashes or admits (66.5945ms)
+  ✖ aggregate 1MB cap, page budget, transactional effect rollback (98.217625ms)
+  ✖ source-free inventory and all original code/ACL unchanged after own fixtures (31.78475ms)
+✖ VPJ-58 isolated full replay, owner metadata pagination, proof and adversarial bounds (6891.363375ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 0
+ℹ fail 16
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6931.25925
+
+✖ failing tests:
+
+test at tests/integration/privacy/owner-module-export-postgres.test.mjs:31:10
+✖ full-chain transactional rollback and unchanged old functions/tables/ACL (36.202125ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  invalid UNION/INTERSECT/EXCEPT ORDER BY clause
+  LINE 10:   order by key collate "C" limit 10001
+                      ^
+  DETAIL:  Only result column names can be used, not expressions or functions.
+  HINT:  Add the expression/function to every SELECT, or move the UNION into a FROM clause.
+  
+  
+  3 !== 0
+  
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:21:59)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:32:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:31:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/owner-module-export-postgres.test.mjs:35:10
+✖ API ACL/RLS default deny before separate fixture grant (31.556375ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  schema "coverage_export_private" does not exist
+  
+  
+  3 !== 0
+  
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:21:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:37:17)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:35:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/owner-module-export-postgres.test.mjs:55:10
+✖ authority before UUID/source/cleanup; strict direct SQL NULL and exact DTOs (62.389042ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  relation "coverage_export_private.requests_v1" does not exist
+  LINE 1: ...b_agg(to_jsonb(r) order by request_id),'[]') from coverage_e...
+                                                               ^
+  
+  
+  3 !== 0
+  
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:21:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:56:55)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:55:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/owner-module-export-postgres.test.mjs:65:10
+✖ sensitive reauth uses server session creation; cannot refresh iat or future date (94.489ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /REAUTHENTICATION_REQUIRED/. Input:
+  
+  'ERROR:  function public.privacy_coverage_module_export_v1(jsonb) does not exist\n' +
+    `LINE 1: select public.privacy_coverage_module_export_v1('{"action":"...\n` +
+    '               ^\n' +
+    'HINT:  No function matches the given name and argument types. You might need to add explicit type casts.\n'
+  
+      at deny (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:22:102)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:66:193)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:65:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: `ERROR:  function public.privacy_coverage_module_export_v1(jsonb) does not exist\nLINE 1: select public.privacy_coverage_module_export_v1('{"action":"...\n               ^\nHINT:  No function matches the given name and argument types. You might need to add explicit type casts.\n`,
+    expected: /REAUTHENTICATION_REQUIRED/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/owner-module-export-postgres.test.mjs:69:10
+✖ fixed 30s start exact retry; partial proof is never delivery; safe projection (92.653ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  function public.privacy_coverage_module_export_v1(jsonb) does not exist
+  LINE 1: select public.privacy_coverage_module_export_v1('{"action":"...
+                 ^
+  HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+  
+  
+  3 !== 0
+  
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:21:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async call (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:47:40)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:70:55)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:69:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/owner-module-export-postgres.test.mjs:77:10
+✖ empty sources require null-to-terminal traversal of all sections (65.163459ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  function public.privacy_coverage_module_export_v1(jsonb) does not exist
+  LINE 1: select public.privacy_coverage_module_export_v1('{"action":"...
+                 ^
+  HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+  
+  
+  3 !== 0
+  
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:21:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async call (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:47:40)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:78:27)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:77:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/owner-module-export-postgres.test.mjs:82:10
+✖ lifecycle metadata and operations only, both-section digest and counts (128.862167ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  function public.privacy_coverage_module_export_v1(jsonb) does not exist
+  LINE 1: select public.privacy_coverage_module_export_v1('{"action":"...
+                 ^
+  HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+  
+  
+  3 !== 0
+  
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:21:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async call (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:47:40)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:84:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:82:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/owner-module-export-postgres.test.mjs:89:10
+✖ global key cross-owner/unknown deny equal; same owner cross-scope conflicts (95.007792ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  function public.privacy_coverage_module_export_v1(jsonb) does not exist
+  LINE 1: select public.privacy_coverage_module_export_v1('{"action":"...
+                 ^
+  HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+  
+  
+  3 !== 0
+  
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:21:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async call (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:47:40)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:90:43)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:89:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/owner-module-export-postgres.test.mjs:95:10
+✖ skipped/foreign/wrong-source/changed-limit/reordered cursors reject without counts (95.151417ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  duplicate key value violates unique constraint "devices_environment_topic_token_key"
+  DETAIL:  Key (environment, topic, token)=(sandbox, own.fixture, 0000000000000000000000000000000000000000000000000000000000000001) already exists.
+  
+  
+  3 !== 0
+  
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:21:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:96:41)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:95:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/owner-module-export-postgres.test.mjs:101:10
+✖ changed source/removed anchor rejects start/page/proof without storing payload (63.334375ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  duplicate key value violates unique constraint "devices_environment_topic_token_key"
+  DETAIL:  Key (environment, topic, token)=(sandbox, own.fixture, 0000000000000000000000000000000000000000000000000000000000000001) already exists.
+  
+  
+  3 !== 0
+  
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:21:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:102:25)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:101:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/owner-module-export-postgres.test.mjs:106:10
+✖ fixed expiry cannot renew before or after cleanup, unauthorized cleanup has no effect (63.774584ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  function public.privacy_coverage_module_export_v1(jsonb) does not exist
+  LINE 1: select public.privacy_coverage_module_export_v1('{"action":"...
+                 ^
+  HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+  
+  
+  3 !== 0
+  
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:21:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async call (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:47:40)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:107:27)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:106:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/owner-module-export-postgres.test.mjs:112:10
+✖ mobile epoch/current session required; session and owner FK erase progress/fences (63.140083ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  function public.privacy_coverage_module_export_v1(jsonb) does not exist
+  LINE 1: select public.privacy_coverage_module_export_v1('{"action":"...
+                 ^
+  HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+  
+  
+  3 !== 0
+  
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:21:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async call (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:47:40)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:113:27)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:112:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/owner-module-export-postgres.test.mjs:118:10
+✖ sentinel notification/lifecycle row overflow never hashes or admits (66.5945ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  duplicate key value violates unique constraint "devices_environment_topic_token_key"
+  DETAIL:  Key (environment, topic, token)=(sandbox, own.fixture, 0000000000000000000000000000000000000000000000000000000000000001) already exists.
+  
+  
+  3 !== 0
+  
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:21:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:119:25)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:118:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/owner-module-export-postgres.test.mjs:122:10
+✖ aggregate 1MB cap, page budget, transactional effect rollback (98.217625ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /COVERAGE_CAPACITY/. Input:
+  
+  'ERROR:  function public.privacy_coverage_module_export_v1(jsonb) does not exist\n' +
+    `LINE 1: select public.privacy_coverage_module_export_v1('{"action":"...\n` +
+    '               ^\n' +
+    'HINT:  No function matches the given name and argument types. You might need to add explicit type casts.\n'
+  
+      at deny (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:22:102)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:123:311)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:122:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: `ERROR:  function public.privacy_coverage_module_export_v1(jsonb) does not exist\nLINE 1: select public.privacy_coverage_module_export_v1('{"action":"...\n               ^\nHINT:  No function matches the given name and argument types. You might need to add explicit type casts.\n`,
+    expected: /COVERAGE_CAPACITY/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/owner-module-export-postgres.test.mjs:127:10
+✖ source-free inventory and all original code/ACL unchanged after own fixtures (31.78475ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + ''
+  - 'request_id,owner_id,session_id,mobile_epoch,scope,source_digest,captured_at,expires_at'
+  
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:128:204)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:127:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: 'request_id,owner_id,session_id,mobile_epoch,scope,source_digest,captured_at,expires_at',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

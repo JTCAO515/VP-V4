@@ -1,0 +1,119 @@
+▶ VPJ-58 isolated full replay, owner metadata pagination, proof and adversarial bounds
+  ✔ full-chain transactional rollback and unchanged old functions/tables/ACL (267.949542ms)
+  ✔ API ACL/RLS default deny before separate fixture grant (545.423083ms)
+  ✔ authority before UUID/source/cleanup; strict direct SQL NULL and exact DTOs (733.510375ms)
+  ✔ sensitive reauth uses server session creation; cannot refresh iat or future date (186.186167ms)
+  ✔ fixed 30s start exact retry; partial proof is never delivery; safe projection (340.887792ms)
+  ✔ empty sources require null-to-terminal traversal of all sections (267.060791ms)
+  ✔ lifecycle metadata and operations only, both-section digest and counts (272.520417ms)
+  ✔ global key cross-owner/unknown deny equal; same owner cross-scope conflicts (325.5515ms)
+  ✖ skipped/foreign/wrong-source/changed-limit/reordered cursors reject without counts (93.677916ms)
+  ✖ changed source/removed anchor rejects start/page/proof without storing payload (66.78825ms)
+  ✔ fixed expiry cannot renew before or after cleanup, unauthorized cleanup has no effect (509.053833ms)
+  ✔ mobile epoch/current session required; session and owner FK erase progress/fences (679.228291ms)
+  ✖ sentinel notification/lifecycle row overflow never hashes or admits (62.553833ms)
+  ✖ aggregate 1MB cap, page budget, transactional effect rollback (179.057625ms)
+  ✔ source-free inventory and all original code/ACL unchanged after own fixtures (117.603709ms)
+✖ VPJ-58 isolated full replay, owner metadata pagination, proof and adversarial bounds (10419.643ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 11
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 10457.413958
+
+✖ failing tests:
+
+test at tests/integration/privacy/owner-module-export-postgres.test.mjs:96:10
+✖ skipped/foreign/wrong-source/changed-limit/reordered cursors reject without counts (93.677916ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  duplicate key value violates unique constraint "devices_environment_topic_token_key"
+  DETAIL:  Key (environment, topic, token)=(sandbox, own.fixture, 0000000000000000000000000000000000000000000000000000000000000001) already exists.
+  
+  
+  3 !== 0
+  
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:21:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:97:41)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:96:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/owner-module-export-postgres.test.mjs:102:10
+✖ changed source/removed anchor rejects start/page/proof without storing payload (66.78825ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  duplicate key value violates unique constraint "devices_environment_topic_token_key"
+  DETAIL:  Key (environment, topic, token)=(sandbox, own.fixture, 0000000000000000000000000000000000000000000000000000000000000001) already exists.
+  
+  
+  3 !== 0
+  
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:21:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:103:25)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:102:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/owner-module-export-postgres.test.mjs:119:10
+✖ sentinel notification/lifecycle row overflow never hashes or admits (62.553833ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  duplicate key value violates unique constraint "devices_environment_topic_token_key"
+  DETAIL:  Key (environment, topic, token)=(sandbox, own.fixture, 0000000000000000000000000000000000000000000000000000000000000001) already exists.
+  
+  
+  3 !== 0
+  
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:21:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:120:25)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:119:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/owner-module-export-postgres.test.mjs:123:10
+✖ aggregate 1MB cap, page budget, transactional effect rollback (179.057625ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  duplicate key value violates unique constraint "devices_environment_topic_token_key"
+  DETAIL:  Key (environment, topic, token)=(sandbox, own.fixture, 0000000000000000000000000000000000000000000000000000000000000001) already exists.
+  
+  
+  3 !== 0
+  
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:21:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:125:25)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:123:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
