@@ -46,7 +46,7 @@ export const uuid = (v: unknown): v is string => typeof v === 'string' && isUuid
 export const milliseconds = (v: unknown): v is number => typeof v === 'number' && Number.isSafeInteger(v) && v > 0 && v < 8640000000000000;
 const text = (v: unknown, max: number): v is string => typeof v === 'string' && !!v.trim() && v.length <= max && !v.includes('\0');
 export function validTrip(v: unknown): v is TripBinding {
-  return record(v) && (v.kind === 'unknown' ? exact(v, ['kind']) : v.kind === 'bound' && exact(v, ['kind', 'tripId', 'headVersion']) && uuid(v.tripId) && integer(v.headVersion, 1));
+  return record(v) && (v.kind === 'unknown' ? exact(v, ['kind']) : v.kind === 'bound' && exact(v, ['kind', 'tripId', 'headVersion']) && uuid(v.tripId) && integer(v.headVersion));
 }
 export function validEvidence(v: unknown): v is ServiceEvidence {
   return record(v) && exact(v, ['kind', 'note', 'reference', 'observedAt']) && ['tutorial', 'contacted_provider', 'external_resolution'].includes(String(v.kind)) && text(v.note, 1000) && text(v.reference, 300) && milliseconds(v.observedAt);
@@ -80,7 +80,7 @@ export function parseServiceInput(v: unknown): ServiceInput | null {
 }
 
 const unknownBinding = (v: unknown) => record(v) && exact(v, ['kind']) && v.kind === 'unknown';
-const proposal = (v: unknown) => v === null || (record(v) && exact(v, ['proposalId', 'tripId', 'baseVersion']) && uuid(v.proposalId) && uuid(v.tripId) && integer(v.baseVersion, 1));
+const proposal = (v: unknown) => v === null || (record(v) && exact(v, ['proposalId', 'tripId', 'baseVersion']) && uuid(v.proposalId) && uuid(v.tripId) && integer(v.baseVersion));
 export function validCapacity(v: unknown): v is ServiceCapacity {
   return record(v) && exact(v, ['state', 'checkedAt']) && ['available', 'full', 'unknown'].includes(String(v.state)) && milliseconds(v.checkedAt);
 }

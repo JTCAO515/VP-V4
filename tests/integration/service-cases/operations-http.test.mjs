@@ -25,11 +25,11 @@ test('disposable real Auth, native HTTP, cookie staff HTTP, operations and origi
   if(users.length)sql('delete from auth.users where id in('+users.map(u=>literal(u.id)).join(',')+');');
  });
  const log=createWriteStream(join(process.env.VP_IDENTITY_SUPABASE_WORKDIR,'operations-next.log'),{mode:0o600});
- next=spawn(process.execPath,['node_modules/next/dist/bin/next','dev','--webpack','--hostname','127.0.0.1','--port',String(ports.apiPort)],{env:{...process.env,NEXT_PUBLIC_SUPABASE_URL:local.API_URL,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:key,VISEPANDA_NATIVE_LOCAL_SESSION:'true',VISEPANDA_NATIVE_LOCAL_SERVICE_KEY:local.SERVICE_ROLE_KEY,VISEPANDA_NATIVE_LOCAL_TRIP:'true',VISEPANDA_TRIP_PROTOCOL_V2:'true',SERVICE_CASES_LOCAL:'1',SERVICE_CASE_OPERATIONS_LOCAL:'1'},stdio:['ignore','pipe','pipe']});
+ next=spawn(process.execPath,['node_modules/next/dist/bin/next','dev','--webpack','--hostname','127.0.0.1','--port',String(ports.apiPort)],{env:{...process.env,NEXT_PUBLIC_SUPABASE_URL:local.API_URL,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:key,VISEPANDA_NATIVE_LOCAL_SESSION:'true',VISEPANDA_NATIVE_LOCAL_SERVICE_KEY:local.SERVICE_ROLE_KEY,VISEPANDA_NATIVE_LOCAL_TRIP:'true',VISEPANDA_TRIP_PROTOCOL_V2:'true',SERVICE_CASES_LOCAL:'1',SERVICE_CASE_OPERATIONS_LOCAL:'1',SERVICE_CASE_DATA_LOCAL:'1'},stdio:['ignore','pipe','pipe']});
  next.stdout.pipe(log);next.stderr.pipe(log);next.once('exit',()=>log.end());await waitForNativeAPI(ports.api,next);
  const call=async(path,token,body,headers={})=>{
   const r=await fetch(ports.api+path,{method:'POST',headers:{...(token?{Authorization:'Bearer '+token}:{}),'Content-Type':'application/json',...headers},body:typeof body==='string'?body:JSON.stringify(body),signal:AbortSignal.timeout(30000)});
-  return {status:r.status,body:await r.json(),cache:r.headers.get('cache-control')};
+  return {status:r.status,body:await r.json(),cache:r.headers.get('cache-control'),disposition:r.headers.get('content-disposition')};
  };
  async function user(){
   const auth=createClient(local.API_URL,key,{auth:{persistSession:false,autoRefreshToken:false}}),email='vpj32-'+uuid()+'@example.test',password='VPJ32-Disposable-'+uuid()+'!';
@@ -50,7 +50,8 @@ test('disposable real Auth, native HTTP, cookie staff HTTP, operations and origi
  sql('update service_operations_private.settings set enabled=true;');
  t.diagnostic('Default ACL deny and empty staffing observed; subsequent cases use disposable-only explicit fixture GRANT and synthetic staffing, no target activation or provider action');
  const cookies=[];const web=createServerClient(local.API_URL,key,{cookies:{getAll:()=>cookies,setAll:rows=>{for(const c of rows){const old=cookies.findIndex(x=>x.name===c.name);if(old>=0)cookies[old]=c;else cookies.push(c);}}}});
- const established=await web.auth.setSession({access_token:staff.accessToken,refresh_token:staff.refreshToken});assert.equal(established.error,null,'cookie setup for current synthetic staff session');
+ const established=await web.auth.signInWithPassword({email:staff.email,password:staff.password});assert.equal(established.error,null,'ordinary browser staff sign-in');
+ staff.sid=JSON.parse(Buffer.from(established.data.session.access_token.split('.')[1],'base64url')).session_id;
  const staffHeaders=()=>({Cookie:cookies.map(c=>`${c.name}=${c.value}`).join('; '),Origin:ports.api,'x-ops-expected-actor':staff.id,'x-ops-expected-session':staff.sid});
  const staffCall=body=>call(ops,null,body,staffHeaders());
  assert.equal((await staffCall({action:'workspace'})).status,403,'unqualified session is not operator authority');
@@ -100,4 +101,44 @@ test('disposable real Auth, native HTTP, cookie staff HTTP, operations and origi
  assert.equal((await staffCall({action:'workspace'})).status,403);
  assert.equal(sql('select count(*) from public.trips;'),'0','service commands wrote no Trip');
  assert.equal(sql('select count(*) from public.trip_proposals;'),'0','service commands fabricated no Proposal');
+ // Canonical create/Proposal APIs are the only Trip writers in this scenario.
+ sql(`update service_operations_private.operators set enabled=true where actor_id=${literal(staff.id)};`);
+ const tripId=uuid(),originalTrip=await call('/api/trips/native/v2',owner.accessToken,{tripId,title:'Synthetic original service Trip'});
+ assert.equal(originalTrip.status,201,JSON.stringify(originalTrip.body));assert.equal(originalTrip.body.trip.headVersion,0);
+ const proposed=await call(`/api/trips/native/v2/${tripId}/proposal`,owner.accessToken,{patch:{expectedVersion:0,operations:[{kind:'set_title',title:'Explicit user-confirmed candidate'}]}});
+ assert.equal(proposed.status,201,JSON.stringify(proposed.body));
+ const exact=await fetch(ports.api+`/api/trips/native/v2/${tripId}/proposal?proposalId=${proposed.body.proposalId}`,{headers:{Authorization:'Bearer '+owner.accessToken}});assert.equal(exact.status,200);const original=await exact.json();
+ const bound=await createCase('Synthetic Trip question; problem is the only staff grant');
+ const boundRequest={...requestService(bound),trip:{kind:'bound',tripId,headVersion:0}};
+ assert.equal((await call(native,owner.accessToken,boundRequest)).status,200,'initial Trip version zero is a real binding');
+ assert.equal((await staffCall(staffInput('accept',bound,1))).status,200);assert.equal((await staffCall(staffInput('assign',bound,2))).status,200);
+ const selection={action:'select_proposal',operationId:uuid(),caseId:bound,expectedRevision:3,grantRevision:1,proposal:{proposalId:proposed.body.proposalId,tripId,baseVersion:0}};
+ assert.equal((await staffCall(selection)).status,400,'staff cannot probe owner Trip or attach a Proposal');
+ const selected=await call(native,owner.accessToken,selection);assert.equal(selected.status,200,JSON.stringify(selected.body));
+ const ownerCase=await call(native,owner.accessToken,{action:'read',caseId:bound});assert.equal(ownerCase.body.data.proposal.proposalId,proposed.body.proposalId);
+ const staffCase=await staffCall({action:'read',caseId:bound});assert.equal(staffCase.status,200);assert.deepEqual(staffCase.body.data.trip,{kind:'unknown'});assert.equal(staffCase.body.data.proposal,null);
+ assert.equal(sql(`select head_version from public.trips where id=${literal(tripId)};`),'0','service association did not apply a Proposal');
+ const confirmed=await call(`/api/trips/native/v2/${tripId}/confirm`,owner.accessToken,{proposalId:proposed.body.proposalId,idempotencyKey:uuid(),digest:original.proposal.digest});assert.equal(confirmed.status,200,JSON.stringify(confirmed.body));
+ assert.equal(sql(`select head_version from public.trips where id=${literal(tripId)};`),'1','only the explicit original confirmation writes the Trip');
+ const changed=await call(native,owner.accessToken,{action:'read',caseId:bound});assert.equal(changed.body.data.proposal,null);assert.deepEqual(changed.body.data.trip,{kind:'unknown'},'old head is not silently rebound');
+ // Independent data scope stays available while the business operations switch is off.
+ const data='/api/service-cases/native/data/v1';assert.equal(sql("select has_function_privilege('authenticated','public.service_case_data_v1(jsonb,text)','execute');"),'f');
+ assert.equal((await call(data,owner.accessToken,{action:'export',requestId:uuid(),confirmed:true})).status,503);
+ sql('grant execute on function public.service_case_data_v1(jsonb,text) to authenticated;update service_operations_private.settings set enabled=false;');
+ const exportId=uuid(),download=await call(data,owner.accessToken,{action:'export',requestId:exportId,confirmed:true});assert.equal(download.status,200,JSON.stringify(download.body));assert.match(download.disposition,new RegExp(exportId));assert.match(download.cache,/no-store/);
+ const b=download.body.data;assert.equal(b.schemaVersion,'service-case-data/1');assert.equal(b.ownerId,owner.id);assert.equal(b.sessionId,owner.sid);assert.equal(b.corePackageEnrollment,'not_enrolled');assert.equal(b.allUserDataCompleted,false);assert.equal(b.coverage.brief,'unavailable');assert.equal(b.coverage.attachments,'unavailable');assert.ok(b.rows.some(r=>r.domain==='case'&&r.value.caseId===bound));
+ assert.ok(!JSON.stringify(b.rows).includes(staff.sid),'staff session identifiers are not exported');
+ const foreign=await call(data,other.accessToken,{action:'export',requestId:uuid(),confirmed:true});assert.equal(foreign.status,200);assert.equal(foreign.body.data.rows.length,0,'foreign account gets only its own empty scope');
+ const deletion={action:'delete',operationId:uuid(),caseId:first,grantRevision:1,confirmed:true},deleteBytes=JSON.stringify(deletion,null,2);
+ assert.equal((await call(data,other.accessToken,deletion)).status,403);
+ const deleted=await call(data,owner.accessToken,deleteBytes);assert.equal(deleted.status,200,JSON.stringify(deleted.body));assert.equal(deleted.body.data.outcome,'deleted');assert.equal(deleted.body.data.requestDigest,serviceRequestDigest(deleteBytes));assert.ok(!('caseId'in deleted.body.data));
+ assert.equal(sql(`select count(*) from service_cases_private.cases where id=${literal(first)};`),'0');assert.equal(sql(`select count(*) from service_operations_private.services where case_id=${literal(first)};`),'0');
+ assert.deepEqual((await call(data,owner.accessToken,deleteBytes)).body,deleted.body,'delete replay reads its permanent minimal receipt after Case erasure');
+ assert.equal((await call(data,owner.accessToken,JSON.stringify(deletion))).status,409,'changed original delete bytes cannot reuse operation');
+ assert.deepEqual((await call(data,owner.accessToken,{action:'read_operation',operationId:deletion.operationId})).body.data.receipt,deleted.body.data);
+ const late={action:'delete',operationId:uuid(),caseId:third,grantRevision:1,confirmed:true},lateBytes=JSON.stringify(late,null,1);
+ assert.equal((await call(data,owner.accessToken,{action:'read_operation',operationId:late.operationId})).body.data.receipt,null,'absence does not claim nonexecution');
+ const fence=await call(data,owner.accessToken,{action:'abandon',operationId:late.operationId,mutationBytes:lateBytes});assert.equal(fence.status,200);assert.equal(fence.body.data.outcome,'cancelled');
+ assert.equal((await call(data,owner.accessToken,lateBytes)).body.data.outcome,'cancelled');assert.equal(sql(`select count(*) from service_cases_private.cases where id=${literal(third)};`),'1','abandonment never performs deletion');
+ const after=await call(data,owner.accessToken,{action:'export',requestId:uuid(),confirmed:true});assert.equal(after.status,200);assert.ok(!after.body.data.rows.some(r=>r.domain==='case'&&r.value.caseId===first));assert.ok(after.body.data.rows.some(r=>r.domain==='operation'&&r.value.operationId===deletion.operationId),'minimal terminal receipt survives data erasure');
 });
