@@ -51,8 +51,11 @@ publication, actual current Trip item, matched applicability and bounded expiry.
 notification mapping predicate reads the original publication/mapping/source
 relations and recipient mobile authority; it never invokes the ordinary-only
 knowledge reader with a spoofed identity.
-The digest covers meaningful status/claim/payload/item/applicability; clocks,
-retrieval time, receipt UUID and source-reference identity alone are excluded.
+The semantic digest includes only status/scope/applicability/itemDigest and the
+typed claimType/subjectId/value projection. It excludes typed_claim.asOf/evidence,
+claim revisions, payload hashes, receipt UUID and clock/provenance fields. Those
+revisions, hashes and exact source refs remain independent current-qualification
+guards. Refreshing a receipt/publication expiry cannot extend the stored watch TTL.
 Baseline availability is watch_available. Actual eligible watch events use
 watch_changed. Source withdrawal or pending review alone cannot notify.
 A recheck_required support is separately eligible only through an actual approved

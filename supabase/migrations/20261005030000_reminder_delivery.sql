@@ -204,13 +204,13 @@ begin
   end if;
   perform 1 from trip_support_private.entity_mappings where id=p.mapping_id for share nowait;
   b:=notification_private.mapping(p.mapping_id);
-  if b is null or b->>'mappingVersion' is distinct from p.mapping_version::text or b->>'sourceDigest' is distinct from s.source_digest or b->>'payloadHash' is distinct from s.payload_hash then return null;end if;
+  if b is null or b->>'mappingVersion' is distinct from p.mapping_version::text or b->>'sourceDigest' is distinct from s.source_digest or b->'sourceRefs' is distinct from s.source_refs or b->>'claimRevision' is distinct from s.claim_revision::text or b->>'payloadHash' is distinct from s.payload_hash then return null;end if;
   select content into v from public.trip_version_snapshots where trip_id=t.id and owner_id=u and version=t.head_version for share nowait;
   item:=trip_support_private.item(v,s.day_id,s.item_id);
   if item is null or trip_support_private.hash(item)<>s.item_digest then return null;end if;
   v:=trip_support_private.typed_claim(b,s.scope);if v is null then return null;end if;
   -- Semantic digest intentionally excludes receipt/ref UUID, retrievedAt, version and clock.
-  semantic:=notification_private.hash(jsonb_build_object('status',s.status,'scope',s.scope,'applicability',s.applicability,'claimRevision',s.claim_revision,'payloadHash',s.payload_hash,'itemDigest',s.item_digest,'claim',v));
+  semantic:=notification_private.hash(jsonb_build_object('status',s.status,'scope',s.scope,'applicability',s.applicability,'itemDigest',s.item_digest,'claim',jsonb_build_object('claimType',v->'claimType','subjectId',v->'subjectId','value',v->'value')));
   rev:=s.version;expiry:=least(expiry,p.expires_at,notification_private.time(b->'receipt'->'expiresAt'));
  else return null;end if;
  if expiry is null or expiry<=clock_timestamp() then return null;end if;

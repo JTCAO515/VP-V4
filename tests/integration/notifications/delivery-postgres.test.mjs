@@ -184,7 +184,13 @@ run('actual reviewed support baseline ignores revision/time refresh; exact appro
  const baseline=(await user(nf,'list')).nextSteps.find(x=>x.source.kind==='qualified_watch');assert.ok(baseline);assert.equal(baseline.reasonCode,'watch_available');
  const watch={operationId:uuid(),id:uuid(),baseVersion:1,source:baseline.source,expiresAt:baseline.expiresAt,timeZone:'Asia/Shanghai',quietHours:{startMinute:0,endMinute:0},consent:true};await user(nf,'watch',watch);
  const supportId=confirmed.supports[0].supportId;
- await db(`update trip_support_private.item_supports set version=version+1,created_at=clock_timestamp() where id='${supportId}';`);
+ // Actual typed_claim includes asOf/evidence receipt timestamps. Refreshing those
+ // fields and publication TTL must not change content semantics or the user's TTL.
+ await db(`update knowledge_review_private.candidates set reviewed_at=reviewed_at+interval '1 second' where id='${f.candidate}';update knowledge_review_private.publications set expires_at=expires_at+interval '1 hour' where candidate_id='${f.candidate}';`);
+ const refreshed=(await user(nf,'list')).nextSteps.find(x=>x.source.sourceId===supportId);assert.equal(refreshed.source.contentDigest,baseline.source.contentDigest);assert.equal(refreshed.expiresAt,baseline.expiresAt);
+ await svc('poll_travel_notifications_v2',[1]);assert.equal(await db(`select count(*) from notification_private.outbox where watch_id='${watch.id}';`),'0');
+ assert.equal(await db(`select notification_private.stamp(expires_at) from notification_private.watches where id='${watch.id}';`),watch.expiresAt);
+ await db(`update notification_private.watches set next_check_at=clock_timestamp() where id='${watch.id}';update trip_support_private.item_supports set version=version+1,created_at=clock_timestamp() where id='${supportId}';`);
  await svc('poll_travel_notifications_v2',[1]);assert.equal(await db(`select count(*) from notification_private.outbox where watch_id='${watch.id}';`),'0');
  // Source withdrawal alone (and a pending review set) has no send eligibility.
  await f.rpc(f.author,'ops_source_revision_withdraw_v1',{p_input:{operationId:uuid(),sourceRevisionId:f.sourceRefs[0].sourceRevisionId,reason:'Synthetic source rights removal'}});

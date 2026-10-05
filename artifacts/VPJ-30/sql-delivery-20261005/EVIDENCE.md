@@ -70,3 +70,17 @@ Current affected source hashes:
 | Actual TS lib/server/notifications/scheduler.ts | c22ea440dcf47ac106b5675f3529ae2a73bd0d82059bd57b5409fa50ac950c8a |
 | Actual TS lib/server/notifications/delivery-contract.ts | 5c851d860f5d4f840673805e48663c542dbaca07d00d9e22960c50a53b34e8b3 |
 | Actual TS lib/server/notifications/apns.ts | f0a24b88f1d2ace723a31a7965fc3fc0da9293d28947fd1c33be1c24edb39f2e |
+
+## Same-task typed-claim semantic correction
+
+The complete original typed_claim shape is claimType/subjectId/value/asOf/evidence. Source semantic now includes only status/scope/applicability/itemDigest and claimType/subjectId/value; claimRevision/payloadHash and asOf/evidence receipt metadata are excluded. Actual claimRevision and exact sourceRefs equality are now explicit qualification checks alongside unchanged mapping revision, source digest, payload hash, owner/session/epoch, current item and TTL guards. No role, setting, target or source-publication authority changes.
+
+- Baseline reproduction: immutable SQL 82e588 plus the new existing-watch assertions in an isolated temporary workspace and network-none PostgreSQL; 1 PASS / 1 FAIL / 0 skip. Candidate reviewedAt/publication expiry refresh changed the digest. This is a synthetic old-source reproduction, not a production or CI failure. It ran after the patch because Main’s reproduction instruction arrived then; original FAIL log is retained.
+- Corrected affected run: 2 PASS / 0 FAIL / 0 skip (full migration replay/ACL plus the existing watch case). Actual typed-claim receipt timestamps and publication expiry refresh retain the same content digest, create no outbox record and do not extend the stored watch expiry. Original reviewed/acked status change still produces exactly one event; unreviewed source withdrawal and reviewer rights loss remain unavailable. Other 17-case evidence is reused.
+
+Local ignored raw logs: semantic-watch-before.log and semantic-watch-after.log. Docs, syntax and diff checks PASS; target/provider/device/enrollment remain UNRUN.
+
+| Affected source | SHA256 |
+| --- | --- |
+| supabase/migrations/20261005030000_reminder_delivery.sql | deb196b483d196451b3bd28f6b5e905d347c012bb6cb8c189d889c8f539b6e10 |
+| tests/integration/notifications/delivery-postgres.test.mjs | d12201ef08992dabea452a584c607979ceb8cfcf0b0efe1b2964387c7b63af00 |
