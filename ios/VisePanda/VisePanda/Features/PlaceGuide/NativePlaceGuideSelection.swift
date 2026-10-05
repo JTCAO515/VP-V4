@@ -11,7 +11,7 @@ enum NativePlaceGuideInterest: String, CaseIterable, Codable, Sendable {
     }
 }
 
-struct NativePlaceGuideSelection: Equatable, Sendable {
+struct NativePlaceGuideSelection: Hashable, Sendable {
     let scope: NativeDataScope
     let canonicalPoiID: String
     let placeReferenceID: String

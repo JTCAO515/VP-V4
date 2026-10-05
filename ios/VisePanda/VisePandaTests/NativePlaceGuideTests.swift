@@ -71,5 +71,9 @@ import Testing
         #expect(throws: (any Error).self) { try fenced.fields() }
         try fenced.validatedRecovery()
         #expect(throws: (any Error).self) { try restored.selection(for: .init(endpoint: scope.endpoint, subject: "other", mobileEpoch: 1, generation: 2)) }
+        // Exact synthetic Native-generated command, for the partner's closed HTTP/SQL parser check.
+        let fixtureURL = FileManager.default.temporaryDirectory.appendingPathComponent("vpj28-owned-native-new-goal.json")
+        try body.write(to: fixtureURL, options: .atomic)
+        print("VPJ28_OWNED_NATIVE_COMMAND_PATH " + fixtureURL.path)
     }
 }

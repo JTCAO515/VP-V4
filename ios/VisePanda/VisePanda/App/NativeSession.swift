@@ -888,9 +888,10 @@ final class NativeSession {
         }
     }
     func completePlaceGuide(_ pending: NativePlaceGuidePending, actor: NativeDataScope) throws {
+        let reference = try NativePlaceGuideResultReference(pending)
         guard dataScope == actor, let stored = try pendingPlaceGuide(actor: actor),
               try stored.selection(for: actor) == pending.selection(for: actor),
-              stored == pending || stored.fencedReference == (try NativePlaceGuideResultReference(pending)) else { throw NativeDataError.staleSessionResponse }
+              stored == pending || stored.fencedReference == reference else { throw NativeDataError.staleSessionResponse }
         let status = vault.remove(service: placeGuideJournalService, owner: actor.subject)
         guard status == errSecSuccess || status == errSecItemNotFound else { throw NativeDataError.sessionUnavailable }
     }
