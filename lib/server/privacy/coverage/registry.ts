@@ -13,6 +13,8 @@ import type { SelectedCommand } from './contract.ts';
 import { ownerModuleExportHTTP } from './module-export.ts';
 import { materialReferenceNativeHTTP } from '../material-references/http.ts';
 import { materialCoverageRequestBody } from '../material-references/coverage.ts';
+import { notificationDataNativeHTTP } from '../notification-data/http.ts';
+import { notificationDataCoverageRequestBody } from '../notification-data/coverage.ts';
 
 export type OwnerHandler = (request: NextRequest, selected: SelectedCommand) => Promise<Response>;
 /** Real direct calls to existing owner boundaries, never a service-role or arbitrary RPC dispatch. */
@@ -30,6 +32,7 @@ export const OWNER_HANDLERS: Readonly<Record<string, OwnerHandler>> = {
   notifications: request => ownerModuleExportHTTP(request, 'notification-metadata/1'),
   lifecycle: request => ownerModuleExportHTTP(request, 'trip-lifecycle-metadata/1'),
   materials: request => materialReferenceNativeHTTP(request),
+  notification_data: request => notificationDataNativeHTTP(request),
 };
 const paths: Readonly<Record<string, string>> = {
   core: '/api/privacy/native/v1/exports', trip: '/api/privacy/native/v1/trips',
@@ -38,6 +41,7 @@ const paths: Readonly<Record<string, string>> = {
   ugc: '/api/community/native/v1', safety: '/api/community/safety/native/v1', publication: '/api/community/publication/native/v1',
   notifications: '/api/privacy/native/v1/coverage/module-export', lifecycle: '/api/privacy/native/v1/coverage/module-export',
   materials: '/api/privacy/native/v1/material-references',
+  notification_data: '/api/privacy/native/v1/notification-data',
 };
 export function ownerHandlerRequest(request: Request, selected: SelectedCommand, signal: AbortSignal): NextRequest {
   const { input, handler } = selected; if (!handler || !Object.hasOwn(OWNER_HANDLERS, handler)) throw Error('HANDLER_MISSING');
@@ -52,6 +56,7 @@ export function ownerHandlerRequest(request: Request, selected: SelectedCommand,
     else if (['ugc','safety','publication'].includes(handler)) body = JSON.stringify({ action: 'operation', operationId: input.operationId, mutationBytes: input.commandBytes });
     else if (['brief','case'].includes(handler)) body = JSON.stringify({ action: 'read_operation', operationId: input.operationId });
     else if (handler === 'materials') body = materialCoverageRequestBody(input);
+    else if (handler === 'notification_data') body = notificationDataCoverageRequestBody(input);
     else throw Error('RECOVERY_NOT_IMPLEMENTED');
   }
   return new NextRequest(url, { method, headers, signal, ...(method === 'POST' ? { body } : {}) });

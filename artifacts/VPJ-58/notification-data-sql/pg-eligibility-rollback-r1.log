@@ -1,0 +1,16 @@
+▶ notification exit real PG replay and v2 owner/service contract
+  ✔ migration rollback restores old definitions, ACL and no exit schema (215.811291ms)
+  ✔ default ACL/RLS all denied, original settings unactivated, fixture grants only (467.691958ms)
+  ✔ disabled RPC has zero writes after current authority (311.478084ms)
+  ✔ begin_fenced retains original TTL/head/archive/session/quiet/recipient eligibility negatives (3051.949833ms)
+  ✔ erasure rollback leaves original source rows, operations and request while no fence survives (646.761667ms)
+✔ notification exit real PG replay and v2 owner/service contract (10583.701958ms)
+ℹ Focused original eligibility and rollback checks; previous full 23 PASS evidence applies to unchanged runtime. Other cases are not registered, not claimed re-run.
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 10658.723875

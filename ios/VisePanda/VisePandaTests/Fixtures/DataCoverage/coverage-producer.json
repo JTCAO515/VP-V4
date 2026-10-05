@@ -2,7 +2,7 @@
   "evidence": "synthetic closed protocol fixture; not target/runtime capability",
   "catalog": {
     "schemaVersion": "data-coverage/1",
-    "catalogVersion": "data-coverage-catalog/2026-10-06.3",
+    "catalogVersion": "data-coverage-catalog/2026-10-06.4",
     "actorId": "12345678-1234-4123-8123-123456789abc",
     "sessionId": "22345678-1234-4123-8123-123456789abc",
     "mobileEpoch": 1,
@@ -224,17 +224,70 @@
       {
         "id": "notifications",
         "location": "server",
-        "version": "coverage-module-export/1",
-        "scope": "notification-metadata/1",
-        "exportHandler": "notifications",
-        "deleteHandler": null,
-        "selection": "owner",
-        "capacity": "100/page; 10000 rows; 1MB whole wrapper; fixed30s current source/proof; independent owner RPC ACL",
+        "version": "notification-data/1",
+        "scope": "notification-trip-data/1",
+        "exportHandler": "notification_data",
+        "deleteHandler": "notification_data",
+        "selection": "notification_records",
+        "capacity": "1..20 explicitly selected owner UUIDs; Trip notifications / device bindings / exit records; full field preview, exact bytes, source CAS, 5/page, 4 pages, 1MB; fixed30s source consent; monotonic drain before data erasure receipt",
         "retention": [
-          "provider_delivery_unknown"
+          "nonreplayable_object_operation_dispatch_fences",
+          "minimal_exit_receipts",
+          "original_trip_and_business_results",
+          "device_bindings"
         ],
         "missing": [
-          "module_delete_not_implemented"
+          "provider_accepted_copies_not_recallable",
+          "provider_ack_unknown",
+          "device_delivered_notifications",
+          "device_local_journals",
+          "external_export_files",
+          "backup_restore_target_acceptance"
+        ]
+      },
+      {
+        "id": "notification_devices",
+        "location": "server",
+        "version": "notification-data/1",
+        "scope": "notification-device-data/1",
+        "exportHandler": "notification_data",
+        "deleteHandler": "notification_data",
+        "selection": "notification_records",
+        "capacity": "1..20 explicitly selected owner UUIDs; Trip notifications / device bindings / exit records; full field preview, exact bytes, source CAS, 5/page, 4 pages, 1MB; fixed30s source consent; monotonic drain before data erasure receipt",
+        "retention": [
+          "nonreplayable_device_dispatch_fences",
+          "minimal_exit_receipts",
+          "trip_reminder_watch_source_rows"
+        ],
+        "missing": [
+          "provider_accepted_copies_not_recallable",
+          "provider_ack_unknown",
+          "device_os_permission",
+          "device_push_token_system_copy",
+          "device_delivered_notifications",
+          "device_local_journals",
+          "external_export_files",
+          "backup_restore_target_acceptance"
+        ]
+      },
+      {
+        "id": "notification_exit_progress",
+        "location": "server",
+        "version": "notification-data/1",
+        "scope": "notification-exit-progress/1",
+        "exportHandler": "notification_data",
+        "deleteHandler": "notification_data",
+        "selection": "notification_records",
+        "capacity": "1..20 explicitly selected owner UUIDs; Trip notifications / device bindings / exit records; full field preview, exact bytes, source CAS, 5/page, 4 pages, 1MB; fixed30s source consent; monotonic drain before data erasure receipt",
+        "retention": [
+          "nonreplayable_request_object_operation_device_dispatch_fences",
+          "source_preview_request_digests",
+          "minimal_exit_receipts"
+        ],
+        "missing": [
+          "other_unselected_exit_requests",
+          "external_export_files",
+          "backup_restore_target_acceptance"
         ]
       },
       {
@@ -544,10 +597,10 @@
     ],
     "allUserDataCompleted": false
   },
-  "requestBytes": "{\"schemaVersion\":\"data-coverage/1\",\"catalogVersion\":\"data-coverage-catalog/2026-10-06.3\",\"actorId\":\"12345678-1234-4123-8123-123456789abc\",\"sessionId\":\"22345678-1234-4123-8123-123456789abc\",\"mobileEpoch\":1,\"moduleId\":\"ugc\",\"moduleVersion\":\"community-j1/1\",\"operationId\":\"32345678-1234-4123-8123-123456789abc\",\"action\":\"export\",\"phase\":\"execute\",\"confirmed\":true,\"tripId\":null,\"commandBytes\":\"{\\\"action\\\":\\\"export\\\"}\"}",
+  "requestBytes": "{\"schemaVersion\":\"data-coverage/1\",\"catalogVersion\":\"data-coverage-catalog/2026-10-06.4\",\"actorId\":\"12345678-1234-4123-8123-123456789abc\",\"sessionId\":\"22345678-1234-4123-8123-123456789abc\",\"mobileEpoch\":1,\"moduleId\":\"ugc\",\"moduleVersion\":\"community-j1/1\",\"operationId\":\"32345678-1234-4123-8123-123456789abc\",\"action\":\"export\",\"phase\":\"execute\",\"confirmed\":true,\"tripId\":null,\"commandBytes\":\"{\\\"action\\\":\\\"export\\\"}\"}",
   "receipt": {
     "schemaVersion": "data-coverage/1",
-    "catalogVersion": "data-coverage-catalog/2026-10-06.3",
+    "catalogVersion": "data-coverage-catalog/2026-10-06.4",
     "actorId": "12345678-1234-4123-8123-123456789abc",
     "sessionId": "22345678-1234-4123-8123-123456789abc",
     "mobileEpoch": 1,
@@ -556,7 +609,7 @@
     "operationId": "32345678-1234-4123-8123-123456789abc",
     "action": "export",
     "phase": "execute",
-    "requestDigest": "7693c6a2c935567d491f1e63ff6cb69a7fe775a5caecce774a23d13a07d0e36b",
+    "requestDigest": "f0542f498bbddf8a0da52b6a20cdf0226fd9412a91c3aedfb3433cd3accb32f3",
     "state": "scoped_complete",
     "reason": "NONE",
     "result": {

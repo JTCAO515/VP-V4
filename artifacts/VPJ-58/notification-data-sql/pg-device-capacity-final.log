@@ -1,0 +1,17 @@
+▶ notification exit real PG replay and v2 owner/service contract
+  ✔ migration rollback restores old definitions, ACL and no exit schema (213.620875ms)
+  ✔ default ACL/RLS all denied, original settings unactivated, fixture grants only (464.777125ms)
+  ✔ disabled RPC has zero writes after current authority (311.9365ms)
+  ✔ device private token export has direct full columns, cross-Trip outbox and current source CAS (760.589959ms)
+  ✔ device erase fences operation/outbox parent and old binding, preserving original reminder/watch business rows (5793.670917ms)
+  ✔ device registration operation source rows also count toward the capacity sentinel (608.515125ms)
+✔ notification exit real PG replay and v2 owner/service contract (14013.508916ms)
+ℹ Focused device-capacity validation. Other cases are not registered, not claimed re-run; reuse the separately recorded full PG evidence for unchanged paths.
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 14087.6205

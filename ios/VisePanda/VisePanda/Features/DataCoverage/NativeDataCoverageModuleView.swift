@@ -1,9 +1,9 @@
 import SwiftUI
 
 private enum NativeDataCoverageDestination: Identifiable {
-    case core, memory, trip(NativeLinkedTripDeleteSelection), deviceExport, deviceDelete, material(NativeMaterialReferenceScope)
+    case core, memory, trip(NativeLinkedTripDeleteSelection), deviceExport, deviceDelete, material(NativeMaterialReferenceScope), notification(NativeNotificationDataScope)
     var id: String {
-        switch self { case .core: "core"; case .memory: "memory"; case .trip(let v): v.tripID; case .deviceExport: "device-export"; case .deviceDelete: "device-delete"; case .material(let scope): scope.rawValue }
+        switch self { case .core: "core"; case .memory: "memory"; case .trip(let v): v.tripID; case .deviceExport: "device-export"; case .deviceDelete: "device-delete"; case .material(let scope): scope.rawValue; case .notification(let scope): scope.rawValue }
     }
 }
 
@@ -82,6 +82,7 @@ struct NativeDataCoverageModuleView: View {
                     case .trip(let selection): NativeDataCoverageTripConsumer(module: module, coverage: store, session: session, selection: selection)
                     case .deviceExport: NativeDataCoverageDeviceExportConsumer(coverage: store, session: session, chinese: chinese)
                     case .deviceDelete: NativeDataCoverageDeviceDeleteConsumer(coverage: store, session: session, chinese: chinese)
+                    case .notification(let scope): NativeNotificationDataConsumer(module: module, coverage: store, session: session, scope: scope, chinese: chinese)
                     case .material(let scope): NativeMaterialReferenceConsumer(coverage: store, session: session, scope: scope, chinese: chinese)
                     }
                 }
@@ -109,7 +110,13 @@ struct NativeDataCoverageModuleView: View {
     }
 
     @ViewBuilder private var serverActions: some View {
-        if module.version == NativeMaterialReferenceWire.schema,
+        if let scope = NativeNotificationDataScope.catalogScope(module) {
+            Section(t("明确选择通知资料范围", "Explicitly select notification data scope")) {
+                Button(t("选择记录、预览全部字段并确认导出或擦除", "Select records, preview all fields and confirm export or erasure")) { destination = .notification(scope) }
+                    .disabled(!registered || actor == nil)
+                Text(t("核验私有文件或原操作擦除回执后，才记录所选范围的结果。", "Records selected scope only after a verified private file or original erasure receipt."))
+            }
+        } else if module.version == NativeMaterialReferenceWire.schema,
            module.exportHandler == "materials", module.deleteHandler == "materials",
            let scope = NativeMaterialReferenceScope(rawValue: module.scope) {
             Section(t("明确选择资料与处理范围", "Select data and operation scope explicitly")) {
