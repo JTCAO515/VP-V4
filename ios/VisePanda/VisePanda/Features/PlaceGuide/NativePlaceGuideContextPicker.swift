@@ -47,7 +47,7 @@ struct NativePlaceGuideContextPicker<Destination: View>: View {
                                 Text(t("Trip version: ", "行程版本：") + String(trip.headVersion)).font(.caption)
                             }
                             if let selection {
-                                NavigationLink { destination(selection) } label: {
+                                NavigationLink(value: selection) {
                                     Text(t("Read this place's guide", "阅读此地点讲解"))
                                 }.accessibilityIdentifier("guide.open")
                             }
@@ -79,6 +79,7 @@ struct NativePlaceGuideContextPicker<Destination: View>: View {
             }.padding()
         }
         .navigationTitle(t("Place guide", "地点讲解"))
+        .navigationDestination(for: NativePlaceGuideSelection.self) { destination($0) }
         .task(id: ReadKey(scope: scope, refresh: refresh)) {
             guard let scope else { clear(); return }
             await trips.list(scope: scope, current: { self.scope }) {
