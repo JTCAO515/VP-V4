@@ -2,8 +2,10 @@ import { CostGuard } from '../../model-gateway/budget/index.ts';
 import { runWithDurableBudget, type BudgetRpc, type BudgetAttempt } from '../../model-gateway/budget/durable.ts';
 import { invokeScopedTripEditProtocol, type ProtocolTransport, type ProtocolUsage } from '../../model-gateway/adapters/provider-protocol.ts';
 import { validatedPlanningUsageReceipt, type RecordPlanningUsage } from '../../model-gateway/budget/usage-receipt.ts';
-import { parseScopedReceipt, sameValue } from '../../trip/scoped-edit/wire.ts';
-import { record, exact } from '../../trip/scoped-edit/contract.ts';
+import { sameValue } from '../../trip/scoped-edit/wire.ts';
+import { record, exact, uuid } from '../../trip/scoped-edit/contract.ts';
+import { scopedEditDiff } from '../../trip/scoped-edit/diff.ts';
+import { previewScopedPatch } from '../../trip/scoped-edit/candidate-guard.ts';
 import { parseScopedModelOutput } from './model-output.ts';
 import { parseInput, promptInput, authorized, savedOutput, candidatePatch, type ScopedBinding, type ScopedInput, type SavedOutput } from './protocol.ts';
 import type { DurableTurnLease } from '../durable-worker.ts';
@@ -14,7 +16,7 @@ export type ScopedExecutorPorts = Readonly<{
 }>;
 const leaseParams=(l:DurableTurnLease)=>({p_turn_id:l.turnId,p_lease_token:l.leaseToken});
 /** One durable turn/operation/attempt. No claim, scheduler, secret lookup, fallback,
- * second planner, or Trip confirm. Unknown ACK can only recover original output. */
+ * second planner, Proposal producer, or Trip confirm. Unknown ACK can only recover original output. */
 export async function executeScopedTripEdit(lease: DurableTurnLease, ports: ScopedExecutorPorts, signal: AbortSignal): Promise<'persisted'|'pending'|'unavailable'> {
   if (signal.aborted) return 'unavailable';
   let input: ScopedInput | null=null;
@@ -68,7 +70,14 @@ export async function executeScopedTripEdit(lease: DurableTurnLease, ports: Scop
     const patch=candidatePatch(input,output.output.edits);
     let completed:unknown;
     try {completed=await ports.rpc('complete_scoped_trip_edit_work_v1',{...params,p_patch:patch},signal);} catch { /* Read receipt below after ambiguous ACK. */ }
-    const valid=(v:unknown)=>record(v)&&exact(v,['kind','binding','receipt'])&&v.kind==='completed'&&sameValue(v.binding,b)&&parseScopedReceipt(v.receipt,b.tripId,b.operationId)?.kind==='scoped_edit_proposal/1';
+    const diff=scopedEditDiff(input.context.snapshot,previewScopedPatch(input.context.snapshot,patch,{scope:input.context.scope,lockedItemIds:input.context.lockedItemIds,fixedItemIds:input.context.fixedItemIds}));
+    const valid=(v:unknown)=>{
+      if(!record(v)||!exact(v,['kind','binding','receipt'])||v.kind!=='candidate_saved'||!sameValue(v.binding,b)||!record(v.receipt))return false;
+      const r=v.receipt;
+      if(!exact(r,['kind','operationId','tripId','contextId','contextDigest','baseVersion','expiresAt','returnScope','candidates','reused'])||r.kind!=='scoped_edit_candidates/1'||r.operationId!==b.operationId||r.tripId!==b.tripId||r.contextId!==b.contextId||r.contextDigest!==b.contextDigest||r.baseVersion!==b.baseVersion||!sameValue(r.returnScope,input!.context.scope)||typeof r.reused!=='boolean'||typeof r.expiresAt!=='string'||Date.parse(r.expiresAt)<=ports.now()||Date.parse(r.expiresAt)>Date.parse(input!.context.expiresAt)||!Array.isArray(r.candidates)||r.candidates.length!==1)return false;
+      const c=r.candidates[0];
+      return record(c)&&exact(c,['candidateId','edits','diff'])&&uuid(c.candidateId)&&sameValue(c.edits,output!.output.kind==='candidate'?output!.output.edits:null)&&sameValue(c.diff,diff);
+    };
     if(!signal.aborted&&valid(completed))return 'persisted';
     if(signal.aborted)return 'pending';
     const reread=await ports.rpc('read_scoped_trip_edit_completion_v1',params,signal);

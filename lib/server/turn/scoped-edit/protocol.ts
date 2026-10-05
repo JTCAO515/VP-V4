@@ -1,6 +1,6 @@
 import { exact, record, uuid, digest, integer, type ManualEdit } from '../../trip/scoped-edit/contract.ts';
 import { parseScopedContext, sameValue, type ScopedEditContext } from '../../trip/scoped-edit/wire.ts';
-import { manualScopedPatch, previewScopedPatch, type ScopedPatchOperation, type ScopedPatch } from '../../trip/scoped-edit/candidate-guard.ts';
+import { manualScopedPatch, previewScopedPatch, selectedItems, type ScopedPatchOperation, type ScopedPatch } from '../../trip/scoped-edit/candidate-guard.ts';
 import { parseScopedModelOutput, type ScopedModelOutput } from './model-output.ts';
 import { PROTOCOL_MODELS, type ProtocolUsage } from '../../model-gateway/adapters/provider-protocol.ts';
 import { isQwenEndpoint } from '../../model-gateway/adapters/provider-endpoints.ts';
@@ -51,7 +51,7 @@ export function savedOutput(v: unknown, b: ScopedBinding): SavedOutput | null {
 /** Translate model edits through the same domain guard as manual editing, then
  * check the entire candidate against the original current snapshot. */
 export function candidatePatch(input: ScopedInput, edits: readonly ManualEdit[]): ScopedPatch {
-  const base=input.context.snapshot, constraints={scope:input.context.scope, lockedItemIds:input.context.lockedItemIds, fixedItemIds:input.context.fixedItemIds};
+  const base=input.context.snapshot, constraints={scope:{...input.context.scope,itemIds:[...selectedItems(input.context.snapshot,input.context.scope)]}, lockedItemIds:input.context.lockedItemIds, fixedItemIds:input.context.fixedItemIds};
   let current=base; const operations:ScopedPatchOperation[]=[];
   for (const edit of edits) {
     const step=manualScopedPatch(current,edit,constraints);

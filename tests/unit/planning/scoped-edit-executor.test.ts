@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import { executeScopedTripEdit, type ScopedExecutorPorts } from '../../../lib/server/turn/scoped-edit/executor.ts';
 import { parseScopedModelOutput, SCOPED_TRIP_EDIT_PROMPT } from '../../../lib/server/turn/scoped-edit/model-output.ts';
 import { candidatePatch, parseInput, promptInput, type ScopedInput } from '../../../lib/server/turn/scoped-edit/protocol.ts';
+import { scopedEditDiff } from '../../../lib/server/trip/scoped-edit/diff.ts';
+import { previewScopedPatch } from '../../../lib/server/trip/scoped-edit/candidate-guard.ts';
 import { PROTOCOL_MODELS } from '../../../lib/server/model-gateway/adapters/provider-protocol.ts';
 const id=(n:number)=>`00000000-0000-4000-8000-${String(n).padStart(12,'0')}`;
 const now=Date.parse('2026-10-05T04:00:00.000Z');
@@ -42,7 +44,8 @@ function fixture(options:Record<string,unknown>={}) {
   if(name==='read_scoped_trip_edit_completion_v1')return committed?completion():{kind:'pending'};
   throw Error('unexpected '+name);
  },};
- function completion(){return {kind:'completed',binding,receipt:{kind:'scoped_edit_proposal/1',operationId:id(7),tripId:id(6),contextId:id(5),contextDigest:'a'.repeat(64),proposalId:id(11),proposalRevision:1,proposalDigest:'trip-v2:'+'e'.repeat(64),baseVersion:3,expiresAt:'2026-10-05T04:05:00.000Z',returnScope:context.scope,diff:{changes:[],preservedItemIds:['locked','untouched'],transferImpact:'pending',walkingImprovement:'unverified',externalOrderEffect:'none'},reused:false}};}
+ function completion(){const input=parseInput(raw,lease,now)!,patch=candidatePatch(input,candidate.edits),after=previewScopedPatch(input.context.snapshot,patch,{scope:context.scope,lockedItemIds:context.lockedItemIds,fixedItemIds:context.fixedItemIds});return {kind:'candidate_saved',binding,receipt:{kind:'scoped_edit_candidates/1',operationId:id(7),tripId:id(6),contextId:id(5),contextDigest:'a'.repeat(64),baseVersion:3,expiresAt:'2026-10-05T04:05:00.000Z',returnScope:context.scope,candidates:[{candidateId:id(11),edits:candidate.edits,diff:scopedEditDiff(input.context.snapshot,after)}],reused:false}};}
+
  return {ports,log,run:()=>executeScopedTripEdit(lease,ports,new AbortController().signal),get calls(){return calls;},get committed(){return committed;}};
 }
 test('closed output refuses extra fields, source or identity claims, unsupported operations and >16 edits',()=>{
@@ -59,11 +62,11 @@ test('local candidate preserves unselected and locked items; rejects their edits
  assert.equal(candidatePatch(input,candidate.edits).expectedVersion,3);
  for(const itemId of ['locked','untouched','missing'])assert.throws(()=>candidatePatch(input,[{kind:'set_time',itemId,startsAt:'2026-10-06T12:00:00+08:00',endsAt:null}]));
 });
-test('one real protocol JSON round settles usage before original proposal publication',async()=>{const f=fixture();assert.equal(await f.run(),'persisted');assert.equal(f.calls,1);assert.equal(f.committed,true);assert.ok(f.log.indexOf('usage')<f.log.indexOf('complete_scoped_trip_edit_work_v1'));});
+test('one real protocol JSON round settles usage before settled typed candidate publication',async()=>{const f=fixture();assert.equal(await f.run(),'persisted');assert.equal(f.calls,1);assert.equal(f.committed,true);assert.ok(f.log.indexOf('usage')<f.log.indexOf('complete_scoped_trip_edit_work_v1'));});
 for(const deny of ['reserve','dispatch'])test(`missing ${deny} authority blocks provider dispatch`,async()=>{const f=fixture({deny});assert.equal(await f.run(),'pending');assert.equal(f.calls,0);assert.equal(f.committed,false);});
 for(const option of ['missingQualification','existingUnknown','alreadyDispatched'])test(`${option} never replays provider`,async()=>{const f=fixture({[option]:true});assert.equal(await f.run(),'pending');assert.equal(f.calls,0);});
-test('output save ACK loss reads same attempt; completion ACK loss reads same proposal',async()=>{const f=fixture({outputAckLost:true,completeAckLost:true});assert.equal(await f.run(),'persisted');assert.equal(f.calls,1);assert.equal(f.log.filter(x=>x==='complete_scoped_trip_edit_work_v1').length,1);});
+test('output save ACK loss reads same attempt; completion ACK loss reads same candidate',async()=>{const f=fixture({outputAckLost:true,completeAckLost:true});assert.equal(await f.run(),'persisted');assert.equal(f.calls,1);assert.equal(f.log.filter(x=>x==='complete_scoped_trip_edit_work_v1').length,1);});
 for(const option of ['unknownPrice','usageAckLost','staleAfterSave'])test(`${option} does not falsely publish success`,async()=>{const f=fixture({[option]:true});assert.equal(await f.run(),'pending');assert.equal(f.calls,1);assert.equal(f.committed,false);});
-test('invalid model fields preserve unknown accounting and cannot reach proposal',async()=>{const f=fixture({output:{...candidate,feasibility:'verified'}});assert.equal(await f.run(),'pending');assert.equal(f.committed,false);});
+test('invalid model fields preserve unknown accounting and cannot reach candidate',async()=>{const f=fixture({output:{...candidate,feasibility:'verified'}});assert.equal(await f.run(),'pending');assert.equal(f.committed,false);});
 test('provider timeout has no automatic second call or completion',async()=>{const f=fixture({timeout:true});assert.equal(await f.run(),'pending');assert.equal(f.calls,1);assert.equal(f.committed,false);});
 test('caller cancellation before execution touches no RPC or provider',async()=>{const f=fixture();const c=new AbortController();c.abort();assert.equal(await executeScopedTripEdit(lease,f.ports,c.signal),'unavailable');assert.equal(f.log.length,0);});

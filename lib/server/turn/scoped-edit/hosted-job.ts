@@ -22,7 +22,7 @@ const rpcs=new Set(['hosted_worker_heartbeat','hosted_scoped_trip_edit_target_v1
  * provider adapter. No key discovery, scheduler, fallback or default enabled mode. */
 export function createHostedScopedEditWorker(raw:ScopedHostedProfile,deps:HostedWorkerDependencies & Readonly<{scopedEditEnabled?:boolean}>) {
   const profile=parseScopedHostedProfile(raw), tariff=profile.loop.qwen, target=profile.target;
-  if(deps.scopedEditEnabled!==true||typeof window!=='undefined'||process.env.VERCEL_ENV||!uuid(deps.workerId)||typeof deps.workerCredential!=='function'||typeof deps.providerCredential!=='function'||typeof deps.journal.planningUsage!=='function')throw Error('Scoped host unavailable');
+  if(deps.scopedEditEnabled!==true||typeof window!=='undefined'||process.env.VERCEL_ENV||!uuid(deps.workerId)||!/^[A-Za-z0-9._-]{1,64}$/.test(deps.build)||!Number.isFinite(Date.parse(deps.startedAt))||new Date(deps.startedAt).toISOString()!==deps.startedAt||typeof deps.workerCredential!=='function'||typeof deps.providerCredential!=='function'||typeof deps.journal.planningUsage!=='function')throw Error('Scoped host unavailable');
   const pricing=createTextJobPrice(tariff.pricing);
   const configDigest=createHash('sha256').update(JSON.stringify(profile)).digest('hex');
   const fetcher=deps.fetch??fetch;
