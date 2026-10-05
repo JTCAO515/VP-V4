@@ -66,3 +66,22 @@ This package does not close whole #239, activate a target, or satisfy global Bet
 isolation. Main retains final parent mapping, independent review and merge gates.
 
 Committed console logs normalize trailing whitespace only; original failure messages, commands and results remain. source-hashes.json freezes the exact server runtime and merged SQL source bytes.
+
+## Native fixed source integration
+
+Normal immutable merge of bced4c9637b4431475093efa495db602dfb24c1e produces
+combined50cef424 (with normal fixed662d7a31d5f). Server/SQL frozen source hashes
+remain identical; no repeated joint matrix. The new adapter independently derives
+completed/queued/cancelled/absent from original results and requires matching outer
+state/reason, resolving the55bc cancelled-promotion finding. Original module APIs
+remain unchanged. Full registry31 entries, real selected objects, original core
+ticket/digest delivery and four injected original consumers are integrated.
+
+Read-only actual xcresult `/tmp/vpj58-native-data-coverage-r1.xcresult` contains
+eight PASS,0FAIL,0SKIP **only NativeCoreExportTests**. It contains no new
+NativeDataCoverageTests nodes; the early new test file was placed in resources.
+Final bced PBX corrects Sources membership; owner reports final test-build-r5 PASS,
+but new own runtime evidence remains pending. Do not label those old8 as the new
+consumer/cancellation/row-proof checks. Original Core8 evidence is reused once;
+only the new intended cases need their actual result. Source completion and this
+validation distinction remain separate. Whole #239/ALL2/target acceptance is UNRUN.

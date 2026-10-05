@@ -159,3 +159,16 @@ for all three community paths as well as Case/Brief. Do not change those accepte
 terminal APIs to hide abandoned;correct only new adapter's source-derived state.
 Own cancellation fixture/negative55bcbdca is ready for peer decoder proof. Server
 runtime unchanged since frozen manifest; no repeated runtime matrix required.
+
+Final native PRODUCT immutable bced4c96 normally merged,combined50cef424 CLEAN.
+55bc cancelled-promotion source finding RESOLVED: newmeaning completed/queued/
+cancelled/absent independently checks exact outerstate/reason; old APIs unchanged.
+Known validation correction: r1 xcresult8PASS0skip is ONLY original CoreExportTests;
+new DataCoverage suite absent from those nodes. PBX source membership corrected in
+bced; final test-build-r5 PASS reported, new intended cases pending soleNative.
+No remaining known server/SQL/caller product finding at this checkpoint; genuine
+missing31-domain exits and ALL2 remain explicit. Auth actual path:
+artifacts/VPJ-58/coverage/auth-http-r3.log (1PASS0skip/cleanup1a94152c).
+Root ordinary frozen runtime hash comparison after all normal merges returned
+runtimeUnchanged=true. Registry actual PG/HTTPentries committed6a1dbbb8. One PR
+will use same source after necessary Native own test evidence, not an old8 upgrade.
