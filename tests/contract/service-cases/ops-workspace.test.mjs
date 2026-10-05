@@ -119,3 +119,6 @@ test('server erased tombstone clears raw bytes but never claims cancellation or 
 test('corrupted storage remains blocked after refresh instead of silently enabling controls', async () => {
   const h = harness({blocked: true}); await h.controller.refresh(); assert.equal(h.controller.snapshot().message, 'storage'); await h.controller.mutate(command()); assert.ok(!h.calls.some(c => c.input.action === 'accept'));
 });
+test('unknown ACK with no visible workspace still erases raw bytes at original grant/freshness deadline', async () => {
+  const h = harness(); await h.controller.refresh(); await h.controller.mutate(command()); assert.equal(h.controller.snapshot().workspace, null); assert.equal(h.controller.canAbandon(), true); h.time(now + 30001); await h.controller.recover(true); assert.equal(h.controller.canAbandon(), false); assert.ok(h.controller.snapshot().pending); assert.ok(!h.calls.some(c => c.input.action === 'abandon'));
+});

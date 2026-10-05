@@ -53,6 +53,7 @@ export class ServiceOpsController {
   private bytes: string | null = null;
   private actor: Identity | null = null;
   private freshUntil = 0;
+  private rawValidUntil = 0;
   private storageBlocked = false;
   private view: View;
   private ports: Ports;
@@ -64,7 +65,7 @@ export class ServiceOpsController {
   snapshot() { return this.view; }
   private now() { return this.ports.now?.() ?? Date.now(); }
   private set(patch: Partial<View>) { this.view = {...this.view, ...patch, ...(this.storageBlocked ? {message: 'storage' as const} : {})}; this.ports.changed(this.view); }
-  invalidate() { ++this.epoch; this.actor = null; this.bytes = null; this.freshUntil = 0; this.set({workspace: null, message: this.view.pending ? 'unknown' : 'unavailable'}); }
+  invalidate() { ++this.epoch; this.actor = null; this.bytes = null; this.freshUntil = 0; this.rawValidUntil = 0; this.set({workspace: null, message: this.view.pending ? 'unknown' : 'unavailable'}); }
   private async qualified(epoch: number, expected?: Identity | Marker): Promise<Identity | null> {
     const id = await this.ports.identity();
     if (epoch !== this.epoch || !id || id.expiresAt <= this.now() || (expected && !sameSession(expected, id))) return null;
@@ -99,6 +100,7 @@ export class ServiceOpsController {
   }
   expire() {
     const w = this.view.workspace;
+    if (this.bytes !== null && this.rawValidUntil <= this.now()) { this.invalidate(); return; }
     if (w && ((this.freshUntil <= this.now() || !this.actor || this.actor.expiresAt <= this.now()) || w.cases.some(c => !currentCase(c, this.now()) || (c.staff !== null && c.staff.shiftEndsAt <= this.now() && !['resolved', 'unresolved', 'cancelled'].includes(c.status))))) this.invalidate();
   }
   async mutate(command: ServiceMutation) {
@@ -117,7 +119,7 @@ export class ServiceOpsController {
       if (!await this.qualified(epoch, id) || this.freshUntil <= this.now() || !canAct(command.action as Marker['action'], c, w, this.now())) { if (epoch === this.epoch) this.invalidate(); return; }
       const marker: Marker = {actorId: id.actorId, sessionId: id.sessionId, operationId: command.operationId, caseId: command.caseId, action: command.action as Marker['action'], expectedRevision: command.expectedRevision, grantRevision: command.grantRevision, requestDigest: digest};
       try { this.ports.save(marker); } catch { this.storageBlocked = true; this.set({message: 'storage'}); return; }
-      this.bytes = bytes; this.set({pending: marker, workspace: null, message: 'unknown'});
+      this.bytes = bytes; this.rawValidUntil = Math.min(this.freshUntil, id.expiresAt, c.expiresAt ?? 0, c.staff?.shiftEndsAt ?? Infinity); this.set({pending: marker, workspace: null, message: 'unknown'});
       const reply = await this.ports.send(bytes, id);
       if (!await this.qualified(epoch, id)) { if (epoch === this.epoch) this.invalidate(); return; }
       await this.finish(reply, marker, epoch, id);
@@ -134,8 +136,9 @@ export class ServiceOpsController {
     await this.workspace(epoch, id);
     if (epoch === this.epoch && this.view.workspace) this.set({message: 'confirmed'});
   }
-  canAbandon() { return this.bytes !== null && !this.storageBlocked; }
+  canAbandon() { return this.bytes !== null && this.rawValidUntil > this.now() && !this.storageBlocked; }
   async recover(abandon = false) {
+    this.expire();
     const p = this.view.pending;
     if (this.lock || !p || this.storageBlocked || (abandon && !this.bytes)) return;
     this.lock = true; const epoch = this.epoch; this.set({workspace: null, busy: true});
@@ -145,7 +148,7 @@ export class ServiceOpsController {
       // Qualification is re-read before recovery; absent/forbidden never clears the marker.
       const w = await this.workspace(epoch, id);
       if (!w) return;
-      if (abandon && !this.bytes) return;
+      if (abandon && !this.canAbandon()) return;
       const bytes = JSON.stringify(abandon ? {action: 'abandon', operationId: p.operationId, mutationBytes: this.bytes} : {action: 'read_operation', operationId: p.operationId});
       this.set({workspace: null});
       const reply = await this.ports.send(bytes, id);
