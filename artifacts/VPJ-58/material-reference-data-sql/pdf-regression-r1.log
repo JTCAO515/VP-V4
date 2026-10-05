@@ -1,0 +1,16 @@
+✔ append replay, RLS and default deny before isolated enrollment (7032.921958ms)
+✔ canonical bytes Unicode arrays numeric forms and UTF16 bounds (554.649708ms)
+✔ TTL worker and session/Trip/account lifecycle erase payload and temporary patch, preserve denial (3272.23975ms)
+✔ new exact export lease owner pages, actual cursor/source invalidation, no old completion retrofit (1032.534666ms)
+✔ concurrent cancel/confirm and privacy/source contention abort without deadlock or partial apply (997.516292ms)
+✔ durable original-byte idempotency, original explicit writer and historical receipt (540.051667ms)
+✔ preview parity, repeat duplicate, conflicts preserve existing fixed items and order (476.152ms)
+✔ owner epoch Trip head digest limits cancel tombstone and marker successor denial (720.020959ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 14766.282125

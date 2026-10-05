@@ -20,6 +20,7 @@ const protocol=wireRoot?await import(pathToFileURL(resolve(wireRoot,'lib/server/
 const collect=wireRoot?await import(pathToFileURL(resolve(wireRoot,'lib/server/privacy/material-references/export.ts')).href):null;
 
 test('material owner exit full PG replay, authority, CAS, erasure and receipt',{skip:!enabled,timeout:300000},async t=>{
+ if(wireRoot)t.diagnostic('Paired TS files SHA256: '+JSON.stringify(Object.fromEntries(['contract.ts','rows.ts','protocol.ts','export.ts'].map(name=>[name,hash(readFileSync(resolve(wireRoot,'lib/server/privacy/material-references',name),'utf8'))]))));
  const container='vpj58-material-'+uuid().slice(0,8);
  assert.ok(!process.env.DOCKER_HOST&&!process.env.DOCKER_CONTEXT);
  const context=JSON.parse((await command('docker',['context','inspect'])).stdout)[0];assert.ok(context.Endpoints.docker.Host.startsWith('unix:///'));
@@ -203,6 +204,36 @@ test('material owner exit full PG replay, authority, CAS, erasure and receipt',{
   assert.deepEqual(await call(a,recovery(p,raw)),receipt,'installed receipt survives Trip deletion without new mutation rights');
   const newTrip=uuid();await db(claims(a)+`insert into public.trips(id,owner_id,title) values('${newTrip}','${a.owner}','Other synthetic Trip');`);const newMaterial=await reservation({...a,trip:newTrip});await reject({...a,trip:newTrip},{action:'preview',scope:res,requestId:p.requestId,tripId:newTrip,objectIds:[newMaterial.referenceId]},'MATERIAL_REQUEST_CONFLICT');
   await db(`delete from auth.users where id='${a.owner}';`);assert.equal(await db(`select count(*) from material_exit_private.reservation_fences_v1 where owner_id='${a.owner}';`),'0');
+ });
+ await t.test('source-specific Trip discovery includes archived PDF, private current metadata and closed current digest cursors',async()=>{
+  const a=await actor(),other=await actor(),foreign=await reservation(other);await reservation(a);const listInput={action:'trip_list',scope:res,cursor:null,limit:20};
+  const own=await call(a,listInput);assert.deepEqual(own.items,[{tripId:a.trip,tripVersion:0,label:'Synthetic material Trip',state:'active'}]);assert.equal(own.expiresAt-own.capturedAt,30000);assert.equal(own.allUserDataCompleted,false);
+  if(protocol)assert.ok(protocol.decodeMaterialTrips(own,listInput,{ownerId:a.owner,sessionId:a.session,mobileEpoch:1},Date.now()));
+  assert.ok(!JSON.stringify(own).includes(foreign.referenceId));await reject(a,{...listInput,tripId:a.trip},'INVALID_INPUT');await reject(a,{...listInput,ownerId:a.owner},'INVALID_INPUT');
+  const ar=await actor(),first=await pdfSubmit(ar);assert.equal(await db(claims(ar)+`select outcome from public.confirm_and_apply_trip_proposal('${first.r.proposalId}','${uuid()}',(select digest from public.read_trip_proposal_v2('${first.r.proposalId}')));`),'applied');await db(claims(ar)+`select public.archive_trip_v1('${ar.trip}',1,'${uuid()}',true);`);
+  const archived=await call(ar,{...listInput,scope:pdf});assert.equal(archived.items[0].state,'archived');assert.equal(archived.items[0].tripVersion,1);assert.equal(archived.items[0].label,'Synthetic material Trip');const metadata=await preview(ar,pdf,[first.c.operationId]);assert.equal(metadata.items[0].fields,null);
+  // Use real archived PDF Trips, so discovery pagination preserves the accepted
+  // live-Trip capacity gate instead of manufacturing 22 simultaneously live Trips.
+  for(let n=0;n<21;n++){const trip=uuid(),candidate={...ar,trip};await db(claims(ar)+`insert into public.trips(id,owner_id,title) values('${trip}','${ar.owner}','Synthetic source Trip');`);const material=await pdfSubmit(candidate);assert.equal(await db(claims(ar)+`select outcome from public.confirm_and_apply_trip_proposal('${material.r.proposalId}','${uuid()}',(select digest from public.read_trip_proposal_v2('${material.r.proposalId}')));`),'applied');await db(claims(ar)+`select public.archive_trip_v1('${trip}',1,'${uuid()}',true);`);}
+  const pdfInput={...listInput,scope:pdf},firstPage=await call(ar,pdfInput);assert.equal(firstPage.items.length,20);assert.equal(firstPage.hasMore,true);const lastPage=await call(ar,{...pdfInput,cursor:firstPage.nextCursor});assert.equal(lastPage.items.length,2);assert.equal(lastPage.hasMore,false);
+  await reject(ar,{...pdfInput,cursor:{sourceDigest:firstPage.sourceDigest,afterId:other.trip}},'MATERIAL_CURSOR_CONFLICT');const extraTrip=uuid();await db(claims(ar)+`insert into public.trips(id,owner_id,title) values('${extraTrip}','${ar.owner}','New actual source Trip');`);await pdfSubmit({...ar,trip:extraTrip});await reject(ar,{...pdfInput,cursor:firstPage.nextCursor},'MATERIAL_CURSOR_CONFLICT');
+ });
+ await t.test('deleted/deleting Trip progress stays discoverable, exportable and cleanable without a Trip body or financial write',async()=>{
+  const a=await actor(),c=await reservation(a),p=await preview(a,res,[c.referenceId]),m=mutation(p,'erase'),raw=JSON.stringify(m),receipt=await call(a,m);
+  const q=await preview(a,progress,[p.requestId]);await call(a,mutation(q,'export'),'export_start');await page(a,q);assert.equal((await proof(a,q)).coverage,'complete');
+  await db(claims(a)+`select public.request_trip_deletion_v1('${uuid()}','${a.trip}',0,true);`);
+  const tripInput={action:'trip_list',scope:progress,cursor:null,limit:20},queued=await call(a,tripInput);assert.deepEqual(queued.items,[{tripId:a.trip,tripVersion:0,label:null,state:'deleted'}]);
+  const listed=await call(a,{action:'list',scope:progress,tripId:a.trip,cursor:null,limit:20});assert.equal(listed.items.length,2);
+  const deleting=await preview(a,progress,[p.requestId]);assert.deepEqual(deleting.items[0].referenceOperationIds,[c.operationId]);assert.deepEqual(await call(a,recovery(p,raw)),receipt);
+  await db(`delete from public.trips where id='${a.trip}';`);const deleted=await call(a,tripInput);assert.deepEqual(deleted.items,queued.items);if(protocol)assert.ok(protocol.decodeMaterialTrips(deleted,tripInput,{ownerId:a.owner,sessionId:a.session,mobileEpoch:1},Date.now()));
+  const projection=await preview(a,progress,[p.requestId,q.requestId]);assert.equal(projection.items.find(x=>x.objectId===q.requestId).progressErased,true);assert.equal(projection.items.find(x=>x.objectId===p.requestId).referenceOperationIds[0],c.operationId);
+  const em=mutation(projection,'export'),bundle=collect?await collect.collectMaterialExport(em,JSON.stringify(em),{ownerId:a.owner,sessionId:a.session,mobileEpoch:1},async(action,bytes)=>call(a,JSON.parse(bytes),action,bytes),new AbortController().signal,async()=>true):null;if(bundle)assert.equal(bundle.proof.rows,2);
+  const erasure=await preview(a,progress,[q.requestId]);const clean=await call(a,mutation(erasure,'erase'));assert.equal(clean.effects.temporaryRecords,0);assert.equal(clean.effects.tripMutation,'none');assert.equal(await db(`select count(*) from public.trips where id='${a.trip}';`),'0');assert.equal(await db(`select count(*) from material_exit_private.reservation_fences_v1 where owner_id='${a.owner}';`),'2');
+  const b=await actor();await reject(b,{action:'list',scope:progress,tripId:a.trip,cursor:null,limit:20},'MATERIAL_TRIP_UNAVAILABLE');assert.deepEqual((await call(b,tripInput)).items,[]);assert.deepEqual(await call(a,recovery(p,raw)),receipt);
+ });
+ await t.test('source Trip discovery capacity sentinel rejects before hash and effect',async()=>{
+  const a=await actor();await db(`with captured as materialized(select floor(extract(epoch from clock_timestamp())*1000)::bigint as stamp) insert into material_exit_private.requests_v1(request_id,owner_id,session_id,mobile_epoch,trip_id,scope,object_ids,trip_version,source_digest,preview_digest,captured_at,expires_at) select gen_random_uuid(),'${a.owner}','${a.session}',1,'${a.trip}','material-exit-progress/1',array[gen_random_uuid()],0,repeat('a',64),repeat('b',64),stamp,stamp+30000 from captured cross join generate_series(1,10001);`);
+  await reject(a,{action:'trip_list',scope:progress,cursor:null,limit:20},'MATERIAL_CAPACITY');assert.equal(await db(`select count(*) from material_exit_private.requests_v1 where owner_id='${a.owner}';`),'10001');assert.equal(await db(`select count(*) from material_exit_private.progress_v1 g join material_exit_private.requests_v1 r on r.request_id=g.request_id where r.owner_id='${a.owner}';`),'0');
  });
  await t.test('owned applied rollback removes only new API/schema/triggers; original source/ACL stay exact',async()=>{
   assert.equal(await oldFunctions(),beforeFunctions);assert.equal(await oldTables(),beforeTables);
