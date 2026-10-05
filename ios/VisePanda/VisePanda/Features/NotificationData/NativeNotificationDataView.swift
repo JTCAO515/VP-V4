@@ -53,7 +53,13 @@ struct NativeNotificationDataView: View {
                     Section(t("所选范围的擦除回执", "Erasure receipt for selected scope")) {
                         Text(NativeNotificationDataCopy.title(receipt.binding.scope, chinese: chinese))
                         Text(receipt.binding.requestID).font(.caption).textSelection(.enabled)
-                        Text(receipt.decidedAt, style: .date)
+                        Text(t("原授权提交时间：", "Original authorization committed: "))
+                        Text(receipt.committedAt, style: .time)
+                        Text(t("擦除最终回执时间：", "Erasure finalized: "))
+                        Text(receipt.decidedAt, style: .time)
+                        if let proof = receipt.drainProof {
+                            Text(t("发送租约的单调时钟等待已核验：", "Verified monotonic dispatch wait: ") + String(proof.waitMS) + " ms")
+                        }
                         ForEach(NativeNotificationDataProtocol.countNames, id: \.self) { key in
                             Text(NativeNotificationDataCopy.field(key, chinese: chinese) + ": " + String(receipt.counts[key] ?? 0))
                         }

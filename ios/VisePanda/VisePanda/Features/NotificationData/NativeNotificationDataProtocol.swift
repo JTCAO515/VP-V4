@@ -31,9 +31,21 @@ struct NativeNotificationDataPreview {
 struct NativeNotificationDataReceipt {
     let binding: NativeNotificationDataBinding
     let requestDigest: String
+    let committedAt: Date
     let decidedAt: Date
+    let drainProof: NativeNotificationDrainProof?
     let counts: [String: Int]
     let drainedThrough: Date
+}
+struct NativeNotificationDrainProof {
+    let generation: Int
+    let waitMS: Int
+    let finishedAt: Date
+}
+struct NativeNotificationDataEffects {
+    let counts: [String: Int]
+    let drainedThrough: Date
+    let proof: NativeNotificationDrainProof?
 }
 enum NativeNotificationDataResult {
     case erased(NativeNotificationDataReceipt)
@@ -101,7 +113,7 @@ enum NativeNotificationDataProtocol {
                   try w.hash(v["requestDigest"]) == digest(original), try !w.bool(v["allUserDataCompleted"]) else { throw NativeDataError.invalidResponse }
             return .unknown
         }
-        let v = try w.object(raw, NativeNotificationDataWire.bindingKeys.union(["kind", "state", "requestDigest", "decidedAt", "effects"]))
+        let v = try w.object(raw, NativeNotificationDataWire.bindingKeys.union(["kind", "state", "requestDigest", "committedAt", "decidedAt", "effects"]))
         let binding = try NativeNotificationDataBinding(v, command: command, actor: actor, now: now, allowExpired: true)
         let receipt = try receipt(v, binding: binding, now: now)
         guard receipt.requestDigest == digest(original) else { throw NativeDataError.invalidResponse }
@@ -111,7 +123,7 @@ enum NativeNotificationDataProtocol {
     /// Historical receipt sessions are data, never current read authority.
     /// Only the outer current-owner read admits this nested retained record.
     static func retainedReceipt(_ raw: [String: Any], actorOwner: String, now: Date) throws -> NativeNotificationDataBinding {
-        let v = try w.object(raw, NativeNotificationDataWire.bindingKeys.union(["kind", "state", "requestDigest", "decidedAt", "effects"]))
+        let v = try w.object(raw, NativeNotificationDataWire.bindingKeys.union(["kind", "state", "requestDigest", "committedAt", "decidedAt", "effects"]))
         guard let scope = NativeNotificationDataScope(rawValue: v["scope"] as? String ?? ""),
               let ids = v["objectIds"] as? [String] else { throw NativeDataError.invalidResponse }
         let request = try NativeNotificationDataCommand.id(v["requestId"])
@@ -124,23 +136,40 @@ enum NativeNotificationDataProtocol {
         return binding
     }
 
+    static func effects(_ raw: Any) throws -> NativeNotificationDataEffects {
+        let v = try w.object(raw, Set(countNames + ["drainedThrough", "drainProof", "tripMutation", "businessResults", "providerCopies", "deviceCopies"]))
+        var counts: [String: Int] = [:]
+        for name in countNames { counts[name] = try w.integer(v[name], max: 200_000, minimum: 0) }
+        let drained = try w.integer(v["drainedThrough"], max: 9_007_199_254_740_991, minimum: 0)
+        guard v["tripMutation"] as? String == "none", v["businessResults"] as? String == "not_modified",
+              v["providerCopies"] as? String == "not_recalled", v["deviceCopies"] as? String == "not_erased" else { throw NativeDataError.invalidResponse }
+        let proof = try w.optional(v["drainProof"]) { raw -> NativeNotificationDrainProof in
+            let p = try w.object(raw as Any, ["protocol", "generation", "waitMs", "finishedAt"])
+            let generation = try w.integer(p["generation"], max: 9_007_199_254_740_991)
+            let wait = try w.integer(p["waitMs"], max: 5000)
+            let finished = try w.integer(p["finishedAt"], max: 9_007_199_254_740_991)
+            guard p["protocol"] as? String == "monotonic-drain/1", wait == 5000, finished == drained else { throw NativeDataError.invalidResponse }
+            return .init(generation: generation, waitMS: wait, finishedAt: Date(timeIntervalSince1970: Double(finished) / 1000))
+        }
+        guard proof != nil || drained == 0 else { throw NativeDataError.invalidResponse }
+        return .init(counts: counts, drainedThrough: Date(timeIntervalSince1970: Double(drained) / 1000), proof: proof)
+    }
+
     private static func receipt(_ v: [String: Any], binding: NativeNotificationDataBinding, now: Date) throws -> NativeNotificationDataReceipt {
+        let committed = try NativeNotificationDataWire.time(v["committedAt"])
         let decided = try NativeNotificationDataWire.time(v["decidedAt"])
         let requestDigest = try w.hash(v["requestDigest"])
-        let effects = try w.object(v["effects"] as Any, Set(countNames + ["drainedThrough", "tripMutation", "businessResults", "providerCopies", "deviceCopies"]))
-        var counts: [String: Int] = [:]
-        for name in countNames { counts[name] = try w.integer(effects[name], max: 200_000, minimum: 0) }
-        let drained = try w.integer(effects["drainedThrough"], max: 9_007_199_254_740_991, minimum: 0)
+        let effects = try effects(v["effects"] as Any)
         guard v["kind"] as? String == "receipt", v["state"] as? String == "erased",
-              decided >= binding.capturedAt, decided < binding.expiresAt, decided <= now,
-              Double(drained) / 1000 <= decided.timeIntervalSince1970,
-              effects["tripMutation"] as? String == "none", effects["businessResults"] as? String == "not_modified",
-              effects["providerCopies"] as? String == "not_recalled", effects["deviceCopies"] as? String == "not_erased" else { throw NativeDataError.invalidResponse }
+              committed >= binding.capturedAt, committed < binding.expiresAt, decided >= committed, decided <= now,
+              effects.drainedThrough <= decided else { throw NativeDataError.invalidResponse }
         if binding.scope == .progress {
-            guard counts.allSatisfy({ ["pageProgress", "fences"].contains($0.key) || $0.value == 0 }) else { throw NativeDataError.invalidResponse }
+            guard effects.proof == nil, effects.counts.allSatisfy({ ["pageProgress", "fences"].contains($0.key) || $0.value == 0 }) else { throw NativeDataError.invalidResponse }
+        } else {
+            guard let proof = effects.proof, proof.finishedAt == decided, effects.drainedThrough == decided else { throw NativeDataError.invalidResponse }
         }
-        return .init(binding: binding, requestDigest: requestDigest, decidedAt: decided, counts: counts,
-            drainedThrough: Date(timeIntervalSince1970: Double(drained) / 1000))
+        return .init(binding: binding, requestDigest: requestDigest, committedAt: committed, decidedAt: decided,
+            drainProof: effects.proof, counts: effects.counts, drainedThrough: effects.drainedThrough)
     }
 
     private static func selected(_ raw: Any?, binding: NativeNotificationDataBinding, now: Date) throws -> [NativeNotificationDataItem] {

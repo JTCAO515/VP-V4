@@ -80,25 +80,56 @@ enum NativeNotificationDataRows {
                 guard a["device_id"] as? String == id, outbox.contains(where: { same($0["id"], a["notification_id"]) && same($0["device_revision"], a["device_revision"]) }) else { throw NativeDataError.invalidResponse }
             }
         case .progress:
-            _ = try w.object(row, ["objectId", "scope", "objectIds", "sourceDigest", "previewDigest", "requestDigest", "state", "capturedAt", "expiresAt", "decidedAt", "pages", "rows", "progressErased", "receipt", "fences"])
+            _ = try w.object(row, ["objectId", "scope", "objectIds", "originalSessionId", "originalMobileEpoch", "sourceDigest", "previewDigest", "requestDigest", "state", "capturedAt", "expiresAt", "committedAt", "decidedAt", "pages", "rows", "progressErased", "pageProgress", "effects", "drain", "receipt", "fences"])
             guard NativeNotificationDataScope(rawValue: row["scope"] as? String ?? "") != nil,
                   let ids = row["objectIds"] as? [String], !ids.isEmpty, ids.count <= 20, ids == ids.sorted(), Set(ids).count == ids.count,
-                  ["previewed", "exporting", "exported", "erased", "expired"].contains(row["state"] as? String ?? "") else { throw NativeDataError.invalidResponse }
+                  ["previewed", "exporting", "exported", "fenced", "erased", "expired"].contains(row["state"] as? String ?? "") else { throw NativeDataError.invalidResponse }
             for object in ids { _ = try NativeNotificationDataCommand.id(object) }
+            let originalSession = try NativeNotificationDataCommand.id(row["originalSessionId"])
+            let originalEpoch = try w.integer(row["originalMobileEpoch"], max: 9_007_199_254_740_991)
             _ = try w.hash(row["sourceDigest"]); _ = try w.hash(row["previewDigest"])
             _ = try w.optional(row["requestDigest"], w.hash)
             let captured = try w.integer(row["capturedAt"], max: 9_007_199_254_740_991)
             let expiry = try w.integer(row["expiresAt"], max: 9_007_199_254_740_991)
+            let committed = try w.optional(row["committedAt"], { try w.integer($0, max: 9_007_199_254_740_991) })
             let decided = try w.optional(row["decidedAt"], { try w.integer($0, max: 9_007_199_254_740_991) })
-            guard expiry == captured + 30_000, decided == nil || decided! >= captured else { throw NativeDataError.invalidResponse }
+            guard expiry == captured + 30_000, committed == nil || committed! >= captured && committed! < expiry,
+                  decided == nil || decided! >= captured else { throw NativeDataError.invalidResponse }
             _ = try w.integer(row["pages"], max: 4, minimum: 0); _ = try w.integer(row["rows"], max: 20, minimum: 0)
-            _ = try w.bool(row["progressErased"]); _ = try fenceRows(row["fences"])
+            let progressErased = try w.bool(row["progressErased"])
+            _ = try fenceRows(row["fences"])
+            _ = try w.optional(row["effects"], { try NativeNotificationDataProtocol.effects($0 as Any) })
+            let drain = try w.object(row["drain"] as Any, ["state", "generation", "waitMs", "finishedAt"])
+            guard ["none", "pending", "complete"].contains(drain["state"] as? String ?? "") else { throw NativeDataError.invalidResponse }
+            _ = try w.integer(drain["generation"], max: 9_007_199_254_740_991, minimum: 0)
+            let wait = try w.integer(drain["waitMs"], max: 5000, minimum: 0)
+            guard wait == 0 || wait == 5000 else { throw NativeDataError.invalidResponse }
+            _ = try w.optional(drain["finishedAt"], { try w.integer($0, max: 9_007_199_254_740_991) })
+            let pages = try w.rows(row["pageProgress"], max: 4) { try fields($0, rules: ["request_id": .id, "owner_id": .id,
+                "page_number": .positive, "after_id": .id, "rows": .positive, "request_digest": .hash, "source_digest": .hash, "created_at": .timestamp]) }
+            var lastPage = 0
+            for page in pages {
+                let number = try w.integer(page["page_number"], max: 4)
+                _ = try w.integer(page["rows"], max: 5)
+                guard page["request_id"] as? String == id, page["owner_id"] as? String == binding.ownerID, number > lastPage else { throw NativeDataError.invalidResponse }
+                lastPage = number
+            }
+            guard !progressErased || pages.isEmpty else { throw NativeDataError.invalidResponse }
+            if row["state"] as? String == "fenced" {
+                guard committed != nil, !(row["effects"] is NSNull), row["receipt"] is NSNull,
+                      drain["state"] as? String == "pending" else { throw NativeDataError.invalidResponse }
+            }
+            if row["state"] as? String == "erased" {
+                guard committed != nil, !(row["effects"] is NSNull), let receipt = row["receipt"] as? [String: Any],
+                      same(receipt["committedAt"], row["committedAt"]), same(receipt["decidedAt"], row["decidedAt"]),
+                      same(receipt["effects"], row["effects"]) else { throw NativeDataError.invalidResponse }
+            }
             if !(row["receipt"] is NSNull) {
                 guard let receipt = row["receipt"] as? [String: Any] else { throw NativeDataError.invalidResponse }
                 let decoded = try NativeNotificationDataProtocol.retainedReceipt(receipt, actorOwner: binding.ownerID, now: now)
                 guard decoded.requestID == id, decoded.scope.rawValue == row["scope"] as? String,
-                      decoded.objectIDs == ids, decoded.sourceDigest == row["sourceDigest"] as? String,
-                      decoded.previewDigest == row["previewDigest"] as? String,
+                      decoded.objectIDs == ids, decoded.sessionID == originalSession, decoded.epoch == originalEpoch,
+                      decoded.sourceDigest == row["sourceDigest"] as? String, decoded.previewDigest == row["previewDigest"] as? String,
                       receipt["requestDigest"] as? String == row["requestDigest"] as? String,
                       row["state"] as? String == "erased" else { throw NativeDataError.invalidResponse }
             }

@@ -73,6 +73,7 @@ struct NativeNotificationDataCommand: Equatable {
             mutationBytes = command.body; previewDigest = command.previewDigest
         default: throw NativeDataError.invalidResponse
         }
+        if action == "erase", !recovering { _ = try recovery() }
     }
 
     static func id(_ raw: Any?) throws -> String {

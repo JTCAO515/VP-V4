@@ -133,7 +133,13 @@ import Testing
         var altered = receipt
         var effects = try #require(altered["effects"] as? [String: Any]); effects["providerCopies"] = "recalled"; altered["effects"] = effects
         #expect(throws: (any Error).self) { try NativeNotificationDataProtocol.erased(envelope(altered), command: recovery, actor: actor, now: wall.addingTimeInterval(60)) }
-        altered = receipt; altered["decidedAt"] = 1_030_000
+        altered = receipt
+        effects = try #require(altered["effects"] as? [String: Any]); effects["drainProof"] = NSNull(); effects["drainedThrough"] = 0; altered["effects"] = effects
+        #expect(throws: (any Error).self) { try NativeNotificationDataProtocol.erased(envelope(altered), command: recovery, actor: actor, now: wall.addingTimeInterval(60)) }
+        altered = receipt
+        effects = try #require(altered["effects"] as? [String: Any]); effects["drainProof"] = ["protocol": "monotonic-drain/1", "generation": 1, "waitMs": 4999, "finishedAt": 1_035_000]; altered["effects"] = effects
+        #expect(throws: (any Error).self) { try NativeNotificationDataProtocol.erased(envelope(altered), command: recovery, actor: actor, now: wall.addingTimeInterval(60)) }
+        altered = receipt; altered["committedAt"] = 1_030_000
         #expect(throws: (any Error).self) { try NativeNotificationDataProtocol.erased(envelope(altered), command: recovery, actor: actor, now: wall.addingTimeInterval(60)) }
         await store.recover(client: .init(current: { actor }, request: { bytes, _ in
             let command = try NativeNotificationDataCommand(body: bytes)
@@ -144,6 +150,50 @@ import Testing
         #expect(store.completion?.action == "delete" && eraseDispatches == 0)
         let completed = try NativeNotificationDataJournal(vault: vault).read(actor)
         #expect(completed == nil)
+    }
+
+    @Test func actualSessionTransportRejectsUnretainedBytesAndPreservesDeniedUnknownUntilExplicitLogout() async throws {
+        let name = "vpj58.notification-session." + UUID().uuidString
+        let defaults = try #require(UserDefaults(suiteName: name))
+        defer { defaults.removePersistentDomain(forName: name) }
+        let vault = NotificationDataTestVault(), configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [NotificationDataSessionProtocol.self]
+        let session = NativeSession(arguments: ["-VisePandaNativeAPI", actor.scope.endpoint], defaults: defaults,
+            configuration: configuration, bundleConfiguration: [:], vault: vault)
+        await session.login(email: "notification-fixture@example.invalid", password: "synthetic-only")
+        let current = try session.communitySafetyActor()
+        let command = try NativeNotificationDataCommand.preview(scope: .trip, objectIDs: [object]).confirmed(action: "erase", previewDigest: hash)
+        do {
+            _ = try await session.notificationDataRequest(body: command.body, actor: current)
+            Issue.record("Unretained erase was dispatched")
+        } catch NativeDataError.staleSessionResponse { }
+        let journal = NativeNotificationDataJournal(vault: vault)
+        let saved = try journal.retain(validatedEraseBytes: command.body, actor: current)
+        do {
+            _ = try await session.notificationDataRequest(body: command.body, actor: current)
+            Issue.record("Lost ACK was accepted")
+        } catch NativeDataError.server(let code) { #expect(code == "NOTIFICATION_DATA_ACK_UNKNOWN") }
+        let original = try journal.read(current)
+        #expect(original == saved && session.dataScope == current.scope)
+        do {
+            _ = try await session.notificationDataRequest(body: command.recovery().body, actor: current)
+            Issue.record("Denied recovery was accepted")
+        } catch NativeDataError.server(let code) { #expect(code == "UNAUTHENTICATED") }
+        #expect(session.dataScope == nil)
+        let unresolved = try journal.read(current)
+        #expect(unresolved == saved)
+        let ownerKey = "native.v2.activeSubject." + current.scope.endpoint + ".pendingJournalCleanupOwner"
+        #expect(defaults.string(forKey: ownerKey) == current.scope.subject)
+        vault.failErase = true
+        await session.logout()
+        #expect(session.status == "storageError" && session.failureCode == "notificationDataJournalCleanupRequired")
+        #expect(defaults.string(forKey: ownerKey) == current.scope.subject)
+        await session.login(email: "replacement@example.invalid", password: "synthetic-only")
+        #expect(session.dataScope == nil && session.status == "storageError")
+        vault.failErase = false; await session.logout()
+        #expect(session.status == "signedOut")
+        let cleaned = try journal.read(current)
+        #expect(cleaned == nil && defaults.object(forKey: ownerKey) == nil)
     }
 
     private func temporaryRoot() -> URL { FileManager.default.temporaryDirectory.appendingPathComponent("vpj58-notification-data-fixture-" + UUID().uuidString) }
@@ -164,10 +214,11 @@ import Testing
     private func erasedReply(_ command: NativeNotificationDataCommand) throws -> [String: Any] {
         var v = try bound(command)
         var effects: [String: Any] = Dictionary(uniqueKeysWithValues: NativeNotificationDataProtocol.countNames.map { ($0, 0 as Any) })
-        effects["fences"] = 1; effects["providerUnknown"] = 1; effects["drainedThrough"] = 1_001_000
+        effects["fences"] = 1; effects["providerUnknown"] = 1; effects["drainedThrough"] = 1_035_000
+        effects["drainProof"] = ["protocol": "monotonic-drain/1", "generation": 1, "waitMs": 5000, "finishedAt": 1_035_000]
         effects["tripMutation"] = "none"; effects["businessResults"] = "not_modified"; effects["providerCopies"] = "not_recalled"; effects["deviceCopies"] = "not_erased"
         v["kind"] = "receipt"; v["state"] = "erased"; v["requestDigest"] = NativeNotificationDataProtocol.digest(command.body)
-        v["decidedAt"] = 1_001_000; v["effects"] = effects
+        v["committedAt"] = 1_001_000; v["decidedAt"] = 1_035_000; v["effects"] = effects
         return v
     }
 }
@@ -186,3 +237,45 @@ import Testing
         values.removeValue(forKey: key(service, owner)); return errSecSuccess
     }
 }
+
+/// Synthetic unsigned URLProtocol fixture for actual NativeSession control flow.
+nonisolated private final class NotificationDataSessionProtocol: URLProtocol, @unchecked Sendable {
+    override class func canInit(with request: URLRequest) -> Bool { request.url?.host == "127.0.0.1" && request.url?.port == 65159 }
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+    override func stopLoading() {}
+    override func startLoading() {
+        let owner = "22222222-2222-4222-8222-222222222222", session = "33333333-3333-4333-8333-333333333333"
+        let path = request.url!.path
+        var status = 200
+        let value: [String: Any]
+        if path.hasSuffix("/credentials") {
+            let claims = try! JSONSerialization.data(withJSONObject: ["sub": owner, "session_id": session]).base64EncodedString()
+                .replacingOccurrences(of: "+", with: "-").replacingOccurrences(of: "/", with: "_").replacingOccurrences(of: "=", with: "")
+            value = ["subject": owner, "accessToken": "synthetic." + claims + ".unsigned-fixture", "refreshToken": "synthetic-only", "expiresAt": Date().timeIntervalSince1970 + 3600]
+        } else if path.hasSuffix("/login") { value = ["subject": owner, "mobileEpoch": 2] }
+        else if path.hasSuffix("/profile") { value = ["subject": owner, "displayName": "Synthetic"] }
+        else if path.hasSuffix("/logout") { value = [:] }
+        else if path == "/api/privacy/native/v1/notification-data", request.httpMethod == "POST",
+                request.value(forHTTPHeaderField: "Cookie") == nil, request.value(forHTTPHeaderField: "Origin") == nil,
+                request.value(forHTTPHeaderField: "Authorization")?.hasPrefix("Bearer synthetic.") == true {
+            let input = body().flatMap { try? JSONSerialization.jsonObject(with: $0) as? [String: Any] }
+            status = input?["action"] as? String == "erase" ? 503 : 401
+            value = ["error": ["code": status == 503 ? "NOTIFICATION_DATA_ACK_UNKNOWN" : "UNAUTHENTICATED"]]
+        } else { status = 400; value = ["error": ["code": "INVALID_FIXTURE_TRANSPORT"]] }
+        let response = HTTPURLResponse(url: request.url!, statusCode: status, httpVersion: "HTTP/1.1", headerFields: ["Content-Type": "application/json"])!
+        client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+        client?.urlProtocol(self, didLoad: try! JSONSerialization.data(withJSONObject: value)); client?.urlProtocolDidFinishLoading(self)
+    }
+    private func body() -> Data? {
+        if let data = request.httpBody { return data }
+        guard let stream = request.httpBodyStream else { return nil }
+        stream.open(); defer { stream.close() }
+        var bytes = Data(), buffer = [UInt8](repeating: 0, count: 2048)
+        while true {
+            let count = stream.read(&buffer, maxLength: buffer.count)
+            if count < 0 { return nil }; if count == 0 { return bytes }
+            bytes.append(contentsOf: buffer.prefix(count))
+        }
+    }
+}
+
