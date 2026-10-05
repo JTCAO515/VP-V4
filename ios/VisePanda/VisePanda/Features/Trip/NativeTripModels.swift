@@ -13,6 +13,7 @@ struct NativeTripItem: Codable, Identifiable, Equatable {
     var title: String
     var startsAt: String?
     var endsAt: String?
+    var manualOrder: Int? = nil
 }
 
 struct NativeTripDay: Codable, Identifiable, Equatable {
@@ -62,7 +63,7 @@ struct NativeTripPatch: Codable, Equatable {
 
 /// Optional keys are omitted when encoded, preserving the server's closed op schema.
 struct NativeTripOperation: Codable, Equatable {
-    enum Kind: String, Codable { case setTitle = "set_title", upsertDay = "upsert_day", deleteDay = "delete_day", upsertItem = "upsert_item", deleteItem = "delete_item" }
+    enum Kind: String, Codable { case setTitle = "set_title", upsertDay = "upsert_day", deleteDay = "delete_day", upsertItem = "upsert_item", deleteItem = "delete_item", reorderItems = "reorder_items" }
     let kind: Kind
     var title: String?
     var dayId: String?
@@ -71,6 +72,7 @@ struct NativeTripOperation: Codable, Equatable {
     var itemId: String?
     var startsAt: String?
     var endsAt: String?
+    var itemIds: [String]? = nil
 }
 
 struct NativeTripPending: Decodable {

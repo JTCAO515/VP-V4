@@ -224,6 +224,25 @@ final class NativeTripStore {
         notice = nil
     }
 
+    /// Adopt the producer's exact immutable proposal for the original visible
+    /// diff and explicit confirmation. Opening Ask never invokes a Trip writer.
+    func openScopedProposal(_ reference: NativeScopedTripProposal, selection: NativeScopedTripSelection,
+                            using session: NativeSession) async -> Bool {
+        guard !busy, draft == nil, !proposalOutcomeUnknown, pendingOfflineText == nil,
+              canEdit, scope == selection.actor,
+              selection.isCurrent(actor: session.dataScope, detail: detail) else { return false }
+        var opened = false
+        await perform(session) { actor in
+            let fresh: NativeTripDetail = try await self.call(session, actor,
+                path: "\(self.base)/\(selection.tripID)", method: "GET")
+            guard selection.isCurrent(actor: session.dataScope, detail: fresh) else { throw NativeDataError.staleSessionResponse }
+            let proposal = try await self.readPending(selection.tripID, proposalID: reference.proposalID, session, actor)
+            guard reference.matches(proposal, selection: selection) else { throw NativeDataError.invalidResponse }
+            self.detail = fresh; self.pending = proposal; self.notice = "reviewRequired"; opened = true
+        }
+        return opened && scope == selection.actor && session.dataScope == selection.actor && confirmationReference == reference.reference
+    }
+
     /// Hotel selection is not a Trip write. The user names exactly one
     /// existing first/last-day item; the ordinary Proposal review remains next.
     func prepareLodgingDraft(expectedTripVersion:Int,dayID:String,itemID:String,title:String,using session:NativeSession) async -> Bool {
@@ -443,7 +462,8 @@ final class NativeTripStore {
         let query = proposalID.map { [URLQueryItem(name: "proposalId", value: $0)] } ?? []
         let result: NativeTripPending = try await call(session, scope, path: "\(base)/\(tripID)/proposal", method: "GET", query: query)
         guard result.version == 2, result.trip.id == tripID, result.proposal.status == "pending",
-              !result.proposal.digest.isEmpty, result.proposal.patch.expectedVersion == result.proposal.baseTripVersion else { throw NativeDataError.invalidResponse }
+              !result.proposal.digest.isEmpty, result.proposal.patch.expectedVersion == result.proposal.baseTripVersion,
+              NativeScopedTripProposal.hasCompleteOrderDiff(result) else { throw NativeDataError.invalidResponse }
         return result
     }
 
