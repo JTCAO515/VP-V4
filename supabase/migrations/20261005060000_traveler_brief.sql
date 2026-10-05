@@ -349,8 +349,8 @@ end $$;
 create function service_brief_private.session_changed() returns trigger language plpgsql security definer set search_path='' as $$
 declare owner uuid;cid uuid;
 begin
- owner:=case when TG_TABLE_NAME='mobile_accounts' then OLD.owner_id else OLD.user_id end;
- if TG_OP='UPDATE' and TG_TABLE_NAME='mobile_accounts' and NEW.session_id is not distinct from OLD.session_id and NEW.epoch=OLD.epoch then return NEW;end if;
+ owner:=(case when TG_TABLE_NAME='mobile_accounts' then to_jsonb(OLD)->>'owner_id' else to_jsonb(OLD)->>'user_id' end)::uuid;
+ if TG_OP='UPDATE' and TG_TABLE_NAME='mobile_accounts' and to_jsonb(NEW)->'session_id' is not distinct from to_jsonb(OLD)->'session_id' and to_jsonb(NEW)->'epoch'=to_jsonb(OLD)->'epoch' then return NEW;end if;
  for cid in select id from service_cases_private.cases where owner_id=owner order by id for update nowait loop
  perform service_brief_private.invalidate(cid,owner,owner);
  end loop;
