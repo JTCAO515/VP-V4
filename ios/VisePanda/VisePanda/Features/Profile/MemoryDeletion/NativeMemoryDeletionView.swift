@@ -4,7 +4,7 @@ struct NativeMemoryDeletionView:View {
     let session:NativeSession
     let chinese:Bool
     @Environment(\.scenePhase) private var phase
-    @State private var store=NativeMemoryDeletionStore()
+    @State private var store: NativeMemoryDeletionStore
     @State private var reviewedIdentity:String?
     @State private var exportsReviewed=false
     @State private var confirmVisible=false
@@ -12,6 +12,12 @@ struct NativeMemoryDeletionView:View {
     @State private var task:Task<Void,Never>?
     @State private var journalNotice=false
     @State private var completedAcknowledgedRequestID:String?
+    init(session: NativeSession, chinese: Bool) {
+        self.session = session; self.chinese = chinese; _store = State(initialValue: NativeMemoryDeletionStore())
+    }
+    init(session: NativeSession, chinese: Bool, store: NativeMemoryDeletionStore) {
+        self.session = session; self.chinese = chinese; _store = State(initialValue: store)
+    }
     private func t(_ zh:String,_ en:String)->String{chinese ? zh:en}
     var body:some View {
         Form {

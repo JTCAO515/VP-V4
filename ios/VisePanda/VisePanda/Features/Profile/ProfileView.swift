@@ -177,6 +177,11 @@ struct ProfileView: View {
             }
 
             Section("profile.privacy") {
+                if settings.nativeSession.dataScope != nil {
+                    NavigationLink(chinese ? "资料导出与删除覆盖" : "Data export and deletion coverage") {
+                        NativeDataCoverageView().id(settings.nativeSession.dataScope)
+                    }.accessibilityIdentifier("profile.data-coverage.open")
+                }
                 NavigationLink(chinese ? "记忆及派生资料删除" : "Memory and derived-data deletion") {
                     NativeMemoryDeletionView(session:settings.nativeSession,chinese:chinese)
                 }

@@ -1,0 +1,60 @@
+{
+  "evidence": "synthetic original cancellation; native/TS must reject promotion",
+  "requestBytes": "{\"schemaVersion\":\"data-coverage/1\",\"catalogVersion\":\"data-coverage-catalog/2026-10-06.2\",\"actorId\":\"12345678-1234-4123-8123-123456789abc\",\"sessionId\":\"22345678-1234-4123-8123-123456789abc\",\"mobileEpoch\":1,\"moduleId\":\"publication\",\"moduleVersion\":\"community-publication-j3j4/1\",\"operationId\":\"32345678-1234-4123-8123-123456789abc\",\"action\":\"delete\",\"phase\":\"recover\",\"confirmed\":true,\"tripId\":null,\"commandBytes\":\"{\\\"action\\\":\\\"delete\\\",\\\"operationId\\\":\\\"32345678-1234-4123-8123-123456789abc\\\",\\\"confirmed\\\":true}\"}",
+  "valid": {
+    "schemaVersion": "data-coverage/1",
+    "catalogVersion": "data-coverage-catalog/2026-10-06.2",
+    "actorId": "12345678-1234-4123-8123-123456789abc",
+    "sessionId": "22345678-1234-4123-8123-123456789abc",
+    "mobileEpoch": 1,
+    "moduleId": "publication",
+    "moduleVersion": "community-publication-j3j4/1",
+    "operationId": "32345678-1234-4123-8123-123456789abc",
+    "action": "delete",
+    "phase": "recover",
+    "requestDigest": "07074f7f48714229ce9af98e2d56dc1822d47cfa07c7083a2bbf5143a78811ce",
+    "state": "partial",
+    "reason": "ORIGINAL_OPERATION_CANCELLED",
+    "result": {
+      "data": {
+        "schemaVersion": "community-publication-j3j4/1",
+        "kind": "operation",
+        "actorId": "12345678-1234-4123-8123-123456789abc",
+        "sessionId": "22345678-1234-4123-8123-123456789abc",
+        "operationId": "32345678-1234-4123-8123-123456789abc",
+        "state": "abandoned",
+        "publication": null,
+        "reference": null
+      }
+    },
+    "allUserDataCompleted": false
+  },
+  "tampered": {
+    "schemaVersion": "data-coverage/1",
+    "catalogVersion": "data-coverage-catalog/2026-10-06.2",
+    "actorId": "12345678-1234-4123-8123-123456789abc",
+    "sessionId": "22345678-1234-4123-8123-123456789abc",
+    "mobileEpoch": 1,
+    "moduleId": "publication",
+    "moduleVersion": "community-publication-j3j4/1",
+    "operationId": "32345678-1234-4123-8123-123456789abc",
+    "action": "delete",
+    "phase": "recover",
+    "requestDigest": "07074f7f48714229ce9af98e2d56dc1822d47cfa07c7083a2bbf5143a78811ce",
+    "state": "scoped_complete",
+    "reason": "NONE",
+    "result": {
+      "data": {
+        "schemaVersion": "community-publication-j3j4/1",
+        "kind": "operation",
+        "actorId": "12345678-1234-4123-8123-123456789abc",
+        "sessionId": "22345678-1234-4123-8123-123456789abc",
+        "operationId": "32345678-1234-4123-8123-123456789abc",
+        "state": "abandoned",
+        "publication": null,
+        "reference": null
+      }
+    },
+    "allUserDataCompleted": false
+  }
+}
