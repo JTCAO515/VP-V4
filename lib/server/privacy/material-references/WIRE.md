@@ -38,6 +38,19 @@ material preview/bundle/receipt classifiers, preserving all original branches.
 CI db registry only append own future PG/actualHTTP lane switches/paths after
 their actual implementation. No old branch/oracle/handler/module privilege changes.
 
+Shared four coverage bridge paths now implemented under Main's explicit lease.
+Actual affected check found one obsolete assertion at
+`tests/integration/privacy/coverage/dispatch.test.mjs:67-68`: the missing-handler
+case selects order_references+empty command and expects unavailable, but this
+module now has a real selected-object handler so the command correctly fails400.
+Request precise two-line test lease to select still-missing `case_attachments`
+and expect `ATTACHMENT_HANDLER_UNAVAILABLE`, preserving every denial/all-data/
+device/denominator assertion. No original runtime/permission change is proposed.
+Old Native coverage producer fixtures also carry catalog `.2`; Native sole owner
+needs to preserve valid previous module assertions while revising only catalog
+metadata/version for `.3` and the added denominator, with opaque request digest
+recomputed from the revised fixture bytes. No production oracle weakening.
+
 ## Actual sources and copy inventory
 
 - Orders: `reservation_private.current_v1` sensitive corrected fields + source

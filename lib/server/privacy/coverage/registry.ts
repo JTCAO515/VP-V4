@@ -11,6 +11,8 @@ import { publicationNativeHTTP } from '../../community/publication/native-http.t
 import { guideHTTP } from '../../guide/http.ts';
 import type { SelectedCommand } from './contract.ts';
 import { ownerModuleExportHTTP } from './module-export.ts';
+import { materialReferenceNativeHTTP } from '../material-references/http.ts';
+import { materialCoverageRequestBody } from '../material-references/coverage.ts';
 
 export type OwnerHandler = (request: NextRequest, selected: SelectedCommand) => Promise<Response>;
 /** Real direct calls to existing owner boundaries, never a service-role or arbitrary RPC dispatch. */
@@ -27,6 +29,7 @@ export const OWNER_HANDLERS: Readonly<Record<string, OwnerHandler>> = {
   guide: (request, selected) => guideHTTP(request, selected.input.tripId!, true),
   notifications: request => ownerModuleExportHTTP(request, 'notification-metadata/1'),
   lifecycle: request => ownerModuleExportHTTP(request, 'trip-lifecycle-metadata/1'),
+  materials: request => materialReferenceNativeHTTP(request),
 };
 const paths: Readonly<Record<string, string>> = {
   core: '/api/privacy/native/v1/exports', trip: '/api/privacy/native/v1/trips',
@@ -34,6 +37,7 @@ const paths: Readonly<Record<string, string>> = {
   brief: '/api/service-cases/native/brief/v1', case: '/api/service-cases/native/data/v1',
   ugc: '/api/community/native/v1', safety: '/api/community/safety/native/v1', publication: '/api/community/publication/native/v1',
   notifications: '/api/privacy/native/v1/coverage/module-export', lifecycle: '/api/privacy/native/v1/coverage/module-export',
+  materials: '/api/privacy/native/v1/material-references',
 };
 export function ownerHandlerRequest(request: Request, selected: SelectedCommand, signal: AbortSignal): NextRequest {
   const { input, handler } = selected; if (!handler || !Object.hasOwn(OWNER_HANDLERS, handler)) throw Error('HANDLER_MISSING');
@@ -47,6 +51,7 @@ export function ownerHandlerRequest(request: Request, selected: SelectedCommand,
     if (['core','trip','linked_trip','memory'].includes(handler)) { method = 'GET'; url.searchParams.set('requestId', input.operationId); }
     else if (['ugc','safety','publication'].includes(handler)) body = JSON.stringify({ action: 'operation', operationId: input.operationId, mutationBytes: input.commandBytes });
     else if (['brief','case'].includes(handler)) body = JSON.stringify({ action: 'read_operation', operationId: input.operationId });
+    else if (handler === 'materials') body = materialCoverageRequestBody(input);
     else throw Error('RECOVERY_NOT_IMPLEMENTED');
   }
   return new NextRequest(url, { method, headers, signal, ...(method === 'POST' ? { body } : {}) });

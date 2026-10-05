@@ -4,6 +4,10 @@ import { handleMaterialReferences, materialReferenceNativeHTTP } from '../../../
 import { materialDigest } from '../../../../lib/server/privacy/material-references/contract.ts';
 import { fixtureActor, fixtureNow, fixtureId, fixtureBinding, fixtureCommand, fixtureRPC, fixtureReceipt } from '../../../fixtures/privacy/material-references/source.mjs';
 import { validMaterialCoverageSelection, materialCoverageRequestBody, materialCoverageOutcome } from '../../../../lib/server/privacy/material-references/coverage.ts';
+import { CATALOG_VERSION, moduleById } from '../../../../lib/server/privacy/coverage/catalog.ts';
+import { parseCoverageInput } from '../../../../lib/server/privacy/coverage/contract.ts';
+import { handleCoverage } from '../../../../lib/server/privacy/coverage/http.ts';
+import { matchesCoverageResult } from '../../../../lib/server/privacy/coverage/consumer.ts';
 const scope = 'reservation-reference-data/1';
 const request = (body, headers = {}) => new Request('http://127.0.0.1/api/privacy/native/v1/material-references', {
   method: 'POST', headers: { 'content-type': 'application/json', ...headers }, body: typeof body === 'string' ? body : JSON.stringify(body),
@@ -89,4 +93,25 @@ test('coverage consumes the selected actual metadata/erasure receipt and preserv
   assert.equal(materialCoverageOutcome({ ...selected,input: recoveryInput },unknown,fixtureNow+5).state,'unknown');
   assert.equal(materialCoverageOutcome(selected,unknown,fixtureNow+5),null);
   assert.equal(materialCoverageOutcome({ ...selected,input: recoveryInput },receipt,fixtureNow+60000).state,'scoped_complete');
+});
+
+test('catalog/parser/registered owner request/result consumer close the selected material flow and keep missing modules visible', async t => {
+  t.mock.timers.enable({ apis: ['Date'],now: fixtureNow+5 });
+  const command = fixtureCommand(scope,'erase'), bytes = '\n'+JSON.stringify(command), module = moduleById('order_references');
+  assert.equal(module.scope,scope); assert.equal(module.deleteHandler,'materials');
+  const input = { schemaVersion: 'data-coverage/1',catalogVersion: CATALOG_VERSION,actorId: fixtureActor.ownerId,
+    sessionId: fixtureActor.sessionId,mobileEpoch: fixtureActor.mobileEpoch,moduleId: module.id,moduleVersion: module.version,
+    operationId: command.requestId,action: 'delete',phase: 'execute',confirmed: true,tripId: command.tripId,commandBytes: bytes };
+  assert.ok(parseCoverageInput(input));
+  assert.equal(parseCoverageInput({ ...input,moduleId: 'pdf_intake' }),null);
+  const outer = value => new Request('http://127.0.0.1/api/privacy/native/v1/coverage',{ method: 'POST',headers: { 'content-type': 'application/json' },body: JSON.stringify(value) });
+  const injected = { enabled: true,authority: () => ({ authenticate: async () => ({ actorId: fixtureActor.ownerId,sessionId: fixtureActor.sessionId,mobileEpoch: fixtureActor.mobileEpoch }),current: async () => true }),
+    handlers: { materials: original => handleMaterialReferences(original,options()) } };
+  for (const phase of ['execute','recover']) {
+    const selected = { ...input,phase }, result = await value(await handleCoverage(outer(selected),injected));
+    assert.equal(result.status,200); assert.equal(result.body.state,'scoped_complete'); assert.equal(result.body.allUserDataCompleted,false);
+    assert.ok(matchesCoverageResult(result.body,JSON.stringify(selected),fixtureNow+5));
+    assert.equal(result.body.result.data.requestDigest,materialDigest(bytes));
+  }
+  assert.equal(moduleById('case_attachments').exportHandler,null); assert.equal(moduleById('financial_records').exportHandler,null);
 });

@@ -198,6 +198,7 @@ export const LANES = {
       { name: "service-operations-http", runner: node("tests/integration/service-cases/run-operations-http.mjs", "--port-base", "64800"), files: ["tests/integration/service-cases/operations-http.test.mjs"] },
       { name: "traveler-brief-http", runner: node("tests/integration/service-cases/run-brief-http.mjs", "--port-base", "64900"), files: ["tests/integration/service-cases/brief-http.test.mjs"] },
       { name: "data-coverage-http", runner: node("tests/integration/privacy/coverage/run-http.mjs", "--port-base", "63400"), files: ["tests/integration/privacy/coverage/auth-http.test.mjs"] },
+      { name: "material-reference-http", runner: node("tests/integration/privacy/material-references/run-http.mjs", "--port-base", "63360"), files: ["tests/integration/privacy/material-references/auth-http.test.mjs"] },
       { name: "pdf-intake-http", runner: node("tests/integration/intake/run-pdf-intake-http.mjs", "--port-base", "65000"), files: ["tests/integration/intake/pdf-intake-http.test.mjs"] },
       { name: "community-j1-jwt", runner: node("tests/integration/community/run-submission-j1-jwt.mjs"), files: ["tests/integration/community/submission-j1-jwt.test.mjs"] },
       { name: "community-j1-http", runner: node("tests/integration/community/run-j1-http.mjs", "--port-base", "64200"), files: ["tests/integration/community/j1-http.test.mjs"] },
