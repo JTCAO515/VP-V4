@@ -1,8 +1,8 @@
 # #221 server implementation evidence
 
 Base: 4dbde74126206e8ef4229497b21d1c46f85578e8. Owned branch:
-codex/vpj30-reminder-delivery-server-20261005. Source-only backend handoff;
-whole #221 Native/SQL integration remains in development at this checkpoint.
+codex/vpj30-reminder-delivery-server-20261005. The initial backend checkpoint
+below is retained; final integrated source and evidence are recorded afterward.
 
 Implemented: closed v2 commands/views and exact canonical mutation ACK,
 cancelled-before-apply recovery contract, source provenance, purpose and quiet
@@ -50,3 +50,33 @@ finished unknown, never sent a second time. PASS existing registry classificatio
 and its 9 governance cases; only the new notification opt-in/root/file were added.
 Manual device revoke now permits an actual authorized OS declaration with
 active=false; the affected parser and actual Native behavior cases cover it.
+
+Final owned code integration is complete. Native source fb92c8a8375769ab6e12aefea6268b74e73ed1a6
+was normally cherry-picked as ee7f5ea9; SQL 0db2bb6f and final runtime
+501acd857c205608023ab724010179d7c6d4bc3e were normally cherry-picked as
+9d92d427 and a8cc43f9. SQL's test/evidence-only 01a218a0 adds actual two-RPC
+cancel/begin contention without changing the SQL runtime. Native App/Session
+hunks preserve existing journals. Any subsequently merged scoped-edit fourth
+journal must be preserved during normal main integration.
+
+SQL source evidence is verified by normal reading of the original logs:
+full owned run 17 PASS, 0 FAIL/skip; last source/OS-state fixes 3 affected PASS;
+actual cancel/begin contention 2 affected PASS (including history/ACL setup).
+These are 17 distinct cases across reused runs, not 22 distinct cases. The actual
+TS scheduler/codec and metadata export adapter consumed real disposable PG source.
+N3 used actual publication, approved mapping, original confirmed support and #207
+reviewed/acked recheck; pending review/reviewer loss and source withdrawal denied
+the notification. No user JWT impersonation or old private payload fallback.
+Task result N1 plus Memory/consent/source drift and exact lease-bound export were
+also observed. Detailed failures and evidence:
+[SQL EVIDENCE](../sql-delivery-20261005/EVIDENCE.md).
+
+Native's actual Foundation run 10 PASS and last manual-revoke affected case 1 PASS
+are reused, together with unsigned generic app/test-target compile and actual TS
+Unicode/slash digest producer agreement. This is compile/Foundation protocol
+evidence, not iOS runtime/permission/APNs delivery. Detailed source evidence:
+[Native evidence](../native-delivery-20261005.md).
+
+The final PR still requires its exact-head CI and independent protected review.
+All original target/device/production UNRUN above remain; development-complete
+source does not activate database permissions, APNs credentials or deployment.
