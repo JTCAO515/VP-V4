@@ -1,0 +1,17 @@
+--- a/tests/static-output.test.mjs
++++ b/tests/static-output.test.mjs
+@@ -49,9 +49,11 @@
+   "docs/adr/0001-nextjs-typescript-tailwind-migration.md",
+   "docs/adr/0002-visepanda-brand-localization-assets.md",
+ ].map((file) => readFileSync(file, "utf8")).join("\n");
+-const cssName = readBuildOutputDir(".next/static/css").find((file) => file.endsWith(".css"));
+-assert.ok(cssName, `compiled CSS must exist — ${BUILD_OUTPUT_HINT}`);
+-const css = readBuildOutput(`.next/static/css/${cssName}`);
++const cssFiles = readBuildOutputDir(".next/static/css");
++const cssNames = [...new Set([...relocatedHomepageHtml.matchAll(/href="\/_next\/static\/css\/([^"/]+\.css)"/g)].map((match) => match[1]))];
++assert.ok(cssNames.length > 0, `compiled Homepage CSS links must exist — ${BUILD_OUTPUT_HINT}`);
++for (const file of cssNames) assert.ok(cssFiles.includes(file), `linked Homepage CSS ${file} must exist — ${BUILD_OUTPUT_HINT}`);
++const css = cssNames.map((file) => readBuildOutput(`.next/static/css/${file}`)).join("\n");
+ 
+ test("renders Journey at the root while preserving the relocated preview", () => {
+   assert.match(html, /<html lang="zh-CN"/);
