@@ -76,8 +76,7 @@ enum NativeArchiveDataRows {
             guard let head = binding.tripVersion, v["tripId"] as? String == binding.tripID else { throw NativeDataError.invalidResponse }
             let version = try s.integer(v["version"], max: head, minimum: 0)
             _ = try w.text(v["title"], max: 160); try instant(v["createdAt"])
-            if v["content"] is NSNull { guard version != head else { throw NativeDataError.invalidResponse } }
-            else { try content(v["content"] as Any) }
+            try content(v["content"] as Any)
             return String(format: "%010d", version)
         }
         if section == "operations" {
