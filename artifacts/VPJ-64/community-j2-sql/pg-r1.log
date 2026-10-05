@@ -1,0 +1,61 @@
+✔ full migration rollback preserves original RPC owner ACL; defaults empty with no private grants (7403.784834ms)
+✔ authority before all reads mutation replay abandonment erasure has zero writes (633.5265ms)
+✔ legitimate independent reader vs moderator; guesses expiry revocation and block metadata deny uniformly (822.422125ms)
+✔ report sensitive body isolation author minimal disposition and independent conflict operators (655.141167ms)
+✖ removal invalidates old J1 live read mine queue and committed exact-byte acknowledgements (506.570917ms)
+✔ author recourse independent restore rechecks current retained source; withdrawal cannot resurrect (768.211541ms)
+✔ J1 rejected version2 restore requires both qualifications and distinct original reviewer; no old unique audit clash (615.136708ms)
+✔ authored decisions/grants export complete with no foreign details; erasure retains foreign source state and independence fence (791.257667ms)
+✖ exact original bytes immutable session epoch operation fences abandoned replay and module-off erasure (672.631958ms)
+✔ physical source/account deletion invalidates content while retaining independent sensitive records and removing own authored notes (513.373083ms)
+✔ CAS competing independent dispositions, original withdrawal and erasure races produce no deadlock or resurrection (654.73425ms)
+✔ bounded keyset51 sentinel and each100+sentinel export fails closed without false completeness (497.560625ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 10
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 14679.953334
+
+✖ failing tests:
+
+test at tests/integration/community/safety-j2-postgres.test.mjs:12:22
+✖ removal invalidates old J1 live read mine queue and committed exact-byte acknowledgements (506.570917ms)
+  AssertionError [ERR_ASSERTION]: Expected "actual" to be strictly unequal to: 0
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj64-community-safety-sql-20261005/tests/integration/community/safety-j2-postgres.test.mjs:95:199)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 0,
+    operator: 'notStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/community/safety-j2-postgres.test.mjs:12:22
+✖ exact original bytes immutable session epoch operation fences abandoned replay and module-off erasure (672.631958ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /UNAUTHENTICATED/. Input:
+
+  'ERROR:  SESSION_REPLACED\n' +
+    'CONTEXT:  PL/pgSQL function identity_private.guard_mobile_rpc_v2() line 4 at RAISE\n' +
+    'SQL statement "SELECT identity_private.guard_mobile_rpc_v2()"\n' +
+    'PL/pgSQL function community_private.actor_j1() line 8 at PERFORM\n' +
+    'PL/pgSQL function community_safety_private.workspace(jsonb) line 6 at assignment\n' +
+    'PL/pgSQL function public.community_workspace(jsonb) line 5 at RETURN\n'
+
+      at denied (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj64-community-safety-sql-20261005/tests/integration/community/safety-j2-postgres.test.mjs:20:111)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj64-community-safety-sql-20261005/tests/integration/community/safety-j2-postgres.test.mjs:133:96)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'ERROR:  SESSION_REPLACED\nCONTEXT:  PL/pgSQL function identity_private.guard_mobile_rpc_v2() line 4 at RAISE\nSQL statement "SELECT identity_private.guard_mobile_rpc_v2()"\nPL/pgSQL function community_private.actor_j1() line 8 at PERFORM\nPL/pgSQL function community_safety_private.workspace(jsonb) line 6 at assignment\nPL/pgSQL function public.community_workspace(jsonb) line 5 at RETURN\n',
+    expected: /UNAUTHENTICATED/,
+    operator: 'match',
+    diff: 'simple'
+  }

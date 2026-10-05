@@ -1,0 +1,24 @@
+✔ full migration rollback preserves original RPC owner ACL; defaults empty with no private grants (7177.464666ms)
+✔ authority before all reads mutation replay abandonment erasure has zero writes (611.403875ms)
+✔ legitimate independent reader vs moderator; guesses expiry revocation and block metadata deny uniformly (799.556667ms)
+✔ report sensitive body isolation author minimal disposition and independent conflict operators (629.253ms)
+✔ removal invalidates old J1 live read mine queue and committed exact-byte acknowledgements (734.404042ms)
+✔ author recourse independent restore rechecks current retained source; withdrawal cannot resurrect (1584.231ms)
+✔ J1 rejected version2 restore requires both qualifications and distinct original reviewer; no old unique audit clash (955.493833ms)
+✔ authored decisions/grants export complete with no foreign details; erasure retains foreign source state and independence fence (1107.858916ms)
+✔ exact original bytes immutable session epoch operation fences abandoned replay and module-off erasure (895.511875ms)
+✔ physical source/account deletion invalidates content while retaining independent sensitive records and removing own authored notes (574.774791ms)
+✔ CAS competing independent dispositions, original withdrawal and erasure races produce no deadlock or resurrection (793.376167ms)
+✔ bounded keyset51 sentinel and each100+sentinel export fails closed without false completeness (528.213292ms)
+✔ erasure rollback is atomic and source/operator deletion never unlocks an original-reviewer appeal (872.630833ms)
+✔ strict closed JSON raw UTF8 and UTF16 limits cannot write receipts; expired own grant export remains complete (564.294917ms)
+✔ each report appeal disposition receipt audit array independently enforces complete bounded export (534.343959ms)
+✔ legacy original RPC source and current controlled-reader qualification cannot resurrect blocked or revoked content (784.191916ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 19291.14425
