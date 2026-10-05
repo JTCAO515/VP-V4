@@ -1,0 +1,12 @@
+✔ appended export correction changes only the lease clock observation and preserves the original body (0.414666ms)
+✔ Brief migration only adds its own reference lifecycle and defaults to denied capability (1.193167ms)
+✔ Brief records contain no value, summary, message or provider payload column (0.322667ms)
+✔ Original intake/link receipt authority, source NOWAIT, independent export scope (0.153708ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 41.721959
