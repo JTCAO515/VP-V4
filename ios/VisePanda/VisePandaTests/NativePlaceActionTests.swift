@@ -180,10 +180,21 @@ import Testing
             return try NativePlaceActionWire.bytes(["kind": "place_ask_context", "tripId": target.tripId, "tripVersion": 0,
                 "selection": NativePlaceActionWire.place(target.place), "mappingDigest": PlaceActionFixture.digest, "contextDigest": PlaceActionFixture.digest,
                 "referenceId": NSNull(), "selectedSources": ["artifact": NSNull(), "trip": ["tripId": target.tripId, "headVersion": 0], "evidence": []],
-                "currentInput": NativePlaceActionWire.place(target.place), "readyForProvider": false, "purpose": "first_party_reference_only", "expiresAt": PlaceActionFixture.date(15), "handoff": NSNull()])
+                "currentInput": NativePlaceActionWire.place(target.place), "readyForProvider": false, "purpose": "first_party_reference_only", "expiresAt": PlaceActionFixture.date(29), "handoff": NSNull()])
         }
         #expect(value?.name == "Current canonical label" && value?.poiID == PlaceActionFixture.canonical)
         #expect(value?.tripID == target.tripId && value?.readiness == "recheck_required")
+        // Return windows are freshly verified by the server, but must still be
+        // current and bounded. Neither expiry nor an unbounded lease is accepted.
+        for expiry in [PlaceActionFixture.date(-1), PlaceActionFixture.date(60)] {
+            let rejected = await store.ask(target: target, locale: "zh", current: { target }) { _ in
+                try NativePlaceActionWire.bytes(["kind": "place_ask_context", "tripId": target.tripId, "tripVersion": 0,
+                    "selection": NativePlaceActionWire.place(target.place), "mappingDigest": PlaceActionFixture.digest, "contextDigest": PlaceActionFixture.digest,
+                    "referenceId": NSNull(), "selectedSources": ["artifact": NSNull(), "trip": ["tripId": target.tripId, "headVersion": 0], "evidence": []],
+                    "currentInput": NativePlaceActionWire.place(target.place), "readyForProvider": false, "purpose": "first_party_reference_only", "expiresAt": expiry, "handoff": NSNull()])
+            }
+            #expect(rejected == nil)
+        }
     }
     @Test func interruptedWriteCannotPublishReceiptOrEraseOriginalJournal() async throws {
         let scope = PlaceActionFixture.scope, command = try PlaceActionFixture.command()

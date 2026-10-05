@@ -123,7 +123,7 @@ import Observation
                   value["mappingDigest"] as? String == basis.mappingDigest, value["contextDigest"] as? String == basis.contextDigest,
                   (value["referenceId"] is NSNull || NativePlaceActionWire.id(value["referenceId"]) != nil), NativePlaceActionWire.boolean(value["readyForProvider"]) == false,
                   value["purpose"] as? String == "first_party_reference_only",
-                  let expires = (value["expiresAt"] as? String).flatMap(NativeKnowledgeRead.date), expires > Date(), expires <= basis.expiresAt else { throw NativeDataError.invalidResponse }
+                  let expires = (value["expiresAt"] as? String).flatMap(NativeKnowledgeRead.date), expires > Date(), expires.timeIntervalSinceNow <= 30 else { throw NativeDataError.invalidResponse }
             if !(value["handoff"] is NSNull) {
                 let handoff = try NativePlaceActionWire.exact(value["handoff"] as Any, ["kind", "href", "poiId", "readiness"])
                 guard handoff["kind"] as? String == "ask_ready", handoff["poiId"] as? String == target.place.canonicalPoiId,
