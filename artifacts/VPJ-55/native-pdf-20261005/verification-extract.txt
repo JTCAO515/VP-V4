@@ -68,3 +68,12 @@ Test Case '-[VisePandaTests.NativePDFIntakeTests testJournalRetainsExactBytesAnd
 	 Executed 3 tests, with 0 failures (0 unexpected) in 0.018 (0.019) seconds
 	 Executed 3 tests, with 0 failures (0 unexpected) in 0.018 (0.019) seconds
 ** TEST SUCCEEDED **
+
+Real Native R3 (source-bound combined a44e19773271b983c09298957baeeb2ca3b50ed6)
+** TEST BUILD SUCCEEDED **
+Test Case '-[VisePandaTests.NativePDFIntegrationTests testPDFKitCorrectPreviewOriginalConfirmReloadAndReceipt]' started.
+Test Case '-[VisePandaTests.NativePDFIntegrationTests testPDFKitCorrectPreviewOriginalConfirmReloadAndReceipt]' passed (1.781 seconds).
+	 Executed 1 test, with 0 failures (0 unexpected) in 1.781 (1.782) seconds
+	 Executed 1 test, with 0 failures (0 unexpected) in 1.781 (1.782) seconds
+	 Executed 1 test, with 0 failures (0 unexpected) in 1.781 (1.782) seconds
+** TEST EXECUTE SUCCEEDED **
