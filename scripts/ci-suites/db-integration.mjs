@@ -62,6 +62,7 @@ export const LANES = {
           VP_PLACE_QUOTA_DB_TEST: "1",
           VP_TRAFFIC_DB_TEST: "1",
           VP_MEMORY_DB_TEST: "1",
+          VP_PLACE_ACTION_DB_TEST: "1",
         },
         files: [
           "tests/integration/community/review.test.mjs",
@@ -71,6 +72,7 @@ export const LANES = {
           "tests/integration/knowledge/question.test.mjs",
           "tests/integration/maps/place-quota.test.mjs",
           "tests/integration/maps/foreground-traffic-postgres.test.mjs",
+          "tests/integration/explore/place-actions-postgres.test.mjs",
           "tests/integration/memory/travel-pace.test.mjs",
           "tests/integration/notifications/storage.test.mjs",
           "tests/integration/observability/ops-ledger.test.mjs",
