@@ -9,6 +9,7 @@ type Result<T> = { data: T } | { error: FailureCode };
 export const pdfRequestDigest = (raw: string) => createHash("sha256").update(raw, "utf8").digest("hex");
 export function pdfError(message: string): FailureCode {
   if (/\b(UNAUTHENTICATED|SESSION_REPLACED)\b/.test(message)) return "UNAUTHENTICATED";
+  if (/\bPDF_PREVIEW_MISMATCH\b/.test(message)) return "PROPOSAL_NOT_CONFIRMABLE";
   for (const code of ["INVALID_INPUT", "FORBIDDEN", "STALE_TRIP_VERSION", "PROPOSAL_NOT_CONFIRMABLE", "IDEMPOTENCY_KEY_REUSE", "DATA_EXPIRED", "CANCELLED"] as const)
     if (new RegExp(`\\b${code}\\b`).test(message)) return code;
   return "PROVIDER_UNAVAILABLE";
@@ -23,8 +24,10 @@ export function parsePdfOperation(v: unknown, tripId: string, operationId: strin
     || !(v.confirmationEventId === null || uuid(v.confirmationEventId)) || !(v.resultingVersion === null || integer(v.resultingVersion, 1))) return null;
   const binding = [v.proposalId, v.proposalRevision, v.baseTripVersion];
   if (binding.some(x => x === null) && !binding.every(x => x === null)) return null;
-  if (v.state === "absent" && [v.requestDigest, v.commandDigest, v.previewDigest, v.expiresAt, ...binding].some(x => x !== null)) return null;
-  if (["pending", "confirmed", "rejected"].includes(v.state as string)
+  const materialBinding = [v.requestDigest, v.commandDigest, v.previewDigest, v.expiresAt, ...binding];
+  if (v.state === "absent" && materialBinding.some(x => x !== null)) return null;
+  const emptyCancel = v.state === "cancelled" && materialBinding.every(x => x === null);
+  if (["pending", "confirmed", "rejected", "expired", "cancelled"].includes(v.state as string) && !emptyCancel
     && (binding.some(x => x === null) || ![v.requestDigest, v.commandDigest, v.previewDigest].every(sha256) || !instant(v.expiresAt))) return null;
   if (v.state === "confirmed" ? !uuid(v.confirmationEventId) || v.resultingVersion !== Number(v.baseTripVersion) + 1
     : v.confirmationEventId !== null || v.resultingVersion !== null) return null;

@@ -17,6 +17,10 @@ test("an operation read requires exact actor/Trip/op binding and actual confirme
     assert.equal(parsePdfOperation({ ...pending, ...delta }, tripId, operationId, 3), null);
   const confirmed = { ...pending, state: "confirmed", confirmationEventId: proposalId, resultingVersion: 1 };
   assert.deepEqual(parsePdfOperation(confirmed, tripId, operationId, 3), confirmed);
+  const fenced = { ...pending, state: "cancelled", requestDigest: null, commandDigest: null, previewDigest: null, expiresAt: null,
+    proposalId: null, proposalRevision: null, baseTripVersion: null };
+  assert.deepEqual(parsePdfOperation(fenced, tripId, operationId, 3), fenced);
+  assert.equal(parsePdfOperation({ ...fenced, requestDigest: pending.requestDigest }, tripId, operationId, 3), null);
 });
 test("proposal ACK requires original exact POST bytes, canonical command, preview, head and current epoch", () => {
   const receipt = { kind: "pdf_intake_proposal/1", operationId, tripId, sessionEpoch: 3, requestDigest: pdfRequestDigest(raw),

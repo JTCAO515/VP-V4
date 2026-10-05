@@ -29,7 +29,8 @@ order, address truth, rights, provider verification or future feasibility.
 
 Exact types and bounds: `contract.ts`; exact additive preview algorithm: `preview.ts`.
 Field values use at most 96 UTF-16 code units; four unique kinds date/amount/address/status,
-date required and strict ISO calendar date. `expiresAt` is UTC ISO with exactly 3
+date required and strict ISO calendar date (years 0001–9999, representable by the
+original PostgreSQL Trip writer; astronomical year zero is rejected). `expiresAt` is UTC ISO with exactly 3
 milliseconds, from the original protected local receipt, never renewed on retry.
 Fields remain in command order. Digests use SHA256 UTF8 of compact recursively
 key-sorted JSON (`pdfCanonical`), preserving array order. SQL must use the same canonical
@@ -100,11 +101,15 @@ preserve the original Trip/receipt and report confirmed, never Undo or false can
 Cancelled/expired rows retain minimal idempotency hashes/binding only, no corrected
 values/source text/PDF bytes. TTL prevents further confirmation; read cleanup must not
 clear a live unknown operation. No revival after logout/delete/session replacement.
-An explicit cancel ACK may clear an unknown journal only when active owner/epoch/Trip/op
-and original `requestDigest` match the retained exact POST bytes and the authoritative
-state is cancelled (or confirmed with its original actual applied receipt). A cancellation
-tombstone without that request digest is insufficient to clear an unknown POST. Close
-can still delete the app PDF copy while preserving the server unknown-operation journal.
+An explicit cancel ACK may clear an unknown journal only under the same active
+owner/epoch/Trip/op and endpoint generation. Two exact cancelled shapes are accepted:
+(A) a cancel-before-create tombstone with every digest/expiry/proposal/base/confirmation
+field null, authoritatively fencing any late same-op POST; (B) an existing operation
+with all original request/command/preview hashes, expiry/base/proposal ID/revision strictly
+matching the retained journal. Mixed nulls or non-null mismatches reject. Ordinary
+operation reads of cancelled/absent/expired never automatically clear a journal or
+authorize a new op. Confirmed additionally requires its original actual applied receipt.
+Close can delete the app PDF copy while preserving an unresolved server-operation journal.
 PDF proposals need permanent marked lineage and a guard inside the original confirm
 transaction: original proposal/revision/digest/patch, owner/session, preview binding,
 TTL/cancel and current head revalidated before any Trip write. Ordinary proposal revision

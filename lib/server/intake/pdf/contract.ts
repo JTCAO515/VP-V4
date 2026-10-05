@@ -37,7 +37,7 @@ export const sha256 = (v: unknown): v is string => typeof v === "string" && /^[0
 export const integer = (v: unknown, min = 0, max = 999_999_999): v is number => typeof v === "number" && Number.isSafeInteger(v) && v >= min && v <= max;
 export const uuid = (v: unknown): v is string => typeof v === "string" && isUuid(v) && v === v.toLowerCase();
 export function instant(v: unknown): v is string {
-  if (typeof v !== "string" || !/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z$/.test(v)) return false;
+  if (typeof v !== "string" || !/^(?!0000)\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z$/.test(v)) return false;
   const time = Date.parse(v);
   return Number.isFinite(time) && new Date(time).toISOString() === v;
 }
@@ -48,7 +48,7 @@ export function parsePdfField(v: unknown, pageCount: number): PdfField | null {
     || !object(v.locator) || !exact(v.locator, ["page", "line", "sourceTextHash"])
     || !integer(v.locator.page, 1, pageCount) || !integer(v.locator.line, 1, 1000) || !sha256(v.locator.sourceTextHash)) return null;
   if (v.kind === "date") {
-    const date = /^\d{4}-\d\d-\d\d$/.test(v.value) ? Date.parse(`${v.value}T00:00:00.000Z`) : NaN;
+    const date = /^(?!0000)\d{4}-\d\d-\d\d$/.test(v.value) ? Date.parse(`${v.value}T00:00:00.000Z`) : NaN;
     if (!Number.isFinite(date) || new Date(date).toISOString().slice(0, 10) !== v.value) return null;
   }
   return { kind: v.kind as PdfFieldKind, value: v.value, locator: { page: v.locator.page, line: v.locator.line, sourceTextHash: v.locator.sourceTextHash } };
