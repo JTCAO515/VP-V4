@@ -3,6 +3,8 @@ import test,{before,after} from 'node:test';
 import assert from 'node:assert/strict';
 import {randomUUID as uuid} from 'node:crypto';
 import {readFileSync,readdirSync} from 'node:fs';
+import {resolve} from 'node:path';
+import {pathToFileURL} from 'node:url';
 import {command,sql} from '../cost/fixtures/postgres-rpc.mjs';
 const enabled=process.env.VP_PLACE_ACTION_DB_TEST==='1';
 const container='vp365-actions-'+uuid().slice(0,8);let created=false;
@@ -215,4 +217,55 @@ run('saved metadata export contains original selection and cursor remains bound 
  const req=uuid(),lease=uuid(),pid=uuid();await db('update export_private.core_policies_v1 set enabled=false;');
  await db(`insert into export_private.core_policies_v1(id,revision,enabled,environment,key_id,max_run_ms,artifact_ttl_ms,ticket_ttl_ms,max_pages,page_size,max_bytes,valid_until) values('${pid}',1,true,'local','synthetic_unactivated',1000,60000,30000,1,10,65536,clock_timestamp()+interval '1 hour');insert into public.privacy_requests(id,owner_id,action,scope_version,status,execution_state) values('${req}','${f.actor.subject}','export','all-user-data-v1','requested','not_started');insert into export_private.core_jobs_v1(request_id,owner_id,session_id,session_epoch,policy_id,policy_snapshot,state,lease_id,lease_expires_at,expires_at) select '${req}','${f.actor.subject}','${f.actor.sessionId}',1,id,to_jsonb(p),'running','${lease}',clock_timestamp()+interval '1 minute',clock_timestamp()+interval '1 hour' from export_private.core_policies_v1 p where id='${pid}';`);
  const out=await rpc('postgres','place_actions_private.export_metadata_v1',[req,lease,1,null,100]);assert.equal(out.kind,'metadata');assert.equal(out.allUserDataCompleted,false);assert.deepEqual(out.items.find(x=>x.domain==='saved').selection,v.selection);assert.equal(JSON.stringify(out).includes('NO PROVIDER BODY'),false);
+});
+
+run('actual TS service consumes real authenticated PG place action producers across the full operation lifecycle',async()=>{
+ // The combined PR imports its own source. Separate owned SQL checkout may use a
+ // read-only source root solely for this local producer/consumer verification.
+ const source=path=>process.env.VP_PLACE_ACTION_TS_SOURCE_ROOT?pathToFileURL(resolve(process.env.VP_PLACE_ACTION_TS_SOURCE_ROOT,path)).href:new URL('../../../'+path,import.meta.url).href;
+ const {runPlaceAction}=await import(source('lib/server/explore/place-action-service.ts'));
+ const {describeProposalDiff}=await import(source('lib/server/trip/proposal/diff.ts'));
+ await db('grant execute on function public.read_place_action_context_v1(uuid,jsonb),public.execute_place_action_v1(uuid,jsonb) to authenticated;');
+ // The hand-written Auth fixture omits schema usage needed by the existing
+ // ordinary Auth invoker. Restore only that fixture namespace prerequisite; no Auth
+ // table SELECT, helper execution expansion or target permission is granted.
+ await db('grant usage on schema auth to authenticated;');
+ const f=await fixture();let loseSaveAck=true,enabledFlag=true,evaluationCalls=0;const wires=[];
+ const ports={
+  current:async()=>await db(`select exists(select 1 from auth.sessions s join auth.users u on u.id=s.user_id where s.id='${f.actor.sessionId}' and u.id='${f.actor.subject}');`)==='t',
+  enabled:()=>enabledFlag,now:()=>Date.now(),
+  rpc:async(name,params)=>{
+   assert.ok(['read_place_action_context_v1','execute_place_action_v1'].includes(name));assert.deepEqual(Object.keys(params).sort(),['p_input','p_trip']);assert.equal(params.p_trip,f.trip);
+   const data=await rpc('authenticated','public.'+name,[params.p_trip,params.p_input],f.actor);wires.push({kind:data.kind,keys:Object.keys(data).length});
+   if(loseSaveAck && params.p_input.action==='save'){loseSaveAck=false;return {data:null,error:{message:'SIMULATED_ACK_LOST_AFTER_COMMIT'}};}
+   return {data,error:null};
+  },
+  proposal:async id=>{
+   // This is the existing ordinary invoker read, not an admin-made proof/digest.
+   const proof=JSON.parse(await db(`begin;${actorSql(f.actor)}set role authenticated;select to_jsonb(x) from public.read_trip_proposal_v2(${lit(id)}) x;commit;`));
+   // The old snapshot helper has no ordinary EXECUTE grant. The actual new
+   // context reader returns the same owned base snapshot without widening ACL.
+   const actual={proof,base:(await f.context()).snapshot};
+   assert.equal(actual.proof.proposal.id,id);assert.equal(actual.proof.proposal.trip_id,f.trip);assert.equal(actual.base.version,actual.proof.proposal.base_trip_version);assert.match(actual.proof.digest,/^trip-v2:[a-f0-9]{64}$/);
+   return {id,revision:actual.proof.proposal.revision,digest:actual.proof.digest,baseVersion:actual.proof.proposal.base_trip_version,after:describeProposalDiff(actual.base,actual.proof.proposal.patch).next};
+  },
+  evaluate:async()=>{evaluationCalls++;throw Error('No provider/evaluation dispatch is authorized by this identity-only flow');},
+ };
+ const invoke=input=>runPlaceAction(f.trip,input,ports);
+ const context=await invoke({action:'context',expectedTripVersion:1,selection:f.selection,locale:'en'});assert.equal(context.kind,'place_action_context');assert.equal(context.snapshot.version,1);
+ const save=f.mutation();await assert.rejects(invoke(save),e=>e.code==='PLACE_ACTION_UNAVAILABLE');assert.equal(await db(`select count(*) from place_actions_private.saved_places where trip_id='${f.trip}';`),'1');
+ enabledFlag=false;
+ const recovered=await invoke({action:'receipt',request:save});assert.equal(recovered.kind,'place_action_receipt');assert.equal(recovered.savedStatus,'saved');assert.equal(recovered.savedRevision,1);assert.deepEqual(await invoke(save),recovered);assert.equal(recovered.proposalReview,null);
+ enabledFlag=true;
+ const add=f.mutation('add',{dayId:'Day_A',itemId:'Service_Add',startsAt:'2026-10-05T10:00:00+08:00',endsAt:'2026-10-05T11:00:00+08:00',locale:'en'});
+ const proposed=await invoke(add);assert.equal(proposed.kind,'place_action_receipt');assert.ok(proposed.proposalReview);assert.equal(proposed.proposalReview.id,proposed.proposal.proposalId);assert.equal(proposed.proposalReview.baseVersion,1);assert.match(proposed.proposalReview.digest,/^trip-v2:[a-f0-9]{64}$/);
+ assert.equal(proposed.preview.status,'pending');assert.equal(proposed.preview.matrix.providerCalls,0);assert.equal(proposed.preview.tripMutation,'none');assert.equal(proposed.savedStatus,null);
+ const late={...add,operationId:uuid(),itemId:'Never_Apply'};const cancelled=await invoke({action:'abandon',request:late});assert.equal(cancelled.kind,'place_action_cancelled');assert.deepEqual(await invoke(late),cancelled);assert.deepEqual(await invoke({action:'receipt',request:late}),cancelled);
+ const another=uuid(),providerId=uuid();await db(`insert into public.canonical_pois(id,primary_name_zh,primary_name_en) values('${another}','第二地点','Second service fixture');insert into public.provider_poi_mappings(canonical_poi_id,provider,provider_poi_id,raw_name) values('${another}','amap','${providerId}','NO PROVIDER BODY');`);
+ const anotherSelection={canonicalPoiId:another,provider:'amap',providerPoiId:providerId};const anotherContext=await invoke({action:'context',expectedTripVersion:1,selection:anotherSelection,locale:'en'});await invoke({...f.mutation(),selection:anotherSelection,expectedMappingDigest:anotherContext.mappingDigest});
+ const listInput={action:'saved',expectedTripVersion:1,locale:'en',limit:1,cursor:null};const list=await invoke(listInput);assert.equal(list.kind,'saved_place_actions');assert.equal(list.hasMore,true);assert.ok(list.nextCursor);
+ const last=await invoke({...listInput,cursor:list.nextCursor});assert.equal(last.hasMore,false);assert.equal(last.nextCursor,null);assert.equal(last.contextDigest,list.contextDigest);assert.ok(last.items[0].selection.canonicalPoiId>list.items[0].selection.canonicalPoiId);
+ const reopened=[...list.items,...last.items].find(x=>x.selection.canonicalPoiId===save.selection.canonicalPoiId);assert.deepEqual(reopened.selection,save.selection);assert.equal(reopened.referenceId,recovered.referenceId);
+ for(const [kind,keys] of [['place_action_context',14],['place_action_receipt',14],['place_action_cancelled',10],['saved_place_actions',7]])assert.ok(wires.some(w=>w.kind===kind&&w.keys===keys),kind+' actual SQL producer shape');
+ assert.equal(evaluationCalls,0);assert.equal(await db(`select head_version from public.trips where id='${f.trip}';`),'1');assert.equal(await db(`select count(*) from public.trip_items where trip_id='${f.trip}';`),'0');assert.equal(await db(`select count(*) from public.trip_proposals where trip_id='${f.trip}';`),'1');assert.equal(await db(`select count(*) from place_actions_private.operations where trip_id='${f.trip}';`),'4');
 });

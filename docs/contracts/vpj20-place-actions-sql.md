@@ -141,3 +141,40 @@ current-label versus changed/unavailable-null behavior. Command:
 `VP_PLACE_ACTION_DB_TEST=1 node --test --test-name-pattern='saved reload' tests/integration/explore/place-actions-postgres.test.mjs`.
 Prior 18-case evidence is reused for unchanged behavior, without claiming a
 new whole-suite run. Target deployment/permissions and real services remain UNRUN.
+
+
+Producer/consumer review delta: one integration case dynamically imports the
+actual runPlaceAction and describeProposalDiff modules. Its RPC port invokes the
+two real PostgreSQL functions as ordinary authenticated, using the same synthetic
+owner/session/Trip. The proposal port calls the existing ordinary
+read_trip_proposal_v2 (the repository has no read_trip_proposal_intent_v2), obtains
+a real proposal ID/revision/trip-v2 digest, and applies describeProposalDiff to
+that exact patch and the actual context RPC base snapshot at the same head.
+This validates the service core and producer/consumer wire; it does not claim
+the whole HTTP, GoTrue/JWT, Supabase adapter or device path was run.
+
+**PASS 1/1, 0 skipped**, 10.05 seconds: context; Save with deliberately lost ACK
+after actual commit; receipt/retry recovery with feature disabled; Add with a
+real proposalReview and pending preview; abandon and late retry/receipt returning
+the cancelled terminal; two saved pages through the actual TS cursor decoder.
+Observed SQL key counts are context14/receipt14/cancelled10/saved7. No evaluation
+port is invoked, preview providerCalls is 0, original Trip head/items are unchanged,
+one actual Proposal exists, and each operation has one durable outcome.
+
+The first attempt failed on the old trip_content_snapshot EXECUTE restriction.
+It was preserved; the test now uses the authorized context snapshot reader.
+The next attempt failed because the hand-written Auth fixture lacked schema
+USAGE required by the original invoker's auth.uid call. Only the disposable case
+adds authenticated USAGE on the synthetic auth schema, alongside the two
+fixture-only place-action EXECUTE grants. No Auth table SELECT, old snapshot
+helper EXECUTE, migration grant or target permission was added.
+
+Run in the combined checkout:
+`VP_PLACE_ACTION_DB_TEST=1 node --experimental-strip-types --test --test-name-pattern='actual TS service consumes' tests/integration/explore/place-actions-postgres.test.mjs`.
+The isolated SQL checkout may specify VP_PLACE_ACTION_TS_SOURCE_ROOT to read the
+actual TS owner checkout; the final combined checkout defaults to its own source.
+The verified TS source was committed at b1b5a9f2bae9a991c72952f2f618050d51271937;
+place-action-service.ts SHA256 was
+2f64b15b386cc57baa8ee7eb120a5d6364b77a6e82df0928496f8dd8ac82192f.
+Only this new case was run after the relevant fixture corrections. Prior SQL and
+Native evidence was not rerun or promoted to target HTTP/GoTrue acceptance.
