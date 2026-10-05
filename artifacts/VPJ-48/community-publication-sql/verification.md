@@ -34,7 +34,7 @@ Focused logs used `--test-name-pattern='canonical place projection'` and `--test
 
 ## Preserved failures and limits
 
-pg-r1: 8PASS/7FAIL, SQL list alias c colliding with row variable. pg-r2:14PASS/1FAIL, erased saved-reference exact recovery was incorrectly denied. Runtime fixes preceded r3:15PASS, r4:19PASS and final r5:21PASS. Original failed assertions were kept; no acceptance relaxation. j1-wrong-flag-unrun records initial incorrect enable variable and11 skips; corrected actual j1-regression is11PASS0skip. This skipped run is not validation evidence.
+pg-r1: 8PASS/7FAIL, SQL list alias c colliding with row variable. pg-r2:14PASS/1FAIL, erased saved-reference exact recovery was incorrectly denied. Runtime fixes preceded r3:15PASS, r4:19PASS and final r5:21PASS. Original failed assertions were kept; no acceptance relaxation. Terminal-added trailing whitespace on blank diagnostic lines in r1/r2 was normalized for repository diff checks; diagnostic text and outcomes were preserved. j1-wrong-flag-unrun records initial incorrect enable variable and11 skips; corrected actual j1-regression is11PASS0skip. This skipped run is not validation evidence.
 
 Rollback: transaction rollback was actually tested before applying the new migration. Operational disable `community_publication_private.settings.enabled=false` denies display/publication and leaves owner export/delete/metadata/recovery available; never delete terminal fences to roll back. No new target configuration, public/grant/admin credential/role/Storage/provider/Production/phone or all-account enrollment operation was executed.
 

@@ -29,10 +29,10 @@ test at tests/integration/community/publication-j3j4-postgres.test.mjs:14:22
   AssertionError [ERR_ASSERTION]: ERROR:  PUBLICATION_NOT_FOUND
   CONTEXT:  PL/pgSQL function community_publication_private.workspace(jsonb) line 65 at RAISE
   PL/pgSQL function public.community_workspace(jsonb) line 5 at RETURN
-  
-  
+
+
   3 !== 0
-  
+
       at call (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj48-community-publication-sql-20261006/tests/integration/community/publication-j3j4-postgres.test.mjs:21:67)
       at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
       at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj48-community-publication-sql-20261006/tests/integration/community/publication-j3j4-postgres.test.mjs:194:201)
