@@ -73,7 +73,7 @@ struct AppShellView: View {
         .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { activity in
             if let url = activity.webpageURL { _ = settings.nativeSession.entryResume.receive(url, scope: settings.nativeSession.dataScope) }
         }
-        .sheet(isPresented: Binding(get: { settings.nativeSession.entryResume.presented && presentedEntry == nil && settings.nativeSession.notifications.destination == nil }, set: { settings.nativeSession.entryResume.presented = $0 })) {
+        .sheet(isPresented: Binding(get: { settings.nativeSession.entryResume.presented && presentedEntry == nil && settings.nativeSession.notifications.destination == nil && !switchState.blocked }, set: { settings.nativeSession.entryResume.presented = $0 })) {
             NativeEntryResumeView(session: settings.nativeSession, coordinator: settings.nativeSession.entryResume, chinese: settings.selectedLocale == .zh)
         }
         .onChange(of: settings.nativeSession.dataScope, initial: true) { _, scope in

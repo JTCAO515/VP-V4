@@ -1129,7 +1129,15 @@ final class NativeSession {
         busy = true
         defer { busy = false }
         // A deliberate account change clears all old account data before sending the new request.
-        guard clear() else { return }
+        let anonymousResume: UUID?
+        do {
+            anonymousResume = credential == nil && defaults.string(forKey: storageKey) == nil
+                && defaults.object(forKey: storageKey + ".signOutIntent") == nil
+                && defaults.string(forKey: storageKey + ".pendingJournalCleanupOwner") == nil
+                && defaults.string(forKey: storageKey + ".recoveryCleanupOwner") == nil
+                ? try entryResume.initialLoginPreservation() : nil
+        } catch { failureCode="entryResumeCleanupRequired";status="storageError";return }
+        guard clear(preservingAnonymousResume: anonymousResume) else { return }
         defaults.removeObject(forKey: storageKey + ".signOutIntent")
         deviceMaterialSignOutFence = false // Only a deliberate new login after cleanup reopens consumption.
         let attempt = UUID().uuidString
@@ -1314,11 +1322,11 @@ final class NativeSession {
         return try deviceMaterials.receive(data, scope: scope)
     }
 
-    @discardableResult private func clear(preservePendingJournals: Bool = false) -> Bool {
+    @discardableResult private func clear(preservePendingJournals: Bool = false, preservingAnonymousResume: UUID? = nil) -> Bool {
         // Fence consumers before cleanup; a locked file is not proof of erasure.
         dataGeneration += 1
         notifications.actorChanged(to: nil)
-        do { try entryResume.erase() }
+        do { try entryResume.erase(preservingUnclaimedID: preservingAnonymousResume) }
         catch { failureCode="entryResumeCleanupRequired";status="storageError";return false }
         subject=nil; mobileEpoch=nil; displayName=nil
         do { try NativePDFInbox().eraseAll() }

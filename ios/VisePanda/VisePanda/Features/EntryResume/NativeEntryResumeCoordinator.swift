@@ -37,11 +37,14 @@ final class NativeEntryResumeCoordinator {
     }
 
     func refresh(scope: NativeDataScope?) {
+        if let previous = active, previous != scope {
+            do { try erase() } catch { message = "cleanupRequired"; return }
+        }
         state.authenticate(scope.map(Self.identity))
         active = scope; receipts = []
         guard let inbox else { message = "unconfigured"; return }
         guard let scope else { message = "loginRequired"; return }
-        guard state.failure == nil else { message = String(describing: state.failure!); return }
+        if let failure = state.failure { message = String(describing: failure); return }
         do {
             let available = try inbox.available(namespace: Self.namespace(scope))
             if let intent = state.intent {
@@ -79,10 +82,23 @@ final class NativeEntryResumeCoordinator {
         state.clear(cleanupSucceeded: true); refresh(scope: scope)
     }
 
+    /// Retains exactly one verified anonymous selection during credential-free initial login.
+    func initialLoginPreservation() throws -> UUID? {
+        guard let value = state.intent, value.identity == nil, value.expiresAt > Date(), let inbox else { return nil }
+        let receipt = try inbox.unclaimedReceipt(id: value.entryID)
+        guard receipt.ownerNamespace == nil, receipt.expiresAt > Date() else { throw ShareIntakeError.expired }
+        return receipt.id
+    }
+
     /// Called by session cleanup before any different account can become active. Missing capability has no files.
-    func erase() throws {
+    func erase(preservingUnclaimedID: UUID? = nil) throws {
         receipts = []; active = nil; presented = false
-        do { try inbox?.eraseAll(); state.clear(cleanupSucceeded: true); message = nil }
+        do {
+            try inbox?.eraseAll(preservingUnclaimedID: preservingUnclaimedID)
+            if preservingUnclaimedID == nil { state.clear(cleanupSucceeded: true) }
+            else { presented = true }
+            message = nil
+        }
         catch { state.clear(cleanupSucceeded: false); message = "cleanupRequired"; throw error }
     }
 
