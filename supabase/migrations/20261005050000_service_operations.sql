@@ -395,7 +395,7 @@ begin
  union all select 'minute:'||m.case_id||':'||m.operation_id,jsonb_build_object('key','minute:'||m.case_id||':'||m.operation_id,'domain','minutes','value',jsonb_build_object('caseId',m.case_id,'operationId',m.operation_id,'staffId',m.staff_id,'startedAt',m.started_at,'endedAt',m.ended_at)) from service_operations_private.minutes m join service_operations_private.services s on s.case_id=m.case_id where s.owner_id=p_owner
  union all select 'audit:'||a.case_id||':'||a.revision,jsonb_build_object('key','audit:'||a.case_id||':'||a.revision,'domain','service_audit','value',jsonb_build_object('caseId',a.case_id,'revision',a.revision,'actorId',a.actor_id,'action',a.action,'status',a.status,'createdAt',a.created_at)) from service_operations_private.audit a join service_operations_private.services s on s.case_id=a.case_id where s.owner_id=p_owner
  union all select 'op:'||encode(extensions.digest(convert_to(o.actor_id||':'||o.session_id||':'||o.surface||':'||o.operation_id,'UTF8'),'sha256'),'hex'),jsonb_build_object('key','op:'||encode(extensions.digest(convert_to(o.actor_id||':'||o.session_id||':'||o.surface||':'||o.operation_id,'UTF8'),'sha256'),'hex'),'domain','operation','value',jsonb_build_object('operationId',o.operation_id,'actorId',o.actor_id,'surface',o.surface,'caseId',o.case_id,'grantRevision',o.grant_revision,'requestDigest',o.request_digest,'receipt',o.receipt,'createdAt',o.created_at,'erased',o.erased,'requestBytes',case when o.erased then null else convert_from(o.request_bytes,'UTF8') end)) from service_operations_private.operations o where owner_id=p_owner
- union all select 'data-op:'||d.operation_id,jsonb_build_object('key','data-op:'||d.operation_id,'domain','operation','value',d.receipt) from service_operations_private.data_operations d where actor_id=p_owner
+ union all select 'data-op:'||encode(extensions.digest(convert_to(d.session_id||':'||d.operation_id,'UTF8'),'sha256'),'hex'),jsonb_build_object('key','data-op:'||encode(extensions.digest(convert_to(d.session_id||':'||d.operation_id,'UTF8'),'sha256'),'hex'),'domain','operation','value',d.receipt) from service_operations_private.data_operations d where actor_id=p_owner
  order by key limit 10001) x;
  if jsonb_array_length(rows)>10000 then raise exception 'CASE_WORKSPACE_LIMIT';end if;return rows;
 end $$;
@@ -474,7 +474,7 @@ begin
  if a='export' then
   if not service_operations_private.exact(v,array['action','requestId','confirmed']) or not service_operations_private.uuid(v->'requestId') or v->'confirmed' is distinct from 'true'::jsonb or octet_length(raw)>24000 then raise exception 'INVALID_INPUT';end if;
   -- All Case sources are locked before one UNION snapshot of all six domains.
-  perform 1 from service_cases_private.cases where owner_id=u order by id for update;
+  perform 1 from service_cases_private.cases where owner_id=u order by id limit 10001 for update;
   perform service_operations_private.expire_owner_cases(u);
   rows:=service_operations_private.export_rows(u);captured:=service_operations_private.ms(clock_timestamp());
   dig_source:=encode(extensions.digest(convert_to(jsonb_build_object('scope','service-case-data/1','requestId',v->'requestId','ownerId',u,'sessionId',session,'rows',rows)::text,'UTF8'),'sha256'),'hex');
@@ -506,7 +506,7 @@ begin
   if c.revision<>(v->>'grantRevision')::integer then raise exception 'CASE_CONFLICT';end if;
   perform service_operations_private.delete_case_v1(c.id,c.revision);
  end if;
- out:=jsonb_build_object('schemaVersion','service-case-data/1','operationId',op,'requestDigest',dig,'outcome',case when abandon then 'cancelled' else 'deleted' end,'allUserDataCompleted',false);
+ out:=jsonb_build_object('schemaVersion','service-case-data/1','kind','receipt','operationId',op,'requestDigest',dig,'outcome',case when abandon then 'cancelled' else 'deleted' end,'createdAt',service_operations_private.ms(clock_timestamp()),'allUserDataCompleted',false);
  insert into service_operations_private.data_operations(actor_id,session_id,operation_id,request_digest,receipt) values(u,session,op,dig,out);
  return out;
 exception when lock_not_available then raise exception 'CASE_BUSY';end $$;
