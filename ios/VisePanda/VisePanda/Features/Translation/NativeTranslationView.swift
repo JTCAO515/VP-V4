@@ -33,6 +33,11 @@ struct NativeTranslationView: View {
             VStack(alignment: .leading, spacing: 20) {
                 Text(text("Say it clearly", "现场表达")).font(.largeTitle.bold())
                 Text(text("Type a short phrase or paste an address you chose. The original stays with your translation.", "输入短句或粘贴你选择的地址，译文始终保留原文。"))
+                NavigationLink {
+                    NativeVoiceTranslationView()
+                } label: {
+                    Label(text("Hold to speak and translate", "按住说话并翻译"), systemImage: "mic")
+                }.accessibilityIdentifier("translation.voice.entry")
                 if session.dataScope == nil {
                     Text(text("Sign in in Profile to translate.", "请在「我的」登录后翻译。"))
                 }

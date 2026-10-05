@@ -1,0 +1,16 @@
+# VPJ-27 local verification
+
+UI/integrator branch codex/vpj27-native-voice-translation-20261005. Base fresh origin/main e2ea9334; source repository dirty edits untouched. Audio owner b0a12fcd integrated as1e327568; later owned fixes integrate as separate commits.
+
+- PASS: UI/store/test syntax parse and diff check.
+- PASS: four actual Swift Testing model cases, macOS14 temporary package, local synthetic requests/callbacks. Store source copied unchanged; supporting decoded DTO fields are extracted from production source (unrelated Ask matching method omitted). No UI or target Session compilation claim.
+- Preserved FAIL: first temporary package targeted macOS12 by default, so Observation could not compile. Corrected temporary package platform to14; no production availability or test requirement weakened.
+- Tests cover late/duplicate final text, actor change, original unknown-ACK read without second generation, exact request semantic body/id replay, unrelated history exclusion, consent withdrawal, late HTTP response discard.
+
+Shared leases were subsequently granted. Normal merge of657 fixed966f64da preceded incremental Session audio cleanup, PBX8production2test registration and two NativeEnvironment bilingual purpose strings. Whole generic Simulator app build PASS (app-build-r1-tail.log). Full test build FAIL (test-build-r1-fail.txt): original audio-owned FileManager fixture subclass overrides inherit target MainActor, conflicting with nonisolated Foundation signatures at223/224. Exact finding is in WIRE/STATUS for original owner repair. Original owner fixed this exact test integration defect in de8475c3 (one nonisolated class declaration; production and assertions unchanged), normally integrated as91764417. Original full generic build-for-testing r2 now PASS (test-build-r2-tail.log). Complete accepted production core and compiler source are fixed; development closure is separate from target/system/human acceptance and protected PR merge. Target/system/device/runtime voice acceptance remains UNRUN.
+
+PASS: registered docs check (`node scripts/docs-check.mjs`). Initial command typo (`node scripts/check-docs.mjs`) failed because no such file, then corrected using package.json. Original audio evidence b7 is retained separately; nine audio and four translation tests were separate actual local runs, not a single iOS run.
+
+Immutable complete source:917644176b7a9c66a8537d16ada28ec295f32580. No repeated9/4fixture matrix after the one-line test-only fix. Main read/relay follows original ownership. Sole PR awaits657 protected merge so the final PR diff excludes that separate task.
+
+Integration display fix: the playback panel now binds its measured character/progress display to the final phrase actually started by the explicit speak action; changing phrases or leaving the panel clears that display identity, so another phrase cannot display old controller counters. Only NativeVoiceAudioPanels.swift changed; Core/recording UUID/Session/PBX/Info/SQL remain unchanged. Affected full generic Simulator app build PASS (playback-binding-build-tail.log), diff review PASS. Existing store/audio and Brief SQL fixture evidence is unchanged and reused. UI/device runtime remains UNRUN. This is a source fix rather than an evidence-only push; final formal review and CI must bind the new head.

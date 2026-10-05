@@ -21,5 +21,9 @@
     <false/>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>The built-in AMap map component can show your current position on the map. This version of VisePanda does not turn that on and does not use your location.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>VisePanda records only when you choose to speak a phrase for translation. Release or cancel to stop. VisePanda 仅在你选择说话翻译时录音，松开或取消即可停止。</string>
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>VisePanda recognizes your selected recording on this device so you can review its text before translation. If local recognition is unavailable, type your phrase. VisePanda 在本机识别你选择的录音，供你核对文字后翻译；本机识别不可用时可输入短句。</string>
 </dict>
 </plist>
