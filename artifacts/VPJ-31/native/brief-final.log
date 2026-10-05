@@ -1,0 +1,55 @@
+Test Suite 'Selected tests' started at 2026-10-05 17:23:08.764.
+Test Suite 'VisePandaTests.xctest' started at 2026-10-05 17:23:08.764.
+Test Suite 'NativeTravelerBriefTests' started at 2026-10-05 17:23:08.765.
+Test Case '-[VisePandaTests.NativeTravelerBriefTests testActualSessionBriefEraseFailureFencesIdentityAndDoesNotClaimErasure]' started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native logout HTTP 200
+Test Case '-[VisePandaTests.NativeTravelerBriefTests testActualSessionBriefEraseFailureFencesIdentityAndDoesNotClaimErasure]' passed (0.017 seconds).
+Test Case '-[VisePandaTests.NativeTravelerBriefTests testActualSessionDenialPreservesOriginalJournalAndExplicitLogoutErasesIt]' started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native session failed: session
+Test Case '-[VisePandaTests.NativeTravelerBriefTests testActualSessionDenialPreservesOriginalJournalAndExplicitLogoutErasesIt]' passed (0.011 seconds).
+Test Case '-[VisePandaTests.NativeTravelerBriefTests testBriefAccessRequiresBothIndividualSelectionAndExplicitConfirmation]' started.
+Test Case '-[VisePandaTests.NativeTravelerBriefTests testBriefAccessRequiresBothIndividualSelectionAndExplicitConfirmation]' passed (0.000 seconds).
+Test Case '-[VisePandaTests.NativeTravelerBriefTests testChangedAccountDuringACKCannotPublishReceiptOrEraseOldOwnersJournal]' started.
+Test Case '-[VisePandaTests.NativeTravelerBriefTests testChangedAccountDuringACKCannotPublishReceiptOrEraseOldOwnersJournal]' passed (0.004 seconds).
+Test Case '-[VisePandaTests.NativeTravelerBriefTests testExportRequiresExactOwnerSessionLeaseAndRejectsCopiedSourceValues]' started.
+Test Case '-[VisePandaTests.NativeTravelerBriefTests testExportRequiresExactOwnerSessionLeaseAndRejectsCopiedSourceValues]' passed (0.001 seconds).
+Test Case '-[VisePandaTests.NativeTravelerBriefTests testLegitimateSharedSubsetUsesItsOwnSourceDigestAndRemainsVisible]' started.
+Test Case '-[VisePandaTests.NativeTravelerBriefTests testLegitimateSharedSubsetUsesItsOwnSourceDigestAndRemainsVisible]' passed (0.001 seconds).
+Test Case '-[VisePandaTests.NativeTravelerBriefTests testLostACKNullReceiptAndWrongDigestPreserveOriginalOperationUntilMatchedAbandon]' started.
+Test Case '-[VisePandaTests.NativeTravelerBriefTests testLostACKNullReceiptAndWrongDigestPreserveOriginalOperationUntilMatchedAbandon]' passed (0.003 seconds).
+Test Case '-[VisePandaTests.NativeTravelerBriefTests testOldReviewCannotSurviveCorrectionGrantReplacementCaseOrSessionChange]' started.
+Test Case '-[VisePandaTests.NativeTravelerBriefTests testOldReviewCannotSurviveCorrectionGrantReplacementCaseOrSessionChange]' passed (0.000 seconds).
+Test Case '-[VisePandaTests.NativeTravelerBriefTests testOriginalWhitespaceBytesSurviveRestartAndCannotBeOverwrittenOrReadByOtherEpoch]' started.
+Test Case '-[VisePandaTests.NativeTravelerBriefTests testOriginalWhitespaceBytesSurviveRestartAndCannotBeOverwrittenOrReadByOtherEpoch]' passed (0.001 seconds).
+Test Case '-[VisePandaTests.NativeTravelerBriefTests testRefreshDoesNotCarryForwardPreviouslyAuthorizedFields]' started.
+Test Case '-[VisePandaTests.NativeTravelerBriefTests testRefreshDoesNotCarryForwardPreviouslyAuthorizedFields]' passed (0.000 seconds).
+Test Case '-[VisePandaTests.NativeTravelerBriefTests testRevokedGrantOwnerCleanupWorksWithoutAnActivePreview]' started.
+Test Case '-[VisePandaTests.NativeTravelerBriefTests testRevokedGrantOwnerCleanupWorksWithoutAnActivePreview]' passed (0.004 seconds).
+Test Case '-[VisePandaTests.NativeTravelerBriefTests testShareWriterRejectsUncheckedFieldsAndChangedPreviewDigestBeforeNetwork]' started.
+Test Case '-[VisePandaTests.NativeTravelerBriefTests testShareWriterRejectsUncheckedFieldsAndChangedPreviewDigestBeforeNetwork]' passed (0.001 seconds).
+Test Case '-[VisePandaTests.NativeTravelerBriefTests testStorageFailurePreventsNetworkAndTTLRemovesAllReadableContent]' started.
+Test Case '-[VisePandaTests.NativeTravelerBriefTests testStorageFailurePreventsNetworkAndTTLRemovesAllReadableContent]' passed (0.007 seconds).
+Test Case '-[VisePandaTests.NativeTravelerBriefTests testUnknownCannotCarryValueAndSensitiveInferenceOrWrongCaseSourceIsRejected]' started.
+Test Case '-[VisePandaTests.NativeTravelerBriefTests testUnknownCannotCarryValueAndSensitiveInferenceOrWrongCaseSourceIsRejected]' passed (0.000 seconds).
+Test Suite 'NativeTravelerBriefTests' passed at 2026-10-05 17:23:08.819.
+	 Executed 14 tests, with 0 failures (0 unexpected) in 0.051 (0.054) seconds
+Test Suite 'VisePandaTests.xctest' passed at 2026-10-05 17:23:08.819.
+	 Executed 14 tests, with 0 failures (0 unexpected) in 0.051 (0.054) seconds
+Test Suite 'Selected tests' passed at 2026-10-05 17:23:08.819.
+	 Executed 14 tests, with 0 failures (0 unexpected) in 0.051 (0.055) seconds
+2026-10-05 17:23:09.101 xcodebuild[6506:1794307] [MT] IDETestOperationsObserverDebug: 6.078 elapsed -- Testing started completed.
+2026-10-05 17:23:09.101 xcodebuild[6506:1794307] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-05 17:23:09.101 xcodebuild[6506:1794307] [MT] IDETestOperationsObserverDebug: 6.078 sec, +6.078 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/vpj31-native-brief-derived/Logs/Test/Test-VisePanda-2026.10.05_17-22-52-+0800.xcresult
+
+** TEST SUCCEEDED **
+
+Testing started

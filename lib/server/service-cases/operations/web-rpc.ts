@@ -22,7 +22,7 @@ export function createServiceWebRPC(request: NextRequest, config: { url: string;
       return actor;
     },
     sessionId() { return session; },
-    async call(name: 'service_case_operations_v1', params: Record<string, unknown>) {
+    async call(name: 'service_case_operations_v1' | 'service_case_brief_v1', params: Record<string, unknown>) {
       if (!actor || !session) return { data: null, error: { message: 'UNAUTHENTICATED' } };
       return lifetime.run(() => client.rpc(name, params).abortSignal(lifetime.signal));
     },
