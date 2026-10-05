@@ -2,7 +2,7 @@
 // fixture-only grant. This proves SQL behavior, not target Auth/enrollment.
 import test,{before,after} from 'node:test';
 import assert from 'node:assert/strict';
-import {randomUUID,createHash} from 'node:crypto';
+import {randomUUID,randomBytes,createHash,createCipheriv} from 'node:crypto';
 import {readFileSync,readdirSync} from 'node:fs';
 import {resolve} from 'node:path';
 import {pathToFileURL} from 'node:url';
@@ -101,6 +101,13 @@ async function lease(a){const request=randomUUID();await exportCall(a,'request',
 const exportInput=l=>({version:'pdf-intake-export/1',requestId:l.requestId,leaseId:l.leaseId,generation:l.generation,cursor:null,limit:100});
 const exportSQL=input=>worker+`set role service_role;select public.pdf_intake_export_v1(${json(input)});`;
 const exportPage=async l=>JSON.parse(await db(exportSQL(exportInput(l))));
+async function exportCommit(a,l,modules,data={}){
+ const key=randomBytes(32),nonce=randomBytes(12),plain=Buffer.from(canonical({schemaVersion:'privacy-core-export/1',requestId:l.requestId,coverage:'partial',allUserDataCompleted:false,data,modules}));
+ const cipher=createCipheriv('aes-256-gcm',key,nonce);cipher.setAAD(Buffer.from(canonical(['privacy-core-export/1',l.requestId,a.owner,l.generation])));
+ const ciphertext=Buffer.concat([cipher.update(plain),cipher.final()]);
+ const artifact={schemaVersion:'privacy-export-artifact/1',keyId:'synthetic-pdf-key',nonce:nonce.toString('base64url'),tag:cipher.getAuthTag().toString('base64url'),ciphertext:ciphertext.toString('base64url'),plaintextDigest:digest(plain),plaintextBytes:plain.length,expiresAt:new Date(Date.now()+300000).toISOString()};
+ return {requestId:l.requestId,leaseId:l.leaseId,generation:l.generation,artifact,modules,coverage:'partial'};
+}
 run('new exact export lease owner pages, actual cursor/source invalidation, no old completion retrofit',async()=>{
  await db(`insert into export_private.core_policies_v1(id,revision,enabled,environment,key_id,max_run_ms,artifact_ttl_ms,ticket_ttl_ms,max_pages,page_size,max_bytes,valid_until) values('${randomUUID()}',1,true,'local','synthetic-pdf-key',90000,600000,300000,1000,100,8388608,clock_timestamp()+interval '1 day');grant execute on function public.pdf_intake_export_v1(jsonb) to service_role;`);
  const a=await fixture(),b=await fixture(),s=await submit(a,cmd());await submit(b,cmd());const l=await lease(a),input=exportInput(l),p=await exportPage(l);
@@ -110,10 +117,15 @@ run('new exact export lease owner pages, actual cursor/source invalidation, no o
  const modules=['trip','conversations','results','profile','memory','turn','user_artifact','brief','entitlements'].map(module=>({module,status:'unavailable',reason:'HANDLER_MISSING',pages:0,rows:0,digest:null}));
  const hasCommit=async(l,modules)=>db(`select pdf_intake_private.export_commit_v1(j,${json(modules)},'${l.leaseId}',${l.generation}) from export_private.core_jobs_v1 j where request_id='${l.requestId}';`);
  modules[6]={module:'user_artifact',status:'complete',reason:'NONE',pages:1,rows:1,digest:digest('fixture pages')};assert.equal(await hasCommit(l,modules),'t');
- const unenrolled=await lease(b);assert.equal(await hasCommit(unenrolled,modules),'f');
+ const unenrolled=await lease(b);assert.equal(await hasCommit(unenrolled,modules),'f');const fake=await exportCommit(b,unenrolled,modules);
+ await deny(worker+`select public.privacy_core_export_v1('commit',${json(fake)});`,/INVALID_OUTPUT/);
  const partial=structuredClone(modules);partial[6]={module:'user_artifact',status:'unavailable',reason:'HANDLER_MISSING',pages:0,rows:0,digest:null};assert.equal(await hasCommit(unenrolled,partial),'t');
- await db(`update export_private.core_jobs_v1 set state='ready_partial',committed_lease=lease_id,lease_id=null,lease_expires_at=null where request_id='${unenrolled.requestId}';`);assert.equal((await exportPage(unenrolled)).kind,'unavailable');assert.equal(await db(`select pdf_export_version is null from export_private.core_jobs_v1 where request_id='${unenrolled.requestId}';`),'t');
+ const oldArtifact=await exportCommit(b,unenrolled,partial);assert.equal((await exportCall(null,'commit',oldArtifact)).state,'ready_partial');
+ assert.equal((await exportPage(unenrolled)).kind,'unavailable');assert.equal(await db(`select pdf_export_version is null from export_private.core_jobs_v1 where request_id='${unenrolled.requestId}';`),'t');
+ const artifact=await exportCommit(a,l,modules,{user_artifact:p.items});assert.equal((await exportCall(null,'commit',artifact)).state,'ready_partial');
+ assert.equal((await exportCall(null,'commit',artifact)).state,'ready_partial','exact old commit ACK can recover');
  await call(a,'cancel',{operationId:s.c.operationId});assert.equal((await exportCall(null,'validate',{requestId:l.requestId,leaseId:l.leaseId,generation:l.generation})).current,false);assert.equal((await exportPage(l)).kind,'unavailable');
+ assert.equal((await exportCall(a,'read',{requestId:l.requestId})).kind,'unavailable','ready controlled artifact invalidates on real source erasure');
 });
 
 run('concurrent cancel/confirm and privacy/source contention abort without deadlock or partial apply',async()=>{
@@ -153,6 +165,7 @@ run('owner epoch Trip head digest limits cancel tombstone and marker successor d
  for(const bad of [{...c,pageCount:11},{...c,byteCount:20000001},{...c,extra:true},{...c,fields:[c.fields[1]]}])await deny(callSQL(a,'preview',bad),/INVALID_INPUT/);
  assert.equal((await call(a,'cancel',{operationId:c.operationId})).state,'cancelled');await deny(callSQL(a,'proposal',{command:c,reviewedPreviewDigest:p.previewDigest}),/CANCELLED/);
  const s=await submit(a,cmd());await deny(claims(a)+`select * from public.revise_trip_proposal_patch('${s.r.proposalId}',${json(s.p.patch)});`,/PDF_SUCCESSOR_FORBIDDEN/);
+ await deny(claims(a)+`insert into public.trip_events(trip_id,owner_id,resulting_version,proposal_id,event_type) values('${a.trip}','${a.owner}',1,'${s.r.proposalId}','proposal_applied');`,/PDF_CONFIRM_GUARD/);
  await deny(`update public.trip_proposals set expires_at=expires_at+interval '1 day' where id='${s.r.proposalId}';`,/PDF_PROPOSAL_IMMUTABLE/);
  assert.equal((await call(a,'cancel',{operationId:s.c.operationId})).state,'cancelled');assert.notEqual(await db(confirmSQL(a,s.r)),'applied');
 });
