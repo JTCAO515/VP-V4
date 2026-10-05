@@ -36,6 +36,11 @@ export function decodeMaterialReceipt(v: unknown, selection?: MaterialSelection,
     || v.effects.tripMutation !== 'none' || v.effects.externalOrders !== 'not_contacted' || v.effects.financialRecords !== 'not_modified') return null;
   return v as MaterialEraseReceipt;
 }
+export function decodeMaterialUnknown(v: unknown, selection: MaterialSelection, actor: MaterialActor, requestDigest: string): boolean {
+  return record(v) && exact(v, ['schemaVersion','kind','scope','requestId','tripId','objectIds','ownerId','sessionId','mobileEpoch','requestDigest','allUserDataCompleted'])
+    && v.schemaVersion === MATERIAL_SCHEMA && v.kind === 'unknown' && sameMaterialSelection(v, selection, actor)
+    && v.requestDigest === requestDigest && v.allUserDataCompleted === false;
+}
 export function decodeMaterialList(v: unknown, command: Extract<MaterialCommand, { action: 'list' }>, actor: MaterialActor, now: number): Record<string, unknown> | null {
   if (!record(v) || !exact(v, ['schemaVersion','kind','scope','tripId','ownerId','sessionId','mobileEpoch','sourceDigest','capturedAt','expiresAt','items','hasMore','nextCursor','allUserDataCompleted'])
     || v.schemaVersion !== MATERIAL_SCHEMA || v.kind !== 'list' || !materialScope(v.scope) || v.scope !== command.scope || v.tripId !== command.tripId

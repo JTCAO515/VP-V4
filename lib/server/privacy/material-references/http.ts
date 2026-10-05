@@ -1,10 +1,10 @@
 import { getNativeRuntimeConfig } from '../../identity/native-config.ts';
 import { verifyNativeCredentials } from '../../identity/native-credentials.ts';
 import { nativeRequestScope } from '../../identity/native-request.ts';
-import { exact, record, uuid } from '../../guide/contract.ts';
-import { MATERIAL_SCHEMA, MATERIAL_LIMITS, parseMaterialCommand, materialDigest, positive, sameMaterialSelection, type MaterialActor } from './contract.ts';
+import { record, uuid } from '../../guide/contract.ts';
+import { MATERIAL_LIMITS, parseMaterialCommand, materialDigest, positive, type MaterialActor } from './contract.ts';
 import { collectMaterialExport, type MaterialRPC } from './export.ts';
-import { decodeMaterialList, decodeMaterialPreview, decodeMaterialReceipt } from './protocol.ts';
+import { decodeMaterialList, decodeMaterialPreview, decodeMaterialReceipt, decodeMaterialUnknown } from './protocol.ts';
 
 type Lifetime = ReturnType<typeof nativeRequestScope>;
 export type MaterialAuthority = Readonly<{ authenticate(): Promise<MaterialActor | null>; current(actor: MaterialActor): Promise<boolean>; rpc: MaterialRPC }>;
@@ -15,11 +15,6 @@ const reply = (data: unknown, status = 200) => Response.json(data, { status, hea
 const fail = (code: string, status = 503) => reply({ error: { code } }, status);
 export function materialError(message: string): string {
   return /^(MATERIAL_[A-Z_]+|UNAUTHENTICATED|SESSION_REPLACED|REAUTHENTICATION_REQUIRED|FORBIDDEN|INVALID_INPUT|STALE_TRIP_VERSION)$/.test(message) ? message : 'MATERIAL_UNAVAILABLE';
-}
-function decodeUnknown(v: unknown, command: Extract<ReturnType<typeof parseMaterialCommand>, { action: 'recover' }>, actor: MaterialActor): boolean {
-  return record(v) && exact(v, ['schemaVersion','kind','scope','requestId','tripId','objectIds','ownerId','sessionId','mobileEpoch','requestDigest','allUserDataCompleted'])
-    && v.schemaVersion === MATERIAL_SCHEMA && v.kind === 'unknown' && sameMaterialSelection(v, command, actor)
-    && v.requestDigest === materialDigest(command.mutationBytes) && v.allUserDataCompleted === false;
 }
 /** Ordinary owner credentials only, with the original exact bytes carried to SQL. */
 export async function handleMaterialReferences(request: Request, options: MaterialHTTPOptions): Promise<Response> {
@@ -50,7 +45,7 @@ export async function handleMaterialReferences(request: Request, options: Materi
       const mutation = command.action === 'recover' ? parseMaterialCommand(JSON.parse(bytes)) : command;
       return mutation && 'previewDigest' in mutation && mutation.previewDigest === receipt.previewDigest ? reply({ data: receipt }) : fail('MATERIAL_ACK_UNKNOWN');
     }
-    if (command.action === 'recover' && decodeUnknown(result, command, actor)) return reply({ data: result });
+    if (command.action === 'recover' && decodeMaterialUnknown(result, command, actor, materialDigest(command.mutationBytes))) return reply({ data: result });
     return fail('MATERIAL_ACK_UNKNOWN');
   }); } catch (error) {
     const code = materialError(error instanceof Error ? error.message : 'MATERIAL_UNAVAILABLE');

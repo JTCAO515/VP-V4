@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { handleMaterialReferences, materialReferenceNativeHTTP } from '../../../../lib/server/privacy/material-references/http.ts';
 import { materialDigest } from '../../../../lib/server/privacy/material-references/contract.ts';
 import { fixtureActor, fixtureNow, fixtureId, fixtureBinding, fixtureCommand, fixtureRPC, fixtureReceipt } from '../../../fixtures/privacy/material-references/source.mjs';
+import { validMaterialCoverageSelection, materialCoverageRequestBody, materialCoverageOutcome } from '../../../../lib/server/privacy/material-references/coverage.ts';
 const scope = 'reservation-reference-data/1';
 const request = (body, headers = {}) => new Request('http://127.0.0.1/api/privacy/native/v1/material-references', {
   method: 'POST', headers: { 'content-type': 'application/json', ...headers }, body: typeof body === 'string' ? body : JSON.stringify(body),
@@ -67,4 +68,25 @@ test('authentication/admission precedes source dispatch, sensitive RPC defaults 
   const changedSource = await handleMaterialReferences(request({ ...list, cursor: { sourceDigest: 'c'.repeat(64), afterId: b.objectIds[0] } }), options(async () => rows));
   assert.equal(changedSource.status, 503);
   assert.equal((await handleMaterialReferences(request(list), options(async () => ({ ...rows, ownerId: fixtureId(999) })))).status, 503);
+});
+
+test('coverage consumes the selected actual metadata/erasure receipt and preserves original bytes on unknown recovery', async () => {
+  const command = fixtureCommand(scope,'erase'), bytes = '\n'+JSON.stringify(command);
+  const input = { schemaVersion: 'data-coverage/1',catalogVersion: 'data-coverage-catalog/2026-10-06.3',actorId: fixtureActor.ownerId,
+    sessionId: fixtureActor.sessionId,mobileEpoch: fixtureActor.mobileEpoch,moduleId: 'order_references',moduleVersion: 'material-reference-data/1',
+    operationId: command.requestId,action: 'delete',phase: 'execute',confirmed: true,tripId: command.tripId,commandBytes: bytes };
+  const selected = { input,command,handler: 'materials' };
+  assert.ok(validMaterialCoverageSelection(input,command));
+  assert.equal(validMaterialCoverageSelection({ ...input,moduleId: 'pdf_intake' },command),false);
+  const receipt = fixtureReceipt(scope,bytes);
+  assert.equal(materialCoverageOutcome(selected,receipt,fixtureNow+5).state,'scoped_complete');
+  assert.equal(materialCoverageOutcome(selected,{ ...receipt,ownerId: fixtureId(900) },fixtureNow+5),null);
+  assert.equal(materialCoverageOutcome(selected,{ ...receipt,state: 'cancelled' },fixtureNow+5),null);
+  const recoveryInput = { ...input,phase: 'recover' }, recovery = JSON.parse(materialCoverageRequestBody(recoveryInput));
+  assert.equal(recovery.mutationBytes,bytes); assert.equal(recovery.action,'recover');
+  const unknown = { schemaVersion: 'material-reference-data/1',kind: 'unknown',scope,requestId: command.requestId,
+    tripId: command.tripId,objectIds: command.objectIds,...fixtureActor,requestDigest: materialDigest(bytes),allUserDataCompleted: false };
+  assert.equal(materialCoverageOutcome({ ...selected,input: recoveryInput },unknown,fixtureNow+5).state,'unknown');
+  assert.equal(materialCoverageOutcome(selected,unknown,fixtureNow+5),null);
+  assert.equal(materialCoverageOutcome({ ...selected,input: recoveryInput },receipt,fixtureNow+60000).state,'scoped_complete');
 });
