@@ -31,7 +31,8 @@ test("Guide actual native owner HTTP reads, replays, scopes fresh grounded submi
   e.sql("grant execute on function public.guide_place_v1(uuid,jsonb),public.submit_guide_use_v1(jsonb),public.review_guide_use_v1(uuid,bigint,text,text) to authenticated;");
   e.sql("grant execute on function public.submit_trip_support_entity_mapping_v1(jsonb),public.review_trip_support_entity_mapping_v1(uuid,bigint,text,text) to authenticated;");
   const ids = e.users.map(u => "'" + u.id + "'").join(",");
-  e.sql(`update knowledge_review_private.settings set enabled=true;update knowledge_review_private.publication_settings set enabled=true;update knowledge_review_private.members set active=true where actor_id in (${ids});`);
+  e.sql(`update knowledge_review_private.settings set enabled=true;update knowledge_review_private.publication_settings set enabled=true;insert into knowledge_review_private.members(actor_id,active) select id,true from auth.users where id in (${ids}) on conflict do nothing;update knowledge_review_private.members set active=true where actor_id in (${ids});`);
+  assert.equal(e.sql(`select count(*) from knowledge_review_private.members where active and actor_id in (${ids});`), "4", "all four independent owned Ops actors are explicitly enrolled only in the fixture");
   const candidate = uuid(), trip = uuid(), ref = uuid(), poi = uuid();
   const statement = { schemaVersion: "knowledge-statement/2", assertion: { subjectId: "guide_http_fixture", predicate: "located_at", objectId: "place_address", conditions: [], exclusions: ["not_admission"] },
     scope: { cities: ["shanghai"], scene: "attraction", audience: "international_independent_traveler" }, place: { names: { en: "Synthetic Guide Gallery", zh: "合成讲解展馆" } },
