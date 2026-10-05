@@ -177,3 +177,33 @@ Main-approved Models changes are prepared but no final catalog was supplied yet.
 Copy.order additional exact release requested above; no unrelated rewrite.
 This current integration is fixed/validation stage, not two new ongoing product
 writers or test-count filler. Full #239/full ALL1 missing/ALL2 remain OPEN.
+
+## Final catalog v4 and visible entry lease consumed
+
+Main grant received: Copy.order/titles/notifications missing text, Models .4/34/
+two IDs/notification_records selection, existing Native catalog fixtures/tests
+catalog/digest/denominator-only. Normal sole producer8a5840f2 merged; CATALOG.md
+and native-catalog-v4.json now immutable source. Actual own consumer opens only
+notifications/trip, notification_devices/device, notification_exit_progress/progress
+with schema notification-data/1, exact notification_data export+delete handlers,
+server location and notification_records selector. Alias, old metadata handler,
+wrong module identity/version/scope cannot open the full data consumer. Exact scope
+mapping is reused by shared ModuleView and completion; no second protocol.
+
+Copy order inserts devices/progress immediately after notifications/before lifecycle.
+Existing other32 relative positions and labels preserved; notifications title now
+full Trip data. Three actual scopes are visible through original Coverage page.
+Other device/server/external missing denominator remains. New immutable producer
+resource mirrored byte-for-byte to owned Fixtures/NotificationData and linked only
+in test resources. New sole NativeNotificationDataCatalogTests exercises exact
+34 visible order, three source-qualified consumer mappings/zh-en scope titles,
+old scope/version/handler/selection negatives and retained financial/attachment
+missing entries. This is new catalog-only evidence; original six risk tests reused.
+
+Original NativeDataCoverageTests changes only three count32->34 assertions. Original
+coverage-producer/cancelled fixtures update catalog version/new registry descriptors,
+opaque outer catalogVersion byte only + SHA256 outer requestDigest. UGC/publication
+handler payloads, cancellation/tampered state/reason and all foreign/promotion /
+cleanup/TTL assertions are unchanged and independently compared. No old tests
+removed or loosened. Actual Native affected catalog + old coverage tests next;
+no larger device/UI/provider/SQL matrix and no source-target activation.

@@ -29,7 +29,7 @@ struct NativeNotificationDataConsumer: View {
             if coverage.visibleModules(captured).isEmpty { await coverage.load(coverageClient) }
             guard actor == captured, let store, store.completion?.id == value.id,
                   coverage.visibleModules(captured).contains(module), module.version == NativeNotificationDataWire.schema,
-                  module.scope == value.scope.rawValue, module.exportHandler != nil, module.deleteHandler != nil else { return }
+                  NativeNotificationDataScope.catalogScope(module) == value.scope else { return }
             if value.action == "export", store.exportURL(captured) == nil { return }
             if value.action == "delete", store.visibleReceipt(captured)?.binding.requestID != value.requestID { return }
             coverage.recordLegacy(module: module, action: value.action == "export" ? .export : .delete,

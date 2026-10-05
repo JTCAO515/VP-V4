@@ -4,6 +4,18 @@ enum NativeNotificationDataScope: String, CaseIterable {
     case trip = "notification-trip-data/1"
     case device = "notification-device-data/1"
     case progress = "notification-exit-progress/1"
+
+    /// Exact sole TS CATALOG.md mapping; an opaque scope or old metadata handler
+    /// cannot open the full data consumer under a different catalog module.
+    static func catalogScope(_ module: NativeDataCoverageModule) -> Self? {
+        guard module.location == .server, module.version == NativeNotificationDataWire.schema,
+              module.exportHandler == "notification_data", module.deleteHandler == "notification_data",
+              module.selection == "notification_records", let scope = Self(rawValue: module.scope) else { return nil }
+        let expected: String
+        switch scope { case .trip: expected = "notifications"; case .device: expected = "notification_devices"; case .progress: expected = "notification_exit_progress" }
+        return module.id == expected ? scope : nil
+    }
+
 }
 
 struct NativeNotificationDataCursor: Equatable {
