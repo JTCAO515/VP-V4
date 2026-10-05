@@ -25,7 +25,7 @@ create table service_operations_private.services (
  trip_id uuid, trip_version integer, proposal_id uuid,
  staff_id uuid, staff_label text, shift_id uuid, accepted_at timestamptz, shift_ends_at timestamptz,
  evidence jsonb not null default '[]', updated_at timestamptz not null default clock_timestamp(),
- check((trip_id is null and trip_version is null) or (trip_id is not null and trip_version>0)),
+ check((trip_id is null and trip_version is null) or (trip_id is not null and trip_version>=0)),
  check(status not in('accepted','assigned','waiting_external','resolved','unresolved') or
  (staff_id is not null and staff_label is not null and accepted_at is not null and shift_ends_at>accepted_at))
 );
@@ -87,9 +87,9 @@ begin
  if a='request' then
   return service_operations_private.exact(v,keys||array['urgency','trip']) and v->>'urgency' in('normal','urgent') and
   (service_operations_private.exact(v->'trip',array['kind']) and v->'trip'->>'kind'='unknown' or
-   service_operations_private.exact(v->'trip',array['kind','tripId','headVersion']) and v->'trip'->>'kind'='bound' and service_operations_private.uuid(v->'trip'->'tripId') and service_operations_private.integer(v->'trip'->'headVersion',1,2147483647));
+   service_operations_private.exact(v->'trip',array['kind','tripId','headVersion']) and v->'trip'->>'kind'='bound' and service_operations_private.uuid(v->'trip'->'tripId') and service_operations_private.integer(v->'trip'->'headVersion',0,2147483647));
  end if;
- if a='select_proposal' then return service_operations_private.exact(v,keys||array['proposal']) and service_operations_private.exact(v->'proposal',array['proposalId','tripId','baseVersion']) and service_operations_private.uuid(v->'proposal'->'proposalId') and service_operations_private.uuid(v->'proposal'->'tripId') and service_operations_private.integer(v->'proposal'->'baseVersion',1,2147483647);end if;
+ if a='select_proposal' then return service_operations_private.exact(v,keys||array['proposal']) and service_operations_private.exact(v->'proposal',array['proposalId','tripId','baseVersion']) and service_operations_private.uuid(v->'proposal'->'proposalId') and service_operations_private.uuid(v->'proposal'->'tripId') and service_operations_private.integer(v->'proposal'->'baseVersion',0,2147483647);end if;
  if a is distinct from 'update' or not service_operations_private.exact(v,keys||array['status','evidence','minutes','proposal']) or coalesce(v->>'status','') not in('waiting_external','resolved','unresolved') or v->'proposal' is distinct from 'null'::jsonb or jsonb_typeof(v->'evidence') is distinct from 'array' then return false;end if;
  if jsonb_array_length(v->'evidence')>10 then return false;end if;
  for e in select value from jsonb_array_elements(v->'evidence') loop

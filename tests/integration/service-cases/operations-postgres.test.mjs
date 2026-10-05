@@ -185,3 +185,20 @@ run('old grant revoke races acceptance on shared Case lock; replacement never re
  assert.ok(accepted.code===0||/CASE_FORBIDDEN/.test(accepted.stderr));const projection=await read(f);assert.equal(projection.status,'cancelled');assert.equal(await db(`select count(*) from service_operations_private.slots where case_id='${f.caseId}';`),'0');await rejects(f.staff,{action:'read',caseId:f.caseId},'CASE_FORBIDDEN','staff');
  const g=await fixture();await assigned(g);const newer=await operator();await old(g.a,{action:'grant',caseId:g.caseId,expectedRevision:1,recipientId:newer.id,durationMinutes:60,sharedFields:['problem']});await rejects(g.staff,{action:'read',caseId:g.caseId},'CASE_FORBIDDEN','staff');await rejects(newer,{action:'read',caseId:g.caseId},'CASE_FORBIDDEN','staff');assert.equal((await read(g)).status,'cancelled');
 });
+run('canonical version zero Trip binding and original pending Proposal keep owner/current guards',async()=>{
+ const f=await fixture(),trip=uuid();
+ await db(`insert into public.trips(id,owner_id,title) values('${trip}','${f.a.id}','Synthetic canonical initial Trip');`);assert.equal(await db(`select head_version from public.trips where id='${trip}';`),'0');
+ f.request.trip={kind:'bound',tripId:trip,headVersion:0};await assigned(f);assert.deepEqual((await read(f)).trip,f.request.trip);
+ const proposal=JSON.parse(await db(`begin;${claims(f.a)}set role authenticated;select row_to_json(x) from public.create_trip_proposal_patch('${trip}','{"expectedVersion":0,"operations":[{"kind":"set_title","title":"Synthetic explicitly selected proposal"}]}') x;commit;`));assert.equal(proposal.base_trip_version,0);
+ const select=mutation(f,'select_proposal',3,{proposal:{proposalId:proposal.proposal_id,tripId:trip,baseVersion:0}});await call(f.a,select);const ownerProjection=await read(f);assert.equal(ownerProjection.proposal.baseVersion,0);assert.equal(await db(`select head_version from public.trips where id='${trip}';`),'0');
+ const staffProjection=await call(f.staff,{action:'read',caseId:f.caseId},'staff');assert.deepEqual(staffProjection.trip,{kind:'unknown'});assert.equal(staffProjection.proposal,null);
+ const other=await fixture();await assigned(other);await rejects(other.a,{...mutation(other,'select_proposal',3),proposal:select.proposal},'CASE_FORBIDDEN');
+ await rejects(f.a,{...f.request,operationId:uuid(),trip:{...f.request.trip,headVersion:-1}},'INVALID_INPUT');
+ // Restore only the namespace prerequisite omitted by the hand-written Auth fixture.
+ await db('grant usage on schema auth to authenticated;');
+ const original=JSON.parse(await db(`begin;${claims(f.a)}set role authenticated;select to_jsonb(x) from public.read_trip_proposal_v2('${proposal.proposal_id}') x;commit;`));
+ assert.equal(original.proposal.base_trip_version,0);
+ const confirmed=JSON.parse(await db(`begin;${claims(f.a)}set role authenticated;select row_to_json(x) from public.confirm_and_apply_trip_proposal('${proposal.proposal_id}','${uuid()}',${lit(original.digest)}) x;commit;`));assert.equal(confirmed.outcome,'applied');assert.equal(await db(`select head_version from public.trips where id='${trip}';`),'1');
+ const staleId=uuid();await old(f.a,{action:'create',caseId:staleId,category:'general',problem:'Synthetic current owner stale head'});await old(f.a,{action:'grant',caseId:staleId,expectedRevision:0,recipientId:f.staff.id,durationMinutes:60,sharedFields:['problem']});await rejects(f.a,{...f.request,caseId:staleId,operationId:uuid()},'CASE_TRIP_UNAVAILABLE');
+ assert.equal((await read(f)).proposal,null);assert.deepEqual((await read(f)).trip,{kind:'unknown'});
+});

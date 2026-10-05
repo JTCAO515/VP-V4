@@ -1,0 +1,10 @@
+✔ full replay rollback, private RLS/ACL deny, empty operators and disabled RPC (5897.456375ms)
+✔ canonical version zero Trip binding and original pending Proposal keep owner/current guards (1255.180167ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7273.063792

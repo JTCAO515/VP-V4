@@ -1,0 +1,39 @@
+✔ full replay rollback, private RLS/ACL deny, empty operators and disabled RPC (6042.933875ms)
+✖ canonical version zero Trip binding and original pending Proposal keep owner/current guards (993.808333ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 1
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7156.833292
+
+✖ failing tests:
+
+test at tests/integration/service-cases/operations-postgres.test.mjs:17:22
+✖ canonical version zero Trip binding and original pending Proposal keep owner/current guards (993.808333ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  permission denied for schema auth
+  LINE 3: ...p where p.id=p_proposal_id and p.owner_id=(select auth.uid()...
+                                                               ^
+  QUERY:  
+    select to_jsonb(p), 'trip-v2:' || encode(sha256(convert_to(jsonb_build_object('id', p.id, 'owner_id', p.owner_id, 'trip_id', p.trip_id, 'revision', p.revision, 'base_trip_version', p.base_trip_version, 'patch', p.patch, 'rollback_snapshot_version', p.rollback_snapshot_version, 'parent_proposal_id', p.parent_proposal_id, 'expires_at', p.expires_at, 'created_at', p.created_at)::text, 'UTF8')), 'hex')
+    from public.trip_proposals p where p.id=p_proposal_id and p.owner_id=(select auth.uid());
+  
+  CONTEXT:  SQL function "read_trip_proposal_v2" during startup
+  
+  
+  3 !== 0
+  
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj32-service-operations-sql-20261005/tests/integration/service-cases/operations-postgres.test.mjs:10:58)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj32-service-operations-sql-20261005/tests/integration/service-cases/operations-postgres.test.mjs:197:28)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
