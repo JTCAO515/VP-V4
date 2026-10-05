@@ -28,7 +28,9 @@ export async function serviceOperationsNativeHTTP(request: NextRequest) {
     return {
       sessionId() { return credentials?.sessionId ?? null; },
       async authenticate() {
-        credentials = await verifyNativeCredentials(request, config!, transport);
+        let unavailable = false;
+        credentials = await verifyNativeCredentials(request, config!, transport, () => { unavailable = true; });
+        if (unavailable) throw new Error('CASE_UNAVAILABLE');
         if (!credentials) return false;
         const result = await credentials.client.rpc('native_session_v2', { p_action: 'session' }).abortSignal(lifetime.signal);
         if (result.error) { if (!['UNAUTHENTICATED', 'SESSION_REPLACED'].includes(result.error.message)) throw new Error('CASE_UNAVAILABLE'); return false; }
