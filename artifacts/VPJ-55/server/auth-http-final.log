@@ -1,0 +1,12 @@
+VPJ55_PDF_LOCAL_TARGET {"project":"vp-native-ask-96e1e22b","base":65000}
+✔ bounded PDF corrected metadata through real Auth/HTTP/durable RPC/original explicit confirm and same Trip recovery (7160.036166ms)
+ℹ Subsequent requests use a disposable-only explicit fixture GRANT; real target activation/device/source rights remain UNRUN
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 10156.842583
+VPJ55_PDF_LOCAL_CLEANUP PASS vp-native-ask-96e1e22b
