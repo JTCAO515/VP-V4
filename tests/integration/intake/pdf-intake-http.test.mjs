@@ -123,7 +123,13 @@ test('bounded PDF corrected metadata through real Auth/HTTP/durable RPC/original
   const restored=await operation();assert.equal(restored.status,200);assert.equal(restored.body.state,'confirmed');assert.equal(restored.body.resultingVersion,2);
   const savedAfter=await call(base,owner.token,undefined,'GET');assert.equal(savedAfter.status,200);assert.equal(savedAfter.body.trip.headVersion,2);
   sameItems(savedAfter.body.content.days[0].items.slice(0,2),originalItems);
-  assert(savedAfter.body.versions.some(v=>v.id===restored.body.confirmationEventId&&v.proposalId===proposal.body.proposalId&&v.resultingVersion===2&&v.eventType==='proposal_applied'));
+  // Native Trip read intentionally omits history. Read the original event with the same ordinary user's RLS-bound client.
+  const eventClient=createClient(local.API_URL,key,{auth:{persistSession:false,autoRefreshToken:false},global:{headers:{Authorization:'Bearer '+owner.token}}});
+  const originalEvent=await eventClient.from('trip_events').select('id,owner_id,trip_id,proposal_id,resulting_version,event_type')
+    .eq('trip_id',tripId).eq('proposal_id',proposal.body.proposalId).eq('id',restored.body.confirmationEventId).maybeSingle();
+  assert.equal(originalEvent.error,null);
+  assert.deepEqual(originalEvent.data,{id:restored.body.confirmationEventId,owner_id:owner.id,trip_id:tripId,
+    proposal_id:proposal.body.proposalId,resulting_version:2,event_type:'proposal_applied'});
   const duplicate={...command,operationId:uuid(),expectedHeadVersion:2};
   const repeated=await call(pdf+'/preview',owner.token,duplicate);assert.equal(repeated.status,200);assert.equal(repeated.body.relation,'duplicate');assert.equal(repeated.body.patch,null);
   const changed={...duplicate,operationId:uuid(),fields:[command.fields[0],{...command.fields[1],value:'¥256 用户再次校正'}]};
