@@ -131,7 +131,7 @@ declare u uuid;s uuid;epoch bigint;v jsonb;a text;original jsonb;raw text;digest
 begin
  u:=community_private.actor_j1();s:=(auth.jwt()->>'session_id')::uuid;
  select coalesce((select x.epoch from identity_private.mobile_accounts x where x.owner_id=u),0) into epoch;
- if not community_private.exact_j1(envelope,array['protocol','command','mutationBytes']) or envelope->>'protocol' is distinct from 'community-j1/1' or not community_private.valid_j1(envelope->'command') then raise exception 'INVALID_INPUT';end if;
+ if not community_private.exact_j1(envelope,array['protocol','command','mutationBytes']) or envelope->>'protocol' is distinct from 'community-j1/1' or community_private.valid_j1(envelope->'command') is not true then raise exception 'INVALID_INPUT';end if;
  v:=envelope->'command';a:=v->>'action';base:=jsonb_build_object('schemaVersion','community-j1/1','actorId',u,'sessionId',s);
  if a='session' then if envelope->'mutationBytes' is distinct from 'null'::jsonb then raise exception 'INVALID_INPUT';end if;return base||jsonb_build_object('kind','session');end if;
  original:=case when a in('operation','abandon') then (v->>'mutationBytes')::jsonb else v end;

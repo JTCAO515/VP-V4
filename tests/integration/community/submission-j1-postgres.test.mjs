@@ -151,3 +151,19 @@ run('independent opposing reviews and reviewer/owner-cleanup contention preserve
  for(const x of results)if(x.code!==0)assert.match(x.stderr,/COMMUNITY_CONFLICT|could not obtain lock/);
  await call(a,cleanup);assert.equal((await call(a,{action:'read',submissionId:pending.submissionId})).submission.content,'');assert.equal(await db('select deadlocks from pg_stat_database where datname=current_database();'),'0');
 });
+
+run('direct RPC JSON null review decision leaves pending row and no receipt, then valid same-op recovery succeeds',async t=>{
+ const a=await actor(),r=await actor(true);await db('update community_private.settings set enabled=true;');
+ const s=submit();await call(a,s);const invalid=review(s,null);
+ const before=await db(`select row_to_json(c)::text from community_private.submissions c where id='${s.submissionId}';`);
+ const result=await raw(r,invalid);
+ if(result.code===0)t.diagnostic(JSON.stringify({phase:'nullable_review_accepted',status:await db(`select status from community_private.submissions where id='${s.submissionId}';`),operationRows:Number(await db(`select count(*) from community_private.operations_j1 where owner_id='${r.id}' and operation_id='${invalid.operationId}';`))}));
+ assert.notEqual(result.code,0,'direct nullable enum must fail before mutation');assert.match(result.stderr,/INVALID_INPUT/);
+ assert.equal(await db(`select row_to_json(c)::text from community_private.submissions c where id='${s.submissionId}';`),before);
+ assert.equal(await db(`select count(*) from community_private.audit where submission_id='${s.submissionId}';`),'1');
+ assert.equal(await db(`select count(*) from community_private.operations_j1 where owner_id='${r.id}' and operation_id='${invalid.operationId}';`),'0');
+ assert.equal(await db(`select count(*) from community_private.receipts where actor_id='${r.id}' and operation_id='${invalid.operationId}';`),'0');
+ const valid={...invalid,decision:'approve'},recovered=await call(r,valid);
+ assert.equal(recovered.state,'committed');assert.equal(recovered.submission.status,'published');assert.equal(recovered.submission.version,2);
+ assert.equal(await db(`select count(*) from community_private.operations_j1 where owner_id='${r.id}' and operation_id='${invalid.operationId}';`),'1');
+});
