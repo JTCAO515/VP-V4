@@ -27,7 +27,13 @@ Preview exposes every collector request/section/fence field and every flat exit
 request/page field before confirmation. It writes one minimal new request only.
 Source CAS excludes that operation's own row and binds selection, actor, epoch,
 version and current selected metadata. Original timestamps and 30-second TTL never
-renew. One SQL clock capture is used per call.
+renew. One entry clock capture fixes the binding timestamps; fresh deadline
+checks after source/wrapper work and after mutations reject elapsed operations
+without changing that original deadline. Export and erase use a fresh decision
+timestamp; erase still has `committedAt=decidedAt`. A trigger that crosses the
+deadline before the return causes the entire RPC transaction to roll back.
+Terminal receipt retries/recovery return through their existing exact-byte path
+before these live deadline checks, so recovery remains valid after TTL.
 
 Export binds the exact bytes once, initializes one source-free page row, and
 traverses at most four pages of five objects. Only the last page retries without
@@ -66,7 +72,13 @@ edit the shared registry. This is one entry, not a new lane or check policy.
 
 PASS: 18 tests, zero failures/skips/cancellations; docs check, artifact growth and
 diff whitespace checks also passed. Evidence:
-`artifacts/VPJ-58/coverage-progress-sql/pg-final.log`. The suite replays
+`artifacts/VPJ-58/coverage-progress-sql/pg-final.log` (original implementation)
+and `pg-deadline-after.log` (completion-deadline correction). The existing TTL
+case now injects a trigger delay until strictly after the original expiry; it
+requires an EXPIRED error, exact full progress-state equality, no decision/receipt,
+retained original fences, restored selected collector transients/new pages and
+unknown recovery. The old implementation returned an erase receipt in the same
+case; that reproduction is retained in `pg-deadline-before.log.gz`. The suite replays
 all predecessor migrations and verifies default deny, byte-identical old function
 source/ACL and schemas/RLS, transactional/applied rollback, current authority,
 strict DTOs, exact bytes, historical session export/erase, selection/inventory,

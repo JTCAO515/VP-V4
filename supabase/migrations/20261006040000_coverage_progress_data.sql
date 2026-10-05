@@ -40,6 +40,15 @@ revoke all on all tables in schema coverage_progress_private from public,anon,au
 create function coverage_progress_private.digest_v1(v text) returns text language sql immutable set search_path='' as $$
  select encode(sha256(convert_to(v,'UTF8')),'hex')
 $$;
+-- Capture once for binding; independently recheck the fixed deadline after work.
+-- A late source/trigger/serialization raises and rolls back the entire RPC.
+create function coverage_progress_private.deadline_v1(captured_ms bigint,expires_ms bigint) returns bigint
+language plpgsql volatile set search_path='' as $$
+declare actual_ms bigint:=floor(extract(epoch from clock_timestamp())*1000)::bigint;
+begin
+ if actual_ms<captured_ms or actual_ms>=expires_ms then raise exception 'COVERAGE_PROGRESS_EXPIRED';end if;
+ return actual_ms;
+end$$;
 create function coverage_progress_private.ids_v1(v jsonb) returns boolean language plpgsql immutable set search_path='' as $$
 declare x jsonb;prior text;
 begin
@@ -193,7 +202,7 @@ declare u uuid:=auth.uid();s uuid;epoch_n bigint;at_time timestamptz;now_ms bigi
  v jsonb;a text;req uuid;ids uuid[];lock_id uuid;r coverage_progress_private.requests_v1%rowtype;
  p coverage_progress_private.pages_v1%rowtype;items jsonb;inventory jsonb;binding_n jsonb;result_n jsonb;
  digest_n text;cmd_digest text;cursor_n jsonb;after_n uuid;last_n uuid;more_n boolean;page_n jsonb;next_n jsonb;
- n integer;page_bytes integer;replay boolean:=false;cr integer;cs integer;ep integer;complete boolean;
+ n integer;page_bytes integer;replay boolean:=false;cr integer;cs integer;ep integer;complete boolean;decision_ms bigint;
 begin
  -- No candidate/CAS/cleanup/write precedes current ordinary signed authority.
  if u is null or auth.role() is distinct from 'authenticated' or auth.jwt()->>'role' is distinct from 'authenticated'
@@ -304,6 +313,7 @@ begin
   if octet_length(notification_private.canonical(jsonb_build_object('data',binding_n||jsonb_build_object('kind','bundle',
    'requestDigest',coalesce(r.request_digest,cmd_digest),'items',items,'proof',jsonb_build_object('coverage','complete',
    'pages',ceil(cardinality(ids)::numeric/5)::integer,'rows',cardinality(ids))))))>1000000 then raise exception 'COVERAGE_PROGRESS_CAPACITY';end if;
+  perform coverage_progress_private.deadline_v1(r.captured_at,r.expires_at);
   if a='preview' then
    if r.decision is not null then raise exception 'COVERAGE_PROGRESS_REQUEST_CONFLICT';end if;
    result_n:=binding_n||jsonb_build_object('kind','preview','items',items,'requiresExplicitConfirmation',true);
@@ -311,7 +321,8 @@ begin
    if r.decision is not null and (r.decision<>'export' or r.request_digest<>cmd_digest)
    then raise exception 'COVERAGE_PROGRESS_REQUEST_CONFLICT';end if;
    if r.decision is null then
-    update coverage_progress_private.requests_v1 set decision='export',request_digest=cmd_digest,decided_at=now_ms where request_id=req returning * into r;
+    decision_ms:=coverage_progress_private.deadline_v1(r.captured_at,r.expires_at);
+    update coverage_progress_private.requests_v1 set decision='export',request_digest=cmd_digest,decided_at=decision_ms where request_id=req returning * into r;
     insert into coverage_progress_private.pages_v1(request_id) values(req);
    elsif not exists(select 1 from coverage_progress_private.pages_v1 where request_id=req)
    then raise exception 'COVERAGE_PROGRESS_REQUEST_CONFLICT';end if;
@@ -353,13 +364,17 @@ begin
    delete from coverage_export_private.requests_v1 where owner_id=u and request_id=any(ids);get diagnostics cr=row_count;
    delete from coverage_progress_private.pages_v1 pg using coverage_progress_private.requests_v1 x
     where x.request_id=pg.request_id and x.owner_id=u and pg.request_id=any(ids);get diagnostics ep=row_count;
-   update coverage_progress_private.requests_v1 set decision='erase',request_digest=cmd_digest,decided_at=now_ms,
+   decision_ms:=coverage_progress_private.deadline_v1(r.captured_at,r.expires_at);
+   update coverage_progress_private.requests_v1 set decision='erase',request_digest=cmd_digest,decided_at=decision_ms,
     effects=jsonb_build_object('collectorRequests',cr,'collectorSections',cs,'exitPages',ep,'retainedFences',cardinality(ids),
      'sourceData','not_modified','sessionAccountFences','retained','externalCopies','not_erased') where request_id=req returning * into r;
    result_n:=coverage_progress_private.receipt_v1(r);
   else raise exception 'INVALID_INPUT';end if;
  end if;
  if octet_length(notification_private.canonical(jsonb_build_object('data',result_n)))>1000000 then raise exception 'COVERAGE_PROGRESS_CAPACITY';end if;
+ -- Terminal receipt retries/recovery return above and remain valid after TTL.
+ -- All live reads/new effects, including list and preview, recheck after wrapper work.
+ perform coverage_progress_private.deadline_v1((result_n->>'capturedAt')::bigint,(result_n->>'expiresAt')::bigint);
  return result_n;
 exception when lock_not_available then raise lock_not_available using message='COVERAGE_PROGRESS_LOCK_CONFLICT';end$$;
 revoke all on all functions in schema coverage_progress_private from public,anon,authenticated,service_role;
