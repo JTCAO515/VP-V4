@@ -25,6 +25,7 @@ export function parseMaterialCommand(v: unknown, recovering = false): MaterialCo
     && (v.cursor === null || record(v.cursor) && exact(v.cursor, ['sourceDigest','afterId']) && hash(v.cursor.sourceDigest)
       && uuid(v.cursor.afterId) && v.cursor.afterId === v.cursor.afterId.toLowerCase()) ? v as MaterialCommand : null;
   if (!uuid(v.requestId) || v.requestId !== v.requestId.toLowerCase() || !selectedIds(v.objectIds)) return null;
+  if (v.scope === 'material-exit-progress/1' && v.objectIds.includes(v.requestId)) return null;
   const keys = ['action','scope','requestId','tripId','objectIds'];
   if (v.action === 'preview') return exact(v, keys) ? v as MaterialCommand : null;
   if (v.action === 'export' || v.action === 'erase') return exact(v, [...keys,'previewDigest','confirmed']) && hash(v.previewDigest) && v.confirmed === true ? v as MaterialCommand : null;

@@ -47,7 +47,7 @@ export function decodeMaterialList(v: unknown, command: Extract<MaterialCommand,
   for (const item of v.items) {
     if (!record(item) || !exact(item, ['objectId','revision','label','materialExpiresAt','sourceState']) || !uuid(item.objectId) || item.objectId <= last
       || !(item.revision === null || positive(item.revision)) || !(item.label === null || typeof item.label === 'string' && item.label.length <= 160)
-      || !(item.materialExpiresAt === null || positive(item.materialExpiresAt)) || !['active','expired','erased','retained'].includes(String(item.sourceState))) return null;
+      || !(item.materialExpiresAt === null || positive(item.materialExpiresAt)) || !['active','pending','confirmed','rejected','cancelled','expired','erased','retained','unknown'].includes(String(item.sourceState))) return null;
     if (command.scope !== 'reservation-reference-data/1' && (item.label !== null || item.revision !== null)) return null;
     last = item.objectId;
   }

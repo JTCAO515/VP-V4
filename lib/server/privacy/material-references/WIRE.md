@@ -66,7 +66,8 @@ respectively. No all-owner delete or nullable Trip selection. IDs must all exist
 and belong to actual selected source+Trip; subset omission fails the whole call.
 
 RPC action values are separate `p_action` strings; `p_input_bytes` preserves
-the original UTF-8 HTTP body (max8192). JSON `action` must match except internal
+the original UTF-8 HTTP body (max8192; recover wrapper max16384 enclosing original
+mutationBytes max8192). JSON `action` must match except internal
 `export_start` accepts original `action:export`. Original byte digest SHA256
 must be independently returned and verified; changed whitespace is changed bytes.
 
@@ -77,7 +78,8 @@ must be independently returned and verified; changed whitespace is changed bytes
    lease/state. Result exact `{schemaVersion,kind:"list",scope,tripId,ownerId,
    sessionId,mobileEpoch,sourceDigest,capturedAt,expiresAt,items,hasMore,nextCursor,
    allUserDataCompleted:false}`. Item exact `{objectId,revision,label,
-   materialExpiresAt,sourceState}`. Source state active/expired/erased/retained;
+   materialExpiresAt,sourceState}`. Source state active/pending/confirmed/rejected/
+   cancelled/expired/erased/retained/unknown;
    unknown label/revision/material expiry null. Only order current label/revision
    are actual data. Never fabricate filename or source verification.
 2. `preview`: exact `{action:"preview",scope,requestId,tripId,objectIds}`. Result
@@ -147,7 +149,11 @@ Reservation row = exact old export item `{current,events,operations,historical:t
 reuse current wire projection and original metadata lists; no command digest or
 historical field/source payload. Old max100 per-reference histories must not be
 silently truncated: overflow rejects preview/export before complete proof. PDF
-row = exact original service export projection (18 keys in `rows.ts`), `fields`
+row = exact original service export projection (18 keys) plus `operation`:
+the exact original `pdf_intake_private.receipt_v1(o,t)` projected via
+`parsePdfOperation` (19 keys in `rows.ts`). Only its installed real confirmation
+proof admits confirmed; proposalId/head/absence of fields never invent state.
+`fields`
 and `contentHash` only while live in this actual session; otherwise both null.
 Original hashes/locator are metadata, never source/provider verification.
 Progress row = exact15-key `rows.ts` shape, only IDs/hashes/counters/times; no

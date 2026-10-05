@@ -1,9 +1,10 @@
 import { exact, record, uuid, hash } from '../../guide/contract.ts';
 import { parseReservationCurrent } from '../../reservations/contract.ts';
 import { instant, parsePdfField } from '../../intake/pdf/contract.ts';
+import { parsePdfOperation } from '../../intake/pdf/repository.ts';
 import { natural, positive, selectedIds, type MaterialScope } from './contract.ts';
 
-export const pdfRowKeys = ['operationId','tripId','sessionEpoch','requestDigest','commandDigest','previewDigest','proposalId','proposalRevision','baseTripVersion','expiresAt','cancelled','fields','contentHash','rawPdfIncluded','fullTextIncluded','evidenceTier','sourceAvailability','orderVerification'] as const;
+export const pdfRowKeys = ['operationId','tripId','sessionEpoch','requestDigest','commandDigest','previewDigest','proposalId','proposalRevision','baseTripVersion','expiresAt','cancelled','fields','contentHash','rawPdfIncluded','fullTextIncluded','evidenceTier','sourceAvailability','orderVerification','operation'] as const;
 export function materialRowKey(scope: MaterialScope, row: unknown, tripId: string, epoch: number, now: number): string | null {
   if (!record(row)) return null;
   if (scope === 'reservation-reference-data/1') {
@@ -40,6 +41,10 @@ export function materialRowKey(scope: MaterialScope, row: unknown, tripId: strin
       || row.evidenceTier !== 'user_checked_local_pdf' || row.sourceAvailability !== 'local_only' || row.orderVerification !== 'unavailable') return null;
     const proposalBinding = [row.proposalId,row.proposalRevision,row.baseTripVersion];
     if (proposalBinding.some(v => v === null) && !proposalBinding.every(v => v === null)) return null;
+    const operation = parsePdfOperation(row.operation, tripId, row.operationId, row.sessionEpoch);
+    if (!operation || operation.state === 'absent'
+      || !['requestDigest','commandDigest','previewDigest','proposalId','proposalRevision','baseTripVersion','expiresAt'].every(k => row[k] === operation[k as keyof typeof operation])
+      || row.cancelled && !['cancelled','confirmed'].includes(operation.state)) return null;
     if (row.fields === null) return row.contentHash === null ? row.operationId : null;
     if (row.sessionEpoch !== epoch || row.cancelled || !instant(row.expiresAt) || Date.parse(row.expiresAt) <= now || !hash(row.contentHash)
       || !Array.isArray(row.fields) || row.fields.length < 1 || row.fields.length > 4) return null;
