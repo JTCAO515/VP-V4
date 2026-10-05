@@ -9,6 +9,7 @@ import { parseServiceDataInput } from '../../service-cases/operations/data-contr
 import { parseGuideCommand } from '../../guide/contract.ts';
 import { linkedTripCommand } from '../linked-trip/contract.ts';
 import { memoryDeleteCommand } from '../memory-delete/contract.ts';
+import { validMaterialCoverageSelection } from '../material-references/coverage.ts';
 
 export const COVERAGE_SCHEMA = 'data-coverage/1' as const;
 export const coverageDigest = (bytes: string) => createHash('sha256').update(bytes, 'utf8').digest('hex');
@@ -43,6 +44,7 @@ export function parseCoverageInput(value: unknown): SelectedCommand | null {
   if (handler === null) return exact(command, []) && input.tripId === null && input.phase === 'execute' ? { input, command, handler } : null;
   // A stable module key may resolve to different existing commands for export/delete.
   if ('operationId' in command && command.operationId !== input.operationId || 'requestId' in command && command.requestId !== input.operationId) return null;
+  if (handler === 'materials') return validMaterialCoverageSelection(input, command) ? { input, command, handler } : null;
   if (handler === 'core') return input.tripId === null && input.phase !== 'preview'
     && exact(command, ['requestId','confirmed']) && command.requestId === input.operationId && command.confirmed === true ? { input, command, handler } : null;
   if (handler === 'trip') {
