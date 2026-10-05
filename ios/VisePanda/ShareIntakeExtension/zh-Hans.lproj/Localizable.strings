@@ -1,0 +1,11 @@
+"share.title" = "分享 PDF 到 VisePanda";
+"share.receiving" = "正在保存私有副本…";
+"share.done" = "完成";
+"share.cancel" = "取消";
+"share.saved" = "已保存，24 小时内有效。请打开 VisePanda，登录后选择此 PDF 和对应行程继续。材料尚未加入行程。";
+"share.size" = "仅支持一个不超过 20 MB 的 PDF。请打开 VisePanda，从“文件”选择较小的 PDF。原文件保持不变。";
+"share.pages" = "仅支持 1–10 页的 PDF。请打开 VisePanda，从“文件”选择较短的 PDF。没有截断页面。";
+"share.format" = "无法接收此文件。请使用一个未加密的 PDF，或打开 VisePanda，从“文件”选择支持的材料。";
+"share.full" = "私有收件箱已满。请打开 VisePanda，处理或删除已保存的 PDF 后重新分享。";
+"share.cleanup" = "无法清除私有副本。请打开 VisePanda，清空收件箱后再继续。";
+"share.unavailable" = "当前安装版本尚不能使用系统分享。请打开 VisePanda，登录后从“文件”选择原 PDF。";
