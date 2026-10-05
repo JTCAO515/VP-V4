@@ -4,6 +4,7 @@ import { nativeRequestScope } from "../identity/native-request.ts";
 import { isUuid } from "../identity/request-guards.ts";
 import { parseResultArtifactRead } from "./result-contract.ts";
 import { parseChangeProposalReferenceRead } from "./change-proposal-reference.ts";
+import { validResultReference } from "../trip/lifecycle/result-reference.ts";
 
 const reply = (data: unknown, status = 200) => Response.json(data, { status, headers: { "Cache-Control": "private, no-store" } });
 const failure = (code: string, status: number) => reply({ error: { code } }, status);
@@ -76,9 +77,7 @@ async function nativeResultReferenceHTTP(request: Request, field: "tripId" | "ta
     if (result.error) return failure("RESULT_UNAVAILABLE", 503);
     if (result.data?.kind === "empty" || result.data?.kind === "unavailable") return reply({ version: 1, data: { kind: result.data.kind } });
     const data = result.data;
-    if (!data || typeof data !== "object" || Array.isArray(data) || Object.keys(data).length !== 4
-      || data.kind !== "result_reference" || data[field] !== identifier || !isUuid(data.artifactId)
-      || !Number.isSafeInteger(data.revision) || data.revision < 1 || data.revision > 1000) return failure("RESULT_UNAVAILABLE", 503);
+    if (!validResultReference(data, field, identifier)) return failure("RESULT_UNAVAILABLE", 503);
     return reply({ version: 1, data });
   } catch { return failure("RESULT_UNAVAILABLE", 503); }
   finally { scope.dispose(); }

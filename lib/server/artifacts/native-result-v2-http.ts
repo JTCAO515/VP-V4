@@ -3,6 +3,7 @@ import {verifyNativeCredentials} from '../identity/native-credentials.ts';
 import {nativeRequestScope} from '../identity/native-request.ts';
 import {isUuid} from '../identity/request-guards.ts';
 import {parseResultArtifactReadV2,parseResultSearchPageV2} from './result-v2-contract.ts';
+import {validResultReference} from '../trip/lifecycle/result-reference.ts';
 const reply=(data:unknown,status=200)=>Response.json(data,{status,headers:{'Cache-Control':'private, no-store'}});
 const failure=(code:string,status:number)=>reply({error:{code}},status);
 const obj=(v:unknown):v is Record<string,unknown>=>v!==null&&typeof v==='object'&&!Array.isArray(v);
@@ -43,7 +44,7 @@ export async function nativeResultReferenceV2HTTP(request:Request,kind:'task'|'t
  if(request.method!=='GET'||!queries(url,[field])||!id||!isUuid(id))return failure('INVALID_INPUT',400);
  return authorized(request,async(actor,scope)=>{const result=await scope.run(()=>actor.client.rpc(kind==='task'?'read_task_result_reference_v2':'read_trip_result_reference_v2',{[kind==='task'?'p_task_id':'p_trip_id']:id.toLowerCase()}).abortSignal(scope.signal));if(result.error)return failure('RESULT_UNAVAILABLE',503);
   if(obj(result.data)&&exact(result.data,['kind'])&&(result.data.kind==='empty'||result.data.kind==='unavailable'))return reply({version:2,data:result.data});const d=result.data;
-  if(!obj(d)||!exact(d,['kind','artifactId','revision',field])||d.kind!=='result_reference'||d[field]!==id.toLowerCase()||typeof d.artifactId!=='string'||!isUuid(d.artifactId)||!Number.isSafeInteger(d.revision)||Number(d.revision)<1||Number(d.revision)>1000)return failure('RESULT_UNAVAILABLE',503);
+  if(!validResultReference(d,field,id.toLowerCase()))return failure('RESULT_UNAVAILABLE',503);
   return reply({version:2,data:d});
  });
 }

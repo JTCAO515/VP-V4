@@ -158,3 +158,19 @@ services” as a fabricated empty result. This dependency remains an explicit fa
 Pass expiry introduces no new read/export gate; test with denied new paid actions
 while saved Trip/result reads remain. Target schema/deployment, provider cost,
 real user export/delete, external service operation and phone are UNRUN boundaries.
+
+## Archived saved-result references
+
+The existing v1/v2 Trip result-reference success wire adds one optional field:
+`archiveHistorical:true`. It is present only when the server has checked the real
+owned archive, no deletion and the original exact result reader has authorized the
+same saved artifact/revision/Trip as `historicalReadable:true,current:false`.
+Ordinary Trip replies retain their old shape; Task references never accept this
+field. False/null/numeric values or any other extra key are invalid.
+
+The second exact body read retains original source/session/consent/Memory/evidence
+and expiration checks. Native/Web accept current-false only with that server proof,
+the same artifact/revision/Trip and historical read qualification. The UI labels it
+as an earlier result. Pending proposal references/previews and new execution,
+publication or choice keep their original currentness gates. No current flag is
+manufactured, no fallback to a different result occurs, and no ACL changes.
