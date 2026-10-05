@@ -34,10 +34,17 @@ Observed evidence:
   progress preservation, retained history after Trip loss and logout were observed.
   It precedes the owner-only lookup repair; its unaffected source/caller evidence
   is reused, the repair's recovery proof is separately named above.
-- Native product2751682a/03ac55e0 normally merged. New final intended Native
-  runtime/interop/session evidence is held by the sole Native owner; original
-  iOS9 PASS/file-protection evidence remains distinct from the macOS513 FAIL.
-  Final Native source/test freeze and its exact logs are appended after handoff.
+- Native final4ac3f479 normally merged, production equals03ac55e0. Sole owner
+  [Native verification](../native-material-reference-data/verification.md) and
+  xcresult summaries record new intended suite11 PASS/0 FAIL/0 SKIP plus original
+  coverage11 PASS/0 FAIL/0 SKIP, exact current immutable TS producer decoding,
+  actual protected file readback and NativeSession cleanup. NativeSession's
+  URLProtocol fixture is unsigned; signed GoTrue evidence remains separately above.
+  Owned iOS Simulator cleanup PASS; earlier macOS513 FAIL remains named.
+- Final affected suites29 PASS/0 FAIL/0 SKIP after Main's two-line missing-case
+  lease; original denominator/terminal/device/authority assertions preserved.
+  Final Web build/typecheck/lint/docs/CI registry PASS. No current source change
+  justifies rerunning unchanged full suites or the original module matrix.
 
 Earlier signed failures are retained in r1/r2/r3: fixture expected RPC error where
 the original stale-head contract returns typed conflict; expected an erase marker

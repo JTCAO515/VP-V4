@@ -1,0 +1,255 @@
+
+> vp-v4@0.0.0 build /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-material-reference-data-server-20261006
+> pnpm generate:design-tokens && next build --webpack
+
+
+> vp-v4@0.0.0 generate:design-tokens /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-material-reference-data-server-20261006
+> node scripts/generate-design-tokens.mjs
+
+▲ Next.js 16.3.6 (webpack)
+✓ Running next.config.ts took 12ms
+
+  Creating an optimized production build ...
+(node:8129) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+✓ Compiled successfully in 3.1s
+  Running TypeScript ...
+  Finished TypeScript in 4.4s ...
+  Collecting page data using 17 workers ...
+  Generating static pages using 17 workers (0/82) ...
+  Generating static pages using 17 workers (20/82) 
+  Generating static pages using 17 workers (40/82) 
+  Generating static pages using 17 workers (61/82) 
+✓ Generating static pages using 17 workers (82/82) in 271ms
+  Finalizing page optimization ...
+  Collecting build traces ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /[city]/[poi]
+├ ƒ /api/auth/native/v2/credentials
+├ ƒ /api/auth/native/v2/login
+├ ƒ /api/auth/native/v2/logout
+├ ƒ /api/auth/native/v2/profile
+├ ƒ /api/auth/native/v2/refresh
+├ ƒ /api/auth/native/v2/session
+├ ƒ /api/chat/grounded
+├ ƒ /api/chat/grounded/ai-assist
+├ ƒ /api/chat/native/v1/consent
+├ ƒ /api/chat/native/v1/policy
+├ ƒ /api/chat/native/v1/turns
+├ ƒ /api/chat/native/v1/turns/[turnId]/cancel
+├ ƒ /api/chat/native/v2/turns
+├ ƒ /api/chat/native/v3/consent
+├ ƒ /api/chat/native/v3/policy
+├ ƒ /api/chat/native/v3/turns
+├ ƒ /api/chat/native/v4/consent
+├ ƒ /api/chat/native/v4/policy
+├ ƒ /api/chat/native/v4/turns
+├ ƒ /api/chat/native/v4/turns/[turnId]/ai-assist
+├ ƒ /api/chat/native/v4/turns/[turnId]/events
+├ ƒ /api/chat/native/v5/consent
+├ ƒ /api/chat/native/v5/context
+├ ƒ /api/chat/native/v5/conversation
+├ ƒ /api/chat/native/v5/conversations
+├ ƒ /api/chat/native/v5/conversations/[conversationId]/tasks
+├ ƒ /api/chat/native/v5/conversations/[conversationId]/tasks/[taskId]/activity
+├ ƒ /api/chat/native/v5/goal-trips
+├ ƒ /api/chat/native/v5/goal-trips/[afterGoalId]
+├ ƒ /api/chat/native/v5/goals/[goalId]/trip
+├ ƒ /api/chat/native/v5/journeys
+├ ƒ /api/chat/native/v5/journeys-goals
+├ ƒ /api/chat/native/v5/journeys-goals/[cursor]
+├ ƒ /api/chat/native/v5/journeys/[cursor]
+├ ƒ /api/chat/native/v5/planning/intake-tasks
+├ ƒ /api/chat/native/v5/planning/policy
+├ ƒ /api/chat/native/v5/planning/tasks
+├ ƒ /api/chat/native/v5/policy
+├ ƒ /api/chat/native/v5/travel-intake
+├ ƒ /api/chat/native/v5/travel-intake/write-basis
+├ ƒ /api/chat/native/v6/context
+├ ƒ /api/chat/native/v6/conversation
+├ ƒ /api/chat/threads
+├ ƒ /api/chat/threads/[threadId]
+├ ƒ /api/chat/threads/[threadId]/turns
+├ ƒ /api/chat/turns/[turnId]/cancel
+├ ƒ /api/chat/turns/[turnId]/events
+├ ƒ /api/chat/turns/[turnId]/feedback
+├ ƒ /api/community/native/v1
+├ ƒ /api/community/publication/native/v1
+├ ƒ /api/community/safety/native/v1
+├ ƒ /api/explore/native/v1/trips/[tripId]/place-actions
+├ ƒ /api/guide/native/v1/trips/[tripId]
+├ ƒ /api/guide/trips/[tripId]
+├ ƒ /api/intake
+├ ƒ /api/knowledge
+├ ƒ /api/knowledge/native/v1
+├ ƒ /api/knowledge/native/v1/answer
+├ ƒ /api/library/native/v1/item
+├ ƒ /api/library/native/v1/items
+├ ƒ /api/library/native/v1/place
+├ ƒ /api/maps/display-config
+├ ƒ /api/memory
+├ ƒ /api/memory/[memoryId]
+├ ƒ /api/memory/[memoryId]/undo
+├ ƒ /api/memory/consent
+├ ƒ /api/memory/native/v1/profiles
+├ ƒ /api/memory/native/v1/travel-pace
+├ ƒ /api/memory/native/v1/travel-pace/project
+├ ƒ /api/ops/budget
+├ ƒ /api/ops/community
+├ ƒ /api/ops/community/publication
+├ ƒ /api/ops/community/safety
+├ ƒ /api/ops/lodging-classification
+├ ƒ /api/ops/provenance
+├ ƒ /api/ops/review
+├ ƒ /api/ops/service-cases/brief/v1
+├ ƒ /api/ops/service-cases/v1
+├ ƒ /api/ops/source-impact/consume-once
+├ ƒ /api/ops/wiki
+├ ƒ /api/places/lookup
+├ ƒ /api/places/native/v1/lookup
+├ ƒ /api/places/native/v1/reverse-geocode
+├ ƒ /api/places/native/v1/search
+├ ƒ /api/places/native/v1/suggest
+├ ƒ /api/places/nearby
+├ ƒ /api/places/search
+├ ƒ /api/privacy
+├ ƒ /api/privacy/native/v1/coverage
+├ ƒ /api/privacy/native/v1/exports
+├ ƒ /api/privacy/native/v1/exports/[requestId]/download
+├ ƒ /api/privacy/native/v1/exports/[requestId]/download-ticket
+├ ƒ /api/privacy/native/v1/linked-trips
+├ ƒ /api/privacy/native/v1/material-references
+├ ƒ /api/privacy/native/v1/memories/delete
+├ ƒ /api/privacy/native/v1/trips
+├ ƒ /api/profile
+├ ƒ /api/results/native/v1
+├ ƒ /api/results/native/v1/change-proposal-reference
+├ ƒ /api/results/native/v1/change-proposal-reference/trip
+├ ƒ /api/results/native/v1/search
+├ ƒ /api/results/native/v1/task
+├ ƒ /api/results/native/v1/trip
+├ ƒ /api/results/native/v2
+├ ƒ /api/results/native/v2/decision
+├ ƒ /api/results/native/v2/search
+├ ƒ /api/results/native/v2/task
+├ ƒ /api/results/native/v2/trip
+├ ƒ /api/service-cases/native/brief/v1
+├ ƒ /api/service-cases/native/data/v1
+├ ƒ /api/service-cases/native/operations/v1
+├ ƒ /api/service-cases/native/v1
+├ ƒ /api/storekit/native/v1
+├ ƒ /api/storekit/web/v1
+├ ƒ /api/translate
+├ ƒ /api/translate/consent
+├ ƒ /api/translate/history/v2
+├ ƒ /api/translate/history/v2/turns/[turnId]
+├ ƒ /api/translate/policy
+├ ƒ /api/translate/trip-sources
+├ ƒ /api/translate/trip-sources/[tripId]
+├ ƒ /api/translate/turns/[turnId]/cancel
+├ ƒ /api/trips
+├ ƒ /api/trips/[tripId]
+├ ƒ /api/trips/[tripId]/actions
+├ ƒ /api/trips/[tripId]/comparison-result
+├ ƒ /api/trips/[tripId]/confirm
+├ ƒ /api/trips/[tripId]/explore/place-actions
+├ ƒ /api/trips/[tripId]/lodging/context
+├ ƒ /api/trips/[tripId]/places
+├ ƒ /api/trips/[tripId]/proposal
+├ ƒ /api/trips/[tripId]/proposal/reject
+├ ƒ /api/trips/[tripId]/proposal/revision
+├ ƒ /api/trips/[tripId]/readiness
+├ ƒ /api/trips/[tripId]/readiness/actions
+├ ƒ /api/trips/[tripId]/readiness/task
+├ ƒ /api/trips/[tripId]/recovery
+├ ƒ /api/trips/[tripId]/reservations
+├ ƒ /api/trips/[tripId]/rollback
+├ ƒ /api/trips/[tripId]/scoped-edit
+├ ƒ /api/trips/[tripId]/traffic-observations
+├ ƒ /api/trips/[tripId]/traffic-observations/context
+├ ƒ /api/trips/lifecycle
+├ ƒ /api/trips/lifecycle/operations/[operationId]
+├ ƒ /api/trips/lifecycle/operations/[operationId]/abandon
+├ ƒ /api/trips/native/v2
+├ ƒ /api/trips/native/v2/[tripId]
+├ ƒ /api/trips/native/v2/[tripId]/archive
+├ ƒ /api/trips/native/v2/[tripId]/confirm
+├ ƒ /api/trips/native/v2/[tripId]/feasibility
+├ ƒ /api/trips/native/v2/[tripId]/lodging/context
+├ ƒ /api/trips/native/v2/[tripId]/offline-read
+├ ƒ /api/trips/native/v2/[tripId]/offline-text/proposal
+├ ƒ /api/trips/native/v2/[tripId]/offline-text/revoke
+├ ƒ /api/trips/native/v2/[tripId]/pdf-intake/cancel
+├ ƒ /api/trips/native/v2/[tripId]/pdf-intake/operation
+├ ƒ /api/trips/native/v2/[tripId]/pdf-intake/preview
+├ ƒ /api/trips/native/v2/[tripId]/pdf-intake/proposal
+├ ƒ /api/trips/native/v2/[tripId]/proposal
+├ ƒ /api/trips/native/v2/[tripId]/proposal/reject
+├ ƒ /api/trips/native/v2/[tripId]/proposal/revision
+├ ƒ /api/trips/native/v2/[tripId]/readiness
+├ ƒ /api/trips/native/v2/[tripId]/readiness/actions
+├ ƒ /api/trips/native/v2/[tripId]/readiness/task
+├ ƒ /api/trips/native/v2/[tripId]/recovery
+├ ƒ /api/trips/native/v2/[tripId]/reminders
+├ ƒ /api/trips/native/v2/[tripId]/reminders/delivery
+├ ƒ /api/trips/native/v2/[tripId]/reservations
+├ ƒ /api/trips/native/v2/[tripId]/scoped-edit
+├ ƒ /api/trips/native/v2/[tripId]/support
+├ ƒ /api/trips/native/v2/[tripId]/support/candidates
+├ ƒ /api/trips/native/v2/[tripId]/support/confirm
+├ ƒ /api/trips/native/v2/[tripId]/support/confirmation-receipt
+├ ƒ /api/trips/native/v2/[tripId]/support/context
+├ ƒ /api/trips/native/v2/[tripId]/support/prepare
+├ ƒ /api/trips/native/v2/[tripId]/support/renew
+├ ƒ /api/trips/native/v2/[tripId]/traffic-observations
+├ ƒ /api/trips/native/v2/[tripId]/traffic-observations/context
+├ ƒ /api/trips/native/v2/lifecycle
+├ ƒ /api/trips/native/v2/lifecycle/operations/[operationId]
+├ ƒ /api/trips/native/v2/lifecycle/operations/[operationId]/abandon
+├ ƒ /api/trips/native/v2/notifications/resolve
+├ ƒ /api/trips/native/v2/support/preparations/revoke
+├ ƒ /auth/sign-in
+├ ○ /explore
+├ ƒ /explore/[city]
+├ ○ /homepage
+├ ○ /journey
+├ ○ /journey/knowledge
+├ ○ /journey/plan
+├ ƒ /ops/budget
+├ ○ /ops/community
+├ ○ /ops/community/publication
+├ ○ /ops/community/safety
+├ ƒ /ops/lodging-classification
+├ ƒ /ops/provenance
+├ ƒ /ops/review
+├ ƒ /ops/service
+├ ○ /ops/service/brief
+├ ƒ /ops/wiki
+├ ○ /places
+├ ƒ /research
+├ ○ /translate
+├ ƒ /visepanda
+├ ƒ /visepanda/ask/[[...thread]]
+├ ƒ /visepanda/copilot
+├ ○ /visepanda/import
+├ ○ /visepanda/import/conflicts
+├ ○ /visepanda/offline
+├ ƒ /visepanda/profile
+├ ƒ /visepanda/today
+├ ○ /visepanda/tools
+├ ○ /visepanda/tools/handoff
+├ ○ /visepanda/tools/network
+├ ○ /visepanda/tools/ride
+├ ○ /visepanda/tools/safe-phrase
+├ ○ /visepanda/tools/visa
+├ ƒ /visepanda/trips
+├ ƒ /visepanda/trips/[tripId]
+└ ƒ /visepanda/trips/[tripId]/ready
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
