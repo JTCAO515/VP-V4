@@ -192,6 +192,7 @@ export const LANES = {
       { name: "pdf-intake-http", runner: node("tests/integration/intake/run-pdf-intake-http.mjs", "--port-base", "65000"), files: ["tests/integration/intake/pdf-intake-http.test.mjs"] },
       { name: "community-j1-jwt", runner: node("tests/integration/community/run-submission-j1-jwt.mjs"), files: ["tests/integration/community/submission-j1-jwt.test.mjs"] },
       { name: "community-j1-http", runner: node("tests/integration/community/run-j1-http.mjs", "--port-base", "64200"), files: ["tests/integration/community/j1-http.test.mjs"] },
+      { name: "community-safety-http", runner: node("tests/integration/community/safety/run-http.mjs", "--port-base", "64100"), files: ["tests/integration/community/safety/http.test.mjs"] },
       { name: "place-guide-http", runner: node("tests/integration/guide/run-guide-http.mjs", "--port-base", "64500"), files: ["tests/integration/guide/guide-http.test.mjs"] },
       { name: "native-assistant-rollback", runner: node("tests/integration/turn/run-native-http.mjs", "--assistant-rollback", "--port-base", "64420"), files: ["tests/integration/turn/assistant-rollback.test.mjs", "tests/integration/turn/assistant-task-activity.test.mjs"] },
       { name: "native-planning-http", runner: node("tests/integration/turn/run-native-http.mjs", "--planning", "--port-base", "64420"), files: ["tests/integration/turn/native-planning-http.test.mjs"] },
