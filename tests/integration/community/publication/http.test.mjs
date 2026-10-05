@@ -12,10 +12,16 @@ test('owned real Auth + Native/Ops HTTP: controlled consent, independent rights/
  const key=local.PUBLISHABLE_KEY||local.ANON_KEY,users=[];let next;
  t.after(async()=>{
   if (next && next.exitCode===null) {const done=once(next,'exit');next.kill('SIGTERM');await Promise.race([done,new Promise(r=>setTimeout(r,3000))]);if (next.exitCode===null) {next.kill('SIGKILL');await done;}}
-  if (users.length) {const ids=users.map(x=>literal(x.id)).join(',');sql(`delete from public.trip_events where owner_id in(${ids});delete from public.trip_audit_events where owner_id in(${ids});delete from auth.users where id in(${ids});`);assert.equal(sql(`select count(*) from auth.users where id in(${ids});`),'0');}
+  if (users.length) {
+   const ids=users.map(x=>literal(x.id)).join(',');sql(`delete from public.trip_events where owner_id in(${ids});delete from public.trip_audit_events where owner_id in(${ids});`);
+   // Each real account deletion is a separate boundary. A bulk auth.users statement
+   // defers inherited FK SET NULL between actors and is not this user-facing contract.
+   for(const user of users) sql(`delete from auth.users where id=${literal(user.id)};`);
+   assert.equal(sql(`select count(*) from auth.users where id in(${ids});`),'0');
+  }
  });
  const log=createWriteStream(join(process.env.VP_IDENTITY_SUPABASE_WORKDIR,'publication-next.log'),{mode:0o600});
- next=spawn(process.execPath,['node_modules/next/dist/bin/next','dev','--webpack','--hostname','127.0.0.1','--port',String(ports.apiPort)],{env:{...process.env,NEXT_PUBLIC_SUPABASE_URL:local.API_URL,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:key,VISEPANDA_NATIVE_LOCAL_SESSION:'true',VISEPANDA_NATIVE_LOCAL_SERVICE_KEY:local.SERVICE_ROLE_KEY,VISEPANDA_TRIP_PROTOCOL_V2:'true',VISEPANDA_PLACE_ACTIONS_ENABLED:'true',OPS_LOCAL_REVIEW:'1',COMMUNITY_INTERNAL_REVIEW:'1',COMMUNITY_SAFETY_INTERNAL:'1',COMMUNITY_PUBLICATION_CONTROLLED:'1'},stdio:['ignore','pipe','pipe']});next.stdout.pipe(log);next.stderr.pipe(log);next.once('exit',()=>log.end());await waitForNativeAPI(ports.api,next);
+ next=spawn(process.execPath,['node_modules/next/dist/bin/next','dev','--webpack','--hostname','127.0.0.1','--port',String(ports.apiPort)],{env:{...process.env,NEXT_PUBLIC_SUPABASE_URL:local.API_URL,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:key,VISEPANDA_NATIVE_LOCAL_SESSION:'true',VISEPANDA_NATIVE_LOCAL_TRIP:'true',VISEPANDA_NATIVE_LOCAL_SERVICE_KEY:local.SERVICE_ROLE_KEY,VISEPANDA_TRIP_PROTOCOL_V2:'true',VISEPANDA_PLACE_ACTIONS_ENABLED:'true',OPS_LOCAL_REVIEW:'1',COMMUNITY_INTERNAL_REVIEW:'1',COMMUNITY_SAFETY_INTERNAL:'1',COMMUNITY_PUBLICATION_CONTROLLED:'1'},stdio:['ignore','pipe','pipe']});next.stdout.pipe(log);next.stderr.pipe(log);next.once('exit',()=>log.end());await waitForNativeAPI(ports.api,next);
  const call=async(path,token,body,headers={})=>{const r=await fetch(ports.api+path,{method:body===undefined?'GET':'POST',headers:{...(token?{Authorization:'Bearer '+token}:{}),...(body===undefined?{}:{'Content-Type':'application/json'}),...headers},...(body===undefined?{}:{body:typeof body==='string'?body:JSON.stringify(body)}),signal:AbortSignal.timeout(30000)});return {status:r.status,body:await r.json(),cache:r.headers.get('cache-control')};};
  async function user() {
   const auth=createClient(local.API_URL,key,{auth:{persistSession:false,autoRefreshToken:false}}),email='vpj48-publication-'+uuid()+'@example.test',password='VPJ48-Disposable-'+uuid()+'!';

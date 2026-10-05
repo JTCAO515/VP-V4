@@ -17,3 +17,6 @@ test('TTL and auth replacement clear current source display',async()=>{
  let now=Date.now(),current=true;
  const reader=new ExperienceReferenceReader({read:async()=>reference(),current:()=>current,changed:()=>{},now:()=>now});await reader.open({referenceId:id});assert.equal(reader.snapshot().availability,'current');now+=31000;assert.equal(reader.snapshot().experience,null);now=Date.now();await reader.open({referenceId:id});current=false;assert.equal(reader.snapshot().experience,null);
 });
+test('wall-clock rollback cannot extend a source lease beyond request-start monotonic TTL',async()=>{
+ let now=Date.now(),monotonic=100;const reader=new ExperienceReferenceReader({read:async()=>reference(),current:()=>true,changed:()=>{},now:()=>now,monotonic:()=>monotonic});await reader.open({referenceId:id});assert.equal(reader.snapshot().availability,'current');now-=3600000;monotonic+=30001;assert.equal(reader.snapshot().experience,null);
+});

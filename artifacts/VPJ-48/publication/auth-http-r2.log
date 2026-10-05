@@ -1,0 +1,42 @@
+VP_COMMUNITY_PUBLICATION_HTTP_TARGET {"project":"vp-native-ask-ce1754a4","base":64000}
+✖ owned real Auth + Native/Ops HTTP: controlled consent, independent rights/publication, exact readers/save, original canonical Save/Proposal, irreversible reference invalidation and scoped privacy (10356.065042ms)
+ℹ Settings/grants/qualification/data confined to the named disposable instance. Real ordinary Auth+HTTP+original canonical Save/Proposal/explicit Confirm observed; real target/public/provider/device/unified account exit UNRUN. Fixture canonical mapping is not real provider evidence.
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13390.752792
+
+✖ failing tests:
+
+test at tests/integration/community/publication/http.test.mjs:7:1
+✖ owned real Auth + Native/Ops HTTP: controlled consent, independent rights/publication, exact readers/save, original canonical Save/Proposal, irreversible reference invalidation and scoped privacy (10356.065042ms)
+  Error: Command failed: docker exec -i supabase_db_vp-native-ask-ce1754a4 psql -U postgres -d postgres -X -Atq -v ON_ERROR_STOP=1
+  ERROR:  insert or update on table "states" violates foreign key constraint "states_author_id_fkey"
+  DETAIL:  Key (author_id)=(dcd97eeb-404c-41e4-9b71-928cf8e9572d) is not present in table "users".
+  CONTEXT:  SQL statement "update community_safety_private.states set origin_reporter=null where origin_reporter=u"
+  PL/pgSQL function community_safety_private.erase(uuid) line 16 at SQL statement
+  SQL statement "SELECT community_safety_private.erase(old.id)"
+  PL/pgSQL function community_safety_private.account_erasure() line 2 at PERFORM
+  
+      at genericNodeError (node:internal/errors:999:15)
+      at wrappedFn (node:internal/errors:544:14)
+      at checkExecSyncError (node:child_process:942:11)
+      at execFileSync (node:child_process:978:15)
+      at sql (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj48-community-publication-server-20261006/tests/integration/community/publication/http.test.mjs:11:15)
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj48-community-publication-server-20261006/tests/integration/community/publication/http.test.mjs:15:70)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestHook.run (node:internal/test_runner/test:1409:7)
+      at async Test.runHook (node:internal/test_runner/test:1289:9)
+      at async after (node:internal/test_runner/test:1342:9) {
+    status: 3,
+    signal: null,
+    output: [ null, '', 'ERROR:  insert or update on table "states" violates foreign key constraint "states_author_id_fkey"\nDETAIL:  Key (author_id)=(dcd97eeb-404c-41e4-9b71-928cf8e9572d) is not present in table "users".\nCONTEXT:  SQL statement "update community_safety_private.states set origin_reporter=null where origin_reporter=u"\nPL/pgSQL function community_safety_private.erase(uuid) line 16 at SQL statement\nSQL statement "SELECT community_safety_private.erase(old.id)"\nPL/pgSQL function community_safety_private.account_erasure() line 2 at PERFORM\n' ],
+    pid: 10158,
+    stdout: '',
+    stderr: 'ERROR:  insert or update on table "states" violates foreign key constraint "states_author_id_fkey"\nDETAIL:  Key (author_id)=(dcd97eeb-404c-41e4-9b71-928cf8e9572d) is not present in table "users".\nCONTEXT:  SQL statement "update community_safety_private.states set origin_reporter=null where origin_reporter=u"\nPL/pgSQL function community_safety_private.erase(uuid) line 16 at SQL statement\nSQL statement "SELECT community_safety_private.erase(old.id)"\nPL/pgSQL function community_safety_private.account_erasure() line 2 at PERFORM\n'
+  }
+VP_COMMUNITY_PUBLICATION_HTTP_CLEANUP {"project":"vp-native-ask-ce1754a4","result":"PASS"}

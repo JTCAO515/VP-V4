@@ -12,20 +12,20 @@ export function decodePublicationPending(raw:string|null):PublicationPending|nul
 type Dependencies={identity():Promise<PublicationIdentity|null>;send(bytes:string,identity:PublicationIdentity,signal:AbortSignal):Promise<{data:PublicationOutcome}|{error:string}>;source(submissionId:string,identity:PublicationIdentity,signal:AbortSignal):Promise<unknown>;read():PublicationPending|null;write(p:PublicationPending):void;erase():void;changed(v:PublicationView):void};
 /** Exact-byte journal; every request clears display and fences late replies. */
 export class PublicationOpsController {
-  view:PublicationView=emptyPublicationView;private generation=0;private mounted=true;private controller:AbortController|null=null;private identity:PublicationIdentity|null=null;private visibleUntil=0;
+  view:PublicationView=emptyPublicationView;private generation=0;private mounted=true;private controller:AbortController|null=null;private identity:PublicationIdentity|null=null;private visibleUntil=0;private monotonicUntil=0;
   private readonly deps:Dependencies;
   constructor(deps:Dependencies) {this.deps=deps;}
   private changed(p:Partial<PublicationView>) {this.view={...this.view,...p};if (this.mounted) this.deps.changed(this.view);}
   private async bounded<T>(signal:AbortSignal,work:()=>Promise<T>):Promise<T> {
     return new Promise((resolve,reject)=>{const cancel=()=>reject(Error('Request ended'));if (signal.aborted) {cancel();return;}signal.addEventListener('abort',cancel,{once:true});Promise.resolve().then(work).then(v=>signal.aborted?cancel():resolve(v),reject).finally(()=>signal.removeEventListener('abort',cancel));});
   }
-  invalidate(erase=false) {this.generation++;this.controller?.abort();this.controller=null;this.identity=null;this.visibleUntil=0;let message:PublicationView['message']='empty';if (erase) {try {this.deps.erase();} catch {message='storage';}}this.changed({...emptyPublicationView,message});}
+  invalidate(erase=false) {this.generation++;this.controller?.abort();this.controller=null;this.identity=null;this.visibleUntil=0;this.monotonicUntil=0;let message:PublicationView['message']='empty';if (erase) {try {this.deps.erase();} catch {message='storage';}}this.changed({...emptyPublicationView,message});}
   dispose() {this.invalidate();this.mounted=false;}
-  expire() {if (this.identity && (this.identity.expiresAt<=Date.now() || this.visibleUntil && this.visibleUntil<=Date.now())) this.invalidate();}
+  expire() {if (this.identity && (this.identity.expiresAt<=Date.now() || this.visibleUntil && this.visibleUntil<=Date.now() || this.monotonicUntil && this.monotonicUntil<=performance.now())) this.invalidate();}
   async execute(command:PublicationInput,retryBytes?:string) {
     if (!parsePublicationInput(command) || this.view.busy || !this.mounted) return;
-    const generation=this.generation;const controller=new AbortController();this.controller=controller;const timer=setTimeout(()=>controller.abort(),8000);
-    this.visibleUntil=0;this.changed({...emptyPublicationView,busy:true});
+    const generation=this.generation;const started=performance.now();const controller=new AbortController();this.controller=controller;const timer=setTimeout(()=>controller.abort(),8000);
+    this.visibleUntil=0;this.monotonicUntil=0;this.changed({...emptyPublicationView,busy:true});
     let pending:PublicationPending|null=null;let dispatched=false;
     try {
       const identity=await this.bounded(controller.signal,()=>this.deps.identity());if (generation!==this.generation) return;
@@ -50,14 +50,15 @@ export class PublicationOpsController {
       const experiences=outcomeExperiences(o);if (experiences.some(e=>Date.parse(e.expiresAt)<=Date.now() || Date.parse(e.expiresAt)>Date.now()+30000)) throw Error('Expired reply');
       if (o.kind==='operation' && o.state!=='absent' || o.kind==='deleted') {this.deps.erase();pending=null;}
       this.visibleUntil=Math.min(identity.expiresAt,Date.now()+30000,...experiences.map(e=>Date.parse(e.expiresAt)));
+      this.monotonicUntil=Math.min(started+30000,performance.now()+Math.max(0,this.visibleUntil-Date.now()));
       this.changed({records:o.kind==='publications'?o.publications:[],selected:o.kind==='publication'?o.publication:o.kind==='operation'?o.publication:null,pending,cursor:o.kind==='publications'?o.nextCursor:null,exported:o.kind==='export'?o:null,deleted:o.kind==='deleted',message:pending?'unknown':'ready'});
     } catch {if (generation===this.generation) this.changed({pending,message:pending && dispatched?'unknown':!dispatched?'storage':'unavailable'});}
     finally {clearTimeout(timer);if (generation===this.generation) {this.controller=null;this.changed({busy:false});}}
   }
   async inspectSource() {
     this.expire();const selected=this.view.selected;if (!selected || this.view.busy || !this.mounted || this.view.pending) return;
-    const generation=this.generation;const controller=new AbortController();this.controller=controller;const timer=setTimeout(()=>controller.abort(),8000);
-    this.visibleUntil=0;this.changed({busy:true,source:null,records:[],exported:null,message:'empty'});
+    const generation=this.generation;const started=performance.now();const controller=new AbortController();this.controller=controller;const timer=setTimeout(()=>controller.abort(),8000);
+    this.visibleUntil=0;this.monotonicUntil=0;this.changed({busy:true,source:null,records:[],exported:null,message:'empty'});
     try {
       const identity=await this.bounded(controller.signal,()=>this.deps.identity());
       if (!identity || !this.identity || identity.actorId!==this.identity.actorId || identity.sessionId!==this.identity.sessionId || identity.expiresAt<=Date.now()) throw Error('Session changed');
@@ -65,7 +66,7 @@ export class PublicationOpsController {
       const after=await this.bounded(controller.signal,()=>this.deps.identity());if (generation!==this.generation || controller.signal.aborted) return;
       const o=decodeSafetyOutcome(value);const source=o?.kind==='object'?o.object:null;
       if (!after || after.actorId!==identity.actorId || after.sessionId!==identity.sessionId || after.expiresAt<=Date.now() || !o || o.actorId!==identity.actorId || o.sessionId!==identity.sessionId || !source || source.id!==selected.submissionId || source.submissionVersion!==selected.submissionVersion || source.safetyVersion!==selected.safetyVersion || Date.parse(source.expiresAt)<=Date.now() || Date.parse(source.expiresAt)>Date.now()+30000) throw Error('Source unavailable');
-      this.visibleUntil=Math.min(identity.expiresAt,Date.parse(source.expiresAt));this.changed({selected,source,message:'ready'});
+      this.visibleUntil=Math.min(identity.expiresAt,Date.parse(source.expiresAt));this.monotonicUntil=Math.min(started+30000,performance.now()+Math.max(0,this.visibleUntil-Date.now()));this.changed({selected,source,message:'ready'});
     } catch {if (generation===this.generation) {this.changed({selected:null,source:null,message:'unavailable'});}}
     finally {clearTimeout(timer);if (generation===this.generation) {this.controller=null;this.changed({busy:false});}}
   }

@@ -1,0 +1,409 @@
+{
+  "fixtureSchema": "community-publication-j3j4-fixture/1",
+  "endpoint": "http://127.0.0.1:64031",
+  "samples": {
+    "list": {
+      "kind": "list",
+      "actorId": "4ab24765-ae12-4b56-be24-e3b67b5ef5f7",
+      "complete": true,
+      "sessionId": "2246535f-2b20-4024-a052-f0c72f102b6e",
+      "nextCursor": null,
+      "experiences": [
+        {
+          "id": "208555c4-1a6a-49c8-870e-4f6371d41bc3",
+          "place": {
+            "label": "Fixture exact place",
+            "mappingDigest": "b33d1d8f621049ead9cc54e961b18a2698a93c70af2083f258a824e7936a9b5a",
+            "canonicalPoiId": "37004b22-7800-4892-8cf7-fa5321e0da93"
+          },
+          "title": "Synthetic withdrawal",
+          "source": "user_experience",
+          "content": "Owned synthetic travel text withdrawal",
+          "audience": "controlled_registered",
+          "canBlock": true,
+          "canReport": true,
+          "copyright": "author_declared_own_text_independently_reviewed",
+          "expiresAt": "2026-10-05T16:38:19.220672+00:00",
+          "contentKind": "experience",
+          "submissionId": "8fa20272-df73-47c6-aa55-cf9a7a3bfe1c",
+          "rightsPurpose": "controlled_experience_display",
+          "safetyVersion": 0,
+          "publiclyVisible": false,
+          "authorDisclosure": "unknown",
+          "benefitDisclosure": "Fixture self-reported interest",
+          "retrievalEligible": false,
+          "submissionVersion": 2,
+          "publicationVersion": 3,
+          "reviewerDisclosure": "unknown"
+        }
+      ],
+      "schemaVersion": "community-publication-j3j4/1"
+    },
+    "unavailable": {
+      "id": "3fa645dc-1dae-4717-8c50-4f2e9fdd48f3",
+      "state": "saved",
+      "endedAt": null,
+      "version": 1,
+      "createdAt": "2026-10-05T16:37:48.472483+00:00",
+      "experience": null,
+      "availability": "unavailable",
+      "publicationId": "208555c4-1a6a-49c8-870e-4f6371d41bc3",
+      "safetyVersion": 0,
+      "submissionVersion": 2,
+      "publicationVersion": 3
+    },
+    "replay": {
+      "kind": "operation",
+      "state": "committed",
+      "actorId": "a8b7cdc2-10e6-403b-ba1d-cefeedbd6415",
+      "reference": null,
+      "sessionId": "bcf6c45c-b5cc-4cf5-bd00-c1bf0db80a22",
+      "operationId": "e4525cee-39a8-40b3-ba13-f841a04f656a",
+      "publication": {
+        "id": "208555c4-1a6a-49c8-870e-4f6371d41bc3",
+        "state": "published",
+        "endedAt": null,
+        "version": 3,
+        "audience": "controlled_registered",
+        "createdAt": "2026-10-05T16:37:48.153506+00:00",
+        "rightsNote": "Checked synthetic author-owned text and limited controlled display purpose",
+        "publishedAt": "2026-10-05T16:37:48.447217+00:00",
+        "submissionId": "8fa20272-df73-47c6-aa55-cf9a7a3bfe1c",
+        "safetyVersion": 0,
+        "publiclyVisible": false,
+        "retrievalEligible": false,
+        "rightsDeclaration": "own-text-v1",
+        "submissionVersion": 2
+      },
+      "schemaVersion": "community-publication-j3j4/1"
+    },
+    "ownedReviews": {
+      "kind": "export",
+      "scope": "community_publication_module",
+      "audits": [
+        {
+          "action": "rightsReview",
+          "recordId": "208555c4-1a6a-49c8-870e-4f6371d41bc3",
+          "createdAt": "2026-10-05T16:37:48.427529+00:00"
+        },
+        {
+          "action": "rightsReview",
+          "recordId": "98e75b26-6634-4e73-9d2c-185d66f5b4f8",
+          "createdAt": "2026-10-05T16:37:49.564919+00:00"
+        },
+        {
+          "action": "rightsReview",
+          "recordId": "2d6d2703-fd3e-4693-98b8-39d092dff2ca",
+          "createdAt": "2026-10-05T16:37:50.125374+00:00"
+        }
+      ],
+      "actorId": "8a71a066-85a0-4e01-a80c-ebec022f9983",
+      "coverage": "complete_for_community_publication",
+      "receipts": [
+        {
+          "state": "committed",
+          "action": "rightsReview",
+          "digest": "b9cdaa450a8d23dff3f4a9aea40ce4ebeaa634190d643560b3be3afc1a291ea5",
+          "recordId": "208555c4-1a6a-49c8-870e-4f6371d41bc3",
+          "operationId": "e252d8f6-aabd-4262-8b8a-03386a4a48b8"
+        },
+        {
+          "state": "committed",
+          "action": "rightsReview",
+          "digest": "9e0dee657afe98471aa5fdd4a72413856a6300d8b5bf2af8e1aca4d779342875",
+          "recordId": "2d6d2703-fd3e-4693-98b8-39d092dff2ca",
+          "operationId": "f1f8e14a-95cf-44c7-91e3-34dac5e39575"
+        },
+        {
+          "state": "committed",
+          "action": "rightsReview",
+          "digest": "aa2412a72ab086f78c0ba4b02b3e523f8434a29dbb0d85bde75a283306e123cb",
+          "recordId": "98e75b26-6634-4e73-9d2c-185d66f5b4f8",
+          "operationId": "fe9c6015-ad01-4c5a-8e5f-2594d9f2c26c"
+        }
+      ],
+      "retained": [
+        "operation_fences",
+        "publication_tombstones",
+        "reference_tombstones",
+        "audit_metadata"
+      ],
+      "sessionId": "527e8dd3-0f7f-4192-ac91-81c92e71898c",
+      "references": [],
+      "publications": [],
+      "qualification": {
+        "publisher": false,
+        "rightsReviewer": true
+      },
+      "schemaVersion": "community-publication-j3j4/1",
+      "authoredRightsReviews": [
+        {
+          "note": "Checked synthetic author-owned text and limited controlled display purpose",
+          "decision": "approve",
+          "createdAt": "2026-10-05T16:37:48.427005+00:00",
+          "publicationId": "208555c4-1a6a-49c8-870e-4f6371d41bc3"
+        },
+        {
+          "note": "Checked synthetic author-owned text and limited controlled display purpose",
+          "decision": "approve",
+          "createdAt": "2026-10-05T16:37:50.125009+00:00",
+          "publicationId": "2d6d2703-fd3e-4693-98b8-39d092dff2ca"
+        },
+        {
+          "note": "Checked synthetic author-owned text and limited controlled display purpose",
+          "decision": "approve",
+          "createdAt": "2026-10-05T16:37:49.56441+00:00",
+          "publicationId": "98e75b26-6634-4e73-9d2c-185d66f5b4f8"
+        }
+      ]
+    },
+    "clearedRights": {
+      "kind": "export",
+      "scope": "community_publication_module",
+      "audits": [
+        {
+          "action": "delete",
+          "recordId": null,
+          "createdAt": "2026-10-05T16:37:50.221213+00:00"
+        }
+      ],
+      "actorId": "8a71a066-85a0-4e01-a80c-ebec022f9983",
+      "coverage": "complete_for_community_publication",
+      "receipts": [
+        {
+          "state": "committed",
+          "action": "delete",
+          "digest": "c9e939a49fdf5753e78c9e76d34740d2c98fd5c61865a2b93a2897bd9db4ab92",
+          "recordId": null,
+          "operationId": "1c91e74b-fbd1-4463-a199-24d17aacbc43"
+        },
+        {
+          "state": "committed",
+          "action": "rightsReview",
+          "digest": "b9cdaa450a8d23dff3f4a9aea40ce4ebeaa634190d643560b3be3afc1a291ea5",
+          "recordId": "208555c4-1a6a-49c8-870e-4f6371d41bc3",
+          "operationId": "e252d8f6-aabd-4262-8b8a-03386a4a48b8"
+        },
+        {
+          "state": "committed",
+          "action": "rightsReview",
+          "digest": "9e0dee657afe98471aa5fdd4a72413856a6300d8b5bf2af8e1aca4d779342875",
+          "recordId": "2d6d2703-fd3e-4693-98b8-39d092dff2ca",
+          "operationId": "f1f8e14a-95cf-44c7-91e3-34dac5e39575"
+        },
+        {
+          "state": "committed",
+          "action": "rightsReview",
+          "digest": "aa2412a72ab086f78c0ba4b02b3e523f8434a29dbb0d85bde75a283306e123cb",
+          "recordId": "98e75b26-6634-4e73-9d2c-185d66f5b4f8",
+          "operationId": "fe9c6015-ad01-4c5a-8e5f-2594d9f2c26c"
+        }
+      ],
+      "retained": [
+        "operation_fences",
+        "publication_tombstones",
+        "reference_tombstones",
+        "audit_metadata"
+      ],
+      "sessionId": "527e8dd3-0f7f-4192-ac91-81c92e71898c",
+      "references": [],
+      "publications": [],
+      "qualification": null,
+      "schemaVersion": "community-publication-j3j4/1",
+      "authoredRightsReviews": []
+    },
+    "readerExport": {
+      "kind": "export",
+      "scope": "community_publication_module",
+      "audits": [
+        {
+          "action": "save",
+          "recordId": "3fa645dc-1dae-4717-8c50-4f2e9fdd48f3",
+          "createdAt": "2026-10-05T16:37:48.472663+00:00"
+        },
+        {
+          "action": "save",
+          "recordId": "50ab902d-e781-4fb7-934a-b045e51460b4",
+          "createdAt": "2026-10-05T16:37:49.597501+00:00"
+        },
+        {
+          "action": "save",
+          "recordId": "4ff3330c-1bcb-4a6f-9dd8-b3d6f68f79e6",
+          "createdAt": "2026-10-05T16:37:50.159745+00:00"
+        }
+      ],
+      "actorId": "4ab24765-ae12-4b56-be24-e3b67b5ef5f7",
+      "coverage": "complete_for_community_publication",
+      "receipts": [
+        {
+          "state": "committed",
+          "action": "save",
+          "digest": "c1dc4c23e61ec42a1e9c85a59eb34a0edc6ce572094d2ddf7b112ee9cf7e9e6e",
+          "recordId": "3fa645dc-1dae-4717-8c50-4f2e9fdd48f3",
+          "operationId": "04fe9065-9573-49d4-ad1c-986cd02b2835"
+        },
+        {
+          "state": "committed",
+          "action": "save",
+          "digest": "e86310dedaec7b186057c70e63d90e06b875ac4302eb238714b08de4082f60bf",
+          "recordId": "4ff3330c-1bcb-4a6f-9dd8-b3d6f68f79e6",
+          "operationId": "24b69561-e7c0-4a96-8e20-db84234cfe89"
+        },
+        {
+          "state": "committed",
+          "action": "save",
+          "digest": "5682b2bea5b017e57dceeb45568d1434fa564e64ce51c08a0daa5bbb52947a07",
+          "recordId": "50ab902d-e781-4fb7-934a-b045e51460b4",
+          "operationId": "8d29e12d-f77f-48da-bb7e-247afc4173f7"
+        }
+      ],
+      "retained": [
+        "operation_fences",
+        "publication_tombstones",
+        "reference_tombstones",
+        "audit_metadata"
+      ],
+      "sessionId": "2246535f-2b20-4024-a052-f0c72f102b6e",
+      "references": [
+        {
+          "id": "3fa645dc-1dae-4717-8c50-4f2e9fdd48f3",
+          "state": "saved",
+          "endedAt": null,
+          "version": 1,
+          "createdAt": "2026-10-05T16:37:48.472483+00:00",
+          "experience": null,
+          "availability": "unavailable",
+          "publicationId": "208555c4-1a6a-49c8-870e-4f6371d41bc3",
+          "safetyVersion": 0,
+          "submissionVersion": 2,
+          "publicationVersion": 3
+        },
+        {
+          "id": "4ff3330c-1bcb-4a6f-9dd8-b3d6f68f79e6",
+          "state": "saved",
+          "endedAt": null,
+          "version": 1,
+          "createdAt": "2026-10-05T16:37:50.159606+00:00",
+          "experience": null,
+          "availability": "unavailable",
+          "publicationId": "2d6d2703-fd3e-4693-98b8-39d092dff2ca",
+          "safetyVersion": 0,
+          "submissionVersion": 2,
+          "publicationVersion": 3
+        },
+        {
+          "id": "50ab902d-e781-4fb7-934a-b045e51460b4",
+          "state": "saved",
+          "endedAt": null,
+          "version": 1,
+          "createdAt": "2026-10-05T16:37:49.597406+00:00",
+          "experience": null,
+          "availability": "unavailable",
+          "publicationId": "98e75b26-6634-4e73-9d2c-185d66f5b4f8",
+          "safetyVersion": 0,
+          "submissionVersion": 2,
+          "publicationVersion": 3
+        }
+      ],
+      "publications": [],
+      "qualification": null,
+      "schemaVersion": "community-publication-j3j4/1",
+      "authoredRightsReviews": []
+    },
+    "erasedReader": {
+      "kind": "export",
+      "scope": "community_publication_module",
+      "audits": [
+        {
+          "action": "delete",
+          "recordId": null,
+          "createdAt": "2026-10-05T16:37:50.258886+00:00"
+        }
+      ],
+      "actorId": "4ab24765-ae12-4b56-be24-e3b67b5ef5f7",
+      "coverage": "complete_for_community_publication",
+      "receipts": [
+        {
+          "state": "committed",
+          "action": "save",
+          "digest": "c1dc4c23e61ec42a1e9c85a59eb34a0edc6ce572094d2ddf7b112ee9cf7e9e6e",
+          "recordId": "3fa645dc-1dae-4717-8c50-4f2e9fdd48f3",
+          "operationId": "04fe9065-9573-49d4-ad1c-986cd02b2835"
+        },
+        {
+          "state": "committed",
+          "action": "save",
+          "digest": "e86310dedaec7b186057c70e63d90e06b875ac4302eb238714b08de4082f60bf",
+          "recordId": "4ff3330c-1bcb-4a6f-9dd8-b3d6f68f79e6",
+          "operationId": "24b69561-e7c0-4a96-8e20-db84234cfe89"
+        },
+        {
+          "state": "committed",
+          "action": "save",
+          "digest": "5682b2bea5b017e57dceeb45568d1434fa564e64ce51c08a0daa5bbb52947a07",
+          "recordId": "50ab902d-e781-4fb7-934a-b045e51460b4",
+          "operationId": "8d29e12d-f77f-48da-bb7e-247afc4173f7"
+        },
+        {
+          "state": "committed",
+          "action": "delete",
+          "digest": "9a7355f68b3b9fd68a2a09dceda9eba894465c2463ecc063202979cec304af27",
+          "recordId": null,
+          "operationId": "a7dc4344-29e7-4057-9958-bfd0126f49f7"
+        }
+      ],
+      "retained": [
+        "operation_fences",
+        "publication_tombstones",
+        "reference_tombstones",
+        "audit_metadata"
+      ],
+      "sessionId": "2246535f-2b20-4024-a052-f0c72f102b6e",
+      "references": [
+        {
+          "id": "3fa645dc-1dae-4717-8c50-4f2e9fdd48f3",
+          "state": "erased",
+          "endedAt": "2026-10-05T16:37:50.258763+00:00",
+          "version": 2,
+          "createdAt": "2026-10-05T16:37:48.472483+00:00",
+          "experience": null,
+          "availability": "unavailable",
+          "publicationId": null,
+          "safetyVersion": 0,
+          "submissionVersion": 2,
+          "publicationVersion": 3
+        },
+        {
+          "id": "4ff3330c-1bcb-4a6f-9dd8-b3d6f68f79e6",
+          "state": "erased",
+          "endedAt": "2026-10-05T16:37:50.258798+00:00",
+          "version": 2,
+          "createdAt": "2026-10-05T16:37:50.159606+00:00",
+          "experience": null,
+          "availability": "unavailable",
+          "publicationId": null,
+          "safetyVersion": 0,
+          "submissionVersion": 2,
+          "publicationVersion": 3
+        },
+        {
+          "id": "50ab902d-e781-4fb7-934a-b045e51460b4",
+          "state": "erased",
+          "endedAt": "2026-10-05T16:37:50.258796+00:00",
+          "version": 2,
+          "createdAt": "2026-10-05T16:37:49.597406+00:00",
+          "experience": null,
+          "availability": "unavailable",
+          "publicationId": null,
+          "safetyVersion": 0,
+          "submissionVersion": 2,
+          "publicationVersion": 3
+        }
+      ],
+      "publications": [],
+      "qualification": null,
+      "schemaVersion": "community-publication-j3j4/1",
+      "authoredRightsReviews": []
+    }
+  }
+}

@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {randomUUID as uuid} from 'node:crypto';
+import {readFileSync} from 'node:fs';
 import {PUBLICATION_SCHEMA,publicationRetained,parsePublicationInput,decodePublication,decodeExperience,decodeExperienceReference,decodePublicationOutcome,matchesPublicationOutcome} from '../../../../lib/server/community/publication/contract.ts';
 import {handlePublicationRequest} from '../../../../lib/server/community/publication/http.ts';
 import {safeReturnTo} from '../../../../lib/navigation/safe-return-to.ts';
@@ -16,6 +17,11 @@ const options=(rpc={},opts={})=>({enabled:true,cleanupEnabled:true,surface:'nati
 test('login returns only to the leased publication literal and rejects query or URL variants',()=>{
  assert.equal(safeReturnTo('/ops/community/publication'),'/ops/community/publication');
  for(const path of ['/ops/community/publication?public=1','/ops/community/publication/','/ops/community/publication#source','//example.test/ops/community/publication','https://example.test/ops/community/publication','/ops/community/publication/anything',' /ops/community/publication','/ops/community/publication\\outside']) assert.equal(safeReturnTo(path),'/visepanda');
+});
+test('actual owned Swift command fixtures and ordinary Auth producer samples match canonical wire',()=>{
+ for(const name of ['request','save','unsave','delete','operation','abandon']) {const bytes=readFileSync(`ios/VisePanda/VisePandaTests/Fixtures/CommunityExperience/native-${name}.json`,'utf8');assert.ok(parsePublicationInput(JSON.parse(bytes)),name);}
+ const fixture=JSON.parse(readFileSync('tests/fixtures/community/publication/producer.json','utf8'));assert.equal(fixture.fixtureSchema,'community-publication-j3j4-fixture/1');
+ for(const [name,value] of Object.entries(fixture.samples)) assert.ok(name==='unavailable'?decodeExperienceReference(value):decodePublicationOutcome(value),name+' is only offline shape proof, not current display authority');
 });
 test('closed input never accepts user-defined recipients, copyright permissions or authority',()=>{
  assert.ok(parsePublicationInput(command()));
