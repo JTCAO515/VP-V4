@@ -1,4 +1,5 @@
 import Foundation
+import CryptoKit
 import Security
 import Testing
 @testable import VisePanda
@@ -133,7 +134,99 @@ import Testing
         await store.load(client: .init(current: { current }, request: { _, _ in store.suspend(); return try bytes(v, "list") }))
         #expect(store.visibleObjects(actor).isEmpty && store.exportURL(actor) == nil)
     }
+
+    @Test func actualSessionRequiresOriginalJournalAndUnknownAckDoesNotRetryBeforeLogoutCleanup() async throws {
+        let domain = "vpj58.coverage-progress-session." + UUID().uuidString
+        let defaults = try #require(UserDefaults(suiteName: domain))
+        defer { defaults.removePersistentDomain(forName: domain) }
+        let vault = CoverageProgressTestVault(), configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [CoverageProgressSessionProtocol.self]
+        CoverageProgressSessionProtocol.calls.reset()
+        let session = NativeSession(arguments: ["-VisePandaNativeAPI", actor.scope.endpoint], defaults: defaults,
+            configuration: configuration, bundleConfiguration: [:], vault: vault)
+        await session.login(email: "coverage-progress@example.invalid", password: "synthetic-only")
+        let current = try session.communitySafetyActor(), v = try fixture(), original = try command(v, "eraseBytes")
+        do {
+            _ = try await session.coverageProgressRequest(body: original.body, actor: current)
+            Issue.record("Unretained erase reached the transport")
+        } catch NativeDataError.staleSessionResponse { }
+        #expect(CoverageProgressSessionProtocol.calls.count == 0)
+        let journal = NativeCoverageProgressJournal(vault: vault, validateErase: NativeCoverageProgressCommand.validateErase)
+        let saved = try journal.retain(original.body, actor: current)
+        do {
+            _ = try await session.coverageProgressRequest(body: original.body, actor: current)
+            Issue.record("Unknown erase ACK was accepted as a response")
+        } catch NativeDataError.server(let code) { #expect(code == "COVERAGE_PROGRESS_ACK_UNKNOWN") }
+        let unresolved = try journal.read(current)
+        #expect(unresolved == saved && CoverageProgressSessionProtocol.calls.count == 1)
+        #expect(session.dataScope == current.scope)
+        let bytes = try await session.coverageProgressRequest(body: original.recovery().body, actor: current)
+        #expect(try NativeCoverageProgressProtocol.erased(bytes, command: original.recovery(), actor: current, now: Date()) == nil)
+        #expect(CoverageProgressSessionProtocol.calls.count == 2)
+        let stillOriginal = try journal.read(current)
+        #expect(stillOriginal == saved)
+        await session.logout()
+        #expect(session.status == "signedOut")
+        let cleaned = try journal.read(current)
+        #expect(cleaned == nil)
+    }
     private func temporaryRoot() -> URL { FileManager.default.temporaryDirectory.appendingPathComponent("coverage-progress-test-" + UUID().uuidString) }
+}
+
+/// Synthetic unsigned transport for the actual NativeSession boundary. No server,
+/// credential scope, real owner data or target permission is created.
+nonisolated private final class CoverageProgressSessionProtocol: URLProtocol, @unchecked Sendable {
+    static let calls = CoverageProgressRequestCounter()
+    override class func canInit(with request: URLRequest) -> Bool { request.url?.host == "127.0.0.1" && request.url?.port == 65160 }
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+    override func stopLoading() {}
+    override func startLoading() {
+        let owner = "00000000-0000-4000-8000-000000000001", session = "00000000-0000-4000-8000-000000000002"
+        let path = request.url?.path ?? ""
+        var status = 200
+        let value: [String: Any]
+        if path.hasSuffix("/credentials") {
+            let claims = try! JSONSerialization.data(withJSONObject: ["sub": owner, "session_id": session]).base64EncodedString()
+                .replacingOccurrences(of: "+", with: "-").replacingOccurrences(of: "/", with: "_").replacingOccurrences(of: "=", with: "")
+            value = ["subject": owner, "accessToken": "synthetic." + claims + ".unsigned-fixture", "refreshToken": "synthetic-only", "expiresAt": Date().timeIntervalSince1970 + 3600]
+        } else if path.hasSuffix("/login") { value = ["subject": owner, "mobileEpoch": 2] }
+        else if path.hasSuffix("/profile") { value = ["subject": owner, "displayName": "Synthetic"] }
+        else if path.hasSuffix("/logout") { value = [:] }
+        else if path == "/api/privacy/native/v1/coverage-progress", request.httpMethod == "POST",
+                request.value(forHTTPHeaderField: "Cookie") == nil, request.value(forHTTPHeaderField: "Origin") == nil,
+                request.value(forHTTPHeaderField: "Authorization")?.hasPrefix("Bearer synthetic.") == true,
+                let bytes = body(), let input = try? JSONSerialization.jsonObject(with: bytes) as? [String: Any] {
+            Self.calls.increment()
+            if input["action"] as? String == "erase" { status = 503; value = ["error": ["code": "COVERAGE_PROGRESS_ACK_UNKNOWN"]] }
+            else if input["action"] as? String == "recover", let original = input["mutationBytes"] as? String {
+                let digest = SHA256.hash(data: Data(original.utf8)).map { String(format: "%02x", $0) }.joined()
+                value = ["data": ["schemaVersion": "coverage-progress-data/1", "kind": "unknown", "scope": "coverage-progress-data/1",
+                    "requestId": input["requestId"]!, "objectIds": input["objectIds"]!, "ownerId": owner, "sessionId": session,
+                    "mobileEpoch": 2, "requestDigest": digest, "allUserDataCompleted": false]]
+            } else { status = 400; value = ["error": ["code": "INVALID_FIXTURE_COMMAND"]] }
+        } else { status = 400; value = ["error": ["code": "INVALID_FIXTURE_TRANSPORT"]] }
+        let response = HTTPURLResponse(url: request.url!, statusCode: status, httpVersion: "HTTP/1.1", headerFields: ["Content-Type": "application/json"])!
+        client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+        client?.urlProtocol(self, didLoad: try! JSONSerialization.data(withJSONObject: value)); client?.urlProtocolDidFinishLoading(self)
+    }
+    private func body() -> Data? {
+        if let bytes = request.httpBody { return bytes }
+        guard let stream = request.httpBodyStream else { return nil }
+        stream.open(); defer { stream.close() }
+        var bytes = Data(), buffer = [UInt8](repeating: 0, count: 2048)
+        while true {
+            let n = stream.read(&buffer, maxLength: buffer.count)
+            if n < 0 { return nil }; if n == 0 { return bytes }
+            bytes.append(contentsOf: buffer.prefix(n))
+        }
+    }
+}
+nonisolated private final class CoverageProgressRequestCounter: @unchecked Sendable {
+    private let lock = NSLock()
+    private var total = 0
+    var count: Int { lock.withLock { total } }
+    func reset() { lock.withLock { total = 0 } }
+    func increment() { lock.withLock { total += 1 } }
 }
 
 private final class CoverageProgressFixtureAnchor: NSObject {}

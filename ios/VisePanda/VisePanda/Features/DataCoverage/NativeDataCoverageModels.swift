@@ -3,7 +3,7 @@ import CryptoKit
 
 enum NativeDataCoverageWire {
     static let schema = "data-coverage/1"
-    static let catalog = "data-coverage-catalog/2026-10-06.4"
+    static let catalog = "data-coverage-catalog/2026-10-06.5"
     static let moduleIDs: Set<String> = ["trip", "conversations", "results", "profile", "memory", "turn", "user_artifact", "brief", "entitlements", "case", "ugc", "safety", "publication", "notifications", "notification_devices", "notification_exit_progress", "lifecycle", "coverage_progress", "guide", "order_references", "pdf_intake", "material_exit_progress", "case_attachments", "archive", "materials", "app_group", "local_share", "guide_cache", "offline", "local_journals", "provider", "backup", "external_copies", "financial_records"]
     static func digest(_ bytes: Data) -> String { SHA256.hash(data: bytes).map { String(format: "%02x", $0) }.joined() }
     static func actor(_ v: [String: Any], _ actor: NativeCommunitySafetyActor) throws {
@@ -39,7 +39,7 @@ struct NativeDataCoverageModule: Identifiable, Equatable {
         selection = try w.text(v["selection"], max: 20); capacity = try w.text(v["capacity"], max: 400)
         retention = try w.rows(v["retention"], max: 20) { try w.text($0, max: 100) }
         missing = try w.rows(v["missing"], max: 20) { try w.text($0, max: 100) }
-        guard ["owner", "trip", "memory_plan", "case", "guide_reference", "device_files", "material_records", "notification_records", "none"].contains(selection),
+        guard ["owner", "trip", "memory_plan", "case", "guide_reference", "device_files", "material_records", "notification_records", "coverage_records", "none"].contains(selection),
               Set(retention).count == retention.count, Set(missing).count == missing.count else { throw NativeDataError.invalidResponse }
     }
     func handler(_ action: NativeDataCoverageAction) -> String? { action == .export ? exportHandler : deleteHandler }
