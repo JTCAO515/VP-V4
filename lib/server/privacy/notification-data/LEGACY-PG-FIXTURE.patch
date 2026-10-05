@@ -1,0 +1,11 @@
+--- a/tests/integration/notifications/delivery-postgres.test.mjs
++++ b/tests/integration/notifications/delivery-postgres.test.mjs
+@@ -13,7 +13,7 @@
+ const claims=a=>`set request.jwt.claim.sub='${a.owner}';set request.jwt.claim.role='authenticated';set request.jwt.claims='${JSON.stringify({session_id:a.session,is_anonymous:false,role:'authenticated'})}';`;
+ const svcClaims="set request.jwt.claim.role='service_role';set request.jwt.claims='{\"role\":\"service_role\"}';";
+ const user=async(f,action,input={})=>JSON.parse(await db(`begin;${claims(f.a)}set role authenticated;select public.travel_reminders_v2(${lit(f.trip)},${lit(action)},${lit(input)});commit;`));
+-const svc=async(name,args)=>JSON.parse(await db(`begin;${svcClaims}set role service_role;select public.${name}(${args.map(lit).join(',')});commit;`));
++const svc=async(name,args)=>{const input=name==='dispatch_travel_notification_v2'&&args[1]==='begin'?[args[0],'begin_fenced',args[2]]:args;return JSON.parse(await db(`begin;${svcClaims}set role service_role;select public.${name}(${input.map(lit).join(',')});commit;`));};
+ const reject=async(f,action,input,code)=>{const r=await sql(container,`begin;${claims(f.a)}set role authenticated;select public.travel_reminders_v2(${lit(f.trip)},${lit(action)},${lit(input)});commit;`);assert.notEqual(r.code,0);assert.match(r.stderr,new RegExp(code));};
+ const run=(n,fn)=>test(n,{skip:!enabled,timeout:120000},fn);
+ before(async()=>{

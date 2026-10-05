@@ -134,3 +134,24 @@ workdir/Next log removed on successful owned cleanup, no secret log persistence.
 Next generated AGENTS/next-env noise inspected/restored only in this own checkout.
 Whole parent239/ALL1missing/ALL2 Open. Scope core ready for Main combined audit;
 remaining necessary CI/legacy fixture integration engineering is separate.
+
+Necessary CI registration concrete patch CI-REGISTRY.patch prepared, no shared
+script written: scripts/ci-suites/db-integration.mjs ONLY VP_NOTIFICATION_EXIT_DB_TEST=1,
+owned notification-data-postgres file and actual notification-data-http runner/base63320
+(existing bases63360/63400 kept, no renumber/kill/assert/skip weakening). Request
+original current registry owner exact additive release, then apply three hunks.
+Original notifications PG fixture loads every append automatically but its service
+fixture still supplies old begin. LEGACY-PG-FIXTURE.patch ONLY maps those synthetic
+input calls to begin_fenced in shared fixture adapter; all test oracles, strict
+errors and source/eligibility/ACL assertions unchanged. Request exact old PG fixture
+release; no runtime old SQL edit. Scope core already actual signed PASS; engineering
+fixtures/CI do not represent another product writer or open core capability gap.
+
+Also actual prior material HTTP input hardcodes catalogv3 at line86; needs ONLY
+CATALOG_VERSION imported constant (no expected receipt/state/source changes).
+Original coverage/auth-http metadata-only notifications commands no longer match
+the intentionally upgraded notifications descriptor. Preserve that old metadata
+capability/oracles via retained owner metadata seam, while updating unavailable
+example to an actually still-missing handler; this is a required legacy fixture
+migration, not justification to weaken original outcome/privacy/no-op assertions.
+Reviewable exact adaptation will stay owned until precise old fixture release.
