@@ -1,0 +1,10 @@
+{"command": "pnpm test:unit", "outcome": "PASS", "tests": 239, "pass": 239, "fail": 0, "skipped": 0}
+{"command": "pnpm test:contract", "outcome": "PASS", "tests": 1022, "pass": 1022, "fail": 0, "skipped": 0}
+{"command": "pnpm test:security", "outcome": "INCOMPLETE", "tests": 323, "pass": 322, "fail": 0, "skipped": 1, "reason": "Existing AI-14 explicit disposable Supabase target was not configured"}
+{"command": "pnpm db:verify", "outcome": "UNRUN", "exit": 0, "reason": "Baseline present; RPC/user/ops/worker probes not configured; no production connection"}
+{"command": "node --experimental-strip-types tests/integration/trip/run-lifecycle-http.mjs --port-base 64600", "outcome": "PASS", "version": "r1", "tests": 1, "pass": 1, "fail": 0, "skipped": 0, "defaultACL": "DENIED", "qualification": "owned disposable fixture grant only", "cleanup": "PASS"}
+{"command": "node --experimental-strip-types tests/integration/trip/run-lifecycle-http.mjs --port-base 64600", "outcome": "PASS", "version": "r2", "tests": 1, "pass": 1, "fail": 0, "skipped": 0, "defaultACL": "DENIED", "qualification": "owned disposable fixture grant only", "cleanup": "PASS"}
+{"command": "node scripts/ci-suites/db-integration.mjs --list", "outcome": "PASS", "reason": "Final integration paths; original classifier unchanged; mandatory PostgreSQL registration with existing VP_ARCHIVE_DB_TEST"}
+{"command": "pnpm build", "outcome": "PASS", "reason": "Final combined Next.js build; no deployment"}
+{"command": "xcodebuild build-for-testing -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' -derivedDataPath /tmp/vpj61-combined-native-derived CODE_SIGNING_ALLOWED=NO", "outcome": "PASS", "reason": "Combined source including notifications, translation and archived readers"}
+{"command": "VP_ARCHIVE_DB_TEST=1 VP_TURN_DB_TEST=1 VP_PRIVACY_DB_TEST=1 node --experimental-strip-types --test --test-concurrency=2 tests/integration/trip/archive.test.mjs tests/integration/turn/five-result-lifecycle.test.mjs tests/integration/privacy/core-export-d2.test.mjs", "outcome": "PASS", "tests": 13, "pass": 13, "fail": 0, "skipped": 0}
