@@ -131,5 +131,5 @@ export function matchesSafetyOutcome(o:SafetyOutcome,input:SafetyInput,actor:str
   if (original.action==='delete') return o.record===null;
   const kind=({report:'report',disposition:'report',appeal:'appeal',appealReview:'appeal',block:'block',unblock:'block'} as const)[original.action];
   const id='reportId' in original?original.reportId:'appealId' in original?original.appealId:original.blockId;
-  return o.record?.kind===kind && o.record.id===id && (!('submissionId' in original) || o.record.submissionId===original.submissionId || original.action==='block' && o.record.kind==='block' && o.record.state==='erased' && o.record.submissionId===null);
+  return o.record?.kind===kind && o.record.id===id && (!('submissionId' in original) || o.record.submissionId===original.submissionId || original.action==='block' && o.record.kind==='block' && o.record.submissionId===null);
 }
