@@ -177,3 +177,38 @@ run('actual execute vs abandon race has one durable terminal and at most one eff
   assert.equal(await db(`select count(*) from place_actions_private.operations where trip_id='${f.trip}';`),'1');assert.deepEqual(await f.execute({action:'receipt',request:v}),execute);
  }
 });
+run('saved reload returns original persisted identity after withdrawal and supports exact unsave',async()=>{
+ await db('grant execute on function public.read_place_action_context_v1(uuid,jsonb),public.execute_place_action_v1(uuid,jsonb) to authenticated;');
+ const f=await fixture(),v=f.mutation(),receipt=await f.execute(v),savedInput={action:'saved',expectedTripVersion:1,locale:'en',limit:100,cursor:null};
+ const read=(input=savedInput,a=f.actor)=>rpc('authenticated','public.read_place_action_context_v1',[f.trip,input],a);
+ const first=await read();assert.equal(first.kind,'saved_place_actions');assert.equal(first.hasMore,false);assert.equal(first.nextCursor,null);assert.equal(Object.keys(first).length,7);assert.equal(first.items[0].mappingStatus,'current');assert.deepEqual(first.items[0].selection,v.selection);
+ await db(`update public.provider_poi_mappings set provider_poi_id='replacement' where canonical_poi_id='${f.poi}';`);
+ const changed=await read();assert.equal(changed.items[0].mappingStatus,'unavailable');assert.deepEqual(changed.items[0].selection,v.selection);assert.notEqual(changed.contextDigest,first.contextDigest);
+ await db(`delete from public.provider_poi_mappings where canonical_poi_id='${f.poi}';`);
+ const withdrawn=await read();assert.equal(withdrawn.items.length,1);assert.equal(withdrawn.items[0].referenceId,receipt.referenceId);assert.equal(withdrawn.items[0].mappingDigest,v.expectedMappingDigest);assert.equal(withdrawn.items[0].displayTitle,'Fixture place');
+ const row=withdrawn.items[0];const unsave={action:'unsave',operationId:uuid(),expectedTripVersion:withdrawn.tripVersion,selection:row.selection,expectedMappingDigest:row.mappingDigest,referenceId:row.referenceId,expectedSaveRevision:row.revision};assert.equal((await f.execute(unsave)).savedStatus,'unsaved');assert.deepEqual((await read()).items,[]);
+ const other=await fixture();const bad=await sql(container,`begin;${actorSql(other.actor)}set role authenticated;select public.read_place_action_context_v1(${lit(f.trip)},${lit(savedInput)});commit;`);assert.match(bad.stderr,/FORBIDDEN/);
+ const denied=await sql(container,`begin;${actorSql({...f.actor,sessionId:uuid()})}set role authenticated;select public.read_place_action_context_v1(${lit(f.trip)},${lit(savedInput)});commit;`);assert.match(denied.stderr,/UNAUTHENTICATED/);
+});
+run('saved pages expose completeness, exact cursor and current mapping drift; resave stores latest original identity',async()=>{
+ const f=await fixture(),v=f.mutation();const one=await f.execute(v);const poi2=uuid(),provider2=uuid();await db(`insert into public.canonical_pois(id,primary_name_zh,primary_name_en) values('${poi2}','第二地点','Second fixture');insert into public.provider_poi_mappings(canonical_poi_id,provider,provider_poi_id,raw_name) values('${poi2}','amap','${provider2}','NO PROVIDER BODY');`);
+ const selection={canonicalPoiId:poi2,provider:'amap',providerPoiId:provider2};const context=await rpc('authenticated','public.read_place_action_context_v1',[f.trip,{action:'context',expectedTripVersion:1,selection,locale:'en'}],f.actor);await f.execute({...f.mutation(),selection,expectedMappingDigest:context.mappingDigest});
+ const input={action:'saved',expectedTripVersion:1,locale:'en',limit:1,cursor:null},read=c=>rpc('authenticated','public.read_place_action_context_v1',[f.trip,{...input,cursor:c??null}],f.actor);
+ const first=await read();assert.equal(first.items.length,1);assert.equal(first.hasMore,true);assert.equal(first.nextCursor.afterCanonicalPoiId,first.items[0].selection.canonicalPoiId);
+ const second=await read(first.nextCursor);assert.equal(second.hasMore,false);assert.equal(second.nextCursor,null);assert.equal(second.contextDigest,first.contextDigest);assert.ok(second.items[0].selection.canonicalPoiId>first.items[0].selection.canonicalPoiId);
+ await db(`update public.provider_poi_mappings set matched_at=clock_timestamp() where canonical_poi_id='${f.poi}';`);assert.equal((await read(first.nextCursor)).reason,'MAPPING_CHANGED');
+ const changed=await read();assert.equal(changed.items.find(x=>x.selection.canonicalPoiId===f.poi)?.mappingStatus??(await read(changed.nextCursor)).items[0].mappingStatus,'changed');
+ // Re-save intentionally adopts a new explicit provider ID, never guessed by the list reader.
+ await db(`update public.provider_poi_mappings set provider_poi_id='new-explicit-id' where canonical_poi_id='${f.poi}';`);
+ const newSelection={...f.selection,providerPoiId:'new-explicit-id'},newContext=await rpc('authenticated','public.read_place_action_context_v1',[f.trip,{action:'context',expectedTripVersion:1,selection:newSelection,locale:'en'}],f.actor);
+ const saved=await f.execute({...f.mutation('save',{expectedSaveRevision:one.savedRevision}),selection:newSelection,expectedMappingDigest:newContext.mappingDigest});assert.equal(saved.savedRevision,2);
+ const all=await rpc('authenticated','public.read_place_action_context_v1',[f.trip,{...input,limit:100}],f.actor);assert.deepEqual(all.items.find(x=>x.selection.canonicalPoiId===f.poi).selection,newSelection);
+});
+run('saved metadata export contains original selection and cursor remains bound to new selection writes',async()=>{
+ const f=await fixture({mobile:true});const v=f.mutation();await f.execute(v);
+ // The private export projection remains denied to every API role, with stored selection only.
+ const stored=JSON.parse(await db(`select selection from place_actions_private.saved_places where trip_id='${f.trip}';`));assert.deepEqual(stored,v.selection);
+ const req=uuid(),lease=uuid(),pid=uuid();await db('update export_private.core_policies_v1 set enabled=false;');
+ await db(`insert into export_private.core_policies_v1(id,revision,enabled,environment,key_id,max_run_ms,artifact_ttl_ms,ticket_ttl_ms,max_pages,page_size,max_bytes,valid_until) values('${pid}',1,true,'local','synthetic_unactivated',1000,60000,30000,1,10,65536,clock_timestamp()+interval '1 hour');insert into public.privacy_requests(id,owner_id,action,scope_version,status,execution_state) values('${req}','${f.actor.subject}','export','all-user-data-v1','requested','not_started');insert into export_private.core_jobs_v1(request_id,owner_id,session_id,session_epoch,policy_id,policy_snapshot,state,lease_id,lease_expires_at,expires_at) select '${req}','${f.actor.subject}','${f.actor.sessionId}',1,id,to_jsonb(p),'running','${lease}',clock_timestamp()+interval '1 minute',clock_timestamp()+interval '1 hour' from export_private.core_policies_v1 p where id='${pid}';`);
+ const out=await rpc('postgres','place_actions_private.export_metadata_v1',[req,lease,1,null,100]);assert.equal(out.kind,'metadata');assert.equal(out.allUserDataCompleted,false);assert.deepEqual(out.items.find(x=>x.domain==='saved').selection,v.selection);assert.equal(JSON.stringify(out).includes('NO PROVIDER BODY'),false);
+});

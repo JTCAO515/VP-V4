@@ -93,3 +93,32 @@ its original attempt epoch; the unchanged negative passes. Initial fixture
 archive-required fields and Auth role claim omissions were corrected separately.
 Real GoTrue/JWT, target deployment/permissions, provider/routes, export delivery,
 and device/human acceptance remain **UNRUN**; no target operation was attempted.
+
+Same-task saved reentry delta: the original read_place_action_context_v1 accepts
+`{action:saved,expectedTripVersion,locale,limit,cursor}`. Limit is an integer
+1–100; cursor is null or `{contextDigest,afterCanonicalPoiId}`. The closed reply
+has `{kind:saved_place_actions,tripId,tripVersion,contextDigest,items,hasMore,
+nextCursor}`. Each item has `{referenceId,revision,status:saved,selection,
+mappingDigest,displayTitle,mappingStatus:current|changed|unavailable}`. A page is
+complete only when hasMore=false and nextCursor=null. Cursor binds the entire
+saved inventory, live mapping metadata, current Trip head, locale and actor;
+drift is unavailable/MAPPING_CHANGED, never a mixed-version continuation.
+Owner/session, exact head and original archive/deletion domain restrictions
+remain. The scan is bounded at 10,000 saved rows; overflow is CAPACITY.
+
+Save/resave now stores the exact original selection on the sidecar. Reentry
+returns that saved identity and original mapping digest even when current mapping
+has been changed or withdrawn, with a canonical metadata label or null. Unsave
+uses that precise identity/reference/revision/digest without requiring a current
+provider mapping. No missing mapping filters out a save. Unsaved rows remain
+historical and are omitted from the current saved list. The private version-1
+export seam, still unpublished and unenrolled, includes the stored selection.
+No third public RPC, additional permission object or new grant was added.
+
+Delta validation: **PASS 3/3, 0 skipped** in 8.44 seconds, using
+`VP_PLACE_ACTION_DB_TEST=1 node --test --test-name-pattern='saved reload|saved
+pages|saved metadata export' tests/integration/explore/place-actions-postgres.test.mjs`.
+This replayed current migrations and tested the saved reentry/withdrawn-unsave,
+paging and identity updates, owner/session negatives and changed export metadata.
+The previous 15 affected tests were not rerun; their evidence is reused for the
+unchanged behavior. Target and real service acceptance remain UNRUN.

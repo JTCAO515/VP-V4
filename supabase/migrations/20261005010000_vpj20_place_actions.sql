@@ -11,6 +11,7 @@ create table place_actions_private.saved_places(
  revision integer not null check(revision between 1 and 2147483647),
  status text not null check(status in('saved','unsaved')),
  mapping_digest text not null check(mapping_digest ~ '^[a-f0-9]{64}$'),
+ selection jsonb not null check(jsonb_typeof(selection)='object' and selection->>'canonicalPoiId'=canonical_poi_id::text),
  created_at timestamptz not null default clock_timestamp(),updated_at timestamptz not null default clock_timestamp(),
  primary key(owner_id,trip_id,canonical_poi_id)
 );
@@ -120,9 +121,37 @@ begin
  end loop;
  return jsonb_set(snap,'{days}',days)||jsonb_build_object('version',head);
 end $$;
+-- Reopen persisted saves even when their original provider mapping is withdrawn.
+-- Stored selection is the last successful Save request, never inferred from today's map.
+create function place_actions_private.saved_v1(p_trip uuid,p_input jsonb,u uuid) returns jsonb language plpgsql security definer set search_path='' set timezone='UTC' as $$
+declare t public.trips%rowtype;s place_actions_private.saved_places%rowtype;m jsonb;label text;rows jsonb:='[]';map_basis jsonb:='[]';page jsonb;context text;after_id text;last_id text;more boolean;n integer:=0;
+begin
+ if not place_actions_private.exact_v1(p_input,array['action','expectedTripVersion','locale','limit','cursor']) or p_input->>'action'<>'saved'
+ or not place_actions_private.revision_v1(p_input->'expectedTripVersion') or p_input->>'locale' not in('zh','en') or not place_actions_private.revision_v1(p_input->'limit') or (p_input->>'limit')::numeric not between 1 and 100 then raise exception 'INVALID_INPUT';end if;
+ select * into t from public.trips where id=p_trip and owner_id=u for share;if not found then raise exception 'FORBIDDEN';end if;
+ if exists(select 1 from public.trip_archives where trip_id=t.id) or exists(select 1 from privacy_private.trip_deletions where trip_id=t.id) then return jsonb_build_object('kind','unavailable','reason','ARCHIVED');end if;
+ if t.head_version<>(p_input->>'expectedTripVersion')::numeric then return jsonb_build_object('kind','unavailable','reason','STALE_TRIP_VERSION');end if;
+ for s in select * from place_actions_private.saved_places where owner_id=u and trip_id=t.id and status='saved' order by canonical_poi_id limit 10001 for share loop
+  n:=n+1;if n>10000 then return jsonb_build_object('kind','unavailable','reason','CAPACITY');end if;
+  m:=place_actions_private.mapping_v1(s.selection);
+  select case p_input->>'locale' when 'zh' then primary_name_zh else primary_name_en end into label from public.canonical_pois where id=s.canonical_poi_id;
+  if place_actions_private.utf16_length_v1(label)>160 then label:=null;end if;
+  rows:=rows||jsonb_build_array(jsonb_build_object('referenceId',s.reference_id,'revision',s.revision,'status',s.status,'selection',s.selection,'mappingDigest',s.mapping_digest,'displayTitle',label,'mappingStatus',case when m is null then 'unavailable' when m->>'digest'=s.mapping_digest then 'current' else 'changed' end));
+  map_basis:=map_basis||jsonb_build_array(m);
+ end loop;
+ context:=place_actions_private.hash_v1(jsonb_build_object('owner',u,'session',auth.jwt()->>'session_id','trip',t.id,'head',t.head_version,'locale',p_input->>'locale','rows',rows,'mappingBasis',map_basis));
+ if p_input->'cursor' is distinct from 'null'::jsonb then
+  if not place_actions_private.exact_v1(p_input->'cursor',array['contextDigest','afterCanonicalPoiId']) or p_input->'cursor'->>'contextDigest' is distinct from context or not place_actions_private.uuid_v1(p_input->'cursor'->'afterCanonicalPoiId') or not exists(select 1 from jsonb_array_elements(rows) x where x->'selection'->>'canonicalPoiId'=p_input->'cursor'->>'afterCanonicalPoiId') then return jsonb_build_object('kind','unavailable','reason','MAPPING_CHANGED');end if;
+  after_id:=p_input->'cursor'->>'afterCanonicalPoiId';
+ end if;
+ select coalesce(jsonb_agg(x order by x->'selection'->>'canonicalPoiId'),'[]'::jsonb) into page from(select value x from jsonb_array_elements(rows) where after_id is null or value->'selection'->>'canonicalPoiId'>after_id order by value->'selection'->>'canonicalPoiId' limit (p_input->>'limit')::numeric::integer) q;
+ last_id:=page->-1->'selection'->>'canonicalPoiId';more:=last_id is not null and exists(select 1 from jsonb_array_elements(rows)x where x->'selection'->>'canonicalPoiId'>last_id);
+ return jsonb_build_object('kind','saved_place_actions','tripId',t.id,'tripVersion',t.head_version,'contextDigest',context,'items',page,'hasMore',more,'nextCursor',case when more then jsonb_build_object('contextDigest',context,'afterCanonicalPoiId',last_id) else null end);
+end $$;
 create function public.read_place_action_context_v1(p_trip uuid,p_input jsonb) returns jsonb language plpgsql security definer set search_path='' set timezone='UTC' as $$
 declare u uuid:=place_actions_private.actor_v1();t public.trips%rowtype;m jsonb;s place_actions_private.saved_places%rowtype;r uuid;saved jsonb;basis jsonb;src jsonb;stamp timestamptz;snapshot jsonb;
 begin
+ if p_input->>'action'='saved' then return place_actions_private.saved_v1(p_trip,p_input,u);end if;
  if not place_actions_private.valid_v1(p_input,true) then raise exception 'INVALID_INPUT';end if;
  select * into t from public.trips where id=p_trip and owner_id=u for share;if not found then raise exception 'FORBIDDEN';end if;
  if exists(select 1 from public.trip_archives where trip_id=t.id) or exists(select 1 from privacy_private.trip_deletions where trip_id=t.id) then return jsonb_build_object('kind','unavailable','reason','ARCHIVED');end if;
@@ -188,8 +217,8 @@ begin
   end if;
   if a='save' then
    if coalesce(s.revision,0)=2147483647 then raise exception 'CAS_CONFLICT';end if;
-   insert into place_actions_private.saved_places(owner_id,trip_id,canonical_poi_id,reference_id,revision,status,mapping_digest) values(u,t.id,poi,r,1,'saved',md)
-   on conflict(owner_id,trip_id,canonical_poi_id) do update set revision=saved_places.revision+1,status='saved',mapping_digest=excluded.mapping_digest,updated_at=clock_timestamp() returning * into s;
+   insert into place_actions_private.saved_places(owner_id,trip_id,canonical_poi_id,reference_id,revision,status,mapping_digest,selection) values(u,t.id,poi,r,1,'saved',md,v->'selection')
+   on conflict(owner_id,trip_id,canonical_poi_id) do update set revision=saved_places.revision+1,status='saved',mapping_digest=excluded.mapping_digest,selection=excluded.selection,updated_at=clock_timestamp() returning * into s;
    r:=s.reference_id;rev:=s.revision;sstatus:=s.status;
   else
    if place_actions_private.utf16_length_v1(m->>(v->>'locale'))>160 then raise exception 'PLACE_ACTION_UNAVAILABLE';end if;
@@ -215,7 +244,7 @@ begin
  j:=export_private.lock_job_v1(p_request,true);if j is null or not export_private.live_lease_v1(j,p_lease,p_generation) then return jsonb_build_object('kind','unavailable');end if;
  -- A consistent metadata snapshot, bounded before aggregation. Cursor binds both domains.
  select coalesce(jsonb_agg(x.row order by x.key),'[]'::jsonb) into all_rows from(
-  select 'saved:'||s.trip_id||':'||s.canonical_poi_id key,jsonb_build_object('key','saved:'||s.trip_id||':'||s.canonical_poi_id,'domain','saved','tripId',s.trip_id,'canonicalPoiId',s.canonical_poi_id,'referenceId',s.reference_id,'revision',s.revision,'status',s.status,'mappingDigest',s.mapping_digest,'createdAt',s.created_at,'updatedAt',s.updated_at) row from place_actions_private.saved_places s where s.owner_id=j.owner_id
+  select 'saved:'||s.trip_id||':'||s.canonical_poi_id key,jsonb_build_object('key','saved:'||s.trip_id||':'||s.canonical_poi_id,'domain','saved','tripId',s.trip_id,'canonicalPoiId',s.canonical_poi_id,'referenceId',s.reference_id,'revision',s.revision,'status',s.status,'mappingDigest',s.mapping_digest,'selection',s.selection,'createdAt',s.created_at,'updatedAt',s.updated_at) row from place_actions_private.saved_places s where s.owner_id=j.owner_id
   union all
   select 'operation:'||o.operation_id,jsonb_build_object('key','operation:'||o.operation_id,'domain','operation','tripId',o.trip_id,'operationId',o.operation_id,'request',o.request,'requestDigest',o.request_digest,'receipt',o.receipt,'createdAt',o.created_at) from place_actions_private.operations o where o.owner_id=j.owner_id
   order by key limit 10001
