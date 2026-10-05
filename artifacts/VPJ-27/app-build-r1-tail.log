@@ -1,0 +1,16 @@
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj27-native-voice-translation-20261005/ios/VisePanda
+    builtin-validationUtility /tmp/vpj27-ui-build/DD/Build/Products/Debug-iphonesimulator/VisePanda.app -shallow-bundle -infoplist-subpath Info.plist
+
+Touch /tmp/vpj27-ui-build/DD/Build/Products/Debug-iphonesimulator/VisePanda.app (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj27-native-voice-translation-20261005/ios/VisePanda
+    /usr/bin/touch -c /tmp/vpj27-ui-build/DD/Build/Products/Debug-iphonesimulator/VisePanda.app
+
+PruneExplicitPrecompiledModules /tmp/vpj27-ui-build/DD/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /tmp/vpj27-ui-build/DD/SDKExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /tmp/vpj27-ui-build/DD/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+note: Run script build phase 'Copy AMap resources for device' will be run during every build because the option to run the script phase "Based on dependency analysis" is unchecked. (in target 'VisePanda' from project 'VisePanda')
+** BUILD SUCCEEDED **
+

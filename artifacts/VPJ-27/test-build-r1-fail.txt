@@ -1,0 +1,19 @@
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj27-native-voice-translation-20261005/ios/VisePanda/VisePandaTests/NativeVoiceAudioTests.swift:224:19: error: main actor-isolated instance method 'removeItem(at:)' has different actor isolation from nonisolated overridden declaration
+    |                   `- error: main actor-isolated instance method 'removeItem(at:)' has different actor isolation from nonisolated overridden declaration
+ 459 | /// Removing an item also removes all old versions of that item, invalidating any URLs returned by the `URLForPublishingUbiquitousItemAtURL:expirationDate:error:` method to old versions.
+ 460 | - (BOOL)removeItemAtURL:(NSURL *)URL error:(NSError **)error API_AVAILABLE(macos(10.6), ios(4.0), watchos(2.0), tvos(9.0));
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj27-native-voice-translation-20261005/ios/VisePanda/VisePandaTests/NativeVoiceAudioTests.swift:223:83: error: main actor-isolated initializer 'init()' has different actor isolation from nonisolated overridden declaration
+    |                                                                                   `- error: main actor-isolated initializer 'init()' has different actor isolation from nonisolated overridden declaration
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj27-native-voice-translation-20261005/ios/VisePanda/VisePandaTests/NativeVoiceAudioTests.swift:224:19: error: main actor-isolated instance method 'removeItem(at:)' has different actor isolation from nonisolated overridden declaration
+    |                   `- error: main actor-isolated instance method 'removeItem(at:)' has different actor isolation from nonisolated overridden declaration
+ 459 | /// Removing an item also removes all old versions of that item, invalidating any URLs returned by the `URLForPublishingUbiquitousItemAtURL:expirationDate:error:` method to old versions.
+ 460 | - (BOOL)removeItemAtURL:(NSURL *)URL error:(NSError **)error API_AVAILABLE(macos(10.6), ios(4.0), watchos(2.0), tvos(9.0));
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj27-native-voice-translation-20261005/ios/VisePanda/VisePandaTests/NativeVoiceAudioTests.swift:223:83: error: main actor-isolated initializer 'init()' has different actor isolation from nonisolated overridden declaration
+    |                                                                                   `- error: main actor-isolated initializer 'init()' has different actor isolation from nonisolated overridden declaration
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj27-native-voice-translation-20261005/ios/VisePanda/VisePandaTests/NativeVoiceAudioTests.swift:224:19: error: main actor-isolated instance method 'removeItem(at:)' has different actor isolation from nonisolated overridden declaration
+    |                   `- error: main actor-isolated instance method 'removeItem(at:)' has different actor isolation from nonisolated overridden declaration
+ 459 | /// Removing an item also removes all old versions of that item, invalidating any URLs returned by the `URLForPublishingUbiquitousItemAtURL:expirationDate:error:` method to old versions.
+ 460 | - (BOOL)removeItemAtURL:(NSURL *)URL error:(NSError **)error API_AVAILABLE(macos(10.6), ios(4.0), watchos(2.0), tvos(9.0));
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj27-native-voice-translation-20261005/ios/VisePanda/VisePandaTests/NativeVoiceAudioTests.swift:223:83: error: main actor-isolated initializer 'init()' has different actor isolation from nonisolated overridden declaration
+    |                                                                                   `- error: main actor-isolated initializer 'init()' has different actor isolation from nonisolated overridden declaration
+** TEST BUILD FAILED **

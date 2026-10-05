@@ -1,0 +1,28 @@
+Building for debugging...
+[Planning deferred tasks]
+[3 / 27] VisePanda
+[7 / 30] VisePanda
+[15 / 30] VisePanda
+[20 / 31] VisePandaTests-product
+[21 / 36]
+[25 / 36] VisePandaTests-product
+[30 / 36] VisePandaTests-product
+[32 / 36] VisePandaTests-product
+Build complete! (2.29秒)
+Test Suite 'All tests' started at 2026-10-05 20:05:00.912.
+Test Suite 'All tests' passed at 2026-10-05 20:05:00.913.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite NativeVoiceTranslationTests started.
+◇ Test policyWithdrawalAndLateResponseHideScopedResult() started.
+◇ Test lateAndDuplicateFinalsCannotReplaceReviewedTextOrCrossAccount() started.
+◇ Test unknownACKReadbackFindsOriginalTurnWithoutSecondGenerate() started.
+◇ Test pendingRetryKeepsExactBytesAndNeverUsesUnrelatedHistory() started.
+✔ Test policyWithdrawalAndLateResponseHideScopedResult() passed after 0.001 seconds.
+✔ Test unknownACKReadbackFindsOriginalTurnWithoutSecondGenerate() passed after 0.001 seconds.
+✔ Test pendingRetryKeepsExactBytesAndNeverUsesUnrelatedHistory() passed after 0.001 seconds.
+✔ Test lateAndDuplicateFinalsCannotReplaceReviewedTextOrCrossAccount() passed after 0.001 seconds.
+✔ Suite NativeVoiceTranslationTests passed after 0.001 seconds.
+✔ Test run with 4 tests in 1 suite passed after 0.001 seconds.
