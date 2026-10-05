@@ -110,9 +110,7 @@ struct NativeDataCoverageModuleView: View {
     }
 
     @ViewBuilder private var serverActions: some View {
-        if module.version == NativeNotificationDataWire.schema,
-           module.exportHandler != nil, module.deleteHandler != nil,
-           let scope = NativeNotificationDataScope(rawValue: module.scope) {
+        if let scope = NativeNotificationDataScope.catalogScope(module) {
             Section(t("明确选择通知资料范围", "Explicitly select notification data scope")) {
                 Button(t("选择记录、预览全部字段并确认导出或擦除", "Select records, preview all fields and confirm export or erasure")) { destination = .notification(scope) }
                     .disabled(!registered || actor == nil)
