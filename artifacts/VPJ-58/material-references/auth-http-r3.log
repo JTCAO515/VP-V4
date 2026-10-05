@@ -1,0 +1,34 @@
+VP_MATERIAL_REFERENCE_HTTP_TARGET {"project":"vp-native-ask-bf9533ec","base":63360}
+✖ real signed owner Auth -> original reservation/PDF sources -> selected exit RPC -> independent HTTP consumption; fixture GRANT distinct from target (7822.9345ms)
+ℹ Only this uniquely owned disposable fixture GRANTs the new RPC and existing reservation/PDF source RPCs; no target ACL/config/provider/Storage or real user data is activated.
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 10776.894958
+
+✖ failing tests:
+
+test at tests/integration/privacy/material-references/auth-http.test.mjs:17:1
+✖ real signed owner Auth -> original reservation/PDF sources -> selected exit RPC -> independent HTTP consumption; fixture GRANT distinct from target (7822.9345ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'retained'
+  - 'deleted'
+  
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-material-reference-data-server-20261006/tests/integration/privacy/material-references/auth-http.test.mjs:159:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'retained',
+    expected: 'deleted',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+VP_MATERIAL_REFERENCE_HTTP_CLEANUP {"project":"vp-native-ask-bf9533ec","result":"PASS"}
