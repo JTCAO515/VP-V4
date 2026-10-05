@@ -104,7 +104,7 @@ test('coverage progress append-only full-chain owner exit SQL', {skip:!enabled,t
   const r=await preview(a,ids),bytes=JSON.stringify(consent(r,'export'))+' ',start=await exportStart(a,r,bytes);assert.equal(start.requestDigest,digest(bytes));assert.deepEqual(await exportStart(a,r,bytes),start);
   await reject(a,consent(r,'export'),'COVERAGE_PROGRESS_REQUEST_CONFLICT','export_start',bytes.trim());
   assert.equal((await proof(a,r)).coverage,'partial');const first=await page(a,r);assert.equal(first.pageNumber,1);assert.equal(first.items.length,5);assert.deepEqual(await page(a,r),first);
-  const before=await state();for(const cursor of [{sourceDigest:r.sourceDigest,afterId:ids[0]},{sourceDigest:'a'.repeat(64),afterId:r.objectIds[4]}])await reject(a,{...internal(r,'page'),cursor,limit:5},'COVERAGE_PROGRESS_CURSOR_CONFLICT');
+  const before=await state();for(const cursor of [{sourceDigest:r.sourceDigest,afterId:r.objectIds[0]},{sourceDigest:'a'.repeat(64),afterId:r.objectIds[4]}])await reject(a,{...internal(r,'page'),cursor,limit:5},'COVERAGE_PROGRESS_CURSOR_CONFLICT');
   await reject(a,{...internal(r,'page'),cursor:first.nextCursor,limit:4},'INVALID_INPUT');assert.equal(await state(),before);
   const last=await page(a,r,first.nextCursor);assert.equal(last.items.length,2);assert.equal(last.sectionComplete,true);assert.equal(last.nextCursor,null);assert.deepEqual(await page(a,r,first.nextCursor),last);
   await reject(a,{...internal(r,'page'),cursor:null,limit:5},'COVERAGE_PROGRESS_CURSOR_CONFLICT');const done=await proof(a,r);assert.equal(done.coverage,'complete');assert.equal(done.rows,7);assert.equal(done.pages,2);

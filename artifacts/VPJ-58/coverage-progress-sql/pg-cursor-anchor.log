@@ -1,0 +1,26 @@
+▶ coverage progress append-only full-chain owner exit SQL
+  ✔ transactional migration rollback; old code/schema/RLS/ACL byte preservation (297.72425ms)
+  ✔ RPC helpers/private schema/tables default revoke and RLS; separate owned fixture grant (430.503209ms)
+  ✔ authority/epoch/reauth precede input/CAS/lookup and leave zero writes (822.262125ms)
+  ✔ read-only full inventory includes retained/current/historical sessions and is bounded/paginated (1073.684875ms)
+  ✔ complete closed preview; same-ID retry TTL; no nested snapshots; old/global collisions (446.372041ms)
+  ✔ exact export bytes, last-page retry, ordered cursors, complete proof, own page inventory (929.170125ms)
+  ✔ collector advance/cleanup and selected exit page advance invalidate source CAS without effects (464.689375ms)
+  ✔ atomic selected erase, retained fences and own minimal receipt, no sweeping/source writes (554.5525ms)
+  ✔ selected new page cleanup prevents same-ID export/page revival, retaining own bindings (406.103041ms)
+  ✔ foreign/absent recover exact unknown and lock indistinguishability; owned mismatches reject (414.161666ms)
+  ✔ historical collector metadata available under new current session; old business cannot resume (302.291417ms)
+  ✔ TTL fixed, undecided nonrenewal, expired immutable receipt recovery, session/account cascade (2438.425875ms)
+  ✔ capacity sentinel/selection/cursor/page counter limits and transactional erase fault rollback (722.185958ms)
+  ✔ advisory/root/selected-row NOWAIT conflicts, real concurrent decisions serialize atomically (8077.741833ms)
+  ✔ whole wrapper 1MB bound; metadata-only cursor source change; expired unselected no sweep (673.963708ms)
+  ✔ immutable minimal requests; own applied rollback only and default revoke on replay (429.834167ms)
+✔ coverage progress append-only full-chain owner exit SQL (24444.037708ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 24485.60825
