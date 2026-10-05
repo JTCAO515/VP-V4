@@ -1,0 +1,188 @@
+# #239 selected material owner exit, closed wire /1
+
+Main coordination is the only relay. TS sole writer/integrator:
+`vpj58-material-reference-data-server-20261006`, rooted at
+`/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-material-reference-data-server-20261006`.
+First actual source write: `lib/server/privacy/material-references/contract.ts`.
+Base `4d8d9417`; dependency #663 `a8af317d` normally fast-forward merged into
+this branch, still OPEN/not claimed merged on main. Original dirty repo untouched.
+
+## Main requests (no SQL written by TS)
+
+Assign sole SQL writer after auditing this entire wire and unused candidate slot
+`20261006020000` (rg over available worktrees currently no match). New private
+schema `material_exit_private`, new ordinary-owner RPC
+`public.privacy_material_reference_v1(p_action text,p_input_bytes text,p_expected_epoch bigint)`.
+Main must recheck slot. Do not modify old D2 worker or accepted applied migrations.
+Native sole writer can consume owned API/protocol/fixtures via Main relay.
+Shared coverage catalog/contract/registry/outcome and Native existing entry/session
+need precise Main leases before edits. New TS files are the only present writes.
+
+## Actual sources and copy inventory
+
+- Orders: `reservation_private.current_v1` sensitive corrected fields + source
+  locator/local-material IDs/hash; `events_v1` metadata, `operations_v1` metadata.
+  Events/ops FK CASCADE from selected current rows. `export_metadata_v1` is
+  service-role + original live core-job lease only; its restricted projection is
+  reusable inside a new private helper. `current_wire_v1` can be reused. No
+  authoritative server original material bytes or provider-qualified source exists.
+  Deleting a reference must not change Trip content, cancel/refund/contact orders,
+  modify financial ledgers or reinterpret `user_reported` as verified.
+- PDF: `pdf_intake_private.operations_v1` temporary exact POST bytes/command;
+  `public.trip_proposals` unapplied corrected patches; `confirm_proofs_v1` and
+  original Trip applied proposals/events/snapshots/idempotency; source revisions;
+  old service export progress/version. No original PDF/full text persisted.
+  Reuse `pdf_intake_private.erase_v1(owner,operation,true)`; it retains replay
+  denial and never erases an applied patch or undoes a confirmed Trip. Expired,
+  replaced-session and cancelled fields never become live again. Old service
+  export progress is source-free and remains inventoried in original D2 scope.
+- Device originals/AppGroup/share temp files and external downloaded copies are
+  explicit missing boundaries, not remotely erased by either server handler.
+- New state: source-free request preview bindings, cursor/page counters, exact
+  original mutation digest and minimal terminal receipt; immutable selected
+  reference+operation/request fences. No source body, raw input bytes, file path,
+  corrected fields, title, provider/token in new tables. New state has its own
+  `material-exit-progress/1` list/preview/export/erase scope; selected transient
+  page progress can be cleared, immutable replay fences are explicitly retained
+  and exported. No unexplained new owner data denominator is introduced.
+
+## User command and authority
+
+Owned HTTP `POST /api/privacy/native/v1/material-references`. Private/no-store,
+native signed credentials, local default disabled; schema/RPC default revoke
+PUBLIC/anon/authenticated/service_role. Fixture-only grants never target enrollment.
+Reuse actual Auth user/session row locks, enrolled native actor/session/epoch,
+original 5-minute reauth, account/Trip archive/deletion fences before lookup,
+cleanup, source feedback or mutation. Account → native session → owned Trip →
+proposal/selected source → request locks with NOWAIT. The new ordinary RPC derives
+owner/session from auth; body has no actor, role, JWT, lease or provider fields.
+`p_expected_epoch` must equal current actual mobile epoch. HTTP reproves it before
+and after every RPC, and at delivery. Abort/unknown ACK is never completion.
+
+Scopes exactly `reservation-reference-data/1`, `pdf-intake-data/1`,
+`material-exit-progress/1`. Selected object IDs are sorted unique lowercase UUIDs,
+1..20, one exact owner Trip. Reference IDs / PDF operation IDs / exit request IDs
+respectively. No all-owner delete or nullable Trip selection. IDs must all exist
+and belong to actual selected source+Trip; subset omission fails the whole call.
+
+RPC action values are separate `p_action` strings; `p_input_bytes` preserves
+the original UTF-8 HTTP body (max8192). JSON `action` must match except internal
+`export_start` accepts original `action:export`. Original byte digest SHA256
+must be independently returned and verified; changed whitespace is changed bytes.
+
+1. `list`: exact `{action:"list",scope,tripId,cursor,limit:20}`. cursor null or
+   `{sourceDigest,afterId}`. Current owner list sourceDigest covers bounded real
+   candidates and changes when source changes; foreign/removed cursor fails.
+   cap10000+sentinel before hash; fixed30s list disclosure expiry, no persistent
+   lease/state. Result exact `{schemaVersion,kind:"list",scope,tripId,ownerId,
+   sessionId,mobileEpoch,sourceDigest,capturedAt,expiresAt,items,hasMore,nextCursor,
+   allUserDataCompleted:false}`. Item exact `{objectId,revision,label,
+   materialExpiresAt,sourceState}`. Source state active/expired/erased/retained;
+   unknown label/revision/material expiry null. Only order current label/revision
+   are actual data. Never fabricate filename or source verification.
+2. `preview`: exact `{action:"preview",scope,requestId,tripId,objectIds}`. Result
+   exact binding below + `{kind:"preview",items,requiresExplicitConfirmation:true}`.
+   Preview contains the exact selected restricted export projection and field/
+   erasure/retention/missing names. Capture digest from *all selected source*,
+   current Trip head, original raw-material erasure state/patch and replay state,
+   source revisions where available, current actor/session/epoch. Do not hash
+   only exported metadata if that omits the actual sensitive source being erased.
+   Missing selected source rejects. Preview CAS is immutable by request ID;
+   retries never extend TTL or change selection. Store no source bytes. No write
+   to business data before explicit confirm.
+3. `export_start`: accepts exact original `{action:"export",scope,requestId,
+   tripId,objectIds,previewDigest,confirmed:true}`. Same preview/current source/
+   original actor/Trip/head required. Result binding + `{kind:"started",
+   requestDigest,limits:{pageSize:5,maxPages:4,maxRows:20,maxBytes:1000000}}`.
+   Limits are exact. Do not store artifact or deliver started as completed.
+4. `page`: exact `{action:"page",scope,requestId,tripId,objectIds,sourceDigest,
+   previewDigest,cursor,limit:5}`. Cursor null or `{sourceDigest,afterId}`.
+   Result binding + `{kind:"page",requestDigest,items,hasMore,nextCursor,
+   sectionComplete,pageNumber}`. Keyset ascending selected IDs, 5+sentinel;
+   progress actual from null to terminal; exact last-page replay idempotent,
+   skipped/foreign/deleted cursor rejects. source/head/session/absolute TTL
+   re-proved each call; pages/rows/whole bytes cap fails without truncation.
+5. `proof`: exact `{action:"proof",scope,requestId,tripId,objectIds,sourceDigest,
+   previewDigest}`. Result binding + `{kind:"proof",requestDigest,
+   coverage:"complete"|"partial",pages,rows}`. Complete only all selected rows
+   actually traversed current source. TS independently validates every selected
+   row/ID/count/cursor/byte cap, requests proof last, then sends binding +
+   `{kind:"bundle",requestDigest,items,proof:{coverage:"complete",pages,rows}}`.
+   Native independently validates actor/epoch/digest/expiry/rows and writes
+   file-protected local export, removing it on logout/source/session/TTL loss.
+6. `erase`: exact `{action:"erase",scope,requestId,tripId,objectIds,
+   previewDigest,confirmed:true}`. Actual exact preview CAS/TTL/current actor/
+   Trip head/all source check before effects. Reservation delete selected
+   `current_v1` and cascading selected events/ops; persist nonreplayable reference
+   AND original operation ID fences first. New append-only before-write triggers
+   deny recreation/replay of erased IDs; do not change original confirm handler
+   or revive old IDs. New material with new ID remains ordinary explicit business
+   semantics (ALL2 whole-account/restore not claimed). PDF reuse original eraser
+   and proposal lock/order, clear sensitive bytes/command and unapplied patch,
+   retain minimal original operation fence/applied proof. Progress scope clear
+   selected transient page progress only, retains exported minimum fence/receipt.
+   All selected effects in one transaction, late failure rolls all back.
+7. `recover`: exact `{action:"recover",scope,requestId,tripId,objectIds,
+   mutationBytes}`; `mutationBytes` exact original erase HTTP body, parsed again
+   closed/bound. Reprove original current actor/session/epoch first, then match
+   SHA256 of original bytes. Terminal receipt survives original preview TTL and
+   has immutable decision time before that deadline. Missing decision returns
+   `{kind:"unknown",schemaVersion,scope,requestId,tripId,objectIds,ownerId,
+   sessionId,mobileEpoch,requestDigest,allUserDataCompleted:false}`; it grants no
+   new operation ID/retry permission. Unknown requires read-first exact bytes.
+   Do not turn cancel/expiry/absent/abandoned into erased.
+
+## Closed bindings, rows, boundaries and receipt
+
+Binding exact fields implemented in `contract.ts`: schemaVersion
+`material-reference-data/1`,scope,requestId,tripId,objectIds,ownerId,sessionId,
+mobileEpoch,sourceDigest,previewDigest,capturedAt,expiresAt,tripVersion,boundaries,
+allUserDataCompleted:false. Times epoch milliseconds. Capture once, expiry
+`min(capturedAt+30000, earliest live selected PDF material expiry)`; never extend
+original material TTL. previewDigest covers binding/selected projection/declared
+boundaries; SQL-native canonical serialization need not equal JS hash, but every
+consumer compares the exact authoritative preview digest and source data.
+
+Reservation row = exact old export item `{current,events,operations,historical:true}`;
+reuse current wire projection and original metadata lists; no command digest or
+historical field/source payload. Old max100 per-reference histories must not be
+silently truncated: overflow rejects preview/export before complete proof. PDF
+row = exact original service export projection (18 keys in `rows.ts`), `fields`
+and `contentHash` only while live in this actual session; otherwise both null.
+Original hashes/locator are metadata, never source/provider verification.
+Progress row = exact15-key `rows.ts` shape, only IDs/hashes/counters/times; no
+source body. Include immutable terminal receipt/fences even after progress erase.
+Authoritative internal projection/state changes invalidate preview/proof, including
+source changes that don't alter exported fields, PDF patch/state/expiry changes,
+and erasure state. Lock source revision before projection; no drifting double read.
+
+`MATERIAL_BOUNDARIES` exact closed four arrays in `contract.ts`; every result
+uses them. No unexplained financial/legal field claims: original financial tables
+are untouched and separately covered. Raw body/device/original source exports
+missing remain explicit. Server order erase ≠ external cancel/refund. PDF erase
+≠ original confirmed Proposal undo.
+
+Erasure receipt exact binding + `{kind:"receipt",state:"erased",requestDigest,
+decidedAt,effects:{objects,temporaryRecords,unappliedProposals,tripMutation:"none",
+externalOrders:"not_contacted",financialRecords:"not_modified"}}`.
+objects equals selected count; temporaryRecords/unappliedProposals actual affected
+counts0..selected count; original already erased PDF may count0 but only actual
+successful source erasure verification yields a receipt. Retained decisions are
+source-free and exportable through progress scope, expire/prune transient cursor
+rows only; request/reference/operation fences cannot be removed to revive IDs.
+Original session/account cascades governed by original contracts; source object
+anti-replay fences survive current row deletion, source-free request metadata
+remains ordinary owner-only. No target roles/grants/enrollment/config/credentials/
+Storage/provider/deployment/phone/user-data authorization in this work.
+
+## Necessary evidence and integration
+
+SQL owned disposable PG: default deny vs explicit fixture grants, actual synthetic
+owner/epoch/reauth, exact source selection/CAS/TTL, nested history overflow,
+list/pages/proof/replay/cursors/caps, concurrent source change and late rollback,
+receipt exact-byte recovery/missing ACK, original reservation-ID/operation replay
+denial, PDF unapplied patch erasure/applied proof preservation/session expiry,
+progress inventory/export/erasure+retained fences, unchanged original Trip and
+financial rows. TS actual signed GoTrue/HTTP separately; Native actual typed
+consumer/export-file/unknown ACK/account switch separately. Fixture is not target
+runtime. One combined PR by this TS integrator; #239 whole missing/ALL2 OPEN.
