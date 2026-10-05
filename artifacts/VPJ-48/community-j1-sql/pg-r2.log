@@ -1,0 +1,42 @@
+✔ full migration replay rollback and unchanged signature ACL; module defaults and direct deny (6639.453708ms)
+✔ registered current-session roots precede reads mutation replay abandon or cleanup (432.328792ms)
+✔ independent qualification trusted unknown disclosure owner isolation review withdraw replay (644.826958ms)
+✔ legacy notes stay private and original receipts are current safe metadata (311.073208ms)
+✔ original exact bytes absent/abandon/commit closure and concurrent same-op race (280.723833ms)
+✖ reject pending withdrawal stale versions strict syntax UTF16 and place reject (452.456042ms)
+✔ owner delete atomic rollback module-off revoked cleanup foreign attribution no revival (765.453041ms)
+✔ keyset sentinel prevents hidden pagination and export overflow fails closed (261.279666ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 7
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9916.602458
+
+✖ failing tests:
+
+test at tests/integration/community/submission-j1-postgres.test.mjs:9:22
+✖ reject pending withdrawal stale versions strict syntax UTF16 and place reject (452.456042ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /INVALID_INPUT|COMMUNITY_PLACE_UNAVAILABLE/. Input:
+
+  'ERROR:  column "status" does not exist\n' +
+    "LINE 1: ...=(v->'place'->>'tripId')::uuid and owner_id=u and status<>'d...\n" +
+    '                                                             ^\n' +
+    "QUERY:  SELECT 1 from public.trips where id=(v->'place'->>'tripId')::uuid and owner_id=u and status<>'deleting' for share nowait\n" +
+    'CONTEXT:  PL/pgSQL function community_private.workspace_j1(jsonb) line 61 at PERFORM\n' +
+    'PL/pgSQL function public.community_workspace(jsonb) line 5 at RETURN\n'
+
+      at denied (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj48-community-submission-sql-20261005/tests/integration/community/submission-j1-postgres.test.mjs:16:111)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj48-community-submission-sql-20261005/tests/integration/community/submission-j1-postgres.test.mjs:96:152)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: `ERROR:  column "status" does not exist\nLINE 1: ...=(v->'place'->>'tripId')::uuid and owner_id=u and status<>'d...\n                                                             ^\nQUERY:  SELECT 1 from public.trips where id=(v->'place'->>'tripId')::uuid and owner_id=u and status<>'deleting' for share nowait\nCONTEXT:  PL/pgSQL function community_private.workspace_j1(jsonb) line 61 at PERFORM\nPL/pgSQL function public.community_workspace(jsonb) line 5 at RETURN\n`,
+    expected: /INVALID_INPUT|COMMUNITY_PLACE_UNAVAILABLE/,
+    operator: 'match',
+    diff: 'simple'
+  }

@@ -43,7 +43,7 @@ run('default closed, explicit reviewer qualification, live registered session an
   assert.notEqual((await sql(container,`set role ${role};select community_private.submission_json('${uuid()}',true);`)).code,0);
  }
  assert.notEqual((await sql(container,"set role anon;select public.community_workspace('{\"action\":\"mine\"}');")).code,0);
- assert.equal(await db("select count(*) from pg_tables where schemaname='community_private' and rowsecurity;"),'5');
+ assert.equal(await db("select count(*) from pg_tables where schemaname='community_private' and rowsecurity;"),'7');
 });
 run('author pending → independent internal publication → withdraw; projections and replay cannot resurrect body',async()=>{
  const a=await actor(),r=await actor(true),other=await actor();const s=submit();

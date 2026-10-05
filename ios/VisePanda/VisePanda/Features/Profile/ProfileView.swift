@@ -144,6 +144,11 @@ struct ProfileView: View {
 
             if settings.nativeSession.subject != nil {
                 Section {
+                    if settings.nativeSession.dataScope != nil {
+                        NavigationLink(chinese ? "旅行投稿与内部审核结果" : "Travel submissions and internal review") {
+                            NativeCommunitySubmissionView().id(settings.nativeSession.dataScope)
+                        }.accessibilityIdentifier("profile.community.open")
+                    }
                     NavigationLink(chinese ? "旅途支持请求" : "Travel support requests") {
                         NativeServiceCaseView().id(settings.nativeSession.dataScope)
                     }

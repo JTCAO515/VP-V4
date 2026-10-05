@@ -1,0 +1,33 @@
+COMMUNITY_J1_JWT_TARGET {"project":"vp-native-ask-cb1e71e4","base":64100}
+✖ real local GoTrue JWT PostgREST RPC owner qualification revocation and erasure (763.812417ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 808.085708
+
+✖ failing tests:
+
+test at tests/integration/community/submission-j1-jwt.test.mjs:8:1
+✖ real local GoTrue JWT PostgREST RPC owner qualification revocation and erasure (763.812417ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'SESSION_REPLACED'
+  - 'UNAUTHENTICATED'
+
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj48-community-submission-sql-20261005/tests/integration/community/submission-j1-jwt.test.mjs:41:81)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'SESSION_REPLACED',
+    expected: 'UNAUTHENTICATED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+COMMUNITY_J1_JWT_CLEANUP PASS vp-native-ask-cb1e71e4

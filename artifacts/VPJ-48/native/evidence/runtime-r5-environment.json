@@ -1,0 +1,9 @@
+{
+  "ownedSimulator": "AF533590-DF82-44EB-A1BC-09642D37467E",
+  "genericBuildReused": "runtime-r2/build.log",
+  "selectedTests": [
+    "NativeCommunitySubmissionTests/moduleDeletionAndExportNeverClaimAllAccountCoverage()"
+  ],
+  "fixtureOnly": true,
+  "deleted": true
+}
