@@ -1,7 +1,7 @@
 /** Runs one Native actual-HTTP proof on the paired owned stack. No new stack/device/provider. */
-import { openSync, fstatSync, readFileSync, closeSync, mkdirSync, writeFileSync, constants } from 'node:fs';
+import { openSync, fstatSync, readFileSync, closeSync, mkdirSync, writeFileSync, readdirSync, unlinkSync, constants } from 'node:fs';
 import { join, isAbsolute } from 'node:path';
-import { spawn } from 'node:child_process';
+import { spawn, execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { randomUUID } from 'node:crypto';
 const path = process.env.VP_NATIVE_PDF_FIXTURE_FILE;
@@ -23,16 +23,41 @@ const root = process.cwd(), output = join(root, 'artifacts/VPJ-55/native-pdf-202
 mkdirSync(output, { recursive: true });
 const result = join(tmpdir(), 'vpj55-native-http-' + randomUUID() + '.xcresult');
 const derived = process.env.VP_NATIVE_PDF_DERIVED_DATA || join(tmpdir(), 'vpj55-native-pdf-dd');
-const args = ['test', '-project', 'ios/VisePanda/VisePanda.xcodeproj', '-scheme', 'VisePanda', '-destination', 'platform=iOS Simulator,id=' + simulator,
-  '-derivedDataPath', derived, '-resultBundlePath', result,
-  '-only-testing:VisePandaTests/NativePDFIntegrationTests/testPDFKitCorrectPreviewOriginalConfirmReloadAndReceipt', 'CODE_SIGNING_ALLOWED=YES', 'CODE_SIGN_IDENTITY=-'];
 const nativeEnv = Object.fromEntries(['HOME', 'PATH', 'TMPDIR', 'USER', 'LOGNAME', 'SHELL', 'LANG', 'LC_ALL', 'DEVELOPER_DIR'].flatMap(key => process.env[key] === undefined ? [] : [[key, process.env[key]]]));
-const child = spawn('xcodebuild', args, { cwd: root, env: { ...nativeEnv, SIMCTL_CHILD_VP_NATIVE_PDF_TEST: '1',
-  SIMCTL_CHILD_VP_NATIVE_PDF_API_ORIGIN: fixture.apiOrigin, SIMCTL_CHILD_VP_NATIVE_PDF_EMAIL: fixture.email,
-  SIMCTL_CHILD_VP_NATIVE_PDF_PASSWORD: fixture.password, SIMCTL_CHILD_VP_NATIVE_PDF_TRIP_ID: fixture.tripId }, stdio: ['ignore', 'pipe', 'pipe'] });
-let log = '';
-for (const stream of [child.stdout, child.stderr]) stream.on('data', bytes => { log += bytes.toString(); });
-const code = await new Promise((resolve, reject) => { child.once('error', () => reject(Error('Native proof launch failed'))); child.once('exit', value => resolve(value ?? 1)); });
+const run = args => new Promise((resolve, reject) => {
+  const child = spawn('xcodebuild', args, { cwd: root, env: nativeEnv, stdio: ['ignore', 'pipe', 'pipe'] });
+  let log = '';
+  for (const stream of [child.stdout, child.stderr]) stream.on('data', bytes => { log += bytes.toString(); });
+  child.once('error', () => reject(Error('Native proof launch failed')));
+  child.once('exit', code => resolve({ code: code ?? 1, log }));
+});
+const common = ['-project', 'ios/VisePanda/VisePanda.xcodeproj', '-scheme', 'VisePanda', '-derivedDataPath', derived, 'CODE_SIGNING_ALLOWED=YES', 'CODE_SIGN_IDENTITY=-'];
+const built = await run(['build-for-testing', ...common, '-destination', 'generic/platform=iOS Simulator']);
+let { code, log } = built;
+let patched;
+try {
+  if (code === 0) {
+    const products = join(derived, 'Build/Products');
+    const candidates = readdirSync(products).filter(name => name.endsWith('.xctestrun') && !name.startsWith('PDFLocal-') && name !== 'LocalText.xctestrun');
+    if (candidates.length !== 1) throw Error('One complete source-bound xctestrun is required');
+    patched = join(products, 'PDFLocal-' + randomUUID() + '.xctestrun');
+    const testEnvironment = { VP_NATIVE_PDF_TEST: '1', VP_NATIVE_PDF_API_ORIGIN: fixture.apiOrigin,
+      VP_NATIVE_PDF_EMAIL: fixture.email, VP_NATIVE_PDF_PASSWORD: fixture.password, VP_NATIVE_PDF_TRIP_ID: fixture.tripId };
+    // Match the repository's existing ci.py test-host environment injection; only this owned temporary plist contains fixture values.
+    execFileSync('python3', ['-c', `import json,sys,plistlib,os
+with open(sys.argv[1],'rb') as stream: profile=plistlib.load(stream)
+if not isinstance(profile.get('VisePandaTests'),dict): raise RuntimeError('Native test target missing')
+profile['VisePandaTests'].setdefault('EnvironmentVariables',{}).update(json.load(sys.stdin))
+fd=os.open(sys.argv[2],os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o600)
+with os.fdopen(fd,'wb') as stream: plistlib.dump(profile,stream)
+`, join(products, candidates[0]), patched], { cwd: root, env: nativeEnv, input: JSON.stringify(testEnvironment), stdio: ['pipe', 'pipe', 'pipe'] });
+    const tested = await run(['test-without-building', '-xctestrun', patched, '-destination', 'platform=iOS Simulator,id=' + simulator,
+      '-parallel-testing-enabled', 'NO', '-resultBundlePath', result,
+      '-only-testing:VisePandaTests/NativePDFIntegrationTests/testPDFKitCorrectPreviewOriginalConfirmReloadAndReceipt',
+      'CODE_SIGNING_ALLOWED=YES', 'CODE_SIGN_IDENTITY=-']);
+    code = tested.code; log += '\n' + tested.log;
+  }
+} finally { if (patched) { try { unlinkSync(patched); } catch (error) { if (error.code !== 'ENOENT') throw Error('Protected test profile cleanup failed'); } } }
 // Build scripts may echo their environment. Never retain or forward fixture credentials.
 log = log.split('\n').filter(line => !/VP_NATIVE_PDF_(PASSWORD|EMAIL)/.test(line)).join('\n');
 for (const secret of [fixture.password, fixture.email]) log = log.split(secret).join('[synthetic-redacted]');
