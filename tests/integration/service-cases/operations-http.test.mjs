@@ -91,7 +91,7 @@ test('disposable real Auth, native HTTP, cookie staff HTTP, operations and origi
  const third=await createCase(),pending=requestService(third),pendingBytes=JSON.stringify(pending,null,1);
  assert.equal((await call(native,owner.accessToken,{action:'read_operation',operationId:pending.operationId})).body.data.receipt,null);
  const abandoned=await call(native,owner.accessToken,{action:'abandon',operationId:pending.operationId,mutationBytes:pendingBytes});assert.equal(abandoned.status,200,JSON.stringify(abandoned.body));assert.equal(abandoned.body.data.outcome,'cancelled');
- assert.equal((await call(native,owner.accessToken,pendingBytes)).status,503,'original command cannot pass its abandonment fence');
+ const fenced=await call(native,owner.accessToken,pendingBytes);assert.equal(fenced.status,200);assert.equal(fenced.body.data.outcome,'cancelled','original command returns its permanent abandonment fence, never applies');
  const fourth=await createCase(),r4=requestService(fourth);assert.equal((await call(native,owner.accessToken,r4)).status,200);
  assert.equal((await call(legacy,owner.accessToken,{action:'revoke',caseId:fourth,expectedRevision:1})).status,200);
  assert.equal((await staffCall({action:'read',caseId:fourth})).status,403);

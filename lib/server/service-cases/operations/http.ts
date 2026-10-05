@@ -66,7 +66,7 @@ export async function handleServiceOperations(request: Request, options: Readonl
       const receipt = decodeServiceReceipt(result.data);
       const original = input.action === 'abandon' ? parseServiceInput(JSON.parse(input.mutationBytes)) as ServiceMutation : input;
       const bytes = input.action === 'abandon' ? input.mutationBytes : raw;
-      if (!receipt || receipt.operationId !== original.operationId || receipt.caseId !== original.caseId || receipt.action !== original.action || receipt.requestDigest !== serviceRequestDigest(bytes) || (input.action !== 'abandon' && receipt.outcome !== 'applied')) return fail('CASE_ACK_UNKNOWN');
+      if (!receipt || receipt.operationId !== original.operationId || receipt.caseId !== original.caseId || receipt.action !== original.action || receipt.requestDigest !== serviceRequestDigest(bytes)) return fail('CASE_ACK_UNKNOWN');
       data = receipt;
     }
     // Eligibility is SQL-authoritative on this second call as well, including
