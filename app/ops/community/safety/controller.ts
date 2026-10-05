@@ -1,8 +1,8 @@
 import {record,exact,uuid,parseSafetyInput,isSafetyMutation,matchesSafetyOutcome,decodeSafetyOutcome,type SafetyInput,type SafetyRecord,type SafetyObject,type SafetyOutcome} from '../../../../lib/server/community/safety/contract.ts';
 import type {SafetyIdentity} from './transport.ts';
 export type SafetyPending=Readonly<{actorId:string;sessionId:string;bytes:string}>;
-export type SafetyView=Readonly<{records:readonly SafetyRecord[];selected:SafetyRecord|null;object:SafetyObject|null;pending:SafetyPending|null;busy:boolean;cursor:string|null;collection:'reports'|'appeals';message:'empty'|'ready'|'login'|'unavailable'|'unknown'|'storage'|'conflict';exported:Extract<SafetyOutcome,{kind:'export'}>|null}>;
-export const emptySafetyView:SafetyView={records:[],selected:null,object:null,pending:null,busy:false,cursor:null,collection:'reports',message:'empty',exported:null};
+export type SafetyView=Readonly<{records:readonly SafetyRecord[];selected:SafetyRecord|null;object:SafetyObject|null;pending:SafetyPending|null;busy:boolean;cursor:string|null;collection:'reports'|'appeals';deleted:boolean;message:'empty'|'ready'|'login'|'unavailable'|'unknown'|'storage'|'conflict';exported:Extract<SafetyOutcome,{kind:'export'}>|null}>;
+export const emptySafetyView:SafetyView={records:[],selected:null,object:null,pending:null,busy:false,cursor:null,collection:'reports',message:'empty',deleted:false,exported:null};
 export function decodeSafetyPending(raw:string|null):SafetyPending|null {
   if (!raw) return null;
   const p:unknown=JSON.parse(raw);
@@ -26,7 +26,7 @@ export class SafetyOpsController {
     if (this.view.busy || !this.mounted) return;
     const priorSelected=command.action==='object'?this.view.selected:null;
     const epoch=this.epoch;const abort=new AbortController();this.abort=abort;const timer=setTimeout(()=>abort.abort(),8000);
-    this.changed({busy:true,records:[],selected:null,object:null,exported:null,cursor:null,message:'empty'});
+    this.changed({busy:true,records:[],selected:null,object:null,exported:null,deleted:false,cursor:null,message:'empty'});
     let pending:SafetyPending|null=null;let dispatched=false;
     try {
       const identity=await this.run(abort.signal,()=>this.deps.identity());if (epoch!==this.epoch) return;
@@ -54,7 +54,7 @@ export class SafetyOpsController {
       const object=o.kind==='object'?o.object:null;
       if (object && (Date.parse(object.expiresAt)<=Date.now() || Date.parse(object.expiresAt)>Date.now()+30000)) throw Error('Object expired');
       this.visibleUntil=Math.min(Date.now()+30000,identity.expiresAt,object?Date.parse(object.expiresAt):Infinity);
-      this.changed({pending,message:pending?'unknown':'ready',records:o.kind==='page'?o.records:[],selected:o.kind==='record'?o.record:o.kind==='operation'?o.record:object && priorSelected && priorSelected.submissionId===object.id && 'submissionVersion' in priorSelected && priorSelected.submissionVersion===object.submissionVersion && priorSelected.safetyVersion===object.safetyVersion?priorSelected:null,object,exported:o.kind==='export'?o:null,cursor:o.kind==='page'?o.nextCursor:null,collection:o.kind==='page' && (o.collection==='reports' || o.collection==='appeals')?o.collection:this.view.collection});
+      this.changed({pending,deleted:o.kind==='deleted',message:pending?'unknown':'ready',records:o.kind==='page'?o.records:[],selected:o.kind==='record'?o.record:o.kind==='operation'?o.record:object && priorSelected && priorSelected.submissionId===object.id && 'submissionVersion' in priorSelected && priorSelected.submissionVersion===object.submissionVersion && priorSelected.safetyVersion===object.safetyVersion?priorSelected:null,object,exported:o.kind==='export'?o:null,cursor:o.kind==='page'?o.nextCursor:null,collection:o.kind==='page' && (o.collection==='reports' || o.collection==='appeals')?o.collection:this.view.collection});
     } catch {if (epoch===this.epoch) this.changed({pending,message:pending && dispatched?'unknown':'storage'});}
     finally {clearTimeout(timer);if (epoch===this.epoch) {this.abort=null;this.changed({busy:false});}}
   }

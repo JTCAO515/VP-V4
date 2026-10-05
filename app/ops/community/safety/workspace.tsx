@@ -13,7 +13,7 @@ export function SafetyOpsWorkspace() {
   useEffect(()=>{
     let mounted=true;const client=createPasswordAuthClient();
     const clearDownload=()=>{if (download.current) {URL.revokeObjectURL(download.current);download.current=null;}};
-    const own=new SafetyOpsController({identity:()=>safetyBrowserIdentity(client?.auth??null),send:safetySend,read:()=>decodeSafetyPending(sessionStorage.getItem(journal)),write:p=>sessionStorage.setItem(journal,JSON.stringify(p)),erase:()=>sessionStorage.removeItem(journal),changed:v=>{if (mounted) {clearDownload();setView(v);if (!v.selected) setNote('');if (v.message!=='ready') setConfirmed(false);}}});controller.current=own;
+    const own=new SafetyOpsController({identity:()=>safetyBrowserIdentity(client?.auth??null),send:safetySend,read:()=>decodeSafetyPending(sessionStorage.getItem(journal)),write:p=>sessionStorage.setItem(journal,JSON.stringify(p)),erase:()=>sessionStorage.removeItem(journal),changed:v=>{if (mounted) {clearDownload();setView(v);if (!v.selected) setNote('');if (v.message!=='ready' || v.deleted) setConfirmed(false);}}});controller.current=own;
     const invalidate=()=>{own.invalidate();clearDownload();};
     const subscription=client?.auth.onAuthStateChange(event=>{if (event==='INITIAL_SESSION') return;own.invalidate(event==='SIGNED_OUT' || event==='SIGNED_IN');clearDownload();});
     document.addEventListener('visibilitychange',invalidate);window.addEventListener('pagehide',invalidate);window.addEventListener('blur',invalidate);window.addEventListener('pageshow',invalidate);
@@ -26,10 +26,10 @@ export function SafetyOpsWorkspace() {
   return <main className={styles.workspace} lang={locale}>
     <header className={styles.header}><div><p>VisePanda · Ops</p><h1>{c.title}</h1></div><label>{c.language}<select value={locale} onChange={e=>setLocale(e.target.value as 'zh'|'en')}><option value="zh">中文</option><option value="en">English</option></select></label></header>
     <p>{c.intro}</p><nav className={styles.actions}><Link href="/ops/review">{c.back}</Link><Link href="/auth/sign-in?returnTo=%2Fops%2Fcommunity%2Fsafety">{c.login}</Link><button disabled={view.busy} onClick={()=>void controller.current?.queue('reports')}>{c.reports}</button><button disabled={view.busy} onClick={()=>void controller.current?.queue('appeals')}>{c.appeals}</button><button disabled={view.busy} onClick={()=>void controller.current?.queue()}>{c.refresh}</button></nav>
-    <p role="status" aria-live="polite">{view.busy?c.loading:state}</p>
+    <p role="status" aria-live="polite">{view.busy?c.loading:view.deleted?c.deleted:state}</p>
     {view.pending?<section className={styles.panel}><p>{c.unknown}</p><div className={styles.actions}><button disabled={view.busy} onClick={()=>void controller.current?.resolve('operation')}>{c.check}</button><button disabled={view.busy} onClick={()=>void controller.current?.retry()}>{c.retry}</button><button disabled={view.busy} onClick={()=>void controller.current?.resolve('abandon')}>{c.abandon}</button></div></section>:null}
     {view.records.map(item=><article className={styles.panel} key={item.id}><p>{'state' in item?stateLabel(item.state):c.unknownValue} · {c.version} {'version' in item?item.version:item.safetyVersion}</p><button disabled={view.busy} onClick={()=>void controller.current?.inspect(view.collection,item.id)}>{c.inspect}</button></article>)}
-    {view.message==='ready' && !selected && !view.records.length && !view.exported?<p>{c.noItems}</p>:null}
+    {view.message==='ready' && !selected && !view.records.length && !view.exported && !view.deleted?<p>{c.noItems}</p>:null}
     {view.cursor?<button disabled={view.busy} onClick={()=>void controller.current?.queue(view.collection,view.cursor)}>{c.next}</button>:view.records.length?<p>{c.complete}</p>:null}
     {selected && (selected.kind==='report' || selected.kind==='appeal')?<section className={styles.panel}>
       <h2>{selected.kind==='report'?c.reports:c.appeals} · {stateLabel(selected.state)}</h2><p>{c.version} {selected.version} · {selected.submissionVersion}/{selected.safetyVersion}</p><h3>{c.reason}</h3><p className={styles.body}>{selected.kind==='report'?selected.details??c.unknownValue:selected.statement??c.unknownValue}</p><h3>{c.result}</h3><p>{selected.note??c.unknownValue}</p>

@@ -61,6 +61,8 @@ export type SafetyAppeal = Readonly<{kind:'appeal';id:string;submissionId:string
 export type SafetyBlock = Readonly<{kind:'block';id:string;submissionId:string|null;state:'blocked'|'unblocked'|'erased';version:number;createdAt:string;endedAt:string|null}>;
 export type SafetyRecord = SafetyReport|SafetyDisposition|SafetyAppeal|SafetyBlock;
 export type SafetyAudit = Readonly<{recordId:string|null;action:SafetyMutation['action'];createdAt:string}>;
+export type SafetyReaderGrant = Readonly<{submissionId:string;submissionVersion:number;expiresAt:string;revoked:boolean}>;
+export type SafetyAuthoredDecision = Readonly<{recordId:string;kind:'report'|'appeal';decision:'dismiss'|'remove'|'uphold'|'restore';note:string|null;createdAt:string}>;
 export type SafetyReceipt = Readonly<{operationId:string;recordId:string|null;action:SafetyMutation['action'];state:'committed'|'abandoned';digest:string}>;
 type Base = Readonly<{schemaVersion:typeof SAFETY_SCHEMA;actorId:string;sessionId:string}>;
 export type SafetyOutcome = Base & (Readonly<{kind:'session'}>
@@ -71,7 +73,7 @@ export type SafetyOutcome = Base & (Readonly<{kind:'session'}>
   | Readonly<{kind:'operation';operationId:string;state:'absent'|'committed'|'abandoned';record:SafetyRecord|null}>
   | Readonly<{kind:'eligibility';submissionId:string;publicationEnabled:false;publiclyVisible:false;retrievalEligible:false;reason:'public_disabled'}>
   | Readonly<{kind:'deleted';operationId:string;scope:'community_safety_module';retained:typeof safetyRetained}>
-  | Readonly<{kind:'export';scope:'community_safety_module';coverage:'complete_for_community_safety';reports:readonly SafetyReport[];dispositions:readonly SafetyDisposition[];appeals:readonly SafetyAppeal[];blocks:readonly SafetyBlock[];receipts:readonly SafetyReceipt[];audits:readonly SafetyAudit[];qualification:Readonly<{active:boolean}>|null;retained:typeof safetyRetained}>);
+  | Readonly<{kind:'export';scope:'community_safety_module';coverage:'complete_for_community_safety';reports:readonly SafetyReport[];dispositions:readonly SafetyDisposition[];appeals:readonly SafetyAppeal[];blocks:readonly SafetyBlock[];authoredDecisions:readonly SafetyAuthoredDecision[];readerGrants:readonly SafetyReaderGrant[];receipts:readonly SafetyReceipt[];audits:readonly SafetyAudit[];qualification:Readonly<{active:boolean}>|null;retained:typeof safetyRetained}>);
 const affiliations = ['registered_user','community_reviewer','official','employee','unknown'] as const;
 export function decodeSafetyObject(v:unknown):SafetyObject|null {
   return record(v) && exact(v,['id','submissionVersion','safetyVersion','title','content','contentKind','benefitDisclosure','authorDisclosure','reviewerDisclosure','source','copyright','visibility','publiclyVisible','retrievalEligible','canReport','canBlock','expiresAt']) && uuid(v.id) && version(v.submissionVersion) && revision(v.safetyVersion) && text(v.title,160) && text(v.content,4000) && choice(v.contentKind,['experience','help','unknown']) && nullable(v.benefitDisclosure,x=>text(x,400,true)) && choice(v.authorDisclosure,affiliations) && nullable(v.reviewerDisclosure,x=>choice(x,affiliations)) && v.source===({experience:'user_experience',help:'user_help',unknown:'unknown'} as const)[v.contentKind] && v.copyright==='unknown' && v.visibility==='internal' && v.publiclyVisible===false && v.retrievalEligible===false && typeof v.canReport==='boolean' && typeof v.canBlock==='boolean' && time(v.expiresAt)?v as SafetyObject:null;
@@ -103,12 +105,14 @@ export function decodeSafetyOutcome(v:unknown):SafetyOutcome|null {
   if (v.kind==='operation') return exact(v,[...base,'operationId','state','record']) && uuid(v.operationId) && choice(v.state,['absent','committed','abandoned']) && (v.state==='committed'?v.record===null || !!decodeSafetyRecord(v.record):v.record===null)?v as SafetyOutcome:null;
   if (v.kind==='eligibility') return exact(v,[...base,'submissionId','publicationEnabled','publiclyVisible','retrievalEligible','reason']) && uuid(v.submissionId) && v.publicationEnabled===false && v.publiclyVisible===false && v.retrievalEligible===false && v.reason==='public_disabled'?v as SafetyOutcome:null;
   if (v.kind==='deleted') return exact(v,[...base,'operationId','scope','retained']) && uuid(v.operationId) && v.scope==='community_safety_module' && retainedValid(v.retained)?v as SafetyOutcome:null;
-  if (v.kind!=='export' || !exact(v,[...base,'scope','coverage','reports','dispositions','appeals','blocks','receipts','audits','qualification','retained']) || v.scope!=='community_safety_module' || v.coverage!=='complete_for_community_safety' || !retainedValid(v.retained)) return null;
+  if (v.kind!=='export' || !exact(v,[...base,'scope','coverage','reports','dispositions','appeals','blocks','authoredDecisions','readerGrants','receipts','audits','qualification','retained']) || v.scope!=='community_safety_module' || v.coverage!=='complete_for_community_safety' || !retainedValid(v.retained)) return null;
   const own=collections.every(c=>rows(v[c],100,x=>decodeSafetyRecord(x)?.kind===recordKind(c)));
   const actions=['report','disposition','appeal','appealReview','block','unblock','delete'] as const;
   const receipts=rows(v.receipts,100,x=>record(x) && exact(x,['operationId','recordId','action','state','digest']) && uuid(x.operationId) && nullable(x.recordId,uuid) && choice(x.action,actions) && choice(x.state,['committed','abandoned']) && hash(x.digest));
   const audits=rows(v.audits,100,x=>record(x) && exact(x,['recordId','action','createdAt']) && nullable(x.recordId,uuid) && choice(x.action,actions) && time(x.createdAt));
-  return own && receipts && audits && (v.qualification===null || record(v.qualification) && exact(v.qualification,['active']) && typeof v.qualification.active==='boolean')?v as SafetyOutcome:null;
+  const authored=rows(v.authoredDecisions,100,x=>record(x) && exact(x,['recordId','kind','decision','note','createdAt']) && uuid(x.recordId) && (x.kind==='report'?choice(x.decision,['dismiss','remove']):x.kind==='appeal' && choice(x.decision,['uphold','restore'])) && nullable(x.note,y=>text(y,400)) && time(x.createdAt));
+  const grants=rows(v.readerGrants,100,x=>record(x) && exact(x,['submissionId','submissionVersion','expiresAt','revoked']) && uuid(x.submissionId) && version(x.submissionVersion) && time(x.expiresAt) && typeof x.revoked==='boolean');
+  return own && authored && grants && receipts && audits && (v.qualification===null || record(v.qualification) && exact(v.qualification,['active']) && typeof v.qualification.active==='boolean')?v as SafetyOutcome:null;
 }
 export function matchesSafetyOutcome(o:SafetyOutcome,input:SafetyInput,actor:string,session:string):boolean {
   if (o.actorId!==actor || o.sessionId!==session) return false;
