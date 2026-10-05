@@ -46,7 +46,9 @@ export async function tripTranslationSourceHTTP(request: NextRequest, tripId?: s
       const trips = result.data.filter(trip => trip.headVersion > 0).map(trip => ({ tripId: trip.id, title: trip.title, headVersion: trip.headVersion }));
       const active = await adapter.authenticated();
       if ("error" in active || active.data !== actor.data) return failure("UNAUTHENTICATED");
-      return response({ version: 1, kind: "trip_sources", ownerId: actor.data, currentTripId: trips[0]?.tripId ?? null, trips });
+      // Recency is not an active Trip selection; only the explicit native entry
+      // supplies that selection. Do not label the first candidate as current.
+      return response({ version: 1, kind: "trip_sources", ownerId: actor.data, currentTripId: null, trips });
     });
   } catch { return failure("PROVIDER_UNAVAILABLE"); }
   finally { scope.dispose(); }

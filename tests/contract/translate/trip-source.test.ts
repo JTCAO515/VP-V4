@@ -78,7 +78,7 @@ test("recent Trip list offers bounded candidates, exact confirmed authority stay
     assert.equal(limit, 20); return { data: [{ id: ownerId, title: "Initial", headVersion: 0 }, { id: tripId, title: "My trip", headVersion: 3 }] };
   } } as unknown as NonNullable<Awaited<ReturnType<TripSourceAdapterFactory>>>);
   const result = await tripTranslationSourceHTTP(new NextRequest("http://127.0.0.1/api/translate/trip-sources"), undefined, factory);
-  assert.deepEqual(await result.json(), { version: 1, kind: "trip_sources", ownerId, currentTripId: tripId, trips: [{ tripId, title: "My trip", headVersion: 3 }] });
+  assert.deepEqual(await result.json(), { version: 1, kind: "trip_sources", ownerId, currentTripId: null, trips: [{ tripId, title: "My trip", headVersion: 3 }] });
 });
 test("ambient authority and malformed reference cannot read or admit", async () => {
   const factory: TripSourceAdapterFactory = async () => { throw Error("must not read"); };
