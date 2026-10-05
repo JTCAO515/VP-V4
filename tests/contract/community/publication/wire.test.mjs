@@ -62,7 +62,7 @@ test('complete scoped export includes authored reviews and qualifications withou
 });
 test('HTTP enforces registered current actor and credential surface before SQL dispatch',async()=>{
  let calls=0;const rpc={call:async()=>{calls++;return {data:outcome(),error:null};}};
- assert.equal((await handlePublicationRequest(request(),options(rpc))).status,200);assert.equal(calls,1);
+ const successful=await handlePublicationRequest(request(),options(rpc));assert.equal(successful.status,200);assert.deepEqual(Object.keys(successful.body),['data']);assert.ok(decodePublicationOutcome(successful.body.data));assert.equal(decodePublicationOutcome(successful.body),null,'flat SQL outcome is not the HTTP envelope');assert.equal(calls,1);
  for(const headers of [{'x-community-publication-expected-actor':uuid()},{'x-community-publication-expected-session':uuid()},{cookie:'x=y'},{origin:'http://localhost'}]) assert.equal((await handlePublicationRequest(request(command(),headers),options(rpc))).status,403);
  assert.equal((await handlePublicationRequest(request(),options({...rpc,current:async()=>false}))).body.error,'SESSION_REPLACED');assert.equal(calls,1);
  assert.equal((await handlePublicationRequest(request(command(),{authorization:'Bearer opaque'},'ops'),options(rpc,{surface:'ops',sameOrigin:true}))).status,403);
