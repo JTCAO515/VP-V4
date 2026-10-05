@@ -27,7 +27,7 @@ test('formal CLI local composition uses real loopback HTTP/HTTP2 once, stops and
   let value;
   if(req.url==='/rest/v1/rpc/poll_travel_notifications_v2'){polls++;value=outcome?{kind:'idle'}:{kind:'candidate',notificationId:id};}
   else if(req.url==='/rest/v1/rpc/dispatch_travel_notification_v2'){
-   if(p.p_action==='begin'){assert.equal(attempt,null);attempt=p.p_input.attemptId;const now=Date.now();value={kind:'attempt',notificationId:id,attemptId:attempt,deviceRevision:1,token:'ab'.repeat(32),environment:'sandbox',topic:'fixture.only',expiresAt:new Date(now+60000).toISOString(),authorizedAt:new Date(now).toISOString(),leaseExpiresAt:new Date(now+5000).toISOString()};}
+   if(p.p_action==='begin_fenced'){assert.equal(attempt,null);attempt=p.p_input.attemptId;const now=Date.now();value={kind:'attempt',notificationId:id,attemptId:attempt,deviceRevision:1,token:'ab'.repeat(32),environment:'sandbox',topic:'fixture.only',expiresAt:new Date(now+60000).toISOString(),authorizedAt:new Date(now).toISOString(),leaseExpiresAt:new Date(now+5000).toISOString(),leaseBudgetMs:5000};}
    else if(p.p_action==='finish'){assert.equal(p.p_input.attemptId,attempt);outcome=p.p_input.outcome;value={kind:'receipt',notificationId:id,attemptId:attempt,state:outcome.kind,outcome};}
    else throw Error('unexpected mock RPC');
   }else throw Error('unexpected mock route');

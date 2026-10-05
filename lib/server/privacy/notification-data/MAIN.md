@@ -89,3 +89,21 @@ reused. pnpm typecheck PASS, source-policy lint PASS740. Shared coverage files a
 original legacy sender fixture files remain unchanged pending exact lease. Sender
 lease minimum production hunks ready to integrate immediately; mapping fixture
 is clearly future registration producer, not current live GET evidence.
+
+## Necessary Native fixture interop finding (sole original Native repair)
+
+Read immutable Native46b/9db source under write-swift: NativeNotificationDataRows
+fenceRows closed kind list omits outbox_parent and watch_semantic, which are actual
+required permanent outbox replay fences in approved TS7be/WIRE v2. Actual rows
+with these fences currently cannot preview/export in Native. New own synthetic
+producer tests/fixtures/privacy/notification-data/native-trip-retained-preview.json
+passes TS decoder and contains just these two retained fence kinds; no sensitive
+body/token. Please relay to SAME sole Native owner to append those exact enum kinds
+and consume this fixture; no TS reverse change, no new worker or matrix. Whole
+scope closure still held until this genuine consumer mismatch is fixed.
+
+Main now granted exact original delivery.test.mjs/hosted.test.mjs input fixture
+release (original owner clean/no in-flight/planned writer): LEGACY-FIXTURES.patch
+applied only its reviewed hunks. Original two files actual15 PASS0FAIL0skip,
+including actual loopback HTTP2 and CLI composition. Expected outcomes/no retry/
+payload/privacy assertions unchanged. No new matrix or runtime config/runner edit.
