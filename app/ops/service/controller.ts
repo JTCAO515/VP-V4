@@ -12,7 +12,7 @@ export type Marker = Readonly<{
 export const JOURNAL_KEY = 'vp-service-ops-pending/1';
 export type View = Readonly<{
   workspace: ServiceWorkspace | null; pending: Marker | null; busy: boolean;
-  message: 'empty' | 'unavailable' | 'disabled' | 'unknown' | 'confirmed' | 'identity' | 'storage' | 'invalid';
+  message: 'empty' | 'unavailable' | 'disabled' | 'unknown' | 'confirmed' | 'identity' | 'storage' | 'invalid' | 'erased';
 }>;
 type Reply = Readonly<{ ok: boolean; data: unknown; code?: string }>;
 type Ports = {
@@ -40,7 +40,7 @@ export function canAct(action: Marker['action'], c: ServiceProjection, w: Servic
   if (w.surface !== 'staff' || !currentCase(c, now)) return false;
   if (action === 'accept') return c.status === 'queued' && w.capacity.state === 'available';
   if (!c.staff || c.staff.actorId !== w.actorId || c.staff.shiftEndsAt <= now) return false;
-  return action === 'assign' ? c.status === 'accepted' : ['accepted', 'assigned', 'waiting_external'].includes(c.status);
+  return action === 'assign' ? c.status === 'accepted' : ['assigned', 'waiting_external'].includes(c.status);
 }
 export function receiptMatches(r: ServiceReceipt, p: Marker): boolean {
   return r.operationId === p.operationId && r.requestDigest === p.requestDigest && r.action === p.action && r.caseId === p.caseId && r.grantRevision === p.grantRevision;
@@ -52,33 +52,37 @@ export class ServiceOpsController {
   private lock = false;
   private bytes: string | null = null;
   private actor: Identity | null = null;
+  private freshUntil = 0;
   private storageBlocked = false;
   private view: View;
-  constructor(private ports: Ports, marker: Marker | null, blocked = false) {
+  private ports: Ports;
+  constructor(ports: Ports, marker: Marker | null, blocked = false) {
+    this.ports = ports;
     this.storageBlocked = blocked;
     this.view = {workspace: null, pending: marker, busy: false, message: blocked ? 'storage' : marker ? 'unknown' : 'empty'};
   }
   snapshot() { return this.view; }
   private now() { return this.ports.now?.() ?? Date.now(); }
-  private set(patch: Partial<View>) { this.view = {...this.view, ...patch}; this.ports.changed(this.view); }
-  invalidate() { ++this.epoch; this.actor = null; this.bytes = null; this.set({workspace: null, message: this.view.pending ? 'unknown' : 'unavailable'}); }
+  private set(patch: Partial<View>) { this.view = {...this.view, ...patch, ...(this.storageBlocked ? {message: 'storage' as const} : {})}; this.ports.changed(this.view); }
+  invalidate() { ++this.epoch; this.actor = null; this.bytes = null; this.freshUntil = 0; this.set({workspace: null, message: this.view.pending ? 'unknown' : 'unavailable'}); }
   private async qualified(epoch: number, expected?: Identity | Marker): Promise<Identity | null> {
     const id = await this.ports.identity();
     if (epoch !== this.epoch || !id || id.expiresAt <= this.now() || (expected && !sameSession(expected, id))) return null;
     return id;
   }
   private async workspace(epoch: number, id: Identity): Promise<ServiceWorkspace | null> {
+    const deadline = this.now() + 30000;
     const reply = await this.ports.send(JSON.stringify({action: 'workspace'}), id);
     const next = reply.ok ? decodeServiceWorkspace(reply.data) : null;
     if (!await this.qualified(epoch, id)) { if (epoch === this.epoch) this.invalidate(); return null; }
-    if (!next || next.surface !== 'staff' || next.actorId !== id.actorId || next.cases.some(c => !currentCase(c, this.now()))) {
+    if (this.now() >= deadline || !next || next.surface !== 'staff' || next.actorId !== id.actorId || next.cases.some(c => !currentCase(c, this.now()))) {
       this.bytes = null;
       if (epoch === this.epoch) this.set({workspace: null, message: ['CASE_DISABLED', 'CASE_OPERATIONS_DISABLED', 'SERVICE_OPERATIONS_DISABLED'].includes(reply.code ?? '') ? 'disabled' : 'unavailable'});
       return null;
     }
     const p = this.view.pending;
     if (p && (!sameSession(p, id) || !next.cases.some(c => c.caseId === p.caseId && c.grantRevision === p.grantRevision))) this.bytes = null;
-    this.actor = id;
+    this.actor = id; this.freshUntil = deadline;
     this.set({workspace: next, message: p ? 'unknown' : 'empty'});
     return next;
   }
@@ -95,7 +99,7 @@ export class ServiceOpsController {
   }
   expire() {
     const w = this.view.workspace;
-    if (w && ((!this.actor || this.actor.expiresAt <= this.now()) || w.cases.some(c => !currentCase(c, this.now()) || (c.staff !== null && c.staff.shiftEndsAt <= this.now() && !['resolved', 'unresolved', 'cancelled'].includes(c.status))))) this.invalidate();
+    if (w && ((this.freshUntil <= this.now() || !this.actor || this.actor.expiresAt <= this.now()) || w.cases.some(c => !currentCase(c, this.now()) || (c.staff !== null && c.staff.shiftEndsAt <= this.now() && !['resolved', 'unresolved', 'cancelled'].includes(c.status))))) this.invalidate();
   }
   async mutate(command: ServiceMutation) {
     if (this.lock || this.view.pending || this.storageBlocked || !['accept', 'assign', 'update'].includes(command.action)) return;
@@ -110,7 +114,7 @@ export class ServiceOpsController {
       if (!w || !c || c.revision !== command.expectedRevision || c.grantRevision !== command.grantRevision || !canAct(command.action as Marker['action'], c, w, this.now())) return;
       const bytes = JSON.stringify(command);
       const digest = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(bytes))), n => n.toString(16).padStart(2, '0')).join('');
-      if (!await this.qualified(epoch, id)) return;
+      if (!await this.qualified(epoch, id) || this.freshUntil <= this.now() || !canAct(command.action as Marker['action'], c, w, this.now())) { if (epoch === this.epoch) this.invalidate(); return; }
       const marker: Marker = {actorId: id.actorId, sessionId: id.sessionId, operationId: command.operationId, caseId: command.caseId, action: command.action as Marker['action'], expectedRevision: command.expectedRevision, grantRevision: command.grantRevision, requestDigest: digest};
       try { this.ports.save(marker); } catch { this.storageBlocked = true; this.set({message: 'storage'}); return; }
       this.bytes = bytes; this.set({pending: marker, workspace: null, message: 'unknown'});
@@ -121,6 +125,7 @@ export class ServiceOpsController {
     finally { this.lock = false; this.set({busy: false}); }
   }
   private async finish(reply: Reply, p: Marker, epoch: number, id: Identity) {
+    if (reply.code === 'CASE_OPERATION_ERASED') { this.bytes = null; this.set({workspace: null, message: 'erased'}); return; }
     const value = reply.data && typeof reply.data === 'object' && 'receipt' in reply.data ? (reply.data as {receipt: unknown}).receipt : reply.data;
     const receipt = reply.ok ? decodeServiceReceipt(value) : null;
     if (!receipt || !receiptMatches(receipt, p)) { this.set({workspace: null, message: 'unknown'}); return; }

@@ -129,7 +129,7 @@ export function OpsReviewWorkspace() {
       <label>{c.language}<select value={locale} onChange={(event) => setLocale(event.target.value as Locale)}>{localeOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>
     </header>
     <p className={styles.boundary}>{k.boundary}</p>
-    <nav className={styles.actions}><Link href={signInHref(signInTarget)}>{c.login}</Link><button type="button" disabled={busy || pending !== null} onClick={() => { setMessage(null); void refresh(); }}>{c.refresh}</button><Link href="/journey/knowledge">{k.preview}</Link><Link href="/ops/wiki">{locale === "zh" ? "Wiki 草稿" : "Wiki drafts"}</Link></nav>
+    <nav className={styles.actions}><Link href={signInHref(signInTarget)}>{c.login}</Link><button type="button" disabled={busy || pending !== null} onClick={() => { setMessage(null); void refresh(); }}>{c.refresh}</button><Link href="/journey/knowledge">{k.preview}</Link><Link href="/ops/wiki">{locale === "zh" ? "Wiki 草稿" : "Wiki drafts"}</Link><Link href="/ops/service">{locale === "zh" ? "真人协助" : "Human assistance"}</Link></nav>
     <p role="status" aria-live="polite">{busy ? c.busy : message ? c[message] : ""}</p>
     {wikiError && <p role="alert">{locale === "zh" ? "指定的 Wiki 版本已变化、正文/来源缺失或无读取权限。请返回 Wiki 重新核对后整理声明。" : "The selected Wiki version changed, its body/sources are missing, or access is unavailable. Return to Wiki and verify the current draft."} <Link href="/ops/wiki">Wiki</Link></p>}
     {pending && !busy && <button type="button" onClick={() => { void mutate(pending); }}>{c.retry}</button>}
