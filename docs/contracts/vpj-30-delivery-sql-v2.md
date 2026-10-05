@@ -69,7 +69,10 @@ skips quiet-hour records so another owner can progress. Disabled poll is idle,
 and disabled begin cannot read a token or create an attempt. Begin rechecks live
 Auth/epoch, head, purpose/status, source/Memory, zone/quiet hours, end/archive,
 expiry, active device revision, OS declaration, configured topic/environment.
-Exactly one durable attempt exists per notification. Its lease is <=5 seconds;
+The closed begin grant includes topic=d.topic from the validated server-bound
+device, allowing the transport to compare its configured topic before provider
+exchange. A configuration mismatch cannot become TOKEN_REVOKED. Exactly one
+durable attempt exists per notification. Its lease is <=5 seconds;
 begin replay never returns another token/send grant. Cancellation before begin
 blocks send. After begin, cancellation closes future work but cannot recall a
 handed-off request. Attempt outcome and reminder cancellation are independent.

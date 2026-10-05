@@ -93,7 +93,7 @@ run('N1 dismissal survives content-identical head/timestamp changes, meaningful 
 });
 run('cancel before begin blocks; begin before cancel preserves exact accepted outcome and never regrants',async()=>{
  const f=await fixture(),s=await scheduled(f);await due(s);await user(f,'cancel',{operationId:uuid(),id:s.x.id});assert.equal((await svc('dispatch_travel_notification_v2',[s.notification,'begin',{attemptId:uuid()}])).kind,'blocked');
- const next=await scheduled(f);await due(next);const attemptId=uuid(),grant=await svc('dispatch_travel_notification_v2',[next.notification,'begin',{attemptId}]);assert.equal(grant.kind,'attempt');assert.ok(Date.parse(grant.leaseExpiresAt)-Date.parse(grant.authorizedAt)<=5000);
+ const next=await scheduled(f);await due(next);const attemptId=uuid(),grant=await svc('dispatch_travel_notification_v2',[next.notification,'begin',{attemptId}]);assert.equal(grant.kind,'attempt');assert.equal(grant.topic,'fixture.only');assert.deepEqual(Object.keys(grant).sort(),['kind','notificationId','attemptId','deviceRevision','token','environment','topic','expiresAt','authorizedAt','leaseExpiresAt'].sort());assert.ok(Date.parse(grant.leaseExpiresAt)-Date.parse(grant.authorizedAt)<=5000);
  assert.equal((await svc('dispatch_travel_notification_v2',[next.notification,'begin',{attemptId}])).kind,'blocked');
  await user(f,'cancel',{operationId:uuid(),id:next.x.id});const outcome={kind:'accepted',apnsId:attemptId,acceptedAt:new Date().toISOString()};
  const receipt=await svc('dispatch_travel_notification_v2',[next.notification,'finish',{attemptId,deviceRevision:grant.deviceRevision,outcome}]);assert.equal(receipt.state,'accepted');assert.deepEqual(receipt.outcome,outcome);assert.equal((await user(f,'list')).reminders.find(r=>r.id===next.x.id).status,'cancelled');
@@ -136,7 +136,7 @@ run('actual TS strict codecs and scheduler consume actual PG source, disabled ze
  const f=await fixture(),s=await scheduled(f);assert.ok(decodeNoticeView(s.view,f.trip,{action:'schedule',input:s.x}));await due(s);
  let calls=0,sends=0;
  const rpc=async(name,p)=>{calls++;return svc(name,name==='poll_travel_notifications_v2'?[p.p_limit]:[p.p_notification,p.p_action,p.p_input]);};
- const transport={available:true,async send(x){sends++;assert.equal(x.notificationId,s.notification);assert.equal(x.token,f.token);return {kind:'accepted',apnsId:x.apnsId,acceptedAt:new Date().toISOString()};}};
+ const transport={available:true,async send(x){sends++;assert.equal(x.notificationId,s.notification);assert.equal(x.token,f.token);assert.equal(x.topic,'fixture.only');return {kind:'accepted',apnsId:x.apnsId,acceptedAt:new Date().toISOString()};}};
  assert.equal(await runNotificationScheduler({rpc,transport},new AbortController().signal),'disabled');assert.equal(calls,0);
  // Other test fixtures can have due records. Disable their queued rows in this disposable fixture only.
  await db(`update notification_private.outbox set state='suppressed' where state='scheduled' and id<>'${s.notification}';`);

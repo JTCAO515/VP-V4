@@ -435,7 +435,7 @@ begin
  ts:=clock_timestamp();
  insert into notification_private.attempts(notification_id,attempt_id,device_id,device_revision,state,authorized_at,lease_expires_at) values(o.id,aid,d.id,d.revision,'attempting',ts,least(ts+interval '5 seconds',r.expires_at));
  update notification_private.outbox set state='attempting',device_id=d.id,device_revision=d.revision where id=o.id;
- return jsonb_build_object('kind','attempt','notificationId',o.id,'attemptId',aid,'deviceRevision',d.revision,'token',d.token,'environment',d.environment,'expiresAt',notification_private.stamp(r.expires_at),'authorizedAt',notification_private.stamp(ts),'leaseExpiresAt',notification_private.stamp(least(ts+interval '5 seconds',r.expires_at)));
+ return jsonb_build_object('kind','attempt','notificationId',o.id,'attemptId',aid,'deviceRevision',d.revision,'token',d.token,'environment',d.environment,'topic',d.topic,'expiresAt',notification_private.stamp(r.expires_at),'authorizedAt',notification_private.stamp(ts),'leaseExpiresAt',notification_private.stamp(least(ts+interval '5 seconds',r.expires_at)));
 exception when lock_not_available then return jsonb_build_object('kind','blocked');end $$;
 create function public.poll_travel_notifications_v2(p_limit integer default 1) returns jsonb language plpgsql security definer set search_path='' set timezone='UTC' as $$
 declare cfg notification_private.settings%rowtype;w notification_private.watches%rowtype;t public.trips%rowtype;r notification_private.reminders%rowtype;o notification_private.outbox%rowtype;b jsonb;rid uuid;ex timestamptz;did uuid;drv integer;n integer:=0;
