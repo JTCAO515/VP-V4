@@ -1,0 +1,29 @@
+{
+  "app": {
+    "CFBundleIdentifier": "space.go2china.VisePanda",
+    "VPShareIntakeAppGroupIdentifier": null,
+    "VPEntryResumeAssociatedHosts": null,
+    "NSExtension": null,
+    "CFBundleURLTypes": [
+      {
+        "CFBundleURLName": "space.go2china.VisePanda.navigation",
+        "CFBundleURLSchemes": [
+          "visepanda"
+        ]
+      }
+    ]
+  },
+  "extension": {
+    "CFBundleIdentifier": "space.go2china.VisePanda.ShareIntakeExtension",
+    "VPShareIntakeAppGroupIdentifier": "",
+    "VPEntryResumeAssociatedHosts": null,
+    "NSExtension": {
+      "NSExtensionAttributes": {
+        "NSExtensionActivationRule": "extensionItems.@count == 1 AND SUBQUERY(extensionItems, $item, $item.attachments.@count == 1 AND SUBQUERY($item.attachments, $attachment, ANY $attachment.registeredTypeIdentifiers UTI-CONFORMS-TO \"com.adobe.pdf\").@count == 1).@count == 1"
+      },
+      "NSExtensionPointIdentifier": "com.apple.share-services",
+      "NSExtensionPrincipalClass": "ShareIntakeExtension.ShareViewController"
+    },
+    "CFBundleURLTypes": null
+  }
+}
