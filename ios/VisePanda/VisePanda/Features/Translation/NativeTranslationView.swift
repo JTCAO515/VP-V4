@@ -1,8 +1,12 @@
 import SwiftUI
 
 struct NativeTranslationView: View {
+    var initialTripID: String? = nil
+    var initialTripScope: NativeDataScope? = nil
+    var initialTripVersion: Int? = nil
     @Environment(AppSettings.self) private var settings
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.dismiss) private var dismiss
     @State private var store = NativeTranslationStore()
     @State private var source = "en"
     @State private var input = ""
@@ -13,6 +17,10 @@ struct NativeTranslationView: View {
     @State private var savedQuery = ""
     @State private var action: Task<Void, Never>?
     @State private var historyAction: Task<Void, Never>?
+    @State private var tripStore = NativeTranslationTripStore()
+    @State private var tripSelection: NativeTranslationTripSelection?
+    @State private var tripReturn: TranslationTripReturn?
+    @State private var tripChanged = false
     private var session: NativeSession { settings.nativeSession }
     private var activeScope: NativeDataScope? { scenePhase == .active ? session.dataScope : nil }
     private func text(_ en: String, _ zh: String) -> String { settings.selectedLocale == .zh ? zh : en }
@@ -29,18 +37,30 @@ struct NativeTranslationView: View {
                     Text(text("Sign in in Profile to translate.", "请在「我的」登录后翻译。"))
                 }
                 policyView
+                tripSourceView
                 Picker(text("Translate", "翻译方向"), selection: $source) {
                     Text("English → 中文").tag("en")
                     Text("中文 → English").tag("zh")
                 }.pickerStyle(.segmented).disabled(store.pending != nil || store.busy)
                 TextField(text("Phrase or chosen address", "短句或已选地址"), text: $input, axis: .vertical)
                     .lineLimit(3...8).textFieldStyle(.roundedBorder)
-                    .disabled(store.pending != nil || store.busy).accessibilityIdentifier("translation.input")
+                    .disabled(tripSelection != nil || store.pending != nil || store.busy).accessibilityIdentifier("translation.input")
                 Text("\(input.utf16.count)/600").font(.caption).foregroundStyle(.secondary)
                 Button(text(store.pending == nil ? "Translate" : "Retry same request", store.pending == nil ? "翻译" : "重试同一请求")) {
                     action?.cancel()
                     action = Task {
-                        await store.submit(text: input, sourceLocale: source, request: request)
+                        let selected = tripSelection
+                        // Resolve an ambiguous prior send from its original receipt before retrying.
+                        if store.pending != nil {
+                            await store.load(scope: activeScope, request: request)
+                            guard store.pending != nil else { return }
+                        }
+                        if let selected, !(await tripStore.revalidate(selected, currentScope: { activeScope }, request: request)) {
+                            tripChanged = true
+                            if store.pending == nil { tripSelection = nil; input = "" }
+                            return
+                        }
+                        await store.submit(text: input, sourceLocale: source, tripSelection: selected, request: request)
                         for _ in 0..<30 {
                             guard store.pending != nil, !Task.isCancelled, store.errorCode == nil else { break }
                             do { try await Task.sleep(for: .seconds(2)) } catch { break }
@@ -48,7 +68,7 @@ struct NativeTranslationView: View {
                         }
                     }
                 }.buttonStyle(.borderedProminent)
-                    .disabled(store.busy || store.policy?.consentState != .accepted || input.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || input.utf16.count > 600)
+                    .disabled(store.busy || tripStore.busy || store.policy?.consentState != .accepted || input.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || input.utf16.count > 600)
                     .accessibilityIdentifier("translation.submit")
                 if store.busy { ProgressView() }
                 if let pending = store.pending {
@@ -79,9 +99,13 @@ struct NativeTranslationView: View {
         .task(id: activeScope) { await store.load(scope: activeScope, request: request) }
         .onChange(of: session.dataScope) { _, _ in
             action?.cancel(); historyAction?.cancel(); input = ""; savedQuery = ""; card = nil; savedCard = nil; savedHistory.clear(); savedDetail.clear()
+            tripStore.clear(); tripSelection = nil; tripReturn = nil; tripChanged = false
+        }
+        .onChange(of: store.errorCode) { _, code in
+            if code == "STALE_TRIP_VERSION" || code == "TRIP_SOURCE_CHANGED" { tripChanged = true; tripStore.clear() }
         }
         .onChange(of: scenePhase) { _, phase in
-            if phase != .active { action?.cancel(); historyAction?.cancel(); card = nil; savedCard = nil; store.clear(); savedHistory.clear(); savedDetail.clear(); input = ""; savedQuery = "" }
+            if phase != .active { action?.cancel(); historyAction?.cancel(); card = nil; savedCard = nil; store.clear(); savedHistory.clear(); savedDetail.clear(); input = ""; savedQuery = ""; tripStore.clear(); tripSelection = nil; tripReturn = nil }
         }
         .onChange(of: Array(savedQuery.utf8)) { _, _ in
             historyAction?.cancel(); savedHistory.clear(); savedDetail.clear(); savedCard = nil
@@ -108,6 +132,93 @@ struct NativeTranslationView: View {
                 await loadSaved(exact: reference, into: savedDetail)
             }
         }
+        .sheet(item: $tripReturn) { target in
+            NavigationStack {
+                NativeTripView(initialTripID: target.tripID, initialTripScope: target.scope, initialTripVersion: target.version)
+                    .toolbar { ToolbarItem(placement: .confirmationAction) { Button(text("Done", "完成")) { tripReturn = nil } } }
+            }
+        }
+    }
+
+    private struct TranslationTripReturn: Identifiable {
+        let tripID: String
+        let scope: NativeDataScope
+        let version: Int
+        var id: String { tripID }
+    }
+
+    private var tripSourceView: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(text("Choose from a confirmed Trip", "从已确认行程选择")).font(.headline)
+            Text(text("Only the field you select is sent for translation. Trip text is not a verified address or proof of availability. Private Memory is not included.", "仅发送你明确选择的字段。行程文字不代表地址已经核真或未来可用，也不会附带私密记忆。"))
+                .font(.caption).foregroundStyle(.secondary)
+            Button(text(initialTripID == nil ? "Choose a Trip" : "Read this Trip", initialTripID == nil ? "选择行程" : "读取本行程")) {
+                action?.cancel()
+                tripSelection = nil; input = ""; tripChanged = false
+                action = Task {
+                    guard initialTripID == nil || initialTripScope == activeScope else { tripChanged = true; return }
+                    _ = await tripStore.load(scope: activeScope, tripID: initialTripID, expectedVersion: initialTripVersion,
+                                             currentScope: { activeScope }, request: request)
+                }
+            }.disabled(activeScope == nil || store.busy || tripStore.busy || store.pending != nil)
+                .accessibilityIdentifier("translation.trip.choose")
+            if tripStore.busy { ProgressView() }
+            if let catalog = tripStore.catalog {
+                ForEach(catalog.trips) { trip in
+                    Button(trip.title + (catalog.currentTripId == trip.tripId ? text(" · current Trip", " · 当前行程") : "")) {
+                        action?.cancel(); tripSelection = nil; input = ""; tripChanged = false
+                        action = Task {
+                            _ = await tripStore.load(scope: activeScope, tripID: trip.tripId, expectedVersion: trip.headVersion,
+                                                     currentScope: { activeScope }, request: request)
+                        }
+                    }.disabled(store.busy || store.pending != nil || tripStore.busy)
+                        .accessibilityIdentifier("translation.trip.\(trip.tripId)")
+                }
+            }
+            if let detail = tripStore.detail {
+                Text(detail.title + text(" · version \(detail.headVersion)", " · 版本 \(detail.headVersion)"))
+                ForEach(detail.fields) { field in
+                    Button {
+                        guard let scope = activeScope else { return }
+                        tripSelection = .init(scope: scope, source: detail.source(field), value: field.value)
+                        input = field.value; tripChanged = false
+                    } label: {
+                        VStack(alignment: .leading) {
+                            Text(field.field == "date" ? text("Day date", "日期") : field.itemId == nil ? text("Trip title", "行程标题") : text("Item text / scene", "条目文字／场景"))
+                                .font(.caption).foregroundStyle(.secondary)
+                            Text(field.value)
+                        }.frame(maxWidth: .infinity, alignment: .leading)
+                    }.disabled(store.busy || store.pending != nil || tripStore.busy)
+                        .accessibilityIdentifier("translation.trip.field.\(field.id)")
+                }
+                if detail.fields.isEmpty { Text(text("No supported fields in this confirmed version.", "此确认版本没有可带入的字段。")) }
+            }
+            if let selection = tripSelection {
+                Text(text("Selected field preview · Trip version \(selection.source.headVersion)", "所选字段预览 · 行程版本 \(selection.source.headVersion)"))
+                    .font(.headline).accessibilityIdentifier("translation.trip.preview")
+                Text(selection.value).textSelection(.enabled)
+                Text(text("Translate confirms sending exactly this text. Later Trip changes do not rewrite an accepted phrase.", "点击翻译即确认发送这段原文；之后的行程变化不会改写已接收的短语。"))
+                    .font(.caption)
+                Button(text("Use typed text instead", "改为手动输入")) { tripSelection = nil; input = ""; tripStore.clear() }
+                    .disabled(store.busy || store.pending != nil || tripStore.busy)
+                Button(text("Return to this Trip", "返回本行程")) {
+                    action?.cancel()
+                    action = Task {
+                        guard await tripStore.revalidate(selection, currentScope: { activeScope }, request: request) else {
+                            tripChanged = true
+                            if store.pending == nil { tripSelection = nil; input = "" }
+                            return
+                        }
+                        if initialTripID == selection.source.tripId { dismiss() }
+                        else { tripReturn = .init(tripID: selection.source.tripId, scope: selection.scope, version: selection.source.headVersion) }
+                    }
+                }.disabled(store.busy || tripStore.busy).accessibilityIdentifier("translation.trip.return")
+            }
+            if tripChanged || tripStore.unavailable {
+                Text(text("This Trip source changed or is unavailable. Read it again and explicitly choose a field before translating or returning.", "行程来源已变化或暂不可读。请重新读取并明确选择字段，再翻译或返回。"))
+                    .accessibilityIdentifier("translation.trip.unavailable")
+            }
+        }
     }
 
     @ViewBuilder private var policyView: some View {
@@ -121,6 +232,7 @@ struct NativeTranslationView: View {
                     .font(.caption)
                 Button(policy.consentState == .accepted ? text("Withdraw consent", "撤回同意") : text("Agree to text processing", "同意文字处理")) {
                     card = nil
+                    tripSelection = nil; tripStore.clear(); input = ""
                     savedCard = nil; historyAction?.cancel(); savedHistory.clear(); savedDetail.clear()
                     action?.cancel()
                     action = Task { await store.consent(accept: policy.consentState != .accepted, request: request) }

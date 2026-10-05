@@ -12,6 +12,99 @@ import Testing
     }
     private func history() -> Data { Data("{\"version\":1,\"kind\":\"translations\",\"phrases\":[]}".utf8) }
 
+    private var tripScope: NativeDataScope {
+        .init(endpoint: scope.endpoint, subject: id, mobileEpoch: 1, generation: 1)
+    }
+    private func selectedSource(day: String? = "Day-1", item: String? = "item_A", field: String = "title") -> NativeTranslationTripSource {
+        .init(ownerId: id, tripId: "22222222-2222-4222-8222-222222222222", headVersion: 3, dayId: day, itemId: item, field: field)
+    }
+    private func tripRead(value: String = "No peanuts. CNY 50.", version: Int = 3, owner: String? = nil) throws -> Data {
+        try JSONSerialization.data(withJSONObject: ["version": 1, "kind": "trip_source", "ownerId": owner ?? id,
+            "tripId": selectedSource().tripId, "headVersion": version, "title": "My Trip",
+            "fields": [["dayId": "Day-1", "itemId": "item_A", "field": "title", "value": value]]])
+    }
+
+    @Test func tripOpaqueIDsAndNullFieldsHaveExactWire() throws {
+        #expect(selectedSource().valid)
+        #expect(selectedSource(day: nil, item: nil).valid)
+        #expect(selectedSource(item: nil, field: "date").valid)
+        #expect(!selectedSource(day: "../day").valid)
+        #expect(!selectedSource(item: String(repeating: "a", count: 65)).valid)
+        #expect(!selectedSource(day: nil).valid)
+        #expect(!selectedSource(field: "address").valid)
+        let wire = try #require(JSONSerialization.jsonObject(with: JSONEncoder().encode(selectedSource(day: nil, item: nil))) as? [String: Any])
+        #expect(Set(wire.keys) == Set(["ownerId", "tripId", "headVersion", "dayId", "itemId", "field"]))
+        #expect(wire["dayId"] is NSNull && wire["itemId"] is NSNull)
+    }
+
+    @Test func tripSelectionBindsOwnerVersionOpaquePathAndExactBytes() async throws {
+        let selector = NativeTranslationTripStore()
+        let selection = NativeTranslationTripSelection(scope: tripScope, source: selectedSource(), value: "No peanuts. CNY 50.")
+        var requests = 0
+        let read: NativeTranslationStore.Request = { path, method, body in
+            requests += 1
+            #expect(path == "api/translate/trip-sources/" + selection.source.tripId && method == "GET" && body == nil)
+            return try tripRead()
+        }
+        #expect(await selector.revalidate(selection, currentScope: { tripScope }, request: read))
+        #expect(requests == 1)
+        #expect(!selection.matches(scope: scope, source: selection.source, value: selection.value))
+        let unicode = NativeTranslationTripSelection(scope: tripScope, source: selectedSource(), value: "é")
+        #expect(!unicode.matches(scope: tripScope, source: unicode.source, value: "e\u{301}"))
+        for data in [try tripRead(version: 4), try tripRead(owner: "33333333-3333-4333-8333-333333333333"), try tripRead(value: "Changed text")] {
+            #expect(!(await selector.revalidate(selection, currentScope: { tripScope }, request: { _, _, _ in data })))
+        }
+    }
+
+    @Test func tripReaderDropsLateActorChangeAndExplicitClear() async throws {
+        let selector = NativeTranslationTripStore()
+        var active: NativeDataScope? = tripScope
+        let opened = await selector.load(scope: tripScope, tripID: selectedSource().tripId, currentScope: { active }) { _, _, _ in
+            active = nil; return try tripRead()
+        }
+        #expect(!opened && selector.detail == nil)
+        let cleared = await selector.load(scope: tripScope, tripID: selectedSource().tripId, currentScope: { tripScope }) { _, _, _ in
+            selector.clear(); return try tripRead()
+        }
+        #expect(!cleared && selector.detail == nil && !selector.busy)
+    }
+
+    @Test func selectedSubmissionRetriesSameWireAndRejectsOtherTripOrEditedText() async throws {
+        let store = NativeTranslationStore()
+        await store.load(scope: tripScope) { path, _, _ in path.hasSuffix("policy") ? policy() : history() }
+        let selected = NativeTranslationTripSelection(scope: tripScope, source: selectedSource(), value: "No peanuts. CNY 50.")
+        var bodies: [Data] = []
+        let failed: NativeTranslationStore.Request = { _, _, body in
+            if let body { bodies.append(body) }
+            throw NativeDataError.server(code: "PROVIDER_UNAVAILABLE")
+        }
+        await store.submit(text: selected.value, sourceLocale: "en", tripSelection: selected, request: failed)
+        let pending = try #require(store.pending)
+        await store.submit(text: selected.value, sourceLocale: "en", tripSelection: selected, request: failed)
+        #expect(bodies.count == 2)
+        #expect(try JSONSerialization.jsonObject(with: bodies[0]) as? NSDictionary == JSONSerialization.jsonObject(with: bodies[1]) as? NSDictionary)
+        let wire = try #require(JSONSerialization.jsonObject(with: bodies[0]) as? [String: Any])
+        #expect(Set(wire.keys) == Set(["threadId", "turnId", "idempotencyKey", "policyId", "sourceLocale", "targetLocale", "text", "tripSource"]))
+        #expect(wire["text"] as? String == selected.value && pending.tripSource == selected.source)
+        await store.submit(text: "Edited", sourceLocale: "en", tripSelection: selected, request: failed)
+        await store.submit(text: selected.value, sourceLocale: "en", request: failed)
+        #expect(bodies.count == 2 && store.pending == pending)
+    }
+
+    @Test func selectedSubmissionDriftIsClosedAndNoConsentCannotPost() async {
+        let selected = NativeTranslationTripSelection(scope: tripScope, source: selectedSource(), value: "My scene")
+        let store = NativeTranslationStore()
+        await store.load(scope: tripScope) { path, _, _ in path.hasSuffix("policy") ? policy() : history() }
+        await store.submit(text: selected.value, sourceLocale: "en", tripSelection: selected) { _, _, _ in
+            throw NativeDataError.server(code: "STALE_TRIP_VERSION")
+        }
+        #expect(store.pending?.tripSource == selected.source && store.errorCode == "STALE_TRIP_VERSION")
+        await store.consent(accept: false) { _, _, _ in throw NativeDataError.invalidResponse }
+        var posts = 0
+        await store.submit(text: selected.value, sourceLocale: "en", tripSelection: selected) { _, _, _ in posts += 1; return history() }
+        #expect(posts == 0)
+    }
+
     @Test func noConsentNeverSubmits() async {
         let store = NativeTranslationStore()
         var posts = 0

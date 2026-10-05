@@ -1,6 +1,134 @@
 import Foundation
 import Observation
 
+/// Day/item IDs retain the confirmed Trip's opaque identity; only Trip IDs are UUIDs.
+struct NativeTranslationTripSource: Codable, Equatable {
+    let ownerId: String
+    let tripId: String
+    let headVersion: Int
+    let dayId: String?
+    let itemId: String?
+    let field: String
+
+    func encode(to encoder: Encoder) throws {
+        var values = encoder.container(keyedBy: CodingKeys.self)
+        try values.encode(ownerId, forKey: .ownerId); try values.encode(tripId, forKey: .tripId)
+        try values.encode(headVersion, forKey: .headVersion); try values.encode(field, forKey: .field)
+        if let dayId { try values.encode(dayId, forKey: .dayId) } else { try values.encodeNil(forKey: .dayId) }
+        if let itemId { try values.encode(itemId, forKey: .itemId) } else { try values.encodeNil(forKey: .itemId) }
+    }
+
+    var valid: Bool {
+        UUID(uuidString: tripId) != nil && headVersion > 0
+        && UUID(uuidString: ownerId) != nil
+        && [dayId, itemId].compactMap { $0 }.allSatisfy { $0.range(of: "^[A-Za-z0-9_-]{1,64}$", options: .regularExpression) != nil }
+        && (field == "title" ? (dayId == nil && itemId == nil || dayId != nil && itemId != nil) : field == "date" && dayId != nil && itemId == nil)
+    }
+}
+
+struct NativeTranslationTripSelection: Equatable {
+    let scope: NativeDataScope
+    let source: NativeTranslationTripSource
+    let value: String
+
+    func matches(scope current: NativeDataScope?, source: NativeTranslationTripSource, value: String) -> Bool {
+        self.scope == current && self.scope.subject.lowercased() == source.ownerId.lowercased() && self.source == source && self.value.utf8.elementsEqual(value.utf8)
+    }
+}
+
+struct NativeTranslationTripCandidate: Decodable, Identifiable {
+    let tripId: String
+    let title: String
+    let headVersion: Int
+    var id: String { tripId }
+}
+
+struct NativeTranslationTripField: Decodable, Equatable, Identifiable {
+    let dayId: String?
+    let itemId: String?
+    let field: String
+    let value: String
+    var id: String { [dayId ?? "", itemId ?? "", field].map { "\($0.utf8.count):\($0)" }.joined() }
+}
+
+struct NativeTranslationTripCatalog: Decodable {
+    let version: Int
+    let kind: String
+    let ownerId: String
+    let currentTripId: String?
+    let trips: [NativeTranslationTripCandidate]
+}
+
+struct NativeTranslationTripRead: Decodable {
+    let version: Int
+    let kind: String
+    let ownerId: String
+    let tripId: String
+    let headVersion: Int
+    let title: String
+    let fields: [NativeTranslationTripField]
+
+    func source(_ field: NativeTranslationTripField) -> NativeTranslationTripSource {
+        .init(ownerId: ownerId, tripId: tripId, headVersion: headVersion, dayId: field.dayId, itemId: field.itemId, field: field.field)
+    }
+}
+
+/// Read-only selector. No Trip mutation, automatic selection, Memory or persistent store.
+@MainActor @Observable
+final class NativeTranslationTripStore {
+    private(set) var catalog: NativeTranslationTripCatalog?
+    private(set) var detail: NativeTranslationTripRead?
+    private(set) var busy = false
+    private(set) var unavailable = false
+    private var generation = UUID()
+    private var scope: NativeDataScope?
+
+    func clear() {
+        generation = UUID(); catalog = nil; detail = nil; scope = nil; busy = false; unavailable = false
+    }
+
+    func load(scope: NativeDataScope?, tripID: String? = nil, expectedVersion: Int? = nil,
+              currentScope: () -> NativeDataScope?, request: NativeTranslationStore.Request) async -> Bool {
+        clear(); self.scope = scope
+        guard let scope, currentScope() == scope, tripID == nil || UUID(uuidString: tripID!) != nil else { unavailable = true; return false }
+        let own = generation
+        busy = true
+        defer { if generation == own { busy = false } }
+        do {
+            let path = "api/translate/trip-sources" + (tripID.map { "/" + $0.lowercased() } ?? "")
+            let bytes = try await request(path, "GET", nil)
+            guard own == generation, currentScope() == scope, !Task.isCancelled, bytes.count <= 1_000_000 else { throw NativeDataError.invalidResponse }
+            if let tripID {
+                let read = try JSONDecoder().decode(NativeTranslationTripRead.self, from: bytes)
+                guard read.version == 1, read.kind == "trip_source", read.ownerId.lowercased() == scope.subject.lowercased(),
+                      read.tripId.lowercased() == tripID.lowercased(), read.headVersion > 0,
+                      expectedVersion == nil || read.headVersion == expectedVersion,
+                      read.fields.count <= 512, Set(read.fields.map(\.id)).count == read.fields.count,
+                      read.fields.allSatisfy({ read.source($0).valid && !$0.value.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && $0.value.utf16.count <= 600 }) else { throw NativeDataError.invalidResponse }
+                detail = read
+            } else {
+                let read = try JSONDecoder().decode(NativeTranslationTripCatalog.self, from: bytes)
+                guard read.version == 1, read.kind == "trip_sources", read.ownerId.lowercased() == scope.subject.lowercased(),
+                      read.trips.count <= 20, Set(read.trips.map(\.id)).count == read.trips.count,
+                      read.trips.allSatisfy({ UUID(uuidString: $0.tripId) != nil && $0.headVersion > 0 }),
+                      read.currentTripId == nil || read.trips.contains(where: { $0.tripId == read.currentTripId }) else { throw NativeDataError.invalidResponse }
+                catalog = read
+            }
+            return true
+        } catch {
+            if generation == own { catalog = nil; detail = nil; unavailable = true }
+            return false
+        }
+    }
+
+    func revalidate(_ selection: NativeTranslationTripSelection, currentScope: () -> NativeDataScope?,
+                    request: NativeTranslationStore.Request) async -> Bool {
+        guard await load(scope: selection.scope, tripID: selection.source.tripId, expectedVersion: selection.source.headVersion,
+                         currentScope: currentScope, request: request), let detail else { return false }
+        return detail.fields.contains { selection.matches(scope: currentScope(), source: detail.source($0), value: $0.value) }
+    }
+}
+
 struct NativeTranslationSubmission: Encodable, Equatable {
     let threadId: String
     let turnId: String
@@ -9,6 +137,7 @@ struct NativeTranslationSubmission: Encodable, Equatable {
     let sourceLocale: String
     let targetLocale: String
     let text: String
+    var tripSource: NativeTranslationTripSource? = nil
 }
 
 struct NativeTranslationPhrase: Decodable, Identifiable, Equatable {
@@ -82,15 +211,19 @@ final class NativeTranslationStore {
         } catch { failed(error, own: own) }
     }
 
-    func submit(text: String, sourceLocale: String, request: Request) async {
+    func submit(text: String, sourceLocale: String, tripSelection: NativeTranslationTripSelection? = nil, request: Request) async {
         guard scope != nil, !busy, let policy, policy.valid, policy.consentState == .accepted,
               ["zh", "en"].contains(sourceLocale), !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
               text.utf16.count <= 600 else { return }
+        guard tripSelection == nil || (tripSelection!.source.valid && tripSelection!.matches(scope: scope, source: tripSelection!.source, value: text)) else {
+            errorCode = "TRIP_SOURCE_CHANGED"; return
+        }
         let own = generation
         let submission = pending ?? NativeTranslationSubmission(threadId: UUID().uuidString.lowercased(), turnId: UUID().uuidString.lowercased(),
             idempotencyKey: UUID().uuidString.lowercased(), policyId: policy.id, sourceLocale: sourceLocale,
-            targetLocale: sourceLocale == "zh" ? "en" : "zh", text: text)
+            targetLocale: sourceLocale == "zh" ? "en" : "zh", text: text, tripSource: tripSelection?.source)
         guard submission.text == text, submission.sourceLocale == sourceLocale, submission.policyId == policy.id,
+              submission.tripSource == tripSelection?.source,
               pending == nil || pendingNotice == policy.noticeHash else { errorCode = "PENDING_REQUEST"; return }
         pending = submission; pendingNotice = policy.noticeHash
         busy = true; errorCode = nil
