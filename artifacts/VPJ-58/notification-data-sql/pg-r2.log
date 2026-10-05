@@ -1,0 +1,47 @@
+▶ notification exit real PG replay and v2 owner/service contract
+  ✔ migration rollback restores old definitions, ACL and no exit schema (213.665ms)
+  ✔ default ACL/RLS all denied, original settings unactivated, fixture grants only (466.052041ms)
+  ✔ disabled RPC has zero writes after current authority (316.747167ms)
+  ✔ direct NULL/extra key/unsorted/foreign role inputs are rejected before writes (542.537291ms)
+  ✔ authentication/session/epoch/reauth precede any request feedback or cleanup (542.164667ms)
+  ✔ complete Trip inventory decodes actual TS, includes legacy/full columns and fixed preview TTL (691.072042ms)
+  ✔ device private token export has direct full columns, cross-Trip outbox and current source CAS (750.468583ms)
+  ✔ source CAS/head/archive change rejects erase atomically; Trip results remain untouched (641.5115ms)
+  ✔ owner erase always fences, never grants success from zero attempts; exact-byte same-op recovery (5940.86975ms)
+  ✔ foreign recovery and absent recovery are indistinguishable unknown (563.112416ms)
+  ✔ old begin returns no token, bounded begin_fenced retains lease/source qualification (5746.388167ms)
+  ✔ nonce generation CAS restarts full barrier; rollback leaves original challenge, owner fake elapsed rejected (5609.038333ms)
+  ✖ device erase fences operation/outbox parent and old binding, preserving original reminder/watch business rows (731.8975ms)
+  ✔ progress export includes every request/page field; erasure removes transient pages only and survives Trip deletion (955.823875ms)
+  ✔ fixed expiry prevents new erase/export; drain and immutable recovery may finish after original TTL (35873.175167ms)
+✖ notification exit real PG replay and v2 owner/service contract (65589.892917ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 14
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 65663.932167
+
+✖ failing tests:
+
+test at tests/integration/privacy/notification-data-postgres.test.mjs:152:10
+✖ device erase fences operation/outbox parent and old binding, preserving original reminder/watch business rows (731.8975ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert.ok(decodeNotificationDataPreview(retained,retained,actor(f)))
+
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:158:67)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:152:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

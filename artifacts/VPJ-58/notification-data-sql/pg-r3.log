@@ -1,0 +1,56 @@
+▶ notification exit real PG replay and v2 owner/service contract
+  ✔ migration rollback restores old definitions, ACL and no exit schema (215.242042ms)
+  ✔ default ACL/RLS all denied, original settings unactivated, fixture grants only (469.888792ms)
+  ✔ disabled RPC has zero writes after current authority (309.384375ms)
+  ✔ direct NULL/extra key/unsorted/foreign role inputs are rejected before writes (543.673416ms)
+  ✔ authentication/session/epoch/reauth precede any request feedback or cleanup (538.6355ms)
+  ✔ complete Trip inventory decodes actual TS, includes legacy/full columns and fixed preview TTL (682.697375ms)
+  ✔ device private token export has direct full columns, cross-Trip outbox and current source CAS (757.708917ms)
+  ✔ source CAS/head/archive change rejects erase atomically; Trip results remain untouched (638.765458ms)
+  ✔ owner erase always fences, never grants success from zero attempts; exact-byte same-op recovery (5943.242042ms)
+  ✔ foreign recovery and absent recovery are indistinguishable unknown (564.372791ms)
+  ✔ old begin returns no token, bounded begin_fenced retains lease/source qualification (5746.573833ms)
+  ✔ nonce generation CAS restarts full barrier; rollback leaves original challenge, owner fake elapsed rejected (5607.50075ms)
+  ✔ device erase fences operation/outbox parent and old binding, preserving original reminder/watch business rows (5838.574834ms)
+  ✔ progress export includes every request/page field; erasure removes transient pages only and survives Trip deletion (977.952792ms)
+  ✖ ordered multipage export rejects missing/skipped pages and changing source cursors (323.544292ms)
+  ✔ all attempts/outcomes and repeated dismissal IDs are inventoried by actual composite PK (5789.447208ms)
+  ✔ corrupt cross-owner parent/device/watch/attempt links fail complete projection without hidden omission (771.24625ms)
+  ✔ byte and row sentinels reject before complete preview, proof or erase with zero requests/fences (800.309667ms)
+  ✔ erase/poll/begin/finish/read concurrent original roots serialize without deadlocks or revival (647.373583ms)
+  ✔ real qualified-watch semantic fence prevents poll fresh UUID regeneration after device erase (1476.155208ms)
+  ✔ fixed expiry prevents new erase/export; drain and immutable recovery may finish after original TTL (35832.365208ms)
+✖ notification exit real PG replay and v2 owner/service contract (80302.890042ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 20
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 80375.169833
+
+✖ failing tests:
+
+test at tests/integration/privacy/notification-data-postgres.test.mjs:194:10
+✖ ordered multipage export rejects missing/skipped pages and changing source cursors (323.544292ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  TRIP_CAPACITY
+  CONTEXT:  PL/pgSQL function trip_lifecycle_private.validate_insert_statement_v1() line 8 at RAISE
+
+
+  3 !== 0
+
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:23:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:195:90)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:194:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

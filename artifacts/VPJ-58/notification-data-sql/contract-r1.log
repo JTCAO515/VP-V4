@@ -1,0 +1,11 @@
+✔ SQL accepted boundary JSON equals sole TS wire for every selected scope (0.708375ms)
+✔ new authority defaults closed and no source bodies/credentials are persisted (0.335875ms)
+✔ permanent identities survive source cascades and old callable signatures are retained (0.175875ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 60.764667

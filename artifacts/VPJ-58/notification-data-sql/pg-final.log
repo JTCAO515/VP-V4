@@ -1,0 +1,34 @@
+▶ notification exit real PG replay and v2 owner/service contract
+  ✔ migration rollback restores old definitions, ACL and no exit schema (218.239333ms)
+  ✔ default ACL/RLS all denied, original settings unactivated, fixture grants only (461.006375ms)
+  ✔ disabled RPC has zero writes after current authority (315.918209ms)
+  ✔ direct NULL/extra key/unsorted/foreign role inputs are rejected before writes (548.350625ms)
+  ✔ authentication/session/epoch/reauth precede any request feedback or cleanup (532.727167ms)
+  ✔ complete Trip inventory decodes actual TS, includes legacy/full columns and fixed preview TTL (688.386709ms)
+  ✔ device private token export has direct full columns, cross-Trip outbox and current source CAS (754.992458ms)
+  ✔ source CAS/head/archive change rejects erase atomically; Trip results remain untouched (648.676625ms)
+  ✔ owner erase always fences, never grants success from zero attempts; exact-byte same-op recovery (5937.010084ms)
+  ✔ foreign recovery and absent recovery are indistinguishable unknown (555.899791ms)
+  ✔ old begin returns no token, bounded begin_fenced retains lease/source qualification (5743.952833ms)
+  ✔ nonce generation CAS restarts full barrier; rollback leaves original challenge, owner fake elapsed rejected (5615.562417ms)
+  ✔ device erase fences operation/outbox parent and old binding, preserving original reminder/watch business rows (5835.434416ms)
+  ✔ progress export includes every request/page field; erasure removes transient pages only and survives Trip deletion (978.927875ms)
+  ✔ ordered multipage export rejects missing/skipped pages and changing source cursors (994.75475ms)
+  ✔ all attempts/outcomes and repeated dismissal IDs are inventoried by actual composite PK (5767.433125ms)
+  ✔ corrupt cross-owner parent/device/watch/attempt links fail complete projection without hidden omission (769.316875ms)
+  ✔ byte and row sentinels reject before complete preview, proof or erase with zero requests/fences (864.602542ms)
+  ✔ erase/poll/begin/finish/read concurrent original roots serialize without deadlocks or revival (646.436625ms)
+  ✔ real qualified-watch semantic fence prevents poll fresh UUID regeneration after device erase (1475.317709ms)
+  ✔ begin_fenced retains original TTL/head/archive/session/quiet/recipient eligibility negatives (3072.495958ms)
+  ✔ erasure rollback leaves original source rows, operations and request while no fence survives (649.7225ms)
+  ✔ service finalization requires fresh owner/session/epoch and strict generation, no source effects on failure (490.3465ms)
+  ✔ fixed expiry prevents new erase/export; drain and immutable recovery may finish after original TTL (35865.680291ms)
+✔ notification exit real PG replay and v2 owner/service contract (85255.679833ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 85332.926208
