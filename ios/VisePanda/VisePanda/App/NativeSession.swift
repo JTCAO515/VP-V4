@@ -35,6 +35,7 @@ final class NativeSession {
     private var assistantNavigation: NativeAssistantNavigation?
     let memoryPreferences=NativeMemoryPreferencesStore()
     let notifications = NativeNotificationCoordinator()
+    let voiceAudio = NativeVoiceAudioController()
     let entryResume: NativeEntryResumeCoordinator
     let offlineTrips=NativeOfflineTripStore()
     let deviceMaterials: NativeDeviceMaterials
@@ -1193,6 +1194,8 @@ final class NativeSession {
         guard !busy else { return }
         defaults.set(credential?.subject ?? defaults.string(forKey: storageKey) ?? defaults.string(forKey: storageKey + ".pendingJournalCleanupOwner") ?? defaults.string(forKey: storageKey + ".recoveryCleanupOwner") ?? "unbound", forKey: storageKey + ".signOutIntent")
         deviceMaterialSignOutFence = true
+        do { try voiceAudio.erase() }
+        catch { failureCode="voiceAudioCleanupRequired";status="storageError";return }
         do { try entryResume.erase() }
         catch { failureCode="entryResumeCleanupRequired";status="storageError";return }
         subject=nil; mobileEpoch=nil; displayName=nil; status="signingOut"
@@ -1326,6 +1329,8 @@ final class NativeSession {
         // Fence consumers before cleanup; a locked file is not proof of erasure.
         dataGeneration += 1
         notifications.actorChanged(to: nil)
+        do { try voiceAudio.erase() }
+        catch { failureCode="voiceAudioCleanupRequired";status="storageError";return false }
         do { try entryResume.erase(preservingUnclaimedID: preservingAnonymousResume) }
         catch { failureCode="entryResumeCleanupRequired";status="storageError";return false }
         subject=nil; mobileEpoch=nil; displayName=nil
