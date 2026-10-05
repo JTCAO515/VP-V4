@@ -1,0 +1,11 @@
+"share.title" = "Share PDF to VisePanda";
+"share.receiving" = "Saving a private copy…";
+"share.done" = "Done";
+"share.cancel" = "Cancel";
+"share.saved" = "Saved for up to 24 hours. Open VisePanda, sign in, then choose this PDF and its trip to continue. Nothing has been added to your trip yet.";
+"share.size" = "Use one PDF of 20 MB or less. Open VisePanda and select a smaller file from Files. Your original file is unchanged.";
+"share.pages" = "Use a PDF with 1–10 pages. Open VisePanda and select a shorter file from Files. Pages have not been truncated.";
+"share.format" = "This file cannot be received. Use one unencrypted PDF, or open VisePanda and choose a supported file from Files.";
+"share.full" = "The private inbox is full. Open VisePanda to review or delete saved PDFs, then share again.";
+"share.cleanup" = "The private copy could not be cleared. Open VisePanda to clear its inbox before continuing.";
+"share.unavailable" = "System sharing is unavailable in this installation. Open VisePanda and select the original PDF from Files after signing in.";
