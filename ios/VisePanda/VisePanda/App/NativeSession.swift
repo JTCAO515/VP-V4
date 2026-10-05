@@ -184,7 +184,7 @@ final class NativeSession {
         try NativeCommunityJournal(vault: vault).complete(pending, scope: actor.scope, sessionID: actor.sessionID)
     }
     func communityRequest(body: Data, actor: NativeCommunityActor) async throws -> Data {
-        guard body.count <= 24_000, !busy, try communityActor() == actor else { throw NativeDataError.sessionUnavailable }
+        guard body.count <= NativeCommunityWire.maximumTransportBytes, !busy, try communityActor() == actor else { throw NativeDataError.sessionUnavailable }
         let input = try NativeCommunityInput(body: body)
         if let command = input.mutation {
             guard try communityRecovery(actor: actor)?.body == command.body else { throw NativeDataError.sessionUnavailable }

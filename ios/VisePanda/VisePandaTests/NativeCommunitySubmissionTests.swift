@@ -235,6 +235,85 @@ import Testing
     }
 
 
+    @Test func escapedMutationRecoveryIsBoundedExactAndCommittedAbandonDoesNotUndo() async throws {
+        let content = String(repeating: "\\", count: 4000)
+        let command = try NativeCommunityCommand.submit(.init(title: "Experience", content: content, consent: true, associationConfirmed: true))
+        #expect(command.body.count <= NativeCommunityWire.maximumMutationBytes)
+        let operation = try command.recovery(), abandon = try command.recovery(abandon: true)
+        #expect(try #require(String(data: operation, encoding: .utf8)).utf16.count > NativeCommunityWire.maximumMutationUTF16)
+        #expect(try NativeCommunityInput(body: operation).recovery?.body == command.body)
+        #expect(try NativeCommunityInput(body: abandon).recovery?.body == command.body)
+        var atLimit = operation
+        atLimit.append(Data(repeating: 32, count: NativeCommunityWire.maximumTransportBytes - atLimit.count))
+        #expect(try NativeCommunityInput(body: atLimit).recovery?.body == command.body)
+        // Same-value repeated JSON content is interpreted identically by all current parsers.
+        // It preserves a valid closed mutation while exercising the original raw-byte boundary.
+        let nearDraft = NativeCommunityDraft(title: String(repeating: "\\", count: 160), content: String(repeating: "界", count: 3600),
+                                             consent: true, benefitDisclosure: String(repeating: "\\", count: 400), associationConfirmed: true)
+        let nearBase = try NativeCommunityCommand.submit(nearDraft)
+        let encodedContent = try JSONSerialization.data(withJSONObject: nearDraft.content, options: [.fragmentsAllowed])
+        let duplicate = "\"content\":" + (try #require(String(data: encodedContent, encoding: .utf8))) + ","
+        var nearBody = Data(("{" + duplicate + (try #require(String(data: nearBase.body, encoding: .utf8))).dropFirst()).utf8)
+        #expect(nearBody.count < NativeCommunityWire.maximumMutationBytes)
+        nearBody.append(Data(repeating: 32, count: NativeCommunityWire.maximumMutationBytes - nearBody.count))
+        #expect(try #require(String(data: nearBody, encoding: .utf8)).utf16.count <= NativeCommunityWire.maximumMutationUTF16)
+        let nearCommand = try NativeCommunityCommand(body: nearBody), nearOperation = try nearCommand.recovery()
+        #expect(nearCommand.body.count == 24_000 && nearOperation.count > 24_000 && nearOperation.count <= 49_152)
+        #expect(try NativeCommunityInput(body: nearOperation).recovery?.body == nearBody)
+        #expect(try NativeCommunityInput(body: nearCommand.recovery(abandon: true)).recovery?.body == nearBody)
+        var overOuter = atLimit; overOuter.append(32)
+        #expect(throws: (any Error).self) { try NativeCommunityInput(body: overOuter) }
+        var overInner = command.body
+        overInner.append(Data(repeating: 32, count: NativeCommunityWire.maximumMutationUTF16 + 1 - overInner.count))
+        let innerRejected = try NativeCommunityWire.bytes(["action": "operation", "operationId": command.operationID, "mutationBytes": try #require(String(data: overInner, encoding: .utf8))])
+        #expect(throws: (any Error).self) { try NativeCommunityInput(body: innerRejected) }
+        var oversizedBytes = command.body
+        oversizedBytes.append(Data(repeating: 32, count: NativeCommunityWire.maximumMutationBytes + 1 - oversizedBytes.count))
+        #expect(throws: (any Error).self) { try NativeCommunityCommand(body: oversizedBytes) }
+        let small = try Self.submit(), nested = try small.recovery()
+        let nestedRejected = try NativeCommunityWire.bytes(["action": "abandon", "operationId": small.operationID, "mutationBytes": try #require(String(data: nested, encoding: .utf8))])
+        #expect(throws: (any Error).self) { try NativeCommunityInput(body: nestedRejected) }
+        var ordinary = command.body
+        ordinary.append(Data(repeating: 32, count: NativeCommunityWire.maximumMutationBytes + 1 - ordinary.count))
+        #expect(throws: (any Error).self) { try NativeCommunityInput(body: ordinary) }
+
+        let vault = CommunityTestVault(), journal = NativeCommunityJournal(vault: vault), store = NativeCommunityStore()
+        let read = { try journal.read(Self.actor, sessionID: Self.actor.subject) }
+        let complete = { (value: NativeCommunityPending) in try journal.complete(value, scope: Self.actor, sessionID: Self.actor.subject) }
+        store.restore(Self.communityActor, read: read)
+        await store.perform(command, current: { Self.communityActor }, read: read,
+                            retain: { try journal.retain(body: $0, scope: Self.actor, sessionID: Self.actor.subject) }, complete: complete) { bytes in
+            #expect(bytes == command.body)
+            #expect(try read()?.body == bytes)
+            throw NativeDataError.server(code: "COMMUNITY_ACK_UNKNOWN")
+        }
+        await store.recover(current: { Self.communityActor }, complete: complete) { bytes in
+            #expect(bytes == operation)
+            return try Self.operation(command, state: "absent")
+        }
+        #expect(store.pending?.body == command.body && store.canRetry(Self.communityActor))
+        var committed = Self.item(try #require(command.submissionID)); committed["content"] = content
+        let receipt = try Self.operation(command, state: "committed", item: committed)
+        await store.recover(abandon: true, current: { Self.communityActor }, complete: complete) { bytes in
+            #expect(bytes == abandon)
+            return receipt
+        }
+        #expect(store.pending == nil && store.visibleItem(Self.communityActor)?.content == content)
+        #expect(store.visibleItem(Self.communityActor)?.status == "pending")
+
+        // The actual NativeSession transport must accept the larger recovery envelope, not just its parser.
+        let name = "community-escaped-session-" + UUID().uuidString
+        let defaults = try #require(UserDefaults(suiteName: name)); defer { defaults.removePersistentDomain(forName: name) }
+        let config = URLSessionConfiguration.ephemeral; config.protocolClasses = [CommunitySessionProtocol.self]
+        let session = NativeSession(arguments: ["-VisePandaNativeAPI", Self.actor.endpoint], defaults: defaults, configuration: config, bundleConfiguration: [:], vault: vault)
+        await session.login(email: "synthetic@example.invalid", password: "synthetic-only")
+        let actor = try session.communityActor()
+        _ = try session.rememberCommunity(body: nearCommand.body, actor: actor)
+        do { _ = try await session.communityRequest(body: nearOperation, actor: actor) } catch { }
+        #expect(session.status == "expiredOrReplaced" && session.dataScope == nil)
+        await session.logout()
+    }
+
     @Test func actualSessionHeadersAndDenialEraseOwnJournalBeforeLegacyPreservation() async throws {
         let name = "community-session-" + UUID().uuidString
         let defaults = try #require(UserDefaults(suiteName: name)); defer { defaults.removePersistentDomain(forName: name) }

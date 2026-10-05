@@ -8,6 +8,9 @@ struct NativeCommunityActor: Equatable {
 
 enum NativeCommunityWire {
     static let schema = "community-j1/1"
+    static let maximumMutationBytes = 24_000
+    static let maximumMutationUTF16 = 10_000
+    static let maximumTransportBytes = 49_152
     static let retained = ["operation_fences", "submission_tombstones", "audit_metadata"]
     static func object(_ raw: Any, _ keys: Set<String>) throws -> [String: Any] {
         guard let v = raw as? [String: Any], Set(v.keys) == keys else { throw NativeDataError.invalidResponse }; return v
@@ -50,7 +53,7 @@ struct NativeCommunityCommand: Equatable {
     let operationID: String
     let submissionID: String?
     init(body: Data) throws {
-        guard body.count <= 24_000, let utf8 = String(data: body, encoding: .utf8), utf8.utf16.count <= 10000 else { throw NativeDataError.invalidResponse }
+        guard body.count <= NativeCommunityWire.maximumMutationBytes, let utf8 = String(data: body, encoding: .utf8), utf8.utf16.count <= NativeCommunityWire.maximumMutationUTF16 else { throw NativeDataError.invalidResponse }
         let w = NativeCommunityWire.self
         guard let v = try JSONSerialization.jsonObject(with: body) as? [String: Any], let action = v["action"] as? String else { throw NativeDataError.invalidResponse }
         self.operationID = try w.id(v["operationId"]); self.action = action; self.body = body
@@ -82,7 +85,9 @@ struct NativeCommunityCommand: Equatable {
     static func delete() throws -> Self { try .init(body: NativeCommunityWire.bytes(["action": "delete", "operationId": UUID().uuidString.lowercased(), "confirmed": true])) }
     func recovery(abandon: Bool = false) throws -> Data {
         guard let text = String(data: body, encoding: .utf8) else { throw NativeDataError.invalidResponse }
-        return try NativeCommunityWire.bytes(["action": abandon ? "abandon" : "operation", "operationId": operationID, "mutationBytes": text])
+        let result = try NativeCommunityWire.bytes(["action": abandon ? "abandon" : "operation", "operationId": operationID, "mutationBytes": text])
+        guard result.count <= NativeCommunityWire.maximumTransportBytes else { throw NativeDataError.invalidResponse }
+        return result
     }
 }
 
@@ -233,8 +238,11 @@ struct NativeCommunityInput {
     let recovery: NativeCommunityCommand?
     init(body: Data) throws {
         let w = NativeCommunityWire.self
-        guard body.count <= 24_000, let value = String(data: body, encoding: .utf8), value.utf16.count <= 10000,
+        guard body.count <= w.maximumTransportBytes, let value = String(data: body, encoding: .utf8),
               let v = try JSONSerialization.jsonObject(with: body) as? [String: Any], let action = v["action"] as? String else { throw NativeDataError.invalidResponse }
+        // JSON escaping expands only the outer recovery envelope. Its inner mutation stays bounded.
+        let isRecovery = action == "operation" || action == "abandon"
+        guard isRecovery || (body.count <= w.maximumMutationBytes && value.utf16.count <= w.maximumMutationUTF16) else { throw NativeDataError.invalidResponse }
         mutation = ["submit", "withdraw", "delete"].contains(action) ? try NativeCommunityCommand(body: body) : nil
         if mutation != nil { recovery = nil; return }
         switch action {
@@ -243,7 +251,7 @@ struct NativeCommunityInput {
         case "export": _ = try w.object(v, ["action"]); recovery = nil
         case "operation", "abandon":
             _ = try w.object(v, ["action", "operationId", "mutationBytes"])
-            let text = try w.text(v["mutationBytes"], max: 10000)
+            let text = try w.text(v["mutationBytes"], max: w.maximumMutationUTF16)
             recovery = try NativeCommunityCommand(body: Data(text.utf8))
             guard recovery?.operationID == (try w.id(v["operationId"])) else { throw NativeDataError.invalidResponse }
         default: throw NativeDataError.invalidResponse

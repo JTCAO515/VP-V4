@@ -1,6 +1,6 @@
 # VPJ-48 J1 native author consumer
 
-Native production source fixed at 80eef4af2c8b24be0bbd2da75fe49ee4c5936e51. Owner 01a10c49-349c-7880-8b18-a0a2dda72bd4. Fresh origin/main plus normal merge of latest main4f450 and approved dependency659 source84d47; dependency remains separate from native delivery.
+Historical native snapshot 80eef4af2c8b24be0bbd2da75fe49ee4c5936e51 was superseded by the recovery-envelope finding below. Owner 01a10c49-349c-7880-8b18-a0a2dda72bd4. Fresh origin/main plus normal merge of latest main4f450 and approved dependency659 source84d47; dependency remains separate from native delivery.
 
 Profile opens a bilingual author flow: explicit experience/help, bounded title/content/benefit, actual owned saved-place selection or explicit no-association, frozen preview and internal-review consent, owner list with honest pagination, current revision/review outcome/author and reviewer disclosure, explicit withdrawal. Internal published literal displays internally approved, never public publication. Original native Trip/saved-place reader supplies current qualified canonical reference/head/digest; submit revalidates without saving or writing a Trip.
 
@@ -24,3 +24,15 @@ Export/delete cover only the community module. Strict final13key export includes
 App build-r1 failed from accidental duplicate cleanup insertion in void logout; insertion removed, leased clear hook retained. Initial runner-r1 lacked DEVELOPER_DIR (no build/test). Test-build-r2 failed two throwing boolean assertions; split unchanged assertions. Runtime-r3 post-test count assertion failed despite actual11 passing; retained and independently reconciled. No old failure is retroactively green.
 
 Full GoTrue/SQL integration belongs to sole TS integrator and original SQL owner. Native transport tests are synthetic URLProtocol; they do not prove provider, credentials, target permission, public UGC, production, physical device or human acceptance. #235 whole remains Open for J3/#238 protections.
+
+
+## Recovery-envelope repair — final direct-user contract
+
+Only operation/abandon outer JSON permits up to49152bytes without the ordinary outer10000UTF16 limit. Its original mutationBytes remains <=24000bytes/10000UTF16 and must decode exactly one allowed mutation with the same operation ID. Ordinary commands retain24000bytes/10000UTF16. Session upfront bound, strict Input action layering, and recovery-builder output bound now agree. No SQL, other transport, permissions or shared journal changes.
+
+- PASS: final affected build-for-testing recovery-r2/ad-hoc signature, one targeted recovery case/0 skipped. Original13 tests and final export-only result reused; no full matrix rerun.
+- PASS:4000backslash submit accepted -> exact original operation read -> abandon returning committed current state preserves pending content, never an Undo.
+- PASS: valid raw mutation24000bytes/9600UTF16 -> outer operation25252bytes/abandon25250bytes. Same-value duplicate content field is accepted by the existing JSON semantic parsers; no conflicting values or input contract relaxation. Frozen raw bytes including trailing whitespace are preserved. Actual NativeSession synthetic transport accepts this >24000 outer envelope (required actor/session headers) and receives simulated denial/cleanup; an old24K Session guard would fail this test.
+- PASS: exact49152 outer accepted/49153 rejected; inner UTF16 or byte overflow rejected; nested operation/abandon is not a mutation; ordinary command caps retained.
+- PASS: three new actual Swift-generated near-limit fixtures accepted by current TS canonical parser with exact mutationBytes. Local model stand-ins only; no target or real-user/GoTrue claim.
+- PASS: final owned Simulator shutdown/deleted. All prior build/test failures and superseded contract decisions remain historical, not retroactively changed.
