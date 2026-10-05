@@ -4,10 +4,12 @@ import UIKit
 struct NativeCoreExportView:View {
     @Environment(AppSettings.self) private var settings
     @Environment(\.scenePhase) private var phase
-    @State private var store=NativeCoreExportStore()
+    @State private var store: NativeCoreExportStore
     @State private var confirmed=false
     @State private var activity:ExportActivitySource?
     @State private var transportTask:Task<Void,Never>?
+    init() { _store = State(initialValue: NativeCoreExportStore()) }
+    init(store: NativeCoreExportStore) { _store = State(initialValue: store) }
     private var session:NativeSession{settings.nativeSession}
     private var chinese:Bool{settings.selectedLocale == .zh}
     private func t(_ zh:String,_ en:String)->String{chinese ? zh:en}

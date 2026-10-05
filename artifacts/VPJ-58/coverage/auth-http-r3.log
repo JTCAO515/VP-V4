@@ -1,0 +1,13 @@
+VP_DATA_COVERAGE_HTTP_TARGET {"project":"vp-native-ask-1a94152c","base":63400}
+✔ owned real GoTrue -> coverage route -> existing owner handler -> DB -> exact result consumer; fixture grants stay distinct from target (6582.914458ms)
+ℹ Observed accepted original community RPC ACL=true with internal feature settings=false; owner cleanup/export remains available by original contract. No new ACL or target change. Subsequent submission enables only this disposable synthetic fixture switch.
+ℹ New module owner RPC default EXECUTE denied. GRANT plus synthetic Trip/device rows exist only in this uniquely owned fixture; source-free progress and lifecycle metadata are distinct from Trip content/provider push.
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9534.410333
+VP_DATA_COVERAGE_HTTP_CLEANUP {"project":"vp-native-ask-1a94152c","result":"PASS"}

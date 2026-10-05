@@ -1,0 +1,31 @@
+VP_DATA_COVERAGE_HTTP_TARGET {"project":"vp-native-ask-58e7793d","base":63400}
+✖ owned real GoTrue -> coverage route -> existing owner handler -> DB -> exact result consumer; fixture grants stay distinct from target (6136.250792ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9086.778
+
+✖ failing tests:
+
+test at tests/integration/privacy/coverage/auth-http.test.mjs:14:1
+✖ owned real GoTrue -> coverage route -> existing owner handler -> DB -> exact result consumer; fixture grants stay distinct from target (6136.250792ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  't' !== 'f'
+
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-data-coverage-server-20261006/tests/integration/privacy/coverage/auth-http.test.mjs:43:9)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 't',
+    expected: 'f',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+VP_DATA_COVERAGE_HTTP_CLEANUP {"project":"vp-native-ask-58e7793d","result":"PASS"}

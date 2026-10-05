@@ -4,9 +4,15 @@ struct NativeDeviceMaterialDeleteView:View {
     let session:NativeSession
     let chinese:Bool
     @Environment(\.scenePhase) private var phase
-    @State private var store=NativeDeviceMaterialDeleteStore()
+    @State private var store: NativeDeviceMaterialDeleteStore
     @State private var reviewedDigest:String?
     @State private var confirmVisible=false
+    init(session: NativeSession, chinese: Bool) {
+        self.session = session; self.chinese = chinese; _store = State(initialValue: NativeDeviceMaterialDeleteStore())
+    }
+    init(session: NativeSession, chinese: Bool, store: NativeDeviceMaterialDeleteStore) {
+        self.session = session; self.chinese = chinese; _store = State(initialValue: store)
+    }
     private func t(_ zh:String,_ en:String)->String{chinese ? zh:en}
     var body:some View {
         Form {

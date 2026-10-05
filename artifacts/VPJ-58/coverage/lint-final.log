@@ -1,0 +1,5 @@
+
+> vp-v4@0.0.0 lint /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-data-coverage-server-20261006
+> node scripts/lint.mjs
+
+Source policy lint passed (723 files checked).

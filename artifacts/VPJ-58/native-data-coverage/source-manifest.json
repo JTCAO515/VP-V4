@@ -1,0 +1,27 @@
+{
+  "productSourceCheckpoint": "bced4c9637b4431475093efa495db602dfb24c1e",
+  "runtime": "new NativeDataCoverage11PASS0FAIL0SKIP; original Core8PASS0SKIP reused; native-to-canonical TS6PASS0SKIP; all fixture/Simulator only",
+  "sources": {
+    "ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageCommand.swift": "1199aad2787721e62f0da068a645885c27453b20aa161d9fdaa51500416fae34",
+    "ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageOfflineView.swift": "1b7467146664bfdcadf9acbd5e7e0948e20779bbd5bdb9d2b450f2279654bf29",
+    "ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageModuleView.swift": "e04718a0b5fc8bfd5bcd03e0dca85460327c6e4c40b6692b456cf2af56c4f7e7",
+    "ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageView.swift": "8212055041eb661c2e5da4a79ef14c37aeae706c081cb35ef12a478cbbde49a1",
+    "ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageStore.swift": "70af7d340451c6de5cd2cbd161e98f027b92a793dc05304f74d63d0ae91e5aa6",
+    "ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageCopy.swift": "02a68c32ac6ae3c6a2d9d5490748929e54566c13e1e4395e4b64b5f9db3d079d",
+    "ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageOwnerBundle.swift": "3714f74eec545ce7ba5297de526d0d3d24e7745fbeb87179accb49d625526f21",
+    "ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageConsumers.swift": "9bd3420c1ea81df3bfe83c05b510840065c1aa7f942a757ffa3825f8315600db",
+    "ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageCases.swift": "780b48d4c43283d643568de0cb64de061cd2986b4593b4cc9353c1d650dfeabb",
+    "ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageModels.swift": "250e4b204d218df61b1539a9cd1d8583af4d076d3407ae3f479d894b36aa9ed8",
+    "ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageExportFile.swift": "b83ac905cf4f95098211c8630aa23a22c450d34013d41278036dc9fa7d572aad",
+    "ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageJournal.swift": "61431ed3dfaf4bcc4f0cdc99a0415ab5a6c09da4311c3668ac2498819f5b4dc4",
+    "ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageOriginal.swift": "59c4a2a150a2318d94c6b2f3ad9cf46ea78410c09fdf2c492152d27aa013c43c",
+    "ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageLifetime.swift": "320fa0669302bf7e1c1044576753c8c9a2863afed77f51a23932236ce268f0b9",
+    "ios/VisePanda/VisePanda/App/NativeSession.swift": "f50d3b90806982c7c7f5d14c89e5bd0e5a15865c85deb374a4feb1b8e2af1abb",
+    "ios/VisePanda/VisePanda/Features/Profile/NativeCoreExportView.swift": "945886c810f40b753b3ce4c96ccc4311a53aef0c89a27864b12aa84bc1db8564",
+    "ios/VisePanda/VisePanda/Features/Profile/MemoryDeletion/NativeMemoryDeletionView.swift": "71276c04b409d9b992238b9343e5963221bfaf720b91ae86b8ef6c0fcaced822",
+    "ios/VisePanda/VisePanda/Features/Trip/LinkedDeletion/NativeLinkedTripDeletionView.swift": "600f55e9acddf1674722cdcb892d5033a1e8f48a40f462a5bda1bf236c558779",
+    "ios/VisePanda/VisePanda/Features/Profile/NativeDeviceMaterialDeleteView.swift": "d027194cecb33a22271cbadbc8dfd67546218764a9d0b555e2db673c24f1bb8f",
+    "ios/VisePanda/VisePanda/Features/Profile/ProfileView.swift": "b36a77b27f65d0bbb8d3de6a2c4c0edfd0991189564d9e0a8ec9c246a88a9373",
+    "ios/VisePanda/VisePanda.xcodeproj/project.pbxproj": "314c3e8ffa7d1a3582d8ae90d4afa8abda98466aa004d7ea6dd13144e727bec0"
+  }
+}
