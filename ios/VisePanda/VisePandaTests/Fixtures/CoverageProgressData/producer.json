@@ -1,0 +1,400 @@
+{
+  "producerRevision": "300815ca0ece12aef9b4634a8d1a5670571eeed4",
+  "previewBytes": "{\"scope\":\"coverage-progress-data/1\",\"requestId\":\"00000000-0000-4000-8000-000000000003\",\"objectIds\":[\"00000000-0000-4000-8000-000000000004\",\"00000000-0000-4000-8000-000000000005\",\"00000000-0000-4000-8000-000000000006\"],\"action\":\"preview\"}",
+  "exportBytes": "\n{\"scope\":\"coverage-progress-data/1\",\"requestId\":\"00000000-0000-4000-8000-000000000003\",\"objectIds\":[\"00000000-0000-4000-8000-000000000004\",\"00000000-0000-4000-8000-000000000005\",\"00000000-0000-4000-8000-000000000006\"],\"action\":\"export\",\"previewDigest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"confirmed\":true}",
+  "eraseBytes": "\t{\"scope\":\"coverage-progress-data/1\",\"requestId\":\"00000000-0000-4000-8000-000000000003\",\"objectIds\":[\"00000000-0000-4000-8000-000000000004\",\"00000000-0000-4000-8000-000000000005\",\"00000000-0000-4000-8000-000000000006\"],\"action\":\"erase\",\"previewDigest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"confirmed\":true}",
+  "list": {
+    "data": {
+      "schemaVersion": "coverage-progress-data/1",
+      "kind": "list",
+      "scope": "coverage-progress-data/1",
+      "ownerId": "00000000-0000-4000-8000-000000000001",
+      "sessionId": "00000000-0000-4000-8000-000000000002",
+      "mobileEpoch": 2,
+      "sourceDigest": "9999999999999999999999999999999999999999999999999999999999999999",
+      "capturedAt": 1801800000000,
+      "expiresAt": 1801800030000,
+      "items": [
+        {
+          "objectId": "00000000-0000-4000-8000-000000000004",
+          "domain": "collector",
+          "state": "retained",
+          "rows": 0
+        },
+        {
+          "objectId": "00000000-0000-4000-8000-000000000005",
+          "domain": "collector",
+          "state": "active",
+          "rows": 2
+        },
+        {
+          "objectId": "00000000-0000-4000-8000-000000000006",
+          "domain": "exit",
+          "state": "erased",
+          "rows": 0
+        }
+      ],
+      "hasMore": false,
+      "nextCursor": null,
+      "allUserDataCompleted": false
+    }
+  },
+  "preview": {
+    "data": {
+      "schemaVersion": "coverage-progress-data/1",
+      "scope": "coverage-progress-data/1",
+      "requestId": "00000000-0000-4000-8000-000000000003",
+      "objectIds": [
+        "00000000-0000-4000-8000-000000000004",
+        "00000000-0000-4000-8000-000000000005",
+        "00000000-0000-4000-8000-000000000006"
+      ],
+      "ownerId": "00000000-0000-4000-8000-000000000001",
+      "sessionId": "00000000-0000-4000-8000-000000000002",
+      "mobileEpoch": 2,
+      "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "previewDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "capturedAt": 1801800000000,
+      "expiresAt": 1801800030000,
+      "boundaries": {
+        "exportFields": [
+          "selected_collector_all_request_fields",
+          "selected_collector_all_section_fields",
+          "selected_collector_all_fence_fields",
+          "selected_exit_all_request_fields",
+          "selected_exit_all_page_fields",
+          "minimal_exit_receipt"
+        ],
+        "eraseFields": [
+          "selected_collector_transient_requests_and_sections",
+          "selected_exit_transient_page_progress"
+        ],
+        "retained": [
+          "original_request_id_owner_session_scope_expiry_fences",
+          "nonreplayable_exit_bindings_selection_digests_decision_receipts",
+          "original_session_account_cascade_semantics"
+        ],
+        "missing": [
+          "unselected_progress_records",
+          "source_data_in_separate_domains",
+          "external_export_files",
+          "backup_restore_target_acceptance"
+        ]
+      },
+      "allUserDataCompleted": false,
+      "kind": "preview",
+      "items": [
+        {
+          "objectId": "00000000-0000-4000-8000-000000000004",
+          "domain": "collector",
+          "request": null,
+          "sections": [],
+          "fence": {
+            "requestId": "00000000-0000-4000-8000-000000000004",
+            "ownerId": "00000000-0000-4000-8000-000000000001",
+            "sessionId": "00000000-0000-4000-8000-000000000008",
+            "scope": "trip-lifecycle-metadata/1",
+            "expiresAt": 1801799970000
+          }
+        },
+        {
+          "objectId": "00000000-0000-4000-8000-000000000005",
+          "domain": "collector",
+          "request": {
+            "requestId": "00000000-0000-4000-8000-000000000005",
+            "ownerId": "00000000-0000-4000-8000-000000000001",
+            "sessionId": "00000000-0000-4000-8000-000000000008",
+            "scope": "trip-lifecycle-metadata/1",
+            "expiresAt": 1801799970000,
+            "mobileEpoch": 1,
+            "sourceDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "capturedAt": 1801799940000
+          },
+          "sections": [
+            {
+              "requestId": "00000000-0000-4000-8000-000000000005",
+              "section": "operations",
+              "lastCursor": null,
+              "nextCursor": null,
+              "lastLimit": null,
+              "pages": 0,
+              "rows": 0,
+              "bytes": 0,
+              "terminal": false
+            },
+            {
+              "requestId": "00000000-0000-4000-8000-000000000005",
+              "section": "trips",
+              "lastCursor": null,
+              "nextCursor": null,
+              "lastLimit": null,
+              "pages": 0,
+              "rows": 0,
+              "bytes": 0,
+              "terminal": false
+            }
+          ],
+          "fence": {
+            "requestId": "00000000-0000-4000-8000-000000000005",
+            "ownerId": "00000000-0000-4000-8000-000000000001",
+            "sessionId": "00000000-0000-4000-8000-000000000008",
+            "scope": "trip-lifecycle-metadata/1",
+            "expiresAt": 1801799970000
+          }
+        },
+        {
+          "objectId": "00000000-0000-4000-8000-000000000006",
+          "domain": "exit",
+          "request": {
+            "requestId": "00000000-0000-4000-8000-000000000006",
+            "ownerId": "00000000-0000-4000-8000-000000000001",
+            "sessionId": "00000000-0000-4000-8000-000000000002",
+            "mobileEpoch": 2,
+            "scope": "coverage-progress-data/1",
+            "objectIds": [
+              "00000000-0000-4000-8000-000000000009"
+            ],
+            "sourceDigest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+            "previewDigest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "capturedAt": 1801799940000,
+            "expiresAt": 1801799970000,
+            "decision": "erase",
+            "requestDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            "decidedAt": 1801799940001,
+            "effects": {
+              "collectorRequests": 1,
+              "collectorSections": 2,
+              "exitPages": 0,
+              "retainedFences": 1,
+              "sourceData": "not_modified",
+              "sessionAccountFences": "retained",
+              "externalCopies": "not_erased"
+            }
+          },
+          "progress": null
+        }
+      ],
+      "requiresExplicitConfirmation": true
+    }
+  },
+  "bundle": {
+    "data": {
+      "schemaVersion": "coverage-progress-data/1",
+      "scope": "coverage-progress-data/1",
+      "requestId": "00000000-0000-4000-8000-000000000003",
+      "objectIds": [
+        "00000000-0000-4000-8000-000000000004",
+        "00000000-0000-4000-8000-000000000005",
+        "00000000-0000-4000-8000-000000000006"
+      ],
+      "ownerId": "00000000-0000-4000-8000-000000000001",
+      "sessionId": "00000000-0000-4000-8000-000000000002",
+      "mobileEpoch": 2,
+      "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "previewDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "capturedAt": 1801800000000,
+      "expiresAt": 1801800030000,
+      "boundaries": {
+        "exportFields": [
+          "selected_collector_all_request_fields",
+          "selected_collector_all_section_fields",
+          "selected_collector_all_fence_fields",
+          "selected_exit_all_request_fields",
+          "selected_exit_all_page_fields",
+          "minimal_exit_receipt"
+        ],
+        "eraseFields": [
+          "selected_collector_transient_requests_and_sections",
+          "selected_exit_transient_page_progress"
+        ],
+        "retained": [
+          "original_request_id_owner_session_scope_expiry_fences",
+          "nonreplayable_exit_bindings_selection_digests_decision_receipts",
+          "original_session_account_cascade_semantics"
+        ],
+        "missing": [
+          "unselected_progress_records",
+          "source_data_in_separate_domains",
+          "external_export_files",
+          "backup_restore_target_acceptance"
+        ]
+      },
+      "allUserDataCompleted": false,
+      "kind": "bundle",
+      "requestDigest": "479d88c90f0191be51fe2fbafabd2cb1e9064c22e0dfa6f588dc3813c42893b0",
+      "items": [
+        {
+          "objectId": "00000000-0000-4000-8000-000000000004",
+          "domain": "collector",
+          "request": null,
+          "sections": [],
+          "fence": {
+            "requestId": "00000000-0000-4000-8000-000000000004",
+            "ownerId": "00000000-0000-4000-8000-000000000001",
+            "sessionId": "00000000-0000-4000-8000-000000000008",
+            "scope": "trip-lifecycle-metadata/1",
+            "expiresAt": 1801799970000
+          }
+        },
+        {
+          "objectId": "00000000-0000-4000-8000-000000000005",
+          "domain": "collector",
+          "request": {
+            "requestId": "00000000-0000-4000-8000-000000000005",
+            "ownerId": "00000000-0000-4000-8000-000000000001",
+            "sessionId": "00000000-0000-4000-8000-000000000008",
+            "scope": "trip-lifecycle-metadata/1",
+            "expiresAt": 1801799970000,
+            "mobileEpoch": 1,
+            "sourceDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "capturedAt": 1801799940000
+          },
+          "sections": [
+            {
+              "requestId": "00000000-0000-4000-8000-000000000005",
+              "section": "operations",
+              "lastCursor": null,
+              "nextCursor": null,
+              "lastLimit": null,
+              "pages": 0,
+              "rows": 0,
+              "bytes": 0,
+              "terminal": false
+            },
+            {
+              "requestId": "00000000-0000-4000-8000-000000000005",
+              "section": "trips",
+              "lastCursor": null,
+              "nextCursor": null,
+              "lastLimit": null,
+              "pages": 0,
+              "rows": 0,
+              "bytes": 0,
+              "terminal": false
+            }
+          ],
+          "fence": {
+            "requestId": "00000000-0000-4000-8000-000000000005",
+            "ownerId": "00000000-0000-4000-8000-000000000001",
+            "sessionId": "00000000-0000-4000-8000-000000000008",
+            "scope": "trip-lifecycle-metadata/1",
+            "expiresAt": 1801799970000
+          }
+        },
+        {
+          "objectId": "00000000-0000-4000-8000-000000000006",
+          "domain": "exit",
+          "request": {
+            "requestId": "00000000-0000-4000-8000-000000000006",
+            "ownerId": "00000000-0000-4000-8000-000000000001",
+            "sessionId": "00000000-0000-4000-8000-000000000002",
+            "mobileEpoch": 2,
+            "scope": "coverage-progress-data/1",
+            "objectIds": [
+              "00000000-0000-4000-8000-000000000009"
+            ],
+            "sourceDigest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+            "previewDigest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "capturedAt": 1801799940000,
+            "expiresAt": 1801799970000,
+            "decision": "erase",
+            "requestDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            "decidedAt": 1801799940001,
+            "effects": {
+              "collectorRequests": 1,
+              "collectorSections": 2,
+              "exitPages": 0,
+              "retainedFences": 1,
+              "sourceData": "not_modified",
+              "sessionAccountFences": "retained",
+              "externalCopies": "not_erased"
+            }
+          },
+          "progress": null
+        }
+      ],
+      "proof": {
+        "coverage": "complete",
+        "pages": 1,
+        "rows": 3
+      }
+    }
+  },
+  "receipt": {
+    "data": {
+      "schemaVersion": "coverage-progress-data/1",
+      "scope": "coverage-progress-data/1",
+      "requestId": "00000000-0000-4000-8000-000000000003",
+      "objectIds": [
+        "00000000-0000-4000-8000-000000000004",
+        "00000000-0000-4000-8000-000000000005",
+        "00000000-0000-4000-8000-000000000006"
+      ],
+      "ownerId": "00000000-0000-4000-8000-000000000001",
+      "sessionId": "00000000-0000-4000-8000-000000000002",
+      "mobileEpoch": 2,
+      "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "previewDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "capturedAt": 1801800000000,
+      "expiresAt": 1801800030000,
+      "boundaries": {
+        "exportFields": [
+          "selected_collector_all_request_fields",
+          "selected_collector_all_section_fields",
+          "selected_collector_all_fence_fields",
+          "selected_exit_all_request_fields",
+          "selected_exit_all_page_fields",
+          "minimal_exit_receipt"
+        ],
+        "eraseFields": [
+          "selected_collector_transient_requests_and_sections",
+          "selected_exit_transient_page_progress"
+        ],
+        "retained": [
+          "original_request_id_owner_session_scope_expiry_fences",
+          "nonreplayable_exit_bindings_selection_digests_decision_receipts",
+          "original_session_account_cascade_semantics"
+        ],
+        "missing": [
+          "unselected_progress_records",
+          "source_data_in_separate_domains",
+          "external_export_files",
+          "backup_restore_target_acceptance"
+        ]
+      },
+      "allUserDataCompleted": false,
+      "kind": "receipt",
+      "state": "erased",
+      "requestDigest": "d1eaf5853fa2b11fa964cf4fe82325701da56935e3cbefab00af489f33768905",
+      "committedAt": 1801800000001,
+      "decidedAt": 1801800000001,
+      "effects": {
+        "collectorRequests": 1,
+        "collectorSections": 2,
+        "exitPages": 0,
+        "retainedFences": 3,
+        "sourceData": "not_modified",
+        "sessionAccountFences": "retained",
+        "externalCopies": "not_erased"
+      }
+    }
+  },
+  "unknown": {
+    "data": {
+      "schemaVersion": "coverage-progress-data/1",
+      "kind": "unknown",
+      "scope": "coverage-progress-data/1",
+      "requestId": "00000000-0000-4000-8000-000000000003",
+      "objectIds": [
+        "00000000-0000-4000-8000-000000000004",
+        "00000000-0000-4000-8000-000000000005",
+        "00000000-0000-4000-8000-000000000006"
+      ],
+      "ownerId": "00000000-0000-4000-8000-000000000001",
+      "sessionId": "00000000-0000-4000-8000-000000000002",
+      "mobileEpoch": 2,
+      "requestDigest": "d1eaf5853fa2b11fa964cf4fe82325701da56935e3cbefab00af489f33768905",
+      "allUserDataCompleted": false
+    }
+  }
+}
