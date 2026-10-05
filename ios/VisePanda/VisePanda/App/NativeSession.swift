@@ -167,6 +167,24 @@ final class NativeSession {
         try await dataRequest(prefix: "api/service-cases/native/v1", path: "api/service-cases/native/v1", method: "POST", body: body)
     }
 
+    func serviceOperationRequest(body: Data, actor: NativeDataScope) async throws -> Data {
+        guard dataScope == actor else { throw NativeDataError.staleSessionResponse }
+        let result = try await dataRequest(prefix: "api/service-cases/native/operations/v1", path: "api/service-cases/native/operations/v1", method: "POST", body: body)
+        guard dataScope == actor else { throw NativeDataError.staleSessionResponse }; return result
+    }
+    func serviceOperationRecovery(actor: NativeDataScope) throws -> NativeServiceOperationPending? {
+        guard dataScope == actor else { throw NativeDataError.staleSessionResponse }
+        return try NativeServiceOperationJournal(vault: vault).read(actor)
+    }
+    func rememberServiceOperation(_ command: NativeServiceOperationCommand, actor: NativeDataScope) throws -> NativeServiceOperationPending {
+        guard dataScope == actor else { throw NativeDataError.staleSessionResponse }
+        return try NativeServiceOperationJournal(vault: vault).retain(command, scope: actor)
+    }
+    func completeServiceOperation(_ value: NativeServiceOperationPending, actor: NativeDataScope) throws {
+        guard dataScope == actor else { throw NativeDataError.staleSessionResponse }
+        try NativeServiceOperationJournal(vault: vault).complete(value, scope: actor)
+    }
+
     func storeKitRequest(method: String, body: Data? = nil) async throws -> Data {
         try await dataRequest(prefix: "api/storekit/native/v1", path: "api/storekit/native/v1", method: method, body: body)
     }
@@ -1207,6 +1225,8 @@ final class NativeSession {
                 catch { failureCode="scopedEditCleanupRequired";status="storageError";return false }
                 do { try NativePlaceActionJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
                 catch { failureCode="placeActionCleanupRequired";status="storageError";return false }
+                do { try NativeServiceOperationJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
+                catch { failureCode="serviceOperationCleanupRequired";status="storageError";return false }
                 do {
                     try NativeNotificationJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault)
                     try NativeNotificationJournal.eraseBinding(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault)
