@@ -16,6 +16,22 @@ async function denied(a,input,error,claims){const r=await raw(a,input,claims);as
 const submit=()=>({action:'submit',operationId:uuid(),submissionId:uuid(),title:'Synthetic travel experience',content:'DO-NOT-EXPOSE-private-body',consent:'internal-review-v1'});
 const review=(s,decision='approve')=>({action:'review',operationId:uuid(),submissionId:s.submissionId,expectedVersion:1,decision,note:'INTERNAL-ONLY review note'});
 const withdraw=(s,version=2)=>({action:'withdraw',operationId:uuid(),submissionId:s.submissionId,expectedVersion:version});
+// Diagnose failed scheduling paths without logging fixture content or review notes.
+async function raceDiagnostic(rows, submissionId) {
+ const losers=rows.filter(({code})=>code!==0).map(({code,stdout,stderr})=>{
+  let value;try {value=JSON.parse(stdout);} catch {value=null;}
+  const shape=stdout.trim()===''?{empty:true}:value && typeof value==='object' && !Array.isArray(value)
+   ? {format:'json',status:['pending','published','rejected','withdrawn','deleted'].includes(value.status)?value.status:null,version:Number.isSafeInteger(value.version)?value.version:null}
+   : {format:'non_record',bytes:Buffer.byteLength(stdout,'utf8')};
+  const safeStderr=stderr.replaceAll('DO-NOT-EXPOSE-private-body','[fixture_body_redacted]').replaceAll('INTERNAL-ONLY review note','[fixture_note_redacted]');
+  return {code,stdout:shape,stderr:safeStderr.slice(0,8192),stderrTruncated:safeStderr.length>8192,stderrBytes:Buffer.byteLength(stderr,'utf8')};
+ });
+ let persisted;
+ try {persisted=JSON.parse(await db(`select jsonb_build_object('status',status,'version',version,'audits',(select count(*) from community_private.audit where submission_id=c.id),'receipts',(select count(*) from community_private.receipts where submission_id=c.id),'bodyErased',title='' and content='') from community_private.submissions c where id='${submissionId}';`) || 'null');}
+ catch {persisted={unavailable:true};}
+ return JSON.stringify({submissionId,winnerCount:rows.filter(({code})=>code===0).length,losers,persisted});
+}
+
 before(async()=>{
  if(!enabled)return;
  const r=await command('docker',['run','--pull=never','--rm','-d','--network','none','--name',container,'--user','postgres','--entrypoint','/bin/sh','public.ecr.aws/supabase/postgres:17.6.1.159','-c','umask 077; mkdir /tmp/vpj59-socket; initdb -D /tmp/vpj59-db -A trust --no-locale -E UTF8 >/tmp/init.log 2>&1 && exec postgres -D /tmp/vpj59-db -c listen_addresses= -c unix_socket_directories=/tmp/vpj59-socket -c unix_socket_permissions=0700']);
@@ -75,10 +91,10 @@ run('rejection and pending withdrawal are terminal; forged body fields fail in d
 });
 run('opposing reviews and withdrawal/review race commit exactly one transition',async()=>{
  const a=await actor(),r=await actor(true),r2=await actor(true);const s=submit();await call(a,s);
- const results=await Promise.all([raw(r,review(s)),raw(r2,review(s,'reject'))]);assert.equal(results.filter(x=>x.code===0).length,1);assert.ok(results.find(x=>x.code!==0).stderr.includes('COMMUNITY_CONFLICT'));
+ const results=await Promise.all([raw(r,review(s)),raw(r2,review(s,'reject'))]);const resultDiagnostic=results.filter(x=>x.code===0).length===1 && results.some(x=>x.code!==0 && x.stderr.includes('COMMUNITY_CONFLICT'))?undefined:await raceDiagnostic(results,s.submissionId);assert.equal(results.filter(x=>x.code===0).length,1,resultDiagnostic);assert.ok(results.find(x=>x.code!==0).stderr.includes('COMMUNITY_CONFLICT'),resultDiagnostic);
  assert.equal(await db(`select count(*) from community_private.audit where submission_id='${s.submissionId}';`),'3');
- const p=submit();await call(a,p);const race=await Promise.all([raw(a,withdraw(p,1)),raw(r,review(p))]);assert.equal(race.filter(x=>x.code===0).length,1);
- assert.ok(race.find(x=>x.code!==0).stderr.includes('COMMUNITY_CONFLICT'));
+ const p=submit();await call(a,p);const race=await Promise.all([raw(a,withdraw(p,1)),raw(r,review(p))]);const withdrawalDiagnostic=race.filter(x=>x.code===0).length===1 && race.some(x=>x.code!==0 && x.stderr.includes('COMMUNITY_CONFLICT'))?undefined:await raceDiagnostic(race,p.submissionId);assert.equal(race.filter(x=>x.code===0).length,1,withdrawalDiagnostic);
+ assert.ok(race.find(x=>x.code!==0).stderr.includes('COMMUNITY_CONFLICT'),withdrawalDiagnostic);
 });
 run('audit fault rolls back content, transition and receipt; gate rollback denies saved data',async()=>{
  const a=await actor(),r=await actor(true);const s=submit();await call(a,s);const d=review(s);
