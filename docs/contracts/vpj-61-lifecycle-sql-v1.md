@@ -132,3 +132,38 @@ barriers; zero database deadlocks were recorded in this bounded matrix. Target s
 all existing DB lanes, unified Native/device, provider and real user rights actions
 are UNRUN in this SQL checkout. TS owns combined integration and final one-PR
 assembly; Main owns independent high-risk review and target enablement.
+
+## Archive result reference proof
+
+Main authorized only append-local CREATE OR REPLACE of the original v1 and v2
+Trip result reference functions. Their original owner/deletion guards and
+nonarchive bodies remain unchanged. Original ACLs survive replacement; no GRANT
+is added. Common basis, artifact readers, publishers and action writers remain
+unchanged. The two-step exact read is still required after receiving a reference.
+
+The archive-only branch requires a real owner archive and the original exact
+reader returning that artifact ID/revision, same Trip, historicalReadable=true
+and current=false. It returns the original reference shape plus exactly
+archiveHistorical:true. This proof permits read-only history on that Trip surface;
+it does not turn the original current=false into execution authority. If saved
+candidates are inaccessible, including withdrawn artifacts, return unavailable;
+only absence of any saved candidate returns empty. The original bounded 64 plus
+sentinel traversal remains.
+
+v1 permits only validated comparison content under its original legacy reader.
+v2 permits comparison, decision, practical, and journey drafts from task_output
+or trip_snapshot when the original typed reader allows them. Proposal references
+and proposal previews are excluded, including readable but unconfirmed previews.
+No schema is granted a generic historical execution path. Existing decision and
+TripProposal execution checks still reject an archived basis.
+
+The added PG case uses the original task/message/goal-link and result publisher
+to store real synthetic results before archive. It checks original nonarchive
+responses, before/after identity, current=false, original body/ACL preservation,
+Memory/consent/source withdrawal, deletion, artifact withdrawal, wrong owner/ID/
+revision and pending proposal exclusion. It is local PostgreSQL evidence; it makes
+no signed Auth, target deployment or phone claim. The first fixture attempt used
+a planning-policy ID where the original intake requires a text-policy ID; the
+next deletion fixture omitted its current session claim. These fixture failures
+were corrected without weakening product guards. New-case results are recorded
+in the accompanying archive-reader evidence, separate from the earlier 9/9 run.

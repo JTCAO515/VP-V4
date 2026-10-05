@@ -506,3 +506,98 @@ do $$declare f record;begin
  end loop;
 end $$;
 notify pgrst,'reload schema';
+
+-- Main #240 lease: Trip reference archive-only proof. Original ACLs survive
+-- CREATE OR REPLACE; no new GRANT, common basis or exact reader changes.
+create or replace function public.read_trip_result_reference_v1(p_trip_id uuid)
+returns jsonb language plpgsql security definer set search_path='' as $$
+declare u uuid:=turn_private.text_owner(); a turn_private.result_artifacts%rowtype;
+  r turn_private.result_revisions%rowtype; authorised jsonb; candidate record; examined integer:=0;
+begin
+  if p_trip_id is null then raise exception 'INVALID_INPUT'; end if;
+  if not exists(select 1 from public.trips t where t.id=p_trip_id and t.owner_id=u)
+    then return jsonb_build_object('kind','empty'); end if;
+  if exists(select 1 from privacy_private.trip_deletions d where d.trip_id=p_trip_id)
+    then return jsonb_build_object('kind','unavailable'); end if;
+  -- VPJ61_ARCHIVE_V1_BEGIN
+  if exists(select 1 from public.trip_archives archive where archive.trip_id=p_trip_id and archive.owner_id=u) then
+    for candidate in select id,current_revision from turn_private.result_artifacts
+      where owner_id=u and trip_id=p_trip_id and proposal_id is null
+      order by created_at desc,id desc limit 65 loop
+      examined:=examined+1;if examined>64 then return jsonb_build_object('kind','unavailable');end if;
+      authorised:=public.read_result_artifacts_v1(candidate.id,candidate.current_revision);
+      if authorised->>'kind'='result_artifact' and authorised->>'artifactId'=candidate.id::text
+        and authorised->'revision'=to_jsonb(candidate.current_revision)
+        and authorised->'source'->>'tripId'=p_trip_id::text
+        and authorised->'historicalReadable'='true'::jsonb and authorised->'current'='false'::jsonb
+        and coalesce(turn_private.valid_comparison_v1(authorised->'content'),false) then
+        return jsonb_build_object('kind','result_reference','artifactId',candidate.id,'revision',candidate.current_revision,'tripId',p_trip_id,'archiveHistorical',true);
+      end if;
+    end loop;
+    if examined>0 then return jsonb_build_object('kind','unavailable');end if;
+    return jsonb_build_object('kind','empty');
+  end if;
+  -- VPJ61_ARCHIVE_V1_END
+  -- Examine at most 64 newest references. If older candidates exist beyond
+  -- that bound, report unavailable rather than falsely claim an empty Trip.
+  for candidate in select artifact.id as artifact_id,artifact.current_revision as revision
+    from turn_private.result_artifacts artifact
+    join turn_private.result_revisions revision on revision.artifact_id=artifact.id
+      and revision.revision=artifact.current_revision and revision.owner_id=u
+    join turn_private.assistant_goal_trip_links link on link.goal_id=artifact.goal_id
+      and link.owner_id=u and link.trip_id=p_trip_id and link.trip_head_version=revision.trip_version
+      and link.operation_id=revision.trip_link_operation_id and link.link_version=revision.trip_link_version
+      and link.goal_scope_version=revision.goal_version and link.source_kind='native_user_confirmed'
+      and not link.terminal_unlinked
+    join turn_private.assistant_goals goal on goal.id=artifact.goal_id and goal.owner_id=u
+      and goal.scope_version=revision.goal_version
+    join public.trips trip on trip.id=p_trip_id and trip.owner_id=u and trip.head_version=revision.trip_version
+    where artifact.proposal_id is null and artifact.trip_id=p_trip_id and artifact.owner_id=u and artifact.lifecycle='active'
+    order by artifact.created_at desc,artifact.id desc limit 65 loop
+    examined:=examined+1;
+    if examined>64 then return jsonb_build_object('kind','unavailable'); end if;
+    select * into a from turn_private.result_artifacts
+      where id=candidate.artifact_id and owner_id=u and lifecycle='active';
+    if not found then continue; end if;
+    select * into r from turn_private.result_revisions
+      where artifact_id=a.id and owner_id=u and revision=candidate.revision;
+    if not found or turn_private.result_basis_state(a,r)->>'current'<>'true' then continue; end if;
+    authorised:=public.read_result_artifacts_v1(a.id,r.revision);
+    if authorised->>'kind'='result_artifact' and authorised->>'current'='true' then
+      return jsonb_build_object('kind','result_reference','artifactId',a.id,'revision',r.revision,'tripId',p_trip_id);
+    end if;
+  end loop;
+  return jsonb_build_object('kind','empty');
+end $$;
+create or replace function public.read_trip_result_reference_v2(p_trip_id uuid) returns jsonb language plpgsql security definer set search_path='' as $$
+declare u uuid:=turn_private.text_owner();candidate record;authorised jsonb;examined integer:=0;
+begin
+ if p_trip_id is null then raise exception 'INVALID_INPUT';end if;
+ if not exists(select 1 from public.trips where id=p_trip_id and owner_id=u) or exists(select 1 from privacy_private.trip_deletions where trip_id=p_trip_id) then return jsonb_build_object('kind','empty');end if;
+ -- VPJ61_ARCHIVE_V2_BEGIN
+ if exists(select 1 from public.trip_archives where trip_id=p_trip_id and owner_id=u) then
+  for candidate in select id,current_revision from turn_private.result_artifacts
+   where owner_id=u and trip_id=p_trip_id and proposal_id is null
+   order by created_at desc,id desc limit 65 loop
+   examined:=examined+1;if examined>64 then return jsonb_build_object('kind','unavailable');end if;
+   authorised:=public.read_result_artifact_v2(candidate.id,candidate.current_revision);
+   if authorised->>'kind'='result_artifact' and authorised->>'artifactId'=candidate.id::text
+    and authorised->'revision'=to_jsonb(candidate.current_revision)
+    and authorised->'source'->>'tripId'=p_trip_id::text
+    and authorised->'historicalReadable'='true'::jsonb and authorised->'current'='false'::jsonb
+    and (authorised->'content'->>'schemaVersion' in ('comparison/1','decision/1','practical/1')
+     or (authorised->'content'->>'schemaVersion'='journey-draft/1' and authorised->'content'->'source'->>'kind' in ('task_output','trip_snapshot'))) then
+    return jsonb_build_object('kind','result_reference','artifactId',candidate.id,'revision',candidate.current_revision,'tripId',p_trip_id,'archiveHistorical',true);
+   end if;
+  end loop;
+  if examined>0 then return jsonb_build_object('kind','unavailable');end if;
+  return jsonb_build_object('kind','empty');
+ end if;
+ -- VPJ61_ARCHIVE_V2_END
+ for candidate in select id,current_revision from turn_private.result_artifacts where owner_id=u and trip_id=p_trip_id and lifecycle='active' order by created_at desc,id desc limit 65 loop
+  examined:=examined+1;if examined>64 then return jsonb_build_object('kind','unavailable');end if;
+  authorised:=public.read_result_artifact_v2(candidate.id,candidate.current_revision);
+  if authorised->>'kind'='result_artifact' and authorised->>'current'='true' and authorised->'source'->>'tripId'=p_trip_id::text then return jsonb_build_object('kind','result_reference','artifactId',candidate.id,'revision',candidate.current_revision,'tripId',p_trip_id);end if;
+ end loop;return jsonb_build_object('kind','empty');
+end $$;
+notify pgrst,'reload schema';
