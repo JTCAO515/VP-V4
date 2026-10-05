@@ -65,6 +65,7 @@ export const LANES = {
           VP_TRAFFIC_DB_TEST: "1",
           VP_MEMORY_DB_TEST: "1",
           VP_PLACE_ACTION_DB_TEST: "1",
+          VP_SERVICE_OPERATIONS_DB_TEST: "1",
         },
         files: [
           "tests/integration/community/review.test.mjs",
@@ -105,6 +106,7 @@ export const LANES = {
           "tests/integration/lodging/reviewed-classification-postgres.test.mjs",
           "tests/integration/reservations/ledger-postgres.test.mjs",
           "tests/integration/reservations/native-return-joint.test.mjs",
+          "tests/integration/service-cases/operations-postgres.test.mjs",
           "tests/integration/trip/offline-text-provenance.test.mjs",
           "tests/integration/trip/offline-source-consumer.test.mjs",
           "tests/integration/turn/durable-work.test.mjs",
@@ -179,6 +181,7 @@ export const LANES = {
       { name: "native-text-http", runner: node("tests/integration/turn/run-native-http.mjs", "--port-base", "64420"), files: ["tests/integration/turn/native-text-http.test.mjs"] },
       { name: "translation-history-http", runner: node("tests/integration/turn/run-native-http.mjs", "--translation-history", "--port-base", "64420"), files: ["tests/integration/translate/history-http.test.mjs"] },
       { name: "translation-trip-source-http", runner: node("tests/integration/translate/run-trip-source-http.mjs", "--port-base", "64460"), files: ["tests/integration/translate/trip-source-http.test.mjs"] },
+      { name: "service-operations-http", runner: node("tests/integration/service-cases/run-operations-http.mjs", "--port-base", "64800"), files: ["tests/integration/service-cases/operations-http.test.mjs"] },
       { name: "native-assistant-rollback", runner: node("tests/integration/turn/run-native-http.mjs", "--assistant-rollback", "--port-base", "64420"), files: ["tests/integration/turn/assistant-rollback.test.mjs", "tests/integration/turn/assistant-task-activity.test.mjs"] },
       { name: "native-planning-http", runner: node("tests/integration/turn/run-native-http.mjs", "--planning", "--port-base", "64420"), files: ["tests/integration/turn/native-planning-http.test.mjs"] },
       { name: "native-grounded-http", runner: node("tests/integration/turn/run-native-http.mjs", "--grounded", "--port-base", "64420"), files: ["tests/integration/turn/native-grounded-http.test.mjs"] },

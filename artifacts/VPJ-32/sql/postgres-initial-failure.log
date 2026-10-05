@@ -1,0 +1,44 @@
+✔ full replay rollback, private RLS/ACL deny, empty operators and disabled RPC (5912.308ms)
+✖ existing grants only, no guessed staff, no Trip/Brief reads, strict closed commands (523.938167ms)
+✔ exact UTF8 bytes, changed whitespace reuse409, immutable receipt and no cross session/surface (393.210583ms)
+✔ unknown ACK abandon fence and execute race share original operation bytes (552.180709ms)
+✔ one actual slot accepts exactly one Case, inactive/unenrolled/no slots reject (905.372834ms)
+✔ recorded seconds aggregate to minutes, reject future/overlap and contact-only resolution (640.457ms)
+✔ legacy revoke/replace wipes source bytes and refs, owner cancel receipt survives fresh read (1024.422625ms)
+✔ TTL releases capacity and scrubs through bounded maintenance, old staff receipt never replays (480.24525ms)
+✔ owner binds original pending Proposal only; staff gets no Trip and archive retains service (515.776583ms)
+✔ Trip deletion erases binding/evidence/operations but keeps Case; explicit Case delete cascades (499.303459ms)
+✔ workspace beyond 50 fails explicitly instead of silently truncating (120.066166ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 10
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 11691.787166
+
+✖ failing tests:
+
+test at tests/integration/service-cases/operations-postgres.test.mjs:17:22
+✖ existing grants only, no guessed staff, no Trip/Brief reads, strict closed commands (523.938167ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /UNAUTHENTICATED/. Input:
+  
+  'ERROR:  SESSION_REPLACED\n' +
+    'CONTEXT:  PL/pgSQL function identity_private.guard_mobile_rpc_v2() line 4 at RAISE\n' +
+    'SQL statement "SELECT identity_private.guard_mobile_rpc_v2()"\n' +
+    'PL/pgSQL function service_cases_private.actor() line 9 at PERFORM\n' +
+    'PL/pgSQL function public.service_case_operations_v1(jsonb,text,text) line 8 at assignment\n'
+  
+      at rejects (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj32-service-operations-sql-20261005/tests/integration/service-cases/operations-postgres.test.mjs:15:146)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj32-service-operations-sql-20261005/tests/integration/service-cases/operations-postgres.test.mjs:67:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'ERROR:  SESSION_REPLACED\nCONTEXT:  PL/pgSQL function identity_private.guard_mobile_rpc_v2() line 4 at RAISE\nSQL statement "SELECT identity_private.guard_mobile_rpc_v2()"\nPL/pgSQL function service_cases_private.actor() line 9 at PERFORM\nPL/pgSQL function public.service_case_operations_v1(jsonb,text,text) line 8 at assignment\n',
+    expected: /UNAUTHENTICATED/,
+    operator: 'match',
+    diff: 'simple'
+  }

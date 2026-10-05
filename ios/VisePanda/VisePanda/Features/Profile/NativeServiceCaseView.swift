@@ -17,6 +17,8 @@ private struct ServiceReply<T: Decodable>: Decodable { let data: T }
 
 struct NativeServiceCaseView: View {
     @Environment(AppSettings.self) private var settings
+    @Environment(\.scenePhase) private var servicePhase
+    @State private var operations = NativeServiceOperationStore()
     @State private var cases: [ServiceCase] = []
     @State private var staff: [ServiceStaff] = []
     @State private var problem = ""
@@ -65,7 +67,16 @@ struct NativeServiceCaseView: View {
             ForEach(cases) { item in
                 Section {
                     Text(item.problem)
-                    Text(zh ? "申请已记录，尚未接单" : "Request recorded; not accepted")
+                    TimelineView(.periodic(from: .now, by: 1)) { _ in
+                        if let value = operations.visible(caseId: item.id, actor: settings.nativeSession.dataScope), servicePhase == .active {
+                            Text(value.status.label(zh: zh))
+                        } else {
+                            Text(zh ? "申请已记录；运营状态未知，请查看服务进度" : "Request recorded; operational status unknown. Open service progress.")
+                        }
+                    }
+                    NavigationLink(zh ? "查看服务进度与结果" : "View service progress and evidence") {
+                        NativeServiceOperationsView(caseId: item.id)
+                    }.accessibilityIdentifier("service.operations.entry." + item.id)
                     Text(grantLabel(item.grantState)).font(.caption)
                     if let id = item.recipientId { Text(staff.first(where: { $0.id == id })?.label ?? id).font(.caption) }
                     if let expiry = item.expiresAt { Text(expiry).font(.caption) }
@@ -85,7 +96,12 @@ struct NativeServiceCaseView: View {
         }
         .disabled(busy || settings.nativeSession.dataScope == nil)
         .navigationTitle(zh ? "旅途支持" : "Travel support")
-        .task { await load() }
+        .task(id: settings.nativeSession.dataScope) { await load() }
+        .onChange(of: settings.nativeSession.dataScope) { _, _ in
+            operations.clear(); cases = []; staff = []; pending = nil; pendingCreate = nil
+        }
+        .onChange(of: servicePhase) { _, value in if value != .active { operations.clear() } }
+        .onDisappear { operations.clear() }
         .sheet(item: $pending) { item in
             NavigationStack {
                 Form {
@@ -117,6 +133,12 @@ struct NativeServiceCaseView: View {
         let data = try await send(["action": "list"])
         let result = try JSONDecoder().decode(ServiceReply<ServiceWorkspace>.self, from: data).data
         cases = result.cases; staff = result.staff; hasMore = result.cases.count == 50
+        if let actor = settings.nativeSession.dataScope {
+            operations.restore(actor: actor) { try settings.nativeSession.serviceOperationRecovery(actor: actor) }
+            await operations.load(actor: actor, current: { settings.nativeSession.dataScope }) {
+                try await settings.nativeSession.serviceOperationRequest(body: $0, actor: actor)
+            }
+        } else { operations.clear() }
         if let pendingCreate, cases.contains(where: { $0.id.lowercased() == pendingCreate.id.lowercased() }) {
             self.pendingCreate = nil; problem = ""
         }

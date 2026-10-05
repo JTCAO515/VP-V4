@@ -1,0 +1,25 @@
+{"command":"node --experimental-strip-types --test tests/contract/service-cases/*.test.mjs","source":"b46d3253","result":"PASS","passed":50,"skipped":0}
+{"command":"node tests/integration/service-cases/run-operations-http.mjs --port-base 64800","source":"a08b7789","result":"FAIL","reason":"own Proposal proof misread canonical nested stale field; owner select_proposal HTTP409","cleanup":"PASS"}
+{"command":"node tests/integration/service-cases/run-operations-http.mjs --port-base 64800","source":"6e539461","result":"PASS","passed":1,"skipped":0,"cleanup":"PASS"}
+{"command":"pnpm build","source":"b46d3253","result":"PASS"}
+{"command":"pnpm test","source":"b46d3253","result":"PASS","passed":22,"skipped":0}
+{"command":"pnpm test:unit","source":"b46d3253","result":"PASS","passed":239,"skipped":0}
+{"command":"pnpm test:contract","source":"b46d3253","result":"PASS","passed":1059,"skipped":0}
+{"command":"pnpm test:security","source":"b46d3253","result":"INCOMPLETE","passed":315,"skipped":1,"reason":"existing explicit disposable Supabase RLS target not configured"}
+{"command":"pnpm test:integration","source":"b46d3253","result":"INCOMPLETE","passed":45,"skipped":462,"reason":"generic suites require explicit environments; new mandatory PG and HTTP tests separately enabled and observed"}
+{"command":"node --test tests/unit/governance/db-integration-ci.test.mjs","source":"2ed9e9d","result":"PASS","passed":9,"skipped":0}
+{"command":"pnpm typecheck","source":"2ed9e9d","result":"PASS"}
+{"command":"plutil -lint ios/VisePanda/VisePanda.xcodeproj/project.pbxproj","source":"2ed9e9d","result":"PASS"}
+{"command":"xcodebuild build-for-testing -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' -derivedDataPath /tmp/vpj32-integrator-dd CODE_SIGNING_ALLOWED=NO","source":"2ed9e9d","result":"PASS","observation":"TEST BUILD SUCCEEDED; app/unit/UI test targets compiled; not test execution"}
+{"command":"node tests/integration/service-cases/run-operations-http.mjs --port-base 64800","source":"2ed9e9d","result":"PASS","passed":1,"skipped":0,"project":"vp-native-ask-558c84f2","cleanup":"PASS"}
+{"command":"pnpm lint","source":"b46d3253","result":"PASS","files":637}
+{"command":"pnpm docs:check","source":"b3ad871d","result":"PASS"}
+{"command":"git diff --check","source":"2ed9e9d","result":"PASS"}
+{"command":"GitHub Quality PR run 37285746621 / Run pnpm test:contract","source":"0e3e946d","result":"FAIL","reason":"existing positive traffic fixture recalculated expiry from a later clock, exceeding unchanged strict 300000ms lifetime"}
+{"command":"controlled 10ms mock producer delay using original traffic fixture","source":"0e3e946d","result":"REPRODUCED","excessLifetimeMs":12,"observation":"simulated delay, not the CI runner exact clock"}
+{"command":"node --experimental-strip-types --test tests/contract/maps/foreground-traffic-authority.test.mjs","source":"a017b8f7 working tree plus approved fixture timestamp anchor","result":"PASS","passed":5,"skipped":0}
+{"command":"controlled 10ms mock producer delay with frozen fetchedAt+300000 expiry","source":"a017b8f7 working tree plus approved fixture timestamp anchor","result":"PASS","lifetimeMs":300000,"runtimeChecks":"unchanged"}
+{"command":"pnpm test:contract","source":"a017b8f7 working tree plus approved fixture timestamp anchor","result":"PASS","passed":1067,"skipped":0}
+{"command":"GitHub PostgreSQL isolated lane job 111687949772","source":"8675b90c","result":"FAIL","tests":449,"passed":448,"failed":1,"skipped":0,"reason":"existing deletion race fixture retains chat-winner Trip and exceeds unchanged three-draft limit on next iteration"}
+{"command":"VP_PRIVACY_DB_TEST=1 node --experimental-strip-types --test tests/integration/privacy/trip-deletion.test.mjs","source":"8675b90c working tree plus approved canonical post-race deletion cleanup","result":"PASS","passed":1,"skipped":0,"durationMs":6296,"cleanup":"PASS","runtimeSQLCapacityRolesTimeoutSkipRegistry":"unchanged"}
+{"command":"VP_PRIVACY_DB_TEST=1 node --experimental-strip-types --test tests/integration/privacy/trip-deletion.test.mjs","source":"74b672d7 working tree plus authorized owner unlink and controlled chat-lock race","result":"PASS","passed":1,"skipped":0,"durationMs":8061,"chatWinnerCleanup":"observed and asserted","cleanup":"PASS","runtimeSQLCapacityRolesTimeoutSkipRegistry":"unchanged"}

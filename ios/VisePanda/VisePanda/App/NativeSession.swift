@@ -167,6 +167,42 @@ final class NativeSession {
         try await dataRequest(prefix: "api/service-cases/native/v1", path: "api/service-cases/native/v1", method: "POST", body: body)
     }
 
+    func serviceOperationRequest(body: Data, actor: NativeDataScope) async throws -> Data {
+        guard dataScope == actor else { throw NativeDataError.staleSessionResponse }
+        let result = try await dataRequest(prefix: "api/service-cases/native/operations/v1", path: "api/service-cases/native/operations/v1", method: "POST", body: body)
+        guard dataScope == actor else { throw NativeDataError.staleSessionResponse }; return result
+    }
+    /// A correlation identity only. HTTP must still verify signed credentials and the live session.
+    func serviceCaseExportSessionId(actor: NativeDataScope) throws -> String {
+        guard dataScope == actor, let credential, credential.subject == actor.subject,
+              credential.mobileEpoch == actor.mobileEpoch, credential.accessToken.utf8.count <= 65_536 else { throw NativeDataError.sessionUnavailable }
+        let parts = credential.accessToken.split(separator: ".", omittingEmptySubsequences: false)
+        guard parts.count == 3 else { throw NativeDataError.sessionUnavailable }
+        var payload = String(parts[1]).replacingOccurrences(of: "-", with: "+").replacingOccurrences(of: "_", with: "/")
+        payload += String(repeating: "=", count: (4 - payload.count % 4) % 4)
+        guard let bytes = Data(base64Encoded: payload), let claims = try JSONSerialization.jsonObject(with: bytes) as? [String: Any],
+              claims["sub"] as? String == actor.subject, let id = claims["session_id"] as? String,
+              UUID(uuidString: id) != nil else { throw NativeDataError.sessionUnavailable }
+        return id.lowercased()
+    }
+    func serviceCaseDataRequest(body: Data, actor: NativeDataScope) async throws -> Data {
+        guard dataScope == actor else { throw NativeDataError.staleSessionResponse }
+        let result = try await dataRequest(prefix: "api/service-cases/native/data/v1", path: "api/service-cases/native/data/v1", method: "POST", body: body)
+        guard dataScope == actor else { throw NativeDataError.staleSessionResponse }; return result
+    }
+    func serviceOperationRecovery(actor: NativeDataScope) throws -> NativeServiceOperationPending? {
+        guard dataScope == actor else { throw NativeDataError.staleSessionResponse }
+        return try NativeServiceOperationJournal(vault: vault).read(actor)
+    }
+    func rememberServiceOperation(_ command: NativeServiceOperationCommand, actor: NativeDataScope) throws -> NativeServiceOperationPending {
+        guard dataScope == actor else { throw NativeDataError.staleSessionResponse }
+        return try NativeServiceOperationJournal(vault: vault).retain(command, scope: actor)
+    }
+    func completeServiceOperation(_ value: NativeServiceOperationPending, actor: NativeDataScope) throws {
+        guard dataScope == actor else { throw NativeDataError.staleSessionResponse }
+        try NativeServiceOperationJournal(vault: vault).complete(value, scope: actor)
+    }
+
     func storeKitRequest(method: String, body: Data? = nil) async throws -> Data {
         try await dataRequest(prefix: "api/storekit/native/v1", path: "api/storekit/native/v1", method: method, body: body)
     }
@@ -1254,6 +1290,8 @@ final class NativeSession {
                 catch { failureCode="scopedEditCleanupRequired";status="storageError";return false }
                 do { try NativePlaceActionJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
                 catch { failureCode="placeActionCleanupRequired";status="storageError";return false }
+                do { try NativeServiceOperationJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
+                catch { failureCode="serviceOperationCleanupRequired";status="storageError";return false }
                 do {
                     try NativeNotificationJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault)
                     try NativeNotificationJournal.eraseBinding(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault)
