@@ -1,0 +1,13 @@
+{
+  "commit": "7856aabd492b45785c87e015a4ef52100b06f712",
+  "deviceUDID": "6193DFF8-247D-48CD-9C63-426812AB5EDD",
+  "simulatorOwned": true,
+  "simulatorDeleted": true,
+  "selectedTests": [
+    "VisePandaTests/NativeCoverageProgressTests/actualSessionRequiresOriginalJournalAndUnknownAckDoesNotRetryBeforeLogoutCleanup()"
+  ],
+  "syntheticTransport": true,
+  "actualSignedAuth": false,
+  "productBuildEvidence": "native-coverage-progress-r1",
+  "testBuildEvidence": "../native-coverage-progress-r2-test-build.xcresult"
+}
