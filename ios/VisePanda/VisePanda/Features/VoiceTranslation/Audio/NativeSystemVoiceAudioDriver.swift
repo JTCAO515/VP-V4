@@ -87,17 +87,7 @@ import UIKit
         guard let value = recorder else { throw NativeVoiceAudioFailure.invalidAudio }
         recorder = nil; value.delegate = nil; value.stop()
         try AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-        let attributes = try FileManager.default.attributesOfItem(atPath: value.url.path)
-        guard let size = attributes[.size] as? NSNumber, size.intValue > 44,
-              size.intValue <= Int(NativeVoiceAudioLimits.maximumRecordingSeconds * 16_000 * 2) + 4_096 else {
-            throw NativeVoiceAudioFailure.invalidAudio
-        }
-        let file = try AVAudioFile(forReading: value.url)
-        let format = file.fileFormat
-        let measured = NativeVoiceAudioMeasurement(seconds: Double(file.length) / format.sampleRate,
-            frames: file.length, sampleRate: format.sampleRate, channels: format.channelCount)
-        guard format.commonFormat == .pcmFormatInt16, measured.valid else { throw NativeVoiceAudioFailure.invalidAudio }
-        return measured
+        return try NativeVoicePCM.measure(url: value.url)
     }
 
     func recognize(url: URL, localeIdentifier: String, completion: @escaping @MainActor @Sendable (String?) -> Void) throws {
@@ -148,7 +138,9 @@ import UIKit
 
     private func installedVoice(_ locale: String) -> AVSpeechSynthesisVoice? {
         // speechVoices enumerates installed voices; never use an implicit default or prompt a download.
-        AVSpeechSynthesisVoice.speechVoices().first { $0.language == locale }
+        AVSpeechSynthesisVoice.speechVoices().first {
+            $0.language == locale && $0.identifier.hasPrefix("com.apple.") && !$0.voiceTraits.contains(.isPersonalVoice)
+        }
     }
 }
 
