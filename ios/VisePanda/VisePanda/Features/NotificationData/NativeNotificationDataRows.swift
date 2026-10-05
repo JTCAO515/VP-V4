@@ -143,7 +143,7 @@ enum NativeNotificationDataRows {
     }
 
     static func fenceRows(_ raw: Any?) throws -> [[String: Any]] {
-        let rules: [String: Rule] = ["kind": .one(["reminder", "watch", "dismissal", "operation", "outbox", "attempt", "device", "exit_request"]),
+        let rules: [String: Rule] = ["kind": .one(["reminder", "watch", "dismissal", "operation", "outbox", "outbox_parent", "watch_semantic", "attempt", "device", "exit_request"]),
             "objectId": .id, "tripId": .nullable(.id), "requestId": .id, "requestDigest": .nullable(.hash), "erasedAt": .positive]
         let values = try w.rows(raw, max: 10_000) { try fields($0, rules: rules) }
         var previous = ""

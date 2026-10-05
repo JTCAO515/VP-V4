@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "notification-data/1",
+  "scope": "notification-trip-data/1",
+  "requestId": "00000000-0000-4000-8000-000000000003",
+  "objectIds": [
+    "00000000-0000-4000-8000-000000000004"
+  ],
+  "ownerId": "00000000-0000-4000-8000-000000000001",
+  "sessionId": "00000000-0000-4000-8000-000000000002",
+  "mobileEpoch": 1,
+  "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "previewDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "capturedAt": 1801800000000,
+  "expiresAt": 1801800030000,
+  "boundaries": {
+    "exportFields": [
+      "reminders_all_fields",
+      "watches_all_fields",
+      "dismissals_all_fields",
+      "outbox_all_fields",
+      "attempts_all_fields",
+      "operations_all_fields",
+      "travel_reminders_all_fields",
+      "retained_object_operation_dispatch_fences"
+    ],
+    "eraseFields": [
+      "selected_trip_notification_rows",
+      "selected_trip_user_reminder_rows"
+    ],
+    "retained": [
+      "nonreplayable_object_operation_dispatch_fences",
+      "minimal_exit_receipts",
+      "original_trip_and_business_results",
+      "device_bindings"
+    ],
+    "missing": [
+      "provider_accepted_copies_not_recallable",
+      "provider_ack_unknown",
+      "device_delivered_notifications",
+      "device_local_journals",
+      "external_export_files",
+      "backup_restore_target_acceptance"
+    ]
+  },
+  "allUserDataCompleted": false,
+  "kind": "preview",
+  "requiresExplicitConfirmation": true,
+  "items": [
+    {
+      "objectId": "00000000-0000-4000-8000-000000000004",
+      "reminders": [],
+      "watches": [],
+      "dismissals": [],
+      "outbox": [],
+      "attempts": [],
+      "operations": [],
+      "travelReminders": [],
+      "fences": [
+        {
+          "kind": "outbox_parent",
+          "objectId": "00000000-0000-4000-8000-000000000005",
+          "tripId": "00000000-0000-4000-8000-000000000004",
+          "requestId": "00000000-0000-4000-8000-000000000050",
+          "requestDigest": null,
+          "erasedAt": 1801799999900
+        },
+        {
+          "kind": "watch_semantic",
+          "objectId": "00000000-0000-4000-8000-000000000006",
+          "tripId": "00000000-0000-4000-8000-000000000004",
+          "requestId": "00000000-0000-4000-8000-000000000050",
+          "requestDigest": null,
+          "erasedAt": 1801799999900
+        }
+      ]
+    }
+  ]
+}
