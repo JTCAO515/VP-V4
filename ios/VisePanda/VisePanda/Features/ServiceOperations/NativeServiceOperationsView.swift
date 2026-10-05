@@ -155,7 +155,7 @@ struct NativeServiceOperationsView: View {
             Text(t("已记录人工分钟：\(value.manualMinutes)；实际总分钟未知，不代表费用或购买承诺。", "Recorded human minutes: \(value.manualMinutes). Actual total time is unknown; this is not a charge or purchase commitment."))
                 .accessibilityIdentifier("service.operations.minutes")
             Text(t("Brief 和来源资格未知。", "Brief and source eligibility are unknown.")).font(.footnote)
-            Text(t("授权状态：", "Sharing status: ") + value.grantState)
+            Text(t("授权状态：", "Sharing status: ") + grantLabel(value.grantState))
             if let expiry = value.expiresAt { Text(Date(timeIntervalSince1970: expiry / 1000), style: .relative) }
             if !value.status.isTerminal {
                 Button(t("取消此服务请求", "Cancel this service request"), role: .destructive) { submit(action: "cancel", actor: actor) }
@@ -218,7 +218,7 @@ struct NativeServiceOperationsView: View {
                 .disabled(store.busy || actionTask != nil || store.pending != nil).accessibilityIdentifier("service.data.export")
             if let file = exportFile, file.current(actor: actor), let bundle = exportBundle {
                 Text(t("文件已准备：真实 \(bundle.rowCount) 条服务记录。", "File prepared: \(bundle.rowCount) actual service records."))
-                ForEach(NativeServiceDataBundle.domains, id: \.self) { domain in Text(domain + ": " + String(bundle.counts[domain] ?? 0)).font(.caption) }
+                ForEach(NativeServiceDataBundle.domains, id: \.self) { domain in Text(domainLabel(domain) + ": " + String(bundle.counts[domain] ?? 0)).font(.caption) }
                 Text(t("该文件仅含服务问题、授权审计、运营状态、已记录分钟、运营审计和操作记录；Brief 与附件不可用。", "The file covers cases, grant audit, service state, recorded minutes, service audit and operations. Briefs and attachments are unavailable."))
                 Button(t("主动共享此 JSON 文件", "Share this JSON file")) { if file.current(actor: self.actor), phase == .active { share = file } }
                 Text(t("已取得的副本无法召回；本应用的临时文件会在到期、离开或退出时清理。", "Downloaded copies cannot be recalled. This app removes its temporary file on expiry, leaving or sign-out.")).font(.footnote)
@@ -258,6 +258,23 @@ struct NativeServiceOperationsView: View {
         exportCleanup?.cancel(); exportCleanup = nil
         if let file = exportFile { do { try NativeServiceExportFile.erase(file); exportFile = nil; exportBundle = nil } catch { dataError = true } }
         share = nil
+    }
+    private func domainLabel(_ domain: String) -> String {
+        switch domain {
+        case "case": t("服务问题", "Service issues")
+        case "grant_audit": t("授权记录", "Sharing history")
+        case "service": t("服务状态", "Service state")
+        case "minutes": t("已记录人工时段", "Recorded human work")
+        case "service_audit": t("服务进度记录", "Service history")
+        default: t("操作记录", "Operation records")
+        }
+    }
+    private func grantLabel(_ state: String) -> String {
+        switch state {
+        case "active": t("有效", "Active")
+        case "expired": t("已过期", "Expired")
+        default: t("已撤回", "Revoked")
+        }
     }
     private func load(actor: NativeDataScope, captured: Key) async {
         do { try NativeServiceExportFile.sweepOrphans() } catch { dataError = true }
