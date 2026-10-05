@@ -19,12 +19,13 @@ before(async()=>{
 });
 after(async()=>{if(created)assert.equal((await command('docker',['rm','-f',container])).code,0);});
 const run=(name,fn)=>test(name,{skip:!enabled,timeout:120000},fn);
-async function fixture(){
+async function fixture(options={}){
  const actors=Array.from({length:5},()=>({id:uuid(),session:uuid()})),[author,reviewer,mapper,owner,rightsReviewer]=actors;
  for(const a of actors)await db(`insert into auth.users(id) values('${a.id}');insert into auth.sessions(id,user_id) values('${a.session}','${a.id}');insert into identity_private.mobile_accounts(owner_id) values('${a.id}');insert into knowledge_review_private.members(actor_id,active) values('${a.id}',true);`);
  await db('update knowledge_review_private.settings set enabled=true;update knowledge_review_private.publication_settings set enabled=true;');
  const rpc=async(a,name,p)=>JSON.parse(await db(`begin;set request.jwt.claim.role='authenticated';set request.jwt.claim.sub='${a.id}';set request.jwt.claims='${JSON.stringify({session_id:a.session,is_anonymous:false})}';set role authenticated;${name==='create_trip_proposal_patch'?"select coalesce(jsonb_agg(to_jsonb(r)),'[]') from public.":'select public.'}${name}(`+Object.entries(p).map(([k,v])=>k+'=>'+lit(v)).join(',')+(name==='create_trip_proposal_patch'?') r;commit;':');commit;')));
- const candidate=uuid(),statement={schemaVersion:'knowledge-statement/2',assertion:{subjectId:'test_gallery',predicate:'opens_during',objectId:'opening_hours',conditions:[],exclusions:[]},scope:{cities:['shanghai'],scene:'attraction',audience:'international_independent_traveler'},place:{names:{en:'Test Gallery',zh:'测试展馆'}},value:{startsAt:'2026-10-03T01:00:00Z',endsAt:'2026-10-03T08:00:00Z',timeZone:'Asia/Shanghai'},expressions:{en:{text:'Synthetic opening window',conditions:[],exclusions:[]},zh:{text:'合成开放时窗',conditions:[],exclusions:[]}},sources:[{sourceKey:'support-'+uuid(),revisionLabel:'one',publisher:'Fixture source',uri:'urn:vpj15:synthetic:support',locator:'Fixture only',snippet:'NO REAL SUPPLIER',usageDeclaration:'private synthetic fixture'}]};
+ const candidate=uuid(),statement={schemaVersion:'knowledge-statement/2',assertion:{subjectId:'test_gallery',predicate:'opens_during',objectId:'opening_hours',conditions:[],exclusions:[]},scope:{cities:['shanghai'],scene:'attraction',audience:'international_independent_traveler'},place:{names:{en:'Test Gallery',zh:'测试展馆'}},value:{startsAt:new Date(Date.now()+8*3600000).toISOString().slice(0,10)+'T01:00:00Z',endsAt:new Date(Date.now()+8*3600000).toISOString().slice(0,10)+'T08:00:00Z',timeZone:'Asia/Shanghai'},expressions:{en:{text:'Synthetic opening window',conditions:[],exclusions:[]},zh:{text:'合成开放时窗',conditions:[],exclusions:[]}},sources:[{sourceKey:'support-'+uuid(),revisionLabel:'one',publisher:'Fixture source',uri:'urn:vpj15:synthetic:support',locator:'Fixture only',snippet:'NO REAL SUPPLIER',usageDeclaration:'private synthetic fixture'}]};
+ Object.assign(statement,options);
  await rpc(author,'ops_review_workspace',{p_input:{action:'submit_statement',operationId:uuid(),candidateId:candidate,title:'Synthetic typed source',statement}});
  await rpc(reviewer,'ops_review_workspace',{p_input:{action:'review',operationId:uuid(),candidateId:candidate,expectedVersion:1,decision:'reviewed',note:'Independent fixture review'}});
  await rpc(reviewer,'ops_review_workspace',{p_input:{action:'publish_statement',operationId:uuid(),candidateId:candidate,expectedVersion:2,useBasis:'original_factual_summary',useNote:'synthetic only no deployment',expiresAt:new Date(Date.now()+86400000).toISOString()}});
@@ -37,11 +38,11 @@ async function fixture(){
  return {rpc,rightsReviewer,owner,reviewer,author,mapper,trip,sourceRefs,poi,placeRef,candidate,statement,mapping:mapped};
 }
 const input=(f,action='read',more={})=>({action,expectedTripVersion:0,placeReferenceId:f.placeRef,locale:'en',interest:'general',...more});
-const guide=(f,c)=>f.rpc(f.owner,'guide_place_v1',{p_trip:f.trip,p_input:c});
-async function use(f,flags={display:true,tts:true,cache:true,prompt:true}){
+const guide=async(f,c)=>{const result=await f.rpc(f.owner,'guide_place_v1',{p_trip:f.trip,p_input:c});if(process.env.VP_GUIDE_TS_WIRE_ROOT){const {decodeGuideOutcome}=await import(process.env.VP_GUIDE_TS_WIRE_ROOT+'/lib/server/guide/projection.ts');assert.ok(decodeGuideOutcome(result,f.trip,c,Date.now()),'actual paired TS decoder accepts owner SQL outcome');}return result;};
+async function use(f,flags={display:true,tts:true,cache:true,prompt:true},ttl=3600000){
  const proof=JSON.parse(await db(`select guide_private.proof_v1(guide_private.mapping_v1('${f.mapping.mappingId}'));`));
  assert.ok(proof);
- const p={operationId:uuid(),mappingId:f.mapping.mappingId,expectedProof:proof,...flags,useBasis:'Explicit synthetic per-use permission, fixture only',locator:'Synthetic decision',expiresAt:new Date(Date.now()+3600000).toISOString()};
+ const p={operationId:uuid(),mappingId:f.mapping.mappingId,expectedProof:proof,...flags,useBasis:'Explicit synthetic per-use permission, fixture only',locator:'Synthetic decision',expiresAt:new Date(Date.now()+ttl).toISOString()};
  const r=await f.rpc(f.mapper,'submit_guide_use_v1',{p_input:p});assert.equal(r.kind,'use_candidate',JSON.stringify(r));
  assert.equal((await f.rpc(f.mapper,'review_guide_use_v1',{p_id:r.id,p_revision:r.revision,p_digest:r.digest,p_decision:'approve'})).kind,'blocked');
  const approved=await f.rpc(f.rightsReviewer,'review_guide_use_v1',{p_id:r.id,p_revision:r.revision,p_digest:r.digest,p_decision:'approve'});assert.equal(approved.kind,'use_reviewed');return {...r,revision:approved.revision};
@@ -59,7 +60,7 @@ run('current exact canonical published fact, independent per-use rights, whole q
  if(process.env.VP_GUIDE_TS_WIRE_ROOT){const {decodeGuideOutcome}=await import(process.env.VP_GUIDE_TS_WIRE_ROOT+'/lib/server/guide/projection.ts');assert.ok(decodeGuideOutcome(ready,f.trip,input(f),Date.now()),'actual TS decoder accepts SQL projection');}
  const c=input(f,'progress',{operationId:uuid(),expectedDigest:ready.digest,completedSegmentIds:[ready.segments[0].id]});const saved=await guide(f,c);assert.deepEqual(saved.completedSegmentIds,c.completedSegmentIds);
  assert.equal((await guide(f,input(f,'replay',{expectedDigest:ready.digest}))).digest,ready.digest);
- const exp=await guide(f,input(f,'export'));assert.equal(exp.records.length,1);assert.equal(Object.hasOwn(exp.records[0],'text'),false);
+ const exp=await guide(f,input(f,'export'));assert.equal(exp.records.length,1);assert.equal(exp.scope,'guide_selection_metadata');assert.equal(exp.coverage,'complete_for_selection');assert.deepEqual(exp.bindings,[]);assert.equal(Object.hasOwn(exp.records[0],'text'),false);
  assert.equal((await guide(f,input(f,'read',{locale:'zh'}))).reason,'unsupported_language');
  assert.equal((await guide(f,input(f,'replay',{expectedDigest:'f'.repeat(64)}))).reason,'source_changed');
  await db(`update public.trips set head_version=1 where id='${f.trip}';`);assert.equal((await guide(f,input(f))).reason,'source_changed');
@@ -85,22 +86,24 @@ const worker=async(name,p={})=>JSON.parse(await db("set request.jwt.claim.role='
 async function follow(f){
  const policy=uuid(),thread=uuid(),notice='a'.repeat(64);await db(`insert into turn_private.text_policies(id,provider,recipient,endpoint,source_region,processing_region,storage_region,terms_version,notice_version,notice_hash,notice_zh,notice_en,retention,effective_at,expires_at,terms_recheck_at,context_mode) values('${policy}','qwen','synthetic-test-only','https://synthetic.invalid/inference','fixture-source','fixture-processing','fixture-storage','test-terms','test-notice','${notice}','测试告知','Test notice','retain_after_hide_v1',now()-interval '1 hour',now()+interval '1 day',now()+interval '1 day','knowledge_intent_v1');`);
  await f.rpc(f.owner,'accept_text_policy',{p_policy_id:policy,p_notice_hash:notice});const v=await guide(f,input(f));
- const c=input(f,'follow_up',{operationId:uuid(),expectedDigest:v.digest,question:'What are the Test Gallery opening hours?',threadId:thread,turnId:uuid(),policyId:policy,serviceTask:{id:uuid(),scopeVersion:1,relationship:'new_goal',parentTurnId:null}});
+ const c=input(f,'follow_up',{operationId:uuid(),expectedDigest:v.digest,question:'What are the Test Gallery opening hours?',threadId:thread,turnId:uuid(),policyId:policy,completedSegmentIds:[v.segments[0].id],serviceTask:{id:uuid(),scopeVersion:1,relationship:'new_goal',parentTurnId:null}});
  const out=await guide(f,c);assert.equal(out.kind,'submitted',JSON.stringify(out));assert.equal(await db(`select count(*) from public.chat_threads where id='${thread}' and owner_id='${f.owner.id}' and trip_id is null;`),'1','original submit uniquely creates fresh thread');assert.equal((await guide(f,c)).reused,true);
  const lease=await worker('claim_grounded_work',{p_owner_id:f.owner.id,p_policy_id:policy});assert.equal(lease.turnId,c.turnId);return {c,policy,v,lease,keys:{p_turn_id:lease.turnId,p_lease_token:lease.leaseToken}};
 }
 run('Guide marked original submission, current input/dispatch/completion/history and no standalone bypass',async()=>{
  const f=await fixture();await use(f);const b=await follow(f);
- const v=await worker('read_grounded_work',b.keys);assert.equal(v.kind,'intent_input');assert.ok(v.text.includes('[VP Guide context'));assert.ok(v.text.includes('Synthetic opening window'));assert.equal(v.history,undefined);
+ const v=await worker('read_grounded_work',b.keys);assert.equal(v.kind,'intent_input');assert.ok(v.text.includes('[VP Guide context'));assert.ok(v.text.includes('Synthetic opening window'));assert.equal(v.history,undefined);assert.ok(v.text.includes(b.c.completedSegmentIds[0]),'explicit played segment position is in prompt context');
  assert.equal(await db(`select trip_id is null from public.chat_threads where id='${b.c.threadId}';`),'t');assert.equal(await db(`select count(*) from turn_private.work where turn_id='${b.c.turnId}';`),'1');
  assert.equal((await worker('authorize_grounded_dispatch',{...b.keys,p_policy_id:b.policy,p_provider:'qwen',p_context_digest:v.contextDigest})).kind,'authorized');
  assert.equal((await worker('complete_grounded_work',{...b.keys,p_intent:'payment_card_acceptance',p_request_scope:'single'})).kind,'blocked','unmapped generic claims blocked');
  assert.equal((await worker('complete_grounded_place_work',{...b.keys,p_intent:'place_opening_hours',p_request_scope:'single',p_unanswered_needs:'[]',p_place_name:'Other Gallery'})).kind,'blocked');
  assert.equal((await worker('complete_grounded_place_work',{...b.keys,p_intent:'place_opening_hours',p_request_scope:'single',p_unanswered_needs:'[]',p_place_name:'Test Gallery'})).kind,'finished');
- const read=await f.rpc(f.owner,'read_grounded_turn',{p_turn_id:b.c.turnId});assert.equal(read.kind,'grounded_turn');assert.ok(read.result.knowledge.statements.every(s=>s.assertionId===b.v.segments[0].assertionId));
+ assert.equal(await db(`select completed_ids from guide_private.bindings_v1 where turn_id='${b.c.turnId}';`),'[]','terminal completion clears transient position');
+ const read=await f.rpc(f.owner,'read_grounded_turn',{p_turn_id:b.c.turnId});assert.equal(read.kind,'grounded_turn');assert.equal(read.result.knowledge.statements.length,1,'actual exact mapped statement is returned through original result');assert.ok(read.result.knowledge.statements.every(s=>s.assertionId===b.v.segments[0].assertionId));
  await f.rpc(f.author,'ops_source_revision_withdraw_v1',{p_input:{operationId:uuid(),sourceRevisionId:f.sourceRefs[0].sourceRevisionId,reason:'Synthetic revoked after completion'}});
  assert.notEqual((await f.rpc(f.owner,'read_grounded_turn',{p_turn_id:b.c.turnId})).kind,'grounded_turn');
  assert.equal(await db(`select invalidated from guide_private.bindings_v1 where turn_id='${b.c.turnId}';`),'t');
+ const exported=await guide(f,input(f,'export',{expectedTripVersion:42}));assert.equal(exported.bindings.length,1);assert.equal(exported.bindings[0].invalidated,true);assert.equal(exported.bindings[0].turnId,b.c.turnId);assert.equal(exported.records.length,0);assert.equal(Object.hasOwn(exported.bindings[0],'question'),false);assert.equal(Object.hasOwn(exported.bindings[0],'text'),false);
 });
 run('revocation between input and dispatch, after dispatch before completion and Trip/session deletion stay marked',async()=>{
  for(const mode of ['before_dispatch','before_completion','trip','session']){
@@ -140,4 +143,29 @@ run('actual ordinary role rejects foreign objects and pre-existing foreign/bound
   await db(`insert into public.chat_threads(id,owner_id,trip_id,status) values('${c.threadId}','${mode==='foreign'?foreign.id:f.owner.id}',${mode==='bound'?"'"+f.trip+"'":'null'},'${mode==='inactive'?'archived':'active'}');`);
   await assert.rejects(guide(f,c),/FORBIDDEN/);assert.equal(await db(`select count(*) from guide_private.bindings_v1 where turn_id='${c.turnId}';`),'0','failed submit atomically rolls back Guide sidecar');
  }
+});
+
+run('whole qualifiers and exact UTF16/120sec limits never truncate or infer translation',async()=>{
+ const assertion={subjectId:'test_gallery',predicate:'opens_during',objectId:'opening_hours',conditions:['date_specific'],exclusions:['no_live_hours']};
+ const expressions={en:{text:'Synthetic dated window.',conditions:['Only the published date applies.'],exclusions:['This does not confirm that the venue is open now.']},zh:{text:'合成日期时窗。',conditions:['仅适用于已发布日期。'],exclusions:['不确认场所当前营业。']}};
+ const f=await fixture({assertion,expressions});await use(f);const v=await guide(f,input(f));assert.deepEqual(v.segments[0].conditions,expressions.en.conditions);assert.deepEqual(v.segments[0].exclusions,expressions.en.exclusions);
+ const long=await fixture({expressions:{en:{text:'a '.repeat(499).trim(),conditions:[],exclusions:[]},zh:{text:'合成时窗',conditions:[],exclusions:[]}}});await use(long);assert.equal((await guide(long,input(long))).reason,'capacity','more than120sec complete text rejected');
+});
+
+run('expired original rights lease rejects work but owner forget/export retain safe metadata coverage',async()=>{
+ const f=await fixture();await use(f,undefined,2000);const b=await follow(f);await new Promise(r=>setTimeout(r,2100));
+ assert.equal((await worker('read_grounded_work',b.keys)).kind,'blocked');
+ const exp=await guide(f,input(f,'export',{expectedTripVersion:9007199254740991}));assert.equal(exp.kind,'export');assert.equal(exp.bindings.length,1);assert.ok(Date.parse(exp.bindings[0].expiresAt)<Date.now());assert.equal(exp.coverage,'complete_for_selection');assert.equal(exp.records.length,0);
+ assert.equal((await guide(f,input(f,'forget',{operationId:uuid(),expectedTripVersion:9007199254740991}))).kind,'forgotten');
+});
+
+run('cache false permits explicit prompt-only position on first new goal; original sameop change fails and terminal clears',async()=>{
+ const f=await fixture();await use(f,{display:true,tts:false,cache:false,prompt:true});const b=await follow(f);
+ assert.equal(await db(`select count(*) from guide_private.progress_v1 where owner_id='${f.owner.id}';`),'0');
+ assert.deepEqual(JSON.parse(await db(`select completed_ids from guide_private.bindings_v1 where turn_id='${b.c.turnId}';`)),b.c.completedSegmentIds);
+ await assert.rejects(guide(f,{...b.c,completedSegmentIds:[]}),/IDEMPOTENCY_KEY_REUSE/);
+ const payload=await worker('read_grounded_work',b.keys);assert.equal(payload.kind,'intent_input');
+ assert.equal((await worker('complete_grounded_work',{...b.keys,p_intent:'technical_failure',p_request_scope:'unknown'})).kind,'finished');
+ assert.equal(await db(`select completed_ids from guide_private.bindings_v1 where turn_id='${b.c.turnId}';`),'[]');
+ assert.deepEqual((await guide(f,input(f))).completedSegmentIds,[],'prompt permission never restores replay progress');
 });

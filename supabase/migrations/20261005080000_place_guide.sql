@@ -38,6 +38,7 @@ create table guide_private.bindings_v1(
  reference_id uuid not null,trip_version integer not null,
  locale text not null,interest text not null,digest text not null,operation_id uuid not null,command_digest text not null,
  thread_id uuid not null,task_id uuid not null,parent_turn_id uuid,completed_ids jsonb not null,
+ canonical_poi_id uuid not null,rights_revision bigint not null,expires_at timestamptz not null,position_expires_at timestamptz not null,
  invalidated boolean not null default false,unique(owner_id,operation_id)
 );
 create index guide_bindings_trip on guide_private.bindings_v1(trip_id);
@@ -167,13 +168,14 @@ declare k text[]:=array['action','expectedTripVersion','placeReferenceId','local
  if a='replay' then return knowledge_review_private.closed_object(v,k);end if;
  if not place_actions_private.uuid_v1(v->'operationId') then return false;end if;k:=k||array['operationId'];
  if a='progress' then return knowledge_review_private.closed_object(v,k||array['completedSegmentIds']) and jsonb_typeof(v->'completedSegmentIds')='array' and jsonb_array_length(v->'completedSegmentIds')<=4 and (select count(distinct x) from jsonb_array_elements(v->'completedSegmentIds')x)=jsonb_array_length(v->'completedSegmentIds') and not exists(select 1 from jsonb_array_elements(v->'completedSegmentIds')x where not place_actions_private.uuid_v1(x));end if;
- return knowledge_review_private.closed_object(v,k||array['question','threadId','turnId','policyId','serviceTask']) and knowledge_review_private.bounded_text(v->'question',600) and guide_private.utf16(v->>'question')<=600
+ return knowledge_review_private.closed_object(v,k||array['question','threadId','turnId','policyId','serviceTask','completedSegmentIds']) and knowledge_review_private.bounded_text(v->'question',600) and guide_private.utf16(v->>'question')<=600
+ and jsonb_typeof(v->'completedSegmentIds')='array' and jsonb_array_length(v->'completedSegmentIds')<=4 and (select count(distinct x) from jsonb_array_elements(v->'completedSegmentIds')x)=jsonb_array_length(v->'completedSegmentIds') and not exists(select 1 from jsonb_array_elements(v->'completedSegmentIds')x where not place_actions_private.uuid_v1(x))
  and place_actions_private.uuid_v1(v->'threadId') and place_actions_private.uuid_v1(v->'turnId') and place_actions_private.uuid_v1(v->'policyId')
  and knowledge_review_private.closed_object(s,array['id','scopeVersion','relationship','parentTurnId']) and place_actions_private.uuid_v1(s->'id') and s->'id'<>v->'turnId' and s->'scopeVersion'='1'::jsonb and s->>'relationship' in('new_goal','clarification','repair') and (s->'parentTurnId'='null'::jsonb or place_actions_private.uuid_v1(s->'parentTurnId')) and ((s->>'relationship'='new_goal')=(s->'parentTurnId'='null'::jsonb));
 end$$;
 
 create function public.guide_place_v1(p_trip uuid,p_input jsonb) returns jsonb language plpgsql security definer set search_path='' as $$
-declare u uuid:=place_actions_private.actor_v1();ref uuid;t public.trips%rowtype;pr public.trip_place_references%rowtype;a text:=p_input->>'action';v jsonb;ids jsonb;records jsonb;b guide_private.bindings_v1%rowtype;submitted jsonb;city text;h text;
+declare u uuid:=place_actions_private.actor_v1();ref uuid;t public.trips%rowtype;pr public.trip_place_references%rowtype;a text:=p_input->>'action';v jsonb;ids jsonb;records jsonb;bindings jsonb;b guide_private.bindings_v1%rowtype;submitted jsonb;city text;h text;
 begin
  if p_trip is null or guide_private.valid_command_v1(p_input) is distinct from true then raise exception 'INVALID_INPUT';end if;ref:=(p_input->>'placeReferenceId')::uuid;
  select * into t from public.trips where id=p_trip and owner_id=u for share nowait;if not found then raise exception 'FORBIDDEN';end if;
@@ -183,12 +185,16 @@ begin
   delete from guide_private.progress_v1 where owner_id=u and reference_id=ref and locale=p_input->>'locale' and interest=p_input->>'interest';
   update guide_private.bindings_v1 set invalidated=true,completed_ids='[]' where owner_id=u and reference_id=ref and locale=p_input->>'locale' and interest=p_input->>'interest';
   return jsonb_build_object('kind','forgotten','operationId',p_input->'operationId');end if;
- if (p_input->>'expectedTripVersion')::numeric>2147483647 then return guide_private.unavailable('source_changed');end if;
- v:=guide_private.projection_v1(u,p_trip,ref,(p_input->>'expectedTripVersion')::numeric::integer,p_input->>'locale',p_input->>'interest');
+ if a<>'export' and (p_input->>'expectedTripVersion')::numeric>2147483647 then return guide_private.unavailable('source_changed');end if;
+ v:=guide_private.projection_v1(u,p_trip,ref,case when a='export' then t.head_version else (p_input->>'expectedTripVersion')::numeric::integer end,p_input->>'locale',p_input->>'interest');
  delete from guide_private.progress_v1 where owner_id=u and reference_id=ref and locale=p_input->>'locale' and interest=p_input->>'interest' and (v->>'kind'<>'ready' or digest is distinct from v->>'digest' or expires_at<=clock_timestamp() or v->'rights'->>'cache'<>'true');
  if a='export' then
+  update guide_private.bindings_v1 set invalidated=true,completed_ids='[]' where owner_id=u and reference_id=ref and expires_at<=clock_timestamp();
+  update guide_private.bindings_v1 set completed_ids='[]' where owner_id=u and reference_id=ref and position_expires_at<=clock_timestamp();
+  select coalesce(jsonb_agg(jsonb_build_object('turnId',x.turn_id,'serviceTaskId',x.task_id,'operationId',x.operation_id,'canonicalPoiId',x.canonical_poi_id,'locale',x.locale,'interest',x.interest,'digest',x.digest,'rightsRevision',x.rights_revision,'expiresAt',guide_private.instant(x.expires_at),'tripVersion',x.trip_version,'invalidated',x.invalidated) order by x.turn_id),'[]') into bindings from(select * from guide_private.bindings_v1 where owner_id=u and reference_id=ref and trip_id=p_trip and locale=p_input->>'locale' and interest=p_input->>'interest' order by turn_id limit 101)x;
+  if jsonb_array_length(bindings)>100 then return guide_private.unavailable('capacity');end if;
   select coalesce(jsonb_agg(jsonb_build_object('digest',p.digest,'canonicalPoiId',p.canonical_poi_id,'locale',p.locale,'interest',p.interest,'rightsRevision',p.rights_revision,'completedSegmentIds',p.completed_ids,'expiresAt',guide_private.instant(p.expires_at),'updatedAt',guide_private.instant(p.updated_at))),'[]') into records from guide_private.progress_v1 p where p.owner_id=u and p.reference_id=ref and p.locale=p_input->>'locale' and p.interest=p_input->>'interest' and p.session_id=(auth.jwt()->>'session_id')::uuid;
-  return jsonb_build_object('kind','export','version',1,'tripId',p_trip,'placeReferenceId',ref,'records',records);end if;
+  return jsonb_build_object('kind','export','version',1,'tripId',p_trip,'placeReferenceId',ref,'records',records,'scope','guide_selection_metadata','coverage','complete_for_selection','bindings',bindings);end if;
  if v->>'kind'<>'ready' then return v;end if;
  if a in('replay','progress','follow_up') and v->>'digest' is distinct from p_input->>'expectedDigest' then return guide_private.unavailable('source_changed');end if;
  if a='progress' then
@@ -200,30 +206,34 @@ begin
   return jsonb_set(v,'{completedSegmentIds}',ids);end if;
  if a<>'follow_up' then return v;end if;
  if v->'rights'->>'prompt'<>'true' then return guide_private.unavailable('rights_unavailable');end if;
+ if exists(select 1 from jsonb_array_elements(p_input->'completedSegmentIds')x where not exists(select 1 from jsonb_array_elements(v->'segments')seg where seg->'id'=x)) then raise exception 'INVALID_INPUT';end if;
  perform 1 from public.chat_threads where id=(p_input->>'threadId')::uuid for update nowait;
  if found then if not exists(select 1 from public.chat_threads where id=(p_input->>'threadId')::uuid and owner_id=u and trip_id is null and status='active') then raise exception 'FORBIDDEN';end if;
  elsif p_input->'serviceTask'->>'relationship'<>'new_goal' then raise exception 'SERVICE_TASK_CONFLICT';end if;
  h:=guide_private.hash(p_input);select * into b from guide_private.bindings_v1 where owner_id=u and operation_id=(p_input->>'operationId')::uuid for update nowait;
  if found then if b.command_digest<>h or b.turn_id<>(p_input->>'turnId')::uuid or b.invalidated or b.digest<>v->>'digest' then raise exception 'IDEMPOTENCY_KEY_REUSE';end if;else
  if p_input->'serviceTask'->>'relationship'<>'new_goal' and not exists(select 1 from guide_private.bindings_v1 parent join turn_private.service_task_turns st on st.turn_id=parent.turn_id where parent.turn_id=(p_input->'serviceTask'->>'parentTurnId')::uuid and parent.owner_id=u and parent.trip_id=p_trip and parent.thread_id=(p_input->>'threadId')::uuid and parent.task_id=(p_input->'serviceTask'->>'id')::uuid and parent.reference_id=ref and parent.locale=p_input->>'locale' and parent.interest=p_input->>'interest' and parent.digest=v->>'digest' and parent.session_id=(auth.jwt()->>'session_id')::uuid and not parent.invalidated) then raise exception 'SERVICE_TASK_CONFLICT';end if;
- insert into guide_private.bindings_v1(turn_id,owner_id,session_id,trip_id,reference_id,trip_version,locale,interest,digest,operation_id,command_digest,thread_id,task_id,parent_turn_id,completed_ids)
- values((p_input->>'turnId')::uuid,u,(auth.jwt()->>'session_id')::uuid,p_trip,ref,t.head_version,p_input->>'locale',p_input->>'interest',v->>'digest',(p_input->>'operationId')::uuid,h,(p_input->>'threadId')::uuid,(p_input->'serviceTask'->>'id')::uuid,(p_input->'serviceTask'->>'parentTurnId')::uuid,v->'completedSegmentIds');end if;
+ insert into guide_private.bindings_v1(turn_id,owner_id,session_id,trip_id,reference_id,trip_version,locale,interest,digest,operation_id,command_digest,thread_id,task_id,parent_turn_id,completed_ids,canonical_poi_id,rights_revision,expires_at,position_expires_at)
+ values((p_input->>'turnId')::uuid,u,(auth.jwt()->>'session_id')::uuid,p_trip,ref,t.head_version,p_input->>'locale',p_input->>'interest',v->>'digest',(p_input->>'operationId')::uuid,h,(p_input->>'threadId')::uuid,(p_input->'serviceTask'->>'id')::uuid,(p_input->'serviceTask'->>'parentTurnId')::uuid,p_input->'completedSegmentIds',(v->>'canonicalPoiId')::uuid,(v->'rights'->>'revision')::bigint,(v->>'expiresAt')::timestamptz,least((v->>'expiresAt')::timestamptz,clock_timestamp()+interval '120 seconds'));end if;
  select m.basis_metadata->>'city' into city from trip_support_private.entity_mappings m where m.canonical_poi_id=pr.canonical_poi_id and m.statement_id=(v->'segments'->0->>'assertionId')::uuid and m.status='approved' and m.basis_metadata->>'locale'=p_input->>'locale' order by m.id limit 1;
  submitted:=public.submit_grounded_turn((p_input->>'threadId')::uuid,(p_input->>'turnId')::uuid,(p_input->>'operationId')::uuid,(p_input->>'policyId')::uuid,p_input->>'locale',p_input->>'question',(p_input->'serviceTask'->>'id')::uuid,1,p_input->'serviceTask'->>'relationship',(p_input->'serviceTask'->>'parentTurnId')::uuid,city);
+ update guide_private.bindings_v1 bind set position_expires_at=least(bind.position_expires_at,(select expires_at from turn_private.work where turn_id=bind.turn_id)) where bind.turn_id=(p_input->>'turnId')::uuid;
  if submitted->>'kind'<>'accepted' or guide_private.bound_v1((p_input->>'turnId')::uuid,null) is null then raise exception 'DATA_POLICY_BLOCKED';end if;
  return jsonb_build_object('kind','submitted','version',1,'operationId',p_input->'operationId','tripId',p_trip,'turnId',p_input->'turnId','serviceTaskId',p_input->'serviceTask'->'id','scopeVersion',1,'relationship',p_input->'serviceTask'->'relationship','parentTurnId',p_input->'serviceTask'->'parentTurnId','guideDigest',v->>'digest','reused',submitted->'reused','generationCost',null);
 end$$;
 
 create function guide_private.bound_v1(tid uuid,token uuid default null) returns jsonb language plpgsql security definer set search_path='' as $$
 declare b guide_private.bindings_v1%rowtype;v jsonb;begin
- select * into b from guide_private.bindings_v1 where turn_id=tid;if not found or b.invalidated then return null;end if;
+ select * into b from guide_private.bindings_v1 where turn_id=tid;if not found then return null;end if;
+ if b.invalidated or b.expires_at<=clock_timestamp() then update guide_private.bindings_v1 set invalidated=true,completed_ids='[]' where turn_id=tid;return null;end if;
  if token is null and (auth.uid() is distinct from b.owner_id or auth.jwt()->>'session_id' is distinct from b.session_id::text) then return null;end if;
- if token is not null and not turn_private.lock_text_work(tid,token) then return null;end if;
+ if b.position_expires_at<=clock_timestamp() then update guide_private.bindings_v1 set completed_ids='[]' where turn_id=tid;if token is not null then return null;end if;end if;
+ if token is not null and not turn_private.lock_text_work(tid,token) then update guide_private.bindings_v1 set completed_ids='[]' where turn_id=tid;return null;end if;
  perform 1 from auth.sessions where id=b.session_id and user_id=b.owner_id for share nowait;if not found then return null;end if;
  if not exists(select 1 from public.chat_threads where id=b.thread_id and owner_id=b.owner_id and trip_id is null and status='active')
  or not exists(select 1 from turn_private.service_task_turns st join turn_private.service_tasks task on task.id=st.task_id and task.owner_id=b.owner_id and task.thread_id=b.thread_id where st.turn_id=tid and st.owner_id=b.owner_id and st.task_id=b.task_id and st.parent_turn_id is not distinct from b.parent_turn_id) then return null;end if;
  v:=guide_private.projection_v1(b.owner_id,b.trip_id,b.reference_id,b.trip_version,b.locale,b.interest);
- if v->>'kind'<>'ready' or v->>'digest'<>b.digest or v->'rights'->>'prompt'<>'true' then return null;end if;
+ if v->>'kind'<>'ready' or v->>'digest'<>b.digest or v->'rights'->>'prompt'<>'true' then update guide_private.bindings_v1 set invalidated=true,completed_ids='[]' where turn_id=tid;return null;end if;
  return v;
 end$$;
 create function guide_private.input_v1(tid uuid,token uuid,payload jsonb) returns jsonb language plpgsql security definer set search_path='' as $$
@@ -301,12 +311,19 @@ declare oldj jsonb:=case when tg_op='INSERT' then to_jsonb(new) else to_jsonb(ol
  elsif tg_table_name='publication_settings' then select array_agg(distinct canonical_poi_id) into po from trip_support_private.entity_mappings;
  end if;
  delete from guide_private.progress_v1 p where p.canonical_poi_id=any(po) or p.reference_id=any(refs) or p.trip_id=any(trips) or p.session_id=any(sessions) or p.owner_id=u;
- update guide_private.bindings_v1 b set invalidated=true,completed_ids='[]' where not b.invalidated and (b.reference_id=any(refs) or b.trip_id=any(trips) or b.session_id=any(sessions) or b.owner_id=u or exists(select 1 from public.trip_place_references r where r.id=b.reference_id and r.canonical_poi_id=any(po)));
+ update guide_private.bindings_v1 b set invalidated=true,completed_ids='[]' where not b.invalidated and (b.reference_id=any(refs) or b.trip_id=any(trips) or b.session_id=any(sessions) or b.owner_id=u or b.canonical_poi_id=any(po));
  return null;
 end$$;
 do $$declare t text;begin
  foreach t in array array['guide_private.uses_v1','trip_support_private.entity_mappings','knowledge_review_private.publications','knowledge_review_private.statements','knowledge_review_private.candidates','knowledge_review_private.statement_sources','knowledge_review_private.source_revisions','knowledge_review_private.members','knowledge_review_private.publication_settings','public.canonical_pois','public.trip_place_references','public.trips','auth.sessions','identity_private.mobile_accounts'] loop execute format('create trigger guide_source_invalidated after insert or update or delete on %s for each row execute function guide_private.invalidate_v1()',t);end loop;
 end$$;
+create function guide_private.clear_position_v1() returns trigger language plpgsql security definer set search_path='' as $$
+begin
+ if tg_table_name='turns' and to_jsonb(new)->>'status' in('completed','proposal_ready','unavailable','failed','cancelled') or tg_table_name='work' and to_jsonb(new)->>'state' in('done','failed','cancelled','quarantined') then
+ update guide_private.bindings_v1 set completed_ids='[]' where turn_id=(to_jsonb(new)->>case when tg_table_name='turns' then 'id' else 'turn_id' end)::uuid;end if;return null;
+end$$;
+create trigger guide_terminal_position_clear after update of status on public.turns for each row execute function guide_private.clear_position_v1();
+create trigger guide_work_position_clear after update of state on turn_private.work for each row execute function guide_private.clear_position_v1();
 -- Owner export above is one explicitly scoped current Guide selection. It is
 -- not enrolled in existing all-account packages and never upgrades their coverage.
 revoke all on all functions in schema guide_private from public,anon,authenticated,service_role;
