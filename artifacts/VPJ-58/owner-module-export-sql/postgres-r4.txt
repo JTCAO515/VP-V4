@@ -1,0 +1,26 @@
+▶ VPJ-58 isolated full replay, owner metadata pagination, proof and adversarial bounds
+  ✔ full-chain transactional rollback and unchanged old functions/tables/ACL (481.941917ms)
+  ✔ API ACL/RLS default deny before separate fixture grant (582.294833ms)
+  ✔ authority before UUID/source/cleanup; strict direct SQL NULL and exact DTOs (752.235167ms)
+  ✔ sensitive reauth uses server session creation; cannot refresh iat or future date (190.827625ms)
+  ✔ fixed 30s start exact retry; partial proof is never delivery; safe projection (353.443791ms)
+  ✔ empty sources require null-to-terminal traversal of all sections (276.679417ms)
+  ✔ lifecycle metadata and operations only, both-section digest and counts (279.161708ms)
+  ✔ global key cross-owner/unknown deny equal; same owner cross-scope conflicts (328.658042ms)
+  ✔ skipped/foreign/wrong-source/changed-limit/reordered cursors reject without counts (583.143292ms)
+  ✔ changed source/removed anchor rejects start/page/proof without storing payload (511.403666ms)
+  ✔ fixed expiry cannot renew before or after cleanup, unauthorized cleanup has no effect (526.382542ms)
+  ✔ mobile epoch/current session required; session and owner FK erase progress/fences (689.833917ms)
+  ✔ sentinel notification/lifecycle row overflow never hashes or admits (402.84925ms)
+  ✔ aggregate 1MB cap, page budget, transactional effect rollback (4410.3275ms)
+  ✔ applied rollback removes only the owned schema/RPC and restores default deny on replay (212.16075ms)
+  ✔ source-free inventory and all original code/ACL unchanged after own fixtures (116.012708ms)
+✔ VPJ-58 isolated full replay, owner metadata pagination, proof and adversarial bounds (20664.488458ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 20727.895916

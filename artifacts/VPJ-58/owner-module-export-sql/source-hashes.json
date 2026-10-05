@@ -1,0 +1,5 @@
+{
+  "supabase/migrations/20261006010000_owner_module_export.sql": "ae1d79b5bbe804e8039809cf58bf199bc8ac2bb6af2cf97f5931fe4326d7a8fd",
+  "tests/integration/privacy/owner-module-export-postgres.test.mjs": "3fa455137aa1dadfa3b9996835c8e66de8585ed01047448456965709963b15a7",
+  "tests/contract/privacy/owner-module-export-sql.test.mjs": "cac8dc38785c5f93e9c010c986a97f0cbc3c24cd0e980e7f98df65dff97b2ff9"
+}

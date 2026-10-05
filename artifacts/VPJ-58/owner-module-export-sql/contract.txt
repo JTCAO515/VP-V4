@@ -1,0 +1,11 @@
+✔ owner SQL preserves the existing closed notification projection, without credentials or core export (0.7575ms)
+✔ direct SQL contract derives authority before request lookup/effects, exact DTO and fixed clock (0.103625ms)
+✔ new state default-deny, metadata-only FK lifecycle, bounded source before digest and exact retry (0.108042ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 37.363917
