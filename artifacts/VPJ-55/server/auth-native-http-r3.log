@@ -1,0 +1,30 @@
+VPJ55_PDF_LOCAL_TARGET {"project":"vp-native-ask-6e7d8e83","base":65000}
+** TEST BUILD SUCCEEDED **
+Test Case '-[VisePandaTests.NativePDFIntegrationTests testPDFKitCorrectPreviewOriginalConfirmReloadAndReceipt]' started.
+Test Case '-[VisePandaTests.NativePDFIntegrationTests testPDFKitCorrectPreviewOriginalConfirmReloadAndReceipt]' passed (1.781 seconds).
+	 Executed 1 test, with 0 failures (0 unexpected) in 1.781 (1.782) seconds
+	 Executed 1 test, with 0 failures (0 unexpected) in 1.781 (1.782) seconds
+	 Executed 1 test, with 0 failures (0 unexpected) in 1.781 (1.782) seconds
+** TEST EXECUTE SUCCEEDED **
+VPJ55_NATIVE_PDF_ACTUAL PASS 1/0fail/0skip; Files picker/device/target acceptance UNRUN
+✖ bounded PDF corrected metadata through real Auth/HTTP/durable RPC/original explicit confirm and same Trip recovery (31212.060084ms)
+ℹ Subsequent requests use a disposable-only explicit fixture GRANT; real target activation/device/source rights remain UNRUN
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 34214.169583
+
+✖ failing tests:
+
+test at tests/integration/intake/pdf-intake-http.test.mjs:33:1
+✖ bounded PDF corrected metadata through real Auth/HTTP/durable RPC/original explicit confirm and same Trip recovery (31212.060084ms)
+  TypeError: Cannot read properties of undefined (reading 'some')
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/tests/integration/intake/pdf-intake-http.test.mjs:126:35)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+VPJ55_PDF_LOCAL_CLEANUP PASS vp-native-ask-6e7d8e83

@@ -1,0 +1,39 @@
+VPJ55_PDF_LOCAL_TARGET {"project":"vp-native-ask-ec595c1f","base":65000}
+Test Case '-[VisePandaTests.NativePDFIntegrationTests testPDFKitCorrectPreviewOriginalConfirmReloadAndReceipt]' started.
+Test Case '-[VisePandaTests.NativePDFIntegrationTests testPDFKitCorrectPreviewOriginalConfirmReloadAndReceipt]' skipped (0.006 seconds).
+	 Executed 1 test, with 1 test skipped and 0 failures (0 unexpected) in 0.006 (0.007) seconds
+	 Executed 1 test, with 1 test skipped and 0 failures (0 unexpected) in 0.006 (0.007) seconds
+	 Executed 1 test, with 1 test skipped and 0 failures (0 unexpected) in 0.006 (0.007) seconds
+** TEST SUCCEEDED **
+VPJ55_NATIVE_PDF_ACTUAL FAIL; full sanitized log retained
+✖ bounded PDF corrected metadata through real Auth/HTTP/durable RPC/original explicit confirm and same Trip recovery (33083.852125ms)
+ℹ Subsequent requests use a disposable-only explicit fixture GRANT; real target activation/device/source rights remain UNRUN
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 36056.322292
+
+✖ failing tests:
+
+test at tests/integration/intake/pdf-intake-http.test.mjs:13:1
+✖ bounded PDF corrected metadata through real Auth/HTTP/durable RPC/original explicit confirm and same Trip recovery (33083.852125ms)
+  AssertionError [ERR_ASSERTION]: actual Native PDF→original confirm→same Trip proof
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/tests/integration/intake/pdf-intake-http.test.mjs:83:14)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+VPJ55_PDF_LOCAL_CLEANUP PASS vp-native-ask-ec595c1f
