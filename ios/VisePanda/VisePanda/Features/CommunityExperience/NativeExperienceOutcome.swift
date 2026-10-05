@@ -14,8 +14,10 @@ enum NativeExperienceOutcome {
     case export(Data)
 
     static func decode(_ bytes: Data, actor: NativeCommunitySafetyActor) throws -> Self {
-        guard bytes.count <= 1_000_000, let v = try JSONSerialization.jsonObject(with: bytes) as? [String: Any] else { throw NativeDataError.invalidResponse }
+        guard bytes.count <= 1_000_000 else { throw NativeDataError.invalidResponse }
         let w = NativeCommunityWire.self, e = NativeExperienceWire.self
+        let outer = try w.object(JSONSerialization.jsonObject(with: bytes), ["data"])
+        guard let v = outer["data"] as? [String: Any] else { throw NativeDataError.invalidResponse }
         guard v["schemaVersion"] as? String == e.schema, try w.id(v["actorId"]) == actor.scope.subject.lowercased(),
               try w.id(v["sessionId"]) == actor.sessionID.lowercased() else { throw NativeDataError.staleSessionResponse }
         let base: Set<String> = ["schemaVersion", "kind", "actorId", "sessionId"]
