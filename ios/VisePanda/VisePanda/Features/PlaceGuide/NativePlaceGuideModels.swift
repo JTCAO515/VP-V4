@@ -124,3 +124,42 @@ extension NativePlaceGuideSelection {
         return try NativePlaceActionWire.bytes(value)
     }
 }
+
+/// Safe historical metadata is independent of a current content-use grant.
+enum NativePlaceGuideMetadataExport {
+    static func decode(_ bytes: Data, expected: NativePlaceGuideSelection, now: Date = Date()) throws -> String {
+        let value = try NativePlaceActionWire.exact(NativePlaceGuideStore.outcome(bytes), ["kind", "version", "scope", "coverage", "tripId", "placeReferenceId", "records", "bindings"])
+        guard value["kind"] as? String == "export", NativePlaceActionWire.integer(value["version"]) == 1,
+              value["scope"] as? String == "guide_selection_metadata", value["coverage"] as? String == "complete_for_selection",
+              value["tripId"] as? String == expected.tripID, value["placeReferenceId"] as? String == expected.placeReferenceID,
+              let records = value["records"] as? [[String: Any]], records.count <= 100,
+              let bindings = value["bindings"] as? [[String: Any]], bindings.count <= 100 else { throw NativeDataError.invalidResponse }
+        for row in records {
+            _ = try NativePlaceActionWire.exact(row, ["digest", "canonicalPoiId", "locale", "interest", "rightsRevision", "completedSegmentIds", "expiresAt", "updatedAt"])
+            guard NativePlaceActionWire.digest(row["digest"]) != nil, NativePlaceActionWire.id(row["canonicalPoiId"]) != nil,
+                  row["locale"] as? String == expected.locale, row["interest"] as? String == expected.interest.rawValue,
+                  NativePlaceActionWire.integer(row["rightsRevision"]).map({ $0 > 0 }) == true,
+                  let completed = row["completedSegmentIds"] as? [String], completed.count <= 4, Set(completed).count == completed.count,
+                  completed.allSatisfy({ NativePlaceActionWire.id($0) != nil }),
+                  date(row["expiresAt"]) != nil, let updated = date(row["updatedAt"]), updated <= now.addingTimeInterval(5)
+            else { throw NativeDataError.invalidResponse }
+        }
+        for row in bindings {
+            _ = try NativePlaceActionWire.exact(row, ["turnId", "serviceTaskId", "operationId", "canonicalPoiId", "locale", "interest", "digest", "rightsRevision", "expiresAt", "tripVersion", "invalidated"])
+            guard ["turnId", "serviceTaskId", "operationId", "canonicalPoiId"].allSatisfy({ NativePlaceActionWire.id(row[$0]) != nil }),
+                  NativePlaceActionWire.integer(row["tripVersion"]) != nil, row["locale"] as? String == expected.locale,
+                  row["interest"] as? String == expected.interest.rawValue, NativePlaceActionWire.digest(row["digest"]) != nil,
+                  NativePlaceActionWire.integer(row["rightsRevision"]).map({ $0 > 0 }) == true,
+                  date(row["expiresAt"]) != nil, NativePlaceActionWire.boolean(row["invalidated"]) != nil else { throw NativeDataError.invalidResponse }
+        }
+        guard Set(records.compactMap({ $0["digest"] as? String })).count == records.count,
+              Set(bindings.compactMap({ $0["turnId"] as? String })).count == bindings.count else { throw NativeDataError.invalidResponse }
+        let data = try JSONSerialization.data(withJSONObject: value, options: [.sortedKeys, .prettyPrinted])
+        guard let text = String(data: data, encoding: .utf8) else { throw NativeDataError.invalidResponse }
+        return text
+    }
+    private static func date(_ raw: Any?) -> Date? {
+        guard let value = raw as? String, value.utf8.count <= 40 else { return nil }
+        return NativeKnowledgeRead.date(value)
+    }
+}

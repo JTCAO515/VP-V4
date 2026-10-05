@@ -76,4 +76,28 @@ import Testing
         try body.write(to: fixtureURL, options: .atomic)
         print("VPJ28_OWNED_NATIVE_COMMAND_PATH " + fixtureURL.path)
     }
+    @Test func canonicalMetadataExportConsumesFinalSQLShapeAndRejectsLegacyOrPrivateFields() throws {
+        // The exact safe metadata fields emitted by final guide_place_v1; past expiry is historical metadata.
+        let binding: [String: Any] = ["turnId": "00000000-0000-4000-8000-000000000013", "serviceTaskId": "00000000-0000-4000-8000-000000000014",
+            "operationId": "00000000-0000-4000-8000-000000000011", "canonicalPoiId": selection.canonicalPoiID,
+            "locale": "en", "interest": "address", "digest": String(repeating: "a", count: 64), "rightsRevision": 1,
+            "expiresAt": "2000-01-01T00:00:00Z", "tripVersion": 0, "invalidated": true]
+        let value: [String: Any] = ["kind": "export", "version": 1, "scope": "guide_selection_metadata", "coverage": "complete_for_selection",
+            "tripId": selection.tripID, "placeReferenceId": selection.placeReferenceID, "records": [], "bindings": [binding]]
+        let text = try NativePlaceGuideMetadataExport.decode(NativePlaceActionWire.bytes(["data": value]), expected: selection)
+        let result = try NativePlaceActionWire.object(Data(text.utf8))
+        #expect(Set(result.keys) == Set(value.keys))
+        #expect((result["bindings"] as? [[String: Any]])?.count == 1)
+        for variant in ["legacyAlias", "privateBody", "invalidRevision", "boolHead", "overflow"] {
+            var changed = value, row = binding
+            switch variant {
+            case "legacyAlias": changed["bindings"] = nil; changed["followUpBindings"] = [binding]; changed["excludedModules"] = ["grounded_history", "use_review_audit"]
+            case "privateBody": row["question"] = "Private input must not be shared"; changed["bindings"] = [row]
+            case "invalidRevision": row["rightsRevision"] = 0; changed["bindings"] = [row]
+            case "boolHead": row["tripVersion"] = true; changed["bindings"] = [row]
+            default: changed["bindings"] = Array(repeating: binding, count: 101)
+            }
+            #expect(throws: (any Error).self) { try NativePlaceGuideMetadataExport.decode(NativePlaceActionWire.bytes(["data": changed]), expected: selection) }
+        }
+    }
 }
