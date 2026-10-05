@@ -1,0 +1,494 @@
+{
+  "fixtureSchema": "community-safety-j2-fixture/1",
+  "endpoint": "http://127.0.0.1:64131",
+  "samples": {
+    "objects": {
+      "kind": "objects",
+      "actorId": "3701bb7b-5597-45a5-a584-f488305fabc9",
+      "objects": [
+        {
+          "id": "77cac2a7-b78e-4409-9c1d-9144409a8662",
+          "title": "Synthetic controlled content",
+          "source": "user_experience",
+          "content": "Synthetic current user experience only",
+          "canBlock": true,
+          "canReport": true,
+          "copyright": "unknown",
+          "expiresAt": "2026-10-05T15:21:07.318536+00:00",
+          "visibility": "internal",
+          "contentKind": "experience",
+          "safetyVersion": 0,
+          "publiclyVisible": false,
+          "authorDisclosure": "unknown",
+          "benefitDisclosure": "Self-reported fixture relationship",
+          "retrievalEligible": false,
+          "submissionVersion": 1,
+          "reviewerDisclosure": null
+        }
+      ],
+      "complete": true,
+      "sessionId": "4c1becd4-73c8-4339-bf95-d6ca409f71cf",
+      "nextCursor": null,
+      "schemaVersion": "community-safety-j2/1"
+    },
+    "object": {
+      "schemaVersion": "community-safety-j2/1",
+      "kind": "object",
+      "actorId": "3701bb7b-5597-45a5-a584-f488305fabc9",
+      "sessionId": "4c1becd4-73c8-4339-bf95-d6ca409f71cf",
+      "object": {
+        "id": "77cac2a7-b78e-4409-9c1d-9144409a8662",
+        "title": "Synthetic controlled content",
+        "source": "user_experience",
+        "content": "Synthetic current user experience only",
+        "canBlock": true,
+        "canReport": true,
+        "copyright": "unknown",
+        "expiresAt": "2026-10-05T15:21:07.331743+00:00",
+        "visibility": "internal",
+        "contentKind": "experience",
+        "safetyVersion": 0,
+        "publiclyVisible": false,
+        "authorDisclosure": "unknown",
+        "benefitDisclosure": "Self-reported fixture relationship",
+        "retrievalEligible": false,
+        "submissionVersion": 1,
+        "reviewerDisclosure": null
+      }
+    },
+    "reported": {
+      "kind": "operation",
+      "state": "committed",
+      "record": {
+        "id": "c1716ebc-8b73-4761-9754-363873c0a20a",
+        "kind": "report",
+        "note": null,
+        "state": "pending",
+        "details": "PRIVATE-REPORTER-SYNTHETIC",
+        "version": 1,
+        "category": "rights",
+        "createdAt": "2026-10-05T15:20:37.34425+00:00",
+        "resolvedAt": null,
+        "submissionId": "77cac2a7-b78e-4409-9c1d-9144409a8662",
+        "safetyVersion": 0,
+        "submissionVersion": 1
+      },
+      "actorId": "3701bb7b-5597-45a5-a584-f488305fabc9",
+      "sessionId": "4c1becd4-73c8-4339-bf95-d6ca409f71cf",
+      "operationId": "b8bb48cc-cff2-4015-b26f-13bd6ad41fd1",
+      "schemaVersion": "community-safety-j2/1"
+    },
+    "receipt": {
+      "kind": "record",
+      "record": {
+        "id": "c1716ebc-8b73-4761-9754-363873c0a20a",
+        "kind": "report",
+        "note": "Only this public-to-parties explanation is retained",
+        "state": "removed",
+        "details": "PRIVATE-REPORTER-SYNTHETIC",
+        "version": 2,
+        "category": "rights",
+        "createdAt": "2026-10-05T15:20:37.34425+00:00",
+        "resolvedAt": "2026-10-05T15:20:37.534988+00:00",
+        "submissionId": "77cac2a7-b78e-4409-9c1d-9144409a8662",
+        "safetyVersion": 1,
+        "submissionVersion": 1
+      },
+      "actorId": "3701bb7b-5597-45a5-a584-f488305fabc9",
+      "sessionId": "4c1becd4-73c8-4339-bf95-d6ca409f71cf",
+      "schemaVersion": "community-safety-j2/1"
+    },
+    "authorDisposition": {
+      "kind": "record",
+      "record": {
+        "id": "77cac2a7-b78e-4409-9c1d-9144409a8662",
+        "kind": "disposition",
+        "note": null,
+        "state": "clear",
+        "j1Status": "pending",
+        "appealable": false,
+        "submissionId": "77cac2a7-b78e-4409-9c1d-9144409a8662",
+        "safetyVersion": 0,
+        "submissionVersion": 1
+      },
+      "actorId": "cd2b127c-5c67-4e38-ba3e-825a42e48362",
+      "sessionId": "cd7ac973-708a-45ca-98d2-1ded502a68af",
+      "schemaVersion": "community-safety-j2/1"
+    },
+    "appealed": {
+      "kind": "operation",
+      "state": "committed",
+      "record": {
+        "id": "52f7e331-7fdc-4f3e-a54c-b65abaf13a8a",
+        "kind": "appeal",
+        "note": null,
+        "basis": "safety_removal",
+        "state": "pending",
+        "version": 1,
+        "createdAt": "2026-10-05T15:20:37.612374+00:00",
+        "statement": "AUTHOR-PRIVATE-SYNTHETIC-APPEAL",
+        "resolvedAt": null,
+        "submissionId": "77cac2a7-b78e-4409-9c1d-9144409a8662",
+        "safetyVersion": 1,
+        "submissionVersion": 1
+      },
+      "actorId": "cd2b127c-5c67-4e38-ba3e-825a42e48362",
+      "sessionId": "cd7ac973-708a-45ca-98d2-1ded502a68af",
+      "operationId": "71d40c99-ae29-4222-a87a-ee490f203655",
+      "schemaVersion": "community-safety-j2/1"
+    },
+    "restored": {
+      "kind": "operation",
+      "state": "committed",
+      "record": {
+        "id": "52f7e331-7fdc-4f3e-a54c-b65abaf13a8a",
+        "kind": "appeal",
+        "note": "Independent reviewer restored the retained current source",
+        "basis": "safety_removal",
+        "state": "restored",
+        "version": 2,
+        "createdAt": "2026-10-05T15:20:37.612374+00:00",
+        "statement": "AUTHOR-PRIVATE-SYNTHETIC-APPEAL",
+        "resolvedAt": "2026-10-05T15:20:37.658349+00:00",
+        "submissionId": "77cac2a7-b78e-4409-9c1d-9144409a8662",
+        "safetyVersion": 2,
+        "submissionVersion": 1
+      },
+      "actorId": "b7cc2872-c875-4e75-a204-29d5a49c0808",
+      "sessionId": "9d275c5e-754c-46a9-aac7-f435c974b657",
+      "operationId": "7ac4195a-7787-4162-8121-b63fa762c9d1",
+      "schemaVersion": "community-safety-j2/1"
+    },
+    "blocked": {
+      "kind": "operation",
+      "state": "committed",
+      "record": {
+        "id": "11ec1bd6-224c-42af-9764-591aae0cfb48",
+        "kind": "block",
+        "state": "blocked",
+        "endedAt": null,
+        "version": 1,
+        "createdAt": "2026-10-05T15:20:37.684496+00:00",
+        "submissionId": "77cac2a7-b78e-4409-9c1d-9144409a8662"
+      },
+      "actorId": "3701bb7b-5597-45a5-a584-f488305fabc9",
+      "sessionId": "4c1becd4-73c8-4339-bf95-d6ca409f71cf",
+      "operationId": "ddcc0ed9-afc5-4d4c-aeb6-fee425ca5d5f",
+      "schemaVersion": "community-safety-j2/1"
+    },
+    "unblocked": {
+      "kind": "operation",
+      "state": "committed",
+      "record": {
+        "id": "11ec1bd6-224c-42af-9764-591aae0cfb48",
+        "kind": "block",
+        "state": "unblocked",
+        "endedAt": "2026-10-05T15:20:37.721585+00:00",
+        "version": 2,
+        "createdAt": "2026-10-05T15:20:37.684496+00:00",
+        "submissionId": "77cac2a7-b78e-4409-9c1d-9144409a8662"
+      },
+      "actorId": "3701bb7b-5597-45a5-a584-f488305fabc9",
+      "sessionId": "4c1becd4-73c8-4339-bf95-d6ca409f71cf",
+      "operationId": "da5bfe99-38b5-4304-8817-671c1abfcafc",
+      "schemaVersion": "community-safety-j2/1"
+    },
+    "ownerExport": {
+      "kind": "export",
+      "scope": "community_safety_module",
+      "audits": [
+        {
+          "action": "appeal",
+          "recordId": "52f7e331-7fdc-4f3e-a54c-b65abaf13a8a",
+          "createdAt": "2026-10-05T15:20:37.612829+00:00"
+        }
+      ],
+      "blocks": [],
+      "actorId": "cd2b127c-5c67-4e38-ba3e-825a42e48362",
+      "appeals": [
+        {
+          "id": "52f7e331-7fdc-4f3e-a54c-b65abaf13a8a",
+          "kind": "appeal",
+          "note": "Independent reviewer restored the retained current source",
+          "basis": "safety_removal",
+          "state": "restored",
+          "version": 2,
+          "createdAt": "2026-10-05T15:20:37.612374+00:00",
+          "statement": "AUTHOR-PRIVATE-SYNTHETIC-APPEAL",
+          "resolvedAt": "2026-10-05T15:20:37.658349+00:00",
+          "submissionId": "77cac2a7-b78e-4409-9c1d-9144409a8662",
+          "safetyVersion": 2,
+          "submissionVersion": 2
+        }
+      ],
+      "reports": [],
+      "coverage": "complete_for_community_safety",
+      "receipts": [
+        {
+          "state": "committed",
+          "action": "appeal",
+          "digest": "3d215ce0b38455bbf428bae6caca5bb7ce25bc6a74feaecccfcb36ae1ea0f2e0",
+          "recordId": "52f7e331-7fdc-4f3e-a54c-b65abaf13a8a",
+          "operationId": "71d40c99-ae29-4222-a87a-ee490f203655"
+        }
+      ],
+      "retained": [
+        "operation_fences",
+        "record_tombstones",
+        "audit_metadata"
+      ],
+      "sessionId": "cd7ac973-708a-45ca-98d2-1ded502a68af",
+      "dispositions": [
+        {
+          "id": "77cac2a7-b78e-4409-9c1d-9144409a8662",
+          "kind": "disposition",
+          "note": null,
+          "state": "unavailable",
+          "j1Status": "withdrawn",
+          "appealable": false,
+          "submissionId": "77cac2a7-b78e-4409-9c1d-9144409a8662",
+          "safetyVersion": 2,
+          "submissionVersion": 2
+        }
+      ],
+      "readerGrants": [],
+      "qualification": null,
+      "schemaVersion": "community-safety-j2/1",
+      "authoredDecisions": []
+    },
+    "reporterExport": {
+      "kind": "export",
+      "scope": "community_safety_module",
+      "audits": [
+        {
+          "action": "report",
+          "recordId": "c1716ebc-8b73-4761-9754-363873c0a20a",
+          "createdAt": "2026-10-05T15:20:37.344624+00:00"
+        },
+        {
+          "action": "block",
+          "recordId": "11ec1bd6-224c-42af-9764-591aae0cfb48",
+          "createdAt": "2026-10-05T15:20:37.684736+00:00"
+        },
+        {
+          "action": "unblock",
+          "recordId": "11ec1bd6-224c-42af-9764-591aae0cfb48",
+          "createdAt": "2026-10-05T15:20:37.721696+00:00"
+        }
+      ],
+      "blocks": [
+        {
+          "id": "11ec1bd6-224c-42af-9764-591aae0cfb48",
+          "kind": "block",
+          "state": "unblocked",
+          "endedAt": "2026-10-05T15:20:37.721585+00:00",
+          "version": 2,
+          "createdAt": "2026-10-05T15:20:37.684496+00:00",
+          "submissionId": null
+        }
+      ],
+      "actorId": "3701bb7b-5597-45a5-a584-f488305fabc9",
+      "appeals": [],
+      "reports": [
+        {
+          "id": "c1716ebc-8b73-4761-9754-363873c0a20a",
+          "kind": "report",
+          "note": "Only this public-to-parties explanation is retained",
+          "state": "removed",
+          "details": "PRIVATE-REPORTER-SYNTHETIC",
+          "version": 2,
+          "category": "rights",
+          "createdAt": "2026-10-05T15:20:37.34425+00:00",
+          "resolvedAt": "2026-10-05T15:20:37.534988+00:00",
+          "submissionId": "77cac2a7-b78e-4409-9c1d-9144409a8662",
+          "safetyVersion": 2,
+          "submissionVersion": 2
+        }
+      ],
+      "coverage": "complete_for_community_safety",
+      "receipts": [
+        {
+          "state": "committed",
+          "action": "report",
+          "digest": "46bbbec7573d45eda0ecf4d1a94104603ed12a8c8484dd28e66155c976bd95a3",
+          "recordId": "c1716ebc-8b73-4761-9754-363873c0a20a",
+          "operationId": "b8bb48cc-cff2-4015-b26f-13bd6ad41fd1"
+        },
+        {
+          "state": "committed",
+          "action": "unblock",
+          "digest": "77bb4122cbdea69d2dd054a60dc9d4bca12af110a155ef0f78d65c073bc11529",
+          "recordId": "11ec1bd6-224c-42af-9764-591aae0cfb48",
+          "operationId": "da5bfe99-38b5-4304-8817-671c1abfcafc"
+        },
+        {
+          "state": "committed",
+          "action": "block",
+          "digest": "e1e02aac84faf82e1e2a57e7f4ddd722c1eda35bab4165036851f7eb987bd1b5",
+          "recordId": "11ec1bd6-224c-42af-9764-591aae0cfb48",
+          "operationId": "ddcc0ed9-afc5-4d4c-aeb6-fee425ca5d5f"
+        },
+        {
+          "state": "abandoned",
+          "action": "report",
+          "digest": "17ce50911bab20a82a58d6766b6e1179eb1f7ed743021cc46124b567393e38f4",
+          "recordId": "50a97d43-e2fe-4d98-8dbf-a2014cde4018",
+          "operationId": "e1df3b55-01cb-4640-9e4f-33e243505123"
+        }
+      ],
+      "retained": [
+        "operation_fences",
+        "record_tombstones",
+        "audit_metadata"
+      ],
+      "sessionId": "4c1becd4-73c8-4339-bf95-d6ca409f71cf",
+      "dispositions": [],
+      "readerGrants": [
+        {
+          "revoked": true,
+          "expiresAt": "2026-10-05T15:25:37.843608+00:00",
+          "submissionId": "77cac2a7-b78e-4409-9c1d-9144409a8662",
+          "submissionVersion": 1
+        }
+      ],
+      "qualification": null,
+      "schemaVersion": "community-safety-j2/1",
+      "authoredDecisions": []
+    },
+    "moderatorExport": {
+      "kind": "export",
+      "scope": "community_safety_module",
+      "audits": [
+        {
+          "action": "disposition",
+          "recordId": "c1716ebc-8b73-4761-9754-363873c0a20a",
+          "createdAt": "2026-10-05T15:20:37.535241+00:00"
+        }
+      ],
+      "blocks": [],
+      "actorId": "9fb31895-24ec-42f3-9707-8dbcd91f51f4",
+      "appeals": [],
+      "reports": [],
+      "coverage": "complete_for_community_safety",
+      "receipts": [
+        {
+          "state": "committed",
+          "action": "disposition",
+          "digest": "45c43f71a376b87cb8ea1f3f093d6dbfbee820c3fb9b4a9e8705104607a82d45",
+          "recordId": "c1716ebc-8b73-4761-9754-363873c0a20a",
+          "operationId": "6255a69c-4baa-46f0-9d6e-9d787b9a0d8e"
+        }
+      ],
+      "retained": [
+        "operation_fences",
+        "record_tombstones",
+        "audit_metadata"
+      ],
+      "sessionId": "55fef581-d709-4b57-b53d-0fc57afe815d",
+      "dispositions": [],
+      "readerGrants": [],
+      "qualification": {
+        "active": true
+      },
+      "schemaVersion": "community-safety-j2/1",
+      "authoredDecisions": [
+        {
+          "kind": "report",
+          "note": "Only this public-to-parties explanation is retained",
+          "decision": "remove",
+          "recordId": "c1716ebc-8b73-4761-9754-363873c0a20a",
+          "createdAt": "2026-10-05T15:20:37.5347+00:00"
+        }
+      ]
+    },
+    "erased": {
+      "kind": "export",
+      "scope": "community_safety_module",
+      "audits": [
+        {
+          "action": "delete",
+          "recordId": null,
+          "createdAt": "2026-10-05T15:20:38.016315+00:00"
+        }
+      ],
+      "blocks": [
+        {
+          "id": "11ec1bd6-224c-42af-9764-591aae0cfb48",
+          "kind": "block",
+          "state": "erased",
+          "endedAt": "2026-10-05T15:20:37.721585+00:00",
+          "version": 2,
+          "createdAt": "2026-10-05T15:20:37.684496+00:00",
+          "submissionId": null
+        }
+      ],
+      "actorId": "3701bb7b-5597-45a5-a584-f488305fabc9",
+      "appeals": [],
+      "reports": [
+        {
+          "id": "c1716ebc-8b73-4761-9754-363873c0a20a",
+          "kind": "report",
+          "note": null,
+          "state": "erased",
+          "details": null,
+          "version": 2,
+          "category": "rights",
+          "createdAt": "2026-10-05T15:20:37.34425+00:00",
+          "resolvedAt": "2026-10-05T15:20:37.534988+00:00",
+          "submissionId": "77cac2a7-b78e-4409-9c1d-9144409a8662",
+          "safetyVersion": 2,
+          "submissionVersion": 2
+        }
+      ],
+      "coverage": "complete_for_community_safety",
+      "receipts": [
+        {
+          "state": "committed",
+          "action": "delete",
+          "digest": "1291f66019c4cb2c4bb9229186efd8aa0c2f5172646abd340b399a06e9530de8",
+          "recordId": null,
+          "operationId": "192458b5-5424-4bd6-bac8-d5f5888dcc17"
+        },
+        {
+          "state": "committed",
+          "action": "report",
+          "digest": "46bbbec7573d45eda0ecf4d1a94104603ed12a8c8484dd28e66155c976bd95a3",
+          "recordId": "c1716ebc-8b73-4761-9754-363873c0a20a",
+          "operationId": "b8bb48cc-cff2-4015-b26f-13bd6ad41fd1"
+        },
+        {
+          "state": "committed",
+          "action": "unblock",
+          "digest": "77bb4122cbdea69d2dd054a60dc9d4bca12af110a155ef0f78d65c073bc11529",
+          "recordId": "11ec1bd6-224c-42af-9764-591aae0cfb48",
+          "operationId": "da5bfe99-38b5-4304-8817-671c1abfcafc"
+        },
+        {
+          "state": "committed",
+          "action": "block",
+          "digest": "e1e02aac84faf82e1e2a57e7f4ddd722c1eda35bab4165036851f7eb987bd1b5",
+          "recordId": "11ec1bd6-224c-42af-9764-591aae0cfb48",
+          "operationId": "ddcc0ed9-afc5-4d4c-aeb6-fee425ca5d5f"
+        },
+        {
+          "state": "abandoned",
+          "action": "report",
+          "digest": "17ce50911bab20a82a58d6766b6e1179eb1f7ed743021cc46124b567393e38f4",
+          "recordId": "50a97d43-e2fe-4d98-8dbf-a2014cde4018",
+          "operationId": "e1df3b55-01cb-4640-9e4f-33e243505123"
+        }
+      ],
+      "retained": [
+        "operation_fences",
+        "record_tombstones",
+        "audit_metadata"
+      ],
+      "sessionId": "4c1becd4-73c8-4339-bf95-d6ca409f71cf",
+      "dispositions": [],
+      "readerGrants": [],
+      "qualification": null,
+      "schemaVersion": "community-safety-j2/1",
+      "authoredDecisions": []
+    }
+  }
+}

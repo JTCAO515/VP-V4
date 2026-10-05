@@ -53,6 +53,8 @@ export const LANES = {
           VP_OPS_DB_TEST: "1",
           VP_COMMUNITY_DB_TEST: "1",
           VP_COMMUNITY_TS_WIRE_ROOT: repo,
+          VP_COMMUNITY_SAFETY_DB_TEST: "1",
+          VP_COMMUNITY_SAFETY_TS_WIRE_ROOT: repo,
           VP_PRIVACY_DB_TEST: "1",
           VP_TRANSLATION_HISTORY_DB_TEST: "1",
           VP_ARCHIVE_DB_TEST: "1",
@@ -72,6 +74,7 @@ export const LANES = {
         files: [
           "tests/integration/community/review.test.mjs",
           "tests/integration/community/submission-j1-postgres.test.mjs",
+          "tests/integration/community/safety-j2-postgres.test.mjs",
           "tests/integration/cost/durable-budget.test.mjs",
           "tests/integration/intake/intake.test.mjs",
           "tests/integration/knowledge/grounded-turn.test.mjs",
