@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "a47479e0c59103df9ab28967336c3bfe90d5da86",
+  "authEvidence": "auth-http-r1.log",
+  "authProject": "vp-native-ask-70721d5c",
+  "authPortBase": 63280,
+  "scope": "owned-disposable-fixture",
+  "files": {
+    "lib/server/privacy/coverage-progress/contract.ts": "57f367d1b2ffa9a4c3e8e9f5209aa69e9740b2ecb028f42dff43cf3f50fb9bef",
+    "lib/server/privacy/coverage-progress/protocol.ts": "28dadf427fff5a1f944f77ca8cf1557c9faab8b8df6e1c832cd1eaa7a5e5c82a",
+    "lib/server/privacy/coverage-progress/rows.ts": "0cffb847e76a10e6e86641aefc77c63ddb8b51de2c2b81769964e148b085e8c6",
+    "lib/server/privacy/coverage-progress/export.ts": "22edd2064f1103835467343e6647bff7015aa099d343dc3a4a7bd9840b40bdef",
+    "lib/server/privacy/coverage-progress/http.ts": "cb12af77053420a787f3ce10eac176b8e363dbbc1492579f1aedeb80040c9bf9",
+    "lib/server/privacy/coverage-progress/coverage.ts": "187a52411cd9c99c60968d05b41902d276e183d9e0f3f17e0c78b23d414baa60",
+    "app/api/privacy/native/v1/coverage-progress/route.ts": "77e655c6c8c126efb7392245cd88740455afdae34fe1e9fbb2901c9d48a99a08",
+    "lib/server/privacy/coverage/catalog.ts": "0c80eec956f074803ee7dd3d58c202e27e5776fc4c332af6c256794392086c28",
+    "lib/server/privacy/coverage/contract.ts": "0f8e9686af505f1ab695cf1aa9b00d38a02da9d1ea14858de1d082d681491c2e",
+    "lib/server/privacy/coverage/registry.ts": "3782a11610f1cdefc6ef3d32d340049e28508e8bf954e3f8d53bae4acf8e3e79",
+    "lib/server/privacy/coverage/outcomes.ts": "be651eafbdb5aaf7500be35b4f51edd1645347a2a04a8d7c4192c290960af0c2",
+    "supabase/migrations/20261006040000_coverage_progress_data.sql": "f6ee02a93f88c59b6535b51a282f6cf8d678ec369cd29b265e04aff18e7c1c1e"
+  }
+}
