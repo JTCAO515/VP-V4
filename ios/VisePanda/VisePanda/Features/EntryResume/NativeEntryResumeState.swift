@@ -47,7 +47,10 @@ struct NativeEntryResumeState: Equatable {
               failure == nil else { return nil }
         return intent
     }
-    mutating func unavailable() { intent = nil; failure = .unavailable }
+    mutating func unavailable() {
+        guard failure != .cleanupRequired else { return }
+        intent = nil; failure = .unavailable
+    }
     mutating func clear(cleanupSucceeded: Bool) {
         intent = nil
         failure = cleanupSucceeded ? nil : .cleanupRequired

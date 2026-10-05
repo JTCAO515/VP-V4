@@ -51,8 +51,28 @@ struct NativeEntryResumeView: View {
                         }
                     }
                     if let message = notice ?? coordinator.message { Text(messageText(message)).accessibilityIdentifier("entryResume.status") }
+                    if coordinator.state.failure == .cleanupRequired {
+                        Button(t("重试清理本机副本", "Retry device-copy cleanup"), role: .destructive) {
+                            do { try coordinator.erase(); coordinator.openInbox(scope: session.dataScope); notice = nil }
+                            catch { notice = "cleanupRequired" }
+                        }.accessibilityIdentifier("entryResume.cleanup.retry")
+                    }
                     Text(t("未安装、关联域未配置或链接失效时，请打开 App，从 Files 手动选择原 PDF。安装后不会自动恢复链接参数。", "If the app is missing, associated domains are unconfigured or the link expired, open the app and choose the original PDF from Files. Installation does not automatically restore link parameters."))
                         .font(.footnote)
+                }
+                if let receipt = selectedReceipt, session.dataScope != nil {
+                    Section(t("导出这份本机材料", "Export this local material")) {
+                        Button(t("准备本地导出副本", "Prepare local export copy")) {
+                            do { try coordinator.prepareExport(receipt, scope: session.dataScope); notice = nil }
+                            catch { notice = "unavailable" }
+                        }.disabled(opening).accessibilityIdentifier("entryResume.export.prepare")
+                        if coordinator.state.failure == nil, let copy = coordinator.exports.current(scope: session.dataScope) {
+                            ShareLink(items: copy.files) { Label(t("保存或分享 PDF 与清单", "Save or share PDF and manifest"), systemImage: "square.and.arrow.up") }
+                                .accessibilityIdentifier("entryResume.export.share")
+                        }
+                        Text(t("仅导出这份原 PDF 和最小来源清单，不是全账号数据导出。导出临时副本在关闭、后台或短期到期时删除；已保存到外部的副本无法撤回。", "Exports only this original PDF and a minimal manifest, not all account data. Temporary export copies are deleted on close, background or short expiry; copies saved externally cannot be recalled."))
+                            .font(.footnote)
+                    }
                 }
                 if selectedReceipt != nil, session.dataScope != nil {
                     Section(t("明确选择已有行程", "Choose an existing Trip")) {
@@ -86,6 +106,14 @@ struct NativeEntryResumeView: View {
             .onChange(of: scenePhase) { _, phase in
                 if phase == .active { coordinator.refresh(scope: session.dataScope) }
                 else { coordinator.hide(); selectedReceipt = nil; destination = nil }
+            }
+            .onDisappear { coordinator.eraseExports() }
+            .task(id: coordinator.exports.copy?.id) {
+                guard let copy = coordinator.exports.copy else { return }
+                let delay = copy.expiresAt.timeIntervalSinceNow
+                if delay > 0 { try? await Task.sleep(for: .seconds(delay)) }
+                guard !Task.isCancelled, coordinator.exports.copy?.id == copy.id else { return }
+                coordinator.eraseExports()
             }
             .task(id: selectedReceipt?.id) {
                 guard let receipt = selectedReceipt else { return }

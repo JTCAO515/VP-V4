@@ -8,13 +8,15 @@ final class NativeEntryResumeCoordinator {
     private(set) var receipts: [ShareIntakeInbox.Receipt] = []
     private(set) var message: String?
     var presented = false
+    let exports: NativeEntryResumeExport
     private let inbox: ShareIntakeInbox?
     private let hosts: Set<String>
     private var active: NativeDataScope?
 
     init(inbox: ShareIntakeInbox? = try? ShareIntakeInbox.configured(),
-         associatedHosts: Set<String> = NativeEntryResumeLink.configuredHosts(Bundle.main.object(forInfoDictionaryKey: "VPEntryResumeAssociatedHosts") as? String)) {
-        self.inbox = inbox; hosts = associatedHosts
+         associatedHosts: Set<String> = NativeEntryResumeLink.configuredHosts(Bundle.main.object(forInfoDictionaryKey: "VPEntryResumeAssociatedHosts") as? String), exports: NativeEntryResumeExport = NativeEntryResumeExport()) {
+        self.inbox = inbox; hosts = associatedHosts; self.exports = exports
+        do { try exports.eraseAll() } catch { state.clear(cleanupSucceeded: false); message = "cleanupRequired" }
     }
 
     @discardableResult func receive(_ url: URL, scope: NativeDataScope?) -> Bool {
@@ -42,6 +44,7 @@ final class NativeEntryResumeCoordinator {
         }
         state.authenticate(scope.map(Self.identity))
         active = scope; receipts = []
+        guard state.failure != .cleanupRequired else { message = "cleanupRequired"; return }
         guard let inbox else { message = "unconfigured"; return }
         guard let scope else {
             do {
@@ -60,7 +63,7 @@ final class NativeEntryResumeCoordinator {
                 if receipts.isEmpty { state.unavailable(); message = "expiredOrUnavailable"; return }
             } else { receipts = available }
             message = nil
-        } catch { message = "cleanupRequired"; receipts = [] }
+        } catch { state.clear(cleanupSucceeded: false); message = "cleanupRequired"; receipts = [] }
     }
 
     /// Metadata-only anonymous selection fixes the one original intent before opening existing sign-in.
@@ -95,8 +98,11 @@ final class NativeEntryResumeCoordinator {
     func delete(_ receipt: ShareIntakeInbox.Receipt, scope: NativeDataScope?) throws {
         guard let scope, scope == active, let inbox, receipts.contains(receipt),
               receipt.ownerNamespace == nil || receipt.ownerNamespace == Self.namespace(scope) else { throw ShareIntakeError.scope }
-        try inbox.delete(receipt, namespace: receipt.ownerNamespace)
-        state.clear(cleanupSucceeded: true); refresh(scope: scope)
+        do {
+            try exports.eraseAll()
+            try inbox.delete(receipt, namespace: receipt.ownerNamespace)
+            state.clear(cleanupSucceeded: true); refresh(scope: scope)
+        } catch { state.clear(cleanupSucceeded: false); message = "cleanupRequired"; throw error }
     }
 
     /// Retains exactly one verified anonymous selection during credential-free initial login.
@@ -111,6 +117,7 @@ final class NativeEntryResumeCoordinator {
     func erase(preservingUnclaimedID: UUID? = nil) throws {
         receipts = []; active = nil; presented = false
         do {
+            try exports.eraseAll()
             try inbox?.eraseAll(preservingUnclaimedID: preservingUnclaimedID)
             if preservingUnclaimedID == nil { state.clear(cleanupSucceeded: true) }
             else { presented = true }
@@ -119,7 +126,23 @@ final class NativeEntryResumeCoordinator {
         catch { state.clear(cleanupSucceeded: false); message = "cleanupRequired"; throw error }
     }
 
-    func hide() { receipts = [] }
+    func prepareExport(_ receipt: ShareIntakeInbox.Receipt, scope: NativeDataScope?) throws {
+        guard let scope, scope == active, let inbox, receipts == [receipt],
+              state.current(Self.identity(scope))?.entryID == receipt.id,
+              receipt.ownerNamespace == Self.namespace(scope) else { throw ShareIntakeError.scope }
+        do {
+            let bytes = try inbox.read(receipt, namespace: Self.namespace(scope))
+            guard active == scope, state.current(Self.identity(scope))?.entryID == receipt.id else { throw ShareIntakeError.scope }
+            try exports.prepare(bytes, receipt: receipt, scope: scope)
+        } catch {
+            eraseExports(); state.clear(cleanupSucceeded: false); message = "cleanupRequired"; throw error
+        }
+    }
+    func eraseExports() {
+        do { try exports.eraseAll() }
+        catch { state.clear(cleanupSucceeded: false); message = "cleanupRequired" }
+    }
+    func hide() { receipts = []; eraseExports() }
 
     static func identity(_ scope: NativeDataScope) -> NativeEntryResumeState.Identity {
         .init(endpoint: scope.endpoint, owner: scope.subject, epoch: scope.mobileEpoch, generation: scope.generation)
