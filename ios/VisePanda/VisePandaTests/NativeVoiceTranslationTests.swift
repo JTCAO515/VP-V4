@@ -69,7 +69,8 @@ import Testing
         await store.submitReviewed(text: "Changed", sourceLocale: "en", request: request)
         #expect(bodies.count == 1)
         await store.submitReviewed(text: "No peanuts.", sourceLocale: "en", request: request)
-        #expect(bodies.count == 2 && bodies[0] == bodies[1])
+        #expect(bodies.count == 2)
+        #expect(try JSONSerialization.jsonObject(with: bodies[0]) as? NSDictionary == JSONSerialization.jsonObject(with: bodies[1]) as? NSDictionary)
         #expect(store.result == nil && !store.canRecord)
     }
 

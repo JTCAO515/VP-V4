@@ -99,6 +99,10 @@ struct NativeVoicePlaybackPanel: View {
                 .disabled(audio.phase != .speaking).accessibilityIdentifier("voice.stopPlayback")
             Text(text("Uses an installed system voice. After a stop or interruption this translation does not restart.", "使用已安装的系统声音，停止或中断后不会重新播放本条译文。"))
                 .font(.caption).foregroundStyle(.secondary)
+            if audio.playbackCharacters > 0 {
+                Text(text("Selected text: \(audio.playbackCharacters) UTF-16 units · system progress: \(audio.spokenCharacters)", "已选译文：\(audio.playbackCharacters) 个 UTF-16 单位 · 系统进度：\(audio.spokenCharacters)"))
+                    .font(.caption).accessibilityIdentifier("voice.playbackProgress")
+            }
             if audio.failure != nil { Text(text("Playback is unavailable. Read the translation above.", "朗读暂不可用，可阅读上方译文。")) }
         }
         .onChange(of: scenePhase) { _, phase in if phase != .active { audio.stopSpeaking() } }
