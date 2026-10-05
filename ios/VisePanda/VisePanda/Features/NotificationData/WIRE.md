@@ -92,3 +92,25 @@ Remaining precise Main-dependent work, already prepared in own code:
    Reuse unchanged old module evidence; no expanded matrix/target grant or phone.
 4. Freeze resulting commit for sole TS normal integration. Whole #239 missing
    handlers/ALL2 OPEN; actual worker fencing remains sole TS/SQL/Main reviewed work.
+
+Review-ready shared patch: SharedNative.patch (NOT applied). `git apply --check`
+PASS against immutable f1f065c8 base. It contains only new NativeSession request/
+factory + two own cleanup sites; new coverage destination/caller; PBX membership
+for eleven own sources + NativeNotificationDataTests. New source IDs checked
+collision-free and each file has its actual app/test source membership in the
+proposed patch. No existing test, original notification worker/business code,
+source oracle or old membership is replaced. The scope/schema guard waits actual
+sole TS registered module. Final catalog IDs/version and minimal fixture mirrors
+are intentionally absent until the unique producer declares them.
+
+Consumer keeps its store in @State and constructs it once in .task via session.
+It does not construct a protected writer during parent render (which could purge
+an already delivered file when coverage receipt changes). This depends on the
+proposed factory/request methods and is not app build/test PASS before integration.
+
+Current checkpoint 2026-10-06: owned code and five risk tests source delivered;
+shared lease + frozen TS catalog/interoperability fixture outstanding. The request
+requires shared precision release before write, so remaining Session/caller/PBX/
+catalog integration and true native test execution cannot proceed in this phase.
+Only Main can relay that release; no other task has been messaged directly.
+No SQL, target, provider, credentials, grants, production or real user data action.

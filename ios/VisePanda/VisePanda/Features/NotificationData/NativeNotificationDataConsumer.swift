@@ -5,23 +5,29 @@ import SwiftUI
 struct NativeNotificationDataConsumer: View {
     let module: NativeDataCoverageModule
     let coverage: NativeDataCoverageStore
-    let store: NativeNotificationDataStore
-    let client: NativeNotificationDataClient
-    let coverageClient: NativeDataCoverageClient
+    let session: NativeSession
+    let scope: NativeNotificationDataScope
     let chinese: Bool
     @Environment(\.scenePhase) private var phase
-    private var actor: NativeCommunitySafetyActor? { phase == .active ? client.current() : nil }
-    private var guarded: NativeNotificationDataClient { .init(current: { self.actor }, request: client.request) }
+    @State private var store: NativeNotificationDataStore?
+    private var actor: NativeCommunitySafetyActor? { phase == .active ? try? session.communitySafetyActor() : nil }
+    private var client: NativeNotificationDataClient {
+        .init(current: { self.actor }, request: { try await session.notificationDataRequest(body: $0, actor: $1) })
+    }
 
     var body: some View {
-        NativeNotificationDataView(store: store, client: guarded, chinese: chinese, completed: completed)
+        Group {
+            if let store { NativeNotificationDataView(store: store, client: client, chinese: chinese, completed: completed) }
+            else { ProgressView() }
+        }.task { if store == nil { store = session.notificationDataStore(scope: scope) } }
     }
 
     private func completed(_ value: NativeNotificationDataCompletion, captured: NativeCommunitySafetyActor) {
         guard actor == captured else { return }
         Task {
+            let coverageClient = NativeDataCoverageClient(session: session, active: { phase == .active })
             if coverage.visibleModules(captured).isEmpty { await coverage.load(coverageClient) }
-            guard actor == captured, store.completion?.id == value.id,
+            guard actor == captured, let store, store.completion?.id == value.id,
                   coverage.visibleModules(captured).contains(module), module.version == NativeNotificationDataWire.schema,
                   module.scope == value.scope.rawValue, module.exportHandler != nil, module.deleteHandler != nil else { return }
             if value.action == "export", store.exportURL(captured) == nil { return }
