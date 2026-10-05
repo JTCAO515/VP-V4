@@ -1,0 +1,9 @@
+{
+  "ownedSimulator": "832895BD-2B23-4BCC-B76B-0A1672665DE9",
+  "genericBuildReused": "runtime-r2/build.log",
+  "selectedTests": [
+    "NativeCommunitySubmissionTests"
+  ],
+  "fixtureOnly": true,
+  "deleted": true
+}
