@@ -205,17 +205,70 @@ import Testing
 
     @Test func moduleDeletionAndExportNeverClaimAllAccountCoverage() async throws {
         let store = NativeCommunityStore(); store.restore(Self.communityActor) { nil }
-        let export: [String: Any] = ["kind": "export", "scope": "community_module", "coverage": "complete_for_community", "submissions": [], "reviews": [], "receipts": [], "audits": [], "retained": NativeCommunityWire.retained]
+        let export: [String: Any] = ["kind": "export", "scope": "community_module", "coverage": "complete_for_community", "submissions": [], "reviews": [], "receipts": [], "audits": [], "reviewerQualification": NSNull(), "trustedDisclosure": NSNull(), "retained": NativeCommunityWire.retained]
         await store.export(current: { Self.communityActor }) { _ in try Self.response(export) }
         let url = try #require(store.exportURL(Self.communityActor))
         #expect(FileManager.default.fileExists(atPath: url.path))
         store.suspend(); #expect(store.exportURL(Self.communityActor) == nil && !FileManager.default.fileExists(atPath: url.path))
+        var final = export
+        final["reviewerQualification"] = ["active": false]; final["trustedDisclosure"] = "unknown"
+        final["receipts"] = [["operationId": Self.actor.subject, "submissionId": NSNull(), "action": "unknown", "state": "committed", "digest": String(repeating: "a", count: 64)]]
+        _ = try NativeCommunityOutcome.decode(Self.response(final), actor: Self.communityActor)
+        for variant in ["missingQualification", "missingDisclosure", "numericQualification", "extraKey"] {
+            var invalid = final
+            switch variant {
+            case "missingQualification": invalid.removeValue(forKey: "reviewerQualification")
+            case "missingDisclosure": invalid.removeValue(forKey: "trustedDisclosure")
+            case "numericQualification": invalid["reviewerQualification"] = ["active": 1]
+            default: invalid["foreignPrivateText"] = "not allowed"
+            }
+            #expect(throws: (any Error).self) { try NativeCommunityOutcome.decode(Self.response(invalid), actor: Self.communityActor) }
+        }
+        var unknown = try #require(JSONSerialization.jsonObject(with: Self.submit().body) as? [String: Any]); unknown["action"] = "unknown"
+        #expect(throws: (any Error).self) { try NativeCommunityCommand(body: NativeCommunityWire.bytes(unknown)) }
         var allAccount = export; allAccount["scope"] = "all_account"
         #expect(throws: (any Error).self) { try NativeCommunityOutcome.decode(Self.response(allAccount), actor: Self.communityActor) }
         let command = try NativeCommunityCommand.delete()
         let result = try NativeCommunityOutcome.decode(Self.response(["kind": "deleted", "operationId": command.operationID, "scope": "community_module", "retained": NativeCommunityWire.retained]), actor: Self.communityActor)
         #expect(try result.terminal(for: command, recovery: false))
         #expect(try NativeCommunityOutcome.decode(Self.operation(command, state: "committed"), actor: Self.communityActor).terminal(for: command, recovery: true))
+    }
+
+
+    @Test func actualSessionHeadersAndDenialEraseOwnJournalBeforeLegacyPreservation() async throws {
+        let name = "community-session-" + UUID().uuidString
+        let defaults = try #require(UserDefaults(suiteName: name)); defer { defaults.removePersistentDomain(forName: name) }
+        let vault = CommunityTestVault(), config = URLSessionConfiguration.ephemeral
+        config.protocolClasses = [CommunitySessionProtocol.self]
+        let session = NativeSession(arguments: ["-VisePandaNativeAPI", Self.actor.endpoint], defaults: defaults, configuration: config, bundleConfiguration: [:], vault: vault)
+        await session.login(email: "synthetic@example.invalid", password: "synthetic-only")
+        let actor = try session.communityActor(), command = try Self.submit()
+        _ = try session.rememberCommunity(body: command.body, actor: actor)
+        do { _ = try await session.communityRequest(body: command.body, actor: actor) } catch { }
+        #expect(session.dataScope == nil && session.status == "expiredOrReplaced")
+        #expect(try NativeCommunityJournal(vault: vault).read(actor.scope, sessionID: actor.sessionID) == nil)
+        #expect(defaults.string(forKey: "native.v2.activeSubject." + actor.scope.endpoint + ".pendingJournalCleanupOwner") == actor.scope.subject)
+        await session.logout()
+        #expect(session.status == "signedOut")
+    }
+    @Test func actualSessionJournalCleanupFailureFencesIdentityAndCanBeRetried() async throws {
+        let name = "community-cleanup-" + UUID().uuidString
+        let defaults = try #require(UserDefaults(suiteName: name)); defer { defaults.removePersistentDomain(forName: name) }
+        let vault = CommunityTestVault(), config = URLSessionConfiguration.ephemeral
+        config.protocolClasses = [CommunitySessionProtocol.self]
+        let session = NativeSession(arguments: ["-VisePandaNativeAPI", Self.actor.endpoint], defaults: defaults, configuration: config, bundleConfiguration: [:], vault: vault)
+        await session.login(email: "synthetic@example.invalid", password: "synthetic-only")
+        let actor = try session.communityActor(), command = try Self.submit()
+        let pending = try session.rememberCommunity(body: command.body, actor: actor)
+        vault.failRemove = true
+        await session.logout()
+        #expect(session.dataScope == nil && session.status == "storageError")
+        #expect(session.failureCode == "communityJournalCleanupRequired")
+        #expect(try NativeCommunityJournal(vault: vault).read(actor.scope, sessionID: actor.sessionID) == pending)
+        vault.failRemove = false
+        await session.logout()
+        #expect(session.status == "signedOut")
+        #expect(try NativeCommunityJournal(vault: vault).read(actor.scope, sessionID: actor.sessionID) == nil)
     }
 
 }
@@ -237,4 +290,30 @@ import Testing
         if failRemove { return errSecInteractionNotAllowed }
         entries.removeValue(forKey: key(service, owner)); return errSecSuccess
     }
+}
+
+nonisolated private final class CommunitySessionProtocol: URLProtocol, @unchecked Sendable {
+    override class func canInit(with request: URLRequest) -> Bool { request.url?.host == "127.0.0.1" }
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+    override func startLoading() {
+        let owner = "22222222-2222-4222-8222-222222222222", session = "33333333-3333-4333-8333-333333333333"
+        let path = request.url!.path
+        let status: Int, value: [String: Any]
+        if path.hasSuffix("/credentials") {
+            let payload = try! JSONSerialization.data(withJSONObject: ["sub": owner, "session_id": session])
+                .base64EncodedString().replacingOccurrences(of: "+", with: "-").replacingOccurrences(of: "/", with: "_").replacingOccurrences(of: "=", with: "")
+            status = 200; value = ["subject": owner, "accessToken": "synthetic." + payload + ".unsigned-fixture", "refreshToken": "synthetic-only", "expiresAt": Date().timeIntervalSince1970 + 3600]
+        } else if path.hasSuffix("/login") { status = 200; value = ["subject": owner, "mobileEpoch": 2] }
+        else if path.hasSuffix("/profile") { status = 200; value = ["subject": owner, "displayName": "Synthetic"] }
+        else if path.hasSuffix("/logout") { status = 200; value = [:] }
+        else if path == "/api/community/native/v1", request.value(forHTTPHeaderField: "x-community-expected-actor") == owner,
+                request.value(forHTTPHeaderField: "x-community-expected-session") == session,
+                request.value(forHTTPHeaderField: "Cookie") == nil, request.httpMethod == "POST" {
+            status = 401; value = ["error": "UNAUTHENTICATED"]
+        } else { status = 400; value = ["error": "INVALID_FIXTURE_TRANSPORT"] }
+        let response = HTTPURLResponse(url: request.url!, statusCode: status, httpVersion: "HTTP/1.1", headerFields: ["Content-Type": "application/json"])!
+        client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+        client?.urlProtocol(self, didLoad: try! JSONSerialization.data(withJSONObject: value)); client?.urlProtocolDidFinishLoading(self)
+    }
+    override func stopLoading() {}
 }

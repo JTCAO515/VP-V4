@@ -184,8 +184,14 @@ enum NativeCommunityOutcome {
             guard v["scope"] as? String == "community_module", v["retained"] as? [String] == w.retained else { throw NativeDataError.invalidResponse }
             return try .deleted(w.id(v["operationId"]))
         case "export":
-            _ = try w.object(v, base.union(["scope", "coverage", "submissions", "reviews", "receipts", "audits", "retained"]))
+            _ = try w.object(v, base.union(["scope", "coverage", "submissions", "reviews", "receipts", "audits", "reviewerQualification", "trustedDisclosure", "retained"]))
             guard v["scope"] as? String == "community_module", v["coverage"] as? String == "complete_for_community", v["retained"] as? [String] == w.retained else { throw NativeDataError.invalidResponse }
+            _ = try w.optional(v["reviewerQualification"]) { raw in
+                let qualification = try w.object(raw as Any, ["active"])
+                return try w.bool(qualification["active"])
+            }
+            let disclosure = try w.optional(v["trustedDisclosure"]) { try w.text($0, max: 24) }
+            guard disclosure == nil || ["registered_user", "community_reviewer", "official", "employee", "unknown"].contains(disclosure!) else { throw NativeDataError.invalidResponse }
             _ = try w.rows(v["submissions"], max: 100, NativeCommunityItem.init)
             _ = try w.rows(v["reviews"], max: 100) { raw in
                 let r = try w.object(raw, ["submissionId", "decision", "note", "createdAt"])
@@ -196,7 +202,7 @@ enum NativeCommunityOutcome {
             _ = try w.rows(v["receipts"], max: 100) { raw in
                 let r = try w.object(raw, ["operationId", "submissionId", "action", "state", "digest"])
                 _ = try w.id(r["operationId"]); _ = try w.optional(r["submissionId"], w.id); _ = try w.hash(r["digest"])
-                guard ["submit", "review", "withdraw", "delete"].contains(r["action"] as? String ?? ""), ["committed", "abandoned"].contains(r["state"] as? String ?? "") else { throw NativeDataError.invalidResponse }
+                guard ["submit", "review", "withdraw", "delete", "unknown"].contains(r["action"] as? String ?? ""), ["committed", "abandoned"].contains(r["state"] as? String ?? "") else { throw NativeDataError.invalidResponse }
             }
             _ = try w.rows(v["audits"], max: 100) { raw in
                 let r = try w.object(raw, ["submissionId", "action", "version", "createdAt"])
