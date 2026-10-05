@@ -127,7 +127,9 @@ test('real signed owner Auth -> original reservation/PDF sources -> selected exi
   assert.equal(pdf.items.find(row => row.operationId === pdfOperations[1].command.operationId).operation.state,'pending');
   await erased(orderScope,references.map(r => r.referenceId));
   assert.equal(sql('select count(*) from reservation_private.current_v1 where owner_id='+literal(owner.id)+';'),'0');
-  const replay = await owner.client.rpc('confirm_reservation_reference_v1',{ p_trip_id: tripId,p_input: references[0] }); assert.ok(replay.error,'erased original reference/operation replay is denied by actual new fence');
+  const replay = await owner.client.rpc('confirm_reservation_reference_v1',{ p_trip_id: tripId,p_input: references[0] });
+  assert.equal(replay.error,null); assert.deepEqual(replay.data,{ kind: 'conflict' },'original stale-head replay is rejected by its unchanged typed conflict contract');
+  assert.equal(sql('select count(*) from reservation_private.current_v1 where owner_id='+literal(owner.id)+';'),'0');
   const currentHead = tripBefore.trip.headVersion;
   const erasedReference = await owner.client.rpc('confirm_reservation_reference_v1',{ p_trip_id: tripId,
     p_input: { ...references[0],operationId: uuid(),expectedTripVersion: currentHead } });
@@ -145,13 +147,18 @@ test('real signed owner Auth -> original reservation/PDF sources -> selected exi
   assert.deepEqual((await call(base,owner.token,undefined,'GET')).body.content,tripBefore.content,'owner material erasure never undoes confirmed Trip content');
   const progress = await exported(progressScope,exitRequests.slice(0,4)); assert.equal(progress.items.length,4);
   assert.equal(progress.items.find(row => row.state === 'erased' && row.originalScope === orderScope).referenceOperationIds.length,6,'retained original operation fence inventory is exported');
-  await erased(progressScope,exitRequests.slice(0,4));
-  const retained = await exported(progressScope,exitRequests.slice(0,4)); assert.ok(retained.items.every(row => row.progressErased));
+  const progressReceipt = await erased(progressScope,exitRequests.slice(0,4));
+  assert.equal(progressReceipt.effects.temporaryRecords,2,'only the two export requests ever had transient page rows; erase requests retain only their minimum fence');
+  const retained = await exported(progressScope,exitRequests.slice(0,4)); assert.ok(retained.items.every(row => row.pages === 0 && row.rows === 0));
+  assert.equal(sql('select count(*) from material_exit_private.progress_v1 where request_id in('+exitRequests.slice(0,4).map(literal).join(',')+') and (last_cursor is not null or next_cursor is not null or pages<>0 or rows<>0 or bytes<>0 or not erased);'),'0');
+  assert.equal(sql('select pages||\':\'||rows from material_exit_private.progress_v1 where request_id='+literal(coverageCommand.requestId)+';'),'2:6','unselected owned progress is preserved');
   assert.ok(retained.items.some(row => row.referenceOperationIds.length === 6),'progress erasure never removes the replay fences');
   sql('delete from public.trip_events where trip_id='+literal(tripId)+';delete from public.trip_audit_events where trip_id='+literal(tripId)+';delete from public.trips where id='+literal(tripId)+';');
   const historical = await call(path,owner.token,{ action: 'trip_list',scope: progressScope,cursor: null,limit: 20 });
   assert.equal(historical.status,200,JSON.stringify(historical.body)); assert.equal(historical.body.data.items[0].tripId,tripId);
-  assert.equal(historical.body.data.items[0].state,'deleted'); assert.equal(historical.body.data.items[0].label,null);
+  assert.equal(historical.body.data.items[0].state,'retained','no original deletion tombstone was submitted; historical metadata does not invent that semantic receipt');
+  assert.equal(historical.body.data.items[0].label,null);
+  assert.equal(sql('select count(*) from public.trips where id='+literal(tripId)+';'),'0','retained progress does not reconstruct the missing Trip');
   assert.equal((await exported(progressScope,exitRequests.slice(0,4))).items.length,4,'retained minimum metadata stays owner exportable after Trip deletion');
   await erased(progressScope,exitRequests.slice(0,4));
   assert.equal((await owner.client.rpc('native_session_v2',{ p_action: 'logout' })).error,null);
