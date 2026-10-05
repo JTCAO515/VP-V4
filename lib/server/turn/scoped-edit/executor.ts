@@ -33,6 +33,17 @@ export async function executeScopedTripEdit(lease: DurableTurnLease, ports: Scop
     const recover=async(s:AbortSignal):Promise<SavedOutput|null>=>savedOutput(await ports.rpc('read_scoped_trip_edit_output_v1',params,s),b);
     const previous=await ports.rpc('read_scoped_trip_edit_output_v1',params,signal);
     let output=savedOutput(previous,b);
+    if(output?.accounting==='pending'){
+      // Recover already saved, priced output on the original attempt. Never
+      // reserve/dispatch again, and never settle a guessed or missing charge.
+      const actual=ports.price(output.usage);
+      if(actual!==output.actualMicros||actual<0)return 'pending';
+      const attempt:BudgetAttempt={scopeId:b.scopeId,ownerId:b.ownerId,taskId:b.taskId,attemptId:b.attemptId,provider:b.provider,model:b.model,priceVersion:b.priceVersion,reservedMicros:input.reservedMicros,timeoutMs:input.timeoutMs};
+      const usageReceipt=validatedPlanningUsageReceipt({schemaVersion:'validated-planning-usage/1',attempt,turnId:b.turnId,policyId:b.policyId,usage:output.usage,actualMicros:actual,observedAt:new Date(ports.now()).toISOString()},{taskId:b.taskId,turnId:b.turnId,planningPolicyId:b.policyId});
+      await ports.recordUsage(usageReceipt,signal);
+      try {await ports.rpc('scoped_trip_edit_budget_v1',{...params,p_effect:'finish',p_reserved_micros:null,p_actual_micros:actual,p_outcome:'settle'},signal);} catch { /* Read the original accounting state only. */ }
+      output=await recover(signal);
+    }
     if (!output) {
       // Only a definitive missing output permits the *same* SQL-owned attempt.
       // Its budget dispatch CAS still denies an already dispatched attempt.
@@ -49,8 +60,9 @@ export async function executeScopedTripEdit(lease: DurableTurnLease, ports: Scop
         const value=await invokeScopedTripEditProtocol({requestId:b.attemptId,text:promptInput(input!)},{provider:b.provider,endpoint:input!.endpoint,maxOutputTokens:input!.maxOutputTokens,timeoutMs:input!.timeoutMs},()=>allow('dispatch',s),guard,ports.transport,s);
         // Invalid output may still have billable usage; do not invent a free call.
         const usage=value.usage;
-        const actual=usage&&usage.inputTokens<=1048576&&usage.outputTokens<=input!.maxOutputTokens ? ports.price(usage):null;
-        if(actual===null||!Number.isSafeInteger(actual)||actual<1||actual>1e12)return {value,actualMicros:null};
+        const priceable=value.kind==='protocol_validated'||value.kind==='unavailable'&&value.code==='SAFETY_BLOCKED';
+        const actual=priceable&&usage&&usage.inputTokens<=1048576&&usage.outputTokens<=input!.maxOutputTokens ? ports.price(usage):null;
+        if(actual===null||!Number.isSafeInteger(actual)||actual<0||actual>1e12)return {value,actualMicros:null};
         const receipt=validatedPlanningUsageReceipt({schemaVersion:'validated-planning-usage/1',attempt:a,turnId:b.turnId,policyId:b.policyId,usage,actualMicros:actual,observedAt:new Date(ports.now()).toISOString()},{taskId:b.taskId,turnId:b.turnId,planningPolicyId:b.policyId});
         await ports.recordUsage(receipt,s);
         if(value.kind!=='protocol_validated')return {value,actualMicros:actual};
@@ -66,7 +78,10 @@ export async function executeScopedTripEdit(lease: DurableTurnLease, ports: Scop
       output=await recover(signal);
     }
     if(!output||output.accounting!=='settled'||!await allow('publish',signal))return 'pending';
-    if(output.output.kind!=='candidate')return 'pending';
+    if(output.output.kind!=='candidate'){
+      await ports.rpc('pause_scoped_trip_edit_work_v1',{...params,p_reason:output.output.reason},signal).catch(()=>{});
+      return 'pending';
+    }
     const patch=candidatePatch(input,output.output.edits);
     let completed:unknown;
     try {completed=await ports.rpc('complete_scoped_trip_edit_work_v1',{...params,p_patch:patch},signal);} catch { /* Read receipt below after ambiguous ACK. */ }
@@ -74,9 +89,9 @@ export async function executeScopedTripEdit(lease: DurableTurnLease, ports: Scop
     const valid=(v:unknown)=>{
       if(!record(v)||!exact(v,['kind','binding','receipt'])||v.kind!=='candidate_saved'||!sameValue(v.binding,b)||!record(v.receipt))return false;
       const r=v.receipt;
-      if(!exact(r,['kind','operationId','tripId','contextId','contextDigest','baseVersion','expiresAt','returnScope','candidates','reused'])||r.kind!=='scoped_edit_candidates/1'||r.operationId!==b.operationId||r.tripId!==b.tripId||r.contextId!==b.contextId||r.contextDigest!==b.contextDigest||r.baseVersion!==b.baseVersion||!sameValue(r.returnScope,input!.context.scope)||typeof r.reused!=='boolean'||typeof r.expiresAt!=='string'||Date.parse(r.expiresAt)<=ports.now()||Date.parse(r.expiresAt)>Date.parse(input!.context.expiresAt)||!Array.isArray(r.candidates)||r.candidates.length!==1)return false;
+      if(!exact(r,['kind','operationId','tripId','contextId','contextDigest','baseVersion','expiresAt','returnScope','candidates','reused'])||r.kind!=='scoped_edit_candidates/1'||r.operationId!==b.operationId||r.tripId!==b.tripId||r.contextId!==b.contextId||r.contextDigest!==b.contextDigest||r.baseVersion!==b.baseVersion||!sameValue(r.returnScope,input!.context.scope)||typeof r.reused!=='boolean'||typeof r.expiresAt!=='string'||!Number.isFinite(Date.parse(r.expiresAt))||Date.parse(r.expiresAt)<=ports.now()||Date.parse(r.expiresAt)>Date.parse(input!.context.expiresAt)||!Array.isArray(r.candidates)||r.candidates.length!==1)return false;
       const c=r.candidates[0];
-      return record(c)&&exact(c,['candidateId','edits','diff'])&&uuid(c.candidateId)&&sameValue(c.edits,output!.output.kind==='candidate'?output!.output.edits:null)&&sameValue(c.diff,diff);
+      return record(c)&&exact(c,['candidateId','edits','diff'])&&uuid(c.candidateId)&&c.candidateId===b.attemptId&&sameValue(c.edits,output!.output.kind==='candidate'?output!.output.edits:null)&&sameValue(c.diff,diff);
     };
     if(!signal.aborted&&valid(completed))return 'persisted';
     if(signal.aborted)return 'pending';

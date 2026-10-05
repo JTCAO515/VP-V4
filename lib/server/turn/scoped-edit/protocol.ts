@@ -1,6 +1,6 @@
-import { exact, record, uuid, digest, integer, type ManualEdit } from '../../trip/scoped-edit/contract.ts';
+import { exact, record, uuid, digest, integer, type CandidateEdit } from '../../trip/scoped-edit/contract.ts';
 import { parseScopedContext, sameValue, type ScopedEditContext } from '../../trip/scoped-edit/wire.ts';
-import { manualScopedPatch, previewScopedPatch, selectedItems, type ScopedPatchOperation, type ScopedPatch } from '../../trip/scoped-edit/candidate-guard.ts';
+import { candidateScopedEditsPatch, selectedItems, type ScopedPatch } from '../../trip/scoped-edit/candidate-guard.ts';
 import { parseScopedModelOutput, type ScopedModelOutput } from './model-output.ts';
 import { PROTOCOL_MODELS, type ProtocolUsage } from '../../model-gateway/adapters/provider-protocol.ts';
 import { isQwenEndpoint } from '../../model-gateway/adapters/provider-endpoints.ts';
@@ -25,8 +25,9 @@ export function parseInput(v: unknown, lease: DurableTurnLease, now: number): Sc
   const b = v.binding, context = parseScopedContext(v.context, b.tripId, now);
   if (!context || b.ownerId !== lease.ownerId || b.turnId !== lease.turnId || b.leaseToken !== lease.leaseToken || b.contextId !== context.contextId || b.contextDigest !== context.contextDigest || b.sourceDigest !== context.sourceBasis.sourceDigest || b.baseVersion !== context.baseVersion
     || typeof v.text !== 'string' || !v.text.trim() || v.text.length > 4000 || v.text.includes('\0') || !['en','zh'].includes(String(v.locale)) || !isQwenEndpoint(v.endpoint)
-    || !(v.profile === null || record(v.profile)) || !Array.isArray(v.memory) || v.memory.length > 64 || !v.memory.every(record)
+    || !(v.profile === null || record(v.profile) && exact(v.profile,['travelPace','revision']) && ['relaxed','balanced','packed'].includes(String(v.profile.travelPace)) && Number.isSafeInteger(v.profile.revision) && Number(v.profile.revision)>=0) || !Array.isArray(v.memory) || v.memory.length > 64 || !v.memory.every(m=>record(m)&&exact(m,['id','revision','summary','constraintKind'])&&uuid(m.id)&&Number.isSafeInteger(m.revision)&&Number(m.revision)>=1&&typeof m.summary==='string'&&m.summary.trim().length>0&&m.summary.length<=500&&['preference','hard_constraint'].includes(String(m.constraintKind))) || new Set(v.memory.map(m=>m.id)).size!==v.memory.length
     || !integer(v.reservedMicros, 1) || !integer(v.timeoutMs, 1) || v.timeoutMs > 60000 || !integer(v.maxOutputTokens, 1) || v.maxOutputTokens > 4096) return null;
+  try { selectedItems(context.snapshot,context.scope); } catch { return null; }
   // Qualification comes only from current SQL, never from these structural checks.
   const result = JSON.parse(JSON.stringify({...v, context})) as ScopedInput;
   if (Buffer.byteLength(promptInput(result)) > 32768) return null;
@@ -42,24 +43,14 @@ export function authorized(v: unknown, binding: ScopedBinding, effect: 'reserve'
 }
 export type SavedOutput = Readonly<{kind:'saved_output'; binding:ScopedBinding; output:ScopedModelOutput; usage:ProtocolUsage; actualMicros:number; accounting:'settled'|'pending'}>;
 export function savedOutput(v: unknown, b: ScopedBinding): SavedOutput | null {
-  if (!record(v) || !exact(v,['kind','binding','output','usage','actualMicros','accounting']) || v.kind !== 'saved_output' || !validBinding(v.binding) || !sameValue(v.binding,b) || !parseScopedModelOutput(v.output) || !record(v.usage) || !integer(v.actualMicros,1) || !['settled','pending'].includes(String(v.accounting))) return null;
+  if (!record(v) || !exact(v,['kind','binding','output','usage','actualMicros','accounting']) || v.kind !== 'saved_output' || !validBinding(v.binding) || !sameValue(v.binding,b) || !parseScopedModelOutput(v.output) || !record(v.usage) || !integer(v.actualMicros) || !['settled','pending'].includes(String(v.accounting))) return null;
   const u=v.usage;
   if (!exact(u,['inputTokens','outputTokens','totalTokens','cachedInputTokens','uncachedInputTokens','reasoningTokens','cost']) || ![u.inputTokens,u.outputTokens,u.totalTokens].every(x=>integer(x)) || Number(u.inputTokens)+Number(u.outputTokens)!==u.totalTokens || Number(u.inputTokens)>1048576 || Number(u.outputTokens)>4096 || u.cost!=='unknown'
-    || [u.cachedInputTokens,u.uncachedInputTokens,u.reasoningTokens].some(x=>x!==null&&!integer(x)) || Number(u.cachedInputTokens)>Number(u.inputTokens) || Number(u.reasoningTokens)>Number(u.outputTokens)) return null;
+    || [u.cachedInputTokens,u.uncachedInputTokens,u.reasoningTokens].some(x=>x!==null&&!integer(x)) || Number(u.cachedInputTokens)>Number(u.inputTokens) || Number(u.reasoningTokens)>Number(u.outputTokens) || Number(u.uncachedInputTokens)>Number(u.inputTokens) || u.cachedInputTokens!==null&&u.uncachedInputTokens!==null&&Number(u.cachedInputTokens)+Number(u.uncachedInputTokens)!==u.inputTokens) return null;
   return JSON.parse(JSON.stringify(v)) as SavedOutput;
 }
 /** Translate model edits through the same domain guard as manual editing, then
  * check the entire candidate against the original current snapshot. */
-export function candidatePatch(input: ScopedInput, edits: readonly ManualEdit[]): ScopedPatch {
-  const base=input.context.snapshot, constraints={scope:{...input.context.scope,itemIds:[...selectedItems(input.context.snapshot,input.context.scope)]}, lockedItemIds:input.context.lockedItemIds, fixedItemIds:input.context.fixedItemIds};
-  let current=base; const operations:ScopedPatchOperation[]=[];
-  for (const edit of edits) {
-    const step=manualScopedPatch(current,edit,constraints);
-    current={...previewScopedPatch(current,step,constraints),version:base.version};
-    operations.push(...step.operations);
-  }
-  const patch={expectedVersion:base.version,operations};
-  const next=previewScopedPatch(base,patch,constraints);
-  if (!sameValue({...next,version:base.version},current) || sameValue(current,base)) throw Error('Scoped candidate unavailable');
-  return patch;
+export function candidatePatch(input: ScopedInput, edits: readonly CandidateEdit[]): ScopedPatch {
+  return candidateScopedEditsPatch(input.context.snapshot,edits,{scope:input.context.scope,lockedItemIds:input.context.lockedItemIds,fixedItemIds:input.context.fixedItemIds},{contextId:input.binding.contextId,askOperationId:input.binding.operationId,candidateId:input.binding.attemptId});
 }

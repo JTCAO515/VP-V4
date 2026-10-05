@@ -82,7 +82,6 @@ export function createHostedScopedEditWorker(raw:ScopedHostedProfile,deps:Hosted
       };
       const result=await executeScopedTripEdit(lease,{rpc:scopedRpc,transport:wrapped,price:pricing,recordUsage:(receipt,s)=>deps.journal.planningUsage!(configDigest,receipt,s),now:Date.now},stop);
       if(result==='persisted')return 'persisted';
-      if(validBinding(currentBinding)&&!stop.aborted)await rpc('pause_scoped_trip_edit_work_v1',{p_binding:currentBinding,p_reason:'provider_unavailable'},stop).catch(()=>{});
       throw Error('Scoped work pending');
     },signal);
   };
