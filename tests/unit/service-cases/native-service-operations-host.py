@@ -7,6 +7,7 @@ Tests inject an in-memory vault; NativeSession transport and logout run only in 
 from pathlib import Path
 import subprocess
 import tempfile
+import sys
 
 repo = Path(__file__).resolve().parents[3]
 with tempfile.TemporaryDirectory(prefix="vpj32-native-host-") as temp:
@@ -24,9 +25,9 @@ let package = Package(name: "VisePanda", platforms: [.macOS(.v14)], products: [.
     (sources / "Boundary.swift").write_text("import Foundation\nimport Security\n" + boundary)
     feature = repo / "ios/VisePanda/VisePanda/Features/ServiceOperations"
     for source in feature.glob("*.swift"):
-        if source.name == "NativeServiceOperationsView.swift":
+        if source.name in {"NativeServiceOperationsView.swift", "NativeServiceExportShare.swift"}:
             continue
         (sources / source.name).symlink_to(source)
     (tests / "NativeServiceOperationTests.swift").symlink_to(repo / "ios/VisePanda/VisePandaTests/NativeServiceOperationTests.swift")
-    result = subprocess.run(["swift", "test", "--package-path", str(root)], check=False)
+    result = subprocess.run(["swift", "test", "--package-path", str(root), *sys.argv[1:]], check=False)
     raise SystemExit(result.returncode)

@@ -57,7 +57,7 @@ import CoreFoundation
                  current: () -> NativeDataScope?, read: () throws -> NativeServiceOperationPending?,
                  retain: (NativeServiceOperationCommand) throws -> NativeServiceOperationPending,
                  complete: (NativeServiceOperationPending) throws -> Void,
-                 request: (Data) async throws -> Data) async {
+                 request: (Data, Bool) async throws -> Data) async {
         guard !busy, scope == actor, current() == actor else { return }
         let own = generation; busy = true; receipt = nil; receiptAbsent = false
         defer { if generation == own { busy = false } }
@@ -65,10 +65,10 @@ import CoreFoundation
             let original: NativeServiceOperationPending
             if let recovery {
                 guard let stored = try read(), stored == pending, stored.matches(actor) else { throw NativeDataError.staleSessionResponse }
-                if recovery == .retry { guard !erased, isFresh(actor) else { throw NativeDataError.server(code: "RECHECK_REQUIRED") } }
+                if recovery == .retry { guard !erased, try NativeServiceOperationCommand(body: stored.body).isData || isFresh(actor) else { throw NativeDataError.server(code: "RECHECK_REQUIRED") } }
                 original = stored
             } else {
-                guard pending == nil, let command, isFresh(actor) else { throw NativeDataError.server(code: "RECHECK_REQUIRED") }
+                guard pending == nil, let command, try command.isData || isFresh(actor) else { throw NativeDataError.server(code: "RECHECK_REQUIRED") }
                 original = try retain(command); pending = original
             }
             let frozen = NativeServiceOperationCommand(body: original.body); try frozen.validate()
@@ -78,7 +78,7 @@ import CoreFoundation
             case .abandon: body = try frozen.recoveryBody(abandon: true)
             default: body = original.body
             }
-            let bytes = try await request(body)
+            let bytes = try await request(body, frozen.isData)
             guard own == generation, current() == actor, !Task.isCancelled else { return }
             var value: Any = try NativeServiceOperationWire.response(bytes)
             if recovery == .read {

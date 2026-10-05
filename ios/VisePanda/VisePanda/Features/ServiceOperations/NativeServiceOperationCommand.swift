@@ -1,4 +1,5 @@
 import Foundation
+import CoreFoundation
 
 struct NativeServiceOperationCommand: Equatable {
     let body: Data
@@ -9,8 +10,15 @@ struct NativeServiceOperationCommand: Equatable {
     var operationId: String { get throws { try NativeServiceOperationWire.identifier(object["operationId"]) } }
     var caseId: String { get throws { try NativeServiceOperationWire.identifier(object["caseId"]) } }
     var action: String { get throws { try NativeServiceOperationWire.string(object["action"], max: 16) } }
+    var isData: Bool { get throws { try action == "delete" } }
     func validate() throws {
         let value = try object, action = try action
+        if action == "delete" {
+            _ = try NativeServiceOperationWire.object(value, keys: ["action", "operationId", "caseId", "grantRevision", "confirmed"])
+            _ = try operationId; _ = try caseId; _ = try NativeServiceOperationWire.integer(value["grantRevision"])
+            guard let confirmed = value["confirmed"] as? NSNumber, CFGetTypeID(confirmed) == CFBooleanGetTypeID(), confirmed.boolValue else { throw NativeDataError.invalidResponse }
+            return
+        }
         guard ["request", "cancel", "select_proposal"].contains(action) else { throw NativeDataError.invalidResponse }
         var keys: Set<String> = ["action", "operationId", "caseId", "expectedRevision", "grantRevision"]
         if action == "request" { keys.formUnion(["urgency", "trip"]) }
@@ -23,7 +31,7 @@ struct NativeServiceOperationCommand: Equatable {
             let proposal = try NativeServiceOperationWire.object(value["proposal"] as Any, keys: ["proposalId", "tripId", "baseVersion"])
             _ = try NativeServiceOperationWire.identifier(proposal["proposalId"])
             _ = try NativeServiceOperationWire.identifier(proposal["tripId"])
-            _ = try NativeServiceOperationWire.integer(proposal["baseVersion"], minimum: 1)
+            _ = try NativeServiceOperationWire.integer(proposal["baseVersion"], minimum: 0)
         }
         if action == "request" {
             guard ["normal", "urgent"].contains(value["urgency"] as? String) else { throw NativeDataError.invalidResponse }
@@ -33,7 +41,7 @@ struct NativeServiceOperationCommand: Equatable {
                 _ = try NativeServiceOperationWire.object(trip, keys: ["kind", "tripId", "headVersion"])
                 guard trip["kind"] as? String == "bound" else { throw NativeDataError.invalidResponse }
                 _ = try NativeServiceOperationWire.identifier(trip["tripId"])
-                _ = try NativeServiceOperationWire.integer(trip["headVersion"], minimum: 1)
+                _ = try NativeServiceOperationWire.integer(trip["headVersion"], minimum: 0)
             }
         }
     }

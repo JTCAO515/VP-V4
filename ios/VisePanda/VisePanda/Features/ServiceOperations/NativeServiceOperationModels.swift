@@ -65,7 +65,7 @@ struct NativeServiceProjection: Decodable, Identifiable {
         if trip["kind"] as? String == "unknown" { guard trip.count == 1 else { throw NativeDataError.invalidResponse } }
         else {
             guard trip["kind"] as? String == "bound", trip.count == 3 else { throw NativeDataError.invalidResponse }
-            _ = try w.identifier(trip["tripId"]); _ = try w.integer(trip["headVersion"], minimum: 1)
+            _ = try w.identifier(trip["tripId"]); _ = try w.integer(trip["headVersion"], minimum: 0)
         }
         if !(v["staff"] is NSNull) {
             let staff = try w.object(v["staff"] as Any, keys: ["actorId", "label", "acceptedAt", "shiftEndsAt"])
@@ -82,7 +82,7 @@ struct NativeServiceProjection: Decodable, Identifiable {
             let proposal = try w.object(v["proposal"] as Any, keys: ["proposalId", "tripId", "baseVersion"])
             _ = try w.identifier(proposal["proposalId"]); _ = try w.identifier(proposal["tripId"])
             guard trip["kind"] as? String == "bound", proposal["tripId"] as? String == trip["tripId"] as? String,
-                  try w.integer(proposal["baseVersion"], minimum: 1) == w.integer(trip["headVersion"], minimum: 1) else { throw NativeDataError.invalidResponse }
+                  try w.integer(proposal["baseVersion"], minimum: 0) == w.integer(trip["headVersion"], minimum: 0) else { throw NativeDataError.invalidResponse }
         }
         guard v["manualMinutesScope"] as? String == "recorded_only" else { throw NativeDataError.invalidResponse }
         let result = try JSONDecoder().decode(Self.self, from: w.bytes(v))
@@ -110,12 +110,21 @@ struct NativeServiceOperationReceipt: Decodable {
     let requestDigest: String
     let action: String
     let outcome: String
-    let caseId: String
-    let revision: Int
-    let grantRevision: Int
+    let caseId: String?
+    let revision: Int?
+    let grantRevision: Int?
     let createdAt: Double
     static func decode(_ value: Any, command: NativeServiceOperationCommand) throws -> Self {
         let w = NativeServiceOperationWire.self
+        if try command.isData {
+            let v = try w.object(value, keys: ["schemaVersion", "kind", "operationId", "requestDigest", "outcome", "createdAt", "allUserDataCompleted"])
+            let digest = SHA256.hash(data: command.body).map { String(format: "%02x", $0) }.joined()
+            guard v["schemaVersion"] as? String == "service-case-data/1", v["kind"] as? String == "receipt",
+                  try w.identifier(v["operationId"]) == command.operationId, v["requestDigest"] as? String == digest,
+                  ["deleted", "cancelled"].contains(v["outcome"] as? String), let complete = v["allUserDataCompleted"] as? NSNumber,
+                  CFGetTypeID(complete) == CFBooleanGetTypeID(), !complete.boolValue else { throw NativeDataError.invalidResponse }
+            return .init(operationId: try command.operationId, requestDigest: digest, action: "delete", outcome: try w.string(v["outcome"], max: 16), caseId: nil, revision: nil, grantRevision: nil, createdAt: try NativeServiceProjection.timestamp(v["createdAt"]))
+        }
         let v = try w.object(value, keys: ["operationId", "requestDigest", "action", "outcome", "caseId", "revision", "grantRevision", "createdAt"])
         let digest = SHA256.hash(data: command.body).map { String(format: "%02x", $0) }.joined()
         guard try w.identifier(v["operationId"]) == command.operationId, try w.identifier(v["caseId"]) == command.caseId,

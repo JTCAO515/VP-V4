@@ -34,6 +34,13 @@ struct NativeServiceOperationsView: View {
     @State private var grantError = false
     @State private var review: NativeServiceReview?
     @State private var reviewError = false
+    @State private var deleteConfirm = false
+    @State private var exportConfirm = false
+    @State private var exportFile: NativeServiceExportFile?
+    @State private var exportBundle: NativeServiceDataBundle?
+    @State private var exportCleanup: Task<Void, Never>?
+    @State private var share: NativeServiceExportFile?
+    @State private var dataError = false
     private var session: NativeSession { settings.nativeSession }
     private var actor: NativeDataScope? { session.dataScope }
     private var zh: Bool { settings.selectedLocale == .zh }
@@ -67,12 +74,13 @@ struct NativeServiceOperationsView: View {
                         Section { Text(t("服务状态或授权暂不可读，请刷新；当前状态未知。", "Service status or sharing permission is unavailable. Refresh; current status is unknown.")) }
                     }
                     recovery(actor: actor)
+                    serviceData(actor: actor)
                     if let receipt = store.receipt {
                         Section(t("操作回执", "Operation receipt")) {
-                            Text(receipt.outcome == "cancelled" ? t("原操作已终止；请重新读取服务状态。", "The original operation was stopped. Read service status again.") : t("原操作已记录；服务结果以重新读取的状态为准。", "The original operation was recorded. Read current status for the service outcome."))
+                            Text(receipt.outcome == "deleted" ? t("此服务记录已删除；保留最小删除回执，这不代表全部账户数据已删除。", "This service record was deleted; a minimal deletion receipt remains. This is not deletion of all account data.") : receipt.outcome == "cancelled" ? t("原操作已终止；请重新读取服务状态。", "The original operation was stopped. Read service status again.") : t("原操作已记录；服务结果以重新读取的状态为准。", "The original operation was recorded. Read current status for the service outcome."))
                         }
                     }
-                    if store.notice != nil || grantError || reviewError {
+                    if store.notice != nil || grantError || reviewError || dataError {
                         Text(t("暂未确认操作或当前资格。可刷新状态、查询原回执，或返回管理授权。", "The operation or current eligibility is not confirmed. Refresh, check the original receipt, or return to manage sharing."))
                             .foregroundStyle(.red).accessibilityIdentifier("service.operations.unavailable")
                     }
@@ -85,7 +93,22 @@ struct NativeServiceOperationsView: View {
         .task(id: key) { let captured = key; guard captured.active, let actor = captured.actor else { clear(); return }; await load(actor: actor, captured: captured) }
         .onChange(of: actor) { _, _ in clear() }
         .onChange(of: phase) { _, value in if value != .active { clear() } }
-        .onDisappear { actionGeneration = UUID(); actionTask?.cancel(); actionTask = nil; if review == nil { clear() } }
+        .onDisappear { actionGeneration = UUID(); actionTask?.cancel(); actionTask = nil; if review == nil && share == nil { clear() } }
+        .confirmationDialog(t("删除此服务记录？", "Delete this service record?"), isPresented: $deleteConfirm, titleVisibility: .visible) {
+            Button(t("确认删除服务记录及相关服务数据", "Confirm deletion of this service and its related data"), role: .destructive) { if let actor { deleteService(actor: actor) } }
+            Button(t("保留记录", "Keep record"), role: .cancel) {}
+        } message: {
+            Text(t("会删除本服务问题、授权记录和运营资料，并保留最小回执。删除无法撤销；不会删除整个行程或全部账户数据，已导出副本无法召回。", "Deletes this issue, grant history and operational data, leaving a minimal receipt. Deletion cannot be undone. It does not delete the Trip or all account data, and exported copies cannot be recalled."))
+        }
+        .confirmationDialog(t("导出服务数据？", "Export service data?"), isPresented: $exportConfirm, titleVisibility: .visible) {
+            Button(t("准备仅服务范围的 JSON 文件", "Prepare a JSON file for service data only")) { if let actor { run { await exportService(actor: actor) } } }
+            Button(t("取消", "Cancel"), role: .cancel) {}
+        } message: {
+            Text(t("仅导出当前可核服务范围；Brief、附件和其他账户数据不在此文件内。共享给其他应用需你主动选择，取得的副本无法召回。", "Exports only the currently verified service scope. Briefs, attachments and other account data are not included. You choose whether to share with another app; downloaded copies cannot be recalled."))
+        }
+        .sheet(item: $share, onDismiss: { eraseExport() }) { file in
+            NativeServiceExportShare(file: file)
+        }
         .sheet(item: $review, onDismiss: { reload() }) { item in
             NavigationStack {
                 NativeTripView(initialTripID: item.tripId, initialTripScope: item.scope, initialProposalReference: item.reference, initialTripVersion: item.baseVersion)
@@ -188,7 +211,56 @@ struct NativeServiceOperationsView: View {
             }.disabled(store.busy || actionTask != nil)
         }
     }
+    @ViewBuilder private func serviceData(actor: NativeDataScope) -> some View {
+        Section(t("服务数据", "Service data")) {
+            Text(t("仅处理服务范围的数据。Brief 和附件尚不可用；此功能不代表全部账户导出或删除已完成。", "Handles service data only. Briefs and attachments are unavailable. This does not complete all account export or deletion."))
+            Button(t("导出服务范围数据…", "Export service data…")) { exportConfirm = true }
+                .disabled(store.busy || actionTask != nil || store.pending != nil).accessibilityIdentifier("service.data.export")
+            if let file = exportFile, file.current(actor: actor), let bundle = exportBundle {
+                Text(t("文件已准备：真实 \(bundle.rowCount) 条服务记录。", "File prepared: \(bundle.rowCount) actual service records."))
+                ForEach(NativeServiceDataBundle.domains, id: \.self) { domain in Text(domain + ": " + String(bundle.counts[domain] ?? 0)).font(.caption) }
+                Text(t("该文件仅含服务问题、授权审计、运营状态、已记录分钟、运营审计和操作记录；Brief 与附件不可用。", "The file covers cases, grant audit, service state, recorded minutes, service audit and operations. Briefs and attachments are unavailable."))
+                Button(t("主动共享此 JSON 文件", "Share this JSON file")) { if file.current(actor: self.actor), phase == .active { share = file } }
+                Text(t("已取得的副本无法召回；本应用的临时文件会在到期、离开或退出时清理。", "Downloaded copies cannot be recalled. This app removes its temporary file on expiry, leaving or sign-out.")).font(.footnote)
+            }
+            Button(t("明确删除此服务记录…", "Explicitly delete this service record…"), role: .destructive) { deleteConfirm = true }
+                .disabled(store.busy || actionTask != nil || store.pending != nil || currentGrant == nil && store.visible(caseId: caseId, actor: actor) == nil)
+                .accessibilityIdentifier("service.data.delete")
+        }
+    }
+    private func deleteService(actor: NativeDataScope) {
+        guard self.actor == actor, phase == .active, let grant = currentGrant ?? grantFromProjection(actor), store.pending == nil else { return }
+        do {
+            let command = NativeServiceOperationCommand(body: try NativeServiceOperationWire.bytes(["action": "delete", "operationId": UUID().uuidString.lowercased(), "caseId": caseId.lowercased(), "grantRevision": grant.grantRevision, "confirmed": true]))
+            try command.validate(); eraseExport(); run { await perform(command: command, actor: actor) }
+        } catch { dataError = true }
+    }
+    private func exportService(actor: NativeDataScope) async {
+        eraseExport(); dataError = false
+        do {
+            try NativeServiceExportFile.sweepOrphans()
+            let sessionId = try session.serviceCaseExportSessionId(actor: actor), requestId = UUID().uuidString.lowercased()
+            let started = ProcessInfo.processInfo.systemUptime
+            let bytes = try await session.serviceCaseDataRequest(body: NativeServiceOperationWire.bytes(["action": "export", "requestId": requestId, "confirmed": true]), actor: actor)
+            guard self.actor == actor, phase == .active, !Task.isCancelled,
+                  try session.serviceCaseExportSessionId(actor: actor) == sessionId else { throw NativeDataError.staleSessionResponse }
+            let bundle = try NativeServiceDataBundle.decode(bytes, actor: actor, sessionId: sessionId, requestId: requestId)
+            let file = try NativeServiceExportFile.create(bundle: bundle, actor: actor, started: started)
+            exportBundle = bundle; exportFile = file
+            exportCleanup = Task {
+                let duration = max(0, min(file.deadline - ProcessInfo.processInfo.systemUptime, file.expiresAt.timeIntervalSinceNow))
+                do { try await Task.sleep(for: .seconds(duration)) } catch { return }
+                if exportFile?.id == file.id { eraseExport() }
+            }
+        } catch { if self.actor == actor { dataError = true } }
+    }
+    private func eraseExport() {
+        exportCleanup?.cancel(); exportCleanup = nil
+        if let file = exportFile { do { try NativeServiceExportFile.erase(file); exportFile = nil; exportBundle = nil } catch { dataError = true } }
+        share = nil
+    }
     private func load(actor: NativeDataScope, captured: Key) async {
+        do { try NativeServiceExportFile.sweepOrphans() } catch { dataError = true }
         store.restore(actor: actor) { try session.serviceOperationRecovery(actor: actor) }
         await store.load(actor: actor, current: { self.actor }) { try await session.serviceOperationRequest(body: $0, actor: actor) }
         guard key == captured, !Task.isCancelled else { return }
@@ -218,7 +290,7 @@ struct NativeServiceOperationsView: View {
             if action == "request" {
                 input["urgency"] = urgent ? "urgent" : "normal"
                 if linkTrip {
-                    guard let detail = tripSelection, detail.trip.headVersion > 0 else { return }
+                    guard let detail = tripSelection, detail.trip.headVersion >= 0 else { return }
                     input["trip"] = ["kind": "bound", "tripId": detail.trip.id, "headVersion": detail.trip.headVersion]
                 } else { input["trip"] = ["kind": "unknown"] }
             }
@@ -240,7 +312,10 @@ struct NativeServiceOperationsView: View {
         await store.perform(command: command, recovery: recovery, actor: actor, current: { self.actor },
                             read: { try session.serviceOperationRecovery(actor: actor) },
                             retain: { try session.rememberServiceOperation($0, actor: actor) },
-                            complete: { try session.completeServiceOperation($0, actor: actor) }) { try await session.serviceOperationRequest(body: $0, actor: actor) }
+                            complete: { try session.completeServiceOperation($0, actor: actor) }) { bytes, dataFamily in
+            if dataFamily { return try await session.serviceCaseDataRequest(body: bytes, actor: actor) }
+            return try await session.serviceOperationRequest(body: bytes, actor: actor)
+        }
         guard self.actor == actor, !Task.isCancelled else { return }
         if store.pending == nil { refresh = UUID() }
     }
@@ -262,6 +337,6 @@ struct NativeServiceOperationsView: View {
         let own = UUID(); actionGeneration = own
         actionTask = Task { await body(); if actionGeneration == own { actionTask = nil } }
     }
-    private func reload() { store.invalidate(); grant = nil; grantDeadline = 0; refresh = UUID() }
-    private func clear() { actionGeneration = UUID(); actionTask?.cancel(); actionTask = nil; store.clear(); grant = nil; grantDeadline = 0; trips.reset(for: nil); selectedTrip = ""; linkTrip = false; review = nil }
+    private func reload() { eraseExport(); store.invalidate(); grant = nil; grantDeadline = 0; refresh = UUID() }
+    private func clear() { eraseExport(); deleteConfirm = false; exportConfirm = false; actionGeneration = UUID(); actionTask?.cancel(); actionTask = nil; store.clear(); grant = nil; grantDeadline = 0; trips.reset(for: nil); selectedTrip = ""; linkTrip = false; review = nil }
 }

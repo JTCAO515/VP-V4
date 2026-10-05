@@ -123,17 +123,17 @@ import Testing
         let vault = ServiceOperationTestVault(), journal = NativeServiceOperationJournal(vault: vault), store = NativeServiceOperationStore(), command = try Self.command()
         store.restore(actor: Self.scope) { try journal.read(Self.scope) }
         await store.load(actor: Self.scope, current: { Self.scope }) { _ in try Self.workspace() }
-        await store.perform(command: command, actor: Self.scope, current: { Self.scope }, read: { try journal.read(Self.scope) }, retain: { try journal.retain($0, scope: Self.scope) }, complete: { try journal.complete($0, scope: Self.scope) }) { bytes in
+        await store.perform(command: command, actor: Self.scope, current: { Self.scope }, read: { try journal.read(Self.scope) }, retain: { try journal.retain($0, scope: Self.scope) }, complete: { try journal.complete($0, scope: Self.scope) }) { bytes, _ in
             #expect(try journal.read(Self.scope)?.body == bytes); throw NativeDataError.server(code: "UNAUTHENTICATED")
         }
         #expect(store.pending?.body == command.body)
         let restored = NativeServiceOperationStore(); restored.restore(actor: Self.scope) { try journal.read(Self.scope) }
-        await restored.perform(command: nil, recovery: .read, actor: Self.scope, current: { Self.scope }, read: { try journal.read(Self.scope) }, retain: { try journal.retain($0, scope: Self.scope) }, complete: { try journal.complete($0, scope: Self.scope) }) { bytes in
+        await restored.perform(command: nil, recovery: .read, actor: Self.scope, current: { Self.scope }, read: { try journal.read(Self.scope) }, retain: { try journal.retain($0, scope: Self.scope) }, complete: { try journal.complete($0, scope: Self.scope) }) { bytes, _ in
             #expect(bytes == (try command.recoveryBody())); return try NativeServiceOperationWire.bytes(["data": ["receipt": NSNull()]])
         }
         #expect(restored.receiptAbsent && restored.pending != nil)
         await restored.load(actor: Self.scope, current: { Self.scope }) { _ in try Self.workspace() }
-        await restored.perform(command: nil, recovery: .retry, actor: Self.scope, current: { Self.scope }, read: { try journal.read(Self.scope) }, retain: { try journal.retain($0, scope: Self.scope) }, complete: { try journal.complete($0, scope: Self.scope) }) { bytes in
+        await restored.perform(command: nil, recovery: .retry, actor: Self.scope, current: { Self.scope }, read: { try journal.read(Self.scope) }, retain: { try journal.retain($0, scope: Self.scope) }, complete: { try journal.complete($0, scope: Self.scope) }) { bytes, _ in
             #expect(bytes == command.body); return try NativeServiceOperationWire.bytes(["data": Self.receipt(command)])
         }
         #expect(restored.pending == nil && restored.receipt != nil)
@@ -143,7 +143,7 @@ import Testing
         let vault = ServiceOperationTestVault(), journal = NativeServiceOperationJournal(vault: vault), command = try Self.command()
         _ = try journal.retain(command, scope: Self.scope)
         let store = NativeServiceOperationStore(); store.restore(actor: Self.scope) { try journal.read(Self.scope) }
-        await store.perform(command: nil, recovery: .read, actor: Self.scope, current: { Self.scope }, read: { try journal.read(Self.scope) }, retain: { try journal.retain($0, scope: Self.scope) }, complete: { try journal.complete($0, scope: Self.scope) }) { _ in throw NativeDataError.server(code: "CASE_OPERATION_ERASED") }
+        await store.perform(command: nil, recovery: .read, actor: Self.scope, current: { Self.scope }, read: { try journal.read(Self.scope) }, retain: { try journal.retain($0, scope: Self.scope) }, complete: { try journal.complete($0, scope: Self.scope) }) { _, _ in throw NativeDataError.server(code: "CASE_OPERATION_ERASED") }
         #expect(store.erased && store.pending != nil && store.receipt == nil)
         vault.failErase = true
         store.stopErasedRecovery(actor: Self.scope, current: { Self.scope }, read: { try journal.read(Self.scope) }, complete: { try journal.complete($0, scope: Self.scope) })
@@ -158,11 +158,113 @@ import Testing
         var current: NativeDataScope? = Self.scope
         store.restore(actor: Self.scope) { try journal.read(Self.scope) }
         await store.load(actor: Self.scope, current: { current }) { _ in try Self.workspace() }
-        await store.perform(command: command, actor: Self.scope, current: { current }, read: { try journal.read(Self.scope) }, retain: { try journal.retain($0, scope: Self.scope) }, complete: { try journal.complete($0, scope: Self.scope) }) { _ in
+        await store.perform(command: command, actor: Self.scope, current: { current }, read: { try journal.read(Self.scope) }, retain: { try journal.retain($0, scope: Self.scope) }, complete: { try journal.complete($0, scope: Self.scope) }) { _, _ in
             current = nil; return try NativeServiceOperationWire.bytes(["data": Self.receipt(command)])
         }
         #expect(store.receipt == nil)
         #expect(try journal.read(Self.scope)?.body == command.body)
+    }
+    static func dataCommand() throws -> NativeServiceOperationCommand {
+        .init(body: try NativeServiceOperationWire.bytes(["action": "delete", "operationId": "44444444-4444-4444-8444-444444444444", "caseId": "33333333-3333-4333-8333-333333333333", "grantRevision": 2, "confirmed": true]))
+    }
+    static func dataReceipt(_ command: NativeServiceOperationCommand, outcome: String = "deleted") throws -> [String: Any] {
+        ["schemaVersion": "service-case-data/1", "kind": "receipt", "operationId": try command.operationId, "requestDigest": SHA256.hash(data: command.body).map { String(format: "%02x", $0) }.joined(), "outcome": outcome, "createdAt": floor(Date().timeIntervalSince1970 * 1000), "allUserDataCompleted": false]
+    }
+    static let exportSession = "55555555-5555-4555-8555-555555555555"
+    static let exportRequest = "66666666-6666-4666-8666-666666666666"
+    static func bundle() -> [String: Any] {
+        let now = floor(Date().timeIntervalSince1970 * 1000)
+        var coverage = Dictionary(uniqueKeysWithValues: NativeServiceDataBundle.domains.map { ($0, "complete") })
+        coverage["brief"] = "unavailable"; coverage["attachments"] = "unavailable"
+        return ["schemaVersion": "service-case-data/1", "kind": "bundle", "requestId": exportRequest, "ownerId": Self.scope.subject, "sessionId": exportSession, "capturedAt": now, "expiresAt": now + 20000, "sourceDigest": String(repeating: "a", count: 64), "corePackageEnrollment": "not_enrolled", "allUserDataCompleted": false, "coverage": coverage, "rows": [["key": "case:1", "domain": "case", "value": ["problem": "Own issue"]]]]
+    }
+    static func decodeBundle(_ value: [String: Any]) throws -> NativeServiceDataBundle {
+        try NativeServiceDataBundle.decode(NativeServiceOperationWire.bytes(["data": value]), actor: Self.scope, sessionId: exportSession, requestId: exportRequest)
+    }
+    @Test func dataCanonicalInitialTripVersionZeroStaysBoundWithoutMutation() throws {
+        var value = Self.projection(status: "cancelled")
+        value["trip"] = ["kind": "bound", "tripId": Self.scope.subject, "headVersion": 0]
+        value["proposal"] = ["proposalId": Self.exportRequest, "tripId": Self.scope.subject, "baseVersion": 0]
+        let result = try NativeServiceProjection.decode(value)
+        #expect(result.trip.headVersion == 0 && result.proposal?.baseVersion == 0)
+        var command = try Self.command().object; command["trip"] = value["trip"]
+        try NativeServiceOperationCommand(body: NativeServiceOperationWire.bytes(command)).validate()
+        command = ["action": "select_proposal", "operationId": Self.exportSession, "caseId": result.id, "expectedRevision": result.revision, "grantRevision": result.grantRevision, "proposal": value["proposal"]!]
+        try NativeServiceOperationCommand(body: NativeServiceOperationWire.bytes(command)).validate()
+        var forged = value["trip"] as! [String: Any]; forged["headVersion"] = false; value["trip"] = forged
+        #expect(throws: (any Error).self) { try NativeServiceProjection.decode(value) }
+    }
+    @Test func dataDeleteRequiresConfirmationAndExactMinimalReceipt() throws {
+        let command = try Self.dataCommand(); try command.validate()
+        #expect(try command.isData)
+        var value = try command.object; value["confirmed"] = 1
+        #expect(throws: (any Error).self) { try NativeServiceOperationCommand(body: NativeServiceOperationWire.bytes(value)).validate() }
+        value = try Self.dataReceipt(command)
+        let receipt = try NativeServiceOperationReceipt.decode(value, command: command)
+        #expect(receipt.outcome == "deleted" && receipt.caseId == nil && receipt.action == "delete")
+        value["allUserDataCompleted"] = true
+        #expect(throws: (any Error).self) { try NativeServiceOperationReceipt.decode(value, command: command) }
+        value = try Self.dataReceipt(command); value["caseId"] = try command.caseId
+        #expect(throws: (any Error).self) { try NativeServiceOperationReceipt.decode(value, command: command) }
+        value = try Self.dataReceipt(command); value["requestDigest"] = String(repeating: "b", count: 64)
+        #expect(throws: (any Error).self) { try NativeServiceOperationReceipt.decode(value, command: command) }
+    }
+    @Test func dataDeleteUnknownAckAndAbsentReceiptRecoverViaDataFamily() async throws {
+        let command = try Self.dataCommand(), vault = ServiceOperationTestVault(), journal = NativeServiceOperationJournal(vault: vault), store = NativeServiceOperationStore()
+        store.restore(actor: Self.scope) { try journal.read(Self.scope) }
+        // Data recovery is independent of operations availability, including a deleted case.
+        await store.perform(command: command, actor: Self.scope, current: { Self.scope }, read: { try journal.read(Self.scope) }, retain: { try journal.retain($0, scope: Self.scope) }, complete: { try journal.complete($0, scope: Self.scope) }) { bytes, dataFamily in
+            #expect(dataFamily && bytes == command.body); throw NativeDataError.server(code: "CASE_DATA_UNAVAILABLE")
+        }
+        #expect(store.pending != nil)
+        await store.perform(command: nil, recovery: .read, actor: Self.scope, current: { Self.scope }, read: { try journal.read(Self.scope) }, retain: { try journal.retain($0, scope: Self.scope) }, complete: { try journal.complete($0, scope: Self.scope) }) { bytes, dataFamily in
+            let expected = try command.recoveryBody(); #expect(dataFamily && bytes == expected); return try NativeServiceOperationWire.bytes(["data": ["receipt": NSNull()]])
+        }
+        #expect(store.receiptAbsent && store.pending != nil)
+        await store.perform(command: nil, recovery: .retry, actor: Self.scope, current: { Self.scope }, read: { try journal.read(Self.scope) }, retain: { try journal.retain($0, scope: Self.scope) }, complete: { try journal.complete($0, scope: Self.scope) }) { bytes, dataFamily in
+            #expect(dataFamily && bytes == command.body); return try NativeServiceOperationWire.bytes(["data": Self.dataReceipt(command)])
+        }
+        #expect(store.receipt?.outcome == "deleted" && store.pending == nil)
+        #expect(try journal.read(Self.scope) == nil)
+    }
+    @Test func dataAbandonUsesOriginalDeleteBytesAndDoesNotClaimDeletion() async throws {
+        let command = try Self.dataCommand(), vault = ServiceOperationTestVault(), journal = NativeServiceOperationJournal(vault: vault), store = NativeServiceOperationStore()
+        _ = try journal.retain(command, scope: Self.scope); store.restore(actor: Self.scope) { try journal.read(Self.scope) }
+        await store.perform(command: nil, recovery: .abandon, actor: Self.scope, current: { Self.scope }, read: { try journal.read(Self.scope) }, retain: { try journal.retain($0, scope: Self.scope) }, complete: { try journal.complete($0, scope: Self.scope) }) { bytes, dataFamily in
+            let value = try JSONSerialization.jsonObject(with: bytes) as! [String: Any]
+            #expect(dataFamily && value["mutationBytes"] as? String == String(data: command.body, encoding: .utf8))
+            return try NativeServiceOperationWire.bytes(["data": Self.dataReceipt(command, outcome: "cancelled")])
+        }
+        #expect(store.receipt?.outcome == "cancelled" && store.pending == nil)
+    }
+    @Test func dataExportChecksActorSessionRequestExpiryAndRealCoverage() throws {
+        let good = Self.bundle(), bundle = try Self.decodeBundle(good)
+        #expect(bundle.rowCount == 1 && bundle.counts["case"] == 1)
+        for (key, replacement) in [("ownerId", Self.exportRequest as Any), ("sessionId", Self.exportRequest as Any), ("requestId", Self.exportSession as Any), ("allUserDataCompleted", 0 as Any), ("corePackageEnrollment", "enrolled" as Any), ("expiresAt", 1 as Any)] {
+            var value = good; value[key] = replacement
+            #expect(throws: (any Error).self) { try Self.decodeBundle(value) }
+        }
+        var duplicate = good; let rows = good["rows"] as! [[String: Any]]; duplicate["rows"] = rows + rows
+        #expect(throws: (any Error).self) { try Self.decodeBundle(duplicate) }
+        var coverage = good["coverage"] as! [String: String]; coverage["brief"] = "complete"
+        var invalid = good; invalid["coverage"] = coverage
+        #expect(throws: (any Error).self) { try Self.decodeBundle(invalid) }
+    }
+    @Test func dataExportDeliversSeparateArtifactAndCleansOnlyOwnedFiles() throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent("service-export-test-" + UUID().uuidString)
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let retained = root.appendingPathComponent("unrelated.json"); try Data("keep".utf8).write(to: retained)
+        let bundle = try Self.decodeBundle(Self.bundle()), started = ProcessInfo.processInfo.systemUptime
+        let file = try NativeServiceExportFile.create(bundle: bundle, actor: Self.scope, started: started, directoryRoot: root)
+        #expect(try Data(contentsOf: file.url) == bundle.bytes)
+        #expect(file.artifactDigest != bundle.sourceDigest && file.current(actor: Self.scope))
+        #expect(!file.current(actor: nil) && !file.current(actor: Self.scope, uptime: file.deadline + 1))
+        let orphan = root.appendingPathComponent("vp-service-export-" + UUID().uuidString); try FileManager.default.createDirectory(at: orphan, withIntermediateDirectories: false)
+        try NativeServiceExportFile.sweepOrphans(directoryRoot: root)
+        #expect(!FileManager.default.fileExists(atPath: orphan.path) && FileManager.default.fileExists(atPath: file.url.path))
+        try NativeServiceExportFile.erase(file)
+        #expect(!FileManager.default.fileExists(atPath: file.url.path) && FileManager.default.fileExists(atPath: retained.path))
     }
     @Test func grantsAndFutureStatesNeverImplyAcceptance() throws {
         for state in ["active", "revoked", "future_state", "requested", "queued"] {
