@@ -36,7 +36,7 @@ import UIKit
         }
     }
 
-    deinit {
+    isolated deinit {
         for token in notificationTokens { NotificationCenter.default.removeObserver(token) }
     }
 
