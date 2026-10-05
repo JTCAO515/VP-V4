@@ -19,13 +19,12 @@ fixture. Three existing fixtures changed only .5 version, the coverage_progress
 descriptor and outer digest. Explicit semantic comparison preserved the other 33
 modules, inner request strings and original cancellation/tampering outcomes.
 
-Remaining exact coordination: NativeDataCoverageTests.swift:61 still asserts
-coverage_progress.exportHandler==nil, which contradicts the accepted .5 descriptor.
-`LegacyCoverageAssertion.patch` replaces only that single capability expectation
-with the strict schema/scope/selection/handler predicate; other negative oracles
-remain unchanged. Main is obtaining original owner release. This Swift test hunk
-has not been applied under the catalog-metadata-only lease. Related old full suite
-UNRUN until this exact release; no permission/gate bypass.
+Final exact coordination resolved: Main normal-read 6c008319 explicit original
+owner clean/no-inflight/planned release and 326a01 exact patch review granted
+NativeDataCoverageTests.swift:61. `LegacyCoverageAssertion.patch` was applied:
+only the coverage_progress capability expectation now checks strict
+schema/scope/selection/handler and retains !missing. All other negative oracles
+and other 33 modules remain unchanged. No pending lease or source work remains.
 
 Current verification: Swift parser PASS for all own source/tests; isolated iOS
 module/typecheck of eight non-UI own sources and both test sources against extracted
@@ -42,6 +41,11 @@ ACK preserves original bytes and does not retry; recovery is read-only; explicit
 logout clears this journal. Test build and that single case PASS, zero skip.
 No repetition of the unchanged r1 tests in r2. Both own temporary devices were
 deleted. Raw evidence: artifacts/native-coverage-progress-r1, -r2, and summary JSON.
+After the one-line legacy assertion update, r3 incremental test build PASS and
+only the original affected catalog case PASS 1/1, zero skip. Prior 10 Native cases
+remain valid/reused; no full suite/matrix rerun or full-matrix PASS claim. The r3
+own temporary device was also deleted. Final small summary records all three
+separate evidence sources, with 11 unique affected cases, not a larger matrix.
 Main's independently verified Auth1/SQL18 evidence is reused, not rerun or merged
 with unsigned URLProtocol/synthetic Native evidence. Real Native signed-Auth joint
 interaction, physical device, target/provider/Storage/permission/fees remain UNRUN.
@@ -50,8 +54,8 @@ producer fixture was generated/validated by the sole frozen TS runtime.
 
 Whole #239, full ALL1 missing and ALL2 remain Open.
 
-Owned caller/runtime fixed: `7856aabd492b45785c87e015a4ef52100b06f712`.
+Owned caller/runtime fixed: `46b2541fdc84e542b8c8633c5d9faf033a750b9f`.
 The final commit above this documentation-only update is immutable for Main/sole
-TS integration. The one legacy assertion remains a precise lease dependency and
-must be resolved before claiming all related Native checks passed. No new writer,
-PR, target action or test matrix.
+TS integration. Necessary owned affected checks passed and unchanged evidence is
+reused. Native scoped implementation is fixed; whole #239/full ALL1 missing/ALL2
+remain Open. No new writer, PR, target action or test matrix.
