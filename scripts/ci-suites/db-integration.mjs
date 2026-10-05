@@ -66,6 +66,7 @@ export const LANES = {
           VP_MEMORY_DB_TEST: "1",
           VP_PLACE_ACTION_DB_TEST: "1",
           VP_SERVICE_OPERATIONS_DB_TEST: "1",
+          VP_TRAVELER_BRIEF_DB_TEST: "1",
         },
         files: [
           "tests/integration/community/review.test.mjs",
@@ -107,6 +108,7 @@ export const LANES = {
           "tests/integration/reservations/ledger-postgres.test.mjs",
           "tests/integration/reservations/native-return-joint.test.mjs",
           "tests/integration/service-cases/operations-postgres.test.mjs",
+          "tests/integration/service-cases/brief-postgres.test.mjs",
           "tests/integration/trip/offline-text-provenance.test.mjs",
           "tests/integration/trip/offline-source-consumer.test.mjs",
           "tests/integration/turn/durable-work.test.mjs",
