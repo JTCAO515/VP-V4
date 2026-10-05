@@ -28,7 +28,19 @@ nonisolated struct NativePDFInbox: Sendable {
         if let inherited = expiresNoLaterThan {
             guard inherited.timeIntervalSince1970.isFinite, inherited > now else { throw NativePDFError.expired }
         }
-        let expiresAt = min(now.addingTimeInterval(lifetime), expiresNoLaterThan ?? .distantFuture)
+        var expiresAt = now.addingTimeInterval(lifetime)
+        if let inherited = expiresNoLaterThan {
+            let upperBound = min(expiresAt, inherited)
+            // Wire expiry has millisecond precision. Foundation rounds fractional seconds; never round beyond the original share lease.
+            let formatter = ISO8601DateFormatter(); formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            let floored = Date(timeIntervalSince1970: floor(upperBound.timeIntervalSince1970 * 1000) / 1000)
+            guard let canonical = formatter.date(from: formatter.string(from: floored)) else { throw NativePDFError.expired }
+            if canonical > upperBound {
+                guard let earlier = formatter.date(from: formatter.string(from: floored.addingTimeInterval(-0.001))) else { throw NativePDFError.expired }
+                expiresAt = earlier
+            } else { expiresAt = canonical }
+            guard expiresAt <= upperBound, expiresAt > now else { throw NativePDFError.expired }
+        }
         try purge(now: now)
         let id = UUID()
         let folder = root.appendingPathComponent(namespace, isDirectory: true).appendingPathComponent(id.uuidString, isDirectory: true)

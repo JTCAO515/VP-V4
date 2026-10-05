@@ -128,6 +128,7 @@ enum AppEntry: String, CaseIterable, Hashable, Identifiable {
         case "vp": return .ask
         case "journeys": return .trip
         case "library": return .knowledge
+        case "shareinbox": return .shareInbox
         case "account", "privacy", "purchase", "logout": return .profile
         default: return AppEntry(rawValue: host)
         }

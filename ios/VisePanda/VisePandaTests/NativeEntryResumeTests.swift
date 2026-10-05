@@ -107,11 +107,11 @@ nonisolated final class NativeEntryResumeInboxTests: XCTestCase {
         let namespace = String(repeating: "a", count: 64)
         let inbox = NativePDFInbox(root: root)
         let receipt = try inbox.receiveValidated(bytes, document: document, namespace: namespace, now: now, expiresNoLaterThan: expiry)
-        XCTAssertEqual(receipt.expiresAt, expiry)
+        XCTAssertLessThanOrEqual(receipt.expiresAt, expiry)
         try NativePDFInbox(root: root).validate(receipt, namespace: namespace, now: now.addingTimeInterval(1))
         let metadataURL = root.appendingPathComponent(namespace).appendingPathComponent(receipt.id.uuidString).appendingPathComponent("receipt.json")
         let persisted = try JSONDecoder().decode(NativePDFInbox.Receipt.self, from: Data(contentsOf: metadataURL))
-        XCTAssertEqual(persisted.expiresAt, expiry)
+        XCTAssertEqual(persisted.expiresAt, receipt.expiresAt)
         let command = NativePDFCommand(operationId: UUID().uuidString.lowercased(), expectedHeadVersion: 0,
             contentHash: document.digest, byteCount: bytes.count, pageCount: 1, extraction: "pdfkit_text",
             expiresAt: NativePDFWire.instant(persisted.expiresAt), fields: [.init(kind: "date", value: "2026-10-05", locator: .init(page: 1,
@@ -119,6 +119,7 @@ nonisolated final class NativeEntryResumeInboxTests: XCTestCase {
                 sourceTextHash: NativePDFDocument.digest(Data(try XCTUnwrap(document.pages.first?.lines.first).text.utf8))))])
         XCTAssertTrue(command.valid)
         _ = try command.encoded()
+        XCTAssertEqual(try XCTUnwrap(NativePDFWire.date(command.expiresAt)), persisted.expiresAt)
         XCTAssertLessThanOrEqual(try XCTUnwrap(NativePDFWire.date(command.expiresAt)), expiry)
         XCTAssertThrowsError(try inbox.receiveValidated(bytes, document: document, namespace: namespace, now: now, expiresNoLaterThan: now))
         XCTAssertThrowsError(try inbox.receiveValidated(bytes, document: document, namespace: namespace, now: now, expiresNoLaterThan: Date(timeIntervalSince1970: .infinity)))
