@@ -1,0 +1,13 @@
+VP_LIFECYCLE_HTTP_TARGET {"project":"vp-native-ask-1fa2e8d1","base":64600}
+✔ real disposable Auth → HTTP → atomic lifecycle → saved reads, original Memory and unknown ACK recovery (7367.650417ms)
+ℹ DEFAULT_RPC_DENY_PASS; following Auth/HTTP cases use explicit disposable-only qualification grant, not target activation
+ℹ LIFECYCLE_REAL_AUTH_HTTP_SQL_PASS; synthetic disposable owners; zero model/provider/budget requests; no target migration or real user export/delete
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 10380.977292
+VP_LIFECYCLE_HTTP_CLEANUP {"project":"vp-native-ask-1fa2e8d1","result":"PASS"}

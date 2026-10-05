@@ -4,6 +4,7 @@ import { getSupabasePublicConfig } from "../identity/user-data-adapter.ts";
 import { isSameOriginMutation, isUuid } from "../identity/request-guards.ts";
 import { requestLifetime } from "../knowledge/review/request-lifetime.ts";
 import { parseResultArtifactRead } from "./result-contract.ts";
+import { validResultReference } from "../trip/lifecycle/result-reference.ts";
 
 type Rpc = Pick<ReturnType<typeof createWebRpc>, "authenticate" | "call">;
 const failed = (code: string, status: number) => ({ status, body: { error: { code } } });
@@ -19,13 +20,11 @@ export async function readWebTripComparison(tripId: string, rpc: Rpc) {
   const ref = reference.data;
   if (ref?.kind === "empty" || ref?.kind === "unavailable")
     return { status: 200, body: { version: 1, data: { kind: ref.kind } } };
-  if (!ref || typeof ref !== "object" || Array.isArray(ref) || Object.keys(ref).length !== 4
-    || ref.kind !== "result_reference" || ref.tripId !== tripId || !isUuid(ref.artifactId)
-    || !Number.isSafeInteger(ref.revision) || ref.revision < 1 || ref.revision > 1000) return failed("RESULT_UNAVAILABLE", 503);
+  if (!validResultReference(ref, "tripId", tripId)) return failed("RESULT_UNAVAILABLE", 503);
   const exact = await rpc.call("read_result_artifacts_v1", { p_artifact_id: ref.artifactId, p_revision: ref.revision });
   if (exact.error) return rpcFailure(exact.error.message);
   const result = parseResultArtifactRead(exact.data);
-  if (!result || !result.current || result.lifecycle !== "active" || result.source.tripId !== tripId
+  if (!result || (ref.archiveHistorical === true ? result.current !== false || result.historicalReadable !== true : result.current !== true) || result.lifecycle !== "active" || result.source.tripId !== tripId
     || result.artifactId !== ref.artifactId || result.revision !== ref.revision) return failed("RESULT_UNAVAILABLE", 503);
   if (await rpc.authenticate() !== actor) return failed("UNAUTHENTICATED", 401);
   return { status: 200, body: { version: 1, data: result } };

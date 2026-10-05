@@ -1,0 +1,52 @@
+VPJ-61 archive result reference delta
+Source: append-local read_trip_result_reference_v1/v2 replacements only; original ACLs, nonarchive bodies and all common/exact/publish/action functions preserved.
+Local network-none PostgreSQL 17.6.1.159, synthetic Auth claims and original task/result producer RPCs; no provider calls, target roles, credentials, real user rights actions or phone acceptance.
+
+Retained failures:
+- r1: fixture used planning policy ID in intake's text-policy argument; DATA_POLICY_BLOCKED. Corrected fixture only.
+- r2: fixture deletion admission lacked current session claim; original goal unlink receipt NOT NULL guard rejected it. Corrected fixture claim only.
+- Capacity-channel report from Main was not a code/test failure; work continued in the same task/worktree.
+
+Full related run before the final active-candidate count refinement:
+▶ VPJ-61 SQL lifecycle, existing writers, locks, erasure and versioned export
+  ✔ ACL/RLS/default-deny and legacy reconciliation (484.522417ms)
+  ✔ canonical input, exact raw replay, durable rejection and unknown abandon (788.349209ms)
+  ✔ old direct create shares capacity, actual producer confirm, active swaps and rollback (761.310125ms)
+  ✔ original archive atomic failure, keep/skip qualification, services retained and erasure (1191.001584ms)
+  ✔ paginated revision fences real head/delete mutations and old replay survives archive (498.2555ms)
+  ✔ real lock conflicts remain unknown, same-op concurrent create, account replacement and rollback (4315.667542ms)
+  ✔ actual old create/confirm/archive/delete/replacement transactions race the lifecycle entry (4162.75425ms)
+  ✔ archive historical exact references retain original readers and refuse withdrawn sources (6015.772459ms)
+  ✔ v2 export exact lease enrollment, old decoder preservation, source fence and delete cascade (671.058833ms)
+✔ VPJ-61 SQL lifecycle, existing writers, locks, erasure and versioned export (24621.851416ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 24661.426625
+
+Final candidate refinement:
+Original owner/Trip/active bounded scan includes proposal candidates; original exact reader and typed success gate continue rejecting proposal/preview. Stored owner rows with no eligible active candidate yield unavailable, without granting a proof.
+Focused final run used a temporary sibling test file, changing registration options only to skip unaffected cases. Every test body was unchanged. Temporary file and Docker container were removed; committed mandatory test has no added per-case skips. The eight skipped cases are UNRUN in this last invocation with prior PASS evidence reused; this is not a fresh 10/10 execution.
+▶ VPJ-61 SQL lifecycle, existing writers, locks, erasure and versioned export
+  ﹣ ACL/RLS/default-deny and legacy reconciliation (0.371959ms) # SKIP
+  ﹣ canonical input, exact raw replay, durable rejection and unknown abandon (0.124042ms) # SKIP
+  ﹣ old direct create shares capacity, actual producer confirm, active swaps and rollback (0.039709ms) # SKIP
+  ﹣ original archive atomic failure, keep/skip qualification, services retained and erasure (0.04ms) # SKIP
+  ﹣ paginated revision fences real head/delete mutations and old replay survives archive (0.034416ms) # SKIP
+  ﹣ real lock conflicts remain unknown, same-op concurrent create, account replacement and rollback (0.032208ms) # SKIP
+  ﹣ actual old create/confirm/archive/delete/replacement transactions race the lifecycle entry (0.029584ms) # SKIP
+  ✔ archive historical exact references retain original readers and refuse withdrawn sources (5929.077959ms)
+  ﹣ v2 export exact lease enrollment, old decoder preservation, source fence and delete cascade (0.132792ms) # SKIP
+✔ VPJ-61 SQL lifecycle, existing writers, locks, erasure and versioned export (11802.427875ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 8
+ℹ todo 0
+ℹ duration_ms 11842.281792

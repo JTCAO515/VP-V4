@@ -103,6 +103,10 @@ test('existing pending Proposal references save/read exactly without executing o
   if(mutation==='taskTerminal')e.sql(`update public.turns set status='failed' where id='${b.turn}';`);
   assert.ok(['empty','unavailable'].includes((await read(b)).kind),mutation);
   if(mutation!=='tripHead')assert.equal(state(b.trip),initial,'reference path did not change the legal initial Trip snapshot: '+mutation);
+  // The negative fixture is finished: erase only its owned disposable Trip.
+  // Keep the production capacity guard; every assertion above runs before cleanup.
+  e.sql(`begin;delete from turn_private.assistant_goal_trip_links where owner_id='${e.users[0].id}' and goal_id='${b.goal}' and trip_id='${b.trip}';delete from public.trips where id='${b.trip}' and owner_id='${e.users[0].id}';commit;`);
+  assert.equal(e.sql(`select count(*) from public.trips where id='${b.trip}';`),'0');
  }
  const c=await fixture();await pub(c);
  e.sql(`update turn_private.text_consents set revoked_at=now() where owner_id='${e.users[0].id}' and policy_id='${e.policyId}';`);

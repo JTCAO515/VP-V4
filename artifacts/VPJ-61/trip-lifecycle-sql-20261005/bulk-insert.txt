@@ -1,0 +1,59 @@
+VPJ-61 atomic multirow INSERT repair
+Product source: 509f5fed2cc96a79d4f2d4f01cc6aa8d842dad89.
+
+Original observed CI failure preserved:
+PR #653 PostgreSQL job 111660359677 observed 430 cases, 418 PASS, 12 FAIL, zero skips; all twelve raised LEGACY_RECONCILIATION_REQUIRED. The original log is retained by the sole TS integrator at /tmp/vpj61-ci-postgres-failed.log. Unchanged failing suites: memory/travel-pace (5), privacy/linked-trip-delete-d3 (6), privacy/trip-deletion (1). This was a product timing defect, not a fixture or channel-capacity failure.
+
+Repair:
+BEFORE ROW retains owner prelocks; original AFTER ROW registers actual inserted rows as drafts; AFTER INSERT STATEMENT REFERENCING NEW TABLE validates complete owner state after registration. True old legacy still rejects. Draft count >3 rejects the whole statement; role/RLS/ownership/FK checks remain. Revision bumps only successful actual inserts, once per owner/transaction. No role/GUC/JWT/pending-table/deferred-FK bypass.
+
+Retained local repair finding:
+First owned-run bulk case PASS, but the prior pagination fixture disabled registration triggers to seed 55 historical rows after migration. The new statement guard correctly rejected that attempt; because the old fixture error prevented trigger reenable, subsequent tests also failed. Corrected only this owned upgrade fixture to seed history before migration. No new guard disabled, no CI-failing fixture/assertion changed.
+
+Actual current owned PG run:
+▶ VPJ-61 SQL lifecycle, existing writers, locks, erasure and versioned export
+  ✔ ACL/RLS/default-deny and legacy reconciliation (495.073375ms)
+  ✔ bulk Trip INSERT validates statement capacity, legacy, RLS and concurrent rollback (1785.41125ms)
+  ✔ canonical input, exact raw replay, durable rejection and unknown abandon (815.189666ms)
+  ✔ old direct create shares capacity, actual producer confirm, active swaps and rollback (829.793042ms)
+  ✔ original archive atomic failure, keep/skip qualification, services retained and erasure (1296.891292ms)
+  ✔ paginated revision fences real head/delete mutations and old replay survives archive (484.863292ms)
+  ✔ real lock conflicts remain unknown, same-op concurrent create, account replacement and rollback (4277.554625ms)
+  ✔ actual old create/confirm/archive/delete/replacement transactions race the lifecycle entry (4249.490583ms)
+  ✔ archive historical exact references retain original readers and refuse withdrawn sources (6245.027958ms)
+  ✔ v2 export exact lease enrollment, old decoder preservation, source fence and delete cascade (676.46625ms)
+✔ VPJ-61 SQL lifecycle, existing writers, locks, erasure and versioned export (27157.631458ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 27198.17025
+
+Actual unchanged affected regressions (run sequentially, one disposable container at a time):
+VP_MEMORY_DB_TEST=1 VP_TURN_DB_TEST=1 VP_PRIVACY_DB_TEST=1 node --test --test-concurrency=1 tests/integration/memory/travel-pace.test.mjs tests/integration/privacy/linked-trip-delete-d3.test.mjs tests/integration/privacy/trip-deletion.test.mjs
+✔ explicit cross-trip consent is required; profile defaults are never task inputs; owner/session gates (6238.972ms)
+✔ current requirement wins; skip is task-only; correction invalidates queued work and older retries (486.363041ms)
+✔ Undo restores exactly the last save; competing corrections and withdrawal prevent revival (493.8155ms)
+✔ two devices cannot overwrite each other; legacy change revokes use; replaced session rejects replay (338.609625ms)
+✔ failed write rolls back version and preimage; code rollback never restores revoked qualification (384.500958ms)
+✔ exact server plan and explicit scoped confirm queue then erase linked Trip with same receipt (5745.397459ms)
+✔ selected retained Task/capacity identities keep quota but private input/output are truly erased and old readers unavailable (399.426042ms)
+✔ shared and active scopes conflict, selection/date changes require preview, queue blocks new related writes (547.637875ms)
+✔ explicit export request selection invalidates whole owner-generated copies and blocks old/new collector until erase (418.137334ms)
+✔ completed snapshots minimise deleted Trip text; bounded expiry purge preserves queued plans and account cascades new copies only (756.638125ms)
+✔ actual server consumer loopback SQL executes one scoped erase after lost ACK; default disabled zero RPC and actual ACL denied (344.945542ms)
+✔ Trip deletion SQL: reauthentication, fencing, atomic completion, isolation and tombstone (6027.142833ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 22491.5065
+
+PASS syntax/docs/diff and source review. Local network-none PostgreSQL 17.6.1.159 with synthetic Auth tables/claims. The old three test files and assertions were not edited. Each owned container was removed.
+UNRUN here: repaired full CI lane, signed Auth/HTTP joint integration on this repair, target schema/ACL activation, phone, real user export/deletion and provider actions. The sole TS integrator owns combined PR/CI and retains the original failed run; no claim that the original CI failure is retroactively PASS.

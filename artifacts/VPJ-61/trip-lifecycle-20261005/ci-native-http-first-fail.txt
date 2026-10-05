@@ -1,0 +1,27 @@
+PR #653 / head eadb8b725ce2f3325a2c4be8c0a4f196fd4a90c9
+Run 37278318273 / job 111660359653 / supabase-http-native
+Original failure retained; independent from the bulk-insert PostgreSQL defect.
+
+2026-10-05T07:35:29.2672567Z not ok 1 - existing pending Proposal references save/read exactly without executing or copying confirmation; live scope/lifecycle and comparison compatibility
+2026-10-05T07:38:49.9196817Z not ok 1 - local native/Web share one immutable Trip with confirmed intent, CAS and ordinary-owner isolation
+2026-10-05T07:39:16.8477850Z not ok 2 - ordinary Web cookies read the same exact comparison with unchanged SQL session and source guards
+2026-10-05T07:40:15.1420818Z not ok 2 - v5 comparison binds only a confirmed goal Trip and reads one exact revision across native entries
+2026-10-05T07:50:36.8261257Z VP_DB_INTEGRATION_RESULT {"lane":"supabase-http-native","step":"change-proposal-reference","files":1,"tests":13,"pass":12,"fail":1,"cancelled":0,"skipped":0,"todo":0,"runs":1,"seconds":116,"outcome":"failed","problems":["exit 1","fail=1"]}
+2026-10-05T07:50:36.8263457Z VP_DB_INTEGRATION_RESULT {"lane":"supabase-http-native","step":"trip-proposal-reference-discovery","files":1,"tests":13,"pass":13,"fail":0,"cancelled":0,"skipped":0,"todo":0,"runs":1,"seconds":52,"outcome":"passed","problems":[]}
+2026-10-05T07:50:36.8264717Z VP_DB_INTEGRATION_RESULT {"lane":"supabase-http-native","step":"native-local-session","files":1,"tests":1,"pass":1,"fail":0,"cancelled":0,"skipped":0,"todo":0,"runs":1,"seconds":43,"outcome":"passed","problems":[]}
+2026-10-05T07:50:36.8266080Z VP_DB_INTEGRATION_RESULT {"lane":"supabase-http-native","step":"trip-lifecycle-http","files":1,"tests":1,"pass":1,"fail":0,"cancelled":0,"skipped":0,"todo":0,"runs":1,"seconds":48,"outcome":"passed","problems":[]}
+2026-10-05T07:50:36.8267297Z VP_DB_INTEGRATION_RESULT {"lane":"supabase-http-native","step":"native-same-trip","files":1,"tests":2,"pass":0,"fail":2,"cancelled":0,"skipped":0,"todo":0,"runs":1,"seconds":78,"outcome":"failed","problems":["exit 1","fail=2"]}
+2026-10-05T07:50:36.8279775Z VP_DB_INTEGRATION_RESULT {"lane":"supabase-http-native","step":"native-text-http","files":1,"tests":8,"pass":7,"fail":1,"cancelled":0,"skipped":0,"todo":0,"runs":1,"seconds":117,"outcome":"failed","problems":["exit 1","fail=1"]}
+2026-10-05T07:50:36.8281560Z VP_DB_INTEGRATION_RESULT {"lane":"supabase-http-native","step":"translation-history-http","files":1,"tests":1,"pass":1,"fail":0,"cancelled":0,"skipped":0,"todo":0,"runs":1,"seconds":52,"outcome":"passed","problems":[]}
+2026-10-05T07:50:36.8282752Z VP_DB_INTEGRATION_RESULT {"lane":"supabase-http-native","step":"translation-trip-source-http","files":1,"tests":1,"pass":1,"fail":0,"cancelled":0,"skipped":0,"todo":0,"runs":1,"seconds":48,"outcome":"passed","problems":[]}
+2026-10-05T07:50:36.8283923Z VP_DB_INTEGRATION_RESULT {"lane":"supabase-http-native","step":"native-assistant-rollback","files":2,"tests":2,"pass":2,"fail":0,"cancelled":0,"skipped":0,"todo":0,"runs":1,"seconds":60,"outcome":"passed","problems":[]}
+2026-10-05T07:50:36.8285048Z VP_DB_INTEGRATION_RESULT {"lane":"supabase-http-native","step":"native-planning-http","files":1,"tests":1,"pass":1,"fail":0,"cancelled":0,"skipped":0,"todo":0,"runs":1,"seconds":44,"outcome":"passed","problems":[]}
+2026-10-05T07:50:36.8286808Z VP_DB_INTEGRATION_RESULT {"lane":"supabase-http-native","step":"native-grounded-http","files":1,"tests":1,"pass":1,"fail":0,"cancelled":0,"skipped":0,"todo":0,"runs":1,"seconds":50,"outcome":"passed","problems":[]}
+2026-10-05T07:50:36.8288135Z VP_DB_INTEGRATION_RESULT {"lane":"supabase-http-native","step":"journeys-goal-index-http","files":1,"tests":13,"pass":13,"fail":0,"cancelled":0,"skipped":0,"todo":0,"runs":1,"seconds":45,"outcome":"passed","problems":[]}
+2026-10-05T07:50:36.8289304Z VP_DB_INTEGRATION_RESULT {"lane":"supabase-http-native","step":"web-trip-continuity","files":1,"tests":4,"pass":4,"fail":0,"cancelled":0,"skipped":0,"todo":0,"runs":1,"seconds":81,"outcome":"passed","problems":[]}
+2026-10-05T07:50:36.8290453Z VP_DB_INTEGRATION_RESULT {"lane":"supabase-http-native","step":"explicit-travel-intake","files":1,"tests":1,"pass":1,"fail":0,"cancelled":0,"skipped":0,"todo":0,"runs":1,"seconds":48,"outcome":"passed","problems":[]}
+2026-10-05T07:50:36.8291805Z VP_DB_INTEGRATION_RESULT {"lane":"supabase-http-native","step":"native-memory-http","files":1,"tests":1,"pass":1,"fail":0,"cancelled":0,"skipped":0,"todo":0,"runs":1,"seconds":42,"outcome":"passed","problems":[]}
+2026-10-05T07:50:36.8292965Z VP_DB_INTEGRATION_RESULT {"lane":"supabase-http-native","step":"selected-source-auth-http","files":1,"tests":1,"pass":1,"fail":0,"cancelled":0,"skipped":0,"todo":0,"runs":1,"seconds":45,"outcome":"passed","problems":[]}
+2026-10-05T07:50:36.8295053Z VP_DB_INTEGRATION_RESULT {"lane":"supabase-http-native","step":"planning-intake-http","files":1,"tests":1,"pass":1,"fail":0,"cancelled":0,"skipped":0,"todo":0,"runs":1,"seconds":46,"outcome":"passed","problems":[]}
+
+Two capacity failures: old independent fixture cases kept adding drafts to one owner beyond the accepted maximum. Two historical-read failures: old archived-empty expectations contradict the new explicit server-authorized archived-result contract. Guard/roles/zero-skip/assertions were not removed.

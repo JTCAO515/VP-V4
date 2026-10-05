@@ -101,7 +101,10 @@ struct NativeFiveResultReference {
     static func decode(_ data:Data,field:String,expectedID:String)throws->Self?{
         guard data.count<=12_000,let e=try JSONSerialization.jsonObject(with:data) as? [String:Any],Set(e.keys)==Set(["version","data"]),e["version"] as? Int==2,let r=e["data"] as? [String:Any] else{throw NativeDataError.invalidResponse}
         if ["empty","unavailable"].contains(r["kind"] as? String ?? ""){guard Set(r.keys)==Set(["kind"]) else{throw NativeDataError.invalidResponse};return nil}
-        guard ["taskId","tripId"].contains(field),Set(r.keys)==Set(["kind","artifactId","revision",field]),r["kind"] as? String=="result_reference",r[field] as? String==expectedID,
+        let originalKeys:Set<String>=["kind","artifactId","revision",field]
+        let archiveProof = field == "tripId" && Set(r.keys) == originalKeys.union(["archiveHistorical"])
+            && (r["archiveHistorical"] as? NSNumber).map { CFGetTypeID($0) == CFBooleanGetTypeID() && $0.boolValue } == true
+        guard ["taskId","tripId"].contains(field),(Set(r.keys)==originalKeys || archiveProof),r["kind"] as? String=="result_reference",r[field] as? String==expectedID,
               let id=r["artifactId"] as? String,UUID(uuidString:id) != nil,let revision=r["revision"] as? Int,(1...1000).contains(revision) else{throw NativeDataError.invalidResponse}
         return .init(artifactID:id,revision:revision)
     }

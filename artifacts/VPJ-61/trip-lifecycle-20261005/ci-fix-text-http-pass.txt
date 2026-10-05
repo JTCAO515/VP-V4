@@ -1,0 +1,21 @@
+VP_NATIVE_HTTP_TARGET {"project":"vp-native-ask-e8a31979","base":64420,"supabaseAPI":"http://127.0.0.1:64441","api":"http://127.0.0.1:64451"}
+✔ real local Auth, native HTTP, consent, durable worker and recovery enforce owner/session boundaries (9627.923917ms)
+RESULT_CAS_LOSER {"case":"linked-trip","status":409,"code":"23505","message":"duplicate key value violates unique constraint \"result_artifacts_pkey\""}
+✔ v5 comparison binds only a confirmed goal Trip and reads one exact revision across native entries (10124.242417ms)
+VPJ82_SEARCH_LOCAL_SYNTHETIC {"published":25,"twoPageMilliseconds":101}
+RESULT_CAS_LOSER {"case":"conversation","status":409,"code":"23505","message":"duplicate key value violates unique constraint \"result_artifacts_pkey\""}
+✔ v5 conversation persists independent answer and versioned goal changes without extra task attempts (10962.647792ms)
+✔ v5 goal context manifest selects current owner Memory without dispatch or stale reuse (5212.137125ms)
+✔ v5 explicit goal Trip link has CAS, owner, deletion and revoked-consent boundaries (8034.9215ms)
+✔ v5 Trip deletion takes the Trip lock before goal/link and fences an interleaved retarget (7971.364792ms)
+✔ v5 Trip unlink and confirmed deletion reserve a terminal goal version at the ordinary cap (7242.631958ms)
+✔ v5 owner privacy cursor reaches and can unlink the 101st active link after withdrawal (7927.905417ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 70070.054208
+VP_NATIVE_HTTP_CLEANUP {"project":"vp-native-ask-e8a31979","result":"PASS"}

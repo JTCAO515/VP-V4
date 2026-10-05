@@ -853,9 +853,10 @@ nonisolated final class NativeKnowledgeTests: XCTestCase {
         let artifactID = UUID().uuidString.lowercased(), store = NativeResultStore()
         func bytes(_ value: [String: Any]) throws -> Data { try JSONSerialization.data(withJSONObject: value) }
         let reference = try bytes(["version": 1, "data": ["kind": "result_reference", "artifactId": artifactID, "revision": 2, "tripId": tripID]])
-        func result(_ sourceTrip: String, current: Bool = true) throws -> Data {
-            try bytes(["version": 1, "data": ["kind": "result_artifact", "artifactId": artifactID, "revision": 2,
-                "current": current, "lifecycle": "active", "source": ["tripId": sourceTrip, "tripVersion": 0],
+        func result(_ sourceTrip: String, current: Bool = true, historicalReadable: Bool = true,
+                    artifact: String? = nil, revision: Int = 2) throws -> Data {
+            try bytes(["version": 1, "data": ["kind": "result_artifact", "artifactId": artifact ?? artifactID, "revision": revision,
+                "current": current, "historicalReadable": historicalReadable, "lifecycle": "active", "source": ["tripId": sourceTrip, "tripVersion": 0],
                 "content": ["schemaVersion": "comparison/1", "title": "Synthetic Trip comparison", "summary": "No real travel advice.",
                     "options": [["id": "one", "title": "One", "tradeoff": "Time unknown"],
                                 ["id": "two", "title": "Two", "tradeoff": "Availability unknown"]]]]])
@@ -872,6 +873,33 @@ nonisolated final class NativeKnowledgeTests: XCTestCase {
         XCTAssertEqual(store.state, "unavailable")
         await store.load(scope: owner, tripID: tripID, reference: { reference }, open: { _, _ in try result(tripID, current: false) })
         XCTAssertNil(store.result, "a changed basis cannot remain in the selected Trip")
+        let archiveReference = try bytes(["version": 1, "data": ["kind": "result_reference", "artifactId": artifactID,
+            "revision": 2, "tripId": tripID, "archiveHistorical": true]])
+        await store.load(scope: owner, tripID: tripID, reference: { archiveReference }, open: { _, _ in try result(tripID, current: false) })
+        XCTAssertEqual(store.visibleResult(owner, expectedTripID: tripID)?.artifactId, artifactID)
+        XCTAssertEqual(store.result?.current, false, "archive proof grants read-only history, never current execution")
+        await store.load(scope: owner, tripID: tripID, reference: { archiveReference }, open: { _, _ in try result(otherTrip, current: false) })
+        XCTAssertNil(store.result)
+        await store.load(scope: owner, tripID: tripID, reference: { archiveReference }, open: { _, _ in try result(tripID, current: false, artifact: UUID().uuidString.lowercased()) })
+        XCTAssertNil(store.result)
+        await store.load(scope: owner, tripID: tripID, reference: { archiveReference }, open: { _, _ in try result(tripID, current: false, revision: 3) })
+        XCTAssertNil(store.result)
+        await store.load(scope: owner, tripID: tripID, reference: { archiveReference }, open: { _, _ in try result(tripID, current: false, historicalReadable: false) })
+        XCTAssertNil(store.result, "archive proof cannot replace the exact reader's current permission")
+        await store.load(scope: owner, tripID: tripID, reference: { archiveReference }, open: { _, _ in throw NativeDataError.server(code: "FORBIDDEN") })
+        XCTAssertEqual(store.state, "unavailable", "a withdrawn source stays unreadable after archive")
+        await store.loadExact(scope: owner, artifactID: artifactID, revision: 2) { try result(tripID, current: false) }
+        XCTAssertNil(store.result, "archive history never changes global current-only exact use")
+        for proof in [false as Any, 1 as Any, NSNull()] {
+            let invalid = try bytes(["version": 1, "data": ["kind": "result_reference", "artifactId": artifactID,
+                "revision": 2, "tripId": tripID, "archiveHistorical": proof]])
+            await store.load(scope: owner, tripID: tripID, reference: { invalid }, open: { _, _ in XCTFail("invalid proof must not open"); return Data() })
+            XCTAssertNil(store.result)
+        }
+        let extra = try bytes(["version": 1, "data": ["kind": "result_reference", "artifactId": artifactID,
+            "revision": 2, "tripId": tripID, "archiveHistorical": true, "extra": true]])
+        await store.load(scope: owner, tripID: tripID, reference: { extra }, open: { _, _ in XCTFail("extra field must not open"); return Data() })
+        XCTAssertNil(store.result)
         let empty = try bytes(["version": 1, "data": ["kind": "empty"]])
         await store.load(scope: owner, tripID: tripID, reference: { empty }, open: { _, _ in
             XCTFail("an empty reference must not open a result"); return Data()

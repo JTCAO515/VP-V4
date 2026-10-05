@@ -1,0 +1,16 @@
+Test Case '-[VisePandaTests.NativeTripLifecycleTests testChangedPreferenceTripOrSessionRequiresNewExplicitReview]' started.
+Test Case '-[VisePandaTests.NativeTripLifecycleTests testChangedPreferenceTripOrSessionRequiresNewExplicitReview]' passed (0.004 seconds).
+Test Case '-[VisePandaTests.NativeTripLifecycleTests testClosedCommandRejectsBooleanRevisionAndSnapshotDoesNotAcceptFakeEmptyCapacity]' started.
+Test Case '-[VisePandaTests.NativeTripLifecycleTests testClosedCommandRejectsBooleanRevisionAndSnapshotDoesNotAcceptFakeEmptyCapacity]' passed (0.001 seconds).
+Test Case '-[VisePandaTests.NativeTripLifecycleTests testJournalRetainsOriginalWhitespaceBytesAndRejectsOverwriteOrOtherEpoch]' started.
+Test Case '-[VisePandaTests.NativeTripLifecycleTests testJournalRetainsOriginalWhitespaceBytesAndRejectsOverwriteOrOtherEpoch]' passed (0.001 seconds).
+Test Case '-[VisePandaTests.NativeTripLifecycleTests testNullRecoveryAndNetworkFailureKeepSameOperationUntilDigestMatchedDecline]' started.
+Test Case '-[VisePandaTests.NativeTripLifecycleTests testNullRecoveryAndNetworkFailureKeepSameOperationUntilDigestMatchedDecline]' passed (0.011 seconds).
+Test Case '-[VisePandaTests.NativeTripLifecycleTests testPreferenceChoiceStartsEmptyAndNeverOffersInferredConstraintsOrRevokedRows]' started.
+Test Case '-[VisePandaTests.NativeTripLifecycleTests testPreferenceChoiceStartsEmptyAndNeverOffersInferredConstraintsOrRevokedRows]' passed (0.002 seconds).
+Test Case '-[VisePandaTests.NativeTripLifecycleTests testReplacementDuringResponseFencesLateResultAndPreservesJournal]' started.
+Test Case '-[VisePandaTests.NativeTripLifecycleTests testReplacementDuringResponseFencesLateResultAndPreservesJournal]' passed (0.003 seconds).
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.023 (0.025) seconds
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.023 (0.025) seconds
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.023 (0.025) seconds
+** TEST SUCCEEDED **

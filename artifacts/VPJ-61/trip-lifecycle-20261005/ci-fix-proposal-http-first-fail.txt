@@ -1,0 +1,49 @@
+VP_NATIVE_HTTP_TARGET {"project":"vp-native-ask-3a8e0da6","base":63420,"supabaseAPI":"http://127.0.0.1:63441","api":"http://127.0.0.1:63451"}
+✖ existing pending Proposal references save/read exactly without executing or copying confirmation; live scope/lifecycle and comparison compatibility (9255.984042ms)
+▶ repository functions grant EXECUTE to anon and authenticated only through the reviewed allowlist
+  ✔ anon executes only the public research intake (41.585917ms)
+  ✔ authenticated executes exactly the reviewed caller list (39.761666ms)
+  ✔ selected-source export remains exactly service-only and source storage private (133.127875ms)
+  ✔ internal Trip content helpers are not callable by any API role (92.554792ms)
+  ✔ Memory create/Undo grants only authenticated, never anonymous or service role (60.955917ms)
+  ✔ result publication is internal and result tables have no direct API grants (188.444208ms)
+  ✔ five-result v2 exact grants keep publisher/export internal and helpers inaccessible (398.431834ms)
+  ✔ planning execution stays service-only with private, RLS-enabled storage (438.14025ms)
+  ✔ Memory create/Undo definer RPCs guard replay and read branches against replaced mobile sessions (32.213709ms)
+  ✔ default privileges give a new function no implicit anon, authenticated or PUBLIC EXECUTE (63.695ms)
+  ✔ PostgREST rejects anonymous calls at the privilege layer and still serves the intake (26.606916ms)
+✔ repository functions grant EXECUTE to anon and authenticated only through the reviewed allowlist (1742.433541ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 12
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 14090.039791
+
+✖ failing tests:
+
+test at tests/integration/artifacts/change-proposal-reference.test.mjs:9:1
+✖ existing pending Proposal references save/read exactly without executing or copying confirmation; live scope/lifecycle and comparison compatibility (9255.984042ms)
+  Error: Command failed: docker exec -i supabase_db_vp-native-ask-3a8e0da6 psql -U postgres -d postgres -X -Atq -v ON_ERROR_STOP=1
+  ERROR:  update or delete on table "trips" violates foreign key constraint "assistant_goal_trip_links_trip_id_fkey" on table "assistant_goal_trip_links"
+  DETAIL:  Key (id)=(ef98b94e-1903-4c37-a688-f97a45df6ba8) is still referenced from table "assistant_goal_trip_links".
+  
+      at genericNodeError (node:internal/errors:999:15)
+      at wrappedFn (node:internal/errors:544:14)
+      at checkExecSyncError (node:child_process:942:11)
+      at execFileSync (node:child_process:978:15)
+      at Object.sql (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj61-trip-lifecycle-server-20261005/tests/integration/turn/native-text-environment.mjs:21:15)
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj61-trip-lifecycle-server-20261005/tests/integration/artifacts/change-proposal-reference.test.mjs:108:5)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    status: 3,
+    signal: null,
+    output: [ null, '', 'ERROR:  update or delete on table "trips" violates foreign key constraint "assistant_goal_trip_links_trip_id_fkey" on table "assistant_goal_trip_links"\nDETAIL:  Key (id)=(ef98b94e-1903-4c37-a688-f97a45df6ba8) is still referenced from table "assistant_goal_trip_links".\n' ],
+    pid: 30614,
+    stdout: '',
+    stderr: 'ERROR:  update or delete on table "trips" violates foreign key constraint "assistant_goal_trip_links_trip_id_fkey" on table "assistant_goal_trip_links"\nDETAIL:  Key (id)=(ef98b94e-1903-4c37-a688-f97a45df6ba8) is still referenced from table "assistant_goal_trip_links".\n'
+  }
+VP_NATIVE_HTTP_CLEANUP {"project":"vp-native-ask-3a8e0da6","result":"PASS"}

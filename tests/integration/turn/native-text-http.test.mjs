@@ -213,7 +213,11 @@ test('v5 comparison binds only a confirmed goal Trip and reads one exact revisio
  const archivedA=(await call(exactA,owner)).body.data;
  assert.equal(archivedA.current,false,'archive keeps history but invalidates currentness');
  assert.equal(archivedA.historicalReadable,true);
- assert.equal((await call('/api/results/native/v1/trip?tripId='+tripA,owner)).body.data.kind,'empty');
+ const archivedReferenceA=(await call('/api/results/native/v1/trip?tripId='+tripA,owner)).body.data;
+ assert.equal(archivedReferenceA.kind,'result_reference');assert.equal(archivedReferenceA.archiveHistorical,true);assert.equal(archivedReferenceA.artifactId,secondArtifact,'newest authorised historical record is exact, not a currentness revival');assert.equal(archivedReferenceA.revision,1);assert.equal(archivedReferenceA.tripId,tripA);
+ const archivedDiscovered=(await call('/api/results/native/v1?artifactId='+archivedReferenceA.artifactId+'&revision='+archivedReferenceA.revision,owner)).body.data;
+ assert.equal(archivedDiscovered.artifactId,archivedReferenceA.artifactId);assert.equal(archivedDiscovered.revision,archivedReferenceA.revision);assert.equal(archivedDiscovered.source.tripId,tripA);assert.equal(archivedDiscovered.current,false);assert.equal(archivedDiscovered.historicalReadable,true);
+ assert.equal(archivedA.artifactId,artifactA);assert.equal(archivedA.revision,1);assert.equal(archivedA.source.tripId,tripA);
  const retarget=await call(linkPath,owner,'POST',link(tripB,2,1,taskA.input.messageId,0));
  assert.equal(retarget.status,201,JSON.stringify(retarget.body));assert.equal(retarget.body.goalScopeVersion,3);
  const taskB=await attachTask(3,taskA.input.messageId,'Synthetic linked B');
@@ -257,6 +261,8 @@ test('v5 comparison binds only a confirmed goal Trip and reads one exact revisio
  assert.equal((await publish(params(randomUUID(),taskC,taskC.input,tripC,0,7))).body.message,'STALE_BASIS','late worker cannot publish on old head');
  assert.equal((await call('/api/chat/native/v5/consent',owner,'DELETE',{policyId:e.policyId})).status,200);
  assert.equal((await call(exactC,owner)).body.data.kind,'unavailable','withdrawn source cannot be read');
+ assert.equal((await call('/api/results/native/v1/trip?tripId='+tripA,owner)).body.data.kind,'unavailable','archive proof does not bypass withdrawn source consent');
+ assert.equal((await call('/api/results/native/v1?artifactId='+archivedReferenceA.artifactId+'&revision='+archivedReferenceA.revision,owner)).body.data.kind,'unavailable');
  await login(e.users[0]);assert.equal((await call(exactC,owner)).status,401,'replaced session cannot read exact history');
 });
 

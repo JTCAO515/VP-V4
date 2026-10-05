@@ -65,6 +65,11 @@ export async function exerciseSameTripBrowser({api,jar,n,t}) {
         assert.deepEqual(errors,[],'no browser page errors');
         await page.screenshot({path:`${directory}/${locale}-${viewport.width}.png`,fullPage:true});
         t.diagnostic(`Browser ${locale} ${viewport.width}x${viewport.height}: ordinary cookie, visible diff/confirm and native same-ID persisted reload passed`);
+        // This viewport/locale case has completed all original assertions.
+        // Preserve its saved plan and release its slot by explicit original archive.
+        const archived=await n('/'+id+'/archive',{expectedVersion:confirmed.trip.headVersion,idempotencyKey:randomUUID(),confirmed:true});
+        assert.equal(archived.status,200);assert.equal(archived.data.archive.tripId,id);assert.equal(archived.data.archive.archivedVersion,confirmed.trip.headVersion);
+        assert.equal((await n('/'+id)).data.trip.headVersion,confirmed.trip.headVersion);
       } finally {await context.close();}
     }
     t.diagnostic('Synthetic browser screenshots: '+directory);

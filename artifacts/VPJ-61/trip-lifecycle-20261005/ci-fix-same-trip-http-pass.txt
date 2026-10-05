@@ -1,0 +1,19 @@
+✔ local native/Web share one immutable Trip with confirmed intent, CAS and ordinary-owner isolation (21704.714875ms)
+ℹ VPJ-09 bounded outline: real local Auth/Postgres, two new dated days, prior dinner preserved, native/Web version 2 readback.
+ℹ Browser zh 1280x800: ordinary cookie, visible diff/confirm and native same-ID persisted reload passed
+ℹ Browser zh 390x844: ordinary cookie, visible diff/confirm and native same-ID persisted reload passed
+ℹ Browser en 1280x800: ordinary cookie, visible diff/confirm and native same-ID persisted reload passed
+ℹ Browser en 390x844: ordinary cookie, visible diff/confirm and native same-ID persisted reload passed
+ℹ Synthetic browser screenshots: /var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/vpj05-same-trip-browser-GCHQJj
+ℹ Native/Web same UUID and five atomic confirmed versions; raw authority attacks rejected; all exact synthetic users removed.
+✔ ordinary Web cookies read the same exact comparison with unchanged SQL session and source guards (16354.808333ms)
+ℹ Web comparison 1280x900: exact identity/literal content/unknown schema/late navigation PASS
+ℹ Web comparison 390x844: exact identity/literal content/unknown schema/late navigation PASS
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 38166.030208
