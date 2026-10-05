@@ -1,0 +1,10 @@
+✔ full migration replay rollback and unchanged signature ACL; module defaults and direct deny (6362.663334ms)
+✔ reject pending withdrawal stale versions strict syntax UTF16 and place reject (465.099333ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6973.163708
