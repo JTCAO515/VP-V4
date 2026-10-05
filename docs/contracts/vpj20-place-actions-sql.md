@@ -40,7 +40,8 @@ qualified scan with no candidate returns complete and an empty list.
 
 Save/unsave CAS updates only saved_places, unique by owner/Trip/canonical. Save
 reuses the oldest canonical reference or creates one below capacity. Unsave
-compares the exact saved reference, revision and original saved mapping digest,
+compares the exact saved reference, revision, full stored selection and original
+saved mapping digest,
 even if current mapping has changed or disappeared; it never deletes a reference
 used by support or traffic. New mutation requires active, undeleted owned Trip
 and exact head. Add creates a reference without saving, requires an existing day
@@ -108,7 +109,8 @@ remain. The scan is bounded at 10,000 saved rows; overflow is CAPACITY.
 
 Save/resave now stores the exact original selection on the sidecar. Reentry
 returns that saved identity and original mapping digest even when current mapping
-has been changed or withdrawn, with a canonical metadata label or null. Unsave
+has been changed or withdrawn, with a canonical metadata label only while the mapping digest is current;
+changed/unavailable mapping returns null. Unsave
 uses that precise identity/reference/revision/digest without requiring a current
 provider mapping. No missing mapping filters out a save. Unsaved rows remain
 historical and are omitted from the current saved list. The private version-1
@@ -122,3 +124,20 @@ This replayed current migrations and tested the saved reentry/withdrawn-unsave,
 paging and identity updates, owner/session negatives and changed export metadata.
 The previous 15 affected tests were not rerun; their evidence is reused for the
 unchanged behavior. Target and real service acceptance remain UNRUN.
+
+Identity review delta: Main found that reference/revision/digest alone allowed a
+caller to substitute provider/providerPoiId on Unsave after withdrawal. The RPC
+now requires exact JSONB equality with the sidecar's full saved selection before
+any state change. A mismatch returns CAS_CONFLICT and stores no operation. Live
+mapping remains unnecessary for forgetting the authentic saved identity. Saved
+labels return null when mappingStatus is changed or unavailable, so an old label
+cannot imply current source or entity qualification. Wire keys are unchanged.
+
+Affected validation: **PASS 1/1, 0 skipped** in 7.81 seconds, with migration replay
+and the existing saved reload case expanded to reject forged provider/provider ID
+using the same canonical/ref/revision/digest, preserve state and operation count,
+then successfully forget the exact withdrawn selection. The case also checks
+current-label versus changed/unavailable-null behavior. Command:
+`VP_PLACE_ACTION_DB_TEST=1 node --test --test-name-pattern='saved reload' tests/integration/explore/place-actions-postgres.test.mjs`.
+Prior 18-case evidence is reused for unchanged behavior, without claiming a
+new whole-suite run. Target deployment/permissions and real services remain UNRUN.

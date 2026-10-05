@@ -135,7 +135,7 @@ begin
   n:=n+1;if n>10000 then return jsonb_build_object('kind','unavailable','reason','CAPACITY');end if;
   m:=place_actions_private.mapping_v1(s.selection);
   select case p_input->>'locale' when 'zh' then primary_name_zh else primary_name_en end into label from public.canonical_pois where id=s.canonical_poi_id;
-  if place_actions_private.utf16_length_v1(label)>160 then label:=null;end if;
+  if m is null or m->>'digest' is distinct from s.mapping_digest or place_actions_private.utf16_length_v1(label)>160 then label:=null;end if;
   rows:=rows||jsonb_build_array(jsonb_build_object('referenceId',s.reference_id,'revision',s.revision,'status',s.status,'selection',s.selection,'mappingDigest',s.mapping_digest,'displayTitle',label,'mappingStatus',case when m is null then 'unavailable' when m->>'digest'=s.mapping_digest then 'current' else 'changed' end));
   map_basis:=map_basis||jsonb_build_array(m);
  end loop;
@@ -199,7 +199,7 @@ begin
  if t.head_version<>(v->>'expectedTripVersion')::numeric then raise exception 'STALE_TRIP_VERSION';end if;
  select * into s from place_actions_private.saved_places where owner_id=u and trip_id=t.id and canonical_poi_id=poi for update;
  if a='unsave' then
-  if s.owner_id is null or s.reference_id<>(v->>'referenceId')::uuid or s.revision<>(v->>'expectedSaveRevision')::numeric or s.status<>'saved' then raise exception 'CAS_CONFLICT';end if;
+  if s.owner_id is null or s.reference_id<>(v->>'referenceId')::uuid or s.revision<>(v->>'expectedSaveRevision')::numeric or s.status<>'saved' or s.selection is distinct from v->'selection' then raise exception 'CAS_CONFLICT';end if;
   perform 1 from public.trip_place_references where id=s.reference_id and owner_id=u and trip_id=t.id and reference_kind='canonical' and canonical_poi_id=poi for share;if not found then raise exception 'CAS_CONFLICT';end if;
   if s.revision=2147483647 then raise exception 'CAS_CONFLICT';end if;
   -- Forget is permitted after mapping withdrawal. Compare the saved original basis only.
