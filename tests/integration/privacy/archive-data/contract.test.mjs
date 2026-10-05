@@ -55,6 +55,7 @@ test('head snapshot content/title equality and safe field projection are indepen
     await assert.rejects(() => collectArchiveExport(command, bytes, actor, source.rpc, signal, async () => true, () => now + 1), /ARCHIVE_SOURCE_UNAVAILABLE/);
   }
   const preview = { ...binding, kind: 'preview', counts: { trip: 1, snapshots: 1, operations: 0, progress: 0 }, snapshotVersionGaps: 1 };
+  assert.equal(archiveRowKey('snapshots', { tripId: selection.tripId, version: 0, title: 'Initial', createdAt: '2026-10-06T00:00:00.000Z', content: null }, binding), null);
   assert.ok(decodeArchivePreview(preview, command, actor, now + 1));
   assert.equal(decodeArchivePreview({ ...preview, snapshotVersionGaps: 0 }, command, actor, now + 1), null);
 });

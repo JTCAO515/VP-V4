@@ -33,7 +33,7 @@ export function archiveRowKey(section: string, v: unknown, binding: ArchiveBindi
   if (section === 'snapshots') {
     return exact(v, ['tripId','version','title','createdAt','content']) && v.tripId === binding.tripId && natural(v.version)
       && v.version <= Number(binding.tripVersion) && text(v.title) && instant(v.createdAt)
-      && (v.content === null && v.version !== binding.tripVersion || archiveContent(v.content)) ? String(v.version).padStart(10, '0') : null;
+      && archiveContent(v.content) ? String(v.version).padStart(10, '0') : null;
   }
   if (section === 'operations') {
     if (!exact(v, ['operationId','sessionId','receipt','erasedReason']) || !uuid(v.operationId)) return null;

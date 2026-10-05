@@ -136,8 +136,9 @@ Trip section row exact={tripId,title,headVersion,confirmationState,content,lifec
 same old confirmation enum initial|confirmed|unknown, exact original safe content,
 original isLifecycleTrip with state archived and same trip/title/version.
 Snapshot row exact={tripId,version,title,createdAt,content}, same safe projection;
-head title/content must match trip row, no unknown hidden JSON fields. Historical
-safe content may be null only when genuinely never stored; head cannot be null.
+head title/content must match trip row, no unknown hidden JSON fields. Every
+stored snapshot has non-null content under the actual original schema; missing
+historical versions use the preview gap count, never a fabricated null row.
 Operation row exact={operationId,sessionId,receipt,erasedReason}; original
 isLifecycleReceipt match owner/op/session; erased reason FORBIDDEN|MEMORY_CONFLICT
 requires null session/receipt, no request bytes. Valid original receipt must refer

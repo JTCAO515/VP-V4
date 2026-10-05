@@ -10,7 +10,7 @@ export const binding = { schemaVersion: ARCHIVE_SCHEMA, ...selection, ...actor, 
 export const content = { days: [{ id: 'day', date: '2026-10-06', timeZone: 'Asia/Shanghai', items: [{ id: 'item', dayId: 'day', title: '真实保留的行程' }] }] };
 export const lifecycle = { tripId: selection.tripId, title: 'Archived', headVersion: 1, state: 'archived', archivedVersion: 1, archivedAt: '2026-10-06T00:00:00.000Z' };
 export const trip = { tripId: selection.tripId, title: 'Archived', headVersion: 1, confirmationState: 'confirmed', content, lifecycle };
-export const snapshots = [0, 1].map(version => ({ tripId: selection.tripId, version, title: version ? 'Archived' : 'Initial', createdAt: '2026-10-06T00:00:00.000Z', content: version ? content : null }));
+export const snapshots = [0, 1].map(version => ({ tripId: selection.tripId, version, title: version ? 'Archived' : 'Initial', createdAt: '2026-10-06T00:00:00.000Z', content: version ? content : { days: [] } }));
 export const sections = [{ section: 'trip', items: [trip] }, { section: 'snapshots', items: snapshots }, { section: 'operations', items: [] }];
 export function rpcSource(mutate = v => v) {
   const calls = [];
