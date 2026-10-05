@@ -163,6 +163,15 @@ begin
  else
   perform service_operations_private.staff_qualified(u);
   if c.recipient_id is distinct from u or c.revoked or c.expires_at<=clock_timestamp() or (s.case_id is not null and s.grant_revision<>c.revision) then raise exception 'CASE_FORBIDDEN';end if;
+  if s.staff_id is not null then
+   if s.staff_id<>u then raise exception 'CASE_FORBIDDEN';end if;
+   perform 1 from service_operations_private.shifts where id=s.shift_id and actor_id=u and enabled and starts_at<=clock_timestamp() and ends_at>clock_timestamp() and ends_at=s.shift_ends_at for share nowait;
+   if not found then raise exception 'CASE_FORBIDDEN';end if;
+   if s.status in('accepted','assigned','waiting_external') then
+    perform 1 from service_operations_private.slots where shift_id=s.shift_id and case_id=s.case_id for share;
+    if not found then raise exception 'CASE_FORBIDDEN';end if;
+   end if;
+  end if;
  end if;
 end $$;
 create function service_operations_private.projection(c service_cases_private.cases,s service_operations_private.services,surface text) returns jsonb language plpgsql volatile security definer set search_path='' as $$
@@ -459,7 +468,7 @@ begin
  for c in select c0.* from service_cases_private.cases c0 join service_operations_private.services s on s.case_id=c0.id
  where c0.owner_id=p_owner and c0.expires_at<=clock_timestamp() and not c0.revoked
  and (s.trip_id is not null or s.status in('queued','accepted','assigned','waiting_external') or exists(select 1 from service_operations_private.operations o where o.case_id=c0.id and not o.erased))
- order by c0.id for update of c0 loop perform service_operations_private.erase_case(c.id,true,p_owner);end loop;
+ order by c0.id limit 10001 for update of c0 loop perform service_operations_private.erase_case(c.id,true,p_owner);end loop;
 end $$;
 create function public.service_case_data_v1(p_input jsonb,p_request_bytes text) returns jsonb language plpgsql security definer set search_path='' as $$
 #variable_conflict use_variable
@@ -469,11 +478,11 @@ begin
  if p_request_bytes is null or octet_length(convert_to(p_request_bytes,'UTF8')) not between 2 and 48000 then raise exception 'INVALID_INPUT';end if;
  begin v:=p_request_bytes::jsonb;exception when others then raise exception 'INVALID_INPUT';end;
  if v is distinct from p_input then raise exception 'INVALID_INPUT';end if;
- if not exists(select 1 from service_operations_private.settings where enabled) then raise exception 'SERVICE_OPERATIONS_DISABLED';end if;
  a:=p_input->>'action';raw:=convert_to(p_request_bytes,'UTF8');
  if a='export' then
   if not service_operations_private.exact(v,array['action','requestId','confirmed']) or not service_operations_private.uuid(v->'requestId') or v->'confirmed' is distinct from 'true'::jsonb or octet_length(raw)>24000 then raise exception 'INVALID_INPUT';end if;
   -- All Case sources are locked before one UNION snapshot of all six domains.
+  if exists(select 1 from service_cases_private.cases where owner_id=u order by id offset 10000 limit 1) then raise exception 'CASE_WORKSPACE_LIMIT';end if;
   perform 1 from service_cases_private.cases where owner_id=u order by id limit 10001 for update;
   perform service_operations_private.expire_owner_cases(u);
   rows:=service_operations_private.export_rows(u);captured:=service_operations_private.ms(clock_timestamp());

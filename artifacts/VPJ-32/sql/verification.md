@@ -1,0 +1,18 @@
+# VPJ-32 SQL implementation evidence
+
+Scope: `20261005050000_service_operations.sql`, own SQL contract and disposable PostgreSQL tests only. Base `93a3c99e`; source delivered to the original TS integrator for one PR. No TS/Native/Ops/registry write and no original dirty checkout change.
+
+- PASS: full migration history replay and rollback of the new migration; PostgreSQL 17.6.1.159 network-none disposable container, synthetic users/sessions/operator/shift fixtures.
+- PASS: `VP_SERVICE_OPERATIONS_DB_TEST=1 node --test tests/integration/service-cases/operations-postgres.test.mjs`, final 17/17, 0 failures, 0 skips; container cleanup completed.
+- PASS: `node --test tests/contract/service-cases/operations-sql.test.mjs`, 3/3, 0 skips.
+- PASS: source policy lint, docs check, `git diff --check`.
+
+Covered behavior: default denied public/private ACL and RLS; operations disabled and roster empty before disposable fixture activation; closed commands; canonical actor/session replacement; exact UTF8 digest/replay and different-byte key rejection; abandoned late-operation fence; one slot/two Cases acceptance; recorded seconds, evidence kinds, invalid future/overlapping minutes; grant revocation/replacement and concurrent old revoke/accept; current membership/shift/slot on staff body/receipt reads; source TTL cleanup; original pending Proposal association without Trip write; archive preservation; bound Trip deletion and Case cascade; explicit workspace overflow; versioned export exact lease/source/cursor replay and unenrolled partial; independently authorized owner deletion/read/abandon; direct bounded owner export, source digest, safe columns, no staff session identifiers; data access independent of business operations switch.
+
+Initial run: 10 passed, 1 failed because a wrong session was rejected as SESSION_REPLACED rather than the test's UNAUTHENTICATED expectation (preserved initial failure log). Subsequent fixture corrections also used real session replacement rather than only changing an epoch, and matched the assigned status after moving proposal selection beyond queued. Final results supersede these incorrect fixture expectations; historical failed runs are not described as passing.
+
+All public wrappers and private tables default to denied access. SQL contains no new EXECUTE GRANT, real operator enrollment or target activation. Test grants/settings/roles/elapsed-time manipulation are disposable fixture setup only. Staff receives granted problem fields, unknown Trip/Brief/source, and no Proposal. Manual minutes describe recorded intervals only, never total staffing/cost estimates. Owner Proposal selection preserves the original confirmation writer.
+
+Data deletion leaves only actor/session/operation digest and a minimal irreversible receipt. Revocation/source erasure wipes sensitive operations/refs. A CASE_OPERATION_ERASED response does not establish that an unknown operation was cancelled or never executed. Cancellation's own minimal receipt remains recoverable; applied operations are never undone by abandon. Independent owner export is service-case-data/1, not enrolled into old core packages, and declares Brief/attachments unavailable and allUserDataCompleted false. The original exact core lease seam remains separately available and unenrolled/partial until explicitly traversed.
+
+UNRUN: target Supabase migration/activation, real personnel capacity, real users/data, target Auth/HTTP, device acceptance, supplier contact, real cost/payment, production release. Local synthetic SQL cannot prove any of these. The original TS owner supplies final joint Auth/HTTP, native integration and required CI evidence; this work does not create a second PR or close the parent Issue.
