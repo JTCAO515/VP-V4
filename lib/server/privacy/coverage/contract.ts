@@ -59,6 +59,8 @@ export function parseCoverageInput(value: unknown): SelectedCommand | null {
     const parsed = parseGuideCommand(command);
     return uuid(input.tripId) && parsed && input.phase === 'execute' && parsed.action === (input.action === 'export' ? 'export' : 'forget') ? { input, command, handler } : null;
   }
+  if (handler === 'notifications' || handler === 'lifecycle') return input.action === 'export' && input.phase === 'execute' && input.tripId === null
+    && exact(command, ['action','requestId','confirmed']) && command.action === 'export' && command.requestId === input.operationId && command.confirmed === true ? { input, command, handler } : null;
   if (input.tripId !== null || input.phase === 'preview') return null;
   const parsed = handler === 'ugc' ? parseCommunityInput(command) : handler === 'safety' ? parseSafetyInput(command)
     : handler === 'publication' ? parsePublicationInput(command) : handler === 'brief' ? parseBriefInput(command)

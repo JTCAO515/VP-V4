@@ -1,5 +1,5 @@
 /** ALL1 denominator. A registered scoped handler is not all-account completion. */
-export const CATALOG_VERSION = 'data-coverage-catalog/2026-10-06.1' as const;
+export const CATALOG_VERSION = 'data-coverage-catalog/2026-10-06.2' as const;
 export type Location = 'server' | 'device' | 'external';
 export type Module = Readonly<{
   id: string; location: Location; version: string; scope: string;
@@ -32,10 +32,12 @@ export const MODULE_CATALOG: readonly Module[] = [
     ['operation_fences', 'record_tombstones', 'audit_metadata']),
   server('publication', 'community-publication-j3j4/1', 'community_publication_module', 'publication', 'publication', 'owner',
     '100 per retained array; 1MB response; controlled registered audience', ['operation_fences', 'publication_tombstones', 'reference_tombstones', 'audit_metadata']),
-  server('notifications', 'notification-metadata/1', 'notification_metadata', null, null, 'owner', '100/page; exact core request lease required',
-    ['provider_delivery_unknown'], ['export_lease_not_enrolled', 'module_delete_not_implemented']),
-  server('lifecycle', 'trip-lifecycle-export/2', 'trip_lifecycle', null, null, 'owner', '50/page; enroll/page/proof bound to existing core lease',
-    ['operation_fences'], ['export_lease_not_enrolled', 'delete_uses_selected_trip']),
+  server('notifications', 'coverage-module-export/1', 'notification-metadata/1', 'notifications', null, 'owner', '100/page; 10000 rows; 1MB whole wrapper; fixed30s current source/proof; independent owner RPC ACL',
+    ['provider_delivery_unknown'], ['module_delete_not_implemented']),
+  server('lifecycle', 'coverage-module-export/1', 'trip-lifecycle-metadata/1', 'lifecycle', null, 'owner', '50/page; 10000 rows/section; 1MB whole wrapper; fixed30s current source/proof; metadata only',
+    ['operation_fences'], ['delete_uses_selected_trip', 'trip_bodies_in_separate_core_export']),
+  server('coverage_progress', 'coverage-module-export/1', 'coverage_export_progress', null, null, 'owner', 'source-free requests/sections expire30s; immutable request fences retained until original session/account revocation',
+    ['request_id_owner_session_scope_expiry_fence'], ['single_request_receipts_only', 'owner_progress_inventory_exit_not_implemented']),
   server('guide', 'guide_selection_metadata/1', 'guide_selection_metadata', 'guide', 'guide', 'guide_reference', '100+sentinel records and bindings; selection only',
     ['nonreplayable_markers', 'original_grounded_turns_separate']),
   server('order_references', 'reservation-ledger/1', 'reservation_reference', null, null, 'trip', 'existing owner reservation reader; no unified exit handler',

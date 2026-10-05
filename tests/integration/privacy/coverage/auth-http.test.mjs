@@ -19,7 +19,7 @@ test('owned real GoTrue -> coverage route -> existing owner handler -> DB -> exa
  const key=local.PUBLISHABLE_KEY||local.ANON_KEY,users=[];let next;
  t.after(async()=>{
   if(next&&next.exitCode===null){const done=once(next,'exit');next.kill('SIGTERM');await Promise.race([done,new Promise(r=>setTimeout(r,3000))]);if(next.exitCode===null){next.kill('SIGKILL');await done;}}
-  for(const user of users)sql('delete from auth.users where id='+literal(user.id)+';');
+  for(const user of users)sql('delete from public.trip_events where owner_id='+literal(user.id)+';delete from public.trip_audit_events where owner_id='+literal(user.id)+';delete from auth.users where id='+literal(user.id)+';');
   if(users.length)assert.equal(sql('select count(*) from auth.users where id in('+users.map(u=>literal(u.id)).join(',')+');'),'0');
  });
  const log=createWriteStream(join(process.env.VP_IDENTITY_SUPABASE_WORKDIR,'coverage-next.log'),{mode:0o600});
@@ -60,6 +60,27 @@ test('owned real GoTrue -> coverage route -> existing owner handler -> DB -> exa
   const changed=await exit(owner,{...selected,commandBytes:JSON.stringify(command)});assert.equal(changed.state,'unavailable','same operation changed original bytes rejected');
  }
  assert.equal(sql('select content from community_private.submissions where id='+literal(submission.submissionId)+';'),'','selected owner module body erased');
+ // New export-only source projection: default ACL denied, followed by one
+ // explicit isolated fixture GRANT. No worker/artifact/source writer is altered.
+ assert.equal(sql("select has_function_privilege('authenticated','public.privacy_coverage_module_export_v1(jsonb)','execute');"),'f');
+ const noGrant=await exit(owner,selection(owner,'notifications','export',{action:'export',requestId:uuid(),confirmed:true}));assert.equal(noGrant.state,'unavailable');assert.equal(noGrant.result,null);
+ sql('grant execute on function public.privacy_coverage_module_export_v1(jsonb) to authenticated;');
+ const fixtureTrip=uuid(),fixtureDevice=uuid();
+ sql(`insert into public.trips(id,owner_id,title) values(${literal(fixtureTrip)},${literal(owner.id)},'Synthetic lifecycle metadata fixture');
+ insert into notification_private.devices(id,owner_id,session_id,epoch,revision,token,environment,topic,permission,time_zone,active)
+ values(${literal(fixtureDevice)},${literal(owner.id)},${literal(owner.catalog.sessionId)},${owner.catalog.mobileEpoch},1,'aabb','sandbox','fixture.only','denied','Asia/Shanghai',false);`);
+ t.diagnostic('New module owner RPC default EXECUTE denied. GRANT plus synthetic Trip/device rows exist only in this uniquely owned fixture; source-free progress and lifecycle metadata are distinct from Trip content/provider push.');
+ for(const moduleId of ['notifications','lifecycle']){
+  const command={action:'export',requestId:uuid(),confirmed:true},selected=selection(owner,moduleId,'export',command),bundle=await exit(owner,selected);
+  assert.equal(bundle.state,'scoped_complete',JSON.stringify(bundle));assert.equal(bundle.result.data.allUserDataCompleted,false);assert.equal(bundle.result.data.expiresAt,bundle.result.data.capturedAt+30000);
+  if(moduleId==='notifications') {assert.equal(bundle.result.data.sections.notifications[0].deviceId,fixtureDevice);assert.ok(!('token' in bundle.result.data.sections.notifications[0]));}
+  else {assert.equal(bundle.result.data.sections.trips[0].tripId,fixtureTrip);assert.equal(bundle.result.data.sections.trips[0].title,'Synthetic lifecycle metadata fixture');assert.ok(!('content' in bundle.result.data.sections.trips[0]));}
+  assert.equal((await call(path,other.accessToken,selected)).status,409);
+  const foreignRequest=selection(other,moduleId,'export',command),foreign=await exit(other,foreignRequest);assert.equal(foreign.state,'unavailable');assert.equal(foreign.result,null);
+  const badScope=await exit(owner,selection(owner,moduleId==='notifications'?'lifecycle':'notifications','export',command));assert.equal(badScope.state,'unavailable');assert.equal(badScope.result,null);
+  assert.equal(sql('select count(*) from coverage_export_private.requests_v1 where request_id='+literal(command.requestId)+';'),'1');
+ }
+ const missingDelete=await exit(owner,selection(owner,'notifications','delete',{}));assert.equal(missingDelete.state,'unavailable');assert.equal(missingDelete.reason,'MODULE_DELETE_NOT_IMPLEMENTED');
  const stale={...selection(owner,'ugc','export',{action:'export'}),mobileEpoch:owner.catalog.mobileEpoch+1};assert.equal((await call(path,owner.accessToken,stale)).status,409);
  const client=createClient(local.API_URL,key,{global:{headers:{Authorization:'Bearer '+owner.accessToken}},auth:{persistSession:false,autoRefreshToken:false}});
  assert.equal((await client.rpc('native_session_v2',{p_action:'logout'})).error,null);

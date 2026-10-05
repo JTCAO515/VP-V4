@@ -10,6 +10,7 @@ import { parseExportJob } from '../export-contract.ts';
 import { memoryDeletePlan, memoryDeleteReceipt, selectionEqual } from '../memory-delete/contract.ts';
 import { linkedTripPlan, linkedTripReceipt } from '../linked-trip/contract.ts';
 import { coverageDigest, type SelectedCommand, type CoverageState } from './contract.ts';
+import { decodeModuleExportBundle } from './module-export.ts';
 
 type Outcome = Readonly<{ state: CoverageState; reason: string }>;
 const state = (value: CoverageState, reason = 'NONE'): Outcome => ({ state: value, reason });
@@ -34,7 +35,7 @@ export function classifyOriginal(selected: SelectedCommand, body: unknown, now =
       || data.allUserDataCompleted !== false || data.backupErasure !== 'not_verified' || data.providerErasure !== 'not_performed'
       || data.offlineRevocation !== 'on_reconnect_only' || data.exportedFilesRevocable !== false || !instant(data.requestedAt)) return null;
     return data.state === 'queued' && data.completedAt === null ? state('queued', 'ORIGINAL_JOB_PENDING')
-      : data.state === 'completed' && instant(data.completedAt) ? state('scoped_complete') : null;
+      : data.state === 'completed' && instant(data.completedAt) && Date.parse(String(data.completedAt)) >= Date.parse(String(data.requestedAt)) ? state('scoped_complete') : null;
   }
   if (handler === 'linked_trip') {
     if (input.phase === 'preview') return linkedTripPlan(data) && data.tripId === input.tripId && data.expectedVersion === command.expectedVersion && Date.parse(String(data.expiresAt)) > now ? state('preview', 'EXPLICIT_SELECTION_REQUIRED') : null;
@@ -53,6 +54,11 @@ export function classifyOriginal(selected: SelectedCommand, body: unknown, now =
     const outcome = decodeGuideOutcome(data, input.tripId, parsed, now); if (!outcome) return null;
     return outcome.kind === 'unavailable' ? state('unavailable', outcome.reason.toUpperCase())
       : ['export','forgotten'].includes(outcome.kind) ? state('scoped_complete') : null;
+  }
+  if (handler === 'notifications' || handler === 'lifecycle') {
+    const bundle = decodeModuleExportBundle(data, now);
+    return bundle && bundle.requestId === input.operationId && bundle.ownerId === input.actorId && bundle.sessionId === input.sessionId
+      && bundle.mobileEpoch === input.mobileEpoch && bundle.scope === (handler === 'notifications' ? 'notification-metadata/1' : 'trip-lifecycle-metadata/1') ? state('scoped_complete') : null;
   }
   if (handler === 'brief' || handler === 'case') {
     if (input.action === 'export') {

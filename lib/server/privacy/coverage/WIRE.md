@@ -91,3 +91,32 @@ expectation of community_workspace authenticated EXECUTE=false;actual accepted
 Default internal settings=false still allows original owner cleanup/export;fixture
 now checks that exact preserved ACL/source behavior instead of claiming a new grant.
 Original fail retained,stack58e7793d cleanup PASS;r2 necessary corrected test running.
+
+NEW source wire (Native/Main relay): notifications/lifecycle are now wired to the
+new independent owner collector,not old core lease. Module registry version for
+both=coverage-module-export/1;scope respectively notification-metadata/1 and
+trip-lifecycle-metadata/1;exportHandler respectively notifications/lifecycle.
+Native original command exact {action:export,requestId:operationId,confirmed:true},
+outerphase execute/Trip=null;no destructive recovery or user-supplied lease.
+Original result body {data:bundle};bundle exact keys schemaVersion,kind=bundle,
+requestId,scope,ownerId,sessionId,mobileEpoch,sourceDigest,capturedAt,expiresAt,
+allUserDataCompleted=false,sections,limits,proof. sections exact notifications:[]
+or trips:[],operations:[];row schemas original notification-metadata/1 and
+isLifecycleTrip/original lifecycle operation metadata. limits exact100/100/10000/1MB
+or50/400/20000/1MB;proof exact{coverage:complete,pages,rows},counts independently
+validated against complete from-null traversal. expiresAt=capturedAt+30000,absolute.
+New coverage_progress module ID added (catalog now31 entries):source-free
+requests_v1/sections_v1 and immutable request_fences_v1 metadata. Owner-only
+single-request metadata travels start/proof/bundle; full owner-progress inventory
+exit unavailable,never hidden or counted full account. Fences persist only until
+original session/account revocation;cannot resetTTL by same expired request.
+Native exact module IDs must include coverage_progress. Bundle ready is not actual
+file delivery;use own protected file/consent/cleanup and independent row decoder.
+
+Current SQLsource consumed READONLY for DTO alignment;no dirty source integrated.
+Wait fixed normal commit,then one integratorPR. Auth-r2 actual1PASS0skip +cleanup
+b47d8661PASS for unchanged registered original modules; r1 wrongACL FAIL retained.
+
+CATALOG_VERSION now data-coverage-catalog/2026-10-06.2 after new module/protocol
+registration. Old .1 aggregate/requests cannot be upgraded to .2. Native schema
+constant must align; original data-coverage/1 response shape stays unchanged.
