@@ -1,0 +1,1363 @@
+{
+  "evidence": "synthetic TS protocol fixture; not SQL, Auth, target or Native execution",
+  "now": 1791227400005,
+  "actor": {
+    "ownerId": "10000000-0000-4000-8000-000000000001",
+    "sessionId": "10000000-0000-4000-8000-000000000002",
+    "mobileEpoch": 1
+  },
+  "scopes": {
+    "reservation-reference-data/1": {
+      "previewBytes": "{\"action\":\"preview\",\"scope\":\"reservation-reference-data/1\",\"requestId\":\"10000000-0000-4000-8000-000000000100\",\"tripId\":\"10000000-0000-4000-8000-000000000003\",\"objectIds\":[\"10000000-0000-4000-8000-000000000010\",\"10000000-0000-4000-8000-000000000011\",\"10000000-0000-4000-8000-000000000012\",\"10000000-0000-4000-8000-000000000013\",\"10000000-0000-4000-8000-000000000014\",\"10000000-0000-4000-8000-000000000015\"]}",
+      "exportBytes": "\n{\"action\":\"export\",\"scope\":\"reservation-reference-data/1\",\"requestId\":\"10000000-0000-4000-8000-000000000100\",\"tripId\":\"10000000-0000-4000-8000-000000000003\",\"objectIds\":[\"10000000-0000-4000-8000-000000000010\",\"10000000-0000-4000-8000-000000000011\",\"10000000-0000-4000-8000-000000000012\",\"10000000-0000-4000-8000-000000000013\",\"10000000-0000-4000-8000-000000000014\",\"10000000-0000-4000-8000-000000000015\"],\"previewDigest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"confirmed\":true}",
+      "eraseBytes": "\t{\"action\":\"erase\",\"scope\":\"reservation-reference-data/1\",\"requestId\":\"10000000-0000-4000-8000-000000000100\",\"tripId\":\"10000000-0000-4000-8000-000000000003\",\"objectIds\":[\"10000000-0000-4000-8000-000000000010\",\"10000000-0000-4000-8000-000000000011\",\"10000000-0000-4000-8000-000000000012\",\"10000000-0000-4000-8000-000000000013\",\"10000000-0000-4000-8000-000000000014\",\"10000000-0000-4000-8000-000000000015\"],\"previewDigest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"confirmed\":true}",
+      "recoverBytes": "{\"action\":\"recover\",\"scope\":\"reservation-reference-data/1\",\"requestId\":\"10000000-0000-4000-8000-000000000100\",\"tripId\":\"10000000-0000-4000-8000-000000000003\",\"objectIds\":[\"10000000-0000-4000-8000-000000000010\",\"10000000-0000-4000-8000-000000000011\",\"10000000-0000-4000-8000-000000000012\",\"10000000-0000-4000-8000-000000000013\",\"10000000-0000-4000-8000-000000000014\",\"10000000-0000-4000-8000-000000000015\"],\"mutationBytes\":\"\\t{\\\"action\\\":\\\"erase\\\",\\\"scope\\\":\\\"reservation-reference-data/1\\\",\\\"requestId\\\":\\\"10000000-0000-4000-8000-000000000100\\\",\\\"tripId\\\":\\\"10000000-0000-4000-8000-000000000003\\\",\\\"objectIds\\\":[\\\"10000000-0000-4000-8000-000000000010\\\",\\\"10000000-0000-4000-8000-000000000011\\\",\\\"10000000-0000-4000-8000-000000000012\\\",\\\"10000000-0000-4000-8000-000000000013\\\",\\\"10000000-0000-4000-8000-000000000014\\\",\\\"10000000-0000-4000-8000-000000000015\\\"],\\\"previewDigest\\\":\\\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\\\",\\\"confirmed\\\":true}\"}",
+      "preview": {
+        "schemaVersion": "material-reference-data/1",
+        "scope": "reservation-reference-data/1",
+        "requestId": "10000000-0000-4000-8000-000000000100",
+        "tripId": "10000000-0000-4000-8000-000000000003",
+        "objectIds": [
+          "10000000-0000-4000-8000-000000000010",
+          "10000000-0000-4000-8000-000000000011",
+          "10000000-0000-4000-8000-000000000012",
+          "10000000-0000-4000-8000-000000000013",
+          "10000000-0000-4000-8000-000000000014",
+          "10000000-0000-4000-8000-000000000015"
+        ],
+        "ownerId": "10000000-0000-4000-8000-000000000001",
+        "sessionId": "10000000-0000-4000-8000-000000000002",
+        "mobileEpoch": 1,
+        "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "previewDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "capturedAt": 1791227400000,
+        "expiresAt": 1791227430000,
+        "tripVersion": 1,
+        "boundaries": {
+          "exportFields": [
+            "current_reference",
+            "reference_events",
+            "reference_operation_metadata"
+          ],
+          "eraseFields": [
+            "selected_current_reference",
+            "selected_reference_events",
+            "selected_reference_operations"
+          ],
+          "retained": [
+            "nonreplayable_object_operation_fences",
+            "original_trip_content",
+            "financial_records"
+          ],
+          "missing": [
+            "original_local_material_bytes",
+            "external_order_copies",
+            "external_order_cancel_refund",
+            "provider_verification"
+          ]
+        },
+        "allUserDataCompleted": false,
+        "kind": "preview",
+        "items": [
+          {
+            "current": {
+              "kind": "reservation_reference/1",
+              "referenceId": "10000000-0000-4000-8000-000000000010",
+              "tripId": "10000000-0000-4000-8000-000000000003",
+              "tripVersion": 0,
+              "revision": 1,
+              "fields": {
+                "kind": "lodging",
+                "supplier": "other",
+                "externalReference": null,
+                "title": "合成订单 🐼 10",
+                "startsAt": null,
+                "endsAt": null,
+                "timeZone": null,
+                "address": null,
+                "terms": null,
+                "status": "unknown"
+              },
+              "evidenceTier": "user_reported",
+              "source": {
+                "kind": "user_reported",
+                "localMaterialId": null,
+                "localContentHash": null,
+                "locator": null
+              },
+              "sourceQualification": "untrusted",
+              "confirmedBy": "explicit_user",
+              "confirmedAt": "2026-10-05T19:10:00.000Z",
+              "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "sourceVersion": null,
+              "planningUse": "confirmed_reference_only",
+              "tripMutation": "none"
+            },
+            "events": [
+              {
+                "revision": 1,
+                "operationId": "10000000-0000-4000-8000-000000001010",
+                "tripVersion": 0,
+                "status": "unknown",
+                "evidenceTier": "user_reported",
+                "sourceKind": "user_reported",
+                "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "confirmedAt": "2026-10-05T19:10:00.000Z"
+              }
+            ],
+            "operations": [
+              {
+                "operationId": "10000000-0000-4000-8000-000000001010",
+                "referenceId": "10000000-0000-4000-8000-000000000010",
+                "tripId": "10000000-0000-4000-8000-000000000003",
+                "appliedRevision": 1
+              }
+            ],
+            "historical": true
+          },
+          {
+            "current": {
+              "kind": "reservation_reference/1",
+              "referenceId": "10000000-0000-4000-8000-000000000011",
+              "tripId": "10000000-0000-4000-8000-000000000003",
+              "tripVersion": 0,
+              "revision": 1,
+              "fields": {
+                "kind": "lodging",
+                "supplier": "other",
+                "externalReference": null,
+                "title": "合成订单 🐼 11",
+                "startsAt": null,
+                "endsAt": null,
+                "timeZone": null,
+                "address": null,
+                "terms": null,
+                "status": "unknown"
+              },
+              "evidenceTier": "user_reported",
+              "source": {
+                "kind": "user_reported",
+                "localMaterialId": null,
+                "localContentHash": null,
+                "locator": null
+              },
+              "sourceQualification": "untrusted",
+              "confirmedBy": "explicit_user",
+              "confirmedAt": "2026-10-05T19:10:00.000Z",
+              "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "sourceVersion": null,
+              "planningUse": "confirmed_reference_only",
+              "tripMutation": "none"
+            },
+            "events": [
+              {
+                "revision": 1,
+                "operationId": "10000000-0000-4000-8000-000000001011",
+                "tripVersion": 0,
+                "status": "unknown",
+                "evidenceTier": "user_reported",
+                "sourceKind": "user_reported",
+                "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "confirmedAt": "2026-10-05T19:10:00.000Z"
+              }
+            ],
+            "operations": [
+              {
+                "operationId": "10000000-0000-4000-8000-000000001011",
+                "referenceId": "10000000-0000-4000-8000-000000000011",
+                "tripId": "10000000-0000-4000-8000-000000000003",
+                "appliedRevision": 1
+              }
+            ],
+            "historical": true
+          },
+          {
+            "current": {
+              "kind": "reservation_reference/1",
+              "referenceId": "10000000-0000-4000-8000-000000000012",
+              "tripId": "10000000-0000-4000-8000-000000000003",
+              "tripVersion": 0,
+              "revision": 1,
+              "fields": {
+                "kind": "lodging",
+                "supplier": "other",
+                "externalReference": null,
+                "title": "合成订单 🐼 12",
+                "startsAt": null,
+                "endsAt": null,
+                "timeZone": null,
+                "address": null,
+                "terms": null,
+                "status": "unknown"
+              },
+              "evidenceTier": "user_reported",
+              "source": {
+                "kind": "user_reported",
+                "localMaterialId": null,
+                "localContentHash": null,
+                "locator": null
+              },
+              "sourceQualification": "untrusted",
+              "confirmedBy": "explicit_user",
+              "confirmedAt": "2026-10-05T19:10:00.000Z",
+              "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "sourceVersion": null,
+              "planningUse": "confirmed_reference_only",
+              "tripMutation": "none"
+            },
+            "events": [
+              {
+                "revision": 1,
+                "operationId": "10000000-0000-4000-8000-000000001012",
+                "tripVersion": 0,
+                "status": "unknown",
+                "evidenceTier": "user_reported",
+                "sourceKind": "user_reported",
+                "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "confirmedAt": "2026-10-05T19:10:00.000Z"
+              }
+            ],
+            "operations": [
+              {
+                "operationId": "10000000-0000-4000-8000-000000001012",
+                "referenceId": "10000000-0000-4000-8000-000000000012",
+                "tripId": "10000000-0000-4000-8000-000000000003",
+                "appliedRevision": 1
+              }
+            ],
+            "historical": true
+          },
+          {
+            "current": {
+              "kind": "reservation_reference/1",
+              "referenceId": "10000000-0000-4000-8000-000000000013",
+              "tripId": "10000000-0000-4000-8000-000000000003",
+              "tripVersion": 0,
+              "revision": 1,
+              "fields": {
+                "kind": "lodging",
+                "supplier": "other",
+                "externalReference": null,
+                "title": "合成订单 🐼 13",
+                "startsAt": null,
+                "endsAt": null,
+                "timeZone": null,
+                "address": null,
+                "terms": null,
+                "status": "unknown"
+              },
+              "evidenceTier": "user_reported",
+              "source": {
+                "kind": "user_reported",
+                "localMaterialId": null,
+                "localContentHash": null,
+                "locator": null
+              },
+              "sourceQualification": "untrusted",
+              "confirmedBy": "explicit_user",
+              "confirmedAt": "2026-10-05T19:10:00.000Z",
+              "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "sourceVersion": null,
+              "planningUse": "confirmed_reference_only",
+              "tripMutation": "none"
+            },
+            "events": [
+              {
+                "revision": 1,
+                "operationId": "10000000-0000-4000-8000-000000001013",
+                "tripVersion": 0,
+                "status": "unknown",
+                "evidenceTier": "user_reported",
+                "sourceKind": "user_reported",
+                "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "confirmedAt": "2026-10-05T19:10:00.000Z"
+              }
+            ],
+            "operations": [
+              {
+                "operationId": "10000000-0000-4000-8000-000000001013",
+                "referenceId": "10000000-0000-4000-8000-000000000013",
+                "tripId": "10000000-0000-4000-8000-000000000003",
+                "appliedRevision": 1
+              }
+            ],
+            "historical": true
+          },
+          {
+            "current": {
+              "kind": "reservation_reference/1",
+              "referenceId": "10000000-0000-4000-8000-000000000014",
+              "tripId": "10000000-0000-4000-8000-000000000003",
+              "tripVersion": 0,
+              "revision": 1,
+              "fields": {
+                "kind": "lodging",
+                "supplier": "other",
+                "externalReference": null,
+                "title": "合成订单 🐼 14",
+                "startsAt": null,
+                "endsAt": null,
+                "timeZone": null,
+                "address": null,
+                "terms": null,
+                "status": "unknown"
+              },
+              "evidenceTier": "user_reported",
+              "source": {
+                "kind": "user_reported",
+                "localMaterialId": null,
+                "localContentHash": null,
+                "locator": null
+              },
+              "sourceQualification": "untrusted",
+              "confirmedBy": "explicit_user",
+              "confirmedAt": "2026-10-05T19:10:00.000Z",
+              "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "sourceVersion": null,
+              "planningUse": "confirmed_reference_only",
+              "tripMutation": "none"
+            },
+            "events": [
+              {
+                "revision": 1,
+                "operationId": "10000000-0000-4000-8000-000000001014",
+                "tripVersion": 0,
+                "status": "unknown",
+                "evidenceTier": "user_reported",
+                "sourceKind": "user_reported",
+                "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "confirmedAt": "2026-10-05T19:10:00.000Z"
+              }
+            ],
+            "operations": [
+              {
+                "operationId": "10000000-0000-4000-8000-000000001014",
+                "referenceId": "10000000-0000-4000-8000-000000000014",
+                "tripId": "10000000-0000-4000-8000-000000000003",
+                "appliedRevision": 1
+              }
+            ],
+            "historical": true
+          },
+          {
+            "current": {
+              "kind": "reservation_reference/1",
+              "referenceId": "10000000-0000-4000-8000-000000000015",
+              "tripId": "10000000-0000-4000-8000-000000000003",
+              "tripVersion": 0,
+              "revision": 1,
+              "fields": {
+                "kind": "lodging",
+                "supplier": "other",
+                "externalReference": null,
+                "title": "合成订单 🐼 15",
+                "startsAt": null,
+                "endsAt": null,
+                "timeZone": null,
+                "address": null,
+                "terms": null,
+                "status": "unknown"
+              },
+              "evidenceTier": "user_reported",
+              "source": {
+                "kind": "user_reported",
+                "localMaterialId": null,
+                "localContentHash": null,
+                "locator": null
+              },
+              "sourceQualification": "untrusted",
+              "confirmedBy": "explicit_user",
+              "confirmedAt": "2026-10-05T19:10:00.000Z",
+              "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "sourceVersion": null,
+              "planningUse": "confirmed_reference_only",
+              "tripMutation": "none"
+            },
+            "events": [
+              {
+                "revision": 1,
+                "operationId": "10000000-0000-4000-8000-000000001015",
+                "tripVersion": 0,
+                "status": "unknown",
+                "evidenceTier": "user_reported",
+                "sourceKind": "user_reported",
+                "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "confirmedAt": "2026-10-05T19:10:00.000Z"
+              }
+            ],
+            "operations": [
+              {
+                "operationId": "10000000-0000-4000-8000-000000001015",
+                "referenceId": "10000000-0000-4000-8000-000000000015",
+                "tripId": "10000000-0000-4000-8000-000000000003",
+                "appliedRevision": 1
+              }
+            ],
+            "historical": true
+          }
+        ],
+        "requiresExplicitConfirmation": true
+      },
+      "bundle": {
+        "schemaVersion": "material-reference-data/1",
+        "scope": "reservation-reference-data/1",
+        "requestId": "10000000-0000-4000-8000-000000000100",
+        "tripId": "10000000-0000-4000-8000-000000000003",
+        "objectIds": [
+          "10000000-0000-4000-8000-000000000010",
+          "10000000-0000-4000-8000-000000000011",
+          "10000000-0000-4000-8000-000000000012",
+          "10000000-0000-4000-8000-000000000013",
+          "10000000-0000-4000-8000-000000000014",
+          "10000000-0000-4000-8000-000000000015"
+        ],
+        "ownerId": "10000000-0000-4000-8000-000000000001",
+        "sessionId": "10000000-0000-4000-8000-000000000002",
+        "mobileEpoch": 1,
+        "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "previewDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "capturedAt": 1791227400000,
+        "expiresAt": 1791227430000,
+        "tripVersion": 1,
+        "boundaries": {
+          "exportFields": [
+            "current_reference",
+            "reference_events",
+            "reference_operation_metadata"
+          ],
+          "eraseFields": [
+            "selected_current_reference",
+            "selected_reference_events",
+            "selected_reference_operations"
+          ],
+          "retained": [
+            "nonreplayable_object_operation_fences",
+            "original_trip_content",
+            "financial_records"
+          ],
+          "missing": [
+            "original_local_material_bytes",
+            "external_order_copies",
+            "external_order_cancel_refund",
+            "provider_verification"
+          ]
+        },
+        "allUserDataCompleted": false,
+        "kind": "bundle",
+        "requestDigest": "eaa5a4ef12e09f72acd42374c67719c09eab56cf6b1527acbca26c9c6a92aa97",
+        "items": [
+          {
+            "current": {
+              "kind": "reservation_reference/1",
+              "referenceId": "10000000-0000-4000-8000-000000000010",
+              "tripId": "10000000-0000-4000-8000-000000000003",
+              "tripVersion": 0,
+              "revision": 1,
+              "fields": {
+                "kind": "lodging",
+                "supplier": "other",
+                "externalReference": null,
+                "title": "合成订单 🐼 10",
+                "startsAt": null,
+                "endsAt": null,
+                "timeZone": null,
+                "address": null,
+                "terms": null,
+                "status": "unknown"
+              },
+              "evidenceTier": "user_reported",
+              "source": {
+                "kind": "user_reported",
+                "localMaterialId": null,
+                "localContentHash": null,
+                "locator": null
+              },
+              "sourceQualification": "untrusted",
+              "confirmedBy": "explicit_user",
+              "confirmedAt": "2026-10-05T19:10:00.000Z",
+              "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "sourceVersion": null,
+              "planningUse": "confirmed_reference_only",
+              "tripMutation": "none"
+            },
+            "events": [
+              {
+                "revision": 1,
+                "operationId": "10000000-0000-4000-8000-000000001010",
+                "tripVersion": 0,
+                "status": "unknown",
+                "evidenceTier": "user_reported",
+                "sourceKind": "user_reported",
+                "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "confirmedAt": "2026-10-05T19:10:00.000Z"
+              }
+            ],
+            "operations": [
+              {
+                "operationId": "10000000-0000-4000-8000-000000001010",
+                "referenceId": "10000000-0000-4000-8000-000000000010",
+                "tripId": "10000000-0000-4000-8000-000000000003",
+                "appliedRevision": 1
+              }
+            ],
+            "historical": true
+          },
+          {
+            "current": {
+              "kind": "reservation_reference/1",
+              "referenceId": "10000000-0000-4000-8000-000000000011",
+              "tripId": "10000000-0000-4000-8000-000000000003",
+              "tripVersion": 0,
+              "revision": 1,
+              "fields": {
+                "kind": "lodging",
+                "supplier": "other",
+                "externalReference": null,
+                "title": "合成订单 🐼 11",
+                "startsAt": null,
+                "endsAt": null,
+                "timeZone": null,
+                "address": null,
+                "terms": null,
+                "status": "unknown"
+              },
+              "evidenceTier": "user_reported",
+              "source": {
+                "kind": "user_reported",
+                "localMaterialId": null,
+                "localContentHash": null,
+                "locator": null
+              },
+              "sourceQualification": "untrusted",
+              "confirmedBy": "explicit_user",
+              "confirmedAt": "2026-10-05T19:10:00.000Z",
+              "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "sourceVersion": null,
+              "planningUse": "confirmed_reference_only",
+              "tripMutation": "none"
+            },
+            "events": [
+              {
+                "revision": 1,
+                "operationId": "10000000-0000-4000-8000-000000001011",
+                "tripVersion": 0,
+                "status": "unknown",
+                "evidenceTier": "user_reported",
+                "sourceKind": "user_reported",
+                "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "confirmedAt": "2026-10-05T19:10:00.000Z"
+              }
+            ],
+            "operations": [
+              {
+                "operationId": "10000000-0000-4000-8000-000000001011",
+                "referenceId": "10000000-0000-4000-8000-000000000011",
+                "tripId": "10000000-0000-4000-8000-000000000003",
+                "appliedRevision": 1
+              }
+            ],
+            "historical": true
+          },
+          {
+            "current": {
+              "kind": "reservation_reference/1",
+              "referenceId": "10000000-0000-4000-8000-000000000012",
+              "tripId": "10000000-0000-4000-8000-000000000003",
+              "tripVersion": 0,
+              "revision": 1,
+              "fields": {
+                "kind": "lodging",
+                "supplier": "other",
+                "externalReference": null,
+                "title": "合成订单 🐼 12",
+                "startsAt": null,
+                "endsAt": null,
+                "timeZone": null,
+                "address": null,
+                "terms": null,
+                "status": "unknown"
+              },
+              "evidenceTier": "user_reported",
+              "source": {
+                "kind": "user_reported",
+                "localMaterialId": null,
+                "localContentHash": null,
+                "locator": null
+              },
+              "sourceQualification": "untrusted",
+              "confirmedBy": "explicit_user",
+              "confirmedAt": "2026-10-05T19:10:00.000Z",
+              "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "sourceVersion": null,
+              "planningUse": "confirmed_reference_only",
+              "tripMutation": "none"
+            },
+            "events": [
+              {
+                "revision": 1,
+                "operationId": "10000000-0000-4000-8000-000000001012",
+                "tripVersion": 0,
+                "status": "unknown",
+                "evidenceTier": "user_reported",
+                "sourceKind": "user_reported",
+                "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "confirmedAt": "2026-10-05T19:10:00.000Z"
+              }
+            ],
+            "operations": [
+              {
+                "operationId": "10000000-0000-4000-8000-000000001012",
+                "referenceId": "10000000-0000-4000-8000-000000000012",
+                "tripId": "10000000-0000-4000-8000-000000000003",
+                "appliedRevision": 1
+              }
+            ],
+            "historical": true
+          },
+          {
+            "current": {
+              "kind": "reservation_reference/1",
+              "referenceId": "10000000-0000-4000-8000-000000000013",
+              "tripId": "10000000-0000-4000-8000-000000000003",
+              "tripVersion": 0,
+              "revision": 1,
+              "fields": {
+                "kind": "lodging",
+                "supplier": "other",
+                "externalReference": null,
+                "title": "合成订单 🐼 13",
+                "startsAt": null,
+                "endsAt": null,
+                "timeZone": null,
+                "address": null,
+                "terms": null,
+                "status": "unknown"
+              },
+              "evidenceTier": "user_reported",
+              "source": {
+                "kind": "user_reported",
+                "localMaterialId": null,
+                "localContentHash": null,
+                "locator": null
+              },
+              "sourceQualification": "untrusted",
+              "confirmedBy": "explicit_user",
+              "confirmedAt": "2026-10-05T19:10:00.000Z",
+              "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "sourceVersion": null,
+              "planningUse": "confirmed_reference_only",
+              "tripMutation": "none"
+            },
+            "events": [
+              {
+                "revision": 1,
+                "operationId": "10000000-0000-4000-8000-000000001013",
+                "tripVersion": 0,
+                "status": "unknown",
+                "evidenceTier": "user_reported",
+                "sourceKind": "user_reported",
+                "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "confirmedAt": "2026-10-05T19:10:00.000Z"
+              }
+            ],
+            "operations": [
+              {
+                "operationId": "10000000-0000-4000-8000-000000001013",
+                "referenceId": "10000000-0000-4000-8000-000000000013",
+                "tripId": "10000000-0000-4000-8000-000000000003",
+                "appliedRevision": 1
+              }
+            ],
+            "historical": true
+          },
+          {
+            "current": {
+              "kind": "reservation_reference/1",
+              "referenceId": "10000000-0000-4000-8000-000000000014",
+              "tripId": "10000000-0000-4000-8000-000000000003",
+              "tripVersion": 0,
+              "revision": 1,
+              "fields": {
+                "kind": "lodging",
+                "supplier": "other",
+                "externalReference": null,
+                "title": "合成订单 🐼 14",
+                "startsAt": null,
+                "endsAt": null,
+                "timeZone": null,
+                "address": null,
+                "terms": null,
+                "status": "unknown"
+              },
+              "evidenceTier": "user_reported",
+              "source": {
+                "kind": "user_reported",
+                "localMaterialId": null,
+                "localContentHash": null,
+                "locator": null
+              },
+              "sourceQualification": "untrusted",
+              "confirmedBy": "explicit_user",
+              "confirmedAt": "2026-10-05T19:10:00.000Z",
+              "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "sourceVersion": null,
+              "planningUse": "confirmed_reference_only",
+              "tripMutation": "none"
+            },
+            "events": [
+              {
+                "revision": 1,
+                "operationId": "10000000-0000-4000-8000-000000001014",
+                "tripVersion": 0,
+                "status": "unknown",
+                "evidenceTier": "user_reported",
+                "sourceKind": "user_reported",
+                "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "confirmedAt": "2026-10-05T19:10:00.000Z"
+              }
+            ],
+            "operations": [
+              {
+                "operationId": "10000000-0000-4000-8000-000000001014",
+                "referenceId": "10000000-0000-4000-8000-000000000014",
+                "tripId": "10000000-0000-4000-8000-000000000003",
+                "appliedRevision": 1
+              }
+            ],
+            "historical": true
+          },
+          {
+            "current": {
+              "kind": "reservation_reference/1",
+              "referenceId": "10000000-0000-4000-8000-000000000015",
+              "tripId": "10000000-0000-4000-8000-000000000003",
+              "tripVersion": 0,
+              "revision": 1,
+              "fields": {
+                "kind": "lodging",
+                "supplier": "other",
+                "externalReference": null,
+                "title": "合成订单 🐼 15",
+                "startsAt": null,
+                "endsAt": null,
+                "timeZone": null,
+                "address": null,
+                "terms": null,
+                "status": "unknown"
+              },
+              "evidenceTier": "user_reported",
+              "source": {
+                "kind": "user_reported",
+                "localMaterialId": null,
+                "localContentHash": null,
+                "locator": null
+              },
+              "sourceQualification": "untrusted",
+              "confirmedBy": "explicit_user",
+              "confirmedAt": "2026-10-05T19:10:00.000Z",
+              "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "sourceVersion": null,
+              "planningUse": "confirmed_reference_only",
+              "tripMutation": "none"
+            },
+            "events": [
+              {
+                "revision": 1,
+                "operationId": "10000000-0000-4000-8000-000000001015",
+                "tripVersion": 0,
+                "status": "unknown",
+                "evidenceTier": "user_reported",
+                "sourceKind": "user_reported",
+                "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "confirmedAt": "2026-10-05T19:10:00.000Z"
+              }
+            ],
+            "operations": [
+              {
+                "operationId": "10000000-0000-4000-8000-000000001015",
+                "referenceId": "10000000-0000-4000-8000-000000000015",
+                "tripId": "10000000-0000-4000-8000-000000000003",
+                "appliedRevision": 1
+              }
+            ],
+            "historical": true
+          }
+        ],
+        "proof": {
+          "coverage": "complete",
+          "pages": 2,
+          "rows": 6
+        }
+      },
+      "receipt": {
+        "schemaVersion": "material-reference-data/1",
+        "scope": "reservation-reference-data/1",
+        "requestId": "10000000-0000-4000-8000-000000000100",
+        "tripId": "10000000-0000-4000-8000-000000000003",
+        "objectIds": [
+          "10000000-0000-4000-8000-000000000010",
+          "10000000-0000-4000-8000-000000000011",
+          "10000000-0000-4000-8000-000000000012",
+          "10000000-0000-4000-8000-000000000013",
+          "10000000-0000-4000-8000-000000000014",
+          "10000000-0000-4000-8000-000000000015"
+        ],
+        "ownerId": "10000000-0000-4000-8000-000000000001",
+        "sessionId": "10000000-0000-4000-8000-000000000002",
+        "mobileEpoch": 1,
+        "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "previewDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "capturedAt": 1791227400000,
+        "expiresAt": 1791227430000,
+        "tripVersion": 1,
+        "boundaries": {
+          "exportFields": [
+            "current_reference",
+            "reference_events",
+            "reference_operation_metadata"
+          ],
+          "eraseFields": [
+            "selected_current_reference",
+            "selected_reference_events",
+            "selected_reference_operations"
+          ],
+          "retained": [
+            "nonreplayable_object_operation_fences",
+            "original_trip_content",
+            "financial_records"
+          ],
+          "missing": [
+            "original_local_material_bytes",
+            "external_order_copies",
+            "external_order_cancel_refund",
+            "provider_verification"
+          ]
+        },
+        "allUserDataCompleted": false,
+        "kind": "receipt",
+        "state": "erased",
+        "requestDigest": "b8613dc4f4bf549bf611834253868cb7f1a1432a77169982df9b5b133327073e",
+        "decidedAt": 1791227400002,
+        "effects": {
+          "objects": 6,
+          "temporaryRecords": 6,
+          "unappliedProposals": 0,
+          "tripMutation": "none",
+          "externalOrders": "not_contacted",
+          "financialRecords": "not_modified"
+        }
+      }
+    },
+    "pdf-intake-data/1": {
+      "previewBytes": "{\"action\":\"preview\",\"scope\":\"pdf-intake-data/1\",\"requestId\":\"10000000-0000-4000-8000-000000000100\",\"tripId\":\"10000000-0000-4000-8000-000000000003\",\"objectIds\":[\"10000000-0000-4000-8000-000000000020\",\"10000000-0000-4000-8000-000000000021\"]}",
+      "exportBytes": "\n{\"action\":\"export\",\"scope\":\"pdf-intake-data/1\",\"requestId\":\"10000000-0000-4000-8000-000000000100\",\"tripId\":\"10000000-0000-4000-8000-000000000003\",\"objectIds\":[\"10000000-0000-4000-8000-000000000020\",\"10000000-0000-4000-8000-000000000021\"],\"previewDigest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"confirmed\":true}",
+      "eraseBytes": "\t{\"action\":\"erase\",\"scope\":\"pdf-intake-data/1\",\"requestId\":\"10000000-0000-4000-8000-000000000100\",\"tripId\":\"10000000-0000-4000-8000-000000000003\",\"objectIds\":[\"10000000-0000-4000-8000-000000000020\",\"10000000-0000-4000-8000-000000000021\"],\"previewDigest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"confirmed\":true}",
+      "recoverBytes": "{\"action\":\"recover\",\"scope\":\"pdf-intake-data/1\",\"requestId\":\"10000000-0000-4000-8000-000000000100\",\"tripId\":\"10000000-0000-4000-8000-000000000003\",\"objectIds\":[\"10000000-0000-4000-8000-000000000020\",\"10000000-0000-4000-8000-000000000021\"],\"mutationBytes\":\"\\t{\\\"action\\\":\\\"erase\\\",\\\"scope\\\":\\\"pdf-intake-data/1\\\",\\\"requestId\\\":\\\"10000000-0000-4000-8000-000000000100\\\",\\\"tripId\\\":\\\"10000000-0000-4000-8000-000000000003\\\",\\\"objectIds\\\":[\\\"10000000-0000-4000-8000-000000000020\\\",\\\"10000000-0000-4000-8000-000000000021\\\"],\\\"previewDigest\\\":\\\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\\\",\\\"confirmed\\\":true}\"}",
+      "preview": {
+        "schemaVersion": "material-reference-data/1",
+        "scope": "pdf-intake-data/1",
+        "requestId": "10000000-0000-4000-8000-000000000100",
+        "tripId": "10000000-0000-4000-8000-000000000003",
+        "objectIds": [
+          "10000000-0000-4000-8000-000000000020",
+          "10000000-0000-4000-8000-000000000021"
+        ],
+        "ownerId": "10000000-0000-4000-8000-000000000001",
+        "sessionId": "10000000-0000-4000-8000-000000000002",
+        "mobileEpoch": 1,
+        "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "previewDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "capturedAt": 1791227400000,
+        "expiresAt": 1791227430000,
+        "tripVersion": 1,
+        "boundaries": {
+          "exportFields": [
+            "live_corrected_fields",
+            "original_locator_hashes",
+            "minimal_pdf_operation_metadata"
+          ],
+          "eraseFields": [
+            "temporary_input_bytes",
+            "temporary_command_fields",
+            "unapplied_pdf_proposal_patch"
+          ],
+          "retained": [
+            "pdf_operation_replay_fences",
+            "applied_trip_proposal_history",
+            "confirmation_event",
+            "financial_records"
+          ],
+          "missing": [
+            "original_pdf_bytes",
+            "full_page_text",
+            "device_appgroup_copies",
+            "external_files",
+            "scheduled_target_retention"
+          ]
+        },
+        "allUserDataCompleted": false,
+        "kind": "preview",
+        "items": [
+          {
+            "operationId": "10000000-0000-4000-8000-000000000020",
+            "tripId": "10000000-0000-4000-8000-000000000003",
+            "sessionEpoch": 1,
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "commandDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "previewDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "proposalId": "10000000-0000-4000-8000-000000002020",
+            "proposalRevision": 1,
+            "baseTripVersion": 0,
+            "expiresAt": "2026-10-05T19:20:00.000Z",
+            "cancelled": false,
+            "fields": [
+              {
+                "kind": "date",
+                "value": "2026-10-06",
+                "locator": {
+                  "page": 1,
+                  "line": 1,
+                  "sourceTextHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                }
+              }
+            ],
+            "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "rawPdfIncluded": false,
+            "fullTextIncluded": false,
+            "evidenceTier": "user_checked_local_pdf",
+            "sourceAvailability": "local_only",
+            "orderVerification": "unavailable",
+            "operation": {
+              "kind": "pdf_intake_operation/1",
+              "operationId": "10000000-0000-4000-8000-000000000020",
+              "tripId": "10000000-0000-4000-8000-000000000003",
+              "sessionEpoch": 1,
+              "state": "pending",
+              "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "commandDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "previewDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "expiresAt": "2026-10-05T19:20:00.000Z",
+              "proposalId": "10000000-0000-4000-8000-000000002020",
+              "proposalRevision": 1,
+              "baseTripVersion": 0,
+              "confirmationEventId": null,
+              "resultingVersion": null
+            }
+          },
+          {
+            "operationId": "10000000-0000-4000-8000-000000000021",
+            "tripId": "10000000-0000-4000-8000-000000000003",
+            "sessionEpoch": 1,
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "commandDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "previewDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "proposalId": "10000000-0000-4000-8000-000000002021",
+            "proposalRevision": 1,
+            "baseTripVersion": 0,
+            "expiresAt": "2026-10-05T19:20:00.000Z",
+            "cancelled": false,
+            "fields": null,
+            "contentHash": null,
+            "rawPdfIncluded": false,
+            "fullTextIncluded": false,
+            "evidenceTier": "user_checked_local_pdf",
+            "sourceAvailability": "local_only",
+            "orderVerification": "unavailable",
+            "operation": {
+              "kind": "pdf_intake_operation/1",
+              "operationId": "10000000-0000-4000-8000-000000000021",
+              "tripId": "10000000-0000-4000-8000-000000000003",
+              "sessionEpoch": 1,
+              "state": "confirmed",
+              "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "commandDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "previewDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "expiresAt": "2026-10-05T19:20:00.000Z",
+              "proposalId": "10000000-0000-4000-8000-000000002021",
+              "proposalRevision": 1,
+              "baseTripVersion": 0,
+              "confirmationEventId": "10000000-0000-4000-8000-000000003021",
+              "resultingVersion": 1
+            }
+          }
+        ],
+        "requiresExplicitConfirmation": true
+      },
+      "bundle": {
+        "schemaVersion": "material-reference-data/1",
+        "scope": "pdf-intake-data/1",
+        "requestId": "10000000-0000-4000-8000-000000000100",
+        "tripId": "10000000-0000-4000-8000-000000000003",
+        "objectIds": [
+          "10000000-0000-4000-8000-000000000020",
+          "10000000-0000-4000-8000-000000000021"
+        ],
+        "ownerId": "10000000-0000-4000-8000-000000000001",
+        "sessionId": "10000000-0000-4000-8000-000000000002",
+        "mobileEpoch": 1,
+        "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "previewDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "capturedAt": 1791227400000,
+        "expiresAt": 1791227430000,
+        "tripVersion": 1,
+        "boundaries": {
+          "exportFields": [
+            "live_corrected_fields",
+            "original_locator_hashes",
+            "minimal_pdf_operation_metadata"
+          ],
+          "eraseFields": [
+            "temporary_input_bytes",
+            "temporary_command_fields",
+            "unapplied_pdf_proposal_patch"
+          ],
+          "retained": [
+            "pdf_operation_replay_fences",
+            "applied_trip_proposal_history",
+            "confirmation_event",
+            "financial_records"
+          ],
+          "missing": [
+            "original_pdf_bytes",
+            "full_page_text",
+            "device_appgroup_copies",
+            "external_files",
+            "scheduled_target_retention"
+          ]
+        },
+        "allUserDataCompleted": false,
+        "kind": "bundle",
+        "requestDigest": "a3389c5a01f735d19c08661f3a8ead916dc31b6a5cc840cbc9fa89e044c12810",
+        "items": [
+          {
+            "operationId": "10000000-0000-4000-8000-000000000020",
+            "tripId": "10000000-0000-4000-8000-000000000003",
+            "sessionEpoch": 1,
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "commandDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "previewDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "proposalId": "10000000-0000-4000-8000-000000002020",
+            "proposalRevision": 1,
+            "baseTripVersion": 0,
+            "expiresAt": "2026-10-05T19:20:00.000Z",
+            "cancelled": false,
+            "fields": [
+              {
+                "kind": "date",
+                "value": "2026-10-06",
+                "locator": {
+                  "page": 1,
+                  "line": 1,
+                  "sourceTextHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                }
+              }
+            ],
+            "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "rawPdfIncluded": false,
+            "fullTextIncluded": false,
+            "evidenceTier": "user_checked_local_pdf",
+            "sourceAvailability": "local_only",
+            "orderVerification": "unavailable",
+            "operation": {
+              "kind": "pdf_intake_operation/1",
+              "operationId": "10000000-0000-4000-8000-000000000020",
+              "tripId": "10000000-0000-4000-8000-000000000003",
+              "sessionEpoch": 1,
+              "state": "pending",
+              "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "commandDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "previewDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "expiresAt": "2026-10-05T19:20:00.000Z",
+              "proposalId": "10000000-0000-4000-8000-000000002020",
+              "proposalRevision": 1,
+              "baseTripVersion": 0,
+              "confirmationEventId": null,
+              "resultingVersion": null
+            }
+          },
+          {
+            "operationId": "10000000-0000-4000-8000-000000000021",
+            "tripId": "10000000-0000-4000-8000-000000000003",
+            "sessionEpoch": 1,
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "commandDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "previewDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "proposalId": "10000000-0000-4000-8000-000000002021",
+            "proposalRevision": 1,
+            "baseTripVersion": 0,
+            "expiresAt": "2026-10-05T19:20:00.000Z",
+            "cancelled": false,
+            "fields": null,
+            "contentHash": null,
+            "rawPdfIncluded": false,
+            "fullTextIncluded": false,
+            "evidenceTier": "user_checked_local_pdf",
+            "sourceAvailability": "local_only",
+            "orderVerification": "unavailable",
+            "operation": {
+              "kind": "pdf_intake_operation/1",
+              "operationId": "10000000-0000-4000-8000-000000000021",
+              "tripId": "10000000-0000-4000-8000-000000000003",
+              "sessionEpoch": 1,
+              "state": "confirmed",
+              "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "commandDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "previewDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "expiresAt": "2026-10-05T19:20:00.000Z",
+              "proposalId": "10000000-0000-4000-8000-000000002021",
+              "proposalRevision": 1,
+              "baseTripVersion": 0,
+              "confirmationEventId": "10000000-0000-4000-8000-000000003021",
+              "resultingVersion": 1
+            }
+          }
+        ],
+        "proof": {
+          "coverage": "complete",
+          "pages": 1,
+          "rows": 2
+        }
+      },
+      "receipt": {
+        "schemaVersion": "material-reference-data/1",
+        "scope": "pdf-intake-data/1",
+        "requestId": "10000000-0000-4000-8000-000000000100",
+        "tripId": "10000000-0000-4000-8000-000000000003",
+        "objectIds": [
+          "10000000-0000-4000-8000-000000000020",
+          "10000000-0000-4000-8000-000000000021"
+        ],
+        "ownerId": "10000000-0000-4000-8000-000000000001",
+        "sessionId": "10000000-0000-4000-8000-000000000002",
+        "mobileEpoch": 1,
+        "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "previewDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "capturedAt": 1791227400000,
+        "expiresAt": 1791227430000,
+        "tripVersion": 1,
+        "boundaries": {
+          "exportFields": [
+            "live_corrected_fields",
+            "original_locator_hashes",
+            "minimal_pdf_operation_metadata"
+          ],
+          "eraseFields": [
+            "temporary_input_bytes",
+            "temporary_command_fields",
+            "unapplied_pdf_proposal_patch"
+          ],
+          "retained": [
+            "pdf_operation_replay_fences",
+            "applied_trip_proposal_history",
+            "confirmation_event",
+            "financial_records"
+          ],
+          "missing": [
+            "original_pdf_bytes",
+            "full_page_text",
+            "device_appgroup_copies",
+            "external_files",
+            "scheduled_target_retention"
+          ]
+        },
+        "allUserDataCompleted": false,
+        "kind": "receipt",
+        "state": "erased",
+        "requestDigest": "d6a75736086050442e068da7a97edeb474897b241bfacc3b03e235811115c1c5",
+        "decidedAt": 1791227400002,
+        "effects": {
+          "objects": 2,
+          "temporaryRecords": 1,
+          "unappliedProposals": 1,
+          "tripMutation": "none",
+          "externalOrders": "not_contacted",
+          "financialRecords": "not_modified"
+        }
+      }
+    },
+    "material-exit-progress/1": {
+      "previewBytes": "{\"action\":\"preview\",\"scope\":\"material-exit-progress/1\",\"requestId\":\"10000000-0000-4000-8000-000000000100\",\"tripId\":\"10000000-0000-4000-8000-000000000003\",\"objectIds\":[\"10000000-0000-4000-8000-000000000030\"]}",
+      "exportBytes": "\n{\"action\":\"export\",\"scope\":\"material-exit-progress/1\",\"requestId\":\"10000000-0000-4000-8000-000000000100\",\"tripId\":\"10000000-0000-4000-8000-000000000003\",\"objectIds\":[\"10000000-0000-4000-8000-000000000030\"],\"previewDigest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"confirmed\":true}",
+      "eraseBytes": "\t{\"action\":\"erase\",\"scope\":\"material-exit-progress/1\",\"requestId\":\"10000000-0000-4000-8000-000000000100\",\"tripId\":\"10000000-0000-4000-8000-000000000003\",\"objectIds\":[\"10000000-0000-4000-8000-000000000030\"],\"previewDigest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"confirmed\":true}",
+      "recoverBytes": "{\"action\":\"recover\",\"scope\":\"material-exit-progress/1\",\"requestId\":\"10000000-0000-4000-8000-000000000100\",\"tripId\":\"10000000-0000-4000-8000-000000000003\",\"objectIds\":[\"10000000-0000-4000-8000-000000000030\"],\"mutationBytes\":\"\\t{\\\"action\\\":\\\"erase\\\",\\\"scope\\\":\\\"material-exit-progress/1\\\",\\\"requestId\\\":\\\"10000000-0000-4000-8000-000000000100\\\",\\\"tripId\\\":\\\"10000000-0000-4000-8000-000000000003\\\",\\\"objectIds\\\":[\\\"10000000-0000-4000-8000-000000000030\\\"],\\\"previewDigest\\\":\\\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\\\",\\\"confirmed\\\":true}\"}",
+      "preview": {
+        "schemaVersion": "material-reference-data/1",
+        "scope": "material-exit-progress/1",
+        "requestId": "10000000-0000-4000-8000-000000000100",
+        "tripId": "10000000-0000-4000-8000-000000000003",
+        "objectIds": [
+          "10000000-0000-4000-8000-000000000030"
+        ],
+        "ownerId": "10000000-0000-4000-8000-000000000001",
+        "sessionId": "10000000-0000-4000-8000-000000000002",
+        "mobileEpoch": 1,
+        "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "previewDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "capturedAt": 1791227400000,
+        "expiresAt": 1791227430000,
+        "tripVersion": 1,
+        "boundaries": {
+          "exportFields": [
+            "selected_exit_request_metadata",
+            "selected_exit_page_progress",
+            "retained_exit_fence_metadata"
+          ],
+          "eraseFields": [
+            "selected_transient_exit_page_progress"
+          ],
+          "retained": [
+            "nonreplayable_request_object_operation_fences",
+            "selected_object_ids",
+            "request_source_preview_hashes",
+            "minimal_erasure_receipt"
+          ],
+          "missing": [
+            "other_unselected_exit_requests"
+          ]
+        },
+        "allUserDataCompleted": false,
+        "kind": "preview",
+        "items": [
+          {
+            "objectId": "10000000-0000-4000-8000-000000000030",
+            "tripId": "10000000-0000-4000-8000-000000000003",
+            "originalScope": "reservation-reference-data/1",
+            "objectIds": [
+              "10000000-0000-4000-8000-000000000010"
+            ],
+            "referenceOperationIds": [
+              "10000000-0000-4000-8000-000000001010"
+            ],
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "previewDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "state": "erased",
+            "capturedAt": 1791227340000,
+            "expiresAt": 1791227370000,
+            "decidedAt": 1791227350000,
+            "pages": 0,
+            "rows": 0,
+            "progressErased": true
+          }
+        ],
+        "requiresExplicitConfirmation": true
+      },
+      "bundle": {
+        "schemaVersion": "material-reference-data/1",
+        "scope": "material-exit-progress/1",
+        "requestId": "10000000-0000-4000-8000-000000000100",
+        "tripId": "10000000-0000-4000-8000-000000000003",
+        "objectIds": [
+          "10000000-0000-4000-8000-000000000030"
+        ],
+        "ownerId": "10000000-0000-4000-8000-000000000001",
+        "sessionId": "10000000-0000-4000-8000-000000000002",
+        "mobileEpoch": 1,
+        "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "previewDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "capturedAt": 1791227400000,
+        "expiresAt": 1791227430000,
+        "tripVersion": 1,
+        "boundaries": {
+          "exportFields": [
+            "selected_exit_request_metadata",
+            "selected_exit_page_progress",
+            "retained_exit_fence_metadata"
+          ],
+          "eraseFields": [
+            "selected_transient_exit_page_progress"
+          ],
+          "retained": [
+            "nonreplayable_request_object_operation_fences",
+            "selected_object_ids",
+            "request_source_preview_hashes",
+            "minimal_erasure_receipt"
+          ],
+          "missing": [
+            "other_unselected_exit_requests"
+          ]
+        },
+        "allUserDataCompleted": false,
+        "kind": "bundle",
+        "requestDigest": "749f3bb80bf32ec3ced2f56af541754e6ecb80ba893e829a73239cfc33a19d5f",
+        "items": [
+          {
+            "objectId": "10000000-0000-4000-8000-000000000030",
+            "tripId": "10000000-0000-4000-8000-000000000003",
+            "originalScope": "reservation-reference-data/1",
+            "objectIds": [
+              "10000000-0000-4000-8000-000000000010"
+            ],
+            "referenceOperationIds": [
+              "10000000-0000-4000-8000-000000001010"
+            ],
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "previewDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "state": "erased",
+            "capturedAt": 1791227340000,
+            "expiresAt": 1791227370000,
+            "decidedAt": 1791227350000,
+            "pages": 0,
+            "rows": 0,
+            "progressErased": true
+          }
+        ],
+        "proof": {
+          "coverage": "complete",
+          "pages": 1,
+          "rows": 1
+        }
+      },
+      "receipt": {
+        "schemaVersion": "material-reference-data/1",
+        "scope": "material-exit-progress/1",
+        "requestId": "10000000-0000-4000-8000-000000000100",
+        "tripId": "10000000-0000-4000-8000-000000000003",
+        "objectIds": [
+          "10000000-0000-4000-8000-000000000030"
+        ],
+        "ownerId": "10000000-0000-4000-8000-000000000001",
+        "sessionId": "10000000-0000-4000-8000-000000000002",
+        "mobileEpoch": 1,
+        "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "previewDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "capturedAt": 1791227400000,
+        "expiresAt": 1791227430000,
+        "tripVersion": 1,
+        "boundaries": {
+          "exportFields": [
+            "selected_exit_request_metadata",
+            "selected_exit_page_progress",
+            "retained_exit_fence_metadata"
+          ],
+          "eraseFields": [
+            "selected_transient_exit_page_progress"
+          ],
+          "retained": [
+            "nonreplayable_request_object_operation_fences",
+            "selected_object_ids",
+            "request_source_preview_hashes",
+            "minimal_erasure_receipt"
+          ],
+          "missing": [
+            "other_unselected_exit_requests"
+          ]
+        },
+        "allUserDataCompleted": false,
+        "kind": "receipt",
+        "state": "erased",
+        "requestDigest": "e2fa648db15659b4aca9ebbc0b38631e5a22f266039670274fa9533d20d0bfbf",
+        "decidedAt": 1791227400002,
+        "effects": {
+          "objects": 1,
+          "temporaryRecords": 1,
+          "unappliedProposals": 0,
+          "tripMutation": "none",
+          "externalOrders": "not_contacted",
+          "financialRecords": "not_modified"
+        }
+      }
+    }
+  }
+}

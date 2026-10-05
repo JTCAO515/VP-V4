@@ -52,17 +52,26 @@ Owned HTTP `POST /api/privacy/native/v1/material-references`. Private/no-store,
 native signed credentials, local default disabled; schema/RPC default revoke
 PUBLIC/anon/authenticated/service_role. Fixture-only grants never target enrollment.
 Reuse actual Auth user/session row locks, enrolled native actor/session/epoch,
-original 5-minute reauth, account/Trip archive/deletion fences before lookup,
+original 5-minute reauth, account/Trip deletion fences before lookup,
 cleanup, source feedback or mutation. Account → native session → owned Trip →
 proposal/selected source → request locks with NOWAIT. The new ordinary RPC derives
 owner/session from auth; body has no actor, role, JWT, lease or provider fields.
 `p_expected_epoch` must equal current actual mobile epoch. HTTP reproves it before
 and after every RPC, and at delivery. Abort/unknown ACK is never completion.
+Main accepted review `655b3f`: a retained owned archived Trip or expired/cancelled
+material must not be refused by unrelated live-business admission. Derive owned
+undeleted Trip directly with privacy-appropriate locks; do not blindly reuse
+`reservation_private.trip_v1` or other unarchived business guard. Preserve original
+confirm/proposal lock order and semantics. Expired live fields remain null; safe
+metadata export and actual sensitive cleanup still work. Existing committed
+receipt read is separate from preview/source/body freshness and accepts
+`decidedAt <= original expiresAt` after preview TTL without new mutation rights.
 
 Scopes exactly `reservation-reference-data/1`, `pdf-intake-data/1`,
 `material-exit-progress/1`. Selected object IDs are sorted unique lowercase UUIDs,
 1..20, one exact owner Trip. Reference IDs / PDF operation IDs / exit request IDs
-respectively. No all-owner delete or nullable Trip selection. IDs must all exist
+respectively. Progress selection cannot contain the currently executing requestId
+(no self-referential preview/proof/erase). No all-owner delete or nullable Trip selection. IDs must all exist
 and belong to actual selected source+Trip; subset omission fails the whole call.
 
 RPC action values are separate `p_action` strings; `p_input_bytes` preserves
@@ -156,8 +165,11 @@ proof admits confirmed; proposalId/head/absence of fields never invent state.
 `fields`
 and `contentHash` only while live in this actual session; otherwise both null.
 Original hashes/locator are metadata, never source/provider verification.
-Progress row = exact15-key `rows.ts` shape, only IDs/hashes/counters/times; no
+Progress row = exact16-key `rows.ts` shape, only IDs/hashes/counters/times; no
 source body. Include immutable terminal receipt/fences even after progress erase.
+`referenceOperationIds` is the sorted unique actual old operation-ID fence list
+(empty for no reservation erasure; bounded2000=20*100). This exports the actual
+retained operation fence inventory, not merely reference IDs or a count.
 Authoritative internal projection/state changes invalidate preview/proof, including
 source changes that don't alter exported fields, PDF patch/state/expiry changes,
 and erasure state. Lock source revision before projection; no drifting double read.

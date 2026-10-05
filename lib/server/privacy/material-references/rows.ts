@@ -51,9 +51,11 @@ export function materialRowKey(scope: MaterialScope, row: unknown, tripId: strin
     const fields = row.fields.map(v => parsePdfField(v, 10));
     return fields.every(Boolean) && new Set(fields.map(f => f!.kind)).size === fields.length && fields.some(f => f!.kind === 'date') ? row.operationId : null;
   }
-  if (!exact(row, ['objectId','tripId','originalScope','objectIds','sourceDigest','previewDigest','requestDigest','state','capturedAt','expiresAt','decidedAt','pages','rows','progressErased'])
+  if (!exact(row, ['objectId','tripId','originalScope','objectIds','referenceOperationIds','sourceDigest','previewDigest','requestDigest','state','capturedAt','expiresAt','decidedAt','pages','rows','progressErased'])
     || !uuid(row.objectId) || row.tripId !== tripId || !['reservation-reference-data/1','pdf-intake-data/1','material-exit-progress/1'].includes(String(row.originalScope))
-    || !selectedIds(row.objectIds) || !hash(row.sourceDigest) || !hash(row.previewDigest) || !(row.requestDigest === null || hash(row.requestDigest))
+    || !selectedIds(row.objectIds) || !Array.isArray(row.referenceOperationIds) || row.referenceOperationIds.length > 2000
+    || !row.referenceOperationIds.every((id, i, ids) => uuid(id) && (i === 0 || id > ids[i - 1]))
+    || !hash(row.sourceDigest) || !hash(row.previewDigest) || !(row.requestDigest === null || hash(row.requestDigest))
     || !['previewed','exporting','exported','erased','expired'].includes(String(row.state)) || !positive(row.capturedAt) || !positive(row.expiresAt)
     || !(row.decidedAt === null || positive(row.decidedAt) && row.decidedAt >= row.capturedAt)
     || !natural(row.pages) || !natural(row.rows) || typeof row.progressErased !== 'boolean') return null;

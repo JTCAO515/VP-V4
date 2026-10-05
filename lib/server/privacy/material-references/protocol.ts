@@ -28,7 +28,7 @@ export function decodeMaterialBundle(v: unknown, selection?: MaterialSelection, 
 export function decodeMaterialReceipt(v: unknown, selection?: MaterialSelection, actor?: MaterialActor, requestDigest?: string, now = Date.now()): MaterialEraseReceipt | null {
   if (!record(v) || !exact(v, [...materialBindingKeys,'kind','state','requestDigest','decidedAt','effects']) || !validMaterialBinding(v, now, true)
     || v.kind !== 'receipt' || v.state !== 'erased' || !hash(v.requestDigest) || requestDigest && v.requestDigest !== requestDigest
-    || !positive(v.decidedAt) || v.decidedAt < v.capturedAt || v.decidedAt >= v.expiresAt || v.decidedAt > now
+    || !positive(v.decidedAt) || v.decidedAt < v.capturedAt || v.decidedAt > v.expiresAt || v.decidedAt > now
     || selection && (!actor || !sameMaterialSelection(v, selection, actor)) || !record(v.effects)
     || !exact(v.effects, ['objects','temporaryRecords','unappliedProposals','tripMutation','externalOrders','financialRecords'])
     || v.effects.objects !== v.objectIds.length || !natural(v.effects.temporaryRecords) || v.effects.temporaryRecords > v.objectIds.length
