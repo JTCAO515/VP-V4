@@ -88,6 +88,10 @@ proposal. `confirmed` requires original writer's actual applied version/receipt 
 the same original proposal, owner and Trip, never proposal creation/preview/status alone.
 Revision/rejection/stale/expired states cannot re-open a candidate or manufacture a
 confirmed receipt. Applied confirmation can remain recoverable after later Trip changes.
+Confirmed PdfOperation additionally has `confirmationEventId` (actual original
+`trip_events.id`) and `resultingVersion = baseTripVersion + 1`, proven by the
+original applied Trip event + proposal-bound idempotency receipt + version snapshot.
+Both are null for every other state. A head increment by itself is no proof.
 
 Cancel records a tombstone even when no proposal exists (racing POST cannot resurrect).
 For an original unconfirmed pending proposal, reject using the original rejection
@@ -96,6 +100,16 @@ preserve the original Trip/receipt and report confirmed, never Undo or false can
 Cancelled/expired rows retain minimal idempotency hashes/binding only, no corrected
 values/source text/PDF bytes. TTL prevents further confirmation; read cleanup must not
 clear a live unknown operation. No revival after logout/delete/session replacement.
+An explicit cancel ACK may clear an unknown journal only when active owner/epoch/Trip/op
+and original `requestDigest` match the retained exact POST bytes and the authoritative
+state is cancelled (or confirmed with its original actual applied receipt). A cancellation
+tombstone without that request digest is insufficient to clear an unknown POST. Close
+can still delete the app PDF copy while preserving the server unknown-operation journal.
+PDF proposals need permanent marked lineage and a guard inside the original confirm
+transaction: original proposal/revision/digest/patch, owner/session, preview binding,
+TTL/cancel and current head revalidated before any Trip write. Ordinary proposal revision
+or successor cannot escape this binding/extend expiry; fresh corrections require a fresh
+preview and explicit workflow. Other proposal types and their existing guards remain.
 
 ## Owner lifecycle
 

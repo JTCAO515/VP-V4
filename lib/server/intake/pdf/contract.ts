@@ -24,6 +24,7 @@ export type PdfOperation = Readonly<{
   state: "absent" | "pending" | "confirmed" | "rejected" | "cancelled" | "expired";
   requestDigest: string | null; commandDigest: string | null; previewDigest: string | null; expiresAt: string | null;
   proposalId: string | null; proposalRevision: number | null; baseTripVersion: number | null;
+  confirmationEventId: string | null; resultingVersion: number | null;
 }>;
 export type PdfProposal = Readonly<{
   kind: "pdf_intake_proposal/1"; operationId: string; tripId: string; sessionEpoch: number;

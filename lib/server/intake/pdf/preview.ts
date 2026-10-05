@@ -12,6 +12,7 @@ export function buildPdfPreview(tripId: string, snapshot: TripSnapshot, command:
   const dayPrefix = `pdfd_${group}_`;
   const dayId = snapshot.days.find(d => d.date === dateField.value)?.id ?? `${dayPrefix}${key(dateField.value)}`;
   const target = snapshot.days.find(d => d.id === dayId);
+  if (target && target.date !== dateField.value) throw Error("PROPOSAL_NOT_CONFIRMABLE");
   const previousDays = snapshot.days.filter(d => d.id.startsWith(dayPrefix)
     || d.items?.some(i => i.id.startsWith(`pdfi_${group}_`)));
   const operations: TripPatchOperation[] = [];
