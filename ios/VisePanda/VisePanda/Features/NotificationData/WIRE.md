@@ -68,3 +68,27 @@ Immediate product commits 5663a38c and 6334d4ad, followed by UI/store/consumer.
 Original notification paths have no Native mutation; old notification local
 journal/device OS copy explicitly excluded. Complete erase send-fencing remains
 sole reviewed server/SQL implementation; Native never enables or sends APNs.
+
+Owned NativeNotificationDataTests.swift now exercises five distinct risk groups:
+exact-byte unknown/relaunch/changed-op/session/failed journal removal; late epoch
+and foreground list response; original TTL/private-file cleanup-failure; full
+owned-device columns (including SYNTHETIC aabbccdd fixture token) and missing/
+foreign/broken-edge negatives; unknown recover with zero erase dispatch, expired
+immutable original receipt and false-recall/late-decision rejection. All are
+source implemented + frontend parse only so far. No discovered/executed test
+PASS claim; signed real session HTTP/device/SQL are not represented by these tests.
+
+Remaining precise Main-dependent work, already prepared in own code:
+1. Grant only App/NativeSession.swift new notificationDataStore/request/own logout
+   cleanup; Features/DataCoverage/NativeDataCoverageModuleView.swift own caller;
+   NativeDataCoverageModels.swift exact sole TS catalog registration; PBX new own
+   sources/test/fixture membership. Existing native tests and DataCoverage fixture
+   files need separately exact catalog-version/denominator-only release if TS
+   final registry changes them. No simultaneous writers/no entire old file copy.
+2. Normally integrate immutable sole TS fixed closed wire; compare independent
+   Native columns/scopes/rows/proof/receipt against final producer fixture once.
+3. With actual membership, one affected unsigned Native build/test run, including
+   actual NativeSession URLProtocol epoch/401/unknown-request preservation path.
+   Reuse unchanged old module evidence; no expanded matrix/target grant or phone.
+4. Freeze resulting commit for sole TS normal integration. Whole #239 missing
+   handlers/ALL2 OPEN; actual worker fencing remains sole TS/SQL/Main reviewed work.

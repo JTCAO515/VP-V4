@@ -15,6 +15,7 @@ struct NativeNotificationDataView: View {
         Form {
             if let pending = store.pendingCommand(actor) {
                 Section(t("恢复原擦除操作", "Recover original erasure")) {
+                    Text(NativeNotificationDataCopy.title(pending.scope, chinese: chinese))
                     Text(pending.requestID ?? "").font(.caption).textSelection(.enabled)
                     ForEach(pending.objectIDs, id: \.self) { Text($0).font(.caption) }
                     Text(t("原操作回执未知。只读取原回执，不重新擦除；关闭页面仍保留恢复记录。", "The original receipt is unknown. Recovery reads it without executing erasure again. Closing keeps the recovery record."))
@@ -50,6 +51,7 @@ struct NativeNotificationDataView: View {
                 if let preview = store.visiblePreview(actor) { review(preview) }
                 if let receipt = store.visibleReceipt(actor) {
                     Section(t("所选范围的擦除回执", "Erasure receipt for selected scope")) {
+                        Text(NativeNotificationDataCopy.title(receipt.binding.scope, chinese: chinese))
                         Text(receipt.binding.requestID).font(.caption).textSelection(.enabled)
                         Text(receipt.decidedAt, style: .date)
                         ForEach(NativeNotificationDataProtocol.countNames, id: \.self) { key in
