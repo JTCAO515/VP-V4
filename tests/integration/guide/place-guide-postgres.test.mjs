@@ -4,6 +4,9 @@ import test,{before,after} from 'node:test';import assert from 'node:assert/stri
 import {randomUUID as uuid} from 'node:crypto';import {readFileSync,readdirSync} from 'node:fs';
 
 import {command,sql} from '../cost/fixtures/postgres-rpc.mjs';
+let baseline;
+const entries=['public.submit_grounded_turn(uuid,uuid,uuid,uuid,text,text,uuid,integer,text,uuid,text)','public.start_text_turn(uuid,uuid,uuid,uuid,text,text)','public.enqueue_turn_work(uuid,uuid,uuid,integer,integer)','turn_private.lock_text_work(uuid,uuid)','public.read_grounded_work(uuid,uuid)','public.authorize_grounded_dispatch(uuid,uuid,uuid,text,text)','turn_private.complete_selected_grounded_work(uuid,uuid,text,text,text)','public.complete_grounded_place_work(uuid,uuid,text,text,text,text)','public.complete_grounded_work_with_needs(uuid,uuid,text,text,text)','public.read_grounded_turn(uuid)'];
+const snapshot=()=>db("select jsonb_object_agg(oid::regprocedure::text,jsonb_build_object('body',prosrc,'acl',proacl::text)) from pg_proc where oid=any(array["+entries.map(x=>"'"+x+"'::regprocedure::oid").join(',')+"]);");
 const enabled=process.env.VP_TURN_DB_TEST==='1',container='vpj28-guide-'+uuid().slice(0,8);let created=false;
 const db=async q=>{const r=await sql(container,q);assert.equal(r.code,0,r.stderr);return r.stdout.trim();};
 const lit=v=>v===null?'null':typeof v==='number'||typeof v==='boolean'?String(v):"'"+(typeof v==='object'?JSON.stringify(v):String(v)).replaceAll("'","''")+"'";
@@ -12,7 +15,7 @@ before(async()=>{
  if(!enabled)return;const r=await command('docker',['run','--pull=never','--rm','-d','--network','none','--name',container,'--user','postgres','--entrypoint','/bin/sh','public.ecr.aws/supabase/postgres:17.6.1.159','-c','umask 077;mkdir /tmp/vpj59-socket;initdb -D /tmp/vpj59-db -A trust --no-locale -E UTF8 >/tmp/init.log 2>&1 && exec postgres -D /tmp/vpj59-db -c listen_addresses= -c unix_socket_directories=/tmp/vpj59-socket -c unix_socket_permissions=0700']);assert.equal(r.code,0,r.stderr);created=true;
  for(let n=0;n<100;n++){if((await command('docker',['exec',container,'pg_isready','-h','/tmp/vpj59-socket','-U','postgres'])).code===0)break;await new Promise(r=>setTimeout(r,100));}
  await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));await db("create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;create schema extensions;create extension pgcrypto with schema extensions;");
- for(const f of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort())await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;');
+ for(const f of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort()){const source=readFileSync('supabase/migrations/'+f,'utf8');if(f==='20261005080000_place_guide.sql'){baseline=JSON.parse(await snapshot());await db('begin;'+source+'rollback;');assert.deepEqual(JSON.parse(await snapshot()),baseline,'append rollback restores all original worker bodies and ACL');assert.equal(await db("select to_regnamespace('guide_private') is null;"),'t');}await db('begin;'+source+'commit;');}
 });
 after(async()=>{if(created)assert.equal((await command('docker',['rm','-f',container])).code,0);});
 const run=(name,fn)=>test(name,{skip:!enabled,timeout:120000},fn);
@@ -20,7 +23,7 @@ async function fixture(){
  const actors=Array.from({length:5},()=>({id:uuid(),session:uuid()})),[author,reviewer,mapper,owner,rightsReviewer]=actors;
  for(const a of actors)await db(`insert into auth.users(id) values('${a.id}');insert into auth.sessions(id,user_id) values('${a.session}','${a.id}');insert into identity_private.mobile_accounts(owner_id) values('${a.id}');insert into knowledge_review_private.members(actor_id,active) values('${a.id}',true);`);
  await db('update knowledge_review_private.settings set enabled=true;update knowledge_review_private.publication_settings set enabled=true;');
- const rpc=async(a,name,p)=>JSON.parse(await db(`begin;set request.jwt.claim.role='authenticated';set request.jwt.claim.sub='${a.id}';set request.jwt.claims='${JSON.stringify({session_id:a.session,is_anonymous:false})}';${name==='create_trip_proposal_patch'?"select coalesce(jsonb_agg(to_jsonb(r)),'[]') from public.":'select public.'}${name}(`+Object.entries(p).map(([k,v])=>k+'=>'+lit(v)).join(',')+(name==='create_trip_proposal_patch'?') r;commit;':');commit;')));
+ const rpc=async(a,name,p)=>JSON.parse(await db(`begin;set request.jwt.claim.role='authenticated';set request.jwt.claim.sub='${a.id}';set request.jwt.claims='${JSON.stringify({session_id:a.session,is_anonymous:false})}';set role authenticated;${name==='create_trip_proposal_patch'?"select coalesce(jsonb_agg(to_jsonb(r)),'[]') from public.":'select public.'}${name}(`+Object.entries(p).map(([k,v])=>k+'=>'+lit(v)).join(',')+(name==='create_trip_proposal_patch'?') r;commit;':');commit;')));
  const candidate=uuid(),statement={schemaVersion:'knowledge-statement/2',assertion:{subjectId:'test_gallery',predicate:'opens_during',objectId:'opening_hours',conditions:[],exclusions:[]},scope:{cities:['shanghai'],scene:'attraction',audience:'international_independent_traveler'},place:{names:{en:'Test Gallery',zh:'测试展馆'}},value:{startsAt:'2026-10-03T01:00:00Z',endsAt:'2026-10-03T08:00:00Z',timeZone:'Asia/Shanghai'},expressions:{en:{text:'Synthetic opening window',conditions:[],exclusions:[]},zh:{text:'合成开放时窗',conditions:[],exclusions:[]}},sources:[{sourceKey:'support-'+uuid(),revisionLabel:'one',publisher:'Fixture source',uri:'urn:vpj15:synthetic:support',locator:'Fixture only',snippet:'NO REAL SUPPLIER',usageDeclaration:'private synthetic fixture'}]};
  await rpc(author,'ops_review_workspace',{p_input:{action:'submit_statement',operationId:uuid(),candidateId:candidate,title:'Synthetic typed source',statement}});
  await rpc(reviewer,'ops_review_workspace',{p_input:{action:'review',operationId:uuid(),candidateId:candidate,expectedVersion:1,decision:'reviewed',note:'Independent fixture review'}});
@@ -46,6 +49,8 @@ async function use(f,flags={display:true,tts:true,cache:true,prompt:true}){
 run('full append replay, original ACL and default deny, no content/role/grant seeds',async()=>{
  assert.equal(await db("select count(*) from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='guide_private' and c.relkind='r' and not c.relrowsecurity;"),'0');
  assert.equal(await db("select count(*) from pg_proc p join pg_namespace n on n.oid=p.pronamespace cross join (values('anon'),('authenticated'),('service_role'))r(role) where (n.nspname='guide_private' or p.proname in('guide_place_v1','submit_guide_use_v1','review_guide_use_v1')) and has_function_privilege(r.role,p.oid,'EXECUTE');"),'0');
+ const denied=await sql(container,"set role authenticated;select public.guide_place_v1(null,null);");assert.notEqual(denied.code,0);assert.match(denied.stderr,/permission denied/);
+ await db('grant execute on function public.guide_place_v1(uuid,jsonb),public.submit_guide_use_v1(jsonb),public.review_guide_use_v1(uuid,bigint,text,text),public.submit_trip_support_entity_mapping_v1(jsonb),public.review_trip_support_entity_mapping_v1(uuid,bigint,text,text) to authenticated;'); // isolated fixture only
  assert.equal(await db("select has_function_privilege('authenticated','public.submit_grounded_turn(uuid,uuid,uuid,uuid,text,text,uuid,integer,text,uuid,text)','EXECUTE') and has_function_privilege('service_role','public.read_grounded_work(uuid,uuid)','EXECUTE');"),'t');
 });
 run('current exact canonical published fact, independent per-use rights, whole qualifiers, replay zero units',async()=>{
@@ -78,10 +83,10 @@ run('no inherited TTS/cache/prompt permission and closed head0 input',async()=>{
 });
 const worker=async(name,p={})=>JSON.parse(await db("set request.jwt.claim.role='service_role';set request.jwt.claim.sub='';set request.jwt.claims='{}';set role service_role;select public."+name+'('+Object.entries(p).map(([k,v])=>k+'=>'+lit(v)).join(',')+');'));
 async function follow(f){
- const policy=uuid(),thread=uuid(),notice='a'.repeat(64);await db(`insert into turn_private.text_policies(id,provider,recipient,endpoint,source_region,processing_region,storage_region,terms_version,notice_version,notice_hash,notice_zh,notice_en,retention,effective_at,expires_at,terms_recheck_at,context_mode) values('${policy}','qwen','synthetic-test-only','https://synthetic.invalid/inference','fixture-source','fixture-processing','fixture-storage','test-terms','test-notice','${notice}','测试告知','Test notice','retain_after_hide_v1',now()-interval '1 hour',now()+interval '1 day',now()+interval '1 day','knowledge_intent_v1');insert into public.chat_threads(id,owner_id) values('${thread}','${f.owner.id}');`);
+ const policy=uuid(),thread=uuid(),notice='a'.repeat(64);await db(`insert into turn_private.text_policies(id,provider,recipient,endpoint,source_region,processing_region,storage_region,terms_version,notice_version,notice_hash,notice_zh,notice_en,retention,effective_at,expires_at,terms_recheck_at,context_mode) values('${policy}','qwen','synthetic-test-only','https://synthetic.invalid/inference','fixture-source','fixture-processing','fixture-storage','test-terms','test-notice','${notice}','测试告知','Test notice','retain_after_hide_v1',now()-interval '1 hour',now()+interval '1 day',now()+interval '1 day','knowledge_intent_v1');`);
  await f.rpc(f.owner,'accept_text_policy',{p_policy_id:policy,p_notice_hash:notice});const v=await guide(f,input(f));
  const c=input(f,'follow_up',{operationId:uuid(),expectedDigest:v.digest,question:'What are the Test Gallery opening hours?',threadId:thread,turnId:uuid(),policyId:policy,serviceTask:{id:uuid(),scopeVersion:1,relationship:'new_goal',parentTurnId:null}});
- const out=await guide(f,c);assert.equal(out.kind,'submitted',JSON.stringify(out));assert.equal((await guide(f,c)).reused,true);
+ const out=await guide(f,c);assert.equal(out.kind,'submitted',JSON.stringify(out));assert.equal(await db(`select count(*) from public.chat_threads where id='${thread}' and owner_id='${f.owner.id}' and trip_id is null;`),'1','original submit uniquely creates fresh thread');assert.equal((await guide(f,c)).reused,true);
  const lease=await worker('claim_grounded_work',{p_owner_id:f.owner.id,p_policy_id:policy});assert.equal(lease.turnId,c.turnId);return {c,policy,v,lease,keys:{p_turn_id:lease.turnId,p_lease_token:lease.leaseToken}};
 }
 run('Guide marked original submission, current input/dispatch/completion/history and no standalone bypass',async()=>{
@@ -107,5 +112,32 @@ run('revocation between input and dispatch, after dispatch before completion and
  assert.equal((await worker('read_grounded_work',b.keys)).kind,'blocked');assert.equal((await worker('authorize_grounded_dispatch',{...b.keys,p_policy_id:b.policy,p_provider:'qwen',p_context_digest:v.contextDigest})).kind,'blocked');assert.equal((await worker('complete_grounded_place_work',{...b.keys,p_intent:'place_opening_hours',p_request_scope:'single',p_unanswered_needs:'[]',p_place_name:'Test Gallery'})).kind,'blocked');
  assert.equal(await db(`select invalidated from guide_private.bindings_v1 where turn_id='${b.c.turnId}';`),'t');
  assert.equal(await db(`select count(*) from public.model_budget_attempts where task_id='${b.c.turnId}';`),'0','SQL fixture does not invoke supplier or fabricate cost');
+ }
+});
+
+run('ordinary original admission/queue/lock bodies and all original ACL unchanged; only exact marked seams',async()=>{
+ const current=JSON.parse(await snapshot());
+ for(const key of Object.keys(baseline)){
+  assert.equal(current[key].acl,baseline[key].acl,key+' original ACL');
+  let body=current[key].body;
+  body=body.replace(/ if exists\(select 1 from guide_private\.bindings_v1 where turn_id=p_turn_id\) and guide_private\.bound_v1\(p_turn_id,(?:null|p_lease_token)\) is null then return jsonb_build_object\('kind','blocked'\);end if;\n/g,'');
+  body=body.replace(/ if exists\(select 1 from guide_private\.bindings_v1 where turn_id=p_turn_id\) then return guide_private\.place_complete_v1\(p_turn_id,p_lease_token,p_intent,p_request_scope,p_unanswered_needs,p_place_name\);end if;\n/g,'');
+  body=body.replace(/ if exists\(select 1 from guide_private\.bindings_v1 where turn_id=p_turn_id\) and knowledge_review_private\.question_definition\(p_intent\) is not null and guide_private\.answer_basis_v1\(p_turn_id,p_lease_token,p_intent,p_subject\) is null then return jsonb_build_object\('kind','blocked'\);end if;\n/g,'');
+  body=body.replace("payload:=payload||jsonb_build_object('contextDigest',encode(pg_catalog.sha256(convert_to(jsonb_build_array(payload,g.city,g.scope_version)::text,'UTF8')),'hex')); if exists(select 1 from guide_private.bindings_v1 where turn_id=p_turn_id) then return guide_private.input_v1(p_turn_id,p_lease_token,payload);end if;return payload;", "return payload||jsonb_build_object('contextDigest',encode(pg_catalog.sha256(convert_to(jsonb_build_array(payload,g.city,g.scope_version)::text,'UTF8')),'hex'));");
+  body=body.replaceAll('if (exists(select 1 from guide_private.bindings_v1 where turn_id=p_turn_id) and guide_private.bound_v1(p_turn_id,p_lease_token) is null) or not turn_private.lock_text_work(p_turn_id,p_lease_token) then','if not turn_private.lock_text_work(p_turn_id,p_lease_token) then');
+  body=body.replace('knowledge_review_private.resolve_question(knowledge_review_private.selected_question_input(p_intent,g.city,g.locale,p_subject),case when exists(select 1 from guide_private.bindings_v1 where turn_id=p_turn_id) then guide_private.answer_basis_v1(p_turn_id,p_lease_token,p_intent,p_subject) else null end)','knowledge_review_private.resolve_question(knowledge_review_private.selected_question_input(p_intent,g.city,g.locale,p_subject))');
+  assert.equal(body,baseline[key].body,key+' ordinary body byte equivalence after removing marked-only seams');
+ }
+});
+
+run('actual ordinary role rejects foreign objects and pre-existing foreign/bound/inactive threads; original submit owns creation',async()=>{
+ const f=await fixture();await use(f);const b=await follow(f);
+ const foreign={id:uuid(),session:uuid()};await db(`insert into auth.users(id) values('${foreign.id}');insert into auth.sessions(id,user_id) values('${foreign.session}','${foreign.id}');`);
+ await assert.rejects(f.rpc(foreign,'guide_place_v1',{p_trip:f.trip,p_input:input(f)}),/FORBIDDEN/);
+ const c={...b.c,operationId:uuid(),turnId:uuid(),threadId:uuid(),serviceTask:{...b.c.serviceTask,id:uuid()}};
+ for(const mode of ['foreign','bound','inactive']){
+  c.threadId=uuid();c.operationId=uuid();c.turnId=uuid();c.serviceTask.id=uuid();
+  await db(`insert into public.chat_threads(id,owner_id,trip_id,status) values('${c.threadId}','${mode==='foreign'?foreign.id:f.owner.id}',${mode==='bound'?"'"+f.trip+"'":'null'},'${mode==='inactive'?'archived':'active'}');`);
+  await assert.rejects(guide(f,c),/FORBIDDEN/);assert.equal(await db(`select count(*) from guide_private.bindings_v1 where turn_id='${c.turnId}';`),'0','failed submit atomically rolls back Guide sidecar');
  }
 });

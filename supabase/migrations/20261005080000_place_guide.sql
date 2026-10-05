@@ -67,7 +67,7 @@ begin
  return jsonb_build_object('mappingId',m.id,'mappingVersion',m.version,'mappingDigest',m.request_digest,'canonicalPoiId',m.canonical_poi_id,'canonicalHash',m.canonical_hash,
  'mappingReviewer',m.reviewer_id,'mappingMemberRevision',m.reviewer_member_revision,'statementId',st.statement_id,'claimRevision',st.revision,'payloadHash',m.payload_hash,
  'factId',pub.fact_id,'factVersion',pub.version,'publicationHash',guide_private.hash(to_jsonb(pub)),'candidateHash',guide_private.hash(to_jsonb(c)),
- 'sourceDigest',m.source_digest,'sourceRefs',refs,'basisMetadata',m.basis_metadata,
+ 'sourceDigest',m.source_digest,'sourceRefs',refs,'sourceMetadataHash',(select guide_private.hash(jsonb_agg(to_jsonb(sr) order by sr.id)) from knowledge_review_private.source_revisions sr where sr.id in(select (x->>'sourceRevisionId')::uuid from jsonb_array_elements(refs)x)),'basisMetadata',m.basis_metadata,
  'payload',st.payload,'reviewedAt',c.reviewed_at,'expiresAt',pub.expires_at);
 exception when lock_not_available then return null;end$$;
 create function guide_private.proof_v1(b jsonb) returns jsonb language sql immutable set search_path='' as $$select b-array['payload','reviewedAt','expiresAt']$$;
@@ -132,7 +132,7 @@ begin
    e:=b->'payload'->'expressions'->loc;
    if not knowledge_review_private.closed_object(e,array['text','conditions','exclusions']) or not knowledge_review_private.bounded_text(e->'text',1000)
    or jsonb_typeof(e->'conditions')<>'array' or jsonb_typeof(e->'exclusions')<>'array' or jsonb_array_length(e->'conditions')>12 or jsonb_array_length(e->'exclusions')>12
-   or exists(select 1 from jsonb_array_elements((e->'conditions')||(e->'exclusions'))x where not knowledge_review_private.bounded_text(x,240)) then return guide_private.unavailable('unsupported_language');end if;
+   or guide_private.utf16(e->>'text')>1000 or exists(select 1 from jsonb_array_elements((e->'conditions')||(e->'exclusions'))x where not knowledge_review_private.bounded_text(x,240) or guide_private.utf16(x#>>'{}')>240) then return guide_private.unavailable('unsupported_language');end if;
    select jsonb_agg(jsonb_build_object('sourceRevisionId',sr.id,'revisionLabel',sr.revision_label,'publisher',sr.declaration->>'publisher','uri',sr.declaration->>'uri','locator',sr.declaration->>'locator') order by sr.id) into sources from knowledge_review_private.source_revisions sr where sr.id in(select (x->>'sourceRevisionId')::uuid from jsonb_array_elements(b->'sourceRefs')x);
    v:=jsonb_build_object('id',m.statement_id,'kind','fact','subjectId',b->'payload'->'assertion'->>'subjectId','predicate',b->'payload'->'assertion'->>'predicate',
     'factId',b->'factId','factVersion',b->'factVersion','assertionId',m.statement_id,'assertionRevision',m.claim_revision,
@@ -151,7 +151,7 @@ begin
  select count(*) into words from regexp_split_to_table(regexp_replace(cap,'[一-鿿ぁ-ゟァ-ヿ]',' ','g'),'[[:space:]]+')w where w<>'';
  if guide_private.utf16(cap)>2400 or cjk::numeric/4+words::numeric/2>120 or loc='zh' and char_length(cap)>480 then return guide_private.unavailable('capacity');end if;
  h:=guide_private.hash(jsonb_build_array(t,head,ref,p.id,loc,interest,rows,proofs));
- if cache then select completed_ids into current_ids from guide_private.progress_v1 where owner_id=u and reference_id=ref and locale=loc and progress_v1.interest=projection_v1.interest and digest=h and expires_at>clock_timestamp();end if;
+ if cache then select completed_ids into current_ids from guide_private.progress_v1 where owner_id=u and reference_id=ref and locale=loc and progress_v1.interest=projection_v1.interest and session_id=(auth.jwt()->>'session_id')::uuid and digest=h and expires_at>clock_timestamp();end if;
  return jsonb_build_object('kind','ready','version',1,'tripId',t,'tripVersion',head,'placeReferenceId',ref,'canonicalPoiId',p.id,'place',jsonb_build_object('en',p.primary_name_en,'zh',p.primary_name_zh),
  'locale',loc,'interest',interest,'digest',h,'evaluatedAt',guide_private.instant(clock_timestamp()),'expiresAt',guide_private.instant(expiry),
  'rights',jsonb_build_object('revision',rights_rev,'display',true,'tts',tts,'cache',cache,'prompt',prompt),'segments',rows,'completedSegmentIds',coalesce(current_ids,'[]'),
@@ -200,7 +200,9 @@ begin
   return jsonb_set(v,'{completedSegmentIds}',ids);end if;
  if a<>'follow_up' then return v;end if;
  if v->'rights'->>'prompt'<>'true' then return guide_private.unavailable('rights_unavailable');end if;
- perform 1 from public.chat_threads where id=(p_input->>'threadId')::uuid and owner_id=u and trip_id is null and status='active' for update nowait;if not found then raise exception 'FORBIDDEN';end if;
+ perform 1 from public.chat_threads where id=(p_input->>'threadId')::uuid for update nowait;
+ if found then if not exists(select 1 from public.chat_threads where id=(p_input->>'threadId')::uuid and owner_id=u and trip_id is null and status='active') then raise exception 'FORBIDDEN';end if;
+ elsif p_input->'serviceTask'->>'relationship'<>'new_goal' then raise exception 'SERVICE_TASK_CONFLICT';end if;
  h:=guide_private.hash(p_input);select * into b from guide_private.bindings_v1 where owner_id=u and operation_id=(p_input->>'operationId')::uuid for update nowait;
  if found then if b.command_digest<>h or b.turn_id<>(p_input->>'turnId')::uuid or b.invalidated or b.digest<>v->>'digest' then raise exception 'IDEMPOTENCY_KEY_REUSE';end if;else
  if p_input->'serviceTask'->>'relationship'<>'new_goal' and not exists(select 1 from guide_private.bindings_v1 parent join turn_private.service_task_turns st on st.turn_id=parent.turn_id where parent.turn_id=(p_input->'serviceTask'->>'parentTurnId')::uuid and parent.owner_id=u and parent.trip_id=p_trip and parent.thread_id=(p_input->>'threadId')::uuid and parent.task_id=(p_input->'serviceTask'->>'id')::uuid and parent.reference_id=ref and parent.locale=p_input->>'locale' and parent.interest=p_input->>'interest' and parent.digest=v->>'digest' and parent.session_id=(auth.jwt()->>'session_id')::uuid and not parent.invalidated) then raise exception 'SERVICE_TASK_CONFLICT';end if;
@@ -208,7 +210,7 @@ begin
  values((p_input->>'turnId')::uuid,u,(auth.jwt()->>'session_id')::uuid,p_trip,ref,t.head_version,p_input->>'locale',p_input->>'interest',v->>'digest',(p_input->>'operationId')::uuid,h,(p_input->>'threadId')::uuid,(p_input->'serviceTask'->>'id')::uuid,(p_input->'serviceTask'->>'parentTurnId')::uuid,v->'completedSegmentIds');end if;
  select m.basis_metadata->>'city' into city from trip_support_private.entity_mappings m where m.canonical_poi_id=pr.canonical_poi_id and m.statement_id=(v->'segments'->0->>'assertionId')::uuid and m.status='approved' and m.basis_metadata->>'locale'=p_input->>'locale' order by m.id limit 1;
  submitted:=public.submit_grounded_turn((p_input->>'threadId')::uuid,(p_input->>'turnId')::uuid,(p_input->>'operationId')::uuid,(p_input->>'policyId')::uuid,p_input->>'locale',p_input->>'question',(p_input->'serviceTask'->>'id')::uuid,1,p_input->'serviceTask'->>'relationship',(p_input->'serviceTask'->>'parentTurnId')::uuid,city);
- if submitted->>'kind'<>'accepted' then raise exception 'DATA_POLICY_BLOCKED';end if;
+ if submitted->>'kind'<>'accepted' or guide_private.bound_v1((p_input->>'turnId')::uuid,null) is null then raise exception 'DATA_POLICY_BLOCKED';end if;
  return jsonb_build_object('kind','submitted','version',1,'operationId',p_input->'operationId','tripId',p_trip,'turnId',p_input->'turnId','serviceTaskId',p_input->'serviceTask'->'id','scopeVersion',1,'relationship',p_input->'serviceTask'->'relationship','parentTurnId',p_input->'serviceTask'->'parentTurnId','guideDigest',v->>'digest','reused',submitted->'reused','generationCost',null);
 end$$;
 
@@ -268,6 +270,9 @@ do $$declare sig text;body text;def text;guard text;anchor text;begin
  if sig='public.complete_grounded_place_work(uuid,uuid,text,text,text,text)' then guard:=guard||E' if exists(select 1 from guide_private.bindings_v1 where turn_id=p_turn_id) then return guide_private.place_complete_v1(p_turn_id,p_lease_token,p_intent,p_request_scope,p_unanswered_needs,p_place_name);end if;\n';end if;
  if sig='turn_private.complete_selected_grounded_work(uuid,uuid,text,text,text)' then guard:=guard||E' if exists(select 1 from guide_private.bindings_v1 where turn_id=p_turn_id) and knowledge_review_private.question_definition(p_intent) is not null and guide_private.answer_basis_v1(p_turn_id,p_lease_token,p_intent,p_subject) is null then return jsonb_build_object(''kind'',''blocked'');end if;\n';end if;
  anchor:=body;body:=regexp_replace(body,E'\nbegin\n',guard);
+ if sig in('turn_private.complete_selected_grounded_work(uuid,uuid,text,text,text)','public.authorize_grounded_dispatch(uuid,uuid,uuid,text,text)') then
+ body:=replace(body,'if not turn_private.lock_text_work(p_turn_id,p_lease_token) then', 'if (exists(select 1 from guide_private.bindings_v1 where turn_id=p_turn_id) and guide_private.bound_v1(p_turn_id,p_lease_token) is null) or not turn_private.lock_text_work(p_turn_id,p_lease_token) then');
+ end if;
  if sig='public.read_grounded_work(uuid,uuid)' then
  body:=replace(body,$old$return payload||jsonb_build_object('contextDigest',encode(pg_catalog.sha256(convert_to(jsonb_build_array(payload,g.city,g.scope_version)::text,'UTF8')),'hex'));$old$,
  $new$payload:=payload||jsonb_build_object('contextDigest',encode(pg_catalog.sha256(convert_to(jsonb_build_array(payload,g.city,g.scope_version)::text,'UTF8')),'hex')); if exists(select 1 from guide_private.bindings_v1 where turn_id=p_turn_id) then return guide_private.input_v1(p_turn_id,p_lease_token,payload);end if;return payload;$new$);
