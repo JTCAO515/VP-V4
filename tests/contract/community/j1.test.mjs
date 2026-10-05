@@ -83,8 +83,8 @@ test('49152byte recovery transport cap accepts escaping, preserving original inn
  const optionsFor=command=>options({call:async(_name,params)=>{assert.equal(params.p_input.command.mutationBytes,command.mutationBytes);return {data:outcome({submission:{...item(),content:original.content}}),error:null};}});
  for (const action of ['operation','abandon']) {const command={...recovery,action};const r=await handleCommunityJ1(request(command),optionsFor(command));assert.equal(r.status,200);assert.equal(r.body.data.state,'committed');assert.equal(r.body.data.submission.content,original.content);}
  const innerTooLong={...recovery,mutationBytes:raw+' '.repeat(10001-raw.length)};assert.equal(parseCommunityInput(innerTooLong),null);assert.equal((await handleCommunityJ1(request(innerTooLong),options())).status,400);
- const boundary={...submit(),title:'旅'.repeat(160),content:'文'.repeat(4000),benefitDisclosure:'利'.repeat(400)};
- const bare=JSON.stringify(boundary),boundRaw='\n'.repeat(10000-bare.length)+bare,boundRequest={action:'operation',operationId:op,mutationBytes:boundRaw};
+ const boundary={...submit(),title:'中'.repeat(160),content:'中'.repeat(4000),benefitDisclosure:'中'.repeat(400)};
+ const bare=JSON.stringify(boundary),boundRaw='\t'.repeat(10000-bare.length)+bare,boundRequest={action:'operation',operationId:op,mutationBytes:boundRaw};
  assert.equal(boundRaw.length,10000);assert.ok(Buffer.byteLength(boundRaw)<24000 && Buffer.byteLength(JSON.stringify(boundRequest))>24000);
  const accepted=await handleCommunityJ1(request(boundRequest),options({call:async()=>({data:outcome({submission:{...item(),title:boundary.title,content:boundary.content,benefitDisclosure:boundary.benefitDisclosure}}),error:null})}));assert.equal(accepted.status,200);
  const huge=wrapper+' '.repeat(49153-Buffer.byteLength(wrapper));assert.equal((await handleCommunityJ1(request(huge),options())).status,413);

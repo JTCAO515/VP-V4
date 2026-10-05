@@ -42,8 +42,8 @@ test('owned real Auth/HTTP J1: registered submission, independent Cookie review,
  const alreadyCommitted=await ownerCall({...recovery,action:'abandon'});assert.equal(alreadyCommitted.status,200);assert.equal(alreadyCommitted.body.data.state,'committed');assert.equal(alreadyCommitted.body.data.submission.content,submission.content,'abandon never undoes a committed submit');
  assert.equal((await ownerCall({...recovery,mutationBytes:raw+' '.repeat(10001-raw.length)})).status,400,'inner mutation limit retained');
  const paddedOuter=JSON.stringify(recovery)+' '.repeat(49153-Buffer.byteLength(JSON.stringify(recovery)));assert.equal((await ownerCall(paddedOuter)).status,413,'outer recovery cap enforced');
- const boundarySubmission={...submission,operationId:uuid(),submissionId:uuid(),title:'旅'.repeat(160),content:'文'.repeat(4000),benefitDisclosure:'利'.repeat(400)};
- const boundaryBare=JSON.stringify(boundarySubmission),boundaryRaw='\n'.repeat(10000-boundaryBare.length)+boundaryBare;assert.equal(boundaryRaw.length,10000);assert.ok(Buffer.byteLength(boundaryRaw)<24000);
+ const boundarySubmission={...submission,operationId:uuid(),submissionId:uuid(),title:'中'.repeat(160),content:'中'.repeat(4000),benefitDisclosure:'中'.repeat(400)};
+ const boundaryBare=JSON.stringify(boundarySubmission),boundaryRaw='\t'.repeat(10000-boundaryBare.length)+boundaryBare;assert.equal(boundaryRaw.length,10000);assert.ok(Buffer.byteLength(boundaryRaw)<24000);
  const boundaryRecovery={action:'operation',operationId:boundarySubmission.operationId,mutationBytes:boundaryRaw};assert.ok(Buffer.byteLength(JSON.stringify(boundaryRecovery))>24000 && Buffer.byteLength(JSON.stringify(boundaryRecovery))<49152);
  assert.equal((await ownerCall(boundaryRaw)).status,200,'original valid large Unicode mutation');
  const boundaryResult=await ownerCall(boundaryRecovery);assert.equal(boundaryResult.status,200,JSON.stringify(boundaryResult.body));assert.equal(boundaryResult.body.data.submission.content,boundarySubmission.content);
