@@ -1,4 +1,5 @@
 export const COMMUNITY_SCHEMA = 'community-j1/1' as const;
+export const utf8Bytes=(v:string)=>new TextEncoder().encode(v).byteLength;
 export const retained = ['operation_fences','submission_tombstones','audit_metadata'] as const;
 export const record = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 export const exact = (v: Record<string, unknown>, keys: readonly string[]) => Object.keys(v).length === keys.length && keys.every(k => Object.hasOwn(v,k));
@@ -18,7 +19,7 @@ export function parseCommunityInput(v: unknown): CommunityInput|null {
   if (v.action === 'export' || v.action === 'session') return exact(v,['action']) ? v as CommunityInput : null;
   if (!uuid(v.operationId)) return null;
   if (v.action === 'operation' || v.action === 'abandon') {
-    if (!exact(v,['action','operationId','mutationBytes']) || !text(v.mutationBytes,10000)) return null;
+    if (!exact(v,['action','operationId','mutationBytes']) || !text(v.mutationBytes,10000) || utf8Bytes(v.mutationBytes)>24000) return null;
     let original: unknown; try { original = JSON.parse(v.mutationBytes); } catch { return null; }
     if (!record(original) || !enumValue(original.action,['submit','review','withdraw','delete'])) return null;
     const parsed = parseCommunityInput(original);

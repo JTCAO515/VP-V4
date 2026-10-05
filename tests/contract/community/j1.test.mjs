@@ -63,6 +63,7 @@ test('unknown SQL errors hide content, known denials remain exact, invalid UTF8 
  assert.equal((await handleCommunityJ1(request(),options({call:async()=>({data:null,error:{message:'private SQL or body'}})}))).body.error,'COMMUNITY_ACK_UNKNOWN');
  assert.equal((await handleCommunityJ1(request(),options({call:async()=>({data:null,error:{message:'COMMUNITY_CONFLICT'}})}))).status,409);
  const invalid=new Request(request(),{body:new Uint8Array([0xff]),duplex:'half'});assert.equal((await handleCommunityJ1(invalid,options())).status,400);
+ const bom=new Request(request(),{body:Buffer.concat([Buffer.from([0xef,0xbb,0xbf]),Buffer.from(JSON.stringify(submit()))]),duplex:'half'});assert.equal((await handleCommunityJ1(bom,options())).status,400,'transport never strips BOM to rewrite frozen original bytes');
 });
 test('disabled business gate retains current-author export/cleanup, never submit/review authority',async()=>{
  const data={schemaVersion:COMMUNITY_SCHEMA,kind:'export',actorId:actor,sessionId:session,scope:'community_module',coverage:'complete_for_community',submissions:[],reviews:[],receipts:[],audits:[],reviewerQualification:{active:false},trustedDisclosure:null,retained:['operation_fences','submission_tombstones','audit_metadata']};
@@ -75,4 +76,18 @@ test('bounded export allows honest legacy action unknown but refuses an unrender
  assert.ok(decodeCommunityOutcome(data));
  const huge={...data,submissions:Array.from({length:100},()=>({...item(),id:randomUUID(),content:'中'.repeat(4000)}))};
  const response=await handleCommunityJ1(request({action:'export'}),options({call:async()=>({data:huge,error:null})}));assert.equal(response.body.error,'COMMUNITY_CAPACITY');assert.ok(!('data'in response.body));
+});
+test('49152byte recovery transport cap accepts escaping, preserving original inner and ordinary-command bounds',async()=>{
+ const original={...submit(),content:'\\'.repeat(4000)};const raw=JSON.stringify(original);assert.ok(raw.length<10000);
+ const recovery={action:'operation',operationId:op,mutationBytes:raw};const wrapper=JSON.stringify(recovery);assert.ok(wrapper.length>10000 && Buffer.byteLength(wrapper)<24000);
+ const optionsFor=command=>options({call:async(_name,params)=>{assert.equal(params.p_input.command.mutationBytes,command.mutationBytes);return {data:outcome({submission:{...item(),content:original.content}}),error:null};}});
+ for (const action of ['operation','abandon']) {const command={...recovery,action};const r=await handleCommunityJ1(request(command),optionsFor(command));assert.equal(r.status,200);assert.equal(r.body.data.state,'committed');assert.equal(r.body.data.submission.content,original.content);}
+ const innerTooLong={...recovery,mutationBytes:raw+' '.repeat(10001-raw.length)};assert.equal(parseCommunityInput(innerTooLong),null);assert.equal((await handleCommunityJ1(request(innerTooLong),options())).status,400);
+ const boundary={...submit(),title:'旅'.repeat(160),content:'文'.repeat(4000),benefitDisclosure:'利'.repeat(400)};
+ const bare=JSON.stringify(boundary),boundRaw='\n'.repeat(10000-bare.length)+bare,boundRequest={action:'operation',operationId:op,mutationBytes:boundRaw};
+ assert.equal(boundRaw.length,10000);assert.ok(Buffer.byteLength(boundRaw)<24000 && Buffer.byteLength(JSON.stringify(boundRequest))>24000);
+ const accepted=await handleCommunityJ1(request(boundRequest),options({call:async()=>({data:outcome({submission:{...item(),title:boundary.title,content:boundary.content,benefitDisclosure:boundary.benefitDisclosure}}),error:null})}));assert.equal(accepted.status,200);
+ const huge=wrapper+' '.repeat(49153-Buffer.byteLength(wrapper));assert.equal((await handleCommunityJ1(request(huge),options())).status,413);
+ const regular=JSON.stringify({action:'mine',cursor:null});assert.equal((await handleCommunityJ1(request(regular+' '.repeat(10001-regular.length)),options())).status,413);
+ assert.equal(parseCommunityInput({...recovery,mutationBytes:JSON.stringify(recovery)}),null,'recovery can never nest another recovery');
 });

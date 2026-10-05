@@ -1,5 +1,5 @@
 import { requestLifetime, type RequestLifetime } from '../knowledge/review/request-lifetime.ts';
-import { COMMUNITY_SCHEMA, parseCommunityInput, hasSideEffect, isMutation, decodeCommunityOutcome, matchesCommunityOutcome } from './contract.ts';
+import { COMMUNITY_SCHEMA, record, parseCommunityInput, hasSideEffect, isMutation, decodeCommunityOutcome, matchesCommunityOutcome } from './contract.ts';
 export type CommunityRPC = {
   authenticate():Promise<string|false>; sessionId():string|null; current():Promise<boolean>;
   call(name:string,input:Record<string,unknown>):PromiseLike<{data:unknown;error:{message:string}|null}>;
@@ -20,9 +20,15 @@ export async function handleCommunityJ1(request:Request, options:{enabled:boolea
     if (request.headers.get('x-community-expected-actor') !== actor || request.headers.get('x-community-expected-session') !== session) return failure('COMMUNITY_FORBIDDEN',403);
     reader = request.body?.getReader(); if (!reader) return failure('INVALID_INPUT',400);
     const chunks:Uint8Array[] = []; let length=0;
-    for (;;) { const next = await lifetime.run(() => reader!.read()); if (next.done) break; length+=next.value.byteLength; if (length>24000) return failure('INVALID_INPUT',413); chunks.push(next.value); }
+    for (;;) { const next = await lifetime.run(() => reader!.read()); if (next.done) break; length+=next.value.byteLength; if (length>49152) return failure('INVALID_INPUT',413); chunks.push(next.value); }
     let raw:string; let input;
-    try { raw=new TextDecoder('utf-8',{fatal:true}).decode(Buffer.concat(chunks)); if (raw.length>10000) return failure('INVALID_INPUT',413); input=parseCommunityInput(JSON.parse(raw)); } catch { return failure('INVALID_INPUT',400); }
+    try {
+      raw=new TextDecoder('utf-8',{fatal:true,ignoreBOM:true}).decode(Buffer.concat(chunks));
+      const value:unknown=JSON.parse(raw);
+      const recovery=record(value) && (value.action==='operation' || value.action==='abandon');
+      if (!recovery && (raw.length>10000 || length>24000)) return failure('INVALID_INPUT',413);
+      input=parseCommunityInput(value);
+    } catch { return failure('INVALID_INPUT',400); }
     if (!input) return failure('INVALID_INPUT',400);
     mutation=hasSideEffect(input);
     if (!options.enabled && !['session','mine','read','withdraw','operation','abandon','export','delete'].includes(input.action)) return failure('COMMUNITY_DISABLED');
