@@ -11,7 +11,7 @@ import {identityLocalEnv} from '../identity/local-supabase.mjs';
 import {nativeHTTPEnvironmentPorts} from '../turn/native-http-ports.mjs';
 import {waitForNativeAPI} from '../identity/native-api-readiness.mjs';
 import {briefRequestDigest} from '../../../lib/server/service-cases/brief/http.ts';
-import {BRIEF_NOTICE,decodeBrief,decodeBriefSourceOptions,decodeBriefDataBundle} from '../../../lib/server/service-cases/brief/contract.ts';
+import {BRIEF_NOTICE,decodeBrief,decodeBriefSourceOptions,decodeBriefDataBundle,decodeBriefOwnerState} from '../../../lib/server/service-cases/brief/contract.ts';
 const literal=v=>"'"+String(v).replaceAll("'","''")+"'";
 
 test('disposable real Auth and cookie staff read explicitly selected live Brief sources with original Memory correction and bytes recovery',{
@@ -101,5 +101,28 @@ test('disposable real Auth and cookie staff read explicitly selected live Brief 
  assert.equal((await call(native,owner.accessToken,{action:'read_operation',operationId:deleted.body.data.operationId})).status,200);
  sql('update service_brief_private.settings set enabled=true;');assert.notEqual((await staffCall({...read,expectedRevision:r2.body.data.revision})).status,200);assert.equal((await call(native,owner.accessToken,{action:'read_operation',operationId:nextShare.operationId})).status,410);
  assert.equal(sql(`select summary from public.memory_profiles where id=${literal(memoryId)};`),'Synthetic corrected nature preference','Brief deletion leaves the original Memory authority intact');
+ // Synthetic limit rows exercise bounded audit without inventing human activity.
+ const previewOnly=uuid();
+ assert.equal((await call(legacy,owner.accessToken,{action:'create',caseId:previewOnly,category:'general',problem:'Synthetic preview-only privacy cleanup'})).status,200);
+ assert.equal((await call(legacy,owner.accessToken,{action:'grant',caseId:previewOnly,expectedRevision:0,recipientId:staff.id,durationMinutes:15,sharedFields:['problem']})).status,200);
+ const noSources={profilePace:false,memories:[],intakeMessageId:null};
+ const firstPreview=await call(native,owner.accessToken,{action:'preview',caseId:previewOnly,recipientId:staff.id,grantRevision:1,sources:noSources});assert.equal(firstPreview.status,200);
+ let metadata=await call(native,owner.accessToken,{action:'owner_state',caseId:previewOnly});assert.equal(metadata.status,200,JSON.stringify(metadata.body));assert.ok(decodeBriefOwnerState(metadata.body.data));assert.equal(metadata.body.data.briefRevision,0);assert.equal(metadata.body.data.state,'absent');assert.ok(!('sourceDigest'in metadata.body.data));assert.ok(!('fields'in metadata.body.data));
+ assert.equal((await call(native,other.accessToken,{action:'owner_state',caseId:previewOnly})).status,403);assert.equal((await staffCall({action:'owner_state',caseId:previewOnly})).status,403);
+ sql(`insert into service_brief_private.audit(case_id,owner_id,revision,actor_id,action,recipient_id,grant_revision,field_keys) select ${literal(previewOnly)},${literal(owner.id)},0,${literal(owner.id)},'read',${literal(staff.id)},1,'[]'::jsonb from generate_series(1,201);update service_brief_private.settings set enabled=false;`);
+ const unavailableAudit=await call(native,owner.accessToken,{action:'audit',caseId:previewOnly});assert.equal(unavailableAudit.status,503);assert.equal(unavailableAudit.body.error.code,'BRIEF_LIMIT');
+ metadata=await call(native,owner.accessToken,{action:'owner_state',caseId:previewOnly});assert.equal(metadata.status,200);assert.equal(metadata.body.data.briefRevision,0);
+ const deletedPreview=await call(native,owner.accessToken,{action:'delete',operationId:uuid(),caseId:metadata.body.data.caseId,recipientId:metadata.body.data.recipientId,grantRevision:metadata.body.data.grantRevision,expectedRevision:metadata.body.data.briefRevision,confirmed:true});assert.equal(deletedPreview.status,200,JSON.stringify(deletedPreview.body));assert.equal(deletedPreview.body.data.revision,1);
+ assert.equal(sql(`select count(*) from service_brief_private.previews where case_id=${literal(previewOnly)};`),'0');assert.equal(sql(`select count(*) from service_brief_private.audit where case_id=${literal(previewOnly)};`),'0');
+ sql('update service_brief_private.settings set enabled=true;');
+ const revoked=uuid();assert.equal((await call(legacy,owner.accessToken,{action:'create',caseId:revoked,category:'general',problem:'Synthetic revoked-grant metadata cleanup'})).status,200);
+ assert.equal((await call(legacy,owner.accessToken,{action:'grant',caseId:revoked,expectedRevision:0,recipientId:staff.id,durationMinutes:15,sharedFields:['problem']})).status,200);
+ const revPreview=await call(native,owner.accessToken,{action:'preview',caseId:revoked,recipientId:staff.id,grantRevision:1,sources:noSources});assert.equal(revPreview.status,200);
+ const revShare=await call(native,owner.accessToken,{...command,caseId:revoked,operationId:uuid(),expectedRevision:revPreview.body.data.revision,previewId:revPreview.body.data.previewId,sourceDigest:revPreview.body.data.sourceDigest,selectedKeys:['problem']});assert.equal(revShare.status,200);
+ assert.equal((await call(legacy,owner.accessToken,{action:'revoke',caseId:revoked,expectedRevision:1})).status,200);
+ sql('update service_brief_private.settings set enabled=false;');
+ const revMeta=await call(native,owner.accessToken,{action:'owner_state',caseId:revoked});assert.equal(revMeta.status,200,JSON.stringify(revMeta.body));assert.equal(revMeta.body.data.grantRevision,2);assert.equal(revMeta.body.data.state,'invalidated');assert.equal(revMeta.body.data.recipientId,staff.id);
+ const cleaned=await call(native,owner.accessToken,{action:'withdraw',operationId:uuid(),caseId:revoked,recipientId:revMeta.body.data.recipientId,grantRevision:revMeta.body.data.grantRevision,expectedRevision:revMeta.body.data.briefRevision,confirmed:true});assert.equal(cleaned.status,200,JSON.stringify(cleaned.body));assert.equal(cleaned.body.data.revision,revMeta.body.data.briefRevision+1);
+ assert.equal((await call(native,owner.accessToken,{action:'owner_state',caseId:uuid()})).status,403,'deleted or unknown Case has no owner metadata');
  assert.equal(sql('select count(*) from public.trips;'),'0');assert.equal(sql('select count(*) from public.trip_proposals;'),'0');
 });
