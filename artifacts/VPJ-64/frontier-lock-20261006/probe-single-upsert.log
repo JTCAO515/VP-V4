@@ -1,0 +1,12 @@
+{"case":"original-deadlock","winner":"withdrawn","version":2,"bodyErased":true,"audits":2,"receipts":2,"loser":"40P01 deadlock detected"}
+✔ controlled original legacy withdraw/review reproduces source-frontier auth FK deadlock and exact CI persisted effect (6328.799291ms)
+{"case":"fixed-review-winner","winner":"published","version":2,"bodyErased":false,"audits":3,"receipts":2,"loser":"COMMUNITY_CONFLICT"}
+✔ candidate single-update frontier removes reverse FK wait with unchanged loser contract and reviewer fence (489.106834ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6936.765666

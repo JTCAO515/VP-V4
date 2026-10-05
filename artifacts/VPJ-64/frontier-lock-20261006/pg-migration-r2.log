@@ -1,0 +1,15 @@
+{"case":"original-deadlock","winner":"withdrawn","version":2,"bodyErased":true,"audits":2,"receipts":2,"loser":"40P01 deadlock detected"}
+✔ controlled original legacy withdraw/review reproduces source-frontier auth FK deadlock and exact CI persisted effect (6696.366416ms)
+{"case":"fixed-review-winner","winner":"published","version":2,"bodyErased":false,"audits":3,"receipts":2,"loser":"COMMUNITY_CONFLICT"}
+✔ append-only migration rollback/ACL and original roots remain exact; same controlled race returns COMMUNITY_CONFLICT (723.707416ms)
+{"case":"fixed-withdraw-winner","winner":"withdrawn","version":2,"bodyErased":true,"audits":2,"receipts":2,"loser":"COMMUNITY_CONFLICT"}
+✔ reverse original withdrawal-first schedule preserves erased winner, exact audit/receipt counts and COMMUNITY_CONFLICT (456.893125ms)
+✔ anonymized original reviewer fence survives; independent appeal, source erasure/grant revocation and physical delete remain qualified (684.993958ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 8695.768792
