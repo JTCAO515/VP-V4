@@ -37,7 +37,14 @@ test('disposable real Auth and cookie staff read explicitly selected live Brief 
   const signup=await auth.auth.signUp({email,password});assert.equal(signup.error,null,'synthetic signup');assert.ok(signup.data.user&&signup.data.session);
   const row={id:signup.data.user.id,email,password};users.push(row);
   const attemptId=uuid(),credential=await call('/api/auth/native/v2/credentials',null,{email,password,attemptId});assert.equal(credential.status,200);
-  assert.equal((await call('/api/auth/native/v2/login',credential.body.accessToken,{attemptId})).status,200);
+  const login=await call('/api/auth/native/v2/login',credential.body.accessToken,{attemptId});
+  if(login.status!==200){
+   const diagnostic=createClient(local.API_URL,key,{global:{headers:{Authorization:'Bearer '+credential.body.accessToken}},auth:{persistSession:false,autoRefreshToken:false}});
+   const failed=await diagnostic.rpc('native_session_v2',{p_action:'login',p_attempt:attemptId});
+   const message=failed.error?.message??'';
+   t.diagnostic(JSON.stringify({phase:'original_native_login',sqlCode:failed.error?.code??'unknown',hint:/record.*has no field/.test(message)?'trigger_record_field':/ambiguous/.test(message)?'ambiguous_column':'unknown'}));
+  }
+  assert.equal(login.status,200,JSON.stringify(login.body));
   return {...row,...credential.body,sid:JSON.parse(Buffer.from(credential.body.accessToken.split('.')[1],'base64url')).session_id};
  }
  const owner=await user(),other=await user(),staff=await user();
