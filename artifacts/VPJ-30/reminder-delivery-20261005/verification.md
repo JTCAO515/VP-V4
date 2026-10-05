@@ -121,3 +121,18 @@ records these exact runs. No Swift source changed, so combined unsigned compile
 is reused; typecheck/diff passed after the new internal transport wire.
 The earlier formal review/CI head 35bf is superseded and cannot authorize merge
 of this corrected final head.
+
+The final N3 source audit also found clock/provenance in the semantic digest via
+the complete typed claim (asOf/evidence) plus claimRevision/payloadHash. An isolated
+old-82 baseline with the affected actual watch fixture observed 1 PASS/1 FAIL;
+the digest changed after a real review-time/expiry refresh of the same value.
+Original SQL owner 76a13db8 (integrated 3b1edd2c) limits semantic content to
+status/scope/applicability/itemDigest and claimType/subjectId/value. Qualification
+retains and strengthens exact sourceRefs/claimRevision plus the prior owner,
+session, epoch, mapping/digest/hash/item and TTL checks. The affected actual PG
+run passed 2/2, 0 skips: same-value provenance/time refresh makes no outbox or
+expiry extension, while a real reviewed recheck status event remains once-only
+and pending/reviewer-loss negatives remain denied. This is an isolated regression
+baseline/fix, not a production or CI failure. No TS/Native/permissions changed;
+unchanged earlier evidence remains reused and the SQL scope is 17 distinct cases.
+Previous 3dca review/green cannot authorize the new corrected head.
