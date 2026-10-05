@@ -1,0 +1,15 @@
+▶ material owner exit full PG replay, authority, CAS, erasure and receipt
+  ✔ transactional migration rollback, original function bodies/ACL and tables unchanged (273.700583ms)
+  ✔ RLS/ACL disabled for every ordinary/service role before isolated grant (400.982708ms)
+  ✔ reservation erase fences both IDs first; original same-ID replay denied, new ID works; receipt exact bytes after TTL (1595.88525ms)
+✔ material owner exit full PG replay, authority, CAS, erasure and receipt (8274.036458ms)
+ℹ FOCUSED recovery validation; only named migration/ACL/recovery cases registered. Prior full matrix evidence reused.
+ℹ Paired TS files SHA256: {"contract.ts":"dc821a0e2303a927d5d89ba6e0929c4be7da4b45e3a47bbd0e4c05fdd8f363a0","rows.ts":"a86c550306616b006402f36799bb43f0ce7b2dced448260b1e0e1a3b310fcae3","protocol.ts":"929ec2ade2bf73ba828352e8c0db2006dab82c4b40ea26811153537bd0bd36b4","export.ts":"4d5874eaf9e99b36f2a6e501ed1a62ebf81fce741c4fce91387dd7302438a06f"}
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 8352.016792

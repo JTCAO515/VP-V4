@@ -2,8 +2,9 @@
 
 Owner: this SQL chat / branch `vpj58-material-reference-data-sql-20261006`.
 Base: `4d8d9417810d4bfebba3657b7267df3db3345f27`. Original dirty repository untouched.
-Runtime freeze: `40a1fc553d2dfcbe5fe83ee44adaca7ff4448a2c` (includes `01477a65`).
-Migration SHA256: `fb0a69c0bcb07ca4299a86fcd0602a3655c852af72fe408907d7bd922e814c10`.
+Runtime freeze: `ab3b3484596e81f354ca4309bfcd2e4b5476d042` (one-line owner-filter repair
+on prior `40a1fc553d2dfcbe5fe83ee44adaca7ff4448a2c`, includes `01477a65`).
+Migration SHA256: `facf7657da20198bb0dc10481446f6b0b072f15ce5efc2420ede72009a14d8e9`.
 Sole TS integrator: `vpj58-material-reference-data-server-20261006`. One combined PR; no SQL-only PR.
 
 RPC: `public.privacy_material_reference_v1(text,text,bigint)`. All roles default denied.
@@ -65,3 +66,27 @@ clock capture for its capacity rows. All fixed in the same owned files; final lo
 Rollback tested transactionally before commit and as owned API/schema removal.
 Existing original function bodies/signatures/ACL/config and table schemas/ACL/RLS
 compare exactly before/after; only the new documented source/Trip triggers are added.
+
+## Owner recovery repair requested by Main (180fd5 / 9b4313)
+
+Only runtime delta: `020000:360` now looks up retained requests with
+`owner_id=u AND request_id=req` before its NOWAIT row lock. Current actor/session/
+epoch/reauth/root lock and every owned decision/bytes/scope check remain unchanged.
+Foreign-present, foreign-locked and absent each return owner-bound closed `unknown`;
+owned changed bytes/scope still conflict, original owned bytes still recover.
+No erasure/new request/replay permission follows from unknown; state is unchanged.
+
+[Focused actual PG log](recovery-owner-final.log): 4 PASS/0 FAIL/0 SKIP (three named
+migration/ACL/recovery cases plus parent), command exit 0 and own container removed.
+The existing recovery case was extended; a named local focus registers only these
+three cases. Default CI registration still runs all original cases/assertions.
+Prior full PG 24/24 and old module regressions are reused, not rerun or relabeled as
+this repair's full matrix. Target grants, real Auth and Native evidence are unchanged.
+
+```sh
+VP_MATERIAL_DB_TEST=1 VP_MATERIAL_DB_FOCUS=recovery VP_MATERIAL_TS_WIRE_ROOT=/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-material-reference-data-server-20261006 node --test tests/integration/privacy/material-reference-data-postgres.test.mjs
+```
+
+Sole TS takes immutable runtime `ab3b3484` immediately, then this owned evidence/test
+commit. No further runtime write is planned; Main combined code review and existing
+single PR remain the integration boundary. Whole #239 / ALL2 remain Open.
