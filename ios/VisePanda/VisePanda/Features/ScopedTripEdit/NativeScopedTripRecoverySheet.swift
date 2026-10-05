@@ -20,7 +20,7 @@ struct NativeScopedTripRecoverySheet: View {
         NavigationStack {
             Form {
                 Text(t("The original request is retained. Checking it does not confirm a proposal or cancel an order.", "原请求仍保留。查询不会确认提议或取消订单。"))
-                if let notice = store.notice { Text(notice == "unknown" ? t("No verified outcome yet. The original request stays saved.", "尚无核实结果，原请求仍保留。") : notice == "cancelled" ? t("Pending operation stopped; existing Trip and orders retained.", "未决操作已停止，已有行程与订单保留。") : t("Return and reselect the current scope to review its result.", "请返回并重新选择当前选区，审阅结果。")) }
+                if let notice = store.notice { Text(notice.hasPrefix("declined:") ? t("VP finished without a proposal. The Trip is unchanged and no external order was cancelled.", "VP 已处理，未创建提议。行程未修改，未取消外部订单。") : notice == "unknown" ? t("No verified outcome yet. The original request stays saved.", "尚无核实结果，原请求仍保留。") : notice == "cancelled" ? t("Pending operation stopped; existing Trip and orders retained.", "未决操作已停止，已有行程与订单保留。") : t("Return and reselect the current scope to review its result.", "请返回并重新选择当前选区，审阅结果。")) }
                 Button(t("Check same operation", "查询同一操作")) { Task { await read("read") } }
                     .accessibilityIdentifier("trip.scoped.savedRecovery.read")
                 Button(t("Stop pending operation…", "停止未决操作…"), role: .destructive) { abandonVisible = true }

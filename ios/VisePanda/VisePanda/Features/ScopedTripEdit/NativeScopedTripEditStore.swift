@@ -144,6 +144,11 @@ import Observation
         }
         guard raw["operationId"] as? String == command.operationID, raw["tripId"] as? String == saved.tripID else { throw NativeDataError.invalidResponse }
         switch kind {
+        case "scoped_edit_declined/1":
+            let declined = try NativeScopedTripDeclined.decode(raw, journal: saved)
+            try session.completeScopedTripEdit(saved, actor: actor)
+            journal = nil; receipt = nil; resolvedJournal = nil; candidates = nil; candidatesJournal = nil
+            notice = "declined:" + declined.reason
         case "scoped_edit_candidates/1":
             let ready = try NativeScopedTripCandidates.decode(bytes, journal: saved, context: context)
             try session.completeScopedTripEdit(saved, actor: actor); journal = nil
@@ -176,7 +181,7 @@ import Observation
             notice = reason
         case "scoped_edit_operation/1":
             _ = try NativeScopedTripWire.exact(raw, keys: ["kind", "operationId", "tripId", "mutation", "receipt", "state", "resultingVersion"])
-            guard let state = raw["state"] as? String, ["pending", "applied", "rejected", "cancelled", "expired", "stale", "unknown"].contains(state),
+            guard let state = raw["state"] as? String, ["pending", "applied", "rejected", "cancelled", "declined", "expired", "stale", "unknown"].contains(state),
                   raw["resultingVersion"] is NSNull || NativeScopedTripWire.integer(raw["resultingVersion"]) != nil,
                   (state == "applied") == (NativeScopedTripWire.integer(raw["resultingVersion"]) != nil),
                   state != "applied" || (NativeScopedTripWire.integer(raw["resultingVersion"]) ?? 0) > 0 else { throw NativeDataError.invalidResponse }
@@ -186,6 +191,14 @@ import Observation
             }
             guard let original = raw["mutation"] as? [String: Any],
                   NSDictionary(dictionary: original).isEqual(to: mutation) else { throw NativeDataError.invalidResponse }
+            if state == "declined" {
+                guard let declined = raw["receipt"] as? [String: Any], declined["kind"] as? String == "scoped_edit_declined/1" else { throw NativeDataError.invalidResponse }
+                try consume(JSONSerialization.data(withJSONObject: declined), journal: saved, session: session, actor: actor); return
+            }
+            if let declined = raw["receipt"] as? [String: Any], declined["kind"] as? String == "scoped_edit_declined/1" {
+                guard ["stale", "expired"].contains(state) else { throw NativeDataError.invalidResponse }
+                _ = try NativeScopedTripDeclined.decode(declined, journal: saved)
+            }
             if ["rejected", "cancelled", "expired", "stale", "applied"].contains(state) {
                 try session.completeScopedTripEdit(saved, actor: actor); journal = nil; receipt = nil; candidates = nil; candidatesJournal = nil; notice = state; return
             }
@@ -200,7 +213,7 @@ import Observation
             if raw["state"] as? String == "cancelled", raw["receipt"] is NSNull {
                 try session.completeScopedTripEdit(saved, actor: actor); journal = nil; receipt = nil; notice = "cancelled"
             } else if raw["state"] as? String == "committed", let receipt = raw["receipt"] as? [String: Any],
-                      let nestedKind = receipt["kind"] as? String, ["scoped_edit_proposal/1", "scoped_edit_lock/1", "scoped_edit_pending/1", "scoped_edit_candidates/1"].contains(nestedKind) {
+                      let nestedKind = receipt["kind"] as? String, ["scoped_edit_proposal/1", "scoped_edit_lock/1", "scoped_edit_pending/1", "scoped_edit_candidates/1", "scoped_edit_declined/1"].contains(nestedKind) {
                 try consume(JSONSerialization.data(withJSONObject: receipt), journal: saved, session: session, actor: actor)
             } else { throw NativeDataError.invalidResponse }
         default: throw NativeDataError.invalidResponse

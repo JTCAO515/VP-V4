@@ -174,6 +174,77 @@ import Testing
         let select = try NativeScopedTripCommand(object: ["action": "select_candidate", "operationId": UUID().uuidString.lowercased(), "basis": basis, "askOperationId": operationID, "candidateId": ready.candidates[0].id])
         try require(select.operationID != ask.operationID, "Separate mutation identity")
     }
+    #if !NATIVE_SCOPED_HOST_TEST
+    @Test
+    #endif
+    static func placeActionsPreserveOptionalOrderAndRejectInvalidOrder() throws {
+        let place = try NativePlaceActionIdentity(candidate: .init(provider: .amap, providerPoiId: "fixture-provider-reference", rawName: "Fixture place", matchedCanonicalPoiId: contextID))
+        let target = NativePlaceActionSelection(scope: actor, place: place, tripId: trip, baseVersion: 4)
+        var item: [String: Any] = ["id": "item_A", "dayId": "Day-1", "title": "A", "manualOrder": 9]
+        func contextBytes() throws -> Data {
+            try JSONSerialization.data(withJSONObject: ["kind": "place_action_context", "tripId": trip, "tripVersion": 4,
+                "selection": ["canonicalPoiId": place.canonicalPoiId, "provider": "amap", "providerPoiId": place.providerPoiId],
+                "mappingDigest": digest, "contextDigest": digest,
+                "snapshot": ["version": 4, "title": "Trip", "days": [["id": "Day-1", "date": "2026-10-05", "items": [item]]]],
+                "displayTitle": "Fixture current label", "referenceId": NSNull(), "saved": NSNull(), "sourceCandidatesStatus": "unavailable", "sourceCandidates": [Any](),
+                "evaluatedAt": ISO8601DateFormatter().string(from: Date().addingTimeInterval(-1)),
+                "expiresAt": ISO8601DateFormatter().string(from: Date().addingTimeInterval(20))])
+        }
+        let ordered = try NativePlaceActionContext.decode(contextBytes(), expected: target)
+        try require(ordered.days.first?.items.first?.manualOrder == 9, "Real sparse order retained in legacy consumer")
+        for invalid: Any in [true, -1] {
+            item["manualOrder"] = invalid
+            try rejects { _ = try NativePlaceActionContext.decode(contextBytes(), expected: target) }
+        }
+        item.removeValue(forKey: "manualOrder")
+        let legacy = try NativePlaceActionContext.decode(contextBytes(), expected: target)
+        try require(legacy.days.first?.items.first?.manualOrder == nil, "Old missing field unchanged")
+    }
+
+    #if NATIVE_SCOPED_HOST_TEST
+    static func declinedRequiresExactDurableAskTerminal() async throws {
+        let memory = Vault(); let session = NativeSession(scope: actor, vault: memory)
+        var mutation: [String: Any] = [:]
+        var mode = "unknown"
+        session.responder = { request in
+            let action = request["action"] as! String
+            let result: [String: Any]
+            if action == "context" { result = contextObject() }
+            else if action == "ask" {
+                mutation = request
+                result = ["kind": "scoped_edit_pending/1", "operationId": request["operationId"]!, "tripId": trip,
+                    "contextId": contextID, "contextDigest": digest, "baseVersion": 4, "reason": "queued", "reused": false]
+            } else {
+                try require(action == "read_operation", "Read-only recovery")
+                var terminal: [String: Any] = ["kind": "scoped_edit_declined/1", "operationId": request["operationId"]!, "tripId": trip,
+                    "contextId": contextID, "contextDigest": digest, "baseVersion": 4, "reason": "no_change", "reused": false]
+                if mode == "wrong_basis" { terminal["contextDigest"] = String(repeating: "b", count: 64) }
+                if mode == "unknown_cost" { terminal["reason"] = "unknown_cost" }
+                if mode == "extra_field" { terminal["proposalCreated"] = false }
+                let unknown = mode == "unknown"
+                result = ["kind": "scoped_edit_operation/1", "operationId": request["operationId"]!, "tripId": trip,
+                    "mutation": unknown ? NSNull() as Any : mutation, "receipt": unknown || mode == "missing_receipt" ? NSNull() as Any : terminal,
+                    "state": unknown ? "unknown" : mode == "wrong_state" ? "pending" : "declined", "resultingVersion": NSNull()]
+            }
+            return try JSONSerialization.data(withJSONObject: result)
+        }
+        let store = NativeScopedTripEditStore()
+        await store.load(selection: selection, session: session, locale: "en", current: { true })
+        await store.send(action: "ask", fields: ["text": "Keep this scope unchanged"], selection: selection, session: session, current: { true })
+        let original = try session.scopedTripEditRecovery()
+        for invalid in ["unknown", "wrong_basis", "unknown_cost", "extra_field", "missing_receipt", "wrong_state"] {
+            mode = invalid
+            await store.recover(mode: "read", selection: selection, session: session, current: { true })
+            try require(try session.scopedTripEditRecovery() == original && store.journal == original, "Unverified terminal retains original journal: " + invalid)
+        }
+        mode = "valid"
+        await store.recover(mode: "read", selection: selection, session: session, current: { true })
+        try require(try session.scopedTripEditRecovery() == nil && store.journal == nil, "Matching durable terminal releases original journal")
+        try require(store.notice == "declined:no_change" && store.receipt == nil && store.candidates == nil, "Refusal creates neither Proposal nor candidate")
+        try require(session.requests.allSatisfy { ["context", "ask", "read_operation"].contains($0["action"] as? String ?? "") }, "No selection, Trip confirm or external order action")
+    }
+    #endif
+
     #if NATIVE_SCOPED_HOST_TEST
     static func pollingDoesNotCreateProposalAndStaleSourceStopsReview() async throws {
         let memory = Vault(); let session = NativeSession(scope: actor, vault: memory)
@@ -223,6 +294,16 @@ import Testing
 #if NATIVE_SCOPED_HOST_TEST
 @main struct NativeScopedTripHostTests {
     @MainActor static func main() async throws {
+        if ProcessInfo.processInfo.environment["VP198_NATIVE_PLACE_ORDER_ONLY"] == "1" {
+            try NativeScopedTripEditTests.placeActionsPreserveOptionalOrderAndRejectInvalidOrder()
+            print("1 affected PlaceActions optional manualOrder compatibility case PASS; iOS runtime UNRUN")
+            return
+        }
+        if ProcessInfo.processInfo.environment["VP198_NATIVE_DECLINED_ONLY"] == "1" {
+            try await NativeScopedTripEditTests.declinedRequiresExactDurableAskTerminal()
+            print("1 affected declined terminal/journal behavior PASS; iOS runtime UNRUN")
+            return
+        }
         try NativeScopedTripEditTests.opaqueSelectionAndActorFence()
         try NativeScopedTripEditTests.closedCommandsRejectBooleansAndInvalidTimes()
         try NativeScopedTripEditTests.journalNeverOverwritesUnknownAndReadbackMustSucceed()

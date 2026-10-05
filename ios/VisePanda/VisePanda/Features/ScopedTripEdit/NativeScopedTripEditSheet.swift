@@ -300,6 +300,9 @@ struct NativeScopedTripEditSheet: View {
     }
     private func message(_ code: String) -> String {
         switch code {
+        case "declined:no_change": t("VP finished with no change. No proposal was created, the Trip is unchanged and no external order was cancelled.", "VP 已处理，本次无变化。未创建提议，行程未修改，未取消外部订单。")
+        case "declined:unsupported_request": t("VP finished but cannot support this request. No proposal was created, the Trip is unchanged and no external order was cancelled.", "VP 已处理，当前不支持这一请求。未创建提议，行程未修改，未取消外部订单。")
+        case "declined:safety_refused": t("VP finished and could not process this request. No proposal was created, the Trip is unchanged and no external order was cancelled.", "VP 已处理，无法处理这一请求。未创建提议，行程未修改，未取消外部订单。")
         case "queued": t("VP is working. Check the same operation for its candidate.", "VP 正在处理，请查询同一操作的候选。")
         case "provider_unavailable": t("VP execution is currently unavailable. The same request is retained; no AI candidate is claimed.", "VP 执行当前不可用，原请求保留；尚无 AI 候选。")
         case "candidatesReady": t("Candidates are ready. Choose an option before a proposal is created.", "候选已准备好。选择后才会生成提议。")

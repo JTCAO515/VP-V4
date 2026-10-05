@@ -71,3 +71,23 @@ struct NativeScopedTripProposalReceipt {
             baseVersion: NativeScopedTripWire.integer(raw["baseVersion"])!, expiresAt: expiry), diff: diff, returnScope: returnScope)
     }
 }
+
+/// A durable refusal is distinct from cancellation, Proposal rejection and an
+/// unknown execution. Only the original Ask operation can own this terminal.
+struct NativeScopedTripDeclined {
+    let reason: String
+    static func decode(_ raw: Any, journal: NativeScopedTripJournal) throws -> Self {
+        let object = try NativeScopedTripWire.exact(raw, keys: ["kind", "operationId", "tripId", "contextId", "contextDigest", "baseVersion", "reason", "reused"])
+        let command = try journal.command()
+        let mutation = try JSONSerialization.jsonObject(with: command.bytes) as! [String: Any]
+        let basis = mutation["basis"] as! [String: Any]
+        guard command.action == "ask", object["kind"] as? String == "scoped_edit_declined/1",
+              object["operationId"] as? String == command.operationID, object["tripId"] as? String == journal.tripID,
+              object["contextId"] as? String == basis["contextId"] as? String,
+              object["contextDigest"] as? String == basis["contextDigest"] as? String,
+              NativeScopedTripWire.integer(object["baseVersion"]) == NativeScopedTripWire.integer(basis["baseVersion"]),
+              let reason = object["reason"] as? String, ["unsupported_request", "no_change", "safety_refused"].contains(reason),
+              NativeScopedTripWire.bool(object["reused"]) != nil else { throw NativeDataError.invalidResponse }
+        return .init(reason: reason)
+    }
+}
