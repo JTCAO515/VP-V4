@@ -75,7 +75,7 @@ export async function handleTravelerBrief(request: Request, options: Readonly<{
       const original = input.action === 'abandon' ? parseBriefInput(JSON.parse(input.mutationBytes)) as BriefMutation : input;
       const bytes = input.action === 'abandon' ? input.mutationBytes : raw;
       const receipt = decodeBriefReceipt(initial.data);
-      if (!receipt || receipt.operationId !== original.operationId || receipt.caseId !== original.caseId || receipt.grantRevision !== original.grantRevision || receipt.action !== original.action || receipt.requestDigest !== briefRequestDigest(bytes) || receipt.revision < original.expectedRevision) return fail('BRIEF_ACK_UNKNOWN');
+      if (!receipt || receipt.operationId !== original.operationId || receipt.caseId !== original.caseId || receipt.grantRevision !== original.grantRevision || receipt.action !== original.action || receipt.requestDigest !== briefRequestDigest(bytes) || (receipt.outcome === 'applied' ? receipt.revision !== original.expectedRevision + 1 : receipt.revision < original.expectedRevision)) return fail('BRIEF_ACK_UNKNOWN');
       data = receipt; verify = {action:'read_operation',operationId:original.operationId};
     }
     const fresh = await call(verify,JSON.stringify(verify));

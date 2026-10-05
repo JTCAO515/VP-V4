@@ -14,6 +14,10 @@ mobile session guard. Database setting disabled by default; no staff enrollment
 or authenticated/anonymous/servicerole EXECUTE grant is added by this package.
 Disposable local fixtures may enroll their own synthetic actors and grant only
 this RPC after separately proving default ACL denial. No target activation.
+Use `service_brief_private.settings` for the new default-disabled local feature
+switch. Source-options/preview/share/read-preview/locate/read require that switch;
+owner audit/export/withdraw/delete/read-operation/abandon remain available under
+their own authority when the feature switch is disabled so privacy is operational.
 
 Owner `source_options {caseId}` returns real eligible source candidates under the
 current Case recipient/grant/TTL. Memory scope is explicitly latest three eligible
@@ -39,7 +43,10 @@ revision URL gets stale/denied; a new preview/share is required after correction
 `withdraw` erases all selected references/previews/raw old operations and increments
 Brief revision, preserving a minimal audit. `delete` also erases the Brief audit
 and previews, retaining a non-content revision/tombstone and this deletion receipt.
-Neither action deletes original Memory/Trip/intake. Original Case or account delete
+Neither action requires an active Case grant: owner cleanup uses current Case
+recipient/grant revision and Brief CAS after expiry/revocation. Applied mutation
+receipts have exactly expected revision plus one; a cancelled abandonment fence
+binds a revision at least expected. Neither action deletes original Memory/Trip/intake. Original Case or account delete
 must cascade/scrub all Brief references, audits and raw operations. Original Case
 grant replacement/revoke must synchronously invalidate Brief and erase old ops.
 
