@@ -27,7 +27,9 @@ test("Guide actual native owner HTTP reads, replays, scopes fresh grounded submi
   // Observe shipped deny-by-default first. The following GRANT is only this
   // named disposable fixture's opt-in, never migration/target permission.
   assert.equal(e.sql("select has_function_privilege('authenticated','public.guide_place_v1(uuid,jsonb)','EXECUTE');"), "f");
+  assert.equal(e.sql("select has_function_privilege('authenticated','public.submit_trip_support_entity_mapping_v1(jsonb)','EXECUTE');"), "f");
   e.sql("grant execute on function public.guide_place_v1(uuid,jsonb),public.submit_guide_use_v1(jsonb),public.review_guide_use_v1(uuid,bigint,text,text) to authenticated;");
+  e.sql("grant execute on function public.submit_trip_support_entity_mapping_v1(jsonb),public.review_trip_support_entity_mapping_v1(uuid,bigint,text,text) to authenticated;");
   const ids = e.users.map(u => "'" + u.id + "'").join(",");
   e.sql(`update knowledge_review_private.settings set enabled=true;update knowledge_review_private.publication_settings set enabled=true;update knowledge_review_private.members set active=true where actor_id in (${ids});`);
   const candidate = uuid(), trip = uuid(), ref = uuid(), poi = uuid();
