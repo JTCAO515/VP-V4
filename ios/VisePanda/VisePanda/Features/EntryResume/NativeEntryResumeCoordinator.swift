@@ -51,6 +51,7 @@ final class NativeEntryResumeCoordinator {
                 guard state.failure == nil else { message = "unavailable"; return }
                 let anonymous = try inbox.unclaimed()
                 receipts = state.intent.map { intent in anonymous.filter { $0.id == intent.entryID } } ?? anonymous
+                if state.intent != nil && receipts.isEmpty { state.unavailable(); message = "expiredOrUnavailable"; return }
                 message = "loginRequired"
             } catch { message = "cleanupRequired" }
             return
@@ -108,9 +109,15 @@ final class NativeEntryResumeCoordinator {
     /// Retains exactly one verified anonymous selection during credential-free initial login.
     func initialLoginPreservation() throws -> UUID? {
         guard let value = state.intent, value.identity == nil, value.expiresAt > Date(), let inbox else { return nil }
-        let receipt = try inbox.unclaimedReceipt(id: value.entryID)
-        guard receipt.ownerNamespace == nil, receipt.expiresAt > Date() else { throw ShareIntakeError.expired }
-        return receipt.id
+        do {
+            let receipt = try inbox.unclaimedReceipt(id: value.entryID)
+            guard receipt.ownerNamespace == nil, receipt.expiresAt > Date() else { throw ShareIntakeError.expired }
+            return receipt.id
+        } catch {
+            // Reject the stale material intent. Authentication itself can still proceed after actual full cleanup.
+            state.unavailable(); receipts = []; message = "expiredOrUnavailable"
+            return nil
+        }
     }
 
     /// Called by session cleanup before any different account can become active. Missing capability has no files.

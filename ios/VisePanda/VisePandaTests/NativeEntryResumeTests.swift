@@ -94,7 +94,8 @@ nonisolated final class NativeEntryResumeInboxTests: XCTestCase {
         let coordinator = NativeEntryResumeCoordinator(inbox: inbox, associatedHosts: [])
         let link = try XCTUnwrap(URL(string: "visepanda://resume/" + UUID().uuidString))
         XCTAssertTrue(coordinator.receive(link, scope: nil))
-        XCTAssertThrowsError(try coordinator.initialLoginPreservation())
+        XCTAssertNil(try coordinator.initialLoginPreservation())
+        XCTAssertEqual(coordinator.message, "expiredOrUnavailable")
     }
     @MainActor func testSharedExpiryPersistsIntoF1AndNeverRenewsCommand() async throws {
         let (_, container, file) = try fixture()
