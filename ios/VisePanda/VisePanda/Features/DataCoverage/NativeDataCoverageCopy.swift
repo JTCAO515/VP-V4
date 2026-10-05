@@ -1,7 +1,7 @@
 import Foundation
 
 enum NativeDataCoverageCopy {
-    static let order = ["trip", "conversations", "results", "profile", "memory", "turn", "user_artifact", "brief", "entitlements", "case", "ugc", "safety", "publication", "notifications", "lifecycle", "coverage_progress", "guide", "order_references", "pdf_intake", "case_attachments", "archive", "materials", "app_group", "local_share", "guide_cache", "offline", "local_journals", "provider", "backup", "external_copies", "financial_records"]
+    static let order = ["trip", "conversations", "results", "profile", "memory", "turn", "user_artifact", "brief", "entitlements", "case", "ugc", "safety", "publication", "notifications", "lifecycle", "coverage_progress", "guide", "order_references", "pdf_intake", "material_exit_progress", "case_attachments", "archive", "materials", "app_group", "local_share", "guide_cache", "offline", "local_journals", "provider", "backup", "external_copies", "financial_records"]
     static func title(_ id: String, chinese: Bool) -> String {
         let labels: [String: (String, String)] = [
             "trip": ("行程", "Trips"), "conversations": ("对话与目标", "Conversations and goals"), "results": ("生成结果", "Generated results"),
@@ -11,6 +11,7 @@ enum NativeDataCoverageCopy {
             "safety": ("举报、屏蔽与申诉", "Reports, blocks and appeals"), "publication": ("体验发布与收藏引用", "Experience publication and saved references"),
             "notifications": ("通知元数据", "Notification metadata"), "lifecycle": ("行程状态与操作记录", "Trip states and operation records"), "coverage_progress": ("范围导出进度与请求围栏", "Scoped export progress and request fences"),
             "guide": ("讲解选择元数据", "Guide selection metadata"), "order_references": ("订单引用", "Order references"), "pdf_intake": ("PDF 解析记录", "PDF intake records"),
+            "material_exit_progress": ("资料处理记录", "Data operation records"),
             "case_attachments": ("服务附件", "Service attachments"), "archive": ("归档行程", "Archived Trips"), "materials": ("本机材料文件", "Device material files"), "app_group": ("共享容器", "Shared app container"),
             "local_share": ("本机分享临时副本", "Temporary device share copies"), "guide_cache": ("本机讲解缓存", "Device Guide cache"),
             "offline": ("离线行程资料", "Offline Trip data"), "local_journals": ("本机待确认请求", "Pending device requests"),
