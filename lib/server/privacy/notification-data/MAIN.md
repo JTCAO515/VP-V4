@@ -155,3 +155,26 @@ capability/oracles via retained owner metadata seam, while updating unavailable
 example to an actually still-missing handler; this is a required legacy fixture
 migration, not justification to weaken original outcome/privacy/no-op assertions.
 Reviewable exact adaptation will stay owned until precise old fixture release.
+
+Main8738c6 independently CODECOMPLETE recorded for owned3scope; current only single
+PR integration engineering, whole239/ALL1missing/ALL2Open. Production build on the
+combined source PASS (target flags disabled in child command; new API compiled).
+Original dispatch/material/metadata-contract affected21 PASS0skip; material input
+literalv3 is helper-only and currently PASS, not a new runtime finding or necessary
+retest matrix. Registry classification accurately fails just the two new gated
+files until exact additive lease; no skip/exclusion substitution.
+
+As requested, once-only exact LEGACY-COVERAGE-AUTH.patch is now reviewable:
+retain original ordinary signed owner metadata handler/proof directly, explicitly
+not current GET registration; preserve all raw-token absence/lifecycle-content
+absence/foreign-body/source-request-count assertions. Validate its real response
+with original typed classifier (never status-only). Use legitimate current preview
+shape solely for original cross-actor409 guard. Missing-delete example moves to
+actual still-missing case_attachments with its exact reason; no widened allowed
+error set. Parent fixture-only env restored in finally; no runtime aliases,
+metadata helper erasure or grant beyond its existing owned fixture. Await exact
+old auth fixture release/patch review, then one affected actual run only.
+
+Original221 PG fixture input-only lease received; exact svc helper patch applied,
+original affected full PG test running in its own network-none disposable container
+with original oracles unchanged. Logs legacy-notification-pg-r1.log once complete.

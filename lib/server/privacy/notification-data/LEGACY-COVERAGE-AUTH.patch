@@ -1,0 +1,60 @@
+--- a/tests/integration/privacy/coverage/auth-http.test.mjs
++++ b/tests/integration/privacy/coverage/auth-http.test.mjs
+@@ -10,6 +10,8 @@
+ import {nativeHTTPEnvironmentPorts} from '../../turn/native-http-ports.mjs';
+ import {waitForNativeAPI} from '../../identity/native-api-readiness.mjs';
+ import {matchesCoverageResult} from '../../../../lib/server/privacy/coverage/consumer.ts';
++import {ownerModuleExportHTTP} from '../../../../lib/server/privacy/coverage/module-export.ts';
++import {classifyOriginal} from '../../../../lib/server/privacy/coverage/outcomes.ts';
+ const literal=v=>"'"+String(v).replaceAll("'","''")+"'";
+ test('owned real GoTrue -> coverage route -> existing owner handler -> DB -> exact result consumer; fixture grants stay distinct from target',{
+  skip:process.env.VP_DATA_COVERAGE_HTTP!=='true',timeout:300000,
+@@ -63,7 +65,26 @@
+  // New export-only source projection: default ACL denied, followed by one
+  // explicit isolated fixture GRANT. No worker/artifact/source writer is altered.
+  assert.equal(sql("select has_function_privilege('authenticated','public.privacy_coverage_module_export_v1(jsonb)','execute');"),'f');
+- const noGrant=await exit(owner,selection(owner,'notifications','export',{action:'export',requestId:uuid(),confirmed:true}));assert.equal(noGrant.state,'unavailable');assert.equal(noGrant.result,null);
++ // The upgraded catalog deliberately publishes full notification data now.
++ // Keep the previous metadata-only signed handler/strict typed proof exercised
++ // directly; it is not a synthetic GET registration or a full-data completion.
++ const legacyMetadata=async(user,moduleId,command)=>{
++  const scope=moduleId==='notifications'?'notification-metadata/1':'trip-lifecycle-metadata/1';
++  const fixtureEnv={NEXT_PUBLIC_SUPABASE_URL:local.API_URL,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:key,
++   VISEPANDA_NATIVE_LOCAL_SESSION:'true',VISEPANDA_NATIVE_LOCAL_SERVICE_KEY:local.SERVICE_ROLE_KEY,
++   VISEPANDA_NATIVE_STAGING:'false',VISEPANDA_NATIVE_PRODUCTION:'false',VERCEL_ENV:''};
++  const previous=Object.fromEntries(Object.keys(fixtureEnv).map(k=>[k,process.env[k]]));
++  Object.assign(process.env,fixtureEnv);
++  try{
++   const raw='\t'+JSON.stringify(command),response=await ownerModuleExportHTTP(new Request(ports.api+path,{method:'POST',
++    headers:{Authorization:'Bearer '+user.accessToken,'Content-Type':'application/json'},body:raw}),scope),body=await response.json();
++   if(!response.ok)return{state:'unavailable',result:null};
++   const input={...selection(user,moduleId,'export',command),moduleVersion:'coverage-module-export/1'};
++   const outcome=classifyOriginal({input,command,handler:moduleId},body);assert.ok(outcome,'strict original metadata proof required');
++   return{state:outcome.state,result:body};
++  }finally{for(const [k,v]of Object.entries(previous))if(v===undefined)delete process.env[k];else process.env[k]=v;}
++ };
++ const noGrant=await legacyMetadata(owner,'notifications',{action:'export',requestId:uuid(),confirmed:true});assert.equal(noGrant.state,'unavailable');assert.equal(noGrant.result,null);
+  sql('grant execute on function public.privacy_coverage_module_export_v1(jsonb) to authenticated;');
+  const fixtureTrip=uuid(),fixtureDevice=uuid();
+  sql(`insert into public.trips(id,owner_id,title) values(${literal(fixtureTrip)},${literal(owner.id)},'Synthetic lifecycle metadata fixture');
+@@ -71,16 +92,16 @@
+  values(${literal(fixtureDevice)},${literal(owner.id)},${literal(owner.catalog.sessionId)},${owner.catalog.mobileEpoch},1,'aabb','sandbox','fixture.only','denied','Asia/Shanghai',false);`);
+  t.diagnostic('New module owner RPC default EXECUTE denied. GRANT plus synthetic Trip/device rows exist only in this uniquely owned fixture; source-free progress and lifecycle metadata are distinct from Trip content/provider push.');
+  for(const moduleId of ['notifications','lifecycle']){
+-  const command={action:'export',requestId:uuid(),confirmed:true},selected=selection(owner,moduleId,'export',command),bundle=await exit(owner,selected);
++  const command={action:'export',requestId:uuid(),confirmed:true},selected=moduleId==='notifications'?selection(owner,moduleId,'export',{action:'preview',scope:'notification-trip-data/1',requestId:command.requestId,objectIds:[fixtureTrip]},'preview'):selection(owner,moduleId,'export',command),bundle=await legacyMetadata(owner,moduleId,command);
+   assert.equal(bundle.state,'scoped_complete',JSON.stringify(bundle));assert.equal(bundle.result.data.allUserDataCompleted,false);assert.equal(bundle.result.data.expiresAt,bundle.result.data.capturedAt+30000);
+   if(moduleId==='notifications') {assert.equal(bundle.result.data.sections.notifications[0].deviceId,fixtureDevice);assert.ok(!('token' in bundle.result.data.sections.notifications[0]));}
+   else {assert.equal(bundle.result.data.sections.trips[0].tripId,fixtureTrip);assert.equal(bundle.result.data.sections.trips[0].title,'Synthetic lifecycle metadata fixture');assert.ok(!('content' in bundle.result.data.sections.trips[0]));}
+   assert.equal((await call(path,other.accessToken,selected)).status,409);
+-  const foreignRequest=selection(other,moduleId,'export',command),foreign=await exit(other,foreignRequest);assert.equal(foreign.state,'unavailable');assert.equal(foreign.result,null);
+-  const badScope=await exit(owner,selection(owner,moduleId==='notifications'?'lifecycle':'notifications','export',command));assert.equal(badScope.state,'unavailable');assert.equal(badScope.result,null);
++  const foreign=await legacyMetadata(other,moduleId,command);assert.equal(foreign.state,'unavailable');assert.equal(foreign.result,null);
++  const badScope=await legacyMetadata(owner,moduleId==='notifications'?'lifecycle':'notifications',command);assert.equal(badScope.state,'unavailable');assert.equal(badScope.result,null);
+   assert.equal(sql('select count(*) from coverage_export_private.requests_v1 where request_id='+literal(command.requestId)+';'),'1');
+  }
+- const missingDelete=await exit(owner,selection(owner,'notifications','delete',{}));assert.equal(missingDelete.state,'unavailable');assert.equal(missingDelete.reason,'MODULE_DELETE_NOT_IMPLEMENTED');
++ const missingDelete=await exit(owner,selection(owner,'case_attachments','delete',{}));assert.equal(missingDelete.state,'unavailable');assert.equal(missingDelete.reason,'ATTACHMENT_HANDLER_UNAVAILABLE');
+  const stale={...selection(owner,'ugc','export',{action:'export'}),mobileEpoch:owner.catalog.mobileEpoch+1};assert.equal((await call(path,owner.accessToken,stale)).status,409);
+  const client=createClient(local.API_URL,key,{global:{headers:{Authorization:'Bearer '+owner.accessToken}},auth:{persistSession:false,autoRefreshToken:false}});
+  assert.equal((await client.rpc('native_session_v2',{p_action:'logout'})).error,null);
