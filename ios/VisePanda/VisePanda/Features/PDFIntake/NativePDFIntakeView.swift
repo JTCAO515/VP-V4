@@ -132,7 +132,7 @@ struct NativePDFIntakeView: View {
             .task {
                 model.start(using: session)
                 if let url = initialPDFURL, let expiry = initialPDFExpiry, expiry > Date(), session.dataScope == source.actor {
-                    await model.load(url, using: session)
+                    await model.load(url, using: session, expiresNoLaterThan: expiry)
                     if expiry <= Date() { model.expire() }
                 }
             }

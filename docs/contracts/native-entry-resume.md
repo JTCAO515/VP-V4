@@ -1,0 +1,15 @@
+# Native system share and entry resume — #236 F2
+
+The ShareIntakeExtension accepts exactly one PDF through NSItemProvider and performs short protected local delivery. ShareIntakeCore is one producer/codec compiled into extension and app; the extension never infers a logged-in owner, extracts text, launches the host by a workaround, or supplies new Trip permission.
+
+The current build defaults to empty AppGroup/associated-host configuration. Both extension and app display a manual Files fallback when normal configured AppGroup container resolution is unavailable. Target/source/Info embedding is code wiring; AppGroup membership, signing, associated-domain entitlements/AASA and installed/uninstalled device behavior remain separate unrun acceptance.
+
+A custom `visepanda://resume/<UUID>` or explicitly configured HTTPS host `/resume/<UUID>` is only a local opaque inbox lookup. Query, fragment, credentials, port, encoded path and extra segments are rejected. Unknown HTTPS resume paths show manual fallback. Existing top-level visepanda navigation and notification handling are preserved. Installation never promises automatic deferred URL-parameter transfer.
+
+The app shows one original material selection and the current verified account. Anonymous metadata can be selected before sign-in without revealing owned material. Initial login may preserve exactly one lock-validated, unclaimed ID/hash/TTL only if no credentials, stored owner, signout intent or cleanup owner exist; account transitions, denial, logout and privacy cleanup preserve none. Cleanup failure fences subsequent intake. Claim is synchronous after explicit user action and current identity verification. No bound entry transfers across namespace(endpoint, owner, epoch), session generation or expiry.
+
+After claim, the user explicitly selects from the current owned Trip list. Original list/select/read and canEdit/pending/unknown-outcome guards run again. NativeTripView then re-reads the same current Trip and passes the protected original PDF URL to the existing F1 intake/correction/deduplication/Proposal review path. The original explicit confirm remains the only Trip writer. Raw PDF content and page text stay on device; no raw content, credentials or metadata-bearing URL is logged or exported to a provider. The selected Files original remains untouched.
+
+Local shared copies are removed by explicit delete, TTL purge and logout/account/session cleanup; the app offers deletion in the inbox. Source and correction UI hide when backgrounded and revalidate on return. An original F1 unknown-ACK submission journal keeps its existing same-operation recovery semantics; deleting a local shared copy does not fabricate server cancellation or Undo.
+
+Validation is source/environment specific: pure link/login state tests and generated local PDF/NSItemProvider/Core tests exercise local guards; generic unsigned app/appex/test compilation proves wiring, not system Share-sheet behavior. Real AppGroup/Universal Links, physical device, target/provider/Storage and human Files acceptance are not claimed.

@@ -86,6 +86,29 @@ nonisolated final class NativeEntryResumeInboxTests: XCTestCase {
         XCTAssertTrue(coordinator.receive(link, scope: nil))
         XCTAssertThrowsError(try coordinator.initialLoginPreservation())
     }
+    @MainActor func testSharedExpiryPersistsIntoF1AndNeverRenewsCommand() async throws {
+        let (_, container, file) = try fixture()
+        defer { try? FileManager.default.removeItem(at: container) }
+        let bytes = try Data(contentsOf: file)
+        let document = try NativePDFDocument.extract(bytes)
+        let now = Date(); let expiry = now.addingTimeInterval(5)
+        let root = container.appendingPathComponent("F1")
+        let namespace = String(repeating: "a", count: 64)
+        let inbox = NativePDFInbox(root: root)
+        let receipt = try inbox.receiveValidated(bytes, document: document, namespace: namespace, now: now, expiresNoLaterThan: expiry)
+        XCTAssertEqual(receipt.expiresAt, expiry)
+        try NativePDFInbox(root: root).validate(receipt, namespace: namespace, now: now.addingTimeInterval(1))
+        let metadataURL = root.appendingPathComponent(namespace).appendingPathComponent(receipt.id.uuidString).appendingPathComponent("receipt.json")
+        let persisted = try JSONDecoder().decode(NativePDFInbox.Receipt.self, from: Data(contentsOf: metadataURL))
+        XCTAssertEqual(persisted.expiresAt, expiry)
+        let command = NativePDFCommand(operationId: UUID().uuidString.lowercased(), expectedHeadVersion: 0,
+            contentHash: document.digest, byteCount: bytes.count, pageCount: 1, extraction: "pdfkit_text",
+            expiresAt: NativePDFWire.instant(persisted.expiresAt), fields: [])
+        XCTAssertLessThanOrEqual(try XCTUnwrap(NativePDFWire.date(command.expiresAt)), expiry)
+        XCTAssertThrowsError(try inbox.receiveValidated(bytes, document: document, namespace: namespace, now: now, expiresNoLaterThan: now))
+        XCTAssertThrowsError(try inbox.receiveValidated(bytes, document: document, namespace: namespace, now: now, expiresNoLaterThan: Date(timeIntervalSince1970: .infinity)))
+        XCTAssertThrowsError(try inbox.validate(receipt, namespace: namespace, now: expiry))
+    }
     @MainActor func testUnconfiguredBuildShowsFilesFallback() async {
         let coordinator = NativeEntryResumeCoordinator(inbox: nil, associatedHosts: [])
         coordinator.openInbox(scope: nil)

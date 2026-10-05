@@ -762,6 +762,10 @@
                 INFOPLIST_FILE = VisePanda/NativeEnvironment.plist;
                 VP_NATIVE_ENVIRONMENT = "";
                 VP_NATIVE_TASK_CONTEXT = "";
+                VP_SHARE_INTAKE_APP_GROUP_IDENTIFIER = "";
+                INFOPLIST_KEY_VPShareIntakeAppGroupIdentifier = "$(VP_SHARE_INTAKE_APP_GROUP_IDENTIFIER)";
+                VP_ENTRY_RESUME_ASSOCIATED_HOSTS = "";
+                INFOPLIST_KEY_VPEntryResumeAssociatedHosts = "$(VP_ENTRY_RESUME_ASSOCIATED_HOSTS)";
                 VP_NATIVE_STAGING_API_ORIGIN = "";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -793,6 +797,10 @@
                 INFOPLIST_FILE = VisePanda/NativeEnvironment.plist;
                 VP_NATIVE_ENVIRONMENT = "";
                 VP_NATIVE_TASK_CONTEXT = "";
+                VP_SHARE_INTAKE_APP_GROUP_IDENTIFIER = "";
+                INFOPLIST_KEY_VPShareIntakeAppGroupIdentifier = "$(VP_SHARE_INTAKE_APP_GROUP_IDENTIFIER)";
+                VP_ENTRY_RESUME_ASSOCIATED_HOSTS = "";
+                INFOPLIST_KEY_VPEntryResumeAssociatedHosts = "$(VP_ENTRY_RESUME_ASSOCIATED_HOSTS)";
                 VP_NATIVE_STAGING_API_ORIGIN = "";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

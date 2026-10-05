@@ -21,10 +21,14 @@ nonisolated struct NativePDFInbox: Sendable {
         let document = try NativePDFDocument.extract(data)
         return (try receiveValidated(data, document: document, namespace: namespace, now: now), document)
     }
-    func receiveValidated(_ data: Data, document: NativePDFDocument, namespace: String, now: Date = Date()) throws -> Receipt {
+    func receiveValidated(_ data: Data, document: NativePDFDocument, namespace: String, now: Date = Date(), expiresNoLaterThan: Date? = nil) throws -> Receipt {
         guard valid(namespace), lifetime > 0, lifetime <= 86_400, document.digest == NativePDFDocument.digest(data),
               document.bytes == data.count, (1...NativePDFDocument.maximumBytes).contains(data.count),
               (1...NativePDFDocument.maximumPages).contains(document.pages.count) else { throw NativePDFError.format }
+        if let inherited = expiresNoLaterThan {
+            guard inherited.timeIntervalSince1970.isFinite, inherited > now else { throw NativePDFError.expired }
+        }
+        let expiresAt = min(now.addingTimeInterval(lifetime), expiresNoLaterThan ?? .distantFuture)
         try purge(now: now)
         let id = UUID()
         let folder = root.appendingPathComponent(namespace, isDirectory: true).appendingPathComponent(id.uuidString, isDirectory: true)
@@ -34,7 +38,7 @@ nonisolated struct NativePDFInbox: Sendable {
             var excluded = URLResourceValues(); excluded.isExcludedFromBackup = true
             var writable = root; try writable.setResourceValues(excluded)
             try data.write(to: folder.appendingPathComponent("source.pdf"), options: [.atomic, .completeFileProtection])
-            let receipt = Receipt(id: id, namespace: namespace, digest: document.digest, fileIdentity: try identity(folder.appendingPathComponent("source.pdf")), expiresAt: now.addingTimeInterval(lifetime))
+            let receipt = Receipt(id: id, namespace: namespace, digest: document.digest, fileIdentity: try identity(folder.appendingPathComponent("source.pdf")), expiresAt: expiresAt)
             try JSONEncoder().encode(receipt).write(to: folder.appendingPathComponent("receipt.json"), options: [.atomic, .completeFileProtection])
             return receipt
         } catch {
