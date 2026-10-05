@@ -26,7 +26,7 @@ App build-r1 failed from accidental duplicate cleanup insertion in void logout; 
 Full GoTrue/SQL integration belongs to sole TS integrator and original SQL owner. Native transport tests are synthetic URLProtocol; they do not prove provider, credentials, target permission, public UGC, production, physical device or human acceptance. #235 whole remains Open for J3/#238 protections.
 
 
-## Recovery-envelope repair — final direct-user contract
+## Recovery-envelope repair — production limits unchanged by subsequent fixture refinement
 
 Only operation/abandon outer JSON permits up to49152bytes without the ordinary outer10000UTF16 limit. Its original mutationBytes remains <=24000bytes/10000UTF16 and must decode exactly one allowed mutation with the same operation ID. Ordinary commands retain24000bytes/10000UTF16. Session upfront bound, strict Input action layering, and recovery-builder output bound now agree. No SQL, other transport, permissions or shared journal changes.
 
@@ -36,3 +36,12 @@ Only operation/abandon outer JSON permits up to49152bytes without the ordinary o
 - PASS: exact49152 outer accepted/49153 rejected; inner UTF16 or byte overflow rejected; nested operation/abandon is not a mutation; ordinary command caps retained.
 - PASS: three new actual Swift-generated near-limit fixtures accepted by current TS canonical parser with exact mutationBytes. Local model stand-ins only; no target or real-user/GoTrue claim.
 - PASS: final owned Simulator shutdown/deleted. All prior build/test failures and superseded contract decisions remain historical, not retroactively changed.
+
+
+## Final preferred single-key TAB sample
+
+Supersedes the earlier duplicate-field/trailing-space boundary fixture without changing production code from801e2c9d. The actual Swift DTO base is4804UTF16; adding5196leadingTAB yields19120bytes/10000UTF16, operation24444bytes/15324UTF16, abandon24442bytes. Original TABs are preserved exactly in the journal and operation/abandon mutationBytes. Current TS canonical parser accepts all three frozen JSON files.
+
+One existing affected recovery case now uses this single-key original for submit/unknownACK -> operation absent -> abandon committed returning current body (no Undo), and actual NativeSession synthetic transport dispatch beyond24K. Exact49152/49153 outer boundaries, inner overflow/nested-recovery/ordinary-cap negatives remain. Final recovery-r4 build-for-testing/ad-hoc signature and1test/0skip PASS; owned Simulator shutdown/deleted. No matrix rerun or SQL changes.
+
+Preserved intermediate failure: recovery-r3 test build failed from throwing a comparison RHS inside a Testing macro; compute expected bytes before the assertion, preserving the comparison. Earlier801e fixture diff-check failed from deliberate trailing padding; preferred prefixTAB fixture removes trailing whitespace and final diff-check passes. Earlier numerical/duplicate-field samples are historical evidence, not final sample authority. Real GoTrue Auth joint remains sole TS scope; Native URLProtocol is a synthetic seam.
