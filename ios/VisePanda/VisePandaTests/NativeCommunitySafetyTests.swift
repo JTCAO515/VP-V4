@@ -136,6 +136,21 @@ import Testing
         #expect(raw["expectedSafetyVersion"] as? Int == 0)
         let input = try NativeCommunitySafetyInput(body: command.recovery())
         #expect(input.recovery?.body == command.body)
+        // Preserve original legal JSON whitespace; outer and inner caps are independent.
+        let originalText = try #require(String(data: command.body, encoding: .utf8))
+        let tabs = String(repeating: "\t", count: 10000 - originalText.utf16.count)
+        let padded = try NativeCommunitySafetyCommand(body: Data((tabs + originalText).utf8))
+        var outer = try padded.recovery()
+        outer.append(Data(repeating: 32, count: 49152 - outer.count))
+        #expect(try NativeCommunitySafetyInput(body: outer).recovery?.body == padded.body)
+        outer.append(32)
+        #expect(throws: (any Error).self) { try NativeCommunitySafetyInput(body: outer) }
+        var tooLongInner = padded.body; tooLongInner.insert(9, at: 0)
+        let oversizedInner = try NativeCommunityWire.bytes(["action": "operation", "operationId": command.operationID, "mutationBytes": try #require(String(data: tooLongInner, encoding: .utf8))])
+        #expect(throws: (any Error).self) { try NativeCommunitySafetyInput(body: oversizedInner) }
+        var tooLongOrdinary = command.body
+        tooLongOrdinary.append(Data(repeating: 32, count: 24001 - tooLongOrdinary.count))
+        #expect(throws: (any Error).self) { try NativeCommunitySafetyInput(body: tooLongOrdinary) }
         var invalid = raw; invalid["expectedSafetyVersion"] = false
         #expect(throws: (any Error).self) { try NativeCommunitySafetyCommand(body: NativeCommunityWire.bytes(invalid)) }
         invalid = raw; invalid["action"] = "disposition"
@@ -241,6 +256,13 @@ import Testing
         #expect(try Self.journal(vault).read(actor.scope, sessionID: actor.sessionID) == nil)
         #expect(defaults.string(forKey: "native.v2.activeSubject." + actor.scope.endpoint + ".pendingJournalCleanupOwner") == actor.scope.subject)
         await session.logout(); #expect(session.status == "signedOut")
+        let expiredName = name + "-expired"
+        let expiredDefaults = try #require(UserDefaults(suiteName: expiredName)); defer { expiredDefaults.removePersistentDomain(forName: expiredName) }
+        let expired = NativeSession(arguments: ["-VisePandaNativeAPI", "http://127.0.0.1:65165"], defaults: expiredDefaults, configuration: config, bundleConfiguration: [:], vault: SafetyTestVault())
+        await expired.login(email: "synthetic@example.invalid", password: "synthetic-only")
+        #expect(expired.dataScope != nil) // A retained base scope cannot override expired Safety credentials.
+        #expect(throws: (any Error).self) { try expired.communitySafetyActor() }
+        await expired.logout()
     }
     @Test func actualSessionSafetyErasureFailureFencesBeforeCredentialCleanupAndRetries() async throws {
         let name = "safety-cleanup-" + UUID().uuidString
@@ -292,7 +314,7 @@ nonisolated private final class SafetySessionProtocol: URLProtocol, @unchecked S
         if path.hasSuffix("/credentials") {
             let payload = try! JSONSerialization.data(withJSONObject: ["sub": owner, "session_id": session])
                 .base64EncodedString().replacingOccurrences(of: "+", with: "-").replacingOccurrences(of: "/", with: "_").replacingOccurrences(of: "=", with: "")
-            status = 200; value = ["subject": owner, "accessToken": "synthetic." + payload + ".unsigned-fixture", "refreshToken": "synthetic-only", "expiresAt": Date().timeIntervalSince1970 + 3600]
+            status = 200; value = ["subject": owner, "accessToken": "synthetic." + payload + ".unsigned-fixture", "refreshToken": "synthetic-only", "expiresAt": Date().timeIntervalSince1970 + (request.url?.port == 65165 ? -1 : 3600)]
         } else if path.hasSuffix("/login") { status = 200; value = ["subject": owner, "mobileEpoch": 2] }
         else if path.hasSuffix("/profile") { status = 200; value = ["subject": owner, "displayName": "Synthetic"] }
         else if path.hasSuffix("/logout") { status = 200; value = [:] }

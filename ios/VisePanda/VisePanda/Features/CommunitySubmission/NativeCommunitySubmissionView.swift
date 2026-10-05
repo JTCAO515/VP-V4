@@ -153,6 +153,9 @@ struct NativeCommunitySubmissionView: View {
             ForEach(Array(item.history.enumerated()), id: \.offset) { _, event in
                 Text(status(event.action) + " · v\(event.version) · " + event.createdAt).font(.caption)
             }
+            NavigationLink(t("此投稿的安全处置与申诉", "Safety disposition and appeal for this submission")) {
+                NativeCommunitySafetyView(authorSubmissionID: item.id).id(session.dataScope)
+            }.accessibilityIdentifier("community.safety.open")
             if item.canWithdraw { Button(t("撤回并清除正文", "Withdraw and clear the text"), role: .destructive) { confirmation = .withdraw(item) }.disabled(store.busy || store.pending != nil || !store.storageReady).accessibilityIdentifier("community.withdraw") }
         }.accessibilityIdentifier("community.detail")
     }

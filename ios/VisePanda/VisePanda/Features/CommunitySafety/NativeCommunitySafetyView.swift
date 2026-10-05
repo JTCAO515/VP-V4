@@ -1,15 +1,21 @@
 import SwiftUI
 
 struct NativeCommunitySafetyView: View {
-    @Environment(NativeSession.self) private var session
+    @Environment(AppSettings.self) private var settings
     @Environment(\.scenePhase) private var scenePhase
     @State private var store = NativeCommunitySafetyStore()
     @State private var selectedCollection = "objects"
     @State private var category = "other"
     @State private var modal: Modal?
     @State private var action: Task<Void, Never>?
+    private let authorSubmissionID: String?
+    init(authorSubmissionID: String? = nil) {
+        self.authorSubmissionID = authorSubmissionID
+        _selectedCollection = State(initialValue: authorSubmissionID == nil ? "objects" : "dispositions")
+    }
     private var actor: NativeCommunitySafetyActor? { try? session.communitySafetyActor() }
-    private var chinese: Bool { session.locale.hasPrefix("zh") }
+    private var session: NativeSession { settings.nativeSession }
+    private var chinese: Bool { settings.selectedLocale == .zh }
     private func t(_ zh: String, _ en: String) -> String { chinese ? zh : en }
 
     private enum Modal: Identifiable {
@@ -221,7 +227,9 @@ struct NativeCommunitySafetyView: View {
         hide(); store.bind(actor)
         guard let actor else { return }
         store.restore(actor) { try session.communitySafetyRecovery(actor: actor) }
-        await load(actor)
+        if let authorSubmissionID {
+            await store.read(collection: "dispositions", recordID: authorSubmissionID, current: { self.actor }, request: { try await session.communitySafetyRequest(body: $0, actor: actor) })
+        } else { await load(actor) }
     }
     private func load(_ actor: NativeCommunitySafetyActor, cursor: String? = nil) async {
         await store.load(collection: selectedCollection == "objects" ? nil : selectedCollection, cursor: cursor, current: { self.actor }, request: { try await session.communitySafetyRequest(body: $0, actor: actor) })
