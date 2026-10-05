@@ -113,13 +113,34 @@ create function notification_private.trip_live(t public.trips) returns boolean l
 create function notification_private.immutable_receipt() returns trigger language plpgsql set search_path='' as $$begin raise exception 'NOTIFICATION_RECEIPT_IMMUTABLE';end $$;
 create trigger notification_receipt_immutable before update on notification_private.operations for each row execute function notification_private.immutable_receipt();
 revoke all on all functions in schema notification_private from public,anon,authenticated,service_role;
+-- Bounded notification-only qualification. Same real publication/source/mapping guards
+-- as #207, without calling an ordinary-user RPC or replacing service JWT claims.
+create function notification_private.mapping(p_mapping uuid) returns jsonb language plpgsql security definer set search_path='' as $$
+declare m trip_support_private.entity_mappings%rowtype;poi public.canonical_pois%rowtype;st knowledge_review_private.statements%rowtype;pub knowledge_review_private.publications%rowtype;c knowledge_review_private.candidates%rowtype;mr bigint;refs jsonb;
+begin
+ select * into m from trip_support_private.entity_mappings where id=p_mapping for share nowait;if not found or m.status<>'approved' then return null;end if;
+ select * into poi from public.canonical_pois where id=m.canonical_poi_id for share nowait;if not found or trip_support_private.hash(to_jsonb(poi))<>m.canonical_hash then return null;end if;
+ select revision into mr from knowledge_review_private.members where actor_id=m.reviewer_id and active for share nowait;if mr is distinct from m.reviewer_member_revision then return null;end if;
+ perform 1 from knowledge_review_private.publication_settings where singleton and enabled for share nowait;if not found then return null;end if;
+ select * into st from knowledge_review_private.statements where statement_id=m.statement_id for share nowait;if not found or st.revision<>m.claim_revision or trip_support_private.hash(st.payload)<>m.payload_hash then return null;end if;
+ select * into pub from knowledge_review_private.publications where candidate_id=st.candidate_id for share nowait;if not found or pub.state<>'published' or pub.expires_at<=clock_timestamp() then return null;end if;
+ select * into c from knowledge_review_private.candidates where id=st.candidate_id for share nowait;if not found or c.status<>'reviewed' then return null;end if;
+ if m.basis_metadata->>'city' not in('shanghai','beijing','guangzhou','chongqing') or m.basis_metadata->>'scene' not in('arrival','airport_transport','payment','connectivity','public_transport','taxi','rail','attraction','accommodation','emergency') or m.basis_metadata->>'locale' not in('zh','en')
+  or not(st.payload->'scope'->'cities' ? (m.basis_metadata->>'city')) or st.payload->'scope'->>'scene' is distinct from m.basis_metadata->>'scene' then return null;end if;
+ -- Preserve ordinary reader's bounded published scope; no new content universe.
+ if pub.fact_id not in(select pp.fact_id from knowledge_review_private.publications pp join knowledge_review_private.statements ss using(candidate_id) join knowledge_review_private.candidates cc on cc.id=pp.candidate_id where pp.state='published' and pp.expires_at>clock_timestamp() and cc.status='reviewed' and ss.payload->'scope'->'cities' ? (m.basis_metadata->>'city') and ss.payload->'scope'->>'scene'=m.basis_metadata->>'scene' order by pp.fact_id limit 50) then return null;end if;
+ perform 1 from knowledge_review_private.source_revisions rr join knowledge_review_private.statement_sources ss on ss.source_revision_id=rr.id where ss.candidate_id=st.candidate_id order by rr.id for share of rr,ss nowait;
+ select coalesce(jsonb_agg(jsonb_build_object('sourceRevisionId',rr.id,'revisionLabel',rr.revision_label,'snippetHash',rr.snippet_hash,'submittedBy',rr.submitted_by) order by rr.id),'[]') into refs from knowledge_review_private.statement_sources ss join knowledge_review_private.source_revisions rr on rr.id=ss.source_revision_id where ss.candidate_id=st.candidate_id and rr.withdrawn_at is null;
+ if jsonb_array_length(refs) not between 1 and 8 or jsonb_array_length(refs)<>(select count(*) from knowledge_review_private.statement_sources where candidate_id=st.candidate_id) or refs is distinct from m.source_refs or trip_support_private.hash(refs)<>m.source_digest then return null;end if;
+ return jsonb_build_object('mappingId',m.id,'mappingVersion',m.version,'mappingDigest',m.request_digest,'canonicalPoiId',m.canonical_poi_id,'statementId',st.statement_id,'claimRevision',st.revision,'payloadHash',m.payload_hash,'payload',st.payload,'sourceRefs',refs,'sourceDigest',m.source_digest,'receipt',jsonb_build_object('kind','fact','factId',pub.fact_id,'version',pub.version,'reviewedAt',c.reviewed_at,'expiresAt',notification_private.stamp(pub.expires_at)));
+exception when lock_not_available then return null;end $$;
 -- Authoritative selectors. A DTO never supplies content, consent or eligibility.
 create function notification_private.source(u uuid,t public.trips,k text,sid uuid,allow_recheck boolean default false) returns jsonb language plpgsql security definer set search_path='' as $$
 declare v jsonb;semantic text;rev integer;expiry timestamptz;ur public.travel_reminders%rowtype;
  a turn_private.result_artifacts%rowtype;r turn_private.result_revisions%rowtype;
  s trip_support_private.item_supports%rowtype;p trip_support_private.preparations%rowtype;b jsonb;item jsonb;ev record;
 begin
- if not notification_private.trip_live(t) then return null;end if;
+ if t.owner_id is distinct from u or not notification_private.trip_live(t) or not exists(select 1 from identity_private.mobile_accounts ma join auth.sessions au on au.id=ma.session_id and au.user_id=ma.owner_id join identity_private.mobile_attempts mt on mt.owner_id=ma.owner_id and mt.session_id=ma.session_id and mt.epoch=ma.epoch where ma.owner_id=u) then return null;end if;
  select max((trip_date+1)::timestamp at time zone time_zone) into expiry from public.trip_days where trip_id=t.id;
  if k='current_trip' then
   if sid<>t.id then return null;end if;
@@ -127,7 +148,7 @@ begin
   if v is null then return null;end if;semantic:=notification_private.hash(v-'version');rev:=t.head_version;
  elsif k='user_reminder' then
   select * into ur from public.travel_reminders where id=sid and owner_id=u and trip_id=t.id for share nowait;
-  if not found or ur.status<>'saved' or ur.base_version<>t.head_version or ur.expires_at<=clock_timestamp()
+  if not found or place_actions_private.utf16_length_v1(ur.reason)>240 or ur.status<>'saved' or ur.base_version<>t.head_version or ur.expires_at<=clock_timestamp()
    or not exists(select 1 from identity_private.mobile_accounts where owner_id=u and session_id=ur.session_id) then return null;end if;
   semantic:=notification_private.hash(jsonb_build_object('reason',ur.reason,'dueAt',notification_private.stamp(ur.due_at),'timeZone',ur.time_zone,'purpose',ur.purpose));
   rev:=ur.base_version;expiry:=least(expiry,ur.expires_at);
@@ -139,17 +160,27 @@ begin
   perform 1 from turn_private.assistant_goals where id=a.goal_id and owner_id=u for share nowait;
   perform 1 from turn_private.assistant_messages where id=a.input_message_id and owner_id=u for share nowait;
   perform 1 from turn_private.text_consents where owner_id=u for share nowait;
-  perform 1 from turn_private.text_policies for share nowait;
+  perform 1 from turn_private.text_policies where id in(select policy_id from turn_private.assistant_messages where id=a.input_message_id union select policy_id from turn_private.service_tasks where id=a.task_id) for share nowait;
+  perform 1 from turn_private.assistant_goal_trip_links where goal_id=a.goal_id for share nowait;
+  perform 1 from turn_private.assistant_goal_trip_receipts where operation_id=r.trip_link_operation_id for share nowait;
+  perform 1 from turn_private.work where turn_id=r.task_turn_id for share nowait;
+  perform 1 from turn_private.planning_comparisons where turn_id=r.task_turn_id for share nowait;
   perform 1 from turn_private.text_content where turn_id=r.task_turn_id and owner_id=u for share nowait;
   perform 1 from public.turns where id=r.task_turn_id and owner_id=u for share nowait;
   perform 1 from public.memory_profiles where owner_id=u and id in(select (x->>'id')::uuid from jsonb_array_elements(r.memory_basis)x) for share nowait;
   perform 1 from public.memory_consents where owner_id=u for share nowait;
-  if turn_private.result_state_v2(a,r)->>'current' is distinct from 'true' or exists(select 1 from turn_private.assistant_goals where id=a.goal_id and trip_terminal) or exists(select 1 from turn_private.work where turn_id=r.task_turn_id and state in('cancelled','quarantined')) then return null;end if;
+  if turn_private.result_state_v2(a,r)->>'current' is distinct from 'true' or exists(select 1 from turn_private.assistant_goals where id=a.goal_id and trip_terminal) or exists(select 1 from turn_private.work where turn_id=r.task_turn_id and state in('cancelled','quarantined')) or exists(select 1 from turn_private.planning_comparisons where turn_id=r.task_turn_id and state='paused_unknown') then return null;end if;
   semantic:=notification_private.hash(r.content);rev:=r.revision;
   -- Bound notification shelf life to every explicit result evidence expiry.
   if r.evidence_basis<>'[]'::jsonb then
-   perform 1 from knowledge_review_private.publications p join knowledge_review_private.statements st on st.candidate_id=p.candidate_id where st.statement_id in(select (x->>'assertionId')::uuid from jsonb_array_elements(r.evidence_basis)x) for share of p,st nowait;
-   select least(expiry,min(p.expires_at)) into expiry from knowledge_review_private.publications p join knowledge_review_private.statements st on st.candidate_id=p.candidate_id where st.statement_id in(select (x->>'assertionId')::uuid from jsonb_array_elements(r.evidence_basis)x);
+   perform 1 from knowledge_review_private.publications kp join knowledge_review_private.statements st on st.candidate_id=kp.candidate_id where st.statement_id in(select (x->>'assertionId')::uuid from jsonb_array_elements(r.evidence_basis)x) for share of kp,st nowait;
+   perform 1 from knowledge_review_private.candidates c join knowledge_review_private.statements st on st.candidate_id=c.id where st.statement_id in(select (x->>'assertionId')::uuid from jsonb_array_elements(r.evidence_basis)x) for share of c nowait;
+   perform 1 from knowledge_review_private.source_revisions sr join knowledge_review_private.statement_sources ss on ss.source_revision_id=sr.id join knowledge_review_private.statements st on st.candidate_id=ss.candidate_id where st.statement_id in(select (x->>'assertionId')::uuid from jsonb_array_elements(r.evidence_basis)x) for share of sr,ss nowait;
+   if exists(select 1 from knowledge_review_private.source_revisions sr join knowledge_review_private.statement_sources ss on ss.source_revision_id=sr.id join knowledge_review_private.statements st on st.candidate_id=ss.candidate_id where sr.withdrawn_at is not null and st.statement_id in(select (x->>'assertionId')::uuid from jsonb_array_elements(r.evidence_basis)x)) then return null;end if;
+   -- Recheck after locking: a revocation committed between the initial read and
+   -- these exact source locks must not obtain a handoff grant.
+   if turn_private.result_state_v2(a,r)->>'current' is distinct from 'true' then return null;end if;
+   select least(expiry,min(kp.expires_at)) into expiry from knowledge_review_private.publications kp join knowledge_review_private.statements st on st.candidate_id=kp.candidate_id where st.statement_id in(select (x->>'assertionId')::uuid from jsonb_array_elements(r.evidence_basis)x);
   end if;
  elsif k='qualified_watch' then
   select * into s from trip_support_private.item_supports where id=sid and owner_id=u and trip_id=t.id for share nowait;
@@ -172,7 +203,7 @@ begin
    return jsonb_build_object('source',jsonb_build_object('kind',k,'sourceId',sid,'revision',s.version,'contentDigest',semantic),'expiresAt',notification_private.stamp(expiry),'recheckReceiptId',ev.receipt_id,'recheckReviewDigest',ev.digest);
   end if;
   perform 1 from trip_support_private.entity_mappings where id=p.mapping_id for share nowait;
-  b:=trip_support_private.mapping_basis(p.mapping_id);
+  b:=notification_private.mapping(p.mapping_id);
   if b is null or b->>'mappingVersion' is distinct from p.mapping_version::text or b->>'sourceDigest' is distinct from s.source_digest or b->>'payloadHash' is distinct from s.payload_hash then return null;end if;
   select content into v from public.trip_version_snapshots where trip_id=t.id and owner_id=u and version=t.head_version for share nowait;
   item:=trip_support_private.item(v,s.day_id,s.item_id);
@@ -194,14 +225,14 @@ begin
  for x in select 'current_trip'::text kind,t.id id union all
   select 'user_reminder',id from public.travel_reminders where owner_id=u and trip_id=t.id and status='saved'
   union all select 'task_result',id from turn_private.result_artifacts where owner_id=u and trip_id=t.id and lifecycle='active'
-  union all select 'qualified_watch',id from trip_support_private.item_supports where owner_id=u and trip_id=t.id and status='reference_current'
+  union all select 'qualified_watch',ss.id from trip_support_private.item_supports ss where ss.owner_id=u and ss.trip_id=t.id and (ss.status='reference_current' or ss.status='recheck_required' and exists(select 1 from notification_private.reminders rr join notification_private.outbox ob on ob.reminder_id=rr.id where rr.owner_id=u and rr.trip_id=t.id and rr.source->>'sourceId'=ss.id::text and ob.recheck_receipt_id is not null and notification_private.current(rr,t)))
   order by kind,id limit 101 loop
   n:=n+1;if n>100 then complete:=false;exit;end if;
-  b:=notification_private.source(u,t,x.kind,x.id);if b is null then complete:=false;continue;end if;
+  b:=notification_private.source(u,t,x.kind,x.id,x.kind='qualified_watch' and exists(select 1 from notification_private.reminders rr join notification_private.outbox ob on ob.reminder_id=rr.id where rr.source->>'sourceId'=x.id::text and rr.owner_id=u and rr.trip_id=t.id and ob.recheck_receipt_id is not null and notification_private.current(rr,t)));if b is null then complete:=false;continue;end if;
   sid:=notification_private.opaque(notification_private.hash(jsonb_build_object('owner',u,'trip',t.id,'kind',x.kind,'sourceId',x.id,'semantic',b->'source'->>'contentDigest')));
   if exists(select 1 from notification_private.dismissals where owner_id=u and trip_id=t.id and source_kind=x.kind and source_id=x.id and semantic_digest=b->'source'->>'contentDigest') then continue;end if;
   why:=null;if x.kind='user_reminder' then select reason into why from public.travel_reminders where id=x.id;end if;
-  rows:=rows||jsonb_build_array(jsonb_build_object('id',sid,'source',b->'source','reasonCode',case x.kind when 'current_trip' then 'review_trip' when 'user_reminder' then 'user_requested' when 'task_result' then 'result_ready' else 'watch_available' end,'reason',why,'expiresAt',b->>'expiresAt'));
+  rows:=rows||jsonb_build_array(jsonb_build_object('id',sid,'source',b->'source','reasonCode',case x.kind when 'current_trip' then 'review_trip' when 'user_reminder' then 'user_requested' when 'task_result' then 'result_ready' else case when exists(select 1 from notification_private.reminders rr join notification_private.outbox ob on ob.reminder_id=rr.id where rr.source=b->'source' and rr.owner_id=u and rr.trip_id=t.id and ob.watch_id is not null and notification_private.current(rr,t)) then 'watch_changed' else 'watch_available' end end,'reason',why,'expiresAt',b->>'expiresAt'));
  end loop;
  return jsonb_build_object('items',rows,'complete',complete);
 end $$;
@@ -226,7 +257,7 @@ begin
  if a in('cancel','complete','unwatch') then return notification_private.exact(x,array['operationId','id']) and notification_private.uuid(x->'id');
  elsif a='dismiss' then return notification_private.exact(x,array['operationId','nextStepId','source']) and notification_private.uuid(x->'nextStepId') and notification_private.source_valid(x->'source');
  elsif a='register_device' then return coalesce(notification_private.exact(x,array['operationId','deviceId','token','environment','permission','timeZone']) and notification_private.uuid(x->'deviceId') and jsonb_typeof(x->'token')='string' and x->>'token' ~ '^[a-f0-9]+$' and length(x->>'token') between 2 and 512 and length(x->>'token')%2=0 and x->>'environment' in('sandbox','production') and x->>'permission'='authorized' and jsonb_typeof(x->'timeZone')='string',false);
- elsif a='revoke_device' then return notification_private.exact(x,array['operationId','deviceId','permission']) and notification_private.uuid(x->'deviceId') and x->>'permission' in('denied','not_determined');
+ elsif a='revoke_device' then return notification_private.exact(x,array['operationId','deviceId','permission']) and notification_private.uuid(x->'deviceId') and x->>'permission' in('authorized','denied','not_determined');
  elsif a not in('schedule','watch') then return false;end if;
  if not notification_private.uuid(x->'id') or not notification_private.integer(x->'baseVersion') or not notification_private.source_valid(x->'source') or not notification_private.quiet(x->'quietHours') or x->'consent' is distinct from 'true'::jsonb or jsonb_typeof(x->'timeZone') is distinct from 'string' then return false;end if;
  ex:=notification_private.time(x->'expiresAt');if ex is null then return false;end if;
@@ -273,7 +304,7 @@ begin
   return notification_private.view(u,t,ack);
  end if;
  if a in('register_device','revoke_device') then
-  select * into dev from notification_private.devices where id=rid for update;
+  select * into dev from notification_private.devices where id=rid for update nowait;
   if found and dev.owner_id<>u then raise exception 'SOURCE_UNAVAILABLE';end if;
   if a='register_device' then
    if not exists(select 1 from pg_timezone_names where name=x->>'timeZone') then raise exception 'INVALID_INPUT';end if;
@@ -326,7 +357,8 @@ begin
   update notification_private.reminders r set status='cancelled',revision=revision+1 from notification_private.outbox o where o.reminder_id=r.id and o.watch_id=rid and r.status='saved';
   update notification_private.outbox set state='suppressed' where watch_id=rid and state='scheduled';
  elsif a='dismiss' then
-  b:=notification_private.source(u,t,x->'source'->>'kind',(x->'source'->>'sourceId')::uuid);
+  steps:=notification_private.next_steps(u,t);select value into step from jsonb_array_elements(steps->'items') where value->>'id'=rid::text and value->'source'=x->'source';if step is null then raise exception 'SOURCE_UNAVAILABLE';end if;
+  b:=jsonb_build_object('source',step->'source');
   if b is null or b->'source' is distinct from x->'source' or rid<>notification_private.opaque(notification_private.hash(jsonb_build_object('owner',u,'trip',t.id,'kind',x->'source'->>'kind','sourceId',x->'source'->>'sourceId','semantic',b->'source'->>'contentDigest'))) then raise exception 'SOURCE_UNAVAILABLE';end if;
   insert into notification_private.dismissals(owner_id,trip_id,next_step_id,source_kind,source_id,semantic_digest) values(u,t.id,rid,x->'source'->>'kind',(x->'source'->>'sourceId')::uuid,x->'source'->>'contentDigest') on conflict do nothing;
  end if;
@@ -383,7 +415,7 @@ begin
     update notification_private.attempts set state=p_input->'outcome'->>'kind',outcome=p_input->'outcome' where notification_id=o.id returning * into a;
     update notification_private.outbox set state=a.state,outcome=a.outcome where id=o.id;
     if a.outcome->>'code'='TOKEN_REVOKED' then
-     update notification_private.devices set active=false,permission='denied',revision=revision+1 where id=a.device_id and revision=a.device_revision;
+     update notification_private.devices set active=false,revision=revision+1 where id=a.device_id and revision=a.device_revision;
      update notification_private.outbox set state='suppressed' where device_id=a.device_id and device_revision=a.device_revision and state='scheduled';
     end if;
    elsif a.outcome is distinct from p_input->'outcome' then return jsonb_build_object('kind','blocked');end if;
