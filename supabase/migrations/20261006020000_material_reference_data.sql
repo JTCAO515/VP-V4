@@ -77,8 +77,8 @@ end$$;
 create function material_exit_private.input_v1(v jsonb,action_n text) returns boolean
 language plpgsql immutable set search_path='' as $$
 declare keys text[];original jsonb;begin
- keys:=array['action','scope','tripId'];
- if action_n='list' then keys:=keys||array['cursor','limit'];
+ keys:=case when action_n='trip_list' then array['action','scope'] else array['action','scope','tripId'] end;
+ if action_n in ('list','trip_list') then keys:=keys||array['cursor','limit'];
  else keys:=keys||array['requestId','objectIds'];
  if action_n in ('export','erase') then keys:=keys||array['previewDigest','confirmed'];
  elsif action_n='recover' then keys:=keys||array['mutationBytes'];
@@ -87,14 +87,14 @@ declare keys text[];original jsonb;begin
  elsif action_n<>'preview' then return false;end if;end if;
  if reservation_private.exact_v1(v,keys) is not true or v->>'action' is distinct from action_n
  or (v->>'scope' in ('reservation-reference-data/1','pdf-intake-data/1','material-exit-progress/1')) is not true
- or material_exit_private.uuid_v1(v->'tripId') is not true then return false;end if;
- if action_n<>'list' and (material_exit_private.uuid_v1(v->'requestId') is not true or material_exit_private.ids_v1(v->'objectIds') is not true
+ or action_n<>'trip_list' and material_exit_private.uuid_v1(v->'tripId') is not true then return false;end if;
+ if action_n not in ('list','trip_list') and (material_exit_private.uuid_v1(v->'requestId') is not true or material_exit_private.ids_v1(v->'objectIds') is not true
  or v->>'scope'='material-exit-progress/1' and v->'objectIds' ? (v->>'requestId')) then return false;end if;
  if action_n in ('export','erase','page','proof') and (jsonb_typeof(v->'previewDigest')='string' and v->>'previewDigest' ~ '^[a-f0-9]{64}$') is not true then return false;end if;
  if action_n in ('export','erase') and v->'confirmed' is distinct from 'true'::jsonb then return false;end if;
  if action_n in ('page','proof') and (jsonb_typeof(v->'sourceDigest')='string' and v->>'sourceDigest' ~ '^[a-f0-9]{64}$') is not true then return false;end if;
- if action_n in ('list','page') then
- if v->'limit' is distinct from to_jsonb(case when action_n='list' then 20 else 5 end) then return false;end if;
+ if action_n in ('list','trip_list','page') then
+ if v->'limit' is distinct from to_jsonb(case when action_n in ('list','trip_list') then 20 else 5 end) then return false;end if;
  if v->'cursor'<>'null'::jsonb and (reservation_private.exact_v1(v->'cursor',array['sourceDigest','afterId']) is not true
  or material_exit_private.uuid_v1(v->'cursor'->'afterId') is not true
  or (jsonb_typeof(v->'cursor'->'sourceDigest')='string' and v->'cursor'->>'sourceDigest' ~ '^[a-f0-9]{64}$') is not true) then return false;end if;
@@ -249,6 +249,64 @@ begin
  return jsonb_build_object('items',items,'sourceDigest',reservation_private.digest_v1(jsonb_build_array(u,s,epoch_n,t.id,t.head_version,scope_n,internal_n,items)));
 end$$;
 
+-- Read-only source-derived Trip discovery. Archived metadata and retained deleted
+-- Trip progress have a real owner entry without relaxing original Trip readers.
+create function material_exit_private.trips_v1(u uuid,s uuid,epoch_n bigint,scope_n text)
+returns jsonb language plpgsql security definer set search_path='' as $$
+declare roots uuid[];trip_ids uuid[];trip_n uuid;t public.trips%rowtype;version_n integer;
+ items jsonb:='[]';raw_n jsonb;trip_metadata jsonb:='[]';state_n text;label_n text;
+begin
+ if scope_n='reservation-reference-data/1' then
+ select coalesce(array_agg(reference_id order by reference_id),'{}') into roots from (
+ select c.reference_id from reservation_private.current_v1 c join public.trips current_trip on current_trip.id=c.trip_id and current_trip.owner_id=u
+ where c.owner_id=u and not exists(select 1 from privacy_private.trip_deletions d where d.trip_id=current_trip.id) order by c.reference_id limit 10001) q;
+ select array_agg(distinct trip_id order by trip_id) into trip_ids from reservation_private.current_v1 where owner_id=u and reference_id=any(roots);
+ elsif scope_n='pdf-intake-data/1' then
+ select coalesce(array_agg(operation_id order by operation_id),'{}') into roots from (
+ select o.operation_id from pdf_intake_private.operations_v1 o join public.trips current_trip on current_trip.id=o.trip_id and current_trip.owner_id=u
+ where o.owner_id=u and not exists(select 1 from privacy_private.trip_deletions d where d.trip_id=current_trip.id) order by o.operation_id limit 10001) q;
+ select array_agg(distinct trip_id order by trip_id) into trip_ids from pdf_intake_private.operations_v1 where owner_id=u and operation_id=any(roots);
+ else
+ select coalesce(array_agg(request_id order by request_id),'{}') into roots from (
+ select request_id from material_exit_private.requests_v1 where owner_id=u order by request_id limit 10001) q;
+ select array_agg(distinct trip_id order by trip_id) into trip_ids from material_exit_private.requests_v1 where owner_id=u and request_id=any(roots);
+ end if;
+ if cardinality(roots)>10000 then raise exception 'MATERIAL_CAPACITY';end if;
+ trip_ids:=coalesce(trip_ids,'{}');
+ perform 1 from public.trips where owner_id=u and id=any(trip_ids) order by id for share nowait;
+ if scope_n='reservation-reference-data/1' then
+ perform 1 from reservation_private.current_v1 where owner_id=u and reference_id=any(roots) order by reference_id for share nowait;
+ select coalesce(jsonb_agg(to_jsonb(c) order by reference_id),'[]') into raw_n from reservation_private.current_v1 c where owner_id=u and reference_id=any(roots);
+ elsif scope_n='pdf-intake-data/1' then
+ perform 1 from public.trip_proposals where owner_id=u and trip_id=any(trip_ids) and id in
+ (select proposal_id from pdf_intake_private.operations_v1 where owner_id=u and operation_id=any(roots)) order by id for share nowait;
+ perform 1 from pdf_intake_private.operations_v1 where owner_id=u and operation_id=any(roots) order by operation_id for share nowait;
+ select coalesce(jsonb_agg(jsonb_build_array(to_jsonb(o),to_jsonb(p)) order by operation_id),'[]') into raw_n
+ from pdf_intake_private.operations_v1 o left join public.trip_proposals p on p.id=o.proposal_id and p.owner_id=u where o.owner_id=u and o.operation_id=any(roots);
+ else
+ perform 1 from material_exit_private.requests_v1 where owner_id=u and request_id=any(roots) order by request_id for share nowait;
+ perform 1 from material_exit_private.progress_v1 where request_id=any(roots) order by request_id for share nowait;
+ select coalesce(jsonb_agg(jsonb_build_array(to_jsonb(r),to_jsonb(g)) order by r.request_id),'[]') into raw_n
+ from material_exit_private.requests_v1 r left join material_exit_private.progress_v1 g on g.request_id=r.request_id where r.owner_id=u and r.request_id=any(roots);
+ end if;
+ if jsonb_array_length(raw_n)<>cardinality(roots) then raise exception 'MATERIAL_SOURCE_CHANGED';end if;
+ foreach trip_n in array trip_ids loop
+ select * into t from public.trips where id=trip_n and owner_id=u;
+ if t.id is not null and not exists(select 1 from privacy_private.trip_deletions where trip_id=trip_n) then
+ version_n:=t.head_version;label_n:=case when reservation_private.utf16_length_v1(t.title) between 1 and 1000 then t.title else null end;
+ state_n:=case when exists(select 1 from public.trip_archives where trip_id=trip_n and owner_id=u) then 'archived' else 'active' end;
+ else
+ if scope_n<>'material-exit-progress/1' then raise exception 'MATERIAL_SOURCE_CHANGED';end if;
+ select max(trip_version) into version_n from material_exit_private.requests_v1 where owner_id=u and trip_id=trip_n and request_id=any(roots);
+ if version_n is null then raise exception 'MATERIAL_SOURCE_MISSING';end if;
+ label_n:=null;state_n:=case when exists(select 1 from privacy_private.trip_deletions where owner_id=u and trip_id=trip_n) then 'deleted' else 'retained' end;
+ end if;
+ items:=items||jsonb_build_array(jsonb_build_object('tripId',trip_n,'tripVersion',version_n,'label',label_n,'state',state_n));
+ trip_metadata:=trip_metadata||jsonb_build_array(jsonb_build_array(to_jsonb(t),state_n,version_n));
+ end loop;
+ return jsonb_build_object('items',items,'sourceDigest',reservation_private.digest_v1(jsonb_build_array(u,s,epoch_n,scope_n,roots,raw_n,trip_metadata)));
+end$$;
+
 create function public.privacy_material_reference_v1(p_action text,p_input_bytes text,p_expected_epoch bigint)
 returns jsonb language plpgsql security definer set search_path='' set timezone='UTC' as $$
 #variable_conflict use_variable
@@ -280,6 +338,17 @@ begin
  action_n:=case when p_action='export_start' then 'export' else p_action end;
  if material_exit_private.input_v1(v,action_n) is not true then raise exception 'INVALID_INPUT';end if;
  scope_n:=v->>'scope';trip_n:=(v->>'tripId')::uuid;
+ if action_n='trip_list' then
+ sources:=material_exit_private.trips_v1(u,s,epoch_n,scope_n);items:=sources->'items';digest_n:=sources->>'sourceDigest';
+ cursor_n:=nullif(v->'cursor','null'::jsonb);after_n:=(cursor_n->>'afterId')::uuid;
+ if cursor_n is not null and (cursor_n->>'sourceDigest' is distinct from digest_n or not exists(select 1 from jsonb_array_elements(items) x where x->>'tripId'=after_n::text)) then raise exception 'MATERIAL_CURSOR_CONFLICT';end if;
+ select coalesce(jsonb_agg(x order by x->>'tripId'),'[]') into page_n from (select x from jsonb_array_elements(items) x where after_n is null or x->>'tripId'>after_n::text order by x->>'tripId' limit 20) q;
+ n:=jsonb_array_length(page_n);last_n:=(page_n->(n-1)->>'tripId')::uuid;more_n:=exists(select 1 from jsonb_array_elements(items) x where last_n is not null and x->>'tripId'>last_n::text);
+ result_n:=jsonb_build_object('schemaVersion','material-reference-data/1','kind','trip_list','scope',scope_n,'ownerId',u,'sessionId',s,'mobileEpoch',epoch_n,
+ 'sourceDigest',digest_n,'capturedAt',now_ms,'expiresAt',now_ms+30000,'items',page_n,'hasMore',more_n,'nextCursor',case when more_n then jsonb_build_object('sourceDigest',digest_n,'afterId',last_n) else null end,'allUserDataCompleted',false);
+ if octet_length(result_n::text)>1000000 then raise exception 'MATERIAL_CAPACITY';end if;
+ if floor(extract(epoch from clock_timestamp())*1000)>=now_ms+30000 then raise exception 'MATERIAL_EXPIRED';end if;return result_n;
+ end if;
  if action_n<>'list' then
  req:=(v->>'requestId')::uuid;select array_agg(x::uuid order by x) into ids from jsonb_array_elements_text(v->'objectIds') x;
  end if;
@@ -303,7 +372,14 @@ begin
  -- Privacy metadata/erasure permits archived owned Trips. Original deletion
  -- tombstone is still a fence; no business live/archive admission is reused.
  select * into t from public.trips where owner_id=u and id=trip_n for update nowait;
- if not found or exists(select 1 from privacy_private.trip_deletions where trip_id=trip_n) then raise exception 'MATERIAL_TRIP_UNAVAILABLE';end if;
+ if not found or exists(select 1 from privacy_private.trip_deletions where trip_id=trip_n) then
+ if scope_n<>'material-exit-progress/1' then raise exception 'MATERIAL_TRIP_UNAVAILABLE';end if;
+ -- Factual historical context from this actor's retained immutable requests only.
+ -- Never pass it to an original Trip writer or restore a public Trip row.
+ t:=null;t.id:=trip_n;t.owner_id:=u;t.title:=null;
+ select max(trip_version) into t.head_version from material_exit_private.requests_v1 where owner_id=u and trip_id=trip_n;
+ if t.head_version is null then raise exception 'MATERIAL_TRIP_UNAVAILABLE';end if;
+ end if;
  if action_n='list' then
  sources:=material_exit_private.list_v1(u,t,s,epoch_n,scope_n,at_time);items:=sources->'items';digest_n:=sources->>'sourceDigest';
  cursor_n:=nullif(v->'cursor','null'::jsonb);after_n:=(cursor_n->>'afterId')::uuid;
