@@ -21,6 +21,7 @@ export type ServiceInput = ServiceMutation
 export type ServiceCapacity = Readonly<{ state: 'available' | 'full' | 'unknown'; checkedAt: number }>;
 export type ServiceProjection = Readonly<{
   caseId: string; revision: number; grantRevision: number; status: ServiceState;
+  category: 'transport' | 'accommodation' | 'on_trip' | 'general'; problem: string;
   grantState: 'active' | 'expired' | 'revoked'; expiresAt: number | null;
   updatedAt: number; urgency: 'normal' | 'urgent'; capacity: ServiceCapacity;
   staff: Readonly<{ actorId: string; label: string; acceptedAt: number; shiftEndsAt: number }> | null;
@@ -80,8 +81,9 @@ export function validCapacity(v: unknown): v is ServiceCapacity {
   return record(v) && exact(v, ['state', 'checkedAt']) && ['available', 'full', 'unknown'].includes(String(v.state)) && milliseconds(v.checkedAt);
 }
 export function decodeServiceProjection(v: unknown): ServiceProjection | null {
-  if (!record(v) || !exact(v, ['caseId', 'revision', 'grantRevision', 'status', 'grantState', 'expiresAt', 'updatedAt', 'urgency', 'capacity', 'staff', 'brief', 'sources', 'trip', 'evidence', 'manualMinutes', 'proposal'])) return null;
+  if (!record(v) || !exact(v, ['caseId', 'revision', 'grantRevision', 'status', 'category', 'problem', 'grantState', 'expiresAt', 'updatedAt', 'urgency', 'capacity', 'staff', 'brief', 'sources', 'trip', 'evidence', 'manualMinutes', 'proposal'])) return null;
   if (!uuid(v.caseId) || !integer(v.revision) || !integer(v.grantRevision) || !['queued', 'accepted', 'assigned', 'waiting_external', 'resolved', 'unresolved', 'cancelled'].includes(String(v.status))) return null;
+  if (!['transport', 'accommodation', 'on_trip', 'general'].includes(String(v.category)) || !text(v.problem, 1000)) return null;
   if (!['active', 'expired', 'revoked'].includes(String(v.grantState)) || !(v.expiresAt === null || milliseconds(v.expiresAt)) || !milliseconds(v.updatedAt) || !['normal', 'urgent'].includes(String(v.urgency)) || !validCapacity(v.capacity)) return null;
   if (!unknownBinding(v.brief) || !unknownBinding(v.sources) || !validTrip(v.trip) || !integer(v.manualMinutes) || !Array.isArray(v.evidence) || v.evidence.length > 100 || !v.evidence.every(validEvidence) || !proposal(v.proposal)) return null;
   if (v.staff !== null && !(record(v.staff) && exact(v.staff, ['actorId', 'label', 'acceptedAt', 'shiftEndsAt']) && uuid(v.staff.actorId) && text(v.staff.label, 80) && milliseconds(v.staff.acceptedAt) && milliseconds(v.staff.shiftEndsAt) && v.staff.shiftEndsAt > v.staff.acceptedAt)) return null;
