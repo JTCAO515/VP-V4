@@ -10,7 +10,7 @@ import UIKit
     private var recorder: AVAudioRecorder?
     private var recognizer: SFSpeechRecognizer?
     private var recognitionTask: SFSpeechRecognitionTask?
-    private let synthesizer = AVSpeechSynthesizer()
+    private var synthesizer: AVSpeechSynthesizer?
     private var utteranceIdentity: ObjectIdentifier?
     private var speechCompletion: (@MainActor @Sendable (Bool, Int) -> Void)?
     private var spoken = 0
@@ -18,7 +18,6 @@ import UIKit
 
     override init() {
         super.init()
-        synthesizer.delegate = self
         // Every route change cancels; no automatic switching of a recording or private spoken response.
         for name in [AVAudioSession.interruptionNotification, AVAudioSession.routeChangeNotification,
                      AVAudioSession.mediaServicesWereResetNotification, UIApplication.willResignActiveNotification, UIApplication.didEnterBackgroundNotification,
@@ -62,7 +61,7 @@ import UIKit
     }
 
     func startRecording(url: URL) throws {
-        guard UIApplication.shared.applicationState == .active, permissionsGranted, recorder == nil, !synthesizer.isSpeaking else { throw NativeVoiceAudioFailure.permissionDenied }
+        guard UIApplication.shared.applicationState == .active, permissionsGranted, recorder == nil, synthesizer?.isSpeaking != true else { throw NativeVoiceAudioFailure.permissionDenied }
         let session = AVAudioSession.sharedInstance()
         try session.setCategory(.record, mode: .measurement, options: [])
         try session.setActive(true)
@@ -116,7 +115,7 @@ import UIKit
     func installedVoiceAvailable(localeIdentifier: String) -> Bool { installedVoice(localeIdentifier) != nil }
 
     func speak(text: String, localeIdentifier: String, completion: @escaping @MainActor @Sendable (Bool, Int) -> Void) throws {
-        guard UIApplication.shared.applicationState == .active, utteranceIdentity == nil, !synthesizer.isSpeaking,
+        guard UIApplication.shared.applicationState == .active, utteranceIdentity == nil, synthesizer?.isSpeaking != true,
               let voice = installedVoice(localeIdentifier) else { throw NativeVoiceAudioFailure.unavailable }
         let session = AVAudioSession.sharedInstance()
         try session.setCategory(.playback, mode: .spokenAudio, options: [])
@@ -125,16 +124,24 @@ import UIKit
         utterance.voice = voice
         speechCompletion = completion; spoken = 0
         utteranceIdentity = ObjectIdentifier(utterance)
-        synthesizer.speak(utterance)
+        let engine: AVSpeechSynthesizer
+        if let existing = synthesizer { engine = existing }
+        else {
+            let value = AVSpeechSynthesizer()
+            value.delegate = self
+            synthesizer = value
+            engine = value
+        }
+        engine.speak(utterance)
     }
 
     func pauseSpeech() -> Bool {
-        guard UIApplication.shared.applicationState == .active, utteranceIdentity != nil else { return false }
+        guard UIApplication.shared.applicationState == .active, utteranceIdentity != nil, let synthesizer else { return false }
         return synthesizer.pauseSpeaking(at: .word)
     }
 
     func resumeSpeech() -> Bool {
-        guard UIApplication.shared.applicationState == .active, utteranceIdentity != nil, synthesizer.isPaused else { return false }
+        guard UIApplication.shared.applicationState == .active, utteranceIdentity != nil, let synthesizer, synthesizer.isPaused else { return false }
         return synthesizer.continueSpeaking()
     }
 
@@ -142,7 +149,7 @@ import UIKit
         recorder?.delegate = nil; recorder?.stop(); recorder = nil
         // Invalidate callbacks before immediate stop (which may itself enqueue didCancel).
         utteranceIdentity = nil; speechCompletion = nil
-        synthesizer.stopSpeaking(at: .immediate)
+        synthesizer?.stopSpeaking(at: .immediate)
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
 
