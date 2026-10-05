@@ -1,0 +1,37 @@
+VP_GUIDE_HTTP_TARGET {"project":"vp-native-ask-e4a755ba","api":"http://127.0.0.1:64531","supabaseAPI":"http://127.0.0.1:64521"}
+✖ Guide actual native owner HTTP reads, replays, scopes fresh grounded submission and revokes source (6517.758375ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9547.539458
+
+✖ failing tests:
+
+test at tests/integration/guide/guide-http.test.mjs:8:1
+✖ Guide actual native owner HTTP reads, replays, scopes fresh grounded submission and revokes source (6517.758375ms)
+  Error: Command failed: docker exec -i supabase_db_vp-native-ask-e4a755ba psql -U postgres -d postgres -X -Atq -v ON_ERROR_STOP=1
+  ERROR:  column "owner_id" does not exist
+  LINE 1: ... count(*) from public.model_budget_attempts where owner_id='...
+                                                               ^
+  
+      at genericNodeError (node:internal/errors:999:15)
+      at wrappedFn (node:internal/errors:544:14)
+      at checkExecSyncError (node:child_process:942:11)
+      at execFileSync (node:child_process:978:15)
+      at Object.sql (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj28-place-guide-server-20261005/tests/integration/turn/native-text-environment.mjs:21:15)
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj28-place-guide-server-20261005/tests/integration/guide/guide-http.test.mjs:59:18)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    status: 3,
+    signal: null,
+    output: [ null, '', `ERROR:  column "owner_id" does not exist\nLINE 1: ... count(*) from public.model_budget_attempts where owner_id='...\n                                                             ^\n` ],
+    pid: 32248,
+    stdout: '',
+    stderr: `ERROR:  column "owner_id" does not exist\nLINE 1: ... count(*) from public.model_budget_attempts where owner_id='...\n                                                             ^\n`
+  }
+VP_GUIDE_HTTP_CLEANUP {"project":"vp-native-ask-e4a755ba","result":"PASS"}

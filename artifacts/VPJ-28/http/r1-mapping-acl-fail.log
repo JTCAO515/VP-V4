@@ -1,0 +1,39 @@
+VP_GUIDE_HTTP_TARGET {"project":"vp-native-ask-92c50eba","api":"http://127.0.0.1:64531","supabaseAPI":"http://127.0.0.1:64521"}
+✖ Guide actual native owner HTTP reads, replays, scopes fresh grounded submission and revokes source (8257.995291ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 11227.5565
+
+✖ failing tests:
+
+test at tests/integration/guide/guide-http.test.mjs:8:1
+✖ Guide actual native owner HTTP reads, replays, scopes fresh grounded submission and revokes source (8257.995291ms)
+  AssertionError [ERR_ASSERTION]: permission denied for function submit_trip_support_entity_mapping_v1
+  + actual - expected
+  
+  + {
+  +   code: '42501',
+  +   details: null,
+  +   hint: null,
+  +   message: 'permission denied for function submit_trip_support_entity_mapping_v1'
+  + }
+  - null
+  
+      at rpc (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj28-place-guide-server-20261005/tests/integration/guide/guide-http.test.mjs:25:61)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj28-place-guide-server-20261005/tests/integration/guide/guide-http.test.mjs:45:13)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: { code: '42501', details: null, hint: null, message: 'permission denied for function submit_trip_support_entity_mapping_v1' },
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+VP_GUIDE_HTTP_CLEANUP {"project":"vp-native-ask-92c50eba","result":"PASS"}
