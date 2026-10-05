@@ -6,3 +6,6 @@
 {"command": "in-app-browser local /ops/community/safety zh/default + en390x844", "result": "PASS", "observed": "unauth queue sign-in boundary/nooverflow/consoleempty; NOTqualifiedruntime"}
 {"command": "node --check tests/integration/community/safety/run-http.mjs && node --check tests/integration/community/safety/http.test.mjs", "result": "PASS", "observed": "syntax only; runtimeUNRUN"}
 {"command": "git diff --check", "result": "PASS"}
+{"command": "pnpm typecheck", "result": "FAIL", "observed": "environment: original J1 shared node_modules removed after freeze; own symlink became dangling, no TypeScript diagnostics"}
+{"command": "pnpm install --frozen-lockfile", "result": "PASS", "observed": "own isolated dependency directory;108cached packages,0downloads;lockfile unchanged"}
+{"command": "pnpm typecheck && pnpm lint && git diff --check", "result": "PASS", "observed": "after own dependency repair; final16key export source"}

@@ -11,3 +11,5 @@ Scope: controlled internal community report/disposition/appeal/block and complet
 - UNRUN: real target rights, real moderator/source producers, public propagation, physical device/human and unified all-account dispatcher.
 
 NewSQL independent owner implements approved closed wire. Canonical TS export now REQUIRED authoredDecisions(kind-based, no action alias) and readerGrants, exactly16keys. Original J1 remains publicfalse; all qualified roles used by eventual tests are fixture-only and stay distinguished from unrun target setup.
+
+Dependency evidence retained: a later typecheck initially FAILed because the original J1 worktree removed its shared node_modules and this worktree's temporary link became dangling. Replaced ONLY own broken symlink with an isolated frozen-lockfile108cached package install (0downloads/no lockfile change); current typecheck+lint+diff PASS. This was an environment failure, not a TypeScript product finding.
