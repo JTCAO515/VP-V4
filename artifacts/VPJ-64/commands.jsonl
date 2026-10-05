@@ -1,0 +1,8 @@
+{"command": "node --experimental-strip-types --test tests/contract/community/safety/wire.test.mjs tests/unit/community/safety/ops-controller.test.mjs", "result": "PASS", "observed": "15PASS0FAIL0skip; wire includes authoredDecisions+readerGrants"}
+{"command": "pnpm typecheck", "result": "PASS"}
+{"command": "pnpm lint", "result": "PASS", "observed": "700files source policy"}
+{"command": "pnpm docs:check", "result": "PASS"}
+{"command": "pnpm build", "result": "PASS", "observed": "actual Web production build after immutable J1966aa normalmerge; before metadata-only export-key delta"}
+{"command": "in-app-browser local /ops/community/safety zh/default + en390x844", "result": "PASS", "observed": "unauth queue sign-in boundary/nooverflow/consoleempty; NOTqualifiedruntime"}
+{"command": "node --check tests/integration/community/safety/run-http.mjs && node --check tests/integration/community/safety/http.test.mjs", "result": "PASS", "observed": "syntax only; runtimeUNRUN"}
+{"command": "git diff --check", "result": "PASS"}
