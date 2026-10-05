@@ -49,7 +49,8 @@ export function createHostedScopedEditWorker(raw:ScopedHostedProfile,deps:Hosted
     // RPC with the dedicated execution mode in the same durable work table.
     return runDurableTurnWork(async(name,p)=>{
       if(name!=='claim_turn_work')throw Error('Scoped finish unavailable');
-      return rpc('claim_scoped_trip_edit_work_v1',{p_owner_id:target.ownerId,p_policy_id:target.policyId,p_scope_id:target.scopeId},signal);
+      const claimed=await rpc('claim_scoped_trip_edit_work_v1',{p_owner_id:target.ownerId,p_policy_id:target.policyId,p_scope_id:target.scopeId},signal);
+      return record(claimed)&&exact(claimed,['kind'])&&claimed.kind==='idle'?{kind:'empty'}:claimed;
     },async(lease,stop)=>{
       let currentBinding:unknown=null;
       let currentInput:ScopedInput|null=null;
