@@ -8,7 +8,7 @@ export function scopedEditDiff(before: TripSnapshot, after: TripSnapshot): Scope
   for (const id of [...new Set([...previous.keys(), ...next.keys()])].sort()) {
     const left = previous.get(id), right = next.get(id);
     if (sameValue(left, right)) { preservedItemIds.push(id); continue; }
-    const kind = !left ? "added" : !right ? "removed" : left.dayId !== right.dayId ? "moved" : sameValue({ ...left, manualOrder: undefined }, { ...right, manualOrder: undefined }) ? "reordered" : "changed";
+    const kind = !left ? "added" : !right ? "removed" : left.dayId !== right.dayId ? "moved" : left.title !== right.title ? "replaced" : sameValue({ ...left, manualOrder: undefined }, { ...right, manualOrder: undefined }) ? "reordered" : "changed";
     changes.push({ kind, itemId: id, before: left ?? null, after: right ?? null });
   }
   return { changes, preservedItemIds, transferImpact: "pending", walkingImprovement: "unverified", externalOrderEffect: "none" };

@@ -7,10 +7,15 @@ export type ManualEdit =
   | Readonly<{ kind: "move_item"; itemId: string; toDayId: string }>
   | Readonly<{ kind: "set_time"; itemId: string; startsAt: string | null; endsAt: string | null }>
   | Readonly<{ kind: "reorder_items"; dayId: string; itemIds: readonly string[] }>;
+export type CandidateEdit = ManualEdit
+  | Readonly<{ kind: "remove_item"; itemId: string }>
+  | Readonly<{ kind: "replace_item"; itemId: string; sourceItemId: string }>
+  | Readonly<{ kind: "add_item"; sourceItemId: string; toDayId: string }>;
 export type ScopedEditRequest =
   | Readonly<{ action: "context"; expectedHeadVersion: number; scope: EditScope; locale: "zh" | "en"; reservationBindings?: readonly ReservationBinding[] }>
   | Readonly<{ action: "manual"; operationId: string; basis: EditBasis; edit: ManualEdit }>
   | Readonly<{ action: "ask"; operationId: string; basis: EditBasis; text: string }>
+  | Readonly<{ action: "select_candidate"; operationId: string; basis: EditBasis; askOperationId: string; candidateId: string }>
   | Readonly<{ action: "lock"; operationId: string; basis: EditBasis; itemId: string; locked: boolean }>
   | Readonly<{ action: "read_operation"; operationId: string }>
   | Readonly<{ action: "abandon"; operationId: string; mutation: Exclude<ScopedEditRequest, { action: "context" | "read_operation" | "abandon" }> }>;
@@ -37,11 +42,12 @@ export function parseScopedEditRequest(v: unknown): ScopedEditRequest | null {
   if (v.action === "context") return exact(v, ["action", "expectedHeadVersion", "scope", "locale", ...(Object.hasOwn(v, "reservationBindings") ? ["reservationBindings"] : [])]) && (v.reservationBindings === undefined || validReservationBindings(v.reservationBindings)) && integer(v.expectedHeadVersion) && validScope(v.scope) && ["zh", "en"].includes(String(v.locale)) ? v as ScopedEditRequest : null;
   if (v.action === "read_operation") return exact(v, ["action", "operationId"]) && uuid(v.operationId) ? v as ScopedEditRequest : null;
   if (v.action === "abandon") {
-    if (!exact(v, ["action", "operationId", "mutation"]) || !uuid(v.operationId) || !record(v.mutation) || !["manual", "ask", "lock"].includes(String(v.mutation.action))) return null;
+    if (!exact(v, ["action", "operationId", "mutation"]) || !uuid(v.operationId) || !record(v.mutation) || !["manual", "ask", "lock", "select_candidate"].includes(String(v.mutation.action))) return null;
     const mutation = parseScopedEditRequest(v.mutation);
     return mutation && "operationId" in mutation && mutation.operationId === v.operationId ? v as ScopedEditRequest : null;
   }
   if (!uuid(v.operationId) || !validBasis(v.basis)) return null;
+  if (v.action === "select_candidate") return exact(v, ["action", "operationId", "basis", "askOperationId", "candidateId"]) && uuid(v.askOperationId) && uuid(v.candidateId) && v.operationId !== v.askOperationId ? v as ScopedEditRequest : null;
   if (v.action === "manual") return exact(v, ["action", "operationId", "basis", "edit"]) && validManualEdit(v.edit) ? v as ScopedEditRequest : null;
   if (v.action === "ask") return exact(v, ["action", "operationId", "basis", "text"]) && typeof v.text === "string" && v.text.trim().length > 0 && v.text.length <= 4000 && !v.text.includes("\0") ? v as ScopedEditRequest : null;
   if (v.action === "lock") return exact(v, ["action", "operationId", "basis", "itemId", "locked"]) && identifier(v.itemId) && typeof v.locked === "boolean" ? v as ScopedEditRequest : null;
@@ -49,3 +55,11 @@ export function parseScopedEditRequest(v: unknown): ScopedEditRequest | null {
 }
 
 export function validReservationBindings(v: unknown): v is readonly ReservationBinding[] { return Array.isArray(v) && v.length <= 100 && v.every(b => record(b) && exact(b, ["itemId", "referenceId", "referenceRevision"]) && identifier(b.itemId) && uuid(b.referenceId) && integer(b.referenceRevision, 1)) && new Set(v.map(b => b.referenceId)).size === v.length; }
+
+export function validCandidateEdit(v: unknown): v is CandidateEdit {
+  if (validManualEdit(v)) return true;
+  if (!record(v)) return false;
+  if (v.kind === "remove_item") return exact(v, ["kind", "itemId"]) && identifier(v.itemId);
+  if (v.kind === "replace_item") return exact(v, ["kind", "itemId", "sourceItemId"]) && identifier(v.itemId) && identifier(v.sourceItemId);
+  return v.kind === "add_item" && exact(v, ["kind", "sourceItemId", "toDayId"]) && identifier(v.sourceItemId) && identifier(v.toDayId);
+}

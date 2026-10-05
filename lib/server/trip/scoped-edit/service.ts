@@ -1,7 +1,7 @@
 import type { TripPatch, TripSnapshot } from "../patch/contract.ts";
 import { type ScopedEditRequest, record } from "./contract.ts";
-import { parseScopedBindingRequired, parseScopedContext, parseScopedReceipt, parseScopedOperation, sameValue, type ScopedReply, type ScopedProposalReceipt, type ScopedOperation } from "./wire.ts";
-import { previewScopedPatch, selectedItems } from "./candidate-guard.ts";
+import { parseScopedBindingRequired, parseScopedContext, parseScopedReceipt, parseScopedOperation, sameValue, type ScopedReply, type ScopedProposalReceipt, type ScopedOperation, type ScopedCandidatesReceipt } from "./wire.ts";
+import { candidateScopedEditsPatch, previewScopedPatch, selectedItems } from "./candidate-guard.ts";
 import { scopedEditDiff } from "./diff.ts";
 export type ScopedEditRPC = (name: string, params: Readonly<Record<string, unknown>>) => Promise<{ data: unknown; error: { message: string } | null }>;
 export class ScopedEditServiceError extends Error {}
@@ -46,7 +46,7 @@ export async function runScopedEdit(tripId: string, input: ScopedEditRequest, rp
   const raw = await call(rpc, "submit_scoped_trip_edit_v1", { p_trip_id: tripId, p_input: input });
   if (unavailable(raw)) return raw;
   const receipt = parseScopedReceipt(raw, tripId, input.operationId);
-  if (!receipt || receipt.baseVersion !== input.basis.baseVersion || (receipt.kind === "scoped_edit_lock/1" ? input.action !== "lock" || receipt.itemId !== input.itemId || receipt.locked !== input.locked : receipt.contextId !== input.basis.contextId || receipt.contextDigest !== input.basis.contextDigest)) fail("SCOPED_EDIT_RECEIPT_UNKNOWN");
+  if (!receipt || input.action === "select_candidate" && receipt.kind !== "scoped_edit_proposal/1" || input.action === "manual" && receipt.kind !== "scoped_edit_proposal/1" || input.action === "ask" && !["scoped_edit_pending/1", "scoped_edit_candidates/1"].includes(receipt.kind) || receipt.baseVersion !== input.basis.baseVersion || (receipt.kind === "scoped_edit_lock/1" ? input.action !== "lock" || receipt.itemId !== input.itemId || receipt.locked !== input.locked : receipt.contextId !== input.basis.contextId || receipt.contextDigest !== input.basis.contextDigest)) fail("SCOPED_EDIT_RECEIPT_UNKNOWN");
   const operationRaw = await call(rpc, "read_scoped_trip_edit_operation_v1", { p_trip_id: tripId, p_operation_id: input.operationId });
   const operation = parseScopedOperation(operationRaw, tripId, input.operationId);
   if (!operation || !sameValue(operation.mutation, input) || !operation.receipt || !sameValue({ ...operation.receipt, reused: true }, { ...receipt!, reused: true })) fail("SCOPED_EDIT_RECEIPT_UNKNOWN");
@@ -65,3 +65,18 @@ export function assertOriginalScopedProposal(receipt: ScopedProposalReceipt, ori
   } catch { fail("SCOPED_EDIT_RECEIPT_UNKNOWN"); }
 }
 export function appliedOperation(v: ScopedReply): v is ScopedOperation { return v.kind === "scoped_edit_operation/1" && v.state === "applied"; }
+
+export function operationCandidates(reply: ScopedReply): ScopedCandidatesReceipt | null {
+  if (reply.kind === "scoped_edit_candidates/1") return reply;
+  return reply.kind === "scoped_edit_operation/1" && reply.state === "pending" && reply.receipt?.kind === "scoped_edit_candidates/1" ? reply.receipt : null;
+}
+export function assertScopedCandidates(receipt: ScopedCandidatesReceipt, snapshot: TripSnapshot, now: number): void {
+  if (receipt.baseVersion !== snapshot.version || Date.parse(receipt.expiresAt) <= now) fail("SCOPED_EDIT_RECEIPT_UNKNOWN");
+  try {
+    for (const candidate of receipt.candidates) {
+      const constraints = { scope: receipt.returnScope, lockedItemIds: [], fixedItemIds: [] };
+      const patch = candidateScopedEditsPatch(snapshot, candidate.edits, constraints, { contextId: receipt.contextId, askOperationId: receipt.operationId, candidateId: candidate.candidateId }), next = previewScopedPatch(snapshot, patch, constraints);
+      if (!sameValue(scopedEditDiff(snapshot, next), candidate.diff)) fail("SCOPED_EDIT_RECEIPT_UNKNOWN");
+    }
+  } catch { fail("SCOPED_EDIT_RECEIPT_UNKNOWN"); }
+}

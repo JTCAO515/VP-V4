@@ -8,7 +8,7 @@ import { opsRuntimeConfig } from "../../knowledge/review/local-workspace.ts";
 import { hasSameOrigin, isUuid } from "../../identity/request-guards.ts";
 import { parseScopedEditRequest } from "./contract.ts";
 import { sameValue } from "./wire.ts";
-import { runScopedEdit, operationProposal, assertOriginalScopedProposal, ScopedEditServiceError, type ScopedEditRPC } from "./service.ts";
+import { runScopedEdit, operationCandidates, assertScopedCandidates, operationProposal, assertOriginalScopedProposal, ScopedEditServiceError, type ScopedEditRPC } from "./service.ts";
 
 /** Ordinary caller-bound actor/RLS transport. No API request dispatches a model or
  * confirms a Proposal; worker publication and the existing confirm own those effects. */
@@ -47,6 +47,8 @@ export async function scopedTripEditHTTP(request: NextRequest, tripId: string, n
     const snapshot = { version: before.data.trip.headVersion, title: before.data.trip.title, days: before.data.content.days };
     if ("operationId" in input) dispatchedOperation = input.operationId;
     const data = await runScopedEdit(tripId, input, rpc, snapshot, Date.now()); scope.check();
+    const candidates = operationCandidates(data);
+    if (candidates) assertScopedCandidates(candidates, snapshot, Date.now());
     const receipt = operationProposal(data);
     if (receipt) {
       const original = await adapter.getPendingProposal(tripId, receipt.proposalId); scope.check();

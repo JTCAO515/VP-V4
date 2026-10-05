@@ -15,8 +15,11 @@ preserve the user's confirmed report, not supplier verification.
 
 `manual` supports move, time change/removal, and ordering. `ask` records the user's
 current instruction for the existing durable worker; missing provider qualification
-returns pending and sends nothing. One validated candidate becomes one original
-TripProposal. The API never invokes a provider or confirms a Proposal.
+returns pending and sends nothing. The worker stores validated candidates. A user must explicitly choose one with a
+new `select_candidate` operation before the original TripProposal is created.
+Polling the Ask operation has no publication side effect. Candidate additions and
+replacements can reference existing same-Trip objects; model output cannot invent
+a new destination, title, identity or evidence. Unsupported requests remain explicit. The API never invokes a provider or confirms a Proposal.
 
 The candidate receipt names the exact original Proposal id/revision/digest/base and
 its expiry, return scope and full item diff. Callers explicitly open and review that
