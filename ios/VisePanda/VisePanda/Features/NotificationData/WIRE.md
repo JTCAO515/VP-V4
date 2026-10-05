@@ -154,3 +154,26 @@ write performed. Final Models catalog version/IDs/selection and unique TS produc
 interoperability fixture still wait actual sole TS registration. Original coverage
 fixtures/tests require separately precise catalog-only release if producer changes
 version; Native will not rewrite their unrelated assertions or oracles.
+
+## Actual native r1 result — 2026-10-06 04:46 CST
+
+/tmp/vpj58-notification-native-r1/tests.xcresult authoritative summary: total6,
+passed6, failed0, skipped0, expectedFailures0, runtimeWarnings empty. App unsigned
+build PASS, ad-hoc test build/signature verification PASS, actual owned iPhone17Pro
+Simulator iOS26.5 test execution PASS. Owned DC572517-B141-4C8A-A6CF-A16FA80F5300
+was strictly shut down/deleted by the repository harness; original reference and
+other task Simulator untouched. Source tested9db0b4fb; a78caf89 only removes final
+blank test-source line and adds WIRE prose. No additional runtime change or test
+rerun after PASS. Both current independent scope/boundary constants equal sole
+immutable TS7be21fd8; Native full column/DTO/proof state v2 aligned there.
+Raw logs under /tmp/vpj58-notification-native-r1/{build,test-build,tests}.log,
+commands/environment JSON keep actual version/scope. Unsigned synthetic NativeSession
+URLProtocol does not prove live GoTrue/API/SQL/provider/target/device-human.
+
+Shared implementation checkpoint: ready for Main/sole TS normal integration now;
+full scoped feature NOT claimed complete until final registered catalog version/
+IDs, deterministic visible order labels and producer fixture interop are joined.
+Main-approved Models changes are prepared but no final catalog was supplied yet.
+Copy.order additional exact release requested above; no unrelated rewrite.
+This current integration is fixed/validation stage, not two new ongoing product
+writers or test-count filler. Full #239/full ALL1 missing/ALL2 remain OPEN.
