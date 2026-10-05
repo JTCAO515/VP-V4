@@ -20,7 +20,7 @@ Whole #235 remains OPEN for J3/#238; these are controlled internal J1 facts.
   against Native80eef4af is empty. SQL migration diff against SQLb16e7fb1 empty.
 - PASS: owned final real GoTrue + native v2 login/current session + Cookie reviewer
   + PostgREST + actual Next HTTP J1 chain1/1, zero skip, cleanup PASS
-  `vp-native-ask-bf68d86d` (`j1-http-r2-final.log`). Prior r1 also1/1/cleanupPASS.
+  `vp-native-ask-bf68d86d` (`j1-http-r2-final.log.gz`). Prior r1 also1/1/cleanupPASS.
   Covers default disabled/empty reviewers/private-table+anonymous deny separately
   from synthetic enabled settings/reviewers/disclosure source, registered submit,
   different reviewer, self-review deny, author-visible result/history, exact bytes
