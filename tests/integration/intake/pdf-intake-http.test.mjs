@@ -10,6 +10,26 @@ import {identityLocalEnv} from '../identity/local-supabase.mjs';
 import {nativeHTTPEnvironmentPorts} from '../turn/native-http-ports.mjs';
 import {waitForNativeAPI} from '../identity/native-api-readiness.mjs';
 
+function sameItems(actual,expected){
+  assert.equal(actual.length,expected.length);
+  for(let index=0;index<expected.length;index++){
+    const a=actual[index],b=expected[index];
+    const {startsAt:as,endsAt:ae,...af}=a,{startsAt:bs,endsAt:be,...bf}=b;
+    assert.deepEqual(af,bf,'preserve every non-time field and exact ordering');
+    for(const field of ['startsAt','endsAt']){
+      assert.equal(Object.hasOwn(a,field),Object.hasOwn(b,field),'preserve optional fixed time presence');
+      if(Object.hasOwn(b,field)){
+        for(const value of [a[field],b[field]]){
+          assert.equal(typeof value,'string');
+          assert.match(value,/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d{1,3})?(?:Z|[+-]\d\d:\d\d)$/);
+          assert(Number.isFinite(Date.parse(value)),'valid original fixed time required');
+        }
+        assert.equal(Date.parse(a[field]),Date.parse(b[field]),'preserve exact instant without tolerance');
+      }
+    }
+  }
+}
+
 test('bounded PDF corrected metadata through real Auth/HTTP/durable RPC/original explicit confirm and same Trip recovery',{
   skip:process.env.VP_PDF_INTAKE_HTTP!=='true',timeout:process.env.VP_PDF_NATIVE_INTEGRATION==='1'?900000:300000,
 },async t=>{
@@ -102,7 +122,7 @@ test('bounded PDF corrected metadata through real Auth/HTTP/durable RPC/original
   await confirm(proposal.body.proposalId);
   const restored=await operation();assert.equal(restored.status,200);assert.equal(restored.body.state,'confirmed');assert.equal(restored.body.resultingVersion,2);
   const savedAfter=await call(base,owner.token,undefined,'GET');assert.equal(savedAfter.status,200);assert.equal(savedAfter.body.trip.headVersion,2);
-  assert.deepEqual(savedAfter.body.content.days[0].items.slice(0,2),originalItems);
+  sameItems(savedAfter.body.content.days[0].items.slice(0,2),originalItems);
   assert(savedAfter.body.versions.some(v=>v.id===restored.body.confirmationEventId&&v.proposalId===proposal.body.proposalId&&v.resultingVersion===2&&v.eventType==='proposal_applied'));
   const duplicate={...command,operationId:uuid(),expectedHeadVersion:2};
   const repeated=await call(pdf+'/preview',owner.token,duplicate);assert.equal(repeated.status,200);assert.equal(repeated.body.relation,'duplicate');assert.equal(repeated.body.patch,null);
@@ -110,7 +130,7 @@ test('bounded PDF corrected metadata through real Auth/HTTP/durable RPC/original
   const conflict=await call(pdf+'/preview',owner.token,changed);assert.equal(conflict.status,200);assert.equal(conflict.body.relation,'conflict');assert.equal(conflict.body.fields[1].state,'conflict');
   const alternate=await call(pdf+'/proposal',owner.token,{command:changed,reviewedPreviewDigest:conflict.body.previewDigest});assert.equal(alternate.status,201);
   await confirm(alternate.body.proposalId);
-  const updated=await call(base,owner.token,undefined,'GET');assert.deepEqual(updated.body.content.days[0].items.slice(0,3),savedAfter.body.content.days[0].items);assert.equal(updated.body.trip.headVersion,3);
+  const updated=await call(base,owner.token,undefined,'GET');sameItems(updated.body.content.days[0].items.slice(0,3),savedAfter.body.content.days[0].items);assert.equal(updated.body.trip.headVersion,3);
   assert.equal((await operation()).body.confirmationEventId,restored.body.confirmationEventId,'original applied receipt survives later Trip changes');
   const cancelCommand={...changed,operationId:uuid(),expectedHeadVersion:3,fields:[command.fields[0],{...command.fields[1],value:'Synthetic correction cancelled'}]};
   const cancelPreview=await call(pdf+'/preview',owner.token,cancelCommand);assert.equal(cancelPreview.status,200);
