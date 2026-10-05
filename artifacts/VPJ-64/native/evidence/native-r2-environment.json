@@ -1,0 +1,84 @@
+{
+  "sourceHead": "f167dde82cd2938be9a869a9a0830af34f88baec",
+  "dirtyNativeIntegration": true,
+  "ownedSimulator": "DF686AA5-0D54-4F80-B606-AFD58D3E0D43",
+  "runtime": "iOS26.5",
+  "actions": [
+    {
+      "command": [
+        "xcrun",
+        "simctl",
+        "create",
+        "VPJ64-Safety-1791213252",
+        "com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro",
+        "com.apple.CoreSimulator.SimRuntime.iOS-26-5"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.16
+    },
+    {
+      "command": [
+        "xcrun",
+        "simctl",
+        "boot",
+        "DF686AA5-0D54-4F80-B606-AFD58D3E0D43"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.38
+    },
+    {
+      "command": [
+        "xcrun",
+        "simctl",
+        "bootstatus",
+        "DF686AA5-0D54-4F80-B606-AFD58D3E0D43",
+        "-b"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 16.12
+    },
+    {
+      "command": [
+        "xcodebuild",
+        "test-without-building",
+        "-project",
+        "ios/VisePanda/VisePanda.xcodeproj",
+        "-scheme",
+        "VisePanda",
+        "-destination",
+        "platform=iOS Simulator,id=DF686AA5-0D54-4F80-B606-AFD58D3E0D43",
+        "-derivedDataPath",
+        "/tmp/vpj64-native-community-safety-dd",
+        "-parallel-testing-enabled",
+        "NO",
+        "-only-testing:VisePandaTests/NativeCommunitySafetyTests",
+        "-only-testing:VisePandaTests/NativeCommunitySubmissionTests/actualSessionHeadersAndDenialEraseOwnJournalBeforeLegacyPreservation",
+        "-only-testing:VisePandaTests/NativeCommunitySubmissionTests/actualSessionJournalCleanupFailureFencesIdentityAndCanBeRetried",
+        "CODE_SIGNING_ALLOWED=YES",
+        "CODE_SIGN_IDENTITY=-"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 6.74
+    },
+    {
+      "command": [
+        "xcrun",
+        "simctl",
+        "shutdown",
+        "DF686AA5-0D54-4F80-B606-AFD58D3E0D43"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 3.24
+    },
+    {
+      "command": [
+        "xcrun",
+        "simctl",
+        "delete",
+        "DF686AA5-0D54-4F80-B606-AFD58D3E0D43"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.11
+    }
+  ]
+}
