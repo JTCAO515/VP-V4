@@ -1,0 +1,32 @@
+VP_COMMUNITY_PUBLICATION_HTTP_TARGET {"project":"vp-native-ask-d6cedee8","base":64000}
+✖ owned real Auth + Native/Ops HTTP: controlled consent, independent rights/publication, exact readers/save, original canonical Save/Proposal, irreversible reference invalidation and scoped privacy (8891.741959ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 11879.201708
+
+✖ failing tests:
+
+test at tests/integration/community/publication/http.test.mjs:7:1
+✖ owned real Auth + Native/Ops HTTP: controlled consent, independent rights/publication, exact readers/save, original canonical Save/Proposal, irreversible reference invalidation and scoped privacy (8891.741959ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  503 !== 201
+  
+      at ownedTrip (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj48-community-publication-server-20261006/tests/integration/community/publication/http.test.mjs:69:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj48-community-publication-server-20261006/tests/integration/community/publication/http.test.mjs:75:19)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 503,
+    expected: 201,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+VP_COMMUNITY_PUBLICATION_HTTP_CLEANUP {"project":"vp-native-ask-d6cedee8","result":"PASS"}

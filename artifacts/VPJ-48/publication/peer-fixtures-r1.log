@@ -1,0 +1,42 @@
+✔ login returns only to the leased publication literal and rejects query or URL variants (0.662083ms)
+✖ actual owned Swift command fixtures and ordinary Auth producer samples match canonical wire (1.87525ms)
+✔ closed input never accepts user-defined recipients, copyright permissions or authority (0.165166ms)
+✔ exact recovery retains original bytes and forbids operation substitution and nesting (0.114958ms)
+✔ experience output cannot promote internal approved content or unknown rights into reading entitlement (0.257ms)
+✔ saved references require all exact current versions and deny reconstructed unavailable body (0.14425ms)
+✔ list and operation correlation rejects duplicates, stale cursors, foreign sessions and record swaps (0.158833ms)
+✔ complete scoped export includes authored reviews and qualifications without foreign body (0.176417ms)
+✔ HTTP enforces registered current actor and credential surface before SQL dispatch (9.060458ms)
+✔ Native cannot issue or replay qualified Ops actions (0.794584ms)
+✔ disabled publication retains owner cleanup and never exposes list/detail (0.750125ms)
+✔ ambiguous mutation dispatch never grants success or automatic fresh operation (0.521959ms)
+✔ current display expires at the HTTP boundary, including saved reference operations (0.352083ms)
+✔ recovery transport caps remain layered with UTF16/UTF8 original exact bytes (0.400375ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 13
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 83.846625
+
+✖ failing tests:
+
+test at tests/contract/community/publication/wire.test.mjs:21:1
+✖ actual owned Swift command fixtures and ordinary Auth producer samples match canonical wire (1.87525ms)
+  AssertionError [ERR_ASSERTION]: unavailable is only offline shape proof, not current display authority
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj48-community-publication-server-20261006/tests/contract/community/publication/wire.test.mjs:24:68)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

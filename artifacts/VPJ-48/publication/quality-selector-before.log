@@ -1,0 +1,174 @@
+deterministic-pr-gates	Run pnpm test	﻿2026-10-05T16:59:26.6978239Z ##[group]Run pnpm test
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:26.6978539Z ^[[36;1mpnpm test^[[0m
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:26.7040157Z shell: /usr/bin/bash -e {0}
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:26.7040428Z env:
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:26.7040686Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:26.7041002Z ##[endgroup]
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.0995163Z 
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.0995665Z > vp-v4@0.0.0 test /home/runner/work/VP-V4/VP-V4
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.0996685Z > node --test tests/static-output.test.mjs tests/design/web-06-foundation.test.mjs
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.0997047Z 
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1466792Z TAP version 13
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1846527Z # Subtest: WEB-06 runs its foundation contract through the standard test gate
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1854270Z ok 1 - WEB-06 runs its foundation contract through the standard test gate
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1855255Z   ---
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1856185Z   duration_ms: 1.035372
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1857375Z   type: 'test'
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1858101Z   ...
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1861923Z # Subtest: WEB-06 derives the shared runtime palette from the approved brand source
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1865086Z ok 2 - WEB-06 derives the shared runtime palette from the approved brand source
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1866295Z   ---
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1866767Z   duration_ms: 0.281028
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1867340Z   type: 'test'
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1867845Z   ...
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1868784Z # Subtest: WEB-06 generates the CSS token projection from the approved manifest
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1871232Z ok 3 - WEB-06 generates the CSS token projection from the approved manifest
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1872286Z   ---
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1872923Z   duration_ms: 1.195883
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1873574Z   type: 'test'
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1874120Z   ...
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1875059Z # Subtest: WEB-06 centralizes all five locale document attributes
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1876737Z ok 4 - WEB-06 centralizes all five locale document attributes
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1877668Z   ---
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1878296Z   duration_ms: 1.321318
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1878959Z   type: 'test'
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1879584Z   ...
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1896671Z # Subtest: WEB-06 aligns the Login initial locale with the server document language
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1898225Z ok 5 - WEB-06 aligns the Login initial locale with the server document language
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1899167Z   ---
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1899710Z   duration_ms: 0.208492
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1900369Z   type: 'test'
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1900984Z   ...
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1907031Z # Subtest: WEB-06 supplies shared accessible UI primitives
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1908794Z ok 6 - WEB-06 supplies shared accessible UI primitives
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1909671Z   ---
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1910278Z   duration_ms: 0.238898
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1910923Z   type: 'test'
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1911509Z   ...
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1912567Z # Subtest: WEB-06 makes tokens, focus targets, and reduced motion globally available
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1916046Z ok 7 - WEB-06 makes tokens, focus targets, and reduced motion globally available
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1917034Z   ---
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1917536Z   duration_ms: 0.368451
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1918072Z   type: 'test'
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1918557Z   ...
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1968848Z # Subtest: renders Journey at the root while preserving the relocated preview
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1987138Z ok 8 - renders Journey at the root while preserving the relocated preview
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1988175Z   ---
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1988788Z   duration_ms: 2.044646
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1989435Z   type: 'test'
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1990012Z   ...
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1991011Z # Subtest: removes reference-brand copy and unsupported positive claims
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1992387Z ok 9 - removes reference-brand copy and unsupported positive claims
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1993329Z   ---
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1993940Z   duration_ms: 0.408306
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1994627Z   type: 'test'
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1995229Z   ...
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1996398Z # Subtest: keeps project documentation focused on VisePanda
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1997646Z ok 10 - keeps project documentation focused on VisePanda
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1999214Z   ---
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.1999817Z   duration_ms: 0.526437
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2000484Z   type: 'test'
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2001079Z   ...
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2002072Z # Subtest: builds the locale-aware private workspace at the canonical route
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2003445Z ok 11 - builds the locale-aware private workspace at the canonical route
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2004407Z   ---
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2005014Z   duration_ms: 0.385894
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2006243Z   type: 'test'
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2006990Z   ...
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2008086Z # Subtest: keeps the canonical workspace five-locale, owner-API-driven, and map-off
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2009795Z ok 12 - keeps the canonical workspace five-locale, owner-API-driven, and map-off
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2010818Z   ---
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2011420Z   duration_ms: 0.426289
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2012435Z   type: 'test'
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2013036Z   ...
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2013728Z # Subtest: renders one workspace wordmark
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2014598Z ok 13 - renders one workspace wordmark
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2015362Z   ---
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2016223Z   duration_ms: 0.236093
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2016878Z   type: 'test'
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2017502Z   ...
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2018456Z # Subtest: keeps the redesigned homepage localized and frontend-only
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2019743Z ok 14 - keeps the redesigned homepage localized and frontend-only
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2020649Z   ---
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2021247Z   duration_ms: 0.482656
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2021915Z   type: 'test'
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2022512Z   ...
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2023725Z # Subtest: moves the requested FAQ and legacy wordmarks to homepage without blocked media
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2025220Z ok 15 - moves the requested FAQ and legacy wordmarks to homepage without blocked media
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2026547Z   ---
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2027115Z   duration_ms: 0.412945
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2027692Z   type: 'test'
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2028233Z   ...
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2029119Z # Subtest: includes English, Spanish, Russian, and Arabic with RTL switching
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2030467Z ok 16 - includes English, Spanish, Russian, and Arabic with RTL switching
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2031409Z   ---
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2032024Z   duration_ms: 0.544742
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2032688Z   type: 'test'
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2033279Z   ...
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2034197Z # Subtest: keeps locale metadata without adding a metric preference
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2035431Z ok 17 - keeps locale metadata without adding a metric preference
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2036702Z   ---
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2037364Z   duration_ms: 0.694763
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2038132Z   type: 'test'
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2038898Z   ...
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2039892Z # Subtest: shows complete feature copy as the Golden Route
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2041219Z ok 18 - shows complete feature copy as the Golden Route
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2042193Z   ---
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2042999Z   duration_ms: 0.288432
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2043828Z   type: 'test'
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2044569Z   ...
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2045993Z # Subtest: removes the guessing marquee and evidence-delivery sections
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2047621Z ok 19 - removes the guessing marquee and evidence-delivery sections
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2048532Z   ---
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2049059Z   duration_ms: 0.500699
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2049744Z   type: 'test'
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2050697Z   ...
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2051618Z # Subtest: removes the full four-promises chapter
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2052660Z ok 20 - removes the full four-promises chapter
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2053137Z   ---
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2053463Z   duration_ms: 0.158447
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2053817Z   type: 'test'
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2054132Z   ...
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2054598Z # Subtest: compiles the redesign tokens and responsive styles
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2055238Z not ok 21 - compiles the redesign tokens and responsive styles
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2055972Z   ---
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2056602Z   duration_ms: 1.249975
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2057001Z   type: 'test'
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2057815Z   location: '/home/runner/work/VP-V4/VP-V4/tests/static-output.test.mjs:172:1'
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2058282Z   failureType: 'testCodeFailure'
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2058541Z   error: |-
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2058899Z     The input did not match the regular expression /Homepage_hero/. Input:
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2059263Z     
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2064167Z     '.workspace_workspace__bSDgL{max-width:58rem;margin:auto;padding:2rem 1rem;color:var(--color-text-primary,#202522)}.workspace_actions__UHdic,.workspace_header__62yBf{display:flex;gap:1rem;align-items:center;flex-wrap:wrap}.workspace_header__62yBf{justify-content:space-between}.workspace_panel__Pqtty{border:1px solid var(--color-border,#b9c1bc);border-radius:.6rem;padding:1rem;margin-block:1rem}.workspace_workspace__bSDgL label{display:block}.workspace_workspace__bSDgL textarea{display:block;width:100%;padding:.75rem;margin-block:.5rem}.workspace_workspace__bSDgL button,.workspace_workspace__bSDgL select{min-height:44px;padding:.5rem .8rem}.workspace_body__TmxQa{white-space:pre-wrap;overflow-wrap:anywhere}.workspace_workspace__bSDgL button:disabled{opacity:.5}.workspace_workspace__bSDgL a:focus-visible,.workspace_workspace__bSDgL button:focus-visible{outline:3px solid #31664d;outline-offset:3px}.workspace_workspace__bSDgL dt{font-weight:600}.workspace_workspace__bSDgL dd{margin-inline-start:0;margin-block-end:.75rem}.workspace_danger__7Hc0f{border-color:#9d4c3c}@media(max-width:420px){.workspace_workspace__bSDgL{padding:1rem}.workspace_actions__UHdic{gap:.5rem}.workspace_actions__UHdic button{flex-grow:1}}'
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2069373Z     
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2069584Z   code: 'ERR_ASSERTION'
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2069836Z   name: 'AssertionError'
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2070066Z   expected:
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2074980Z   actual: '.workspace_workspace__bSDgL{max-width:58rem;margin:auto;padding:2rem 1rem;color:var(--color-text-primary,#202522)}.workspace_actions__UHdic,.workspace_header__62yBf{display:flex;gap:1rem;align-items:center;flex-wrap:wrap}.workspace_header__62yBf{justify-content:space-between}.workspace_panel__Pqtty{border:1px solid var(--color-border,#b9c1bc);border-radius:.6rem;padding:1rem;margin-block:1rem}.workspace_workspace__bSDgL label{display:block}.workspace_workspace__bSDgL textarea{display:block;width:100%;padding:.75rem;margin-block:.5rem}.workspace_workspace__bSDgL button,.workspace_workspace__bSDgL select{min-height:44px;padding:.5rem .8rem}.workspace_body__TmxQa{white-space:pre-wrap;overflow-wrap:anywhere}.workspace_workspace__bSDgL button:disabled{opacity:.5}.workspace_workspace__bSDgL a:focus-visible,.workspace_workspace__bSDgL button:focus-visible{outline:3px solid #31664d;outline-offset:3px}.workspace_workspace__bSDgL dt{font-weight:600}.workspace_workspace__bSDgL dd{margin-inline-start:0;margin-block-end:.75rem}.workspace_danger__7Hc0f{border-color:#9d4c3c}@media(max-width:420px){.workspace_workspace__bSDgL{padding:1rem}.workspace_actions__UHdic{gap:.5rem}.workspace_actions__UHdic button{flex-grow:1}}'
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2079820Z   operator: 'match'
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2080035Z   stack: |-
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2080533Z     TestContext.<anonymous> (file:///home/runner/work/VP-V4/VP-V4/tests/static-output.test.mjs:177:10)
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2081106Z     Test.runInAsyncScope (node:async_hooks:214:14)
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2081494Z     Test.run (node:internal/test_runner/test:1047:25)
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2081969Z     Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2082613Z     Test.postRun (node:internal/test_runner/test:1173:19)
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2083196Z     Test.run (node:internal/test_runner/test:1101:12)
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2083776Z     async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2084275Z   ...
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2084596Z # Subtest: removes the legacy Vite and Sites runtime
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2085128Z ok 22 - removes the legacy Vite and Sites runtime
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2085492Z   ---
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2086074Z   duration_ms: 0.195136
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2086618Z   type: 'test'
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2086854Z   ...
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2087116Z 1..22
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2087334Z # tests 22
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2087534Z # suites 0
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2087719Z # pass 21
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2087902Z # fail 1
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2088086Z # cancelled 0
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2088290Z # skipped 0
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2088473Z # todo 0
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2088685Z # duration_ms 78.862749
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2150640Z  ELIFECYCLE  Test failed. See above for more details.
+deterministic-pr-gates	Run pnpm test	2026-10-05T16:59:27.2392548Z ##[error]Process completed with exit code 1.

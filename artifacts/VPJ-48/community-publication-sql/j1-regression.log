@@ -1,0 +1,19 @@
+✔ full migration replay rollback and unchanged signature ACL; module defaults and direct deny (8713.948125ms)
+✔ registered current-session roots precede reads mutation replay abandon or cleanup (530.136333ms)
+✔ independent qualification trusted unknown disclosure owner isolation review withdraw replay (823.259334ms)
+✔ legacy notes stay private and original receipts are current safe metadata (765.627709ms)
+✔ original exact bytes absent/abandon/commit closure and concurrent same-op race (472.502125ms)
+✔ reject pending withdrawal stale versions strict syntax UTF16 and place reject (1323.832875ms)
+✔ owner delete atomic rollback module-off revoked cleanup foreign attribution no revival (1999.166667ms)
+✔ keyset sentinel prevents hidden pagination and export overflow fails closed (541.028375ms)
+✔ actual saved canonical association freezes Trip head and exact original provider mapping without writes (1853.953708ms)
+✔ independent opposing reviews and reviewer/owner-cleanup contention preserve one transition without deadlock (628.496708ms)
+✔ direct RPC JSON null review decision leaves pending row and no receipt, then valid same-op recovery succeeds (575.347083ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 18413.186875

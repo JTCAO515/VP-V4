@@ -1,0 +1,27 @@
+✔ full migration rollback preserves original RPC owner ACL; defaults empty with no private grants (12022.041875ms)
+✔ authority before all reads mutation replay abandonment erasure has zero writes (1358.421ms)
+✔ legitimate independent reader vs moderator; guesses expiry revocation and block metadata deny uniformly (2006.444708ms)
+✔ report sensitive body isolation author minimal disposition and independent conflict operators (1663.907375ms)
+✔ removal invalidates old J1 live read mine queue and committed exact-byte acknowledgements (3143.38725ms)
+✔ author recourse independent restore rechecks current retained source; withdrawal cannot resurrect (3109.740875ms)
+✔ J1 rejected version2 restore requires both qualifications and distinct original reviewer; no old unique audit clash (1452.207042ms)
+✔ authored decisions/grants export complete with no foreign details; erasure retains foreign source state and independence fence (1760.162708ms)
+✔ exact original bytes immutable session epoch operation fences abandoned replay and module-off erasure (1361.091333ms)
+✔ physical source/account deletion invalidates content while retaining independent sensitive records and removing own authored notes (927.593916ms)
+✔ CAS competing independent dispositions, original withdrawal and erasure races produce no deadlock or resurrection (1216.807208ms)
+✔ bounded keyset51 sentinel and each100+sentinel export fails closed without false completeness (776.026125ms)
+✔ erasure rollback is atomic and source/operator deletion never unlocks an original-reviewer appeal (1169.826458ms)
+✔ strict closed JSON raw UTF8 and UTF16 limits cannot write receipts; expired own grant export remains complete (784.043875ms)
+✔ each report appeal disposition receipt audit array independently enforces complete bounded export (701.344584ms)
+✔ legacy original RPC source and current controlled-reader qualification cannot resurrect blocked or revoked content (1120.209ms)
+✔ unavailable selected block target and exact receipt return only own null metadata, never cached source UUID (874.321041ms)
+✔ SQL NULL validation fails closed before direct RPC writes for nullable discriminators or enum decisions (868.519666ms)
+✔ unauthorized guessed source and stale versions yield uniform not-found before CAS without metadata oracle (1041.021583ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 37543.386333

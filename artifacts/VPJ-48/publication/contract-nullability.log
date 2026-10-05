@@ -1,0 +1,21 @@
+✔ login returns only to the leased publication literal and rejects query or URL variants (0.648291ms)
+✔ closed input never accepts user-defined recipients, copyright permissions or authority (0.3295ms)
+✔ exact recovery retains original bytes and forbids operation substitution and nesting (0.123417ms)
+✔ experience output cannot promote internal approved content or unknown rights into reading entitlement (1.159208ms)
+✔ saved references require all exact current versions and deny reconstructed unavailable body (0.163375ms)
+✔ list and operation correlation rejects duplicates, stale cursors, foreign sessions and record swaps (0.265625ms)
+✔ complete scoped export includes authored reviews and qualifications without foreign body (0.172708ms)
+✔ HTTP enforces registered current actor and credential surface before SQL dispatch (10.057333ms)
+✔ Native cannot issue or replay qualified Ops actions (0.635042ms)
+✔ disabled publication retains owner cleanup and never exposes list/detail (0.394958ms)
+✔ ambiguous mutation dispatch never grants success or automatic fresh operation (0.85ms)
+✔ current display expires at the HTTP boundary, including saved reference operations (0.365333ms)
+✔ recovery transport caps remain layered with UTF16/UTF8 original exact bytes (0.71775ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 94.819791

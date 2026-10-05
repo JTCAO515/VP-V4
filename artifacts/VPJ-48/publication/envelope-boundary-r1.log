@@ -1,0 +1,22 @@
+✔ login returns only to the leased publication literal and rejects query or URL variants (0.553125ms)
+✔ actual owned Swift command fixtures and ordinary Auth producer samples match canonical wire (1.81725ms)
+✔ closed input never accepts user-defined recipients, copyright permissions or authority (0.144458ms)
+✔ exact recovery retains original bytes and forbids operation substitution and nesting (0.097ms)
+✔ experience output cannot promote internal approved content or unknown rights into reading entitlement (0.18425ms)
+✔ saved references require all exact current versions and deny reconstructed unavailable body (0.114834ms)
+✔ list and operation correlation rejects duplicates, stale cursors, foreign sessions and record swaps (0.154833ms)
+✔ complete scoped export includes authored reviews and qualifications without foreign body (0.146791ms)
+✔ HTTP enforces registered current actor and credential surface before SQL dispatch (9.090292ms)
+✔ Native cannot issue or replay qualified Ops actions (0.5965ms)
+✔ disabled publication retains owner cleanup and never exposes list/detail (0.668209ms)
+✔ ambiguous mutation dispatch never grants success or automatic fresh operation (0.470792ms)
+✔ current display expires at the HTTP boundary, including saved reference operations (0.324167ms)
+✔ recovery transport caps remain layered with UTF16/UTF8 original exact bytes (0.36625ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 82.791459

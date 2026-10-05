@@ -2,6 +2,8 @@ import { spawn } from 'node:child_process';
 export function command(binary, args, input = '') {
   return new Promise((resolve, reject) => {
     const child = spawn(binary, args, { stdio: ['pipe', 'pipe', 'pipe'] });
+    child.stdout.setEncoding('utf8');
+    child.stderr.setEncoding('utf8');
     let stdout = '', stderr = '';
     child.stdout.on('data', b => { stdout += b; }); child.stderr.on('data', b => { stderr += b; });
     child.on('error', reject); child.on('close', code => resolve({ code, stdout, stderr }));

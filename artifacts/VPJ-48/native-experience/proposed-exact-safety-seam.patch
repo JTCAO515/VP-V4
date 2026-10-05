@@ -1,0 +1,38 @@
+--- a/ios/VisePanda/VisePanda/Features/CommunitySafety/NativeCommunitySafetyView.swift
++++ b/ios/VisePanda/VisePanda/Features/CommunitySafety/NativeCommunitySafetyView.swift
+@@ -9,8 +9,10 @@
+     @State private var modal: Modal?
+     @State private var action: Task<Void, Never>?
+     private let authorSubmissionID: String?
+-    init(authorSubmissionID: String? = nil) {
++    private let initialObjectID: String?
++    init(authorSubmissionID: String? = nil, initialObjectID: String? = nil) {
+         self.authorSubmissionID = authorSubmissionID
++        self.initialObjectID = initialObjectID
+         _selectedCollection = State(initialValue: authorSubmissionID == nil ? "objects" : "dispositions")
+     }
+     private var actor: NativeCommunitySafetyActor? { try? session.communitySafetyActor() }
+@@ -227,7 +229,9 @@
+         hide(); store.bind(actor)
+         guard let actor else { return }
+         store.restore(actor) { try session.communitySafetyRecovery(actor: actor) }
+-        if let authorSubmissionID {
++        if let initialObjectID {
++            await store.read(objectID: initialObjectID, current: { self.actor }, request: { try await session.communitySafetyRequest(body: $0, actor: actor) })
++        } else if let authorSubmissionID {
+             await store.read(collection: "dispositions", recordID: authorSubmissionID, current: { self.actor }, request: { try await session.communitySafetyRequest(body: $0, actor: actor) })
+         } else { await load(actor) }
+     }
+--- a/ios/VisePanda/VisePanda/Features/CommunityExperience/NativeExperienceView.swift
++++ b/ios/VisePanda/VisePanda/Features/CommunityExperience/NativeExperienceView.swift
+@@ -180,7 +180,9 @@
+                 Button(t("重新核体验后打开原地点动作", "Requalify experience and open original place actions")) { openPlace(experience) }
+                     .disabled(!eligible).accessibilityIdentifier("experience.place.open")
+             } else { Text(t("没有可核实的 canonical 地点关联；不能猜测地点或加入行程。", "No verifiable canonical place association. A place cannot be guessed or added to a Trip.")) }
+-            NavigationLink(t("安全入口（重新读取合法对象）", "Safety (reread a qualified object)")) { NativeCommunitySafetyView() }
++            NavigationLink(t("举报／屏蔽此体验（重新核资格）", "Report / block this experience (requalify)")) {
++                NativeCommunitySafetyView(initialObjectID: experience.submissionID).id(actor?.scope)
++            }
+         }
+     }
+     @ViewBuilder private func referenceContent(_ reference: NativeExperienceSaved) -> some View {

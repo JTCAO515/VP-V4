@@ -9,11 +9,14 @@ struct NativeCommunitySafetyView: View {
     @State private var modal: Modal?
     @State private var action: Task<Void, Never>?
     private let authorSubmissionID: String?
-    init(authorSubmissionID: String? = nil) {
+    private let initialObjectID: String?
+    init(authorSubmissionID: String? = nil, initialObjectID: String? = nil) {
         self.authorSubmissionID = authorSubmissionID
+        self.initialObjectID = initialObjectID
         _selectedCollection = State(initialValue: authorSubmissionID == nil ? "objects" : "dispositions")
     }
-    private var actor: NativeCommunitySafetyActor? { try? session.communitySafetyActor() }
+    private var entryConflict: Bool { authorSubmissionID != nil && initialObjectID != nil }
+    private var actor: NativeCommunitySafetyActor? { entryConflict ? nil : try? session.communitySafetyActor() }
     private var session: NativeSession { settings.nativeSession }
     private var chinese: Bool { settings.selectedLocale == .zh }
     private func t(_ zh: String, _ en: String) -> String { chinese ? zh : en }
@@ -44,7 +47,7 @@ struct NativeCommunitySafetyView: View {
                     Text(t("可操作对象由服务端确认。内容尚未公开，也不会自动成为旅行事实。", "The server confirms which objects you can act on. Content is internal and does not become a travel fact automatically.")).font(.caption)
                 }
                 if actor == nil {
-                    NativeCommunitySafetyUnavailableView(chinese: chinese, reason: t("需要有效登录会话。", "A current signed-in session is required."))
+                    NativeCommunitySafetyUnavailableView(chinese: chinese, reason: entryConflict ? t("安全入口标识冲突，请从原入口重新打开。", "Conflicting safety entry identifiers. Reopen the original entry.") : t("需要有效登录会话。", "A current signed-in session is required."))
                 } else {
                     if let notice = store.notice { Section { Text(message(notice)).accessibilityIdentifier("community-safety-notice") } }
                     if store.pending != nil { recoverySection }
@@ -227,7 +230,9 @@ struct NativeCommunitySafetyView: View {
         hide(); store.bind(actor)
         guard let actor else { return }
         store.restore(actor) { try session.communitySafetyRecovery(actor: actor) }
-        if let authorSubmissionID {
+        if let initialObjectID {
+            await store.read(objectID: initialObjectID, current: { self.actor }, request: { try await session.communitySafetyRequest(body: $0, actor: actor) })
+        } else if let authorSubmissionID {
             await store.read(collection: "dispositions", recordID: authorSubmissionID, current: { self.actor }, request: { try await session.communitySafetyRequest(body: $0, actor: actor) })
         } else { await load(actor) }
     }

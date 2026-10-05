@@ -1,0 +1,34 @@
+
+> vp-v4@0.0.0 test /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj48-community-publication-server-20261006
+> node --test tests/static-output.test.mjs tests/design/web-06-foundation.test.mjs
+
+✔ WEB-06 runs its foundation contract through the standard test gate (0.350125ms)
+✔ WEB-06 derives the shared runtime palette from the approved brand source (0.34725ms)
+✔ WEB-06 generates the CSS token projection from the approved manifest (0.190834ms)
+✔ WEB-06 centralizes all five locale document attributes (0.369958ms)
+✔ WEB-06 aligns the Login initial locale with the server document language (0.09325ms)
+✔ WEB-06 supplies shared accessible UI primitives (0.126333ms)
+✔ WEB-06 makes tokens, focus targets, and reduced motion globally available (0.09775ms)
+✔ renders Journey at the root while preserving the relocated preview (0.370667ms)
+✔ removes reference-brand copy and unsupported positive claims (0.076625ms)
+✔ keeps project documentation focused on VisePanda (0.212625ms)
+✔ builds the locale-aware private workspace at the canonical route (0.063167ms)
+✔ keeps the canonical workspace five-locale, owner-API-driven, and map-off (0.113334ms)
+✔ renders one workspace wordmark (0.071625ms)
+✔ keeps the redesigned homepage localized and frontend-only (0.10575ms)
+✔ moves the requested FAQ and legacy wordmarks to homepage without blocked media (0.152542ms)
+✔ includes English, Spanish, Russian, and Arabic with RTL switching (0.054958ms)
+✔ keeps locale metadata without adding a metric preference (0.101875ms)
+✔ shows complete feature copy as the Golden Route (0.049375ms)
+✔ removes the guessing marquee and evidence-delivery sections (0.17225ms)
+✔ removes the full four-promises chapter (0.042417ms)
+✔ compiles the redesign tokens and responsive styles (0.030583ms)
+✔ removes the legacy Vite and Sites runtime (0.051791ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 39.900542

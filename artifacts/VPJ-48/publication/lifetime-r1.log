@@ -1,0 +1,17 @@
+✔ Ops cannot blind approve a publication record or publish without current lawful source (3.598708ms)
+✔ lawful source binding rejects replacement revision, foreign session and expired content (0.6155ms)
+✔ unknown mutation retry denial retains journal until exact operation is resolved (0.363875ms)
+✔ storage failure prevents mutation dispatch and lifecycle fences a late source reply (1.700541ms)
+✔ account switch discards owned pending bytes and pre-source identity failure hides prior record (0.165ms)
+✔ saved re-open clears content before authoritative current read and source denial (2.180333ms)
+✔ old replies, mismatched reference, expired authority and replacement revisions never restore content (0.300125ms)
+✔ TTL and auth replacement clear current source display (0.302667ms)
+✔ wall-clock rollback cannot extend a source lease beyond request-start monotonic TTL (0.169375ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 83.098708

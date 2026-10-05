@@ -415,6 +415,9 @@ private struct NativePlaceSearchView: View {
             VStack(alignment: .leading, spacing: VPSpacing.section) {
                 BrandHeader()
                 Text(text("Find a place", "查找地点")).font(.largeTitle.bold())
+                NavigationLink(text("Controlled travel experiences", "受控旅行体验")) {
+                    NativeExperienceView(access: session.communityExperienceAccess, isActive: isActive)
+                }.disabled(session.dataScope == nil).accessibilityIdentifier("explore.community-experience.open")
                 Text(text("Search results are provider observations. Select a specific result before using it; an unmapped result is not merged by name.", "搜索结果是供应商观测。请先选择具体结果；未映射结果不会仅按名称合并。"))
                     .foregroundStyle(Color.vpSecondaryText)
                 Picker(text("City", "城市"), selection: $city) {
