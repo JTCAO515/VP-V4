@@ -11,6 +11,8 @@ import { nativeHTTPEnvironmentPorts } from '../../turn/native-http-ports.mjs';
 import { waitForNativeAPI } from '../../identity/native-api-readiness.mjs';
 import { materialDigest } from '../../../../lib/server/privacy/material-references/contract.ts';
 import { decodeMaterialPreview, decodeMaterialBundle, decodeMaterialReceipt } from '../../../../lib/server/privacy/material-references/protocol.ts';
+import { CATALOG_VERSION, moduleById } from '../../../../lib/server/privacy/coverage/catalog.ts';
+import { matchesCoverageResult } from '../../../../lib/server/privacy/coverage/consumer.ts';
 
 test('real signed owner Auth -> original reservation/PDF sources -> selected exit RPC -> independent HTTP consumption; fixture GRANT distinct from target', {
   skip: process.env.VP_MATERIAL_REFERENCE_HTTP !== 'true', timeout: 300000,
@@ -34,7 +36,7 @@ test('real signed owner Auth -> original reservation/PDF sources -> selected exi
   next = spawn(process.execPath, ['node_modules/next/dist/bin/next','dev','--webpack','--hostname','127.0.0.1','--port',String(ports.apiPort)], {
     env: { ...process.env, NEXT_PUBLIC_SUPABASE_URL: local.API_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: key,
       VISEPANDA_NATIVE_LOCAL_SESSION: 'true', VISEPANDA_NATIVE_LOCAL_TRIP: 'true', VISEPANDA_NATIVE_LOCAL_SERVICE_KEY: local.SERVICE_ROLE_KEY,
-      VISEPANDA_TRIP_PROTOCOL_V2: 'true', DATA_MATERIAL_REFERENCES_LOCAL: '1' }, stdio: ['ignore','pipe','pipe'],
+      VISEPANDA_TRIP_PROTOCOL_V2: 'true', DATA_MATERIAL_REFERENCES_LOCAL: '1', DATA_COVERAGE_LOCAL: '1' }, stdio: ['ignore','pipe','pipe'],
   });
   next.stdout.pipe(log); next.stderr.pipe(log); next.once('exit', () => log.end()); await waitForNativeAPI(ports.api, next);
   const path = '/api/privacy/native/v1/material-references';
@@ -107,9 +109,19 @@ test('real signed owner Auth -> original reservation/PDF sources -> selected exi
     exitRequests.push(command.requestId); return result.body.data;
   }
   const listed = await call(path,owner.token,list(orderScope)); assert.equal(listed.status,200); assert.equal(listed.body.data.items.length,6);
+  const discovered = await call(path,owner.token,{ action: 'trip_list',scope: orderScope,cursor: null,limit: 20 });
+  assert.equal(discovered.status,200,JSON.stringify(discovered.body)); assert.equal(discovered.body.data.items[0].tripId,tripId);
   assert.notEqual((await call(path,other.token,list(orderScope))).status,200,'selected Trip remains owner only');
   const orders = await exported(orderScope,references.map(r => r.referenceId)); assert.equal(orders.proof.pages,2); assert.equal(orders.items.length,6);
   assert.equal(orders.items[0].current.evidenceTier,'user_reported'); assert.equal(orders.items[0].current.sourceQualification,'untrusted');
+  const coveragePreview = await preview(orderScope,references.map(r => r.referenceId));
+  const coverageCommand = { ...coveragePreview.command,action: 'export',previewDigest: coveragePreview.preview.previewDigest,confirmed: true };
+  const module = moduleById('order_references'), selected = { schemaVersion: 'data-coverage/1',catalogVersion: CATALOG_VERSION,
+    actorId: owner.id,sessionId: owner.actor.sessionId,mobileEpoch: owner.actor.mobileEpoch,moduleId: module.id,moduleVersion: module.version,
+    operationId: coverageCommand.requestId,action: 'export',phase: 'execute',confirmed: true,tripId,commandBytes: '\n'+JSON.stringify(coverageCommand) };
+  const covered = await call('/api/privacy/native/v1/coverage',owner.token,selected);
+  assert.equal(covered.status,200,JSON.stringify(covered.body)); assert.ok(matchesCoverageResult(covered.body,JSON.stringify(selected)));
+  assert.equal(covered.body.state,'scoped_complete'); assert.equal(covered.body.allUserDataCompleted,false);
   const pdf = await exported(pdfScope,pdfOperations.map(p => p.command.operationId));
   assert.equal(pdf.items.find(row => row.operationId === pdfOperations[0].command.operationId).operation.state,'confirmed');
   assert.equal(pdf.items.find(row => row.operationId === pdfOperations[1].command.operationId).operation.state,'pending');
@@ -136,6 +148,12 @@ test('real signed owner Auth -> original reservation/PDF sources -> selected exi
   await erased(progressScope,exitRequests.slice(0,4));
   const retained = await exported(progressScope,exitRequests.slice(0,4)); assert.ok(retained.items.every(row => row.progressErased));
   assert.ok(retained.items.some(row => row.referenceOperationIds.length === 6),'progress erasure never removes the replay fences');
+  sql('delete from public.trip_events where trip_id='+literal(tripId)+';delete from public.trip_audit_events where trip_id='+literal(tripId)+';delete from public.trips where id='+literal(tripId)+';');
+  const historical = await call(path,owner.token,{ action: 'trip_list',scope: progressScope,cursor: null,limit: 20 });
+  assert.equal(historical.status,200,JSON.stringify(historical.body)); assert.equal(historical.body.data.items[0].tripId,tripId);
+  assert.equal(historical.body.data.items[0].state,'deleted'); assert.equal(historical.body.data.items[0].label,null);
+  assert.equal((await exported(progressScope,exitRequests.slice(0,4))).items.length,4,'retained minimum metadata stays owner exportable after Trip deletion');
+  await erased(progressScope,exitRequests.slice(0,4));
   assert.equal((await owner.client.rpc('native_session_v2',{ p_action: 'logout' })).error,null);
   assert.equal((await call(path,owner.token,list(pdfScope))).status,401);
 });
