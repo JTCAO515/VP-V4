@@ -2,28 +2,27 @@ import Foundation
 
 /// Interests are chosen on this screen. No inferred profile or permission projection is added.
 enum NativePlaceGuideInterest: String, CaseIterable, Codable, Sendable {
-    case history, architecture, culture, practical
+    case general, address, openingHours = "opening_hours"
     var en: String {
-        switch self { case .history: "History"; case .architecture: "Architecture"; case .culture: "Culture"; case .practical: "Visiting basics" }
+        switch self { case .general: "Visiting basics"; case .address: "Address"; case .openingHours: "Published opening window" }
     }
     var zh: String {
-        switch self { case .history: "历史"; case .architecture: "建筑"; case .culture: "文化"; case .practical: "游览须知" }
+        switch self { case .general: "游览须知"; case .address: "地址"; case .openingHours: "已发布开放时段" }
     }
 }
 
 struct NativePlaceGuideSelection: Equatable, Sendable {
     let scope: NativeDataScope
     let canonicalPoiID: String
+    let placeReferenceID: String
     let tripID: String
     let tripVersion: Int
     let locale: String
-    let interests: [NativePlaceGuideInterest]
+    let interest: NativePlaceGuideInterest
 
     var valid: Bool {
-        UUID(uuidString: canonicalPoiID) != nil && UUID(uuidString: tripID) != nil
-        && tripVersion >= 0 && ["en", "zh"].contains(locale)
-        && interests.count <= NativePlaceGuideInterest.allCases.count
-        && Set(interests).count == interests.count
+        UUID(uuidString: canonicalPoiID) != nil && UUID(uuidString: placeReferenceID) != nil
+        && UUID(uuidString: tripID) != nil && tripVersion > 0 && ["en", "zh"].contains(locale)
     }
 }
 
