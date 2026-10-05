@@ -1,0 +1,8 @@
+Source code: 027e452e89b01ed8437b7a735b93f0ca4337bb46 (approved exact legacy fixture adapter)
+Command: node --experimental-strip-types tests/integration/privacy/coverage/run-http.mjs --port-base 59650
+VP_DATA_COVERAGE_HTTP_TARGET {"project":"vp-native-ask-bd26a343","base":59650}
+PASS owned real GoTrue -> coverage route -> existing owner handler -> DB -> exact result consumer; fixture grants stay distinct from target (5220.505125ms)
+Observed accepted original community RPC ACL=true with internal feature settings=false; owner cleanup/export remains available by original contract. No new ACL or target change. Subsequent submission enables only this disposable synthetic fixture switch.
+New module owner RPC default EXECUTE denied. GRANT plus synthetic Trip/device rows exist only in this uniquely owned fixture; source-free progress and lifecycle metadata are distinct from Trip content/provider push.
+tests 1; pass 1; fail 0; cancelled 0; skipped 0; todo 0; duration_ms 8173.607416
+VP_DATA_COVERAGE_HTTP_CLEANUP {"project":"vp-native-ask-bd26a343","result":"PASS"}

@@ -192,3 +192,12 @@ exact sorted key oracle and explicit integer (0,5000] + original interval bound;
 all cancellation/accepted/no retry/error/ACL/source outcomes stay identical.
 Current PG lease only allowed svc input; please exact Main review/additive oracle
 lease before apply. Never strip mandatory field in fixture or allow extra errors.
+
+Legacy coverage/Auth exact approved fixture adaptation actual1PASS0skip + owned
+cleanupbd26a343/base59650/session77756; log now legacy-coverage-auth-r1.log. Source
+027e452e; no production change/new model/provider/target. Strict original metadata
+proof/foreign/no token/no content/no writes remain, current full notification GET
+registration is separately proved by new actualAuth1. OriginalPG strict grant-shape
+patch now physically exists (corrected expected list order matching), awaiting
+specific additional oracle lease; second idle root still unconfirmed until first
+failed unfinished-attempt cleanup path can execute. No blind rerun or accepted idle.

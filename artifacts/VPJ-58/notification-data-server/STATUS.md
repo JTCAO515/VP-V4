@@ -29,3 +29,14 @@ Target schema/role/grant/settings/credentials/old-sender rollout drain/Storage/
 provider/APNs/phone/user acceptance and whole#239/fullALL1missing/ALL2 UNRUN/Open.
 All server results allUserDataCompleted=false; no original Trip/results or finance
 mutation and no recall of provider-accepted/unknown/device/external copies.
+
+Integration engineering: reviewed exact CI registry3 additions classify both gated
+files in actual lanes. Legacy coverage/Auth r1 actual1 PASS0skip (session77756,
+projectbd26a343/base59650 cleanupPASS), original metadata handler and typed classifier
+retain raw-token/content absence, foreign/scope and no-write assertions; no fake
+GET enrollment. legacy-coverage-auth-r1.log is selected actual output. Combined
+build PASS with target flags off. Original dispatch/material/metadata contract
+21 PASS0skip reused. Original notice PG r1 15PASS2FAIL0skip retained verbatim except
+trailing whitespace normalization; required new grant key oracle approval pending,
+no assertion weakening/accept-idle or strip-new-field fix. Runtime scope remains
+Main-reviewed code complete, this is legacy fixture integration engineering.
