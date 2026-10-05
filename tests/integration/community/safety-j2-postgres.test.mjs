@@ -45,6 +45,11 @@ before(async()=>{
  await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'rollback;');
  assert.equal(await db("select prosrc from pg_proc where oid='public.community_workspace(jsonb)'::regprocedure;"),legacyBody);
  assert.equal(await db("select to_regclass('community_safety_private.operations') is null;"),'t');
+ // Compatibility with the independently fixed J1 migration: its validation
+ // guard is already IS NOT TRUE. Apply J2 without weakening or duplicating it.
+ const j1GuardFix=`do $$declare body text;begin select prosrc into body from pg_proc where oid='community_private.workspace_j1(jsonb)'::regprocedure;body:=replace(body,'not community_private.valid_j1(envelope->''command'')','community_private.valid_j1(envelope->''command'') is not true');execute format('create or replace function community_private.workspace_j1(envelope jsonb) returns jsonb language plpgsql security definer set search_path=%L set timezone=%L as %L','','UTC',body);end $$;`;
+ assert.equal(await db('begin;'+j1GuardFix+readFileSync('supabase/migrations/'+f,'utf8')+"select position('community_private.valid_j1(envelope->''command'') is not true' in prosrc)>0 from pg_proc where oid='community_private.workspace_j1(jsonb)'::regprocedure;rollback;"),'t');
+ assert.equal(await db("select prosrc from pg_proc where oid='public.community_workspace(jsonb)'::regprocedure;"),legacyBody);
  }
  await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;');
  }

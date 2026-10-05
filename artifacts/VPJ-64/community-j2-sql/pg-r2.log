@@ -1,0 +1,20 @@
+✔ full migration rollback preserves original RPC owner ACL; defaults empty with no private grants (7565.877541ms)
+✔ authority before all reads mutation replay abandonment erasure has zero writes (669.700625ms)
+✔ legitimate independent reader vs moderator; guesses expiry revocation and block metadata deny uniformly (859.86925ms)
+✔ report sensitive body isolation author minimal disposition and independent conflict operators (679.602334ms)
+✔ removal invalidates old J1 live read mine queue and committed exact-byte acknowledgements (572.679958ms)
+✔ author recourse independent restore rechecks current retained source; withdrawal cannot resurrect (745.288833ms)
+✔ J1 rejected version2 restore requires both qualifications and distinct original reviewer; no old unique audit clash (593.353625ms)
+✔ authored decisions/grants export complete with no foreign details; erasure retains foreign source state and independence fence (757.892084ms)
+✔ exact original bytes immutable session epoch operation fences abandoned replay and module-off erasure (708.527125ms)
+✔ physical source/account deletion invalidates content while retaining independent sensitive records and removing own authored notes (548.5445ms)
+✔ CAS competing independent dispositions, original withdrawal and erasure races produce no deadlock or resurrection (755.470375ms)
+✔ bounded keyset51 sentinel and each100+sentinel export fails closed without false completeness (528.519209ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 15139.3955

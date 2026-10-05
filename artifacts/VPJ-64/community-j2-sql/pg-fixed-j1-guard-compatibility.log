@@ -1,0 +1,9 @@
+✔ SQL NULL validation fails closed before direct RPC writes for nullable discriminators or enum decisions (6843.88225ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6995.736833
