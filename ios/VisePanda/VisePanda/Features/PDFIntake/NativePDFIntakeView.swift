@@ -152,6 +152,16 @@ struct NativePDFIntakeView: View {
         case "unavailable": return text("No extractable text is available. Use screenshot review; no fields have been inferred.", "没有可提取文本。请使用截图审阅；未推测任何字段。")
         case "cleanupRequired": return text("The protected local copy could not be removed. Unlock this device and retry Close.", "受保护本机副本暂无法删除。请解锁设备并重试关闭。")
         case "scope": return text("The signed-in session changed. Return to the same Trip under its current owner.", "登录会话已改变。请在当前所有者会话下返回同一行程。")
+        case "STALE_TRIP_VERSION":
+            return model.journal == nil
+                ? text("This Trip changed. Close, refresh the same Trip, then choose the original PDF again. This preview did not change your Trip.", "当前行程已变化。请关闭、刷新同一行程，再选择原PDF。这次预览未修改行程。")
+                : text("This Trip changed after a submission attempt. Read the original receipt below before making another submission.", "提交尝试后行程已变化。请先用下方入口核对原回执，再开始其他提交。")
+        case "readOrPreviewUnavailable", "PROVIDER_UNAVAILABLE":
+            return model.journal == nil
+                ? text("The file or PDF preview is unavailable. Close and retry after refreshing this Trip, or use screenshot review. Your original file and Trip are preserved.", "文件读取或PDF预览暂不可用。请关闭并刷新同一行程后重试，或使用截图审阅。原文件及行程保留。")
+                : text("The submission receipt is unavailable. Use the original operation recovery below; its request remains retained.", "提交回执暂不可用。请用下方入口恢复原操作；原请求仍保留。")
+        case "expired" where model.journal == nil:
+            return text("The protected PDF review copy expired. Choose the original file again for a new review; your saved Trip is preserved.", "受保护PDF审阅副本已过期。请重新选择原文件开始审阅；已保存行程保留。")
         case "confirmed": return text("The original confirmation receipt was recovered.", "已恢复原明确确认回执。")
         case "cancelled", "expired", "rejected": return text("The original operation is \(value). It cannot be confirmed; resolve its retained receipt before another import.", "原操作已取消、过期或拒绝，不能确认；先处理保留回执再导入。")
         default: return text("The original receipt needs checking. Retry the same operation; do not create another submission.", "需要核对原回执。请恢复同一操作，勿重复创建提交。")

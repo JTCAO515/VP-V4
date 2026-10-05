@@ -176,7 +176,7 @@ struct NativePDFIntakeSource: Identifiable {
         case let value as NativePDFError: return String(describing: value)
         case NativeDataError.server(let code): return code
         case NativeDataError.staleSessionResponse: return "scope"
-        default: return "recoveryRequired"
+        default: return journal == nil ? "readOrPreviewUnavailable" : "recoveryRequired"
         }
     }
 }
