@@ -73,6 +73,7 @@ export const LANES = {
           "tests/integration/maps/place-quota.test.mjs",
           "tests/integration/maps/foreground-traffic-postgres.test.mjs",
           "tests/integration/explore/place-actions-postgres.test.mjs",
+          "tests/integration/scoped-edit/scoped-edit-postgres.test.mjs",
           "tests/integration/memory/travel-pace.test.mjs",
           "tests/integration/notifications/storage.test.mjs",
           "tests/integration/observability/ops-ledger.test.mjs",
