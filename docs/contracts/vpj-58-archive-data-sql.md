@@ -83,3 +83,37 @@ Rollback removes only the new RPC/schema/consumer registration through the
 reviewed append/compatibility path. It never edits applied migration history or
 restores erased/revoked business data. The suite separately verifies transactional
 rollback, owned fixture drop/replay, and unchanged original source/schema/RLS/ACL.
+
+## Local evidence and remaining acceptance
+
+Runtime/owned tests fixed at `f91ca39d35e2c55b1f740056ac499aec4feac928`.
+PASS: 19 tests, zero failures/skips/cancellations, 82.378 seconds, with the actual
+sole server producer decoder/collector. Evidence is retained in
+`artifacts/VPJ-58/archive-data-sql/pg-final.log` and `verification.json`, including
+the code and producer file hashes. The container was removed after the run.
+Docs check, source policy lint, owned test syntax and diff whitespace checks passed.
+
+The cases include default deny/RLS; transactional rollback and owned drop/replay;
+unchanged ALL original function source/config/ACL and table columns/RLS/ACL;
+ordinary authority before parsing/writes; original confirmed Trip creation/archive;
+safe head/all available history and missing versions; exact bytes and selection;
+foreign/absent recovery; independent ordered pages/replay/empty terminal/proof;
+queued deletion and corrupt owner/head/title/archive/source negatives; historical
+sessions and original account/session cascades; finite metadata export/erase;
+nonrenewal and current reauth; late source and late effect rollback; natural
+30-second expiry with byte-identical original terminal receipt recovery;
+10001-row inventory/archive/snapshot/operation overflow; UTF-8 overflow; an actual
+source below 1 MB whose complete wrapper exceeds 1 MB; real NOWAIT source/session/
+account locks, concurrent erase CAS and zero database deadlocks.
+
+Two added fixture expectations initially failed: attempting NULL content violated
+the actual source NOT NULL constraint, and the preliminary wrapper fixture size
+estimate was too low. The final cases preserve the source constraint, test actual
+missing head/history instead, and compute the exact source bytes before asserting
+the wrapper overflow. No runtime guard was relaxed to pass these tests.
+
+UNRUN in this SQL task: signed GoTrue Auth/HTTP, target GRANT or deployment,
+provider/Storage, real-user deletion, Native private-file/share/foreground delivery,
+physical device, whole #239/ALL2 and unified target acceptance. The sole TS and
+Native owners retain their respective independent integration work. This is
+complete owned SQL development, not whole parent or production acceptance.

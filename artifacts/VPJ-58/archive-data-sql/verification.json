@@ -1,0 +1,39 @@
+{
+  "kind": "local-sql-claims-fixture",
+  "codeCommit": "f91ca39d35e2c55b1f740056ac499aec4feac928",
+  "baseCommit": "31e8db3110c05cb156d3d6f37595818efccbff9d",
+  "command": [
+    "node",
+    "--test",
+    "tests/integration/privacy/archive-data-sql/postgres.test.mjs"
+  ],
+  "env": {
+    "VP_ARCHIVE_DATA_DB_TEST": "1",
+    "VP_ARCHIVE_DATA_TS_ROOT": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-archive-data-server-20261006"
+  },
+  "node": "v26.8.2",
+  "image": "public.ecr.aws/supabase/postgres:17.6.1.159",
+  "network": "none",
+  "actual": "PASS",
+  "tests": 19,
+  "fail": 0,
+  "skip": 0,
+  "exitCode": 0,
+  "durationMs": 82378.123958,
+  "sourceHashes": {
+    "supabase/migrations/20261006050000_archive_data.sql": "d51da2d52b1e7c000c6174859340839e3fc2a0b92ebefde8629c3fb3ceaec617",
+    "tests/integration/privacy/archive-data-sql/postgres.test.mjs": "ec9c84b5368a3bc6562f0847215274ac519b92b155f82df50225f2216d3f7d23"
+  },
+  "producerCommit": "b594e98c48842e51b36b4a5c82ad50485e79f53b",
+  "producerHashes": {
+    "contract.ts": "32b587880ad31744107346c53c673a16e5a1a213dbf608bbd1e2be960d51bb36",
+    "rows.ts": "845a4ffc3a20e1af6498b33ce007f41537fc1e7ab3c5e30f6d2258238594035e",
+    "protocol.ts": "61edb3031cf4882514af5e24d91c6eaa91a7049192d1ed1cafe8bda160bff8b8",
+    "export.ts": "25b263f6dbed5cc679294baef62316848ec6be7712d55dde0703afc6749ffaff"
+  },
+  "loggedAtUTC": "2026-10-05T23:54:51.212758+00:00",
+  "targetGrant": "UNRUN",
+  "signedAuth": "UNRUN in this SQL task",
+  "nativeFileDelivery": "UNRUN in this SQL task",
+  "targetDeployment": "UNRUN"
+}
