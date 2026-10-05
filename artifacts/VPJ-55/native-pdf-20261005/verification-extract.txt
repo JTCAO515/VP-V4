@@ -56,3 +56,15 @@ Test Case '-[VisePandaTests.NativePDFIntakeTests testRealPDFTextAndPageLocators]
 build-final-pass
 source log: /tmp/vpj55-native-pdf-build-final.log
 ** BUILD SUCCEEDED **
+
+cancel/year-zero/journal delta
+Test Case '-[VisePandaTests.NativePDFIntakeTests testCancelTombstoneHasClosedUnboundAndBoundShapes]' started.
+Test Case '-[VisePandaTests.NativePDFIntakeTests testCancelTombstoneHasClosedUnboundAndBoundShapes]' passed (0.012 seconds).
+Test Case '-[VisePandaTests.NativePDFIntakeTests testCanonicalDigestMatchesTypeScriptForUnicodeAndSlashes]' started.
+Test Case '-[VisePandaTests.NativePDFIntakeTests testCanonicalDigestMatchesTypeScriptForUnicodeAndSlashes]' passed (0.001 seconds).
+Test Case '-[VisePandaTests.NativePDFIntakeTests testJournalRetainsExactBytesAndRejectsChangedOperationOrActor]' started.
+Test Case '-[VisePandaTests.NativePDFIntakeTests testJournalRetainsExactBytesAndRejectsChangedOperationOrActor]' passed (0.005 seconds).
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.018 (0.019) seconds
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.018 (0.019) seconds
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.018 (0.019) seconds
+** TEST SUCCEEDED **

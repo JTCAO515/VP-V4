@@ -159,17 +159,7 @@ struct NativePDFIntakeSource: Identifiable {
         } catch { message = errorCode(error); return false }
     }
     private func operationMatches(_ result: NativePDFOperation, value: NativePDFJournal) -> Bool {
-        guard result.kind == "pdf_intake_operation/1", result.operationId == value.command.operationId, result.tripId == value.tripID,
-              result.sessionEpoch == source.actor.mobileEpoch, ["absent", "pending", "confirmed", "rejected", "cancelled", "expired"].contains(result.state) else { return false }
-        if result.state == "absent" { return result.requestDigest == nil && result.commandDigest == nil && result.previewDigest == nil && result.proposalId == nil && result.proposalRevision == nil && result.baseTripVersion == nil && result.expiresAt == nil && result.confirmationEventId == nil && result.resultingVersion == nil }
-        if result.state == "confirmed" {
-            guard result.confirmationEventId.map(NativePDFWire.uuid) == true, result.resultingVersion == value.command.expectedHeadVersion + 1 else { return false }
-        } else if result.confirmationEventId != nil || result.resultingVersion != nil { return false }
-        return result.requestDigest == value.requestDigest && result.commandDigest == value.command.digest
-            && result.previewDigest == value.previewDigest && result.expiresAt == value.command.expiresAt
-            && result.baseTripVersion == value.command.expectedHeadVersion
-            && (result.proposalId.map(NativePDFWire.uuid) ?? (result.state == "cancelled"))
-            && (result.proposalRevision.map { $0 >= 1 } ?? (result.state == "cancelled"))
+        result.matches(value, actor: source.actor)
     }
     func expire() { if clearCopy() { message = "expired" } }
     @discardableResult func clearCopy() -> Bool {

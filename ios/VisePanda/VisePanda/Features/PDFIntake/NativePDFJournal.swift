@@ -15,7 +15,9 @@ struct NativePDFJournal: Codable, Equatable {
               let object = try? JSONSerialization.jsonObject(with: bytes) as? [String: Any],
               Set(object.keys) == ["command", "reviewedPreviewDigest"], object["reviewedPreviewDigest"] as? String == previewDigest,
               let raw = object["command"], let data = try? JSONSerialization.data(withJSONObject: raw),
-              let decoded = try? JSONDecoder().decode(NativePDFCommand.self, from: data), decoded == command else { return false }
+              let decoded = try? JSONDecoder().decode(NativePDFCommand.self, from: data), decoded == command,
+              let canonical = try? JSONSerialization.data(withJSONObject: raw, options: [.sortedKeys, .withoutEscapingSlashes]),
+              NativePDFDocument.digest(canonical) == command.digest else { return false }
         return true
     }
     func matches(_ actor: NativeDataScope) -> Bool {

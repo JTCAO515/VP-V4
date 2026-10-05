@@ -13,3 +13,5 @@ Validation: final generic Simulator build PASS. Seven affected XCTest cases PASS
 UNRUN: real Files provider UI automation, physical device/VoiceOver, target/provider/Production acceptance and F2 Share Extension/AppGroup/Universal Link. This delivers Native F1 implementation; it does not close the complete #236.
 
 Rollback: disable the PDF entry/consumer while preserving original confirmed Trip/events/receipts and append-only migrations. No second Trip writer.
+
+Same-owner contract delta: an explicit authenticated same-op cancel ACK accepts either a fully null binding tombstone (cancel raced before POST) or the full original request/command/preview/expiry/base/proposal binding. Mixed-null, wrong op/Trip/epoch and wrong digest shapes reject. A regular operation read never clears the unknown journal. Year 0000 date/expiry rejects; journal raw command canonical identity rejects unknown command keys. Three affected XCTest cases PASS/0fail/0skip on the same owned simulator; original seven-test PASS remains its recorded earlier scope.

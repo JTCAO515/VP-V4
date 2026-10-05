@@ -94,6 +94,37 @@ nonisolated final class NativePDFIntakeTests: XCTestCase {
         try vault.complete(journal, actor: actor)
         XCTAssertNil(try vault.read(actor))
     }
+    @MainActor func testCancelTombstoneHasClosedUnboundAndBoundShapes() throws {
+        let actor = NativeDataScope(endpoint: "http://127.0.0.1:59988/", subject: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", mobileEpoch: 1, generation: 0)
+        let command = NativePDFCommand(operationId: "11111111-1111-4111-8111-111111111111", expectedHeadVersion: 0,
+            contentHash: String(repeating: "a", count: 64), byteCount: 1234, pageCount: 1, extraction: "pdfkit_text", expiresAt: "2026-10-06T00:00:00.000Z",
+            fields: [.init(kind: "date", value: "2026-10-05", locator: .init(page: 1, line: 2, sourceTextHash: String(repeating: "b", count: 64)))])
+        let digest = String(repeating: "d", count: 64)
+        let object = try JSONSerialization.jsonObject(with: command.encoded())
+        let bytes = try JSONSerialization.data(withJSONObject: ["command": object, "reviewedPreviewDigest": digest])
+        let journal = NativePDFJournal(endpoint: actor.endpoint, owner: actor.subject, epoch: 1,
+            tripID: "22222222-2222-4222-8222-222222222222", command: command, previewDigest: digest, bytes: bytes)
+        var response: [String: Any] = ["kind": "pdf_intake_operation/1", "operationId": command.operationId, "tripId": journal.tripID,
+            "sessionEpoch": 1, "state": "cancelled", "requestDigest": NSNull(), "commandDigest": NSNull(), "previewDigest": NSNull(),
+            "expiresAt": NSNull(), "proposalId": NSNull(), "proposalRevision": NSNull(), "baseTripVersion": NSNull(),
+            "confirmationEventId": NSNull(), "resultingVersion": NSNull()]
+        func matches(_ object: [String: Any]) throws -> Bool {
+            try JSONDecoder().decode(NativePDFOperation.self, from: JSONSerialization.data(withJSONObject: object)).matches(journal, actor: actor)
+        }
+        XCTAssertTrue(try matches(response), "A real cancel-before-POST tombstone fences the original delayed POST")
+        var mixed = response; mixed["requestDigest"] = journal.requestDigest
+        XCTAssertFalse(try matches(mixed))
+        for (key, value) in [("operationId", "33333333-3333-4333-8333-333333333333"), ("tripId", "33333333-3333-4333-8333-333333333333"), ("state", "expired")] {
+            var wrong = response; wrong[key] = value; XCTAssertFalse(try matches(wrong))
+        }
+        var wrongEpoch = response; wrongEpoch["sessionEpoch"] = 2; XCTAssertFalse(try matches(wrongEpoch))
+        response["requestDigest"] = journal.requestDigest; response["commandDigest"] = command.digest
+        response["previewDigest"] = digest; response["expiresAt"] = command.expiresAt
+        response["proposalId"] = "44444444-4444-4444-8444-444444444444"; response["proposalRevision"] = 1; response["baseTripVersion"] = 0
+        XCTAssertTrue(try matches(response))
+        response["commandDigest"] = String(repeating: "f", count: 64); XCTAssertFalse(try matches(response))
+        XCTAssertFalse(NativePDFField.validValue("0000-01-01", kind: "date"))
+    }
     @MainActor func testActiveActionDictionaryIsRejected() throws {
         // A valid, text-free PDF with an actual parsed catalog action (not a string heuristic).
         var data = Data("%PDF-1.4\n".utf8)
