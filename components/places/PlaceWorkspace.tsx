@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { RouteComparison } from "./RouteComparison";
+import { PlaceActions } from "../explore/PlaceActions";
 import styles from "./PlaceWorkspace.module.css";
 const AMapCanvas = dynamic(() => import("./AMapCanvas").then(module => module.AMapCanvas), { ssr: false });
 type Candidate = { provider: "amap" | "tencent"; providerPoiId: string; rawName: string; matchedCanonicalPoiId?: string | null };
@@ -84,6 +85,7 @@ export function PlaceWorkspace() {
       <p className={styles.note}>{text("This is an observed map point, not a verified entrance. Missing coordinates stay unknown.", "这是观测点位，不是已核实入口。缺失坐标保持未知。")}</p>
       {point?.coordinateSystem === "gcj02" && <div className={styles.form}>{[["restroom", "Restrooms", "厕所"], ["convenience_store", "Convenience stores", "便利店"], ["dining", "Food", "餐饮"], ["pharmacy", "Pharmacies", "药店"], ["atm", "ATM", "ATM"]].map(([category, en, zh]) => <button key={category} disabled={loading} onClick={() => void lookup("nearby", { category, lat: String(point.lat), lng: String(point.lng), system: "gcj02" })}>{text(en, zh)}</button>)}</div>}
     </section>}
+    <PlaceActions selected={selected?.matchedCanonicalPoiId ? { canonicalPoiId: selected.matchedCanonicalPoiId, provider: selected.provider, providerPoiId: selected.providerPoiId } : null} chinese={chinese} />
     <RouteComparison key={`${city}:${provider}:${routeEpoch}`} selected={detail} chinese={chinese} />
   </main>;
 }

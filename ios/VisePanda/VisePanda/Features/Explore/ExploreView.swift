@@ -387,69 +387,6 @@ struct NativeExploreAskHandoff:Identifiable {
     let readiness="recheck_required"
     var valid:Bool{[tripID,poiID].allSatisfy{UUID(uuidString:$0) != nil} && tripVersion>=0 && !providerPoiID.isEmpty && providerPoiID.count<=128 && !name.isEmpty && name.count<=200}
 }
-private struct NativeExploreAskAction:View {
-    let candidate:NativePlaceCandidate
-    let session:NativeSession
-    let chinese:Bool
-    let active:Bool
-    @Environment(\.scenePhase) private var phase
-    @State private var trips:[NativeTripSummary]=[]
-    @State private var selectedTrip:String?
-    @State private var scope:NativeDataScope?
-    @State private var generation=UUID()
-    @State private var deadline:TimeInterval=0
-    @State private var checking=false
-    @State private var notice=false
-    private func t(_ zh:String,_ en:String)->String{chinese ? zh:en}
-    private var readable:Bool{active && phase == .active && scope==session.dataScope && scope != nil && ProcessInfo.processInfo.systemUptime<deadline}
-    var body:some View {
-        VStack(alignment:.leading,spacing:6){
-            Button(t("收藏暂不可用","Save is unavailable")){}.disabled(true)
-            Text(t("尚无持久收藏服务，此处不会宣称已收藏。","A persistent Save service is unavailable; no save is claimed.")).font(.caption)
-            Button(t("加入行程暂不可用","Add to Trip is unavailable")){}.disabled(true)
-            Text(t("加入需要当前合格证据与原提案确认；可以先在 VP 讨论。","Add requires eligible evidence and the existing Proposal confirmation. You can discuss it in VP first.")).font(.caption)
-            Link(t("打开 VP 手动提问","Open VP to ask manually"),destination:URL(string:"visepanda://ask")!)
-                .accessibilityIdentifier("explore.place.ask.manual")
-            if candidate.matchedCanonicalPoiId != nil {
-                if readable {Picker(t("讨论所关联的行程","Trip for this discussion"),selection:$selectedTrip){Text(t("明确选择行程","Choose a Trip explicitly")).tag(String?.none);ForEach(trips){trip in Text(trip.title).tag(Optional(trip.id))}}}
-                Button(t("在同一个 VP 讨论此地点","Discuss this place in the same VP")){
-                    guard readable,!checking,let scope,let trip=trips.first(where:{$0.id==selectedTrip}) else{return}
-                    let own=generation,started=ProcessInfo.processInfo.systemUptime
-                    checking=true;notice=false
-                    Task {
-                        defer{if generation==own{checking=false}}
-                        do {
-                            let bytes=try await session.libraryPlaceRequest(provider:candidate.provider,providerID:candidate.providerPoiId,tripID:trip.id)
-                            guard generation==own,selectedTrip==trip.id,scope==session.dataScope,active,phase == .active,!Task.isCancelled,ProcessInfo.processInfo.systemUptime-started<30 else{return}
-                            let value=try NativeLibraryPlace.decode(bytes,provider:candidate.provider,providerID:candidate.providerPoiId,tripID:trip.id)
-                            guard value.available,let poi=value.canonicalPoiID,value.askTripID==trip.id,let name=value.name else{notice=true;return}
-                            session.prepareExploreAsk(.init(scope:scope,tripID:trip.id,tripVersion:trip.headVersion,poiID:poi,provider:candidate.provider,providerPoiID:candidate.providerPoiId,name:name))
-                        }catch{if generation==own,scope==session.dataScope{notice=true}}
-                    }
-                }.disabled(!readable || selectedTrip==nil || checking)
-                    .accessibilityIdentifier("explore.place.ask")
-                if notice {Text(t("当前实体或行程资格未确认，请重新选择；也可手动提问。","Current entity or Trip authority was not confirmed. Reselect or ask manually.")).font(.caption)}
-                Button(t("重新读取行程","Reread Trips")){Task{await load()}}
-            }else {Text(t("此供应商结果未映射为 canonical 地点。请保留具体地址，重新选择已映射结果。","This provider result has no canonical mapping. Keep its specific address and reselect a mapped result.")).font(.caption)}
-        }
-        .task(id:Key(scope:session.dataScope,active:active && phase == .active,selectionID:candidate.id)){await load()}
-        .onDisappear{generation=UUID();trips=[];scope=nil;selectedTrip=nil;deadline=0;checking=false;notice=false}
-    }
-    private func load()async {
-        generation=UUID();trips=[];selectedTrip=nil;scope=nil;deadline=0;checking=false;notice=false
-        guard active,phase == .active,let selected=session.dataScope,candidate.valid(),candidate.matchedCanonicalPoiId != nil else{return}
-        let own=generation,started=ProcessInfo.processInfo.systemUptime
-        do {
-            let bytes=try await session.tripRequest(path:"api/trips/native/v2",method:"GET")
-            guard generation==own,session.dataScope==selected,active,phase == .active,!Task.isCancelled,ProcessInfo.processInfo.systemUptime-started<30 else{return}
-            let read=try JSONDecoder().decode(NativeTripList.self,from:bytes)
-            guard read.version==2,read.trips.count<=100,Set(read.trips.map(\.id)).count==read.trips.count,read.trips.allSatisfy({UUID(uuidString:$0.id) != nil && $0.headVersion>=0 && !$0.title.isEmpty && $0.title.count<=2000}) else{throw NativeDataError.invalidResponse}
-            trips=read.trips;scope=selected;deadline=started+30
-        }catch{if generation==own{trips=[];scope=nil;deadline=0}}
-    }
-    private struct Key:Equatable{let scope:NativeDataScope?;let active:Bool;let selectionID:String}
-}
-
 private struct NativePlaceSearchView: View {
     var isActive: Bool
     @Environment(\.scenePhase) private var scenePhase
@@ -622,7 +559,7 @@ private struct NativePlaceSearchView: View {
                     } else {
                         Text(store.detailUnavailable ? text("Details unavailable. Retry this place.", "详情暂不可用，请重试此地点。") : text("Tap this result to load its address and map point.", "点选此结果以加载地址和地图点位。"))
                     }
-                    NativeExploreAskAction(candidate:selected,session:session,chinese:chinese,active:isActive && scenePhase == .active)
+                    NativePlaceActionsView(candidate: selected, session: session, chinese: chinese, active: isActive && scenePhase == .active).id(selected.provider.rawValue + ":" + selected.providerPoiId + ":" + selected.id)
                 }.frame(maxWidth: .infinity, alignment: .leading) }.accessibilityIdentifier("places.detail.\(selected.id)")
             }
         }
