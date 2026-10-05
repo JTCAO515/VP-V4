@@ -25,7 +25,7 @@ struct NativePlaceGuideSegment: Decodable, Equatable, Identifiable {
     let expiresAt: String
     let sources: [NativePlaceGuideSource]
     /// The published expression and every qualifier are spoken verbatim, without model rewriting.
-    var speechText: String { ([text] + conditions + exclusions).joined(separator: ". ") }
+    var speechText: String { ([text] + conditions + exclusions).joined(separator: "\n") }
 }
 
 struct NativePlaceGuideReady: Decodable, Equatable {
@@ -79,12 +79,14 @@ struct NativePlaceGuideReady: Decodable, Equatable {
               validText(value.place.en, maximum: 160), validText(value.place.zh, maximum: 160),
               let evaluated = NativeKnowledgeRead.date(value.evaluatedAt),
               let expires = NativeKnowledgeRead.date(value.expiresAt),
-              evaluated <= now.addingTimeInterval(5), expires > now, expires > evaluated,
+              evaluated <= now.addingTimeInterval(5), now.timeIntervalSince(evaluated) <= 30,
+              expires > now, expires > evaluated,
               value.completedSegmentIds.count <= 4,
               Set(value.completedSegmentIds).count == value.completedSegmentIds.count,
               Set(value.completedSegmentIds).isSubset(of: Set(value.segments.map(\.id))),
               Set(value.segments.map(\.id)).count == value.segments.count,
-              value.segments.reduce(0, { $0 + $1.speechText.utf16.count }) <= 2400 else { throw NativeDataError.invalidResponse }
+              value.rights.cache || value.completedSegmentIds.isEmpty,
+              value.segments.map(\.speechText).joined(separator: "\n").utf16.count <= 2400 else { throw NativeDataError.invalidResponse }
         for segment in value.segments {
             guard NativePlaceActionWire.id(segment.id) != nil, segment.id == segment.assertionId,
                   segment.kind == "fact", ["located_at", "opens_during"].contains(segment.predicate),

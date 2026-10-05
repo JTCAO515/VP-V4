@@ -14,7 +14,14 @@ import Observation
     func cancelRecognition()
     func installedVoiceAvailable(localeIdentifier: String) -> Bool
     func speak(text: String, localeIdentifier: String, completion: @escaping @MainActor @Sendable (Bool, Int) -> Void) throws
+    func pauseSpeech() -> Bool
+    func resumeSpeech() -> Bool
     func stopAudio()
+}
+
+extension NativeVoiceAudioDriver {
+    func pauseSpeech() -> Bool { false }
+    func resumeSpeech() -> Bool { false }
 }
 
 /// One push-to-talk capture and one explicitly selected final translation, scoped to the live session.
@@ -29,6 +36,9 @@ import Observation
     private(set) var scope: NativeDataScope?
     var cleanupPending: Bool { files.cleanupPending }
     var onFinalTranscript: (@MainActor (NativeVoiceTranscript) -> Void)?
+    var onGuideProgress: (@MainActor (String, Bool, Int) -> Void)?
+    private(set) var guidePlaybackID: String?
+    private(set) var guidePaused = false
 
     @ObservationIgnored private let driver: any NativeVoiceAudioDriver
     @ObservationIgnored private let files: NativeVoiceAudioFiles
@@ -40,6 +50,11 @@ import Observation
     @ObservationIgnored private var ttlTask: Task<Void, Never>?
     @ObservationIgnored private var finalTranslation: FinalTranslation?
     @ObservationIgnored private var startedTranslationIDs = Set<String>()
+    @ObservationIgnored private var guideText: String?
+    @ObservationIgnored private var guideLocale: String?
+    @ObservationIgnored private var guideExpiresAt: Date?
+    @ObservationIgnored private var guidePlaybackDeadline: Date?
+    @ObservationIgnored private var guideOffset = 0
 
     private struct FinalTranslation: Equatable {
         let id: String
@@ -158,6 +173,60 @@ import Observation
         } catch { cancel(reason: audioFailure(error)) }
     }
 
+    /// Guide-only playback purpose. The caller must freshly qualify the exact source and rights.
+    /// The immutable ID contains source digest + segment ID, never a new fabricated translation ID.
+    func speakGuide(id: String, text: String, localeIdentifier: String, expiresAt: Date, offset: Int = 0) {
+        guard scope != nil, phase == .idle, !cleanupPending, id.utf8.count <= 200, !id.isEmpty,
+              ["en-US", "zh-CN"].contains(localeIdentifier), !text.isEmpty,
+              text.utf16.count <= NativeVoiceAudioLimits.maximumSpeechCharacters,
+              expiresAt > Date(), offset >= 0, offset < text.utf16.count,
+              let boundary = String.Index(text.utf16.index(text.utf16.startIndex, offsetBy: offset), within: text) else { return }
+        guard driver.installedVoiceAvailable(localeIdentifier: localeIdentifier) else { failure = .unavailable; return }
+        generation = UUID(); let own = generation
+        guidePlaybackID = id; guideText = text; guideLocale = localeIdentifier
+        guideExpiresAt = expiresAt; guideOffset = offset; guidePaused = false
+        guidePlaybackDeadline = Date().addingTimeInterval(NativeVoiceAudioLimits.temporaryLifetime)
+        playbackCharacters = text.utf16.count; spokenCharacters = offset; phase = .speaking; failure = nil
+        do {
+            try driver.speak(text: String(text[boundary...]), localeIdentifier: localeIdentifier) { [weak self] finished, characters in
+                guard let self, self.generation == own, self.phase == .speaking, self.guidePlaybackID == id,
+                      let expiry = self.guideExpiresAt, expiry > Date() else { return }
+                self.spokenCharacters = min(self.playbackCharacters, max(self.spokenCharacters, self.guideOffset + characters))
+                self.onGuideProgress?(id, finished, self.spokenCharacters)
+                if finished { self.stopSpeaking() }
+            }
+            armDeadline(seconds: min(NativeVoiceAudioLimits.temporaryLifetime, expiresAt.timeIntervalSinceNow), own: own)
+        } catch { cancel(reason: audioFailure(error)) }
+    }
+
+    func pauseGuide() {
+        guard phase == .speaking, guidePlaybackID != nil, !guidePaused else { return }
+        guard driver.pauseSpeech() else { cancel(reason: .unavailable); return }
+        guidePaused = true
+    }
+
+    /// Continue the actual paused utterance only after a fresh identical source receipt.
+    func resumeGuide(id: String, text: String, localeIdentifier: String, expiresAt: Date) {
+        guard scope != nil, phase == .speaking, guidePaused, guidePlaybackID == id,
+              guideText == text, guideLocale == localeIdentifier, expiresAt > Date(),
+              let deadline = guidePlaybackDeadline, deadline > Date(), !cleanupPending else {
+            if guidePlaybackID != nil { cancel(reason: .unavailable) }; return
+        }
+        guideExpiresAt = expiresAt
+        guard driver.resumeSpeech() else { cancel(reason: .unavailable); return }
+        guidePaused = false
+        armDeadline(seconds: min(deadline.timeIntervalSinceNow, expiresAt.timeIntervalSinceNow), own: generation)
+    }
+
+    /// A foreground read can renew a still-running source lease, never start or continue speech.
+    func renewGuide(id: String, text: String, localeIdentifier: String, expiresAt: Date) {
+        guard scope != nil, phase == .speaking, guidePlaybackID == id, guideText == text,
+              guideLocale == localeIdentifier, expiresAt > Date(), let deadline = guidePlaybackDeadline,
+              deadline > Date(), !cleanupPending else { cancel(reason: .unavailable); return }
+        guideExpiresAt = expiresAt
+        armDeadline(seconds: min(deadline.timeIntervalSinceNow, expiresAt.timeIntervalSinceNow), own: generation)
+    }
+
     func stopSpeaking() {
         guard phase == .speaking else { return }
         cancel()
@@ -173,6 +242,7 @@ import Observation
             recordedSeconds = measured.seconds
         }
         driver.stopAudio(); driver.cancelRecognition()
+        guidePlaybackID = nil; guideText = nil; guideLocale = nil; guideExpiresAt = nil; guidePlaybackDeadline = nil; guideOffset = 0; guidePaused = false
         currentRecordingID = nil; recordingLocale = nil; phase = .idle
         do { try files.eraseAll(); failure = reason }
         catch { failure = .cleanupRequired }

@@ -22,7 +22,7 @@ struct NativePlaceGuideSelection: Equatable, Sendable {
 
     var valid: Bool {
         UUID(uuidString: canonicalPoiID) != nil && UUID(uuidString: placeReferenceID) != nil
-        && UUID(uuidString: tripID) != nil && tripVersion > 0 && ["en", "zh"].contains(locale)
+        && UUID(uuidString: tripID) != nil && tripVersion >= 0 && ["en", "zh"].contains(locale)
     }
 }
 

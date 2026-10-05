@@ -128,6 +128,16 @@ import UIKit
         synthesizer.speak(utterance)
     }
 
+    func pauseSpeech() -> Bool {
+        guard UIApplication.shared.applicationState == .active, utteranceIdentity != nil else { return false }
+        return synthesizer.pauseSpeaking(at: .word)
+    }
+
+    func resumeSpeech() -> Bool {
+        guard UIApplication.shared.applicationState == .active, utteranceIdentity != nil, synthesizer.isPaused else { return false }
+        return synthesizer.continueSpeaking()
+    }
+
     func stopAudio() {
         recorder?.delegate = nil; recorder?.stop(); recorder = nil
         // Invalidate callbacks before immediate stop (which may itself enqueue didCancel).
