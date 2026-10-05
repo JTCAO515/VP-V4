@@ -91,7 +91,7 @@ changes. The notification-only port is `dispatch_travel_notification_v2` with
   concurrently cancelled records return `{kind:'blocked'}`. Quiet/not due stays
   scheduled. Exactly one durable attempt enters attempting; replays never return
   a new send grant. Reply `{kind:'attempt',notificationId,attemptId,deviceRevision,
-  token,environment,expiresAt,authorizedAt,leaseExpiresAt}`. Lease <=5 seconds.
+  token,environment,topic,expiresAt,authorizedAt,leaseExpiresAt}`. Lease <=5 seconds.
 - finish takes `{attemptId,deviceRevision,outcome}` with exact DeliveryOutcome.
   It updates only that attempt, preserving cancellation and known provider
   outcome independently. TOKEN_REVOKED revokes only the matching device revision.
@@ -104,6 +104,10 @@ Begin is the serialized irreversible handoff boundary. Cancellation committed
 before begin prevents send. Cancellation after begin closes future work and
 retains last-known outcome; an already handed-off APNs request cannot be recalled.
 The TS consumer checks the short lease immediately before one transport call.
+It also compares the SQL-authorized device environment/topic with the transport's
+independently configured nonsecret binding before calling send. A mismatch makes
+zero provider exchanges, records TRANSPORT_UNAVAILABLE and never revokes a device
+token. The APNs factory repeats the environment/topic check on its send input.
 APNs payload contains only generic aps alert + notificationRef UUID; apns-id is
 the persisted attemptId. APNs expiration is zero (no offline storage), priority
 10, push-type alert. Acceptance does not prove device delivery. Provider 200

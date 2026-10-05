@@ -106,3 +106,18 @@ merge and the partial-source fix, with isolated derived data
 `TEST BUILD SUCCEEDED` are in `/tmp/vpj30-integrated-notification-build-20261005.log`.
 This compiles app/test targets and verifies the merged project/Session together;
 no Simulator was booted and no device/runtime acceptance follows.
+
+Final independent review found an actual cross-boundary topic-binding gap: the
+SQL grant omitted topic while APNs used its separate factory topic. The original
+SQL owner fixed only the grant (82e588c4, integrated 2ae00094). TS 4a48cef4 makes
+the strict attempt include topic and requires transport environment/topic equality
+before send; the APNs factory also repeats the equality check. Mismatch has zero
+provider exchanges, TRANSPORT_UNAVAILABLE, no token revocation and no new attempt.
+PASS: 2 targeted sender checks and 1 affected actual local CLI check. The actual
+strict sender/codec versus PG matched/mismatch joint passed 2 cases, and direct
+grant/cancel-race checks passed 2; unchanged earlier SQL cases are reused and the
+scope remains 17 distinct SQL cases. The test/evidence-only SQL ecc3456d commit
+records these exact runs. No Swift source changed, so combined unsigned compile
+is reused; typecheck/diff passed after the new internal transport wire.
+The earlier formal review/CI head 35bf is superseded and cannot authorize merge
+of this corrected final head.
