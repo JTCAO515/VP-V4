@@ -85,7 +85,7 @@ struct NativeCommunitySafetyView: View {
         }
         .navigationTitle(t("社区安全", "Community safety"))
         .task(id: actor) { await reload() }
-        .onChange(of: selectedCollection) { _, _ in modal = nil; run { actor in await load(actor) } }
+        .onChange(of: selectedCollection) { _, _ in hide(); run { actor in await load(actor) } }
         .onChange(of: scenePhase) { _, next in
             if next != .active { hide() }
             else { run { actor in await load(actor) } }
