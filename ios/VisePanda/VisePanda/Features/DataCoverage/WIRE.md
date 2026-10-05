@@ -26,8 +26,10 @@ Main COORD records exact grants after explicit original-owner releases: four Sto
 
 ## Actual validation frontier
 
-Whole generic simulator app build-r3 PASS; final whole build-for-testing-r5 PASS including actual NativeDataCoverageTests source and two fixed synthetic producer resources. Earlier build failures preserved: failed PBX prefix assertion/register step and four own Swift errors, repaired. Runtime-r1 actual8PASS0FAIL0SKIP is ORIGINAL NativeCoreExportTests only; new test membership was accidentally in resources and is now corrected/independently plist-verified. New Native runtime cases are pending; no claim that8 proves new coverage or real Auth/SQL.
+Whole generic simulator app build-r3 PASS; final whole build-for-testing-r5 PASS including actual NativeDataCoverageTests source and two fixed synthetic producer resources. Earlier build failures preserved: failed PBX prefix assertion/register step and four own Swift errors, repaired. Runtime-r1 actual8PASS0FAIL0SKIP is ORIGINAL NativeCoreExportTests only; new test membership was accidentally in resources and is now corrected/independently plist-verified. Final new Native runtime-r2 is actual11PASS0FAIL0SKIP, separately from original8; no claim that either proves real Auth/SQL.
 
-Own simulator25261F15-47F4-4856-9852-28B03B55D65E, DerivedData/tmp/vpj58-native-data-coverage-dd. Final own cases/interop output and verified own simulator cleanup follow separately. Product code is frozen at this source checkpoint unless a concrete affected case reveals a defect; tests/evidence are not a new product line.
+Own simulator25261F15-47F4-4856-9852-28B03B55D65E, DerivedData/tmp/vpj58-native-data-coverage-dd. Final native11, actual Swift-generated canonical TS6 and verified own simulator shutdown/delete/absence are complete, artifacts/VPJ-58/native-data-coverage/verification.md. Product code is frozen at this source checkpoint unless a concrete affected case reveals a defect; tests/evidence are not a new product line.
 
 ALL2, real target grants/roles/credentials/Storage/provider/funds/Production, real user export/delete, restore/old-device/offline return, physical phone/human/VoiceOver remain UNRUN. Default deny and synthetic fixture evidence do not authorize or prove them. Whole239 remains Open; no Native own PR or whole-account completion claim.
+
+FIXED_NATIVE_PRODUCT_SOURCE=bced4c9637b4431475093efa495db602dfb24c1e. Product hashes unchanged through final cases and cleanup. Evidence-only handoff follows; no further planned product/test edits.
