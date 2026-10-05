@@ -1,0 +1,16 @@
+{"command":"node --experimental-strip-types --test tests/contract/guide/place-guide.test.ts","result":"PASS","tests":6,"skipped":0,"scope":"TS closed commands/projection/service"}
+{"command":"node --experimental-strip-types --test tests/contract/guide/place-guide-sql.test.mjs","result":"PASS","tests":3,"skipped":0,"scope":"SQL source contract"}
+{"command":"node --test tests/integration/guide/http-ingress.test.mjs","result":"PASS","tests":1,"skipped":0,"scope":"built route ingress/config denial"}
+{"command":"node --experimental-strip-types tests/integration/guide/run-guide-http.mjs --port-base 64500","attempt":"r1","result":"FAIL","reason":"fixture mapping RPC ACL missing","cleanup":"PASS","log":"http/r1-mapping-acl-fail.log.gz"}
+{"command":"node --experimental-strip-types tests/integration/guide/run-guide-http.mjs --port-base 64500","attempt":"r2","result":"FAIL","reason":"fixture enrolled only2 of4 independent Ops actors","cleanup":"PASS","log":"http/r2-ops-members-fail.log.gz"}
+{"command":"node --experimental-strip-types tests/integration/guide/run-guide-http.mjs --port-base 64500","attempt":"r3","result":"FAIL","reason":"fixture budget assertion used nonexistent owner_id","cleanup":"PASS","log":"http/r3-budget-query-fail.log.gz"}
+{"command":"node --experimental-strip-types tests/integration/guide/run-guide-http.mjs --port-base 64500","attempt":"r4","result":"PASS","tests":1,"skipped":0,"cleanup":"PASS","log":"http/r4-pass.log.gz"}
+{"command":"node --experimental-strip-types tests/integration/guide/run-guide-http.mjs --port-base 64500","attempt":"r5-final","result":"PASS","tests":1,"skipped":0,"cleanup":"PASS","source":"SQL6b61 integrated6d505b9c","log":"http/r5-final-pass.log.gz"}
+{"command":"pnpm check","result":"PASS","scope":"lint/typecheck/build/static22"}
+{"command":"pnpm test:unit","result":"PASS","tests":239,"skipped":0}
+{"command":"pnpm test:contract","result":"PASS","tests":1113,"skipped":0}
+{"command":"pnpm test:e2e","result":"PASS","tests":40,"skipped":0,"scope":"repository contract/e2e inspection, not browser QA"}
+{"command":"pnpm evals","result":"PASS","tests":42,"skipped":0,"scope":"fixture evaluations, no real provider/content quality"}
+{"command":"pnpm test:security","result":"INCOMPLETE","passed":324,"skipped":1,"reason":"AI-14 requires explicit disposable identity target"}
+{"command":"pnpm docs:check","result":"PASS"}
+{"command":"node scripts/ci-suites/db-integration.mjs --list","result":"PASS","scope":"Guide postgres and native HTTP registered; ingress unconditional"}
