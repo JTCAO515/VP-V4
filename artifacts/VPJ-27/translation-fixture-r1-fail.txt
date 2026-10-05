@@ -1,0 +1,120 @@
+error: SwiftCompile normal arm64 failed with a nonzero exit code. Command line:     cd /private/tmp
+/private/tmp/vpj27-translation-fixture/Sources/VisePanda/NativeTranslationStore.swift:77:13: error: 'Observable()' is only available in macOS 14.0 or newer
+    |             `- error: 'Observable()' is only available in macOS 14.0 or newer
+macro expansion @Observable:1:2: error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+macro expansion @Observable:1:2: error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+macro expansion @Observable:1:2: error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+macro expansion @Observable:1:2: error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+macro expansion @Observable:1:2: error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+macro expansion @Observable:1:2: error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+macro expansion @Observable:1:2: error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+    |   |  `- error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+macro expansion @ObservationTracked:1:2: error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+macro expansion @ObservationTracked:1:2: error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+macro expansion @ObservationTracked:1:2: error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+macro expansion @ObservationTracked:1:2: error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+macro expansion @ObservationTracked:1:2: error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+macro expansion @ObservationTracked:1:2: error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+macro expansion @Observable:1:70: error: 'ObservationRegistrar' is only available in macOS 14.0 or newer
+    |   |                                                                      `- error: 'ObservationRegistrar' is only available in macOS 14.0 or newer
+/private/tmp/vpj27-translation-fixture/Sources/VisePanda/NativeTranslationStore.swift:173:13: error: 'Observable()' is only available in macOS 14.0 or newer
+    |             `- error: 'Observable()' is only available in macOS 14.0 or newer
+/private/tmp/vpj27-translation-fixture/Sources/VisePanda/NativeTranslationStore.swift:77:13: error: 'Observable()' is only available in macOS 14.0 or newer
+    |             `- error: 'Observable()' is only available in macOS 14.0 or newer
+macro expansion @Observable:1:2: error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+macro expansion @Observable:1:2: error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+macro expansion @Observable:1:2: error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+macro expansion @Observable:1:2: error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+macro expansion @Observable:1:2: error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+macro expansion @Observable:1:2: error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+macro expansion @Observable:1:2: error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+macro expansion @Observable:1:2: error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+macro expansion @Observable:1:2: error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+    |   |  `- error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+macro expansion @ObservationTracked:1:2: error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+macro expansion @ObservationTracked:1:2: error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+macro expansion @ObservationTracked:1:2: error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+macro expansion @ObservationTracked:1:2: error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+macro expansion @ObservationTracked:1:2: error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+macro expansion @ObservationTracked:1:2: error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+macro expansion @ObservationTracked:1:2: error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+macro expansion @ObservationTracked:1:2: error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+macro expansion @Observable:1:70: error: 'ObservationRegistrar' is only available in macOS 14.0 or newer
+    |   |                                                                      `- error: 'ObservationRegistrar' is only available in macOS 14.0 or newer
+/private/tmp/vpj27-translation-fixture/Sources/VisePanda/NativeTranslationStore.swift:173:13: error: 'Observable()' is only available in macOS 14.0 or newer
+    |             `- error: 'Observable()' is only available in macOS 14.0 or newer
+/private/tmp/vpj27-translation-fixture/Sources/VisePanda/NativeTranslationStore.swift:337:13: error: 'Observable()' is only available in macOS 14.0 or newer
+    |             `- error: 'Observable()' is only available in macOS 14.0 or newer
+macro expansion @Observable:1:2: error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+macro expansion @Observable:1:2: error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+macro expansion @Observable:1:2: error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+macro expansion @Observable:1:2: error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+macro expansion @Observable:1:2: error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+macro expansion @Observable:1:2: error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+macro expansion @Observable:1:2: error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+macro expansion @Observable:1:2: error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+macro expansion @Observable:1:2: error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+macro expansion @Observable:1:2: error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationTracked()' is only available in macOS 14.0 or newer
+macro expansion @Observable:1:2: error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+    |   |  `- error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+macro expansion @ObservationTracked:1:2: error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+macro expansion @ObservationTracked:1:2: error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+macro expansion @ObservationTracked:1:2: error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+macro expansion @ObservationTracked:1:2: error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+macro expansion @ObservationTracked:1:2: error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+macro expansion @ObservationTracked:1:2: error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+macro expansion @ObservationTracked:1:2: error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+macro expansion @ObservationTracked:1:2: error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+macro expansion @ObservationTracked:1:2: error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+macro expansion @ObservationTracked:1:2: error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+    |  |  `- error: 'ObservationIgnored()' is only available in macOS 14.0 or newer
+macro expansion @Observable:1:70: error: 'ObservationRegistrar' is only available in macOS 14.0 or newer
+    |   |                                                                      `- error: 'ObservationRegistrar' is only available in macOS 14.0 or newer
+/private/tmp/vpj27-translation-fixture/Sources/VisePanda/NativeTranslationStore.swift:337:13: error: 'Observable()' is only available in mac

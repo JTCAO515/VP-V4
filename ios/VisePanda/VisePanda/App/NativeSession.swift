@@ -35,6 +35,8 @@ final class NativeSession {
     private var assistantNavigation: NativeAssistantNavigation?
     let memoryPreferences=NativeMemoryPreferencesStore()
     let notifications = NativeNotificationCoordinator()
+    let voiceAudio = NativeVoiceAudioController()
+    let placeGuide = NativePlaceGuideStore()
     let entryResume: NativeEntryResumeCoordinator
     let offlineTrips=NativeOfflineTripStore()
     let deviceMaterials: NativeDeviceMaterials
@@ -830,6 +832,68 @@ final class NativeSession {
         let path = "api/explore/native/v1/trips/\(tripId)/place-actions"
         return try await dataRequest(prefix: path, path: path, method: "POST", body: body)
     }
+
+    func placeGuideRequest(selection: NativePlaceGuideSelection, body: Data) async throws -> Data {
+        guard dataScope == selection.scope, selection.valid, body.count <= 12_000 else { throw NativeDataError.sessionUnavailable }
+        let path = "api/guide/native/v1/trips/\(selection.tripID)"
+        let bytes = try await dataRequest(prefix: path, path: path, method: "POST", body: body)
+        guard dataScope == selection.scope, bytes.count <= 65_536 else { throw NativeDataError.staleSessionResponse }
+        return bytes
+    }
+
+    /// Guide has one fixed original grounded policy/history lane. New turns only use the qualified Guide command.
+    func placeGuideGroundedRequest(path: String, method: String, body: Data? = nil, actor: NativeDataScope) async throws -> Data {
+        let base = "api/chat/native/v4"
+        let allowed = method == "GET" && [base + "/policy", base + "/turns"].contains(path)
+            || ["POST", "DELETE"].contains(method) && path == base + "/consent"
+        guard dataScope == actor, allowed, (body?.count ?? 0) <= 12_000 else { throw NativeDataError.sessionUnavailable }
+        let bytes = try await dataRequest(prefix: base, path: path, method: method, body: body)
+        guard dataScope == actor, bytes.count <= 1_000_000 else { throw NativeDataError.staleSessionResponse }
+        return bytes
+    }
+
+    private var placeGuideJournalService: String { keychainService + ".place-guide-operation." + (endpoint?.absoluteString ?? "disabled") }
+    func pendingPlaceGuide(actor: NativeDataScope) throws -> NativePlaceGuidePending? {
+        guard dataScope == actor else { throw NativeDataError.sessionUnavailable }
+        let (status, bytes) = vault.read(service: placeGuideJournalService, owner: actor.subject)
+        if status == errSecItemNotFound { return nil }
+        guard status == errSecSuccess, let bytes, bytes.count <= 32_000 else { throw NativeDataError.sessionUnavailable }
+        let pending = try JSONDecoder().decode(NativePlaceGuidePending.self, from: bytes)
+        _ = try pending.selection(for: actor); try pending.validatedRecovery()
+        if pending.fencedReference == nil && pending.expiresAt <= Date() {
+            let fenced = try pending.fenced()
+            try writePlaceGuideRecovery(fenced, actor: actor); return fenced
+        }
+        return pending
+    }
+    func rememberPlaceGuide(_ pending: NativePlaceGuidePending, policy: NativeTextPolicy, actor: NativeDataScope) throws {
+        guard dataScope == actor, policy.valid, policy.consentState == .accepted, pending.noticeHash == policy.noticeHash, pending.expiresAt > Date(),
+              try pending.fields()["policyId"] as? String == policy.id else { throw NativeDataError.sessionUnavailable }
+        _ = try pending.selection(for: actor)
+        if let existing = try pendingPlaceGuide(actor: actor) {
+            guard existing == pending else { throw NativeDataError.server(code: "GUIDE_RECOVERY_REQUIRED") }; return
+        }
+        try writePlaceGuideRecovery(pending, actor: actor)
+    }
+    func fencePlaceGuide(actor: NativeDataScope) throws {
+        guard let pending = try pendingPlaceGuide(actor: actor), pending.fencedReference == nil else { return }
+        try writePlaceGuideRecovery(pending.fenced(), actor: actor)
+    }
+    private func writePlaceGuideRecovery(_ pending: NativePlaceGuidePending, actor: NativeDataScope) throws {
+        guard dataScope == actor else { throw NativeDataError.sessionUnavailable }
+        let bytes = try JSONEncoder().encode(pending)
+        guard bytes.count <= 32_000, vault.write(bytes, service: placeGuideJournalService, owner: actor.subject) == errSecSuccess else {
+            placeGuide.clear(); voiceAudio.cancel(); failureCode="guideJournalCleanupRequired"; status="storageError"; dataGeneration += 1
+            throw NativeDataError.sessionUnavailable
+        }
+    }
+    func completePlaceGuide(_ pending: NativePlaceGuidePending, actor: NativeDataScope) throws {
+        guard dataScope == actor, let stored = try pendingPlaceGuide(actor: actor),
+              try stored.selection(for: actor) == pending.selection(for: actor),
+              stored == pending || stored.fencedReference == (try NativePlaceGuideResultReference(pending)) else { throw NativeDataError.staleSessionResponse }
+        let status = vault.remove(service: placeGuideJournalService, owner: actor.subject)
+        guard status == errSecSuccess || status == errSecItemNotFound else { throw NativeDataError.sessionUnavailable }
+    }
     func pendingPlaceAction(actor: NativeDataScope) throws -> NativePlaceActionPending? {
         guard dataScope == actor else { throw NativeDataError.sessionUnavailable }
         return try NativePlaceActionJournal(vault: vault).read(actor)
@@ -1193,6 +1257,9 @@ final class NativeSession {
         guard !busy else { return }
         defaults.set(credential?.subject ?? defaults.string(forKey: storageKey) ?? defaults.string(forKey: storageKey + ".pendingJournalCleanupOwner") ?? defaults.string(forKey: storageKey + ".recoveryCleanupOwner") ?? "unbound", forKey: storageKey + ".signOutIntent")
         deviceMaterialSignOutFence = true
+        placeGuide.clear()
+        do { try voiceAudio.erase() }
+        catch { failureCode="voiceAudioCleanupRequired";status="storageError";return }
         do { try entryResume.erase() }
         catch { failureCode="entryResumeCleanupRequired";status="storageError";return }
         subject=nil; mobileEpoch=nil; displayName=nil; status="signingOut"
@@ -1326,6 +1393,9 @@ final class NativeSession {
         // Fence consumers before cleanup; a locked file is not proof of erasure.
         dataGeneration += 1
         notifications.actorChanged(to: nil)
+        placeGuide.clear()
+        do { try voiceAudio.erase() }
+        catch { failureCode="voiceAudioCleanupRequired";status="storageError";return false }
         do { try entryResume.erase(preservingUnclaimedID: preservingAnonymousResume) }
         catch { failureCode="entryResumeCleanupRequired";status="storageError";return false }
         subject=nil; mobileEpoch=nil; displayName=nil
@@ -1343,6 +1413,8 @@ final class NativeSession {
                 // Noncredential cleanup index only. It cannot restore a session or authorize a journal read.
                 defaults.set(owner, forKey: storageKey + ".pendingJournalCleanupOwner")
             } else {
+                let guide = vault.remove(service: placeGuideJournalService, owner: owner)
+                guard guide == errSecSuccess || guide == errSecItemNotFound else { failureCode="guideJournalCleanupRequired";status="storageError";return false }
                 do { try NativeRecoveryJournal(vault: vault).erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner) }
                 catch { failureCode="recoveryJournalCleanupRequired";status="storageError";return false }
                 do { try NativeReservationJournalVault.remove(endpoint:endpoint?.absoluteString ?? "disabled",owner:owner,vault:vault) }

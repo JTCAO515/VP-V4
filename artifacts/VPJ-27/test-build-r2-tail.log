@@ -1,0 +1,16 @@
+RegisterExecutionPolicyException /tmp/vpj27-ui-build/DD/Build/Products/Debug-iphonesimulator/VisePandaUITests-Runner.app/PlugIns/VisePandaUITests.xctest (in target 'VisePandaUITests' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj27-native-voice-translation-20261005/ios/VisePanda
+    builtin-RegisterExecutionPolicyException /tmp/vpj27-ui-build/DD/Build/Products/Debug-iphonesimulator/VisePandaUITests-Runner.app/PlugIns/VisePandaUITests.xctest
+
+Touch /tmp/vpj27-ui-build/DD/Build/Products/Debug-iphonesimulator/VisePandaUITests-Runner.app/PlugIns/VisePandaUITests.xctest (in target 'VisePandaUITests' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj27-native-voice-translation-20261005/ios/VisePanda
+    /usr/bin/touch -c /tmp/vpj27-ui-build/DD/Build/Products/Debug-iphonesimulator/VisePandaUITests-Runner.app/PlugIns/VisePandaUITests.xctest
+
+PruneExplicitPrecompiledModules /tmp/vpj27-ui-build/DD/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /tmp/vpj27-ui-build/DD/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /tmp/vpj27-ui-build/DD/SDKExplicitPrecompiledModules
+
+** TEST BUILD SUCCEEDED **
+
