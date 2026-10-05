@@ -6,6 +6,8 @@ struct NativePDFIntakeView: View {
     let session: NativeSession
     let tripStore: NativeTripStore
     let chinese: Bool
+    let initialPDFURL: URL?
+    let initialPDFExpiry: Date?
     @State private var model: NativePDFIntakeStore
     @State private var importer = false
     @State private var selectedPage = 1
@@ -14,7 +16,8 @@ struct NativePDFIntakeView: View {
     @State private var correctedValue = ""
     @State private var checkedPreview = false
     @Environment(\.dismiss) private var dismiss
-    init(source: NativePDFIntakeSource, session: NativeSession, tripStore: NativeTripStore, chinese: Bool) {
+    init(source: NativePDFIntakeSource, session: NativeSession, tripStore: NativeTripStore, chinese: Bool, initialPDFURL: URL? = nil, initialPDFExpiry: Date? = nil) {
+        self.initialPDFURL = initialPDFURL; self.initialPDFExpiry = initialPDFExpiry
         self.source = source; self.session = session; self.tripStore = tripStore; self.chinese = chinese
         _model = State(initialValue: NativePDFIntakeStore(source: source))
     }
@@ -126,10 +129,16 @@ struct NativePDFIntakeView: View {
                 selectedLine = nil; correctedValue = ""; selectedPage = 1; checkedPreview = false
                 Task { await model.load(url, using: session) }
             }
-            .task { model.start(using: session) }
+            .task {
+                model.start(using: session)
+                if let url = initialPDFURL, let expiry = initialPDFExpiry, expiry > Date(), session.dataScope == source.actor {
+                    await model.load(url, using: session)
+                    if expiry <= Date() { model.expire() }
+                }
+            }
             .task(id: model.receipt?.id) {
                 guard let receipt = model.receipt else { return }
-                let interval = receipt.expiresAt.timeIntervalSinceNow
+                let interval = min(receipt.expiresAt, initialPDFExpiry ?? receipt.expiresAt).timeIntervalSinceNow
                 if interval > 0 { try? await Task.sleep(for: .seconds(interval)) }
                 guard !Task.isCancelled else { return }
                 model.expire(); selectedLine = nil; correctedValue = ""; checkedPreview = false

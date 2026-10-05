@@ -108,13 +108,14 @@ struct TabRootView: View {
 
 // Navigation identity only; each entry delegates to its existing domain consumer.
 enum AppEntry: String, CaseIterable, Hashable, Identifiable {
-    case ask, trip, knowledge, memory, profile, today, tools, explore, search
+    case ask, trip, knowledge, memory, profile, today, tools, explore, search, shareInbox
     var id: String { rawValue }
     var titleKey: String {
         switch self {
         case .knowledge: "tab.library"
         case .memory: "tab.memory"
         case .search: "shell.search"
+        case .shareInbox: "shell.shareInbox"
         default: "tab.\(rawValue)"
         }
     }
@@ -141,7 +142,7 @@ enum AppEntry: String, CaseIterable, Hashable, Identifiable {
         case .profile: assistant ? nil : .profile
         case .tools: assistant ? nil : .tools
         case .explore: assistant ? nil : .explore
-        case .today, .search: nil
+        case .today, .search, .shareInbox: nil
         }
     }
 }
@@ -170,6 +171,7 @@ struct AppEntryView: View {
         case .tools: ToolsView()
         case .explore: ExploreView(isActive: isActive)
         case .search: GlobalSearchView()
+        case .shareInbox: NativeEntryResumeInboxEntry()
         }
     }
 }

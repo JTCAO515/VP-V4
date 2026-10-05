@@ -60,6 +60,7 @@ struct AppShellView: View {
             Text(settings.selectedLocale == .zh ? "来源、行程、权限或有效期已变化，请从当前行程继续。" : "The source, trip, permission or expiry changed. Continue from your current trip.")
         }
         .onOpenURL { url in
+            if settings.nativeSession.entryResume.receive(url, scope: settings.nativeSession.dataScope) { return }
             if let reference = NativeNotificationWire.opaqueReference(url) {
                 if let scope = settings.nativeSession.dataScope {
                     Task { await settings.nativeSession.notifications.resolve(reference: reference, scope: scope) }
@@ -69,8 +70,15 @@ struct AppShellView: View {
             guard let entry = AppEntry.deepLink(url) else { return }
             open(entry)
         }
+        .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { activity in
+            if let url = activity.webpageURL { _ = settings.nativeSession.entryResume.receive(url, scope: settings.nativeSession.dataScope) }
+        }
+        .sheet(isPresented: Binding(get: { settings.nativeSession.entryResume.presented && presentedEntry == nil && settings.nativeSession.notifications.destination == nil }, set: { settings.nativeSession.entryResume.presented = $0 })) {
+            NativeEntryResumeView(session: settings.nativeSession, coordinator: settings.nativeSession.entryResume, chinese: settings.selectedLocale == .zh)
+        }
         .onChange(of: settings.nativeSession.dataScope, initial: true) { _, scope in
             settings.nativeSession.notifications.attach(session: settings.nativeSession)
+            settings.nativeSession.entryResume.refresh(scope: scope)
             goalEntry = nil
             switchState.actorChanged(to: scope)
             presentedEntry = nil
@@ -86,10 +94,12 @@ struct AppShellView: View {
             await settings.nativeSession.notifications.finishRestoration(session: settings.nativeSession)
         }
         .onChange(of: scenePhase) { _, phase in
+            if phase != .active { settings.nativeSession.entryResume.hide() }
             if phase == .active {
                 Task {
                     await settings.nativeSession.validate()
                     await settings.nativeSession.notifications.refreshPermission(session: settings.nativeSession)
+                    settings.nativeSession.entryResume.refresh(scope: settings.nativeSession.dataScope)
                 }
             }
         }
