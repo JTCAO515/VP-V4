@@ -115,7 +115,12 @@ export function isLifecycleSnapshot(value: unknown): value is LifecycleSnapshot 
     || !isCapacity(value.capacity) || !Array.isArray(value.trips) || value.trips.length > 50 || !value.trips.every(isTrip)
     || new Set(value.trips.map(trip => trip.tripId)).size !== value.trips.length || !nullableUuid(value.nextTripId)
     || value.serviceStatus !== "unavailable") return false;
-  return true;
+  const { trips, capacity } = value;
+  return trips.every((trip, i) => (i === 0 || trips[i - 1].tripId < trip.tripId)
+      && (trip.state === "active" ? trip.tripId === capacity.activeTripId && trip.headVersion > 0 : trip.tripId !== capacity.activeTripId))
+    && trips.filter(trip => trip.state === "draft").length <= capacity.draftCount
+    && trips.filter(trip => trip.state === "legacy").length <= capacity.legacyCount
+    && (value.nextTripId === null || trips.length === 50 && value.nextTripId === trips.at(-1)?.tripId);
 }
 function isAppliedReceipt(value: unknown): value is LifecycleAppliedReceipt {
   if (!record(value) || !exact(value, ["status", "version", "ownerId", "sessionId", "operationId", "requestDigest", "action", "revision", "tripId", "state", "capacity", "archivedVersion", "archivedAt", "preference", "memoryRefs"])

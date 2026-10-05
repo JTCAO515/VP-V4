@@ -70,7 +70,9 @@ keep one pending write, recover by op after unknown ACK, and accept a receipt on
 if digest/action/target/session match. Cancellation/timeout/503 is unknown, not
 proof of rollback. After receipt, refresh current snapshot; historical receipt does
 not authorize editing, Memory use or restore an old Active. Account/host/session
-change fences late results and clears that scope's journal. Reuse of an op with
+change fences late results and detaches that scope. Preserve unresolved durable
+journals under the existing NativeSession denied/unknown-ACK policy; only an
+explicit successful erase clears them. Never replay an old session journal. Reuse of an op with
 different bytes is `LIFECYCLE_OPERATION_REUSE` (409); no automatic new op retry.
 
 Errors: `INVALID_INPUT`400; `UNAUTHENTICATED|SESSION_REPLACED`401; `FORBIDDEN`403;
@@ -142,10 +144,12 @@ cascades lifecycle rows and erases raw op bytes/receipts referencing that Trip
 non-replayable op tombstone if required to prevent reuse. Memory deletion/forget
 erases selected references and raw bytes/receipts carrying them; subsequent recovery
 cannot revive them. No summary/index/second Memory store exists. SQL owner supplies
-bounded owner-scoped export page RPC and extends the existing core Trip export
-section through an append-only wrapper; TS integrator adapts exact row decoder only
-if needed, with a Main lease. Export consumers use their existing source revision
-and executor/lease proof; no user runs are authorized here.
+bounded owner-scoped export page RPC with a new version and exact live-job
+lease/enrollment seam. Do not retrofit already-completed core exports or claim a
+legacy job enrolled this source. Preserve old schemas; new-job support is explicit
+and unenrolled coverage is partial. A wrapper, if used, branches by new job/version,
+retaining existing executor/lease/source-revision proof. TS exact decoder changes
+require a Main lease. No real user export/delete runs are authorized here.
 
 #224's current `service_case_v1` only has requested/grant state and no Trip binding
 or queued/accepted/assigned authority. Report `serviceStatus:'unavailable'`, preserve
