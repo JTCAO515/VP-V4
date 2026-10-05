@@ -51,8 +51,13 @@ struct NativePlaceGuideReady: Decodable, Equatable {
     let unsupportedNarratives: [String]
 
     func remaining(now: Date = Date()) -> TimeInterval {
-        guard let expires = NativeKnowledgeRead.date(expiresAt) else { return 0 }
+        guard let expires = playbackExpiresAt else { return 0 }
         return max(0, min(30, expires.timeIntervalSince(now)))
+    }
+    /// Preserve the absolute authority boundary; two separate now() calls must not extend it.
+    var playbackExpiresAt: Date? {
+        guard let expires = NativeKnowledgeRead.date(expiresAt), let evaluated = NativeKnowledgeRead.date(evaluatedAt) else { return nil }
+        return min(expires, evaluated.addingTimeInterval(30))
     }
 
     static func decode(_ bytes: Data, expected: NativePlaceGuideSelection, now: Date = Date()) throws -> Self {

@@ -70,6 +70,11 @@ import Observation
         guard let ready = visible(current), let segment = ready.segments.first(where: { $0.id == id }) else { return }
         progress.advance(segmentID: id, characters: characters, total: segment.speechText.utf16.count, finished: finished)
     }
+    func completedForQuestion(current: NativeDataScope?) -> [String] {
+        guard let ready = visible(current) else { return [] }
+        return ready.segments.map(\.id).filter(progress.completedSegmentIDs.contains)
+    }
+    func clearUnlicensedProgress() { if !cacheAllowed { progress = .init() } }
 
     func saveProgress(current: () -> NativeDataScope?, request: Request) async {
         guard !busy, let selection, let ready = visible(current()), ready.rights.cache else { return }

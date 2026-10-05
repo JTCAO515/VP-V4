@@ -44,7 +44,11 @@ struct NativePlaceGuideView: View {
                     .disabled(scope != selection.scope || store.busy || followUp.busy).accessibilityIdentifier("guide.refresh")
                 Button(t("Forget stored guide progress", "删除已存讲解进度")) {
                     audio.cancel(); exportText = nil
-                    run { await store.forget(current: { scope }, request: request) }
+                    run {
+                        followUp.sourceUnavailable(using: session)
+                        await store.forget(current: { scope }, request: request)
+                        if store.notice == "forgotten" { followUp.forgotten(using: session) }
+                    }
                 }.disabled(scope != selection.scope || store.busy).accessibilityIdentifier("guide.forget")
                 Button(t("Export this guide's progress metadata", "导出此讲解的进度元数据")) { run { await exportProgress() } }
                     .disabled(scope != selection.scope || store.busy).accessibilityIdentifier("guide.export")
@@ -161,12 +165,17 @@ struct NativePlaceGuideView: View {
         guard scope == selection.scope, !store.busy, !followUp.busy else { return }
         let previous = store.visible(scope)
         let valid = await store.read(current: { scope }, request: request)
-        guard valid, let ready = store.visible(scope), store.selection == selection else { audio.cancel(); exportText = nil; return }
+        guard valid, let ready = store.visible(scope), store.selection == selection else {
+            audio.cancel(); exportText = nil; followUp.sourceUnavailable(using: session)
+            await followUp.refresh(using: session, guide: store); return
+        }
+        if !ready.rights.prompt { followUp.sourceUnavailable(using: session) }
         if previous?.digest != ready.digest { exportText = nil }
         if let id = audio.guidePlaybackID {
-            if let segment = ready.segments.first(where: { ready.digest + ":" + $0.id == id }), previous?.digest == ready.digest, ready.rights.tts {
+            if let segment = ready.segments.first(where: { ready.digest + ":" + $0.id == id }), previous?.digest == ready.digest, ready.rights.tts,
+               let expiry = ready.playbackExpiresAt {
                 audio.renewGuide(id: id, text: segment.speechText, localeIdentifier: chinese ? "zh-CN" : "en-US",
-                    expiresAt: Date().addingTimeInterval(ready.remaining()))
+                    expiresAt: expiry)
             } else { audio.cancel() }
         }
         await followUp.refresh(using: session, guide: store)
@@ -183,7 +192,7 @@ struct NativePlaceGuideView: View {
             store.advance(id: segment.id, characters: characters, finished: finished, current: scope)
             if finished { run { await store.saveProgress(current: { scope }, request: request) } }
         }
-        let expiry = Date().addingTimeInterval(ready.remaining())
+        guard let expiry = ready.playbackExpiresAt else { audio.cancel(); return }
         if resume { audio.resumeGuide(id: id, text: fresh.speechText, localeIdentifier: chinese ? "zh-CN" : "en-US", expiresAt: expiry) }
         else { audio.speakGuide(id: id, text: fresh.speechText, localeIdentifier: chinese ? "zh-CN" : "en-US", expiresAt: expiry, offset: offset) }
     }

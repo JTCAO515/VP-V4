@@ -859,20 +859,38 @@ final class NativeSession {
         if status == errSecItemNotFound { return nil }
         guard status == errSecSuccess, let bytes, bytes.count <= 32_000 else { throw NativeDataError.sessionUnavailable }
         let pending = try JSONDecoder().decode(NativePlaceGuidePending.self, from: bytes)
-        _ = try pending.selection(for: actor); _ = try pending.fields(); return pending
+        _ = try pending.selection(for: actor); try pending.validatedRecovery()
+        if pending.fencedReference == nil && pending.expiresAt <= Date() {
+            let fenced = try pending.fenced()
+            try writePlaceGuideRecovery(fenced, actor: actor); return fenced
+        }
+        return pending
     }
     func rememberPlaceGuide(_ pending: NativePlaceGuidePending, policy: NativeTextPolicy, actor: NativeDataScope) throws {
-        guard dataScope == actor, policy.valid, policy.consentState == .accepted, pending.noticeHash == policy.noticeHash,
+        guard dataScope == actor, policy.valid, policy.consentState == .accepted, pending.noticeHash == policy.noticeHash, pending.expiresAt > Date(),
               try pending.fields()["policyId"] as? String == policy.id else { throw NativeDataError.sessionUnavailable }
         _ = try pending.selection(for: actor)
         if let existing = try pendingPlaceGuide(actor: actor) {
             guard existing == pending else { throw NativeDataError.server(code: "GUIDE_RECOVERY_REQUIRED") }; return
         }
+        try writePlaceGuideRecovery(pending, actor: actor)
+    }
+    func fencePlaceGuide(actor: NativeDataScope) throws {
+        guard let pending = try pendingPlaceGuide(actor: actor), pending.fencedReference == nil else { return }
+        try writePlaceGuideRecovery(pending.fenced(), actor: actor)
+    }
+    private func writePlaceGuideRecovery(_ pending: NativePlaceGuidePending, actor: NativeDataScope) throws {
+        guard dataScope == actor else { throw NativeDataError.sessionUnavailable }
         let bytes = try JSONEncoder().encode(pending)
-        guard bytes.count <= 32_000, vault.write(bytes, service: placeGuideJournalService, owner: actor.subject) == errSecSuccess else { throw NativeDataError.sessionUnavailable }
+        guard bytes.count <= 32_000, vault.write(bytes, service: placeGuideJournalService, owner: actor.subject) == errSecSuccess else {
+            placeGuide.clear(); voiceAudio.cancel(); failureCode="guideJournalCleanupRequired"; status="storageError"; dataGeneration += 1
+            throw NativeDataError.sessionUnavailable
+        }
     }
     func completePlaceGuide(_ pending: NativePlaceGuidePending, actor: NativeDataScope) throws {
-        guard dataScope == actor, try pendingPlaceGuide(actor: actor) == pending else { throw NativeDataError.staleSessionResponse }
+        guard dataScope == actor, let stored = try pendingPlaceGuide(actor: actor),
+              try stored.selection(for: actor) == pending.selection(for: actor),
+              stored == pending || stored.fencedReference == (try NativePlaceGuideResultReference(pending)) else { throw NativeDataError.staleSessionResponse }
         let status = vault.remove(service: placeGuideJournalService, owner: actor.subject)
         guard status == errSecSuccess || status == errSecItemNotFound else { throw NativeDataError.sessionUnavailable }
     }

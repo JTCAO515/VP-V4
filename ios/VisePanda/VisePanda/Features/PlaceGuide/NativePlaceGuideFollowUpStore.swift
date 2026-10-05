@@ -10,12 +10,12 @@ import Observation
     private(set) var notice: String?
     var draft = ""
     private var selection: NativePlaceGuideSelection?
-    private var submitted: NativePlaceGuidePending?
+    private var submitted: NativePlaceGuideResultReference?
     private var generation = UUID()
     private var answerDeadline: TimeInterval = 0
     private var continuation: NativeTextTurn?
     private var awaiting = false
-    var canSend: Bool { !busy && !awaiting && policy?.consentState == .accepted && (pending != nil || (!draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && draft.utf16.count <= 600)) }
+    var canSend: Bool { !busy && !awaiting && pending?.fencedReference == nil && policy?.consentState == .accepted && (pending != nil || (!draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && draft.utf16.count <= 600)) }
 
     func bind(_ next: NativePlaceGuideSelection?) {
         guard selection != next else { return }
@@ -43,29 +43,28 @@ import Observation
             if let pending, try pending.selection(for: selection.scope) != selection {
                 notice = "other_pending"; turn = nil; answerDeadline = 0; return
             }
-            guard let selected = pending ?? submitted else { return }
-            let fields = try selected.fields(), task = fields["serviceTask"] as? [String: Any]
+            guard let selected = try pending.map(NativePlaceGuideResultReference.init) ?? submitted else { return }
             let started = ProcessInfo.processInfo.systemUptime
             let bytes = try await session.placeGuideGroundedRequest(path: "api/chat/native/v4/turns", method: "GET", actor: selection.scope)
             try ensure(own, session, selection)
             let history = try JSONDecoder().decode(NativeTextHistory.self, from: bytes)
             guard history.version == 4, history.kind == "grounded_history", history.turns.count <= 20,
                   history.turns.allSatisfy({ $0.valid && $0.validTask }), Set(history.turns.map(\.id)).count == history.turns.count else { throw NativeDataError.invalidResponse }
-            guard let found = history.turns.first(where: { $0.id == fields["turnId"] as? String }) else {
+            guard let found = history.turns.first(where: { $0.id == selected.turnID }) else {
                 turn = nil; answerDeadline = 0; notice = pending == nil ? "result_unavailable" : "ack_unknown"; return
             }
-            guard found.threadId == fields["threadId"] as? String, found.serviceTaskId == task?["id"] as? String,
+            guard found.threadId == selected.threadID, found.serviceTaskId == selected.taskID,
                   found.locale == selection.locale, found.scopeVersion == 1,
-                  found.relationship == task?["relationship"] as? String,
-                  found.parentTurnId == task?["parentTurnId"] as? String else { throw NativeDataError.invalidResponse }
+                  found.relationship == selected.relationship, found.parentTurnId == selected.parentTurnID else { throw NativeDataError.invalidResponse }
             awaiting = found.waiting; continuation = nil
             if let chain = NativeTaskChain(containing: found, history: history.turns), chain.turns.count < 4,
                [.clarification, .technicalFailure].contains(found.outcome) { continuation = found }
             // Original history proves acceptance, including a lost Guide HTTP acknowledgement.
-            if let pending { try session.completePlaceGuide(pending, actor: selection.scope); submitted = pending; self.pending = nil }
+            if let pending { try session.completePlaceGuide(pending, actor: selection.scope); submitted = selected; self.pending = nil }
+            if !found.waiting { guide.clearUnlicensedProgress() }
             guard reply.policy.consentState == .accepted, reply.policy.noticeHash == selected.noticeHash,
-                  reply.policy.id == fields["policyId"] as? String,
-                  let current = guide.visible(session.dataScope), current.digest == fields["expectedDigest"] as? String,
+                  reply.policy.id == selected.policyID,
+                  let current = guide.visible(session.dataScope), current.digest == selected.digest,
                   current.rights.prompt, let result = found.result else { turn = nil; answerDeadline = 0; return }
             let lifetime = try result.lifetime(for: found, elapsed: ProcessInfo.processInfo.systemUptime - started)
             // A Guide answer may only expose facts from the exact currently qualified statement set.
@@ -105,7 +104,7 @@ import Observation
                 let task: NativeServiceTaskLink
                 let threadID: String
                 if let continuation, let taskID = continuation.serviceTaskId,
-                   submitted.flatMap({ try? $0.fields()["expectedDigest"] as? String }) == ready.digest {
+                   submitted?.digest == ready.digest {
                     task = .init(id: taskID, scopeVersion: 1, relationship: continuation.outcome == .clarification ? "clarification" : "repair", parentTurnId: continuation.id)
                     threadID = continuation.threadId
                 } else {
@@ -114,16 +113,19 @@ import Observation
                 }
                 let taskObject = try JSONSerialization.jsonObject(with: JSONEncoder().encode(task))
                 let body = try selection.command("follow_up", extra: ["operationId": UUID().uuidString.lowercased(), "expectedDigest": ready.digest,
-                    "question": question, "threadId": threadID, "turnId": UUID().uuidString.lowercased(), "policyId": policy.id, "serviceTask": taskObject])
+                    "completedSegmentIds": guide.completedForQuestion(current: session.dataScope), "question": question,
+                    "threadId": threadID, "turnId": UUID().uuidString.lowercased(), "policyId": policy.id, "serviceTask": taskObject])
                 let request = NativePlaceGuidePending(endpoint: selection.scope.endpoint, owner: selection.scope.subject, mobileEpoch: selection.scope.mobileEpoch,
                     canonicalPoiID: selection.canonicalPoiID, tripID: selection.tripID, tripVersion: selection.tripVersion, placeReferenceID: selection.placeReferenceID,
-                    locale: selection.locale, interest: selection.interest, noticeHash: policy.noticeHash, body: body)
+                    locale: selection.locale, interest: selection.interest, noticeHash: policy.noticeHash,
+                    expiresAt: ready.playbackExpiresAt ?? Date(), body: body)
                 try session.rememberPlaceGuide(request, policy: policy, actor: selection.scope); pending = request
             }
             guard let pending, pending.noticeHash == policy.noticeHash else { throw NativeDataError.invalidResponse }
             let fields = try pending.fields(), task = fields["serviceTask"] as? [String: Any]
             guard fields["policyId"] as? String == policy.id, fields["expectedDigest"] as? String == ready.digest,
                   try pending.selection(for: selection.scope) == selection else { throw NativeDataError.invalidResponse }
+            guard let completed = fields["completedSegmentIds"] as? [String], Set(completed).isSubset(of: Set(ready.segments.map(\.id))) else { throw NativeDataError.invalidResponse }
             let bytes = try await session.placeGuideRequest(selection: selection, body: pending.body)
             try ensure(own, session, selection)
             let reply = try NativePlaceActionWire.exact(NativePlaceGuideStore.outcome(bytes), ["kind", "version", "operationId", "tripId", "turnId", "serviceTaskId", "scopeVersion", "relationship", "parentTurnId", "guideDigest", "reused", "generationCost"])
@@ -134,9 +136,23 @@ import Observation
                   reply["parentTurnId"] as? String == task?["parentTurnId"] as? String,
                   reply["guideDigest"] as? String == ready.digest, NativePlaceActionWire.boolean(reply["reused"]) != nil,
                   reply["generationCost"] is NSNull else { throw NativeDataError.invalidResponse }
-            try session.completePlaceGuide(pending, actor: selection.scope); submitted = pending; self.pending = nil; draft = ""; turn = nil; answerDeadline = 0
+            let reference = try NativePlaceGuideResultReference(pending)
+            try session.completePlaceGuide(pending, actor: selection.scope); submitted = reference; self.pending = nil; draft = ""; turn = nil; answerDeadline = 0
             notice = "submitted"; awaiting = true
         } catch { if own == generation { turn = nil; answerDeadline = 0; notice = "ack_unknown" } }
+    }
+    func sourceUnavailable(using session: NativeSession) {
+        guard let selection, session.dataScope == selection.scope else { return }
+        turn = nil; draft = ""; answerDeadline = 0
+        do { try session.fencePlaceGuide(actor: selection.scope); pending = try session.pendingPlaceGuide(actor: selection.scope) }
+        catch { policy = nil; notice = "cleanup_pending" }
+    }
+    func forgotten(using session: NativeSession) {
+        guard let selection, session.dataScope == selection.scope else { return }
+        do {
+            if let pending = try session.pendingPlaceGuide(actor: selection.scope) { try session.completePlaceGuide(pending, actor: selection.scope) }
+            clear(); bind(selection)
+        } catch { sourceUnavailable(using: session); policy = nil; notice = "cleanup_pending" }
     }
     private func ensure(_ own: UUID, _ session: NativeSession, _ selection: NativePlaceGuideSelection) throws {
         guard own == generation, session.dataScope == selection.scope, self.selection == selection, !Task.isCancelled else { throw NativeDataError.staleSessionResponse }

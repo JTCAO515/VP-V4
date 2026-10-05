@@ -57,15 +57,19 @@ import Testing
     }
     @Test func pendingBodyKeepsSameOperationAndRejectsAnotherOwner() throws {
         let policyID = "00000000-0000-4000-8000-000000000010", operationID = "00000000-0000-4000-8000-000000000011"
-        let body = try selection.command("follow_up", extra: ["operationId": operationID, "expectedDigest": String(repeating: "a", count: 64), "question": "Is this the address?",
+        let body = try selection.command("follow_up", extra: ["operationId": operationID, "expectedDigest": String(repeating: "a", count: 64), "completedSegmentIds": ["00000000-0000-4000-8000-000000000005"], "question": "Is this the address?",
             "threadId": "00000000-0000-4000-8000-000000000012", "turnId": "00000000-0000-4000-8000-000000000013", "policyId": policyID,
             "serviceTask": ["id": "00000000-0000-4000-8000-000000000014", "scopeVersion": 1, "relationship": "new_goal", "parentTurnId": NSNull()]])
         let pending = NativePlaceGuidePending(endpoint: scope.endpoint, owner: scope.subject, mobileEpoch: scope.mobileEpoch, canonicalPoiID: selection.canonicalPoiID,
             tripID: selection.tripID, tripVersion: selection.tripVersion, placeReferenceID: selection.placeReferenceID, locale: selection.locale, interest: selection.interest,
-            noticeHash: String(repeating: "b", count: 64), body: body)
+            noticeHash: String(repeating: "b", count: 64), expiresAt: Date().addingTimeInterval(25), body: body)
         let restored = try JSONDecoder().decode(NativePlaceGuidePending.self, from: JSONEncoder().encode(pending))
         #expect(restored.body == body && restored == pending)
         #expect(try restored.fields()["operationId"] as? String == operationID)
+        let fenced = try restored.fenced()
+        #expect(fenced.body.isEmpty && fenced.fencedReference?.operationID == operationID)
+        #expect(throws: (any Error).self) { try fenced.fields() }
+        try fenced.validatedRecovery()
         #expect(throws: (any Error).self) { try restored.selection(for: .init(endpoint: scope.endpoint, subject: "other", mobileEpoch: 1, generation: 2)) }
     }
 }
