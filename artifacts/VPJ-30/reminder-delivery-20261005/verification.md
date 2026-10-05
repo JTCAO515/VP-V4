@@ -80,3 +80,29 @@ evidence, not iOS runtime/permission/APNs delivery. Detailed source evidence:
 The final PR still requires its exact-head CI and independent protected review.
 All original target/device/production UNRUN above remain; development-complete
 source does not activate database permissions, APNs credentials or deployment.
+
+Final integration follow-up: normal main merge incorporates #650 main
+85e7ec6b7969a9a5796d07c58c8b8880bada1d73, preserving the scoped-edit fourth journal,
+manualOrder/reorder and both CI entries. The first project-file conflict script
+failed its assertion; an unpublished merge commit retained markers and the first
+reported project PASS was incorrect. This was corrected before push in f3b2252d.
+Actual subsequent checks PASS: no markers, both feature/test registrations,
+five existing/new journal names, project plutil, Session Swift syntax, diff check.
+That failure is retained rather than converted into successful validation.
+
+Actual UI source review then found that global incomplete coverage blocked even
+individually verified sources. The original Native owner fixed fca6e06e (integrated
+49bd73ff): incomplete remains an explicit partial/unknown notice, while returned
+sources are filtered by exact head/source/expiry for N1 and scheduling. Unreturned
+watch sources remain unavailable. Stored purpose consent survives card dismissal;
+registration still does not authorize dispatch. One affected real Foundation
+partial-GET/schedule/ACK and negative head/expiry/source case passed, with unchanged
+prior tests reused. Main retained the initial Closed/reopened history and closed
+development again only after this actual code fix.
+
+PASS: one necessary combined unsigned `xcodebuild build-for-testing` after main
+merge and the partial-source fix, with isolated derived data
+`/tmp/vpj30-integrated-notification-dd-20261005`. Actual exit 0 and
+`TEST BUILD SUCCEEDED` are in `/tmp/vpj30-integrated-notification-build-20261005.log`.
+This compiles app/test targets and verifies the merged project/Session together;
+no Simulator was booted and no device/runtime acceptance follows.
