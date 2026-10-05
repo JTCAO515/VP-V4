@@ -12,7 +12,7 @@ const request=(body=submit(),headers={})=>new Request('http://localhost/api/comm
 const options=(rpc={},extra={})=>({enabled:true,surface:'native',createRpc:()=>({authenticate:async()=>actor,sessionId:()=>session,current:async()=>true,call:async()=>({data:outcome(),error:null}),...rpc}),...extra});
 test('J1 closed commands bind consent, purpose, version, owner-safe place and raw mutation lookup',()=>{
  assert.ok(parseCommunityInput(submit()));
- for (const name of ['native-submit','native-operation','native-abandon']) {
+ for (const name of ['native-submit','native-operation','native-abandon','native-near-limit-submit','native-near-limit-operation','native-near-limit-abandon']) {
   const raw=readFileSync(new URL(`../../../ios/VisePanda/VisePandaTests/Fixtures/CommunitySubmission/${name}.json`,import.meta.url),'utf8');
   assert.ok(parseCommunityInput(JSON.parse(raw)),`actual Native DTO builder fixture ${name}`);
  }

@@ -33,7 +33,7 @@ Whole #235 remains OPEN for J3/#238; these are controlled internal J1 facts.
   review-note export1/1 after the final note correction; old legacy5/5 adjusted RLS
   count7; SQL contract3/3; actual JWT-r2 1/1/owned cleanup. Original failures remain
   in `community-j1-sql/`; no full repeat after note-only delta.
-- PASS: TS community contracts22/22 zero skip on current DTO/HTTP/consumer/SQL
+- PASS: TS community contracts23/23 zero skip on current DTO/HTTP/consumer/SQL
   contract; lint, strict TypeScript, docs/diff check. Final source checks preserve these same commands and scopes.
 - PASS: Web build includes actual `/api/community/native/v1` and `/ops/community`.
 - PASS: actual Browser1280/zh ->390x844/en, language switch and anonymous queue
@@ -70,3 +70,31 @@ with original VP_COMMUNITY_DB_TEST plus exact TS root, and source-owned JWT64100
 HTTP64200 steps. Original entries/flags/zero-skip gates remain intact. Classification
 preflight initially failed for those3 unregistered new files; final registry fixes
 the concrete omission rather than waiving them. Single PR and remote gates follow.
+
+## Final recovery-envelope repair (supersedes earlier core-close checkpoint)
+
+Main found a valid original mutation could be rejected by outer recovery limits.
+Final user instruction: recovery outer transport49152bytes only, ordinary body
+and inner original24000bytes/10000UTF16 unchanged. HTTP strictly layers bounds;
+Native801e changes Input, actual Session guard and builder bounded output together.
+SQL has only the correct inner bounds and remains byte-identical to b16.
+
+- PASS: final pure single-key JSON with leading5196 TAB from serialized base4804:
+  inner10000UTF16/19120UTF8 bytes -> operation24444bytes, abandon24442. TAB/raw
+  mutation bytes stay exact; committed abandonment does not undo the submission.
+- PASS: same existing owned real Auth/HTTP case-r5 includes this >24K recovery,
+  4000backslashes, inner10001/outer49153/nested-recovery negatives and unchanged
+  ordinary body bounds;1/1 zero skip and cleanup vp-native-ask-630e4dd5 PASS.
+  Prior r3/r4 are versioned intermediate checks, not final TAB proof.
+- Native801e + final fixture/test0e3 immutable sources integrated; real Session
+  through URLProtocol remains clearly synthetic. Original normal/inner limits and
+  permission/session/deadline/unknown-ACK/erasure semantics unchanged.
+- Current TS parser accepts all6 actual Native builder fixtures, including final
+  TAB-prefixed near-limit original/operation/abandon. No JSON canonicalization.
+- BOM is preserved for strict JSON parsing rather than stripped before digest;
+  malformed transport input is denied before dispatch, never silently rewritten.
+
+J1 completion is re-audited by Main after this fix. Whole235/J3 stays Open;
+final-head remote CI/formal protection still separate. No target activation.
+
+Final actual repaired HTTP log: artifacts/VPJ-48/j1-http-r5-tab-final.log.gz (uncompressed local file same basename.log), final23 contract log j1-contract-recovery-final.log.gz. Exact product source87f1be13/Native801e + fixture/test0e3, current Native source diff0/SQLb16diff0. All final local lint/typecheck/docs/diff checks PASS; no extra matrix scheduled.
