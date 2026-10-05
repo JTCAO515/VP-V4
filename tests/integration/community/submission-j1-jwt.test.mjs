@@ -20,7 +20,7 @@ test('real local GoTrue JWT PostgREST RPC owner qualification revocation and era
   const value=await response.json();return {ok:response.ok,value};
  };
  const a=await signup(),r=await signup(),other=await signup();
- assert.equal((await rpc(a,{action:'mine',cursor:null})).value.message,'COMMUNITY_DISABLED');
+ assert.equal((await rpc(a,{action:'mine',cursor:null})).value.kind,'page');assert.equal((await rpc(a,{action:'queue',cursor:null})).value.message,'COMMUNITY_FORBIDDEN');
  assert.equal((await rpc(a,{action:'session'})).value.kind,'session');
  // Fixture-only setup AFTER default-off/direct ACL observation, no production seed.
  assert.equal(sql("select count(*) from community_private.reviewers;"),'0');

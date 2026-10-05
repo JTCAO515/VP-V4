@@ -3,6 +3,9 @@ import test,{before,after} from 'node:test';
 import assert from 'node:assert/strict';
 import {randomUUID as uuid} from 'node:crypto';
 import {readFileSync,readdirSync} from 'node:fs';
+import {resolve} from 'node:path';
+import {pathToFileURL} from 'node:url';
+const reference=process.env.VP_COMMUNITY_TS_WIRE_ROOT?await import(pathToFileURL(resolve(process.env.VP_COMMUNITY_TS_WIRE_ROOT,'lib/server/community/contract.ts')).href):null;
 import {command,sql} from '../cost/fixtures/postgres-rpc.mjs';
 const enabled=process.env.VP_COMMUNITY_DB_TEST==='1';
 const container='vpj48-j1-'+uuid().slice(0,8);let created=false,legacyBody,legacyACL;
@@ -12,7 +15,7 @@ const db=async q=>{const r=await sql(container,q);assert.equal(r.code,0,r.stderr
 const claims=(a,over={})=>`set request.jwt.claim.sub='${a.id}';set request.jwt.claim.role='authenticated';set request.jwt.claims=${lit(JSON.stringify({role:'authenticated',is_anonymous:false,session_id:a.session,...over}))};`;
 const envelope=(v,bytes=['submit','review','withdraw','delete'].includes(v.action)?JSON.stringify(v):null)=>({protocol:'community-j1/1',command:v,mutationBytes:bytes});
 const raw=(a,v,bytes,over={})=>sql(container,claims(a,over)+`set role authenticated;select public.community_workspace(${lit(JSON.stringify(envelope(v,bytes)))}::jsonb);`);
-const call=async(a,v,bytes)=>{const r=await raw(a,v,bytes);assert.equal(r.code,0,r.stderr);return JSON.parse(r.stdout.trim());};
+const call=async(a,v,bytes)=>{const r=await raw(a,v,bytes);assert.equal(r.code,0,r.stderr);const out=JSON.parse(r.stdout.trim());if(reference)assert.ok(reference.decodeCommunityOutcome(out),'actual canonical TS decoder rejects SQL response '+out.kind);return out;};
 const denied=async(a,v,error,bytes,over)=>{const r=await raw(a,v,bytes,over);assert.notEqual(r.code,0);assert.match(r.stderr,error);};
 const submit=(over={})=>({action:'submit',operationId:uuid(),submissionId:uuid(),contentKind:'experience',title:'Travel 😀',content:'Private body',benefitDisclosure:'Self-reported interest',place:null,consent:'internal-review-v1',...over});
 const review=(s,decision='approve')=>({action:'review',operationId:uuid(),submissionId:s.submissionId,expectedVersion:1,decision,note:'Explicit author-visible note'});
@@ -48,7 +51,7 @@ run('full migration replay rollback and unchanged signature ACL; module defaults
  assert.notEqual((await sql(container,`set role ${role};select community_private.workspace_j1('{}');`)).code,0);
  }
  assert.notEqual((await sql(container,"set role anon;select public.community_workspace('{}');")).code,0);
- const a=await actor();await denied(a,{action:'mine',cursor:null},/COMMUNITY_DISABLED/);
+ const a=await actor();await denied(a,submit(),/COMMUNITY_DISABLED/);
  assert.equal((await call(a,{action:'session'})).kind,'session');assert.equal((await call(a,{action:'export'})).coverage,'complete_for_community');assert.equal((await call(a,{action:'mine',cursor:null})).kind,'page');
  assert.equal(await db('select count(*) from community_private.disclosures_j1;'),'0');
  await db('update community_private.settings set enabled=true;');
@@ -74,11 +77,11 @@ run('independent qualification trusted unknown disclosure owner isolation review
  await denied(a,{...s,content:'changed'},/COMMUNITY_CONFLICT/);await denied(a,s,/COMMUNITY_CONFLICT/,JSON.stringify(s,null,2));
 });
 run('legacy notes stay private and original receipts are current safe metadata',async()=>{
- const a=await actor(),r=await actor(true);const s=submit();const old={action:'submit',operationId:s.operationId,submissionId:s.submissionId,title:s.title,content:s.content,consent:s.consent};
+ const a=await actor(),r=await actor(true);await db('update community_private.settings set enabled=true;');const s=submit();const old={action:'submit',operationId:s.operationId,submissionId:s.submissionId,title:s.title,content:s.content,consent:s.consent};
  const legacy=async(actor,v)=>{const out=await sql(container,claims(actor)+`set role authenticated;select public.community_workspace(${lit(JSON.stringify(v))}::jsonb);`);assert.equal(out.code,0,out.stderr);return JSON.parse(out.stdout.trim());};
  await legacy(a,old);const rev={...review(s),note:'LEGACY-INTERNAL-SECRET'};await legacy(r,rev);
  const item=(await call(a,{action:'read',submissionId:s.submissionId})).submission;assert.equal(item.contentKind,'unknown');assert.equal(item.reviewNote,null);assert.ok(!JSON.stringify(item).includes(rev.note));
- const exported=await call(a,{action:'export'});assert.equal(exported.receipts[0].action,'unknown');
+ const exported=await call(a,{action:'export'});assert.equal(exported.receipts[0].action,'unknown');const ownReview=await call(r,{action:'export'});assert.equal(ownReview.reviews[0].note,rev.note);assert.equal(Object.hasOwn(ownReview.reviews[0],'content'),false);assert.equal(Object.hasOwn(ownReview.reviews[0],'authorId'),false);
  await call(a,erase());assert.equal((await legacy(a,old)).content,'');await denied(a,s,/COMMUNITY_CONFLICT/);
 });
 run('original exact bytes absent/abandon/commit closure and concurrent same-op race',async()=>{
@@ -138,4 +141,13 @@ run('actual saved canonical association freezes Trip head and exact original pro
  await db(`update public.trips set head_version=1 where id='${trip}';`);await denied(a,submit({place}),/COMMUNITY_PLACE_UNAVAILABLE/);
  await db(`update public.provider_poi_mappings set matched_at=clock_timestamp() where canonical_poi_id='${poi}';`);
  assert.equal((await call(a,{action:'read',submissionId:s.submissionId})).submission.place.label,null);await denied(a,submit({place:{...place,expectedTripVersion:1}}),/COMMUNITY_PLACE_UNAVAILABLE/);
+});
+
+run('independent opposing reviews and reviewer/owner-cleanup contention preserve one transition without deadlock',async()=>{
+ const a=await actor(),r=await actor(true),r2=await actor(true),s=submit();await call(a,s);
+ const race=await Promise.all([raw(r,review(s)),raw(r2,review(s,'reject'))]);assert.equal(race.filter(x=>x.code===0).length,1);assert.match(race.find(x=>x.code!==0).stderr,/COMMUNITY_CONFLICT|could not obtain lock/);
+ assert.equal(await db(`select count(*) from community_private.audit where submission_id='${s.submissionId}';`),'3');
+ const pending=submit();await call(a,pending);const cleanup=erase(),rev=review(pending);const results=await Promise.all([raw(r,rev),raw(a,cleanup)]);assert.ok(results.some(x=>x.code===0));
+ for(const x of results)if(x.code!==0)assert.match(x.stderr,/COMMUNITY_CONFLICT|could not obtain lock/);
+ await call(a,cleanup);assert.equal((await call(a,{action:'read',submissionId:pending.submissionId})).submission.content,'');assert.equal(await db('select deadlocks from pg_stat_database where datname=current_database();'),'0');
 });
