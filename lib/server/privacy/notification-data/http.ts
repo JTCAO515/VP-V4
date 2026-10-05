@@ -36,7 +36,7 @@ export async function handleNotificationData(request: Request, options: Notifica
     if (!await authority.current(actor)) return fail('SESSION_REPLACED', 401);
     const current = () => authority.current(actor);
     if (command.action === 'export') return reply({ data: await collectNotificationDataExport(command, raw, actor, authority.rpc, lifetime.signal, current, now) });
-    mutationDispatched = command.action === 'erase';
+    mutationDispatched = command.action === 'erase' || command.action === 'recover';
     let result = await authority.rpc(command.action, raw, lifetime.signal);
     if (lifetime.signal.aborted || !await current()) return fail(mutationDispatched ? 'NOTIFICATION_DATA_ACK_UNKNOWN' : 'SESSION_REPLACED', mutationDispatched ? 503 : 401);
     if (Buffer.byteLength(JSON.stringify(result) ?? '', 'utf8') > NOTIFICATION_DATA_LIMITS.maxBytes) return fail(mutationDispatched ? 'NOTIFICATION_DATA_ACK_UNKNOWN' : 'NOTIFICATION_DATA_CAPACITY');

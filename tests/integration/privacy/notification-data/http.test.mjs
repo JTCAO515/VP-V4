@@ -132,3 +132,18 @@ test('admission and real current credentials precede dispatch; default runtime i
   assert.equal((await denied.json()).error.code, 'NOTIFICATION_DATA_UNAVAILABLE');
   assert.equal(NOTIFICATION_DATA_LIMITS.lifetimeMs, 30000);
 });
+
+test('pending fences need privileged drain authority; malformed preview binding and lost recovery ACK cannot complete', async () => {
+  const bytes = '\n' + JSON.stringify(command('erase'));
+  const pending = { ...binding, kind: 'draining', state: 'fenced', requestDigest: notificationDataDigest(bytes), committedAt: now + 1 };
+  const fenced = await handleNotificationData(request(bytes), options(async () => pending));
+  assert.equal(fenced.status, 503); assert.equal((await fenced.json()).error.code, 'NOTIFICATION_DATA_ACK_UNKNOWN');
+  let serviceCalls = 0;
+  const invalidBinding = { ...pending, previewDigest: 'e'.repeat(64) };
+  const original = options(async () => invalidBinding);
+  const invalid = await handleNotificationData(request(bytes), { ...original, authority: () => ({ ...original.authority(), drainRPC: async () => { serviceCalls++; throw Error('must not finalize'); } }) });
+  assert.equal(invalid.status, 503); assert.equal(serviceCalls, 0);
+  const recover = { ...selection, action: 'recover', mutationBytes: bytes };
+  const lost = await handleNotificationData(request(recover), options(async () => { throw Error('lost original recovery response'); }));
+  assert.equal(lost.status, 503); assert.equal((await lost.json()).error.code, 'NOTIFICATION_DATA_ACK_UNKNOWN');
+});

@@ -1,3 +1,4 @@
+import type { NotificationSendPermit } from '../privacy/notification-data/send-budget.ts';
 /** Provider acceptance is a handoff acknowledgement, never device delivery. */
 export type DeliveryOutcome = Readonly<
   | { kind: 'accepted'; apnsId: string; acceptedAt: string }
@@ -10,7 +11,7 @@ export type QuietHours = Readonly<{ startMinute: number; endMinute: number }>;
 export type ReminderTransport = Readonly<{
   available: boolean;
   binding: Readonly<{ environment: 'sandbox' | 'production'; topic: string }> | null;
-  send(input: Readonly<{ token: string; apnsId: string; notificationId: string; environment: 'sandbox' | 'production'; topic: string; expiresAt: string }>): Promise<DeliveryOutcome>;
+  send(input: Readonly<{ token: string; apnsId: string; notificationId: string; environment: 'sandbox' | 'production'; topic: string; expiresAt: string; sendPermit: NotificationSendPermit }>): Promise<DeliveryOutcome>;
 }>;
 export const unavailableReminderTransport: ReminderTransport = Object.freeze({
   available: false,
