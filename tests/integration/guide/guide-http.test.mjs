@@ -56,7 +56,7 @@ test("Guide actual native owner HTTP reads, replays, scopes fresh grounded submi
   const first = await call(path, tokens[0], base); assert.equal(first.status, 200); assert.equal(first.cache, "private, no-store");
   const ready = first.body.data; assert.equal(ready.kind, "ready"); assert.equal(ready.canonicalPoiId, poi); assert.equal(ready.segments[0].exclusions[0], "This is not an admission guarantee.");
   const replay = await call(path, tokens[0], { ...base, action: "replay", expectedDigest: ready.digest }); assert.equal(replay.body.data.replayAskUnits, 0);
-  assert.equal(e.sql(`select count(*) from public.model_budget_attempts where owner_id='${e.users[0].id}';`), "0");
+  assert.equal(e.sql(`select count(*) from public.model_budget_attempts where scope_id='${e.users[0].scopeId}';`), "0");
   assert.equal((await call("/api/chat/native/v4/consent", tokens[0], { policyId: e.groundedPolicyId, noticeHash: e.groundedNoticeHash })).status, 200);
   // The real Native shape starts with a fresh missing standalone thread ID.
   const follow = { ...base, action: "follow_up", operationId: uuid(), expectedDigest: ready.digest, question: "HOLD What is the Synthetic Guide Gallery address?", threadId: uuid(), turnId: uuid(), policyId: e.groundedPolicyId,
