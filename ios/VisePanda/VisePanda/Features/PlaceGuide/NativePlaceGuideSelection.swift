@@ -25,13 +25,3 @@ struct NativePlaceGuideSelection: Equatable, Sendable {
         && UUID(uuidString: tripID) != nil && tripVersion >= 0 && ["en", "zh"].contains(locale)
     }
 }
-
-/// Native-only binding for source changes and cache isolation; wire decoding lives with the producer DTO.
-struct NativePlaceGuideSourceBinding: Equatable, Sendable {
-    let sourceID: String
-    let revision: String
-    let rightsRevision: String
-    let expiresAt: Date
-    let cacheAllowed: Bool
-    let speechAllowed: Bool
-}

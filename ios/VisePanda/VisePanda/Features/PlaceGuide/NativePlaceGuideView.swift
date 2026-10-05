@@ -9,6 +9,8 @@ struct NativePlaceGuideView: View {
     @State private var selectedSegmentID: String?
     @State private var action: Task<Void, Never>?
     @State private var exportText: String?
+    @State private var exportDeadline: TimeInterval = 0
+    @State private var exportExpiry: Task<Void, Never>?
     private var session: NativeSession { settings.nativeSession }
     private var store: NativePlaceGuideStore { session.placeGuide }
     private var audio: NativeVoiceAudioController { session.voiceAudio }
@@ -47,7 +49,9 @@ struct NativePlaceGuideView: View {
                 Button(t("Export this guide's progress metadata", "导出此讲解的进度元数据")) { run { await exportProgress() } }
                     .disabled(scope != selection.scope || store.busy).accessibilityIdentifier("guide.export")
                 TimelineView(.periodic(from: .now, by: 1)) { _ in
-                    if let exportText, store.visible(scope) != nil { ShareLink(item: exportText) { Text(t("Share this scoped metadata export", "分享此范围的元数据导出")) } }
+                    if let exportText, scope == selection.scope, ProcessInfo.processInfo.systemUptime < exportDeadline {
+                        ShareLink(item: exportText) { Text(t("Share this scoped metadata export", "分享此范围的元数据导出")) }
+                    }
                 }
                 if store.busy || followUp.busy { ProgressView() }
                 if let notice = store.notice { Text(message(notice)).font(.caption) }
@@ -188,15 +192,41 @@ struct NativePlaceGuideView: View {
         do {
             let bytes = try await request(selection, selection.command("export"))
             guard scope == selection.scope, !Task.isCancelled else { return }
-            let value = try NativePlaceActionWire.exact(NativePlaceGuideStore.outcome(bytes), ["kind", "version", "tripId", "placeReferenceId", "records"])
+            let value = try NativePlaceActionWire.exact(NativePlaceGuideStore.outcome(bytes), ["kind", "version", "scope", "coverage", "excludedModules", "tripId", "placeReferenceId", "records", "followUpBindings"])
             guard value["kind"] as? String == "export", NativePlaceActionWire.integer(value["version"]) == 1,
+                  value["scope"] as? String == "guide_selection_metadata", value["coverage"] as? String == "complete_for_selection",
+                  value["excludedModules"] as? [String] == ["grounded_history", "use_review_audit"],
                   value["tripId"] as? String == selection.tripID, value["placeReferenceId"] as? String == selection.placeReferenceID,
-                  let records = value["records"] as? [[String: Any]], records.count <= 100 else { throw NativeDataError.invalidResponse }
+                  let records = value["records"] as? [[String: Any]], records.count <= 100,
+                  let bindings = value["followUpBindings"] as? [[String: Any]], bindings.count <= 100 else { throw NativeDataError.invalidResponse }
+            for row in records {
+                _ = try NativePlaceActionWire.exact(row, ["digest", "canonicalPoiId", "locale", "interest", "rightsRevision", "completedSegmentIds", "expiresAt", "updatedAt"])
+                guard NativePlaceActionWire.digest(row["digest"]) != nil, row["canonicalPoiId"] as? String == selection.canonicalPoiID,
+                      row["locale"] as? String == selection.locale, row["interest"] as? String == selection.interest.rawValue,
+                      NativePlaceActionWire.integer(row["rightsRevision"]).map({ $0 > 0 }) == true,
+                      let completed = row["completedSegmentIds"] as? [String], completed.count <= 4, Set(completed).count == completed.count,
+                      completed.allSatisfy({ NativePlaceActionWire.id($0) != nil }),
+                      (row["expiresAt"] as? String).flatMap(NativeKnowledgeRead.date) != nil,
+                      let updated = (row["updatedAt"] as? String).flatMap(NativeKnowledgeRead.date), updated <= Date().addingTimeInterval(5) else { throw NativeDataError.invalidResponse }
+            }
+            for row in bindings {
+                _ = try NativePlaceActionWire.exact(row, ["turnId", "threadId", "serviceTaskId", "operationId", "tripVersion", "locale", "interest", "guideDigest", "parentTurnId", "completedSegmentIds", "invalidated"])
+                guard ["turnId", "threadId", "serviceTaskId", "operationId"].allSatisfy({ NativePlaceActionWire.id(row[$0]) != nil }),
+                      NativePlaceActionWire.integer(row["tripVersion"]) != nil, row["locale"] as? String == selection.locale,
+                      row["interest"] as? String == selection.interest.rawValue, NativePlaceActionWire.digest(row["guideDigest"]) != nil,
+                      row["parentTurnId"] is NSNull || NativePlaceActionWire.id(row["parentTurnId"]) != nil,
+                      let completed = row["completedSegmentIds"] as? [String], completed.count <= 4, Set(completed).count == completed.count,
+                      completed.allSatisfy({ NativePlaceActionWire.id($0) != nil }), NativePlaceActionWire.boolean(row["invalidated"]) != nil else { throw NativeDataError.invalidResponse }
+            }
+            guard Set(records.compactMap({ $0["digest"] as? String })).count == records.count,
+                  Set(bindings.compactMap({ $0["turnId"] as? String })).count == bindings.count else { throw NativeDataError.invalidResponse }
             exportText = String(data: try JSONSerialization.data(withJSONObject: value, options: [.sortedKeys, .prettyPrinted]), encoding: .utf8)
+            exportDeadline = ProcessInfo.processInfo.systemUptime + 30
+            exportExpiry?.cancel(); exportExpiry = Task { try? await Task.sleep(for: .seconds(30)); if !Task.isCancelled { exportText = nil; exportDeadline = 0 } }
         } catch { exportText = nil }
     }
     private func run(_ operation: @escaping @MainActor () async -> Void) { action?.cancel(); action = Task { await operation() } }
-    private func stop() { action?.cancel(); action = nil; audio.cancel(); audio.onGuideProgress = nil; audio.onFinalTranscript = nil }
+    private func stop() { action?.cancel(); action = nil; exportExpiry?.cancel(); exportExpiry = nil; exportText = nil; exportDeadline = 0; audio.cancel(); audio.onGuideProgress = nil; audio.onFinalTranscript = nil }
     private func message(_ notice: String) -> String {
         if notice == "forgotten" { return t("Stored guide metadata deleted.", "已删除存储的讲解元数据。") }
         if notice == "delete_unconfirmed" { return t("Deletion is unconfirmed. Retry before assuming cleanup.", "删除回执未确认，请重试；尚未宣称已清理。") }
