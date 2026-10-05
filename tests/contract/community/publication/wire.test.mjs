@@ -82,6 +82,9 @@ test('current display expires at the HTTP boundary, including saved reference op
   assert.equal((await handlePublicationRequest(request({action:'detail',publicationId:id}),options({call:async()=>({data,error:null})}))).body.error,'PUBLICATION_UNAVAILABLE');
  }
  const e=experience();const data={...base(),kind:'detail',experience:e};assert.equal((await handlePublicationRequest(request({action:'detail',publicationId:id}),options({call:async()=>({data,error:null})}))).status,200);
+ const save={action:'save',operationId:op,referenceId:ref,publicationId:id,expectedPublicationVersion:3,expectedSubmissionVersion:2,expectedSafetyVersion:0};
+ const expired={...base(),kind:'operation',operationId:op,state:'committed',publication:null,reference:{...reference(),experience:{...experience(),expiresAt:new Date(Date.now()-1).toISOString()}}};
+ assert.equal((await handlePublicationRequest(request(save),options({call:async()=>({data:expired,error:null})}))).body.error,'PUBLICATION_ACK_UNKNOWN','expired returned body does not prove the dispatched save failed');
 });
 test('recovery transport caps remain layered with UTF16/UTF8 original exact bytes',async()=>{
  const raw=JSON.stringify(command());const large=JSON.stringify(command())+' '.repeat(10001-raw.length);
