@@ -1,0 +1,556 @@
+{
+  "evidence": "synthetic closed protocol fixture; not target/runtime capability",
+  "catalog": {
+    "schemaVersion": "data-coverage/1",
+    "catalogVersion": "data-coverage-catalog/2026-10-06.2",
+    "actorId": "12345678-1234-4123-8123-123456789abc",
+    "sessionId": "22345678-1234-4123-8123-123456789abc",
+    "mobileEpoch": 1,
+    "modules": [
+      {
+        "id": "trip",
+        "location": "server",
+        "version": "trip-core-v1",
+        "scope": "trip-core-v1",
+        "exportHandler": "core",
+        "deleteHandler": "trip",
+        "selection": "trip",
+        "capacity": "one explicitly selected Trip; async receipt; optional original linked-chat plan",
+        "retention": [
+          "financial_records",
+          "provider_erasure_unknown",
+          "backup_erasure_unverified"
+        ],
+        "missing": []
+      },
+      {
+        "id": "conversations",
+        "location": "server",
+        "version": "core-export-d2/1",
+        "scope": "core-export-d2/1",
+        "exportHandler": "core",
+        "deleteHandler": null,
+        "selection": "owner",
+        "capacity": "100 rows/page; 1000 pages/module; 8MiB artifact; original protected download/expiry",
+        "retention": [
+          "original_module_retention",
+          "external_copies_not_recallable"
+        ],
+        "missing": [
+          "scoped_delete_not_registered"
+        ]
+      },
+      {
+        "id": "results",
+        "location": "server",
+        "version": "core-export-d2/1",
+        "scope": "core-export-d2/1",
+        "exportHandler": "core",
+        "deleteHandler": null,
+        "selection": "owner",
+        "capacity": "100 rows/page; 1000 pages/module; 8MiB artifact; original protected download/expiry",
+        "retention": [
+          "original_module_retention",
+          "external_copies_not_recallable"
+        ],
+        "missing": [
+          "scoped_delete_not_registered"
+        ]
+      },
+      {
+        "id": "profile",
+        "location": "server",
+        "version": "core-export-d2/1",
+        "scope": "core-export-d2/1",
+        "exportHandler": "core",
+        "deleteHandler": null,
+        "selection": "owner",
+        "capacity": "100 rows/page; 1000 pages/module; 8MiB artifact; original protected download/expiry",
+        "retention": [
+          "original_module_retention",
+          "external_copies_not_recallable"
+        ],
+        "missing": [
+          "scoped_delete_not_registered"
+        ]
+      },
+      {
+        "id": "memory",
+        "location": "server",
+        "version": "memory-bulk-delete-d4/1",
+        "scope": "memory-bulk-delete-d4/1",
+        "exportHandler": "core",
+        "deleteHandler": "memory",
+        "selection": "memory_plan",
+        "capacity": "100 selected memories; original preview/CAS/selection required",
+        "retention": [
+          "original_chat_input",
+          "trip_intent",
+          "financial_records"
+        ],
+        "missing": []
+      },
+      {
+        "id": "turn",
+        "location": "server",
+        "version": "core-export-d2/1",
+        "scope": "core-export-d2/1",
+        "exportHandler": "core",
+        "deleteHandler": null,
+        "selection": "owner",
+        "capacity": "100 rows/page; 1000 pages/module; 8MiB artifact; original protected download/expiry",
+        "retention": [
+          "original_module_retention",
+          "external_copies_not_recallable"
+        ],
+        "missing": [
+          "scoped_delete_not_registered"
+        ]
+      },
+      {
+        "id": "user_artifact",
+        "location": "server",
+        "version": "core-export-d2/1",
+        "scope": "core-export-d2/1",
+        "exportHandler": "core",
+        "deleteHandler": null,
+        "selection": "owner",
+        "capacity": "100 rows/page; 1000 pages/module; 8MiB artifact; original protected download/expiry",
+        "retention": [
+          "original_module_retention",
+          "external_copies_not_recallable"
+        ],
+        "missing": [
+          "scoped_delete_not_registered"
+        ]
+      },
+      {
+        "id": "brief",
+        "location": "server",
+        "version": "traveler-brief-data/1",
+        "scope": "traveler-brief-data/1",
+        "exportHandler": "brief",
+        "deleteHandler": "brief",
+        "selection": "case",
+        "capacity": "owner export: 10000 rows/512KiB, double sourceDigest read/30s expiry; delete: selected case/recipient/grant/Brief revision",
+        "retention": [
+          "operation_fences",
+          "minimal_audit_metadata"
+        ],
+        "missing": []
+      },
+      {
+        "id": "entitlements",
+        "location": "server",
+        "version": "core-export-d2/1",
+        "scope": "core-export-d2/1",
+        "exportHandler": "core",
+        "deleteHandler": null,
+        "selection": "owner",
+        "capacity": "original core lease/pages/artifact",
+        "retention": [
+          "minimal_financial_ledger",
+          "store_transactions"
+        ],
+        "missing": [
+          "financial_delete_not_supported"
+        ]
+      },
+      {
+        "id": "case",
+        "location": "server",
+        "version": "service-case-data/1",
+        "scope": "service-case-data/1",
+        "exportHandler": "case",
+        "deleteHandler": "case",
+        "selection": "case",
+        "capacity": "owner export: 10000 rows/512KiB, double sourceDigest read/30s expiry; delete: selected case/current grant revision",
+        "retention": [
+          "operation_fences",
+          "minimal_audit_metadata",
+          "external_recipient_copies"
+        ],
+        "missing": []
+      },
+      {
+        "id": "ugc",
+        "location": "server",
+        "version": "community-j1/1",
+        "scope": "community_module",
+        "exportHandler": "ugc",
+        "deleteHandler": "ugc",
+        "selection": "owner",
+        "capacity": "100 per retained array; 1MB response; overflow fails",
+        "retention": [
+          "operation_fences",
+          "submission_tombstones",
+          "audit_metadata"
+        ],
+        "missing": []
+      },
+      {
+        "id": "safety",
+        "location": "server",
+        "version": "community-safety-j2/1",
+        "scope": "community_safety_module",
+        "exportHandler": "safety",
+        "deleteHandler": "safety",
+        "selection": "owner",
+        "capacity": "100 per retained array; 1MB response; overflow fails",
+        "retention": [
+          "operation_fences",
+          "record_tombstones",
+          "audit_metadata"
+        ],
+        "missing": []
+      },
+      {
+        "id": "publication",
+        "location": "server",
+        "version": "community-publication-j3j4/1",
+        "scope": "community_publication_module",
+        "exportHandler": "publication",
+        "deleteHandler": "publication",
+        "selection": "owner",
+        "capacity": "100 per retained array; 1MB response; controlled registered audience",
+        "retention": [
+          "operation_fences",
+          "publication_tombstones",
+          "reference_tombstones",
+          "audit_metadata"
+        ],
+        "missing": []
+      },
+      {
+        "id": "notifications",
+        "location": "server",
+        "version": "coverage-module-export/1",
+        "scope": "notification-metadata/1",
+        "exportHandler": "notifications",
+        "deleteHandler": null,
+        "selection": "owner",
+        "capacity": "100/page; 10000 rows; 1MB whole wrapper; fixed30s current source/proof; independent owner RPC ACL",
+        "retention": [
+          "provider_delivery_unknown"
+        ],
+        "missing": [
+          "module_delete_not_implemented"
+        ]
+      },
+      {
+        "id": "lifecycle",
+        "location": "server",
+        "version": "coverage-module-export/1",
+        "scope": "trip-lifecycle-metadata/1",
+        "exportHandler": "lifecycle",
+        "deleteHandler": null,
+        "selection": "owner",
+        "capacity": "50/page; 10000 rows/section; 1MB whole wrapper; fixed30s current source/proof; metadata only",
+        "retention": [
+          "operation_fences"
+        ],
+        "missing": [
+          "delete_uses_selected_trip",
+          "trip_bodies_in_separate_core_export"
+        ]
+      },
+      {
+        "id": "coverage_progress",
+        "location": "server",
+        "version": "coverage-module-export/1",
+        "scope": "coverage_export_progress",
+        "exportHandler": null,
+        "deleteHandler": null,
+        "selection": "owner",
+        "capacity": "source-free requests/sections expire30s; immutable request fences retained until original session/account revocation",
+        "retention": [
+          "request_id_owner_session_scope_expiry_fence"
+        ],
+        "missing": [
+          "single_request_receipts_only",
+          "owner_progress_inventory_exit_not_implemented"
+        ]
+      },
+      {
+        "id": "guide",
+        "location": "server",
+        "version": "guide_selection_metadata/1",
+        "scope": "guide_selection_metadata",
+        "exportHandler": "guide",
+        "deleteHandler": "guide",
+        "selection": "guide_reference",
+        "capacity": "100+sentinel records and bindings; selection only",
+        "retention": [
+          "nonreplayable_markers",
+          "original_grounded_turns_separate"
+        ],
+        "missing": []
+      },
+      {
+        "id": "order_references",
+        "location": "server",
+        "version": "reservation-ledger/1",
+        "scope": "reservation_reference",
+        "exportHandler": null,
+        "deleteHandler": null,
+        "selection": "trip",
+        "capacity": "existing owner reservation reader; no unified exit handler",
+        "retention": [
+          "external_orders",
+          "minimal_financial_ledger"
+        ],
+        "missing": [
+          "export_delete_not_implemented"
+        ]
+      },
+      {
+        "id": "pdf_intake",
+        "location": "server",
+        "version": "pdf-intake/1",
+        "scope": "pdf_intake_receipts",
+        "exportHandler": null,
+        "deleteHandler": null,
+        "selection": "trip",
+        "capacity": "original proposal/receipt TTL and Trip deletion boundary",
+        "retention": [
+          "original_external_files",
+          "trip_patch_receipts"
+        ],
+        "missing": [
+          "export_delete_not_implemented"
+        ]
+      },
+      {
+        "id": "case_attachments",
+        "location": "server",
+        "version": "unavailable/1",
+        "scope": "case_attachments",
+        "exportHandler": null,
+        "deleteHandler": null,
+        "selection": "owner",
+        "capacity": "existing bundles explicitly declare attachments unavailable",
+        "retention": [
+          "unknown"
+        ],
+        "missing": [
+          "attachment_handler_unavailable"
+        ]
+      },
+      {
+        "id": "archive",
+        "location": "server",
+        "version": "trip-lifecycle-export/2",
+        "scope": "archived_trip",
+        "exportHandler": null,
+        "deleteHandler": "trip",
+        "selection": "trip",
+        "capacity": "selected archived Trip; lifecycle lease not enrolled",
+        "retention": [
+          "operation_fences"
+        ],
+        "missing": [
+          "export_lease_not_enrolled"
+        ]
+      },
+      {
+        "id": "materials",
+        "location": "device",
+        "version": "device-scoped/1",
+        "scope": "materials",
+        "exportHandler": null,
+        "deleteHandler": null,
+        "selection": "device_files",
+        "capacity": "original owner/endpoint/epoch/TTL selected device consumer",
+        "retention": [
+          "external_copies_not_recallable"
+        ],
+        "missing": [
+          "device_receipt_required"
+        ]
+      },
+      {
+        "id": "app_group",
+        "location": "device",
+        "version": "device-scoped/1",
+        "scope": "app_group",
+        "exportHandler": null,
+        "deleteHandler": null,
+        "selection": "device_files",
+        "capacity": "original owner/endpoint/epoch/TTL selected device consumer",
+        "retention": [
+          "external_copies_not_recallable"
+        ],
+        "missing": [
+          "device_receipt_required"
+        ]
+      },
+      {
+        "id": "local_share",
+        "location": "device",
+        "version": "device-scoped/1",
+        "scope": "local_share",
+        "exportHandler": null,
+        "deleteHandler": null,
+        "selection": "device_files",
+        "capacity": "original owner/endpoint/epoch/TTL selected device consumer",
+        "retention": [
+          "external_copies_not_recallable"
+        ],
+        "missing": [
+          "device_receipt_required"
+        ]
+      },
+      {
+        "id": "guide_cache",
+        "location": "device",
+        "version": "device-scoped/1",
+        "scope": "guide_cache",
+        "exportHandler": null,
+        "deleteHandler": null,
+        "selection": "device_files",
+        "capacity": "original owner/endpoint/epoch/TTL selected device consumer",
+        "retention": [
+          "external_copies_not_recallable"
+        ],
+        "missing": [
+          "device_receipt_required"
+        ]
+      },
+      {
+        "id": "offline",
+        "location": "device",
+        "version": "device-scoped/1",
+        "scope": "offline",
+        "exportHandler": null,
+        "deleteHandler": null,
+        "selection": "device_files",
+        "capacity": "original owner/endpoint/epoch/TTL selected device consumer",
+        "retention": [
+          "external_copies_not_recallable"
+        ],
+        "missing": [
+          "device_receipt_required"
+        ]
+      },
+      {
+        "id": "local_journals",
+        "location": "device",
+        "version": "device-scoped/1",
+        "scope": "local_journals",
+        "exportHandler": null,
+        "deleteHandler": null,
+        "selection": "device_files",
+        "capacity": "original owner/endpoint/epoch/TTL selected device consumer",
+        "retention": [
+          "external_copies_not_recallable"
+        ],
+        "missing": [
+          "device_receipt_required"
+        ]
+      },
+      {
+        "id": "provider",
+        "location": "external",
+        "version": "boundary/1",
+        "scope": "provider",
+        "exportHandler": null,
+        "deleteHandler": null,
+        "selection": "none",
+        "capacity": "unknown",
+        "retention": [
+          "unknown"
+        ],
+        "missing": [
+          "external_runtime_unverified"
+        ]
+      },
+      {
+        "id": "backup",
+        "location": "external",
+        "version": "boundary/1",
+        "scope": "backup",
+        "exportHandler": null,
+        "deleteHandler": null,
+        "selection": "none",
+        "capacity": "unknown",
+        "retention": [
+          "unknown"
+        ],
+        "missing": [
+          "external_runtime_unverified"
+        ]
+      },
+      {
+        "id": "external_copies",
+        "location": "external",
+        "version": "boundary/1",
+        "scope": "external_copies",
+        "exportHandler": null,
+        "deleteHandler": null,
+        "selection": "none",
+        "capacity": "unknown",
+        "retention": [
+          "unknown"
+        ],
+        "missing": [
+          "not_remotely_recallable"
+        ]
+      },
+      {
+        "id": "financial_records",
+        "location": "external",
+        "version": "boundary/1",
+        "scope": "financial_records",
+        "exportHandler": null,
+        "deleteHandler": null,
+        "selection": "none",
+        "capacity": "unknown",
+        "retention": [
+          "minimal_legal_financial_fields"
+        ],
+        "missing": [
+          "external_runtime_unverified"
+        ]
+      }
+    ],
+    "allUserDataCompleted": false
+  },
+  "requestBytes": "{\"schemaVersion\":\"data-coverage/1\",\"catalogVersion\":\"data-coverage-catalog/2026-10-06.2\",\"actorId\":\"12345678-1234-4123-8123-123456789abc\",\"sessionId\":\"22345678-1234-4123-8123-123456789abc\",\"mobileEpoch\":1,\"moduleId\":\"ugc\",\"moduleVersion\":\"community-j1/1\",\"operationId\":\"32345678-1234-4123-8123-123456789abc\",\"action\":\"export\",\"phase\":\"execute\",\"confirmed\":true,\"tripId\":null,\"commandBytes\":\"{\\\"action\\\":\\\"export\\\"}\"}",
+  "receipt": {
+    "schemaVersion": "data-coverage/1",
+    "catalogVersion": "data-coverage-catalog/2026-10-06.2",
+    "actorId": "12345678-1234-4123-8123-123456789abc",
+    "sessionId": "22345678-1234-4123-8123-123456789abc",
+    "mobileEpoch": 1,
+    "moduleId": "ugc",
+    "moduleVersion": "community-j1/1",
+    "operationId": "32345678-1234-4123-8123-123456789abc",
+    "action": "export",
+    "phase": "execute",
+    "requestDigest": "0828057b5eac104b07801f4eab7be424d695c2e9101eccede609f4239c4dfc10",
+    "state": "scoped_complete",
+    "reason": "NONE",
+    "result": {
+      "data": {
+        "schemaVersion": "community-j1/1",
+        "kind": "export",
+        "actorId": "12345678-1234-4123-8123-123456789abc",
+        "sessionId": "22345678-1234-4123-8123-123456789abc",
+        "scope": "community_module",
+        "coverage": "complete_for_community",
+        "submissions": [],
+        "reviews": [],
+        "receipts": [],
+        "audits": [],
+        "reviewerQualification": null,
+        "trustedDisclosure": null,
+        "retained": [
+          "operation_fences",
+          "submission_tombstones",
+          "audit_metadata"
+        ]
+      }
+    },
+    "allUserDataCompleted": false
+  }
+}

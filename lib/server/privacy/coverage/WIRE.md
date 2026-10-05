@@ -120,3 +120,11 @@ b47d8661PASS for unchanged registered original modules; r1 wrongACL FAIL retaine
 CATALOG_VERSION now data-coverage-catalog/2026-10-06.2 after new module/protocol
 registration. Old .1 aggregate/requests cannot be upgraded to .2. Native schema
 constant must align; original data-coverage/1 response shape stays unchanged.
+
+Early fixed own TS source1af756b0 (partial before SQL integration); current semantic
+linked-selection ordering fix+affected15PASS0skip follows same task. Canonical Native
+fixture tests/fixtures/privacy/coverage/producer.json now contains exact current31
+entries/catalog.2,requestBytes and bound UGC original result; synthetic only.
+SQL own fixed-wire now reports17PG/3contract with source data+oldACL unchanged;
+await immutable normal source commit before actual Auth-r3 union. Precise registry
+lease still pending; own protected restore cleanup leavesAGENTS/next-env original.

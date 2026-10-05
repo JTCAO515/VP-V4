@@ -125,3 +125,23 @@ test('Guide selected exact Trip/reference-only handler, no unjournaled automatic
  }}));assert.equal(result.body.state,'scoped_complete');assert.equal(matchesCoverageResult(result.body,result.raw),true);
  assert.equal(parseCoverageInput({...selected,phase:'recover'}),null,'original Guide forget has no durable operation receipt; repeated delete is not recovery');
 });
+
+test('Trip queued is not complete; selected Trip and original operation stay bound across GET recovery',async()=>{
+ const tripId=randomUUID(),selected=input('trip','delete',{requestId:randomUUID(),tripId,expectedVersion:1,confirmed:true},'execute',tripId),now=new Date().toISOString();
+ const receipt={version:1,requestId:selected.operationId,tripId,scope:'trip-core-v1',state:'queued',requestedAt:now,completedAt:null,allUserDataCompleted:false,backupErasure:'not_verified',providerErasure:'not_performed',offlineRevocation:'on_reconnect_only',exportedFilesRevocable:false};
+ const queued=await call(selected,options({trip:async original=>{assert.equal(original.method,'POST');assert.deepEqual(await original.json(),JSON.parse(selected.commandBytes));return Response.json(receipt,{status:202});}}));
+ assert.equal(queued.body.state,'queued');assert.equal(matchesCoverageResult({...queued.body,state:'scoped_complete',reason:'NONE'},queued.raw),false);
+ receipt.state='completed';receipt.completedAt=now;
+ const recovered=await call({...selected,phase:'recover'},options({trip:async original=>{assert.equal(original.method,'GET');assert.equal(new URL(original.url).searchParams.get('requestId'),selected.operationId);return Response.json(receipt);}}));assert.equal(recovered.body.state,'scoped_complete');
+ const foreign=await call({...selected,phase:'recover'},options({trip:async()=>Response.json({...receipt,tripId:randomUUID()})}));assert.equal(foreign.body.state,'unknown');assert.equal(foreign.body.result,null);
+ const inconsistent=await call({...selected,phase:'recover'},options({trip:async()=>Response.json({...receipt,completedAt:'2020-01-01T00:00:00.000Z'})}));assert.equal(inconsistent.body.state,'unknown');
+});
+
+test('linked Trip exact selected arrays compare semantically across JSONB object ordering, never widen the scope',async()=>{
+ const tripId=randomUUID(),arrays={threadIds:[],turnIds:[],taskIds:[],goalIds:[],messageIds:[],artifactIds:[],exportRequestIds:[]};
+ const selected=input('trip','delete',{action:'confirm',requestId:randomUUID(),planId:randomUUID(),scopeDigest:'a'.repeat(64),expectedVersion:1,confirmed:true,selection:arrays},'execute',tripId),now=new Date().toISOString();
+ const command=JSON.parse(selected.commandBytes),retained=['FINANCIAL_LEDGER_MINIMUM','TASK_CAPACITY_MINIMUM','EXTERNAL_DOWNLOADED_COPIES','PROVIDER_COPIES_NOT_ERASED','BACKUP_ERASURE_NOT_VERIFIED'];
+ const receipt={kind:'linked_trip_delete_receipt/1',requestId:selected.operationId,planId:command.planId,tripId,scope:'trip-linked-chat-d3/1',scopeDigest:command.scopeDigest,state:'completed',requestedAt:now,completedAt:now,selection:Object.fromEntries(Object.entries(arrays).reverse()),erasedCounts:Object.fromEntries(['threads','turns','goals','messages','artifacts','textBodies','groundedRows','planningRows','consumerReferences','exports','tickets'].map(k=>[k,0])),allUserDataCompleted:false,retained};
+ const result=await call(selected,options({linked_trip:async()=>Response.json(receipt)}));assert.equal(result.body.state,'scoped_complete');assert.equal(matchesCoverageResult(result.body,result.raw),true);
+ const wrong=await call(selected,options({linked_trip:async()=>Response.json({...receipt,selection:{...arrays,threadIds:[randomUUID()]}})}));assert.equal(wrong.body.state,'unknown');
+});

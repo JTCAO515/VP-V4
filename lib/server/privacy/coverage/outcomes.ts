@@ -1,4 +1,5 @@
 import { record, exact, uuid } from '../../guide/contract.ts';
+import { isDeepStrictEqual } from 'node:util';
 import { decodeGuideOutcome } from '../../guide/projection.ts';
 import { parseGuideCommand } from '../../guide/contract.ts';
 import { decodeCommunityOutcome, matchesCommunityOutcome, parseCommunityInput } from '../../community/contract.ts';
@@ -40,7 +41,7 @@ export function classifyOriginal(selected: SelectedCommand, body: unknown, now =
   if (handler === 'linked_trip') {
     if (input.phase === 'preview') return linkedTripPlan(data) && data.tripId === input.tripId && data.expectedVersion === command.expectedVersion && Date.parse(String(data.expiresAt)) > now ? state('preview', 'EXPLICIT_SELECTION_REQUIRED') : null;
     if (!linkedTripReceipt(data) || data.requestId !== input.operationId || data.tripId !== input.tripId || data.scopeDigest !== command.scopeDigest || data.planId !== command.planId
-      || JSON.stringify(data.selection) !== JSON.stringify(command.selection)) return null;
+      || !isDeepStrictEqual(data.selection, command.selection)) return null;
     return state(data.state === 'completed' ? 'scoped_complete' : 'queued', data.state === 'completed' ? 'NONE' : 'ORIGINAL_JOB_PENDING');
   }
   if (handler === 'memory') {
