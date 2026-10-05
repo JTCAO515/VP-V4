@@ -64,7 +64,15 @@ nonisolated final class NativePDFIntegrationTests: XCTestCase {
             let retained = try XCTUnwrap(confirmed.content.days.first { $0.id == day.id })
             XCTAssertEqual(retained.date, day.date); XCTAssertEqual(retained.timeZone, day.timeZone)
             let ids = Set(day.items.map(\.id))
-            XCTAssertEqual(retained.items.filter { ids.contains($0.id) }, day.items, "Preserve original fixed fields and relative ordering")
+            let kept = retained.items.filter { ids.contains($0.id) }
+            XCTAssertEqual(kept.map(\.id), day.items.map(\.id), "Preserve every original item and its relative order")
+            for (actual, before) in zip(kept, day.items) {
+                XCTAssertEqual(actual.id, before.id); XCTAssertEqual(actual.dayId, before.dayId)
+                XCTAssertEqual(actual.title, before.title); XCTAssertEqual(actual.manualOrder, before.manualOrder)
+                // The original writer stores timestamptz and snapshot() serializes UTC; offset spelling is not a time change.
+                XCTAssertEqual(try strictInstant(actual.startsAt), try strictInstant(before.startsAt), "Preserve exact fixed start instant and nil presence")
+                XCTAssertEqual(try strictInstant(actual.endsAt), try strictInstant(before.endsAt), "Preserve exact fixed end instant and nil presence")
+            }
         }
         let reloaded = NativeTripStore(); reloaded.reset(for: actor)
         await reloaded.select(tripID, using: session)
@@ -103,6 +111,12 @@ nonisolated final class NativePDFIntegrationTests: XCTestCase {
         XCTAssertEqual(try Data(contentsOf: file), bytes, "Closing/deleting app copies never changes the original selected file")
         await session.logout()
         XCTAssertNil(session.dataScope)
+    }
+    @MainActor private func strictInstant(_ raw: String?) throws -> Date? {
+        guard let raw else { return nil }
+        _ = try XCTUnwrap(raw.range(of: #"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|[+-]\d{2}:\d{2})$"#, options: .regularExpression), "A complete explicit-offset timestamp is required")
+        XCTAssertTrue(NativePDFField.validValue(String(raw.prefix(10)), kind: "date"), "Calendar date must be valid")
+        return try XCTUnwrap(NativeScopedTripCommand.date(raw), "The full timestamp must parse; malformed time is not absence")
     }
     @MainActor private func textPDF() -> Data {
         let bytes = NSMutableData(); let consumer = CGDataConsumer(data: bytes)!
