@@ -65,3 +65,20 @@ Development closure is Main's whole-code decision and is separate from merge, ro
 and unified target/device/provider acceptance. Rollback disables scoped admission/host
 configuration while retaining accepted Trips, ordering, operation receipts and
 revocations; it does not rewrite the applied migration or undo external orders.
+
+## PR #650 Quality follow-up
+
+At head `b89a8102`, remote Quality failed in `test:contract`; its buffered log ended
+at test 286 with no failing assertion or final summary. The same fixed source ran
+1006/1006 contract cases locally on Node 26 and the CI's Node 22.23.3, both with zero
+skips. Those are local comparisons, not a replacement for the remote failure.
+
+A controlled real suite CLI with 200,000-byte TAP output demonstrated that the old
+immediate exit retained only 65,536 bytes, losing tail failure detail and summary,
+while keeping the actual failure exit 1 (and pass exit 0). Awaiting stdout/stderr
+write callbacks and natural exit preserve the complete log and the unchanged child
+outcome. Two affected output/exit tests pass on both Node versions. The initial
+nested fixture inherited Node's test-worker context; the fixture now launches a
+fresh CLI using the existing test-harness convention. No maxBuffer, test assertion,
+file selection, skip policy, timeout or workflow was weakened. The underlying remote
+contract failure remains unresolved until the new head's complete CI observation.
