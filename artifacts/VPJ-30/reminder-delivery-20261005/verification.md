@@ -36,3 +36,17 @@ stops future work and preserves the last-known outcome without promising recall.
 
 SQL and Native owners' final source/evidence plus actual TS/SQL producer-consumer
 joint evidence will be appended after integration, preserving prior FAIL/UNRUN.
+
+Formal host follow-up: the initial runtime factory had no production caller.
+This was a real implementation gap. The dedicated finite CLI/host now composes
+the existing notification runtime and RPC, with closed profiles/parameters and
+content-free counters. PASS 2 actual host tests: disabled no credential reads
+(guarded Proxy plus actual CLI process), and actual CLI local loopback
+HTTP/HTTP2 composition accepts one synthetic request and exits after two ticks.
+Neither test contacts Apple. No daemon/config/target deployment was added.
+
+PASS 1 affected abort-during-unresolved-transport case: same durable attempt is
+finished unknown, never sent a second time. PASS existing registry classification
+and its 9 governance cases; only the new notification opt-in/root/file were added.
+Manual device revoke now permits an actual authorized OS declaration with
+active=false; the affected parser and actual Native behavior cases cover it.

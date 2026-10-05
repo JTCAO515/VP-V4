@@ -21,6 +21,7 @@ test('closed commands reject implicit timezone, normalized dates, consent and pu
  for(const patch of [{consent:false},{purpose:'marketing'},{purpose:'accepted_task_result'},{source:{...source,contentDigest:'timestamp'}},{quietHours:{startMinute:1440,endMinute:1}},{dueAt:'2026-02-30T04:00:00Z'}])assert.equal(parseNoticeCommand({...command,input:{...command.input,...patch}}),null);
  assert.equal(parseNoticeCommand({...command,input:{...command.input,ownerId:id(99)}}),null);
  assert.equal(parseNoticeCommand({action:'register_device',input:{operationId:id(2),deviceId:id(4),token:'ab',environment:'sandbox',permission:'denied',timeZone:'Asia/Shanghai'}}),null);
+ assert.ok(parseNoticeCommand({action:'revoke_device',input:{operationId:id(2),deviceId:id(4),permission:'authorized'}}));
 });
 test('canonical exact mutation receipt clears only the original command; abandon retains original tuple',()=>{
  const digest=noticeRequestDigest(command);

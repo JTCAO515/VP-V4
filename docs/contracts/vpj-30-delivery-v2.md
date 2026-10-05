@@ -114,8 +114,9 @@ intent, purposes, watch/dismissal metadata and delivery outcomes. Token bytes an
 worker leases are omitted. Owner/Trip deletion cascades remove dependent rows;
 session/epoch change revokes devices and queued work, token rotation fences stale
 outcomes. Existing completed core export packages remain unchanged/partial;
-new notification handler is independently enrolled through the existing versioned
-export seam. No retroactive completeness claim, runtime GRANT or actual user
+new notification handler is available through an independently versioned export
+seam and is currently unenrolled. Legacy v1-only intent remains explicitly partial.
+No retroactive completeness claim, runtime GRANT or actual user
 delete/export is authorized.
 
 API errors are exactly the noticeErrorCodes union in wire.ts. HTTP401 only for
@@ -123,3 +124,37 @@ actual credential rejection; session/head conflicts HTTP409; Trip missing 404;
 invalid input 400; source unavailable 409; unknown infrastructure 503. A timeout
 never proves a mutation did not occur. Explicit replay uses the same operation
 and request; list/receipt recovery must precede further scheduling.
+
+## Formal finite host
+
+`lib/server/jobs/run-notification-worker.mjs` composes the actual runtime through
+`notifications/hosted.ts`. It accepts only paired flags `--profile` (disabled,
+local, staging, production), `--ticks` (1–8), `--max-ms` (1000–60000), and
+`--interval-ms` (0–5000). Defaults are disabled, one tick, 25000ms and no interval.
+Duplicate/unknown flags fail without network. Disabled exits before reading any
+endpoint/key or constructing the RPC/APNs factories. It prints only content-free
+profile/reason/counters. The durable SQL attempt is the authoritative journal;
+the host creates no token/Trip/provider-content journal and no daemon.
+
+Enabled requires `VISEPANDA_REMINDER_DELIVERY_ENABLED=true`, matching explicit
+`VISEPANDA_REMINDER_HOST_PROFILE`, operator-selected
+`VISEPANDA_REMINDER_DATABASE_URL`, injected `VISEPANDA_REMINDER_WORKER_KEY`, and
+explicit APNs environment/topic. Credentials use the existing safe Supabase
+worker header utility exclusively on the dedicated two-RPC port. Cloud profiles
+require the exact approved database URL plus sandbox for staging or production
+for production; team/key/private key enter only the dedicated APNs factory.
+These configuration field names are code, not installed configuration or grants.
+
+Local profile requires loopback HTTP database and HTTP2 synthetic APNs URLs plus
+`VISEPANDA_REMINDER_LOCAL_SYNTHETIC=true`. It generates only an ephemeral synthetic
+signing key, omits the JWT on the mock exchange, reads no real APNs private key,
+and cannot contact Apple. Its accepted counter is a synthetic endpoint result.
+The time budget/SIGINT/SIGTERM abort new polls and active handoff waits; the
+current SQL finish/read cleanup remains bounded to at most 10 seconds afterward.
+Unknown/error/blocked ends the batch; no attempt is retried. No entrypoint was
+started against any real target, and production profile existence authorizes no
+production enablement or send.
+
+Manual device travel-purpose revoke accepts the current client's supported OS
+declaration including authorized, and always makes active=false. A user purpose
+withdrawal is never written as invented OS denied permission.

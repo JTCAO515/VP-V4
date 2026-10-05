@@ -14,7 +14,7 @@ export type NoticeMutationCommand = Readonly<
   | { action: 'watch'; input: { operationId: string; id: string; baseVersion: number; source: NoticeSource; expiresAt: string; timeZone: string; quietHours: QuietHours; consent: true } }
   | { action: 'unwatch'; input: { operationId: string; id: string } }
   | { action: 'register_device'; input: { operationId: string; deviceId: string; token: string; environment: 'sandbox' | 'production'; permission: 'authorized'; timeZone: string } }
-  | { action: 'revoke_device'; input: { operationId: string; deviceId: string; permission: 'denied' | 'not_determined' } }
+  | { action: 'revoke_device'; input: { operationId: string; deviceId: string; permission: 'authorized' | 'denied' | 'not_determined' } }
 >;
 export type NoticeCommand = NoticeMutationCommand | Readonly<{ action: 'resolve'; input: { notificationId: string } } | { action: 'abandon'; input: { command: NoticeMutationCommand } }>;
 export type NoticeResolution = Readonly<{ version: 2; kind: 'resolved'; notificationId: string; tripId: string; tripVersion: number; source: NoticeSource; expiresAt: string; current: boolean }>;
@@ -49,7 +49,7 @@ export function parseNoticeCommand(v: unknown): NoticeCommand | null {
   if (['cancel', 'complete', 'unwatch'].includes(String(v.action))) return exact(x, ['operationId', 'id']) && uuid(x.id) ? v as NoticeCommand : null;
   if (v.action === 'dismiss') return exact(x, ['operationId', 'nextStepId', 'source']) && uuid(x.nextStepId) && source(x.source) ? v as NoticeCommand : null;
   if (v.action === 'register_device') return exact(x, ['operationId', 'deviceId', 'token', 'environment', 'permission', 'timeZone']) && uuid(x.deviceId) && typeof x.token === 'string' && /^[a-f0-9]{2,512}$/.test(x.token) && x.token.length % 2 === 0 && ['sandbox', 'production'].includes(String(x.environment)) && x.permission === 'authorized' && zone(x.timeZone) ? v as NoticeCommand : null;
-  if (v.action === 'revoke_device') return exact(x, ['operationId', 'deviceId', 'permission']) && uuid(x.deviceId) && ['denied', 'not_determined'].includes(String(x.permission)) ? v as NoticeCommand : null;
+  if (v.action === 'revoke_device') return exact(x, ['operationId', 'deviceId', 'permission']) && uuid(x.deviceId) && ['authorized', 'denied', 'not_determined'].includes(String(x.permission)) ? v as NoticeCommand : null;
   if (v.action === 'watch') return exact(x, ['operationId', 'id', 'baseVersion', 'source', 'expiresAt', 'timeZone', 'quietHours', 'consent']) && uuid(x.id) && integer(x.baseVersion) && source(x.source) && x.source.kind === 'qualified_watch' && timestamp(x.expiresAt) && zone(x.timeZone) && quietHours(x.quietHours) && x.consent === true ? v as NoticeCommand : null;
   if (v.action !== 'schedule' || !exact(x, ['operationId', 'id', 'baseVersion', 'purpose', 'source', 'reason', 'dueAt', 'expiresAt', 'timeZone', 'quietHours', 'consent']) || !uuid(x.id) || !integer(x.baseVersion) || !source(x.source) || !reason(x.reason) || !timestamp(x.dueAt) || !timestamp(x.expiresAt) || Date.parse(x.expiresAt) <= Date.parse(x.dueAt) || Date.parse(x.expiresAt) - Date.parse(x.dueAt) > 86400000 || !zone(x.timeZone) || !quietHours(x.quietHours) || x.consent !== true) return null;
   if (!(x.purpose === 'user_set_travel' && ['current_trip', 'user_reminder'].includes(x.source.kind) && x.reason !== null || x.purpose === 'accepted_task_result' && x.source.kind === 'task_result' && x.reason === null || x.purpose === 'qualified_watch' && x.source.kind === 'qualified_watch' && x.reason === null)) return null;
