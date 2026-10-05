@@ -1,7 +1,7 @@
 // Real disposable PostgreSQL; synthetic role/consent fixtures are not target Auth or APNs.
 import test,{before,after} from 'node:test';
 import assert from 'node:assert/strict';
-import {randomUUID as uuid,createHash} from 'node:crypto';
+import {randomUUID as uuid,createHash,generateKeyPairSync} from 'node:crypto';
 import {readFileSync,readdirSync} from 'node:fs';
 import {resolve} from 'node:path';
 import {pathToFileURL} from 'node:url';
@@ -136,12 +136,21 @@ run('actual TS strict codecs and scheduler consume actual PG source, disabled ze
  const f=await fixture(),s=await scheduled(f);assert.ok(decodeNoticeView(s.view,f.trip,{action:'schedule',input:s.x}));await due(s);
  let calls=0,sends=0;
  const rpc=async(name,p)=>{calls++;return svc(name,name==='poll_travel_notifications_v2'?[p.p_limit]:[p.p_notification,p.p_action,p.p_input]);};
- const transport={available:true,async send(x){sends++;assert.equal(x.notificationId,s.notification);assert.equal(x.token,f.token);assert.equal(x.topic,'fixture.only');return {kind:'accepted',apnsId:x.apnsId,acceptedAt:new Date().toISOString()};}};
+ const transport={available:true,binding:{environment:'sandbox',topic:'fixture.only'},async send(x){sends++;assert.equal(x.notificationId,s.notification);assert.equal(x.token,f.token);assert.equal(x.topic,'fixture.only');return {kind:'accepted',apnsId:x.apnsId,acceptedAt:new Date().toISOString()};}};
  assert.equal(await runNotificationScheduler({rpc,transport},new AbortController().signal),'disabled');assert.equal(calls,0);
  // Other test fixtures can have due records. Disable their queued rows in this disposable fixture only.
  await db(`update notification_private.outbox set state='suppressed' where state='scheduled' and id<>'${s.notification}';`);
  assert.equal(await runNotificationScheduler({enabled:true,rpc,transport},new AbortController().signal),'accepted');assert.equal(sends,1);
  assert.equal(await runNotificationScheduler({enabled:true,rpc,transport},new AbortController().signal),'idle');assert.equal(sends,1);
+ const mismatch=await scheduled(f);await due(mismatch);let exchanges=0;
+ const {createApnsTransport}=await import(pathToFileURL(resolve(root,'lib/server/notifications/apns.ts')));
+ const signing=generateKeyPairSync('ec',{namedCurve:'P-256'});
+ const mismatched=createApnsTransport({enabled:true,configuration:{teamId:'ABCDEFGHIJ',keyId:'0123456789',topic:'different.fixture',environment:'sandbox',privateKey:signing.privateKey.export({format:'pem',type:'pkcs8'}).toString()},exchange:async()=>{exchanges++;throw Error('Mismatch must deny before provider exchange');}});
+ assert.equal(await runNotificationScheduler({enabled:true,rpc,transport:mismatched},new AbortController().signal),'error');assert.equal(exchanges,0);
+ assert.equal(await db(`select active::text||':'||permission from notification_private.devices where id='${f.deviceId}';`),'true:authorized');
+ const mismatchRow=(await user(f,'list')).reminders.find(r=>r.id===mismatch.x.id);assert.deepEqual(mismatchRow.outcome,{kind:'error',code:'TRANSPORT_UNAVAILABLE'});
+ const originalAttempt=await db(`select attempt_id from notification_private.attempts where notification_id='${mismatch.notification}';`);
+ assert.equal((await svc('dispatch_travel_notification_v2',[mismatch.notification,'begin',{attemptId:uuid()}])).kind,'blocked');assert.equal(await db(`select attempt_id from notification_private.attempts where notification_id='${mismatch.notification}';`),originalAttempt);
 });
 
 async function supportFixture(){

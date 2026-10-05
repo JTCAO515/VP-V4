@@ -50,3 +50,23 @@ Tested source hashes (SHA256):
 UNRUN: Target GoTrue/JWT acceptance; Target migrations, grants and recipient/source qualification; Real APNs signing credentials/provider network/physical phone delivery; Native runtime and human acceptance; Actual user export/deletion and independent handler enrollment; Production activation.
 
 Legacy v1 intent is not automatically dispatched. Its records without new sidecars make v2 incomplete; the new export page is independently versioned and unenrolled/partial, with no retrofit of previously completed core packages. Rollback disables new authority and preserves historical ACK/outcomes; it cannot recall an already handed-off push.
+
+## Same-task topic handoff correction
+
+Runtime commit `82e588c48d98f8dab78cca87bda8cab55c78c057` adds only `topic=d.topic` to the closed begin grant (now exactly 10 keys). It changes no role, permission, setting, policy or actual target configuration. The actual TS consumer now compares the nonsecret transport environment/topic binding before send; the APNs factory independently rechecks input.topic.
+
+- Direct PostgreSQL affected run: 2 PASS / 0 FAIL / 0 skip; exact grant topic/keys and existing cancellation/handoff case, including the two-RPC race.
+- Actual TS scheduler to PostgreSQL affected run: 2 PASS / 0 FAIL / 0 skip; matched grant consumed once, topic mismatch yields TRANSPORT_UNAVAILABLE with zero provider exchanges, active authorized device retained, exact original attempt cannot be regranted. The mismatched factory used an ephemeral synthetic P-256 key and an injected exchange; no Apple or real credential access.
+- Existing 17 distinct cases are unchanged in count; unaffected preceding evidence is reused, not rerun or added to a fictitious distinct-case total. Docs, syntax and diff checks PASS.
+
+Local ignored raw logs: topic-grant-2.log and topic-joint-2.log in this same directory. Target/provider/device/enrollment UNRUN facts remain unchanged.
+
+Current affected source hashes:
+
+| Source | SHA256 |
+| --- | --- |
+| supabase/migrations/20261005030000_reminder_delivery.sql | df67c60c2cb0a07d1ae4086a5e074045a4bfeee6f5174a09a436dabd7650a106 |
+| tests/integration/notifications/delivery-postgres.test.mjs | 049e7a5f7660849151e62f8848e4c5a78f5ebace703bb9edfd1cc59de6667e10 |
+| Actual TS lib/server/notifications/scheduler.ts | c22ea440dcf47ac106b5675f3529ae2a73bd0d82059bd57b5409fa50ac950c8a |
+| Actual TS lib/server/notifications/delivery-contract.ts | 5c851d860f5d4f840673805e48663c542dbaca07d00d9e22960c50a53b34e8b3 |
+| Actual TS lib/server/notifications/apns.ts | f0a24b88f1d2ace723a31a7965fc3fc0da9293d28947fd1c33be1c24edb39f2e |
