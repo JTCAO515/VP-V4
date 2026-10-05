@@ -18,6 +18,26 @@ Native sole writer can consume owned API/protocol/fixtures via Main relay.
 Shared coverage catalog/contract/registry/outcome and Native existing entry/session
 need precise Main leases before edits. New TS files are the only present writes.
 
+Current immutable TS checkpoint `77e132c8` includes HTTP+collector+closed rows,
+original PDF confirmed receipt proof, post-TTL immutable erase receipt recovery,
+and source-free operation fence list (`referenceOperationIds`) in progress rows.
+Native fixture: `tests/fixtures/privacy/material-references/producer.json`, one
+synthetic protocol dictionary with three scopes, preview/bundle/erase receipt,
+exact original request bytes and a fixed `now` for independent decoding.
+Owned semantic contracts5 and injected HTTP consumer3 PASS; typecheck/lint/docs
+PASS. These are not SQL/GoTrue/Native execution or target acceptance.
+
+Precise TS shared lease requested: coverage/catalog.ts version `.3`, replace only
+order_references/pdf_intake entries with version `material-reference-data/1`,
+closed respective selected scopes and add `material_exit_progress`; add selection
+`material_records`. coverage/contract.ts one `materials` closed parser branch
+binding exact Trip/scope/request and preview/export/erase/original-bytes recovery.
+coverage/registry.ts append `materials` direct owner HTTP and fixed route plus
+recover original-byte wrapper. coverage/outcomes.ts append the independent typed
+material preview/bundle/receipt classifiers, preserving all original branches.
+CI db registry only append own future PG/actualHTTP lane switches/paths after
+their actual implementation. No old branch/oracle/handler/module privilege changes.
+
 ## Actual sources and copy inventory
 
 - Orders: `reservation_private.current_v1` sensitive corrected fields + source
