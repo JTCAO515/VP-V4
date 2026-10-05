@@ -1,0 +1,12 @@
+{
+  "app/api/privacy/native/v1/coverage/route.ts": "41d727f576a29166e1a123e89b9f32f054c6995da56e257548b0331c927d4702",
+  "supabase/migrations/20261006010000_owner_module_export.sql": "ae1d79b5bbe804e8039809cf58bf199bc8ac2bb6af2cf97f5931fe4326d7a8fd",
+  "lib/server/privacy/coverage/catalog.ts": "be7d7966d03a4c56ab7dc8290658a097e3341ee2552052aab2a403af8fcc37bd",
+  "lib/server/privacy/coverage/consumer.ts": "c92f4de5fe272a23ac9ea22b2014b517a6e45adff9f1a1e9bae907697ec7a050",
+  "lib/server/privacy/coverage/contract.ts": "a1916e81510bd60b9fddf5271adeea4cdbe820fdc09e838a2df0f124a031725d",
+  "lib/server/privacy/coverage/http.ts": "acb831bebbb57477b7384d157176f271fb398217e6fdfa72b2888405e8fa2158",
+  "lib/server/privacy/coverage/module-export.ts": "d690734dd1e1504eb441df63be14ab303b52496237750695c0af66c003f4c870",
+  "lib/server/privacy/coverage/notification-row.ts": "c29b05fae8e64b50b673f78627826d7f9c303c2267a10dbb4d9eb6ae1d53f433",
+  "lib/server/privacy/coverage/outcomes.ts": "a9a04d835bfe4a0e85178c7c93ac2edc996f35b4d29f9980994852763cefd777",
+  "lib/server/privacy/coverage/registry.ts": "d47580280d18a996188d3702190c9031a5c864379b19cd19b279113d2f95ced0"
+}

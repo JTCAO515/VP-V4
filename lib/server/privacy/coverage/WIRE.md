@@ -128,3 +128,26 @@ entries/catalog.2,requestBytes and bound UGC original result; synthetic only.
 SQL own fixed-wire now reports17PG/3contract with source data+oldACL unchanged;
 await immutable normal source commit before actual Auth-r3 union. Precise registry
 lease still pending; own protected restore cleanup leavesAGENTS/next-env original.
+
+Current fixed own package908665da CLEAN: actual SQL normal merged7fe2505d,Auth-r3
+1PASS0skip cleanup1a94152c,affected15PASS0skip,build/typecheck/lint/docs PASS.
+Main precise shared registry append already committed6a1dbbb8,actual list PASS.
+No further planned server/SQL product change. Native fixed handoff/integration/
+affected app check and final one PR remain. SQL source5b exactly preserved.
+
+## Concrete Native consumer finding for Main relay (same task, before fixed)
+
+Read-only current NativeDataCoverageOriginal.swift terminalResult lines103-107
+only requires `reply.state != .scopedComplete || terminal`. Publication recovery
+sets terminal=state!=absent at lines60-66,so abandoned=true. Case/Brief receipt
+decoders accept cancelled receipts and feed terminal=true at lines69-79. A valid
+original cancelled/abandoned terminal result with tampered outerstate
+scoped_complete/reasonNONE therefore passes this gate and can show deletion
+completion. The canonical TS classifier/consumer returns partial/
+ORIGINAL_OPERATION_CANCELLED for those exact original results and rejects such
+promotion. Terminal means ACK known,not source deletion applied. Required own
+Native correction: derive original applied/committed-versus-cancelled state
+independently before accepting outer completion; retain genuine unknown/absent
+pending bytes and allow legitimate cancelled cleanup as partial. No old module
+decoder/receipt/authority weakening. New own TS cancelled negative/fixture records
+this precisely;Main relay soleNative for its own consumer fix/affected proof.
