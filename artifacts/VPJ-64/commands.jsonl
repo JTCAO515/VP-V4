@@ -9,3 +9,7 @@
 {"command": "pnpm typecheck", "result": "FAIL", "observed": "environment: original J1 shared node_modules removed after freeze; own symlink became dangling, no TypeScript diagnostics"}
 {"command": "pnpm install --frozen-lockfile", "result": "PASS", "observed": "own isolated dependency directory;108cached packages,0downloads;lockfile unchanged"}
 {"command": "pnpm typecheck && pnpm lint && git diff --check", "result": "PASS", "observed": "after own dependency repair; final16key export source"}
+{"command": "node scripts/ci-suites/db-integration.mjs --list", "result": "PASS", "observed": "actualSafetyPG+AuthHTTP64100 classified; originalgates unchanged"}
+{"command": "VP_COMMUNITY_SAFETY_RECORD_FIXTURE=1 node --experimental-strip-types tests/integration/community/safety/run-http.mjs --port-base 64100", "result": "PASS", "source": "initial3dSQL", "observed": "AuthHTTP-r1 1PASS0skip cleanupff6eaebcPASS"}
+{"command": "VP_COMMUNITY_SAFETY_RECORD_FIXTURE=1 node --experimental-strip-types tests/integration/community/safety/run-http.mjs --port-base 64100", "result": "PASS", "source": "finalSQLd412+Native8c+J1abda; Native5b UI-only later unchangedendpointwire", "observed": "AuthHTTP-r2 1PASS0skip cleanup4efa74a7PASS including foreignstaleguess zero-write"}
+{"command": "node --experimental-strip-types --test tests/contract/community/safety-j2-sql.test.mjs", "result": "PASS", "observed": "3PASS0skip exact integratedSQL contract"}

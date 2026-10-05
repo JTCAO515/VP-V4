@@ -4,17 +4,17 @@
   "samples": {
     "objects": {
       "kind": "objects",
-      "actorId": "3701bb7b-5597-45a5-a584-f488305fabc9",
+      "actorId": "e3f45c5c-7205-488e-b2a3-f383f97fecc7",
       "objects": [
         {
-          "id": "77cac2a7-b78e-4409-9c1d-9144409a8662",
+          "id": "eb5f460c-3991-43a3-ae4c-8a8897e7da97",
           "title": "Synthetic controlled content",
           "source": "user_experience",
           "content": "Synthetic current user experience only",
           "canBlock": true,
           "canReport": true,
           "copyright": "unknown",
-          "expiresAt": "2026-10-05T15:21:07.318536+00:00",
+          "expiresAt": "2026-10-05T15:32:13.027445+00:00",
           "visibility": "internal",
           "contentKind": "experience",
           "safetyVersion": 0,
@@ -27,24 +27,24 @@
         }
       ],
       "complete": true,
-      "sessionId": "4c1becd4-73c8-4339-bf95-d6ca409f71cf",
+      "sessionId": "10bab51d-49bc-4546-ac6a-3ada90de8d60",
       "nextCursor": null,
       "schemaVersion": "community-safety-j2/1"
     },
     "object": {
       "schemaVersion": "community-safety-j2/1",
       "kind": "object",
-      "actorId": "3701bb7b-5597-45a5-a584-f488305fabc9",
-      "sessionId": "4c1becd4-73c8-4339-bf95-d6ca409f71cf",
+      "actorId": "e3f45c5c-7205-488e-b2a3-f383f97fecc7",
+      "sessionId": "10bab51d-49bc-4546-ac6a-3ada90de8d60",
       "object": {
-        "id": "77cac2a7-b78e-4409-9c1d-9144409a8662",
+        "id": "eb5f460c-3991-43a3-ae4c-8a8897e7da97",
         "title": "Synthetic controlled content",
         "source": "user_experience",
         "content": "Synthetic current user experience only",
         "canBlock": true,
         "canReport": true,
         "copyright": "unknown",
-        "expiresAt": "2026-10-05T15:21:07.331743+00:00",
+        "expiresAt": "2026-10-05T15:32:13.041198+00:00",
         "visibility": "internal",
         "contentKind": "experience",
         "safetyVersion": 0,
@@ -60,137 +60,137 @@
       "kind": "operation",
       "state": "committed",
       "record": {
-        "id": "c1716ebc-8b73-4761-9754-363873c0a20a",
+        "id": "8beda57c-92ab-4d6c-ace4-953221c84ccf",
         "kind": "report",
         "note": null,
         "state": "pending",
         "details": "PRIVATE-REPORTER-SYNTHETIC",
         "version": 1,
         "category": "rights",
-        "createdAt": "2026-10-05T15:20:37.34425+00:00",
+        "createdAt": "2026-10-05T15:31:43.053855+00:00",
         "resolvedAt": null,
-        "submissionId": "77cac2a7-b78e-4409-9c1d-9144409a8662",
+        "submissionId": "eb5f460c-3991-43a3-ae4c-8a8897e7da97",
         "safetyVersion": 0,
         "submissionVersion": 1
       },
-      "actorId": "3701bb7b-5597-45a5-a584-f488305fabc9",
-      "sessionId": "4c1becd4-73c8-4339-bf95-d6ca409f71cf",
-      "operationId": "b8bb48cc-cff2-4015-b26f-13bd6ad41fd1",
+      "actorId": "e3f45c5c-7205-488e-b2a3-f383f97fecc7",
+      "sessionId": "10bab51d-49bc-4546-ac6a-3ada90de8d60",
+      "operationId": "c8466b26-d557-4e2e-a128-199d6bbd17d8",
       "schemaVersion": "community-safety-j2/1"
     },
     "receipt": {
       "kind": "record",
       "record": {
-        "id": "c1716ebc-8b73-4761-9754-363873c0a20a",
+        "id": "8beda57c-92ab-4d6c-ace4-953221c84ccf",
         "kind": "report",
         "note": "Only this public-to-parties explanation is retained",
         "state": "removed",
         "details": "PRIVATE-REPORTER-SYNTHETIC",
         "version": 2,
         "category": "rights",
-        "createdAt": "2026-10-05T15:20:37.34425+00:00",
-        "resolvedAt": "2026-10-05T15:20:37.534988+00:00",
-        "submissionId": "77cac2a7-b78e-4409-9c1d-9144409a8662",
+        "createdAt": "2026-10-05T15:31:43.053855+00:00",
+        "resolvedAt": "2026-10-05T15:31:43.249511+00:00",
+        "submissionId": "eb5f460c-3991-43a3-ae4c-8a8897e7da97",
         "safetyVersion": 1,
         "submissionVersion": 1
       },
-      "actorId": "3701bb7b-5597-45a5-a584-f488305fabc9",
-      "sessionId": "4c1becd4-73c8-4339-bf95-d6ca409f71cf",
+      "actorId": "e3f45c5c-7205-488e-b2a3-f383f97fecc7",
+      "sessionId": "10bab51d-49bc-4546-ac6a-3ada90de8d60",
       "schemaVersion": "community-safety-j2/1"
     },
     "authorDisposition": {
       "kind": "record",
       "record": {
-        "id": "77cac2a7-b78e-4409-9c1d-9144409a8662",
+        "id": "eb5f460c-3991-43a3-ae4c-8a8897e7da97",
         "kind": "disposition",
         "note": null,
         "state": "clear",
         "j1Status": "pending",
         "appealable": false,
-        "submissionId": "77cac2a7-b78e-4409-9c1d-9144409a8662",
+        "submissionId": "eb5f460c-3991-43a3-ae4c-8a8897e7da97",
         "safetyVersion": 0,
         "submissionVersion": 1
       },
-      "actorId": "cd2b127c-5c67-4e38-ba3e-825a42e48362",
-      "sessionId": "cd7ac973-708a-45ca-98d2-1ded502a68af",
+      "actorId": "9183f6a8-f2d3-46dc-9619-6af0ec9e3be9",
+      "sessionId": "6dd4ade0-061c-4764-bb9f-8046bd806320",
       "schemaVersion": "community-safety-j2/1"
     },
     "appealed": {
       "kind": "operation",
       "state": "committed",
       "record": {
-        "id": "52f7e331-7fdc-4f3e-a54c-b65abaf13a8a",
+        "id": "0aa096ee-c1cf-4df7-b426-d747c20e25d6",
         "kind": "appeal",
         "note": null,
         "basis": "safety_removal",
         "state": "pending",
         "version": 1,
-        "createdAt": "2026-10-05T15:20:37.612374+00:00",
+        "createdAt": "2026-10-05T15:31:43.336102+00:00",
         "statement": "AUTHOR-PRIVATE-SYNTHETIC-APPEAL",
         "resolvedAt": null,
-        "submissionId": "77cac2a7-b78e-4409-9c1d-9144409a8662",
+        "submissionId": "eb5f460c-3991-43a3-ae4c-8a8897e7da97",
         "safetyVersion": 1,
         "submissionVersion": 1
       },
-      "actorId": "cd2b127c-5c67-4e38-ba3e-825a42e48362",
-      "sessionId": "cd7ac973-708a-45ca-98d2-1ded502a68af",
-      "operationId": "71d40c99-ae29-4222-a87a-ee490f203655",
+      "actorId": "9183f6a8-f2d3-46dc-9619-6af0ec9e3be9",
+      "sessionId": "6dd4ade0-061c-4764-bb9f-8046bd806320",
+      "operationId": "33aec879-550c-4b67-b3f3-8b0641a27251",
       "schemaVersion": "community-safety-j2/1"
     },
     "restored": {
       "kind": "operation",
       "state": "committed",
       "record": {
-        "id": "52f7e331-7fdc-4f3e-a54c-b65abaf13a8a",
+        "id": "0aa096ee-c1cf-4df7-b426-d747c20e25d6",
         "kind": "appeal",
         "note": "Independent reviewer restored the retained current source",
         "basis": "safety_removal",
         "state": "restored",
         "version": 2,
-        "createdAt": "2026-10-05T15:20:37.612374+00:00",
+        "createdAt": "2026-10-05T15:31:43.336102+00:00",
         "statement": "AUTHOR-PRIVATE-SYNTHETIC-APPEAL",
-        "resolvedAt": "2026-10-05T15:20:37.658349+00:00",
-        "submissionId": "77cac2a7-b78e-4409-9c1d-9144409a8662",
+        "resolvedAt": "2026-10-05T15:31:43.383094+00:00",
+        "submissionId": "eb5f460c-3991-43a3-ae4c-8a8897e7da97",
         "safetyVersion": 2,
         "submissionVersion": 1
       },
-      "actorId": "b7cc2872-c875-4e75-a204-29d5a49c0808",
-      "sessionId": "9d275c5e-754c-46a9-aac7-f435c974b657",
-      "operationId": "7ac4195a-7787-4162-8121-b63fa762c9d1",
+      "actorId": "342067c8-7f2c-4410-a2ee-6124fb79a510",
+      "sessionId": "125df4c4-014a-497f-918c-678d03064ce3",
+      "operationId": "8f1e4a7c-80a6-4b73-af4a-151f10e31371",
       "schemaVersion": "community-safety-j2/1"
     },
     "blocked": {
       "kind": "operation",
       "state": "committed",
       "record": {
-        "id": "11ec1bd6-224c-42af-9764-591aae0cfb48",
+        "id": "8aaa4789-c083-424c-8326-3ecb1fcb43b3",
         "kind": "block",
         "state": "blocked",
         "endedAt": null,
         "version": 1,
-        "createdAt": "2026-10-05T15:20:37.684496+00:00",
-        "submissionId": "77cac2a7-b78e-4409-9c1d-9144409a8662"
+        "createdAt": "2026-10-05T15:31:43.40704+00:00",
+        "submissionId": "eb5f460c-3991-43a3-ae4c-8a8897e7da97"
       },
-      "actorId": "3701bb7b-5597-45a5-a584-f488305fabc9",
-      "sessionId": "4c1becd4-73c8-4339-bf95-d6ca409f71cf",
-      "operationId": "ddcc0ed9-afc5-4d4c-aeb6-fee425ca5d5f",
+      "actorId": "e3f45c5c-7205-488e-b2a3-f383f97fecc7",
+      "sessionId": "10bab51d-49bc-4546-ac6a-3ada90de8d60",
+      "operationId": "7b1d9956-059d-43e9-a46a-3439fc3f5808",
       "schemaVersion": "community-safety-j2/1"
     },
     "unblocked": {
       "kind": "operation",
       "state": "committed",
       "record": {
-        "id": "11ec1bd6-224c-42af-9764-591aae0cfb48",
+        "id": "8aaa4789-c083-424c-8326-3ecb1fcb43b3",
         "kind": "block",
         "state": "unblocked",
-        "endedAt": "2026-10-05T15:20:37.721585+00:00",
+        "endedAt": "2026-10-05T15:31:43.439364+00:00",
         "version": 2,
-        "createdAt": "2026-10-05T15:20:37.684496+00:00",
-        "submissionId": "77cac2a7-b78e-4409-9c1d-9144409a8662"
+        "createdAt": "2026-10-05T15:31:43.40704+00:00",
+        "submissionId": "eb5f460c-3991-43a3-ae4c-8a8897e7da97"
       },
-      "actorId": "3701bb7b-5597-45a5-a584-f488305fabc9",
-      "sessionId": "4c1becd4-73c8-4339-bf95-d6ca409f71cf",
-      "operationId": "da5bfe99-38b5-4304-8817-671c1abfcafc",
+      "actorId": "e3f45c5c-7205-488e-b2a3-f383f97fecc7",
+      "sessionId": "10bab51d-49bc-4546-ac6a-3ada90de8d60",
+      "operationId": "2b24fac5-95b6-4921-a224-ab573c694aea",
       "schemaVersion": "community-safety-j2/1"
     },
     "ownerExport": {
@@ -199,24 +199,24 @@
       "audits": [
         {
           "action": "appeal",
-          "recordId": "52f7e331-7fdc-4f3e-a54c-b65abaf13a8a",
-          "createdAt": "2026-10-05T15:20:37.612829+00:00"
+          "recordId": "0aa096ee-c1cf-4df7-b426-d747c20e25d6",
+          "createdAt": "2026-10-05T15:31:43.336514+00:00"
         }
       ],
       "blocks": [],
-      "actorId": "cd2b127c-5c67-4e38-ba3e-825a42e48362",
+      "actorId": "9183f6a8-f2d3-46dc-9619-6af0ec9e3be9",
       "appeals": [
         {
-          "id": "52f7e331-7fdc-4f3e-a54c-b65abaf13a8a",
+          "id": "0aa096ee-c1cf-4df7-b426-d747c20e25d6",
           "kind": "appeal",
           "note": "Independent reviewer restored the retained current source",
           "basis": "safety_removal",
           "state": "restored",
           "version": 2,
-          "createdAt": "2026-10-05T15:20:37.612374+00:00",
+          "createdAt": "2026-10-05T15:31:43.336102+00:00",
           "statement": "AUTHOR-PRIVATE-SYNTHETIC-APPEAL",
-          "resolvedAt": "2026-10-05T15:20:37.658349+00:00",
-          "submissionId": "77cac2a7-b78e-4409-9c1d-9144409a8662",
+          "resolvedAt": "2026-10-05T15:31:43.383094+00:00",
+          "submissionId": "eb5f460c-3991-43a3-ae4c-8a8897e7da97",
           "safetyVersion": 2,
           "submissionVersion": 2
         }
@@ -227,9 +227,9 @@
         {
           "state": "committed",
           "action": "appeal",
-          "digest": "3d215ce0b38455bbf428bae6caca5bb7ce25bc6a74feaecccfcb36ae1ea0f2e0",
-          "recordId": "52f7e331-7fdc-4f3e-a54c-b65abaf13a8a",
-          "operationId": "71d40c99-ae29-4222-a87a-ee490f203655"
+          "digest": "548e11854fefba6bf6211b2777cb12829b704930b65c95d364c3c5fd37890cbb",
+          "recordId": "0aa096ee-c1cf-4df7-b426-d747c20e25d6",
+          "operationId": "33aec879-550c-4b67-b3f3-8b0641a27251"
         }
       ],
       "retained": [
@@ -237,16 +237,16 @@
         "record_tombstones",
         "audit_metadata"
       ],
-      "sessionId": "cd7ac973-708a-45ca-98d2-1ded502a68af",
+      "sessionId": "6dd4ade0-061c-4764-bb9f-8046bd806320",
       "dispositions": [
         {
-          "id": "77cac2a7-b78e-4409-9c1d-9144409a8662",
+          "id": "eb5f460c-3991-43a3-ae4c-8a8897e7da97",
           "kind": "disposition",
           "note": null,
           "state": "unavailable",
           "j1Status": "withdrawn",
           "appealable": false,
-          "submissionId": "77cac2a7-b78e-4409-9c1d-9144409a8662",
+          "submissionId": "eb5f460c-3991-43a3-ae4c-8a8897e7da97",
           "safetyVersion": 2,
           "submissionVersion": 2
         }
@@ -262,45 +262,45 @@
       "audits": [
         {
           "action": "report",
-          "recordId": "c1716ebc-8b73-4761-9754-363873c0a20a",
-          "createdAt": "2026-10-05T15:20:37.344624+00:00"
+          "recordId": "8beda57c-92ab-4d6c-ace4-953221c84ccf",
+          "createdAt": "2026-10-05T15:31:43.054232+00:00"
         },
         {
           "action": "block",
-          "recordId": "11ec1bd6-224c-42af-9764-591aae0cfb48",
-          "createdAt": "2026-10-05T15:20:37.684736+00:00"
+          "recordId": "8aaa4789-c083-424c-8326-3ecb1fcb43b3",
+          "createdAt": "2026-10-05T15:31:43.407337+00:00"
         },
         {
           "action": "unblock",
-          "recordId": "11ec1bd6-224c-42af-9764-591aae0cfb48",
-          "createdAt": "2026-10-05T15:20:37.721696+00:00"
+          "recordId": "8aaa4789-c083-424c-8326-3ecb1fcb43b3",
+          "createdAt": "2026-10-05T15:31:43.439476+00:00"
         }
       ],
       "blocks": [
         {
-          "id": "11ec1bd6-224c-42af-9764-591aae0cfb48",
+          "id": "8aaa4789-c083-424c-8326-3ecb1fcb43b3",
           "kind": "block",
           "state": "unblocked",
-          "endedAt": "2026-10-05T15:20:37.721585+00:00",
+          "endedAt": "2026-10-05T15:31:43.439364+00:00",
           "version": 2,
-          "createdAt": "2026-10-05T15:20:37.684496+00:00",
+          "createdAt": "2026-10-05T15:31:43.40704+00:00",
           "submissionId": null
         }
       ],
-      "actorId": "3701bb7b-5597-45a5-a584-f488305fabc9",
+      "actorId": "e3f45c5c-7205-488e-b2a3-f383f97fecc7",
       "appeals": [],
       "reports": [
         {
-          "id": "c1716ebc-8b73-4761-9754-363873c0a20a",
+          "id": "8beda57c-92ab-4d6c-ace4-953221c84ccf",
           "kind": "report",
           "note": "Only this public-to-parties explanation is retained",
           "state": "removed",
           "details": "PRIVATE-REPORTER-SYNTHETIC",
           "version": 2,
           "category": "rights",
-          "createdAt": "2026-10-05T15:20:37.34425+00:00",
-          "resolvedAt": "2026-10-05T15:20:37.534988+00:00",
-          "submissionId": "77cac2a7-b78e-4409-9c1d-9144409a8662",
+          "createdAt": "2026-10-05T15:31:43.053855+00:00",
+          "resolvedAt": "2026-10-05T15:31:43.249511+00:00",
+          "submissionId": "eb5f460c-3991-43a3-ae4c-8a8897e7da97",
           "safetyVersion": 2,
           "submissionVersion": 2
         }
@@ -309,31 +309,31 @@
       "receipts": [
         {
           "state": "committed",
-          "action": "report",
-          "digest": "46bbbec7573d45eda0ecf4d1a94104603ed12a8c8484dd28e66155c976bd95a3",
-          "recordId": "c1716ebc-8b73-4761-9754-363873c0a20a",
-          "operationId": "b8bb48cc-cff2-4015-b26f-13bd6ad41fd1"
-        },
-        {
-          "state": "committed",
           "action": "unblock",
-          "digest": "77bb4122cbdea69d2dd054a60dc9d4bca12af110a155ef0f78d65c073bc11529",
-          "recordId": "11ec1bd6-224c-42af-9764-591aae0cfb48",
-          "operationId": "da5bfe99-38b5-4304-8817-671c1abfcafc"
+          "digest": "6b0b5ef070a628e5da24a1a15e6f6bcaba1a7113a075ad3d8f341ac34c9fdf74",
+          "recordId": "8aaa4789-c083-424c-8326-3ecb1fcb43b3",
+          "operationId": "2b24fac5-95b6-4921-a224-ab573c694aea"
         },
         {
           "state": "committed",
           "action": "block",
-          "digest": "e1e02aac84faf82e1e2a57e7f4ddd722c1eda35bab4165036851f7eb987bd1b5",
-          "recordId": "11ec1bd6-224c-42af-9764-591aae0cfb48",
-          "operationId": "ddcc0ed9-afc5-4d4c-aeb6-fee425ca5d5f"
+          "digest": "c0526ac7dc8aa9c8f080b70cd7c8b26ced3511d5730923f879aefc865360bca0",
+          "recordId": "8aaa4789-c083-424c-8326-3ecb1fcb43b3",
+          "operationId": "7b1d9956-059d-43e9-a46a-3439fc3f5808"
+        },
+        {
+          "state": "committed",
+          "action": "report",
+          "digest": "bc2beaac2e8f273bcd95533f92c8a42085307b73bce252df2d8373c7c9e3dd59",
+          "recordId": "8beda57c-92ab-4d6c-ace4-953221c84ccf",
+          "operationId": "c8466b26-d557-4e2e-a128-199d6bbd17d8"
         },
         {
           "state": "abandoned",
           "action": "report",
-          "digest": "17ce50911bab20a82a58d6766b6e1179eb1f7ed743021cc46124b567393e38f4",
-          "recordId": "50a97d43-e2fe-4d98-8dbf-a2014cde4018",
-          "operationId": "e1df3b55-01cb-4640-9e4f-33e243505123"
+          "digest": "f7109a7b0e1826e56202c5baf50327e55bdb1cac09906366517025c0238b1e34",
+          "recordId": "776f78ca-e36e-4ba1-9553-026d9600dbd2",
+          "operationId": "e3269037-28d5-40f1-8898-c6f9570a3dac"
         }
       ],
       "retained": [
@@ -341,13 +341,13 @@
         "record_tombstones",
         "audit_metadata"
       ],
-      "sessionId": "4c1becd4-73c8-4339-bf95-d6ca409f71cf",
+      "sessionId": "10bab51d-49bc-4546-ac6a-3ada90de8d60",
       "dispositions": [],
       "readerGrants": [
         {
           "revoked": true,
-          "expiresAt": "2026-10-05T15:25:37.843608+00:00",
-          "submissionId": "77cac2a7-b78e-4409-9c1d-9144409a8662",
+          "expiresAt": "2026-10-05T15:36:43.571493+00:00",
+          "submissionId": "eb5f460c-3991-43a3-ae4c-8a8897e7da97",
           "submissionVersion": 1
         }
       ],
@@ -361,12 +361,12 @@
       "audits": [
         {
           "action": "disposition",
-          "recordId": "c1716ebc-8b73-4761-9754-363873c0a20a",
-          "createdAt": "2026-10-05T15:20:37.535241+00:00"
+          "recordId": "8beda57c-92ab-4d6c-ace4-953221c84ccf",
+          "createdAt": "2026-10-05T15:31:43.249754+00:00"
         }
       ],
       "blocks": [],
-      "actorId": "9fb31895-24ec-42f3-9707-8dbcd91f51f4",
+      "actorId": "d8532c3b-a9a9-4103-9d7c-83abd1853702",
       "appeals": [],
       "reports": [],
       "coverage": "complete_for_community_safety",
@@ -374,9 +374,9 @@
         {
           "state": "committed",
           "action": "disposition",
-          "digest": "45c43f71a376b87cb8ea1f3f093d6dbfbee820c3fb9b4a9e8705104607a82d45",
-          "recordId": "c1716ebc-8b73-4761-9754-363873c0a20a",
-          "operationId": "6255a69c-4baa-46f0-9d6e-9d787b9a0d8e"
+          "digest": "bcc7a2a3e72521c9f34802b28536b690e044698517d9397eb02c2ccf3b363bd5",
+          "recordId": "8beda57c-92ab-4d6c-ace4-953221c84ccf",
+          "operationId": "8b4a616b-50b8-45b2-a044-8948b1222f34"
         }
       ],
       "retained": [
@@ -384,7 +384,7 @@
         "record_tombstones",
         "audit_metadata"
       ],
-      "sessionId": "55fef581-d709-4b57-b53d-0fc57afe815d",
+      "sessionId": "399f0fda-6c6f-49f9-85db-1fa74cea33af",
       "dispositions": [],
       "readerGrants": [],
       "qualification": {
@@ -396,8 +396,8 @@
           "kind": "report",
           "note": "Only this public-to-parties explanation is retained",
           "decision": "remove",
-          "recordId": "c1716ebc-8b73-4761-9754-363873c0a20a",
-          "createdAt": "2026-10-05T15:20:37.5347+00:00"
+          "recordId": "8beda57c-92ab-4d6c-ace4-953221c84ccf",
+          "createdAt": "2026-10-05T15:31:43.249252+00:00"
         }
       ]
     },
@@ -408,34 +408,34 @@
         {
           "action": "delete",
           "recordId": null,
-          "createdAt": "2026-10-05T15:20:38.016315+00:00"
+          "createdAt": "2026-10-05T15:31:43.754094+00:00"
         }
       ],
       "blocks": [
         {
-          "id": "11ec1bd6-224c-42af-9764-591aae0cfb48",
+          "id": "8aaa4789-c083-424c-8326-3ecb1fcb43b3",
           "kind": "block",
           "state": "erased",
-          "endedAt": "2026-10-05T15:20:37.721585+00:00",
+          "endedAt": "2026-10-05T15:31:43.439364+00:00",
           "version": 2,
-          "createdAt": "2026-10-05T15:20:37.684496+00:00",
+          "createdAt": "2026-10-05T15:31:43.40704+00:00",
           "submissionId": null
         }
       ],
-      "actorId": "3701bb7b-5597-45a5-a584-f488305fabc9",
+      "actorId": "e3f45c5c-7205-488e-b2a3-f383f97fecc7",
       "appeals": [],
       "reports": [
         {
-          "id": "c1716ebc-8b73-4761-9754-363873c0a20a",
+          "id": "8beda57c-92ab-4d6c-ace4-953221c84ccf",
           "kind": "report",
           "note": null,
           "state": "erased",
           "details": null,
           "version": 2,
           "category": "rights",
-          "createdAt": "2026-10-05T15:20:37.34425+00:00",
-          "resolvedAt": "2026-10-05T15:20:37.534988+00:00",
-          "submissionId": "77cac2a7-b78e-4409-9c1d-9144409a8662",
+          "createdAt": "2026-10-05T15:31:43.053855+00:00",
+          "resolvedAt": "2026-10-05T15:31:43.249511+00:00",
+          "submissionId": "eb5f460c-3991-43a3-ae4c-8a8897e7da97",
           "safetyVersion": 2,
           "submissionVersion": 2
         }
@@ -444,38 +444,38 @@
       "receipts": [
         {
           "state": "committed",
-          "action": "delete",
-          "digest": "1291f66019c4cb2c4bb9229186efd8aa0c2f5172646abd340b399a06e9530de8",
-          "recordId": null,
-          "operationId": "192458b5-5424-4bd6-bac8-d5f5888dcc17"
-        },
-        {
-          "state": "committed",
-          "action": "report",
-          "digest": "46bbbec7573d45eda0ecf4d1a94104603ed12a8c8484dd28e66155c976bd95a3",
-          "recordId": "c1716ebc-8b73-4761-9754-363873c0a20a",
-          "operationId": "b8bb48cc-cff2-4015-b26f-13bd6ad41fd1"
-        },
-        {
-          "state": "committed",
           "action": "unblock",
-          "digest": "77bb4122cbdea69d2dd054a60dc9d4bca12af110a155ef0f78d65c073bc11529",
-          "recordId": "11ec1bd6-224c-42af-9764-591aae0cfb48",
-          "operationId": "da5bfe99-38b5-4304-8817-671c1abfcafc"
+          "digest": "6b0b5ef070a628e5da24a1a15e6f6bcaba1a7113a075ad3d8f341ac34c9fdf74",
+          "recordId": "8aaa4789-c083-424c-8326-3ecb1fcb43b3",
+          "operationId": "2b24fac5-95b6-4921-a224-ab573c694aea"
         },
         {
           "state": "committed",
           "action": "block",
-          "digest": "e1e02aac84faf82e1e2a57e7f4ddd722c1eda35bab4165036851f7eb987bd1b5",
-          "recordId": "11ec1bd6-224c-42af-9764-591aae0cfb48",
-          "operationId": "ddcc0ed9-afc5-4d4c-aeb6-fee425ca5d5f"
+          "digest": "c0526ac7dc8aa9c8f080b70cd7c8b26ced3511d5730923f879aefc865360bca0",
+          "recordId": "8aaa4789-c083-424c-8326-3ecb1fcb43b3",
+          "operationId": "7b1d9956-059d-43e9-a46a-3439fc3f5808"
+        },
+        {
+          "state": "committed",
+          "action": "delete",
+          "digest": "b795b8945e07490a0af2c0c153b9c19fffeee5cf8e0a87b74a242884bcc4fc3e",
+          "recordId": null,
+          "operationId": "a7bca75a-8a5a-402f-a4cc-81c528a06f20"
+        },
+        {
+          "state": "committed",
+          "action": "report",
+          "digest": "bc2beaac2e8f273bcd95533f92c8a42085307b73bce252df2d8373c7c9e3dd59",
+          "recordId": "8beda57c-92ab-4d6c-ace4-953221c84ccf",
+          "operationId": "c8466b26-d557-4e2e-a128-199d6bbd17d8"
         },
         {
           "state": "abandoned",
           "action": "report",
-          "digest": "17ce50911bab20a82a58d6766b6e1179eb1f7ed743021cc46124b567393e38f4",
-          "recordId": "50a97d43-e2fe-4d98-8dbf-a2014cde4018",
-          "operationId": "e1df3b55-01cb-4640-9e4f-33e243505123"
+          "digest": "f7109a7b0e1826e56202c5baf50327e55bdb1cac09906366517025c0238b1e34",
+          "recordId": "776f78ca-e36e-4ba1-9553-026d9600dbd2",
+          "operationId": "e3269037-28d5-40f1-8898-c6f9570a3dac"
         }
       ],
       "retained": [
@@ -483,7 +483,7 @@
         "record_tombstones",
         "audit_metadata"
       ],
-      "sessionId": "4c1becd4-73c8-4339-bf95-d6ca409f71cf",
+      "sessionId": "10bab51d-49bc-4546-ac6a-3ada90de8d60",
       "dispositions": [],
       "readerGrants": [],
       "qualification": null,
