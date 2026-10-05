@@ -121,7 +121,7 @@ real locks/replacement, service preservation, and new export enrollment/source
 fences. It uses synthetic Auth tables and administrator claims; that is PostgreSQL
 behavior evidence, not signed Auth/RLS HTTP or target acceptance.
 
-PASS: current targeted PG 9/9, zero skipped; migration replay; old archive/export
+PASS: earlier lifecycle-only targeted PG 9/9, zero skipped; migration replay; old archive/export
 body hashes preserved; default-denied functions and private RLS; diff whitespace.
 Initial SQL syntax/operator failures were fixed before this PASS. An added old
 confirm replay test initially expected `applied` rather than the accepted
@@ -167,3 +167,20 @@ a planning-policy ID where the original intake requires a text-policy ID; the
 next deletion fixture omitted its current session claim. These fixture failures
 were corrected without weakening product guards. New-case results are recorded
 in the accompanying archive-reader evidence, separate from the earlier 9/9 run.
+
+Archive delta validation: PASS original reference ACLs and exact nonarchive body
+restoration; PASS unchanged common basis/typed state/exact reader/publisher bodies.
+A full local run including the new archive case passed 10/10 with zero skips.
+The final candidate-count refinement scans the original owner/Trip/active 65-row
+bound without filtering proposal IDs. Only success qualification excludes
+proposal/preview. A separate owner/Trip stored-row presence check distinguishes
+withdrawn-only history from actual absence and never returns an archive proof.
+This last refinement was verified by running only the added archive case on one
+new disposable PostgreSQL: selected case PASS, parent PASS, eight unchanged cases
+explicitly skipped with their earlier evidence reused. It is not reported as a
+new zero-skip full-matrix run. The committed mandatory DB-lane test retains all
+cases with the existing VP_ARCHIVE_DB_TEST gate and no per-case skips. Temporary
+focused registration and its container were removed. The actual stored publisher
+case also covers practical translations and task-output drafts, pending-only
+references/previews, exact ID/revision/Trip mismatches and historical decision
+execution rejection. Evidence: archive-reader.txt next to the earlier pg.txt.

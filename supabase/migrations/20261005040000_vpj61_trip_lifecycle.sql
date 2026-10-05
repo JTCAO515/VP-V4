@@ -521,12 +521,12 @@ begin
     then return jsonb_build_object('kind','unavailable'); end if;
   -- VPJ61_ARCHIVE_V1_BEGIN
   if exists(select 1 from public.trip_archives archive where archive.trip_id=p_trip_id and archive.owner_id=u) then
-    for candidate in select id,current_revision from turn_private.result_artifacts
-      where owner_id=u and trip_id=p_trip_id and proposal_id is null
+    for candidate in select id,current_revision,proposal_id from turn_private.result_artifacts
+      where owner_id=u and trip_id=p_trip_id and lifecycle='active'
       order by created_at desc,id desc limit 65 loop
       examined:=examined+1;if examined>64 then return jsonb_build_object('kind','unavailable');end if;
       authorised:=public.read_result_artifacts_v1(candidate.id,candidate.current_revision);
-      if authorised->>'kind'='result_artifact' and authorised->>'artifactId'=candidate.id::text
+      if candidate.proposal_id is null and authorised->>'kind'='result_artifact' and authorised->>'artifactId'=candidate.id::text
         and authorised->'revision'=to_jsonb(candidate.current_revision)
         and authorised->'source'->>'tripId'=p_trip_id::text
         and authorised->'historicalReadable'='true'::jsonb and authorised->'current'='false'::jsonb
@@ -534,7 +534,7 @@ begin
         return jsonb_build_object('kind','result_reference','artifactId',candidate.id,'revision',candidate.current_revision,'tripId',p_trip_id,'archiveHistorical',true);
       end if;
     end loop;
-    if examined>0 then return jsonb_build_object('kind','unavailable');end if;
+    if examined>0 or exists(select 1 from turn_private.result_artifacts where owner_id=u and trip_id=p_trip_id) then return jsonb_build_object('kind','unavailable');end if;
     return jsonb_build_object('kind','empty');
   end if;
   -- VPJ61_ARCHIVE_V1_END
@@ -576,12 +576,12 @@ begin
  if not exists(select 1 from public.trips where id=p_trip_id and owner_id=u) or exists(select 1 from privacy_private.trip_deletions where trip_id=p_trip_id) then return jsonb_build_object('kind','empty');end if;
  -- VPJ61_ARCHIVE_V2_BEGIN
  if exists(select 1 from public.trip_archives where trip_id=p_trip_id and owner_id=u) then
-  for candidate in select id,current_revision from turn_private.result_artifacts
-   where owner_id=u and trip_id=p_trip_id and proposal_id is null
+  for candidate in select id,current_revision,proposal_id from turn_private.result_artifacts
+   where owner_id=u and trip_id=p_trip_id and lifecycle='active'
    order by created_at desc,id desc limit 65 loop
    examined:=examined+1;if examined>64 then return jsonb_build_object('kind','unavailable');end if;
    authorised:=public.read_result_artifact_v2(candidate.id,candidate.current_revision);
-   if authorised->>'kind'='result_artifact' and authorised->>'artifactId'=candidate.id::text
+   if candidate.proposal_id is null and authorised->>'kind'='result_artifact' and authorised->>'artifactId'=candidate.id::text
     and authorised->'revision'=to_jsonb(candidate.current_revision)
     and authorised->'source'->>'tripId'=p_trip_id::text
     and authorised->'historicalReadable'='true'::jsonb and authorised->'current'='false'::jsonb
@@ -590,7 +590,7 @@ begin
     return jsonb_build_object('kind','result_reference','artifactId',candidate.id,'revision',candidate.current_revision,'tripId',p_trip_id,'archiveHistorical',true);
    end if;
   end loop;
-  if examined>0 then return jsonb_build_object('kind','unavailable');end if;
+  if examined>0 or exists(select 1 from turn_private.result_artifacts where owner_id=u and trip_id=p_trip_id) then return jsonb_build_object('kind','unavailable');end if;
   return jsonb_build_object('kind','empty');
  end if;
  -- VPJ61_ARCHIVE_V2_END

@@ -34,6 +34,9 @@ test('VPJ-61 SQL lifecycle, existing writers, locks, erasure and versioned expor
  const confirmed=new Map();
  async function confirm(a,id,title='Saved Trip'){const proposal=JSON.parse(await db(claims(a)+`select row_to_json(r) from public.create_trip_proposal_patch('${id}',jsonb_build_object('expectedVersion',(select head_version from public.trips where id='${id}'),'operations',jsonb_build_array(jsonb_build_object('kind','set_title','title',${literal(title)})))) r;`));const digest=await db(claims(a)+`select digest from public.read_trip_proposal_v2('${proposal.proposal_id}');`);const key=uuid();const receipt=await db(claims(a)+`select * from public.confirm_and_apply_trip_proposal('${proposal.proposal_id}','${key}','${digest}');`);const result={id:proposal.proposal_id,digest,key,receipt};confirmed.set(id,result);return result;}
  await confirm(legacyOwner,legacy);
+ const resultSignatures=['public.read_trip_result_reference_v1(uuid)','public.read_trip_result_reference_v2(uuid)','public.read_result_artifacts_v1(uuid,integer)','public.read_result_artifact_v2(uuid,integer)','turn_private.comparison_common_basis_state(turn_private.result_artifacts,turn_private.result_revisions)','turn_private.result_state_v2(turn_private.result_artifacts,turn_private.result_revisions)','turn_private.publish_result_v2(uuid,uuid,integer,uuid,uuid,uuid,uuid,uuid,integer,integer,jsonb,jsonb,jsonb,boolean)'];
+ const readerState=()=>db(`select jsonb_object_agg(proname,jsonb_build_object('body',prosrc,'acl',proacl)) from pg_proc where oid=any(array[${resultSignatures.map(x=>literal(x)+'::regprocedure').join(',')}]);`).then(JSON.parse);
+ const originalReaders=await readerState();
  const originalArchive=await db("select md5(prosrc) from pg_proc where oid='public.archive_trip_v1(uuid,integer,uuid,boolean)'::regprocedure;");
  const originalExport=await db("select md5(prosrc) from pg_proc where oid='public.privacy_core_export_v1(text,jsonb)'::regprocedure;");
  await db('begin;'+readFileSync('supabase/migrations/'+migration,'utf8')+'commit;');
@@ -195,6 +198,76 @@ test('VPJ-61 SQL lifecycle, existing writers, locks, erasure and versioned expor
   await barrier(claims(next)+`select public.native_session_v2('login','${attempt}')`,()=>unknown(pending));
   await deny(claims(p)+`select public.trip_lifecycle_v1('execute',${json(pending)},${literal(JSON.stringify(pending))});`,'SESSION_REPLACED');
   assert.equal(await db("select deadlocks from pg_stat_database where datname=current_database();"),'0');
+ });
+ await t.test('archive historical exact references retain original readers and refuse withdrawn sources',async()=>{
+  const after=await readerState();
+  for(const [name,value] of Object.entries(originalReaders)){
+   assert.deepEqual(after[name].acl,value.acl,'original ACL preserved: '+name);
+   if(!name.startsWith('read_trip_result_reference'))assert.equal(after[name].body,value.body,'original domain/reader/publisher body preserved: '+name);
+  }
+  const oldV1="  if exists(select 1 from public.trip_archives archive where archive.trip_id=p_trip_id and archive.owner_id=u)\n    then return jsonb_build_object('kind','empty'); end if;";
+  assert.equal(after.read_trip_result_reference_v1.body.replace(/  -- VPJ61_ARCHIVE_V1_BEGIN[\s\S]*?  -- VPJ61_ARCHIVE_V1_END/,oldV1),originalReaders.read_trip_result_reference_v1.body,'v1 nonarchive body exact original');
+  assert.equal(after.read_trip_result_reference_v2.body.replace(/\n -- VPJ61_ARCHIVE_V2_BEGIN[\s\S]*? -- VPJ61_ARCHIVE_V2_END/,'').replace("or exists(select 1 from privacy_private.trip_deletions where trip_id=p_trip_id)","or exists(select 1 from public.trip_archives where trip_id=p_trip_id) or exists(select 1 from privacy_private.trip_deletions where trip_id=p_trip_id)"),originalReaders.read_trip_result_reference_v2.body,'v2 nonarchive body exact original');
+  const rpc=async(a,name,params)=>JSON.parse(await db((a?claims(a):service)+`select public.${name}(${Object.entries(params).map(([k,v])=>k+'=>'+(v===null?'null':typeof v==='object'?json(v):typeof v==='number'||typeof v==='boolean'?String(v):literal(v))).join(',')});`));
+  async function saved(withMemory=false){
+   const a=await owner(),trip=uuid(),policy=uuid(),planningPolicy=uuid(),conversation=uuid(),goal=uuid(),source=uuid(),hash='a'.repeat(64);
+   await db(`insert into turn_private.text_policies(id,provider,recipient,endpoint,source_region,processing_region,storage_region,terms_version,notice_version,notice_hash,notice_zh,notice_en,retention,effective_at,expires_at,terms_recheck_at) values('${policy}','qwen','synthetic only','https://synthetic.invalid/inference','fixture','fixture','fixture','test','test','${hash}','合成','Synthetic','retain_after_hide_v1',now()-interval '1 hour',now()+interval '1 day',now()+interval '1 day');insert into turn_private.planning_policies(id,text_policy_id,environment,notice_version,notice_hash,notice_zh,notice_en,effective_at,expires_at) values('${planningPolicy}','${policy}','local_synthetic','test','${hash}','合成','Synthetic',now()-interval '1 hour',now()+interval '1 day');`);
+   await rpc(a,'accept_text_policy',{p_policy_id:policy,p_notice_hash:hash});await rpc(a,'accept_planning_policy_v1',{p_policy_id:planningPolicy,p_notice_hash:hash});
+   const intake={schemaVersion:'stay-area-intake/1',city:'shanghai',comparisonTarget:'area_transport',durationDays:10,partySize:2,interests:['food'],pace:'relaxed',lodgingBudget:null,dates:null,mobilityConstraints:[]};
+   await rpc(a,'submit_assistant_travel_intake_v1',{p_conversation_id:conversation,p_goal_id:goal,p_message_id:source,p_parent_message_id:null,p_expected_goal_version:null,p_expected_intake_revision:0,p_idempotency_key:uuid(),p_policy_id:policy,p_locale:'en',p_text:'Synthetic travel goal',p_relationship:'goal_start',p_intake:intake,p_memory_basis:[]});
+   await execute(a,await commandFor(a,'create',trip,{title:'Saved result Trip'}));await confirm(a,trip);
+   await rpc(a,'set_assistant_goal_trip_link_v1',{p_operation_id:uuid(),p_conversation_id:conversation,p_goal_id:goal,p_source_message_id:source,p_expected_goal_scope_version:1,p_expected_link_version:0,p_action:'link',p_trip_id:trip,p_expected_trip_version:1,p_confirmed:true});
+   const task=uuid(),turn=uuid(),thread=uuid(),message=uuid();
+   await rpc(a,'submit_service_task_turn',{p_thread_id:thread,p_turn_id:turn,p_idempotency_key:uuid(),p_policy_id:policy,p_locale:'en',p_text:'Synthetic completed saved result',p_task_id:task,p_scope_version:1,p_relationship:'new_goal',p_parent_turn_id:null});
+   await rpc(a,'submit_assistant_message_v1',{p_conversation_id:conversation,p_message_id:message,p_idempotency_key:uuid(),p_policy_id:policy,p_locale:'en',p_text:'Saved result',p_relationship:'follow_up',p_goal_id:goal,p_expected_goal_version:2,p_task_id:task,p_parent_message_id:source,p_turn_id:null});
+   await db(`update turn_private.text_content set output_kind='answered',output_text='Synthetic completed output' where turn_id='${turn}';select turn_private.terminal('${turn}','completed',1);`);
+   let memory=null,basis=[];
+   if(withMemory){memory={id:uuid(),consent:uuid(),receipt:uuid()};await db(claims(a)+`begin;insert into public.memory_consents(id,owner_id,status) values('${memory.consent}','${a.owner}','granted');insert into public.memory_profiles(id,owner_id,source_receipt_id,consent_id,state,constraint_kind,summary) values('${memory.id}','${a.owner}','${memory.receipt}','${memory.consent}','explicit','preference','Synthetic saved preference');insert into public.memory_receipts(id,owner_id,memory_id,event_state,source_kind) values('${memory.receipt}','${a.owner}','${memory.id}','explicit','user_confirmed');commit;`);basis=[{id:memory.id,revision:Number(await db(`select revision from public.memory_profiles where id='${memory.id}';`))}];}
+   const content={schemaVersion:'comparison/1',title:'Saved areas',summary:'Historical screening',options:[{id:'one',title:'One',tradeoff:'Unknown detail'},{id:'two',title:'Two',tradeoff:'Unknown detail'}],actions:[]};
+   const publish=async(content,id=uuid())=>{await rpc(null,'publish_result_artifact_v2',{p_owner_id:a.owner,p_artifact_id:id,p_expected_revision:0,p_idempotency_key:uuid(),p_task_id:task,p_goal_id:goal,p_input_message_id:message,p_trip_id:trip,p_trip_version:1,p_goal_version:2,p_memory_basis:basis,p_content:content,p_evidence_basis:[]});return id;};
+   const id=await publish(content);
+   return {a,trip,policy,task,turn,goal,source,memory,id,publish};
+  }
+  const ref=(f,v)=>rpc(f.a,'read_trip_result_reference_v'+v,{p_trip_id:f.trip});
+  const exact=(f,id=f.id,v=2,revision=1)=>rpc(f.a,v===2?'read_result_artifact_v2':'read_result_artifacts_v1',{p_artifact_id:id,p_revision:revision});
+  const f=await saved();
+  for(const v of [1,2])assert.deepEqual(await ref(f,v),{kind:'result_reference',artifactId:f.id,revision:1,tripId:f.trip});
+  const decision=await f.publish({schemaVersion:'decision/1',title:'Saved choice',summary:'Pending owner choice',comparisonRef:{artifactId:f.id,revision:1},state:'pending',chosenOptionId:null,actions:[]});
+  const snapshot=JSON.parse(await db(`select content||jsonb_build_object('version',1) from public.trip_version_snapshots where trip_id='${f.trip}' and version=1;`));
+  const {translationPrompt}=await import('../../../lib/server/media-translation/text/contract.ts');
+  const translationTurn=uuid();await rpc(f.a,'submit_text_turn',{p_thread_id:uuid(),p_turn_id:translationTurn,p_idempotency_key:uuid(),p_policy_id:f.policy,p_locale:'zh',p_text:translationPrompt({sourceLocale:'en',targetLocale:'zh',text:'Gate 3'})});
+  await db(`update turn_private.text_content set output_kind='answered',output_text='{"translation":"3号门","backTranslation":"Gate 3"}' where turn_id='${translationTurn}';select turn_private.terminal('${translationTurn}','completed',1);`);
+  const practical=await f.publish({schemaVersion:'practical/1',kind:'translation',sourceTurnId:translationTurn,sourceLocale:'en',targetLocale:'zh',translation:'3号门',backTranslation:'Gate 3',actions:[]});
+  await db(`update turn_private.text_content set output_text=${literal(JSON.stringify(snapshot))} where turn_id='${f.turn}';`);
+  const taskDraft=await f.publish({schemaVersion:'journey-draft/1',title:'Task saved draft',summary:'Synthetic completed task draft',draft:snapshot,source:{kind:'task_output',taskTurnId:f.turn},actions:[]});
+  const draft=await f.publish({schemaVersion:'journey-draft/1',title:'Saved Trip',summary:'Snapshot',draft:snapshot,source:{kind:'trip_snapshot',tripId:f.trip,tripVersion:1},actions:[]});
+  const proposal=JSON.parse(await db(claims(f.a)+`select row_to_json(r) from public.create_trip_proposal_patch('${f.trip}','{"expectedVersion":1,"operations":[{"kind":"set_title","title":"Pending preview"}]}') r;`));
+  const preview=JSON.parse(await db(`select public.apply_trip_content_patch(s.content,p.patch)||jsonb_build_object('version',2) from public.trip_version_snapshots s join public.trip_proposals p on p.trip_id=s.trip_id where p.id='${proposal.proposal_id}' and s.version=1;`));
+  const previewId=await f.publish({schemaVersion:'journey-draft/1',title:'Pending preview',summary:'Never confirmed',draft:preview,source:{kind:'proposal_preview',proposalId:proposal.proposal_id,proposalRevision:proposal.revision},actions:[]});
+  const proposalId=await f.publish({schemaVersion:'change-proposal-reference/1',proposalId:proposal.proposal_id,proposalRevision:proposal.revision,actions:[]});
+  await execute(f.a,await commandFor(f.a,'archive',f.trip,{expectedHeadVersion:1,preference:{action:'skip'}}));
+  const v1=await ref(f,1),v2=await ref(f,2);assert.equal(v1.artifactId,f.id);assert.equal(v1.archiveHistorical,true);assert.equal(v2.artifactId,draft);assert.equal(v2.archiveHistorical,true);
+  for(const id of [f.id,decision,practical,taskDraft,draft]){const result=await exact(f,id);assert.equal(result.kind,'result_artifact');assert.equal(result.current,false);assert.equal(result.historicalReadable,true);assert.equal(result.source.tripId,f.trip);assert.equal(result.artifactId,id);}
+  assert.equal((await exact(f,previewId)).current,false,'original exact preview reader is unchanged');assert.equal((await exact(f,proposalId)).kind,'unavailable','proposal execution/reference qualification remains denied');
+  assert.equal((await rpc(f.a,'choose_result_decision_v2',{p_artifact_id:decision,p_expected_revision:1,p_operation_id:uuid(),p_option_id:'one'})).kind,'unavailable','historical decision cannot execute');
+  assert.equal((await exact(f,uuid())).kind,'empty');assert.equal((await exact(f,f.id,2,2)).kind,'empty');
+  const foreign=await owner();assert.equal((await rpc(foreign,'read_trip_result_reference_v2',{p_trip_id:f.trip})).kind,'empty');assert.equal((await rpc(foreign,'read_result_artifact_v2',{p_artifact_id:f.id,p_revision:1})).kind,'empty');
+  await db(`delete from turn_private.result_artifacts where id in ('${f.id}','${draft}','${practical}','${taskDraft}');`);
+  assert.equal(await db(`select count(*) from turn_private.result_artifacts where owner_id='${f.a.owner}' and trip_id='${f.trip}';`),'2','only pending proposal/preview stored candidates remain');
+  for(const v of [1,2])assert.equal((await ref(f,v)).kind,'unavailable','stored but unreadable proposal candidates cannot become an empty result');
+  const empty={a:await owner(),trip:uuid()};await execute(empty.a,await commandFor(empty.a,'create',empty.trip,{title:'No saved result'}));await confirm(empty.a,empty.trip);await execute(empty.a,await commandFor(empty.a,'archive',empty.trip,{expectedHeadVersion:1,preference:{action:'skip'}}));for(const v of [1,2])assert.equal((await ref(empty,v)).kind,'empty','no saved candidate remains empty');
+  // Separate stored real-publisher fixtures make each withdrawn basis terminal,
+  // so a healthy fallback cannot hide a rejected source in this check.
+  for(const mode of ['consent','memory','source','withdrawal','deletion']){
+   const x=await saved(mode==='memory');await execute(x.a,await commandFor(x.a,'archive',x.trip,{expectedHeadVersion:1,preference:{action:'skip'}}));assert.equal((await ref(x,2)).archiveHistorical,true);
+   if(mode==='consent')await db(`update turn_private.text_consents set revoked_at=now() where owner_id='${x.a.owner}' and policy_id='${x.policy}';`);
+   if(mode==='memory')await db(claims(x.a)+`select * from public.transition_memory_profile('${x.memory.id}','deleted');`);
+   if(mode==='source')await db(`update turn_private.text_content set hidden_at=now() where turn_id='${x.turn}';`);
+   if(mode==='withdrawal')await rpc(null,'withdraw_result_artifact_v1',{p_owner_id:x.a.owner,p_artifact_id:x.id,p_expected_revision:1});
+   if(mode==='deletion')await db(claims(x.a)+`insert into privacy_private.trip_deletions(request_id,owner_id,trip_id,expected_version) values('${uuid()}','${x.a.owner}','${x.trip}',1);`);
+   assert.equal((await exact(x)).kind,'unavailable',mode+' original exact reader rejects');
+   assert.equal((await ref(x,1)).kind,'unavailable',mode+' v1 rejects');assert.equal((await ref(x,2)).kind,mode==='deletion'?'empty':'unavailable',mode+' preserves v2 original deletion response');
+  }
  });
  await t.test('v2 export exact lease enrollment, old decoder preservation, source fence and delete cascade',async()=>{
   await db(`insert into export_private.core_policies_v1(id,revision,enabled,environment,key_id,max_run_ms,artifact_ttl_ms,ticket_ttl_ms,max_pages,page_size,max_bytes,valid_until) values('${uuid()}',1,true,'local','synthetic',90000,600000,300000,1000,100,8388608,now()+interval '1 day');`);
