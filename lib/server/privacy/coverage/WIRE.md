@@ -151,3 +151,11 @@ independently before accepting outer completion; retain genuine unknown/absent
 pending bytes and allow legitimate cancelled cleanup as partial. No old module
 decoder/receipt/authority weakening. New own TS cancelled negative/fixture records
 this precisely;Main relay soleNative for its own consumer fix/affected proof.
+Confirmed broader same consumer gap by reading accepted original APIs: J1
+NativeCommunityOutcome.terminal and J2 NativeCommunitySafetyOutcome.terminal
+intentionally return true for recovery abandoned (known ACK,original journal may
+clear). Thus new Native adapter must apply the cancellation/committed distinction
+for all three community paths as well as Case/Brief. Do not change those accepted
+terminal APIs to hide abandoned;correct only new adapter's source-derived state.
+Own cancellation fixture/negative55bcbdca is ready for peer decoder proof. Server
+runtime unchanged since frozen manifest; no repeated runtime matrix required.
