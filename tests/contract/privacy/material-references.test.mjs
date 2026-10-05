@@ -17,6 +17,10 @@ test('exact object selection, immutable original erase bytes, no implicit bulk/p
     { ...recover, objectIds: [fixtureId(99)] }, { ...recover, mutationBytes: JSON.stringify({ ...c, action: 'export' }) },
     { ...fixtureCommand(scopes[2], 'erase'), objectIds: [fixtureBinding(scopes[2]).requestId] } ]) assert.equal(parseMaterialCommand(changed), null);
   assert.notEqual(materialDigest(raw), materialDigest(raw.trim()));
+  const trips = { action: 'trip_list',scope: scopes[2],cursor: null,limit: 20 };
+  assert.ok(parseMaterialCommand(trips));
+  assert.equal(parseMaterialCommand({ ...trips,ownerId: fixtureId(900) }),null);
+  assert.equal(parseMaterialCommand({ ...trips,confirmed: true }),null,'read discovery never carries erasure consent');
 });
 
 for (const scope of scopes) test(`${scope}: selected restricted row traversal, current proof and explicit field/retention boundary`, async () => {

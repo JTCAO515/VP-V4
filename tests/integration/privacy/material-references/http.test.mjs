@@ -72,6 +72,13 @@ test('authentication/admission precedes source dispatch, sensitive RPC defaults 
   const changedSource = await handleMaterialReferences(request({ ...list, cursor: { sourceDigest: 'c'.repeat(64), afterId: b.objectIds[0] } }), options(async () => rows));
   assert.equal(changedSource.status, 503);
   assert.equal((await handleMaterialReferences(request(list), options(async () => ({ ...rows, ownerId: fixtureId(999) })))).status, 503);
+  const trips = { action: 'trip_list',scope: 'material-exit-progress/1',cursor: null,limit: 20 };
+  const metadata = { schemaVersion: b.schemaVersion,kind: 'trip_list',scope: trips.scope,...fixtureActor,sourceDigest: b.sourceDigest,
+    capturedAt: b.capturedAt,expiresAt: b.expiresAt,items: [{ tripId: b.tripId,tripVersion: 1,label: null,state: 'deleted' }],
+    hasMore: false,nextCursor: null,allUserDataCompleted: false };
+  assert.equal((await handleMaterialReferences(request(trips),options(async () => metadata))).status,200,'retained historical progress remains discoverable without a live Trip body');
+  assert.equal((await handleMaterialReferences(request({ ...trips,scope }),options(async () => ({ ...metadata,scope })))).status,503,'deleted context cannot authorize fresh order data');
+  assert.equal((await handleMaterialReferences(request(trips),options(async () => ({ ...metadata,items: [{ ...metadata.items[0],label: 'invented historical title' }] })))).status,503);
 });
 
 test('coverage consumes the selected actual metadata/erasure receipt and preserves original bytes on unknown recovery', async () => {

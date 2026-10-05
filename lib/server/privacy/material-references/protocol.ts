@@ -41,6 +41,26 @@ export function decodeMaterialUnknown(v: unknown, selection: MaterialSelection, 
     && v.schemaVersion === MATERIAL_SCHEMA && v.kind === 'unknown' && sameMaterialSelection(v, selection, actor)
     && v.requestDigest === requestDigest && v.allUserDataCompleted === false;
 }
+/** Source-derived Trip metadata also discovers archived/deleted retained progress. */
+export function decodeMaterialTrips(v: unknown, command: Extract<MaterialCommand, { action: 'trip_list' }>, actor: MaterialActor, now: number): Record<string, unknown> | null {
+  if (!record(v) || !exact(v, ['schemaVersion','kind','scope','ownerId','sessionId','mobileEpoch','sourceDigest','capturedAt','expiresAt','items','hasMore','nextCursor','allUserDataCompleted'])
+    || v.schemaVersion !== MATERIAL_SCHEMA || v.kind !== 'trip_list' || v.scope !== command.scope
+    || v.ownerId !== actor.ownerId || v.sessionId !== actor.sessionId || v.mobileEpoch !== actor.mobileEpoch || !hash(v.sourceDigest)
+    || !positive(v.capturedAt) || !positive(v.expiresAt) || v.capturedAt > now || v.expiresAt <= now || v.expiresAt !== v.capturedAt+MATERIAL_LIMITS.lifetimeMs
+    || command.cursor && command.cursor.sourceDigest !== v.sourceDigest || !Array.isArray(v.items) || v.items.length > 20
+    || typeof v.hasMore !== 'boolean' || v.allUserDataCompleted !== false) return null;
+  let last = command.cursor?.afterId ?? '';
+  for (const item of v.items) {
+    if (!record(item) || !exact(item, ['tripId','tripVersion','label','state']) || !uuid(item.tripId) || item.tripId <= last
+      || !natural(item.tripVersion) || !(item.label === null || typeof item.label === 'string' && item.label.length > 0 && item.label.length <= 1000)
+      || !['active','archived','deleted','retained'].includes(String(item.state))
+      || ['deleted','retained'].includes(String(item.state)) && (command.scope !== 'material-exit-progress/1' || item.label !== null)) return null;
+    last = item.tripId;
+  }
+  if (v.hasMore ? v.items.length !== 20 || !record(v.nextCursor) || !exact(v.nextCursor, ['sourceDigest','afterId'])
+    || v.nextCursor.sourceDigest !== v.sourceDigest || v.nextCursor.afterId !== last : v.nextCursor !== null) return null;
+  return v;
+}
 export function decodeMaterialList(v: unknown, command: Extract<MaterialCommand, { action: 'list' }>, actor: MaterialActor, now: number): Record<string, unknown> | null {
   if (!record(v) || !exact(v, ['schemaVersion','kind','scope','tripId','ownerId','sessionId','mobileEpoch','sourceDigest','capturedAt','expiresAt','items','hasMore','nextCursor','allUserDataCompleted'])
     || v.schemaVersion !== MATERIAL_SCHEMA || v.kind !== 'list' || !materialScope(v.scope) || v.scope !== command.scope || v.tripId !== command.tripId

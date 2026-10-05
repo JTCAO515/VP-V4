@@ -4,7 +4,7 @@ import { nativeRequestScope } from '../../identity/native-request.ts';
 import { record, uuid } from '../../guide/contract.ts';
 import { MATERIAL_LIMITS, parseMaterialCommand, materialDigest, positive, type MaterialActor } from './contract.ts';
 import { collectMaterialExport, type MaterialRPC } from './export.ts';
-import { decodeMaterialList, decodeMaterialPreview, decodeMaterialReceipt, decodeMaterialUnknown } from './protocol.ts';
+import { decodeMaterialList, decodeMaterialTrips, decodeMaterialPreview, decodeMaterialReceipt, decodeMaterialUnknown } from './protocol.ts';
 
 type Lifetime = ReturnType<typeof nativeRequestScope>;
 export type MaterialAuthority = Readonly<{ authenticate(): Promise<MaterialActor | null>; current(actor: MaterialActor): Promise<boolean>; rpc: MaterialRPC }>;
@@ -37,6 +37,7 @@ export async function handleMaterialReferences(request: Request, options: Materi
     const result = await authority.rpc(command.action, raw, lifetime.signal);
     if (lifetime.signal.aborted || !await current()) return fail(mutationDispatched ? 'MATERIAL_ACK_UNKNOWN' : 'SESSION_REPLACED', mutationDispatched ? 503 : 401);
     if (Buffer.byteLength(JSON.stringify(result) ?? '', 'utf8') > MATERIAL_LIMITS.maxBytes) return fail(mutationDispatched ? 'MATERIAL_ACK_UNKNOWN' : 'MATERIAL_CAPACITY');
+    if (command.action === 'trip_list') return decodeMaterialTrips(result, command, actor, now()) ? reply({ data: result }) : fail('MATERIAL_SOURCE_UNAVAILABLE');
     if (command.action === 'list') return decodeMaterialList(result, command, actor, now()) ? reply({ data: result }) : fail('MATERIAL_SOURCE_UNAVAILABLE');
     if (command.action === 'preview') return decodeMaterialPreview(result, command, actor, now()) ? reply({ data: result }) : fail('MATERIAL_SOURCE_UNAVAILABLE');
     const bytes = command.action === 'recover' ? command.mutationBytes : raw;

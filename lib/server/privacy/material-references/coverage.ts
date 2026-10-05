@@ -8,7 +8,7 @@ const moduleScopes: Readonly<Record<string, MaterialScope>> = {
 /** A catalog ID narrows one exact owner scope; it never conveys a bulk-data authority. */
 export function validMaterialCoverageSelection(input: CoverageInput, value: unknown): boolean {
   const command = parseMaterialCommand(value);
-  return !!command && command.action !== 'list' && command.action !== 'recover' && command.requestId === input.operationId
+  return !!command && command.action !== 'trip_list' && command.action !== 'list' && command.action !== 'recover' && command.requestId === input.operationId
     && command.tripId === input.tripId && command.scope === moduleScopes[input.moduleId]
     && (input.phase === 'preview' ? command.action === 'preview' : input.action === 'export' ? input.phase === 'execute' && command.action === 'export' : command.action === 'erase');
 }
@@ -22,7 +22,7 @@ export function materialCoverageRequestBody(input: CoverageInput): string {
 }
 export function materialCoverageOutcome(selected: SelectedCommand, data: unknown, now: number): Readonly<{ state: CoverageState; reason: string }> | null {
   const { input } = selected; const command = parseMaterialCommand(selected.command);
-  if (!command || command.action === 'list' || command.action === 'recover' || !validMaterialCoverageSelection(input, command)) return null;
+  if (!command || command.action === 'trip_list' || command.action === 'list' || command.action === 'recover' || !validMaterialCoverageSelection(input, command)) return null;
   const actor = { ownerId: input.actorId, sessionId: input.sessionId, mobileEpoch: input.mobileEpoch };
   if (command.action === 'preview') return decodeMaterialPreview(data, command, actor, now) ? { state: 'preview', reason: 'EXPLICIT_SELECTION_REQUIRED' } : null;
   const digest = materialDigest(input.commandBytes);

@@ -43,6 +43,12 @@ exact mutation bytes and immutable decision time within the original deadline.
 Unknown/cancelled/expired/absent ACKs never become an erasure success or authorize
 a fresh operation key.
 
+Read-only source-specific `trip_list` discovers real source contexts, including
+archived records and retained exit progress after a Trip is deleted. Its title is
+null when no actual owned current title exists. Historical progress selection
+uses its retained owner/Trip binding; it grants no permission to recreate or write
+the original Trip. Ordinary Trip business readers and RLS remain intact.
+
 Exact RPC wire, source/copy inventory and ownership are in
 `lib/server/privacy/material-references/WIRE.md`; independent row and result
 decoders are adjacent. Main review655b3f accepted the bounded owner seam and the

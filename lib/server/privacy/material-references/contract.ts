@@ -13,6 +13,7 @@ export const selectedIds = (v: unknown): v is string[] => Array.isArray(v) && v.
   && v.every((id, i) => uuid(id) && id === id.toLowerCase() && (i === 0 || id > v[i - 1]));
 export type MaterialSelection = Readonly<{ scope: MaterialScope; requestId: string; tripId: string; objectIds: readonly string[] }>;
 export type MaterialCommand =
+  | Readonly<{ action: 'trip_list'; scope: MaterialScope; cursor: Readonly<{ sourceDigest: string; afterId: string }> | null; limit: 20 }>
   | Readonly<{ action: 'list'; scope: MaterialScope; tripId: string; cursor: Readonly<{ sourceDigest: string; afterId: string }> | null; limit: 20 }>
   | MaterialSelection & Readonly<{ action: 'preview' }>
   | MaterialSelection & Readonly<{ action: 'export' | 'erase'; previewDigest: string; confirmed: true }>
@@ -20,10 +21,13 @@ export type MaterialCommand =
 
 /** Only exact selected objects. No owner, endpoint, provider, service lease or bulk scope. */
 export function parseMaterialCommand(v: unknown, recovering = false): MaterialCommand | null {
-  if (!record(v) || !materialScope(v.scope) || !uuid(v.tripId) || v.tripId !== v.tripId.toLowerCase()) return null;
+  if (!record(v) || !materialScope(v.scope)) return null;
+  const cursorValid = (cursor: unknown) => cursor === null || record(cursor) && exact(cursor, ['sourceDigest','afterId'])
+    && hash(cursor.sourceDigest) && uuid(cursor.afterId) && cursor.afterId === cursor.afterId.toLowerCase();
+  if (v.action === 'trip_list') return exact(v, ['action','scope','cursor','limit']) && v.limit === 20 && cursorValid(v.cursor) ? v as MaterialCommand : null;
+  if (!uuid(v.tripId) || v.tripId !== v.tripId.toLowerCase()) return null;
   if (v.action === 'list') return exact(v, ['action','scope','tripId','cursor','limit']) && v.limit === 20
-    && (v.cursor === null || record(v.cursor) && exact(v.cursor, ['sourceDigest','afterId']) && hash(v.cursor.sourceDigest)
-      && uuid(v.cursor.afterId) && v.cursor.afterId === v.cursor.afterId.toLowerCase()) ? v as MaterialCommand : null;
+    && cursorValid(v.cursor) ? v as MaterialCommand : null;
   if (!uuid(v.requestId) || v.requestId !== v.requestId.toLowerCase() || !selectedIds(v.objectIds)) return null;
   if (v.scope === 'material-exit-progress/1' && v.objectIds.includes(v.requestId)) return null;
   const keys = ['action','scope','requestId','tripId','objectIds'];

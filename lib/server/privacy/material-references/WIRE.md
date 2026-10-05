@@ -51,6 +51,43 @@ needs to preserve valid previous module assertions while revising only catalog
 metadata/version for `.3` and the added denominator, with opaque request digest
 recomputed from the revised fixture bytes. No production oracle weakening.
 
+## Remaining source-backed discovery gap and narrow closure (03:29 CST)
+
+Actual source audit: original Native Trip list/detail follows current Trip RLS
+(`user-data-adapter.ts:599/655`, lifecycle migration `040000:118` hides archives).
+New SQL retains requests/fences across physical Trip deletion (`020000:6-40`,
+PG root-cascade case), but list/preview/export still requires a live `public.trips`
+row. Thus retained own progress/fences would become undiscoverable/unexportable,
+and archived PDF metadata would have no real Native selection entry. This is a
+remaining implementation gap, not a request for all-owner bulk erase or a rewrite
+of original Trip readers. Main relay to the existing sole SQL/Native owners:
+
+- Add read-only `trip_list`: exact `{action:"trip_list",scope,cursor,limit:20}`;
+  cursor null or same `{sourceDigest,afterId}`. Actual candidates are scoped
+  owned reservation/PDF records joined to their owned undeleted Trip, or own
+  retained exit requests with their historical bound Trip ID. Current ordinary
+  owner/session/reauth before lookup; cap10000+sentinel/no source body; source
+  digest covers actual candidate Trip/source metadata and current source changes.
+  Output exact `{schemaVersion,kind:"trip_list",scope,ownerId,sessionId,
+  mobileEpoch,sourceDigest,capturedAt,expiresAt,items,hasMore,nextCursor,
+  allUserDataCompleted:false}`. Item exact `{tripId,tripVersion,label,state}`;
+  states active/archived/deleted/retained. Actual current owned title only; missing
+  historical title null, historical version from owned retained request metadata,
+  never guess or revive a deleted Trip. Fixed30s cursor/disclosure rules.
+- For `material-exit-progress/1` list/preview/export/erase only, if original Trip
+  is deleted/deleting, derive historical selection context from the actual own
+  retained request records (exact Trip ID, all selected request IDs owned and bound
+  there, retained Trip version). No original Trip/body/table write. Source-free
+  metadata and transient progress cleanup remain owner callable; reference/request/
+  operation replay fences remain immutable, complete owner inventory survives.
+  Reservation/PDF active source erasure still uses owned actual undeleted Trip;
+  old business reader/confirmation/RLS/deletion semantics remain intact.
+- Native uses this safe source-specific `trip_list` then exact object list.
+  It does not require old live-body Trip detail to qualify archived or historical
+  progress. Selecting a listed ID grants no write to Trip content. TS closed
+  parser/independent trip-list decoder/HTTP branch already implemented as owned
+  files; awaiting this narrow SQL/Native closure, no second writer or target action.
+
 ## Actual sources and copy inventory
 
 - Orders: `reservation_private.current_v1` sensitive corrected fields + source
