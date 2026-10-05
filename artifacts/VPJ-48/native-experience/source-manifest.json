@@ -1,0 +1,25 @@
+{
+  "kind": "native-j3j4-checkpoint",
+  "codeComplete": false,
+  "remaining": "exact-object Safety caller lease",
+  "files": {
+    "ios/VisePanda/VisePanda/App/NativeSession.swift": "70bb10655f3de3e3ff354f3909c6c71c2392ace7723a90d0b439d0bda9c60f5d",
+    "ios/VisePanda/VisePanda/Features/CommunityExperience/NativeExperienceAccess.swift": "88ad10938993f44c03c2c204645440cf142f8674b953b99dce7cf50de6ea91ff",
+    "ios/VisePanda/VisePanda/Features/CommunityExperience/NativeExperienceCommand.swift": "a99af087cda9ff22223d45c8dff0ffe0918eabfd14ef27219f26dd03d1a785d4",
+    "ios/VisePanda/VisePanda/Features/CommunityExperience/NativeExperienceExportFile.swift": "a87d3b0ef61074d0d4b2230e3f1c1855a9af1607d1dd865fffbabb5621591ee6",
+    "ios/VisePanda/VisePanda/Features/CommunityExperience/NativeExperienceJournal.swift": "a471b0400c73be008fe212ac5a68a5c3e3104aafe656d1eb9eb51699036448a1",
+    "ios/VisePanda/VisePanda/Features/CommunityExperience/NativeExperienceLifetime.swift": "41f10f2970889a1faf63b4c848f64565cf565d3944060b9d38b98d0c26cefb13",
+    "ios/VisePanda/VisePanda/Features/CommunityExperience/NativeExperienceModels.swift": "d26656b6e90e4a5c3bf80164720cf96a7a448cb9f3c531bb1c47d1601d746b6d",
+    "ios/VisePanda/VisePanda/Features/CommunityExperience/NativeExperienceOutcome.swift": "05c3f3978619ead7e10e98437b5d1355319bdef83b58e268d90a31c6595a0b16",
+    "ios/VisePanda/VisePanda/Features/CommunityExperience/NativeExperiencePlaceActionsView.swift": "7fc2a745be1627306f5232b4dd53a9e25973b95052d16def1f8ffb02d721cb84",
+    "ios/VisePanda/VisePanda/Features/CommunityExperience/NativeExperienceReadWindow.swift": "62c41ab9a244160d7e0e686774484b1436ef33d7d7c58b82c7dfedf8b283165e",
+    "ios/VisePanda/VisePanda/Features/CommunityExperience/NativeExperienceStore.swift": "10913fba796268b58f0eeea651d4b9ad64ea464c552a88b1afaa7d004eaed580",
+    "ios/VisePanda/VisePanda/Features/CommunityExperience/NativeExperienceView.swift": "540db70ae1f0c1a25592fb6dec1fb202a3a737876b43080dbebd38678f5b20bb",
+    "ios/VisePanda/VisePanda/Features/CommunitySubmission/NativeCommunitySubmissionView.swift": "5b3b3b74907a2f006672fca1d4666c741922d8a129c2ee81860e97fb79bf87b1",
+    "ios/VisePanda/VisePanda/Features/Explore/ExploreView.swift": "ef67a20a5c6f48f347dc05df0c1850ad6dae7b42ab2598c9e306b6281296c320",
+    "ios/VisePanda/VisePanda/Features/Knowledge/NativeLibrarySources.swift": "2c105d91d7ba407e4b8a84e5d22416e6efaae7ad5a16546ea1ee0d7173eccfc8",
+    "ios/VisePanda/VisePanda/Features/Profile/ProfileView.swift": "2892d43a9be0f874738df2c3d86b55edc9a29c7adbda6990971bd85a395a1533",
+    "ios/VisePanda/VisePanda.xcodeproj/project.pbxproj": "bac3f9229ded9b522335ac0652b4ed15c4288f3ef1a15d969b3987a4885947f2",
+    "ios/VisePanda/VisePandaTests/NativeCommunityExperienceTests.swift": "748002695192ef66245dfe3f04562a9a0f3e92dbb35720841bc41d754514a2c4"
+  }
+}
