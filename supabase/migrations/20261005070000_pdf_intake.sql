@@ -381,8 +381,10 @@ begin
  end loop;
  return NEW;
 end $$;
-create trigger pdf_intake_trip_deleted_v1 after insert on privacy_private.trip_deletions for each row execute function pdf_intake_private.trip_erasure_v1();
-create trigger pdf_intake_trip_archived_v1 after insert on public.trip_archives for each row execute function pdf_intake_private.trip_erasure_v1();
+-- Erase before admission establishes the original immutable deletion/archive
+-- fence; a failed admission rolls this erasure back with the whole transaction.
+create trigger pdf_intake_trip_deleted_v1 before insert on privacy_private.trip_deletions for each row execute function pdf_intake_private.trip_erasure_v1();
+create trigger pdf_intake_trip_archived_v1 before insert on public.trip_archives for each row execute function pdf_intake_private.trip_erasure_v1();
 
 -- Bounded retention worker, disabled until explicitly enrolled. It takes the
 -- installed account lock and NOWAIT rows in the same order as ordinary paths.
@@ -440,7 +442,7 @@ end $$;
 create trigger pdf_intake_source_changed_v1 before insert or update or delete on pdf_intake_private.operations_v1
  for each row execute function pdf_intake_private.source_changed_v1();
 create function pdf_intake_private.export_current_v1(j export_private.core_jobs_v1) returns boolean
-language plpgsql stable security definer set search_path='' as $$
+language plpgsql security definer set search_path='' as $$
 declare rev bigint;
 begin
  if j.pdf_export_version is null then return true;end if;
