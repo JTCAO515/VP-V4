@@ -22,12 +22,12 @@ export type PdfPreview = Readonly<{
 export type PdfOperation = Readonly<{
   kind: "pdf_intake_operation/1"; operationId: string; tripId: string; sessionEpoch: number;
   state: "absent" | "pending" | "confirmed" | "rejected" | "cancelled" | "expired";
-  commandDigest: string | null; previewDigest: string | null; expiresAt: string | null;
+  requestDigest: string | null; commandDigest: string | null; previewDigest: string | null; expiresAt: string | null;
   proposalId: string | null; proposalRevision: number | null; baseTripVersion: number | null;
 }>;
 export type PdfProposal = Readonly<{
   kind: "pdf_intake_proposal/1"; operationId: string; tripId: string; sessionEpoch: number;
-  commandDigest: string; previewDigest: string; proposalId: string; proposalRevision: number;
+  requestDigest: string; commandDigest: string; previewDigest: string; proposalId: string; proposalRevision: number;
   baseTripVersion: number; reused: boolean;
 }>;
 export const object = (v: unknown): v is Record<string, unknown> => v !== null && typeof v === "object" && !Array.isArray(v);
