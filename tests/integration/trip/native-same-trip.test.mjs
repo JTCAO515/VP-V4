@@ -117,6 +117,9 @@ test('local native/Web share one immutable Trip with confirmed intent, CAS and o
  t.diagnostic('VPJ-09 bounded outline: real local Auth/Postgres, two new dated days, prior dinner preserved, native/Web version 2 readback.');
  if(process.env.VP_S1_BROWSER==='true') {
   const {exerciseSameTripBrowser}=await import('./same-trip-browser.mjs');
+  // Finish this confirmed owned fixture explicitly before independent browser cases.
+  const finishedFixture=await n('/'+tripId+'/archive',{expectedVersion:5,idempotencyKey:randomUUID(),confirmed:true});
+  assert.equal(finishedFixture.status,200);assert.equal(finishedFixture.data.archive.tripId,tripId);assert.equal(finishedFixture.data.archive.archivedVersion,5);
   await exerciseSameTripBrowser({api,jar,n,t});
  }
  const otherToken=await login(users[1]);assert.equal((await call('/api/trips/native/v2/'+tripId,{token:otherToken})).status,403);assert.equal((await call('/api/trips/native/v2/'+tripId+'/proposal?proposalId='+third.data.proposalId,{token:otherToken})).status,403);
@@ -154,7 +157,11 @@ test('ordinary Web cookies read the same exact comparison with unchanged SQL ses
  assert.equal((await read(fixture.trip)).body.data.kind,'empty');
  const archived=await webTripResult(state,sql,a);assert.equal((await read(archived.trip)).status,200);
  await archived.rpc('archive_trip_v1',{p_trip_id:archived.trip,p_expected_version:1,p_idempotency_key:randomUUID(),p_confirmed:true});
- assert.equal((await read(archived.trip)).body.data.kind,'empty');
+ const archivedRead=await read(archived.trip);assert.equal(archivedRead.status,200);assert.equal(archivedRead.body.data.kind,'result_artifact');
+ assert.equal(archivedRead.body.data.artifactId,archived.artifact);assert.equal(archivedRead.body.data.revision,1);assert.equal(archivedRead.body.data.source.tripId,archived.trip);
+ assert.equal(archivedRead.body.data.current,false);assert.equal(archivedRead.body.data.historicalReadable,true);
+ await archived.rpc('withdraw_text_policy',{p_policy_id:archived.policy});
+ assert.equal((await read(archived.trip)).body.data.kind,'unavailable','archive proof does not restore withdrawn source consent');
  const remembered=await webTripResult(state,sql,a,{memory:true});assert.equal((await read(remembered.trip)).body.data.kind,'result_artifact');
  await remembered.rpc('transition_memory_profile',{p_memory_id:remembered.memory,p_next_state:'deleted'});
  assert.equal((await read(remembered.trip)).body.data.kind,'empty','deleted Memory cannot be revived by Web reader');

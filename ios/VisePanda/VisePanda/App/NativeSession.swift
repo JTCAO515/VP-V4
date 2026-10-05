@@ -413,6 +413,53 @@ final class NativeSession {
         try journal.complete(pending, scope: scope)
     }
 
+    func tripLifecycleRead(actor: NativeDataScope, afterTripID: String? = nil, revision: Int? = nil) async throws -> Data {
+        guard dataScope == actor, (afterTripID == nil) == (revision == nil),
+              afterTripID.map(NativeMemoryWire.uuid) ?? true,
+              revision.map(NativeTripLifecycleWire.revision) ?? true else { throw NativeDataError.sessionUnavailable }
+        let query: [URLQueryItem] = afterTripID.map { [.init(name: "afterTripId", value: $0), .init(name: "expectedRevision", value: String(revision!))] } ?? []
+        return try await tripRequest(path: "api/trips/native/v2/lifecycle", method: "GET", queryItems: query)
+    }
+
+    func tripLifecycleRecovery(actor: NativeDataScope) throws -> NativeTripLifecycleJournal? {
+        guard dataScope == actor else { throw NativeDataError.sessionUnavailable }
+        return try NativeTripLifecycleJournalVault(vault: vault).read(actor)
+    }
+
+    func rememberTripLifecycle(_ command: NativeTripLifecycleCommand, actor: NativeDataScope) throws -> NativeTripLifecycleJournal {
+        guard dataScope == actor else { throw NativeDataError.sessionUnavailable }
+        return try NativeTripLifecycleJournalVault(vault: vault).remember(command, actor: actor)
+    }
+
+    func tripLifecycleSubmit(_ journal: NativeTripLifecycleJournal, actor: NativeDataScope) async throws -> Data {
+        guard dataScope == actor, journal.matches(actor), try tripLifecycleRecovery(actor: actor) == journal else {
+            throw NativeDataError.staleSessionResponse
+        }
+        _ = try journal.command()
+        return try await tripRequest(path: "api/trips/native/v2/lifecycle", method: "POST", body: journal.bytes)
+    }
+
+    func tripLifecycleOperation(_ journal: NativeTripLifecycleJournal, actor: NativeDataScope) async throws -> Data {
+        guard dataScope == actor, journal.matches(actor), try tripLifecycleRecovery(actor: actor) == journal else {
+            throw NativeDataError.staleSessionResponse
+        }
+        let command = try journal.command()
+        return try await tripRequest(path: "api/trips/native/v2/lifecycle/operations/\(command.operationID)", method: "GET")
+    }
+
+    func abandonTripLifecycle(_ journal: NativeTripLifecycleJournal, actor: NativeDataScope) async throws -> Data {
+        guard dataScope == actor, journal.matches(actor), try tripLifecycleRecovery(actor: actor) == journal else {
+            throw NativeDataError.staleSessionResponse
+        }
+        let command = try journal.command()
+        return try await tripRequest(path: "api/trips/native/v2/lifecycle/operations/\(command.operationID)/abandon", method: "POST", body: journal.bytes)
+    }
+
+    func completeTripLifecycle(_ journal: NativeTripLifecycleJournal, actor: NativeDataScope) throws {
+        guard dataScope == actor else { throw NativeDataError.staleSessionResponse }
+        try NativeTripLifecycleJournalVault(vault: vault).complete(journal, actor: actor)
+    }
+
     func scopedTripEditRequest(tripID: String, body: Data) async throws -> Data {
         guard UUID(uuidString: tripID) != nil, body.count <= 32000 else { throw NativeDataError.invalidResponse }
         let result = try await tripRequest(path: "api/trips/native/v2/\(tripID)/scoped-edit", method: "POST", body: body)
@@ -1249,6 +1296,8 @@ final class NativeSession {
                     try NativeNotificationJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault)
                     try NativeNotificationJournal.eraseBinding(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault)
                 } catch { failureCode="notificationCleanupRequired";status="storageError";return false }
+                do { try NativeTripLifecycleJournalVault.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
+                catch { failureCode="tripLifecycleCleanupRequired";status="storageError";return false }
             }
             let support=vault.remove(service:tripSupportConfirmVaultService,owner:owner)
             guard support==errSecSuccess || support==errSecItemNotFound else { failureCode="keychain:\(support)";status="storageError";return false }

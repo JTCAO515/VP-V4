@@ -23,9 +23,12 @@ nonisolated final class NativeTripUITests: XCTestCase {
         reveal(login, app); login.tap()
         XCTAssertTrue(app.staticTexts["native.session.status"].waitForExistence(timeout: 30))
         app.tabBars.buttons["Trip"].tap()
-        let title = element("trip.create.title", app)
+        let lifecycle = app.buttons["trip.create.lifecycle"]
+        reveal(lifecycle, app); lifecycle.tap()
+        XCTAssertTrue(app.staticTexts["trip.lifecycle.capacity"].waitForExistence(timeout: 25))
+        let title = element("trip.lifecycle.title", app)
         reveal(title, app); title.tap(); title.typeText("Synthetic outline trip")
-        let create = app.buttons["trip.create.submit"]
+        let create = app.buttons["trip.lifecycle.create"]
         reveal(create, app); create.tap()
         XCTAssertTrue(app.staticTexts["trip.confirmed.title"].waitForExistence(timeout: 25))
         let tripID = app.staticTexts["trip.selected.id"].label
@@ -128,11 +131,14 @@ nonisolated final class NativeTripUITests: XCTestCase {
         application.tabBars.buttons[chinese ? "行程" : "Trip"].tap()
 
         let title = "iOS UI \(locale) \(UUID().uuidString.prefix(6))"
-        let titleField = element("trip.create.title", application)
+        let lifecycle = application.buttons["trip.create.lifecycle"]
+        reveal(lifecycle, application); lifecycle.tap()
+        XCTAssertTrue(application.staticTexts["trip.lifecycle.capacity"].waitForExistence(timeout: 25))
+        let titleField = element("trip.lifecycle.title", application)
         XCTAssertTrue(titleField.waitForExistence(timeout: 15))
         reveal(titleField, application)
         titleField.tap(); titleField.typeText(title)
-        let create = application.buttons["trip.create.submit"]
+        let create = application.buttons["trip.lifecycle.create"]
         reveal(create, application); create.tap()
         let confirmedTitle = application.staticTexts["trip.confirmed.title"]
         XCTAssertTrue(confirmedTitle.waitForExistence(timeout: 20))

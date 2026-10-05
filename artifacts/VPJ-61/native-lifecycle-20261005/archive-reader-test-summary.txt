@@ -1,0 +1,14 @@
+/tmp/vpj61-native-archive-read-20261005.log
+Test Case '-[VisePandaTests.NativeKnowledgeTests testTripResultOpensOnlyExactCurrentReference]' started.
+Test Case '-[VisePandaTests.NativeKnowledgeTests testTripResultOpensOnlyExactCurrentReference]' passed (0.012 seconds).
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.012 (0.013) seconds
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.012 (0.013) seconds
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.012 (0.013) seconds
+** TEST SUCCEEDED **
+/tmp/vpj61-native-archive-v2-20261005.log
+Test Case '-[VisePandaTests.NativeFiveResultTests testArchiveReferenceProofIsTripOnlyStrictBooleanAndExactShape]' started.
+Test Case '-[VisePandaTests.NativeFiveResultTests testArchiveReferenceProofIsTripOnlyStrictBooleanAndExactShape]' passed (0.006 seconds).
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.006 (0.006) seconds
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.006 (0.007) seconds
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.006 (0.007) seconds
+** TEST SUCCEEDED **

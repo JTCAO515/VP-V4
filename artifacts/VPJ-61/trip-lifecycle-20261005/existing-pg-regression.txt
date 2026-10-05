@@ -1,0 +1,21 @@
+✔ real native-bound request/lease/current Trip page, closed role guards and unchanged intent (6485.061959ms)
+✔ atomic protected artifact ready_partial, exact lost ACK recovery and decrypt before one-use consume (425.41975ms)
+✔ expired lease CAS reclaims one generation, blocks old execution and late artifact faults roll back all writes (464.731167ms)
+✔ tickets are request/session/epoch/digest bound; new issue invalidates ACK-lost predecessor without extending artifact TTL (626.264583ms)
+✔ size/module/expiry caps reject mismatches; TTL purge and account cascade erase only generated data; ACL remains closed (885.935417ms)
+✔ partial SOURCE_UNAVAILABLE after collected pages commits retained data; zero-page partial and nonempty failed refuse (280.1395ms)
+✔ archive SQL: owner isolation, atomic retries, failure preservation, service retention and fresh Trip (7486.697416ms)
+✔ five-type migration current source installs with API ACL and validates closed types (5420.150125ms)
+✔ comparison and decision share atomic revision/events and explicit owner choice CAS; service cannot choose (785.643416ms)
+✔ journey task draft is immutable domain preview; practical content comes from real saved translation projection (520.825917ms)
+✔ Trip snapshot/proposal preview/reference share real domain basis; new Trip/proposal bases invalidate without executing a change (817.21475ms)
+✔ canonical knowledge evidence revocation, CAS rollback, export and cascading source deletion protect every result (1342.221625ms)
+✔ publication retry cannot manufacture a current receipt after source consent withdrawal (402.804667ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 16961.052584

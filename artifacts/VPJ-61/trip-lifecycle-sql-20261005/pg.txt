@@ -1,0 +1,36 @@
+VPJ-61 SQL targeted PostgreSQL verification
+Version: final migration on SQL branch; source follows 0c6bbd2d plus reviewed erasure delta.
+
+Evidence boundaries: local network-none PostgreSQL 17.6.1.159; synthetic Auth tables and administrator claims; no target schema, role or user changes. Each invocation used its own isolated container and removed it afterwards; at most one SQL container was running.
+
+Retained failures and repairs:
+- Initial migration parse FAIL: CASE arithmetic in activation IF needed parentheses. Fixed.
+- Next run FAIL: jsonb preference subtraction operator precedence. Fixed with parentheses. Other affected checks passed.
+- Expanded replay check FAIL: test incorrectly expected applied instead of original already_applied status. Corrected only test expectation; original writer unchanged.
+- Final source/test run: 9/9 PASS, zero skipped/cancelled/todo.
+- Main-approved path relocation changed only the path/import. A subsequent source review found PostgreSQL E'\v' would trim the literal v; changed to chr(11) and added vacation v acceptance. The current affected run below uses the actual integration path and includes that fix.
+
+▶ VPJ-61 SQL lifecycle, existing writers, locks, erasure and versioned export
+  ✔ ACL/RLS/default-deny and legacy reconciliation (491.185708ms)
+  ✔ canonical input, exact raw replay, durable rejection and unknown abandon (794.815667ms)
+  ✔ old direct create shares capacity, actual producer confirm, active swaps and rollback (772.210791ms)
+  ✔ original archive atomic failure, keep/skip qualification, services retained and erasure (1206.5065ms)
+  ✔ paginated revision fences real head/delete mutations and old replay survives archive (514.617ms)
+  ✔ real lock conflicts remain unknown, same-op concurrent create, account replacement and rollback (4296.210916ms)
+  ✔ actual old create/confirm/archive/delete/replacement transactions race the lifecycle entry (4231.87625ms)
+  ✔ v2 export exact lease enrollment, old decoder preservation, source fence and delete cascade (693.787833ms)
+✔ VPJ-61 SQL lifecycle, existing writers, locks, erasure and versioned export (18923.18425ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 18962.555041
+
+CI gate delta (Main authorized): reuse existing VP_ARCHIVE_DB_TEST only.
+PASS gate off: one explicit skip/UNRUN and a sentinel Docker executable was never invoked.
+PASS gate on: root test selected (skip:false). Exact source equality after removing only the gate additions matches the final actual 9/9-tested source. This selection check is not a second PG execution.
+PASS syntax/docs/diff. TS registry owns this actual integration file in the PostgreSQL lane; no EXCLUDED/classifier/workflow change by SQL owner.
+Earlier preparation-path registry classification FAIL is retained as a process finding; Main approved relocating the test rather than changing the classifier. The generic integration job had no pinned image, which motivated the existing gate instead of duplicate Docker execution.

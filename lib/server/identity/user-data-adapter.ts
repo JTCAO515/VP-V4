@@ -3,6 +3,7 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { verifyNativeCredentials } from "./native-credentials.ts";
 import { missingMemoryCreateV2, missingMemoryRevision } from "../memory/compat.ts";
+import { tripLifecycleOperations } from "../trip/lifecycle/operations.ts";
 import type { NextRequest, NextResponse } from "next/server";
 import type { FailureCode } from "@/lib/server/contracts/errors";
 import type {
@@ -1320,6 +1321,7 @@ function createDataOperations(
     return { data: { proposalId: result.proposal_id, baseTripVersion: proof.proposal.base_trip_version, targetVersion, digest: proof.digest } };
   };
   return {
+    ...tripLifecycleOperations(client, authenticated),
     applyCookies,
     authenticated,
     async readGroundedHistory(policyId: string) {
