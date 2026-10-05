@@ -201,3 +201,12 @@ registration is separately proved by new actualAuth1. OriginalPG strict grant-sh
 patch now physically exists (corrected expected list order matching), awaiting
 specific additional oracle lease; second idle root still unconfirmed until first
 failed unfinished-attempt cleanup path can execute. No blind rerun or accepted idle.
+
+Single reviewable Draft PR created and attached: https://github.com/JTCAO515/VP-V4/pull/665
+head960f1ed7, temporarily stacked base material server3c9 until required normal
+main integration. All runtime/SQl/Native source in this one scoped PR, no repeated
+PR. Draft explicitly retains original PG15/2 failure and additional exact oracle
+lease pending; not mergeable/Ready/CI green. Accepted3scope code completion remains
+separate from this engineering gate. Branch pushed actual implementation, no
+provider/config/roles/fees/deployment/userdata action. Before final Ready require
+strict grant-key repair/run, same-head normal CI/independent review and main base.
