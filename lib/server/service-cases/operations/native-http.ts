@@ -4,7 +4,7 @@ import { verifyNativeCredentials } from '../../identity/native-credentials.ts';
 import { createNativeTripDataAdapter } from '../../identity/user-data-adapter.ts';
 import { nativeFetch } from '../../identity/native-fetch.ts';
 import { handleServiceOperations } from './http.ts';
-import { record, type ServiceInput, type ServiceProjection, type ServiceProposal } from './contract.ts';
+import { type ServiceInput, type ServiceProjection, type ServiceProposal } from './contract.ts';
 
 export async function serviceOperationsNativeHTTP(request: NextRequest) {
   const config = getNativeRuntimeConfig(request, 'session');
@@ -20,10 +20,8 @@ export async function serviceOperationsNativeHTTP(request: NextRequest) {
       const adapter = await tripAdapter(); if (!adapter) return false;
       const auth = await adapter.authenticated(); if ('error' in auth || auth.data !== actor) return false;
       const pending = await adapter.getPendingProposal(ref.tripId, ref.proposalId);
-      const currentness: unknown = 'error' in pending ? null : pending.data;
-      // The current adapter returns currentness on the outer read object. Require
-      // literal false; an absent flag is not proof of scoped-source eligibility.
-      return !('error' in pending) && record(currentness) && currentness.stale === false && pending.data.proposal.id === ref.proposalId && pending.data.proposal.baseTripVersion === ref.baseVersion && pending.data.trip.id === ref.tripId && pending.data.trip.headVersion === ref.baseVersion && !!pending.data.proposal.digest;
+      // Literal false is required; an absent flag is never currentness proof.
+      return !('error' in pending) && pending.data.proposal.stale === false && pending.data.proposal.id === ref.proposalId && pending.data.proposal.baseTripVersion === ref.baseVersion && pending.data.trip.id === ref.tripId && pending.data.trip.headVersion === ref.baseVersion && !!pending.data.proposal.digest;
     }
     return {
       sessionId() { return credentials?.sessionId ?? null; },
