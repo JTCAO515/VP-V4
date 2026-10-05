@@ -211,3 +211,11 @@ run('SQL NULL validation fails closed before direct RPC writes for nullable disc
  const res=await sql(container,claims(f.mod)+`set role authenticated;select public.community_workspace(${lit(JSON.stringify({protocol:'community-j1/1',command:review,mutationBytes:JSON.stringify(review)}))}::jsonb);`);assert.notEqual(res.code,0);assert.match(res.stderr,/INVALID_INPUT/);
  assert.equal(await db(`select status from community_private.submissions where id='${f.s.submissionId}';`),'pending');assert.equal(await db(`select count(*) from community_private.operations_j1 where operation_id='${review.operationId}';`),'0');
 });
+run('unauthorized guessed source and stale versions yield uniform not-found before CAS without metadata oracle',async()=>{
+ const f=await fixture(),outsider=await actor();
+ for(const sv of [0,999])for(const version of [1,2]){
+ for(const v of [{...report(f.s,sv),expectedSubmissionVersion:version},{...block(f.s),expectedSubmissionVersion:version,expectedSafetyVersion:sv},{...appeal(f.s,sv,'j1_rejection',version)}])await denied(outsider,v,/SAFETY_NOT_FOUND/);
+ }
+ await db(`update community_safety_private.controlled_readers set revoked=true where actor_id='${f.reader.id}';`);await denied(f.reader,{...report(f.s,999),expectedSubmissionVersion:2},/SAFETY_NOT_FOUND/);
+ assert.equal(await db(`select count(*) from community_safety_private.operations where owner_id='${outsider.id}';`),'0');
+});

@@ -321,8 +321,10 @@ declare u uuid;s uuid;epoch bigint;v jsonb;a text;o jsonb;oa text;raw text;diges
  update community_safety_private.blocks set state='unblocked',version=2,ended_at=clock_timestamp() where id=rid;
  else
  if c.id is null or c.status in('withdrawn','deleted') then raise exception 'SAFETY_NOT_FOUND';end if;
- if c.version<>(v->>'expectedSubmissionVersion')::integer or st.safety_version<>(v->>'expectedSafetyVersion')::integer or st.safety_version=2147483647 then raise exception 'SAFETY_CONFLICT';end if;
+ -- Permission precedes CAS: stale versions must never become a UUID oracle.
  if a in('report','block') and not community_safety_private.object_allowed(u,cid) then raise exception 'SAFETY_NOT_FOUND';end if;
+ if a='appeal' and c.author_id<>u then raise exception 'SAFETY_NOT_FOUND';end if;
+ if c.version<>(v->>'expectedSubmissionVersion')::integer or st.safety_version<>(v->>'expectedSafetyVersion')::integer or st.safety_version=2147483647 then raise exception 'SAFETY_CONFLICT';end if;
  if a='report' then
  if exists(select 1 from community_safety_private.reports where id=rid or owner_id=u and submission_id=cid and state='pending') then raise exception 'SAFETY_CONFLICT';end if;
  insert into community_safety_private.reports(id,owner_id,submission_id,submission_version,safety_version,category,details) values(rid,u,cid,c.version,st.safety_version,v->>'category',v->>'details');
