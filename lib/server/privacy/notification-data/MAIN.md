@@ -216,3 +216,12 @@ strict exact key list + integer>0<=5000<=original interval, no outcome/ACL/error
 noRetry changes. Patch now applied, original affected PG r2 running once. If idle
 still fails root remains actual diagnosis, never accept idle/retry-to-green. Prior
 r1 retained. No runtime edit/new writer/reopening completed core.
+
+Original affected PG r2 actual17PASS0FAIL0skip on6d14684e/session10691 after only
+approved exact grant key+budget oracle addition; accepted/cancel/noRetry/ACL/source
+results unchanged. Second idle disappeared after first case normal finish path
+executes; no runtime/poll/expected-idle change, prior r1 failed state retained.
+Raw r2 log under server artifacts. All owned scope and necessary legacy fixture
+integration engineering fixed. LEASE.md gives requested exact four coverage hunks
+and futureCI3 additions explicit CLEAN/noinflight/planned release to Main/sole next
+TS01a10e1b-e69c; no whole-file reservation. Notification PR remains one#665.

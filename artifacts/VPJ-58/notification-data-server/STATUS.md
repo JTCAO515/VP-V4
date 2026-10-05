@@ -40,3 +40,11 @@ build PASS with target flags off. Original dispatch/material/metadata contract
 trailing whitespace normalization; required new grant key oracle approval pending,
 no assertion weakening/accept-idle or strip-new-field fix. Runtime scope remains
 Main-reviewed code complete, this is legacy fixture integration engineering.
+
+Original notice PG r2 after Mainfd5ade exact strict11-key/budget bound oracle
+addition: actual17 PASS0FAIL0skip, source6d14684e, session10691. All original
+accepted/cancel/noRetry/ACL/eligibility/error assertions unchanged. Both r1 failures
+are absent once first case executes its original finish/cleanup; no expected-idle
+change or retry allowlist. First r1 failed before finishing prior attempt, so its
+later scheduler idle was cascading fixture state; original poll/runtime unchanged.
+Raw r2 output legacy-notification-pg-r2.log; source r1 history retained.

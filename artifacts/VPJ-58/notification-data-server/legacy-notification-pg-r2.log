@@ -1,0 +1,25 @@
+✔ full replay rollback and ACL/RLS default deny, SQL transport disabled (6228.258292ms)
+✔ strict calendar/offset/zone/closed purpose rejects direct callers; IANA DST quiet hours (618.966666ms)
+✔ immutable exact full digest/replay and historical ACK cannot resurrect cancelled reminders (689.779667ms)
+✔ same operation abandon is serialized: absent tombstone blocks late execute, applied stays applied (896.278625ms)
+✔ cross owner, false credential, stale mobile epoch and stolen device/token fail closed (1090.027375ms)
+✔ N1 dismissal survives content-identical head/timestamp changes, meaningful content creates new opaque ID (1010.461ms)
+✔ cancel before begin blocks; begin before cancel preserves exact accepted outcome and never regrants (2447.583083ms)
+✔ crashed lease resolves unknown, wrong tuple cannot finish, token-revoked cannot revoke a rotated token (1785.503375ms)
+✔ head/archive/end/expiry/session/quiet/OS fences suppress stale work; generic tap exact basis (3643.24825ms)
+✔ legacy v1 intent and complete/cancel stay compatible; metadata never copies registration token (635.810167ms)
+✔ actual TS strict codecs and scheduler consume actual PG source, disabled zeroRPC and one send only (2303.089833ms)
+✔ actual reviewed support baseline ignores revision/time refresh; exact approved acked recheck emits once and stops (3058.804375ms)
+✔ quiet oldest record does not block another owner; crashed attempt becomes truthful unknown without retry (1305.266833ms)
+✔ actual export adapter uses exact job lease, generation and stable source cursor; omits token/body/worker lease (814.823416ms)
+✔ owned Trip/account cascades remove new records; rollback flag blocks grants and preserves existing receipts (872.548041ms)
+✔ actual accepted Task result basis exposes generic N1; Memory/consent changes block source and dispatch (2133.062125ms)
+✔ explicit revoke retains actual authorized OS declaration while disabling recipient; expiry and truncation stay truthful (1271.455666ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 30962.326708
