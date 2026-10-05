@@ -655,6 +655,24 @@ final class NativeSession {
 
     }
 
+    func placeActionRequest(tripId: String, body: Data, actor: NativeDataScope) async throws -> Data {
+        guard dataScope == actor, NativeMemoryWire.uuid(tripId), body.count <= 16384 else { throw NativeDataError.sessionUnavailable }
+        let path = "api/explore/native/v1/trips/\(tripId)/place-actions"
+        return try await dataRequest(prefix: path, path: path, method: "POST", body: body)
+    }
+    func pendingPlaceAction(actor: NativeDataScope) throws -> NativePlaceActionPending? {
+        guard dataScope == actor else { throw NativeDataError.sessionUnavailable }
+        return try NativePlaceActionJournal(vault: vault).read(actor)
+    }
+    func rememberPlaceAction(_ command: NativePlaceActionCommand, actor: NativeDataScope) throws -> NativePlaceActionPending {
+        guard dataScope == actor else { throw NativeDataError.sessionUnavailable }
+        return try NativePlaceActionJournal(vault: vault).retain(command, scope: actor)
+    }
+    func completePlaceAction(_ pending: NativePlaceActionPending, actor: NativeDataScope) throws {
+        guard dataScope == actor else { throw NativeDataError.staleSessionResponse }
+        try NativePlaceActionJournal(vault: vault).complete(pending, scope: actor)
+    }
+
     func libraryPlaceRequest(provider:NativePlaceProvider,providerID:String,tripID:String)async throws->Data {
         guard !providerID.isEmpty,providerID.utf16.count<=128,NativeMemoryWire.uuid(tripID) else{throw NativeDataError.invalidResponse}
         let path="api/library/native/v1/place"
@@ -1142,6 +1160,8 @@ final class NativeSession {
                 catch { failureCode="recoveryJournalCleanupRequired";status="storageError";return false }
                 do { try NativeReservationJournalVault.remove(endpoint:endpoint?.absoluteString ?? "disabled",owner:owner,vault:vault) }
                 catch { failureCode="reservationCleanupRequired";status="storageError";return false }
+                do { try NativePlaceActionJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
+                catch { failureCode="placeActionCleanupRequired";status="storageError";return false }
             }
             let support=vault.remove(service:tripSupportConfirmVaultService,owner:owner)
             guard support==errSecSuccess || support==errSecItemNotFound else { failureCode="keychain:\(support)";status="storageError";return false }
