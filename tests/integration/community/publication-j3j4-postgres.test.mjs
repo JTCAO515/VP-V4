@@ -280,10 +280,28 @@ run('canonical place projection uses original lawful mapping and never leaks pri
  await db('grant execute on function public.execute_place_action_v1(uuid,jsonb) to authenticated;');
  const cmd={action:'save',operationId:uuid(),expectedTripVersion:0,selection,expectedMappingDigest:mapping.digest,expectedSaveRevision:0};
  const saved=JSON.parse(await db(claims(f.author)+`set role authenticated;select public.execute_place_action_v1('${trip}',${lit(JSON.stringify(cmd))}::jsonb);`));
- await db(`update community_private.submissions set place_binding=${lit(JSON.stringify({tripId:trip,placeReferenceId:saved.referenceId,canonicalPoiId:poi,mappingDigest:mapping.digest}))}::jsonb where id='${f.s.submissionId}';`);
- const preview=(await call(f.author,{action:'preview',submissionId:f.s.submissionId})).preview,p={...f.p,previewDigest:preview.previewDigest};const before=await db(`select row_to_json(t) from public.trips t where id='${trip}';`);
+ const source={...submit(),place:{tripId:trip,placeReferenceId:saved.referenceId,expectedTripVersion:0,mappingDigest:mapping.digest}};
+ await j1(f.author,source);await j1(f.reviewer,{action:'review',operationId:uuid(),submissionId:source.submissionId,expectedVersion:1,decision:'approve',note:'Saved-place source approved'});
+ for(const a of [f.reader,f.right,f.publisher])await grant(a,source);
+ const preview=(await call(f.author,{action:'preview',submissionId:source.submissionId})).preview,p={...f.p,submissionId:source.submissionId,previewDigest:preview.previewDigest};const before=await db(`select row_to_json(t) from public.trips t where id='${trip}';`);
  await call(f.author,p);await call(f.right,rights(p));await call(f.publisher,publish(p));const e=(await call(f.reader,{action:'detail',publicationId:p.publicationId})).experience;
  assert.deepEqual(e.place,{canonicalPoiId:poi,mappingDigest:mapping.digest,label:'Fixture place'});assert.equal(JSON.stringify(e).includes(trip),false);assert.equal(JSON.stringify(e).includes(saved.referenceId),false);
  assert.equal(await db(`select row_to_json(t) from public.trips t where id='${trip}';`),before);assert.equal(await db(`select count(*) from public.trip_proposals where trip_id='${trip}';`),'0');
  await db(`delete from public.provider_poi_mappings where canonical_poi_id='${poi}';`);assert.equal((await call(f.reader,{action:'detail',publicationId:p.publicationId})).experience.place,null);
+});
+run('owned auth account cascades erase author declaration reader links and foreign authored rights note without revival',async()=>{
+ for(const mode of ['author','reader','rights']){
+ const f=await fixture(),s=save(f.p);await call(f.reader,s);const a=mode==='author'?f.author:mode==='reader'?f.reader:f.right;
+ await db(`delete from auth.users where id='${a.id}';`);
+ assert.equal(await db(`select count(*) from community_publication_private.operations where owner_id='${a.id}';`),'0');
+ assert.equal(await db(`select count(*) from community_publication_private.qualifications where actor_id='${a.id}';`),'0');
+ if(mode==='reader'){
+ assert.equal(await db(`select state||':'||(owner_id is null)::text||':'||(publication_id is null)::text from community_publication_private.references where id='${s.referenceId}';`),'erased:true:true');
+ assert.equal((await call(f.author,{action:'mine',cursor:null})).publications[0].state,'published');
+ }else{
+ await denied(f.reader,{action:'detail',publicationId:f.p.publicationId},/PUBLICATION_NOT_FOUND/);assert.equal((await call(f.reader,operation(s))).reference.experience,null);
+ if(mode==='author')assert.equal(await db(`select state||':'||(owner_id is null)::text||':'||(rights_declaration is null)::text||':'||(preview_digest is null)::text from community_publication_private.publications where id='${f.p.publicationId}';`),'erased:true:true:true');
+ else {assert.equal(await db(`select count(*) from community_publication_private.rights_reviews where actor_id='${a.id}';`),'0');assert.equal((await call(f.author,{action:'mine',cursor:null})).publications[0].rightsNote,null);}
+ }
+ }
 });
