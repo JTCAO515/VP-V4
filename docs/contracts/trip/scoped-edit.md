@@ -48,3 +48,9 @@ rejected: prepare a fresh context and candidate. Lifecycle cleanup, lease-scoped
 export metadata, worker authorization and accounting remain part of the complete
 SQL/executor implementation. Target activation and new runtime roles are not
 implied by this contract.
+
+A settled, validated model refusal or a typed unsupported/no-change result returns
+`scoped_edit_declined/1` and operation state `declined`. It is distinct from a
+user cancellation, a rejected Proposal and an unknown ACK. Unknown cost, timeout
+or invalid output stays unresolved; none can fabricate a declined receipt. No
+external booking is cancelled. Matching durable declined ACK releases the journal.

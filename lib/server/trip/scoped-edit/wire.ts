@@ -24,10 +24,11 @@ export type ScopedCandidatesReceipt = Readonly<{
   kind: "scoped_edit_candidates/1"; operationId: string; tripId: string; contextId: string; contextDigest: string; baseVersion: number; expiresAt: string;
   returnScope: EditScope; candidates: readonly Readonly<{ candidateId: string; edits: readonly CandidateEdit[]; diff: ScopedEditDiff }>[]; reused: boolean;
 }>;
-export type ScopedReceipt = ScopedCandidatesReceipt | ScopedProposalReceipt | ScopedLockReceipt | ScopedPendingReceipt;
+export type ScopedDeclinedReceipt = Readonly<{ kind: "scoped_edit_declined/1"; operationId: string; tripId: string; contextId: string; contextDigest: string; baseVersion: number; reason: "unsupported_request" | "no_change" | "safety_refused"; reused: boolean }>;
+export type ScopedReceipt = ScopedDeclinedReceipt | ScopedCandidatesReceipt | ScopedProposalReceipt | ScopedLockReceipt | ScopedPendingReceipt;
 export type ScopedOperation = Readonly<{
   kind: "scoped_edit_operation/1"; operationId: string; tripId: string; mutation: ScopedEditRequest | null; receipt: ScopedReceipt | null;
-  state: "pending" | "applied" | "rejected" | "cancelled" | "expired" | "stale" | "unknown"; resultingVersion: number | null;
+  state: "pending" | "applied" | "rejected" | "cancelled" | "declined" | "expired" | "stale" | "unknown"; resultingVersion: number | null;
 }>;
 export type ScopedUnavailable = Readonly<{ kind: "unavailable"; reason: "stale_basis" | "invalid_scope" | "protected_item" | "cancelled" | "unsupported" | "provider_unavailable" }>;
 export type ScopedAbandonReceipt = Readonly<{ kind: "scoped_edit_abandon/1"; operationId: string; tripId: string; state: "cancelled" | "committed"; receipt: ScopedReceipt | null }>;
@@ -61,6 +62,7 @@ export function parseScopedReceipt(v: unknown, tripId: string, operationId: stri
   if (!record(v) || v.tripId !== tripId || v.operationId !== operationId || typeof v.reused !== "boolean" || !integer(v.baseVersion)) return null;
   if (v.kind === "scoped_edit_lock/1") return exact(v, ["kind", "operationId", "tripId", "baseVersion", "lockRevision", "itemId", "locked", "reused"]) && integer(v.lockRevision) && identifier(v.itemId) && typeof v.locked === "boolean" ? v as ScopedLockReceipt : null;
   if (!uuid(v.contextId) || !digest(v.contextDigest)) return null;
+  if (v.kind === "scoped_edit_declined/1") return exact(v, ["kind", "operationId", "tripId", "contextId", "contextDigest", "baseVersion", "reason", "reused"]) && ["unsupported_request", "no_change", "safety_refused"].includes(String(v.reason)) ? v as ScopedDeclinedReceipt : null;
   if (v.kind === "scoped_edit_pending/1") return exact(v, ["kind", "operationId", "tripId", "contextId", "contextDigest", "baseVersion", "reason", "reused"]) && ["provider_unavailable", "queued"].includes(String(v.reason)) ? v as ScopedPendingReceipt : null;
   if (v.kind === "scoped_edit_candidates/1") {
     if (!exact(v, ["kind", "operationId", "tripId", "contextId", "contextDigest", "baseVersion", "expiresAt", "returnScope", "candidates", "reused"]) || !time(v.expiresAt) || !validScope(v.returnScope) || !Array.isArray(v.candidates) || v.candidates.length < 1 || v.candidates.length > 2) return null;
@@ -70,9 +72,11 @@ export function parseScopedReceipt(v: unknown, tripId: string, operationId: stri
   return v.kind === "scoped_edit_proposal/1" && exact(v, ["kind", "operationId", "tripId", "contextId", "contextDigest", "proposalId", "proposalRevision", "proposalDigest", "baseVersion", "expiresAt", "returnScope", "diff", "reused"]) && uuid(v.proposalId) && integer(v.proposalRevision, 1) && proposalDigest(v.proposalDigest) && time(v.expiresAt) && validScope(v.returnScope) && validDiff(v.diff) ? v as ScopedProposalReceipt : null;
 }
 export function parseScopedOperation(v: unknown, tripId: string, operationId: string): ScopedOperation | null {
-  if (!record(v) || !exact(v, ["kind", "operationId", "tripId", "mutation", "receipt", "state", "resultingVersion"]) || v.kind !== "scoped_edit_operation/1" || v.tripId !== tripId || v.operationId !== operationId || !["pending", "applied", "rejected", "cancelled", "expired", "stale", "unknown"].includes(String(v.state)) || !(v.resultingVersion === null || integer(v.resultingVersion, 1))) return null;
+  if (!record(v) || !exact(v, ["kind", "operationId", "tripId", "mutation", "receipt", "state", "resultingVersion"]) || v.kind !== "scoped_edit_operation/1" || v.tripId !== tripId || v.operationId !== operationId || !["pending", "applied", "rejected", "cancelled", "declined", "expired", "stale", "unknown"].includes(String(v.state)) || !(v.resultingVersion === null || integer(v.resultingVersion, 1))) return null;
   const mutation = v.mutation === null ? null : parseScopedEditRequest(v.mutation), receipt = v.receipt === null ? null : parseScopedReceipt(v.receipt, tripId, operationId);
   if (v.mutation !== null && (!mutation || !["manual", "ask", "lock", "select_candidate"].includes(mutation.action) || !("operationId" in mutation) || mutation.operationId !== operationId) || v.receipt !== null && !receipt || (v.state === "applied") !== (v.resultingVersion !== null) || v.state === "unknown" && (mutation !== null || receipt !== null) || v.state === "pending" && !receipt) return null;
+  if (v.state === "declined" && (mutation?.action !== "ask" || receipt?.kind !== "scoped_edit_declined/1")) return null;
+  if (receipt?.kind === "scoped_edit_declined/1" && v.state !== "declined" && v.state !== "stale" && v.state !== "expired") return null;
   return v as ScopedOperation;
 }
 
