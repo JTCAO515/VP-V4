@@ -13,6 +13,7 @@ const envelope = value => ({ schemaVersion: 'data-coverage/1', catalogVersion: C
 
 test('archive keeps original denominator and routes selected Trip deletion to the original engine', async () => {
   assert.equal(MODULE_CATALOG.length, 34); assert.equal(moduleById('archive').exportHandler, 'archive_data');
+  for (const field of ['missing','retention']) assert.equal(new Set(moduleById('archive')[field]).size, moduleById('archive')[field].length);
   assert.equal(moduleById('case_attachments').exportHandler, null); assert.ok(moduleById('pdf_intake').missing.includes('original_pdf_bytes'));
   const selected = parseCoverageInput(envelope(bytes)); assert.equal(selected.handler, 'archive_data'); assert.ok(OWNER_HANDLERS[selected.handler]);
   const deletion = { requestId: selection.requestId, tripId: selection.tripId, expectedVersion: 1, confirmed: true };

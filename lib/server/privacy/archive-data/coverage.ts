@@ -8,7 +8,7 @@ export const ARCHIVE_MODULE = {
   exportHandler: 'archive_data', deleteHandler: 'archive_data', selection: 'trip' as const,
   capacity: 'one selected archived Trip/version; all available safe snapshots and Trip lifecycle receipts; 50/page, 402 pages, 20001 rows, 1MB; fixed30s; own progress inventory 1..20 selected metadata; original selected Trip deletion',
   retention: [...ARCHIVE_BOUNDARIES['archived-trip-data/1'].retained,...ARCHIVE_BOUNDARIES['archive-export-progress/1'].retained],
-  missing: [...ARCHIVE_BOUNDARIES['archived-trip-data/1'].missing,...ARCHIVE_BOUNDARIES['archive-export-progress/1'].missing],
+  missing: [...new Set([...ARCHIVE_BOUNDARIES['archived-trip-data/1'].missing,...ARCHIVE_BOUNDARIES['archive-export-progress/1'].missing])],
 };
 export function validArchiveCoverageSelection(input: CoverageInput, value: unknown): boolean {
   const command = parseArchiveCommand(value);
