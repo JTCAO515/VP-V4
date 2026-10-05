@@ -4,7 +4,7 @@ export const record = (v: unknown): v is Record<string, unknown> => !!v && typeo
 export const exact = (v: Record<string, unknown>, keys: readonly string[]) => Object.keys(v).length === keys.length && keys.every(k => Object.hasOwn(v,k));
 export const uuid = (v: unknown): v is string => typeof v === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(v);
 export const text = (v: unknown, n: number, empty = false): v is string => typeof v === 'string' && v.length <= n && !v.includes('\0') && (empty || !!v.trim());
-export type CommunityPlaceInput = Readonly<{tripId:string;placeReferenceId:string}>;
+export type CommunityPlaceInput = Readonly<{tripId:string;placeReferenceId:string;expectedTripVersion:number;mappingDigest:string}>;
 export type CommunityMutation = Readonly<{action:'submit';operationId:string;submissionId:string;contentKind:'experience'|'help';title:string;content:string;benefitDisclosure:string;place:CommunityPlaceInput|null;consent:'internal-review-v1'}>
   | Readonly<{action:'review';operationId:string;submissionId:string;expectedVersion:1;decision:'approve'|'reject';note:string}>
   | Readonly<{action:'withdraw';operationId:string;submissionId:string;expectedVersion:1|2}>
@@ -28,7 +28,7 @@ export function parseCommunityInput(v: unknown): CommunityInput|null {
   if (!uuid(v.submissionId)) return null;
   if (v.action === 'submit') return exact(v,['action','operationId','submissionId','contentKind','title','content','benefitDisclosure','place','consent'])
     && (v.contentKind === 'experience' || v.contentKind === 'help') && text(v.title,160) && text(v.content,4000) && text(v.benefitDisclosure,400,true)
-    && (v.place === null || record(v.place) && exact(v.place,['tripId','placeReferenceId']) && uuid(v.place.tripId) && uuid(v.place.placeReferenceId))
+    && (v.place === null || record(v.place) && exact(v.place,['tripId','placeReferenceId','expectedTripVersion','mappingDigest']) && uuid(v.place.tripId) && uuid(v.place.placeReferenceId) && typeof v.place.expectedTripVersion==='number' && Number.isSafeInteger(v.place.expectedTripVersion) && v.place.expectedTripVersion>=0 && v.place.expectedTripVersion<=2147483647 && hash(v.place.mappingDigest))
     && v.consent === 'internal-review-v1' ? v as CommunityInput : null;
   if (v.action === 'withdraw') return exact(v,['action','operationId','submissionId','expectedVersion']) && (v.expectedVersion === 1 || v.expectedVersion === 2) ? v as CommunityInput : null;
   return v.action === 'review' && exact(v,['action','operationId','submissionId','expectedVersion','decision','note']) && v.expectedVersion === 1

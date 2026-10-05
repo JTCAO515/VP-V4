@@ -20,8 +20,11 @@ User-authored benefit disclosure is identified separately. Only new J1 review no
 are author-visible; legacy internal notes are not disclosed. Stored `published`
 continues to mean **internally approved**, with `publiclyVisible:false` and
 `retrievalEligible:false`. There is no public feed, Fact promotion or Trip writer.
-Optional place association comes from an owned canonical Trip reference qualified
-by the original reviewed mapping producer, never free-text identity matching.
+Optional place association comes from an explicitly selected own saved canonical
+Trip reference qualified by the original mapping producer. Frozen current Trip head
+and mapping digest are rechecked at submit; changes require explicit reselection.
+The native picker reuses the original saved-place Bearer reader and does not Save
+or write a Trip. Unlinked submission is an explicit choice, never title matching.
 
 Mutation operations preserve exact original bytes, owner/session/epoch and operation
 ID. Status queries and atomic abandonment prevent unknown acknowledgements from

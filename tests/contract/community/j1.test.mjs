@@ -11,6 +11,7 @@ const request=(body=submit(),headers={})=>new Request('http://localhost/api/comm
 const options=(rpc={},extra={})=>({enabled:true,surface:'native',createRpc:()=>({authenticate:async()=>actor,sessionId:()=>session,current:async()=>true,call:async()=>({data:outcome(),error:null}),...rpc}),...extra});
 test('J1 closed commands bind consent, purpose, version, owner-safe place and raw mutation lookup',()=>{
  assert.ok(parseCommunityInput(submit()));
+ const place={tripId:id,placeReferenceId:id,expectedTripVersion:0,mappingDigest:'a'.repeat(64)};assert.ok(parseCommunityInput({...submit(),place}));assert.equal(parseCommunityInput({...submit(),place:{...place,expectedTripVersion:-1}}),null);assert.equal(parseCommunityInput({...submit(),place:{...place,mappingDigest:'unknown'}}),null);
  for (const change of [{authorId:actor},{reviewerDisclosure:'employee'},{contentKind:'fact'},{place:{tripId:id,placeReferenceId:id,label:'invented'}},{benefitDisclosure:'x'.repeat(401)},{consent:'public'},{content:'\0'},{title:' '},{content:'😀'.repeat(2001)}]) assert.equal(parseCommunityInput({...submit(),...change}),null);
  const raw=JSON.stringify(submit());assert.ok(parseCommunityInput({action:'operation',operationId:op,mutationBytes:raw}));
  for (const original of [{action:'export'},{action:'operation',operationId:op,mutationBytes:'{}'},{...submit(),operationId:randomUUID()}]) assert.equal(parseCommunityInput({action:'operation',operationId:op,mutationBytes:JSON.stringify(original)}),null);
