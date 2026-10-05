@@ -13,3 +13,5 @@ Required new-data denominator: coverage_export_private.requests_v1 + sections_v1
 Required sole integrator registry hunk (not written here): scripts/ci-suites/db-integration.mjs isolated-postgres env add VP_COVERAGE_DB_TEST: "1"; files add tests/integration/privacy/owner-module-export-postgres.test.mjs. Actual list classifier currently fails because this gated file is unclassified. Main can relay this precise hunk to the sole TS owner with the existing shared-registry ownership lease; no duplicate PG/Auth matrix or second PR needed. Add the three tables to the new coverage inventory explicitly.
 
 Target grants/enrollment, remote actions, credentials/policy, real data, Storage/provider, deployment/device, ALL2 and all-account completion remain UNRUN. Fixed runtime awaiting integration is not current SQL development work.
+
+Fixed product/test source commit: `5b521f45`. Subsequent handoff/evidence formatting changes do not change these sources. Raw failure log lines retain the original messages and results; trailing spaces were normalized for diff hygiene.

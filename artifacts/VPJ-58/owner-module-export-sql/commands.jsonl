@@ -3,3 +3,5 @@
 {"command": "node scripts/lint.mjs", "result": "PASS", "evidence": "lint.txt"}
 {"command": "node scripts/docs-check.mjs", "result": "PASS", "evidence": "docs.txt"}
 {"command": "node scripts/ci-suites/db-integration.mjs --list", "result": "FAIL", "reason": "New gated owner-module-export PG file unclassified; precise shared-registry hunk handed to sole TS integrator, no registry lease for SQL owner."}
+{"command": "git diff --cached --check (initial raw failure evidence)", "result": "FAIL", "reason": "Trailing spaces in Node assertion formatter output; evidence whitespace normalized only, original failures preserved."}
+{"command": "git diff 469c02dc..HEAD --check (after evidence normalization)", "result": "PASS", "reason": "Verified before final handoff commit; no source changes."}

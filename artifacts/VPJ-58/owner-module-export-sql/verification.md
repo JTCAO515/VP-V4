@@ -26,3 +26,5 @@ Signed GoTrue/PostgREST/HTTP: sole TS owner. Target GRANT, credentials, real use
 ## Reversible local rollback
 
 Only on an isolated/authorized target: drop function public.privacy_coverage_module_export_v1(jsonb); drop schema coverage_export_private cascade. This removes transient export metadata/minimum fences and the new RPC only. The owned applied rollback verifies original schemas/data/ACL remain unchanged. Reapply the append-only migration restores default deny; grants are a separate operator action. No remote rollback is authorized here.
+
+Fixed product/test source commit: `5b521f45`. Subsequent handoff/evidence formatting changes do not change these sources. Raw failure log lines retain the original messages and results; trailing spaces were normalized for diff hygiene.

@@ -17,10 +17,10 @@ test at tests/integration/privacy/owner-module-export-postgres.test.mjs:31:10
   AssertionError [ERR_ASSERTION]: ERROR:  syntax error at or near ";"
   LINE 12:  ) x;
                ^
-  
-  
+
+
   3 !== 0
-  
+
       at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:21:59)
       at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
       at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:32:3)
@@ -39,9 +39,9 @@ test at tests/integration/privacy/owner-module-export-postgres.test.mjs:31:10
 test at tests/integration/privacy/owner-module-export-postgres.test.mjs:15:1
 ✖ VPJ-58 isolated full replay, owner metadata pagination, proof and adversarial bounds (6077.057125ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
-  
+
   'f' !== 't'
-  
+
       at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-owner-module-export-sql-20261006/tests/integration/privacy/owner-module-export-postgres.test.mjs:35:9)
       at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
       at async Test.run (node:internal/test_runner/test:1409:7)
