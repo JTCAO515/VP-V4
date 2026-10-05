@@ -57,6 +57,11 @@ import XCTest
             rows[0]["rawPDF"] = "hidden"; sections[0]["items"] = rows; $0["sections"] = sections
         }
         #expect(throws: (any Error).self) { try NativeArchiveDataProtocol.bundle(extra, command: export, reviewed: reviewed, actor: current, now: now) }
+        let nullHistory = try changed(v, "tripBundle") {
+            var sections = try #require($0["sections"] as? [[String: Any]]), rows = try #require(sections[1]["items"] as? [[String: Any]])
+            rows[0]["content"] = NSNull(); sections[1]["items"] = rows; $0["sections"] = sections
+        }
+        #expect(throws: (any Error).self) { try NativeArchiveDataProtocol.bundle(nullHistory, command: export, reviewed: reviewed, actor: current, now: now) }
         let foreign = try changed(v, "tripPreview") { $0["ownerId"] = "99999999-9999-4999-8999-999999999999" }
         #expect(throws: (any Error).self) { try NativeArchiveDataProtocol.preview(foreign, command: preview, actor: current, now: now) }
         #expect(throws: (any Error).self) { try NativeArchiveDataProtocol.preview(bytes(v, "tripPreview"), command: preview, actor: current, now: now.addingTimeInterval(30)) }
@@ -145,8 +150,8 @@ private final class ArchiveDataFixtureAnchor: NSObject {}
 
 /// Actual Session consumer with an unsigned, synthetic loopback transport.
 /// No real user credentials, grants or server data are used.
-@MainActor final class NativeArchiveDataSessionTests: XCTestCase {
-    func testJournalGateUnknownAckRecoveryHeadersAndLogoutCleanup() async throws {
+nonisolated final class NativeArchiveDataSessionTests: XCTestCase {
+    @MainActor func testJournalGateUnknownAckRecoveryHeadersAndLogoutCleanup() async throws {
         let domain = "vpj58.archive-session." + UUID().uuidString
         let defaults = try XCTUnwrap(UserDefaults(suiteName: domain))
         defer { defaults.removePersistentDomain(forName: domain) }
