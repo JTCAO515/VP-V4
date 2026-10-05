@@ -259,7 +259,7 @@ declare u uuid;s uuid;epoch bigint;v jsonb;a text;o jsonb;oa text;raw text;diges
  -- Existing root performs no writes; no admission copy or caller-controlled GUC.
  u:=community_private.actor_j1();s:=(auth.jwt()->>'session_id')::uuid;
  select coalesce((select x.epoch from identity_private.mobile_accounts x where x.owner_id=u),0) into epoch;
- if not community_private.exact_j1(envelope,array['protocol','command','mutationBytes']) or envelope->>'protocol' is distinct from 'community-safety-j2/1' or not community_safety_private.valid(envelope->'command') then raise exception 'INVALID_INPUT';end if;
+ if not community_private.exact_j1(envelope,array['protocol','command','mutationBytes']) or envelope->>'protocol' is distinct from 'community-safety-j2/1' or community_safety_private.valid(envelope->'command') is not true then raise exception 'INVALID_INPUT';end if;
  v:=envelope->'command';a:=v->>'action';base:=jsonb_build_object('schemaVersion','community-safety-j2/1','actorId',u,'sessionId',s);
  o:=case when a in('operation','abandon') then (v->>'mutationBytes')::jsonb else v end;oa:=o->>'action';internal:=a in('queue','inspect') or oa in('disposition','appealReview');
  if a in('report','disposition','appeal','appealReview','block','unblock','delete') then
@@ -383,7 +383,8 @@ begin
 end $$;
 do $$declare old_body text;body text;begin
  select prosrc into old_body from pg_proc where oid='community_private.workspace_j1(jsonb)'::regprocedure;
- body:=replace(old_body,'(a=''mine'' and x.author_id=u or a=''queue'' and x.status=''pending'')','(a=''mine'' and x.author_id=u or a=''queue'' and x.status=''pending'') and community_safety_private.j1_allowed(u,x.id)');
+ body:=replace(old_body,'not community_private.valid_j1(envelope->''command'')','community_private.valid_j1(envelope->''command'') is not true');
+ body:=replace(body,'(a=''mine'' and x.author_id=u or a=''queue'' and x.status=''pending'')','(a=''mine'' and x.author_id=u or a=''queue'' and x.status=''pending'') and community_safety_private.j1_allowed(u,x.id)');
  body:=replace(body,'(a=''mine'' and author_id=u or a=''queue'' and status=''pending'')','(a=''mine'' and author_id=u or a=''queue'' and status=''pending'') and community_safety_private.j1_allowed(u,id)');
  -- Owner data export remains complete even when visibility is denied. It is
  -- authorized by actor_j1 and the original author_id=u filter, never a live read.
