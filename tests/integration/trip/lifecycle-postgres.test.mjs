@@ -4,7 +4,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID as uuid, createHash } from 'node:crypto';
 import { readFileSync, readdirSync } from 'node:fs';
-import { command, sql } from '../../integration/cost/fixtures/postgres-rpc.mjs';
+import { command, sql } from '../cost/fixtures/postgres-rpc.mjs';
 const migration='20261005040000_vpj61_trip_lifecycle.sql';
 const literal=v=>"'"+String(v).replaceAll("'","''")+"'";
 const json=v=>literal(JSON.stringify(v))+'::jsonb';
@@ -30,7 +30,8 @@ test('VPJ-61 SQL lifecycle, existing writers, locks, erasure and versioned expor
  async function owner(mobile=true){const a={owner:uuid(),session:uuid()};await db(`insert into auth.users values('${a.owner}');insert into auth.sessions(id,user_id) values('${a.session}','${a.owner}');insert into identity_private.mobile_accounts(owner_id,epoch,session_id) values('${a.owner}',1,'${a.session}');${mobile?`insert into identity_private.mobile_attempts(owner_id,attempt_id,session_id,epoch) values('${a.owner}','${uuid()}','${a.session}',1);`:''}`);return a;}
  const legacyOwner=await owner(), legacy=uuid(),legacyDraft=uuid();
  await db(claims(legacyOwner)+`insert into public.trips(id,owner_id,title) values('${legacy}','${legacyOwner.owner}','Historical'),('${legacyDraft}','${legacyOwner.owner}','Unconfirmed legacy');`);
- async function confirm(a,id,title='Saved Trip'){const proposal=JSON.parse(await db(claims(a)+`select row_to_json(r) from public.create_trip_proposal_patch('${id}',jsonb_build_object('expectedVersion',(select head_version from public.trips where id='${id}'),'operations',jsonb_build_array(jsonb_build_object('kind','set_title','title',${literal(title)})))) r;`));const digest=await db(claims(a)+`select digest from public.read_trip_proposal_v2('${proposal.proposal_id}');`);await db(claims(a)+`select * from public.confirm_and_apply_trip_proposal('${proposal.proposal_id}','${uuid()}','${digest}');`);return {id:proposal.proposal_id,digest};}
+ const confirmed=new Map();
+ async function confirm(a,id,title='Saved Trip'){const proposal=JSON.parse(await db(claims(a)+`select row_to_json(r) from public.create_trip_proposal_patch('${id}',jsonb_build_object('expectedVersion',(select head_version from public.trips where id='${id}'),'operations',jsonb_build_array(jsonb_build_object('kind','set_title','title',${literal(title)})))) r;`));const digest=await db(claims(a)+`select digest from public.read_trip_proposal_v2('${proposal.proposal_id}');`);const key=uuid();const receipt=await db(claims(a)+`select * from public.confirm_and_apply_trip_proposal('${proposal.proposal_id}','${key}','${digest}');`);const result={id:proposal.proposal_id,digest,key,receipt};confirmed.set(id,result);return result;}
  await confirm(legacyOwner,legacy);
  const originalArchive=await db("select md5(prosrc) from pg_proc where oid='public.archive_trip_v1(uuid,integer,uuid,boolean)'::regprocedure;");
  const originalExport=await db("select md5(prosrc) from pg_proc where oid='public.privacy_core_export_v1(text,jsonb)'::regprocedure;");
@@ -93,14 +94,24 @@ test('VPJ-61 SQL lifecycle, existing writers, locks, erasure and versioned expor
   await deny(claims(a)+`select public.trip_lifecycle_v1('execute',${json(archiveCommand)},${literal(JSON.stringify(archiveCommand))});`,'FAULT_AFTER_ARCHIVE');
   assert.deepEqual(await read(a),before);assert.equal((await call(a,'recover',{operationId:archiveCommand.operationId})).receipt,null);
   await db('drop trigger lifecycle_fault on private.audit_events;drop function private.lifecycle_fault();');
+  await db("create function private.lifecycle_fault() returns trigger language plpgsql as $$begin if new.action='trip_archived' then raise exception 'MEMORY_CONFLICT';end if;return new;end$$;create trigger lifecycle_fault before insert on private.audit_events for each row execute function private.lifecycle_fault();");
+  const lateBusiness={...archiveCommand,operationId:uuid()};const rejected=await execute(a,lateBusiness);assert.equal(rejected.reason,'MEMORY_CONFLICT');assert.deepEqual(await read(a),before,'subtransaction retains original Active/revision after late business fault');
+  await db('drop trigger lifecycle_fault on private.audit_events;drop function private.lifecycle_fault();');
+  assert.deepEqual(await execute(a,lateBusiness),rejected,'terminal rejection never later applies');
   const bad=await commandFor(a,'archive',second,{expectedHeadVersion:1,preference:{action:'keep',memoryRefs:[{...refs[0],revision:revision+1}]}});
   const declined=await execute(a,bad);assert.equal(declined.reason,'MEMORY_CONFLICT');assert.deepEqual(await read(a),before);assert.deepEqual(await execute(a,bad),declined);
   archiveReceipt=await execute(a,archiveCommand);assert.equal(archiveReceipt.state,'archived');assert.equal(archiveReceipt.preference,'kept');assert.equal(archiveReceipt.revision,before.revision+1);assert.equal(archiveReceipt.capacity.activeTripId,null);
   assert.equal(await db(`select row_to_json(c) from service_cases_private.cases c where id='${caseId}';select row_to_json(t) from public.turns t where id='${turnId}';`),services);
   assert.equal((await read(a)).serviceStatus,'unavailable');
+  const original=confirmed.get(second);assert.equal(await db(claims(a)+`select * from public.confirm_and_apply_trip_proposal('${original.id}','${original.key}','${original.digest}');`),original.receipt.replace(/^applied\|/,'already_applied|'),'original confirmed replay remains readable after archive');
+  await deny(`update trip_lifecycle_private.operations_v1 set receipt='{}' where owner_id='${a.owner}' and operation_id='${archiveCommand.operationId}';`,'LIFECYCLE_OPERATION_REUSE');
   // Existing content guard still blocks a new confirmed write after archive.
   await deny(claims(a)+`update public.trips set head_version=2 where id='${second}';`,'PROPOSAL_NOT_CONFIRMABLE');
   const old=await read(a);await db(claims(a)+`select * from public.archive_trip_v1('${trip}',1,'${uuid()}',true);`);const current=await read(a);assert.equal(current.revision,old.revision+1);assert.equal(current.capacity.draftCount,2);
+  const swapOp=await db(`select operation_id from trip_lifecycle_private.operations_v1 where owner_id='${a.owner}' and trip_id='${second}' and previous_active_trip_id='${trip}' and receipt->>'action'='activate';`);
+  assert.ok(swapOp);await db(claims(a)+`select public.request_trip_deletion_v1('${uuid()}','${trip}',1,true);`);
+  await deny(claims(a)+`select public.trip_lifecycle_v1('recover',${json({operationId:swapOp})});`,'FORBIDDEN');
+  assert.equal(await db(`select session_id is null and receipt is null and request_bytes is null and previous_active_trip_id is null from trip_lifecycle_private.operations_v1 where owner_id='${a.owner}' and operation_id='${swapOp}';`),'t','deleting previous Active erases another Trip operation without a replayable session');
   await db(claims(a)+`select * from public.transition_memory_profile('${m.id}','deleted');`);
   await deny(claims(a)+`select public.trip_lifecycle_v1('recover',${json({operationId:archiveCommand.operationId})});`,'MEMORY_CONFLICT');
   assert.equal(await db(`select request_bytes is null and request_digest is null and receipt is null and trip_id is null and previous_active_trip_id is null from trip_lifecycle_private.operations_v1 where owner_id='${a.owner}' and operation_id='${archiveCommand.operationId}';`),'t');
@@ -153,6 +164,34 @@ test('VPJ-61 SQL lifecycle, existing writers, locks, erasure and versioned expor
   const next={...p,session:replacement};await db(claims(next)+`select public.native_session_v2('login','${attempt}');`);
   await deny(claims(p)+`select public.trip_lifecycle_v1('execute',${json(after)},${literal(JSON.stringify(after))});`,'SESSION_REPLACED');
   await deny(claims(next)+`select public.trip_lifecycle_v1('recover',${json({operationId:c.operationId})});`,'FORBIDDEN');
+  assert.equal(await db("select deadlocks from pg_stat_database where datname=current_database();"),'0');
+ });
+ await t.test('actual old create/confirm/archive/delete/replacement transactions race the lifecycle entry',async()=>{
+  async function barrier(text,fn){const marker='vpj61-old-'+uuid();const running=sql(container,`set application_name='${marker}';begin;${text};select pg_sleep(0.5);commit;`);let held=false;for(let i=0;i<50;i++){if(await db(`select count(*) from pg_stat_activity where application_name='${marker}' and wait_event='PgSleep';`)==='1'){held=true;break;}await new Promise(r=>setTimeout(r,10));}assert.ok(held);await fn();const r=await running;assert.equal(r.code,0,r.stderr);}
+  const p=await owner(),id=uuid(),racing=await commandFor(p,'create',uuid(),{title:'Concurrent new create'});
+  const unknown=c=>deny(claims(p)+`select public.trip_lifecycle_v1('execute',${json(c)},${literal(JSON.stringify(c))});`,'LIFECYCLE_LOCK_CONFLICT|could not obtain lock');
+  await barrier(claims(p)+`insert into public.trips(id,owner_id,title) values('${id}','${p.owner}','Original insert')`,()=>unknown(racing));
+  assert.equal((await call(p,'recover',{operationId:racing.operationId})).receipt,null);assert.equal((await execute(p,racing)).reason,'LIFECYCLE_CONFLICT');
+  const prop=JSON.parse(await db(claims(p)+`select row_to_json(r) from public.create_trip_proposal_patch('${id}','{"expectedVersion":0,"operations":[{"kind":"set_title","title":"Confirmed original"}]}') r;`));
+  const digest=await db(claims(p)+`select digest from public.read_trip_proposal_v2('${prop.proposal_id}');`),key=uuid();
+  const activation=await commandFor(p,'activate',id,{expectedHeadVersion:0});
+  await barrier(claims(p)+`select * from public.confirm_and_apply_trip_proposal('${prop.proposal_id}','${key}','${digest}')`,()=>unknown(activation));
+  assert.equal((await execute(p,activation)).reason,'LIFECYCLE_CONFLICT');
+  await execute(p,await commandFor(p,'activate',id,{expectedHeadVersion:1}));
+  const fresh=await commandFor(p,'create',uuid(),{title:'Archive race'});
+  await barrier(claims(p)+`select * from public.archive_trip_v1('${id}',1,'${uuid()}',true)`,()=>unknown(fresh));
+  assert.equal((await read(p)).capacity.activeTripId,null);assert.equal((await execute(p,fresh)).reason,'LIFECYCLE_CONFLICT');
+  const deletion=uuid(),before=await read(p);
+  await barrier(claims(p)+`select public.request_trip_deletion_v1('${deletion}','${id}',1,true)`,async()=>unknown(await commandForOtherScope(p)));
+  async function commandForOtherScope(actor){return {action:'create',operationId:uuid(),expectedRevision:before.revision,expectedActiveTripId:null,expectedSessionId:actor.session,confirmed:true,tripId:uuid(),title:'Delete race'};}
+  assert.equal((await read(p)).trips.some(x=>x.tripId===id),false);
+  assert.equal(await db(`select count(*) from trip_lifecycle_private.operations_v1 where owner_id='${p.owner}' and trip_id='${id}' and request_bytes is not null;`),'0');
+  await barrier(service+`select public.execute_trip_deletion_v1('${deletion}')`,async()=>unknown(await commandForOtherScope(p)));
+  assert.equal(await db(`select count(*) from public.trips where id='${id}';`),'0');
+  const replacement=uuid(),attempt=uuid();await db(`insert into auth.sessions(id,user_id) values('${replacement}','${p.owner}');insert into identity_private.mobile_login_proofs(session_id,owner_id,attempt_id,expires_at) values('${replacement}','${p.owner}','${attempt}',now()+interval '1 minute');`);
+  const next={...p,session:replacement},pending=await commandFor(p,'create',uuid(),{title:'Session race'});
+  await barrier(claims(next)+`select public.native_session_v2('login','${attempt}')`,()=>unknown(pending));
+  await deny(claims(p)+`select public.trip_lifecycle_v1('execute',${json(pending)},${literal(JSON.stringify(pending))});`,'SESSION_REPLACED');
   assert.equal(await db("select deadlocks from pg_stat_database where datname=current_database();"),'0');
  });
  await t.test('v2 export exact lease enrollment, old decoder preservation, source fence and delete cascade',async()=>{

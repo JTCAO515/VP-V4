@@ -24,7 +24,8 @@ mobile epochs from ordinary Web sessions; a Web session need not be the current
 mobile session. CAS binds JWT session, owner revision, previous Active and target
 head. Replay checks exact bytes before CAS and returns the original applied or
 declined receipt. Different bytes produce `LIFECYCLE_OPERATION_REUSE`, preserving
-that receipt. Business declines are terminal; auth/schema/internal/lock errors
+that receipt. A private trigger permits only one-way erasure of existing operations;
+all other receipt/bytes/digest updates are rejected. Business declines are terminal; auth/schema/internal/lock errors
 remain unknown. Abandon returns the committed receipt or fences the same bytes
 with `USER_ABANDONED`; it never undoes a committed operation.
 
@@ -68,8 +69,7 @@ content/deletion workers still own their graph and cleanup.
 Trip deletion admission or physical deletion erases raw operation bytes, digest,
 receipt, target and previous Active references, including operations whose target
 is another Trip. Memory delete/forget/reject and consent revocation/source-receipt
-deletion erase selected edges and associated raw operations. A minimal owner/op/
-session/reason tombstone remains to prevent replay. Recovery returns FORBIDDEN or
+deletion erase selected edges and associated raw operations. A minimal owner/op/reason tombstone remains to prevent replay. Recovery returns FORBIDDEN or
 MEMORY_CONFLICT, never a null suggesting a new operation. Root account deletion
 cascades all new rows without recreating a ledger. Product faults roll back state,
 archive, selections, counters and operation insertion together.
@@ -106,9 +106,10 @@ export/deletion or completed artifact retrofit is authorized by this change.
 
 ## Validation
 
-Run `node --test tests/preparation/vpj61-trip-lifecycle/pg.test.mjs` from repository
-root. This intentionally stays in preparation until the sole integrator leases the
-shared DB-lane registry. It creates one isolated, network-disabled PostgreSQL
+Run `node --test tests/integration/trip/lifecycle-postgres.test.mjs` from repository
+root. Main approved moving the existing test into the required integration tree after
+the actual classifier rejected its preparation path. The sole integrator registers
+this path in the PostgreSQL lane; no new gate, duplicated test or skip is introduced. It creates one isolated, network-disabled PostgreSQL
 17.6.1.159 container per invocation, replays the accepted full migration chain,
 then tests ACL/RLS, upgrade legacy, exact bytes/rejection/abandon, original create/
 confirm/archive, capacity/swap/rollback, Memory erasure, pagination/head/delete,
@@ -116,10 +117,14 @@ real locks/replacement, service preservation, and new export enrollment/source
 fences. It uses synthetic Auth tables and administrator claims; that is PostgreSQL
 behavior evidence, not signed Auth/RLS HTTP or target acceptance.
 
-PASS: current targeted PG 8/8, zero skipped; migration replay; old archive/export
+PASS: current targeted PG 9/9, zero skipped; migration replay; old archive/export
 body hashes preserved; default-denied functions and private RLS; diff whitespace.
-Initial SQL syntax/operator failures were fixed before this PASS. The successful
-run took about 14 seconds. Target schema/ACL activation, combined signed Auth/HTTP,
+Initial SQL syntax/operator failures were fixed before this PASS. An added old
+confirm replay test initially expected `applied` rather than the accepted
+`already_applied`; its expectation was corrected without changing that writer. The successful
+run took about 19 seconds. Actual old create/confirm/archive/deletion request/
+worker/mobile replacement transactions race the new entry under observed lock
+barriers; zero database deadlocks were recorded in this bounded matrix. Target schema/ACL activation, combined signed Auth/HTTP,
 all existing DB lanes, unified Native/device, provider and real user rights actions
 are UNRUN in this SQL checkout. TS owns combined integration and final one-PR
 assembly; Main owns independent high-risk review and target enablement.

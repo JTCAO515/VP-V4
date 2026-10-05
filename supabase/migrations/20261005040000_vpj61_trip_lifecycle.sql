@@ -19,7 +19,7 @@ create index lifecycle_owner_states_v1 on trip_lifecycle_private.states_v1(owner
 create table trip_lifecycle_private.operations_v1 (
  owner_id uuid not null references auth.users(id) on delete cascade,
  operation_id uuid not null,
- session_id uuid not null,
+ session_id uuid,
  request_bytes text,
  request_digest text,
  trip_id uuid,
@@ -27,8 +27,8 @@ create table trip_lifecycle_private.operations_v1 (
  receipt jsonb,
  erased_reason text check(erased_reason in ('FORBIDDEN','MEMORY_CONFLICT')),
  primary key(owner_id,operation_id),
- check((erased_reason is null and request_bytes is not null and request_digest is not null and request_digest ~ '^[a-f0-9]{64}$' and receipt is not null)
-   or (erased_reason is not null and request_bytes is null and request_digest is null and receipt is null and trip_id is null and previous_active_trip_id is null))
+ check((erased_reason is null and session_id is not null and request_bytes is not null and request_digest is not null and request_digest ~ '^[a-f0-9]{64}$' and receipt is not null)
+   or (erased_reason is not null and session_id is null and request_bytes is null and request_digest is null and receipt is null and trip_id is null and previous_active_trip_id is null))
 );
 create index lifecycle_op_trip_v1 on trip_lifecycle_private.operations_v1(owner_id,trip_id);
 create index lifecycle_op_previous_v1 on trip_lifecycle_private.operations_v1(owner_id,previous_active_trip_id);
@@ -58,6 +58,22 @@ end $$;
 -- Old RPCs already hold account/proposal/Trip locks in differing orders. Every
 -- additional lock here uses try/NOWAIT: never wait while holding the inverse edge.
 -- 55P03 stays an unknown/retryable transport result, never a durable decline.
+create function trip_lifecycle_private.immutable_operation_v1() returns trigger
+language plpgsql security definer set search_path='' as $$
+begin
+ -- The sole permitted UPDATE is one-way erasure. Original receipt/digest/bytes
+ -- cannot be replaced, including after a business decline or abandon.
+ if old.erased_reason is not null or new.erased_reason is null
+ or (new.owner_id,new.operation_id) is distinct from (old.owner_id,old.operation_id)
+ or new.session_id is not null or new.request_bytes is not null or new.request_digest is not null
+ or new.trip_id is not null or new.previous_active_trip_id is not null or new.receipt is not null then
+  raise exception 'LIFECYCLE_OPERATION_REUSE';
+ end if;
+ return new;
+end $$;
+create trigger lifecycle_immutable_operation_v1 before update on trip_lifecycle_private.operations_v1
+ for each row execute function trip_lifecycle_private.immutable_operation_v1();
+
 create function trip_lifecycle_private.lock_owner_v1(u uuid) returns void
 language plpgsql security definer set search_path='' as $$
 begin
@@ -129,7 +145,7 @@ begin
   if (c->>'legacyCount')::bigint>0 then raise exception 'LEGACY_RECONCILIATION_REQUIRED';end if;
   if (c->>'draftCount')::integer>=3 then raise exception 'TRIP_CAPACITY';end if;
  elsif tg_op='DELETE' then
-  update trip_lifecycle_private.operations_v1 set request_bytes=null,request_digest=null,trip_id=null,
+  update trip_lifecycle_private.operations_v1 set session_id=null,request_bytes=null,request_digest=null,trip_id=null,
    previous_active_trip_id=null,receipt=null,erased_reason='FORBIDDEN'
   where owner_id=u and (trip_id=old.id or previous_active_trip_id=old.id);
   delete from trip_lifecycle_private.memory_edges_v1 e where e.owner_id=u and exists(
@@ -180,7 +196,7 @@ begin
  and ((tg_table_name='memory_profiles' and e.memory_id=(r->>'id')::uuid)
  or (tg_table_name='memory_consents' and e.consent_id=(r->>'id')::uuid)
  or (tg_table_name='memory_receipts' and e.source_receipt_id=(r->>'id')::uuid));
- update trip_lifecycle_private.operations_v1 set request_bytes=null,request_digest=null,trip_id=null,
+ update trip_lifecycle_private.operations_v1 set session_id=null,request_bytes=null,request_digest=null,trip_id=null,
  previous_active_trip_id=null,receipt=null,erased_reason='MEMORY_CONFLICT'
  where owner_id=u and operation_id=any(ids);
  delete from trip_lifecycle_private.memory_edges_v1 where owner_id=u and operation_id=any(ids);
@@ -471,7 +487,7 @@ language plpgsql security definer set search_path='' as $$
 begin
  if not exists(select 1 from auth.users where id=new.owner_id) then return new;end if;
  perform trip_lifecycle_private.lock_owner_v1(new.owner_id);
- update trip_lifecycle_private.operations_v1 set request_bytes=null,request_digest=null,trip_id=null,
+ update trip_lifecycle_private.operations_v1 set session_id=null,request_bytes=null,request_digest=null,trip_id=null,
   previous_active_trip_id=null,receipt=null,erased_reason='FORBIDDEN'
  where owner_id=new.owner_id and (trip_id=new.trip_id or previous_active_trip_id=new.trip_id);
  delete from trip_lifecycle_private.memory_edges_v1 e where e.owner_id=new.owner_id and exists(
