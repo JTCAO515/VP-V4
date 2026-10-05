@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "db7dcf82e362b491d83b5f39912dcd8642fb2416",
+  "baseAuthEvidence": "auth-http-r1.log",
+  "baseSQL": "54a85c3567ee32eeb19b82badba838b0fed67c29",
+  "finalSQL": "4de5767aa498e422b74dacb533df2043fe1170a9",
+  "changed": [
+    {
+      "path": "supabase/migrations/20261006040000_coverage_progress_data.sql",
+      "baselineHash": "f6ee02a93f88c59b6535b51a282f6cf8d678ec369cd29b265e04aff18e7c1c1e",
+      "currentHash": "bb1c89c79826e16b2e69a6a353835d1d52a506880e0cd11f707e58fae117fa1c"
+    }
+  ],
+  "unchangedTS": true,
+  "deltaEvidence": [
+    "../coverage-progress-sql/pg-deadline-after.log",
+    "auth-deadline-r1.log"
+  ],
+  "affectedAuthProject": "vp-native-ask-3ac45bb1",
+  "fullNormalAuthRerun": false
+}

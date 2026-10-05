@@ -1,0 +1,34 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -derivedDataPath artifacts/native-coverage-progress-r1-derived -destination "platform=iOS Simulator,id=965B47A0-1F04-4632-BB10-7169524AF6E5" -parallel-testing-enabled NO "-only-testing:VisePandaTests/NativeDataCoverageTests/closedCatalogPreservesMissingDenominatorAndRejectsOldVersionActorBoolean()" -resultBundlePath /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-coverage-progress-20261006/artifacts/native-coverage-progress-r3/tests.xcresult
+
+2026-10-06 06:42:09.843 xcodebuild[33951:5098398] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionsModels.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-06 06:42:09.844 xcodebuild[33951:5098398] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionsStore.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-06 06:42:09.844 xcodebuild[33951:5098398] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionDestination.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-06 06:42:09.844 xcodebuild[33951:5098398] warning:  The file reference for "ShareIntakeCore/ShareIntakeInbox.swift" is a member of multiple groups ("ShareIntakeExtension" and "Features"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+Writing result bundle at path:
+	/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-coverage-progress-20261006/artifacts/native-coverage-progress-r3/tests.xcresult
+
+Test Suite 'Selected tests' started at 2026-10-06 06:42:14.098.
+Test Suite 'VisePandaTests.xctest' started at 2026-10-06 06:42:14.098.
+Test Suite 'VisePandaTests.xctest' passed at 2026-10-06 06:42:14.098.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-06 06:42:14.098.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64-apple-ios17.0-simulator
+◇ Suite NativeDataCoverageTests started.
+◇ Test closedCatalogPreservesMissingDenominatorAndRejectsOldVersionActorBoolean() started.
+✔ Test closedCatalogPreservesMissingDenominatorAndRejectsOldVersionActorBoolean() passed after 0.012 seconds.
+✔ Suite NativeDataCoverageTests passed after 0.013 seconds.
+✔ Test run with 1 test in 1 suite passed after 0.013 seconds.
+2026-10-06 06:42:14.396 xcodebuild[33951:5098398] [MT] IDETestOperationsObserverDebug: 4.260 elapsed -- Testing started completed.
+2026-10-06 06:42:14.396 xcodebuild[33951:5098398] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-06 06:42:14.396 xcodebuild[33951:5098398] [MT] IDETestOperationsObserverDebug: 4.260 sec, +4.260 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-coverage-progress-20261006/artifacts/native-coverage-progress-r3/tests.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started
