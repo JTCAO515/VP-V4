@@ -266,3 +266,22 @@ New app/test/resource PBX IDs only; original fixtures/tests/membership unchanged
 Productb918623b ready NOW for normal Main/soleTS integration; actual owned pinned
 Harness /tmp/vpj58-notification-retained-fence-r1 executing just this1case, result
 pending. Original6 andcatalog/coverage12 evidence are reused separately.
+
+## Retained-fence exact follow-up PASS / ready now
+
+2026-10-06 05:24 CST authoritative
+/tmp/vpj58-notification-retained-fence-r1/tests.xcresult reports1PASS0FAIL0SKIP,
+no expectedFailures/runtimeWarnings. Actual sole affected fixture case proves
+TS-retained outbox_parent/watch_semantic preview + complete bundle + protected
+file bytes and preserved original rejection guards. Unsigned app build PASS,
+ad-hoc signed test build/signature verification PASS. Tested runtimeb918623b;
+ce3a9a25/final follow-up are WIRE-only. Owned90077FCA-2265-4A9F-99F2-DE9FAA38FDC5
+Simulator strictly shutdown/deleted. Prior6+12 evidence reused, not rerun or
+represented as those19tests on one current SHA. No SQL/new TS/provider matrix.
+
+This exact Native producer/consumer mismatch is fixed and actually checked.
+Main/sole TS take b918623b (and this WIRE evidence HEAD) through normal integration
+immediately. No remaining Native implementation for this finding, no new writer,
+no target/role/grant/deploy/device action. Combined whole239/fullALL1remaining/
+ALL2 and actual target/real-user/provider/restore/human acceptance remain separate
+OPEN/UNRUN; ordinary exact permission and downstream CI gates are preserved.
