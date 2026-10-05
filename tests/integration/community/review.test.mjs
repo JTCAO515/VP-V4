@@ -18,9 +18,6 @@ const review=(s,decision='approve')=>({action:'review',operationId:uuid(),submis
 const withdraw=(s,version=2)=>({action:'withdraw',operationId:uuid(),submissionId:s.submissionId,expectedVersion:version});
 // Diagnose failed scheduling paths without logging fixture content or review notes.
 async function raceDiagnostic(rows, submissionId) {
- let persisted;
- try {persisted=JSON.parse(await db(`select jsonb_build_object('status',status,'version',version,'audits',(select count(*) from community_private.audit where submission_id=c.id),'receipts',(select count(*) from community_private.receipts where submission_id=c.id),'bodyErased',title='' and content='') from community_private.submissions c where id='${submissionId}';`) || 'null');}
- catch {persisted={unavailable:true};}
  const losers=rows.filter(({code})=>code!==0).map(({code,stdout,stderr})=>{
   let value;try {value=JSON.parse(stdout);} catch {value=null;}
   const shape=stdout.trim()===''?{empty:true}:value && typeof value==='object' && !Array.isArray(value)
@@ -29,6 +26,9 @@ async function raceDiagnostic(rows, submissionId) {
   const safeStderr=stderr.replaceAll('DO-NOT-EXPOSE-private-body','[fixture_body_redacted]').replaceAll('INTERNAL-ONLY review note','[fixture_note_redacted]');
   return {code,stdout:shape,stderr:safeStderr.slice(0,8192),stderrTruncated:safeStderr.length>8192,stderrBytes:Buffer.byteLength(stderr,'utf8')};
  });
+ let persisted;
+ try {persisted=JSON.parse(await db(`select jsonb_build_object('status',status,'version',version,'audits',(select count(*) from community_private.audit where submission_id=c.id),'receipts',(select count(*) from community_private.receipts where submission_id=c.id),'bodyErased',title='' and content='') from community_private.submissions c where id='${submissionId}';`) || 'null');}
+ catch {persisted={unavailable:true};}
  return JSON.stringify({submissionId,winnerCount:rows.filter(({code})=>code===0).length,losers,persisted});
 }
 
