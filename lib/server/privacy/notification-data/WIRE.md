@@ -344,3 +344,18 @@ rows. Narrow worker exchange synthetic delayed connect/expired lease/no network
 and missing ACK cases. Actual signed GoTrue/HTTP separately; native typed consumer,
 file output/account switch/unknown ACK separately. Target APNs/phone/userdata/
 deploy/grants/storage/provider costs and ALL2 acceptance UNRUN/unauthed here.
+
+## Final core / integration engineering checkpoint
+
+Main8738c6 independently records this owned3scope CODECOMPLETE; actual signed
+Auth1+cleanup74b0e507, normal SQLc013 and Native16d72e68 joins verified, whole239/
+ALL1missing/ALL2 Open. New registry and legacy metadata Auth exact reviewed changes
+are applied, legacy Auth1 cleanupbd26a343, build/lint/docs/flags pass. Source refs
+and actual logs are in artifacts/VPJ-58/notification-data-server/STATUS.md.
+Original PG helper input upgrade reveals strict old10-key grant oracle: mandatory
+new leaseBudgetMs is the legitimate11th field. Concrete additional exact oracle
+and (0,5000]/original interval check in LEGACY-PG-GRANT-SHAPE.patch awaits explicit
+Main review because the prior lease only permitted svc inputs. Old17-case r1 has
+15PASS2FAIL0skip; second idle may follow unclosed first failed-case attempt, remains
+unconfirmed. No hidden field deletion, allowed-error broadening, accept-idle or
+new matrix. This is legacy fixture engineering, not reopening core scope delivery.
