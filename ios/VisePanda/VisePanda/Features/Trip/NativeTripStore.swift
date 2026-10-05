@@ -320,6 +320,25 @@ final class NativeTripStore {
         }
     }
 
+    /// Reads a server-created PDF proposal into the original reviewed-diff/explicit-confirm flow.
+    func adoptPDFProposal(tripID: String, proposalID: String, revision: Int, baseVersion: Int,
+                          expectedPatch: NativeTripPatch?, using session: NativeSession) async -> Bool {
+        guard !busy, let actor = scope, session.dataScope == actor, selectedID == tripID,
+              detail?.trip.id == tripID, detail?.trip.headVersion == baseVersion, draft == nil,
+              pending == nil || pending?.proposal.id == proposalID, !proposalOutcomeUnknown,
+              NativePDFWire.uuid(proposalID), revision >= 1 else { return false }
+        var adopted = false
+        await perform(session) { scope in
+            let result = try await self.readPending(tripID, proposalID: proposalID, session, scope)
+            guard result.proposal.id == proposalID, result.proposal.revision == revision,
+                  result.proposal.baseTripVersion == baseVersion, result.trip.headVersion == baseVersion,
+                  !result.proposal.stale, NativePDFWire.date(result.proposal.expiresAt).map({ $0 > Date() }) == true,
+                  expectedPatch == nil || result.proposal.patch == expectedPatch else { throw NativeDataError.invalidResponse }
+            self.pending = result; self.notice = "reviewRequired"; adopted = true
+        }
+        return adopted && session.dataScope == actor && scope == actor
+    }
+
     func discardDraft() {
         guard !busy, pending == nil, !proposalOutcomeUnknown else { return }
         draft = nil

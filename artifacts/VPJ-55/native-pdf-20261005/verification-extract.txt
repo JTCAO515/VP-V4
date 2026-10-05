@@ -1,0 +1,79 @@
+build-initial-fail
+source log: /tmp/vpj55-native-pdf-build.log
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-native-pdf-intake-20261005/ios/VisePanda/VisePanda/App/NativeSession.swift:1168:85: error: unexpected non-void return value in void function
+     |                                                                                     |- error: unexpected non-void return value in void function
+** BUILD FAILED **
+
+tests-initial-compile-fail
+source log: /tmp/vpj55-native-pdf-tests.log
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-native-pdf-intake-20261005/ios/VisePanda/VisePandaTests/NativePDFIntakeTests.swift:7:46: error: main actor-isolated initializer 'init(invocation:)' has different actor isolation from nonisolated overridden declaration
+   |                                              `- error: main actor-isolated initializer 'init(invocation:)' has different actor isolation from nonisolated overridden declaration
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-native-pdf-intake-20261005/ios/VisePanda/VisePandaTests/NativePDFIntakeTests.swift:7:46: error: main actor-isolated initializer 'init(selector:)' has different actor isolation from nonisolated overridden declaration
+   |                                              `- error: main actor-isolated initializer 'init(selector:)' has different actor isolation from nonisolated overridden declaration
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-native-pdf-intake-20261005/ios/VisePanda/VisePandaTests/NativePDFIntakeTests.swift:7:46: error: main actor-isolated initializer 'init()' has different actor isolation from nonisolated overridden declaration
+   |                                              `- error: main actor-isolated initializer 'init()' has different actor isolation from nonisolated overridden declaration
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-native-pdf-intake-20261005/ios/VisePanda/VisePandaTests/NativePDFIntakeTests.swift:7:46: error: main actor-isolated initializer 'init(invocation:)' has different actor isolation from nonisolated overridden declaration
+   |                                              `- error: main actor-isolated initializer 'init(invocation:)' has different actor isolation from nonisolated overridden declaration
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-native-pdf-intake-20261005/ios/VisePanda/VisePandaTests/NativePDFIntakeTests.swift:7:46: error: main actor-isolated initializer 'init(selector:)' has different actor isolation from nonisolated overridden declaration
+   |                                              `- error: main actor-isolated initializer 'init(selector:)' has different actor isolation from nonisolated overridden declaration
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-native-pdf-intake-20261005/ios/VisePanda/VisePandaTests/NativePDFIntakeTests.swift:7:46: error: main actor-isolated initializer 'init()' has different actor isolation from nonisolated overridden declaration
+   |                                              `- error: main actor-isolated initializer 'init()' has different actor isolation from nonisolated overridden declaration
+** TEST FAILED **
+
+tests-r2-compile-fail
+source log: /tmp/vpj55-native-pdf-tests-r2.log
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-native-pdf-intake-20261005/ios/VisePanda/VisePandaTests/NativePDFIntakeTests.swift:76:137: error: missing argument for parameter 'generation' in call
+    |                                                                                                                                         `- error: missing argument for parameter 'generation' in call
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-native-pdf-intake-20261005/ios/VisePanda/VisePandaTests/NativePDFIntakeTests.swift:89:107: error: missing argument for parameter 'generation' in call
+    |                                                                                                           `- error: missing argument for parameter 'generation' in call
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-native-pdf-intake-20261005/ios/VisePanda/VisePandaTests/NativePDFIntakeTests.swift:76:137: error: missing argument for parameter 'generation' in call
+    |                                                                                                                                         `- error: missing argument for parameter 'generation' in call
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-native-pdf-intake-20261005/ios/VisePanda/VisePandaTests/NativePDFIntakeTests.swift:89:107: error: missing argument for parameter 'generation' in call
+    |                                                                                                           `- error: missing argument for parameter 'generation' in call
+** TEST FAILED **
+
+tests-r4-pass
+source log: /tmp/vpj55-native-pdf-tests-r4.log
+Test Case '-[VisePandaTests.NativePDFIntakeTests testActiveActionDictionaryIsRejected]' started.
+Test Case '-[VisePandaTests.NativePDFIntakeTests testActiveActionDictionaryIsRejected]' passed (0.003 seconds).
+Test Case '-[VisePandaTests.NativePDFIntakeTests testCanonicalDigestMatchesTypeScriptForUnicodeAndSlashes]' started.
+Test Case '-[VisePandaTests.NativePDFIntakeTests testCanonicalDigestMatchesTypeScriptForUnicodeAndSlashes]' passed (0.004 seconds).
+Test Case '-[VisePandaTests.NativePDFIntakeTests testCopyIsOwnerScopedExpiresAndNeverDeletesOriginal]' started.
+Test Case '-[VisePandaTests.NativePDFIntakeTests testCopyIsOwnerScopedExpiresAndNeverDeletesOriginal]' passed (0.009 seconds).
+Test Case '-[VisePandaTests.NativePDFIntakeTests testEncryptedInvalidAndOversizedAreRejected]' started.
+Test Case '-[VisePandaTests.NativePDFIntakeTests testEncryptedInvalidAndOversizedAreRejected]' passed (0.003 seconds).
+Test Case '-[VisePandaTests.NativePDFIntakeTests testJournalRetainsExactBytesAndRejectsChangedOperationOrActor]' started.
+Test Case '-[VisePandaTests.NativePDFIntakeTests testJournalRetainsExactBytesAndRejectsChangedOperationOrActor]' passed (0.005 seconds).
+Test Case '-[VisePandaTests.NativePDFIntakeTests testNoSilentPageTruncationOrScannedTextInvention]' started.
+Test Case '-[VisePandaTests.NativePDFIntakeTests testNoSilentPageTruncationOrScannedTextInvention]' passed (0.002 seconds).
+Test Case '-[VisePandaTests.NativePDFIntakeTests testRealPDFTextAndPageLocators]' started.
+Test Case '-[VisePandaTests.NativePDFIntakeTests testRealPDFTextAndPageLocators]' passed (0.002 seconds).
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.028 (0.030) seconds
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.028 (0.030) seconds
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.028 (0.031) seconds
+** TEST SUCCEEDED **
+
+build-final-pass
+source log: /tmp/vpj55-native-pdf-build-final.log
+** BUILD SUCCEEDED **
+
+cancel/year-zero/journal delta
+Test Case '-[VisePandaTests.NativePDFIntakeTests testCancelTombstoneHasClosedUnboundAndBoundShapes]' started.
+Test Case '-[VisePandaTests.NativePDFIntakeTests testCancelTombstoneHasClosedUnboundAndBoundShapes]' passed (0.012 seconds).
+Test Case '-[VisePandaTests.NativePDFIntakeTests testCanonicalDigestMatchesTypeScriptForUnicodeAndSlashes]' started.
+Test Case '-[VisePandaTests.NativePDFIntakeTests testCanonicalDigestMatchesTypeScriptForUnicodeAndSlashes]' passed (0.001 seconds).
+Test Case '-[VisePandaTests.NativePDFIntakeTests testJournalRetainsExactBytesAndRejectsChangedOperationOrActor]' started.
+Test Case '-[VisePandaTests.NativePDFIntakeTests testJournalRetainsExactBytesAndRejectsChangedOperationOrActor]' passed (0.005 seconds).
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.018 (0.019) seconds
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.018 (0.019) seconds
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.018 (0.019) seconds
+** TEST SUCCEEDED **
+
+Real Native R3 (source-bound combined a44e19773271b983c09298957baeeb2ca3b50ed6)
+** TEST BUILD SUCCEEDED **
+Test Case '-[VisePandaTests.NativePDFIntegrationTests testPDFKitCorrectPreviewOriginalConfirmReloadAndReceipt]' started.
+Test Case '-[VisePandaTests.NativePDFIntegrationTests testPDFKitCorrectPreviewOriginalConfirmReloadAndReceipt]' passed (1.781 seconds).
+	 Executed 1 test, with 0 failures (0 unexpected) in 1.781 (1.782) seconds
+	 Executed 1 test, with 0 failures (0 unexpected) in 1.781 (1.782) seconds
+	 Executed 1 test, with 0 failures (0 unexpected) in 1.781 (1.782) seconds
+** TEST EXECUTE SUCCEEDED **

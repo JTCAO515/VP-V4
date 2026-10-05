@@ -1,0 +1,1181 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild build-for-testing -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -derivedDataPath /tmp/vpj55-native-pdf-dd CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- -destination "generic/platform=iOS Simulator"
+
+Build settings from command line:
+    CODE_SIGN_IDENTITY = -
+    CODE_SIGNING_ALLOWED = YES
+
+2026-10-05 19:00:55.908 xcodebuild[85674:2309779] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionsModels.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-05 19:00:55.908 xcodebuild[85674:2309779] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionsStore.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-05 19:00:55.908 xcodebuild[85674:2309779] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionDestination.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+note: Using codesigning identity override: -
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (3 targets)
+    Target 'VisePandaUITests' in project 'VisePanda'
+        ➜ Explicit dependency on target 'VisePanda' in project 'VisePanda'
+    Target 'VisePandaTests' in project 'VisePanda'
+        ➜ Explicit dependency on target 'VisePanda' in project 'VisePanda'
+    Target 'VisePanda' in project 'VisePanda' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/xcstringstool compile --dry-run --output-directory /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePanda/Resources/Localizable.xcstrings
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --print-asset-tag-combinations --output-format xml1 /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePanda/Resources/Assets.xcassets
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/xcstringstool compile --dry-run --output-directory /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePanda/Resources/InfoPlist.xcstrings
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+
+Build description signature: 52398bea21032724d759b28d9cd7fe4c
+Build description path: /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/XCBuildData/52398bea21032724d759b28d9cd7fe4c.xcbuilddata
+note: Run script build phase 'Copy AMap resources for device' will be run during every build because the option to run the script phase "Based on dependency analysis" is unchecked. (in target 'VisePanda' from project 'VisePanda')
+PhaseScriptExecution Copy\ AMap\ resources\ for\ device /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Script-800000000000000000000007.sh (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    export ACTION\=build
+    export AD_HOC_CODE_SIGNING_ALLOWED\=YES
+    export AGGREGATE_TRACKED_DOMAINS\=YES
+    export ALLOW_BUILD_REQUEST_OVERRIDES\=NO
+    export ALLOW_TARGET_PLATFORM_SPECIALIZATION\=NO
+    export ALTERNATE_GROUP\=staff
+    export ALTERNATE_MODE\=u+w,go-w,a+rX
+    export ALTERNATE_OWNER\=jtsm5p
+    export ALTERNATIVE_DISTRIBUTION_WEB\=NO
+    export ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES\=NO
+    export ALWAYS_SEARCH_USER_PATHS\=NO
+    export ALWAYS_USE_SEPARATE_HEADERMAPS\=NO
+    export APPLICATION_EXTENSION_API_ONLY\=NO
+    export APPLY_RULES_IN_COPY_FILES\=NO
+    export APPLY_RULES_IN_COPY_HEADERS\=NO
+    export APP_SHORTCUTS_ENABLE_FLEXIBLE_MATCHING\=YES
+    export ARCHS\=arm64\ x86_64
+    export ARCHS_BASE\=arm64\ x86_64
+    export ARCHS_STANDARD\=arm64\ x86_64
+    export ARCHS_STANDARD_32_64_BIT\=arm64\ x86_64
+    export ARCHS_STANDARD_64_BIT\=arm64\ x86_64
+    export ARCHS_STANDARD_INCLUDING_64_BIT\=arm64\ x86_64
+    export ARCHS_UNIVERSAL_IPHONE_OS\=arm64\ x86_64
+    export ASSETCATALOG_COMPILER_APPICON_NAME\=AppIcon
+    export ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS\=YES
+    export AUTOMATICALLY_MERGE_DEPENDENCIES\=NO
+    export AUTOMATION_APPLE_EVENTS\=NO
+    export AVAILABLE_PLATFORMS\=android\ appletvos\ appletvsimulator\ driverkit\ freebsd\ iphoneos\ iphonesimulator\ linux\ macosx\ none\ openbsd\ qnx\ staticlinux\ watchos\ watchsimulator\ webassembly\ xros\ xrsimulator
+    export AppIdentifierPrefix\=NLD68762GG.
+    export BUILD_ACTIVE_RESOURCES_ONLY\=NO
+    export BUILD_COMPONENTS\=headers\ build
+    export BUILD_DIR\=/tmp/vpj55-native-pdf-dd/Build/Products
+    export BUILD_LIBRARY_FOR_DISTRIBUTION\=NO
+    export BUILD_ONLY_KNOWN_LOCALIZATIONS\=NO
+    export BUILD_ROOT\=/tmp/vpj55-native-pdf-dd/Build/Products
+    export BUILD_STYLE\=
+    export BUILD_VARIANTS\=normal
+    export BUILT_PRODUCTS_DIR\=/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator
+    export BUNDLE_CONTENTS_FOLDER_PATH_deep\=Contents/
+    export BUNDLE_EXECUTABLE_FOLDER_NAME_deep\=MacOS
+    export BUNDLE_EXTENSIONS_FOLDER_PATH\=Extensions
+    export BUNDLE_FORMAT\=shallow
+    export BUNDLE_FRAMEWORKS_FOLDER_PATH\=Frameworks
+    export BUNDLE_PLUGINS_FOLDER_PATH\=PlugIns
+    export BUNDLE_PRIVATE_HEADERS_FOLDER_PATH\=PrivateHeaders
+    export BUNDLE_PUBLIC_HEADERS_FOLDER_PATH\=Headers
+    export CACHE_ROOT\=/var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/C/com.apple.DeveloperTools/27.0-27A266a/Xcode
+    export CCHROOT\=/var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/C/com.apple.DeveloperTools/27.0-27A266a/Xcode
+    export CHMOD\=/bin/chmod
+    export CHOWN\=chown
+    export CLANG_CACHE_FINE_GRAINED_OUTPUTS\=YES
+    export CLANG_ENABLE_EXPLICIT_MODULES\=YES
+    export CLANG_ENABLE_MODULES\=YES
+    export CLANG_ENABLE_OBJC_ARC\=YES
+    export CLANG_MODULES_BUILD_SESSION_FILE\=/tmp/vpj55-native-pdf-dd/ModuleCache.noindex/Session.modulevalidation
+    export CLASS_FILE_DIR\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/JavaClasses
+    export CLEAN_PRECOMPS\=YES
+    export CLONE_HEADERS\=NO
+    export CODESIGNING_FOLDER_PATH\=/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app
+    export CODE_SIGNING_ALLOWED\=YES
+    export CODE_SIGNING_REQUIRED\=YES
+    export CODE_SIGN_CONTEXT_CLASS\=XCiPhoneSimulatorCodeSignContext
+    export CODE_SIGN_IDENTITY\=-
+    export CODE_SIGN_INJECT_BASE_ENTITLEMENTS\=YES
+    export CODE_SIGN_STYLE\=Automatic
+    export COLOR_DIAGNOSTICS\=NO
+    export COMBINE_HIDPI_IMAGES\=NO
+    export COMPILATION_CACHE_CAS_PATH\=/tmp/vpj55-native-pdf-dd/CompilationCache.noindex
+    export COMPILATION_CACHE_KEEP_CAS_DIRECTORY\=YES
+    export COMPILER_INDEX_STORE_ENABLE\=Default
+    export COMPOSITE_SDK_DIRS\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/CompositeSDKs
+    export COMPRESS_PNG_FILES\=YES
+    export CONFIGURATION\=Debug
+    export CONFIGURATION_BUILD_DIR\=/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator
+    export CONFIGURATION_TEMP_DIR\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator
+    export CONTENTS_FOLDER_PATH\=VisePanda.app
+    export CONTENTS_FOLDER_PATH_SHALLOW_BUNDLE_NO\=VisePanda.app/Contents
+    export CONTENTS_FOLDER_PATH_SHALLOW_BUNDLE_YES\=VisePanda.app
+    export COPYING_PRESERVES_HFS_DATA\=NO
+    export COPY_HEADERS_RUN_UNIFDEF\=NO
+    export COPY_PHASE_STRIP\=NO
+    export CORRESPONDING_DEVICE_PLATFORM_DIR\=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform
+    export CORRESPONDING_DEVICE_PLATFORM_NAME\=iphoneos
+    export CORRESPONDING_DEVICE_SDK_DIR\=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS27.0.sdk
+    export CORRESPONDING_DEVICE_SDK_NAME\=iphoneos27.0
+    export CP\=/bin/cp
+    export CREATE_INFOPLIST_SECTION_IN_BINARY\=NO
+    export CURRENT_ARCH\=undefined_arch
+    export CURRENT_PROJECT_VERSION\=1
+    export CURRENT_VARIANT\=normal
+    export DEAD_CODE_STRIPPING\=YES
+    export DEBUGGING_SYMBOLS\=YES
+    export DEBUG_INFORMATION_FORMAT\=dwarf
+    export DEBUG_INFORMATION_VERSION\=compiler-default
+    export DEFAULT_COMPILER\=com.apple.compilers.llvm.clang.1_0
+    export DEFAULT_DEXT_INSTALL_PATH\=/System/Library/DriverExtensions
+    export DEFAULT_KEXT_INSTALL_PATH\=/System/Library/Extensions
+    export DEFINES_MODULE\=NO
+    export DEPLOYMENT_LOCATION\=NO
+    export DEPLOYMENT_POSTPROCESSING\=NO
+    export DEPLOYMENT_TARGET_SETTING_NAME\=IPHONEOS_DEPLOYMENT_TARGET
+    export DEPLOYMENT_TARGET_SUGGESTED_VALUES\=15.0\ 15.1\ 15.2\ 15.3\ 15.4\ 15.5\ 15.6\ 16.0\ 16.1\ 16.2\ 16.3\ 16.4\ 16.5\ 16.6\ 17.0\ 17.1\ 17.2\ 17.3\ 17.4\ 17.5\ 17.6\ 18.0\ 18.1\ 18.2\ 18.3\ 18.4\ 18.5\ 18.6\ 26.0\ 26.2\ 26.3\ 26.4\ 26.5\ 26.6\ 27.0
+    export DERIVED_FILES_DIR\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources
+    export DERIVED_FILE_DIR\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources
+    export DERIVED_SOURCES_DIR\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources
+    export DEVELOPER_APPLICATIONS_DIR\=/Applications/Xcode.app/Contents/Developer/Applications
+    export DEVELOPER_BIN_DIR\=/Applications/Xcode.app/Contents/Developer/usr/bin
+    export DEVELOPER_DIR\=/Applications/Xcode.app/Contents/Developer
+    export DEVELOPER_FRAMEWORKS_DIR\=/Applications/Xcode.app/Contents/Developer/Library/Frameworks
+    export DEVELOPER_FRAMEWORKS_DIR_QUOTED\=/Applications/Xcode.app/Contents/Developer/Library/Frameworks
+    export DEVELOPER_LIBRARY_DIR\=/Applications/Xcode.app/Contents/Developer/Library
+    export DEVELOPER_SDK_DIR\=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
+    export DEVELOPER_TOOLS_DIR\=/Applications/Xcode.app/Contents/Developer/Tools
+    export DEVELOPER_USR_DIR\=/Applications/Xcode.app/Contents/Developer/usr
+    export DEVELOPMENT_LANGUAGE\=en
+    export DIAGNOSE_MISSING_TARGET_DEPENDENCIES\=YES
+    export DIFF\=/usr/bin/diff
+    export DOCUMENTATION_FOLDER_PATH\=VisePanda.app/en.lproj/Documentation
+    export DONT_GENERATE_INFOPLIST_FILE\=NO
+    export DSTROOT\=/tmp/VisePanda.dst
+    export DT_TOOLCHAIN_DIR\=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain
+    export DWARF_DSYM_FILE_NAME\=VisePanda.app.dSYM
+    export DWARF_DSYM_FILE_SHOULD_ACCOMPANY_PRODUCT\=NO
+    export DWARF_DSYM_FOLDER_PATH\=/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator
+    export DYNAMIC_LIBRARY_EXTENSION\=dylib
+    export EAGER_COMPILATION_ALLOW_SCRIPTS\=NO
+    export EAGER_LINKING\=NO
+    export EFFECTIVE_PLATFORM_NAME\=-iphonesimulator
+    export EFFECTIVE_SWIFT_VERSION\=6
+    export EMBEDDED_CONTENT_CONTAINS_SWIFT\=NO
+    export EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE\=NO
+    export ENABLE_APP_SANDBOX\=NO
+    export ENABLE_CODE_COVERAGE\=YES
+    export ENABLE_COHORT_ARCHS\=YES
+    export ENABLE_CPLUSPLUS_BOUNDS_SAFE_BUFFERS\=NO
+    export ENABLE_C_BOUNDS_SAFETY\=NO
+    export ENABLE_DEBUG_DYLIB\=YES
+    export ENABLE_DEFAULT_HEADER_SEARCH_PATHS\=YES
+    export ENABLE_DEFAULT_SEARCH_PATHS\=YES
+    export ENABLE_ENHANCED_SECURITY\=NO
+    export ENABLE_HARDENED_RUNTIME\=NO
+    export ENABLE_HARDWARE_CHECKED_POINTER_ARITHMETIC_SLICE\=NO
+    export ENABLE_HEADER_DEPENDENCIES\=YES
+    export ENABLE_INCOMING_NETWORK_CONNECTIONS\=NO
+    export ENABLE_ON_DEMAND_RESOURCES\=YES
+    export ENABLE_OUTGOING_NETWORK_CONNECTIONS\=NO
+    export ENABLE_POINTER_AUTHENTICATION\=NO
+    export ENABLE_PREVIEWS\=NO
+    export ENABLE_RESOURCE_ACCESS_AUDIO_INPUT\=NO
+    export ENABLE_RESOURCE_ACCESS_BLUETOOTH\=NO
+    export ENABLE_RESOURCE_ACCESS_CALENDARS\=NO
+    export ENABLE_RESOURCE_ACCESS_CAMERA\=NO
+    export ENABLE_RESOURCE_ACCESS_CONTACTS\=NO
+    export ENABLE_RESOURCE_ACCESS_LOCATION\=NO
+    export ENABLE_RESOURCE_ACCESS_PHOTO_LIBRARY\=NO
+    export ENABLE_RESOURCE_ACCESS_PRINTING\=NO
+    export ENABLE_RESOURCE_ACCESS_USB\=NO
+    export ENABLE_SDK_IMPORTS\=NO
+    export ENABLE_SECURITY_COMPILER_WARNINGS\=NO
+    export ENABLE_TESTABILITY\=YES
+    export ENABLE_TESTING_SEARCH_PATHS\=NO
+    export ENABLE_USER_SCRIPT_SANDBOXING\=NO
+    export ENABLE_XOJIT_PREVIEWS\=YES
+    export ENFORCE_VALID_ARCHS\=YES
+    export ENTITLEMENTS_ALLOWED\=NO
+    export ENTITLEMENTS_DESTINATION\=__entitlements
+    export ENTITLEMENTS_REQUIRED\=NO
+    export EXCLUDED_INSTALLSRC_SUBDIRECTORY_PATTERNS\=.DS_Store\ .svn\ .git\ .hg\ CVS
+    export EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES\=\*.nib\ \*.lproj\ \*.framework\ \*.gch\ \*.xcode\*\ \*.xcassets\ \*.icon\ \(\*\)\ .DS_Store\ CVS\ .svn\ .git\ .hg\ \*.pbproj\ \*.pbxproj
+    export EXECUTABLES_FOLDER_PATH\=VisePanda.app/Executables
+    export EXECUTABLE_BLANK_INJECTION_DYLIB_PATH\=VisePanda.app/__preview.dylib
+    export EXECUTABLE_DEBUG_DYLIB_INSTALL_NAME\=@rpath/VisePanda.debug.dylib
+    export EXECUTABLE_DEBUG_DYLIB_PATH\=VisePanda.app/VisePanda.debug.dylib
+    export EXECUTABLE_FOLDER_PATH\=VisePanda.app
+    export EXECUTABLE_FOLDER_PATH_SHALLOW_BUNDLE_NO\=VisePanda.app/MacOS
+    export EXECUTABLE_FOLDER_PATH_SHALLOW_BUNDLE_YES\=VisePanda.app
+    export EXECUTABLE_NAME\=VisePanda
+    export EXECUTABLE_PATH\=VisePanda.app/VisePanda
+    export EXPANDED_CODE_SIGN_IDENTITY\=-
+    export EXPANDED_CODE_SIGN_IDENTITY_NAME\=Sign\ to\ Run\ Locally
+    export EXTENSIONS_FOLDER_PATH\=VisePanda.app/Extensions
+    export FILE_LIST\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects/LinkFileList
+    export FIXED_FILES_DIR\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/FixedFiles
+    export FRAMEWORKS_FOLDER_PATH\=VisePanda.app/Frameworks
+    export FRAMEWORK_FLAG_PREFIX\=-framework
+    export FRAMEWORK_SEARCH_PATHS\=/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator\ 
+    export FRAMEWORK_VERSION\=A
+    export FULL_PRODUCT_NAME\=VisePanda.app
+    export FUSE_BUILD_PHASES\=YES
+    export FUSE_BUILD_SCRIPT_PHASES\=NO
+    export GCC3_VERSION\=3.3
+    export GCC_C_LANGUAGE_STANDARD\=gnu17
+    export GCC_DYNAMIC_NO_PIC\=NO
+    export GCC_INLINES_ARE_PRIVATE_EXTERN\=YES
+    export GCC_OBJC_LEGACY_DISPATCH\=YES
+    export GCC_OPTIMIZATION_LEVEL\=0
+    export GCC_PFE_FILE_C_DIALECTS\=c\ objective-c\ c++\ objective-c++
+    export GCC_SYMBOLS_PRIVATE_EXTERN\=NO
+    export GCC_TREAT_WARNINGS_AS_ERRORS\=NO
+    export GCC_VERSION\=com.apple.compilers.llvm.clang.1_0
+    export GCC_VERSION_IDENTIFIER\=com_apple_compilers_llvm_clang_1_0
+    export GCC_WARN_64_TO_32_BIT_CONVERSION\=NO
+    export GENERATED_MODULEMAP_DIR\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/GeneratedModuleMaps-iphonesimulator
+    export GENERATE_INFOPLIST_FILE\=YES
+    export GENERATE_INTERMEDIATE_TEXT_BASED_STUBS\=YES
+    export GENERATE_PKGINFO_FILE\=YES
+    export GENERATE_PRELINK_OBJECT_FILE\=NO
+    export GENERATE_PROFILING_CODE\=NO
+    export GENERATE_TEXT_BASED_STUBS\=NO
+    export GID\=20
+    export GROUP\=staff
+    export HEADERMAP_INCLUDES_FLAT_ENTRIES_FOR_TARGET_BEING_BUILT\=YES
+    export HEADERMAP_INCLUDES_FRAMEWORK_ENTRIES_FOR_ALL_PRODUCT_TYPES\=YES
+    export HEADERMAP_INCLUDES_FRAMEWORK_ENTRIES_FOR_TARGETS_NOT_BEING_BUILT\=YES
+    export HEADERMAP_INCLUDES_NONPUBLIC_NONPRIVATE_HEADERS\=YES
+    export HEADERMAP_INCLUDES_PROJECT_HEADERS\=YES
+    export HEADERMAP_USES_FRAMEWORK_PREFIX_ENTRIES\=YES
+    export HEADERMAP_USES_VFS\=NO
+    export HEADER_SEARCH_PATHS\=/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/include\ 
+    export HOME\=/Users/jtsm5p
+    export HOST_ARCH\=arm64
+    export HOST_PLATFORM\=macosx
+    export ICONV\=/usr/bin/iconv
+    export IMPLICIT_DEPENDENCY_DOMAIN\=default
+    export INDEX_ENABLE_OPTIMIZATION_LEVEL_OVERRIDE\=YES
+    export INDEX_STORE_COMPRESS\=NO
+    export INDEX_STORE_ONLY_PROJECT_FILES\=NO
+    export INFOPLIST_ENABLE_CFBUNDLEICONS_MERGE\=YES
+    export INFOPLIST_EXPAND_BUILD_SETTINGS\=YES
+    export INFOPLIST_FILE\=VisePanda/NativeEnvironment.plist
+    export INFOPLIST_KEY_CFBundleDisplayName\=VisePanda
+    export INFOPLIST_KEY_LSApplicationCategoryType\=public.app-category.travel
+    export INFOPLIST_KEY_UIApplicationSceneManifest_Generation\=YES
+    export INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents\=YES
+    export INFOPLIST_KEY_UILaunchScreen_Generation\=YES
+    export INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone\=UIInterfaceOrientationPortrait
+    export INFOPLIST_OUTPUT_FORMAT\=binary
+    export INFOPLIST_PATH\=VisePanda.app/Info.plist
+    export INFOPLIST_PREPROCESS\=NO
+    export INFOSTRINGS_PATH\=VisePanda.app/en.lproj/InfoPlist.strings
+    export INLINE_PRIVATE_FRAMEWORKS\=NO
+    export INSTALLAPI_IGNORE_SKIP_INSTALL\=YES
+    export INSTALLHDRS_COPY_PHASE\=NO
+    export INSTALLHDRS_SCRIPT_PHASE\=NO
+    export INSTALL_DIR\=/tmp/VisePanda.dst/Applications
+    export INSTALL_GROUP\=staff
+    export INSTALL_MODE_FLAG\=u+w,go-w,a+rX
+    export INSTALL_OWNER\=jtsm5p
+    export INSTALL_PATH\=/Applications
+    export INSTALL_ROOT\=/tmp/VisePanda.dst
+    export IPHONEOS_DEPLOYMENT_TARGET\=17.0
+    export IS_UNOPTIMIZED_BUILD\=YES
+    export JAVAC_DEFAULT_FLAGS\=-J-Xms64m\ -J-XX:NewSize\=4M\ -J-Dfile.encoding\=UTF8
+    export JAVA_APP_STUB\=/System/Library/Frameworks/JavaVM.framework/Resources/MacOS/JavaApplicationStub
+    export JAVA_ARCHIVE_CLASSES\=YES
+    export JAVA_ARCHIVE_TYPE\=JAR
+    export JAVA_COMPILER\=/usr/bin/javac
+    export JAVA_FOLDER_PATH\=VisePanda.app/Java
+    export JAVA_FRAMEWORK_RESOURCES_DIRS\=Resources
+    export JAVA_JAR_FLAGS\=cv
+    export JAVA_SOURCE_SUBDIR\=.
+    export JAVA_USE_DEPENDENCIES\=YES
+    export JAVA_ZIP_FLAGS\=-urg
+    export JIKES_DEFAULT_FLAGS\=+E\ +OLDCSO
+    export KEEP_PRIVATE_EXTERNS\=NO
+    export LD_DEPENDENCY_INFO_FILE\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/undefined_arch/VisePanda_dependency_info.dat
+    export LD_ENTITLEMENTS_SECTION\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.app-Simulated.xcent
+    export LD_ENTITLEMENTS_SECTION_DER\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.app-Simulated.xcent.der
+    export LD_EXPORT_GLOBAL_SYMBOLS\=YES
+    export LD_EXPORT_SYMBOLS\=YES
+    export LD_GENERATE_MAP_FILE\=NO
+    export LD_MAP_FILE_PATH\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-LinkMap-normal-undefined_arch.txt
+    export LD_NO_PIE\=NO
+    export LD_QUOTE_LINKER_ARGUMENTS_FOR_COMPILER_DRIVER\=YES
+    export LD_RUNPATH_SEARCH_PATHS_YES\=@loader_path/../Frameworks
+    export LD_SHARED_CACHE_ELIGIBLE\=Automatic
+    export LD_WARN_DUPLICATE_LIBRARIES\=NO
+    export LD_WARN_UNUSED_DYLIBS\=NO
+    export LEGACY_DEVELOPER_DIR\=/Applications/Xcode.app/Contents/PlugIns/Xcode3Core.ideplugin/Contents/SharedSupport/Developer
+    export LEX\=lex
+    export LIBRARY_DEXT_INSTALL_PATH\=/Library/DriverExtensions
+    export LIBRARY_FLAG_NOSPACE\=YES
+    export LIBRARY_FLAG_PREFIX\=-l
+    export LIBRARY_KEXT_INSTALL_PATH\=/Library/Extensions
+    export LIBRARY_SEARCH_PATHS\=/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator\ 
+    export LINKER_DISPLAYS_MANGLED_NAMES\=NO
+    export LINK_FILE_LIST_normal_arm64\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.LinkFileList
+    export LINK_FILE_LIST_normal_x86_64\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.LinkFileList
+    export LINK_OBJC_RUNTIME\=YES
+    export LINK_WITH_STANDARD_LIBRARIES\=YES
+    export LLVM_TARGET_TRIPLE_OS_VERSION\=ios17.0
+    export LLVM_TARGET_TRIPLE_SUFFIX\=-simulator
+    export LLVM_TARGET_TRIPLE_VENDOR\=apple
+    export LM_AUX_CONST_METADATA_LIST_PATH_normal_arm64\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.SwiftConstValuesFileList
+    export LM_AUX_CONST_METADATA_LIST_PATH_normal_x86_64\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.SwiftConstValuesFileList
+    export LOCALIZATION_EXPORT_SUPPORTED\=YES
+    export LOCALIZATION_PREFERS_STRING_CATALOGS\=NO
+    export LOCALIZED_RESOURCES_FOLDER_PATH\=VisePanda.app/en.lproj
+    export LOCALIZED_STRING_CODE_COMMENTS\=NO
+    export LOCALIZED_STRING_MACRO_NAMES\=NSLocalizedString\ CFCopyLocalizedString
+    export LOCALIZED_STRING_SWIFTUI_SUPPORT\=YES
+    export LOCAL_ADMIN_APPS_DIR\=/Applications/Utilities
+    export LOCAL_APPS_DIR\=/Applications
+    export LOCAL_DEVELOPER_DIR\=/Library/Developer
+    export LOCAL_LIBRARY_DIR\=/Library
+    export LOCROOT\=/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    export LOCSYMROOT\=/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    export MACH_O_TYPE\=mh_execute
+    export MAC_OS_X_PRODUCT_BUILD_VERSION\=26A434
+    export MAC_OS_X_VERSION_ACTUAL\=270001
+    export MAC_OS_X_VERSION_MAJOR\=270000
+    export MAC_OS_X_VERSION_MINOR\=270000
+    export MAKE_MERGEABLE\=NO
+    export MARKETING_VERSION\=0.1.0
+    export MERGEABLE_LIBRARY\=NO
+    export MERGED_BINARY_TYPE\=none
+    export MERGE_LINKED_LIBRARIES\=NO
+    export METAL_LIBRARY_FILE_BASE\=default
+    export METAL_LIBRARY_OUTPUT_DIR\=/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app
+    export MODULES_FOLDER_PATH\=VisePanda.app/Modules
+    export MODULE_CACHE_DIR\=/tmp/vpj55-native-pdf-dd/ModuleCache.noindex
+    export NATIVE_ARCH\=arm64
+    export NATIVE_ARCH_32_BIT\=arm
+    export NATIVE_ARCH_64_BIT\=arm64
+    export NATIVE_ARCH_ACTUAL\=arm64
+    export NO_COMMON\=YES
+    export OBJC_ABI_VERSION\=2
+    export OBJECT_FILE_DIR\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects
+    export OBJECT_FILE_DIR_normal\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal
+    export OBJROOT\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex
+    export ONLY_ACTIVE_ARCH\=NO
+    export ONLY_ARCH\=multiple_archs
+    export OS\=MACOS
+    export OSAC\=/usr/bin/osacompile
+    export PACKAGE_TYPE\=com.apple.package-type.wrapper.application
+    export PASCAL_STRINGS\=YES
+    export PATH\=/Applications/Xcode.app/Contents/SharedFrameworks/SwiftBuild.framework/Versions/A/PlugIns/SWBBuildService.bundle/Contents/PlugIns/SWBUniversalPlatformPlugin.bundle/Contents/Frameworks/SWBUniversalPlatform.framework/Resources:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/local/bin:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/libexec:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/usr/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/usr/local/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/local/bin:/Applications/Xcode.app/Contents/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/usr/local/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/jtsm5p/.codex/tmp/arg0/codex-arg0gaYGbJ:/Users/jtsm5p/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/Users/jtsm5p/.local/bin:/Users/jtsm5p/.docker/bin:/Users/jtsm5p/.lmstudio/bin:/Users/jtsm5p/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources:/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS
+    export PATH_PREFIXES_EXCLUDED_FROM_HEADER_DEPENDENCIES\=/usr/include\ /usr/local/include\ /System/Library/Frameworks\ /System/Library/PrivateFrameworks\ /Applications/Xcode.app/Contents/Developer/Headers\ /Applications/Xcode.app/Contents/Developer/SDKs\ /Applications/Xcode.app/Contents/Developer/Platforms
+    export PBDEVELOPMENTPLIST_PATH\=VisePanda.app/pbdevelopment.plist
+    export PER_ARCH_MODULE_FILE_DIR\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/undefined_arch
+    export PER_ARCH_OBJECT_FILE_DIR\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/undefined_arch
+    export PER_VARIANT_OBJECT_FILE_DIR\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal
+    export PKGINFO_FILE_PATH\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/PkgInfo
+    export PKGINFO_PATH\=VisePanda.app/PkgInfo
+    export PLATFORM_DEVELOPER_APPLICATIONS_DIR\=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Applications
+    export PLATFORM_DEVELOPER_BIN_DIR\=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin
+    export PLATFORM_DEVELOPER_LIBRARY_DIR\=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library
+    export PLATFORM_DEVELOPER_SDK_DIR\=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs
+    export PLATFORM_DEVELOPER_TOOLS_DIR\=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Tools
+    export PLATFORM_DEVELOPER_USR_DIR\=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr
+    export PLATFORM_DIR\=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform
+    export PLATFORM_DISPLAY_NAME\=iOS\ Simulator
+    export PLATFORM_FAMILY_NAME\=iOS
+    export PLATFORM_NAME\=iphonesimulator
+    export PLATFORM_PREFERRED_ARCH\=x86_64
+    export PLATFORM_PRODUCT_BUILD_VERSION\=24A430
+    export PLATFORM_REQUIRES_SWIFT_AUTOLINK_EXTRACT\=NO
+    export PLATFORM_REQUIRES_SWIFT_MODULEWRAP\=NO
+    export PLATFORM_USES_DSYMS\=YES
+    export PLIST_FILE_OUTPUT_FORMAT\=binary
+    export PLUGINS_FOLDER_PATH\=VisePanda.app/PlugIns
+    export PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR\=YES
+    export PRECOMP_DESTINATION_DIR\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/PrefixHeaders
+    export PRELINK_DEPENDENCY_INFO_FILE\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/undefined_arch/VisePanda_prelink_dependency_info.dat
+    export PRIVATE_HEADERS_FOLDER_PATH\=VisePanda.app/PrivateHeaders
+    export PROCESSED_INFOPLIST_PATH\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/undefined_arch/Processed-Info.plist
+    export PRODUCT_BUNDLE_IDENTIFIER\=space.go2china.VisePanda
+    export PRODUCT_BUNDLE_PACKAGE_TYPE\=APPL
+    export PRODUCT_MODULE_NAME\=VisePanda
+    export PRODUCT_NAME\=VisePanda
+    export PRODUCT_SETTINGS_PATH\=/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePanda/NativeEnvironment.plist
+    export PRODUCT_TYPE\=com.apple.product-type.application
+    export PROFILING_CODE\=NO
+    export PROJECT\=VisePanda
+    export PROJECT_DERIVED_FILE_DIR\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/DerivedSources
+    export PROJECT_DIR\=/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    export PROJECT_FILE_PATH\=/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePanda.xcodeproj
+    export PROJECT_GUID\=97c7769df369d917a11b704107fd7f24
+    export PROJECT_NAME\=VisePanda
+    export PROJECT_TEMP_DIR\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build
+    export PROJECT_TEMP_ROOT\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex
+    export PROVISIONING_PROFILE_REQUIRED\=NO
+    export PROVISIONING_PROFILE_REQUIRED_YES_YES\=YES
+    export PROVISIONING_PROFILE_SUPPORTED\=YES
+    export PUBLIC_HEADERS_FOLDER_PATH\=VisePanda.app/Headers
+    export RECOMMENDED_IPHONEOS_DEPLOYMENT_TARGET\=17.0
+    export RECURSIVE_SEARCH_PATHS_FOLLOW_SYMLINKS\=YES
+    export REMOVE_CVS_FROM_RESOURCES\=YES
+    export REMOVE_GIT_FROM_RESOURCES\=YES
+    export REMOVE_HEADERS_FROM_EMBEDDED_BUNDLES\=YES
+    export REMOVE_HG_FROM_RESOURCES\=YES
+    export REMOVE_STATIC_EXECUTABLES_FROM_EMBEDDED_BUNDLES\=YES
+    export REMOVE_SVN_FROM_RESOURCES\=YES
+    export RESCHEDULE_INDEPENDENT_HEADERS_PHASES\=YES
+    export REZ_COLLECTOR_DIR\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/ResourceManagerResources
+    export REZ_OBJECTS_DIR\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/ResourceManagerResources/Objects
+    export REZ_SEARCH_PATHS\=/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator\ 
+    export RPATH_ORIGIN\=@loader_path
+    export RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES\=NO
+    export RUNTIME_EXCEPTION_ALLOW_JIT\=NO
+    export RUNTIME_EXCEPTION_ALLOW_UNSIGNED_EXECUTABLE_MEMORY\=NO
+    export RUNTIME_EXCEPTION_DEBUGGING_TOOL\=NO
+    export RUNTIME_EXCEPTION_DISABLE_EXECUTABLE_PAGE_PROTECTION\=NO
+    export RUNTIME_EXCEPTION_DISABLE_LIBRARY_VALIDATION\=NO
+    export SCANNING_PCM_KEEP_CACHE_DIRECTORY\=YES
+    export SCAN_ALL_SOURCE_FILES_FOR_INCLUDES\=NO
+    export SCRIPTS_FOLDER_PATH\=VisePanda.app/Scripts
+    export SCRIPT_INPUT_FILE_0\=/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    export SCRIPT_INPUT_FILE_COUNT\=1
+    export SCRIPT_INPUT_FILE_LIST_COUNT\=0
+    export SCRIPT_OUTPUT_FILE_0\=/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/AMap.bundle
+    export SCRIPT_OUTPUT_FILE_COUNT\=1
+    export SCRIPT_OUTPUT_FILE_LIST_COUNT\=0
+    export SDKROOT\=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk
+    export SDK_DIR\=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk
+    export SDK_DIR_iphonesimulator\=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk
+    export SDK_DIR_iphonesimulator27_0\=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk
+    export SDK_NAME\=iphonesimulator27.0
+    export SDK_NAMES\=iphonesimulator27.0
+    export SDK_PRODUCT_BUILD_VERSION\=24A430
+    export SDK_STAT_CACHE_DIR\=/tmp/vpj55-native-pdf-dd
+    export SDK_STAT_CACHE_ENABLE\=YES
+    export SDK_STAT_CACHE_PATH\=/tmp/vpj55-native-pdf-dd/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    export SDK_VERSION\=27.0
+    export SDK_VERSION_ACTUAL\=270000
+    export SDK_VERSION_MAJOR\=270000
+    export SDK_VERSION_MINOR\=270000
+    export SED\=/usr/bin/sed
+    export SEPARATE_STRIP\=NO
+    export SEPARATE_SYMBOL_EDIT\=NO
+    export SET_DIR_MODE_OWNER_GROUP\=YES
+    export SET_FILE_MODE_OWNER_GROUP\=NO
+    export SHALLOW_BUNDLE\=YES
+    export SHALLOW_BUNDLE_TRIPLE\=ios-simulator
+    export SHALLOW_BUNDLE_ios_macabi\=NO
+    export SHALLOW_BUNDLE_macos\=NO
+    export SHARED_DERIVED_FILE_DIR\=/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/DerivedSources
+    export SHARED_FRAMEWORKS_FOLDER_PATH\=VisePanda.app/SharedFrameworks
+    export SHARED_PRECOMPS_DIR\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/PrecompiledHeaders
+    export SHARED_SUPPORT_FOLDER_PATH\=VisePanda.app/SharedSupport
+    export SKIP_COPYING_TEST_FRAMEWORKS\=YES
+    export SKIP_INSTALL\=NO
+    export SKIP_MERGEABLE_LIBRARY_BUNDLE_HOOK\=NO
+    export SOURCE_ROOT\=/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    export SRCROOT\=/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    export STRINGSDATA_DIR\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/undefined_arch
+    export STRINGSDATA_ROOT\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build
+    export STRINGS_FILE_INFOPLIST_RENAME\=YES
+    export STRINGS_FILE_OUTPUT_ENCODING\=binary
+    export STRING_CATALOG_GENERATE_SYMBOLS\=NO
+    export STRIP_BITCODE_FROM_COPIED_FILES\=NO
+    export STRIP_INSTALLED_PRODUCT\=NO
+    export STRIP_STYLE\=all
+    export STRIP_SWIFT_SYMBOLS\=YES
+    export SUPPORTED_DEVICE_FAMILIES\=1,2
+    export SUPPORTED_PLATFORMS\=iphoneos\ iphonesimulator
+    export SUPPORTS_MACCATALYST\=NO
+    export SUPPORTS_ON_DEMAND_RESOURCES\=YES
+    export SUPPORTS_TEXT_BASED_API\=NO
+    export SUPPRESS_WARNINGS\=NO
+    export SWIFTC_PASS_SDKROOT\=YES
+    export SWIFTC_PASS_SYSROOT\=NO
+    export SWIFT_ACTIVE_COMPILATION_CONDITIONS\=DEBUG\ 
+    export SWIFT_APPROACHABLE_CONCURRENCY\=YES
+    export SWIFT_COLOR_DIAGNOSTICS\=NO
+    export SWIFT_DEFAULT_ACTOR_ISOLATION\=MainActor
+    export SWIFT_EMIT_CONST_VALUE_PROTOCOLS\=AnyResolverProviding\ AppEntity\ AppEnum\ AppExtension\ AppIntent\ AppIntentsPackage\ AppShortcutProviding\ AppShortcutsProvider\ AppUnionValue\ AppUnionValueCasesProviding\ DynamicOptionsProvider\ EntityQuery\ ExtensionPointDefining\ IntentValueQuery\ Resolver\ TransientEntity\ _AssistantIntentsProvider\ _GenerativeFunctionExtractable\ _IntentValueRepresentable
+    export SWIFT_EMIT_LOC_STRINGS\=NO
+    export SWIFT_ENABLE_EXPLICIT_MODULES\=YES
+    export SWIFT_ENABLE_TESTABILITY\=YES
+    export SWIFT_OPTIMIZATION_LEVEL\=-Onone
+    export SWIFT_PLATFORM_TARGET_PREFIX\=ios
+    export SWIFT_RESPONSE_FILE_PATH_normal_arm64\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.SwiftFileList
+    export SWIFT_RESPONSE_FILE_PATH_normal_x86_64\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.SwiftFileList
+    export SWIFT_STRICT_CONCURRENCY\=complete
+    export SWIFT_VERSION\=6.0
+    export SYMROOT\=/tmp/vpj55-native-pdf-dd/Build/Products
+    export SYSROOT\=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk
+    export SYSTEM_ADMIN_APPS_DIR\=/Applications/Utilities
+    export SYSTEM_APPS_DIR\=/Applications
+    export SYSTEM_CORE_SERVICES_DIR\=/System/Library/CoreServices
+    export SYSTEM_DEMOS_DIR\=/Applications/Extras
+    export SYSTEM_DEVELOPER_APPS_DIR\=/Applications/Xcode.app/Contents/Developer/Applications
+    export SYSTEM_DEVELOPER_BIN_DIR\=/Applications/Xcode.app/Contents/Developer/usr/bin
+    export SYSTEM_DEVELOPER_DEMOS_DIR\=/Applications/Xcode.app/Contents/Developer/Applications/Utilities/Built\ Examples
+    export SYSTEM_DEVELOPER_DIR\=/Applications/Xcode.app/Contents/Developer
+    export SYSTEM_DEVELOPER_DOC_DIR\=/Applications/Xcode.app/Contents/Developer/ADC\ Reference\ Library
+    export SYSTEM_DEVELOPER_GRAPHICS_TOOLS_DIR\=/Applications/Xcode.app/Contents/Developer/Applications/Graphics\ Tools
+    export SYSTEM_DEVELOPER_JAVA_TOOLS_DIR\=/Applications/Xcode.app/Contents/Developer/Applications/Java\ Tools
+    export SYSTEM_DEVELOPER_PERFORMANCE_TOOLS_DIR\=/Applications/Xcode.app/Contents/Developer/Applications/Performance\ Tools
+    export SYSTEM_DEVELOPER_RELEASENOTES_DIR\=/Applications/Xcode.app/Contents/Developer/ADC\ Reference\ Library/releasenotes
+    export SYSTEM_DEVELOPER_TOOLS\=/Applications/Xcode.app/Contents/Developer/Tools
+    export SYSTEM_DEVELOPER_TOOLS_DOC_DIR\=/Applications/Xcode.app/Contents/Developer/ADC\ Reference\ Library/documentation/DeveloperTools
+    export SYSTEM_DEVELOPER_TOOLS_RELEASENOTES_DIR\=/Applications/Xcode.app/Contents/Developer/ADC\ Reference\ Library/releasenotes/DeveloperTools
+    export SYSTEM_DEVELOPER_USR_DIR\=/Applications/Xcode.app/Contents/Developer/usr
+    export SYSTEM_DEVELOPER_UTILITIES_DIR\=/Applications/Xcode.app/Contents/Developer/Applications/Utilities
+    export SYSTEM_DEXT_INSTALL_PATH\=/System/Library/DriverExtensions
+    export SYSTEM_DOCUMENTATION_DIR\=/Library/Documentation
+    export SYSTEM_EXTENSIONS_FOLDER_PATH\=VisePanda.app/SystemExtensions
+    export SYSTEM_EXTENSIONS_FOLDER_PATH_SHALLOW_BUNDLE_NO\=VisePanda.app/Library/SystemExtensions
+    export SYSTEM_EXTENSIONS_FOLDER_PATH_SHALLOW_BUNDLE_YES\=VisePanda.app/SystemExtensions
+    export SYSTEM_KEXT_INSTALL_PATH\=/System/Library/Extensions
+    export SYSTEM_LIBRARY_DIR\=/System/Library
+    export TAPI_DEMANGLE\=YES
+    export TAPI_ENABLE_PROJECT_HEADERS\=NO
+    export TAPI_LANGUAGE\=objective-c
+    export TAPI_LANGUAGE_STANDARD\=compiler-default
+    export TAPI_USE_SRCROOT\=YES
+    export TAPI_VERIFY_MODE\=Pedantic
+    export TARGETED_DEVICE_FAMILY\=1
+    export TARGETNAME\=VisePanda
+    export TARGET_BUILD_DIR\=/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator
+    export TARGET_NAME\=VisePanda
+    export TARGET_TEMP_DIR\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build
+    export TEMP_DIR\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build
+    export TEMP_FILES_DIR\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build
+    export TEMP_FILE_DIR\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build
+    export TEMP_ROOT\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex
+    export TEMP_SANDBOX_DIR\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/TemporaryTaskSandboxes
+    export TEST_FRAMEWORK_SEARCH_PATHS\=\ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks\ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks
+    export TEST_LIBRARY_SEARCH_PATHS\=\ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib
+    export TOOLCHAINS\=com.apple.dt.toolchain.XcodeDefault
+    export TOOLCHAIN_DIR\=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain
+    export TREAT_MISSING_BASELINES_AS_TEST_FAILURES\=NO
+    export TREAT_MISSING_SCRIPT_PHASE_OUTPUTS_AS_ERRORS\=NO
+    export TeamIdentifierPrefix\=NLD68762GG.
+    export UID\=501
+    export UNINSTALLED_PRODUCTS_DIR\=/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/UninstalledProducts
+    export UNLOCALIZED_RESOURCES_FOLDER_PATH\=VisePanda.app
+    export UNLOCALIZED_RESOURCES_FOLDER_PATH_SHALLOW_BUNDLE_NO\=VisePanda.app/Resources
+    export UNLOCALIZED_RESOURCES_FOLDER_PATH_SHALLOW_BUNDLE_YES\=VisePanda.app
+    export UNSTRIPPED_PRODUCT\=NO
+    export USER\=jtsm5p
+    export USER_APPS_DIR\=/Users/jtsm5p/Applications
+    export USER_LIBRARY_DIR\=/Users/jtsm5p/Library
+    export USE_DYNAMIC_NO_PIC\=YES
+    export USE_HEADERMAP\=YES
+    export USE_HEADER_SYMLINKS\=NO
+    export VALIDATE_DEVELOPMENT_ASSET_PATHS\=YES_ERROR
+    export VALIDATE_PRODUCT\=NO
+    export VALID_ARCHS\=arm64\ x86_64
+    export VERBOSE_PBXCP\=NO
+    export VERSIONPLIST_PATH\=VisePanda.app/version.plist
+    export VERSION_INFO_BUILDER\=jtsm5p
+    export VERSION_INFO_FILE\=VisePanda_vers.c
+    export VERSION_INFO_STRING\=\"@\(\#\)PROGRAM:VisePanda\ \ PROJECT:VisePanda-1\"
+    export WORKSPACE_DIR\=/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePanda.xcodeproj
+    export WRAPPER_EXTENSION\=app
+    export WRAPPER_NAME\=VisePanda.app
+    export WRAPPER_SUFFIX\=.app
+    export WRAP_ASSET_PACKS_IN_SEPARATE_DIRECTORIES\=NO
+    export XCODE_APP_SUPPORT_DIR\=/Applications/Xcode.app/Contents/Developer/Library/Xcode
+    export XCODE_PRODUCT_BUILD_VERSION\=27A266a
+    export XCODE_VERSION_ACTUAL\=2700
+    export XCODE_VERSION_MAJOR\=2700
+    export XCODE_VERSION_MINOR\=2700
+    export XPCSERVICES_FOLDER_PATH\=VisePanda.app/XPCServices
+    export YACC\=yacc
+    export _DISCOVER_COMMAND_LINE_LINKER_INPUTS\=YES
+    export _DISCOVER_COMMAND_LINE_LINKER_INPUTS_INCLUDE_WL\=YES
+    export _LD_MULTIARCH\=YES
+    export _SWIFT_EXPLICIT_MODULES_ALLOW_CXX_INTEROP\=YES
+    export _WRAPPER_CONTENTS_DIR_SHALLOW_BUNDLE_NO\=/Contents
+    export _WRAPPER_PARENT_PATH_SHALLOW_BUNDLE_NO\=/..
+    export _WRAPPER_RESOURCES_DIR_SHALLOW_BUNDLE_NO\=/Resources
+    export __ARCHS__\=arm64\ x86_64
+    export __DIAGNOSE_DEPRECATED_ARCHS\=YES
+    export __DIAGNOSE_INVALID_DEPLOYMENT_TARGET_AS_ERROR\=YES
+    export __IS_NOT_MACOS\=YES
+    export __IS_NOT_MACOS_macosx\=NO
+    export __IS_NOT_SIMULATOR\=NO
+    export __IS_NOT_SIMULATOR_simulator\=NO
+    export __ORIGINAL_SDK_DEFINED_LLVM_TARGET_TRIPLE_SYS\=ios
+    export arch\=undefined_arch
+    export variant\=normal
+    /bin/sh -c /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Script-800000000000000000000007.sh
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /tmp/vpj55-native-pdf-dd/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePanda.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /tmp/vpj55-native-pdf-dd/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+SwiftDriver VisePanda normal arm64 com.apple.xcode.tools.swift.compiler (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name VisePanda -Onone @/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.SwiftFileList -DDEBUG -default-isolation\=MainActor -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios17.0-simulator -g -module-cache-path /tmp/vpj55-native-pdf-dd/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/vpj55-native-pdf-dd/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -F /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -c -j18 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/vpj55-native-pdf-dd/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/vpj55-native-pdf-dd/ModuleCache.noindex -sdk-module-cache-path /tmp/vpj55-native-pdf-dd/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/vpj55-native-pdf-dd/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-generated-files.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-own-target-headers.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-project-headers.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/include -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources-normal/arm64 -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/arm64 -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources -emit-objc-header -emit-objc-header-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda-Swift.h -working-directory /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda -experimental-emit-module-separately -disable-cmo
+
+SwiftDriver VisePanda normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name VisePanda -Onone @/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.SwiftFileList -DDEBUG -default-isolation\=MainActor -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target x86_64-apple-ios17.0-simulator -g -module-cache-path /tmp/vpj55-native-pdf-dd/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/vpj55-native-pdf-dd/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -F /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -c -j18 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/vpj55-native-pdf-dd/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/vpj55-native-pdf-dd/ModuleCache.noindex -sdk-module-cache-path /tmp/vpj55-native-pdf-dd/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/vpj55-native-pdf-dd/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-generated-files.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-own-target-headers.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-project-headers.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/include -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources-normal/x86_64 -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/x86_64 -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources -emit-objc-header -emit-objc-header-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda-Swift.h -working-directory /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda -experimental-emit-module-separately -disable-cmo
+
+ProcessInfoPlistFile /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/Info.plist /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePanda/NativeEnvironment.plist (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-infoPlistUtility /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePanda/NativeEnvironment.plist -producttype com.apple.product-type.application -genpkginfo /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/assetcatalog_generated_info.plist -o /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/Info.plist
+
+SwiftCompile normal arm64 Compiling\ NativePDFIntakeStore.swift /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePanda/Features/PDFIntake/NativePDFIntakeStore.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftCompile normal arm64 /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePanda/Features/PDFIntake/NativePDFIntakeStore.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-SwiftPerFileCompile NativePDFIntakeStore.swift
+
+SwiftEmitModule normal x86_64 Emitting\ module\ for\ VisePanda (in target 'VisePanda' from project 'VisePanda')
+
+SwiftCompile normal x86_64 (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ VisePanda (in target 'VisePanda' from project 'VisePanda')
+
+SwiftCompile normal arm64 (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    
+
+SwiftCompile normal x86_64 Compiling\ NativePDFIntakeStore.swift /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePanda/Features/PDFIntake/NativePDFIntakeStore.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftCompile normal x86_64 /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePanda/Features/PDFIntake/NativePDFIntakeStore.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-SwiftPerFileCompile NativePDFIntakeStore.swift
+
+SwiftCompile normal x86_64 Compiling\ NativePDFIntakeView.swift /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePanda/Features/PDFIntake/NativePDFIntakeView.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftCompile normal x86_64 /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePanda/Features/PDFIntake/NativePDFIntakeView.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-SwiftPerFileCompile NativePDFIntakeView.swift
+
+SwiftCompile normal arm64 Compiling\ NativePDFIntakeView.swift /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePanda/Features/PDFIntake/NativePDFIntakeView.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftCompile normal arm64 /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePanda/Features/PDFIntake/NativePDFIntakeView.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-SwiftPerFileCompile NativePDFIntakeView.swift
+
+SwiftDriverJobDiscovery normal arm64 Compiling NativePDFIntakeStore.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftDriverJobDiscovery normal x86_64 Compiling NativePDFIntakeStore.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftDriverJobDiscovery normal arm64 Compiling NativePDFIntakeView.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftDriverJobDiscovery normal x86_64 Compiling NativePDFIntakeView.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for VisePanda (in target 'VisePanda' from project 'VisePanda')
+
+SwiftDriver\ Compilation\ Requirements VisePanda normal arm64 com.apple.xcode.tools.swift.compiler (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name VisePanda -Onone @/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.SwiftFileList -DDEBUG -default-isolation\=MainActor -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios17.0-simulator -g -module-cache-path /tmp/vpj55-native-pdf-dd/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/vpj55-native-pdf-dd/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -F /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -c -j18 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/vpj55-native-pdf-dd/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/vpj55-native-pdf-dd/ModuleCache.noindex -sdk-module-cache-path /tmp/vpj55-native-pdf-dd/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/vpj55-native-pdf-dd/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-generated-files.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-own-target-headers.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-project-headers.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/include -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources-normal/arm64 -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/arm64 -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources -emit-objc-header -emit-objc-header-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda-Swift.h -working-directory /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda -experimental-emit-module-separately -disable-cmo
+
+SwiftDriver\ Compilation VisePanda normal arm64 com.apple.xcode.tools.swift.compiler (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name VisePanda -Onone @/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.SwiftFileList -DDEBUG -default-isolation\=MainActor -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios17.0-simulator -g -module-cache-path /tmp/vpj55-native-pdf-dd/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/vpj55-native-pdf-dd/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -F /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -c -j18 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/vpj55-native-pdf-dd/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/vpj55-native-pdf-dd/ModuleCache.noindex -sdk-module-cache-path /tmp/vpj55-native-pdf-dd/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/vpj55-native-pdf-dd/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-generated-files.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-own-target-headers.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-project-headers.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/include -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources-normal/arm64 -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/arm64 -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources -emit-objc-header -emit-objc-header-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda-Swift.h -working-directory /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda -experimental-emit-module-separately -disable-cmo
+
+SwiftDriverJobDiscovery normal x86_64 Emitting module for VisePanda (in target 'VisePanda' from project 'VisePanda')
+
+SwiftDriver\ Compilation\ Requirements VisePanda normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name VisePanda -Onone @/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.SwiftFileList -DDEBUG -default-isolation\=MainActor -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target x86_64-apple-ios17.0-simulator -g -module-cache-path /tmp/vpj55-native-pdf-dd/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/vpj55-native-pdf-dd/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -F /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -c -j18 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/vpj55-native-pdf-dd/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/vpj55-native-pdf-dd/ModuleCache.noindex -sdk-module-cache-path /tmp/vpj55-native-pdf-dd/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/vpj55-native-pdf-dd/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-generated-files.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-own-target-headers.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-project-headers.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/include -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources-normal/x86_64 -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/x86_64 -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources -emit-objc-header -emit-objc-header-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda-Swift.h -working-directory /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda -experimental-emit-module-separately -disable-cmo
+
+SwiftDriver\ Compilation VisePanda normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name VisePanda -Onone @/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.SwiftFileList -DDEBUG -default-isolation\=MainActor -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target x86_64-apple-ios17.0-simulator -g -module-cache-path /tmp/vpj55-native-pdf-dd/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/vpj55-native-pdf-dd/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -F /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -c -j18 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/vpj55-native-pdf-dd/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/vpj55-native-pdf-dd/ModuleCache.noindex -sdk-module-cache-path /tmp/vpj55-native-pdf-dd/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/vpj55-native-pdf-dd/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-generated-files.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-own-target-headers.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-project-headers.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/include -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources-normal/x86_64 -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/x86_64 -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources -emit-objc-header -emit-objc-header-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda-Swift.h -working-directory /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda -experimental-emit-module-separately -disable-cmo
+
+Copy /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.swiftmodule/Project/x86_64-apple-ios-simulator.swiftsourceinfo /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.swiftsourceinfo (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.swiftsourceinfo /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.swiftmodule/Project/x86_64-apple-ios-simulator.swiftsourceinfo
+
+Copy /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.swiftmodule/x86_64-apple-ios-simulator.abi.json /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.abi.json (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.abi.json /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.swiftmodule/x86_64-apple-ios-simulator.abi.json
+
+Copy /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.swiftmodule/arm64-apple-ios-simulator.abi.json /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.abi.json (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.abi.json /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.swiftmodule/arm64-apple-ios-simulator.abi.json
+
+Copy /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.swiftsourceinfo (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.swiftsourceinfo /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo
+
+SwiftDriver VisePandaTests normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'VisePandaTests' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name VisePandaTests -Onone @/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -default-isolation\=MainActor -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target x86_64-apple-ios17.0-simulator -g -module-cache-path /tmp/vpj55-native-pdf-dd/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/vpj55-native-pdf-dd/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -c -j18 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/vpj55-native-pdf-dd/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/vpj55-native-pdf-dd/ModuleCache.noindex -sdk-module-cache-path /tmp/vpj55-native-pdf-dd/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/vpj55-native-pdf-dd/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/VisePandaTests-generated-files.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/VisePandaTests-own-target-headers.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/VisePandaTests-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/VisePandaTests-project-headers.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/include -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/DerivedSources-normal/x86_64 -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/DerivedSources/x86_64 -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/DerivedSources -emit-objc-header -emit-objc-header-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests-Swift.h -working-directory /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda -experimental-emit-module-separately -disable-cmo
+
+SwiftDriver VisePandaTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'VisePandaTests' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name VisePandaTests -Onone @/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -default-isolation\=MainActor -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios17.0-simulator -g -module-cache-path /tmp/vpj55-native-pdf-dd/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/vpj55-native-pdf-dd/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -c -j18 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/vpj55-native-pdf-dd/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/vpj55-native-pdf-dd/ModuleCache.noindex -sdk-module-cache-path /tmp/vpj55-native-pdf-dd/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/vpj55-native-pdf-dd/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/VisePandaTests-generated-files.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/VisePandaTests-own-target-headers.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/VisePandaTests-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/VisePandaTests-project-headers.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/include -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/DerivedSources-normal/arm64 -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/DerivedSources/arm64 -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/DerivedSources -emit-objc-header -emit-objc-header-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests-Swift.h -working-directory /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda -experimental-emit-module-separately -disable-cmo
+
+Ld /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/Binary/VisePanda.debug.dylib normal arm64 (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios17.0-simulator -dynamiclib -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -O0 -Xlinker -no_warn_duplicate_libraries -L/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -L/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -F/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -F/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -filelist /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.LinkFileList -install_name @rpath/VisePanda.debug.dylib -Xlinker -rpath -Xlinker /usr/lib/swift -Xlinker -dead_strip -Xlinker -object_path_lto -Xlinker /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.swiftmodule -Xlinker -alias -Xlinker _main -Xlinker ___debug_main_executable_dylib_entry_point -Xlinker -no_adhoc_codesign -o /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/Binary/VisePanda.debug.dylib
+
+Ld /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/Binary/VisePanda.debug.dylib normal x86_64 (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target x86_64-apple-ios17.0-simulator -dynamiclib -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -O0 -Xlinker -no_warn_duplicate_libraries -L/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -L/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -F/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -F/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -filelist /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.LinkFileList -install_name @rpath/VisePanda.debug.dylib -Xlinker -rpath -Xlinker /usr/lib/swift -Xlinker -dead_strip -Xlinker -object_path_lto -Xlinker /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.swiftmodule -Xlinker -alias -Xlinker _main -Xlinker ___debug_main_executable_dylib_entry_point -Xlinker -no_adhoc_codesign -o /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/Binary/VisePanda.debug.dylib
+
+ConstructStubExecutorLinkFileList /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-ExecutorLinkFileList-normal-arm64.txt (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    construct-stub-executor-link-file-list /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/Binary/VisePanda.debug.dylib /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libPreviewsJITStubExecutor_no_swift_entry_point.a /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libPreviewsJITStubExecutor.a --output /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-ExecutorLinkFileList-normal-arm64.txt
+note: Using stub executor library with Swift entry point. (in target 'VisePanda' from project 'VisePanda')
+
+CreateUniversalBinary /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/VisePanda.debug.dylib normal arm64\ x86_64 (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo -create /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/Binary/VisePanda.debug.dylib /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/Binary/VisePanda.debug.dylib -output /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/VisePanda.debug.dylib
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ VisePandaTests (in target 'VisePandaTests' from project 'VisePanda')
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePandaTests/NativePlanFeasibilityTests.swift:86:76: warning: 'FeasibilityProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+ 84 |     func remove(service:String,owner:String)->OSStatus{records.removeValue(forKey:service+owner);return errSecSuccess}
+ 85 | }
+ 86 | nonisolated private final class FeasibilityProtocol:URLProtocol,@unchecked Sendable {
+    |                                 |                                          `- warning: 'FeasibilityProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+    |                                 `- note: 'FeasibilityProtocol' inherits unavailable conformance to protocol 'Sendable' from superclass here
+ 87 |     private static let lock=NSLock()
+ 88 |     nonisolated(unsafe) private static var payload=Data(),body:Data?,path:String?,bad=false
+
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePandaTests/NativeTripSupportTests.swift:172:76: warning: 'SupportFlowProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+170 |     func remove(service:String,owner:String)->OSStatus{records.removeValue(forKey:service+owner);return errSecSuccess}
+171 | }
+172 | nonisolated private final class SupportFlowProtocol:URLProtocol,@unchecked Sendable {
+    |                                 |                                          `- warning: 'SupportFlowProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+    |                                 `- note: 'SupportFlowProtocol' inherits unavailable conformance to protocol 'Sendable' from superclass here
+173 |     private static let lock=NSLock()
+174 |     nonisolated(unsafe) private static var documents:[String:Data]=[:]
+
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePandaTests/NativeMemoryDeletionTests.swift:86:84: warning: 'MemoryDeleteFixtureProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+ 84 |     func remove(service:String,owner:String)->OSStatus{records.removeValue(forKey:service+owner);return errSecSuccess}
+ 85 | }
+ 86 | nonisolated private final class MemoryDeleteFixtureProtocol:URLProtocol,@unchecked Sendable {
+    |                                 |                                                  `- warning: 'MemoryDeleteFixtureProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+    |                                 `- note: 'MemoryDeleteFixtureProtocol' inherits unavailable conformance to protocol 'Sendable' from superclass here
+ 87 |     private static let lock=NSLock()
+ 88 |     nonisolated(unsafe) private static var post:Data?,get:Data?,sent:Data?,readID:String?,reauth=false
+
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePandaTests/NativeDeviceMaterialDeleteTests.swift:141:75: warning: 'DeleteTestProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+139 |     func remove(service:String,owner:String)->OSStatus{records.removeValue(forKey:service+owner);return errSecSuccess}
+140 | }
+141 | nonisolated private final class DeleteTestProtocol:URLProtocol,@unchecked Sendable {
+    |                                 |                                         `- warning: 'DeleteTestProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+    |                                 `- note: 'DeleteTestProtocol' inherits unavailable conformance to protocol 'Sendable' from superclass here
+142 |     override class func canInit(with request:URLRequest)->Bool{true}
+143 |     override class func canonicalRequest(for request:URLRequest)->URLRequest{request}
+
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePandaTests/NativeScreenshotProposalRecoveryTests.swift:84:85: warning: 'ScreenshotProposalProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+ 82 | }
+ 83 | 
+ 84 | nonisolated private final class ScreenshotProposalProtocol: URLProtocol, @unchecked Sendable {
+    |                                 |                                                   `- warning: 'ScreenshotProposalProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+    |                                 `- note: 'ScreenshotProposalProtocol' inherits unavailable conformance to protocol 'Sendable' from superclass here
+ 85 |     static let subject = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+ 86 |     static let tripID = "11111111-1111-4111-8111-111111111111"
+
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePandaTests/NativeScreenshotInboxTests.swift:207:81: warning: 'MaterialLogoutProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+205 |     func remove(service: String, owner: String) -> OSStatus { records.removeValue(forKey: service+owner); return errSecSuccess }
+206 | }
+207 | nonisolated private final class MaterialLogoutProtocol: URLProtocol, @unchecked Sendable {
+    |                                 |                                               `- warning: 'MaterialLogoutProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+    |                                 `- note: 'MaterialLogoutProtocol' inherits unavailable conformance to protocol 'Sendable' from superclass here
+208 |     private static let lock = NSLock()
+209 |     nonisolated(unsafe) private static var pending: MaterialLogoutProtocol?
+
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePandaTests/NativeAiAssistStateTests.swift:77:75: warning: 'AiAssistProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+ 75 | }
+ 76 | 
+ 77 | nonisolated private final class AiAssistProtocol: URLProtocol, @unchecked Sendable {
+    |                                 |                                         `- warning: 'AiAssistProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+    |                                 `- note: 'AiAssistProtocol' inherits unavailable conformance to protocol 'Sendable' from superclass here
+ 78 |     private static let lock = NSLock()
+ 79 |     nonisolated(unsafe) private static var queue: [[String: Any]] = []
+
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePandaTests/NativeAskPersistenceTests.swift:282:77: warning: 'PendingAskProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+280 | /// The fake can lose only a receipt while preserving server admission. Actual
+281 | /// Keychain storage is exercised separately; no real supplier request is made.
+282 | nonisolated private final class PendingAskProtocol: URLProtocol, @unchecked Sendable {
+    |                                 |                                           `- warning: 'PendingAskProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+    |                                 `- note: 'PendingAskProtocol' inherits unavailable conformance to protocol 'Sendable' from superclass here
+283 |     private static let lock = NSLock()
+284 |     nonisolated(unsafe) private static var sent: [Data] = []
+
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePandaTests/NativeAskStateTests.swift:377:76: warning: 'TextStateProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+375 | 
+376 | /// Only test callback state is shared, under one lock; no production credential.
+377 | nonisolated private final class TextStateProtocol: URLProtocol, @unchecked Sendable {
+    |                                 |                                          `- warning: 'TextStateProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+    |                                 `- note: 'TextStateProtocol' inherits unavailable conformance to protocol 'Sendable' from superclass here
+378 |     private static let lock = NSLock()
+379 |     nonisolated(unsafe) private static var pending: TextStateProtocol?
+
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePandaTests/NativeAskStateTests.swift:430:79: warning: 'ObsoleteTaskProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+428 | 
+429 | /// Controlled transport: the original POST loses its receipt; no actual provider call.
+430 | nonisolated private final class ObsoleteTaskProtocol: URLProtocol, @unchecked Sendable {
+    |                                 |                                             `- warning: 'ObsoleteTaskProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+    |                                 `- note: 'ObsoleteTaskProtocol' inherits unavailable conformance to protocol 'Sendable' from superclass here
+431 |     private static let lock = NSLock()
+432 |     nonisolated(unsafe) private static var changed = false
+
+
+SwiftCompile normal arm64 (in target 'VisePandaTests' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    
+
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePandaTests/NativeTripStateTests.swift:422:78: warning: 'DelayedTripProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+420 | 
+421 | /// Deterministic race test only. Real API integration is tested separately.
+422 | nonisolated private final class DelayedTripProtocol: URLProtocol, @unchecked Sendable {
+    |                                 |                                            `- warning: 'DelayedTripProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+    |                                 `- note: 'DelayedTripProtocol' inherits unavailable conformance to protocol 'Sendable' from superclass here
+423 |     private static let lock = NSLock()
+424 |     nonisolated(unsafe) private static var pending: DelayedTripProtocol?
+
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePandaTests/NativeTripStateTests.swift:486:78: warning: 'ArchiveTripProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+484 | 
+485 | /// Native state test only; SQL and HTTP authority have separate tests.
+486 | nonisolated private final class ArchiveTripProtocol: URLProtocol, @unchecked Sendable {
+    |                                 |                                            `- warning: 'ArchiveTripProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+    |                                 `- note: 'ArchiveTripProtocol' inherits unavailable conformance to protocol 'Sendable' from superclass here
+487 |     static let tripID = "11111111-1111-4111-8111-111111111111"
+488 |     private static let ownerID = "22222222-2222-4222-8222-222222222222"
+
+[#UnavailableSendableConformance]: <https://docs.swift.org/compiler/documentation/diagnostics/unavailable-sendable-conformance>
+SwiftCompile normal arm64 Compiling\ NativePDFIntegrationTests.swift /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePandaTests/NativePDFIntegrationTests.swift (in target 'VisePandaTests' from project 'VisePanda')
+
+SwiftCompile normal arm64 /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePandaTests/NativePDFIntegrationTests.swift (in target 'VisePandaTests' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-SwiftPerFileCompile NativePDFIntegrationTests.swift
+
+Ld /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/Binary/VisePanda normal arm64 (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios17.0-simulator -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -O0 -Xlinker -no_warn_duplicate_libraries -L/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -F/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -Xlinker -rpath -Xlinker @executable_path -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -e ___debug_blank_executor_main -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_dylib -Xlinker /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-DebugDylibPath-normal-arm64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_instlnm -Xlinker /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-DebugDylibInstallName-normal-arm64.txt -Xlinker -filelist -Xlinker /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-ExecutorLinkFileList-normal-arm64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __entitlements -Xlinker /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.app-Simulated.xcent -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __ents_der -Xlinker /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.app-Simulated.xcent.der /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/Binary/VisePanda.debug.dylib -Xlinker -no_adhoc_codesign -o /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/Binary/VisePanda
+
+SwiftEmitModule normal x86_64 Emitting\ module\ for\ VisePandaTests (in target 'VisePandaTests' from project 'VisePanda')
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePandaTests/NativePlanFeasibilityTests.swift:86:76: warning: 'FeasibilityProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+ 84 |     func remove(service:String,owner:String)->OSStatus{records.removeValue(forKey:service+owner);return errSecSuccess}
+ 85 | }
+ 86 | nonisolated private final class FeasibilityProtocol:URLProtocol,@unchecked Sendable {
+    |                                 |                                          `- warning: 'FeasibilityProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+    |                                 `- note: 'FeasibilityProtocol' inherits unavailable conformance to protocol 'Sendable' from superclass here
+ 87 |     private static let lock=NSLock()
+ 88 |     nonisolated(unsafe) private static var payload=Data(),body:Data?,path:String?,bad=false
+
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePandaTests/NativeTripSupportTests.swift:172:76: warning: 'SupportFlowProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+170 |     func remove(service:String,owner:String)->OSStatus{records.removeValue(forKey:service+owner);return errSecSuccess}
+171 | }
+172 | nonisolated private final class SupportFlowProtocol:URLProtocol,@unchecked Sendable {
+    |                                 |                                          `- warning: 'SupportFlowProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+    |                                 `- note: 'SupportFlowProtocol' inherits unavailable conformance to protocol 'Sendable' from superclass here
+173 |     private static let lock=NSLock()
+174 |     nonisolated(unsafe) private static var documents:[String:Data]=[:]
+
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePandaTests/NativeMemoryDeletionTests.swift:86:84: warning: 'MemoryDeleteFixtureProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+ 84 |     func remove(service:String,owner:String)->OSStatus{records.removeValue(forKey:service+owner);return errSecSuccess}
+ 85 | }
+ 86 | nonisolated private final class MemoryDeleteFixtureProtocol:URLProtocol,@unchecked Sendable {
+    |                                 |                                                  `- warning: 'MemoryDeleteFixtureProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+    |                                 `- note: 'MemoryDeleteFixtureProtocol' inherits unavailable conformance to protocol 'Sendable' from superclass here
+ 87 |     private static let lock=NSLock()
+ 88 |     nonisolated(unsafe) private static var post:Data?,get:Data?,sent:Data?,readID:String?,reauth=false
+
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePandaTests/NativeDeviceMaterialDeleteTests.swift:141:75: warning: 'DeleteTestProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+139 |     func remove(service:String,owner:String)->OSStatus{records.removeValue(forKey:service+owner);return errSecSuccess}
+140 | }
+141 | nonisolated private final class DeleteTestProtocol:URLProtocol,@unchecked Sendable {
+    |                                 |                                         `- warning: 'DeleteTestProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+    |                                 `- note: 'DeleteTestProtocol' inherits unavailable conformance to protocol 'Sendable' from superclass here
+142 |     override class func canInit(with request:URLRequest)->Bool{true}
+143 |     override class func canonicalRequest(for request:URLRequest)->URLRequest{request}
+
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePandaTests/NativeScreenshotProposalRecoveryTests.swift:84:85: warning: 'ScreenshotProposalProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+ 82 | }
+ 83 | 
+ 84 | nonisolated private final class ScreenshotProposalProtocol: URLProtocol, @unchecked Sendable {
+    |                                 |                                                   `- warning: 'ScreenshotProposalProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+    |                                 `- note: 'ScreenshotProposalProtocol' inherits unavailable conformance to protocol 'Sendable' from superclass here
+ 85 |     static let subject = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+ 86 |     static let tripID = "11111111-1111-4111-8111-111111111111"
+
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePandaTests/NativeScreenshotInboxTests.swift:207:81: warning: 'MaterialLogoutProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+205 |     func remove(service: String, owner: String) -> OSStatus { records.removeValue(forKey: service+owner); return errSecSuccess }
+206 | }
+207 | nonisolated private final class MaterialLogoutProtocol: URLProtocol, @unchecked Sendable {
+    |                                 |                                               `- warning: 'MaterialLogoutProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+    |                                 `- note: 'MaterialLogoutProtocol' inherits unavailable conformance to protocol 'Sendable' from superclass here
+208 |     private static let lock = NSLock()
+209 |     nonisolated(unsafe) private static var pending: MaterialLogoutProtocol?
+
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePandaTests/NativeAiAssistStateTests.swift:77:75: warning: 'AiAssistProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+ 75 | }
+ 76 | 
+ 77 | nonisolated private final class AiAssistProtocol: URLProtocol, @unchecked Sendable {
+    |                                 |                                         `- warning: 'AiAssistProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+    |                                 `- note: 'AiAssistProtocol' inherits unavailable conformance to protocol 'Sendable' from superclass here
+ 78 |     private static let lock = NSLock()
+ 79 |     nonisolated(unsafe) private static var queue: [[String: Any]] = []
+
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePandaTests/NativeAskPersistenceTests.swift:282:77: warning: 'PendingAskProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+280 | /// The fake can lose only a receipt while preserving server admission. Actual
+281 | /// Keychain storage is exercised separately; no real supplier request is made.
+282 | nonisolated private final class PendingAskProtocol: URLProtocol, @unchecked Sendable {
+    |                                 |                                           `- warning: 'PendingAskProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+    |                                 `- note: 'PendingAskProtocol' inherits unavailable conformance to protocol 'Sendable' from superclass here
+283 |     private static let lock = NSLock()
+284 |     nonisolated(unsafe) private static var sent: [Data] = []
+
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePandaTests/NativeAskStateTests.swift:377:76: warning: 'TextStateProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+375 | 
+376 | /// Only test callback state is shared, under one lock; no production credential.
+377 | nonisolated private final class TextStateProtocol: URLProtocol, @unchecked Sendable {
+    |                                 |                                          `- warning: 'TextStateProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+    |                                 `- note: 'TextStateProtocol' inherits unavailable conformance to protocol 'Sendable' from superclass here
+378 |     private static let lock = NSLock()
+379 |     nonisolated(unsafe) private static var pending: TextStateProtocol?
+
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePandaTests/NativeAskStateTests.swift:430:79: warning: 'ObsoleteTaskProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+428 | 
+429 | /// Controlled transport: the original POST loses its receipt; no actual provider call.
+430 | nonisolated private final class ObsoleteTaskProtocol: URLProtocol, @unchecked Sendable {
+    |                                 |                                             `- warning: 'ObsoleteTaskProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+    |                                 `- note: 'ObsoleteTaskProtocol' inherits unavailable conformance to protocol 'Sendable' from superclass here
+431 |     private static let lock = NSLock()
+432 |     nonisolated(unsafe) private static var changed = false
+
+
+SwiftCompile normal x86_64 (in target 'VisePandaTests' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    
+
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePandaTests/NativeTripStateTests.swift:422:78: warning: 'DelayedTripProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+420 | 
+421 | /// Deterministic race test only. Real API integration is tested separately.
+422 | nonisolated private final class DelayedTripProtocol: URLProtocol, @unchecked Sendable {
+    |                                 |                                            `- warning: 'DelayedTripProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+    |                                 `- note: 'DelayedTripProtocol' inherits unavailable conformance to protocol 'Sendable' from superclass here
+423 |     private static let lock = NSLock()
+424 |     nonisolated(unsafe) private static var pending: DelayedTripProtocol?
+
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePandaTests/NativeTripStateTests.swift:486:78: warning: 'ArchiveTripProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+484 | 
+485 | /// Native state test only; SQL and HTTP authority have separate tests.
+486 | nonisolated private final class ArchiveTripProtocol: URLProtocol, @unchecked Sendable {
+    |                                 |                                            `- warning: 'ArchiveTripProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]
+    |                                 `- note: 'ArchiveTripProtocol' inherits unavailable conformance to protocol 'Sendable' from superclass here
+487 |     static let tripID = "11111111-1111-4111-8111-111111111111"
+488 |     private static let ownerID = "22222222-2222-4222-8222-222222222222"
+
+[#UnavailableSendableConformance]: <https://docs.swift.org/compiler/documentation/diagnostics/unavailable-sendable-conformance>
+SwiftCompile normal x86_64 Compiling\ NativePDFIntegrationTests.swift /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePandaTests/NativePDFIntegrationTests.swift (in target 'VisePandaTests' from project 'VisePanda')
+
+SwiftCompile normal x86_64 /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda/VisePandaTests/NativePDFIntegrationTests.swift (in target 'VisePandaTests' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-SwiftPerFileCompile NativePDFIntegrationTests.swift
+
+ConstructStubExecutorLinkFileList /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-ExecutorLinkFileList-normal-x86_64.txt (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    construct-stub-executor-link-file-list /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/Binary/VisePanda.debug.dylib /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libPreviewsJITStubExecutor_no_swift_entry_point.a /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libPreviewsJITStubExecutor.a --output /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-ExecutorLinkFileList-normal-x86_64.txt
+note: Using stub executor library with Swift entry point. (in target 'VisePanda' from project 'VisePanda')
+
+Ld /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/Binary/VisePanda normal x86_64 (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target x86_64-apple-ios17.0-simulator -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -O0 -Xlinker -no_warn_duplicate_libraries -L/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -F/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -Xlinker -rpath -Xlinker @executable_path -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -e ___debug_blank_executor_main -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_dylib -Xlinker /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-DebugDylibPath-normal-x86_64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_instlnm -Xlinker /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-DebugDylibInstallName-normal-x86_64.txt -Xlinker -filelist -Xlinker /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-ExecutorLinkFileList-normal-x86_64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __entitlements -Xlinker /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.app-Simulated.xcent -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __ents_der -Xlinker /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.app-Simulated.xcent.der /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/Binary/VisePanda.debug.dylib -Xlinker -no_adhoc_codesign -o /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/Binary/VisePanda
+
+CreateUniversalBinary /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/VisePanda normal arm64\ x86_64 (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo -create /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/Binary/VisePanda /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/Binary/VisePanda -output /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/VisePanda
+
+CopySwiftLibs /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/VisePanda.debug.dylib --scan-folder /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/Frameworks --scan-folder /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/PlugIns --scan-folder /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/SystemExtensions --scan-folder /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os --back-deploy-swift-span
+
+ExtractAppIntentsMetadata (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name VisePanda --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk --xcode-version 27A266a --platform-family iOS --deployment-target 17.0 --bundle-identifier space.go2china.VisePanda --output /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app --target-triple arm64-apple-ios17.0-simulator --target-triple x86_64-apple-ios17.0-simulator --binary-file /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/VisePanda --dependency-file /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda_dependency_info.dat --dependency-file /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda_dependency_info.dat --stringsdata-file /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --stringsdata-file /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.SwiftFileList --source-file-list /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.SwiftFileList --metadata-file-list /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.DependencyMetadataFileList --static-metadata-file-list /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.DependencyStaticMetadataFileList --swift-const-vals-list /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.SwiftConstValuesFileList --swift-const-vals-list /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --no-app-shortcuts-localization
+2026-10-05 19:01:06.308 appintentsmetadataprocessor[85731:2310351] Starting appintentsmetadataprocessor export
+2026-10-05 19:01:06.309 appintentsmetadataprocessor[85731:2310351] warning: Metadata extraction skipped, no AppIntents.framework dependency found
+
+ProcessInfoPlistFile /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/PlugIns/VisePandaTests.xctest/Info.plist /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/empty-VisePandaTests.plist (in target 'VisePandaTests' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-infoPlistUtility /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/empty-VisePandaTests.plist -producttype com.apple.product-type.bundle.unit-test -expandbuildsettings -format binary -platform iphonesimulator -o /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/PlugIns/VisePandaTests.xctest/Info.plist
+
+SwiftDriverJobDiscovery normal arm64 Compiling NativePDFIntegrationTests.swift (in target 'VisePandaTests' from project 'VisePanda')
+
+SwiftDriverJobDiscovery normal x86_64 Compiling NativePDFIntegrationTests.swift (in target 'VisePandaTests' from project 'VisePanda')
+
+SwiftDriver\ Compilation VisePandaTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'VisePandaTests' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name VisePandaTests -Onone @/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -default-isolation\=MainActor -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios17.0-simulator -g -module-cache-path /tmp/vpj55-native-pdf-dd/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/vpj55-native-pdf-dd/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -c -j18 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/vpj55-native-pdf-dd/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/vpj55-native-pdf-dd/ModuleCache.noindex -sdk-module-cache-path /tmp/vpj55-native-pdf-dd/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/vpj55-native-pdf-dd/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/VisePandaTests-generated-files.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/VisePandaTests-own-target-headers.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/VisePandaTests-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/VisePandaTests-project-headers.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/include -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/DerivedSources-normal/arm64 -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/DerivedSources/arm64 -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/DerivedSources -emit-objc-header -emit-objc-header-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests-Swift.h -working-directory /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda -experimental-emit-module-separately -disable-cmo
+
+SwiftDriverJobDiscovery normal x86_64 Emitting module for VisePandaTests (in target 'VisePandaTests' from project 'VisePanda')
+
+SwiftDriver\ Compilation\ Requirements VisePandaTests normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'VisePandaTests' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name VisePandaTests -Onone @/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -default-isolation\=MainActor -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target x86_64-apple-ios17.0-simulator -g -module-cache-path /tmp/vpj55-native-pdf-dd/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/vpj55-native-pdf-dd/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -c -j18 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/vpj55-native-pdf-dd/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/vpj55-native-pdf-dd/ModuleCache.noindex -sdk-module-cache-path /tmp/vpj55-native-pdf-dd/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/vpj55-native-pdf-dd/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/VisePandaTests-generated-files.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/VisePandaTests-own-target-headers.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/VisePandaTests-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/VisePandaTests-project-headers.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/include -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/DerivedSources-normal/x86_64 -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/DerivedSources/x86_64 -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/DerivedSources -emit-objc-header -emit-objc-header-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests-Swift.h -working-directory /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda -experimental-emit-module-separately -disable-cmo
+
+SwiftDriver\ Compilation VisePandaTests normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'VisePandaTests' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name VisePandaTests -Onone @/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -default-isolation\=MainActor -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target x86_64-apple-ios17.0-simulator -g -module-cache-path /tmp/vpj55-native-pdf-dd/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/vpj55-native-pdf-dd/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -c -j18 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/vpj55-native-pdf-dd/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/vpj55-native-pdf-dd/ModuleCache.noindex -sdk-module-cache-path /tmp/vpj55-native-pdf-dd/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/vpj55-native-pdf-dd/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/VisePandaTests-generated-files.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/VisePandaTests-own-target-headers.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/VisePandaTests-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/VisePandaTests-project-headers.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/include -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/DerivedSources-normal/x86_64 -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/DerivedSources/x86_64 -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/DerivedSources -emit-objc-header -emit-objc-header-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests-Swift.h -working-directory /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda -experimental-emit-module-separately -disable-cmo
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for VisePandaTests (in target 'VisePandaTests' from project 'VisePanda')
+
+SwiftDriver\ Compilation\ Requirements VisePandaTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'VisePandaTests' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name VisePandaTests -Onone @/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -default-isolation\=MainActor -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios17.0-simulator -g -module-cache-path /tmp/vpj55-native-pdf-dd/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/vpj55-native-pdf-dd/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -c -j18 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/vpj55-native-pdf-dd/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/vpj55-native-pdf-dd/ModuleCache.noindex -sdk-module-cache-path /tmp/vpj55-native-pdf-dd/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/vpj55-native-pdf-dd/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/VisePandaTests-generated-files.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/VisePandaTests-own-target-headers.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/VisePandaTests-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/VisePandaTests-project-headers.hmap -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/include -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/DerivedSources-normal/arm64 -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/DerivedSources/arm64 -Xcc -I/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/DerivedSources -emit-objc-header -emit-objc-header-path /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests-Swift.h -working-directory /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda -experimental-emit-module-separately -disable-cmo
+
+Ld /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/Binary/VisePandaTests normal x86_64 (in target 'VisePandaTests' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target x86_64-apple-ios17.0-simulator -bundle -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -O0 -Xlinker -no_warn_duplicate_libraries -L/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -L/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -L/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -F/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -filelist /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests.LinkFileList -Xlinker -rpath -Xlinker /usr/lib/swift -Xlinker -rpath -Xlinker @loader_path/Frameworks -Xlinker -rpath -Xlinker @executable_path/Frameworks -Xlinker -dead_strip -bundle_loader /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/VisePanda -Xlinker -object_path_lto -Xlinker /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests.swiftmodule -Xlinker -needed_framework -Xlinker XCTest -framework XCTest -Xlinker -needed-lXCTestSwiftSupport -lXCTestSwiftSupport /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/VisePanda.debug.dylib -Xlinker -no_adhoc_codesign -o /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/Binary/VisePandaTests
+
+Ld /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/Binary/VisePandaTests normal arm64 (in target 'VisePandaTests' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios17.0-simulator -bundle -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -O0 -Xlinker -no_warn_duplicate_libraries -L/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -L/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -L/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F/tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -F/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -filelist /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests.LinkFileList -Xlinker -rpath -Xlinker /usr/lib/swift -Xlinker -rpath -Xlinker @loader_path/Frameworks -Xlinker -rpath -Xlinker @executable_path/Frameworks -Xlinker -dead_strip -bundle_loader /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/VisePanda -Xlinker -object_path_lto -Xlinker /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests.swiftmodule -Xlinker -needed_framework -Xlinker XCTest -framework XCTest -Xlinker -needed-lXCTestSwiftSupport -lXCTestSwiftSupport /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/VisePanda.debug.dylib -Xlinker -no_adhoc_codesign -o /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/Binary/VisePandaTests
+
+Copy /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePandaTests.swiftmodule/x86_64-apple-ios-simulator.swiftmodule /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests.swiftmodule (in target 'VisePandaTests' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests.swiftmodule /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePandaTests.swiftmodule/x86_64-apple-ios-simulator.swiftmodule
+
+Copy /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePandaTests.swiftmodule/x86_64-apple-ios-simulator.abi.json /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests.abi.json (in target 'VisePandaTests' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests.abi.json /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePandaTests.swiftmodule/x86_64-apple-ios-simulator.abi.json
+
+Copy /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePandaTests.swiftmodule/arm64-apple-ios-simulator.swiftmodule /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests.swiftmodule (in target 'VisePandaTests' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests.swiftmodule /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePandaTests.swiftmodule/arm64-apple-ios-simulator.swiftmodule
+
+Copy /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePandaTests.swiftmodule/arm64-apple-ios-simulator.abi.json /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests.abi.json (in target 'VisePandaTests' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests.abi.json /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePandaTests.swiftmodule/arm64-apple-ios-simulator.abi.json
+
+Copy /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePandaTests.swiftmodule/Project/x86_64-apple-ios-simulator.swiftsourceinfo /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests.swiftsourceinfo (in target 'VisePandaTests' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests.swiftsourceinfo /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePandaTests.swiftmodule/Project/x86_64-apple-ios-simulator.swiftsourceinfo
+
+Copy /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePandaTests.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests.swiftsourceinfo (in target 'VisePandaTests' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests.swiftsourceinfo /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePandaTests.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo
+
+CreateUniversalBinary /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/PlugIns/VisePandaTests.xctest/VisePandaTests normal arm64\ x86_64 (in target 'VisePandaTests' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo -create /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/Binary/VisePandaTests /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/Binary/VisePandaTests -output /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/PlugIns/VisePandaTests.xctest/VisePandaTests
+
+CopySwiftLibs /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/PlugIns/VisePandaTests.xctest (in target 'VisePandaTests' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/PlugIns/VisePandaTests.xctest/VisePandaTests --scan-folder /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/PlugIns/VisePandaTests.xctest/Frameworks --scan-folder /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/PlugIns/VisePandaTests.xctest/PlugIns --scan-folder /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/PlugIns/VisePandaTests.xctest/SystemExtensions --scan-folder /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/PlugIns/VisePandaTests.xctest/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/PlugIns/VisePandaTests.xctest/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os --back-deploy-swift-span
+
+ExtractAppIntentsMetadata (in target 'VisePandaTests' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name VisePandaTests --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk --xcode-version 27A266a --platform-family iOS --deployment-target 17.0 --bundle-identifier space.go2china.VisePandaTests --output /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/PlugIns/VisePandaTests.xctest --target-triple arm64-apple-ios17.0-simulator --target-triple x86_64-apple-ios17.0-simulator --binary-file /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/PlugIns/VisePandaTests.xctest/VisePandaTests --dependency-file /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests_dependency_info.dat --dependency-file /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests_dependency_info.dat --stringsdata-file /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --stringsdata-file /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests.SwiftFileList --source-file-list /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests.SwiftFileList --metadata-file-list /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/VisePandaTests.DependencyMetadataFileList --static-metadata-file-list /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/VisePandaTests.DependencyStaticMetadataFileList --swift-const-vals-list /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/arm64/VisePandaTests.SwiftConstValuesFileList --swift-const-vals-list /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaTests.build/Objects-normal/x86_64/VisePandaTests.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --no-app-shortcuts-localization
+2026-10-05 19:01:08.048 appintentsmetadataprocessor[85739:2310411] Starting appintentsmetadataprocessor export
+2026-10-05 19:01:08.049 appintentsmetadataprocessor[85739:2310411] warning: Metadata extraction skipped, no AppIntents.framework dependency found
+
+CodeSign /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/PlugIns/VisePandaTests.xctest (in target 'VisePandaTests' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/PlugIns/VisePandaTests.xctest
+
+CodeSign /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/VisePanda.debug.dylib (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/VisePanda.debug.dylib
+
+CodeSign /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/__preview.dylib (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/__preview.dylib
+/tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app/__preview.dylib: replacing existing signature
+
+CodeSign /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app
+
+Validate /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-validationUtility /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePanda.app -shallow-bundle -infoplist-subpath Info.plist
+
+ProcessInfoPlistFile /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePandaUITests-Runner.app/PlugIns/VisePandaUITests.xctest/Info.plist /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaUITests.build/empty-VisePandaUITests.plist (in target 'VisePandaUITests' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-infoPlistUtility /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaUITests.build/empty-VisePandaUITests.plist -producttype com.apple.product-type.bundle.ui-testing -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaUITests.build/ProductTypeInfoPlistAdditions.plist -o /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePandaUITests-Runner.app/PlugIns/VisePandaUITests.xctest/Info.plist
+
+CopySwiftLibs /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePandaUITests-Runner.app/PlugIns/VisePandaUITests.xctest (in target 'VisePandaUITests' from project 'VisePanda')
+    cd /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj55-pdf-intake-server-20261005/ios/VisePanda
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePandaUITests-Runner.app/PlugIns/VisePandaUITests.xctest/VisePandaUITests --scan-folder /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePandaUITests-Runner.app/PlugIns/VisePandaUITests.xctest/Frameworks --scan-folder /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePandaUITests-Runner.app/PlugIns/VisePandaUITests.xctest/PlugIns --scan-folder /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePandaUITests-Runner.app/PlugIns/VisePandaUITests.xctest/SystemExtensions --scan-folder /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePandaUITests-Runner.app/PlugIns/VisePandaUITests.xctest/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /tmp/vpj55-native-pdf-dd/Build/Products/Debug-iphonesimulator/VisePandaUITests-Runner.app/PlugIns/VisePandaUITests.xctest/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePandaUITests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os --back-deploy-swift-span
+
+PruneExplicitPrecompiledModules /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /tmp/vpj55-native-pdf-dd/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /tmp/vpj55-native-pdf-dd/SDKExplicitPrecompiledModules
+
+** TEST BUILD SUCCEEDED **
+
+
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /tmp/vpj55-native-pdf-dd/Build/Products/PDFLocal-81cc1e0d-86f8-4cc3-a268-4ebbd46a8caf.xctestrun -destination "platform=iOS Simulator,id=802FD061-F76B-40E6-9DD1-07BBE72166BD" -parallel-testing-enabled NO -resultBundlePath /var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/vpj55-native-http-c76c13fe-25ea-4a9a-adf1-d4e613a0a231.xcresult "-only-testing:VisePandaTests/NativePDFIntegrationTests/testPDFKitCorrectPreviewOriginalConfirmReloadAndReceipt" CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=-
+
+Build settings from command line:
+    CODE_SIGN_IDENTITY = -
+    CODE_SIGNING_ALLOWED = YES
+
+Writing result bundle at path:
+	/var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/vpj55-native-http-c76c13fe-25ea-4a9a-adf1-d4e613a0a231.xcresult
+
+2026-10-05 19:01:15.195610+0800 VisePanda[85952:2312842] [General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+2026-10-05 19:01:15.278295+0800 VisePanda[85952:2312843] [General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
+Test Suite 'Selected tests' started at 2026-10-05 19:01:15.368.
+Test Suite 'VisePandaTests.xctest' started at 2026-10-05 19:01:15.369.
+Test Suite 'NativePDFIntegrationTests' started at 2026-10-05 19:01:15.369.
+Test Case '-[VisePandaTests.NativePDFIntegrationTests testPDFKitCorrectPreviewOriginalConfirmReloadAndReceipt]' started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native logout HTTP 200
+Test Case '-[VisePandaTests.NativePDFIntegrationTests testPDFKitCorrectPreviewOriginalConfirmReloadAndReceipt]' passed (1.781 seconds).
+Test Suite 'NativePDFIntegrationTests' passed at 2026-10-05 19:01:17.150.
+	 Executed 1 test, with 0 failures (0 unexpected) in 1.781 (1.782) seconds
+Test Suite 'VisePandaTests.xctest' passed at 2026-10-05 19:01:17.151.
+	 Executed 1 test, with 0 failures (0 unexpected) in 1.781 (1.782) seconds
+Test Suite 'Selected tests' passed at 2026-10-05 19:01:17.151.
+	 Executed 1 test, with 0 failures (0 unexpected) in 1.781 (1.782) seconds
+2026-10-05 19:01:17.430 xcodebuild[85749:2310453] [MT] IDETestOperationsObserverDebug: 8.523 elapsed -- Testing started completed.
+2026-10-05 19:01:17.430 xcodebuild[85749:2310453] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-05 19:01:17.430 xcodebuild[85749:2310453] [MT] IDETestOperationsObserverDebug: 8.523 sec, +8.523 sec -- end
+
+Test session results, code coverage, and logs:
+	/var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/vpj55-native-http-c76c13fe-25ea-4a9a-adf1-d4e613a0a231.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started
