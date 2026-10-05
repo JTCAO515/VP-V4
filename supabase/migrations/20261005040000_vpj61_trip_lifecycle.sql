@@ -140,18 +140,14 @@ begin
  -- Root account deletion must cascade without resurrecting an owner head.
  if not exists(select 1 from auth.users where id=u) then return old;end if;
  perform trip_lifecycle_private.lock_owner_v1(u);
- if tg_op='INSERT' then
-  c:=trip_lifecycle_private.capacity_v1(u);
-  if (c->>'legacyCount')::bigint>0 then raise exception 'LEGACY_RECONCILIATION_REQUIRED';end if;
-  if (c->>'draftCount')::integer>=3 then raise exception 'TRIP_CAPACITY';end if;
- elsif tg_op='DELETE' then
+ if tg_op='DELETE' then
   update trip_lifecycle_private.operations_v1 set session_id=null,request_bytes=null,request_digest=null,trip_id=null,
    previous_active_trip_id=null,receipt=null,erased_reason='FORBIDDEN'
   where owner_id=u and (trip_id=old.id or previous_active_trip_id=old.id);
   delete from trip_lifecycle_private.memory_edges_v1 e where e.owner_id=u and exists(
    select 1 from trip_lifecycle_private.operations_v1 o where o.owner_id=e.owner_id and o.operation_id=e.operation_id and o.erased_reason is not null);
  end if;
- if tg_op<>'UPDATE' or (new.title,new.head_version) is distinct from (old.title,old.head_version) then
+ if tg_op='DELETE' or (tg_op='UPDATE' and (new.title,new.head_version) is distinct from (old.title,old.head_version)) then
   perform trip_lifecycle_private.bump_v1(u);
  end if;
  if tg_op='DELETE' then return old;else return new;end if;
@@ -168,6 +164,27 @@ begin
 end $$;
 create trigger lifecycle_trip_inserted_v1 after insert on public.trips
  for each row execute function trip_lifecycle_private.trip_inserted_v1();
+-- AFTER ROW registration fires only for inserted rows, before AFTER STATEMENT.
+-- Validate the complete actual statement after all those rows are drafts. A
+-- failed capacity/legacy/RLS/FK check rolls back Trips, snapshots, states and head
+-- bumps together. No transaction flag or role/JWT claim distinguishes new rows.
+create function trip_lifecycle_private.validate_insert_statement_v1() returns trigger
+language plpgsql security definer set search_path='' as $$
+declare u uuid;c jsonb;
+begin
+ for u in select distinct owner_id from lifecycle_inserted_trips order by owner_id loop
+  perform trip_lifecycle_private.lock_owner_v1(u);
+  c:=trip_lifecycle_private.capacity_v1(u);
+  if (c->>'legacyCount')::bigint>0 then raise exception 'LEGACY_RECONCILIATION_REQUIRED';end if;
+  if (c->>'draftCount')::integer>3 then raise exception 'TRIP_CAPACITY';end if;
+  perform trip_lifecycle_private.bump_v1(u);
+ end loop;
+ return null;
+end $$;
+create trigger lifecycle_insert_capacity_v1 after insert on public.trips
+ referencing new table as lifecycle_inserted_trips for each statement
+ execute function trip_lifecycle_private.validate_insert_statement_v1();
+
 create function trip_lifecycle_private.archived_v1() returns trigger
 language plpgsql security definer set search_path='' as $$
 begin

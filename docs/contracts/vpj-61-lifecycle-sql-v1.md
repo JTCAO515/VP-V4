@@ -184,3 +184,34 @@ focused registration and its container were removed. The actual stored publisher
 case also covers practical translations and task-output drafts, pending-only
 references/previews, exact ID/revision/Trip mismatches and historical decision
 execution rejection. Evidence: archive-reader.txt next to the earlier pg.txt.
+
+## Atomic bulk creation correction
+
+PR #653 PostgreSQL CI observed 430 cases: 418 PASS, 12 FAIL, zero skips. The
+12 failures in unchanged travel-pace/linked-trip-delete/trip-delete fixtures all
+exposed the same product bug: in a multirow INSERT, BEFORE ROW inspected the
+first inserted Trip before its queued AFTER ROW state registration and wrongly
+classified that same-statement row as an existing legacy Trip.
+
+The correction keeps BEFORE ROW owner prelocks and the original actual-row draft
+registration/snapshot behavior. AFTER INSERT STATEMENT uses PostgreSQL's actual
+NEW TABLE transition relation to validate the full set of owners after all actual
+new rows have been registered as drafts. True pre-existing legacy rows still
+block creation; final owner draft count must be at most three. Any capacity,
+legacy, RLS or FK error rolls back the entire statement, including all owners'
+Trips, snapshots, state rows and revisions. Only successful actual inserts bump
+the owner revision once per transaction. ON CONFLICT DO NOTHING has no inserted
+transition rows and cannot fabricate a new capacity mutation/revision.
+
+No pending table, deferred FK, caller-controlled flag, mutable GUC/JWT marker,
+role bypass or historical backfill was introduced. New private helper ACLs are
+covered by the existing revoke inventory. The three failed CI test files and
+their assertions remain unchanged. The SQL-owned pagination upgrade fixture now
+seeds its history before this migration instead of disabling creation triggers
+afterwards; it neither bypasses nor weakens the new statement guard.
+
+The new owned bulk case checks ordinary authenticated 2/3-row creation, atomic
+4-row rejection, true legacy rejection, mixed-owner success and full rollback,
+foreign-owner RLS rollback, and concurrent 2+2 statements without false legacy
+or capacity overflow. Actual affected results are recorded in bulk-insert.txt;
+this scoped repair does not claim a new full 430-case PostgreSQL lane result.
