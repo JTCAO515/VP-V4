@@ -202,3 +202,12 @@ run('unavailable selected block target and exact receipt return only own null me
  await db(`delete from auth.users where id='${f.author.id}';`);assert.equal((await call(f.reader,operation(b))).record.submissionId,null);
  await call(f.reader,{action:'unblock',operationId:uuid(),blockId:b.blockId,expectedVersion:1});assert.equal((await call(f.reader,operation(b))).record.state,'unblocked');
 });
+run('SQL NULL validation fails closed before direct RPC writes for nullable discriminators or enum decisions',async()=>{
+ const f=await fixture(),r=report(f.s),before=await db(`select count(*) from community_safety_private.operations where owner_id='${f.reader.id}';`);
+ for(const v of [{...r,category:null},{...r,consent:null},{...r,action:null}])await denied(f.reader,v,/INVALID_INPUT/);
+ assert.equal(await db(`select count(*) from community_safety_private.operations where owner_id='${f.reader.id}';`),before);
+ await call(f.reader,r);await denied(f.mod,{...disposition(r),decision:null},/INVALID_INPUT/);assert.equal((await call(f.reader,{action:'read',collection:'reports',id:r.reportId})).record.state,'pending');
+ const review={action:'review',operationId:uuid(),submissionId:f.s.submissionId,expectedVersion:1,decision:null,note:'Must never reject through SQL NULL'};
+ const res=await sql(container,claims(f.mod)+`set role authenticated;select public.community_workspace(${lit(JSON.stringify({protocol:'community-j1/1',command:review,mutationBytes:JSON.stringify(review)}))}::jsonb);`);assert.notEqual(res.code,0);assert.match(res.stderr,/INVALID_INPUT/);
+ assert.equal(await db(`select status from community_private.submissions where id='${f.s.submissionId}';`),'pending');assert.equal(await db(`select count(*) from community_private.operations_j1 where operation_id='${review.operationId}';`),'0');
+});
