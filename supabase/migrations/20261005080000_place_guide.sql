@@ -225,11 +225,17 @@ end$$;
 create function guide_private.bound_v1(tid uuid,token uuid default null) returns jsonb language plpgsql security definer set search_path='' as $$
 declare b guide_private.bindings_v1%rowtype;v jsonb;begin
  select * into b from guide_private.bindings_v1 where turn_id=tid;if not found then return null;end if;
- if b.invalidated or b.expires_at<=clock_timestamp() then update guide_private.bindings_v1 set invalidated=true,completed_ids='[]' where turn_id=tid;return null;end if;
- if token is null and (auth.uid() is distinct from b.owner_id or auth.jwt()->>'session_id' is distinct from b.session_id::text) then return null;end if;
- if b.position_expires_at<=clock_timestamp() then update guide_private.bindings_v1 set completed_ids='[]' where turn_id=tid;if token is not null then return null;end if;end if;
- if token is not null and not turn_private.lock_text_work(tid,token) then update guide_private.bindings_v1 set completed_ids='[]' where turn_id=tid;return null;end if;
+ -- Authority and original account/session/turn/work locks precede every write.
+ -- Denied reads never clean another actor's or an invalid lease's metadata.
+ if token is null then
+  if auth.uid() is distinct from b.owner_id or auth.jwt()->>'session_id' is distinct from b.session_id::text then return null;end if;
+  perform turn_private.text_owner();
+  if not turn_private.lock_turn(tid,b.owner_id,b.session_id) then return null;end if;
+ elsif not turn_private.lock_text_work(tid,token) then return null;end if;
  perform 1 from auth.sessions where id=b.session_id and user_id=b.owner_id for share nowait;if not found then return null;end if;
+ select * into b from guide_private.bindings_v1 where turn_id=tid;if not found then return null;end if;
+ if b.invalidated or b.expires_at<=clock_timestamp() then update guide_private.bindings_v1 set invalidated=true,completed_ids='[]' where turn_id=tid;return null;end if;
+ if b.position_expires_at<=clock_timestamp() then update guide_private.bindings_v1 set completed_ids='[]' where turn_id=tid;if token is not null then return null;end if;end if;
  if not exists(select 1 from public.chat_threads where id=b.thread_id and owner_id=b.owner_id and trip_id is null and status='active')
  or not exists(select 1 from turn_private.service_task_turns st join turn_private.service_tasks task on task.id=st.task_id and task.owner_id=b.owner_id and task.thread_id=b.thread_id where st.turn_id=tid and st.owner_id=b.owner_id and st.task_id=b.task_id and st.parent_turn_id is not distinct from b.parent_turn_id) then return null;end if;
  v:=guide_private.projection_v1(b.owner_id,b.trip_id,b.reference_id,b.trip_version,b.locale,b.interest);

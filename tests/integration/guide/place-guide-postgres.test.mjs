@@ -169,3 +169,27 @@ run('cache false permits explicit prompt-only position on first new goal; origin
  assert.equal(await db(`select completed_ids from guide_private.bindings_v1 where turn_id='${b.c.turnId}';`),'[]');
  assert.deepEqual((await guide(f,input(f))).completedSegmentIds,[],'prompt permission never restores replay progress');
 });
+
+const metadata=f=>db(`select jsonb_build_object('bindings',(select coalesce(jsonb_agg(to_jsonb(b) order by turn_id),'[]') from guide_private.bindings_v1 b where owner_id='${f.owner.id}'),'progress',(select coalesce(jsonb_agg(to_jsonb(p) order by reference_id,locale,interest),'[]') from guide_private.progress_v1 p where owner_id='${f.owner.id}'));`);
+async function staleBinding(b,state){
+ await db(`update guide_private.bindings_v1 set invalidated=${state==='invalidated'},expires_at=clock_timestamp()+interval '${state==='source_expired'?'-1':'3600'} seconds',position_expires_at=clock_timestamp()-interval '1 second',completed_ids=${lit(b.c.completedSegmentIds)}::jsonb where turn_id='${b.c.turnId}';`);
+}
+run('foreign reads of expired or invalidated Guide bindings have zero metadata writes',async()=>{
+ const f=await fixture();await use(f);const b=await follow(f),foreign={id:uuid(),session:uuid()};
+ await db(`insert into auth.users(id) values('${foreign.id}');insert into auth.sessions(id,user_id) values('${foreign.session}','${foreign.id}');`);
+ for(const state of ['source_expired','position_expired','invalidated']){
+  await staleBinding(b,state);const before=await metadata(f);
+  assert.notEqual((await f.rpc(foreign,'read_grounded_turn',{p_turn_id:b.c.turnId})).kind,'grounded_turn');
+  assert.equal(await metadata(f),before,state+' foreign denied read must not clear position or invalidate metadata');
+ }
+});
+run('invalid worker token on expired or invalidated Guide bindings has zero metadata writes',async()=>{
+ const f=await fixture();await use(f);const b=await follow(f);
+ for(const state of ['source_expired','position_expired','invalidated']){
+  await staleBinding(b,state);const before=await metadata(f),keys={...b.keys,p_lease_token:uuid()};
+  assert.equal((await worker('read_grounded_work',keys)).kind,'blocked');
+  assert.equal(await metadata(f),before,state+' invalid worker read must not write metadata');
+  assert.equal((await worker('authorize_grounded_dispatch',{...keys,p_policy_id:b.policy,p_provider:'qwen',p_context_digest:'a'.repeat(64)})).kind,'blocked');
+  assert.equal(await metadata(f),before,state+' invalid worker dispatch must not write metadata');
+ }
+});
