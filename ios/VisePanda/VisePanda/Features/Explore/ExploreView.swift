@@ -560,6 +560,12 @@ private struct NativePlaceSearchView: View {
                         Text(store.detailUnavailable ? text("Details unavailable. Retry this place.", "详情暂不可用，请重试此地点。") : text("Tap this result to load its address and map point.", "点选此结果以加载地址和地图点位。"))
                     }
                     NativePlaceActionsView(candidate: selected, session: session, chinese: chinese, active: isActive && scenePhase == .active).id(selected.provider.rawValue + ":" + selected.providerPoiId + ":" + selected.id)
+                    if selected.matchedCanonicalPoiId != nil {
+                        NavigationLink {
+                            NativePlaceGuideContextPicker(candidate: selected, active: isActive) { NativePlaceGuideView(selection: $0) }
+                        } label: { Text(text("Read this place's guide", "阅读此地点讲解")) }
+                            .accessibilityIdentifier("places.guide")
+                    }
                 }.frame(maxWidth: .infinity, alignment: .leading) }.accessibilityIdentifier("places.detail.\(selected.id)")
             }
         }
