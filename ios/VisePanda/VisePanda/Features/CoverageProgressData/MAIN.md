@@ -24,11 +24,19 @@ Required remaining inputs/actions:
   no physical device, target/provider/Storage/permission/fees are authorized here.
 
 Current verification: Swift parser PASS for all own source/tests; isolated iOS
-typecheck of eight non-UI own sources against extracted actual accepted declarations
-PASS after correcting a missing try (initial FAIL retained in tool history). This
-is not full app build/runtime evidence. `git diff --check` and shared patch apply
-check PASS. Runtime tests and app build UNRUN until shared registration lease.
+module/typecheck of eight non-UI own sources and both test sources against extracted
+actual accepted declarations PASS with repository Swift 6, MainActor default and
+strict concurrency settings. Corrected one missing try. Earlier standalone compiler
+invocations lacked Testing framework/macros and the accepted actor flags; those
+FAILs are retained in tool history, not actual runtime test results. This is not
+full app build/runtime evidence. `git diff --check` and shared patch apply check
+PASS. Runtime tests and app build UNRUN until shared registration lease.
 Own storage fixtures prove no producer wire or real data outcome; the separate
 producer fixture was generated/validated by the sole frozen TS runtime.
 
 Whole #239, full ALL1 missing and ALL2 remain Open.
+
+Owned implementation checkpoint: `30d7a5108f9b0e18b87c9fc2c042c89b8767a7b6`.
+The final commit above this doc-only/test-name update is immutable for Main review;
+the selected module scope is not complete until the exact shared caller patch is
+applied and affected verification runs. No new writer/PR/device/target action.
