@@ -1,0 +1,23 @@
+✔ append replay and rollback; new ACL/RLS deny, disabled switch, no enrollment (6153.254334ms)
+✔ preview alone denies staff; explicit selection produces exact sources and minimal audit (577.4985ms)
+✔ byte digest, whitespace reuse, current-head CAS, immutable receipt, abandon race (1067.109541ms)
+✔ pace and selected Memory authority; selected-only refs survive unselected pace change (732.194917ms)
+✔ withdraw/delete and feature-off owner privacy; deletion receipt survives original Case deletion (659.201584ms)
+✔ unique Case Trip intake via actual original goal/link/intake writers; explicit intake overrides profile (767.621666ms)
+✔ intake ambiguity/unrelated messages are unknown; null fields stay unknown and receipt/head rights requalify (4966.69625ms)
+✔ Case correction/grant replacement/revoke/expiry invalidates, while expired/revoked owner cleanup stays usable (1891.383708ms)
+✔ latest three eligible explicit Memory candidates, foreign consent/receipt and inferred/hard sources excluded (866.838208ms)
+✔ recipient membership/shift/slot withdrawal erases old head and re-enrollment never revives it (2020.152292ms)
+✔ real correction/revoke/read/delete/session/account lock races; original writers commit and old refs never revive (10919.784042ms)
+✔ export exact 30s lease, reference-only projection, invalidation after source/audit/data change, complete bounds (4260.57175ms)
+✔ canonical native credential-proof login replacement logout, original guard and Brief session erasure (2353.786417ms)
+✔ owner_state metadata permits feature-off cleanup after audit overflow, revoked/expired, absent revision zero; staff and foreign owner deny (1748.890375ms)
+✔ null intake fields remain unknown, originals never inferred; selected intake Memory dependencies and Trip deletion erase refs (4931.836333ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 44131.861625

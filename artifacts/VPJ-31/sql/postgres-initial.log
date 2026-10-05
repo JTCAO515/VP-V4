@@ -1,0 +1,13 @@
+✔ append replay and rollback; new ACL/RLS deny, disabled switch, no enrollment (6394.912625ms)
+✔ preview alone denies staff; explicit selection produces exact sources and minimal audit (561.291458ms)
+✔ byte digest, whitespace reuse, current-head CAS, immutable receipt, abandon race (1074.575083ms)
+✔ pace and selected Memory authority; selected-only refs survive unselected pace change (739.045667ms)
+✔ withdraw/delete and feature-off owner privacy; deletion receipt survives original Case deletion (669.450583ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9565.368208

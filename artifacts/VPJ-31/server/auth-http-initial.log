@@ -1,0 +1,32 @@
+VP_TRAVELER_BRIEF_HTTP_TARGET {"project":"vp-native-ask-25d6d5cf","base":64900}
+✖ disposable real Auth and cookie staff read explicitly selected live Brief sources with original Memory correction and bytes recovery (4616.471042ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7675.187834
+
+✖ failing tests:
+
+test at tests/integration/service-cases/brief-http.test.mjs:17:1
+✖ disposable real Auth and cookie staff read explicitly selected live Brief sources with original Memory correction and bytes recovery (4616.471042ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  503 !== 200
+  
+      at user (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj31-traveler-brief-server-20261005/tests/integration/service-cases/brief-http.test.mjs:40:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj31-traveler-brief-server-20261005/tests/integration/service-cases/brief-http.test.mjs:43:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 503,
+    expected: 200,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+VP_TRAVELER_BRIEF_HTTP_CLEANUP {"project":"vp-native-ask-25d6d5cf","result":"PASS"}
