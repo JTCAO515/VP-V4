@@ -1,0 +1,14 @@
+✔ default closed, explicit reviewer qualification, live registered session and private ACL (6452.874583ms)
+VP_LEGACY_OPPOSING_RESULTS [{"code":0,"stdout":"{\"id\": \"a6896547-1242-4475-baea-7328bda09775\", \"audit\": [{\"action\": \"submitted\", \"version\": 1, \"createdAt\": \"2026-10-05T17:32:06.9908+00:00\"}, {\"action\": \"reviewed\", \"version\": 2, \"createdAt\": \"2026-10-05T17:32:07.027819+00:00\"}, {\"action\": \"published\", \"version\": 2, \"createdAt\": \"2026-10-05T17:32:07.027889+00:00\"}], \"title\": \"Synthetic travel experience\", \"status\": \"published\", \"content\": \"DO-NOT-EXPOSE-private-body\", \"version\": 2, \"authorId\": \"367f90bd-ab68-4b5c-bf92-95e47bb3e690\", \"createdAt\": \"2026-10-05T17:32:06.990307+00:00\", \"reviewNote\": \"INTERNAL-ONLY review note\", \"reviewedAt\": \"2026-10-05T17:32:07.027049+00:00\", \"reviewerId\": \"923a72f3-67cc-49a7-8b5b-748b2d0657b2\", \"visibility\": \"internal\", \"withdrawnAt\": null, \"authorIdentity\": \"registered_user\", \"publiclyVisible\": false, \"retrievalEligible\": false}\n","stderr":""},{"code":3,"stdout":"","stderr":"ERROR:  COMMUNITY_CONFLICT\nCONTEXT:  PL/pgSQL function public.community_workspace(jsonb) line 64 at RAISE\n"}]
+VP_LEGACY_OPPOSING_EFFECT {"audits": 3, "status": "published", "version": 2, "receipts": 2}
+VP_LEGACY_WITHDRAW_RESULTS [{"code":0,"stdout":"{\"id\": \"84a3b37c-e663-41b6-a831-11a261f1540f\", \"title\": \"\", \"status\": \"withdrawn\", \"content\": \"\", \"version\": 2, \"createdAt\": \"2026-10-05T17:32:07.12356+00:00\", \"visibility\": \"internal\", \"withdrawnAt\": \"2026-10-05T17:32:07.159658+00:00\", \"authorIdentity\": \"registered_user\", \"publiclyVisible\": false, \"retrievalEligible\": false}\n","stderr":""},{"code":3,"stdout":"","stderr":"ERROR:  COMMUNITY_CONFLICT\nCONTEXT:  PL/pgSQL function public.community_workspace(jsonb) line 64 at RAISE\n"}]
+VP_LEGACY_WITHDRAW_EFFECT {"audits": 2, "status": "withdrawn", "version": 2, "receipts": 2, "bodyErased": true}
+✔ opposing reviews and withdrawal/review race commit exactly one transition (330.52525ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6906.09125
