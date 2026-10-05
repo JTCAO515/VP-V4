@@ -1,11 +1,12 @@
-import { NOTIFICATION_CATALOG_VERSION, NOTIFICATION_MODULES } from '../notification-data/coverage.ts';
+import { NOTIFICATION_MODULES } from '../notification-data/coverage.ts';
+import { COVERAGE_PROGRESS_MODULE } from '../coverage-progress/coverage.ts';
 /** ALL1 denominator. A registered scoped handler is not all-account completion. */
-export const CATALOG_VERSION = NOTIFICATION_CATALOG_VERSION;
+export { COVERAGE_PROGRESS_CATALOG_VERSION as CATALOG_VERSION } from '../coverage-progress/coverage.ts';
 export type Location = 'server' | 'device' | 'external';
 export type Module = Readonly<{
   id: string; location: Location; version: string; scope: string;
   exportHandler: string | null; deleteHandler: string | null;
-  selection: 'owner' | 'trip' | 'memory_plan' | 'case' | 'guide_reference' | 'material_records' | 'notification_records' | 'device_files' | 'none';
+  selection: 'owner' | 'trip' | 'memory_plan' | 'case' | 'guide_reference' | 'material_records' | 'notification_records' | 'coverage_records' | 'device_files' | 'none';
   capacity: string; retention: readonly string[]; missing: readonly string[];
 }>;
 const server = (id: string, version: string, scope: string, exportHandler: string | null, deleteHandler: string | null,
@@ -36,8 +37,7 @@ export const MODULE_CATALOG: readonly Module[] = [
   ...NOTIFICATION_MODULES,
   server('lifecycle', 'coverage-module-export/1', 'trip-lifecycle-metadata/1', 'lifecycle', null, 'owner', '50/page; 10000 rows/section; 1MB whole wrapper; fixed30s current source/proof; metadata only',
     ['operation_fences'], ['delete_uses_selected_trip', 'trip_bodies_in_separate_core_export']),
-  server('coverage_progress', 'coverage-module-export/1', 'coverage_export_progress', null, null, 'owner', 'source-free requests/sections expire30s; immutable request fences retained until original session/account revocation',
-    ['request_id_owner_session_scope_expiry_fence'], ['single_request_receipts_only', 'owner_progress_inventory_exit_not_implemented']),
+  COVERAGE_PROGRESS_MODULE,
   server('guide', 'guide_selection_metadata/1', 'guide_selection_metadata', 'guide', 'guide', 'guide_reference', '100+sentinel records and bindings; selection only',
     ['nonreplayable_markers', 'original_grounded_turns_separate']),
   server('order_references', 'material-reference-data/1', 'reservation-reference-data/1', 'materials', 'materials', 'material_records',
