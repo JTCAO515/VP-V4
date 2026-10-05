@@ -163,6 +163,28 @@ test('coverage progress append-only full-chain owner exit SQL', {skip:!enabled,t
   await db(`alter table coverage_progress_private.requests_v1 disable trigger coverage_progress_immutable_v1;update coverage_progress_private.requests_v1 set captured_at=captured_at-31000,expires_at=expires_at-31000,decided_at=decided_at-31000 where request_id='${live.requestId}';alter table coverage_progress_private.requests_v1 enable trigger coverage_progress_immutable_v1;`);
   const expired=await recover(a,live,bytes);assert.equal(expired.requestDigest,receipt.requestDigest);assert.equal(expired.decidedAt,receipt.decidedAt-31000);
   await reject(a,{action:'recover',...select(live),mutationBytes:bytes},'SESSION_REPLACED',undefined,undefined,2);
+  // Deterministically cross the ORIGINAL deadline inside the decision trigger.
+  // Both collector transients and selected new pages must roll back, together
+  // with the operation decision/receipt; this is SQL claims fixture-only DDL.
+  const slow=await actor(),sc=await collector(slow),exported=await preview(slow,[sc.requestId]);
+  await exportStart(slow,exported);await page(slow,exported);
+  const sr=await preview(slow,[sc.requestId,exported.requestId]);
+  await db(`alter table coverage_progress_private.requests_v1 disable trigger coverage_progress_immutable_v1;
+   with deadline as(select floor(extract(epoch from clock_timestamp())*1000)::bigint+1200 expires)
+   update coverage_progress_private.requests_v1 set captured_at=deadline.expires-30000,expires_at=deadline.expires
+   from deadline where request_id='${sr.requestId}';
+   alter table coverage_progress_private.requests_v1 enable trigger coverage_progress_immutable_v1;
+   create function coverage_progress_private.fixture_deadline_delay() returns trigger language plpgsql as $$begin
+    perform pg_sleep(greatest(0,NEW.expires_at::numeric/1000-extract(epoch from clock_timestamp()))+0.05);return NEW;end$$;
+   create trigger own_deadline_delay before update on coverage_progress_private.requests_v1
+   for each row when(NEW.decision is not null and OLD.decision is null) execute function coverage_progress_private.fixture_deadline_delay();`);
+  try {
+  const beforeSlow=await state();await reject(slow,consent(sr),'COVERAGE_PROGRESS_EXPIRED');assert.equal(await state(),beforeSlow);
+  assert.equal(await db(`select decision is null and request_digest is null and decided_at is null and effects is null
+   from coverage_progress_private.requests_v1 where request_id='${sr.requestId}';`),'t');
+  assert.equal((await recover(slow,sr,JSON.stringify(consent(sr)))).kind,'unknown');
+  } finally { await db('drop trigger own_deadline_delay on coverage_progress_private.requests_v1;drop function coverage_progress_private.fixture_deadline_delay();'); }
+
   await db(`delete from auth.sessions where id='${a.session}';`);assert.equal(await db(`select count(*) from coverage_progress_private.requests_v1 where owner_id='${a.owner}';`),'0');assert.equal(await db(`select count(*) from coverage_export_private.request_fences_v1 where owner_id='${a.owner}';`),'0');
   const b=await actor(),bc=await collector(b),br=await preview(b,[bc.requestId]);await exportStart(b,br);await db(`delete from auth.users where id='${b.owner}';`);assert.equal(await db(`select count(*) from coverage_progress_private.pages_v1 where request_id='${br.requestId}';`),'0');
  });
