@@ -207,3 +207,35 @@ handler payloads, cancellation/tampered state/reason and all foreign/promotion /
 cleanup/TTL assertions are unchanged and independently compared. No old tests
 removed or loosened. Actual Native affected catalog + old coverage tests next;
 no larger device/UI/provider/SQL matrix and no source-target activation.
+
+## Final Native owned code fixed — catalog r2 actual PASS
+
+Product freeze993d5cb0fdde1346bc5dd2e9d482a4d5c643163d. Native complete owned scope:
+actual coverage-page34 inventory/order + three exact notification_data destinations,
+original current actor/session/epoch/reauth request, full fields/boundaries, explicit
+same-op erase/export confirmation, protected real file, exact journal/recover,
+monotonic drain terminal proof and scoped parent result. Sole TS8a5840f2 normal
+integration supplies unique producer wire/catalog4. No remaining Native file lease
+or producer catalog wait. Main/sole TS may take this immutable Native HEAD normally
+NOW; do not wait for evidence formatting or expand matrices.
+
+Actual /tmp/vpj58-notification-native-catalog-r2/tests.xcresult summary12PASS0FAIL0SKIP:
+NativeNotificationDataCatalogTests1 (actual immutable TS catalog+visible order+three
+closed module mappings) + original NativeDataCoverageTests11 (all original business/
+negative/TTL/cleanup/Session assertions preserved, only admitted catalog/digest and
+count34 adaptation). Unsigned app build/ad-hoc signed test build PASS. Owned
+2D433C68-227A-4340-A3EB-1AEA8413B3DC iPhone17Pro/iOS26.5 Simulator strictly deleted.
+Original notification six risk tests r1 at9db0b4fb6PASS0SKIP are reused separately,
+NOT asserted to have rerun on993d5cb0. Those tests unchanged byte-for-byte; final
+app change only metadata/mapping, constructor/action wire remains unchanged.
+7be21fd8->8a5840f2 TS contract/rows/protocol diff empty, confirming v2 risk proof
+scope still applies. No new device/provider/target matrix.
+
+Old metadata OwnerBundle helper and its existing negative oracle stay unchanged;
+new three scopes use ONLY independent NotificationDataProtocol and Session route.
+The inherited legacy Native coverage emitter sample is not counted as new full
+notification-data wire proof. New Native catalog producer proof is the exact
+immutable8a5840f2 resource, not that legacy metadata sample. Final combined real
+server registration/SQL/GoTrue data path remains sole TS+SQL normal integration;
+Native target UI/human/device/provider/backup/all-account acceptance UNRUN.
+Whole #239/full ALL1 remaining handlers/ALL2 stay OPEN, allUserDataCompletedfalse.
