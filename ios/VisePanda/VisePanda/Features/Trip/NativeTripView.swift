@@ -157,6 +157,7 @@ struct NativeTripView: View {
                         NativeTripLifecycleView(session: session, chinese: chinese, initialTripID: store.selectedID,
                                                 onUpdated: { await lifecycleUpdated($0) })
                     }.accessibilityIdentifier("trip.lifecycle.entry")
+                        .disabled(store.busy || store.draft != nil || store.pending != nil || store.hasUncertainProposal)
                     tripList
                     if let receipt = store.deletionReceipt {
                         VisePandaCard {
