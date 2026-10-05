@@ -93,6 +93,7 @@ import Observation
             } catch { journalReady = false; storageReady = false; throw error }
             guard durable.body == command.body, durable.matches(actor.scope, sessionID: actor.sessionID), try read() == durable else { throw NativeDataError.sessionUnavailable }
             pending = durable; receiptAbsent = false; clearVisible()
+            guard storageReady else { throw NativeDataError.sessionUnavailable }
             let bytes = try await request(command.body)
             guard generation == own, current() == actor, !Task.isCancelled else { return }
             let outcome = try NativeCommunityOutcome.decode(bytes, actor: actor)
@@ -105,6 +106,7 @@ import Observation
         let own = generation; busy = true; clearVisible(); receiptAbsent = false
         defer { if generation == own { busy = false } }
         do {
+            guard storageReady else { throw NativeDataError.sessionUnavailable }
             let command = try NativeCommunityCommand(body: pending.body)
             let bytes = try await request(command.recovery(abandon: abandon))
             guard generation == own, current() == actor, !Task.isCancelled else { return }
@@ -122,6 +124,7 @@ import Observation
         let own = generation; busy = true; receiptAbsent = false; clearVisible()
         defer { if generation == own { busy = false } }
         do {
+            guard storageReady else { throw NativeDataError.sessionUnavailable }
             guard try read() == pending else { throw NativeDataError.sessionUnavailable }
             let command = try NativeCommunityCommand(body: pending.body)
             let bytes = try await request(pending.body)
@@ -136,6 +139,7 @@ import Observation
         let own = generation, started = uptime(); busy = true; clearVisible()
         defer { if generation == own { busy = false } }
         do {
+            guard storageReady else { throw NativeDataError.sessionUnavailable }
             let bytes = try await request(NativeCommunityWire.bytes(["action": "export"]))
             guard generation == own, current() == actor, !Task.isCancelled, uptime() - started < 30 else { return }
             guard case .export(let artifact) = try NativeCommunityOutcome.decode(bytes, actor: actor) else { throw NativeDataError.invalidResponse }

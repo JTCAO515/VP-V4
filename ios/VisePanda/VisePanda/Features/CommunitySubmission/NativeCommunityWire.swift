@@ -21,8 +21,8 @@ enum NativeCommunityWire {
     static func text(_ raw: Any?, max: Int, empty: Bool = false) throws -> String {
         guard let s = raw as? String, s.utf16.count <= max, !s.contains("\u{0}"), empty || !s.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { throw NativeDataError.invalidResponse }; return s
     }
-    static func integer(_ raw: Any?, max: Int = 3) throws -> Int {
-        guard let n = raw as? NSNumber, CFGetTypeID(n) != CFBooleanGetTypeID(), n.doubleValue.rounded() == n.doubleValue, n.doubleValue >= 1, n.doubleValue <= Double(max) else { throw NativeDataError.invalidResponse }; return n.intValue
+    static func integer(_ raw: Any?, max: Int = 3, minimum: Int = 1) throws -> Int {
+        guard let n = raw as? NSNumber, CFGetTypeID(n) != CFBooleanGetTypeID(), n.doubleValue.rounded() == n.doubleValue, n.doubleValue >= Double(minimum), n.doubleValue <= Double(max) else { throw NativeDataError.invalidResponse }; return n.intValue
     }
     static func bool(_ raw: Any?) throws -> Bool {
         guard let n = raw as? NSNumber, CFGetTypeID(n) == CFBooleanGetTypeID() else { throw NativeDataError.invalidResponse }; return n.boolValue
@@ -60,7 +60,7 @@ struct NativeCommunityCommand: Equatable {
             submissionID = try w.id(v["submissionId"])
             guard ["experience", "help"].contains(v["contentKind"] as? String ?? ""), v["consent"] as? String == "internal-review-v1" else { throw NativeDataError.invalidResponse }
             _ = try w.text(v["title"], max: 160); _ = try w.text(v["content"], max: 4000); _ = try w.text(v["benefitDisclosure"], max: 400, empty: true)
-            _ = try w.optional(v["place"]) { value in let p = try w.object(value as Any, ["tripId", "placeReferenceId"]); return (try w.id(p["tripId"]), try w.id(p["placeReferenceId"])) }
+            _ = try w.optional(v["place"]) { value in let p = try w.object(value as Any, ["tripId", "placeReferenceId", "expectedTripVersion", "mappingDigest"]); _ = try w.integer(p["expectedTripVersion"], max: 2_147_483_647, minimum: 0); _ = try w.hash(p["mappingDigest"]); return (try w.id(p["tripId"]), try w.id(p["placeReferenceId"])) }
         case "withdraw":
             _ = try w.object(v, ["action", "operationId", "submissionId", "expectedVersion"]); submissionID = try w.id(v["submissionId"])
             _ = try w.integer(v["expectedVersion"], max: 2)
@@ -72,7 +72,7 @@ struct NativeCommunityCommand: Equatable {
     }
     static func submit(_ draft: NativeCommunityDraft) throws -> Self {
         guard draft.valid else { throw NativeDataError.invalidResponse }
-        let place: Any = draft.place.map { ["tripId": $0.tripID, "placeReferenceId": $0.referenceID] } ?? NSNull()
+        let place: Any = draft.place.map { ["tripId": $0.tripID, "placeReferenceId": $0.referenceID, "expectedTripVersion": $0.tripVersion, "mappingDigest": $0.row.mappingDigest] as [String: Any] } ?? NSNull()
         return try .init(body: NativeCommunityWire.bytes(["action": "submit", "operationId": UUID().uuidString.lowercased(), "submissionId": UUID().uuidString.lowercased(), "contentKind": draft.kind, "title": draft.title, "content": draft.content, "benefitDisclosure": draft.benefitDisclosure, "place": place, "consent": "internal-review-v1"]))
     }
     static func withdraw(_ item: NativeCommunityItem) throws -> Self {
@@ -115,6 +115,7 @@ struct NativeCommunityItem: Identifiable, Equatable {
     let kind: String
     let benefit: String?
     let disclosure: String
+    let reviewerDisclosure: String?
     let status: String
     let version: Int
     let createdAt: String
@@ -126,8 +127,9 @@ struct NativeCommunityItem: Identifiable, Equatable {
     var canWithdraw: Bool { ["pending", "published", "rejected"].contains(status) && version <= 2 }
     init(_ raw: Any) throws {
         let w = NativeCommunityWire.self
-        let v = try w.object(raw, ["id", "title", "content", "contentKind", "benefitDisclosure", "authorDisclosure", "status", "version", "createdAt", "reviewedAt", "withdrawnAt", "reviewNote", "place", "history", "visibility", "publiclyVisible", "retrievalEligible"])
+        let v = try w.object(raw, ["id", "title", "content", "contentKind", "benefitDisclosure", "authorDisclosure", "reviewerDisclosure", "status", "version", "createdAt", "reviewedAt", "withdrawnAt", "reviewNote", "place", "history", "visibility", "publiclyVisible", "retrievalEligible"])
         id = try w.id(v["id"]); title = try w.text(v["title"], max: 160, empty: true); content = try w.text(v["content"], max: 4000, empty: true)
+        reviewerDisclosure = try w.optional(v["reviewerDisclosure"]) { try w.text($0, max: 24) }
         kind = try w.text(v["contentKind"], max: 10); disclosure = try w.text(v["authorDisclosure"], max: 24); status = try w.text(v["status"], max: 12)
         benefit = try w.optional(v["benefitDisclosure"]) { try w.text($0, max: 400, empty: true) }
         version = try w.integer(v["version"]); createdAt = try w.date(v["createdAt"])
@@ -142,7 +144,8 @@ struct NativeCommunityItem: Identifiable, Equatable {
         } else {
             guard !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, !content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, withdrawnAt == nil else { throw NativeDataError.invalidResponse }
         }
-        if status == "pending" { guard version == 1, reviewedAt == nil, reviewNote == nil else { throw NativeDataError.invalidResponse } }
+        guard reviewerDisclosure == nil || ["registered_user", "community_reviewer", "official", "employee", "unknown"].contains(reviewerDisclosure!) else { throw NativeDataError.invalidResponse }
+        if status == "pending" { guard version == 1, reviewedAt == nil, reviewNote == nil, reviewerDisclosure == nil else { throw NativeDataError.invalidResponse } }
         if ["published", "rejected"].contains(status) { guard version == 2, reviewedAt != nil else { throw NativeDataError.invalidResponse } }
     }
 }
@@ -214,6 +217,29 @@ enum NativeCommunityOutcome {
                 guard command.action == "delete" ? item == nil : item?.id == command.submissionID else { throw NativeDataError.invalidResponse }; return true
             }
             guard recovery else { throw NativeDataError.invalidResponse }; return state == "abandoned"
+        default: throw NativeDataError.invalidResponse
+        }
+    }
+}
+
+struct NativeCommunityInput {
+    let mutation: NativeCommunityCommand?
+    let recovery: NativeCommunityCommand?
+    init(body: Data) throws {
+        let w = NativeCommunityWire.self
+        guard body.count <= 24_000, let value = String(data: body, encoding: .utf8), value.utf16.count <= 10000,
+              let v = try JSONSerialization.jsonObject(with: body) as? [String: Any], let action = v["action"] as? String else { throw NativeDataError.invalidResponse }
+        mutation = ["submit", "withdraw", "delete"].contains(action) ? try NativeCommunityCommand(body: body) : nil
+        if mutation != nil { recovery = nil; return }
+        switch action {
+        case "mine": _ = try w.object(v, ["action", "cursor"]); _ = try w.optional(v["cursor"], w.id); recovery = nil
+        case "read": _ = try w.object(v, ["action", "submissionId"]); _ = try w.id(v["submissionId"]); recovery = nil
+        case "export": _ = try w.object(v, ["action"]); recovery = nil
+        case "operation", "abandon":
+            _ = try w.object(v, ["action", "operationId", "mutationBytes"])
+            let text = try w.text(v["mutationBytes"], max: 10000)
+            recovery = try NativeCommunityCommand(body: Data(text.utf8))
+            guard recovery?.operationID == (try w.id(v["operationId"])) else { throw NativeDataError.invalidResponse }
         default: throw NativeDataError.invalidResponse
         }
     }

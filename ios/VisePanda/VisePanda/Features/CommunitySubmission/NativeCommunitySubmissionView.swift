@@ -7,11 +7,14 @@ struct NativeCommunitySubmissionView: View {
     @State private var draft = NativeCommunityDraft()
     @State private var action: Task<Void, Never>?
     @State private var confirmation: Confirmation?
+    @State private var placePicker: PlacePicker?
+    @State private var placeUnavailable = false
     private var session: NativeSession { settings.nativeSession }
     private var chinese: Bool { settings.selectedLocale == .zh }
     private var actor: NativeCommunityActor? { try? session.communityActor() }
     private func t(_ zh: String, _ en: String) -> String { chinese ? zh : en }
 
+    private struct PlacePicker: Identifiable { let actor: NativeCommunityActor; let id = UUID() }
     private enum Confirmation: Identifiable {
         case withdraw(NativeCommunityItem), delete, abandon
         var id: String { switch self { case .withdraw(let item): "withdraw-" + item.id; case .delete: "delete"; case .abandon: "abandon" } }
@@ -40,9 +43,22 @@ struct NativeCommunitySubmissionView: View {
                         .accessibilityIdentifier("community.operation.abandon")
                 }.disabled(store.busy || !store.storageReady || actor == nil)
             }
+            Section(t("可选地点关联", "Optional place association")) {
+                if let place = draft.place {
+                    Text(place.label)
+                    Button(t("明确移除关联", "Remove association")) { draft.place = nil; draft.associationConfirmed = true; placeUnavailable = false }
+                }
+                Button(t("本次明确不关联地点", "Explicitly submit without a place")) { draft.place = nil; draft.associationConfirmed = true; placeUnavailable = false }
+                if draft.place == nil { Text(draft.associationConfirmed ? t("已选择不关联地点", "You chose no place association") : t("请明确选择地点或不关联地点", "Choose a place or explicitly choose no association")) }
+                Button(t("选择自己行程内的已收藏地点", "Choose a saved place in your Trip")) { if let actor { placePicker = .init(actor: actor) } }
+                if placeUnavailable { Text(t("地点或行程已变化。请重新选择，或明确移除关联后投稿。", "The place or Trip changed. Choose again or explicitly remove the association before submitting.")) }
+            }.disabled(store.busy || store.pending != nil || actor == nil)
             NativeCommunityComposer(draft: $draft, chinese: chinese, disabled: store.busy || store.pending != nil || !store.storageReady || actor == nil) { frozen in
-                guard let command = try? NativeCommunityCommand.submit(frozen) else { return }
-                draft = .init(); run { actor in await perform(command, actor: actor) }
+                run { actor in
+                    guard await validatePlace(frozen.place, actor: actor), !Task.isCancelled, self.actor == actor,
+                          draft == frozen, let command = try? NativeCommunityCommand.submit(frozen) else { placeUnavailable = true; return }
+                    draft = .init(); placeUnavailable = false; await perform(command, actor: actor)
+                }
             }
             Section(t("自己的投稿", "Your submissions")) {
                 Button(t("刷新第一页", "Refresh first page")) { run { actor in await store.page(current: { self.actor }, request: { try await session.communityRequest(body: $0, actor: actor) }) } }
@@ -84,6 +100,11 @@ struct NativeCommunitySubmissionView: View {
             .onChange(of: scenePhase) { _, phase in if phase != .active { hide() } }
             .onChange(of: session.dataScope) { _, _ in hide(); store.bind(actor) }
             .onDisappear { hide() }
+            .sheet(item: $placePicker) { token in
+                NativeCommunityPlacePicker(session: session, actor: token.actor, chinese: chinese) { place in
+                    guard actor == token.actor else { return }; draft.place = place; draft.associationConfirmed = true; placeUnavailable = false
+                }
+            }
             .sheet(item: $confirmation) { value in confirmationView(value) }
     }
     private func run(_ work: @escaping (NativeCommunityActor) async -> Void) {
@@ -96,7 +117,22 @@ struct NativeCommunitySubmissionView: View {
         store.restore(actor) { try session.communityRecovery(actor: actor) }
         await store.page(current: { self.actor }, request: { try await session.communityRequest(body: $0, actor: actor) })
     }
-    private func hide() { action?.cancel(); action = nil; confirmation = nil; draft = .init(); store.suspend() }
+    private func hide() { action?.cancel(); action = nil; confirmation = nil; placePicker = nil; draft = .init(); placeUnavailable = false; store.suspend() }
+    private func validatePlace(_ place: NativeCommunityPlaceSelection?, actor: NativeCommunityActor) async -> Bool {
+        guard let place else { return true }
+        guard place.actor == actor, self.actor == actor else { return false }
+        do {
+            let bytes = try await session.tripRequest(path: "api/trips/native/v2/" + place.tripID, method: "GET")
+            guard self.actor == actor, bytes.count <= 1_000_000, !Task.isCancelled else { return false }
+            let trip = try JSONDecoder().decode(NativeTripDetail.self, from: bytes)
+            guard trip.version == 2, trip.trip.id == place.tripID, trip.trip.headVersion == place.tripVersion else { return false }
+            let reader = NativeSavedPlaceStore()
+            await reader.load(scope: actor.scope, tripId: place.tripID, version: place.tripVersion, locale: chinese ? "zh" : "en", cursor: place.cursor,
+                              current: { self.actor == actor }) { try await session.placeActionRequest(tripId: place.tripID, body: $0, actor: actor.scope) }
+            defer { reader.clear() }
+            return reader.visible(scope: actor.scope, tripId: place.tripID, version: place.tripVersion)?.contains(place.row) == true && place.row.mappingStatus == "current"
+        } catch { return false }
+    }
     private func perform(_ command: NativeCommunityCommand, actor: NativeCommunityActor) async {
         await store.perform(command, current: { self.actor }, read: { try session.communityRecovery(actor: actor) }, retain: { try session.rememberCommunity(body: $0, actor: actor) }, complete: { try session.completeCommunity($0, actor: actor) }, request: { try await session.communityRequest(body: $0, actor: actor) })
     }
@@ -107,6 +143,7 @@ struct NativeCommunitySubmissionView: View {
             if !item.title.isEmpty { Text(item.title).font(.title3); Text(item.content).textSelection(.enabled) }
             Text(t("作者身份：", "Author disclosure: ") + disclosure(item.disclosure)).font(.caption)
             if let benefit = item.benefit, !benefit.isEmpty { Text(t("作者自述利益关系：", "Author-reported interests: ") + benefit).font(.caption) }
+            if item.reviewedAt != nil { Text(t("审核者身份：", "Reviewer disclosure: ") + disclosure(item.reviewerDisclosure ?? "unknown")).font(.caption) }
             if let note = item.reviewNote { Text(t("审核结果说明：", "Review result note: ") + note).textSelection(.enabled) }
             else if item.reviewedAt != nil { Text(t("未提供可向作者展示的审核说明。", "No author-visible review note is available.")) }
             if let place = item.place {
