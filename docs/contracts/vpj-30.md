@@ -5,6 +5,12 @@ reason and purpose consent, lets the same owner list, close or complete it, and
 projects delivery eligibility from the current Trip. It does not schedule or send
 push notifications. The UI says this before saving and on every saved record.
 
+The independently versioned [delivery v2 contract](vpj-30-delivery-v2.md) adds
+Next Step, purpose consent, explicit qualified watches, device lifecycle and
+bounded dispatch/APNs code. Historical v1 intent is never silently enrolled for
+delivery. New transport and database authorities default disabled/revoked; target
+APNs, device permission, deployment and delivery acceptance remain separate facts.
+
 ## Storage and consumer
 
 `travel_reminders_v1(trip, action, input)` owns all writes. The native
