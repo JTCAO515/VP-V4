@@ -1,0 +1,552 @@
+{
+  "syntheticSource": true,
+  "actor": {
+    "ownerId": "22222222-2222-4222-8222-222222222222",
+    "sessionId": "33333333-3333-4333-8333-333333333333",
+    "mobileEpoch": 2
+  },
+  "now": 1791237600002,
+  "tripExportBytes": "{\"action\":\"export\",\"scope\":\"archived-trip-data/1\",\"requestId\":\"00000000-0000-4000-8000-000000000003\",\"tripId\":\"00000000-0000-4000-8000-000000000004\",\"tripVersion\":1,\"objectIds\":[],\"previewDigest\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"confirmed\":true}",
+  "tripPreviewBytes": "{\"scope\":\"archived-trip-data/1\",\"requestId\":\"00000000-0000-4000-8000-000000000003\",\"tripId\":\"00000000-0000-4000-8000-000000000004\",\"tripVersion\":1,\"objectIds\":[],\"action\":\"preview\"}",
+  "tripListBytes": "{\"action\":\"list\",\"scope\":\"archived-trip-data/1\",\"cursor\":null,\"limit\":20}",
+  "tripList": {
+    "data": {
+      "schemaVersion": "archive-data/1",
+      "kind": "list",
+      "scope": "archived-trip-data/1",
+      "ownerId": "22222222-2222-4222-8222-222222222222",
+      "sessionId": "33333333-3333-4333-8333-333333333333",
+      "mobileEpoch": 2,
+      "sourceDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "capturedAt": 1791237600000,
+      "expiresAt": 1791237630000,
+      "items": [
+        {
+          "tripId": "00000000-0000-4000-8000-000000000004",
+          "title": "Archived",
+          "headVersion": 1,
+          "state": "archived",
+          "archivedVersion": 1,
+          "archivedAt": "2026-10-06T00:00:00.000Z"
+        }
+      ],
+      "hasMore": false,
+      "nextCursor": null,
+      "allUserDataCompleted": false
+    }
+  },
+  "tripPreview": {
+    "data": {
+      "schemaVersion": "archive-data/1",
+      "scope": "archived-trip-data/1",
+      "requestId": "00000000-0000-4000-8000-000000000003",
+      "tripId": "00000000-0000-4000-8000-000000000004",
+      "tripVersion": 1,
+      "objectIds": [],
+      "ownerId": "22222222-2222-4222-8222-222222222222",
+      "sessionId": "33333333-3333-4333-8333-333333333333",
+      "mobileEpoch": 2,
+      "sourceDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "previewDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "capturedAt": 1791237600000,
+      "expiresAt": 1791237630000,
+      "boundaries": {
+        "exportFields": [
+          "archived_trip_id_title_head_confirmation_lifecycle",
+          "head_snapshot_safe_days_items",
+          "all_available_snapshot_versions_titles_timestamps_safe_content",
+          "selected_trip_lifecycle_operation_receipts"
+        ],
+        "eraseFields": [],
+        "retained": [
+          "original_archive_terminal_business_state",
+          "confirmed_trip_proposal_history",
+          "original_selected_trip_deletion_receipt",
+          "financial_records",
+          "operation_fences"
+        ],
+        "missing": [
+          "snapshot_versions_never_stored",
+          "fields_outside_original_safe_content_projection",
+          "other_domains_use_existing_module_handlers",
+          "raw_pdf_attachment_device_bytes",
+          "external_orders_payments_copies",
+          "backup_restore_target_acceptance"
+        ]
+      },
+      "allUserDataCompleted": false,
+      "kind": "preview",
+      "counts": {
+        "trip": 1,
+        "snapshots": 2,
+        "operations": 0,
+        "progress": 0
+      },
+      "snapshotVersionGaps": 0
+    }
+  },
+  "tripBundle": {
+    "data": {
+      "schemaVersion": "archive-data/1",
+      "scope": "archived-trip-data/1",
+      "requestId": "00000000-0000-4000-8000-000000000003",
+      "tripId": "00000000-0000-4000-8000-000000000004",
+      "tripVersion": 1,
+      "objectIds": [],
+      "ownerId": "22222222-2222-4222-8222-222222222222",
+      "sessionId": "33333333-3333-4333-8333-333333333333",
+      "mobileEpoch": 2,
+      "sourceDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "previewDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "capturedAt": 1791237600000,
+      "expiresAt": 1791237630000,
+      "boundaries": {
+        "exportFields": [
+          "archived_trip_id_title_head_confirmation_lifecycle",
+          "head_snapshot_safe_days_items",
+          "all_available_snapshot_versions_titles_timestamps_safe_content",
+          "selected_trip_lifecycle_operation_receipts"
+        ],
+        "eraseFields": [],
+        "retained": [
+          "original_archive_terminal_business_state",
+          "confirmed_trip_proposal_history",
+          "original_selected_trip_deletion_receipt",
+          "financial_records",
+          "operation_fences"
+        ],
+        "missing": [
+          "snapshot_versions_never_stored",
+          "fields_outside_original_safe_content_projection",
+          "other_domains_use_existing_module_handlers",
+          "raw_pdf_attachment_device_bytes",
+          "external_orders_payments_copies",
+          "backup_restore_target_acceptance"
+        ]
+      },
+      "allUserDataCompleted": false,
+      "kind": "bundle",
+      "requestDigest": "81abf3571982321ae0c49ba59c3e1dfb3eea32e42d115637978bae2acb8d07c8",
+      "sections": [
+        {
+          "section": "trip",
+          "items": [
+            {
+              "tripId": "00000000-0000-4000-8000-000000000004",
+              "title": "Archived",
+              "headVersion": 1,
+              "confirmationState": "confirmed",
+              "content": {
+                "days": [
+                  {
+                    "id": "day",
+                    "date": "2026-10-06",
+                    "timeZone": "Asia/Shanghai",
+                    "items": [
+                      {
+                        "id": "item",
+                        "dayId": "day",
+                        "title": "真实保留的行程"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "lifecycle": {
+                "tripId": "00000000-0000-4000-8000-000000000004",
+                "title": "Archived",
+                "headVersion": 1,
+                "state": "archived",
+                "archivedVersion": 1,
+                "archivedAt": "2026-10-06T00:00:00.000Z"
+              }
+            }
+          ]
+        },
+        {
+          "section": "snapshots",
+          "items": [
+            {
+              "tripId": "00000000-0000-4000-8000-000000000004",
+              "version": 0,
+              "title": "Initial",
+              "createdAt": "2026-10-06T00:00:00.000Z",
+              "content": null
+            },
+            {
+              "tripId": "00000000-0000-4000-8000-000000000004",
+              "version": 1,
+              "title": "Archived",
+              "createdAt": "2026-10-06T00:00:00.000Z",
+              "content": {
+                "days": [
+                  {
+                    "id": "day",
+                    "date": "2026-10-06",
+                    "timeZone": "Asia/Shanghai",
+                    "items": [
+                      {
+                        "id": "item",
+                        "dayId": "day",
+                        "title": "真实保留的行程"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "section": "operations",
+          "items": []
+        }
+      ],
+      "proof": {
+        "coverage": "complete",
+        "pages": 3,
+        "rows": 3
+      }
+    }
+  },
+  "progressExportBytes": "{\"action\":\"export\",\"scope\":\"archive-export-progress/1\",\"requestId\":\"00000000-0000-4000-8000-000000000009\",\"tripId\":null,\"tripVersion\":null,\"objectIds\":[\"00000000-0000-4000-8000-000000000003\"],\"previewDigest\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"confirmed\":true}",
+  "progressPreviewBytes": "{\"scope\":\"archive-export-progress/1\",\"requestId\":\"00000000-0000-4000-8000-000000000009\",\"tripId\":null,\"tripVersion\":null,\"objectIds\":[\"00000000-0000-4000-8000-000000000003\"],\"action\":\"preview\"}",
+  "progressListBytes": "{\"action\":\"list\",\"scope\":\"archive-export-progress/1\",\"cursor\":null,\"limit\":20}",
+  "progressList": {
+    "data": {
+      "schemaVersion": "archive-data/1",
+      "kind": "list",
+      "scope": "archive-export-progress/1",
+      "ownerId": "22222222-2222-4222-8222-222222222222",
+      "sessionId": "33333333-3333-4333-8333-333333333333",
+      "mobileEpoch": 2,
+      "sourceDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "capturedAt": 1791237600000,
+      "expiresAt": 1791237630000,
+      "items": [
+        {
+          "objectId": "00000000-0000-4000-8000-000000000003",
+          "originalScope": "archived-trip-data/1",
+          "tripId": "00000000-0000-4000-8000-000000000004",
+          "tripVersion": 1,
+          "state": "exported",
+          "progressErased": false
+        }
+      ],
+      "hasMore": false,
+      "nextCursor": null,
+      "allUserDataCompleted": false
+    }
+  },
+  "progressPreview": {
+    "data": {
+      "schemaVersion": "archive-data/1",
+      "scope": "archive-export-progress/1",
+      "requestId": "00000000-0000-4000-8000-000000000009",
+      "tripId": null,
+      "tripVersion": null,
+      "objectIds": [
+        "00000000-0000-4000-8000-000000000003"
+      ],
+      "ownerId": "22222222-2222-4222-8222-222222222222",
+      "sessionId": "33333333-3333-4333-8333-333333333333",
+      "mobileEpoch": 2,
+      "sourceDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "previewDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "capturedAt": 1791237600000,
+      "expiresAt": 1791237630000,
+      "boundaries": {
+        "exportFields": [
+          "selected_request_all_binding_fields",
+          "selected_request_page_progress",
+          "selected_request_minimal_erasure_receipt"
+        ],
+        "eraseFields": [
+          "selected_transient_page_progress"
+        ],
+        "retained": [
+          "nonreplayable_request_owner_session_epoch_scope_selection_source_preview_request_hash_time_fences",
+          "immutable_minimal_erasure_receipt",
+          "original_session_account_cascade_semantics"
+        ],
+        "missing": [
+          "unselected_requests",
+          "source_trip_data_separate_original_delete_handler",
+          "external_files_copies",
+          "backup_restore_target_acceptance"
+        ]
+      },
+      "allUserDataCompleted": false,
+      "kind": "preview",
+      "counts": {
+        "trip": 0,
+        "snapshots": 0,
+        "operations": 0,
+        "progress": 1
+      },
+      "snapshotVersionGaps": 0
+    }
+  },
+  "progressBundle": {
+    "data": {
+      "schemaVersion": "archive-data/1",
+      "scope": "archive-export-progress/1",
+      "requestId": "00000000-0000-4000-8000-000000000009",
+      "tripId": null,
+      "tripVersion": null,
+      "objectIds": [
+        "00000000-0000-4000-8000-000000000003"
+      ],
+      "ownerId": "22222222-2222-4222-8222-222222222222",
+      "sessionId": "33333333-3333-4333-8333-333333333333",
+      "mobileEpoch": 2,
+      "sourceDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "previewDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "capturedAt": 1791237600000,
+      "expiresAt": 1791237630000,
+      "boundaries": {
+        "exportFields": [
+          "selected_request_all_binding_fields",
+          "selected_request_page_progress",
+          "selected_request_minimal_erasure_receipt"
+        ],
+        "eraseFields": [
+          "selected_transient_page_progress"
+        ],
+        "retained": [
+          "nonreplayable_request_owner_session_epoch_scope_selection_source_preview_request_hash_time_fences",
+          "immutable_minimal_erasure_receipt",
+          "original_session_account_cascade_semantics"
+        ],
+        "missing": [
+          "unselected_requests",
+          "source_trip_data_separate_original_delete_handler",
+          "external_files_copies",
+          "backup_restore_target_acceptance"
+        ]
+      },
+      "allUserDataCompleted": false,
+      "kind": "bundle",
+      "requestDigest": "3320f1488d16f125d71745e586899d9937677e0e167cae8a1e8c8a44a355dea5",
+      "sections": [
+        {
+          "section": "progress",
+          "items": [
+            {
+              "objectId": "00000000-0000-4000-8000-000000000003",
+              "ownerId": "22222222-2222-4222-8222-222222222222",
+              "sessionId": "33333333-3333-4333-8333-333333333333",
+              "mobileEpoch": 2,
+              "originalScope": "archived-trip-data/1",
+              "tripId": "00000000-0000-4000-8000-000000000004",
+              "tripVersion": 1,
+              "objectIds": [],
+              "sourceDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "previewDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "requestDigest": "81abf3571982321ae0c49ba59c3e1dfb3eea32e42d115637978bae2acb8d07c8",
+              "state": "exported",
+              "capturedAt": 1791237600000,
+              "expiresAt": 1791237630000,
+              "decidedAt": 1791237600001,
+              "progressErased": false,
+              "receipt": null,
+              "progress": [
+                {
+                  "section": "trip",
+                  "pages": 1,
+                  "rows": 1,
+                  "lastCursor": null,
+                  "nextCursor": null,
+                  "lastLimit": 50,
+                  "terminal": true
+                },
+                {
+                  "section": "snapshots",
+                  "pages": 1,
+                  "rows": 2,
+                  "lastCursor": null,
+                  "nextCursor": null,
+                  "lastLimit": 50,
+                  "terminal": true
+                },
+                {
+                  "section": "operations",
+                  "pages": 1,
+                  "rows": 0,
+                  "lastCursor": null,
+                  "nextCursor": null,
+                  "lastLimit": 50,
+                  "terminal": true
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "coverage": "complete",
+        "pages": 1,
+        "rows": 1
+      }
+    }
+  },
+  "tripValidated": {
+    "data": {
+      "schemaVersion": "archive-data/1",
+      "scope": "archived-trip-data/1",
+      "requestId": "00000000-0000-4000-8000-000000000003",
+      "tripId": "00000000-0000-4000-8000-000000000004",
+      "tripVersion": 1,
+      "objectIds": [],
+      "ownerId": "22222222-2222-4222-8222-222222222222",
+      "sessionId": "33333333-3333-4333-8333-333333333333",
+      "mobileEpoch": 2,
+      "sourceDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "previewDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "capturedAt": 1791237600000,
+      "expiresAt": 1791237630000,
+      "boundaries": {
+        "exportFields": [
+          "archived_trip_id_title_head_confirmation_lifecycle",
+          "head_snapshot_safe_days_items",
+          "all_available_snapshot_versions_titles_timestamps_safe_content",
+          "selected_trip_lifecycle_operation_receipts"
+        ],
+        "eraseFields": [],
+        "retained": [
+          "original_archive_terminal_business_state",
+          "confirmed_trip_proposal_history",
+          "original_selected_trip_deletion_receipt",
+          "financial_records",
+          "operation_fences"
+        ],
+        "missing": [
+          "snapshot_versions_never_stored",
+          "fields_outside_original_safe_content_projection",
+          "other_domains_use_existing_module_handlers",
+          "raw_pdf_attachment_device_bytes",
+          "external_orders_payments_copies",
+          "backup_restore_target_acceptance"
+        ]
+      },
+      "allUserDataCompleted": false,
+      "kind": "validated",
+      "requestDigest": "81abf3571982321ae0c49ba59c3e1dfb3eea32e42d115637978bae2acb8d07c8",
+      "current": true
+    }
+  },
+  "progressValidated": {
+    "data": {
+      "schemaVersion": "archive-data/1",
+      "scope": "archive-export-progress/1",
+      "requestId": "00000000-0000-4000-8000-000000000009",
+      "tripId": null,
+      "tripVersion": null,
+      "objectIds": [
+        "00000000-0000-4000-8000-000000000003"
+      ],
+      "ownerId": "22222222-2222-4222-8222-222222222222",
+      "sessionId": "33333333-3333-4333-8333-333333333333",
+      "mobileEpoch": 2,
+      "sourceDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "previewDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "capturedAt": 1791237600000,
+      "expiresAt": 1791237630000,
+      "boundaries": {
+        "exportFields": [
+          "selected_request_all_binding_fields",
+          "selected_request_page_progress",
+          "selected_request_minimal_erasure_receipt"
+        ],
+        "eraseFields": [
+          "selected_transient_page_progress"
+        ],
+        "retained": [
+          "nonreplayable_request_owner_session_epoch_scope_selection_source_preview_request_hash_time_fences",
+          "immutable_minimal_erasure_receipt",
+          "original_session_account_cascade_semantics"
+        ],
+        "missing": [
+          "unselected_requests",
+          "source_trip_data_separate_original_delete_handler",
+          "external_files_copies",
+          "backup_restore_target_acceptance"
+        ]
+      },
+      "allUserDataCompleted": false,
+      "kind": "validated",
+      "requestDigest": "3320f1488d16f125d71745e586899d9937677e0e167cae8a1e8c8a44a355dea5",
+      "current": true
+    }
+  },
+  "progressEraseBytes": "{\"action\":\"erase\",\"scope\":\"archive-export-progress/1\",\"requestId\":\"00000000-0000-4000-8000-000000000010\",\"tripId\":null,\"tripVersion\":null,\"objectIds\":[\"00000000-0000-4000-8000-000000000003\"],\"previewDigest\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"confirmed\":true}",
+  "progressReceipt": {
+    "data": {
+      "schemaVersion": "archive-data/1",
+      "scope": "archive-export-progress/1",
+      "requestId": "00000000-0000-4000-8000-000000000010",
+      "tripId": null,
+      "tripVersion": null,
+      "objectIds": [
+        "00000000-0000-4000-8000-000000000003"
+      ],
+      "ownerId": "22222222-2222-4222-8222-222222222222",
+      "sessionId": "33333333-3333-4333-8333-333333333333",
+      "mobileEpoch": 2,
+      "sourceDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "previewDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "capturedAt": 1791237600000,
+      "expiresAt": 1791237630000,
+      "boundaries": {
+        "exportFields": [
+          "selected_request_all_binding_fields",
+          "selected_request_page_progress",
+          "selected_request_minimal_erasure_receipt"
+        ],
+        "eraseFields": [
+          "selected_transient_page_progress"
+        ],
+        "retained": [
+          "nonreplayable_request_owner_session_epoch_scope_selection_source_preview_request_hash_time_fences",
+          "immutable_minimal_erasure_receipt",
+          "original_session_account_cascade_semantics"
+        ],
+        "missing": [
+          "unselected_requests",
+          "source_trip_data_separate_original_delete_handler",
+          "external_files_copies",
+          "backup_restore_target_acceptance"
+        ]
+      },
+      "allUserDataCompleted": false,
+      "kind": "receipt",
+      "state": "erased",
+      "requestDigest": "bd2a5f925ccf38202f1f2e2e2682a62d92f310112a81ad7d5b07e1a09450babc",
+      "decidedAt": 1791237600001,
+      "effects": {
+        "clearedProgress": 3,
+        "retainedFences": 1,
+        "sourceTrip": "not_modified",
+        "externalCopies": "not_erased"
+      }
+    }
+  },
+  "progressUnknown": {
+    "data": {
+      "schemaVersion": "archive-data/1",
+      "kind": "unknown",
+      "scope": "archive-export-progress/1",
+      "requestId": "00000000-0000-4000-8000-000000000010",
+      "tripId": null,
+      "tripVersion": null,
+      "objectIds": [
+        "00000000-0000-4000-8000-000000000003"
+      ],
+      "ownerId": "22222222-2222-4222-8222-222222222222",
+      "sessionId": "33333333-3333-4333-8333-333333333333",
+      "mobileEpoch": 2,
+      "requestDigest": "bd2a5f925ccf38202f1f2e2e2682a62d92f310112a81ad7d5b07e1a09450babc",
+      "allUserDataCompleted": false
+    }
+  }
+}
