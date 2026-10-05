@@ -93,7 +93,7 @@ export const LANES = {
           "tests/integration/privacy/entitlement-export-d5.test.mjs",
           "tests/integration/translate/history.test.mjs",
           "tests/integration/trip/archive.test.mjs",
-          "tests/preparation/vpj61-trip-lifecycle/pg.test.mjs",
+          "tests/integration/trip/lifecycle-postgres.test.mjs",
           "tests/integration/trip/trip-item-support.test.mjs",
           "tests/integration/trip/native-support-http-read.test.mjs",
           "tests/integration/trip/local-recovery-guard.test.mjs",

@@ -1,7 +1,14 @@
-# VPJ-61 — explicit Trip archive, first slice
+# VPJ-61 — Trip archive and explicit lifecycle
 
-Related to #240. S4; native consumer + ordinary-actor API + database migration.
-This increment does not close the whole Issue.
+Issue #240, S4. The original v1 archive contract below remains compatible.
+A1/A2 now add explicit three-draft/one-Active capacity, legacy reconciliation,
+per-preference review, original-byte terminal receipts and unknown-ACK recovery.
+See [lifecycle wire](vpj-61-lifecycle-v1.md) and
+[SQL/deletion/export contract](vpj-61-lifecycle-sql-v1.md).
+
+The new lifecycle RPC is default-denied. Local qualification uses an explicitly
+authorized disposable-only grant; target ACL/schema activation remains UNRUN.
+No privileged fallback changes the normal user authority.
 
 `GET /api/trips/native/v2/:tripId/archive` returns `version: 1` and a nullable
 `archive: { tripId, archivedVersion, archivedAt }`. A null archive is distinct from
@@ -31,9 +38,10 @@ result. No entitlement check is introduced on result reads.
 Creating the next Trip uses the existing title + new UUID producer, which creates
 an empty version-zero snapshot. The native outline inputs are cleared at explicit
 new-Trip creation. No old dates, places, timing, temporary constraints, memory or
-service rows are copied or saved. Profile manages already-explicit preferences;
-this slice only explains that review may be skipped. A real per-preference
-selection/consent consumer remains #199 integration work.
+service rows are copied or saved. The lifecycle archive review now reads the original #199 Memory management
+authority and lets the user choose each eligible preference or skip. SQL rechecks
+owner, revision, original source and granted consent before recording that choice.
+It does not resave or copy Memory; skip does not revoke prior global preferences.
 
 ## Rollout and rollback
 
@@ -50,18 +58,27 @@ reopen archived Trips. Any later unarchive requires a separately reviewed explic
 user action; there is no unarchive endpoint in this slice. No applied migration is
 rewritten and no remote schema change is authorized by this document.
 
-## Remaining whole-Issue acceptance
+## Current evidence and remaining environment acceptance
 
-- The maximum-three-drafts + one-active rule needs an explicit persisted Active
-  transition and legacy reconciliation; the current Trip model has neither. This
-  slice does not invent Active from dates or silently classify existing Trips.
-- Per-preference selection/rejection/skip through #199, and #224's human-service
-  lifecycle/readback, remain integration dependencies. Existing record-only
-  ServiceTask (currently unbound to a Trip) and Trip-linked unfinished Turn
-  preservation can be tested independently; neither substitutes for #224.
-- Target-environment account/native/API/database/read/share flow, Pass-expiry
-  readback, physical-device/accessibility behavior and user acceptance remain
-  required. SQL claims fixtures are not GoTrue/JWT acceptance.
+The lifecycle code adds owner-serialized capacity with an explicit confirmed Active
+swap, legacy reconciliation to draft/retained, and transactional reuse of the
+original archive writer. No date or old confirmed snapshot automatically becomes
+Active. Creation through original Native/Web/Data API insertion also meets the
+same capacity guard. A fresh Trip remains an empty original snapshot.
 
-See [verification](../../artifacts/VPJ-61/verification.md) and
-[unrun boundaries](../../artifacts/VPJ-61/unrun.md).
+New source rows and byte-bound receipts have Trip/Memory erasure hooks and a
+versioned export seam. Old completed export bundles are unchanged; a job that has
+not explicitly enrolled lifecycle v2 does not gain lifecycle coverage. The new
+source traversal proof is distinct from an assembled/downloaded artifact.
+
+#224 still lacks a Trip-bound human-service status reader; `serviceStatus` remains
+`unavailable` and actual service rows are retained. Existing requested/grant state
+is not queued/accepted/assigned evidence. This limitation stays explicit.
+
+See [current Native evidence](../../artifacts/VPJ-61/native-lifecycle-20261005/verification.md),
+[original archive verification](../../artifacts/VPJ-61/verification.md) and
+[original unrun boundaries](../../artifacts/VPJ-61/unrun.md). Target ACL/schema
+activation, real human-service delivery, complete export artifact delivery,
+Pass-expiry target readback, real user rights actions, physical-device/
+accessibility and user acceptance remain separate UNRUN facts. Local SQL claims
+and disposable grants do not prove those outcomes.

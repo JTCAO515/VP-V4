@@ -101,7 +101,7 @@ export function isCapacity(value: unknown): value is LifecycleCapacity {
     && revision(value.draftCount) && value.draftCount <= 3 && value.draftLimit === 3
     && nullableUuid(value.activeTripId) && value.activeLimit === 1 && revision(value.legacyCount);
 }
-function isTrip(value: unknown): value is LifecycleTrip {
+export function isLifecycleTrip(value: unknown): value is LifecycleTrip {
   if (!record(value) || !exact(value, ["tripId", "title", "headVersion", "state", "archivedVersion", "archivedAt"])
     || !uuid(value.tripId) || typeof value.title !== "string" || value.title.length < 1 || value.title.length > 160
     || !head(value.headVersion) || !LIFECYCLE_STATES.includes(value.state as LifecycleState)) return false;
@@ -112,7 +112,7 @@ function isTrip(value: unknown): value is LifecycleTrip {
 export function isLifecycleSnapshot(value: unknown): value is LifecycleSnapshot {
   if (!record(value) || !exact(value, ["version", "ownerId", "sessionId", "revision", "capacity", "trips", "nextTripId", "serviceStatus"])
     || value.version !== LIFECYCLE_VERSION || !uuid(value.ownerId) || !uuid(value.sessionId) || !revision(value.revision)
-    || !isCapacity(value.capacity) || !Array.isArray(value.trips) || value.trips.length > 50 || !value.trips.every(isTrip)
+    || !isCapacity(value.capacity) || !Array.isArray(value.trips) || value.trips.length > 50 || !value.trips.every(isLifecycleTrip)
     || new Set(value.trips.map(trip => trip.tripId)).size !== value.trips.length || !nullableUuid(value.nextTripId)
     || value.serviceStatus !== "unavailable") return false;
   const { trips, capacity } = value;
