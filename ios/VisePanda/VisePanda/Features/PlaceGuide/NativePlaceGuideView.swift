@@ -50,8 +50,10 @@ struct NativePlaceGuideView: View {
                         if store.notice == "forgotten" { followUp.forgotten(using: session) }
                     }
                 }.disabled(scope != selection.scope || store.busy).accessibilityIdentifier("guide.forget")
-                Button(t("Export this guide's progress metadata", "导出此讲解的进度元数据")) { run { await exportProgress() } }
+                Button(t("Export this guide's metadata", "导出此讲解的元数据")) { run { await exportProgress() } }
                     .disabled(scope != selection.scope || store.busy).accessibilityIdentifier("guide.export")
+                Text(t("Includes guide progress and question references for this place in this Trip. Question text, answers and rights reviews are separate.", "包含此行程中此地点的讲解进度和追问引用。追问正文、答案与权利审核记录另属其他范围。"))
+                    .font(.caption).foregroundStyle(.secondary)
                 TimelineView(.periodic(from: .now, by: 1)) { _ in
                     if let exportText, scope == selection.scope, ProcessInfo.processInfo.systemUptime < exportDeadline {
                         ShareLink(item: exportText) { Text(t("Share this scoped metadata export", "分享此范围的元数据导出")) }
@@ -201,35 +203,7 @@ struct NativePlaceGuideView: View {
         do {
             let bytes = try await request(selection, selection.command("export"))
             guard scope == selection.scope, !Task.isCancelled else { return }
-            let value = try NativePlaceActionWire.exact(NativePlaceGuideStore.outcome(bytes), ["kind", "version", "scope", "coverage", "excludedModules", "tripId", "placeReferenceId", "records", "followUpBindings"])
-            guard value["kind"] as? String == "export", NativePlaceActionWire.integer(value["version"]) == 1,
-                  value["scope"] as? String == "guide_selection_metadata", value["coverage"] as? String == "complete_for_selection",
-                  value["excludedModules"] as? [String] == ["grounded_history", "use_review_audit"],
-                  value["tripId"] as? String == selection.tripID, value["placeReferenceId"] as? String == selection.placeReferenceID,
-                  let records = value["records"] as? [[String: Any]], records.count <= 100,
-                  let bindings = value["followUpBindings"] as? [[String: Any]], bindings.count <= 100 else { throw NativeDataError.invalidResponse }
-            for row in records {
-                _ = try NativePlaceActionWire.exact(row, ["digest", "canonicalPoiId", "locale", "interest", "rightsRevision", "completedSegmentIds", "expiresAt", "updatedAt"])
-                guard NativePlaceActionWire.digest(row["digest"]) != nil, row["canonicalPoiId"] as? String == selection.canonicalPoiID,
-                      row["locale"] as? String == selection.locale, row["interest"] as? String == selection.interest.rawValue,
-                      NativePlaceActionWire.integer(row["rightsRevision"]).map({ $0 > 0 }) == true,
-                      let completed = row["completedSegmentIds"] as? [String], completed.count <= 4, Set(completed).count == completed.count,
-                      completed.allSatisfy({ NativePlaceActionWire.id($0) != nil }),
-                      (row["expiresAt"] as? String).flatMap(NativeKnowledgeRead.date) != nil,
-                      let updated = (row["updatedAt"] as? String).flatMap(NativeKnowledgeRead.date), updated <= Date().addingTimeInterval(5) else { throw NativeDataError.invalidResponse }
-            }
-            for row in bindings {
-                _ = try NativePlaceActionWire.exact(row, ["turnId", "threadId", "serviceTaskId", "operationId", "tripVersion", "locale", "interest", "guideDigest", "parentTurnId", "completedSegmentIds", "invalidated"])
-                guard ["turnId", "threadId", "serviceTaskId", "operationId"].allSatisfy({ NativePlaceActionWire.id(row[$0]) != nil }),
-                      NativePlaceActionWire.integer(row["tripVersion"]) != nil, row["locale"] as? String == selection.locale,
-                      row["interest"] as? String == selection.interest.rawValue, NativePlaceActionWire.digest(row["guideDigest"]) != nil,
-                      row["parentTurnId"] is NSNull || NativePlaceActionWire.id(row["parentTurnId"]) != nil,
-                      let completed = row["completedSegmentIds"] as? [String], completed.count <= 4, Set(completed).count == completed.count,
-                      completed.allSatisfy({ NativePlaceActionWire.id($0) != nil }), NativePlaceActionWire.boolean(row["invalidated"]) != nil else { throw NativeDataError.invalidResponse }
-            }
-            guard Set(records.compactMap({ $0["digest"] as? String })).count == records.count,
-                  Set(bindings.compactMap({ $0["turnId"] as? String })).count == bindings.count else { throw NativeDataError.invalidResponse }
-            exportText = String(data: try JSONSerialization.data(withJSONObject: value, options: [.sortedKeys, .prettyPrinted]), encoding: .utf8)
+            exportText = try NativePlaceGuideMetadataExport.decode(bytes, expected: selection)
             exportDeadline = ProcessInfo.processInfo.systemUptime + 30
             exportExpiry?.cancel(); exportExpiry = Task { try? await Task.sleep(for: .seconds(30)); if !Task.isCancelled { exportText = nil; exportDeadline = 0 } }
         } catch { exportText = nil }
