@@ -9,19 +9,23 @@ Main transferred and approved the sole closed WIRE/runtime at
 binding/proof/receipt decoding, inventory/selection/preview/explicit confirmation,
 store, view, consumer, lifetime, original-operation journal and private file are
 implemented. The producer-generated fixture is separately marked synthetic.
-All shared files and source worktrees remain unchanged.
+Main's 89bc926f/680219/d16325 precise shared lease was applied in this own worktree.
+Source/Notification/TS worktrees remain unchanged.
 
-Required remaining inputs/actions:
-- Main explicit release/precise lease for NativeSession, DataCoverageModuleView,
-  DataCoverageCopy/Models, and PBX new-file registrations. Concrete exact patch:
-  `SharedNative.patch` (apply-check PASS). It adds only own Session methods and
-  cleanup, own destination/action, .5 catalog + coverage_records selection,
-  existing coverage_progress boundary copy, ten source/two test registrations and
-  own producer fixture resource. No old whole-file replacement.
-- Existing catalog fixture version/coverage_progress descriptor adaptation needs
-  original owner release; retain all 34 IDs and all unrelated expected assertions.
-- Necessary affected build/runtime validation after the actual caller is registered;
-  no physical device, target/provider/Storage/permission/fees are authorized here.
+Implemented shared caller: own Session methods and two cleanup hunks, own
+ModuleView destination/action, Models .5 catalog/coverage_records selection,
+existing scope's boundary copy, ten source/two test registrations and own producer
+fixture. Three existing fixtures changed only .5 version, the coverage_progress
+descriptor and outer digest. Explicit semantic comparison preserved the other 33
+modules, inner request strings and original cancellation/tampering outcomes.
+
+Remaining exact coordination: NativeDataCoverageTests.swift:61 still asserts
+coverage_progress.exportHandler==nil, which contradicts the accepted .5 descriptor.
+`LegacyCoverageAssertion.patch` replaces only that single capability expectation
+with the strict schema/scope/selection/handler predicate; other negative oracles
+remain unchanged. Main is obtaining original owner release. This Swift test hunk
+has not been applied under the catalog-metadata-only lease. Related old full suite
+UNRUN until this exact release; no permission/gate bypass.
 
 Current verification: Swift parser PASS for all own source/tests; isolated iOS
 module/typecheck of eight non-UI own sources and both test sources against extracted
@@ -30,13 +34,24 @@ strict concurrency settings. Corrected one missing try. Earlier standalone compi
 invocations lacked Testing framework/macros and the accepted actor flags; those
 FAILs are retained in tool history, not actual runtime test results. This is not
 full app build/runtime evidence. `git diff --check` and shared patch apply check
-PASS. Runtime tests and app build UNRUN until shared registration lease.
+PASS.
+Full unsigned App build and full ad-hoc test build PASS (r1); actual nine tests in
+three affected suites PASS, zero skip. r2 on immutable 7856aabd adds the actual
+NativeSession boundary case: unretained erase is not dispatched; retained unknown
+ACK preserves original bytes and does not retry; recovery is read-only; explicit
+logout clears this journal. Test build and that single case PASS, zero skip.
+No repetition of the unchanged r1 tests in r2. Both own temporary devices were
+deleted. Raw evidence: artifacts/native-coverage-progress-r1, -r2, and summary JSON.
+Main's independently verified Auth1/SQL18 evidence is reused, not rerun or merged
+with unsigned URLProtocol/synthetic Native evidence. Real Native signed-Auth joint
+interaction, physical device, target/provider/Storage/permission/fees remain UNRUN.
 Own storage fixtures prove no producer wire or real data outcome; the separate
 producer fixture was generated/validated by the sole frozen TS runtime.
 
 Whole #239, full ALL1 missing and ALL2 remain Open.
 
-Owned implementation checkpoint: `30d7a5108f9b0e18b87c9fc2c042c89b8767a7b6`.
-The final commit above this doc-only/test-name update is immutable for Main review;
-the selected module scope is not complete until the exact shared caller patch is
-applied and affected verification runs. No new writer/PR/device/target action.
+Owned caller/runtime fixed: `7856aabd492b45785c87e015a4ef52100b06f712`.
+The final commit above this documentation-only update is immutable for Main/sole
+TS integration. The one legacy assertion remains a precise lease dependency and
+must be resolved before claiming all related Native checks passed. No new writer,
+PR, target action or test matrix.
