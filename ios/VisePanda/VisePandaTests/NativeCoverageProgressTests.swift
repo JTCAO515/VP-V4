@@ -120,7 +120,7 @@ import Testing
         #expect(try FileManager.default.contentsOfDirectory(at: root, includingPropertiesForKeys: nil).isEmpty)
     }
 
-    @Test func lateOwnerEpochResponseAndExpiredPreviewCannotPublishOrDispatch() async throws {
+    @Test func lateOwnerEpochAndSuspendedForegroundCannotPublish() async throws {
         let v = try fixture(), root = temporaryRoot(); defer { try? FileManager.default.removeItem(at: root) }
         var current: NativeCommunitySafetyActor? = actor
         let store = NativeCoverageProgressStore(vault: CoverageProgressTestVault(), file: .init(root: root), now: { wall }, uptime: { 10 })
