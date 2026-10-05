@@ -1,0 +1,23 @@
+✔ full replay rollback, private RLS/ACL deny, empty operators and disabled RPC (6492.578833ms)
+✔ existing grants only, no guessed staff, no Trip/Brief reads, strict closed commands (583.94675ms)
+✔ exact UTF8 bytes, changed whitespace reuse409, immutable receipt and no cross session/surface (383.245625ms)
+✔ unknown ACK abandon fence and execute race share original operation bytes (541.597917ms)
+✔ one actual slot accepts exactly one Case, inactive/unenrolled/no slots reject (906.692291ms)
+✔ recorded seconds aggregate to minutes, reject future/overlap and contact-only resolution (617.427625ms)
+✔ legacy revoke/replace wipes source bytes and refs, owner cancel receipt survives fresh read (942.84475ms)
+✔ TTL releases capacity and scrubs through bounded maintenance, old staff receipt never replays (455.788792ms)
+✔ owner binds original pending Proposal only; staff gets no Trip and archive retains service (557.751958ms)
+✔ Trip deletion erases binding/evidence/operations but keeps Case; explicit Case delete cascades (490.610334ms)
+✔ workspace beyond 50 fails explicitly instead of silently truncating (114.059083ms)
+✔ versioned export exact lease, unenrolled partial, cursor replay and source-change invalidation (1123.9395ms)
+✔ explicit owner deletion CAS, irreversible minimal receipt and original-byte late request fence (1210.40475ms)
+✔ owner export companion source digest, closed columns, no staff session, bounds and source erasure (1535.672209ms)
+✔ membership/shift/slot withdrawn after commit denies staff body and receipt replay (1256.723459ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 17334.993958
