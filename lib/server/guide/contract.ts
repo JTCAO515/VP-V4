@@ -40,7 +40,7 @@ export type GuideUnavailable = Readonly<{
 }>;
 export type GuideOutcome = GuideReady | GuideUnavailable
   | Readonly<{ kind: "forgotten"; operationId: string }>
-  | Readonly<{ kind: "export"; version: 1; tripId: string; placeReferenceId: string; records: readonly GuideExportRecord[] }>
+  | Readonly<{ kind: "export"; version: 1; scope: "guide-metadata/1"; tripId: string; placeReferenceId: string; records: readonly GuideExportRecord[] }>
   | Readonly<{ kind: "submitted"; version: 1; operationId: string; tripId: string; turnId: string; serviceTaskId: string;
       scopeVersion: 1; relationship: "new_goal" | "clarification" | "repair"; parentTurnId: string | null;
       guideDigest: string; reused: boolean; generationCost: null }>;

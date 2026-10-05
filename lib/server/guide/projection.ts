@@ -67,7 +67,7 @@ export function decodeGuideReady(value: unknown, tripId: string, input: GuideCom
 function exportRecord(value: unknown, input: GuideCommand, now: number): value is GuideExportRecord {
   return record(value) && exact(value, ["digest", "canonicalPoiId", "locale", "interest", "rightsRevision", "completedSegmentIds", "expiresAt", "updatedAt"])
     && hash(value.digest) && uuid(value.canonicalPoiId) && value.locale === input.locale && value.interest === input.interest
-    && integer(value.rightsRevision) && segmentIds(value.completedSegmentIds) && instant(value.expiresAt) && Date.parse(value.expiresAt) > now
+    && integer(value.rightsRevision) && segmentIds(value.completedSegmentIds) && instant(value.expiresAt)
     && instant(value.updatedAt) && Date.parse(value.updatedAt) <= now;
 }
 export function decodeGuideOutcome(value: unknown, tripId: string, input: GuideCommand, now: number): GuideOutcome | null {
@@ -76,8 +76,8 @@ export function decodeGuideOutcome(value: unknown, tripId: string, input: GuideC
     && typeof value.reason === "string" && ["not_covered", "rights_unavailable", "source_changed", "unsupported_language", "capacity"].includes(value.reason) && value.fallback === "explore") return value as GuideOutcome;
   if (["read", "replay", "progress"].includes(input.action)) return decodeGuideReady(value, tripId, input, now);
   if (input.action === "forget" && exact(value, ["kind", "operationId"]) && value.kind === "forgotten" && value.operationId === input.operationId) return value as GuideOutcome;
-  if (input.action === "export" && exact(value, ["kind", "version", "tripId", "placeReferenceId", "records"])
-    && value.kind === "export" && value.version === 1 && value.tripId === tripId && value.placeReferenceId === input.placeReferenceId
+  if (input.action === "export" && exact(value, ["kind", "version", "scope", "tripId", "placeReferenceId", "records"])
+    && value.kind === "export" && value.version === 1 && value.scope === "guide-metadata/1" && value.tripId === tripId && value.placeReferenceId === input.placeReferenceId
     && Array.isArray(value.records) && value.records.length <= 100 && value.records.every(v => exportRecord(v, input, now))
     && new Set(value.records.map(v => v.digest)).size === value.records.length) return value as GuideOutcome;
   if (input.action === "follow_up" && exact(value, ["kind", "version", "operationId", "tripId", "turnId", "serviceTaskId", "scopeVersion", "relationship", "parentTurnId", "guideDigest", "reused", "generationCost"])
