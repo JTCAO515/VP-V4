@@ -6,11 +6,19 @@ struct NativeLinkedTripDeletionView:View {
     var onQueued:((String)->Void)?
     @Environment(AppSettings.self) private var settings
     @Environment(\.scenePhase) private var phase
-    @State private var store=NativeLinkedTripDeletionStore()
+    @State private var store: NativeLinkedTripDeletionStore
     @State private var reviewed=false
     @State private var exportsReviewed=false
     @State private var confirmation=false
     @State private var reviewedIdentity:String?
+    init(tripID: String, headVersion: Int, onQueued: ((String) -> Void)? = nil) {
+        self.tripID = tripID; self.headVersion = headVersion; self.onQueued = onQueued
+        _store = State(initialValue: NativeLinkedTripDeletionStore())
+    }
+    init(tripID: String, headVersion: Int, onQueued: ((String) -> Void)? = nil, store: NativeLinkedTripDeletionStore) {
+        self.tripID = tripID; self.headVersion = headVersion; self.onQueued = onQueued
+        _store = State(initialValue: store)
+    }
     private var session:NativeSession{settings.nativeSession}
     private var chinese:Bool{settings.selectedLocale == .zh}
     private var selected:NativeLinkedTripDeleteSelection?{guard phase == .active,let scope=session.dataScope else{return nil};return .init(scope:scope,tripID:tripID,headVersion:headVersion)}

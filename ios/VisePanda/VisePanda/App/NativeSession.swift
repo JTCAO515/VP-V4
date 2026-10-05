@@ -229,6 +229,72 @@ final class NativeSession {
         return bytes
     }
 
+    func dataCoverageRecovery(actor: NativeCommunitySafetyActor) throws -> NativeDataCoveragePending? {
+        guard try communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
+        return try NativeDataCoverageJournal(vault: vault, validate: { body in
+            let command = try NativeDataCoverageCommand(body: body)
+            guard command.action == .delete, command.phase == .execute, command.matches(actor) else { throw NativeDataError.invalidResponse }
+        }).read(actor)
+    }
+    func rememberDataCoverage(body: Data, actor: NativeCommunitySafetyActor) throws -> NativeDataCoveragePending {
+        guard try communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
+        return try NativeDataCoverageJournal(vault: vault, validate: { body in
+            let command = try NativeDataCoverageCommand(body: body)
+            guard command.action == .delete, command.phase == .execute, command.matches(actor) else { throw NativeDataError.invalidResponse }
+        }).retain(body, actor: actor)
+    }
+    func completeDataCoverage(_ pending: NativeDataCoveragePending, actor: NativeCommunitySafetyActor) throws {
+        guard try communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
+        try NativeDataCoverageJournal(vault: vault, validate: { body in
+            let command = try NativeDataCoverageCommand(body: body)
+            guard command.action == .delete, command.phase == .execute, command.matches(actor) else { throw NativeDataError.invalidResponse }
+        }).complete(pending, actor: actor)
+    }
+    func dataCoverageRequest(method: String, body: Data? = nil, actor: NativeCommunitySafetyActor) async throws -> Data {
+        guard !busy, ["GET", "POST"].contains(method), (method == "GET") == (body == nil), try communitySafetyActor() == actor else { throw NativeDataError.sessionUnavailable }
+        let command: NativeDataCoverageCommand?
+        if let body {
+            command = try NativeDataCoverageCommand(body: body)
+            guard command?.matches(actor) == true else { throw NativeDataError.staleSessionResponse }
+            if let command, command.action == .delete, command.phase != .preview {
+                guard let pending = try dataCoverageRecovery(actor: actor) else { throw NativeDataError.sessionUnavailable }
+                let original = try NativeDataCoverageCommand(body: pending.body)
+                guard original.commandBytes == command.commandBytes, original.operationID == command.operationID,
+                      original.moduleID == command.moduleID, original.moduleVersion == command.moduleVersion,
+                      original.tripID == command.tripID, original.action == command.action,
+                      command.phase == .recover || command.body == original.body else { throw NativeDataError.staleSessionResponse }
+            }
+        } else { command = nil }
+        if let credential, credential.expiresAt <= Date().timeIntervalSince1970 + 10 { await validate() }
+        guard try communitySafetyActor() == actor, let credential, let endpoint else { throw NativeDataError.staleSessionResponse }
+        var request = URLRequest(url: endpoint.appendingPathComponent("api/privacy/native/v1/coverage"))
+        request.httpMethod = method; request.httpBody = body; request.httpShouldHandleCookies = false; request.timeoutInterval = 30
+        request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(credential.accessToken)", forHTTPHeaderField: "Authorization")
+        let start = ProcessInfo.processInfo.systemUptime
+        let (stream, response) = try await transport.bytes(for: request)
+        defer { stream.task.cancel() }
+        guard let http = response as? HTTPURLResponse, try communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
+        let cap = http.statusCode == 200 ? (method == "GET" ? 65_536 : 1_000_000) : 4096
+        guard http.expectedContentLength <= Int64(cap) else { throw NativeDataError.invalidResponse }
+        var bytes = Data()
+        for try await byte in stream {
+            guard bytes.count < cap, try communitySafetyActor() == actor, !Task.isCancelled,
+                  ProcessInfo.processInfo.systemUptime - start < 30 else { throw NativeDataError.staleSessionResponse }
+            bytes.append(byte)
+        }
+        guard try communitySafetyActor() == actor, !Task.isCancelled, ProcessInfo.processInfo.systemUptime - start < 30 else { throw NativeDataError.staleSessionResponse }
+        guard http.statusCode == 200 else {
+            let code = (try? JSONDecoder().decode(NativeDataFailure.self, from: bytes).error.code) ?? "COVERAGE_UNAVAILABLE"
+            if http.statusCode == 401, code != "REAUTHENTICATION_REQUIRED" { handle(SessionError.denied) }
+            throw NativeDataError.server(code: code)
+        }
+        if let command { _ = try NativeDataCoverageReceipt(bytes: bytes, actor: actor, command: command) }
+        else { _ = try NativeDataCoverageCatalog(bytes: bytes, actor: actor) }
+        return bytes
+    }
+
     func communitySafetyActor() throws -> NativeCommunitySafetyActor {
         guard let scope = dataScope, let credential, credential.expiresAt > Date().timeIntervalSince1970 else { throw NativeDataError.sessionUnavailable }
         return .init(scope: scope, sessionID: try serviceCaseExportSessionId(actor: scope))
@@ -1579,6 +1645,8 @@ final class NativeSession {
         do { try entryResume.erase(preservingUnclaimedID: preservingAnonymousResume) }
         catch { failureCode="entryResumeCleanupRequired";status="storageError";return false }
         subject=nil; mobileEpoch=nil; displayName=nil
+        do { try NativeDataCoverageExportFile.eraseAll() }
+        catch { failureCode="dataCoverageExportCleanupRequired"; status="storageError"; return false }
         do { try NativeExperienceExportFile.eraseAll() }
         catch { failureCode="communityExperienceExportCleanupRequired"; status="storageError"; return false }
         do { try NativeCommunitySafetyExportFile.eraseAll() }
@@ -1595,6 +1663,8 @@ final class NativeSession {
         memoryPreferences.clear()
         exploreAskHandoff=nil
         if let owner = credential?.subject ?? defaults.string(forKey: storageKey) ?? defaults.string(forKey: storageKey + ".pendingJournalCleanupOwner") ?? defaults.string(forKey: storageKey + ".recoveryCleanupOwner") {
+            do { try NativeDataCoverageJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
+            catch { failureCode="dataCoverageJournalCleanupRequired"; status="storageError"; return false }
             do { try NativeExperienceJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
             catch { failureCode="communityExperienceJournalCleanupRequired"; status="storageError"; return false }
             do { try NativeCommunitySafetyJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
