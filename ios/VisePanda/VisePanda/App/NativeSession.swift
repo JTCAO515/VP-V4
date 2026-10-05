@@ -223,6 +223,29 @@ final class NativeSession {
         try NativeServiceOperationJournal(vault: vault).complete(value, scope: actor)
     }
 
+    func pdfIntakeRequest(tripID: String, action: String, body: Data? = nil, operationID: String? = nil, actor: NativeDataScope) async throws -> Data {
+        guard dataScope == actor, NativePDFWire.uuid(tripID), ["preview", "proposal", "operation", "cancel"].contains(action),
+              action == "operation" ? operationID.map(NativePDFWire.uuid) == true && body == nil : operationID == nil && body != nil else { throw NativeDataError.staleSessionResponse }
+        let generation = dataGeneration
+        let base = "api/trips/native/v2/\(tripID)/pdf-intake"
+        let result = try await dataRequest(prefix: base, path: base + "/" + action, method: action == "operation" ? "GET" : "POST", body: body,
+            queryItems: operationID.map { [URLQueryItem(name: "operationId", value: $0)] } ?? [])
+        guard dataScope == actor, dataGeneration == generation, result.count <= 128_000 else { throw NativeDataError.staleSessionResponse }
+        return result
+    }
+    func pdfIntakeRecovery(actor: NativeDataScope) throws -> NativePDFJournal? {
+        guard dataScope == actor else { throw NativeDataError.staleSessionResponse }
+        return try NativePDFJournalVault(vault: vault).read(actor)
+    }
+    func rememberPDFIntake(_ journal: NativePDFJournal, actor: NativeDataScope) throws {
+        guard dataScope == actor else { throw NativeDataError.staleSessionResponse }
+        try NativePDFJournalVault(vault: vault).remember(journal, actor: actor)
+    }
+    func completePDFIntake(_ journal: NativePDFJournal, actor: NativeDataScope) throws {
+        guard dataScope == actor else { throw NativeDataError.staleSessionResponse }
+        try NativePDFJournalVault(vault: vault).complete(journal, actor: actor)
+    }
+
     func storeKitRequest(method: String, body: Data? = nil) async throws -> Data {
         try await dataRequest(prefix: "api/storekit/native/v1", path: "api/storekit/native/v1", method: method, body: body)
     }
@@ -1161,6 +1184,8 @@ final class NativeSession {
         defaults.set(credential?.subject ?? defaults.string(forKey: storageKey) ?? defaults.string(forKey: storageKey + ".pendingJournalCleanupOwner") ?? defaults.string(forKey: storageKey + ".recoveryCleanupOwner") ?? "unbound", forKey: storageKey + ".signOutIntent")
         deviceMaterialSignOutFence = true
         subject=nil; mobileEpoch=nil; displayName=nil; status="signingOut"
+        do { try NativePDFInbox().eraseAll() }
+        catch { failureCode="pdfIntakeCleanupRequired";status="storageError";return }
         do { try deviceMaterials.eraseAll() }
         catch { failureCode="deviceMaterialCleanupRequired";status="storageError";return }
         do{try offlineTrips.eraseAll()}catch{failureCode="offlineCleanupRequired";return}
@@ -1290,6 +1315,8 @@ final class NativeSession {
         dataGeneration += 1
         notifications.actorChanged(to: nil)
         subject=nil; mobileEpoch=nil; displayName=nil
+        do { try NativePDFInbox().eraseAll() }
+        catch { failureCode="pdfIntakeCleanupRequired";status="storageError";return false }
         do { try deviceMaterials.eraseAll() }
         catch { failureCode="deviceMaterialCleanupRequired";status="storageError";return false }
         do{try offlineTrips.eraseAll()}catch{failureCode="offlineCleanupRequired";status="storageError";return false}
@@ -1306,6 +1333,8 @@ final class NativeSession {
                 catch { failureCode="recoveryJournalCleanupRequired";status="storageError";return false }
                 do { try NativeReservationJournalVault.remove(endpoint:endpoint?.absoluteString ?? "disabled",owner:owner,vault:vault) }
                 catch { failureCode="reservationCleanupRequired";status="storageError";return false }
+                do { try NativePDFJournalVault.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
+                catch { failureCode="pdfIntakeJournalCleanupRequired";status="storageError";return false }
                 do { try NativeScopedTripJournalVault.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
                 catch { failureCode="scopedEditCleanupRequired";status="storageError";return false }
                 do { try NativePlaceActionJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }

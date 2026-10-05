@@ -69,6 +69,7 @@ struct NativeTripView: View {
     @State private var scopedScrollID: String?
     @State private var shareSource: NativeTripShareSource?
     @State private var screenshotReviewSource: NativeScreenshotReviewSource?
+    @State private var pdfIntakeSource: NativePDFIntakeSource?
     @State private var inboxCleanupFailed = false
     @State private var supportStore = NativeTripSupportStore()
     @State private var confirmVisible = false
@@ -268,6 +269,9 @@ struct NativeTripView: View {
         .sheet(item: $shareSource) { source in
             NativeTripShareView(source: source, store: store, session: session, chinese: chinese)
         }
+        .sheet(item: $pdfIntakeSource) { source in
+            NativePDFIntakeView(source: source, session: session, tripStore: store, chinese: chinese)
+        }
         .sheet(item: $screenshotReviewSource) { source in
             NativeScreenshotReviewView(source: source, chinese: chinese, store: store, session: session)
         }
@@ -276,7 +280,7 @@ struct NativeTripView: View {
         .scrollDismissesKeyboard(.interactively)
         .task(id: session.dataScope) {
             if screenshotReviewSource != nil || session.dataScope == nil {
-                screenshotReviewSource = nil
+                screenshotReviewSource = nil; pdfIntakeSource = nil
             }
             cleanupAbandonedScreenshots()
             if store.scope != session.retainedDataScope {
@@ -286,7 +290,7 @@ struct NativeTripView: View {
                 reviewedReference = nil
                 discardVisible = false
                 clearOutline()
-                screenshotReviewSource = nil
+                screenshotReviewSource = nil; pdfIntakeSource = nil
             }
             if !consumedInitialRequest, session.dataScope != nil, let initialPlanningRequest {
                 consumedInitialRequest = true
@@ -303,7 +307,7 @@ struct NativeTripView: View {
         }
         .onChange(of: session.retainedDataScope) { _, retained in
             if store.scope != retained {
-                screenshotReviewSource = nil
+                screenshotReviewSource = nil; pdfIntakeSource = nil
                 cleanupAbandonedScreenshots()
                 store.reset(for: retained)
                 newTitle = ""; confirmVisible = false; reviewedReference = nil; discardVisible = false
@@ -325,6 +329,7 @@ struct NativeTripView: View {
             }
         }
         .onChange(of: store.selectedID) { _, _ in
+            pdfIntakeSource = nil
             scopedSelection = nil; scopedRecovery = nil; scopedOrigin = nil; scopedScrollID = nil
             outlineGeneration = UUID(); outline = nil; outlineTitles = []; outlinePaceBasis = nil
         }
@@ -343,7 +348,7 @@ struct NativeTripView: View {
         .onChange(of:store.confirmationReference) { _,_ in supportStore.bind(nil) }
         .onChange(of: store.deletionRequest) { _, request in
             if request != nil {
-                shareSource = nil; screenshotReviewSource = nil
+                shareSource = nil; screenshotReviewSource = nil; pdfIntakeSource = nil
                 cleanupAbandonedScreenshots()
             }
         }
@@ -703,6 +708,26 @@ struct NativeTripView: View {
                     .accessibilityIdentifier("trip.share")
                     .disabled(store.busy)
                 }
+                Button(text("Import PDF from Files", "从Files导入PDF")) {
+                    guard let actor = session.dataScope, store.scope == actor else { return }
+                    pdfIntakeSource = .init(actor: actor, detail: detail)
+                }
+                .accessibilityIdentifier("trip.pdf.import")
+                .disabled(store.busy || !store.canEdit || store.draft != nil || store.pending != nil || store.hasUncertainProposal)
+                Button(text("Recover original PDF Trip receipt", "恢复原PDF行程回执")) {
+                    guard let actor = session.dataScope, store.scope == actor else { return }
+                    Task {
+                        do {
+                            let journal = try session.pdfIntakeRecovery(actor: actor)
+                            if let journal, journal.tripID != detail.trip.id { await store.select(journal.tripID, using: session) }
+                            guard session.dataScope == actor, store.scope == actor, let current = store.detail,
+                                  journal == nil || current.trip.id == journal?.tripID else { return }
+                            pdfIntakeSource = .init(actor: actor, detail: current)
+                        } catch { inboxCleanupFailed = true }
+                    }
+                }
+                .accessibilityIdentifier("trip.pdf.recovery")
+                .disabled(store.busy)
                 Button(text("Review one screenshot on device", "在本机审阅一张截图")) {
                     screenshotReviewSource = .init(
                         tripID: detail.trip.id,
