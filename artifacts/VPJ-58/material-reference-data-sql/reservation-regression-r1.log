@@ -1,0 +1,16 @@
+✔ original actor/current Trip confirms exact original operation ACK; CAS/amend/cancel never writes Trip (7572.25375ms)
+✔ closed validation refuses unavailable artifact, controls, invented tiers, impossible clocks and revision overflow (971.627459ms)
+✔ owner/current-head list and single reads have exact cursor fences and original ACK head after confirmed Trip patch (810.084917ms)
+✔ server identity separates supplier/owner/Trip; official code alone never merges vendors; UTC equivalent complete fields dedupe (731.940625ms)
+✔ two live PostgreSQL transactions serialize duplicate create/CAS and retain only one winning event (2528.520417ms)
+✔ late acknowledgement insert failure rolls back new/current/history; immutable metadata never exposes prior payload (479.740125ms)
+✔ original archive/D1/D3/account lifecycle erases all reservation state and prevents replay; financial minimum survives D3 (1533.290208ms)
+✔ private exact D2 lease export shows corrected current only; existing inventory stays partial and every default ACL is closed (1373.551292ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 16105.053458

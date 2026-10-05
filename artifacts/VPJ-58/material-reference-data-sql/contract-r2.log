@@ -1,0 +1,14 @@
+✔ PDF migration exposes only disabled closed RPCs and retains original writer hook (0.489792ms)
+✔ PDF lineage stays marked through expiry, erased payload and ordinary successor rejection (0.530666ms)
+✔ PDF export stays on exact existing lease/source and enforces unenrolled partial (0.222125ms)
+✔ selected material RPC ships disabled without rewriting original writer/service lease authority (0.624917ms)
+✔ all new source-free retained tables are inventoried; business fences precede source erase (0.129083ms)
+✔ actual paired wire is explicit; recovery hashes exact UTF8 and preserves immutable original expiry (0.11375ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 43.473834

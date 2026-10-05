@@ -1,10 +1,10 @@
 /** ALL1 denominator. A registered scoped handler is not all-account completion. */
-export const CATALOG_VERSION = 'data-coverage-catalog/2026-10-06.2' as const;
+export const CATALOG_VERSION = 'data-coverage-catalog/2026-10-06.3' as const;
 export type Location = 'server' | 'device' | 'external';
 export type Module = Readonly<{
   id: string; location: Location; version: string; scope: string;
   exportHandler: string | null; deleteHandler: string | null;
-  selection: 'owner' | 'trip' | 'memory_plan' | 'case' | 'guide_reference' | 'device_files' | 'none';
+  selection: 'owner' | 'trip' | 'memory_plan' | 'case' | 'guide_reference' | 'material_records' | 'device_files' | 'none';
   capacity: string; retention: readonly string[]; missing: readonly string[];
 }>;
 const server = (id: string, version: string, scope: string, exportHandler: string | null, deleteHandler: string | null,
@@ -40,10 +40,18 @@ export const MODULE_CATALOG: readonly Module[] = [
     ['request_id_owner_session_scope_expiry_fence'], ['single_request_receipts_only', 'owner_progress_inventory_exit_not_implemented']),
   server('guide', 'guide_selection_metadata/1', 'guide_selection_metadata', 'guide', 'guide', 'guide_reference', '100+sentinel records and bindings; selection only',
     ['nonreplayable_markers', 'original_grounded_turns_separate']),
-  server('order_references', 'reservation-ledger/1', 'reservation_reference', null, null, 'trip', 'existing owner reservation reader; no unified exit handler',
-    ['external_orders', 'minimal_financial_ledger'], ['export_delete_not_implemented']),
-  server('pdf_intake', 'pdf-intake/1', 'pdf_intake_receipts', null, null, 'trip', 'original proposal/receipt TTL and Trip deletion boundary',
-    ['original_external_files', 'trip_patch_receipts'], ['export_delete_not_implemented']),
+  server('order_references', 'material-reference-data/1', 'reservation-reference-data/1', 'materials', 'materials', 'material_records',
+    '1..20 explicitly selected owner references in one Trip; 5/page; 4 pages; source/CAS/proof; fixed30s; 1MB; per-reference history100+sentinel',
+    ['nonreplayable_reference_operation_fences', 'original_trip_content', 'financial_records'],
+    ['original_local_material_bytes', 'external_order_copies', 'external_order_cancel_refund', 'provider_verification']),
+  server('pdf_intake', 'material-reference-data/1', 'pdf-intake-data/1', 'materials', 'materials', 'material_records',
+    '1..20 explicitly selected owner PDF operations in one Trip; 5/page; 4 pages; source/CAS/proof; fixed30s and original material TTL; 1MB',
+    ['pdf_operation_replay_fences', 'applied_trip_proposal_history', 'confirmation_event', 'financial_records'],
+    ['original_pdf_bytes', 'full_page_text', 'device_appgroup_copies', 'external_files', 'scheduled_target_retention']),
+  server('material_exit_progress', 'material-reference-data/1', 'material-exit-progress/1', 'materials', 'materials', 'material_records',
+    '1..20 explicitly selected owner exit requests in one Trip; own minimal fence inventory; source/CAS/proof; selected transient progress erasure',
+    ['nonreplayable_request_object_operation_fences', 'selected_object_ids', 'request_source_preview_hashes', 'minimal_erasure_receipt'],
+    ['other_unselected_exit_requests']),
   server('case_attachments', 'unavailable/1', 'case_attachments', null, null, 'owner', 'existing bundles explicitly declare attachments unavailable',
     ['unknown'], ['attachment_handler_unavailable']),
   server('archive', 'trip-lifecycle-export/2', 'archived_trip', null, 'trip', 'trip', 'selected archived Trip; lifecycle lease not enrolled',

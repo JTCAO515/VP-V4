@@ -1,0 +1,12 @@
+VP_MATERIAL_REFERENCE_HTTP_TARGET {"project":"vp-native-ask-806da5f8","base":63360}
+✔ real signed owner Auth -> original reservation/PDF sources -> selected exit RPC -> independent HTTP consumption; fixture GRANT distinct from target (7794.988667ms)
+ℹ Only this uniquely owned disposable fixture GRANTs the new RPC and existing reservation/PDF source RPCs; no target ACL/config/provider/Storage or real user data is activated.
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 10746.107834
+VP_MATERIAL_REFERENCE_HTTP_CLEANUP {"project":"vp-native-ask-806da5f8","result":"PASS"}

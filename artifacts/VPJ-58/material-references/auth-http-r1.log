@@ -1,0 +1,29 @@
+VP_MATERIAL_REFERENCE_HTTP_TARGET {"project":"vp-native-ask-af36f89e","base":63360}
+✖ real signed owner Auth -> original reservation/PDF sources -> selected exit RPC -> independent HTTP consumption; fixture GRANT distinct from target (7682.961167ms)
+ℹ Only this uniquely owned disposable fixture GRANTs the new RPC and existing reservation/PDF source RPCs; no target ACL/config/provider/Storage or real user data is activated.
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 10635.280208
+
+✖ failing tests:
+
+test at tests/integration/privacy/material-references/auth-http.test.mjs:17:1
+✖ real signed owner Auth -> original reservation/PDF sources -> selected exit RPC -> independent HTTP consumption; fixture GRANT distinct from target (7682.961167ms)
+  AssertionError [ERR_ASSERTION]: erased original reference/operation replay is denied by actual new fence
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-material-reference-data-server-20261006/tests/integration/privacy/material-references/auth-http.test.mjs:130:130)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+VP_MATERIAL_REFERENCE_HTTP_CLEANUP {"project":"vp-native-ask-af36f89e","result":"PASS"}

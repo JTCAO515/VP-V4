@@ -56,7 +56,7 @@ private final class CoverageFixtureMarker: NSObject {}
     @Test func closedCatalogPreservesMissingDenominatorAndRejectsOldVersionActorBoolean() throws {
         let a = actor(), p = try producer(), valid = try catalogBytes()
         let decoded = try NativeDataCoverageCatalog(bytes: valid, actor: a)
-        #expect(decoded.modules.count == 31)
+        #expect(decoded.modules.count == 32)
         #expect(Set(decoded.modules.map(\.id)) == Set(NativeDataCoverageCopy.order))
         #expect(decoded.modules.contains { $0.id == "coverage_progress" && $0.exportHandler == nil && !$0.missing.isEmpty })
         #expect(decoded.modules.contains { $0.id == "app_group" && $0.location == .device })
@@ -166,7 +166,7 @@ private final class CoverageFixtureMarker: NSObject {}
         #expect(store.visibleModules(current).isEmpty && store.visibleRows(current).isEmpty)
         current = actor()
         let normal = client(current: { current }, vault: vault, request: { _, _, _ in try catalogBytes() })
-        await store.load(normal); #expect(store.visibleModules(current).count == 31)
+        await store.load(normal); #expect(store.visibleModules(current).count == 32)
         clock = 130; store.tick(normal); #expect(store.visibleModules(current).isEmpty)
         clock = 100; #expect(store.visibleModules(current).isEmpty)
     }
@@ -303,7 +303,7 @@ private final class CoverageFixtureMarker: NSObject {}
         do { _ = try await session.dataCoverageRequest(method: "POST", body: c.body, actor: a); Issue.record("Unjournaled write was sent") } catch { }
         #expect(session.dataScope == a.scope)
         let bytes = try await session.dataCoverageRequest(method: "GET", actor: a)
-        #expect(try NativeDataCoverageCatalog(bytes: bytes, actor: a).modules.count == 31)
+        #expect(try NativeDataCoverageCatalog(bytes: bytes, actor: a).modules.count == 32)
         let pending = try session.rememberDataCoverage(body: c.body, actor: a)
         let j = journal(vault)
         #expect(try j.read(a)?.body == c.body)

@@ -1,0 +1,37 @@
+✔ notification-metadata/1: from-null traversal, closed original rows, bounded exact proof and 30s same source binding (16.615917ms)
+✔ trip-lifecycle-metadata/1: from-null traversal, closed original rows, bounded exact proof and 30s same source binding (0.319417ms)
+✔ partial/forged proof, changed source/owner/epoch, pagination reorder, hidden fields and capacity fail closed (8.530708ms)
+✔ empty scope still requires terminal page/current proof, and cancellation never creates fresh identity (0.182625ms)
+✔ selected material RPC ships disabled without rewriting original writer/service lease authority (0.670375ms)
+✔ all new source-free retained tables are inventoried; business fences precede source erase (0.413542ms)
+✔ actual paired wire is explicit; recovery hashes exact UTF8 and preserves immutable original expiry (0.10125ms)
+✔ exact object selection, immutable original erase bytes, no implicit bulk/provider/lease/owner scope (0.903791ms)
+✔ reservation-reference-data/1: selected restricted row traversal, current proof and explicit field/retention boundary (1.703334ms)
+✔ pdf-intake-data/1: selected restricted row traversal, current proof and explicit field/retention boundary (0.547083ms)
+✔ material-exit-progress/1: selected restricted row traversal, current proof and explicit field/retention boundary (0.221583ms)
+✔ partial/mismatched source/authority/proof/cursor, hidden sensitive fields, truncated histories and expired live PDF never complete (1.596958ms)
+✔ ugc: real original owner HTTP command/receipt validators, same bytes unknown ACK recovery and no cross-actor completion (7.40425ms)
+✔ safety: real original owner HTTP command/receipt validators, same bytes unknown ACK recovery and no cross-actor completion (1.910292ms)
+✔ publication: real original owner HTTP command/receipt validators, same bytes unknown ACK recovery and no cross-actor completion (1.579375ms)
+✔ closed selection prevents privilege widening; disabled/foreign/session changed denies before a handler (1.182875ms)
+✔ denominator includes missing server/device/external modules and accepts no client device proof (0.431375ms)
+✔ core queued and ready_complete cannot be promoted to delivered all-data export (1.672208ms)
+✔ Case and Brief invoke existing bounded owner bundle double-read; changed source and stale TTL never complete (2.168417ms)
+✔ Case/Brief recovered delete receipt must match original exact bytes, current grant and explicit scope (1.063083ms)
+✔ Guide selected exact Trip/reference-only handler, no unjournaled automatic destructive recovery (0.406917ms)
+✔ Trip queued is not complete; selected Trip and original operation stay bound across GET recovery (0.651625ms)
+✔ linked Trip exact selected arrays compare semantically across JSONB object ordering, never widen the scope (0.512584ms)
+✔ known cancellation is terminal ACK only; tampered outer complete cannot erase its partial result (0.177458ms)
+✔ owner HTTP validates real-handler protocol result separately from success status and preserves exact original bytes (6.919875ms)
+✔ session switch/unknown ACK/retained exact recovery bytes never promote a terminal response to erasure completion (0.729625ms)
+✔ authentication/admission precedes source dispatch, sensitive RPC defaults disabled, and explicit selected list is source bound (0.975375ms)
+✔ coverage consumes the selected actual metadata/erasure receipt and preserves original bytes on unknown recovery (0.200416ms)
+✔ catalog/parser/registered owner request/result consumer close the selected material flow and keep missing modules visible (2.013083ms)
+ℹ tests 29
+ℹ suites 0
+ℹ pass 29
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 154.447208

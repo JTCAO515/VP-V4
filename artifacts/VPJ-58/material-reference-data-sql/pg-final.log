@@ -1,0 +1,34 @@
+▶ material owner exit full PG replay, authority, CAS, erasure and receipt
+  ✔ transactional migration rollback, original function bodies/ACL and tables unchanged (272.069125ms)
+  ✔ RLS/ACL disabled for every ordinary/service role before isolated grant (408.574667ms)
+  ✔ authority/epoch/reauth precede all feedback; NULL and nonclosed inputs have zero effects (950.106916ms)
+  ✔ ordinary owner list is real, keyset bounded and current digest cursor bound (1072.367667ms)
+  ✔ preview immutable selection, full sensitive digest CAS and no business writes (374.91375ms)
+  ✔ actual page traversal only completes proof; replay/cursor/bytes/TTL remain exact (921.827125ms)
+  ✔ reservation erase fences both IDs first; original same-ID replay denied, new ID works; receipt exact bytes after TTL (665.412791ms)
+  ✔ progress inventory exports actual operation fences; own progress erase retains request/receipt/fences (555.745042ms)
+  ✔ live PDF source expiry bounds preview and expired metadata remains safely erasable (4946.84975ms)
+  ✔ PDF real installed confirmation stays applied after privacy erase; no fabricated confirmed state (382.549167ms)
+  ✔ actual archived Trip metadata exit bypasses business admission; current owner/session remains required (337.434917ms)
+  ✔ full sensitive PDF patch/replay state invalidates CAS even when safe projection identical (245.895834ms)
+  ✔ digest covers hidden expired PDF bytes/patch; applied status without installed proof is never success (1184.627209ms)
+  ✔ twenty selected rows require four real pages; twenty-one selections are denied (1032.011416ms)
+  ✔ late receipt write failure rolls selected erasure and fences back atomically (299.516ms)
+  ✔ real concurrent writer/source/account locks reject without effects; no NOWAIT success claim (2970.93075ms)
+  ✔ history overflow, mismatched selections and byte/page cap fail without partial effects (4014.170292ms)
+  ✔ new-session metadata is safe; old authority and Trip deletion fence reject before effects (436.577958ms)
+  ✔ root account cascade does not recreate state; minimal reference fences survive Trip cascade (458.348583ms)
+  ✔ source-specific Trip discovery includes archived PDF, private current metadata and closed current digest cursors (4746.55575ms)
+  ✔ deleted/deleting Trip progress stays discoverable, exportable and cleanable without a Trip body or financial write (927.092458ms)
+  ✔ source Trip discovery capacity sentinel rejects before hash and effect (266.208666ms)
+  ✔ owned applied rollback removes only new API/schema/triggers; original source/ACL stay exact (309.728875ms)
+✔ material owner exit full PG replay, authority, CAS, erasure and receipt (33585.985542ms)
+ℹ Paired TS files SHA256: {"contract.ts":"dc821a0e2303a927d5d89ba6e0929c4be7da4b45e3a47bbd0e4c05fdd8f363a0","rows.ts":"a86c550306616b006402f36799bb43f0ce7b2dced448260b1e0e1a3b310fcae3","protocol.ts":"929ec2ade2bf73ba828352e8c0db2006dab82c4b40ea26811153537bd0bd36b4","export.ts":"4d5874eaf9e99b36f2a6e501ed1a62ebf81fce741c4fce91387dd7302438a06f"}
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 33663.8465

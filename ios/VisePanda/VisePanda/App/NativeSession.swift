@@ -295,6 +295,53 @@ final class NativeSession {
         return bytes
     }
 
+    func materialReferenceStore(scope: NativeMaterialReferenceScope) -> NativeMaterialReferenceStore {
+        NativeMaterialReferenceStore(scope: scope, vault: vault)
+    }
+    func materialReferenceRequest(body: Data, actor: NativeCommunitySafetyActor) async throws -> Data {
+        guard !busy, try communitySafetyActor() == actor, !Task.isCancelled else { throw NativeDataError.sessionUnavailable }
+        let command = try NativeMaterialReferenceCommand(body: body)
+        if command.action == "erase" || command.action == "recover" {
+            guard let pending = try NativeMaterialReferenceJournal(vault: vault).read(actor),
+                  pending.body == (command.mutationBytes ?? command.body) else { throw NativeDataError.staleSessionResponse }
+        }
+        let started = ProcessInfo.processInfo.systemUptime
+        if let credential, credential.expiresAt <= Date().timeIntervalSince1970 + 10 { await validate() }
+        guard try communitySafetyActor() == actor, let credential, let endpoint, !Task.isCancelled,
+              ProcessInfo.processInfo.systemUptime - started < 30 else { throw NativeDataError.staleSessionResponse }
+        var request = URLRequest(url: endpoint.appendingPathComponent("api/privacy/native/v1/material-references"))
+        request.httpMethod = "POST"; request.httpBody = body; request.httpShouldHandleCookies = false; request.timeoutInterval = 30
+        request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(credential.accessToken)", forHTTPHeaderField: "Authorization")
+        let (stream, response) = try await transport.bytes(for: request)
+        defer { stream.task.cancel() }
+        guard let http = response as? HTTPURLResponse, try communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
+        let cap = http.statusCode == 200 ? 1_000_000 : 4096
+        guard http.expectedContentLength <= Int64(cap) else { throw NativeDataError.invalidResponse }
+        var bytes = Data()
+        for try await byte in stream {
+            guard bytes.count < cap, try communitySafetyActor() == actor, !Task.isCancelled,
+                  ProcessInfo.processInfo.systemUptime - started < 30 else { throw NativeDataError.staleSessionResponse }
+            bytes.append(byte)
+        }
+        guard try communitySafetyActor() == actor, !Task.isCancelled,
+              ProcessInfo.processInfo.systemUptime - started < 30 else { throw NativeDataError.staleSessionResponse }
+        guard http.statusCode == 200 else {
+            let code = (try? JSONDecoder().decode(NativeDataFailure.self, from: bytes).error.code) ?? "MATERIAL_UNAVAILABLE"
+            if http.statusCode == 401, code != "REAUTHENTICATION_REQUIRED" { handle(SessionError.denied) }
+            throw NativeDataError.server(code: code)
+        }
+        // The owned store independently validates the closed list/preview/bundle/
+        // receipt shape, source binding, exact byte digest and selected scope.
+        let value = try NativeMaterialReferenceWire.root(bytes)
+        guard value["schemaVersion"] as? String == NativeMaterialReferenceWire.schema,
+              value["ownerId"] as? String == actor.scope.subject.lowercased(), value["sessionId"] as? String == actor.sessionID,
+              try NativeCommunityWire.integer(value["mobileEpoch"], max: 9_007_199_254_740_991) == actor.scope.mobileEpoch,
+              try !NativeCommunityWire.bool(value["allUserDataCompleted"]) else { throw NativeDataError.invalidResponse }
+        return bytes
+    }
+
     func communitySafetyActor() throws -> NativeCommunitySafetyActor {
         guard let scope = dataScope, let credential, credential.expiresAt > Date().timeIntervalSince1970 else { throw NativeDataError.sessionUnavailable }
         return .init(scope: scope, sessionID: try serviceCaseExportSessionId(actor: scope))
@@ -1645,6 +1692,8 @@ final class NativeSession {
         do { try entryResume.erase(preservingUnclaimedID: preservingAnonymousResume) }
         catch { failureCode="entryResumeCleanupRequired";status="storageError";return false }
         subject=nil; mobileEpoch=nil; displayName=nil
+        do { try NativeMaterialReferenceExportFile.eraseAll() }
+        catch { failureCode="materialReferenceExportCleanupRequired"; status="storageError"; return false }
         do { try NativeDataCoverageExportFile.eraseAll() }
         catch { failureCode="dataCoverageExportCleanupRequired"; status="storageError"; return false }
         do { try NativeExperienceExportFile.eraseAll() }
@@ -1675,6 +1724,8 @@ final class NativeSession {
                 // Noncredential cleanup index only. It cannot restore a session or authorize a journal read.
                 defaults.set(owner, forKey: storageKey + ".pendingJournalCleanupOwner")
             } else {
+                do { try NativeMaterialReferenceJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
+                catch { failureCode="materialReferenceJournalCleanupRequired"; status="storageError"; return false }
                 let guide = vault.remove(service: placeGuideJournalService, owner: owner)
                 guard guide == errSecSuccess || guide == errSecItemNotFound else { failureCode="guideJournalCleanupRequired";status="storageError";return false }
                 do { try NativeRecoveryJournal(vault: vault).erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner) }
