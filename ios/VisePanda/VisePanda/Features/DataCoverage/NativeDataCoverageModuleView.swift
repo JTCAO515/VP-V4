@@ -1,9 +1,9 @@
 import SwiftUI
 
 private enum NativeDataCoverageDestination: Identifiable {
-    case coverageProgress, core, memory, trip(NativeLinkedTripDeleteSelection), deviceExport, deviceDelete, material(NativeMaterialReferenceScope), notification(NativeNotificationDataScope)
+    case archiveData, coverageProgress, core, memory, trip(NativeLinkedTripDeleteSelection), deviceExport, deviceDelete, material(NativeMaterialReferenceScope), notification(NativeNotificationDataScope)
     var id: String {
-        switch self { case .coverageProgress: "coverage-progress"; case .core: "core"; case .memory: "memory"; case .trip(let v): v.tripID; case .deviceExport: "device-export"; case .deviceDelete: "device-delete"; case .material(let scope): scope.rawValue; case .notification(let scope): scope.rawValue }
+        switch self { case .archiveData: "archive-data"; case .coverageProgress: "coverage-progress"; case .core: "core"; case .memory: "memory"; case .trip(let v): v.tripID; case .deviceExport: "device-export"; case .deviceDelete: "device-delete"; case .material(let scope): scope.rawValue; case .notification(let scope): scope.rawValue }
     }
 }
 
@@ -77,6 +77,7 @@ struct NativeDataCoverageModuleView: View {
             .sheet(item: $destination) { target in
                 NavigationStack {
                     switch target {
+                    case .archiveData: NativeArchiveDataConsumer(module: module, coverage: store, session: session, chinese: chinese)
                     case .coverageProgress: NativeCoverageProgressConsumer(module: module, coverage: store, session: session, chinese: chinese)
                     case .core: NativeDataCoverageCoreConsumer(coverage: store, session: session)
                     case .memory: NativeDataCoverageMemoryConsumer(module: module, coverage: store, session: session, chinese: chinese)
@@ -111,7 +112,12 @@ struct NativeDataCoverageModuleView: View {
     }
 
     @ViewBuilder private var serverActions: some View {
-        if NativeCoverageProgressWire.catalog(module) {
+        if NativeArchiveDataWire.catalog(module) {
+            Section(t("归档资料与出口进度", "Archived data and exit progress")) {
+                Button(t("选择归档行程、预览字段并确认导出", "Select an archived Trip, preview fields and confirm export")) { destination = .archiveData }
+                Text(t("私有文件交付前核对原版本；删除仍使用原行程范围预览与回执。本出口请求与临时进度也可单独选择处理。", "Checks the original version before private-file delivery. Deletion still uses the original Trip scope preview and receipt. Exit requests and transient progress can be selected separately."))
+            }.disabled(actor == nil || !registered)
+        } else if NativeCoverageProgressWire.catalog(module) {
             Section(t("明确选择进度与围栏", "Explicitly select progress and fences")) {
                 Button(t("选择记录、预览全部字段并确认导出或清理", "Select records, preview every field and confirm export or cleanup")) { destination = .coverageProgress }
                     .disabled(!registered || actor == nil)

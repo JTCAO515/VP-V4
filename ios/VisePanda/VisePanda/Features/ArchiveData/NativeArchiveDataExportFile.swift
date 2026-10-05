@@ -16,7 +16,7 @@ import Foundation
     var ready: Bool { protected.ready }
 
     static var defaultRoot: URL {
-        FileManager.default.temporaryDirectory.appendingPathComponent("NativeArchiveDataDataExport", isDirectory: true)
+        FileManager.default.temporaryDirectory.appendingPathComponent("NativeArchiveDataExport", isDirectory: true)
     }
 
     init(root: URL? = nil, remove: ((URL) throws -> Void)? = nil,

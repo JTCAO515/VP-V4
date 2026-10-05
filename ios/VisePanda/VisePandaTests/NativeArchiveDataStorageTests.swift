@@ -12,7 +12,7 @@ import Testing
     @Test func originalBytesSurviveRestartAndRefuseReplacementEpochAndSession() throws {
         let vault = ArchiveDataStorageVault()
         let bytes = Data("validated-export-fixture".utf8)
-        let journal = NativeArchiveDataJournal(vault: vault, validateExport: {
+        let journal = NativeArchiveDataJournal(vault: vault, validateConfirmation: {
             guard $0.starts(with: Data("validated-export".utf8)) else { throw NativeDataError.invalidResponse }
         })
         let saved = try journal.retain(bytes, actor: actor)

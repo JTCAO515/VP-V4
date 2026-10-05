@@ -1,11 +1,11 @@
 import Foundation
 import Security
 
-/// Only the consumer of the closed producer export command supplies validation.
+/// Only the consumer of the closed producer confirmation command supplies validation.
 /// This layer stores exact confirmation bytes, never preview rows or source bodies.
 @MainActor struct NativeArchiveDataJournal {
     let vault: any NativeCredentialVault
-    let validateExport: (Data) throws -> Void
+    let validateConfirmation: (Data) throws -> Void
 
     static func service(_ endpoint: String) -> String {
         "com.visepanda.native.archive-data.v1." + endpoint
@@ -18,13 +18,13 @@ import Security
         let pending = try JSONDecoder().decode(NativeCommunitySafetyPending.self, from: bytes)
         guard pending.matches(actor.scope, sessionID: actor.sessionID) else { throw NativeDataError.staleSessionResponse }
         guard !pending.body.isEmpty, pending.body.count <= 8192 else { throw NativeDataError.invalidResponse }
-        try validateExport(pending.body)
+        try validateConfirmation(pending.body)
         return pending
     }
 
     func retain(_ bytes: Data, actor: NativeCommunitySafetyActor) throws -> NativeCommunitySafetyPending {
         guard !bytes.isEmpty, bytes.count <= 8192 else { throw NativeDataError.invalidResponse }
-        try validateExport(bytes)
+        try validateConfirmation(bytes)
         if let previous = try read(actor) {
             guard previous.body == bytes else { throw NativeDataError.staleSessionResponse }
             return previous
@@ -38,7 +38,7 @@ import Security
         return pending
     }
 
-    /// Call after verifying the terminal receipt for the saved export operation.
+    /// Call after verifying the terminal receipt for the saved operation.
     /// Missing ACK, expiry, unknown receipts and transport errors retain it.
     func complete(_ pending: NativeCommunitySafetyPending, actor: NativeCommunitySafetyActor) throws {
         guard pending.matches(actor.scope, sessionID: actor.sessionID), try read(actor) == pending else {
