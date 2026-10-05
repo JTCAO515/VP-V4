@@ -38,7 +38,9 @@ export async function runNotificationScheduler(options: Readonly<{ enabled?: boo
   // never put back into a retryable queue even when no network call happened.
   let outcome: DeliveryOutcome = { kind: 'unknown', code: 'ACK_UNKNOWN' };
   if (!signal.aborted && clock().getTime() < Date.parse(attempt.leaseExpiresAt) && clock().getTime() < Date.parse(attempt.expiresAt)) {
-    try { const result = await options.transport.send({ token: attempt.token, apnsId: attemptId, notificationId, environment: attempt.environment, expiresAt: attempt.expiresAt }); if (deliveryOutcome(result) && (result.kind !== 'accepted' || result.apnsId === attemptId)) outcome = result; } catch { /* uncertain transport, no automatic retry */ }
+    const sending = nativeRequestScope(signal, 3000);
+    try { const result = await sending.run(() => options.transport.send({ token: attempt.token, apnsId: attemptId, notificationId, environment: attempt.environment, expiresAt: attempt.expiresAt })); if (deliveryOutcome(result) && (result.kind !== 'accepted' || result.apnsId === attemptId)) outcome = result; } catch { /* uncertain transport, no automatic retry */ }
+    finally { sending.dispose(); }
   }
   const cleanup = new AbortController();
   try {

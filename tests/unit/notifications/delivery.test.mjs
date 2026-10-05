@@ -135,3 +135,9 @@ test('lost finish ACK recovers same durable attempt; malformed/aborted grant sen
  const malformed=port({malformed:true});assert.equal(await runNotificationScheduler({enabled:true,...malformed,now:clock},new AbortController().signal),'blocked');assert.equal(malformed.sent,0);
  const controller=new AbortController(),aborted=port({abortAfterBegin:controller});assert.equal(await runNotificationScheduler({enabled:true,...aborted,now:clock},controller.signal),'unknown');assert.equal(aborted.sent,0);
 });
+test('abort during an unresolved network handoff records unknown and does not start another send',async()=>{
+ const controller=new AbortController(),p=port();let calls=0;
+ const transport={available:true,send(){calls++;setTimeout(()=>controller.abort(),5);return new Promise(()=>{});}};
+ assert.equal(await runNotificationScheduler({enabled:true,rpc:p.rpc,transport,now:clock},controller.signal),'unknown');assert.equal(calls,1);
+ assert.equal(await runNotificationScheduler({enabled:true,rpc:p.rpc,transport,now:clock},new AbortController().signal),'blocked');assert.equal(calls,1);
+});
