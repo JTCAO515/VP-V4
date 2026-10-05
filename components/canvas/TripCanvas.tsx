@@ -9,6 +9,7 @@ import { TripActionsView } from "./TripActionsView";
 import { TripComparisonResult } from "./TripComparisonResult";
 import { TripContentEditor, type LocalTripRead } from "./TripContentEditor";
 import type { PendingProposalRead } from "@/lib/server/identity/user-data-adapter";
+import { matchesPlaceProposalReference, type PlaceProposalReference } from "@/lib/server/explore/proposal-review-reference";
 import styles from "./TripCanvas.module.css";
 
 type TripVersion = { id: string; resultingVersion: number; proposalId: string | null; eventType: "initial" | "proposal_applied" | "unverified"; title: string | null; createdAt: string; memoryReceipts: readonly { memoryId: string; sourceReceiptId: string; constraintKind: "preference" | "hard_constraint" }[] };
@@ -18,7 +19,7 @@ type PendingRollback = { proposalId: string; baseTripVersion: number; targetVers
 type Notice = "proposalUnavailable" | "proposalRefreshed" | "unavailable" | "proposalConflict";
 type Mutation = "preparing" | "confirming" | "rejecting" | "revising" | null;
 
-export function TripCanvas({ tripId, localTripEnabled = false }: { tripId: string; localTripEnabled?: boolean }) {
+export function TripCanvas({ tripId, localTripEnabled = false, initialProposalReference }: { tripId: string; localTripEnabled?: boolean; initialProposalReference?: PlaceProposalReference }) {
   const [locale, setLocale] = useState<Locale>("zh");
   const [data, setData] = useState<TripRead | null>(null);
   const [pendingProposal, setPendingProposal] = useState<PendingProposalRead | null>(null);
@@ -51,12 +52,13 @@ export function TripCanvas({ tripId, localTripEnabled = false }: { tripId: strin
   }
 
   async function readPendingProposal(generation: number): Promise<PendingProposalRead | null> {
-    const response = await fetch(`/api/trips/${tripId}/proposal`, { cache: "no-store" });
+    const response = await fetch(`/api/trips/${tripId}/proposal${initialProposalReference ? `?proposalId=${initialProposalReference.id}` : ""}`, { cache: "no-store" });
     if (generation !== requestGeneration.current) return null;
     if (response.status === 401) { setState("unauthenticated"); return null; }
     if (response.status === 409) return null;
     if (!response.ok) throw new Error("proposal read unavailable");
     const pending = await response.json() as PendingProposalRead;
+    if (initialProposalReference && !matchesPlaceProposalReference(initialProposalReference, pending, tripId)) throw new Error("selected proposal unavailable");
     return generation === requestGeneration.current ? pending : null;
   }
 
@@ -88,7 +90,7 @@ export function TripCanvas({ tripId, localTripEnabled = false }: { tripId: strin
     setState("loading");
     void reloadAll();
     return () => { requestGeneration.current += 1; };
-  }, [tripId]);
+  }, [tripId, initialProposalReference?.id, initialProposalReference?.revision, initialProposalReference?.digest, initialProposalReference?.baseVersion]);
 
   async function refreshAfterMutation(response: Response, generation: number): Promise<void> {
     if (generation !== requestGeneration.current) return;
