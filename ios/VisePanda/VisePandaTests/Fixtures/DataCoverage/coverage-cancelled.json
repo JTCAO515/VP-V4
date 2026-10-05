@@ -1,9 +1,9 @@
 {
   "evidence": "synthetic original cancellation; native/TS must reject promotion",
-  "requestBytes": "{\"schemaVersion\":\"data-coverage/1\",\"catalogVersion\":\"data-coverage-catalog/2026-10-06.2\",\"actorId\":\"12345678-1234-4123-8123-123456789abc\",\"sessionId\":\"22345678-1234-4123-8123-123456789abc\",\"mobileEpoch\":1,\"moduleId\":\"publication\",\"moduleVersion\":\"community-publication-j3j4/1\",\"operationId\":\"32345678-1234-4123-8123-123456789abc\",\"action\":\"delete\",\"phase\":\"recover\",\"confirmed\":true,\"tripId\":null,\"commandBytes\":\"{\\\"action\\\":\\\"delete\\\",\\\"operationId\\\":\\\"32345678-1234-4123-8123-123456789abc\\\",\\\"confirmed\\\":true}\"}",
+  "requestBytes": "{\"schemaVersion\":\"data-coverage/1\",\"catalogVersion\":\"data-coverage-catalog/2026-10-06.3\",\"actorId\":\"12345678-1234-4123-8123-123456789abc\",\"sessionId\":\"22345678-1234-4123-8123-123456789abc\",\"mobileEpoch\":1,\"moduleId\":\"publication\",\"moduleVersion\":\"community-publication-j3j4/1\",\"operationId\":\"32345678-1234-4123-8123-123456789abc\",\"action\":\"delete\",\"phase\":\"recover\",\"confirmed\":true,\"tripId\":null,\"commandBytes\":\"{\\\"action\\\":\\\"delete\\\",\\\"operationId\\\":\\\"32345678-1234-4123-8123-123456789abc\\\",\\\"confirmed\\\":true}\"}",
   "valid": {
     "schemaVersion": "data-coverage/1",
-    "catalogVersion": "data-coverage-catalog/2026-10-06.2",
+    "catalogVersion": "data-coverage-catalog/2026-10-06.3",
     "actorId": "12345678-1234-4123-8123-123456789abc",
     "sessionId": "22345678-1234-4123-8123-123456789abc",
     "mobileEpoch": 1,
@@ -12,7 +12,7 @@
     "operationId": "32345678-1234-4123-8123-123456789abc",
     "action": "delete",
     "phase": "recover",
-    "requestDigest": "07074f7f48714229ce9af98e2d56dc1822d47cfa07c7083a2bbf5143a78811ce",
+    "requestDigest": "486e73c9d6ebdaf2f31767c8095ef8d7ee8115a39aed98bb2e0150a9d893da47",
     "state": "partial",
     "reason": "ORIGINAL_OPERATION_CANCELLED",
     "result": {
@@ -31,7 +31,7 @@
   },
   "tampered": {
     "schemaVersion": "data-coverage/1",
-    "catalogVersion": "data-coverage-catalog/2026-10-06.2",
+    "catalogVersion": "data-coverage-catalog/2026-10-06.3",
     "actorId": "12345678-1234-4123-8123-123456789abc",
     "sessionId": "22345678-1234-4123-8123-123456789abc",
     "mobileEpoch": 1,
@@ -40,7 +40,7 @@
     "operationId": "32345678-1234-4123-8123-123456789abc",
     "action": "delete",
     "phase": "recover",
-    "requestDigest": "07074f7f48714229ce9af98e2d56dc1822d47cfa07c7083a2bbf5143a78811ce",
+    "requestDigest": "486e73c9d6ebdaf2f31767c8095ef8d7ee8115a39aed98bb2e0150a9d893da47",
     "state": "scoped_complete",
     "reason": "NONE",
     "result": {

@@ -2,7 +2,7 @@
   "evidence": "synthetic closed protocol fixture; not target/runtime capability",
   "catalog": {
     "schemaVersion": "data-coverage/1",
-    "catalogVersion": "data-coverage-catalog/2026-10-06.2",
+    "catalogVersion": "data-coverage-catalog/2026-10-06.3",
     "actorId": "12345678-1234-4123-8123-123456789abc",
     "sessionId": "22345678-1234-4123-8123-123456789abc",
     "mobileEpoch": 1,
@@ -289,35 +289,64 @@
       {
         "id": "order_references",
         "location": "server",
-        "version": "reservation-ledger/1",
-        "scope": "reservation_reference",
-        "exportHandler": null,
-        "deleteHandler": null,
-        "selection": "trip",
-        "capacity": "existing owner reservation reader; no unified exit handler",
+        "version": "material-reference-data/1",
+        "scope": "reservation-reference-data/1",
+        "exportHandler": "materials",
+        "deleteHandler": "materials",
+        "selection": "material_records",
+        "capacity": "1..20 explicitly selected owner references in one Trip; 5/page; 4 pages; source/CAS/proof; fixed30s; 1MB; per-reference history100+sentinel",
         "retention": [
-          "external_orders",
-          "minimal_financial_ledger"
+          "nonreplayable_reference_operation_fences",
+          "original_trip_content",
+          "financial_records"
         ],
         "missing": [
-          "export_delete_not_implemented"
+          "original_local_material_bytes",
+          "external_order_copies",
+          "external_order_cancel_refund",
+          "provider_verification"
         ]
       },
       {
         "id": "pdf_intake",
         "location": "server",
-        "version": "pdf-intake/1",
-        "scope": "pdf_intake_receipts",
-        "exportHandler": null,
-        "deleteHandler": null,
-        "selection": "trip",
-        "capacity": "original proposal/receipt TTL and Trip deletion boundary",
+        "version": "material-reference-data/1",
+        "scope": "pdf-intake-data/1",
+        "exportHandler": "materials",
+        "deleteHandler": "materials",
+        "selection": "material_records",
+        "capacity": "1..20 explicitly selected owner PDF operations in one Trip; 5/page; 4 pages; source/CAS/proof; fixed30s and original material TTL; 1MB",
         "retention": [
-          "original_external_files",
-          "trip_patch_receipts"
+          "pdf_operation_replay_fences",
+          "applied_trip_proposal_history",
+          "confirmation_event",
+          "financial_records"
         ],
         "missing": [
-          "export_delete_not_implemented"
+          "original_pdf_bytes",
+          "full_page_text",
+          "device_appgroup_copies",
+          "external_files",
+          "scheduled_target_retention"
+        ]
+      },
+      {
+        "id": "material_exit_progress",
+        "location": "server",
+        "version": "material-reference-data/1",
+        "scope": "material-exit-progress/1",
+        "exportHandler": "materials",
+        "deleteHandler": "materials",
+        "selection": "material_records",
+        "capacity": "1..20 explicitly selected owner exit requests in one Trip; own minimal fence inventory; source/CAS/proof; selected transient progress erasure",
+        "retention": [
+          "nonreplayable_request_object_operation_fences",
+          "selected_object_ids",
+          "request_source_preview_hashes",
+          "minimal_erasure_receipt"
+        ],
+        "missing": [
+          "other_unselected_exit_requests"
         ]
       },
       {
@@ -515,10 +544,10 @@
     ],
     "allUserDataCompleted": false
   },
-  "requestBytes": "{\"schemaVersion\":\"data-coverage/1\",\"catalogVersion\":\"data-coverage-catalog/2026-10-06.2\",\"actorId\":\"12345678-1234-4123-8123-123456789abc\",\"sessionId\":\"22345678-1234-4123-8123-123456789abc\",\"mobileEpoch\":1,\"moduleId\":\"ugc\",\"moduleVersion\":\"community-j1/1\",\"operationId\":\"32345678-1234-4123-8123-123456789abc\",\"action\":\"export\",\"phase\":\"execute\",\"confirmed\":true,\"tripId\":null,\"commandBytes\":\"{\\\"action\\\":\\\"export\\\"}\"}",
+  "requestBytes": "{\"schemaVersion\":\"data-coverage/1\",\"catalogVersion\":\"data-coverage-catalog/2026-10-06.3\",\"actorId\":\"12345678-1234-4123-8123-123456789abc\",\"sessionId\":\"22345678-1234-4123-8123-123456789abc\",\"mobileEpoch\":1,\"moduleId\":\"ugc\",\"moduleVersion\":\"community-j1/1\",\"operationId\":\"32345678-1234-4123-8123-123456789abc\",\"action\":\"export\",\"phase\":\"execute\",\"confirmed\":true,\"tripId\":null,\"commandBytes\":\"{\\\"action\\\":\\\"export\\\"}\"}",
   "receipt": {
     "schemaVersion": "data-coverage/1",
-    "catalogVersion": "data-coverage-catalog/2026-10-06.2",
+    "catalogVersion": "data-coverage-catalog/2026-10-06.3",
     "actorId": "12345678-1234-4123-8123-123456789abc",
     "sessionId": "22345678-1234-4123-8123-123456789abc",
     "mobileEpoch": 1,
@@ -527,7 +556,7 @@
     "operationId": "32345678-1234-4123-8123-123456789abc",
     "action": "export",
     "phase": "execute",
-    "requestDigest": "0828057b5eac104b07801f4eab7be424d695c2e9101eccede609f4239c4dfc10",
+    "requestDigest": "7693c6a2c935567d491f1e63ff6cb69a7fe775a5caecce774a23d13a07d0e36b",
     "state": "scoped_complete",
     "reason": "NONE",
     "result": {

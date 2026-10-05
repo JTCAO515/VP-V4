@@ -264,6 +264,42 @@ import Testing
         #expect(defaults.object(forKey: ownerKey) == nil)
     }
 
+    @Test func immutableProducerInteroperatesForAllThreeSelectedScopesAndHistoricalTripContexts() throws {
+        let url = try #require(Bundle(for: MaterialReferenceFixtureMarker.self).url(forResource: "material-reference-producer", withExtension: "json"))
+        let fixture = try NativeCommunityWire.object(JSONSerialization.jsonObject(with: Data(contentsOf: url)), ["evidence", "now", "actor", "scopes"])
+        let actorValue = try NativeCommunityWire.object(fixture["actor"] as Any, ["ownerId", "sessionId", "mobileEpoch"])
+        let current = NativeCommunitySafetyActor(scope: .init(endpoint: actor.scope.endpoint,
+            subject: try NativeMaterialReferenceCommand.id(actorValue["ownerId"]),
+            mobileEpoch: try NativeCommunityWire.integer(actorValue["mobileEpoch"], max: 9_007_199_254_740_991), generation: 1),
+            sessionID: try NativeMaterialReferenceCommand.id(actorValue["sessionId"]))
+        let wall = try NativeMaterialReferenceWire.time(fixture["now"] as Any)
+        let scopes = try NativeCommunityWire.object(fixture["scopes"] as Any, Set(NativeMaterialReferenceScope.allCases.map(\.rawValue)))
+        for scope in NativeMaterialReferenceScope.allCases {
+            let value = try NativeCommunityWire.object(scopes[scope.rawValue] as Any,
+                ["previewBytes", "exportBytes", "eraseBytes", "recoverBytes", "preview", "bundle", "receipt", "tripListBytes", "tripList"])
+            func command(_ key: String) throws -> NativeMaterialReferenceCommand {
+                let text = try NativeCommunityWire.text(value[key], max: 16_384)
+                return try .init(body: Data(text.utf8))
+            }
+            let previewCommand = try command("previewBytes"), exportCommand = try command("exportBytes"), eraseCommand = try command("eraseBytes")
+            let preview = try NativeMaterialReferenceProtocol.preview(envelope(value["preview"] as! [String: Any]), command: previewCommand, actor: current, now: wall)
+            let bundle = try NativeMaterialReferenceProtocol.bundle(envelope(value["bundle"] as! [String: Any]), command: exportCommand,
+                preview: preview.binding, actor: current, now: wall)
+            #expect(bundle.scope == scope && preview.items.map(\.id) == eraseCommand.objectIDs)
+            let recovery = try command("recoverBytes")
+            #expect(recovery.mutationBytes == eraseCommand.body)
+            let reply = try NativeMaterialReferenceProtocol.erased(envelope(value["receipt"] as! [String: Any]), command: recovery,
+                actor: current, now: wall.addingTimeInterval(60))
+            guard case .erased(let receipt) = reply else { Issue.record("Immutable producer receipt was not erased"); continue }
+            #expect(receipt.binding.scope == scope && receipt.objects == eraseCommand.objectIDs.count)
+            let discovery = try command("tripListBytes")
+            let trips = try NativeMaterialReferenceProtocol.trips(envelope(value["tripList"] as! [String: Any]), command: discovery, actor: current, now: wall)
+            #expect(trips.trips.first?.id == preview.binding.tripID)
+            if scope == .progress { #expect(trips.trips.first?.label == nil && trips.trips.first?.state == "deleted") }
+            if scope == .pdf { #expect(trips.trips.first?.state == "active") }
+        }
+    }
+
     private func envelope(_ value: [String: Any]) throws -> Data { try NativeCommunityWire.bytes(["data": value]) }
     private func binding(_ command: NativeMaterialReferenceCommand, captured: Date) -> [String: Any] {
         let bounds = NativeMaterialReferenceBoundaries.expected(command.scope)
@@ -291,6 +327,8 @@ import Testing
         return row
     }
 }
+
+private final class MaterialReferenceFixtureMarker: NSObject {}
 
 /// Unsigned URLProtocol fixture exercises actual NativeSession control flow.
 /// No network listener, GoTrue credentials, target grant or provider is involved.
