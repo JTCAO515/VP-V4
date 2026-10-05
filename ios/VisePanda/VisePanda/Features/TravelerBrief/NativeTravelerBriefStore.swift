@@ -7,8 +7,8 @@ import Observation
     private(set) var brief: NativeTravelerBriefSnapshot?
     private(set) var options: NativeTravelerBriefSources?
     private(set) var audit: NativeTravelerBriefAudit?
-    struct OwnerCase: Equatable { let caseID: String; let recipientID: String?; let grantRevision: Int }
-    private(set) var ownerCase: OwnerCase?
+    private(set) var auditUnavailable = false
+    private(set) var ownerState: NativeTravelerBriefOwnerState?
     private(set) var selection: NativeTravelerBriefSelection?
     private(set) var pending: NativeTravelerBriefPending?
     private(set) var receipt: NativeTravelerBriefReceipt?
@@ -20,7 +20,7 @@ import Observation
     private var deadline = 0.0
     private var optionsDeadline = 0.0
     private var auditDeadline = 0.0
-    private var ownerCaseDeadline = 0.0
+    private var ownerStateDeadline = 0.0
     private var briefDeadline = 0.0
     private let uptime: () -> Double
     init(uptime: @escaping () -> Double = { ProcessInfo.processInfo.systemUptime }) { self.uptime = uptime }
@@ -29,32 +29,23 @@ import Observation
         guard scope != next else { return }
         invalidate(); scope = next; pending = nil; receipt = nil; notice = nil; receiptAbsent = false; erased = false
     }
-    func invalidate() { generation = UUID(); preview = nil; brief = nil; selection = nil; options = nil; audit = nil; ownerCase = nil; deadline = 0; optionsDeadline = 0; auditDeadline = 0; ownerCaseDeadline = 0; briefDeadline = 0; busy = false }
-    func cleanupBinding(_ actor: NativeDataScope?) -> (OwnerCase, Int)? {
-        guard actor != nil, actor == scope, uptime() < ownerCaseDeadline, let ownerCase, ownerCase.recipientID != nil,
-              let audit = visibleAudit(actor), audit.revision > 0 else { return nil }; return (ownerCase, audit.revision)
+    func invalidate() { generation = UUID(); preview = nil; brief = nil; selection = nil; options = nil; audit = nil; auditUnavailable = false; ownerState = nil; deadline = 0; optionsDeadline = 0; auditDeadline = 0; ownerStateDeadline = 0; briefDeadline = 0; busy = false }
+    func cleanupBinding(_ actor: NativeDataScope?) -> (NativeTravelerBriefOwnerState, Int)? {
+        guard actor != nil, actor == scope, uptime() < ownerStateDeadline, let ownerState,
+              ownerState.recipientID != nil else { return nil }
+        return (ownerState, ownerState.briefRevision)
     }
-    func loadOwnerCase(actor: NativeDataScope, caseID: String, current: () -> NativeDataScope?, request: (Data) async throws -> Data) async {
+    func loadOwnerState(actor: NativeDataScope, caseID: String, current: () -> NativeDataScope?, request: (Data) async throws -> Data) async {
         guard !busy, scope == actor, current() == actor else { return }
-        let own = generation, started = uptime(); ownerCase = nil; ownerCaseDeadline = 0; busy = true
+        let own = generation, started = uptime(); ownerState = nil; ownerStateDeadline = 0; busy = true
         defer { if own == generation { busy = false } }
         do {
-            for page in 0..<200 {
-                let body = try NativeTravelerBriefWire.bytes(["action": "list", "offset": page * 50])
-                let bytes = try await request(body)
-                guard own == generation, current() == actor, !Task.isCancelled else { return }
-                guard let value = try NativeTravelerBriefWire.payload(bytes) as? [String: Any], let cases = value["cases"] as? [[String: Any]], cases.count <= 50 else { throw NativeDataError.invalidResponse }
-                // Reuses the Case owner's existing reader. Additional service projection fields are irrelevant to this binding.
-                if let row = cases.first(where: { $0["caseId"] as? String == caseID }) {
-                    let recipient = row["recipientId"] is NSNull ? nil : try NativeTravelerBriefWire.uuid(row["recipientId"])
-                    guard uptime() - started < 30 else { throw NativeDataError.staleSessionResponse }
-                    ownerCase = .init(caseID: try NativeTravelerBriefWire.uuid(row["caseId"]), recipientID: recipient, grantRevision: try NativeTravelerBriefWire.integer(row["grantRevision"]))
-                    ownerCaseDeadline = started + 30; return
-                }
-                if cases.count < 50 { return }
-            }
-            notice = "CASE_LIST_UNAVAILABLE"
-        } catch { if own == generation { ownerCase = nil; notice = Self.code(error) } }
+            let body = try NativeTravelerBriefWire.bytes(["action": "owner_state", "caseId": caseID])
+            let bytes = try await request(body)
+            guard own == generation, current() == actor, !Task.isCancelled, uptime() - started < 30 else { return }
+            ownerState = try NativeTravelerBriefOwnerState(raw: NativeTravelerBriefWire.payload(bytes), actor: actor, caseID: caseID)
+            ownerStateDeadline = started + 30
+        } catch { if own == generation { ownerState = nil; notice = Self.code(error) } }
     }
     func loadShared(actor: NativeDataScope, caseID: String, current: () -> NativeDataScope?, request: (Data) async throws -> Data) async {
         guard !busy, scope == actor, current() == actor else { return }
@@ -101,14 +92,14 @@ import Observation
     }
     func loadAudit(actor: NativeDataScope, caseID: String, current: () -> NativeDataScope?, request: (Data) async throws -> Data) async {
         guard !busy, scope == actor, current() == actor else { return }
-        let own = generation, started = uptime(); audit = nil; auditDeadline = 0; busy = true
+        let own = generation, started = uptime(); audit = nil; auditUnavailable = false; auditDeadline = 0; busy = true
         defer { if own == generation { busy = false } }
         do {
             let body = try NativeTravelerBriefWire.bytes(["action": "audit", "caseId": caseID])
             let bytes = try await request(body)
             guard own == generation, current() == actor, !Task.isCancelled, uptime() - started < 30 else { return }
             audit = try NativeTravelerBriefAudit(raw: NativeTravelerBriefWire.payload(bytes), actor: actor, caseID: caseID); auditDeadline = started + 30
-        } catch { if own == generation { audit = nil; notice = Self.code(error) } }
+        } catch { if own == generation { audit = nil; auditUnavailable = true } }
     }
     func visible(_ actor: NativeDataScope?, now: Date = Date()) -> NativeTravelerBriefSnapshot? {
         guard actor != nil, actor == scope, uptime() < deadline, let preview,
@@ -191,7 +182,7 @@ import Observation
             default: body = original.body
             }
             // Remove readable fields before a mutation/retry; the server rechecks every authority.
-            preview = nil; brief = nil; selection = nil; options = nil; audit = nil; ownerCase = nil; deadline = 0; optionsDeadline = 0; auditDeadline = 0; ownerCaseDeadline = 0; briefDeadline = 0
+            preview = nil; brief = nil; selection = nil; options = nil; audit = nil; ownerState = nil; deadline = 0; optionsDeadline = 0; auditDeadline = 0; ownerStateDeadline = 0; briefDeadline = 0
             let bytes = try await request(body)
             guard own == generation, current() == actor, !Task.isCancelled else { return }
             var value: Any = try NativeTravelerBriefWire.payload(bytes)

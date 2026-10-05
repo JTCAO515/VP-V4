@@ -74,7 +74,12 @@ nonisolated final class NativeTravelerBriefTests: XCTestCase {
     @MainActor private func receipt(_ command: NativeTravelerBriefCommand, outcome: String = "applied") throws -> Data {
         try NativeTravelerBriefWire.bytes(["data": ["schemaVersion": "traveler-brief/1", "kind": "receipt", "operationId": command.operationID,
             "requestDigest": command.digest, "caseId": command.caseID, "action": command.action, "outcome": outcome,
-            "revision": 2, "grantRevision": 1, "createdAt": Date().timeIntervalSince1970.rounded(.down) * 1000]])
+            "revision": command.expectedRevision + 1, "grantRevision": 1, "createdAt": Date().timeIntervalSince1970.rounded(.down) * 1000]])
+    }
+    @MainActor private func ownerState(revision: Int = 1, state: String = "shared", owner: String? = nil, recipient: String? = nil) throws -> Data {
+        try NativeTravelerBriefWire.bytes(["data": ["schemaVersion": "traveler-brief/1", "kind": "owner_state", "caseId": caseID,
+            "ownerId": owner ?? actor.subject, "recipientId": recipient ?? self.recipient, "grantRevision": 1,
+            "briefRevision": revision, "state": state]])
     }
     @MainActor private func previewBody() throws -> Data {
         try NativeTravelerBriefWire.bytes(["action": "preview", "caseId": caseID, "recipientId": recipient, "grantRevision": 1,
@@ -89,8 +94,8 @@ nonisolated final class NativeTravelerBriefTests: XCTestCase {
             if raw?["action"] as? String == "read" { throw NativeDataError.server(code: "BRIEF_UNAVAILABLE") }
             return snapshot
         })
-        await store.loadOwnerCase(actor: actor, caseID: caseID, current: current, request: { _ in
-            try NativeTravelerBriefWire.bytes(["data": ["cases": [["caseId": self.caseID, "recipientId": self.recipient, "grantRevision": 1, "grantState": "revoked"]], "staff": []]])
+        await store.loadOwnerState(actor: actor, caseID: caseID, current: current, request: { _ in
+            try self.ownerState()
         })
         await store.loadAudit(actor: actor, caseID: caseID, current: current, request: { _ in
             try NativeTravelerBriefWire.bytes(["data": ["schemaVersion": "traveler-brief/1", "kind": "audit", "caseId": self.caseID, "ownerId": self.actor.subject,
@@ -251,8 +256,8 @@ nonisolated final class NativeTravelerBriefTests: XCTestCase {
     @MainActor func testRevokedGrantOwnerCleanupWorksWithoutAnActivePreview() async throws {
         let actor = self.actor, store = NativeTravelerBriefStore(), vault = BriefTestVault(), journal = NativeTravelerBriefJournal(vault: vault)
         store.bind(actor)
-        await store.loadOwnerCase(actor: actor, caseID: caseID, current: { actor }, request: { _ in
-            try NativeTravelerBriefWire.bytes(["data": ["cases": [["caseId": self.caseID, "recipientId": self.recipient, "grantRevision": 1, "grantState": "revoked"]], "staff": []]])
+        await store.loadOwnerState(actor: actor, caseID: caseID, current: { actor }, request: { _ in
+            try self.ownerState()
         })
         await store.loadAudit(actor: actor, caseID: caseID, current: { actor }, request: { _ in
             try NativeTravelerBriefWire.bytes(["data": ["schemaVersion": "traveler-brief/1", "kind": "audit", "caseId": self.caseID, "ownerId": actor.subject, "revision": 1, "events": [], "complete": true]])
@@ -262,6 +267,57 @@ nonisolated final class NativeTravelerBriefTests: XCTestCase {
         await store.perform(command: command, actor: actor, current: { actor }, read: { try journal.read(actor) }, retain: { try journal.retain($0, actor: actor) },
                             complete: { try journal.complete($0, actor: actor) }, request: { _ in try self.receipt(command) })
         XCTAssertEqual(store.receipt?.outcome, "applied"); XCTAssertNil(store.pending)
+    }
+
+    @MainActor func testAuditOverLimitCannotBlockOwnerWithdrawal() async throws {
+        let actor = self.actor, store = NativeTravelerBriefStore(), vault = BriefTestVault(), journal = NativeTravelerBriefJournal(vault: vault)
+        store.bind(actor)
+        await store.loadOwnerState(actor: actor, caseID: caseID, current: { actor }, request: { bytes in
+            let body = try XCTUnwrap(JSONSerialization.jsonObject(with: bytes) as? [String: Any]); XCTAssertEqual(body["action"] as? String, "owner_state")
+            return try self.ownerState()
+        })
+        await store.loadAudit(actor: actor, caseID: caseID, current: { actor }, request: { _ in throw NativeDataError.server(code: "BRIEF_LIMIT") })
+        XCTAssertNil(store.visibleAudit(actor)); XCTAssertTrue(store.auditUnavailable); XCTAssertNotNil(store.cleanupBinding(actor))
+        let command = try command()
+        await store.perform(command: command, actor: actor, current: { actor }, read: { try journal.read(actor) }, retain: { try journal.retain($0, actor: actor) },
+                            complete: { try journal.complete($0, actor: actor) }, request: { _ in try self.receipt(command) })
+        XCTAssertEqual(store.receipt?.action, "withdraw"); XCTAssertEqual(store.receipt?.outcome, "applied"); XCTAssertNil(store.pending)
+    }
+
+    @MainActor func testVersionZeroPreviewCanBeDeletedUsingActualOwnerMetadataWithoutAudit() async throws {
+        let actor = self.actor, store = NativeTravelerBriefStore(), vault = BriefTestVault(), journal = NativeTravelerBriefJournal(vault: vault)
+        store.bind(actor)
+        await store.loadOwnerState(actor: actor, caseID: caseID, current: { actor }, request: { _ in try self.ownerState(revision: 0, state: "absent") })
+        let (binding, revision) = try XCTUnwrap(store.cleanupBinding(actor))
+        XCTAssertEqual(revision, 0); XCTAssertNil(store.visibleAudit(actor)); XCTAssertNil(store.visible(actor))
+        let command = try NativeTravelerBriefCommand(cleanup: "delete", caseID: binding.caseID, recipientID: try XCTUnwrap(binding.recipientID), grantRevision: binding.grantRevision, revision: revision)
+        await store.perform(command: command, actor: actor, current: { actor }, read: { try journal.read(actor) }, retain: { try journal.retain($0, actor: actor) },
+                            complete: { try journal.complete($0, actor: actor) }, request: { bytes in XCTAssertEqual(bytes, command.body); return try self.receipt(command) })
+        XCTAssertEqual(store.receipt?.revision, 1); XCTAssertEqual(store.receipt?.action, "delete")
+    }
+
+    @MainActor func testOwnerMetadataRejectsOtherOwnerChangedCaseExtraContentAndExpiresWithoutFallback() async throws {
+        let actor = self.actor; var now = 100.0
+        let store = NativeTravelerBriefStore(uptime: { now }); store.bind(actor)
+        let good = try ownerState()
+        await store.loadOwnerState(actor: actor, caseID: caseID, current: { actor }, request: { _ in good })
+        XCTAssertNotNil(store.cleanupBinding(actor)); now = 131; XCTAssertNil(store.cleanupBinding(actor)); now = 100
+        let other = "b2345678-1234-4234-8234-123456789abc"
+        for (key, value) in [("ownerId", other as Any), ("caseId", other as Any), ("briefRevision", true as Any), ("fields", [] as Any)] {
+            var raw = try XCTUnwrap(NativeTravelerBriefWire.payload(good) as? [String: Any]); raw[key] = value
+            let bytes = try NativeTravelerBriefWire.bytes(["data": raw])
+            await store.loadOwnerState(actor: actor, caseID: caseID, current: { actor }, request: { _ in bytes })
+            XCTAssertNil(store.cleanupBinding(actor)); XCTAssertNil(store.ownerState)
+        }
+        var absent = try XCTUnwrap(NativeTravelerBriefWire.payload(ownerState(revision: 0, state: "absent")) as? [String: Any]); absent["recipientId"] = NSNull()
+        let noRecipient = try NativeTravelerBriefWire.bytes(["data": absent])
+        await store.loadOwnerState(actor: actor, caseID: caseID, current: { actor }, request: { _ in noRecipient })
+        XCTAssertNil(store.cleanupBinding(actor)); XCTAssertNil(store.ownerState?.recipientID)
+        var current: NativeDataScope? = actor
+        await store.loadOwnerState(actor: actor, caseID: caseID, current: { current }, request: { _ in
+            current = .init(endpoint: actor.endpoint, subject: other, mobileEpoch: 2, generation: 2); return good
+        })
+        XCTAssertNil(store.cleanupBinding(current)); XCTAssertNil(store.ownerState)
     }
 
     @MainActor func testActualSessionDenialPreservesOriginalJournalAndExplicitLogoutErasesIt() async throws {

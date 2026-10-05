@@ -1,5 +1,28 @@
 import Foundation
 
+/// Current owner metadata only. Audit availability and active sharing do not grant or remove cleanup authority.
+struct NativeTravelerBriefOwnerState: Equatable {
+    let caseID: String
+    let ownerID: String
+    let recipientID: String?
+    let grantRevision: Int
+    let briefRevision: Int
+    let state: String
+    init(raw: Any, actor: NativeDataScope, caseID: String) throws {
+        let w = NativeTravelerBriefWire.self
+        let v = try w.object(raw, keys: ["schemaVersion", "kind", "caseId", "ownerId", "recipientId", "grantRevision", "briefRevision", "state"])
+        guard v["schemaVersion"] as? String == w.version, v["kind"] as? String == "owner_state",
+              try w.uuid(v["caseId"]) == caseID, try w.uuid(v["ownerId"]) == actor.subject.lowercased(),
+              let state = v["state"] as? String, ["absent", "shared", "withdrawn", "deleted", "invalidated"].contains(state) else { throw NativeDataError.invalidResponse }
+        self.caseID = caseID; ownerID = actor.subject.lowercased()
+        recipientID = v["recipientId"] is NSNull ? nil : try w.uuid(v["recipientId"])
+        guard recipientID != ownerID else { throw NativeDataError.invalidResponse }
+        grantRevision = try w.integer(v["grantRevision"]); briefRevision = try w.integer(v["briefRevision"])
+        guard (state == "absent") == (briefRevision == 0) else { throw NativeDataError.invalidResponse }
+        self.state = state
+    }
+}
+
 struct NativeTravelerBriefSources: Equatable {
     struct Intake: Equatable {
         let messageID: String

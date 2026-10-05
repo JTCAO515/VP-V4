@@ -175,6 +175,10 @@ struct NativeTravelerBriefView: View {
                     }
                 }
             }
+        } else if store.auditUnavailable {
+            Section(t("此请求的访问记录", "Access records for this request")) {
+                Text(t("完整审计记录暂不可读，可能超过单次读取上限；未展示截断记录。撤回和删除按当前 owner 元数据独立核对。", "The complete audit is unavailable and may exceed the read limit; no truncated record is shown. Withdrawal and deletion use independently rechecked current owner metadata.")).font(.footnote)
+            }
         }
     }
     private func auditLabel(_ action: String) -> String {
@@ -222,7 +226,7 @@ struct NativeTravelerBriefView: View {
         do { try NativeTravelerBriefExportFile.sweepOrphans() } catch { failed = true; return }
         store.restore(actor: actor, read: { try session.travelerBriefRecovery(actor: actor) })
         await store.loadOptions(actor: actor, caseID: caseID, current: { self.actor }, request: { try await session.travelerBriefRequest(body: $0, actor: actor) })
-        await store.loadOwnerCase(actor: actor, caseID: caseID, current: { self.actor }, request: { try await session.serviceCaseRequest(body: $0) })
+        await store.loadOwnerState(actor: actor, caseID: caseID, current: { self.actor }, request: { try await session.travelerBriefRequest(body: $0, actor: actor) })
         await store.loadShared(actor: actor, caseID: caseID, current: { self.actor }, request: { try await session.travelerBriefRequest(body: $0, actor: actor) })
         await store.loadAudit(actor: actor, caseID: caseID, current: { self.actor }, request: { try await session.travelerBriefRequest(body: $0, actor: actor) })
     }
@@ -233,7 +237,7 @@ struct NativeTravelerBriefView: View {
             await store.loadPreview(body: body, actor: actor, caseID: caseID, recipientID: options.recipientID, grantRevision: options.grantRevision,
                                     current: { self.actor }, request: { try await session.travelerBriefRequest(body: $0, actor: actor) })
             await store.loadAudit(actor: actor, caseID: caseID, current: { self.actor }, request: { try await session.travelerBriefRequest(body: $0, actor: actor) })
-            await store.loadOwnerCase(actor: actor, caseID: caseID, current: { self.actor }, request: { try await session.serviceCaseRequest(body: $0) })
+            await store.loadOwnerState(actor: actor, caseID: caseID, current: { self.actor }, request: { try await session.travelerBriefRequest(body: $0, actor: actor) })
         } catch { failed = true }
     }
     private func mutate(_ action: String, actor: NativeDataScope) async {
