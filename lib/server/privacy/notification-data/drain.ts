@@ -10,7 +10,7 @@ export type NotificationDrainRPC = (action: 'begin' | 'finish', input: Readonly<
 /** Owner DTO cannot turn a pending fence into success. Only the separately
  * authenticated existing server credential may complete this bounded barrier. */
 export function decodeNotificationDataDraining(v: unknown, selection: NotificationDataSelection, actor: NotificationDataActor, bytes: string, now: number): boolean {
-  return record(v) && exact(v, [...notificationDataBindingKeys,'kind','state','requestDigest','committedAt']) && validNotificationDataBinding(v, now, true)
+  return selection.scope !== 'notification-exit-progress/1' && record(v) && exact(v, [...notificationDataBindingKeys,'kind','state','requestDigest','committedAt']) && validNotificationDataBinding(v, now, true)
     && sameNotificationDataSelection(v, selection, actor) && v.kind === 'draining' && v.state === 'fenced'
     && v.requestDigest === notificationDataDigest(bytes) && positive(v.committedAt) && v.committedAt >= v.capturedAt && v.committedAt < v.expiresAt && v.committedAt <= now;
 }

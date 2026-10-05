@@ -3,25 +3,36 @@ import { connect, type OutgoingHttpHeaders } from 'node:http2';
 import { privateLockScreenPayload } from './contract.ts';
 import { unavailableReminderTransport, type ReminderTransport, type DeliveryOutcome } from './delivery-contract.ts';
 import { uuid, timestamp } from './wire.ts';
+import { genuineNotificationSendPermit, type NotificationSendPermit } from '../privacy/notification-data/send-budget.ts';
 
 export type ApnsConfiguration = Readonly<{ teamId: string; keyId: string; topic: string; privateKey: string; environment: 'sandbox' | 'production' }>;
 export type ApnsResponse = Readonly<{ status: number; apnsId: string | null; reason: string | null }>;
 /** A synthetic exchange is injectable in tests; production origins are fixed. */
-export type ApnsExchange = (request: Readonly<{ origin: string; headers: OutgoingHttpHeaders; payload: string; timeoutMs: number }>) => Promise<ApnsResponse>;
-export const apnsExchange: ApnsExchange = request => new Promise((resolve, reject) => {
-  const session = connect(request.origin, { minVersion: 'TLSv1.2' });
+export type ApnsExchange = (request: Readonly<{ origin: string; headers: OutgoingHttpHeaders; payload: string; timeoutMs: number; sendPermit: NotificationSendPermit }>) => Promise<ApnsResponse>;
+/** The optional connector is a synthetic test seam; runtime composition uses
+ * the original Node connector and the transport's fixed Apple origins. */
+export function apnsExchange(request: Parameters<ApnsExchange>[0], connectSession: typeof connect = connect): Promise<ApnsResponse> {
+  return new Promise((resolve, reject) => {
+  const permit = request.sendPermit;
+  if (!genuineNotificationSendPermit(permit) || !permit.canWrite() || !Number.isSafeInteger(request.timeoutMs) || request.timeoutMs < 1 || request.timeoutMs > 3000) {
+    reject(new Error('APNS_ACK_UNKNOWN')); return;
+  }
+  const session = connectSession(request.origin, { minVersion: 'TLSv1.2' });
   let finished = false;
   const done = (response?: ApnsResponse) => {
     if (finished) return;
-    finished = true; clearTimeout(timer); session.destroy();
+    finished = true; clearTimeout(timer); permit.signal.removeEventListener('abort', abort); session.destroy(); permit.close();
     if (response) resolve(response); else reject(new Error('APNS_ACK_UNKNOWN'));
   };
-  const timer = setTimeout(() => done(), request.timeoutMs);
+  const abort = () => done();
+  const timer = setTimeout(abort, Math.min(request.timeoutMs, permit.remainingMs()));
+  permit.signal.addEventListener('abort', abort, { once: true });
   session.on('error', () => done());
   session.on('close', () => done());
   session.on('connect', () => {
     if (finished) return;
     try {
+      if (!permit.beginNetworkWrite()) { done(); return; }
       const stream = session.request(request.headers);
       let status = 0, apnsId: string | null = null, body = '', bytes = 0;
       stream.setEncoding('utf8');
@@ -37,10 +48,13 @@ export const apnsExchange: ApnsExchange = request => new Promise((resolve, rejec
         if (body) { try { const v: unknown = JSON.parse(body); if (v && typeof v === 'object' && 'reason' in v && typeof v.reason === 'string') reason = v.reason; } catch { /* no raw body escapes */ } }
         done({ status, apnsId, reason });
       });
+      if (!permit.canWrite()) { done(); return; }
       stream.end(request.payload);
     } catch { done(); }
   });
-});
+  if (!permit.canWrite()) done();
+  });
+}
 
 /** No environment variable discovery, token upload or network occurs at construction. */
 export function createApnsTransport(options: Readonly<{ enabled?: boolean; configuration?: ApnsConfiguration; exchange?: ApnsExchange; now?: () => Date }>): ReminderTransport {
@@ -51,9 +65,11 @@ export function createApnsTransport(options: Readonly<{ enabled?: boolean; confi
   const clock = options.now ?? (() => new Date()), exchange = options.exchange ?? apnsExchange;
   let cachedToken = '', issuedAt = 0;
   return Object.freeze({ available: true, binding: Object.freeze({ environment: c.environment, topic: c.topic }), async send(input): Promise<DeliveryOutcome> {
-    const now = clock(), seconds = Math.floor(now.getTime() / 1000);
-    if (!Number.isFinite(seconds) || !uuid(input.apnsId) || !uuid(input.notificationId) || !/^[a-f0-9]{2,512}$/.test(input.token) || input.token.length % 2 !== 0 || input.environment !== c.environment || input.topic !== c.topic || !timestamp(input.expiresAt) || Date.parse(input.expiresAt) <= now.getTime()) return { kind: 'error', code: 'TRANSPORT_UNAVAILABLE' };
+    const permit = input.sendPermit;
+    if (!genuineNotificationSendPermit(permit)) return { kind: 'error', code: 'TRANSPORT_UNAVAILABLE' };
     try {
+    const now = clock(), seconds = Math.floor(now.getTime() / 1000);
+    if (!permit.canWrite() || !Number.isFinite(seconds) || !uuid(input.apnsId) || !uuid(input.notificationId) || !/^[a-f0-9]{2,512}$/.test(input.token) || input.token.length % 2 !== 0 || input.environment !== c.environment || input.topic !== c.topic || !timestamp(input.expiresAt) || Date.parse(input.expiresAt) <= now.getTime()) return { kind: 'error', code: 'TRANSPORT_UNAVAILABLE' };
       if (!cachedToken || seconds < issuedAt || seconds - issuedAt >= 3000) {
         const header = Buffer.from(JSON.stringify({ alg: 'ES256', kid: c.keyId })).toString('base64url');
         const claims = Buffer.from(JSON.stringify({ iss: c.teamId, iat: seconds })).toString('base64url');
@@ -61,7 +77,8 @@ export function createApnsTransport(options: Readonly<{ enabled?: boolean; confi
         cachedToken = `${signed}.${sign('sha256', Buffer.from(signed), { key, dsaEncoding: 'ieee-p1363' }).toString('base64url')}`;
         issuedAt = seconds;
       }
-      const response = await exchange({ origin: c.environment === 'sandbox' ? 'https://api.sandbox.push.apple.com' : 'https://api.push.apple.com', timeoutMs: 3000,
+      if (!permit.canWrite()) return { kind: 'unknown', code: 'ACK_UNKNOWN' };
+      const response = await exchange({ origin: c.environment === 'sandbox' ? 'https://api.sandbox.push.apple.com' : 'https://api.push.apple.com', timeoutMs: Math.min(3000, permit.remainingMs()), sendPermit: permit,
         headers: { ':method': 'POST', ':path': `/3/device/${input.token}`, authorization: `bearer ${cachedToken}`, 'apns-topic': c.topic, 'apns-id': input.apnsId, 'apns-expiration': '0', 'apns-priority': '10', 'apns-push-type': 'alert', 'content-type': 'application/json' },
         payload: JSON.stringify({ aps: { alert: privateLockScreenPayload }, notificationRef: input.notificationId }),
       });
@@ -70,5 +87,6 @@ export function createApnsTransport(options: Readonly<{ enabled?: boolean; confi
       if (response.status === 410 && response.reason === 'Unregistered' || response.status === 400 && ['BadDeviceToken', 'DeviceTokenNotForTopic'].includes(response.reason ?? '')) return { kind: 'error', code: 'TOKEN_REVOKED' };
       return { kind: 'error', code: 'PROVIDER_REJECTED' };
     } catch { return { kind: 'unknown', code: 'ACK_UNKNOWN' }; }
+    finally { permit.close(); }
   } });
 }

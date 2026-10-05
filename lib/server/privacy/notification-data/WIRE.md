@@ -148,13 +148,18 @@ Original notification_private.attempts constraint gives <=5000ms server grant
 interval. New begin_fenced action returns exact old attempt DTO plus integer
 leaseBudgetMs: floor(min(lease_expires_at,material_expires_at)-single captured
 server authorized_at) in (0,5000]. Store/return the same original bound, no renewal.
+The v2 proof covers only senders using this process-local permit. Already-running
+old sender processes holding unfenced grants remain outside that proof. Target
+rollout must stop/drain those old senders before enabling the upgraded capability;
+that target/old-process gate is explicitly UNRUN, never inferred from these fixtures.
 Original begin action MUST fail blocked and disclose no token: a still-running
 old wall-clock sender cannot receive a new unfenced grant. finish/read retain
 original shapes and original qualification, additionally reject erased IDs.
 No new queue, periodic worker or automatic resend. Existing poll unchanged.
 
 Minimal shared production hunks required (leased Main before edits):
-- notifications/scheduler.ts runNotificationScheduler: capture hrtime.bigint()
+- notifications/scheduler.ts runNotificationScheduler: use owned sender.ts
+  beginNotificationSend (strict DTO+permit) which captures hrtime.bigint()
   immediately BEFORE begin_fenced RPC invocation; parse exactly old attempt keys+
   leaseBudgetMs and reject budget over original absolute interval/5000. Remove
   Date.now / injected options.now from SEND authorization. Mint own in-process
@@ -251,8 +256,11 @@ Primary technical sources checked while closing the wire:
 [Node hrtime.bigint](https://nodejs.org/api/process.html#processhrtimebigint) for
 process-local elapsed duration; [PostgreSQL REL17 pg_sleep source](https://github.com/postgres/postgres/blob/REL_17_STABLE/src/backend/utils/adt/misc.c)
 for rejecting wall-clock sleep as independent drain proof. Own send-budget.ts and
-drain.ts implement this duration/controller contract; shared sender/SQL still await
-Main exact review/lease/new official SQL session. No target or provider activated.
+drain.ts implement this duration/controller contract. Main c78355/ca59d1/415c53
+approved this wire and dispatched a new independent SQL session for unused030000.
+Main has now granted the original sender owner3673c342 explicit release: this
+sole TS consumed scheduler/delivery-contract/APNs minimal hunks, no other sender
+file. Source and local synthetic/loopback verification are recorded in MAIN.md. No target or provider activated.
 
 ## Closed ordinary-owner API
 

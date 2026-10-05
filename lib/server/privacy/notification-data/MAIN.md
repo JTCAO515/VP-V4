@@ -5,7 +5,7 @@ new POST route implemented. WIRE.md is one closed SQL/Native wire for review.
 Shared files unchanged; no new SQL, runtime flags/config, target operation or other
 thread message. Original material HEAD f1f065c8 used, no dirty copy.
 
-Required Main decisions before dependent implementation:
+Original dependencies (approval status updated below):
 1. Review closed WIRE (full eight-table+legacy/new inventory, three explicit scopes,
    exact JSON shapes, root order and permanent producer/worker fence/drain design).
 2. Verify unused new migration slot and create independent official SQL owner.
@@ -32,8 +32,8 @@ monotonic barrier -> actual SQL terminal receipt, all within new request record,
 no queue. Missing drain authority/ACK leaves original-op fenced/unknown. Full DTO/
 minimal shared hunks/retained state inventory updated once in WIRE.
 
-Requires Main review of this exact narrow service finalization seam, mandatory
-sender lease before new SQL. Shared worker files still unchanged. Target/actual
+Main approved this exact narrow service finalization seam in the later relay
+below. Shared sender lease remains required before shared-file writes. Target/actual
 PG/APNs/Native execution not claimed from fixture tests.
 
 Validation: focused HTTP/permit/controller tests 10 PASS, 0 FAIL, 0 SKIP (synthetic
@@ -46,3 +46,46 @@ and target/ALL2 UNRUN pending required SQL/sender lease/Native integration.
 Final wire additionally preserves erased outbox reminder-parent and
 watch+semantic unique identities; deleting original unique rows alone could let
 poll synthesize old delivery with a new random UUID. No source-body tombstone.
+
+## Main approval c78355 / ca59d1 / 415c53 (2026-10-06)
+
+Approved v2 closed wire and independently checked unused030000; Main has created
+a new official SQL session sole append030000 (session ID pending COORD readback).
+No further ordinary approval pending. Trusted service controller uses only existing
+credential/disposable fixture and default deny; no new credentials/target grants.
+Native exact shared lease granted by Main. Original notification owner
+01a10a6b-02d6 release requested for scheduler/delivery-contract/APNs; NOT granted
+yet, no shared writes by this session.
+
+Old unfenced sender process/grants are outside v2 proof. Target rollout must stop/
+drain old senders before claiming all dispatch covered; this target gate is UNRUN.
+Own sender.ts now provides exact begin_fenced DTO and RPC-start monotonic permit
+so shared scheduler integration needs a narrow call-site change after lease.
+
+## Sender lease implemented; final Native mapping available
+
+Main original#221 sole owner3673c342 explicit release granted this session ONLY
+scheduler/delivery-contract/apns minimum hunks. Those three now consume new
+begin_fenced DTO and genuine process-local permit through actual connector/write
+points; no other notification production file touched. Own sender.ts removes
+wall clock from dispatch authority. Own worker.test.mjs: 5 PASS0skip, including
+production exchange leaf with synthetic delayed connector and real local HTTP2;
+own sender DTO3 PASS0skip. A normal permit retirement/known-ACK lifetime issue
+was detected and fixed; old outcomes/finish-read/no retry preserved. Typecheck PASS.
+No Apple/provider/real key or deployment action.
+
+Main acabb7 Native46b integration request: CATALOG.md provides once final IDs/
+version4/selection/order and full34 producer fixture for sole Native. Owned
+coverage.ts implemented; shared coverage four-file registration hunks ready, need
+exact lease per original dispatch (no current shared coverage write). Native
+Copy.order/fixture release is Main's separate exact handoff. LEGACY-FIXTURES.patch
+is concrete minimal input-only adaptation for two original unit fixture files;
+no expected assertion changes. Request exact tests fixture release before applying,
+keeping the existing tests runnable with mandatory permit/new fenced SQL shape.
+
+Current follow-up verification: own HTTP6 + sender3 + production-guard worker5 +
+owned mapping3 =17 PASS0skip; unchanged original monotonic barrier5 tests/evidence
+reused. pnpm typecheck PASS, source-policy lint PASS740. Shared coverage files and
+original legacy sender fixture files remain unchanged pending exact lease. Sender
+lease minimum production hunks ready to integrate immediately; mapping fixture
+is clearly future registration producer, not current live GET evidence.
