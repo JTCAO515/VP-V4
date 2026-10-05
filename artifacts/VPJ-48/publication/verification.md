@@ -34,3 +34,7 @@ UNRUN: actual target/public configuration and qualified producers/roles/credenti
 policy/provider fees/Storage, real-user data, physical phone/human, full-account dispatcher,
 final integrated SQL/Native/AuthHTTP, final PR head required CI and Main complete-scope review.
 Unknown supplier cost/rights remains unknown; no public activation occurred.
+
+## Final implementation disposition
+
+Main48ee0b/5dbe57/df5302 independently audited integrated d83e1631 and confirmed complete owned J3/J4 source. No known owned core finding. Normal SQL finalf80820b2/runtimee76 and Native final7fd04eee/runtime33f84ca5 sources equal integrated production. Actual AuthHTTP-r3 1PASS0skip + named0e30fd3f cleanupPASS, rawlog auth-http-r3.log; final affected28PASS0skip in final-affected.log; full integrated Web buildPASS in build-integrated-r1.log. Native final HTTP envelope/null disclosure/same-object Safety fixes and affected3PASS0skip supersede checkpoint UNRUN notes above; unchanged Native evidence reused. The older UNRUN progress paragraphs do not describe missing final code. No additional matrix. Bulk multi-account teardown r2 inherited J2 FK timing FAIL retained; r3 separate one-account cleanupPASS, no bulk/allaccount product claim. JS monotonic TTL affected9PASS0skip preserves max30s even after wall-clock rollback. Real target/public/qualified producer/provider/Storage/device/human/allaccount enrollment remain UNRUN/not_enrolled. Main closes whole development issues independently; final PR head/formal/applicableCI/protected merge remain separate engineering gates.
