@@ -28,3 +28,20 @@ Need producer wire with explicit selections/scopes, full field/retention/externa
 boundaries, exact preview and mutation binding, unknown recovery using original
 operation bytes, erased receipt and retained-fence export. Full #239/ALL1 missing
 handlers and ALL2 remain OPEN. Default target off; device/provider/real data UNRUN.
+
+Current implementation consumes peer READONLY contract.ts/rows.ts/protocol.ts:
+trip/device/progress selected UUIDs (not guessed UUID input), closed field mirrors,
+full-field private preview, independent bundle/request digest + complete-page
+proof, historical retained receipts bound to outer current owner (historic session
+is data only), and explicit provider accepted/unknown + device copy effects.
+Producer freeze/final source comparison remains required. Command/model/row/protocol
+parse PASS; full Native build/test UNRUN until exact PBX lease/membership.
+
+Exact cleanup patch request for Main release (no write performed):
+NativeSession.swift after subject=nil/mobileEpoch=nil/displayName=nil and before
+MaterialReferenceExportFile.eraseAll: add NotificationDataExportFile.eraseAll,
+failure notificationDataExportCleanupRequired/storageError/return false.
+Within existing !preservePendingJournals branch before MaterialReferenceJournal:
+add NotificationDataJournal.erase(endpoint current or disabled, owner, vault),
+failure notificationDataJournalCleanupRequired/storageError/return false.
+Retain existing preservePendingJournals path and cleanup index unchanged.

@@ -24,11 +24,17 @@ typealias NativeNotificationDataPending = NativeCommunitySafetyPending
               !pending.body.isEmpty, pending.body.count <= 8192 else {
             throw NativeDataError.staleSessionResponse
         }
+        guard try NativeNotificationDataCommand(body: pending.body).action == "erase" else {
+            throw NativeDataError.invalidResponse
+        }
         return pending
     }
 
     func retain(validatedEraseBytes body: Data, actor: NativeCommunitySafetyActor) throws -> NativeNotificationDataPending {
         guard !body.isEmpty, body.count <= 8192 else { throw NativeDataError.invalidResponse }
+        guard try NativeNotificationDataCommand(body: body).action == "erase" else {
+            throw NativeDataError.invalidResponse
+        }
         if let existing = try read(actor) {
             guard existing.body == body else { throw NativeDataError.staleSessionResponse }
             return existing
