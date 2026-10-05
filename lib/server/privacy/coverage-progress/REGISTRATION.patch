@@ -1,0 +1,99 @@
+--- a/lib/server/privacy/coverage/catalog.ts
++++ b/lib/server/privacy/coverage/catalog.ts
+@@ -1,11 +1,12 @@
+-import { NOTIFICATION_CATALOG_VERSION, NOTIFICATION_MODULES } from '../notification-data/coverage.ts';
++import { NOTIFICATION_MODULES } from '../notification-data/coverage.ts';
++import { COVERAGE_PROGRESS_MODULE } from '../coverage-progress/coverage.ts';
+ /** ALL1 denominator. A registered scoped handler is not all-account completion. */
+-export const CATALOG_VERSION = NOTIFICATION_CATALOG_VERSION;
++export { COVERAGE_PROGRESS_CATALOG_VERSION as CATALOG_VERSION } from '../coverage-progress/coverage.ts';
+ export type Location = 'server' | 'device' | 'external';
+ export type Module = Readonly<{
+   id: string; location: Location; version: string; scope: string;
+   exportHandler: string | null; deleteHandler: string | null;
+-  selection: 'owner' | 'trip' | 'memory_plan' | 'case' | 'guide_reference' | 'material_records' | 'notification_records' | 'device_files' | 'none';
++  selection: 'owner' | 'trip' | 'memory_plan' | 'case' | 'guide_reference' | 'material_records' | 'notification_records' | 'coverage_records' | 'device_files' | 'none';
+   capacity: string; retention: readonly string[]; missing: readonly string[];
+ }>;
+ const server = (id: string, version: string, scope: string, exportHandler: string | null, deleteHandler: string | null,
+@@ -36,8 +37,7 @@
+   ...NOTIFICATION_MODULES,
+   server('lifecycle', 'coverage-module-export/1', 'trip-lifecycle-metadata/1', 'lifecycle', null, 'owner', '50/page; 10000 rows/section; 1MB whole wrapper; fixed30s current source/proof; metadata only',
+     ['operation_fences'], ['delete_uses_selected_trip', 'trip_bodies_in_separate_core_export']),
+-  server('coverage_progress', 'coverage-module-export/1', 'coverage_export_progress', null, null, 'owner', 'source-free requests/sections expire30s; immutable request fences retained until original session/account revocation',
+-    ['request_id_owner_session_scope_expiry_fence'], ['single_request_receipts_only', 'owner_progress_inventory_exit_not_implemented']),
++  COVERAGE_PROGRESS_MODULE,
+   server('guide', 'guide_selection_metadata/1', 'guide_selection_metadata', 'guide', 'guide', 'guide_reference', '100+sentinel records and bindings; selection only',
+     ['nonreplayable_markers', 'original_grounded_turns_separate']),
+   server('order_references', 'material-reference-data/1', 'reservation-reference-data/1', 'materials', 'materials', 'material_records',
+--- a/lib/server/privacy/coverage/contract.ts
++++ b/lib/server/privacy/coverage/contract.ts
+@@ -11,6 +11,7 @@
+ import { memoryDeleteCommand } from '../memory-delete/contract.ts';
+ import { validMaterialCoverageSelection } from '../material-references/coverage.ts';
+ import { validNotificationDataCoverageSelection } from '../notification-data/coverage.ts';
++import { validCoverageProgressCoverageSelection } from '../coverage-progress/coverage.ts';
+ 
+ export const COVERAGE_SCHEMA = 'data-coverage/1' as const;
+ export const coverageDigest = (bytes: string) => createHash('sha256').update(bytes, 'utf8').digest('hex');
+@@ -46,6 +47,7 @@
+   // A stable module key may resolve to different existing commands for export/delete.
+   if ('operationId' in command && command.operationId !== input.operationId || 'requestId' in command && command.requestId !== input.operationId) return null;
+   if (handler === 'materials') return validMaterialCoverageSelection(input, command) ? { input, command, handler } : null;
++  if (handler === 'coverage_progress') return validCoverageProgressCoverageSelection(input, command) ? { input, command, handler } : null;
+   if (handler === 'notification_data') return validNotificationDataCoverageSelection(input, command) ? { input, command, handler } : null;
+   if (handler === 'core') return input.tripId === null && input.phase !== 'preview'
+     && exact(command, ['requestId','confirmed']) && command.requestId === input.operationId && command.confirmed === true ? { input, command, handler } : null;
+--- a/lib/server/privacy/coverage/registry.ts
++++ b/lib/server/privacy/coverage/registry.ts
+@@ -13,6 +13,8 @@
+ import { ownerModuleExportHTTP } from './module-export.ts';
+ import { materialReferenceNativeHTTP } from '../material-references/http.ts';
+ import { materialCoverageRequestBody } from '../material-references/coverage.ts';
++import { coverageProgressNativeHTTP } from '../coverage-progress/http.ts';
++import { coverageProgressCoverageRequestBody } from '../coverage-progress/coverage.ts';
+ import { notificationDataNativeHTTP } from '../notification-data/http.ts';
+ import { notificationDataCoverageRequestBody } from '../notification-data/coverage.ts';
+ 
+@@ -32,6 +34,7 @@
+   notifications: request => ownerModuleExportHTTP(request, 'notification-metadata/1'),
+   lifecycle: request => ownerModuleExportHTTP(request, 'trip-lifecycle-metadata/1'),
+   materials: request => materialReferenceNativeHTTP(request),
++  coverage_progress: request => coverageProgressNativeHTTP(request),
+   notification_data: request => notificationDataNativeHTTP(request),
+ };
+ const paths: Readonly<Record<string, string>> = {
+@@ -41,6 +44,7 @@
+   ugc: '/api/community/native/v1', safety: '/api/community/safety/native/v1', publication: '/api/community/publication/native/v1',
+   notifications: '/api/privacy/native/v1/coverage/module-export', lifecycle: '/api/privacy/native/v1/coverage/module-export',
+   materials: '/api/privacy/native/v1/material-references',
++  coverage_progress: '/api/privacy/native/v1/coverage-progress',
+   notification_data: '/api/privacy/native/v1/notification-data',
+ };
+ export function ownerHandlerRequest(request: Request, selected: SelectedCommand, signal: AbortSignal): NextRequest {
+@@ -56,6 +60,7 @@
+     else if (['ugc','safety','publication'].includes(handler)) body = JSON.stringify({ action: 'operation', operationId: input.operationId, mutationBytes: input.commandBytes });
+     else if (['brief','case'].includes(handler)) body = JSON.stringify({ action: 'read_operation', operationId: input.operationId });
+     else if (handler === 'materials') body = materialCoverageRequestBody(input);
++    else if (handler === 'coverage_progress') body = coverageProgressCoverageRequestBody(input);
+     else if (handler === 'notification_data') body = notificationDataCoverageRequestBody(input);
+     else throw Error('RECOVERY_NOT_IMPLEMENTED');
+   }
+--- a/lib/server/privacy/coverage/outcomes.ts
++++ b/lib/server/privacy/coverage/outcomes.ts
+@@ -13,6 +13,7 @@
+ import { coverageDigest, type SelectedCommand, type CoverageState } from './contract.ts';
+ import { decodeModuleExportBundle } from './module-export.ts';
+ import { materialCoverageOutcome } from '../material-references/coverage.ts';
++import { coverageProgressCoverageOutcome } from '../coverage-progress/coverage.ts';
+ import { notificationDataCoverageOutcome } from '../notification-data/coverage.ts';
+ 
+ type Outcome = Readonly<{ state: CoverageState; reason: string }>;
+@@ -24,6 +25,7 @@
+   if (!handler || !record(body)) return null;
+   const data = Object.hasOwn(body, 'data') ? body.data : body;
+   if (handler === 'materials') return materialCoverageOutcome(selected, data, now);
++  if (handler === 'coverage_progress') return coverageProgressCoverageOutcome(selected, data, now);
+   if (handler === 'notification_data') return notificationDataCoverageOutcome(selected, data, now);
+   if (handler === 'core') {
+     const receipt = parseExportJob(body, input.operationId); if (!receipt) return null;
