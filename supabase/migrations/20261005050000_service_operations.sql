@@ -191,11 +191,12 @@ declare u uuid;session uuid;a text;v jsonb;raw bytea;op uuid;cid uuid;dig text;a
  t public.trips;proposal public.trip_proposals;started timestamptz;ended timestamptz;k record;
 begin
  u:=service_cases_private.actor();session:=(auth.jwt()->>'session_id')::uuid;
- if p_surface is null or p_surface not in('owner','staff') or p_request_bytes is null or octet_length(convert_to(p_request_bytes,'UTF8')) not between 2 and 24000 then raise exception 'INVALID_INPUT';end if;
+ if p_surface is null or p_surface not in('owner','staff') or p_request_bytes is null or octet_length(convert_to(p_request_bytes,'UTF8')) not between 2 and 48000 then raise exception 'INVALID_INPUT';end if;
  begin v:=p_request_bytes::jsonb;exception when others then raise exception 'INVALID_INPUT';end;
  if v is distinct from p_input then raise exception 'INVALID_INPUT';end if;
  if not exists(select 1 from service_operations_private.settings where enabled) then raise exception 'SERVICE_OPERATIONS_DISABLED';end if;
  a:=p_input->>'action';
+ if a<>'abandon' and octet_length(convert_to(p_request_bytes,'UTF8'))>24000 then raise exception 'INVALID_INPUT';end if;
  if a='abandon' then
   if not service_operations_private.exact(p_input,array['action','operationId','mutationBytes']) or not service_operations_private.uuid(p_input->'operationId') or jsonb_typeof(p_input->'mutationBytes') is distinct from 'string' then raise exception 'INVALID_INPUT';end if;
   begin v:=(p_input->>'mutationBytes')::jsonb;exception when others then raise exception 'INVALID_INPUT';end;
@@ -314,7 +315,7 @@ begin
     end if;
    end if;
   elsif a='select_proposal' then
-   if s.case_id is null or s.trip_id is null or c.revoked or c.expires_at<=clock_timestamp() or s.grant_revision<>c.revision or s.status='cancelled' then raise exception 'CASE_FORBIDDEN';end if;
+   if s.case_id is null or s.trip_id is null or c.revoked or c.expires_at<=clock_timestamp() or s.grant_revision<>c.revision or s.status not in('assigned','waiting_external','resolved','unresolved') then raise exception 'CASE_FORBIDDEN';end if;
    if (v->'proposal'->>'tripId')::uuid<>s.trip_id or (v->'proposal'->>'baseVersion')::integer<>s.trip_version then raise exception 'CASE_TRIP_UNAVAILABLE';end if;
    -- NOWAIT keeps original Proposal->Trip writer lock order safe; no new writer.
    select * into proposal from public.trip_proposals where id=(v->'proposal'->>'proposalId')::uuid and owner_id=u for share nowait;
@@ -384,20 +385,22 @@ create table service_operations_private.export_progress (
 );
 alter table service_operations_private.export_progress enable row level security;
 revoke all on service_operations_private.export_progress from public,anon,authenticated,service_role;
-create function service_operations_private.export_rows(p_owner uuid) returns jsonb language plpgsql security definer set search_path='' as $$
+create function service_operations_private.export_rows(p_owner uuid) returns jsonb language plpgsql security definer set search_path='' set timezone='UTC' as $$
 declare rows jsonb;
 begin
  select coalesce(jsonb_agg(x.row order by x.key),'[]') into rows from(
- select 'case:'||c.id key,jsonb_build_object('key','case:'||c.id,'domain','case','value',to_jsonb(c)) row from service_cases_private.cases c where owner_id=p_owner
- union all select 'grant:'||a.case_id||':'||a.revision,jsonb_build_object('key','grant:'||a.case_id||':'||a.revision,'domain','grant_audit','value',to_jsonb(a)) from service_cases_private.audit a join service_cases_private.cases c on c.id=a.case_id where c.owner_id=p_owner
- union all select 'service:'||s.case_id,jsonb_build_object('key','service:'||s.case_id,'domain','service','value',to_jsonb(s)) from service_operations_private.services s where owner_id=p_owner
- union all select 'minute:'||m.case_id||':'||m.operation_id,jsonb_build_object('key','minute:'||m.case_id||':'||m.operation_id,'domain','minutes','value',to_jsonb(m)) from service_operations_private.minutes m join service_operations_private.services s on s.case_id=m.case_id where s.owner_id=p_owner
- union all select 'audit:'||a.case_id||':'||a.revision,jsonb_build_object('key','audit:'||a.case_id||':'||a.revision,'domain','service_audit','value',to_jsonb(a)) from service_operations_private.audit a join service_operations_private.services s on s.case_id=a.case_id where s.owner_id=p_owner
- union all select 'op:'||o.actor_id||':'||o.session_id||':'||o.surface||':'||o.operation_id,jsonb_build_object('key','op:'||o.actor_id||':'||o.session_id||':'||o.surface||':'||o.operation_id,'domain','operation','value',(to_jsonb(o)-'request_bytes')||jsonb_build_object('requestBytes',case when o.erased then null else convert_from(o.request_bytes,'UTF8') end)) from service_operations_private.operations o where owner_id=p_owner
+ select 'case:'||c.id key,jsonb_build_object('key','case:'||c.id,'domain','case','value',jsonb_build_object('caseId',c.id,'category',c.category,'problem',c.problem,'revision',c.revision,'recipientId',c.recipient_id,'expiresAt',c.expires_at,'revoked',c.revoked,'createdAt',c.created_at)) row from service_cases_private.cases c where owner_id=p_owner
+ union all select 'grant:'||a.case_id||':'||a.revision,jsonb_build_object('key','grant:'||a.case_id||':'||a.revision,'domain','grant_audit','value',jsonb_build_object('caseId',a.case_id,'revision',a.revision,'action',a.action,'actorId',a.actor_id,'recipientId',a.recipient_id,'expiresAt',a.expires_at,'createdAt',a.created_at)) from service_cases_private.audit a join service_cases_private.cases c on c.id=a.case_id where c.owner_id=p_owner
+ union all select 'service:'||s.case_id,jsonb_build_object('key','service:'||s.case_id,'domain','service','value',jsonb_build_object('caseId',s.case_id,'revision',s.revision,'grantRevision',s.grant_revision,'status',s.status,'urgency',s.urgency,'tripId',s.trip_id,'tripVersion',s.trip_version,'proposalId',s.proposal_id,'staffId',s.staff_id,'staffLabel',s.staff_label,'acceptedAt',s.accepted_at,'shiftEndsAt',s.shift_ends_at,'evidence',s.evidence,'updatedAt',s.updated_at)) from service_operations_private.services s where owner_id=p_owner
+ union all select 'minute:'||m.case_id||':'||m.operation_id,jsonb_build_object('key','minute:'||m.case_id||':'||m.operation_id,'domain','minutes','value',jsonb_build_object('caseId',m.case_id,'operationId',m.operation_id,'staffId',m.staff_id,'startedAt',m.started_at,'endedAt',m.ended_at)) from service_operations_private.minutes m join service_operations_private.services s on s.case_id=m.case_id where s.owner_id=p_owner
+ union all select 'audit:'||a.case_id||':'||a.revision,jsonb_build_object('key','audit:'||a.case_id||':'||a.revision,'domain','service_audit','value',jsonb_build_object('caseId',a.case_id,'revision',a.revision,'actorId',a.actor_id,'action',a.action,'status',a.status,'createdAt',a.created_at)) from service_operations_private.audit a join service_operations_private.services s on s.case_id=a.case_id where s.owner_id=p_owner
+ union all select 'op:'||encode(extensions.digest(convert_to(o.actor_id||':'||o.session_id||':'||o.surface||':'||o.operation_id,'UTF8'),'sha256'),'hex'),jsonb_build_object('key','op:'||encode(extensions.digest(convert_to(o.actor_id||':'||o.session_id||':'||o.surface||':'||o.operation_id,'UTF8'),'sha256'),'hex'),'domain','operation','value',jsonb_build_object('operationId',o.operation_id,'actorId',o.actor_id,'surface',o.surface,'caseId',o.case_id,'grantRevision',o.grant_revision,'requestDigest',o.request_digest,'receipt',o.receipt,'createdAt',o.created_at,'erased',o.erased,'requestBytes',case when o.erased then null else convert_from(o.request_bytes,'UTF8') end)) from service_operations_private.operations o where owner_id=p_owner
+ union all select 'data-op:'||d.operation_id,jsonb_build_object('key','data-op:'||d.operation_id,'domain','operation','value',d.receipt) from service_operations_private.data_operations d where actor_id=p_owner
  order by key limit 10001) x;
  if jsonb_array_length(rows)>10000 then raise exception 'CASE_WORKSPACE_LIMIT';end if;return rows;
 end $$;
-create function public.service_case_export_v1(p_action text,p_input jsonb) returns jsonb language plpgsql security definer set search_path='' as $$
+create function public.service_case_export_v1(p_action text,p_input jsonb) returns jsonb language plpgsql security definer set search_path='' set timezone='UTC' as $$
+#variable_conflict use_variable
 declare j export_private.core_jobs_v1;p service_operations_private.export_progress;req uuid;l uuid;g integer;rows jsonb;rev text;page jsonb;more boolean;after_key text;last_key text;limit_n integer;keys text[];
 begin
  if auth.role() is distinct from 'service_role' then raise exception 'FORBIDDEN';end if;
@@ -437,4 +440,75 @@ exception when lock_not_available then return jsonb_build_object('kind','unavail
 
 revoke all on all functions in schema service_operations_private from public,anon,authenticated,service_role;
 revoke all on function public.service_case_operations_v1(jsonb,text,text),public.service_case_export_v1(text,jsonb) from public,anon,authenticated,service_role;
+notify pgrst,'reload schema';
+
+-- Main #224 closed owner erasure wire: receipt survives only as an irreversible
+-- digest + actor/session/operation tuple. Case/Trip/problem/raw bytes are absent.
+create table service_operations_private.data_operations (
+ actor_id uuid not null references auth.users(id) on delete cascade,session_id uuid not null,
+ operation_id uuid not null,request_digest text not null check(request_digest ~ '^[a-f0-9]{64}$'),
+ receipt jsonb not null,primary key(actor_id,session_id,operation_id)
+);
+alter table service_operations_private.data_operations enable row level security;
+revoke all on service_operations_private.data_operations from public,anon,authenticated,service_role;
+create function service_operations_private.data_immutable() returns trigger language plpgsql set search_path='' as $$begin raise exception 'CASE_OPERATION_IMMUTABLE';end $$;
+create trigger service_data_operation_immutable before update on service_operations_private.data_operations for each row execute function service_operations_private.data_immutable();
+create function service_operations_private.expire_owner_cases(p_owner uuid) returns void language plpgsql security definer set search_path='' as $$
+declare c service_cases_private.cases;
+begin
+ for c in select c0.* from service_cases_private.cases c0 join service_operations_private.services s on s.case_id=c0.id
+ where c0.owner_id=p_owner and c0.expires_at<=clock_timestamp() and not c0.revoked
+ and (s.trip_id is not null or s.status in('queued','accepted','assigned','waiting_external') or exists(select 1 from service_operations_private.operations o where o.case_id=c0.id and not o.erased))
+ order by c0.id for update of c0 loop perform service_operations_private.erase_case(c.id,true,p_owner);end loop;
+end $$;
+create function public.service_case_data_v1(p_input jsonb,p_request_bytes text) returns jsonb language plpgsql security definer set search_path='' as $$
+#variable_conflict use_variable
+declare u uuid:=service_cases_private.actor();session uuid:=(auth.jwt()->>'session_id')::uuid;v jsonb;a text;raw bytea;op uuid;dig text;
+ prior service_operations_private.data_operations;c service_cases_private.cases;out jsonb;rows jsonb;captured bigint;dig_source text;abandon boolean:=false;
+begin
+ if p_request_bytes is null or octet_length(convert_to(p_request_bytes,'UTF8')) not between 2 and 48000 then raise exception 'INVALID_INPUT';end if;
+ begin v:=p_request_bytes::jsonb;exception when others then raise exception 'INVALID_INPUT';end;
+ if v is distinct from p_input then raise exception 'INVALID_INPUT';end if;
+ if not exists(select 1 from service_operations_private.settings where enabled) then raise exception 'SERVICE_OPERATIONS_DISABLED';end if;
+ a:=p_input->>'action';raw:=convert_to(p_request_bytes,'UTF8');
+ if a='export' then
+  if not service_operations_private.exact(v,array['action','requestId','confirmed']) or not service_operations_private.uuid(v->'requestId') or v->'confirmed' is distinct from 'true'::jsonb or octet_length(raw)>24000 then raise exception 'INVALID_INPUT';end if;
+  -- All Case sources are locked before one UNION snapshot of all six domains.
+  perform 1 from service_cases_private.cases where owner_id=u order by id for update;
+  perform service_operations_private.expire_owner_cases(u);
+  rows:=service_operations_private.export_rows(u);captured:=service_operations_private.ms(clock_timestamp());
+  dig_source:=encode(extensions.digest(convert_to(jsonb_build_object('scope','service-case-data/1','requestId',v->'requestId','ownerId',u,'sessionId',session,'rows',rows)::text,'UTF8'),'sha256'),'hex');
+  out:=jsonb_build_object('schemaVersion','service-case-data/1','kind','bundle','requestId',v->'requestId','ownerId',u,'sessionId',session,'capturedAt',captured,'expiresAt',captured+30000,'sourceDigest',dig_source,'corePackageEnrollment','not_enrolled','allUserDataCompleted',false,
+  'coverage',jsonb_build_object('case','complete','grant_audit','complete','service','complete','minutes','complete','service_audit','complete','operation','complete','brief','unavailable','attachments','unavailable'),'rows',rows);
+  if octet_length(convert_to(out::text,'UTF8'))>524288 then raise exception 'CASE_WORKSPACE_LIMIT';end if;
+  return out;
+ end if;
+ if a='read_operation' then
+  if not service_operations_private.exact(v,array['action','operationId']) or not service_operations_private.uuid(v->'operationId') then raise exception 'INVALID_INPUT';end if;
+ elsif a='abandon' then
+  if not service_operations_private.exact(v,array['action','operationId','mutationBytes']) or not service_operations_private.uuid(v->'operationId') or jsonb_typeof(v->'mutationBytes') is distinct from 'string' then raise exception 'INVALID_INPUT';end if;
+  raw:=convert_to(v->>'mutationBytes','UTF8');
+  begin v:=(v->>'mutationBytes')::jsonb;exception when others then raise exception 'INVALID_INPUT';end;
+  if v->'operationId' is distinct from p_input->'operationId' then raise exception 'INVALID_INPUT';end if;abandon:=true;
+ end if;
+ if a<>'read_operation' and (not service_operations_private.exact(v,array['action','operationId','caseId','grantRevision','confirmed']) or v->>'action' is distinct from 'delete' or not service_operations_private.uuid(v->'operationId') or not service_operations_private.uuid(v->'caseId') or not service_operations_private.integer(v->'grantRevision',0,2147483647) or v->'confirmed' is distinct from 'true'::jsonb) then raise exception 'INVALID_INPUT';end if;
+ if octet_length(raw)>24000 then raise exception 'INVALID_INPUT';end if;
+ op:=(v->>'operationId')::uuid;dig:=encode(extensions.digest(raw,'sha256'),'hex');
+ perform pg_advisory_xact_lock(hashtextextended('service-data:'||u||':'||session||':'||op,0));
+ select * into prior from service_operations_private.data_operations where actor_id=u and session_id=session and operation_id=op;
+ if a='read_operation' then return jsonb_build_object('receipt',prior.receipt);end if;
+ if prior.operation_id is not null then
+  if prior.request_digest<>dig then raise exception 'IDEMPOTENCY_KEY_REUSE';end if;return prior.receipt;
+ end if;
+ select * into c from service_cases_private.cases where id=(v->>'caseId')::uuid and owner_id=u for update;
+ if not found then raise exception 'CASE_FORBIDDEN';end if;
+ if not abandon then
+  if c.revision<>(v->>'grantRevision')::integer then raise exception 'CASE_CONFLICT';end if;
+  perform service_operations_private.delete_case_v1(c.id,c.revision);
+ end if;
+ out:=jsonb_build_object('schemaVersion','service-case-data/1','operationId',op,'requestDigest',dig,'outcome',case when abandon then 'cancelled' else 'deleted' end,'allUserDataCompleted',false);
+ insert into service_operations_private.data_operations(actor_id,session_id,operation_id,request_digest,receipt) values(u,session,op,dig,out);
+ return out;
+exception when lock_not_available then raise exception 'CASE_BUSY';end $$;
+revoke all on function public.service_case_data_v1(jsonb,text),service_operations_private.data_immutable(),service_operations_private.expire_owner_cases(uuid) from public,anon,authenticated,service_role;
 notify pgrst,'reload schema';
