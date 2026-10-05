@@ -114,3 +114,43 @@ requires shared precision release before write, so remaining Session/caller/PBX/
 catalog integration and true native test execution cannot proceed in this phase.
 Only Main can relay that release; no other task has been messaged directly.
 No SQL, target, provider, credentials, grants, production or real user data action.
+
+## Main exact release consumed; v2 actual integration
+
+Main9c1b62/505f15 explicit release received in this session. Normal immutable TS
+7be21fd8 merged at13acabaf, shared review patch applied ONLY to authorized Session
+new factory/request/two cleanup sites, ModuleView notification destination/caller,
+PBX eleven own app sources + sole own test membership. Product9db0b4fb includes
+v2 committedAt and drainProof independently verified. Trip/device terminal receipt
+needs exact monotonic-drain/1 positive generation, waitMs5000, finishedAt matching
+SQL-stamped drainedThrough and decidedAt; committedAt must be within original
+preview TTL but terminal decidedAt may follow it. Progress-only proof nil and
+zero drain; all source effect counts zero except pageProgress/fences. Old v1
+receipt keys/expiry-only drain cannot complete Native. Progress inventory now
+includes originalSessionId/originalMobileEpoch, all pageProgress column mirrors,
+fenced state, effects/drain/receipt consistency, current owner + historical-session
+record semantics. No actual SQL/APNs claim follows from these consumer checks.
+Native erase command additionally verifies recover-wrapper cap before retention.
+
+Six own Native tests now include actual NativeSession unsigned URLProtocol
+control flow for unretained erase denial, lost ACK, 401 preserving unknown journal,
+failed explicit logout cleanup/new-login denial, successful explicit cleanup. The
+unsigned fixture is not signed GoTrue/HTTP/provider acceptance. Original Session
+flows/EntryResume/material4stores/old journals untouched except additive own cleanup.
+Current own Harness /tmp/vpj58-notification-native-r1 at9db0b4fb runs actual pinned
+Xcode27.0/27A266a, unsigned app build + ad-hoc own fresh Simulator tests; result
+pending, no discovered-test PASS. Earlier preflight first lacked DEVELOPER_DIR;
+local per-command installed pinned path corrected, no toolchain/global config change.
+
+### Narrow additional label/inventory release needed from Main
+
+Actual NativeDataCoverageView enumerates NativeDataCoverageCopy.order, not just
+Models.moduleIDs. If sole TS final catalog adds device/progress module IDs, Models
+alone cannot make them discoverable. Request ONLY Copy.order two exact final IDs,
+new notification scope titles/missing copy (old metadata-only delete text must not
+remain for new own handler), preserving old scopes/Copy states/other copy. Could
+alternatively Main supply precise own View lookup patch, but no shared unleased
+write performed. Final Models catalog version/IDs/selection and unique TS producer
+interoperability fixture still wait actual sole TS registration. Original coverage
+fixtures/tests require separately precise catalog-only release if producer changes
+version; Native will not rewrite their unrelated assertions or oracles.

@@ -278,4 +278,3 @@ nonisolated private final class NotificationDataSessionProtocol: URLProtocol, @u
         }
     }
 }
-
