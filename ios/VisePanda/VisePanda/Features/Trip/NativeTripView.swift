@@ -76,8 +76,6 @@ struct NativeTripView: View {
     @State private var reviewedSupportSelection: String?
     @State private var reviewedReference: String?
     @State private var discardVisible = false
-    @State private var archiveVisible = false
-    @State private var archiveReference: String?
     @State private var deleteVisible = false
     @State private var deleteReference: String?
     @State private var planningRequest = ""
@@ -155,6 +153,10 @@ struct NativeTripView: View {
                     if initialPlanningRequest != nil && store.draft == nil && store.pending == nil {
                         outlineComposer
                     }
+                    NavigationLink(text("Finish, archive and next Trip", "结束、归档与下一次旅行")) {
+                        NativeTripLifecycleView(session: session, chinese: chinese, initialTripID: store.selectedID,
+                                                onUpdated: { await lifecycleUpdated($0) })
+                    }.accessibilityIdentifier("trip.lifecycle.entry")
                     tripList
                     if let receipt = store.deletionReceipt {
                         VisePandaCard {
@@ -187,7 +189,7 @@ struct NativeTripView: View {
                     }
                     if let detail = store.detail {
                         confirmed(detail)
-                        if store.archive == nil && store.deletionRequest == nil && store.deletionReceipt == nil {
+                        if store.deletionRequest == nil && store.deletionReceipt == nil {
                             TimelineView(.periodic(from: .now, by: 1)) { _ in
                                 NativeResultCard(store: resultStore, scope: session.dataScope, chinese: chinese,
                                                  expectedTripID: detail.trip.id)
@@ -283,7 +285,6 @@ struct NativeTripView: View {
                 reviewedReference = nil
                 discardVisible = false
                 clearOutline()
-                archiveVisible = false; archiveReference = nil
                 screenshotReviewSource = nil
             }
             if !consumedInitialRequest, session.dataScope != nil, let initialPlanningRequest {
@@ -295,7 +296,7 @@ struct NativeTripView: View {
         }
         .task(id: resultLoadKey) {
             let key = resultLoadKey
-            guard let scope = key.scope, let tripID = key.tripID, !key.archived, !key.deleting,
+            guard let scope = key.scope, let tripID = key.tripID, !key.deleting,
                   key.active, store.scope == scope else { resultStore.clear(); return }
             await resultStore.load(scope: scope, tripID: tripID, using: session)
         }
@@ -306,7 +307,6 @@ struct NativeTripView: View {
                 store.reset(for: retained)
                 newTitle = ""; confirmVisible = false; reviewedReference = nil; discardVisible = false
                 clearOutline()
-                archiveVisible = false; archiveReference = nil
             }
         }
         .toolbar {
@@ -359,14 +359,6 @@ struct NativeTripView: View {
             Button(text("Keep reviewing", "继续审阅"), role: .cancel) {}
         } message: {
             Text(text("Only this proposal will be applied. External orders are not connected.", "只应用这一提议。外部订单尚未接入。"))
-        }
-        .confirmationDialog(text("Archive this trip?", "归档此行程？"), isPresented: $archiveVisible, titleVisibility: .visible) {
-            Button(text("Archive confirmed trip", "归档已确认行程")) {
-                if let archiveReference { Task { await store.archive(reviewedReference: archiveReference, using: session) } }
-            }
-            Button(text("Keep this trip open", "保持行程开放"), role: .cancel) {}
-        } message: {
-            Text(text("Your saved plan stays readable and shareable. Unfinished services keep their status. No preferences are saved automatically; you can skip preference review and start a fresh trip.", "已保存计划仍可读取和分享，未完服务保留原状态。不自动保存偏好；可以跳过偏好检查，直接开始新行程。"))
         }
         .confirmationDialog(text("Delete this Trip?", "删除此行程？"), isPresented: $deleteVisible, titleVisibility: .visible) {
             Button(text("Request Trip deletion", "请求删除行程"), role: .destructive) {
@@ -559,6 +551,15 @@ struct NativeTripView: View {
         }
     }
 
+    private func lifecycleUpdated(_ terminal: NativeTripLifecycleTerminal?) async {
+        if case .applied(let receipt) = terminal, receipt.action == .create, initialTripID == nil {
+            // Keep the original planning request on this same screen; select the new empty Trip only after its receipt.
+            await store.select(receipt.tripID, using: session)
+        } else {
+            await store.reload(using: session)
+        }
+    }
+
     private var tripList: some View {
         VisePandaCard {
             VStack(alignment: .leading, spacing: 14) {
@@ -582,17 +583,12 @@ struct NativeTripView: View {
                 Button(text("Reload saved trips", "重载已保存行程")) { Task { await store.reload(using: session) } }
                     .accessibilityIdentifier("trip.reload").disabled(store.busy)
                 Divider()
-                TextField(text("New trip title", "新行程名称"), text: $newTitle, axis: .vertical)
-                    .textFieldStyle(.roundedBorder).focused($titleFocused)
-                    .accessibilityIdentifier("trip.create.title")
-                Button(text("Create trip", "创建行程")) {
-                    titleFocused = false
-                    if initialPlanningRequest == nil { clearOutline() }
-                    Task { await store.create(title: newTitle, using: session) }
+                NavigationLink(text("Create a fresh Trip with capacity review", "核对容量并创建全新行程")) {
+                    NativeTripLifecycleView(session: session, chinese: chinese,
+                                            onUpdated: { await lifecycleUpdated($0) })
                 }
-                .buttonStyle(.bordered)
-                .accessibilityIdentifier("trip.create.submit")
-                .disabled(store.busy || newTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                .accessibilityIdentifier("trip.create.lifecycle")
+                .disabled(store.busy || store.draft != nil || store.pending != nil || store.hasUncertainProposal)
             }
         }
     }
@@ -630,9 +626,9 @@ struct NativeTripView: View {
                         .font(.footnote)
                 }
                 if store.archiveReference != nil {
-                    Button(text("Archive trip…", "归档行程…")) {
-                        archiveReference = store.archiveReference
-                        archiveVisible = true
+                    NavigationLink(text("Archive trip…", "归档行程…")) {
+                        NativeTripLifecycleView(session: session, chinese: chinese, initialTripID: detail.trip.id,
+                                                onUpdated: { await lifecycleUpdated($0) })
                     }
                     .accessibilityIdentifier("trip.archive.begin").disabled(store.busy)
                 }
