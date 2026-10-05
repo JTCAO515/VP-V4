@@ -53,7 +53,7 @@ export type CommunityOutcome = Base & (
   | Readonly<{kind:'deleted';operationId:string;scope:'community_module';retained:typeof retained}>
   | Readonly<{kind:'export';scope:'community_module';coverage:'complete_for_community';submissions:readonly CommunityItem[];
     reviews:readonly Readonly<{submissionId:string;decision:'approve'|'reject';note:string|null;createdAt:string}>[];
-    receipts:readonly Readonly<{operationId:string;submissionId:string|null;action:'submit'|'review'|'withdraw'|'delete';state:'committed'|'abandoned';digest:string}>[];
+    receipts:readonly Readonly<{operationId:string;submissionId:string|null;action:'submit'|'review'|'withdraw'|'delete'|'unknown';state:'committed'|'abandoned';digest:string}>[];
     audits:readonly Readonly<{submissionId:string;action:CommunityEvent['action'];version:number;createdAt:string}>[];reviewerQualification:Readonly<{active:boolean}>|null;trustedDisclosure:CommunityItem['authorDisclosure']|null;retained:typeof retained}>
 );
 const enumValue = (v:unknown,values:readonly string[]):v is string => typeof v === 'string' && values.includes(v);
@@ -93,7 +93,7 @@ export function decodeCommunityOutcome(v: unknown): CommunityOutcome|null {
   if (v.kind === 'deleted') return exact(v,[...base,'operationId','scope','retained']) && uuid(v.operationId) && v.scope === 'community_module' && retainedValid(v.retained) ? v as CommunityOutcome : null;
   if (v.kind !== 'export' || !exact(v,[...base,'scope','coverage','submissions','reviews','receipts','audits','reviewerQualification','trustedDisclosure','retained']) || v.scope !== 'community_module' || v.coverage !== 'complete_for_community' || !retainedValid(v.retained)) return null;
   const reviews = rows(v.reviews,100,x => record(x) && exact(x,['submissionId','decision','note','createdAt']) && uuid(x.submissionId) && (x.decision === 'approve' || x.decision === 'reject') && nullable(x.note,y => text(y,400)) && time(x.createdAt));
-  const receipts = rows(v.receipts,100,x => record(x) && exact(x,['operationId','submissionId','action','state','digest']) && uuid(x.operationId) && nullable(x.submissionId,uuid) && enumValue(x.action,['submit','review','withdraw','delete']) && enumValue(x.state,['committed','abandoned']) && hash(x.digest));
+  const receipts = rows(v.receipts,100,x => record(x) && exact(x,['operationId','submissionId','action','state','digest']) && uuid(x.operationId) && nullable(x.submissionId,uuid) && enumValue(x.action,['submit','review','withdraw','delete','unknown']) && enumValue(x.state,['committed','abandoned']) && hash(x.digest));
   const audits = rows(v.audits,100,x => record(x) && exact(x,['submissionId','action','version','createdAt']) && uuid(x.submissionId) && typeof x.action === 'string' && events.includes(x.action) && version(x.version) && time(x.createdAt));
   const qualification=v.reviewerQualification===null || record(v.reviewerQualification) && exact(v.reviewerQualification,['active']) && typeof v.reviewerQualification.active==='boolean';
   const disclosure=v.trustedDisclosure===null || enumValue(v.trustedDisclosure,['registered_user','community_reviewer','official','employee','unknown']);

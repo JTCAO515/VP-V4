@@ -34,6 +34,7 @@ export async function handleCommunityJ1(request:Request, options:{enabled:boolea
     if (error) return Object.hasOwn(statuses,error.message) ? failure(error.message,statuses[error.message]) : failure(mutation?'COMMUNITY_ACK_UNKNOWN':'COMMUNITY_UNAVAILABLE');
     const outcome=decodeCommunityOutcome(data);
     if (!outcome || !matchesCommunityOutcome(outcome,input,actor,session)) return failure(mutation?'COMMUNITY_ACK_UNKNOWN':'COMMUNITY_UNAVAILABLE');
+    if (Buffer.byteLength(JSON.stringify({data:outcome}),'utf8')>1_000_000) return failure(mutation?'COMMUNITY_ACK_UNKNOWN':'COMMUNITY_CAPACITY');
     if (!await lifetime.run(() => rpc.current())) return failure(mutation?'COMMUNITY_ACK_UNKNOWN':'SESSION_REPLACED',mutation?503:401);
     lifetime.check();
     return {body:{data:outcome},status:200};
