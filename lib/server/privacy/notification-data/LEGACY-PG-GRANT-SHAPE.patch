@@ -1,0 +1,11 @@
+--- a/tests/integration/notifications/delivery-postgres.test.mjs
++++ b/tests/integration/notifications/delivery-postgres.test.mjs
+@@ -93,7 +93,7 @@
+ });
+ run('cancel before begin blocks; begin before cancel preserves exact accepted outcome and never regrants',async()=>{
+  const f=await fixture(),s=await scheduled(f);await due(s);await user(f,'cancel',{operationId:uuid(),id:s.x.id});assert.equal((await svc('dispatch_travel_notification_v2',[s.notification,'begin',{attemptId:uuid()}])).kind,'blocked');
+- const next=await scheduled(f);await due(next);const attemptId=uuid(),grant=await svc('dispatch_travel_notification_v2',[next.notification,'begin',{attemptId}]);assert.equal(grant.kind,'attempt');assert.equal(grant.topic,'fixture.only');assert.deepEqual(Object.keys(grant).sort(),['kind','notificationId','attemptId','deviceRevision','token','environment','topic','expiresAt','authorizedAt','leaseExpiresAt'].sort());assert.ok(Date.parse(grant.leaseExpiresAt)-Date.parse(grant.authorizedAt)<=5000);
++ const next=await scheduled(f);await due(next);const attemptId=uuid(),grant=await svc('dispatch_travel_notification_v2',[next.notification,'begin',{attemptId}]);assert.equal(grant.kind,'attempt');assert.equal(grant.topic,'fixture.only');assert.deepEqual(Object.keys(grant).sort(),['kind','notificationId','attemptId','deviceRevision','token','environment','topic','expiresAt','authorizedAt','leaseExpiresAt','leaseBudgetMs'].sort());assert.ok(Number.isInteger(grant.leaseBudgetMs)&&grant.leaseBudgetMs>0&&grant.leaseBudgetMs<=5000&&grant.leaseBudgetMs<=Date.parse(grant.leaseExpiresAt)-Date.parse(grant.authorizedAt));assert.ok(Date.parse(grant.leaseExpiresAt)-Date.parse(grant.authorizedAt)<=5000);
+  assert.equal((await svc('dispatch_travel_notification_v2',[next.notification,'begin',{attemptId}])).kind,'blocked');
+  await user(f,'cancel',{operationId:uuid(),id:next.x.id});const outcome={kind:'accepted',apnsId:attemptId,acceptedAt:new Date().toISOString()};
+  const receipt=await svc('dispatch_travel_notification_v2',[next.notification,'finish',{attemptId,deviceRevision:grant.deviceRevision,outcome}]);assert.equal(receipt.state,'accepted');assert.deepEqual(receipt.outcome,outcome);assert.equal((await user(f,'list')).reminders.find(r=>r.id===next.x.id).status,'cancelled');

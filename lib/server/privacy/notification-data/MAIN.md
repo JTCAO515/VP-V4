@@ -178,3 +178,17 @@ old auth fixture release/patch review, then one affected actual run only.
 Original221 PG fixture input-only lease received; exact svc helper patch applied,
 original affected full PG test running in its own network-none disposable container
 with original oracles unchanged. Logs legacy-notification-pg-r1.log once complete.
+
+Approved exact CI registry3 additions and legacy coverage/Auth patch now applied;
+classification PASS and both new gated files are actually enrolled, no EXCLUDED/
+skip/gate changes. Material helper tests already PASS21/current producer import,
+no unnecessary literal-only delta. Prior original PG input patch run actual15PASS,
+2FAIL0skip (raw legacy-notification-pg-r1.log). First failure is original strict
+10-key grant oracle vs new required11-key DTO leaseBudgetMs. This assertion exits
+before old attempt finish; next scheduler case idle is likely the resulting
+unfinished/expired prior attempt, remains diagnosis pending repair (not accepted
+idle/no retry weakening). LEGACY-PG-GRANT-SHAPE.patch only adds required field to
+exact sorted key oracle and explicit integer (0,5000] + original interval bound;
+all cancellation/accepted/no retry/error/ACL/source outcomes stay identical.
+Current PG lease only allowed svc input; please exact Main review/additive oracle
+lease before apply. Never strip mandatory field in fixture or allow extra errors.

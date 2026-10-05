@@ -1,0 +1,76 @@
+✔ full replay rollback and ACL/RLS default deny, SQL transport disabled (6139.261916ms)
+✔ strict calendar/offset/zone/closed purpose rejects direct callers; IANA DST quiet hours (561.377417ms)
+✔ immutable exact full digest/replay and historical ACK cannot resurrect cancelled reminders (604.315125ms)
+✔ same operation abandon is serialized: absent tombstone blocks late execute, applied stays applied (856.2325ms)
+✔ cross owner, false credential, stale mobile epoch and stolen device/token fail closed (891.391291ms)
+✔ N1 dismissal survives content-identical head/timestamp changes, meaningful content creates new opaque ID (665.1095ms)
+✖ cancel before begin blocks; begin before cancel preserves exact accepted outcome and never regrants (766.367292ms)
+✔ crashed lease resolves unknown, wrong tuple cannot finish, token-revoked cannot revoke a rotated token (1085.76275ms)
+✔ head/archive/end/expiry/session/quiet/OS fences suppress stale work; generic tap exact basis (3234.194708ms)
+✔ legacy v1 intent and complete/cancel stay compatible; metadata never copies registration token (596.422209ms)
+✖ actual TS strict codecs and scheduler consume actual PG source, disabled zeroRPC and one send only (513.743625ms)
+✔ actual reviewed support baseline ignores revision/time refresh; exact approved acked recheck emits once and stops (2351.2265ms)
+✔ quiet oldest record does not block another owner; crashed attempt becomes truthful unknown without retry (1227.761291ms)
+✔ actual export adapter uses exact job lease, generation and stable source cursor; omits token/body/worker lease (759.43125ms)
+✔ owned Trip/account cascades remove new records; rollback flag blocks grants and preserves existing receipts (828.938167ms)
+✔ actual accepted Task result basis exposes generic N1; Memory/consent changes block source and dispatch (2039.291166ms)
+✔ explicit revoke retains actual authorized OS declaration while disabling recipient; expiry and truncation stay truthful (1217.765792ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 15
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 24460.008334
+
+✖ failing tests:
+
+test at tests/integration/notifications/delivery-postgres.test.mjs:18:19
+✖ cancel before begin blocks; begin before cancel preserves exact accepted outcome and never regrants (766.367292ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+    [
+      'attemptId',
+      'authorizedAt',
+      'deviceRevision',
+      'environment',
+      'expiresAt',
+      'kind',
+  +   'leaseBudgetMs',
+      'leaseExpiresAt',
+      'notificationId',
+      'token',
+      'topic'
+    ]
+
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-server-20261006/tests/integration/notifications/delivery-postgres.test.mjs:96:245)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'attemptId', 'authorizedAt', 'deviceRevision', 'environment', 'expiresAt', 'kind', 'leaseBudgetMs', 'leaseExpiresAt', 'notificationId', 'token', 'topic' ],
+    expected: [ 'attemptId', 'authorizedAt', 'deviceRevision', 'environment', 'expiresAt', 'kind', 'leaseExpiresAt', 'notificationId', 'token', 'topic' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/notifications/delivery-postgres.test.mjs:18:19
+✖ actual TS strict codecs and scheduler consume actual PG source, disabled zeroRPC and one send only (513.743625ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  'idle' !== 'accepted'
+
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-server-20261006/tests/integration/notifications/delivery-postgres.test.mjs:143:9)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'idle',
+    expected: 'accepted',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
