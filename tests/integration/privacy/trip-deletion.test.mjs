@@ -113,6 +113,16 @@ test('Trip deletion SQL: reauthentication, fencing, atomic completion, isolation
     const outcomes=await Promise.all([sql(container,call(owner,race,key,session,0)),sql(container,`insert into public.chat_threads(owner_id,trip_id) values('${owner}','${race}');`)]);
     assert.equal(outcomes.filter(r=>r.code===0).length,1);
     assert.ok(outcomes.some(r=>r.stderr.includes('TRIP_HAS_CHAT_REFERENCES') || r.stderr.includes('TRIP_DELETION_PENDING_OR_COMPLETED')));
+    // Retain the actual race assertions, then release only this iteration's
+    // synthetic Trip through the original deletion flow. A chat winner must not
+    // consume a draft slot needed by the next independent race.
+    if(outcomes[1].code===0){
+      await db(as(owner,`delete from public.chat_threads where owner_id='${owner}' and trip_id='${race}';`));
+      await db(call(owner,race,key,session,0));
+    }
+    const raceReceipt=JSON.parse(await db(`set role service_role; set request.jwt.claim.role='service_role'; select public.execute_trip_deletion_v1('${key}');`));
+    assert.equal(raceReceipt.state,'completed');
+    assert.equal(await db(`select count(*) from public.trips where id='${race}';`),'0');
   }
   await db(`delete from auth.sessions where id='${session}';`);
   await denied(as(owner,`select public.read_trip_deletion_v1('${request}');`),'SESSION_REPLACED');
