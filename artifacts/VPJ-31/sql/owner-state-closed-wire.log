@@ -1,0 +1,10 @@
+✔ append replay and rollback; new ACL/RLS deny, disabled switch, no enrollment (6034.043334ms)
+✔ owner_state metadata permits feature-off cleanup after audit overflow, revoked/expired, absent revision zero; staff and foreign owner deny (1226.917416ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7406.707167

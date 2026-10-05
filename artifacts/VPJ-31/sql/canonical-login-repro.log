@@ -1,0 +1,36 @@
+✖ canonical native credential-proof login replacement logout, original guard and Brief session erasure (5471.619375ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5586.696417
+
+✖ failing tests:
+
+test at tests/integration/service-cases/brief-postgres.test.mjs:17:22
+✖ canonical native credential-proof login replacement logout, original guard and Brief session erasure (5471.619375ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  42703: record "old" has no field "user_id"
+  CONTEXT:  PL/pgSQL assignment "owner:=case when TG_TABLE_NAME='mobile_accounts' then OLD.owner_id else OLD.user_id end"
+  PL/pgSQL function service_brief_private.session_changed() line 4 at assignment
+  SQL statement "update identity_private.mobile_accounts set epoch=epoch+1, session_id=s where owner_id=u returning *"
+  PL/pgSQL function identity_private.mobile_session_v2(text,uuid) line 31 at SQL statement
+  SQL function "native_session_v2" statement 1
+  LOCATION:  plpgsql_exec_get_datum_type_info, pl_exec.c:5609
+  
+  
+  3 !== 0
+  
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj31-traveler-brief-sql-20261005/tests/integration/service-cases/brief-postgres.test.mjs:259:9)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

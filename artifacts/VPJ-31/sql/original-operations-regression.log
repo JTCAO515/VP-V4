@@ -1,0 +1,26 @@
+✔ full replay rollback, private RLS/ACL deny, empty operators and disabled RPC (17768.451083ms)
+✔ existing grants only, no guessed staff, no Trip/Brief reads, strict closed commands (1125.257625ms)
+✔ exact UTF8 bytes, changed whitespace reuse409, immutable receipt and no cross session/surface (413.74325ms)
+✔ unknown ACK abandon fence and execute race share original operation bytes (711.63175ms)
+✔ one actual slot accepts exactly one Case, inactive/unenrolled/no slots reject (1712.628291ms)
+✔ recorded seconds aggregate to minutes, reject future/overlap and contact-only resolution (1536.320625ms)
+✔ legacy revoke/replace wipes source bytes and refs, owner cancel receipt survives fresh read (1472.994291ms)
+✔ TTL releases capacity and scrubs through bounded maintenance, old staff receipt never replays (574.435917ms)
+✔ owner binds original pending Proposal only; staff gets no Trip and archive retains service (637.460541ms)
+✔ Trip deletion erases binding/evidence/operations but keeps Case; explicit Case delete cascades (547.478791ms)
+✔ workspace beyond 50 fails explicitly instead of silently truncating (130.072375ms)
+✔ versioned export exact lease, unenrolled partial, cursor replay and source-change invalidation (1431.115167ms)
+✔ explicit owner deletion CAS, irreversible minimal receipt and original-byte late request fence (2339.634416ms)
+✔ owner export companion source digest, closed columns, no staff session, bounds and source erasure (2001.809875ms)
+✔ membership/shift/slot withdrawn after commit denies staff body and receipt replay (1415.152084ms)
+✔ business switch off preserves independent owner data recovery/export/delete and isolation (503.616042ms)
+✔ old grant revoke races acceptance on shared Case lock; replacement never revives old staff (948.361833ms)
+✔ canonical version zero Trip binding and original pending Proposal keep owner/current guards (1276.735125ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 36685.986208

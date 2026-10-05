@@ -80,7 +80,7 @@ create function service_brief_private.valid(v jsonb) returns boolean language pl
 declare a text:=v->>'action'; keys text[]:=array['action','caseId','recipientId','grantRevision']; k jsonb;
 begin
  if a='read_preview' then return service_operations_private.exact(v,array['action','previewId']) and service_operations_private.uuid(v->'previewId');end if;
- if a in('audit','source_options','locate') then return service_operations_private.exact(v,array['action','caseId']) and service_operations_private.uuid(v->'caseId');end if;
+ if a in('audit','source_options','locate','owner_state') then return service_operations_private.exact(v,array['action','caseId']) and service_operations_private.uuid(v->'caseId');end if;
  if a='export' then return service_operations_private.exact(v,array['action','requestId','confirmed']) and service_operations_private.uuid(v->'requestId') and v->'confirmed'='true'::jsonb;end if;
  if a='read_operation' then return service_operations_private.exact(v,array['action','operationId']) and service_operations_private.uuid(v->'operationId');end if;
  if not service_operations_private.uuid(v->'caseId') or not service_operations_private.uuid(v->'recipientId') or not service_operations_private.integer(v->'grantRevision',0,2147483647) then return false;end if;
@@ -137,7 +137,8 @@ end $$;
 
 create function service_brief_private.event(c service_cases_private.cases,r bigint,u uuid,a text,keys jsonb) returns void language sql volatile set search_path='' as $$
  insert into service_brief_private.audit(case_id,owner_id,revision,actor_id,action,recipient_id,grant_revision,field_keys)
- values(c.id,c.owner_id,r,u,a,c.recipient_id,c.revision,keys)
+ select c.id,c.owner_id,r,u,a,c.recipient_id,c.revision,keys
+ where exists(select 1 from auth.users where id=c.owner_id) and exists(select 1 from service_cases_private.cases where id=c.id)
 $$;
 create function service_brief_private.erase(cid uuid,owner uuid,remove_audit boolean default false) returns void language plpgsql set search_path='' as $$
 begin
@@ -512,6 +513,9 @@ begin
  end if;
  if a='read_operation' then return jsonb_build_object('receipt',o.receipt);else return o.receipt;end if;
  end if;
+ if a='owner_state' then
+ return jsonb_build_object('schemaVersion','traveler-brief/1','kind','owner_state','caseId',cid,'ownerId',u,'recipientId',c.recipient_id,'grantRevision',c.revision,'briefRevision',rev,'state',coalesce(b.state,'absent'));
+ end if;
  if a='audit' then
  select count(*) into n from service_brief_private.audit where case_id=cid;if n>200 then raise exception 'BRIEF_LIMIT';end if;
  select coalesce(jsonb_agg(service_brief_private.audit_json(e) order by e.created_at,e.event_id),'[]') into events from service_brief_private.audit e where e.case_id=cid;
@@ -588,3 +592,26 @@ exception when lock_not_available then raise exception 'BRIEF_BUSY';
 end $$;
 revoke all on all functions in schema service_brief_private from public,anon,authenticated,service_role;
 revoke all on function public.service_case_brief_v1(jsonb,text,text) from public,anon,authenticated,service_role;
+
+-- Withdrawal of recipient qualifications cannot later resurrect an old head.
+create function service_brief_private.recipient_changed() returns trigger language plpgsql security definer set search_path='' as $$
+declare row_data jsonb;prev jsonb;cid uuid;owner uuid;actors uuid[]:=array[]::uuid[];tab text:=TG_TABLE_NAME;
+begin
+ if TG_OP='UPDATE' and to_jsonb(NEW) is not distinct from to_jsonb(OLD) then return NEW;end if;
+ row_data:=case when TG_OP='DELETE' then to_jsonb(OLD) else to_jsonb(NEW) end;prev:=case when TG_OP='INSERT' then row_data else to_jsonb(OLD) end;
+ if tab='slots' then
+ select array_agg(distinct actor_id) into actors from service_operations_private.shifts where id::text in(row_data->>'shift_id',prev->>'shift_id');
+ else actors:=array[(row_data->>'actor_id')::uuid,(prev->>'actor_id')::uuid];end if;
+ for cid in select c.id from service_cases_private.cases c where c.recipient_id=any(actors)
+ and (exists(select 1 from service_brief_private.briefs b where b.case_id=c.id and b.state='shared') or exists(select 1 from service_brief_private.previews p where p.case_id=c.id))
+ order by c.id for update nowait loop
+ select owner_id into owner from service_cases_private.cases where id=cid;perform service_brief_private.invalidate(cid,owner,owner);
+ end loop;
+ if TG_OP='DELETE' then return OLD;else return NEW;end if;
+exception when lock_not_available then raise exception 'BRIEF_BUSY';
+end $$;
+create trigger service_brief_staff_qualification before update or delete on service_cases_private.staff for each row execute function service_brief_private.recipient_changed();
+create trigger service_brief_operator_qualification before update or delete on service_operations_private.operators for each row execute function service_brief_private.recipient_changed();
+create trigger service_brief_shift_qualification before update or delete on service_operations_private.shifts for each row execute function service_brief_private.recipient_changed();
+create trigger service_brief_slot_qualification before update or delete on service_operations_private.slots for each row execute function service_brief_private.recipient_changed();
+revoke all on all functions in schema service_brief_private from public,anon,authenticated,service_role;
