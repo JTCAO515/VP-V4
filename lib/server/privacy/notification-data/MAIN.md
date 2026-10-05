@@ -124,3 +124,13 @@ Native merge0fa completed; no original SQL edited. Actual signed one-scenario
 Auth/HTTP runner/test prepared in owned namespace, starts/stops uniquely scoped
 local Supabase + Next only, default-deny before scoped fixture grants, no APNs.
 No duplicate SQL/Native matrix; prior versioned sources/evidence reused.
+
+Final core receiver finding fixed via normal immutable Native16d72e68 integration,
+not old0fa wait: exact two fence enums only plus upstream affected1 PASS0skip,
+original guards/evidence retained. Actual signed Auth/HTTP PASS1/0skip + owned
+cleanup provenance is artifacts/VPJ-58/notification-data-server/auth-http-r1.log
+(source6d66ad62/session67943/project74b0e507/base59690) and STATUS.md. Harness private
+workdir/Next log removed on successful owned cleanup, no secret log persistence.
+Next generated AGENTS/next-env noise inspected/restored only in this own checkout.
+Whole parent239/ALL1missing/ALL2 Open. Scope core ready for Main combined audit;
+remaining necessary CI/legacy fixture integration engineering is separate.
