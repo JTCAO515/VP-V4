@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
 import { requestLifetime, type RequestLifetime } from '../../knowledge/review/request-lifetime.ts';
 import { exact, record } from '../operations/contract.ts';
-import { decodeBrief, decodeBriefAudit, decodeBriefDataBundle, decodeBriefReceipt, decodeBriefSourceOptions, decodeBriefLocator, parseBriefInput, type BriefInput, type BriefMutation } from './contract.ts';
+import { decodeBrief, decodeBriefAudit, decodeBriefDataBundle, decodeBriefReceipt, decodeBriefSourceOptions, decodeBriefLocator, decodeBriefOwnerState, parseBriefInput, type BriefInput, type BriefMutation } from './contract.ts';
 
 export type BriefRPC = Readonly<{
   authenticate(): Promise<string | false>; sessionId(): string | null;
@@ -42,7 +42,11 @@ export async function handleTravelerBrief(request: Request, options: Readonly<{
       return Object.hasOwn(statuses,initial.error.message) ? fail(initial.error.message,statuses[initial.error.message]) : fail(dispatched ? 'BRIEF_ACK_UNKNOWN' : 'BRIEF_UNAVAILABLE');
     }
     let data: unknown, verify: BriefInput = input;
-    if (input.action === 'locate') {
+    if (input.action === 'owner_state') {
+      const state = decodeBriefOwnerState(initial.data);
+      if (!state || state.caseId !== input.caseId || state.ownerId !== actor) return fail('BRIEF_UNAVAILABLE');
+      data = state;
+    } else if (input.action === 'locate') {
       const locator = decodeBriefLocator(initial.data);
       if (!locator || locator.caseId !== input.caseId || locator.expiresAt <= Date.now() || (options.surface === 'owner' ? locator.ownerId !== actor : locator.recipientId !== actor || locator.ownerId === actor)) return fail('BRIEF_UNAVAILABLE');
       data = locator;

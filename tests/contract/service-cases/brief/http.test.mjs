@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {handleTravelerBrief,briefRequestDigest} from '../../../../lib/server/service-cases/brief/http.ts';
-import {BRIEF_NOTICE,parseBriefInput,decodeBrief,decodeBriefSourceOptions,decodeBriefDataBundle,validBriefField} from '../../../../lib/server/service-cases/brief/contract.ts';
+import {BRIEF_NOTICE,parseBriefInput,decodeBrief,decodeBriefSourceOptions,decodeBriefDataBundle,decodeBriefOwnerState,validBriefField} from '../../../../lib/server/service-cases/brief/contract.ts';
 const owner='11111111-1111-4111-8111-111111111111',staff='22222222-2222-4222-8222-222222222222',caseId='33333333-3333-4333-8333-333333333333',operationId='44444444-4444-4444-8444-444444444444',session='55555555-5555-4555-8555-555555555555',previewId='66666666-6666-4666-8666-666666666666';
 const now=Date.now(),sourceDigest='a'.repeat(64);
 const binding={caseId,ownerId:owner,recipientId:staff,grantRevision:1,purpose:'case_assistance',category:'general'};
@@ -48,6 +48,16 @@ test('staff locator exposes no values and requires a freshly qualified shared Br
  const locator={schemaVersion:'traveler-brief/1',kind:'locator',...binding,revision:1,expiresAt:now+60000};
  const {result}=await run(JSON.stringify({action:'locate',caseId}),{staffSurface:true,call:async()=>({data:locator,error:null})});assert.equal(result.status,200);assert.ok(!('fields'in result.body.data));
  const denied=await run(JSON.stringify({action:'locate',caseId}),{staffSurface:true,call:async()=>({data:null,error:{message:'BRIEF_FORBIDDEN'}})});assert.equal(denied.result.status,403);
+});
+test('owner cleanup metadata is independent of complete audit and permits first-preview revision zero',async()=>{
+ const state={schemaVersion:'traveler-brief/1',kind:'owner_state',caseId,ownerId:owner,recipientId:staff,grantRevision:1,briefRevision:0,state:'absent'};
+ assert.ok(decodeBriefOwnerState(state));assert.ok(decodeBriefOwnerState({...state,recipientId:null,grantRevision:0}));
+ for(const invalid of [{...state,state:'shared'},{...state,briefRevision:1},{...state,fields:[problem]},{...state,ownerId:staff}]){
+  const r=await run(JSON.stringify({action:'owner_state',caseId}),{call:async()=>({data:invalid,error:null})});assert.equal(r.result.status,503);assert.ok(!('data'in r.result.body));
+ }
+ const r=await run(JSON.stringify({action:'owner_state',caseId}),{call:async()=>({data:state,error:null})});assert.equal(r.result.status,200);assert.equal(r.calls.length,2);assert.ok(r.calls.every(c=>c.params.p_input.action==='owner_state'));assert.ok(!('sourceDigest'in r.result.body.data));
+ const denied=await run(JSON.stringify({action:'owner_state',caseId}),{staffSurface:true});assert.equal(denied.result.status,403);assert.equal(denied.calls.length,0);
+ const changed=await run(JSON.stringify({action:'owner_state',caseId}),{call:async(_,n)=>({data:n===1?state:{...state,grantRevision:2},error:null})});assert.equal(changed.result.status,503);assert.ok(!('data'in changed.result.body));
 });
 test('staff cannot preview, audit, export, recover or mutate an owner Brief',async()=>{
  for(const input of [previewInput,share,{action:'audit',caseId},{action:'export',requestId:operationId,confirmed:true},{action:'read_operation',operationId},{action:'abandon',operationId,mutationBytes:JSON.stringify(share)}]){const {result,calls}=await run(JSON.stringify(input),{staffSurface:true});assert.equal(result.status,403);assert.equal(calls.length,0);}

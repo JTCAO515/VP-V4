@@ -26,6 +26,7 @@ export type BriefProjection = Readonly<BriefBinding & {
 export type BriefMutation = Readonly<{ action: 'share'; operationId: string; caseId: string; recipientId: string; grantRevision: number; expectedRevision: number; previewId: string; sourceDigest: string; selectedKeys: readonly string[]; noticeVersion: typeof BRIEF_NOTICE; confirmed: true }>
   | Readonly<{ action: 'withdraw' | 'delete'; operationId: string; caseId: string; recipientId: string; grantRevision: number; expectedRevision: number; confirmed: true }>;
 export type BriefInput = BriefMutation
+  | Readonly<{ action: 'owner_state'; caseId: string }>
   | Readonly<{ action: 'locate'; caseId: string }>
   | Readonly<{ action: 'source_options'; caseId: string }>
   | Readonly<{ action: 'preview'; caseId: string; recipientId: string; grantRevision: number; sources: BriefSources }>
@@ -44,7 +45,7 @@ function validSources(v: unknown): v is BriefSources {
 export function parseBriefInput(v: unknown): BriefInput | null {
   if (!record(v)) return null;
   if (v.action === 'read_preview') return exact(v,['action','previewId']) && uuid(v.previewId) ? v as BriefInput : null;
-  if (v.action === 'audit' || v.action === 'source_options' || v.action === 'locate') return exact(v,['action','caseId']) && uuid(v.caseId) ? v as BriefInput : null;
+  if (v.action === 'audit' || v.action === 'source_options' || v.action === 'locate' || v.action === 'owner_state') return exact(v,['action','caseId']) && uuid(v.caseId) ? v as BriefInput : null;
   if (v.action === 'export') return exact(v,['action','requestId','confirmed']) && uuid(v.requestId) && v.confirmed === true ? v as BriefInput : null;
   if (v.action === 'read_operation') return exact(v,['action','operationId']) && uuid(v.operationId) ? v as BriefInput : null;
   if (v.action === 'abandon') {
@@ -91,6 +92,14 @@ const bindingKeys = ['schemaVersion','kind','caseId','ownerId','recipientId','gr
 export type BriefLocator = Readonly<BriefBinding & {schemaVersion: 'traveler-brief/1'; kind: 'locator'; revision: number; expiresAt: number}>;
 export function decodeBriefLocator(v: unknown): BriefLocator | null {
   return record(v) && exact(v,['schemaVersion','kind','caseId','ownerId','recipientId','grantRevision','purpose','category','revision','expiresAt']) && v.schemaVersion === 'traveler-brief/1' && v.kind === 'locator' && [v.caseId,v.ownerId,v.recipientId].every(uuid) && v.ownerId !== v.recipientId && revision(v.grantRevision) && revision(v.revision) && v.purpose === 'case_assistance' && ['transport','accommodation','on_trip','general'].includes(String(v.category)) && milliseconds(v.expiresAt) ? v as BriefLocator : null;
+}
+export type BriefOwnerState = Readonly<{
+  schemaVersion: 'traveler-brief/1'; kind: 'owner_state'; caseId: string; ownerId: string;
+  recipientId: string | null; grantRevision: number; briefRevision: number;
+  state: 'absent' | 'shared' | 'withdrawn' | 'deleted' | 'invalidated';
+}>;
+export function decodeBriefOwnerState(v: unknown): BriefOwnerState | null {
+  return record(v) && exact(v,['schemaVersion','kind','caseId','ownerId','recipientId','grantRevision','briefRevision','state']) && v.schemaVersion === 'traveler-brief/1' && v.kind === 'owner_state' && uuid(v.caseId) && uuid(v.ownerId) && (v.recipientId === null || uuid(v.recipientId) && v.recipientId !== v.ownerId) && revision(v.grantRevision) && revision(v.briefRevision) && ['absent','shared','withdrawn','deleted','invalidated'].includes(String(v.state)) && (v.state === 'absent' ? v.briefRevision === 0 : v.briefRevision > 0) ? v as BriefOwnerState : null;
 }
 export function decodeBrief(v: unknown): BriefPreview | BriefProjection | null {
   if (!record(v) || !['preview','brief'].includes(String(v.kind)) || !exact(v,[...bindingKeys,...(v.kind === 'preview' ? ['previewId','createdAt'] : ['updatedAt'])]) || v.schemaVersion !== 'traveler-brief/1' || ![v.caseId,v.ownerId,v.recipientId].every(uuid) || v.ownerId === v.recipientId || !revision(v.grantRevision) || !revision(v.revision) || v.purpose !== 'case_assistance' || !['transport','accommodation','on_trip','general'].includes(String(v.category)) || !digest(v.sourceDigest) || !milliseconds(v.expiresAt) || v.noticeVersion !== BRIEF_NOTICE || !Array.isArray(v.fields) || v.fields.length > 8 || !v.fields.every(validBriefField) || new Set(v.fields.map(f => f.key)).size !== v.fields.length) return null;

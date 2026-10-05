@@ -16,7 +16,7 @@ Disposable local fixtures may enroll their own synthetic actors and grant only
 this RPC after separately proving default ACL denial. No target activation.
 Use `service_brief_private.settings` for the new default-disabled local feature
 switch. Source-options/preview/share/read-preview/locate/read require that switch;
-owner audit/export/withdraw/delete/read-operation/abandon remain available under
+owner-state/audit/export/withdraw/delete/read-operation/abandon remain available under
 their own authority when the feature switch is disabled so privacy is operational.
 
 Owner `source_options {caseId}` returns real eligible source candidates under the
@@ -49,6 +49,15 @@ receipts have exactly expected revision plus one; a cancelled abandonment fence
 binds a revision at least expected. Neither action deletes original Memory/Trip/intake. Original Case or account delete
 must cascade/scrub all Brief references, audits and raw operations. Original Case
 grant replacement/revoke must synchronously invalidate Brief and erase old ops.
+
+`owner_state {caseId}` returns only exact current owner/Case/current nullable
+recipient/grant revision/Brief revision/state metadata. It is owner/session-bound,
+feature-off/expired/revoked readable, contains no source values/digests/history and
+never grants staff access. Absent Brief is revision zero/state `absent`; an owner
+may explicitly delete first-preview references at revision zero. Cleanup CAS does
+not depend on the audit being below its complete 200-event limit or an active
+preview. A deleted Case has no owner_state; only its original minimal deletion
+receipt recovery remains. Audit overflow stays honest unavailable, not truncated.
 
 ## Source qualification (SQL implementation requirements)
 
