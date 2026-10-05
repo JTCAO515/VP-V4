@@ -170,7 +170,7 @@ struct NativeExperienceView: View {
             Text(experience.title).font(.headline); Text(experience.content).textSelection(.enabled)
             Text(t("可信作者身份来源：", "Trusted author affiliation: ") + disclosure(experience.authorDisclosure))
             Text(t("可信审核者身份来源：", "Trusted reviewer affiliation: ") + disclosure(experience.reviewerDisclosure ?? "unknown"))
-            Text(t("作者自述利益关系：", "Author-reported interests: ") + experience.benefit)
+            Text(t("作者自述利益关系：", "Author-reported interests: ") + (experience.benefit ?? t("未提供", "Not provided")))
             Text(t("来源：用户体验／求助；作者声明拥有文字，已记录独立审核，仅供受控体验显示。并非事实或第三方版权保证，供应商费用未知。", "Source: user experience/help. Author-declared own text with a recorded independent review, limited to controlled experience display. It is not a fact or a third-party copyright guarantee; provider costs are unknown."))
                 .font(.footnote)
             Button(t("保存体验引用", "Save experience reference")) { run { actor in if let command = try? NativeExperienceCommand.save(experience) { await perform(command, actor: actor) } } }
@@ -180,7 +180,9 @@ struct NativeExperienceView: View {
                 Button(t("重新核体验后打开原地点动作", "Requalify experience and open original place actions")) { openPlace(experience) }
                     .disabled(!eligible).accessibilityIdentifier("experience.place.open")
             } else { Text(t("没有可核实的 canonical 地点关联；不能猜测地点或加入行程。", "No verifiable canonical place association. A place cannot be guessed or added to a Trip.")) }
-            NavigationLink(t("安全入口（重新读取合法对象）", "Safety (reread a qualified object)")) { NativeCommunitySafetyView() }
+            NavigationLink(t("举报／屏蔽此体验（重新核资格）", "Report / block this experience (requalify)")) {
+                NativeCommunitySafetyView(initialObjectID: experience.submissionID).id(actor?.scope)
+            }
         }
     }
     @ViewBuilder private func referenceContent(_ reference: NativeExperienceSaved) -> some View {

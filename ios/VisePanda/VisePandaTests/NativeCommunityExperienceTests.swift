@@ -92,8 +92,8 @@ import Security
         await store.recover(retry: true, current: { actor }, complete: { try journal.complete($0, actor: actor) }) { _ in writes += 1; return Data() }
         #expect(writes == 1)
         func result(_ state: String) throws -> Data {
-            try NativeCommunityWire.bytes(["schemaVersion": NativeExperienceWire.schema, "actorId": actor.scope.subject, "sessionId": actor.sessionID,
-                                          "kind": "operation", "operationId": command.operationID, "state": state, "publication": NSNull(), "reference": NSNull()])
+            try NativeCommunityWire.bytes(["data": ["schemaVersion": NativeExperienceWire.schema, "actorId": actor.scope.subject, "sessionId": actor.sessionID,
+                                          "kind": "operation", "operationId": command.operationID, "state": state, "publication": NSNull(), "reference": NSNull()]])
         }
         await store.recover(current: { actor }, complete: { try journal.complete($0, actor: actor) }) { body in
             #expect(try NativeExperienceInput(body: body).recovery?.body == command.body); return try result("absent")
@@ -131,6 +131,8 @@ import Security
         let session = NativeSession(arguments: ["-VisePandaNativeAPI", "http://127.0.0.1:65368"], defaults: defaults, configuration: config, bundleConfiguration: [:], vault: vault)
         await session.login(email: "synthetic@example.invalid", password: "synthetic-only")
         let actor = try session.communitySafetyActor(), command = try NativeExperienceCommand.delete()
+        let flat = try NativeCommunityWire.bytes(["schemaVersion": NativeExperienceWire.schema, "kind": "session", "actorId": actor.scope.subject, "sessionId": actor.sessionID])
+        #expect(throws: (any Error).self) { try NativeExperienceOutcome.decode(flat, actor: actor) }
         let journal = NativeExperienceJournal(vault: vault, validate: { _ = try NativeExperienceInput(body: $0) })
         let pending = try session.rememberCommunityExperience(body: command.body, actor: actor)
         _ = try await session.communityExperienceRequest(body: NativeCommunityWire.bytes(["action": "session"]), actor: actor)
@@ -155,7 +157,7 @@ import Security
                                 "place": NSNull(), "expiresAt": expiry]
         func response(_ values: [String: Any]) throws -> Data {
             var v = values; v["schemaVersion"] = NativeExperienceWire.schema; v["actorId"] = actor.scope.subject; v["sessionId"] = actor.sessionID
-            return try NativeCommunityWire.bytes(v)
+            return try NativeCommunityWire.bytes(["data": v])
         }
         let request: [String: Any] = ["action": "detail", "publicationId": publicationID]
         let store = NativeExperienceStore(); store.restore(actor) { nil }
@@ -182,6 +184,9 @@ import Security
         #expect(throws: (any Error).self) { try NativeExperienceOutcome.decode(response(["kind": "detail", "experience": invalid]), actor: actor) }
         invalid = e; invalid["canReport"] = 1
         #expect(throws: (any Error).self) { try NativeExperienceOutcome.decode(response(["kind": "detail", "experience": invalid]), actor: actor) }
+        var nullable = e; nullable["benefitDisclosure"] = NSNull()
+        let legacyOutcome = try NativeExperienceOutcome.decode(response(["kind": "detail", "experience": nullable]), actor: actor)
+        #expect(legacyOutcome.experiences.first?.benefit == nil)
         ref["experience"] = e // Unavailable rows cannot smuggle cached foreign content.
         #expect(throws: (any Error).self) { try NativeExperienceOutcome.decode(response(["kind": "reference", "reference": ref]), actor: actor) }
 
@@ -190,6 +195,25 @@ import Security
                                      "source": "user_experience", "copyright": "unknown", "visibility": "internal", "publiclyVisible": false, "retrievalEligible": false,
                                      "canReport": true, "canBlock": false, "expiresAt": expiry]
         let preview = try NativeExperiencePreview(["object": object, "previewDigest": String(repeating: "a", count: 64), "audience": "controlled_registered", "rightsDeclarationRequired": "own-text-v1", "expiresAt": expiry])
+        let safety = NativeCommunitySafetyStore(); safety.restore(actor) { nil }
+        func safetyResponse(_ object: [String: Any]) throws -> Data {
+            try NativeCommunityWire.bytes(["data": ["schemaVersion": NativeCommunitySafetyWire.schema, "actorId": actor.scope.subject,
+                                          "sessionId": actor.sessionID, "kind": "object", "object": object]])
+        }
+        await safety.read(objectID: experience.submissionID, current: { actor }) { body in
+            let v = try NativeCommunityWire.object(JSONSerialization.jsonObject(with: body), ["action", "submissionId"])
+            #expect(v["action"] as? String == "object" && v["submissionId"] as? String == experience.submissionID)
+            return try safetyResponse(object)
+        }
+        let qualified = try #require(safety.visibleObject(actor))
+        #expect(qualified.id == experience.submissionID && qualified.submissionVersion == experience.submissionVersion)
+        let report = try NativeCommunitySafetyCommand.object(qualified, action: "report", category: "other", explanation: "Owned fixture report")
+        #expect(safety.canPerform(report, current: actor))
+        var wrongObject = object; wrongObject["id"] = UUID().uuidString.lowercased()
+        await safety.read(objectID: experience.submissionID, current: { actor }) { _ in try safetyResponse(wrongObject) }
+        #expect(safety.visibleObject(actor) == nil && !safety.canPerform(report, current: actor))
+        await safety.read(objectID: experience.submissionID, current: { actor }) { _ in throw NativeDataError.server(code: "SAFETY_NOT_FOUND") }
+        #expect(safety.visibleObject(actor) == nil)
         let requestPublication = try NativeExperienceCommand.request(preview), unsave = try NativeExperienceCommand.unsave(unavailable), deletion = try NativeExperienceCommand.delete()
         let folder = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0].appendingPathComponent("NativeExperienceWireFixtures", isDirectory: true)
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
@@ -218,7 +242,7 @@ nonisolated private final class ExperienceSessionProtocol: URLProtocol, @uncheck
                 request.value(forHTTPHeaderField: "x-community-publication-expected-session") == session, request.value(forHTTPHeaderField: "Cookie") == nil,
                 request.value(forHTTPHeaderField: "Authorization")?.hasPrefix("Bearer synthetic.") == true {
             if (try? JSONSerialization.jsonObject(with: requestBody()) as? [String: Any])?["action"] as? String == "session" {
-                status = 200; value = ["schemaVersion": "community-publication-j3j4/1", "kind": "session", "actorId": owner, "sessionId": session]
+                status = 200; value = ["data": ["schemaVersion": "community-publication-j3j4/1", "kind": "session", "actorId": owner, "sessionId": session]]
             } else { status = 401; value = ["error": "UNAUTHENTICATED"] }
         } else { status = 400; value = ["error": "INVALID_FIXTURE_TRANSPORT"] }
         let response = HTTPURLResponse(url: request.url!, statusCode: status, httpVersion: "HTTP/1.1", headerFields: ["Content-Type": "application/json"])!

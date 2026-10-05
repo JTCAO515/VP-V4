@@ -1,4 +1,4 @@
-# Native J3/J4 checkpoint, 2026-10-06
+# Native J3/J4 owned source verification, 2026-10-06
 
 Owner 01a10cc7-2f7f-7b92-bd91-4d69e95bc378; sole Native branch/worktree vpj48-native-community-experience-20261006. Started at c515848, normally merged fixed J1 acb5ea21/J2 ee211ecd, then latest J1 0a7ee316 and J2 d738d0e4. Original dirty checkout untouched. Audio changes are inherited only via the fixed upstream merge; this owner made no Audio edits.
 
@@ -15,8 +15,12 @@ Own UI/Store performs current detail/search/saved/reference/preview/mine, explic
 - PASS pnpm docs:check and git diff --check.
 - Owned Simulator A0F21FA2-7356-4D78-AA2F-3F9C200085B0; DerivedData /tmp/vpj48-native-community-experience-dd. Cleanup recorded separately before handoff. Fixture-only URLProtocol port65368 opens no listener.
 
-## Remaining implementation and unrun scope
+## Final owned source and unrun scope
 
-Exact-object Safety caller still awaits Main's precise original-owner lease: NativeCommunitySafetyView additive initialObjectID constructor + reload's existing store.read(objectID:) branch. Current general Safety link rereads legal objects but does not complete same-object integration. See Features/CommunityExperience/WIRE.md. This checkpoint is not Native J3/J4 code-complete, whole235/238 closure, or PR/CI completion.
+Main b752df explicitly granted the last precise Safety constructor/reload hunk. The original NativeCommunitySafetyView now reads the exact Experience.submissionID through its existing authenticated/current qualified object reader. Conflicting authorSubmissionID+initialObjectID produces an unavailable entry and no read/action; author-only/default paths retain their behavior. Native Experience link passes no body, rights or permission. Nullable benefitDisclosure aligns actual TS d1609849 and displays not provided rather than inventing disclosure.
+
+The final actual caller check found a real compatibility gap: old publication fixture/decoder used flat RPC outcomes while HTTP returns {data:outcome}. Actual NativeExperienceOutcome and fixtures now require that exact envelope; flat/extra outer denied. Initial exact-Safety r1 FAIL was a missing J2 response envelope in the fixture; failure is retained. Final full generic testbuild-exact-safety-r3 PASS; runtime-exact-safety-r2 actual3PASS0skip, including original-operation recovery, NativeSession headers/envelope/verified erase fence, and typed Experience→same-object Safety read/report qualification plus wrong-ID/denial clearing and nullable source. Reuse unchanged four lifetime/export r1 and four original J1/J2 Session r2 cases. Seven own tests have applicable PASS evidence; no new test-count or whole11 rerun claim.
+
+Owned Native implementation is now fixed, with no planned production writes. Source manifest marks only this Native scope complete. Sole TS integrates fixed source; Main retains whole235/238 closure and integrated audit. No Native own PR/merge/target activation is claimed. Final cleanup and current peer-wire evidence are recorded separately.
 
 UNRUN: final integrated producer/SQL/GoTrue path (sole TS/SQL owners); target controlled reader/grant/rights-review/publisher setup; target public audience/domain/roles/GRANT/credentials/Storage/provider and funds; physical phone/human/VoiceOver and target UI. Public target remains disabled. Local native mocks are not authorization or copyright verification. Full account export/delete dispatcher is not_enrolled; only explicit publication-module exits are claimed.

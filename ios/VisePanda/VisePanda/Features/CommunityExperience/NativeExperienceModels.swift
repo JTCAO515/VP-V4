@@ -65,7 +65,7 @@ struct NativeExperience: Identifiable, Equatable {
     let title: String
     let content: String
     let kind: String
-    let benefit: String
+    let benefit: String?
     let authorDisclosure: String
     let reviewerDisclosure: String?
     let source: String
@@ -78,7 +78,7 @@ struct NativeExperience: Identifiable, Equatable {
         id = try w.id(v["id"]); submissionID = try w.id(v["submissionId"])
         submissionVersion = try e.revision(v["submissionVersion"], minimum: 1); safetyVersion = try e.revision(v["safetyVersion"]); publicationVersion = try e.revision(v["publicationVersion"], minimum: 1)
         title = try w.text(v["title"], max: 160); content = try w.text(v["content"], max: 4000); kind = try w.text(v["contentKind"], max: 10)
-        benefit = try w.text(v["benefitDisclosure"], max: 400, empty: true)
+        benefit = try w.optional(v["benefitDisclosure"]) { try w.text($0, max: 400, empty: true) }
         authorDisclosure = try w.text(v["authorDisclosure"], max: 24); reviewerDisclosure = try w.optional(v["reviewerDisclosure"]) { try w.text($0, max: 24) }
         source = try w.text(v["source"], max: 20); canBlock = try w.bool(v["canBlock"])
         place = try w.optional(v["place"]) { try NativeExperiencePlace($0 as Any) }; expiresAt = try NativeCommunitySafetyWire.dateValue(v["expiresAt"])
