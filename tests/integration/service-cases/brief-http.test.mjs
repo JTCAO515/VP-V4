@@ -104,6 +104,9 @@ test('disposable real Auth and cookie staff read explicitly selected live Brief 
  // Synthetic limit rows exercise bounded audit without inventing human activity.
  const previewOnly=uuid();
  assert.equal((await call(legacy,owner.accessToken,{action:'create',caseId:previewOnly,category:'general',problem:'Synthetic preview-only privacy cleanup'})).status,200);
+ const ungranted=await call(native,owner.accessToken,{action:'owner_state',caseId:previewOnly});assert.equal(ungranted.status,200);assert.equal(ungranted.body.data.recipientId,null);assert.equal(ungranted.body.data.briefRevision,0);
+ assert.equal((await call(native,owner.accessToken,{action:'preview',caseId:previewOnly,recipientId:staff.id,grantRevision:0,sources:{profilePace:false,memories:[],intakeMessageId:null}})).status,403,'null recipient cannot create Brief or preview references');
+ assert.equal(sql(`select count(*) from service_brief_private.previews where case_id=${literal(previewOnly)};`),'0');
  assert.equal((await call(legacy,owner.accessToken,{action:'grant',caseId:previewOnly,expectedRevision:0,recipientId:staff.id,durationMinutes:15,sharedFields:['problem']})).status,200);
  const noSources={profilePace:false,memories:[],intakeMessageId:null};
  const firstPreview=await call(native,owner.accessToken,{action:'preview',caseId:previewOnly,recipientId:staff.id,grantRevision:1,sources:noSources});assert.equal(firstPreview.status,200);
