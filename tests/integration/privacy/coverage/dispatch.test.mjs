@@ -145,3 +145,10 @@ test('linked Trip exact selected arrays compare semantically across JSONB object
  const result=await call(selected,options({linked_trip:async()=>Response.json(receipt)}));assert.equal(result.body.state,'scoped_complete');assert.equal(matchesCoverageResult(result.body,result.raw),true);
  const wrong=await call(selected,options({linked_trip:async()=>Response.json({...receipt,selection:{...arrays,threadIds:[randomUUID()]}})}));assert.equal(wrong.body.state,'unknown');
 });
+
+test('known cancellation is terminal ACK only; tampered outer complete cannot erase its partial result',async()=>{
+ const selected=input('publication','delete',{action:'delete',operationId:randomUUID(),confirmed:true},'recover');
+ const body={data:{schemaVersion:'community-publication-j3j4/1',kind:'operation',actorId:actor.actorId,sessionId:actor.sessionId,operationId:selected.operationId,state:'abandoned',publication:null,reference:null}};
+ const result=await call(selected,options({publication:async()=>Response.json(body)}));assert.equal(result.body.state,'partial');assert.equal(result.body.reason,'ORIGINAL_OPERATION_CANCELLED');assert.equal(matchesCoverageResult(result.body,result.raw),true);
+ assert.equal(matchesCoverageResult({...result.body,state:'scoped_complete',reason:'NONE'},result.raw),false);
+});
