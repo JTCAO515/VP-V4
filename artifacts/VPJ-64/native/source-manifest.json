@@ -1,0 +1,19 @@
+{
+  "nativeProductCommit": "5b9155a9a6c45b393026cc9d1d7826b56f17b869",
+  "evidenceScope": "Local Apple Simulator and offline typed contract only; no target/public/device/GoTrue proof",
+  "files": {
+    "ios/VisePanda/VisePanda/Features/CommunitySafety/NativeCommunitySafetyUnavailableView.swift": "6443e3e6fcb6d1638fa4536543ce57a887cccf1f266dac4f37e98a8c26d40621",
+    "ios/VisePanda/VisePanda/Features/CommunitySafety/NativeCommunitySafetyStore.swift": "592cc4bbed5d7689b673d33944fefd96da779a11f44b74e901a7b791685ceec5",
+    "ios/VisePanda/VisePanda/Features/CommunitySafety/NativeCommunitySafetyExportFile.swift": "1d34e67f9e295038371e246917cdff85da7eee224b280931e42a386bb05db908",
+    "ios/VisePanda/VisePanda/Features/CommunitySafety/NativeCommunitySafetyWire.swift": "e1f7505f5cad60a389369b7a46514fb7715b734af6fe91b5df75a00840134668",
+    "ios/VisePanda/VisePanda/Features/CommunitySafety/NativeCommunitySafetyExplanationForm.swift": "22d9c72d39ae3862734df7822a819f8013f5727dbc79ed4300843c3185602b39",
+    "ios/VisePanda/VisePanda/Features/CommunitySafety/NativeCommunitySafetyDraft.swift": "eef0be97ad21300f696fe8272d49e70dd75d804145abe4a0689dfd1f3441547c",
+    "ios/VisePanda/VisePanda/Features/CommunitySafety/NativeCommunitySafetyView.swift": "d22f59e882ff47aac4604cd0ca298239f319e1a3b634eb0476d79e7440c7b285",
+    "ios/VisePanda/VisePanda/Features/CommunitySafety/NativeCommunitySafetyJournal.swift": "0f372bacd2bf7067063aa2bfc98bf8964b2e6620dc7840aca0dbee302611fac9",
+    "ios/VisePanda/VisePanda/App/NativeSession.swift": "50d1418c2e0610302e0219d8ad615c99773f5d7dd2d44d38fa99840602d369c8",
+    "ios/VisePanda/VisePanda/Features/Profile/ProfileView.swift": "fd522538155af5194f078e19ee74ef76a86bee06457e8d1986af98d15fd6e4b4",
+    "ios/VisePanda/VisePanda/Features/CommunitySubmission/NativeCommunitySubmissionView.swift": "3dc8508b4ec2125c73d02c5316d62e6db991740bfd779365662ee70c9c93dbdb",
+    "ios/VisePanda/VisePanda.xcodeproj/project.pbxproj": "69619d3bb656836de1c9adbf6cb126f19b8e4680d5da8f7416d9548f88e2f069",
+    "ios/VisePanda/VisePandaTests/NativeCommunitySafetyTests.swift": "6a10d0a311e95da8c3c03e43d89acb6f42acee927a829fea43f94f767b8dce9d"
+  }
+}

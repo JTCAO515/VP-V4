@@ -1,0 +1,6 @@
+
+> vp-v4@0.0.0 docs:check /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj64-native-community-safety-20261005
+> node scripts/docs-check.mjs
+
+VPJ plan passed: 83 tasks, 20 replacements, acyclic dependencies, contracts and archive hashes.
+AI Core and VPJ documentation baseline passed.
