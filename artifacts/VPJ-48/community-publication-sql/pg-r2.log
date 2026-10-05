@@ -1,0 +1,47 @@
+✔ full history replay rollback RPC exact prior body owner ACL and empty disabled defaults (7556.566458ms)
+✔ complete preview consent independent rights publisher read search exact metadata save and unsave (912.945291ms)
+✔ preview digest excludes TTL but binds exact body disclosures and reviewed revisions (778.01975ms)
+✔ source reader authority is distinct from qualification and all independence fences survive J1 erasure (1344.685542ms)
+✔ current registered-reader expiry revocation block and UUID probes deny before CAS with zero effects (1391.762542ms)
+✔ original auth session epoch anonymous and malformed NULL guards precede any cleanup or CAS (2130.492417ms)
+✔ exact byte idempotency absent abandon replay session fence and unknown outcome resolution (1088.954083ms)
+✔ withdraw revoke disabled rollback deny old detail search saved and committed body replay (2933.839625ms)
+✔ J1 withdrawal source physical deletion and reviewer account deletion preserve permanent denial tombstones (2705.151958ms)
+✔ J2 remove appeal restore cannot revive publication or silently rebind old reference (1068.147583ms)
+✔ rights/publisher revocation erasure and review deletion terminal forever under re-enrollment (4294.167ms)
+✔ scoped export includes authored foreign rights notes qualification receipts audits and metadata-only references (839.885083ms)
+✖ scoped deletion erases declaration all authored notes qualifications links while exact receipts remain sanitized (957.946625ms)
+✔ 100 plus sentinel on each retained export collection fails whole export without truncation (981.279875ms)
+✔ ordered concurrent read publish withdraw erasure serialize or fail closed; retry cannot expose body (1518.586333ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 14
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 30662.232708
+
+✖ failing tests:
+
+test at tests/integration/community/publication-j3j4-postgres.test.mjs:14:22
+✖ scoped deletion erases declaration all authored notes qualifications links while exact receipts remain sanitized (957.946625ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  PUBLICATION_NOT_FOUND
+  CONTEXT:  PL/pgSQL function community_publication_private.workspace(jsonb) line 65 at RAISE
+  PL/pgSQL function public.community_workspace(jsonb) line 5 at RETURN
+  
+  
+  3 !== 0
+  
+      at call (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj48-community-publication-sql-20261006/tests/integration/community/publication-j3j4-postgres.test.mjs:21:67)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj48-community-publication-sql-20261006/tests/integration/community/publication-j3j4-postgres.test.mjs:194:201)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
