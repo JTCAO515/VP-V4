@@ -1,0 +1,9 @@
+{
+  "ownedSimulator": "13E1BE32-EB18-4C3D-90FC-CE7FDF99C9DE",
+  "genericBuildReused": "runtime-r2/build.log",
+  "selectedTests": [
+    "NativeCommunitySubmissionTests/escapedMutationRecoveryIsBoundedExactAndCommittedAbandonDoesNotUndo()"
+  ],
+  "fixtureOnly": true,
+  "deleted": true
+}

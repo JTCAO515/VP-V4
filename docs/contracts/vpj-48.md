@@ -2,6 +2,61 @@
 
 Related to #235. This is a server/API preparation slice, not public UGC acceptance.
 
+## Current J1 consumer extension (2026-10-05)
+
+The canonical closed request/output contract is `lib/server/community/contract.ts`;
+`lib/server/community/WIRE.md` records the coordinated producer semantics. J1 adds
+registered Native v2 `POST /api/community/native/v1` and Cookie-bound
+`POST /api/ops/community`, plus `/ops/community` and the native author consumer.
+Every ingress binds expected actor/session, verifies live authority before dispatch
+and checks again before releasing data. The original GET/unenveloped SQL protocol
+remains the PR #502 historical interface described below.
+
+New paginated `mine`/`queue` use ID keysets, 50+sentinel and explicit completeness;
+`read`/`inspect` return exact current submission, history and author-visible result.
+`experience` and `help` remain distinct text types. Trusted author/reviewer affiliation
+is independent of qualification; missing producer evidence is `unknown`/null.
+User-authored benefit disclosure is identified separately. Only new J1 review notes
+are author-visible; legacy internal notes are not disclosed. Stored `published`
+continues to mean **internally approved**, with `publiclyVisible:false` and
+`retrievalEligible:false`. There is no public feed, Fact promotion or Trip writer.
+Optional place association comes from an explicitly selected own saved canonical
+Trip reference qualified by the original mapping producer. Frozen current Trip head
+and mapping digest are rechecked at submit; changes require explicit reselection.
+The native picker reuses the original saved-place Bearer reader and does not Save
+or write a Trip. Unlinked submission is an explicit choice, never title matching.
+
+Mutation operations preserve exact original bytes, owner/session/epoch and operation
+ID. Status queries and atomic abandonment prevent unknown acknowledgements from
+creating a replacement mutation. Replay projects current state; withdrawal/erasure
+never restores old text. Ops saves the exact review request before sending, refuses
+new review while unresolved, and clears visible content on auth/lifecycle invalidation.
+The native author journal shares the same operation semantics in its owned scope.
+
+`export`/confirmed `delete` are owner-scoped module commands with explicit
+`community_module` / `complete_for_community` coverage and 100+sentinel capacity
+checks. Inventory: `lib/server/community/inventory.ts`. Erasure covers owned content,
+authored review text/attribution, place metadata and qualification/disclosure rows;
+minimal operation fences, submission tombstones and audit metadata remain to prevent
+resurrection. Foreign authors' content/status remains intact. All-account export
+jobs are explicitly **not enrolled**; these commands do not claim their completion.
+Owned cleanup remains available while the business switch is off, within the original
+configured local/native or Ops environment and current ordinary identity authority.
+
+The new SQL package is append-only and retains the original RPC signature/ACL.
+Private helpers/tables remain revoked; default switches are off, reviewer/source
+qualification is never seeded for a target. The verification entry points for SQL and Auth/HTTP integration
+are the package's disposable tests; observed results are reported separately in
+`artifacts/VPJ-48/j1-verification.md`. Target deployment, real producer identity,
+real-user/device and human acceptance remain separate from fixture proof. #235 remains
+open for J3 and #238 protection before any public publication.
+
+## Historical PR #502 preparation boundary (superseded scope)
+
+The following records what PR #502 delivered and left open at that time. Its older
+50-item list, absence of consumers/data handlers and broader remaining-gap statements
+are historical facts, not the current J1 interface.
+
 ## Interface and authority
 
 `GET /api/ops/community` reads only the authenticated author's latest 50 submissions.

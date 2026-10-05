@@ -167,6 +167,61 @@ final class NativeSession {
         credential = updated
     }
 
+    func communityActor() throws -> NativeCommunityActor {
+        guard let scope = dataScope else { throw NativeDataError.sessionUnavailable }
+        return .init(scope: scope, sessionID: try serviceCaseExportSessionId(actor: scope))
+    }
+    func communityRecovery(actor: NativeCommunityActor) throws -> NativeCommunityPending? {
+        guard try communityActor() == actor else { throw NativeDataError.staleSessionResponse }
+        return try NativeCommunityJournal(vault: vault).read(actor.scope, sessionID: actor.sessionID)
+    }
+    func rememberCommunity(body: Data, actor: NativeCommunityActor) throws -> NativeCommunityPending {
+        guard try communityActor() == actor else { throw NativeDataError.staleSessionResponse }
+        return try NativeCommunityJournal(vault: vault).retain(body: body, scope: actor.scope, sessionID: actor.sessionID)
+    }
+    func completeCommunity(_ pending: NativeCommunityPending, actor: NativeCommunityActor) throws {
+        guard try communityActor() == actor else { throw NativeDataError.staleSessionResponse }
+        try NativeCommunityJournal(vault: vault).complete(pending, scope: actor.scope, sessionID: actor.sessionID)
+    }
+    func communityRequest(body: Data, actor: NativeCommunityActor) async throws -> Data {
+        guard body.count <= NativeCommunityWire.maximumTransportBytes, !busy, try communityActor() == actor else { throw NativeDataError.sessionUnavailable }
+        let input = try NativeCommunityInput(body: body)
+        if let command = input.mutation {
+            guard try communityRecovery(actor: actor)?.body == command.body else { throw NativeDataError.sessionUnavailable }
+        }
+        if let original = input.recovery {
+            guard try communityRecovery(actor: actor)?.body == original.body else { throw NativeDataError.sessionUnavailable }
+        }
+        if let credential, credential.expiresAt <= Date().timeIntervalSince1970 + 10 { await validate() }
+        guard try communityActor() == actor, let credential, let endpoint else { throw NativeDataError.staleSessionResponse }
+        var request = URLRequest(url: endpoint.appendingPathComponent("api/community/native/v1"))
+        request.httpMethod = "POST"; request.httpBody = body; request.httpShouldHandleCookies = false; request.timeoutInterval = 30
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(credential.accessToken)", forHTTPHeaderField: "Authorization")
+        request.setValue(actor.scope.subject, forHTTPHeaderField: "x-community-expected-actor")
+        request.setValue(actor.sessionID, forHTTPHeaderField: "x-community-expected-session")
+        let started = ProcessInfo.processInfo.systemUptime
+        let (stream, response) = try await transport.bytes(for: request)
+        defer { stream.task.cancel() }
+        guard let http = response as? HTTPURLResponse, try communityActor() == actor else { throw NativeDataError.staleSessionResponse }
+        let cap = http.statusCode == 200 ? 1_000_000 : 4096
+        guard http.expectedContentLength <= Int64(cap) else { throw NativeDataError.invalidResponse }
+        var bytes = Data()
+        for try await byte in stream {
+            guard bytes.count < cap, try communityActor() == actor, !Task.isCancelled, ProcessInfo.processInfo.systemUptime - started < 30 else { throw NativeDataError.staleSessionResponse }
+            bytes.append(byte)
+        }
+        guard try communityActor() == actor else { throw NativeDataError.staleSessionResponse }
+        if http.statusCode != 200 {
+            let error = try? NativeCommunityWire.object(JSONSerialization.jsonObject(with: bytes), ["error"])
+            let code = error?["error"] as? String ?? "COMMUNITY_UNAVAILABLE"
+            if http.statusCode == 401 { handle(SessionError.denied) }
+            throw NativeDataError.server(code: code)
+        }
+        _ = try NativeCommunityOutcome.decode(bytes, actor: actor)
+        return bytes
+    }
+
     func serviceCaseRequest(body: Data) async throws -> Data {
         try await dataRequest(prefix: "api/service-cases/native/v1", path: "api/service-cases/native/v1", method: "POST", body: body)
     }
@@ -1400,6 +1455,8 @@ final class NativeSession {
         do { try entryResume.erase(preservingUnclaimedID: preservingAnonymousResume) }
         catch { failureCode="entryResumeCleanupRequired";status="storageError";return false }
         subject=nil; mobileEpoch=nil; displayName=nil
+        do { try NativeCommunityExportFile.eraseAll() }
+        catch { failureCode="communityExportCleanupRequired"; status="storageError"; return false }
         do { try NativePDFInbox().eraseAll() }
         catch { failureCode="pdfIntakeCleanupRequired";status="storageError";return false }
         do { try deviceMaterials.eraseAll() }
@@ -1410,6 +1467,8 @@ final class NativeSession {
         memoryPreferences.clear()
         exploreAskHandoff=nil
         if let owner = credential?.subject ?? defaults.string(forKey: storageKey) ?? defaults.string(forKey: storageKey + ".pendingJournalCleanupOwner") ?? defaults.string(forKey: storageKey + ".recoveryCleanupOwner") {
+            do { try NativeCommunityJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
+            catch { failureCode="communityJournalCleanupRequired"; status="storageError"; return false }
             if preservePendingJournals {
                 // Noncredential cleanup index only. It cannot restore a session or authorize a journal read.
                 defaults.set(owner, forKey: storageKey + ".pendingJournalCleanupOwner")

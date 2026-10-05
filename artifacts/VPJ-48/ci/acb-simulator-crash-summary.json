@@ -1,0 +1,133 @@
+{
+  "runId": 37333453936,
+  "jobId": 111842129926,
+  "head": "acb5ea215810215eb29e928ecea37e5b36fbb3d2",
+  "failure": "NativeAskPersistenceTests/testActualDeviceOnlyKeychainPersistsAcrossSessionRecreation",
+  "exception": {
+    "codes": "0x0000000000000000, 0x0000000000000000",
+    "rawCodes": [
+      0,
+      0
+    ],
+    "type": "EXC_CRASH",
+    "signal": "SIGABRT"
+  },
+  "faultingThread": 16,
+  "frames": [
+    {
+      "image": "libsystem_kernel.dylib",
+      "symbol": "__pthread_kill",
+      "imageOffset": 34976
+    },
+    {
+      "image": "libsystem_pthread.dylib",
+      "symbol": "pthread_kill",
+      "imageOffset": 25464
+    },
+    {
+      "image": "libsystem_c.dylib",
+      "symbol": "abort",
+      "imageOffset": 473476
+    },
+    {
+      "image": "libsystem_malloc.dylib",
+      "symbol": "malloc_vreport",
+      "imageOffset": 237088
+    },
+    {
+      "image": "libsystem_malloc.dylib",
+      "symbol": "malloc_report",
+      "imageOffset": 237536
+    },
+    {
+      "image": "libsystem_malloc.dylib",
+      "symbol": "___BUG_IN_CLIENT_OF_LIBMALLOC_POINTER_BEING_FREED_WAS_NOT_ALLOCATED",
+      "imageOffset": 16452
+    },
+    {
+      "image": "libswiftCore.dylib",
+      "symbol": "_swift_release_dealloc",
+      "imageOffset": 122824
+    },
+    {
+      "image": "libswiftCore.dylib",
+      "symbol": "bool swift::RefCounts<swift::RefCountBitsT<(swift::RefCountInlinedness)1>>::doDecrementSlow<(swift::PerformDeinit)1>(swift::RefCountBitsT<(swift::RefCountInlinedness)1>, unsigned int)",
+      "imageOffset": 125676
+    },
+    {
+      "image": "AXCoreUtilities",
+      "symbol": null,
+      "imageOffset": 677776
+    },
+    {
+      "image": "AXCoreUtilities",
+      "symbol": null,
+      "imageOffset": 676820
+    },
+    {
+      "image": "AXCoreUtilities",
+      "symbol": null,
+      "imageOffset": 677952
+    },
+    {
+      "image": "TextToSpeech",
+      "symbol": null,
+      "imageOffset": 221052
+    },
+    {
+      "image": "Foundation",
+      "symbol": "__NSThreadPerformPerform",
+      "imageOffset": 9523788
+    },
+    {
+      "image": "CoreFoundation",
+      "symbol": "__CFRUNLOOP_IS_CALLING_OUT_TO_A_SOURCE0_PERFORM_FUNCTION__",
+      "imageOffset": 606044
+    },
+    {
+      "image": "CoreFoundation",
+      "symbol": "__CFRunLoopDoSource0",
+      "imageOffset": 605860
+    },
+    {
+      "image": "CoreFoundation",
+      "symbol": "__CFRunLoopDoSources0",
+      "imageOffset": 603700
+    },
+    {
+      "image": "CoreFoundation",
+      "symbol": "__CFRunLoopRun",
+      "imageOffset": 600072
+    },
+    {
+      "image": "CoreFoundation",
+      "symbol": "_CFRunLoopRunSpecificWithOptions",
+      "imageOffset": 579844
+    },
+    {
+      "image": "Foundation",
+      "symbol": "-[NSRunLoop(NSRunLoop) runMode:beforeDate:]",
+      "imageOffset": 9370188
+    },
+    {
+      "image": "TextToSpeech",
+      "symbol": null,
+      "imageOffset": 112444
+    },
+    {
+      "image": "Foundation",
+      "symbol": "__NSThread__start__",
+      "imageOffset": 9522908
+    },
+    {
+      "image": "libsystem_pthread.dylib",
+      "symbol": "_pthread_start",
+      "imageOffset": 26240
+    },
+    {
+      "image": "libsystem_pthread.dylib",
+      "symbol": "thread_start",
+      "imageOffset": 6792
+    }
+  ]
+}
