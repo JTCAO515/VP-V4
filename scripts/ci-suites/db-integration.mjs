@@ -80,6 +80,7 @@ export const LANES = {
           "tests/integration/community/review.test.mjs",
           "tests/integration/community/submission-j1-postgres.test.mjs",
           "tests/integration/community/safety-j2-postgres.test.mjs",
+          "tests/integration/community/frontier-lock-postgres.test.mjs",
           "tests/integration/community/publication-j3j4-postgres.test.mjs",
           "tests/integration/cost/durable-budget.test.mjs",
           "tests/integration/intake/intake.test.mjs",

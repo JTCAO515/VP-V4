@@ -1,0 +1,13 @@
+✔ default closed, explicit reviewer qualification, live registered session and private ACL (6654.492375ms)
+✔ author pending → independent internal publication → withdraw; projections and replay cannot resurrect body (774.710042ms)
+✔ rejection and pending withdrawal are terminal; forged body fields fail in direct RPC (617.537625ms)
+✔ opposing reviews and withdrawal/review race commit exactly one transition (270.091917ms)
+✔ audit fault rolls back content, transition and receipt; gate rollback denies saved data (510.828792ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 8931.693708
