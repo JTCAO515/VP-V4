@@ -357,7 +357,7 @@ begin
  if action_n='recover' then
  perform 1 from public.trips where id=trip_n and owner_id=u for update nowait;
  request_digest_n:=encode(sha256(convert_to(v->>'mutationBytes','UTF8')),'hex');
- select * into r from material_exit_private.requests_v1 where request_id=req for share nowait;
+ select * into r from material_exit_private.requests_v1 where owner_id=u and request_id=req for share nowait;
  if found then
  if r.owner_id<>u or r.session_id<>s or r.mobile_epoch<>epoch_n or r.trip_id<>trip_n or r.scope<>scope_n or r.object_ids<>ids
  then raise exception 'MATERIAL_REQUEST_CONFLICT';end if;
