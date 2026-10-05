@@ -17,6 +17,9 @@ export function draftTripPatch(base: TripSnapshot, draft: TripSnapshot): TripPat
       const old = previous?.items?.find(value => value.id === item.id);
       if (!old || old.title !== item.title || old.startsAt !== item.startsAt || old.endsAt !== item.endsAt) operations.push({ kind: "upsert_item", itemId: item.id, dayId: day.id, title: item.title, ...(item.startsAt ? { startsAt: item.startsAt } : {}), ...(item.endsAt ? { endsAt: item.endsAt } : {}) });
     }
+    const beforeOrder = previous?.items?.map(item => item.id) ?? [];
+    const afterOrder = (day.items ?? []).map(item => item.id);
+    if (JSON.stringify(beforeOrder) !== JSON.stringify(afterOrder) && ((day.items ?? []).some(item => item.manualOrder !== undefined) || beforeOrder.length === afterOrder.length && beforeOrder.every(id => afterOrder.includes(id)))) operations.push({ kind: "reorder_items", dayId: day.id, itemIds: afterOrder });
   }
   return { expectedVersion: base.version, operations };
 }
