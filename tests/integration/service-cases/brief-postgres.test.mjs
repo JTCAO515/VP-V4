@@ -8,6 +8,7 @@ import {command,sql} from '../cost/fixtures/postgres-rpc.mjs';
 const enabled=process.env.VP_TRAVELER_BRIEF_DB_TEST==='1';
 const container=process.env.VP_TRAVELER_BRIEF_TEST_CONTAINER||'vp223-'+uuid().slice(0,8);let created=false;
 const migration='20261005060000_traveler_brief.sql';
+const clockMigration='20261005081000_traveler_brief_export_clock.sql';
 const db=async q=>{const r=await sql(container,q);assert.equal(r.code,0,r.stderr);return r.stdout.trim();};
 const lit=x=>x===null?'null':typeof x==='number'?String(x):"'"+(typeof x==='object'?JSON.stringify(x):String(x)).replaceAll("'","''")+"'";
 const claims=a=>`set request.jwt.claim.sub='${a.id}';set request.jwt.claim.role='authenticated';set request.jwt.claims='${JSON.stringify({session_id:a.session,is_anonymous:false,role:'authenticated'})}';`;
@@ -26,7 +27,14 @@ before(async()=>{
   for(const name of readdirSync('supabase/migrations').filter(n=>n.endsWith('.sql')).sort()){
    const source=readFileSync('supabase/migrations/'+name,'utf8');
    if(name===migration){await db('begin;'+source+'rollback;');assert.equal(await db("select to_regnamespace('service_brief_private') is null;"),'t');}
-   await db('begin;'+source+'commit;');
+   if(name===clockMigration){
+    const definition=await db("select md5(pg_get_functiondef('service_brief_private.export(uuid,uuid,uuid)'::regprocedure));");
+    const acl=await db("select proacl::text from pg_proc where oid='service_brief_private.export(uuid,uuid,uuid)'::regprocedure;");
+    await db('begin;'+source+'rollback;');
+    assert.equal(await db("select md5(pg_get_functiondef('service_brief_private.export(uuid,uuid,uuid)'::regprocedure));"),definition,'clock migration rollback preserves original function');
+    await db('begin;'+source+'commit;');
+    assert.equal(await db("select proacl::text from pg_proc where oid='service_brief_private.export(uuid,uuid,uuid)'::regprocedure;"),acl,'clock migration preserves original ACL');
+   }else await db('begin;'+source+'commit;');
   }
  }
 });
@@ -239,7 +247,7 @@ run('real correction/revoke/read/delete/session/account lock races; original wri
 });
 run('export exact 30s lease, reference-only projection, invalidation after source/audit/data change, complete bounds',async()=>{
  const f=await fixture(),m=await memory(f.a),p=await preview(f,{...sources,memories:[{id:m.id,revision:1}]}),v=shareInput(f,p,['memory:'+m.id]);await call(f.a,v);
- const req={action:'export',requestId:uuid(),confirmed:true},out=await call(f.a,req);assert.deepEqual(await call(f.a,req),out);assert.ok(out.expiresAt-out.capturedAt<=30000);assert.equal(out.corePackageEnrollment,'not_enrolled');
+ const req={action:'export',requestId:uuid(),confirmed:true},out=await call(f.a,req);assert.deepEqual(await call(f.a,req),out);assert.equal(out.expiresAt-out.capturedAt,30000);assert.equal(await db(`select expires_at-captured_at=interval '30 seconds' from service_brief_private.export_leases where owner_id='${f.a.id}' and session_id='${f.a.session}' and request_id='${req.requestId}';`),'t','SQL microsecond lease duration is exactly 30 seconds');assert.equal(out.corePackageEnrollment,'not_enrolled');
  assert.equal(JSON.stringify(out).includes('Synthetic explicit preference'),false);assert.equal(out.rows.find(x=>x.domain==='brief').value.sources.memories[0].id,m.id);
  await briefRead(f);await rejects(f.a,req,'BRIEF_STALE');
  const r2={...req,requestId:uuid()};await call(f.a,r2);await db(`begin;${claims(f.a)}set role authenticated;select public.revoke_memory_retrieval_consent('${m.consent}');commit;`);await rejects(f.a,r2,'BRIEF_STALE');
