@@ -1,6 +1,6 @@
 {
   "schemaVersion": "data-coverage/1",
-  "catalogVersion": "data-coverage-catalog/2026-10-06.4",
+  "catalogVersion": "data-coverage-catalog/2026-10-06.5",
   "actorId": "00000000-0000-4000-8000-000000000001",
   "sessionId": "00000000-0000-4000-8000-000000000002",
   "mobileEpoch": 1,
@@ -308,18 +308,22 @@
     {
       "id": "coverage_progress",
       "location": "server",
-      "version": "coverage-module-export/1",
-      "scope": "coverage_export_progress",
-      "exportHandler": null,
-      "deleteHandler": null,
-      "selection": "owner",
-      "capacity": "source-free requests/sections expire30s; immutable request fences retained until original session/account revocation",
+      "version": "coverage-progress-data/1",
+      "scope": "coverage-progress-data/1",
+      "exportHandler": "coverage_progress",
+      "deleteHandler": "coverage_progress",
+      "selection": "coverage_records",
+      "capacity": "1..20 selected owner collector/exit requests; all metadata/fence preview; exact bytes/source CAS; 5/page, 4 pages, 1MB; fixed30s; selected transient erasure",
       "retention": [
-        "request_id_owner_session_scope_expiry_fence"
+        "original_request_id_owner_session_scope_expiry_fences",
+        "nonreplayable_exit_bindings_selection_digests_decision_receipts",
+        "original_session_account_cascade_semantics"
       ],
       "missing": [
-        "single_request_receipts_only",
-        "owner_progress_inventory_exit_not_implemented"
+        "unselected_progress_records",
+        "source_data_in_separate_domains",
+        "external_export_files",
+        "backup_restore_target_acceptance"
       ]
     },
     {
