@@ -651,6 +651,16 @@ struct NativeTripView: View {
                 Text(detail.trip.id).font(.caption).textSelection(.enabled).accessibilityIdentifier("trip.selected.id")
                 if detail.confirmationState == "confirmed" {
                     NavigationLink {
+                        NativeTranslationView(initialTripID: detail.trip.id, initialTripScope: session.dataScope,
+                                              initialTripVersion: detail.trip.headVersion)
+                    } label: {
+                        Label(text("Translate a selected field", "翻译所选字段"), systemImage: "character.bubble")
+                    }
+                    .disabled(store.scope != session.dataScope || store.busy || store.draft != nil || store.pending != nil
+                              || store.hasUncertainProposal || store.deletionRequest != nil || store.deletionReceipt != nil
+                              || !store.archiveAvailable || store.archive != nil)
+                    .accessibilityIdentifier("trip.translation")
+                    NavigationLink {
                         NativeTodayView(store: store, tripID: detail.trip.id)
                     } label: {
                         Label(text("Open Today", "打开今日"), systemImage: "sun.max")

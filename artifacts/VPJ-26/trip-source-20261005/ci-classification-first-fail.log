@@ -1,0 +1,18 @@
+deterministic-pr-gates	Select checks from the actual changed paths	﻿2026-10-05T06:12:59.6720420Z ##[group]Run node scripts/ci-change-scope.mjs
+deterministic-pr-gates	Select checks from the actual changed paths	2026-10-05T06:12:59.6720886Z ^[[36;1mnode scripts/ci-change-scope.mjs^[[0m
+deterministic-pr-gates	Select checks from the actual changed paths	2026-10-05T06:12:59.7033111Z shell: /usr/bin/bash -e {0}
+deterministic-pr-gates	Select checks from the actual changed paths	2026-10-05T06:12:59.7033487Z env:
+deterministic-pr-gates	Select checks from the actual changed paths	2026-10-05T06:12:59.7033814Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+deterministic-pr-gates	Select checks from the actual changed paths	2026-10-05T06:12:59.7034223Z   VP_CI_EVENT: pull_request
+deterministic-pr-gates	Select checks from the actual changed paths	2026-10-05T06:12:59.7034564Z   VP_CI_BASE: 85e7ec6b7969a9a5796d07c58c8b8880bada1d73
+deterministic-pr-gates	Select checks from the actual changed paths	2026-10-05T06:12:59.7034979Z   VP_CI_HEAD: ae9f4d24d348c378c1d6e4ad3e934cdb8dca33c6
+deterministic-pr-gates	Select checks from the actual changed paths	2026-10-05T06:12:59.7035367Z ##[endgroup]
+deterministic-pr-gates	Select checks from the actual changed paths	2026-10-05T06:12:59.7693301Z file:///home/runner/work/VP-V4/VP-V4/scripts/ci-change-scope.mjs:104
+deterministic-pr-gates	Select checks from the actual changed paths	2026-10-05T06:12:59.7694464Z  const {classify}=await import('./ci-suites/db-integration.mjs');const classification=classify();if(classification.problems.length)throw Error(classification.problems.join('\n'));
+deterministic-pr-gates	Select checks from the actual changed paths	2026-10-05T06:12:59.7695469Z                                                                                                                                          ^
+deterministic-pr-gates	Select checks from the actual changed paths	2026-10-05T06:12:59.7695870Z 
+deterministic-pr-gates	Select checks from the actual changed paths	2026-10-05T06:12:59.7696449Z Error: tests/integration/translate/trip-source-http.test.mjs can skip itself but is neither in a db-integration lane nor in EXCLUDED
+deterministic-pr-gates	Select checks from the actual changed paths	2026-10-05T06:12:59.7697229Z     at file:///home/runner/work/VP-V4/VP-V4/scripts/ci-change-scope.mjs:104:138
+deterministic-pr-gates	Select checks from the actual changed paths	2026-10-05T06:12:59.7697558Z 
+deterministic-pr-gates	Select checks from the actual changed paths	2026-10-05T06:12:59.7697657Z Node.js v22.23.3
+deterministic-pr-gates	Select checks from the actual changed paths	2026-10-05T06:12:59.7736717Z ##[error]Process completed with exit code 1.
