@@ -1,4 +1,4 @@
-export type TripItem = Readonly<{ id: string; dayId: string; title: string; startsAt?: string; endsAt?: string }>;
+export type TripItem = Readonly<{ id: string; dayId: string; title: string; startsAt?: string; endsAt?: string; manualOrder?: number }>;
 export type TripDay = Readonly<{ id: string; date: string; timeZone?: string; items?: readonly TripItem[] }>;
 export type TripSnapshot = Readonly<{ version: number; title: string; days: readonly TripDay[] }>;
 export type TripPatchOperation =
@@ -6,7 +6,8 @@ export type TripPatchOperation =
   | Readonly<{ kind: "upsert_day"; dayId: string; date: string; timeZone?: string }>
   | Readonly<{ kind: "delete_day"; dayId: string }>
   | Readonly<{ kind: "upsert_item"; itemId: string; dayId: string; title: string; startsAt?: string; endsAt?: string }>
-  | Readonly<{ kind: "delete_item"; itemId: string; dayId: string }>;
+  | Readonly<{ kind: "delete_item"; itemId: string; dayId: string }>
+  | Readonly<{ kind: "reorder_items"; dayId: string; itemIds: readonly string[] }>;
 export type TripPatch = Readonly<{ expectedVersion: number; operations: readonly TripPatchOperation[] }>;
 
 export class InvalidTripPatchError extends Error {}
@@ -33,7 +34,15 @@ export function applyPatch(snapshot: TripSnapshot, patch: TripPatch): TripSnapsh
       case "set_title": title = operation.title.trim(); break;
       case "upsert_day": { const previous = days.get(operation.dayId); days.set(operation.dayId, { id: operation.dayId, date: operation.date, ...(operation.timeZone ? { timeZone: operation.timeZone } : {}), items: previous?.items ?? [] }); break; }
       case "delete_day": if (!days.delete(operation.dayId)) fail("day not found"); break;
-      case "upsert_item": { const day = days.get(operation.dayId); if (!day) fail("item day not found"); const items = new Map((day.items ?? []).map((item) => [item.id, item])); items.set(operation.itemId, itemFrom(operation)); days.set(day.id, { ...day, items: [...items.values()] }); break; }
+      case "upsert_item": { const day = days.get(operation.dayId); if (!day) fail("item day not found"); const items = new Map((day.items ?? []).map((item) => [item.id, item])); items.set(operation.itemId, { ...itemFrom(operation), ...(items.get(operation.itemId)?.manualOrder !== undefined ? { manualOrder: items.get(operation.itemId)!.manualOrder } : {}) }); days.set(day.id, { ...day, items: [...items.values()] }); break; }
+      case "reorder_items": {
+        const day = days.get(operation.dayId);
+        if (!day || operation.itemIds.length !== day.items.length || operation.itemIds.some(id => !day.items.some(item => item.id === id))) fail("invalid order");
+        const before = freezeDay(day!).items ?? [];
+        const ordered = freezeDay({ ...day!, items: operation.itemIds.map((id, manualOrder) => { const item = before.find(value => value.id === id)!; return before.findIndex(value => value.id === id) === manualOrder ? item : { ...item, manualOrder }; }) });
+        if (JSON.stringify(ordered.items?.map(item => item.id)) !== JSON.stringify(operation.itemIds)) fail("order conflict");
+        days.set(day!.id, { ...ordered, items: [...(ordered.items ?? [])] }); break;
+      }
       case "delete_item": { const day = days.get(operation.dayId); if (!day) fail("item day not found"); const items = new Map((day.items ?? []).map((item) => [item.id, item])); if (!items.delete(operation.itemId)) fail("item not found"); days.set(day.id, { ...day, items: [...items.values()] }); }
     }
   }
@@ -50,6 +59,7 @@ function assertOperation(operation: unknown): asserts operation is TripPatchOper
     case "upsert_day": if (!hasOnlyKeys(operation, ["kind", "dayId", "date", "timeZone"]) || !validId(operation.dayId) || !validDate(operation.date) || (operation.timeZone !== undefined && !validTimeZone(operation.timeZone))) fail("invalid day"); return;
     case "delete_day": if (!hasOnlyKeys(operation, ["kind", "dayId"]) || !validId(operation.dayId)) fail("dayId required"); return;
     case "upsert_item": if (!hasOnlyKeys(operation, ["kind", "itemId", "dayId", "title", "startsAt", "endsAt"]) || !validId(operation.itemId) || !validId(operation.dayId) || !validTitle(operation.title) || !validWindow(operation.startsAt, operation.endsAt)) fail("invalid item"); return;
+    case "reorder_items": if (!hasOnlyKeys(operation, ["kind", "dayId", "itemIds"]) || !validId(operation.dayId) || !Array.isArray(operation.itemIds) || operation.itemIds.length > 500 || !operation.itemIds.every(validId) || new Set(operation.itemIds).size !== operation.itemIds.length) fail("invalid order"); return;
     case "delete_item": if (!hasOnlyKeys(operation, ["kind", "itemId", "dayId"]) || !validId(operation.itemId) || !validId(operation.dayId)) fail("invalid item"); return;
     default: fail("unknown operation");
   }
@@ -62,12 +72,15 @@ function assertSnapshot(snapshot: TripSnapshot): void {
     if (!isRecord(day) || !validId(day.id) || !validDate(day.date) || (day.timeZone !== undefined && !validTimeZone(day.timeZone)) || ids.has(day.id) || dates.has(day.date) || !Array.isArray(day.items ?? [])) fail("invalid snapshot day");
     ids.add(day.id); dates.add(day.date);
     const items: readonly unknown[] = Array.isArray(day.items) ? day.items : [];
-    for (const item of items) { if (!isRecord(item) || !validId(item.id) || item.dayId !== day.id || !validTitle(item.title) || !validWindow(item.startsAt, item.endsAt) || itemIds.has(item.id)) fail("invalid snapshot item"); itemIds.add(item.id); }
+    for (const item of items) { if (!isRecord(item) || !validId(item.id) || item.dayId !== day.id || !validTitle(item.title) || !validWindow(item.startsAt, item.endsAt) || (item.manualOrder !== undefined && (!Number.isSafeInteger(item.manualOrder) || Number(item.manualOrder) < 0 || Number(item.manualOrder) > 2147483647)) || itemIds.has(item.id)) fail("invalid snapshot item"); itemIds.add(item.id); }
   }
 }
 
 function itemFrom(operation: Extract<TripPatchOperation, { kind: "upsert_item" }>): TripItem { return { id: operation.itemId, dayId: operation.dayId, title: operation.title.trim(), ...(operation.startsAt ? { startsAt: operation.startsAt } : {}), ...(operation.endsAt ? { endsAt: operation.endsAt } : {}) }; }
-function freezeDay(day: TripDay): TripDay { return Object.freeze({ ...day, ...(day.items ? { items: Object.freeze([...day.items].sort((left, right) => left.id.localeCompare(right.id)).map((item) => Object.freeze({ ...item }))) } : {}) }); }
+function freezeDay(day: TripDay): TripDay {
+  const legacyIds = [...(day.items ?? [])].map(item => item.id).sort((a,b) => a.localeCompare(b));
+  return Object.freeze({ ...day, ...(day.items ? { items: Object.freeze([...day.items].sort((left, right) => (left.manualOrder ?? legacyIds.indexOf(left.id)) - (right.manualOrder ?? legacyIds.indexOf(right.id)) || left.id.localeCompare(right.id)).map((item) => Object.freeze({ ...item }))) } : {}) });
+}
 function compareDay(left: TripDay, right: TripDay): number { return left.date.localeCompare(right.date) || left.id.localeCompare(right.id); }
 function validId(value: unknown): value is string { return typeof value === "string" && ID.test(value); }
 function validTitle(value: unknown): value is string { return typeof value === "string" && value.trim().length > 0 && value.trim().length <= 160; }

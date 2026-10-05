@@ -34,6 +34,7 @@ export function snapshotRestorePatch(before: TripSnapshot, target: TripSnapshot)
     ...target.days.flatMap(day => [
       { kind: "upsert_day" as const, dayId: day.id, date: day.date, ...(day.timeZone ? { timeZone: day.timeZone } : {}) },
       ...(day.items ?? []).map(item => ({ kind: "upsert_item" as const, itemId: item.id, dayId: day.id, title: item.title, ...(item.startsAt ? { startsAt: item.startsAt } : {}), ...(item.endsAt ? { endsAt: item.endsAt } : {}) })),
+      ...(day.items?.some(item => item.manualOrder !== undefined) ? [{ kind: "reorder_items" as const, dayId: day.id, itemIds: [...day.items].sort((a,b) => (a.manualOrder ?? Number.MAX_SAFE_INTEGER) - (b.manualOrder ?? Number.MAX_SAFE_INTEGER) || a.id.localeCompare(b.id)).map(item => item.id) }] : []),
     ]),
   ] };
 }

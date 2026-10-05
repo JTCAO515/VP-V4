@@ -42,6 +42,7 @@ struct NativeOfflineTripDraft:Codable,Equatable {
         func title(_ value:String?)->Bool{value.map{!$0.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty && $0.utf16.count<=160}==true}
         for op in operations {
             switch op.kind {
+            case .reorderItems: return false
             case .setTitle:guard title(op.title),op.dayId==nil,op.date==nil,op.timeZone==nil,op.itemId==nil,op.startsAt==nil,op.endsAt==nil else{return false}
             case .deleteDay:guard identifier(op.dayId),op.title==nil,op.date==nil,op.timeZone==nil,op.itemId==nil,op.startsAt==nil,op.endsAt==nil else{return false}
             case .upsertDay:
@@ -263,6 +264,7 @@ enum NativeOfflineDraftRecovery {
         var draft=NativeTripDraft(detail)
         for op in local.operations {
             switch op.kind {
+            case .reorderItems: throw NativeOfflineTripError.invalidInput
             case .setTitle:draft.title=op.title!
             case .deleteDay:draft.days.removeAll{$0.id==op.dayId}
             case .upsertDay:

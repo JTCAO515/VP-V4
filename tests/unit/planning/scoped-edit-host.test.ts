@@ -1,0 +1,40 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { createHostedScopedEditWorker, parseScopedHostedProfile } from '../../../lib/server/turn/scoped-edit/hosted-job.ts';
+const id=(n:number)=>`00000000-0000-4000-8000-${String(n).padStart(12,'0')}`;
+const profile={schemaVersion:'vpj10-hosted-scoped-edit/1',loop:{schemaVersion:'vpj07-hosted-text-worker/1',pollIntervalMs:1000,maxLifetimeMs:60000,drainMs:0,concurrency:1,groupLimit:1,modes:['current_input_v1'],qwen:{priceVersion:'reviewed',pricing:{mode:'flat',inputMicrosPerMillion:1,outputMicrosPerMillion:2,cachedInputMicrosPerMillion:null},reservedMicros:1000,maxOutputTokens:1024,timeoutMs:1000,configurationId:id(3),configurationVersion:1}},target:{ownerId:id(1),policyId:id(2),scopeId:id(4)}};
+const endpoint='https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
+function deps(signal:AbortController, enabled=false){const paths:string[]=[];let providerKeys=0;return {paths,get providerKeys(){return providerKeys;},dependencies:{scopedEditEnabled:true,workerId:id(5),build:'local-closed-test',startedAt:'2026-10-05T04:00:00.000Z',qwenEndpoint:endpoint,workerCredential:()=> 'synthetic-service-key',providerCredential:()=>{providerKeys++;return 'synthetic-provider-key';},journal:{job:async()=>{},usage:async()=>{},knowledge:async()=>{},destination:async()=>{},planningUsage:async()=>{},event:async()=>{}},fetch:async(input:RequestInfo|URL)=>{const path=String(input).split('/').at(-1)!;paths.push(path);if(path==='hosted_worker_heartbeat'){signal.abort();return Response.json({kind:'ok',enabled});}throw Error('unexpected dispatch');}}};}
+test('closed profile requires explicit new schema and target; original profile stays separate',()=>{assert.ok(parseScopedHostedProfile(profile));assert.throws(()=>parseScopedHostedProfile({...profile,target:{...profile.target,ready:true}}));assert.throws(()=>parseScopedHostedProfile({...profile,enabled:true}));});
+test('mode remains default off and construction reads no credentials',()=>{const c=new AbortController(),f=deps(c),p=parseScopedHostedProfile(profile);assert.throws(()=>createHostedScopedEditWorker(p,{...f.dependencies,scopedEditEnabled:undefined}));assert.equal(f.paths.length,0);assert.equal(f.providerKeys,0);});
+test('original stop/heartbeat loop stops before discovery or claim; provider secret remains unread',async()=>{const c=new AbortController(),f=deps(c);const run=createHostedScopedEditWorker(parseScopedHostedProfile(profile),f.dependencies);const result=await run(c.signal);assert.equal(result.reason,'stopped');assert.ok(f.paths.length>0);assert.ok(f.paths.every(p=>p==='hosted_worker_heartbeat'));assert.equal(f.providerKeys,0);});
+test('first SQL heartbeat enabled cannot arm file-secret startup',async()=>{const c=new AbortController(),f=deps(c,true);const run=createHostedScopedEditWorker(parseScopedHostedProfile(profile),{...f.dependencies,requireInitialDisabled:true});const result=await run(c.signal);assert.equal(result.polls,0);assert.equal(f.providerKeys,0);});
+test('existing host loop completes one synthetic candidate using canonical destination metadata and original queue',async()=>{
+ const stop=new AbortController(),calls:string[]=[];let output:Record<string,unknown>|null=null,savedUsage:Record<string,unknown>|null=null,completed=false,providerCalls=0;
+ const base={version:1,title:'Current Trip',days:[{id:'day',date:'2026-10-06',items:[{id:'selected',dayId:'day',title:'Existing item'}]}]};
+ const context={kind:'scoped_edit_context/1',contextId:id(6),contextDigest:'a'.repeat(64),tripId:id(7),baseVersion:1,scope:{dayIds:[],itemIds:['selected']},snapshot:base,orderedItemIdsByDay:[{dayId:'day',itemIds:['selected']}],lockedItemIds:[],fixedItemIds:[],sourceBasis:{profileUpdatedAt:null,memoryBasisDigest:'b'.repeat(64),reservationBasisDigest:'c'.repeat(64),sourceDigest:'d'.repeat(64),lockRevision:0,fixedBindings:[]},expiresAt:new Date(Date.now()+300000).toISOString()};
+ const binding={ownerId:id(1),taskId:id(8),turnId:id(9),leaseToken:id(10),operationId:id(11),contextId:id(6),contextDigest:'a'.repeat(64),sourceDigest:'d'.repeat(64),tripId:id(7),baseVersion:1,policyId:id(2),scopeId:id(4),attemptId:id(12),provider:'qwen',model:'qwen3.7-plus-2026-05-26',priceVersion:'reviewed'};
+ const input={kind:'scoped_edit_input/1',binding,context,text:'Remove the selected item',locale:'en',profile:null,memory:[],endpoint,reservedMicros:1000,timeoutMs:1000,maxOutputTokens:1024};
+ const edits=[{kind:'remove_item',itemId:'selected'}];
+ const dependencies={scopedEditEnabled:true,workerId:id(5),build:'synthetic',startedAt:new Date().toISOString(),qwenEndpoint:endpoint,workerCredential:()=> 'synthetic-service-key',providerCredential:()=> 'synthetic-provider-key',journal:{job:async()=>{},usage:async()=>{},knowledge:async()=>{},destination:async()=>{},planningUsage:async()=>{},event:async()=>{}},fetch:async(url:RequestInfo|URL,init?:RequestInit)=>{
+  if(String(url)===endpoint){providerCalls++;return Response.json({model:binding.model,usage:{prompt_tokens:100,completion_tokens:10,total_tokens:110},choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:JSON.stringify({kind:'candidate',edits})}}]});}
+  const name=String(url).split('/').at(-1)!;calls.push(name);const p=JSON.parse(String(init?.body));
+  switch(name){
+   case 'hosted_worker_heartbeat':if(completed)stop.abort();return Response.json({kind:'ok',enabled:true});
+   case 'hosted_scoped_trip_edit_target_v1':return Response.json({kind:'ready'});
+   case 'claim_scoped_trip_edit_work_v1':return Response.json({kind:'leased',ownerId:id(1),turnId:id(9),leaseToken:id(10),attempt:1,leaseMs:30000});
+   case 'read_scoped_trip_edit_work_v1':return Response.json(input);
+   case 'authorize_scoped_trip_edit_effect_v1':return Response.json({kind:'authorized',binding,effect:p.p_effect});
+   case 'read_scoped_trip_edit_output_v1':return Response.json(output??{kind:'missing'});
+   case 'record_scoped_trip_edit_usage_v1':savedUsage={kind:'saved_usage',binding,usage:p.p_usage,actualMicros:p.p_actual_micros,outcome:p.p_outcome};return Response.json({kind:'usage_saved'});
+   case 'read_scoped_trip_edit_usage_v1':return Response.json(savedUsage??{kind:'missing'});
+   case 'scoped_trip_edit_budget_v1':if(p.p_effect==='reserve')return Response.json({kind:'reserved'});if(p.p_effect==='dispatch')return Response.json({kind:'dispatched'});if(p.p_outcome==='settle'){output!.accounting='settled';return Response.json({kind:'settled',overrun:false});}return Response.json({kind:'pending'});
+   case 'record_scoped_trip_edit_destination_v1':assert.equal(p.p_request_id,binding.attemptId);assert.match(p.p_payload_digest,/^[a-f0-9]{64}$/);assert.equal(JSON.parse(p.p_payload_text).messages[1].content.includes(input.text),true);return Response.json({kind:'destination_recorded',attemptId:binding.attemptId,invocationId:p.p_destination.invocationId,phase:p.p_destination.phase});
+   case 'record_scoped_trip_edit_output_v1':output={kind:'saved_output',binding,output:p.p_output,usage:p.p_usage,actualMicros:p.p_actual_micros,accounting:'pending'};return Response.json(output);
+   case 'complete_scoped_trip_edit_work_v1':completed=true;return Response.json({kind:'candidate_saved',binding,receipt:{kind:'scoped_edit_candidates/1',operationId:binding.operationId,tripId:binding.tripId,contextId:binding.contextId,contextDigest:binding.contextDigest,baseVersion:1,expiresAt:context.expiresAt,returnScope:context.scope,candidates:[{candidateId:binding.attemptId,edits,diff:{changes:[{kind:'removed',itemId:'selected',before:base.days[0].items[0],after:null}],preservedItemIds:[],transferImpact:'pending',walkingImprovement:'unverified',externalOrderEffect:'none'}}],reused:false}});
+   default:throw Error('Unexpected '+name);
+  }
+ }};
+ const run=createHostedScopedEditWorker(parseScopedHostedProfile(profile),dependencies),result=await run(stop.signal);
+ assert.equal(result.finished,1);assert.equal(providerCalls,1);assert.equal(calls.includes('claim_turn_work'),false);assert.equal(calls.some(c=>c.includes('create_trip')||c.includes('confirm')),false);
+});

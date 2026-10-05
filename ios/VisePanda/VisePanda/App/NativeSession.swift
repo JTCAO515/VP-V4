@@ -377,6 +377,27 @@ final class NativeSession {
         try journal.complete(pending, scope: scope)
     }
 
+    func scopedTripEditRequest(tripID: String, body: Data) async throws -> Data {
+        guard UUID(uuidString: tripID) != nil, body.count <= 32000 else { throw NativeDataError.invalidResponse }
+        let result = try await tripRequest(path: "api/trips/native/v2/\(tripID)/scoped-edit", method: "POST", body: body)
+        guard result.count <= 256000 else { throw NativeDataError.invalidResponse }; return result
+    }
+
+    func scopedTripEditRecovery() throws -> NativeScopedTripJournal? {
+        guard let actor = dataScope else { throw NativeDataError.sessionUnavailable }
+        return try NativeScopedTripJournalVault(vault: vault).read(actor)
+    }
+
+    func rememberScopedTripEdit(_ command: NativeScopedTripCommand, selection: NativeScopedTripSelection, actor: NativeDataScope) throws -> NativeScopedTripJournal {
+        guard dataScope == actor else { throw NativeDataError.staleSessionResponse }
+        return try NativeScopedTripJournalVault(vault: vault).remember(command, selection: selection, actor: actor)
+    }
+
+    func completeScopedTripEdit(_ journal: NativeScopedTripJournal, actor: NativeDataScope) throws {
+        guard dataScope == actor else { throw NativeDataError.staleSessionResponse }
+        try NativeScopedTripJournalVault(vault: vault).complete(journal, actor: actor)
+    }
+
     func tripDeletionRequest(method: String, body: Data? = nil, requestID: String? = nil) async throws -> Data {
         let query = requestID.map { [URLQueryItem(name: "requestId", value: $0)] } ?? []
         return try await dataRequest(prefix: "api/privacy/native/v1/trips", path: "api/privacy/native/v1/trips",
@@ -1182,6 +1203,8 @@ final class NativeSession {
                 catch { failureCode="recoveryJournalCleanupRequired";status="storageError";return false }
                 do { try NativeReservationJournalVault.remove(endpoint:endpoint?.absoluteString ?? "disabled",owner:owner,vault:vault) }
                 catch { failureCode="reservationCleanupRequired";status="storageError";return false }
+                do { try NativeScopedTripJournalVault.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
+                catch { failureCode="scopedEditCleanupRequired";status="storageError";return false }
                 do { try NativePlaceActionJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
                 catch { failureCode="placeActionCleanupRequired";status="storageError";return false }
                 do {
