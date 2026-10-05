@@ -50,6 +50,9 @@ struct NativeCommunitySafetyPending: Codable, Equatable {
     }
 
     static func erase(endpoint: String, owner: String, vault: any NativeCredentialVault) throws {
+        let before = vault.read(service: service(endpoint), owner: owner).0
+        if before == errSecItemNotFound { return }
+        guard before == errSecSuccess else { throw NativeDataError.sessionUnavailable }
         let status = vault.remove(service: service(endpoint), owner: owner)
         guard status == errSecSuccess || status == errSecItemNotFound,
               vault.read(service: service(endpoint), owner: owner).0 == errSecItemNotFound else { throw NativeDataError.sessionUnavailable }

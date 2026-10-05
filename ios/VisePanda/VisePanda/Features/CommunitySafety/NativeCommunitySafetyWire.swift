@@ -225,7 +225,7 @@ enum NativeCommunitySafetyOutcome {
             guard v["scope"] as? String == "community_safety_module", v["retained"] as? [String] == s.retained else { throw NativeDataError.invalidResponse }
             return try .deleted(w.id(v["operationId"]))
         case "export":
-            _ = try w.object(v, base.union(["scope", "coverage", "reports", "dispositions", "appeals", "blocks", "authoredDecisions", "receipts", "audits", "qualification", "retained"]))
+            _ = try w.object(v, base.union(["scope", "coverage", "reports", "dispositions", "appeals", "blocks", "authoredDecisions", "receipts", "audits", "qualification", "readerGrants", "retained"]))
             guard v["scope"] as? String == "community_safety_module", v["coverage"] as? String == "complete_for_community_safety", v["retained"] as? [String] == s.retained else { throw NativeDataError.invalidResponse }
             for collection in s.collections {
                 let rows = try w.rows(v[collection], max: 100, NativeCommunitySafetyRecord.init)
@@ -246,6 +246,11 @@ enum NativeCommunitySafetyOutcome {
                 let r = try w.object(raw, ["recordId", "action", "createdAt"])
                 _ = try w.optional(r["recordId"], w.id); _ = try w.date(r["createdAt"])
                 guard s.actions.contains(r["action"] as? String ?? "") else { throw NativeDataError.invalidResponse }
+            }
+            _ = try w.rows(v["readerGrants"], max: 100) { raw in
+                let r = try w.object(raw, ["submissionId", "submissionVersion", "expiresAt", "revoked"])
+                _ = try w.id(r["submissionId"]); _ = try s.revision(r["submissionVersion"], minimum: 1)
+                _ = try w.date(r["expiresAt"]); _ = try w.bool(r["revoked"])
             }
             _ = try w.optional(v["qualification"]) { raw in
                 let r = try w.object(raw as Any, ["active"]); return try w.bool(r["active"])
@@ -280,10 +285,12 @@ enum NativeCommunitySafetyOutcome {
 }
 
 struct NativeCommunitySafetyInput {
+    private let body: Data
     let mutation: NativeCommunitySafetyCommand?
     let recovery: NativeCommunitySafetyCommand?
     let action: String
     init(body: Data) throws {
+        self.body = body
         let w = NativeCommunityWire.self
         guard body.count <= 49152, let text = String(data: body, encoding: .utf8),
               let v = try JSONSerialization.jsonObject(with: body) as? [String: Any] else { throw NativeDataError.invalidResponse }
@@ -307,6 +314,29 @@ struct NativeCommunitySafetyInput {
             recovery = try NativeCommunitySafetyCommand(body: Data(bytes.utf8))
             guard try w.id(v["operationId"]) == recovery?.operationID else { throw NativeDataError.invalidResponse }
         default: throw NativeDataError.invalidResponse
+        }
+    }
+}
+
+
+extension NativeCommunitySafetyInput {
+    func matches(_ outcome: NativeCommunitySafetyOutcome) throws -> Bool {
+        if let command = mutation { return try outcome.terminal(for: command, recovery: false) }
+        if let command = recovery {
+            _ = try outcome.terminal(for: command, recovery: true)
+            return true // Exact absent receipt is valid, but does not authorize a new operation.
+        }
+        guard let input = try JSONSerialization.jsonObject(with: body) as? [String: Any] else { return false }
+        switch (action, outcome) {
+        case ("objects", .objects(let values, _, _)):
+            return input["cursor"] is NSNull || values.allSatisfy({ $0.id > (input["cursor"] as? String ?? "").lowercased() })
+        case ("object", .object(let value)): return value.id == (input["submissionId"] as? String)?.lowercased()
+        case ("mine", .page(let collection, let values, _, _)):
+            return collection == input["collection"] as? String && (input["cursor"] is NSNull || values.allSatisfy({ $0.id > (input["cursor"] as? String ?? "").lowercased() }))
+        case ("read", .record(let value)):
+            return value.id == (input["id"] as? String)?.lowercased() && value.kind == NativeCommunitySafetyWire.collectionKind(input["collection"] as? String ?? "")
+        case ("export", .export): return true
+        default: return false
         }
     }
 }

@@ -62,7 +62,7 @@ struct NativeCommunitySafetyView: View {
                         NativeCommunitySafetyUnavailableView(chinese: chinese, reason: t("目前没有有效的可操作内容。请刷新；没有资格时无法举报或屏蔽。", "No current eligible content is available. Refresh to check; reports and blocks require eligibility."))
                     }
                     Section(t("本模块资料", "Module data")) {
-                        Text(t("仅含社区安全模块的自身举报、处置、申诉、屏蔽及最少操作元数据。统一账户导出/删除尚未接入此模块。", "Includes your own reports, dispositions, appeals, blocks and minimal operation metadata in this safety module. Unified account export and deletion are not enrolled for this module.")).font(.caption)
+                        Text(t("包含本模块的自身举报、处置、申诉、屏蔽、本人运营说明及授权元数据。统一账户导出/删除尚未接入此模块。", "Includes your own reports, dispositions, appeals, blocks, authored moderation notes and grant metadata in this safety module. Unified account export and deletion are not enrolled for this module.")).font(.caption)
                         Button(t("导出本模块资料", "Export module data")) { run { actor in await store.export(current: { self.actor }, request: { try await session.communitySafetyRequest(body: $0, actor: actor) }) } }
                             .disabled(store.busy || !store.storageReady).accessibilityIdentifier("community-safety-export")
                         if let url = store.exportURL(actor) { ShareLink(item: url) { Label(t("分享临时导出", "Share temporary export"), systemImage: "square.and.arrow.up") }.accessibilityIdentifier("community-safety-share") }
