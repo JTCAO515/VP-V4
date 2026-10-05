@@ -1,0 +1,29 @@
+{
+  "nativeProductCommit": "2751682a",
+  "peerProducerCommit": "9c2d4fb7",
+  "kind": "owned source and fixture, not target acceptance",
+  "sha256": {
+    "ios/VisePanda/VisePanda/Features/MaterialReferenceData/NativeMaterialReferenceCommand.swift": "ac988afabcb55a1bbf034a544b49fcec90b4388e06d5c95b3c919d4e6aed994e",
+    "ios/VisePanda/VisePanda/Features/MaterialReferenceData/NativeMaterialReferenceConsumer.swift": "fa57f24e7d22bfa7dd392117b53a13ecd20430c6544ad720078ebcc2614ab82a",
+    "ios/VisePanda/VisePanda/Features/MaterialReferenceData/NativeMaterialReferenceCopy.swift": "eeaa5e05e4ad327257daa77183b9f33428e2c3fac3c179326c3ce0a98ef78513",
+    "ios/VisePanda/VisePanda/Features/MaterialReferenceData/NativeMaterialReferenceExportFile.swift": "604340171c4dbe7bb446a2a7fd2e94f8cabe89f8b7f47f5b6b86bbe96bcdf2f1",
+    "ios/VisePanda/VisePanda/Features/MaterialReferenceData/NativeMaterialReferenceJournal.swift": "95916983bca78c150df7097670b01a31a6efe1f63ffd8067dcbe6949f51f424f",
+    "ios/VisePanda/VisePanda/Features/MaterialReferenceData/NativeMaterialReferenceLifetime.swift": "4b77032bae8a9fc33192049639b33b8496945d0ba2a2d383d79681c29e6ef4f4",
+    "ios/VisePanda/VisePanda/Features/MaterialReferenceData/NativeMaterialReferenceModels.swift": "51b6d91e1568607952b1dbbea3a3763cb61d264cd4775ab72c805bef3d35214b",
+    "ios/VisePanda/VisePanda/Features/MaterialReferenceData/NativeMaterialReferenceProtocol.swift": "3fcbd188d3735da1afa245b627d789953a0fd3b4307570226aede62493360d0a",
+    "ios/VisePanda/VisePanda/Features/MaterialReferenceData/NativeMaterialReferenceRows.swift": "2436eab3e9331a3224b489f8947f3f6f042ac281b1a1fee21e1895fbdd0a525b",
+    "ios/VisePanda/VisePanda/Features/MaterialReferenceData/NativeMaterialReferenceStore.swift": "56a613679898e835de4cb997794b095aaa6458b33e4c71f206ef3455b6cea441",
+    "ios/VisePanda/VisePanda/Features/MaterialReferenceData/NativeMaterialReferenceTrips.swift": "d3cce157fbb97e0467c024c33d3398d05b335a1d73aac054f9d39241b036d278",
+    "ios/VisePanda/VisePanda/Features/MaterialReferenceData/NativeMaterialReferenceView.swift": "825a31f836f2f3f3a8727d4554eefa4e96283010403787c74f2eebe5e6aac424",
+    "ios/VisePanda/VisePanda/App/NativeSession.swift": "4c50cdb77a123b25d2dbd740a86a049a35bfddd3c62be42c4c535bb6808d083d",
+    "ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageCopy.swift": "5c5452752c8e1f8d120e4dc0d4d120cdfd4fe0a497e0db0c23c3deca94d13efb",
+    "ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageModels.swift": "20b1fd457e41649d144bddde9335ebaee79129504ee1c0a61871b58dc26630be",
+    "ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageModuleView.swift": "c8e412e6583854bca86194933df9eb120139f67ee47a646537bcf1df5d320dae",
+    "ios/VisePanda/VisePanda.xcodeproj/project.pbxproj": "5b1e4f87be1ace2a09df3e3fd3709fab9fb5298ad07620820290d3d5ab7a759f",
+    "ios/VisePanda/VisePandaTests/NativeMaterialReferenceDataTests.swift": "c96c3f58ae81c51307a902f2eaec561d29797f5d104ab213a328dd44f8f33ee4",
+    "ios/VisePanda/VisePandaTests/NativeDataCoverageTests.swift": "fbcdd2250a96e7814871cbe06a6379d97313a213cf6c046207d8213384dc9fdb",
+    "ios/VisePanda/VisePandaTests/Fixtures/MaterialReferenceData/material-reference-producer.json": "7fa5c87795b0277da596bc64ee4d953eba3700d2e11145f50ec03399d3c60fae",
+    "ios/VisePanda/VisePandaTests/Fixtures/DataCoverage/coverage-producer.json": "f31c5157d081387a4d197dc0062437c029b3da477b70a9cbbdfcd2ed1c5efdeb",
+    "ios/VisePanda/VisePandaTests/Fixtures/DataCoverage/coverage-cancelled.json": "7d501d38ba6072bb9e7c37f865ee8b54e7c78599c743ee1988cfdd86bf075c53"
+  }
+}

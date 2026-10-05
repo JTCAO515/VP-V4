@@ -1,0 +1,52 @@
+{
+  "devicesAndConfigurations" : [
+    {
+      "device" : {
+        "architecture" : "arm64",
+        "deviceId" : "418ECC11-3C90-4019-9ECB-F71204DFDDFC",
+        "deviceName" : "VPJ58-MaterialReference-20261006",
+        "modelName" : "iPhone 17 Pro",
+        "osBuildNumber" : "23F77",
+        "osVersion" : "26.5",
+        "platform" : "iOS Simulator"
+      },
+      "expectedFailures" : 0,
+      "failedTests" : 1,
+      "passedTests" : 9,
+      "skippedTests" : 0,
+      "testPlanConfiguration" : {
+        "configurationId" : "1",
+        "configurationName" : "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription" : "VisePanda · Built with macOS 27.0.1",
+  "expectedFailures" : 0,
+  "failedTests" : 1,
+  "finishTime" : 1791228545.268,
+  "passedTests" : 9,
+  "result" : "Failed",
+  "runtimeWarnings" : [
+
+  ],
+  "skippedTests" : 0,
+  "startTime" : 1791228541.217,
+  "statistics" : [
+
+  ],
+  "testFailures" : [
+    {
+      "failureText" : "Expectation failed: session.status == \"storageError\" && session.failureCode == \"materialReferenceJournalCleanupRequired\"\nsession.status == \"storageError\" → true\nsession.failureCode == \"materialReferenceJournalCleanupRequired\" → false",
+      "targetName" : "VisePandaTests",
+      "testIdentifier" : 10,
+      "testIdentifierString" : "NativeMaterialReferenceDataTests/actualSessionTransportRequiresRetainedBytesAndDenialPreservesUntilExplicitLogout()",
+      "testIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeMaterialReferenceDataTests/actualSessionTransportRequiresRetainedBytesAndDenialPreservesUntilExplicitLogout()",
+      "testName" : "actualSessionTransportRequiresRetainedBytesAndDenialPreservesUntilExplicitLogout()"
+    }
+  ],
+  "title" : "Test - VisePanda",
+  "topInsights" : [
+
+  ],
+  "totalTestCount" : 10
+}

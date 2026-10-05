@@ -101,3 +101,39 @@ assertions become32; preserve all original11 cases/negative assertions. No new
 coverage matrix or altered runtime oracle. Current native.3 necessarily rejects
 the old.2 fixture; leave that failure visible until this exact alignment is leased.
 The new current NativeMaterialReferenceData suite remains independently owned.
+
+CORE FIXED immutable native product commit `2751682a`: selected owner discovery
+now consumes Main-approved exact `trip_list` metadata, no original live Trip body
+reader/admission. Current archived contexts and deleted/retained progress contexts
+are explicit, null historical titles stay null, no Trip resurrection/write.
+Only declared progress can use historical context; source receipt still proves
+original decidedAt/current actor/exact mutation bytes after preview expiry.
+Actual Main lease original shared5 paths applied narrowly; old4privacy stores,
+Reservations/PDFIntake business handlers and journals untouched. Normal immutable
+peer source `9c2d4fb7` merged after this native product freeze, not dirty copied.
+
+Final owned iOS r7 xcresult `/tmp/vpj58-material-reference-ios-r7.xcresult`:
+11PASS0FAIL0SKIP. This includes original scoped discovery test revised for the
+actual metadata reader, actual NativeSession unsigned URLProtocol control flow,
+and one three-scope immutable producer interoperability case (TS JSON normal
+9c2d4fb7, no fake SQL/GoTrue/target proof). Early r2 compile FAIL from throwing
+macro expression; r3 fixture FAIL because a global mock erase flag failed the
+legacy no-op journal first; corrected to only this exact owned service, all original
+assertions retained. r6 interop FAIL was an incorrect new test expectation that
+the canonical PDF fixture had archived state (actual immutable JSON says active);
+corrected expectation without altering producer data. Separate actual archived
+discovery remains tested. Mac file-protection513 retained; actual iOS protection
+and final own11 pass. No further planned Native product write.
+
+FINAL engineering alignment under Main's last necessary membership/fixture
+freeze instruction: old two Native DataCoverage inputs now use immutable sole
+TS catalog.3/full32 denominator and recomputed outer request hashes; original
+handler results byte-semantic equal, all original11 cases/negative/authority and
+terminal oracles unchanged. There were THREE count31 assertions (including
+visibleModules): coverage-r1 actual10PASS1FAIL exposed the last stale count;
+that literal only became32, coverage-r2 actual11PASS0FAIL0SKIP. No source change
+or new matrix. These original11 remain separate from new material own11 r7.
+All product remains equal to native2751682a; source/fixture manifest and retained
+raw failure logs in artifacts/VPJ-58/native-material-reference-data. Sole TS can
+take the final immutable Native commit without waiting for further formatting.
+Target signed session/enrollment/real users/deployment/phone/ALL2 remain UNRUN.

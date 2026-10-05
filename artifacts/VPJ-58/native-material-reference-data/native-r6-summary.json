@@ -1,0 +1,52 @@
+{
+  "devicesAndConfigurations" : [
+    {
+      "device" : {
+        "architecture" : "arm64",
+        "deviceId" : "418ECC11-3C90-4019-9ECB-F71204DFDDFC",
+        "deviceName" : "VPJ58-MaterialReference-20261006",
+        "modelName" : "iPhone 17 Pro",
+        "osBuildNumber" : "23F77",
+        "osVersion" : "26.5",
+        "platform" : "iOS Simulator"
+      },
+      "expectedFailures" : 0,
+      "failedTests" : 1,
+      "passedTests" : 10,
+      "skippedTests" : 0,
+      "testPlanConfiguration" : {
+        "configurationId" : "1",
+        "configurationName" : "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription" : "VisePanda · Built with macOS 27.0.1",
+  "expectedFailures" : 0,
+  "failedTests" : 1,
+  "finishTime" : 1791229244.272,
+  "passedTests" : 10,
+  "result" : "Failed",
+  "runtimeWarnings" : [
+
+  ],
+  "skippedTests" : 0,
+  "startTime" : 1791229240.281,
+  "statistics" : [
+
+  ],
+  "testFailures" : [
+    {
+      "failureText" : "Expectation failed: trips.trips.first?.state == \"archived\"\ntrips.trips.first?.state → \"active\"",
+      "targetName" : "VisePandaTests",
+      "testIdentifier" : 11,
+      "testIdentifierString" : "NativeMaterialReferenceDataTests/immutableProducerInteroperatesForAllThreeSelectedScopesAndHistoricalTripContexts()",
+      "testIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeMaterialReferenceDataTests/immutableProducerInteroperatesForAllThreeSelectedScopesAndHistoricalTripContexts()",
+      "testName" : "immutableProducerInteroperatesForAllThreeSelectedScopesAndHistoricalTripContexts()"
+    }
+  ],
+  "title" : "Test - VisePanda",
+  "topInsights" : [
+
+  ],
+  "totalTestCount" : 11
+}
