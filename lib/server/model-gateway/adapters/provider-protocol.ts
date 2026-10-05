@@ -371,7 +371,7 @@ async function readBoundedJson(response: Response, signal: AbortSignal): Promise
 
 function validRequest(value: ProtocolRequest): boolean {
   return record(value) && typeof value.requestId === "string" && /^[A-Za-z0-9_-]{1,64}$/.test(value.requestId) && Object.hasOwn(PROTOCOL_MODELS, value.provider)
-    && ["ordinary_text", "strict_known_unknown", "tool_candidate", "text_turn_v1", "text_task_v2", "knowledge_intent_v1", "planning_comparison_v1", "scoped_trip_edit_v1", "wiki_generation_v1", "wiki_statement_proposals_v1", "wiki_search_v1", "scoped_trip_edit_v1"].includes(value.task)
+    && ["ordinary_text", "strict_known_unknown", "tool_candidate", "text_turn_v1", "text_task_v2", "knowledge_intent_v1", "planning_comparison_v1", "scoped_trip_edit_v1", "wiki_generation_v1", "wiki_statement_proposals_v1", "wiki_search_v1"].includes(value.task)
     && (value.task !== "scoped_trip_edit_v1" || value.provider === "qwen" && value.maxOutputTokens <= 4096)
     && (value.task === "text_task_v2" ? validTextTaskHistory(value.history) : value.history === undefined)
     && typeof value.input === "string" && value.input.trim().length > 0 && value.input.length <= 32768
