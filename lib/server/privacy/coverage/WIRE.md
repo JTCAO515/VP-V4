@@ -172,3 +172,12 @@ artifacts/VPJ-58/coverage/auth-http-r3.log (1PASS0skip/cleanup1a94152c).
 Root ordinary frozen runtime hash comparison after all normal merges returned
 runtimeUnchanged=true. Registry actual PG/HTTPentries committed6a1dbbb8. One PR
 will use same source after necessary Native own test evidence, not an old8 upgrade.
+
+FINAL facts: Native evidence9400274a normal merged; actualnew11PASS0fail0skip,
+originalCore8 separately reused,Swift-generated6/6 TSparse confirmed,ownSimulator
+shutdown/delete/absence PASS. bced product source+server/SQL frozen hashes unchanged.
+PR663 created/attached https://github.com/JTCAO515/VP-V4/pull/663 (same sole branch).
+Whole239/ALL2/genuine missing31-domain handler exits/targetgrant/real userdata,
+provider/Storage/fees/Production/devicehuman remainOpen/UNRUN. No known remaining
+owned integration core source finding; required CI/Main review/normal protected
+merge remainengineeringgates. Current fixed work is not three active dev streams.

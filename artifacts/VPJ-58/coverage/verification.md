@@ -85,3 +85,14 @@ but new own runtime evidence remains pending. Do not label those old8 as the new
 consumer/cancellation/row-proof checks. Original Core8 evidence is reused once;
 only the new intended cases need their actual result. Source completion and this
 validation distinction remain separate. Whole #239/ALL2/target acceptance is UNRUN.
+
+Final evidence update (supersedes new-runtime-pending above): Native immutable
+9400274a evidence/fixture handoff is normally merged. Actual r2 xcresult new
+NativeDataCoverageTests11PASS/0FAIL/0SKIP independently read; original r1 Core8
+remains separate. Six actual Swift-generated request JSON files all independently
+pass current TS parseCoverageInput (6/6). Native manifest confirms product source
+unchanged from bced4c96; owned simulator shutdown/delete/absence PASS. Full facts
+and preserved source/build/membership failures are in
+`../native-data-coverage/verification.md`. Server/SQL manifest also remains exact.
+No repeated joint/old Core matrix or target acceptance is implied. PR663 is the
+single attached combined review package; required CI/independent review remain.
