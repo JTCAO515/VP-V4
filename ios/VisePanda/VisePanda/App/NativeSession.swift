@@ -34,6 +34,7 @@ final class NativeSession {
     private(set) var dataGeneration = 0
     private var assistantNavigation: NativeAssistantNavigation?
     let memoryPreferences=NativeMemoryPreferencesStore()
+    let notifications = NativeNotificationCoordinator()
     let offlineTrips=NativeOfflineTripStore()
     let deviceMaterials: NativeDeviceMaterials
     private(set) var exploreAskHandoff:NativeExploreAskHandoff?
@@ -354,6 +355,26 @@ final class NativeSession {
 
     func tripRequest(path: String, method: String, body: Data? = nil, queryItems: [URLQueryItem] = []) async throws -> Data {
         try await dataRequest(prefix: "api/trips/native/v2", path: path, method: method, body: body, queryItems: queryItems)
+    }
+
+    func notificationRecovery() throws -> NativeNotificationPending? {
+        guard let scope = dataScope else { throw NativeDataError.sessionUnavailable }
+        return try NativeNotificationJournal(vault: vault).read(scope)
+    }
+    func notificationDeviceBinding() throws -> NativeNotificationDeviceBinding? {
+        guard let scope = dataScope else { throw NativeDataError.sessionUnavailable }
+        return try NativeNotificationJournal(vault: vault).binding(scope)
+    }
+    func retainNotification(_ command: NativeNoticeCommand, scope: NativeDataScope) throws -> NativeNotificationPending {
+        guard dataScope == scope else { throw NativeDataError.sessionUnavailable }
+        return try NativeNotificationJournal(vault: vault).retain(command, scope: scope)
+    }
+    func completeNotification(_ pending: NativeNotificationPending, receipt: NativeNoticeView.MutationReceipt, scope: NativeDataScope) throws {
+        guard dataScope == scope else { throw NativeDataError.staleSessionResponse }
+        let journal = NativeNotificationJournal(vault: vault)
+        guard try journal.read(scope) == pending, receipt.matches(pending.command) else { throw NativeDataError.invalidResponse }
+        try journal.acknowledgeDevice(pending, receipt: receipt, scope: scope)
+        try journal.complete(pending, scope: scope)
     }
 
     func scopedTripEditRequest(tripID: String, body: Data) async throws -> Data {
@@ -1164,6 +1185,7 @@ final class NativeSession {
     @discardableResult private func clear(preservePendingJournals: Bool = false) -> Bool {
         // Fence consumers before cleanup; a locked file is not proof of erasure.
         dataGeneration += 1
+        notifications.actorChanged(to: nil)
         subject=nil; mobileEpoch=nil; displayName=nil
         do { try deviceMaterials.eraseAll() }
         catch { failureCode="deviceMaterialCleanupRequired";status="storageError";return false }
@@ -1185,6 +1207,10 @@ final class NativeSession {
                 catch { failureCode="scopedEditCleanupRequired";status="storageError";return false }
                 do { try NativePlaceActionJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
                 catch { failureCode="placeActionCleanupRequired";status="storageError";return false }
+                do {
+                    try NativeNotificationJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault)
+                    try NativeNotificationJournal.eraseBinding(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault)
+                } catch { failureCode="notificationCleanupRequired";status="storageError";return false }
             }
             let support=vault.remove(service:tripSupportConfirmVaultService,owner:owner)
             guard support==errSecSuccess || support==errSecItemNotFound else { failureCode="keychain:\(support)";status="storageError";return false }
