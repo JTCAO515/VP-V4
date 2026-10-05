@@ -9,6 +9,7 @@ import { createClient } from '@supabase/supabase-js';
 import { identityLocalEnv } from '../identity/local-supabase.mjs';
 import { nativeHTTPEnvironmentPorts } from '../turn/native-http-ports.mjs';
 import { waitForNativeAPI } from '../identity/native-api-readiness.mjs';
+import { webTripResult } from '../artifacts/fixtures/web-trip-result.mjs';
 import { lifecycleDigest } from '../../../lib/server/trip/lifecycle/operations.ts';
 const literal=v=>"'"+String(v).replaceAll("'","''")+"'";
 
@@ -91,6 +92,25 @@ test('real disposable Auth → HTTP → atomic lifecycle → saved reads, origin
  assert.equal((await call('/api/trips/lifecycle',null,'POST',webCmd,{cookie,Origin:'https://foreign.invalid'})).status,403);
  const webCreated=await call('/api/trips/lifecycle',null,'POST',webCmd,{cookie,Origin:ports.api});assert.equal(webCreated.status,200,JSON.stringify(webCreated.body));assert.equal(webCreated.body.status,'applied');
  const webOp=await call('/api/trips/lifecycle/operations/'+webCmd.operationId,null,'GET',undefined,{cookie});assert.equal(webOp.status,200);assert.deepEqual(webOp.body.receipt,webCreated.body);
+ // Reuse the accepted original publisher fixture; it records synthetic source
+ // data and completed task output without contacting or dispatching any provider.
+ const savedResult=await webTripResult(local,sql,{owner:users[1].id,client:users[1].client});
+ for(const version of [1,2]){
+  const before=await call('/api/results/native/v'+version+'/trip?tripId='+savedResult.trip,other);assert.equal(before.status,200);assert.equal(before.body.data.artifactId,savedResult.artifact);assert.equal(Object.hasOwn(before.body.data,'archiveHistorical'),false);
+ }
+ const resultView=await read(other),archiveResult={action:'archive',operationId:uuid(),expectedRevision:resultView.revision,expectedActiveTripId:resultView.capacity.activeTripId,expectedSessionId:resultView.sessionId,confirmed:true,tripId:savedResult.trip,expectedHeadVersion:1,preference:{action:'skip'}};
+ const resultEnded=await call(base,other,'POST',archiveResult);assert.equal(resultEnded.status,200);assert.equal(resultEnded.body.status,'applied');
+ for(const version of [1,2]){
+  const ref=await call('/api/results/native/v'+version+'/trip?tripId='+savedResult.trip,other);assert.equal(ref.status,200);assert.equal(ref.body.data.archiveHistorical,true);assert.equal(ref.body.data.artifactId,savedResult.artifact);
+  const body=await call('/api/results/native/v'+version+'?artifactId='+savedResult.artifact+'&revision=1',other);assert.equal(body.status,200);assert.equal(body.body.data.current,false);assert.equal(body.body.data.historicalReadable,true);assert.equal(body.body.data.source.tripId,savedResult.trip);
+ }
+ const webSaved=await call('/api/trips/'+savedResult.trip+'/comparison-result',null,'GET',undefined,{cookie});assert.equal(webSaved.status,200);assert.equal(webSaved.body.data.current,false);assert.equal(webSaved.body.data.artifactId,savedResult.artifact);
+ // Revoke original source consent: the historical marker never bypasses it.
+ const revoked=await users[1].client.rpc('withdraw_text_policy',{p_policy_id:savedResult.policy});assert.ifError(revoked.error);
+ for(const version of [1,2]){
+  const ref=await call('/api/results/native/v'+version+'/trip?tripId='+savedResult.trip,other);assert.equal(ref.status,200);assert.equal(ref.body.data.kind,'unavailable');
+  const body=await call('/api/results/native/v'+version+'?artifactId='+savedResult.artifact+'&revision=1',other);assert.equal(body.status,200);assert.equal(body.body.data.kind,'unavailable');
+ }
  const old=owner;await login(users[0]);assert.equal((await call(base,old)).status,401);assert.equal((await call(base+'/operations/'+blocked.operationId,old)).status,401);
  assert.equal(sql('select count(*) from public.model_budget_attempts;'),'0');
  t.diagnostic('LIFECYCLE_REAL_AUTH_HTTP_SQL_PASS; synthetic disposable owners; zero model/provider/budget requests; no target migration or real user export/delete');
