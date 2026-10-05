@@ -100,7 +100,9 @@ test('real signed owner Auth -> original reservation/PDF sources -> selected exi
     assert.ok(decodeMaterialReceipt(result.body.data,command,owner.actor,materialDigest(bytes)));
     const recover = { ...p.command,action: 'recover',mutationBytes: bytes }, recovered = await call(path,owner.token,recover);
     assert.equal(recovered.status,200,JSON.stringify(recovered.body)); assert.deepEqual(recovered.body,result.body);
-    assert.notEqual((await call(path,other.token,recover)).status,200,'foreign owner cannot retrieve own minimal erasure receipt');
+    const foreign = await call(path,other.token,recover);
+    assert.ok(foreign.status !== 200 || foreign.body.data?.kind === 'unknown' && foreign.body.data.ownerId === other.id,
+      'foreign owner can receive only unavailable/unknown, never the retained erasure receipt');
     const changed = await call(path,owner.token,{ ...recover,mutationBytes: bytes.trim() }); assert.notEqual(changed.status,200,'changed exact original bytes cannot recover a decision');
     exitRequests.push(command.requestId); return result.body.data;
   }

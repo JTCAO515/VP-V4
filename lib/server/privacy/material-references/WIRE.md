@@ -88,6 +88,14 @@ of original Trip readers. Main relay to the existing sole SQL/Native owners:
   parser/independent trip-list decoder/HTTP branch already implemented as owned
   files; awaiting this narrow SQL/Native closure, no second writer or target action.
 
+Recovery privacy note for sole SQL: query retained requests by actual owner plus
+requestId (after current authority), not globally by requestId with a different
+foreign-existing error from absent. A foreign request is owner-absent/unknown;
+changed bytes/scope for an actual owned request still conflicts. HTTP/coverage
+already understand unknown as non-completion. The signed Auth test now permits
+only unavailable or actor-bound unknown for foreign recovery, never an erased
+receipt; do not disclose foreign source/fence existence through a success receipt.
+
 ## Actual sources and copy inventory
 
 - Orders: `reservation_private.current_v1` sensitive corrected fields + source
