@@ -103,3 +103,11 @@ test("abandon fences unsubmitted mutation but does not undo a committed Proposal
   }
   await assert.rejects(() => runScopedEdit(trip, input, async () => rpcData({ kind: "scoped_edit_abandon/1", operationId: op, tripId: trip, state: "cancelled", receipt }), base, now), /RECEIPT_UNKNOWN/);
 });
+
+test("retry reads the original already-applied Proposal operation without reopening pending or writing again", async () => {
+  const { receipt } = proposal(); let calls = 0;
+  const operation = { kind: "scoped_edit_operation/1", operationId: op, tripId: trip, mutation, receipt, state: "applied", resultingVersion: 4 };
+  const rpc: ScopedEditRPC = async () => rpcData(calls++ === 0 ? { ...receipt, reused: true } : operation);
+  assert.deepEqual(await runScopedEdit(trip, mutation, rpc, { ...base, version: 4 }, now), operation);
+  assert.equal(calls, 2);
+});
