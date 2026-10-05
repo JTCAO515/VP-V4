@@ -3,6 +3,7 @@ const PRIVATE_PATHS = [
   /^\/journey\/knowledge$/,
   /^\/ops\/review$/,
   /^\/ops\/community\/safety$/,
+  /^\/ops\/community\/publication$/,
   /^\/ops\/wiki$/,
   /^\/visepanda\/(?:ask|profile|copilot)$/,
   new RegExp(`^/visepanda/(?:ask|trips)/${UUID}$`, "i"),
