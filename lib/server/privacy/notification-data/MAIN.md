@@ -210,3 +210,9 @@ lease pending; not mergeable/Ready/CI green. Accepted3scope code completion rema
 separate from this engineering gate. Branch pushed actual implementation, no
 provider/config/roles/fees/deployment/userdata action. Before final Ready require
 strict grant-key repair/run, same-head normal CI/independent review and main base.
+
+Mainfd5ade exact additive oracle lease GRANTED: only required leaseBudgetMs in
+strict exact key list + integer>0<=5000<=original interval, no outcome/ACL/error/
+noRetry changes. Patch now applied, original affected PG r2 running once. If idle
+still fails root remains actual diagnosis, never accept idle/retry-to-green. Prior
+r1 retained. No runtime edit/new writer/reopening completed core.
