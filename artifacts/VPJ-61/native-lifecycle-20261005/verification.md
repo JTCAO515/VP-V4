@@ -29,3 +29,18 @@ Following these tests, only the already leased visible entry busy/draft/pending 
 UNRUN: actual local/target Auth→Native rendered lifecycle→API→SQL joint flow, deployed migrations, provider/fees, real user export/delete, physical device/VoiceOver/human discovery and complete existing UI integration tests. The existing UI tests now navigate lifecycle→capacity→title→create→original screen and still require their disposable authenticated environment. No target schema, provider, credentials, grants, production or phone action occurred.
 
 #224 has no authoritative same-Trip unfinished-service projection in the accepted source. Native displays unavailable instead of an invented empty service list; archiving does not cancel any existing service. Native source delivery and the six local tests do not close the full parent or prove target capacity concurrency. SQL authority, migration/data-rights/capacity tests and final integration/CI are the appointed SQL/TS owners' deliverables.
+
+
+## Same-task archive reader finding and correction
+
+The earlier card-only UI gate removal did not complete actual archived-result reading: existing v1 Trip loading still required `current:true`, and the v2 Trip-reference decoder accepted only four keys. Main granted only these Trip-reference/Trip-load hunks and affected tests. Source fix: `bd232e6f7ecae50988d45bb09f00c89acf4f71d9`.
+
+Both versions accept the original reference shape or its exact extension `archiveHistorical:true`, provided only by the server after its archive/owner/deletion/original-reader checks. False, null, number, string, extra keys and a flag on Task references are rejected. The v1 Trip consumer requires the second exact artifact/revision/same-Trip read to return `current:false` and `historicalReadable:true` for that flagged historical branch. Ordinary Trip references retain the current-only rule. The v2 exact content reader already required historical readability, and its content/action gates are unchanged. The global v1 `loadExact` and all current-only decision/amendment/confirmation gates remain unchanged. Existing UI labels old revisions as historical read-only results.
+
+Actual affected validation on owned iOS 26.5 Simulator `0265359A-EE05-495E-83D3-7480EC377503`:
+
+- PASS: existing `NativeKnowledgeTests/testTripResultOpensOnlyExactCurrentReference` expanded with archive history positive, wrong artifact/revision/Trip, revoked/read-denied history, malformed proof and global exact-current negative cases; 1 test, 0 failure, 0 skip, `TEST SUCCEEDED`.
+- PASS: new `NativeFiveResultTests/testArchiveReferenceProofIsTripOnlyStrictBooleanAndExactShape`; original/archived Trip refs, wrong expected Trip, malformed proof, extra keys and Task isolation; 1 test, 0 failure, 0 skip, `TEST SUCCEEDED`.
+- PASS: affected code/tests compiled in these actual test runs; final diff check. Original six lifecycle tests were not repeated because their source and inputs were unchanged.
+
+Commands reused the original project/scheme/derivedData/ad-hoc signing, with destination `platform=iOS Simulator,id=0265359A-EE05-495E-83D3-7480EC377503`, one `-only-testing:` path as named above per run, `-parallel-testing-enabled NO`, and result bundles `/tmp/vpj61-native-archive-read-20261005.xcresult` and `/tmp/vpj61-native-archive-v2-20261005.xcresult`. Raw summaries are in `archive-reader-test-summary.txt`. The owned Simulator was deleted afterward. This is native synthetic reader/proof evidence; SQL authority, Auth/HTTP joint target and real result rights are still the designated TS/SQL owners' integration evidence, not proved by these tests.
