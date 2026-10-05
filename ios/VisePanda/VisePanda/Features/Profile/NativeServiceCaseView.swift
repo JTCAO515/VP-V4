@@ -77,6 +77,9 @@ struct NativeServiceCaseView: View {
                     NavigationLink(zh ? "查看服务进度与结果" : "View service progress and evidence") {
                         NativeServiceOperationsView(caseId: item.id)
                     }.accessibilityIdentifier("service.operations.entry." + item.id)
+                    NavigationLink(zh ? "预览和管理此请求的旅行者资料" : "Preview and manage this request's Traveler Brief") {
+                        NativeTravelerBriefView(caseID: item.id)
+                    }.accessibilityIdentifier("service.brief." + item.id)
                     Text(grantLabel(item.grantState)).font(.caption)
                     if let id = item.recipientId { Text(staff.first(where: { $0.id == id })?.label ?? id).font(.caption) }
                     if let expiry = item.expiresAt { Text(expiry).font(.caption) }

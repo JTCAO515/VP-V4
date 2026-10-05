@@ -167,6 +167,26 @@ final class NativeSession {
         try await dataRequest(prefix: "api/service-cases/native/v1", path: "api/service-cases/native/v1", method: "POST", body: body)
     }
 
+    func travelerBriefRequest(body: Data, actor: NativeDataScope) async throws -> Data {
+        guard dataScope == actor, body.count <= 64_000 else { throw NativeDataError.staleSessionResponse }
+        let path = "api/service-cases/native/brief/v1"
+        let bytes = try await dataRequest(prefix: path, path: path, method: "POST", body: body)
+        guard dataScope == actor, bytes.count <= 524_288 else { throw NativeDataError.staleSessionResponse }
+        return bytes
+    }
+    func travelerBriefRecovery(actor: NativeDataScope) throws -> NativeTravelerBriefPending? {
+        guard dataScope == actor else { throw NativeDataError.staleSessionResponse }
+        return try NativeTravelerBriefJournal(vault: vault).read(actor)
+    }
+    func rememberTravelerBrief(_ command: NativeTravelerBriefCommand, actor: NativeDataScope) throws -> NativeTravelerBriefPending {
+        guard dataScope == actor else { throw NativeDataError.staleSessionResponse }
+        return try NativeTravelerBriefJournal(vault: vault).retain(command, actor: actor)
+    }
+    func completeTravelerBrief(_ pending: NativeTravelerBriefPending, actor: NativeDataScope) throws {
+        guard dataScope == actor else { throw NativeDataError.staleSessionResponse }
+        try NativeTravelerBriefJournal(vault: vault).complete(pending, actor: actor)
+    }
+
     func serviceOperationRequest(body: Data, actor: NativeDataScope) async throws -> Data {
         guard dataScope == actor else { throw NativeDataError.staleSessionResponse }
         let result = try await dataRequest(prefix: "api/service-cases/native/operations/v1", path: "api/service-cases/native/operations/v1", method: "POST", body: body)
@@ -1292,6 +1312,8 @@ final class NativeSession {
                 catch { failureCode="placeActionCleanupRequired";status="storageError";return false }
                 do { try NativeServiceOperationJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
                 catch { failureCode="serviceOperationCleanupRequired";status="storageError";return false }
+                do { try NativeTravelerBriefJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
+                catch { failureCode="travelerBriefCleanupRequired";status="storageError";return false }
                 do {
                     try NativeNotificationJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault)
                     try NativeNotificationJournal.eraseBinding(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault)
