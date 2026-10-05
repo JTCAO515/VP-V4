@@ -51,6 +51,47 @@ import Testing
 }
 
 @MainActor struct NativeNotificationTests {
+    @Test func partialCoverageKeepsQualifiedTripSourceAndReminderUsable() async throws {
+        let source = NativeNoticeSource(kind: "current_trip", sourceId: NotificationFixture.trip, revision: 0, contentDigest: String(repeating: "a", count: 64))
+        let now = Date()
+        let expiry = now.addingTimeInterval(7200)
+        let command = try NativeNoticeCommand.schedule(tripId: NotificationFixture.trip, version: 0, source: source,
+            reason: "My travel reminder", due: now.addingTimeInterval(60), expiry: expiry, timeZone: "Asia/Shanghai",
+            quietHours: .init(startMinute: 1320, endMinute: 420))
+        var raw = NotificationFixture.raw(command: nil)
+        raw["complete"] = false
+        raw["nextSteps"] = [["id": NotificationFixture.id, "source": try NativeNoticeCommand.sourceObject(source),
+            "reasonCode": "review_trip", "reason": NSNull(), "expiresAt": expiry.ISO8601Format()]]
+        raw["reminders"] = [["id": command.resultId, "operationId": command.operationId, "baseVersion": 0, "purpose": "user_set_travel",
+            "source": try NativeNoticeCommand.sourceObject(source), "reason": "My travel reminder", "dueAt": now.addingTimeInterval(60).ISO8601Format(),
+            "expiresAt": expiry.ISO8601Format(), "timeZone": "Asia/Shanghai", "quietHours": ["startMinute": 1320, "endMinute": 420],
+            "status": "saved", "deliveryState": "scheduled", "outcome": NSNull()]]
+        let view = try NativeNoticeView.decode(NotificationFixture.bytes(raw), tripId: NotificationFixture.trip)
+        #expect(!view.complete)
+        #expect(view.currentSources(expectedVersion: 0, now: now).map(\.source) == [source])
+        #expect(view.hasRetainedConsentedPurpose(now: now))
+        #expect(view.currentSources(expectedVersion: 1, now: now).isEmpty)
+        #expect(view.currentSources(expectedVersion: 0, now: expiry).isEmpty)
+        #expect(!view.hasRetainedConsentedPurpose(now: expiry))
+        #expect(!view.currentSources(expectedVersion: 0, now: now).contains { $0.source.kind == "qualified_watch" })
+        var dismissed = raw; dismissed["nextSteps"] = []
+        let retained = try NativeNoticeView.decode(NotificationFixture.bytes(dismissed), tripId: NotificationFixture.trip)
+        #expect(retained.currentSources(expectedVersion: 0, now: now).isEmpty)
+        #expect(retained.hasRetainedConsentedPurpose(now: now))
+        var changed = dismissed; changed["tripVersion"] = 1
+        let drifted = try NativeNoticeView.decode(NotificationFixture.bytes(changed), tripId: NotificationFixture.trip)
+        #expect(!drifted.hasRetainedConsentedPurpose(now: now))
+        let journal = NativeNotificationJournal(vault: NotificationTestVault()), store = NativeNoticeStore()
+        store.bind(scope: NotificationFixture.actor, tripId: NotificationFixture.trip)
+        var ack = raw
+        ack["mutationReceipt"] = NotificationFixture.raw(command: command)["mutationReceipt"]
+        await NotificationFixture.perform(store, journal, command: command) { _, _, body in
+            #expect(body == command.body)
+            return try NotificationFixture.bytes(ack)
+        }
+        #expect(store.pending == nil && store.view?.complete == false)
+        #expect(store.view?.hasRetainedConsentedPurpose(now: now) == true)
+    }
     @Test func manualRevocationPreservesActualPermissionAndRejectsUnknown() throws {
         let command = try NativeNoticeCommand.revokeDevice(tripId: NotificationFixture.trip, deviceId: NotificationFixture.id, permission: .authorized)
         #expect(command.action == "revoke_device" && command.input["permission"] as? String == "authorized")

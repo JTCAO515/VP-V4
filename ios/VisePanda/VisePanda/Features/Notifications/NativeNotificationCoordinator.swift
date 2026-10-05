@@ -73,16 +73,16 @@ final class NativeNotificationCoordinator {
                 let bytes = try await session.tripRequest(path: "api/trips/native/v2/\(binding.tripId)/reminders/delivery", method: "GET")
                 guard generation == own, session.dataScope == scope, !Task.isCancelled else { return }
                 let view = try NativeNoticeView.decode(bytes, tripId: binding.tripId)
-                guard view.mutationReceipt == nil, view.complete, view.transport == "configured", view.device?.active == true,
-                      view.device?.deviceId == binding.deviceId, view.hasConsentedPurpose else { stopRegistration(); return }
+                guard view.mutationReceipt == nil, view.transport == "configured", view.device?.active == true,
+                      view.device?.deviceId == binding.deviceId, view.hasRetainedConsentedPurpose() else { stopRegistration(); return }
                 beginRegistration(tripId: binding.tripId, deviceId: binding.deviceId, scope: scope)
             } else { stopRegistration() }
         } catch { if generation == own, session.dataScope == scope { notice = NativeNoticeStore.code(error) } }
     }
 
     func requestPermission(session: NativeSession, view: NativeNoticeView?) async {
-        guard !busy, let scope = session.dataScope, let view, view.complete, view.transport == "configured",
-              view.hasConsentedPurpose, NativeNotificationConfiguration.installed() != nil else { notice = "PUSH_UNAVAILABLE"; return }
+        guard !busy, let scope = session.dataScope, let view, view.transport == "configured",
+              view.hasRetainedConsentedPurpose(), NativeNotificationConfiguration.installed() != nil else { notice = "PUSH_UNAVAILABLE"; return }
         actorChanged(to: scope)
         let own = generation
         let current = await NativeNotificationPermission.requestForTravel()
@@ -95,8 +95,8 @@ final class NativeNotificationCoordinator {
             let bytes = try await session.tripRequest(path: "api/trips/native/v2/\(view.tripId)/reminders/delivery", method: "GET")
             guard generation == own, session.dataScope == scope, !Task.isCancelled else { return }
             let fresh = try NativeNoticeView.decode(bytes, tripId: view.tripId)
-            guard fresh.mutationReceipt == nil, fresh.complete, fresh.transport == "configured", fresh.tripVersion == view.tripVersion,
-                  fresh.hasConsentedPurpose else { notice = "SOURCE_UNAVAILABLE"; return }
+            guard fresh.mutationReceipt == nil, fresh.transport == "configured", fresh.tripVersion == view.tripVersion,
+                  fresh.hasRetainedConsentedPurpose() else { notice = "SOURCE_UNAVAILABLE"; return }
             beginRegistration(tripId: view.tripId, deviceId: fresh.device?.deviceId ?? NativeNoticeCommand.operation(), scope: scope)
         } catch { if generation == own, session.dataScope == scope { notice = NativeNoticeStore.code(error) } }
     }

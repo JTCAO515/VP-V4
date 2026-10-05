@@ -24,8 +24,7 @@ struct NativeTravelRemindersView: View {
         .init(startMinute: quietEnabled ? quietStart * 60 : 0, endMinute: quietEnabled ? quietEnd * 60 : 0)
     }
     private var sources: [NativeNextStep] {
-        guard let view = store.view, view.complete, view.tripVersion == detail.trip.headVersion else { return [] }
-        return view.nextSteps.filter { NativeNotificationWire.date($0.expiresAt).map { $0 > Date() } == true }
+        store.view?.currentSources(expectedVersion: detail.trip.headVersion) ?? []
     }
     private var selectedSource: NativeNextStep? { sources.first { $0.id == sourceID } }
     private var frozen: Bool { store.busy || store.pending != nil }
@@ -89,7 +88,7 @@ struct NativeTravelRemindersView: View {
                 Button(text("Allow notifications for my saved travel reminders", "为已保存的旅行提醒允许系统通知")) {
                     Task { await session.notifications.requestPermission(session: session, view: store.view) }
                 }
-                .disabled(frozen || store.view?.hasConsentedPurpose != true)
+                .disabled(frozen || store.view?.tripVersion != detail.trip.headVersion || store.view?.hasRetainedConsentedPurpose() != true)
                 .accessibilityIdentifier("reminders.permission")
                 if let device = store.view?.device, device.active {
                     Button(text("Revoke this device's travel notifications", "撤回本设备旅行通知"), role: .destructive) {
@@ -131,7 +130,11 @@ struct NativeTravelRemindersView: View {
         }
     }
     @ViewBuilder private var nextStepsSection: some View {
-        if let view = store.view, view.complete, view.tripVersion == detail.trip.headVersion {
+        if let view = store.view, view.tripVersion == detail.trip.headVersion {
+            if !view.complete {
+                Text(text("Some sources are unavailable or unverified. You can use each verified source shown below.", "部分来源不可用或尚未核实，可使用下方逐条已验证的来源。"))
+                    .font(.footnote).foregroundStyle(Color.vpSecondaryText)
+            }
             ForEach(sources) { step in
                 VStack(alignment: .leading, spacing: 6) {
                     Text(step.reason ?? reasonText(step.reasonCode))
@@ -241,7 +244,8 @@ struct NativeTravelRemindersView: View {
         switch code {
         case "REMINDER_OPERATION_CONFIRMED": return text("Operation confirmed. The delivery receipt is separate.", "操作已确认，投递结果请看独立回执。")
         case "REMINDER_OPERATION_CANCELLED": return text("The original operation was fenced before it applied.", "原操作已在执行前取消并封住迟到请求。")
-        case "SOURCE_UNAVAILABLE", "STALE_TRIP_VERSION": return text("Current source is unavailable or changed. Reload this trip.", "当前来源不可用或已变化，请重载行程。")
+        case "SOURCE_UNAVAILABLE": return text("Some sources are unavailable or unverified; use only the verified sources shown.", "部分来源不可用或尚未核实，请仅使用已显示的验证来源。")
+        case "STALE_TRIP_VERSION": return text("The trip changed. Reload this trip.", "行程已变化，请重载行程。")
         case "PERMISSION_DENIED": return text("iOS notifications are denied; saved reminders remain available in the app.", "iOS 通知已拒绝，仍可在 App 内查看已保存提醒。")
         case "PUSH_UNAVAILABLE": return text("Push is unavailable in this configuration.", "当前配置推送不可用。")
         default: return text("The result could not be confirmed. Refresh or recover the original operation.", "结果尚未确认，请刷新或恢复原操作。")
@@ -274,7 +278,7 @@ struct NativeTravelRemindersView: View {
         await perform(command)
     }
     @MainActor private func schedule(watch: Bool) async {
-        guard consent, !frozen, let step = selectedSource, let view = store.view, view.complete,
+        guard consent, !frozen, let step = selectedSource, let view = store.view,
               view.tripVersion == detail.trip.headVersion, let sourceExpiry = NativeNotificationWire.date(step.expiresAt),
               due > Date(), TimeZone(identifier: timeZone) != nil else { return }
         let expiry = min(sourceExpiry, due.addingTimeInterval(Double(validMinutes * 60)))

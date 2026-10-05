@@ -121,8 +121,25 @@ struct NativeNoticeView: Decodable, Sendable {
     let device: Device?
     let complete: Bool
     let mutationReceipt: MutationReceipt?
-    var hasConsentedPurpose: Bool {
-        reminders.contains { $0.status == "saved" } || watches.contains { $0.status == "active" }
+    /// Completeness describes coverage across independent sources. Each returned
+    /// next step has its own qualified tuple; absent sources grant no capability.
+    func currentSources(expectedVersion: Int, now: Date = Date()) -> [NativeNextStep] {
+        guard tripVersion == expectedVersion else { return [] }
+        return nextSteps.filter { step in
+            step.valid && NativeNotificationWire.date(step.expiresAt).map { $0 > now } == true &&
+            (step.source.kind != "current_trip" || step.source.sourceId == tripId && step.source.revision == tripVersion)
+        }
+    }
+    /// Saved purpose consent is separate from card dismissal and source delivery
+    /// qualification. Registration permits no dispatch; the server rechecks basis.
+    func hasRetainedConsentedPurpose(now: Date = Date()) -> Bool {
+        return reminders.contains {
+            $0.status == "saved" && $0.baseVersion == tripVersion && $0.valid &&
+            NativeNotificationWire.date($0.expiresAt).map { $0 > now } == true &&
+            ($0.source.kind != "current_trip" || $0.source.sourceId == tripId && $0.source.revision == tripVersion)
+        } || watches.contains {
+            $0.status == "active" && $0.valid && NativeNotificationWire.date($0.expiresAt).map { $0 > now } == true
+        }
     }
 
     static func reasonValid(_ value: String?) -> Bool {
