@@ -11,12 +11,17 @@ import {nativeHTTPEnvironmentPorts} from '../turn/native-http-ports.mjs';
 import {waitForNativeAPI} from '../identity/native-api-readiness.mjs';
 
 function sameItems(actual,expected){
-  assert.equal(actual.length,expected.length);
+  // Both arguments are complete day arrays. Added alternatives must follow every original item.
+  assert(actual.length>=expected.length);
+  const originalIds=expected.map(item=>item.id),seen=new Set(originalIds);
+  assert.deepEqual(actual.filter(item=>seen.has(item.id)).map(item=>item.id),originalIds,'preserve full original day ID sequence');
   for(let index=0;index<expected.length;index++){
     const a=actual[index],b=expected[index];
+    assert.equal(actual.findIndex(item=>item.id===b.id),index,'preserve exact original position in the full day');
     const {startsAt:as,endsAt:ae,...af}=a,{startsAt:bs,endsAt:be,...bf}=b;
     // Original reorder_items can make a previously implicit position explicit; it must equal this exact retained position.
     if(!Object.hasOwn(b,'manualOrder')&&Object.hasOwn(a,'manualOrder')){
+      assert(Number.isSafeInteger(a.manualOrder),'explicit normalized position must be an integer');
       assert.equal(a.manualOrder,index,'implicit ordering can only normalize to the unchanged exact position');
       delete af.manualOrder;
     }
@@ -127,7 +132,7 @@ test('bounded PDF corrected metadata through real Auth/HTTP/durable RPC/original
   await confirm(proposal.body.proposalId);
   const restored=await operation();assert.equal(restored.status,200);assert.equal(restored.body.state,'confirmed');assert.equal(restored.body.resultingVersion,2);
   const savedAfter=await call(base,owner.token,undefined,'GET');assert.equal(savedAfter.status,200);assert.equal(savedAfter.body.trip.headVersion,2);
-  sameItems(savedAfter.body.content.days[0].items.slice(0,2),originalItems);
+  sameItems(savedAfter.body.content.days[0].items,originalItems);
   // Native Trip read intentionally omits history. Read the original event with the same ordinary user's RLS-bound client.
   const eventClient=createClient(local.API_URL,key,{auth:{persistSession:false,autoRefreshToken:false},global:{headers:{Authorization:'Bearer '+owner.token}}});
   const originalEvent=await eventClient.from('trip_events').select('id,owner_id,trip_id,proposal_id,resulting_version,event_type')
@@ -141,7 +146,7 @@ test('bounded PDF corrected metadata through real Auth/HTTP/durable RPC/original
   const conflict=await call(pdf+'/preview',owner.token,changed);assert.equal(conflict.status,200);assert.equal(conflict.body.relation,'conflict');assert.equal(conflict.body.fields[1].state,'conflict');
   const alternate=await call(pdf+'/proposal',owner.token,{command:changed,reviewedPreviewDigest:conflict.body.previewDigest});assert.equal(alternate.status,201);
   await confirm(alternate.body.proposalId);
-  const updated=await call(base,owner.token,undefined,'GET');sameItems(updated.body.content.days[0].items.slice(0,3),savedAfter.body.content.days[0].items);assert.equal(updated.body.trip.headVersion,3);
+  const updated=await call(base,owner.token,undefined,'GET');sameItems(updated.body.content.days[0].items,savedAfter.body.content.days[0].items);assert.equal(updated.body.trip.headVersion,3);
   assert.equal((await operation()).body.confirmationEventId,restored.body.confirmationEventId,'original applied receipt survives later Trip changes');
   const cancelCommand={...changed,operationId:uuid(),expectedHeadVersion:3,fields:[command.fields[0],{...command.fields[1],value:'Synthetic correction cancelled'}]};
   const cancelPreview=await call(pdf+'/preview',owner.token,cancelCommand);assert.equal(cancelPreview.status,200);
