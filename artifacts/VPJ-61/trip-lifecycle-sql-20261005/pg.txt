@@ -28,3 +28,9 @@ Retained failures and repairs:
 ℹ skipped 0
 ℹ todo 0
 ℹ duration_ms 18962.555041
+
+CI gate delta (Main authorized): reuse existing VP_ARCHIVE_DB_TEST only.
+PASS gate off: one explicit skip/UNRUN and a sentinel Docker executable was never invoked.
+PASS gate on: root test selected (skip:false). Exact source equality after removing only the gate additions matches the final actual 9/9-tested source. This selection check is not a second PG execution.
+PASS syntax/docs/diff. TS registry owns this actual integration file in the PostgreSQL lane; no EXCLUDED/classifier/workflow change by SQL owner.
+Earlier preparation-path registry classification FAIL is retained as a process finding; Main approved relocating the test rather than changing the classifier. The generic integration job had no pinned image, which motivated the existing gate instead of duplicate Docker execution.

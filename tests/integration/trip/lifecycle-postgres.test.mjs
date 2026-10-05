@@ -5,6 +5,7 @@ import assert from 'node:assert/strict';
 import { randomUUID as uuid, createHash } from 'node:crypto';
 import { readFileSync, readdirSync } from 'node:fs';
 import { command, sql } from '../cost/fixtures/postgres-rpc.mjs';
+const enabled=process.env.VP_ARCHIVE_DB_TEST==='1';
 const migration='20261005040000_vpj61_trip_lifecycle.sql';
 const literal=v=>"'"+String(v).replaceAll("'","''")+"'";
 const json=v=>literal(JSON.stringify(v))+'::jsonb';
@@ -12,7 +13,7 @@ const claims=a=>`set request.jwt.claim.role='authenticated';set request.jwt.clai
 const service="set request.jwt.claim.role='service_role';set request.jwt.claim.sub='';set request.jwt.claims='{\"role\":\"service_role\"}';";
 const sha=v=>createHash('sha256').update(v).digest('hex');
 
-test('VPJ-61 SQL lifecycle, existing writers, locks, erasure and versioned export', {timeout:300000}, async t=>{
+test('VPJ-61 SQL lifecycle, existing writers, locks, erasure and versioned export', {skip:!enabled,timeout:300000}, async t=>{
  const container='vpj61-lifecycle-'+uuid().slice(0,8);
  assert.ok(!process.env.DOCKER_HOST&&!process.env.DOCKER_CONTEXT);
  const context=JSON.parse((await command('docker',['context','inspect'])).stdout)[0];

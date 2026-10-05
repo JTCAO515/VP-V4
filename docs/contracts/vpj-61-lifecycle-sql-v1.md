@@ -106,10 +106,14 @@ export/deletion or completed artifact retrofit is authorized by this change.
 
 ## Validation
 
-Run `node --test tests/integration/trip/lifecycle-postgres.test.mjs` from repository
+Run `VP_ARCHIVE_DB_TEST=1 node --test tests/integration/trip/lifecycle-postgres.test.mjs` from repository
 root. Main approved moving the existing test into the required integration tree after
 the actual classifier rejected its preparation path. The sole integrator registers
-this path in the PostgreSQL lane; no new gate, duplicated test or skip is introduced. It creates one isolated, network-disabled PostgreSQL
+this path in the PostgreSQL lane, which already supplies `VP_ARCHIVE_DB_TEST=1`.
+Main approved reusing that existing gate after the generic integration job was
+found to run without the pinned Docker image. Generic integration explicitly skips
+this DB test (UNRUN); the mandatory PostgreSQL lane must execute with zero skips.
+No new flag, duplicated test, EXCLUDED entry or workflow change is introduced. It creates one isolated, network-disabled PostgreSQL
 17.6.1.159 container per invocation, replays the accepted full migration chain,
 then tests ACL/RLS, upgrade legacy, exact bytes/rejection/abandon, original create/
 confirm/archive, capacity/swap/rollback, Memory erasure, pagination/head/delete,
