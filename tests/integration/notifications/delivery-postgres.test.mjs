@@ -98,6 +98,12 @@ run('cancel before begin blocks; begin before cancel preserves exact accepted ou
  await user(f,'cancel',{operationId:uuid(),id:next.x.id});const outcome={kind:'accepted',apnsId:attemptId,acceptedAt:new Date().toISOString()};
  const receipt=await svc('dispatch_travel_notification_v2',[next.notification,'finish',{attemptId,deviceRevision:grant.deviceRevision,outcome}]);assert.equal(receipt.state,'accepted');assert.deepEqual(receipt.outcome,outcome);assert.equal((await user(f,'list')).reminders.find(r=>r.id===next.x.id).status,'cancelled');
  assert.deepEqual(await svc('dispatch_travel_notification_v2',[next.notification,'read',{attemptId}]),receipt);assert.equal((await svc('dispatch_travel_notification_v2',[next.notification,'begin',{attemptId:uuid()}])).kind,'blocked');
+ const race=await scheduled(f);await due(race);const raceAttempt=uuid();
+ const [cancelled,handoff]=await Promise.all([user(f,'cancel',{operationId:uuid(),id:race.x.id}),svc('dispatch_travel_notification_v2',[race.notification,'begin',{attemptId:raceAttempt}])]);
+ assert.equal(cancelled.reminders.find(r=>r.id===race.x.id).status,'cancelled');assert.ok(['attempt','blocked'].includes(handoff.kind));
+ assert.equal(await db(`select count(*) from notification_private.attempts where notification_id='${race.notification}';`),handoff.kind==='attempt'?'1':'0');
+ assert.equal((await svc('dispatch_travel_notification_v2',[race.notification,'begin',{attemptId:uuid()}])).kind,'blocked');
+ if(handoff.kind==='attempt')await svc('dispatch_travel_notification_v2',[race.notification,'finish',{attemptId:raceAttempt,deviceRevision:handoff.deviceRevision,outcome:{kind:'unknown',code:'ACK_UNKNOWN'}}]);
 });
 run('crashed lease resolves unknown, wrong tuple cannot finish, token-revoked cannot revoke a rotated token',async()=>{
  const f=await fixture(),s=await scheduled(f);await due(s);const attemptId=uuid(),grant=await svc('dispatch_travel_notification_v2',[s.notification,'begin',{attemptId}]);
