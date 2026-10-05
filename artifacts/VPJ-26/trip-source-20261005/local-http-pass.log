@@ -1,0 +1,12 @@
+VPJ26_LOCAL_TARGET {"project":"vp-native-ask-5a712028","base":60300}
+✔ disposable Auth/confirmed Trip/selected field/current-input admission/receipt recovery remain owner scoped (7142.426375ms)
+ℹ actual local Auth/RLS/HTTP/confirmed Trip and frozen input receipt; zero model exchanges and zero budget attempts
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 12156.32625
+VPJ26_LOCAL_CLEANUP PASS vp-native-ask-5a712028

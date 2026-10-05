@@ -1,0 +1,78 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination "platform=iOS Simulator,id=849CE183-BD46-4DD2-85E4-FCA6864376BF" -derivedDataPath /tmp/vpj26-native-derived CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- -parallel-testing-enabled NO "-only-testing:VisePandaTests/NativeTranslationTests" -resultBundlePath /tmp/vpj26-native-tests.xcresult
+
+Build settings from command line:
+    CODE_SIGN_IDENTITY = -
+    CODE_SIGNING_ALLOWED = YES
+
+2026-10-05 14:06:17.461 xcodebuild[73589:931898] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionsModels.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-05 14:06:17.461 xcodebuild[73589:931898] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionsStore.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-05 14:06:17.461 xcodebuild[73589:931898] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionDestination.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+Writing result bundle at path:
+	/tmp/vpj26-native-tests.xcresult
+
+Test Suite 'Selected tests' started at 2026-10-05 14:06:21.930.
+Test Suite 'VisePandaTests.xctest' started at 2026-10-05 14:06:21.931.
+Test Suite 'VisePandaTests.xctest' passed at 2026-10-05 14:06:21.931.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-05 14:06:21.931.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64-apple-ios17.0-simulator
+◇ Suite NativeTranslationTests started.
+◇ Test tripOpaqueIDsAndNullFieldsHaveExactWire() started.
+✔ Test tripOpaqueIDsAndNullFieldsHaveExactWire() passed after 0.007 seconds.
+◇ Test tripSelectionBindsOwnerVersionOpaquePathAndExactBytes() started.
+✔ Test tripSelectionBindsOwnerVersionOpaquePathAndExactBytes() passed after 0.005 seconds.
+◇ Test tripReaderDropsLateActorChangeAndExplicitClear() started.
+✔ Test tripReaderDropsLateActorChangeAndExplicitClear() passed after 0.001 seconds.
+◇ Test selectedSubmissionRetriesSameWireAndRejectsOtherTripOrEditedText() started.
+✔ Test selectedSubmissionRetriesSameWireAndRejectsOtherTripOrEditedText() passed after 0.009 seconds.
+◇ Test selectedSubmissionDriftIsClosedAndNoConsentCannotPost() started.
+✔ Test selectedSubmissionDriftIsClosedAndNoConsentCannotPost() passed after 0.001 seconds.
+◇ Test noConsentNeverSubmits() started.
+✔ Test noConsentNeverSubmits() passed after 0.001 seconds.
+◇ Test ambiguousSendRetriesSameIdentityAndRejectsEditedInput() started.
+✔ Test ambiguousSendRetriesSameIdentityAndRejectsEditedInput() passed after 0.001 seconds.
+◇ Test scopeChangeDropsLateResponseAndPendingText() started.
+✔ Test scopeChangeDropsLateResponseAndPendingText() passed after 0.001 seconds.
+◇ Test withdrawalHidesCachedPhraseEvenIfNetworkFails() started.
+✔ Test withdrawalHidesCachedPhraseEvenIfNetworkFails() passed after 0.001 seconds.
+◇ Test cardRequiresBothTranslationsAndPreservesOriginal() started.
+✔ Test cardRequiresBothTranslationsAndPreservesOriginal() passed after 0.002 seconds.
+◇ Test savedHistoryPagesReplaceRowsAndOlderTranslationUsesFreshExactGET() started.
+✔ Test savedHistoryPagesReplaceRowsAndOlderTranslationUsesFreshExactGET() passed after 0.005 seconds.
+◇ Test savedHistoryUsesMonotonicLifetimeIncludingRequestTime(delay:) started.
+◇ Test case passing 1 argument delay → 19.0 to savedHistoryUsesMonotonicLifetimeIncludingRequestTime(delay:) started.
+​◇ Test case passing 1 argument delay → 20.0 to savedHistoryUsesMonotonicLifetimeIncludingRequestTime(delay:) started.
+​◇ Test case passing 1 argument delay → 21.0 to savedHistoryUsesMonotonicLifetimeIncludingRequestTime(delay:) started.
+​✔ Test savedHistoryUsesMonotonicLifetimeIncludingRequestTime(delay:) with 3 test cases passed after 0.001 seconds.
+◇ Test savedHistoryDropsLateScopeChangeAndRevokedFinalPolicy() started.
+✔ Test savedHistoryDropsLateScopeChangeAndRevokedFinalPolicy() passed after 0.001 seconds.
+◇ Test savedHistoryCannotOpenChangedExactContentOrPublishMalformedCursor() started.
+✔ Test savedHistoryCannotOpenChangedExactContentOrPublishMalformedCursor() passed after 0.001 seconds.
+◇ Test savedHistoryClearDuringReadCannotPublishLateContent() started.
+✔ Test savedHistoryClearDuringReadCannotPublishLateContent() passed after 0.001 seconds.
+◇ Test savedHistoryAcceptsTwentyMaximumCJKPhrasesAndEscapedWire() started.
+✔ Test savedHistoryAcceptsTwentyMaximumCJKPhrasesAndEscapedWire() passed after 0.028 seconds.
+◇ Test searchPagesBindQueryAndExactReadKeepsOriginalPermissionWire() started.
+✔ Test searchPagesBindQueryAndExactReadKeepsOriginalPermissionWire() passed after 0.001 seconds.
+◇ Test queryChangeAndLateOldReplyCannotOverwriteNewQueryPage() started.
+✔ Test queryChangeAndLateOldReplyCannotOverwriteNewQueryPage() passed after 0.001 seconds.
+◇ Test queryEchoMismatchAndCanonicalUnicodeDifferenceFailClosed() started.
+✔ Test queryEchoMismatchAndCanonicalUnicodeDifferenceFailClosed() passed after 0.001 seconds.
+◇ Test searchPermissionWithdrawalAndExpiredReferenceNeverExposeRows() started.
+✔ Test searchPermissionWithdrawalAndExpiredReferenceNeverExposeRows() passed after 0.001 seconds.
+✔ Suite NativeTranslationTests passed after 0.066 seconds.
+✔ Test run with 20 tests in 1 suite passed after 0.067 seconds.
+2026-10-05 14:06:22.338 xcodebuild[73589:931898] [MT] IDETestOperationsObserverDebug: 4.545 elapsed -- Testing started completed.
+2026-10-05 14:06:22.338 xcodebuild[73589:931898] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-05 14:06:22.338 xcodebuild[73589:931898] [MT] IDETestOperationsObserverDebug: 4.545 sec, +4.545 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/vpj26-native-tests.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started
