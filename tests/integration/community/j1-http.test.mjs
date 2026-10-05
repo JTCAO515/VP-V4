@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {randomUUID as uuid} from 'node:crypto';
-import {spawn,execFileSync} from 'node:child_process';import {once} from 'node:events';import {createWriteStream} from 'node:fs';import {join} from 'node:path';
+import {spawn,execFileSync} from 'node:child_process';import {once} from 'node:events';import {createWriteStream,mkdirSync,writeFileSync} from 'node:fs';import {join} from 'node:path';
 import {createClient} from '@supabase/supabase-js';import {createServerClient} from '@supabase/ssr';
 import {identityLocalEnv} from '../identity/local-supabase.mjs';import {nativeHTTPEnvironmentPorts} from '../turn/native-http-ports.mjs';import {waitForNativeAPI} from '../identity/native-api-readiness.mjs';
 import {decodeCommunityOutcome,decodeCommunityItem} from '../../../lib/server/community/contract.ts';
@@ -22,7 +22,7 @@ test('owned real Auth/HTTP J1: registered submission, independent Cookie review,
   const signed=await auth.auth.signUp({email,password});assert.equal(signed.error,null);assert.ok(signed.data.user&&signed.data.session);
   const row={id:signed.data.user.id,email,password};users.push(row);const attemptId=uuid();
   const credential=await call('/api/auth/native/v2/credentials',null,{email,password,attemptId});assert.equal(credential.status,200);const login=await call('/api/auth/native/v2/login',credential.body.accessToken,{attemptId});assert.equal(login.status,200,'original native v2 login');
-  return {...row,...credential.body,sid:JSON.parse(Buffer.from(credential.body.accessToken.split('.')[1],'base64url')).session_id};
+  return {...row,...credential.body,mobileEpoch:login.body.mobileEpoch,sid:JSON.parse(Buffer.from(credential.body.accessToken.split('.')[1],'base64url')).session_id};
  }
  const owner=await user(),other=await user(),staff=await user();const native='/api/community/native/v1',ops='/api/ops/community';
  const ownerCall=(body,headers={})=>call(native,owner.accessToken,body,{'x-community-expected-actor':owner.id,'x-community-expected-session':owner.sid,...headers});
@@ -62,8 +62,12 @@ test('owned real Auth/HTTP J1: registered submission, independent Cookie review,
  sql('update community_private.settings set enabled=false;');const exported=await ownerCall({action:'export'});assert.equal(exported.status,200,JSON.stringify(exported.body));assert.ok(decodeCommunityOutcome(exported.body.data));assert.equal(exported.body.data.coverage,'complete_for_community');assert.equal(exported.body.data.submissions.length,2);assert.ok(exported.body.data.receipts.length>=3);assert.ok(!JSON.stringify(exported.body.data).includes(foreign.content));
  const staffExport=await staffCall({action:'export'});assert.equal(staffExport.status,200,JSON.stringify(staffExport.body));assert.ok(decodeCommunityOutcome(staffExport.body.data));assert.equal(staffExport.body.data.reviewerQualification.active,true);assert.equal(staffExport.body.data.trustedDisclosure,'employee');assert.ok(staffExport.body.data.reviews.length>=3);assert.ok(!JSON.stringify(staffExport.body.data).includes(foreign.title));
  const staffDelete=await staffCall({action:'delete',operationId:uuid(),confirmed:true});assert.equal(staffDelete.status,200,JSON.stringify(staffDelete.body));const surviving=await otherCall({action:'read',submissionId:foreign.submissionId});assert.equal(surviving.status,200);assert.equal(surviving.body.data.submission.content,foreign.content);assert.equal(surviving.body.data.submission.status,'rejected');assert.equal(surviving.body.data.submission.reviewNote,null);assert.equal(surviving.body.data.submission.reviewerDisclosure,null);
- const deletion={action:'delete',operationId:uuid(),confirmed:true};assert.equal((await ownerCall(deletion)).status,200);const erased=await ownerCall({action:'read',submissionId:submission.submissionId});assert.equal(erased.status,200,JSON.stringify(erased.body));assert.equal(erased.body.data.submission.status,'deleted');assert.equal(erased.body.data.submission.content,'');
+ const deletion={action:'delete',operationId:uuid(),confirmed:true};const deleted=await ownerCall(deletion);assert.equal(deleted.status,200);const erased=await ownerCall({action:'read',submissionId:submission.submissionId});assert.equal(erased.status,200,JSON.stringify(erased.body));assert.equal(erased.body.data.submission.status,'deleted');assert.equal(erased.body.data.submission.content,'');
  sql('update community_private.settings set enabled=true;');const replay=await ownerCall(raw);assert.equal(replay.status,200,JSON.stringify(replay.body));assert.equal(replay.body.data.submission.content,'');assert.equal(replay.body.data.submission.status,'deleted');
  assert.equal((await staffCall({action:'queue',cursor:null})).status,403,'erasure removes independent reviewer qualification');
+ if (process.env.VP_COMMUNITY_RECORD_FIXTURE==='1') {
+  mkdirSync('tests/fixtures/community',{recursive:true});
+  writeFileSync('tests/fixtures/community/j1-producer.json',JSON.stringify({schemaVersion:'community-j1-fixture/1',endpoint:ports.api,ownerId:owner.id,sessionId:owner.sid,epoch:owner.mobileEpoch,samples:{submitted:sent.body,reviewed:result.body,exported:exported.body,erased:erased.body,deleted:deleted.body}},null,2)+'\n',{mode:0o600});
+ }
  const replacementAttempt=uuid();const replacement=await call('/api/auth/native/v2/credentials',null,{email:owner.email,password:owner.password,attemptId:replacementAttempt});assert.equal(replacement.status,200);assert.equal((await call('/api/auth/native/v2/login',replacement.body.accessToken,{attemptId:replacementAttempt})).status,200);assert.equal((await ownerCall({action:'mine',cursor:null})).status,401,'old mobile session fenced');
 });

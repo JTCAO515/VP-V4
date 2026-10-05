@@ -65,3 +65,9 @@ test('disabled business gate retains current-author export/cleanup, never submit
  assert.equal((await handleCommunityJ1(request({action:'export'}),options({call:async()=>({data,error:null})},{enabled:false,cleanupEnabled:true}))).status,200);
  assert.equal((await handleCommunityJ1(request(),options({},{enabled:false,cleanupEnabled:true}))).body.error,'COMMUNITY_DISABLED');
 });
+test('bounded export allows honest legacy action unknown but refuses an unrenderable oversized package',async()=>{
+ const data={schemaVersion:COMMUNITY_SCHEMA,kind:'export',actorId:actor,sessionId:session,scope:'community_module',coverage:'complete_for_community',submissions:[],reviews:[],receipts:[{operationId:op,submissionId:id,action:'unknown',state:'committed',digest:'a'.repeat(64)}],audits:[],reviewerQualification:null,trustedDisclosure:null,retained:['operation_fences','submission_tombstones','audit_metadata']};
+ assert.ok(decodeCommunityOutcome(data));
+ const huge={...data,submissions:Array.from({length:100},()=>({...item(),id:randomUUID(),content:'中'.repeat(4000)}))};
+ const response=await handleCommunityJ1(request({action:'export'}),options({call:async()=>({data:huge,error:null})}));assert.equal(response.body.error,'COMMUNITY_CAPACITY');assert.ok(!('data'in response.body));
+});
