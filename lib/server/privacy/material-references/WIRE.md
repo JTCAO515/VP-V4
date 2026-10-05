@@ -96,6 +96,31 @@ already understand unknown as non-completion. The signed Auth test now permits
 only unavailable or actor-bound unknown for foreign recovery, never an erased
 receipt; do not disclose foreign source/fence existence through a success receipt.
 
+## Current combined source and remaining closure
+
+Combined runtime `df207c30` normally includes sole SQL `40a1fc55` (its evidence/
+tests `d09bb269`) and Native product `2751682a`/normal dependency merge `03ac55e0`.
+Actual git diff against Native `03ac55e0` is empty for MaterialReferenceData,
+NativeSession and its DataCoverage caller changes; not merely the fixture ancestor.
+Actual signed GoTrue/HTTP r4: 1PASS0FAIL0SKIP, owned project
+`vp-native-ask-806da5f8` removed successfully. Ordinary new RPC default deny was
+proved before disposable-only GRANT. Original owner business source writers,
+current export page/proof, coverage wrapper independent consumer, selected erase/
+fences/exact-byte recovery, applied Trip preservation, unselected progress
+preservation, retained metadata after physical Trip loss and logout were observed.
+Earlier r1/r2/r3 preserve three fixture-oracle failures, corrected only in this
+owned test: original stale-head typed conflict, no transient row for erase-only
+requests, and missing original deletion tombstone means `retained` not `deleted`.
+No production error allowance or original assertion was weakened.
+
+Only scoped closure remains: Main's precise obsolete original dispatch-test/
+catalog fixture metadata alignment lease; Native final intended test/PBX/fixture
+freeze (product already merged); final affected checks/source audit/one PR.
+No new test matrix requested. #663 final `bda241be` protected normal main merge/
+fresh final-head CI remains an independent dependency gate, not a core handler gap.
+Whole #239 missing modules/ALL2 and target/user/device/provider/Storage/fees remain
+OPEN/UNRUN; the selected three scopes never claim all-user-data completion.
+
 ## Actual sources and copy inventory
 
 - Orders: `reservation_private.current_v1` sensitive corrected fields + source
