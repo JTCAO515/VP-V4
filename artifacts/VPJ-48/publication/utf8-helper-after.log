@@ -1,0 +1,1 @@
+PASS actual shared helper preserves split UTF8 stdout/stderr and nonzero exit code; canonical maximum emoji response retains exact160/4000 UTF16 and no replacement characters
