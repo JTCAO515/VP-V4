@@ -64,8 +64,8 @@ test('closed selection prevents privilege widening; disabled/foreign/session cha
 });
 
 test('denominator includes missing server/device/external modules and accepts no client device proof',async()=>{
- const selected=input('order_references','export',{});
- const result=await call(selected,options({}));assert.equal(result.body.state,'unavailable');assert.equal(result.body.reason,'EXPORT_DELETE_NOT_IMPLEMENTED');
+ const selected=input('case_attachments','export',{});
+ const result=await call(selected,options({}));assert.equal(result.body.state,'unavailable');assert.equal(result.body.reason,'ATTACHMENT_HANDLER_UNAVAILABLE');
  assert.equal(matchesCoverageResult({...result.body,state:'scoped_complete'},result.raw),false);
  for(const id of ['materials','app_group','offline','external_copies'])assert.equal(parseCoverageInput(input(id,'delete',{})),null);
  const response=await handleCoverage(new Request('http://localhost/api/privacy/native/v1/coverage'),options({}));const catalog=await response.json();
