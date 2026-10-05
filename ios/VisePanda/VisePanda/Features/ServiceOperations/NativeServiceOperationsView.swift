@@ -29,6 +29,7 @@ struct NativeServiceOperationsView: View {
     @State private var linkTrip = false
     @State private var selectedTrip = ""
     @State private var refresh = UUID()
+    @State private var actionGeneration = UUID()
     @State private var actionTask: Task<Void, Never>?
     @State private var grantError = false
     @State private var review: NativeServiceReview?
@@ -84,7 +85,7 @@ struct NativeServiceOperationsView: View {
         .task(id: key) { let captured = key; guard captured.active, let actor = captured.actor else { clear(); return }; await load(actor: actor, captured: captured) }
         .onChange(of: actor) { _, _ in clear() }
         .onChange(of: phase) { _, value in if value != .active { clear() } }
-        .onDisappear { actionTask?.cancel(); actionTask = nil; if review == nil { clear() } }
+        .onDisappear { actionGeneration = UUID(); actionTask?.cancel(); actionTask = nil; if review == nil { clear() } }
         .sheet(item: $review, onDismiss: { reload() }) { item in
             NavigationStack {
                 NativeTripView(initialTripID: item.tripId, initialTripScope: item.scope, initialProposalReference: item.reference, initialTripVersion: item.baseVersion)
@@ -176,7 +177,13 @@ struct NativeServiceOperationsView: View {
                 Text(t("保留原始请求。回执缺失不证明操作没有执行。", "The original request is retained. A missing receipt does not prove it did not execute."))
                 if (try? NativeServiceOperationCommand(body: pending.body).caseId) != caseId { Text(t("待核对操作属于另一条服务请求；完成它之前不能覆盖。", "The pending operation belongs to another service request and cannot be overwritten.")) }
                 Button(t("查询原操作回执", "Check original receipt")) { recover(.read, actor: actor) }
-                Button(t("明确重试原始请求", "Explicitly retry original request")) { recover(.retry, actor: actor) }.disabled(!store.isFresh(actor))
+                if store.erased {
+                    Text(t("服务端记录已擦除，操作结果未知；停止本机恢复不会撤销服务端操作。", "The server record was erased and its outcome is unknown. Stopping device recovery does not undo any server operation."))
+                    Button(t("明确停止恢复并擦除本机原请求", "Stop recovery and erase the device request"), role: .destructive) {
+                        store.stopErasedRecovery(actor: actor, current: { self.actor }, read: { try session.serviceOperationRecovery(actor: actor) }, complete: { try session.completeServiceOperation($0, actor: actor) })
+                    }
+                }
+                Button(t("明确重试原始请求", "Explicitly retry original request")) { recover(.retry, actor: actor) }.disabled(store.erased || !store.isFresh(actor))
                 Button(t("终止原操作并核对回执", "Stop original operation and check receipt"), role: .destructive) { recover(.abandon, actor: actor) }
             }.disabled(store.busy || actionTask != nil)
         }
@@ -252,8 +259,9 @@ struct NativeServiceOperationsView: View {
     }
     private func run(_ body: @escaping @MainActor () async -> Void) {
         guard actionTask == nil else { return }
-        actionTask = Task { await body(); actionTask = nil }
+        let own = UUID(); actionGeneration = own
+        actionTask = Task { await body(); if actionGeneration == own { actionTask = nil } }
     }
     private func reload() { store.invalidate(); grant = nil; grantDeadline = 0; refresh = UUID() }
-    private func clear() { actionTask?.cancel(); actionTask = nil; store.clear(); grant = nil; grantDeadline = 0; trips.reset(for: nil); selectedTrip = ""; linkTrip = false; review = nil }
+    private func clear() { actionGeneration = UUID(); actionTask?.cancel(); actionTask = nil; store.clear(); grant = nil; grantDeadline = 0; trips.reset(for: nil); selectedTrip = ""; linkTrip = false; review = nil }
 }

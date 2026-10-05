@@ -11,11 +11,12 @@ import CoreFoundation
     private(set) var busy = false
     private(set) var notice: String?
     private(set) var receiptAbsent = false
+    private(set) var erased = false
     private var generation = UUID()
     private var deadline = 0.0
     private let uptime: () -> Double
     init(uptime: @escaping () -> Double = { ProcessInfo.processInfo.systemUptime }) { self.uptime = uptime }
-    func clear() { generation = UUID(); cases = []; capacity = nil; scope = nil; pending = nil; receipt = nil; busy = false; notice = nil; deadline = 0; receiptAbsent = false }
+    func clear() { generation = UUID(); cases = []; capacity = nil; scope = nil; pending = nil; receipt = nil; busy = false; notice = nil; deadline = 0; receiptAbsent = false; erased = false }
     func invalidate() { generation = UUID(); cases = []; capacity = nil; deadline = 0; busy = false }
     func isFresh(_ actor: NativeDataScope?, now: Date = Date()) -> Bool {
         guard actor == scope, actor != nil, let capacity, uptime() < deadline,
@@ -64,7 +65,7 @@ import CoreFoundation
             let original: NativeServiceOperationPending
             if let recovery {
                 guard let stored = try read(), stored == pending, stored.matches(actor) else { throw NativeDataError.staleSessionResponse }
-                if recovery == .retry { guard isFresh(actor) else { throw NativeDataError.server(code: "RECHECK_REQUIRED") } }
+                if recovery == .retry { guard !erased, isFresh(actor) else { throw NativeDataError.server(code: "RECHECK_REQUIRED") } }
                 original = stored
             } else {
                 guard pending == nil, let command, isFresh(actor) else { throw NativeDataError.server(code: "RECHECK_REQUIRED") }
@@ -88,7 +89,15 @@ import CoreFoundation
             let result = try NativeServiceOperationReceipt.decode(value, command: frozen)
             try complete(original); pending = nil; receipt = result; notice = nil
             cases = []; capacity = nil; deadline = 0
-        } catch { if own == generation { notice = Self.code(error) } }
+        } catch { if own == generation { notice = Self.code(error); if notice == "CASE_OPERATION_ERASED" { erased = true } } }
+    }
+    /// Explicitly stops device recovery only. Server erasure provides no outcome or Undo proof.
+    func stopErasedRecovery(actor: NativeDataScope, current: () -> NativeDataScope?, read: () throws -> NativeServiceOperationPending?, complete: (NativeServiceOperationPending) throws -> Void) {
+        guard !busy, erased, scope == actor, current() == actor else { return }
+        do {
+            guard let pending, try read() == pending else { throw NativeDataError.staleSessionResponse }
+            try complete(pending); self.pending = nil; erased = false; notice = "ERASED_OUTCOME_UNKNOWN"
+        } catch { notice = Self.code(error) }
     }
     private static func code(_ error: Error) -> String {
         if case NativeDataError.server(let code) = error { return code }

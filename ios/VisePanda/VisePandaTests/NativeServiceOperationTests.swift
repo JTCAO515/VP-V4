@@ -1,5 +1,6 @@
 import Foundation
 import Security
+import CryptoKit
 import Testing
 @testable import VisePanda
 
@@ -7,6 +8,7 @@ import Testing
     var values: [String: Data] = [:]
     var failWrite = false
     var failErase = false
+    var failServiceErase = false
     func read(service: String, owner: String) -> (OSStatus, Data?) {
         guard let bytes = values[service + owner] else { return (errSecItemNotFound, nil) }; return (errSecSuccess, bytes)
     }
@@ -14,7 +16,7 @@ import Testing
         guard !failWrite else { return errSecInteractionNotAllowed }; values[service + owner] = bytes; return errSecSuccess
     }
     func remove(service: String, owner: String) -> OSStatus {
-        guard !failErase else { return errSecInteractionNotAllowed }; values.removeValue(forKey: service + owner); return errSecSuccess
+        guard !failErase, !(failServiceErase && service.hasPrefix("com.visepanda.native.service-operations.v1.")) else { return errSecInteractionNotAllowed }; values.removeValue(forKey: service + owner); return errSecSuccess
     }
 }
 
@@ -55,6 +57,113 @@ import Testing
         #expect(throws: (any Error).self) { try NativeServiceOperationCommand(body: NativeServiceOperationWire.bytes(forged)).validate() }
     }
 
+    static func projection(status: String = "queued") -> [String: Any] {
+        let now = floor(Date().timeIntervalSince1970 * 1000)
+        return ["caseId": "33333333-3333-4333-8333-333333333333", "revision": 1, "grantRevision": 1, "status": status, "category": "general", "problem": "Issue", "grantState": "active", "expiresAt": now + 60000, "updatedAt": now, "urgency": "normal", "capacity": ["state": "unknown", "checkedAt": now], "staff": NSNull(), "brief": ["kind": "unknown"], "sources": ["kind": "unknown"], "trip": ["kind": "unknown"], "evidence": [], "manualMinutes": 0, "manualMinutesScope": "recorded_only", "proposal": NSNull()]
+    }
+    static func workspace(_ rows: [[String: Any]] = []) throws -> Data {
+        try NativeServiceOperationWire.bytes(["data": ["actorId": Self.scope.subject, "surface": "owner", "cases": rows, "capacity": ["state": "unknown", "checkedAt": floor(Date().timeIntervalSince1970 * 1000)], "complete": true]])
+    }
+    static func receipt(_ command: NativeServiceOperationCommand) throws -> [String: Any] {
+        ["operationId": try command.operationId, "requestDigest": SHA256.hash(data: command.body).map { String(format: "%02x", $0) }.joined(), "action": try command.action, "outcome": "applied", "caseId": try command.caseId, "revision": 1, "grantRevision": 1, "createdAt": floor(Date().timeIntervalSince1970 * 1000)]
+    }
+    @Test func queueCannotInventStaffOrMinutesAndContactCannotResolve() throws {
+        var value = Self.projection()
+        #expect(try NativeServiceProjection.decode(value).status == .queued)
+        value["manualMinutes"] = 1
+        #expect(throws: (any Error).self) { try NativeServiceProjection.decode(value) }
+        value = Self.projection(status: "resolved")
+        let now = floor(Date().timeIntervalSince1970 * 1000)
+        value["staff"] = ["actorId": Self.scope.subject, "label": "Staff", "acceptedAt": now - 10000, "shiftEndsAt": now + 10000]
+        value["evidence"] = [["kind": "contacted_provider", "note": "Contact sent", "reference": "case receipt", "observedAt": now]]
+        #expect(throws: (any Error).self) { try NativeServiceProjection.decode(value) }
+        value["evidence"] = [["kind": "external_resolution", "note": "Provider resolved", "reference": "provider receipt", "observedAt": now]]
+        #expect(try NativeServiceProjection.decode(value).status == .resolved)
+    }
+    @Test func proposalMustMatchAuthoritativeTripAndMinutesRemainRecordedOnly() throws {
+        var value = Self.projection(status: "cancelled")
+        value["proposal"] = ["proposalId": Self.scope.subject, "tripId": Self.scope.subject, "baseVersion": 1]
+        #expect(throws: (any Error).self) { try NativeServiceProjection.decode(value) }
+        value["trip"] = ["kind": "bound", "tripId": Self.scope.subject, "headVersion": 1]
+        #expect(try NativeServiceProjection.decode(value).proposal != nil)
+        value["manualMinutesScope"] = "total"
+        #expect(throws: (any Error).self) { try NativeServiceProjection.decode(value) }
+    }
+    @Test func receiptChecksFrozenDigestAndOperationIdentity() throws {
+        let command = try Self.command(); var value = try Self.receipt(command)
+        #expect(try NativeServiceOperationReceipt.decode(value, command: command).outcome == "applied")
+        value["requestDigest"] = String(repeating: "a", count: 64)
+        #expect(throws: (any Error).self) { try NativeServiceOperationReceipt.decode(value, command: command) }
+        value = try Self.receipt(command); value["operationId"] = Self.scope.subject
+        #expect(throws: (any Error).self) { try NativeServiceOperationReceipt.decode(value, command: command) }
+    }
+    @Test func ttlAndAccountChangesHideWorkspaceAndLateReads() async throws {
+        var uptime = 100.0; let store = NativeServiceOperationStore(uptime: { uptime })
+        store.restore(actor: Self.scope) { nil }
+        await store.load(actor: Self.scope, current: { Self.scope }) { _ in try Self.workspace([Self.projection()]) }
+        #expect(store.visible(caseId: try Self.command().caseId, actor: Self.scope) != nil)
+        uptime = 131
+        #expect(store.visible(caseId: try Self.command().caseId, actor: Self.scope) == nil)
+        var current: NativeDataScope? = Self.scope
+        await store.load(actor: Self.scope, current: { current }) { _ in current = nil; return try Self.workspace([Self.projection()]) }
+        #expect(store.cases.isEmpty)
+    }
+    @Test func incompleteWorkspaceAndDuplicateRowsAreUnavailable() async throws {
+        let store = NativeServiceOperationStore(); store.restore(actor: Self.scope) { nil }
+        await store.load(actor: Self.scope, current: { Self.scope }) { _ in try Self.workspace([Self.projection(), Self.projection()]) }
+        #expect(!store.isFresh(Self.scope))
+        await store.load(actor: Self.scope, current: { Self.scope }) { _ in
+            var envelope = try JSONSerialization.jsonObject(with: Self.workspace()) as! [String: Any]
+            var data = envelope["data"] as! [String: Any]; data["complete"] = 1; envelope["data"] = data
+            return try NativeServiceOperationWire.bytes(envelope)
+        }
+        #expect(!store.isFresh(Self.scope))
+    }
+    @Test func unknownAckAndAbsentReceiptKeepOriginalBeforeExactRetry() async throws {
+        let vault = ServiceOperationTestVault(), journal = NativeServiceOperationJournal(vault: vault), store = NativeServiceOperationStore(), command = try Self.command()
+        store.restore(actor: Self.scope) { try journal.read(Self.scope) }
+        await store.load(actor: Self.scope, current: { Self.scope }) { _ in try Self.workspace() }
+        await store.perform(command: command, actor: Self.scope, current: { Self.scope }, read: { try journal.read(Self.scope) }, retain: { try journal.retain($0, scope: Self.scope) }, complete: { try journal.complete($0, scope: Self.scope) }) { bytes in
+            #expect(try journal.read(Self.scope)?.body == bytes); throw NativeDataError.server(code: "UNAUTHENTICATED")
+        }
+        #expect(store.pending?.body == command.body)
+        let restored = NativeServiceOperationStore(); restored.restore(actor: Self.scope) { try journal.read(Self.scope) }
+        await restored.perform(command: nil, recovery: .read, actor: Self.scope, current: { Self.scope }, read: { try journal.read(Self.scope) }, retain: { try journal.retain($0, scope: Self.scope) }, complete: { try journal.complete($0, scope: Self.scope) }) { bytes in
+            #expect(bytes == (try command.recoveryBody())); return try NativeServiceOperationWire.bytes(["data": ["receipt": NSNull()]])
+        }
+        #expect(restored.receiptAbsent && restored.pending != nil)
+        await restored.load(actor: Self.scope, current: { Self.scope }) { _ in try Self.workspace() }
+        await restored.perform(command: nil, recovery: .retry, actor: Self.scope, current: { Self.scope }, read: { try journal.read(Self.scope) }, retain: { try journal.retain($0, scope: Self.scope) }, complete: { try journal.complete($0, scope: Self.scope) }) { bytes in
+            #expect(bytes == command.body); return try NativeServiceOperationWire.bytes(["data": Self.receipt(command)])
+        }
+        #expect(restored.pending == nil && restored.receipt != nil)
+        #expect(try journal.read(Self.scope) == nil)
+    }
+    @Test func erasedOperationRequiresExplicitLocalStopAndKeepsOutcomeUnknown() async throws {
+        let vault = ServiceOperationTestVault(), journal = NativeServiceOperationJournal(vault: vault), command = try Self.command()
+        _ = try journal.retain(command, scope: Self.scope)
+        let store = NativeServiceOperationStore(); store.restore(actor: Self.scope) { try journal.read(Self.scope) }
+        await store.perform(command: nil, recovery: .read, actor: Self.scope, current: { Self.scope }, read: { try journal.read(Self.scope) }, retain: { try journal.retain($0, scope: Self.scope) }, complete: { try journal.complete($0, scope: Self.scope) }) { _ in throw NativeDataError.server(code: "CASE_OPERATION_ERASED") }
+        #expect(store.erased && store.pending != nil && store.receipt == nil)
+        vault.failErase = true
+        store.stopErasedRecovery(actor: Self.scope, current: { Self.scope }, read: { try journal.read(Self.scope) }, complete: { try journal.complete($0, scope: Self.scope) })
+        #expect(store.pending != nil)
+        vault.failErase = false
+        store.stopErasedRecovery(actor: Self.scope, current: { Self.scope }, read: { try journal.read(Self.scope) }, complete: { try journal.complete($0, scope: Self.scope) })
+        #expect(store.pending == nil && store.notice == "ERASED_OUTCOME_UNKNOWN" && store.receipt == nil)
+        #expect(try journal.read(Self.scope) == nil)
+    }
+    @Test func responseAfterAccountChangeCannotClearDurableUnknownWrite() async throws {
+        let vault = ServiceOperationTestVault(), journal = NativeServiceOperationJournal(vault: vault), command = try Self.command(), store = NativeServiceOperationStore()
+        var current: NativeDataScope? = Self.scope
+        store.restore(actor: Self.scope) { try journal.read(Self.scope) }
+        await store.load(actor: Self.scope, current: { current }) { _ in try Self.workspace() }
+        await store.perform(command: command, actor: Self.scope, current: { current }, read: { try journal.read(Self.scope) }, retain: { try journal.retain($0, scope: Self.scope) }, complete: { try journal.complete($0, scope: Self.scope) }) { _ in
+            current = nil; return try NativeServiceOperationWire.bytes(["data": Self.receipt(command)])
+        }
+        #expect(store.receipt == nil)
+        #expect(try journal.read(Self.scope)?.body == command.body)
+    }
     @Test func grantsAndFutureStatesNeverImplyAcceptance() throws {
         for state in ["active", "revoked", "future_state", "requested", "queued"] {
             let value = try JSONDecoder().decode(NativeServiceOperationStatus.self, from: Data("\"\(state)\"".utf8))
@@ -74,3 +183,56 @@ import Testing
         #expect(try NativeServiceOperationWire.integer(0) == 0)
     }
 }
+
+#if !SWIFT_PACKAGE
+nonisolated private final class ServiceOperationSessionProtocol: URLProtocol {
+    override class func canInit(with request: URLRequest) -> Bool { request.url?.host == "127.0.0.1" }
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+    override func startLoading() {
+        let path = request.url!.path, owner = "11111111-1111-4111-8111-111111111111"
+        let status: Int, value: [String: Any]
+        if path.hasSuffix("/credentials") { status = 200; value = ["subject": owner, "accessToken": "synthetic-only", "refreshToken": "synthetic-only", "expiresAt": Date().timeIntervalSince1970 + 3600] }
+        else if path.hasSuffix("/login") { status = 200; value = ["subject": owner, "mobileEpoch": 3] }
+        else if path.hasSuffix("/profile") { status = 200; value = ["subject": owner, "displayName": "Synthetic"] }
+        else if path.hasSuffix("/logout") { status = 200; value = [:] }
+        else { status = 401; value = ["error": ["code": "UNAUTHENTICATED"]] }
+        let response = HTTPURLResponse(url: request.url!, statusCode: status, httpVersion: "HTTP/1.1", headerFields: ["Content-Type": "application/json"])!
+        client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+        client?.urlProtocol(self, didLoad: try! JSONSerialization.data(withJSONObject: value)); client?.urlProtocolDidFinishLoading(self)
+    }
+    override func stopLoading() {}
+}
+@MainActor extension NativeServiceOperationTests {
+    @Test func actualSessionDenialPreservesBytesAndRelaunchLogoutErasesThem() async throws {
+        let name = "service-operation-session-" + UUID().uuidString, defaults = UserDefaults(suiteName: name)!
+        defer { defaults.removePersistentDomain(forName: name) }
+        let vault = ServiceOperationTestVault(), configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [ServiceOperationSessionProtocol.self]
+        let session = NativeSession(arguments: ["-VisePandaNativeAPI", Self.scope.endpoint], defaults: defaults, configuration: configuration, bundleConfiguration: [:], vault: vault)
+        await session.login(email: "synthetic@example.invalid", password: "synthetic-only")
+        let actor = try #require(session.dataScope), command = try Self.command()
+        let pending = try session.rememberServiceOperation(command, actor: actor)
+        do { _ = try await session.serviceOperationRequest(body: command.body, actor: actor) } catch { }
+        #expect(session.dataScope == nil && session.status == "expiredOrReplaced")
+        #expect(try NativeServiceOperationJournal(vault: vault).read(actor) == pending)
+        let index = "native.v2.activeSubject." + actor.endpoint + ".pendingJournalCleanupOwner"
+        #expect(defaults.string(forKey: index) == actor.subject)
+        let relaunched = NativeSession(arguments: ["-VisePandaNativeAPI", actor.endpoint], defaults: defaults, configuration: configuration, bundleConfiguration: [:], vault: vault)
+        await relaunched.logout()
+        #expect(try NativeServiceOperationJournal(vault: vault).read(actor) == nil)
+        #expect(relaunched.status == "signedOut" && defaults.object(forKey: index) == nil)
+    }
+    @Test func actualSessionServiceEraseFailureFencesIdentityAndRetainsRecovery() async throws {
+        let name = "service-operation-session-" + UUID().uuidString, defaults = UserDefaults(suiteName: name)!
+        defer { defaults.removePersistentDomain(forName: name) }
+        let vault = ServiceOperationTestVault(), configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [ServiceOperationSessionProtocol.self]
+        let session = NativeSession(arguments: ["-VisePandaNativeAPI", Self.scope.endpoint], defaults: defaults, configuration: configuration, bundleConfiguration: [:], vault: vault)
+        await session.login(email: "synthetic@example.invalid", password: "synthetic-only")
+        let actor = try #require(session.dataScope), pending = try session.rememberServiceOperation(Self.command(), actor: actor)
+        vault.failServiceErase = true; await session.logout()
+        #expect(session.dataScope == nil && session.status == "storageError" && session.failureCode == "serviceOperationCleanupRequired")
+        #expect(try NativeServiceOperationJournal(vault: vault).read(actor) == pending)
+    }
+}
+#endif
