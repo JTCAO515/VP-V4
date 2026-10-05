@@ -9,9 +9,11 @@ export type QuietHours = Readonly<{ startMinute: number; endMinute: number }>;
 /** An explicit disabled factory is the only default; configuration is injected. */
 export type ReminderTransport = Readonly<{
   available: boolean;
-  send(input: Readonly<{ token: string; apnsId: string; notificationId: string; environment: 'sandbox' | 'production'; expiresAt: string }>): Promise<DeliveryOutcome>;
+  binding: Readonly<{ environment: 'sandbox' | 'production'; topic: string }> | null;
+  send(input: Readonly<{ token: string; apnsId: string; notificationId: string; environment: 'sandbox' | 'production'; topic: string; expiresAt: string }>): Promise<DeliveryOutcome>;
 }>;
 export const unavailableReminderTransport: ReminderTransport = Object.freeze({
   available: false,
+  binding: null,
   async send() { return { kind: 'error', code: 'TRANSPORT_UNAVAILABLE' }; },
 });

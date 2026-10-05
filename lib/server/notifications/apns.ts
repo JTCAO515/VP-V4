@@ -50,9 +50,9 @@ export function createApnsTransport(options: Readonly<{ enabled?: boolean; confi
   try { key = createPrivateKey(c.privateKey); if (key.asymmetricKeyType !== 'ec' || key.asymmetricKeyDetails?.namedCurve !== 'prime256v1') return unavailableReminderTransport; } catch { return unavailableReminderTransport; }
   const clock = options.now ?? (() => new Date()), exchange = options.exchange ?? apnsExchange;
   let cachedToken = '', issuedAt = 0;
-  return Object.freeze({ available: true, async send(input): Promise<DeliveryOutcome> {
+  return Object.freeze({ available: true, binding: Object.freeze({ environment: c.environment, topic: c.topic }), async send(input): Promise<DeliveryOutcome> {
     const now = clock(), seconds = Math.floor(now.getTime() / 1000);
-    if (!Number.isFinite(seconds) || !uuid(input.apnsId) || !uuid(input.notificationId) || !/^[a-f0-9]{2,512}$/.test(input.token) || input.token.length % 2 !== 0 || input.environment !== c.environment || !timestamp(input.expiresAt) || Date.parse(input.expiresAt) <= now.getTime()) return { kind: 'error', code: 'TRANSPORT_UNAVAILABLE' };
+    if (!Number.isFinite(seconds) || !uuid(input.apnsId) || !uuid(input.notificationId) || !/^[a-f0-9]{2,512}$/.test(input.token) || input.token.length % 2 !== 0 || input.environment !== c.environment || input.topic !== c.topic || !timestamp(input.expiresAt) || Date.parse(input.expiresAt) <= now.getTime()) return { kind: 'error', code: 'TRANSPORT_UNAVAILABLE' };
     try {
       if (!cachedToken || seconds < issuedAt || seconds - issuedAt >= 3000) {
         const header = Buffer.from(JSON.stringify({ alg: 'ES256', kid: c.keyId })).toString('base64url');

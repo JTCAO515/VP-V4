@@ -64,7 +64,7 @@ test('notification export has an exact lease/source cursor and rejects raw token
 });
 const keypair=generateKeyPairSync('ec',{namedCurve:'prime256v1'});
 const configuration={teamId:'ABCDEFGHIJ',keyId:'0123456789',topic:'com.visepanda.app',privateKey:keypair.privateKey.export({format:'pem',type:'pkcs8'}).toString(),environment:'sandbox'};
-const send={token:'ab'.repeat(32),apnsId:id(11),notificationId:id(12),environment:'sandbox',expiresAt:'2026-10-05T05:00:00Z'};
+const send={token:'ab'.repeat(32),apnsId:id(11),notificationId:id(12),environment:'sandbox',topic:'com.visepanda.app',expiresAt:'2026-10-05T05:00:00Z'};
 test('APNs factory is explicit/default disabled; no credentials discovery or network',async()=>{
  let calls=0;
  const exchange=async()=>{calls++;throw Error('must not call');};
@@ -105,6 +105,18 @@ test('uncertain APNs ACK, token revoke and rejected response are distinct, with 
  const t=createApnsTransport({enabled:true,configuration,now:clock,exchange:async()=>{throw Error('secret body must not escape');}});
  assert.deepEqual(await t.send(send),{kind:'unknown',code:'ACK_UNKNOWN'});
 });
+test('SQL-authorized topic and environment must match independently configured transport before any exchange',async()=>{
+ let exchanges=0;
+ const factory=createApnsTransport({enabled:true,configuration,now:clock,exchange:async()=>{exchanges++;return {status:200,apnsId:send.apnsId,reason:null};}});
+ assert.deepEqual(factory.binding,{environment:'sandbox',topic:configuration.topic});
+ for(const patch of [{topic:'other.app'},{environment:'production'}])assert.deepEqual(await factory.send({...send,...patch}),{kind:'error',code:'TRANSPORT_UNAVAILABLE'});
+ assert.equal(exchanges,0);
+ for(const binding of [{environment:'sandbox',topic:'other.app'},{environment:'production',topic:configuration.topic},null]){
+  const p=port(),transport={available:true,binding,send:async()=>{exchanges++;throw Error('must not exchange');}};
+  assert.equal(await runNotificationScheduler({enabled:true,rpc:p.rpc,transport,now:clock},new AbortController().signal),'error');
+  assert.equal(exchanges,0);assert.equal(p.calls.at(-1)[1],'finish');
+ }
+});
 test('actual HTTP2 exchange reads a local synthetic endpoint without contacting Apple',async()=>{
  const server=createServer();server.on('stream',(stream,headers)=>{assert.equal(headers[':method'],'POST');stream.respond({':status':200,'apns-id':send.apnsId});stream.end();});
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
@@ -119,12 +131,12 @@ function port({block=false,lostFinish=false,malformed=false,abortAfterBegin=null
   const attemptId=p.p_input.attemptId;
   if(p.p_action==='begin'){
    if(block||attempted)return {kind:'blocked'};attempted=true;abortAfterBegin?.abort();
-   return {kind:'attempt',notificationId:id(12),attemptId,deviceRevision:1,token:send.token,environment:'sandbox',expiresAt:send.expiresAt,authorizedAt:now.toISOString(),leaseExpiresAt:new Date(now.getTime()+5000).toISOString(),...(malformed?{owner:'untrusted'}:{})};
+   return {kind:'attempt',notificationId:id(12),attemptId,deviceRevision:1,token:send.token,environment:'sandbox',topic:'com.visepanda.app',expiresAt:send.expiresAt,authorizedAt:now.toISOString(),leaseExpiresAt:new Date(now.getTime()+5000).toISOString(),...(malformed?{owner:'untrusted'}:{})};
   }
   if(p.p_action==='finish'){saved={kind:'receipt',notificationId:id(12),attemptId,state:p.p_input.outcome.kind,outcome:p.p_input.outcome};if(lostFinish)throw Error('lost ACK');return saved;}
   return saved;
  };
- const transport={available:true,send:async input=>{sent++;return {kind:'accepted',apnsId:input.apnsId,acceptedAt:now.toISOString()};}};
+ const transport={available:true,binding:{environment:'sandbox',topic:'com.visepanda.app'},send:async input=>{sent++;return {kind:'accepted',apnsId:input.apnsId,acceptedAt:now.toISOString()};}};
  return {rpc,transport,calls,get sent(){return sent;}};
 }
 test('serialized cancellation before begin prevents transport; accepted attempt is never repeated',async()=>{
@@ -138,7 +150,7 @@ test('lost finish ACK recovers same durable attempt; malformed/aborted grant sen
 });
 test('abort during an unresolved network handoff records unknown and does not start another send',async()=>{
  const controller=new AbortController(),p=port();let calls=0;
- const transport={available:true,send(){calls++;setTimeout(()=>controller.abort(),5);return new Promise(()=>{});}};
+ const transport={available:true,binding:{environment:'sandbox',topic:'com.visepanda.app'},send(){calls++;setTimeout(()=>controller.abort(),5);return new Promise(()=>{});}};
  assert.equal(await runNotificationScheduler({enabled:true,rpc:p.rpc,transport,now:clock},controller.signal),'unknown');assert.equal(calls,1);
  assert.equal(await runNotificationScheduler({enabled:true,rpc:p.rpc,transport,now:clock},new AbortController().signal),'blocked');assert.equal(calls,1);
 });

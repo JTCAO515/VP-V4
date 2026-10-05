@@ -5,9 +5,9 @@ import { deliveryOutcome } from './codec.ts';
 import { randomUUID } from 'node:crypto';
 
 export type NotificationRpc = (name: 'poll_travel_notifications_v2' | 'dispatch_travel_notification_v2', parameters: Readonly<Record<string, unknown>>, signal: AbortSignal) => Promise<unknown>;
-type Attempt = Readonly<{ kind: 'attempt'; notificationId: string; attemptId: string; deviceRevision: number; token: string; environment: 'sandbox' | 'production'; expiresAt: string; authorizedAt: string; leaseExpiresAt: string }>;
+type Attempt = Readonly<{ kind: 'attempt'; notificationId: string; attemptId: string; deviceRevision: number; token: string; environment: 'sandbox' | 'production'; topic: string; expiresAt: string; authorizedAt: string; leaseExpiresAt: string }>;
 function decodeAttempt(v: unknown, notificationId: string, attemptId: string, now: number): Attempt | null {
-  if (!object(v) || !exact(v, ['kind', 'notificationId', 'attemptId', 'deviceRevision', 'token', 'environment', 'expiresAt', 'authorizedAt', 'leaseExpiresAt']) || v.kind !== 'attempt' || v.notificationId !== notificationId || v.attemptId !== attemptId || !integer(v.deviceRevision, 1) || typeof v.token !== 'string' || !/^[a-f0-9]{2,512}$/.test(v.token) || v.token.length % 2 !== 0 || !['sandbox', 'production'].includes(String(v.environment)) || !timestamp(v.expiresAt) || !timestamp(v.authorizedAt) || !timestamp(v.leaseExpiresAt)) return null;
+  if (!object(v) || !exact(v, ['kind', 'notificationId', 'attemptId', 'deviceRevision', 'token', 'environment', 'topic', 'expiresAt', 'authorizedAt', 'leaseExpiresAt']) || v.kind !== 'attempt' || v.notificationId !== notificationId || v.attemptId !== attemptId || !integer(v.deviceRevision, 1) || typeof v.token !== 'string' || !/^[a-f0-9]{2,512}$/.test(v.token) || v.token.length % 2 !== 0 || !['sandbox', 'production'].includes(String(v.environment)) || typeof v.topic !== 'string' || !/^[A-Za-z0-9.-]{1,200}$/.test(v.topic) || !timestamp(v.expiresAt) || !timestamp(v.authorizedAt) || !timestamp(v.leaseExpiresAt)) return null;
   const at = Date.parse(v.authorizedAt), lease = Date.parse(v.leaseExpiresAt);
   if (at > now + 1000 || lease <= now || lease <= at || lease - at > 5000 || Date.parse(v.expiresAt) <= now) return null;
   return v as Attempt;
@@ -37,9 +37,11 @@ export async function runNotificationScheduler(options: Readonly<{ enabled?: boo
   // No send follows a stale/aborted grant. The durable attempt remains unknown,
   // never put back into a retryable queue even when no network call happened.
   let outcome: DeliveryOutcome = { kind: 'unknown', code: 'ACK_UNKNOWN' };
-  if (!signal.aborted && clock().getTime() < Date.parse(attempt.leaseExpiresAt) && clock().getTime() < Date.parse(attempt.expiresAt)) {
+  const binding = options.transport.binding;
+  if (!binding || binding.environment !== attempt.environment || binding.topic !== attempt.topic) outcome = { kind: 'error', code: 'TRANSPORT_UNAVAILABLE' };
+  else if (!signal.aborted && clock().getTime() < Date.parse(attempt.leaseExpiresAt) && clock().getTime() < Date.parse(attempt.expiresAt)) {
     const sending = nativeRequestScope(signal, 3000);
-    try { const result = await sending.run(() => options.transport.send({ token: attempt.token, apnsId: attemptId, notificationId, environment: attempt.environment, expiresAt: attempt.expiresAt })); if (deliveryOutcome(result) && (result.kind !== 'accepted' || result.apnsId === attemptId)) outcome = result; } catch { /* uncertain transport, no automatic retry */ }
+    try { const result = await sending.run(() => options.transport.send({ token: attempt.token, apnsId: attemptId, notificationId, environment: attempt.environment, topic: attempt.topic, expiresAt: attempt.expiresAt })); if (deliveryOutcome(result) && (result.kind !== 'accepted' || result.apnsId === attemptId)) outcome = result; } catch { /* uncertain transport, no automatic retry */ }
     finally { sending.dispose(); }
   }
   const cleanup = new AbortController();
