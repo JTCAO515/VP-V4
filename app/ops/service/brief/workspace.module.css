@@ -1,0 +1,17 @@
+.workspace { max-width: 60rem; margin: 0 auto; padding: 2rem 1rem; display: grid; gap: 1.25rem; color: var(--color-text-primary, #172b26); overflow-wrap: anywhere; }
+.header { display: flex; align-items: start; justify-content: space-between; gap: 1rem; }
+.header h1 { font-size: 1.8rem; font-weight: 650; }
+.panel { border: 1px solid var(--color-border, #b5c3bc); border-radius: 1rem; padding: 1.25rem; display: grid; gap: .8rem; }
+.panel h2 { font-size: 1.2rem; font-weight: 650; }
+.field { display: grid; gap: .65rem; padding-block: .5rem; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; }
+.workspace button, .workspace select { border: 1px solid var(--color-border, #75867d); border-radius: .4rem; padding: .6rem .8rem; font: inherit; max-width: 100%; min-height: 2.75rem; }
+.workspace button { cursor: pointer; }
+.workspace button:disabled { opacity: .55; cursor: default; }
+.workspace :focus-visible { outline: 3px solid var(--color-accent, #147953); outline-offset: 3px; }
+.workspace label { display: grid; gap: .4rem; }
+.sources, .requirements { display: grid; gap: .5rem; }
+.sources dt, .requirements dt { font-size: .9rem; }
+.sources dd, .requirements dd { font-weight: 500; }
+.value { white-space: pre-wrap; }
+@media (max-width: 40rem) { .header { flex-direction: column; } .panel { padding: 1rem; } }
