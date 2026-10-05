@@ -35,6 +35,7 @@ final class NativeSession {
     private var assistantNavigation: NativeAssistantNavigation?
     let memoryPreferences=NativeMemoryPreferencesStore()
     let notifications = NativeNotificationCoordinator()
+    let entryResume: NativeEntryResumeCoordinator
     let offlineTrips=NativeOfflineTripStore()
     let deviceMaterials: NativeDeviceMaterials
     private(set) var exploreAskHandoff:NativeExploreAskHandoff?
@@ -48,7 +49,7 @@ final class NativeSession {
     private let storageKey: String
     private let keychainService = "com.visepanda.native.local-session.v2"
 
-    init(arguments: [String] = ProcessInfo.processInfo.arguments, defaults: UserDefaults = .standard, configuration: URLSessionConfiguration = .ephemeral, bundleConfiguration: [String: String] = Bundle.main.infoDictionary?.compactMapValues { $0 as? String } ?? [:], vault: any NativeCredentialVault = NativeKeychainVault(), deviceMaterials: NativeDeviceMaterials? = nil) {
+    init(arguments: [String] = ProcessInfo.processInfo.arguments, defaults: UserDefaults = .standard, configuration: URLSessionConfiguration = .ephemeral, bundleConfiguration: [String: String] = Bundle.main.infoDictionary?.compactMapValues { $0 as? String } ?? [:], vault: any NativeCredentialVault = NativeKeychainVault(), deviceMaterials: NativeDeviceMaterials? = nil, entryResume: NativeEntryResumeCoordinator? = nil) {
         endpoint = Self.resolveEndpoint(arguments: arguments, bundleConfiguration: bundleConfiguration)
         let installed = bundleConfiguration["VisePandaNativeTaskContext", default: ""]
         if !installed.isEmpty { askMode = NativeAskMode(rawValue: installed) ?? .unavailable }
@@ -59,6 +60,7 @@ final class NativeSession {
         self.defaults = defaults
         self.vault = vault
         self.deviceMaterials = deviceMaterials ?? NativeDeviceMaterials()
+        self.entryResume = entryResume ?? NativeEntryResumeCoordinator()
         storageKey = "native.v2.activeSubject.\(endpoint?.absoluteString ?? "disabled")"
         configuration.httpCookieStorage = nil
         configuration.httpShouldSetCookies = false
@@ -1127,7 +1129,15 @@ final class NativeSession {
         busy = true
         defer { busy = false }
         // A deliberate account change clears all old account data before sending the new request.
-        guard clear() else { return }
+        let anonymousResume: UUID?
+        do {
+            anonymousResume = credential == nil && defaults.string(forKey: storageKey) == nil
+                && defaults.object(forKey: storageKey + ".signOutIntent") == nil
+                && defaults.string(forKey: storageKey + ".pendingJournalCleanupOwner") == nil
+                && defaults.string(forKey: storageKey + ".recoveryCleanupOwner") == nil
+                ? try entryResume.initialLoginPreservation() : nil
+        } catch { failureCode="entryResumeCleanupRequired";status="storageError";return }
+        guard clear(preservingAnonymousResume: anonymousResume) else { return }
         defaults.removeObject(forKey: storageKey + ".signOutIntent")
         deviceMaterialSignOutFence = false // Only a deliberate new login after cleanup reopens consumption.
         let attempt = UUID().uuidString
@@ -1183,6 +1193,8 @@ final class NativeSession {
         guard !busy else { return }
         defaults.set(credential?.subject ?? defaults.string(forKey: storageKey) ?? defaults.string(forKey: storageKey + ".pendingJournalCleanupOwner") ?? defaults.string(forKey: storageKey + ".recoveryCleanupOwner") ?? "unbound", forKey: storageKey + ".signOutIntent")
         deviceMaterialSignOutFence = true
+        do { try entryResume.erase() }
+        catch { failureCode="entryResumeCleanupRequired";status="storageError";return }
         subject=nil; mobileEpoch=nil; displayName=nil; status="signingOut"
         do { try NativePDFInbox().eraseAll() }
         catch { failureCode="pdfIntakeCleanupRequired";status="storageError";return }
@@ -1310,10 +1322,12 @@ final class NativeSession {
         return try deviceMaterials.receive(data, scope: scope)
     }
 
-    @discardableResult private func clear(preservePendingJournals: Bool = false) -> Bool {
+    @discardableResult private func clear(preservePendingJournals: Bool = false, preservingAnonymousResume: UUID? = nil) -> Bool {
         // Fence consumers before cleanup; a locked file is not proof of erasure.
         dataGeneration += 1
         notifications.actorChanged(to: nil)
+        do { try entryResume.erase(preservingUnclaimedID: preservingAnonymousResume) }
+        catch { failureCode="entryResumeCleanupRequired";status="storageError";return false }
         subject=nil; mobileEpoch=nil; displayName=nil
         do { try NativePDFInbox().eraseAll() }
         catch { failureCode="pdfIntakeCleanupRequired";status="storageError";return false }

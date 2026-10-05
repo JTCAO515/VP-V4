@@ -56,6 +56,9 @@ struct NativeTripView: View {
     var initialTripScope: NativeDataScope? = nil
     var initialProposalReference:String? = nil
     var initialTripVersion:Int? = nil
+    var initialSharedPDF: NativeEntryResumeTrip? = nil
+    @State private var sharedPDFURL: URL?
+    @State private var sharedPDFConsumed = false
     @State private var initialTripReady = false
     @State private var initialTripFailed = false
     @Environment(AppSettings.self) private var settings
@@ -138,6 +141,14 @@ struct NativeTripView: View {
                 })
             guard session.dataScope == initialTripScope, !Task.isCancelled else { return }
             initialTripReady = opened; initialTripFailed = !opened
+            if opened, !sharedPDFConsumed, let shared = initialSharedPDF, shared.scope == session.dataScope,
+               shared.tripID == initialTripID, let detail = store.detail, store.canEdit, store.pending == nil, !store.hasUncertainProposal {
+                do {
+                    sharedPDFURL = try session.entryResume.sourceURL(shared.receipt, scope: session.dataScope)
+                    sharedPDFConsumed = true
+                    pdfIntakeSource = .init(actor: shared.scope, detail: detail)
+                } catch { initialTripFailed = true }
+            }
         }
     }
 
@@ -270,7 +281,15 @@ struct NativeTripView: View {
             NativeTripShareView(source: source, store: store, session: session, chinese: chinese)
         }
         .sheet(item: $pdfIntakeSource) { source in
-            NativePDFIntakeView(source: source, session: session, tripStore: store, chinese: chinese)
+            NativePDFIntakeView(source: source, session: session, tripStore: store, chinese: chinese, initialPDFURL: sharedPDFURL, initialPDFExpiry: sharedPDFURL == nil ? nil : initialSharedPDF?.receipt.expiresAt)
+        }
+        .onChange(of: pdfIntakeSource?.id) { _, value in if value == nil { sharedPDFURL = nil } }
+        .task(id: initialSharedPDF?.receipt.id) {
+            guard let shared = initialSharedPDF else { return }
+            let delay = shared.receipt.expiresAt.timeIntervalSinceNow
+            if delay > 0 { try? await Task.sleep(for: .seconds(delay)) }
+            guard !Task.isCancelled else { return }
+            pdfIntakeSource = nil; sharedPDFURL = nil
         }
         .sheet(item: $screenshotReviewSource) { source in
             NativeScreenshotReviewView(source: source, chinese: chinese, store: store, session: session)

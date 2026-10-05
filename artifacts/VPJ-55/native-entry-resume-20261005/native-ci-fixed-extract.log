@@ -1,0 +1,23 @@
+Test Suite 'NativeEntryResumeInboxTests' started at 2026-10-05 20:01:48.392.
+Test Case '-[VisePandaTests.NativeEntryResumeInboxTests testExportRequiresClaimAndCleansIndependentCopiesOnBackground]' started.
+Test Case '-[VisePandaTests.NativeEntryResumeInboxTests testExportRequiresClaimAndCleansIndependentCopiesOnBackground]' passed (0.022 seconds).
+Test Case '-[VisePandaTests.NativeEntryResumeInboxTests testForgedAnonymousPointerCannotAuthorizeLoginPreservation]' started.
+Test Case '-[VisePandaTests.NativeEntryResumeInboxTests testForgedAnonymousPointerCannotAuthorizeLoginPreservation]' passed (0.003 seconds).
+Test Case '-[VisePandaTests.NativeEntryResumeInboxTests testInitialLoginPreservesOnlyVerifiedOriginalAndClaimKeepsTTL]' started.
+Test Case '-[VisePandaTests.NativeEntryResumeInboxTests testInitialLoginPreservesOnlyVerifiedOriginalAndClaimKeepsTTL]' passed (0.032 seconds).
+Test Case '-[VisePandaTests.NativeEntryResumeInboxTests testSharedExpiryPersistsIntoF1AndNeverRenewsCommand]' started.
+Test Case '-[VisePandaTests.NativeEntryResumeInboxTests testSharedExpiryPersistsIntoF1AndNeverRenewsCommand]' passed (0.010 seconds).
+Test Case '-[VisePandaTests.NativeEntryResumeInboxTests testUnconfiguredBuildShowsFilesFallback]' started.
+Test Case '-[VisePandaTests.NativeEntryResumeInboxTests testUnconfiguredBuildShowsFilesFallback]' passed (0.001 seconds).
+Test Suite 'NativeEntryResumeInboxTests' passed at 2026-10-05 20:01:48.462.
+Test Suite 'NativeEntryResumeTests' started at 2026-10-05 20:01:48.462.
+Test Case '-[VisePandaTests.NativeEntryResumeTests testExpiryAndCleanupFencePreventReplay]' started.
+Test Case '-[VisePandaTests.NativeEntryResumeTests testExpiryAndCleanupFencePreventReplay]' passed (0.001 seconds).
+Test Case '-[VisePandaTests.NativeEntryResumeTests testLoginCannotRetargetBoundMaterialOrExtendTTL]' started.
+Test Case '-[VisePandaTests.NativeEntryResumeTests testLoginCannotRetargetBoundMaterialOrExtendTTL]' passed (0.000 seconds).
+Test Case '-[VisePandaTests.NativeEntryResumeTests testOpaqueLinksAndConfiguredDomainsOnly]' started.
+Test Case '-[VisePandaTests.NativeEntryResumeTests testOpaqueLinksAndConfiguredDomainsOnly]' passed (0.001 seconds).
+Test Suite 'NativeEntryResumeTests' passed at 2026-10-05 20:01:48.464.
+	 Executed 333 tests, with 13 tests skipped and 0 failures (0 unexpected) in 8.390 (8.463) seconds
+	 Executed 333 tests, with 13 tests skipped and 0 failures (0 unexpected) in 8.390 (8.464) seconds
+✔ Test run with 123 tests in 12 suites passed after 0.332 seconds.

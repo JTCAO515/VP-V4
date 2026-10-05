@@ -33,8 +33,11 @@ struct NativePDFIntakeSource: Identifiable {
             if journal != nil { message = "recoveryRequired" }
         } catch { cleanupPending = true; message = "cleanupRequired" }
     }
-    func load(_ url: URL, using session: NativeSession) async {
+    func load(_ url: URL, using session: NativeSession, expiresNoLaterThan: Date? = nil) async {
         guard current(session), !busy, journal == nil else { return }
+        if let expiry = expiresNoLaterThan, !expiry.timeIntervalSince1970.isFinite || expiry <= Date() {
+            message = "expired"; return
+        }
         guard clearCopy() else { return }
         busy = true; message = nil
         let token = generation
@@ -52,7 +55,7 @@ struct NativePDFIntakeSource: Identifiable {
             let result = try await task.value
             guard current(session), generation == token, !Task.isCancelled else { return }
             // Publish the protected copy only after main-actor revalidation. No detached writer can race logout/clear.
-            let saved = try inbox.receiveValidated(result.0, document: result.1, namespace: namespace)
+            let saved = try inbox.receiveValidated(result.0, document: result.1, namespace: namespace, expiresNoLaterThan: expiresNoLaterThan)
             receipt = saved; document = result.1
             if result.1.pages.allSatisfy({ $0.lines.isEmpty }) { message = "unavailable" }
         } catch is CancellationError {} catch {

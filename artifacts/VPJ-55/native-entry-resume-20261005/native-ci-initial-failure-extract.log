@@ -1,0 +1,23 @@
+Test Suite 'NativeEntryResumeInboxTests' started at 2026-10-05 19:48:44.420.
+Test Case '-[VisePandaTests.NativeEntryResumeInboxTests testExportRequiresClaimAndCleansIndependentCopiesOnBackground]' started.
+Test Case '-[VisePandaTests.NativeEntryResumeInboxTests testExportRequiresClaimAndCleansIndependentCopiesOnBackground]' passed (0.022 seconds).
+Test Case '-[VisePandaTests.NativeEntryResumeInboxTests testForgedAnonymousPointerCannotAuthorizeLoginPreservation]' started.
+Test Case '-[VisePandaTests.NativeEntryResumeInboxTests testForgedAnonymousPointerCannotAuthorizeLoginPreservation]' passed (0.003 seconds).
+Test Case '-[VisePandaTests.NativeEntryResumeInboxTests testInitialLoginPreservesOnlyVerifiedOriginalAndClaimKeepsTTL]' started.
+Test Case '-[VisePandaTests.NativeEntryResumeInboxTests testInitialLoginPreservesOnlyVerifiedOriginalAndClaimKeepsTTL]' passed (0.031 seconds).
+Test Case '-[VisePandaTests.NativeEntryResumeInboxTests testSharedExpiryPersistsIntoF1AndNeverRenewsCommand]' started.
+/Users/jtsm5p/.local/share/github-runners/vp-v4-ios/_work/VP-V4/VP-V4/ios/VisePanda/VisePandaTests/NativeEntryResumeTests.swift:122: error: -[VisePandaTests.NativeEntryResumeInboxTests testSharedExpiryPersistsIntoF1AndNeverRenewsCommand] : XCTAssertLessThanOrEqual failed: ("2026-10-05 11:48:49 +0000") is greater than ("2026-10-05 11:48:49 +0000")
+Test Case '-[VisePandaTests.NativeEntryResumeInboxTests testSharedExpiryPersistsIntoF1AndNeverRenewsCommand]' failed (0.342 seconds).
+Test Case '-[VisePandaTests.NativeEntryResumeInboxTests testUnconfiguredBuildShowsFilesFallback]' started.
+Test Case '-[VisePandaTests.NativeEntryResumeInboxTests testUnconfiguredBuildShowsFilesFallback]' passed (0.001 seconds).
+Test Suite 'NativeEntryResumeInboxTests' failed at 2026-10-05 19:48:44.820.
+Test Suite 'NativeEntryResumeTests' started at 2026-10-05 19:48:44.820.
+Test Case '-[VisePandaTests.NativeEntryResumeTests testExpiryAndCleanupFencePreventReplay]' started.
+Test Case '-[VisePandaTests.NativeEntryResumeTests testExpiryAndCleanupFencePreventReplay]' passed (0.000 seconds).
+Test Case '-[VisePandaTests.NativeEntryResumeTests testLoginCannotRetargetBoundMaterialOrExtendTTL]' started.
+Test Case '-[VisePandaTests.NativeEntryResumeTests testLoginCannotRetargetBoundMaterialOrExtendTTL]' passed (0.000 seconds).
+Test Case '-[VisePandaTests.NativeEntryResumeTests testOpaqueLinksAndConfiguredDomainsOnly]' started.
+Test Case '-[VisePandaTests.NativeEntryResumeTests testOpaqueLinksAndConfiguredDomainsOnly]' passed (0.000 seconds).
+Test Suite 'NativeEntryResumeTests' passed at 2026-10-05 19:48:44.822.
+	NativeEntryResumeInboxTests.testSharedExpiryPersistsIntoF1AndNeverRenewsCommand()
+	AppNavigationContractTests.entryURLs()
