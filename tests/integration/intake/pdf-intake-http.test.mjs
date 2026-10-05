@@ -15,6 +15,11 @@ function sameItems(actual,expected){
   for(let index=0;index<expected.length;index++){
     const a=actual[index],b=expected[index];
     const {startsAt:as,endsAt:ae,...af}=a,{startsAt:bs,endsAt:be,...bf}=b;
+    // Original reorder_items can make a previously implicit position explicit; it must equal this exact retained position.
+    if(!Object.hasOwn(b,'manualOrder')&&Object.hasOwn(a,'manualOrder')){
+      assert.equal(a.manualOrder,index,'implicit ordering can only normalize to the unchanged exact position');
+      delete af.manualOrder;
+    }
     assert.deepEqual(af,bf,'preserve every non-time field and exact ordering');
     for(const field of ['startsAt','endsAt']){
       assert.equal(Object.hasOwn(a,field),Object.hasOwn(b,field),'preserve optional fixed time presence');
