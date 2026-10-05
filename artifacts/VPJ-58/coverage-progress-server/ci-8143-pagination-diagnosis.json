@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "ciHead": "8143a0c598d7c5f691dbf4efcca180c08049927f",
+  "jobId": "112019703820",
+  "runId": "37386088996",
+  "testLine": 107,
+  "operationId": "9b7eb493-c229-4923-93d2-a620c59fe0b1",
+  "sortedObjectIds": [
+    "4e04afd5-0a05-4e1a-85f3-4758b8a6d91f",
+    "5265a4a7-ee9a-4586-9552-d3d1e798d587",
+    "77a716de-bc7a-4ea9-af45-bd44e6fb2176",
+    "92943491-250a-4488-9191-eba8649fb2d6",
+    "a9a17f47-06a7-4d0f-926a-0eabecb61e2d",
+    "d6d08342-76d9-4889-aa7a-6eff0e490d1a",
+    "e25cb823-ef03-4600-ba0c-07823ddcdb59"
+  ],
+  "expectedFirstNextCursor": {
+    "sourceDigest": "0b767b8775fa04f6b06a78cdb8dbf3e4ea66b2875e16ed7ec4fa4a3a454938fd",
+    "afterId": "a9a17f47-06a7-4d0f-926a-0eabecb61e2d"
+  },
+  "guaranteedInvalidCursor": {
+    "sourceDigest": "0b767b8775fa04f6b06a78cdb8dbf3e4ea66b2875e16ed7ec4fa4a3a454938fd",
+    "afterId": "4e04afd5-0a05-4e1a-85f3-4758b8a6d91f"
+  },
+  "returnedItems": [
+    "d6d08342-76d9-4889-aa7a-6eff0e490d1a",
+    "e25cb823-ef03-4600-ba0c-07823ddcdb59"
+  ],
+  "pageNumber": 2,
+  "hasMore": false,
+  "recordedRequestCursor": false,
+  "inference": "The failure occurs in the first correct-digest negative. Previous last_cursor is NULL, so successful pageNumber2 implies that ids[0] equals the legitimate next anchor sortedObjectIds[4]. It is a first continuation, not a replay.",
+  "contract": "Only last page exact cursor retry allowed without recount; advancing through expected next cursor is also valid. Other non-null anchors must conflict.",
+  "sqlChanged": false,
+  "ciRerun": false,
+  "mergeHold": true
+}
