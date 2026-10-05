@@ -1,0 +1,29 @@
+Final streamed output chunk from the affected original regression command. Earlier suite output was streamed separately.
+✔ full migration compile and default revoked ACL/RLS; ordinary original writer unchanged (6112.465458ms)
+✔ missing actual reservation authority fails closed, no context/proposal or Trip write (450.995584ms)
+✔ closed typed input future/stale/highrisk/fixed/foreign scope rejects without writes (773.871042ms)
+✔ permanent recovery marker without association rejects direct original confirm and revision; full rollback (497.31875ms)
+✔ transport closed source input never fabricates user report; absent real reader/proof callback leaves no context (1076.3865ms)
+✔ unqualified transport association rejects before first Trip mutation; private proof cannot be client minted (720.806042ms)
+✔ server context exact replay/current Profile; same operation changed body conflicts (401.592ms)
+✔ single original confirm preserves all fixed/unselected/date/window scope; exact historical retry/read (607.675417ms)
+✔ lost ACK exact submit/read concurrent replay creates one proposal/operation; changed choice conflicts (505.434166ms)
+✔ concurrent same-key original confirmation applies once with one event/version and exact operation recovery (508.846916ms)
+✔ Profile change direct original confirm rolls back; malformed alternate support cannot bypass the original writer (548.5835ms)
+✔ all recovery revisions including same patch are rejected; title/rollback/expiry cannot bypass (606.810625ms)
+✔ expiry clock at commit rejects original writer even if legacy now() allowed the patch (2118.426583ms)
+✔ new source reservation / reference correction invalidates actual confirmation atomically (506.422417ms)
+✔ user-confirmed preservation binds exact current real order without qualification upgrade; unknown/missing/date/duplicate blocked (934.004125ms)
+✔ late source drift in same original writer transaction rejects all writes at deferred guard (472.1905ms)
+✔ account/Trip deletion cascades personal rows; clearing association keeps permanent rejection marker (1344.250667ms)
+✔ lifecycle-only unqualified records cascade on real archive/deletion request/account/Trip paths (2367.421208ms)
+✔ private exact real export lease reads only owned metadata, is partial/unenrolled and rejects wrong lease/cursor (1052.707792ms)
+✔ private export stays partial unenrolled and requires exact live original lease; no ordinary ACL (65.445166ms)
+ℹ tests 61
+ℹ suites 0
+ℹ pass 61
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 72950.580291
