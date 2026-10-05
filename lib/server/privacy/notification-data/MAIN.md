@@ -107,3 +107,20 @@ release (original owner clean/no in-flight/planned writer): LEGACY-FIXTURES.patc
 applied only its reviewed hunks. Original two files actual15 PASS0FAIL0skip,
 including actual loopback HTTP2 and CLI composition. Expected outcomes/no retry/
 payload/privacy assertions unchanged. No new matrix or runtime config/runner edit.
+
+Integration current: normal merged immutable SQLc0135994 and Native0fa92171
+(including final v4/34 visible catalog). Four exact leased coverage hunks are
+implemented. IMPORTANT Native0fa still has original eight fence kinds at
+NativeNotificationDataRows.swift:146; outbox_parent/watch_semantic remain omitted.
+The same concrete producer fixture/finding above still requires SAME Native
+owner repair; reported directory tests12 do not prove those real retained rows.
+No new writer/TS reverse contract/new matrix is justified. Source closure held.
+
+Four coverage registration hunks consumed exact Main grant: actual shared catalog
+now4/34 and notification_data dispatch validates explicit nil-trip/object selection,
+opaque recovery bytes and full typed outcome. Owned registered GET/POST4 tests
+PASS0skip (fake authority separately labelled). Normal SQL mergec013 and latest
+Native merge0fa completed; no original SQL edited. Actual signed one-scenario
+Auth/HTTP runner/test prepared in owned namespace, starts/stops uniquely scoped
+local Supabase + Next only, default-deny before scoped fixture grants, no APNs.
+No duplicate SQL/Native matrix; prior versioned sources/evidence reused.

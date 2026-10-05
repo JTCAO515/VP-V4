@@ -1,10 +1,11 @@
+import { NOTIFICATION_CATALOG_VERSION, NOTIFICATION_MODULES } from '../notification-data/coverage.ts';
 /** ALL1 denominator. A registered scoped handler is not all-account completion. */
-export const CATALOG_VERSION = 'data-coverage-catalog/2026-10-06.3' as const;
+export const CATALOG_VERSION = NOTIFICATION_CATALOG_VERSION;
 export type Location = 'server' | 'device' | 'external';
 export type Module = Readonly<{
   id: string; location: Location; version: string; scope: string;
   exportHandler: string | null; deleteHandler: string | null;
-  selection: 'owner' | 'trip' | 'memory_plan' | 'case' | 'guide_reference' | 'material_records' | 'device_files' | 'none';
+  selection: 'owner' | 'trip' | 'memory_plan' | 'case' | 'guide_reference' | 'material_records' | 'notification_records' | 'device_files' | 'none';
   capacity: string; retention: readonly string[]; missing: readonly string[];
 }>;
 const server = (id: string, version: string, scope: string, exportHandler: string | null, deleteHandler: string | null,
@@ -32,8 +33,7 @@ export const MODULE_CATALOG: readonly Module[] = [
     ['operation_fences', 'record_tombstones', 'audit_metadata']),
   server('publication', 'community-publication-j3j4/1', 'community_publication_module', 'publication', 'publication', 'owner',
     '100 per retained array; 1MB response; controlled registered audience', ['operation_fences', 'publication_tombstones', 'reference_tombstones', 'audit_metadata']),
-  server('notifications', 'coverage-module-export/1', 'notification-metadata/1', 'notifications', null, 'owner', '100/page; 10000 rows; 1MB whole wrapper; fixed30s current source/proof; independent owner RPC ACL',
-    ['provider_delivery_unknown'], ['module_delete_not_implemented']),
+  ...NOTIFICATION_MODULES,
   server('lifecycle', 'coverage-module-export/1', 'trip-lifecycle-metadata/1', 'lifecycle', null, 'owner', '50/page; 10000 rows/section; 1MB whole wrapper; fixed30s current source/proof; metadata only',
     ['operation_fences'], ['delete_uses_selected_trip', 'trip_bodies_in_separate_core_export']),
   server('coverage_progress', 'coverage-module-export/1', 'coverage_export_progress', null, null, 'owner', 'source-free requests/sections expire30s; immutable request fences retained until original session/account revocation',
