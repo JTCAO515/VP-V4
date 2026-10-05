@@ -22,3 +22,5 @@ Owner cleanup remains legal with module disabled/reviewer revoked, except REVIEW
 ## UNRUN / integration responsibility
 
 No target schema/role enrollment/config activation, genuine reviewer/disclosure/source seeding, production deployment/provider fees/Storage/real-user deletion, device/UI or public J3 acceptance. Generic all-repo/SQL CI and final exact-head PR review remain with sole TS. Registry/handoff/shared TS/Native/old migrations untouched. New RPC has no all-account export completion authority. Operational rollback disables submissions/reviewer consumer while retaining authorized owner cleanup and immutable denial fences; no destructive downgrade of committed tombstones is proposed.
+
+Committed console logs normalize trailing whitespace only; recorded failures, messages, timings and counts are unchanged. Initial raw diff check on imported failure logs flagged whitespace; normalization resolves this without runtime/test changes.

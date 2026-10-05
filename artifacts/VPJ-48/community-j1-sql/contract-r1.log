@@ -1,0 +1,11 @@
+✔ J1 append preserves RPC ACL and default-off trusted identity; no target activation (0.497959ms)
+✔ operation inventory stores digest and generation only; legacy action is honest unknown (0.121166ms)
+✔ cleanup authorizes first and independently preserves foreign body plus minimal tombstones (0.4005ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 43.11625
