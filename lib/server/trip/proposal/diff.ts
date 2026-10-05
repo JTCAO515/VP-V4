@@ -1,15 +1,20 @@
-import { applyPatch, type TripItem, type TripPatch, type TripSnapshot } from "../patch/contract.ts";
+import { applyPatch, assertTripSnapshot, type TripItem, type TripPatch, type TripPatchOperation, type TripSnapshot } from "../patch/contract.ts";
 
-export type ProposalItemDiff = Readonly<{ kind: "added" | "removed" | "changed"; itemId: string; title: string }>;
+export type ProposalItemDiff = Readonly<{ kind: "added" | "removed" | "changed" | "reordered"; itemId: string; title: string }>;
 export type ProposalDayDiff = Readonly<{ kind: "added" | "removed" | "changed"; dayId: string; date: string; items: readonly ProposalItemDiff[] }>;
 export type ProposalDiff = Readonly<{ next: TripSnapshot; dayDiffs: readonly ProposalDayDiff[] }>;
 
 export function describeProposalDiff(current: TripSnapshot, patch: TripPatch): ProposalDiff {
-  const next = applyPatch(current, patch);
+  return describeSnapshotDiff(current, applyPatch(current, patch), patch.operations);
+}
+
+/** Display a stored rollback target without reconstructing or normalizing its order. */
+export function describeSnapshotDiff(current: TripSnapshot, next: TripSnapshot, operations: readonly TripPatchOperation[] = []): ProposalDiff {
+  assertTripSnapshot(current); assertTripSnapshot(next);
   const beforeDays = new Map(current.days.map((day) => [day.id, day]));
   const afterDays = new Map(next.days.map((day) => [day.id, day]));
   const order = new Map<string, number>();
-  patch.operations.forEach((operation, index) => {
+  operations.forEach((operation, index) => {
     if ("dayId" in operation && !order.has(operation.dayId)) order.set(operation.dayId, index);
   });
   const ids = new Set([...beforeDays.keys(), ...afterDays.keys()]);
@@ -33,7 +38,8 @@ function itemDiffs(before: readonly TripItem[], after: readonly TripItem[]): rea
     const previous = left.get(id); const next = right.get(id);
     if (!previous && next) return [freezeItem("added", next)];
     if (previous && !next) return [freezeItem("removed", previous)];
-    if (!previous || !next || (previous.title === next.title && previous.startsAt === next.startsAt && previous.endsAt === next.endsAt)) return [];
+    if (!previous || !next) return [];
+    if (previous.title === next.title && previous.startsAt === next.startsAt && previous.endsAt === next.endsAt) return previous.manualOrder === next.manualOrder ? [] : [freezeItem("reordered", next)];
     return [freezeItem("changed", next)];
   }));
 }

@@ -9,6 +9,8 @@ import { WIKI_GENERATION_SYSTEM_PROMPT, isValidWikiGenerationDraftOutput, type W
 import { WIKI_SEARCH_SYSTEM_PROMPT, isValidWikiSearchAction, type WikiSearchAction } from "../prompt/wiki-search.ts";
 import { PLANNING_COMPARISON_PROMPT, parsePlanningSelection, type PlanningSelection } from "../prompt/planning-comparison.ts";
 
+import { SCOPED_TRIP_EDIT_PROMPT, parseScopedModelOutput, type ScopedModelOutput } from "../../turn/scoped-edit/model-output.ts";
+
 export const PROTOCOL_MODELS = Object.freeze({
   qwen: MODEL_PROFILES.qwen_37_strict.providerModelId,
   glm: "glm-5.3-flash",
@@ -25,7 +27,7 @@ export type ProtocolRequest = Readonly<{
   provider: ProtocolProvider;
   dataClass: ModelDataClass;
   input: string;
-  task: ModelTask | "tool_candidate" | "text_turn_v1" | "text_task_v2" | "knowledge_intent_v1" | "wiki_generation_v1" | "wiki_statement_proposals_v1" | "wiki_search_v1" | "planning_comparison_v1";
+  task: ModelTask | "tool_candidate" | "text_turn_v1" | "text_task_v2" | "knowledge_intent_v1" | "wiki_generation_v1" | "wiki_statement_proposals_v1" | "wiki_search_v1" | "planning_comparison_v1" | "scoped_trip_edit_v1";
   history?: readonly Readonly<{ role: "user" | "assistant"; content: string }>[];
   tool?: ProtocolTool;
   /** Optional bounded Qwen task-context experiment; output cap includes reasoning. */
@@ -56,7 +58,7 @@ export type ProtocolOutcome =
       kind: "protocol_validated";
       provider: ProtocolProvider;
       model: string;
-      output: string | KnownUnknownOutput | WikiGenerationDraftOutput | ProposalOutput | WikiSearchAction | PlanningSelection | Readonly<{ kind: "tool_candidate"; id: string; name: string; arguments: Record<string, unknown> }>;
+      output: string | KnownUnknownOutput | WikiGenerationDraftOutput | ProposalOutput | WikiSearchAction | PlanningSelection | ScopedModelOutput | Readonly<{ kind: "tool_candidate"; id: string; name: string; arguments: Record<string, unknown> }>;
       usage: ProtocolUsage;
     }>
   | Readonly<{ kind: "unavailable"; code: FailureCode; usage: ProtocolUsage | null; cost: "unknown"; rawResponseForDiagnostics?: string }>
@@ -150,6 +152,18 @@ export async function invokePlanningComparisonProtocol(
     timeoutMs: binding.timeoutMs }, budget, transport, signal, authorize, binding.endpoint);
 }
 
+/** Scoped C2 exit. The executor must recheck current SQL authority immediately
+ * before egress. No provider fallback or caller-supplied system prompt. */
+export async function invokeScopedTripEditProtocol(
+  input: Readonly<{ requestId: string; text: string }>,
+  binding: Readonly<{ provider: ProtocolProvider; endpoint: string; maxOutputTokens: number; timeoutMs: number }>,
+  authorize: () => Promise<boolean>, budget: BudgetTurn, transport: ProtocolTransport, signal: AbortSignal,
+): Promise<ProtocolOutcome> {
+  return invokeProtocol({ requestId: input.requestId, provider: binding.provider, dataClass: "c2_sensitive",
+    input: input.text, task: "scoped_trip_edit_v1", maxOutputTokens: binding.maxOutputTokens,
+    timeoutMs: binding.timeoutMs }, budget, transport, signal, authorize, binding.endpoint);
+}
+
 async function invokeProtocol(
   request: ProtocolRequest, budget: BudgetTurn, transport: ProtocolTransport, signal: AbortSignal,
   authorizeText?: () => Promise<boolean>,
@@ -157,7 +171,7 @@ async function invokeProtocol(
 ): Promise<ProtocolOutcome> {
   if (!validRequest(request)) return unavailable("INVALID_INPUT");
   if (signal.aborted) return cancelled();
-  if (request.dataClass !== "c0_synthetic" && (request.dataClass !== "c2_sensitive" || !["text_turn_v1", "text_task_v2", "knowledge_intent_v1", "planning_comparison_v1"].includes(request.task) || !authorizeText)) return unavailable("DATA_POLICY_BLOCKED");
+  if (request.dataClass !== "c0_synthetic" && (request.dataClass !== "c2_sensitive" || !["text_turn_v1", "text_task_v2", "knowledge_intent_v1", "planning_comparison_v1", "scoped_trip_edit_v1"].includes(request.task) || !authorizeText)) return unavailable("DATA_POLICY_BLOCKED");
   let body: string;
   try { body = JSON.stringify(requestBody(request)); } catch { return unavailable("INVALID_INPUT"); }
   if (Buffer.byteLength(body) > MAX_RESPONSE_BYTES) return unavailable("INVALID_INPUT");
@@ -218,6 +232,7 @@ function requestBody(request: ProtocolRequest): Record<string, unknown> {
       ...(request.task === "wiki_statement_proposals_v1" ? [{ role: "system", content: WIKI_STATEMENT_PROPOSALS_PROMPT }] : []),
       ...(request.task === "wiki_generation_v1" ? [{ role: "system", content: WIKI_GENERATION_SYSTEM_PROMPT }] : []),
       ...(request.task === "wiki_search_v1" ? [{ role: "system", content: WIKI_SEARCH_SYSTEM_PROMPT }] : []),
+      ...(request.task === "scoped_trip_edit_v1" ? [{ role: "system", content: SCOPED_TRIP_EDIT_PROMPT }] : []),
       ...(request.task === "planning_comparison_v1" ? [{ role: "system", content: PLANNING_COMPARISON_PROMPT }] : []),
       ...(request.task === "strict_known_unknown" ? [{ role: "system", content: 'Return only JSON: {"kind":"known","value":"nonempty text"} or {"kind":"unknown","reason":"fixture_no_evidence"}. Do not add fields.' }] : []),
       { role: "user", content: request.input },
@@ -229,7 +244,7 @@ function requestBody(request: ProtocolRequest): Record<string, unknown> {
     // GLM-5.3-Flash rejects thinking: disabled (observed HTTP400/1210).
     // Preserve its native default; reasoning text still never leaves normalization.
     ...(request.provider === "qwen" ? { enable_thinking: request.thinkingBudgetTokens !== undefined } : request.provider === "deepseek" ? { thinking: { type: "disabled" } } : {}),
-    ...(["strict_known_unknown", "text_turn_v1", "text_task_v2", "knowledge_intent_v1", "planning_comparison_v1", "wiki_generation_v1", "wiki_statement_proposals_v1", "wiki_search_v1"].includes(request.task) ? { response_format: { type: "json_object" } } : {}),
+    ...(["strict_known_unknown", "text_turn_v1", "text_task_v2", "knowledge_intent_v1", "planning_comparison_v1", "scoped_trip_edit_v1", "wiki_generation_v1", "wiki_statement_proposals_v1", "wiki_search_v1"].includes(request.task) ? { response_format: { type: "json_object" } } : {}),
     ...(request.task === "tool_candidate" && request.tool ? {
       tools: [{ type: "function", function: { name: request.tool.name, parameters: request.tool.parameters } }],
       tool_choice: "auto",
@@ -294,6 +309,12 @@ function normalizeResponse(request: ProtocolRequest, value: unknown): ProtocolOu
         if (!isValidWikiSearchAction(parsed)) return invalidOutput(usage);
         output = parsed;
       } catch { return invalidOutput(usage); }
+    } else if (request.task === "scoped_trip_edit_v1") {
+      try {
+        const parsed = parseScopedModelOutput(JSON.parse(message.content));
+        if (!parsed) return invalidOutput(usage);
+        output = parsed;
+      } catch { return invalidOutput(usage); }
     } else if (request.task === "planning_comparison_v1") {
       try {
         const parsed = parsePlanningSelection(JSON.parse(message.content));
@@ -350,7 +371,8 @@ async function readBoundedJson(response: Response, signal: AbortSignal): Promise
 
 function validRequest(value: ProtocolRequest): boolean {
   return record(value) && typeof value.requestId === "string" && /^[A-Za-z0-9_-]{1,64}$/.test(value.requestId) && Object.hasOwn(PROTOCOL_MODELS, value.provider)
-    && ["ordinary_text", "strict_known_unknown", "tool_candidate", "text_turn_v1", "text_task_v2", "knowledge_intent_v1", "planning_comparison_v1", "wiki_generation_v1", "wiki_statement_proposals_v1", "wiki_search_v1"].includes(value.task)
+    && ["ordinary_text", "strict_known_unknown", "tool_candidate", "text_turn_v1", "text_task_v2", "knowledge_intent_v1", "planning_comparison_v1", "scoped_trip_edit_v1", "wiki_generation_v1", "wiki_statement_proposals_v1", "wiki_search_v1"].includes(value.task)
+    && (value.task !== "scoped_trip_edit_v1" || value.provider === "qwen" && value.maxOutputTokens <= 4096)
     && (value.task === "text_task_v2" ? validTextTaskHistory(value.history) : value.history === undefined)
     && typeof value.input === "string" && value.input.trim().length > 0 && value.input.length <= 32768
     && ["c0_synthetic", "c1_user", "c2_sensitive", "c3_restricted", "c4_secret"].includes(value.dataClass)

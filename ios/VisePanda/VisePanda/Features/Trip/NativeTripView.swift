@@ -63,6 +63,10 @@ struct NativeTripView: View {
     @State private var store = NativeTripStore()
     @State private var resultStore = NativeResultStore()
     @State private var newTitle = ""
+    @State private var scopedRecovery: NativeScopedTripJournal?
+    @State private var scopedSelection: NativeScopedTripSelection?
+    @State private var scopedOrigin: NativeScopedTripSelection?
+    @State private var scopedScrollID: String?
     @State private var shareSource: NativeTripShareSource?
     @State private var screenshotReviewSource: NativeScreenshotReviewSource?
     @State private var inboxCleanupFailed = false
@@ -139,6 +143,7 @@ struct NativeTripView: View {
     }
 
     private var tripBody: some View {
+        ScrollViewReader { proxy in
         ScrollView {
             VStack(alignment: .leading, spacing: VPSpacing.section) {
                 BrandHeader()
@@ -208,7 +213,7 @@ struct NativeTripView: View {
                             Text(text("This imports only your local edits. It does not submit or confirm; conflicts keep the saved local draft.", "仅导入用户本地编辑，不提交／确认；冲突仍保留已存本地稿。"))
                         }
                         if initialPlanningRequest == nil && store.canEdit && store.draft == nil && store.pending == nil { outlineComposer }
-                        if let pending = store.pending { proposal(pending) }
+                        if let pending = store.pending { proposal(pending).id("scoped-proposal") }
                         if let draft = store.draft {
                             NativeTripDraftEditor(draft: draftBinding(draft), chinese: chinese)
                                 .id(draft.id)
@@ -234,7 +239,29 @@ struct NativeTripView: View {
             }
             .padding(VPSpacing.standard)
         }
+        .onChange(of: scopedScrollID) { _, target in
+            if let target { proxy.scrollTo(target, anchor: .center) }
+        }
+        .onChange(of: store.notice) { _, notice in
+            guard notice == "confirmed", let origin = scopedOrigin, session.dataScope == origin.actor,
+                  store.selectedID == origin.tripID, let detail = store.detail,
+                  detail.trip.id == origin.tripID, detail.confirmationState == "confirmed",
+                  detail.trip.headVersion > origin.headVersion else { return }
+            let itemPresent = origin.itemID.map { id in detail.content.days.flatMap(\.items).contains { $0.id == id } } == true
+            scopedScrollID = itemPresent ? origin.itemID.map { "scoped-item:\($0)" } : "scoped-day:\(origin.dayID)"
+            scopedOrigin = nil
+        }
         .background(Color.vpBackground)
+        .sheet(item: $scopedSelection, onDismiss: {
+            if scopedOrigin == nil { scopedScrollID = scopedSelection?.anchor ?? scopedScrollID }
+        }) { selection in
+            NativeScopedTripEditSheet(selection: selection, tripStore: store, session: session, chinese: chinese) { origin in
+                scopedOrigin = origin; scopedScrollID = "scoped-proposal"
+            }
+        }
+        .sheet(item: $scopedRecovery) { journal in
+            NativeScopedTripRecoverySheet(journal: journal, tripStore: store, session: session, chinese: chinese)
+        }
         .sheet(item: $shareSource) { source in
             NativeTripShareView(source: source, store: store, session: session, chinese: chinese)
         }
@@ -297,6 +324,7 @@ struct NativeTripView: View {
             }
         }
         .onChange(of: store.selectedID) { _, _ in
+            scopedSelection = nil; scopedRecovery = nil; scopedOrigin = nil; scopedScrollID = nil
             outlineGeneration = UUID(); outline = nil; outlineTitles = []; outlinePaceBasis = nil
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.protectedDataDidBecomeAvailableNotification)) { _ in
@@ -309,7 +337,7 @@ struct NativeTripView: View {
                 Task { await store.reload(using: session) }
             }
         }
-        .onChange(of:session.dataScope) { _,_ in supportStore.bind(nil) }
+        .onChange(of:session.dataScope) { _,_ in supportStore.bind(nil); scopedSelection = nil; scopedRecovery = nil; scopedOrigin = nil }
         .onChange(of:store.selectedID) { _,_ in supportStore.bind(nil) }
         .onChange(of:store.confirmationReference) { _,_ in supportStore.bind(nil) }
         .onChange(of: store.deletionRequest) { _, request in
@@ -352,6 +380,7 @@ struct NativeTripView: View {
         .confirmationDialog(text("Discard this local draft?", "放弃这份本机草稿？"), isPresented: $discardVisible, titleVisibility: .visible) {
             Button(text("Discard draft", "放弃草稿"), role: .destructive) { store.discardDraft() }
             Button(text("Keep draft", "保留草稿"), role: .cancel) {}
+        }
         }
     }
 
@@ -576,6 +605,16 @@ struct NativeTripView: View {
         }
     }
 
+    @ViewBuilder private func scopedEntry(detail: NativeTripDetail, dayID: String, itemID: String?) -> some View {
+        if detail.confirmationState == "confirmed", let actor = session.dataScope,
+           let selection = NativeScopedTripSelection(actor: actor, detail: detail, dayID: dayID, itemID: itemID) {
+            Button(itemID == nil ? text("Ask VP / edit this day", "问 VP／编辑这一天") : text("Ask VP / edit this item", "问 VP／编辑此项目")) {
+                scopedScrollID = selection.anchor; scopedSelection = selection
+            }.disabled(store.busy || !store.canEdit || store.draft != nil || store.pending != nil || store.hasUncertainProposal)
+                .accessibilityIdentifier("trip.scoped.entry.\(itemID ?? dayID)")
+        }
+    }
+
     private func confirmed(_ detail: NativeTripDetail) -> some View {
         VisePandaCard {
             VStack(alignment: .leading, spacing: 12) {
@@ -607,6 +646,10 @@ struct NativeTripView: View {
                     } label:{Label(text("Review linked-chat deletion scope…", "预览关联聊天协同删除范围…"),systemImage:"trash")}
                     .accessibilityIdentifier("trip.linkedDeletion.begin")
                 }
+                if let recovery = try? session.scopedTripEditRecovery(), recovery.tripID == detail.trip.id {
+                    Button(text("Resolve pending local edit", "处理未决局部编辑")) { scopedRecovery = recovery }
+                        .accessibilityIdentifier("trip.scoped.savedRecovery")
+                }
                 Text(detail.trip.title).font(.title2.bold()).accessibilityIdentifier("trip.confirmed.title")
                 Text(detail.trip.id).font(.caption).textSelection(.enabled).accessibilityIdentifier("trip.selected.id")
                 if detail.confirmationState == "confirmed" {
@@ -630,6 +673,7 @@ struct NativeTripView: View {
                 ForEach(detail.content.days) { day in
                     VStack(alignment: .leading, spacing: 8) {
                         Text(day.date).font(.headline)
+                        scopedEntry(detail: detail, dayID: day.id, itemID: nil)
                         if let zone = day.timeZone { Text(zone).font(.caption) }
                         ForEach(day.items) { item in
                             VStack(alignment: .leading, spacing: 4) {
@@ -637,11 +681,12 @@ struct NativeTripView: View {
                                     NativeTripSupportView(session:session,tripID:detail.trip.id,tripVersion:detail.trip.headVersion,dayID:day.id,itemID:item.id,proposal:store.pending?.proposal,store:supportStore,chinese:settings.selectedLocale == .zh,ports:.init(read:{try await session.tripSupportRead($0)},context:{try await session.tripSupportContext(target:$0,proposal:$1)}))
                                 }
                                 Text(item.title).accessibilityIdentifier("trip.confirmed.item.\(item.id)")
+                                scopedEntry(detail: detail, dayID: day.id, itemID: item.id)
                                 if let start = item.startsAt { Text(start).font(.caption) }
                                 if let end = item.endsAt { Text(end).font(.caption) }
-                            }
+                            }.id("scoped-item:\(item.id)")
                         }
-                    }
+                    }.id("scoped-day:\(day.id)")
                 }
                 if detail.confirmationState == "confirmed" {
                     Button(text("Share confirmed plan", "分享已确认计划")) {
@@ -663,7 +708,7 @@ struct NativeTripView: View {
                 .accessibilityIdentifier("trip.screenshot.review")
                 .disabled(store.busy || !store.canEdit)
                 Divider()
-                Text(text("User locks are not enabled in this version. External orders are not connected, so this cannot tell you whether an order exists.", "此版本未启用用户硬锁。外部订单尚未接入，不能据此判断是否存在订单。"))
+                Text(text("Open a selected scope to review its current hard locks and explicitly linked reservation sources. Manual editing does not create a hard lock. Missing order links do not prove there is no order.", "打开选区可审阅当前硬锁与明确关联的预订来源。手动编辑不会自动加锁；缺少订单关联不代表没有订单。"))
                     .font(.footnote).foregroundStyle(Color.vpSecondaryText)
             }
         }
@@ -741,6 +786,11 @@ struct NativeTripView: View {
         switch operation.kind {
         case .setTitle:
             return (pending.proposal.titleDiff.before, operation.title ?? unset)
+        case .reorderItems:
+            func orderText(_ items: [NativeTripItem]?) -> String {
+                items?.map { "\($0.title) · \($0.manualOrder.map(String.init) ?? unset)" }.joined(separator: " → ") ?? absent
+            }
+            return (orderText(day?.items), orderText(pending.proposal.after?.days.first(where: { $0.id == operation.dayId })?.items))
         case .upsertDay:
             return (day.map { dayText($0.date, $0.timeZone) } ?? absent, dayText(operation.date ?? unset, operation.timeZone))
         case .deleteDay:
@@ -765,6 +815,7 @@ struct NativeTripView: View {
         case .deleteDay: text("Remove day and its items", "移除日期及其项目")
         case .upsertItem: text("Add or update item", "新增或修改项目")
         case .deleteItem: text("Remove item", "移除项目")
+        case .reorderItems: text("Change item order", "更改项目顺序")
         }
     }
 

@@ -75,10 +75,15 @@ struct NativePlaceActionContext {
             let itemRows = row["items"] as? [[String: Any]] ?? []
             guard row["items"] == nil || row["items"] is [[String: Any]], itemRows.count <= 100 else { throw NativeDataError.invalidResponse }
             let items = try itemRows.map { item -> NativeTripItem in
-                guard Set(item.keys).isSubset(of: ["id", "dayId", "title", "startsAt", "endsAt"]), let itemId = item["id"] as? String, NativePlaceActionWire.item(itemId), item["dayId"] as? String == id,
+                guard Set(item.keys).isSubset(of: ["id", "dayId", "title", "startsAt", "endsAt", "manualOrder"]), let itemId = item["id"] as? String, NativePlaceActionWire.item(itemId), item["dayId"] as? String == id,
                       let name = item["title"] as? String, !name.isEmpty else { throw NativeDataError.invalidResponse }
                 for key in ["startsAt", "endsAt"] { if let timestamp = item[key] { guard let text = timestamp as? String, NativeKnowledgeRead.date(text) != nil else { throw NativeDataError.invalidResponse } } }
-                return .init(id: itemId, dayId: id, title: name, startsAt: item["startsAt"] as? String, endsAt: item["endsAt"] as? String)
+                let manualOrder: Int?
+                if let raw = item["manualOrder"] {
+                    guard NativePlaceActionWire.boolean(raw) == nil, let value = NativePlaceActionWire.integer(raw) else { throw NativeDataError.invalidResponse }
+                    manualOrder = value
+                } else { manualOrder = nil }
+                return .init(id: itemId, dayId: id, title: name, startsAt: item["startsAt"] as? String, endsAt: item["endsAt"] as? String, manualOrder: manualOrder)
             }
             guard Set(items.map(\.id)).count == items.count, row["timeZone"] == nil || (row["timeZone"] as? String).flatMap(TimeZone.init(identifier:)) != nil else { throw NativeDataError.invalidResponse }
             return .init(id: id, date: date, timeZone: row["timeZone"] as? String, items: items)

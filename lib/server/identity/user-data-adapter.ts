@@ -14,7 +14,7 @@ import type { TripActionReference } from "@/lib/server/trip/actions/contract";
 import type { PrivacyRequest } from "@/lib/server/privacy/contract";
 import type { TripPatch } from "@/lib/server/trip/patch/contract";
 import { assertTripPatch, type TripSnapshot as TripContentSnapshot } from "../trip/patch/contract.ts";
-import { describeProposalDiff, type ProposalDayDiff } from "../trip/proposal/diff.ts";
+import { describeProposalDiff, describeSnapshotDiff, type ProposalDayDiff } from "../trip/proposal/diff.ts";
 
 import { readStoredSnapshot, snapshotRestorePatch } from "../trip/snapshot/read.ts";
 import { tripArchiveOperations } from "../trip/archive/operations.ts";
@@ -875,20 +875,30 @@ function createDataOperations(
     const proof = intent.data?.[0];
     const proposal = proof?.proposal;
     if (!proposal || proposal.trip_id !== tripId || (tripProtocolV2 && typeof proof.digest !== "string")) return { error: "FORBIDDEN" };
+    let scopedCurrent = true;
+    if (tripProtocolV2 && proposal.scoped_edit === true) {
+      const qualified = await client.rpc("read_scoped_trip_edit_proposal_current_v1", { p_proposal_id: selected });
+      if (qualified.error) { const mapped = mapRpcFailure(qualified.error.message); return { error: mapped === "UNAUTHENTICATED" || mapped === "FORBIDDEN" ? mapped : "PROVIDER_UNAVAILABLE" }; }
+      const currentness = qualified.data;
+      if (!currentness || typeof currentness !== "object" || Array.isArray(currentness) || Object.keys(currentness).length !== 3 || currentness.kind !== "scoped_edit_current/1" || currentness.proposalId !== selected || typeof currentness.current !== "boolean") return { error: "PROVIDER_UNAVAILABLE" };
+      scopedCurrent = currentness.current;
+    }
     const stored = await client.from("trip_version_snapshots").select("version,title,content").eq("trip_id", tripId).eq("version", proposal.base_trip_version).maybeSingle();
     const base = stored.data ? readStoredSnapshot(stored.data) : null;
     if (stored.error || !base) return { error: "PROJECTION_LAG" };
     let patch: unknown = proposal.patch;
+    let rollbackAfter: TripContentSnapshot | null = null;
     if (tripProtocolV2 && proposal.rollback_snapshot_version !== null) {
       const target = await client.from("trip_version_snapshots").select("version,title,content").eq("trip_id", tripId).eq("version", proposal.rollback_snapshot_version).maybeSingle();
       const targetSnapshot = target.data ? readStoredSnapshot(target.data) : null;
       if (target.error || !targetSnapshot) return { error: "PROJECTION_LAG" };
+      rollbackAfter = { ...targetSnapshot, version: base.version + 1 };
       patch = snapshotRestorePatch(base, targetSnapshot);
     } else if (tripProtocolV2 && typeof proposal.patch?.title === "string") {
       patch = { expectedVersion: base.version, operations: [{ kind: "set_title", title: proposal.patch.title }] };
     }
     const read = pendingProposalRead({ trip: tripSnapshot(current.data), proposal: { ...proposal, patch }, content: base });
-    return read ? { data: { ...read, proposal: { ...read.proposal, ...(tripProtocolV2 ? { digest: proof.digest, before: base, after: describeProposalDiff(base, patch as TripPatch).next } : {}), stale: current.data.head_version !== proposal.base_trip_version } } } : { error: "PROPOSAL_NOT_CONFIRMABLE" };
+    return read ? { data: { ...read, proposal: { ...read.proposal, ...(tripProtocolV2 ? { digest: proof.digest, before: base, after: rollbackAfter ?? describeProposalDiff(base, patch as TripPatch).next, ...(rollbackAfter ? { dayDiffs: describeSnapshotDiff(base, rollbackAfter).dayDiffs } : {}) } : {}), stale: current.data.head_version !== proposal.base_trip_version || !scopedCurrent } } } : { error: "PROPOSAL_NOT_CONFIRMABLE" };
   };
   const createPendingProposal = async (tripId: string, input: TripProposalInput): Promise<AdapterResult<Readonly<{ proposalId: string; revision: number; baseTripVersion: number }>>> => {
     const actor = await authenticated();

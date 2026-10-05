@@ -18,9 +18,10 @@ const result = spawnSync(process.execPath, ["--experimental-strip-types", "--tes
   encoding: "utf8",
 });
 
-if (result.stdout) process.stdout.write(result.stdout);
-if (result.stderr) process.stderr.write(result.stderr);
+await writeOutput(process.stdout, result.stdout);
+await writeOutput(process.stderr, result.stderr);
 if (result.error) throw result.error;
+if (result.signal) console.error(`VP_CI_SUITE_CHILD_SIGNAL ${result.signal}`);
 
 const reporterOutput = `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
 const skipped = Number(/^# skipped (\d+)$/m.exec(reporterOutput)?.[1] ?? 0);
@@ -33,7 +34,13 @@ if (process.env.GITHUB_STEP_SUMMARY) {
   appendFileSync(process.env.GITHUB_STEP_SUMMARY, `| ${suite} | ${outcome} | ${skipped} | ${testFiles.length} |\n`);
 }
 
-process.exit(result.status ?? 1);
+// Let pending stdout/stderr writes drain; preserve the actual child outcome.
+process.exitCode = result.status ?? 1;
+
+function writeOutput(stream, value) {
+  if (!value) return Promise.resolve();
+  return new Promise((resolve, reject) => stream.write(value, error => error ? reject(error) : resolve()));
+}
 
 function collectTestFiles(directory) {
   const files = [];
