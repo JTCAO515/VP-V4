@@ -9,7 +9,7 @@ if (process.env.DOCKER_HOST || process.env.DOCKER_CONTEXT) throw Error('Explicit
 const context=execFileSync('docker',['context','show'],{encoding:'utf8'}).trim();
 const endpoint=JSON.parse(execFileSync('docker',['context','inspect',context],{encoding:'utf8'}))[0].Endpoints.docker.Host;
 if (!endpoint.startsWith('unix:///')) throw Error('Owned local Docker context required');
-const project='vp-native-ask-'+randomUUID().slice(0,8),target=mkdtempSync(join(tmpdir(),'vpj48-coverage-http-'));
+const project='vp-native-ask-'+randomUUID().slice(0,8),target=mkdtempSync(join(tmpdir(),'vpj58-coverage-http-'));
 mkdirSync(join(target,'supabase'));writeFileSync(join(target,'supabase/config.toml'),nativeHTTPSupabaseConfig(readFileSync('supabase/config.toml','utf8'),project,ports));cpSync('supabase/migrations',join(target,'supabase/migrations'),{recursive:true});
 const env={...process.env,DOCKER_CONTEXT:context};let exit=1;
 try {
