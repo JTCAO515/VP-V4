@@ -12,7 +12,7 @@ export type GuideCommand = GuideSelection & (
   | Readonly<{ action: "forget"; operationId: string }>
   | Readonly<{ action: "export" }>
   | Readonly<{ action: "follow_up"; operationId: string; expectedDigest: string; question: string;
-      threadId: string; turnId: string; policyId: string; serviceTask: Readonly<{
+      completedSegmentIds: readonly string[]; threadId: string; turnId: string; policyId: string; serviceTask: Readonly<{
         id: string; scopeVersion: 1; relationship: "new_goal" | "clarification" | "repair"; parentTurnId: string | null;
       }> }>
 );
@@ -41,8 +41,7 @@ export type GuideUnavailable = Readonly<{
 export type GuideOutcome = GuideReady | GuideUnavailable
   | Readonly<{ kind: "forgotten"; operationId: string }>
   | Readonly<{ kind: "export"; version: 1; scope: "guide_selection_metadata"; coverage: "complete_for_selection";
-      excludedModules: readonly ["grounded_history", "use_review_audit"]; tripId: string; placeReferenceId: string;
-      records: readonly GuideExportRecord[]; followUpBindings: readonly GuideBindingExportRecord[] }>
+      tripId: string; placeReferenceId: string; records: readonly GuideExportRecord[]; bindings: readonly GuideBindingExportRecord[] }>
   | Readonly<{ kind: "submitted"; version: 1; operationId: string; tripId: string; turnId: string; serviceTaskId: string;
       scopeVersion: 1; relationship: "new_goal" | "clarification" | "repair"; parentTurnId: string | null;
       guideDigest: string; reused: boolean; generationCost: null }>;
@@ -53,9 +52,9 @@ export type GuideExportRecord = Readonly<{
 }>;
 /** Source/body-free owner metadata. invalidated=false is no eligibility grant. */
 export type GuideBindingExportRecord = Readonly<{
-  turnId: string; threadId: string; serviceTaskId: string; operationId: string; tripVersion: number;
-  locale: GuideLocale; interest: GuideInterest; guideDigest: string; parentTurnId: string | null;
-  completedSegmentIds: readonly string[]; invalidated: boolean;
+  turnId: string; serviceTaskId: string; operationId: string; canonicalPoiId: string;
+  locale: GuideLocale; interest: GuideInterest; digest: string; rightsRevision: number;
+  expiresAt: string; tripVersion: number; invalidated: boolean;
 }>;
 
 export const uuid = (v: unknown): v is string => typeof v === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(v);
@@ -79,8 +78,9 @@ export function parseGuideCommand(value: unknown): GuideCommand | null {
   if (value.action === "forget" && exact(value, [...common, "operationId"]) && uuid(value.operationId)) return value as GuideCommand;
   if (value.action === "progress" && exact(value, [...common, "operationId", "expectedDigest", "completedSegmentIds"])
     && uuid(value.operationId) && hash(value.expectedDigest) && segmentIds(value.completedSegmentIds)) return value as GuideCommand;
-  if (value.action !== "follow_up" || !exact(value, [...common, "operationId", "expectedDigest", "question", "threadId", "turnId", "policyId", "serviceTask"])
+  if (value.action !== "follow_up" || !exact(value, [...common, "operationId", "expectedDigest", "question", "completedSegmentIds", "threadId", "turnId", "policyId", "serviceTask"])
     || !uuid(value.operationId) || !hash(value.expectedDigest) || !text(value.question, 600)
+    || !segmentIds(value.completedSegmentIds)
     || !uuid(value.threadId) || !uuid(value.turnId) || !uuid(value.policyId)
     || !record(value.serviceTask) || !exact(value.serviceTask, ["id", "scopeVersion", "relationship", "parentTurnId"])
     || !uuid(value.serviceTask.id) || value.serviceTask.id === value.turnId || value.serviceTask.scopeVersion !== 1

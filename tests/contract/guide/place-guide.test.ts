@@ -61,10 +61,14 @@ test("replay has zero Ask units but rechecks exact digest; progress requires cac
 });
 test("follow-up exact original task/op receipt preserves unknown cost and never accepts another turn", async () => {
   const input = { ...read, action: "follow_up" as const, operationId: op, expectedDigest: digest, question: "Where is the entrance?",
+    completedSegmentIds: [id],
     threadId: ref, turnId: turn, policyId: poi, serviceTask: { id, scopeVersion: 1 as const, relationship: "new_goal" as const, parentTurnId: null } };
   const submitted = { kind: "submitted", version: 1, operationId: op, tripId: trip, turnId: turn, serviceTaskId: id,
     scopeVersion: 1, relationship: "new_goal", parentTurnId: null, guideDigest: digest, reused: false, generationCost: null };
   assert.deepEqual(parseGuideCommand(input), input);
+  for (const completedSegmentIds of [[id, id], [id, ref, poi, op, turn], "played", ["source-slug"]]) assert.equal(parseGuideCommand({ ...input, completedSegmentIds }), null);
+  const { completedSegmentIds: omitted, ...withoutProgress } = input; void omitted;
+  assert.equal(parseGuideCommand(withoutProgress), null);
   for (const relationship of [["new_goal"], {}, { toString: 42 }]) assert.equal(parseGuideCommand({ ...input, serviceTask: { ...input.serviceTask, relationship } }), null);
   assert.deepEqual(decodeGuideOutcome(submitted, trip, input, now), submitted);
   assert.equal(decodeGuideOutcome({ ...submitted, generationCost: 0 }, trip, input, now), null);
@@ -83,13 +87,13 @@ test("lost actor prevents output; revoked sources allow owned forget without cur
   assert.deepEqual(await runGuide(trip, forget, { current: async () => true, now: () => now,
     rpc: async () => ({ data: { kind: "forgotten", operationId: op }, error: null }) }), { kind: "forgotten", operationId: op });
   const exported = { kind: "export", version: 1, scope: "guide_selection_metadata", coverage: "complete_for_selection",
-    excludedModules: ["grounded_history", "use_review_audit"], followUpBindings: [{ turnId: turn, threadId: ref, serviceTaskId: id, operationId: op,
-      tripVersion: 0, locale: "en", interest: "general", guideDigest: digest, parentTurnId: null, completedSegmentIds: [], invalidated: true }],
+    bindings: [{ turnId: turn, serviceTaskId: id, operationId: op, canonicalPoiId: poi, tripVersion: 0, locale: "en", interest: "general",
+      digest, rightsRevision: 1, expiresAt: new Date(now - 1).toISOString(), invalidated: true }],
     tripId: trip, placeReferenceId: ref, records: [{ digest, canonicalPoiId: poi,
     locale: "en", interest: "general", rightsRevision: 1, completedSegmentIds: [id], expiresAt: new Date(now - 1).toISOString(), updatedAt: new Date(now).toISOString() }] };
   const input = { ...read, action: "export" as const };
   assert.ok(decodeGuideOutcome(exported, trip, input, now));
   assert.equal(decodeGuideOutcome({ ...exported, scope: "all-user-data" }, trip, input, now), null);
-  assert.equal(decodeGuideOutcome({ ...exported, followUpBindings: [{ ...exported.followUpBindings[0], sourceBody: "withdrawn content" }] }, trip, input, now), null);
+  assert.equal(decodeGuideOutcome({ ...exported, bindings: [{ ...exported.bindings[0], sourceBody: "withdrawn content" }] }, trip, input, now), null);
   assert.equal(decodeGuideOutcome({ ...exported, records: [{ ...exported.records[0], text: "withdrawn content" }] }, trip, input, now), null);
 });

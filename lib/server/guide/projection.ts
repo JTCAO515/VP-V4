@@ -71,10 +71,10 @@ function exportRecord(value: unknown, input: GuideCommand, now: number): value i
     && instant(value.updatedAt) && Date.parse(value.updatedAt) <= now;
 }
 function bindingRecord(value: unknown, input: GuideCommand): value is GuideBindingExportRecord {
-  return record(value) && exact(value, ["turnId", "threadId", "serviceTaskId", "operationId", "tripVersion", "locale", "interest", "guideDigest", "parentTurnId", "completedSegmentIds", "invalidated"])
-    && [value.turnId, value.threadId, value.serviceTaskId, value.operationId].every(uuid) && tripVersion(value.tripVersion)
-    && value.locale === input.locale && value.interest === input.interest && hash(value.guideDigest)
-    && (value.parentTurnId === null || uuid(value.parentTurnId)) && segmentIds(value.completedSegmentIds)
+  return record(value) && exact(value, ["turnId", "serviceTaskId", "operationId", "canonicalPoiId", "locale", "interest", "digest", "rightsRevision", "expiresAt", "tripVersion", "invalidated"])
+    && [value.turnId, value.serviceTaskId, value.operationId, value.canonicalPoiId].every(uuid) && tripVersion(value.tripVersion)
+    && value.locale === input.locale && value.interest === input.interest && hash(value.digest)
+    && integer(value.rightsRevision) && instant(value.expiresAt)
     && typeof value.invalidated === "boolean";
 }
 export function decodeGuideOutcome(value: unknown, tripId: string, input: GuideCommand, now: number): GuideOutcome | null {
@@ -83,14 +83,13 @@ export function decodeGuideOutcome(value: unknown, tripId: string, input: GuideC
     && typeof value.reason === "string" && ["not_covered", "rights_unavailable", "source_changed", "unsupported_language", "capacity"].includes(value.reason) && value.fallback === "explore") return value as GuideOutcome;
   if (["read", "replay", "progress"].includes(input.action)) return decodeGuideReady(value, tripId, input, now);
   if (input.action === "forget" && exact(value, ["kind", "operationId"]) && value.kind === "forgotten" && value.operationId === input.operationId) return value as GuideOutcome;
-  if (input.action === "export" && exact(value, ["kind", "version", "scope", "coverage", "excludedModules", "tripId", "placeReferenceId", "records", "followUpBindings"])
+  if (input.action === "export" && exact(value, ["kind", "version", "scope", "coverage", "tripId", "placeReferenceId", "records", "bindings"])
     && value.kind === "export" && value.version === 1 && value.scope === "guide_selection_metadata" && value.coverage === "complete_for_selection"
-    && Array.isArray(value.excludedModules) && value.excludedModules.length === 2 && value.excludedModules[0] === "grounded_history" && value.excludedModules[1] === "use_review_audit"
     && value.tripId === tripId && value.placeReferenceId === input.placeReferenceId
     && Array.isArray(value.records) && value.records.length <= 100 && value.records.every(v => exportRecord(v, input, now))
     && new Set(value.records.map(v => v.digest)).size === value.records.length
-    && Array.isArray(value.followUpBindings) && value.followUpBindings.length <= 100 && value.followUpBindings.every(v => bindingRecord(v, input))
-    && new Set(value.followUpBindings.map(v => v.turnId)).size === value.followUpBindings.length) return value as GuideOutcome;
+    && Array.isArray(value.bindings) && value.bindings.length <= 100 && value.bindings.every(v => bindingRecord(v, input))
+    && new Set(value.bindings.map(v => v.turnId)).size === value.bindings.length) return value as GuideOutcome;
   if (input.action === "follow_up" && exact(value, ["kind", "version", "operationId", "tripId", "turnId", "serviceTaskId", "scopeVersion", "relationship", "parentTurnId", "guideDigest", "reused", "generationCost"])
     && value.kind === "submitted" && value.version === 1 && value.operationId === input.operationId && value.tripId === tripId
     && value.turnId === input.turnId && value.serviceTaskId === input.serviceTask.id && value.scopeVersion === 1
