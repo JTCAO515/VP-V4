@@ -1,0 +1,385 @@
+▶ notification exit real PG replay and v2 owner/service contract
+  ✖ migration rollback restores old definitions, ACL and no exit schema (39.171334ms)
+  ✖ default ACL/RLS all denied, original settings unactivated, fixture grants only (30.213875ms)
+  ✖ disabled RPC has zero writes after current authority (97.295333ms)
+  ✖ direct NULL/extra key/unsorted/foreign role inputs are rejected before writes (97.894542ms)
+  ✖ authentication/session/epoch/reauth precede any request feedback or cleanup (96.4635ms)
+  ✖ complete Trip inventory decodes actual TS, includes legacy/full columns and fixed preview TTL (95.7ms)
+  ✖ device private token export has direct full columns, cross-Trip outbox and current source CAS (95.694667ms)
+  ✖ source CAS/head/archive change rejects erase atomically; Trip results remain untouched (98.67725ms)
+  ✖ owner erase always fences, never grants success from zero attempts; exact-byte same-op recovery (95.031958ms)
+  ✖ foreign recovery and absent recovery are indistinguishable unknown (95.227625ms)
+  ✖ old begin returns no token, bounded begin_fenced retains lease/source qualification (96.5445ms)
+  ✖ nonce generation CAS restarts full barrier; rollback leaves original challenge, owner fake elapsed rejected (98.143334ms)
+  ✖ device erase fences operation/outbox parent and old binding, preserving original reminder/watch business rows (95.122833ms)
+  ✖ progress export includes every request/page field; erasure removes transient pages only and survives Trip deletion (97.393ms)
+  ✖ fixed expiry prevents new erase/export; drain and immutable recovery may finish after original TTL (96.278917ms)
+✖ notification exit real PG replay and v2 owner/service contract (7395.46275ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 0
+ℹ fail 16
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7479.741583
+
+✖ failing tests:
+
+test at tests/integration/privacy/notification-data-postgres.test.mjs:31:10
+✖ migration rollback restores old definitions, ACL and no exit schema (39.171334ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  syntax error at end of input
+  LINE 13: ...length(p_input_bytes)>case p_action when 'recover' then 1638...
+                                                                ^
+
+
+  3 !== 0
+
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:23:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:32:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:31:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/notification-data-postgres.test.mjs:37:10
+✖ default ACL/RLS all denied, original settings unactivated, fixture grants only (30.213875ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  schema "notification_exit_private" does not exist
+
+
+  3 !== 0
+
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:23:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:39:17)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:37:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/notification-data-postgres.test.mjs:77:10
+✖ disabled RPC has zero writes after current authority (97.295333ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  permission denied for function travel_reminders_v2
+
+
+  3 !== 0
+
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:23:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async user (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:48:50)
+      at async fixture (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:58:123)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:78:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:77:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/notification-data-postgres.test.mjs:81:10
+✖ direct NULL/extra key/unsorted/foreign role inputs are rejected before writes (97.894542ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  permission denied for function travel_reminders_v2
+
+
+  3 !== 0
+
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:23:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async user (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:48:50)
+      at async fixture (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:58:123)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:82:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:81:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/notification-data-postgres.test.mjs:90:10
+✖ authentication/session/epoch/reauth precede any request feedback or cleanup (96.4635ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  permission denied for function travel_reminders_v2
+
+
+  3 !== 0
+
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:23:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async user (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:48:50)
+      at async fixture (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:58:123)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:91:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:90:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/notification-data-postgres.test.mjs:97:10
+✖ complete Trip inventory decodes actual TS, includes legacy/full columns and fixed preview TTL (95.7ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  permission denied for function travel_reminders_v2
+
+
+  3 !== 0
+
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:23:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async user (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:48:50)
+      at async fixture (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:58:123)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:98:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:97:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/notification-data-postgres.test.mjs:107:10
+✖ device private token export has direct full columns, cross-Trip outbox and current source CAS (95.694667ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  permission denied for function travel_reminders_v2
+
+
+  3 !== 0
+
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:23:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async user (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:48:50)
+      at async fixture (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:58:123)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:108:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:107:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/notification-data-postgres.test.mjs:115:10
+✖ source CAS/head/archive change rejects erase atomically; Trip results remain untouched (98.67725ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  permission denied for function travel_reminders_v2
+
+
+  3 !== 0
+
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:23:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async user (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:48:50)
+      at async fixture (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:58:123)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:116:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:115:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/notification-data-postgres.test.mjs:120:10
+✖ owner erase always fences, never grants success from zero attempts; exact-byte same-op recovery (95.031958ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  permission denied for function travel_reminders_v2
+
+
+  3 !== 0
+
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:23:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async user (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:48:50)
+      at async fixture (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:58:123)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:121:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:120:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/notification-data-postgres.test.mjs:131:10
+✖ foreign recovery and absent recovery are indistinguishable unknown (95.227625ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  permission denied for function travel_reminders_v2
+
+
+  3 !== 0
+
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:23:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async user (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:48:50)
+      at async fixture (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:58:123)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:132:15)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:131:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/notification-data-postgres.test.mjs:135:10
+✖ old begin returns no token, bounded begin_fenced retains lease/source qualification (96.5445ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  permission denied for function travel_reminders_v2
+
+
+  3 !== 0
+
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:23:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async user (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:48:50)
+      at async fixture (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:58:123)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:136:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:135:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/notification-data-postgres.test.mjs:142:10
+✖ nonce generation CAS restarts full barrier; rollback leaves original challenge, owner fake elapsed rejected (98.143334ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  permission denied for function travel_reminders_v2
+
+
+  3 !== 0
+
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:23:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async user (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:48:50)
+      at async fixture (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:58:123)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:143:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:142:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/notification-data-postgres.test.mjs:151:10
+✖ device erase fences operation/outbox parent and old binding, preserving original reminder/watch business rows (95.122833ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  permission denied for function travel_reminders_v2
+
+
+  3 !== 0
+
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:23:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async user (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:48:50)
+      at async fixture (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:58:123)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:152:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:151:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/notification-data-postgres.test.mjs:160:10
+✖ progress export includes every request/page field; erasure removes transient pages only and survives Trip deletion (97.393ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  permission denied for function travel_reminders_v2
+
+
+  3 !== 0
+
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:23:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async user (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:48:50)
+      at async fixture (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:58:123)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:161:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:160:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/privacy/notification-data-postgres.test.mjs:169:10
+✖ fixed expiry prevents new erase/export; drain and immutable recovery may finish after original TTL (96.278917ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  permission denied for function travel_reminders_v2
+
+
+  3 !== 0
+
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:23:59)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async user (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:48:50)
+      at async fixture (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:58:123)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:170:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-notification-data-sql-20261006/tests/integration/privacy/notification-data-postgres.test.mjs:169:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
