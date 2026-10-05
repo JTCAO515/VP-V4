@@ -846,6 +846,29 @@
           "externalOrders": "not_contacted",
           "financialRecords": "not_modified"
         }
+      },
+      "tripListBytes": "{\"action\":\"trip_list\",\"scope\":\"reservation-reference-data/1\",\"cursor\":null,\"limit\":20}",
+      "tripList": {
+        "schemaVersion": "material-reference-data/1",
+        "kind": "trip_list",
+        "scope": "reservation-reference-data/1",
+        "ownerId": "10000000-0000-4000-8000-000000000001",
+        "sessionId": "10000000-0000-4000-8000-000000000002",
+        "mobileEpoch": 1,
+        "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "capturedAt": 1791227400000,
+        "expiresAt": 1791227430000,
+        "items": [
+          {
+            "tripId": "10000000-0000-4000-8000-000000000003",
+            "tripVersion": 1,
+            "label": "Synthetic owned material Trip",
+            "state": "active"
+          }
+        ],
+        "hasMore": false,
+        "nextCursor": null,
+        "allUserDataCompleted": false
       }
     },
     "pdf-intake-data/1": {
@@ -1173,6 +1196,29 @@
           "externalOrders": "not_contacted",
           "financialRecords": "not_modified"
         }
+      },
+      "tripListBytes": "{\"action\":\"trip_list\",\"scope\":\"pdf-intake-data/1\",\"cursor\":null,\"limit\":20}",
+      "tripList": {
+        "schemaVersion": "material-reference-data/1",
+        "kind": "trip_list",
+        "scope": "pdf-intake-data/1",
+        "ownerId": "10000000-0000-4000-8000-000000000001",
+        "sessionId": "10000000-0000-4000-8000-000000000002",
+        "mobileEpoch": 1,
+        "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "capturedAt": 1791227400000,
+        "expiresAt": 1791227430000,
+        "items": [
+          {
+            "tripId": "10000000-0000-4000-8000-000000000003",
+            "tripVersion": 1,
+            "label": "Synthetic owned material Trip",
+            "state": "active"
+          }
+        ],
+        "hasMore": false,
+        "nextCursor": null,
+        "allUserDataCompleted": false
       }
     },
     "material-exit-progress/1": {
@@ -1357,6 +1403,29 @@
           "externalOrders": "not_contacted",
           "financialRecords": "not_modified"
         }
+      },
+      "tripListBytes": "{\"action\":\"trip_list\",\"scope\":\"material-exit-progress/1\",\"cursor\":null,\"limit\":20}",
+      "tripList": {
+        "schemaVersion": "material-reference-data/1",
+        "kind": "trip_list",
+        "scope": "material-exit-progress/1",
+        "ownerId": "10000000-0000-4000-8000-000000000001",
+        "sessionId": "10000000-0000-4000-8000-000000000002",
+        "mobileEpoch": 1,
+        "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "capturedAt": 1791227400000,
+        "expiresAt": 1791227430000,
+        "items": [
+          {
+            "tripId": "10000000-0000-4000-8000-000000000003",
+            "tripVersion": 1,
+            "label": null,
+            "state": "deleted"
+          }
+        ],
+        "hasMore": false,
+        "nextCursor": null,
+        "allUserDataCompleted": false
       }
     }
   }
