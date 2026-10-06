@@ -403,3 +403,33 @@ copy. SQL must use the same fixed wire, requalify original pairs on terminal ACK
 and reject all actual source-impact references/copies before redaction. No runtime
 SQL/Auth success, shared lease or scopeComplete inferred from these TS checks.
 This is necessary closure of the frozen ConversationData task, not a new scope.
+
+## Frozen integrator checkpoint after fixed Native delivery
+
+Normal fresh main `76129df3` and fixed Native `891980aa` merged into sole TS;
+combined source checkpoint `03deed0d`. Exact Git source comparison: entire ios
+tree equals Native891; own TS/API/contracts/producer equals1b169b22. No dirty SQL
+copied. All12 producer JSON files (11 envelopes+commands) byte/hash-equal the
+fixed Native ConversationData fixtures. Existing TS registration patch still
+passes apply-check against the fresh main, but its four shared hunks remain
+unapplied pending original-owner release/Main precise lease.
+
+Native r3 actual logs read at owner WT artifacts/native-conversation-data/
+ask-invalidation-r3: own Swift Testing8 PASS separately from original Ask XCTest23
+(persistence10/state13), test/build/signing/owned-Simulator boot/shutdown/delete
+exit0. Metadata baseline12ba plus tested working changes was then fixed as891;
+this is reused source evidence, not a new postmerge full suite or target Auth.
+Earlier r1 missing DEVELOPER_DIR preflight and r2 throwing #require compile FAIL
+remain separate. No unchanged Swift tests rerun for integration bookkeeping.
+
+Final catalog fixture gap retained: Native catalog constant is.7 while shared
+TS catalog/registry is.6 until precise registration. Old Native
+Fixtures/DataCoverage/coverage-producer.json,coverage-cancelled.json and
+Fixtures/NotificationData/native-catalog-v4.json, plus the TS notification catalog
+fixture, still carry.6. Final alignment needs only catalog metadata/conversations
+descriptor and outer coverage request/result version/digest, preserving original
+inner bytes/receipt proofs/other33 descriptors/oracles under precise lease.
+No SQL060000/PG/Auth source/executor acceptance or scopeComplete yet. Final sole
+package still requires actual SQL fixed integration, lease registration/affected
+fixture alignment, normal fresh-main/source equality/new-head formal/all required
+CI/protected gates. Whole239/fullmissing/ALL2 remains Open; no new task or scope.
