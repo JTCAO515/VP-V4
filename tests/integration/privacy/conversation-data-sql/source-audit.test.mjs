@@ -128,6 +128,9 @@ test('conversation source graph baseline: catalog and hidden-text reverse effect
     assert.equal(await db("select to_regnamespace('conversation_data_private') is null;"),'t');
     assert.equal(await oldFunctions(),before);
     await db('begin;'+source+'commit;');assert.equal(await oldFunctions(),before);
+    assert.equal(await db('select conversation_data_private.schema_supported_v1();'),'t');
+    assert.equal(await db('begin;alter table public.chat_turn_events add column unexpected_reference uuid;select conversation_data_private.schema_supported_v1();rollback;'),'f');
+    assert.equal(await db('select conversation_data_private.schema_supported_v1();'),'t');
     for (const role of ['anon','authenticated','service_role']) {
       assert.equal(await db(`select has_schema_privilege('${role}','conversation_data_private','USAGE');`),'f');
       assert.equal(await db(`select count(*) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='conversation_data_private' and has_function_privilege('${role}',p.oid,'EXECUTE');`),'0');
@@ -139,11 +142,18 @@ test('conversation source graph baseline: catalog and hidden-text reverse effect
       values('${request}','${owner}','${session}',1,'conversation-sensitive-data/1','thread','${uuid()}',array[]::uuid[],'${'a'.repeat(64)}','${'b'.repeat(64)}',1,30001,'{}','{}','{}','{}','{}','[]');
       delete from auth.sessions where id='${session}';`);
     assert.equal(await db(`select count(*) from conversation_data_private.operations_v1 where request_id='${request}';`),'1');
+    const forbidden=await sql(container,`update conversation_data_private.operations_v1 set root_id='${uuid()}' where request_id='${request}';`);
+    assert.notEqual(forbidden.code,0);assert.match(forbidden.stderr,/CONVERSATION_CONFLICT/);
+    const leakedProof=await sql(container,`begin;insert into conversation_data_private.transaction_proofs_v1(transaction_id,owner_id,request_id,source_digest,graph,expires_at)
+      values(pg_current_xact_id(),'${owner}','${request}','${'a'.repeat(64)}','{}',30001);commit;`);
+    assert.notEqual(leakedProof.code,0);assert.match(leakedProof.stderr,/CONVERSATION_CONFLICT/);
+    assert.equal(await db('select count(*) from conversation_data_private.transaction_proofs_v1;'),'0');
     await db(`delete from auth.users where id='${owner}';`);
     assert.equal(await db(`select count(*) from conversation_data_private.operations_v1 where request_id='${request}';`),'0');
     evidence.prefix={kind:'partial-private-state-only',digest:hash(source),rollback:'PASS',oldFunctions:'unchanged',defaultACL:'denied',sessionCascade:'none',accountCascade:'original owner deletion',publicRPC:'not implemented'};
   });
   assert.ok(evidence.finding, 'Reproduction must succeed before publishing evidence');
+  assert.ok(evidence.prefix, 'Private state checks must succeed before publishing prefix evidence');
   const target='artifacts/VPJ-58/conversation-data-sql';mkdirSync(target,{recursive:true});
   writeFileSync(target+'/source-catalog.json',JSON.stringify(evidence,null,2)+'\n');
   console.log('SOURCE_UNSUPPORTED reproduction verified; baseline catalog saved; owned fixture cleanup follows.');

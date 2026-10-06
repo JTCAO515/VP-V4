@@ -8,7 +8,7 @@ subsequently aligned to fixed `9a91fe36de00e6b6f0392e5f6373a08e80a9d316`
 (protocol unchanged from `44c1d705`). Synthetic Native envelopes do not supply
 source-graph or signed Auth evidence.
 No old SQL owner, dirty original checkout, shared registry or TS file changed.
-Initial source finding preceded new SQL. A 159-line private-state migration prefix
+Initial source finding preceded new SQL. A private-state migration prefix
 has now been written and tested locally; no public RPC/source executor, target
 grant, deployment or real-user erasure performed. This remains partial development.
 
@@ -53,7 +53,7 @@ VP_CONVERSATION_SOURCE_AUDIT=1 node --test tests/integration/privacy/conversatio
 
 Initial audit run: **PASS 3 tests / 0 failures / 0 skipped**, 6452 ms including setup
 and owned container cleanup. Final prefix run: **PASS 4 tests / 0 failures / 0
-skipped**, 7721 ms. Three child cases plus the parent are Node's four tests.
+skipped**, 7762 ms. Three child cases plus the parent are Node's four tests.
 Disposable local PostgreSQL 17.6.1.159, `--network none`, all migrations before
 the reserved new slot applied transactionally from the exact baseline. SQL claims
 and valid admin-seeded synthetic mixed-set rows; no signed Auth or new erasure RPC.
@@ -115,6 +115,35 @@ The retained task/text FKs deliberately point to retained text, not public Turns
 this part of the approved deletion boundary is structurally possible. The
 source-impact side effects cannot be folded into those retention counts.
 
+## Wire alignment required: recoverable original policy/consent provenance
+
+The original source supports real **record-only goal conversations with no
+ServiceTask or text_content**. `20260927021000_vpj78_conversation_membership.sql`
+stores mandatory policy_id/consent_id on the conversation and message. Its
+`submit_assistant_message_v1` explicitly requires task_id=null/turn_id=null for
+goal_start, and its own source reader requires the exact current source policy
+and owner consent. This is a normal supported path, not a fabricated source.
+
+Erasing its conversation/goals/messages removes all source-policy associations.
+The fixed wire's EXACT operation fields, B, D and seven graph keys have no policy/
+consent reference slot. Its six retained source categories cannot supply a task/
+text policy association when no task/text existed. A sourceDigest is a one-way
+whole-source hash, not an original policy/consent lookup. Another live owner
+consent must not be treated as the erased source's original consent.
+
+The current instructions require original live policy/consent qualification
+before feedback, while the wire also promises terminal same-byte recovery even
+after the original 30-second deadline. The original policy/consent gate for this
+taskless path cannot be reconstructed from the permitted persisted fields after
+erasure. Main/sole TS must make this exact boundary explicit before the final SQL
+RPC: preserve finite original policy/consent IDs in the inspectable flat state,
+or explicitly define a separate authority rule for content-free terminal metadata.
+This SQL owner has not silently weakened the source policy guard, invented a
+retained task/text row, or stored hidden source bodies to obtain recovery.
+
+This finding is source/closed-contract inspection, not a claim of a new ordinary
+RPC failure. No extra test matrix or target action was run for it.
+
 ## Required correction before source executor can be accepted
 
 Use the existing `SOURCE_UNSUPPORTED` conflict, with no IDs/body in feedback, for
@@ -130,10 +159,17 @@ This is the requested concrete source finding for Main/sole TS, rather than a
 fabricated empty relation or a new supported deletion domain. The reserved
 `20261006060000_conversation_data.sql` currently contains only the private state,
 private xid proof shape, closed selection/input helpers, current actor/epoch/reauth
-guard and flat operation projection. The additional PostgreSQL case verifies
+guard, flat operation projection, finite 40-table source registry, known nested
+reference helpers, and drift checks for actual columns/types/PK/inbound/outbound
+FKs. Its reconstructed tombstone lookup is not yet attached to source writers.
+Own binding/decision immutability and deferred proof cleanup are enforced on the
+new private tables. The additional PostgreSQL case verifies
 transactional migration rollback, unchanged old function bodies/ACL/config,
 default denied schema/functions/tables plus RLS, retained inert session UUID and
-original owner-account cascade. Its directly seeded private binding row is a
+original owner-account cascade, source-column drift rejection, binding move
+rejection and rollback of a leaked transaction proof. A PL/pgSQL alias ambiguity
+found during this local extension was corrected before the final four-test PASS;
+it is not a new source/data-policy failure. Its directly seeded private binding row is a
 metadata-lifetime fixture, not a validated graph/preview or erasure receipt.
 No stub public RPC returns empty source relations or an erasure acknowledgment.
 Source closure/locking/CAS/known JSON fences/effects/receipt/inventory executor
