@@ -32,10 +32,16 @@ offers no GET/public URL. Fixture RPC revocation denies access. Fixture cleanup
 PASS; only this isolated fixture receives the grant. Later non-null decoder
 correction preserves all legal actual payloads from this chain.
 
-Native app/support/runtime results are supplied by the sole Native owner and kept
-separate. Current app result must cover the final non-null snapshot correction;
-the earlier five app cases and three separate support cases are not combined into
-an invented single run.
+PASS: final Native `326ed3c0` unsigned App/testbuild (r4), then affected app5 plus
+actual Session1, six total/zero skips in r5. `xcresulttool` confirms this result at
+`/tmp/vpj58-archive-app-final-r5/tests.xcresult`. The separately corrected legacy
+selection runs exactly3/zero skips in r6 at
+`/tmp/vpj58-archive-legacy-final-r6/tests.xcresult`; the original r5 legacy selection
+did not run those cases and is not counted. Three support cases were separately
+run in an iOS package, not a single12-case App run. The Native owner reports all
+owned simulator shutdown/deletion exit0. No new business source follows from
+these final runs; they validate the final non-null decoder/fixture and the actual
+Session and original catalog consumers.
 
 UNRUN: target RPC grants/roles, deployment, Storage/provider/fees, real user data,
 physical device, ALL2 and all-account/full-ALL1 missing-handler acceptance.
