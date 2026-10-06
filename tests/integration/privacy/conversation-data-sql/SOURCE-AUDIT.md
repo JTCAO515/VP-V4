@@ -3,9 +3,14 @@
 Base: `a1f70134fb6abf3672a94b956a4296b36c2c3d59`.
 Independent branch/worktree: `vpj58-conversation-data-sql-20261006`.
 Source contract: sole TS `lib/server/privacy/conversation-data/WIRE.md` in
-`vpj58-conversation-data-server-20261006`, plus its closed contract/protocol.
+`vpj58-conversation-data-server-20261006`, plus its closed contract/protocol;
+subsequently aligned to fixed `9a91fe36de00e6b6f0392e5f6373a08e80a9d316`
+(protocol unchanged from `44c1d705`). Synthetic Native envelopes do not supply
+source-graph or signed Auth evidence.
 No old SQL owner, dirty original checkout, shared registry or TS file changed.
-No new runtime migration, target grant, deployment or real-user erasure performed.
+Initial source finding preceded new SQL. A 159-line private-state migration prefix
+has now been written and tested locally; no public RPC/source executor, target
+grant, deployment or real-user erasure performed. This remains partial development.
 
 ## Finding: text redaction has an unlisted mixed-scope reverse effect
 
@@ -46,8 +51,9 @@ Command:
 VP_CONVERSATION_SOURCE_AUDIT=1 node --test tests/integration/privacy/conversation-data-sql/source-audit.test.mjs
 ```
 
-Final run: **PASS 3 tests / 0 failures / 0 skipped**, 6452 ms including setup and
-owned container cleanup. Two child cases plus the parent are Node's three tests.
+Initial audit run: **PASS 3 tests / 0 failures / 0 skipped**, 6452 ms including setup
+and owned container cleanup. Final prefix run: **PASS 4 tests / 0 failures / 0
+skipped**, 7721 ms. Three child cases plus the parent are Node's four tests.
 Disposable local PostgreSQL 17.6.1.159, `--network none`, all migrations before
 the reserved new slot applied transactionally from the exact baseline. SQL claims
 and valid admin-seeded synthetic mixed-set rows; no signed Auth or new erasure RPC.
@@ -71,8 +77,8 @@ user can create those impact records or that the new erase operation works.
 
 ## Catalog inspected
 
-Generated local evidence: `artifacts/VPJ-58/conversation-data-sql/source-catalog.json`
-(426,728 bytes). Includes exact migration hashes, all 40 mapped table columns/
+Generated local evidence: `artifacts/VPJ-58/conversation-data-sql/source-catalog.json`.
+Includes exact migration hashes, all 40 mapped table columns/
 constraints/ACL/RLS, all 125 inbound/outbound FKs, 83 existing mapped-table triggers
 and their function bodies, 148 baseline application JSON columns and 11 directly
 matched reverse-source function definitions. No user rows, foreign IDs, source
@@ -122,8 +128,20 @@ The original impact producer/cleanup/Trip business functions must remain intact.
 
 This is the requested concrete source finding for Main/sole TS, rather than a
 fabricated empty relation or a new supported deletion domain. The reserved
-`20261006060000_conversation_data.sql` has not been written while this actual
-source/lock mismatch is being reported. Full executor permission/graph/CAS/late
+`20261006060000_conversation_data.sql` currently contains only the private state,
+private xid proof shape, closed selection/input helpers, current actor/epoch/reauth
+guard and flat operation projection. The additional PostgreSQL case verifies
+transactional migration rollback, unchanged old function bodies/ACL/config,
+default denied schema/functions/tables plus RLS, retained inert session UUID and
+original owner-account cascade. Its directly seeded private binding row is a
+metadata-lifetime fixture, not a validated graph/preview or erasure receipt.
+No stub public RPC returns empty source relations or an erasure acknowledgment.
+Source closure/locking/CAS/known JSON fences/effects/receipt/inventory executor
+remain required work. Do not integrate this partial prefix as a completed migration.
+Full executor permission/graph/CAS/late
 rollback/replay/retention/concurrency/receipt/inventory tests remain **UNRUN**;
 signed Auth and Native remain with their original owners. Whole #239/full missing/
 ALL2 remains Open.
+
+JT's 2026-10-06 08:27:35 CST freeze applies: finish this existing scope only;
+no new development thread or reassignment to another scope after it closes.

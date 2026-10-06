@@ -120,6 +120,29 @@ test('conversation source graph baseline: catalog and hidden-text reverse effect
       producer:'knowledge_review_private.impact_graph(uuid)',trigger:'clear_source_impact_on_text_hide',rollback:'PASS',
       fixture:'Valid schema rows seeded as fixture postgres; existing real trigger/function, no trigger bypass or new erasure RPC.'};
   });
+  await t.test('new private state prefix rolls back; defaults deny; session deletion retains own binding and account deletion cascades', async () => {
+    const source=readFileSync('supabase/migrations/'+boundary,'utf8');
+    const oldFunctions=()=>db("select md5(string_agg(p.oid::regprocedure::text||p.prosrc||coalesce(p.proacl::text,'')||coalesce(p.proconfig::text,''),'' order by p.oid::regprocedure::text)) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname not in('pg_catalog','information_schema','conversation_data_private');");
+    const before=await oldFunctions();
+    await db('begin;'+source+'rollback;');
+    assert.equal(await db("select to_regnamespace('conversation_data_private') is null;"),'t');
+    assert.equal(await oldFunctions(),before);
+    await db('begin;'+source+'commit;');assert.equal(await oldFunctions(),before);
+    for (const role of ['anon','authenticated','service_role']) {
+      assert.equal(await db(`select has_schema_privilege('${role}','conversation_data_private','USAGE');`),'f');
+      assert.equal(await db(`select count(*) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='conversation_data_private' and has_function_privilege('${role}',p.oid,'EXECUTE');`),'0');
+      assert.equal(await db(`select count(*) from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='conversation_data_private' and c.relkind='r' and (not c.relrowsecurity or has_table_privilege('${role}',c.oid,'SELECT,INSERT,UPDATE,DELETE'));`),'0');
+    }
+    const owner=uuid(),session=uuid(),request=uuid();
+    await db(`insert into auth.users values('${owner}');insert into auth.sessions(id,user_id) values('${session}','${owner}');
+      insert into conversation_data_private.operations_v1(request_id,owner_id,session_id,mobile_epoch,scope,root_kind,root_id,object_ids,source_digest,preview_digest,captured_at,expires_at,graph,erase_counts,redact_counts,retain_counts,retained_references,conflicts)
+      values('${request}','${owner}','${session}',1,'conversation-sensitive-data/1','thread','${uuid()}',array[]::uuid[],'${'a'.repeat(64)}','${'b'.repeat(64)}',1,30001,'{}','{}','{}','{}','{}','[]');
+      delete from auth.sessions where id='${session}';`);
+    assert.equal(await db(`select count(*) from conversation_data_private.operations_v1 where request_id='${request}';`),'1');
+    await db(`delete from auth.users where id='${owner}';`);
+    assert.equal(await db(`select count(*) from conversation_data_private.operations_v1 where request_id='${request}';`),'0');
+    evidence.prefix={kind:'partial-private-state-only',digest:hash(source),rollback:'PASS',oldFunctions:'unchanged',defaultACL:'denied',sessionCascade:'none',accountCascade:'original owner deletion',publicRPC:'not implemented'};
+  });
   assert.ok(evidence.finding, 'Reproduction must succeed before publishing evidence');
   const target='artifacts/VPJ-58/conversation-data-sql';mkdirSync(target,{recursive:true});
   writeFileSync(target+'/source-catalog.json',JSON.stringify(evidence,null,2)+'\n');
