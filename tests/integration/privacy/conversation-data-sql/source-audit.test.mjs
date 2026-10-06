@@ -50,6 +50,7 @@ test('conversation source graph baseline: catalog and hidden-text reverse effect
   const relationArray = 'array[' + tables.map(lit).join(',') + ']::regclass[]';
   const evidence = { base: 'a1f70134fb6abf3672a94b956a4296b36c2c3d59', kind: 'source-audit-only',
     migrations: migrations.map(file => ({ file, digest: hash(readFileSync('supabase/migrations/' + file, 'utf8')) })) };
+  let originalSource;
   await t.test('actual mapped table definitions, all inbound/outbound FKs, JSON columns and trigger bodies', async () => {
     evidence.tables = JSON.parse(await db(`select jsonb_agg(jsonb_build_object('table',c.oid::regclass::text,'rls',c.relrowsecurity,'acl',c.relacl,
       'columns',(select jsonb_agg(jsonb_build_object('name',a.attname,'type',a.atttypid::regtype::text,'notNull',a.attnotnull) order by a.attnum) from pg_attribute a where a.attrelid=c.oid and a.attnum>0 and not a.attisdropped),
@@ -80,6 +81,7 @@ test('conversation source graph baseline: catalog and hidden-text reverse effect
       insert into turn_private.text_consents(owner_id,policy_id,consent_id) values('${owner}','${policy}','${consent}');`);
     for (const turn of [selected,other]) {
       const thread=uuid(),task=uuid();
+      if(turn===selected)originalSource={owner,session,policy,consent,thread,task,turn};
       await db(`begin;${claims}insert into public.chat_threads(id,owner_id,status) values('${thread}','${owner}','active');
         insert into public.turns(id,owner_id,thread_id,status) values('${turn}','${owner}','${thread}','completed');
         insert into turn_private.service_tasks(id,owner_id,thread_id,goal_turn_id,last_turn_id,policy_id,consent_id,scope_version,goal_digest)
@@ -138,8 +140,8 @@ test('conversation source graph baseline: catalog and hidden-text reverse effect
     }
     const owner=uuid(),session=uuid(),request=uuid();
     await db(`insert into auth.users values('${owner}');insert into auth.sessions(id,user_id) values('${session}','${owner}');
-      insert into conversation_data_private.operations_v1(request_id,owner_id,session_id,mobile_epoch,scope,root_kind,root_id,object_ids,source_digest,preview_digest,captured_at,expires_at,graph,erase_counts,redact_counts,retain_counts,retained_references,conflicts)
-      values('${request}','${owner}','${session}',1,'conversation-sensitive-data/1','thread','${uuid()}',array[]::uuid[],'${'a'.repeat(64)}','${'b'.repeat(64)}',1,30001,'{}','{}','{}','{}','{}','[]');
+      insert into conversation_data_private.operations_v1(request_id,owner_id,session_id,mobile_epoch,scope,root_kind,root_id,object_ids,source_digest,preview_digest,source_authorities,captured_at,expires_at,graph,erase_counts,redact_counts,retain_counts,retained_references,conflicts)
+      values('${request}','${owner}','${session}',1,'conversation-sensitive-data/1','thread','${uuid()}',array[]::uuid[],'${'a'.repeat(64)}','${'b'.repeat(64)}','[]',1,30001,'{}','{}','{}','{}','{}','[]');
       delete from auth.sessions where id='${session}';`);
     assert.equal(await db(`select count(*) from conversation_data_private.operations_v1 where request_id='${request}';`),'1');
     const forbidden=await sql(container,`update conversation_data_private.operations_v1 set root_id='${uuid()}' where request_id='${request}';`);
@@ -152,8 +154,26 @@ test('conversation source graph baseline: catalog and hidden-text reverse effect
     assert.equal(await db(`select count(*) from conversation_data_private.operations_v1 where request_id='${request}';`),'0');
     evidence.prefix={kind:'partial-private-state-only',digest:hash(source),rollback:'PASS',oldFunctions:'unchanged',defaultACL:'denied',sessionCascade:'none',accountCascade:'original owner deletion',publicRPC:'not implemented'};
   });
+  await t.test('actual fixed-point graph inventory and stored impact relation blocker, with no source effects',async()=>{
+    const s=originalSource;
+    const a=JSON.parse(await db(`select conversation_data_private.source_v1('${s.owner}','thread','${s.thread}');`));
+    assert.deepEqual(a.graph.threadIds,[s.thread]);assert.deepEqual(a.graph.turnIds,[s.turn]);assert.deepEqual(a.graph.taskIds,[s.task]);
+    assert.deepEqual(a.sourceAuthorities,[{policyId:s.policy,consentId:s.consent}]);
+    assert.ok(a.conflicts.includes('SOURCE_UNSUPPORTED'));assert.equal(a.redactCounts.textBodies,1);
+    assert.equal(await db(`select input_text from turn_private.text_content where turn_id='${s.turn}';`),'Synthetic private input');
+    const baseline=a.sourceDigest;
+    const changed=JSON.parse(await db(`begin;update knowledge_review_private.source_impact_outbox set state='failed' where set_id in(select id from knowledge_review_private.source_impact_sets where author_id='${s.owner}');
+      select conversation_data_private.source_v1('${s.owner}','thread','${s.thread}');rollback;`));
+    assert.notEqual(changed.sourceDigest,baseline);
+    assert.equal(JSON.parse(await db(`select conversation_data_private.source_v1('${s.owner}','thread','${s.thread}');`)).sourceDigest,baseline);
+    const revoked=await sql(container,`begin;update turn_private.text_consents set revoked_at=clock_timestamp() where owner_id='${s.owner}' and policy_id='${s.policy}';
+      select conversation_data_private.authorities_current_v1('${s.owner}',${json(a.sourceAuthorities)});rollback;`);
+    assert.notEqual(revoked.code,0);assert.match(revoked.stderr,/DATA_POLICY_BLOCKED/);
+    evidence.source={kind:'private graph constructor only',impactBlocker:'SOURCE_UNSUPPORTED',authorities:'actual original singleton',effects:'none'};
+  });
   assert.ok(evidence.finding, 'Reproduction must succeed before publishing evidence');
   assert.ok(evidence.prefix, 'Private state checks must succeed before publishing prefix evidence');
+  assert.ok(evidence.source, 'Actual source constructor checks must succeed before publishing source evidence');
   const target='artifacts/VPJ-58/conversation-data-sql';mkdirSync(target,{recursive:true});
   writeFileSync(target+'/source-catalog.json',JSON.stringify(evidence,null,2)+'\n');
   console.log('SOURCE_UNSUPPORTED reproduction verified; baseline catalog saved; owned fixture cleanup follows.');

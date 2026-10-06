@@ -1,5 +1,5 @@
 -- VPJ-58 independent conversation data. This migration remains in development.
--- Sole fixed producer: 9a91fe36de00e6b6f0392e5f6373a08e80a9d316 (protocol 44c1d705).
+-- Sole fixed producer: 1b169b2260f5fbb625201255b777fe5eeb72e9d8 (Mainc6548c authority refinement).
 -- No target grants, caller-set transaction authority, raw request/source bodies,
 -- session cascade of tombstones, generic export enrollment or provider worker.
 create schema conversation_data_private;
@@ -17,6 +17,7 @@ create table conversation_data_private.operations_v1 (
  root_kind text,root_id uuid,object_ids uuid[] not null,
  source_digest text not null check(source_digest ~ '^[a-f0-9]{64}$'),
  preview_digest text not null check(preview_digest ~ '^[a-f0-9]{64}$'),
+ source_authorities jsonb not null check(jsonb_typeof(source_authorities)='array' and jsonb_array_length(source_authorities)<=100),
  captured_at bigint not null check(captured_at>0),
  expires_at bigint not null check(expires_at=captured_at+30000),
  request_digest text check(request_digest ~ '^[a-f0-9]{64}$'),
@@ -149,7 +150,7 @@ end$$;
 create function conversation_data_private.operation_row_v1(r conversation_data_private.operations_v1) returns jsonb language sql stable set search_path='' as $$
  select jsonb_build_object('requestId',r.request_id,'ownerId',r.owner_id,'sessionId',r.session_id,'mobileEpoch',r.mobile_epoch,
   'scope',r.scope,'rootKind',r.root_kind,'rootId',r.root_id,'objectIds',r.object_ids,
-  'sourceDigest',r.source_digest,'previewDigest',r.preview_digest,'capturedAt',r.captured_at,'expiresAt',r.expires_at,
+  'sourceDigest',r.source_digest,'previewDigest',r.preview_digest,'sourceAuthorities',r.source_authorities,'capturedAt',r.captured_at,'expiresAt',r.expires_at,
   'requestDigest',r.request_digest,'state',r.state,'previewErased',r.preview_erased,'graph',r.graph,
   'eraseCounts',r.erase_counts,'redactCounts',r.redact_counts,'retainCounts',r.retain_counts,
   'retainedReferences',r.retained_references,'conflicts',r.conflicts,'decision',r.decision)
@@ -228,23 +229,23 @@ begin
  if cardinality(p_path)>32 then raise exception 'CONVERSATION_SOURCE_UNAVAILABLE';end if;
  if jsonb_typeof(v)='object' then
   if v->>'kind'='historical_answer' and notification_private.uuid(v->'id') is true then
-   return query select 'turnIds'::text,(v->>'id')::uuid,p_path||'id';
+   return query select 'turnIds'::text,(v->>'id')::uuid,p_path||array['id'];
   end if;
   if v->>'kind' in('artifact_reference','result_artifact') and notification_private.uuid(v->'id') is true then
-   return query select 'artifactIds'::text,(v->>'id')::uuid,p_path||'id';
+   return query select 'artifactIds'::text,(v->>'id')::uuid,p_path||array['id'];
   end if;
   for x in select key,value from jsonb_each(v) order by key collate "C" loop
    resolved:=conversation_data_private.reference_kind_v1(x.key);
    if resolved is not null and x.value<>'null'::jsonb then
     if notification_private.uuid(x.value) is not true then raise exception 'CONVERSATION_SOURCE_UNAVAILABLE';end if;
-    return query select resolved,(x.value#>>'{}')::uuid,p_path||x.key;
+    return query select resolved,(x.value#>>'{}')::uuid,p_path||array[x.key];
    elsif jsonb_typeof(x.value) in('object','array') then
-    return query select * from conversation_data_private.json_references_v1(x.value,p_path||x.key);
+    return query select * from conversation_data_private.json_references_v1(x.value,p_path||array[x.key]);
    end if;
   end loop;
  elsif jsonb_typeof(v)='array' then
   for x in select value,ordinality from jsonb_array_elements(v) with ordinality loop
-   return query select * from conversation_data_private.json_references_v1(x.value,p_path||x.ordinality::text);
+   return query select * from conversation_data_private.json_references_v1(x.value,p_path||array[x.ordinality::text]);
   end loop;
  end if;
 end$$;
@@ -315,8 +316,8 @@ begin
   if exists(select 1 from auth.users where id=old.owner_id) then raise exception 'CONVERSATION_CONFLICT';end if;
   return old;
  end if;
- if row(new.request_id,new.owner_id,new.session_id,new.mobile_epoch,new.scope,new.root_kind,new.root_id,new.object_ids,new.source_digest,new.preview_digest,new.captured_at,new.expires_at)
-  is distinct from row(old.request_id,old.owner_id,old.session_id,old.mobile_epoch,old.scope,old.root_kind,old.root_id,old.object_ids,old.source_digest,old.preview_digest,old.captured_at,old.expires_at)
+ if row(new.request_id,new.owner_id,new.session_id,new.mobile_epoch,new.scope,new.root_kind,new.root_id,new.object_ids,new.source_digest,new.preview_digest,new.source_authorities,new.captured_at,new.expires_at)
+  is distinct from row(old.request_id,old.owner_id,old.session_id,old.mobile_epoch,old.scope,old.root_kind,old.root_id,old.object_ids,old.source_digest,old.preview_digest,old.source_authorities,old.captured_at,old.expires_at)
   then raise exception 'CONVERSATION_CONFLICT';end if;
  if old.request_digest is not null and (new.request_digest is distinct from old.request_digest or new.decision is distinct from old.decision or new.state is distinct from old.state)
   then raise exception 'CONVERSATION_CONFLICT';end if;
@@ -338,7 +339,358 @@ end$$;
 create trigger conversation_operation_immutable_v1 before update or delete on conversation_data_private.operations_v1
  for each row execute function conversation_data_private.immutable_operation_v1();
 
+create function conversation_data_private.union_ids_v1(v uuid[]) returns uuid[] language sql immutable set search_path='' as $$
+ select coalesce(array_agg(id order by id),array[]::uuid[]) from(select distinct id from unnest(v) id where id is not null) actual
+$$;
+
+-- Actual owned forward graph plus exclusively scoped reverse result closure.
+-- No fixed two-pass assumption; no source body or foreign ID is returned.
+create function conversation_data_private.closure_v1(u uuid,root_kind_n text,root_id_n uuid) returns jsonb
+language plpgsql volatile security definer set search_path='' as $$
+declare conversations uuid[]:=array[]::uuid[];threads uuid[]:=array[]::uuid[];turns uuid[]:=array[]::uuid[];
+ tasks uuid[]:=array[]::uuid[];goals uuid[]:=array[]::uuid[];messages uuid[]:=array[]::uuid[];artifacts uuid[]:=array[]::uuid[];
+ previous_n jsonb;graph_n jsonb;extra_n uuid[];pass_n integer:=0;conflicts_n text[]:=array[]::text[];
+begin
+ if root_kind_n='conversation' then
+  perform 1 from turn_private.assistant_conversations where id=root_id_n and owner_id=u;
+  if not found then raise exception 'CONVERSATION_SOURCE_UNAVAILABLE';end if;
+  conversations:=array[root_id_n];
+  select coalesce(array_agg(id order by id),array[]::uuid[]) into goals from
+   (select id from turn_private.assistant_goals where conversation_id=root_id_n and owner_id=u order by id limit 10001) source_rows;
+  select coalesce(array_agg(id order by id),array[]::uuid[]) into messages from
+   (select id from turn_private.assistant_messages where conversation_id=root_id_n and owner_id=u order by id limit 10001) source_rows;
+  if exists(select 1 from turn_private.assistant_goals where conversation_id=root_id_n and owner_id<>u)
+   or exists(select 1 from turn_private.assistant_messages where conversation_id=root_id_n and owner_id<>u) then
+   conflicts_n:=conflicts_n||array['SHARED_OR_FOREIGN_SCOPE'];
+  end if;
+ elsif root_kind_n='thread' then
+  perform 1 from public.chat_threads where id=root_id_n and owner_id=u;
+  if not found then raise exception 'CONVERSATION_SOURCE_UNAVAILABLE';end if;
+  threads:=array[root_id_n];
+ else raise exception 'INVALID_INPUT';end if;
+ loop
+  previous_n:=jsonb_build_array(threads,turns,tasks,artifacts);
+  pass_n:=pass_n+1;
+  if pass_n>4100 or cardinality(conversations)+cardinality(threads)+cardinality(turns)+cardinality(tasks)+cardinality(goals)+cardinality(messages)+cardinality(artifacts)>4100 then
+   return jsonb_build_object('graph',jsonb_set(conversation_data_private.empty_graph_v1(),array[case root_kind_n when 'conversation' then 'conversationIds' else 'threadIds' end],to_jsonb(array[root_id_n])),
+    'conflicts','["SCOPE_TOO_LARGE"]'::jsonb);
+  end if;
+  select array_agg(task_id) into extra_n from turn_private.assistant_messages where id=any(messages) and owner_id=u;
+  tasks:=conversation_data_private.union_ids_v1(tasks||coalesce(extra_n,array[]::uuid[]));
+  select array_agg(turn_id) into extra_n from turn_private.assistant_messages where id=any(messages) and owner_id=u;
+  turns:=conversation_data_private.union_ids_v1(turns||coalesce(extra_n,array[]::uuid[]));
+  select array_agg(task_id) into extra_n from turn_private.service_task_turns where turn_id=any(turns) and owner_id=u;
+  tasks:=conversation_data_private.union_ids_v1(tasks||coalesce(extra_n,array[]::uuid[]));
+  select array_agg(id) into extra_n from turn_private.service_tasks where thread_id=any(threads) and owner_id=u;
+  tasks:=conversation_data_private.union_ids_v1(tasks||coalesce(extra_n,array[]::uuid[]));
+  select array_agg(thread_id) into extra_n from turn_private.service_tasks where id=any(tasks) and owner_id=u;
+  threads:=conversation_data_private.union_ids_v1(threads||coalesce(extra_n,array[]::uuid[]));
+  select array_agg(turn_id) into extra_n from turn_private.service_task_turns where task_id=any(tasks) and owner_id=u;
+  turns:=conversation_data_private.union_ids_v1(turns||coalesce(extra_n,array[]::uuid[]));
+  select array_agg(id) into extra_n from public.turns where thread_id=any(threads) and owner_id=u;
+  turns:=conversation_data_private.union_ids_v1(turns||coalesce(extra_n,array[]::uuid[]));
+  select array_agg(turn_id) into extra_n from turn_private.text_content where (turn_id=any(turns) or thread_id=any(threads)) and owner_id=u;
+  turns:=conversation_data_private.union_ids_v1(turns||coalesce(extra_n,array[]::uuid[]));
+  select array_agg(thread_id) into extra_n from turn_private.text_content where turn_id=any(turns) and owner_id=u;
+  threads:=conversation_data_private.union_ids_v1(threads||coalesce(extra_n,array[]::uuid[]));
+  select array_agg(id) into extra_n from turn_private.result_artifacts a where a.owner_id=u
+   and (a.task_id=any(tasks) or a.goal_id=any(goals) or a.input_message_id=any(messages) or a.source_turn_id=any(turns) or a.source_result_id=any(artifacts))
+   and (a.goal_id is null or a.goal_id=any(goals)) and (a.input_message_id is null or a.input_message_id=any(messages));
+  artifacts:=conversation_data_private.union_ids_v1(artifacts||coalesce(extra_n,array[]::uuid[]));
+  select array_agg(task_id) into extra_n from turn_private.result_artifacts where id=any(artifacts) and owner_id=u;
+  tasks:=conversation_data_private.union_ids_v1(tasks||coalesce(extra_n,array[]::uuid[]));
+  select array_agg(source_turn_id) into extra_n from turn_private.result_artifacts where id=any(artifacts) and owner_id=u;
+  turns:=conversation_data_private.union_ids_v1(turns||coalesce(extra_n,array[]::uuid[]));
+  select array_agg(task_turn_id) into extra_n from turn_private.result_revisions where artifact_id=any(artifacts) and owner_id=u;
+  turns:=conversation_data_private.union_ids_v1(turns||coalesce(extra_n,array[]::uuid[]));
+  select array_agg(turn_id) into extra_n from turn_private.planning_comparisons where owner_id=u
+   and (task_id=any(tasks) or message_id=any(messages) or goal_id=any(goals));
+  turns:=conversation_data_private.union_ids_v1(turns||coalesce(extra_n,array[]::uuid[]));
+  select array_agg(task_id) into extra_n from turn_private.planning_comparisons where owner_id=u and turn_id=any(turns);
+  tasks:=conversation_data_private.union_ids_v1(tasks||coalesce(extra_n,array[]::uuid[]));
+  exit when previous_n=jsonb_build_array(threads,turns,tasks,artifacts);
+ end loop;
+ if cardinality(conversations)+cardinality(threads)+cardinality(turns)+cardinality(tasks)+cardinality(goals)+cardinality(messages)+cardinality(artifacts)>4100 then
+  return jsonb_build_object('graph',jsonb_set(conversation_data_private.empty_graph_v1(),array[case root_kind_n when 'conversation' then 'conversationIds' else 'threadIds' end],to_jsonb(array[root_id_n])),
+   'conflicts','["SCOPE_TOO_LARGE"]'::jsonb);
+ end if;
+ -- All collected identities must be actual owned rows. Unknown/retained orphan
+ -- text is never silently dropped; root/last/task-parent relations must close.
+ if exists(select 1 from unnest(tasks) requested(id) where not exists(select 1 from turn_private.service_tasks s where s.id=requested.id and s.owner_id=u))
+  or exists(select 1 from unnest(turns) requested(id) where not exists(select 1 from public.turns t where t.id=requested.id and t.owner_id=u))
+  or exists(select 1 from turn_private.service_tasks where id=any(tasks) and owner_id=u and (not goal_turn_id=any(turns) or not last_turn_id=any(turns)))
+  or exists(select 1 from turn_private.service_task_turns where task_id=any(tasks) and owner_id=u and parent_turn_id is not null and not parent_turn_id=any(turns))
+  then conflicts_n:=conflicts_n||array['SOURCE_UNSUPPORTED'];end if;
+ if exists(select 1 from public.turns where thread_id=any(threads) and owner_id<>u)
+  or exists(select 1 from turn_private.text_content where thread_id=any(threads) and owner_id<>u)
+  or exists(select 1 from turn_private.service_tasks where thread_id=any(threads) and owner_id<>u)
+  then conflicts_n:=conflicts_n||array['SHARED_OR_FOREIGN_SCOPE'];end if;
+ if exists(select 1 from turn_private.assistant_messages m
+  left join turn_private.service_task_turns l on l.turn_id=m.turn_id
+  left join turn_private.service_tasks s on s.id=coalesce(m.task_id,l.task_id)
+  where (m.task_id=any(tasks) or m.turn_id=any(turns) or m.goal_id=any(goals) or s.thread_id=any(threads))
+  and (root_kind_n='thread' or m.conversation_id<>root_id_n or m.owner_id<>u)) then
+  conflicts_n:=conflicts_n||case root_kind_n when 'thread' then 'CROSS_SCOPE_REFERENCE' else 'SHARED_OR_FOREIGN_SCOPE' end;
+ end if;
+ if exists(select 1 from turn_private.assistant_messages where id=any(messages) and parent_message_id is not null and not parent_message_id=any(messages))
+  or exists(select 1 from turn_private.assistant_messages where not id=any(messages) and parent_message_id=any(messages))
+  or exists(select 1 from turn_private.result_artifacts a where not a.id=any(artifacts)
+   and (a.task_id=any(tasks) or a.goal_id=any(goals) or a.input_message_id=any(messages) or a.source_turn_id=any(turns) or a.source_result_id=any(artifacts)))
+  then conflicts_n:=conflicts_n||array['CROSS_SCOPE_REFERENCE'];end if;
+ -- An owned row may contain a corrupt foreign parent UUID; do not expose that
+ -- UUID as a selected entity in conflict feedback.
+ if exists(select 1 from unnest(tasks) requested(id) join turn_private.service_tasks actual on actual.id=requested.id where actual.owner_id<>u)
+  or exists(select 1 from unnest(turns) requested(id) join turn_private.text_content actual on actual.turn_id=requested.id where actual.owner_id<>u)
+  then conflicts_n:=conflicts_n||array['SHARED_OR_FOREIGN_SCOPE'];end if;
+ select coalesce(array_agg(id order by id),array[]::uuid[]) into tasks from turn_private.service_tasks where id=any(tasks) and owner_id=u;
+ select coalesce(array_agg(id order by id),array[]::uuid[]) into threads from public.chat_threads where id=any(threads) and owner_id=u;
+ select coalesce(array_agg(requested.id order by requested.id),array[]::uuid[]) into turns from unnest(turns) requested(id)
+  where exists(select 1 from public.turns actual where actual.id=requested.id and actual.owner_id=u)
+   or exists(select 1 from turn_private.text_content actual where actual.turn_id=requested.id and actual.owner_id=u);
+ graph_n:=jsonb_build_object('conversationIds',conversations,'threadIds',threads,'turnIds',turns,'taskIds',tasks,'goalIds',goals,'messageIds',messages,'artifactIds',artifacts);
+ return jsonb_build_object('graph',graph_n,'conflicts',conversation_data_private.conflicts_v1(conflicts_n));
+end$$;
+
+create function conversation_data_private.authorities_shape_v1(v jsonb) returns boolean language plpgsql immutable set search_path='' as $$
+declare a jsonb;previous_n text;k text;
+begin
+ if jsonb_typeof(v) is distinct from 'array' or jsonb_array_length(v)>100 then return false;end if;
+ for a in select value from jsonb_array_elements(v) loop
+  if notification_private.exact(a,array['policyId','consentId']) is not true
+   or notification_private.uuid(a->'policyId') is not true or notification_private.uuid(a->'consentId') is not true then return false;end if;
+  k:=a->>'policyId'||':'||(a->>'consentId');
+  if previous_n is not null and previous_n collate "C">=k collate "C" then return false;end if;previous_n:=k;
+ end loop;return true;
+end$$;
+alter table conversation_data_private.operations_v1 add constraint original_source_authorities_shape_v1
+ check(conversation_data_private.authorities_shape_v1(source_authorities));
+
+create function conversation_data_private.authorities_union_v1(v jsonb) returns jsonb language sql immutable set search_path='' as $$
+ select coalesce(jsonb_agg(a order by a->>'policyId' collate "C",a->>'consentId' collate "C"),'[]'::jsonb)
+ from(select distinct a from jsonb_array_elements(v) a) unique_pairs
+$$;
+
+-- Requalify the EXACT original pair, never any replacement owner consent.
+-- UUID collision across policy domains must satisfy every exact matching realm;
+-- a live unrelated realm cannot mask revocation of the original pair.
+create function conversation_data_private.authorities_current_v1(u uuid,v jsonb) returns jsonb
+language plpgsql volatile security definer set search_path='' as $$
+declare a jsonb;p uuid;c uuid;matched_n integer;witness_n jsonb:='[]';policy_n jsonb;consent_n jsonb;
+begin
+ if conversation_data_private.authorities_shape_v1(v) is not true then raise exception 'CONVERSATION_SOURCE_UNAVAILABLE';end if;
+ for a in select value from jsonb_array_elements(v) loop
+  p:=(a->>'policyId')::uuid;c:=(a->>'consentId')::uuid;matched_n:=0;
+  select to_jsonb(actual) into policy_n from turn_private.text_policies actual where actual.id=p for share nowait;
+  if found then
+   select to_jsonb(actual) into consent_n from turn_private.text_consents actual where actual.owner_id=u and actual.policy_id=p and actual.consent_id=c for share nowait;
+   if not found then raise exception 'DATA_POLICY_BLOCKED';else
+    matched_n:=matched_n+1;
+    if not turn_private.text_policy_current(p) or consent_n->>'revoked_at' is not null then raise exception 'DATA_POLICY_BLOCKED';end if;
+    witness_n:=witness_n||jsonb_build_array(jsonb_build_object('realm','text','pair',a,'policyDigest',conversation_data_private.digest_v1(policy_n::text),'consentDigest',conversation_data_private.digest_v1(consent_n::text)));
+   end if;
+  end if;
+  select to_jsonb(actual) into policy_n from turn_private.planning_policies actual where actual.id=p for share nowait;
+  if found then
+   select to_jsonb(actual) into consent_n from turn_private.planning_consents actual where actual.owner_id=u and actual.policy_id=p and actual.consent_id=c for share nowait;
+   if not found then raise exception 'DATA_POLICY_BLOCKED';else
+    matched_n:=matched_n+1;
+    if not turn_private.planning_policy_current(p) or consent_n->>'revoked_at' is not null then raise exception 'DATA_POLICY_BLOCKED';end if;
+    -- Its linked text policy is part of the actual planning authority, too.
+    perform 1 from turn_private.text_policies where id=(policy_n->>'text_policy_id')::uuid for share nowait;
+    witness_n:=witness_n||jsonb_build_array(jsonb_build_object('realm','planning','pair',a,'policyDigest',conversation_data_private.digest_v1(policy_n::text),'consentDigest',conversation_data_private.digest_v1(consent_n::text)));
+   end if;
+  end if;
+  if matched_n=0 then raise exception 'DATA_POLICY_BLOCKED';end if;
+ end loop;return witness_n;
+end$$;
+
+create function conversation_data_private.related_v1(relation_n text,v jsonb,g jsonb,executions uuid[]) returns boolean
+language plpgsql immutable set search_path='' as $$
+declare identity_kind text:=conversation_data_private.entity_kind_v1(relation_n);ref record;
+begin
+ if identity_kind is not null then return coalesce(g->identity_kind ? (v->>'id'),false);end if;
+ if v->>'execution_id' is not null and v->>'execution_id'=any(executions::text[]) then return true;end if;
+ for ref in select * from conversation_data_private.json_references_v1(v) loop
+  if g->ref.kind ? ref.entity_id::text then return true;end if;
+ end loop;return false;
+end$$;
+
+create function conversation_data_private.impact_inventory_v1(g jsonb) returns jsonb
+language plpgsql volatile security definer set search_path='' as $$
+declare sets_n uuid[]:=array[]::uuid[];items_n uuid[]:=array[]::uuid[];deliveries_n uuid[]:=array[]::uuid[];
+ projections_n uuid[]:=array[]::uuid[];extra_n uuid[];rows_n jsonb:='[]';r record;n integer:=0;table_n text;current_n jsonb;
+begin
+ select array_agg(id) into extra_n from knowledge_review_private.source_impact_sets
+  where conversation_data_private.related_v1('impact',graph_snapshot,g,array[]::uuid[]);
+ sets_n:=conversation_data_private.union_ids_v1(sets_n||coalesce(extra_n,array[]::uuid[]));
+ select array_agg(set_id) into extra_n from knowledge_review_private.source_impact_items
+  where conversation_data_private.related_v1('impact',target,g,array[]::uuid[]);
+ sets_n:=conversation_data_private.union_ids_v1(sets_n||coalesce(extra_n,array[]::uuid[]));
+ select array_agg(set_id) into extra_n from knowledge_review_private.source_impact_pages
+  where conversation_data_private.related_v1('impact',receipt,g,array[]::uuid[]);
+ sets_n:=conversation_data_private.union_ids_v1(sets_n||coalesce(extra_n,array[]::uuid[]));
+ select array_agg(set_id) into extra_n from knowledge_review_private.source_impact_projections
+  where conversation_data_private.related_v1('impact',target,g,array[]::uuid[]);
+ sets_n:=conversation_data_private.union_ids_v1(sets_n||coalesce(extra_n,array[]::uuid[]));
+ -- Whole matching mixed-set inventory is CAS input; NONE of it is erased.
+ for table_n in select unnest(array['source_impact_sets','source_impact_items','source_impact_pages','source_impact_outbox','source_impact_projections','source_impact_review_requests']) loop
+  n:=0;
+  for current_n in execute format('select to_jsonb(actual) from knowledge_review_private.%I actual where %s order by to_jsonb(actual)::text collate "C" limit 10001',table_n,
+   case table_n when 'source_impact_sets' then 'id=any($1)' when 'source_impact_review_requests' then
+    'delivery_id in(select id from knowledge_review_private.source_impact_outbox where set_id=any($1)) or projection_id in(select id from knowledge_review_private.source_impact_projections where set_id=any($1))'
+    else 'set_id=any($1)' end) using sets_n loop
+   n:=n+1;
+   if n>10000 or jsonb_array_length(rows_n)>=4100 then return jsonb_build_object('rows',rows_n,'overflow',true);end if;
+   rows_n:=rows_n||jsonb_build_array(jsonb_build_object('table','knowledge_review_private.'||table_n,'digest',conversation_data_private.digest_v1(current_n::text)));
+  end loop;
+ end loop;
+ return jsonb_build_object('rows',rows_n,'overflow',false);
+end$$;
+
+create function conversation_data_private.source_v1(u uuid,root_kind_n text,root_id_n uuid) returns jsonb
+language plpgsql volatile security definer set search_path='' as $$
+declare closure_n jsonb;g jsonb;spec record;actual_n jsonb;key_n jsonb;ref record;qualified_n boolean;
+ rows_n jsonb:='[]';reverse_n jsonb:='[]';authorities_n jsonb:='[]';witness_n jsonb;conflicts_n text[]:=array[]::text[];
+ erase_n jsonb:=conversation_data_private.zero_counts_v1('erase');redact_n jsonb:=conversation_data_private.zero_counts_v1('redact');
+ retain_n jsonb:=conversation_data_private.zero_counts_v1('retain');refs_n jsonb;trips_n uuid[]:=array[]::uuid[];memory_n uuid[]:=array[]::uuid[];
+ executions uuid[]:=array[]::uuid[];turns uuid[];tasks uuid[];messages uuid[];goals uuid[];artifacts uuid[];threads uuid[];
+ n integer;total_n integer:=0;reverse_total integer:=0;other_n jsonb;fingerprint_n jsonb;relation_n text;extra_n uuid[];
+begin
+ -- Root ownership/policy precede source feedback, even on a capacity blocker.
+ if root_kind_n='conversation' then
+  select jsonb_build_array(jsonb_build_object('policyId',policy_id,'consentId',consent_id)) into authorities_n
+   from turn_private.assistant_conversations where id=root_id_n and owner_id=u;
+  if not found then raise exception 'CONVERSATION_SOURCE_UNAVAILABLE';end if;
+  perform conversation_data_private.authorities_current_v1(u,authorities_n);
+ elsif root_kind_n='thread' then
+  perform 1 from public.chat_threads where id=root_id_n and owner_id=u;if not found then raise exception 'CONVERSATION_SOURCE_UNAVAILABLE';end if;
+ else raise exception 'INVALID_INPUT';end if;
+ closure_n:=conversation_data_private.closure_v1(u,root_kind_n,root_id_n);g:=closure_n->'graph';
+ select coalesce(array_agg(value#>>'{}'),array[]::text[]) into conflicts_n from jsonb_array_elements(closure_n->'conflicts');
+ if not conversation_data_private.schema_supported_v1() then conflicts_n:=conflicts_n||array['SOURCE_UNSUPPORTED'];end if;
+ if conflicts_n @> array['SCOPE_TOO_LARGE'] then
+  return jsonb_build_object('graph',g,'eraseCounts',erase_n,'redactCounts',redact_n,'retainCounts',retain_n,'sourceAuthorities',authorities_n,
+   'retainedReferences','{"tripIds":[],"memoryIds":[]}'::jsonb,'conflicts',conversation_data_private.conflicts_v1(conflicts_n),'rows','[]'::jsonb,
+   'sourceDigest',conversation_data_private.digest_v1(jsonb_build_array(g,conflicts_n,authorities_n)::text));
+ end if;
+ turns:=privacy_private.linked_delete_array_v1(g->'turnIds');tasks:=privacy_private.linked_delete_array_v1(g->'taskIds');
+ messages:=privacy_private.linked_delete_array_v1(g->'messageIds');goals:=privacy_private.linked_delete_array_v1(g->'goalIds');
+ artifacts:=privacy_private.linked_delete_array_v1(g->'artifactIds');threads:=privacy_private.linked_delete_array_v1(g->'threadIds');
+ if root_kind_n='thread' and (cardinality(threads)<>1 or threads[1]<>root_id_n) then conflicts_n:=conflicts_n||array['CROSS_SCOPE_REFERENCE'];end if;
+ select coalesce(array_agg(id order by id),array[]::uuid[]) into executions from turn_private.planning_v2_execution_runs
+  where owner_id=u and (turn_id=any(turns) or task_id=any(tasks));
+ for spec in select * from conversation_data_private.sources_v1() order by relation_name collate "C" loop
+  n:=0;
+  for actual_n in execute format('select to_jsonb(actual) from %s actual where conversation_data_private.related_v1(%L,to_jsonb(actual),$1,$2) order by conversation_data_private.row_key_v1(to_jsonb(actual),$3)::text collate "C" limit 10001',spec.relation_name,spec.relation_name)
+   using g,executions,spec.pk loop
+   n:=n+1;total_n:=total_n+1;
+   if n>10000 or total_n>4100 then conflicts_n:=conflicts_n||array['SCOPE_TOO_LARGE'];exit;end if;
+   key_n:=conversation_data_private.row_key_v1(actual_n,spec.pk);
+   rows_n:=rows_n||jsonb_build_array(jsonb_build_object('table',spec.relation_name,'pk',key_n,'digest',conversation_data_private.digest_v1(actual_n::text),'effect',spec.effect,'countKey',spec.count_key));
+   if spec.has_owner then qualified_n:=actual_n->>'owner_id'=u::text;
+   elsif spec.relation_name='public.model_budget_attempts' then
+    qualified_n:=exists(select 1 from turn_private.service_tasks t join public.model_budget_scopes b on b.id=(actual_n->>'scope_id')::uuid where t.id=(actual_n->>'task_id')::uuid and t.owner_id=u and b.owner_id=u);
+   elsif spec.relation_name='turn_private.text_dispatches' then
+    qualified_n:=exists(select 1 from turn_private.text_content t where t.turn_id=(actual_n->>'turn_id')::uuid and t.owner_id=u);
+   else qualified_n:=exists(select 1 from turn_private.planning_v2_execution_runs e where e.id=(actual_n->>'execution_id')::uuid and e.owner_id=u);end if;
+   if not qualified_n then conflicts_n:=conflicts_n||array['SHARED_OR_FOREIGN_SCOPE'];continue;end if;
+   if spec.effect='erase' then erase_n:=jsonb_set(erase_n,array[spec.count_key],to_jsonb((erase_n->>spec.count_key)::integer+1));
+   elsif spec.effect='redact' then redact_n:=jsonb_set(redact_n,array[spec.count_key],to_jsonb((redact_n->>spec.count_key)::integer+1));
+   else retain_n:=jsonb_set(retain_n,array[spec.count_key],to_jsonb((retain_n->>spec.count_key)::integer+1));end if;
+   if actual_n->>'policy_id' is not null and actual_n->>'consent_id' is not null then
+    authorities_n:=authorities_n||jsonb_build_array(jsonb_build_object('policyId',actual_n->'policy_id','consentId',actual_n->'consent_id'));
+   end if;
+   if actual_n->>'planning_policy_id' is not null and actual_n->>'planning_consent_id' is not null then
+    authorities_n:=authorities_n||jsonb_build_array(jsonb_build_object('policyId',actual_n->'planning_policy_id','consentId',actual_n->'planning_consent_id'));
+   end if;
+   -- Retained historical link receipts do not seed another deleted conversation.
+   if spec.count_key<>'goalTripReceipts' then
+    for ref in select * from conversation_data_private.json_references_v1(actual_n) loop
+     if not(g->ref.kind ? ref.entity_id::text) then conflicts_n:=conflicts_n||array['CROSS_SCOPE_REFERENCE'];end if;
+    end loop;
+   end if;
+   if spec.count_key='turns' then
+    if actual_n->>'status'='proposal_ready' then conflicts_n:=conflicts_n||array['PROPOSAL_REFERENCE'];
+    elsif actual_n->>'status' not in('completed','unavailable','failed','cancelled') then conflicts_n:=conflicts_n||array['ACTIVE_WORK'];end if;
+   elsif spec.count_key='work' and actual_n->>'state' not in('completed','failed','cancelled') then conflicts_n:=conflicts_n||array['ACTIVE_WORK'];
+   elsif spec.count_key='assistJobs' and actual_n->>'status' in('queued','running') then conflicts_n:=conflicts_n||array['ACTIVE_WORK'];
+   elsif spec.count_key='planning' and actual_n->>'state'<>'completed' then conflicts_n:=conflicts_n||array['ACTIVE_WORK'];
+   elsif spec.count_key='capacity' and actual_n->>'state'='reserved' then conflicts_n:=conflicts_n||array['ACTIVE_WORK'];
+   elsif spec.count_key='budgetAttempts' and actual_n->>'status' not in('settled','released') then conflicts_n:=conflicts_n||array['ACTIVE_WORK'];
+   elsif spec.count_key='checkpoints' and actual_n->>'state'<>'completed' then conflicts_n:=conflicts_n||array['ACTIVE_WORK'];
+   elsif spec.count_key='attemptBindings' and actual_n->>'unknown_at' is not null then conflicts_n:=conflicts_n||array['ACTIVE_WORK'];
+   elsif spec.count_key='collectorOrigins' and (actual_n->>'unknown_at' is not null or actual_n->>'attempted_at' is not null and actual_n->>'response_buffered_at' is null) then conflicts_n:=conflicts_n||array['ACTIVE_WORK'];
+   elsif spec.count_key='resultClaims' and actual_n->>'state'<>'completed' then conflicts_n:=conflicts_n||array['ACTIVE_WORK'];
+   elsif spec.count_key='localJournals' and (actual_n->>'unknown_at' is not null or actual_n->>'phase'<>'response_recorded'
+     or not exists(select 1 from turn_private.planning_v2_completed_receipts c where c.turn_id=(actual_n->>'turn_id')::uuid and c.owner_id=u)) then conflicts_n:=conflicts_n||array['ACTIVE_WORK'];
+   elsif spec.count_key='callWindows' and (actual_n->>'calls')::integer>0
+     and not exists(select 1 from turn_private.planning_v2_completion_proofs p where p.execution_id=(actual_n->>'execution_id')::uuid and p.owner_id=u) then conflicts_n:=conflicts_n||array['ACTIVE_WORK'];end if;
+   if actual_n->>'proposal_id' is not null or actual_n->'content'->>'schemaVersion' in('proposal_preview/1','change-proposal/1') then conflicts_n:=conflicts_n||array['PROPOSAL_REFERENCE'];end if;
+   if actual_n->>'trip_id' is not null then trips_n:=conversation_data_private.union_ids_v1(trips_n||array[(actual_n->>'trip_id')::uuid]);end if;
+   if actual_n->>'memory_id' is not null then memory_n:=conversation_data_private.union_ids_v1(memory_n||array[(actual_n->>'memory_id')::uuid]);end if;
+   if jsonb_typeof(actual_n->'memory_basis')='array' then
+    select array_agg((entry->>'memoryId')::uuid) into extra_n from jsonb_array_elements(actual_n->'memory_basis') entry where notification_private.uuid(entry->'memoryId') is true;
+    memory_n:=conversation_data_private.union_ids_v1(memory_n||coalesce(extra_n,array[]::uuid[]));
+   end if;
+  end loop;
+  if conflicts_n @> array['SCOPE_TOO_LARGE'] then exit;end if;
+ end loop;
+ redact_n:=jsonb_set(redact_n,'{taskDigests}',to_jsonb(cardinality(tasks)));
+ authorities_n:=conversation_data_private.authorities_union_v1(authorities_n);
+ if jsonb_array_length(authorities_n)>100 then raise exception 'CONVERSATION_CAPACITY';end if;
+ witness_n:=conversation_data_private.authorities_current_v1(u,authorities_n);
+ other_n:=conversation_data_private.impact_inventory_v1(g);
+ if other_n->'rows'<>'[]'::jsonb then conflicts_n:=conflicts_n||array['SOURCE_UNSUPPORTED'];end if;
+ if other_n->'overflow'='true'::jsonb then conflicts_n:=conflicts_n||array['SCOPE_TOO_LARGE'];end if;
+ reverse_n:=reverse_n||(other_n->'rows');reverse_total:=jsonb_array_length(reverse_n);
+ -- Reverse JSON references in all actual application JSON tables. Known
+ -- domain matches are blockers; any unregistered stored relation is unsupported.
+ for relation_n in select distinct (n.nspname||'.'||c.relname) collate "C" from pg_class c join pg_namespace n on n.oid=c.relnamespace join pg_attribute a on a.attrelid=c.oid
+  where c.relkind='r' and n.nspname not in('pg_catalog','information_schema','conversation_data_private')
+  and not(n.nspname='knowledge_review_private' and c.relname like 'source_impact_%')
+  and a.attnum>0 and not a.attisdropped and a.atttypid in('jsonb'::regtype,'json'::regtype)
+  and not exists(select 1 from conversation_data_private.sources_v1() s where s.relation_name=n.nspname||'.'||c.relname)
+  order by 1 loop
+  n:=0;
+  for actual_n in execute format('select to_jsonb(actual) from %s actual where conversation_data_private.related_v1(%L,to_jsonb(actual),$1,$2) order by to_jsonb(actual)::text collate "C" limit 10001',relation_n,relation_n) using g,executions loop
+   n:=n+1;reverse_total:=reverse_total+1;
+   if n>10000 or reverse_total+total_n>4100 then conflicts_n:=conflicts_n||array['SCOPE_TOO_LARGE'];exit;end if;
+   reverse_n:=reverse_n||jsonb_build_array(jsonb_build_object('table',relation_n,'digest',conversation_data_private.digest_v1(actual_n::text)));
+   conflicts_n:=conflicts_n||case
+    when relation_n like 'readiness_private.%' then 'READINESS_REFERENCE'
+    when relation_n like 'guide_private.%' then 'GUIDE_REFERENCE'
+    when relation_n like 'scoped_edit_private.%' then 'SCOPED_EDIT_REFERENCE'
+    when relation_n like 'notification_private.%' then 'NOTIFICATION_REFERENCE'
+    when relation_n like 'service_brief_private.%' then 'BRIEF_REFERENCE'
+    else 'SOURCE_UNSUPPORTED' end;
+  end loop;
+ end loop;
+ select coalesce(array_agg(id order by id),array[]::uuid[]) into trips_n from public.trips where id=any(trips_n) and owner_id=u;
+ select coalesce(array_agg(id order by id),array[]::uuid[]) into memory_n from public.memory_profiles where id=any(memory_n) and owner_id=u;
+ refs_n:=jsonb_build_object('tripIds',trips_n,'memoryIds',memory_n);
+ if exists(select 1 from export_private.core_artifacts_v1 where owner_id=u)
+  or exists(select 1 from export_private.core_jobs_v1 where owner_id=u and (state in('queued','running') or lease_expires_at>clock_timestamp())) then conflicts_n:=conflicts_n||array['CORE_EXPORT_COPY'];end if;
+ if exists(select 1 from privacy_private.trip_deletions where owner_id=u and trip_id=any(trips_n) and state='queued')
+  or exists(select 1 from privacy_private.linked_delete_fences_v1 f where exists(select 1 from jsonb_each(g) group_n where group_n.value ? f.entity_id::text))
+  or exists(select 1 from privacy_private.memory_delete_jobs_v1 j where j.owner_id=u and j.state='queued') then conflicts_n:=conflicts_n||array['OTHER_DELETE_PENDING'];end if;
+ if exists(select 1 from turn_private.result_revisions r where not r.artifact_id=any(artifacts)
+  and exists(select 1 from conversation_data_private.json_references_v1(r.content) stored_ref where g->stored_ref.kind ? stored_ref.entity_id::text))
+  or exists(select 1 from turn_private.assistant_message_source_receipts r where not r.message_id=any(messages)
+   and (conversation_data_private.related_v1('reverse',r.input_sources,g,executions) or conversation_data_private.related_v1('reverse',r.captured_sources,g,executions))) then conflicts_n:=conflicts_n||array['CROSS_SCOPE_REFERENCE'];end if;
+ fingerprint_n:=jsonb_build_object('graph',g,'rows',rows_n,'reverse',reverse_n,'sourceAuthorities',authorities_n,'authorityWitness',witness_n,
+  'trips',(select coalesce(jsonb_agg(to_jsonb(actual) order by id),'[]') from public.trips actual where id=any(trips_n) and owner_id=u),
+  'memory',(select coalesce(jsonb_agg(to_jsonb(actual) order by id),'[]') from public.memory_profiles actual where id=any(memory_n) and owner_id=u),
+  'conflicts',conversation_data_private.conflicts_v1(conflicts_n));
+ if total_n+reverse_total+jsonb_array_length(witness_n)+cardinality(trips_n)+cardinality(memory_n)>4100 or octet_length(fingerprint_n::text)>1000000 then conflicts_n:=conflicts_n||array['SCOPE_TOO_LARGE'];end if;
+ if conflicts_n @> array['SCOPE_TOO_LARGE'] then
+  g:=jsonb_set(conversation_data_private.empty_graph_v1(),array[case root_kind_n when 'conversation' then 'conversationIds' else 'threadIds' end],to_jsonb(array[root_id_n]));
+  erase_n:=conversation_data_private.zero_counts_v1('erase');redact_n:=conversation_data_private.zero_counts_v1('redact');retain_n:=conversation_data_private.zero_counts_v1('retain');rows_n:='[]';refs_n:='{"tripIds":[],"memoryIds":[]}';
+ end if;
+ return jsonb_build_object('graph',g,'eraseCounts',erase_n,'redactCounts',redact_n,'retainCounts',retain_n,'sourceAuthorities',authorities_n,'retainedReferences',refs_n,
+  'conflicts',conversation_data_private.conflicts_v1(conflicts_n),'rows',rows_n,'sourceDigest',conversation_data_private.digest_v1(fingerprint_n::text));
+end$$;
+
 revoke all on all functions in schema conversation_data_private from public,anon,authenticated,service_role;
--- Source closure/CAS, permanent entity/JSON fences, effects, receipt and public
--- RPC remain unwritten until the actual source-impact reverse-edge finding is
--- incorporated. Do not merge or activate this partial migration as a delivery.
+-- Fixed-point private source construction and authority qualification exist.
+-- Source locking, attached permanent entity/JSON fences, atomic effects, receipt
+-- and public RPC remain in development. Do not merge/activate this partial source.

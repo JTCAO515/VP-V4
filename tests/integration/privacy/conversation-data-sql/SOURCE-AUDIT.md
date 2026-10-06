@@ -5,7 +5,7 @@ Independent branch/worktree: `vpj58-conversation-data-sql-20261006`.
 Source contract: sole TS `lib/server/privacy/conversation-data/WIRE.md` in
 `vpj58-conversation-data-server-20261006`, plus its closed contract/protocol;
 subsequently aligned to fixed `9a91fe36de00e6b6f0392e5f6373a08e80a9d316`
-(protocol unchanged from `44c1d705`). Synthetic Native envelopes do not supply
+and then to Mainc6548c refinement `1b169b2260f5fbb625201255b777fe5eeb72e9d8`. Synthetic Native envelopes do not supply
 source-graph or signed Auth evidence.
 No old SQL owner, dirty original checkout, shared registry or TS file changed.
 Initial source finding preceded new SQL. A private-state migration prefix
@@ -52,8 +52,8 @@ VP_CONVERSATION_SOURCE_AUDIT=1 node --test tests/integration/privacy/conversatio
 ```
 
 Initial audit run: **PASS 3 tests / 0 failures / 0 skipped**, 6452 ms including setup
-and owned container cleanup. Final prefix run: **PASS 4 tests / 0 failures / 0
-skipped**, 7762 ms. Three child cases plus the parent are Node's four tests.
+and owned container cleanup. Final private-constructor run: **PASS 5 tests / 0 failures / 0
+skipped**, 7721 ms. Four child cases plus the parent are Node's five tests.
 Disposable local PostgreSQL 17.6.1.159, `--network none`, all migrations before
 the reserved new slot applied transactionally from the exact baseline. SQL claims
 and valid admin-seeded synthetic mixed-set rows; no signed Auth or new erasure RPC.
@@ -115,7 +115,7 @@ The retained task/text FKs deliberately point to retained text, not public Turns
 this part of the approved deletion boundary is structurally possible. The
 source-impact side effects cannot be folded into those retention counts.
 
-## Wire alignment required: recoverable original policy/consent provenance
+## Original policy/consent provenance finding and accepted correction
 
 The original source supports real **record-only goal conversations with no
 ServiceTask or text_content**. `20260927021000_vpj78_conversation_membership.sql`
@@ -135,9 +135,11 @@ The current instructions require original live policy/consent qualification
 before feedback, while the wire also promises terminal same-byte recovery even
 after the original 30-second deadline. The original policy/consent gate for this
 taskless path cannot be reconstructed from the permitted persisted fields after
-erasure. Main/sole TS must make this exact boundary explicit before the final SQL
-RPC: preserve finite original policy/consent IDs in the inspectable flat state,
-or explicitly define a separate authority rule for content-free terminal metadata.
+erasure. Mainc6548c resolved the boundary without weakening terminal authority: the fixed
+TS `1b169b22` adds inspectable flat sourceAuthorities, at most100 deduplicated pairs
+sorted by policyId then consentId. SQL retains these IDs and requalifies the exact
+original consent; progress uses the selected rows' finite union. No replacement
+consent or policy summary may substitute. This correction is in the same frozen task.
 This SQL owner has not silently weakened the source policy guard, invented a
 retained task/text row, or stored hidden source bodies to obtain recovery.
 
@@ -172,8 +174,20 @@ found during this local extension was corrected before the final four-test PASS;
 it is not a new source/data-policy failure. Its directly seeded private binding row is a
 metadata-lifetime fixture, not a validated graph/preview or erasure receipt.
 No stub public RPC returns empty source relations or an erasure acknowledgment.
-Source closure/locking/CAS/known JSON fences/effects/receipt/inventory executor
-remain required work. Do not integrate this partial prefix as a completed migration.
+Actual private fixed-point closure and source construction now exist. The
+constructor gathers qualified actual mapped rows/counts, whole-row hashes and
+original source authority IDs, then includes the six-table mixed source-impact
+inventory in the source fingerprint and SOURCE_UNSUPPORTED conflict. The current
+fifth PostgreSQL case calls this constructor on actual retained text/task/Turn
+fixtures: original singleton authority/graph/counts match; outbox-only mutation
+changes the digest and rollback restores it; revoking the original consent blocks
+qualification. No source effect or new public RPC is exercised.
+
+Remaining implementation: complete reverse-domain/copy/source inventory review,
+source/advisory/row locking, attached permanent old/new-parent/known-JSON guards,
+whole-source CAS with absolute deadline, atomic exact-count effects, immutable
+receipt/recovery, owner list/progress inventory and public RPC. Do not integrate
+this partial checkpoint as a completed migration.
 Full executor permission/graph/CAS/late
 rollback/replay/retention/concurrency/receipt/inventory tests remain **UNRUN**;
 signed Auth and Native remain with their original owners. Whole #239/full missing/
@@ -181,3 +195,7 @@ ALL2 remains Open.
 
 JT's 2026-10-06 08:27:35 CST freeze applies: finish this existing scope only;
 no new development thread or reassignment to another scope after it closes.
+
+Current private source checkpoint consumes fixed `1b169b22` and is not scopeComplete.
+The source-authority and impact findings are resolved at the agreed contract level;
+remaining SQL implementation is work in progress, not a new approval blocker.
