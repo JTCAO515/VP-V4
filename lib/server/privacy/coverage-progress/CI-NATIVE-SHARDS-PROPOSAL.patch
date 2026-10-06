@@ -1,0 +1,184 @@
+--- a/scripts/ci-suites/db-integration.mjs
++++ b/scripts/ci-suites/db-integration.mjs
+@@ -242,6 +242,30 @@
+   },
+ };
+ 
++/** CI execution partitions only; logical classification and manual lanes stay intact. */
++export function executionMatrix(lanes) {
++  if (!Array.isArray(lanes) || lanes.length === 0 || new Set(lanes).size !== lanes.length
++    || lanes.some(lane => lane !== "none" && !Object.hasOwn(LANES, lane))
++    || lanes.includes("none") && lanes.length !== 1) throw Error("Invalid selected DB lanes");
++  return { include: lanes.flatMap(lane => {
++    const count = lane === "supabase-http-native" ? 2 : 1;
++    return Array.from({ length: count }, (_, i) => ({ lane, shard: `${i + 1}/${count}`,
++      name: count === 1 ? `lane (${lane})` : `lane (${lane} / ${i + 1} of ${count})` }));
++  }) };
++}
++export function executionSteps(lane, shard = null) {
++  if (!Object.hasOwn(LANES, lane)) throw Error("Unknown DB lane");
++  const steps = LANES[lane].steps;
++  if (shard === null) return steps;
++  const count = lane === "supabase-http-native" ? 2 : 1;
++  const match = /^([12])\/([12])$/.exec(shard);
++  if (!match || Number(match[2]) !== count || Number(match[1]) > count)
++    throw Error("Invalid DB lane shard");
++  const selected = steps.filter((_, i) => i % count === Number(match[1]) - 1);
++  if (!selected.length) throw Error("Empty DB lane shard");
++  return selected;
++}
++
+ /** Explicit allowlist: gated files that CI does not run, with the reason. Keep this list short. */
+ export const EXCLUDED = {
+   "tests/integration/cost/full-supabase-budget.test.mjs":
+@@ -391,13 +415,14 @@
+   };
+ }
+ 
+-async function runLane(lane) {
++async function runLane(lane, shard = null) {
+   const definition = LANES[lane];
++  const steps = executionSteps(lane, shard);
+   preflight(lane, definition.needs);
+   const results = [];
+   const stack = definition.stack ? await startDisposableStack(definition.stack.portBase) : null;
+   try {
+-    for (const step of definition.steps) {
++    for (const step of steps) {
+       const env = { ...process.env, ...(stack?.env ?? {}), ...(step.env ?? {}), VP_CI_SUITE: "db-integration" };
+       const [command, ...args] = step.runner ?? node("--test", "--test-reporter=tap", `--test-concurrency=${step.concurrency ?? 4}`, ...step.files);
+       console.log(`\n::group::${lane} / ${step.name}`);
+@@ -417,6 +442,11 @@
+ async function main() {
+   const argv = process.argv.slice(2);
+   const { rows, problems } = classify();
++  if (argv.length === 1 && argv[0] === "--ci-matrix") {
++    if (problems.length) throw Error(problems.join("\n"));
++    console.log(JSON.stringify(executionMatrix(JSON.parse(process.env.VP_DB_LANES_JSON ?? "null"))));
++    return;
++  }
+   if (argv.includes("--images")) {
+     console.log(pinnedImages().join("\n"));
+     return;
+@@ -427,19 +457,21 @@
+     return;
+   }
+   if (problems.length) throw new Error(`Integration test classification is incomplete:\n${problems.join("\n")}`);
+-  const lanes = [];
++  const lanes = []; let shard = null;
+   for (let i = 0; i < argv.length; i++) {
++    if (argv[i] === "--shard" && argv[i + 1] && shard === null) { shard = argv[++i]; continue; }
+     if (argv[i] !== "--lane" || !argv[i + 1]) throw new Error(`Usage: --list | --lane <${Object.keys(LANES).join("|")}|all> ...`);
+     lanes.push(...(argv[i + 1] === "all" ? Object.keys(LANES) : [argv[i + 1]]));
+     i++;
+   }
+   if (!lanes.length) throw new Error(`Usage: --list | --lane <${Object.keys(LANES).join("|")}|all> ...`);
++  if (shard !== null && lanes.length !== 1) throw Error("A shard requires exactly one lane");
+   for (const lane of lanes) if (!LANES[lane]) throw new Error(`Unknown lane ${lane}`);
+ 
+   const results = [];
+   let crashed = null;
+   for (const lane of lanes) {
+-    try { results.push(...(await runLane(lane))); }
++    try { results.push(...(await runLane(lane, shard))); }
+     catch (error) { crashed = error; results.push({ lane, step: "(setup)", outcome: "failed", problems: [String(error.message ?? error)] }); break; }
+   }
+   const header = "| Lane | Step | Outcome | Tests | Pass | Skipped | Fail | Seconds |\n| --- | --- | --- | ---: | ---: | ---: | ---: | ---: |\n";
+--- a/.github/workflows/db-integration.yml
++++ b/.github/workflows/db-integration.yml
+@@ -28,6 +28,7 @@
+     outputs:
+       has_db: ${{ steps.scope.outputs.has_db }}
+       lanes: ${{ steps.scope.outputs.db_lanes_json }}
++      execution_matrix: ${{ steps.execution.outputs.matrix }}
+     steps:
+       - uses: actions/checkout@v4
+         with:
+@@ -43,18 +44,23 @@
+           VP_CI_BASE: ${{ github.event.pull_request.base.sha }}
+           VP_CI_HEAD: ${{ github.event.pull_request.head.sha }}
+         run: node scripts/ci-change-scope.mjs
++      - name: Project selected logical lanes into bounded CI execution jobs
++        id: execution
++        env:
++          VP_DB_LANES_JSON: ${{ steps.scope.outputs.db_lanes_json }}
++        run: printf 'matrix=%s\n' "$(node scripts/ci-suites/db-integration.mjs --ci-matrix)" >> "$GITHUB_OUTPUT"
+       - run: node --test tests/unit/governance/ci-change-scope.test.mjs tests/unit/governance/db-integration-ci.test.mjs
+       - run: node scripts/ci-suites/db-integration.mjs --list
+   lane:
+     needs: select
+     if: needs.select.outputs.has_db == 'true'
+-    name: lane (${{ matrix.lane }})
++    name: ${{ matrix.name }}
+     runs-on: ubuntu-24.04
+     timeout-minutes: 30
+     strategy:
+       fail-fast: false
+       matrix:
+-        lane: ${{ fromJSON(needs.select.outputs.lanes) }}
++        include: ${{ fromJSON(needs.select.outputs.execution_matrix).include }}
+     steps:
+       - uses: actions/checkout@v4
+         with:
+@@ -111,7 +117,7 @@
+           pnpm exec playwright install --with-deps chromium
+           echo "VP_OPS_BROWSER_EXECUTABLE=$(node -e "process.stdout.write(require('@playwright/test').chromium.executablePath())")" >> "$GITHUB_ENV"
+       - name: Run lane (skip, todo or cancel fails)
+-        run: node scripts/ci-suites/db-integration.mjs --lane ${{ matrix.lane }}
++        run: node scripts/ci-suites/db-integration.mjs --lane "${{ matrix.lane }}" --shard "${{ matrix.shard }}"
+ 
+   # Single stable check name for branch protection.
+   db-integration:
+--- a/tests/unit/governance/db-integration-ci.test.mjs
++++ b/tests/unit/governance/db-integration-ci.test.mjs
+@@ -3,7 +3,7 @@
+ import test from "node:test";
+ import {spawnSync} from "node:child_process";
+ import {selectCheckPlan,DB_LANES} from "../../../scripts/ci-change-scope.mjs";
+-import { EXCLUDED, LANES, classify, parseNodeTestSummary, pinnedImages, stepProblems } from "../../../scripts/ci-suites/db-integration.mjs";
++import { EXCLUDED, LANES, executionMatrix, executionSteps, classify, parseNodeTestSummary, pinnedImages, stepProblems } from "../../../scripts/ci-suites/db-integration.mjs";
+ 
+ const read = (path) => readFileSync(path, "utf8");
+ 
+@@ -31,10 +31,10 @@
+ 
+ test("DB Integration dynamically selects lanes with a stable fail-closed aggregate and real classification",()=>{
+  const workflow=read('.github/workflows/db-integration.yml');assert.match(workflow,/^permissions:\n  contents: read$/m);
+- assert.match(workflow,/lane: \$\{\{ fromJSON\(needs.select.outputs.lanes\) \}\}/);
++ assert.match(workflow,/include: \$\{\{ fromJSON\(needs.select.outputs.execution_matrix\).include \}\}/);
+  assert.deepEqual(selectCheckPlan(['supabase/migrations/new.sql'],'pull_request').dbLanes,Object.keys(LANES));assert.deepEqual([...DB_LANES].sort(),Object.keys(LANES).sort());
+  assert.match(workflow,/node scripts\/ci-suites\/db-integration\.mjs --list/);assert.match(workflow,/node scripts\/ci-change-scope\.mjs/);
+- assert.match(workflow,/node scripts\/ci-suites\/db-integration\.mjs --lane \$\{\{ matrix\.lane \}\}/);
++ assert.match(workflow,/node scripts\/ci-suites\/db-integration\.mjs --lane "\$\{\{ matrix\.lane \}\}" --shard "\$\{\{ matrix\.shard \}\}"/);
+  assert.match(workflow,/^  db-integration:\n    if: always\(\)\n    needs: \[select, lane\]$/m);
+  assert.match(workflow,/test "\$SELECT_RESULT" = success/);assert.match(workflow,/test "\$LANE_RESULT" = success/);assert.match(workflow,/test "\$LANE_RESULT" = skipped/);assert.match(workflow,/exit 1/);
+  assert.ok(pinnedImages().includes('public.ecr.aws/supabase/postgres:17.6.1.159'));
+@@ -87,3 +87,28 @@
+  const code="import importlib.util,json,re,pathlib; s=importlib.util.spec_from_file_location('vpci','scripts/ios/ci.py');m=importlib.util.module_from_spec(s);s.loader.exec_module(m);f='ios/VisePanda/VisePandaTests/AccessibilityContrastTests.swift';names=m.checked_test_names(pathlib.Path(f));print(json.dumps([names,m.pr_test_selection([f]),m.pr_test_selection(['ios/UnknownScope/Changed.swift'])]))";
+  const r=spawnSync('python3',['-c',code],{encoding:'utf8'});assert.equal(r.status,0,r.stderr);const [names,selected,unknown]=JSON.parse(r.stdout);assert.ok(names.length>0);for(const name of names)assert.ok(selected.includes('VisePandaTests/'+name));assert.ok(selected.includes('VisePandaTests/NativeTripStateTests'));assert.deepEqual(unknown,['VisePandaTests']);
+ });
++
++
++test("bounded CI shards preserve every logical step exactly once and reject malformed partitions", () => {
++  const jobs = executionMatrix(Object.keys(LANES)).include;
++  for (const lane of Object.keys(LANES)) {
++    const own = jobs.filter(job => job.lane === lane);
++    assert.equal(own.length, lane === "supabase-http-native" ? 2 : 1);
++    const selected = own.flatMap(job => executionSteps(lane, job.shard));
++    assert.equal(new Set(selected).size, LANES[lane].steps.length);
++    assert.equal(selected.length, LANES[lane].steps.length);
++    assert.deepEqual(new Set(selected), new Set(LANES[lane].steps));
++    for (const job of own) {
++      const part = executionSteps(lane, job.shard);
++      assert.ok(part.length > 0);
++      assert.deepEqual(part, LANES[lane].steps.filter(step => part.includes(step)));
++    }
++    assert.deepEqual(executionSteps(lane), LANES[lane].steps);
++  }
++  for (const input of [null, [], ["unknown"], ["postgres", "postgres"], ["none", "postgres"]]) assert.throws(() => executionMatrix(input));
++  assert.deepEqual(executionMatrix(["none"]).include, [{lane:"none",shard:"1/1",name:"lane (none)"}]);
++  for (const shard of ["0/2", "3/2", "1/3", "2/1", "1/1", "garbage"]) assert.throws(() => executionSteps("supabase-http-native", shard));
++  assert.throws(() => executionSteps("postgres", "1/2"));
++  assert.throws(() => executionSteps("unknown", "1/1"));
++  assert.match(read(".github/workflows/db-integration.yml"), /timeout-minutes: 30/);
++});
