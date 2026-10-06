@@ -1,6 +1,6 @@
 import { exact, record, hash } from '../../guide/contract.ts';
 import { CONVERSATION_SCHEMA, CONVERSATION_LIMITS, bindingKeys, selectionKeys, GRAPH_KEYS, ERASED_KEYS, REDACTED_KEYS, RETAINED_KEYS, CONFLICTS,
-  identifier, natural, positive, sortedIds, conversationScope, validSelection, sameSelection, validBinding, validGraph, counts,
+  identifier, natural, positive, sortedIds, conversationScope, validSelection, sameSelection, validBinding, validGraph, counts, validSourceAuthorities,
   type ConversationActor, type ConversationCommand, type ConversationBinding, type ConversationGraph } from './contract.ts';
 
 type Selected = Exclude<ConversationCommand, { action: 'list' }>;
@@ -36,6 +36,7 @@ export function decodeConversationPreview(v: unknown, c: Selected, a: Conversati
     || !natural(v.progressCount) || !size(v)) return null;
   // Conflict previews may expose only qualified owner entities; overflow has no fabricated selection.
   if (v.eligible && (!graphRoot(v.graph, v) || !cardinalities(v.graph, v.eraseCounts, v.redactCounts, v.retainCounts)
+    || (v.redactCounts.textBodies > 0 || v.graph.taskIds.length > 0) && v.sourceAuthorities.length === 0
     || totalRows(v.eraseCounts, v.redactCounts, v.retainCounts) > CONVERSATION_LIMITS.entities)) return null;
   if (v.scope === 'conversation-sensitive-data/1' ? v.progressCount !== 0 : v.progressCount !== c.objectIds.length
     || !emptyGraph(v.graph) || (v.retainedReferences.tripIds as string[]).length !== 0 || (v.retainedReferences.memoryIds as string[]).length !== 0
@@ -58,6 +59,7 @@ export function decodeConversationReceipt(v: unknown, c: Selected, a: Conversati
   if (!record(v) || !exact(v, [...bindingKeys, 'kind', 'state', 'decision']) || !validBinding(v, now, true) || !bound(v, c, a)
     || v.kind !== 'receipt' || v.state !== 'erased' || !validDecision(v.decision, v.scope, v.capturedAt, v.expiresAt, now, c.objectIds.length)
     || v.decision.requestDigest !== digest || !graphRoot(v.decision.graph, v) || !size(v)) return null;
+  if ((v.decision.redactedCounts.textBodies > 0 || v.decision.graph.taskIds.length > 0) && v.sourceAuthorities.length === 0) return null;
   return v as ConversationReceipt;
 }
 export function decodeConversationUnknown(v: unknown, c: Selected, a: ConversationActor, digest: string): boolean {
@@ -68,19 +70,23 @@ export function decodeConversationUnknown(v: unknown, c: Selected, a: Conversati
 /** Every persisted operation field is inspectable; decision is finite and never embeds another receipt. */
 export function validOperationRow(v: unknown, owner: string, now: number): boolean {
   if (!record(v) || !exact(v, ['requestId', 'ownerId', 'sessionId', 'mobileEpoch', 'scope', 'rootKind', 'rootId', 'objectIds', 'sourceDigest', 'previewDigest',
-    'capturedAt', 'expiresAt', 'requestDigest', 'state', 'previewErased', 'graph', 'eraseCounts', 'redactCounts', 'retainCounts', 'retainedReferences', 'conflicts', 'decision'])
+    'sourceAuthorities', 'capturedAt', 'expiresAt', 'requestDigest', 'state', 'previewErased', 'graph', 'eraseCounts', 'redactCounts', 'retainCounts', 'retainedReferences', 'conflicts', 'decision'])
     || !validSelection(v) || v.ownerId !== owner || !identifier(v.sessionId) || !positive(v.mobileEpoch) || !hash(v.sourceDigest) || !hash(v.previewDigest)
     || !positive(v.capturedAt) || v.capturedAt > now || v.expiresAt !== v.capturedAt + CONVERSATION_LIMITS.lifetimeMs
+    || !validSourceAuthorities(v.sourceAuthorities)
+    || v.rootKind === 'conversation' && v.sourceAuthorities.length === 0
     || (v.state !== 'previewed' && v.state !== 'erased') || typeof v.previewErased !== 'boolean') return false;
   if (v.previewErased ? [v.graph, v.eraseCounts, v.redactCounts, v.retainCounts, v.retainedReferences, v.conflicts].some(x => x !== null)
     : !validGraph(v.graph) || !counts(v.eraseCounts, ERASED_KEYS) || !counts(v.redactCounts, REDACTED_KEYS) || !counts(v.retainCounts, RETAINED_KEYS) || !refs(v.retainedReferences) || !conflicts(v.conflicts)) return false;
   if (!v.previewErased && Array.isArray(v.conflicts) && v.conflicts.length === 0
     && (!validGraph(v.graph) || !counts(v.eraseCounts, ERASED_KEYS) || !counts(v.redactCounts, REDACTED_KEYS) || !counts(v.retainCounts, RETAINED_KEYS)
       || !graphRoot(v.graph, v) || !cardinalities(v.graph, v.eraseCounts, v.redactCounts, v.retainCounts)
+      || (v.redactCounts.textBodies > 0 || v.graph.taskIds.length > 0) && v.sourceAuthorities.length === 0
       || totalRows(v.eraseCounts, v.redactCounts, v.retainCounts) > CONVERSATION_LIMITS.entities)) return false;
   return v.state === 'previewed' ? v.requestDigest === null && v.decision === null
     : hash(v.requestDigest) && validDecision(v.decision, String(v.scope), v.capturedAt, Number(v.expiresAt), now, (v.objectIds as string[]).length)
-      && v.decision.requestDigest === v.requestDigest && graphRoot(v.decision.graph, v) && v.previewErased === true;
+      && v.decision.requestDigest === v.requestDigest && graphRoot(v.decision.graph, v) && v.previewErased === true
+      && (!(v.decision.redactedCounts.textBodies > 0 || v.decision.graph.taskIds.length > 0) || v.sourceAuthorities.length > 0);
 }
 export function decodeConversationList(v: unknown, c: Extract<ConversationCommand, { action: 'list' }>, a: ConversationActor, now: number): Record<string, unknown> | null {
   if (!record(v) || !exact(v, ['schemaVersion', 'kind', 'scope', 'rootKind', 'ownerId', 'sessionId', 'mobileEpoch', 'sourceDigest', 'capturedAt', 'expiresAt', 'items', 'hasMore', 'nextCursor', 'allUserDataCompleted'])

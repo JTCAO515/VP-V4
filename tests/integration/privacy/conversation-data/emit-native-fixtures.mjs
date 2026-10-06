@@ -14,8 +14,9 @@ const emptyGraph = () => Object.fromEntries(GRAPH_KEYS.map(k => [k, []]));
 const selection = { scope: 'conversation-sensitive-data/1', requestId: id(3), rootKind: 'conversation', rootId: id(4), objectIds: [] };
 const command = { action: 'erase', ...selection, sourceDigest: 'a'.repeat(64), previewDigest: 'b'.repeat(64), confirmed: true };
 const bytes = `  ${JSON.stringify(command)}\n`;
+const sourceAuthorities = [{ policyId: id(20), consentId: id(21) }, { policyId: id(22), consentId: id(23) }];
 const binding = { schemaVersion: CONVERSATION_SCHEMA, ...selection, ...actor, sourceDigest: command.sourceDigest, previewDigest: command.previewDigest,
-  capturedAt: now, expiresAt: now + 30000, boundaries: CONVERSATION_BOUNDARIES[selection.scope], allUserDataCompleted: false };
+  sourceAuthorities, capturedAt: now, expiresAt: now + 30000, boundaries: CONVERSATION_BOUNDARIES[selection.scope], allUserDataCompleted: false };
 const graph = { ...emptyGraph(), conversationIds: [id(4)], goalIds: [id(5)], messageIds: [id(6)], taskIds: [id(7)], threadIds: [id(8)], turnIds: [id(9)], artifactIds: [id(10)] };
 const eraseCounts = { ...zero(ERASED_KEYS), conversations: 1, goals: 1, messages: 1, threads: 1, turns: 1, artifacts: 1 };
 const redactCounts = { textBodies: 1, taskDigests: 1 }, retainCounts = { ...zero(RETAINED_KEYS), tasks: 1, taskTurns: 1, capacity: 1 };
@@ -31,19 +32,28 @@ const list = (scope, rootKind, items) => ({ schemaVersion: CONVERSATION_SCHEMA, 
 const conversationList = list(selection.scope, 'conversation', [{ rootKind: 'conversation', rootId: id(4), createdAt: now - 1000 }]);
 const threadList = list(selection.scope, 'thread', [{ rootKind: 'thread', rootId: id(15), createdAt: now - 1000 }]);
 const operation = { ...selection, ...actor, sourceDigest: binding.sourceDigest, previewDigest: binding.previewDigest, capturedAt: now, expiresAt: now + 30000,
-  requestDigest: conversationDigest(bytes), state: 'erased', previewErased: true, graph: null, eraseCounts: null, redactCounts: null, retainCounts: null,
+  sourceAuthorities, requestDigest: conversationDigest(bytes), state: 'erased', previewErased: true, graph: null, eraseCounts: null, redactCounts: null, retainCounts: null,
   retainedReferences: null, conflicts: null, decision };
 const progressSelection = { scope: 'conversation-delete-progress/1', requestId: id(13), rootKind: null, rootId: null, objectIds: [selection.requestId] };
 const progressCommand = { action: 'erase', ...progressSelection, sourceDigest: 'c'.repeat(64), previewDigest: 'd'.repeat(64), confirmed: true };
 const progressBytes = `\n${JSON.stringify(progressCommand)}  `;
 const progressBinding = { ...binding, ...progressSelection, sourceDigest: progressCommand.sourceDigest, previewDigest: progressCommand.previewDigest,
-  boundaries: CONVERSATION_BOUNDARIES[progressSelection.scope] };
+  sourceAuthorities, boundaries: CONVERSATION_BOUNDARIES[progressSelection.scope] };
 const progressPreview = { ...progressBinding, kind: 'preview', graph: emptyGraph(), eraseCounts: zero(ERASED_KEYS), redactCounts: zero(REDACTED_KEYS),
   retainCounts: zero(RETAINED_KEYS), retainedReferences: { tripIds: [], memoryIds: [] }, conflicts: [], eligible: true, progressCount: 1 };
 const progressDecision = { ...decision, requestDigest: conversationDigest(progressBytes), graph: emptyGraph(), erasedCounts: zero(ERASED_KEYS),
   redactedCounts: zero(REDACTED_KEYS), retainedCounts: zero(RETAINED_KEYS), clearedPreviews: 1, retainedFences: 1, sourceConversation: 'not_modified' };
 const progressReceipt = { ...progressBinding, kind: 'receipt', state: 'erased', decision: progressDecision };
 const progressList = list(progressSelection.scope, null, [operation]);
+const tasklessSelection = { ...selection, requestId: id(16), rootId: id(17) };
+const tasklessCommand = { action: 'erase', ...tasklessSelection, sourceDigest: 'e'.repeat(64), previewDigest: 'f'.repeat(64), confirmed: true };
+const tasklessBytes = ` ${JSON.stringify(tasklessCommand)}\n`;
+const tasklessBinding = { ...binding, ...tasklessSelection, sourceDigest: tasklessCommand.sourceDigest, previewDigest: tasklessCommand.previewDigest, sourceAuthorities: [sourceAuthorities[0]] };
+const tasklessGraph = { ...emptyGraph(), conversationIds: [id(17)], goalIds: [id(18)], messageIds: [id(19)] };
+const tasklessCounts = { ...zero(ERASED_KEYS), conversations: 1, goals: 1, messages: 1 };
+const tasklessPreview = { ...preview, ...tasklessBinding, graph: tasklessGraph, eraseCounts: tasklessCounts, redactCounts: zero(REDACTED_KEYS), retainCounts: zero(RETAINED_KEYS), retainedReferences: { tripIds: [], memoryIds: [] } };
+const tasklessReceipt = { ...tasklessBinding, kind: 'receipt', state: 'erased', decision: { ...decision, requestDigest: conversationDigest(tasklessBytes), graph: tasklessGraph,
+  erasedCounts: tasklessCounts, redactedCounts: zero(REDACTED_KEYS), retainedCounts: zero(RETAINED_KEYS), retainedFences: 3 } };
 const listCommand = (scope, rootKind) => ({ action: 'list', scope, rootKind, cursor: null, limit: 20 });
 assert.ok(parseConversationCommand(JSON.parse(bytes)));
 assert.ok(decodeConversationList(conversationList, listCommand(selection.scope, 'conversation'), actor, now + 20));
@@ -56,11 +66,13 @@ assert.ok(validOperationRow(operation, actor.ownerId, now + 40000));
 assert.ok(decodeConversationList(progressList, listCommand(progressSelection.scope, null), actor, now + 20));
 assert.ok(decodeConversationPreview(progressPreview, { action: 'preview', ...progressSelection }, actor, now + 20));
 assert.ok(decodeConversationReceipt(progressReceipt, progressCommand, actor, conversationDigest(progressBytes), now + 40000));
+assert.ok(decodeConversationPreview(tasklessPreview, { action: 'preview', ...tasklessSelection }, actor, now + 20));
+assert.ok(decodeConversationReceipt(tasklessReceipt, tasklessCommand, actor, conversationDigest(tasklessBytes), now + 40000));
 mkdirSync(output, { recursive: true });
 for (const [name, data] of Object.entries({ 'conversation-list': conversationList, 'thread-list': threadList, 'conversation-preview': preview,
   'conversation-blocked': blocked, 'conversation-receipt': receipt, 'conversation-unknown': unknown, 'progress-list': progressList,
-  'progress-preview': progressPreview, 'progress-receipt': progressReceipt })) writeFileSync(join(output, name + '.json'), JSON.stringify({ data }, null, 2) + '\n');
+  'progress-preview': progressPreview, 'progress-receipt': progressReceipt, 'taskless-preview': tasklessPreview, 'taskless-receipt': tasklessReceipt })) writeFileSync(join(output, name + '.json'), JSON.stringify({ data }, null, 2) + '\n');
 writeFileSync(join(output, 'commands.json'), JSON.stringify({ syntheticSource: true, schemaVersion: CONVERSATION_SCHEMA, actor, now: now + 20,
-  receiptRecoveryNow: now + 40000, eraseBytes: bytes, progressEraseBytes: progressBytes,
-  preview: { action: 'preview', ...selection }, progressPreview: { action: 'preview', ...progressSelection } }, null, 2) + '\n');
+  receiptRecoveryNow: now + 40000, eraseBytes: bytes, progressEraseBytes: progressBytes, tasklessEraseBytes: tasklessBytes,
+  preview: { action: 'preview', ...selection }, progressPreview: { action: 'preview', ...progressSelection }, tasklessPreview: { action: 'preview', ...tasklessSelection } }, null, 2) + '\n');
 console.log('Synthetic sole-TS Native fixtures written: ' + output);

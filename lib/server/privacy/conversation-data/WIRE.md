@@ -145,16 +145,21 @@ Explicit blockers (closed `CONFLICTS` order) before any effects:
 - SOURCE_UNSUPPORTED: unresolved JSON reference, unknown FK/reverse edge/table
   registry drift or unreadable source; no fabricated empty relation.
   SQL owner finding `b5a1df00` confirms source-impact historical_answer references
-  in knowledge_review_private.source_impact_sets.graph_snapshot[].target,
-  source_impact_items.target and source_impact_projections.target, with derived
-  pages/outbox/review requests. ANY such selected-Turn relation is blocked before
-  redaction, included in source CAS; original text-hide cleanup can otherwise
+  in ALL SIX knowledge_review_private.source_impact_* tables: sets.graph_snapshot
+  (direct historical_answer entries AND wrapped .target), items.target,
+  pages.receipt, outbox through set/item and copied receipt references,
+  projections.target, review_requests through projection/delivery and copies.
+  ANY matching actual historical_answer selected-Turn relation, including stale/
+  terminal copies, is blocked before redaction and included in source CAS/row cap.
+  Feedback contains no foreign set/item/delivery IDs or body. Text-hide cleanup can otherwise
   invalidate a whole mixed set and stale unselected deliveries while taking
   blocking locks. Preserve that domain, never implicitly invoke its cleanup or
   claim outside NOWAIT covers it. Permanent known-target guards must reject later
   old/fenced historical_answer references, including root sets/items/projections
-  and copied receipts. Existing SOURCE_UNSUPPORTED enum/boundaries cover this;
-  no new wire field, handler, module denominator or scope. Actual original-trigger
+  and copied receipts, checking BOTH old and new parent/target identities on moves.
+  Original impact functions/business remain unchanged. Existing SOURCE_UNSUPPORTED
+  covers this finding without a new handler, module denominator or domain erase.
+  Actual original-trigger
   reproduction/rollback3 PASS is separate SQL-source-audit evidence, not this
   module's executor or Auth evidence. See SQL owner's SOURCE-AUDIT.md.
 
@@ -190,11 +195,42 @@ erase replay, new op, parsed/reserialized bytes or converted export. UTF8 comman
 8192; recover outer16384. Recover is read-only, never starts an erase.
 
 Binding B exact={schemaVersion:"conversation-data/1",...S,ownerId,sessionId,
-mobileEpoch,sourceDigest,previewDigest,capturedAt,expiresAt,boundaries,
+mobileEpoch,sourceDigest,previewDigest,sourceAuthorities,capturedAt,expiresAt,boundaries,
 allUserDataCompleted:false}. Digests lower64hex; time epoch ms; expiresAt exactly
 capturedAt+30000, original fixed clock never renewed on retry.
 boundaries EXACT CONVERSATION_BOUNDARIES from contract.ts on ALL preview/receipts;
 Native renders eraseFields/redactFields/retained/missing before confirm.
+
+Mainc6548c closed authority refinement: sourceAuthorities is a FLAT array of
+0..100 exact {policyId,consentId} lower-case UUID pairs, deduplicated and sorted
+by policyId then consentId. These are ORIGINAL actual owned source IDs, not hash/
+policy summary, fabricated task, new consent or current global preference. A
+conversation root requires at least its real conversation policy/consent pair;
+selected message/text/task/dispatch/planning pairs come from their actual rows.
+Every pair must match the actual source owner's current effective policy and
+the SAME original consent ID; any revoked/expired/replaced/unqualified pair fails
+closed. Source digest/CAS/preview digest covers these IDs and actual authority
+state; the full source inventory and blockers remain row-bounded. More than100
+pairs fails capacity, never truncates authority. An empty standalone thread with
+no policy-bearing source legitimately has []; no invented policy or task.
+
+Progress sourceAuthorities is the bounded sorted UNION of the original pairs in
+the explicitly selected operation rows, which remain fully inventoried. This
+does not recursively embed operations/receipts. Erase and recovery requalify all
+original pairs. An all-empty source union stays []; an arbitrary new consent
+cannot replace any selected original authority. Progress metadata/list exposes
+every retained original pair as minimal authority metadata, never source bodies.
+Original actor/session/epoch/reauth must precede any feedback as before.
+
+Terminal sensitive receipt, including taskless record-only conversation, rechecks
+its STORED sourceAuthorities under original owner/session/epoch/reauth before
+returning any original-bytes ACK, even beyond preview TTL. It cannot depend on
+deleted conversation rows or nonexistent retained task/text. Current policy or
+consent failure withholds the receipt, rather than loosening terminal authority.
+Recover remains read-only; commands contain NO caller-supplied sourceAuthorities.
+Preview/receipt B and each operation row return the exact retained array. D and
+unknown shape stay unchanged; list sensitive root rows stay unchanged. Native
+uses the closed new B/inventory decoder; SQL performs actual requalification.
 
 Preview exact={...B,kind:"preview",graph,eraseCounts,redactCounts,retainCounts,
 retainedReferences:{tripIds,memoryIds},conflicts,eligible,progressCount}.
@@ -276,7 +312,7 @@ this on owned local disposable fixture is separate from real backup/device ALL2.
 
 Private operation row EXACT persisted fields=validOperationRow protocol keys:
 requestId,ownerId,sessionId,mobileEpoch,scope,rootKind,rootId,objectIds,sourceDigest,
-previewDigest,capturedAt,expiresAt,requestDigest,state,previewErased,graph,
+previewDigest,sourceAuthorities,capturedAt,expiresAt,requestDigest,state,previewErased,graph,
 eraseCounts,redactCounts,retainCounts,retainedReferences,conflicts,decision.
 No raw bytes, source bodies/file/page payload. State previewed|erased. Decision
 is finite D, never full B/another operation/another receipt. RLS/private API table
@@ -286,10 +322,11 @@ survive session deletion). Current operation access still exact live session/
 epoch; owner inventory can discover old session metadata under new live authority.
 
 Erased sensitive operations clear transient graph/counts/refs/conflicts to null,
-previewErased=true, retain immutable D and source/root/selection/time/hash fences.
+previewErased=true, retain immutable D, sourceAuthorities and source/root/selection/time/hash fences.
 Progress erase clears selected transient previews (including expired/erased ops),
 sets previewErased=true, retains original D and all binding/selection/hash/time
-fences; stores its own finite D. No deleting tombstones/op identity. Its own
+fences AND original sourceAuthorities; stores its own finite D and finite union
+sourceAuthorities. No deleting tombstones/op identity or authority IDs. Its own
 operation is discovered by the same progress list and can be selected later.
 Progress CAS excludes its current requestId; no recursive self-enrollment.
 Selected tombstone inventory reconstructed from D.graph and op requestId; no
@@ -342,7 +379,7 @@ lease for the listed hunks remains pending. Scope remains in development until
 actual source/execution/fence/receipt and registration join.
 
 Sole producer `tests/integration/privacy/conversation-data/emit-native-fixtures.mjs`
-actually ran and wrote `/tmp/vpj58-conversation-data-native-fixtures`: 9 envelopes
+initially ran and wrote `/tmp/vpj58-conversation-data-native-fixtures`: 9 envelopes
 plus commands.json, all self-checked against this TS parser/decoder. Synthetic
 only, no PG/Auth/provider/device claim. Receipt recovery clock deliberately passes
 original TTL; original eraseBytes/progressEraseBytes include intentional whitespace.
@@ -350,5 +387,19 @@ Native must consume THESE envelopes and original bytes. Final conflict order and
 boundary arrays include actual BRIEF_REFERENCE; reservation artifact_reference
 remains unused/rejected, not a real dependency. Final eligible graph/decision
 capacity includes sum erased+retained+textBodies<=4100, not just core ID arrays.
-Original contracts/protocol/HTTP unchanged since fixed `44c1d705`; this fixture
-producer adds no new payload fields or SQL phase. TS contract7 PASS/zeroSkip reused.
+Mainc6548c refinement changes ONLY B/operation sourceAuthorities and retained
+boundary arrays, with affected decoder/source/receipt fixtures. Commands and
+HTTP dispatch/original byte digest/unknown/D shapes remain unchanged. Earlier
+7-test evidence is retained; this refinement's affected result is recorded below.
+
+Mainc6548c fixed-authority TS update: affected contract8 PASS/zeroSkip, typecheck,
+lint/docs/diff checks PASS. Sole producer reran to SAME output path with11
+envelopes plus commands.json; new taskless-preview/taskless-receipt have no fake
+task/text yet retain explicit original authority IDs and recover past TTL.
+Preview/receipt B and full progress operation inventory include sourceAuthorities;
+retained array includes original_source_policy_consent_authority_ids in both scopes.
+Native must synchronize these closed keys, ordered arrays and minimal-retention
+copy. SQL must use the same fixed wire, requalify original pairs on terminal ACK,
+and reject all actual source-impact references/copies before redaction. No runtime
+SQL/Auth success, shared lease or scopeComplete inferred from these TS checks.
+This is necessary closure of the frozen ConversationData task, not a new scope.

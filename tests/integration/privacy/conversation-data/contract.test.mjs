@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { CONVERSATION_SCHEMA, CONVERSATION_BOUNDARIES, GRAPH_KEYS, ERASED_KEYS, REDACTED_KEYS, RETAINED_KEYS,
-  parseConversationCommand, conversationDigest } from '../../../../lib/server/privacy/conversation-data/contract.ts';
+  parseConversationCommand, conversationDigest, validSourceAuthorities } from '../../../../lib/server/privacy/conversation-data/contract.ts';
 import { decodeConversationPreview, decodeConversationReceipt, decodeConversationList, validOperationRow } from '../../../../lib/server/privacy/conversation-data/protocol.ts';
 import { handleConversationData } from '../../../../lib/server/privacy/conversation-data/http.ts';
 import { conversationCoverageOutcome, conversationCoverageRequestBody, validConversationCoverageSelection } from '../../../../lib/server/privacy/conversation-data/coverage.ts';
@@ -12,8 +12,9 @@ const actor = { ownerId: id(1), sessionId: id(2), mobileEpoch: 3 };
 const selection = { scope: 'conversation-sensitive-data/1', requestId: id(3), rootKind: 'conversation', rootId: id(4), objectIds: [] };
 const command = { action: 'erase', ...selection, sourceDigest: 'a'.repeat(64), previewDigest: 'b'.repeat(64), confirmed: true };
 const bytes = `  ${JSON.stringify(command)}\n`;
+const sourceAuthorities = [{ policyId: id(20), consentId: id(21) }, { policyId: id(22), consentId: id(23) }];
 const binding = { schemaVersion: CONVERSATION_SCHEMA, ...selection, ...actor, sourceDigest: command.sourceDigest, previewDigest: command.previewDigest,
-  capturedAt: now, expiresAt: now + 30000, boundaries: CONVERSATION_BOUNDARIES[selection.scope], allUserDataCompleted: false };
+  sourceAuthorities, capturedAt: now, expiresAt: now + 30000, boundaries: CONVERSATION_BOUNDARIES[selection.scope], allUserDataCompleted: false };
 const zero = keys => Object.fromEntries(keys.map(k => [k, 0]));
 const graph = { ...Object.fromEntries(GRAPH_KEYS.map(k => [k, []])), conversationIds: [selection.rootId], goalIds: [id(5)], messageIds: [id(6)], taskIds: [id(7)], threadIds: [id(8)], turnIds: [id(9)], artifactIds: [id(10)] };
 const eraseCounts = { ...zero(ERASED_KEYS), conversations: 1, goals: 1, messages: 1, threads: 1, turns: 1, artifacts: 1 };
@@ -62,7 +63,7 @@ test('immutable receipt recovery accepts original decision past TTL, never new d
 
 test('all retained operation fields are discoverable, finite and sanitized; progress never claims source deletion', () => {
   const op = { ...selection, ...actor, sourceDigest: binding.sourceDigest, previewDigest: binding.previewDigest, capturedAt: now, expiresAt: now + 30000,
-    requestDigest: conversationDigest(bytes), state: 'erased', previewErased: true, graph: null, eraseCounts: null, redactCounts: null, retainCounts: null, retainedReferences: null, conflicts: null, decision: decision() };
+    sourceAuthorities, requestDigest: conversationDigest(bytes), state: 'erased', previewErased: true, graph: null, eraseCounts: null, redactCounts: null, retainCounts: null, retainedReferences: null, conflicts: null, decision: decision() };
   assert.ok(validOperationRow(op, actor.ownerId, now + 40000));
   for (const change of [{ rawBytes: bytes }, { sourceBody: 'secret' }, { previewErased: false }, { decision: { ...decision(), receipt: receipt() } }])
     assert.equal(validOperationRow({ ...op, ...change }, actor.ownerId, now + 40000), false);
@@ -75,7 +76,7 @@ test('all retained operation fields are discoverable, finite and sanitized; prog
   const erase = { action: 'erase', ...s, sourceDigest: command.sourceDigest, previewDigest: command.previewDigest, confirmed: true };
   const d = { ...decision(), requestDigest: conversationDigest(JSON.stringify(erase)), graph: Object.fromEntries(GRAPH_KEYS.map(k => [k, []])), erasedCounts: zero(ERASED_KEYS),
     redactedCounts: zero(REDACTED_KEYS), retainedCounts: zero(RETAINED_KEYS), clearedPreviews: 1, retainedFences: 1, sourceConversation: 'not_modified' };
-  const r = { ...receipt(), ...s, boundaries: CONVERSATION_BOUNDARIES[s.scope], decision: d };
+  const r = { ...receipt(), ...s, sourceAuthorities, boundaries: CONVERSATION_BOUNDARIES[s.scope], decision: d };
   assert.ok(decodeConversationReceipt(r, erase, actor, d.requestDigest, now + 20));
   assert.equal(decodeConversationReceipt({ ...r, decision: { ...d, sourceConversation: 'erased' } }, erase, actor, d.requestDigest, now + 20), null);
 });
@@ -122,4 +123,27 @@ test('coverage is scoped to conversations, preserves original core export and re
   const unknown = { schemaVersion: CONVERSATION_SCHEMA, kind: 'unknown', ...selection, ...actor, requestDigest: conversationDigest(bytes), allUserDataCompleted: false };
   assert.deepEqual(conversationCoverageOutcome({ input: recoverInput, command, handler: 'conversation_data' }, unknown, now + 20),
     { state: 'unknown', reason: 'CONVERSATION_ACK_UNKNOWN' });
+});
+
+test('taskless source authority IDs remain explicit, closed and retained after preview erasure', () => {
+  const g = { ...Object.fromEntries(GRAPH_KEYS.map(k => [k, []])), conversationIds: [selection.rootId], goalIds: [id(5)], messageIds: [id(6)] };
+  const erasedCounts = { ...zero(ERASED_KEYS), conversations: 1, goals: 1, messages: 1 };
+  const source = { ...preview(), graph: g, eraseCounts: erasedCounts, redactCounts: zero(REDACTED_KEYS), retainCounts: zero(RETAINED_KEYS) };
+  assert.ok(decodeConversationPreview(source, { action: 'preview', ...selection }, actor, now + 1));
+  const r = { ...receipt(), decision: { ...decision(), graph: g, erasedCounts, redactedCounts: zero(REDACTED_KEYS), retainedCounts: zero(RETAINED_KEYS), retainedFences: 3 } };
+  assert.ok(decodeConversationReceipt(r, command, actor, conversationDigest(bytes), now + 40000));
+  const op = { ...selection, ...actor, sourceAuthorities, sourceDigest: binding.sourceDigest, previewDigest: binding.previewDigest, capturedAt: now, expiresAt: now + 30000,
+    requestDigest: conversationDigest(bytes), state: 'erased', previewErased: true, graph: null, eraseCounts: null, redactCounts: null, retainCounts: null, retainedReferences: null, conflicts: null, decision: r.decision };
+  assert.ok(validOperationRow(op, actor.ownerId, now + 40000));
+  for (const authorities of [undefined, null, [], sourceAuthorities.map(v => ({ ...v, digest: 'a'.repeat(64) })), [...sourceAuthorities].reverse(),
+    [sourceAuthorities[0], sourceAuthorities[0]], [{ policyId: ['policy'], consentId: id(21) }], Array.from({ length: 101 }, (_, i) => ({ policyId: id(100 + i), consentId: id(300 + i) }))]) {
+    if (authorities?.length !== 0) assert.equal(validSourceAuthorities(authorities), false);
+    assert.equal(decodeConversationReceipt({ ...r, sourceAuthorities: authorities }, command, actor, conversationDigest(bytes), now + 40000), null);
+    assert.equal(validOperationRow({ ...op, sourceAuthorities: authorities }, actor.ownerId, now + 40000), false);
+  }
+  assert.ok(validSourceAuthorities(sourceAuthorities));
+  const caller = { ...command, sourceAuthorities: [{ policyId: id(90), consentId: id(91) }] };
+  assert.equal(parseConversationCommand(caller), null);
+  const old = { ...r }; delete old.sourceAuthorities;
+  assert.equal(decodeConversationReceipt(old, command, actor, conversationDigest(bytes), now + 40000), null);
 });

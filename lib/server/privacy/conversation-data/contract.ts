@@ -4,7 +4,7 @@ import { exact, record, hash, uuid } from '../../guide/contract.ts';
 export const CONVERSATION_SCHEMA = 'conversation-data/1' as const;
 export const CONVERSATION_SCOPES = ['conversation-sensitive-data/1', 'conversation-delete-progress/1'] as const;
 export type ConversationScope = typeof CONVERSATION_SCOPES[number];
-export const CONVERSATION_LIMITS = { lifetimeMs: 30000, maxBytes: 1000000, entities: 4100, tableRows: 10000, selected: 20, list: 20 } as const;
+export const CONVERSATION_LIMITS = { lifetimeMs: 30000, maxBytes: 1000000, entities: 4100, tableRows: 10000, selected: 20, list: 20, authorities: 100 } as const;
 export const conversationDigest = (bytes: string) => createHash('sha256').update(bytes, 'utf8').digest('hex');
 export const natural = (v: unknown): v is number => typeof v === 'number' && Number.isSafeInteger(v) && v >= 0;
 export const positive = (v: unknown): v is number => natural(v) && v > 0;
@@ -13,6 +13,13 @@ export const sortedIds = (v: unknown, maximum: number = CONVERSATION_LIMITS.enti
   && v.length <= maximum && v.every((id, i) => identifier(id) && (i === 0 || id > v[i - 1]));
 export const conversationScope = (v: unknown): v is ConversationScope => CONVERSATION_SCOPES.includes(v as ConversationScope);
 export type ConversationActor = Readonly<{ ownerId: string; sessionId: string; mobileEpoch: number }>;
+export type SourceAuthority = Readonly<{ policyId: string; consentId: string }>;
+/** Original actual IDs, sorted by policyId then consentId; never a policy digest or new-consent substitute. */
+export function validSourceAuthorities(v: unknown): v is readonly SourceAuthority[] {
+  return Array.isArray(v) && v.length <= CONVERSATION_LIMITS.authorities && v.every((entry, i) => record(entry)
+    && exact(entry, ['policyId', 'consentId']) && identifier(entry.policyId) && identifier(entry.consentId)
+    && (i === 0 || v[i - 1].policyId < entry.policyId || v[i - 1].policyId === entry.policyId && v[i - 1].consentId < entry.consentId));
+}
 export type ConversationSelection = Readonly<{ scope: ConversationScope; requestId: string; rootKind: 'conversation' | 'thread' | null; rootId: string | null; objectIds: readonly string[] }>;
 export type ConversationCommand =
   | Readonly<{ action: 'list'; scope: ConversationScope; rootKind: 'conversation' | 'thread' | null; cursor: Readonly<{ sourceDigest: string; afterId: string }> | null; limit: 20 }>
@@ -57,12 +64,12 @@ export const CONVERSATION_BOUNDARIES = {
   'conversation-sensitive-data/1': {
     eraseFields: ['selected_conversation_goals_messages_intakes_source_receipts', 'exclusive_threads_turns_events_feedback', 'exclusive_results_all_revisions_events', 'closed_planning_grounded_worker_copies', 'selected_turn_memory_consumer_references'],
     redactFields: ['selected_private_text_input_output_permanently_hidden', 'selected_task_goal_digest_fixed_deleted_marker'],
-    retained: ['confirmed_trip_content_history_proposals', 'explicit_memory_profiles_receipts_consents', 'other_conversations_and_domains', 'minimal_task_capacity_budget_dispatch_link_receipts', 'permanent_entity_identity_and_operation_fences'],
+    retained: ['confirmed_trip_content_history_proposals', 'explicit_memory_profiles_receipts_consents', 'other_conversations_and_domains', 'minimal_task_capacity_budget_dispatch_link_receipts', 'permanent_entity_identity_and_operation_fences', 'original_source_policy_consent_authority_ids'],
     missing: ['applied_or_unapplied_proposal_source_requires_original_flow', 'shared_cross_scope_or_active_work_rejected', 'readiness_guide_scoped_edit_notification_brief_links_rejected', 'existing_core_export_copies_require_original_cleanup', 'provider_and_external_copies_not_erased', 'backup_restore_and_old_device_acceptance_unverified'],
   },
   'conversation-delete-progress/1': {
     eraseFields: ['selected_transient_preview_graph_conflicts_references'], redactFields: [],
-    retained: ['root_selection_actor_epoch_hash_time_operation_fences', 'immutable_minimal_decisions_and_entity_tombstones'],
+    retained: ['root_selection_actor_epoch_hash_time_operation_fences', 'immutable_minimal_decisions_and_entity_tombstones', 'original_source_policy_consent_authority_ids'],
     missing: ['source_conversation_data_not_erased', 'unselected_operations', 'external_copies', 'backup_restore_and_old_device_acceptance_unverified'],
   },
 } as const;
@@ -70,11 +77,13 @@ export function validBoundaries(v: unknown, scope: ConversationScope): boolean {
   return record(v) && exact(v, ['eraseFields', 'redactFields', 'retained', 'missing'])
     && Object.entries(CONVERSATION_BOUNDARIES[scope]).every(([k, values]) => JSON.stringify(v[k]) === JSON.stringify(values));
 }
-export const bindingKeys = ['schemaVersion', ...selectionKeys, 'ownerId', 'sessionId', 'mobileEpoch', 'sourceDigest', 'previewDigest', 'capturedAt', 'expiresAt', 'boundaries', 'allUserDataCompleted'] as const;
-export type ConversationBinding = ConversationSelection & ConversationActor & Readonly<{ schemaVersion: typeof CONVERSATION_SCHEMA; sourceDigest: string; previewDigest: string; capturedAt: number; expiresAt: number; boundaries: typeof CONVERSATION_BOUNDARIES[ConversationScope]; allUserDataCompleted: false }>;
+export const bindingKeys = ['schemaVersion', ...selectionKeys, 'ownerId', 'sessionId', 'mobileEpoch', 'sourceDigest', 'previewDigest', 'sourceAuthorities', 'capturedAt', 'expiresAt', 'boundaries', 'allUserDataCompleted'] as const;
+export type ConversationBinding = ConversationSelection & ConversationActor & Readonly<{ schemaVersion: typeof CONVERSATION_SCHEMA; sourceDigest: string; previewDigest: string; sourceAuthorities: readonly SourceAuthority[]; capturedAt: number; expiresAt: number; boundaries: typeof CONVERSATION_BOUNDARIES[ConversationScope]; allUserDataCompleted: false }>;
 export function validBinding(v: Record<string, unknown>, now: number, decided = false): v is Record<string, unknown> & ConversationBinding {
   return v.schemaVersion === CONVERSATION_SCHEMA && validSelection(v) && identifier(v.ownerId) && identifier(v.sessionId) && positive(v.mobileEpoch)
-    && hash(v.sourceDigest) && hash(v.previewDigest) && positive(v.capturedAt) && v.capturedAt <= now && positive(v.expiresAt)
+    && hash(v.sourceDigest) && hash(v.previewDigest) && validSourceAuthorities(v.sourceAuthorities)
+    && (v.rootKind !== 'conversation' || v.sourceAuthorities.length > 0)
+    && positive(v.capturedAt) && v.capturedAt <= now && positive(v.expiresAt)
     && v.expiresAt === v.capturedAt + CONVERSATION_LIMITS.lifetimeMs && (decided || now < v.expiresAt)
     && validBoundaries(v.boundaries, v.scope as ConversationScope) && v.allUserDataCompleted === false;
 }
