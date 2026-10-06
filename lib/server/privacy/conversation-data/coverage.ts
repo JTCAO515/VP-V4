@@ -3,6 +3,7 @@ import { CONVERSATION_SCHEMA, CONVERSATION_BOUNDARIES, parseConversationCommand,
 import { decodeConversationPreview, decodeConversationReceipt, decodeConversationUnknown } from './protocol.ts';
 
 /** Candidate descriptor; shared catalog is applied only under Main's precise lease. */
+export const CONVERSATION_CATALOG_VERSION = 'data-coverage-catalog/2026-10-06.7' as const;
 export const CONVERSATION_MODULE = {
   id: 'conversations', location: 'server' as const, version: CONVERSATION_SCHEMA, scope: CONVERSATION_SCHEMA,
   exportHandler: 'core', deleteHandler: 'conversation_data', selection: 'owner' as const,

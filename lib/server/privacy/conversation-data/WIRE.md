@@ -302,6 +302,10 @@ path/recover body, coverage/outcomes one original classifier branch. No old Trip
 linkedTrip/Memory/export worker rewrite. Ungated own TS contract test is already
 auto-classified test:integration by original registry; SQL/Auth lane additions
 wait for actual NEW SQL/Auth files and precise Main CI lease, not fictitious paths.
+`REGISTRATION.patch` contains exactly those FOUR TS shared-file hunks against the
+fixed base. `git apply --check` PASS; not applied. It preserves all existing
+handler branches/core export/Trip consumers and denominator34. This patch is the
+concrete lease-review object; no second source writer or new supervising matrix.
 
 Error allowlist is `errors` in http.ts; authority401, policy/forbidden403, input400,
 others503. Once mutation dispatched any lost/malformed/mismatched ACK ->
