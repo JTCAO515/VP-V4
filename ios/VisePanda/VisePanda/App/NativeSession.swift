@@ -33,6 +33,7 @@ final class NativeSession {
     private(set) var failureCode: String?
     private(set) var dataGeneration = 0
     private var assistantNavigation: NativeAssistantNavigation?
+    private(set) var conversationDataErasure: NativeConversationDataErasure?
     let memoryPreferences=NativeMemoryPreferencesStore()
     let notifications = NativeNotificationCoordinator()
     let voiceAudio = NativeVoiceAudioController()
@@ -292,6 +293,73 @@ final class NativeSession {
         }
         if let command { _ = try NativeDataCoverageReceipt(bytes: bytes, actor: actor, command: command) }
         else { _ = try NativeDataCoverageCatalog(bytes: bytes, actor: actor) }
+        return bytes
+    }
+
+    var conversationDataClient: NativeConversationDataClient {
+        .init(current: { try? self.communitySafetyActor() },
+              request: { try await self.conversationDataRequest(body: $0, actor: $1) },
+              consumeReceipt: { try self.applyConversationDataReceipt($0, actor: $1) })
+    }
+    func conversationDataStore(scope: NativeConversationDataScope) -> NativeConversationDataStore {
+        NativeConversationDataStore(scope: scope, vault: vault)
+    }
+    private func applyConversationDataReceipt(_ receipt: NativeConversationDataReceipt, actor: NativeCommunitySafetyActor) throws {
+        guard try communitySafetyActor() == actor, receipt.binding.actor == actor else { throw NativeDataError.staleSessionResponse }
+        guard receipt.binding.scope == .sensitive else { return }
+        let erased = NativeConversationDataErasure(receipt: receipt, actor: actor)
+        if let pending = credential?.pendingAsk,
+           erased.turnIDs.contains(pending.request.turnId) || erased.threadIDs.contains(pending.request.threadId) {
+            try clearPendingAsk(matching: pending.request)
+        }
+        if let navigation = assistantNavigation, navigation.scope == actor.scope,
+           erased.conversationIDs.contains(navigation.conversationID) ||
+            navigation.artifact.map({ erased.artifactIDs.contains($0.artifactId) }) == true ||
+            navigation.viewedArtifact.map({ erased.artifactIDs.contains($0.artifactId) }) == true {
+            assistantNavigation = nil
+        }
+        conversationDataErasure = erased
+    }
+    func conversationDataRequest(body: Data, actor: NativeCommunitySafetyActor) async throws -> Data {
+        guard !busy, try communitySafetyActor() == actor, !Task.isCancelled else { throw NativeDataError.sessionUnavailable }
+        let command = try NativeConversationDataCommand(body: body)
+        if ["erase", "recover"].contains(command.action) {
+            let journal = NativeConversationDataJournal(vault: vault, validateConfirmation: NativeConversationDataCommand.validateConfirmation)
+            guard try journal.read(actor)?.body == (command.mutationBytes ?? body) else { throw NativeDataError.staleSessionResponse }
+        }
+        let started = ProcessInfo.processInfo.systemUptime
+        if let credential, credential.expiresAt <= Date().timeIntervalSince1970 + 10 { await validate() }
+        guard try communitySafetyActor() == actor, let endpoint, let credential, !Task.isCancelled,
+              ProcessInfo.processInfo.systemUptime - started < 30 else { throw NativeDataError.staleSessionResponse }
+        var request = URLRequest(url: endpoint.appendingPathComponent("api/privacy/native/v1/conversation-data"))
+        request.httpMethod = "POST"; request.httpBody = body; request.httpShouldHandleCookies = false
+        request.timeoutInterval = 30; request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(credential.accessToken)", forHTTPHeaderField: "Authorization")
+        let (stream, response) = try await transport.bytes(for: request)
+        defer { stream.task.cancel() }
+        guard let http = response as? HTTPURLResponse, try communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
+        let cap = http.statusCode == 200 ? 1_000_000 : 4096
+        guard http.expectedContentLength <= Int64(cap) else { throw NativeDataError.invalidResponse }
+        var bytes = Data()
+        for try await byte in stream {
+            guard bytes.count < cap, try communitySafetyActor() == actor, !Task.isCancelled,
+                  ProcessInfo.processInfo.systemUptime - started < 30 else { throw NativeDataError.staleSessionResponse }
+            bytes.append(byte)
+        }
+        guard try communitySafetyActor() == actor, !Task.isCancelled,
+              ProcessInfo.processInfo.systemUptime - started < 30 else { throw NativeDataError.staleSessionResponse }
+        guard http.statusCode == 200 else {
+            let code = (try? JSONDecoder().decode(NativeDataFailure.self, from: bytes).error.code) ?? "CONVERSATION_UNAVAILABLE"
+            if http.statusCode == 401, code != "REAUTHENTICATION_REQUIRED" { handle(SessionError.denied) }
+            throw NativeDataError.server(code: code)
+        }
+        let cache = http.value(forHTTPHeaderField: "Cache-Control")?.lowercased() ?? ""
+        guard cache.contains("private"), cache.contains("no-store"),
+              http.value(forHTTPHeaderField: "Vary")?.lowercased().split(separator: ",").map({ $0.trimmingCharacters(in: .whitespaces) }).contains("authorization") == true,
+              http.value(forHTTPHeaderField: "X-Content-Type-Options")?.lowercased() == "nosniff",
+              http.value(forHTTPHeaderField: "Content-Type")?.lowercased().hasPrefix("application/json") == true else { throw NativeDataError.invalidResponse }
+        try NativeConversationDataWire.actor(NativeConversationDataWire.root(bytes), actor, scope: command.scope)
         return bytes
     }
 
@@ -1847,6 +1915,7 @@ final class NativeSession {
         do{try offlineTrips.eraseAll()}catch{failureCode="offlineCleanupRequired";status="storageError";return false}
         dataGeneration += 1
         assistantNavigation=nil
+        conversationDataErasure=nil
         memoryPreferences.clear()
         exploreAskHandoff=nil
         if let owner = credential?.subject ?? defaults.string(forKey: storageKey) ?? defaults.string(forKey: storageKey + ".pendingJournalCleanupOwner") ?? defaults.string(forKey: storageKey + ".recoveryCleanupOwner") {
@@ -1862,6 +1931,8 @@ final class NativeSession {
                 // Noncredential cleanup index only. It cannot restore a session or authorize a journal read.
                 defaults.set(owner, forKey: storageKey + ".pendingJournalCleanupOwner")
             } else {
+                do { try NativeConversationDataJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
+                catch { failureCode="conversationDataJournalCleanupRequired"; status="storageError"; return false }
                 do { try NativeArchiveDataJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
                 catch { failureCode="archiveDataJournalCleanupRequired"; status="storageError"; return false }
                 do { try NativeCoverageProgressJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
