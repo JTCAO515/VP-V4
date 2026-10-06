@@ -1,0 +1,37 @@
+{
+  "change": "case14 byte-bound fixture only",
+  "priorCI": {
+    "pr": 667,
+    "head": "721b4fb0",
+    "run": 37393259342,
+    "job": 112043318371,
+    "actual": "FAIL",
+    "error": "statement_timeout at direct historical safe projection"
+  },
+  "local": {
+    "actual": "FAIL overall; case14 PASS",
+    "nodes": 19,
+    "pass": 17,
+    "fail": 2,
+    "skip": 0,
+    "case14Ms": 2641.836959,
+    "sourceQueryMs": 207,
+    "sourceBytes": 999950,
+    "historicalVersions": [
+      0,
+      1
+    ],
+    "itemsPerVersion": [
+      964,
+      964
+    ],
+    "unchangedStatementTimeoutMs": 5000,
+    "case15": "unchanged serial held-lock probes took 33228ms; original preview expired after 30s; ARCHIVE_EXPIRED rather than expected ARCHIVE_CONFLICT"
+  },
+  "sourceHashes": {
+    "supabase/migrations/20261006050000_archive_data.sql": "d51da2d52b1e7c000c6174859340839e3fc2a0b92ebefde8629c3fb3ceaec617",
+    "tests/integration/privacy/archive-data-sql/postgres.test.mjs": "ef517ee8f494681bfc7b27f2c6caf16bec976bf5ae4f022d8ef2a8beab9951ec"
+  },
+  "newHeadCI": "UNRUN; MERGEHOLD retained",
+  "runtimeChanged": false
+}

@@ -117,3 +117,26 @@ provider/Storage, real-user deletion, Native private-file/share/foreground deliv
 physical device, whole #239/ALL2 and unified target acceptance. The sole TS and
 Native owners retain their respective independent integration work. This is
 complete owned SQL development, not whole parent or production acceptance.
+
+## PR #667 CI fixture correction
+
+The original `721b4fb0` PostgreSQL run `37393259342` / job `112043318371`
+failed case 14's direct historical source-size query under the existing 5-second
+statement budget. The old fixture placed thousands of ASCII-title items in one
+snapshot array, exercising cumulative JSONB append cost in the unchanged original
+safe projection before reaching the public RPC's wrapper-capacity assertion.
+Only this byte-bound fixture was adjusted: equal near-limit UTF-8 bytes now span
+the two actual stored historical versions, with legal 1..160-character titles.
+Source >999700/<1000000, exact actual source bytes, public RPC ARCHIVE_CAPACITY
+and unchanged metadata after refusal remain asserted; no budget/guard changed.
+
+One local run observed case 14 PASS, source exactly 999950 bytes, 964 items per
+historical version, direct source query 207 ms and complete case 2642 ms. That run
+is FAIL overall (17 reported nodes PASS, case 15 and parent FAIL, zero skip): the
+unchanged eight serial held-lock probes took 33228 ms and their shared original
+preview correctly expired after 30 seconds. Its ARCHIVE_EXPIRED differs from the
+test's expected lock-conflict error. That separate fixture issue was reported to
+Main; it was not changed under the case-14-only freeze scope. Preserve both prior
+CI FAIL and this local FAIL in `ci721-case14-fail.log.gz`, `ci667-fixture-after.log.gz`
+and `ci667-fixture-diagnosis.json`. New-head CI remains UNRUN/MERGEHOLD; this is not
+a runtime performance fix or renewed whole-scope/target acceptance claim.

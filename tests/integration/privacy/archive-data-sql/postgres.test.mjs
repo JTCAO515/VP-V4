@@ -248,20 +248,32 @@ test('archive selected source/export/progress exit SQL', {skip:!enabled,timeout:
   // Deliberately oversize a flat fixture row; no truncated prefix can be exported.
   await corrupt(`update archive_data_private.progress_v1 set pages=1,last_limit=50,last_cursor=jsonb_build_object('sourceDigest',repeat('a',64),'afterKey',repeat('界',333333)) where request_id='${br.requestId}' and section='trip';`);
   await reject(b,{action:'preview',scope:progressScope,requestId:uuid(),tripId:null,tripVersion:null,objectIds:[br.requestId]},'ARCHIVE_CAPACITY');
-  // Valid safe row content: tune one historical snapshot to just below the
+  // Valid safe row content: tune historical snapshots to just below the
   // source limit while the WHOLE bundle wrapper (binding/boundaries/proof) exceeds it.
   const c=await actor(),ct=await trip(c);
   const sourceObject=JSON.parse(await db(`select archive_data_private.archive_source_v1('${c.owner}','${ct.id}',2);`));
-  const rawItems=[],safeItems=[];const content={days:[{id:'d',date:'2026-10-06',items:rawItems}]};
-  sourceObject.sections[1].items[1].content={days:[{id:'d',date:'2026-10-06',items:safeItems}]};
+  // Keep the byte-bound fixture distinct from a very large single-array workload:
+  // the unchanged safe projection appends each JSON item. Spread identical byte
+  // coverage across both stored historical versions, using legal 160-char UTF-8
+  // titles. Neither the 5s statement budget nor any runtime guard is relaxed.
+  const histories=[0,1].map(version=>({version,rawItems:[],safeItems:[]}));
+  for(const h of histories)sourceObject.sections[1].items[h.version].content={days:[{id:'d',date:'2026-10-06',items:h.safeItems}]};
   let sourceBytes=Buffer.byteLength(JSON.stringify(sourceObject));
   for(let i=0;;i++){
-   const raw={id:'i'+i,title:'x'.repeat(160)},safe={...raw,dayId:'d'},delta=Buffer.byteLength(JSON.stringify(safe))+(i?1:0);
-   if(sourceBytes+delta>999950)break;rawItems.push(raw);safeItems.push(safe);sourceBytes+=delta;
+   const h=histories[i%histories.length],raw={id:'i'+i,title:'界'.repeat(160)},safe={...raw,dayId:'d'},delta=Buffer.byteLength(JSON.stringify(safe))+(h.rawItems.length?1:0);
+   if(sourceBytes+delta>999950){
+    const overhead=delta-Buffer.byteLength(raw.title),chars=Math.floor((999950-sourceBytes-overhead)/3);
+    if(chars>0){raw.title='界'.repeat(chars);safe.title=raw.title;h.rawItems.push(raw);h.safeItems.push(safe);sourceBytes+=overhead+chars*3;}
+    break;
+   }
+   h.rawItems.push(raw);h.safeItems.push(safe);sourceBytes+=delta;
   }
   assert.ok(sourceBytes>999700&&sourceBytes<1000000,String(sourceBytes));
-  await corrupt(`update public.trip_version_snapshots set content=${json(content)} where trip_id='${ct.id}' and version=1;`);
+  assert.ok(histories.every(h=>h.rawItems.length<1000&&h.rawItems.every(item=>item.title.length>=1&&item.title.length<=160)));
+  await corrupt(histories.map(h=>`update public.trip_version_snapshots set content=${json({days:[{id:'d',date:'2026-10-06',items:h.rawItems}]})} where trip_id='${ct.id}' and version=${h.version};`).join('\n'));
+  const sourceStarted=performance.now();
   const sourceSize=Number(await db(`select octet_length(notification_private.canonical(archive_data_private.archive_source_v1('${c.owner}','${ct.id}',2)));`));assert.equal(sourceSize,sourceBytes);
+  t.diagnostic(JSON.stringify({wrapperCapacityFixture:{versions:histories.map(h=>h.version),items:histories.map(h=>h.rawItems.length),sourceBytes:sourceSize,sourceQueryMs:Math.round(performance.now()-sourceStarted),statementBudgetMs:5000}}));
   const beforeWrapper=await state();await reject(c,{action:'preview',scope,requestId:uuid(),tripId:ct.id,tripVersion:2,objectIds:[]},'ARCHIVE_CAPACITY');assert.equal(await state(),beforeWrapper);
  });
  await t.test('source/account/session/request NOWAIT fences; foreign recovery unaffected; concurrent erase CAS',async()=>{
