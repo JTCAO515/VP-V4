@@ -144,6 +144,19 @@ Explicit blockers (closed `CONFLICTS` order) before any effects:
   deletion affecting referenced Trip; original owner controls original flow.
 - SOURCE_UNSUPPORTED: unresolved JSON reference, unknown FK/reverse edge/table
   registry drift or unreadable source; no fabricated empty relation.
+  SQL owner finding `b5a1df00` confirms source-impact historical_answer references
+  in knowledge_review_private.source_impact_sets.graph_snapshot[].target,
+  source_impact_items.target and source_impact_projections.target, with derived
+  pages/outbox/review requests. ANY such selected-Turn relation is blocked before
+  redaction, included in source CAS; original text-hide cleanup can otherwise
+  invalidate a whole mixed set and stale unselected deliveries while taking
+  blocking locks. Preserve that domain, never implicitly invoke its cleanup or
+  claim outside NOWAIT covers it. Permanent known-target guards must reject later
+  old/fenced historical_answer references, including root sets/items/projections
+  and copied receipts. Existing SOURCE_UNSUPPORTED enum/boundaries cover this;
+  no new wire field, handler, module denominator or scope. Actual original-trigger
+  reproduction/rollback3 PASS is separate SQL-source-audit evidence, not this
+  module's executor or Auth evidence. See SQL owner's SOURCE-AUDIT.md.
 
 Internal graph hashes whole actual row JSON (all fields) and PK, selected and
 reverse-edge/blocked relation inventories, live policy/consent state and retained
