@@ -1,0 +1,12 @@
+VP_ARCHIVE_DATA_HTTP_TARGET {"project":"vp-native-ask-0d6da3ee","base":63240}
+✔ signed owner original confirm/archive -> inventory/preview/exact export/protected file preparation -> own metadata erase -> original Trip delete invalidates export; owned fixture only (7260.575792ms)
+ℹ New RPC grant applies only to this unique disposable Auth fixture; no target role/Storage/provider/real user data.
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 10211.697958
+VP_ARCHIVE_DATA_HTTP_CLEANUP {"project":"vp-native-ask-0d6da3ee","result":"PASS"}
