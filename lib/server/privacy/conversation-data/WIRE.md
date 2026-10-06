@@ -322,7 +322,20 @@ Own contract/decoder/HTTP/API/coverage adapter written on the fixed base. Actual
 These are TS protocol/authority/byte-recovery negatives, NOT actual PostgreSQL
 graph erasure, Auth HTTP, Native file/cache, provider or old-device evidence.
 No shared source files edited. No runtime SQL/target action performed.
-Next precise dependency: Main source review of THIS complete wire and unused060000
-slot, assign NEW sole SQL scope/executor/guards/tests; obtain shared prior-owner
-release/lease for the listed hunks. Native consumes this wire. Scope remains in
-development until actual source/execution/fence/receipt and registration join.
+Main0e681e approved this whole source wire after unused060000 audit; NEW official
+SQL owner `01a10e96-c9b2-7fc2-9eb2-d95b8145fcb9` is assigned sole060000/own PG
+contracts. Creation is not executed SQL/source proof. Shared prior-owner release/
+lease for the listed hunks remains pending. Scope remains in development until
+actual source/execution/fence/receipt and registration join.
+
+Sole producer `tests/integration/privacy/conversation-data/emit-native-fixtures.mjs`
+actually ran and wrote `/tmp/vpj58-conversation-data-native-fixtures`: 9 envelopes
+plus commands.json, all self-checked against this TS parser/decoder. Synthetic
+only, no PG/Auth/provider/device claim. Receipt recovery clock deliberately passes
+original TTL; original eraseBytes/progressEraseBytes include intentional whitespace.
+Native must consume THESE envelopes and original bytes. Final conflict order and
+boundary arrays include actual BRIEF_REFERENCE; reservation artifact_reference
+remains unused/rejected, not a real dependency. Final eligible graph/decision
+capacity includes sum erased+retained+textBodies<=4100, not just core ID arrays.
+Original contracts/protocol/HTTP unchanged since fixed `44c1d705`; this fixture
+producer adds no new payload fields or SQL phase. TS contract7 PASS/zeroSkip reused.
