@@ -1,0 +1,51 @@
+{
+  "change": "Main-authorized case14/15 fixtures only",
+  "actual": "PASS_LOCAL_SQL_CLAIMS_FIXTURE",
+  "command": [
+    "node",
+    "--test",
+    "tests/integration/privacy/archive-data-sql/postgres.test.mjs"
+  ],
+  "env": {
+    "VP_ARCHIVE_DATA_DB_TEST": "1",
+    "VP_ARCHIVE_DATA_TS_ROOT": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-archive-data-server-20261006"
+  },
+  "pass": 19,
+  "fail": 0,
+  "skip": 0,
+  "exitCode": 0,
+  "durationMs": 76107.518666,
+  "case14": {
+    "caseMs": 2628.285166,
+    "sourceQueryMs": 204,
+    "sourceBytes": 999950,
+    "items": [
+      964,
+      964
+    ],
+    "versions": [
+      0,
+      1
+    ]
+  },
+  "case15": {
+    "caseMs": 14934.6395,
+    "freshOriginalBindingBeforeEachHeldLock": true,
+    "tailEraseBindingPreparedAfterProbes": true,
+    "metadataUnchangedAfterEveryConflict": true
+  },
+  "statementBudgetMs": 5000,
+  "originalTTLms": 30000,
+  "runtimeChanged": false,
+  "sourceHashes": {
+    "supabase/migrations/20261006050000_archive_data.sql": "d51da2d52b1e7c000c6174859340839e3fc2a0b92ebefde8629c3fb3ceaec617",
+    "tests/integration/privacy/archive-data-sql/postgres.test.mjs": "2294f887929c4ae3a85bd7e54aa083cb1df006ff380260b6f56202ec0b17c737"
+  },
+  "previousFailuresRetained": [
+    "ci721-case14-fail.log.gz",
+    "ci667-fixture-after.log.gz",
+    "ci667-fixture-diagnosis.json"
+  ],
+  "newHeadCI": "UNRUN; pending sole TS integration; MERGEHOLD unchanged",
+  "targetAcceptance": "not exercised by this fixture correction"
+}

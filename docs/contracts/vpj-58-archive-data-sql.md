@@ -117,3 +117,48 @@ provider/Storage, real-user deletion, Native private-file/share/foreground deliv
 physical device, whole #239/ALL2 and unified target acceptance. The sole TS and
 Native owners retain their respective independent integration work. This is
 complete owned SQL development, not whole parent or production acceptance.
+
+## PR #667 CI fixture correction
+
+The original `721b4fb0` PostgreSQL run `37393259342` / job `112043318371`
+failed case 14's direct historical source-size query under the existing 5-second
+statement budget. The old fixture placed thousands of ASCII-title items in one
+snapshot array, exercising cumulative JSONB append cost in the unchanged original
+safe projection before reaching the public RPC's wrapper-capacity assertion.
+Only this byte-bound fixture was adjusted: equal near-limit UTF-8 bytes now span
+the two actual stored historical versions, with legal 1..160-character titles.
+Source >999700/<1000000, exact actual source bytes, public RPC ARCHIVE_CAPACITY
+and unchanged metadata after refusal remain asserted; no budget/guard changed.
+
+One local run observed case 14 PASS, source exactly 999950 bytes, 964 items per
+historical version, direct source query 207 ms and complete case 2642 ms. That run
+is FAIL overall (17 reported nodes PASS, case 15 and parent FAIL, zero skip): the
+unchanged eight serial held-lock probes took 33228 ms and their shared original
+preview correctly expired after 30 seconds. Its ARCHIVE_EXPIRED differs from the
+test's expected lock-conflict error. That separate fixture issue was reported to
+Main; it was not changed under the case-14-only freeze scope. Preserve both prior
+CI FAIL and this local FAIL in `ci721-case14-fail.log.gz`, `ci667-fixture-after.log.gz`
+and `ci667-fixture-diagnosis.json`. New-head CI remains UNRUN/MERGEHOLD; this is not
+a runtime performance fix or renewed whole-scope/target acceptance claim.
+
+Main then authorized only the necessary same-task case-15 fixture correction:
+each original target-lock probe establishes an independent fresh preview and its
+complete original export proof BEFORE holding that target lock. The rejection
+still requires ARCHIVE_CONFLICT and unchanged metadata. No binding is renewed or
+qualified inside a held-lock callback. The foreign recovery/concurrent erase use
+their own freshly prepared original binding; original exact-byte/CAS/cleared-row/
+zero-deadlock assertions remain. Statement 5s, TTL 30s, runtime RPC, source
+projection, all permissions and source tables are unchanged. The prior local
+FAIL stays archived separately; final fixture verification is recorded separately
+and does not replace CI results for another head.
+
+Final local original-scope run: 19/19 PASS, zero failures/skips/cancellations,
+76108 ms. Case 14 source remains exactly 999950 bytes (964 items per historical
+version); direct source query 204 ms, complete case 2628 ms. Case 15 passed all
+original real-lock/foreign-recovery/concurrent-CAS/zero-deadlock assertions plus
+unchanged metadata after every conflict, 14935 ms. Natural original TTL expiry
+and immutable receipt recovery, actual sole-TS decoding/collection and original
+source/schema/ACL preservation also passed in that same run. Logs and source
+hashes are in `ci667-fixture-final.log.gz` / `ci667-fixture-final.json` alongside
+both retained failed runs. New-head CI still requires sole TS integration and an
+actual run; the local result does not lift MERGEHOLD.
