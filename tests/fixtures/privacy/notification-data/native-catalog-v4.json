@@ -1,6 +1,6 @@
 {
   "schemaVersion": "data-coverage/1",
-  "catalogVersion": "data-coverage-catalog/2026-10-06.5",
+  "catalogVersion": "data-coverage-catalog/2026-10-06.6",
   "actorId": "00000000-0000-4000-8000-000000000001",
   "sessionId": "00000000-0000-4000-8000-000000000002",
   "mobileEpoch": 1,
@@ -423,17 +423,32 @@
     {
       "id": "archive",
       "location": "server",
-      "version": "trip-lifecycle-export/2",
-      "scope": "archived_trip",
-      "exportHandler": null,
-      "deleteHandler": "trip",
+      "version": "archive-data/1",
+      "scope": "archive-data/1",
+      "exportHandler": "archive_data",
+      "deleteHandler": "archive_data",
       "selection": "trip",
-      "capacity": "selected archived Trip; lifecycle lease not enrolled",
+      "capacity": "one selected archived Trip/version; all available safe snapshots and Trip lifecycle receipts; 50/page, 402 pages, 20001 rows, 1MB; fixed30s; own progress inventory 1..20 selected metadata; original selected Trip deletion",
       "retention": [
-        "operation_fences"
+        "original_archive_terminal_business_state",
+        "confirmed_trip_proposal_history",
+        "original_selected_trip_deletion_receipt",
+        "financial_records",
+        "operation_fences",
+        "nonreplayable_request_owner_session_epoch_scope_selection_source_preview_request_hash_time_fences",
+        "immutable_minimal_erasure_receipt",
+        "original_session_account_cascade_semantics"
       ],
       "missing": [
-        "export_lease_not_enrolled"
+        "snapshot_versions_never_stored",
+        "fields_outside_original_safe_content_projection",
+        "other_domains_use_existing_module_handlers",
+        "raw_pdf_attachment_device_bytes",
+        "external_orders_payments_copies",
+        "backup_restore_target_acceptance",
+        "unselected_requests",
+        "source_trip_data_separate_original_delete_handler",
+        "external_files_copies"
       ]
     },
     {

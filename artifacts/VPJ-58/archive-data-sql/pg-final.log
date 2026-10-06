@@ -1,0 +1,28 @@
+▶ archive selected source/export/progress exit SQL
+  ✔ transactional migration rollback; old code/schema/RLS/ACL byte preservation (374.152334ms)
+  ✔ RPC helpers/private schema/tables default revoke and RLS; separate owned fixture grant (573.128833ms)
+  ✔ ordinary authority/epoch/reauth first; closed commands and zero writes (1163.701625ms)
+  ✔ real confirmed/archive source, safe head/history, explicit gaps and no bodies in preview (1490.111458ms)
+  ✔ foreign/missing indistinguishable, immutable selection and original bytes (974.68025ms)
+  ✔ independent ordered pagination, exact-last replay, no skips/restarts and complete proof (1374.30725ms)
+  ✔ head/title/owner/archive mismatch, snapshot changes and queued deletion invalidate (2617.557417ms)
+  ✔ finite own inventory, selected metadata erase, immutable fences/receipt, no business writes (1272.860666ms)
+  ✔ progress list includes expired/deleted-trip/history-session fences, full digest cursor CAS (636.485542ms)
+  ✔ empty operation terminal page; unknown confirmation uses original query; previous-only excluded (1129.148083ms)
+  ✔ historical sessions discoverable, current epoch required; original cascade retained (1106.571209ms)
+  ✔ fixed expiry/nonrenewal, post-source/post-effect fresh deadlines roll back atomically (3705.955792ms)
+  ✔ 10000+sentinel inventory/snapshot/operation bounds and no overflow writes (5276.731166ms)
+  ✔ whole final wrapper UTF8 byte bound; source/progress oversize refuses without truncation (5970.380708ms)
+  ✔ source/account/session/request NOWAIT fences; foreign recovery unaffected; concurrent erase CAS (10835.463375ms)
+  ✔ actual SQL payloads through sole TS strict decoder and complete collector (1892.966834ms)
+  ✔ actual absolute 30s expiration; exact immutable terminal receipt recovers without source/TTL renewal (31726.6605ms)
+  ✔ immutable request/receipt; own drop/replay leaves ALL original source code/schema/ACL unchanged (748.9905ms)
+✔ archive selected source/export/progress exit SQL (82321.528375ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 82378.123958

@@ -295,6 +295,52 @@ final class NativeSession {
         return bytes
     }
 
+    func archiveDataStore(scope: NativeArchiveDataScope) -> NativeArchiveDataStore {
+        NativeArchiveDataStore(scope: scope, vault: vault)
+    }
+    func archiveDataRequest(body: Data, actor: NativeCommunitySafetyActor) async throws -> Data {
+        guard !busy, try communitySafetyActor() == actor, !Task.isCancelled else { throw NativeDataError.sessionUnavailable }
+        let command = try NativeArchiveDataCommand(body: body)
+        if ["export", "erase", "recover"].contains(command.action) {
+            let journal = NativeArchiveDataJournal(vault: vault, validateConfirmation: NativeArchiveDataCommand.validateConfirmation)
+            guard try journal.read(actor)?.body == (command.mutationBytes ?? body) else { throw NativeDataError.staleSessionResponse }
+        }
+        let started = ProcessInfo.processInfo.systemUptime
+        if let credential, credential.expiresAt <= Date().timeIntervalSince1970 + 10 { await validate() }
+        guard try communitySafetyActor() == actor, let endpoint, let credential, !Task.isCancelled,
+              ProcessInfo.processInfo.systemUptime - started < 30 else { throw NativeDataError.staleSessionResponse }
+        var request = URLRequest(url: endpoint.appendingPathComponent("api/privacy/native/v1/archive-data"))
+        request.httpMethod = "POST"; request.httpBody = body; request.httpShouldHandleCookies = false
+        request.timeoutInterval = 30; request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(credential.accessToken)", forHTTPHeaderField: "Authorization")
+        let (stream, response) = try await transport.bytes(for: request)
+        defer { stream.task.cancel() }
+        guard let http = response as? HTTPURLResponse, try communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
+        let cap = http.statusCode == 200 ? 1_000_000 : 4096
+        guard http.expectedContentLength <= Int64(cap) else { throw NativeDataError.invalidResponse }
+        var bytes = Data()
+        for try await byte in stream {
+            guard bytes.count < cap, try communitySafetyActor() == actor, !Task.isCancelled,
+                  ProcessInfo.processInfo.systemUptime - started < 30 else { throw NativeDataError.staleSessionResponse }
+            bytes.append(byte)
+        }
+        guard try communitySafetyActor() == actor, !Task.isCancelled,
+              ProcessInfo.processInfo.systemUptime - started < 30 else { throw NativeDataError.staleSessionResponse }
+        guard http.statusCode == 200 else {
+            let code = (try? JSONDecoder().decode(NativeDataFailure.self, from: bytes).error.code) ?? "ARCHIVE_UNAVAILABLE"
+            if http.statusCode == 401, code != "REAUTHENTICATION_REQUIRED" { handle(SessionError.denied) }
+            throw NativeDataError.server(code: code)
+        }
+        let cache = http.value(forHTTPHeaderField: "Cache-Control")?.lowercased() ?? ""
+        guard cache.contains("private"), cache.contains("no-store"),
+              http.value(forHTTPHeaderField: "Vary")?.lowercased().split(separator: ",").map({ $0.trimmingCharacters(in: .whitespaces) }).contains("authorization") == true,
+              http.value(forHTTPHeaderField: "X-Content-Type-Options")?.lowercased() == "nosniff",
+              http.value(forHTTPHeaderField: "Content-Type")?.lowercased().hasPrefix("application/json") == true else { throw NativeDataError.invalidResponse }
+        try NativeArchiveDataWire.actor(NativeArchiveDataWire.root(bytes), actor, scope: command.scope)
+        return bytes
+    }
+
     func coverageProgressStore() -> NativeCoverageProgressStore {
         NativeCoverageProgressStore(vault: vault)
     }
@@ -1778,6 +1824,8 @@ final class NativeSession {
         do { try entryResume.erase(preservingUnclaimedID: preservingAnonymousResume) }
         catch { failureCode="entryResumeCleanupRequired";status="storageError";return false }
         subject=nil; mobileEpoch=nil; displayName=nil
+        do { try NativeArchiveDataExportFile.eraseAll() }
+        catch { failureCode="archiveDataExportCleanupRequired"; status="storageError"; return false }
         do { try NativeCoverageProgressExportFile.eraseAll() }
         catch { failureCode="coverageProgressExportCleanupRequired"; status="storageError"; return false }
         do { try NativeNotificationDataExportFile.eraseAll() }
@@ -1814,6 +1862,8 @@ final class NativeSession {
                 // Noncredential cleanup index only. It cannot restore a session or authorize a journal read.
                 defaults.set(owner, forKey: storageKey + ".pendingJournalCleanupOwner")
             } else {
+                do { try NativeArchiveDataJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
+                catch { failureCode="archiveDataJournalCleanupRequired"; status="storageError"; return false }
                 do { try NativeCoverageProgressJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
                 catch { failureCode="coverageProgressJournalCleanupRequired"; status="storageError"; return false }
                 do { try NativeNotificationDataJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }

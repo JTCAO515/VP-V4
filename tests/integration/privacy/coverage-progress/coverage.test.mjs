@@ -11,7 +11,7 @@ import { COVERAGE_PROGRESS_MODULE, COVERAGE_PROGRESS_CATALOG_VERSION } from '../
 
 const actor={ownerId:uuid(),sessionId:uuid(),mobileEpoch:1}, requestId=uuid(), objectId=uuid();
 const selected={scope,requestId,objectIds:[objectId]}, command={...selected,action:'erase',previewDigest:'b'.repeat(64),confirmed:true}, bytes='\t'+JSON.stringify(command);
-const input={schemaVersion:'data-coverage/1',catalogVersion:COVERAGE_PROGRESS_CATALOG_VERSION,actorId:actor.ownerId,sessionId:actor.sessionId,mobileEpoch:actor.mobileEpoch,
+const input={schemaVersion:'data-coverage/1',catalogVersion:CATALOG_VERSION,actorId:actor.ownerId,sessionId:actor.sessionId,mobileEpoch:actor.mobileEpoch,
   moduleId:'coverage_progress',moduleVersion:scope,operationId:requestId,action:'delete',phase:'execute',confirmed:true,tripId:null,commandBytes:bytes};
 const request=raw=>new Request('http://localhost/api/privacy/native/v1/coverage',{method:'POST',headers:{'Content-Type':'application/json'},body:raw});
 const current={actorId:actor.ownerId,sessionId:actor.sessionId,mobileEpoch:1};
@@ -21,10 +21,10 @@ const bound=now=>({schemaVersion:scope,...selected,...actor,sourceDigest:'a'.rep
 const effects={collectorRequests:1,collectorSections:2,exitPages:0,retainedFences:1,sourceData:'not_modified',sessionAccountFences:'retained',externalCopies:'not_erased'};
 
 test('actual catalog and owner caller upgrade only existing progress module, preserving full server/device/external denominator',async()=>{
-  assert.equal(CATALOG_VERSION,COVERAGE_PROGRESS_CATALOG_VERSION);assert.deepEqual(moduleById('coverage_progress'),COVERAGE_PROGRESS_MODULE);
+  assert.deepEqual(moduleById('coverage_progress'),COVERAGE_PROGRESS_MODULE);
   assert.equal(MODULE_CATALOG.length,34);assert.equal(new Set(MODULE_CATALOG.map(m=>m.id)).size,34);assert.equal(typeof OWNER_HANDLERS.coverage_progress,'function');
   const response=await handleCoverage(new Request('http://localhost/api/privacy/native/v1/coverage'),{enabled:true,authority,handlers:OWNER_HANDLERS});
-  const catalog=await response.json();assert.equal(response.status,200);assert.deepEqual(catalog.modules,MODULE_CATALOG);assert.equal(catalog.allUserDataCompleted,false);
+  const catalog=await response.json();assert.equal(response.status,200);assert.equal(catalog.catalogVersion,CATALOG_VERSION);assert.deepEqual(catalog.modules,MODULE_CATALOG);assert.equal(catalog.allUserDataCompleted,false);
   for(const location of ['server','device','external']) assert.ok(catalog.modules.some(m=>m.location===location));
 });
 
@@ -51,4 +51,5 @@ test('exact recovery route preserves original bytes; missing ACK never becomes e
   const raw=JSON.stringify({...input,phase:'recover'}), response=await handleCoverage(request(raw),{enabled:true,authority,handlers}), result=await response.json();
   assert.equal(calls,1);assert.equal(result.state,'unknown');assert.ok(matchesCoverageResult(result,raw));assert.equal(matchesCoverageResult({...result,state:'scoped_complete'},raw),false);
   const old=await handleCoverage(request(JSON.stringify({...input,catalogVersion:'data-coverage-catalog/2026-10-06.4'})),{enabled:true,authority,handlers});assert.equal(old.status,400);assert.equal(calls,1);
+  const prior=await handleCoverage(request(JSON.stringify({...input,catalogVersion:COVERAGE_PROGRESS_CATALOG_VERSION})),{enabled:true,authority,handlers});assert.equal(prior.status,400);assert.equal(calls,1);
 });

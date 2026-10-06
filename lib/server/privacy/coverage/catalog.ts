@@ -1,7 +1,8 @@
 import { NOTIFICATION_MODULES } from '../notification-data/coverage.ts';
+import { ARCHIVE_MODULE } from '../archive-data/coverage.ts';
 import { COVERAGE_PROGRESS_MODULE } from '../coverage-progress/coverage.ts';
 /** ALL1 denominator. A registered scoped handler is not all-account completion. */
-export { COVERAGE_PROGRESS_CATALOG_VERSION as CATALOG_VERSION } from '../coverage-progress/coverage.ts';
+export { ARCHIVE_CATALOG_VERSION as CATALOG_VERSION } from '../archive-data/coverage.ts';
 export type Location = 'server' | 'device' | 'external';
 export type Module = Readonly<{
   id: string; location: Location; version: string; scope: string;
@@ -54,8 +55,7 @@ export const MODULE_CATALOG: readonly Module[] = [
     ['other_unselected_exit_requests']),
   server('case_attachments', 'unavailable/1', 'case_attachments', null, null, 'owner', 'existing bundles explicitly declare attachments unavailable',
     ['unknown'], ['attachment_handler_unavailable']),
-  server('archive', 'trip-lifecycle-export/2', 'archived_trip', null, 'trip', 'trip', 'selected archived Trip; lifecycle lease not enrolled',
-    ['operation_fences'], ['export_lease_not_enrolled']),
+  ARCHIVE_MODULE,
   ...['materials', 'app_group', 'local_share', 'guide_cache', 'offline', 'local_journals'].map((id): Module => ({
     id, location: 'device', version: 'device-scoped/1', scope: id, exportHandler: null, deleteHandler: null,
     selection: 'device_files', capacity: 'original owner/endpoint/epoch/TTL selected device consumer',
