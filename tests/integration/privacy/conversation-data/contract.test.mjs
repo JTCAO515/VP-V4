@@ -5,6 +5,11 @@ import { CONVERSATION_SCHEMA, CONVERSATION_BOUNDARIES, GRAPH_KEYS, ERASED_KEYS, 
 import { decodeConversationPreview, decodeConversationReceipt, decodeConversationList, validOperationRow } from '../../../../lib/server/privacy/conversation-data/protocol.ts';
 import { handleConversationData } from '../../../../lib/server/privacy/conversation-data/http.ts';
 import { conversationCoverageOutcome, conversationCoverageRequestBody, validConversationCoverageSelection } from '../../../../lib/server/privacy/conversation-data/coverage.ts';
+import { handleCoverage } from '../../../../lib/server/privacy/coverage/http.ts';
+import { CATALOG_VERSION, MODULE_CATALOG } from '../../../../lib/server/privacy/coverage/catalog.ts';
+import { parseCoverageInput } from '../../../../lib/server/privacy/coverage/contract.ts';
+import { matchesCoverageResult } from '../../../../lib/server/privacy/coverage/consumer.ts';
+import { OWNER_HANDLERS } from '../../../../lib/server/privacy/coverage/registry.ts';
 
 const id = n => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
 const now = 1791246000000;
@@ -146,4 +151,43 @@ test('taskless source authority IDs remain explicit, closed and retained after p
   assert.equal(parseConversationCommand(caller), null);
   const old = { ...r }; delete old.sourceAuthorities;
   assert.equal(decodeConversationReceipt(old, command, actor, conversationDigest(bytes), now + 40000), null);
+});
+
+test('leased registry routes exact conversation preview/erase/recovery while preserving original core export', async () => {
+  const fresh = Date.now(), authorityActor = { actorId: actor.ownerId, sessionId: actor.sessionId, mobileEpoch: actor.mobileEpoch };
+  const input = { schemaVersion: 'data-coverage/1', catalogVersion: CATALOG_VERSION, ...authorityActor, moduleId: 'conversations', moduleVersion: CONVERSATION_SCHEMA,
+    operationId: selection.requestId, action: 'delete', phase: 'execute', confirmed: true, tripId: null, commandBytes: bytes };
+  assert.equal(parseCoverageInput(input).handler, 'conversation_data'); assert.equal(typeof OWNER_HANDLERS.conversation_data, 'function');
+  const core = { ...input, action: 'export', commandBytes: JSON.stringify({ requestId: selection.requestId, confirmed: true }) };
+  assert.equal(parseCoverageInput(core).handler, 'core');
+  let loseAck = false, calls = 0;
+  const currentBinding = { capturedAt: fresh - 5, expiresAt: fresh - 5 + 30000 };
+  const terminal = { ...receipt(), ...currentBinding, decision: { ...decision(), decidedAt: fresh - 3 } };
+  const options = { enabled: true, authority: () => ({ authenticate: async () => authorityActor, current: async () => true }), handlers: {
+    conversation_data: async original => {
+      assert.equal(new URL(original.url).pathname, '/api/privacy/native/v1/conversation-data'); calls++;
+      return handleConversationData(original, { enabled: true, now: () => fresh, authority: () => ({ authenticate: async () => actor, current: async () => true,
+        rpc: async (action, raw) => {
+          if (action === 'preview') return { ...preview(), ...currentBinding };
+          if (action === 'recover') {
+            assert.equal(JSON.parse(raw).mutationBytes, bytes); return { schemaVersion: CONVERSATION_SCHEMA, kind: 'unknown', ...selection, ...actor, requestDigest: conversationDigest(bytes), allUserDataCompleted: false };
+          }
+          assert.equal(raw, bytes); if (loseAck) throw Error('synthetic lost ACK'); return terminal;
+        } }) });
+    },
+  } };
+  const call = async value => {
+    const raw = JSON.stringify(value), response = await handleCoverage(new Request('http://localhost/api/privacy/native/v1/coverage', {
+      method: 'POST', headers: { 'content-type': 'application/json' }, body: raw }), options);
+    assert.equal(response.status, 200); return { raw, result: await response.json() };
+  };
+  const catalog = await (await handleCoverage(new Request('http://localhost/api/privacy/native/v1/coverage'), options)).json();
+  assert.equal(catalog.catalogVersion, CATALOG_VERSION); assert.equal(catalog.modules.length, 34); assert.deepEqual(catalog.modules, MODULE_CATALOG);
+  const p = await call({ ...input, phase: 'preview', commandBytes: JSON.stringify({ action: 'preview', ...selection }) });
+  assert.equal(p.result.state, 'preview'); assert.ok(matchesCoverageResult(p.result, p.raw, fresh));
+  const r = await call(input); assert.equal(r.result.state, 'scoped_complete'); assert.ok(matchesCoverageResult(r.result, r.raw, fresh));
+  assert.equal(r.result.allUserDataCompleted, false);
+  loseAck = true; const lost = await call(input); assert.equal(lost.result.state, 'unknown');
+  const recovered = await call({ ...input, phase: 'recover' }); assert.equal(recovered.result.state, 'unknown'); assert.ok(matchesCoverageResult(recovered.result, recovered.raw, fresh));
+  assert.equal(calls, 4);
 });

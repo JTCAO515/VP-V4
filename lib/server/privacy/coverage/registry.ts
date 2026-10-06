@@ -17,6 +17,8 @@ import { coverageProgressNativeHTTP } from '../coverage-progress/http.ts';
 import { coverageProgressCoverageRequestBody } from '../coverage-progress/coverage.ts';
 import { archiveDataNativeHTTP } from '../archive-data/http.ts';
 import { archiveCoverageRequestBody } from '../archive-data/coverage.ts';
+import { conversationDataNativeHTTP } from '../conversation-data/http.ts';
+import { conversationCoverageRequestBody } from '../conversation-data/coverage.ts';
 import { notificationDataNativeHTTP } from '../notification-data/http.ts';
 import { notificationDataCoverageRequestBody } from '../notification-data/coverage.ts';
 
@@ -39,6 +41,7 @@ export const OWNER_HANDLERS: Readonly<Record<string, OwnerHandler>> = {
   coverage_progress: request => coverageProgressNativeHTTP(request),
   notification_data: request => notificationDataNativeHTTP(request),
   archive_data: request => archiveDataNativeHTTP(request),
+  conversation_data: request => conversationDataNativeHTTP(request),
 };
 const paths: Readonly<Record<string, string>> = {
   core: '/api/privacy/native/v1/exports', trip: '/api/privacy/native/v1/trips',
@@ -50,6 +53,7 @@ const paths: Readonly<Record<string, string>> = {
   coverage_progress: '/api/privacy/native/v1/coverage-progress',
   notification_data: '/api/privacy/native/v1/notification-data',
   archive_data: '/api/privacy/native/v1/archive-data',
+  conversation_data: '/api/privacy/native/v1/conversation-data',
 };
 export function ownerHandlerRequest(request: Request, selected: SelectedCommand, signal: AbortSignal): NextRequest {
   const { input, handler } = selected; if (!handler || !Object.hasOwn(OWNER_HANDLERS, handler)) throw Error('HANDLER_MISSING');
@@ -67,6 +71,7 @@ export function ownerHandlerRequest(request: Request, selected: SelectedCommand,
     else if (handler === 'coverage_progress') body = coverageProgressCoverageRequestBody(input);
     else if (handler === 'notification_data') body = notificationDataCoverageRequestBody(input);
     else if (handler === 'archive_data') body = archiveCoverageRequestBody(input);
+    else if (handler === 'conversation_data') body = conversationCoverageRequestBody(input);
     else throw Error('RECOVERY_NOT_IMPLEMENTED');
   }
   return new NextRequest(url, { method, headers, signal, ...(method === 'POST' ? { body } : {}) });

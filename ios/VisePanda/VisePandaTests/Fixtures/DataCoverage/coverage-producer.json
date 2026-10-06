@@ -2,7 +2,7 @@
   "evidence": "synthetic closed protocol fixture; not target/runtime capability",
   "catalog": {
     "schemaVersion": "data-coverage/1",
-    "catalogVersion": "data-coverage-catalog/2026-10-06.6",
+    "catalogVersion": "data-coverage-catalog/2026-10-06.7",
     "actorId": "12345678-1234-4123-8123-123456789abc",
     "sessionId": "22345678-1234-4123-8123-123456789abc",
     "mobileEpoch": 1,
@@ -26,18 +26,32 @@
       {
         "id": "conversations",
         "location": "server",
-        "version": "core-export-d2/1",
-        "scope": "core-export-d2/1",
+        "version": "conversation-data/1",
+        "scope": "conversation-data/1",
         "exportHandler": "core",
-        "deleteHandler": null,
+        "deleteHandler": "conversation_data",
         "selection": "owner",
-        "capacity": "100 rows/page; 1000 pages/module; 8MiB artifact; original protected download/expiry",
+        "capacity": "one explicitly selected owner conversation or standalone thread; bounded4100 graph/1MB; fixed30s source CAS; active/shared/independent domains rejected; own1..20 preview metadata exit",
         "retention": [
-          "original_module_retention",
-          "external_copies_not_recallable"
+          "confirmed_trip_content_history_proposals",
+          "explicit_memory_profiles_receipts_consents",
+          "other_conversations_and_domains",
+          "minimal_task_capacity_budget_dispatch_link_receipts",
+          "permanent_entity_identity_and_operation_fences",
+          "original_source_policy_consent_authority_ids",
+          "root_selection_actor_epoch_hash_time_operation_fences",
+          "immutable_minimal_decisions_and_entity_tombstones"
         ],
         "missing": [
-          "scoped_delete_not_registered"
+          "applied_or_unapplied_proposal_source_requires_original_flow",
+          "shared_cross_scope_or_active_work_rejected",
+          "readiness_guide_scoped_edit_notification_brief_links_rejected",
+          "existing_core_export_copies_require_original_cleanup",
+          "provider_and_external_copies_not_erased",
+          "backup_restore_and_old_device_acceptance_unverified",
+          "source_conversation_data_not_erased",
+          "unselected_operations",
+          "external_copies"
         ]
       },
       {
@@ -616,10 +630,10 @@
     ],
     "allUserDataCompleted": false
   },
-  "requestBytes": "{\"schemaVersion\":\"data-coverage/1\",\"catalogVersion\":\"data-coverage-catalog/2026-10-06.6\",\"actorId\":\"12345678-1234-4123-8123-123456789abc\",\"sessionId\":\"22345678-1234-4123-8123-123456789abc\",\"mobileEpoch\":1,\"moduleId\":\"ugc\",\"moduleVersion\":\"community-j1/1\",\"operationId\":\"32345678-1234-4123-8123-123456789abc\",\"action\":\"export\",\"phase\":\"execute\",\"confirmed\":true,\"tripId\":null,\"commandBytes\":\"{\\\"action\\\":\\\"export\\\"}\"}",
+  "requestBytes": "{\"schemaVersion\":\"data-coverage/1\",\"catalogVersion\":\"data-coverage-catalog/2026-10-06.7\",\"actorId\":\"12345678-1234-4123-8123-123456789abc\",\"sessionId\":\"22345678-1234-4123-8123-123456789abc\",\"mobileEpoch\":1,\"moduleId\":\"ugc\",\"moduleVersion\":\"community-j1/1\",\"operationId\":\"32345678-1234-4123-8123-123456789abc\",\"action\":\"export\",\"phase\":\"execute\",\"confirmed\":true,\"tripId\":null,\"commandBytes\":\"{\\\"action\\\":\\\"export\\\"}\"}",
   "receipt": {
     "schemaVersion": "data-coverage/1",
-    "catalogVersion": "data-coverage-catalog/2026-10-06.6",
+    "catalogVersion": "data-coverage-catalog/2026-10-06.7",
     "actorId": "12345678-1234-4123-8123-123456789abc",
     "sessionId": "22345678-1234-4123-8123-123456789abc",
     "mobileEpoch": 1,
@@ -628,7 +642,7 @@
     "operationId": "32345678-1234-4123-8123-123456789abc",
     "action": "export",
     "phase": "execute",
-    "requestDigest": "086689a36111b6ca6374254c9eb39264aa36f26c1ff447c31159623543e43a16",
+    "requestDigest": "ee85bb041704b82711affa81716a8746eee8cad0a7ed5c76d870614ed1031a0d",
     "state": "scoped_complete",
     "reason": "NONE",
     "result": {

@@ -433,3 +433,34 @@ No SQL060000/PG/Auth source/executor acceptance or scopeComplete yet. Final sole
 package still requires actual SQL fixed integration, lease registration/affected
 fixture alignment, normal fresh-main/source equality/new-head formal/all required
 CI/protected gates. Whole239/fullmissing/ALL2 remains Open; no new task or scope.
+
+## Granted caller/catalog lease applied (same frozen task)
+
+Main's precise lease, after original Archive TS7e5/Native326 clean/no in-flight/
+planned/successor release, applied ONLY the four originally reviewed TS shared
+files (catalog/contract/registry/outcomes) and four named catalog fixtures.
+Catalog.7, same34 modules; conversations descriptor is sole new scoped delete,
+core export preserved. Registry uses the fixed direct path, closed selection,
+exact-byte recovery and original source classifier. Applied patch file retired.
+No original other33/Archive/Trip business changed and no whole-WT copy.
+
+Fixture edit asserts independently verified every other33 descriptor in original
+order, original inner commandBytes and all result/receipt/cancellation fields
+byte/value-equal. Only outer catalog version/digest and conversations metadata
+changed. Actual TS consumers accept producer/cancelled and still reject tampered
+promotion. Four fixture changes inspected in actual diff, all old assertions kept.
+
+Affected TS25 PASS/0skip: own9 (includes actual registered preview/erase/recovery
+dispatch and original core preservation) plus previous coverage/notification16.
+Typecheck/lint/docs/diff checks PASS. Native lease-r1 at artifacts/VPJ-58/
+conversation-data/native-catalog-lease-r1: original NativeDataCoverageTests and
+NativeNotificationDataCatalogTests ONLY; Swift Testing12 PASS in2 suites, XCTest
+0 reported separately, no zero-test pass claim. Build/test-build/signature and
+owned-Simulator boot/shutdown/delete all exit0, simulatorDeleted=true. Existing
+Native8+Ask23 r3 evidence reused unchanged; no expanded matrix. Harness metadata
+baseline e705 plus precisely leased working source; fixed source follows commit.
+
+This closes the caller/catalog fixture gap, not SQL execution/PG/Auth. Original
+SQL060000 full graph/CAS/authority/fences/receipt owner still must supply fixed
+source and actual PG/Auth evidence for sole package integration. No target
+activation or premature scopeComplete/PR merge. Prior failures remain recorded.
