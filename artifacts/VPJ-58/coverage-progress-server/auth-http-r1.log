@@ -1,0 +1,12 @@
+VP_COVERAGE_PROGRESS_HTTP_TARGET {"project":"vp-native-ask-70721d5c","base":63280}
+✔ signed ordinary Auth -> actual collector inventory -> selected metadata export/erase -> old fences and own inventory -> registered consumer; isolated fixture only (6579.12725ms)
+ℹ RPC grants are only in this uniquely owned disposable fixture; target/default privileges unchanged. No provider/Storage/business deletion.
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9533.931542
+VP_COVERAGE_PROGRESS_HTTP_CLEANUP {"project":"vp-native-ask-70721d5c","result":"PASS"}

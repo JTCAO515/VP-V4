@@ -1,9 +1,9 @@
 import SwiftUI
 
 private enum NativeDataCoverageDestination: Identifiable {
-    case core, memory, trip(NativeLinkedTripDeleteSelection), deviceExport, deviceDelete, material(NativeMaterialReferenceScope), notification(NativeNotificationDataScope)
+    case coverageProgress, core, memory, trip(NativeLinkedTripDeleteSelection), deviceExport, deviceDelete, material(NativeMaterialReferenceScope), notification(NativeNotificationDataScope)
     var id: String {
-        switch self { case .core: "core"; case .memory: "memory"; case .trip(let v): v.tripID; case .deviceExport: "device-export"; case .deviceDelete: "device-delete"; case .material(let scope): scope.rawValue; case .notification(let scope): scope.rawValue }
+        switch self { case .coverageProgress: "coverage-progress"; case .core: "core"; case .memory: "memory"; case .trip(let v): v.tripID; case .deviceExport: "device-export"; case .deviceDelete: "device-delete"; case .material(let scope): scope.rawValue; case .notification(let scope): scope.rawValue }
     }
 }
 
@@ -77,6 +77,7 @@ struct NativeDataCoverageModuleView: View {
             .sheet(item: $destination) { target in
                 NavigationStack {
                     switch target {
+                    case .coverageProgress: NativeCoverageProgressConsumer(module: module, coverage: store, session: session, chinese: chinese)
                     case .core: NativeDataCoverageCoreConsumer(coverage: store, session: session)
                     case .memory: NativeDataCoverageMemoryConsumer(module: module, coverage: store, session: session, chinese: chinese)
                     case .trip(let selection): NativeDataCoverageTripConsumer(module: module, coverage: store, session: session, selection: selection)
@@ -110,7 +111,13 @@ struct NativeDataCoverageModuleView: View {
     }
 
     @ViewBuilder private var serverActions: some View {
-        if let scope = NativeNotificationDataScope.catalogScope(module) {
+        if NativeCoverageProgressWire.catalog(module) {
+            Section(t("明确选择进度与围栏", "Explicitly select progress and fences")) {
+                Button(t("选择记录、预览全部字段并确认导出或清理", "Select records, preview every field and confirm export or cleanup")) { destination = .coverageProgress }
+                    .disabled(!registered || actor == nil)
+                Text(t("原围栏与最小回执保留；只核验所选临时进度。", "Original fences and minimal receipts remain; verifies only selected transient progress."))
+            }
+        } else if let scope = NativeNotificationDataScope.catalogScope(module) {
             Section(t("明确选择通知资料范围", "Explicitly select notification data scope")) {
                 Button(t("选择记录、预览全部字段并确认导出或擦除", "Select records, preview all fields and confirm export or erasure")) { destination = .notification(scope) }
                     .disabled(!registered || actor == nil)

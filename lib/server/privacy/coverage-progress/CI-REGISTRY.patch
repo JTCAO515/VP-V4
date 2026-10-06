@@ -1,0 +1,11 @@
+--- a/scripts/ci-suites/db-integration.mjs
++++ b/scripts/ci-suites/db-integration.mjs
+@@
+           VP_NOTIFICATION_EXIT_DB_TEST: "1",
++          VP_COVERAGE_PROGRESS_DB_TEST: "1",
+@@
+           "tests/integration/privacy/notification-data-postgres.test.mjs",
++          "tests/integration/privacy/coverage-progress-sql/postgres.test.mjs",
+@@
+       { name: "notification-data-http", runner: node("tests/integration/privacy/notification-data/run-http.mjs", "--port-base", "63320"), files: ["tests/integration/privacy/notification-data/auth-http.test.mjs"] },
++      { name: "coverage-progress-http", runner: node("tests/integration/privacy/coverage-progress/run-http.mjs", "--port-base", "63280"), files: ["tests/integration/privacy/coverage-progress/auth-http.test.mjs"] },

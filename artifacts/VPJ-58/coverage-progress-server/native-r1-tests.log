@@ -1,0 +1,60 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -derivedDataPath /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-coverage-progress-20261006/artifacts/native-coverage-progress-r1-derived -destination "platform=iOS Simulator,id=BA96044D-229B-4073-A30A-4046B6B58AD7" CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- -parallel-testing-enabled NO "-only-testing:VisePandaTests/NativeCoverageProgressTests" "-only-testing:VisePandaTests/NativeCoverageProgressStorageTests" "-only-testing:VisePandaTests/NativeNotificationDataCatalogTests" -resultBundlePath /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-coverage-progress-20261006/artifacts/native-coverage-progress-r1/tests.xcresult
+
+Build settings from command line:
+    CODE_SIGN_IDENTITY = -
+    CODE_SIGNING_ALLOWED = YES
+
+2026-10-06 06:33:21.443 xcodebuild[32314:5076997] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionsModels.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-06 06:33:21.444 xcodebuild[32314:5076997] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionsStore.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-06 06:33:21.444 xcodebuild[32314:5076997] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionDestination.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-06 06:33:21.444 xcodebuild[32314:5076997] warning:  The file reference for "ShareIntakeCore/ShareIntakeInbox.swift" is a member of multiple groups ("ShareIntakeExtension" and "Features"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+Writing result bundle at path:
+	/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-coverage-progress-20261006/artifacts/native-coverage-progress-r1/tests.xcresult
+
+2026-10-06 06:33:26.199779+0800 VisePanda[32372:5077803] [General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+2026-10-06 06:33:26.298733+0800 VisePanda[32372:5077803] [General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
+Test Suite 'Selected tests' started at 2026-10-06 06:33:26.532.
+Test Suite 'VisePandaTests.xctest' started at 2026-10-06 06:33:26.532.
+Test Suite 'VisePandaTests.xctest' passed at 2026-10-06 06:33:26.532.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-06 06:33:26.532.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64-apple-ios17.0-simulator
+◇ Suite NativeCoverageProgressStorageTests started.
+◇ Test originalBytesSurviveRestartAndRefuseReplacementEpochAndSession() started.
+✔ Test originalBytesSurviveRestartAndRefuseReplacementEpochAndSession() passed after 0.005 seconds.
+◇ Test lifetimeRejectsLateResponsesAndLeaseCannotBeRenewedByWallRollback() started.
+✔ Test lifetimeRejectsLateResponsesAndLeaseCannotBeRenewedByWallRollback() passed after 0.001 seconds.
+◇ Test fileHasExactBytesAndCleanupFailureBlocksPublicationAndNextWrite() started.
+✔ Test fileHasExactBytesAndCleanupFailureBlocksPublicationAndNextWrite() passed after 0.002 seconds.
+✔ Suite NativeCoverageProgressStorageTests passed after 0.009 seconds.
+◇ Suite NativeCoverageProgressTests started.
+◇ Test soleProducerAllFieldsHistoricalFencesAndFlatExitInventoryDecode() started.
+✔ Test soleProducerAllFieldsHistoricalFencesAndFlatExitInventoryDecode() passed after 0.004 seconds.
+◇ Test exactExportBytesAndProofBoundariesMustMatchReviewedSelection() started.
+✔ Test exactExportBytesAndProofBoundariesMustMatchReviewedSelection() passed after 0.001 seconds.
+◇ Test unknownAckQueriesOriginalBytesAndTerminalRecoveryAfterTTLCannotRenewOrDropFences() started.
+✔ Test unknownAckQueriesOriginalBytesAndTerminalRecoveryAfterTTLCannotRenewOrDropFences() passed after 0.003 seconds.
+◇ Test selectedStoreCreatesExactPrivateFileOnlyAfterValidatedBundleAndClearsOnSuspend() started.
+✔ Test selectedStoreCreatesExactPrivateFileOnlyAfterValidatedBundleAndClearsOnSuspend() passed after 0.005 seconds.
+◇ Test lateOwnerEpochAndSuspendedForegroundCannotPublish() started.
+✔ Test lateOwnerEpochAndSuspendedForegroundCannotPublish() passed after 0.001 seconds.
+✔ Suite NativeCoverageProgressTests passed after 0.016 seconds.
+◇ Suite NativeNotificationDataCatalogTests started.
+◇ Test immutableProducerHasThirtyFourVisibleScopesAndOnlyExactNotificationHandlersOpenConsumer() started.
+✔ Test immutableProducerHasThirtyFourVisibleScopesAndOnlyExactNotificationHandlersOpenConsumer() passed after 0.002 seconds.
+✔ Suite NativeNotificationDataCatalogTests passed after 0.003 seconds.
+✔ Test run with 9 tests in 3 suites passed after 0.029 seconds.
+2026-10-06 06:33:26.846 xcodebuild[32314:5076997] [MT] IDETestOperationsObserverDebug: 5.100 elapsed -- Testing started completed.
+2026-10-06 06:33:26.846 xcodebuild[32314:5076997] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-06 06:33:26.846 xcodebuild[32314:5076997] [MT] IDETestOperationsObserverDebug: 5.100 sec, +5.100 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-coverage-progress-20261006/artifacts/native-coverage-progress-r1/tests.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

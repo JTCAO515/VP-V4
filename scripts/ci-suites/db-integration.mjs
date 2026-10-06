@@ -61,6 +61,7 @@ export const LANES = {
           VP_COVERAGE_DB_TEST: "1",
           VP_MATERIAL_DB_TEST: "1",
           VP_NOTIFICATION_EXIT_DB_TEST: "1",
+          VP_COVERAGE_PROGRESS_DB_TEST: "1",
           VP_MATERIAL_TS_WIRE_ROOT: repo,
           VP_TRANSLATION_HISTORY_DB_TEST: "1",
           VP_ARCHIVE_DB_TEST: "1",
@@ -110,6 +111,7 @@ export const LANES = {
           "tests/integration/privacy/owner-module-export-postgres.test.mjs",
           "tests/integration/privacy/material-reference-data-postgres.test.mjs",
           "tests/integration/privacy/notification-data-postgres.test.mjs",
+          "tests/integration/privacy/coverage-progress-sql/postgres.test.mjs",
           "tests/integration/translate/history.test.mjs",
           "tests/integration/trip/archive.test.mjs",
           "tests/integration/trip/lifecycle-postgres.test.mjs",
@@ -206,6 +208,7 @@ export const LANES = {
       { name: "data-coverage-http", runner: node("tests/integration/privacy/coverage/run-http.mjs", "--port-base", "63400"), files: ["tests/integration/privacy/coverage/auth-http.test.mjs"] },
       { name: "material-reference-http", runner: node("tests/integration/privacy/material-references/run-http.mjs", "--port-base", "63360"), files: ["tests/integration/privacy/material-references/auth-http.test.mjs"] },
       { name: "notification-data-http", runner: node("tests/integration/privacy/notification-data/run-http.mjs", "--port-base", "63320"), files: ["tests/integration/privacy/notification-data/auth-http.test.mjs"] },
+      { name: "coverage-progress-http", runner: node("tests/integration/privacy/coverage-progress/run-http.mjs", "--port-base", "63280"), files: ["tests/integration/privacy/coverage-progress/auth-http.test.mjs"] },
       { name: "pdf-intake-http", runner: node("tests/integration/intake/run-pdf-intake-http.mjs", "--port-base", "65000"), files: ["tests/integration/intake/pdf-intake-http.test.mjs"] },
       { name: "community-j1-jwt", runner: node("tests/integration/community/run-submission-j1-jwt.mjs"), files: ["tests/integration/community/submission-j1-jwt.test.mjs"] },
       { name: "community-j1-http", runner: node("tests/integration/community/run-j1-http.mjs", "--port-base", "64200"), files: ["tests/integration/community/j1-http.test.mjs"] },
@@ -238,6 +241,30 @@ export const LANES = {
     ],
   },
 };
+
+/** CI execution partitions only; logical classification and manual lanes stay intact. */
+export function executionMatrix(lanes) {
+  if (!Array.isArray(lanes) || lanes.length === 0 || new Set(lanes).size !== lanes.length
+    || lanes.some(lane => lane !== "none" && !Object.hasOwn(LANES, lane))
+    || lanes.includes("none") && lanes.length !== 1) throw Error("Invalid selected DB lanes");
+  return { include: lanes.flatMap(lane => {
+    const count = lane === "supabase-http-native" ? 2 : 1;
+    return Array.from({ length: count }, (_, i) => ({ lane, shard: `${i + 1}/${count}`,
+      name: count === 1 ? `lane (${lane})` : `lane (${lane} / ${i + 1} of ${count})` }));
+  }) };
+}
+export function executionSteps(lane, shard = null) {
+  if (!Object.hasOwn(LANES, lane)) throw Error("Unknown DB lane");
+  const steps = LANES[lane].steps;
+  if (shard === null) return steps;
+  const count = lane === "supabase-http-native" ? 2 : 1;
+  const match = /^([12])\/([12])$/.exec(shard);
+  if (!match || Number(match[2]) !== count || Number(match[1]) > count)
+    throw Error("Invalid DB lane shard");
+  const selected = steps.filter((_, i) => i % count === Number(match[1]) - 1);
+  if (!selected.length) throw Error("Empty DB lane shard");
+  return selected;
+}
 
 /** Explicit allowlist: gated files that CI does not run, with the reason. Keep this list short. */
 export const EXCLUDED = {
@@ -388,13 +415,14 @@ export async function startDisposableStack(base) {
   };
 }
 
-async function runLane(lane) {
+async function runLane(lane, shard = null) {
   const definition = LANES[lane];
+  const steps = executionSteps(lane, shard);
   preflight(lane, definition.needs);
   const results = [];
   const stack = definition.stack ? await startDisposableStack(definition.stack.portBase) : null;
   try {
-    for (const step of definition.steps) {
+    for (const step of steps) {
       const env = { ...process.env, ...(stack?.env ?? {}), ...(step.env ?? {}), VP_CI_SUITE: "db-integration" };
       const [command, ...args] = step.runner ?? node("--test", "--test-reporter=tap", `--test-concurrency=${step.concurrency ?? 4}`, ...step.files);
       console.log(`\n::group::${lane} / ${step.name}`);
@@ -414,6 +442,11 @@ async function runLane(lane) {
 async function main() {
   const argv = process.argv.slice(2);
   const { rows, problems } = classify();
+  if (argv.length === 1 && argv[0] === "--ci-matrix") {
+    if (problems.length) throw Error(problems.join("\n"));
+    console.log(JSON.stringify(executionMatrix(JSON.parse(process.env.VP_DB_LANES_JSON ?? "null"))));
+    return;
+  }
   if (argv.includes("--images")) {
     console.log(pinnedImages().join("\n"));
     return;
@@ -424,19 +457,21 @@ async function main() {
     return;
   }
   if (problems.length) throw new Error(`Integration test classification is incomplete:\n${problems.join("\n")}`);
-  const lanes = [];
+  const lanes = []; let shard = null;
   for (let i = 0; i < argv.length; i++) {
+    if (argv[i] === "--shard" && argv[i + 1] && shard === null) { shard = argv[++i]; continue; }
     if (argv[i] !== "--lane" || !argv[i + 1]) throw new Error(`Usage: --list | --lane <${Object.keys(LANES).join("|")}|all> ...`);
     lanes.push(...(argv[i + 1] === "all" ? Object.keys(LANES) : [argv[i + 1]]));
     i++;
   }
   if (!lanes.length) throw new Error(`Usage: --list | --lane <${Object.keys(LANES).join("|")}|all> ...`);
+  if (shard !== null && lanes.length !== 1) throw Error("A shard requires exactly one lane");
   for (const lane of lanes) if (!LANES[lane]) throw new Error(`Unknown lane ${lane}`);
 
   const results = [];
   let crashed = null;
   for (const lane of lanes) {
-    try { results.push(...(await runLane(lane))); }
+    try { results.push(...(await runLane(lane, shard))); }
     catch (error) { crashed = error; results.push({ lane, step: "(setup)", outcome: "failed", problems: [String(error.message ?? error)] }); break; }
   }
   const header = "| Lane | Step | Outcome | Tests | Pass | Skipped | Fail | Seconds |\n| --- | --- | --- | ---: | ---: | ---: | ---: | ---: |\n";

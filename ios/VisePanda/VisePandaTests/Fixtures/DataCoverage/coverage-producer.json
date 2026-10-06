@@ -2,7 +2,7 @@
   "evidence": "synthetic closed protocol fixture; not target/runtime capability",
   "catalog": {
     "schemaVersion": "data-coverage/1",
-    "catalogVersion": "data-coverage-catalog/2026-10-06.4",
+    "catalogVersion": "data-coverage-catalog/2026-10-06.5",
     "actorId": "12345678-1234-4123-8123-123456789abc",
     "sessionId": "22345678-1234-4123-8123-123456789abc",
     "mobileEpoch": 1,
@@ -310,18 +310,22 @@
       {
         "id": "coverage_progress",
         "location": "server",
-        "version": "coverage-module-export/1",
-        "scope": "coverage_export_progress",
-        "exportHandler": null,
-        "deleteHandler": null,
-        "selection": "owner",
-        "capacity": "source-free requests/sections expire30s; immutable request fences retained until original session/account revocation",
+        "version": "coverage-progress-data/1",
+        "scope": "coverage-progress-data/1",
+        "exportHandler": "coverage_progress",
+        "deleteHandler": "coverage_progress",
+        "selection": "coverage_records",
+        "capacity": "1..20 selected owner collector/exit requests; all metadata/fence preview; exact bytes/source CAS; 5/page, 4 pages, 1MB; fixed30s; selected transient erasure",
         "retention": [
-          "request_id_owner_session_scope_expiry_fence"
+          "original_request_id_owner_session_scope_expiry_fences",
+          "nonreplayable_exit_bindings_selection_digests_decision_receipts",
+          "original_session_account_cascade_semantics"
         ],
         "missing": [
-          "single_request_receipts_only",
-          "owner_progress_inventory_exit_not_implemented"
+          "unselected_progress_records",
+          "source_data_in_separate_domains",
+          "external_export_files",
+          "backup_restore_target_acceptance"
         ]
       },
       {
@@ -597,10 +601,10 @@
     ],
     "allUserDataCompleted": false
   },
-  "requestBytes": "{\"schemaVersion\":\"data-coverage/1\",\"catalogVersion\":\"data-coverage-catalog/2026-10-06.4\",\"actorId\":\"12345678-1234-4123-8123-123456789abc\",\"sessionId\":\"22345678-1234-4123-8123-123456789abc\",\"mobileEpoch\":1,\"moduleId\":\"ugc\",\"moduleVersion\":\"community-j1/1\",\"operationId\":\"32345678-1234-4123-8123-123456789abc\",\"action\":\"export\",\"phase\":\"execute\",\"confirmed\":true,\"tripId\":null,\"commandBytes\":\"{\\\"action\\\":\\\"export\\\"}\"}",
+  "requestBytes": "{\"schemaVersion\":\"data-coverage/1\",\"catalogVersion\":\"data-coverage-catalog/2026-10-06.5\",\"actorId\":\"12345678-1234-4123-8123-123456789abc\",\"sessionId\":\"22345678-1234-4123-8123-123456789abc\",\"mobileEpoch\":1,\"moduleId\":\"ugc\",\"moduleVersion\":\"community-j1/1\",\"operationId\":\"32345678-1234-4123-8123-123456789abc\",\"action\":\"export\",\"phase\":\"execute\",\"confirmed\":true,\"tripId\":null,\"commandBytes\":\"{\\\"action\\\":\\\"export\\\"}\"}",
   "receipt": {
     "schemaVersion": "data-coverage/1",
-    "catalogVersion": "data-coverage-catalog/2026-10-06.4",
+    "catalogVersion": "data-coverage-catalog/2026-10-06.5",
     "actorId": "12345678-1234-4123-8123-123456789abc",
     "sessionId": "22345678-1234-4123-8123-123456789abc",
     "mobileEpoch": 1,
@@ -609,7 +613,7 @@
     "operationId": "32345678-1234-4123-8123-123456789abc",
     "action": "export",
     "phase": "execute",
-    "requestDigest": "f0542f498bbddf8a0da52b6a20cdf0226fd9412a91c3aedfb3433cd3accb32f3",
+    "requestDigest": "ed070491350607276d69e888cc94b8be242a0a74268dd6069a81428dd0f17281",
     "state": "scoped_complete",
     "reason": "NONE",
     "result": {

@@ -13,6 +13,7 @@ import { linkedTripPlan, linkedTripReceipt } from '../linked-trip/contract.ts';
 import { coverageDigest, type SelectedCommand, type CoverageState } from './contract.ts';
 import { decodeModuleExportBundle } from './module-export.ts';
 import { materialCoverageOutcome } from '../material-references/coverage.ts';
+import { coverageProgressCoverageOutcome } from '../coverage-progress/coverage.ts';
 import { notificationDataCoverageOutcome } from '../notification-data/coverage.ts';
 
 type Outcome = Readonly<{ state: CoverageState; reason: string }>;
@@ -24,6 +25,7 @@ export function classifyOriginal(selected: SelectedCommand, body: unknown, now =
   if (!handler || !record(body)) return null;
   const data = Object.hasOwn(body, 'data') ? body.data : body;
   if (handler === 'materials') return materialCoverageOutcome(selected, data, now);
+  if (handler === 'coverage_progress') return coverageProgressCoverageOutcome(selected, data, now);
   if (handler === 'notification_data') return notificationDataCoverageOutcome(selected, data, now);
   if (handler === 'core') {
     const receipt = parseExportJob(body, input.operationId); if (!receipt) return null;

@@ -1,0 +1,16 @@
+{
+  "commit": "46b2541fdc84e542b8c8633c5d9faf033a750b9f",
+  "deviceUDID": "965B47A0-1F04-4632-BB10-7169524AF6E5",
+  "simulatorOwned": true,
+  "simulatorDeleted": true,
+  "selectedTests": [
+    "VisePandaTests/NativeDataCoverageTests/closedCatalogPreservesMissingDenominatorAndRejectsOldVersionActorBoolean()"
+  ],
+  "reusedEvidence": [
+    "native-coverage-progress-r1",
+    "native-coverage-progress-r2",
+    "Main Auth1/SQL18"
+  ],
+  "fullLegacySuiteRun": false,
+  "testBuildEvidence": "../native-coverage-progress-r3-test-build.xcresult"
+}

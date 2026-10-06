@@ -1,0 +1,27 @@
+▶ coverage progress append-only full-chain owner exit SQL
+  ✔ transactional migration rollback; old code/schema/RLS/ACL byte preservation (268.522959ms)
+  ✔ RPC helpers/private schema/tables default revoke and RLS; separate owned fixture grant (431.630792ms)
+  ✔ authority/epoch/reauth precede input/CAS/lookup and leave zero writes (823.954916ms)
+  ✔ read-only full inventory includes retained/current/historical sessions and is bounded/paginated (1042.056583ms)
+  ✔ complete closed preview; same-ID retry TTL; no nested snapshots; old/global collisions (450.720125ms)
+  ✔ exact export bytes, last-page retry, ordered cursors, complete proof, own page inventory (888.629792ms)
+  ✔ collector advance/cleanup and selected exit page advance invalidate source CAS without effects (469.997375ms)
+  ✔ atomic selected erase, retained fences and own minimal receipt, no sweeping/source writes (558.9365ms)
+  ✔ selected new page cleanup prevents same-ID export/page revival, retaining own bindings (406.201583ms)
+  ✔ foreign/absent recover exact unknown and lock indistinguishability; owned mismatches reject (393.65725ms)
+  ✔ historical collector metadata available under new current session; old business cannot resume (291.172875ms)
+  ✔ TTL fixed, undecided nonrenewal, expired immutable receipt recovery, session/account cascade (738.894083ms)
+  ✔ capacity sentinel/selection/cursor/page counter limits and transactional erase fault rollback (736.42925ms)
+  ✔ advisory/root/selected-row NOWAIT conflicts, real concurrent decisions serialize atomically (8114.7495ms)
+  ✔ whole wrapper 1MB bound; metadata-only cursor source change; expired unselected no sweep (680.024458ms)
+  ✔ actual SQL projections through sole TS closed decoder and export controller (SQL claims fixture) (637.347334ms)
+  ✔ immutable minimal requests; own applied rollback only and default revoke on replay (433.373875ms)
+✔ coverage progress append-only full-chain owner exit SQL (23291.88225ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 23332.241792

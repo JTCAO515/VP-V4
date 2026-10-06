@@ -13,6 +13,8 @@ import type { SelectedCommand } from './contract.ts';
 import { ownerModuleExportHTTP } from './module-export.ts';
 import { materialReferenceNativeHTTP } from '../material-references/http.ts';
 import { materialCoverageRequestBody } from '../material-references/coverage.ts';
+import { coverageProgressNativeHTTP } from '../coverage-progress/http.ts';
+import { coverageProgressCoverageRequestBody } from '../coverage-progress/coverage.ts';
 import { notificationDataNativeHTTP } from '../notification-data/http.ts';
 import { notificationDataCoverageRequestBody } from '../notification-data/coverage.ts';
 
@@ -32,6 +34,7 @@ export const OWNER_HANDLERS: Readonly<Record<string, OwnerHandler>> = {
   notifications: request => ownerModuleExportHTTP(request, 'notification-metadata/1'),
   lifecycle: request => ownerModuleExportHTTP(request, 'trip-lifecycle-metadata/1'),
   materials: request => materialReferenceNativeHTTP(request),
+  coverage_progress: request => coverageProgressNativeHTTP(request),
   notification_data: request => notificationDataNativeHTTP(request),
 };
 const paths: Readonly<Record<string, string>> = {
@@ -41,6 +44,7 @@ const paths: Readonly<Record<string, string>> = {
   ugc: '/api/community/native/v1', safety: '/api/community/safety/native/v1', publication: '/api/community/publication/native/v1',
   notifications: '/api/privacy/native/v1/coverage/module-export', lifecycle: '/api/privacy/native/v1/coverage/module-export',
   materials: '/api/privacy/native/v1/material-references',
+  coverage_progress: '/api/privacy/native/v1/coverage-progress',
   notification_data: '/api/privacy/native/v1/notification-data',
 };
 export function ownerHandlerRequest(request: Request, selected: SelectedCommand, signal: AbortSignal): NextRequest {
@@ -56,6 +60,7 @@ export function ownerHandlerRequest(request: Request, selected: SelectedCommand,
     else if (['ugc','safety','publication'].includes(handler)) body = JSON.stringify({ action: 'operation', operationId: input.operationId, mutationBytes: input.commandBytes });
     else if (['brief','case'].includes(handler)) body = JSON.stringify({ action: 'read_operation', operationId: input.operationId });
     else if (handler === 'materials') body = materialCoverageRequestBody(input);
+    else if (handler === 'coverage_progress') body = coverageProgressCoverageRequestBody(input);
     else if (handler === 'notification_data') body = notificationDataCoverageRequestBody(input);
     else throw Error('RECOVERY_NOT_IMPLEMENTED');
   }

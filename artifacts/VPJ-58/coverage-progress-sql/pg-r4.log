@@ -1,0 +1,27 @@
+▶ coverage progress append-only full-chain owner exit SQL
+  ✔ transactional migration rollback; old code/schema/RLS/ACL byte preservation (275.203375ms)
+  ✔ RPC helpers/private schema/tables default revoke and RLS; separate owned fixture grant (434.957417ms)
+  ✔ authority/epoch/reauth precede input/CAS/lookup and leave zero writes (834.669834ms)
+  ✔ read-only full inventory includes retained/current/historical sessions and is bounded/paginated (1046.742167ms)
+  ✔ complete closed preview; same-ID retry TTL; no nested snapshots; old/global collisions (373.913125ms)
+  ✔ exact export bytes, last-page retry, ordered cursors, complete proof, own page inventory (894.6625ms)
+  ✔ collector advance/cleanup and selected exit page advance invalidate source CAS without effects (467.013125ms)
+  ✔ atomic selected erase, retained fences and own minimal receipt, no sweeping/source writes (562.089791ms)
+  ✔ selected new page cleanup prevents same-ID export/page revival, retaining own bindings (410.629541ms)
+  ✔ foreign/absent recover exact unknown and lock indistinguishability; owned mismatches reject (1694.976291ms)
+  ✔ historical collector metadata available under new current session; old business cannot resume (308.372916ms)
+  ✔ TTL fixed, undecided nonrenewal, expired immutable receipt recovery, session/account cascade (729.652083ms)
+  ✔ capacity sentinel/selection/cursor/page counter limits and transactional erase fault rollback (741.284083ms)
+  ✔ advisory/root/selected-row NOWAIT conflicts, real concurrent decisions serialize atomically (8108.774583ms)
+  ✔ whole wrapper 1MB bound; metadata-only cursor source change; expired unselected no sweep (675.416209ms)
+  ✔ actual SQL projections through sole TS closed decoder and export controller (SQL claims fixture) (632.322084ms)
+  ✔ immutable minimal requests; own applied rollback only and default revoke on replay (434.891708ms)
+✔ coverage progress append-only full-chain owner exit SQL (24592.760125ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 24633.909209

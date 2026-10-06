@@ -1,0 +1,41 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -derivedDataPath artifacts/native-coverage-progress-r1-derived -destination "platform=iOS Simulator,id=6193DFF8-247D-48CD-9C63-426812AB5EDD" -parallel-testing-enabled NO "-only-testing:VisePandaTests/NativeCoverageProgressTests/actualSessionRequiresOriginalJournalAndUnknownAckDoesNotRetryBeforeLogoutCleanup()" -resultBundlePath /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-coverage-progress-20261006/artifacts/native-coverage-progress-r2/tests.xcresult
+
+2026-10-06 06:37:09.788 xcodebuild[32982:5086993] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionsModels.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-06 06:37:09.788 xcodebuild[32982:5086993] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionsStore.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-06 06:37:09.788 xcodebuild[32982:5086993] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionDestination.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-06 06:37:09.788 xcodebuild[32982:5086993] warning:  The file reference for "ShareIntakeCore/ShareIntakeInbox.swift" is a member of multiple groups ("ShareIntakeExtension" and "Features"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+Writing result bundle at path:
+	/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-coverage-progress-20261006/artifacts/native-coverage-progress-r2/tests.xcresult
+
+2026-10-06 06:37:13.570735+0800 VisePanda[33032:5087707] [General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+2026-10-06 06:37:13.660557+0800 VisePanda[33032:5087707] [General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
+Test Suite 'Selected tests' started at 2026-10-06 06:37:13.883.
+Test Suite 'VisePandaTests.xctest' started at 2026-10-06 06:37:13.883.
+Test Suite 'VisePandaTests.xctest' passed at 2026-10-06 06:37:13.883.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-06 06:37:13.883.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64-apple-ios17.0-simulator
+◇ Suite NativeCoverageProgressTests started.
+◇ Test actualSessionRequiresOriginalJournalAndUnknownAckDoesNotRetryBeforeLogoutCleanup() started.
+2026-10-06 06:37:13.911269+0800 VisePanda[33032:5087578] [plugin] AddInstanceForFactory: No factory registered for id <CFUUID 0x123cc92c0> F8BB1C28-BAE8-11D6-9C31-00039315CD46
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native logout HTTP 200
+✔ Test actualSessionRequiresOriginalJournalAndUnknownAckDoesNotRetryBeforeLogoutCleanup() passed after 0.083 seconds.
+✔ Suite NativeCoverageProgressTests passed after 0.084 seconds.
+✔ Test run with 1 test in 1 suite passed after 0.084 seconds.
+2026-10-06 06:37:14.259 xcodebuild[32982:5086993] [MT] IDETestOperationsObserverDebug: 4.214 elapsed -- Testing started completed.
+2026-10-06 06:37:14.259 xcodebuild[32982:5086993] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-06 06:37:14.259 xcodebuild[32982:5086993] [MT] IDETestOperationsObserverDebug: 4.214 sec, +4.214 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-coverage-progress-20261006/artifacts/native-coverage-progress-r2/tests.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

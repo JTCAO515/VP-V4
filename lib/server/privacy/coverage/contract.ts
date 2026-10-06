@@ -11,6 +11,7 @@ import { linkedTripCommand } from '../linked-trip/contract.ts';
 import { memoryDeleteCommand } from '../memory-delete/contract.ts';
 import { validMaterialCoverageSelection } from '../material-references/coverage.ts';
 import { validNotificationDataCoverageSelection } from '../notification-data/coverage.ts';
+import { validCoverageProgressCoverageSelection } from '../coverage-progress/coverage.ts';
 
 export const COVERAGE_SCHEMA = 'data-coverage/1' as const;
 export const coverageDigest = (bytes: string) => createHash('sha256').update(bytes, 'utf8').digest('hex');
@@ -46,6 +47,7 @@ export function parseCoverageInput(value: unknown): SelectedCommand | null {
   // A stable module key may resolve to different existing commands for export/delete.
   if ('operationId' in command && command.operationId !== input.operationId || 'requestId' in command && command.requestId !== input.operationId) return null;
   if (handler === 'materials') return validMaterialCoverageSelection(input, command) ? { input, command, handler } : null;
+  if (handler === 'coverage_progress') return validCoverageProgressCoverageSelection(input, command) ? { input, command, handler } : null;
   if (handler === 'notification_data') return validNotificationDataCoverageSelection(input, command) ? { input, command, handler } : null;
   if (handler === 'core') return input.tripId === null && input.phase !== 'preview'
     && exact(command, ['requestId','confirmed']) && command.requestId === input.operationId && command.confirmed === true ? { input, command, handler } : null;

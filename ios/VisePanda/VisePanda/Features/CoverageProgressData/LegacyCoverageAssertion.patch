@@ -1,0 +1,11 @@
+--- a/ios/VisePanda/VisePandaTests/NativeDataCoverageTests.swift
++++ b/ios/VisePanda/VisePandaTests/NativeDataCoverageTests.swift
+@@ -58,7 +58,7 @@
+         let decoded = try NativeDataCoverageCatalog(bytes: valid, actor: a)
+         #expect(decoded.modules.count == 34)
+         #expect(Set(decoded.modules.map(\.id)) == Set(NativeDataCoverageCopy.order))
+-        #expect(decoded.modules.contains { $0.id == "coverage_progress" && $0.exportHandler == nil && !$0.missing.isEmpty })
++        #expect(decoded.modules.contains { $0.id == "coverage_progress" && NativeCoverageProgressWire.catalog($0) && !$0.missing.isEmpty })
+         #expect(decoded.modules.contains { $0.id == "app_group" && $0.location == .device })
+         var value = try #require(p["catalog"] as? [String: Any])
+         let rows = try #require(value["modules"] as? [[String: Any]])

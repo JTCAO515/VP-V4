@@ -1,0 +1,13 @@
+VP_COVERAGE_PROGRESS_HTTP_TARGET {"project":"vp-native-ask-3ac45bb1","base":63280}
+✔ signed ordinary Auth -> expired SQL decision rollback -> mother coverage unknown ACK; isolated fixture only (7207.348792ms)
+ℹ RPC grants are only in this uniquely owned disposable fixture; target/default privileges unchanged. No provider/Storage/business deletion.
+ℹ Affected deadline only: signed owner/caller returns unknown ACK, complete progress snapshot identical, no decision/receipt, original fence/Trip preserved. Full normal Auth walk not repeated.
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 10171.734083
+VP_COVERAGE_PROGRESS_HTTP_CLEANUP {"project":"vp-native-ask-3ac45bb1","result":"PASS"}

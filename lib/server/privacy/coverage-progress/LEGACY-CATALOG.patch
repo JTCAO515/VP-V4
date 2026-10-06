@@ -1,0 +1,19 @@
+--- a/tests/integration/privacy/notification-data/coverage.test.mjs
++++ b/tests/integration/privacy/notification-data/coverage.test.mjs
+@@ -12,14 +12,14 @@
+ const actor = { ownerId: id(1), sessionId: id(2), mobileEpoch: 1 }, now = 1801800000000;
+ const command = { action: 'erase', scope: 'notification-trip-data/1', requestId: id(3), objectIds: [id(4)], previewDigest: 'b'.repeat(64), confirmed: true };
+ const bytes = '\n' + JSON.stringify(command);
+-const input = { schemaVersion: 'data-coverage/1', catalogVersion: NOTIFICATION_CATALOG_VERSION, actorId: actor.ownerId,
++const input = { schemaVersion: 'data-coverage/1', catalogVersion: CATALOG_VERSION, actorId: actor.ownerId,
+   sessionId: actor.sessionId, mobileEpoch: actor.mobileEpoch, moduleId: 'notifications', moduleVersion: NOTIFICATION_DATA_SCHEMA,
+   operationId: command.requestId, action: 'delete', phase: 'execute', confirmed: true, tripId: null, commandBytes: bytes };
+ 
+ test('Native producer fixture upgrades original notification row, adds adjacent device/progress and preserves entire denominator', () => {
+   const fixture = JSON.parse(readFileSync(new URL('../../../fixtures/privacy/notification-data/native-catalog-v4.json', import.meta.url)));
+   const intended = MODULE_CATALOG;
+-  assert.equal(fixture.catalogVersion, NOTIFICATION_CATALOG_VERSION); assert.equal(fixture.allUserDataCompleted, false);
++  assert.equal(fixture.catalogVersion, CATALOG_VERSION); assert.equal(fixture.allUserDataCompleted, false);
+   assert.deepEqual(fixture.modules, intended); assert.equal(fixture.modules.length, 34);
+   assert.equal(new Set(fixture.modules.map(m => m.id)).size, 34);
+   const first = fixture.modules.findIndex(m => m.id === 'notifications');
