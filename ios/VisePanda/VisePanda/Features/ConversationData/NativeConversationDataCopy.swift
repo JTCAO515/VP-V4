@@ -43,6 +43,7 @@ enum NativeConversationDataCopy {
             "other_conversations_and_domains": ("其他会话、财务及其他领域资料", "Other conversations, financial records and other domains"),
             "minimal_task_capacity_budget_dispatch_link_receipts": ("最小任务、容量、预算、调用及行程链接回执", "Minimal task, capacity, budget, dispatch and Trip link receipts"),
             "permanent_entity_identity_and_operation_fences": ("永久实体身份、删除标记及操作围栏", "Permanent entity identities, tombstones and operation fences"),
+            "original_source_policy_consent_authority_ids": ("原来源的政策与同意标识；恢复仍核验同一原始授权", "Original source policy and consent identities; recovery checks the same original authority"),
             "applied_or_unapplied_proposal_source_requires_original_flow": ("涉及已应用或未应用 proposal 来源的对象须使用原处理流程", "Objects referenced by applied or unapplied proposals require the original flow"),
             "shared_cross_scope_or_active_work_rejected": ("共享、跨范围或仍在执行的对象拒绝本次擦除", "Shared objects, cross-scope objects and active work are rejected"),
             "readiness_guide_scoped_edit_notification_brief_links_rejected": ("准备检查、指南、定向编辑、通知和 Brief 引用须原流程处理", "Readiness, guide, scoped-edit, notification and Brief references require their original flows"),

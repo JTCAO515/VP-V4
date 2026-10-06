@@ -101,6 +101,12 @@ struct NativeConversationDataView: View {
             ForEach(preview.memoryIDs, id: \.self) { Text("Memory · " + $0).textSelection(.enabled) }
             if preview.tripIDs.isEmpty && preview.memoryIDs.isEmpty { Text(t("未列出 Trip / Memory 引用", "No Trip / Memory references listed")) }
         }
+        Section(t("原来源授权标识", "Original source authority identities")) {
+            ForEach(Array(preview.binding.sourceAuthorities.enumerated()), id: \.offset) { _, authority in
+                Text("Policy · " + authority.policyID + "\nConsent · " + authority.consentID).font(.caption).textSelection(.enabled)
+            }
+            if preview.binding.sourceAuthorities.isEmpty { Text(t("此范围没有带政策的来源对象", "This scope has no policy-bearing source objects")) }
+        }
         ForEach(["eraseFields", "redactFields", "retained", "missing"], id: \.self) { group in
             Section(boundaryTitle(group)) {
                 let codes = NativeConversationDataWire.boundaries[store.scope]?[group] ?? []

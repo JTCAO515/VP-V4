@@ -11,6 +11,16 @@
     "mobileEpoch": 3,
     "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
     "previewDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "sourceAuthorities": [
+      {
+        "policyId": "00000000-0000-4000-8000-000000000020",
+        "consentId": "00000000-0000-4000-8000-000000000021"
+      },
+      {
+        "policyId": "00000000-0000-4000-8000-000000000022",
+        "consentId": "00000000-0000-4000-8000-000000000023"
+      }
+    ],
     "capturedAt": 1791246000000,
     "expiresAt": 1791246030000,
     "boundaries": {
@@ -30,7 +40,8 @@
         "explicit_memory_profiles_receipts_consents",
         "other_conversations_and_domains",
         "minimal_task_capacity_budget_dispatch_link_receipts",
-        "permanent_entity_identity_and_operation_fences"
+        "permanent_entity_identity_and_operation_fences",
+        "original_source_policy_consent_authority_ids"
       ],
       "missing": [
         "applied_or_unapplied_proposal_source_requires_original_flow",

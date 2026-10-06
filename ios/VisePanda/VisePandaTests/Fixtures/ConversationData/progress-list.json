@@ -24,6 +24,16 @@
         "previewDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "capturedAt": 1791246000000,
         "expiresAt": 1791246030000,
+        "sourceAuthorities": [
+          {
+            "policyId": "00000000-0000-4000-8000-000000000020",
+            "consentId": "00000000-0000-4000-8000-000000000021"
+          },
+          {
+            "policyId": "00000000-0000-4000-8000-000000000022",
+            "consentId": "00000000-0000-4000-8000-000000000023"
+          }
+        ],
         "requestDigest": "273027c47be3507c006341008f7800e0e270f6131caf20fed333a8afb3838cbc",
         "state": "erased",
         "previewErased": true,

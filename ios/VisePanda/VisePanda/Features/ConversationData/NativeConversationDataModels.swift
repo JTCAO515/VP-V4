@@ -4,7 +4,7 @@ import CryptoKit
 enum NativeConversationDataWire {
     static let schema = "conversation-data/1"
     static let lifetime: TimeInterval = 30
-    static let bindingKeys: Set<String> = ["schemaVersion", "scope", "requestId", "rootKind", "rootId", "objectIds", "ownerId", "sessionId", "mobileEpoch", "sourceDigest", "previewDigest", "capturedAt", "expiresAt", "boundaries", "allUserDataCompleted"]
+    static let bindingKeys: Set<String> = ["schemaVersion", "scope", "requestId", "rootKind", "rootId", "objectIds", "ownerId", "sessionId", "mobileEpoch", "sourceDigest", "previewDigest", "sourceAuthorities", "capturedAt", "expiresAt", "boundaries", "allUserDataCompleted"]
     static let graphKeys = ["conversationIds", "threadIds", "turnIds", "taskIds", "goalIds", "messageIds", "artifactIds"]
     static let erasedKeys = ["conversations", "goals", "messages", "threads", "turns", "events", "idempotency", "feedback", "artifacts", "revisions", "resultEvents", "sourceReceipts", "intakes", "intakeBindings", "planning", "actionReceipts", "observations", "modelDispatches", "checkpoints", "attemptBindings", "localJournals", "executionRuns", "callWindows", "collectorOrigins", "collectorOutputs", "resultClaims", "completionProofs", "completedReceipts", "grounded", "assistJobs", "work", "memoryConsumers", "goalLinks"]
     static let redactedKeys = ["textBodies", "taskDigests"]
@@ -14,12 +14,12 @@ enum NativeConversationDataWire {
         .sensitive: [
             "eraseFields": ["selected_conversation_goals_messages_intakes_source_receipts", "exclusive_threads_turns_events_feedback", "exclusive_results_all_revisions_events", "closed_planning_grounded_worker_copies", "selected_turn_memory_consumer_references"],
             "redactFields": ["selected_private_text_input_output_permanently_hidden", "selected_task_goal_digest_fixed_deleted_marker"],
-            "retained": ["confirmed_trip_content_history_proposals", "explicit_memory_profiles_receipts_consents", "other_conversations_and_domains", "minimal_task_capacity_budget_dispatch_link_receipts", "permanent_entity_identity_and_operation_fences"],
+            "retained": ["confirmed_trip_content_history_proposals", "explicit_memory_profiles_receipts_consents", "other_conversations_and_domains", "minimal_task_capacity_budget_dispatch_link_receipts", "permanent_entity_identity_and_operation_fences", "original_source_policy_consent_authority_ids"],
             "missing": ["applied_or_unapplied_proposal_source_requires_original_flow", "shared_cross_scope_or_active_work_rejected", "readiness_guide_scoped_edit_notification_brief_links_rejected", "existing_core_export_copies_require_original_cleanup", "provider_and_external_copies_not_erased", "backup_restore_and_old_device_acceptance_unverified"]
         ],
         .progress: [
             "eraseFields": ["selected_transient_preview_graph_conflicts_references"], "redactFields": [],
-            "retained": ["root_selection_actor_epoch_hash_time_operation_fences", "immutable_minimal_decisions_and_entity_tombstones"],
+            "retained": ["root_selection_actor_epoch_hash_time_operation_fences", "immutable_minimal_decisions_and_entity_tombstones", "original_source_policy_consent_authority_ids"],
             "missing": ["source_conversation_data_not_erased", "unselected_operations", "external_copies", "backup_restore_and_old_device_acceptance_unverified"]
         ]
     ]
@@ -49,6 +49,24 @@ enum NativeConversationDataWire {
     }
 }
 
+struct NativeConversationDataSourceAuthority: Equatable {
+    let policyID: String
+    let consentID: String
+
+    static func parse(_ raw: Any?) throws -> [Self] {
+        guard let values = raw as? [[String: Any]], values.count <= 100 else { throw NativeDataError.invalidResponse }
+        var previous: Self?
+        return try values.map { value in
+            _ = try NativeCommunityWire.object(value, ["policyId", "consentId"])
+            let next = try Self(policyID: NativeConversationDataCommand.id(value["policyId"]), consentID: NativeConversationDataCommand.id(value["consentId"]))
+            if let previous {
+                guard previous.policyID < next.policyID || previous.policyID == next.policyID && previous.consentID < next.consentID else { throw NativeDataError.invalidResponse }
+            }
+            previous = next; return next
+        }
+    }
+}
+
 struct NativeConversationDataBinding: Equatable {
     let scope: NativeConversationDataScope
     let requestID: String
@@ -58,6 +76,7 @@ struct NativeConversationDataBinding: Equatable {
     let actor: NativeCommunitySafetyActor
     let sourceDigest: String
     let previewDigest: String
+    let sourceAuthorities: [NativeConversationDataSourceAuthority]
     let capturedAt: Date
     let expiresAt: Date
 
@@ -72,10 +91,12 @@ struct NativeConversationDataBinding: Equatable {
         rootID = try w.optional(v["rootId"], NativeConversationDataCommand.id)
         objectIDs = try NativeConversationDataCommand.ids(v["objectIds"], maximum: 20)
         sourceDigest = try w.hash(v["sourceDigest"]); previewDigest = try w.hash(v["previewDigest"])
+        sourceAuthorities = try NativeConversationDataSourceAuthority.parse(v["sourceAuthorities"])
         let capture = try s.integer(v["capturedAt"]), expiry = try s.integer(v["expiresAt"])
         capturedAt = try s.time(capture); expiresAt = try s.time(expiry)
         guard now.timeIntervalSince1970.isFinite, capture <= 9_007_199_254_740_991 - 30_000,
               requestID == command.requestID, rootKind == command.rootKind, rootID == command.rootID, objectIDs == command.objectIDs,
+              rootKind != .conversation || !sourceAuthorities.isEmpty,
               command.sourceDigest == nil || sourceDigest == command.sourceDigest,
               command.previewDigest == nil || previewDigest == command.previewDigest,
               capturedAt <= now, expiry == capture + 30_000, decided || now < expiresAt else { throw NativeDataError.invalidResponse }

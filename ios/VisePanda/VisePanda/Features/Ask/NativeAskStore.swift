@@ -21,6 +21,7 @@ final class NativeAskStore {
         return max(1, groundedDeadline - ProcessInfo.processInfo.systemUptime - lead)
     }
     private var operation: UUID?
+    private var readGeneration = UUID()
     private var eventRead: UUID?
     private var eventCursors: [String: Int] = [:]
     enum AiAssistState: Equatable { case loading, done(NativeAiAssistStatus), error }
@@ -108,6 +109,26 @@ final class NativeAskStore {
         eventRead = nil
         aiAssist = [:]; aiAssistTokens = [:]
         operation = nil; busy = false; policy = nil; turns = []; notice = nil
+    }
+
+    func applyConversationErasure(_ erased: NativeConversationDataErasure) {
+        guard scope == erased.scope else { return }
+        // An empty visible cache can still have an old history request in flight.
+        // Invalidate that read without invalidating an unrelated send's bytes.
+        readGeneration = UUID()
+        let pendingAffected = pending.map { erased.turnIDs.contains($0.turnId) || erased.threadIDs.contains($0.threadId) } == true
+        let visibleAffected = turns.contains { erased.turnIDs.contains($0.turnId) || erased.threadIDs.contains($0.threadId) }
+        let intentAffected: Bool
+        switch intent {
+        case .continuation(let turn): intentAffected = erased.turnIDs.contains(turn.turnId) || erased.threadIDs.contains(turn.threadId)
+        case .awaiting(let id): intentAffected = erased.turnIDs.contains(id)
+        default: intentAffected = false
+        }
+        guard pendingAffected || visibleAffected || intentAffected else { return }
+        // Original read fence rejects pre-erasure replies; no provider cancellation.
+        suspendReads()
+        if pendingAffected { pending = nil; pendingNotice = nil; pendingAcknowledged = false; draft = "" }
+        if intentAffected { intent = .newGoal; draft = "" }
     }
 
     /// Real-time, non-persisted, user-triggered supplement (VPJ-76 slice 9),
@@ -303,10 +324,12 @@ final class NativeAskStore {
     }
 
     private func load(_ session: NativeSession, _ current: Context) async throws {
+        let generation = readGeneration
         let policy: NativeTextPolicyReply = try await call(session, current, suffix: "/policy", method: "GET")
         guard policy.version == mode.version && policy.kind == "policy" && policy.policy.valid else { throw NativeDataError.invalidResponse }
         let started = ProcessInfo.processInfo.systemUptime
         let history: NativeTextHistory = try await call(session, current, suffix: "/turns", method: "GET")
+        guard readGeneration == generation else { throw NativeDataError.staleSessionResponse }
         guard history.version == mode.version && history.kind == (mode == .grounded ? "grounded_history" : "history") && history.turns.count <= 20
             && history.turns.allSatisfy(\.valid) && Set(history.turns.map(\.id)).count == history.turns.count else { throw NativeDataError.invalidResponse }
         try ensure(session, current)

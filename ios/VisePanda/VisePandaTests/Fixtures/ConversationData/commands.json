@@ -10,6 +10,7 @@
   "receiptRecoveryNow": 1791246040000,
   "eraseBytes": "  {\"action\":\"erase\",\"scope\":\"conversation-sensitive-data/1\",\"requestId\":\"00000000-0000-4000-8000-000000000003\",\"rootKind\":\"conversation\",\"rootId\":\"00000000-0000-4000-8000-000000000004\",\"objectIds\":[],\"sourceDigest\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"previewDigest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"confirmed\":true}\n",
   "progressEraseBytes": "\n{\"action\":\"erase\",\"scope\":\"conversation-delete-progress/1\",\"requestId\":\"00000000-0000-4000-8000-000000000013\",\"rootKind\":null,\"rootId\":null,\"objectIds\":[\"00000000-0000-4000-8000-000000000003\"],\"sourceDigest\":\"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"previewDigest\":\"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\",\"confirmed\":true}  ",
+  "tasklessEraseBytes": " {\"action\":\"erase\",\"scope\":\"conversation-sensitive-data/1\",\"requestId\":\"00000000-0000-4000-8000-000000000016\",\"rootKind\":\"conversation\",\"rootId\":\"00000000-0000-4000-8000-000000000017\",\"objectIds\":[],\"sourceDigest\":\"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\",\"previewDigest\":\"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\",\"confirmed\":true}\n",
   "preview": {
     "action": "preview",
     "scope": "conversation-sensitive-data/1",
@@ -27,5 +28,13 @@
     "objectIds": [
       "00000000-0000-4000-8000-000000000003"
     ]
+  },
+  "tasklessPreview": {
+    "action": "preview",
+    "scope": "conversation-sensitive-data/1",
+    "requestId": "00000000-0000-4000-8000-000000000016",
+    "rootKind": "conversation",
+    "rootId": "00000000-0000-4000-8000-000000000017",
+    "objectIds": []
   }
 }

@@ -124,6 +124,7 @@ enum NativeConversationDataProtocol {
         let erase = try s.counts(v["eraseCounts"], keys: s.erasedKeys), redact = try s.counts(v["redactCounts"], keys: s.redactedKeys), retain = try s.counts(v["retainCounts"], keys: s.retainedKeys)
         let refs = try references(v["retainedReferences"]), conflicts = try conflictList(v["conflicts"])
         let eligible = try w.bool(v["eligible"]), progressCount = try s.integer(v["progressCount"], minimum: 0)
+        guard !eligible || !binding.sourceAuthorities.isEmpty || (redact["textBodies"] == 0 && graph.ids["taskIds"]?.isEmpty == true) else { throw NativeDataError.invalidResponse }
         guard eligible == conflicts.isEmpty,
               !eligible || root(graph, command: command) && cardinalities(graph, erased: erase, redacted: redact, retained: retain) &&
                 totalRows(erased: erase, redacted: redact, retained: retain) <= 4100 else { throw NativeDataError.invalidResponse }
@@ -155,8 +156,10 @@ enum NativeConversationDataProtocol {
         _ = try w.object(v, s.bindingKeys.union(["kind", "state", "decision"]))
         guard v["kind"] as? String == "receipt", v["state"] as? String == "erased" else { throw NativeDataError.invalidResponse }
         let binding = try NativeConversationDataBinding(v, command: command, actor: actor, now: now, decided: true)
-        return try decision(v["decision"], command: command, capturedAt: binding.capturedAt,
-            expiresAt: binding.expiresAt, digest: digest, now: now).receipt(binding)
+        let decoded = try decision(v["decision"], command: command, capturedAt: binding.capturedAt,
+            expiresAt: binding.expiresAt, digest: digest, now: now)
+        guard !binding.sourceAuthorities.isEmpty || (decoded.redacted["textBodies"] == 0 && decoded.graph.ids["taskIds"]?.isEmpty == true) else { throw NativeDataError.invalidResponse }
+        return decoded.receipt(binding)
     }
 
     private static func decision(_ raw: Any?, command: NativeConversationDataCommand, capturedAt: Date, expiresAt: Date, digest: String, now: Date) throws -> NativeConversationDataDecision {
@@ -182,10 +185,12 @@ enum NativeConversationDataProtocol {
 
     private static func operation(_ v: [String: Any], owner: String, now: Date) throws -> NativeConversationDataObject {
         let w = NativeCommunityWire.self, s = NativeConversationDataWire.self
-        _ = try w.object(v, ["requestId", "ownerId", "sessionId", "mobileEpoch", "scope", "rootKind", "rootId", "objectIds", "sourceDigest", "previewDigest", "capturedAt", "expiresAt", "requestDigest", "state", "previewErased", "graph", "eraseCounts", "redactCounts", "retainCounts", "retainedReferences", "conflicts", "decision"])
+        _ = try w.object(v, ["requestId", "ownerId", "sessionId", "mobileEpoch", "scope", "rootKind", "rootId", "objectIds", "sourceDigest", "previewDigest", "sourceAuthorities", "capturedAt", "expiresAt", "requestDigest", "state", "previewErased", "graph", "eraseCounts", "redactCounts", "retainCounts", "retainedReferences", "conflicts", "decision"])
         var input: [String: Any] = ["action": "preview"]
         for key in ["scope", "requestId", "rootKind", "rootId", "objectIds"] { input[key] = v[key] }
         let command = try NativeConversationDataCommand(body: w.bytes(input))
+        let authorities = try NativeConversationDataSourceAuthority.parse(v["sourceAuthorities"])
+        guard command.rootKind != .conversation || !authorities.isEmpty else { throw NativeDataError.invalidResponse }
         guard try NativeConversationDataCommand.id(v["ownerId"]) == owner.lowercased(),
               let state = v["state"] as? String, ["previewed", "erased"].contains(state) else { throw NativeDataError.invalidResponse }
         _ = try NativeConversationDataCommand.id(v["sessionId"]); _ = try s.integer(v["mobileEpoch"])
@@ -200,6 +205,7 @@ enum NativeConversationDataProtocol {
             let erase = try s.counts(v["eraseCounts"], keys: s.erasedKeys), redact = try s.counts(v["redactCounts"], keys: s.redactedKeys), retain = try s.counts(v["retainCounts"], keys: s.retainedKeys)
             _ = try references(v["retainedReferences"])
             if try conflictList(v["conflicts"]).isEmpty {
+                guard !authorities.isEmpty || (redact["textBodies"] == 0 && graph.ids["taskIds"]?.isEmpty == true) else { throw NativeDataError.invalidResponse }
                 guard root(graph, command: command), cardinalities(graph, erased: erase, redacted: redact, retained: retain),
                       totalRows(erased: erase, redacted: redact, retained: retain) <= 4100 else { throw NativeDataError.invalidResponse }
             }
@@ -208,8 +214,9 @@ enum NativeConversationDataProtocol {
             guard v["requestDigest"] is NSNull, v["decision"] is NSNull else { throw NativeDataError.invalidResponse }
         } else {
             guard previewErased else { throw NativeDataError.invalidResponse }
-            _ = try decision(v["decision"], command: command, capturedAt: s.time(capture),
+            let decoded = try decision(v["decision"], command: command, capturedAt: s.time(capture),
                 expiresAt: s.time(expiry), digest: w.hash(v["requestDigest"]), now: now)
+            guard !authorities.isEmpty || (decoded.redacted["textBodies"] == 0 && decoded.graph.ids["taskIds"]?.isEmpty == true) else { throw NativeDataError.invalidResponse }
         }
         let details = try JSONSerialization.data(withJSONObject: v, options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes])
         guard let text = String(data: details, encoding: .utf8) else { throw NativeDataError.invalidResponse }

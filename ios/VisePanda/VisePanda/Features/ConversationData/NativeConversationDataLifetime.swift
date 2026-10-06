@@ -48,7 +48,8 @@ struct NativeConversationDataLease {
 /// It contains source IDs; domain values and provider operations stay with their owners.
 struct NativeConversationDataErasure: Identifiable {
     let id = UUID()
-    let scope: NativeDataScope
+    let actor: NativeCommunitySafetyActor
+    var scope: NativeDataScope { actor.scope }
     let conversationIDs: Set<String>
     let threadIDs: Set<String>
     let turnIDs: Set<String>
@@ -56,7 +57,7 @@ struct NativeConversationDataErasure: Identifiable {
     let artifactIDs: Set<String>
 
     init(receipt: NativeConversationDataReceipt, actor: NativeCommunitySafetyActor) {
-        scope = actor.scope
+        self.actor = actor
         conversationIDs = Set(receipt.graph.ids["conversationIds"] ?? [])
         threadIDs = Set(receipt.graph.ids["threadIds"] ?? [])
         turnIDs = Set(receipt.graph.ids["turnIds"] ?? [])
