@@ -245,6 +245,30 @@ export const LANES = {
   },
 };
 
+/** CI execution partitions only; logical classification and manual lanes stay intact. */
+export function executionMatrix(lanes) {
+  if (!Array.isArray(lanes) || lanes.length === 0 || new Set(lanes).size !== lanes.length
+    || lanes.some(lane => lane !== "none" && !Object.hasOwn(LANES, lane))
+    || lanes.includes("none") && lanes.length !== 1) throw Error("Invalid selected DB lanes");
+  return { include: lanes.flatMap(lane => {
+    const count = lane === "supabase-http-native" ? 2 : 1;
+    return Array.from({ length: count }, (_, i) => ({ lane, shard: `${i + 1}/${count}`,
+      name: count === 1 ? `lane (${lane})` : `lane (${lane} / ${i + 1} of ${count})` }));
+  }) };
+}
+export function executionSteps(lane, shard = null) {
+  if (!Object.hasOwn(LANES, lane)) throw Error("Unknown DB lane");
+  const steps = LANES[lane].steps;
+  if (shard === null) return steps;
+  const count = lane === "supabase-http-native" ? 2 : 1;
+  const match = /^([12])\/([12])$/.exec(shard);
+  if (!match || Number(match[2]) !== count || Number(match[1]) > count)
+    throw Error("Invalid DB lane shard");
+  const selected = steps.filter((_, i) => i % count === Number(match[1]) - 1);
+  if (!selected.length) throw Error("Empty DB lane shard");
+  return selected;
+}
+
 /** Explicit allowlist: gated files that CI does not run, with the reason. Keep this list short. */
 export const EXCLUDED = {
   "tests/integration/cost/full-supabase-budget.test.mjs":
@@ -394,13 +418,14 @@ export async function startDisposableStack(base) {
   };
 }
 
-async function runLane(lane) {
+async function runLane(lane, shard = null) {
   const definition = LANES[lane];
+  const steps = executionSteps(lane, shard);
   preflight(lane, definition.needs);
   const results = [];
   const stack = definition.stack ? await startDisposableStack(definition.stack.portBase) : null;
   try {
-    for (const step of definition.steps) {
+    for (const step of steps) {
       const env = { ...process.env, ...(stack?.env ?? {}), ...(step.env ?? {}), VP_CI_SUITE: "db-integration" };
       const [command, ...args] = step.runner ?? node("--test", "--test-reporter=tap", `--test-concurrency=${step.concurrency ?? 4}`, ...step.files);
       console.log(`\n::group::${lane} / ${step.name}`);
@@ -420,6 +445,11 @@ async function runLane(lane) {
 async function main() {
   const argv = process.argv.slice(2);
   const { rows, problems } = classify();
+  if (argv.length === 1 && argv[0] === "--ci-matrix") {
+    if (problems.length) throw Error(problems.join("\n"));
+    console.log(JSON.stringify(executionMatrix(JSON.parse(process.env.VP_DB_LANES_JSON ?? "null"))));
+    return;
+  }
   if (argv.includes("--images")) {
     console.log(pinnedImages().join("\n"));
     return;
@@ -430,19 +460,21 @@ async function main() {
     return;
   }
   if (problems.length) throw new Error(`Integration test classification is incomplete:\n${problems.join("\n")}`);
-  const lanes = [];
+  const lanes = []; let shard = null;
   for (let i = 0; i < argv.length; i++) {
+    if (argv[i] === "--shard" && argv[i + 1] && shard === null) { shard = argv[++i]; continue; }
     if (argv[i] !== "--lane" || !argv[i + 1]) throw new Error(`Usage: --list | --lane <${Object.keys(LANES).join("|")}|all> ...`);
     lanes.push(...(argv[i + 1] === "all" ? Object.keys(LANES) : [argv[i + 1]]));
     i++;
   }
   if (!lanes.length) throw new Error(`Usage: --list | --lane <${Object.keys(LANES).join("|")}|all> ...`);
+  if (shard !== null && lanes.length !== 1) throw Error("A shard requires exactly one lane");
   for (const lane of lanes) if (!LANES[lane]) throw new Error(`Unknown lane ${lane}`);
 
   const results = [];
   let crashed = null;
   for (const lane of lanes) {
-    try { results.push(...(await runLane(lane))); }
+    try { results.push(...(await runLane(lane, shard))); }
     catch (error) { crashed = error; results.push({ lane, step: "(setup)", outcome: "failed", problems: [String(error.message ?? error)] }); break; }
   }
   const header = "| Lane | Step | Outcome | Tests | Pass | Skipped | Fail | Seconds |\n| --- | --- | --- | ---: | ---: | ---: | ---: | ---: |\n";
