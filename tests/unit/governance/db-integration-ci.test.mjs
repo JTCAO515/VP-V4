@@ -1,9 +1,11 @@
 import assert from "node:assert/strict";
-import { readFileSync, readdirSync } from "node:fs";
+import { readFileSync, readdirSync, mkdtempSync, rmSync, existsSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import test from "node:test";
 import {spawnSync} from "node:child_process";
 import {selectCheckPlan,DB_LANES} from "../../../scripts/ci-change-scope.mjs";
-import { EXCLUDED, LANES, classify, parseNodeTestSummary, pinnedImages, stepProblems } from "../../../scripts/ci-suites/db-integration.mjs";
+import { EXCLUDED, LANES, executionMatrix, executionSteps, classify, parseNodeTestSummary, pinnedImages, stepProblems } from "../../../scripts/ci-suites/db-integration.mjs";
 
 const read = (path) => readFileSync(path, "utf8");
 
@@ -31,10 +33,10 @@ test("a DB integration lane fails on skip, todo, cancel, failure, non-zero exit 
 
 test("DB Integration dynamically selects lanes with a stable fail-closed aggregate and real classification",()=>{
  const workflow=read('.github/workflows/db-integration.yml');assert.match(workflow,/^permissions:\n  contents: read$/m);
- assert.match(workflow,/lane: \$\{\{ fromJSON\(needs.select.outputs.lanes\) \}\}/);
+ assert.match(workflow,/include: \$\{\{ fromJSON\(needs.select.outputs.execution_matrix\).include \}\}/);
  assert.deepEqual(selectCheckPlan(['supabase/migrations/new.sql'],'pull_request').dbLanes,Object.keys(LANES));assert.deepEqual([...DB_LANES].sort(),Object.keys(LANES).sort());
  assert.match(workflow,/node scripts\/ci-suites\/db-integration\.mjs --list/);assert.match(workflow,/node scripts\/ci-change-scope\.mjs/);
- assert.match(workflow,/node scripts\/ci-suites\/db-integration\.mjs --lane \$\{\{ matrix\.lane \}\}/);
+ assert.match(workflow,/node scripts\/ci-suites\/db-integration\.mjs --lane "\$\{\{ matrix\.lane \}\}" --shard "\$\{\{ matrix\.shard \}\}"/);
  assert.match(workflow,/^  db-integration:\n    if: always\(\)\n    needs: \[select, lane\]$/m);
  assert.match(workflow,/test "\$SELECT_RESULT" = success/);assert.match(workflow,/test "\$LANE_RESULT" = success/);assert.match(workflow,/test "\$LANE_RESULT" = skipped/);assert.match(workflow,/exit 1/);
  assert.ok(pinnedImages().includes('public.ecr.aws/supabase/postgres:17.6.1.159'));
@@ -86,4 +88,53 @@ test('native PR uses unsigned build or affected permission/data code tests; manu
 test('changed noncritical native test classes and unknown native sources are never omitted',()=>{
  const code="import importlib.util,json,re,pathlib; s=importlib.util.spec_from_file_location('vpci','scripts/ios/ci.py');m=importlib.util.module_from_spec(s);s.loader.exec_module(m);f='ios/VisePanda/VisePandaTests/AccessibilityContrastTests.swift';names=m.checked_test_names(pathlib.Path(f));print(json.dumps([names,m.pr_test_selection([f]),m.pr_test_selection(['ios/UnknownScope/Changed.swift'])]))";
  const r=spawnSync('python3',['-c',code],{encoding:'utf8'});assert.equal(r.status,0,r.stderr);const [names,selected,unknown]=JSON.parse(r.stdout);assert.ok(names.length>0);for(const name of names)assert.ok(selected.includes('VisePandaTests/'+name));assert.ok(selected.includes('VisePandaTests/NativeTripStateTests'));assert.deepEqual(unknown,['VisePandaTests']);
+});
+
+
+test("bounded CI shards preserve every logical step exactly once and reject malformed partitions", () => {
+  const jobs = executionMatrix(Object.keys(LANES)).include;
+  for (const lane of Object.keys(LANES)) {
+    const own = jobs.filter(job => job.lane === lane);
+    assert.equal(own.length, lane === "supabase-http-native" ? 2 : 1);
+    const selected = own.flatMap(job => executionSteps(lane, job.shard));
+    assert.equal(new Set(selected).size, LANES[lane].steps.length);
+    assert.equal(selected.length, LANES[lane].steps.length);
+    assert.deepEqual(new Set(selected), new Set(LANES[lane].steps));
+    for (const job of own) {
+      const part = executionSteps(lane, job.shard);
+      assert.ok(part.length > 0);
+      assert.deepEqual(part, LANES[lane].steps.filter(step => part.includes(step)));
+    }
+    assert.deepEqual(executionSteps(lane), LANES[lane].steps);
+  }
+  for (const input of [null, [], ["unknown"], ["postgres", "postgres"], ["none", "postgres"]]) assert.throws(() => executionMatrix(input));
+  assert.deepEqual(executionMatrix(["none"]).include, [{lane:"none",shard:"1/1",name:"lane (none)"}]);
+  for (const shard of ["0/2", "3/2", "1/3", "2/1", "1/1", "garbage"]) assert.throws(() => executionSteps("supabase-http-native", shard));
+  assert.throws(() => executionSteps("postgres", "1/2"));
+  assert.throws(() => executionSteps("unknown", "1/1"));
+  assert.match(read(".github/workflows/db-integration.yml"), /timeout-minutes: 30/);
+});
+
+
+test("CI matrix CLI and actual workflow projection fail before emitting an output on bad plans", () => {
+  const command = ["scripts/ci-suites/db-integration.mjs", "--ci-matrix"];
+  for (const input of ["not-json", "{}", "[]", '["unknown"]', '["none","postgres"]', '["postgres","postgres"]']) {
+    const cli = spawnSync(process.execPath, command, {env:{...process.env,VP_DB_LANES_JSON:input},encoding:"utf8"});
+    assert.notEqual(cli.status, 0); assert.equal(cli.stdout.trim(), "");
+  }
+  const none = spawnSync(process.execPath, command, {env:{...process.env,VP_DB_LANES_JSON:'["none"]'},encoding:"utf8"});
+  assert.equal(none.status,0,none.stderr); assert.deepEqual(JSON.parse(none.stdout),executionMatrix(["none"]));
+  const workflow=read(".github/workflows/db-integration.yml");
+  const match=workflow.match(/id: execution[\s\S]*?run: \|\n([\s\S]*?)(?=      - )/);
+  assert.ok(match); const body=match[1].split("\n").map(line=>line.startsWith("          ")?line.slice(10):line).join("\n");
+  assert.match(body,/^matrix=\$\(node scripts\/ci-suites\/db-integration\.mjs --ci-matrix\)$/m);
+  const dir=mkdtempSync(join(tmpdir(),"vp-db-matrix-output-")),output=join(dir,"github-output");
+  try {
+    for(const input of ["not-json",'[]','["unknown"]']){
+      const run=spawnSync("/bin/bash",["-e","-c",body],{env:{...process.env,VP_DB_LANES_JSON:input,GITHUB_OUTPUT:output},encoding:"utf8"});
+      assert.notEqual(run.status,0);assert.ok(!existsSync(output));
+    }
+    const run=spawnSync("/bin/bash",["-e","-c",body],{env:{...process.env,VP_DB_LANES_JSON:'["none"]',GITHUB_OUTPUT:output},encoding:"utf8"});
+    assert.equal(run.status,0,run.stderr);assert.equal(read(output),'matrix='+JSON.stringify(executionMatrix(["none"]))+'\n');
+  } finally {rmSync(dir,{recursive:true,force:true});}
 });

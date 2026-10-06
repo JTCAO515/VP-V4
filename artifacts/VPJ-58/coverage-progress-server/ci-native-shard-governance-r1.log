@@ -1,0 +1,28 @@
+✔ only bounded documentation pull requests use the smaller check set (0.693209ms)
+✔ runtime, contracts, unknown files and both sides of moves retain full checks (0.30175ms)
+✔ the known product-planning set uses documentation checks, while a single runtime change retains full checks (0.060458ms)
+✔ actual Git comparison includes both sides of a runtime-to-document rename (361.520166ms)
+✔ missing, invalid or unavailable comparison inputs fall back to the complete gate (14.522667ms)
+✔ affected selector docs/backend/native/UI/SQL matrices preserve required real checks (1.267125ms)
+✔ CI policy changes and unknown/unavailable/manual inputs fail closed to the full superset (23.875041ms)
+✔ actual registered test lane is selected while known Web failure coverage cannot be narrowed away (5.679667ms)
+✔ wiki source imports select native PostgreSQL persistence and Ops readers without making all server full (0.183ms)
+✔ every gated integration test file is in a DB integration lane or on the reasoned allowlist (34.933417ms)
+✔ a DB integration lane fails on skip, todo, cancel, failure, non-zero exit or a missing summary (0.71ms)
+✔ DB Integration dynamically selects lanes with a stable fail-closed aggregate and real classification (17.168375ms)
+✔ deduplicated four PG workflows keep manual commands covered by the selected postgres step (0.828084ms)
+✔ every workflow declares least-privilege token permissions (1.289292ms)
+✔ the self-hosted iOS runner never executes fork pull request code (0.172291ms)
+✔ stable DB aggregate executes strict result predicates for empty/full/error/cancel states (30.329542ms)
+✔ native PR uses unsigned build or affected permission/data code tests; manual remains full (63.045792ms)
+✔ changed noncritical native test classes and unknown native sources are never omitted (48.445333ms)
+✔ bounded CI shards preserve every logical step exactly once and reject malformed partitions (0.888875ms)
+✔ CI matrix CLI and actual workflow projection fail before emitting an output on bad plans (550.934666ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 809.625667
