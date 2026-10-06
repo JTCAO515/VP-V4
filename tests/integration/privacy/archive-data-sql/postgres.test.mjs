@@ -277,13 +277,19 @@ test('archive selected source/export/progress exit SQL', {skip:!enabled,timeout:
   const beforeWrapper=await state();await reject(c,{action:'preview',scope,requestId:uuid(),tripId:ct.id,tripVersion:2,objectIds:[]},'ARCHIVE_CAPACITY');assert.equal(await state(),beforeWrapper);
  });
  await t.test('source/account/session/request NOWAIT fences; foreign recovery unaffected; concurrent erase CAS',async()=>{
-  const a=await actor(),tr=await trip(a),r=await preview(a,tr);await collect(a,r);const e=await progressPreview(a,[r.requestId]),bytes=JSON.stringify(consent(e));
+  const a=await actor(),tr=await trip(a);
   async function held(lockSQL,body){
    const marker=uuid();const holding=command('docker',['exec','-i',container,'psql','-h','/tmp/vpj59-socket','-U','postgres','-X','-q','-At','-v','ON_ERROR_STOP=1'],`set application_name=${lit(marker)};begin;${lockSQL}select pg_sleep(1);rollback;`);
    let locked=false;for(let i=0;i<30;i++){if(await db(`select count(*) from pg_stat_activity where application_name=${lit(marker)} and wait_event='PgSleep';`)==='1'){locked=true;break;}await new Promise(r=>setTimeout(r,10));}
    assert.equal(locked,true);try{await body();}finally{assert.equal((await holding).code,0);}
   }
-  for(const lockSQL of [`select pg_advisory_xact_lock(hashtextextended('${a.owner}',34));`,`select 1 from identity_private.mobile_accounts where owner_id='${a.owner}' for update;`,`select 1 from auth.sessions where id='${a.session}' for update;`,`select 1 from public.trips where id='${tr.id}' for update;`,`select 1 from public.trip_proposals where trip_id='${tr.id}' for update;`,`select 1 from public.trip_version_snapshots where trip_id='${tr.id}' for update;`,`select 1 from public.trip_archives where trip_id='${tr.id}' for update;`,`select 1 from trip_lifecycle_private.operations_v1 where owner_id='${a.owner}' and trip_id='${tr.id}' for update;`])await held(lockSQL,()=>reject(a,consent(r,'validate'),'ARCHIVE_CONFLICT'));
+  for(const lockSQL of [`select pg_advisory_xact_lock(hashtextextended('${a.owner}',34));`,`select 1 from identity_private.mobile_accounts where owner_id='${a.owner}' for update;`,`select 1 from auth.sessions where id='${a.session}' for update;`,`select 1 from public.trips where id='${tr.id}' for update;`,`select 1 from public.trip_proposals where trip_id='${tr.id}' for update;`,`select 1 from public.trip_version_snapshots where trip_id='${tr.id}' for update;`,`select 1 from public.trip_archives where trip_id='${tr.id}' for update;`,`select 1 from trip_lifecycle_private.operations_v1 where owner_id='${a.owner}' and trip_id='${tr.id}' for update;`]){
+   // Separate authority preparation from the subsequent real lock conflict.
+   // Each independent probe has its own ORIGINAL 30s binding, never a renewal.
+   const probe=await preview(a,tr);await collect(a,probe);const beforeProbe=await state();
+   await held(lockSQL,()=>reject(a,consent(probe,'validate'),'ARCHIVE_CONFLICT'));assert.equal(await state(),beforeProbe);
+  }
+  const r=await preview(a,tr);await collect(a,r);const e=await progressPreview(a,[r.requestId]),bytes=JSON.stringify(consent(e));
   const b=await actor();await held(`select pg_advisory_xact_lock(hashtextextended('archive-request:${e.requestId}',0));select 1 from archive_data_private.requests_v1 where request_id='${e.requestId}' for update;`,async()=>assert.equal((await recover(b,e,bytes)).kind,'unknown'));
   const results=await Promise.all([sql(container,query(a,consent(e))),sql(container,query(a,consent(e)))]);assert.ok(results.some(x=>x.code===0));for(const x of results)if(x.code!==0)assert.match(x.stderr,/ARCHIVE_CONFLICT/);
   const receipt=await recover(a,e,bytes);assert.equal(receipt.effects.clearedProgress,3);assert.equal(await db('select deadlocks from pg_stat_database where datname=current_database();'),'0');

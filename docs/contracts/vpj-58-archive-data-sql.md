@@ -140,3 +140,25 @@ Main; it was not changed under the case-14-only freeze scope. Preserve both prio
 CI FAIL and this local FAIL in `ci721-case14-fail.log.gz`, `ci667-fixture-after.log.gz`
 and `ci667-fixture-diagnosis.json`. New-head CI remains UNRUN/MERGEHOLD; this is not
 a runtime performance fix or renewed whole-scope/target acceptance claim.
+
+Main then authorized only the necessary same-task case-15 fixture correction:
+each original target-lock probe establishes an independent fresh preview and its
+complete original export proof BEFORE holding that target lock. The rejection
+still requires ARCHIVE_CONFLICT and unchanged metadata. No binding is renewed or
+qualified inside a held-lock callback. The foreign recovery/concurrent erase use
+their own freshly prepared original binding; original exact-byte/CAS/cleared-row/
+zero-deadlock assertions remain. Statement 5s, TTL 30s, runtime RPC, source
+projection, all permissions and source tables are unchanged. The prior local
+FAIL stays archived separately; final fixture verification is recorded separately
+and does not replace CI results for another head.
+
+Final local original-scope run: 19/19 PASS, zero failures/skips/cancellations,
+76108 ms. Case 14 source remains exactly 999950 bytes (964 items per historical
+version); direct source query 204 ms, complete case 2628 ms. Case 15 passed all
+original real-lock/foreign-recovery/concurrent-CAS/zero-deadlock assertions plus
+unchanged metadata after every conflict, 14935 ms. Natural original TTL expiry
+and immutable receipt recovery, actual sole-TS decoding/collection and original
+source/schema/ACL preservation also passed in that same run. Logs and source
+hashes are in `ci667-fixture-final.log.gz` / `ci667-fixture-final.json` alongside
+both retained failed runs. New-head CI still requires sole TS integration and an
+actual run; the local result does not lift MERGEHOLD.
