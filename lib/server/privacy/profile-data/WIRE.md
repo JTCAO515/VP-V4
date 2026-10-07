@@ -231,3 +231,14 @@ REGISTRATION.patch is precisely four shared hunks against read-only ResultData
 98af2832 snapshot (.8), apply-check only; no ResultData shared write/release inferred.
 PROFILE-WRITER.patch runtime guard rejects absent/malformed actual new revision/mask;
 no silent default mask accepted from real upgraded DB. Both patches remain unapplied.
+
+Main008264 precise leases consumed (same task, no whole-file lease): original219
+integrator01a0df0f released feasibility/preferences.ts exact mask hunk; original240
+TS01a10abc-c06b released ONLY user-data-adapter.ts Profile hunk. Applied matching
+patch via git apply --include each file, preserved Trip/lifecycle/archive imports
+and all other operations. request-guards/ProfileWorkspace/registration still pending.
+Actual affected verification: original feasibility9 + own8 PASS0skip; original
+Profile security1 PASS0skip; direct actual leased function clears fallback hints,
+newly saved pace alone stays a soft reference, independent explicit needs unchanged;
+typecheck/diff PASS. Four-file virtual overlay typecheck already PASS and reused.
+Earlier Next API build PASS applies to own API source; no new source/PG/Auth claim.
