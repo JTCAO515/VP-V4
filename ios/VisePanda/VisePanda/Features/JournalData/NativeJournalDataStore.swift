@@ -33,7 +33,7 @@ import Observation
     }
     private func read(_ actor: NativeCommunitySafetyActor) throws -> [NativeJournalDataSnapshot] {
         let values = try source.read(actor)
-        guard values.count <= 10_000, values.allSatisfy(\.valid),
+        guard values.count == NativeJournalDataSourceID.allCases.count, values.count <= 10_000, values.allSatisfy(\.valid),
               Set(values.map { $0.record.source }) == Set(NativeJournalDataSourceID.allCases) else {
             throw NativeDataError.invalidResponse
         }
@@ -108,7 +108,7 @@ import Observation
                   now() >= (lastNow ?? selected.createdAt), uptime() >= (lastUptime ?? selected.uptime),
                   let original = selected.snapshots.first(where: { $0.record.source == id && $0.record.state == .pending }),
                   let completion = source.completion(source: id, actor: current), completion.actor == current,
-                  completion.originalIdentity == original.originalIdentity, !completion.receiptIdentity.isEmpty,
+                  completion.operationIdentity == original.operationIdentity, !completion.receiptIdentity.isEmpty,
                   completion.completedAt >= selected.createdAt,
                   try source.physicallyAbsent(source: id, actor: current) else { throw NativeDataError.staleSessionResponse }
             try discardExport()

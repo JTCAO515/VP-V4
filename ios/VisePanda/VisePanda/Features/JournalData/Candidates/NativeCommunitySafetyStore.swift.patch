@@ -1,0 +1,22 @@
+--- a/ios/VisePanda/VisePanda/Features/CommunitySafety/NativeCommunitySafetyStore.swift
++++ b/ios/VisePanda/VisePanda/Features/CommunitySafety/NativeCommunitySafetyStore.swift
+@@ -2,6 +2,8 @@
+ import Observation
+ 
+ @MainActor @Observable final class NativeCommunitySafetyStore {
++    var journalObservation: NativeJournalDataObservation?
++
+     typealias Request = (Data) async throws -> Data
+     private(set) var actor: NativeCommunitySafetyActor?
+     private(set) var objects: [NativeCommunitySafetyObject] = []
+@@ -195,8 +197,10 @@
+         return true
+     }
+     private func finish(_ value: NativeCommunitySafetyPending, outcome: NativeCommunitySafetyOutcome, start: Double, complete: (NativeCommunitySafetyPending) throws -> Void) throws {
++        let journalTicket = journalObservation?.begin()
+         do { try complete(value) } catch { journalReady = false; storageReady = false; throw error }
+         pending = nil
++        journalObservation?.finish(journalTicket, try NativeCommunitySafetyCommand(body: value.body).operationID)
+         if case .operation(_, let state, let record) = outcome {
+             selectedRecord = record; loaded = record != nil; deadline = start + 30
+             notice = state == "abandoned" ? "ABANDONED" : "ACKNOWLEDGED"

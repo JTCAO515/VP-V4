@@ -110,6 +110,12 @@ struct NativeJournalDataView: View {
             case .reservation: NativeReservationsView(session: session, chinese: chinese, active: actor != nil)
             case .deviceDelete: NativeDeviceMaterialDeleteView(session: session, chinese: chinese)
             case .tripLifecycle: NativeTripLifecycleView(session: session, chinese: chinese, initialTripID: record.tripID)
+            case .serviceOperation:
+                if let id = record.objectID { NativeServiceOperationsView(caseId: id) }
+                else { Text(t("回原服务协作模块核验；对象尚未确认。", "Verify in the original service module; object unconfirmed.")) }
+            case .travelerBrief:
+                if let id = record.objectID { NativeTravelerBriefView(caseID: id) }
+                else { Text(t("回原旅行者简报模块核验；对象尚未确认。", "Verify in the original brief module; object unconfirmed.")) }
             case .recovery:
                 if let trip = record.tripID { NativeRecoveryView(tripID: trip) }
                 else { Text(t("在原局部恢复模块核验；当前请求范围未确认。", "Verify in the original recovery module; the request scope is unconfirmed.")) }

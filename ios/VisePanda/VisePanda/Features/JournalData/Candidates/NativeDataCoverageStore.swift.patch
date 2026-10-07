@@ -1,0 +1,29 @@
+--- a/ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageStore.swift
++++ b/ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageStore.swift
+@@ -8,6 +8,7 @@
+     let retain: (Data, NativeCommunitySafetyActor) throws -> NativeDataCoveragePending
+     let complete: (NativeDataCoveragePending, NativeCommunitySafetyActor) throws -> Void
+     let retainOriginal: (NativeDataCoverageCommand, NativeCommunitySafetyActor) throws -> Void
++    var journalObservation: NativeJournalDataObservation?
+     let completeOriginal: (NativeDataCoverageCommand, NativeDataCoverageReceipt, NativeCommunitySafetyActor) throws -> Void
+ 
+     init(session: NativeSession, active: @escaping () -> Bool) {
+@@ -16,6 +17,7 @@
+         saved = { try session.dataCoverageRecovery(actor: $0) }
+         retain = { try session.rememberDataCoverage(body: $0, actor: $1) }
+         complete = { try session.completeDataCoverage($0, actor: $1) }
++        journalObservation = session.journalDataObservation(.coverage)
+         retainOriginal = { try NativeDataCoverageOriginal.retain($0, using: session, actor: $1) }
+         completeOriginal = { try NativeDataCoverageOriginal.complete($0, reply: $1, using: session, actor: $2) }
+     }
+@@ -178,8 +180,10 @@
+                 exportedRow = command.moduleID
+             }
+             if command.action == .delete, verified.terminal, let pending {
++                let journalTicket = client.journalObservation?.begin()
+                 try client.completeOriginal(original, reply, actor)
+                 try client.complete(pending, actor); self.pending = nil
++                client.journalObservation?.finish(journalTicket, command.operationID)
+             }
+             record(reply, state: verified.state, selection: selection)
+             storageReady = files.ready && journalReady

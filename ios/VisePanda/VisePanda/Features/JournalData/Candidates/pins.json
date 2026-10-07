@@ -1,0 +1,197 @@
+{
+  "ios/VisePanda/VisePanda/Features/ResultData/NativeResultDataStore.swift": {
+    "before": "0b54edaddb5d6aaa4016bf17d77d0a20433d5f024f40d67b756c614c93041b24",
+    "after": "b3982269d707b9a0f0cc23232dc5a7d74933c4b2bbd19b87b9b026a0008d001a",
+    "patch": "045cb37d3a5f8b586e8f2e7bd2dfa4fff919928ac592385f8eea61e86729f1ca"
+  },
+  "ios/VisePanda/VisePanda/Features/ProfileData/NativeProfileDataStore.swift": {
+    "before": "f683eae8e00bc1ae4c1c307c022748ffde8db37802ace74ccaf35d6a88284ec7",
+    "after": "f5603b3e8f5279791afaa720d3841d28a611dea9c18e87a92b5dfe7baad0f39d",
+    "patch": "3b5383282766efad62f7e35ee85749ab39fa3caa45db86a66fb31604f8276081"
+  },
+  "ios/VisePanda/VisePanda/Features/TurnData/NativeTurnDataStore.swift": {
+    "before": "9865ca28c4ed75217aeefd21ae19da7aab58a5b8166e98599db982849369abd5",
+    "after": "2ce8b7cc4d701383dda65870dd80e8f5b687dd0e0fcd7d3dfa5d79b815fb1416",
+    "patch": "16d90c8ab36643143d89f68f227e00812f0ced2cdf5b4f30977f5a70940640c6"
+  },
+  "ios/VisePanda/VisePanda/Features/ConversationData/NativeConversationDataStore.swift": {
+    "before": "37bf08aeae891e5f0fa247676ec5f9339872d1de905265a23755081139823a86",
+    "after": "f1d11c2938cfb7a6abd00529253723cd08925c9e7000bc26d5d60aa700aa6f79",
+    "patch": "a6f919f93eccfc937e39b864bd1d94d5a43495007428f90ba8b32c47b9e1bf04"
+  },
+  "ios/VisePanda/VisePanda/Features/CoverageProgressData/NativeCoverageProgressStore.swift": {
+    "before": "2e75c6343fd68aa30b929921a2357ac2abe1c2fb2121bb7a74335723e127b859",
+    "after": "56c330e2f08d06445a460801a25c217a6676c3a11650577329acebf5f5bd31a0",
+    "patch": "9bba1074c084e18f6fba8cea2c45513f850f66d6ffc4f66bb372be056c5c2bc5"
+  },
+  "ios/VisePanda/VisePanda/Features/NotificationData/NativeNotificationDataStore.swift": {
+    "before": "40e0576aaf3f340259fe2303343a91cb740ed225b1604661b8336201c00fdf3c",
+    "after": "e7e597a61bbbb720a18dc3b7ff7f1abaaf41f4d7f14fe3ac6d0877788c01ade2",
+    "patch": "13f87bb2b96425e6719ed9384894cd35b8c235475c9597f860e1c9cfac0ec23f"
+  },
+  "ios/VisePanda/VisePanda/Features/MaterialReferenceData/NativeMaterialReferenceStore.swift": {
+    "before": "56a613679898e835de4cb997794b095aaa6458b33e4c71f206ef3455b6cea441",
+    "after": "a3abff885455ba19d147542ee9c35be1acb09abd3a16fa6873d74cc464a333c5",
+    "patch": "6b7a010633ce264da432bf74a1f30824e0064ea5c68aba0127e82bac90d6f164"
+  },
+  "ios/VisePanda/VisePanda/Features/ArchiveData/NativeArchiveDataStore.swift": {
+    "before": "c974743790f8fa25953fcfae875394f43eb3ba52c63025d60f2dd38abff186dd",
+    "after": "4f68ace203353ff0a77fe641454308b10bba721a5d8b795f6995fd4c4c2cab6d",
+    "patch": "d9f89f3ae0bc5975a7a261aba5f970e56ab3fc6ec26d8173b564d1c0e48835c0"
+  },
+  "ios/VisePanda/VisePanda/Features/CommunitySafety/NativeCommunitySafetyStore.swift": {
+    "before": "592cc4bbed5d7689b673d33944fefd96da779a11f44b74e901a7b791685ceec5",
+    "after": "20bf4f82c25cadc7ac5ea703073059caf86552c1f3adbe8f3c644bd5ecaf2cf8",
+    "patch": "ea5833777d5fba9ded9083a36dccd180c9dde58c4d4bff559170318485192764"
+  },
+  "ios/VisePanda/VisePanda/Features/CommunitySubmission/NativeCommunityStore.swift": {
+    "before": "2f3edcf9ea35da589b384b256007eaee75f63c9bdac376e87590556c89b9fed2",
+    "after": "15d9b87c6807335f2cfe9b83335c28a0578a071fec8e8ac522a24c446fc6d8f6",
+    "patch": "78031b84db6a0d9f64e00eb6f1b95dccd3728794a1f7fd7313947553b1ffa4cd"
+  },
+  "ios/VisePanda/VisePanda/Features/CommunityExperience/NativeExperienceStore.swift": {
+    "before": "10913fba796268b58f0eeea651d4b9ad64ea464c552a88b1afaa7d004eaed580",
+    "after": "491f64a48f5cebfa84ddfe9fadc91a49af4a7587decffc87b7e7881ce99f21be",
+    "patch": "e058968ada99070bbf8abc07d7eed613035b90887dbf3821cb49e2ae79d98917"
+  },
+  "ios/VisePanda/VisePanda/Features/ServiceOperations/NativeServiceOperationStore.swift": {
+    "before": "9442691772c67471bf508ffda25a855f38615fb11fb895be4c5004a8f7b4253b",
+    "after": "00ebf1e6e4bad70bcae724e623bc37d883879fdd6e1a1e6c54bd3d54b7251691",
+    "patch": "16ebe19e87e3e57a95bb8a03078fd941a9cb9debd4084bb9b255713ae891359c"
+  },
+  "ios/VisePanda/VisePanda/Features/TravelerBrief/NativeTravelerBriefStore.swift": {
+    "before": "6ef50e2235430122391b1f46a995d9340973565e66e82433780850be1f8f4472",
+    "after": "0fa999dcbb4ae5078ecbbd7a707548abf5546a4d217d73fa8251da8412abf57b",
+    "patch": "3cc3cf7aed948a57a753573b5e311f72c899d14ac8950386a7ed4e6492a80255"
+  },
+  "ios/VisePanda/VisePanda/Features/Reservations/NativeReservationStore.swift": {
+    "before": "1e771fc89c8cac497cd477c01a635eaed14be996fa3ad2ad27a1b225488194a0",
+    "after": "9da5ce8f4a74c0088c92c32ffed34c73048392eb6ddc1bc6dc10c2385cacf705",
+    "patch": "816f4828fd2ecf74c3e25b858e3a46cef8ee16cb5300a0b5402ce7610d5fdf23"
+  },
+  "ios/VisePanda/VisePanda/Features/Recovery/NativeRecoveryStore.swift": {
+    "before": "454b75fc9d8cbd6e1ab17bbc0ba78f5164b98df6bca041144013645ad2402a05",
+    "after": "774d49fc6f7da26bd6d31bcf7ee88456a9f948afcbb55b75e6487e2b3926e21a",
+    "patch": "ba496477bda7e104249501b9a259466ce0b7192dd99194880b536566b483e4fa"
+  },
+  "ios/VisePanda/VisePanda/Features/TripLifecycle/NativeTripLifecycleStore.swift": {
+    "before": "45c0396ddd703b61081d8d0ee3ee1c311988dafbdd62587cabc3fdeccadbc57a",
+    "after": "3ad48d3131ef25a06b3751b0f736a4b1f29501c349d3206f3c71f9a0558638b7",
+    "patch": "a2b363dc3316e30c4ef5f00526ca78d2e8b0fa4d5f93a453422f64e3b4db59df"
+  },
+  "ios/VisePanda/VisePanda/Features/PlaceActions/NativePlaceActionStore.swift": {
+    "before": "001d6390b4d22f6e34a420365eecf23de549c35b6f8fc616f4ff0f18bc601f2e",
+    "after": "4d9e4f109658dc0e0bfd6f3c31132c7067c1f6d06b4c365ca6f1623c5bca7462",
+    "patch": "dcfa35317fddb6bc5680b5dd779231238ede39d67aaaabe9f2f16d2c54cc3136"
+  },
+  "ios/VisePanda/VisePanda/Features/Notifications/NativeNoticeStore.swift": {
+    "before": "e92d61463738c713aca8ccd07c808c73413b9e2be51b1ec24e02d4d10e49165c",
+    "after": "3a7eb5cba91339152266fff8e9f3e899514a17db7d8b706446a316afbe6d3199",
+    "patch": "d2877fa099ac480df81582ed9637aa6c10d17329ed788e2214678a608d92645b"
+  },
+  "ios/VisePanda/VisePanda/Features/CommunitySafety/NativeCommunitySafetyView.swift": {
+    "before": "4a61abb1e988dd669d1ef8dff5b54fcd0c53a004d59e70d726dc40d825e887c0",
+    "after": "b922aea5c422efb0f31a5e769186151efe87bc35e1dfec591b5689aa94bf881c",
+    "patch": "774513cae1834183f09594fecc3f4a76acaf89dcb5f36d5c635a4cb44d3bf718"
+  },
+  "ios/VisePanda/VisePanda/Features/CommunitySubmission/NativeCommunitySubmissionView.swift": {
+    "before": "5b3b3b74907a2f006672fca1d4666c741922d8a129c2ee81860e97fb79bf87b1",
+    "after": "7cf767f4928168389b1bf96e009e2a49a73227fa9848b3d316c4b46c7e4aa780",
+    "patch": "9908bf107d97bb430f7feb87f6eda1445558c46316815bb0303d1b81a0f75394"
+  },
+  "ios/VisePanda/VisePanda/Features/CommunityExperience/NativeExperienceView.swift": {
+    "before": "39378ba3c8dfc29dfd8c8e5b7491ac90a6cd097f5f706b36243c2a9d1a9630f1",
+    "after": "3ab8809de0e5eae3aa486e11d073c04839c3a250b57f0fd88ca7356f1b28c3c2",
+    "patch": "79b200fdbe175a52c2ba4a352ff4afb8aa2609d6c86acdbf1a8cf371901d066b"
+  },
+  "ios/VisePanda/VisePanda/Features/ServiceOperations/NativeServiceOperationsView.swift": {
+    "before": "2812a88c1913a6d60f9b63d2c33fe52d91f268fb562a9591eb72e610c732d7fc",
+    "after": "75b8389c6b62afce78961ac61d484e2168a77304a5919d1260269f689b16d376",
+    "patch": "8a72b5d00b809115b440e45ef085372f9dfb1efe7f8fec42af31fe0a6fea72b2"
+  },
+  "ios/VisePanda/VisePanda/Features/TravelerBrief/NativeTravelerBriefView.swift": {
+    "before": "d524e0bd4e764fc8d0ba76ce3a33d20f8b470cb27ca253a6fe29388b05dd0302",
+    "after": "14b159833ef44ede0e24b085577643d058b9915dde6d47ed0eb38a9a6f85e1f7",
+    "patch": "bc7728519ce25e25e4e7dbbe001507272b5e0e4a57fa923f149f0e761122e957"
+  },
+  "ios/VisePanda/VisePanda/Features/Reservations/NativeReservationsView.swift": {
+    "before": "558e0ead752dd1061f4935727ad3fc1b34a25cc02c34c81511bf86803d9672ca",
+    "after": "a79bf87d6fdde4f3944da3580af743c69577c3e4d83118d6af1dfc75c7a21a3f",
+    "patch": "f28b9f0bcf46091ccde9be26bb4eee152eefe82e28fcc47ebc8a3b4c46ed4005"
+  },
+  "ios/VisePanda/VisePanda/Features/Recovery/NativeRecoveryView.swift": {
+    "before": "fc7da5ef64ca7af5dc9c6eb1fa5c497fdf6d375a8dcf0ab13a2db41d9893f3ed",
+    "after": "627f5b8046d6a7f981b389f1e51d1d0624cc5f845ff4f27eea79eab2adf36fe7",
+    "patch": "74e01e3cc79cc65562377655886aca01ff1f817771d80cf8df507131084db200"
+  },
+  "ios/VisePanda/VisePanda/Features/TripLifecycle/NativeTripLifecycleView.swift": {
+    "before": "49d702f63706feb47eb319be7a3f4e427aab0c0b5fb3d2d3afb0e3cef8d208fc",
+    "after": "83f02c0cc24369c644fef4efa651e7b08e2ef8b653be7cc65eb5259afed8beb7",
+    "patch": "572ff466dc4aa6367143afd26cfb8d296ca4978195cc96f3e5390bc560125c21"
+  },
+  "ios/VisePanda/VisePanda/Features/PlaceActions/NativePlaceActionsView.swift": {
+    "before": "33ef8cf1033d1b3d4e28f52f108bf3a7737e82b23931116b43f2e6463e1259ec",
+    "after": "103295194ac87440616ec077f934d94b44e6fe352b5ba05e8a3d0e8a5af423a1",
+    "patch": "790af9fc08fc98732761f7082e445562d4ea43874fcfcba1d2841ec95a616003"
+  },
+  "ios/VisePanda/VisePanda/Features/Trip/NativeTravelRemindersView.swift": {
+    "before": "a0994c8a01e6738e0a4d1ae1780ddd82163fe064a215f06b06b8cd3580473dd0",
+    "after": "7229fe6fd04d509119a13fc2ef6e553ac84a6f737c85131bb72d9adf0f24bde0",
+    "patch": "b7f078f96f815d986fad97697c0b9ff7a2e5379a64a5c16ebbb29ea2be4da318"
+  },
+  "ios/VisePanda/VisePanda/Features/PDFIntake/NativePDFIntakeStore.swift": {
+    "before": "c43fc32a69d8d1304349615c776404f8588306d0eccf5922be515885d8e3f1ba",
+    "after": "956a79a7fcd38be71f6bca8875f2ee43ab2f2f1ed4b438ab77ece32e6dd25b06",
+    "patch": "204024c70ca0d5757df912e0a0f7b08003fff6144d04784c27a9a751552e780d"
+  },
+  "ios/VisePanda/VisePanda/Features/ScopedTripEdit/NativeScopedTripEditStore.swift": {
+    "before": "f9f1715d63b97bc20a5b307ef56f14c634960eddaef568abba851b2155983f8f",
+    "after": "ae71946bf18cd9157a026cab6b19568d8f78e72eb75938f7dd0646f67533a690",
+    "patch": "1b19ffaf4ebd5e7b441c08d1ed3298a6f1377dc2180bad4c892aaa8f57ec7b7b"
+  },
+  "ios/VisePanda/VisePanda/Features/Ask/NativeAskStore.swift": {
+    "before": "c66f8d83b0c3946b8a67ee38e3e665ac08375395224197c960b75db52ab7193b",
+    "after": "d3d49c5cf65b8267833008ae7e00b8a367b672b84b44362b430a07a0a5563078",
+    "patch": "4e1675ecf87e42d98cb1894de099794c538cb66b9bb05f68dd917c40cfed07b5"
+  },
+  "ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageStore.swift": {
+    "before": "70af7d340451c6de5cd2cbd161e98f027b92a793dc05304f74d63d0ae91e5aa6",
+    "after": "d26c77ea799dbae91caf31d06d7b488721c71c7d8d291ca48c622d8e2e355af4",
+    "patch": "136816103484457abf24911e6bfa1927c0ba59d132281a3ea3dd1f5f7d606b53"
+  },
+  "ios/VisePanda/VisePanda/App/NativeSession.swift": {
+    "before": "f5ab33e837f7c736001f860f2fa6dbef1f72da7eaf05997966729a8c8fc68d2a",
+    "after": "763351e2ee21b7bbce0024d8db40eb98c4efef270f77ff405172af6f1997ecab",
+    "patch": "bfcbf176e1706954537efa4284a158b5ef1851290a883fd535c977736bb40ecd"
+  },
+  "ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageModuleView.swift": {
+    "before": "83a1c2209584cfed7bc900c6601566ecc8ece8aedb22130f097f4872084bb6df",
+    "after": "10e87439e4ac3114f38b03e3c250a7f3dfd32977ae10627f6728f89121b73e76",
+    "patch": "dff7993c2b7c7307cb77ba507907a36765187090c0090f10f1852b471553d844"
+  },
+  "ios/VisePanda/VisePanda/Features/PlaceGuide/NativePlaceGuideFollowUpStore.swift": {
+    "before": "9ef6d48653a762cb7efd8516ad80c6c355f42e63aebe4fbb158104e1bad4f2f1",
+    "after": "50f43ff92df614fe9fb15786123693bfea15ab2a7edf9e3bd2e9dd9e465ad76c",
+    "patch": "c865df752c9b5a16ebcf4a81c8f92f5a221c5ef9dcb4af4dd20c953b600084f1"
+  },
+  "ios/VisePanda/VisePanda/Features/Trip/NativeTripStore.swift": {
+    "before": "193db078a2d6999152da52f4767c7691fdb7274de81fde4a1b51d9a7e9f3e24b",
+    "after": "0a59eb31be88de104b151c61b6ac733d12162a0a012685635f846875bf127b71",
+    "patch": "0145da523f310b72ee3b4e1791b6bc266e092b977c2ee66ca316ba456069e8e4"
+  },
+  "ios/VisePanda/VisePanda/Features/Trip/Support/NativeTripSupportView.swift": {
+    "before": "03209d8994bb0939eb9d8b5fba12096eda456ce1b61563a09954d396c8a9ba3b",
+    "after": "00273612a15e1687f1d540b8d75e1047240dea22280801dba2edac4920f54684",
+    "patch": "4c9ab860950181cac5ff235b39eb5f3fa75a39c648b9fbf0123a78423d7cb663"
+  },
+  "ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageOriginal.swift": {
+    "before": "59c4a2a150a2318d94c6b2f3ad9cf46ea78410c09fdf2c492152d27aa013c43c",
+    "after": "1b364093354aa88a60f63ee927b1b72c245f1b513d5e6a52e79e67f8cd081419",
+    "patch": "dfec3a47fb7e8b0396f24386bd04aefd28a51da75873c8914b907a25a1f65eb1"
+  },
+  "ios/VisePanda/VisePanda.xcodeproj/project.pbxproj": {
+    "before": "93f99aab75f85c0462725e332ad0f0e14e74a0290db62beb81e22a1185a23cec",
+    "after": "ddd62d6a7d15e3f75ce051d6e377ae18bc80989d707cf995ff120bcd84519840",
+    "patch": "65bb0ea55f47f0bc39258395dc83952197e539bbed3db005e9bce3abcff867cd"
+  }
+}

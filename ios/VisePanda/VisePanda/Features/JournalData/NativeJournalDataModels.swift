@@ -23,20 +23,33 @@ struct NativeJournalDataExportRecord: Codable, Equatable {
     let action: String?
     let originalOperationBytes: Data?
     let contentBoundary: String
+    var objectID: String? = nil
 }
 
 struct NativeJournalDataSnapshot: Equatable {
     let record: NativeJournalDataExportRecord
     /// Process-private CAS. This is never serialized, traced or logged.
     let originalIdentity: Data?
+    /// Original immutable request identity. Only original acknowledgement fields may differ.
+    let operationIdentity: Data?
+    init(record: NativeJournalDataExportRecord, originalIdentity: Data?, operationIdentity: Data? = nil) {
+        self.record = record; self.originalIdentity = originalIdentity
+        self.operationIdentity = operationIdentity ?? originalIdentity
+    }
     var valid: Bool {
+        guard record.contentBoundary.utf8.count <= 128,
+              [record.operationID, record.tripID, record.objectID].allSatisfy({ $0 == nil || UUID(uuidString: $0!) != nil }),
+              record.action == nil || record.action!.utf8.count <= 64 else { return false }
         switch record.state {
         case .absent, .unavailable:
-            originalIdentity == nil && record.originalOperationBytes == nil
+            return originalIdentity == nil && operationIdentity == nil && record.originalOperationBytes == nil
+                && record.operationID == nil && record.tripID == nil && record.objectID == nil && record.action == nil && record.kind == .metadataOnly
         case .pending:
-            originalIdentity != nil && originalIdentity!.count <= 262_144
+            let byteSources: Set<NativeJournalDataSourceID> = [.materialReference, .profile, .conversation, .turn, .notificationData, .coverageProgress, .archive, .result]
+            return originalIdentity != nil && !originalIdentity!.isEmpty && originalIdentity!.count <= 262_144
+            && operationIdentity != nil && !operationIdentity!.isEmpty && operationIdentity!.count <= 262_144
             && (record.kind == .metadataOnly ? record.originalOperationBytes == nil
-                : record.originalOperationBytes != nil && record.originalOperationBytes!.count <= 8192)
+                : byteSources.contains(record.source) && record.originalOperationBytes != nil && !record.originalOperationBytes!.isEmpty && record.originalOperationBytes!.count <= 8192)
         }
     }
 }
@@ -60,7 +73,7 @@ struct NativeJournalDataSelection: Equatable {
 struct NativeJournalDataCompletion: Equatable {
     let source: NativeJournalDataSourceID
     let actor: NativeCommunitySafetyActor
-    let originalIdentity: Data
+    let operationIdentity: Data
     let receiptIdentity: String
     let completedAt: Date
 }
@@ -85,6 +98,13 @@ func nativeJournalDataActorBinding(_ actor: NativeCommunitySafetyActor) -> Strin
 
 @MainActor protocol NativeJournalDataSource: AnyObject {
     func read(_ actor: NativeCommunitySafetyActor) throws -> [NativeJournalDataSnapshot]
+    func snapshot(source: NativeJournalDataSourceID, actor: NativeCommunitySafetyActor) throws -> NativeJournalDataSnapshot?
     func completion(source: NativeJournalDataSourceID, actor: NativeCommunitySafetyActor) -> NativeJournalDataCompletion?
     func physicallyAbsent(source: NativeJournalDataSourceID, actor: NativeCommunitySafetyActor) throws -> Bool
+}
+
+extension NativeJournalDataSource {
+    func snapshot(source: NativeJournalDataSourceID, actor: NativeCommunitySafetyActor) throws -> NativeJournalDataSnapshot? {
+        try read(actor).first { $0.record.source == source }
+    }
 }

@@ -1,0 +1,8 @@
+{
+  "ios/VisePanda/VisePanda/Features/JournalData/NativeJournalDataEvidence.swift": "c8f113788c59a633e8bc88f61884237a92f8483a956146513f533c573a8e1be4",
+  "ios/VisePanda/VisePanda/Features/JournalData/NativeJournalDataView.swift": "99410099dba7c37fceb2db59f40ada196ec413ae1c44e4e9c8040cc1f9b6f2a9",
+  "ios/VisePanda/VisePanda/Features/JournalData/NativeJournalDataModels.swift": "fc7ede8f616215eaecaaa881b08716800efb0e077e6c63d375d2717f42051ec5",
+  "ios/VisePanda/VisePanda/Features/JournalData/NativeJournalDataStore.swift": "7bf1a2ea9b9b1fe81fc03b9e555f539dce1dea714b25d885be6add0599771bb9",
+  "ios/VisePanda/VisePanda/Features/JournalData/NativeJournalDataVaultSources.swift": "f905670b8c65b184d09b50704a33811e5aca44f47bacf131fdc7b9fdf945e100",
+  "ios/VisePanda/VisePandaTests/NativeJournalDataTests.swift": "7df56d78d873af72a1ff1594a624644453e7829e303bf4253e746669919eb01c"
+}

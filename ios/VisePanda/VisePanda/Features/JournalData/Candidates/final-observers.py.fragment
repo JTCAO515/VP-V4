@@ -1,0 +1,66 @@
+# Guide's original policy-scoped history is observed only when it also proves the exact original question,
+# current notice and live qualified source. Fenced/expired/withdrawn/missing identity stays UNKNOWN locally.
+path=base/'Features/PlaceGuide/NativePlaceGuideFollowUpStore.swift';text=(root/path).read_text()
+marker='''            // Original history proves acceptance, including a lost Guide HTTP acknowledgement.
+            if let pending { try session.completePlaceGuide(pending, actor: selection.scope); submitted = selected; self.pending = nil }
+            if !found.waiting { guide.clearUnlicensedProgress() }'''
+replacement='''            // Original history proves acceptance, including a lost Guide HTTP acknowledgement.
+            let journalObserver = session.journalDataObservation(.guide)
+            let exactOriginalQuestion = pending?.fencedReference == nil && pending != nil
+                && (try? pending?.fields()["question"] as? String) == found.input
+            let journalTicket = exactOriginalQuestion && reply.policy.consentState == .accepted
+                && reply.policy.id == selected.policyID && reply.policy.noticeHash == selected.noticeHash
+                && guide.visible(session.dataScope)?.digest == selected.digest ? journalObserver.begin() : nil
+            if let pending { try session.completePlaceGuide(pending, actor: selection.scope); submitted = selected; self.pending = nil }
+            if !found.waiting { guide.clearUnlicensedProgress() }
+            journalObserver.finish(journalTicket, selected.operationID)'''
+text=replace(text,marker,replacement);write(path,text)
+# Already-typed original Session companions: no new server dispatch or modified request/complete ABI.
+path=base/'App/NativeSession.swift';text=(staged/path).read_text()
+for source,method,start,end,receipt in [
+ ('memoryDelete','completeMemoryDeletion','        let status=vault.remove(service:memoryDeleteVaultService,owner:scope.subject)',
+  '        guard status==errSecSuccess || status==errSecItemNotFound else{throw NativeDataError.sessionUnavailable}', 'receipt.requestId'),
+ ('linkedTripDelete','completeLinkedTripDeletion','        let result=vault.remove(service:linkedDeleteVaultService,owner:target.scope.subject)',
+  '        guard result==errSecSuccess || result==errSecItemNotFound else{throw NativeDataError.sessionUnavailable}', 'receipt.requestId')]:
+ i=text.index('    func '+method+'(');j=text.index('\n    }',i);chunk=text[i:j]
+ chunk=replace(chunk,start,'        let journalObserver = journalDataObservation(.'+source+'), journalTicket = journalObserver.begin()\n'+start)
+ chunk=replace(chunk,end,end+'\n        journalObserver.finish(journalTicket, '+receipt+')')
+ text=text[:i]+chunk+text[j:]
+# The material execute method already performs original local physical deletion and keeps its immutable receipt.
+i=text.index('    func executeDeviceMaterialDeletion(');j=text.index('\n    }',i);chunk=text[i:j]
+chunk=replace(chunk,'        let pending=try pendingDeviceMaterialDeletion()', '        let pending=try pendingDeviceMaterialDeletion()\n        let journalObserver = journalDataObservation(.deviceDelete), journalTicket = journalObserver.begin()')
+chunk=replace(chunk,'            return receipt // Replay proves', '            journalObserver.finish(journalTicket, receipt.requestId)\n            return receipt // Replay proves')
+chunk=replace(chunk,'        try removeDeviceMaterialDeleteRequest(owner:actor.subject)\n        return receipt','        try removeDeviceMaterialDeleteRequest(owner:actor.subject)\n        journalObserver.finish(journalTicket, receipt.requestId)\n        return receipt')
+text=text[:i]+chunk+text[j:]
+write(path,text)
+# Support receipt validation stays in its original consumers and synchronous projections.
+path=base/'Features/Trip/NativeTripStore.swift';text=(root/path).read_text()
+marker='''            try session.completeTripSupportConfirmation(journal,receipt:result,actor:actor)
+            try support.confirmed(key:request.idempotencyKey,choices:choices)
+            self.pending=nil;self.draft=nil'''
+text=replace(text,marker,marker.replace('            try session.completeTripSupportConfirmation','            let journalObserver = session.journalDataObservation(.tripSupport), journalTicket = journalObserver.begin()\n            try session.completeTripSupportConfirmation')+'\n            journalObserver.finish(journalTicket, request.idempotencyKey)')
+write(path,text)
+path=base/'Features/Trip/Support/NativeTripSupportView.swift';text=(root/path).read_text()
+marker='''            try session.completeTripSupportConfirmation(journal,receipt:result,actor:actor)
+            receipt=result;self.journal=nil;request=nil'''
+text=replace(text,marker,marker.replace('            try session.completeTripSupportConfirmation','            let journalObserver = session.journalDataObservation(.tripSupport), journalTicket = journalObserver.begin()\n            try session.completeTripSupportConfirmation')+'\n            journalObserver.finish(journalTicket, try journal.request().idempotencyKey)',2)
+write(path,text)
+# Wrapper deletion can also complete one of the original module journals. Its original verifier already ran.
+path=base/'Features/DataCoverage/NativeDataCoverageOriginal.swift';text=(root/path).read_text()
+marker='''        guard original.matches(actor), let bytes = reply.result else { throw NativeDataError.staleSessionResponse }
+        switch original.moduleID {'''
+replacement='''        guard original.matches(actor), let bytes = reply.result else { throw NativeDataError.staleSessionResponse }
+        let observedSources: [String: NativeJournalDataSourceID] = ["ugc": .community, "safety": .communitySafety,
+            "publication": .experience, "case": .serviceOperation, "brief": .travelerBrief]
+        let journalObserver = observedSources[original.moduleID].map { session.journalDataObservation($0) }
+        let journalTicket = journalObserver?.begin()
+        switch original.moduleID {'''
+text=replace(text,marker,replacement)
+# Last switch ends the original complete function. Early absence/throws do not reach this observation.
+marker='''        case "guide": break
+        default: throw NativeDataError.invalidResponse
+        }
+    }
+}'''
+text=replace(text,marker,marker.replace('        }\n    }','        }\n        journalObserver?.finish(journalTicket, original.operationID)\n    }'))
+write(path,text)

@@ -1,0 +1,30 @@
+--- a/ios/VisePanda/VisePanda/Features/ArchiveData/NativeArchiveDataStore.swift
++++ b/ios/VisePanda/VisePanda/Features/ArchiveData/NativeArchiveDataStore.swift
+@@ -12,6 +12,8 @@
+ }
+ 
+ @MainActor @Observable final class NativeArchiveDataStore {
++    var journalObservation: NativeJournalDataObservation?
++
+     let scope: NativeArchiveDataScope
+     private(set) var objects: [NativeArchiveDataObject] = []
+     private(set) var next: NativeArchiveDataCursor?
+@@ -142,14 +144,18 @@
+                     current: client.current, currentGeneration: { self.lifetime.generation })
+                 exportCommand = command; exportBinding = binding
+                 guard try await validate(client: client, actor: actor, generation: generation) != nil else { throw NativeDataError.staleSessionResponse }
++                let journalTicket = journalObservation?.begin()
+                 try journal.complete(pending, actor: actor); self.pending = nil
++                journalObservation?.finish(journalTicket, binding.requestID)
+                 preview = nil; previewLease = nil; previewCommand = nil
+                 completion = .init(binding: binding, action: "export"); message = "file"
+             } else {
+                 guard let result = try NativeArchiveDataProtocol.erased(bytes, command: command, actor: actor, now: now()) else { message = "unknown"; return }
+                 let lease = try NativeArchiveDataLease(start: started, received: uptime(), now: now(), expiry: now().addingTimeInterval(30))
+                 clearVisible(); guard storageReady else { throw NativeDataError.sessionUnavailable }
++                let journalTicket = journalObservation?.begin()
+                 try journal.complete(pending, actor: actor); self.pending = nil
++                journalObservation?.finish(journalTicket, result.binding.requestID)
+                 receipt = result; receiptLease = lease; completion = .init(binding: result.binding, action: "delete"); message = "erased"
+             }
+         } catch { failed(generation, actor: actor, client: client) }

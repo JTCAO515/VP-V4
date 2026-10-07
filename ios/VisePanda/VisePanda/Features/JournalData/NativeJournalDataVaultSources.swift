@@ -31,16 +31,17 @@ import Security
         guard current() == actor else { throw NativeDataError.staleSessionResponse }
     }
     private func record(_ id: NativeJournalDataSourceID, operation: String? = nil, trip: String? = nil,
-                        action: String? = nil, bytes: Data? = nil, boundary: String = "body_rights_not_granted") -> NativeJournalDataExportRecord {
+                        action: String? = nil, bytes: Data? = nil, boundary: String = "body_rights_not_granted", object: String? = nil) -> NativeJournalDataExportRecord {
         .init(source: id, state: .pending, kind: bytes == nil ? .metadataOnly : .originalOperation,
-            operationID: operation, tripID: trip, action: action, originalOperationBytes: bytes, contentBoundary: boundary)
+            operationID: operation, tripID: trip, action: action, originalOperationBytes: bytes, contentBoundary: boundary, objectID: object)
     }
     private func empty(_ id: NativeJournalDataSourceID, state: NativeJournalDataReadState) -> NativeJournalDataSnapshot {
         .init(record: .init(source: id, state: state, kind: .metadataOnly, operationID: nil, tripID: nil,
             action: nil, originalOperationBytes: nil, contentBoundary: state == .absent ? "original_reader_absent" : "qualification_unconfirmed"), originalIdentity: nil)
     }
-    /// Reader runs first, including its accepted expiry transition, then raw bytes are compared
-    /// around a second qualified read. Cross-process drift never becomes an empty or valid row.
+    /// Pure original qualification runs twice around exact physical byte comparisons.
+    /// Guide uses the original stored decoder without its separate expiry writer.
+    /// Observed drift never becomes an empty or valid row; this is not a cross-process transaction.
     private func read(_ id: NativeJournalDataSourceID, service: String, actor: NativeCommunitySafetyActor,
                       original: () throws -> NativeJournalDataExportRecord?) -> NativeJournalDataSnapshot {
         do {
@@ -55,20 +56,36 @@ import Security
             }
             guard let value, value.source == id, after.0 == errSecSuccess, let identity = after.1,
                   !identity.isEmpty, identity.count <= 262_144 else { throw NativeDataError.invalidResponse }
-            let snapshot = NativeJournalDataSnapshot(record: value, originalIdentity: identity)
+            var immutable = identity
+            if id == .recovery {
+                // The original acknowledge method appends these two verified fields; it never changes body.
+                guard var envelope = try JSONSerialization.jsonObject(with: identity) as? [String: Any] else { throw NativeDataError.invalidResponse }
+                envelope.removeValue(forKey: "originalReceipt"); envelope.removeValue(forKey: "originalProposalDigest")
+                immutable = try JSONSerialization.data(withJSONObject: envelope, options: [.sortedKeys, .withoutEscapingSlashes])
+            }
+            let snapshot = NativeJournalDataSnapshot(record: value, originalIdentity: identity, operationIdentity: immutable)
             guard snapshot.valid else { throw NativeDataError.invalidResponse }; return snapshot
         } catch { return empty(id, state: .unavailable) }
     }
     func read(_ actor: NativeCommunitySafetyActor) throws -> [NativeJournalDataSnapshot] {
+        try read(actor, only: nil)
+    }
+    func snapshot(source: NativeJournalDataSourceID, actor: NativeCommunitySafetyActor) throws -> NativeJournalDataSnapshot? {
+        try read(actor, only: source).first
+    }
+    private func read(_ actor: NativeCommunitySafetyActor, only selected: NativeJournalDataSourceID?) throws -> [NativeJournalDataSnapshot] {
         try checked(actor)
         let scope = actor.scope, endpoint = scope.endpoint
         var rows: [NativeJournalDataSnapshot] = []
         func add(_ id: NativeJournalDataSourceID, _ service: String,
                  _ original: () throws -> NativeJournalDataExportRecord?) {
+            guard selected == nil || selected == id else { return }
             rows.append(read(id, service: service, actor: actor, original: original))
         }
         add(.coverage, NativeDataCoverageJournal.service(endpoint)) {
-            try NativeDataCoverageJournal(vault: self.vault, validate: { _ = try NativeDataCoverageCommand(body: $0) }).read(actor).map {
+            try NativeDataCoverageJournal(vault: self.vault, validate: {
+                guard try NativeDataCoverageCommand(body: $0).matches(actor) else { throw NativeDataError.staleSessionResponse }
+            }).read(actor).map {
                 let c = try NativeDataCoverageCommand(body: $0.body)
                 return self.record(.coverage, operation: c.operationID, trip: c.tripID, action: c.action.rawValue)
             }
@@ -95,7 +112,7 @@ import Security
         add(.serviceOperation, NativeServiceOperationJournal.service(endpoint)) {
             try NativeServiceOperationJournal(vault: self.vault).read(scope).map {
                 let c = NativeServiceOperationCommand(body: $0.body)
-                return self.record(.serviceOperation, operation: try c.operationId, action: try c.action)
+                return self.record(.serviceOperation, operation: try c.operationId, action: try c.action, object: try c.caseId)
             }
         }
         add(.turn, NativeTurnDataJournal.service(endpoint)) {
@@ -131,12 +148,12 @@ import Security
         add(.travelerBrief, NativeTravelerBriefJournal.service(endpoint)) {
             try NativeTravelerBriefJournal(vault: self.vault).read(scope).map {
                 let c = try NativeTravelerBriefCommand(body: $0.body)
-                return self.record(.travelerBrief, operation: c.operationID, action: c.action, boundary: "recipient_brief_content_and_authority_excluded")
+                return self.record(.travelerBrief, operation: c.operationID, action: c.action, boundary: "recipient_brief_content_and_authority_excluded", object: c.caseID)
             }
         }
         add(.pdf, NativePDFJournalVault.service(endpoint)) {
             try NativePDFJournalVault(vault: self.vault).read(scope).map {
-                self.record(.pdf, trip: $0.tripID, action: "confirm", boundary: "pdf_licensed_body_and_reviewed_patch_excluded")
+                self.record(.pdf, operation: $0.command.operationId, trip: $0.tripID, action: "confirm", boundary: "pdf_licensed_body_and_reviewed_patch_excluded")
             }
         }
         add(.communitySafety, NativeCommunitySafetyJournal.service(endpoint)) {
@@ -176,8 +193,8 @@ import Security
         }
         add(.scopedTrip, NativeScopedTripJournalVault.service(endpoint)) {
             try NativeScopedTripJournalVault(vault: self.vault).read(scope).map {
-                _ = try $0.command()
-                return self.record(.scopedTrip, trip: $0.tripID, boundary: "reviewed_patch_provider_and_licensed_content_excluded")
+                let c = try $0.command()
+                return self.record(.scopedTrip, operation: c.operationID, trip: $0.tripID, action: c.action, boundary: "reviewed_patch_provider_and_licensed_content_excluded")
             }
         }
         add(.result, NativeResultDataJournal.service(endpoint)) {
@@ -200,19 +217,21 @@ import Security
                 return self.record(.guide, operation: c.operationID, trip: $0.tripID, action: "follow_up", boundary: "question_source_text_audio_and_prompt_rights_excluded")
             }
         }
-        do {
+        if selected == nil || selected == .ask { do {
             try checked(actor); let value = try ask()
             let encoder = JSONEncoder(); encoder.outputFormatting = [.sortedKeys]
             let identity = try value.map { try encoder.encode($0) }
             guard try value == ask() else { throw NativeDataError.staleSessionResponse }
             try checked(actor)
             if let value, value.valid, value.mobileEpoch == scope.mobileEpoch, let identity {
+                var immutable = value; immutable.acknowledged = false
                 rows.append(.init(record: record(.ask, operation: value.request.idempotencyKey, action: value.mode.rawValue,
-                    boundary: "credential_envelope_and_user_or_licensed_input_excluded"), originalIdentity: identity))
+                    boundary: "credential_envelope_and_user_or_licensed_input_excluded"), originalIdentity: identity, operationIdentity: try encoder.encode(immutable)))
             } else if value == nil { rows.append(empty(.ask, state: .absent)) }
             else { throw NativeDataError.invalidResponse }
-        } catch { rows.append(empty(.ask, state: .unavailable)) }
+        } catch { rows.append(empty(.ask, state: .unavailable)) } }
         for id in [NativeJournalDataSourceID.tripSupport, .deviceDelete, .readinessSave, .linkedTripDelete, .memoryDelete, .tripDelete] {
+            guard selected == nil || selected == id else { continue }
             if let companion = companions[id] {
                 add(id, companion.service(endpoint)) { try companion.read(actor) }
             } else { rows.append(empty(id, state: .unavailable)) }
@@ -223,7 +242,7 @@ import Security
         try checked(actor)
         if id == .ask { return try askAbsent(actor) }
         // The qualified read includes the fixed original service status and a second readback.
-        guard let row = try read(actor).first(where: { $0.record.source == id }) else { return false }
+        guard let row = try snapshot(source: id, actor: actor) else { return false }
         return row.record.state == .absent
     }
 }
