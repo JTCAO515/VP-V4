@@ -418,3 +418,21 @@ new collision; corrected additive identity check passes. This release does NOT
 cover ProfileView/NativeTravelPace/VPStore/TravelerBrief hunks owned by others,
 whole files, current Result branch writes, TS/SQL/CI or unrelated architecture.
 Main grants actual Profile task application after its other applicable releases.
+
+## Final precise CI registration lease applied
+
+Maina4672e complete patch review plus original C registry owner's explicit clean/
+no-in-flight/planned/successor release (turn01a1161c-a933/exec2a571897) granted only
+these2 additions in scripts/ci-suites/db-integration.mjs: actual PG test file and
+native-HTTP TAIL result-data-http runner/file base63080. Applied; own candidate
+patch retired. Original31 native steps compare exactly with baseline at each
+index, retain original parity; all32 current steps are partitioned once. Existing
+postgres env/other file rows, all other lanes, EXCLUDED, matrix/shard helpers,
+workflow/30m/strict summaries/aggregate untouched. Actual classifier has zero
+problems and maps new SQL→postgres/Auth→supabase-http-native.
+
+Original required DB governance11 PASS,0 FAIL/SKIP/CANCEL/TODO after actual lease
+application; diff/docs/artifact checks PASS. No original already-green risk/Native/
+Auth matrix rerun for registration. Current package proceeds as ONE PR related239
+with exact final source/head review/all required CI/protected merge by Main;
+whole239 and target/provider/production/device/backup acceptance remain Open/UNRUN.
