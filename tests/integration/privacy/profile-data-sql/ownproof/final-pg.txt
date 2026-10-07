@@ -1,0 +1,36 @@
+Actual local PG replay complete
+▶ actual Profile SQL transaction and source graph
+  ✔ default private/RPC denies and exact immutable original Native implementation (150.638708ms)
+  ✔ absent Profile stays absent; first Native save inventories only actual pace; malformed wire types rejected (311.373417ms)
+  ✔ ordinary Web without mobile enrollment saves with original guard and v2 CAS (194.066125ms)
+  ✔ all original fields, request and Undo -> fixed30s clear, dual permanent floors, row retained (376.814459ms)
+  ✔ old native replay/Undo/Web7/v2 stale requests cannot revive; fresh writes remain legitimate (361.605625ms)
+  ✔ immutable original-byte recover and progress metadata erasure preserve source/receipt/floors (254.9665ms)
+  ✔ source CAS rejects every saved-field and reverse-row edit; failed erase makes no effects (310.735042ms)
+  ✔ raw service/GUC restoration and watermark reset are refused; delete/recreate cannot ABA (377.087709ms)
+  ✔ original Brief trigger invalidates shared Case and erases all affected previews/operation bytes, mixed scoped/recovery rows retained stale (528.566291ms)
+  ✔ complete confirmed Trip/events/snapshots/proposal/Memory/Auth and financial rows unchanged (472.029625ms)
+  ✔ full progress20+5 pagination and self-exit retain original fences, expired receipts recover (1878.916166ms)
+  ✔ actual leased scoped Profile use blocks clear, complete mixed publication remains and becomes stale (554.548458ms)
+  ✔ actual opaque Profile core copy blocks; missing Profile handler is not falsely inventoried; expired copy still CAS (320.399917ms)
+  ✔ clear serializes against real old Native save/Undo/Web RPC transactions without weakening old errors (2161.146875ms)
+  ✔ whole owner progress capacity rejects before insertion; no partial list and no privileged cleanup floor bypass (2502.5655ms)
+  ✔ actual30s expiry before effects rolls back source, progress and floor (30418.172625ms)
+  ✔ controlled fixture delay after real effects uses actual clock and rolls source/floors/receipt back; original terminal receipt recovers afterTTL (30565.463125ms)
+  ✔ fresh authority/session and foreign selection negatives rollback and disclose no foreign source (491.398917ms)
+  ✔ unknown application source shape and inbound FK drift remain fail-closed (291.70275ms)
+✔ actual Profile SQL transaction and source graph (72600.867833ms)
+▶ Profile precise Result append preserves whole application and boundary guards
+  ✔ unknown application relation and inbound FK still rejected (110.914375ms)
+  ✔ original managed typed identities and application OID consumers still rejected (83.97525ms)
+  ✔ Profile private no-result-ref constraints reject typed object/field JSON, arbitrary title strings allowed (79.4715ms)
+✔ Profile precise Result append preserves whole application and boundary guards (373.877208ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 73054.915916
+Owned disposable PG cleanup PASS
