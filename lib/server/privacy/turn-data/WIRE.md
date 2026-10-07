@@ -365,3 +365,42 @@ Closed snapshot additionally checks per terminal sensitive request that the
 flattened sourceIdentityKeys count for each approved countKey equals its immutable
 decision.erasedCounts. Matching an empty array counter cannot conceal omitted
 actual technical identities. This adds no root cleanup DTO or selection.
+
+## Final same-source Auth handoff
+
+Source: sole SQL `08b2edc3c52733dfd4d47cf71aa76557d2f1a451`, 0705 SHA256
+`33b066b7846626a03c93b8e34656215d09bbe9cf6ecfffd8dd70200dc7f3f85d`;
+Profile0702 `aec808...` source preserved. Native `82f09c8022489c8cabdb9fd24d1d23664d443904`
+normal-merged with exact source equality; original Native12 r2 and36 r1 are
+separate evidence, retaining original r1 clock FAIL/cancel75 and device UNRUN.
+35-source-schema SHA remains `1629f0b1382aa08a6bc8dfbe5c2f49f9775991691819f593ea95a9f57b5917a1`.
+
+Real signed GoTrue/native-proof -> original taskless independent-question and
+ServiceTask submit/claim/authorize/complete -> registered HTTP list/preview/
+explicit source-CAS erase -> original-whitespace immutable recovery -> finite
+progress -> independent actual preserved parent/otherTurn/confirmedTrip/Memory/
+dispatch/financial bytes -> fresh same-conversation original producer -> original
+D2 configured worker/bundle/private ticket/download/plaintext bytes/hash -> strict
+Turn snapshot including technical keys -> actual mixed CORE_EXPORT_COPY blocker:
+**r4 PASS1/0skip**, owned project `vp-native-ask-3e84a8e6`, port base62960,
+case6206ms/suite9128ms, owned cleanup PASS. No paid provider send, real-user data,
+target grants/keys/storage/deployment/device action. Main separately read actual
+run output; this is local Auth evidence, not target or all-account completion.
+
+Prior failures remain: r1 `27c62c29` owner list503 from fixture-only managed Auth
+definition pin mismatch; original identity/app105/own43 gates retained while Main
+approved exact observed official + fixture managed helper variants, unknown denied.
+r2 `2758b3d3` failed in my diagnostic-only SQL naming a nonexistent guard getter,
+not a new business result. r3 `42c49001` passed original clear/recover/retention and
+stopped at original D2 request503 because the owned fixture lacked original
+core_policies row/local worker configuration; r4 reused the existing Profile
+Export fixture's same policy/local switches and preserved the202 assertion.
+Every owned stack cleanup PASS; no retroactive green or unaffected matrix rerun.
+
+Owned source list: turn-data directory; new native/v1/turn-data route; turn-data
+integration files; sole SQL0705/turn-data-sql source (normal merges only); sole
+Native TurnData and precisely leased Session/Ask/coverage/project integrations
+(normal merge only). Shared TS exact leases: export-worker plus four coverage
+files; CI only actual Auth runner tail62960. Original Profile/Offline/Export
+dependencies preserved. Whole Main source review, one PR/exact formal/current
+applicable CI/protected merge remain; #239 whole scope remains open.
