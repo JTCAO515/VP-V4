@@ -282,7 +282,7 @@ In flight operation:   <DVTOperationGroup: 0x7cc4c08900; state = AREfc>
                                      <XCTHOperationGroup: 0x7cc4c08a80>
                                          <XCTHOperationGroup: 0x7cc4c09380>
                                              <IDERunOperation: 0x7cc4c09080; state = aReF!c, blocking { XCTHTestOperationCoordinator processing delay, Blocking finish to allow restarting of crashed test operations., Waiting for -runningDidFinish call. }>
-                                             worker: <IDERunOperationWorkerGroup: 0x7cc843b900, unfinished subworkers : 
+                                             worker: <IDERunOperationWorkerGroup: 0x7cc843b900, unfinished subworkers :
 					<IDELaunchiPhoneSimulatorLauncher: 0x7cc57b50a0 -- ExtensionIdentifier: Xcode.IDEiPhoneSimulatorSupport.Launch>
 				 >
 
@@ -722,4 +722,3 @@ estination:orderedOperations:schemeActionRecord:deviceAvailableChecker:actionCal
  17   -[XcodebuildPreIDEHandler runWithArguments:] (in xcodebuild)
  18   main (in xcodebuild)
  19   start (in dyld)
-
