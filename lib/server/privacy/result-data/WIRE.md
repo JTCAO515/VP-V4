@@ -357,3 +357,14 @@ Sole integrator normally merged exact fixedNative964b then f5f8c6; complete ios
 source equals f5f8c6, all11 envelopes+commands12/12 byte-hash MATCH. Latest TS
 fifth-type wire is d0591196. SQL fixed source/real PG consumer/signed Auth remains
 outstanding; no original partial dirty migration/source copied. Whole239 Open.
+
+CI-REGISTRATION.patch is a concrete pending lease object, NOT applied. It adds
+only actual result-data-sql/postgres.test.mjs to the existing postgres file list
+(VP_PRIVACY_DB_TEST already supplied), and APPENDS the actual signed Auth runner
+at native-HTTP step index31/base63080. Original31 native steps keep identical
+indexes/parity/commands/env; logical lanes/two-shard helper/workflow/timeout/
+strict summary/zeroSkip/aggregate/EXCLUDED unchanged. No new env switch required.
+Apply-check PASS; shared classifier/governance execution awaits precise Main
+original-registry-owner release/lease and fixed SQL file integration. No nonexistent
+SQL source copied or fake registered-path success. Own Auth runner requires real
+fixed migration plus actual registered result_data caller before resource start.
