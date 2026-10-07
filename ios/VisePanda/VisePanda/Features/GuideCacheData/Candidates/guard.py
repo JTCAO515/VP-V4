@@ -51,13 +51,18 @@ args = parser.parse_args()
 pins = json.loads((HERE / "pins.json").read_text())
 manifest = []
 prepared = {}
+already_applied = set()
 for relative, pin in pins.items():
     patch = HERE / (Path(relative).name + ".patch")
     raw = patch.read_bytes()
     before = (ROOT / relative).read_bytes()
-    if sha(before) != pin["before"]:
+    current_sha = sha(before)
+    if current_sha == pin["after"]:
+        after = before; already_applied.add(relative)
+    elif current_sha == pin["before"]:
+        after = project(before, raw)
+    else:
         raise RuntimeError("Baseline SHA differs: " + relative)
-    after = project(before, raw)
     if sha(after) != pin["after"]:
         raise RuntimeError("After SHA differs: " + relative)
     manifest.append({"file": relative, **pin, "patchSHA256": sha(raw)})
@@ -71,10 +76,14 @@ if args.inspect_directory:
 if args.apply:
     if args.lease_batch_sha != batch or not args.file or not set(args.file).issubset(prepared):
         raise RuntimeError("Exact batch and explicitly leased file list required")
-    selected = [str(HERE / (Path(relative).name + ".patch")) for relative in args.file]
+    pending = [relative for relative in args.file if relative not in already_applied]
+    if not pending:
+        print("All selected leased files already match their exact after SHA256 values.")
+        raise SystemExit(0)
+    selected = [str(HERE / (Path(relative).name + ".patch")) for relative in pending]
     subprocess.run(["git", "apply", "--unidiff-zero", "--check", *selected], cwd=ROOT, check=True)
     # Recheck every selected full baseline immediately before one git apply; no file-copy overwrite.
-    for relative in args.file:
+    for relative in pending:
         if sha((ROOT / relative).read_bytes()) != pins[relative]["before"]:
             raise RuntimeError("Source changed before application: " + relative)
     subprocess.run(["git", "apply", "--unidiff-zero", *selected], cwd=ROOT, check=True)
