@@ -50,11 +50,14 @@ test('signed owner Auth consumes an actual Profile snapshot, real protected byte
     const email='vp-profile-export-'+uuid()+'@example.test',password='Owned-Disposable-'+uuid()+'!';
     const signup=await auth.auth.signUp({email,password});assert.equal(signup.error,null);assert.ok(signup.data.user&&signup.data.session);
     const row={id:signup.data.user.id};users.push(row);
-    const attemptId=uuid(),credentials=await call('/api/auth/native/v2/credentials',null,{email,password,attemptId});assert.equal(credentials.status,200);
-    assert.equal((await call('/api/auth/native/v2/login',credentials.body.accessToken,{attemptId})).status,200);
-    const client=createClient(local.API_URL,publishable,{global:{headers:{Authorization:'Bearer '+credentials.body.accessToken}},auth:{persistSession:false,autoRefreshToken:false}});
-    const session=await client.rpc('native_session_v2',{p_action:'session'});assert.equal(session.error,null);
-    return {...row,token:credentials.body.accessToken,client,actor:{ownerId:row.id,sessionId:session.data.sessionId,mobileEpoch:session.data.mobileEpoch}};
+    async function fresh(){
+      const attemptId=uuid(),credentials=await call('/api/auth/native/v2/credentials',null,{email,password,attemptId});assert.equal(credentials.status,200);
+      assert.equal((await call('/api/auth/native/v2/login',credentials.body.accessToken,{attemptId})).status,200);
+      const client=createClient(local.API_URL,publishable,{global:{headers:{Authorization:'Bearer '+credentials.body.accessToken}},auth:{persistSession:false,autoRefreshToken:false}});
+      const session=await client.rpc('native_session_v2',{p_action:'session'});assert.equal(session.error,null);
+      return {...row,token:credentials.body.accessToken,client,actor:{ownerId:row.id,sessionId:session.data.sessionId,mobileEpoch:session.data.mobileEpoch}};
+    }
+    return {...await fresh(),fresh};
   }
   const owner=await user(),foreign=await user(),exports='/api/privacy/native/v1/exports';
   for(const role of ['anon','authenticated','service_role'])assert.equal(sql('select has_function_privilege('+literal(role)+",'public.privacy_core_export_v1(text,jsonb)','execute');"),'f');
@@ -78,7 +81,14 @@ test('signed owner Auth consumes an actual Profile snapshot, real protected byte
     const ticket=await call(exports+'/'+requestId+'/download-ticket',owner.token,{});assert.equal(ticket.status,200);
     return {requestId,receipt,ticket:ticket.body};
   }
-  const ready=await exportSnapshot(),downloadHeaders={'X-Export-Download-Token':ready.ticket.token,'X-Export-Operation-ID':ready.ticket.operationId};
+  const ready=await exportSnapshot(),admission={...owner.actor};
+  Object.assign(owner,await owner.fresh());assert.notEqual(owner.actor.sessionId,admission.sessionId);assert.ok(owner.actor.mobileEpoch>admission.mobileEpoch);
+  const oldHeaders={'X-Export-Download-Token':ready.ticket.token,'X-Export-Operation-ID':ready.ticket.operationId};
+  assert.notEqual((await call(exports+'/'+ready.requestId+'/download',owner.token,undefined,'GET',oldHeaders)).status,200,'Old ticket cannot transfer to the new Native session');
+  const freshTicket=await call(exports+'/'+ready.requestId+'/download-ticket',owner.token,{});assert.equal(freshTicket.status,200,'Same owner fresh session may download originally admitted job');
+  ready.ticket=freshTicket.body;
+  assert.equal(sql(`select count(*) from export_private.profile_snapshot_provenance_v1 where request_id='${ready.requestId}' and session_id='${admission.sessionId}' and session_epoch=${admission.mobileEpoch};`),'1','Immutable proof retains original admission actor');
+  const downloadHeaders={'X-Export-Download-Token':ready.ticket.token,'X-Export-Operation-ID':ready.ticket.operationId};
   assert.notEqual((await call(exports+'/'+ready.requestId+'/download',foreign.token,undefined,'GET',downloadHeaders)).status,200);
   const downloaded=await fetch(ports.api+exports+'/'+ready.requestId+'/download',{headers:{Authorization:'Bearer '+owner.token,...downloadHeaders},signal:AbortSignal.timeout(60000)});
   assert.equal(downloaded.status,200);assert.match(downloaded.headers.get('cache-control'),/private.*no-store/);
