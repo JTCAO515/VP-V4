@@ -950,11 +950,11 @@ begin
   if jsonb_array_length(inventory_n)>10000 or octet_length(inventory_n::text)>1000000 then raise exception 'CONVERSATION_CAPACITY';end if;
   digest_n:=conversation_data_private.digest_v1(inventory_n::text);
   after_n:=case when v->'cursor'='null'::jsonb then null else (v->'cursor'->>'afterId')::uuid end;
-  if after_n is not null and (v->'cursor'->>'sourceDigest' is distinct from digest_n or not exists(select 1 from jsonb_array_elements(inventory_n) actual where coalesce(actual->>'rootId',actual->>'requestId')=after_n::text)) then raise exception 'CONVERSATION_SOURCE_CHANGED';end if;
-  select coalesce(jsonb_agg(value order by coalesce(value->>'rootId',value->>'requestId')),'[]'::jsonb) into items_n from
-   (select value from jsonb_array_elements(inventory_n) where after_n is null or coalesce(value->>'rootId',value->>'requestId')>after_n::text order by coalesce(value->>'rootId',value->>'requestId') limit 20) page;
-  last_n:=nullif(coalesce(items_n->-1->>'rootId',items_n->-1->>'requestId'),'')::uuid;
-  more_n:=exists(select 1 from jsonb_array_elements(inventory_n) where last_n is not null and coalesce(value->>'rootId',value->>'requestId')>last_n::text);
+  if after_n is not null and (v->'cursor'->>'sourceDigest' is distinct from digest_n or not exists(select 1 from jsonb_array_elements(inventory_n) actual where (case when scope_n='conversation-delete-progress/1' then actual->>'requestId' else actual->>'rootId' end)=after_n::text)) then raise exception 'CONVERSATION_SOURCE_CHANGED';end if;
+  select coalesce(jsonb_agg(value order by (case when scope_n='conversation-delete-progress/1' then value->>'requestId' else value->>'rootId' end)),'[]'::jsonb) into items_n from
+   (select value from jsonb_array_elements(inventory_n) where after_n is null or (case when scope_n='conversation-delete-progress/1' then value->>'requestId' else value->>'rootId' end)>after_n::text order by (case when scope_n='conversation-delete-progress/1' then value->>'requestId' else value->>'rootId' end) limit 20) page;
+  last_n:=nullif((case when scope_n='conversation-delete-progress/1' then items_n->-1->>'requestId' else items_n->-1->>'rootId' end),'')::uuid;
+  more_n:=exists(select 1 from jsonb_array_elements(inventory_n) where last_n is not null and (case when scope_n='conversation-delete-progress/1' then value->>'requestId' else value->>'rootId' end)>last_n::text);
   result_n:=jsonb_build_object('schemaVersion','conversation-data/1','kind','list','scope',scope_n,'rootKind',kind_n,
    'ownerId',u,'sessionId',s,'mobileEpoch',e,'sourceDigest',digest_n,'capturedAt',captured_n,'expiresAt',expires_n,'items',items_n,'hasMore',more_n,
    'nextCursor',case when more_n then jsonb_build_object('sourceDigest',digest_n,'afterId',last_n) else null end,'allUserDataCompleted',false);

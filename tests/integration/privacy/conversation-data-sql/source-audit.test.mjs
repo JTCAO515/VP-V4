@@ -52,8 +52,9 @@ test('conversation source graph baseline: catalog and hidden-text reverse effect
     migrations: migrations.map(file => ({ file, digest: hash(readFileSync('supabase/migrations/' + file, 'utf8')) })) };
   let originalSource,tasklessOutcome;
   const mixedOnly = process.env.VP_CONVERSATION_MIXED_COPY_ONLY === '1';
-  const runCase = (name, ...args) => mixedOnly && !/actual mapped|real text-hide|new private state|actual fixed-point|connected mixed-copy/.test(name)
-    ? Promise.resolve() : t.test(name, ...args);
+  const paginationOnly = process.env.VP_CONVERSATION_PAGINATION_ONLY === '1';
+  const runCase = (name, ...args) => (mixedOnly && !/actual mapped|real text-hide|new private state|actual fixed-point|connected mixed-copy/.test(name))
+    || (paginationOnly && !/new private state|progress pagination/.test(name)) ? Promise.resolve() : t.test(name, ...args);
   await runCase('actual mapped table definitions, all inbound/outbound FKs, JSON columns and trigger bodies', async () => {
     evidence.tables = JSON.parse(await db(`select jsonb_agg(jsonb_build_object('table',c.oid::regclass::text,'rls',c.relrowsecurity,'acl',c.relacl,
       'columns',(select jsonb_agg(jsonb_build_object('name',a.attname,'type',a.atttypid::regtype::text,'notNull',a.attnotnull) order by a.attnum) from pg_attribute a where a.attrelid=c.oid and a.attnum>0 and not a.attisdropped),
@@ -413,6 +414,43 @@ test('conversation source graph baseline: catalog and hidden-text reverse effect
     assert.equal(await invariant(),before);
     evidence.tripMemory={confirmedTrip:'all tested content/snapshot/event/proposal rows unchanged',explicitMemory:'profile/receipt/consent rows unchanged',goalTripReceipts:'all columns unchanged'};
   });
+  await runCase('progress pagination uses outer-scope request identity across repeated sensitive roots and progress rows',async()=>{
+    const owner=uuid(),session=uuid(),root='f0000000-0000-4000-8000-000000000001';
+    const claims=`set request.jwt.claim.role='authenticated';set request.jwt.claim.sub='${owner}';set request.jwt.claims=${lit(JSON.stringify({role:'authenticated',is_anonymous:false,session_id:session}))};`;
+    await db(`insert into auth.users values('${owner}');insert into auth.sessions(id,user_id) values('${session}','${owner}');
+      insert into identity_private.mobile_accounts(owner_id,session_id,epoch) values('${owner}','${session}',1);
+      insert into identity_private.mobile_attempts(owner_id,attempt_id,session_id,epoch) values('${owner}','${uuid()}','${session}',1);
+      ${claims}insert into public.chat_threads(id,owner_id) values('${root}','${owner}');
+      grant execute on function public.privacy_conversation_data_v1(text,text,bigint) to authenticated;`);
+    const query=c=>`begin;${claims}set role authenticated;select public.privacy_conversation_data_v1(${lit(c.action)},${lit(JSON.stringify(c))},1);commit;`;
+    const call=async c=>JSON.parse(await db(query(c)));
+    const requests=Array.from({length:25},(_,n)=>'10000000-0000-4000-8000-'+String(n+1).padStart(12,'0'));
+    for(let n=0;n<requests.length;n++)await call({action:'preview',requestId:requests[n],
+      ...(n%5===4?{scope:'conversation-delete-progress/1',rootKind:null,rootId:null,objectIds:[requests[0]]}
+        :{scope:'conversation-sensitive-data/1',rootKind:'thread',rootId:root,objectIds:[]})});
+    const listCommand={action:'list',scope:'conversation-delete-progress/1',rootKind:null,cursor:null,limit:20};
+    const first=await call(listCommand);assert.equal(first.hasMore,true);assert.equal(first.items.length,20);
+    assert.deepEqual(first.items.map(r=>r.requestId),requests.slice(0,20));assert.equal(first.nextCursor.afterId,requests[19]);
+    assert.ok(first.items.some(r=>r.rootId===root));assert.ok(first.items.some(r=>r.rootId===null));
+    const second=await call({...listCommand,cursor:first.nextCursor});assert.equal(second.hasMore,false);assert.equal(second.nextCursor,null);
+    assert.equal(second.sourceDigest,first.sourceDigest);assert.deepEqual(second.items.map(r=>r.requestId),requests.slice(20));
+    assert.deepEqual([...first.items,...second.items].map(r=>r.requestId),requests);
+    for(const cursor of [{sourceDigest:first.sourceDigest,afterId:root},{sourceDigest:'a'.repeat(64),afterId:requests[19]},
+      {sourceDigest:first.sourceDigest,afterId:'10000000-0000-4000-8000-000000000099'}]){
+      const rejected=await sql(container,query({...listCommand,cursor}));assert.notEqual(rejected.code,0);assert.match(rejected.stderr,/CONVERSATION_SOURCE_CHANGED/);
+    }
+    const resumed=await call({...listCommand,cursor:{sourceDigest:first.sourceDigest,afterId:requests[4]}});
+    assert.deepEqual(resumed.items.map(r=>r.requestId),requests.slice(5));assert.equal(resumed.hasMore,false);
+    const last=await call({...listCommand,cursor:{sourceDigest:first.sourceDigest,afterId:requests[24]}});
+    assert.deepEqual(last.items,[]);assert.equal(last.hasMore,false);assert.equal(last.nextCursor,null);
+    const sensitive=await call({action:'list',scope:'conversation-sensitive-data/1',rootKind:'thread',cursor:null,limit:20});
+    assert.deepEqual(sensitive.items.map(r=>r.rootId),[root]);
+    const empty=await call({action:'list',scope:'conversation-sensitive-data/1',rootKind:'thread',cursor:{sourceDigest:sensitive.sourceDigest,afterId:root},limit:20});
+    assert.deepEqual(empty.items,[]);assert.equal(empty.hasMore,false);assert.equal(empty.nextCursor,null);
+    evidence.pagination={kind:'actual local SQL claims RPC; 25 real preview operations',progress:'requestId ordering across repeated roots and progress rows; 20+5 exact pages',
+      anchors:'root alias/absent operation/digest mismatch rejected; existing operation resumes exactly',sensitive:'rootId anchor preserved',skipsDuplicates:'none'};
+  });
+  if (!paginationOnly) {
   assert.ok(evidence.finding, 'Reproduction must succeed before publishing evidence');
   assert.ok(evidence.prefix, 'Private state checks must succeed before publishing prefix evidence');
   assert.ok(evidence.source, 'Actual source constructor checks must succeed before publishing source evidence');
@@ -425,7 +463,10 @@ test('conversation source graph baseline: catalog and hidden-text reverse effect
   assert.ok(evidence.tripMemory, 'Actual retained Trip/Memory comparison must succeed before publishing evidence');
   }
   assert.ok(evidence.mixedCopies, 'Connected mixed-copy checks must succeed before publishing evidence');
+  }
+  if (!mixedOnly) assert.ok(evidence.pagination, 'Actual progress pagination checks must succeed before publishing evidence');
   const target='artifacts/VPJ-58/conversation-data-sql';mkdirSync(target,{recursive:true});
-  writeFileSync(target+(mixedOnly?'/mixed-copy-catalog.json':'/source-catalog.json'),JSON.stringify(evidence,null,2)+'\n');
-  console.log('SOURCE_UNSUPPORTED reproduction verified; baseline catalog saved; owned fixture cleanup follows.');
+  writeFileSync(target+(paginationOnly?'/progress-pagination-catalog.json':mixedOnly?'/mixed-copy-catalog.json':'/source-catalog.json'),JSON.stringify(evidence,null,2)+'\n');
+  console.log(paginationOnly ? 'Progress pagination verified; focused evidence saved; owned fixture cleanup follows.'
+    : 'SOURCE_UNSUPPORTED reproduction verified; baseline catalog saved; owned fixture cleanup follows.');
 });

@@ -247,3 +247,25 @@ Main owns whole-source/exact-head formal review, required CI and protected merge
 Target grant/config/credentials, backup/old devices/ALL2 and whole #239 remain
 UNRUN/Open as applicable. This fixed SQL checkpoint closes the owned SQL
 implementation, not the whole integrated ConversationData delivery.
+
+
+## Progress pagination correction, 2026-10-07
+
+The original integrator's SQL-LIST-FINDING.md retains signed Auth r1/r2 failures:
+non-null original rootId in progress rows was incorrectly used by coalesce as
+the page key. The SQL now chooses every anchor/page/aggregation/last/hasMore key
+by the outer requested scope: progress=requestId, sensitive=rootId; nextCursor
+uses that same last key. Owner/sourceDigest/existing-anchor/bounds/TTL/authority
+and immutable decisions are unchanged. No client sorting or assertion weakening.
+
+Actual affected command:
+`VP_CONVERSATION_SOURCE_AUDIT=1 VP_CONVERSATION_PAGINATION_ONLY=1 node --test tests/integration/privacy/conversation-data-sql/source-audit.test.mjs`.
+Marker a0338d: exit0, 3 PASS/0 fail/skip, 9041ms including disposable setup/cleanup.
+The two child cases verify default private denial/rollback/original functions and
+25 actual preview operations with low request UUIDs, a high repeated root UUID,
+and interleaved progress operations. Exact 20+5 pages, correct operation cursor,
+no duplicate/missing rows, root-alias/absent-anchor/digest-mismatch refusal,
+existing-operation continuation, final empty page and sensitive-root anchoring pass.
+Evidence: ignored `artifacts/VPJ-58/conversation-data-sql/progress-pagination-catalog.json`.
+Original green Trip/Memory/30s and other matrices are reused, not rerun. Signed
+Auth incremental rerun remains with sole TS; r1/r2 FAIL history remains retained.
