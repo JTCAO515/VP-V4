@@ -313,3 +313,13 @@ Result same-source CI repair dependency, one final Profile PR and required check
 protected merge remain. Whole239/ALL1/ALL2 stays Open; target/real device/backup/
 provider/fees/deploy remain UNRUN. No approval/activity/fixture is represented as
 an actual target or whole-account completion, and no new product work is invented.
+
+Main78857/Result669 protected merge consumed by normal Git. Necessary same-source
+increment verification is artifacts/VPJ-58/profile-data/server/AUTH-r2-main.md:
+new full migration order actual signed Auth1PASS0skip + own e7a1f55f cleanupPASS,
+prior actual PG dual-guard/Guide proofs reused. Profile SQL hash unchanged, entire
+ios equals0725; Result/Conversation increment source equalsmain. Affected registry
+11PASS/typecheck/lint/docs/diff PASS. No unmerged ProfileExport source consumed.
+This closes the earlier unmerged Result dependency; unique main-base Profile PR
+engineering follows, with exact final-head review/required CI separate from code
+completion and target/full239 acceptance.
