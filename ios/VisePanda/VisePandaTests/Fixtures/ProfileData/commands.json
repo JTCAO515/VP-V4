@@ -1,0 +1,72 @@
+{
+  "actor": {
+    "ownerId": "00000000-0000-4000-8000-000000000001",
+    "sessionId": "00000000-0000-4000-8000-000000000002",
+    "mobileEpoch": 3
+  },
+  "now": 1791369600000,
+  "preview": {
+    "action": "preview",
+    "scope": "profile-sensitive-data/1",
+    "requestId": "00000000-0000-4000-8000-000000000003",
+    "profileId": "00000000-0000-4000-8000-000000000001",
+    "objectIds": []
+  },
+  "erase": {
+    "action": "erase",
+    "scope": "profile-sensitive-data/1",
+    "requestId": "00000000-0000-4000-8000-000000000003",
+    "profileId": "00000000-0000-4000-8000-000000000001",
+    "objectIds": [],
+    "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "previewDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "confirmed": true
+  },
+  "eraseBytes": "  {\"action\":\"erase\",\"scope\":\"profile-sensitive-data/1\",\"requestId\":\"00000000-0000-4000-8000-000000000003\",\"profileId\":\"00000000-0000-4000-8000-000000000001\",\"objectIds\":[],\"sourceDigest\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"previewDigest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"confirmed\":true}\n",
+  "recover": {
+    "action": "recover",
+    "scope": "profile-sensitive-data/1",
+    "requestId": "00000000-0000-4000-8000-000000000003",
+    "profileId": "00000000-0000-4000-8000-000000000001",
+    "objectIds": [],
+    "mutationBytes": "  {\"action\":\"erase\",\"scope\":\"profile-sensitive-data/1\",\"requestId\":\"00000000-0000-4000-8000-000000000003\",\"profileId\":\"00000000-0000-4000-8000-000000000001\",\"objectIds\":[],\"sourceDigest\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"previewDigest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"confirmed\":true}\n"
+  },
+  "progressPreview": {
+    "action": "preview",
+    "scope": "profile-delete-progress/1",
+    "requestId": "00000000-0000-4000-8000-000000000010",
+    "profileId": null,
+    "objectIds": [
+      "00000000-0000-4000-8000-000000000003"
+    ]
+  },
+  "progressErase": {
+    "action": "erase",
+    "scope": "profile-delete-progress/1",
+    "requestId": "00000000-0000-4000-8000-000000000010",
+    "profileId": null,
+    "objectIds": [
+      "00000000-0000-4000-8000-000000000003"
+    ],
+    "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "previewDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "confirmed": true
+  },
+  "progressEraseBytes": "\n{\"action\":\"erase\",\"scope\":\"profile-delete-progress/1\",\"requestId\":\"00000000-0000-4000-8000-000000000010\",\"profileId\":null,\"objectIds\":[\"00000000-0000-4000-8000-000000000003\"],\"sourceDigest\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"previewDigest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"confirmed\":true}  ",
+  "progressRecover": {
+    "action": "recover",
+    "scope": "profile-delete-progress/1",
+    "requestId": "00000000-0000-4000-8000-000000000010",
+    "profileId": null,
+    "objectIds": [
+      "00000000-0000-4000-8000-000000000003"
+    ],
+    "mutationBytes": "\n{\"action\":\"erase\",\"scope\":\"profile-delete-progress/1\",\"requestId\":\"00000000-0000-4000-8000-000000000010\",\"profileId\":null,\"objectIds\":[\"00000000-0000-4000-8000-000000000003\"],\"sourceDigest\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"previewDigest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"confirmed\":true}  "
+  },
+  "list": {
+    "action": "list",
+    "scope": "profile-delete-progress/1",
+    "cursor": null,
+    "limit": 20
+  }
+}

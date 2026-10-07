@@ -1,0 +1,16 @@
+# Precise shared integration candidate r3 - awaiting Main lease
+
+Source WIRE fixed3b8709716a0488764ab624af6feede7321af83f3 has been read; same envelope keys as original approved7780, matching strict pace operation/revision/Undo-source consistency. Final receipt floor guard also rejects an explicit/paused snapshot equal to the erasure floor; a valid newly consented save must have a later revision. This is a local stale-cache guard, not a new wire. Native aligns dual monotonic revision/floor summaries, saved-field inventory, ordinary current owner/session/epoch, original exact request bytes, fixed30s and declared fallback-without-consent. Unique eight producer envelopes/commands are next native decoder evidence.
+
+Candidate is Features/ProfileData/SharedNative.patch. Latest candidate9 file SHA256 80d60a901084ef906f0269aba135574d4e2607470a605ba872fce9e9babfe0cd. Shared runtime is NOT applied. Prior temporary PBX candidate was superseded before any app build/application; current PBX own11 app file references/buildIDs in app Sources, own storage test in test Sources confirmed using plutil. Final own two test files are in test Sources and original9 fixture JSON files in test Resources; all memberships have been checked by plutil.
+
+Candidate exact hunks:
+- App/NativeSession.swift: own11-type factory/transport/immutable receipt+original journal validation; sameactor local Profile/pace floors and onegeneration to reject old profile-name response; no account/Auth/Trip/Memory mutation; private file purge and journal only under existing explicit cleanup gate.
+- Features/Profile/ProfileView.swift: one ProfileData route (injection via session); original privacy coverage/core export remain.
+- Features/Profile/NativeTravelPace.swift: generation fence and verified receipt paceFloor, drops only pending/Undo/snapshot older than committed floor; newer explicit edit may proceed with current revision. No old wire/notice contract changed.
+- Features/Profile/NativeTravelPaceView.swift and Features/Ask/NativeVPTravelPaceStore.swift/View.swift: current-actor receipt observers reset older saved Profile projection/consent, preserve explicit current-goal intake and pending current-input writer.
+- Features/TravelerBrief/NativeTravelerBriefView.swift: only matching owner scope+actual receipt briefCasesInvalidated, invalidates transient view/export and read generation; preserves original pending journal and original server sharing/withdraw/recovery contract. Necessary to prevent old cached Profile pace from remaining visible after original Brief invalidation trigger.
+- Features/DataCoverage/NativeDataCoverageModuleView.swift: profile-specific registered destination only, same catalog and other modules.
+- VisePanda.xcodeproj/project.pbxproj: own application/test source references only.
+
+No ResultData file touched. Candidate full App compile PASS; own10+originalpace6 r2, newboundary1+Brief17 r3, finalfloorboundary1+originalpace6 r4 all actual PASS/0skip outside this worktree. Raw evidence is CANDIDATE-r2.md. Lease must explicitly release current actual shared owners (including Brief observer) and exact reviewed final patch before applying. Native proceeds on owned scope without a new approval flow.
