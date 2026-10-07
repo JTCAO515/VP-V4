@@ -13,5 +13,26 @@
     "9800 count/5s timeout/oracles",
     "all source/copy/receipt/TTL/Native wire",
     "07020000/060000/target grants"
-  ]
+  ],
+  "negativeRunProvenance": [
+    {
+      "exec": "5d54404e",
+      "profileResultSchemaGuards": "both true in preceding statement",
+      "negativeCommand": "FAIL",
+      "exitCode": 1,
+      "cause": "owned disposable fixture missing authenticated RPC EXECUTE grant",
+      "actualError": "permission denied for function privacy_result_data_v1",
+      "rawLog": "overwritten by subsequent run; preserved here as factual result note, not recreated"
+    },
+    {
+      "exec": "9dd5c49f",
+      "setup": "one RPC EXECUTE grant in same owned disposable fixture only",
+      "negativeCommand": "PASS",
+      "tests": 3,
+      "fail": 0,
+      "skip": 0,
+      "trackedLog": "brief-guard-negative.log (second run only)"
+    }
+  ],
+  "proofOnlyCorrection": "no runtime change or test rerun; runtime094 remains immediately consumable"
 }

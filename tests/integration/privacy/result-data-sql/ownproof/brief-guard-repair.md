@@ -40,3 +40,20 @@ logs are in this ownproof directory. Ordinary full source/copy/TTL/Native/Auth
 matrices remain unchanged evidence; only the affected CI verification should run
 on the new integrated head. All user/account/fixture grants are local disposable
 PG fixtures, not target activation. No remote/provider/config/deploy action.
+
+## Fixture setup failure retained separately
+
+Exec5d54404e first returned both strict Profile/Result schema guards true, but
+the following negative test command exited1: the already-owned disposable PG
+fixture had not granted authenticated EXECUTE on privacy_result_data_v1. Actual
+error was `permission denied for function privacy_result_data_v1`. That negative
+run is FAIL, not a retroactive PASS or a runtime/schema regression. Its original
+negative.log was overwritten by the subsequent run; this is a factual command
+result note, not a reconstructed raw log.
+
+Exec9dd5c49f then granted that one RPC only inside the same owned disposable
+fixture and reran the three affected negatives:3PASS0FAIL/SKIP. The tracked
+brief-guard-negative.log records this second run only. The earlier schema-guard
+PASS and first negative setup FAIL remain distinct. No target grant, runtime
+change or additional test run was made for this evidence correction. Runtime094
+remains consumable independently of this proof-only addendum.
