@@ -1,0 +1,493 @@
+--- a/ios/VisePanda/VisePanda/App/NativeSession.swift
++++ b/ios/VisePanda/VisePanda/App/NativeSession.swift
+@@ -33,6 +33,8 @@
+     private(set) var failureCode: String?
+     private(set) var dataGeneration = 0
+     private var assistantNavigation: NativeAssistantNavigation?
++    private(set) var resultDataErasure: NativeResultDataErasure?
++    private var resultDataProjectionFence = NativeResultDataProjectionFence()
+     private(set) var conversationDataErasure: NativeConversationDataErasure?
+     let memoryPreferences=NativeMemoryPreferencesStore()
+     let notifications = NativeNotificationCoordinator()
+@@ -85,7 +87,10 @@
+         guard let value=assistantNavigation,value.scope==dataScope else{return nil};return value
+     }
+     func retainAssistantNavigation(_ value:NativeAssistantNavigation) {
+-        guard value.scope==dataScope else{return};assistantNavigation=value
++        guard value.scope==dataScope else{return}
++        assistantNavigation = .init(scope: value.scope, conversationID: value.conversationID, goal: value.goal,
++            artifact: value.artifact.flatMap { resultDataPermitsResult($0.artifactId) ? $0 : nil },
++            viewedArtifact: value.viewedArtifact.flatMap { resultDataPermitsResult($0.artifactId) ? $0 : nil })
+     }
+ 
+     /// Remote destinations come only from the installed build, never launch arguments or user input.
+@@ -296,6 +301,81 @@
+         return bytes
+     }
+ 
++    var resultDataClient: NativeResultDataClient {
++        .init(current: { try? self.communitySafetyActor() },
++              request: { try await self.resultDataRequest(body: $0, actor: $1) },
++              consumeReceipt: { try self.applyResultDataReceipt($0, actor: $1) })
++    }
++    func resultDataStore(scope: NativeResultDataScope) -> NativeResultDataStore {
++        NativeResultDataStore(scope: scope, vault: vault)
++    }
++    func resultDataPermitsResult(_ id: String) -> Bool {
++        guard let actor = try? communitySafetyActor() else { return false }
++        return resultDataProjectionFence.actor != actor || resultDataProjectionFence.permits(id, actor: actor)
++    }
++    private func applyResultDataReceipt(_ receipt: NativeResultDataReceipt, actor: NativeCommunitySafetyActor) throws {
++        guard try communitySafetyActor() == actor, receipt.binding.actor == actor,
++              let pending = try NativeResultDataJournal(vault: vault, validateConfirmation: NativeResultDataCommand.validateConfirmation).read(actor) else {
++            throw NativeDataError.staleSessionResponse
++        }
++        let command = try NativeResultDataCommand(body: pending.body), binding = receipt.binding
++        guard command.action == "erase", command.requestID == binding.requestID, command.scope == binding.scope,
++              command.rootKind == binding.rootKind, command.rootID == binding.rootID, command.objectIDs == binding.objectIDs,
++              command.sourceDigest == binding.sourceDigest, command.previewDigest == binding.previewDigest,
++              receipt.requestDigest == NativeResultDataWire.digest(pending.body) else { throw NativeDataError.invalidResponse }
++        guard binding.scope == .sensitive else { return }
++        resultDataProjectionFence.bind(actor)
++        let erased = try NativeResultDataErasure(receipt: receipt, actor: actor, previouslyErased: resultDataProjectionFence.artifactIDs)
++        if let root = binding.rootID { try resultDataProjectionFence.recordVerifiedErasure(artifactID: root, actor: actor) }
++        if let navigation = assistantNavigation, navigation.scope == actor.scope {
++            assistantNavigation = .init(scope: navigation.scope, conversationID: navigation.conversationID, goal: navigation.goal,
++                artifact: navigation.artifact.flatMap { erased.artifactIDs.contains($0.artifactId) ? nil : $0 },
++                viewedArtifact: navigation.viewedArtifact.flatMap { erased.artifactIDs.contains($0.artifactId) ? nil : $0 })
++        }
++        resultDataErasure = erased
++    }
++    func resultDataRequest(body: Data, actor: NativeCommunitySafetyActor) async throws -> Data {
++        guard !busy, try communitySafetyActor() == actor, !Task.isCancelled else { throw NativeDataError.sessionUnavailable }
++        let command = try NativeResultDataCommand(body: body)
++        if ["erase", "recover"].contains(command.action) {
++            let journal = NativeResultDataJournal(vault: vault, validateConfirmation: NativeResultDataCommand.validateConfirmation)
++            guard try journal.read(actor)?.body == (command.mutationBytes ?? body) else { throw NativeDataError.staleSessionResponse }
++        }
++        let started = ProcessInfo.processInfo.systemUptime
++        if let credential, credential.expiresAt <= Date().timeIntervalSince1970 + 10 { await validate() }
++        guard try communitySafetyActor() == actor, let endpoint, let credential, !Task.isCancelled,
++              ProcessInfo.processInfo.systemUptime - started < 30 else { throw NativeDataError.staleSessionResponse }
++        var request = URLRequest(url: endpoint.appendingPathComponent("api/privacy/native/v1/result-data"))
++        request.httpMethod = "POST"; request.httpBody = body; request.httpShouldHandleCookies = false
++        request.timeoutInterval = 30; request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
++        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
++        request.setValue("Bearer \(credential.accessToken)", forHTTPHeaderField: "Authorization")
++        let (stream, response) = try await transport.bytes(for: request)
++        defer { stream.task.cancel() }
++        guard let http = response as? HTTPURLResponse, try communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
++        let cap = http.statusCode == 200 ? 1_000_000 : 4096
++        guard http.expectedContentLength <= Int64(cap) else { throw NativeDataError.invalidResponse }
++        var bytes = Data()
++        for try await byte in stream {
++            guard bytes.count < cap, try communitySafetyActor() == actor, !Task.isCancelled,
++                  ProcessInfo.processInfo.systemUptime - started < 30 else { throw NativeDataError.staleSessionResponse }
++            bytes.append(byte)
++        }
++        guard try communitySafetyActor() == actor, !Task.isCancelled,
++              ProcessInfo.processInfo.systemUptime - started < 30 else { throw NativeDataError.staleSessionResponse }
++        guard http.statusCode == 200 else {
++            let code = (try? JSONDecoder().decode(NativeDataFailure.self, from: bytes).error.code) ?? "RESULT_UNAVAILABLE"
++            if http.statusCode == 401, code != "REAUTHENTICATION_REQUIRED" { handle(SessionError.denied) }
++            throw NativeDataError.server(code: code)
++        }
++        let cache = http.value(forHTTPHeaderField: "Cache-Control")?.lowercased() ?? ""
++        guard cache.contains("private"), cache.contains("no-store"),
++              http.value(forHTTPHeaderField: "Vary")?.lowercased().split(separator: ",").map({ $0.trimmingCharacters(in: .whitespaces) }).contains("authorization") == true,
++              http.value(forHTTPHeaderField: "X-Content-Type-Options")?.lowercased() == "nosniff",
++              http.value(forHTTPHeaderField: "Content-Type")?.lowercased().hasPrefix("application/json") == true else { throw NativeDataError.invalidResponse }
++        try NativeResultDataWire.actor(NativeResultDataWire.root(bytes), actor, scope: command.scope)
++        return bytes
++    }
+     var conversationDataClient: NativeConversationDataClient {
+         .init(current: { try? self.communitySafetyActor() },
+               request: { try await self.conversationDataRequest(body: $0, actor: $1) },
+@@ -1596,6 +1676,17 @@
+ 
+     private func dataRequest(prefix: String, path: String, method: String, body: Data? = nil, queryItems: [URLQueryItem] = []) async throws -> Data {
+         guard enabled, !busy, let initial = dataScope else { throw NativeDataError.sessionUnavailable }
++        let guardsResultProjection = path.hasPrefix("api/results/native/") ||
++            ((path == "api/library/native/v1/items" || path == "api/library/native/v1/item") && queryItems.contains { $0.name == "source" && $0.value == "results" })
++        let resultActor = guardsResultProjection ? try communitySafetyActor() : nil
++        let resultArtifact = queryItems.first { $0.name == "artifactId" || guardsResultProjection && path == "api/library/native/v1/item" && $0.name == "id" }?.value ??
++            (path == "api/results/native/v2/decision" ? ((try? JSONSerialization.jsonObject(with: body ?? Data())) as? [String: Any])?["artifactId"] as? String : nil)
++        var resultTicket: NativeResultDataProjectionFence.Ticket?
++        if let actor = resultActor {
++            resultDataProjectionFence.bind(actor)
++            resultTicket = try resultDataProjectionFence.capture(actor)
++            guard resultTicket.map({ resultDataProjectionFence.accepts($0, artifactID: resultArtifact) }) == true else { throw NativeDataError.staleSessionResponse }
++        }
+         if let credential, credential.expiresAt <= Date().timeIntervalSince1970 + 10 {
+             await validate()
+         }
+@@ -1622,6 +1713,9 @@
+         guard (200..<300).contains(http.statusCode) else {
+             let envelope = try? JSONDecoder().decode(NativeDataFailure.self, from: data)
+             throw NativeDataError.server(code: envelope?.error.code ?? "HTTP_\(http.statusCode)")
++        }
++        if let ticket = resultTicket {
++            guard try communitySafetyActor() == ticket.actor, resultDataProjectionFence.accepts(ticket, artifactID: resultArtifact) else { throw NativeDataError.staleSessionResponse }
+         }
+         return data
+     }
+@@ -1904,6 +1998,8 @@
+         catch { failureCode="dataCoverageExportCleanupRequired"; status="storageError"; return false }
+         do { try NativeExperienceExportFile.eraseAll() }
+         catch { failureCode="communityExperienceExportCleanupRequired"; status="storageError"; return false }
++        do { try NativeResultDataReceiptFile.eraseAll() }
++        catch { failureCode="resultDataFileCleanupRequired"; status="storageError"; return false }
+         do { try NativeCommunitySafetyExportFile.eraseAll() }
+         catch { failureCode="communitySafetyExportCleanupRequired"; status="storageError"; return false }
+         do { try NativeCommunityExportFile.eraseAll() }
+@@ -1915,6 +2011,7 @@
+         do{try offlineTrips.eraseAll()}catch{failureCode="offlineCleanupRequired";status="storageError";return false}
+         dataGeneration += 1
+         assistantNavigation=nil
++        resultDataErasure=nil; resultDataProjectionFence.bind(nil)
+         conversationDataErasure=nil
+         memoryPreferences.clear()
+         exploreAskHandoff=nil
+@@ -1931,6 +2028,8 @@
+                 // Noncredential cleanup index only. It cannot restore a session or authorize a journal read.
+                 defaults.set(owner, forKey: storageKey + ".pendingJournalCleanupOwner")
+             } else {
++                do { try NativeResultDataJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
++                catch { failureCode="resultDataJournalCleanupRequired"; status="storageError"; return false }
+                 do { try NativeConversationDataJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
+                 catch { failureCode="conversationDataJournalCleanupRequired"; status="storageError"; return false }
+                 do { try NativeArchiveDataJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
+--- a/ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageModuleView.swift
++++ b/ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageModuleView.swift
+@@ -1,9 +1,9 @@
+ import SwiftUI
+ 
+ private enum NativeDataCoverageDestination: Identifiable {
+-    case conversationData, archiveData, coverageProgress, core, memory, trip(NativeLinkedTripDeleteSelection), deviceExport, deviceDelete, material(NativeMaterialReferenceScope), notification(NativeNotificationDataScope)
++    case resultData, conversationData, archiveData, coverageProgress, core, memory, trip(NativeLinkedTripDeleteSelection), deviceExport, deviceDelete, material(NativeMaterialReferenceScope), notification(NativeNotificationDataScope)
+     var id: String {
+-        switch self { case .conversationData: "conversation-data"; case .archiveData: "archive-data"; case .coverageProgress: "coverage-progress"; case .core: "core"; case .memory: "memory"; case .trip(let v): v.tripID; case .deviceExport: "device-export"; case .deviceDelete: "device-delete"; case .material(let scope): scope.rawValue; case .notification(let scope): scope.rawValue }
++        switch self { case .resultData: "result-data"; case .conversationData: "conversation-data"; case .archiveData: "archive-data"; case .coverageProgress: "coverage-progress"; case .core: "core"; case .memory: "memory"; case .trip(let v): v.tripID; case .deviceExport: "device-export"; case .deviceDelete: "device-delete"; case .material(let scope): scope.rawValue; case .notification(let scope): scope.rawValue }
+     }
+ }
+ 
+@@ -77,6 +77,9 @@
+             .sheet(item: $destination) { target in
+                 NavigationStack {
+                     switch target {
++                    case .resultData:
++                        NativeResultDataConsumer(module: module, coverage: store, client: session.resultDataClient,
++                            makeStore: { session.resultDataStore(scope: $0) }, chinese: chinese)
+                     case .conversationData:
+                         NativeConversationDataConsumer(module: module, coverage: store, client: session.conversationDataClient,
+                             makeStore: { session.conversationDataStore(scope: $0) }, chinese: chinese)
+@@ -155,7 +158,13 @@
+             }
+         } else { Section(t("导出缺项", "Export unavailable")) { Text(NativeDataCoverageCopy.missing(module.id, chinese: chinese)) } }
+ 
+-        if NativeConversationDataWire.catalog(module) {
++        if NativeResultDataWire.catalog(module) {
++            Section(t("本人选定成果资料", "My selected result data")) {
++                Button(t("选择一个成果，核对全部版本与事件并确认清理", "Select one result, review every revision and event, and confirm cleanup")) { destination = .resultData }
++                    .disabled(!registered || actor == nil)
++                Text(t("原会话、任务、行程与显式记忆保留。跨成果、共享、混合副本或在途工作会阻挡清理；本出口临时进度可独立选择清理。", "Original conversations, tasks, Trips and explicit Memory remain. Cross-result, shared, mixed-copy or active-work dependencies block cleanup; transient progress has its own explicit cleanup selection."))
++            }
++        } else if NativeConversationDataWire.catalog(module) {
+             Section(t("本人会话敏感资料", "My conversation's sensitive data")) {
+                 Button(t("选择本人会话或线程，核对完整关系并确认擦除", "Select my conversation or thread, review the complete graph and confirm erasure")) { destination = .conversationData }
+                     .disabled(!registered || actor == nil)
+--- a/ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageModels.swift
++++ b/ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageModels.swift
+@@ -3,7 +3,7 @@
+ 
+ enum NativeDataCoverageWire {
+     static let schema = "data-coverage/1"
+-    static let catalog = "data-coverage-catalog/2026-10-06.7"
++    static let catalog = "data-coverage-catalog/2026-10-07.8"
+     static let moduleIDs: Set<String> = ["trip", "conversations", "results", "profile", "memory", "turn", "user_artifact", "brief", "entitlements", "case", "ugc", "safety", "publication", "notifications", "notification_devices", "notification_exit_progress", "lifecycle", "coverage_progress", "guide", "order_references", "pdf_intake", "material_exit_progress", "case_attachments", "archive", "materials", "app_group", "local_share", "guide_cache", "offline", "local_journals", "provider", "backup", "external_copies", "financial_records"]
+     static func digest(_ bytes: Data) -> String { SHA256.hash(data: bytes).map { String(format: "%02x", $0) }.joined() }
+     static func actor(_ v: [String: Any], _ actor: NativeCommunitySafetyActor) throws {
+--- a/ios/VisePanda/VisePanda/Features/Ask/NativeVPTravelPaceView.swift
++++ b/ios/VisePanda/VisePanda/Features/Ask/NativeVPTravelPaceView.swift
+@@ -121,6 +121,10 @@
+                 }
+             } else { result.clear() }
+         }
++        .onChange(of: session.resultDataErasure?.id) { _, _ in
++            guard let erased = session.resultDataErasure, (try? session.communitySafetyActor()) == erased.actor else { return }
++            result.applyResultErasure(erased)
++        }
+         .onChange(of: session.dataScope) { _, value in store.bind(scope: value, selection: value == nil ? nil : currentSelection()); result.clear() }
+         .onChange(of: pending, initial: true) { _, value in onPendingChange(store.saved.scope ?? session.dataScope, value) }
+         .onChange(of: active) { _, value in if !value { store.leave(); result.clear() } }
+--- a/ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift
++++ b/ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift
+@@ -861,6 +861,16 @@
+             await reload()
+             if let resume {await restoreNavigationSource(resume)}
+         }
++        .onChange(of: session.resultDataErasure?.id) { _, _ in
++            guard let erased = session.resultDataErasure, (try? session.communitySafetyActor()) == erased.actor else { return }
++            fiveResultRequestGeneration = UUID()
++            if fiveResultSelection.map({ erased.artifactIDs.contains($0.artifactID) }) == true { fiveResultSelection = nil }
++            if lastViewedArtifact.map({ erased.artifactIDs.contains($0.artifactId) }) == true { lastViewedArtifact = nil }
++            if selectedSources.pending == nil, selectedSources.sources.artifact.map({ erased.artifactIDs.contains($0.artifactId) }) == true { selectedSources.sources.artifact = nil; referencedResultUntil = 0 }
++            if selectedResult?.artifactId.map({ erased.artifactIDs.contains($0) }) == true { selectedResult = nil; resultNotice = "unavailable"; resultFence.clear() }
++            if selectedArtifactID.map({ erased.artifactIDs.contains($0) }) == true { selectedArtifactID = nil; selectedArtifactTaskID = nil }
++            retainNavigation()
++        }
+         .onChange(of: session.conversationDataErasure?.id) { _, _ in
+             guard let erased = session.conversationDataErasure,
+                   (try? session.communitySafetyActor()) == erased.actor else { return }
+--- a/ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeView.swift
++++ b/ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeView.swift
+@@ -290,6 +290,10 @@
+                 return bytes
+             }
+         }
++        .onChange(of: session.resultDataErasure?.id) { _, _ in
++            guard let erased = session.resultDataErasure, (try? session.communitySafetyActor()) == erased.actor else { return }
++            store.applyResultErasure(erased)
++        }
+         .onChange(of: scenePhase) { _, phase in if phase != .active { store.clear() } }
+         .onDisappear { store.clear() }
+     }
+@@ -493,6 +497,13 @@
+     private(set) var result: NativeResultPayload?
+     private(set) var state = "idle"
+     private(set) var scope: NativeDataScope?
++    private var erasedResultIDs = Set<String>()
++    private var erasureScope: NativeDataScope?
++    func applyResultErasure(_ erased: NativeResultDataErasure) {
++        guard scope == erased.scope else { return }
++        erasureScope = erased.scope; erasedResultIDs.formUnion(erased.artifactIDs)
++        if result?.artifactId.map({ erased.artifactIDs.contains($0) }) == true { result = nil; state = "unavailable"; deadline = 0 }
++    }
+     private var generation = UUID()
+     private var deadline: TimeInterval = 0
+     private let uptime: () -> TimeInterval
+@@ -509,6 +520,7 @@
+ 
+     func visibleResult(_ currentScope: NativeDataScope?, expectedTripID: String? = nil) -> NativeResultPayload? {
+         guard isCurrent(currentScope), let result, result.kind == "result_artifact",
++              result.artifactId.map({ !erasedResultIDs.contains($0) }) == true,
+               expectedTripID == nil || result.source?.tripId == expectedTripID else { return nil }
+         return result
+     }
+@@ -573,6 +585,7 @@
+     func load(scope requested: NativeDataScope?, fetch: () async throws -> Data) async {
+         clear()
+         guard let requested, !Task.isCancelled else { return }
++        if erasureScope != requested { erasureScope = requested; erasedResultIDs = [] }
+         scope = requested; state = "loading"
+         let own = generation, started = uptime()
+         do {
+@@ -580,6 +593,7 @@
+             guard !Task.isCancelled, generation == own else { return }
+             let envelope = try JSONDecoder().decode(NativeResultEnvelope.self, from: bytes)
+             guard envelope.version == 1, envelope.data.valid, uptime() - started < 30 else { throw NativeDataError.invalidResponse }
++            guard envelope.data.artifactId.map({ !erasedResultIDs.contains($0) }) ?? true else { throw NativeDataError.staleSessionResponse }
+             result = envelope.data; state = envelope.data.kind; deadline = started + 30
+         } catch {
+             guard generation == own else { return }
+--- a/ios/VisePanda/VisePanda/Features/Knowledge/NativeLibrarySources.swift
++++ b/ios/VisePanda/VisePanda/Features/Knowledge/NativeLibrarySources.swift
+@@ -82,6 +82,15 @@
+     private var deadline:TimeInterval=0
+     private let uptime:()->TimeInterval
+     init(uptime:@escaping()->TimeInterval={ProcessInfo.processInfo.systemUptime}){self.uptime=uptime}
++    func applyResultErasure(_ erased: NativeResultDataErasure) {
++        guard key?.scope == erased.scope, key?.source == .results else { return }
++        generation = UUID(); loading = false
++        if let old = page {
++            page = .init(version: old.version, kind: old.kind, source: old.source, status: old.status,
++                reason: old.reason, items: old.items?.filter { !erased.artifactIDs.contains($0.id) }, nextCursor: old.nextCursor)
++        }
++        if case .result(let value)? = projection, erased.artifactIDs.contains(value.artifactID) { projection = nil }
++    }
+     func clear(){generation=UUID();page=nil;projection=nil;key=nil;deadline=0;loading=false}
+     func visible(_ requested:Key?)->NativeLibraryPage?{guard requested != nil,requested==key,uptime()<deadline else{return nil};return page}
+     func visibleProjection(_ scope:NativeDataScope?)->NativeLibraryProjection?{guard scope != nil,scope==key?.scope,uptime()<deadline else{return nil};return projection}
+@@ -172,6 +181,9 @@
+         }
+         .onChange(of:source){_,_ in store.clear();opened=nil;cursor=nil}
+         .onChange(of:Data(query.utf8)){_,_ in store.clear();opened=nil;cursor=nil}
++        .onChange(of:session.resultDataErasure?.id){_,_ in
++            guard let erased=session.resultDataErasure,(try? session.communitySafetyActor())==erased.actor else{return};store.applyResultErasure(erased)
++        }
+         .onChange(of:session.dataScope){_,_ in store.clear();opened=nil;cursor=nil}
+         .onDisappear{store.clear();opened=nil}
+         .sheet(item:$opened,onDismiss:{cursor=nil;refresh=UUID()}){reference in NativeLibraryExactSourceView(reference:reference,session:session,chinese:chinese,active:active)}
+@@ -211,6 +223,9 @@
+             guard let scope else{store.clear();return}
+             await store.open(reference,scope:scope,current:{self.scope}){try await session.librarySourceItem(reference)}
+         }
++        .onChange(of:session.resultDataErasure?.id){_,_ in
++            guard let erased=session.resultDataErasure,(try? session.communitySafetyActor())==erased.actor else{return};store.applyResultErasure(erased)
++        }
+         .onChange(of:scope){_,_ in store.clear()}.onDisappear{store.clear()}
+     }
+     private struct Load:Equatable{let scope:NativeDataScope?;let reference:NativeLibraryMetadata;let refresh:UUID}
+--- a/ios/VisePanda/VisePanda/Features/Knowledge/NativeFiveResultView.swift
++++ b/ios/VisePanda/VisePanda/Features/Knowledge/NativeFiveResultView.swift
+@@ -3,6 +3,14 @@
+ 
+ @MainActor @Observable final class NativeFiveResultStore {
+     private(set) var record:NativeFiveResultRecord?
++    private var erasedResultIDs=Set<String>()
++    private var erasureScope:NativeDataScope?
++    func applyResultErasure(_ erased:NativeResultDataErasure){
++        guard key?.scope==erased.scope else{return}
++        erasureScope=erased.scope;erasedResultIDs.formUnion(erased.artifactIDs)
++        if record.map({erased.artifactIDs.contains($0.artifactID)})==true{record=nil;deadline=0}
++        // Preserve original pendingChoice/pendingBody/submitting and writer generation.
++    }
+     private var generation=UUID()
+     private var key:Key?
+     private(set) var pendingChoice: NativeDecisionChoice?
+@@ -14,7 +22,7 @@
+     init(uptime:@escaping()->TimeInterval={ProcessInfo.processInfo.systemUptime}){self.uptime=uptime}
+     struct Key:Equatable {let scope:NativeDataScope;let artifactID:String;let revision:Int}
+     func clear(){generation=UUID();record=nil;key=nil;deadline=0;pendingChoice=nil;choiceNotice=nil;pendingBody=nil;submitting=false}
+-    func visible(_ scope:NativeDataScope?)->NativeFiveResultRecord?{guard scope==key?.scope,scope != nil,uptime()<deadline else{return nil};return record}
++    func visible(_ scope:NativeDataScope?)->NativeFiveResultRecord?{guard scope==key?.scope,scope != nil,uptime()<deadline,record.map({!erasedResultIDs.contains($0.artifactID)})==true else{return nil};return record}
+     func choose(option:String,comparison:NativeFiveResultRecord?,current:@escaping()->Key?,post:(Data)async throws->Data,read:(String,Int)async throws->Data)async{
+         guard !submitting,let authority=key,authority==current(),let selected=visible(authority.scope),selected.current,let scope=key?.scope,
+               case .decision(let decision)=selected.content,decision.state=="pending",let comparison,comparison.current,
+@@ -58,9 +66,11 @@
+     }
+     func load(key requested:Key,current:@escaping ()->Key?,request:()async throws->Data)async{
+         clear();guard requested==current(),UUID(uuidString:requested.artifactID) != nil,(1...1000).contains(requested.revision) else{return}
++        if erasureScope != requested.scope{erasureScope=requested.scope;erasedResultIDs=[]}
+         let own=generation,started=uptime();key=requested
+         do{let bytes=try await request();guard generation==own,requested==current(),!Task.isCancelled else{return}
+             guard uptime()-started<30 else{throw NativeDataError.invalidResponse}
++            guard !erasedResultIDs.contains(requested.artifactID) else{throw NativeDataError.staleSessionResponse}
+             record=try NativeFiveResultRecord.decode(bytes,artifactID:requested.artifactID,revision:requested.revision);deadline=started+30
+         }catch{if generation==own{record=nil;deadline=0}}
+     }
+@@ -108,6 +118,11 @@
+                 await comparison.load(key:comparisonKey,current:{self.key?.scope==key.scope ? comparisonKey:nil}){try await session.fiveResultRequest(artifactID:comparisonKey.artifactID,revision:comparisonKey.revision)}
+             }
+         }
++        .onChange(of:session.resultDataErasure?.id){_,_ in
++            guard let erased=session.resultDataErasure,(try? session.communitySafetyActor())==erased.actor else{return}
++            store.applyResultErasure(erased); comparison.applyResultErasure(erased)
++            if erased.artifactIDs.contains(artifactID){choosing=nil}
++        }
+         .onChange(of:key){_,_ in store.clear();comparison.clear();choosing=nil}.onDisappear{store.clear();comparison.clear();choosing=nil}
+     }
+     private struct Load:Equatable{let key:NativeFiveResultStore.Key?;let refresh:UUID}
+--- a/ios/VisePanda/VisePanda.xcodeproj/project.pbxproj
++++ b/ios/VisePanda/VisePanda.xcodeproj/project.pbxproj
+@@ -400,6 +400,20 @@
+ 		71A90D913FBDEA4F5433743A /* NativeConversationDataStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3C8570B11E8FF14E93E768 /* NativeConversationDataStorageTests.swift */; };
+ 		A64D0A11E3D04CAF2EB787C1 /* NativeConversationDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A525727CA005BEF82EA10D9 /* NativeConversationDataTests.swift */; };
+ 		73839A21704A41C4F4A34CE5 /* ConversationData in Resources */ = {isa = PBXBuildFile; fileRef = 7F7AFAE84466ADE295B390C7; };
++		C3D83A1E4EC702E088F8BFD4 /* NativeResultDataCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA221EBDDF1247B748250A61; };
++		EDD6DA01DE3584C9F98E3CAC /* NativeResultDataConsumer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B39A4B38D6D7228EA8703A; };
++		AE3BF91BAC03446AA6134998 /* NativeResultDataCopy.swift in Sources */ = {isa = PBXBuildFile; fileRef = C27D0A04A14CFF3BB941C2E0; };
++		5031CE51CB0FB8CD2CFD41B4 /* NativeResultDataJournal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 264F9E366FAB9FE428856F3F; };
++		C5193FAF6623877C7C839911 /* NativeResultDataLifetime.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD3A0711C7134DCD867CCAA6; };
++		2C847E1366DBB731209A3FC4 /* NativeResultDataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4C1A0E6D62E3B9DE835612; };
++		155129626D62042848ED4C78 /* NativeResultDataProjectionFence.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB6B1B301BB5AC0066D3D173; };
++		085EAE698E3D8273A2ADB786 /* NativeResultDataProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53B3DB58E7A64DC9F18F764; };
++		B92AF8FCC3AF163AFC597F0F /* NativeResultDataReceiptFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92CCADBDDD74516F5C2F28AC; };
++		F57E2C7C6684DA9DF080ACA6 /* NativeResultDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E878D1545FBBD699AB773C82; };
++		BCFFEAE1DB2B895D14C1BF2C /* NativeResultDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3DD1810A8E476F25B50C02F; };
++		BF0DD31803EB8545FF26193F /* NativeResultDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ED1B23E5A5189B5AD2B67FD; };
++		2CF7B0A9EFA2FEAFC95C2F03 /* NativeResultDataStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E561793B1EDE3CCB15E227C8; };
++		3E202B16F8CA949052172819 /* ResultData fixtures in Resources */ = {isa = PBXBuildFile; fileRef = C80D8ACDF6135D52380AF5ED; };
+ /* End PBXBuildFile section */
+ 
+ /* Begin PBXContainerItemProxy section */
+@@ -806,6 +820,20 @@
+ 		EF3C8570B11E8FF14E93E768 /* NativeConversationDataStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeConversationDataStorageTests.swift; sourceTree = "<group>"; };
+ 		2A525727CA005BEF82EA10D9 /* NativeConversationDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeConversationDataTests.swift; sourceTree = "<group>"; };
+ 		7F7AFAE84466ADE295B390C7 /* ConversationData fixtures */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Fixtures/ConversationData; sourceTree = "<group>"; };
++		BA221EBDDF1247B748250A61 /* NativeResultDataCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeResultDataCommand.swift; sourceTree = "<group>"; };
++		87B39A4B38D6D7228EA8703A /* NativeResultDataConsumer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeResultDataConsumer.swift; sourceTree = "<group>"; };
++		C27D0A04A14CFF3BB941C2E0 /* NativeResultDataCopy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeResultDataCopy.swift; sourceTree = "<group>"; };
++		264F9E366FAB9FE428856F3F /* NativeResultDataJournal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeResultDataJournal.swift; sourceTree = "<group>"; };
++		FD3A0711C7134DCD867CCAA6 /* NativeResultDataLifetime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeResultDataLifetime.swift; sourceTree = "<group>"; };
++		BF4C1A0E6D62E3B9DE835612 /* NativeResultDataModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeResultDataModels.swift; sourceTree = "<group>"; };
++		BB6B1B301BB5AC0066D3D173 /* NativeResultDataProjectionFence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeResultDataProjectionFence.swift; sourceTree = "<group>"; };
++		C53B3DB58E7A64DC9F18F764 /* NativeResultDataProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeResultDataProtocol.swift; sourceTree = "<group>"; };
++		92CCADBDDD74516F5C2F28AC /* NativeResultDataReceiptFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeResultDataReceiptFile.swift; sourceTree = "<group>"; };
++		E878D1545FBBD699AB773C82 /* NativeResultDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeResultDataStore.swift; sourceTree = "<group>"; };
++		D3DD1810A8E476F25B50C02F /* NativeResultDataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeResultDataView.swift; sourceTree = "<group>"; };
++		2ED1B23E5A5189B5AD2B67FD /* NativeResultDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeResultDataTests.swift; sourceTree = "<group>"; };
++		E561793B1EDE3CCB15E227C8 /* NativeResultDataStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeResultDataStorageTests.swift; sourceTree = "<group>"; };
++		C80D8ACDF6135D52380AF5ED /* ResultData fixtures */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Fixtures/ResultData; sourceTree = "<group>"; };
+ /* End PBXFileReference section */
+ 
+ /* Begin PBXFrameworksBuildPhase section */
+@@ -846,14 +874,14 @@
+ 		600000000000000000000004 /* Navigation */ = {isa = PBXGroup; children = (300000000000000000000004, 300000000000000000000005, 300000000000000000000006); path = Navigation; sourceTree = "<group>"; };
+ 		600000000000000000000005 /* DesignSystem */ = {isa = PBXGroup; children = (570000000000000000000004, 300000000000000000000007); path = DesignSystem; sourceTree = "<group>"; };
+ 		600000000000000000000006 /* Components */ = {isa = PBXGroup; children = (300000000000000000000008, 300000000000000000000009, 30000000000000000000000A); path = Components; sourceTree = "<group>"; };
+-		600000000000000000000007 /* Features */ = {isa = PBXGroup; children = (08F6243EA4A655CA130CF30E, 2B9323FA251768AD8A3E58E7, 382762886C7814EF0811E55B, 32B231693DD46DDC77F92AEF, 254708D1683ECFB32BD931DB, F15803000000000000000001, F14892000000000000000001, F16405200000000000000001, F14805200000000000000001, EC906874DA684AC083A1908F, B9462B5B763B33146221939E, F25505000000000000000007, F25506200000000000000002, F25505000000000000000006, F25505000000000000000004, F25505000000000000000003, F25505000000000000000002, F25505000000000000000001, F15505200000000000000001, 68A6D21260366D32D3948B05, E22405300000000000000001, E22405300000000000000002, E22405300000000000000003, E22405100000000000000001, E22405100000000000000002, E22405100000000000000003, E22405100000000000000004, E22405100000000000000005, E22405100000000000000006, E22405100000000000000007, AC3026200000000000000001, AC820500000000000000000B, AC820500000000000000000C, AC820500000000000000000A, AC8205000000000000000001, AC8205000000000000000002, AC8205000000000000000003, AC8205000000000000000004, AC8205000000000000000005, AC8205000000000000000006, AC8205000000000000000007, AC8294000000000000000003, AC8294000000000000000001, AC8293000000000000000001, AC8293000000000000000003, AC8293000000000000000005, AC8293000000000000000007, D98300000000000000000002, D98300000000000000000001, E21600000000000000000301, 600000000000000000000008, 600000000000000000000009, 60000000000000000000000A, 60000000000000000000000B, 60000000000000000000000C, 22500D3EA2164BC4AEC0DEE0, A21460000000000000000001, AC1051980000000000000001); path = Features; sourceTree = "<group>"; };
++		600000000000000000000007 /* Features */ = {isa = PBXGroup; children = (6F3563F7CEB915B46683B687, 08F6243EA4A655CA130CF30E, 2B9323FA251768AD8A3E58E7, 382762886C7814EF0811E55B, 32B231693DD46DDC77F92AEF, 254708D1683ECFB32BD931DB, F15803000000000000000001, F14892000000000000000001, F16405200000000000000001, F14805200000000000000001, EC906874DA684AC083A1908F, B9462B5B763B33146221939E, F25505000000000000000007, F25506200000000000000002, F25505000000000000000006, F25505000000000000000004, F25505000000000000000003, F25505000000000000000002, F25505000000000000000001, F15505200000000000000001, 68A6D21260366D32D3948B05, E22405300000000000000001, E22405300000000000000002, E22405300000000000000003, E22405100000000000000001, E22405100000000000000002, E22405100000000000000003, E22405100000000000000004, E22405100000000000000005, E22405100000000000000006, E22405100000000000000007, AC3026200000000000000001, AC820500000000000000000B, AC820500000000000000000C, AC820500000000000000000A, AC8205000000000000000001, AC8205000000000000000002, AC8205000000000000000003, AC8205000000000000000004, AC8205000000000000000005, AC8205000000000000000006, AC8205000000000000000007, AC8294000000000000000003, AC8294000000000000000001, AC8293000000000000000001, AC8293000000000000000003, AC8293000000000000000005, AC8293000000000000000007, D98300000000000000000002, D98300000000000000000001, E21600000000000000000301, 600000000000000000000008, 600000000000000000000009, 60000000000000000000000A, 60000000000000000000000B, 60000000000000000000000C, 22500D3EA2164BC4AEC0DEE0, A21460000000000000000001, AC1051980000000000000001); path = Features; sourceTree = "<group>"; };
+ 		600000000000000000000008 /* Today */ = {isa = PBXGroup; children = (30000000000000000000000B); path = Today; sourceTree = "<group>"; };
+ 		600000000000000000000009 /* Ask */ = {isa = PBXGroup; children = (AC8133000000000000000009, AC8133000000000000000003, AC8133000000000000000002, AC8133000000000000000001, AC8123000000000000000002, AC8123000000000000000001, AC8113000000000000000003, AC8113000000000000000002, AC8113000000000000000001, AC810300000000000000000B, AC8103000000000000000001, AC8103000000000000000002, AC8103000000000000000003, AC7100000000000000000001, AC7100000000000000000002, AC7100000000000000000003, A77700000000000000000002, 300000000000000000000047, 300000000000000000000078, 300000000000000000000042, 300000000000000000000041, 300000000000000000000040, 30000000000000000000000C); path = Ask; sourceTree = "<group>"; };
+ 		60000000000000000000000A /* Trip */ = {isa = PBXGroup; children = (221000000000000000000002, 300000000000000000000069, 300000000000000000000067, 300000000000000000000064, 300000000000000000000061, 300000000000000000000060, 300000000000000000000032, 300000000000000000000031, 300000000000000000000030, 30000000000000000000000D); path = Trip; sourceTree = "<group>"; };
+ 		60000000000000000000000B /* Explore */ = {isa = PBXGroup; children = (30000000000000000000006D, 300000000000000000000052, 300000000000000000000051, 300000000000000000000050, 30000000000000000000000E); path = Explore; sourceTree = "<group>"; };
+ 		60000000000000000000000C /* Profile */ = {isa = PBXGroup; children = (AC8253000000000000000001, AC8253000000000000000003, AC8253000000000000000005, AC8253000000000000000001, AC8253000000000000000003, AC8253000000000000000005, AC8243000000000000000001, AC8243000000000000000003, AC8243000000000000000005, AC8213000000000000000003, AC8213000000000000000005, AC8213000000000000000001, AC8233000000000000000003, AC8233000000000000000005, AC8233000000000000000001, AC8223000000000000000001, AC8203000000000000000001, AC8183000000000000000001, AC8183000000000000000002, AC8193000000000000000003, AC8193000000000000000004, AC8193000000000000000001, AC8173000000000000000005, AC8173000000000000000002, AC8173000000000000000001, AC8163000000000000000001, AC8153000000000000000001, B97900000000000000000001, B97900000000000000000002, B97900000000000000000003, D91100000000000000000001, D91100000000000000000002, 570000000000000000000002, 30000000000000000000000F); path = Profile; sourceTree = "<group>"; };
+ 		60000000000000000000000E /* Resources */ = {isa = PBXGroup; children = (300000000000000000000010, 300000000000000000000011, 300000000000000000000018, 300000000000000000000019); path = Resources; sourceTree = "<group>"; };
+-		60000000000000000000000F /* VisePandaTests */ = {isa = PBXGroup; children = (7F7AFAE84466ADE295B390C7, EF3C8570B11E8FF14E93E768, 2A525727CA005BEF82EA10D9, F2961E0F8CA1D9EEF3C9FCD7, 53206FE86ADF098DB9AF1341, BAEC69F8BF7F77F43BD5C33A, DC4FDC059F9DFB31A8808C69, 82394BBBF17D51C371FB19E4, FD8FE8134F0CD5677F208629, 9F0C8D63C19043C6EDF24D5C, 6892B13D0B7A6BFFA95CC483, CE03F13D70CB28FE6883F0F8, 777945367F2274B363D2D413, B40FDA7860213E278983B3EF, 7FBB391B185FA6F48FA3E408, F158010000000000000000F1, F158010000000000000000F2, F158010000000000000000F3,F1489000000000000000000C, F16405000000000000000009, F14805000000000000000009, 724AB2DC475DF49B167C3C86, 74B36CE8E21BB92F13838221, 07ED425D3E4A2F152915B0B4, 9A18CFE38B40074C02F56E5D, F25505000000000000000005, F15505000000000000000008, F15505000000000000000007, A990F2F6CCB2FFDC598C1FF0, E22405100000000000000008, AC3026300000000000000001, AC8205000000000000000009, AC8293000000000000000009, AC8243000000000000000007, AC8213000000000000000007, AC8233000000000000000007, AC8223000000000000000005, AC8183000000000000000005, AC8193000000000000000007, AC8173000000000000000007, AC8163000000000000000002, AC8153000000000000000002, AC8143000000000000000003, AC8133000000000000000004, AC8123000000000000000003, AC8113000000000000000009, AC8113000000000000000004, AC8103000000000000000004, AC7100000000000000000004, B97900000000000000000004, D98300000000000000000003, D91100000000000000000003, 30000000000000000000006F, D8E665A1A99C49B7A7A7184C, 30000000000000000000006C, 30000000000000000000006B, 30000000000000000000006A, 300000000000000000000068, 300000000000000000000065, 300000000000000000000062, 300000000000000000000055, 300000000000000000000053, 300000000000000000000046, 300000000000000000000045, 300000000000000000000043, 300000000000000000000034, 300000000000000000000033, 300000000000000000000012, 300000000000000000000021, E21600000000000000000203, A21430000000000000000007, A21430000000000000000006, AC1051980000000000000032); path = VisePandaTests; sourceTree = "<group>"; };
++		60000000000000000000000F /* VisePandaTests */ = {isa = PBXGroup; children = (2ED1B23E5A5189B5AD2B67FD, E561793B1EDE3CCB15E227C8, C80D8ACDF6135D52380AF5ED, 7F7AFAE84466ADE295B390C7, EF3C8570B11E8FF14E93E768, 2A525727CA005BEF82EA10D9, F2961E0F8CA1D9EEF3C9FCD7, 53206FE86ADF098DB9AF1341, BAEC69F8BF7F77F43BD5C33A, DC4FDC059F9DFB31A8808C69, 82394BBBF17D51C371FB19E4, FD8FE8134F0CD5677F208629, 9F0C8D63C19043C6EDF24D5C, 6892B13D0B7A6BFFA95CC483, CE03F13D70CB28FE6883F0F8, 777945367F2274B363D2D413, B40FDA7860213E278983B3EF, 7FBB391B185FA6F48FA3E408, F158010000000000000000F1, F158010000000000000000F2, F158010000000000000000F3,F1489000000000000000000C, F16405000000000000000009, F14805000000000000000009, 724AB2DC475DF49B167C3C86, 74B36CE8E21BB92F13838221, 07ED425D3E4A2F152915B0B4, 9A18CFE38B40074C02F56E5D, F25505000000000000000005, F15505000000000000000008, F15505000000000000000007, A990F2F6CCB2FFDC598C1FF0, E22405100000000000000008, AC3026300000000000000001, AC8205000000000000000009, AC8293000000000000000009, AC8243000000000000000007, AC8213000000000000000007, AC8233000000000000000007, AC8223000000000000000005, AC8183000000000000000005, AC8193000000000000000007, AC8173000000000000000007, AC8163000000000000000002, AC8153000000000000000002, AC8143000000000000000003, AC8133000000000000000004, AC8123000000000000000003, AC8113000000000000000009, AC8113000000000000000004, AC8103000000000000000004, AC7100000000000000000004, B97900000000000000000004, D98300000000000000000003, D91100000000000000000003, 30000000000000000000006F, D8E665A1A99C49B7A7A7184C, 30000000000000000000006C, 30000000000000000000006B, 30000000000000000000006A, 300000000000000000000068, 300000000000000000000065, 300000000000000000000062, 300000000000000000000055, 300000000000000000000053, 300000000000000000000046, 300000000000000000000045, 300000000000000000000043, 300000000000000000000034, 300000000000000000000033, 300000000000000000000012, 300000000000000000000021, E21600000000000000000203, A21430000000000000000007, A21430000000000000000006, AC1051980000000000000032); path = VisePandaTests; sourceTree = "<group>"; };
+ 		600000000000000000000010 /* Products */ = {isa = PBXGroup; children = (F25506000000000000000001, 300000000000000000000013, 300000000000000000000014, 300000000000000000000016); name = Products; sourceTree = "<group>"; };
+ 		600000000000000000000011 = {isa = PBXGroup; children = (AC8103000000000000000009, B97900000000000000000009, A77D00000000000000000002, D98300000000000000000004, 300000000000000000000066, 300000000000000000000063, 300000000000000000000054, 300000000000000000000044, 300000000000000000000035, 300000000000000000000015, 300000000000000000000022, A9AE0A5F84264B519E771326); path = VisePandaUITests; sourceTree = "<group>"; };
+ 		E21600000000000000000301 = {isa = PBXGroup; children = (E21600000000000000000201, E21600000000000000000202); path = Translation; sourceTree = "<group>"; };
+@@ -878,6 +906,7 @@
+ 		382762886C7814EF0811E55B /* CoverageProgressData */ = {isa = PBXGroup; children = (ECFA77B30DF90FF0D3AA74BF, E45B0BB1ECBE72F9FFD32FB4, 8B6DB88E282CF553E96F4268, A6CCCDA2C641988D44BF9D4A, A274B2A5B2BB20BCF99ECA52, 3F6E897FDA4FDAAFFFAFC37F, A082793BB4F15A9808AD6FCC, 1A7AF7083437DB3778E9D0E3, E77B07CB092138BF8B7BEB39, 9EC373C0DF982826CCCD82C9); path = CoverageProgressData; sourceTree = "<group>"; };
+ 		2B9323FA251768AD8A3E58E7 /* ArchiveData */ = {isa = PBXGroup; children = (8B54E57FD47841ABCD7C84C8, 7107978EF639F66E6FAB1D7F, DAF895DAC8D8368963DFBA80, D0B655D81DA90E296C9B2A3E, 2B69E201E91EEE0175BB4DBB, 057D9C2F620991D0258AF883, D8E61047F18E4FF33E8CD423, 8C2072CDD4E34FE6ED50CF9F, 4C985DB508FFDAF2DB4CF55D, 682D1F7B3DF87168D7677DD0, 90A4AEF45CA27A1F20C2DE9A, 0F5827C0304947D2045CD06A); path = ArchiveData; sourceTree = "<group>"; };
+ 		08F6243EA4A655CA130CF30E /* ConversationData */ = {isa = PBXGroup; children = (AAD1EDFF1365DDB6ECE09E93, 69154CA2D02E33B793BD330A, E06C898E593FED10A40B6B85, 94DC890E26884EE20C2C9A8B, 10FE8C2D56E378FAD0583588, C8B46F4FE624900345C0B531, 87E6953A72260150537B874A, 7A5E6160FE46ECBA26E9BD46, 4FE4E080DAA63A33A67CD787); path = ConversationData; sourceTree = "<group>"; };
++		6F3563F7CEB915B46683B687 /* ResultData */ = {isa = PBXGroup; children = (BA221EBDDF1247B748250A61, 87B39A4B38D6D7228EA8703A, C27D0A04A14CFF3BB941C2E0, 264F9E366FAB9FE428856F3F, FD3A0711C7134DCD867CCAA6, BF4C1A0E6D62E3B9DE835612, BB6B1B301BB5AC0066D3D173, C53B3DB58E7A64DC9F18F764, 92CCADBDDD74516F5C2F28AC, E878D1545FBBD699AB773C82, D3DD1810A8E476F25B50C02F); path = ResultData; sourceTree = "<group>"; };
+ /* End PBXGroup section */
+ 
+ /* Begin PBXNativeTarget section */
+@@ -945,7 +974,9 @@
+ 
+ /* Begin PBXResourcesBuildPhase section */
+ 		800000000000000000000002 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (200000000000000000000010, 200000000000000000000011, 200000000000000000000018, 200000000000000000000019); runOnlyForDeploymentPostprocessing = 0; };
+-		800000000000000000000004 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (73839A21704A41C4F4A34CE5, 3F8ECFC8C506EEDE1D6C83A3, AFEC86C458B38C1CFBC62D1E, 20835F57B31A002583B5BEC4, 0023731A2F7F7F0D5EF461C0, 083E8C0D5650718EFE8258E8, F158020000000000000000F2, F158020000000000000000F3,); runOnlyForDeploymentPostprocessing = 0; };
++		800000000000000000000004 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (
++				3E202B16F8CA949052172819,
++73839A21704A41C4F4A34CE5, 3F8ECFC8C506EEDE1D6C83A3, AFEC86C458B38C1CFBC62D1E, 20835F57B31A002583B5BEC4, 0023731A2F7F7F0D5EF461C0, 083E8C0D5650718EFE8258E8, F158020000000000000000F2, F158020000000000000000F3,); runOnlyForDeploymentPostprocessing = 0; };
+ 		800000000000000000000006 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+         F25506800000000000000003 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (F25506100000000000000004); runOnlyForDeploymentPostprocessing = 0; };
+ /* End PBXResourcesBuildPhase section */
+@@ -969,7 +1000,19 @@
+ 		800000000000000000000001 /* Sources */ = {
+ 			isa = PBXSourcesBuildPhase;
+ 			buildActionMask = 2147483647;
+-			files = (F0A9A1317C15BDA2F16330D8, A4DCA6C33B4BD0E2992D5949, C9B12D0AD35EE0F05886214E, DF8D336F141F9DAD8FAEE922, 1090DC5A409373895A71C40F, BD84B0F5160F320852345D57, B59D86599662BF6B9AEFACE3, 2388149F9C3B2067E00C8526, C3BCB639F862EFEE1592E4B8, CE101C6566AA420CFA4EC2F7, E079672FD1E3E8A8B7DE714D, C8A2486C1953BFC873604970, CF11C66FD4A98E7C424B71E0, 3EBB75E4CCBEACD01E3BDD6E, E33116A59283F041A9153E58, A2B6EEAE7F95E499AA971200, 552F5CF7036C4059431321A4, AAFB699DBE821E1DD32BE6F3, 3434F72EB0F1EBFB3D37AAA9, D45DADA9C1E74B6BF3776475, DAC53CB5A3DDE1EB1DCC4FEE, 18C309D3E1A5AE10812DEA0F, B14ECA252833AC132A9F1537, 5AB656FAA027AB44755170EE, 72C243DA78A159862515D995, 97EE7C721450EA79693509C1, 36E09CEC9130052D51926F2F, B53C0125FEA81A65C169927E, 1F9464746EC6FB1F8ECAE702, 8EF3362ABB327A6C9A31F191, BB4CE4D8072A46318B14EEB1, 90DA2D88A484C724BC080C86, BFF3C3AAD3C8162471C34724, 14ED48BA93D62623667C9C82, B254719D26F216C6570560CD, 200A534B8E2C1A604A612724, 76D8498D0761AA52594883D5, D6A673615E2A72DB3C8DD5F7, E4E8134D38C9D19560B13C45, E88C150CB978543EB0EE1C99, AC3F4F7B3780707A7743B9E7, AC25822F2FA4ADEF03221EB1, FCD6B9582685DAF0C01B7E31, 56B3CCD48F09AA8B3DF7B61C, CA3C000B33344E7A2530EB02, E8BA5864565940AFC08E3B52, 104F3652231DDF806149E5B4, CB7236EA459BDD1576566112, 1865F0DAB1FEBD3356438948, 513E97CB68B871C7507F82A2, 36A77AF9F3C3A1A5274B193C, 74D47589F6A7A4ECADDEF183, 16B5280BD7335766E6901252, 7AD102FC25AC9CC1BC1E045E, F15802000000000000000001, F15802000000000000000002, F15802000000000000000003, F15802000000000000000004, F15802000000000000000005, F15802000000000000000006, F15802000000000000000007, F15802000000000000000008, F15802000000000000000009, F1580200000000000000000A, F1580200000000000000000B, F1580200000000000000000C, F1580200000000000000000D, F1580200000000000000000E, F14891000000000000000001, F14891000000000000000002, F14891000000000000000003, F14891000000000000000004, F14891000000000000000005, F14891000000000000000006, F14891000000000000000007, F14891000000000000000008, F14891000000000000000009, F1489100000000000000000A, F1489100000000000000000B, F16405100000000000000001, F16405100000000000000002, F16405100000000000000003, F16405100000000000000004, F16405100000000000000005, F16405100000000000000006, F16405100000000000000007, F16405100000000000000008, F1480510000000000000000A, F14805100000000000000001, F14805100000000000000002, F14805100000000000000003, F14805100000000000000004, F14805100000000000000005, F14805100000000000000006, F14805100000000000000007, F14805100000000000000008,
++			files = (
++				C3D83A1E4EC702E088F8BFD4,
++				EDD6DA01DE3584C9F98E3CAC,
++				AE3BF91BAC03446AA6134998,
++				5031CE51CB0FB8CD2CFD41B4,
++				C5193FAF6623877C7C839911,
++				2C847E1366DBB731209A3FC4,
++				155129626D62042848ED4C78,
++				085EAE698E3D8273A2ADB786,
++				B92AF8FCC3AF163AFC597F0F,
++				F57E2C7C6684DA9DF080ACA6,
++				BCFFEAE1DB2B895D14C1BF2C,
++F0A9A1317C15BDA2F16330D8, A4DCA6C33B4BD0E2992D5949, C9B12D0AD35EE0F05886214E, DF8D336F141F9DAD8FAEE922, 1090DC5A409373895A71C40F, BD84B0F5160F320852345D57, B59D86599662BF6B9AEFACE3, 2388149F9C3B2067E00C8526, C3BCB639F862EFEE1592E4B8, CE101C6566AA420CFA4EC2F7, E079672FD1E3E8A8B7DE714D, C8A2486C1953BFC873604970, CF11C66FD4A98E7C424B71E0, 3EBB75E4CCBEACD01E3BDD6E, E33116A59283F041A9153E58, A2B6EEAE7F95E499AA971200, 552F5CF7036C4059431321A4, AAFB699DBE821E1DD32BE6F3, 3434F72EB0F1EBFB3D37AAA9, D45DADA9C1E74B6BF3776475, DAC53CB5A3DDE1EB1DCC4FEE, 18C309D3E1A5AE10812DEA0F, B14ECA252833AC132A9F1537, 5AB656FAA027AB44755170EE, 72C243DA78A159862515D995, 97EE7C721450EA79693509C1, 36E09CEC9130052D51926F2F, B53C0125FEA81A65C169927E, 1F9464746EC6FB1F8ECAE702, 8EF3362ABB327A6C9A31F191, BB4CE4D8072A46318B14EEB1, 90DA2D88A484C724BC080C86, BFF3C3AAD3C8162471C34724, 14ED48BA93D62623667C9C82, B254719D26F216C6570560CD, 200A534B8E2C1A604A612724, 76D8498D0761AA52594883D5, D6A673615E2A72DB3C8DD5F7, E4E8134D38C9D19560B13C45, E88C150CB978543EB0EE1C99, AC3F4F7B3780707A7743B9E7, AC25822F2FA4ADEF03221EB1, FCD6B9582685DAF0C01B7E31, 56B3CCD48F09AA8B3DF7B61C, CA3C000B33344E7A2530EB02, E8BA5864565940AFC08E3B52, 104F3652231DDF806149E5B4, CB7236EA459BDD1576566112, 1865F0DAB1FEBD3356438948, 513E97CB68B871C7507F82A2, 36A77AF9F3C3A1A5274B193C, 74D47589F6A7A4ECADDEF183, 16B5280BD7335766E6901252, 7AD102FC25AC9CC1BC1E045E, F15802000000000000000001, F15802000000000000000002, F15802000000000000000003, F15802000000000000000004, F15802000000000000000005, F15802000000000000000006, F15802000000000000000007, F15802000000000000000008, F15802000000000000000009, F1580200000000000000000A, F1580200000000000000000B, F1580200000000000000000C, F1580200000000000000000D, F1580200000000000000000E, F14891000000000000000001, F14891000000000000000002, F14891000000000000000003, F14891000000000000000004, F14891000000000000000005, F14891000000000000000006, F14891000000000000000007, F14891000000000000000008, F14891000000000000000009, F1489100000000000000000A, F1489100000000000000000B, F16405100000000000000001, F16405100000000000000002, F16405100000000000000003, F16405100000000000000004, F16405100000000000000005, F16405100000000000000006, F16405100000000000000007, F16405100000000000000008, F1480510000000000000000A, F14805100000000000000001, F14805100000000000000002, F14805100000000000000003, F14805100000000000000004, F14805100000000000000005, F14805100000000000000006, F14805100000000000000007, F14805100000000000000008,
+ 				CD457A6D86BABA31225EB746,
+ 				61B60BE18F3D55F761F9B8F4,
+ 				FAF469BDFDB3BB34F7703EE7,
+@@ -1002,7 +1045,10 @@
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+-		800000000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (71A90D913FBDEA4F5433743A, A64D0A11E3D04CAF2EB787C1, 32C2B2995F555C82E7640723, FD41E1ECD8A620F9CA55B0C7, D21E4AAC463EFEB441C2487D, 1E84D6E7B31E4354A1697726, 2AE33A25269179EFC5EFBFB6, 322D27174D52152351B264A8, F37E6FD70D0A67B300012052, 45F7ABD0BDCB5FDB0669A547, F158020000000000000000F1,F1489100000000000000000C, F16405100000000000000009, F14805100000000000000009, 8A67C965FFBD10A165415F6F, 3E024577903A98F6EFFD1991, 51BD4D0B8E4A1C51E46F4A07, 7F51379DB9B5121C157DA13A, F25505100000000000000005, F15505100000000000000008, F15505100000000000000007, 19C2EFD51E4BD138A4E7EE1F, E22405200000000000000008, AC3026400000000000000001, AC8205000000000000010009, AC829300000000000000000A, AC8243000000000000000008, AC8213000000000000000008, AC8233000000000000000008, AC8223000000000000000006, AC8183000000000000000006, AC8193000000000000000008, AC8173000000000000000008, AC8163000000000000000004, AC8153000000000000000004, AC8143000000000000000006, AC8133000000000000000008, AC8123000000000000000006, AC811300000000000000000A, AC8113000000000000000008, AC8103000000000000000008, AC7100000000000000000008, B97900000000000000000008, A98320000000000000000103, B98300000000000000000003, B91100000000000000000003, 20000000000000000000006F, D679092AC75040D3B7FC3E03, 20000000000000000000006C, 20000000000000000000006B, 20000000000000000000006A, 200000000000000000000068, 200000000000000000000065, 200000000000000000000062, 200000000000000000000055, 200000000000000000000053, 200000000000000000000046, 200000000000000000000045, 200000000000000000000043, 200000000000000000000034, 200000000000000000000033, 200000000000000000000012, 200000000000000000000021, E21600000000000000000103, A21420000000000000000007, A21420000000000000000006, AC1051980000000000000033, AC10524000000000000000E0); runOnlyForDeploymentPostprocessing = 0; };
++		800000000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (
++				BF0DD31803EB8545FF26193F,
++				2CF7B0A9EFA2FEAFC95C2F03,
++71A90D913FBDEA4F5433743A, A64D0A11E3D04CAF2EB787C1, 32C2B2995F555C82E7640723, FD41E1ECD8A620F9CA55B0C7, D21E4AAC463EFEB441C2487D, 1E84D6E7B31E4354A1697726, 2AE33A25269179EFC5EFBFB6, 322D27174D52152351B264A8, F37E6FD70D0A67B300012052, 45F7ABD0BDCB5FDB0669A547, F158020000000000000000F1,F1489100000000000000000C, F16405100000000000000009, F14805100000000000000009, 8A67C965FFBD10A165415F6F, 3E024577903A98F6EFFD1991, 51BD4D0B8E4A1C51E46F4A07, 7F51379DB9B5121C157DA13A, F25505100000000000000005, F15505100000000000000008, F15505100000000000000007, 19C2EFD51E4BD138A4E7EE1F, E22405200000000000000008, AC3026400000000000000001, AC8205000000000000010009, AC829300000000000000000A, AC8243000000000000000008, AC8213000000000000000008, AC8233000000000000000008, AC8223000000000000000006, AC8183000000000000000006, AC8193000000000000000008, AC8173000000000000000008, AC8163000000000000000004, AC8153000000000000000004, AC8143000000000000000006, AC8133000000000000000008, AC8123000000000000000006, AC811300000000000000000A, AC8113000000000000000008, AC8103000000000000000008, AC7100000000000000000008, B97900000000000000000008, A98320000000000000000103, B98300000000000000000003, B91100000000000000000003, 20000000000000000000006F, D679092AC75040D3B7FC3E03, 20000000000000000000006C, 20000000000000000000006B, 20000000000000000000006A, 200000000000000000000068, 200000000000000000000065, 200000000000000000000062, 200000000000000000000055, 200000000000000000000053, 200000000000000000000046, 200000000000000000000045, 200000000000000000000043, 200000000000000000000034, 200000000000000000000033, 200000000000000000000012, 200000000000000000000021, E21600000000000000000103, A21420000000000000000007, A21420000000000000000006, AC1051980000000000000033, AC10524000000000000000E0); runOnlyForDeploymentPostprocessing = 0; };
+ 		800000000000000000000005 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (AC810300000000000000000A, AC710000000000000000000A, B9790000000000000000000A, A77D00000000000000000001, B98300000000000000000004, B70096DFB59F47A2A16D06BD, 200000000000000000000066, 200000000000000000000063, 200000000000000000000054, 200000000000000000000044, 200000000000000000000035, 200000000000000000000015, 200000000000000000000022); runOnlyForDeploymentPostprocessing = 0; };
+         F25506800000000000000001 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (F25506100000000000000001, F25506100000000000000002, F25506100000000000000003); runOnlyForDeploymentPostprocessing = 0; };
+ /* End PBXSourcesBuildPhase section */
