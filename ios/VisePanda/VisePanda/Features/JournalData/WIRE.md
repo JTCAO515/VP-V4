@@ -59,6 +59,9 @@ absent/pending/expired/transport/mismatch retain the request. No PDF replay/Prop
 reader return to their original UI and remain UNKNOWN until a genuine original proof exists.
 
 Precise optional observations are added only to the original successful receipt decoder path.
+Community/Safety/Experience observe only committed/deleted outcomes after synchronous projection;
+Coverage requires original scopedComplete verification, and cancelled/partial results never qualify.
+Trip support completion is observed after the original actual projection/resultingVersion/confirmed guard.
 Original cancellation without a receipt, source expiry, consent withdrawal, erased-outcome UNKNOWN,
 pre-write rejection and generic complete/discard methods produce no event. A receipt observer
 captures the original fixed source immediately before its existing synchronous complete, then
