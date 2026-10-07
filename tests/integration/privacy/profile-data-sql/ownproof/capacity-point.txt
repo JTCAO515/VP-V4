@@ -1,0 +1,13 @@
+▶ original Profile capacity assertions through standalone fixture
+  ✔ whole owner progress capacity rejects before insertion; no partial list and no privileged cleanup floor bypass (1362.547833ms)
+Fixture RPC revoke PASS
+Owned fixture container cleanup PASS
+✔ original Profile capacity assertions through standalone fixture (8051.348583ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 8093.096333
