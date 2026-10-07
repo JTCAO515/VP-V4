@@ -445,6 +445,10 @@
 		0235F28964043C9A01126AE9 /* NativeTurnDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6A530B6BA278E255D90B0C3; };
 		210A5218D6BDE6B5029405EA /* NativeTurnDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3535BE1272B6134A7787953; };
 		0BE4CD0A7ADDFE3FE67DDA05 /* TurnData fixtures in Resources */ = {isa = PBXBuildFile; fileRef = 7300BC8DF88786F92DEEAAD7; };
+		D8CBF3C5FFCEF0644EB38ACE /* NativeGuideCacheDataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888B4B0A91E5548A09C37C11 /* NativeGuideCacheDataModels.swift */; };
+		C8F1373D438FBA2EDAE6AA9B /* NativeGuideCacheDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCCC553B21229B4E730955A /* NativeGuideCacheDataStore.swift */; };
+		02EC30953F6AB8E137371A83 /* NativeGuideCacheDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5CF2667A5B8D2C33188E839 /* NativeGuideCacheDataView.swift */; };
+		0423D65F61601E64A59BFF19 /* NativeGuideCacheDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4478C92C24D0CDB8CD07CEF /* NativeGuideCacheDataTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -896,6 +900,10 @@
 		A6A530B6BA278E255D90B0C3 /* NativeTurnDataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeTurnDataView.swift; sourceTree = "<group>"; };
 		E3535BE1272B6134A7787953 /* NativeTurnDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeTurnDataTests.swift; sourceTree = "<group>"; };
 		7300BC8DF88786F92DEEAAD7 /* TurnData fixtures */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Fixtures/TurnData; sourceTree = "<group>"; };
+		888B4B0A91E5548A09C37C11 /* NativeGuideCacheDataModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/GuideCacheData/NativeGuideCacheDataModels.swift; sourceTree = SOURCE_ROOT; };
+		0BCCC553B21229B4E730955A /* NativeGuideCacheDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/GuideCacheData/NativeGuideCacheDataStore.swift; sourceTree = SOURCE_ROOT; };
+		B5CF2667A5B8D2C33188E839 /* NativeGuideCacheDataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/GuideCacheData/NativeGuideCacheDataView.swift; sourceTree = SOURCE_ROOT; };
+		C4478C92C24D0CDB8CD07CEF /* NativeGuideCacheDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePandaTests/NativeGuideCacheDataTests.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -911,6 +919,7 @@
 			isa = PBXGroup;
 			children = (
 				F158D3000000000000000001 /* OfflineData */,
+				541C4A7662005C1FCE8B757B /* GuideCacheData */,
 				600000000000000000000002 /* VisePanda */,
 				AC10524000000000000000F0 /* TripLifecycle */,
 				A21100000000000000000002 /* NativeReadinessView.swift */,
@@ -987,6 +996,7 @@
 		6F3563F7CEB915B46683B687 /* ResultData */ = {isa = PBXGroup; children = (BA221EBDDF1247B748250A61, 87B39A4B38D6D7228EA8703A, C27D0A04A14CFF3BB941C2E0, 264F9E366FAB9FE428856F3F, FD3A0711C7134DCD867CCAA6, BF4C1A0E6D62E3B9DE835612, BB6B1B301BB5AC0066D3D173, C53B3DB58E7A64DC9F18F764, 92CCADBDDD74516F5C2F28AC, E878D1545FBBD699AB773C82, D3DD1810A8E476F25B50C02F); path = ResultData; sourceTree = "<group>"; };
 		F158D3000000000000000001 /* OfflineData */ = {isa = PBXGroup; children = (F158D1000000000000000001, F158D1000000000000000002, F158D1000000000000000003, F158D1000000000000000004); name = OfflineData; sourceTree = "<group>"; };
 		0B54AAA0BEC9EBD7C8E720A4 /* TurnData */ = {isa = PBXGroup; children = (A0FD8E21F792D63FA237C37E, F1B9DFD57CBDA43B29FB1125, 14C924F68EEBD9DD077382BE, 7208EBA9C7D6BA835A98F5A1, FB5AD44D7D7DE1A5E2715462, 19F673CD221A0CFB5C1F4FA4, D0EF7AC31C0D77428A5B87E9, 56298FB83B302B82ADA8696F, BF7CEB0D748E3E452C085EC4, BE9CCF8E019EE158932BEB5D, A6A530B6BA278E255D90B0C3); path = TurnData; sourceTree = "<group>"; };
+		541C4A7662005C1FCE8B757B /* GuideCacheData */ = {isa = PBXGroup; children = (888B4B0A91E5548A09C37C11, 0BCCC553B21229B4E730955A, B5CF2667A5B8D2C33188E839, C4478C92C24D0CDB8CD07CEF); name = GuideCacheData; sourceTree = "<group>"; };
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1096,6 +1106,9 @@
 				F158D2000000000000000001 /* NativeOfflineDataModels.swift in Sources */,
 				F158D2000000000000000002 /* NativeOfflineDataStore.swift in Sources */,
 				F158D2000000000000000003 /* NativeOfflineDataView.swift in Sources */,
+				02EC30953F6AB8E137371A83 /* NativeGuideCacheDataView.swift in Sources */,
+				C8F1373D438FBA2EDAE6AA9B /* NativeGuideCacheDataStore.swift in Sources */,
+				D8CBF3C5FFCEF0644EB38ACE /* NativeGuideCacheDataModels.swift in Sources */,
 				887E547C5EE93D28A2863C94 /* NativeProfileDataStore.swift in Sources */,
 				E42FC132E3F6F7435C094654 /* NativeProfileDataLifetime.swift in Sources */,
 				F1C8B18C04F9EA1E89FAF822 /* NativeProfileDataCopy.swift in Sources */,
@@ -1154,6 +1167,7 @@ FAAB3A946EA0F180D0C047FA, 39679E2115C244EBC0A2E7B1, 2E678B6E23FFBB6AC16AF3E3, 29
 		};
 		800000000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (210A5218D6BDE6B5029405EA,
 				F158D2000000000000000004 /* NativeOfflineDataTests.swift in Sources */,
+				0423D65F61601E64A59BFF19 /* NativeGuideCacheDataTests.swift in Sources */,
 				F00F495CA0F870ABED6D1C7F /* NativeProfileDataStorageTests.swift in Sources */,
 				ABD17A0B2C9BEFA3DBCD2250 /* NativeProfileDataTests.swift in Sources */,
 
