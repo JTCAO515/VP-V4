@@ -46,9 +46,12 @@ fabricated as an eligible selected root. A fenced erased Turn is explicit `erase
 in inventory and remains identity-only. No active-work cancellation.
 
 Graph exact={turnIds,messageIds,artifactIds}: turnIds=[selected Turn]; messageIds
-are ONLY assistant_messages whose actual turn_id equals root, plus a planning
-row's exact input message only if that same message.turn_id equals root. Reject
-unbound/orphan/ambiguous message, rather than guess from task/latest/goal.
+are assistant_messages whose actual turn_id equals root, plus planning_comparisons
+exact message_id for root (original 20260927060000:176-196 submits follow_up with
+turn_id=NULL), and exclusive result input_message_id bound by actual revision
+task_turn_id=root. Require exact owner/task/goal/conversation/sequence basis. NULL
+message.turn_id with this real binding is valid; only absent/ambiguous producer
+binding is unsupported. Never guess from shared task/latest/goal or equal text.
 Artifacts seed ONLY revisions.task_turn_id=root OR artifacts.source_turn_id=root,
 with actual input-message binding. Include ALL revisions/events of each artifact.
 Every revision must belong to root and its exact message/task/goal, every source
@@ -68,12 +71,12 @@ this before confirmation. If another Turn depends on that root context, block.
 |---|---|
 | retain turns | public.turns.id=root, same row including status/Trip/thread |
 | redact textBodies | text_content.turn_id=root: input fixed `[deleted by scoped turn request]`, output_kind/output_text=NULL, hidden_at permanent |
-| redact messageBodies/retain messages | qualified assistant_messages.turn_id=root, input_text same fixed marker; exact all other columns retained |
+| redact messageBodies/retain messages | qualified assistant_messages by exact root/planning/result binding above, input_text same fixed marker; exact all other columns retained |
 | redact taskDigests/retain tasks | service_task_turns.turn_id=root -> service_tasks.id; only root goal_digest marker; all other fields retained |
 | erase events/idempotency/feedback | public.chat_turn_events/chat_turn_idempotency/turn_feedback.turn_id=root; never whole thread |
 | erase artifacts/revisions/resultEvents | exclusive graph above; result_artifacts/result_revisions/result_events |
 | erase sourceReceipts/intakes | assistant_message_source_receipts.message_id / assistant_travel_intakes.message_id in selected messageIds |
-| erase intakeBindings | planning_intake_bindings.turn_id=root; source_message_id pointing outside selection blocks, does not enlarge scope |
+| erase intakeBindings | planning_intake_bindings.turn_id=root; outbound source_message_id stays an owner-qualified retained identity; an unselected reverse binding referring to selected message blocks, never enlarges scope |
 | erase planning/actionReceipts/observations/modelDispatches | planning_comparisons/planning_action_receipts/planning_observations/planning_model_dispatches.turn_id=root; all referenced parents must match qualified actual retained identities |
 | erase checkpoints/attemptBindings/localJournals | planning_v2_place_checkpoints/planning_v2_model_attempt_bindings/planning_v2_model_local_journal.turn_id=root |
 | erase executionRuns/completionProofs/completedReceipts | planning_v2_execution_runs/planning_v2_completion_proofs/planning_v2_completed_receipts.turn_id=root |
@@ -110,6 +113,22 @@ OTHER_DELETE_PENDING; SOURCE_UNSUPPORTED.
   treat common retained task/thread/conversation/goal identity alone as a blocker
   or select their whole graph. Inspect all message source input/captured/receipt
   and result content/sourceTurnId/comparisonRef fields, including terminal copies.
+- Goal current-input copy: actual 20260927021000:100-113 goal_start creates
+  assistant_goals.current_text=p_text at scope_version=1; amendment increments
+  scope_version and stores p_text. Determine provenance by qualified
+  assistant_messages.goal_id/conversation_id/scope_version/relationship (goal_start
+  or amendment), exact current goal.scope_version and the unique actual writer
+  message for that version. If selected message is that current writer,
+  CROSS_TURN_REFERENCE before erasure because parent goal.current_text must stay
+  intact. Version/relationship provenance, never string equality/similarity.
+  Common goal identity or follow_up/clarification alone is not this blocker.
+  Missing/ambiguous current writer or unexpected goal body/state =>
+  SOURCE_UNSUPPORTED. Include actual goal row/version/current_text and all writer
+  basis rows in source CAS/row cap without returning body. Hide-selected-root also
+  makes original conversation/task readers suppress task identity when
+  service_tasks.goal_turn_id text.hidden_at is set (membership:153-165). If any
+  other Turn/task-history/current result depends on that root/parent, block before
+  hide; preserve unrelated parent reader/writer semantics. No parent Goal redact.
 - Proposal: actual applied/unapplied proposal source references, artifact proposal_id,
   result proposal-preview content. Preserve confirmed Trip/history, do not repair
   a proposal after erasing its source. Source reference must be removed by original flow.

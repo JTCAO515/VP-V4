@@ -53,6 +53,8 @@ function closedSourceGraph(sources: Sources): boolean {
   const turns = new Set([...ids('public.turns', 'id'), ...ids('turn_private.text_content', 'turn_id')]);
   const tasks = ids('turn_private.service_tasks', 'id'), messages = ids('turn_private.assistant_messages', 'id');
   const artifacts = ids('turn_private.result_artifacts', 'id'), executions = ids('turn_private.planning_v2_execution_runs', 'id');
+  const linkedMessages = new Set([...rows('turn_private.planning_comparisons').map(r => String(r.message_id)),
+    ...rows('turn_private.result_artifacts').map(r => String(r.input_message_id))]);
   for (const spec of schema) for (const row of rows(spec.relation)) {
     if ('turn_id' in row && row.turn_id !== null && !turns.has(String(row.turn_id))) return false;
     if ('task_turn_id' in row && !turns.has(String(row.task_turn_id))) return false;
@@ -62,7 +64,9 @@ function closedSourceGraph(sources: Sources): boolean {
     if ('execution_id' in row && !executions.has(String(row.execution_id))) return false;
     if (spec.relation === 'turn_private.service_tasks' && (!turns.has(String(row.goal_turn_id)) || !turns.has(String(row.last_turn_id)))) return false;
     if (spec.relation === 'turn_private.service_task_turns' && row.parent_turn_id !== null && !turns.has(String(row.parent_turn_id))) return false;
-    if (spec.relation === 'turn_private.assistant_messages' && (row.turn_id === null || row.parent_message_id !== null && !messages.has(String(row.parent_message_id)))) return false;
+    // Planning's real submitter binds a follow_up message with turn_id=NULL.
+    // Outbound parent IDs are retained identities; SQL qualifies their owner, never exports their body by guess.
+    if (spec.relation === 'turn_private.assistant_messages' && row.turn_id === null && !linkedMessages.has(String(row.id))) return false;
     if (spec.relation === 'turn_private.result_artifacts' && (!messages.has(String(row.input_message_id))
       || row.source_turn_id !== null && !turns.has(String(row.source_turn_id)) || row.source_result_id !== null && !artifacts.has(String(row.source_result_id)))) return false;
   }
