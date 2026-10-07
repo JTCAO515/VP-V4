@@ -1,0 +1,10 @@
+{
+  "kind": "actual owned PG old/new recursive parser bag and SQLSTATE/message oracle",
+  "cases": 247,
+  "expectedErrors": 119,
+  "equal": 247,
+  "oldParserMd5": "9e014624130e8b640352ab16acdcd307",
+  "sourceSha": "12738f0ae49e96b2769009da56ef83c55947b0c0e8d1db72c97236ca3602930e",
+  "aclConfig": "byte-identical",
+  "newParserMd5": "645393810c37120afb2514ac18706f6d"
+}
