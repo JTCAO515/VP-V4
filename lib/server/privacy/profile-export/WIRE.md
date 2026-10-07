@@ -5,9 +5,10 @@ provenance table after identifying that old D2 facts alone cannot distinguish
 legacy opaque copies. No page ledger, new source counter, job column, public RPC,
 commit-digest tag or alternate proposal remains. Sole SQL07040000 is consumed,
 including its reviewed TIME endpoint/fixed identity delta. Profile0f114 source
-is retained through stable03a067fa3dd16270a08a95df03b4257542cb38f2; PR670 remains
-an explicit unmerged dependency. Current main78857 and its07030000 are merged
-into this isolated integration worktree.
+is retained through merged PR670. Current main498ecf1a9b65318023da6850633c91d145391686
+and its latest Profile,07030000 and08000000 are merged into this isolated
+integration worktree. The original unmerged-base checkpoints remain historical
+evidence; there is no outstanding unmerged product dependency for this PR.
 Parent #239 ALL1/ALL2 stays Open; ProfileData delete completion is independent.
 
 ## Real source graph and reuse
