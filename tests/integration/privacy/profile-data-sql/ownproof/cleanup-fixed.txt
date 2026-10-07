@@ -1,0 +1,31 @@
+▶ actual Profile SQL transaction and source graph
+  ✔ default private/RPC denies and exact immutable original Native implementation (145.2425ms)
+  ✔ absent Profile stays absent; first Native save inventories only actual pace; malformed wire types rejected (308.403084ms)
+  ✔ ordinary Web without mobile enrollment saves with original guard and v2 CAS (194.8335ms)
+  ✔ all original fields, request and Undo -> fixed30s clear, dual permanent floors, row retained (371.644667ms)
+  ✔ old native replay/Undo/Web7/v2 stale requests cannot revive; fresh writes remain legitimate (362.042875ms)
+  ✔ immutable original-byte recover and progress metadata erasure preserve source/receipt/floors (259.996333ms)
+  ✔ source CAS rejects every saved-field and reverse-row edit; failed erase makes no effects (312.104625ms)
+  ✔ raw service/GUC restoration and watermark reset are refused; delete/recreate cannot ABA (376.266459ms)
+  ✔ original Brief trigger invalidates shared Case and erases all affected previews/operation bytes, mixed scoped/recovery rows retained stale (529.198916ms)
+  ✔ complete confirmed Trip/events/snapshots/proposal/Memory/Auth and financial rows unchanged (472.390333ms)
+  ✔ full progress20+5 pagination and self-exit retain original fences, expired receipts recover (1856.836958ms)
+  ✔ actual leased scoped Profile use blocks clear, complete mixed publication remains and becomes stale (557.336709ms)
+  ✔ actual opaque Profile core copy blocks; missing Profile handler is not falsely inventoried; expired copy still CAS (322.291083ms)
+  ✔ clear serializes against real old Native save/Undo/Web RPC transactions without weakening old errors (2183.043208ms)
+  ✔ whole owner progress capacity rejects before insertion; no partial list and no privileged cleanup floor bypass (2517.440208ms)
+  ✔ actual30s expiry before effects rolls back source, progress and floor (30452.708833ms)
+  ✔ controlled fixture delay after real effects uses actual clock and rolls source/floors/receipt back; original terminal receipt recovers afterTTL (30519.174292ms)
+  ✔ fresh authority/session and foreign selection negatives rollback and disclose no foreign source (356.879125ms)
+  ✔ unknown application source shape and inbound FK drift remain fail-closed (222.529333ms)
+Fixture RPC revoke PASS
+Owned fixture container cleanup PASS
+✔ actual Profile SQL transaction and source graph (78571.118333ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 78613.964084
