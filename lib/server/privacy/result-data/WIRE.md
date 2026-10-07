@@ -294,3 +294,25 @@ acceptance UNRUN. Initial TS source completion is not scopeComplete/whole239.
 Main one-batch fixed-wire audit and unused-slot check precede sole official SQL;
 final integrated TS/SQL/Native/real signedAuth/registered caller/one PR remains
 required. No new child chats or shared source writer were created by this owner.
+
+Main has approved fixed725827b0 whole WIRE and verified all-worktree unused
+20261007010000 slot. Official unique SQL owner01a115bb-2e1d-7382-a0f7-21ff76b197f0
+owns vpj58-result-data-sql-20261007 / append20261007010000_result_data.sql and own
+PG contracts. Initial product wire/fixtures remain byte-identical725827b0.
+
+Prepared own signed Auth consumer auth-http.test.mjs and isolated run-http.mjs,
+using the original disposable GoTrue/native login pattern, real original owner
+source submitters and service publisher with synthetic completed source output.
+One test covers two historical revisions+withdrawal/all3 events, sibling same
+source preserved, whole Conversation/Task/Turn/Trip/Memory/financial rows retained,
+registered coverage erase/exact-byte receipt/recovery, unknown uncommitted
+preview and explicit progress cleanup/complete operation inventory, wrong epoch/
+foreign/unauthenticated/revoked-original-consent/reauth/default-denied RPC.
+Synthetic financial rows are fixture data, never a provider/billing claim.
+Runner fails before creating resources unless actual fixed SQL and precisely
+leased result_data registration exist. No target .env discovery or remote grant;
+only isolated unique local namespace, port collision guard, fixture grant/revoke,
+owned stop/no-backup cleanup. Node syntax checks for both files PASS; real signed
+Auth run UNRUN until those actual dependencies integrate. No zero-skip/pass claim
+from a gated test and no unchanged protocol/build/Native matrix rerun.
+Shared original4 registration hunks remain patch-only, no shared lease consumed.
