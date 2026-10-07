@@ -244,6 +244,6 @@ typecheck/diff PASS. Four-file virtual overlay typecheck already PASS and reused
 Earlier Next API build PASS applies to own API source; no new source/PG/Auth claim.
 Main008264 third precise lease consumed: request-guards.ts only isUserProfileInput
 optional expectedProfileRevision type/check/allowed-key, original Memory and other
-guards byte-unchanged. Original Profile contract3 PASS0skip, direct actual guard
+guards byte-unchanged. Original Profile contract1 PASS0skip, direct actual guard
 accepts old payload and safe CAS0/5/max, rejects negative/fraction/string/null/array/
 unsafe max; typecheck/diff PASS. ProfileWorkspace and catalog remain pending.
