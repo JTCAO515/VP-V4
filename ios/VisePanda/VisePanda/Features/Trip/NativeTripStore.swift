@@ -278,10 +278,16 @@ final class NativeTripStore {
 
     func restoreOfflineUserDraft(_ local:NativeOfflineTripDraft,using session:NativeSession)async->Bool {
         guard !busy,draft==nil,pending==nil,!proposalOutcomeUnknown,let scope=session.dataScope,local.namespace.matches(scope) else{return false}
+        guard let localGeneration=try? session.offlineTrips.offlineDataGeneration(local.namespace,scope:scope),
+              (try? session.offlineTrips.readUserDraft(local.namespace,scope:scope))==local else{return false}
         if self.scope != scope || selectedID != local.namespace.tripID {await select(local.namespace.tripID,using:session)}
         else {guard await refreshForSharing(using:session) else{return false}}
         guard session.dataScope==scope,self.scope==scope,canEdit,deletionRequest==nil,deletionReceipt==nil,pending==nil,!proposalOutcomeUnknown,let detail,selectedID==local.namespace.tripID else{return false}
-        do{draft=try NativeOfflineDraftRecovery.restore(local,scope:scope,detail:detail);notice=nil;return true}
+        do {
+            guard try session.offlineTrips.offlineDataGeneration(local.namespace,scope:scope)==localGeneration,
+                  try session.offlineTrips.readUserDraft(local.namespace,scope:scope)==local else{throw NativeOfflineTripError.versionConflict}
+            draft=try NativeOfflineDraftRecovery.restore(local,scope:scope,detail:detail);notice=nil;return true
+        }
         catch{notice=error is NativeOfflineTripError ? "OFFLINE_DRAFT_REVIEW_REQUIRED":"INVALID_INPUT";return false}
     }
 
