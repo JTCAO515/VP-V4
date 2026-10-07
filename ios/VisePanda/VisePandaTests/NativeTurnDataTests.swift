@@ -113,6 +113,32 @@ import Testing
         let journal = NativeTurnDataJournal(vault:vault,validateConfirmation:NativeTurnDataCommand.validateConfirmation)
         #expect(try journal.read(actor)?.body == mutation)
     }
+    @Test func selectedProjectionNotificationKeepsDraftAndUnselectedTaskActivity() async throws {
+        let receipt = try #require(try NativeTurnDataProtocol.receipt(bytes("receipt"), command: command("recoverBytes"), actor: actor, now: date(40)))
+        let erased = try NativeTurnDataErasure(receipt: receipt, actor: actor)
+        let ask = NativeAskStore(mode:.currentInput)
+        ask.reset(for:actor.scope); ask.draft = "Explicit unsent draft"
+        ask.applyTurnErasure(erased)
+        #expect(ask.draft == "Explicit unsent draft" && ask.scope == actor.scope && !ask.busy)
+        let selected = NativeTaskActivitySelection(scope:actor.scope,conversationID:"00000000-0000-4000-8000-000000000008",
+            taskID:"00000000-0000-4000-8000-000000000006",latestTurnID:try #require(receipt.binding.turnID),eligible:true)
+        let other = NativeTaskActivitySelection(scope:actor.scope,conversationID:selected.conversationID,
+            taskID:selected.taskID,latestTurnID:"00000000-0000-4000-8000-000000000099",eligible:true)
+        let activity = NativeTaskActivityStore(uptime:{100})
+        func wire(_ value: NativeTaskActivitySelection) throws -> Data {
+            try NativeCommunityWire.bytes(["version":5,"kind":"task_activity","conversationId":value.conversationID,
+                "taskId":value.taskID,"turnId":value.latestTurnID,"turnStatus":"completed","limit":4,"recording":"unrecorded","actions":[[String:String]]()])
+        }
+        activity.bind(selection:other,active:true)
+        await activity.load(selection:other,currentSelection:{other},active:{true},request:{_,_ in try wire(other)})
+        activity.applyTurnErasure(erased)
+        #expect(activity.visible(selection:other,active:true) != nil)
+        activity.bind(selection:selected,active:true)
+        await activity.load(selection:selected,currentSelection:{selected},active:{true},request:{_,_ in try wire(selected)})
+        #expect(activity.visible(selection:selected,active:true) != nil)
+        activity.applyTurnErasure(erased)
+        #expect(activity.visible(selection:selected,active:true) == nil && activity.boundSelection == selected)
+    }
     private var otherTurn: String { "00000000-0000-4000-8000-000000000004" }
     private var erasedTurn: String { "00000000-0000-4000-8000-000000000003" }
     @Test func actorEpochAndBackgroundInvalidateLateReadAuthority() throws {
