@@ -27,7 +27,8 @@ try {
   if (await run("supabase", ["start", "--workdir", target, "-x", "realtime,storage-api,imgproxy,mailpit,postgres-meta,studio,edge-runtime,logflare,vector,supavisor"]) !== 0) throw Error("Owned stack start failed; credential-bearing output suppressed");
   console.log("VP_GUIDE_HTTP_TARGET " + JSON.stringify({ project, api: ports.api, supabaseAPI: ports.supabaseAPI }));
   result = await run(process.execPath, ["--experimental-strip-types", "--test", "tests/integration/guide/guide-http.test.mjs"], true,
-    { ...env, VP_GUIDE_HTTP_INTEGRATION: "true", VISEPANDA_TRIP_PROTOCOL_V2: "true", ...nativeHTTPChildEnv(ports, target) });
+    { ...env, VP_GUIDE_HTTP_INTEGRATION: "true", VISEPANDA_TRIP_PROTOCOL_V2: "true", ...nativeHTTPChildEnv(ports, target),
+      NODE_OPTIONS: [env.NODE_OPTIONS, "--import " + new URL("../../../lib/server/privacy/profile-data/observe-guide-conflict.mjs", import.meta.url).href].filter(Boolean).join(" ") });
 } finally {
   if (await run("supabase", ["stop", "--workdir", target, "--no-backup"]) !== 0) { console.error("Owned Guide stack cleanup failed for " + project); result = 1; }
   else { rmSync(target, { recursive: true }); console.log("VP_GUIDE_HTTP_CLEANUP " + JSON.stringify({ project, result: "PASS" })); }
