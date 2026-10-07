@@ -1,0 +1,72 @@
+preview eligible true [] {
+  artifacts: 1,
+  revisions: 1,
+  callWindows: 0,
+  resultClaims: 0,
+  resultEvents: 1,
+  executionRuns: 0,
+  localJournals: 0,
+  collectorOrigins: 0,
+  collectorOutputs: 0,
+  completionProofs: 0,
+  completedReceipts: 0
+} {
+  goals: 1,
+  tasks: 1,
+  trips: 0,
+  turns: 1,
+  threads: 1,
+  memories: 0,
+  messages: 1,
+  proposals: 0,
+  conversations: 1,
+  budgetAttempts: 0,
+  planningSources: 3,
+  sourceArtifacts: 0
+}
+receipt {
+  graph: {
+    eventIds: [ '9007199254741027' ],
+    revisions: [ 1 ],
+    journalIds: [],
+    artifactIds: [ 'bfd3db0f-999f-48eb-8d5a-93a8939566e8' ],
+    executionIds: [],
+    publicationKeys: [ '1063f111-fd5b-4514-ab58-dccb5f3371e5' ]
+  },
+  decidedAt: 1791369830074,
+  sourceTrip: 'not_modified',
+  erasedCounts: {
+    artifacts: 1,
+    revisions: 1,
+    callWindows: 0,
+    resultClaims: 0,
+    resultEvents: 1,
+    executionRuns: 0,
+    localJournals: 0,
+    collectorOrigins: 0,
+    collectorOutputs: 0,
+    completionProofs: 0,
+    completedReceipts: 0
+  },
+  sourceResult: 'erased',
+  requestDigest: 'd05ecc90d1b37799377af002e5547e2ba33a4f92f2bfe5442db6193667248164',
+  explicitMemory: 'not_modified',
+  externalCopies: 'not_erased',
+  retainedCounts: {
+    goals: 1,
+    tasks: 1,
+    trips: 0,
+    turns: 1,
+    threads: 1,
+    memories: 0,
+    messages: 1,
+    proposals: 0,
+    conversations: 1,
+    budgetAttempts: 0,
+    planningSources: 3,
+    sourceArtifacts: 0
+  },
+  retainedFences: 2,
+  clearedPreviews: 0,
+  sourceConversation: 'not_modified'
+}

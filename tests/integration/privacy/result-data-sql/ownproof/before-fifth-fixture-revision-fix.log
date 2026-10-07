@@ -1,0 +1,85 @@
+▶ ResultData whole PostgreSQL source, CAS, immutable receipt, progress, copies and writer compatibility
+  ✔ actual no-copy source and sole TS decoding (670.469333ms)
+  ✔ complete original synthetic worker/execution/journal erasure with retained financial sources (1526.689917ms)
+  ✖ historical references, ownership, mixed closure, CAS, 30s rollback, progress and permanent guards (43098.541792ms)
+✖ ResultData whole PostgreSQL source, CAS, immutable receipt, progress, copies and writer compatibility (51623.648041ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 2
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 51663.163542
+
+✖ failing tests:
+
+test at tests/integration/privacy/result-data-sql/postgres.test.mjs:18:12
+✖ historical references, ownership, mixed closure, CAS, 30s rollback, progress and permanent guards (43098.541792ms)
+  AssertionError [ERR_ASSERTION]: ✔ all historical revisions/withdrawal and bigint event IDs erase; unselected result and every source full row retained (970.784042ms)
+  ✔ historical decision JSON and result selfFK blockers protect every dependent, including withdrawn (681.540417ms)
+  ✔ typed plural refs and task_result notifications block, generic reminder resultId has no result authority (589.302083ms)
+  ✔ Brief original request BYTEA is parsed; malformed original bytes fail closed (345.275084ms)
+  ✔ full-row CAS detects retained source change and reverse dependency insertion before mutation (802.994292ms)
+  ✔ ordinary original source authority revocation, stale epoch, recent reauth and foreign roots fail closed (699.401625ms)
+  ✔ finite own progress clears selected transients and preserves exact immutable receipts and enumerable fences (1590.885541ms)
+  ✔ six impact relations close across both sides of cross-set item/receipt/delivery/projection links; hashes include connected unselected set (638.362167ms)
+  ✔ unregistered incoming cascade FK and complete touched-byte overflow block without partial eligible graph (552.500709ms)
+  ✔ ordinary same-id publication preserves original 23505; shared result guards add no producer serialization (1035.536333ms)
+  ✔ eraser exclusive/NOWAIT conflicts with real incoming writer; source remains; permanent OLD planning parent cannot move after erase (1522.55925ms)
+  ✔ absolute 30s lifetime rollback after actual delete effects; committed ACK recovers unchanged past TTL (31127.154583ms)
+  ✔ original message source receipt producer blocks result erasure; source receipts and conversation remain unchanged (405.184917ms)
+  ✔ private operation immutable fields, caller GUC, session deletion and current-session inventory preserve permanent state (852.976625ms)
+  ✔ actual confirmed Trip content/history/proposals and used explicit Memory profile/receipts/consent remain byte-identical (832.475417ms)
+  ✖ actual fifth proposal-reference metadata is decoded by sole corrected TS; selected proposal source is blocked and unchanged (350.563375ms)
+  ℹ tests 16
+  ℹ suites 0
+  ℹ pass 15
+  ℹ fail 1
+  ℹ cancelled 0
+  ℹ skipped 0
+  ℹ todo 0
+  ℹ duration_ms 43064.8415
+
+  ✖ failing tests:
+
+  test at tests/integration/privacy/result-data-sql/ownproof/adversarial.mjs:7:22
+  ✖ actual fifth proposal-reference metadata is decoded by sole corrected TS; selected proposal source is blocked and unchanged (350.563375ms)
+    AssertionError [ERR_ASSERTION]: ERROR:  STALE_BASIS
+    CONTEXT:  PL/pgSQL function turn_private.publish_result_v2(uuid,uuid,integer,uuid,uuid,uuid,uuid,uuid,integer,integer,jsonb,jsonb,jsonb,boolean) line 54 at RAISE
+    SQL function "publish_result_artifact_v2" statement 1
+
+
+    3 !== 0
+
+        at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-result-data-sql-20261007/tests/integration/privacy/result-data-sql/ownproof/runtime.mjs:8:67)
+        at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+        at async file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-result-data-sql-20261007/tests/integration/privacy/result-data-sql/ownproof/adversarial.mjs:140:18
+        at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-result-data-sql-20261007/tests/integration/privacy/result-data-sql/ownproof/adversarial.mjs:7:42)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+      generatedMessage: false,
+      code: 'ERR_ASSERTION',
+      actual: 3,
+      expected: 0,
+      operator: 'strictEqual',
+      diff: 'simple'
+    }
+
+
+
+  1 !== 0
+
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-result-data-sql-20261007/tests/integration/privacy/result-data-sql/postgres.test.mjs:19:125)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-result-data-sql-20261007/tests/integration/privacy/result-data-sql/postgres.test.mjs:18:4)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -1,0 +1,220 @@
+{
+  "kind": "local actual PG SQL-claims fixture; not signed Auth or provider",
+  "preview": {
+    "kind": "preview",
+    "graph": {
+      "eventIds": [
+        "9007199254741027"
+      ],
+      "revisions": [
+        1
+      ],
+      "journalIds": [],
+      "artifactIds": [
+        "bfd3db0f-999f-48eb-8d5a-93a8939566e8"
+      ],
+      "executionIds": [],
+      "publicationKeys": [
+        "1063f111-fd5b-4514-ab58-dccb5f3371e5"
+      ]
+    },
+    "scope": "result-sensitive-data/1",
+    "rootId": "bfd3db0f-999f-48eb-8d5a-93a8939566e8",
+    "ownerId": "abb1c6ca-3d88-4f4b-83c9-337c77e4a9fa",
+    "eligible": true,
+    "rootKind": "artifact",
+    "conflicts": [],
+    "expiresAt": 1791369859491,
+    "objectIds": [],
+    "requestId": "77d4b2e5-2187-454b-8ac4-6943666a9e39",
+    "sessionId": "04fc1ba2-5a02-45b4-aff8-38e98bad5c18",
+    "boundaries": {
+      "missing": [
+        "cross_result_or_conversation_source_dependents_rejected",
+        "applied_or_unapplied_proposal_and_decision_dependencies_rejected",
+        "active_shared_or_unqualified_copies_rejected",
+        "brief_guide_notification_knowledge_and_core_export_copies_rejected",
+        "provider_and_external_copies_not_erased",
+        "backup_restore_and_old_device_acceptance_unverified"
+      ],
+      "retained": [
+        "original_conversations_goals_messages_tasks_turns_threads",
+        "confirmed_trip_content_history_proposals",
+        "explicit_memory_profiles_receipts_consents",
+        "original_source_results_and_evidence",
+        "financial_budget_dispatch_and_source_records",
+        "permanent_artifact_publication_execution_journal_and_operation_fences",
+        "original_source_policy_consent_authority_ids"
+      ],
+      "eraseFields": [
+        "one_selected_artifact_all_revisions_and_events",
+        "proven_exclusive_completed_planning_result_copies"
+      ]
+    },
+    "capturedAt": 1791369829491,
+    "eraseCounts": {
+      "artifacts": 1,
+      "revisions": 1,
+      "callWindows": 0,
+      "resultClaims": 0,
+      "resultEvents": 1,
+      "executionRuns": 0,
+      "localJournals": 0,
+      "collectorOrigins": 0,
+      "collectorOutputs": 0,
+      "completionProofs": 0,
+      "completedReceipts": 0
+    },
+    "mobileEpoch": 1,
+    "retainCounts": {
+      "goals": 1,
+      "tasks": 1,
+      "trips": 0,
+      "turns": 1,
+      "threads": 1,
+      "memories": 0,
+      "messages": 1,
+      "proposals": 0,
+      "conversations": 1,
+      "budgetAttempts": 0,
+      "planningSources": 3,
+      "sourceArtifacts": 0
+    },
+    "sourceDigest": "ad0dad2ff9bbb715ed7f7c839983b8f3dbc3383e0b67f7c93161dc13a6abdaf4",
+    "previewDigest": "e37ef205e29c812d347516ed00e3e8441761eb74dc4adae48a5a86f95c2eb207",
+    "progressCount": 0,
+    "schemaVersion": "result-data/1",
+    "sourceAuthorities": [
+      {
+        "policyId": "b99c3a81-c0f1-4475-be97-afebeab281dc",
+        "consentId": "0c70a6d4-9107-48a3-8f2f-5db5e05c649d"
+      }
+    ],
+    "retainedReferences": {
+      "goalIds": [
+        "7205321a-e08f-4a5a-91ca-cea8e026eb18"
+      ],
+      "taskIds": [
+        "67716734-d255-41d6-910d-1f66f6d3727d"
+      ],
+      "tripIds": [],
+      "turnIds": [
+        "c7bf321c-59e8-41ab-8bdf-00b54709674b"
+      ],
+      "memoryIds": [],
+      "threadIds": [
+        "d1ba71e6-dfd5-4b5d-847e-e01f5621cf15"
+      ],
+      "messageIds": [
+        "17b4fde0-323e-4886-b579-4cb7a79dbdb7"
+      ],
+      "proposalIds": [],
+      "conversationIds": [
+        "6ce28799-db97-4e82-ae43-3bba7f9fe236"
+      ],
+      "sourceArtifactIds": []
+    },
+    "allUserDataCompleted": false
+  },
+  "receipt": {
+    "kind": "receipt",
+    "scope": "result-sensitive-data/1",
+    "state": "erased",
+    "rootId": "bfd3db0f-999f-48eb-8d5a-93a8939566e8",
+    "ownerId": "abb1c6ca-3d88-4f4b-83c9-337c77e4a9fa",
+    "decision": {
+      "graph": {
+        "eventIds": [
+          "9007199254741027"
+        ],
+        "revisions": [
+          1
+        ],
+        "journalIds": [],
+        "artifactIds": [
+          "bfd3db0f-999f-48eb-8d5a-93a8939566e8"
+        ],
+        "executionIds": [],
+        "publicationKeys": [
+          "1063f111-fd5b-4514-ab58-dccb5f3371e5"
+        ]
+      },
+      "decidedAt": 1791369830074,
+      "sourceTrip": "not_modified",
+      "erasedCounts": {
+        "artifacts": 1,
+        "revisions": 1,
+        "callWindows": 0,
+        "resultClaims": 0,
+        "resultEvents": 1,
+        "executionRuns": 0,
+        "localJournals": 0,
+        "collectorOrigins": 0,
+        "collectorOutputs": 0,
+        "completionProofs": 0,
+        "completedReceipts": 0
+      },
+      "sourceResult": "erased",
+      "requestDigest": "d05ecc90d1b37799377af002e5547e2ba33a4f92f2bfe5442db6193667248164",
+      "explicitMemory": "not_modified",
+      "externalCopies": "not_erased",
+      "retainedCounts": {
+        "goals": 1,
+        "tasks": 1,
+        "trips": 0,
+        "turns": 1,
+        "threads": 1,
+        "memories": 0,
+        "messages": 1,
+        "proposals": 0,
+        "conversations": 1,
+        "budgetAttempts": 0,
+        "planningSources": 3,
+        "sourceArtifacts": 0
+      },
+      "retainedFences": 2,
+      "clearedPreviews": 0,
+      "sourceConversation": "not_modified"
+    },
+    "rootKind": "artifact",
+    "expiresAt": 1791369859491,
+    "objectIds": [],
+    "requestId": "77d4b2e5-2187-454b-8ac4-6943666a9e39",
+    "sessionId": "04fc1ba2-5a02-45b4-aff8-38e98bad5c18",
+    "boundaries": {
+      "missing": [
+        "cross_result_or_conversation_source_dependents_rejected",
+        "applied_or_unapplied_proposal_and_decision_dependencies_rejected",
+        "active_shared_or_unqualified_copies_rejected",
+        "brief_guide_notification_knowledge_and_core_export_copies_rejected",
+        "provider_and_external_copies_not_erased",
+        "backup_restore_and_old_device_acceptance_unverified"
+      ],
+      "retained": [
+        "original_conversations_goals_messages_tasks_turns_threads",
+        "confirmed_trip_content_history_proposals",
+        "explicit_memory_profiles_receipts_consents",
+        "original_source_results_and_evidence",
+        "financial_budget_dispatch_and_source_records",
+        "permanent_artifact_publication_execution_journal_and_operation_fences",
+        "original_source_policy_consent_authority_ids"
+      ],
+      "eraseFields": [
+        "one_selected_artifact_all_revisions_and_events",
+        "proven_exclusive_completed_planning_result_copies"
+      ]
+    },
+    "capturedAt": 1791369829491,
+    "mobileEpoch": 1,
+    "sourceDigest": "ad0dad2ff9bbb715ed7f7c839983b8f3dbc3383e0b67f7c93161dc13a6abdaf4",
+    "previewDigest": "e37ef205e29c812d347516ed00e3e8441761eb74dc4adae48a5a86f95c2eb207",
+    "schemaVersion": "result-data/1",
+    "sourceAuthorities": [
+      {
+        "policyId": "b99c3a81-c0f1-4475-be97-afebeab281dc",
+        "consentId": "0c70a6d4-9107-48a3-8f2f-5db5e05c649d"
+      }
+    ],
+    "allUserDataCompleted": false
+  }
+}

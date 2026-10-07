@@ -1,0 +1,20 @@
+▶ VPJ-61 SQL lifecycle, existing writers, locks, erasure and versioned export
+  ✔ ACL/RLS/default-deny and legacy reconciliation (540.898958ms)
+  ✔ bulk Trip INSERT validates statement capacity, legacy, RLS and concurrent rollback (1920.8135ms)
+  ✔ canonical input, exact raw replay, durable rejection and unknown abandon (866.889417ms)
+  ✔ old direct create shares capacity, actual producer confirm, active swaps and rollback (822.33075ms)
+  ✔ original archive atomic failure, keep/skip qualification, services retained and erasure (1270.039458ms)
+  ✔ paginated revision fences real head/delete mutations and old replay survives archive (469.468ms)
+  ✔ real lock conflicts remain unknown, same-op concurrent create, account replacement and rollback (4330.295541ms)
+  ✔ actual old create/confirm/archive/delete/replacement transactions race the lifecycle entry (4268.418125ms)
+  ✔ archive historical exact references retain original readers and refuse withdrawn sources (6295.454833ms)
+  ✔ v2 export exact lease enrollment, old decoder preservation, source fence and delete cascade (711.257542ms)
+✔ VPJ-61 SQL lifecycle, existing writers, locks, erasure and versioned export (28060.793084ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 28103.80425

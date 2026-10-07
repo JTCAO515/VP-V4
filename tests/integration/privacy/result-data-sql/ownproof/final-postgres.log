@@ -1,0 +1,15 @@
+▶ ResultData whole PostgreSQL source, CAS, immutable receipt, progress, copies and writer compatibility
+  ✔ actual no-copy source and sole TS decoding (667.04175ms)
+  ✔ complete original synthetic worker/execution/journal erasure with retained financial sources (1534.9065ms)
+  ✔ full financial/config witness CAS and preservation (1869.016667ms)
+  ✔ mixed core queued copy blocker and stale original commit fence (741.034833ms)
+  ✔ historical references, ownership, mixed closure, CAS, 30s rollback, progress and permanent guards (44178.599208ms)
+✔ ResultData whole PostgreSQL source, CAS, immutable receipt, progress, copies and writer compatibility (54983.931666ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 55021.733125

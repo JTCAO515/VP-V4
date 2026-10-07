@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';import {randomUUID as uuid} from 'node:crypto';import {writeFileSync} from 'node:fs';
+import {db,fixture,call,selected,eraseFor,query,container,lit} from './runtime.mjs';import {sql} from '../../../cost/fixtures/postgres-rpc.mjs';
+const a=await fixture(),policy=uuid(),request=uuid();
+await db(`insert into export_private.core_policies_v1(id,revision,enabled,environment,key_id,max_run_ms,artifact_ttl_ms,ticket_ttl_ms,max_pages,page_size,max_bytes,valid_until) values('${policy}',1,false,'local','synthetic-result-fixture',1000,1000,1000,10,20,10000,clock_timestamp()+interval '1 hour');
+ insert into public.privacy_requests(id,owner_id,action,scope_version,status,execution_state) values('${request}','${a.owner}','export','all-user-data-v1','requested','not_started');
+ insert into export_private.core_jobs_v1(request_id,owner_id,session_id,session_epoch,scope,policy_id,policy_snapshot,state,expires_at) values('${request}','${a.owner}','${a.session}',1,'core-export-d2/1','${policy}','{}','queued',clock_timestamp()+interval '1 minute');`);
+const blocked=await call(a,{action:'preview',...selected(a)});assert.equal(blocked.eligible,false);assert.ok(blocked.conflicts.includes('CORE_EXPORT_COPY'));
+await db(`update export_private.core_jobs_v1 set state='failed' where request_id='${request}';`);
+const s=selected(a),p=await call(a,{action:'preview',...s});assert.equal(p.eligible,true);await call(a,eraseFor(s,p));
+const revive=await sql(container,`update export_private.core_jobs_v1 set state='queued' where request_id='${request}';`);assert.notEqual(revive.code,0);assert.match(revive.stderr,/RESULT_CONFLICT/);
+assert.equal(await db(`select state from export_private.core_jobs_v1 where request_id='${request}';`),'failed');
+writeFileSync('tests/integration/privacy/result-data-sql/ownproof/core-fence.json',JSON.stringify({kind:'admin owned no-copy core job fixture, policy disabled; no artifact/target activation',queued:'blocks',afterErase:'original stale job revival rejected; failed metadata retained'},null,2)+'\n');console.log('core queued copy blocker and old-job permanent commit fence PASS');

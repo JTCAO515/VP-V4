@@ -1,0 +1,14 @@
+import {readFileSync,readdirSync,writeFileSync} from 'node:fs';
+import {command,sql} from '../../../cost/fixtures/postgres-rpc.mjs';
+export const container=process.env.VP_RESULT_DATA_SQL_CONTAINER??'vpj58-result-data-sql-20261007';
+if(process.env.DOCKER_HOST||process.env.DOCKER_CONTEXT)throw Error('local fixture Docker context required');
+const context=JSON.parse((await command('docker',['context','inspect'])).stdout)[0];if(!context.Endpoints.docker.Host.startsWith('unix:///'))throw Error('local Unix fixture required');
+const r=await command('docker',['run','--pull=never','--rm','-d','--network','none','--name',container,'--user','postgres','--entrypoint','/bin/sh','public.ecr.aws/supabase/postgres:17.6.1.159','-c','umask 077; mkdir /tmp/vpj59-socket; initdb -D /tmp/vpj59-db -A trust --no-locale -E UTF8 >/tmp/init.log 2>&1 && exec postgres -D /tmp/vpj59-db -c listen_addresses= -c unix_socket_directories=/tmp/vpj59-socket -c unix_socket_permissions=0700']);
+if(r.code)throw Error(r.stderr);
+for(let n=0;n<100;n++){if((await command('docker',['exec',container,'pg_isready','-h','/tmp/vpj59-socket','-U','postgres'])).code===0)break;await new Promise(r=>setTimeout(r,100));}
+async function db(q){const r=await sql(container,q);if(r.code)throw Error(r.stderr);return r.stdout.trim();}
+await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));
+await db("create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;create schema extensions;create extension pgcrypto with schema extensions;");
+for(const f of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&f<'20261007010000').sort())await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;').catch(e=>{throw Error(f+': '+e.message)});
+const catalog=JSON.parse(await db(`select jsonb_agg(jsonb_build_object('relation',n.nspname||'.'||c.relname,'columns',(select jsonb_agg(jsonb_build_object('name',a.attname,'type',format_type(a.atttypid,a.atttypmod),'notNull',a.attnotnull) order by a.attnum) from pg_attribute a where a.attrelid=c.oid and a.attnum>0 and not a.attisdropped),'pk',(select jsonb_agg(a.attname order by x.ordinality) from pg_constraint k cross join lateral unnest(k.conkey) with ordinality x(attnum,ordinality) join pg_attribute a on a.attrelid=c.oid and a.attnum=x.attnum where k.conrelid=c.oid and k.contype='p'),'constraints',(select jsonb_agg(pg_get_constraintdef(k.oid) order by k.conname) from pg_constraint k where k.conrelid=c.oid)) order by n.nspname,c.relname) from pg_class c join pg_namespace n on n.oid=c.relnamespace where c.relkind='r' and n.nspname not in('pg_catalog','information_schema','extensions')`));
+writeFileSync('tests/integration/privacy/result-data-sql/ownproof/catalog.json',JSON.stringify(catalog,null,2)+'\n');console.log('baseline migrated catalog',catalog.length,'tables');

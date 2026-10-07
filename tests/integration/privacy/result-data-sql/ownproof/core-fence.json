@@ -1,0 +1,5 @@
+{
+  "kind": "admin owned no-copy core job fixture, policy disabled; no artifact/target activation",
+  "queued": "blocks",
+  "afterErase": "original stale job revival rejected; failed metadata retained"
+}
