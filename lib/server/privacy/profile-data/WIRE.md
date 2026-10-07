@@ -268,3 +268,28 @@ old negative oracles unchanged. Native3 fixture update stays sole Native writer.
 CI-REGISTRATION.patch is concrete PG env+two actual owned files and existing HTTP
 lane tail63360 only; all original Result entries, two-shard algorithm and gates
 preserved. Apply-check PASS; remains unapplied pending Main precise lease.
+
+Final ordinary Web bridge lease consumed: Main located actual #549 owner01a0dd7a-
+8709 and received explicit ProfileWorkspace release; only approved revision/read/
+explicit save/reload/disable hunk applied, JourneyPass/payment/environment UI intact.
+Old form no longer resubmits server metadata in its seven-field payload. Fresh
+read revision is required; conflict does not silently rebase. Actual final Web/API
+build, typecheck/lint/docs/diff and original Profile guards/security2 PASS. Earlier
+four-file virtual overlay and direct CAS guard evidence reused. PROFILE-WRITER.patch
+retired after all four exact leases applied.
+PG CI env + two actual test files granted and applied. HTTP candidate63360 was
+identified as overlapping original material-reference shard2; accidental local
+application of that ungranted tail was immediately reversed before any lane run or
+commit. New single-line candidate base63040, ports63060..63071, has zero overlap
+against all37 current fixed runner/stack ranges and kernel preflight PASS. Existing
+indices0..31/Resultindex31 remain unchanged; appendedindex32/shard1. Complete audit
+is artifacts/VPJ-58/profile-data/server/CI-PORTS.json. HTTP tail remains unapplied
+pending Main precise final grant; standalone63360 signedAuth PASS is retained and
+not unnecessarily rerun for an allocation-only change.
+Native final0725bac8 consumed79942212: entire ios byte-equal actual fixed Native,
+13 shared hunks and3 catalog fixtures landed, same34 and original Result preserved.
+Affected registry integration26PASS (own8, Conversation9, Result9) and original
+coverage/notification16PASS separate; these are real unchanged negative oracles.
+Product source/full user bridge is implemented; final CI tail/Main batch/onePR and
+unmerged Result dependency integration remain engineering gates, not target or
+whole239 completion. No target permission/deploy/provider/device/backup claim.

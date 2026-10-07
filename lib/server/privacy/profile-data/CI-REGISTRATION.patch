@@ -1,27 +1,10 @@
 --- a/scripts/ci-suites/db-integration.mjs
 +++ b/scripts/ci-suites/db-integration.mjs
-@@ -64,6 +64,7 @@
-           VP_COVERAGE_PROGRESS_DB_TEST: "1",
-           VP_ARCHIVE_DATA_DB_TEST: "1",
-           VP_CONVERSATION_SOURCE_AUDIT: "1",
-+          VP_PROFILE_DATA_SQL: "1",
-           VP_MATERIAL_TS_WIRE_ROOT: repo,
-           VP_TRANSLATION_HISTORY_DB_TEST: "1",
-           VP_ARCHIVE_DB_TEST: "1",
-@@ -117,6 +118,8 @@
-           "tests/integration/privacy/archive-data-sql/postgres.test.mjs",
-           "tests/integration/privacy/conversation-data-sql/source-audit.test.mjs",
-           "tests/integration/privacy/result-data-sql/postgres.test.mjs",
-+          "tests/integration/privacy/profile-data-sql/profile.test.mjs",
-+          "tests/integration/privacy/profile-data-sql/result-compatibility.test.mjs",
-           "tests/integration/translate/history.test.mjs",
-           "tests/integration/trip/archive.test.mjs",
-           "tests/integration/trip/lifecycle-postgres.test.mjs",
-@@ -232,6 +235,7 @@
+@@ -235,6 +235,7 @@
        { name: "selected-source-auth-http", runner: node("tests/integration/turn/run-selected-source-auth-http.mjs"), files: ["tests/integration/turn/selected-source-auth-http.test.mjs"] },
        { name: "planning-intake-http", runner: node("tests/integration/turn/run-planning-intake-http.mjs"), files: ["tests/integration/turn/planning-intake-http.test.mjs"] },
        { name: "result-data-http", runner: node("tests/integration/privacy/result-data/run-http.mjs", "--port-base", "63080"), files: ["tests/integration/privacy/result-data/auth-http.test.mjs"] },
-+      { name: "profile-data-http", runner: node("tests/integration/privacy/profile-data/run-http.mjs", "--port-base", "63360"), files: ["tests/integration/privacy/profile-data/auth-http.test.mjs"] },
++      { name: "profile-data-http", runner: node("tests/integration/privacy/profile-data/run-http.mjs", "--port-base", "63040"), files: ["tests/integration/privacy/profile-data/auth-http.test.mjs"] },
      ],
    },
    "supabase-http-ops": {

@@ -1,0 +1,395 @@
+{
+  "candidate": {
+    "base": 63040,
+    "ports": [
+      63060,
+      63061,
+      63062,
+      63063,
+      63064,
+      63067,
+      63069,
+      63071
+    ],
+    "range": [
+      63060,
+      63071
+    ],
+    "index": 32,
+    "shard": 1
+  },
+  "existing": [
+    {
+      "lane": "supabase-rls",
+      "step": "lane-stack",
+      "base": 57400,
+      "range": [
+        57420,
+        57431
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 0,
+      "step": "change-proposal-reference",
+      "base": 63420,
+      "range": [
+        63440,
+        63451
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 1,
+      "step": "trip-proposal-reference-discovery",
+      "base": 63420,
+      "range": [
+        63440,
+        63451
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 2,
+      "step": "native-local-session",
+      "base": 58500,
+      "range": [
+        58520,
+        58531
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 3,
+      "step": "trip-lifecycle-http",
+      "base": 64600,
+      "range": [
+        64620,
+        64631
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 4,
+      "step": "native-same-trip",
+      "base": 58500,
+      "range": [
+        58520,
+        58531
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 5,
+      "step": "native-text-http",
+      "base": 64420,
+      "range": [
+        64440,
+        64451
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 6,
+      "step": "translation-history-http",
+      "base": 64420,
+      "range": [
+        64440,
+        64451
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 7,
+      "step": "translation-trip-source-http",
+      "base": 64460,
+      "range": [
+        64480,
+        64491
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 8,
+      "step": "service-operations-http",
+      "base": 64800,
+      "range": [
+        64820,
+        64831
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 9,
+      "step": "traveler-brief-http",
+      "base": 64900,
+      "range": [
+        64920,
+        64931
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 10,
+      "step": "data-coverage-http",
+      "base": 63400,
+      "range": [
+        63420,
+        63431
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 11,
+      "step": "material-reference-http",
+      "base": 63360,
+      "range": [
+        63380,
+        63391
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 12,
+      "step": "notification-data-http",
+      "base": 63320,
+      "range": [
+        63340,
+        63351
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 13,
+      "step": "archive-data-http",
+      "base": 63240,
+      "range": [
+        63260,
+        63271
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 14,
+      "step": "conversation-data-http",
+      "base": 63120,
+      "range": [
+        63140,
+        63151
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 15,
+      "step": "coverage-progress-http",
+      "base": 63280,
+      "range": [
+        63300,
+        63311
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 16,
+      "step": "pdf-intake-http",
+      "base": 65000,
+      "range": [
+        65020,
+        65031
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 17,
+      "step": "community-j1-jwt",
+      "base": 64100,
+      "range": [
+        64120,
+        64131
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 18,
+      "step": "community-j1-http",
+      "base": 64200,
+      "range": [
+        64220,
+        64231
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 19,
+      "step": "community-safety-http",
+      "base": 64100,
+      "range": [
+        64120,
+        64131
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 20,
+      "step": "community-publication-http",
+      "base": 64000,
+      "range": [
+        64020,
+        64031
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 21,
+      "step": "place-guide-http",
+      "base": 64500,
+      "range": [
+        64520,
+        64531
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 22,
+      "step": "native-assistant-rollback",
+      "base": 64420,
+      "range": [
+        64440,
+        64451
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 23,
+      "step": "native-planning-http",
+      "base": 64420,
+      "range": [
+        64440,
+        64451
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 24,
+      "step": "native-grounded-http",
+      "base": 64420,
+      "range": [
+        64440,
+        64451
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 25,
+      "step": "journeys-goal-index-http",
+      "base": 63820,
+      "range": [
+        63840,
+        63851
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 26,
+      "step": "web-trip-continuity",
+      "base": 64620,
+      "range": [
+        64640,
+        64651
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 27,
+      "step": "explicit-travel-intake",
+      "base": 64720,
+      "range": [
+        64740,
+        64751
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 28,
+      "step": "native-memory-http",
+      "base": 64820,
+      "range": [
+        64840,
+        64851
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 29,
+      "step": "selected-source-auth-http",
+      "base": 64720,
+      "range": [
+        64740,
+        64751
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 30,
+      "step": "planning-intake-http",
+      "base": 64720,
+      "range": [
+        64740,
+        64751
+      ]
+    },
+    {
+      "lane": "supabase-http-native",
+      "index": 31,
+      "step": "result-data-http",
+      "base": 63080,
+      "range": [
+        63100,
+        63111
+      ]
+    },
+    {
+      "lane": "supabase-http-ops",
+      "index": 0,
+      "step": "ops-local-review",
+      "base": 56900,
+      "range": [
+        56920,
+        56931
+      ]
+    },
+    {
+      "lane": "supabase-http-ops",
+      "index": 1,
+      "step": "knowledge-publication",
+      "base": 56900,
+      "range": [
+        56920,
+        56931
+      ]
+    },
+    {
+      "lane": "supabase-http-ops",
+      "index": 2,
+      "step": "knowledge-private-source-34-to-35",
+      "base": 56900,
+      "range": [
+        56920,
+        56931
+      ]
+    },
+    {
+      "lane": "supabase-http-ops",
+      "index": 3,
+      "step": "service-case-access",
+      "base": 58100,
+      "range": [
+        58120,
+        58131
+      ]
+    }
+  ],
+  "rangeOverlap": false,
+  "kernelPreflight": "PASS",
+  "runtimeAuthRerun": false
+}
