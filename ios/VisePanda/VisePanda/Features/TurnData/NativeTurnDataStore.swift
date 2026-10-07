@@ -19,6 +19,8 @@ struct NativeTurnDataCompletion: Identifiable {
 }
 
 @MainActor @Observable final class NativeTurnDataStore {
+    var journalObservation: NativeJournalDataObservation?
+
     let scope: NativeTurnDataScope
     private(set) var objects: [NativeTurnDataObject] = []
     private(set) var selected = Set<String>()
@@ -187,7 +189,9 @@ struct NativeTurnDataCompletion: Identifiable {
             _ = try privateFile.write(bytes, actor: actor, now: now(), uptime: uptime())
             try client.consumeReceipt(result, actor)
             try check(generation, actor: actor, client: client)
+            let journalTicket = journalObservation?.begin()
             try journal.complete(pending, actor: actor)
+            journalObservation?.finish(journalTicket, result.binding.requestID)
             self.pending = nil; clearVisible(keepFile: true)
             receiptInventory = inventoryText
             receipt = result; receiptLease = displayLease; completion = .init(receipt: result); message = "erased"
