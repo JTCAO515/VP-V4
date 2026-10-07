@@ -306,3 +306,14 @@ Main-corrected catalog .11 replaces the original Turn row in actual .9 after
 normal merging deac2c30 Offline source. That checkpoint has no .10 TS registration;
 its device-scoped Offline row is preserved. Exact shared registration remains
 candidate until Main current-owner release/lease; it is not live registration.
+
+2026-10-08 Main exact lease granted original 840cd3e6 five-path Turn hunks after
+ExportTS01a11667 ff1 release and Offline01a116e8 deac release (clean/no in-flight/
+planned/successor writes). Split patches 38a53e36 (worker) / d5c13c9f (four coverage)
+apply the same reviewed content after normal deac merge. Both applied; candidates
+retired. Original nine-module core and 34-entry coverage denominators unchanged;
+only original turn core-only row gains scoped Turn handler and catalog .07.11.
+Registered TS owner-handler coverage proof 1/1 PASS,0skip; original D2 worker/
+private-download contract regressions 6/6 PASS,0skip. Actual SQL/Auth download
+remains UNRUN. Lint/typecheck/diff PASS after shared integration. No CI/fixture
+metadata lease inferred from this registration grant.
