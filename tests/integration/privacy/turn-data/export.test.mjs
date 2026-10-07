@@ -50,6 +50,9 @@ test('supplemental immutable source keys are exact typed terminal provenance wit
   const s=snapshot(),op=operation();s.operations=[op];s.sourceRows.operations=1;
   op.decision.erasedCounts=Object.fromEntries(Object.keys(op.decision.erasedCounts).map(k=>[k,0]));op.decision.erasedCounts.resultEvents=2;
   s.sourceIdentityKeys=[{requestId:id(3),relation:'turn_private.result_events',pk:{id:'2'}},{requestId:id(3),relation:'turn_private.result_events',pk:{id:'10'}}];s.sourceRows.sourceIdentityKeys=2;assert.ok(decode(page(s)));
+  const composite=structuredClone(s);composite.operations[0].decision.erasedCounts.resultEvents=0;composite.operations[0].decision.erasedCounts.idempotency=1;
+  composite.sourceIdentityKeys=[{requestId:id(3),relation:'public.chat_turn_idempotency',pk:{owner_id:actor.ownerId,thread_id:id(7),idempotency_key:id(60)}}];composite.sourceRows.sourceIdentityKeys=1;assert.ok(decode(page(composite)));
+  composite.sourceIdentityKeys[0].pk.owner_id=id(99);assert.equal(decode(page(composite)),null);
   for(const mutate of [v=>v.sourceIdentityKeys.reverse(),v=>v.sourceIdentityKeys[0].pk.id=2,v=>v.sourceIdentityKeys[0].pk.extra='body',
     v=>v.sourceIdentityKeys[0].relation='public.model_budget_attempts',v=>v.sourceIdentityKeys[0].requestId=id(99),v=>v.sourceIdentityKeys[0].sourceBody='secret',
     v=>v.operations[0].decision.erasedCounts.resultEvents=3,v=>{v.sourceIdentityKeys=[];v.sourceRows.sourceIdentityKeys=0;}]){
