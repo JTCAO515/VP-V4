@@ -23,6 +23,8 @@ struct NativeTurnDataProjectionFence {
         guard turnID == nil || UUID(uuidString: turnID ?? "")?.uuidString.lowercased() == turnID else { throw NativeDataError.invalidResponse }
         return .init(actor: current, generation: turnID.map { turnGenerations[$0] ?? actorGeneration } ?? generation, turnID: turnID)
     }
+    /// Legacy readers retain their original NativeDataScope authority; this version only fences local old source projections.
+    func readVersion(turnID: String) -> UUID? { turnGenerations[turnID] }
     func accepts(_ ticket: Ticket) -> Bool {
         actor == ticket.actor && (ticket.turnID.map { turnGenerations[$0] ?? actorGeneration } ?? generation) == ticket.generation
     }

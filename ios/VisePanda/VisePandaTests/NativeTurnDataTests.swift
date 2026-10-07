@@ -139,6 +139,17 @@ import Testing
         activity.applyTurnErasure(erased)
         #expect(activity.visible(selection:selected,active:true) == nil && activity.boundSelection == selected)
     }
+    @Test func actualLocalPostgresPreviewAdmitsSoleNativeDecoder() throws {
+        let context = try #require(JSONSerialization.jsonObject(with: bytes("pg-context")) as? [String:Any])
+        #expect(context["synthetic"] as? Bool == true)
+        let sourceActor = try NativeCommunitySafetyActor(scope:.init(endpoint:actor.scope.endpoint,
+            subject:NativeTurnDataCommand.id(context["ownerId"]),mobileEpoch:NativeTurnDataWire.integer(context["mobileEpoch"]),generation:1),
+            sessionID:NativeTurnDataCommand.id(context["sessionId"]))
+        let selected = try NativeTurnDataCommand(body:Data(try #require(context["commandBytes"] as? String).utf8))
+        let preview = try NativeTurnDataProtocol.preview(bytes("pg-preview"),command:selected,actor:sourceActor,now:NativeTurnDataWire.time(context["now"]))
+        #expect(preview.binding.turnID == selected.turnID && preview.binding.actor == sourceActor)
+        #expect(preview.redacted["textBodies"] == 1 && preview.retained["turns"] == 1)
+    }
     private var otherTurn: String { "00000000-0000-4000-8000-000000000004" }
     private var erasedTurn: String { "00000000-0000-4000-8000-000000000003" }
     @Test func actorEpochAndBackgroundInvalidateLateReadAuthority() throws {
