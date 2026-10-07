@@ -9,11 +9,12 @@
      typealias Request = (Data) async throws -> Data
      let window = NativeExperienceReadWindow<NativeExperienceOutcome>()
      private(set) var pending: NativeExperiencePending?
-@@ -119,8 +121,10 @@
+@@ -119,8 +121,11 @@
              if case .operation(_, let state, _, _) = outcome, state == "abandoned" { notice = "ABANDONED" }
              else if case .deleted = outcome { notice = "MODULE_DELETED" }
              else { notice = "COMMITTED_REFRESH_REQUIRED" }
-+            let journalTicket = journalObservation?.begin()
++            let journalEligible: Bool = { switch outcome { case .deleted: true; case .operation(_, let state, _, _): state == "committed"; default: false } }()
++            let journalTicket = journalEligible ? journalObservation?.begin() : nil
              do { try complete(pending); self.pending = nil }
              catch { journalReady = false; storageReady = false; throw error }
 +            journalObservation?.finish(journalTicket, try NativeExperienceCommand(body: pending.body).operationID)

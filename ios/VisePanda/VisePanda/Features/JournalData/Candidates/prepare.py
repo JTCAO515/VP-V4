@@ -7,6 +7,10 @@ base=Path('ios/VisePanda/VisePanda')
 out=Path(__file__).parent
 staged=Path('/tmp/vpj58-journal-candidate-stage');staged.mkdir(exist_ok=True)
 pins={}
+if (out/'pins.json').exists():
+ existing=json.loads((out/'pins.json').read_text())
+ if any(hashlib.sha256((root/path).read_bytes()).hexdigest()!=pin['before'] for path,pin in existing.items()):
+  raise RuntimeError('Frozen lease batch has applied/drifted sources; never reprepare it. Fix only reviewed un-applied candidates.')
 def write(path,after):
  before=(root/path).read_text(); assert before!=after, path
  patch=''.join(difflib.unified_diff(before.splitlines(True),after.splitlines(True),fromfile='a/'+str(path),tofile='b/'+str(path)))

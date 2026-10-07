@@ -16,14 +16,19 @@
          retainOriginal = { try NativeDataCoverageOriginal.retain($0, using: session, actor: $1) }
          completeOriginal = { try NativeDataCoverageOriginal.complete($0, reply: $1, using: session, actor: $2) }
      }
-@@ -178,8 +180,10 @@
+@@ -177,12 +179,15 @@
+                 guard files.visible(current: actor) != nil else { throw NativeDataError.sessionUnavailable }
                  exportedRow = command.moduleID
              }
++            let journalTicket = command.action == .delete && verified.terminal && verified.state == .scopedComplete && pending != nil
++                ? client.journalObservation?.begin() : nil
              if command.action == .delete, verified.terminal, let pending {
-+                let journalTicket = client.journalObservation?.begin()
                  try client.completeOriginal(original, reply, actor)
                  try client.complete(pending, actor); self.pending = nil
-+                client.journalObservation?.finish(journalTicket, command.operationID)
              }
              record(reply, state: verified.state, selection: selection)
              storageReady = files.ready && journalReady
++            client.journalObservation?.finish(journalTicket, command.operationID)
+         } catch { failed(error, own: own, client: client) }
+     }
+ 
