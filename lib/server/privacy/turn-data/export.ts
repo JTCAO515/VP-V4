@@ -58,7 +58,7 @@ function closedSourceGraph(sources: Sources): boolean {
   for (const spec of schema) for (const row of rows(spec.relation)) {
     if ('turn_id' in row && row.turn_id !== null && !turns.has(String(row.turn_id))) return false;
     if ('task_turn_id' in row && !turns.has(String(row.task_turn_id))) return false;
-    if ('task_id' in row && !tasks.has(String(row.task_id))
+    if ('task_id' in row && row.task_id !== null && !tasks.has(String(row.task_id))
       && !(spec.relation === 'public.model_budget_attempts' && turns.has(String(row.task_id)))) return false;
     if ('message_id' in row && !messages.has(String(row.message_id))) return false;
     if ('artifact_id' in row && !artifacts.has(String(row.artifact_id))) return false;
