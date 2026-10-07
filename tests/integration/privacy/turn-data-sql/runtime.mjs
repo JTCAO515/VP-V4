@@ -1,3 +1,4 @@
+import { fixturePath } from './fixture-path.mjs';
 import { readFileSync,readdirSync,writeFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import { command,sql } from '../../cost/fixtures/postgres-rpc.mjs';
@@ -9,7 +10,7 @@ try{
  check(await sql(container,readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8')));
  check(await sql(container,"create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;create schema extensions;create extension pgcrypto with schema extensions;"));
  for(const f of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&f<'20261007050000').sort()){check(await sql(container,'begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;'));}
- console.log('BASELINE',container);writeFileSync('/tmp/vpj58-turn-sql-container',container);
+ console.log('BASELINE',container);writeFileSync(fixturePath('vpj58-turn-sql-container'),container);
  check(await sql(container,'begin;'+readFileSync('supabase/migrations/20261007050000_turn_data.sql','utf8')+'commit;'));
  console.log('OWN_MIGRATION_APPLIED',check(await sql(container,'select turn_data_private.schema_supported_v1();')));
 }catch(e){console.error(e.message);process.exitCode=1;}

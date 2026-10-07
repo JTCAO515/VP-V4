@@ -1,5 +1,6 @@
+import { fixturePath } from './fixture-path.mjs';
 import assert from 'node:assert/strict';import{randomUUID as uuid}from'node:crypto';import{readFileSync,writeFileSync}from'node:fs';import{sql}from'../../cost/fixtures/postgres-rpc.mjs';
-const container=readFileSync('/tmp/vpj58-turn-sql-container','utf8').trim();const lit=v=>"'"+String(v).replaceAll("'","''")+"'";
+const container=readFileSync(fixturePath('vpj58-turn-sql-container'),'utf8').trim();const lit=v=>"'"+String(v).replaceAll("'","''")+"'";
 const db=async q=>{const r=await sql(container,q);assert.equal(r.code,0,r.stderr);return r.stdout.trim();};
 const a={owner:uuid(),session:uuid(),policy:uuid(),consent:uuid(),thread:uuid(),turn:uuid(),task:uuid(),other:uuid()};
 const claims=`set request.jwt.claim.role='authenticated';set request.jwt.claim.sub='${a.owner}';set request.jwt.claims=${lit(JSON.stringify({role:'authenticated',is_anonymous:false,session_id:a.session}))};`;
@@ -11,4 +12,4 @@ insert into turn_private.text_content(turn_id,owner_id,thread_id,policy_id,conse
 grant execute on function public.privacy_turn_data_v1(text,text,bigint)to authenticated;commit;`);
 const call=async(c,bytes=JSON.stringify(c))=>JSON.parse(await db(`begin;${claims}set role authenticated;select public.privacy_turn_data_v1(${lit(c.action)},${lit(bytes)},1);commit;`));
 const c={action:'preview',scope:'turn-sensitive-data/1',requestId:uuid(),turnId:a.turn,objectIds:[]};const source=JSON.parse(await db(`select turn_data_private.source_v1('${a.owner}','${a.turn}')`));console.log('SOURCE_CONFLICTS',source.conflicts);
-const prev=await call(c);assert.equal(prev.eligible,true);writeFileSync('/tmp/vpj58-turn-actual-preview.json',JSON.stringify({a,claims,c,prev}));console.log('ACTUAL_PREVIEW',prev.kind,prev.redactCounts,prev.retainCounts);
+const prev=await call(c);assert.equal(prev.eligible,true);writeFileSync(fixturePath('vpj58-turn-actual-preview.json'),JSON.stringify({a,claims,c,prev}));console.log('ACTUAL_PREVIEW',prev.kind,prev.redactCounts,prev.retainCounts);
