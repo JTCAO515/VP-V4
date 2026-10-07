@@ -132,3 +132,34 @@ so Export continues to reuse the single stable Profile validator. A new owned
 endpoint regression is pending stable shared/source fixes. Earlier positive
 evidence is retained but does not close this actual newly discovered field gap.
 No whole #239 or owned Export completion is claimed yet.
+
+TIME boundary closed in stable combined source: normal merge of original Profile
+03a067fa3dd16270a08a95df03b4257542cb38f2 retains source0f and consumes original
+TS/Native single validator delta; original0702 SHA2564e12c0b4775995964382c52357a44c3cbe261f4042023326e833318c6fb8fdfe
+unchanged. Sole SQL28bff4cba3f1fd6d0e0f46c1f07add0f7d9e9987 consumed as6b797d0e:
+0704 newSHA2565f1502f4d93d500db35ba7ae52b6b03b474bbc67abd62b8756ec62c00eaa8989
+MATCH; only the approved endpoint validator and corresponding fixed identities.
+Root removed its temporary own adapter and continues reusing shared validProfile.
+Production TS endpoint suite11/11 PASS zero skipped; invalid24:01/nonzero fractions
+and25h fail. No redundant canonical6/PG11/old24 regression rerun.
+
+PASS necessary same original signed Auth case after TIME fixes:
+`node --experimental-strip-types tests/integration/privacy/profile-export/run-http.mjs --port-base 63000`
+exit0, ownedeb9d69dd/5356.495ms (total8317.564ms), one PASS zero skipped, cleanup PASS.
+Original authenticated writer saves24:00:00.000000 as actual SQL TIME24:00:00;
+actual ProfileData HTTP preview accepts original value through the stable shared
+validator. Original configured registered worker/source/decoder/sections digest,
+encrypted immutable proof and protected download retain24:00:00, not00:00.
+Seven saved field values/sourceRows/original operation are asserted. Same-owner
+fresh-session authorization and real prepare->clear->consume denial remain in
+this same case. Actual strict Profile/Result/source+retrieval identities=true.
+Original SQL55ed56f5 time helper/CI subcase and precise fixed-delta evidence are
+consumed asf9d8f69f; the sole author's latest complete EVIDENCE was retained when
+its documentation-only conflict was resolved. Its locally UNRUN decoder note
+remains accurately attributed; Root's above stable signed case supplies integration.
+
+Final relevant full typecheck/source lint/diff checks PASS. Shared CI's four exact
+additions are applied under existing lease. Current main78857 is consumed;
+Profile PR670 remains unmerged. Main whole-owned review/scoped record and unique
+main-base PR/exact formal/all applicable CI/protected merge are still pending.
+Parent #239/ALL1/ALL2 stays Open; no target/device/provider acceptance is claimed.

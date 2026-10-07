@@ -27,6 +27,15 @@ test('absence exports real owner inventory without inventing a Profile row or lo
   const mismatch=snapshot();mismatch.watermark=null;mismatch.sourceRows.watermarks=0;assert.equal(decode(page(mismatch)),null);
   assert.equal(decode({...page(),items:[]}),null);
 });
+test('original PostgreSQL end-of-day TIME exports unchanged while impossible 24h values fail closed',async()=>{
+  const s=snapshot();s.profile.profile.defaultDepartureTime='24:00:00';
+  assert.equal(decode(page(s)).items[0].profile.profile.defaultDepartureTime,'24:00:00');
+  const h=profileExportHandler(lease(),async()=>page(s));const actual=await h.page('snapshot',null,100,signal());
+  assert.equal(actual.items[0].profile.profile.defaultDepartureTime,'24:00:00');
+  for(const invalid of ['24:00:00.1','24:01:00','25:00:00']){
+    s.profile.profile.defaultDepartureTime=invalid;assert.equal(decode(page(s)),null);
+  }
+});
 test('foreign/unknown fields, hidden saved inventory, forged history and inconsistent row counts fail closed',()=>{
   for(const change of [s=>s.ownerId=id(99),s=>s.profile.ownerId=id(99),s=>s.secret='secret',s=>s.profile.profile.secret='secret',
     s=>s.profile.savedFields=[],s=>s.profile.summary.hasPaceUndo=false,s=>s.watermark.paceRevision=6,

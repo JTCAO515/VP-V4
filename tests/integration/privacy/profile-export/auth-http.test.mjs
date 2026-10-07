@@ -66,14 +66,15 @@ test('signed owner Auth consumes an actual Profile snapshot, real protected byte
   const denied=await call(exports,owner.token,{requestId:uuid(),confirmed:true});assert.equal(denied.status,503);
   sql('grant execute on function public.privacy_core_export_v1(text,jsonb) to authenticated,service_role;grant execute on function public.privacy_profile_data_v1(text,text,bigint) to authenticated;');
   t.diagnostic('Only owned disposable fixture grants original D2/Profile RPCs; no target/service-provider/Storage/fees/deploy/real user data.');
-  const saved={p_display_name:'Signed owner 汉字😀',p_travel_pace:'relaxed',p_locale:'en',p_currency:'USD',p_distance_unit:'mile',p_temperature_unit:'fahrenheit',p_default_departure_time:'08:31:02.123456'};
+  const saved={p_display_name:'Signed owner 汉字😀',p_travel_pace:'relaxed',p_locale:'en',p_currency:'USD',p_distance_unit:'mile',p_temperature_unit:'fahrenheit',p_default_departure_time:'24:00:00.000000'};
   assert.equal((await owner.client.rpc('save_user_profile',saved)).error,null);
   const paceInput={action:'save',operationId:uuid(),expectedRevision:0,travelPace:'packed',noticeVersion:'local-planning-cross-trip-v1'};
   const pace=await owner.client.rpc('native_travel_pace_v1',{p_input:paceInput});assert.equal(pace.error,null);
   const initialPreviewId=uuid();
-  const initialPreview=await owner.client.rpc('privacy_profile_data_v1',{p_action:'preview',p_input_bytes:JSON.stringify({action:'preview',
-    scope:'profile-sensitive-data/1',requestId:initialPreviewId,profileId:owner.id,objectIds:[]}),p_expected_epoch:owner.actor.mobileEpoch});
-  assert.equal(initialPreview.error,null);assert.equal(initialPreview.data.eligible,true);
+  const initialPreview=await call('/api/privacy/native/v1/profile-data',owner.token,{action:'preview',
+    scope:'profile-sensitive-data/1',requestId:initialPreviewId,profileId:owner.id,objectIds:[]});
+  assert.equal(initialPreview.status,200);assert.equal(initialPreview.body.data.eligible,true);
+  assert.equal(initialPreview.body.data.profile.defaultDepartureTime,'24:00:00');
   const keyFile=join(process.env.VP_IDENTITY_SUPABASE_WORKDIR,'owned-export-key.json'),serviceFile=join(process.env.VP_IDENTITY_SUPABASE_WORKDIR,'owned-export-service-key');
   writeFileSync(keyFile,JSON.stringify(keyConfig),{mode:0o600});writeFileSync(serviceFile,local.SERVICE_ROLE_KEY,{mode:0o600});
   sql(`insert into export_private.core_policies_v1(id,revision,enabled,environment,key_id,max_run_ms,artifact_ttl_ms,ticket_ttl_ms,max_pages,page_size,max_bytes,valid_until)values('${uuid()}',1,true,'local','${keyConfig.keyId}',90000,60000,30000,100,100,500000,clock_timestamp()+interval '1 hour');`);
@@ -101,10 +102,10 @@ test('signed owner Auth consumes an actual Profile snapshot, real protected byte
   const bytes=Buffer.from(await downloaded.arrayBuffer());assert.equal(bytes.length,ready.receipt.artifactBytes);assert.equal(createHash('sha256').update(bytes).digest('hex'),ready.receipt.artifactDigest);
   const bundle=JSON.parse(bytes.toString('utf8')),item=bundle.data.profile.snapshot[0];assert.equal(item.profile.profile.displayName,saved.p_display_name);
   assert.deepEqual(Object.fromEntries(['displayName','travelPace','locale','currency','distanceUnit','temperatureUnit','defaultDepartureTime'].map(k=>[k,item.profile.profile[k]])),
-    {displayName:saved.p_display_name,travelPace:'packed',locale:'en',currency:'USD',distanceUnit:'mile',temperatureUnit:'fahrenheit',defaultDepartureTime:'08:31:02.123456'});
+    {displayName:saved.p_display_name,travelPace:'packed',locale:'en',currency:'USD',distanceUnit:'mile',temperatureUnit:'fahrenheit',defaultDepartureTime:'24:00:00'});
   assert.deepEqual(item.profile.profile.paceRequest,paceInput);assert.equal(item.profile.summary.hasPaceUndo,true);assert.deepEqual(item.sourceRows,{profiles:1,watermarks:1,operations:1});
   assert.equal(item.operations[0].requestId,initialPreviewId);assert.equal(item.operations[0].ownerId,owner.id);assert.equal(item.operations[0].sessionId,admission.sessionId);
-  assert.deepEqual(item.operations[0].summary,initialPreview.data.summary);assert.equal(Object.hasOwn(item.operations[0],'profile'),false);
+  assert.deepEqual(item.operations[0].summary,initialPreview.body.data.summary);assert.equal(Object.hasOwn(item.operations[0],'profile'),false);
   assert.ok(decodeProfileExportPage({schemaVersion:'profile-core-export/1',section:'snapshot',sourceDigest:ready.receipt.modules.find(m=>m.module==='profile').digest,items:[item],hasMore:false,nextCursor:null,sectionComplete:true},100,owner.id,Date.now()));
   assert.equal(bundle.notices.downloadedFilesRecallable,false);assert.equal(bundle.allUserDataCompleted,false);
   assert.notEqual((await call(exports+'/'+ready.requestId+'/download',owner.token,undefined,'GET',downloadHeaders)).status,200);

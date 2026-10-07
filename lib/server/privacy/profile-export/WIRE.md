@@ -3,9 +3,11 @@
 Main accepted this sole bounded-snapshot direction and one minimal private
 provenance table after identifying that old D2 facts alone cannot distinguish
 legacy opaque copies. No page ledger, new source counter, job column, public RPC,
-commit-digest tag or alternate proposal remains. SQL implementation awaits Main
-precise candidate/unused-slot lease. Base ProfileData
-0f114f679b89553017a41d18f3fbd6444bf8259b is an explicit unmerged dependency.
+commit-digest tag or alternate proposal remains. Sole SQL07040000 is consumed,
+including its reviewed TIME endpoint/fixed identity delta. Profile0f114 source
+is retained through stable03a067fa3dd16270a08a95df03b4257542cb38f2; PR670 remains
+an explicit unmerged dependency. Current main78857 and its07030000 are merged
+into this isolated integration worktree.
 Parent #239 ALL1/ALL2 stays Open; ProfileData delete completion is independent.
 
 ## Real source graph and reuse
@@ -28,6 +30,12 @@ Operations are original owner metadata, not raw Profile preimages/erase bytes,
 ephemeral proofs or recursive new receipts. Existing retained mixed Brief/scoped/
 recovery contents stay under their own modules, not copied into this snapshot.
 Memory profiles/consents/commands are an independent D4 source and producer.
+
+Original PostgreSQL TIME and the lawful writer also support end-of-day24:00:00.
+Shared Profile TS/Native validators accept that endpoint and zero fractions;
+the SQL source emits canonical24:00:00 unchanged. Nonzero fractions at24h,
+24:01 and25h remain invalid. Export reuses the one shared Profile validator;
+there is no separate time adapter or normalization to00:00.
 
 Reuse public.privacy_core_export_v1 via service-only action profile_page; existing
 transport already allowlists this domain. Reuse original job/lease/generation,
@@ -184,7 +192,7 @@ qualification; active unknown/custom still SOURCE_UNSUPPORTED. Qualification:
 
 1. Immutable server proof matches real owner/request/generation/session/epoch/
    committed lease, original unmodified commit_digest, exact complete Profile
-module pages1/rows1/digest=proof source digest and original actual source counts.
+   module pages1/rows1/digest=proof source digest and original actual source counts.
    These admission session/epoch facts are compared to the original job, never
    required to equal a lawful owner's new download session.
 2. Real original atomic job/intent/closed modules and encrypted artifact agree
@@ -210,12 +218,12 @@ session/file TTL. Server clear does not claim to recall a downloaded file.
 
 ## Exact necessary SQL/shared change list and proof
 
-New private helpers proposed: profile_source_v1(owner UUID),
+Implemented private helpers: profile_source_v1(owner UUID),
 core_profile_page_v1(input JSONB), profile_commit_qualifies_v1(job,modules,lease,gen),
-record_profile_provenance_v1(job), profile_source_current_v1(job),
+record_profile_provenance_v1(job,lease_deadline TIMESTAMPTZ), profile_source_current_v1(job),
 profile_managed_copy_v1(request UUID,owner UUID), immutable provenance guard and
-fixed managed-hook dependency verification. Names/signatures fixed by sole SQL
-owner from this contract, not claims of already-existing functions.
+profile_hooks_valid_v1() fixed identity verification, plus closed scalar/row
+validators in the sole SQL module. The original commit digest encoding remains.
 
 Existing function hunks: export_private.lock_job_v1(UUID,BOOLEAN) adds post-original
 source hook; public.privacy_core_export_v1(TEXT,JSONB) adds profile_page dispatch,
@@ -226,11 +234,14 @@ profile_data_private.schema_v1() and result_data_private.schema_supported_v1()
 only reviewed exact table/function/FK/catalog deltas. Preserve exhaustive unknown
 app/incoming FK/typed JSON/infrastructure default-deny. No blind hash substitution,
 old migration edit, broad namespace exemption or original writer/floor/RPC change.
-Profile SQL original owner release reported by Main; final precise append lease
-and unused migration slot still required. No SQL written in this TS worktree.
+Profile/Result/D2/PDF owners explicitly released the exact shared hunks, and Main
+granted the append/identity deltas. This integrator consumes sole SQL commits;
+it does not author a second migration or modify the original writer/floors.
 Main a7aabb granted the released export-worker.ts Profile import/composition/
-receipt-guard hunks; these three additions are now applied. CI registry changes
-still await explicit owner release/Main lease. Existing modules/dispatcher/runner/coverage
+receipt-guard hunks; these three additions are applied. CI's two PG files, one SQL
+gate flag and one HTTP tail were separately released/granted and are applied.
+Canonical reuses the existing VP_TURN_DB_TEST gate; indices/shards/limits remain.
+Existing modules/dispatcher/runner/coverage
 need no rewrite; no new Native task/source.
 
 Final actual proof: current ordered migration rollback/replay/catalog and canonical
