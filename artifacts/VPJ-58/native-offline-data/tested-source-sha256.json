@@ -1,0 +1,14 @@
+{
+  "ios/VisePanda/VisePanda.xcodeproj/project.pbxproj": "298b92aa59b3fcc6415ec53fb20462ce509c581ad6da8bd5a03fde9b83149d87",
+  "ios/VisePanda/VisePanda/App/NativeSession.swift": "bd358a1709ed2559f35b9a5bd0468d4cea83cd1992221ec06f61959612c92b0c",
+  "ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageOfflineView.swift": "bab532855790a95700b09e3e64595c9d560f032844a9118d44b4cf3eacced0a6",
+  "ios/VisePanda/VisePanda/Features/Hotels/NativeHotelHandoffView.swift": "f784f0cf808d8b510ba7d1a7ef59bea28981d804f829bcc1d42719c31a8ec5df",
+  "ios/VisePanda/VisePanda/Features/OfflineData/NativeOfflineDataModels.swift": "d9f8f409dca290de266cdd3aaf2f19890a6a442b7c9e4740ab4dc143626f745c",
+  "ios/VisePanda/VisePanda/Features/OfflineData/NativeOfflineDataStore.swift": "dc1bcbee89b81a0353fa0e58c6e20f6bef2a93298fcd3cdc5f0af1c16151814c",
+  "ios/VisePanda/VisePanda/Features/OfflineData/NativeOfflineDataView.swift": "2a3fc4c357c01a7edc3f6d81a795fc39846eef43494e154e1b797e2221345e67",
+  "ios/VisePanda/VisePanda/Features/Today/NativeOfflineTodayView.swift": "90ec91a1c45fd102db2b0aca8d8fe6ce000b846ff77d7c803653882d2bffb346",
+  "ios/VisePanda/VisePanda/Features/Today/NativeOfflineTripStore.swift": "954de70b68e9b3195118b5ff4a8a53a5f125baf8cd0305cb384dd883a2020a5d",
+  "ios/VisePanda/VisePanda/Features/Trip/NativeTripStore.swift": "193db078a2d6999152da52f4767c7691fdb7274de81fde4a1b51d9a7e9f3e24b",
+  "ios/VisePanda/VisePandaTests/NativeOfflineDataTests.swift": "0101f66a1d6f0a193b4ee4d427933f41d364afc0ee205e260a2b9b5f6a68bf5c",
+  "ios/VisePanda/VisePandaTests/NativeOfflineTripTests.swift": "1f2aa2380cbe338128e7ea40bfed5943912779b86dadd92219dce0332c2aeacd"
+}
