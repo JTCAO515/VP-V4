@@ -23,6 +23,7 @@ test('real signed owner erases one completed Turn and preserves actual parents/o
   const ports=nativeHTTPEnvironmentPorts(process.env),local=identityLocalEnv();assert.equal(local?.API_URL,ports.supabaseAPI);
   assert.match(local.DB_CONTAINER,/^supabase_db_vp-native-ask-[a-f0-9]{8}$/);
   const literal=v=>"'"+String(v).replaceAll("'","''")+"'";
+  const taskLiteral=v=>v?literal(v):'null';
   const sql=q=>execFileSync('docker',['exec','-i',local.DB_CONTAINER,'psql','-U','postgres','-d','postgres','-X','-Atq','-v','ON_ERROR_STOP=1'],{
     input:"set statement_timeout='15s';"+q,encoding:'utf8',stdio:['pipe','pipe','pipe'],
   }).trim();
@@ -70,9 +71,16 @@ test('real signed owner erases one completed Turn and preserves actual parents/o
     const claimed=await service.rpc('claim_text_work',{p_owner_id:owner.id,p_policy_id:policy});assert.equal(claimed.error,null);assert.equal(claimed.data.kind,'leased');assert.equal(claimed.data.turnId,turn);
     const keys={p_turn_id:turn,p_lease_token:claimed.data.leaseToken};const authorization=await service.rpc('authorize_text_dispatch',{...keys,p_policy_id:policy,p_provider:'qwen'});assert.equal(authorization.error,null);assert.equal(authorization.data.kind,'authorized');
     const done=await service.rpc('complete_text_work',{...keys,p_kind:'answered',p_text:'Original synthetic completed output '+text});assert.equal(done.error,null);assert.equal(done.data.kind,'finished');
-    return {message,turn,task:sql(`select task_id from turn_private.service_task_turns where turn_id='${turn}';`)};
+    return {message,turn,task:sql(`select task_id from turn_private.service_task_turns where turn_id='${turn}';`)||null};
   }
   const selected=await completed('Selected original input'),other=await completed('Preserved other input');
+  const taskRoot={turn:uuid(),thread:uuid(),task:uuid()};
+  const admittedTask=await owner.client.rpc('submit_service_task_turn',{p_thread_id:taskRoot.thread,p_turn_id:taskRoot.turn,p_idempotency_key:uuid(),p_policy_id:policy,p_locale:'en',p_text:'Selected real ServiceTask input',p_task_id:taskRoot.task,p_scope_version:1,p_relationship:'new_goal',p_parent_turn_id:null});
+  assert.equal(admittedTask.error,null);assert.equal(admittedTask.data.kind,'accepted');
+  const taskClaim=await service.rpc('claim_text_work',{p_owner_id:owner.id,p_policy_id:policy});assert.equal(taskClaim.error,null);assert.equal(taskClaim.data.turnId,taskRoot.turn);
+  const taskKeys={p_turn_id:taskRoot.turn,p_lease_token:taskClaim.data.leaseToken};
+  const taskAuthorized=await service.rpc('authorize_text_dispatch',{...taskKeys,p_policy_id:policy,p_provider:'qwen'});assert.equal(taskAuthorized.error,null);assert.equal(taskAuthorized.data.kind,'authorized');
+  const taskFinished=await service.rpc('complete_text_work',{...taskKeys,p_kind:'answered',p_text:'Selected real ServiceTask completed output'});assert.equal(taskFinished.error,null);assert.equal(taskFinished.data.kind,'finished');
   const trip=uuid();assert.equal((await call('/api/trips/native/v2',owner.token,{tripId:trip,title:'Retained confirmed Trip'})).status,201);
   const proposal=await call('/api/trips/native/v2/'+trip+'/proposal',owner.token,{patch:{expectedVersion:0,operations:[{kind:'set_title',title:'Original confirmed Trip body'}]}});assert.equal(proposal.status,201);
   const diff=await call('/api/trips/native/v2/'+trip+'/proposal?proposalId='+proposal.body.proposalId,owner.token,undefined,'GET');assert.equal(diff.status,200);
@@ -81,7 +89,7 @@ test('real signed owner erases one completed Turn and preserves actual parents/o
   const explicit=await owner.client.rpc('native_memory_command_v1',{p_input:{action:'create',operationId:uuid(),memoryId:uuid(),receiptId:uuid(),consentId:mc.data.consentId,constraintKind:'preference',summary:'Retained explicit Memory',saveLongTerm:true}});assert.equal(explicit.error,null);
   const stable=()=>sql(`select jsonb_build_object('conversation',(select to_jsonb(v) from turn_private.assistant_conversations v where id='${conversation}'),
     'otherTurn',(select to_jsonb(v) from public.turns v where id='${other.turn}'),'otherText',(select to_jsonb(v) from turn_private.text_content v where turn_id='${other.turn}'),
-    'otherMessage',(select to_jsonb(v) from turn_private.assistant_messages v where id='${other.message}'),'otherTask',(select to_jsonb(v) from turn_private.service_tasks v where id='${other.task}'),
+    'otherMessage',(select to_jsonb(v) from turn_private.assistant_messages v where id='${other.message}'),'otherTask',(select to_jsonb(v) from turn_private.service_tasks v where id=${taskLiteral(other.task)}),
     'trip',(select to_jsonb(v) from public.trips v where id='${trip}'),
     'tripSnapshots',(select jsonb_agg(to_jsonb(v) order by version) from public.trip_version_snapshots v where trip_id='${trip}'),
     'tripEvents',(select jsonb_agg(to_jsonb(v) order by id) from public.trip_events v where trip_id='${trip}'),
@@ -89,17 +97,17 @@ test('real signed owner erases one completed Turn and preserves actual parents/o
     'memory',(select jsonb_agg(to_jsonb(v) order by id) from public.memory_profiles v where owner_id='${owner.id}'),
     'memoryReceipts',(select jsonb_agg(to_jsonb(v) order by id) from public.memory_receipts v where owner_id='${owner.id}'),
     'selectedDispatchMetadata',(select jsonb_agg(to_jsonb(v) order by lease_token) from turn_private.text_dispatches v where turn_id='${selected.turn}'),
-    'selectedTaskMetadata',(select to_jsonb(v)-'goal_digest' from turn_private.service_tasks v where id='${selected.task}'),
+    'selectedTaskMetadata',(select to_jsonb(v)-'goal_digest' from turn_private.service_tasks v where id=${taskLiteral(selected.task)}),
     'selectedThread',(select to_jsonb(v) from public.chat_threads v join public.turns t on t.thread_id=v.id where t.id='${selected.turn}'),
-    'budget',(select coalesce(jsonb_agg(to_jsonb(v) order by scope_id,attempt_id),'[]') from public.model_budget_attempts v where task_id in('${selected.turn}','${selected.task}','${other.turn}','${other.task}')));`);
+    'budget',(select coalesce(jsonb_agg(to_jsonb(v) order by scope_id,attempt_id),'[]') from public.model_budget_attempts v where task_id in('${selected.turn}',${taskLiteral(selected.task)},'${other.turn}',${taskLiteral(other.task)})));`);
   assert.equal((await call('/api/privacy/native/v1/coverage',owner.token,undefined,'GET')).status,200);
-  const before=stable(),inventory=await call(path,owner.token,list);assert.equal(inventory.status,200);assert.ok(decodeTurnList(inventory.body.data,list,owner.actor,Date.now()));assert.equal(inventory.body.data.items.length,2);
+  const before=stable(),inventory=await call(path,owner.token,list);assert.equal(inventory.status,200);assert.ok(decodeTurnList(inventory.body.data,list,owner.actor,Date.now()));assert.equal(inventory.body.data.items.length,3);
   const s={scope:list.scope,requestId:uuid(),turnId:selected.turn,objectIds:[]},p={action:'preview',...s};assert.notEqual((await call(path,foreign.token,p)).status,200);
   const planned=await call(path,owner.token,p);assert.equal(planned.status,200);assert.ok(decodeTurnPreview(planned.body.data,p,owner.actor,Date.now()));assert.equal(planned.body.data.eligible,true);assert.deepEqual(planned.body.data.graph.turnIds,[selected.turn]);
   const erase={action:'erase',...s,sourceDigest:planned.body.data.sourceDigest,previewDigest:planned.body.data.previewDigest,confirmed:true},raw='\n '+JSON.stringify(erase)+' ';
   const envelope={schemaVersion:'data-coverage/1',catalogVersion:CATALOG_VERSION,actorId:owner.id,sessionId:owner.actor.sessionId,mobileEpoch:owner.actor.mobileEpoch,moduleId:'turn',moduleVersion:'turn-data/1',operationId:s.requestId,action:'delete',phase:'execute',confirmed:true,tripId:null,commandBytes:raw};
   const erased=await call('/api/privacy/native/v1/coverage',owner.token,envelope);assert.equal(erased.status,200);assert.ok(matchesCoverageResult(erased.body,JSON.stringify(envelope)));assert.equal(erased.body.state,'scoped_complete');
-  const original=erased.body.result.data;assert.ok(decodeTurnReceipt(original,erase,owner.actor,turnDigest(raw),Date.now()));assert.equal(original.decision.parentData,'selected_digest_redacted');assert.equal(stable(),before);
+  const original=erased.body.result.data;assert.ok(decodeTurnReceipt(original,erase,owner.actor,turnDigest(raw),Date.now()));assert.equal(original.decision.parentData,planned.body.data.redactCounts.taskDigests>0?'selected_digest_redacted':'not_modified');assert.equal(stable(),before);
   assert.equal(sql(`select input_text='[deleted by scoped turn request]' and output_text is null and output_kind is null and hidden_at is not null from turn_private.text_content where turn_id='${selected.turn}';`),'t');
   assert.equal(sql(`select input_text='[deleted by scoped turn request]' from turn_private.assistant_messages where id='${selected.message}';`),'t');
   assert.equal(sql(`select count(*) from public.chat_turn_events where turn_id='${selected.turn}';`),'0');assert.equal(sql(`select count(*) from turn_private.work where turn_id='${selected.turn}';`),'0');
@@ -109,6 +117,13 @@ test('real signed owner erases one completed Turn and preserves actual parents/o
   const progress=await call(path,owner.token,pc);assert.equal(progress.status,200);assert.ok(decodeTurnPreview(progress.body.data,pc,owner.actor,Date.now()));assert.equal(progress.body.data.eligible,true);
   const pe={action:'erase',...ps,sourceDigest:progress.body.data.sourceDigest,previewDigest:progress.body.data.previewDigest,confirmed:true},pb=JSON.stringify(pe);
   const pr=await call(path,owner.token,pb);assert.equal(pr.status,200);assert.ok(decodeTurnReceipt(pr.body.data,pe,owner.actor,turnDigest(pb),Date.now()));assert.equal(pr.body.data.decision.sourceTurn,'not_modified');assert.equal(stable(),before);
+  const taskBefore=sql(`select jsonb_build_object('task',(select to_jsonb(v)-'goal_digest' from turn_private.service_tasks v where id='${taskRoot.task}'),'thread',(select to_jsonb(v) from public.chat_threads v where id='${taskRoot.thread}'),'turn',(select to_jsonb(v) from public.turns v where id='${taskRoot.turn}'));`);
+  const taskS={scope:list.scope,requestId:uuid(),turnId:taskRoot.turn,objectIds:[]},taskP={action:'preview',...taskS};
+  const taskPreview=await call(path,owner.token,taskP);assert.equal(taskPreview.status,200);assert.ok(decodeTurnPreview(taskPreview.body.data,taskP,owner.actor,Date.now()));assert.equal(taskPreview.body.data.eligible,true);assert.equal(taskPreview.body.data.redactCounts.taskDigests,1);
+  const taskErase={action:'erase',...taskS,sourceDigest:taskPreview.body.data.sourceDigest,previewDigest:taskPreview.body.data.previewDigest,confirmed:true},taskBytes=JSON.stringify(taskErase);
+  const taskReceipt=await call(path,owner.token,taskBytes);assert.equal(taskReceipt.status,200);assert.ok(decodeTurnReceipt(taskReceipt.body.data,taskErase,owner.actor,turnDigest(taskBytes),Date.now()));assert.equal(taskReceipt.body.data.decision.parentData,'selected_digest_redacted');
+  assert.equal(sql(`select jsonb_build_object('task',(select to_jsonb(v)-'goal_digest' from turn_private.service_tasks v where id='${taskRoot.task}'),'thread',(select to_jsonb(v) from public.chat_threads v where id='${taskRoot.thread}'),'turn',(select to_jsonb(v) from public.turns v where id='${taskRoot.turn}'));`),taskBefore);
+  assert.equal(sql(`select input_text='[deleted by scoped turn request]' and output_text is null and hidden_at is not null from turn_private.text_content where turn_id='${taskRoot.turn}';`),'t');assert.equal(stable(),before);
   const fresh=await completed('Fresh same-conversation unrelated input');assert.ok(fresh.turn);
   const afterFresh=JSON.parse(stable()),beforeFresh=JSON.parse(before);assert.equal(afterFresh.conversation.next_sequence,beforeFresh.conversation.next_sequence+1);
   afterFresh.conversation.next_sequence=beforeFresh.conversation.next_sequence;assert.deepEqual(afterFresh,beforeFresh,'Only original conversation sequence advances for fresh unrelated Turn');
@@ -121,6 +136,6 @@ test('real signed owner erases one completed Turn and preserves actual parents/o
   const download=await fetch(ports.api+'/api/privacy/native/v1/exports/'+requestId+'/download',{headers:{Authorization:'Bearer '+owner.token,'X-Export-Download-Token':ticket.body.token,'X-Export-Operation-ID':ticket.body.operationId},signal:AbortSignal.timeout(60000)});assert.equal(download.status,200);
   const exported=Buffer.from(await download.arrayBuffer());assert.equal(createHash('sha256').update(exported).digest('hex'),exportReceipt.artifactDigest);assert.equal(exported.length,exportReceipt.artifactBytes);
   const bundle=JSON.parse(exported.toString('utf8'));assert.ok(decodeTurnExportPage({schemaVersion:'turn-core-export/1',section:'snapshot',sourceDigest:turnModule.digest,items:bundle.data.turn.snapshot,hasMore:false,nextCursor:null,sectionComplete:true},100,owner.id,Date.now()));
-  assert.equal(exported.includes('Selected original input'),false);assert.equal(exported.includes('Preserved other input'),true);assert.equal(bundle.allUserDataCompleted,false);
+  assert.equal(exported.includes('Selected original input'),false);assert.equal(exported.includes('Selected real ServiceTask input'),false);assert.equal(exported.includes('Selected real ServiceTask completed output'),false);assert.equal(exported.includes('Preserved other input'),true);assert.equal(bundle.allUserDataCompleted,false);
   const blocked=await call(path,owner.token,{action:'preview',scope:list.scope,requestId:uuid(),turnId:other.turn,objectIds:[]});assert.equal(blocked.status,200);assert.equal(blocked.body.data.eligible,false);assert.ok(blocked.body.data.conflicts.includes('CORE_EXPORT_COPY'),'Actual mixed D2 ciphertext cannot be silently erased with another selected Turn');
 });
