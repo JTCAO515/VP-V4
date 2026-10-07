@@ -120,33 +120,34 @@ import Testing
         let actor = try session.communitySafetyActor(), folder = root()
         defer { cleanup(vault: vault, actor: actor, suite: suite); try? FileManager.default.removeItem(at: folder) }
         let token = String(repeating: "c1", count: 32)
-        let notification = try NativeNoticeCommand(tripId: UUID().uuidString, action: "register_device", input: [
-            "operationId": UUID().uuidString, "deviceId": UUID().uuidString, "token": token,
+        let notification = try NativeNoticeCommand(tripId: UUID().uuidString.lowercased(), action: "register_device", input: [
+            "operationId": UUID().uuidString.lowercased(), "deviceId": UUID().uuidString.lowercased(), "token": token,
             "environment": "sandbox", "permission": "authorized", "timeZone": "Asia/Shanghai"])
         _ = try NativeNotificationJournal(vault: vault).retain(notification, scope: actor.scope)
         let old = NativeCommunitySafetyPending(schemaVersion: 1, endpoint: actor.scope.endpoint, owner: actor.scope.subject,
             epoch: actor.scope.mobileEpoch + 1, sessionID: actor.sessionID, body: try command().body)
         let oldBytes = try JSONEncoder().encode(old)
         _ = vault.write(oldBytes, service: NativeResultDataJournal.service(actor.scope.endpoint), owner: actor.scope.subject)
-        let policy = NativeTextPolicy(id: UUID().uuidString, provider: "qwen", recipient: "synthetic",
+        let policy = NativeTextPolicy(id: UUID().uuidString.lowercased(), provider: "qwen", recipient: "synthetic",
             sourceRegion: "synthetic", processingRegion: "synthetic", storageRegion: "synthetic", termsVersion: "fixture/1",
             noticeVersion: "fixture/1", noticeHash: String(repeating: "a", count: 64), noticeZh: "合成", noticeEn: "Synthetic",
             retention: "retain_after_hide_v1", expiresAt: Date().addingTimeInterval(3600).ISO8601Format(), consentState: .accepted)
-        let ask = NativeTextSubmission(threadId: UUID().uuidString, turnId: UUID().uuidString, idempotencyKey: UUID().uuidString,
+        let ask = NativeTextSubmission(threadId: UUID().uuidString.lowercased(), turnId: UUID().uuidString.lowercased(), idempotencyKey: UUID().uuidString.lowercased(),
             policyId: policy.id, locale: "en", text: "USER_OR_LICENSED_BODY_SENTINEL", serviceTask: nil)
         _ = try session.retainPendingAsk(ask, policy: policy, mode: .currentInput)
-        let trip = UUID().uuidString, place = UUID().uuidString, canonical = UUID().uuidString
+        let trip = UUID().uuidString.lowercased(), place = UUID().uuidString.lowercased(), canonical = UUID().uuidString.lowercased()
         let guideFields: [String: Any] = ["action": "follow_up", "expectedTripVersion": 0, "placeReferenceId": place,
-            "locale": "en", "interest": "address", "operationId": UUID().uuidString, "expectedDigest": String(repeating: "b", count: 64),
-            "completedSegmentIds": [String](), "question": "EXPIRED_GUIDE_ORIGINAL_BODY", "threadId": UUID().uuidString,
-            "turnId": UUID().uuidString, "policyId": policy.id,
-            "serviceTask": ["id": UUID().uuidString, "scopeVersion": 1, "relationship": "new_goal", "parentTurnId": NSNull()]]
+            "locale": "en", "interest": "address", "operationId": UUID().uuidString.lowercased(), "expectedDigest": String(repeating: "b", count: 64),
+            "completedSegmentIds": [String](), "question": "EXPIRED_GUIDE_ORIGINAL_BODY", "threadId": UUID().uuidString.lowercased(),
+            "turnId": UUID().uuidString.lowercased(), "policyId": policy.id,
+            "serviceTask": ["id": UUID().uuidString.lowercased(), "scopeVersion": 1, "relationship": "new_goal", "parentTurnId": NSNull()]]
         let guide = NativePlaceGuidePending(endpoint: actor.scope.endpoint, owner: actor.scope.subject, mobileEpoch: actor.scope.mobileEpoch,
             canonicalPoiID: canonical, tripID: trip, tripVersion: 0, placeReferenceID: place, locale: "en", interest: .address,
             noticeHash: policy.noticeHash, expiresAt: Date().addingTimeInterval(-1), body: try JSONSerialization.data(withJSONObject: guideFields))
+        _ = try guide.selection(for: actor.scope); try guide.validatedRecovery()
         let guideBytes = try JSONEncoder().encode(guide), guideKey = "com.visepanda.native.local-session.v2.place-guide-operation." + actor.scope.endpoint
         _ = vault.write(guideBytes, service: guideKey, owner: actor.scope.subject)
-        let legacy = NativePendingTripDeletion(owner: actor.scope.subject, tripID: trip, requestID: UUID().uuidString, expectedVersion: 0)
+        let legacy = NativePendingTripDeletion(owner: actor.scope.subject, tripID: trip, requestID: UUID().uuidString.lowercased(), expectedVersion: 0)
         let legacyBytes = try JSONEncoder().encode(legacy), legacyKey = "com.visepanda.native.local-session.v2.trip-deletion." + actor.scope.endpoint
         _ = vault.write(legacyBytes, service: legacyKey, owner: actor.scope.subject)
         let source = session.journalDataSource(), exported = NativeJournalDataStore(source: source, root: folder)
