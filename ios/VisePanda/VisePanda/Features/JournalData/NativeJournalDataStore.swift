@@ -15,8 +15,8 @@ import Observation
     private var bound: NativeCommunitySafetyActor?
     private var exportSelection: NativeJournalDataSelection?
     private var exportActor: NativeCommunitySafetyActor?
-    private var lastNow: Date?
-    private var lastUptime: TimeInterval?
+    @ObservationIgnored private var lastNow: Date?
+    @ObservationIgnored private var lastUptime: TimeInterval?
     static var exportRoot: URL { FileManager.default.temporaryDirectory.appendingPathComponent("NativeJournalDataExport", isDirectory: true) }
     var storageReady: Bool { files.ready }
 

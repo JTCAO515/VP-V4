@@ -25,7 +25,7 @@ struct NativeJournalDataView: View {
                         Text(row.record.source.title(chinese: chinese)).font(.headline)
                         Text(row.record.state == .absent ? t("原读取已确认无请求", "The original reader confirmed no request")
                             : row.record.state == .unavailable ? t("资格或读取未确认；不视为空", "Qualification or read unconfirmed; not empty")
-                            : t("原请求保留；结果尚未核验", "Original request retained; outcome unverified"))
+                            : t("读取时保留的原请求；本页不推断当前结果", "Request retained at the source read; this page does not infer its current outcome"))
                         if row.record.state == .pending {
                             Text(row.record.kind == .originalOperation ? t("可导出原操作字节", "Original operation bytes may be exported")
                                 : t("仅导出安全操作元数据；正文与授权保持受保护", "Only safe operation metadata is exported; body and authority remain protected")).font(.caption)
@@ -103,11 +103,20 @@ struct NativeJournalDataView: View {
             NativeDataCoverageModuleView(module: module, store: coverage, session: session, chinese: chinese)
         } else {
             switch record.source {
+            case .coverage: NativeDataCoverageView()
             case .ask: NativeAskView(isActive: actor != nil)
             case .community: NativeCommunitySubmissionView()
             case .communitySafety: NativeCommunitySafetyView()
             case .experience: NativeExperienceView(access: session.communityExperienceAccess)
             case .reservation: NativeReservationsView(session: session, chinese: chinese, active: actor != nil)
+            case .placeAction:
+                NativeJournalDataPlaceRecovery(session: session, chinese: chinese, canContinue: {
+                    registered && store?.canReturnToOriginal(.placeAction, current: actor) == true
+                })
+            case .pdf:
+                NativeJournalDataPDFRecovery(record: record, session: session, chinese: chinese, canContinue: {
+                    registered && store?.canReturnToOriginal(.pdf, current: actor) == true
+                })
             case .deviceDelete: NativeDeviceMaterialDeleteView(session: session, chinese: chinese)
             case .tripLifecycle: NativeTripLifecycleView(session: session, chinese: chinese, initialTripID: record.tripID)
             case .serviceOperation:
@@ -125,6 +134,93 @@ struct NativeJournalDataView: View {
         }
     }
     private struct ShareSelection: Identifiable { let id: UUID; let actor: NativeCommunitySafetyActor; let url: URL }
+}
+
+/// Source-specific adapter to the original Place Store's pure receipt-read path.
+/// No candidate, source image, mutation, replay or provider request is fabricated.
+private struct NativeJournalDataPlaceRecovery: View {
+    let session: NativeSession
+    let chinese: Bool
+    let canContinue: @MainActor () -> Bool
+    @Environment(\.scenePhase) private var phase
+    @Environment(\.dismiss) private var dismiss
+    @State private var original = NativePlaceActionStore()
+    @State private var task: Task<Void, Never>?
+    private var actor: NativeDataScope? { phase == .active && canContinue() ? session.dataScope : nil }
+    var body: some View {
+        Form {
+            Text(chinese ? "仅使用原地点模块读取同一操作回执；不重发原操作。未知回执保留原字节。" : "Uses the original Place module to read this operation receipt. It never replays the operation; unknown receipts retain original bytes.")
+            Button(chinese ? "读取原地点操作回执" : "Read the original Place operation receipt") {
+                guard let actor else { return }
+                task = Task {
+                    await original.perform(command: nil, scope: actor, recover: true, retryOriginal: false, abandon: false,
+                        current: { self.actor }, read: { try session.pendingPlaceAction(actor: actor) },
+                        retain: { _ in throw NativeDataError.invalidResponse },
+                        complete: { try session.completePlaceAction($0, actor: actor) },
+                        request: { try await session.placeActionRequest(tripId: $0, body: $1, actor: actor) })
+                }
+            }.disabled(actor == nil || original.busy || original.pending == nil)
+            Text(original.pending == nil && (original.receipt != nil || original.cancelled != nil)
+                ? (chinese ? "原模块已核验回执。返回清单读取该请求的本机完成证明。" : "The original module verified a receipt. Return to the list for this request’s local completion proof.")
+                : (chinese ? "结果尚未核验；原请求继续保留。" : "Outcome unverified; the original request remains retained."))
+        }
+        .task { guard let actor else { return }; original.journalObservation = session.journalDataObservation(.placeAction); original.restore(scope: actor) { try session.pendingPlaceAction(actor: actor) } }
+        .onChange(of: phase) { _, next in if next != .active { task?.cancel(); original.clear() } }
+        .onDisappear { task?.cancel(); original.clear() }
+        .toolbar { ToolbarItem(placement: .cancellationAction) { Button(chinese ? "返回清单" : "Return to list") { dismiss() } } }
+    }
+}
+
+/// Reuses the original PDF operation decoder and confirmed-Trip readback. Its original
+/// Store.recover may replay an absent request, so this adapter calls only the existing GET reader.
+private struct NativeJournalDataPDFRecovery: View {
+    let record: NativeJournalDataExportRecord
+    let session: NativeSession
+    let chinese: Bool
+    let canContinue: @MainActor () -> Bool
+    @Environment(\.scenePhase) private var phase
+    @Environment(\.dismiss) private var dismiss
+    @State private var trip = NativeTripStore()
+    @State private var task: Task<Void, Never>?
+    @State private var busy = false
+    @State private var verified = false
+    private var actor: NativeDataScope? { phase == .active && canContinue() ? session.dataScope : nil }
+    var body: some View {
+        Form {
+            Text(chinese ? "仅查询原 PDF 操作。没有已确认的精确回执时保留原字节，不重新提交 PDF 或确认提案。" : "Reads the original PDF operation only. Without an exact confirmed receipt it retains original bytes and never resubmits the PDF or confirms a Proposal.")
+            Button(chinese ? "只读核验原 PDF 回执" : "Verify the original PDF receipt by reading") { task = Task { await read() } }
+                .disabled(actor == nil || busy)
+            Text(verified ? (chinese ? "原 PDF 回执和实际行程读回已核验。返回清单读取本机完成证明。" : "Original PDF receipt and actual Trip readback verified. Return to the list for local completion proof.")
+                : (chinese ? "尚未核验完成；原请求继续保留。" : "Completion unverified; the original request remains retained."))
+            if let tripID = record.tripID, let actor {
+                NavigationLink(chinese ? "回原行程查看提案与可见差异" : "Return to the original Trip for its Proposal and visible diff") {
+                    NativeTripView(initialTripID: tripID, initialTripScope: actor)
+                }
+            }
+        }
+        .onChange(of: phase) { _, next in if next != .active { task?.cancel(); busy = false; verified = false } }
+        .onDisappear { task?.cancel(); busy = false }
+        .toolbar { ToolbarItem(placement: .cancellationAction) { Button(chinese ? "返回清单" : "Return to list") { dismiss() } } }
+    }
+    private func read() async {
+        guard !busy, let captured = actor else { return }; busy = true; defer { busy = false }
+        do {
+            guard let pending = try session.pdfIntakeRecovery(actor: captured), pending.tripID == record.tripID,
+                  pending.command.operationId == record.operationID else { return }
+            let bytes = try await session.pdfIntakeRequest(tripID: pending.tripID, action: "operation",
+                operationID: pending.command.operationId, actor: captured)
+            guard actor == captured, !Task.isCancelled else { return }
+            let result = try JSONDecoder().decode(NativePDFOperation.self, from: bytes)
+            guard result.matches(pending, actor: captured), result.state == "confirmed" else { return }
+            await trip.select(pending.tripID, using: session)
+            guard actor == captured, !Task.isCancelled, trip.selectedID == pending.tripID,
+                  trip.detail?.trip.id == pending.tripID,
+                  (trip.detail?.trip.headVersion ?? -1) >= (result.resultingVersion ?? Int.max) else { return }
+            let observer = session.journalDataObservation(.pdf), ticket = observer.begin()
+            try session.completePDFIntake(pending, actor: captured)
+            observer.finish(ticket, pending.command.operationId); verified = true
+        } catch { verified = false }
+    }
 }
 
 extension NativeJournalDataExportRecord: Identifiable { var id: String { source.rawValue } }

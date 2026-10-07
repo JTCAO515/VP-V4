@@ -52,7 +52,10 @@ User selects a qualified row in the frozen list → explicit original module des
 read/recovery/permission/consent/budget/TripProposal confirmation mechanism. JournalData never sends,
 replays, publishes, pays, executes a provider action, completes or discards a source itself.
 Some original methods named recover include an explicit replay branch (PDF/notifications/readiness);
-this feature does not call those APIs as a generic read. Sources without a pure immutable receipt
+this feature does not call those APIs as a generic read. Its Place destination uses the original Store
+pure receipt path with retry/abandon false. Its PDF destination uses the existing GET operation,
+original NativePDFOperation.matches and actual original Trip readback before the original complete;
+absent/pending/expired/transport/mismatch retain the request. No PDF replay/Proposal confirmation runs. Sources without a pure immutable receipt
 reader return to their original UI and remain UNKNOWN until a genuine original proof exists.
 
 Precise optional observations are added only to the original successful receipt decoder path.
