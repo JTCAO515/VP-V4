@@ -1,28 +1,13 @@
 --- a/ios/VisePanda/VisePanda/Features/VoiceTranslation/Audio/NativeVoiceAudioController.swift
 +++ b/ios/VisePanda/VisePanda/Features/VoiceTranslation/Audio/NativeVoiceAudioController.swift
-@@ -25,7 +25,7 @@
- }
- 
- /// One push-to-talk capture and one explicitly selected final translation, scoped to the live session.
+@@ -28 +28 @@
 -@MainActor @Observable final class NativeVoiceAudioController {
 +@MainActor @Observable final class NativeVoiceAudioController: NativeGuideCacheDataRenderer {
-     private(set) var phase: NativeVoiceAudioPhase = .idle
-     private(set) var failure: NativeVoiceAudioFailure?
-     private(set) var transcript: NativeVoiceTranscript?
-@@ -36,7 +36,8 @@
-     private(set) var scope: NativeDataScope?
-     var cleanupPending: Bool { files.cleanupPending }
-     var onFinalTranscript: (@MainActor (NativeVoiceTranscript) -> Void)?
+@@ -39 +39,2 @@
 -    var onGuideProgress: (@MainActor (String, Bool, Int) -> Void)?
 +    var onGuideProgress: (@MainActor (String, Bool, Int) -> Void)? { didSet { guideCallbackRevision = UUID() } }
 +    @ObservationIgnored private var guideCallbackRevision = UUID()
-     private(set) var guidePlaybackID: String?
-     private(set) var guidePaused = false
- 
-@@ -199,6 +200,30 @@
-         } catch { cancel(reason: audioFailure(error)) }
-     }
- 
+@@ -201,0 +203,24 @@
 +    func guideCacheRendererState(current: NativeDataScope) -> NativeGuideCacheDataRendererState? {
 +        // An unbound, never-used renderer is verifiably empty; another actor is unavailable.
 +        guard scope == nil || scope == current else { return nil }
@@ -47,6 +32,3 @@
 +        && guideExpiresAt == nil && guidePlaybackDeadline == nil && guideOffset == 0 && !guidePaused && onGuideProgress == nil
 +    }
 +
-     func pauseGuide() {
-         guard phase == .speaking, guidePlaybackID != nil, !guidePaused else { return }
-         guard driver.pauseSpeech() else { cancel(reason: .unavailable); return }
