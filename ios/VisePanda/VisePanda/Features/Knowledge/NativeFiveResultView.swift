@@ -3,6 +3,14 @@ import Observation
 
 @MainActor @Observable final class NativeFiveResultStore {
     private(set) var record:NativeFiveResultRecord?
+    private var erasedResultIDs=Set<String>()
+    private var erasureScope:NativeDataScope?
+    func applyResultErasure(_ erased:NativeResultDataErasure){
+        guard key?.scope==erased.scope else{return}
+        erasureScope=erased.scope;erasedResultIDs.formUnion(erased.artifactIDs)
+        if record.map({erased.artifactIDs.contains($0.artifactID)})==true{record=nil;deadline=0}
+        // Preserve original pendingChoice/pendingBody/submitting and writer generation.
+    }
     private var generation=UUID()
     private var key:Key?
     private(set) var pendingChoice: NativeDecisionChoice?
@@ -14,7 +22,7 @@ import Observation
     init(uptime:@escaping()->TimeInterval={ProcessInfo.processInfo.systemUptime}){self.uptime=uptime}
     struct Key:Equatable {let scope:NativeDataScope;let artifactID:String;let revision:Int}
     func clear(){generation=UUID();record=nil;key=nil;deadline=0;pendingChoice=nil;choiceNotice=nil;pendingBody=nil;submitting=false}
-    func visible(_ scope:NativeDataScope?)->NativeFiveResultRecord?{guard scope==key?.scope,scope != nil,uptime()<deadline else{return nil};return record}
+    func visible(_ scope:NativeDataScope?)->NativeFiveResultRecord?{guard scope==key?.scope,scope != nil,uptime()<deadline,record.map({!erasedResultIDs.contains($0.artifactID)})==true else{return nil};return record}
     func choose(option:String,comparison:NativeFiveResultRecord?,current:@escaping()->Key?,post:(Data)async throws->Data,read:(String,Int)async throws->Data)async{
         guard !submitting,let authority=key,authority==current(),let selected=visible(authority.scope),selected.current,let scope=key?.scope,
               case .decision(let decision)=selected.content,decision.state=="pending",let comparison,comparison.current,
@@ -58,9 +66,11 @@ import Observation
     }
     func load(key requested:Key,current:@escaping ()->Key?,request:()async throws->Data)async{
         clear();guard requested==current(),UUID(uuidString:requested.artifactID) != nil,(1...1000).contains(requested.revision) else{return}
+        if erasureScope != requested.scope{erasureScope=requested.scope;erasedResultIDs=[]}
         let own=generation,started=uptime();key=requested
         do{let bytes=try await request();guard generation==own,requested==current(),!Task.isCancelled else{return}
             guard uptime()-started<30 else{throw NativeDataError.invalidResponse}
+            guard !erasedResultIDs.contains(requested.artifactID) else{throw NativeDataError.staleSessionResponse}
             record=try NativeFiveResultRecord.decode(bytes,artifactID:requested.artifactID,revision:requested.revision);deadline=started+30
         }catch{if generation==own{record=nil;deadline=0}}
     }
@@ -107,6 +117,11 @@ struct NativeFiveResultDetail:View {
                 let comparisonKey=NativeFiveResultStore.Key(scope:key.scope,artifactID:decision.comparison.artifactId,revision:decision.comparison.revision)
                 await comparison.load(key:comparisonKey,current:{self.key?.scope==key.scope ? comparisonKey:nil}){try await session.fiveResultRequest(artifactID:comparisonKey.artifactID,revision:comparisonKey.revision)}
             }
+        }
+        .onChange(of:session.resultDataErasure?.id){_,_ in
+            guard let erased=session.resultDataErasure,(try? session.communitySafetyActor())==erased.actor else{return}
+            store.applyResultErasure(erased); comparison.applyResultErasure(erased)
+            if erased.artifactIDs.contains(artifactID){choosing=nil}
         }
         .onChange(of:key){_,_ in store.clear();comparison.clear();choosing=nil}.onDisappear{store.clear();comparison.clear();choosing=nil}
     }

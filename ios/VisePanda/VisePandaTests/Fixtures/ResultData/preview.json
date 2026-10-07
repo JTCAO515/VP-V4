@@ -1,0 +1,128 @@
+{
+  "data": {
+    "schemaVersion": "result-data/1",
+    "scope": "result-sensitive-data/1",
+    "requestId": "00000000-0000-4000-8000-000000000003",
+    "rootKind": "artifact",
+    "rootId": "00000000-0000-4000-8000-000000000004",
+    "objectIds": [],
+    "ownerId": "00000000-0000-4000-8000-000000000001",
+    "sessionId": "00000000-0000-4000-8000-000000000002",
+    "mobileEpoch": 3,
+    "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "previewDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "sourceAuthorities": [
+      {
+        "policyId": "00000000-0000-4000-8000-000000000020",
+        "consentId": "00000000-0000-4000-8000-000000000021"
+      },
+      {
+        "policyId": "00000000-0000-4000-8000-000000000022",
+        "consentId": "00000000-0000-4000-8000-000000000023"
+      }
+    ],
+    "capturedAt": 1791360000000,
+    "expiresAt": 1791360030000,
+    "boundaries": {
+      "eraseFields": [
+        "one_selected_artifact_all_revisions_and_events",
+        "proven_exclusive_completed_planning_result_copies"
+      ],
+      "retained": [
+        "original_conversations_goals_messages_tasks_turns_threads",
+        "confirmed_trip_content_history_proposals",
+        "explicit_memory_profiles_receipts_consents",
+        "original_source_results_and_evidence",
+        "financial_budget_dispatch_and_source_records",
+        "permanent_artifact_publication_execution_journal_and_operation_fences",
+        "original_source_policy_consent_authority_ids"
+      ],
+      "missing": [
+        "cross_result_or_conversation_source_dependents_rejected",
+        "applied_or_unapplied_proposal_and_decision_dependencies_rejected",
+        "active_shared_or_unqualified_copies_rejected",
+        "brief_guide_notification_knowledge_and_core_export_copies_rejected",
+        "provider_and_external_copies_not_erased",
+        "backup_restore_and_old_device_acceptance_unverified"
+      ]
+    },
+    "allUserDataCompleted": false,
+    "kind": "preview",
+    "graph": {
+      "artifactIds": [
+        "00000000-0000-4000-8000-000000000004"
+      ],
+      "executionIds": [
+        "00000000-0000-4000-8000-000000000010"
+      ],
+      "journalIds": [
+        "00000000-0000-4000-8000-000000000011"
+      ],
+      "publicationKeys": [
+        "00000000-0000-4000-8000-000000000012",
+        "00000000-0000-4000-8000-000000000013"
+      ],
+      "revisions": [
+        1,
+        2
+      ],
+      "eventIds": [
+        "2",
+        "10",
+        "9223372036854775807"
+      ]
+    },
+    "eraseCounts": {
+      "artifacts": 1,
+      "revisions": 2,
+      "resultEvents": 3,
+      "executionRuns": 1,
+      "callWindows": 1,
+      "collectorOrigins": 1,
+      "collectorOutputs": 1,
+      "resultClaims": 1,
+      "completionProofs": 1,
+      "completedReceipts": 1,
+      "localJournals": 1
+    },
+    "retainCounts": {
+      "conversations": 1,
+      "goals": 1,
+      "messages": 1,
+      "tasks": 1,
+      "turns": 1,
+      "threads": 0,
+      "trips": 0,
+      "memories": 0,
+      "sourceArtifacts": 0,
+      "proposals": 0,
+      "budgetAttempts": 1,
+      "planningSources": 3
+    },
+    "retainedReferences": {
+      "conversationIds": [
+        "00000000-0000-4000-8000-000000000005"
+      ],
+      "goalIds": [
+        "00000000-0000-4000-8000-000000000006"
+      ],
+      "messageIds": [
+        "00000000-0000-4000-8000-000000000007"
+      ],
+      "taskIds": [
+        "00000000-0000-4000-8000-000000000008"
+      ],
+      "turnIds": [
+        "00000000-0000-4000-8000-000000000009"
+      ],
+      "threadIds": [],
+      "tripIds": [],
+      "memoryIds": [],
+      "sourceArtifactIds": [],
+      "proposalIds": []
+    },
+    "conflicts": [],
+    "eligible": true,
+    "progressCount": 0
+  }
+}

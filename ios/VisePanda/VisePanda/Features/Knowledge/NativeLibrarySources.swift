@@ -82,6 +82,15 @@ enum NativeLibraryProjection {
     private var deadline:TimeInterval=0
     private let uptime:()->TimeInterval
     init(uptime:@escaping()->TimeInterval={ProcessInfo.processInfo.systemUptime}){self.uptime=uptime}
+    func applyResultErasure(_ erased: NativeResultDataErasure) {
+        guard key?.scope == erased.scope, key?.source == .results else { return }
+        generation = UUID(); loading = false
+        if let old = page {
+            page = .init(version: old.version, kind: old.kind, source: old.source, status: old.status,
+                reason: old.reason, items: old.items?.filter { !erased.artifactIDs.contains($0.id) }, nextCursor: old.nextCursor)
+        }
+        if case .result(let value)? = projection, erased.artifactIDs.contains(value.artifactID) { projection = nil }
+    }
     func clear(){generation=UUID();page=nil;projection=nil;key=nil;deadline=0;loading=false}
     func visible(_ requested:Key?)->NativeLibraryPage?{guard requested != nil,requested==key,uptime()<deadline else{return nil};return page}
     func visibleProjection(_ scope:NativeDataScope?)->NativeLibraryProjection?{guard scope != nil,scope==key?.scope,uptime()<deadline else{return nil};return projection}
@@ -172,6 +181,9 @@ struct NativeLibrarySourcesView:View {
         }
         .onChange(of:source){_,_ in store.clear();opened=nil;cursor=nil}
         .onChange(of:Data(query.utf8)){_,_ in store.clear();opened=nil;cursor=nil}
+        .onChange(of:session.resultDataErasure?.id){_,_ in
+            guard let erased=session.resultDataErasure,(try? session.communitySafetyActor())==erased.actor else{return};store.applyResultErasure(erased)
+        }
         .onChange(of:session.dataScope){_,_ in store.clear();opened=nil;cursor=nil}
         .onDisappear{store.clear();opened=nil}
         .sheet(item:$opened,onDismiss:{cursor=nil;refresh=UUID()}){reference in NativeLibraryExactSourceView(reference:reference,session:session,chinese:chinese,active:active)}
@@ -210,6 +222,9 @@ private struct NativeLibraryExactSourceView:View {
         .task(id:Load(scope:scope,reference:reference,refresh:refresh)){
             guard let scope else{store.clear();return}
             await store.open(reference,scope:scope,current:{self.scope}){try await session.librarySourceItem(reference)}
+        }
+        .onChange(of:session.resultDataErasure?.id){_,_ in
+            guard let erased=session.resultDataErasure,(try? session.communitySafetyActor())==erased.actor else{return};store.applyResultErasure(erased)
         }
         .onChange(of:scope){_,_ in store.clear()}.onDisappear{store.clear()}
     }
