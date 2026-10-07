@@ -1,0 +1,12 @@
+{
+  "parentSQL": "705c6a88c2f182b07d9d0782f3b904932bce2a19",
+  "findingTS": "f0407c93",
+  "findingSha256": "2702ea774f30395a23e77f91410bdb50ea94d57747eb9637fd0353163d073a5f",
+  "migrationSha256": "906b7be76bdde898dfacf70405bc0a687fed5ca669beaa9f0ce1d3f2042c5f26",
+  "applicationHash": "6c2371cd4338f681af77de8fe888a4ae3692bd0abcf1736c14eaf0935314020d",
+  "boundary": "six observed operational namespaces; incoming application FK, typed columns/JSON and relation OID still reject",
+  "pg": "fresh full migration replay + nine scoped compatibility/negative assertions + ordinary RPC PASS",
+  "signedAuth": "two previous FAIL and cleanup PASS preserved; fixed actual Auth rerun belongs to sole TS",
+  "unchanged": "source erasure/CAS/authority/TTL/receipts/counts/identity writer guards/target grants",
+  "targetGrant": false
+}

@@ -12,6 +12,7 @@ test('ResultData whole PostgreSQL source, CAS, immutable receipt, progress, copi
  const applied=await sql(container,'begin;'+readFileSync('supabase/migrations/20261007010000_result_data.sql','utf8')+'commit;');assert.equal(applied.code,0,applied.stderr);
  const invoke=async args=>{const context=process.env.NODE_TEST_CONTEXT;delete process.env.NODE_TEST_CONTEXT;try{return await command(process.execPath,args);}finally{if(context)process.env.NODE_TEST_CONTEXT=context;}};
  for(const [name,file,args] of [
+  ['managed schema compatibility and fail-closed application boundaries','schema-compatibility.mjs',[]],
   ['actual no-copy source and sole TS decoding','runtime.mjs',[]],
   ['complete original synthetic worker/execution/journal erasure with retained financial sources','copies.mjs',[]],
   ['full financial/config witness CAS and preservation','copy-witnesses.mjs',[]],

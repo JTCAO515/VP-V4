@@ -303,10 +303,67 @@ create function result_data_private.proof_v1(kind_n text,id_n uuid) returns bool
 $$;
 alter table result_data_private.operations_v1 add constraint result_source_authorities_shape_v1 check(conversation_data_private.authorities_shape_v1(source_authorities));
 
--- Full migrated columns/types/PKs/FKs/checks, including all incoming relations.
--- Auth system tables are external; original Auth RPC checks their live identity.
-create function result_data_private.schema_supported_v1() returns boolean language sql stable set search_path='' as $$
- select result_data_private.digest_v1((select coalesce(jsonb_agg(jsonb_build_object('relation',n.nspname||'.'||c.relname,'columns',(select jsonb_agg(jsonb_build_array(a.attname,format_type(a.atttypid,a.atttypmod),a.attnotnull) order by a.attnum) from pg_attribute a where a.attrelid=c.oid and a.attnum>0 and not a.attisdropped),'constraints',(select jsonb_agg(pg_get_constraintdef(k.oid) order by k.conname) from pg_constraint k where k.conrelid=c.oid)) order by n.nspname,c.relname),'[]'::jsonb) from pg_class c join pg_namespace n on n.oid=c.relnamespace where c.relkind='r' and n.nspname not in('pg_catalog','information_schema','extensions','auth','result_data_private'))::text)='6c2371cd4338f681af77de8fe888a4ae3692bd0abcf1736c14eaf0935314020d'
+-- Actual signed Auth includes these managed operational namespaces, absent
+-- from the independent PG bootstrap. They are not application source tables.
+-- This fixed list does NOT exempt an application relation in another namespace.
+create function result_data_private.infrastructure_namespaces_v1() returns text[] language sql immutable set search_path='' as $$
+ select array['storage','realtime','_realtime','vault','supabase_functions','supabase_migrations']::text[]
+$$;
+create function result_data_private.application_identity_v1(kind_n text,id_n uuid) returns boolean
+language sql stable security definer set search_path='' as $$
+ select result_data_private.fenced_v1(kind_n,id_n) or case kind_n
+  when 'artifactIds' then exists(select 1 from turn_private.result_artifacts where id=id_n)
+  when 'executionIds' then exists(select 1 from turn_private.planning_v2_execution_runs where id=id_n)
+  when 'journalIds' then exists(select 1 from turn_private.planning_v2_model_local_journal where request_id=id_n)
+  when 'publicationKeys' then exists(select 1 from turn_private.result_revisions where idempotency_key=id_n)
+  else false end
+$$;
+create function result_data_private.infrastructure_supported_v1() returns boolean
+language plpgsql stable security definer set search_path='' as $$
+declare spec record;column_n record;found_n boolean;
+begin
+ -- Every excluded origin, not just the six namespaces, must remain without
+ -- an incoming application FK. Application outgoing FKs remain in the hash.
+ if exists(select 1 from pg_constraint fk join pg_class destination on destination.oid=fk.confrelid
+  join pg_namespace target_n on target_n.oid=destination.relnamespace
+  join pg_class origin on origin.oid=fk.conrelid join pg_namespace origin_n on origin_n.oid=origin.relnamespace
+  where fk.contype='f'
+   and target_n.nspname not in('pg_catalog','information_schema','extensions','auth','result_data_private')
+   and not target_n.nspname=any(result_data_private.infrastructure_namespaces_v1())
+   and (origin_n.nspname in('pg_catalog','information_schema','extensions','auth','result_data_private')
+    or origin_n.nspname=any(result_data_private.infrastructure_namespaces_v1()))) then return false;end if;
+ -- A typed application identity column is not unrelated infrastructure, even
+ -- if it has no FK, is empty, or is placed inside one of the fixed namespaces.
+ if exists(select 1 from pg_attribute attribute_n join pg_class relation_n on relation_n.oid=attribute_n.attrelid
+  join pg_namespace namespace_n on namespace_n.oid=relation_n.relnamespace
+  where relation_n.relkind='r' and namespace_n.nspname=any(result_data_private.infrastructure_namespaces_v1())
+   and attribute_n.attnum>0 and not attribute_n.attisdropped
+   and result_data_private.reference_kind_v1(attribute_n.attname::text) is not null) then return false;end if;
+ for spec in select c.oid,n.nspname,c.relname from pg_class c join pg_namespace n on n.oid=c.relnamespace
+  where c.relkind='r' and n.nspname=any(result_data_private.infrastructure_namespaces_v1()) order by n.nspname,c.relname loop
+  -- Managed regclass subscriptions and the actual webhook table OID must not
+  -- silently introduce application consumers across this boundary.
+  for column_n in select attname from pg_attribute where attrelid=spec.oid and attnum>0 and not attisdropped
+   and (atttypid='regclass'::regtype or spec.nspname='supabase_functions' and spec.relname='hooks' and attname='hook_table_id' and atttypid='oid'::regtype) loop
+   execute format('select exists(select 1 from %I.%I operational where operational.%I::oid in(select c.oid from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname not in(''pg_catalog'',''information_schema'',''extensions'',''auth'',''result_data_private'') and not n.nspname=any($1)))',spec.nspname,spec.relname,column_n.attname)
+    into found_n using result_data_private.infrastructure_namespaces_v1();
+   if found_n then return false;end if;
+  end loop;
+  if exists(select 1 from pg_attribute where attrelid=spec.oid and attnum>0 and not attisdropped and atttypid in('json'::regtype,'jsonb'::regtype)) then
+   -- Arbitrary title/UUID strings are not authority. Actual typed JSON links
+   -- to application rows or permanent identities remain unsupported sources.
+   execute format('select exists(select 1 from %I.%I operational where exists(select 1 from result_data_private.json_references_v1(to_jsonb(operational)) typed where result_data_private.application_identity_v1(typed.kind,typed.entity_id)))',spec.nspname,spec.relname) into found_n;
+   if found_n then return false;end if;
+  end if;
+ end loop;
+ return true;
+exception when invalid_text_representation or invalid_parameter_value then return false;
+end$$;
+-- Original complete application columns/types/PKs/FKs/checks hash is unchanged.
+-- Unknown application tables, private.*, and all actual reverse sources stay
+-- fail-closed; only unrelated managed system catalog differences are isolated.
+create function result_data_private.schema_supported_v1() returns boolean language sql stable security definer set search_path='' as $$
+ select result_data_private.infrastructure_supported_v1() and result_data_private.digest_v1((select coalesce(jsonb_agg(jsonb_build_object('relation',n.nspname||'.'||c.relname,'columns',(select jsonb_agg(jsonb_build_array(a.attname,format_type(a.atttypid,a.atttypmod),a.attnotnull) order by a.attnum) from pg_attribute a where a.attrelid=c.oid and a.attnum>0 and not a.attisdropped),'constraints',(select jsonb_agg(pg_get_constraintdef(k.oid) order by k.conname) from pg_constraint k where k.conrelid=c.oid)) order by n.nspname,c.relname),'[]'::jsonb) from pg_class c join pg_namespace n on n.oid=c.relnamespace where c.relkind='r' and n.nspname not in('pg_catalog','information_schema','extensions','auth','result_data_private','storage','realtime','_realtime','vault','supabase_functions','supabase_migrations'))::text)='6c2371cd4338f681af77de8fe888a4ae3692bd0abcf1736c14eaf0935314020d'
 $$;
 create function result_data_private.relations_v1() returns table(relation_name text,pk text[]) language sql immutable set search_path='' as $$ values
  ('community_private.audit',array['id']::text[]),
@@ -1115,6 +1172,8 @@ begin
   end if;
  end if;
  perform result_data_private.actor_v1(p_expected_epoch);
+ if scope_n='result-sensitive-data/1' and (p_action='list' or p_action='preview' and r.conflicts='[]'::jsonb or new_decision)
+  and not result_data_private.schema_supported_v1() then raise exception 'RESULT_SOURCE_UNAVAILABLE';end if;
  if octet_length(jsonb_build_object('data',result_n)::text)>1000000 then raise exception 'RESULT_CAPACITY';end if;
  if p_action='list' then
   perform conversation_data_private.authorities_current_v1(u,list_authorities);

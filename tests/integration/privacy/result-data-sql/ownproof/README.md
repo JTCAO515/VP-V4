@@ -69,3 +69,32 @@ target/device/backup acceptance remain with Main/sole TS integrator.
 list (the existing VP_PRIVACY_DB_TEST flag already enables the test). It is not
 applied; no shared registry, old migration, TS, Native or shared handoff file was
 changed by this SQL owner.
+
+## Signed Auth schema compatibility repair
+
+The original isolated signed Auth runs r1/r2 both failed owner-list HTTP503 and
+cleaned up successfully; they remain recorded by the sole TS producer in
+`lib/server/privacy/result-data/AUTH-SCHEMA-FINDING.md` at f0407c93. Earlier
+standalone PG success did not establish Supabase runtime compatibility.
+
+The application hash constant and complete original application columns/types/
+PKs/FKs/checks remain unchanged. Only the six actually observed managed operational
+namespaces (storage, realtime, _realtime, vault, supabase_functions,
+supabase_migrations) are outside that hash. They are not automatically trusted:
+all excluded-origin incoming application FKs, typed application identity columns,
+application regclass/webhook-table-OID consumers, and typed JSON links to actual
+application identities or permanent result fences reject support. Arbitrary
+UUID/title strings are not authority. New application schemas/tables and the
+original private schema remain hashed. There are no system-table grants, writer
+triggers, architecture/config changes or new source/attachment domains.
+
+The compatibility module tests nine explicit supported/rejected boundaries on a
+fresh migrated owned PG fixture, with original default-denied RPC privileges,
+actual source list/preview/erase and the same TS decoder. It restores its own
+simulated schemas and fixture grant. A separate ordinary no-system-schema
+source/preview/erase/receipt/recover check passes after the repair. Existing source,
+copy, finance, CAS, locks, Native and TTL evidence is reused unchanged; no full
+matrix was rerun. The runner includes this module before its original modules.
+`schema-compatibility.log/json` and `schema-compatible-rpc.log` are scoped PG
+proof only. The sole TS integrator must rerun the preserved actual signed Auth
+chain using this fixed SQL increment; no signed Auth success is claimed here.
