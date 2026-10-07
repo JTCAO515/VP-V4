@@ -1,45 +1,21 @@
 --- a/ios/VisePanda/VisePanda/Features/CommunitySubmission/NativeCommunityStore.swift
 +++ b/ios/VisePanda/VisePanda/Features/CommunitySubmission/NativeCommunityStore.swift
-@@ -2,6 +2,8 @@
- import Observation
- 
- @MainActor @Observable final class NativeCommunityStore {
+@@ -4,0 +5,2 @@
 +    var journalObservation: NativeJournalDataObservation?
 +
-     typealias Request = (Data) async throws -> Data
-     private(set) var actor: NativeCommunityActor?
-     private(set) var items: [NativeCommunityItem] = []
-@@ -98,7 +100,10 @@
-             guard generation == own, current() == actor, !Task.isCancelled else { return }
-             let outcome = try NativeCommunityOutcome.decode(bytes, actor: actor)
-             guard try outcome.terminal(for: command, recovery: false) else { throw NativeDataError.invalidResponse }
+@@ -100,0 +103,2 @@
 +            let journalEligible: Bool = { switch outcome { case .deleted: true; case .operation(_, let state, _): state == "committed"; default: false } }()
 +            let journalTicket = journalEligible ? journalObservation?.begin() : nil
-             do { try complete(durable) } catch { journalReady = false; storageReady = false; throw error }; pending = nil; apply(outcome, command: command)
+@@ -101,0 +106 @@
 +            journalObservation?.finish(journalTicket, command.operationID)
-         } catch { fail(error, own: own) }
-     }
-     func recover(abandon: Bool = false, current: () -> NativeCommunityActor?, complete: (NativeCommunityPending) throws -> Void, request: Request) async {
-@@ -112,7 +117,10 @@
-             guard generation == own, current() == actor, !Task.isCancelled else { return }
-             let outcome = try NativeCommunityOutcome.decode(bytes, actor: actor)
-             if try outcome.terminal(for: command, recovery: true) {
+@@ -114,0 +120,2 @@
 +                let journalEligible: Bool = { switch outcome { case .deleted: true; case .operation(_, let state, _): state == "committed"; default: false } }()
 +            let journalTicket = journalEligible ? journalObservation?.begin() : nil
-                 do { try complete(pending) } catch { journalReady = false; storageReady = false; throw error }; self.pending = nil; apply(outcome, command: command)
+@@ -115,0 +123 @@
 +                journalObservation?.finish(journalTicket, command.operationID)
-             } else {
-                 guard !abandon, case .operation(_, "absent", nil) = outcome else { throw NativeDataError.invalidResponse }
-                 receiptAbsent = true; absentDeadline = uptime() + 30; notice = "ABSENT_EXACT_RETRY_OR_ABANDON"
-@@ -131,7 +139,10 @@
-             guard generation == own, current() == actor, !Task.isCancelled else { return }
-             let outcome = try NativeCommunityOutcome.decode(bytes, actor: actor)
-             guard try outcome.terminal(for: command, recovery: false) else { throw NativeDataError.invalidResponse }
+@@ -134 +142,4 @@
 -            do { try complete(pending) } catch { journalReady = false; storageReady = false; throw error }; self.pending = nil; apply(outcome, command: command)
 +            let journalEligible: Bool = { switch outcome { case .deleted: true; case .operation(_, let state, _): state == "committed"; default: false } }()
 +            let journalTicket = journalEligible ? journalObservation?.begin() : nil
 +                do { try complete(pending) } catch { journalReady = false; storageReady = false; throw error }; self.pending = nil; apply(outcome, command: command)
 +                journalObservation?.finish(journalTicket, command.operationID)
-         } catch { fail(error, own: own) }
-     }
-     func export(current: () -> NativeCommunityActor?, request: Request) async {

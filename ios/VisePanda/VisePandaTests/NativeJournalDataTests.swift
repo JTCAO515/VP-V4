@@ -192,6 +192,16 @@ import Testing
         #expect(!exported.handedOff(operation: operation, current: actor, completed: true, failed: false))
         #expect(!FileManager.default.fileExists(atPath: url.path) && vault.read(service: key, owner: actor.scope.subject).1 == original)
         wall = base; monotonic = 200; exported.load(current: actor); exported.select(current: actor)
+        #expect(exported.export(current: actor))
+        let oldShare = NativeJournalDataShareSelection(id: try #require(exported.exportOperationID), actor: actor,
+            url: try #require(exported.exportURL(current: actor)))
+        exported.select(current: actor); #expect(exported.export(current: actor))
+        let newShare = NativeJournalDataShareSelection(id: try #require(exported.exportOperationID), actor: actor,
+            url: try #require(exported.exportURL(current: actor)))
+        #expect(!newShare.matches(oldShare, currentActor: actor, registered: true, operationID: exported.exportOperationID, currentURL: exported.exportURL(current: actor)))
+        #expect(newShare.matches(newShare, currentActor: actor, registered: true, operationID: exported.exportOperationID, currentURL: exported.exportURL(current: actor)))
+        #expect(!exported.handedOff(operation: oldShare.id, current: actor, completed: true, failed: false))
+        #expect(exported.exportOperationID == newShare.id && exported.delivery == "prepared")
         wall = base.addingTimeInterval(-1); #expect(!exported.export(current: actor))
         wall = base; exported.load(current: actor); exported.select(current: actor)
         monotonic = 199; #expect(!exported.export(current: actor))

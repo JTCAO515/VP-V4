@@ -1,22 +1,11 @@
 --- a/ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageOriginal.swift
 +++ b/ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageOriginal.swift
-@@ -159,6 +159,12 @@
- 
-     static func complete(_ original: NativeDataCoverageCommand, reply: NativeDataCoverageReceipt, using session: NativeSession, actor: NativeCommunitySafetyActor) throws {
-         guard original.matches(actor), let bytes = reply.result else { throw NativeDataError.staleSessionResponse }
+@@ -161,0 +162,6 @@
 +        let observedSources: [String: NativeJournalDataSourceID] = ["ugc": .community, "safety": .communitySafety,
 +            "publication": .experience, "case": .serviceOperation, "brief": .travelerBrief]
 +        let journalQualification = try? verify(reply, original: original, actor: actor)
 +        let journalCompleted = original.action == .delete && journalQualification?.terminal == true && journalQualification?.state == .scopedComplete
 +        let journalObserver = journalCompleted ? observedSources[original.moduleID].map { session.journalDataObservation($0) } : nil
 +        let journalTicket = journalObserver?.begin()
-         switch original.moduleID {
-         case "ugc":
-             let a = NativeCommunityActor(scope: actor.scope, sessionID: actor.sessionID)
-@@ -199,5 +205,6 @@
-         case "guide": break
-         default: throw NativeDataError.invalidResponse
-         }
+@@ -201,0 +208 @@
 +        journalObserver?.finish(journalTicket, original.operationID)
-     }
- }

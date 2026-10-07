@@ -1,17 +1,6 @@
 --- a/ios/VisePanda/VisePanda/Features/Trip/NativeTripStore.swift
 +++ b/ios/VisePanda/VisePanda/Features/Trip/NativeTripStore.swift
-@@ -430,12 +430,14 @@
-             let journal=try session.rememberTripSupportConfirmation(request,tripID:pending.trip.id,actor:actor)
-             let bytes=try await session.tripSupportConfirm(journal,actor:actor)
-             let result=try NativeSupportedTripConfirmReceipt.decode(bytes,tripID:pending.trip.id,request:request)
+@@ -432,0 +433 @@
 +            let journalObserver = session.journalDataObservation(.tripSupport), journalTicket = journalObserver.begin()
-             try session.completeTripSupportConfirmation(journal,receipt:result,actor:actor)
-             try support.confirmed(key:request.idempotencyKey,choices:choices)
-             self.pending=nil;self.draft=nil
-             try await self.loadList(session,actor)
-             try await self.loadSelected(session,actor)
-             guard self.detail?.trip.headVersion == result.resultingVersion,self.detail?.confirmationState=="confirmed" else { throw NativeDataError.invalidResponse }
+@@ -438,0 +440 @@
 +            journalObserver.finish(journalTicket, request.idempotencyKey)
-             self.notice="confirmed"
-         }
-     }

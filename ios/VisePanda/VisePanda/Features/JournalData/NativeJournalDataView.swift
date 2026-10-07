@@ -8,7 +8,7 @@ struct NativeJournalDataView: View {
     @Environment(\.scenePhase) private var phase
     @State private var store: NativeJournalDataStore?
     @State private var original: NativeJournalDataExportRecord?
-    @State private var share: ShareSelection?
+    @State private var share: NativeJournalDataShareSelection?
     private var actor: NativeCommunitySafetyActor? { phase == .active ? try? session.communitySafetyActor() : nil }
     private var registered: Bool { coverage.visibleModules(actor).contains { $0.id == "local_journals" && $0.location == .device } }
     private func t(_ zh: String, _ en: String) -> String { chinese ? zh : en }
@@ -88,7 +88,8 @@ struct NativeJournalDataView: View {
             NativeJournalDataActivity(currentURL: {
                 actor == item.actor && registered && store?.exportOperationID == item.id && store?.exportURL(current: actor) == item.url ? item.url : nil
             }) { completed, failed in
-                guard actor == item.actor, registered else { share = nil; return }
+                guard share?.matches(item, currentActor: actor, registered: registered,
+                    operationID: store?.exportOperationID, currentURL: store?.exportURL(current: actor)) == true else { return }
                 let accepted = store?.handedOff(operation: item.id, current: actor, completed: completed, failed: failed) == true
                 coverage.recordDevice(moduleID: "local_journals", action: .export, operationID: item.id.uuidString,
                     selection: accepted ? t("此本机文件已获系统交付确认", "System delivery confirmed for this device file")
@@ -133,7 +134,6 @@ struct NativeJournalDataView: View {
             }
         }
     }
-    private struct ShareSelection: Identifiable { let id: UUID; let actor: NativeCommunitySafetyActor; let url: URL }
 }
 
 /// Source-specific adapter to the original Place Store's pure receipt-read path.
@@ -272,5 +272,16 @@ private struct NativeJournalDataActivity: UIViewControllerRepresentable {
     }
     func updateUIViewController(_ controller: UIActivityViewController, context: Context) {
         if currentURL() == nil { controller.dismiss(animated: true) }
+    }
+}
+
+/// The current UI selection must match before a completion callback writes any state or coverage.
+struct NativeJournalDataShareSelection: Identifiable, Equatable {
+    let id: UUID
+    let actor: NativeCommunitySafetyActor
+    let url: URL
+    func matches(_ captured: Self, currentActor: NativeCommunitySafetyActor?, registered: Bool,
+                 operationID: UUID?, currentURL: URL?) -> Bool {
+        self == captured && actor == currentActor && registered && id == operationID && url == currentURL
     }
 }
