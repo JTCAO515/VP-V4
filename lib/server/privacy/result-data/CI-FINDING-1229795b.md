@@ -153,3 +153,12 @@ conversation-data-sql/guide-invalidation-compat.test.mjs alongside originalsourc
 audit. Existing VP_CONVERSATION_SOURCE_AUDIT already enables it. No new env/native
 step/shard/helper/timeout change. Apply-check PASS, shared registry NOT applied.
 Original Context/Profile precise ownership needs Main release/grant; no wholefile.
+
+Main962014 granted the ONE guide PG registration line after current Profile
+registry owner0f114 explicit clean/no-inflight/planned/queued/successor release.
+Applied actualfile alongside source-audit using its existing env; candidate retired.
+Classifier zero problems; new filepostgres; existing32 Native steps/indexes and
+all env/lane/shard/helper/timeout/strict gates remain unchanged. Original required
+registration governance11PASS0FAIL/SKIP after this additive line. No already-green
+behavioral matrix rerun. Same PR669 receives one new combined head for renewed
+exact formal/all applicableCI/protectedmatchmerge; old122 CI FAIL remains factual.
