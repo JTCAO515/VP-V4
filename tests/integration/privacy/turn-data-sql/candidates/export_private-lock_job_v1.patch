@@ -1,5 +1,5 @@
---- tests/integration/privacy/turn-data-sql/candidates/export_private-lock_job_v1.before.sql	2026-10-08 00:28:01
-+++ tests/integration/privacy/turn-data-sql/candidates/export_private-lock_job_v1.after.sql	2026-10-08 00:28:01
+--- tests/integration/privacy/turn-data-sql/candidates/export_private-lock_job_v1.before.sql	2026-10-08 00:44:35
++++ tests/integration/privacy/turn-data-sql/candidates/export_private-lock_job_v1.after.sql	2026-10-08 00:44:35
 @@ -21,6 +21,7 @@
   if export_private.entitlement_source_current_v1(j) is distinct from true then return null;end if;
   if pdf_intake_private.export_current_v1(j) is distinct from true then return null;end if;

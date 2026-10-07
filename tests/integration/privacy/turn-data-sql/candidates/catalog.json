@@ -1,5 +1,5 @@
 {
-  "catalogHash": "9d8182b5f7ca3eda80a8a2eea3d0611a9341e2c62537d28507c242d8bd48b0c3",
+  "catalogHash": "75695f209c10f7d1486505632ada19c18337bfa099680caad726a3984d666ec9",
   "ownTables": [
     {
       "columns": [
@@ -230,6 +230,11 @@
           "decision",
           "jsonb",
           false
+        ],
+        [
+          "source_identity_keys",
+          "jsonb",
+          true
         ]
       ],
       "relation": "turn_data_private.operations_v1",
@@ -251,6 +256,7 @@
         "CHECK ((scope = ANY (ARRAY['turn-sensitive-data/1'::text, 'turn-delete-progress/1'::text])))",
         "CHECK (((jsonb_typeof(source_authorities) = 'array'::text) AND (jsonb_array_length(source_authorities) <= 100)))",
         "CHECK ((source_digest ~ '^[a-f0-9]{64}$'::text))",
+        "CHECK (((jsonb_typeof(source_identity_keys) = 'array'::text) AND (jsonb_array_length(source_identity_keys) <= 4100)))",
         "CHECK ((state = ANY (ARRAY['previewed'::text, 'erased'::text])))"
       ]
     },
@@ -2117,6 +2123,11 @@
           "decision",
           "jsonb",
           false
+        ],
+        [
+          "source_identity_keys",
+          "jsonb",
+          true
         ]
       ],
       "constraints": [
@@ -2137,6 +2148,7 @@
         "CHECK ((scope = ANY (ARRAY['turn-sensitive-data/1'::text, 'turn-delete-progress/1'::text])))",
         "CHECK (((jsonb_typeof(source_authorities) = 'array'::text) AND (jsonb_array_length(source_authorities) <= 100)))",
         "CHECK ((source_digest ~ '^[a-f0-9]{64}$'::text))",
+        "CHECK (((jsonb_typeof(source_identity_keys) = 'array'::text) AND (jsonb_array_length(source_identity_keys) <= 4100)))",
         "CHECK ((state = ANY (ARRAY['previewed'::text, 'erased'::text])))"
       ]
     },
@@ -4158,6 +4170,7 @@
     "turn_private.text_dispatches",
     "turn_private.work",
     "public.turns",
+    "public.trip_proposals",
     "turn_private.assistant_goal_trip_links",
     "turn_private.assistant_goal_trip_receipts",
     "knowledge_review_private.source_impact_sets",
@@ -4198,30 +4211,30 @@
     {
       "identity": "profile_data_private.sources_v1()",
       "oldDefinitionMd5": "5811d9fda1b78cf6916dff6375347e74",
-      "newDefinitionMd5": "4ef54953d6096e209dc580e2666fa377",
+      "newDefinitionMd5": "8b91f04b63b4957b6894fbce1e1fa3f8",
       "oldDefinitionSha": "613753f36338ac00c95590c79f7e4402a6c1ada40558a2cfcb501d0ffd675bef",
-      "newDefinitionSha": "dfe586c4af24e2a2f41553155b1843df25b63c8166968a04ce01fe824bfb714a"
+      "newDefinitionSha": "5d41fee213b848d3a3ada4daaa9df9791538e69b7e2e1a5619985a0ee1b06eb7"
     },
     {
       "identity": "profile_data_private.schema_v1()",
       "oldDefinitionMd5": "16c33fe11c041ffb6aa7de088e443bd0",
-      "newDefinitionMd5": "d2dac318c6cb6013af5eb8ef6fe97f00",
+      "newDefinitionMd5": "dd01612adb490d2499b34b09e3302d58",
       "oldDefinitionSha": "a0326e7a290dcee5b16029e999880b9c4d68e55b6d0f3e36b6086394c183f72f",
-      "newDefinitionSha": "56cd7f861ab09c80e29c3d25f095371f507be82db2866d7e42e536ee127fb424"
+      "newDefinitionSha": "0fac95584b666bc309f93cc4775f51ef057419a0999e70cfb15899280da6ed82"
     },
     {
       "identity": "result_data_private.schema_supported_v1()",
       "oldDefinitionMd5": "990eca65da11db891a8c3af09a8750e6",
-      "newDefinitionMd5": "4524b26fa3027814a86fafad998d1b30",
+      "newDefinitionMd5": "cf3d9ccb3e67706194fbbc2d44272b39",
       "oldDefinitionSha": "c6fba9a28374f561cb4e369ac577c49f9edfa46e2093a50c62d750cbc53f0f1f",
-      "newDefinitionSha": "a58fd2cd9e5b4301575e9d9574cedef7f231b8a47475d4eed2a35e62f2f4625a"
+      "newDefinitionSha": "b1f4dcc9fa99083503d56f5410539ec0bec71e41f1459a58cc08846fc7863f02"
     },
     {
       "identity": "export_private.profile_hooks_valid_v1()",
       "oldDefinitionMd5": "de7f9b03d6ae7f14db3e93baff9c2514",
-      "newDefinitionMd5": "5851e7a70d6221011266d1cc0a5041e4",
+      "newDefinitionMd5": "bd66034a0392385d53f2f3c29b8a5c57",
       "oldDefinitionSha": "48e3528087da99ffbb35bc7480813f66fc60ba3e1af347d47d88edb15b8a1f2a",
-      "newDefinitionSha": "1f41f0d3cbc5bc61e7d6bfe80e022bc04c08085e81f012d28f09fa516c5f43e2"
+      "newDefinitionSha": "342e374dbd732e341415ce97835de32b1adc5331b3ac502f058691906e8fe9c1"
     }
   ]
 }
