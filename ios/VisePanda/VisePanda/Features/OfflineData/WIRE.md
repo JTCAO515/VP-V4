@@ -1,6 +1,6 @@
 # Selected Trip device offline data — ALL1 / ALL2
 
-Sole implementation owner: current OfflineData chat; isolated vpj58-native-offline-data-20261007 based on main78857. One local user result, no server/SQL/privacy-executor replacement.
+Sole implementation owner: 01a116e8-4daa-7d93-ac2c-6304c2365ce6; isolated vpj58-native-offline-data-20261007 based on main78857, with normal Git merge of fixed Profile5a6fd19c dependency (not yet main at local verification). One local user result, no server/SQL/privacy-executor replacement.
 
 ## Actual source graph and bounds
 
@@ -24,4 +24,7 @@ NativeOfflineTripStore is MainActor and all scoped mutation transactions are syn
 
 ## Necessary verification
 
-Affected synthetic source/permit expiry/nonce/generation, two-Store/restart late writer, physical deletion/index absence, immutable receipt/retry/CAS and actor/scene/file TTL behavior; affected native build/unit tests and repository required PR checks. No all-App/UI/device matrix or target activation. Actual iOS protection/physical phone/system user sharing/backup restore remain UNRUN until permitted and observed. Shared source changes remain candidate patches until original owners explicitly release and Main grants exact hunks.
+Affected synthetic source/permit expiry/nonce/generation, two-Store/restart late writer, physical deletion/index absence, immutable receipt/retry/CAS and actor/scene/file TTL behavior; affected native build/unit tests and repository required PR checks. No all-App/UI/device matrix or target activation. Actual iOS protection/physical phone/system user sharing/backup restore remain UNRUN until permitted and observed. All shared hunks were released by their original/current owners and precisely granted by Main before writing; Session/PBX are additive on fixed Profile5a, preserving all original memberships/cleanup order. Three-file removal fault injection defaults to the original FileManager implementation and is used only by owned tests to verify interruption recovery.
+
+
+Local verification r3: native unsigned generic Simulator build PASS; complete ad-hoc test build/signature verification PASS; owned iOS26.5/iPhone17Pro Simulator runtime new OfflineData10/10 PASS, original OfflineTrip5 PASS/1 SKIP (the unchanged fixed TypeScript golden environment was not supplied), original TripState16/16 PASS. No failures; owned Simulator shut down/deleted and environment metadata confirms deletion. Exact tested source hashes and original test log are in artifacts/VPJ-58/native-offline-data. pnpm docs:check and git diff --check PASS. Earlier r1 preflight without DEVELOPER_DIR and r2 own default-function actor conversion compilation FAIL were corrected, never promoted to PASS. No target/device/sharing/backup claim follows from synthetic tests.

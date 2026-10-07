@@ -33,7 +33,7 @@ import Observation
     init(original: NativeOfflineTripStore, root: URL? = nil, verifier: NativeOfflinePermitVerifier = .installed,
          remove: ((URL) throws -> Void)? = nil,
          uptime: @escaping () -> TimeInterval = { ProcessInfo.processInfo.systemUptime },
-         now: @escaping () -> Date = Date.init, boot: @escaping () -> String? = NativeOfflineBootIdentity.current) {
+         now: @escaping () -> Date = Date.init, boot: @escaping () -> String? = { NativeOfflineBootIdentity.current() }) {
         self.original = original; self.verifier = verifier; self.uptime = uptime; self.now = now; self.boot = boot
         files = NativeExperienceExportFile(root: root ?? Self.exportRoot, remove: remove, uptime: uptime, now: now)
         storageReady = files.ready

@@ -17,6 +17,7 @@ struct NativeOfflineTodayPanel:View {
     @State private var busy=false
     @State private var generation=UUID()
     @State private var revokeOperation:String?
+    @State private var storageGeneration:Int?
     private var session:NativeSession{settings.nativeSession}
     private var chinese:Bool{settings.selectedLocale == .zh}
     private func t(_ zh:String,_ en:String)->String{chinese ? zh:en}
@@ -42,7 +43,7 @@ struct NativeOfflineTodayPanel:View {
             TextField(t("明确输入的新项目文字","Explicitly enter new item text"),text:$title,axis:.vertical).lineLimit(2...4)
             Button(t("保存用户编辑草稿（不提交）","Save user-edit draft (no submission)")){saveLocal()}.disabled(busy || namespace==nil)
                 .accessibilityIdentifier("today.offline.draft.save")
-            if let local {
+            if let local,storageCurrent {
                 Text(t("草稿基于版本","Draft base version")+" \(local.baseVersion) · "+local.updatedAt.formatted()).font(.caption)
                 Button(t("回网核对，加载到原行程草稿编辑","Recheck online and load into existing Trip draft editor")){
                     Task {
@@ -69,16 +70,27 @@ struct NativeOfflineTodayPanel:View {
         }
         .task(id:Key(scope:session.retainedDataScope,online:session.dataScope,active:phase == .active)){readSaved();await revalidate() }
         .onChange(of:session.retainedDataScope){_,_ in generation=UUID();payload=nil;leaseRecord=nil;local=nil;version=nil;savedAt=nil;date="";title="";notice=nil}
+        .task(id:Key(scope:session.retainedDataScope,online:session.dataScope,active:phase == .active)){
+            while !Task.isCancelled,phase == .active {
+                try? await Task.sleep(for:.seconds(1))
+                if !Task.isCancelled,storageGeneration != nil,!storageCurrent {generation=UUID();readSaved()}
+            }
+        }
         .onChange(of:phase){_,phase in if phase != .active{payload=nil}}
     }
     private var cacheTimeCurrent:Bool {
-        guard let value=leaseRecord else{return false}
+        guard storageCurrent,let value=leaseRecord else{return false}
         return value.bootIdentity==NativeOfflineBootIdentity.current() && Date()>=value.lastObservedAt && Date()<value.expiresAt && ProcessInfo.processInfo.systemUptime>=value.lastObservedUptime && ProcessInfo.processInfo.systemUptime<value.deadlineUptime
     }
+    private var storageCurrent:Bool {
+        guard let namespace,let scope=session.retainedDataScope,let storageGeneration else{return false}
+        return (try? session.offlineTrips.offlineDataGeneration(namespace,scope:scope))==storageGeneration
+    }
     private func readSaved(){
-        payload=nil;leaseRecord=nil;local=nil;version=nil;savedAt=nil
+        payload=nil;leaseRecord=nil;local=nil;version=nil;savedAt=nil;storageGeneration=nil
         guard phase == .active,let namespace,let scope=session.retainedDataScope else{return}
         do {
+            storageGeneration=try session.offlineTrips.offlineDataGeneration(namespace,scope:scope)
             local=try session.offlineTrips.readUserDraft(namespace,scope:scope)
             let meta=try session.offlineTrips.cachedMetadata(namespace,scope:scope);version=meta?.headVersion;savedAt=meta?.savedAt
             if let valid=try? session.offlineTrips.readConfirmedText(namespace,scope:scope,verifier:.installed){leaseRecord=valid.0;payload=valid.1}
@@ -86,13 +98,14 @@ struct NativeOfflineTodayPanel:View {
     }
     private func revalidate()async {
         guard phase == .active,let scope=session.dataScope,let namespace else{return}
+        guard let storageBasis=try? session.offlineTrips.offlineDataGeneration(namespace,scope:scope) else{return}
         let own=generation
         do {
             let bytes=try await session.tripRequest(path:"api/trips/native/v2/"+namespace.tripID,method:"GET")
-            guard generation==own,session.dataScope==scope,!Task.isCancelled else{return}
+            guard generation==own,session.dataScope==scope,(try? session.offlineTrips.offlineDataGeneration(namespace,scope:scope))==storageBasis,!Task.isCancelled else{return}
             let detail=try JSONDecoder().decode(NativeTripDetail.self,from:bytes)
             let archiveBytes=try await session.tripRequest(path:"api/trips/native/v2/"+namespace.tripID+"/archive",method:"GET")
-            guard generation==own,session.dataScope==scope,!Task.isCancelled else{return}
+            guard generation==own,session.dataScope==scope,(try? session.offlineTrips.offlineDataGeneration(namespace,scope:scope))==storageBasis,!Task.isCancelled else{return}
             let archive=try JSONDecoder().decode(NativeTripArchiveReply.self,from:archiveBytes)
             guard detail.trip.id==namespace.tripID,archive.version==2 else{throw NativeDataError.invalidResponse}
             if archive.archive != nil {try session.offlineTrips.removeTrip(namespace,scope:scope);readSaved();return}
@@ -100,12 +113,12 @@ struct NativeOfflineTodayPanel:View {
             guard let version else{return}
             let nonce=UUID().uuidString.lowercased()
             let proof=try await session.offlineTripRead(tripID:namespace.tripID,headVersion:version,nonce:nonce)
-            guard generation==own,session.dataScope==scope,!Task.isCancelled else{return}
+            guard generation==own,session.dataScope==scope,(try? session.offlineTrips.offlineDataGeneration(namespace,scope:scope))==storageBasis,!Task.isCancelled else{return}
             // Online revalidation never renews a cached deadline or saves new bytes.
             let checked=try NativeOfflinePermitVerifier.installed.verify(proof,namespace:namespace,headVersion:version,nonce:nonce)
             guard checked.namespace==namespace,let previous=try session.offlineTrips.cachedMetadata(namespace,scope:scope),checked.generation==previous.generation,checked.policyID==previous.policyID,checked.policyRevision==previous.policyRevision,checked.coverage==previous.coverage,NativeOfflineTripNamespace.digest(try NativeOfflineCanonicalJSON.data(JSONSerialization.jsonObject(with:JSONEncoder().encode(checked.payload))))==previous.payloadDigest else{throw NativeOfflineTripError.authorityRequired}
         }catch{
-            guard generation==own,session.dataScope==scope else{return}
+            guard generation==own,session.dataScope==scope,(try? session.offlineTrips.offlineDataGeneration(namespace,scope:scope))==storageBasis else{return}
             if case NativeDataError.server(let code)=error,["FORBIDDEN","NOT_FOUND","TRIP_DELETED"].contains(code){try? session.offlineTrips.removeTrip(namespace,scope:scope)}
             else{try? session.offlineTrips.removeConfirmedText(namespace,scope:scope)}
             readSaved()
@@ -126,17 +139,19 @@ struct NativeOfflineTodayPanel:View {
     private func saveLocal(){
         guard let namespace,let scope=session.retainedDataScope,let base=currentDetail?.trip.headVersion ?? version else{notice="basis";return}
         do {
+            let ticket=try session.offlineTrips.beginOfflineDataWrite(namespace,scope:scope)
             let dayID=local?.operations.first(where:{$0.kind == .upsertDay})?.dayId ?? UUID().uuidString
             let itemID=local?.operations.first(where:{$0.kind == .upsertItem})?.itemId ?? UUID().uuidString
             let operations:[NativeTripOperation]=[.init(kind:.upsertDay,dayId:dayID,date:date),.init(kind:.upsertItem,title:title.trimmingCharacters(in:.whitespacesAndNewlines),dayId:dayID,itemId:itemID)]
             var draft=try local ?? NativeOfflineTripDraft(namespace:namespace,baseVersion:base,operations:operations)
             draft.operations=operations;draft.updatedAt=Date()
-            try session.offlineTrips.saveUserDraft(draft,scope:scope);notice="draft";readSaved()
+            try session.offlineTrips.saveUserDraft(draft,scope:scope,ticket:ticket);notice="draft";readSaved()
         }catch{notice="unavailable"}
     }
     private func saveSnapshot()async {
         guard !busy,let scope=session.dataScope,let namespace,let detail=currentDetail,detail.trip.id==tripID,detail.confirmationState=="confirmed" else{return}
-        let nonce=UUID().uuidString.lowercased(),own=generation,started=ProcessInfo.processInfo.systemUptime;busy=true
+        guard let ticket=try? session.offlineTrips.beginOfflineDataWrite(namespace,scope:scope) else{notice="unavailable";return}
+        let nonce=ticket.nonce,own=generation;busy=true
         defer{if generation==own{busy=false}}
         do {
             let bytes=try await session.offlineTripRead(tripID:tripID.lowercased(),headVersion:detail.trip.headVersion,nonce:nonce)
@@ -146,7 +161,7 @@ struct NativeOfflineTodayPanel:View {
                 notice="authority";return
             }
             let permit=try NativeOfflinePermitVerifier.installed.verify(bytes,namespace:namespace,headVersion:detail.trip.headVersion,nonce:nonce)
-            try session.offlineTrips.saveConfirmedText(permit,scope:scope,requestStarted:started);notice="saved";readSaved()
+            try session.offlineTrips.saveConfirmedText(permit,scope:scope,ticket:ticket);notice="saved";readSaved()
         }catch{guard generation==own,session.dataScope==scope else{return};notice="authority"}
     }
     private func message(_ notice:String)->String {
