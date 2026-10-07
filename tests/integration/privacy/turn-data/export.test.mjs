@@ -11,6 +11,8 @@ const group=(s,r)=>s.sources.find(v=>v.relation===r).rows;
 test('all actual groups and original input/output are one source-bound owner snapshot',()=>{
   const v=page();assert.ok(decode(v));assert.equal(decode(v).items[0].sources.length,35);
   assert.equal(group(decode(v).items[0],'turn_private.text_content')[0].input_text,'真实用户输入');
+  const original=snapshot();group(original,'turn_private.assistant_messages').push({id:id(5),owner_id:actor.ownerId,conversation_id:id(8),sequence:'1',idempotency_key:id(60),request_digest:'a'.repeat(64),policy_id:id(20),consent_id:id(21),locale:'en',input_text:'Original independent input',relationship:'independent_question',goal_id:null,scope_version:null,task_id:null,parent_message_id:null,turn_id:id(4),created_at:new Date(now-100).toISOString()});original.sourceRows.data++;
+  assert.ok(decode(page(original)));group(original,'turn_private.assistant_messages')[0].task_id=id(99);assert.equal(decode(page(original)),null);
   for(const mutate of [s=>s.sources.pop(),s=>s.sources.reverse(),s=>group(s,'public.turns')[0].owner_id=id(99),s=>group(s,'public.turns')[0].secret='secret',
     s=>s.sourceRows.data++,s=>s.sourceAuthorities=[],s=>s.sources[0].rows.push({}),s=>group(s,'turn_private.text_content')[0].thread_id='unknown']) {
     const s=snapshot();mutate(s);assert.equal(decode(page(s)),null);
