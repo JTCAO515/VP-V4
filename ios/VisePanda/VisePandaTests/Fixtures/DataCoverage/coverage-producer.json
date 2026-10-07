@@ -2,7 +2,7 @@
   "evidence": "synthetic closed protocol fixture; not target/runtime capability",
   "catalog": {
     "schemaVersion": "data-coverage/1",
-    "catalogVersion": "data-coverage-catalog/2026-10-06.7",
+    "catalogVersion": "data-coverage-catalog/2026-10-07.8",
     "actorId": "12345678-1234-4123-8123-123456789abc",
     "sessionId": "22345678-1234-4123-8123-123456789abc",
     "mobileEpoch": 1,
@@ -57,18 +57,33 @@
       {
         "id": "results",
         "location": "server",
-        "version": "core-export-d2/1",
-        "scope": "core-export-d2/1",
+        "version": "result-data/1",
+        "scope": "result-data/1",
         "exportHandler": "core",
-        "deleteHandler": null,
+        "deleteHandler": "result_data",
         "selection": "owner",
-        "capacity": "100 rows/page; 1000 pages/module; 8MiB artifact; original protected download/expiry",
+        "capacity": "one explicitly selected owner artifact and all revisions/events; bounded4100 graph/1MB; fixed30s source CAS; active/shared/cross-result/domain copies rejected; own1..20 preview metadata exit",
         "retention": [
-          "original_module_retention",
-          "external_copies_not_recallable"
+          "original_conversations_goals_messages_tasks_turns_threads",
+          "confirmed_trip_content_history_proposals",
+          "explicit_memory_profiles_receipts_consents",
+          "original_source_results_and_evidence",
+          "financial_budget_dispatch_and_source_records",
+          "permanent_artifact_publication_execution_journal_and_operation_fences",
+          "original_source_policy_consent_authority_ids",
+          "selection_actor_epoch_hash_time_operation_fences",
+          "immutable_minimal_decisions_and_identity_tombstones"
         ],
         "missing": [
-          "scoped_delete_not_registered"
+          "cross_result_or_conversation_source_dependents_rejected",
+          "applied_or_unapplied_proposal_and_decision_dependencies_rejected",
+          "active_shared_or_unqualified_copies_rejected",
+          "brief_guide_notification_knowledge_and_core_export_copies_rejected",
+          "provider_and_external_copies_not_erased",
+          "backup_restore_and_old_device_acceptance_unverified",
+          "source_results_not_erased",
+          "unselected_operations",
+          "external_copies"
         ]
       },
       {
@@ -630,10 +645,10 @@
     ],
     "allUserDataCompleted": false
   },
-  "requestBytes": "{\"schemaVersion\":\"data-coverage/1\",\"catalogVersion\":\"data-coverage-catalog/2026-10-06.7\",\"actorId\":\"12345678-1234-4123-8123-123456789abc\",\"sessionId\":\"22345678-1234-4123-8123-123456789abc\",\"mobileEpoch\":1,\"moduleId\":\"ugc\",\"moduleVersion\":\"community-j1/1\",\"operationId\":\"32345678-1234-4123-8123-123456789abc\",\"action\":\"export\",\"phase\":\"execute\",\"confirmed\":true,\"tripId\":null,\"commandBytes\":\"{\\\"action\\\":\\\"export\\\"}\"}",
+  "requestBytes": "{\"schemaVersion\":\"data-coverage/1\",\"catalogVersion\":\"data-coverage-catalog/2026-10-07.8\",\"actorId\":\"12345678-1234-4123-8123-123456789abc\",\"sessionId\":\"22345678-1234-4123-8123-123456789abc\",\"mobileEpoch\":1,\"moduleId\":\"ugc\",\"moduleVersion\":\"community-j1/1\",\"operationId\":\"32345678-1234-4123-8123-123456789abc\",\"action\":\"export\",\"phase\":\"execute\",\"confirmed\":true,\"tripId\":null,\"commandBytes\":\"{\\\"action\\\":\\\"export\\\"}\"}",
   "receipt": {
     "schemaVersion": "data-coverage/1",
-    "catalogVersion": "data-coverage-catalog/2026-10-06.7",
+    "catalogVersion": "data-coverage-catalog/2026-10-07.8",
     "actorId": "12345678-1234-4123-8123-123456789abc",
     "sessionId": "22345678-1234-4123-8123-123456789abc",
     "mobileEpoch": 1,
@@ -642,7 +657,7 @@
     "operationId": "32345678-1234-4123-8123-123456789abc",
     "action": "export",
     "phase": "execute",
-    "requestDigest": "ee85bb041704b82711affa81716a8746eee8cad0a7ed5c76d870614ed1031a0d",
+    "requestDigest": "4515ee59f8c6bada61eb9355f186bf1f59f2cf659f4afd13fb6347d200a55e63",
     "state": "scoped_complete",
     "reason": "NONE",
     "result": {

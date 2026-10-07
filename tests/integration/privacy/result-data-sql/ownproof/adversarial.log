@@ -1,0 +1,24 @@
+✔ all historical revisions/withdrawal and bigint event IDs erase; unselected result and every source full row retained (1004.469375ms)
+✔ historical decision JSON and result selfFK blockers protect every dependent, including withdrawn (707.349292ms)
+✔ typed plural refs and task_result notifications block, generic reminder resultId has no result authority (630.516958ms)
+✔ Brief original request BYTEA is parsed; malformed original bytes fail closed (345.51425ms)
+✔ full-row CAS detects retained source change and reverse dependency insertion before mutation (845.790458ms)
+✔ ordinary original source authority revocation, stale epoch, recent reauth and foreign roots fail closed (715.540917ms)
+✔ finite own progress clears selected transients and preserves exact immutable receipts and enumerable fences (1624.854083ms)
+✔ six impact relations close across both sides of cross-set item/receipt/delivery/projection links; hashes include connected unselected set (661.393417ms)
+✔ unregistered incoming cascade FK and complete touched-byte overflow block without partial eligible graph (573.378334ms)
+✔ ordinary same-id publication preserves original 23505; shared result guards add no producer serialization (1032.350667ms)
+✔ eraser exclusive/NOWAIT conflicts with real incoming writer; source remains; permanent OLD planning parent cannot move after erase (1608.771959ms)
+✔ absolute 30s lifetime rollback after actual delete effects; committed ACK recovers unchanged past TTL (31173.319958ms)
+✔ original message source receipt producer blocks result erasure; source receipts and conversation remain unchanged (412.100292ms)
+✔ private operation immutable fields, caller GUC, session deletion and current-session inventory preserve permanent state (916.7815ms)
+✔ actual confirmed Trip content/history/proposals and used explicit Memory profile/receipts/consent remain byte-identical (884.405042ms)
+✔ actual fifth proposal-reference metadata is decoded by sole corrected TS; selected proposal source is blocked and unchanged (940.336833ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 44143.279667

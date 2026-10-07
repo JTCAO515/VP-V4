@@ -1,0 +1,21 @@
+{
+  "kind": "actual PG SQL claims, no signed Auth/target/provider",
+  "passed": [
+    "all historical revisions/withdrawal and bigint event IDs erase; unselected result and every source full row retained",
+    "historical decision JSON and result selfFK blockers protect every dependent, including withdrawn",
+    "typed plural refs and task_result notifications block, generic reminder resultId has no result authority",
+    "Brief original request BYTEA is parsed; malformed original bytes fail closed",
+    "full-row CAS detects retained source change and reverse dependency insertion before mutation",
+    "ordinary original source authority revocation, stale epoch, recent reauth and foreign roots fail closed",
+    "finite own progress clears selected transients and preserves exact immutable receipts and enumerable fences",
+    "six impact relations close across both sides of cross-set item/receipt/delivery/projection links; hashes include connected unselected set",
+    "unregistered incoming cascade FK and complete touched-byte overflow block without partial eligible graph",
+    "ordinary same-id publication preserves original 23505; shared result guards add no producer serialization",
+    "eraser exclusive/NOWAIT conflicts with real incoming writer; source remains; permanent OLD planning parent cannot move after erase",
+    "absolute 30s lifetime rollback after actual delete effects; committed ACK recovers unchanged past TTL",
+    "original message source receipt producer blocks result erasure; source receipts and conversation remain unchanged",
+    "private operation immutable fields, caller GUC, session deletion and current-session inventory preserve permanent state",
+    "actual confirmed Trip content/history/proposals and used explicit Memory profile/receipts/consent remain byte-identical",
+    "actual fifth proposal-reference metadata is decoded by sole corrected TS; selected proposal source is blocked and unchanged"
+  ]
+}

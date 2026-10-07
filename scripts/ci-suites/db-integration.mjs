@@ -116,6 +116,8 @@ export const LANES = {
           "tests/integration/privacy/coverage-progress-sql/postgres.test.mjs",
           "tests/integration/privacy/archive-data-sql/postgres.test.mjs",
           "tests/integration/privacy/conversation-data-sql/source-audit.test.mjs",
+          "tests/integration/privacy/conversation-data-sql/guide-invalidation-compat.test.mjs",
+          "tests/integration/privacy/result-data-sql/postgres.test.mjs",
           "tests/integration/translate/history.test.mjs",
           "tests/integration/trip/archive.test.mjs",
           "tests/integration/trip/lifecycle-postgres.test.mjs",
@@ -230,6 +232,7 @@ export const LANES = {
       { name: "native-memory-http", runner: node("tests/integration/turn/run-native-memory-http.mjs"), files: ["tests/integration/turn/native-memory-http.test.mjs"] },
       { name: "selected-source-auth-http", runner: node("tests/integration/turn/run-selected-source-auth-http.mjs"), files: ["tests/integration/turn/selected-source-auth-http.test.mjs"] },
       { name: "planning-intake-http", runner: node("tests/integration/turn/run-planning-intake-http.mjs"), files: ["tests/integration/turn/planning-intake-http.test.mjs"] },
+      { name: "result-data-http", runner: node("tests/integration/privacy/result-data/run-http.mjs", "--port-base", "63080"), files: ["tests/integration/privacy/result-data/auth-http.test.mjs"] },
     ],
   },
   "supabase-http-ops": {

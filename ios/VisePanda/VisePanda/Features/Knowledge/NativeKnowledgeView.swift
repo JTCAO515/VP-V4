@@ -290,6 +290,10 @@ private struct NativeLibraryResultDetail: View {
                 return bytes
             }
         }
+        .onChange(of: session.resultDataErasure?.id) { _, _ in
+            guard let erased = session.resultDataErasure, (try? session.communitySafetyActor()) == erased.actor else { return }
+            store.applyResultErasure(erased)
+        }
         .onChange(of: scenePhase) { _, phase in if phase != .active { store.clear() } }
         .onDisappear { store.clear() }
     }
@@ -493,6 +497,13 @@ final class NativeResultStore {
     private(set) var result: NativeResultPayload?
     private(set) var state = "idle"
     private(set) var scope: NativeDataScope?
+    private var erasedResultIDs = Set<String>()
+    private var erasureScope: NativeDataScope?
+    func applyResultErasure(_ erased: NativeResultDataErasure) {
+        guard scope == erased.scope else { return }
+        erasureScope = erased.scope; erasedResultIDs.formUnion(erased.artifactIDs)
+        if result?.artifactId.map({ erased.artifactIDs.contains($0) }) == true { result = nil; state = "unavailable"; deadline = 0 }
+    }
     private var generation = UUID()
     private var deadline: TimeInterval = 0
     private let uptime: () -> TimeInterval
@@ -509,6 +520,7 @@ final class NativeResultStore {
 
     func visibleResult(_ currentScope: NativeDataScope?, expectedTripID: String? = nil) -> NativeResultPayload? {
         guard isCurrent(currentScope), let result, result.kind == "result_artifact",
+              result.artifactId.map({ !erasedResultIDs.contains($0) }) == true,
               expectedTripID == nil || result.source?.tripId == expectedTripID else { return nil }
         return result
     }
@@ -573,6 +585,7 @@ final class NativeResultStore {
     func load(scope requested: NativeDataScope?, fetch: () async throws -> Data) async {
         clear()
         guard let requested, !Task.isCancelled else { return }
+        if erasureScope != requested { erasureScope = requested; erasedResultIDs = [] }
         scope = requested; state = "loading"
         let own = generation, started = uptime()
         do {
@@ -580,6 +593,7 @@ final class NativeResultStore {
             guard !Task.isCancelled, generation == own else { return }
             let envelope = try JSONDecoder().decode(NativeResultEnvelope.self, from: bytes)
             guard envelope.version == 1, envelope.data.valid, uptime() - started < 30 else { throw NativeDataError.invalidResponse }
+            guard envelope.data.artifactId.map({ !erasedResultIDs.contains($0) }) ?? true else { throw NativeDataError.staleSessionResponse }
             result = envelope.data; state = envelope.data.kind; deadline = started + 30
         } catch {
             guard generation == own else { return }

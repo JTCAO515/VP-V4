@@ -1,0 +1,211 @@
+{
+  "kind": "actual original 9800 source-free audit INSERT; owned PG only, 5s timeout",
+  "phase": "before",
+  "count": 9800,
+  "code": 0,
+  "elapsedMs": 2247.6790419999998,
+  "explain": "Insert on audit  (cost=0.00..147.00 rows=0 width=0) (actual time=2138.986..2138.986 rows=0 loops=1)\n  Buffers: shared hit=383954 dirtied=370 written=370\n  ->  Function Scan on generate_series  (cost=0.00..147.00 rows=9800 width=164) (actual time=0.311..10.499 rows=9800 loops=1)\nPlanning:\n  Buffers: shared hit=9\nPlanning Time: 0.051 ms\nTrigger for constraint audit_case_id_fkey: time=14.488 calls=9800\nTrigger for constraint audit_owner_id_fkey: time=13.610 calls=9800\nTrigger result_source_fence_v1: time=2082.367 calls=9800\nExecution Time: 2167.653 ms",
+  "error": "",
+  "samples": [
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    }
+  ],
+  "functions": [
+    {
+      "calls": 19600,
+      "function": "documents_v1",
+      "namespace": "result_data_private",
+      "self_time": 9.758,
+      "total_time": 9.758
+    },
+    {
+      "calls": 9800,
+      "function": "guard_source_v1",
+      "namespace": "result_data_private",
+      "self_time": 245.032,
+      "total_time": 2079.448
+    },
+    {
+      "calls": 39200,
+      "function": "json_references_v1",
+      "namespace": "result_data_private",
+      "self_time": 247.162,
+      "total_time": 432.218
+    },
+    {
+      "calls": 19600,
+      "function": "notification_parents_v1",
+      "namespace": "result_data_private",
+      "self_time": 1249.695,
+      "total_time": 1249.695
+    },
+    {
+      "calls": 19600,
+      "function": "parents_v1",
+      "namespace": "result_data_private",
+      "self_time": 142.743,
+      "total_time": 1834.415
+    },
+    {
+      "calls": 196000,
+      "function": "reference_kind_v1",
+      "namespace": "result_data_private",
+      "self_time": 169.758,
+      "total_time": 169.758
+    }
+  ]
+}

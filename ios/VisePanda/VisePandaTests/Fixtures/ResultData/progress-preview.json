@@ -1,0 +1,97 @@
+{
+  "data": {
+    "schemaVersion": "result-data/1",
+    "scope": "result-delete-progress/1",
+    "requestId": "00000000-0000-4000-8000-000000000030",
+    "rootKind": null,
+    "rootId": null,
+    "objectIds": [
+      "00000000-0000-4000-8000-000000000003"
+    ],
+    "ownerId": "00000000-0000-4000-8000-000000000001",
+    "sessionId": "00000000-0000-4000-8000-000000000002",
+    "mobileEpoch": 3,
+    "sourceDigest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "previewDigest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "sourceAuthorities": [
+      {
+        "policyId": "00000000-0000-4000-8000-000000000020",
+        "consentId": "00000000-0000-4000-8000-000000000021"
+      },
+      {
+        "policyId": "00000000-0000-4000-8000-000000000022",
+        "consentId": "00000000-0000-4000-8000-000000000023"
+      }
+    ],
+    "capturedAt": 1791360040000,
+    "expiresAt": 1791360070000,
+    "boundaries": {
+      "eraseFields": [
+        "selected_transient_preview_graph_counts_references_conflicts"
+      ],
+      "retained": [
+        "selection_actor_epoch_hash_time_operation_fences",
+        "immutable_minimal_decisions_and_identity_tombstones",
+        "original_source_policy_consent_authority_ids"
+      ],
+      "missing": [
+        "source_results_not_erased",
+        "unselected_operations",
+        "external_copies",
+        "backup_restore_and_old_device_acceptance_unverified"
+      ]
+    },
+    "allUserDataCompleted": false,
+    "kind": "preview",
+    "graph": {
+      "artifactIds": [],
+      "executionIds": [],
+      "journalIds": [],
+      "publicationKeys": [],
+      "revisions": [],
+      "eventIds": []
+    },
+    "eraseCounts": {
+      "artifacts": 0,
+      "revisions": 0,
+      "resultEvents": 0,
+      "executionRuns": 0,
+      "callWindows": 0,
+      "collectorOrigins": 0,
+      "collectorOutputs": 0,
+      "resultClaims": 0,
+      "completionProofs": 0,
+      "completedReceipts": 0,
+      "localJournals": 0
+    },
+    "retainCounts": {
+      "conversations": 0,
+      "goals": 0,
+      "messages": 0,
+      "tasks": 0,
+      "turns": 0,
+      "threads": 0,
+      "trips": 0,
+      "memories": 0,
+      "sourceArtifacts": 0,
+      "proposals": 0,
+      "budgetAttempts": 0,
+      "planningSources": 0
+    },
+    "retainedReferences": {
+      "conversationIds": [],
+      "goalIds": [],
+      "messageIds": [],
+      "taskIds": [],
+      "turnIds": [],
+      "threadIds": [],
+      "tripIds": [],
+      "memoryIds": [],
+      "sourceArtifactIds": [],
+      "proposalIds": []
+    },
+    "conflicts": [],
+    "eligible": true,
+    "progressCount": 1
+  }
+}
