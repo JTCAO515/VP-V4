@@ -110,3 +110,25 @@ reused an original Profile bootstrap ending at0702 then applied0704, missing
 newly merged0703; reported old-fixed-set eleven PG PASS remains valid for that
 set. Original SQL owner is correcting only the fixture's current ordered replay;
 no product SQL change or unchanged canonical/old regression rerun is implied.
+
+PASS after consuming original SQL fixture df060690c468585e8cfcf104c88b01fb8edfc7c2
+as a053c36f: `VP_PROFILE_EXPORT_SQL=1 node --experimental-strip-types --test
+--test-concurrency=1 tests/integration/privacy/profile-export-sql/postgres.test.mjs`
+on the actual combined78857 set. Explicit output applied0703 then0704 each once;
+11/11 PASS, zero skipped/fail, total14723.2575ms, owned standalone cleanup PASS.
+No repeated canonical six-case/old twenty-four regressions or Auth matrix.
+
+New actual supported-field finding remains unresolved at this checkpoint:
+original `save_user_profile(...,'24:00:00'::time)` succeeded under synthetic
+authenticated owner claims in an owned current PG fixture, actual stored TIME
+was24:00:00; new profile_source_v1 refused with PROFILE_SOURCE_UNAVAILABLE.
+Probe exec session72240/output c36f2b exit0/owned cleanup PASS; not signed Auth.
+The old shared TS validProfile, new SQL row validator and original Native
+ProfileData consumer only allow00..23. PostgreSQL and the original writer support
+the lawful end-of-day endpoint. Main directed original Profile TS/Native and
+Export SQL owners to make the same narrow correction without changing source
+values/writer/columns/rights. Root's temporary own validation adapter was removed
+so Export continues to reuse the single stable Profile validator. A new owned
+endpoint regression is pending stable shared/source fixes. Earlier positive
+evidence is retained but does not close this actual newly discovered field gap.
+No whole #239 or owned Export completion is claimed yet.
