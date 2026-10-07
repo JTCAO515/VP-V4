@@ -129,7 +129,7 @@ export function decodeTurnExportPage(v: unknown, limit: number, owner: string, n
       || !terminalSensitiveOperations.has(identity.requestId) || typeof identity.relation !== 'string' || !record(identity.pk)) return null;
     const spec = schema.find(s => s.relation === identity.relation && s.effect === 'erase');
     const pk = identity.pk;
-    if (!spec || !exact(pk, spec.pk) || !spec.pk.every(key => {
+    if (!spec || !exact(pk, spec.pk) || 'owner_id' in pk && pk.owner_id !== owner || !spec.pk.every(key => {
       const column = spec.columns.find(c => c.name === key);
       return !!column && columnValue(pk[key], column.type, true);
     })) return null;
