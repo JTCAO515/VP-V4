@@ -323,8 +323,10 @@ struct NativeTripSupportRecoveryView: View {
                 checkedAbsent=true;notice=t("未取得此请求的确认回执，尚不宣称成功。", "No confirmation receipt obtained for this request; success is unconfirmed.");return
             }
             let result=try NativeTripSupportHistoricalReceipt.decode(bytes,journal:journal)
+            let journalObserver = session.journalDataObservation(.tripSupport), journalTicket = journalObserver.begin()
             try session.completeTripSupportConfirmation(journal,receipt:result,actor:actor)
             receipt=result;self.journal=nil;request=nil
+            journalObserver.finish(journalTicket, try journal.request().idempotencyKey)
             await onResolved?()
         } catch { notice=t("精确回执读取未完成，原请求仍保留。", "Exact receipt read incomplete; original request retained.") }
     }
@@ -335,8 +337,10 @@ struct NativeTripSupportRecoveryView: View {
             let bytes=try await session.tripSupportConfirm(journal,actor:actor)
             guard session.dataScope==actor else{return}
             let result=try NativeSupportedTripConfirmReceipt.decode(bytes,tripID:journal.tripID,request:journal.request())
+            let journalObserver = session.journalDataObservation(.tripSupport), journalTicket = journalObserver.begin()
             try session.completeTripSupportConfirmation(journal,receipt:result,actor:actor)
             receipt=result;self.journal=nil;request=nil
+            journalObserver.finish(journalTicket, try journal.request().idempotencyKey)
             await onResolved?()
         } catch { notice=t("重试结果未知；继续只读核对同一请求，不自动重放。", "Retry outcome unknown; continue read-only checking of this request. No automatic replay.") }
     }
