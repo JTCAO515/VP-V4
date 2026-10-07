@@ -1,0 +1,164 @@
+--- a/lib/server/identity/request-guards.ts
++++ b/lib/server/identity/request-guards.ts
+@@ -306,6 +306,7 @@
+   distanceUnit: "kilometre" | "mile";
+   temperatureUnit: "celsius" | "fahrenheit";
+   defaultDepartureTime: string;
++  expectedProfileRevision?: number;
+ }> {
+   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+   const input = value as Record<string, unknown>;
+@@ -318,6 +319,7 @@
+     ["kilometre", "mile"].includes(String(input.distanceUnit)) &&
+     ["celsius", "fahrenheit"].includes(String(input.temperatureUnit)) &&
+     /^([01]\d|2[0-3]):[0-5]\d$/.test(String(input.defaultDepartureTime)) &&
++    (input.expectedProfileRevision === undefined || Number.isSafeInteger(input.expectedProfileRevision) && Number(input.expectedProfileRevision) >= 0 && Number(input.expectedProfileRevision) <= 9007199254740990) &&
+     Object.keys(input).every((key) =>
+       [
+         "displayName",
+@@ -327,6 +329,7 @@
+         "distanceUnit",
+         "temperatureUnit",
+         "defaultDepartureTime",
++        "expectedProfileRevision",
+       ].includes(key),
+     )
+   );
+--- a/lib/server/identity/user-data-adapter.ts
++++ b/lib/server/identity/user-data-adapter.ts
+@@ -1,4 +1,5 @@
+ import { nativeFetch } from "./native-fetch.ts";
++import { profileSaveParameters } from "../privacy/profile-data/writer.ts";
+ import { createServerClient, type CookieOptions } from "@supabase/ssr";
+ import type { SupabaseClient } from "@supabase/supabase-js";
+ import { verifyNativeCredentials } from "./native-credentials.ts";
+@@ -78,6 +79,8 @@
+   temperatureUnit: "celsius" | "fahrenheit";
+   defaultDepartureTime: string;
+   updatedAt: string;
++  profileRevision?: number;
++  savedFields?: readonly string[];
+ }>;
+ export type PrivacyRequestRead = Readonly<{
+   requestId: string;
+@@ -257,7 +260,7 @@
+     const { data, error } = await client
+       .from("user_profiles")
+       .select(
+-        "display_name,travel_pace,locale,currency,distance_unit,temperature_unit,default_departure_time,updated_at",
++        "display_name,travel_pace,locale,currency,distance_unit,temperature_unit,default_departure_time,updated_at,profile_revision,profile_saved_fields",
+       )
+       .maybeSingle();
+     if (error) return { error: "INTERNAL_ERROR" };
+@@ -272,15 +275,19 @@
+         temperatureUnit: data.temperature_unit,
+         defaultDepartureTime: String(data.default_departure_time).slice(0, 5),
+         updatedAt: data.updated_at,
++        profileRevision: data.profile_revision,
++        savedFields: data.profile_saved_fields,
+       } as UserProfileRead,
+     };
+   };
+   const saveUserProfile = async (
+-    input: Omit<UserProfileRead, "updatedAt">,
++    input: Omit<UserProfileRead, "updatedAt" | "profileRevision" | "savedFields"> & Readonly<{ expectedProfileRevision?: number }>,
+   ): Promise<AdapterResult<UserProfileRead>> => {
+     const actor = await authenticated();
+     if ("error" in actor) return { error: actor.error };
+-    const { error } = await client.rpc("save_user_profile", {
++    const { error } = input.expectedProfileRevision !== undefined
++      ? await client.rpc("save_user_profile_v2", profileSaveParameters(input, input.expectedProfileRevision))
++      : await client.rpc("save_user_profile", {
+       p_display_name: input.displayName,
+       p_travel_pace: input.travelPace,
+       p_locale: input.locale,
+@@ -289,7 +296,7 @@
+       p_temperature_unit: input.temperatureUnit,
+       p_default_departure_time: input.defaultDepartureTime,
+     });
+-    if (error) return { error: mapRpcFailure(error.message) };
++    if (error) return { error: ["PROFILE_CONFLICT", "PROFILE_WRITE_FENCE"].includes(error.message) ? "DATA_EXPIRED" : mapRpcFailure(error.message) };
+     const read = await getUserProfile();
+     if ("error" in read || read.data === null)
+       return { error: "INTERNAL_ERROR" };
+--- a/components/user/ProfileWorkspace.tsx
++++ b/components/user/ProfileWorkspace.tsx
+@@ -135,6 +135,7 @@
+   const [locale, setLocale] = useState<Locale>("zh"),
+     [profile, setProfile] = useState<Profile>(blank),
+     [ready, setReady] = useState(false),
++    [profileRevision, setProfileRevision] = useState<number | null>(null),
+     [error, setError] = useState(false),
+     [saving, setSaving] = useState(false),
+     [grants, setGrants] = useState<PassGrant[]>([]),
+@@ -144,7 +145,10 @@
+     const r = await fetch("/api/profile");
+     if (!r.ok) throw Error();
+     const v = await r.json();
+-    setProfile(v ?? blank);
++    setProfile(v ? { displayName: v.displayName, travelPace: v.travelPace, locale: v.locale, currency: v.currency,
++      distanceUnit: v.distanceUnit, temperatureUnit: v.temperatureUnit, defaultDepartureTime: v.defaultDepartureTime } : blank);
++    if (v !== null && (!Number.isSafeInteger(v.profileRevision) || v.profileRevision < 0 || v.profileRevision > 9007199254740990)) throw Error();
++    setProfileRevision(v === null ? 0 : v.profileRevision);
+     if (v) setLocale(v.locale);
+     setReady(true);
+   };
+@@ -164,13 +168,14 @@
+   }, []);
+   const save = async (e: React.FormEvent) => {
+     e.preventDefault();
++    if (profileRevision === null) return;
+     setSaving(true);
+     setError(false);
+     try {
+       const r = await fetch("/api/profile", {
+         method: "POST",
+         headers: { "Content-Type": "application/json" },
+-        body: JSON.stringify({ ...profile, locale }),
++        body: JSON.stringify({ ...profile, locale, expectedProfileRevision: profileRevision }),
+       });
+       if (!r.ok) throw Error();
+       await load();
+@@ -211,6 +216,9 @@
+         {error ? (
+           <p className={styles.notice} aria-live="polite">
+             {words.unavailable}
++            <button type="button" className={styles.button} disabled={saving} onClick={() => { setError(false); setReady(false); setProfileRevision(null); void load().catch(() => setError(true)); }}>
++              {locale === "zh" ? "重新读取资料" : locale === "es" ? "Recargar perfil" : locale === "ru" ? "Обновить профиль" : locale === "ar" ? "إعادة تحميل الملف" : "Reload profile"}
++            </button>
+           </p>
+         ) : null}
+         {!ready && !error ? (
+@@ -286,7 +294,7 @@
+               onChange={(e) => set("defaultDepartureTime", e.target.value)}
+             />
+           </label>
+-          <button className={styles.button} disabled={saving || !ready}>
++          <button className={styles.button} disabled={saving || !ready || profileRevision === null}>
+             {words.save}
+           </button>
+         </form>
+--- a/lib/server/trip/feasibility/preferences.ts
++++ b/lib/server/trip/feasibility/preferences.ts
+@@ -1,4 +1,5 @@
+ import type { AdapterResult, UserProfileRead } from "../../identity/user-data-adapter.ts";
++import { profileHasSavedField } from "../../privacy/profile-data/saved-fields.ts";
+ import type { ExplicitPlanNeeds } from "./assembly.ts";
+ 
+ export type PreferenceContext = {
+@@ -18,9 +19,10 @@
+     || !["CNY","USD","EUR","RUB","SAR"].includes(profile.currency)
+     || !/^([01]\d|2[0-3]):[0-5]\d$/.test(profile.defaultDepartureTime)
+     || !Number.isFinite(Date.parse(profile.updatedAt)))return empty;
+-  return {...empty,status:"current",travelPace:profile.travelPace,currency:profile.currency,
+-    defaultDepartureTime:profile.defaultDepartureTime,updatedAt:profile.updatedAt,
+-    hints:[`PROFILE_PACE_${profile.travelPace.toUpperCase()}_SOFT_REFERENCE`,
+-      needs.currency===profile.currency?"EXPLICIT_CURRENCY_MATCHES_PROFILE":"EXPLICIT_CURRENCY_OVERRIDES_PROFILE",
+-      "PROFILE_DEPARTURE_REFERENCE_ONLY"]};
++  const pace = profileHasSavedField(profile, "travel_pace"), currency = profileHasSavedField(profile, "currency"), departure = profileHasSavedField(profile, "default_departure_time");
++  return {...empty,status:pace || currency || departure ? "current" : "unknown",travelPace:pace ? profile.travelPace : null,currency:currency ? profile.currency : null,
++    defaultDepartureTime:departure ? profile.defaultDepartureTime : null,updatedAt:profile.updatedAt,
++    hints:[...(pace ? [`PROFILE_PACE_${profile.travelPace.toUpperCase()}_SOFT_REFERENCE`] : []),
++      ...(currency ? [needs.currency===profile.currency?"EXPLICIT_CURRENCY_MATCHES_PROFILE":"EXPLICIT_CURRENCY_OVERRIDES_PROFILE"] : []),
++      ...(departure ? ["PROFILE_DEPARTURE_REFERENCE_ONLY"] : [])]};
+ }
