@@ -113,7 +113,7 @@ enum NativeResultDataProtocol {
         guard v["rootKind"] as? String == "artifact", current == count, events >= count, created <= now,
               let lifecycle = v["lifecycle"] as? String, ["active", "withdrawn"].contains(lifecycle),
               let types = v["resultTypes"] as? [String], !types.isEmpty, types.count <= 5, types == types.sorted(), Set(types).count == types.count,
-              types.allSatisfy({ ["change-proposal/1", "comparison/1", "decision/1", "journey-draft/1", "practical/1"].contains($0) }) else { throw NativeDataError.invalidResponse }
+              types.allSatisfy({ ["change-proposal-reference/1", "comparison/1", "decision/1", "journey-draft/1", "practical/1"].contains($0) }) else { throw NativeDataError.invalidResponse }
         return .init(id: try NativeResultDataCommand.id(v["rootId"]), createdAt: created, currentRevision: current,
             revisionCount: count, eventCount: events, lifecycle: lifecycle, resultTypes: types, operationFields: nil)
     }
