@@ -178,6 +178,11 @@ struct ProfileView: View {
 
             Section("profile.privacy") {
                 if settings.nativeSession.dataScope != nil {
+                    NavigationLink(chinese ? "本人 Profile 资料清理" : "My Profile data cleanup") {
+                        NativeProfileDataConsumer(module: nil, coverage: nil, client: settings.nativeSession.profileDataClient,
+                            makeStore: { settings.nativeSession.profileDataStore(scope: $0) }, chinese: chinese)
+                            .id(settings.nativeSession.dataScope)
+                    }.accessibilityIdentifier("profile.profile-data.open")
                     NavigationLink(chinese ? "资料导出与删除覆盖" : "Data export and deletion coverage") {
                         NativeDataCoverageView().id(settings.nativeSession.dataScope)
                     }.accessibilityIdentifier("profile.data-coverage.open")

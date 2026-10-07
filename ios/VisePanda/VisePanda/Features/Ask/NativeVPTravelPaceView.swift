@@ -125,6 +125,7 @@ struct NativeVPTravelPaceView: View {
             guard let erased = session.resultDataErasure, (try? session.communitySafetyActor()) == erased.actor else { return }
             result.applyResultErasure(erased)
         }
+        .onChange(of: session.currentProfileDataErasure?.id) { _, _ in store.applyProfileErasure(session.currentProfileDataErasure) }
         .onChange(of: session.dataScope) { _, value in store.bind(scope: value, selection: value == nil ? nil : currentSelection()); result.clear() }
         .onChange(of: pending, initial: true) { _, value in onPendingChange(store.saved.scope ?? session.dataScope, value) }
         .onChange(of: active) { _, value in if !value { store.leave(); result.clear() } }

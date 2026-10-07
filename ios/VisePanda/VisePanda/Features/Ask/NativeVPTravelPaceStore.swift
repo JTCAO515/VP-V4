@@ -19,6 +19,12 @@ final class NativeVPTravelPaceStore {
         if self.selection != selection { localProjection = nil }
         activeScope = scope; self.selection = selection; current.bind(selection)
     }
+    func applyProfileErasure(_ value: NativeProfileDataErasure?) {
+        guard let value, activeScope == value.actor.scope else { return }
+        saved.applyProfileErasure(value)
+        if saved.snapshot == nil { choice = .balanced; consent = false; lastSavedAction = nil; saveReadbackChanged = false }
+        if let projection = localProjection, projection.source == "profile", (projection.sourceRevision ?? 0) < value.paceFloor { localProjection = nil }
+    }
     func load(using session: NativeSession, selected: @escaping () -> NativeTravelIntakeSelection?) async {
         bind(scope: session.dataScope, selection: selected())
         await saved.load(using: session)
