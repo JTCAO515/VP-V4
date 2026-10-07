@@ -1,0 +1,7 @@
+{
+  "kind": "actual current ProfileTS0702 append in owned PG transaction; rollback",
+  "result": true,
+  "profile": true,
+  "helperMd5": "988946e99753b485e64e8377fd709c19",
+  "parserMd5": "645393810c37120afb2514ac18706f6d"
+}
