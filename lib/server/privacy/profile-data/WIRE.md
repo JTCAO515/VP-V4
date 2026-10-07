@@ -260,3 +260,11 @@ Remaining Web form last hunk and catalog fixture metadata leases remain necessar
 caller closure; existing PG24+gated4 and Native evidence stay separate. Full239 not
 closed, target/provider/fees/device/backup UNRUN. Current source is no longer only
 wire preparation; pending shared caller/fixture/CI entries do not imply new scope.
+Main precise TS fixture lease consumed: only
+ tests/fixtures/privacy/notification-data/native-catalog-v4.json .9/Profile row,
+all other33 descriptors/order and all other root fields independently asserted
+unchanged. Actual affected original coverage/notification consumers16PASS0skip,
+old negative oracles unchanged. Native3 fixture update stays sole Native writer.
+CI-REGISTRATION.patch is concrete PG env+two actual owned files and existing HTTP
+lane tail63360 only; all original Result entries, two-shard algorithm and gates
+preserved. Apply-check PASS; remains unapplied pending Main precise lease.
