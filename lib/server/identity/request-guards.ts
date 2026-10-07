@@ -306,6 +306,7 @@ export function isUserProfileInput(
   distanceUnit: "kilometre" | "mile";
   temperatureUnit: "celsius" | "fahrenheit";
   defaultDepartureTime: string;
+  expectedProfileRevision?: number;
 }> {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
   const input = value as Record<string, unknown>;
@@ -318,6 +319,7 @@ export function isUserProfileInput(
     ["kilometre", "mile"].includes(String(input.distanceUnit)) &&
     ["celsius", "fahrenheit"].includes(String(input.temperatureUnit)) &&
     /^([01]\d|2[0-3]):[0-5]\d$/.test(String(input.defaultDepartureTime)) &&
+    (input.expectedProfileRevision === undefined || Number.isSafeInteger(input.expectedProfileRevision) && Number(input.expectedProfileRevision) >= 0 && Number(input.expectedProfileRevision) <= 9007199254740990) &&
     Object.keys(input).every((key) =>
       [
         "displayName",
@@ -327,6 +329,7 @@ export function isUserProfileInput(
         "distanceUnit",
         "temperatureUnit",
         "defaultDepartureTime",
+        "expectedProfileRevision",
       ].includes(key),
     )
   );

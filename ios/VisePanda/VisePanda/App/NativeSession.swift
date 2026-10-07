@@ -35,6 +35,8 @@ final class NativeSession {
     private var assistantNavigation: NativeAssistantNavigation?
     private(set) var resultDataErasure: NativeResultDataErasure?
     private var resultDataProjectionFence = NativeResultDataProjectionFence()
+    private(set) var profileDataErasure: NativeProfileDataErasure?
+    private var profileDataProjectionFence = NativeProfileDataProjectionFence()
     private(set) var conversationDataErasure: NativeConversationDataErasure?
     let memoryPreferences=NativeMemoryPreferencesStore()
     let notifications = NativeNotificationCoordinator()
@@ -374,6 +376,78 @@ final class NativeSession {
               http.value(forHTTPHeaderField: "X-Content-Type-Options")?.lowercased() == "nosniff",
               http.value(forHTTPHeaderField: "Content-Type")?.lowercased().hasPrefix("application/json") == true else { throw NativeDataError.invalidResponse }
         try NativeResultDataWire.actor(NativeResultDataWire.root(bytes), actor, scope: command.scope)
+        return bytes
+    }
+    var profileDataClient: NativeProfileDataClient {
+        .init(current: { try? self.communitySafetyActor() },
+              request: { try await self.profileDataRequest(body: $0, actor: $1) },
+              consumeReceipt: { try self.applyProfileDataReceipt($0, actor: $1) })
+    }
+    func profileDataStore(scope: NativeProfileDataScope) -> NativeProfileDataStore {
+        NativeProfileDataStore(scope: scope, vault: vault)
+    }
+    var currentProfileDataErasure: NativeProfileDataErasure? {
+        guard let value = profileDataErasure, (try? communitySafetyActor()) == value.actor else { return nil }
+        return value
+    }
+    private func applyProfileDataReceipt(_ receipt: NativeProfileDataReceipt, actor: NativeCommunitySafetyActor) throws {
+        guard try communitySafetyActor() == actor, receipt.binding.actor == actor,
+              let pending = try NativeProfileDataJournal(vault: vault, validateConfirmation: NativeProfileDataCommand.validateConfirmation).read(actor) else {
+            throw NativeDataError.staleSessionResponse
+        }
+        let command = try NativeProfileDataCommand(body: pending.body), binding = receipt.binding
+        guard command.action == "erase", command.requestID == binding.requestID, command.scope == binding.scope,
+              command.profileID == binding.profileID, command.objectIDs == binding.objectIDs,
+              command.sourceDigest == binding.sourceDigest, command.previewDigest == binding.previewDigest,
+              receipt.requestDigest == NativeProfileDataWire.digest(pending.body) else { throw NativeDataError.invalidResponse }
+        guard binding.scope == .sensitive else { return }
+        let erased = try NativeProfileDataErasure(receipt: receipt, actor: actor)
+        profileDataProjectionFence.bind(actor)
+        if try profileDataProjectionFence.record(receipt, actor: actor) {
+            displayName = nil
+            profileDataErasure = erased
+        }
+    }
+    func profileDataRequest(body: Data, actor: NativeCommunitySafetyActor) async throws -> Data {
+        guard !busy, try communitySafetyActor() == actor, !Task.isCancelled else { throw NativeDataError.sessionUnavailable }
+        let command = try NativeProfileDataCommand(body: body)
+        if ["erase", "recover"].contains(command.action) {
+            let journal = NativeProfileDataJournal(vault: vault, validateConfirmation: NativeProfileDataCommand.validateConfirmation)
+            guard try journal.read(actor)?.body == (command.mutationBytes ?? body) else { throw NativeDataError.staleSessionResponse }
+        }
+        let started = ProcessInfo.processInfo.systemUptime
+        if let credential, credential.expiresAt <= Date().timeIntervalSince1970 + 10 { await validate() }
+        guard try communitySafetyActor() == actor, let endpoint, let credential, !Task.isCancelled,
+              ProcessInfo.processInfo.systemUptime - started < 30 else { throw NativeDataError.staleSessionResponse }
+        var request = URLRequest(url: endpoint.appendingPathComponent("api/privacy/native/v1/profile-data"))
+        request.httpMethod = "POST"; request.httpBody = body; request.httpShouldHandleCookies = false
+        request.timeoutInterval = 30; request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(credential.accessToken)", forHTTPHeaderField: "Authorization")
+        let (stream, response) = try await transport.bytes(for: request)
+        defer { stream.task.cancel() }
+        guard let http = response as? HTTPURLResponse, try communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
+        let cap = http.statusCode == 200 ? 1_000_000 : 4096
+        guard http.expectedContentLength <= Int64(cap) else { throw NativeDataError.invalidResponse }
+        var bytes = Data()
+        for try await byte in stream {
+            guard bytes.count < cap, try communitySafetyActor() == actor, !Task.isCancelled,
+                  ProcessInfo.processInfo.systemUptime - started < 30 else { throw NativeDataError.staleSessionResponse }
+            bytes.append(byte)
+        }
+        guard try communitySafetyActor() == actor, !Task.isCancelled,
+              ProcessInfo.processInfo.systemUptime - started < 30 else { throw NativeDataError.staleSessionResponse }
+        guard http.statusCode == 200 else {
+            let code = (try? JSONDecoder().decode(NativeDataFailure.self, from: bytes).error.code) ?? "PROFILE_UNAVAILABLE"
+            if http.statusCode == 401, code != "REAUTHENTICATION_REQUIRED" { handle(SessionError.denied) }
+            throw NativeDataError.server(code: code)
+        }
+        let cache = http.value(forHTTPHeaderField: "Cache-Control")?.lowercased() ?? ""
+        guard cache.contains("private"), cache.contains("no-store"),
+              http.value(forHTTPHeaderField: "Vary")?.lowercased().split(separator: ",").map({ $0.trimmingCharacters(in: .whitespaces) }).contains("authorization") == true,
+              http.value(forHTTPHeaderField: "X-Content-Type-Options")?.lowercased() == "nosniff",
+              http.value(forHTTPHeaderField: "Content-Type")?.lowercased().hasPrefix("application/json") == true else { throw NativeDataError.invalidResponse }
+        try NativeProfileDataWire.actor(NativeProfileDataWire.root(bytes), actor, scope: command.scope)
         return bytes
     }
     var conversationDataClient: NativeConversationDataClient {
@@ -1878,11 +1952,12 @@ final class NativeSession {
 
     private func loadProfile() async throws {
         guard let credential else { throw SessionError.invalid }
-        let generation = dataGeneration
+        let generation = dataGeneration, profileGeneration = profileDataProjectionFence.generation
         let data = try await request("profile", body: [:], token: credential.accessToken)
         try ensureCurrent(generation)
         let reply = try JSONDecoder().decode(ProfileReply.self, from: data)
         guard reply.subject == credential.subject else { throw SessionError.invalid }
+        guard profileGeneration == profileDataProjectionFence.generation else { return }
         displayName = reply.displayName
     }
 
@@ -1986,6 +2061,8 @@ final class NativeSession {
         do { try entryResume.erase(preservingUnclaimedID: preservingAnonymousResume) }
         catch { failureCode="entryResumeCleanupRequired";status="storageError";return false }
         subject=nil; mobileEpoch=nil; displayName=nil
+        do { try NativeProfileDataReceiptFile.eraseAll() }
+        catch { failureCode="profileDataFileCleanupRequired"; status="storageError"; return false }
         do { try NativeArchiveDataExportFile.eraseAll() }
         catch { failureCode="archiveDataExportCleanupRequired"; status="storageError"; return false }
         do { try NativeCoverageProgressExportFile.eraseAll() }
@@ -2012,6 +2089,7 @@ final class NativeSession {
         dataGeneration += 1
         assistantNavigation=nil
         resultDataErasure=nil; resultDataProjectionFence.bind(nil)
+        profileDataErasure=nil; profileDataProjectionFence.bind(nil)
         conversationDataErasure=nil
         memoryPreferences.clear()
         exploreAskHandoff=nil
@@ -2030,6 +2108,8 @@ final class NativeSession {
             } else {
                 do { try NativeResultDataJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
                 catch { failureCode="resultDataJournalCleanupRequired"; status="storageError"; return false }
+                do { try NativeProfileDataJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
+                catch { failureCode="profileDataJournalCleanupRequired"; status="storageError"; return false }
                 do { try NativeConversationDataJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
                 catch { failureCode="conversationDataJournalCleanupRequired"; status="storageError"; return false }
                 do { try NativeArchiveDataJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }

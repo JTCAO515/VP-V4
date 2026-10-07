@@ -414,6 +414,20 @@
 		BF0DD31803EB8545FF26193F /* NativeResultDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ED1B23E5A5189B5AD2B67FD; };
 		2CF7B0A9EFA2FEAFC95C2F03 /* NativeResultDataStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E561793B1EDE3CCB15E227C8; };
 		3E202B16F8CA949052172819 /* ResultData fixtures in Resources */ = {isa = PBXBuildFile; fileRef = C80D8ACDF6135D52380AF5ED; };
+		887E547C5EE93D28A2863C94 /* NativeProfileDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E1F7F0EA9ABDE538C8E1621; };
+		E42FC132E3F6F7435C094654 /* NativeProfileDataLifetime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6013C4C3394FBAC09F23A084; };
+		F1C8B18C04F9EA1E89FAF822 /* NativeProfileDataCopy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD87362C837CD58837AFC71; };
+		5E9312A795BEF89B46239D15 /* NativeProfileDataConsumer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00949B6E0C975E5FEBA791C4; };
+		EA202B2C261E0FE5944649A1 /* NativeProfileDataJournal.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE4EE2DD8E837ACB6C5AC8A9; };
+		74C27295FE6E659BD4D5D687 /* NativeProfileDataProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D1A789603DFEE63FD99AD3; };
+		B00EE4486B3E7D87469227E6 /* NativeProfileDataCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2619D69B09B4B76F8D9AC1F; };
+		0C49710FEDDED477599C2B5C /* NativeProfileDataProjectionFence.swift in Sources */ = {isa = PBXBuildFile; fileRef = E507A916CB8DF0B17B746807; };
+		D1116DCC93965D021BBC8266 /* NativeProfileDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AECCC8C05E6CFF867D34D71; };
+		E3670476A56D50B4CE88BDB2 /* NativeProfileDataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DF7C5B68FB8DC0E6B922E28; };
+		C564DD284E6119A347B2EF48 /* NativeProfileDataReceiptFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47413E4D4E5B747C2032F974; };
+		F00F495CA0F870ABED6D1C7F /* NativeProfileDataStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B74CA73231E14F738CD6B1; };
+		ABD17A0B2C9BEFA3DBCD2250 /* NativeProfileDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73C49D6A796F57BE7375B9F9; };
+		B7BE276579871835D8FB669F /* ProfileData fixtures in Resources */ = {isa = PBXBuildFile; fileRef = DC07C43DD45256E21021A97D; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -834,6 +848,20 @@
 		2ED1B23E5A5189B5AD2B67FD /* NativeResultDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeResultDataTests.swift; sourceTree = "<group>"; };
 		E561793B1EDE3CCB15E227C8 /* NativeResultDataStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeResultDataStorageTests.swift; sourceTree = "<group>"; };
 		C80D8ACDF6135D52380AF5ED /* ResultData fixtures */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Fixtures/ResultData; sourceTree = "<group>"; };
+		7E1F7F0EA9ABDE538C8E1621 /* NativeProfileDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/ProfileData/NativeProfileDataStore.swift"; sourceTree = "<group>"; };
+		6013C4C3394FBAC09F23A084 /* NativeProfileDataLifetime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/ProfileData/NativeProfileDataLifetime.swift"; sourceTree = "<group>"; };
+		0BD87362C837CD58837AFC71 /* NativeProfileDataCopy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/ProfileData/NativeProfileDataCopy.swift"; sourceTree = "<group>"; };
+		00949B6E0C975E5FEBA791C4 /* NativeProfileDataConsumer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/ProfileData/NativeProfileDataConsumer.swift"; sourceTree = "<group>"; };
+		EE4EE2DD8E837ACB6C5AC8A9 /* NativeProfileDataJournal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/ProfileData/NativeProfileDataJournal.swift"; sourceTree = "<group>"; };
+		D6D1A789603DFEE63FD99AD3 /* NativeProfileDataProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/ProfileData/NativeProfileDataProtocol.swift"; sourceTree = "<group>"; };
+		C2619D69B09B4B76F8D9AC1F /* NativeProfileDataCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/ProfileData/NativeProfileDataCommand.swift"; sourceTree = "<group>"; };
+		E507A916CB8DF0B17B746807 /* NativeProfileDataProjectionFence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/ProfileData/NativeProfileDataProjectionFence.swift"; sourceTree = "<group>"; };
+		1AECCC8C05E6CFF867D34D71 /* NativeProfileDataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/ProfileData/NativeProfileDataView.swift"; sourceTree = "<group>"; };
+		2DF7C5B68FB8DC0E6B922E28 /* NativeProfileDataModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/ProfileData/NativeProfileDataModels.swift"; sourceTree = "<group>"; };
+		47413E4D4E5B747C2032F974 /* NativeProfileDataReceiptFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/ProfileData/NativeProfileDataReceiptFile.swift"; sourceTree = "<group>"; };
+		34B74CA73231E14F738CD6B1 /* NativeProfileDataStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "../VisePandaTests/NativeProfileDataStorageTests.swift"; sourceTree = "<group>"; };
+		73C49D6A796F57BE7375B9F9 /* NativeProfileDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "../VisePandaTests/NativeProfileDataTests.swift"; sourceTree = "<group>"; };
+		DC07C43DD45256E21021A97D /* ProfileData fixtures */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "../VisePandaTests/Fixtures/ProfileData"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -860,7 +888,22 @@
 		};
 		600000000000000000000002 /* VisePanda */ = {
 			isa = PBXGroup;
-			children = (600000000000000000000003 /* App */,
+			children = (
+				7E1F7F0EA9ABDE538C8E1621 /* NativeProfileDataStore.swift */,
+				6013C4C3394FBAC09F23A084 /* NativeProfileDataLifetime.swift */,
+				0BD87362C837CD58837AFC71 /* NativeProfileDataCopy.swift */,
+				00949B6E0C975E5FEBA791C4 /* NativeProfileDataConsumer.swift */,
+				EE4EE2DD8E837ACB6C5AC8A9 /* NativeProfileDataJournal.swift */,
+				D6D1A789603DFEE63FD99AD3 /* NativeProfileDataProtocol.swift */,
+				C2619D69B09B4B76F8D9AC1F /* NativeProfileDataCommand.swift */,
+				E507A916CB8DF0B17B746807 /* NativeProfileDataProjectionFence.swift */,
+				1AECCC8C05E6CFF867D34D71 /* NativeProfileDataView.swift */,
+				2DF7C5B68FB8DC0E6B922E28 /* NativeProfileDataModels.swift */,
+				47413E4D4E5B747C2032F974 /* NativeProfileDataReceiptFile.swift */,
+				34B74CA73231E14F738CD6B1 /* NativeProfileDataStorageTests.swift */,
+				73C49D6A796F57BE7375B9F9 /* NativeProfileDataTests.swift */,
+				DC07C43DD45256E21021A97D /* ProfileData fixtures */,
+600000000000000000000003 /* App */,
 				600000000000000000000004 /* Navigation */,
 				600000000000000000000005 /* DesignSystem */,
 				600000000000000000000006 /* Components */,
@@ -974,7 +1017,7 @@
 
 /* Begin PBXResourcesBuildPhase section */
 		800000000000000000000002 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (200000000000000000000010, 200000000000000000000011, 200000000000000000000018, 200000000000000000000019); runOnlyForDeploymentPostprocessing = 0; };
-		800000000000000000000004 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (
+		800000000000000000000004 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (B7BE276579871835D8FB669F,
 				3E202B16F8CA949052172819,
 73839A21704A41C4F4A34CE5, 3F8ECFC8C506EEDE1D6C83A3, AFEC86C458B38C1CFBC62D1E, 20835F57B31A002583B5BEC4, 0023731A2F7F7F0D5EF461C0, 083E8C0D5650718EFE8258E8, F158020000000000000000F2, F158020000000000000000F3,); runOnlyForDeploymentPostprocessing = 0; };
 		800000000000000000000006 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
@@ -1001,6 +1044,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				887E547C5EE93D28A2863C94 /* NativeProfileDataStore.swift in Sources */,
+				E42FC132E3F6F7435C094654 /* NativeProfileDataLifetime.swift in Sources */,
+				F1C8B18C04F9EA1E89FAF822 /* NativeProfileDataCopy.swift in Sources */,
+				5E9312A795BEF89B46239D15 /* NativeProfileDataConsumer.swift in Sources */,
+				EA202B2C261E0FE5944649A1 /* NativeProfileDataJournal.swift in Sources */,
+				74C27295FE6E659BD4D5D687 /* NativeProfileDataProtocol.swift in Sources */,
+				B00EE4486B3E7D87469227E6 /* NativeProfileDataCommand.swift in Sources */,
+				0C49710FEDDED477599C2B5C /* NativeProfileDataProjectionFence.swift in Sources */,
+				D1116DCC93965D021BBC8266 /* NativeProfileDataView.swift in Sources */,
+				E3670476A56D50B4CE88BDB2 /* NativeProfileDataModels.swift in Sources */,
+				C564DD284E6119A347B2EF48 /* NativeProfileDataReceiptFile.swift in Sources */,
+
 				C3D83A1E4EC702E088F8BFD4,
 				EDD6DA01DE3584C9F98E3CAC,
 				AE3BF91BAC03446AA6134998,
@@ -1046,6 +1101,9 @@ FAAB3A946EA0F180D0C047FA, 39679E2115C244EBC0A2E7B1, 2E678B6E23FFBB6AC16AF3E3, 29
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		800000000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (
+				F00F495CA0F870ABED6D1C7F /* NativeProfileDataStorageTests.swift in Sources */,
+				ABD17A0B2C9BEFA3DBCD2250 /* NativeProfileDataTests.swift in Sources */,
+
 				BF0DD31803EB8545FF26193F,
 				2CF7B0A9EFA2FEAFC95C2F03,
 71A90D913FBDEA4F5433743A, A64D0A11E3D04CAF2EB787C1, 32C2B2995F555C82E7640723, FD41E1ECD8A620F9CA55B0C7, D21E4AAC463EFEB441C2487D, 1E84D6E7B31E4354A1697726, 2AE33A25269179EFC5EFBFB6, 322D27174D52152351B264A8, F37E6FD70D0A67B300012052, 45F7ABD0BDCB5FDB0669A547, F158020000000000000000F1,F1489100000000000000000C, F16405100000000000000009, F14805100000000000000009, 8A67C965FFBD10A165415F6F, 3E024577903A98F6EFFD1991, 51BD4D0B8E4A1C51E46F4A07, 7F51379DB9B5121C157DA13A, F25505100000000000000005, F15505100000000000000008, F15505100000000000000007, 19C2EFD51E4BD138A4E7EE1F, E22405200000000000000008, AC3026400000000000000001, AC8205000000000000010009, AC829300000000000000000A, AC8243000000000000000008, AC8213000000000000000008, AC8233000000000000000008, AC8223000000000000000006, AC8183000000000000000006, AC8193000000000000000008, AC8173000000000000000008, AC8163000000000000000004, AC8153000000000000000004, AC8143000000000000000006, AC8133000000000000000008, AC8123000000000000000006, AC811300000000000000000A, AC8113000000000000000008, AC8103000000000000000008, AC7100000000000000000008, B97900000000000000000008, A98320000000000000000103, B98300000000000000000003, B91100000000000000000003, 20000000000000000000006F, D679092AC75040D3B7FC3E03, 20000000000000000000006C, 20000000000000000000006B, 20000000000000000000006A, 200000000000000000000068, 200000000000000000000065, 200000000000000000000062, 200000000000000000000055, 200000000000000000000053, 200000000000000000000046, 200000000000000000000045, 200000000000000000000043, 200000000000000000000034, 200000000000000000000033, 200000000000000000000012, 200000000000000000000021, E21600000000000000000103, A21420000000000000000007, A21420000000000000000006, AC1051980000000000000033, AC10524000000000000000E0); runOnlyForDeploymentPostprocessing = 0; };

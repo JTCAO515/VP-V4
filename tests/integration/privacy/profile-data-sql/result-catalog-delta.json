@@ -1,0 +1,301 @@
+{
+  "resultBase": "92e338e19450061f4e048c92177256461825a596",
+  "reconstructedBaselineHash": "6c2371cd4338f681af77de8fe888a4ae3692bd0abcf1736c14eaf0935314020d",
+  "profileDelta": [
+    {
+      "columns": [
+        [
+          "request_id",
+          "uuid",
+          true
+        ],
+        [
+          "owner_id",
+          "uuid",
+          true
+        ],
+        [
+          "session_id",
+          "uuid",
+          true
+        ],
+        [
+          "mobile_epoch",
+          "bigint",
+          true
+        ],
+        [
+          "scope",
+          "text",
+          true
+        ],
+        [
+          "profile_id",
+          "uuid",
+          false
+        ],
+        [
+          "object_ids",
+          "jsonb",
+          true
+        ],
+        [
+          "source_digest",
+          "text",
+          true
+        ],
+        [
+          "preview_digest",
+          "text",
+          true
+        ],
+        [
+          "captured_at",
+          "bigint",
+          true
+        ],
+        [
+          "expires_at",
+          "bigint",
+          true
+        ],
+        [
+          "request_digest",
+          "text",
+          false
+        ],
+        [
+          "state",
+          "text",
+          true
+        ],
+        [
+          "preview_erased",
+          "boolean",
+          true
+        ],
+        [
+          "summary",
+          "jsonb",
+          false
+        ],
+        [
+          "copies",
+          "jsonb",
+          false
+        ],
+        [
+          "conflicts",
+          "jsonb",
+          false
+        ],
+        [
+          "decision",
+          "jsonb",
+          false
+        ]
+      ],
+      "relation": "profile_data_private.operations_v1",
+      "constraints": [
+        "CHECK ((expires_at = (captured_at + 30000)))",
+        "CHECK ((((scope = 'profile-sensitive-data/1'::text) AND (profile_id = owner_id) AND (object_ids = '[]'::jsonb)) OR ((scope = 'profile-delete-progress/1'::text) AND (profile_id IS NULL))))",
+        "CHECK ((((state = 'previewed'::text) AND (request_digest IS NULL) AND (decision IS NULL)) OR ((state = 'erased'::text) AND (request_digest IS NOT NULL) AND (decision IS NOT NULL) AND preview_erased)))",
+        "CHECK (((NOT preview_erased) OR ((summary IS NULL) AND (copies IS NULL) AND (conflicts IS NULL))))",
+        "CHECK (((mobile_epoch >= 1) AND (mobile_epoch <= '9007199254740990'::bigint)))",
+        "FOREIGN KEY (owner_id) REFERENCES auth.users(id) ON DELETE CASCADE",
+        "PRIMARY KEY (request_id)",
+        "CHECK ((preview_digest ~ '^[a-f0-9]{64}$'::text))",
+        "CHECK ((request_digest ~ '^[a-f0-9]{64}$'::text))",
+        "CHECK ((scope = ANY (ARRAY['profile-sensitive-data/1'::text, 'profile-delete-progress/1'::text])))",
+        "CHECK ((source_digest ~ '^[a-f0-9]{64}$'::text))",
+        "CHECK ((state = ANY (ARRAY['previewed'::text, 'erased'::text])))",
+        "CHECK (profile_data_private.no_result_references_v1(jsonb_build_array(summary, copies, conflicts, decision)))"
+      ]
+    },
+    {
+      "columns": [
+        [
+          "transaction_id",
+          "xid8",
+          true
+        ],
+        [
+          "owner_id",
+          "uuid",
+          true
+        ],
+        [
+          "mode",
+          "text",
+          true
+        ],
+        [
+          "expected_row",
+          "jsonb",
+          false
+        ],
+        [
+          "input",
+          "jsonb",
+          false
+        ]
+      ],
+      "relation": "profile_data_private.proofs_v1",
+      "constraints": [
+        "TRIGGER DEFERRABLE INITIALLY DEFERRED",
+        "CHECK (profile_data_private.no_result_references_v1(jsonb_build_array(expected_row, input)))",
+        "CHECK ((mode = ANY (ARRAY['web'::text, 'native'::text, 'restore'::text, 'erase'::text, 'executor'::text])))",
+        "PRIMARY KEY (transaction_id)"
+      ]
+    },
+    {
+      "columns": [
+        [
+          "owner_id",
+          "uuid",
+          true
+        ],
+        [
+          "profile_revision",
+          "bigint",
+          true
+        ],
+        [
+          "pace_revision",
+          "bigint",
+          true
+        ],
+        [
+          "profile_floor",
+          "bigint",
+          true
+        ],
+        [
+          "pace_floor",
+          "bigint",
+          true
+        ]
+      ],
+      "relation": "profile_data_private.watermarks_v1",
+      "constraints": [
+        "CHECK (((profile_floor >= 0) AND (profile_floor <= profile_revision)))",
+        "CHECK (((pace_floor >= 0) AND (pace_floor <= pace_revision)))",
+        "FOREIGN KEY (owner_id) REFERENCES auth.users(id) ON DELETE CASCADE",
+        "CHECK (((pace_revision >= 0) AND (pace_revision <= '9007199254740990'::bigint)))",
+        "PRIMARY KEY (owner_id)",
+        "CHECK (((profile_revision >= 0) AND (profile_revision <= '9007199254740990'::bigint)))"
+      ]
+    },
+    {
+      "columns": [
+        [
+          "owner_id",
+          "uuid",
+          true
+        ],
+        [
+          "display_name",
+          "text",
+          false
+        ],
+        [
+          "travel_pace",
+          "text",
+          true
+        ],
+        [
+          "locale",
+          "text",
+          true
+        ],
+        [
+          "currency",
+          "text",
+          true
+        ],
+        [
+          "distance_unit",
+          "text",
+          true
+        ],
+        [
+          "temperature_unit",
+          "text",
+          true
+        ],
+        [
+          "default_departure_time",
+          "time without time zone",
+          true
+        ],
+        [
+          "created_at",
+          "timestamp with time zone",
+          true
+        ],
+        [
+          "updated_at",
+          "timestamp with time zone",
+          true
+        ],
+        [
+          "pace_revision",
+          "bigint",
+          true
+        ],
+        [
+          "pace_state",
+          "text",
+          true
+        ],
+        [
+          "pace_notice",
+          "text",
+          false
+        ],
+        [
+          "pace_operation",
+          "uuid",
+          false
+        ],
+        [
+          "pace_request",
+          "jsonb",
+          false
+        ],
+        [
+          "pace_undo",
+          "jsonb",
+          false
+        ],
+        [
+          "profile_revision",
+          "bigint",
+          true
+        ],
+        [
+          "profile_saved_fields",
+          "jsonb",
+          true
+        ]
+      ],
+      "relation": "public.user_profiles",
+      "constraints": [
+        "CHECK (((pace_state <> ALL (ARRAY['explicit'::text, 'paused'::text])) OR (pace_notice IS NOT NULL)))",
+        "CHECK ((currency = ANY (ARRAY['CNY'::text, 'USD'::text, 'EUR'::text, 'RUB'::text, 'SAR'::text])))",
+        "CHECK (((display_name IS NULL) OR ((char_length(display_name) >= 1) AND (char_length(display_name) <= 80))))",
+        "CHECK ((distance_unit = ANY (ARRAY['kilometre'::text, 'mile'::text])))",
+        "CHECK ((locale = ANY (ARRAY['zh'::text, 'en'::text, 'es'::text, 'ru'::text, 'ar'::text])))",
+        "FOREIGN KEY (owner_id) REFERENCES auth.users(id) ON DELETE CASCADE",
+        "CHECK (((pace_notice IS NULL) OR (pace_notice = 'local-planning-cross-trip-v1'::text)))",
+        "CHECK (((pace_revision >= 0) AND (pace_revision <= '9007199254740990'::bigint)))",
+        "CHECK ((pace_state = ANY (ARRAY['unset'::text, 'explicit'::text, 'paused'::text, 'revoked'::text])))",
+        "PRIMARY KEY (owner_id)",
+        "CHECK (((profile_revision >= 0) AND (profile_revision <= '9007199254740990'::bigint)))",
+        "CHECK ((temperature_unit = ANY (ARRAY['celsius'::text, 'fahrenheit'::text])))",
+        "CHECK ((travel_pace = ANY (ARRAY['relaxed'::text, 'balanced'::text, 'packed'::text])))"
+      ]
+    }
+  ],
+  "profileCatalogHash": "1b026808c513d02dbe168a5fd2698f624283075ba2ae8b8e265e7f4ce4381324"
+}

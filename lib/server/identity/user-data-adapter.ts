@@ -1,4 +1,7 @@
 import { nativeFetch } from "./native-fetch.ts";
+import { profileSaveParameters } from "../privacy/profile-data/writer.ts";
+import { validSavedFields } from "../privacy/profile-data/saved-fields.ts";
+import { revision as profileRevision } from "../privacy/profile-data/contract.ts";
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { verifyNativeCredentials } from "./native-credentials.ts";
@@ -78,6 +81,8 @@ export type UserProfileRead = Readonly<{
   temperatureUnit: "celsius" | "fahrenheit";
   defaultDepartureTime: string;
   updatedAt: string;
+  profileRevision?: number;
+  savedFields?: readonly string[];
 }>;
 export type PrivacyRequestRead = Readonly<{
   requestId: string;
@@ -257,11 +262,12 @@ function createDataOperations(
     const { data, error } = await client
       .from("user_profiles")
       .select(
-        "display_name,travel_pace,locale,currency,distance_unit,temperature_unit,default_departure_time,updated_at",
+        "display_name,travel_pace,locale,currency,distance_unit,temperature_unit,default_departure_time,updated_at,profile_revision,profile_saved_fields",
       )
       .maybeSingle();
     if (error) return { error: "INTERNAL_ERROR" };
     if (!data) return { data: null };
+    if (!profileRevision(data.profile_revision) || !validSavedFields(data.profile_saved_fields)) return { error: "INTERNAL_ERROR" };
     return {
       data: {
         displayName: data.display_name ?? "",
@@ -272,15 +278,19 @@ function createDataOperations(
         temperatureUnit: data.temperature_unit,
         defaultDepartureTime: String(data.default_departure_time).slice(0, 5),
         updatedAt: data.updated_at,
+        profileRevision: data.profile_revision,
+        savedFields: data.profile_saved_fields,
       } as UserProfileRead,
     };
   };
   const saveUserProfile = async (
-    input: Omit<UserProfileRead, "updatedAt">,
+    input: Omit<UserProfileRead, "updatedAt" | "profileRevision" | "savedFields"> & Readonly<{ expectedProfileRevision?: number }>,
   ): Promise<AdapterResult<UserProfileRead>> => {
     const actor = await authenticated();
     if ("error" in actor) return { error: actor.error };
-    const { error } = await client.rpc("save_user_profile", {
+    const { error } = input.expectedProfileRevision !== undefined
+      ? await client.rpc("save_user_profile_v2", profileSaveParameters(input, input.expectedProfileRevision))
+      : await client.rpc("save_user_profile", {
       p_display_name: input.displayName,
       p_travel_pace: input.travelPace,
       p_locale: input.locale,
@@ -289,7 +299,7 @@ function createDataOperations(
       p_temperature_unit: input.temperatureUnit,
       p_default_departure_time: input.defaultDepartureTime,
     });
-    if (error) return { error: mapRpcFailure(error.message) };
+    if (error) return { error: ["PROFILE_CONFLICT", "PROFILE_WRITE_FENCE"].includes(error.message) ? "DATA_EXPIRED" : mapRpcFailure(error.message) };
     const read = await getUserProfile();
     if ("error" in read || read.data === null)
       return { error: "INTERNAL_ERROR" };

@@ -135,6 +135,7 @@ export function ProfileWorkspace() {
   const [locale, setLocale] = useState<Locale>("zh"),
     [profile, setProfile] = useState<Profile>(blank),
     [ready, setReady] = useState(false),
+    [profileRevision, setProfileRevision] = useState<number | null>(null),
     [error, setError] = useState(false),
     [saving, setSaving] = useState(false),
     [grants, setGrants] = useState<PassGrant[]>([]),
@@ -144,7 +145,10 @@ export function ProfileWorkspace() {
     const r = await fetch("/api/profile");
     if (!r.ok) throw Error();
     const v = await r.json();
-    setProfile(v ?? blank);
+    setProfile(v ? { displayName: v.displayName, travelPace: v.travelPace, locale: v.locale, currency: v.currency,
+      distanceUnit: v.distanceUnit, temperatureUnit: v.temperatureUnit, defaultDepartureTime: v.defaultDepartureTime } : blank);
+    if (v !== null && (!Number.isSafeInteger(v.profileRevision) || v.profileRevision < 0 || v.profileRevision > 9007199254740990)) throw Error();
+    setProfileRevision(v === null ? 0 : v.profileRevision);
     if (v) setLocale(v.locale);
     setReady(true);
   };
@@ -164,13 +168,14 @@ export function ProfileWorkspace() {
   }, []);
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (profileRevision === null) return;
     setSaving(true);
     setError(false);
     try {
       const r = await fetch("/api/profile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...profile, locale }),
+        body: JSON.stringify({ ...profile, locale, expectedProfileRevision: profileRevision }),
       });
       if (!r.ok) throw Error();
       await load();
@@ -211,6 +216,9 @@ export function ProfileWorkspace() {
         {error ? (
           <p className={styles.notice} aria-live="polite">
             {words.unavailable}
+            <button type="button" className={styles.button} disabled={saving} onClick={() => { setError(false); setReady(false); setProfileRevision(null); void load().catch(() => setError(true)); }}>
+              {locale === "zh" ? "重新读取资料" : locale === "es" ? "Recargar perfil" : locale === "ru" ? "Обновить профиль" : locale === "ar" ? "إعادة تحميل الملف" : "Reload profile"}
+            </button>
           </p>
         ) : null}
         {!ready && !error ? (
@@ -286,7 +294,7 @@ export function ProfileWorkspace() {
               onChange={(e) => set("defaultDepartureTime", e.target.value)}
             />
           </label>
-          <button className={styles.button} disabled={saving || !ready}>
+          <button className={styles.button} disabled={saving || !ready || profileRevision === null}>
             {words.save}
           </button>
         </form>

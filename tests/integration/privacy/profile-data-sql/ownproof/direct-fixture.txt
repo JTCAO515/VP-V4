@@ -1,0 +1,13 @@
+▶ Profile precise Result append preserves whole application and boundary guards
+  ✔ unknown application relation and inbound FK still rejected (181.036875ms)
+  ✔ original managed typed identities and application OID consumers still rejected (139.492167ms)
+  ✔ Profile private no-result-ref constraints reject typed object/field JSON, arbitrary title strings allowed (109.381834ms)
+✔ Profile precise Result append preserves whole application and boundary guards (11994.53575ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 12039.903375

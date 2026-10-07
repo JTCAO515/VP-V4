@@ -1,4 +1,5 @@
 import type { AdapterResult, UserProfileRead } from "../../identity/user-data-adapter.ts";
+import { profileHasSavedField } from "../../privacy/profile-data/saved-fields.ts";
 import type { ExplicitPlanNeeds } from "./assembly.ts";
 
 export type PreferenceContext = {
@@ -18,9 +19,10 @@ export function planPreferenceContext(read: AdapterResult<UserProfileRead|null>,
     || !["CNY","USD","EUR","RUB","SAR"].includes(profile.currency)
     || !/^([01]\d|2[0-3]):[0-5]\d$/.test(profile.defaultDepartureTime)
     || !Number.isFinite(Date.parse(profile.updatedAt)))return empty;
-  return {...empty,status:"current",travelPace:profile.travelPace,currency:profile.currency,
-    defaultDepartureTime:profile.defaultDepartureTime,updatedAt:profile.updatedAt,
-    hints:[`PROFILE_PACE_${profile.travelPace.toUpperCase()}_SOFT_REFERENCE`,
-      needs.currency===profile.currency?"EXPLICIT_CURRENCY_MATCHES_PROFILE":"EXPLICIT_CURRENCY_OVERRIDES_PROFILE",
-      "PROFILE_DEPARTURE_REFERENCE_ONLY"]};
+  const pace = profileHasSavedField(profile, "travel_pace"), currency = profileHasSavedField(profile, "currency"), departure = profileHasSavedField(profile, "default_departure_time");
+  return {...empty,status:pace || currency || departure ? "current" : "unknown",travelPace:pace ? profile.travelPace : null,currency:currency ? profile.currency : null,
+    defaultDepartureTime:departure ? profile.defaultDepartureTime : null,updatedAt:profile.updatedAt,
+    hints:[...(pace ? [`PROFILE_PACE_${profile.travelPace.toUpperCase()}_SOFT_REFERENCE`] : []),
+      ...(currency ? [needs.currency===profile.currency?"EXPLICIT_CURRENCY_MATCHES_PROFILE":"EXPLICIT_CURRENCY_OVERRIDES_PROFILE"] : []),
+      ...(departure ? ["PROFILE_DEPARTURE_REFERENCE_ONLY"] : [])]};
 }
