@@ -1,0 +1,18 @@
+--- a/scripts/ci-suites/db-integration.mjs
++++ b/scripts/ci-suites/db-integration.mjs
+@@ -66,6 +66,7 @@
+           VP_CONVERSATION_SOURCE_AUDIT: "1",
+           VP_PROFILE_DATA_SQL: "1",
+           VP_PROFILE_EXPORT_SQL: "1",
++          VP_TURN_DATA_SQL: "1",
+           VP_MATERIAL_TS_WIRE_ROOT: repo,
+           VP_TRANSLATION_HISTORY_DB_TEST: "1",
+           VP_ARCHIVE_DB_TEST: "1",
+@@ -124,6 +125,7 @@
+           "tests/integration/privacy/profile-data-sql/result-compatibility.test.mjs",
+           "tests/integration/privacy/profile-export/canonical-postgres.test.mjs",
+           "tests/integration/privacy/profile-export-sql/postgres.test.mjs",
++          "tests/integration/privacy/turn-data-sql/postgres.test.mjs",
+           "tests/integration/translate/history.test.mjs",
+           "tests/integration/trip/archive.test.mjs",
+           "tests/integration/trip/lifecycle-postgres.test.mjs",
