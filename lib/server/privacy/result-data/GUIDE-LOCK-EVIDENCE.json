@@ -1,0 +1,307 @@
+{
+  "sourceHash": "90660e7eed3640873c70af6f1975fc2395857197e5ecaa79585fd6d2586061d1",
+  "started": "2026-10-07T12:27:31.640Z",
+  "project": "vp-native-ask-d8b1db7f",
+  "base": 64500,
+  "originalTestExit": 1,
+  "observedSamples": 187,
+  "contexts": [
+    {
+      "function": "public.guide_place_v1(uuid,jsonb)",
+      "line": 5
+    },
+    {
+      "function": "public.guide_place_v1(uuid,jsonb)",
+      "line": 38
+    },
+    {
+      "lockedRelation": "service_tasks"
+    },
+    {
+      "function": "conversation_data_private.guard_source_v1()",
+      "line": 33
+    },
+    {
+      "function": "guide_private.invalidate_v1()",
+      "line": 16
+    },
+    {
+      "function": "public.ops_source_revision_withdraw_v1(jsonb)",
+      "line": 29
+    }
+  ],
+  "originalTestUnchanged": true,
+  "cleanupPass": true,
+  "lockSnapshotCount": 58,
+  "representativeLockSnapshots": [
+    {
+      "at": "2026-10-07T12:28:02.989995+00:00",
+      "locks": [
+        {
+          "pid": 494,
+          "mode": "RowShareLock",
+          "type": "relation",
+          "granted": true,
+          "relation": "turn_private.service_tasks",
+          "transaction": null
+        },
+        {
+          "pid": 494,
+          "mode": "ShareLock",
+          "type": "transactionid",
+          "granted": false,
+          "relation": null,
+          "transaction": "1467"
+        },
+        {
+          "pid": 1216,
+          "mode": "ExclusiveLock",
+          "type": "transactionid",
+          "granted": true,
+          "relation": null,
+          "transaction": "1467"
+        },
+        {
+          "pid": 494,
+          "mode": "AccessExclusiveLock",
+          "type": "tuple",
+          "granted": true,
+          "relation": "public.model_budget_scopes",
+          "transaction": null
+        },
+        {
+          "pid": 494,
+          "mode": "ExclusiveLock",
+          "type": "transactionid",
+          "granted": true,
+          "relation": null,
+          "transaction": "1468"
+        }
+      ],
+      "activities": [
+        {
+          "app": "PostgREST 16.2",
+          "pid": 494,
+          "role": "authenticator",
+          "wait": "transactionid",
+          "state": "active",
+          "blockers": [
+            1216
+          ],
+          "waitType": "Lock",
+          "operation": "reserve_model_budget",
+          "transactionMs": 31
+        },
+        {
+          "app": "vpj58-guide-budget-holder",
+          "pid": 1216,
+          "role": "postgres",
+          "wait": "PgSleep",
+          "state": "active",
+          "blockers": [],
+          "waitType": "Timeout",
+          "operation": "other",
+          "transactionMs": 34
+        }
+      ]
+    },
+    {
+      "at": "2026-10-07T12:28:03.041816+00:00",
+      "locks": [
+        {
+          "pid": 494,
+          "mode": "RowShareLock",
+          "type": "relation",
+          "granted": true,
+          "relation": "turn_private.service_tasks",
+          "transaction": null
+        },
+        {
+          "pid": 494,
+          "mode": "ShareLock",
+          "type": "transactionid",
+          "granted": false,
+          "relation": null,
+          "transaction": "1467"
+        },
+        {
+          "pid": 1216,
+          "mode": "ExclusiveLock",
+          "type": "transactionid",
+          "granted": true,
+          "relation": null,
+          "transaction": "1467"
+        },
+        {
+          "pid": 494,
+          "mode": "AccessExclusiveLock",
+          "type": "tuple",
+          "granted": true,
+          "relation": "public.model_budget_scopes",
+          "transaction": null
+        },
+        {
+          "pid": 494,
+          "mode": "ExclusiveLock",
+          "type": "transactionid",
+          "granted": true,
+          "relation": null,
+          "transaction": "1468"
+        }
+      ],
+      "activities": [
+        {
+          "app": "PostgREST 16.2",
+          "pid": 494,
+          "role": "authenticator",
+          "wait": "transactionid",
+          "state": "active",
+          "blockers": [
+            1216
+          ],
+          "waitType": "Lock",
+          "operation": "reserve_model_budget",
+          "transactionMs": 83
+        },
+        {
+          "app": "vpj58-guide-budget-holder",
+          "pid": 1216,
+          "role": "postgres",
+          "wait": "PgSleep",
+          "state": "active",
+          "blockers": [],
+          "waitType": "Timeout",
+          "operation": "other",
+          "transactionMs": 86
+        }
+      ]
+    },
+    {
+      "at": "2026-10-07T12:28:03.096207+00:00",
+      "locks": [
+        {
+          "pid": 494,
+          "mode": "RowShareLock",
+          "type": "relation",
+          "granted": true,
+          "relation": "turn_private.service_tasks",
+          "transaction": null
+        },
+        {
+          "pid": 494,
+          "mode": "ShareLock",
+          "type": "transactionid",
+          "granted": false,
+          "relation": null,
+          "transaction": "1467"
+        },
+        {
+          "pid": 1216,
+          "mode": "ExclusiveLock",
+          "type": "transactionid",
+          "granted": true,
+          "relation": null,
+          "transaction": "1467"
+        },
+        {
+          "pid": 1244,
+          "mode": "AccessExclusiveLock",
+          "type": "tuple",
+          "granted": false,
+          "relation": "public.model_budget_scopes",
+          "transaction": null
+        },
+        {
+          "pid": 494,
+          "mode": "AccessExclusiveLock",
+          "type": "tuple",
+          "granted": true,
+          "relation": "public.model_budget_scopes",
+          "transaction": null
+        },
+        {
+          "pid": 494,
+          "mode": "ExclusiveLock",
+          "type": "transactionid",
+          "granted": true,
+          "relation": null,
+          "transaction": "1468"
+        }
+      ],
+      "activities": [
+        {
+          "app": "PostgREST 16.2",
+          "pid": 494,
+          "role": "authenticator",
+          "wait": "transactionid",
+          "state": "active",
+          "blockers": [
+            1216
+          ],
+          "waitType": "Lock",
+          "operation": "reserve_model_budget",
+          "transactionMs": 137
+        },
+        {
+          "app": "vpj58-guide-budget-holder",
+          "pid": 1216,
+          "role": "postgres",
+          "wait": "PgSleep",
+          "state": "active",
+          "blockers": [],
+          "waitType": "Timeout",
+          "operation": "other",
+          "transactionMs": 140
+        },
+        {
+          "app": "psql",
+          "pid": 1244,
+          "role": "postgres",
+          "wait": "tuple",
+          "state": "active",
+          "blockers": [
+            494
+          ],
+          "waitType": "Lock",
+          "operation": "other",
+          "transactionMs": 38
+        }
+      ]
+    }
+  ],
+  "controlledBudgetOverlap": {
+    "controlledScheduling": true,
+    "sourceOrAssertChanged": false,
+    "binding": {
+      "taskId": "2675627f-fe0c-47d3-bdcd-7103ac1d6b15",
+      "turnId": "fcef04db-9cfd-443f-9312-7b32161a1103",
+      "scopeId": "2a29e3a8-2be1-4114-a3c2-04766b99fb75"
+    },
+    "lockChain": [
+      {
+        "app": "PostgREST 16.2",
+        "pid": 494,
+        "wait": "transactionid",
+        "blockers": [
+          1216
+        ],
+        "waitType": "Lock",
+        "operation": "reserve_model_budget"
+      },
+      {
+        "app": "vpj58-guide-budget-holder",
+        "pid": 1216,
+        "wait": "PgSleep",
+        "blockers": [],
+        "waitType": "Timeout",
+        "operation": "scope_holder"
+      }
+    ],
+    "withdraw": {
+      "status": 500,
+      "code": "55P03",
+      "message": "could not obtain lock on row in relation \"service_tasks\""
+    },
+    "holderExit": 0
+  }
+}

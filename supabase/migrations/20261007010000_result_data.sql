@@ -907,9 +907,13 @@ language plpgsql volatile security definer set search_path='' as $$
 declare doc_n jsonb;sets_n uuid[];seed_n uuid[];n integer:=0;
 begin
  return query select * from result_data_private.json_references_v1(result_data_private.documents_v1(relation_n,v));
- for doc_n in select * from result_data_private.notification_parents_v1(relation_n,v) loop
-  return query select * from result_data_private.json_references_v1(doc_n);
- end loop;
+ -- Only these three actual relations can have a notification parent in the
+ -- existing helper. Other rows still undergo the complete typed JSON walk.
+ if relation_n in('notification_private.outbox','notification_private.attempts','notification_private.operations') then
+  for doc_n in select * from result_data_private.notification_parents_v1(relation_n,v) loop
+   return query select * from result_data_private.json_references_v1(doc_n);
+  end loop;
+ end if;
  if relation_n='turn_private.result_artifacts' and notification_private.uuid(v->'id') then return query select 'artifactIds'::text,(v->>'id')::uuid;end if;
  if relation_n='turn_private.planning_v2_collector_origins' and notification_private.uuid(v->'request_id') then return query select 'journalIds'::text,(v->>'request_id')::uuid;end if;
  if relation_n='turn_private.result_revisions' and notification_private.uuid(v->'idempotency_key') then return query select 'publicationKeys'::text,(v->>'idempotency_key')::uuid;end if;
