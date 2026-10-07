@@ -1,0 +1,340 @@
+{
+  "ownerFixture": true,
+  "rows": 10000,
+  "originalTimeoutMs": 5000,
+  "calls": [
+    {
+      "fn": "progress_v1",
+      "milliseconds": 1401,
+      "code": 3,
+      "stderr": "ERROR:  PROFILE_SCOPE_TOO_LARGE\nCONTEXT:  PL/pgSQL function profile_data_private.progress_v1(uuid,jsonb) line 6 at RAISE"
+    },
+    {
+      "fn": "progress_cost_candidate_v1",
+      "milliseconds": 62,
+      "code": 3,
+      "stderr": "ERROR:  PROFILE_SCOPE_TOO_LARGE\nCONTEXT:  PL/pgSQL function profile_data_private.progress_cost_candidate_v1(uuid,jsonb) line 7 at RAISE"
+    },
+    {
+      "case": "exact whole row/ordered serialization/digest equality",
+      "selected": 0,
+      "result": true
+    },
+    {
+      "case": "exact whole row/ordered serialization/digest equality",
+      "selected": 20,
+      "result": true
+    },
+    {
+      "case": "exact whole row/ordered serialization/digest equality",
+      "selected": 500,
+      "result": true
+    }
+  ],
+  "waitSamples": [
+    {
+      "fn": "progress_v1",
+      "sample": [
+        {
+          "state": "active",
+          "blockers": [],
+          "waitEvent": null,
+          "waitEventType": null
+        }
+      ]
+    },
+    {
+      "fn": "progress_v1",
+      "sample": [
+        {
+          "state": "active",
+          "blockers": [],
+          "waitEvent": null,
+          "waitEventType": null
+        }
+      ]
+    },
+    {
+      "fn": "progress_v1",
+      "sample": [
+        {
+          "state": "active",
+          "blockers": [],
+          "waitEvent": null,
+          "waitEventType": null
+        }
+      ]
+    },
+    {
+      "fn": "progress_v1",
+      "sample": [
+        {
+          "state": "active",
+          "blockers": [],
+          "waitEvent": null,
+          "waitEventType": null
+        }
+      ]
+    },
+    {
+      "fn": "progress_v1",
+      "sample": [
+        {
+          "state": "active",
+          "blockers": [],
+          "waitEvent": null,
+          "waitEventType": null
+        }
+      ]
+    },
+    {
+      "fn": "progress_v1",
+      "sample": [
+        {
+          "state": "active",
+          "blockers": [],
+          "waitEvent": null,
+          "waitEventType": null
+        }
+      ]
+    },
+    {
+      "fn": "progress_v1",
+      "sample": [
+        {
+          "state": "active",
+          "blockers": [],
+          "waitEvent": null,
+          "waitEventType": null
+        }
+      ]
+    },
+    {
+      "fn": "progress_v1",
+      "sample": [
+        {
+          "state": "active",
+          "blockers": [],
+          "waitEvent": null,
+          "waitEventType": null
+        }
+      ]
+    },
+    {
+      "fn": "progress_v1",
+      "sample": [
+        {
+          "state": "active",
+          "blockers": [],
+          "waitEvent": null,
+          "waitEventType": null
+        }
+      ]
+    },
+    {
+      "fn": "progress_v1",
+      "sample": [
+        {
+          "state": "active",
+          "blockers": [],
+          "waitEvent": null,
+          "waitEventType": null
+        }
+      ]
+    },
+    {
+      "fn": "progress_v1",
+      "sample": [
+        {
+          "state": "active",
+          "blockers": [],
+          "waitEvent": null,
+          "waitEventType": null
+        }
+      ]
+    },
+    {
+      "fn": "progress_v1",
+      "sample": [
+        {
+          "state": "active",
+          "blockers": [],
+          "waitEvent": null,
+          "waitEventType": null
+        }
+      ]
+    },
+    {
+      "fn": "progress_v1",
+      "sample": [
+        {
+          "state": "active",
+          "blockers": [],
+          "waitEvent": null,
+          "waitEventType": null
+        }
+      ]
+    },
+    {
+      "fn": "progress_v1",
+      "sample": [
+        {
+          "state": "active",
+          "blockers": [],
+          "waitEvent": null,
+          "waitEventType": null
+        }
+      ]
+    },
+    {
+      "fn": "progress_v1",
+      "sample": [
+        {
+          "state": "active",
+          "blockers": [],
+          "waitEvent": null,
+          "waitEventType": null
+        }
+      ]
+    },
+    {
+      "fn": "progress_v1",
+      "sample": [
+        {
+          "state": "active",
+          "blockers": [],
+          "waitEvent": null,
+          "waitEventType": null
+        }
+      ]
+    },
+    {
+      "fn": "progress_v1",
+      "sample": [
+        {
+          "state": "active",
+          "blockers": [],
+          "waitEvent": null,
+          "waitEventType": null
+        }
+      ]
+    },
+    {
+      "fn": "progress_v1",
+      "sample": [
+        {
+          "state": "active",
+          "blockers": [],
+          "waitEvent": null,
+          "waitEventType": null
+        }
+      ]
+    },
+    {
+      "fn": "progress_v1",
+      "sample": [
+        {
+          "state": "active",
+          "blockers": [],
+          "waitEvent": null,
+          "waitEventType": null
+        }
+      ]
+    },
+    {
+      "fn": "progress_v1",
+      "sample": [
+        {
+          "state": "active",
+          "blockers": [],
+          "waitEvent": null,
+          "waitEventType": null
+        }
+      ]
+    },
+    {
+      "fn": "progress_v1",
+      "sample": [
+        {
+          "state": "active",
+          "blockers": [],
+          "waitEvent": null,
+          "waitEventType": null
+        }
+      ]
+    },
+    {
+      "fn": "progress_v1",
+      "sample": [
+        {
+          "state": "active",
+          "blockers": [],
+          "waitEvent": null,
+          "waitEventType": null
+        }
+      ]
+    },
+    {
+      "fn": "progress_v1",
+      "sample": [
+        {
+          "state": "active",
+          "blockers": [],
+          "waitEvent": null,
+          "waitEventType": null
+        }
+      ]
+    },
+    {
+      "fn": "progress_cost_candidate_v1",
+      "sample": [
+        {
+          "state": "active",
+          "blockers": [],
+          "waitEvent": null,
+          "waitEventType": null
+        }
+      ]
+    }
+  ],
+  "byteEquivalence": [
+    {
+      "rows": 0,
+      "utf8AndSeparatorsExact": true
+    },
+    {
+      "rows": 1,
+      "utf8AndSeparatorsExact": true
+    },
+    {
+      "rows": 2,
+      "utf8AndSeparatorsExact": true
+    }
+  ],
+  "missingSelectionSame": true,
+  "schemaUnchanged": "t",
+  "postFixEquality0_20_500": true,
+  "nowaitPreserved": true,
+  "exportCompatibility": {
+    "fixedHead": "4b31a17f5d67d77972f5cd9406b242de3bff4313",
+    "migrationSHA256": "5f1502f4d93d500db35ba7ae52b6b03b474bbc67abd62b8756ec62c00eaa8989",
+    "guards": "t|t|t",
+    "progressReferencedOrPinned": false
+  },
+  "boundaryFixtureKind": "private serialization math only; temporary synthetic summary padding; whole transaction rollback; not a lawful public Profile source projection",
+  "boundaryBytes": [
+    {
+      "bytes": 999999,
+      "outcome": "identical complete JSON/digest"
+    },
+    {
+      "bytes": 1000000,
+      "outcome": "identical complete JSON/digest"
+    },
+    {
+      "bytes": 1000001,
+      "outcome": "PROFILE_SCOPE_TOO_LARGE",
+      "bothImplementationsIndependentlyRejected": true
+    }
+  ]
+}

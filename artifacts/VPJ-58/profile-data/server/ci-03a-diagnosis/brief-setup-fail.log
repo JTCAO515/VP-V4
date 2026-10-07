@@ -1,0 +1,48 @@
+✖ export exact 30s lease, reference-only projection, invalidation after source/audit/data change, complete bounds (317.977625ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 390.478625
+
+✖ failing tests:
+
+test at tests/integration/service-cases/brief-postgres.test.mjs:19:22
+✖ export exact 30s lease, reference-only projection, invalidation after source/audit/data change, complete bounds (317.977625ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  permission denied for function service_case_brief_v1
+  
+  
+  3 !== 0
+  
+      at call (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-profile-data-server-20261007/tests/integration/service-cases/brief-postgres.test.mjs:16:112)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-profile-data-server-20261007/tests/integration/service-cases/brief-postgres.test.mjs:249:48)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+Owned03a Brief cost fixture cleanup PASS
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: original unchanged bounds setup must reach its actual9800 rows
+    at file:///private/tmp/vpj58-profile-brief-cost.mjs:20:252
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: '',
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v26.8.2

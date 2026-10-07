@@ -344,14 +344,17 @@ begin
  'conflicts',(select coalesce(jsonb_agg(to_jsonb(k) order by ord),'[]') from unnest(array['SCOPE_TOO_LARGE','ACTIVE_PROFILE_USE','CORE_EXPORT_COPY','OTHER_DELETE_PENDING','SOURCE_UNSUPPORTED']) with ordinality x(k,ord) where k=any(conflicts)));
 end$$;
 create function profile_data_private.progress_v1(u uuid,ids jsonb default null) returns jsonb language plpgsql volatile security definer set search_path='' as $$
-declare rows_n jsonb:='[]';r profile_data_private.operations_v1;n integer:=0;begin
+declare rows_n jsonb[]:=array[]::jsonb[];items_n jsonb;row_n jsonb;r profile_data_private.operations_v1;n integer:=0;bytes_n bigint:=2;begin
  for r in select * from profile_data_private.operations_v1 where owner_id=u and (ids is null or ids ? request_id::text) order by request_id limit 10001 for update nowait loop
   n:=n+1;if n>10000 then raise exception 'PROFILE_SCOPE_TOO_LARGE';end if;
-  rows_n:=rows_n||jsonb_build_array(profile_data_private.operation_row_v1(r));
-  if octet_length(rows_n::text)>1000000 then raise exception 'PROFILE_SCOPE_TOO_LARGE';end if;
+  row_n:=profile_data_private.operation_row_v1(r);
+  bytes_n:=bytes_n+octet_length(row_n::text)+case when n>1 then 2 else 0 end;
+  if bytes_n>1000000 then raise exception 'PROFILE_SCOPE_TOO_LARGE';end if;
+  rows_n:=array_append(rows_n,row_n);
  end loop;
  if ids is not null and n<>jsonb_array_length(ids) then raise exception 'PROFILE_NOT_FOUND';end if;
- return jsonb_build_object('items',rows_n,'sourceDigest',profile_data_private.digest_v1(rows_n::text));
+ items_n:=to_jsonb(rows_n);
+ return jsonb_build_object('items',items_n,'sourceDigest',profile_data_private.digest_v1(items_n::text));
 end$$;
 -- Exact planned/actual source side effects. Any unexpected mutation rolls back.
 create function profile_data_private.verify_effects_v1(inv jsonb) returns void language plpgsql volatile security definer set search_path='' as $$
