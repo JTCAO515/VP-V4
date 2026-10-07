@@ -33,6 +33,8 @@ final class NativeSession {
     private(set) var failureCode: String?
     private(set) var dataGeneration = 0
     private var assistantNavigation: NativeAssistantNavigation?
+    private(set) var resultDataErasure: NativeResultDataErasure?
+    private var resultDataProjectionFence = NativeResultDataProjectionFence()
     private(set) var conversationDataErasure: NativeConversationDataErasure?
     let memoryPreferences=NativeMemoryPreferencesStore()
     let notifications = NativeNotificationCoordinator()
@@ -85,7 +87,10 @@ final class NativeSession {
         guard let value=assistantNavigation,value.scope==dataScope else{return nil};return value
     }
     func retainAssistantNavigation(_ value:NativeAssistantNavigation) {
-        guard value.scope==dataScope else{return};assistantNavigation=value
+        guard value.scope==dataScope else{return}
+        assistantNavigation = .init(scope: value.scope, conversationID: value.conversationID, goal: value.goal,
+            artifact: value.artifact.flatMap { resultDataPermitsResult($0.artifactId) ? $0 : nil },
+            viewedArtifact: value.viewedArtifact.flatMap { resultDataPermitsResult($0.artifactId) ? $0 : nil })
     }
 
     /// Remote destinations come only from the installed build, never launch arguments or user input.
@@ -296,6 +301,81 @@ final class NativeSession {
         return bytes
     }
 
+    var resultDataClient: NativeResultDataClient {
+        .init(current: { try? self.communitySafetyActor() },
+              request: { try await self.resultDataRequest(body: $0, actor: $1) },
+              consumeReceipt: { try self.applyResultDataReceipt($0, actor: $1) })
+    }
+    func resultDataStore(scope: NativeResultDataScope) -> NativeResultDataStore {
+        NativeResultDataStore(scope: scope, vault: vault)
+    }
+    func resultDataPermitsResult(_ id: String) -> Bool {
+        guard let actor = try? communitySafetyActor() else { return false }
+        return resultDataProjectionFence.actor != actor || resultDataProjectionFence.permits(id, actor: actor)
+    }
+    private func applyResultDataReceipt(_ receipt: NativeResultDataReceipt, actor: NativeCommunitySafetyActor) throws {
+        guard try communitySafetyActor() == actor, receipt.binding.actor == actor,
+              let pending = try NativeResultDataJournal(vault: vault, validateConfirmation: NativeResultDataCommand.validateConfirmation).read(actor) else {
+            throw NativeDataError.staleSessionResponse
+        }
+        let command = try NativeResultDataCommand(body: pending.body), binding = receipt.binding
+        guard command.action == "erase", command.requestID == binding.requestID, command.scope == binding.scope,
+              command.rootKind == binding.rootKind, command.rootID == binding.rootID, command.objectIDs == binding.objectIDs,
+              command.sourceDigest == binding.sourceDigest, command.previewDigest == binding.previewDigest,
+              receipt.requestDigest == NativeResultDataWire.digest(pending.body) else { throw NativeDataError.invalidResponse }
+        guard binding.scope == .sensitive else { return }
+        resultDataProjectionFence.bind(actor)
+        let erased = try NativeResultDataErasure(receipt: receipt, actor: actor, previouslyErased: resultDataProjectionFence.artifactIDs)
+        if let root = binding.rootID { try resultDataProjectionFence.recordVerifiedErasure(artifactID: root, actor: actor) }
+        if let navigation = assistantNavigation, navigation.scope == actor.scope {
+            assistantNavigation = .init(scope: navigation.scope, conversationID: navigation.conversationID, goal: navigation.goal,
+                artifact: navigation.artifact.flatMap { erased.artifactIDs.contains($0.artifactId) ? nil : $0 },
+                viewedArtifact: navigation.viewedArtifact.flatMap { erased.artifactIDs.contains($0.artifactId) ? nil : $0 })
+        }
+        resultDataErasure = erased
+    }
+    func resultDataRequest(body: Data, actor: NativeCommunitySafetyActor) async throws -> Data {
+        guard !busy, try communitySafetyActor() == actor, !Task.isCancelled else { throw NativeDataError.sessionUnavailable }
+        let command = try NativeResultDataCommand(body: body)
+        if ["erase", "recover"].contains(command.action) {
+            let journal = NativeResultDataJournal(vault: vault, validateConfirmation: NativeResultDataCommand.validateConfirmation)
+            guard try journal.read(actor)?.body == (command.mutationBytes ?? body) else { throw NativeDataError.staleSessionResponse }
+        }
+        let started = ProcessInfo.processInfo.systemUptime
+        if let credential, credential.expiresAt <= Date().timeIntervalSince1970 + 10 { await validate() }
+        guard try communitySafetyActor() == actor, let endpoint, let credential, !Task.isCancelled,
+              ProcessInfo.processInfo.systemUptime - started < 30 else { throw NativeDataError.staleSessionResponse }
+        var request = URLRequest(url: endpoint.appendingPathComponent("api/privacy/native/v1/result-data"))
+        request.httpMethod = "POST"; request.httpBody = body; request.httpShouldHandleCookies = false
+        request.timeoutInterval = 30; request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(credential.accessToken)", forHTTPHeaderField: "Authorization")
+        let (stream, response) = try await transport.bytes(for: request)
+        defer { stream.task.cancel() }
+        guard let http = response as? HTTPURLResponse, try communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
+        let cap = http.statusCode == 200 ? 1_000_000 : 4096
+        guard http.expectedContentLength <= Int64(cap) else { throw NativeDataError.invalidResponse }
+        var bytes = Data()
+        for try await byte in stream {
+            guard bytes.count < cap, try communitySafetyActor() == actor, !Task.isCancelled,
+                  ProcessInfo.processInfo.systemUptime - started < 30 else { throw NativeDataError.staleSessionResponse }
+            bytes.append(byte)
+        }
+        guard try communitySafetyActor() == actor, !Task.isCancelled,
+              ProcessInfo.processInfo.systemUptime - started < 30 else { throw NativeDataError.staleSessionResponse }
+        guard http.statusCode == 200 else {
+            let code = (try? JSONDecoder().decode(NativeDataFailure.self, from: bytes).error.code) ?? "RESULT_UNAVAILABLE"
+            if http.statusCode == 401, code != "REAUTHENTICATION_REQUIRED" { handle(SessionError.denied) }
+            throw NativeDataError.server(code: code)
+        }
+        let cache = http.value(forHTTPHeaderField: "Cache-Control")?.lowercased() ?? ""
+        guard cache.contains("private"), cache.contains("no-store"),
+              http.value(forHTTPHeaderField: "Vary")?.lowercased().split(separator: ",").map({ $0.trimmingCharacters(in: .whitespaces) }).contains("authorization") == true,
+              http.value(forHTTPHeaderField: "X-Content-Type-Options")?.lowercased() == "nosniff",
+              http.value(forHTTPHeaderField: "Content-Type")?.lowercased().hasPrefix("application/json") == true else { throw NativeDataError.invalidResponse }
+        try NativeResultDataWire.actor(NativeResultDataWire.root(bytes), actor, scope: command.scope)
+        return bytes
+    }
     var conversationDataClient: NativeConversationDataClient {
         .init(current: { try? self.communitySafetyActor() },
               request: { try await self.conversationDataRequest(body: $0, actor: $1) },
@@ -1596,6 +1676,17 @@ final class NativeSession {
 
     private func dataRequest(prefix: String, path: String, method: String, body: Data? = nil, queryItems: [URLQueryItem] = []) async throws -> Data {
         guard enabled, !busy, let initial = dataScope else { throw NativeDataError.sessionUnavailable }
+        let guardsResultProjection = path.hasPrefix("api/results/native/") ||
+            ((path == "api/library/native/v1/items" || path == "api/library/native/v1/item") && queryItems.contains { $0.name == "source" && $0.value == "results" })
+        let resultActor = guardsResultProjection ? try communitySafetyActor() : nil
+        let resultArtifact = queryItems.first { $0.name == "artifactId" || guardsResultProjection && path == "api/library/native/v1/item" && $0.name == "id" }?.value ??
+            (path == "api/results/native/v2/decision" ? ((try? JSONSerialization.jsonObject(with: body ?? Data())) as? [String: Any])?["artifactId"] as? String : nil)
+        var resultTicket: NativeResultDataProjectionFence.Ticket?
+        if let actor = resultActor {
+            resultDataProjectionFence.bind(actor)
+            resultTicket = try resultDataProjectionFence.capture(actor)
+            guard resultTicket.map({ resultDataProjectionFence.accepts($0, artifactID: resultArtifact) }) == true else { throw NativeDataError.staleSessionResponse }
+        }
         if let credential, credential.expiresAt <= Date().timeIntervalSince1970 + 10 {
             await validate()
         }
@@ -1622,6 +1713,9 @@ final class NativeSession {
         guard (200..<300).contains(http.statusCode) else {
             let envelope = try? JSONDecoder().decode(NativeDataFailure.self, from: data)
             throw NativeDataError.server(code: envelope?.error.code ?? "HTTP_\(http.statusCode)")
+        }
+        if let ticket = resultTicket {
+            guard try communitySafetyActor() == ticket.actor, resultDataProjectionFence.accepts(ticket, artifactID: resultArtifact) else { throw NativeDataError.staleSessionResponse }
         }
         return data
     }
@@ -1904,6 +1998,8 @@ final class NativeSession {
         catch { failureCode="dataCoverageExportCleanupRequired"; status="storageError"; return false }
         do { try NativeExperienceExportFile.eraseAll() }
         catch { failureCode="communityExperienceExportCleanupRequired"; status="storageError"; return false }
+        do { try NativeResultDataReceiptFile.eraseAll() }
+        catch { failureCode="resultDataFileCleanupRequired"; status="storageError"; return false }
         do { try NativeCommunitySafetyExportFile.eraseAll() }
         catch { failureCode="communitySafetyExportCleanupRequired"; status="storageError"; return false }
         do { try NativeCommunityExportFile.eraseAll() }
@@ -1915,6 +2011,7 @@ final class NativeSession {
         do{try offlineTrips.eraseAll()}catch{failureCode="offlineCleanupRequired";status="storageError";return false}
         dataGeneration += 1
         assistantNavigation=nil
+        resultDataErasure=nil; resultDataProjectionFence.bind(nil)
         conversationDataErasure=nil
         memoryPreferences.clear()
         exploreAskHandoff=nil
@@ -1931,6 +2028,8 @@ final class NativeSession {
                 // Noncredential cleanup index only. It cannot restore a session or authorize a journal read.
                 defaults.set(owner, forKey: storageKey + ".pendingJournalCleanupOwner")
             } else {
+                do { try NativeResultDataJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
+                catch { failureCode="resultDataJournalCleanupRequired"; status="storageError"; return false }
                 do { try NativeConversationDataJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
                 catch { failureCode="conversationDataJournalCleanupRequired"; status="storageError"; return false }
                 do { try NativeArchiveDataJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
