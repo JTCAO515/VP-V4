@@ -54,6 +54,9 @@ Only `fixture.mjs` and `profile.test.mjs` changed: one fixture lifecycle invokes
 
 Direct standalone bootstrap was observed with the same real fixture/migrations: **20 PASS / 0 FAIL / 0 skip**; log order is `Fixture RPC revoke PASS` then `Owned fixture container cleanup PASS`, and the owned container is absent afterward. The attempted parent-plus-one selector expanded all children, so this is accurately recorded as one full Profile-file run, not a single-case result; no additional matrix was rerun. Raw receipt `ownproof/cleanup-fixed.txt`, original failure excerpt `ownproof/cleanup-ci-failure.txt`. Migration SHA remains `4e12c0b4775995964382c52357a44c3cbe261f4042023326e833318c6fb8fdfe`. Remote CI on the integrated new PR head remains unrun by this writer.
 
+SQL SHA256 after the narrow Native source-lock error mapping: `aec808a083914b6414c129369ac96489463a1228fa802d26a68cc120f5fe42d3`. The preceding progress cost revision is `499b6ca9`. Earlier24 full-source receipts below belong to the original `4e12c0b4` runtime, with affected evidence for this change listed separately.
+
+
 
 ## 03a progress capacity runtime cost correction
 
@@ -72,3 +75,19 @@ Affected actual verification:
 - Read fixed Export0704 source at `4b31a17f5d67d77972f5cd9406b242de3bff4313`, migration SHA `5f1502f4d93d500db35ba7ae52b6b03b474bbc67abd62b8756ec62c00eaa8989`: no reference or precise pin for progress_v1. Loaded that exact0704 in the owned PG after this runtime fix: Profile schema, Result schema and Export hook guards all true. No Export source or hash/pin was edited. No application schema delta exists.
 
 Remote CI on the next integrated head remains UNRUN here. No full matrix or unaffected30s/Native/provider/device suite was repeated for this cost correction; prior unchanged evidence is retained.
+
+
+## cbe original Native error-family correction
+
+Actual Main observation for PR670 head `cbe3056b`, run `37650011765` / job `112890748294`, records691 tests/689 PASS/2 FAIL: original Profile concurrency subcase14 failed its strict PACE_CONFLICT assertion, and its parent followed. The lock_owner_v1 owner34 acquisition raised SQLSTATE55P03 with private PROFILE_CONFLICT, escaping public.native_travel_pace_v1 into the original Native HTTP error taxonomy. Brief9800 was separately observed PASS/2158ms/zero blockers; no old Brief cause is carried forward. Original selected failure retained in `ownproof/native-ci-failure.txt`.
+
+Main read the existing wrapper and granted **only** the local BEGIN/EXCEPTION around newly introduced lock_owner_v1 and following Profile FOR UPDATE NOWAIT. Catch lock_not_available and raise original PACE_CONFLICT. mobile_session, input/operation validation, floor, replay, original Native writer, effects/Brief, global private owner-lock function and new Profile API remain outside that catch and unchanged. Read and save/pause/revoke/undo share the new source lock and use the original Native conflict namespace. No HTTP allowlist, assertion, NOWAIT, advisory, lifetime, hard bound or schema was relaxed.
+
+Actual affected verification in a no-network owned PG:
+
+- Controlled owner34 lock reproduces original PROFILE_CONFLICT for read/save/undo. Candidate under controlled owner34, watermark and Profile row locks yields strict PACE_CONFLICT for read and all four mutation actions. A pg_stat_activity sleep barrier proves the holder acquired its lock before each call. Whole Profile/watermark rows are unchanged after failures (`ownproof/native-lock-mapping.json`, `native-lock-point.txt`).
+- Fresh save/read still succeed after contention; original INVALID_INPUT, session/authority failure, stale-revision PACE_CONFLICT and PACE_OPERATION_REUSE remain. Direct private lock_owner_v1 still raises PROFILE_CONFLICT. Profile/Result guards remain true.
+- Original subcase14 was extracted unchanged into a temporary standalone fixture runner: **2 PASS / 0 skip** including parent and original child. Its strict old-error regexes, concurrent Native save/Undo/Web, fresh v2 write and stale clear assertions remain identical; actual RPC revoke then owned destroy pass (`native-case14.txt`).
+- Read current fixed Export0704 (`4b31a17f`, SHA5f1502...) and Turn0705 (`dfc92c96`, SHA44a346...): neither references/pins this public Native wrapper. Original private native_original/task reader/operation getters and all shared schema/source-hook definitions are unchanged, so no function-pin or catalog-hash replacement is made. Turn integrator must consume this new0702 file baseline rather than restore an older full file.
+
+This is a necessary runtime contract fix, not a fixture-only change. Remote CI on the next integrated head remains UNRUN by this writer. No unaffected old local matrix was rerun.

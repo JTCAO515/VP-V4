@@ -1,0 +1,28 @@
+2026-10-07T16:24:14.9916916Z     not ok 14 - clear serializes against real old Native save/Undo/Web RPC transactions without weakening old errors
+2026-10-07T16:24:14.9917868Z       ---
+2026-10-07T16:24:14.9917995Z       duration_ms: 1310.730067
+2026-10-07T16:24:14.9918130Z       type: 'test'
+2026-10-07T16:24:14.9918416Z       location: '/home/runner/work/VP-V4/VP-V4/tests/integration/privacy/profile-data-sql/profile.test.mjs:131:10'
+2026-10-07T16:24:14.9918710Z       failureType: 'testCodeFailure'
+2026-10-07T16:24:14.9918870Z       error: |-
+2026-10-07T16:24:14.9919078Z         The input did not match the regular expression /PACE_CONFLICT/. Input:
+2026-10-07T16:24:14.9919279Z
+2026-10-07T16:24:14.9919410Z         'ERROR:  PROFILE_CONFLICT\n' +
+2026-10-07T16:24:14.9919689Z           'CONTEXT:  PL/pgSQL function profile_data_private.lock_owner_v1(uuid) line 3 at RAISE\n' +
+2026-10-07T16:24:14.9920027Z           'PL/pgSQL function public.native_travel_pace_v1(jsonb) line 6 at assignment\n'
+2026-10-07T16:24:14.9920241Z
+2026-10-07T16:24:14.9920358Z       code: 'ERR_ASSERTION'
+2026-10-07T16:24:14.9920503Z       name: 'AssertionError'
+2026-10-07T16:24:14.9920735Z       expected:
+2026-10-07T16:24:14.9920854Z       actual: |-
+2026-10-07T16:24:14.9920993Z         ERROR:  PROFILE_CONFLICT
+2026-10-07T16:24:14.9921243Z         CONTEXT:  PL/pgSQL function profile_data_private.lock_owner_v1(uuid) line 3 at RAISE
+2026-10-07T16:24:14.9921562Z         PL/pgSQL function public.native_travel_pace_v1(jsonb) line 6 at assignment
+2026-10-07T16:24:14.9921770Z
+2026-10-07T16:24:14.9921880Z       operator: 'match'
+2026-10-07T16:24:14.9922007Z       stack: |-
+2026-10-07T16:24:14.9922350Z         TestContext.<anonymous> (file:///home/runner/work/VP-V4/VP-V4/tests/integration/privacy/profile-data-sql/profile.test.mjs:134:469)
+2026-10-07T16:24:14.9922773Z         process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-10-07T16:24:14.9923056Z         async Test.run (node:internal/test_runner/test:1054:7)
+2026-10-07T16:24:14.9923448Z         async TestContext.<anonymous> (file:///home/runner/work/VP-V4/VP-V4/tests/integration/privacy/profile-data-sql/profile.test.mjs:131:2)
+2026-10-07T16:24:14.9923817Z         async Test.run (node:internal/test_runner/test:1054:7)
