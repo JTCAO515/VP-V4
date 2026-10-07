@@ -151,8 +151,16 @@ digest/monotonic tuple. Cover original read/validate/commit exact replay/recover
 ticket/download_prepare/download_consume, preserving Memory/entitlement hooks.
 Source-current and managed provenance are separate checks: stale proven copies
 remain managed and permit later clear, but never controlled readable.
-Lease expiry/reclaim, account/session/epoch replacement, revoked/frozen policy,
-intent drift and original deadlines retain original denial behavior. Unknown commit
+Provenance owner/session/epoch matches the job's original admission, not the
+downloader's current session. Original worker/claim/validate/commit/recovery still
+require original job session/epoch; replacing those makes old worker unavailable.
+Original owner ticket/prepare/consume intentionally allow the same owner after a
+new fresh Native session/epoch, under existing current-owner/session checks and
+ticket binding to that new actor. Do not compare proof.session_id/session_epoch
+to the downloader or silently add old-admission-epoch equality to owner download.
+Unauthorized/foreign/revoked current actors still fail original authentication.
+Lease expiry/reclaim, account deletion, revoked/frozen policy, intent drift and
+original deadlines retain original denial behavior. Unknown commit
 recovery remains original execution_receipt; no effects re-run, lease renewal or
 new-session rebind. Historical HANDLER_MISSING bytes are not upgraded. Old custom
 Profile bytes without proof stay opaque and blocked for clear even if digest
@@ -176,7 +184,9 @@ qualification; active unknown/custom still SOURCE_UNSUPPORTED. Qualification:
 
 1. Immutable server proof matches real owner/request/generation/session/epoch/
    committed lease, original unmodified commit_digest, exact complete Profile
-   module pages1/rows1/digest=proof source digest and original actual source counts.
+module pages1/rows1/digest=proof source digest and original actual source counts.
+   These admission session/epoch facts are compared to the original job, never
+   required to equal a lawful owner's new download session.
 2. Real original atomic job/intent/closed modules and encrypted artifact agree
    with proof: owner/request/generation/lease/key, nonce/tag/cipher lengths,
    digests/bytes, canonical original AAD and exact original clamped times. No
