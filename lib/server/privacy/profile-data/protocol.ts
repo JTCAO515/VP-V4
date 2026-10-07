@@ -49,6 +49,11 @@ export function decodeProfilePreview(v: unknown, c: Selected, a: ProfileActor, n
     if (!validProfile(v.profile) || !validSummary(v.summary) || v.progressCount !== 0) return null;
     if (v.summary.hasPaceRequest !== (v.profile.paceRequest !== null) || v.summary.hasPaceUndo !== (v.profile.paceUndo !== null)
       || ['explicit', 'paused'].includes(String(v.summary.paceState)) && v.profile.paceNotice !== 'local-planning-cross-trip-v1') return null;
+    if ((v.profile.paceRequest === null) !== (v.profile.paceOperation === null)
+      || v.profile.paceRequest !== null && (!record(v.profile.paceRequest) || typeof v.profile.paceRequest.operationId !== 'string'
+        || v.profile.paceRequest.operationId.toLowerCase() !== v.profile.paceOperation || Number(v.profile.paceRequest.expectedRevision) + 1 !== v.summary.paceRevision)
+      || v.profile.paceUndo !== null && (!record(v.profile.paceRequest) || v.profile.paceRequest.action !== 'save')
+      || !['explicit', 'paused'].includes(String(v.summary.paceState)) && v.profile.paceNotice !== null) return null;
   } else if (v.profile !== null || v.summary !== null || !emptyCopies(v.copies) || v.progressCount !== c.objectIds.length) return null;
   return v;
 }

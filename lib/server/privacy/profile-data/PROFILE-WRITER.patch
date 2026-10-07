@@ -26,13 +26,15 @@
    );
 --- a/lib/server/identity/user-data-adapter.ts
 +++ b/lib/server/identity/user-data-adapter.ts
-@@ -1,4 +1,5 @@
+@@ -1,4 +1,7 @@
  import { nativeFetch } from "./native-fetch.ts";
 +import { profileSaveParameters } from "../privacy/profile-data/writer.ts";
++import { validSavedFields } from "../privacy/profile-data/saved-fields.ts";
++import { revision as profileRevision } from "../privacy/profile-data/contract.ts";
  import { createServerClient, type CookieOptions } from "@supabase/ssr";
  import type { SupabaseClient } from "@supabase/supabase-js";
  import { verifyNativeCredentials } from "./native-credentials.ts";
-@@ -78,6 +79,8 @@
+@@ -78,6 +81,8 @@
    temperatureUnit: "celsius" | "fahrenheit";
    defaultDepartureTime: string;
    updatedAt: string;
@@ -41,7 +43,7 @@
  }>;
  export type PrivacyRequestRead = Readonly<{
    requestId: string;
-@@ -257,7 +260,7 @@
+@@ -257,11 +262,12 @@
      const { data, error } = await client
        .from("user_profiles")
        .select(
@@ -50,7 +52,12 @@
        )
        .maybeSingle();
      if (error) return { error: "INTERNAL_ERROR" };
-@@ -272,15 +275,19 @@
+     if (!data) return { data: null };
++    if (!profileRevision(data.profile_revision) || !validSavedFields(data.profile_saved_fields)) return { error: "INTERNAL_ERROR" };
+     return {
+       data: {
+         displayName: data.display_name ?? "",
+@@ -272,15 +278,19 @@
          temperatureUnit: data.temperature_unit,
          defaultDepartureTime: String(data.default_departure_time).slice(0, 5),
          updatedAt: data.updated_at,
@@ -72,7 +79,7 @@
        p_display_name: input.displayName,
        p_travel_pace: input.travelPace,
        p_locale: input.locale,
-@@ -289,7 +296,7 @@
+@@ -289,7 +299,7 @@
        p_temperature_unit: input.temperatureUnit,
        p_default_departure_time: input.defaultDepartureTime,
      });

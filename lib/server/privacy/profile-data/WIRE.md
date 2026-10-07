@@ -219,6 +219,15 @@ Main whole-source review/formal final-head requiredCI/protected merge. Scope sti
 in development; full #239/ALL1/ALL2 not complete. Target grants/credentials/
 provider/fees/deployment/real devices/backup remain UNRUN/unauthorized.
 
-Initial TS evidence: own7 PASS0skip, typecheck PASS (initial two type errors fixed),
+Initial TS evidence: own8 PASS0skip, typecheck PASS (initial two type errors fixed),
 sole producer8 envelopes self-checked. SQL/runtime/Auth/Native/shared registration
 not yet implemented in this package; no completion inference from this wire.
+
+Main496620 approved fixed7780cdc6 complete wire; unused07020000 auditedb41683.
+Sole SQL01a11608-fcd3 assigned append07020000/ownPG; Native receives sole producer.
+Subsequent decoder consistency checks are same wire keys: last pace request op/revision
+and Undo provenance must match actual row. No new SQL/Native envelope keys.
+REGISTRATION.patch is precisely four shared hunks against read-only ResultData
+98af2832 snapshot (.8), apply-check only; no ResultData shared write/release inferred.
+PROFILE-WRITER.patch runtime guard rejects absent/malformed actual new revision/mask;
+no silent default mask accepted from real upgraded DB. Both patches remain unapplied.
