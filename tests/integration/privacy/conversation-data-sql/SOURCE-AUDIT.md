@@ -269,3 +269,42 @@ existing-operation continuation, final empty page and sensitive-root anchoring p
 Evidence: ignored `artifacts/VPJ-58/conversation-data-sql/progress-pagination-catalog.json`.
 Original green Trip/Memory/30s and other matrices are reused, not rerun. Signed
 Auth incremental rerun remains with sole TS; r1/r2 FAIL history remains retained.
+
+
+## Original producer guard compatibility correction, 2026-10-07
+
+PR668 exact6eef CI failures remain retained: Native publication loser500/55P03
+CONVERSATION_CONFLICT, Trip/chat loser error not printed by CI, capacity task
+relabel lock-wait timeout. Local SQL was byte-equal to integrator SHA4ee23f….
+Diagnostic copies preserved all original assertions and added only outcome logs:
+887ab6 before2FAIL/0skip actually observed Trip race1 LIFECYCLE_LOCK_CONFLICT
+from trip_lifecycle_private.lock_owner_v1/deletion_queued_v1 and capacity
+CONVERSATION_CONFLICT at guard_source_v1 owner34 TRY. The original CI's missing
+Trip stderr remains missing; this raw value is from the local diagnostic.
+
+The new source writer's unconditional exclusive owner34 TRY preempted original
+producer locking; exclusive entity TRY also rejected competing normal writers.
+The minimal runtime correction removes only that added source-writer owner lock
+and changes writer entity TRY to shared. Original RPC owner34/admission, eraser
+exclusive entity/NOWAIT, parent row key-share NOWAIT, D4 account barriers,
+old/new-parent fences and private transaction proof remain unchanged.
+
+Actual431f3d after3PASS/0skip/8701ms: unchanged original Trip scenario with outcome
+logging and unchanged two capacity cases. Trip's three race losers now returned
+TRIP_HAS_CHAT_REFERENCES, TRIP_DELETION_PENDING_OR_COMPLETED and
+TRIP_DELETION_PENDING_OR_COMPLETED; capacity observes original blocking lock then
+SERVICE_TASK_CAPACITY_SCOPE_CONFLICT, including the inverse Trip-rebind case.
+Diagnostic temporary copies were removed; no original oracle was edited.
+
+Actualc2e3c6 directly affected fence run7PASS/0skip/12522ms:
+`VP_CONVERSATION_SOURCE_AUDIT=1 VP_CONVERSATION_FENCES_ONLY=1 node --test tests/integration/privacy/conversation-data-sql/source-audit.test.mjs`.
+Six child cases plus parent, disposable fixture cleanup. Actual shared-parent
+ordinary event writes both commit; erasure refuses a held source writer; a
+producer refuses an exclusive erase transaction; committed root restore is
+rejected. Mixed-copy old/new parents, original exact-byte erasure/recovery,
+retained text/task/capacity/budget markers and late callback rejection, default
+private denial/migration rollback/original function preservation also pass.
+Evidence: ignored `artifacts/VPJ-58/conversation-data-sql/shared-writer-fences-catalog.json`.
+No full matrix, timeout extension, allowlist or assertion weakening. Sole TS
+still owns the affected actual Native HTTP publication concurrency check and
+PR integration; Main must review the new combined exact head and required CI.

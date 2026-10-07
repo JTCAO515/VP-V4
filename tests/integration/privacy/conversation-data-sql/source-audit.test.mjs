@@ -53,8 +53,10 @@ test('conversation source graph baseline: catalog and hidden-text reverse effect
   let originalSource,tasklessOutcome;
   const mixedOnly = process.env.VP_CONVERSATION_MIXED_COPY_ONLY === '1';
   const paginationOnly = process.env.VP_CONVERSATION_PAGINATION_ONLY === '1';
+  const fencesOnly = process.env.VP_CONVERSATION_FENCES_ONLY === '1';
   const runCase = (name, ...args) => (mixedOnly && !/actual mapped|real text-hide|new private state|actual fixed-point|connected mixed-copy/.test(name))
-    || (paginationOnly && !/new private state|progress pagination/.test(name)) ? Promise.resolve() : t.test(name, ...args);
+    || (paginationOnly && !/new private state|progress pagination/.test(name))
+    || (fencesOnly && !/real text-hide|new private state|connected mixed-copy|ordinary scoped RPC|actual retained task|shared entity guards/.test(name)) ? Promise.resolve() : t.test(name, ...args);
   await runCase('actual mapped table definitions, all inbound/outbound FKs, JSON columns and trigger bodies', async () => {
     evidence.tables = JSON.parse(await db(`select jsonb_agg(jsonb_build_object('table',c.oid::regclass::text,'rls',c.relrowsecurity,'acl',c.relacl,
       'columns',(select jsonb_agg(jsonb_build_object('name',a.attname,'type',a.atttypid::regtype::text,'notNull',a.attnotnull) order by a.attnum) from pg_attribute a where a.attrelid=c.oid and a.attnum>0 and not a.attisdropped),
@@ -414,6 +416,45 @@ test('conversation source graph baseline: catalog and hidden-text reverse effect
     assert.equal(await invariant(),before);
     evidence.tripMemory={confirmedTrip:'all tested content/snapshot/event/proposal rows unchanged',explicitMemory:'profile/receipt/consent rows unchanged',goalTripReceipts:'all columns unchanged'};
   });
+  await runCase('shared entity guards preserve ordinary concurrent writers and keep erase overlap/late restore fail-closed',async()=>{
+    const owner=uuid(),session=uuid(),thread=uuid(),turn=uuid(),request=uuid();
+    const claims=`set request.jwt.claim.role='authenticated';set request.jwt.claim.sub='${owner}';set request.jwt.claims=${lit(JSON.stringify({role:'authenticated',is_anonymous:false,session_id:session}))};`;
+    await db(`insert into auth.users values('${owner}');insert into auth.sessions(id,user_id) values('${session}','${owner}');
+      insert into identity_private.mobile_accounts(owner_id,session_id,epoch) values('${owner}','${session}',1);
+      insert into identity_private.mobile_attempts(owner_id,attempt_id,session_id,epoch) values('${owner}','${uuid()}','${session}',1);
+      ${claims}insert into public.chat_threads(id,owner_id) values('${thread}','${owner}');
+      insert into public.turns(id,owner_id,thread_id,status) values('${turn}','${owner}','${thread}','completed');`);
+    const insertEvent=n=>`insert into public.chat_turn_events(owner_id,thread_id,turn_id,event_id,sequence,schema_version,event_type,state)
+      values('${owner}','${thread}','${turn}','shared-${n}',${n},'turn-sse-v1','terminal','completed');`;
+    const waitMarker=async marker=>{let seen=false;for(let n=0;n<100;n++){
+      if(await db(`select exists(select 1 from pg_stat_activity where application_name=${lit(marker)} and wait_event='PgSleep');`)==='t'){seen=true;break;}
+      await new Promise(r=>setTimeout(r,10));}assert.ok(seen,'actual owned transaction reached hold point');};
+    const writerMarker='conversation-shared-'+uuid();
+    const writer=sql(container,`set application_name=${lit(writerMarker)};begin;${insertEvent(1)}select pg_sleep(1);commit;`);
+    await waitMarker(writerMarker);
+    assert.equal((await sql(container,insertEvent(2))).code,0,'ordinary writers sharing thread/Turn preserve original concurrent writes');
+    assert.equal((await writer).code,0);
+    const selection={scope:'conversation-sensitive-data/1',requestId:request,rootKind:'thread',rootId:thread,objectIds:[]};
+    const query=c=>`begin;${claims}set role authenticated;select public.privacy_conversation_data_v1(${lit(c.action)},${lit(JSON.stringify(c))},1);commit;`;
+    const preview=JSON.parse(await db(query({action:'preview',...selection})));assert.equal(preview.eligible,true);assert.equal(preview.eraseCounts.events,2);
+    const erase={action:'erase',...selection,sourceDigest:preview.sourceDigest,previewDigest:preview.previewDigest,confirmed:true};
+    const heldWriterMarker='conversation-held-writer-'+uuid();
+    const heldWriter=sql(container,`set application_name=${lit(heldWriterMarker)};begin;${insertEvent(3)}select pg_sleep(1);rollback;`);
+    await waitMarker(heldWriterMarker);
+    const refusedErase=await sql(container,query(erase));assert.notEqual(refusedErase.code,0);assert.match(refusedErase.stderr,/CONVERSATION_CONFLICT/);
+    assert.equal((await heldWriter).code,0);assert.equal(await db(`select count(*) from public.chat_threads where id='${thread}';`),'1');
+    const eraseMarker='conversation-held-erase-'+uuid();
+    const heldErase=sql(container,`set application_name=${lit(eraseMarker)};begin;${claims}set role authenticated;
+      select public.privacy_conversation_data_v1('erase',${lit(JSON.stringify(erase))},1);select pg_sleep(1);commit;`);
+    await waitMarker(eraseMarker);
+    const callback=await sql(container,insertEvent(4));assert.notEqual(callback.code,0);assert.match(callback.stderr,/CONVERSATION_CONFLICT/);
+    const committed=await heldErase;assert.equal(committed.code,0,committed.stderr);
+    assert.equal(await db(`select count(*) from public.chat_threads where id='${thread}';`),'0');
+    const restore=await sql(container,`${claims}insert into public.chat_threads(id,owner_id) values('${thread}','${owner}');`);
+    assert.notEqual(restore.code,0);assert.match(restore.stderr,/CONVERSATION_CONFLICT/);
+    evidence.sharedFences={kind:'actual guarded writers and scoped erase RPC; SQL claims fixture',ordinary:'two shared-parent event writes commit',
+      writerOverlap:'erase refuses held source writer',eraseOverlap:'late producer refuses exclusive erase',afterCommit:'permanent root restore refused'};
+  });
   await runCase('progress pagination uses outer-scope request identity across repeated sensitive roots and progress rows',async()=>{
     const owner=uuid(),session=uuid(),root='f0000000-0000-4000-8000-000000000001';
     const claims=`set request.jwt.claim.role='authenticated';set request.jwt.claim.sub='${owner}';set request.jwt.claims=${lit(JSON.stringify({role:'authenticated',is_anonymous:false,session_id:session}))};`;
@@ -450,7 +491,7 @@ test('conversation source graph baseline: catalog and hidden-text reverse effect
     evidence.pagination={kind:'actual local SQL claims RPC; 25 real preview operations',progress:'requestId ordering across repeated roots and progress rows; 20+5 exact pages',
       anchors:'root alias/absent operation/digest mismatch rejected; existing operation resumes exactly',sensitive:'rootId anchor preserved',skipsDuplicates:'none'};
   });
-  if (!paginationOnly) {
+  if (!paginationOnly && !fencesOnly) {
   assert.ok(evidence.finding, 'Reproduction must succeed before publishing evidence');
   assert.ok(evidence.prefix, 'Private state checks must succeed before publishing prefix evidence');
   assert.ok(evidence.source, 'Actual source constructor checks must succeed before publishing source evidence');
@@ -464,9 +505,12 @@ test('conversation source graph baseline: catalog and hidden-text reverse effect
   }
   assert.ok(evidence.mixedCopies, 'Connected mixed-copy checks must succeed before publishing evidence');
   }
-  if (!mixedOnly) assert.ok(evidence.pagination, 'Actual progress pagination checks must succeed before publishing evidence');
+  if (fencesOnly) {
+    for (const key of ['finding','prefix','mixedCopies','rpc','retention','sharedFences']) assert.ok(evidence[key], key+' must pass');
+  }
+  if (!mixedOnly && !fencesOnly) assert.ok(evidence.pagination, 'Actual progress pagination checks must succeed before publishing evidence');
   const target='artifacts/VPJ-58/conversation-data-sql';mkdirSync(target,{recursive:true});
-  writeFileSync(target+(paginationOnly?'/progress-pagination-catalog.json':mixedOnly?'/mixed-copy-catalog.json':'/source-catalog.json'),JSON.stringify(evidence,null,2)+'\n');
-  console.log(paginationOnly ? 'Progress pagination verified; focused evidence saved; owned fixture cleanup follows.'
+  writeFileSync(target+(fencesOnly?'/shared-writer-fences-catalog.json':paginationOnly?'/progress-pagination-catalog.json':mixedOnly?'/mixed-copy-catalog.json':'/source-catalog.json'),JSON.stringify(evidence,null,2)+'\n');
+  console.log(fencesOnly ? 'Shared writer/erasure fences verified; focused evidence saved; owned fixture cleanup follows.' : paginationOnly ? 'Progress pagination verified; focused evidence saved; owned fixture cleanup follows.'
     : 'SOURCE_UNSUPPORTED reproduction verified; baseline catalog saved; owned fixture cleanup follows.');
 });

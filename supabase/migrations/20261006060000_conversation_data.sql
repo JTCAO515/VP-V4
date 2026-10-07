@@ -761,8 +761,9 @@ begin
 end$$;
 
 -- Every actual mapped writer and known external reference writer checks OLD
--- and NEW identity/parents. Identity advisory keys also cover absent parents,
--- so insert-after-delete cannot pass a pre-commit MVCC snapshot.
+-- and NEW identity/parents. Writers share entity advisory keys, including absent
+-- parents; the eraser takes them exclusively. Ordinary producer races retain
+-- their original row/PK locks and errors, without a new owner-wide write lock.
 create function conversation_data_private.guard_source_v1() returns trigger language plpgsql volatile security definer set search_path='' as $$
 declare relation_n text:=tg_table_schema||'.'||tg_table_name;new_n jsonb;old_n jsonb;all_n jsonb;ref record;owner_n uuid;owner_ids uuid[]:=array[]::uuid[];
 begin
@@ -775,7 +776,7 @@ begin
   if tg_op='DELETE' then return old;else return new;end if;
  end if;
  for owner_n in select unnest(owner_ids) loop
-  -- Retain D4's real account barrier/error before this added advisory fence for
+  -- Retain D4's real account barrier/error before the entity fence for
   -- Memory-bearing and queued-cleanup writers. Its original guard still runs.
   if exists(select 1 from privacy_private.memory_delete_jobs_v1 where owner_id=owner_n and state='queued')
    or jsonb_typeof(new_n->'memory_basis')='array' and jsonb_array_length(new_n->'memory_basis')>0
@@ -786,12 +787,11 @@ begin
    perform 1 from auth.users where id=owner_n for key share nowait;
    perform 1 from identity_private.mobile_accounts where owner_id=owner_n for update nowait;
   end if;
-  if not pg_try_advisory_xact_lock(hashtextextended(owner_n::text,34)) then raise lock_not_available using message='CONVERSATION_CONFLICT';end if;
  end loop;
  for ref in select distinct p.kind collate "C" kind,p.entity_id from (
   select * from conversation_data_private.parents_v1(relation_n,new_n)
   union select * from conversation_data_private.parents_v1(relation_n,old_n)) p order by p.kind collate "C",p.entity_id loop
-  if not pg_try_advisory_xact_lock(hashtextextended('conversation-data-entity:'||ref.kind||':'||ref.entity_id::text,0)) then raise lock_not_available using message='CONVERSATION_CONFLICT';end if;
+  if not pg_try_advisory_xact_lock_shared(hashtextextended('conversation-data-entity:'||ref.kind||':'||ref.entity_id::text,0)) then raise lock_not_available using message='CONVERSATION_CONFLICT';end if;
   case ref.kind
    when 'conversationIds' then perform 1 from turn_private.assistant_conversations where id=ref.entity_id for key share nowait;
    when 'threadIds' then perform 1 from public.chat_threads where id=ref.entity_id for key share nowait;
