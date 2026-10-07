@@ -1,0 +1,10 @@
+✔ append replay and rollback; new ACL/RLS deny, disabled switch, no enrollment (6956.525625ms)
+✔ export exact 30s lease, reference-only projection, invalidation after source/audit/data change, complete bounds (4020.710708ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 11149.5675

@@ -117,6 +117,7 @@ export const LANES = {
           "tests/integration/privacy/coverage-progress-sql/postgres.test.mjs",
           "tests/integration/privacy/archive-data-sql/postgres.test.mjs",
           "tests/integration/privacy/conversation-data-sql/source-audit.test.mjs",
+          "tests/integration/privacy/conversation-data-sql/guide-invalidation-compat.test.mjs",
           "tests/integration/privacy/result-data-sql/postgres.test.mjs",
           "tests/integration/privacy/profile-data-sql/profile.test.mjs",
           "tests/integration/privacy/profile-data-sql/result-compatibility.test.mjs",
