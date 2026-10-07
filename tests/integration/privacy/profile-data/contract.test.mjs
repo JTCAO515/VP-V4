@@ -23,6 +23,8 @@ test('closed explicit Profile selection preserves original bytes and rejects nes
 test('owner preview exposes all fields/pace history, exact fixed30s and declared mixed-copy effects', () => {
   const c = { action: 'preview', ...selection };
   assert.ok(decodeProfilePreview(preview(), c, actor, now + 1));
+  assert.ok(decodeProfilePreview({ ...preview(), profile: { ...profile, displayName: '🐼'.repeat(80) } }, c, actor, now + 1), 'legacy SQL char_length permits 80 Unicode code points');
+  assert.equal(decodeProfilePreview({ ...preview(), profile: { ...profile, displayName: '🐼'.repeat(81) } }, c, actor, now + 1), null);
   assert.ok(decodeProfilePreview({ ...preview(), conflicts: ['ACTIVE_PROFILE_USE'], eligible: false }, c, actor, now + 1));
   for (const change of [{ ownerId: id(90) }, { profileId: id(90) }, { mobileEpoch: 4 }, { expiresAt: now + 60000 }, { allUserDataCompleted: true },
     { profile: { ...profile, paceRequest: { ...profile.paceRequest, ownerId: actor.ownerId } } }, { summary: { ...summary, hasPaceUndo: false } },

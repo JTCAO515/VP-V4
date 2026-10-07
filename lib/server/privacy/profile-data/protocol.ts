@@ -21,7 +21,7 @@ export function validSummary(v: unknown): v is Record<string, unknown> {
 }
 export function validProfile(v: unknown): v is Record<string, unknown> {
   if (!record(v) || !exact(v, ['displayName', 'travelPace', 'locale', 'currency', 'distanceUnit', 'temperatureUnit', 'defaultDepartureTime',
-    'paceNotice', 'paceOperation', 'paceRequest', 'paceUndo']) || !(v.displayName === null || typeof v.displayName === 'string' && v.displayName.length > 0 && v.displayName.length <= 80)
+    'paceNotice', 'paceOperation', 'paceRequest', 'paceUndo']) || !(v.displayName === null || typeof v.displayName === 'string' && v.displayName.length > 0 && Array.from(v.displayName).length <= 80)
     || !['relaxed', 'balanced', 'packed'].includes(String(v.travelPace)) || !['zh', 'en', 'es', 'ru', 'ar'].includes(String(v.locale))
     || !['CNY', 'USD', 'EUR', 'RUB', 'SAR'].includes(String(v.currency)) || !['kilometre', 'mile'].includes(String(v.distanceUnit))
     || !['celsius', 'fahrenheit'].includes(String(v.temperatureUnit)) || typeof v.defaultDepartureTime !== 'string'
