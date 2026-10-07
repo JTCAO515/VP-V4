@@ -308,3 +308,45 @@ Evidence: ignored `artifacts/VPJ-58/conversation-data-sql/shared-writer-fences-c
 No full matrix, timeout extension, allowlist or assertion weakening. Sole TS
 still owns the affected actual Native HTTP publication concurrency check and
 PR integration; Main must review the new combined exact head and required CI.
+
+
+## Merged-source Guide invalidation append compatibility, 2026-10-07
+
+Main061e5f/97ee6d reviewed exact candidate SHA708d01f0f57c8347b122139ec214691712dff2345d7df2dc9ceb0c48405dfc25
+and granted the unused sole append20261007030000 slot. The merged060000 is
+unchanged. Only CREATE OR REPLACE conversation_data_private.guard_source_v1():
+Guide binding UPDATE may omit the additional Task row lock only when NEW is
+invalidated=true/completed_ids=[] and every other complete-row field equals OLD.
+Shared entity TRY, complete OLD/NEW parents, permanent fence/proof checks remain;
+other parent NOWAIT, D4 barriers, eraser admission/exclusive locks/CAS and original
+budget reservation locks are unchanged. No new trigger/API/ACL grant.
+
+Read the Result owner's actual controlled Guide evidence at CI-FINDING-1229795b.md
+and GUIDE-LOCK-EVIDENCE.json. That specific PostgREST reserve RPC holds canonical
+Task FOR UPDATE while waiting for its scope; source withdrawal invalidates Guide
+bindings and the original C KEY SHARE NOWAIT fails55P03. Historical CI blocker
+PID/budget wait remains UNKNOWN; the controlled reproduction does not prove it.
+
+Actual2c427f own affected PG1 PASS/0fail/skip,14012ms and disposable cleanup:
+actual original reserve RPC overlaps the same Guide invalidation SQL; before
+fails with strict Task55P03, after invalidation commits while reserve still waits.
+Two original budget reservations/canonical binding persist. Parent move, actual
+invalidated true->false reopen, other metadata/nonempty progress remain strict
+55P03 under Task contention; old/new permanent Task references and eraser
+exclusive entity are rejected. Real bound-Guide account cascade passes. Function
+ACL/config/security/volatility and original account boundary are preserved.
+
+Loaded original Result5154724/07010000 SHA3a87c300… and Profile928948d6/07020000
+SHA4e12c0b4… as read-only inputs in this owned fixture. Both original strict source
+guards execute TRUE before AND after; no registry/hash rewrite. The local test
+records these exact dependency hashes. On a checkout before Profile exists,
+Profile verification is explicitly UNRUN; Result stays strictly checked. Local
+combined proof contains both TRUE. No Result/Profile worktree writes occurred.
+
+Proof: ignored artifacts/VPJ-58/conversation-data-sql/guide-invalidation-append-candidate/append-proof.json.
+Prior626f42 candidate script PASS and000237/5ebc6d earlier focused PASS retained;
+8ec2d6 ACL proof cast failure and6b43c0 test syntax failure were fixture-code errors,
+corrected without runtime/timeout/oracle changes. Original controlled Guide HTTP
+after-withdrawal still belongs to Result sole TS; send is not consumption/PASS.
+Main owns new combined-head review/CI/protected merge. Target activation remains
+UNRUN. No unrelated matrix or provider call was run.
