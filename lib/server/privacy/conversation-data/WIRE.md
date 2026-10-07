@@ -464,3 +464,43 @@ This closes the caller/catalog fixture gap, not SQL execution/PG/Auth. Original
 SQL060000 full graph/CAS/authority/fences/receipt owner still must supply fixed
 source and actual PG/Auth evidence for sole package integration. No target
 activation or premature scopeComplete/PR merge. Prior failures remain recorded.
+
+## Complete source/consumer/Auth closeout, 2026-10-07
+
+Fixed whole SQL c645820c integrated over its original6bf ancestry; minimal
+pagination fix39684776 cherry-picked as18937e95. Migration SHA256
+4ee23f33522c16f85a57ca8866e8f2d00d1673ab0da28b2f55cf27d5a14b6ebc matches
+the actual pagination proof/manifest. Both SQL/test/audit source trees match the
+sole SQL fixed checkpoint; original source-catalog snapshot preserved. No old
+failed writer resumed and no dirty partial source copied.
+
+Signed disposable Auth r3 ACTUAL1 PASS/0skip,9888ms, cleanup3634d70c PASS:
+real GoTrue/JWT/native session -> signed PG preview -> actual TS decoder ->
+registered coverage erasure -> exact raw-byte receipt/recovery -> own progress
+preview/erase/complete inventory. Full confirmed Trip/snapshots/events/proposals
+and explicit Memory/receipts unchanged. Original producer cannot restore old
+root; wrong epoch/foreign/no credential/changed bytes denied; uncommitted actual
+preview's recover remains unknown; original revoked consent withholds terminal
+ACK; reauth precedes metadata; default RPC denial and fixture-only grant/revoke
+observed. One owned test, not a synthetic signed-identity claim.
+
+Auth r1/r2 FAIL+cleanup PASS retained. Whole progress list used wrong original
+root key despite individually valid rows; sole SQL corrected scope-specific key.
+No TS/client sorting or relaxed oracle. Own regression uses deterministic IDs.
+Next dev generated AGENTS/next-env changes were verified tooling-only and only
+those local deltas restored after owned process shutdown; no unrelated governance.
+
+Evidence stays separate: prior complete SQL11/30s/TripMemory; mixed-copy PG6;
+pagination PG3; D4 seven; separately reported D3 six; own TS9 and original
+coverage/notification16; Native8/Ask23; affected Native catalog12; signedAuth1.
+No handoff-only rerun of unaffected matrices. Main full core review and comment
+6033841844 record owned DEVELOPMENT CODECOMPLETE; whole239/fullmissing/ALL2 Open,
+target grants/credentials/provider/Storage/deploy/real data/device/backup UNRUN.
+
+Original sole integrator one-PR engineering remains. CI-REGISTRATION.patch is
+three appended registrations for actual SQL source-audit and signed Auth files in
+existing lanes/base63120; no new lane, execution helpers, matrix, timeout or skip
+waiver. Temporary local application/classification+governance11 PASS was checked,
+then reversed pending Main's explicit original-registry-owner release/lease;
+script source currently untouched. Apply only after grant, retire patch and renew
+exact final-head source/formal/all required CI/protected review/merge with Main.

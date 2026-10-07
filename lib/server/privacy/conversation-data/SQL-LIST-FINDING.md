@@ -29,3 +29,10 @@ Existing Auth test will choose low operation/high original root/middle progress
 operation UUIDs so the regression cannot pass by random UUID coincidence. Only
 the affected original Auth/PG consumer is rerun after fixed source is returned.
 No new scope, target GRANT, real user erase, reporting matrix or new writer.
+
+Resolved by sole SQL39684776 (integrator18937e95), exact scope-selected key in
+all five changed source lines. Its focused PG3 PASS/zeroSkip proves25 actual
+preview operations,20+5 pages/repeated roots/interleaved progress, no skip or
+duplicate, exact cursor and invalid root/absent/digest anchors. Original Auth r3
+then PASS1/zeroSkip with deterministic low request/high root/middle progress IDs,
+actual PG+TS+registered HTTP, and owned cleanup3634d70c PASS. R1/r2 FAIL retained.
