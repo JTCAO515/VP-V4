@@ -302,5 +302,7 @@ D2 private download/Native same-source and target/device verification UNRUN.
 Shared-registration candidate is exactly worker import/Turn handler/bundle+
 receipt qualification and four coverage additions. It retains nine core modules,
 34 coverage denominator entries, original encryption/download/currentness gates.
-Candidate catalog .11 follows Offline .10 only after actual current-owner release
-and Main exact lease; this candidate is not installed or live registration.
+Main-corrected catalog .11 replaces the original Turn row in actual .9 after
+normal merging deac2c30 Offline source. That checkpoint has no .10 TS registration;
+its device-scoped Offline row is preserved. Exact shared registration remains
+candidate until Main current-owner release/lease; it is not live registration.
