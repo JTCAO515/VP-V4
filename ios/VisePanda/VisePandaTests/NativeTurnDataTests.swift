@@ -54,7 +54,7 @@ import Testing
     @Test func explicitReviewUnknownAckAndReadOnlyRecoveryRetainOriginalBytes() async throws {
         let vault = TurnDataSafetyVault(), root = FileManager.default.temporaryDirectory.appendingPathComponent("turn-state-" + UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: root) }
-        let wall = try date(0.001); var monotonic: TimeInterval = 100, erases = 0, reads = 0, consumes = 0
+        var wall = try date(0.001); var monotonic: TimeInterval = 100, erases = 0, reads = 0, consumes = 0
         var originalMutation: Data?, reviewed: [String: Any]?
         let client = NativeTurnDataClient(current: { actor }, request: { body,_ in
             let command = try NativeTurnDataCommand(body: body)
@@ -87,7 +87,7 @@ import Testing
         #expect(store.pending?.body == originalMutation)
         await store.resolve(client:client)
         #expect(reads == 1 && erases == 1 && store.canResend(actor))
-        monotonic += 31; store.tick(client:client)
+        monotonic += 31; wall = wall.addingTimeInterval(31); store.tick(client:client)
         #expect(!store.canResend(actor) && store.pending?.body == originalMutation)
         await store.resolve(client:client)
         #expect(reads == 2 && erases == 1 && consumes == 1 && store.pending == nil)
