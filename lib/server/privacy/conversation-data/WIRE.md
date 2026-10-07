@@ -504,3 +504,13 @@ waiver. Temporary local application/classification+governance11 PASS was checked
 then reversed pending Main's explicit original-registry-owner release/lease;
 script source currently untouched. Apply only after grant, retire patch and renew
 exact final-head source/formal/all required CI/protected review/merge with Main.
+
+Main60e3af final precise CI lease received after original execution keeper's
+explicit clean/no in-flight/planned/successor release. ONLY the three appended
+registrations applied; patch retired. Original executionMatrix/executionSteps/
+CLI/two shards/LANES/classification/30m/strict summaries/zeroSkip/aggregate and
+Archive63240 untouched. Required registration governance11 PASS/zeroSkip and
+both new gated files classify to their real existing lanes; two-shard full union
+retained. Typecheck/lint/docs/diff evidence unchanged and reused. Final one-package
+engineering/source handoff can proceed; Main formal/new-head allCI/protected merge
+remain distinct from already recorded owned CODECOMPLETE.
