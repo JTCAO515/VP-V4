@@ -47,7 +47,8 @@ import Testing
         #expect(raw["contentExportRight"] as? String == "not_granted")
         #expect(!String(decoding: data, as: UTF8.self).contains("DO NOT EXPORT"))
         #expect((try url.resourceValues(forKeys: [.isExcludedFromBackupKey])).isExcludedFromBackup == true)
-        #expect(try FileManager.default.attributesOfItem(atPath: url.path)[.protectionKey] as? FileProtectionType == .complete)
+        let protection = try FileManager.default.attributesOfItem(atPath: url.path)[.protectionKey]
+        #expect((protection as? String) == FileProtectionType.complete.rawValue, "Actual protection attribute: \(String(describing: protection))")
         let operation = try #require(store.exportOperationID)
         #expect(store.delivery == "prepared" && !store.handedOff(operation: operation, current: actor, completed: false, failed: false))
         #expect(store.delivery == "cancelled")
