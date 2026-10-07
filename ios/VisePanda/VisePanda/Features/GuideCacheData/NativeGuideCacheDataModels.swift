@@ -64,7 +64,7 @@ struct NativeGuideCacheDataReceipt: Codable, Equatable {
     let completedAt: Date
     let instanceCount: Int
     let inspectedEmptyCount: Int
-    let rendererStopped: Bool
+    let guideRendererInspectedEmpty: Bool
     let scope: String
     let serverData: String
     let pendingRequests: String

@@ -124,7 +124,7 @@ import Observation
             let binding = [preview.actor.scope.endpoint, preview.actor.scope.subject, String(preview.actor.scope.mobileEpoch),
                            String(preview.actor.scope.generation), preview.actor.sessionID].joined(separator: "\n")
             let result = NativeGuideCacheDataReceipt(version: 1, operationID: preview.id, completedAt: now(),
-                instanceCount: inspected, inspectedEmptyCount: inspected, rendererStopped: true,
+                instanceCount: inspected, inspectedEmptyCount: inspected, guideRendererInspectedEmpty: true,
                 scope: "actual_owner_device_guide_instances", serverData: "unchanged", pendingRequests: "unchanged",
                 externalCopies: "not_recalled", actorBinding: SHA256.hash(data: Data(binding.utf8)).map { String(format: "%02x", $0) }.joined())
             receipt = result; receiptActor = preview.actor; self.preview = nil; available = []; loaded = false; notice = nil

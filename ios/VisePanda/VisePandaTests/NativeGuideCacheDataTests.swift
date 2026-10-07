@@ -122,6 +122,19 @@ import Testing
         audio.onGuideProgress = { _, _, _ in callbacks += 1 }
         #expect(!store.currentSelection(actor) && store.clean(current: actor) == nil)
     }
+    @Test func clearingGuideDoesNotStopAnActiveOtherPurposeTranslation() async throws {
+        let (original, audio, driver, store, root) = fixture(); defer { try? FileManager.default.removeItem(at: root) }
+        try await read(original)
+        audio.selectFinalTranslation(id: "live-original", text: "Keep this translation playing", localeIdentifier: "en-US")
+        audio.speak(); let completion = driver.completion
+        #expect(audio.phase == .speaking && audio.guidePlaybackID == nil)
+        store.load(current: actor); store.select(current: actor)
+        let receipt = try #require(store.clean(current: actor))
+        #expect(receipt.guideRendererInspectedEmpty && audio.phase == .speaking)
+        completion?(false, 4); #expect(audio.spokenCharacters == 4 && audio.phase == .speaking)
+        completion?(true, 29); #expect(audio.phase == .idle)
+        audio.speak(); #expect(driver.texts.count == 1)
+    }
     @Test func ownedExportRemovalFailureCannotBecomeSourceClearReceipt() async throws {
         var failing = false
         let (original, _, _, store, root) = fixture(remove: { url in if failing { throw NativeDataError.sessionUnavailable }; try FileManager.default.removeItem(at: url) })
