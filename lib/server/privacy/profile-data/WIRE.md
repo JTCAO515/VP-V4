@@ -335,3 +335,12 @@ still fail closed. New actual source-time24 signedAuth1PASS/cleanup and Native1
 codec proof are necessary increments, not copied fixture-only confidence.
 No ProfileExport source/SQL or other unmerged domain consumed. Main must renew
 codecompletion/exactfinalformal/allCI on the fixed head; oldheadHOLD is not waived.
+
+Fresh03a PG failures remain distinct from3201: progress capacity fails before its
+exact bound error due to statement timeout, assigned solely to original ProfileSQL;
+Brief audit9800 timeout at Auth FK has remote UNKNOWN cause. Main26e60d reviewed
+owned originalprereq/bounds2PASS + actual9800 EXPLAIN/function/wait counterexample
+(792ms,10active/noWait/noBlocker samples), without source or originalbounds changes.
+Counterexample + first setupFAIL preserved under server/ci-03a-diagnosis; no further
+local matrix/Brief source edit this turn. New actual progress source increment then
+normal new-head requiredCI, with original Brief5s/9800 assertion still hard gate.
