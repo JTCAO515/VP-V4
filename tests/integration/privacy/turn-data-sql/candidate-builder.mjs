@@ -1,5 +1,6 @@
+import { fixturePath } from './fixture-path.mjs';
 import { readFileSync,writeFileSync,mkdirSync } from 'node:fs';import{createHash}from'node:crypto';import{sql}from'../../cost/fixtures/postgres-rpc.mjs';
-const c=readFileSync('/tmp/vpj58-turn-sql-container','utf8').trim(),dir='tests/integration/privacy/turn-data-sql/candidates';mkdirSync(dir,{recursive:true});
+const c=readFileSync(fixturePath('vpj58-turn-sql-container'),'utf8').trim(),dir='tests/integration/privacy/turn-data-sql/candidates';mkdirSync(dir,{recursive:true});
 const lit=v=>"'"+v.replaceAll("'","''")+"'";const db=async q=>{const r=await sql(c,"set search_path='';"+q);if(r.code)throw Error(r.stderr);return r.stdout.trim();};const hash=v=>createHash('sha256').update(v).digest('hex'),md5=v=>createHash('md5').update(v).digest('hex');
 const ids=['export_private.lock_job_v1(uuid,boolean)','public.privacy_core_export_v1(text,jsonb)','profile_data_private.sources_v1()','profile_data_private.schema_v1()','result_data_private.schema_supported_v1()','export_private.profile_hooks_valid_v1()'];
 const defs=JSON.parse(await db(`select jsonb_object_agg(id,pg_get_functiondef(id::regprocedure)) from unnest(array[${ids.map(lit).join(',')}]::text[]) id`));

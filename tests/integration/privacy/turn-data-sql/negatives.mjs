@@ -1,5 +1,6 @@
+import { fixturePath } from './fixture-path.mjs';
 import assert from'node:assert/strict';import{readFileSync}from'node:fs';import{randomUUID as uuid}from'node:crypto';import{sql}from'../../cost/fixtures/postgres-rpc.mjs';
-const cn=readFileSync('/tmp/vpj58-turn-sql-container','utf8').trim();const {a,claims}=JSON.parse(readFileSync('/tmp/vpj58-turn-actual-preview.json','utf8'));const lit=v=>"'"+String(v).replaceAll("'","''")+"'";const db=async q=>{const r=await sql(cn,q);assert.equal(r.code,0,r.stderr);return r.stdout.trim();};const fail=async(q,why)=>{const r=await sql(cn,q);assert.notEqual(r.code,0);assert.match(r.stderr,why);};
+const cn=readFileSync(fixturePath('vpj58-turn-sql-container'),'utf8').trim();const {a,claims}=JSON.parse(readFileSync(fixturePath('vpj58-turn-actual-preview.json'),'utf8'));const lit=v=>"'"+String(v).replaceAll("'","''")+"'";const db=async q=>{const r=await sql(cn,q);assert.equal(r.code,0,r.stderr);return r.stdout.trim();};const fail=async(q,why)=>{const r=await sql(cn,q);assert.notEqual(r.code,0);assert.match(r.stderr,why);};
 await db(`update auth.sessions set created_at=clock_timestamp()where id='${a.session}';`);
 const query=c=>`begin;${claims}set role authenticated;select public.privacy_turn_data_v1(${lit(c.action)},${lit(JSON.stringify(c))},1);commit;`;
 const pick=()=>({scope:'turn-sensitive-data/1',requestId:uuid(),turnId:a.turn,objectIds:[]});const s=pick(),p=JSON.parse(await db(query({action:'preview',...s})));assert.equal(p.eligible,true);
