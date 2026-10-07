@@ -368,3 +368,53 @@ Apply-check PASS; shared classifier/governance execution awaits precise Main
 original-registry-owner release/lease and fixed SQL file integration. No nonexistent
 SQL source copied or fake registered-path success. Own Auth runner requires real
 fixed migration plus actual registered result_data caller before resource start.
+
+## Actual signed Auth chain closed after compatibility repair
+
+Actual repaired SQL06a2c4b9 normally integrated85bee5e4; migration hash matches
+schema-compatibility-checkpoint, entire SQL tree equals fixed source. No dirty
+owner output copied. Original251 application schema private1/fullhash and all
+reverse/boundary drift checks retained; only six real managed namespaces isolated
+with typed crossing negatives and final recheck. Original705 PG proof remains
+scoped/reused; first actual Auth r1/r2 FAIL+cleanup PASS retained in finding.
+
+Auth r3 ACTUAL1 PASS/0skip on combined85bee5e4, cleanup5e524606 PASS: real
+GoTrue/JWT/native session -> ordinary owner RPC -> TS actual SQL decoder ->
+registered results coverage caller -> complete selected withdrawn artifact erase
+(all2 revisions/all3 events) -> original whitespace bytes immutable receipt/
+read-only recovery -> own finite inventory/explicit transient cleanup. Full
+original Conversation/Task/Turn/Trip/applied proposal/history/explicit Memory/
+financial rows and unselected same-source sibling unchanged. Original publish
+cannot restore erased artifact; wrong epoch/foreign/no credentials/changed bytes/
+original revoked consent/reauth/default-denied/grant-revoke negatives observed.
+Provider output/financial rows are controlled synthetic fixture data; real signed
+Auth is observed, not a real provider/fee/target/device/backup completion claim.
+
+Owned runtime source/caller/Native/SQL/actualAuth core is implemented. Whole239
+and remaining ALL1/ALL2 remain Open. Main whole-chain batch review, precise pending
+CI registration lease, one integrated PR/exact-head formal/all required CI and
+protected merge remain required. No target grant/config/provider/production action.
+Existing valid scoped evidence reused; no new process, child chat or extra matrix.
+
+Final SQL owner92e338e1 replaces intermediate06a2c4b9 only in committed
+ownproof/smoke.json fresh ordinary-source output (IDs/times/digests/event sequence).
+Runtime migration, compatibility proof/runner and all assertions are BYTE IDENTICAL.
+Applied only that exact committed delta, never dirty files; whole SQL/proof tree
+now equals final92e338e1. Auth r3 runtime hash906b7be7/config/caller unchanged,
+so actual1PASS/cleanup5e524606 evidence remains effective; no duplicate source
+cherry-pick or unnecessary unchanged Auth rerun.
+
+Profile Native precise release (read-only, separate task): current Result source
+f5f8c6 is stable, no Swift source in-flight/planned/successor writes. Explicitly
+release only Profile additions to NativeSession factory/request/receipt floor/
+displayName generation/cache cleanup, NativeDataCoverageModuleView destination/
+profile entry, PBX own Profile references/memberships, and NativeVPTravelPaceView
+Profile observer; original Result cases/cleanup/tickets/.8/pending bytes preserved.
+Future NativeDataCoverageModels .8→.9 constant only/same34 is also released for
+Main-reviewed Profile integration, not an application to this Result checkout.
+Read-only patch applies to current f5 context;28 new PBX IDs unique/noncolliding.
+First broad object-ID check falsely treated existing Resources replacement as a
+new collision; corrected additive identity check passes. This release does NOT
+cover ProfileView/NativeTravelPace/VPStore/TravelerBrief hunks owned by others,
+whole files, current Result branch writes, TS/SQL/CI or unrelated architecture.
+Main grants actual Profile task application after its other applicable releases.

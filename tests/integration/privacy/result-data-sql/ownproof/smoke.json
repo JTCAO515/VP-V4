@@ -4,30 +4,30 @@
     "kind": "preview",
     "graph": {
       "eventIds": [
-        "9007199254741027"
+        "3"
       ],
       "revisions": [
         1
       ],
       "journalIds": [],
       "artifactIds": [
-        "bfd3db0f-999f-48eb-8d5a-93a8939566e8"
+        "7e40aa1f-4651-47a2-8847-8a6782069778"
       ],
       "executionIds": [],
       "publicationKeys": [
-        "1063f111-fd5b-4514-ab58-dccb5f3371e5"
+        "90377bd5-47a9-4812-a452-e9b308218b0e"
       ]
     },
     "scope": "result-sensitive-data/1",
-    "rootId": "bfd3db0f-999f-48eb-8d5a-93a8939566e8",
-    "ownerId": "abb1c6ca-3d88-4f4b-83c9-337c77e4a9fa",
+    "rootId": "7e40aa1f-4651-47a2-8847-8a6782069778",
+    "ownerId": "f0c12c9a-76b9-4ad6-a4e6-109c0666dcda",
     "eligible": true,
     "rootKind": "artifact",
     "conflicts": [],
-    "expiresAt": 1791369859491,
+    "expiresAt": 1791371910679,
     "objectIds": [],
-    "requestId": "77d4b2e5-2187-454b-8ac4-6943666a9e39",
-    "sessionId": "04fc1ba2-5a02-45b4-aff8-38e98bad5c18",
+    "requestId": "437b2267-31e2-4271-80c2-71eb299a0545",
+    "sessionId": "6499f45c-f9af-4bdb-91e2-f42e7e7f3480",
     "boundaries": {
       "missing": [
         "cross_result_or_conversation_source_dependents_rejected",
@@ -51,7 +51,7 @@
         "proven_exclusive_completed_planning_result_copies"
       ]
     },
-    "capturedAt": 1791369829491,
+    "capturedAt": 1791371880679,
     "eraseCounts": {
       "artifacts": 1,
       "revisions": 1,
@@ -80,37 +80,37 @@
       "planningSources": 3,
       "sourceArtifacts": 0
     },
-    "sourceDigest": "ad0dad2ff9bbb715ed7f7c839983b8f3dbc3383e0b67f7c93161dc13a6abdaf4",
-    "previewDigest": "e37ef205e29c812d347516ed00e3e8441761eb74dc4adae48a5a86f95c2eb207",
+    "sourceDigest": "f1cad9f7daf9c656ca32d1f2dd054dd98659eec18d2e2341e557c6960429a626",
+    "previewDigest": "2ef6880367477b20f8cba8760cfbaf6e4f2c470b629fa39199bf2c546a26f765",
     "progressCount": 0,
     "schemaVersion": "result-data/1",
     "sourceAuthorities": [
       {
-        "policyId": "b99c3a81-c0f1-4475-be97-afebeab281dc",
-        "consentId": "0c70a6d4-9107-48a3-8f2f-5db5e05c649d"
+        "policyId": "12f5d264-3402-456c-a0b7-37d3573b2e2d",
+        "consentId": "d71b0f3f-71f7-43e1-8a6c-d13b8ca24fc3"
       }
     ],
     "retainedReferences": {
       "goalIds": [
-        "7205321a-e08f-4a5a-91ca-cea8e026eb18"
+        "c6d904a2-ae13-4595-a20d-16774c89756c"
       ],
       "taskIds": [
-        "67716734-d255-41d6-910d-1f66f6d3727d"
+        "1d40dd4a-b85a-4a43-bb63-c8b4076e4025"
       ],
       "tripIds": [],
       "turnIds": [
-        "c7bf321c-59e8-41ab-8bdf-00b54709674b"
+        "c7d2d9ac-e391-47c7-acf5-d34af83741d6"
       ],
       "memoryIds": [],
       "threadIds": [
-        "d1ba71e6-dfd5-4b5d-847e-e01f5621cf15"
+        "b554c4d6-27d6-4081-8069-37466f8c85c9"
       ],
       "messageIds": [
-        "17b4fde0-323e-4886-b579-4cb7a79dbdb7"
+        "dfddca02-9dbc-4d71-8309-fac4025b9ff0"
       ],
       "proposalIds": [],
       "conversationIds": [
-        "6ce28799-db97-4e82-ae43-3bba7f9fe236"
+        "f5152299-58d1-4f43-bc6d-06576b6ef61a"
       ],
       "sourceArtifactIds": []
     },
@@ -120,26 +120,26 @@
     "kind": "receipt",
     "scope": "result-sensitive-data/1",
     "state": "erased",
-    "rootId": "bfd3db0f-999f-48eb-8d5a-93a8939566e8",
-    "ownerId": "abb1c6ca-3d88-4f4b-83c9-337c77e4a9fa",
+    "rootId": "7e40aa1f-4651-47a2-8847-8a6782069778",
+    "ownerId": "f0c12c9a-76b9-4ad6-a4e6-109c0666dcda",
     "decision": {
       "graph": {
         "eventIds": [
-          "9007199254741027"
+          "3"
         ],
         "revisions": [
           1
         ],
         "journalIds": [],
         "artifactIds": [
-          "bfd3db0f-999f-48eb-8d5a-93a8939566e8"
+          "7e40aa1f-4651-47a2-8847-8a6782069778"
         ],
         "executionIds": [],
         "publicationKeys": [
-          "1063f111-fd5b-4514-ab58-dccb5f3371e5"
+          "90377bd5-47a9-4812-a452-e9b308218b0e"
         ]
       },
-      "decidedAt": 1791369830074,
+      "decidedAt": 1791371880904,
       "sourceTrip": "not_modified",
       "erasedCounts": {
         "artifacts": 1,
@@ -155,7 +155,7 @@
         "completedReceipts": 0
       },
       "sourceResult": "erased",
-      "requestDigest": "d05ecc90d1b37799377af002e5547e2ba33a4f92f2bfe5442db6193667248164",
+      "requestDigest": "d640c28f85b790d1ab1c7c702b81f84f6dea3f258f3a8e70f036faea5b3161b4",
       "explicitMemory": "not_modified",
       "externalCopies": "not_erased",
       "retainedCounts": {
@@ -177,10 +177,10 @@
       "sourceConversation": "not_modified"
     },
     "rootKind": "artifact",
-    "expiresAt": 1791369859491,
+    "expiresAt": 1791371910679,
     "objectIds": [],
-    "requestId": "77d4b2e5-2187-454b-8ac4-6943666a9e39",
-    "sessionId": "04fc1ba2-5a02-45b4-aff8-38e98bad5c18",
+    "requestId": "437b2267-31e2-4271-80c2-71eb299a0545",
+    "sessionId": "6499f45c-f9af-4bdb-91e2-f42e7e7f3480",
     "boundaries": {
       "missing": [
         "cross_result_or_conversation_source_dependents_rejected",
@@ -204,15 +204,15 @@
         "proven_exclusive_completed_planning_result_copies"
       ]
     },
-    "capturedAt": 1791369829491,
+    "capturedAt": 1791371880679,
     "mobileEpoch": 1,
-    "sourceDigest": "ad0dad2ff9bbb715ed7f7c839983b8f3dbc3383e0b67f7c93161dc13a6abdaf4",
-    "previewDigest": "e37ef205e29c812d347516ed00e3e8441761eb74dc4adae48a5a86f95c2eb207",
+    "sourceDigest": "f1cad9f7daf9c656ca32d1f2dd054dd98659eec18d2e2341e557c6960429a626",
+    "previewDigest": "2ef6880367477b20f8cba8760cfbaf6e4f2c470b629fa39199bf2c546a26f765",
     "schemaVersion": "result-data/1",
     "sourceAuthorities": [
       {
-        "policyId": "b99c3a81-c0f1-4475-be97-afebeab281dc",
-        "consentId": "0c70a6d4-9107-48a3-8f2f-5db5e05c649d"
+        "policyId": "12f5d264-3402-456c-a0b7-37d3573b2e2d",
+        "consentId": "d71b0f3f-71f7-43e1-8a6c-d13b8ca24fc3"
       }
     ],
     "allUserDataCompleted": false

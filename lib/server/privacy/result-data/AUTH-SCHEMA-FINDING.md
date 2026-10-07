@@ -45,3 +45,31 @@ unexpected application dependency, or weaken an oracle. Original SQL owner owns
 migration repair/fixed PG source evidence; sole TS owns the actual signed consumer.
 Affected real Auth reruns after fixed repair; unchanged Native evidence reused.
 Whole ResultData package is not complete and whole239 remains Open.
+
+## Fixed compatibility repair and actual rerun
+
+Original sole SQL06a2c4b9 integrated normally as85bee5e4, no dirty smoke.json copied.
+Migration SHA256906b7be76bdde898dfacf70405bc0a687fed5ca669beaa9f0ce1d3f2042c5f26
+matches fixed compatibility manifest. Entire SQL/source-proof tree equals fixed
+06a2c4b9; original application hash and private1 remain audited, only six observed
+managed operational namespaces isolated with incoming FK/typed column/JSON/OID
+negative boundary proof and final recheck. No runtime authority/count/TTL/erase/
+receipt/fence guard or target grant relaxed. Main owns formal full-chain review.
+
+r3 ACTUAL projectvp-native-ask-5e524606/base63080 on combined85bee5e4: signed
+GoTrue/JWT/native login -> owner actual RPC -> TS decoder -> registered coverage
+caller -> selected withdrawn artifact all2 revisions/all3 events erased -> exact
+whitespace raw bytes receipt/read-only recovery -> unknown uncommitted preview ->
+finite own operation inventory -> explicit selected transient preview erasure.
+Whole original Conversation/goal/messages/Task/Turn/text/thread/Trip/applied
+proposal/history/explicit Memory/financial rows and unselected sibling unchanged.
+Original publication fenced; wrong epoch/foreign/no credentials/changed recovery
+bytes/revoked ORIGINAL consent/reauth/default denied RPC rejected. Fixture-only
+local grant/revoke; actual1 PASS,0 FAIL/SKIP/CANCEL/TODO,8963.037542ms; owned
+cleanup PASS, no target/provider/device/backup acceptance inferred. Source completion
+now has this actual signed consumer proof. r1/r2 FAIL+cleanup PASS remain above.
+
+Next dev tooling-only AGENTS generated block and next-env dev types diff were
+inspected and restored only after owned Next stopped; no user source overwritten.
+Existing Native own10/schema1/Five6/catalog12/other39 and unchanged PG/copy/CAS/
+30s/regression evidence stay versioned and reused, not rerun as one fictitious total.
