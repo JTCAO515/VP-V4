@@ -3,7 +3,7 @@ import { TURN_SCHEMA, TURN_BOUNDARIES, parseTurnCommand, turnDigest } from './co
 import { decodeTurnPreview, decodeTurnReceipt, decodeTurnUnknown } from './protocol.ts';
 
 /** Candidate descriptor; shared catalog is applied only under Main's precise lease. */
-export const TURN_CATALOG_VERSION = 'data-coverage-catalog/2026-10-06.11' as const;
+export const TURN_CATALOG_VERSION = 'data-coverage-catalog/2026-10-07.11' as const;
 export const TURN_MODULE = {
   id: 'turn', location: 'server' as const, version: TURN_SCHEMA, scope: TURN_SCHEMA,
   exportHandler: 'core', deleteHandler: 'turn_data', selection: 'owner' as const,

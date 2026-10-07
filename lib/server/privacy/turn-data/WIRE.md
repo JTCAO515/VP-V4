@@ -2,12 +2,15 @@
 
 Base `ff1de3a65b0b85c271ab29448a1b89ff43cfc09e`, exclusive WT/branch
 `vpj58-turn-data-server-20261007`. Profile/Export dependencies are unmerged.
-TS owns this directory and `tests/integration/privacy/turn-data/` only. Shared
+TS owns this directory, `tests/integration/privacy/turn-data/` and Main-authorized
+new adjacent API `app/api/privacy/native/v1/turn-data/route.ts`. Shared
 worker/catalog/registry/route/CI edits remain candidate patches until Main's
 exact lease. No SQL here. Candidate `20261007050000` absent from available
 VP-V5 worktrees at 2026-10-07 23:58 CST; Main must recheck before assigning SQL.
-This wire is a source-backed proposed implementation contract awaiting Main's
-whole-source adjudication, not SQL/HTTP/Native completion or whole #239 closure.
+Main reviewed full 2b60e4fd wire/35-source schema and assigned sole SQL
+01a11715-53b5-7cf0-8c42-cc87905a82a2 at 2026-10-08. Subsequent TS refinements
+use this same source boundary; runtime SQL/Auth/D2/Native completion and whole
+#239 closure remain unproved.
 
 ## Existing mechanism and one user result
 
@@ -84,7 +87,7 @@ this before confirmation. If another Turn depends on that root context, block.
 | erase grounded/assistJobs/work | grounded_turns/grounded_ai_assist_jobs/work.turn_id=root |
 | erase memoryConsumers | public.memory_consumer_receipts.turn_id=root AND proposal_id IS NULL; explicit Memory unchanged |
 | retain taskTurns/capacity | selected service_task_turns row and its service_task_capacity task row; other Turns are never effects |
-| retain budgetAttempts/textDispatches | public.model_budget_attempts qualified actual selected task/scope/attempt IDs; turn_private.text_dispatches.turn_id=root; no amounts/state changes |
+| retain budgetAttempts/textDispatches | public.model_budget_attempts exact selected legacy Turn or qualified task/scope/attempt IDs; turn_private.text_dispatches.turn_id=root; no amounts/state changes |
 | retain threads/conversations/goals | distinct retainedReferences parent rows; IDs/counts only, no body redaction or deletion |
 
 Raw provider credentials, model host secrets and policy configuration are not
@@ -162,7 +165,9 @@ exact qualified graph, all own finite operation rows and permanent Turn fences.
 Parents are IDs/necessary minimal task/capacity/budget metadata; independent
 conversation/goal bodies stay in original conversations export. Deduplicate each actual PK exactly once in fixed schema-group/PK native order,
 not a separate owner-wide scan of each table. Budget rows use exact selected
-task + authenticated scope/attempt graph; ownerless execution copies use exact
+task + authenticated scope/attempt graph; legacy text-worker.ts:61 uses
+budget taskId=lease.turnId, so qualify that exact Turn + scope owner too rather
+than require a nonexistent ServiceTask join or silently drop its ledger; ownerless execution copies use exact
 qualified execution IDs; no common owner/task identity alone pulls another Turn
 into erasure. Export sourceAuthorities is the bounded sorted union of actual
 text/message/task/dispatch/planning source pairs and original retained operations.
@@ -279,3 +284,23 @@ and progress finite recovery, controlled original producer concurrency and OLD/N
 late writer fences. Fixtures are protocol evidence only; Main whole-batch review,
 unique PR/exact formal/current applicable CI/protected merge remain separate.
 No target GRANT/CREATE ROLE/keys/provider fees/Storage/APNs/deploy/device actions.
+
+## Scoped TS verification
+
+2026-10-08: command/closedpreview/receipt/finiteprogress/HTTP original-bytes and
+lostACK fixture 5/5 PASS, 0skip. Independent export/source-shape/authority/legacy
+budget decimal/dispatcher/encrypted bytes fixture 5/5 PASS, 0skip. Early export
+fixture assertions incorrectly assumed orphan owner text outside a public Turn
+must fail (root union intentionally preserves actual retained text), chose a byte
+cap above actual snapshot size, and compared decrypted Buffer with object; these
+fixture FAILs were corrected under the unchanged source/byte contract and retained
+here, not called runtime SQL failures or retroactive PASS. Source lint/typecheck/
+docs/diff PASS; no ESLint binary in dependency bundle (repository lint uses
+scripts/lint.mjs, actual lint PASS). SQL/Auth/registered real owner HTTP/original
+D2 private download/Native same-source and target/device verification UNRUN.
+
+Shared-registration candidate is exactly worker import/Turn handler/bundle+
+receipt qualification and four coverage additions. It retains nine core modules,
+34 coverage denominator entries, original encryption/download/currentness gates.
+Candidate catalog .11 follows Offline .10 only after actual current-owner release
+and Main exact lease; this candidate is not installed or live registration.

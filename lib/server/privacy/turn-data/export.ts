@@ -27,9 +27,9 @@ function columnValue(v: unknown, type: string, required: boolean): boolean {
     case 'boolean': return typeof v === 'boolean';
     case 'integer': return typeof v === 'number' && Number.isSafeInteger(v) && v >= -2147483648 && v <= 2147483647;
     // SQL emits exact decimal strings; no lossy PostgreSQL bigint -> JS Number conversion.
-    case 'bigint': return typeof v === 'string' && /^(?:0|-[1-9][0-9]*|[1-9][0-9]*)$/.test(v)
+    case 'bigint': return typeof v === 'string' && v.length <= 20 && /^(?:0|-[1-9][0-9]*|[1-9][0-9]*)$/.test(v)
       && BigInt(v) >= BigInt('-9223372036854775808') && BigInt(v) <= BigInt('9223372036854775807');
-    case 'xid8': return typeof v === 'string' && /^(?:0|[1-9][0-9]*)$/.test(v) && BigInt(v) <= BigInt('18446744073709551615');
+    case 'xid8': return typeof v === 'string' && v.length <= 20 && /^(?:0|[1-9][0-9]*)$/.test(v) && BigInt(v) <= BigInt('18446744073709551615');
     case 'timestamp with time zone': return instant(v);
     case 'jsonb': return jsonValue(v);
     default: return false;
@@ -58,7 +58,8 @@ function closedSourceGraph(sources: Sources): boolean {
   for (const spec of schema) for (const row of rows(spec.relation)) {
     if ('turn_id' in row && row.turn_id !== null && !turns.has(String(row.turn_id))) return false;
     if ('task_turn_id' in row && !turns.has(String(row.task_turn_id))) return false;
-    if ('task_id' in row && !tasks.has(String(row.task_id))) return false;
+    if ('task_id' in row && !tasks.has(String(row.task_id))
+      && !(spec.relation === 'public.model_budget_attempts' && turns.has(String(row.task_id)))) return false;
     if ('message_id' in row && !messages.has(String(row.message_id))) return false;
     if ('artifact_id' in row && !artifacts.has(String(row.artifact_id))) return false;
     if ('execution_id' in row && !executions.has(String(row.execution_id))) return false;
@@ -97,11 +98,18 @@ export function decodeTurnExportPage(v: unknown, limit: number, owner: string, n
     sources.set(spec.relation, group.rows);
   }
   if (item.sourceRows.data !== dataRows || dataRows + item.operations.length + item.fences.length > TURN_LIMITS.tableRows || !closedSourceGraph(sources)) return null;
+  const authorityPairs = new Set<string>();
+  for (const group of sources.values()) for (const row of group) {
+    for (const [policyKey, consentKey] of [['policy_id', 'consent_id'], ['planning_policy_id', 'planning_consent_id']])
+      if (policyKey in row && consentKey in row) authorityPairs.add(`${row[policyKey]}:${row[consentKey]}`);
+  }
   let previousOperation = '';
   for (const operation of item.operations) {
     if (!record(operation) || !identifier(operation.requestId) || operation.requestId <= previousOperation || !validOperationRow(operation, owner, now)) return null;
     previousOperation = operation.requestId;
+    for (const pair of operation.sourceAuthorities as { policyId: string; consentId: string }[]) authorityPairs.add(`${pair.policyId}:${pair.consentId}`);
   }
+  if (JSON.stringify([...authorityPairs].sort()) !== JSON.stringify(item.sourceAuthorities.map(pair => `${pair.policyId}:${pair.consentId}`))) return null;
   let previousFence = '';
   for (const fence of item.fences) {
     if (!record(fence) || !exact(fence, ['kind', 'objectId', 'requestId', 'createdAt']) || !['turn', 'message', 'artifact', 'operation'].includes(String(fence.kind))
