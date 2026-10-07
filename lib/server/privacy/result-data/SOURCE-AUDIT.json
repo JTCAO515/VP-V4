@@ -1,0 +1,407 @@
+{
+  "baseCommit": "bdb92b2b7dabf64b4d89fee1b657dcf06998dded",
+  "evidenceKind": "source inspection only; not migrated PG catalog or Auth execution",
+  "sources": [
+    {
+      "path": "supabase/migrations/20260927030000_vpj79_comparison_results.sql",
+      "sha256": "d998622c2611dd1f1c8d9cd1c487d43f4900810f59ab274ce1e282fd8d789b73",
+      "referenceLines": [
+        3,
+        14,
+        15,
+        17,
+        18,
+        33,
+        35,
+        38,
+        44,
+        46,
+        47,
+        48,
+        49,
+        54,
+        85,
+        117,
+        124,
+        145,
+        163,
+        166,
+        174,
+        176,
+        178,
+        185,
+        187,
+        191,
+        194,
+        195,
+        199,
+        200,
+        203,
+        211,
+        213,
+        215,
+        216,
+        218,
+        220,
+        224,
+        226,
+        230,
+        234,
+        242,
+        243
+      ]
+    },
+    {
+      "path": "supabase/migrations/20260927055000_vpj79_exact_trip_results.sql",
+      "sha256": "c28813d89fade5d3a3377193b8c672077188c55a817d9342996f912ed2f334aa",
+      "referenceLines": [
+        3,
+        10,
+        13,
+        70,
+        71,
+        83,
+        84,
+        98,
+        101,
+        104,
+        105,
+        120,
+        142,
+        188,
+        191,
+        199,
+        201,
+        205
+      ]
+    },
+    {
+      "path": "supabase/migrations/20260930010000_vpj82_result_search.sql",
+      "sha256": "78067b6d01a7f15b47a18fb7fd62eee364dd1d80024e0dee50f765bf8b31e2c7",
+      "referenceLines": [
+        3,
+        4,
+        6,
+        8,
+        9,
+        14,
+        16,
+        29,
+        39,
+        57,
+        58
+      ]
+    },
+    {
+      "path": "supabase/migrations/20261001010000_vpj79_task_result_reference.sql",
+      "sha256": "d8d16342d2d9ec046b8b8a7b4b91efa9b624ee5e9b89d0913db16c912bf1b7a2",
+      "referenceLines": [
+        2,
+        3,
+        4,
+        11,
+        16,
+        17
+      ]
+    },
+    {
+      "path": "supabase/migrations/20261002030000_vpj79_result_export.sql",
+      "sha256": "8f7d604820435e9637accf405e7638ab1b885ceaed006e0aea207dc0532d2678",
+      "referenceLines": [
+        3,
+        4,
+        6,
+        39,
+        41,
+        44,
+        53,
+        63,
+        73,
+        87,
+        88
+      ]
+    },
+    {
+      "path": "supabase/migrations/20261002110000_vpj79_change_proposal_reference.sql",
+      "sha256": "54b5f54f50c9bce7008289eea806028a2fc3d70beba052df901d5fc14f7878d8",
+      "referenceLines": [
+        3,
+        5,
+        52,
+        54,
+        70,
+        77,
+        103,
+        158,
+        161,
+        170,
+        172,
+        176,
+        207,
+        209,
+        213,
+        215,
+        220,
+        224,
+        234,
+        235,
+        247,
+        248,
+        262,
+        265,
+        268,
+        269,
+        280,
+        285,
+        286,
+        296,
+        299,
+        302,
+        306
+      ]
+    },
+    {
+      "path": "supabase/migrations/20261002130000_vpj79_trip_proposal_reference_discovery.sql",
+      "sha256": "1d58dc6a50d2a87780f992441426a8ecfd7653b6a3b58ed0e8148a34abbd3cdc",
+      "referenceLines": [
+        3,
+        4,
+        20,
+        26
+      ]
+    },
+    {
+      "path": "supabase/migrations/20261003090000_vpj78_selected_message_sources.sql",
+      "sha256": "4e7d2cd56be437c0325dc8087938cc6ae4778416e3946b4aca87c7ec1b4c256e",
+      "referenceLines": [
+        38,
+        49,
+        51,
+        54,
+        55,
+        128
+      ]
+    },
+    {
+      "path": "supabase/migrations/20261003110000_vpj79_five_result_lifecycle.sql",
+      "sha256": "4332903ba58da8ba7ca98f2eb8b6cec5c2e102415d3553612739b7e0510ff77e",
+      "referenceLines": [
+        3,
+        58,
+        64,
+        65,
+        66,
+        67,
+        87,
+        116,
+        118,
+        128,
+        141,
+        152,
+        182,
+        185,
+        240,
+        243,
+        244,
+        248,
+        250,
+        255,
+        257,
+        261,
+        267,
+        270,
+        271,
+        272,
+        273,
+        276,
+        279,
+        283,
+        287,
+        288,
+        297,
+        299,
+        300,
+        305,
+        307,
+        320,
+        330,
+        348,
+        349,
+        355,
+        357,
+        358,
+        368,
+        370,
+        371,
+        377,
+        381,
+        382,
+        388,
+        390,
+        391,
+        402,
+        435,
+        437,
+        440,
+        447,
+        449,
+        459,
+        469,
+        483,
+        484,
+        494,
+        495,
+        500
+      ]
+    },
+    {
+      "path": "supabase/migrations/20261003120000_vpj78_result_v2_context_compat.sql",
+      "sha256": "271a770010e66a38d6b33d3670d9565694cf56b39a02c58441edbe5be8f66ee6",
+      "referenceLines": [
+        6,
+        8,
+        9,
+        13,
+        14
+      ]
+    },
+    {
+      "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+      "sha256": "91f9da2d2399bbfacf3ea400b226f209397bb8bd449cdf6a3639aa30da493ab7",
+      "referenceLines": [
+        546,
+        608
+      ]
+    },
+    {
+      "path": "supabase/migrations/20261003190000_vpj36_linked_trip_delete_d3.sql",
+      "sha256": "9fe92a25d8d0524e8099f2f63e406d4edc21bc92c9967cfd60fec452292c448c",
+      "referenceLines": [
+        51,
+        55,
+        64,
+        67,
+        68,
+        85,
+        116,
+        122,
+        138,
+        169,
+        256
+      ]
+    },
+    {
+      "path": "supabase/migrations/20261003230000_vpj36_memory_bulk_delete_d4.sql",
+      "sha256": "6da3b6b6b631c5a585e653522cb0e4cceac24ede20b5a270ee3a11f288adb50a",
+      "referenceLines": [
+        33,
+        40,
+        41,
+        47,
+        48,
+        50,
+        56,
+        71,
+        89,
+        93,
+        113,
+        189
+      ]
+    },
+    {
+      "path": "supabase/migrations/20261004020000_reservation_ledger.sql",
+      "sha256": "ac0e2b1ad8371f03bdd3da1f19cfcc3b945cf63dc70ffea101d5bd9ec3525fe2",
+      "referenceLines": [
+        54,
+        138
+      ]
+    },
+    {
+      "path": "supabase/migrations/20261005030000_reminder_delivery.sql",
+      "sha256": "deb196b483d196451b3bd28f6b5e905d347c012bb6cb8c189d889c8f539b6e10",
+      "referenceLines": [
+        140,
+        156,
+        157,
+        227
+      ]
+    },
+    {
+      "path": "supabase/migrations/20261005040000_vpj61_trip_lifecycle.sql",
+      "sha256": "9c79f65484366aa5c69c8d01094afe76ea2edae412c1db8a69e149e743c75630",
+      "referenceLines": [
+        531,
+        532,
+        541,
+        545,
+        546,
+        554,
+        561,
+        562,
+        576,
+        579,
+        582,
+        583,
+        596,
+        600,
+        601,
+        610,
+        614,
+        616,
+        617
+      ]
+    },
+    {
+      "path": "supabase/migrations/20261006060000_conversation_data.sql",
+      "sha256": "4e0cb6cad922c5198d5ad0bebf9c4510a5701680b25d407cb281b5a3e282b763",
+      "referenceLines": [
+        194,
+        195,
+        196,
+        213,
+        220,
+        234,
+        297,
+        304,
+        400,
+        401,
+        404,
+        406,
+        408,
+        441,
+        442,
+        698,
+        784,
+        802,
+        836,
+        846,
+        864,
+        867
+      ]
+    },
+    {
+      "path": "lib/server/turn/native-assistant-context-http.ts",
+      "sha256": "e65cc627c506e4be3fb121e3d61839d466029392b3622b6f140afd4f428cfcb1"
+    },
+    {
+      "path": "lib/server/privacy/export-modules.ts",
+      "sha256": "8ddd86e5c447da1c2e1b937b966741c972901290a1489623936d0b5bcc17be06"
+    },
+    {
+      "path": "lib/server/reservations/service.ts",
+      "sha256": "aca56a76db1e398113e396ec41d18f0067f7d25e88d5a118c182639b1883e41a"
+    },
+    {
+      "path": "lib/server/reservations/evidence.ts",
+      "sha256": "f2b125fa6c7fffa98683e37d3979f288fdef35ced292cba482979ba86c19ed6d"
+    },
+    {
+      "path": "lib/server/lodging/http.ts",
+      "sha256": "16f5bd1364cb1bbe04b83f606840aab78281e933c0f367ddfc33d3e4d2067535"
+    },
+    {
+      "path": "lib/server/readiness/task-selection.ts",
+      "sha256": "caf159fd527e3af27df3805d99737741ba724ce918dc65ee02417d668275ddf8"
+    }
+  ]
+}

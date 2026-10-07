@@ -1,0 +1,94 @@
+--- a/lib/server/privacy/coverage/catalog.ts
++++ b/lib/server/privacy/coverage/catalog.ts
+@@ -1,9 +1,10 @@
+ import { NOTIFICATION_MODULES } from '../notification-data/coverage.ts';
+ import { ARCHIVE_MODULE } from '../archive-data/coverage.ts';
+ import { CONVERSATION_MODULE } from '../conversation-data/coverage.ts';
++import { RESULT_MODULE } from '../result-data/coverage.ts';
+ import { COVERAGE_PROGRESS_MODULE } from '../coverage-progress/coverage.ts';
+ /** ALL1 denominator. A registered scoped handler is not all-account completion. */
+-export { CONVERSATION_CATALOG_VERSION as CATALOG_VERSION } from '../conversation-data/coverage.ts';
++export { RESULT_CATALOG_VERSION as CATALOG_VERSION } from '../result-data/coverage.ts';
+ export type Location = 'server' | 'device' | 'external';
+ export type Module = Readonly<{
+   id: string; location: Location; version: string; scope: string;
+@@ -20,7 +21,7 @@
+ export const MODULE_CATALOG: readonly Module[] = [
+   server('trip', 'trip-core-v1', 'trip-core-v1', 'core', 'trip', 'trip', 'one explicitly selected Trip; async receipt; optional original linked-chat plan',
+     ['financial_records', 'provider_erasure_unknown', 'backup_erasure_unverified']),
+-  CONVERSATION_MODULE, core('results'), core('profile'),
++  CONVERSATION_MODULE, RESULT_MODULE, core('profile'),
+   server('memory', 'memory-bulk-delete-d4/1', 'memory-bulk-delete-d4/1', 'core', 'memory', 'memory_plan',
+     '100 selected memories; original preview/CAS/selection required', ['original_chat_input', 'trip_intent', 'financial_records']),
+   core('turn'), core('user_artifact'),
+--- a/lib/server/privacy/coverage/contract.ts
++++ b/lib/server/privacy/coverage/contract.ts
+@@ -13,6 +13,7 @@
+ import { validNotificationDataCoverageSelection } from '../notification-data/coverage.ts';
+ import { validArchiveCoverageSelection } from '../archive-data/coverage.ts';
+ import { validConversationCoverageSelection } from '../conversation-data/coverage.ts';
++import { validResultCoverageSelection } from '../result-data/coverage.ts';
+ import { validCoverageProgressCoverageSelection } from '../coverage-progress/coverage.ts';
+
+ export const COVERAGE_SCHEMA = 'data-coverage/1' as const;
+@@ -49,6 +50,7 @@
+   // A stable module key may resolve to different existing commands for export/delete.
+   if ('operationId' in command && command.operationId !== input.operationId || 'requestId' in command && command.requestId !== input.operationId) return null;
+   if (handler === 'conversation_data') return validConversationCoverageSelection(input, command) ? { input, command, handler } : null;
++  if (handler === 'result_data') return validResultCoverageSelection(input, command) ? { input, command, handler } : null;
+   if (handler === 'materials') return validMaterialCoverageSelection(input, command) ? { input, command, handler } : null;
+   if (handler === 'coverage_progress') return validCoverageProgressCoverageSelection(input, command) ? { input, command, handler } : null;
+   if (handler === 'notification_data') return validNotificationDataCoverageSelection(input, command) ? { input, command, handler } : null;
+--- a/lib/server/privacy/coverage/outcomes.ts
++++ b/lib/server/privacy/coverage/outcomes.ts
+@@ -16,6 +16,7 @@
+ import { coverageProgressCoverageOutcome } from '../coverage-progress/coverage.ts';
+ import { archiveCoverageOutcome } from '../archive-data/coverage.ts';
+ import { conversationCoverageOutcome } from '../conversation-data/coverage.ts';
++import { resultCoverageOutcome } from '../result-data/coverage.ts';
+ import { notificationDataCoverageOutcome } from '../notification-data/coverage.ts';
+
+ type Outcome = Readonly<{ state: CoverageState; reason: string }>;
+@@ -31,6 +32,7 @@
+   if (handler === 'notification_data') return notificationDataCoverageOutcome(selected, data, now);
+   if (handler === 'archive_data') return archiveCoverageOutcome(selected, data, now);
+   if (handler === 'conversation_data') return conversationCoverageOutcome(selected, data, now);
++  if (handler === 'result_data') return resultCoverageOutcome(selected, data, now);
+   if (handler === 'core') {
+     const receipt = parseExportJob(body, input.operationId); if (!receipt) return null;
+     if (receipt.state === 'queued' || receipt.state === 'running') return state('queued', 'ORIGINAL_JOB_PENDING');
+--- a/lib/server/privacy/coverage/registry.ts
++++ b/lib/server/privacy/coverage/registry.ts
+@@ -19,6 +19,8 @@
+ import { archiveCoverageRequestBody } from '../archive-data/coverage.ts';
+ import { conversationDataNativeHTTP } from '../conversation-data/http.ts';
+ import { conversationCoverageRequestBody } from '../conversation-data/coverage.ts';
++import { resultDataNativeHTTP } from '../result-data/http.ts';
++import { resultCoverageRequestBody } from '../result-data/coverage.ts';
+ import { notificationDataNativeHTTP } from '../notification-data/http.ts';
+ import { notificationDataCoverageRequestBody } from '../notification-data/coverage.ts';
+
+@@ -42,6 +44,7 @@
+   notification_data: request => notificationDataNativeHTTP(request),
+   archive_data: request => archiveDataNativeHTTP(request),
+   conversation_data: request => conversationDataNativeHTTP(request),
++  result_data: request => resultDataNativeHTTP(request),
+ };
+ const paths: Readonly<Record<string, string>> = {
+   core: '/api/privacy/native/v1/exports', trip: '/api/privacy/native/v1/trips',
+@@ -54,6 +57,7 @@
+   notification_data: '/api/privacy/native/v1/notification-data',
+   archive_data: '/api/privacy/native/v1/archive-data',
+   conversation_data: '/api/privacy/native/v1/conversation-data',
++  result_data: '/api/privacy/native/v1/result-data',
+ };
+ export function ownerHandlerRequest(request: Request, selected: SelectedCommand, signal: AbortSignal): NextRequest {
+   const { input, handler } = selected; if (!handler || !Object.hasOwn(OWNER_HANDLERS, handler)) throw Error('HANDLER_MISSING');
+@@ -72,6 +76,7 @@
+     else if (handler === 'notification_data') body = notificationDataCoverageRequestBody(input);
+     else if (handler === 'archive_data') body = archiveCoverageRequestBody(input);
+     else if (handler === 'conversation_data') body = conversationCoverageRequestBody(input);
++    else if (handler === 'result_data') body = resultCoverageRequestBody(input);
+     else throw Error('RECOVERY_NOT_IMPLEMENTED');
+   }
+   return new NextRequest(url, { method, headers, signal, ...(method === 'POST' ? { body } : {}) });
