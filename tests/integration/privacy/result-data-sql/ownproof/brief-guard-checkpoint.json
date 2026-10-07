@@ -1,0 +1,17 @@
+{
+  "parent": "92e338e19450061f4e048c92177256461825a596",
+  "runtimeDelta": "parents_v1 notification helper relation predicate only",
+  "migrationSha256": "3a87c300ecc448238071472b52a2a7d513cc60a8d92dea95a03098b33dddccf9",
+  "remoteBefore": "actual CI PG666/665/1 FAIL retained; Guide lock remains separate UNKNOWN",
+  "localBefore": "original Brief2PASS; controlled9800INSERT result guard2079.448ms/notification1249.695ms/no blockers",
+  "localAfter": "original Brief2PASS; guard698.745ms/JSON recursion counts identical/notification empty calls removed",
+  "safety": "parent equivalence6 + account cascade +3 affected negatives PASS",
+  "profileCompatibility": "actual928948 append reports both strict guards true, rolled back",
+  "unchanged": [
+    "schema_supported_v1/infrastructure helpers/catalog hash",
+    "guard_source_v1 OLD/NEW/account cascade/entity fences",
+    "9800 count/5s timeout/oracles",
+    "all source/copy/receipt/TTL/Native wire",
+    "07020000/060000/target grants"
+  ]
+}

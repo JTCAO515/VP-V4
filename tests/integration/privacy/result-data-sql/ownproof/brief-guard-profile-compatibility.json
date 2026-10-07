@@ -1,0 +1,9 @@
+{
+  "kind": "actual reviewed Profile928948 append in owned PG transaction, rollback afterward",
+  "source": "928948d6b11583c3b3f2f07e7c96cb4c440de52b",
+  "guards": {
+    "resultSchema": true,
+    "profileSchema": true
+  },
+  "delta": "only parents_v1 function body; schema hash/trigger definitions/function signatures and guarded prosrc list unaffected"
+}
