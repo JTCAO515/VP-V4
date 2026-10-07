@@ -25,7 +25,7 @@ export function validProfile(v: unknown): v is Record<string, unknown> {
     || !['relaxed', 'balanced', 'packed'].includes(String(v.travelPace)) || !['zh', 'en', 'es', 'ru', 'ar'].includes(String(v.locale))
     || !['CNY', 'USD', 'EUR', 'RUB', 'SAR'].includes(String(v.currency)) || !['kilometre', 'mile'].includes(String(v.distanceUnit))
     || !['celsius', 'fahrenheit'].includes(String(v.temperatureUnit)) || typeof v.defaultDepartureTime !== 'string'
-    || !/^([01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d{1,6})?$/.test(v.defaultDepartureTime)
+    || !/^(?:([01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d{1,6})?|24:00:00(?:\.0{1,6})?)$/.test(v.defaultDepartureTime)
     || !(v.paceNotice === null || v.paceNotice === 'local-planning-cross-trip-v1') || !(v.paceOperation === null || identifier(v.paceOperation))
     || !(v.paceRequest === null || isTravelPaceCommand(v.paceRequest))) return false;
   const undo = v.paceUndo;

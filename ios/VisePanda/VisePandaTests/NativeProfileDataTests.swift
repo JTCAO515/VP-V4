@@ -40,6 +40,23 @@ import Testing
         NativeProfileDataReceiptFile(root: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true))
     }
 
+    @Test func profileTimePreservesPostgresEndOfDayAndRejectsInvalidTwentyFourHourValues() throws {
+        let c = try command("preview"), now = wall.addingTimeInterval(0.001)
+        for time in ["00:00:00", "23:59:59.999999", "24:00:00", "24:00:00.0", "24:00:00.000000"] {
+            var value = try fixture("preview"), fields = try #require(value["profile"] as? [String: Any])
+            fields["defaultDepartureTime"] = time; value["profile"] = fields
+            let decoded = try NativeProfileDataProtocol.preview(envelope(value), command: c, actor: actor, now: now)
+            #expect(decoded.profile?.values["defaultDepartureTime"] == time)
+        }
+        for time in ["24:01:00", "24:00:01", "24:00:00.1", "24:00:00.000001", "24:00:00.0000000", "23:59:59.1234567", "24:00:00.", "25:00:00"] {
+            var value = try fixture("preview"), fields = try #require(value["profile"] as? [String: Any])
+            fields["defaultDepartureTime"] = time; value["profile"] = fields
+            #expect(throws: (any Error).self) {
+                try NativeProfileDataProtocol.preview(envelope(value), command: c, actor: actor, now: now)
+            }
+        }
+    }
+
     @Test func soleProducerEightEnvelopesDecodeWithExactOriginalBytesAndFloors() throws {
         let previewCommand = try command("preview"), erase = try command("eraseBytes"), progress = try command("progressPreview"), progressErase = try command("progressEraseBytes")
         let now = wall.addingTimeInterval(0.001)

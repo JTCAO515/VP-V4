@@ -1,0 +1,13 @@
+VP_PROFILE_DATA_HTTP_TARGET {"project":"vp-native-ask-66db3f5f","base":63040}
+✔ signed Auth and actual PG payloads close selected Profile field clear/monotonic floor/new edit/exact recovery/own progress with actual ordinary-owner authorization (4829.136625ms)
+ℹ Only owned disposable fixture grants this default-denied RPC. No target grants/provider/Storage/fees/deploy/real user erase.
+ℹ Actual signed RPC/TS decoder and registered owner HTTP field clearing/recovery; whole Trip and explicit Memory retained, new edits allowed. Mixed-copy/worker concurrency evidence belongs to sole SQL tests, target/device acceptance remains UNRUN.
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7782.182
+VP_PROFILE_DATA_HTTP_CLEANUP {"project":"vp-native-ask-66db3f5f","result":"PASS"}

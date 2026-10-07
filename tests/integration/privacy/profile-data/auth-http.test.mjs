@@ -65,7 +65,7 @@ test('signed Auth and actual PG payloads close selected Profile field clear/mono
   assert.equal((await call(path, owner.token, list)).status, 503);
   sql('grant execute on function public.privacy_profile_data_v1(text,text,bigint) to authenticated;');
   t.diagnostic('Only owned disposable fixture grants this default-denied RPC. No target grants/provider/Storage/fees/deploy/real user erase.');
-  const saved = { p_display_name: 'Signed disposable owner', p_travel_pace: 'relaxed', p_locale: 'en', p_currency: 'USD', p_distance_unit: 'mile', p_temperature_unit: 'fahrenheit', p_default_departure_time: '10:30:00' };
+  const saved = { p_display_name: 'Signed disposable owner', p_travel_pace: 'relaxed', p_locale: 'en', p_currency: 'USD', p_distance_unit: 'mile', p_temperature_unit: 'fahrenheit', p_default_departure_time: '24:00:00' };
   assert.equal((await owner.client.rpc('save_user_profile', saved)).error, null);
   const oldPace = { action: 'save', operationId: uuid(), expectedRevision: 0, travelPace: 'packed', noticeVersion: 'local-planning-cross-trip-v1' };
   const pace = await owner.client.rpc('native_travel_pace_v1', { p_input: oldPace }); assert.equal(pace.error, null);
@@ -93,6 +93,7 @@ test('signed Auth and actual PG payloads close selected Profile field clear/mono
   const pg = await owner.client.rpc('privacy_profile_data_v1', { p_action: 'preview', p_input_bytes: JSON.stringify(previewCommand), p_expected_epoch: owner.actor.mobileEpoch });
   assert.equal(pg.error, null); assert.ok(decodeProfilePreview(pg.data, previewCommand, owner.actor, Date.now()));
   assert.equal(pg.data.eligible, true); assert.equal(pg.data.profile.displayName, saved.p_display_name);assert.deepEqual(pg.data.profile.paceRequest, oldPace);
+  assert.equal(pg.data.profile.defaultDepartureTime, '24:00:00', 'original writer legal end-of-day TIME stays visible to the real preview decoder');
   assert.equal(pg.data.summary.hasPaceUndo, true);
   const command = { action: 'erase', ...selection, sourceDigest: pg.data.sourceDigest, previewDigest: pg.data.previewDigest, confirmed: true }, bytes = '\n' + JSON.stringify(command) + ' ';
   assert.ok((await owner.client.rpc('privacy_profile_data_v1', { p_action: 'erase', p_input_bytes: bytes, p_expected_epoch: owner.actor.mobileEpoch + 1 })).error);

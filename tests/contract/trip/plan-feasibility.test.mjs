@@ -50,7 +50,7 @@ test('production HTTP uses owned exact proposal and JWT reads; changed same-sess
  t.mock.method(globalThis,'fetch',async(input,init)=>{
   const req=new Request(input,init),path=new URL(req.url).pathname;
   if(path.endsWith('/native_session_v2')){epochCalls++;return Response.json({version:2,subject,sessionId,mobileEpoch:replace&&epochCalls>1?2:1});}
-  if(path==='/rest/v1/user_profiles'){profileCalls++;return Response.json({travel_pace:'relaxed',currency:profileMoves&&profileCalls>1?'USD':'CNY',default_departure_time:'09:00:00',updated_at:'2026-10-03T00:00:00Z'});}
+  if(path==='/rest/v1/user_profiles'){profileCalls++;return Response.json({travel_pace:'relaxed',currency:profileMoves&&profileCalls>1?'USD':'CNY',default_departure_time:'09:00:00',updated_at:'2026-10-03T00:00:00Z',profile_revision:0,profile_saved_fields:['display_name','travel_pace','locale','currency','distance_unit','temperature_unit','default_departure_time']});}
   if(path==='/rest/v1/trips')return Response.json({id:basis.tripId,title:'Current proposal',head_version:0,updated_at:'2026-10-03T00:00:00Z'});
   if(path.endsWith('/read_trip_proposal_v2')){seen.push({params:await req.json(),authorization:req.headers.get('authorization')});return Response.json([{digest:hash,proposal:{id:basis.proposalId,trip_id:basis.tripId,revision:1,base_trip_version:0,status:'pending',patch:{expectedVersion:0,operations:[{kind:'set_title',title:'Proposed'}]},created_at:'2026-10-03T00:00:00Z',expires_at:'2099-01-01T00:00:00Z',rollback_snapshot_version:null}}]);}
   if(path==='/rest/v1/trip_version_snapshots')return Response.json({version:0,title:basis.after.title,content:{title:basis.after.title,days:basis.after.days}});

@@ -313,3 +313,25 @@ Result same-source CI repair dependency, one final Profile PR and required check
 protected merge remain. Whole239/ALL1/ALL2 stays Open; target/real device/backup/
 provider/fees/deploy remain UNRUN. No approval/activity/fixture is represented as
 an actual target or whole-account completion, and no new product work is invented.
+
+Main78857/Result669 protected merge consumed by normal Git. Necessary same-source
+increment verification is artifacts/VPJ-58/profile-data/server/AUTH-r2-main.md:
+new full migration order actual signed Auth1PASS0skip + own e7a1f55f cleanupPASS,
+prior actual PG dual-guard/Guide proofs reused. Profile SQL hash unchanged, entire
+ios equals0725; Result/Conversation increment source equalsmain. Affected registry
+11PASS/typecheck/lint/docs/diff PASS. No unmerged ProfileExport source consumed.
+This closes the earlier unmerged Result dependency; unique main-base Profile PR
+engineering follows, with exact final-head review/required CI separate from code
+completion and target/full239 acceptance.
+
+PR670 old3201 Quality/RLS/Ops/Native/PG FAIL retained and diagnosed individually.
+Precise lease-only fixture compatibility and own cleanup c34db52c joined this
+same-source repair, without changing any runtime guard/oracle or broadening a
+lane. Actual receipts and cause distinctions:
+artifacts/VPJ-58/profile-data/server/ci-fix-3201/README.md.
+Original TIME24 boundary was a real preview defect: dedicated TS/Native3bc174
+validators now preserve exact24:00:00 and1..6 zero fractions; invalid24-hour forms
+still fail closed. New actual source-time24 signedAuth1PASS/cleanup and Native1
+codec proof are necessary increments, not copied fixture-only confidence.
+No ProfileExport source/SQL or other unmerged domain consumed. Main must renew
+codecompletion/exactfinalformal/allCI on the fixed head; oldheadHOLD is not waived.
