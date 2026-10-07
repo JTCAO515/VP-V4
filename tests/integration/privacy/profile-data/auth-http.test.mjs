@@ -130,6 +130,7 @@ test('signed Auth and actual PG payloads close selected Profile field clear/mono
   assert.equal(reread.display_name, 'Fresh user edit after clear');assert.notEqual(reread.pace_state, 'explicit', 'Web fields do not grant pace purpose');
   const newConsent = await owner.client.rpc('native_travel_pace_v1', { p_input: { action: 'save', operationId: uuid(), expectedRevision: reread.pace_revision, travelPace: 'relaxed', noticeVersion: 'local-planning-cross-trip-v1' } });
   assert.equal(newConsent.error, null, 'fresh explicit consent save remains legal');assert.equal(newConsent.data.state, 'explicit');assert.equal(retained(), before);
+  assert.deepEqual((await call(path, owner.token, recover)).body.data, receipt, 'original immutable receipt survives a legitimate newer edit without re-erasing it');
   const pending = { scope, requestId: uuid(), profileId: owner.id, objectIds: [] };
   const pendingPreview = await call(path, owner.token, { action: 'preview', ...pending });assert.equal(pendingPreview.status, 200);
   const pendingBytes = JSON.stringify({ action: 'erase', ...pending, sourceDigest: pendingPreview.body.data.sourceDigest, previewDigest: pendingPreview.body.data.previewDigest, confirmed: true });
