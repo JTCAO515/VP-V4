@@ -146,23 +146,29 @@ import Observation
         switch kind {
         case "scoped_edit_declined/1":
             let declined = try NativeScopedTripDeclined.decode(raw, journal: saved)
+            let journalObserver = session.journalDataObservation(.scopedTrip), journalTicket = journalObserver.begin()
             try session.completeScopedTripEdit(saved, actor: actor)
             journal = nil; receipt = nil; resolvedJournal = nil; candidates = nil; candidatesJournal = nil
             notice = "declined:" + declined.reason
+            journalObserver.finish(journalTicket, command.operationID)
         case "scoped_edit_candidates/1":
             let ready = try NativeScopedTripCandidates.decode(bytes, journal: saved, context: context)
+            let journalObserver = session.journalDataObservation(.scopedTrip), journalTicket = journalObserver.begin()
             try session.completeScopedTripEdit(saved, actor: actor); journal = nil
             if let context, context.current, ready.current, context.basis == ready.basis {
                 candidates = ready; candidatesJournal = saved; notice = "candidatesReady"
             } else { candidates = nil; candidatesJournal = nil; notice = "refreshRequired" }
+            journalObserver.finish(journalTicket, command.operationID)
         case "scoped_edit_proposal/1":
             guard command.action != "lock" else { throw NativeDataError.invalidResponse }
             let candidate = try NativeScopedTripProposalReceipt.decode(bytes, journal: saved, context: context)
+            let journalObserver = session.journalDataObservation(.scopedTrip), journalTicket = journalObserver.begin()
             try session.completeScopedTripEdit(saved, actor: actor); journal = nil; resolvedJournal = saved
             if let context, context.current, candidate.returnScope == context.scope,
                context.basis.contextDigest == basis["contextDigest"] as? String,
                candidate.proposal.current { receipt = candidate; notice = "reviewRequired" }
             else { receipt = nil; notice = "refreshRequired" }
+            journalObserver.finish(journalTicket, command.operationID)
         case "scoped_edit_lock/1":
             _ = try NativeScopedTripWire.exact(raw, keys: ["kind", "operationId", "tripId", "baseVersion", "lockRevision", "itemId", "locked", "reused"])
             guard command.action == "lock", raw["itemId"] as? String == mutation["itemId"] as? String,
@@ -170,7 +176,9 @@ import Observation
                   NativeScopedTripWire.integer(raw["lockRevision"]) != nil,
                   NativeScopedTripWire.bool(raw["locked"]) == NativeScopedTripWire.bool(mutation["locked"]),
                   NativeScopedTripWire.bool(raw["reused"]) != nil else { throw NativeDataError.invalidResponse }
+            let journalObserver = session.journalDataObservation(.scopedTrip), journalTicket = journalObserver.begin()
             try session.completeScopedTripEdit(saved, actor: actor); journal = nil; context = nil; receipt = nil; notice = "lockSaved"
+            journalObserver.finish(journalTicket, command.operationID)
         case "scoped_edit_pending/1":
             _ = try NativeScopedTripWire.exact(raw, keys: ["kind", "operationId", "tripId", "contextId", "contextDigest", "baseVersion", "reason", "reused"])
             guard command.action == "ask", raw["contextId"] as? String == basis["contextId"] as? String,

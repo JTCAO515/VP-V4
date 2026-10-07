@@ -277,6 +277,7 @@ struct NativeServiceOperationsView: View {
         }
     }
     private func load(actor: NativeDataScope, captured: Key) async {
+        store.journalObservation = session.journalDataObservation(.serviceOperation)
         do { try NativeServiceExportFile.sweepOrphans() } catch { dataError = true }
         store.restore(actor: actor) { try session.serviceOperationRecovery(actor: actor) }
         await store.load(actor: actor, current: { self.actor }) { try await session.serviceOperationRequest(body: $0, actor: actor) }
