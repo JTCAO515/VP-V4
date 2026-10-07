@@ -861,6 +861,16 @@ struct NativeAssistantConversationView: View {
             await reload()
             if let resume {await restoreNavigationSource(resume)}
         }
+        .onChange(of: session.resultDataErasure?.id) { _, _ in
+            guard let erased = session.resultDataErasure, (try? session.communitySafetyActor()) == erased.actor else { return }
+            fiveResultRequestGeneration = UUID()
+            if fiveResultSelection.map({ erased.artifactIDs.contains($0.artifactID) }) == true { fiveResultSelection = nil }
+            if lastViewedArtifact.map({ erased.artifactIDs.contains($0.artifactId) }) == true { lastViewedArtifact = nil }
+            if selectedSources.pending == nil, selectedSources.sources.artifact.map({ erased.artifactIDs.contains($0.artifactId) }) == true { selectedSources.sources.artifact = nil; referencedResultUntil = 0 }
+            if selectedResult?.artifactId.map({ erased.artifactIDs.contains($0) }) == true { selectedResult = nil; resultNotice = "unavailable"; resultFence.clear() }
+            if selectedArtifactID.map({ erased.artifactIDs.contains($0) }) == true { selectedArtifactID = nil; selectedArtifactTaskID = nil }
+            retainNavigation()
+        }
         .onChange(of: session.conversationDataErasure?.id) { _, _ in
             guard let erased = session.conversationDataErasure,
                   (try? session.communitySafetyActor()) == erased.actor else { return }

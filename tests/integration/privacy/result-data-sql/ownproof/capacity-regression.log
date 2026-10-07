@@ -1,0 +1,10 @@
+✔ concurrent task relabel and capacity insert cannot commit a mismatched task (7692.340042ms)
+✔ concurrent capacity insert and Trip rebind cannot commit a metered Trip thread (355.058125ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 8234.009625

@@ -121,6 +121,10 @@ struct NativeVPTravelPaceView: View {
                 }
             } else { result.clear() }
         }
+        .onChange(of: session.resultDataErasure?.id) { _, _ in
+            guard let erased = session.resultDataErasure, (try? session.communitySafetyActor()) == erased.actor else { return }
+            result.applyResultErasure(erased)
+        }
         .onChange(of: session.dataScope) { _, value in store.bind(scope: value, selection: value == nil ? nil : currentSelection()); result.clear() }
         .onChange(of: pending, initial: true) { _, value in onPendingChange(store.saved.scope ?? session.dataScope, value) }
         .onChange(of: active) { _, value in if !value { store.leave(); result.clear() } }

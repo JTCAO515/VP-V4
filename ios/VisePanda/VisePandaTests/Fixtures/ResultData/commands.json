@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "result-data-native-fixtures/1",
+  "synthetic": true,
+  "actor": {
+    "ownerId": "00000000-0000-4000-8000-000000000001",
+    "sessionId": "00000000-0000-4000-8000-000000000002",
+    "mobileEpoch": 3
+  },
+  "now": 1791360000000,
+  "previewBytes": "{\"action\":\"preview\",\"scope\":\"result-sensitive-data/1\",\"requestId\":\"00000000-0000-4000-8000-000000000003\",\"rootKind\":\"artifact\",\"rootId\":\"00000000-0000-4000-8000-000000000004\",\"objectIds\":[]}",
+  "eraseBytes": "  {\"action\":\"erase\",\"scope\":\"result-sensitive-data/1\",\"requestId\":\"00000000-0000-4000-8000-000000000003\",\"rootKind\":\"artifact\",\"rootId\":\"00000000-0000-4000-8000-000000000004\",\"objectIds\":[],\"sourceDigest\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"previewDigest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"confirmed\":true}\n",
+  "recoverBytes": "{\"action\":\"recover\",\"scope\":\"result-sensitive-data/1\",\"requestId\":\"00000000-0000-4000-8000-000000000003\",\"rootKind\":\"artifact\",\"rootId\":\"00000000-0000-4000-8000-000000000004\",\"objectIds\":[],\"mutationBytes\":\"  {\\\"action\\\":\\\"erase\\\",\\\"scope\\\":\\\"result-sensitive-data/1\\\",\\\"requestId\\\":\\\"00000000-0000-4000-8000-000000000003\\\",\\\"rootKind\\\":\\\"artifact\\\",\\\"rootId\\\":\\\"00000000-0000-4000-8000-000000000004\\\",\\\"objectIds\\\":[],\\\"sourceDigest\\\":\\\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\\",\\\"previewDigest\\\":\\\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\\\",\\\"confirmed\\\":true}\\n\"}",
+  "listBytes": "{\"action\":\"list\",\"scope\":\"result-sensitive-data/1\",\"rootKind\":\"artifact\",\"cursor\":null,\"limit\":20}",
+  "progressPreviewBytes": "{\"action\":\"preview\",\"scope\":\"result-delete-progress/1\",\"requestId\":\"00000000-0000-4000-8000-000000000030\",\"rootKind\":null,\"rootId\":null,\"objectIds\":[\"00000000-0000-4000-8000-000000000003\"]}",
+  "progressEraseBytes": "\n{\"action\":\"erase\",\"scope\":\"result-delete-progress/1\",\"requestId\":\"00000000-0000-4000-8000-000000000030\",\"rootKind\":null,\"rootId\":null,\"objectIds\":[\"00000000-0000-4000-8000-000000000003\"],\"sourceDigest\":\"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\",\"previewDigest\":\"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\",\"confirmed\":true}  ",
+  "progressRecoverBytes": "{\"action\":\"recover\",\"scope\":\"result-delete-progress/1\",\"requestId\":\"00000000-0000-4000-8000-000000000030\",\"rootKind\":null,\"rootId\":null,\"objectIds\":[\"00000000-0000-4000-8000-000000000003\"],\"mutationBytes\":\"\\n{\\\"action\\\":\\\"erase\\\",\\\"scope\\\":\\\"result-delete-progress/1\\\",\\\"requestId\\\":\\\"00000000-0000-4000-8000-000000000030\\\",\\\"rootKind\\\":null,\\\"rootId\\\":null,\\\"objectIds\\\":[\\\"00000000-0000-4000-8000-000000000003\\\"],\\\"sourceDigest\\\":\\\"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\\\",\\\"previewDigest\\\":\\\"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\\\",\\\"confirmed\\\":true}  \"}",
+  "progressListBytes": "{\"action\":\"list\",\"scope\":\"result-delete-progress/1\",\"rootKind\":null,\"cursor\":null,\"limit\":20}"
+}

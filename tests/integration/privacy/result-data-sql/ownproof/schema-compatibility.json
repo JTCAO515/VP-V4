@@ -1,0 +1,14 @@
+{
+  "kind": "owned no-network PG schema simulations; actual signed Auth remains TS-owned",
+  "pass": [
+    "six real observed operational namespaces change former hash but unrelated shapes remain supported",
+    "incoming system-schema CASCADE FK to application rejects, even empty",
+    "system namespace alone cannot hide an unregistered typed application column",
+    "typed JSON link to actual result rejects; arbitrary UUID title does not become authority",
+    "actual application regclass consumer rejects without a declared FK",
+    "actual webhook application table OID rejects",
+    "unknown application namespaces/tables/incoming FK and mapped-column drift still reject; original private schema remains hashed",
+    "mapped PK/FK and original private.audit_events visible-column changes independently fail under otherwise supported system state",
+    "typed JSON reference to erased permanent application identity also rejects"
+  ]
+}

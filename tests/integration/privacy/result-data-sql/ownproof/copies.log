@@ -1,0 +1,28 @@
+original prepared
+original completed
+copies preview true [] {
+  artifacts: 1,
+  revisions: 1,
+  callWindows: 1,
+  resultClaims: 1,
+  resultEvents: 1,
+  executionRuns: 1,
+  localJournals: 1,
+  collectorOrigins: 1,
+  collectorOutputs: 1,
+  completionProofs: 1,
+  completedReceipts: 1
+} {
+  goals: 1,
+  tasks: 1,
+  trips: 0,
+  turns: 1,
+  threads: 1,
+  memories: 0,
+  messages: 1,
+  proposals: 0,
+  conversations: 1,
+  budgetAttempts: 1,
+  planningSources: 13,
+  sourceArtifacts: 0
+}

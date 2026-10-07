@@ -3,7 +3,7 @@ import CryptoKit
 
 enum NativeDataCoverageWire {
     static let schema = "data-coverage/1"
-    static let catalog = "data-coverage-catalog/2026-10-06.7"
+    static let catalog = "data-coverage-catalog/2026-10-07.8"
     static let moduleIDs: Set<String> = ["trip", "conversations", "results", "profile", "memory", "turn", "user_artifact", "brief", "entitlements", "case", "ugc", "safety", "publication", "notifications", "notification_devices", "notification_exit_progress", "lifecycle", "coverage_progress", "guide", "order_references", "pdf_intake", "material_exit_progress", "case_attachments", "archive", "materials", "app_group", "local_share", "guide_cache", "offline", "local_journals", "provider", "backup", "external_copies", "financial_records"]
     static func digest(_ bytes: Data) -> String { SHA256.hash(data: bytes).map { String(format: "%02x", $0) }.joined() }
     static func actor(_ v: [String: Any], _ actor: NativeCommunitySafetyActor) throws {

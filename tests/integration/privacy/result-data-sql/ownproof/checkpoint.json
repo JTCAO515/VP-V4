@@ -1,0 +1,37 @@
+{
+  "base": "bdb92b2b7dabf64b4d89fee1b657dcf06998dded",
+  "ts": "d0591196440c59910f4baac96b2a964a64586785",
+  "migrationSha256": "80f35348e9911fb0f193a33261b308bd4434ff3dea6cf695da5a0d73a5f2ac71",
+  "wire": [
+    {
+      "file": "WIRE.md",
+      "sha256": "3929cbdf4584a29e687f7c17e77e46b10977931a6d612f5df32f9a9cbb0a34a9"
+    },
+    {
+      "file": "contract.ts",
+      "sha256": "652047ece6fbce5a558480a5fe91844be0ee990ec97bf959bb3d8147451a469e"
+    },
+    {
+      "file": "protocol.ts",
+      "sha256": "639a0bda620fa24431b20bd21bf2e36c86614556c0259ee31dfd31a6abe6eea1"
+    },
+    {
+      "file": "SOURCE-AUDIT.json",
+      "sha256": "7a5c171e4713682cae12f155ca0c4972e08fac1dddf815887c85530d0bb53476"
+    }
+  ],
+  "sourceAuditHashes": "all actual audited base source files match",
+  "pg": "17.6.1.159 / network-none local Unix fixtures",
+  "own": "fresh 5 modules plus 16 adversarial cases PASS; subsequent narrow authority-capacity branch compile/normal source verification PASS",
+  "regression": {
+    "workerFiveTypes": 14,
+    "tripLifecycle": 11,
+    "capacityConcurrent": 2
+  },
+  "unrun": [
+    "signed Auth and registered coverage caller",
+    "Native integrated build/device",
+    "formal exact-head review/all merge CI/protected merge",
+    "target/provider/backup"
+  ]
+}

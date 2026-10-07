@@ -1,0 +1,31 @@
+{
+  "data": {
+    "schemaVersion": "result-data/1",
+    "kind": "list",
+    "ownerId": "00000000-0000-4000-8000-000000000001",
+    "sessionId": "00000000-0000-4000-8000-000000000002",
+    "mobileEpoch": 3,
+    "scope": "result-sensitive-data/1",
+    "rootKind": "artifact",
+    "sourceDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "capturedAt": 1791360000000,
+    "expiresAt": 1791360030000,
+    "items": [
+      {
+        "rootKind": "artifact",
+        "rootId": "00000000-0000-4000-8000-000000000031",
+        "createdAt": 1791359999000,
+        "currentRevision": 2,
+        "revisionCount": 2,
+        "eventCount": 3,
+        "lifecycle": "withdrawn",
+        "resultTypes": [
+          "change-proposal-reference/1"
+        ]
+      }
+    ],
+    "hasMore": false,
+    "nextCursor": null,
+    "allUserDataCompleted": false
+  }
+}

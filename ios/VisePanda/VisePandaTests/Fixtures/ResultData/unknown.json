@@ -1,0 +1,16 @@
+{
+  "data": {
+    "schemaVersion": "result-data/1",
+    "kind": "unknown",
+    "scope": "result-sensitive-data/1",
+    "requestId": "00000000-0000-4000-8000-000000000003",
+    "rootKind": "artifact",
+    "rootId": "00000000-0000-4000-8000-000000000004",
+    "objectIds": [],
+    "ownerId": "00000000-0000-4000-8000-000000000001",
+    "sessionId": "00000000-0000-4000-8000-000000000002",
+    "mobileEpoch": 3,
+    "requestDigest": "f0356a71e9d467b4ea2e340c567550e4c0b4e8ae57d73dafacd14747d40b19e6",
+    "allUserDataCompleted": false
+  }
+}
