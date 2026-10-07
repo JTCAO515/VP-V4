@@ -8,6 +8,7 @@ import { decodeProfileExportPage } from '../../../../lib/server/privacy/profile-
 import { encryptExportArtifact, decryptExportArtifact } from '../../../../lib/server/privacy/export-artifact.ts';
 import { sql } from '../../cost/fixtures/postgres-rpc.mjs';
 import { ensureFixture } from './fixture.mjs';
+import { verifyTimeBoundary } from './time-boundary.mjs';
 setContainer(process.env.VP_PROFILE_EXPORT_TEST_CONTAINER || 'vpj58-profile-export-sql-20261007');
 const lit = x => "'" + String(x).replaceAll("'", "''") + "'";
 const json = x => lit(JSON.stringify(x)) + '::jsonb';
@@ -86,6 +87,7 @@ test('bounded Profile source through current original D2 and permanent clear fen
     assert.equal(p.items[0].operations.some(r=>r.scope==='profile-delete-progress/1'&&r.state==='erased'),true);
     assert.deepEqual(p.items[0].sourceRows,{profiles:1,watermarks:1,operations:p.items[0].operations.length});
   });
+  await t.test('lawful original TIME 24-hour endpoint preserves source bytes and rejects non-endpoint values',verifyTimeBoundary);
   await t.test('original atomic commit/proof/exact-byte execution recovery/download and same-owner fresh-session download',async()=>{
     const a=await actor();await save(a);const f=await job(a),p=await page(f),c=commitInput(f,p);
     const receipt=await call(null,'commit',c.input);assert.equal(receipt.state,'ready_partial');assert.deepEqual(receipt.modules[3],c.input.modules[3]);

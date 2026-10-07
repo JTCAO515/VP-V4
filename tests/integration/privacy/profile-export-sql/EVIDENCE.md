@@ -1,5 +1,11 @@
 # Profile snapshot SQL — fixed owned source
 
+Current TIME-boundary increment: `28bff4cba3f1fd6d0e0f46c1f07add0f7d9e9987`,
+migration SHA256
+`5f1502f4d93d500db35ba7ae52b6b03b474bbc67abd62b8756ec62c00eaa8989`.
+The original product/fixture proofs below remain attributed to their earlier
+`11df...` source; the final section records the only affected boundary change.
+
 Product commit: `a9cd15f5c21d1e355aaabdde343132ea8c3883d9` on
 `vpj58-profile-export-sql-20261007`, based on
 `11cdbc2a1bdb29e3c3a4dfe6d45e68effa4cbfac`.
@@ -168,3 +174,56 @@ override refusal, syntax and diff checks PASS. The actual affected standalone
 11-PG rerun against that merged checkout is assigned to the sole TS integrator;
 it is **UNRUN in this SQL worktree**, whose fixed base contains no `0703`. No
 unchanged 24-case regression or canonical matrix was repeated for this fixture fix.
+
+Subsequent actual consumer verification: the sole TS integrator consumed the
+fixture fix `df060690c468585e8cfcf104c88b01fb8edfc7c2` as `a053c36f` in its current
+merged checkout. Official thread command output
+`exec-7e40fdfd-8733-468b-9582-ca23651c2df1` was read here: exit 0, explicit applied
+list `07030000_conversation_guide_invalidation_compat.sql` then
+`07040000_profile_core_export.sql`, **11 PASS, zero skip/fail**, total 14723.2575 ms,
+owned standalone fixture cleanup PASS. SQL SHA256 stayed `11df1343...7a70dce`.
+This closes the current-ordered standalone verification gap without rerunning
+the unchanged 24-case suite, canonical proof or Auth matrix.
+
+## Lawful PostgreSQL TIME endpoint
+
+The TS integrator's actual current-source probe found an original lawful saved
+value which the new export had rejected: authenticated `save_user_profile` accepts
+`24:00:00::time`, while `profile_row_valid_v1` originally admitted only hours 00–23.
+This SQL owner reproduced original save success, real stored `24:00:00`, and old
+source `PROFILE_SOURCE_UNAVAILABLE` in an owned PostgreSQL fixture.
+
+Main reviewed and granted the exact narrow change: the export-only row validator
+adds the literal `24:00:00` inside its existing time predicate. It does not rewrite
+the value to `00:00:00`, change the original writer/TIME column/permissions, add
+tables or change original D2 behavior. Only that function's reviewed full-definition
+hash changes from `e02f265a135a57d3049e1eda9d58dfee` to
+`847b8f7f39004426cc4668734e02be58` in the 30-function registry. The hook source pin
+changes from `ee11dce02749b72cf002562771a3c42c` to
+`06bdee5e33bbe7639acc7acd65a7fbe0`; catalog hash `9b12...` and all remaining function
+identities are unchanged. The exact row/registry/schema/migration deltas are the
+`time-*.candidate.patch` and `time-identity-delta.json` files.
+
+Actual candidate PostgreSQL boundary proof PASS: original authenticated saves of
+`24:00:00` and `24:00:00.000000` both project through PostgreSQL `TIME::text` to
+exactly `24:00:00`. The new source preserves that value, and its SQL hash equals
+the original TS `exportCanonical({snapshot:[item]})` digest. `24:01:00`,
+`24:00:00.1`, `24:00:00.000001`, `24:00:01` and `25:00:00` all remain rejected by
+the export validator. Strict Profile/Result schema and the fixed hook registry
+were true, and owned fixture cleanup passed. No all-zero fractional wire extension
+is needed for the actual PostgreSQL projection; PostgreSQL removes that fraction.
+
+The first probe's draft SQL assembly misused JS replacement `$'` expansion and
+failed to compile; literal replacement fixed it before the product increment.
+An early decoder probe read the integrator's temporary adapter which was then
+withdrawn, and encountered the old shared validator's rejection. That was not
+counted as a stable decoder PASS. The original Profile owner owns the shared TS
+validator correction; this SQL task does not author that shared source.
+
+`time-boundary.mjs` provides one affected original writer -> actual source ->
+stable TS decoder/digest proof, with strict schema/hooks and invalid-time negatives.
+It is wired into the existing PostgreSQL file for CI and can run alone with
+`VP_PROFILE_EXPORT_SQL=1 node tests/integration/privacy/profile-export-sql/time-boundary.mjs`.
+Its stable decoder part is **UNRUN here** pending consumption of the original
+Profile owner's shared validator; the rest of the earlier 11/24/6 matrices is
+reused, not repeated for this time predicate change.
