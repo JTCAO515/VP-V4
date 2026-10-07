@@ -247,3 +247,16 @@ optional expectedProfileRevision type/check/allowed-key, original Memory and oth
 guards byte-unchanged. Original Profile contract1 PASS0skip, direct actual guard
 accepts old payload and safe CAS0/5/max, rejects negative/fraction/string/null/array/
 unsafe max; typecheck/diff PASS. ProfileWorkspace and catalog remain pending.
+
+Stable integration and actual signed Auth r1: ProfileSQL928948d6 consumedfcd82b51,
+07020000 SHA4e12c0b4 MATCH; normal fixedResult1229795b dependency preserved and
+ProfileNativeb159 consumedb772284c. Entire ios equals b159; Result domain/API/
+SQL/Auth equals1229795b. Main9ce573 four precise TS registration hunks applied
+12+/2-, same34, profile only/.9, original Result/core/other33 retained. Registered
+signed Auth **1PASS0skip + owned53955298 cleanupPASS** observed; raw facts and
+boundaries in artifacts/VPJ-58/profile-data/server/AUTH-r1.md. Own8/typecheck PASS.
+No dirty source copied. REGISTRATION.patch retired after actual grant/application.
+Remaining Web form last hunk and catalog fixture metadata leases remain necessary
+caller closure; existing PG24+gated4 and Native evidence stay separate. Full239 not
+closed, target/provider/fees/device/backup UNRUN. Current source is no longer only
+wire preparation; pending shared caller/fixture/CI entries do not imply new scope.
