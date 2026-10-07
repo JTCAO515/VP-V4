@@ -29,7 +29,8 @@ information_schema,extensions,auth,result_data_private against the standalone
 bootstrap whole-catalog hash6c2371cd4338f681af77de8fe888a4ae3692bd0abcf1736c14eaf0935314020d.
 Real Supabase additional operational schemas therefore invalidate the source
 before metadata can return. Observed r2 system schema counts include storage10,
-realtime7,_realtime4,vault1,supabase_functions2,supabase_migrations1,private1.
+realtime7,_realtime4,vault1,supabase_functions2,supabase_migrations1.
+private1 already exists in the original251-table catalog and MUST remain audited.
 Public34/turn_private43 and other original application tables are also present.
 This is an actual product compatibility failure, not a target policy/credential
 or infrastructure wait and not fixed by accepting the fixture as complete.
