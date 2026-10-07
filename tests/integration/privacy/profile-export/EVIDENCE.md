@@ -63,3 +63,27 @@ core-export-worker-http, memory-export-d4 and entitlement-export contract files.
 Full typecheck and source lint PASS. Original bounded/Memory/entitlement counts,
 disabled/no-key transport and immutable original execution recovery retained.
 These contract fixtures do not prove new SQL/Auth/source-race integration.
+
+PASS actual original Auth/registered-worker/download, 2026-10-07: sole SQL product
+a9cd15f5c21d1e355aaabdde343132ea8c3883d9 consumed as dc5713d2; migration SHA256
+11df13431271b902257f03500cc46275cc5dbef27f16aba33ac0314717a70dce MATCH.
+Command `node --experimental-strip-types tests/integration/privacy/profile-export/run-http.mjs --port-base 63000`
+exit0; owned project vp-native-ask-fc1501b9, Main23777c precise port lease and fresh
+preflight. One test PASS/zero skip, 7209.647ms (Node total10149.559ms). Uses current
+all checkout migrations and real GoTrue signed owner JWT/Native session endpoints,
+original configured D2 runner/service PostgREST/worker, one complete Profile owner
+snapshot with sourceRows=1 Profile/1 watermark/1 original operation, genuine
+immutable proof, foreign denial and exact private/no-store plaintext bytes/digest.
+Fresh same-owner session/new epoch gets a new valid ticket for the original job;
+old ticket is denied and proof retains original admission actor.
+Actual PostgREST download_prepare response is passed through unchanged; a real
+ordinary owner Profile clear runs before actual consume, which refuses old body.
+Subsequent ticket/read also refuse. No mocked Auth/SQL/source payload; the fetch
+hook only controls this one real prepare->clear->consume schedule.
+Own users removed, own Next process stopped, own Supabase fixture and temporary
+key/log directory cleanup PASS. Local fixture RPC grants are separate from target
+default-denied authorities. No physical-device/target/provider acceptance claim.
+SQL-owner whole migration/replay/rollback/eleven PG assertions remain its separate
+evidence; canonical six-case result is separate. Main whole-package review, CI
+registry lease, final main dependency compatibility, unique PR/formal/all CI and
+protected merge remain. Parent #239/ALL1/ALL2 stay Open.

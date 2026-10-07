@@ -1,0 +1,19 @@
+--- a/scripts/ci-suites/db-integration.mjs
++++ b/scripts/ci-suites/db-integration.mjs
+@@ -120,6 +120,8 @@
+           "tests/integration/privacy/result-data-sql/postgres.test.mjs",
+           "tests/integration/privacy/profile-data-sql/profile.test.mjs",
+           "tests/integration/privacy/profile-data-sql/result-compatibility.test.mjs",
++          "tests/integration/privacy/profile-export/canonical-postgres.test.mjs",
++          "tests/integration/privacy/profile-export-sql/postgres.test.mjs",
+           "tests/integration/translate/history.test.mjs",
+           "tests/integration/trip/archive.test.mjs",
+           "tests/integration/trip/lifecycle-postgres.test.mjs",
+@@ -236,6 +238,7 @@
+       { name: "planning-intake-http", runner: node("tests/integration/turn/run-planning-intake-http.mjs"), files: ["tests/integration/turn/planning-intake-http.test.mjs"] },
+       { name: "result-data-http", runner: node("tests/integration/privacy/result-data/run-http.mjs", "--port-base", "63080"), files: ["tests/integration/privacy/result-data/auth-http.test.mjs"] },
+       { name: "profile-data-http", runner: node("tests/integration/privacy/profile-data/run-http.mjs", "--port-base", "63040"), files: ["tests/integration/privacy/profile-data/auth-http.test.mjs"] },
++      { name: "profile-export-http", runner: node("tests/integration/privacy/profile-export/run-http.mjs", "--port-base", "63000"), files: ["tests/integration/privacy/profile-export/auth-http.test.mjs"] },
+     ],
+   },
+   "supabase-http-ops": {
