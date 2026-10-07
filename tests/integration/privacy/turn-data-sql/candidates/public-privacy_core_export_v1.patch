@@ -1,0 +1,46 @@
+--- tests/integration/privacy/turn-data-sql/candidates/public-privacy_core_export_v1.before.sql	2026-10-08 00:28:01
++++ tests/integration/privacy/turn-data-sql/candidates/public-privacy_core_export_v1.after.sql	2026-10-08 00:28:01
+@@ -8,11 +8,12 @@
+ declare keys text[];role text:=auth.role();req uuid;op uuid;lease uuid;gen integer;actor jsonb;u uuid;
+  policy export_private.core_policies_v1%rowtype;j export_private.core_jobs_v1%rowtype;ticket export_private.core_tickets_v1%rowtype;a export_private.core_artifacts_v1%rowtype;
+  artifact jsonb;nonce bytea;tag bytea;cipher bytea;digest text;expires timestamptz;run_ms integer;ttl integer;limit_n integer;cursor uuid;page jsonb;more boolean;next_id uuid;all_complete boolean;
+- profile_lease_deadline timestamptz;removed integer:=0;removed_tickets integer:=0;c record;old_intent public.privacy_requests%rowtype;
++ profile_lease_deadline timestamptz;turn_lease_deadline timestamptz;removed integer:=0;removed_tickets integer:=0;c record;old_intent public.privacy_requests%rowtype;
+ begin
+  if p_action='memory_page' then return export_private.core_memory_page_v1(p_input);end if;
+  if p_action='entitlement_page' then return export_private.entitlement_page_v1(p_input);end if;
+  if p_action='profile_page' then return export_private.core_profile_page_v1(p_input);end if;
++ if p_action='turn_page' then return export_private.core_turn_page_v1(p_input);end if;
+  keys:=case p_action
+  when 'request' then array['requestId','confirmed'] when 'read' then array['requestId']
+  when 'claim' then array['requestId','operationId','maxRunMs','expectedEnvironment','expectedKeyId']
+@@ -125,6 +126,7 @@
+   if export_private.entitlement_commit_progress_v1(j,p_input->'modules',lease,gen) is distinct from true then raise exception 'INVALID_OUTPUT';end if;
+   if pdf_intake_private.export_commit_v1(j,p_input->'modules',lease,gen) is distinct from true then raise exception 'INVALID_OUTPUT';end if;
+   if j.state='running' and export_private.profile_commit_qualifies_v1(j,p_input->'modules',lease,gen) is distinct from true then raise exception 'INVALID_OUTPUT';end if;
++  if j.state='running' and export_private.turn_commit_qualifies_v1(j,p_input->'modules',lease,gen) is distinct from true then raise exception 'INVALID_OUTPUT';end if;
+   artifact:=p_input->'artifact';
+   if jsonb_typeof(artifact) is distinct from 'object' or artifact-array['schemaVersion','keyId','nonce','tag','ciphertext','plaintextDigest','plaintextBytes','expiresAt']<>'{}' or (select count(*) from jsonb_object_keys(artifact))<>8
+   or jsonb_typeof(artifact->'keyId') is distinct from 'string' or artifact->>'schemaVersion' is distinct from 'privacy-export-artifact/1' or artifact->>'keyId' is distinct from policy.key_id or jsonb_typeof(artifact->'plaintextDigest') is distinct from 'string' or artifact->>'plaintextDigest' !~ '^[a-f0-9]{64}$'
+@@ -139,6 +141,7 @@
+   if j.state in ('ready_partial','ready_complete') then
+    if j.committed_lease=lease and j.generation=gen and j.commit_digest=digest and j.artifact_expires_at>clock_timestamp() then
+     if export_private.profile_source_current_v1(j) is distinct from true then raise exception 'INVALID_OUTPUT';end if;
++    if export_private.turn_source_current_v1(j) is distinct from true then raise exception 'INVALID_OUTPUT';end if;
+     return export_private.job_receipt_v1(j);end if;raise exception 'EXPORT_CONFLICT';
+   end if;
+   if not export_private.live_lease_v1(j,lease,gen) then return jsonb_build_object('kind','unavailable');end if;
+@@ -146,11 +149,12 @@
+   if expires<=clock_timestamp() or expires>clock_timestamp()+interval '24 hours' then raise exception 'INVALID_OUTPUT';end if;
+   expires:=least(expires,clock_timestamp()+policy.artifact_ttl_ms*interval '1 millisecond',j.expires_at);
+   if expires<=clock_timestamp() then return jsonb_build_object('kind','unavailable');end if;
+-  profile_lease_deadline:=j.lease_expires_at;
++  profile_lease_deadline:=j.lease_expires_at;turn_lease_deadline:=j.lease_expires_at;
+   insert into export_private.core_artifacts_v1(request_id,owner_id,generation,lease_id,key_id,nonce,tag,ciphertext,plaintext_digest,plaintext_bytes,ciphertext_digest,aad,expires_at)
+    values(req,j.owner_id,gen,lease,policy.key_id,nonce,tag,cipher,artifact->>'plaintextDigest',(artifact->>'plaintextBytes')::integer,encode(sha256(cipher),'hex'),'["privacy-core-export/1",'||turn_private.planning_v2_json_string_v1(req::text)||','||turn_private.planning_v2_json_string_v1(j.owner_id::text)||','||gen::text||']',expires);
+   update export_private.core_jobs_v1 set state=case when all_complete then 'ready_complete' else 'ready_partial' end,modules=p_input->'modules',completed_at=clock_timestamp(),artifact_digest=artifact->>'plaintextDigest',artifact_bytes=(artifact->>'plaintextBytes')::integer,artifact_expires_at=expires,committed_lease=lease,commit_digest=digest,lease_id=null,lease_expires_at=null where request_id=req returning * into j;
+   perform export_private.record_profile_provenance_v1(j,profile_lease_deadline);
++  perform export_private.record_turn_provenance_v1(j,turn_lease_deadline);
+   return export_private.job_receipt_v1(j);
+  end if;
+  if p_action='fail' then
