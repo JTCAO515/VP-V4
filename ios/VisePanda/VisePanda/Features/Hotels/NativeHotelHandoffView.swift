@@ -850,6 +850,10 @@ struct NativeHotelComparisonView: View {
 
     private func saveLocal() async {
         guard current, !localSaving, let scope = settings.nativeSession.dataScope, let namespace else { return }
+        guard let ticket = try? settings.nativeSession.offlineTrips.beginOfflineDataWrite(namespace, scope: scope) else {
+            localNotice = text("Device storage is unavailable or cleanup is pending; reload before saving.", "本机存储不可用或清理待核；请重读后再保存。")
+            return
+        }
         let own = localGeneration
         localSaving = true
         defer { if localGeneration == own { localSaving = false } }
@@ -879,7 +883,7 @@ struct NativeHotelComparisonView: View {
             candidateChoices: candidateChoices, selected: selectedHotel, updatedAt: Date())
         guard record.valid else { localNotice = text("Check stay dates and lodging details.", "请核对入住日期和住宿条件。"); return }
         do {
-            try settings.nativeSession.offlineTrips.saveLodging(record, expectedRevision: savedRecord?.revision, scope: scope)
+            try settings.nativeSession.offlineTrips.saveLodging(record, expectedRevision: savedRecord?.revision, scope: scope, ticket: ticket)
             savedRecord = record
             localNotice = text("Saved only on this device. Booking status remains unknown.", "仅已保存到本机；预订状态仍未知。")
         } catch {

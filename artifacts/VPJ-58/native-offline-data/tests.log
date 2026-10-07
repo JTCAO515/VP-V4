@@ -1,0 +1,142 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -derivedDataPath /private/tmp/vpj58-offline-native-r3-derived -destination "platform=iOS Simulator,id=0C5295FA-2F78-409D-9D4D-F7A2A1512478" CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- -parallel-testing-enabled NO "-only-testing:VisePandaTests/NativeOfflineDataTests" "-only-testing:VisePandaTests/NativeOfflineTripTests" "-only-testing:VisePandaTests/NativeTripStateTests" -resultBundlePath /private/tmp/vpj58-offline-native-r3/tests.xcresult
+
+Build settings from command line:
+    CODE_SIGN_IDENTITY = -
+    CODE_SIGNING_ALLOWED = YES
+
+2026-10-07 23:33:20.492 xcodebuild[74826:1381242] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionsModels.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-07 23:33:20.493 xcodebuild[74826:1381242] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionsStore.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-07 23:33:20.493 xcodebuild[74826:1381242] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionDestination.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-07 23:33:20.493 xcodebuild[74826:1381242] warning:  The file reference for "ShareIntakeCore/ShareIntakeInbox.swift" is a member of multiple groups ("ShareIntakeExtension" and "Features"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+Writing result bundle at path:
+	/private/tmp/vpj58-offline-native-r3/tests.xcresult
+
+Test Suite 'Selected tests' started at 2026-10-07 23:33:26.396.
+Test Suite 'VisePandaTests.xctest' started at 2026-10-07 23:33:26.396.
+Test Suite 'NativeOfflineDataTests' started at 2026-10-07 23:33:26.396.
+Test Case '-[VisePandaTests.NativeOfflineDataTests testActorEpochSessionAndBackgroundInvalidatePrivateExport]' started.
+Test Case '-[VisePandaTests.NativeOfflineDataTests testActorEpochSessionAndBackgroundInvalidatePrivateExport]' passed (0.069 seconds).
+Test Case '-[VisePandaTests.NativeOfflineDataTests testChangedPreviewCannotExportOrEraseNewData]' started.
+Test Case '-[VisePandaTests.NativeOfflineDataTests testChangedPreviewCannotExportOrEraseNewData]' passed (0.030 seconds).
+Test Case '-[VisePandaTests.NativeOfflineDataTests testFailedCleanerRetainsAdmissionAndCanOnlyResumeSameOperation]' started.
+Test Case '-[VisePandaTests.NativeOfflineDataTests testFailedCleanerRetainsAdmissionAndCanOnlyResumeSameOperation]' passed (0.039 seconds).
+Test Case '-[VisePandaTests.NativeOfflineDataTests testLostIndexAfterPhysicalEraseStillOffersOriginalRecovery]' started.
+Test Case '-[VisePandaTests.NativeOfflineDataTests testLostIndexAfterPhysicalEraseStillOffersOriginalRecovery]' passed (0.034 seconds).
+Test Case '-[VisePandaTests.NativeOfflineDataTests testOriginalFullAndSingleSourceCleanerRejectLateTickets]' started.
+Test Case '-[VisePandaTests.NativeOfflineDataTests testOriginalFullAndSingleSourceCleanerRejectLateTickets]' passed (0.028 seconds).
+Test Case '-[VisePandaTests.NativeOfflineDataTests testOriginalThreeSourceExportPreservesWireAndLeavesOtherTripAndCommands]' started.
+Test Case '-[VisePandaTests.NativeOfflineDataTests testOriginalThreeSourceExportPreservesWireAndLeavesOtherTripAndCommands]' passed (0.048 seconds).
+Test Case '-[VisePandaTests.NativeOfflineDataTests testPersistedGenerationRejectsLateWritersButExplicitNewWritesStayLegal]' started.
+Test Case '-[VisePandaTests.NativeOfflineDataTests testPersistedGenerationRejectsLateWritersButExplicitNewWritesStayLegal]' passed (0.057 seconds).
+Test Case '-[VisePandaTests.NativeOfflineDataTests testPrivateFileTTLClockRollbackRebootAndOriginalSourceInvalidation]' started.
+Test Case '-[VisePandaTests.NativeOfflineDataTests testPrivateFileTTLClockRollbackRebootAndOriginalSourceInvalidation]' passed (0.129 seconds).
+Test Case '-[VisePandaTests.NativeOfflineDataTests testUnknownSelectedFileAndSymlinkFailClosedWithoutDeletingForeignTargets]' started.
+Test Case '-[VisePandaTests.NativeOfflineDataTests testUnknownSelectedFileAndSymlinkFailClosedWithoutDeletingForeignTargets]' passed (0.016 seconds).
+Test Case '-[VisePandaTests.NativeOfflineDataTests testUntrustedAndExpiredPermitIsBlockedWithoutContentButCiphertextCanBeCleaned]' started.
+Test Case '-[VisePandaTests.NativeOfflineDataTests testUntrustedAndExpiredPermitIsBlockedWithoutContentButCiphertextCanBeCleaned]' passed (0.079 seconds).
+Test Suite 'NativeOfflineDataTests' passed at 2026-10-07 23:33:26.928.
+	 Executed 10 tests, with 0 failures (0 unexpected) in 0.529 (0.532) seconds
+Test Suite 'NativeOfflineTripTests' started at 2026-10-07 23:33:26.928.
+Test Case '-[VisePandaTests.NativeOfflineTripTests testEncryptedDraftIsTripBoundAndFailedPurgeBlocksReads]' started.
+Test Case '-[VisePandaTests.NativeOfflineTripTests testEncryptedDraftIsTripBoundAndFailedPurgeBlocksReads]' passed (0.009 seconds).
+Test Case '-[VisePandaTests.NativeOfflineTripTests testFixedTypeScriptProducerCanonicalSignatureInterop]' started.
+/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-offline-data-20261007/ios/VisePanda/VisePandaTests/NativeOfflineTripTests.swift:101: -[VisePandaTests.NativeOfflineTripTests testFixedTypeScriptProducerCanonicalSignatureInterop] : Test skipped - UNRUN: explicit fixed TS producer fixture required
+Test Case '-[VisePandaTests.NativeOfflineTripTests testFixedTypeScriptProducerCanonicalSignatureInterop]' skipped (0.005 seconds).
+Test Case '-[VisePandaTests.NativeOfflineTripTests testLodgingRecordIsEncryptedTripBoundVersionedAndRemoved]' started.
+Test Case '-[VisePandaTests.NativeOfflineTripTests testLodgingRecordIsEncryptedTripBoundVersionedAndRemoved]' passed (0.032 seconds).
+Test Case '-[VisePandaTests.NativeOfflineTripTests testNetworkTimeExpiryWallRollbackAndRebootCannotRenewLease]' started.
+Test Case '-[VisePandaTests.NativeOfflineTripTests testNetworkTimeExpiryWallRollbackAndRebootCannotRenewLease]' passed (0.003 seconds).
+Test Case '-[VisePandaTests.NativeOfflineTripTests testOrdinaryDraftRecoveryNeedsExactVersionAndDoesNotCreateOfflineSource]' started.
+Test Case '-[VisePandaTests.NativeOfflineTripTests testOrdinaryDraftRecoveryNeedsExactVersionAndDoesNotCreateOfflineSource]' passed (0.002 seconds).
+Test Case '-[VisePandaTests.NativeOfflineTripTests testTrustedSignatureOpaqueIDsAndNonceRejectDigestAsGrant]' started.
+Test Case '-[VisePandaTests.NativeOfflineTripTests testTrustedSignatureOpaqueIDsAndNonceRejectDigestAsGrant]' passed (0.003 seconds).
+Test Suite 'NativeOfflineTripTests' passed at 2026-10-07 23:33:26.985.
+	 Executed 6 tests, with 1 test skipped and 0 failures (0 unexpected) in 0.055 (0.057) seconds
+Test Suite 'NativeTripStateTests' started at 2026-10-07 23:33:26.985.
+Test Case '-[VisePandaTests.NativeTripStateTests testAccountChangeRejectsAnAlreadyInFlightTripReply]' started.
+2026-10-07 23:33:27.012122+0800 VisePanda[74884:1382003] [plugin] AddInstanceForFactory: No factory registered for id <CFUUID 0x10b957f60> F8BB1C28-BAE8-11D6-9C31-00039315CD46
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native logout HTTP 200
+Test Case '-[VisePandaTests.NativeTripStateTests testAccountChangeRejectsAnAlreadyInFlightTripReply]' passed (0.117 seconds).
+Test Case '-[VisePandaTests.NativeTripStateTests testArchiveRequiresReviewedVersionRetainsResultsAndStartsFresh]' started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+Test Case '-[VisePandaTests.NativeTripStateTests testArchiveRequiresReviewedVersionRetainsResultsAndStartsFresh]' passed (0.033 seconds).
+Test Case '-[VisePandaTests.NativeTripStateTests testArchiveUnavailableKeepsSavedResultsWithoutClaimingSuccess]' started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+Test Case '-[VisePandaTests.NativeTripStateTests testArchiveUnavailableKeepsSavedResultsWithoutClaimingSuccess]' passed (0.027 seconds).
+Test Case '-[VisePandaTests.NativeTripStateTests testAuthorizedPaceChangesOnlyUnconfirmedRelativeDayDensity]' started.
+Test Case '-[VisePandaTests.NativeTripStateTests testAuthorizedPaceChangesOnlyUnconfirmedRelativeDayDensity]' passed (0.002 seconds).
+Test Case '-[VisePandaTests.NativeTripStateTests testCompletedGroundedRequestCanEnterOutlineWithoutCopyingAnswer]' started.
+Test Case '-[VisePandaTests.NativeTripStateTests testCompletedGroundedRequestCanEnterOutlineWithoutCopyingAnswer]' passed (0.003 seconds).
+Test Case '-[VisePandaTests.NativeTripStateTests testDeletionQueuedThenCompletedClearsCachedTripOnReconnect]' started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+2026-10-07 23:33:27.200863+0800 VisePanda[74884:1382163] [Default] Task <5367C6FD-5D65-4E2C-81F7-BD0F9AED5E26>.<9> finished with error [-1009] Error Domain=NSURLErrorDomain Code=-1009 "(null)" UserInfo={_NSURLErrorRelatedURLSessionTaskErrorKey=(
+    "LocalDataTask <5367C6FD-5D65-4E2C-81F7-BD0F9AED5E26>.<9>"
+), _NSURLErrorFailingURLSessionTaskErrorKey=LocalDataTask <5367C6FD-5D65-4E2C-81F7-BD0F9AED5E26>.<9>}
+2026-10-07 23:33:27.217668+0800 VisePanda[74884:1382167] [Default] Task <2FEC1C54-606D-41D3-B87C-87E30BCACAA6>.<17> finished with error [-1009] Error Domain=NSURLErrorDomain Code=-1009 "(null)" UserInfo={_NSURLErrorRelatedURLSessionTaskErrorKey=(
+    "LocalDataTask <2FEC1C54-606D-41D3-B87C-87E30BCACAA6>.<17>"
+), _NSURLErrorFailingURLSessionTaskErrorKey=LocalDataTask <2FEC1C54-606D-41D3-B87C-87E30BCACAA6>.<17>}
+Test Case '-[VisePandaTests.NativeTripStateTests testDeletionQueuedThenCompletedClearsCachedTripOnReconnect]' passed (0.052 seconds).
+Test Case '-[VisePandaTests.NativeTripStateTests testDeletionReceiptRejectsMalformedCompletionState]' started.
+Test Case '-[VisePandaTests.NativeTripStateTests testDeletionReceiptRejectsMalformedCompletionState]' passed (0.001 seconds).
+Test Case '-[VisePandaTests.NativeTripStateTests testDraftOnlyChangesRequestedFieldsAndKeepsConfirmedContent]' started.
+Test Case '-[VisePandaTests.NativeTripStateTests testDraftOnlyChangesRequestedFieldsAndKeepsConfirmedContent]' passed (0.001 seconds).
+Test Case '-[VisePandaTests.NativeTripStateTests testLateRefreshCannotReviveSessionAfterTripDenial]' started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native session failed: session
+VisePanda native refresh HTTP 200
+Test Case '-[VisePandaTests.NativeTripStateTests testLateRefreshCannotReviveSessionAfterTripDenial]' passed (0.046 seconds).
+Test Case '-[VisePandaTests.NativeTripStateTests testOutlineBindsOnlyAfterValidNonoverlappingDateAndPreservesTrip]' started.
+Test Case '-[VisePandaTests.NativeTripStateTests testOutlineBindsOnlyAfterValidNonoverlappingDateAndPreservesTrip]' passed (0.001 seconds).
+Test Case '-[VisePandaTests.NativeTripStateTests testOutlineRejectsAmbiguousAndUnsupportedWholeDurations]' started.
+Test Case '-[VisePandaTests.NativeTripStateTests testOutlineRejectsAmbiguousAndUnsupportedWholeDurations]' passed (0.004 seconds).
+Test Case '-[VisePandaTests.NativeTripStateTests testOutlineRespectsExplicitNegationWithoutGuessingItsScope]' started.
+Test Case '-[VisePandaTests.NativeTripStateTests testOutlineRespectsExplicitNegationWithoutGuessingItsScope]' passed (0.003 seconds).
+Test Case '-[VisePandaTests.NativeTripStateTests testRelativeOutlineRequiresSupportedInputsAndKeepsUnknowns]' started.
+Test Case '-[VisePandaTests.NativeTripStateTests testRelativeOutlineRequiresSupportedInputsAndKeepsUnknowns]' passed (0.001 seconds).
+Test Case '-[VisePandaTests.NativeTripStateTests testSingleInterestOutlineDoesNotInventAnAlternative]' started.
+Test Case '-[VisePandaTests.NativeTripStateTests testSingleInterestOutlineDoesNotInventAnAlternative]' passed (0.002 seconds).
+Test Case '-[VisePandaTests.NativeTripStateTests testTemporaryAuthenticationFailureKeepsDraftHiddenAndLogoutClearsIt]' started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+2026-10-07 23:33:27.292856+0800 VisePanda[74884:1382167] [Default] Task <B6D42C0D-B5F4-4055-B0CD-6BC3A2110736>.<4> finished with error [-1009] Error Domain=NSURLErrorDomain Code=-1009 "(null)" UserInfo={_NSURLErrorRelatedURLSessionTaskErrorKey=(
+    "LocalDataTask <B6D42C0D-B5F4-4055-B0CD-6BC3A2110736>.<4>"
+), _NSURLErrorFailingURLSessionTaskErrorKey=LocalDataTask <B6D42C0D-B5F4-4055-B0CD-6BC3A2110736>.<4>}
+VisePanda native session failed: network:-1009
+VisePanda native refresh HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native logout HTTP 200
+Test Case '-[VisePandaTests.NativeTripStateTests testTemporaryAuthenticationFailureKeepsDraftHiddenAndLogoutClearsIt]' passed (0.028 seconds).
+Test Case '-[VisePandaTests.NativeTripStateTests testTodaySelectsOnlyDatedConfirmedItemsAndKeepsEmptyStatesDistinct]' started.
+Test Case '-[VisePandaTests.NativeTripStateTests testTodaySelectsOnlyDatedConfirmedItemsAndKeepsEmptyStatesDistinct]' passed (0.001 seconds).
+Test Suite 'NativeTripStateTests' passed at 2026-10-07 23:33:27.311.
+	 Executed 16 tests, with 0 failures (0 unexpected) in 0.322 (0.326) seconds
+Test Suite 'VisePandaTests.xctest' passed at 2026-10-07 23:33:27.311.
+	 Executed 32 tests, with 1 test skipped and 0 failures (0 unexpected) in 0.906 (0.914) seconds
+Test Suite 'Selected tests' passed at 2026-10-07 23:33:27.311.
+	 Executed 32 tests, with 1 test skipped and 0 failures (0 unexpected) in 0.906 (0.915) seconds
+2026-10-07 23:33:27.592 xcodebuild[74826:1381242] [MT] IDETestOperationsObserverDebug: 6.784 elapsed -- Testing started completed.
+2026-10-07 23:33:27.592 xcodebuild[74826:1381242] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-07 23:33:27.592 xcodebuild[74826:1381242] [MT] IDETestOperationsObserverDebug: 6.784 sec, +6.784 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/vpj58-offline-native-r3/tests.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started
