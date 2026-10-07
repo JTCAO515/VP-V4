@@ -1,0 +1,2248 @@
+[
+  {
+    "relation": "public.chat_turn_events",
+    "countKey": "events",
+    "effect": "erase",
+    "pk": [
+      "id"
+    ],
+    "columns": [
+      {
+        "name": "id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "thread_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "turn_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "event_id",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "sequence",
+        "type": "integer",
+        "notNull": true
+      },
+      {
+        "name": "schema_version",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "event_type",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "state",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      }
+    ],
+    "hasOwner": true
+  },
+  {
+    "relation": "public.chat_turn_idempotency",
+    "countKey": "idempotency",
+    "effect": "erase",
+    "pk": [
+      "owner_id",
+      "thread_id",
+      "idempotency_key"
+    ],
+    "columns": [
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "thread_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "idempotency_key",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "turn_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      }
+    ],
+    "hasOwner": true
+  },
+  {
+    "relation": "public.memory_consumer_receipts",
+    "countKey": "memoryConsumers",
+    "effect": "erase",
+    "pk": [
+      "id"
+    ],
+    "columns": [
+      {
+        "name": "id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "memory_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "source_receipt_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "consumer_kind",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "turn_id",
+        "type": "uuid",
+        "notNull": false
+      },
+      {
+        "name": "proposal_id",
+        "type": "uuid",
+        "notNull": false
+      },
+      {
+        "name": "constraint_kind",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      }
+    ],
+    "hasOwner": true
+  },
+  {
+    "relation": "public.model_budget_attempts",
+    "countKey": "budgetAttempts",
+    "effect": "retain",
+    "pk": [
+      "scope_id",
+      "attempt_id"
+    ],
+    "columns": [
+      {
+        "name": "scope_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "attempt_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "task_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "provider",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "model",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "price_version",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "reserved_micros",
+        "type": "bigint",
+        "notNull": true
+      },
+      {
+        "name": "actual_micros",
+        "type": "bigint",
+        "notNull": false
+      },
+      {
+        "name": "status",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      },
+      {
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      }
+    ],
+    "hasOwner": false
+  },
+  {
+    "relation": "public.turn_feedback",
+    "countKey": "feedback",
+    "effect": "erase",
+    "pk": [
+      "id"
+    ],
+    "columns": [
+      {
+        "name": "id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "thread_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "turn_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "feedback_kind",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "reason_code",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      }
+    ],
+    "hasOwner": true
+  },
+  {
+    "relation": "turn_private.assistant_message_source_receipts",
+    "countKey": "sourceReceipts",
+    "effect": "erase",
+    "pk": [
+      "message_id"
+    ],
+    "columns": [
+      {
+        "name": "message_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "request_key",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "request_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "input_sources",
+        "type": "jsonb",
+        "notNull": true
+      },
+      {
+        "name": "captured_sources",
+        "type": "jsonb",
+        "notNull": true
+      },
+      {
+        "name": "accepted_receipt",
+        "type": "jsonb",
+        "notNull": true
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      }
+    ],
+    "hasOwner": true
+  },
+  {
+    "relation": "turn_private.assistant_messages",
+    "countKey": "messageBodies",
+    "effect": "redact",
+    "pk": [
+      "id"
+    ],
+    "columns": [
+      {
+        "name": "id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "conversation_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "sequence",
+        "type": "bigint",
+        "notNull": true
+      },
+      {
+        "name": "idempotency_key",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "request_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "policy_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "consent_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "locale",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "input_text",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "relationship",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "goal_id",
+        "type": "uuid",
+        "notNull": false
+      },
+      {
+        "name": "scope_version",
+        "type": "integer",
+        "notNull": false
+      },
+      {
+        "name": "task_id",
+        "type": "uuid",
+        "notNull": false
+      },
+      {
+        "name": "parent_message_id",
+        "type": "uuid",
+        "notNull": false
+      },
+      {
+        "name": "turn_id",
+        "type": "uuid",
+        "notNull": false
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      }
+    ],
+    "hasOwner": true
+  },
+  {
+    "relation": "turn_private.assistant_travel_intakes",
+    "countKey": "intakes",
+    "effect": "erase",
+    "pk": [
+      "message_id"
+    ],
+    "columns": [
+      {
+        "name": "message_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "conversation_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "goal_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "policy_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "consent_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "message_sequence",
+        "type": "bigint",
+        "notNull": true
+      },
+      {
+        "name": "goal_version",
+        "type": "integer",
+        "notNull": true
+      },
+      {
+        "name": "intake_revision",
+        "type": "integer",
+        "notNull": true
+      },
+      {
+        "name": "idempotency_key",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "request_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "intake",
+        "type": "jsonb",
+        "notNull": true
+      },
+      {
+        "name": "memory_basis",
+        "type": "jsonb",
+        "notNull": true
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      }
+    ],
+    "hasOwner": true
+  },
+  {
+    "relation": "turn_private.grounded_ai_assist_jobs",
+    "countKey": "assistJobs",
+    "effect": "erase",
+    "pk": [
+      "id"
+    ],
+    "columns": [
+      {
+        "name": "id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "turn_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "status",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "claim_token",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "started_at",
+        "type": "timestamp with time zone",
+        "notNull": false
+      },
+      {
+        "name": "finished_at",
+        "type": "timestamp with time zone",
+        "notNull": false
+      },
+      {
+        "name": "outcome",
+        "type": "jsonb",
+        "notNull": false
+      },
+      {
+        "name": "error_code",
+        "type": "text",
+        "notNull": false
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      }
+    ],
+    "hasOwner": true
+  },
+  {
+    "relation": "turn_private.grounded_turns",
+    "countKey": "grounded",
+    "effect": "erase",
+    "pk": [
+      "turn_id"
+    ],
+    "columns": [
+      {
+        "name": "turn_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "task_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "city",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "locale",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "scope_version",
+        "type": "integer",
+        "notNull": true
+      },
+      {
+        "name": "intent",
+        "type": "text",
+        "notNull": false
+      },
+      {
+        "name": "request_scope",
+        "type": "text",
+        "notNull": false
+      },
+      {
+        "name": "original_outcome",
+        "type": "text",
+        "notNull": false
+      },
+      {
+        "name": "basis",
+        "type": "jsonb",
+        "notNull": false
+      },
+      {
+        "name": "completed_at",
+        "type": "timestamp with time zone",
+        "notNull": false
+      },
+      {
+        "name": "unanswered_needs",
+        "type": "jsonb",
+        "notNull": false
+      },
+      {
+        "name": "place_subject_id",
+        "type": "text",
+        "notNull": false
+      },
+      {
+        "name": "place_name",
+        "type": "text",
+        "notNull": false
+      },
+      {
+        "name": "place_resolution",
+        "type": "text",
+        "notNull": false
+      }
+    ],
+    "hasOwner": true
+  },
+  {
+    "relation": "turn_private.planning_action_receipts",
+    "countKey": "actionReceipts",
+    "effect": "erase",
+    "pk": [
+      "turn_id",
+      "action_key"
+    ],
+    "columns": [
+      {
+        "name": "turn_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "action_key",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "task_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "message_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "lease_token",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "tool_id",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "input_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "basis_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "memory_basis",
+        "type": "jsonb",
+        "notNull": true
+      },
+      {
+        "name": "state",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "receipt_digest",
+        "type": "text",
+        "notNull": false
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      },
+      {
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      }
+    ],
+    "hasOwner": true
+  },
+  {
+    "relation": "turn_private.planning_comparisons",
+    "countKey": "planning",
+    "effect": "erase",
+    "pk": [
+      "turn_id"
+    ],
+    "columns": [
+      {
+        "name": "turn_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "task_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "goal_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "message_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "goal_version",
+        "type": "integer",
+        "notNull": true
+      },
+      {
+        "name": "planning_policy_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "planning_consent_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "memory_basis",
+        "type": "jsonb",
+        "notNull": true
+      },
+      {
+        "name": "artifact_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "publication_key",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "state",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      }
+    ],
+    "hasOwner": true
+  },
+  {
+    "relation": "turn_private.planning_intake_bindings",
+    "countKey": "intakeBindings",
+    "effect": "erase",
+    "pk": [
+      "turn_id"
+    ],
+    "columns": [
+      {
+        "name": "turn_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "source_message_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "source_sequence",
+        "type": "bigint",
+        "notNull": true
+      },
+      {
+        "name": "source_revision",
+        "type": "integer",
+        "notNull": true
+      },
+      {
+        "name": "source_goal_version",
+        "type": "integer",
+        "notNull": true
+      },
+      {
+        "name": "source_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "message_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "intake_revision",
+        "type": "integer",
+        "notNull": true
+      },
+      {
+        "name": "new_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "request_key",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "request_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      }
+    ],
+    "hasOwner": true
+  },
+  {
+    "relation": "turn_private.planning_model_dispatches",
+    "countKey": "modelDispatches",
+    "effect": "erase",
+    "pk": [
+      "lease_token"
+    ],
+    "columns": [
+      {
+        "name": "lease_token",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "turn_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "task_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "scope_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "attempt_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "dispatched_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      }
+    ],
+    "hasOwner": true
+  },
+  {
+    "relation": "turn_private.planning_observations",
+    "countKey": "observations",
+    "effect": "erase",
+    "pk": [
+      "turn_id",
+      "action_key"
+    ],
+    "columns": [
+      {
+        "name": "turn_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "action_key",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "observation",
+        "type": "jsonb",
+        "notNull": true
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      }
+    ],
+    "hasOwner": true
+  },
+  {
+    "relation": "turn_private.planning_v2_collector_origins",
+    "countKey": "collectorOrigins",
+    "effect": "erase",
+    "pk": [
+      "execution_id"
+    ],
+    "columns": [
+      {
+        "name": "execution_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "scope_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "attempt_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "invocation_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "request_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "request_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "payload_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "binding",
+        "type": "jsonb",
+        "notNull": true
+      },
+      {
+        "name": "origin_kind",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "configured_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      },
+      {
+        "name": "attempted_at",
+        "type": "timestamp with time zone",
+        "notNull": false
+      },
+      {
+        "name": "response_buffered_at",
+        "type": "timestamp with time zone",
+        "notNull": false
+      },
+      {
+        "name": "unknown_at",
+        "type": "timestamp with time zone",
+        "notNull": false
+      },
+      {
+        "name": "configuration_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "configuration_version",
+        "type": "integer",
+        "notNull": true
+      },
+      {
+        "name": "endpoint",
+        "type": "text",
+        "notNull": true
+      }
+    ],
+    "hasOwner": false
+  },
+  {
+    "relation": "turn_private.planning_v2_collector_outputs",
+    "countKey": "collectorOutputs",
+    "effect": "erase",
+    "pk": [
+      "execution_id"
+    ],
+    "columns": [
+      {
+        "name": "execution_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "output_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "usage_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "output_wire",
+        "type": "jsonb",
+        "notNull": true
+      },
+      {
+        "name": "usage_receipt_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "usage_wire",
+        "type": "jsonb",
+        "notNull": true
+      },
+      {
+        "name": "recorded_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      }
+    ],
+    "hasOwner": false
+  },
+  {
+    "relation": "turn_private.planning_v2_completed_receipts",
+    "countKey": "completedReceipts",
+    "effect": "erase",
+    "pk": [
+      "execution_id"
+    ],
+    "columns": [
+      {
+        "name": "execution_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "task_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "turn_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "artifact_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "revision",
+        "type": "integer",
+        "notNull": true
+      },
+      {
+        "name": "receipt",
+        "type": "jsonb",
+        "notNull": true
+      }
+    ],
+    "hasOwner": true
+  },
+  {
+    "relation": "turn_private.planning_v2_completion_proofs",
+    "countKey": "completionProofs",
+    "effect": "erase",
+    "pk": [
+      "execution_id"
+    ],
+    "columns": [
+      {
+        "name": "execution_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "transaction_id",
+        "type": "xid8",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "task_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "turn_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "original_lease",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "current_lease",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "intake_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "planning_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "action_key",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "content_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "artifact_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "scope_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "attempt_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "output_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "usage_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "content",
+        "type": "jsonb",
+        "notNull": true
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      }
+    ],
+    "hasOwner": true
+  },
+  {
+    "relation": "turn_private.planning_v2_execution_runs",
+    "countKey": "executionRuns",
+    "effect": "erase",
+    "pk": [
+      "id"
+    ],
+    "columns": [
+      {
+        "name": "id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "profile_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "profile_revision",
+        "type": "integer",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "task_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "turn_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "original_lease",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "source",
+        "type": "jsonb",
+        "notNull": true
+      },
+      {
+        "name": "intake_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "planning_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "collector_principal_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "origin_kind",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "execution",
+        "type": "jsonb",
+        "notNull": true
+      },
+      {
+        "name": "profile_snapshot",
+        "type": "jsonb",
+        "notNull": true
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      }
+    ],
+    "hasOwner": true
+  },
+  {
+    "relation": "turn_private.planning_v2_external_call_windows",
+    "countKey": "callWindows",
+    "effect": "erase",
+    "pk": [
+      "execution_id"
+    ],
+    "columns": [
+      {
+        "name": "execution_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "calls",
+        "type": "integer",
+        "notNull": true
+      }
+    ],
+    "hasOwner": false
+  },
+  {
+    "relation": "turn_private.planning_v2_model_attempt_bindings",
+    "countKey": "attemptBindings",
+    "effect": "erase",
+    "pk": [
+      "turn_id"
+    ],
+    "columns": [
+      {
+        "name": "turn_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "task_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "claim_lease",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "text_policy_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "planning_policy_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "scope_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "attempt_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "provider",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "model",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "price_version",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "intake_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "planning_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "bound_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      },
+      {
+        "name": "unknown_at",
+        "type": "timestamp with time zone",
+        "notNull": false
+      }
+    ],
+    "hasOwner": true
+  },
+  {
+    "relation": "turn_private.planning_v2_model_local_journal",
+    "countKey": "localJournals",
+    "effect": "erase",
+    "pk": [
+      "request_id"
+    ],
+    "columns": [
+      {
+        "name": "request_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "task_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "turn_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "scope_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "attempt_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "binding",
+        "type": "jsonb",
+        "notNull": true
+      },
+      {
+        "name": "payload_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "request_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "phase",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "revision",
+        "type": "bigint",
+        "notNull": true
+      },
+      {
+        "name": "intent_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      },
+      {
+        "name": "send_at",
+        "type": "timestamp with time zone",
+        "notNull": false
+      },
+      {
+        "name": "response_at",
+        "type": "timestamp with time zone",
+        "notNull": false
+      },
+      {
+        "name": "unknown_at",
+        "type": "timestamp with time zone",
+        "notNull": false
+      },
+      {
+        "name": "send_observation",
+        "type": "jsonb",
+        "notNull": false
+      },
+      {
+        "name": "response_observation",
+        "type": "jsonb",
+        "notNull": false
+      },
+      {
+        "name": "output_wire",
+        "type": "jsonb",
+        "notNull": false
+      },
+      {
+        "name": "unknown_reason",
+        "type": "text",
+        "notNull": false
+      }
+    ],
+    "hasOwner": true
+  },
+  {
+    "relation": "turn_private.planning_v2_place_checkpoints",
+    "countKey": "checkpoints",
+    "effect": "erase",
+    "pk": [
+      "turn_id"
+    ],
+    "columns": [
+      {
+        "name": "turn_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "task_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "claim_lease",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "intake_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "planning_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "state",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "started_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      },
+      {
+        "name": "observation",
+        "type": "jsonb",
+        "notNull": false
+      },
+      {
+        "name": "completed_at",
+        "type": "timestamp with time zone",
+        "notNull": false
+      }
+    ],
+    "hasOwner": true
+  },
+  {
+    "relation": "turn_private.planning_v2_result_claims",
+    "countKey": "resultClaims",
+    "effect": "erase",
+    "pk": [
+      "execution_id"
+    ],
+    "columns": [
+      {
+        "name": "execution_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "action_key",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "content_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "lease_token",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "state",
+        "type": "text",
+        "notNull": true
+      }
+    ],
+    "hasOwner": false
+  },
+  {
+    "relation": "turn_private.result_artifacts",
+    "countKey": "artifacts",
+    "effect": "erase",
+    "pk": [
+      "id"
+    ],
+    "columns": [
+      {
+        "name": "id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "task_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "goal_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "input_message_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "trip_id",
+        "type": "uuid",
+        "notNull": false
+      },
+      {
+        "name": "current_revision",
+        "type": "integer",
+        "notNull": true
+      },
+      {
+        "name": "lifecycle",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      },
+      {
+        "name": "proposal_id",
+        "type": "uuid",
+        "notNull": false
+      },
+      {
+        "name": "source_result_id",
+        "type": "uuid",
+        "notNull": false
+      },
+      {
+        "name": "source_turn_id",
+        "type": "uuid",
+        "notNull": false
+      }
+    ],
+    "hasOwner": true
+  },
+  {
+    "relation": "turn_private.result_events",
+    "countKey": "resultEvents",
+    "effect": "erase",
+    "pk": [
+      "id"
+    ],
+    "columns": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "artifact_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "revision",
+        "type": "integer",
+        "notNull": true
+      },
+      {
+        "name": "event_type",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      }
+    ],
+    "hasOwner": true
+  },
+  {
+    "relation": "turn_private.result_revisions",
+    "countKey": "revisions",
+    "effect": "erase",
+    "pk": [
+      "artifact_id",
+      "revision"
+    ],
+    "columns": [
+      {
+        "name": "artifact_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "revision",
+        "type": "integer",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "idempotency_key",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "request_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "input_sequence",
+        "type": "bigint",
+        "notNull": true
+      },
+      {
+        "name": "task_turn_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "goal_version",
+        "type": "integer",
+        "notNull": true
+      },
+      {
+        "name": "trip_version",
+        "type": "integer",
+        "notNull": false
+      },
+      {
+        "name": "memory_basis",
+        "type": "jsonb",
+        "notNull": true
+      },
+      {
+        "name": "content",
+        "type": "jsonb",
+        "notNull": true
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      },
+      {
+        "name": "trip_link_operation_id",
+        "type": "uuid",
+        "notNull": false
+      },
+      {
+        "name": "trip_link_version",
+        "type": "integer",
+        "notNull": false
+      },
+      {
+        "name": "evidence_basis",
+        "type": "jsonb",
+        "notNull": true
+      }
+    ],
+    "hasOwner": true
+  },
+  {
+    "relation": "turn_private.service_task_capacity",
+    "countKey": "capacity",
+    "effect": "retain",
+    "pk": [
+      "task_id"
+    ],
+    "columns": [
+      {
+        "name": "task_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "policy_version",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "tier",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "grant_environment",
+        "type": "text",
+        "notNull": false
+      },
+      {
+        "name": "grant_transaction_id",
+        "type": "text",
+        "notNull": false
+      },
+      {
+        "name": "admitted_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      },
+      {
+        "name": "state",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "settled_turn_id",
+        "type": "uuid",
+        "notNull": false
+      },
+      {
+        "name": "settled_at",
+        "type": "timestamp with time zone",
+        "notNull": false
+      },
+      {
+        "name": "released_at",
+        "type": "timestamp with time zone",
+        "notNull": false
+      }
+    ],
+    "hasOwner": true
+  },
+  {
+    "relation": "turn_private.service_task_turns",
+    "countKey": "taskTurns",
+    "effect": "retain",
+    "pk": [
+      "turn_id"
+    ],
+    "columns": [
+      {
+        "name": "turn_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "task_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "parent_turn_id",
+        "type": "uuid",
+        "notNull": false
+      },
+      {
+        "name": "relationship",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "idempotency_key",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "request_digest",
+        "type": "text",
+        "notNull": true
+      }
+    ],
+    "hasOwner": true
+  },
+  {
+    "relation": "turn_private.service_tasks",
+    "countKey": "tasks",
+    "effect": "retain",
+    "pk": [
+      "id"
+    ],
+    "columns": [
+      {
+        "name": "id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "thread_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "goal_turn_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "last_turn_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "policy_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "consent_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "scope_version",
+        "type": "integer",
+        "notNull": true
+      },
+      {
+        "name": "expected_result",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "goal_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "budget_scope_id",
+        "type": "uuid",
+        "notNull": false
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      },
+      {
+        "name": "capacity_enforced",
+        "type": "boolean",
+        "notNull": true
+      }
+    ],
+    "hasOwner": true
+  },
+  {
+    "relation": "turn_private.text_content",
+    "countKey": "textBodies",
+    "effect": "redact",
+    "pk": [
+      "turn_id"
+    ],
+    "columns": [
+      {
+        "name": "turn_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "thread_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "policy_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "consent_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "locale",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "input_text",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "output_kind",
+        "type": "text",
+        "notNull": false
+      },
+      {
+        "name": "output_text",
+        "type": "text",
+        "notNull": false
+      },
+      {
+        "name": "hidden_at",
+        "type": "timestamp with time zone",
+        "notNull": false
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      }
+    ],
+    "hasOwner": true
+  },
+  {
+    "relation": "turn_private.text_dispatches",
+    "countKey": "textDispatches",
+    "effect": "retain",
+    "pk": [
+      "lease_token"
+    ],
+    "columns": [
+      {
+        "name": "lease_token",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "turn_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "consent_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "policy_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "dispatched_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      }
+    ],
+    "hasOwner": false
+  },
+  {
+    "relation": "turn_private.work",
+    "countKey": "work",
+    "effect": "erase",
+    "pk": [
+      "turn_id"
+    ],
+    "columns": [
+      {
+        "name": "turn_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "session_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "state",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "attempt",
+        "type": "integer",
+        "notNull": true
+      },
+      {
+        "name": "max_attempts",
+        "type": "integer",
+        "notNull": true
+      },
+      {
+        "name": "lease_ms",
+        "type": "integer",
+        "notNull": true
+      },
+      {
+        "name": "lease_token",
+        "type": "uuid",
+        "notNull": false
+      },
+      {
+        "name": "expires_at",
+        "type": "timestamp with time zone",
+        "notNull": false
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      },
+      {
+        "name": "execution_mode",
+        "type": "text",
+        "notNull": true
+      }
+    ],
+    "hasOwner": true
+  },
+  {
+    "relation": "public.turns",
+    "countKey": "turns",
+    "effect": "retain",
+    "pk": [
+      "id"
+    ],
+    "columns": [
+      {
+        "name": "id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "trip_id",
+        "type": "uuid",
+        "notNull": false
+      },
+      {
+        "name": "status",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      },
+      {
+        "name": "thread_id",
+        "type": "uuid",
+        "notNull": false
+      },
+      {
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      }
+    ],
+    "hasOwner": true
+  }
+]
