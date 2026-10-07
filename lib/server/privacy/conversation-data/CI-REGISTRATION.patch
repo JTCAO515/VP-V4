@@ -1,0 +1,26 @@
+--- a/scripts/ci-suites/db-integration.mjs
++++ b/scripts/ci-suites/db-integration.mjs
+@@ -63,6 +63,7 @@
+           VP_NOTIFICATION_EXIT_DB_TEST: "1",
+           VP_COVERAGE_PROGRESS_DB_TEST: "1",
+           VP_ARCHIVE_DATA_DB_TEST: "1",
++          VP_CONVERSATION_SOURCE_AUDIT: "1",
+           VP_MATERIAL_TS_WIRE_ROOT: repo,
+           VP_TRANSLATION_HISTORY_DB_TEST: "1",
+           VP_ARCHIVE_DB_TEST: "1",
+@@ -114,6 +115,7 @@
+           "tests/integration/privacy/notification-data-postgres.test.mjs",
+           "tests/integration/privacy/coverage-progress-sql/postgres.test.mjs",
+           "tests/integration/privacy/archive-data-sql/postgres.test.mjs",
++          "tests/integration/privacy/conversation-data-sql/source-audit.test.mjs",
+           "tests/integration/translate/history.test.mjs",
+           "tests/integration/trip/archive.test.mjs",
+           "tests/integration/trip/lifecycle-postgres.test.mjs",
+@@ -211,6 +213,7 @@
+       { name: "material-reference-http", runner: node("tests/integration/privacy/material-references/run-http.mjs", "--port-base", "63360"), files: ["tests/integration/privacy/material-references/auth-http.test.mjs"] },
+       { name: "notification-data-http", runner: node("tests/integration/privacy/notification-data/run-http.mjs", "--port-base", "63320"), files: ["tests/integration/privacy/notification-data/auth-http.test.mjs"] },
+       { name: "archive-data-http", runner: node("tests/integration/privacy/archive-data/run-http.mjs", "--port-base", "63240"), files: ["tests/integration/privacy/archive-data/auth-http.test.mjs"] },
++      { name: "conversation-data-http", runner: node("tests/integration/privacy/conversation-data/run-http.mjs", "--port-base", "63120"), files: ["tests/integration/privacy/conversation-data/auth-http.test.mjs"] },
+       { name: "coverage-progress-http", runner: node("tests/integration/privacy/coverage-progress/run-http.mjs", "--port-base", "63280"), files: ["tests/integration/privacy/coverage-progress/auth-http.test.mjs"] },
+       { name: "pdf-intake-http", runner: node("tests/integration/intake/run-pdf-intake-http.mjs", "--port-base", "65000"), files: ["tests/integration/intake/pdf-intake-http.test.mjs"] },
+       { name: "community-j1-jwt", runner: node("tests/integration/community/run-submission-j1-jwt.mjs"), files: ["tests/integration/community/submission-j1-jwt.test.mjs"] },
