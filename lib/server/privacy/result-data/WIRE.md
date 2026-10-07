@@ -334,3 +334,26 @@ Affected actual list test1 PASS,0 FAIL/SKIP; typecheck/lint/diff PASS. Sole prod
 now11 envelopes+commands. Original10 envelopes+commands independently regenerated
 with prior67c5682a emitter and compared:11/11 byte-hash MATCH; only proposal-list
 added. No unaffected full suite/build/Native/Auth run repeated for this literal.
+
+## Precise TS caller registration lease consumed
+
+Main523d89 granted original C sole-TS explicit clean/no in-flight/planned/successor
+release. Applied exactly original4 REGISTRATION.patch hunks in coverage catalog,
+contract, registry, outcomes, plus the named TS notification native-catalog-v4
+fixture's .8/results single descriptor. Retired applied own patch. Same34,
+other33 in original order/value, original core export and ConversationData remain.
+No execution helper/SQL/CI registry/permission or unrelated shared file written.
+TS and fixedNative f5f8c6 catalog modules+outer metadata compare EXACT .8/same34.
+
+Own registered caller test observes actual fixed path/delegate, preview, erase,
+original whitespace bytes, lost ACK/recovery unknown, old.7 rejection with no
+handler call, original results core export. Actual affected batch34 PASS,0 FAIL/
+SKIP = own9 + original ConversationData9 + coverage dispatch12 + notification
+coverage4. Typecheck/lint/docs/diff PASS. This is HTTP/TS fixture evidence, NOT
+signed Auth/Postgres erase, provider or device acceptance. Existing unchanged
+Native/source tests and initial build evidence reused, not rerun for bookkeeping.
+
+Sole integrator normally merged exact fixedNative964b then f5f8c6; complete ios
+source equals f5f8c6, all11 envelopes+commands12/12 byte-hash MATCH. Latest TS
+fifth-type wire is d0591196. SQL fixed source/real PG consumer/signed Auth remains
+outstanding; no original partial dirty migration/source copied. Whole239 Open.

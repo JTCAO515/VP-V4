@@ -6,6 +6,11 @@ import { handleResultData } from '../../../../lib/server/privacy/result-data/htt
 import { validResultCoverageSelection, resultCoverageRequestBody, resultCoverageOutcome } from '../../../../lib/server/privacy/result-data/coverage.ts';
 import { collectResultInventory } from '../../../../lib/server/privacy/result-data/collector.ts';
 import * as f from './fixtures.mjs';
+import { handleCoverage } from '../../../../lib/server/privacy/coverage/http.ts';
+import { CATALOG_VERSION, MODULE_CATALOG } from '../../../../lib/server/privacy/coverage/catalog.ts';
+import { parseCoverageInput } from '../../../../lib/server/privacy/coverage/contract.ts';
+import { matchesCoverageResult } from '../../../../lib/server/privacy/coverage/consumer.ts';
+import { OWNER_HANDLERS } from '../../../../lib/server/privacy/coverage/registry.ts';
 const request = v => new Request('http://localhost/api/privacy/native/v1/result-data', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: typeof v === 'string' ? v : JSON.stringify(v) });
 const options = rpc => ({ enabled: true, now: () => f.now + 20, authority: () => ({ authenticate: async () => f.actor, current: async () => true, rpc }) });
 
@@ -90,7 +95,7 @@ test('inventory collector binds one snapshot/deadline and returns no partial lis
   await assert.rejects(collectResultInventory(f.listCommand.scope, f.actor, async () => { current = false; return first; }, async () => current, signal, () => f.now + 1), /RESULT_SOURCE_UNAVAILABLE/);
 });
 
-test('coverage candidate only selects results/delete and retains exact bytes for recovery without shared registration', () => {
+test('coverage only selects results/delete and retains exact bytes for recovery', () => {
   const input = { actorId: f.actor.ownerId, sessionId: f.actor.sessionId, mobileEpoch: f.actor.mobileEpoch, moduleId: 'results', moduleVersion: 'result-data/1',
     operationId: f.selection.requestId, action: 'delete', phase: 'execute', tripId: null, commandBytes: f.eraseBytes };
   assert.ok(validResultCoverageSelection(input, f.erase));
@@ -98,4 +103,44 @@ test('coverage candidate only selects results/delete and retains exact bytes for
   for (const change of [{ moduleId: 'conversations' }, { moduleId: 'turn' }, { action: 'export' }, { tripId: f.id(99) }]) assert.equal(validResultCoverageSelection({ ...input, ...change }, f.erase), false);
   assert.equal(JSON.parse(resultCoverageRequestBody({ ...input, phase: 'recover' })).mutationBytes, f.eraseBytes);
   assert.equal(resultCoverageOutcome({ input: { ...input, phase: 'recover' }, command: f.erase }, f.unknown(), f.now + 20).state, 'unknown');
+});
+
+
+test('leased caller dispatches actual result preview/erase/recover path and preserves original core export/other33', async () => {
+  const fresh = Date.now(), authorityActor = { actorId: f.actor.ownerId, sessionId: f.actor.sessionId, mobileEpoch: f.actor.mobileEpoch };
+  const input = { schemaVersion: 'data-coverage/1', catalogVersion: CATALOG_VERSION, ...authorityActor, moduleId: 'results', moduleVersion: 'result-data/1',
+    operationId: f.selection.requestId, action: 'delete', phase: 'execute', confirmed: true, tripId: null, commandBytes: f.eraseBytes };
+  assert.equal(parseCoverageInput(input).handler, 'result_data'); assert.equal(typeof OWNER_HANDLERS.result_data, 'function');
+  const core = { ...input, action: 'export', commandBytes: JSON.stringify({ requestId: f.selection.requestId, confirmed: true }) };
+  assert.equal(parseCoverageInput(core).handler, 'core');
+  let loseAck = false, calls = 0;
+  const stamp = { capturedAt: fresh - 5, expiresAt: fresh - 5 + 30000 };
+  const terminal = { ...f.receipt(), ...stamp, decision: { ...f.decision(), decidedAt: fresh - 3 } };
+  const options = { enabled: true, authority: () => ({ authenticate: async () => authorityActor, current: async () => true }), handlers: {
+    result_data: async original => {
+      assert.equal(new URL(original.url).pathname, '/api/privacy/native/v1/result-data'); calls++;
+      return handleResultData(original, { enabled: true, now: () => fresh, authority: () => ({ authenticate: async () => f.actor, current: async () => true,
+        rpc: async (action, raw) => {
+          if (action === 'preview') return { ...f.preview(), ...stamp };
+          if (action === 'recover') { assert.equal(JSON.parse(raw).mutationBytes, f.eraseBytes); return f.unknown(); }
+          assert.equal(raw, f.eraseBytes); if (loseAck) throw Error('synthetic lost ACK'); return terminal;
+        } }) });
+    },
+  } };
+  const call = async value => {
+    const raw = JSON.stringify(value), response = await handleCoverage(new Request('http://localhost/api/privacy/native/v1/coverage', {
+      method: 'POST', headers: { 'content-type': 'application/json' }, body: raw }), options);
+    assert.equal(response.status, 200); return { raw, result: await response.json() };
+  };
+  const catalog = await (await handleCoverage(new Request('http://localhost/api/privacy/native/v1/coverage'), options)).json();
+  assert.equal(catalog.catalogVersion, CATALOG_VERSION); assert.equal(catalog.modules.length, 34); assert.deepEqual(catalog.modules, MODULE_CATALOG);
+  const p = await call({ ...input, phase: 'preview', commandBytes: JSON.stringify(f.previewCommand) });
+  assert.equal(p.result.state, 'preview'); assert.ok(matchesCoverageResult(p.result, p.raw, fresh));
+  const r = await call(input); assert.equal(r.result.state, 'scoped_complete'); assert.ok(matchesCoverageResult(r.result, r.raw, fresh)); assert.equal(r.result.allUserDataCompleted, false);
+  loseAck = true; const lost = await call(input); assert.equal(lost.result.state, 'unknown');
+  const recovered = await call({ ...input, phase: 'recover' }); assert.equal(recovered.result.state, 'unknown'); assert.ok(matchesCoverageResult(recovered.result, recovered.raw, fresh));
+  assert.equal(calls, 4);
+  const stale = await handleCoverage(new Request('http://localhost/api/privacy/native/v1/coverage', { method: 'POST', headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ ...input, catalogVersion: 'data-coverage-catalog/2026-10-06.7' }) }), options);
+  assert.equal(stale.status, 400); assert.equal(calls, 4);
 });

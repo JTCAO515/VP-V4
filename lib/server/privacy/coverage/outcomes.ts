@@ -16,6 +16,7 @@ import { materialCoverageOutcome } from '../material-references/coverage.ts';
 import { coverageProgressCoverageOutcome } from '../coverage-progress/coverage.ts';
 import { archiveCoverageOutcome } from '../archive-data/coverage.ts';
 import { conversationCoverageOutcome } from '../conversation-data/coverage.ts';
+import { resultCoverageOutcome } from '../result-data/coverage.ts';
 import { notificationDataCoverageOutcome } from '../notification-data/coverage.ts';
 
 type Outcome = Readonly<{ state: CoverageState; reason: string }>;
@@ -31,6 +32,7 @@ export function classifyOriginal(selected: SelectedCommand, body: unknown, now =
   if (handler === 'notification_data') return notificationDataCoverageOutcome(selected, data, now);
   if (handler === 'archive_data') return archiveCoverageOutcome(selected, data, now);
   if (handler === 'conversation_data') return conversationCoverageOutcome(selected, data, now);
+  if (handler === 'result_data') return resultCoverageOutcome(selected, data, now);
   if (handler === 'core') {
     const receipt = parseExportJob(body, input.operationId); if (!receipt) return null;
     if (receipt.state === 'queued' || receipt.state === 'running') return state('queued', 'ORIGINAL_JOB_PENDING');

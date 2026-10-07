@@ -13,6 +13,7 @@ import { validMaterialCoverageSelection } from '../material-references/coverage.
 import { validNotificationDataCoverageSelection } from '../notification-data/coverage.ts';
 import { validArchiveCoverageSelection } from '../archive-data/coverage.ts';
 import { validConversationCoverageSelection } from '../conversation-data/coverage.ts';
+import { validResultCoverageSelection } from '../result-data/coverage.ts';
 import { validCoverageProgressCoverageSelection } from '../coverage-progress/coverage.ts';
 
 export const COVERAGE_SCHEMA = 'data-coverage/1' as const;
@@ -49,6 +50,7 @@ export function parseCoverageInput(value: unknown): SelectedCommand | null {
   // A stable module key may resolve to different existing commands for export/delete.
   if ('operationId' in command && command.operationId !== input.operationId || 'requestId' in command && command.requestId !== input.operationId) return null;
   if (handler === 'conversation_data') return validConversationCoverageSelection(input, command) ? { input, command, handler } : null;
+  if (handler === 'result_data') return validResultCoverageSelection(input, command) ? { input, command, handler } : null;
   if (handler === 'materials') return validMaterialCoverageSelection(input, command) ? { input, command, handler } : null;
   if (handler === 'coverage_progress') return validCoverageProgressCoverageSelection(input, command) ? { input, command, handler } : null;
   if (handler === 'notification_data') return validNotificationDataCoverageSelection(input, command) ? { input, command, handler } : null;
