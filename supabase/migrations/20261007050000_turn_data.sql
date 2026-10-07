@@ -26,6 +26,7 @@ create table turn_data_private.operations_v1 (
  preview_erased boolean not null default false,
  graph jsonb,erase_counts jsonb,redact_counts jsonb,retain_counts jsonb,
  retained_references jsonb,conflicts jsonb,decision jsonb,
+ source_identity_keys jsonb not null default '[]'::jsonb check(jsonb_typeof(source_identity_keys)='array' and jsonb_array_length(source_identity_keys)<=4100),
  check(((scope='turn-sensitive-data/1' and turn_id is not null and cardinality(object_ids)=0)
   or (scope='turn-delete-progress/1' and turn_id is null and cardinality(object_ids) between 1 and 20 and not request_id=any(object_ids))) is true),
  check((state='previewed')=(request_digest is null)),
@@ -38,6 +39,7 @@ create table turn_data_private.operations_v1 (
 create index turn_data_owner_v1 on turn_data_private.operations_v1(owner_id,request_id);
 create index turn_data_tombstones_v1 on turn_data_private.operations_v1 using gin(decision jsonb_path_ops)
  where scope='turn-sensitive-data/1' and state='erased';
+create index turn_data_source_identity_v1 on turn_data_private.operations_v1 using gin(source_identity_keys jsonb_path_ops) where scope='turn-sensitive-data/1' and state='erased';
 alter table turn_data_private.operations_v1 enable row level security;
 revoke all on turn_data_private.operations_v1 from public,anon,authenticated,service_role;
 
@@ -101,7 +103,7 @@ $$;
 
 create function turn_data_private.fenced_v1(kind_n text,id_n uuid) returns boolean language sql stable security definer set search_path='' as $$
  select exists(select 1 from turn_data_private.operations_v1 r
-  where r.scope='conversation-sensitive-data/1' and r.state='erased'
+  where r.scope='turn-sensitive-data/1' and r.state='erased' and exists(select 1 from auth.users account_n where account_n.id=r.owner_id)
   and r.decision @> jsonb_build_object('graph',jsonb_build_object(kind_n,jsonb_build_array(id_n::text))))
 $$;
 
@@ -258,7 +260,7 @@ begin
   if pk_n is distinct from s.pk then return false;end if;
  end loop;
  -- Original fixed FK closure remains unchanged by this module's private auth FK.
- return conversation_data_private.schema_supported_v1() and result_data_private.infrastructure_supported_v1() and result_data_private.digest_v1((select coalesce(jsonb_agg(jsonb_build_object('relation',n.nspname||'.'||c.relname,'columns',(select jsonb_agg(jsonb_build_array(a.attname,format_type(a.atttypid,a.atttypmod),a.attnotnull) order by a.attnum) from pg_attribute a where a.attrelid=c.oid and a.attnum>0 and not a.attisdropped),'constraints',(select jsonb_agg(pg_get_constraintdef(k.oid) order by k.conname) from pg_constraint k where k.conrelid=c.oid)) order by n.nspname,c.relname),'[]'::jsonb) from pg_class c join pg_namespace n on n.oid=c.relnamespace where c.relkind='r' and n.nspname not in('pg_catalog','information_schema','extensions','auth','result_data_private','storage','realtime','_realtime','vault','supabase_functions','supabase_migrations'))::text)='9d8182b5f7ca3eda80a8a2eea3d0611a9341e2c62537d28507c242d8bd48b0c3';
+ return conversation_data_private.schema_supported_v1() and result_data_private.infrastructure_supported_v1() and result_data_private.digest_v1((select coalesce(jsonb_agg(jsonb_build_object('relation',n.nspname||'.'||c.relname,'columns',(select jsonb_agg(jsonb_build_array(a.attname,format_type(a.atttypid,a.atttypmod),a.attnotnull) order by a.attnum) from pg_attribute a where a.attrelid=c.oid and a.attnum>0 and not a.attisdropped),'constraints',(select jsonb_agg(pg_get_constraintdef(k.oid) order by k.conname) from pg_constraint k where k.conrelid=c.oid)) order by n.nspname,c.relname),'[]'::jsonb) from pg_class c join pg_namespace n on n.oid=c.relnamespace where c.relkind='r' and n.nspname not in('pg_catalog','information_schema','extensions','auth','result_data_private','storage','realtime','_realtime','vault','supabase_functions','supabase_migrations'))::text)='75695f209c10f7d1486505632ada19c18337bfa099680caad726a3984d666ec9';
 end$$;
 
 create function turn_data_private.conflicts_v1(v text[]) returns jsonb language sql immutable set search_path='' as $$ select coalesce(jsonb_agg(k order by ordinality),'[]'::jsonb) from unnest(array['SCOPE_TOO_LARGE','ACTIVE_WORK','SHARED_OR_FOREIGN_SCOPE','CROSS_TURN_REFERENCE','PROPOSAL_REFERENCE','READINESS_REFERENCE','GUIDE_REFERENCE','SCOPED_EDIT_REFERENCE','NOTIFICATION_REFERENCE','BRIEF_REFERENCE','CORE_EXPORT_COPY','OTHER_DELETE_PENDING','SOURCE_UNSUPPORTED']::text[]) with ordinality a(k,ordinality) where k=any(v) $$;
@@ -273,7 +275,7 @@ begin
  select * into body_n from turn_private.text_content where turn_id=t and owner_id=u;
  if not found or root_n.thread_id is null or body_n.thread_id is distinct from root_n.thread_id then raise exception 'TURN_SOURCE_UNAVAILABLE';end if;
  perform turn_data_private.authorities_current_v1(u,jsonb_build_array(jsonb_build_object('policyId',body_n.policy_id,'consentId',body_n.consent_id)));
- if root_n.status<>'completed' then bad:=bad||'ACTIVE_WORK';end if;
+ if root_n.status<>'completed' then bad:=array_append(bad,'ACTIVE_WORK');end if;
  if body_n.hidden_at is not null or turn_data_private.fenced_v1('turnIds',t) then raise exception 'TURN_SOURCE_UNAVAILABLE';end if;
  select coalesce(array_agg(id order by id),array[]::uuid[]) into arts from turn_private.result_artifacts a
  where a.source_turn_id=t or exists(select 1 from turn_private.result_revisions r where r.artifact_id=a.id and r.task_turn_id=t);
@@ -285,13 +287,15 @@ begin
   union select task_id from turn_private.planning_comparisons where turn_id=t union select task_id from turn_private.result_artifacts where id=any(arts)
  ) bound;
  if exists(select 1 from turn_private.assistant_messages m where m.id=any(msgs) and (m.owner_id<>u or m.turn_id is not null and m.turn_id<>t))
-  or exists(select 1 from turn_private.result_artifacts a where a.id=any(arts) and (a.owner_id<>u or a.source_turn_id is not null and a.source_turn_id<>t)) then bad:=bad||'SHARED_OR_FOREIGN_SCOPE';end if;
- if exists(select 1 from turn_private.assistant_messages m where m.id=any(msgs) and not exists(select 1 from turn_private.service_tasks st join turn_private.assistant_goals g on g.id=m.goal_id join turn_private.assistant_conversations c on c.id=m.conversation_id
-   where st.id=m.task_id and st.owner_id=u and st.thread_id=root_n.thread_id and g.owner_id=u and g.conversation_id=c.id and c.owner_id=u and m.scope_version between 1 and g.scope_version)) then bad:=bad||'SOURCE_UNSUPPORTED';end if;
- if exists(select 1 from turn_private.assistant_messages m where m.id=any(msgs) and m.parent_message_id is not null and not exists(select 1 from turn_private.assistant_messages pm where pm.id=m.parent_message_id and pm.owner_id=u and pm.conversation_id=m.conversation_id)) then bad:=bad||'SHARED_OR_FOREIGN_SCOPE';end if;
- if exists(select 1 from turn_private.planning_intake_bindings ib where ib.turn_id=t and (ib.owner_id<>u or not ib.message_id=any(msgs) or not exists(select 1 from turn_private.assistant_messages sm join turn_private.assistant_travel_intakes si on si.message_id=sm.id and si.owner_id=sm.owner_id where sm.id=ib.source_message_id and sm.owner_id=u and sm.sequence=ib.source_sequence and si.intake_revision=ib.source_revision and si.goal_version=ib.source_goal_version))) then bad:=bad||'SOURCE_UNSUPPORTED';end if;
+  or exists(select 1 from turn_private.result_artifacts a where a.id=any(arts) and (a.owner_id<>u or a.source_turn_id is not null and a.source_turn_id<>t)) then bad:=array_append(bad,'SHARED_OR_FOREIGN_SCOPE');end if;
+ if exists(select 1 from turn_private.assistant_messages m where m.id=any(msgs) and (
+  not exists(select 1 from turn_private.assistant_conversations c where c.id=m.conversation_id and c.owner_id=u and c.policy_id=m.policy_id and c.consent_id=m.consent_id)
+  or case when m.relationship='independent_question' then m.turn_id is distinct from t or m.id is distinct from root_n.thread_id or m.task_id is not null or m.goal_id is not null or m.scope_version is not null or m.parent_message_id is not null
+  else not exists(select 1 from turn_private.service_tasks st join turn_private.assistant_goals g on g.id=m.goal_id where st.id=m.task_id and st.owner_id=u and st.thread_id=root_n.thread_id and g.owner_id=u and g.conversation_id=m.conversation_id and m.scope_version between 1 and g.scope_version) end)) then bad:=array_append(bad,'SOURCE_UNSUPPORTED');end if;
+ if exists(select 1 from turn_private.assistant_messages m where m.id=any(msgs) and m.parent_message_id is not null and not exists(select 1 from turn_private.assistant_messages pm where pm.id=m.parent_message_id and pm.owner_id=u and pm.conversation_id=m.conversation_id)) then bad:=array_append(bad,'SHARED_OR_FOREIGN_SCOPE');end if;
+ if exists(select 1 from turn_private.planning_intake_bindings ib where ib.turn_id=t and (ib.owner_id<>u or not ib.message_id=any(msgs) or not exists(select 1 from turn_private.assistant_messages sm join turn_private.assistant_travel_intakes si on si.message_id=sm.id and si.owner_id=sm.owner_id where sm.id=ib.source_message_id and sm.owner_id=u and sm.sequence=ib.source_sequence and si.intake_revision=ib.source_revision and si.goal_version=ib.source_goal_version))) then bad:=array_append(bad,'SOURCE_UNSUPPORTED');end if;
  if exists(select 1 from turn_private.planning_comparisons p left join turn_private.assistant_messages m on m.id=p.message_id
-   where p.turn_id=t and (p.owner_id<>u or m.owner_id is distinct from u or m.task_id is distinct from p.task_id or m.goal_id is distinct from p.goal_id or m.scope_version is distinct from p.goal_version or m.sequence is null)) then bad:=bad||'SOURCE_UNSUPPORTED';end if;
+   where p.turn_id=t and (p.owner_id<>u or m.owner_id is distinct from u or m.task_id is distinct from p.task_id or m.goal_id is distinct from p.goal_id or m.scope_version is distinct from p.goal_version or m.sequence is null)) then bad:=array_append(bad,'SOURCE_UNSUPPORTED');end if;
  if exists(select 1 from turn_private.result_artifacts a where a.id=any(arts) and (a.source_result_id is not null and not a.source_result_id=any(arts)
    or not exists(select 1 from turn_private.result_revisions r where r.artifact_id=a.id)))
   or exists(select 1 from turn_private.result_revisions r join turn_private.result_artifacts a on a.id=r.artifact_id left join turn_private.assistant_messages m on m.id=a.input_message_id
@@ -299,21 +303,22 @@ begin
   or exists(select 1 from turn_private.result_artifacts where not id=any(arts) and (source_result_id=any(arts) or input_message_id=any(msgs)))
   or exists(select 1 from turn_private.assistant_messages where not id=any(msgs) and parent_message_id=any(msgs))
   or exists(select 1 from turn_private.service_task_turns where turn_id<>t and parent_turn_id=t)
-  or exists(select 1 from turn_private.planning_intake_bindings where turn_id<>t and (source_message_id=any(msgs) or message_id=any(msgs))) then bad:=bad||'CROSS_TURN_REFERENCE';end if;
- if exists(select 1 from turn_private.service_tasks st join public.model_budget_attempts ba on ba.task_id=st.id and ba.scope_id=st.budget_scope_id where st.id=any(tasks) and exists(select 1 from turn_private.service_task_turns l where l.task_id=st.id and l.turn_id<>t) and not exists(select 1 from turn_private.planning_model_dispatches d where d.turn_id=t and d.task_id=st.id and d.scope_id=ba.scope_id and d.attempt_id=ba.attempt_id) and not exists(select 1 from turn_private.planning_v2_model_attempt_bindings ab where ab.turn_id=t and ab.task_id=st.id and ab.scope_id=ba.scope_id and ab.attempt_id=ba.attempt_id)) then bad:=bad||'SOURCE_UNSUPPORTED';end if;
- if exists(select 1 from public.model_budget_attempts ba where (ba.task_id=t or ba.task_id=any(tasks)) and not exists(select 1 from public.model_budget_scopes bs where bs.id=ba.scope_id and bs.owner_id=u)) then bad:=bad||'SHARED_OR_FOREIGN_SCOPE';end if;
+  or exists(select 1 from turn_private.planning_intake_bindings where turn_id<>t and (source_message_id=any(msgs) or message_id=any(msgs))) then bad:=array_append(bad,'CROSS_TURN_REFERENCE');end if;
+ if exists(select 1 from turn_private.service_tasks st join public.model_budget_attempts ba on ba.task_id=st.id and ba.scope_id=st.budget_scope_id where st.id=any(tasks) and exists(select 1 from turn_private.service_task_turns l where l.task_id=st.id and l.turn_id<>t) and not exists(select 1 from turn_private.planning_model_dispatches d where d.turn_id=t and d.task_id=st.id and d.scope_id=ba.scope_id and d.attempt_id=ba.attempt_id) and not exists(select 1 from turn_private.planning_v2_model_attempt_bindings ab where ab.turn_id=t and ab.task_id=st.id and ab.scope_id=ba.scope_id and ab.attempt_id=ba.attempt_id)) then bad:=array_append(bad,'SOURCE_UNSUPPORTED');end if;
+ if exists(select 1 from public.model_budget_attempts ba where (ba.task_id=t or ba.task_id=any(tasks)) and not exists(select 1 from public.model_budget_scopes bs where bs.id=ba.scope_id and bs.owner_id=u)) then bad:=array_append(bad,'SHARED_OR_FOREIGN_SCOPE');end if;
+ if exists(select 1 from turn_private.planning_v2_model_attempt_bindings ab where ab.turn_id=t and (ab.owner_id<>u or not exists(select 1 from turn_private.text_content tc where tc.turn_id=t and tc.owner_id=u and tc.policy_id=ab.text_policy_id) or not exists(select 1 from turn_private.planning_comparisons pc where pc.turn_id=t and pc.owner_id=u and pc.task_id=ab.task_id and pc.planning_policy_id=ab.planning_policy_id))) then bad:=array_append(bad,'SOURCE_UNSUPPORTED');end if;
  -- Hiding a task goal root suppresses the original task reader. Preserve any other dependent Turn.
  if exists(select 1 from turn_private.service_tasks st where st.id=any(tasks) and st.goal_turn_id=t and
    (st.last_turn_id<>t or exists(select 1 from turn_private.service_task_turns l where l.task_id=st.id and l.turn_id<>t)
     or exists(select 1 from turn_private.assistant_messages m where m.task_id=st.id and not m.id=any(msgs))
-    or exists(select 1 from turn_private.result_artifacts a where a.task_id=st.id and not a.id=any(arts)))) then bad:=bad||'CROSS_TURN_REFERENCE';end if;
+    or exists(select 1 from turn_private.result_artifacts a where a.task_id=st.id and not a.id=any(arts)))) then bad:=array_append(bad,'CROSS_TURN_REFERENCE');end if;
  select turn_data_private.union_ids_v1(array_agg(goal_id)),turn_data_private.union_ids_v1(array_agg(conversation_id)) into goals,convs from turn_private.assistant_messages where id=any(msgs) and owner_id=u;
  if exists(select 1 from unnest(tasks) x where not exists(select 1 from turn_private.service_tasks st where st.id=x and st.owner_id=u and st.thread_id=root_n.thread_id))
-  or exists(select 1 from turn_private.service_task_turns where turn_id=t and (owner_id<>u or not task_id=any(tasks))) then bad:=bad||'SOURCE_UNSUPPORTED';end if;
+  or exists(select 1 from turn_private.service_task_turns where turn_id=t and (owner_id<>u or not task_id=any(tasks))) then bad:=array_append(bad,'SOURCE_UNSUPPORTED');end if;
  -- The real current version writer is the goal body authority, never text similarity.
  if exists(select 1 from turn_private.assistant_goals g where g.id=any(goals) and (g.owner_id<>u or g.current_text is null or
-  (select count(*) from turn_private.assistant_messages w where w.goal_id=g.id and w.conversation_id=g.conversation_id and w.owner_id=u and w.scope_version=g.scope_version and w.relationship in('goal_start','amendment'))<>1)) then bad:=bad||'SOURCE_UNSUPPORTED';end if;
- if exists(select 1 from turn_private.assistant_goals g join turn_private.assistant_messages w on w.goal_id=g.id and w.conversation_id=g.conversation_id and w.owner_id=g.owner_id and w.scope_version=g.scope_version and w.relationship in('goal_start','amendment') where g.id=any(goals) and w.id=any(msgs)) then bad:=bad||'CROSS_TURN_REFERENCE';end if;
+  (select count(*) from turn_private.assistant_messages w where w.goal_id=g.id and w.conversation_id=g.conversation_id and w.owner_id=u and w.scope_version=g.scope_version and w.relationship in('goal_start','amendment'))<>1)) then bad:=array_append(bad,'SOURCE_UNSUPPORTED');end if;
+ if exists(select 1 from turn_private.assistant_goals g join turn_private.assistant_messages w on w.goal_id=g.id and w.conversation_id=g.conversation_id and w.owner_id=g.owner_id and w.scope_version=g.scope_version and w.relationship in('goal_start','amendment') where g.id=any(goals) and w.id=any(msgs)) then bad:=array_append(bad,'CROSS_TURN_REFERENCE');end if;
  return jsonb_build_object('graph',jsonb_build_object('turnIds',array[t],'messageIds',msgs,'artifactIds',arts),
   'retainedReferences',jsonb_build_object('taskIds',tasks,'threadIds',array[root_n.thread_id],'conversationIds',convs,'goalIds',goals,'tripIds',array[]::uuid[],'memoryIds',array[]::uuid[]),'conflicts',turn_data_private.conflicts_v1(bad));
 end$$;
@@ -354,11 +359,11 @@ begin
  for spec in select * from turn_data_private.sources_v1() order by relation_name collate "C" loop
   n:=0;
   for v in execute format('select to_jsonb(a) from %s a where turn_data_private.related_v1(%L,to_jsonb(a),$1,$2,$3,$4) order by %s limit 10001',spec.relation_name,spec.relation_name,(select string_agg(format('a.%I',k),',') from unnest(spec.pk) k)) using g,refs,ex,u loop
-   n:=n+1;total_n:=total_n+1;if total_n>4100 then bad:=bad||'SCOPE_TOO_LARGE';exit;end if;
+   n:=n+1;total_n:=total_n+1;if total_n>4100 then bad:=array_append(bad,'SCOPE_TOO_LARGE');exit;end if;
    pk_n:=turn_data_private.row_key_v1(v,spec.pk);effect_n:=spec.effect;
    qualified:=not spec.has_owner or v->>'owner_id'=u::text;
-   if not qualified then bad:=bad||'SHARED_OR_FOREIGN_SCOPE';end if;
-   if spec.count_key='memoryConsumers' and v->>'proposal_id' is not null then effect_n:='retain';bad:=bad||'PROPOSAL_REFERENCE';end if;
+   if not qualified then bad:=array_append(bad,'SHARED_OR_FOREIGN_SCOPE');end if;
+   if spec.count_key='memoryConsumers' and v->>'proposal_id' is not null then effect_n:='retain';bad:=array_append(bad,'PROPOSAL_REFERENCE');end if;
    rows_n:=array_append(rows_n,jsonb_build_object('table',spec.relation_name,'pk',pk_n,'digest',turn_data_private.digest_v1(v::text),'effect',effect_n,'countKey',spec.count_key));
    if effect_n='erase' then erase_n:=jsonb_set(erase_n,array[spec.count_key],to_jsonb((erase_n->>spec.count_key)::integer+1));
    elsif effect_n='redact' then redact_n:=jsonb_set(redact_n,array[spec.count_key],to_jsonb((redact_n->>spec.count_key)::integer+1));
@@ -373,7 +378,7 @@ begin
    end if;
    for ref in select * from turn_data_private.json_references_v1(v) loop
     if ref.kind in('turnIds','messageIds','artifactIds') and not(g->ref.kind ? ref.entity_id::text)
-     and not(cardinality(ref.path_n)=1 and ref.path_n[1] in('parent_turn_id','parent_message_id','source_message_id','goal_turn_id','last_turn_id')) then bad:=bad||'CROSS_TURN_REFERENCE';end if;
+     and not(cardinality(ref.path_n)=1 and ref.path_n[1] in('parent_turn_id','parent_message_id','source_message_id','goal_turn_id','last_turn_id')) then bad:=array_append(bad,'CROSS_TURN_REFERENCE');end if;
    end loop;
    if spec.count_key='work' and v->>'state' not in('completed','failed','cancelled')
     or spec.count_key='assistJobs' and v->>'status' in('queued','running')
@@ -383,10 +388,11 @@ begin
     or spec.count_key='checkpoints' and v->>'state'<>'completed'
     or spec.count_key='attemptBindings' and v->>'unknown_at' is not null
     or spec.count_key='collectorOrigins' and (v->>'unknown_at' is not null or v->>'attempted_at' is not null and v->>'response_buffered_at' is null)
+    or spec.count_key='executionRuns' and (not exists(select 1 from turn_private.planning_v2_completion_proofs cp where cp.execution_id=(v->>'id')::uuid and cp.owner_id=u and cp.turn_id=t) or not exists(select 1 from turn_private.planning_v2_completed_receipts cr where cr.execution_id=(v->>'id')::uuid and cr.owner_id=u and cr.turn_id=t))
     or spec.count_key='resultClaims' and v->>'state'<>'completed'
     or spec.count_key='localJournals' and (v->>'unknown_at' is not null or v->>'phase'<>'response_recorded' or not exists(select 1 from turn_private.planning_v2_completed_receipts c where c.turn_id=t and c.owner_id=u))
-    or spec.count_key='callWindows' and (v->>'calls')::integer>0 and not exists(select 1 from turn_private.planning_v2_completion_proofs p where p.execution_id=(v->>'execution_id')::uuid and p.owner_id=u) then bad:=bad||'ACTIVE_WORK';end if;
-   if v->>'proposal_id' is not null or v->'content'->>'schemaVersion' in('proposal_preview/1','change-proposal/1') then bad:=bad||'PROPOSAL_REFERENCE';end if;
+    or spec.count_key='callWindows' and (v->>'calls')::integer>0 and not exists(select 1 from turn_private.planning_v2_completion_proofs p where p.execution_id=(v->>'execution_id')::uuid and p.owner_id=u) then bad:=array_append(bad,'ACTIVE_WORK');end if;
+   if v->>'proposal_id' is not null or v->'content'->>'schemaVersion' in('proposal_preview/1','change-proposal/1') then bad:=array_append(bad,'PROPOSAL_REFERENCE');end if;
    if notification_private.uuid(v->'trip_id') then trips_n:=turn_data_private.union_ids_v1(trips_n||array[(v->>'trip_id')::uuid]);end if;
    if notification_private.uuid(v->'memory_id') then mems:=turn_data_private.union_ids_v1(mems||array[(v->>'memory_id')::uuid]);end if;
    if jsonb_typeof(v->'memory_basis')='array' then select turn_data_private.union_ids_v1(mems||coalesce(array_agg(coalesce(x->>'memoryId',x->>'id')::uuid),array[]::uuid[])) into mems from jsonb_array_elements(v->'memory_basis') x where notification_private.uuid(coalesce(x->'memoryId',x->'id'));end if;
@@ -397,18 +403,18 @@ begin
  for rel in select unnest(array['public.chat_threads','turn_private.assistant_conversations','turn_private.assistant_goals']) loop
   parents:=privacy_private.linked_delete_array_v1(refs->case rel when 'public.chat_threads' then 'threadIds' when 'turn_private.assistant_conversations' then 'conversationIds' else 'goalIds' end);
   for v in execute format('select to_jsonb(a) from %s a where id=any($1) and owner_id=$2 order by id',rel) using parents,u loop
-   total_n:=total_n+1;reverse_n:=array_append(reverse_n,jsonb_build_object('table',rel,'pk',jsonb_build_array(v->'id'),'digest',turn_data_private.digest_v1(v::text)));
+   total_n:=total_n+1;reverse_n:=array_append(reverse_n,jsonb_build_object('table',rel,'pk',jsonb_build_object('id',v->'id'),'digest',turn_data_private.digest_v1(v::text)));
   end loop;
  end loop;
  retain_n:=retain_n||jsonb_build_object('threads',jsonb_array_length(refs->'threadIds'),'conversations',jsonb_array_length(refs->'conversationIds'),'goals',jsonb_array_length(refs->'goalIds'));
  for v in select to_jsonb(w) from turn_private.assistant_messages w join turn_private.assistant_goals goal on goal.id=w.goal_id and goal.conversation_id=w.conversation_id and goal.owner_id=w.owner_id and goal.scope_version=w.scope_version where goal.id=any(privacy_private.linked_delete_array_v1(refs->'goalIds')) and w.owner_id=u and w.relationship in('goal_start','amendment') order by w.id loop
-  total_n:=total_n+1;reverse_n:=array_append(reverse_n,jsonb_build_object('table','turn_private.assistant_messages','pk',jsonb_build_array(v->'id'),'digest',turn_data_private.digest_v1(v::text)));
+  total_n:=total_n+1;reverse_n:=array_append(reverse_n,jsonb_build_object('table','turn_private.assistant_messages','pk',jsonb_build_object('id',v->'id'),'digest',turn_data_private.digest_v1(v::text)));
  end loop;
  -- Original connected-set helper preserves the entire six-table mixed-copy CAS.
  impact_n:=conversation_data_private.impact_inventory_v1(g);
  for v in select value from jsonb_array_elements(impact_n->'rows') loop reverse_n:=array_append(reverse_n,v);total_n:=total_n+1;end loop;
- if impact_n->'rows'<>'[]'::jsonb then bad:=bad||'SOURCE_UNSUPPORTED';end if;
- if impact_n->'overflow'='true'::jsonb then bad:=bad||'SCOPE_TOO_LARGE';end if;
+ if impact_n->'rows'<>'[]'::jsonb then bad:=array_append(bad,'SOURCE_UNSUPPORTED');end if;
+ if impact_n->'overflow'='true'::jsonb then bad:=array_append(bad,'SCOPE_TOO_LARGE');end if;
  -- All actual reverse direct/nested relations are inspected, including terminal copies.
  for rel in select distinct n.nspname||'.'||c.relname from pg_class c join pg_namespace n on n.oid=c.relnamespace join pg_attribute a on a.attrelid=c.oid
   where c.relkind='r' and a.attnum>0 and not a.attisdropped and n.nspname not in('pg_catalog','information_schema','extensions','auth','storage','realtime','_realtime','vault','supabase_functions','supabase_migrations','turn_data_private')
@@ -423,26 +429,26 @@ begin
     when rel like 'scoped_edit_private.%' then 'SCOPED_EDIT_REFERENCE' when rel like 'notification_private.%' then 'NOTIFICATION_REFERENCE'
     when rel like 'service_brief_private.%' then 'BRIEF_REFERENCE' when rel like 'knowledge_review_private.source_impact_%' then 'SOURCE_UNSUPPORTED'
     when rel like 'conversation_data_private.%' or rel like 'result_data_private.%' or rel like 'privacy_private.%' then 'OTHER_DELETE_PENDING'
-    when exists(select 1 from turn_data_private.sources_v1() s where s.relation_name=rel) or rel in('turn_private.assistant_messages','turn_private.assistant_goal_trip_links','turn_private.assistant_goal_trip_receipts') then 'CROSS_TURN_REFERENCE'
+    when exists(select 1 from turn_data_private.sources_v1() s where s.relation_name=rel) or rel in('turn_private.assistant_messages','public.trip_proposals','turn_private.assistant_goal_trip_links','turn_private.assistant_goal_trip_receipts') then 'CROSS_TURN_REFERENCE'
     when rel like 'public.%proposal%' then 'PROPOSAL_REFERENCE' else 'SOURCE_UNSUPPORTED' end;
-   if total_n>4100 then bad:=bad||'SCOPE_TOO_LARGE';exit;end if;
+   if total_n>4100 then bad:=array_append(bad,'SCOPE_TOO_LARGE');exit;end if;
   end loop;
   if total_n>4100 then exit;end if;
  end loop;
  for rel in select unnest(array['export_private.core_jobs_v1','export_private.core_artifacts_v1']) loop
   for v in execute format('select to_jsonb(a) from %s a where owner_id=$1 order by request_id limit 4101',rel) using u loop
    total_n:=total_n+1;reverse_n:=array_append(reverse_n,jsonb_build_object('table',rel,'digest',turn_data_private.digest_v1(v::text)));
-   if rel='export_private.core_artifacts_v1' or v->>'state' in('queued','running') or (v->>'lease_expires_at')::timestamptz>clock_timestamp() then bad:=bad||'CORE_EXPORT_COPY';end if;
+   if rel='export_private.core_artifacts_v1' or v->>'state' in('queued','running') or (v->>'lease_expires_at')::timestamptz>clock_timestamp() then bad:=array_append(bad,'CORE_EXPORT_COPY');end if;
   end loop;
  end loop;
  if exists(select 1 from privacy_private.trip_deletions where owner_id=u and trip_id=any(trips_n) and state='queued')
-  or exists(select 1 from privacy_private.linked_delete_fences_v1 f where exists(select 1 from jsonb_each(g) e where e.value ? f.entity_id::text)) then bad:=bad||'OTHER_DELETE_PENDING';end if;
+  or exists(select 1 from privacy_private.linked_delete_fences_v1 f where exists(select 1 from jsonb_each(g) e where e.value ? f.entity_id::text)) then bad:=array_append(bad,'OTHER_DELETE_PENDING');end if;
  select coalesce(array_agg(id order by id),array[]::uuid[]) into trips_n from public.trips where id=any(trips_n) and owner_id=u;
  select coalesce(array_agg(id order by id),array[]::uuid[]) into mems from public.memory_profiles where id=any(mems) and owner_id=u;
  refs:=refs||jsonb_build_object('tripIds',trips_n,'memoryIds',mems);
  auths:=turn_data_private.authorities_union_v1(auths);witness:=turn_data_private.authorities_current_v1(u,auths);
  fp:=jsonb_build_object('graph',g,'rows',to_jsonb(rows_n),'reverse',to_jsonb(reverse_n),'retainedReferences',refs,'sourceAuthorities',auths,'authorityWitness',witness,'conflicts',turn_data_private.conflicts_v1(bad));
- if total_n+jsonb_array_length(witness)+cardinality(trips_n)+cardinality(mems)>4100 or octet_length(fp::text)>1000000 then bad:=bad||'SCOPE_TOO_LARGE';end if;
+ if total_n+jsonb_array_length(witness)+cardinality(trips_n)+cardinality(mems)>4100 or octet_length(fp::text)>1000000 then bad:=array_append(bad,'SCOPE_TOO_LARGE');end if;
  return jsonb_build_object('graph',g,'retainedReferences',refs,'rows',to_jsonb(rows_n),'reverse',to_jsonb(reverse_n),'eraseCounts',erase_n,'redactCounts',redact_n,'retainCounts',retain_n,'sourceAuthorities',auths,'conflicts',turn_data_private.conflicts_v1(bad),'sourceDigest',turn_data_private.digest_v1(fp::text));
 end$$;
 
@@ -464,7 +470,7 @@ begin
  if row(new.request_id,new.owner_id,new.session_id,new.mobile_epoch,new.scope,new.turn_id,new.object_ids,new.source_digest,new.preview_digest,new.source_authorities,new.captured_at,new.expires_at)
   is distinct from row(old.request_id,old.owner_id,old.session_id,old.mobile_epoch,old.scope,old.turn_id,old.object_ids,old.source_digest,old.preview_digest,old.source_authorities,old.captured_at,old.expires_at)
   then raise exception 'TURN_CONFLICT';end if;
- if old.request_digest is not null and (new.mutation_bytes is distinct from old.mutation_bytes or new.request_digest is distinct from old.request_digest or new.decision is distinct from old.decision or new.state is distinct from old.state)
+ if old.request_digest is not null and (new.source_identity_keys is distinct from old.source_identity_keys or new.mutation_bytes is distinct from old.mutation_bytes or new.request_digest is distinct from old.request_digest or new.decision is distinct from old.decision or new.state is distinct from old.state)
   then raise exception 'TURN_CONFLICT';end if;
  if old.preview_erased and (not new.preview_erased or new.graph is not null or new.erase_counts is not null or new.redact_counts is not null
   or new.retain_counts is not null or new.retained_references is not null or new.conflicts is not null) then raise exception 'TURN_CONFLICT';end if;
@@ -560,6 +566,9 @@ begin
   if not pg_try_advisory_xact_lock(hashtextextended('service-task-identity:'||id_n::text,0)) then raise lock_not_available using message='TURN_CONFLICT';end if;
  end loop;
  perform 1 from turn_private.service_tasks where id=any(privacy_private.linked_delete_array_v1(refs->'taskIds')) and owner_id=u order by id for update nowait;
+ for v in select value from jsonb_array_elements(src->'rows') where value->>'effect'='erase' order by value->>'table' collate "C",(value->'pk')::text collate "C" loop
+  if not pg_try_advisory_xact_lock(hashtextextended('turn-data-source-key:'||(v->>'table')||':'||turn_data_private.digest_v1((v->'pk')::text),0)) then raise lock_not_available using message='TURN_CONFLICT';end if;
+ end loop;
  for r in select e.key kind,x.value::uuid id from jsonb_each(g) e cross join lateral jsonb_array_elements_text(e.value) x order by e.key collate "C",x.value::uuid loop
   if not pg_try_advisory_xact_lock(hashtextextended('turn-data-entity:'||r.kind||':'||r.id::text,0)) then raise lock_not_available using message='TURN_CONFLICT';end if;
  end loop;
@@ -576,7 +585,7 @@ begin
 end$$;
 
 create function turn_data_private.write_hooks_valid_v1() returns boolean language sql stable set search_path='' as $$
- select not exists(select 1 from unnest(array['public.chat_turn_events','public.chat_turn_idempotency','public.memory_consumer_receipts','public.model_budget_attempts','public.turn_feedback','turn_private.assistant_message_source_receipts','turn_private.assistant_messages','turn_private.assistant_travel_intakes','turn_private.grounded_ai_assist_jobs','turn_private.grounded_turns','turn_private.planning_action_receipts','turn_private.planning_comparisons','turn_private.planning_intake_bindings','turn_private.planning_model_dispatches','turn_private.planning_observations','turn_private.planning_v2_collector_origins','turn_private.planning_v2_collector_outputs','turn_private.planning_v2_completed_receipts','turn_private.planning_v2_completion_proofs','turn_private.planning_v2_execution_runs','turn_private.planning_v2_external_call_windows','turn_private.planning_v2_model_attempt_bindings','turn_private.planning_v2_model_local_journal','turn_private.planning_v2_place_checkpoints','turn_private.planning_v2_result_claims','turn_private.result_artifacts','turn_private.result_events','turn_private.result_revisions','turn_private.service_task_capacity','turn_private.service_task_turns','turn_private.service_tasks','turn_private.text_content','turn_private.text_dispatches','turn_private.work','public.turns','turn_private.assistant_goal_trip_links','turn_private.assistant_goal_trip_receipts','knowledge_review_private.source_impact_sets','knowledge_review_private.source_impact_items','knowledge_review_private.source_impact_pages','knowledge_review_private.source_impact_outbox','knowledge_review_private.source_impact_projections','knowledge_review_private.source_impact_review_requests','readiness_private.scopes_v1','readiness_private.operations_v1','guide_private.bindings_v1','scoped_edit_private.work_v1','scoped_edit_private.requests_v1','scoped_edit_private.contexts_v1','scoped_edit_private.operations_v1','notification_private.reminders','notification_private.watches','notification_private.dismissals','service_brief_private.briefs','service_brief_private.previews','service_brief_private.operations']::text[]) rel where not exists(select 1 from pg_trigger t where t.tgrelid=to_regclass(rel) and t.tgname='turn_data_parent_fence_v1' and t.tgenabled='O' and t.tgtype=31 and not t.tgisinternal and t.tgfoid=to_regprocedure('turn_data_private.guard_source_v1()')))
+ select not exists(select 1 from unnest(array['public.chat_turn_events','public.chat_turn_idempotency','public.memory_consumer_receipts','public.model_budget_attempts','public.turn_feedback','turn_private.assistant_message_source_receipts','turn_private.assistant_messages','turn_private.assistant_travel_intakes','turn_private.grounded_ai_assist_jobs','turn_private.grounded_turns','turn_private.planning_action_receipts','turn_private.planning_comparisons','turn_private.planning_intake_bindings','turn_private.planning_model_dispatches','turn_private.planning_observations','turn_private.planning_v2_collector_origins','turn_private.planning_v2_collector_outputs','turn_private.planning_v2_completed_receipts','turn_private.planning_v2_completion_proofs','turn_private.planning_v2_execution_runs','turn_private.planning_v2_external_call_windows','turn_private.planning_v2_model_attempt_bindings','turn_private.planning_v2_model_local_journal','turn_private.planning_v2_place_checkpoints','turn_private.planning_v2_result_claims','turn_private.result_artifacts','turn_private.result_events','turn_private.result_revisions','turn_private.service_task_capacity','turn_private.service_task_turns','turn_private.service_tasks','turn_private.text_content','turn_private.text_dispatches','turn_private.work','public.turns','public.trip_proposals','turn_private.assistant_goal_trip_links','turn_private.assistant_goal_trip_receipts','knowledge_review_private.source_impact_sets','knowledge_review_private.source_impact_items','knowledge_review_private.source_impact_pages','knowledge_review_private.source_impact_outbox','knowledge_review_private.source_impact_projections','knowledge_review_private.source_impact_review_requests','readiness_private.scopes_v1','readiness_private.operations_v1','guide_private.bindings_v1','scoped_edit_private.work_v1','scoped_edit_private.requests_v1','scoped_edit_private.contexts_v1','scoped_edit_private.operations_v1','notification_private.reminders','notification_private.watches','notification_private.dismissals','service_brief_private.briefs','service_brief_private.previews','service_brief_private.operations']::text[]) rel where not exists(select 1 from pg_trigger t where t.tgrelid=to_regclass(rel) and t.tgname='turn_data_parent_fence_v1' and t.tgenabled='O' and t.tgtype=31 and not t.tgisinternal and t.tgfoid=to_regprocedure('turn_data_private.guard_source_v1()')))
 $$;
 create function turn_data_private.erase_source_v1(u uuid,src jsonb) returns jsonb language plpgsql volatile security definer set search_path='' as $$
 declare spec record;v jsonb;n integer;ec jsonb:=turn_data_private.zero_counts_v1('erase');rc jsonb:=turn_data_private.zero_counts_v1('redact');t uuid:=(src->'graph'->'turnIds'->>0)::uuid;rel text;remaining integer;keys_n jsonb;
@@ -720,7 +729,7 @@ begin
       'sourceTurn',case scope_n when 'turn-sensitive-data/1' then 'erased' else 'not_modified' end,
       'parentData',case when (counts_n->'redactedCounts'->>'taskDigests')::integer>0 then 'selected_digest_redacted' else 'not_modified' end,'financialData','not_modified',
       'sourceTrip','not_modified','explicitMemory','not_modified','externalCopies','not_erased');
-     update turn_data_private.operations_v1 set state='erased',mutation_bytes=bytes_n,request_digest=digest_n,decision=decision_n,preview_erased=true,
+     update turn_data_private.operations_v1 set state='erased',source_identity_keys=case when scope_n='turn-sensitive-data/1' then (select coalesce(jsonb_agg(jsonb_build_object('relation',x->'table','pk',x->'pk') order by x->>'table' collate "C",(x->'pk')::text collate "C"),'[]'::jsonb) from jsonb_array_elements(source_n->'rows') x where x->>'effect'='erase') else '[]'::jsonb end,mutation_bytes=bytes_n,request_digest=digest_n,decision=decision_n,preview_erased=true,
       graph=null,erase_counts=null,redact_counts=null,retain_counts=null,retained_references=null,conflicts=null where request_id=request_n and owner_id=u returning * into r;
      perform turn_data_private.deadline_v1(r.captured_at,r.expires_at);
      delete from turn_data_private.transaction_proofs_v1 where transaction_id=pg_current_xact_id();result_n:=turn_data_private.receipt_v1(r);
@@ -754,11 +763,22 @@ begin
   return query select 'turnIds'::text,tc.turn_id from turn_private.text_content tc join public.model_budget_scopes s on s.id=(v->>'scope_id')::uuid where tc.turn_id=(v->>'task_id')::uuid and s.owner_id=tc.owner_id;
  end if;
 end$$;
+
+create function turn_data_private.source_key_v1(rel text,v jsonb) returns jsonb language sql immutable set search_path='' as $$
+ select turn_data_private.row_key_v1(v,s.pk) from turn_data_private.sources_v1() s where s.relation_name=rel and s.effect='erase'
+$$;
+create function turn_data_private.source_key_fenced_v1(rel text,pk_n jsonb) returns boolean language sql stable security definer set search_path='' as $$
+ select pk_n is not null and exists(select 1 from turn_data_private.operations_v1 r where r.scope='turn-sensitive-data/1' and r.state='erased' and exists(select 1 from auth.users account_n where account_n.id=r.owner_id) and r.source_identity_keys @> jsonb_build_array(jsonb_build_object('relation',rel,'pk',pk_n)))
+$$;
 create function turn_data_private.guard_source_v1() returns trigger language plpgsql volatile security definer set search_path='' as $$
-declare rel text:=tg_table_schema||'.'||tg_table_name;nv jsonb:=case when tg_op='DELETE' then to_jsonb(old) else to_jsonb(new) end;ov jsonb:=case when tg_op='INSERT' then to_jsonb(new) else to_jsonb(old) end;r record;owners uuid[];
+declare rel text:=tg_table_schema||'.'||tg_table_name;nv jsonb:=case when tg_op='DELETE' then to_jsonb(old) else to_jsonb(new) end;ov jsonb:=case when tg_op='INSERT' then to_jsonb(new) else to_jsonb(old) end;r record;owners uuid[];key_n jsonb;
 begin
  owners:=turn_data_private.union_ids_v1(array[nullif(nv->>'owner_id','')::uuid,nullif(ov->>'owner_id','')::uuid]);
  if cardinality(owners)>0 and not exists(select 1 from auth.users where id=any(owners)) and tg_op='DELETE' then return old;end if;
+ for key_n in select distinct k from(select turn_data_private.source_key_v1(rel,nv) k union select turn_data_private.source_key_v1(rel,ov) where tg_op='UPDATE' and ov is distinct from nv) a where k is not null loop
+  if not pg_try_advisory_xact_lock_shared(hashtextextended('turn-data-source-key:'||rel||':'||turn_data_private.digest_v1(key_n::text),0)) then raise lock_not_available using message='TURN_CONFLICT';end if;
+  if turn_data_private.source_key_fenced_v1(rel,key_n) then raise exception 'TURN_CONFLICT';end if;
+ end loop;
  for r in select distinct kind collate "C" kind,entity_id from(select * from turn_data_private.writer_references_v1(rel,nv) union select * from turn_data_private.writer_references_v1(rel,ov) where tg_op='UPDATE' and ov is distinct from nv) a order by kind collate "C",entity_id loop
   if not pg_try_advisory_xact_lock_shared(hashtextextended('turn-data-entity:'||r.kind||':'||r.entity_id::text,0)) then raise lock_not_available using message='TURN_CONFLICT';end if;
   if turn_data_private.fenced_v1(r.kind,r.entity_id) then raise exception 'TURN_CONFLICT';end if;
@@ -824,6 +844,8 @@ begin
   group_rows:=array[]::jsonb[];
   for v in execute format('select to_jsonb(a) from %s a where %s order by %s limit 10001 for share nowait',s.relation_name,turn_data_private.export_predicate_v1(s.relation_name),(select string_agg(format('a.%I',k),',') from unnest(s.pk) k)) using roots,msgs,arts,tasks,ex,u loop
    if s.has_owner and v->>'owner_id' is distinct from u::text then raise exception 'TURN_SOURCE_UNAVAILABLE';end if;
+   if s.count_key='sourceReceipts' and (jsonb_typeof(v->'input_sources'->'evidence') is distinct from 'array' or jsonb_array_length(v->'input_sources'->'evidence')>0) then raise exception 'TURN_SOURCE_UNAVAILABLE';end if;
+   if s.count_key='attemptBindings' and not exists(select 1 from turn_private.planning_comparisons pc join turn_private.text_content tc on tc.turn_id=pc.turn_id and tc.owner_id=pc.owner_id where pc.turn_id=(v->>'turn_id')::uuid and pc.owner_id=u and pc.task_id=(v->>'task_id')::uuid and pc.planning_policy_id=(v->>'planning_policy_id')::uuid and tc.policy_id=(v->>'text_policy_id')::uuid) then raise exception 'TURN_SOURCE_UNAVAILABLE';end if;
    if s.count_key='grounded' and (jsonb_typeof(v->'basis'->'publications') is distinct from 'array' or jsonb_array_length(v->'basis'->'publications')>0) then raise exception 'TURN_SOURCE_UNAVAILABLE';end if;
    r:=turn_data_private.export_row_v1(s.relation_name,v);row_count_n:=row_count_n+1;byte_count_n:=byte_count_n+octet_length(r::text);
    if row_count_n>10000 or byte_count_n>1000000 then raise exception 'TURN_CAPACITY';end if;

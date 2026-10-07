@@ -5,7 +5,7 @@ do $$declare rel text;begin
   execute format('create trigger turn_data_parent_fence_v1 before insert or update or delete on %s for each row execute function turn_data_private.guard_source_v1()',rel);
  end loop;
  foreach rel in array array[
-  'turn_private.assistant_goal_trip_links','turn_private.assistant_goal_trip_receipts',
+  'public.trip_proposals','turn_private.assistant_goal_trip_links','turn_private.assistant_goal_trip_receipts',
   'knowledge_review_private.source_impact_sets','knowledge_review_private.source_impact_items','knowledge_review_private.source_impact_pages',
   'knowledge_review_private.source_impact_outbox','knowledge_review_private.source_impact_projections','knowledge_review_private.source_impact_review_requests',
   'readiness_private.scopes_v1','readiness_private.operations_v1','guide_private.bindings_v1',

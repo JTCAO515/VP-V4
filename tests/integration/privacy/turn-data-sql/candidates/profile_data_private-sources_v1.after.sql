@@ -34,6 +34,6 @@ AS $function$values
  ('export_private.core_tickets_v1','request_id in(select request_id from export_private.core_jobs_v1 where owner_id=$1)','operation_id'),
  ('export_private.profile_snapshot_provenance_v1','request_id in(select request_id from export_private.core_jobs_v1 where owner_id=$1)','request_id,generation'),
  ('turn_data_private.operations_v1','owner_id=$1','request_id'),
- ('turn_data_private.export_provenance_v1','owner_id=$1','"request_id","generation"'),
+ ('turn_data_private.export_provenance_v1','owner_id=$1','request_id,generation'),
  ('public.privacy_requests','owner_id=$1','id')
 $function$
