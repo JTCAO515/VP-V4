@@ -75,6 +75,25 @@ import Testing
         #expect(throws: (any Error).self) { try blocked.clear() }
         #expect(!blocked.ready && blocked.url == nil)
     }
+    @Test func receiptConsumerCacheBoundaryFencesOldReadsAndPreservesUnselectedIdentity() throws {
+        var fence = NativeResultDataProjectionFence(); fence.bind(actor)
+        let selected = "66666666-6666-4666-8666-666666666666"
+        let unselected = "77777777-7777-4777-8777-777777777777"
+        let old = try fence.capture(actor)
+        #expect(fence.accepts(old, artifactID: selected))
+        try fence.recordVerifiedErasure(artifactID: selected, actor: actor)
+        #expect(!fence.accepts(old))
+        #expect(!fence.permits(selected, actor: actor))
+        #expect(fence.permits(unselected, actor: actor))
+        let fresh = try fence.capture(actor)
+        #expect(fence.accepts(fresh, artifactID: unselected))
+        #expect(!fence.accepts(fresh, artifactID: selected))
+        let other = NativeCommunitySafetyActor(scope: actor.scope, sessionID: "88888888-8888-4888-8888-888888888888")
+        #expect(throws: (any Error).self) { try fence.recordVerifiedErasure(artifactID: unselected, actor: other) }
+        #expect(fence.permits(unselected, actor: actor))
+        fence.bind(other)
+        #expect(!fence.accepts(fresh))
+    }
     @Test func generationAndMonotonicDeadlineFenceLateResponses() throws {
         var lifetime = NativeResultDataLifetime(); lifetime.bind(actor)
         let generation = lifetime.generation

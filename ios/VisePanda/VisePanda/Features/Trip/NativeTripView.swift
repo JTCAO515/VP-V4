@@ -324,6 +324,10 @@ struct NativeTripView: View {
                   key.active, store.scope == scope else { resultStore.clear(); return }
             await resultStore.load(scope: scope, tripID: tripID, using: session)
         }
+        .onChange(of: session.resultDataErasure?.id) { _, _ in
+            guard let erased = session.resultDataErasure, (try? session.communitySafetyActor()) == erased.actor else { return }
+            resultStore.applyResultErasure(erased)
+        }
         .onChange(of: session.retainedDataScope) { _, retained in
             if store.scope != retained {
                 screenshotReviewSource = nil; pdfIntakeSource = nil
