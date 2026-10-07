@@ -1,5 +1,5 @@
 import { exact, record, hash } from '../../guide/contract.ts';
-import { RESULT_SCHEMA, RESULT_LIMITS, bindingKeys, selectionKeys, GRAPH_KEYS, ERASED_KEYS, RETAINED_KEYS, CONFLICTS, REFERENCE_KEYS,
+import { RESULT_SCHEMA, RESULT_TYPES, RESULT_LIMITS, bindingKeys, selectionKeys, GRAPH_KEYS, ERASED_KEYS, RETAINED_KEYS, CONFLICTS, REFERENCE_KEYS,
   identifier, natural, positive, resultScope, validSelection, sameSelection, validBinding, validGraph, validReferences, counts, validSourceAuthorities,
   type ResultActor, type ResultCommand, type ResultBinding, type ResultGraph, type ResultReferences } from './contract.ts';
 
@@ -97,7 +97,7 @@ export function validResultListItem(v: unknown, now: number): boolean {
     && positive(v.eventCount) && v.eventCount >= v.revisionCount && v.eventCount <= 3000
     && (v.lifecycle === 'active' || v.lifecycle === 'withdrawn') && Array.isArray(v.resultTypes) && v.resultTypes.length > 0
     && v.resultTypes.length <= 5 && v.resultTypes.every((t, i, array) => typeof t === 'string'
-      && ['change-proposal/1', 'comparison/1', 'decision/1', 'journey-draft/1', 'practical/1'].includes(t) && (i === 0 || t > array[i - 1]));
+      && RESULT_TYPES.includes(t as typeof RESULT_TYPES[number]) && (i === 0 || t > array[i - 1]));
 }
 export function decodeResultList(v: unknown, c: Extract<ResultCommand, { action: 'list' }>, a: ResultActor, now: number): Record<string, unknown> | null {
   if (!record(v) || !exact(v, ['schemaVersion', 'kind', 'scope', 'rootKind', 'ownerId', 'sessionId', 'mobileEpoch', 'sourceDigest', 'capturedAt', 'expiresAt', 'items', 'hasMore', 'nextCursor', 'allUserDataCompleted'])

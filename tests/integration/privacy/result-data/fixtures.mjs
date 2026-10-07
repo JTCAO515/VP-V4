@@ -46,3 +46,6 @@ export const progressOperation = () => ({ ...operation(), ...progressSelection, 
 export const progressListCommand = { action: 'list', scope: 'result-delete-progress/1', rootKind: null, cursor: null, limit: 20 };
 export const progressList = () => ({ ...list(), scope: progressListCommand.scope, rootKind: null, capturedAt: now + 80000, expiresAt: now + 110000,
   items: [operation(), progressOperation()], sourceDigest: 'f'.repeat(64) });
+
+// Actual original fifth stored schema, metadata only; selection remains blocked by proposal dependency.
+export const proposalList = () => ({ ...list(), items: [{ ...list().items[0], rootId: id(31), resultTypes: ['change-proposal-reference/1'] }] });

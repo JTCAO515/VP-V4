@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { exact, record, hash, uuid } from '../../guide/contract.ts';
 
 export const RESULT_SCHEMA = 'result-data/1' as const;
+export const RESULT_TYPES = ['change-proposal-reference/1', 'comparison/1', 'decision/1', 'journey-draft/1', 'practical/1'] as const;
 export const RESULT_SCOPES = ['result-sensitive-data/1', 'result-delete-progress/1'] as const;
 export type ResultScope = typeof RESULT_SCOPES[number];
 export const RESULT_LIMITS = { lifetimeMs: 30000, maxBytes: 1000000, entities: 4100, tableRows: 10000, selected: 20, list: 20, authorities: 100 } as const;

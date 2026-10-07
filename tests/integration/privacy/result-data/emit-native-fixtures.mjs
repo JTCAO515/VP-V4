@@ -17,6 +17,7 @@ const artifacts = {
   'receipt.json': [f.receipt(), v => decodeResultReceipt(v, f.erase, f.actor, resultDigest(f.eraseBytes), f.now + 40000)],
   'plain-receipt.json': [plainReceipt, v => decodeResultReceipt(v, f.erase, f.actor, resultDigest(f.eraseBytes), f.now + 40000)],
   'unknown.json': [f.unknown(), v => decodeResultUnknown(v, f.recover, f.actor, resultDigest(f.eraseBytes))],
+  'proposal-list.json': [f.proposalList(), v => decodeResultList(v, f.listCommand, f.actor, f.now + 1)],
   'list.json': [f.list(), v => decodeResultList(v, f.listCommand, f.actor, f.now + 1)],
   'progress-preview.json': [f.progressPreview(), v => decodeResultPreview(v, f.progressPreviewCommand, f.actor, f.now + 40001)],
   'progress-receipt.json': [f.progressReceipt(), v => decodeResultReceipt(v, f.progressErase, f.actor, resultDigest(f.progressEraseBytes), f.now + 80001)],

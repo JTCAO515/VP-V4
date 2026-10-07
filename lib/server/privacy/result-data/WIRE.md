@@ -181,7 +181,8 @@ list={schemaVersion,kind:'list',scope,rootKind,ownerId,sessionId,mobileEpoch,
 sourceDigest,capturedAt,expiresAt,items,hasMore,nextCursor,allUserDataCompleted:false}.
 Sensitive item={rootKind:'artifact',rootId,createdAt,currentRevision,revisionCount,
 eventCount,lifecycle:'active'|'withdrawn',resultTypes:sorted unique actual closed
-five schema names}. NO copied title/body. All historical revisions/source authority
+five schema names: change-proposal-reference/1,comparison/1,decision/1,
+journey-draft/1,practical/1}. NO copied title/body. All historical revisions/source authority
 qualified before metadata. Listing never uses latest/current search-only filter.
 Progress item is COMPLETE operation row below. Inventory sorted by UUID, anchored
 existing afterId/sourceDigest of entire scoped inventory<=10000+sentinel/1MB,
@@ -316,3 +317,20 @@ owned stop/no-backup cleanup. Node syntax checks for both files PASS; real signe
 Auth run UNRUN until those actual dependencies integrate. No zero-skip/pass claim
 from a gated test and no unchanged protocol/build/Native matrix rerun.
 Shared original4 registration hunks remain patch-only, no shared lease consumed.
+
+## Actual fifth stored schema correction
+
+SQL source audit found the initial list decoder had a wrong fifth literal.
+Original valid_result_content_v2 at03110000:51 and valid_proposal_reference_v1
+at02110000:15 both persist change-proposal-reference/1. Sole RESULT_TYPES now
+uses exactly that original name; old invented change-proposal/1 is rejected.
+No sixth type, store/publisher/proposal writer or deletion boundary changes.
+Own existing list test accepts actual proposal-reference metadata and rejects
+the old name; proposal-list fixture is added, original10 envelopes/commands
+unchanged. Selecting a proposal reference remains PROPOSAL_REFERENCE blocked.
+This supersedes only the initial list type literal; other4 types and full wire
+keys/counts/authority/TTL/operation/receipt/fence semantics remain unchanged.
+Affected actual list test1 PASS,0 FAIL/SKIP; typecheck/lint/diff PASS. Sole producer
+now11 envelopes+commands. Original10 envelopes+commands independently regenerated
+with prior67c5682a emitter and compared:11/11 byte-hash MATCH; only proposal-list
+added. No unaffected full suite/build/Native/Auth run repeated for this literal.

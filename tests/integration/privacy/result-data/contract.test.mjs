@@ -72,6 +72,8 @@ test('HTTP authority precedes dispatch, original bytes are preserved, every unce
 
 test('actual list includes withdrawn artifacts with complete revisions and forbids sensitive title/body or truncated closure', () => {
   assert.ok(decodeResultList(f.list(), f.listCommand, f.actor, f.now + 1));
+  assert.ok(decodeResultList(f.proposalList(), f.listCommand, f.actor, f.now + 1));
+  assert.equal(decodeResultList({ ...f.proposalList(), items: [{ ...f.proposalList().items[0], resultTypes: ['change-proposal/1'] }] }, f.listCommand, f.actor, f.now + 1), null);
   for (const change of [{ title: 'sensitive' }, { revisionCount: 1 }, { eventCount: 0 }, { resultTypes: ['unregistered/1'] }])
     assert.equal(decodeResultList({ ...f.list(), items: [{ ...f.list().items[0], ...change }] }, f.listCommand, f.actor, f.now + 1), null);
   assert.equal(decodeResultList({ ...f.list(), items: [...f.list().items, ...f.list().items] }, f.listCommand, f.actor, f.now + 1), null);
