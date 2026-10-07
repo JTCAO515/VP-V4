@@ -165,9 +165,16 @@ exact qualified graph, all own finite operation rows and permanent Turn fences.
 Parents are IDs/necessary minimal task/capacity/budget metadata; independent
 conversation/goal bodies stay in original conversations export. Deduplicate each actual PK exactly once in fixed schema-group/PK native order,
 not a separate owner-wide scan of each table. Budget rows use exact selected
-task + authenticated scope/attempt graph; legacy text-worker.ts:61 uses
-budget taskId=lease.turnId, so qualify that exact Turn + scope owner too rather
-than require a nonexistent ServiceTask join or silently drop its ledger; ownerless execution copies use exact
+task + authenticated scope/attempt graph. text-worker.ts:61 passes client
+taskId=lease.turnId; original 20260911200339:159-178 reserve_model_budget resolves
+service_task_turns -> canonical ServiceTask and stores that task_id, binding
+service_tasks.budget_scope_id. Include the actual selected task + matching bound
+scope + scope.owner for ordinary text/task-history attempts even without planning
+dispatch/binding. Historical pre-canonical ledger may actually retain Turn ID;
+qualify that exact Turn + scope owner too. If multiple Turns share a Task without
+a per-Turn attempt receipt, do not invent attribution; accurately block unsafe
+active/ambiguous references or declare whole necessary financial metadata retained.
+Never omit a canonical Task ledger or its pending state as a false zero; ownerless execution copies use exact
 qualified execution IDs; no common owner/task identity alone pulls another Turn
 into erasure. Export sourceAuthorities is the bounded sorted union of actual
 text/message/task/dispatch/planning source pairs and original retained operations.
@@ -317,3 +324,8 @@ Registered TS owner-handler coverage proof 1/1 PASS,0skip; original D2 worker/
 private-download contract regressions 6/6 PASS,0skip. Actual SQL/Auth download
 remains UNRUN. Lint/typecheck/diff PASS after shared integration. No CI/fixture
 metadata lease inferred from this registration grant.
+
+Next production build via repository pnpm build PASS (exit0), including new
+registered `/api/privacy/native/v1/turn-data`; original earlier nonexistent
+scripts/build.mjs invocation failed before work and was corrected to package.json
+command. No deployment or target runtime was run.
