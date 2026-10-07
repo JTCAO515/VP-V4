@@ -98,7 +98,7 @@ struct NativeProfileDataFields: Equatable {
             fields[key] = value
         }
         let departure = try w.text(v["defaultDepartureTime"], max: 15)
-        guard departure.range(of: "^([01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d{1,6})?$", options: .regularExpression) != nil else { throw NativeDataError.invalidResponse }
+        guard departure.range(of: "^(?:([01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d{1,6})?|24:00:00(?:\\.0{1,6})?)$", options: .regularExpression) != nil else { throw NativeDataError.invalidResponse }
         fields["defaultDepartureTime"] = departure; values = fields
         paceNotice = try w.optional(v["paceNotice"], { try w.text($0, max: 40) })
         guard paceNotice == nil || paceNotice == "local-planning-cross-trip-v1" else { throw NativeDataError.invalidResponse }
