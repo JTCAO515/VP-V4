@@ -114,7 +114,14 @@ test('signed Auth and actual PG close one complete artifact erasure, source pres
       'revisions',(select jsonb_agg(to_jsonb(r) order by revision) from turn_private.result_revisions r where artifact_id='${sibling}'),
       'events',(select jsonb_agg(to_jsonb(e) order by id) from turn_private.result_events e where artifact_id='${sibling}'));`);
   const before = retained();
-  const inventory = await call(path, owner.token, list); assert.equal(inventory.status, 200); assert.ok(decodeResultList(inventory.body.data, list, owner.actor, Date.now()));
+  const inventory = await call(path, owner.token, list);
+  if (inventory.status !== 200) {
+    const actual = await owner.client.rpc('privacy_result_data_v1', { p_action: 'list', p_input_bytes: JSON.stringify(list), p_expected_epoch: owner.actor.mobileEpoch });
+    t.diagnostic(JSON.stringify({ phase: 'actual-owner-list', httpCode: inventory.body.error?.code, rpcCode: actual.error?.code, rpcClosedCode: /^RESULT_[A-Z_]+$/.test(actual.error?.message ?? '') ? actual.error.message : 'UNMAPPED',
+      sourceAudit: JSON.parse(sql(`select jsonb_build_object('schemaSupported',result_data_private.schema_supported_v1(),'conflicts',result_data_private.source_v1('${owner.id}','${artifact}')->'conflicts',
+        'schemaTableCounts',(select jsonb_object_agg(nspname,n) from(select n.nspname,count(*) n from pg_class c join pg_namespace n on n.oid=c.relnamespace where c.relkind='r' and n.nspname not in('pg_catalog','information_schema','auth','extensions') group by n.nspname) metadata));`)) }));
+  }
+  assert.equal(inventory.status, 200); assert.ok(decodeResultList(inventory.body.data, list, owner.actor, Date.now()));
   const selected = inventory.body.data.items.find(x => x.rootId === artifact); assert.ok(selected); assert.equal(selected.lifecycle, 'withdrawn'); assert.equal(selected.revisionCount, 2); assert.equal(selected.eventCount, 3);
   assert.equal((await call(path, foreign.token, list)).body.data.items.length, 0);
   const selection = { scope, requestId: '00000000-0000-4000-8000-000000000001', rootKind: 'artifact', rootId: artifact, objectIds: [] }, previewCommand = { action: 'preview', ...selection };
