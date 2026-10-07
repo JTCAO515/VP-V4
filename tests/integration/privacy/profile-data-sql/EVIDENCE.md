@@ -44,3 +44,12 @@ Initial fixture claims incorrectly cast SET to jsonb; corrected the test. Initia
 Signed GoTrue/JWT Auth -> TS HTTP/decoder and Native consumer is the sole TS/integrator's next step using this fixed source. Main whole-source/formal final-head CI/protected merge remain separate. Target grants, deployment, provider/fees, production, real device and backup acceptance are UNRUN/unauthorized. SQL-claims fixtures are not signed Auth or a target observation. Full #239 and all-account deletion remain incomplete; `allUserDataCompleted=false` always.
 
 Rollback verification: the full migration runs and rolls back before actual replay; original function definitions/ACL hash and original Result schema are identical afterward. Every failed operation uses PostgreSQL transactional rollback. No target migration history or permission was changed. New private proof must be removed at commit; decisions/floors retain their original permanent authority.
+
+
+## PR670 CI fixture cleanup correction
+
+Actual GitHub Actions job `112818357697` passed all19 Profile subcases, then the parent failed with `hookFailed / No such container: vpj58-profile-4779acb1`. The direct bootstrap registered container removal before a separate RPC revocation hook; Node ran the hooks in that registration order. The earlier external-container24 run and the no-grant direct compatibility4 did not exercise this ordering.
+
+Only `fixture.mjs` and `profile.test.mjs` changed: one fixture lifecycle invokes the supplied RPC cleanup before its owned container removal. Revocation is followed by an actual authenticated EXECUTE=false assertion; removal still runs in finally even when revocation fails. A provided external container gets RPC cleanup without an ownership takeover. No NoSuchContainer error is swallowed and no SQL/runtime/allowlist/oracle is relaxed.
+
+Direct standalone bootstrap was observed with the same real fixture/migrations: **20 PASS / 0 FAIL / 0 skip**; log order is `Fixture RPC revoke PASS` then `Owned fixture container cleanup PASS`, and the owned container is absent afterward. The attempted parent-plus-one selector expanded all children, so this is accurately recorded as one full Profile-file run, not a single-case result; no additional matrix was rerun. Raw receipt `ownproof/cleanup-fixed.txt`, original failure excerpt `ownproof/cleanup-ci-failure.txt`. Migration SHA remains `4e12c0b4775995964382c52357a44c3cbe261f4042023326e833318c6fb8fdfe`. Remote CI on the integrated new PR head remains unrun by this writer.

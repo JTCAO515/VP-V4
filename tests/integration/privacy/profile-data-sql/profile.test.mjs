@@ -15,10 +15,16 @@ const mutation=(s,p)=>({action:'erase',...s,sourceDigest:p.sourceDigest,previewD
 const fail=(p,code)=>assert.rejects(p,new RegExp(code));
 let state;
 test('actual Profile SQL transaction and source graph',{skip:process.env.VP_PROFILE_DATA_SQL!=='1'},async t=>{
- await ensureFixture(t);
+ let rpcGranted=false;
+ await ensureFixture(t,async()=>{
+  if(!rpcGranted)return;
+  await db('revoke all on function public.privacy_profile_data_v1(text,text,bigint) from authenticated;');
+  assert.equal(await db("select has_function_privilege('authenticated','public.privacy_profile_data_v1(text,text,bigint)','EXECUTE')"),'f');
+  console.log('Fixture RPC revoke PASS');
+ });
  assert.equal(await db("select has_function_privilege('authenticated','public.privacy_profile_data_v1(text,text,bigint)','EXECUTE')"),'f');
  await db('grant execute on function public.privacy_profile_data_v1(text,text,bigint) to authenticated;');
- t.after(()=>db('revoke all on function public.privacy_profile_data_v1(text,text,bigint) from authenticated;'));
+ rpcGranted=true;
  await t.test('default private/RPC denies and exact immutable original Native implementation',async()=>{
   assert.equal(await db("select has_function_privilege('anon','public.privacy_profile_data_v1(text,text,bigint)','EXECUTE') or has_function_privilege('service_role','public.privacy_profile_data_v1(text,text,bigint)','EXECUTE')"),'f');
   assert.equal(await db("select bool_and(relrowsecurity) from pg_class where relnamespace='profile_data_private'::regnamespace and relkind='r'"),'t');
