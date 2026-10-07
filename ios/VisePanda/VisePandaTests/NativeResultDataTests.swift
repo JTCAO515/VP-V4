@@ -35,6 +35,11 @@ import Testing
         #expect(try erase.recovery().mutationBytes == erase.body)
         let page = try NativeResultDataProtocol.list(bytes("list"), command: command("listBytes"), actor: actor, now: date(0.001))
         #expect(page.objects.count == 1 && page.objects.first?.revisionCount == 2 && page.objects.first?.eventCount == 3)
+        let proposal = try NativeResultDataProtocol.list(bytes("proposal-list"), command: command("listBytes"), actor: actor, now: date(0.001))
+        #expect(proposal.objects.first?.resultTypes == ["change-proposal-reference/1"])
+        var obsoleteList = try root("proposal-list"), obsoleteItems = try #require(try root("proposal-list")["items"] as? [[String: Any]])
+        obsoleteItems[0]["resultTypes"] = ["change-proposal/1"]; obsoleteList["items"] = obsoleteItems
+        #expect(throws: (any Error).self) { try NativeResultDataProtocol.list(envelope(obsoleteList), command: command("listBytes"), actor: actor, now: date(0.001)) }
         let value = try NativeResultDataProtocol.preview(bytes("preview"), command: preview, actor: actor, now: date(0.001))
         #expect(value.eligible && value.graph.revisions == [1, 2] && value.graph.eventIDs == ["2", "10", "9223372036854775807"])
         #expect(value.references.ids["conversationIds"]?.count == 1)
