@@ -4218,9 +4218,9 @@
     {
       "identity": "profile_data_private.schema_v1()",
       "oldDefinitionMd5": "16c33fe11c041ffb6aa7de088e443bd0",
-      "newDefinitionMd5": "dd01612adb490d2499b34b09e3302d58",
+      "newDefinitionMd5": "25d8a26f2729eb3532e3b7bf8b9c47c9",
       "oldDefinitionSha": "a0326e7a290dcee5b16029e999880b9c4d68e55b6d0f3e36b6086394c183f72f",
-      "newDefinitionSha": "0fac95584b666bc309f93cc4775f51ef057419a0999e70cfb15899280da6ed82"
+      "newDefinitionSha": "08120a86b89e698556f64501ef67feb8dcdd3a2fb6c7eab09847c8d7f06faa2b"
     },
     {
       "identity": "result_data_private.schema_supported_v1()",
