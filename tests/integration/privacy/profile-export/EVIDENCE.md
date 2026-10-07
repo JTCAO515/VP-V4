@@ -44,3 +44,11 @@ concurrency and opaque/proven-copy qualification. Native generic source review
 finds reuse; no Swift edit/device execution. Whole #239/ALL1/ALL2 remain Open.
 Production/Staging grants, keys/config/Storage/provider expense/deployment,
 real-user data and device/old-device acceptance are not authorized/run.
+
+Prepared, UNRUN: own run-http.mjs/auth-http.test.mjs reuse the original isolated
+GoTrue fixture launcher/Native credentials and configured D2 runner, then verify
+actual owner attachment bytes and a controlled clear between real prepare and
+consume. No historical SQL source override. Actual startup waits for stable
+current SQL/registered worker and a Main-reviewed nonoverlapping port lease.
+Dependencies installed offline from the existing lockfile; full pnpm typecheck
+PASS. Syntax checks PASS; no Auth/HTTP success inferred from preparation.
