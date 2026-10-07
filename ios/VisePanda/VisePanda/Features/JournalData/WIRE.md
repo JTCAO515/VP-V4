@@ -104,7 +104,7 @@ double-clock, original result receipt/projection/complete, physical readback and
 will be checked with the accepted iOS harness/build/security checks. Matching prior source evidence
 is reused. Tests, fixtures and source inspection remain separate from actual Auth/server/phone/
 DataProtection/real system share/backup/provider acceptance; these target facts are UNRUN here.
-Whole #239 remains OPEN until its other actual core scopes are complete.
+Whole #239 follows Main’s complete-development-core review; unified target acceptance remains separate.
 
 ## Stable implementation and actual validation — 2026-10-08
 
@@ -148,4 +148,7 @@ empty/completed rows. No additional implementation core is silently counted as d
 Owned implementation is ready for Main's final complete-core review. Engineering delivery remains
 one independent main-base Journal Native PR after actual normal dependency merges, exact-head formal
 review/applicable CI and protected merge. It is not part of the already delivered Turn scope or a
-dependency draft. Whole #239 stays OPEN for its other actual core scopes and unified target acceptance.
+dependency draft. Main completed the full development-core review and closed #239 on 2026-10-08
+(2026-10-07T21:48:38Z; live GitHub state independently read back). Main’s scope record is
+https://github.com/JTCAO515/VP-V4/issues/239#issuecomment-6047528627. This is development closure;
+unified real ALL1/ALL2, Auth/target/device/share/backup/provider acceptance remains explicitly UNRUN.
