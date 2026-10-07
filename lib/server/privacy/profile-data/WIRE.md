@@ -391,7 +391,10 @@ NOWAIT/barrier30s/allassert/dataatomic unchanged. New07020000SHAaec808a083914b64
 Originalcase14 actual2PASS0skip/revoke+destroy, controlled read/allmutation across
 owner34/watermark/Profilelocks/fresh/invalid/authority/stale/reuse/whole-row-nochange
 proofs reused. Ownconsumer8/type/lint/docs/diffPASS. Read-only fixed Export4b31 and
-Turndfc92 qualified publicwrapper references absent, actual migration hashesmatch
-originalowner proof, no newbaseline overwrite or blindpin. Rootdidnotimport either
+Turndfc92 qualified publicwrapper references absent, Export0704 actualhash matches ownerproof; committedTurndfc92 actual0705hash
+31a15eab81ae97c4a9e8a1b35c99a9664e26c2604a0554e31ca6443d0cd82600 differs
+from the earlier quoted44a346 shorthand, so no equality/pin assumed. Main receives
+the precise source discrepancy for originalTurn baseline coordination; no new
+baseline overwrite or blindpin. Rootdidnotimport either
 unmerged direction. New finalhead must receive renewedformal/allactualCI/protected
 merge; oldcbeFAIL/previousruns preservefacts, target/full239 boundaries unchanged.
