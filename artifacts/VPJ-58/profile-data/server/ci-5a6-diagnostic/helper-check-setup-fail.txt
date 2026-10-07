@@ -1,0 +1,25 @@
+VP_BRIEF_9800_DIAGNOSTIC {"kind":"original9800/5s seed observation","container":"ProfileDiag_dc114f21","marker":"brief-9800-observe-a0e907b3","count":9800,"statementTimeoutMs":5000,"lockTimeoutMs":5000,"originalExit":3,"error":"ERROR:  column \"s\" does not exist\nLINE 1: ...rt into service_brief_private.audit(value) select s from gen...\n                                                             ^","elapsedMs":34.93220900000006,"samples":[],"samplingErrors":[],"beforeFunctions":[],"afterFunctions":[],"host":{"loadavg":[4.2421875,4.6015625,4.9287109375],"parallelism":18},"rawQueryLogged":false,"sourceChanged":false,"remoteCauseConclusion":"UNKNOWN"}
+Owned helper-check container cleanup PASS
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: ERROR:  column "s" does not exist
+LINE 1: ...rt into service_brief_private.audit(value) select s from gen...
+                                                             ^
+
+
+3 !== 0
+
+    at observedBriefAuditSeed (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-profile-data-server-20261007/tests/integration/privacy/profile-data/brief-seed-diagnostics.mjs:54:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///private/tmp/vpj58-brief-diagnostic-helper-check.mjs:13:2 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 3,
+  expected: 0,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v26.8.2

@@ -367,3 +367,13 @@ Read-only Export check initially rejected unrelated memory/entitlement progress
 name substrings; the precise fully-qualified Profile function check passes with
 actual0704hashMATCH. No pin/schema/source changed. First new-head Git push was
 remotely rejected500; old03a remained verified remote before normal push retry.
+
+Fresh5a6 only remainingPG failure is originalBrief audit9800 AuthFK timeout; all
+capacity/rootcases now pass remotely, not inferred from localproofs. Main98f036/
+a3b0df precise observationlease after original223 owner release applied only
+helperimport+same9800 SQL caller. No counterexample/matrix/green12 rerun or guard/
+oracle/5s/30s/count change. Ownhelper-only check accepts originalexternal names,
+observes syntheticdelay and preserves failing originalexit, owncleanupPASS;
+initialsyntheticcolumn setupFAIL retained. Singlebackend marked telemetry feeds
+normal currentheadCI, no rawquery/sourcebody/credentials added. Runtimecause still
+UNKNOWN pending remoteevidence. Details under server/ci-5a6-diagnostic.
