@@ -1,0 +1,30 @@
+▶ Turn source, actual erasure, permanent identities and original D2
+  ✔ exact fresh complete migration and fixed helpers (6171.585083ms)
+  ✔ affected capacity/absolute deadline repair (43112.432208ms)
+✔ Turn source, actual erasure, permanent identities and original D2 (49620.204917ms)
+ℹ BASELINE vpj58-turn-512340f0
+OWN_MIGRATION_APPLIED t
+ℹ SOURCE_CONFLICTS []
+ACTUAL_PREVIEW preview { textBodies: 1, taskDigests: 1, messageBodies: 0 } {
+  goals: 0,
+  tasks: 1,
+  turns: 1,
+  threads: 1,
+  capacity: 0,
+  messages: 0,
+  taskTurns: 1,
+  conversations: 0,
+  budgetAttempts: 0,
+  textDispatches: 0
+}
+ℹ ACTUAL_UTF8_1MB_AND_10001_ROOT_SNAPSHOT_FULL_FAILURE_ROLLBACK_PASS
+ℹ ORIGINAL_30S_DEADLINE_WAIT_START
+REAL_ABSOLUTE_30S_NO_RENEW_NO_EFFECT_RECOVERY_UNKNOWN_PASS
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 49657.034417
