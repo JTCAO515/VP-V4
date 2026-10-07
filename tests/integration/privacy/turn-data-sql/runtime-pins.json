@@ -2,9 +2,6 @@
   "kind": "fixed_reviewed_function_definitions",
   "ownCount": 43,
   "hashes": {
-    "auth.jwt()": "e7e6af0ba7017bef15c018d43308e755",
-    "auth.uid()": "fd72ccf973f1df8865db456f23e20f89",
-    "auth.role()": "b5ab292f6dfc8a84501504eb10b85605",
     "turn_data_private.sources_v1()": "9376b6ca5f147f49f934cc3078ce3885",
     "notification_private.hash(jsonb)": "56d037a72a2869b2a5a9fc529d7f4f65",
     "notification_private.uuid(jsonb)": "807ab1cc00b54bb5318e4e9166c80d1c",
@@ -110,5 +107,19 @@
     "conversation_data_private.operation_row_v1(conversation_data_private.operations_v1)": "10dc5c02bd14cb464df2b2d86eae92d2",
     "export_private.turn_commit_qualifies_v1(export_private.core_jobs_v1,jsonb,uuid,integer)": "bd5ceae00f678d59ced90bcc68c9d8ba",
     "export_private.record_turn_provenance_v1(export_private.core_jobs_v1,timestamp with time zone)": "a4c76fc759bc73342acf3c7586bc15c5"
+  },
+  "managed_auth": {
+    "auth.uid()": [
+      "fd72ccf973f1df8865db456f23e20f89",
+      "ea3b41bf29e2ad573067939329aa088e"
+    ],
+    "auth.role()": [
+      "b5ab292f6dfc8a84501504eb10b85605",
+      "8a3e05459e07e0633d43c6fba2a2cdf4"
+    ],
+    "auth.jwt()": [
+      "e7e6af0ba7017bef15c018d43308e755",
+      "20054548ba2003f61a6bcb472175700b"
+    ]
   }
 }
