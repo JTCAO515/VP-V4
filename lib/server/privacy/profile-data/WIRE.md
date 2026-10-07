@@ -323,3 +323,15 @@ ios equals0725; Result/Conversation increment source equalsmain. Affected regist
 This closes the earlier unmerged Result dependency; unique main-base Profile PR
 engineering follows, with exact final-head review/required CI separate from code
 completion and target/full239 acceptance.
+
+PR670 old3201 Quality/RLS/Ops/Native/PG FAIL retained and diagnosed individually.
+Precise lease-only fixture compatibility and own cleanup c34db52c joined this
+same-source repair, without changing any runtime guard/oracle or broadening a
+lane. Actual receipts and cause distinctions:
+artifacts/VPJ-58/profile-data/server/ci-fix-3201/README.md.
+Original TIME24 boundary was a real preview defect: dedicated TS/Native3bc174
+validators now preserve exact24:00:00 and1..6 zero fractions; invalid24-hour forms
+still fail closed. New actual source-time24 signedAuth1PASS/cleanup and Native1
+codec proof are necessary increments, not copied fixture-only confidence.
+No ProfileExport source/SQL or other unmerged domain consumed. Main must renew
+codecompletion/exactfinalformal/allCI on the fixed head; oldheadHOLD is not waived.

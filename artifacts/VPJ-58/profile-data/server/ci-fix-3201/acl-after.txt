@@ -1,0 +1,23 @@
+VP_DB_INTEGRATION_STACK {"project":"vp-db-ci-931cd0d8","migrations":147}
+▶ repository functions grant EXECUTE to anon and authenticated only through the reviewed allowlist
+  ✔ anon executes only the public research intake (41.557167ms)
+  ✔ authenticated executes exactly the reviewed caller list (40.918209ms)
+  ✔ selected-source export remains exactly service-only and source storage private (138.844667ms)
+  ✔ internal Trip content helpers are not callable by any API role (99.490042ms)
+  ✔ Memory create/Undo grants only authenticated, never anonymous or service role (64.727459ms)
+  ✔ result publication is internal and result tables have no direct API grants (192.464958ms)
+  ✔ five-result v2 exact grants keep publisher/export internal and helpers inaccessible (422.802833ms)
+  ✔ planning execution stays service-only with private, RLS-enabled storage (460.959083ms)
+  ✔ Memory create/Undo definer RPCs guard replay and read branches against replaced mobile sessions (32.294375ms)
+  ✔ default privileges give a new function no implicit anon, authenticated or PUBLIC EXECUTE (65.572791ms)
+  ✔ PostgREST rejects anonymous calls at the privilege layer and still serves the intake (35.50575ms)
+✔ repository functions grant EXECUTE to anon and authenticated only through the reviewed allowlist (1835.706792ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1878.325709
+Profile affected ACL owned stack cleanup PASS

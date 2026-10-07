@@ -1,0 +1,14 @@
+✔ explicit cross-trip consent is required; profile defaults are never task inputs; owner/session gates (6457.260541ms)
+✔ profile/Memory/session/source changes reject before original Trip write (6660.660542ms)
+✔ server context exact replay/current Profile; same operation changed body conflicts (6414.6875ms)
+✔ single original confirm preserves all fixed/unselected/date/window scope; exact historical retry/read (582.544709ms)
+✔ Profile change direct original confirm rolls back; malformed alternate support cannot bypass the original writer (526.839542ms)
+✔ late source drift in same original writer transaction rejects all writes at deferred guard (451.27ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 21446.043167

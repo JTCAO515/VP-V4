@@ -1,0 +1,25 @@
+✔ actual native and Web handlers qualify owner context, create local diff only, and no model/provider/Trip write (25.872083ms)
+✔ missing reservation reader returns real pending and no executable candidates (4.102416ms)
+✔ native post-source mobile epoch replacement returns no private candidates (5.615208ms)
+✔ selection returns original Proposal digest/diff; lost ACK preserves exact operation for receipt read (12.346167ms)
+✔ credential ambiguity, cross-Origin and caller provider data are rejected before actual recovery dispatch (0.704708ms)
+✔ nested transport consumes only its dedicated authoritative RPC; missing qualification never becomes a user report (2.955833ms)
+✔ synthetic qualified transport seam emits original local diff with separate source branch and detects reread drift (6.065459ms)
+✔ transport rejects foreign scope, caller policy and future requests before authoritative preparation (1.90525ms)
+✔ production engine call preserves proposal reference and absent place/reservation evidence stays pending (8.689ms)
+✔ qualified opening violation is explicit without shifting appointments or discarding user choice (0.223792ms)
+✔ local calendar mismatch and caller evidence/owner assertions cannot grant feasibility (0.413ms)
+✔ opaque Trip IDs and overlapping fixed appointments produce a result without moving either item (0.372125ms)
+✔ current opening receipt supports only its positive window; outside, expired and wrong exact context stay pending (1.030583ms)
+✔ production HTTP uses owned exact proposal and JWT reads; changed same-session epoch returns no result (21.459166ms)
+✔ explicit now route reuses Maps transport: exact time binds, references stay pending, future/default-off/identity/quota dispatch nothing (2.110792ms)
+✔ existing canonical route identity resolution requires exactly one valid mapping per selected canonical POI (0.153291ms)
+✔ saved Profile is a soft current reference; explicit needs prevail and missing or denied sources never default (0.154583ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 172.677583

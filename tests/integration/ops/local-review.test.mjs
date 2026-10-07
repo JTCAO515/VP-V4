@@ -56,7 +56,8 @@ test('real GoTrue Cookie → controlled Ops → separate reviewer → atomic aud
     const ok=await call(author);assert.equal(ok.status,200);assert.match(ok.cache,/no-store/);assert.equal(ok.body.data.actorId,author.id);
     assert.ok((await outsider.jwt.rpc('ops_review_workspace',{p_input:{action:'list'}})).error,'direct RPC also checks membership');
     assert.ok((await author.jwt.schema('knowledge_review_private').from('members').select('*')).error,'private schema inaccessible');
-    sql(`insert into public.user_profiles(owner_id,display_name) values('${outsider.id}','synthetic outsider') on conflict(owner_id) do update set display_name='synthetic outsider';`);
+    const saved=await outsider.jwt.rpc('save_user_profile',{p_display_name:'synthetic outsider',p_travel_pace:'balanced',p_locale:'zh',p_currency:'CNY',p_distance_unit:'kilometre',p_temperature_unit:'celsius',p_default_departure_time:'09:00:00'});
+    assert.equal(saved.error,null,'outsider prepares only its own Profile through the original guarded writer');
     const profiles=await author.jwt.from('user_profiles').select('owner_id');assert.equal(profiles.error,null);assert.ok(!profiles.data.some(r=>r.owner_id===outsider.id),'Ops membership does not grant customer reads');
   });
   const submitted=make('One synthetic candidate');

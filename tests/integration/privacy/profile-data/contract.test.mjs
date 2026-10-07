@@ -25,6 +25,12 @@ test('owner preview exposes all fields/pace history, exact fixed30s and declared
   assert.ok(decodeProfilePreview(preview(), c, actor, now + 1));
   assert.ok(decodeProfilePreview({ ...preview(), profile: { ...profile, displayName: '🐼'.repeat(80) } }, c, actor, now + 1), 'legacy SQL char_length permits 80 Unicode code points');
   assert.equal(decodeProfilePreview({ ...preview(), profile: { ...profile, displayName: '🐼'.repeat(81) } }, c, actor, now + 1), null);
+  for (const time of ['24:00:00', '24:00:00.0', '24:00:00.000000']) {
+    const actual = decodeProfilePreview({ ...preview(), profile: { ...profile, defaultDepartureTime: time } }, c, actor, now + 1);
+    assert.ok(actual); assert.equal(actual.profile.defaultDepartureTime, time, 'preserves the original legal SQL time without normalizing midnight');
+  }
+  for (const time of ['24:01:00', '24:00:01', '24:00:00.1', '24:00:00.000001', '24:00:00.0000000', '24:00', '25:00:00'])
+    assert.equal(decodeProfilePreview({ ...preview(), profile: { ...profile, defaultDepartureTime: time } }, c, actor, now + 1), null);
   assert.ok(decodeProfilePreview({ ...preview(), conflicts: ['ACTIVE_PROFILE_USE'], eligible: false }, c, actor, now + 1));
   for (const change of [{ ownerId: id(90) }, { profileId: id(90) }, { mobileEpoch: 4 }, { expiresAt: now + 60000 }, { allUserDataCompleted: true },
     { profile: { ...profile, paceRequest: { ...profile.paceRequest, ownerId: actor.ownerId } } }, { summary: { ...summary, hasPaceUndo: false } },

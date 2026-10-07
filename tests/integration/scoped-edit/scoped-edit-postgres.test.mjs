@@ -63,7 +63,7 @@ run('direct RPC refuses invalid scope/source/client fields, cross actor and cont
 run('profile/Memory/session/source changes reject before original Trip write',async()=>{
  for(const kind of ['profile','memory','session']){
  const a=await tripFixture(),c=await prepare(a),r=await submit(a,mutation(c));
- if(kind==='profile')await db(`insert into public.user_profiles(owner_id,travel_pace) values('${a.owner}','balanced');`);
+ if(kind==='profile')await db(`${claims(a)}set role authenticated;select public.save_user_profile(null,'balanced','zh','CNY','kilometre','celsius','09:00:00');`);
  if(kind==='memory')await db(`insert into public.memory_consents(id,owner_id,status) values('${uuid()}','${a.owner}','granted');`);
  if(kind==='session')await db(`update identity_private.mobile_accounts set epoch=epoch+1 where owner_id='${a.owner}';`);
  await denial(confirmProposalSQL(a,r),/SCOPED_CONFIRM_GUARD|SESSION/);assert.equal(await db(`select head_version from public.trips where id='${a.trip}';`),'0');
