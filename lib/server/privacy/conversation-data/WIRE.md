@@ -514,3 +514,16 @@ both new gated files classify to their real existing lanes; two-shard full union
 retained. Typecheck/lint/docs/diff evidence unchanged and reused. Final one-package
 engineering/source handoff can proceed; Main formal/new-head allCI/protected merge
 remain distinct from already recorded owned CODECOMPLETE.
+
+PR668 exact6eef CI exposed original producer concurrency regressions: postgres
+656/658 with2FAIL, NativeHTTP2 group7/8 with1FAIL, aggregateFAIL. Actual diagnostics
+and old FAIL preserved in CI-PG-FINDING.md and compressed artifacts. Sole SQL
+3b51e0ee minimum two executable guard changes integrated171636fa: ordinary
+writers share entity locks and preserve original serialization/errors; no new
+owner-wide producer lock. Eraser's original owner/exclusive entity/NOWAIT and
+permanent old/new guards/proof preserved. Fixed SQL/test/audit manifest matches.
+Sole SQL original producer PG3 and fence7 PASS/zeroSkip are distinct. Original
+Native publication case3 actual HTTP increment1 PASS/zeroSkip, loser409/23505
+artifact PK conflict, owned19c92927 cleanupPASS. Source tests/old assertions and
+error allowlist/timeouts unchanged; no green lane/matrix rerun locally. New final
+head is required for Main renewed formal/all applicable CI/protected merge.

@@ -62,3 +62,22 @@ PG outcomes. Source result/artifact guard takes the same broad owner34/entity
 NOWAIT path before original writer serialization. Current sole SQL consumed all
 three; TS records evidence and does not modify source/old PG fixtures or weaken
 oracles. Core regression requires source correction before protected merge.
+
+## Sole SQL correction and actual original HTTP confirmation
+
+Fixed increment3b51e0ee cherry-picked as171636fa, source/test/audit manifest MATCH.
+Only two executable guard changes: ordinary source writers no longer acquire
+owner34 exclusive TRY; entity TRY is shared for writers, exclusive for eraser.
+RPC original owner34, eraser exclusive entity/NOWAIT, parent key-share NOWAIT,
+D4 account barrier, permanent old/new fences and xid proof remain. No old guard,
+assertion, timeout or error allowlist changed. Sole SQL before887ab6 old2FAIL,
+after431f3d original Trip/chat+capacity3PASS/zeroSkip, affected fence7PASS/zeroSkip
+c2e3c6/12522ms+owned cleanup remain independently inspected evidence.
+
+Actual TS increment runs only original native-text case3 with an external temp
+runner copy narrowing Node test-name selection (repository runner/test unchanged).
+Result1PASS/zeroSkip12196ms; exact original concurrent publish loser409/code23505/
+duplicate result_artifacts_pkey, original oracle unchanged. Owned target19c92927
+cleanupPASS. Old exact6eef PG/Native2/aggregate FAIL retained. Existing green
+lanes not locally rerun. New final head requires Main renewed formal and all
+applicable CI/normal protected merge; no completion inferred from old green.
