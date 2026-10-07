@@ -47,8 +47,15 @@ import Testing
         #expect(raw["contentExportRight"] as? String == "not_granted")
         #expect(!String(decoding: data, as: UTF8.self).contains("DO NOT EXPORT"))
         #expect((try url.resourceValues(forKeys: [.isExcludedFromBackupKey])).isExcludedFromBackup == true)
-        let protection = try FileManager.default.attributesOfItem(atPath: url.path)[.protectionKey]
-        #expect((protection as? String) == FileProtectionType.complete.rawValue, "Actual protection attribute: \(String(describing: protection))")
+        let attributes = try FileManager.default.attributesOfItem(atPath: url.path)
+        #expect((attributes[.posixPermissions] as? NSNumber)?.intValue == 0o600)
+        #if targetEnvironment(simulator)
+        // Same capability boundary as NativeScreenshotInboxTests.testPhysicalFileProtectionAttribute.
+        // Never interpret the Simulator's nil protection attribute as a Complete protection grant.
+        print("VPJ58_GUIDE_FILE_PROTECTION_DEVICE_UNRUN: simulator does not report the physical protection attribute")
+        #else
+        #expect((attributes[.protectionKey] as? String) == FileProtectionType.complete.rawValue)
+        #endif
         let operation = try #require(store.exportOperationID)
         #expect(store.delivery == "prepared" && !store.handedOff(operation: operation, current: actor, completed: false, failed: false))
         #expect(store.delivery == "cancelled")
