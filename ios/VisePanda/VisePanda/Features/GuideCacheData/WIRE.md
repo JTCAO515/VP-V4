@@ -69,7 +69,7 @@ can rebind/read under current original permissions. Old async read/progress save
 cannot restore state; no permanent same-epoch ban, silent reload or old-permit rebase. External
 already-consumed audio and saved copies cannot be recalled. Server Guide forget remains its original flow.
 
-## Shared precise candidates — ungranted until Main lease
+## Shared precise candidates — applied under exact Main leases
 
 `Candidates/*.patch` and `pins.json` are exact before/after candidates for Store/View/Audio/
 ModuleView/PBX. No shared source is written before actual current-owner release and Main exact
@@ -84,3 +84,37 @@ Necessary new own source/clear/clock/actor/late callback/protected file/handoff 
 Guide/Audio compatibility, then actual App test build. Reuse unchanged Offline/Turn/Profile evidence.
 Local synthetic proof is not real Auth/server/provider/device voice/human/share/backup acceptance.
 Target phone, provider, fees, backup and actual system delivery are UNRUN until separately observed.
+
+## Owned implementation and actual validation — 2026-10-08
+
+All seven precise shared leases were applied with the pinned guard, each original before SHA
+and staged after SHA matched. Product source is immutable at `3e4cfc4e`; the only later source
+deltas fix the new test's hardware-protection capability interpretation. Current tested source is
+`d2802d30`. PBX JSON audit proves nine added objects, with every original object unchanged after
+removing only the new IDs from three parent arrays. Catalog stays 34 / 2026-10-07.11.
+
+App build, test build and ad-hoc signature verification PASS. Actual first run executed 24 cases:
+23 PASS / 1 FAIL / 0 skips, then stalled collecting failure diagnostics. Its owned Xcode process
+was interrupted (-15); the owned Simulator was deleted. Original Guide4 + GuideAudio3 + VoiceAudio9
+individual cases passed and their exact unchanged sources are reused. This is not a 24-case green run.
+
+The failure was protectionKey == Complete: a raw-value diagnostic retry still failed, with actual
+attribute nil (7 PASS / 1 FAIL / 0 skips; exit65). Current accepted repository precedent is
+NativeScreenshotInboxTests.testPhysicalFileProtectionAttribute: Simulator reports this hardware
+check UNRUN. The Guide test now strictly verifies real POSIX0600 and backup exclusion, metadata
+content boundaries, handoff outcome and physical cleanup on Simulator. Its physical-device branch
+still requires Complete. Simulator nil is never considered an encryption grant. The hardware
+attribute/lock-state check remains DEVICE_UNRUN, explicitly emitted in the actual log.
+
+Final affected own suite: 8 PASS / 0 FAIL / 0 skips, actual tests exit0 and xcresult Passed. Only
+this suite was rerun after the test-only capability correction; unchanged compatibility/App proof
+was reused. Xcode's supported `-collect-test-diagnostics never` avoids the observed failure-diagnostic
+collector stall; no assertion, actor, TTL, rights, CAS, timeout or production/Harness source changed.
+All three owned Simulators were shutdown/deleted. Evidence includes the original failures and exact
+14 production/test source hashes (10 production, 4 test files).
+
+Owned code is complete. Engineering integration is a separate independent Native PR after the
+related Turn/Profile/Offline dependencies enter main, with exact-head review, applicable CI and
+the original protected merge. No dependency draft or inclusion in already-reviewed Turn scope.
+Whole #239 remains open for other core gaps. Real system share, physical protection/phone, human
+UI acceptance, provider/fees and backup remain UNRUN; no production or target operation occurred.
