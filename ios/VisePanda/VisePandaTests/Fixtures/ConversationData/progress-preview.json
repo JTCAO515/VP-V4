@@ -1,0 +1,111 @@
+{
+  "data": {
+    "schemaVersion": "conversation-data/1",
+    "scope": "conversation-delete-progress/1",
+    "requestId": "00000000-0000-4000-8000-000000000013",
+    "rootKind": null,
+    "rootId": null,
+    "objectIds": [
+      "00000000-0000-4000-8000-000000000003"
+    ],
+    "ownerId": "00000000-0000-4000-8000-000000000001",
+    "sessionId": "00000000-0000-4000-8000-000000000002",
+    "mobileEpoch": 3,
+    "sourceDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "previewDigest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "sourceAuthorities": [
+      {
+        "policyId": "00000000-0000-4000-8000-000000000020",
+        "consentId": "00000000-0000-4000-8000-000000000021"
+      },
+      {
+        "policyId": "00000000-0000-4000-8000-000000000022",
+        "consentId": "00000000-0000-4000-8000-000000000023"
+      }
+    ],
+    "capturedAt": 1791246000000,
+    "expiresAt": 1791246030000,
+    "boundaries": {
+      "eraseFields": [
+        "selected_transient_preview_graph_conflicts_references"
+      ],
+      "redactFields": [],
+      "retained": [
+        "root_selection_actor_epoch_hash_time_operation_fences",
+        "immutable_minimal_decisions_and_entity_tombstones",
+        "original_source_policy_consent_authority_ids"
+      ],
+      "missing": [
+        "source_conversation_data_not_erased",
+        "unselected_operations",
+        "external_copies",
+        "backup_restore_and_old_device_acceptance_unverified"
+      ]
+    },
+    "allUserDataCompleted": false,
+    "kind": "preview",
+    "graph": {
+      "conversationIds": [],
+      "threadIds": [],
+      "turnIds": [],
+      "taskIds": [],
+      "goalIds": [],
+      "messageIds": [],
+      "artifactIds": []
+    },
+    "eraseCounts": {
+      "conversations": 0,
+      "goals": 0,
+      "messages": 0,
+      "threads": 0,
+      "turns": 0,
+      "events": 0,
+      "idempotency": 0,
+      "feedback": 0,
+      "artifacts": 0,
+      "revisions": 0,
+      "resultEvents": 0,
+      "sourceReceipts": 0,
+      "intakes": 0,
+      "intakeBindings": 0,
+      "planning": 0,
+      "actionReceipts": 0,
+      "observations": 0,
+      "modelDispatches": 0,
+      "checkpoints": 0,
+      "attemptBindings": 0,
+      "localJournals": 0,
+      "executionRuns": 0,
+      "callWindows": 0,
+      "collectorOrigins": 0,
+      "collectorOutputs": 0,
+      "resultClaims": 0,
+      "completionProofs": 0,
+      "completedReceipts": 0,
+      "grounded": 0,
+      "assistJobs": 0,
+      "work": 0,
+      "memoryConsumers": 0,
+      "goalLinks": 0
+    },
+    "redactCounts": {
+      "textBodies": 0,
+      "taskDigests": 0
+    },
+    "retainCounts": {
+      "tasks": 0,
+      "taskTurns": 0,
+      "capacity": 0,
+      "budgetAttempts": 0,
+      "textDispatches": 0,
+      "goalTripReceipts": 0
+    },
+    "retainedReferences": {
+      "tripIds": [],
+      "memoryIds": []
+    },
+    "conflicts": [],
+    "eligible": true,
+    "progressCount": 1
+  }
+}

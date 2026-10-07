@@ -1,0 +1,123 @@
+{
+  "data": {
+    "schemaVersion": "conversation-data/1",
+    "scope": "conversation-sensitive-data/1",
+    "requestId": "00000000-0000-4000-8000-000000000016",
+    "rootKind": "conversation",
+    "rootId": "00000000-0000-4000-8000-000000000017",
+    "objectIds": [],
+    "ownerId": "00000000-0000-4000-8000-000000000001",
+    "sessionId": "00000000-0000-4000-8000-000000000002",
+    "mobileEpoch": 3,
+    "sourceDigest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "previewDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "sourceAuthorities": [
+      {
+        "policyId": "00000000-0000-4000-8000-000000000020",
+        "consentId": "00000000-0000-4000-8000-000000000021"
+      }
+    ],
+    "capturedAt": 1791246000000,
+    "expiresAt": 1791246030000,
+    "boundaries": {
+      "eraseFields": [
+        "selected_conversation_goals_messages_intakes_source_receipts",
+        "exclusive_threads_turns_events_feedback",
+        "exclusive_results_all_revisions_events",
+        "closed_planning_grounded_worker_copies",
+        "selected_turn_memory_consumer_references"
+      ],
+      "redactFields": [
+        "selected_private_text_input_output_permanently_hidden",
+        "selected_task_goal_digest_fixed_deleted_marker"
+      ],
+      "retained": [
+        "confirmed_trip_content_history_proposals",
+        "explicit_memory_profiles_receipts_consents",
+        "other_conversations_and_domains",
+        "minimal_task_capacity_budget_dispatch_link_receipts",
+        "permanent_entity_identity_and_operation_fences",
+        "original_source_policy_consent_authority_ids"
+      ],
+      "missing": [
+        "applied_or_unapplied_proposal_source_requires_original_flow",
+        "shared_cross_scope_or_active_work_rejected",
+        "readiness_guide_scoped_edit_notification_brief_links_rejected",
+        "existing_core_export_copies_require_original_cleanup",
+        "provider_and_external_copies_not_erased",
+        "backup_restore_and_old_device_acceptance_unverified"
+      ]
+    },
+    "allUserDataCompleted": false,
+    "kind": "preview",
+    "graph": {
+      "conversationIds": [
+        "00000000-0000-4000-8000-000000000017"
+      ],
+      "threadIds": [],
+      "turnIds": [],
+      "taskIds": [],
+      "goalIds": [
+        "00000000-0000-4000-8000-000000000018"
+      ],
+      "messageIds": [
+        "00000000-0000-4000-8000-000000000019"
+      ],
+      "artifactIds": []
+    },
+    "eraseCounts": {
+      "conversations": 1,
+      "goals": 1,
+      "messages": 1,
+      "threads": 0,
+      "turns": 0,
+      "events": 0,
+      "idempotency": 0,
+      "feedback": 0,
+      "artifacts": 0,
+      "revisions": 0,
+      "resultEvents": 0,
+      "sourceReceipts": 0,
+      "intakes": 0,
+      "intakeBindings": 0,
+      "planning": 0,
+      "actionReceipts": 0,
+      "observations": 0,
+      "modelDispatches": 0,
+      "checkpoints": 0,
+      "attemptBindings": 0,
+      "localJournals": 0,
+      "executionRuns": 0,
+      "callWindows": 0,
+      "collectorOrigins": 0,
+      "collectorOutputs": 0,
+      "resultClaims": 0,
+      "completionProofs": 0,
+      "completedReceipts": 0,
+      "grounded": 0,
+      "assistJobs": 0,
+      "work": 0,
+      "memoryConsumers": 0,
+      "goalLinks": 0
+    },
+    "redactCounts": {
+      "textBodies": 0,
+      "taskDigests": 0
+    },
+    "retainCounts": {
+      "tasks": 0,
+      "taskTurns": 0,
+      "capacity": 0,
+      "budgetAttempts": 0,
+      "textDispatches": 0,
+      "goalTripReceipts": 0
+    },
+    "retainedReferences": {
+      "tripIds": [],
+      "memoryIds": []
+    },
+    "conflicts": [],
+    "eligible": true,
+    "progressCount": 0
+  }
+}

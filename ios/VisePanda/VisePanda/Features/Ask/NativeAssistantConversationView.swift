@@ -861,6 +861,22 @@ struct NativeAssistantConversationView: View {
             await reload()
             if let resume {await restoreNavigationSource(resume)}
         }
+        .onChange(of: session.conversationDataErasure?.id) { _, _ in
+            guard let erased = session.conversationDataErasure,
+                  (try? session.communitySafetyActor()) == erased.actor else { return }
+            // Fences a latest/list read even before it has selected a conversation ID.
+            refreshState.invalidate()
+            conversations.removeAll { erased.conversationIDs.contains($0.conversationId) }
+            let affected = [selection.conversationID, conversation?.conversationId, goalEntry.wrappedValue?.conversationID]
+                .compactMap { $0 }.contains { erased.conversationIDs.contains($0) }
+            if affected {
+                selection.select(nil); selectedSources.clear()
+                explicitGoalEntry = nil; goalEntry.wrappedValue = nil; entryConfirm = nil
+                entryBusy = false; entryFailed = false
+                fiveResultRequestGeneration = UUID(); fiveResultSelection = nil
+                clearConversationContext(); busy = false; planningBusy = false; tripBusy = false
+            }
+        }
         .onChange(of: selection.generation) { _, _ in selectedSources.clear();referencedResultUntil=0 }
         .onChange(of:session.memoryPreferences.profiles){_,rows in
             selectedMemoryBasis.removeAll{ref in !rows.contains(where:{$0.id==ref.id && $0.revision==ref.revision && $0.eligible})}

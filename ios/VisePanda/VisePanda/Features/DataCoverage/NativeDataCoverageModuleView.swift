@@ -1,9 +1,9 @@
 import SwiftUI
 
 private enum NativeDataCoverageDestination: Identifiable {
-    case archiveData, coverageProgress, core, memory, trip(NativeLinkedTripDeleteSelection), deviceExport, deviceDelete, material(NativeMaterialReferenceScope), notification(NativeNotificationDataScope)
+    case conversationData, archiveData, coverageProgress, core, memory, trip(NativeLinkedTripDeleteSelection), deviceExport, deviceDelete, material(NativeMaterialReferenceScope), notification(NativeNotificationDataScope)
     var id: String {
-        switch self { case .archiveData: "archive-data"; case .coverageProgress: "coverage-progress"; case .core: "core"; case .memory: "memory"; case .trip(let v): v.tripID; case .deviceExport: "device-export"; case .deviceDelete: "device-delete"; case .material(let scope): scope.rawValue; case .notification(let scope): scope.rawValue }
+        switch self { case .conversationData: "conversation-data"; case .archiveData: "archive-data"; case .coverageProgress: "coverage-progress"; case .core: "core"; case .memory: "memory"; case .trip(let v): v.tripID; case .deviceExport: "device-export"; case .deviceDelete: "device-delete"; case .material(let scope): scope.rawValue; case .notification(let scope): scope.rawValue }
     }
 }
 
@@ -77,6 +77,9 @@ struct NativeDataCoverageModuleView: View {
             .sheet(item: $destination) { target in
                 NavigationStack {
                     switch target {
+                    case .conversationData:
+                        NativeConversationDataConsumer(module: module, coverage: store, client: session.conversationDataClient,
+                            makeStore: { session.conversationDataStore(scope: $0) }, chinese: chinese)
                     case .archiveData: NativeArchiveDataConsumer(module: module, coverage: store, session: session, chinese: chinese)
                     case .coverageProgress: NativeCoverageProgressConsumer(module: module, coverage: store, session: session, chinese: chinese)
                     case .core: NativeDataCoverageCoreConsumer(coverage: store, session: session)
@@ -152,7 +155,13 @@ struct NativeDataCoverageModuleView: View {
             }
         } else { Section(t("导出缺项", "Export unavailable")) { Text(NativeDataCoverageCopy.missing(module.id, chinese: chinese)) } }
 
-        if module.deleteHandler == "memory" {
+        if NativeConversationDataWire.catalog(module) {
+            Section(t("本人会话敏感资料", "My conversation's sensitive data")) {
+                Button(t("选择本人会话或线程，核对完整关系并确认擦除", "Select my conversation or thread, review the complete graph and confirm erasure")) { destination = .conversationData }
+                    .disabled(!registered || actor == nil)
+                Text(t("已确认 Trip 与原显式 Memory 保留。存在共享、跨范围或在途工作时拒绝本次擦除；本出口预览进度也可独立选择清理。", "Confirmed Trips and original explicit Memory remain. Shared relations, cross-scope references and active work block this erasure. This exit's preview progress can be selected for separate cleanup."))
+            }
+        } else if module.deleteHandler == "memory" {
             Section { Button(t("在原界面选择记忆并确认完整派生范围", "Select Memory and confirm its whole derived scope in the original screen")) { destination = .memory } }.disabled(!registered || actor == nil)
         } else if module.deleteHandler == "trip" {
             tripSelection

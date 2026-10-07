@@ -1,0 +1,24 @@
+{
+  "data": {
+    "schemaVersion": "conversation-data/1",
+    "kind": "list",
+    "scope": "conversation-sensitive-data/1",
+    "rootKind": "thread",
+    "ownerId": "00000000-0000-4000-8000-000000000001",
+    "sessionId": "00000000-0000-4000-8000-000000000002",
+    "mobileEpoch": 3,
+    "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "capturedAt": 1791246000000,
+    "expiresAt": 1791246030000,
+    "items": [
+      {
+        "rootKind": "thread",
+        "rootId": "00000000-0000-4000-8000-000000000015",
+        "createdAt": 1791245999000
+      }
+    ],
+    "hasMore": false,
+    "nextCursor": null,
+    "allUserDataCompleted": false
+  }
+}

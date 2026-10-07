@@ -1,0 +1,529 @@
+# VPJ-58 independent conversation data — complete wire v1
+
+Fixed base `a1f70134fb6abf3672a94b956a4296b36c2c3d59`, independent WT/branch
+`vpj58-conversation-data-server-20261006`. Sole TS: this directory, own new API,
+contracts and integration. No runtime SQL here. Candidate slot `20261006060000`
+has no file in any available `VP-V5-worktrees/*/supabase/migrations` at audit.
+Main reviews this whole wire/source/lock boundary BEFORE assigning a NEW SQL
+owner. Shared conversation/Trip/worker/coverage/Session/PBX require exact lease.
+No target GRANT/role/key/real user deletion/provider/Storage/deploy/device authority.
+
+## Why the old entry cannot deliver this result
+
+`20261003190000_vpj36_linked_trip_delete_d3.sql:40` takes mandatory `p_trip`;
+its graph starts from that Trip's links/threads/turns/results, not a conversation.
+`:164` locks an owned Trip; `:173` preview/confirm takes tripId/head version;
+confirm queues `privacy_private.trip_deletions`, and the worker completes the
+selected Trip deletion. The TS `linked-trip/contract.ts` accepts only Trip preview
+and Trip confirmation. Catalog `conversations/results/turn/user_artifact` remains
+core-export-only. No existing independent conversation/thread erasure route found.
+Reusing that route would violate this accepted result's preserved Trip boundary.
+
+Reuse D3's bounded graph/owner34 lock/NOWAIT/fence/immutable receipt patterns,
+D4's source CAS and explicit retention, original text permanent hiding, original
+Native owner/session/epoch guards and request lifetime. This is one atomic bounded
+new source executor, no new generic privacy engine or hosted deletion worker.
+No automatic cancellation of active provider work. Existing original D3/D4 untouched.
+
+## Actual source graph and exact boundary
+
+IDs are sourced from real tables, never UI/current Trip guesses. One explicit
+root: owned `turn_private.assistant_conversations.id` OR `public.chat_threads.id`.
+List returns owner/current-consent eligible roots, no raw title/input/output.
+
+Conversation root: select ONLY its owner goals/messages; collect tasks/turns
+actually referenced by those messages/results/planning rows; collect task thread,
+all its service_task_turns and root/last text turns. Every entire selected thread
+and task must belong exclusively to this conversation. Foreign-owner rows,
+messages in another conversation sharing ANY selected task/turn/goal/thread,
+or parents/children outside selection -> SHARED_OR_FOREIGN_SCOPE or
+CROSS_SCOPE_REFERENCE. Never silently expand to another conversation.
+
+Thread root: owned standalone thread, all owned turns/text/tasks. If ANY
+assistant message/goal/conversation relates to it, reject cross scope and let
+the user explicitly select that conversation instead. Do not silently delete it.
+Core selection exact sorted arrays `GRAPH_KEYS` in contract.ts. Closure runs to a
+fixed point with sentinel/limit, not D3's two-pass assumption. Result artifacts
+start from selected input_message/goal/task/source_turn. Reverse source_result
+closure is allowed ONLY within selected conversation; external artifact or revision
+referencing selected artifact/turn (including content.comparisonRef.artifactId,
+content.sourceTurnId and source taskTurnId) -> CROSS_SCOPE_REFERENCE. Inspect
+assistant_message_source_receipts.input_sources/captured_sources artifact refs
+in unselected messages too. Never FK-cascade an unselected result.
+
+Actual delete mapping (all rows must have qualified owner, ALL parent identities
+inside core selection, exact PK order/hash in internal graph; no unknown columns
+silently ignored). All available versions/rows included, not current-only:
+
+| Counts key | Actual source and join |
+|---|---|
+| conversations/goals/messages | assistant_conversations.id; assistant_goals.conversation_id; assistant_messages.conversation_id/parent_message_id/task_id/turn_id |
+| threads/turns/events/idempotency/feedback | public.chat_threads.id; public.turns.thread_id; public.chat_turn_events,chat_turn_idempotency,turn_feedback via thread/turn |
+| artifacts/revisions/resultEvents | turn_private.result_artifacts (goal,input_message,task,source_result,source_turn); result_revisions.artifact_id/task_turn_id; result_events.artifact_id |
+| sourceReceipts/intakes/intakeBindings | assistant_message_source_receipts.message_id; assistant_travel_intakes.message_id/conversation_id/goal_id; planning_intake_bindings source_message_id/message_id/turn_id |
+| planning/actionReceipts/observations/modelDispatches | planning_comparisons turn/task/message/goal; planning_action_receipts turn/task/message; planning_observations turn/action; planning_model_dispatches turn/task |
+| checkpoints/attemptBindings/localJournals | planning_v2_place_checkpoints, planning_v2_model_attempt_bindings, planning_v2_model_local_journal turn/task |
+| executionRuns/callWindows | planning_v2_execution_runs turn/task; planning_v2_external_call_windows.execution_id |
+| collectorOrigins/collectorOutputs/resultClaims | planning_v2_collector_origins.execution_id; planning_v2_collector_outputs.execution_id; planning_v2_result_claims.execution_id |
+| completionProofs/completedReceipts | planning_v2_completion_proofs.turn_id; planning_v2_completed_receipts.turn_id |
+| grounded/assistJobs/work | grounded_turns.turn_id/task_id; grounded_ai_assist_jobs.turn_id; turn_private.work.turn_id |
+| memoryConsumers/goalLinks | public.memory_consumer_receipts.turn_id ONLY (never proposal consumer); assistant_goal_trip_links goal/conversation |
+
+Source definitions: 20260828153000/160000/194000; 20260910163426/171836,
+20260911200339/12190000/15200000/26132008/27021000/030000/040000/050000/060000;
+20261002200000; 20261003020000/040000/050000/060000/090000/150000.
+These suffixes refer to existing migration filenames, not new SQL slots.
+No independent user_artifact source table was found: results are result_artifacts,
+not proof of a new generic attachment store. Original core user_artifact export
+missing/denominator remains unchanged. This module does not fill five module rows.
+
+Closure includes ALL private text_content for selected thread/task root/last turns,
+not just currently visible public Turns. If a retained text row has no matching
+selected public Turn, or a selected task root/last/reference lies outside the
+closed graph, return SOURCE_UNSUPPORTED instead of ignoring its retained body.
+Terminal old text without a live selectable root stays under the existing core
+retained-source boundary; this task does not invent an orphan-data account sweep.
+
+Redact exact selected turn_private.text_content input to fixed
+`[deleted by scoped conversation request]`, output_kind/output_text=null,
+hidden_at permanently set. Original NOT NULL/retained FKs require this, not DELETE.
+Selected service_tasks.goal_digest -> SHA256 of same fixed marker, not user text.
+Retain finite tasks/taskTurns/capacity/budgetAttempts/textDispatches/goalTripReceipts
+counts, from service_tasks/service_task_turns/service_task_capacity,
+public.model_budget_attempts, text_dispatches, assistant_goal_trip_receipts.
+Capacity/Store grant/transaction/budget/settlement fields and financial ledger are
+never fabricated/deleted. Task identity/scope/policy/consent/root/last/idempotency
+metadata remains with permanently hidden text and permanent identity fences.
+Original link receipts have no conversation FK and remain minimal historical
+reference/operation proof. Show this retention; do not claim complete row removal.
+
+Preserve original explicit Memory, receipts, consents and Trip content, archives,
+version snapshots/events/proposals/idempotency/financial/Store records. Existing
+Memory schema stores independent summary/receipt, no source Turn FK to erase.
+Selected turn consumer references may be deleted; Memory identity remains.
+Preview retainedReferences={tripIds,memoryIds} contains ONLY qualified owner IDs
+from selected goal links/link receipts/result Trip refs/turn.thread Trip refs and
+selected consumer/result memory_basis refs, never foreign IDs/text. Trip refs
+do not seed other chats or whole-Trip erase. Queued original deletion -> blocker.
+
+Explicit blockers (closed `CONFLICTS` order) before any effects:
+- ACTIVE_WORK: nonterminal selected Turn; queued/leased work even lease expired;
+  grounded_ai_assist_jobs queued/running; planning not terminal; external call
+  window.calls>0 without original completion proof, collector attempted_at with
+  no response_buffered_at, unknown_at set; local journal without settled completion;
+  budget reserved/dispatched/pending; capacity reserved. No provider cancel/refund.
+- PROPOSAL_REFERENCE: selected result_artifacts.proposal_id or result content
+  proposal_preview/change-proposal reference, and original Turn proposal payload
+  references. Applied AND unapplied proposals use original accepted flow; do not
+  delete confirmation/history or first erase source and repair after.
+- READINESS_REFERENCE: readiness_private.scopes_v1 any conversation/goal/message/
+  thread/root_turn/task_turn/task match (20261004000000) and its operations.
+- GUIDE_REFERENCE: guide_private.bindings_v1 selected turn/task/thread/parent_turn
+  (20261005080000); preserve uses/progress/rights domain rather than FK cascade.
+- SCOPED_EDIT_REFERENCE: scoped_edit_private.work_v1 turn/task/source JSON and
+  requests_v1/binding related selected identities (20261005020000).
+- NOTIFICATION_REFERENCE: notification_private.reminders.source or watches.source
+  selected task/artifact; dismissals.source_id of selected result/task. Original
+  outbox/watch/attempt domain retained; do not cancel real APNs/provider work.
+- BRIEF_REFERENCE: service_brief_private.briefs.sources or previews.sources
+  intakeMessageId of selected assistant_travel_intakes/message (20261005060000).
+  Check retained operations.request_bytes and receipt references too. Brief's
+  selected intake field reader is a real separate source; preserve recipient/grant
+  domain and refuse until original Brief flow handles it, including stale previews.
+- Reservation `valid_source_v1` defines artifact_reference, BUT actual records
+  constrain source.kind=user_reported and the RPC explicitly rejects artifact_reference
+  (20261004020000:79,138). It is NOT an actual result dependency or supported
+  new module. Preserve the independent order flow; do not count its unused
+  validator shape as an existing source. Unexpected unsupported stored relation
+  still fails SOURCE_UNSUPPORTED, never invented reservation cascade/cleanup.
+- CORE_EXPORT_COPY: ANY owner core_artifacts_v1 row (including expired ciphertext)
+  or queued/running core_jobs_v1/active unexpired lease. Encrypted mixed-scope
+  artifacts have no exact source graph: refuse until original cleanup; never
+  invalidate all owner exports as a guessed conversation relationship.
+- OTHER_DELETE_PENDING: selected old D3/D4 entity/reference fence or queued Trip
+  deletion affecting referenced Trip; original owner controls original flow.
+- SOURCE_UNSUPPORTED: unresolved JSON reference, unknown FK/reverse edge/table
+  registry drift or unreadable source; no fabricated empty relation.
+  SQL owner finding `b5a1df00` confirms source-impact historical_answer references
+  in ALL SIX knowledge_review_private.source_impact_* tables: sets.graph_snapshot
+  (direct historical_answer entries AND wrapped .target), items.target,
+  pages.receipt, outbox through set/item and copied receipt references,
+  projections.target, review_requests through projection/delivery and copies.
+  ANY matching actual historical_answer selected-Turn relation, including stale/
+  terminal copies, is blocked before redaction and included in source CAS/row cap.
+  Feedback contains no foreign set/item/delivery IDs or body. Text-hide cleanup can otherwise
+  invalidate a whole mixed set and stale unselected deliveries while taking
+  blocking locks. Preserve that domain, never implicitly invoke its cleanup or
+  claim outside NOWAIT covers it. Permanent known-target guards must reject later
+  old/fenced historical_answer references, including root sets/items/projections
+  and copied receipts, checking BOTH old and new parent/target identities on moves.
+  Original impact functions/business remain unchanged. Existing SOURCE_UNSUPPORTED
+  covers this finding without a new handler, module denominator or domain erase.
+  Actual original-trigger
+  reproduction/rollback3 PASS is separate SQL-source-audit evidence, not this
+  module's executor or Auth evidence. See SQL owner's SOURCE-AUDIT.md.
+
+Internal graph hashes whole actual row JSON (all fields) and PK, selected and
+reverse-edge/blocked relation inventories, live policy/consent state and retained
+Trip/Memory versions/statuses. No bodies in stored preview/return/fence/receipt.
+4100 selected+derived rows maximum, per-table10000 sentinel and whole wrapper1MB.
+Overflow -> SCOPE_TOO_LARGE with qualified root only or empty graph; no truncation
+pretending executable. Authorized blocker feedback never includes foreign IDs.
+
+## Transport/closed commands and payloads (sole TS contract)
+
+POST `/api/privacy/native/v1/conversation-data`, JSON bearer ordinary Native owner;
+reject cookie/origin/query/other method. `{data:payload}` or `{error:{code}}`;
+private,no-store/Vary Authorization/nosniff. RPC
+`privacy_conversation_data_v1(p_action text,p_input_bytes text,p_expected_epoch bigint)`.
+ORIGINAL raw bytes, no service role/new credential. DATA_CONVERSATION_DATA_LOCAL=1
+and config.environment absent AND VERCEL_ENV absent. Default disabled/ungranted.
+
+Scopes and selection S exact={scope,requestId,rootKind,rootId,objectIds}:
+- conversation-sensitive-data/1: rootKind conversation|thread; lower-case UUID
+  rootId from actual list; objectIds=[]. One selected root only.
+- conversation-delete-progress/1: rootKind/rootId=null;1..20 strictly sorted
+  lower-case operation UUID objectIds, excluding new requestId.
+
+Commands exact (no additional fields):
+- list={action:"list",scope,rootKind,cursor:null|{sourceDigest,afterId},limit:20}.
+- preview={action:"preview",...S}.
+- erase={action:"erase",...S,sourceDigest,previewDigest,confirmed:true}.
+- recover={action:"recover",...S,mutationBytes:<ORIGINAL erase bytes>}.
+Only original selection/requestId/source/preview/confirmation bytes; no automatic
+erase replay, new op, parsed/reserialized bytes or converted export. UTF8 command
+8192; recover outer16384. Recover is read-only, never starts an erase.
+
+Binding B exact={schemaVersion:"conversation-data/1",...S,ownerId,sessionId,
+mobileEpoch,sourceDigest,previewDigest,sourceAuthorities,capturedAt,expiresAt,boundaries,
+allUserDataCompleted:false}. Digests lower64hex; time epoch ms; expiresAt exactly
+capturedAt+30000, original fixed clock never renewed on retry.
+boundaries EXACT CONVERSATION_BOUNDARIES from contract.ts on ALL preview/receipts;
+Native renders eraseFields/redactFields/retained/missing before confirm.
+
+Mainc6548c closed authority refinement: sourceAuthorities is a FLAT array of
+0..100 exact {policyId,consentId} lower-case UUID pairs, deduplicated and sorted
+by policyId then consentId. These are ORIGINAL actual owned source IDs, not hash/
+policy summary, fabricated task, new consent or current global preference. A
+conversation root requires at least its real conversation policy/consent pair;
+selected message/text/task/dispatch/planning pairs come from their actual rows.
+Every pair must match the actual source owner's current effective policy and
+the SAME original consent ID; any revoked/expired/replaced/unqualified pair fails
+closed. Source digest/CAS/preview digest covers these IDs and actual authority
+state; the full source inventory and blockers remain row-bounded. More than100
+pairs fails capacity, never truncates authority. An empty standalone thread with
+no policy-bearing source legitimately has []; no invented policy or task.
+
+Progress sourceAuthorities is the bounded sorted UNION of the original pairs in
+the explicitly selected operation rows, which remain fully inventoried. This
+does not recursively embed operations/receipts. Erase and recovery requalify all
+original pairs. An all-empty source union stays []; an arbitrary new consent
+cannot replace any selected original authority. Progress metadata/list exposes
+every retained original pair as minimal authority metadata, never source bodies.
+Original actor/session/epoch/reauth must precede any feedback as before.
+
+Terminal sensitive receipt, including taskless record-only conversation, rechecks
+its STORED sourceAuthorities under original owner/session/epoch/reauth before
+returning any original-bytes ACK, even beyond preview TTL. It cannot depend on
+deleted conversation rows or nonexistent retained task/text. Current policy or
+consent failure withholds the receipt, rather than loosening terminal authority.
+Recover remains read-only; commands contain NO caller-supplied sourceAuthorities.
+Preview/receipt B and each operation row return the exact retained array. D and
+unknown shape stay unchanged; list sensitive root rows stay unchanged. Native
+uses the closed new B/inventory decoder; SQL performs actual requalification.
+
+Preview exact={...B,kind:"preview",graph,eraseCounts,redactCounts,retainCounts,
+retainedReferences:{tripIds,memoryIds},conflicts,eligible,progressCount}.
+graph exact GRAPH_KEYS sorted unique UUID arrays. Exact count keys are
+ERASED_KEYS/REDACTED_KEYS/RETAINED_KEYS, natural0..10000. Eligible iff conflicts=[];
+eligible core counts equal graph lengths; counts all actual derived rows.
+Sensitive scope progressCount0. Progress scope empty graph/all source counts0,
+progressCount=objectIds.length; retainedReferences empty. Never body in preview.
+
+Receipt exact={...B,kind:"receipt",state:"erased",decision:D}.
+D exact={requestDigest,decidedAt,graph,erasedCounts,redactedCounts,retainedCounts,
+clearedPreviews,retainedFences,sourceConversation,sourceTrip,explicitMemory,externalCopies}.
+Immutable requestDigest=SHA256 original mutation bytes; capturedAt<=decidedAt<
+expiresAt; decidedAt<=now. Actual count effects equal the originally planned
+counts or rollback, graph original fence selection; NOT recomputed on recovery.
+Sensitive scope: sourceConversation="erased", clearedPreviews0, retainedFences=
+sum core graph array lengths. Progress: sourceConversation="not_modified",
+empty graph/all source counts0, retainedFences=selected count, clearedPreviews
+actual0..selected count. Always sourceTrip/explicitMemory="not_modified",
+externalCopies="not_erased", allUserDataCompleted=false. No queued/completed
+claim without commit; no all-account completion badge.
+
+Unknown exact={schemaVersion,kind:"unknown",...S,ownerId,sessionId,mobileEpoch,
+requestDigest,allUserDataCompleted:false}. Never erased. Returned only on exact
+recover with no committed decision. Same bytes remain pending. A committed
+decision may recover after original TTL ONLY under original current actor/
+session/epoch+reauth; original digests/time/decision, not current-source replacement.
+
+List exact={schemaVersion,kind:"list",scope,rootKind,ownerId,sessionId,mobileEpoch,
+sourceDigest,capturedAt,expiresAt,items,hasMore,nextCursor,allUserDataCompleted:false}.
+Sensitive items={rootKind,rootId,createdAt}, no body/currentTrip heuristic.
+Progress items are COMPLETE finite operation rows below (not receipt nesting).
+Owner inventory10000+sentinel/whole1MB, sourceDigest of all scoped rows, UUID order,
+20/page, anchored existing afterId with same digest, no skipped/truncated inventory.
+
+## Locks, source CAS, erasure and permanent anti-revival
+
+Reuse owner advisory hash(owner,34); original live auth.users/auth.sessions/mobile
+account guard + epoch + reauth<=5min BEFORE source feedback, list, recovery or
+cleanup. Lock account before graph; selected service-task identities advisory in
+UUID order (original submit_service_task_turn), selected tasks, owned referenced
+Trips NOWAIT, selected conversation then thread/Turn/goal/message/artifact rows
+UUID order NOWAIT. Source policy/consent/Memory and derived rows sorted NOWAIT;
+request row last. All later locks NOWAIT so opposite original writer order fails
+closed, not hangs. Fresh original mobile session and live text/planning policy/
+consent qualify every selected source before returning its metadata.
+
+Preview stores sourceDigest+content-free graph/relations/counts and fixed deadline.
+Erase obtains same locks, rebuilds entire source graph/blocked reverse edges,
+checks exact original graph/digests/no conflicts/absolute clock and actual counts;
+stores transaction-bound erasure proof (private, no caller-set GUC authority),
+permanent identity fences and minimal immutable decision in ONE transaction.
+Delete derived leaves and explicitly selected parent edges, never rely on
+unqualified cascade; delete message leaves and reject cycles. Keep task/text
+retained FKs. Fresh owner/session/epoch/consent/clock AFTER last hash and AFTER
+effects and before return; failure rolls back every body/fence/receipt effect.
+
+New permanent fences use original D3 pattern but separate scope/erase proof;
+do NOT invoke D3 erase_authority requiring queued Trip/service worker. Cover
+core identities including conversation (missing in old D3), every mapped source
+and old/new parent edges, source_result,source_turn,source_message,parent_turn,
+input_message,goal_turn,last_turn,execution_id joins and known nested JSON refs.
+Before-insert/update guards lock existing source parents where present and check
+permanent identity fences even if source rows were deleted/recreated; BEFORE
+UPDATE checks BOTH old and new parents. Old callback/producer request cannot
+move away from fenced parent or create new artifact/message from erased source.
+Only this RPC's exact current transaction/source proof allows its own erase/
+redaction. Original immutable-source-receipt update guard remains (delete only).
+Never relax original D3/D4/session/worker/security guards or raw content visibility.
+Old work completion/read functions require selected rows/current leases; deleted
+work and permanently hidden text cannot accept late completion. Add mapped-table
+identity guards rather than rewriting shared worker TS. Core export in-flight/
+copy blocker plus owner lock prevents a previously authorized mixed copy from
+committing after deletion; never enroll/reset old jobs into a new export scope.
+Restore cannot reinsert fenced root/entity or publish its old references; testing
+this on owned local disposable fixture is separate from real backup/device ALL2.
+
+## New state's own exit: complete minimal inventory, no recursive omissions
+
+Private operation row EXACT persisted fields=validOperationRow protocol keys:
+requestId,ownerId,sessionId,mobileEpoch,scope,rootKind,rootId,objectIds,sourceDigest,
+previewDigest,sourceAuthorities,capturedAt,expiresAt,requestDigest,state,previewErased,graph,
+eraseCounts,redactCounts,retainCounts,retainedReferences,conflicts,decision.
+No raw bytes, source bodies/file/page payload. State previewed|erased. Decision
+is finite D, never full B/another operation/another receipt. RLS/private API table
+default denied. Owner FK original account deletion semantics; original sessionId
+is inert retained UUID, not cascading session FK (permanent anti-revival must
+survive session deletion). Current operation access still exact live session/
+epoch; owner inventory can discover old session metadata under new live authority.
+
+Erased sensitive operations clear transient graph/counts/refs/conflicts to null,
+previewErased=true, retain immutable D, sourceAuthorities and source/root/selection/time/hash fences.
+Progress erase clears selected transient previews (including expired/erased ops),
+sets previewErased=true, retains original D and all binding/selection/hash/time
+fences AND original sourceAuthorities; stores its own finite D and finite union
+sourceAuthorities. No deleting tombstones/op identity or authority IDs. Its own
+operation is discovered by the same progress list and can be selected later.
+Progress CAS excludes its current requestId; no recursive self-enrollment.
+Selected tombstone inventory reconstructed from D.graph and op requestId; no
+second hidden fence inventory. Capacity10000 before insert; no cleanup bypass on
+unauthenticated list. Reuse expired/replaced operation key cannot renew or mutate.
+
+## Shared registration requested, not yet applied
+
+No new generic account/module row. Under precise Main/prior-owner lease add ONE
+`conversation_data` handler to original conversations module while preserving
+existing core export. Keep results/turn/user_artifact core export/delete missing
+entries; this scoped graph covers exclusive referenced results/Turns only.
+Use exact module selection command, operationId=requestId; tripId must null,
+validate original actor/session/epoch and original bytes/source/preview on outcome.
+Root metadata progress uses same module/executor, not a second engine/denominator.
+Native own ConversationData consumer uses sole wire. Native/coverage/Session/PBX
+shared registration ONLY after lease; untouched in this initial package.
+Candidate catalog version is `.7` after existing archive `.6`, same34 modules:
+only conversations descriptor changes, exportHandler remains original core.
+TS shared hunks: coverage/catalog import+single descriptor/version,
+coverage/contract one closed handler branch, coverage/registry direct call/fixed
+path/recover body, coverage/outcomes one original classifier branch. No old Trip/
+linkedTrip/Memory/export worker rewrite. Ungated own TS contract test is already
+auto-classified test:integration by original registry; SQL/Auth lane additions
+wait for actual NEW SQL/Auth files and precise Main CI lease, not fictitious paths.
+`REGISTRATION.patch` contains exactly those FOUR TS shared-file hunks against the
+fixed base. `git apply --check` PASS; not applied. It preserves all existing
+handler branches/core export/Trip consumers and denominator34. This patch is the
+concrete lease-review object; no second source writer or new supervising matrix.
+
+Error allowlist is `errors` in http.ts; authority401, policy/forbidden403, input400,
+others503. Once mutation dispatched any lost/malformed/mismatched ACK ->
+CONVERSATION_ACK_UNKNOWN503, preserve same bytes. HTTP no retry, no secret logs.
+No runtime source/PGAuth claim from TypeScript fixtures. Source executor/new SQL,
+mapped permanent guards/shared registration and actual fixture contracts must
+join before scopeComplete; whole239/fullmissing/ALL2 remains Open.
+
+## Initial fixed TS delivery and pending owner action
+
+Own contract/decoder/HTTP/API/coverage adapter written on the fixed base. Actual
+`node --experimental-strip-types --test tests/integration/privacy/conversation-data/contract.test.mjs`:
+7 PASS,0 FAIL/skip. `pnpm typecheck`, `pnpm lint`, `pnpm docs:check`, diff check PASS.
+These are TS protocol/authority/byte-recovery negatives, NOT actual PostgreSQL
+graph erasure, Auth HTTP, Native file/cache, provider or old-device evidence.
+No shared source files edited. No runtime SQL/target action performed.
+Main0e681e approved this whole source wire after unused060000 audit; NEW official
+SQL owner `01a10e96-c9b2-7fc2-9eb2-d95b8145fcb9` is assigned sole060000/own PG
+contracts. Creation is not executed SQL/source proof. Shared prior-owner release/
+lease for the listed hunks remains pending. Scope remains in development until
+actual source/execution/fence/receipt and registration join.
+
+Sole producer `tests/integration/privacy/conversation-data/emit-native-fixtures.mjs`
+initially ran and wrote `/tmp/vpj58-conversation-data-native-fixtures`: 9 envelopes
+plus commands.json, all self-checked against this TS parser/decoder. Synthetic
+only, no PG/Auth/provider/device claim. Receipt recovery clock deliberately passes
+original TTL; original eraseBytes/progressEraseBytes include intentional whitespace.
+Native must consume THESE envelopes and original bytes. Final conflict order and
+boundary arrays include actual BRIEF_REFERENCE; reservation artifact_reference
+remains unused/rejected, not a real dependency. Final eligible graph/decision
+capacity includes sum erased+retained+textBodies<=4100, not just core ID arrays.
+Mainc6548c refinement changes ONLY B/operation sourceAuthorities and retained
+boundary arrays, with affected decoder/source/receipt fixtures. Commands and
+HTTP dispatch/original byte digest/unknown/D shapes remain unchanged. Earlier
+7-test evidence is retained; this refinement's affected result is recorded below.
+
+Mainc6548c fixed-authority TS update: affected contract8 PASS/zeroSkip, typecheck,
+lint/docs/diff checks PASS. Sole producer reran to SAME output path with11
+envelopes plus commands.json; new taskless-preview/taskless-receipt have no fake
+task/text yet retain explicit original authority IDs and recover past TTL.
+Preview/receipt B and full progress operation inventory include sourceAuthorities;
+retained array includes original_source_policy_consent_authority_ids in both scopes.
+Native must synchronize these closed keys, ordered arrays and minimal-retention
+copy. SQL must use the same fixed wire, requalify original pairs on terminal ACK,
+and reject all actual source-impact references/copies before redaction. No runtime
+SQL/Auth success, shared lease or scopeComplete inferred from these TS checks.
+This is necessary closure of the frozen ConversationData task, not a new scope.
+
+## Frozen integrator checkpoint after fixed Native delivery
+
+Normal fresh main `76129df3` and fixed Native `891980aa` merged into sole TS;
+combined source checkpoint `03deed0d`. Exact Git source comparison: entire ios
+tree equals Native891; own TS/API/contracts/producer equals1b169b22. No dirty SQL
+copied. All12 producer JSON files (11 envelopes+commands) byte/hash-equal the
+fixed Native ConversationData fixtures. Existing TS registration patch still
+passes apply-check against the fresh main, but its four shared hunks remain
+unapplied pending original-owner release/Main precise lease.
+
+Native r3 actual logs read at owner WT artifacts/native-conversation-data/
+ask-invalidation-r3: own Swift Testing8 PASS separately from original Ask XCTest23
+(persistence10/state13), test/build/signing/owned-Simulator boot/shutdown/delete
+exit0. Metadata baseline12ba plus tested working changes was then fixed as891;
+this is reused source evidence, not a new postmerge full suite or target Auth.
+Earlier r1 missing DEVELOPER_DIR preflight and r2 throwing #require compile FAIL
+remain separate. No unchanged Swift tests rerun for integration bookkeeping.
+
+Final catalog fixture gap retained: Native catalog constant is.7 while shared
+TS catalog/registry is.6 until precise registration. Old Native
+Fixtures/DataCoverage/coverage-producer.json,coverage-cancelled.json and
+Fixtures/NotificationData/native-catalog-v4.json, plus the TS notification catalog
+fixture, still carry.6. Final alignment needs only catalog metadata/conversations
+descriptor and outer coverage request/result version/digest, preserving original
+inner bytes/receipt proofs/other33 descriptors/oracles under precise lease.
+No SQL060000/PG/Auth source/executor acceptance or scopeComplete yet. Final sole
+package still requires actual SQL fixed integration, lease registration/affected
+fixture alignment, normal fresh-main/source equality/new-head formal/all required
+CI/protected gates. Whole239/fullmissing/ALL2 remains Open; no new task or scope.
+
+## Granted caller/catalog lease applied (same frozen task)
+
+Main's precise lease, after original Archive TS7e5/Native326 clean/no in-flight/
+planned/successor release, applied ONLY the four originally reviewed TS shared
+files (catalog/contract/registry/outcomes) and four named catalog fixtures.
+Catalog.7, same34 modules; conversations descriptor is sole new scoped delete,
+core export preserved. Registry uses the fixed direct path, closed selection,
+exact-byte recovery and original source classifier. Applied patch file retired.
+No original other33/Archive/Trip business changed and no whole-WT copy.
+
+Fixture edit asserts independently verified every other33 descriptor in original
+order, original inner commandBytes and all result/receipt/cancellation fields
+byte/value-equal. Only outer catalog version/digest and conversations metadata
+changed. Actual TS consumers accept producer/cancelled and still reject tampered
+promotion. Four fixture changes inspected in actual diff, all old assertions kept.
+
+Affected TS25 PASS/0skip: own9 (includes actual registered preview/erase/recovery
+dispatch and original core preservation) plus previous coverage/notification16.
+Typecheck/lint/docs/diff checks PASS. Native lease-r1 at artifacts/VPJ-58/
+conversation-data/native-catalog-lease-r1: original NativeDataCoverageTests and
+NativeNotificationDataCatalogTests ONLY; Swift Testing12 PASS in2 suites, XCTest
+0 reported separately, no zero-test pass claim. Build/test-build/signature and
+owned-Simulator boot/shutdown/delete all exit0, simulatorDeleted=true. Existing
+Native8+Ask23 r3 evidence reused unchanged; no expanded matrix. Harness metadata
+baseline e705 plus precisely leased working source; fixed source follows commit.
+
+This closes the caller/catalog fixture gap, not SQL execution/PG/Auth. Original
+SQL060000 full graph/CAS/authority/fences/receipt owner still must supply fixed
+source and actual PG/Auth evidence for sole package integration. No target
+activation or premature scopeComplete/PR merge. Prior failures remain recorded.
+
+## Complete source/consumer/Auth closeout, 2026-10-07
+
+Fixed whole SQL c645820c integrated over its original6bf ancestry; minimal
+pagination fix39684776 cherry-picked as18937e95. Migration SHA256
+4ee23f33522c16f85a57ca8866e8f2d00d1673ab0da28b2f55cf27d5a14b6ebc matches
+the actual pagination proof/manifest. Both SQL/test/audit source trees match the
+sole SQL fixed checkpoint; original source-catalog snapshot preserved. No old
+failed writer resumed and no dirty partial source copied.
+
+Signed disposable Auth r3 ACTUAL1 PASS/0skip,9888ms, cleanup3634d70c PASS:
+real GoTrue/JWT/native session -> signed PG preview -> actual TS decoder ->
+registered coverage erasure -> exact raw-byte receipt/recovery -> own progress
+preview/erase/complete inventory. Full confirmed Trip/snapshots/events/proposals
+and explicit Memory/receipts unchanged. Original producer cannot restore old
+root; wrong epoch/foreign/no credential/changed bytes denied; uncommitted actual
+preview's recover remains unknown; original revoked consent withholds terminal
+ACK; reauth precedes metadata; default RPC denial and fixture-only grant/revoke
+observed. One owned test, not a synthetic signed-identity claim.
+
+Auth r1/r2 FAIL+cleanup PASS retained. Whole progress list used wrong original
+root key despite individually valid rows; sole SQL corrected scope-specific key.
+No TS/client sorting or relaxed oracle. Own regression uses deterministic IDs.
+Next dev generated AGENTS/next-env changes were verified tooling-only and only
+those local deltas restored after owned process shutdown; no unrelated governance.
+
+Evidence stays separate: prior complete SQL11/30s/TripMemory; mixed-copy PG6;
+pagination PG3; D4 seven; separately reported D3 six; own TS9 and original
+coverage/notification16; Native8/Ask23; affected Native catalog12; signedAuth1.
+No handoff-only rerun of unaffected matrices. Main full core review and comment
+6033841844 record owned DEVELOPMENT CODECOMPLETE; whole239/fullmissing/ALL2 Open,
+target grants/credentials/provider/Storage/deploy/real data/device/backup UNRUN.
+
+Original sole integrator one-PR engineering remains. CI-REGISTRATION.patch is
+three appended registrations for actual SQL source-audit and signed Auth files in
+existing lanes/base63120; no new lane, execution helpers, matrix, timeout or skip
+waiver. Temporary local application/classification+governance11 PASS was checked,
+then reversed pending Main's explicit original-registry-owner release/lease;
+script source currently untouched. Apply only after grant, retire patch and renew
+exact final-head source/formal/all required CI/protected review/merge with Main.
+
+Main60e3af final precise CI lease received after original execution keeper's
+explicit clean/no in-flight/planned/successor release. ONLY the three appended
+registrations applied; patch retired. Original executionMatrix/executionSteps/
+CLI/two shards/LANES/classification/30m/strict summaries/zeroSkip/aggregate and
+Archive63240 untouched. Required registration governance11 PASS/zeroSkip and
+both new gated files classify to their real existing lanes; two-shard full union
+retained. Typecheck/lint/docs/diff evidence unchanged and reused. Final one-package
+engineering/source handoff can proceed; Main formal/new-head allCI/protected merge
+remain distinct from already recorded owned CODECOMPLETE.
+
+PR668 exact6eef CI exposed original producer concurrency regressions: postgres
+656/658 with2FAIL, NativeHTTP2 group7/8 with1FAIL, aggregateFAIL. Actual diagnostics
+and old FAIL preserved in CI-PG-FINDING.md and compressed artifacts. Sole SQL
+3b51e0ee minimum two executable guard changes integrated171636fa: ordinary
+writers share entity locks and preserve original serialization/errors; no new
+owner-wide producer lock. Eraser's original owner/exclusive entity/NOWAIT and
+permanent old/new guards/proof preserved. Fixed SQL/test/audit manifest matches.
+Sole SQL original producer PG3 and fence7 PASS/zeroSkip are distinct. Original
+Native publication case3 actual HTTP increment1 PASS/zeroSkip, loser409/23505
+artifact PK conflict, owned19c92927 cleanupPASS. Source tests/old assertions and
+error allowlist/timeouts unchanged; no green lane/matrix rerun locally. New final
+head is required for Main renewed formal/all applicable CI/protected merge.
