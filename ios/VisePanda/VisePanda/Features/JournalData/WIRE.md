@@ -105,3 +105,47 @@ will be checked with the accepted iOS harness/build/security checks. Matching pr
 is reused. Tests, fixtures and source inspection remain separate from actual Auth/server/phone/
 DataProtection/real system share/backup/provider acceptance; these target facts are UNRUN here.
 Whole #239 remains OPEN until its other actual core scopes are complete.
+
+## Stable implementation and actual validation — 2026-10-08
+
+All 39 precise shared leases were applied with exact before/patch/after guards. Actual after hashes
+match every current pin, including the six Main-reviewed outcome/projection corrections. The frozen
+candidate generator rejects post-lease regeneration. Runtime production/config source is unchanged
+since integrated `27fe128b`; `f810d98a` changes only the failing own synthetic fixture to the original
+Notification decoder's required lowercase UUIDs and verifies original Guide setup validity. It does
+not widen a decoder, drop an assertion or change original source/body/actor/complete/permission ABI.
+
+Original iOS harness r1: App build 0, test build 0, complete ad-hoc signature display/verification 0;
+eight actual own tests ran **7 PASS / 1 FAIL / 0 skips**, tests exit65. Positive actual Session/current
+actor → real Simulator Keychain → fixed 29 original adapters → protected export → sole producer's
+synthetic Result receipt → actual Session projection fence → original Journal complete → independent
+physical Keychain absence → minimal local receipt passed. The first suite failure was invalid
+uppercase synthetic Notification IDs rejected by the original strict decoder, not a data-boundary
+failure. The original FAIL remains in raw evidence.
+
+After the test-only lawful fixture correction, incremental test build and ad-hoc verification passed;
+only the original failed method ran in r2: **1 PASS / 0 FAIL / 0 skips**, exit0. The original seven
+unchanged passing points are reused; there is no claimed single eight-case green rerun. Existing
+late-handoff/CAS point covers new same-actor export while an old captured share callback arrives;
+UI writes require exact current share id/actor/URL and current operation/file eligibility first.
+Both exact owned Simulators were shutdown/deleted successfully. The harness's r1
+simulatorTestsRun=false reflects whole-run failure, not zero tests; actual Swift Testing logs ran eight.
+
+Raw bounded logs, commands, ownership/cleanup and all actual source hashes are retained at
+`artifacts/VPJ-58/native-journals-20261008`. Source comparison proves only the one own test file differs
+from the r1 integrated code. Existing unrelated PBX duplicate-group warnings remain; structural
+comparison proved this task only added 13 objects and preserved every original object/parent entry.
+No warning or XCTest's zero legacy-test count was substituted for the actual Swift Testing results.
+
+Synthetic auth and immutable receipt transport are fixture evidence; the real Simulator vault,
+file write/readback/POSIX/backup exclusion and physical pending readback are local observed evidence.
+Real Auth/HTTP integration for this new feature, system sharing, physical phone/Complete lock-state,
+backup/restore and provider remain UNRUN. Metadata-only copyrighted/authority-bearing sources,
+Readiness's lack of an independent immutable receipt reader, expired/fenced Guide and legacy Trip
+request's missing persisted epoch remain explicit UNKNOWN/unavailable boundaries rather than fake
+empty/completed rows. No additional implementation core is silently counted as delivered.
+
+Owned implementation is ready for Main's final complete-core review. Engineering delivery remains
+one independent main-base Journal Native PR after actual normal dependency merges, exact-head formal
+review/applicable CI and protected merge. It is not part of the already delivered Turn scope or a
+dependency draft. Whole #239 stays OPEN for its other actual core scopes and unified target acceptance.
