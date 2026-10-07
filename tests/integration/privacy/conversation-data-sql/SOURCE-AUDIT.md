@@ -199,3 +199,51 @@ no new development thread or reassignment to another scope after it closes.
 Current private source checkpoint consumes fixed `1b169b22` and is not scopeComplete.
 The source-authority and impact findings are resolved at the agreed contract level;
 remaining SQL implementation is work in progress, not a new approval blocker.
+
+
+## Fixed complete SQL checkpoint, 2026-10-07
+
+The earlier partial checkpoints above are historical. The complete source now
+implements source/advisory/NOWAIT locks, old/new-parent permanent guards,
+full-row CAS, bounded child-first effects, exact immutable-byte recovery,
+original sourceAuthorities requalification, and finite list/preview/erase/recover
+operation/progress inventory. Default ACLs remain revoked; no target grant,
+provider, deployment, Storage, or real-user deletion is included.
+
+Final review found a concrete remaining copy gap: the original impact schema's
+individual FKs permit outbox.set_id to differ from item.set_id, projection.set_id
+to differ from delivery.set_id, and receipt/review links to reach another set.
+The six-table reverse inventory now closes those actual links in both directions,
+includes complete connected sets in CAS/4100-row capacity, and keeps every copy
+under SOURCE_UNSUPPORTED. Both OLD and NEW source-parent guards use this same
+bounded closure, including copied receipt references. No impact cleanup or
+original producer/immutable-effect function was changed.
+
+Affected local command:
+`VP_CONVERSATION_SOURCE_AUDIT=1 VP_CONVERSATION_MIXED_COPY_ONLY=1 node --test tests/integration/privacy/conversation-data-sql/source-audit.test.mjs`.
+Actual marker c09426: exit0, 6 PASS, 0 fail/skip, 8918 ms including disposable
+PostgreSQL setup and cleanup. Five child cases plus parent; the focused selector
+does not register unrelated cases. All six table inventories affect CAS; rollback
+restores the digest, old-parent move/new copied-parent inserts fail closed, and
+no copies are erased. ACL/RLS/default denial, migration rollback, unchanged
+original function bodies/ACL/config, and the existing source reproduction are
+also checked. Evidence: ignored `artifacts/VPJ-58/conversation-data-sql/mixed-copy-catalog.json`.
+
+Retain prior actual a395a845 11 PASS/0skip (42616 ms), including actual RPC,
+taskless authority/progress, retained task/text/capacity/budget, real 30-second
+late rollback, CAS/foreign/NOWAIT, and complete confirmed Trip/explicit Memory
+row retention; no handoff-only rerun of those cases. Original D4 marker1832096e
+7 PASS/0skip and separately reported D3 six PASS are retained evidence, not new
+runs. The focused run does not claim final combined TS/Auth/Native acceptance.
+
+Failures retained: 483769 failed before PostgreSQL setup because local Docker
+socket was absent; Docker was started. 046622 had 4 PASS/2 FAIL including parent:
+the new fixture attempted an UPDATE prohibited by original immutable impact-item
+rules. Corrected to a legal INSERT without changing any oracle/guard; c09426 passed.
+Earlier syntax/array/lock-order failures remain in original evidence/history.
+
+Sole TS still owns actual PG consumer/signed Auth integration and the one PR;
+Main owns whole-source/exact-head formal review, required CI and protected merge.
+Target grant/config/credentials, backup/old devices/ALL2 and whole #239 remain
+UNRUN/Open as applicable. This fixed SQL checkpoint closes the owned SQL
+implementation, not the whole integrated ConversationData delivery.

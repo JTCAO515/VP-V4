@@ -228,11 +228,15 @@ declare x record;resolved text;scalar_n text;
 begin
  if cardinality(p_path)>32 then raise exception 'CONVERSATION_SOURCE_UNAVAILABLE';end if;
  if jsonb_typeof(v)='object' then
-  if v->>'kind'='historical_answer' and notification_private.uuid(v->'id') is true then
+  if v->>'kind' in('historical_answer','turn','text_turn') and notification_private.uuid(v->'id') is true then
    return query select 'turnIds'::text,(v->>'id')::uuid,p_path||array['id'];
   end if;
-  if v->>'kind' in('artifact_reference','result_artifact') and notification_private.uuid(v->'id') is true then
+  if v->>'kind' in('artifact_reference','result_artifact','artifact','result') and notification_private.uuid(v->'id') is true then
    return query select 'artifactIds'::text,(v->>'id')::uuid,p_path||array['id'];
+  end if;
+  if v->>'kind' in('intake','task','task_output','conversation','thread','goal') and notification_private.uuid(v->'id') is true then
+   return query select case v->>'kind' when 'intake' then 'messageIds' when 'task' then 'taskIds' when 'task_output' then 'taskIds'
+    when 'conversation' then 'conversationIds' when 'thread' then 'threadIds' else 'goalIds' end,(v->>'id')::uuid,p_path||array['id'];
   end if;
   for x in select key,value from jsonb_each(v) order by key collate "C" loop
    resolved:=conversation_data_private.reference_kind_v1(x.key);
@@ -510,37 +514,47 @@ declare identity_kind text:=conversation_data_private.entity_kind_v1(relation_n)
 begin
  if identity_kind is not null then return coalesce(g->identity_kind ? (v->>'id'),false);end if;
  if v->>'execution_id' is not null and v->>'execution_id'=any(executions::text[]) then return true;end if;
+ if relation_n='notification_private.dismissals' and ((g->'taskIds') ? (v->>'source_id') or (g->'artifactIds') ? (v->>'source_id')) then return true;end if;
  for ref in select * from conversation_data_private.json_references_v1(v) loop
   if g->ref.kind ? ref.entity_id::text then return true;end if;
  end loop;return false;
 end$$;
 
+-- All six impact tables can connect different sets. Individual FKs do not
+-- enforce that delivery/item/projection/receipt belong to the same set.
+create function conversation_data_private.impact_sets_v1(g jsonb,seeds uuid[] default array[]::uuid[]) returns uuid[]
+language sql volatile security definer set search_path='' as $$
+ with recursive links(a,b) as (
+  select o.set_id,i.set_id from knowledge_review_private.source_impact_outbox o join knowledge_review_private.source_impact_items i on i.id=o.item_id
+  union select o.set_id,p.set_id from knowledge_review_private.source_impact_outbox o join knowledge_review_private.source_impact_projections p on p.id=o.receipt_id
+  union select p.set_id,o.set_id from knowledge_review_private.source_impact_projections p join knowledge_review_private.source_impact_outbox o on o.id=p.delivery_id
+  union select o.set_id,p.set_id from knowledge_review_private.source_impact_review_requests r
+   join knowledge_review_private.source_impact_outbox o on o.id=r.delivery_id join knowledge_review_private.source_impact_projections p on p.id=r.projection_id
+ ), edges(a,b) as (select a,b from links union select b,a from links), roots(id) as (
+  select unnest(seeds)
+  union select id from knowledge_review_private.source_impact_sets s where conversation_data_private.related_v1('impact',to_jsonb(s),g,array[]::uuid[])
+  union select set_id from knowledge_review_private.source_impact_items i where conversation_data_private.related_v1('impact',to_jsonb(i),g,array[]::uuid[])
+  union select set_id from knowledge_review_private.source_impact_pages p where conversation_data_private.related_v1('impact',to_jsonb(p),g,array[]::uuid[])
+  union select set_id from knowledge_review_private.source_impact_projections p where conversation_data_private.related_v1('impact',to_jsonb(p),g,array[]::uuid[])
+ ), reached(id) as (
+  select id from roots where id is not null union select e.b from reached r join edges e on e.a=r.id
+ ) select coalesce(array_agg(id order by id),array[]::uuid[]) from (select id from reached limit 4101) bounded
+$$;
+
 create function conversation_data_private.impact_inventory_v1(g jsonb) returns jsonb
 language plpgsql volatile security definer set search_path='' as $$
-declare sets_n uuid[]:=array[]::uuid[];items_n uuid[]:=array[]::uuid[];deliveries_n uuid[]:=array[]::uuid[];
- projections_n uuid[]:=array[]::uuid[];extra_n uuid[];rows_n jsonb:='[]';r record;n integer:=0;table_n text;current_n jsonb;
+declare sets_n uuid[];rows_n jsonb:='[]';n integer:=0;table_n text;current_n jsonb;
 begin
- select array_agg(id) into extra_n from knowledge_review_private.source_impact_sets
-  where conversation_data_private.related_v1('impact',graph_snapshot,g,array[]::uuid[]);
- sets_n:=conversation_data_private.union_ids_v1(sets_n||coalesce(extra_n,array[]::uuid[]));
- select array_agg(set_id) into extra_n from knowledge_review_private.source_impact_items
-  where conversation_data_private.related_v1('impact',target,g,array[]::uuid[]);
- sets_n:=conversation_data_private.union_ids_v1(sets_n||coalesce(extra_n,array[]::uuid[]));
- select array_agg(set_id) into extra_n from knowledge_review_private.source_impact_pages
-  where conversation_data_private.related_v1('impact',receipt,g,array[]::uuid[]);
- sets_n:=conversation_data_private.union_ids_v1(sets_n||coalesce(extra_n,array[]::uuid[]));
- select array_agg(set_id) into extra_n from knowledge_review_private.source_impact_projections
-  where conversation_data_private.related_v1('impact',target,g,array[]::uuid[]);
- sets_n:=conversation_data_private.union_ids_v1(sets_n||coalesce(extra_n,array[]::uuid[]));
- -- Whole matching mixed-set inventory is CAS input; NONE of it is erased.
+ sets_n:=conversation_data_private.impact_sets_v1(g);
+ if cardinality(sets_n)>4100 then return jsonb_build_object('rows',rows_n,'overflow',true);end if;
+ -- Whole connected mixed-set inventory is CAS input; NONE of it is erased.
  for table_n in select unnest(array['source_impact_sets','source_impact_items','source_impact_pages','source_impact_outbox','source_impact_projections','source_impact_review_requests']) loop
-  n:=0;
-  for current_n in execute format('select to_jsonb(actual) from knowledge_review_private.%I actual where %s order by to_jsonb(actual)::text collate "C" limit 10001',table_n,
+  for current_n in execute format('select to_jsonb(actual) from knowledge_review_private.%I actual where %s order by to_jsonb(actual)::text collate "C" limit 4101',table_n,
    case table_n when 'source_impact_sets' then 'id=any($1)' when 'source_impact_review_requests' then
     'delivery_id in(select id from knowledge_review_private.source_impact_outbox where set_id=any($1)) or projection_id in(select id from knowledge_review_private.source_impact_projections where set_id=any($1))'
     else 'set_id=any($1)' end) using sets_n loop
    n:=n+1;
-   if n>10000 or jsonb_array_length(rows_n)>=4100 then return jsonb_build_object('rows',rows_n,'overflow',true);end if;
+   if n>4100 then return jsonb_build_object('rows',rows_n,'overflow',true);end if;
    rows_n:=rows_n||jsonb_build_array(jsonb_build_object('table','knowledge_review_private.'||table_n,'digest',conversation_data_private.digest_v1(current_n::text)));
   end loop;
  end loop;
@@ -629,7 +643,7 @@ begin
    if actual_n->>'trip_id' is not null then trips_n:=conversation_data_private.union_ids_v1(trips_n||array[(actual_n->>'trip_id')::uuid]);end if;
    if actual_n->>'memory_id' is not null then memory_n:=conversation_data_private.union_ids_v1(memory_n||array[(actual_n->>'memory_id')::uuid]);end if;
    if jsonb_typeof(actual_n->'memory_basis')='array' then
-    select array_agg((entry->>'memoryId')::uuid) into extra_n from jsonb_array_elements(actual_n->'memory_basis') entry where notification_private.uuid(entry->'memoryId') is true;
+    select array_agg(coalesce(entry->>'memoryId',entry->>'id')::uuid) into extra_n from jsonb_array_elements(actual_n->'memory_basis') entry where notification_private.uuid(coalesce(entry->'memoryId',entry->'id')) is true;
     memory_n:=conversation_data_private.union_ids_v1(memory_n||coalesce(extra_n,array[]::uuid[]));
    end if;
   end loop;
@@ -648,11 +662,11 @@ begin
  for relation_n in select distinct (n.nspname||'.'||c.relname) collate "C" from pg_class c join pg_namespace n on n.oid=c.relnamespace join pg_attribute a on a.attrelid=c.oid
   where c.relkind='r' and n.nspname not in('pg_catalog','information_schema','conversation_data_private')
   and not(n.nspname='knowledge_review_private' and c.relname like 'source_impact_%')
-  and a.attnum>0 and not a.attisdropped and a.atttypid in('jsonb'::regtype,'json'::regtype)
+  and a.attnum>0 and not a.attisdropped and (a.atttypid in('jsonb'::regtype,'json'::regtype) or conversation_data_private.reference_kind_v1(a.attname::text) is not null or n.nspname in('notification_private','service_brief_private','readiness_private','guide_private','scoped_edit_private'))
   and not exists(select 1 from conversation_data_private.sources_v1() s where s.relation_name=n.nspname||'.'||c.relname)
   order by 1 loop
   n:=0;
-  for actual_n in execute format('select to_jsonb(actual) from %s actual where conversation_data_private.related_v1(%L,to_jsonb(actual),$1,$2) order by to_jsonb(actual)::text collate "C" limit 10001',relation_n,relation_n) using g,executions loop
+  for actual_n in execute format('select to_jsonb(actual) from %s actual where conversation_data_private.related_v1(%L,conversation_data_private.documents_v1(%L,to_jsonb(actual)),$1,$2) order by to_jsonb(actual)::text collate "C" limit 10001',relation_n,relation_n,relation_n) using g,executions loop
    n:=n+1;reverse_total:=reverse_total+1;
    if n>10000 or reverse_total+total_n>4100 then conflicts_n:=conflicts_n||array['SCOPE_TOO_LARGE'];exit;end if;
    reverse_n:=reverse_n||jsonb_build_array(jsonb_build_object('table',relation_n,'digest',conversation_data_private.digest_v1(actual_n::text)));
@@ -668,11 +682,19 @@ begin
  select coalesce(array_agg(id order by id),array[]::uuid[]) into trips_n from public.trips where id=any(trips_n) and owner_id=u;
  select coalesce(array_agg(id order by id),array[]::uuid[]) into memory_n from public.memory_profiles where id=any(memory_n) and owner_id=u;
  refs_n:=jsonb_build_object('tripIds',trips_n,'memoryIds',memory_n);
+ for relation_n in select unnest(array['export_private.core_jobs_v1','export_private.core_artifacts_v1']) loop
+  n:=0;
+  for actual_n in execute format('select to_jsonb(actual) from %s actual where owner_id=$1 order by request_id limit 10001',relation_n) using u loop
+   n:=n+1;reverse_total:=reverse_total+1;
+   if n>10000 or reverse_total+total_n>4100 then conflicts_n:=conflicts_n||array['SCOPE_TOO_LARGE'];exit;end if;
+   reverse_n:=reverse_n||jsonb_build_array(jsonb_build_object('table',relation_n,'digest',conversation_data_private.digest_v1(actual_n::text)));
+  end loop;
+ end loop;
  if exists(select 1 from export_private.core_artifacts_v1 where owner_id=u)
   or exists(select 1 from export_private.core_jobs_v1 where owner_id=u and (state in('queued','running') or lease_expires_at>clock_timestamp())) then conflicts_n:=conflicts_n||array['CORE_EXPORT_COPY'];end if;
  if exists(select 1 from privacy_private.trip_deletions where owner_id=u and trip_id=any(trips_n) and state='queued')
   or exists(select 1 from privacy_private.linked_delete_fences_v1 f where exists(select 1 from jsonb_each(g) group_n where group_n.value ? f.entity_id::text))
-  or exists(select 1 from privacy_private.memory_delete_jobs_v1 j where j.owner_id=u and j.state='queued') then conflicts_n:=conflicts_n||array['OTHER_DELETE_PENDING'];end if;
+  or exists(select 1 from privacy_private.memory_delete_jobs_v1 j join privacy_private.memory_delete_plans_v1 plan on plan.id=j.plan_id where j.owner_id=u and j.state='queued' and (privacy_private.memory_delete_ids_v1(plan.selection)&&memory_n or privacy_private.linked_delete_array_v1(plan.selection->'artifactIds')&&artifacts or privacy_private.linked_delete_array_v1(plan.selection->'generatedTurnIds')&&turns)) then conflicts_n:=conflicts_n||array['OTHER_DELETE_PENDING'];end if;
  if exists(select 1 from turn_private.result_revisions r where not r.artifact_id=any(artifacts)
   and exists(select 1 from conversation_data_private.json_references_v1(r.content) stored_ref where g->stored_ref.kind ? stored_ref.entity_id::text))
   or exists(select 1 from turn_private.assistant_message_source_receipts r where not r.message_id=any(messages)
@@ -690,7 +712,383 @@ begin
   'conflicts',conversation_data_private.conflicts_v1(conflicts_n),'rows',rows_n,'sourceDigest',conversation_data_private.digest_v1(fingerprint_n::text));
 end$$;
 
+create function conversation_data_private.boundaries_v1(scope_n text) returns jsonb language sql immutable set search_path='' as $$ select case scope_n when 'conversation-sensitive-data/1' then '{"eraseFields":["selected_conversation_goals_messages_intakes_source_receipts","exclusive_threads_turns_events_feedback","exclusive_results_all_revisions_events","closed_planning_grounded_worker_copies","selected_turn_memory_consumer_references"],"redactFields":["selected_private_text_input_output_permanently_hidden","selected_task_goal_digest_fixed_deleted_marker"],"retained":["confirmed_trip_content_history_proposals","explicit_memory_profiles_receipts_consents","other_conversations_and_domains","minimal_task_capacity_budget_dispatch_link_receipts","permanent_entity_identity_and_operation_fences","original_source_policy_consent_authority_ids"],"missing":["applied_or_unapplied_proposal_source_requires_original_flow","shared_cross_scope_or_active_work_rejected","readiness_guide_scoped_edit_notification_brief_links_rejected","existing_core_export_copies_require_original_cleanup","provider_and_external_copies_not_erased","backup_restore_and_old_device_acceptance_unverified"]}'::jsonb else '{"eraseFields":["selected_transient_preview_graph_conflicts_references"],"redactFields":[],"retained":["root_selection_actor_epoch_hash_time_operation_fences","immutable_minimal_decisions_and_entity_tombstones","original_source_policy_consent_authority_ids"],"missing":["source_conversation_data_not_erased","unselected_operations","external_copies","backup_restore_and_old_device_acceptance_unverified"]}'::jsonb end $$;
+create function conversation_data_private.documents_v1(relation_n text,v jsonb) returns jsonb language plpgsql immutable set search_path='' as $$
+declare document_n jsonb:=v;raw_n text;parsed_n jsonb;
+begin
+ if relation_n='service_brief_private.operations' and v->>'request_bytes' is not null then
+  begin raw_n:=convert_from(decode(substr(v->>'request_bytes',3),'hex'),'UTF8');parsed_n:=raw_n::jsonb;
+  exception when others then raise exception 'CONVERSATION_SOURCE_UNAVAILABLE';end;
+  document_n:=document_n||jsonb_build_object('originalRequest',parsed_n);
+ end if;return document_n;
+end$$;
+
+create function conversation_data_private.parents_v1(relation_n text,v jsonb) returns table(kind text,entity_id uuid)
+language plpgsql volatile security definer set search_path='' as $$
+declare identity_n text:=conversation_data_private.entity_kind_v1(relation_n);parent_n jsonb;set_n uuid;item_n uuid;delivery_n uuid;projection_n uuid;sets_n uuid[];n integer:=0;
+begin
+ if identity_n is not null and notification_private.uuid(v->'id') then return query select identity_n,(v->>'id')::uuid;end if;
+ return query select r.kind,r.entity_id from conversation_data_private.json_references_v1(conversation_data_private.documents_v1(relation_n,v)) r;
+ if notification_private.uuid(v->'source_id') then
+  return query select k,(v->>'source_id')::uuid from unnest(array['taskIds','artifactIds']) k;
+ end if;
+ if notification_private.uuid(v->'execution_id') then
+  select to_jsonb(actual) into parent_n from turn_private.planning_v2_execution_runs actual where id=(v->>'execution_id')::uuid;
+  if found then return query select r.kind,r.entity_id from conversation_data_private.json_references_v1(parent_n) r;end if;
+ end if;
+ if relation_n like 'knowledge_review_private.source_impact_%' then
+  set_n:=nullif(v->>'set_id','')::uuid;item_n:=nullif(v->>'item_id','')::uuid;
+  delivery_n:=nullif(v->>'delivery_id','')::uuid;projection_n:=nullif(v->>'projection_id','')::uuid;
+  -- Seed every actual parent, including receipt_id and both sides of moves.
+  select coalesce(array_agg(id),array[]::uuid[]) into sets_n from (
+   select set_n id union select (v->>'id')::uuid where relation_n='knowledge_review_private.source_impact_sets'
+   union select set_id from knowledge_review_private.source_impact_items where id=item_n
+   union select set_id from knowledge_review_private.source_impact_outbox where id=delivery_n
+   union select set_id from knowledge_review_private.source_impact_projections where id in(projection_n,nullif(v->>'receipt_id','')::uuid)
+  ) parents;
+  sets_n:=conversation_data_private.impact_sets_v1(conversation_data_private.empty_graph_v1(),sets_n);
+  if cardinality(sets_n)>4100 then raise exception 'CONVERSATION_SOURCE_UNAVAILABLE';end if;
+  for parent_n in select document_n from (
+   select to_jsonb(s) document_n from knowledge_review_private.source_impact_sets s where id=any(sets_n)
+   union all select to_jsonb(i) from knowledge_review_private.source_impact_items i where set_id=any(sets_n)
+   union all select to_jsonb(p) from knowledge_review_private.source_impact_pages p where set_id=any(sets_n)
+   union all select to_jsonb(p) from knowledge_review_private.source_impact_projections p where set_id=any(sets_n)
+  ) documents limit 4101 loop
+   n:=n+1;if n>4100 then raise exception 'CONVERSATION_SOURCE_UNAVAILABLE';end if;
+   return query select r.kind,r.entity_id from conversation_data_private.json_references_v1(parent_n) r;
+  end loop;
+ end if;
+end$$;
+
+-- Every actual mapped writer and known external reference writer checks OLD
+-- and NEW identity/parents. Identity advisory keys also cover absent parents,
+-- so insert-after-delete cannot pass a pre-commit MVCC snapshot.
+create function conversation_data_private.guard_source_v1() returns trigger language plpgsql volatile security definer set search_path='' as $$
+declare relation_n text:=tg_table_schema||'.'||tg_table_name;new_n jsonb;old_n jsonb;all_n jsonb;ref record;owner_n uuid;owner_ids uuid[]:=array[]::uuid[];
+begin
+ new_n:=case when tg_op='DELETE' then to_jsonb(old) else to_jsonb(new) end;
+ old_n:=case when tg_op='INSERT' then new_n else to_jsonb(old) end;
+ owner_ids:=conversation_data_private.union_ids_v1(array[nullif(new_n->>'owner_id','')::uuid,nullif(old_n->>'owner_id','')::uuid]);
+ -- Preserve original owner-account cascade (retained text deliberately has no
+ -- auth-user FK). No deleted session can clear operations/tombstones.
+ if cardinality(owner_ids)>0 and not exists(select 1 from auth.users where id=any(owner_ids)) then
+  if tg_op='DELETE' then return old;else return new;end if;
+ end if;
+ for owner_n in select unnest(owner_ids) loop
+  -- Retain D4's real account barrier/error before this added advisory fence for
+  -- Memory-bearing and queued-cleanup writers. Its original guard still runs.
+  if exists(select 1 from privacy_private.memory_delete_jobs_v1 where owner_id=owner_n and state='queued')
+   or jsonb_typeof(new_n->'memory_basis')='array' and jsonb_array_length(new_n->'memory_basis')>0
+   or jsonb_typeof(old_n->'memory_basis')='array' and jsonb_array_length(old_n->'memory_basis')>0
+   or relation_n in('turn_private.result_artifacts','turn_private.result_revisions') and exists(select 1 from turn_private.result_revisions historical where historical.artifact_id in
+    (nullif(new_n->>'artifact_id','')::uuid,nullif(old_n->>'artifact_id','')::uuid,nullif(new_n->>'id','')::uuid,nullif(old_n->>'id','')::uuid)
+    and jsonb_array_length(historical.memory_basis)>0) then
+   perform 1 from auth.users where id=owner_n for key share nowait;
+   perform 1 from identity_private.mobile_accounts where owner_id=owner_n for update nowait;
+  end if;
+  if not pg_try_advisory_xact_lock(hashtextextended(owner_n::text,34)) then raise lock_not_available using message='CONVERSATION_CONFLICT';end if;
+ end loop;
+ for ref in select distinct p.kind collate "C" kind,p.entity_id from (
+  select * from conversation_data_private.parents_v1(relation_n,new_n)
+  union select * from conversation_data_private.parents_v1(relation_n,old_n)) p order by p.kind collate "C",p.entity_id loop
+  if not pg_try_advisory_xact_lock(hashtextextended('conversation-data-entity:'||ref.kind||':'||ref.entity_id::text,0)) then raise lock_not_available using message='CONVERSATION_CONFLICT';end if;
+  case ref.kind
+   when 'conversationIds' then perform 1 from turn_private.assistant_conversations where id=ref.entity_id for key share nowait;
+   when 'threadIds' then perform 1 from public.chat_threads where id=ref.entity_id for key share nowait;
+   when 'turnIds' then perform 1 from public.turns where id=ref.entity_id for key share nowait;
+   when 'taskIds' then perform 1 from turn_private.service_tasks where id=ref.entity_id for key share nowait;
+   when 'goalIds' then perform 1 from turn_private.assistant_goals where id=ref.entity_id for key share nowait;
+   when 'messageIds' then perform 1 from turn_private.assistant_messages where id=ref.entity_id for key share nowait;
+   when 'artifactIds' then perform 1 from turn_private.result_artifacts where id=ref.entity_id for key share nowait;
+   else raise exception 'CONVERSATION_SOURCE_UNAVAILABLE';
+  end case;
+  if conversation_data_private.fenced_v1(ref.kind,ref.entity_id) then
+   owner_n:=nullif(new_n->>'owner_id','')::uuid;
+   if owner_n is null or not conversation_data_private.proof_v1(owner_n,ref.kind,ref.entity_id) then raise exception 'CONVERSATION_CONFLICT';end if;
+   if relation_n='turn_private.text_content' and tg_op<>'DELETE'
+    and (new_n->>'input_text' is distinct from '[deleted by scoped conversation request]' or new_n->>'output_kind' is not null or new_n->>'output_text' is not null or new_n->>'hidden_at' is null)
+    then raise exception 'CONVERSATION_CONFLICT';end if;
+   if relation_n='turn_private.service_tasks' and tg_op<>'DELETE'
+    and new_n->>'goal_digest' is distinct from conversation_data_private.digest_v1('[deleted by scoped conversation request]') then raise exception 'CONVERSATION_CONFLICT';end if;
+  end if;
+ end loop;
+ if tg_op='DELETE' then return old;else return new;end if;
+end$$;
+
+create function conversation_data_private.lock_source_v1(u uuid,source_n jsonb) returns void language plpgsql volatile security definer set search_path='' as $$
+declare g jsonb:=source_n->'graph';identity_n uuid;ref record;row_n jsonb;table_n text;pk_n text[];
+begin
+ -- Original submit_service_task_turn identity pair precedes task/thread locks.
+ for identity_n in select distinct value::uuid from (
+  select jsonb_array_elements_text(g->'taskIds') value union select jsonb_array_elements_text(g->'turnIds') value) identities order by value::uuid loop
+  if not pg_try_advisory_xact_lock(hashtextextended('service-task-identity:'||identity_n::text,0)) then raise lock_not_available using message='CONVERSATION_CONFLICT';end if;
+ end loop;
+ perform 1 from turn_private.service_tasks where id=any(privacy_private.linked_delete_array_v1(g->'taskIds')) and owner_id=u order by id for update nowait;
+ perform 1 from public.trips where id=any(privacy_private.linked_delete_array_v1(source_n->'retainedReferences'->'tripIds')) and owner_id=u order by id for update nowait;
+ for ref in select groups.key kind,ids.value::uuid entity_id from jsonb_each(g) groups cross join lateral jsonb_array_elements_text(groups.value) ids(value) order by groups.key collate "C",ids.value::uuid loop
+  if not pg_try_advisory_xact_lock(hashtextextended('conversation-data-entity:'||ref.kind||':'||ref.entity_id::text,0)) then raise lock_not_available using message='CONVERSATION_CONFLICT';end if;
+ end loop;
+ perform 1 from turn_private.assistant_conversations where id=any(privacy_private.linked_delete_array_v1(g->'conversationIds')) and owner_id=u order by id for update nowait;
+ perform 1 from public.chat_threads where id=any(privacy_private.linked_delete_array_v1(g->'threadIds')) and owner_id=u order by id for update nowait;
+ perform 1 from public.turns where id=any(privacy_private.linked_delete_array_v1(g->'turnIds')) and owner_id=u order by id for update nowait;
+ perform 1 from turn_private.assistant_goals where id=any(privacy_private.linked_delete_array_v1(g->'goalIds')) and owner_id=u order by id for update nowait;
+ perform 1 from turn_private.assistant_messages where id=any(privacy_private.linked_delete_array_v1(g->'messageIds')) and owner_id=u order by id for update nowait;
+ perform 1 from turn_private.result_artifacts where id=any(privacy_private.linked_delete_array_v1(g->'artifactIds')) and owner_id=u order by id for update nowait;
+ perform 1 from public.memory_profiles where id=any(privacy_private.linked_delete_array_v1(source_n->'retainedReferences'->'memoryIds')) and owner_id=u order by id for share nowait;
+ perform conversation_data_private.authorities_current_v1(u,source_n->'sourceAuthorities');
+ for row_n in select value from jsonb_array_elements(source_n->'rows') order by value->>'table' collate "C",(value->'pk')::text collate "C" loop
+  table_n:=row_n->>'table';select pk into pk_n from conversation_data_private.sources_v1() where relation_name=table_n;
+  if pk_n is null then raise exception 'CONVERSATION_SOURCE_UNAVAILABLE';end if;
+  execute format('select 1 from %s actual where conversation_data_private.row_key_v1(to_jsonb(actual),$1)=$2 for update nowait',table_n) using pk_n,row_n->'pk';
+ end loop;
+end$$;
+
+create function conversation_data_private.erase_order_v1() returns text[] language sql immutable set search_path='' as $$ select array['public.chat_turn_events','public.chat_turn_idempotency','public.memory_consumer_receipts','public.turn_feedback','turn_private.assistant_goal_trip_links','turn_private.assistant_message_source_receipts','turn_private.grounded_ai_assist_jobs','turn_private.planning_intake_bindings','turn_private.planning_model_dispatches','turn_private.planning_observations','turn_private.planning_v2_collector_outputs','turn_private.planning_v2_completed_receipts','turn_private.planning_v2_external_call_windows','turn_private.planning_v2_model_attempt_bindings','turn_private.planning_v2_model_local_journal','turn_private.planning_v2_place_checkpoints','turn_private.planning_v2_result_claims','turn_private.result_events','turn_private.result_revisions','turn_private.assistant_travel_intakes','turn_private.grounded_turns','turn_private.planning_action_receipts','turn_private.planning_v2_collector_origins','turn_private.planning_v2_completion_proofs','turn_private.result_artifacts','turn_private.planning_v2_execution_runs','turn_private.planning_comparisons','turn_private.assistant_messages','turn_private.work','public.turns','turn_private.assistant_goals','public.chat_threads','turn_private.assistant_conversations']::text[] $$;
+create function conversation_data_private.erase_source_v1(u uuid,source_n jsonb) returns jsonb
+language plpgsql volatile security definer set search_path='' as $$
+declare relation_n text;spec record;key_n jsonb;selected_n jsonb;count_n integer;sum_n integer;progress_n integer;remaining_n integer;
+ actual_erase jsonb:=conversation_data_private.zero_counts_v1('erase');actual_redact jsonb:=conversation_data_private.zero_counts_v1('redact');
+ turns uuid[]:=privacy_private.linked_delete_array_v1(source_n->'graph'->'turnIds');tasks uuid[]:=privacy_private.linked_delete_array_v1(source_n->'graph'->'taskIds');
+begin
+ -- Exactly selected text keeps its original NOT NULL and retained task FK.
+ update turn_private.text_content set input_text='[deleted by scoped conversation request]',output_kind=null,output_text=null,hidden_at=coalesce(hidden_at,clock_timestamp())
+  where turn_id=any(turns) and owner_id=u;get diagnostics count_n=row_count;
+ actual_redact:=jsonb_set(actual_redact,'{textBodies}',to_jsonb(count_n));
+ update turn_private.service_tasks set goal_digest=conversation_data_private.digest_v1('[deleted by scoped conversation request]') where id=any(tasks) and owner_id=u;
+ get diagnostics count_n=row_count;actual_redact:=jsonb_set(actual_redact,'{taskDigests}',to_jsonb(count_n));
+ foreach relation_n in array conversation_data_private.erase_order_v1() loop
+  select * into spec from conversation_data_private.sources_v1() where relation_name=relation_n;
+  select coalesce(jsonb_agg(value->'pk' order by (value->'pk')::text collate "C"),'[]'::jsonb) into selected_n
+   from jsonb_array_elements(source_n->'rows') where value->>'table'=relation_n;
+  sum_n:=0;
+  if relation_n in('turn_private.assistant_messages','turn_private.result_artifacts') then
+   loop
+    execute format('delete from %s actual where conversation_data_private.row_key_v1(to_jsonb(actual),$1) in(select value from jsonb_array_elements($2)) and actual.owner_id=$3 and not exists(select 1 from %s child where child.%I=actual.id)',
+     relation_n,relation_n,case relation_n when 'turn_private.assistant_messages' then 'parent_message_id' else 'source_result_id' end)
+     using spec.pk,selected_n,u;get diagnostics progress_n=row_count;sum_n:=sum_n+progress_n;exit when progress_n=0;
+   end loop;
+   execute format('select count(*) from %s actual where conversation_data_private.row_key_v1(to_jsonb(actual),$1) in(select value from jsonb_array_elements($2))',relation_n)
+    into remaining_n using spec.pk,selected_n;
+   if remaining_n<>0 then raise exception 'CONVERSATION_SOURCE_CHANGED';end if;
+  else
+   for key_n in select value from jsonb_array_elements(selected_n) order by value::text collate "C" loop
+    execute format('delete from %s actual where conversation_data_private.row_key_v1(to_jsonb(actual),$1)=$2',relation_n) using spec.pk,key_n;
+    get diagnostics count_n=row_count;sum_n:=sum_n+count_n;
+   end loop;
+  end if;
+  actual_erase:=jsonb_set(actual_erase,array[spec.count_key],to_jsonb(sum_n));
+ end loop;
+ if actual_erase is distinct from source_n->'eraseCounts' or actual_redact is distinct from source_n->'redactCounts' then raise exception 'CONVERSATION_SOURCE_CHANGED';end if;
+ return jsonb_build_object('erasedCounts',actual_erase,'redactedCounts',actual_redact,'retainedCounts',source_n->'retainCounts');
+end$$;
+
+create function conversation_data_private.binding_v1(r conversation_data_private.operations_v1) returns jsonb language sql stable set search_path='' as $$
+ select jsonb_build_object('schemaVersion','conversation-data/1','scope',r.scope,'requestId',r.request_id,'rootKind',r.root_kind,'rootId',r.root_id,'objectIds',r.object_ids,
+  'ownerId',r.owner_id,'sessionId',r.session_id,'mobileEpoch',r.mobile_epoch,'sourceDigest',r.source_digest,'previewDigest',r.preview_digest,
+  'sourceAuthorities',r.source_authorities,'capturedAt',r.captured_at,'expiresAt',r.expires_at,'boundaries',conversation_data_private.boundaries_v1(r.scope),'allUserDataCompleted',false)
+$$;
+create function conversation_data_private.preview_v1(r conversation_data_private.operations_v1) returns jsonb language sql stable set search_path='' as $$
+ select conversation_data_private.binding_v1(r)||jsonb_build_object('kind','preview','graph',r.graph,'eraseCounts',r.erase_counts,'redactCounts',r.redact_counts,'retainCounts',r.retain_counts,
+  'retainedReferences',r.retained_references,'conflicts',r.conflicts,'eligible',r.conflicts='[]'::jsonb,'progressCount',case when r.scope='conversation-delete-progress/1' then cardinality(r.object_ids) else 0 end)
+$$;
+create function conversation_data_private.receipt_v1(r conversation_data_private.operations_v1) returns jsonb language sql stable set search_path='' as $$
+ select conversation_data_private.binding_v1(r)||jsonb_build_object('kind','receipt','state','erased','decision',r.decision)
+$$;
+
+create function conversation_data_private.progress_source_v1(u uuid,ids uuid[],request_n uuid) returns jsonb
+language plpgsql volatile security definer set search_path='' as $$
+declare inventory_n jsonb;authorities_n jsonb;witness_n jsonb;count_n integer;
+begin
+ select coalesce(jsonb_agg(conversation_data_private.operation_row_v1(actual) order by request_id),'[]'::jsonb),count(*) into inventory_n,count_n
+  from conversation_data_private.operations_v1 actual where owner_id=u and request_id=any(ids) and request_id<>request_n;
+ if count_n<>cardinality(ids) then raise exception 'CONVERSATION_SOURCE_UNAVAILABLE';end if;
+ select conversation_data_private.authorities_union_v1(coalesce(jsonb_agg(pair),'[]'::jsonb)) into authorities_n
+  from jsonb_array_elements(inventory_n) op cross join lateral jsonb_array_elements(op->'sourceAuthorities') pair;
+ if jsonb_array_length(authorities_n)>100 or octet_length(inventory_n::text)>1000000 then raise exception 'CONVERSATION_CAPACITY';end if;
+ witness_n:=conversation_data_private.authorities_current_v1(u,authorities_n);
+ return jsonb_build_object('graph',conversation_data_private.empty_graph_v1(),'eraseCounts',conversation_data_private.zero_counts_v1('erase'),
+  'redactCounts',conversation_data_private.zero_counts_v1('redact'),'retainCounts',conversation_data_private.zero_counts_v1('retain'),'sourceAuthorities',authorities_n,
+  'retainedReferences','{"tripIds":[],"memoryIds":[]}'::jsonb,'conflicts','[]'::jsonb,
+  'sourceDigest',conversation_data_private.digest_v1(jsonb_build_array(inventory_n,witness_n)::text));
+end$$;
+
+create function public.privacy_conversation_data_v1(p_action text,p_input_bytes text,p_expected_epoch bigint) returns jsonb
+language plpgsql volatile security definer set search_path='' as $$
+declare actor_n jsonb;u uuid;s uuid;e bigint;v jsonb;mutation_n jsonb;bytes_n text;digest_n text;request_n uuid;ids uuid[];
+ scope_n text;kind_n text;root_n uuid;r conversation_data_private.operations_v1%rowtype;source_n jsonb;rebuilt_n jsonb;
+ result_n jsonb;decision_n jsonb;counts_n jsonb;inventory_n jsonb;items_n jsonb;row_n jsonb;preview_hash text;
+ captured_n bigint;expires_n bigint;now_n bigint;cleared_n integer:=0;fences_n integer:=0;n integer;after_n uuid;more_n boolean;last_n uuid;new_decision boolean:=false;list_authorities jsonb:='[]'::jsonb;
+begin
+ actor_n:=conversation_data_private.actor_v1(p_expected_epoch);u:=(actor_n->>'ownerId')::uuid;s:=(actor_n->>'sessionId')::uuid;e:=(actor_n->>'mobileEpoch')::bigint;
+ if p_action is null or p_input_bytes is null or octet_length(p_input_bytes)>(case p_action when 'recover' then 16384 else 8192 end) then raise exception 'INVALID_INPUT';end if;
+ begin v:=p_input_bytes::jsonb;exception when others then raise exception 'INVALID_INPUT';end;
+ if conversation_data_private.input_v1(v,p_action) is not true then raise exception 'INVALID_INPUT';end if;
+ scope_n:=v->>'scope';kind_n:=v->>'rootKind';root_n:=nullif(v->>'rootId','')::uuid;
+ captured_n:=floor(extract(epoch from clock_timestamp())*1000)::bigint;expires_n:=captured_n+30000;
+ if p_action='list' then
+  if scope_n='conversation-delete-progress/1' then
+   select coalesce(jsonb_agg(conversation_data_private.operation_row_v1(actual) order by request_id),'[]'::jsonb) into inventory_n from
+    (select * from conversation_data_private.operations_v1 where owner_id=u order by request_id limit 10001) actual;
+  else
+   inventory_n:='[]';
+   if kind_n='conversation' then
+    for row_n in select to_jsonb(actual) from (select id,created_at,policy_id,consent_id from turn_private.assistant_conversations original where owner_id=u and turn_private.text_policy_current(policy_id) and exists(select 1 from turn_private.text_consents consent where consent.owner_id=u and consent.policy_id=original.policy_id and consent.consent_id=original.consent_id and consent.revoked_at is null) order by id limit 10001) actual loop
+     perform conversation_data_private.authorities_current_v1(u,jsonb_build_array(jsonb_build_object('policyId',row_n->'policy_id','consentId',row_n->'consent_id')));
+     list_authorities:=conversation_data_private.authorities_union_v1(list_authorities||jsonb_build_array(jsonb_build_object('policyId',row_n->'policy_id','consentId',row_n->'consent_id')));
+     inventory_n:=inventory_n||jsonb_build_array(jsonb_build_object('rootKind','conversation','rootId',row_n->'id','createdAt',floor(extract(epoch from (row_n->>'created_at')::timestamptz)*1000)::bigint));
+    end loop;
+   else
+    for row_n in select to_jsonb(actual) from (select id,created_at from public.chat_threads where owner_id=u order by id limit 10001) actual loop
+     begin source_n:=conversation_data_private.source_v1(u,'thread',(row_n->>'id')::uuid);
+     exception when others then if sqlerrm='DATA_POLICY_BLOCKED' then continue;else raise;end if;end;
+     list_authorities:=conversation_data_private.authorities_union_v1(list_authorities||(source_n->'sourceAuthorities'));
+     if jsonb_array_length(list_authorities)>100 then raise exception 'CONVERSATION_CAPACITY';end if;
+     inventory_n:=inventory_n||jsonb_build_array(jsonb_build_object('rootKind','thread','rootId',row_n->'id','createdAt',floor(extract(epoch from (row_n->>'created_at')::timestamptz)*1000)::bigint));
+    end loop;
+   end if;
+  end if;
+  if jsonb_array_length(inventory_n)>10000 or octet_length(inventory_n::text)>1000000 then raise exception 'CONVERSATION_CAPACITY';end if;
+  digest_n:=conversation_data_private.digest_v1(inventory_n::text);
+  after_n:=case when v->'cursor'='null'::jsonb then null else (v->'cursor'->>'afterId')::uuid end;
+  if after_n is not null and (v->'cursor'->>'sourceDigest' is distinct from digest_n or not exists(select 1 from jsonb_array_elements(inventory_n) actual where coalesce(actual->>'rootId',actual->>'requestId')=after_n::text)) then raise exception 'CONVERSATION_SOURCE_CHANGED';end if;
+  select coalesce(jsonb_agg(value order by coalesce(value->>'rootId',value->>'requestId')),'[]'::jsonb) into items_n from
+   (select value from jsonb_array_elements(inventory_n) where after_n is null or coalesce(value->>'rootId',value->>'requestId')>after_n::text order by coalesce(value->>'rootId',value->>'requestId') limit 20) page;
+  last_n:=nullif(coalesce(items_n->-1->>'rootId',items_n->-1->>'requestId'),'')::uuid;
+  more_n:=exists(select 1 from jsonb_array_elements(inventory_n) where last_n is not null and coalesce(value->>'rootId',value->>'requestId')>last_n::text);
+  result_n:=jsonb_build_object('schemaVersion','conversation-data/1','kind','list','scope',scope_n,'rootKind',kind_n,
+   'ownerId',u,'sessionId',s,'mobileEpoch',e,'sourceDigest',digest_n,'capturedAt',captured_n,'expiresAt',expires_n,'items',items_n,'hasMore',more_n,
+   'nextCursor',case when more_n then jsonb_build_object('sourceDigest',digest_n,'afterId',last_n) else null end,'allUserDataCompleted',false);
+ else
+  request_n:=(v->>'requestId')::uuid;ids:=privacy_private.linked_delete_array_v1(v->'objectIds');
+  if p_action='recover' then bytes_n:=v->>'mutationBytes';mutation_n:=bytes_n::jsonb;else bytes_n:=p_input_bytes;mutation_n:=v;end if;
+  digest_n:=conversation_data_private.digest_v1(bytes_n);
+  -- Filter owner BEFORE any tuple lock or foreign/absent distinction.
+  select * into r from conversation_data_private.operations_v1 where request_id=request_n and owner_id=u;
+  if p_action='recover' and not found then
+   result_n:=jsonb_build_object('schemaVersion','conversation-data/1','kind','unknown','scope',scope_n,'requestId',request_n,'rootKind',kind_n,'rootId',root_n,'objectIds',ids,
+    'ownerId',u,'sessionId',s,'mobileEpoch',e,'requestDigest',digest_n,'allUserDataCompleted',false);
+  else
+   if r.request_id is not null then
+    if r.session_id<>s or r.mobile_epoch<>e then raise exception 'SESSION_REPLACED';end if;
+    if r.scope<>scope_n or r.root_kind is distinct from kind_n or r.root_id is distinct from root_n or r.object_ids is distinct from ids then raise exception 'CONVERSATION_SOURCE_CHANGED';end if;
+    perform conversation_data_private.authorities_current_v1(u,r.source_authorities);
+    if p_action in('erase','recover') and (r.source_digest is distinct from mutation_n->>'sourceDigest' or r.preview_digest is distinct from mutation_n->>'previewDigest') then raise exception 'CONVERSATION_SOURCE_CHANGED';end if;
+   elsif p_action<>'preview' then raise exception 'CONVERSATION_SOURCE_UNAVAILABLE';end if;
+   if p_action='recover' then
+    if r.state='erased' then
+     if r.request_digest is distinct from digest_n then raise exception 'CONVERSATION_SOURCE_CHANGED';end if;result_n:=conversation_data_private.receipt_v1(r);
+    else result_n:=jsonb_build_object('schemaVersion','conversation-data/1','kind','unknown','scope',scope_n,'requestId',request_n,'rootKind',kind_n,'rootId',root_n,'objectIds',ids,
+     'ownerId',u,'sessionId',s,'mobileEpoch',e,'requestDigest',digest_n,'allUserDataCompleted',false);end if;
+   elsif p_action='erase' and r.state='erased' then
+    if r.request_digest is distinct from digest_n then raise exception 'CONVERSATION_SOURCE_CHANGED';end if;result_n:=conversation_data_private.receipt_v1(r);
+   else
+    if r.request_id is not null then perform conversation_data_private.deadline_v1(r.captured_at,r.expires_at);end if;
+    if scope_n='conversation-sensitive-data/1' then
+     source_n:=conversation_data_private.source_v1(u,kind_n,root_n);
+     if source_n->'conflicts'='[]'::jsonb then perform conversation_data_private.lock_source_v1(u,source_n);
+      rebuilt_n:=conversation_data_private.source_v1(u,kind_n,root_n);
+      if rebuilt_n is distinct from source_n then raise exception 'CONVERSATION_SOURCE_CHANGED';end if;source_n:=rebuilt_n;
+     end if;
+    else
+     perform 1 from conversation_data_private.operations_v1 where owner_id=u and request_id=any(ids) order by request_id for update nowait;
+     source_n:=conversation_data_private.progress_source_v1(u,ids,request_n);
+    end if;
+    -- Original source locks precede request-state lock. All later locks NOWAIT.
+    if not pg_try_advisory_xact_lock(hashtextextended('conversation-data-request:'||request_n::text,0)) then raise lock_not_available using message='CONVERSATION_CONFLICT';end if;
+    select * into r from conversation_data_private.operations_v1 where request_id=request_n and owner_id=u for update nowait;
+    if p_action='preview' and not found then
+     select count(*) into n from conversation_data_private.operations_v1 where owner_id=u;if n>=10000 then raise exception 'CONVERSATION_CAPACITY';end if;
+     preview_hash:=conversation_data_private.digest_v1(jsonb_build_array(actor_n,v,source_n-'rows',captured_n,expires_n,conversation_data_private.boundaries_v1(scope_n))::text);
+     insert into conversation_data_private.operations_v1(request_id,owner_id,session_id,mobile_epoch,scope,root_kind,root_id,object_ids,source_digest,preview_digest,source_authorities,
+      captured_at,expires_at,graph,erase_counts,redact_counts,retain_counts,retained_references,conflicts)
+     values(request_n,u,s,e,scope_n,kind_n,root_n,ids,source_n->>'sourceDigest',preview_hash,source_n->'sourceAuthorities',captured_n,expires_n,
+      source_n->'graph',source_n->'eraseCounts',source_n->'redactCounts',source_n->'retainCounts',source_n->'retainedReferences',source_n->'conflicts') returning * into r;
+    else
+     if r.request_id is null or r.preview_erased then raise exception 'CONVERSATION_SOURCE_UNAVAILABLE';end if;
+     if r.source_digest is distinct from source_n->>'sourceDigest' or r.graph is distinct from source_n->'graph'
+      or r.erase_counts is distinct from source_n->'eraseCounts' or r.redact_counts is distinct from source_n->'redactCounts'
+      or r.retain_counts is distinct from source_n->'retainCounts' or r.retained_references is distinct from source_n->'retainedReferences'
+      or r.conflicts is distinct from source_n->'conflicts' or r.source_authorities is distinct from source_n->'sourceAuthorities' then raise exception 'CONVERSATION_SOURCE_CHANGED';end if;
+    end if;
+    if p_action='preview' then result_n:=conversation_data_private.preview_v1(r);
+    else
+     if r.conflicts<>'[]'::jsonb then raise exception 'CONVERSATION_CONFLICT';end if;
+     perform conversation_data_private.deadline_v1(r.captured_at,r.expires_at);
+     insert into conversation_data_private.transaction_proofs_v1(transaction_id,owner_id,request_id,source_digest,graph,expires_at)
+      values(pg_current_xact_id(),u,r.request_id,r.source_digest,r.graph,r.expires_at);
+     if scope_n='conversation-sensitive-data/1' then
+      counts_n:=conversation_data_private.erase_source_v1(u,source_n);
+      select coalesce(sum(jsonb_array_length(value)),0) into fences_n from jsonb_each(r.graph);
+     else
+      update conversation_data_private.operations_v1 set preview_erased=true,graph=null,erase_counts=null,redact_counts=null,retain_counts=null,retained_references=null,conflicts=null
+       where owner_id=u and request_id=any(ids) and not preview_erased;get diagnostics cleared_n=row_count;
+      fences_n:=cardinality(ids);counts_n:=jsonb_build_object('erasedCounts',r.erase_counts,'redactedCounts',r.redact_counts,'retainedCounts',r.retain_counts);
+     end if;
+     perform conversation_data_private.actor_v1(p_expected_epoch);perform conversation_data_private.authorities_current_v1(u,r.source_authorities);
+     now_n:=conversation_data_private.deadline_v1(r.captured_at,r.expires_at);new_decision:=true;
+     decision_n:=jsonb_build_object('requestDigest',digest_n,'decidedAt',now_n,'graph',r.graph,'erasedCounts',counts_n->'erasedCounts',
+      'redactedCounts',counts_n->'redactedCounts','retainedCounts',counts_n->'retainedCounts','clearedPreviews',cleared_n,'retainedFences',fences_n,
+      'sourceConversation',case scope_n when 'conversation-sensitive-data/1' then 'erased' else 'not_modified' end,
+      'sourceTrip','not_modified','explicitMemory','not_modified','externalCopies','not_erased');
+     update conversation_data_private.operations_v1 set state='erased',request_digest=digest_n,decision=decision_n,preview_erased=true,
+      graph=null,erase_counts=null,redact_counts=null,retain_counts=null,retained_references=null,conflicts=null where request_id=request_n and owner_id=u returning * into r;
+     perform conversation_data_private.deadline_v1(r.captured_at,r.expires_at);
+     delete from conversation_data_private.transaction_proofs_v1 where transaction_id=pg_current_xact_id();result_n:=conversation_data_private.receipt_v1(r);
+    end if;
+    perform conversation_data_private.deadline_v1(r.captured_at,r.expires_at);
+   end if;
+  end if;
+ end if;
+ perform conversation_data_private.actor_v1(p_expected_epoch);
+ if octet_length(jsonb_build_object('data',result_n)::text)>1000000 then raise exception 'CONVERSATION_CAPACITY';end if;
+ if p_action='list' then
+  if scope_n='conversation-sensitive-data/1' then perform conversation_data_private.authorities_current_v1(u,list_authorities);end if;
+  perform conversation_data_private.deadline_v1(captured_n,expires_n);
+ elsif r.request_id is not null then
+  perform conversation_data_private.authorities_current_v1(u,r.source_authorities);
+  if p_action='preview' or new_decision then perform conversation_data_private.deadline_v1(r.captured_at,r.expires_at);end if;
+ end if;
+ return result_n;
+exception when lock_not_available then raise lock_not_available using message='CONVERSATION_CONFLICT';
+ when unique_violation then raise exception 'CONVERSATION_CONFLICT';
+end$$;
+
+-- Only current declared sources/reference writers are enrolled. Original
+create function conversation_data_private.guard_core_copy_v1() returns trigger language plpgsql volatile security definer set search_path='' as $$
+declare job_created timestamptz;may_copy boolean:=true;
+begin
+ if not exists(select 1 from auth.users where id=new.owner_id) then return new;end if;
+ if not pg_try_advisory_xact_lock(hashtextextended(new.owner_id::text,34)) then raise lock_not_available using message='CONVERSATION_CONFLICT';end if;
+ if tg_table_name='core_jobs_v1' then job_created:=new.created_at;may_copy:=new.state in('queued','running','ready_partial','ready_complete');else
+  select created_at into job_created from export_private.core_jobs_v1 where request_id=new.request_id and owner_id=new.owner_id for share nowait;
+ end if;
+ if exists(select 1 from conversation_data_private.operations_v1 r where r.owner_id=new.owner_id and r.scope='conversation-sensitive-data/1' and r.state='erased'
+  and (r.decision->>'decidedAt')::bigint>=floor(extract(epoch from job_created)*1000)::bigint)
+  and may_copy then raise exception 'CONVERSATION_CONFLICT';end if;
+ return new;
+end$$;
+create trigger conversation_core_job_fence_v1 before insert or update on export_private.core_jobs_v1 for each row execute function conversation_data_private.guard_core_copy_v1();
+create trigger conversation_core_copy_fence_v1 before insert on export_private.core_artifacts_v1 for each row execute function conversation_data_private.guard_core_copy_v1();
+
+-- Only current declared sources/reference writers are enrolled. Original
+-- functions and original D3/D4/worker guards are unchanged and still execute.
+do $$declare table_n text;events_n text;begin
+ for table_n in select relation_name from conversation_data_private.sources_v1() loop
+  events_n:=case when table_n in('public.model_budget_attempts','turn_private.service_task_capacity') then 'insert' else 'insert or update or delete' end;
+  execute format('create trigger conversation_data_parent_fence_v1 before %s on %s for each row execute function conversation_data_private.guard_source_v1()',events_n,table_n);
+ end loop;
+ foreach table_n in array array[
+  'knowledge_review_private.source_impact_sets','knowledge_review_private.source_impact_items','knowledge_review_private.source_impact_pages',
+  'knowledge_review_private.source_impact_outbox','knowledge_review_private.source_impact_projections','knowledge_review_private.source_impact_review_requests',
+  'readiness_private.scopes_v1','readiness_private.operations_v1','guide_private.bindings_v1',
+  'scoped_edit_private.work_v1','scoped_edit_private.requests_v1','scoped_edit_private.contexts_v1','scoped_edit_private.operations_v1',
+  'notification_private.reminders','notification_private.watches','notification_private.dismissals',
+  'service_brief_private.briefs','service_brief_private.previews','service_brief_private.operations'] loop
+  execute format('create trigger conversation_data_parent_fence_v1 before insert or update or delete on %s for each row execute function conversation_data_private.guard_source_v1()',table_n);
+ end loop;
+end$$;
+
+revoke all on function public.privacy_conversation_data_v1(text,text,bigint) from public,anon,authenticated,service_role;
 revoke all on all functions in schema conversation_data_private from public,anon,authenticated,service_role;
--- Fixed-point private source construction and authority qualification exist.
--- Source locking, attached permanent entity/JSON fences, atomic effects, receipt
--- and public RPC remain in development. Do not merge/activate this partial source.
+-- Complete scoped executor; default-denied activation and target acceptance
+-- remain with the original integrator and Main. No target grant is included.
