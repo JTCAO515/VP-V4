@@ -87,3 +87,26 @@ SQL-owner whole migration/replay/rollback/eleven PG assertions remain its separa
 evidence; canonical six-case result is separate. Main whole-package review, CI
 registry lease, final main dependency compatibility, unique PR/formal/all CI and
 protected merge remain. Parent #239/ALL1/ALL2 stay Open.
+
+PASS current combined dependency set: normal fetch/merge origin/main
+78857da0a7dd2ff9b6a5ffa3ca0af2b0503be7d2 yielded 3b06066ef6fa9d095e51f781f0daa22daff1843b,
+preserving original Profile0f source and exact0704 SHA11df. Unlike the first Auth
+checkpoint, this actual full startup includes merged07030000 and repaired0701.
+Same original Auth command at base63000 exit0; owned7a720526, one PASS/zero skip,
+5400.870ms (total8340.755ms), fixture cleanup PASS. Added actual strict Profile
+schema/Result schema/fixed source+retrieval hooks=true assertion and seven saved
+field expected values. Original0704 exact predecessor definition checks executed
+during actual ordered migration startup. No hash/pin/source rewrite to accept
+0703. Original old-set Auth checkpoint remains attributed to its fixed set.
+Next dev's generated AGENTS.md block and next-env.d.ts route-import churn were
+inspected and restored; they are not part of this implementation.
+
+SQL proof-only9d39751c1f406ca20e55d6b083db7f11cb3e6c76 consumed as1bc0d9ca;
+its PostgreSQL gate reads VP_PROFILE_EXPORT_SQL='1', while canonical uses the
+existing VP_TURN_DB_TEST='1'. Updated whole CI candidate includes exactly the new
+SQL env flag, two existing owned PG files and one HTTP tail. Shared registry
+remains unapplied pending exact Main lease. Its standalone fixture initially
+reused an original Profile bootstrap ending at0702 then applied0704, missing
+newly merged0703; reported old-fixed-set eleven PG PASS remains valid for that
+set. Original SQL owner is correcting only the fixture's current ordered replay;
+no product SQL change or unchanged canonical/old regression rerun is implied.

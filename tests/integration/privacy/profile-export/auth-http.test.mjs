@@ -60,6 +60,8 @@ test('signed owner Auth consumes an actual Profile snapshot, real protected byte
     return {...await fresh(),fresh};
   }
   const owner=await user(),foreign=await user(),exports='/api/privacy/native/v1/exports';
+  assert.equal(sql('select profile_data_private.schema_v1() and result_data_private.schema_supported_v1() and export_private.profile_hooks_valid_v1();'),'t',
+    'Actual current full migration set must preserve strict Profile/Result schemas and the reviewed source/retrieval hooks');
   for(const role of ['anon','authenticated','service_role'])assert.equal(sql('select has_function_privilege('+literal(role)+",'public.privacy_core_export_v1(text,jsonb)','execute');"),'f');
   const denied=await call(exports,owner.token,{requestId:uuid(),confirmed:true});assert.equal(denied.status,503);
   sql('grant execute on function public.privacy_core_export_v1(text,jsonb) to authenticated,service_role;grant execute on function public.privacy_profile_data_v1(text,text,bigint) to authenticated;');
@@ -98,6 +100,8 @@ test('signed owner Auth consumes an actual Profile snapshot, real protected byte
   assert.equal(downloaded.status,200);assert.match(downloaded.headers.get('cache-control'),/private.*no-store/);
   const bytes=Buffer.from(await downloaded.arrayBuffer());assert.equal(bytes.length,ready.receipt.artifactBytes);assert.equal(createHash('sha256').update(bytes).digest('hex'),ready.receipt.artifactDigest);
   const bundle=JSON.parse(bytes.toString('utf8')),item=bundle.data.profile.snapshot[0];assert.equal(item.profile.profile.displayName,saved.p_display_name);
+  assert.deepEqual(Object.fromEntries(['displayName','travelPace','locale','currency','distanceUnit','temperatureUnit','defaultDepartureTime'].map(k=>[k,item.profile.profile[k]])),
+    {displayName:saved.p_display_name,travelPace:'packed',locale:'en',currency:'USD',distanceUnit:'mile',temperatureUnit:'fahrenheit',defaultDepartureTime:'08:31:02.123456'});
   assert.deepEqual(item.profile.profile.paceRequest,paceInput);assert.equal(item.profile.summary.hasPaceUndo,true);assert.deepEqual(item.sourceRows,{profiles:1,watermarks:1,operations:1});
   assert.equal(item.operations[0].requestId,initialPreviewId);assert.equal(item.operations[0].ownerId,owner.id);assert.equal(item.operations[0].sessionId,admission.sessionId);
   assert.deepEqual(item.operations[0].summary,initialPreview.data.summary);assert.equal(Object.hasOwn(item.operations[0],'profile'),false);
