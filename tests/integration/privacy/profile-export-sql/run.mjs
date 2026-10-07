@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
-import { readFileSync } from 'node:fs';
 import { command } from '../../cost/fixtures/postgres-rpc.mjs';
-import { db, setContainer } from '../profile-data-sql/replay.mjs';
+import { setContainer } from '../profile-data-sql/replay.mjs';
+import { postProfileMigrations, replayPostProfileMigrations } from './fixture.mjs';
+postProfileMigrations();
 assert.ok(!process.env.DOCKER_HOST && !process.env.DOCKER_CONTEXT);
 const context=JSON.parse((await command('docker',['context','inspect'])).stdout)[0];
 assert.ok(context.Endpoints.docker.Host.startsWith('unix:///'));
@@ -20,13 +21,7 @@ try {
   }
   const replay=await command(process.execPath,['tests/integration/privacy/profile-data-sql/replay.mjs','init']);
   process.stdout.write(replay.stdout);process.stderr.write(replay.stderr);assert.equal(replay.code,0);
-  process.env.VP_PROFILE_EXPORT_RESULT_GUARD_HASH=await db("select md5(prosrc) from pg_proc where oid='result_data_private.guard_core_copy_v1()'::regprocedure");
-  const fingerprint=()=>db("set search_path='';select md5(string_agg(pg_get_functiondef(p.oid)||coalesce(p.proacl::text,''),'|' order by p.oid::regprocedure::text)) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where p.prokind='f' and n.nspname not in('pg_catalog','information_schema','extensions','auth')");
-  const baseline=await fingerprint(),source=readFileSync('supabase/migrations/20261007040000_profile_core_export.sql','utf8');
-  await db('begin;'+source+'rollback;');assert.equal(await fingerprint(),baseline);
-  assert.equal(await db("select to_regclass('export_private.profile_snapshot_provenance_v1') is null and profile_data_private.schema_v1() and result_data_private.schema_supported_v1()"),'t');
-  console.log('Whole append rollback restores all original function definitions/ACL/catalog PASS');
-  await db('begin;'+source+'commit;');
+  await replayPostProfileMigrations(true);
   console.log('Current ordered append replay/catalog and fixed source identities PASS');
   if(profileRegression)process.env.VP_PROFILE_DATA_SQL='1';
   const files=profileRegression
