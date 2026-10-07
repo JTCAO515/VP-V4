@@ -3,8 +3,10 @@
 2026-10-07 Asia/Shanghai. TS products and sole final WIRE fixed at
 11cdbc2a1bdb29e3c3a4dfe6d45e68effa4cbfac on the specified Profile base
 0f114f679b89553017a41d18f3fbd6444bf8259b. Profile base remains unmerged.
-Only owned profile-export directories have changed. WORKER.candidate.patch is
-unapplied; no SQL migration or shared write in this worktree.
+Initial checkpoint changed only owned profile-export directories;
+no SQL migration was written in this worktree. Later original-owner release and
+Main a7aabb granted exactly the export-worker.ts import/composition/receipt-guard.
+The three additions are applied; the consumed candidate patch is removed.
 
 PASS: `node --experimental-strip-types --test tests/integration/privacy/profile-export/producer.test.mjs`
 10/10, zero skipped. Closed TS source decoder/producer, genuine sourceRows,
@@ -50,5 +52,14 @@ GoTrue fixture launcher/Native credentials and configured D2 runner, then verify
 actual owner attachment bytes and a controlled clear between real prepare and
 consume. No historical SQL source override. Actual startup waits for stable
 current SQL/registered worker and a Main-reviewed nonoverlapping port lease.
+The same single Auth case also covers a fresh same-owner session/new ticket and
+immutable original-admission proof; it rejects an old-session ticket. This keeps
+original D2 owner download and worker-recovery authority distinct. UNRUN.
 Dependencies installed offline from the existing lockfile; full pnpm typecheck
 PASS. Syntax checks PASS; no Auth/HTTP success inferred from preparation.
+
+PASS after worker registration: 19/19 zero skipped across original core-export,
+core-export-worker-http, memory-export-d4 and entitlement-export contract files.
+Full typecheck and source lint PASS. Original bounded/Memory/entitlement counts,
+disabled/no-key transport and immutable original execution recovery retained.
+These contract fixtures do not prove new SQL/Auth/source-race integration.

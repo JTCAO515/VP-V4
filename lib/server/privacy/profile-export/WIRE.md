@@ -228,8 +228,9 @@ app/incoming FK/typed JSON/infrastructure default-deny. No blind hash substituti
 old migration edit, broad namespace exemption or original writer/floor/RPC change.
 Profile SQL original owner release reported by Main; final precise append lease
 and unused migration slot still required. No SQL written in this TS worktree.
-Shared export-worker.ts/CI registry modifications remain candidate until original
-owner release/Main precise hunk lease. Existing modules/dispatcher/runner/coverage
+Main a7aabb granted the released export-worker.ts Profile import/composition/
+receipt-guard hunks; these three additions are now applied. CI registry changes
+still await explicit owner release/Main lease. Existing modules/dispatcher/runner/coverage
 need no rewrite; no new Native task/source.
 
 Final actual proof: current ordered migration rollback/replay/catalog and canonical
