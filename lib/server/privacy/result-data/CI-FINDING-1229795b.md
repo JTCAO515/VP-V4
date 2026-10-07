@@ -116,3 +116,40 @@ Sanitized actual lock/context evidence is GUIDE-LOCK-EVIDENCE.json. Diagnostic
 helpers remain under this own namespace and never print or persist query text,
 headers, JWT/passwords, raw DB logs or application row bodies. Their environment
 hook is opt-in only for the owned original Guide fixture, not an API/runtime edit.
+
+## Fixed original Conversation append and full actual Guide HTTP after
+
+Original sole ConversationSQL3cb6d9e8 normally integrated7e4fbdc1. Only append
+07030000 replaces that original function; merged060000/Result/Profile untouched.
+Append SHA708d01f0f57c8347b122139ec214691712dff2345d7df2dc9ceb0c48405dfc25
+matches approved exact candidate and original actualPG proof. Exception only a
+Guide binding UPDATE where invalidated=true,completed_ids=[], and EVERY other
+old/new field identical; plain Task read replaces the additional row KEY SHARE
+NOWAIT. Original entity shared TRY/OLDNEW/permanentfence/xidproof, other parents,
+eraserexclusive/D4/account/budget locks and ACL retained. OriginalPG proof1 PASS
+includes before55P03/afterdirect binding mutation, real parent/reopen/progress
+negative cases, old/new taskfences, erase lock and real accountcascade. Both
+Result/Profile strict guards tested true by original owner, not a blind hash edit.
+
+Full SAME controlled original Guide HTTP project8e23c22f/base64500 on integrated
+7e4fbdc1: actual original reserve worker again waits on the3s fixture-owned budget
+scope while holding its Task row; actual signed Source withdrawal returns200,
+then original replay unavailable/forget/Triphead0 assertions all PASS. Original
+Guide test SHA90660e7e... unchanged.1 PASS,0 FAIL/SKIP/CANCEL/TODO,9378.163583ms;
+owned cleanupPASS,scope holderexit0. Observer214 actual samples/59 retained,
+blocking relation is still observed (not avoided); sanitized structured after
+proof in GUIDE-LOCK-AFTER-EVIDENCE.json. DirectPG proof and full HTTP after remain
+separate. Old remote55P03 and controlled-beforeFAIL remain above/in old JSON.
+
+Original ResultSQL Brief cost repair094cd237+proof5154724 also normally integrated,
+whole ResultSQL tree matches515; original beforelocal2PASS and observed CPU cost
+then original after2PASS/6parent equivalence/account/3negatives are separate scoped
+proofs. Both remote findings now have fixed source and affected behavior evidence;
+new exacthead formal/all original CI/protected merge is still required. No retry/
+timeout/oracle/matrix or original Guide test alteration.
+
+CI-GUIDE-REGISTRATION.patch is pending exact lease: ONE actual new PG file
+conversation-data-sql/guide-invalidation-compat.test.mjs alongside originalsource
+audit. Existing VP_CONVERSATION_SOURCE_AUDIT already enables it. No new env/native
+step/shard/helper/timeout change. Apply-check PASS, shared registry NOT applied.
+Original Context/Profile precise ownership needs Main release/grant; no wholefile.
