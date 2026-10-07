@@ -94,6 +94,7 @@ const AUTHENTICATED = [
   "public.revise_trip_proposal_patch(uuid,jsonb)",
   "public.revoke_memory_retrieval_consent(uuid)",
   "public.save_user_profile(text,text,text,text,text,text,time without time zone)",
+  "public.save_user_profile_v2(text,text,text,text,text,text,time without time zone,bigint)",
   "public.service_case_v1(jsonb)",
   "public.set_assistant_goal_trip_link_v1(uuid,uuid,uuid,uuid,integer,integer,text,uuid,integer,boolean)",
   "public.start_chat_turn(uuid,uuid,uuid,text)",

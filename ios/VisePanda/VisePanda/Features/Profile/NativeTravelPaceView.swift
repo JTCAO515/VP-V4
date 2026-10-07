@@ -72,6 +72,10 @@ struct NativeTravelPaceView: View {
             }
         }
         .navigationTitle(text("Saved travel pace", "已保存旅行节奏"))
+        .onChange(of: session.currentProfileDataErasure?.id) { _, _ in
+            store.applyProfileErasure(session.currentProfileDataErasure)
+            if store.snapshot == nil { selected = .balanced; consent = false }
+        }
         .task(id: session.dataScope) {
             store.reset(for: session.dataScope); consent = false; selected = .balanced
             await store.load(using: session)
@@ -93,6 +97,7 @@ struct NativeTravelPaceView: View {
         case "undone": text("Undone", "已撤销")
         case "pause": text("Use paused", "已暂停使用")
         case "revoke": text("Saved pace withdrawn", "已撤回保存的节奏")
+        case "profileCleared": text("Profile data cleared. Refresh before explicitly saving a new choice.", "Profile 资料已清理；刷新后可明确保存新的选择。")
         case "conflict": text("This choice changed. Refresh before making another change.", "此选择已变更，请刷新后再修改。")
         default: text("The result could not be confirmed. Retry the same change or refresh.", "尚未确认操作结果，请重试本次修改或刷新。")
         }

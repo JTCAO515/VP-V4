@@ -1,9 +1,9 @@
 import SwiftUI
 
 private enum NativeDataCoverageDestination: Identifiable {
-    case resultData, conversationData, archiveData, coverageProgress, core, memory, trip(NativeLinkedTripDeleteSelection), deviceExport, deviceDelete, material(NativeMaterialReferenceScope), notification(NativeNotificationDataScope)
+    case profileData, resultData, conversationData, archiveData, coverageProgress, core, memory, trip(NativeLinkedTripDeleteSelection), deviceExport, deviceDelete, material(NativeMaterialReferenceScope), notification(NativeNotificationDataScope)
     var id: String {
-        switch self { case .resultData: "result-data"; case .conversationData: "conversation-data"; case .archiveData: "archive-data"; case .coverageProgress: "coverage-progress"; case .core: "core"; case .memory: "memory"; case .trip(let v): v.tripID; case .deviceExport: "device-export"; case .deviceDelete: "device-delete"; case .material(let scope): scope.rawValue; case .notification(let scope): scope.rawValue }
+        switch self { case .profileData: "profile-data"; case .resultData: "result-data"; case .conversationData: "conversation-data"; case .archiveData: "archive-data"; case .coverageProgress: "coverage-progress"; case .core: "core"; case .memory: "memory"; case .trip(let v): v.tripID; case .deviceExport: "device-export"; case .deviceDelete: "device-delete"; case .material(let scope): scope.rawValue; case .notification(let scope): scope.rawValue }
     }
 }
 
@@ -80,6 +80,9 @@ struct NativeDataCoverageModuleView: View {
                     case .resultData:
                         NativeResultDataConsumer(module: module, coverage: store, client: session.resultDataClient,
                             makeStore: { session.resultDataStore(scope: $0) }, chinese: chinese)
+                    case .profileData:
+                        NativeProfileDataConsumer(module: module, coverage: store, client: session.profileDataClient,
+                            makeStore: { session.profileDataStore(scope: $0) }, chinese: chinese)
                     case .conversationData:
                         NativeConversationDataConsumer(module: module, coverage: store, client: session.conversationDataClient,
                             makeStore: { session.conversationDataStore(scope: $0) }, chinese: chinese)

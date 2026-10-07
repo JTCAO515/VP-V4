@@ -42,7 +42,7 @@ run('explicit cross-trip consent is required; profile defaults are never task in
   const a = await actor(), b = await actor();
   assert.equal((await call(a, { action: 'read' })).state, 'unset');
   assert.equal((await call(a, projection(a), true)).source, 'none');
-  await db(`insert into public.user_profiles(owner_id,travel_pace) values('${a.id}','balanced');`);
+  await db(`set request.jwt.claim.sub='${a.id}';set request.jwt.claims=${literal(JSON.stringify({role:'authenticated',is_anonymous:false,session_id:a.session}))};set role authenticated;select public.save_user_profile(null,'balanced','zh','CNY','kilometre','celsius','09:00:00');`);
   assert.equal((await call(a, projection(a), true)).travelPace, null);
   await denied(a, { ...save(), noticeVersion: null }, 'INVALID_INPUT');
   await denied(a, { ...save(), ownerId: b.id }, 'INVALID_INPUT');

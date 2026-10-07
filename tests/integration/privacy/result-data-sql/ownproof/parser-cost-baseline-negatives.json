@@ -1,0 +1,20 @@
+{
+  "kind": "owned PG rollback-only static baseline rejection",
+  "results": [
+    {
+      "name": "config",
+      "status": "rejected",
+      "message": "RESULT_PARSER_DEPENDENCY_DRIFT"
+    },
+    {
+      "name": "acl",
+      "status": "rejected",
+      "message": "RESULT_PARSER_DEPENDENCY_DRIFT"
+    },
+    {
+      "name": "helperConfig",
+      "status": "rejected",
+      "message": "RESULT_PARSER_DEPENDENCY_DRIFT"
+    }
+  ]
+}

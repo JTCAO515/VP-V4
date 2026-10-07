@@ -1,0 +1,66 @@
+2026-10-07T16:24:14.9916916Z     not ok 14 - clear serializes against real old Native save/Undo/Web RPC transactions without weakening old errors
+2026-10-07T16:24:14.9917868Z       ---
+2026-10-07T16:24:14.9917995Z       duration_ms: 1310.730067
+2026-10-07T16:24:14.9918130Z       type: 'test'
+2026-10-07T16:24:14.9918416Z       location: '/home/runner/work/VP-V4/VP-V4/tests/integration/privacy/profile-data-sql/profile.test.mjs:131:10'
+2026-10-07T16:24:14.9918710Z       failureType: 'testCodeFailure'
+2026-10-07T16:24:14.9918870Z       error: |-
+2026-10-07T16:24:14.9919078Z         The input did not match the regular expression /PACE_CONFLICT/. Input:
+2026-10-07T16:24:14.9919279Z         
+2026-10-07T16:24:14.9919410Z         'ERROR:  PROFILE_CONFLICT\n' +
+2026-10-07T16:24:14.9919689Z           'CONTEXT:  PL/pgSQL function profile_data_private.lock_owner_v1(uuid) line 3 at RAISE\n' +
+2026-10-07T16:24:14.9920027Z           'PL/pgSQL function public.native_travel_pace_v1(jsonb) line 6 at assignment\n'
+2026-10-07T16:24:14.9920241Z         
+2026-10-07T16:24:14.9920358Z       code: 'ERR_ASSERTION'
+2026-10-07T16:24:14.9920503Z       name: 'AssertionError'
+2026-10-07T16:24:14.9920735Z       expected:
+2026-10-07T16:24:14.9920854Z       actual: |-
+2026-10-07T16:24:14.9920993Z         ERROR:  PROFILE_CONFLICT
+2026-10-07T16:24:14.9921243Z         CONTEXT:  PL/pgSQL function profile_data_private.lock_owner_v1(uuid) line 3 at RAISE
+2026-10-07T16:24:14.9921562Z         PL/pgSQL function public.native_travel_pace_v1(jsonb) line 6 at assignment
+2026-10-07T16:24:14.9921770Z         
+2026-10-07T16:24:14.9921880Z       operator: 'match'
+2026-10-07T16:24:14.9922007Z       stack: |-
+2026-10-07T16:24:14.9922350Z         TestContext.<anonymous> (file:///home/runner/work/VP-V4/VP-V4/tests/integration/privacy/profile-data-sql/profile.test.mjs:134:469)
+2026-10-07T16:24:14.9922773Z         process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-10-07T16:24:14.9923056Z         async Test.run (node:internal/test_runner/test:1054:7)
+2026-10-07T16:24:14.9923448Z         async TestContext.<anonymous> (file:///home/runner/work/VP-V4/VP-V4/tests/integration/privacy/profile-data-sql/profile.test.mjs:131:2)
+2026-10-07T16:24:14.9923817Z         async Test.run (node:internal/test_runner/test:1054:7)
+2026-10-07T16:24:14.9924087Z         async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+2026-10-07T16:24:14.9924303Z       ...
+2026-10-07T16:24:14.9924588Z     # Subtest: whole owner progress capacity rejects before insertion; no partial list and no privileged cleanup floor bypass
+2026-10-07T16:24:14.9925048Z     ok 15 - whole owner progress capacity rejects before insertion; no partial list and no privileged cleanup floor bypass
+2026-10-07T16:24:14.9925328Z       ---
+2026-10-07T16:24:14.9925442Z       duration_ms: 3020.58882
+2026-10-07T16:24:14.9925581Z       type: 'test'
+2026-10-07T16:24:14.9925776Z       ...
+2026-10-07T16:24:14.9925980Z     # Subtest: actual30s expiry before effects rolls back source, progress and floor
+2026-10-07T16:24:14.9926286Z     ok 16 - actual30s expiry before effects rolls back source, progress and floor
+2026-10-07T16:24:14.9926494Z       ---
+2026-10-07T16:24:14.9926618Z       duration_ms: 30783.530588
+2026-10-07T16:24:14.9926755Z       type: 'test'
+2026-10-07T16:24:14.9926871Z       ...
+2026-10-07T16:24:14.9927322Z     # Subtest: controlled fixture delay after real effects uses actual clock and rolls source/floors/receipt back; original terminal receipt recovers afterTTL
+2026-10-07T16:24:14.9927986Z     ok 17 - controlled fixture delay after real effects uses actual clock and rolls source/floors/receipt back; original terminal receipt recovers afterTTL
+2026-10-07T16:24:14.9928321Z       ---
+2026-10-07T16:24:14.9928443Z       duration_ms: 30983.983507
+2026-10-07T16:24:14.9928577Z       type: 'test'
+2026-10-07T16:24:14.9928693Z       ...
+2026-10-07T16:24:14.9928952Z     # Subtest: fresh authority/session and foreign selection negatives rollback and disclose no foreign source
+2026-10-07T16:24:14.9929354Z     ok 18 - fresh authority/session and foreign selection negatives rollback and disclose no foreign source
+2026-10-07T16:24:14.9929606Z       ---
+2026-10-07T16:24:14.9929719Z       duration_ms: 543.507573
+2026-10-07T16:24:14.9929853Z       type: 'test'
+2026-10-07T16:24:14.9929969Z       ...
+2026-10-07T16:24:14.9930183Z     # Subtest: unknown application source shape and inbound FK drift remain fail-closed
+2026-10-07T16:24:14.9930507Z     ok 19 - unknown application source shape and inbound FK drift remain fail-closed
+2026-10-07T16:24:14.9930723Z       ---
+2026-10-07T16:24:14.9930835Z       duration_ms: 313.616825
+2026-10-07T16:30:27.0778040Z # tests 691
+2026-10-07T16:30:27.0778227Z # suites 0
+2026-10-07T16:30:27.0778400Z # pass 689
+2026-10-07T16:30:27.0778571Z # fail 2
+2026-10-07T16:30:27.0778746Z # cancelled 0
+2026-10-07T16:30:27.0778934Z # skipped 0
+2026-10-07T16:30:27.0779103Z # todo 0
+2026-10-07T16:30:27.0779302Z # duration_ms 768501.314918

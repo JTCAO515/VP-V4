@@ -1,0 +1,12 @@
+✔ append replay and rollback; new ACL/RLS deny, disabled switch, no enrollment (588.720875ms)
+✔ export exact 30s lease, reference-only projection, invalidation after source/audit/data change, complete bounds (2361.047167ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3014.865416
+{"container":"vpj58-brief-cost-1a166c58","originalExit":0,"diagnosisExit":0,"elapsedMs":861.4409579999992,"waitSamples":10,"blockerSamples":0,"functions":[{"calls":19600,"function":"documents_v1","namespace":"result_data_private","self_time":9.019,"total_time":9.019},{"calls":9800,"function":"guard_source_v1","namespace":"result_data_private","self_time":211.777,"total_time":715.738},{"calls":39200,"function":"json_references_v1","namespace":"result_data_private","self_time":258.269,"total_time":438.524},{"calls":19600,"function":"parents_v1","namespace":"result_data_private","self_time":56.416,"total_time":503.961},{"calls":196000,"function":"reference_kind_v1","namespace":"result_data_private","self_time":166.619,"total_time":166.619}]}
+Owned03a Brief cost fixture cleanup PASS

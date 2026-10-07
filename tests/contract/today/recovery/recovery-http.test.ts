@@ -35,7 +35,7 @@ async function setup(t: Parameters<typeof nativeFixture>[0]) {
       return Response.json(url.searchParams.get("version")?.startsWith("eq.") ? row : [row]);
     }
     if (path === "/rest/v1/trip_archives") return Response.json(null);
-    if (path === "/rest/v1/user_profiles") return Response.json({ travel_pace: "relaxed", currency: "CNY", default_departure_time: "09:00", updated_at: observedAt });
+    if (path === "/rest/v1/user_profiles") return Response.json({ travel_pace: "relaxed", currency: "CNY", default_departure_time: "09:00", updated_at: observedAt, profile_revision: 0, profile_saved_fields: ["display_name", "travel_pace", "locale", "currency", "distance_unit", "temperature_unit", "default_departure_time"] });
     if (path.endsWith("/prepare_local_recovery_v1")) {
       prepareCalls++; if (replaceAfterPrepare && prepareCalls > 1) epoch = 2;
       return Response.json(sourceAbsent ? { kind: "pending", reason: "RESERVATION_READER_UNAVAILABLE" } : context);

@@ -1,0 +1,22 @@
+2026-10-07T13:41:18.4514495Z not ok 216 - actual Profile SQL transaction and source graph
+2026-10-07T13:41:18.4516747Z   ---
+2026-10-07T13:41:18.4517179Z   duration_ms: 112625.286119
+2026-10-07T13:41:18.4518764Z   type: 'test'
+2026-10-07T13:41:18.4519717Z   location: '/home/runner/work/VP-V4/VP-V4/tests/integration/privacy/profile-data-sql/profile.test.mjs:17:1'
+2026-10-07T13:41:18.4520520Z   failureType: 'hookFailed'
+2026-10-07T13:41:18.4520896Z   error: |-
+2026-10-07T13:41:18.4521440Z     Error response from daemon: No such container: vpj58-profile-4779acb1
+2026-10-07T13:41:18.4521972Z
+2026-10-07T13:41:18.4522267Z   code: 'ERR_TEST_FAILURE'
+2026-10-07T13:41:18.4522654Z   stack: |-
+2026-10-07T13:41:18.4523434Z     db (file:///home/runner/work/VP-V4/VP-V4/tests/integration/privacy/profile-data-sql/replay.mjs:6:76)
+2026-10-07T13:41:18.4524451Z     process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-10-07T13:41:18.4525151Z     async TestHook.run (node:internal/test_runner/test:1054:7)
+2026-10-07T13:41:18.4526079Z     async Test.runHook (node:internal/test_runner/test:965:9)
+2026-10-07T13:41:18.4526684Z     async after (node:internal/test_runner/test:1005:9)
+2026-10-07T13:41:18.4527717Z     async Test.run (node:internal/test_runner/test:1070:7)
+2026-10-07T13:41:18.4528450Z     async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+2026-10-07T13:41:18.4528997Z   ...
+2026-10-07T13:41:18.4529607Z # Subtest: Profile precise Result append preserves whole application and boundary guards
+2026-10-07T13:41:18.4530611Z     # Subtest: unknown application relation and inbound FK still rejected
+2026-10-07T13:41:18.4531499Z     ok 1 - unknown application relation and inbound FK still rejected

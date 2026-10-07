@@ -115,7 +115,7 @@ run('unqualified transport association rejects before first Trip mutation; priva
 run('server context exact replay/current Profile; same operation changed body conflicts',async()=>{
  const f=await fixture(),c=await prepared(f);assert.deepEqual(await prepared(f),c);
  assert.equal((await rpc(f.a,'prepare_local_recovery_v1',{p_trip_id:f.trip,p_input:{...f.input,locale:'en'}})).kind,'conflict');
- await db(`insert into public.user_profiles(owner_id) values('${f.a.id}');`);
+ await db(`${claims(f.a)}set role authenticated;select public.save_user_profile(null,'balanced','zh','CNY','kilometre','celsius','09:00:00');`);
  assert.equal((await rpc(f.a,'prepare_local_recovery_v1',{p_trip_id:f.trip,p_input:f.input})).kind,'conflict');
 });
 run('single original confirm preserves all fixed/unselected/date/window scope; exact historical retry/read',async()=>{
@@ -124,7 +124,7 @@ run('single original confirm preserves all fixed/unselected/date/window scope; e
  assert.equal((await rpc(f.a,'confirm_and_apply_trip_proposal',f.confirm))[0].outcome,'applied');
  const current=JSON.parse(await db(`select public.trip_content_snapshot(id,title) from public.trips where id='${f.trip}';`));before.days[0].items=before.days[0].items.filter(i=>i.id!=='OptionalA');assert.deepEqual(current,before);
  const op=await rpc(f.a,'read_local_recovery_operation_v1',{p_trip_id:f.trip,p_operation_id:f.selection.operationId});assert.equal(op.state,'applied');assert.equal(op.resultingVersion,2);assert.deepEqual(op.input,f.selection);
- await db(`insert into public.user_profiles(owner_id) values('${f.a.id}');`);
+ await db(`${claims(f.a)}set role authenticated;select public.save_user_profile(null,'balanced','zh','CNY','kilometre','celsius','09:00:00');`);
  assert.equal((await rpc(f.a,'confirm_and_apply_trip_proposal',f.confirm))[0].outcome,'already_applied');
  assert.equal((await rpc(f.a,'submit_local_recovery_v1',{p_trip_id:f.trip,p_input:f.selection})).proposalId,f.receipt.proposalId);
  assert.equal(await db(`select count(*) from public.trip_events where proposal_id='${f.receipt.proposalId}';`),'1');
@@ -147,7 +147,7 @@ run('concurrent same-key original confirmation applies once with one event/versi
  const op=await rpc(f.a,'read_local_recovery_operation_v1',{p_trip_id:f.trip,p_operation_id:f.selection.operationId});assert.equal(op.state,'applied');assert.equal(op.resultingVersion,2);
 });
 run('Profile change direct original confirm rolls back; malformed alternate support cannot bypass the original writer',async()=>{
- const f=await selected(await fixture()),before=await fingerprint(f);await db(`insert into public.user_profiles(owner_id) values('${f.a.id}');`);
+ const f=await selected(await fixture()),before=await fingerprint(f);await db(`${claims(f.a)}set role authenticated;select public.save_user_profile(null,'balanced','zh','CNY','kilometre','celsius','09:00:00');`);
  await failure(f.a,'confirm_and_apply_trip_proposal',f.confirm,/RECOVERY_CONFIRM_GUARD/);
  // Empty selection is blocked by the existing supported wrapper before writer
  // entry; it is not evidence that an accepted support reached the recovery guard.
@@ -187,7 +187,7 @@ run('user-confirmed preservation binds exact current real order without qualific
 });
 run('late source drift in same original writer transaction rejects all writes at deferred guard',async()=>{
  const f=await selected(await fixture()),before=await fingerprint(f);
- const r=await sql(container,`begin;${claims(f.a)}${stmt('confirm_and_apply_trip_proposal',f.confirm)}insert into public.user_profiles(owner_id) values('${f.a.id}');commit;`);assert.notEqual(r.code,0);assert.match(r.stderr,/RECOVERY_CONFIRM_GUARD/);assert.equal(await fingerprint(f),before);assert.equal(await db(`select count(*) from public.user_profiles where owner_id='${f.a.id}';`),'0');
+ const r=await sql(container,`begin;${claims(f.a)}${stmt('confirm_and_apply_trip_proposal',f.confirm)}select public.save_user_profile(null,'balanced','zh','CNY','kilometre','celsius','09:00:00');commit;`);assert.notEqual(r.code,0);assert.match(r.stderr,/RECOVERY_CONFIRM_GUARD/);assert.equal(await fingerprint(f),before);assert.equal(await db(`select count(*) from public.user_profiles where owner_id='${f.a.id}';`),'0');
 });
 run('account/Trip deletion cascades personal rows; clearing association keeps permanent rejection marker',async()=>{
  const f=await selected(await fixture()),before=await fingerprint(f);await db(`delete from recovery_private.contexts_v1 where trip_id='${f.trip}';`);await failure(f.a,'confirm_and_apply_trip_proposal',f.confirm,/RECOVERY_CONFIRM_GUARD/);assert.equal(await fingerprint(f),before);

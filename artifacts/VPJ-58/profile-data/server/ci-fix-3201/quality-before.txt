@@ -1,0 +1,84 @@
+✖ actual native and Web handlers qualify owner context, create local diff only, and no model/provider/Trip write (18.534042ms)
+✔ missing reservation reader returns real pending and no executable candidates (4.641416ms)
+✔ native post-source mobile epoch replacement returns no private candidates (4.623042ms)
+✔ selection returns original Proposal digest/diff; lost ACK preserves exact operation for receipt read (12.294458ms)
+✔ credential ambiguity, cross-Origin and caller provider data are rejected before actual recovery dispatch (1.895666ms)
+✔ nested transport consumes only its dedicated authoritative RPC; missing qualification never becomes a user report (3.005625ms)
+✖ synthetic qualified transport seam emits original local diff with separate source branch and detects reread drift (3.186708ms)
+✔ transport rejects foreign scope, caller policy and future requests before authoritative preparation (2.260458ms)
+✔ production engine call preserves proposal reference and absent place/reservation evidence stays pending (8.999458ms)
+✔ qualified opening violation is explicit without shifting appointments or discarding user choice (0.240167ms)
+✔ local calendar mismatch and caller evidence/owner assertions cannot grant feasibility (0.253167ms)
+✔ opaque Trip IDs and overlapping fixed appointments produce a result without moving either item (0.226875ms)
+✔ current opening receipt supports only its positive window; outside, expired and wrong exact context stay pending (0.916625ms)
+✖ production HTTP uses owned exact proposal and JWT reads; changed same-session epoch returns no result (16.703458ms)
+✔ explicit now route reuses Maps transport: exact time binds, references stay pending, future/default-off/identity/quota dispatch nothing (2.321458ms)
+✔ existing canonical route identity resolution requires exactly one valid mapping per selected canonical POI (0.182584ms)
+✔ saved Profile is a soft current reference; explicit needs prevail and missing or denied sources never default (0.195292ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 14
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 179.813083
+
+✖ failing tests:
+
+test at tests/contract/today/recovery/recovery-http.test.ts:67:1
+✖ actual native and Web handlers qualify owner context, create local diff only, and no model/provider/Trip write (18.534042ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'pending'
+  - 'candidates'
+  
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-profile-data-server-20261007/tests/contract/today/recovery/recovery-http.test.ts:71:70)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'pending',
+    expected: 'candidates',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/contract/today/recovery/recovery-http.test.ts:122:1
+✖ synthetic qualified transport seam emits original local diff with separate source branch and detects reread drift (3.186708ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'pending'
+  - 'candidates'
+  
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-profile-data-server-20261007/tests/contract/today/recovery/recovery-http.test.ts:126:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'pending',
+    expected: 'candidates',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/contract/trip/plan-feasibility.test.mjs:43:1
+✖ production HTTP uses owned exact proposal and JWT reads; changed same-session epoch returns no result (16.703458ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'unavailable'
+  - 'current'
+  
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-profile-data-server-20261007/tests/contract/trip/plan-feasibility.test.mjs:61:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'unavailable',
+    expected: 'current',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

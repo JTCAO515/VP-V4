@@ -1,0 +1,31 @@
+2026-10-07T14:33:27.5073548Z     not ok 15 - whole owner progress capacity rejects before insertion; no partial list and no privileged cleanup floor bypass
+2026-10-07T14:33:27.5074774Z       ---
+2026-10-07T14:33:27.5075592Z       duration_ms: 12687.154852
+2026-10-07T14:33:27.5076221Z       type: 'test'
+2026-10-07T14:33:27.5077283Z       location: '/home/runner/work/VP-V4/VP-V4/tests/integration/privacy/profile-data-sql/profile.test.mjs:137:10'
+2026-10-07T14:33:27.5078409Z       failureType: 'testCodeFailure'
+2026-10-07T14:33:27.5079050Z       error: |-
+2026-10-07T14:33:27.5082646Z         The input did not match the regular expression /PROFILE_SCOPE_TOO_LARGE/. Input:
+2026-10-07T14:33:27.5110368Z
+2026-10-07T14:33:27.5137126Z         'Error: ERROR:  canceling statement due to statement timeout\n' +
+2026-10-07T14:33:27.5175687Z           'CONTEXT:  PL/pgSQL function profile_data_private.progress_v1(uuid,jsonb) line 6 at IF\n' +
+2026-10-07T14:33:27.5177311Z           'PL/pgSQL function public.privacy_profile_data_v1(text,text,bigint) line 19 at assignment\n'
+2026-10-07T14:33:27.5178611Z
+2026-10-07T14:33:27.5179145Z       code: 'ERR_ASSERTION'
+2026-10-07T14:33:27.5179997Z       name: 'AssertionError'
+2026-10-07T14:33:27.5180600Z       expected:
+2026-10-07T14:33:27.5181878Z       actual:
+2026-10-07T14:33:27.5182400Z       error: |-
+2026-10-07T14:33:27.5183318Z         ERROR:  canceling statement due to statement timeout
+2026-10-07T14:33:27.5184945Z         CONTEXT:  PL/pgSQL function profile_data_private.progress_v1(uuid,jsonb) line 6 at IF
+2026-10-07T14:33:27.5186734Z         PL/pgSQL function public.privacy_profile_data_v1(text,text,bigint) line 19 at assignment
+2026-10-07T14:33:27.5188089Z
+2026-10-07T14:33:27.5188625Z       stack: |-
+2026-10-07T14:33:27.5189876Z         db (file:///home/runner/work/VP-V4/VP-V4/tests/integration/privacy/profile-data-sql/replay.mjs:6:76)
+2026-10-07T14:33:27.5191598Z         process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-10-07T14:33:27.5192923Z         async waitForActual (node:assert:644:5)
+2026-10-07T14:33:27.5193982Z         async Function.rejects (node:assert:767:25)
+2026-10-07T14:33:27.5195698Z         async TestContext.<anonymous> (file:///home/runner/work/VP-V4/VP-V4/tests/integration/privacy/profile-data-sql/profile.test.mjs:143:83)
+2026-10-07T14:33:27.5197255Z         async Test.run (node:internal/test_runner/test:1054:7)
+2026-10-07T14:33:27.5198555Z         async TestContext.<anonymous> (file:///home/runner/work/VP-V4/VP-V4/tests/integration/privacy/profile-data-sql/profile.test.mjs:137:2)
+2026-10-07T14:33:27.5199843Z         async Test.run (node:internal/test_runner/test:1054:7)

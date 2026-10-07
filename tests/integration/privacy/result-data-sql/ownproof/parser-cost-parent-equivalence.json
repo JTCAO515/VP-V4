@@ -1,0 +1,61 @@
+{
+  "kind": "actual PG owned original/updated function set equivalence; synthetic sources",
+  "verified": [
+    {
+      "relation": "service_brief_private.audit",
+      "equal": true,
+      "parents": []
+    },
+    {
+      "relation": "service_brief_private.audit",
+      "equal": true,
+      "parents": [
+        {
+          "kind": "artifactIds",
+          "entity_id": "9489dc48-75a4-4d53-b546-c30ecb9f10a0"
+        }
+      ]
+    },
+    {
+      "relation": "service_brief_private.audit",
+      "equal": true,
+      "parents": [
+        {
+          "kind": "artifactIds",
+          "entity_id": "9489dc48-75a4-4d53-b546-c30ecb9f10a0"
+        }
+      ]
+    },
+    {
+      "relation": "notification_private.outbox",
+      "equal": true,
+      "parents": [
+        {
+          "kind": "artifactIds",
+          "entity_id": "9489dc48-75a4-4d53-b546-c30ecb9f10a0"
+        }
+      ]
+    },
+    {
+      "relation": "notification_private.attempts",
+      "equal": true,
+      "parents": [
+        {
+          "kind": "artifactIds",
+          "entity_id": "9489dc48-75a4-4d53-b546-c30ecb9f10a0"
+        }
+      ]
+    },
+    {
+      "relation": "notification_private.operations",
+      "equal": true,
+      "parents": [
+        {
+          "kind": "artifactIds",
+          "entity_id": "9489dc48-75a4-4d53-b546-c30ecb9f10a0"
+        }
+      ]
+    }
+  ],
+  "accountCascade": "PASS"
+}

@@ -150,22 +150,37 @@ final class NativeTravelPaceStore {
     private(set) var toast: Toast?
     private(set) var busy = false
     private(set) var notice: String?
+    private var requestGeneration = UUID()
+    private var profileErasureFloor = 0
     private var shownOperations: Set<UUID> = []
 
     func reset(for next: NativeDataScope?) {
         guard scope != next else { return }
+        requestGeneration = UUID(); profileErasureFloor = 0
         scope = next; snapshot = nil; pending = nil; toast = nil; busy = false
         notice = nil; shownOperations = []
     }
 
+    /// Verified source cleanup invalidates only older saved Profile state. SQL keeps permanent fences.
+    func applyProfileErasure(_ value: NativeProfileDataErasure?) {
+        guard let value, scope == value.actor.scope, value.paceFloor > profileErasureFloor else { return }
+        profileErasureFloor = value.paceFloor; requestGeneration = UUID(); busy = false
+        if let snapshot, snapshot.revision < value.paceFloor || snapshot.revision == value.paceFloor && ["explicit", "paused"].contains(snapshot.state) { self.snapshot = nil }
+        if let pending, pending.expectedRevision < value.paceFloor { self.pending = nil }
+        if let toast, toast.revision <= value.paceFloor { self.toast = nil }
+        shownOperations = []; notice = "profileCleared"
+    }
+
     func load(using session: NativeSession) async {
         reset(for: session.dataScope)
+        applyProfileErasure(session.currentProfileDataErasure)
         await perform(currentScope: { session.dataScope }, command: nil) {
             try await session.memoryRequest(method: "GET")
         }
     }
 
     func save(_ pace: NativeTravelPace, consent: Bool, using session: NativeSession) async {
+        applyProfileErasure(session.currentProfileDataErasure)
         guard consent, let snapshot, pending == nil else { return }
         let command = NativeTravelPaceCommand(action: "save", operationId: UUID(), expectedRevision: snapshot.revision,
                                              travelPace: pace, noticeVersion: Self.noticeVersion)
@@ -173,6 +188,7 @@ final class NativeTravelPaceStore {
     }
 
     func change(_ action: String, using session: NativeSession) async {
+        applyProfileErasure(session.currentProfileDataErasure)
         guard ["pause", "revoke", "undo"].contains(action), let snapshot, pending == nil else { return }
         if action == "undo" {
             guard let toast, toast.revision == snapshot.revision, toast.operationId == snapshot.operationId else { return }
@@ -181,6 +197,7 @@ final class NativeTravelPaceStore {
     }
 
     func retry(using session: NativeSession) async {
+        applyProfileErasure(session.currentProfileDataErasure)
         guard let pending else { return }
         await send(pending, using: session)
     }
@@ -199,18 +216,21 @@ final class NativeTravelPaceStore {
     /// transport without inventing credentials or bypassing the production gate.
     func perform(currentScope: @MainActor () -> NativeDataScope?, command: NativeTravelPaceCommand?,
                  request: @MainActor () async throws -> Data) async {
-        guard !busy, let captured = scope, currentScope() == captured else { return }
+        guard !busy, let captured = scope, currentScope() == captured,
+              command == nil || command!.expectedRevision >= profileErasureFloor else { return }
+        let capturedGeneration = requestGeneration
         if let command {
             guard pending == nil || pending == command else { return }
             pending = command
         }
         busy = true; notice = nil
-        defer { if scope == captured && currentScope() == captured { busy = false } }
+        defer { if requestGeneration == capturedGeneration && scope == captured && currentScope() == captured { busy = false } }
         do {
             let data = try await request()
-            guard scope == captured, currentScope() == captured else { return }
+            guard requestGeneration == capturedGeneration, scope == captured, currentScope() == captured else { return }
             let result = try JSONDecoder().decode(NativeTravelPaceSnapshot.self, from: data)
-            guard result.valid else { throw NativeDataError.invalidResponse }
+            guard result.valid, result.revision >= profileErasureFloor,
+                  !["explicit", "paused"].contains(result.state) || result.revision > profileErasureFloor else { throw NativeDataError.invalidResponse }
             if let command {
                 guard result.operationId == command.operationId, result.revision == command.expectedRevision + 1,
                       result.reused != nil else { throw NativeDataError.invalidResponse }
@@ -232,7 +252,7 @@ final class NativeTravelPaceStore {
             }
             snapshot = result
         } catch {
-            guard scope == captured, currentScope() == captured else { return }
+            guard requestGeneration == capturedGeneration, scope == captured, currentScope() == captured else { return }
             if case NativeDataError.server(let code) = error,
                ["PACE_CONFLICT", "PACE_OPERATION_REUSE", "PACE_STALE_SOURCE"].contains(code) {
                 pending = nil; snapshot = nil; toast = nil; notice = "conflict"

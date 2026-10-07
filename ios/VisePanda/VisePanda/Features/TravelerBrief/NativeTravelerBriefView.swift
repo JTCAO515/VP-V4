@@ -60,6 +60,11 @@ struct NativeTravelerBriefView: View {
             guard phase == .active, let actor else { clear(); return }
             await load(actor)
         }
+        .onChange(of: session.currentProfileDataErasure?.id) { _, _ in
+            guard let erased = session.currentProfileDataErasure, erased.actor.scope == actor, erased.briefCaseIDs.contains(caseID) else { return }
+            actionGeneration = UUID(); actionTask?.cancel(); actionTask = nil
+            resetChoices(); store.invalidate(); eraseExport() // Original pending journal remains recoverable.
+        }
         .onChange(of: actor) { _, _ in clear() }
         .onChange(of: phase) { _, value in if value != .active { clear() } }
         .onDisappear { clear() }
