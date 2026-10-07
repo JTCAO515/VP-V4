@@ -377,3 +377,21 @@ observes syntheticdelay and preserves failing originalexit, owncleanupPASS;
 initialsyntheticcolumn setupFAIL retained. Singlebackend marked telemetry feeds
 normal currentheadCI, no rawquery/sourcebody/credentials added. Runtimecause still
 UNKNOWN pending remoteevidence. Details under server/ci-5a6-diagnostic.
+
+Exactcbe remote trace proved originalBrief9800 succeeded2158ms,11PID5210 active/
+noWait/noBlocker samples, unchanged typed guard counts. This does not explain old
+5a6 timeout. Current rootFAIL is Profile native concurrent case14 leaking private
+PROFILE_CONFLICT instead of originalPACE_CONFLICT; originalHTTP only accepts old
+PACE409 family. Observation/error contract sources are captured under server/
+ci-cbe-observation, no fixture regex broadening or falseBrief failure attribution.
+SoleSQL source4e1f3ee5 consumedc6601f35: only7-line local exception around added
+owner/ProfileNOWAIT maps SQLSTATE55P03 to originalPACE. Allmobile/input/floor/
+replay/privateOriginal/effect/Brief/global lock helper/API paths remain outside,
+NOWAIT/barrier30s/allassert/dataatomic unchanged. New07020000SHAaec808a083914b6414c129369ac96489463a1228fa802d26a68cc120f5fe42d3.
+Originalcase14 actual2PASS0skip/revoke+destroy, controlled read/allmutation across
+owner34/watermark/Profilelocks/fresh/invalid/authority/stale/reuse/whole-row-nochange
+proofs reused. Ownconsumer8/type/lint/docs/diffPASS. Read-only fixed Export4b31 and
+Turndfc92 qualified publicwrapper references absent, actual migration hashesmatch
+originalowner proof, no newbaseline overwrite or blindpin. Rootdidnotimport either
+unmerged direction. New finalhead must receive renewedformal/allactualCI/protected
+merge; oldcbeFAIL/previousruns preservefacts, target/full239 boundaries unchanged.
