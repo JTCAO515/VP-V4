@@ -1,0 +1,50 @@
+CREATE OR REPLACE FUNCTION export_private.profile_source_v1(u uuid)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+ SET "TimeZone" TO 'UTC'
+AS $function$
+declare p public.user_profiles;w profile_data_private.watermarks_v1;r profile_data_private.operations_v1;
+ profile_n jsonb:='null';watermark_n jsonb:='null';ops jsonb:='[]';item jsonb;n integer:=0;rows_n integer:=0;source_bytes integer:=0;
+begin
+ -- Caller holds original policy/auth/account/intent/job locks. Never fabricate an
+ -- owner, watermark or saved Profile, and never acquire a job in reverse order.
+ if profile_data_private.schema_v1() is not true then raise exception 'PROFILE_SOURCE_UNAVAILABLE';end if;
+ if u is null or not exists(select 1 from auth.users where id=u) then raise exception 'PROFILE_SOURCE_UNAVAILABLE';end if;
+ select * into w from profile_data_private.watermarks_v1 where owner_id=u for share nowait;
+ if found then
+  rows_n:=rows_n+1;
+  watermark_n:=jsonb_build_object('ownerId',u,'profileRevision',w.profile_revision,'paceRevision',w.pace_revision,
+   'profileErasureFloor',w.profile_floor,'paceErasureFloor',w.pace_floor);
+ end if;
+ select * into p from public.user_profiles where owner_id=u for share nowait;
+ if found then
+  if octet_length(to_jsonb(p)::text)>1000000 then raise exception 'PROFILE_SCOPE_TOO_LARGE';end if;
+  if w.owner_id is null or p.profile_revision<>w.profile_revision or p.pace_revision<>w.pace_revision then raise exception 'PROFILE_SOURCE_UNAVAILABLE';end if;
+  rows_n:=rows_n+1;
+  profile_n:=jsonb_build_object('ownerId',u,'profile',profile_data_private.profile_v1(p),
+   'summary',profile_data_private.summary_v1(p,w),'savedFields',p.profile_saved_fields,
+   'createdAt',to_char(p.created_at at time zone 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"'),
+   'updatedAt',to_char(p.updated_at at time zone 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"'));
+  profile_n:=export_private.profile_normalize_integers_v1(profile_n);
+  if export_private.profile_row_valid_v1(profile_n,u) is not true then raise exception 'PROFILE_SOURCE_UNAVAILABLE';end if;
+ end if;
+ item:=jsonb_build_object('ownerId',u,'profile',profile_n,'watermark',watermark_n,'operations',ops,
+  'sourceRows',jsonb_build_object('profiles',case when p.owner_id is null then 0 else 1 end,'watermarks',case when w.owner_id is null then 0 else 1 end,'operations',0));
+ source_bytes:=octet_length(notification_private.canonical(jsonb_build_object('snapshot',jsonb_build_array(item))));
+ if source_bytes>1000000 then raise exception 'PROFILE_SCOPE_TOO_LARGE';end if;
+ for r in select * from profile_data_private.operations_v1 where owner_id=u order by request_id limit 10001 for share nowait loop
+  n:=n+1;if rows_n+n>10000 then raise exception 'PROFILE_SCOPE_TOO_LARGE';end if;
+  if octet_length(to_jsonb(r)::text)>1000000 then raise exception 'PROFILE_SCOPE_TOO_LARGE';end if;
+  item:=export_private.profile_normalize_integers_v1(profile_data_private.operation_row_v1(r));
+  if export_private.profile_operation_valid_v1(item,u,profile_data_private.now_v1()) is not true then raise exception 'PROFILE_SOURCE_UNAVAILABLE';end if;
+  source_bytes:=source_bytes+octet_length(notification_private.canonical(item))+case when n>1 then 1 else 0 end+length(n::text)-length((n-1)::text);
+  if source_bytes>1000000 then raise exception 'PROFILE_SCOPE_TOO_LARGE';end if;
+  ops:=ops||jsonb_build_array(item);
+ end loop;
+ item:=jsonb_build_object('ownerId',u,'profile',profile_n,'watermark',watermark_n,'operations',ops,
+  'sourceRows',jsonb_build_object('profiles',case when p.owner_id is null then 0 else 1 end,'watermarks',case when w.owner_id is null then 0 else 1 end,'operations',n));
+ if octet_length(notification_private.canonical(jsonb_build_object('snapshot',jsonb_build_array(item))))>1000000 then raise exception 'PROFILE_SCOPE_TOO_LARGE';end if;
+ return item;
+end$function$
