@@ -108,8 +108,11 @@ declare u uuid:=auth.uid();w profile_data_private.watermarks_v1;p public.user_pr
  perform identity_private.mobile_session_v2('session');
  if p_input is null or jsonb_typeof(p_input)<>'object' then raise exception 'INVALID_INPUT';end if;
  if a is distinct from 'read' and (jsonb_typeof(p_input->'operationId') is distinct from 'string' or p_input->>'operationId' !~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$') then raise exception 'INVALID_INPUT';end if;
- w:=profile_data_private.lock_owner_v1(u);
- select * into p from public.user_profiles where owner_id=u for update nowait;
+ begin
+  w:=profile_data_private.lock_owner_v1(u);
+  select * into p from public.user_profiles where owner_id=u for update nowait;
+ exception when lock_not_available then raise exception 'PACE_CONFLICT';
+ end;
  if a='read' then
   if p.owner_id is null and w.pace_floor>0 and p_input='{"action":"read"}'::jsonb then p.pace_revision:=w.pace_revision;p.pace_state:='revoked';return memory_private.pace_json(p);end if;
   return profile_data_private.native_original_v1(p_input);

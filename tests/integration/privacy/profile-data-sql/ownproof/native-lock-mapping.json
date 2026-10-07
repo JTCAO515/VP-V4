@@ -1,0 +1,119 @@
+{
+  "kind": "actual owned PostgreSQL controlled lock fixture",
+  "record": [
+    {
+      "stage": "before",
+      "lock": "owner34",
+      "action": "read",
+      "error": "PROFILE_CONFLICT"
+    },
+    {
+      "stage": "before",
+      "lock": "owner34",
+      "action": "save",
+      "error": "PROFILE_CONFLICT"
+    },
+    {
+      "stage": "before",
+      "lock": "owner34",
+      "action": "undo",
+      "error": "PROFILE_CONFLICT"
+    },
+    {
+      "stage": "candidate",
+      "lock": "owner34",
+      "action": "read",
+      "error": "PACE_CONFLICT"
+    },
+    {
+      "stage": "candidate",
+      "lock": "owner34",
+      "action": "save",
+      "error": "PACE_CONFLICT"
+    },
+    {
+      "stage": "candidate",
+      "lock": "owner34",
+      "action": "pause",
+      "error": "PACE_CONFLICT"
+    },
+    {
+      "stage": "candidate",
+      "lock": "owner34",
+      "action": "revoke",
+      "error": "PACE_CONFLICT"
+    },
+    {
+      "stage": "candidate",
+      "lock": "owner34",
+      "action": "undo",
+      "error": "PACE_CONFLICT"
+    },
+    {
+      "stage": "candidate",
+      "lock": "watermark",
+      "action": "read",
+      "error": "PACE_CONFLICT"
+    },
+    {
+      "stage": "candidate",
+      "lock": "watermark",
+      "action": "save",
+      "error": "PACE_CONFLICT"
+    },
+    {
+      "stage": "candidate",
+      "lock": "watermark",
+      "action": "pause",
+      "error": "PACE_CONFLICT"
+    },
+    {
+      "stage": "candidate",
+      "lock": "watermark",
+      "action": "revoke",
+      "error": "PACE_CONFLICT"
+    },
+    {
+      "stage": "candidate",
+      "lock": "watermark",
+      "action": "undo",
+      "error": "PACE_CONFLICT"
+    },
+    {
+      "stage": "candidate",
+      "lock": "profile",
+      "action": "read",
+      "error": "PACE_CONFLICT"
+    },
+    {
+      "stage": "candidate",
+      "lock": "profile",
+      "action": "save",
+      "error": "PACE_CONFLICT"
+    },
+    {
+      "stage": "candidate",
+      "lock": "profile",
+      "action": "pause",
+      "error": "PACE_CONFLICT"
+    },
+    {
+      "stage": "candidate",
+      "lock": "profile",
+      "action": "revoke",
+      "error": "PACE_CONFLICT"
+    },
+    {
+      "stage": "candidate",
+      "lock": "profile",
+      "action": "undo",
+      "error": "PACE_CONFLICT"
+    }
+  ],
+  "unchangedFailedSource": true,
+  "freshSaveAndRead": true,
+  "originalInvalidInputAndAuthority": true,
+  "privateProfileErrorUnchanged": true,
+  "guards": "t|t",
+  "operationReuseUnchanged": true
+}
