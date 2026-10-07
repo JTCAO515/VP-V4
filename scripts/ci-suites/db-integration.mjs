@@ -241,6 +241,7 @@ export const LANES = {
       { name: "result-data-http", runner: node("tests/integration/privacy/result-data/run-http.mjs", "--port-base", "63080"), files: ["tests/integration/privacy/result-data/auth-http.test.mjs"] },
       { name: "profile-data-http", runner: node("tests/integration/privacy/profile-data/run-http.mjs", "--port-base", "63040"), files: ["tests/integration/privacy/profile-data/auth-http.test.mjs"] },
       { name: "profile-export-http", runner: node("tests/integration/privacy/profile-export/run-http.mjs", "--port-base", "63000"), files: ["tests/integration/privacy/profile-export/auth-http.test.mjs"] },
+      { name: "turn-data-http", runner: node("tests/integration/privacy/turn-data/run-http.mjs", "--port-base", "62960"), files: ["tests/integration/privacy/turn-data/auth-http.test.mjs"] },
     ],
   },
   "supabase-http-ops": {

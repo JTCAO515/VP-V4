@@ -329,3 +329,17 @@ Next production build via repository pnpm build PASS (exit0), including new
 registered `/api/privacy/native/v1/turn-data`; original earlier nonexistent
 scripts/build.mjs invocation failed before work and was corrected to package.json
 command. No deployment or target runtime was run.
+
+Main exact CI append lease (b3545716cdb21c82bfcd0afb3585877ff9a710cee38ab727c704fd7e64847390)
+applied after current Profile/Export owner release. Only native-HTTP tail registers
+actual turn-data/run-http + auth-http/base62960; fresh port preflight remains in
+original runner and other ranges/indices/shards/strict zeroSkip/aggregate are
+unchanged. Classification --list PASS and existing DB integration governance
+11/11 PASS,0skip. Candidate retired. No speculative future SQL test registered.
+
+Early actual owned PG17 SQL-claims payloads consumed by current TS: preview
+decode PASS; 35-source export page decode PASS with schema-order mismatch[];
+finite progress erase original-byte receipt decode PASS and after-progress
+snapshot actual data6/operations2/fences1 decode PASS. Sensitive erasure deliberately
+requires all 56 registered source guards; unleased helper/trigger candidates
+remain unavailable, not a simulated erasure PASS. Full Auth/D2/Native still UNRUN.
