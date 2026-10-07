@@ -1,0 +1,9 @@
+# Native ProfileData implementation
+
+Sole writer branch/worktree vpj58-native-profile-data-20261007; base bdb92b2b. Actual first write: Lifetime38/Journal51/ReceiptFile57 lines, Swift parse PASS. Current owned source adds strict sole-TS command/Profile fields/history/summary/floors/receipt/list decoders, generation- and fixed30s-fenced store, protected immutable receipt export, selected-owner and selected transient-progress SwiftUI flow. No shared source/PBX applied and no SQL writes.
+
+Component evidence: exact own three foundational files plus extracted unchanged actual NativeDataScope/NativeDataError/NativeCredentialVault/NativeCommunitySafetyActor/Pending on isolated iOS26.5 Simulator. Actual 4 PASS / 0 FAIL / 0 SKIP. Result bundle /Users/jtsm5p/Library/Developer/XcodeBuildMCP/workspaces/Codex-64a03d9ff053/result-bundles/test_sim_2026-10-07T10-52-13-453Z_pid24769_195d088d.xcresult. Build log corresponding logs/test_sim_2026-10-07T10-52-13-452Z_pid24769_4e40280f.log. This is storage/lifetime evidence only; application/protocol/Auth/SQL/device UNRUN at this checkpoint.
+
+Shared precise candidate being prepared: NativeSession factory/streaming private bearer transport/receipt validation+local generation/floor invalidation+private cleanup; ProfileView owned route; NativeTravelPaceStore local generation/receipt floor/pending/Undo; saved pace and VP pace views/store matching observer (explicit current-goal intake preserved); DataCoverageModuleView profile destination; PBX own app/tests IDs only. Requires original actual owner release + Main exact lease before applying. ResultData files/owners remain untouched.
+
+Sole source is sibling profile-data-server lib/server/privacy/profile-data/contract.ts/protocol.ts/WIRE.md. Final decoder will be compared with its fixed SHA and original emitted producer bytes; Native defines no alternate WIRE.
