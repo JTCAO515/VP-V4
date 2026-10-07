@@ -1,0 +1,126 @@
+{
+  "source": "03a067fa",
+  "originalCase": {
+    "code": 0,
+    "stdout": "✔ append replay and rollback; new ACL/RLS deny, disabled switch, no enrollment (588.720875ms)\n✔ export exact 30s lease, reference-only projection, invalidation after source/audit/data change, complete bounds (2361.047167ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 3014.865416\n",
+    "stderr": ""
+  },
+  "count": 9800,
+  "statementTimeoutMs": 5000,
+  "container": "vpj58-brief-cost-1a166c58",
+  "result": {
+    "code": 0,
+    "stdout": "Insert on audit  (cost=0.00..147.00 rows=0 width=0) (actual time=764.344..764.344 rows=0 loops=1)\n  Buffers: shared hit=69977 dirtied=366 written=366\n  ->  Function Scan on generate_series  (cost=0.00..147.00 rows=9800 width=164) (actual time=0.274..8.703 rows=9800 loops=1)\nPlanning:\n  Buffers: shared hit=9\nPlanning Time: 0.044 ms\nTrigger for constraint audit_case_id_fkey: time=13.902 calls=9800\nTrigger for constraint audit_owner_id_fkey: time=13.279 calls=9800\nTrigger result_source_fence_v1: time=718.221 calls=9800\nExecution Time: 792.062 ms\n",
+    "stderr": ""
+  },
+  "elapsedMs": 861.4409579999992,
+  "samples": [
+    {
+      "pid": 1542,
+      "wait": null,
+      "state": "active",
+      "blockers": [],
+      "waitType": null
+    },
+    {
+      "pid": 1542,
+      "wait": null,
+      "state": "active",
+      "blockers": [],
+      "waitType": null
+    },
+    {
+      "pid": 1542,
+      "wait": null,
+      "state": "active",
+      "blockers": [],
+      "waitType": null
+    },
+    {
+      "pid": 1542,
+      "wait": null,
+      "state": "active",
+      "blockers": [],
+      "waitType": null
+    },
+    {
+      "pid": 1542,
+      "wait": null,
+      "state": "active",
+      "blockers": [],
+      "waitType": null
+    },
+    {
+      "pid": 1542,
+      "wait": null,
+      "state": "active",
+      "blockers": [],
+      "waitType": null
+    },
+    {
+      "pid": 1542,
+      "wait": null,
+      "state": "active",
+      "blockers": [],
+      "waitType": null
+    },
+    {
+      "pid": 1542,
+      "wait": null,
+      "state": "active",
+      "blockers": [],
+      "waitType": null
+    },
+    {
+      "pid": 1542,
+      "wait": null,
+      "state": "active",
+      "blockers": [],
+      "waitType": null
+    },
+    {
+      "pid": 1542,
+      "wait": null,
+      "state": "active",
+      "blockers": [],
+      "waitType": null
+    }
+  ],
+  "functions": [
+    {
+      "calls": 19600,
+      "function": "documents_v1",
+      "namespace": "result_data_private",
+      "self_time": 9.019,
+      "total_time": 9.019
+    },
+    {
+      "calls": 9800,
+      "function": "guard_source_v1",
+      "namespace": "result_data_private",
+      "self_time": 211.777,
+      "total_time": 715.738
+    },
+    {
+      "calls": 39200,
+      "function": "json_references_v1",
+      "namespace": "result_data_private",
+      "self_time": 258.269,
+      "total_time": 438.524
+    },
+    {
+      "calls": 19600,
+      "function": "parents_v1",
+      "namespace": "result_data_private",
+      "self_time": 56.416,
+      "total_time": 503.961
+    },
+    {
+      "calls": 196000,
+      "function": "reference_kind_v1",
+      "namespace": "result_data_private",
+      "self_time": 166.619,
+      "total_time": 166.619
+    }
+  ]
+}

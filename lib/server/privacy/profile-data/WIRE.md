@@ -335,3 +335,97 @@ still fail closed. New actual source-time24 signedAuth1PASS/cleanup and Native1
 codec proof are necessary increments, not copied fixture-only confidence.
 No ProfileExport source/SQL or other unmerged domain consumed. Main must renew
 codecompletion/exactfinalformal/allCI on the fixed head; oldheadHOLD is not waived.
+
+Fresh03a PG failures remain distinct from3201: progress capacity fails before its
+exact bound error due to statement timeout, assigned solely to original ProfileSQL;
+Brief audit9800 timeout at Auth FK has remote UNKNOWN cause. Main26e60d reviewed
+owned originalprereq/bounds2PASS + actual9800 EXPLAIN/function/wait counterexample
+(792ms,10active/noWait/noBlocker samples), without source or originalbounds changes.
+Counterexample + first setupFAIL preserved under server/ci-03a-diagnosis; no further
+local matrix/Brief source edit this turn. New actual progress source increment then
+normal new-head requiredCI, with original Brief5s/9800 assertion still hard gate.
+
+Fresh03a capacity runtime repair85fb497f consumed8d07f79d: only progress_v1
+11-line body, whole operation_row projection/order/owner/ids/10001/NOWAIT/10000/
+NOT_FOUND and original5s/30s deadlines unchanged. Precise UTF8 row text plus []2
+and comma-space2 bytes are counted before append; construct final array/digest
+once. New07020000 SHA499b6ca9e46b8354411987c919a41cd096245e8df156590ae481428bdca97386;
+no table/constraint/trigger/ACL/schemahash delta. Original capacity2PASS and
+20+5/selfexit2PASS,0/20/500 completeJSON/digest equivalence,NOWAIT and exact1MB
+boundaries are original SQL-owner actual proofs, not another TS matrix rerun.
+Own closed consumer8/typecheck/lint/docs/diff PASS after integration. Read-only
+fixed Export4b31a17f exact0704 hash5f1502 matches owner evidence, contains no
+profile_data_private.progress_v1 reference/pin; actual owner's same-PG threeguard t|t|t proof reused.
+No Export source imported or blind new hash accepted. First filename lookup used
+nonexistent suffix, returned no source and failed its hash assertion; exact git
+inventory located profile_core_export.sql before verification, no source changed.
+Brief remote03a FK5s cause remainsUNKNOWN, localcounterexample preserved. New
+actual runtime repair head must run original complete requiredCI with original
+Brief9800/5s hard assertion; no blindrerun of oldhead or suppression/normalization.
+
+Read-only Export check initially rejected unrelated memory/entitlement progress
+name substrings; the precise fully-qualified Profile function check passes with
+actual0704hashMATCH. No pin/schema/source changed. First new-head Git push was
+remotely rejected500; old03a remained verified remote before normal push retry.
+
+Fresh5a6 only remainingPG failure is originalBrief audit9800 AuthFK timeout; all
+capacity/rootcases now pass remotely, not inferred from localproofs. Main98f036/
+a3b0df precise observationlease after original223 owner release applied only
+helperimport+same9800 SQL caller. No counterexample/matrix/green12 rerun or guard/
+oracle/5s/30s/count change. Ownhelper-only check accepts originalexternal names,
+observes syntheticdelay and preserves failing originalexit, owncleanupPASS;
+initialsyntheticcolumn setupFAIL retained. Singlebackend marked telemetry feeds
+normal currentheadCI, no rawquery/sourcebody/credentials added. Runtimecause still
+UNKNOWN pending remoteevidence. Details under server/ci-5a6-diagnostic.
+
+Exactcbe remote trace proved originalBrief9800 succeeded2158ms,11PID5210 active/
+noWait/noBlocker samples, unchanged typed guard counts. This does not explain old
+5a6 timeout. Current rootFAIL is Profile native concurrent case14 leaking private
+PROFILE_CONFLICT instead of originalPACE_CONFLICT; originalHTTP only accepts old
+PACE409 family. Observation/error contract sources are captured under server/
+ci-cbe-observation, no fixture regex broadening or falseBrief failure attribution.
+SoleSQL source4e1f3ee5 consumedc6601f35: only7-line local exception around added
+owner/ProfileNOWAIT maps SQLSTATE55P03 to originalPACE. Allmobile/input/floor/
+replay/privateOriginal/effect/Brief/global lock helper/API paths remain outside,
+NOWAIT/barrier30s/allassert/dataatomic unchanged. New07020000SHAaec808a083914b6414c129369ac96489463a1228fa802d26a68cc120f5fe42d3.
+Originalcase14 actual2PASS0skip/revoke+destroy, controlled read/allmutation across
+owner34/watermark/Profilelocks/fresh/invalid/authority/stale/reuse/whole-row-nochange
+proofs reused. Ownconsumer8/type/lint/docs/diffPASS. Read-only fixed Export4b31 and
+Turndfc92 qualified publicwrapper references absent, Export0704 actualhash matches ownerproof; committedTurndfc92 actual0705hash
+31a15eab81ae97c4a9e8a1b35c99a9664e26c2604a0554e31ca6443d0cd82600 differs
+from the earlier quoted44a346 shorthand, so no equality/pin assumed. Main receives
+the precise source discrepancy for originalTurn baseline coordination; no new
+baseline overwrite or blindpin. Rootdidnotimport either
+unmerged direction. New finalhead must receive renewedformal/allactualCI/protected
+merge; oldcbeFAIL/previousruns preservefacts, target/full239 boundaries unchanged.
+
+Fresh833 PG691 has690PASS/1FAIL/0skip: originalBrief9800/5s insertion took
+5178.593ms, with parser/parents/guard execution cost in the error context. The19
+active/null-wait/no-blocker samples describe only observed moments. OriginalResult
+SQL ownerdf62ca63 is integrated as22f9d948: new append-only
+20261008000000_result_reference_parser_cost.sql, SHA256
+6a94c0613895e7126108e2f44d0dd2fa5762c63a71ae04ef3858fc6c03d5c3a4.
+Only exact helperCASE inline dispatch and empty-array return after the original
+depth guard change. Unknown nested containers, duplicate references, OLD/NEW,
+source guards, fences, ACL, original0701 and current0702aec808 remain intact.
+Static dependency pins reject drift rather than accepting an observed hash.
+Originalowner actual247 old/new bags/errors agree,119 expected errors; original
+Brief prerequisite/bounds before2PASS and after2PASS, sixparent/accountcascade,
+3affected negatives and currentProfile/Result strictguards true proofs are reused.
+Controlledguard706.803→489.225ms is local evidence, not remote acceptance.
+Source/proof details: tests/integration/privacy/result-data-sql/ownproof/
+parser-cost-repair.md. No unchanged Native/Auth/TTL matrix is repeated.
+
+Fresh833 Guide67 independently returned503 where the original oracle requires409.
+Remote producer code remainsUNKNOWN. One original localcase observed PG
+P0001/IDEMPOTENCY_KEY_REUSE→HTTP409 and cleanupPASS; that counterexample does not
+resolve the remote failure. Ownobserverfda14249 forwards the original fetch once,
+clones responses and correlates sanitized PG/HTTP errors by commandSHA256, without
+logging request bodies, headers or credentials. Its actual1PASS noninterference
+proof preserves the identical response when diagnostic write/log fail and preserves
+the identical original fetch error. Main's final exact lease after originalGuide
+owner release applies only sharedrunner NODE_OPTIONS1hunk, preserving existing
+options and the four original nativeHTTPChildEnv values. Syntax/classification
+checks run on the integrated candidate; no mapper/SQL/oracle/budget change.
+New integrated formal/allrequiredCI/protectedmerge remainUNRUN; whole239,
+target/provider/device/backup boundaries remain unchanged.

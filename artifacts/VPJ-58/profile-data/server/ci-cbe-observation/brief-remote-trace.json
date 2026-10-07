@@ -1,0 +1,162 @@
+{
+  "kind": "original9800/5s seed observation",
+  "container": "vp223-83e9aae3",
+  "marker": "brief-9800-observe-ae22af36",
+  "count": 9800,
+  "statementTimeoutMs": 5000,
+  "lockTimeoutMs": 5000,
+  "originalExit": 0,
+  "error": "",
+  "elapsedMs": 2158.729526999996,
+  "samples": [
+    {
+      "pid": 5210,
+      "wait": null,
+      "state": "active",
+      "blockers": [],
+      "waitType": null,
+      "queryAgeMs": 4.155,
+      "transactionAgeMs": 4.149
+    },
+    {
+      "pid": 5210,
+      "wait": null,
+      "state": "active",
+      "blockers": [],
+      "waitType": null,
+      "queryAgeMs": 173.472,
+      "transactionAgeMs": 173.465
+    },
+    {
+      "pid": 5210,
+      "wait": null,
+      "state": "active",
+      "blockers": [],
+      "waitType": null,
+      "queryAgeMs": 361.932,
+      "transactionAgeMs": 361.926
+    },
+    {
+      "pid": 5210,
+      "wait": null,
+      "state": "active",
+      "blockers": [],
+      "waitType": null,
+      "queryAgeMs": 543.493,
+      "transactionAgeMs": 543.487
+    },
+    {
+      "pid": 5210,
+      "wait": null,
+      "state": "active",
+      "blockers": [],
+      "waitType": null,
+      "queryAgeMs": 730.053,
+      "transactionAgeMs": 730.047
+    },
+    {
+      "pid": 5210,
+      "wait": null,
+      "state": "active",
+      "blockers": [],
+      "waitType": null,
+      "queryAgeMs": 930.281,
+      "transactionAgeMs": 930.276
+    },
+    {
+      "pid": 5210,
+      "wait": null,
+      "state": "active",
+      "blockers": [],
+      "waitType": null,
+      "queryAgeMs": 1127.949,
+      "transactionAgeMs": 1127.943
+    },
+    {
+      "pid": 5210,
+      "wait": null,
+      "state": "active",
+      "blockers": [],
+      "waitType": null,
+      "queryAgeMs": 1315.993,
+      "transactionAgeMs": 1315.987
+    },
+    {
+      "pid": 5210,
+      "wait": null,
+      "state": "active",
+      "blockers": [],
+      "waitType": null,
+      "queryAgeMs": 1514.499,
+      "transactionAgeMs": 1514.492
+    },
+    {
+      "pid": 5210,
+      "wait": null,
+      "state": "active",
+      "blockers": [],
+      "waitType": null,
+      "queryAgeMs": 1715.985,
+      "transactionAgeMs": 1715.978
+    },
+    {
+      "pid": 5210,
+      "wait": null,
+      "state": "active",
+      "blockers": [],
+      "waitType": null,
+      "queryAgeMs": 1910.484,
+      "transactionAgeMs": 1910.479
+    }
+  ],
+  "samplingErrors": [],
+  "beforeFunctions": [],
+  "afterFunctions": [
+    {
+      "calls": 19600,
+      "function": "documents_v1",
+      "namespace": "result_data_private",
+      "self_time": 18.81,
+      "total_time": 18.81
+    },
+    {
+      "calls": 9800,
+      "function": "guard_source_v1",
+      "namespace": "result_data_private",
+      "self_time": 423.578,
+      "total_time": 1723.332
+    },
+    {
+      "calls": 39200,
+      "function": "json_references_v1",
+      "namespace": "result_data_private",
+      "self_time": 661.059,
+      "total_time": 1122.744
+    },
+    {
+      "calls": 19600,
+      "function": "parents_v1",
+      "namespace": "result_data_private",
+      "self_time": 158.199,
+      "total_time": 1299.754
+    },
+    {
+      "calls": 196000,
+      "function": "reference_kind_v1",
+      "namespace": "result_data_private",
+      "self_time": 420.523,
+      "total_time": 420.523
+    }
+  ],
+  "host": {
+    "loadavg": [
+      9.44,
+      6.08,
+      3.09
+    ],
+    "parallelism": 4
+  },
+  "rawQueryLogged": false,
+  "sourceChanged": false,
+  "remoteCauseConclusion": "UNKNOWN"
+}
