@@ -1,0 +1,11 @@
+--- a/ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageModuleView.swift
++++ b/ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageModuleView.swift
+@@ -50,6 +50,8 @@
+                 }.disabled(actor == nil || !registered)
+             } else if module.id == "offline" {
+                 NativeDataCoverageOfflineView(coverage: store, session: session, chinese: chinese)
++            } else if module.id == "guide_cache" {
++                NativeGuideCacheDataView(coverage: store, session: session, chinese: chinese)
+             } else {
+                 Section { Text(NativeDataCoverageCopy.missing(module.id, chinese: chinese)) }
+             }

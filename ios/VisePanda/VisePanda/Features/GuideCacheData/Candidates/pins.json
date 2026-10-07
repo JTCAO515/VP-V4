@@ -1,0 +1,30 @@
+{
+  "ios/VisePanda/VisePanda/Features/PlaceGuide/NativePlaceGuideStore.swift": {
+    "before": "6d6d592c0ffb27934710fd08ec61b48838a33b1df2765ae5043b5f4f5924844d",
+    "after": "a69f94654a53dc9e9d0601503ae47ba37069f46b2e1426c7a11c598b38486864"
+  },
+  "ios/VisePanda/VisePanda/Features/PlaceGuide/NativePlaceGuideView.swift": {
+    "before": "87053c5d7ebcbbb7cc9f93882dbaaddce70f3395dbe9e5ac4677e3ced7ec27b5",
+    "after": "d8a4d4cbbf656c321df550aebf8bcb0be351d8352b726b2ba8bf9ec6ae6b44b0"
+  },
+  "ios/VisePanda/VisePanda/Features/PlaceGuide/NativePlaceGuideFollowUpStore.swift": {
+    "before": "c31a53ad919ad333e66cb0c07011c017fadd575e93b90279c8d3f2cf1af3bba5",
+    "after": "9ef6d48653a762cb7efd8516ad80c6c355f42e63aebe4fbb158104e1bad4f2f1"
+  },
+  "ios/VisePanda/VisePanda/Features/VoiceTranslation/Audio/NativeVoiceAudioController.swift": {
+    "before": "91e35c3a5c25c82565c3a8d88328b27fb0001cb67978c6dbf2bab191b9255395",
+    "after": "8f6d7503c178be203f33d44d8c66c585b98488c7519554edd3342b32cb35c526"
+  },
+  "ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageModuleView.swift": {
+    "before": "67e3ba327cf57d10d48846525e0154c2ff64069d06e3fd265d1fcd3732ac1ce6",
+    "after": "83a1c2209584cfed7bc900c6601566ecc8ece8aedb22130f097f4872084bb6df"
+  },
+  "ios/VisePanda/VisePanda.xcodeproj/project.pbxproj": {
+    "before": "acd57e8b2cf6742e0256292fc4e5e9824ba969b7c40ee31e969179d6c87434c8",
+    "after": "93f99aab75f85c0462725e332ad0f0e14e74a0290db62beb81e22a1185a23cec"
+  },
+  "ios/VisePanda/VisePanda/App/NativeSession.swift": {
+    "before": "93aaf9d20946a93a1f73eea81780b2f61def5d43228984cd6224a6782d64020b",
+    "after": "f5ab33e837f7c736001f860f2fa6dbef1f72da7eaf05997966729a8c8fc68d2a"
+  }
+}
