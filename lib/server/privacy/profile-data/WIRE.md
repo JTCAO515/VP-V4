@@ -344,3 +344,21 @@ owned originalprereq/bounds2PASS + actual9800 EXPLAIN/function/wait counterexamp
 Counterexample + first setupFAIL preserved under server/ci-03a-diagnosis; no further
 local matrix/Brief source edit this turn. New actual progress source increment then
 normal new-head requiredCI, with original Brief5s/9800 assertion still hard gate.
+
+Fresh03a capacity runtime repair85fb497f consumed8d07f79d: only progress_v1
+11-line body, whole operation_row projection/order/owner/ids/10001/NOWAIT/10000/
+NOT_FOUND and original5s/30s deadlines unchanged. Precise UTF8 row text plus []2
+and comma-space2 bytes are counted before append; construct final array/digest
+once. New07020000 SHA499b6ca9e46b8354411987c919a41cd096245e8df156590ae481428bdca97386;
+no table/constraint/trigger/ACL/schemahash delta. Original capacity2PASS and
+20+5/selfexit2PASS,0/20/500 completeJSON/digest equivalence,NOWAIT and exact1MB
+boundaries are original SQL-owner actual proofs, not another TS matrix rerun.
+Own closed consumer8/typecheck/lint/docs/diff PASS after integration. Read-only
+fixed Export4b31a17f exact0704 hash5f1502 matches owner evidence, contains no
+progress reference/pin; actual owner's same-PG threeguard t|t|t proof reused.
+No Export source imported or blind new hash accepted. First filename lookup used
+nonexistent suffix, returned no source and failed its hash assertion; exact git
+inventory located profile_core_export.sql before verification, no source changed.
+Brief remote03a FK5s cause remainsUNKNOWN, localcounterexample preserved. New
+actual runtime repair head must run original complete requiredCI with original
+Brief9800/5s hard assertion; no blindrerun of oldhead or suppression/normalization.
