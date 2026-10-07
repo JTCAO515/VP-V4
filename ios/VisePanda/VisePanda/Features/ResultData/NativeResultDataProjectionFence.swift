@@ -41,12 +41,12 @@ struct NativeResultDataErasure: Identifiable {
     let actor: NativeCommunitySafetyActor
     var scope: NativeDataScope { actor.scope }
     let artifactIDs: Set<String>
-    init(receipt: NativeResultDataReceipt, actor: NativeCommunitySafetyActor) throws {
+    init(receipt: NativeResultDataReceipt, actor: NativeCommunitySafetyActor, previouslyErased: Set<String> = []) throws {
         guard receipt.binding.actor == actor, receipt.binding.scope == .sensitive,
               let root = receipt.binding.rootID, receipt.graph.ids["artifactIds"] == [root],
               !receipt.graph.revisions.isEmpty, receipt.graph.revisions == Array(1...receipt.graph.revisions.count) else {
             throw NativeDataError.staleSessionResponse
         }
-        self.actor = actor; artifactIDs = [root]
+        self.actor = actor; artifactIDs = previouslyErased.union([root])
     }
 }

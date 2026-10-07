@@ -1,0 +1,9 @@
+# Final pending shared candidate r5
+
+Own fixed TS contract remains 725827b02ac5e1057fe8504e6fea34717b7f7101. SharedNativeRemaining-r5.patch SHA256: 5450716927214daca5c4a1732411c53882bd1e7c069474b74a0a5b212faecc70.
+
+Main reviewed the exact r5 cached receipt notification on the same actor's verified ID set. Every RPC remains one selected artifact and all revisions/events; no extra source erase or contract change. The local signal includes prior verified erased IDs so a coalesced UI callback cannot miss an earlier erased result. Actor changes clear the local ID set and generation.
+
+FiveResult cached read invalidation preserves original pendingChoice, pendingBody, submitting and writer generation. Original decision request/response logic remains unchanged. Matching ID cache visibility and late simple loads are blocked. The original detail key no longer changes due solely to a new erasure signal, so its old clear() path cannot discard decision pending bytes. Session navigation retainer filters erased artifact/viewedArtifact IDs while preserving conversation/goal and every pending command.
+
+r4 actual full App candidate incremental compile + NativeFiveResultTests: 6 PASS / 0 FAIL / 0 SKIP. Other unchanged r2 own10 and prior LibrarySources/Knowledge39 PASS are reused (not a single55-test run). r1 FAIL and macOS513 FAIL are retained separately. Remaining9 shared files still pending Main's precise release/lease; granted TripView4 already matches the original reviewed candidate. Final r5 type integration build is being checked separately.
