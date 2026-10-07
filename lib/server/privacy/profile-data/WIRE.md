@@ -355,10 +355,15 @@ no table/constraint/trigger/ACL/schemahash delta. Original capacity2PASS and
 boundaries are original SQL-owner actual proofs, not another TS matrix rerun.
 Own closed consumer8/typecheck/lint/docs/diff PASS after integration. Read-only
 fixed Export4b31a17f exact0704 hash5f1502 matches owner evidence, contains no
-progress reference/pin; actual owner's same-PG threeguard t|t|t proof reused.
+profile_data_private.progress_v1 reference/pin; actual owner's same-PG threeguard t|t|t proof reused.
 No Export source imported or blind new hash accepted. First filename lookup used
 nonexistent suffix, returned no source and failed its hash assertion; exact git
 inventory located profile_core_export.sql before verification, no source changed.
 Brief remote03a FK5s cause remainsUNKNOWN, localcounterexample preserved. New
 actual runtime repair head must run original complete requiredCI with original
 Brief9800/5s hard assertion; no blindrerun of oldhead or suppression/normalization.
+
+Read-only Export check initially rejected unrelated memory/entitlement progress
+name substrings; the precise fully-qualified Profile function check passes with
+actual0704hashMATCH. No pin/schema/source changed. First new-head Git push was
+remotely rejected500; old03a remained verified remote before normal push retry.
