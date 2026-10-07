@@ -1,6 +1,6 @@
 {
   "schemaVersion": "data-coverage/1",
-  "catalogVersion": "data-coverage-catalog/2026-10-07.8",
+  "catalogVersion": "data-coverage-catalog/2026-10-07.9",
   "actorId": "00000000-0000-4000-8000-000000000001",
   "sessionId": "00000000-0000-4000-8000-000000000002",
   "mobileEpoch": 1,
@@ -87,18 +87,30 @@
     {
       "id": "profile",
       "location": "server",
-      "version": "core-export-d2/1",
-      "scope": "core-export-d2/1",
+      "version": "profile-data/1",
+      "scope": "profile-data/1",
       "exportHandler": "core",
-      "deleteHandler": null,
+      "deleteHandler": "profile_data",
       "selection": "owner",
-      "capacity": "100 rows/page; 1000 pages/module; 8MiB artifact; original protected download/expiry",
+      "capacity": "one explicitly selected owner Profile, all saved fields and pace history; fixed30s source CAS; declared mixed copies retained under original controls; own1..20 preview metadata exit",
       "retention": [
-        "original_module_retention",
-        "external_copies_not_recallable"
+        "account_auth_sessions",
+        "profile_owner_identity_created_at_monotonic_revisions",
+        "system_fallbacks_without_pace_consent",
+        "explicit_memory_trip_history_financial_provider_and_other_modules",
+        "mixed_domain_copies_under_original_controls",
+        "immutable_minimal_decisions_operation_replay_fences",
+        "actor_selection_hash_time_operation_fences",
+        "immutable_minimal_decisions",
+        "profile_owner_identity_monotonic_revision_erasure_floor"
       ],
       "missing": [
-        "scoped_delete_not_registered"
+        "external_provider_downloaded_export_backup_and_old_device_copies_not_recalled",
+        "mixed_domain_copies_not_cascade_erased",
+        "target_backup_and_old_device_acceptance_unverified",
+        "profile_source_not_modified",
+        "unselected_progress",
+        "external_copies"
       ]
     },
     {
