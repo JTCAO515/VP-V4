@@ -183,12 +183,12 @@ unknown source or truncation: entire snapshot fails capacity/unavailable honestl
 
 Page exact={schemaVersion,section,sourceDigest,items:[snapshot],hasMore:false,
 nextCursor:null,sectionComplete:true}. Snapshot exact={ownerId,sources,operations,
-fences,sourceRows,sourceAuthorities}. `sources` has EVERY pinned relation in schema order, each exact
+fences,sourceIdentityKeys,sourceRows,sourceAuthorities}. `sources` has EVERY pinned relation in schema order, each exact
 {relation,rows}; rows match exact pinned columns/types/nullability/PK order. PostgreSQL bigint
 and xid8 are canonical decimal STRINGS (including small values); integer is a
 safe JSON integer, timestamps preserve original offset/fractional precision. Empty
 groups are actual inspected empty tables, not synthesized missing-source fallback.
-`sourceRows` exact={data,operations,fences}; counts equal arrays, total<=10000;
+`sourceRows` exact={data,operations,fences,sourceIdentityKeys}; counts equal arrays, total<=10000;
 UTF8 page<=1MB. Operations use validOperationRow; fences exact={kind:'turn'|'message'|
 'artifact'|'operation',objectId,requestId,createdAt}; minimal permanent IDs only.
 No hidden source byte preimage in receipt/provenance.
@@ -343,3 +343,25 @@ finite progress erase original-byte receipt decode PASS and after-progress
 snapshot actual data6/operations2/fences1 decode PASS. Sensitive erasure deliberately
 requires all 56 registered source guards; unleased helper/trigger candidates
 remain unavailable, not a simulated erasure PASS. Full Auth/D2/Native still UNRUN.
+
+Main supplemental identity-key ruling (2026-10-08): original API/cleanup DTO/
+35-source SHA unchanged. decision.retainedFences strictly counts ONLY selected
+Turn/message/artifact root graph IDs, not every technical source key. Own immutable
+operations.source_identity_keys holds relation+actual erased-source PK, <=4100,
+no source body; it remains after source/progress clear with original bytes/decision.
+D2 owner snapshot exposes separate closed sourceIdentityKeys[] exact entries
+{requestId,relation,pk} from actual terminal sensitive operations. Relation must
+be an approved effect=erase source; pk EXACT pinned primary column names/types,
+non-null. Bigint/xid8 PK canonical decimal strings, original integer/UUID/text
+types retained; no invented UUID. Sort/dedupe by requestId, relation C, original
+native PK column order. sourceRows.sourceIdentityKeys equals exact flattened
+array length; total data+operations+fences+sourceIdentityKeys<=10000 and whole
+page UTF8<=1MB, linear accumulation. Existing original authority union/currentness/
+root fences/nonrenewing expiry/terminal recovery unchanged. Additional technical
+keys are inspectable separate metadata, never a recursive receipt/body preimage or
+new cleanup selection. Progress clearing retains these immutable keys.
+
+Closed snapshot additionally checks per terminal sensitive request that the
+flattened sourceIdentityKeys count for each approved countKey equals its immutable
+decision.erasedCounts. Matching an empty array counter cannot conceal omitted
+actual technical identities. This adds no root cleanup DTO or selection.

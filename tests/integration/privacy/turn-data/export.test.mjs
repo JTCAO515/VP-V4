@@ -17,7 +17,8 @@ test('all actual groups and original input/output are one source-bound owner sna
   }
 });
 test('retained operation/fence bytes stay finite and original authorities cannot be omitted',()=>{
-  const s=snapshot();s.operations=[operation()];s.fences=[{kind:'turn',objectId:id(4),requestId:id(3),createdAt:now+10}];s.sourceRows.operations=1;s.sourceRows.fences=1;assert.ok(decode(page(s)));
+  const s=snapshot();s.operations=[operation()];s.fences=[{kind:'turn',objectId:id(4),requestId:id(3),createdAt:now+10}];s.sourceRows.operations=1;s.sourceRows.fences=1;
+  s.sourceIdentityKeys=[{requestId:id(3),relation:'public.chat_turn_events',pk:{id:id(40)}},{requestId:id(3),relation:'public.chat_turn_events',pk:{id:id(41)}},{requestId:id(3),relation:'turn_private.assistant_message_source_receipts',pk:{message_id:id(5)}},{requestId:id(3),relation:'turn_private.work',pk:{turn_id:id(4)}}];s.sourceRows.sourceIdentityKeys=4;assert.ok(decode(page(s)));
   s.operations[0].sourceAuthorities=[{policyId:id(40),consentId:id(41)}];assert.equal(decode(page(s)),null);
   s.sourceAuthorities.push({policyId:id(40),consentId:id(41)});assert.ok(decode(page(s)));
   s.operations[0].decision.receipt={};assert.equal(decode(page(s)),null);
@@ -43,4 +44,15 @@ test('changed bytes/digest/cursor under same source lease never requalify a forg
   group(v.items[0],'turn_private.text_content')[0].output_text='changed';await assert.rejects(h.page('snapshot',null,100,signal()));
   v=page(v.items[0]);await assert.rejects(h.page('snapshot',null,100,signal()));
   await assert.rejects(h.page('snapshot',id(90),100,signal()));
+});
+
+test('supplemental immutable source keys are exact typed terminal provenance with native PK order and complete effect counts',()=>{
+  const s=snapshot(),op=operation();s.operations=[op];s.sourceRows.operations=1;
+  op.decision.erasedCounts=Object.fromEntries(Object.keys(op.decision.erasedCounts).map(k=>[k,0]));op.decision.erasedCounts.resultEvents=2;
+  s.sourceIdentityKeys=[{requestId:id(3),relation:'turn_private.result_events',pk:{id:'2'}},{requestId:id(3),relation:'turn_private.result_events',pk:{id:'10'}}];s.sourceRows.sourceIdentityKeys=2;assert.ok(decode(page(s)));
+  for(const mutate of [v=>v.sourceIdentityKeys.reverse(),v=>v.sourceIdentityKeys[0].pk.id=2,v=>v.sourceIdentityKeys[0].pk.extra='body',
+    v=>v.sourceIdentityKeys[0].relation='public.model_budget_attempts',v=>v.sourceIdentityKeys[0].requestId=id(99),v=>v.sourceIdentityKeys[0].sourceBody='secret',
+    v=>v.operations[0].decision.erasedCounts.resultEvents=3,v=>{v.sourceIdentityKeys=[];v.sourceRows.sourceIdentityKeys=0;}]){
+    const v=structuredClone(s);mutate(v);assert.equal(decode(page(v)),null);
+  }
 });
