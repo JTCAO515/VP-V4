@@ -1,0 +1,129 @@
+{
+  "removed": [],
+  "modified": [],
+  "added": [
+    {
+      "columns": [
+        [
+          "request_id",
+          "uuid",
+          true
+        ],
+        [
+          "generation",
+          "integer",
+          true
+        ],
+        [
+          "owner_id",
+          "uuid",
+          true
+        ],
+        [
+          "session_id",
+          "uuid",
+          true
+        ],
+        [
+          "session_epoch",
+          "bigint",
+          true
+        ],
+        [
+          "committed_lease",
+          "uuid",
+          true
+        ],
+        [
+          "source_digest",
+          "text",
+          true
+        ],
+        [
+          "profile_revision",
+          "bigint",
+          false
+        ],
+        [
+          "pace_revision",
+          "bigint",
+          false
+        ],
+        [
+          "profile_floor",
+          "bigint",
+          false
+        ],
+        [
+          "pace_floor",
+          "bigint",
+          false
+        ],
+        [
+          "source_profile_rows",
+          "integer",
+          true
+        ],
+        [
+          "source_watermark_rows",
+          "integer",
+          true
+        ],
+        [
+          "source_operation_rows",
+          "integer",
+          true
+        ],
+        [
+          "artifact_digest",
+          "text",
+          true
+        ],
+        [
+          "artifact_bytes",
+          "integer",
+          true
+        ],
+        [
+          "commit_digest",
+          "text",
+          true
+        ],
+        [
+          "completed_at",
+          "timestamp with time zone",
+          true
+        ],
+        [
+          "artifact_expires_at",
+          "timestamp with time zone",
+          true
+        ],
+        [
+          "key_id",
+          "text",
+          true
+        ]
+      ],
+      "relation": "export_private.profile_snapshot_provenance_v1",
+      "constraints": [
+        "CHECK (((artifact_bytes >= 1) AND (artifact_bytes <= 8388608)))",
+        "CHECK ((artifact_digest ~ '^[a-f0-9]{64}$'::text))",
+        "CHECK ((((source_profile_rows + source_watermark_rows) + source_operation_rows) <= 10000))",
+        "CHECK ((source_profile_rows <= source_watermark_rows))",
+        "CHECK ((((source_watermark_rows = 0) AND (profile_revision IS NULL) AND (pace_revision IS NULL) AND (profile_floor IS NULL) AND (pace_floor IS NULL)) OR ((source_watermark_rows = 1) AND (profile_revision IS NOT NULL) AND (pace_revision IS NOT NULL) AND (profile_floor IS NOT NULL) AND (pace_floor IS NOT NULL) AND ((profile_revision >= 0) AND (profile_revision <= '9007199254740990'::bigint)) AND ((pace_revision >= 0) AND (pace_revision <= '9007199254740990'::bigint)) AND ((profile_floor >= 0) AND (profile_floor <= profile_revision)) AND ((pace_floor >= 0) AND (pace_floor <= pace_revision)))))",
+        "CHECK ((artifact_expires_at > completed_at))",
+        "CHECK ((commit_digest ~ '^[a-f0-9]{64}$'::text))",
+        "CHECK (((generation >= 1) AND (generation <= 3)))",
+        "CHECK ((((octet_length(key_id) >= 1) AND (octet_length(key_id) <= 128)) AND (key_id !~ '[^!-~]'::text)))",
+        "PRIMARY KEY (request_id, generation)",
+        "FOREIGN KEY (request_id) REFERENCES export_private.core_jobs_v1(request_id) ON DELETE CASCADE",
+        "CHECK (((session_epoch >= 1) AND (session_epoch <= '9007199254740991'::bigint)))",
+        "CHECK ((source_digest ~ '^[a-f0-9]{64}$'::text))",
+        "CHECK (((source_operation_rows >= 0) AND (source_operation_rows <= 10000)))",
+        "CHECK (((source_profile_rows >= 0) AND (source_profile_rows <= 1)))",
+        "CHECK (((source_watermark_rows >= 0) AND (source_watermark_rows <= 1)))"
+      ]
+    }
+  ]
+}
