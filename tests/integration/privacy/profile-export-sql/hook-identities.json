@@ -15,7 +15,7 @@
   "export_private.valid_modules_v1(jsonb,integer)": "a012fc7607e819051c4b83867b4e4ad4",
   "export_private.profile_integer_v1(jsonb,bigint)": "114575989f2ce7b0eb7b350514f2f86d",
   "export_private.profile_natural_v1(jsonb,bigint)": "4f91a39b4198c9f7b9b8778bf1f95561",
-  "export_private.profile_row_valid_v1(jsonb,uuid)": "e02f265a135a57d3049e1eda9d58dfee",
+  "export_private.profile_row_valid_v1(jsonb,uuid)": "847b8f7f39004426cc4668734e02be58",
   "export_private.profile_conflicts_valid_v1(jsonb)": "34875bab4b6c05c2f261ee53e21c0716",
   "export_private.profile_provenance_immutable_v1()": "bc691ef7f0df72ff9d3bbf338fb65401",
   "export_private.profile_managed_copy_v1(uuid,uuid)": "ac28e7dfeda5a9f101a55c887c946019",
