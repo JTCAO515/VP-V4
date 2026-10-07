@@ -1,0 +1,107 @@
+{
+  "data": {
+    "schemaVersion": "turn-data/1",
+    "scope": "turn-delete-progress/1",
+    "requestId": "00000000-0000-4000-8000-000000000050",
+    "turnId": null,
+    "objectIds": [
+      "00000000-0000-4000-8000-000000000003"
+    ],
+    "ownerId": "00000000-0000-4000-8000-000000000001",
+    "sessionId": "00000000-0000-4000-8000-000000000002",
+    "mobileEpoch": 3,
+    "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "previewDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "sourceAuthorities": [
+      {
+        "policyId": "00000000-0000-4000-8000-000000000020",
+        "consentId": "00000000-0000-4000-8000-000000000021"
+      }
+    ],
+    "capturedAt": 1791388800000,
+    "expiresAt": 1791388830000,
+    "boundaries": {
+      "eraseFields": [
+        "selected_transient_preview_graph_counts_references_conflicts"
+      ],
+      "redactFields": [],
+      "retained": [
+        "original_selection_actor_epoch_hash_time_operation_fences",
+        "immutable_minimal_decisions",
+        "original_policy_consent_authority_ids"
+      ],
+      "missing": [
+        "source_turn_data_not_erased",
+        "unselected_operations",
+        "external_copies",
+        "backup_restore_old_device_acceptance_unverified"
+      ]
+    },
+    "allUserDataCompleted": false,
+    "kind": "receipt",
+    "state": "erased",
+    "decision": {
+      "requestDigest": "0581611ea4ff1baf428b49ecf4885079623f569f6038c3826865cf5452ebd9d6",
+      "decidedAt": 1791388800010,
+      "graph": {
+        "turnIds": [],
+        "messageIds": [],
+        "artifactIds": []
+      },
+      "erasedCounts": {
+        "events": 0,
+        "idempotency": 0,
+        "feedback": 0,
+        "artifacts": 0,
+        "revisions": 0,
+        "resultEvents": 0,
+        "sourceReceipts": 0,
+        "intakes": 0,
+        "intakeBindings": 0,
+        "planning": 0,
+        "actionReceipts": 0,
+        "observations": 0,
+        "modelDispatches": 0,
+        "checkpoints": 0,
+        "attemptBindings": 0,
+        "localJournals": 0,
+        "executionRuns": 0,
+        "callWindows": 0,
+        "collectorOrigins": 0,
+        "collectorOutputs": 0,
+        "resultClaims": 0,
+        "completionProofs": 0,
+        "completedReceipts": 0,
+        "grounded": 0,
+        "assistJobs": 0,
+        "work": 0,
+        "memoryConsumers": 0
+      },
+      "redactedCounts": {
+        "textBodies": 0,
+        "messageBodies": 0,
+        "taskDigests": 0
+      },
+      "retainedCounts": {
+        "turns": 0,
+        "messages": 0,
+        "tasks": 0,
+        "taskTurns": 0,
+        "capacity": 0,
+        "budgetAttempts": 0,
+        "textDispatches": 0,
+        "threads": 0,
+        "conversations": 0,
+        "goals": 0
+      },
+      "clearedPreviews": 1,
+      "retainedFences": 1,
+      "sourceTurn": "not_modified",
+      "parentData": "not_modified",
+      "sourceTrip": "not_modified",
+      "explicitMemory": "not_modified",
+      "financialData": "not_modified",
+      "externalCopies": "not_erased"
+    }
+  }
+}

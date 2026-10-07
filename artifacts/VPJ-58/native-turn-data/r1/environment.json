@@ -1,0 +1,25 @@
+{
+  "commit": "8150c5632144137bd770141312f1b875fe3165fa",
+  "xcode": "Xcode 27.0\nBuild version 27A266a",
+  "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-26-5",
+  "deviceName": "iPhone 17 Pro",
+  "deviceUDID": "350EF0FC-EEE7-4101-82F7-9EAE1AC7E5C8",
+  "runnerImageVersion": null,
+  "preflightOnly": false,
+  "distributionSigned": false,
+  "genericBuildSigning": "disabled",
+  "simulatorTestSigning": "ad-hoc",
+  "simulatorTestSigningVerified": true,
+  "localTextIntegration": false,
+  "buildOnly": false,
+  "selectedTests": [
+    "VisePandaTests/NativeTurnDataTests",
+    "VisePandaTests/NativeAskStateTests",
+    "VisePandaTests/NativeAskPersistenceTests",
+    "VisePandaTests/NativeTaskActivityTests",
+    "VisePandaTests/NativeResultDataTests"
+  ],
+  "simulatorTestsRun": false,
+  "simulatorOwned": true,
+  "simulatorDeleted": true
+}
