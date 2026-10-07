@@ -47,6 +47,19 @@ import Testing
         #expect(preview.profile?.values["displayName"] == "Synthetic owner" && preview.summary?.paceRevision == 7)
         #expect(preview.summary?.profileErasureFloor == 0 && preview.summary?.paceErasureFloor == 0)
         #expect(preview.profile?.hasPaceRequest == true && preview.profile?.hasPaceUndo == true)
+        for name in [String(repeating: "🐼", count: 80), "\u{00A0}", " ", "\t", String(repeating: "e\u{0301}", count: 40)] {
+            var value = try fixture("preview"), fields = try #require(value["profile"] as? [String: Any])
+            fields["displayName"] = name; value["profile"] = fields
+            let decoded = try NativeProfileDataProtocol.preview(envelope(value), command: previewCommand, actor: actor, now: now)
+            #expect(decoded.profile?.values["displayName"] == name)
+        }
+        for name in [String(repeating: "🐼", count: 81), String(repeating: "e\u{0301}", count: 41), "", "old\0name"] {
+            var value = try fixture("preview"), fields = try #require(value["profile"] as? [String: Any])
+            fields["displayName"] = name; value["profile"] = fields
+            #expect(throws: (any Error).self) {
+                try NativeProfileDataProtocol.preview(envelope(value), command: previewCommand, actor: actor, now: now)
+            }
+        }
         #expect(try !NativeProfileDataProtocol.preview(bytes("blocked"), command: previewCommand, actor: actor, now: now).eligible)
         let decodedReceipt = try NativeProfileDataProtocol.receipt(bytes("receipt"), command: erase.recovery(), actor: actor, now: wall.addingTimeInterval(40))
         let receipt = try #require(decodedReceipt)

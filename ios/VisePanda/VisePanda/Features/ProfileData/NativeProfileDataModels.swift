@@ -86,7 +86,13 @@ struct NativeProfileDataFields: Equatable {
         let w = NativeCommunityWire.self
         let v = try w.object(raw, ["displayName", "travelPace", "locale", "currency", "distanceUnit", "temperatureUnit", "defaultDepartureTime", "paceNotice", "paceOperation", "paceRequest", "paceUndo"])
         var fields: [String: String] = [:]
-        if let name = try w.optional(v["displayName"], { try w.text($0, max: 80) }) { fields["displayName"] = name }
+        // PostgreSQL char_length counts Unicode scalars, not UTF-16 units or graphemes.
+        // Preserve valid existing values verbatim; trimming would reject legal old rows.
+        if let name = try w.optional(v["displayName"], { raw -> String in
+            guard let name = raw as? String, (1...80).contains(name.unicodeScalars.count),
+                  !name.contains("\0") else { throw NativeDataError.invalidResponse }
+            return name
+        }) { fields["displayName"] = name }
         for (key, options) in ["travelPace": ["relaxed", "balanced", "packed"], "locale": ["zh", "en", "es", "ru", "ar"], "currency": ["CNY", "USD", "EUR", "RUB", "SAR"], "distanceUnit": ["kilometre", "mile"], "temperatureUnit": ["celsius", "fahrenheit"]] {
             guard let value = v[key] as? String, options.contains(value) else { throw NativeDataError.invalidResponse }
             fields[key] = value
