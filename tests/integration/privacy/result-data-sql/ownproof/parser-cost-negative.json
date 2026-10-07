@@ -1,0 +1,8 @@
+{
+  "kind": "actual PG SQL claims, no signed Auth/target/provider",
+  "passed": [
+    "typed plural refs and task_result notifications block, generic reminder resultId has no result authority",
+    "Brief original request BYTEA is parsed; malformed original bytes fail closed",
+    "eraser exclusive/NOWAIT conflicts with real incoming writer; source remains; permanent OLD planning parent cannot move after erase"
+  ]
+}

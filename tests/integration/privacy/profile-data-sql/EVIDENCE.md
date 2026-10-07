@@ -5,7 +5,7 @@ Sole Result source dependency: `92e338e19450061f4e048c92177256461825a596`, uncha
 Profile sole wire: initial Main-approved `7780cdc6`, strengthened same keys at `3b870971`; TS Unicode codepoint correction `e9bf72dc` changes no SQL contract.
 
 Owned paths: `supabase/migrations/20261007020000_profile_data.sql` and this test directory only.
-SQL SHA256 after the narrow progress cost fix: `499b6ca9e46b8354411987c919a41cd096245e8df156590ae481428bdca97386`. Earlier24 full-source receipts below belong to the original `4e12c0b4` runtime, with affected evidence for this change listed separately.
+SQL SHA256 after the narrow Native source-lock error mapping: `aec808a083914b6414c129369ac96489463a1228fa802d26a68cc120f5fe42d3`. The preceding progress cost revision is `499b6ca9`. Earlier24 full-source receipts below belong to the original `4e12c0b4` runtime, with affected evidence for this change listed separately.
 No Result migration/WT, TS/shared catalog, Native, CI registry or target was written by this writer.
 
 ## PASS
@@ -53,9 +53,6 @@ Actual GitHub Actions job `112818357697` passed all19 Profile subcases, then the
 Only `fixture.mjs` and `profile.test.mjs` changed: one fixture lifecycle invokes the supplied RPC cleanup before its owned container removal. Revocation is followed by an actual authenticated EXECUTE=false assertion; removal still runs in finally even when revocation fails. A provided external container gets RPC cleanup without an ownership takeover. No NoSuchContainer error is swallowed and no SQL/runtime/allowlist/oracle is relaxed.
 
 Direct standalone bootstrap was observed with the same real fixture/migrations: **20 PASS / 0 FAIL / 0 skip**; log order is `Fixture RPC revoke PASS` then `Owned fixture container cleanup PASS`, and the owned container is absent afterward. The attempted parent-plus-one selector expanded all children, so this is accurately recorded as one full Profile-file run, not a single-case result; no additional matrix was rerun. Raw receipt `ownproof/cleanup-fixed.txt`, original failure excerpt `ownproof/cleanup-ci-failure.txt`. Migration SHA remains `4e12c0b4775995964382c52357a44c3cbe261f4042023326e833318c6fb8fdfe`. Remote CI on the integrated new PR head remains unrun by this writer.
-
-SQL SHA256 after the narrow Native source-lock error mapping: `aec808a083914b6414c129369ac96489463a1228fa802d26a68cc120f5fe42d3`. The preceding progress cost revision is `499b6ca9`. Earlier24 full-source receipts below belong to the original `4e12c0b4` runtime, with affected evidence for this change listed separately.
-
 
 
 ## 03a progress capacity runtime cost correction

@@ -1,0 +1,83 @@
+{
+  "kind": "actual original 9800 source-free audit INSERT; owned PG only, 5s timeout",
+  "phase": "parser-after",
+  "count": 9800,
+  "code": 0,
+  "elapsedMs": 631.695916,
+  "explain": "Insert on audit  (cost=0.00..147.00 rows=0 width=0) (actual time=531.015..531.015 rows=0 loops=1)\n  Buffers: shared hit=69741 dirtied=256 written=256\n  ->  Function Scan on generate_series  (cost=0.00..147.00 rows=9800 width=164) (actual time=0.328..7.808 rows=9800 loops=1)\nPlanning:\n  Buffers: shared hit=9\nPlanning Time: 0.050 ms\nTrigger for constraint audit_case_id_fkey: time=13.301 calls=9800\nTrigger for constraint audit_owner_id_fkey: time=12.790 calls=9800\nTrigger result_source_fence_v1: time=491.399 calls=9800\nExecution Time: 557.635 ms",
+  "error": "",
+  "samples": [
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    },
+    {
+      "wait": null,
+      "state": "active",
+      "blockers": 0,
+      "waitType": null
+    }
+  ],
+  "functions": [
+    {
+      "calls": 19600,
+      "function": "documents_v1",
+      "namespace": "result_data_private",
+      "self_time": 8.842,
+      "total_time": 8.842
+    },
+    {
+      "calls": 9800,
+      "function": "guard_source_v1",
+      "namespace": "result_data_private",
+      "self_time": 206.353,
+      "total_time": 489.225
+    },
+    {
+      "calls": 39200,
+      "function": "json_references_v1",
+      "namespace": "result_data_private",
+      "self_time": 207.484,
+      "total_time": 220.661
+    },
+    {
+      "calls": 19600,
+      "function": "parents_v1",
+      "namespace": "result_data_private",
+      "self_time": 53.367,
+      "total_time": 282.871
+    }
+  ]
+}

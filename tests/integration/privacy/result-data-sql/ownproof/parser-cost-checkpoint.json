@@ -1,0 +1,13 @@
+{
+  "parent": "5154724ea11413669ebf5db375ee07d251eb22ad",
+  "oldParserMd5": "9e014624130e8b640352ab16acdcd307",
+  "helperMd5": "988946e99753b485e64e8377fd709c19",
+  "newParserMd5": "645393810c37120afb2514ac18706f6d",
+  "newParserBodySha256": "4510c8da84fa48dda67b90c270c85dfd9e7915427bafbcad80d345d2ff61c563",
+  "migrationSha256": "6a94c0613895e7126108e2f44d0dd2fa5762c63a71ae04ef3858fc6c03d5c3a4",
+  "oracle": "247 bags/errors equal;119 expected errors",
+  "brief": "before2PASS/after2PASS;9800/5s/oracles unchanged",
+  "affected": "six parent equivalence/account cascade/3 negatives PASS",
+  "profile": "actual current ProfileTS0702 both strict guards true, rollback",
+  "remote": "833 cost FAIL retained; new integrated CI unrun; Guide67 separate UNKNOWN"
+}
