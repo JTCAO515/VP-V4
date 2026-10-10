@@ -9,6 +9,17 @@
      @State private var planningPolicy: AssistantPlanningPolicy?
      @State private var planningAgreed = false
      @State private var planningBusy = false
+@@ -497,8 +499,8 @@
+     private var resultActive: Bool { isActive && scenePhase == .active }
+     private var refreshBusy: Bool { refreshState.busy }
+     private var shellSwitchBlocked: Bool {
+-        AssistantShellSwitchGate.blocked(busy: busy || planningBusy || tripBusy || entryBlocking || paceOperationBlocked || memoryOperationBlocked,
+-            intakePending: pending != nil || selectedSources.pending != nil, planningPending: planningPending != nil, tripPending: pendingTripMutation != nil)
++        AssistantShellSwitchGate.blocked(busy: busy || planningBusy || tripBusy || entryBlocking || paceOperationBlocked || memoryOperationBlocked || directionsIntake.busy,
++            intakePending: pending != nil || selectedSources.pending != nil || directionsIntake.pendingBody != nil, planningPending: planningPending != nil, tripPending: pendingTripMutation != nil)
+     }
+     private var composerScopeCurrent: Bool { session.dataScope != nil && boundScope == session.dataScope }
+     private var confirmedConversation: Bool {
 @@ -526,6 +528,14 @@
                let parent = AssistantPlanningEligibility.parent(for: goal, messages: conversation?.messages ?? []) else { return nil }
          return NativeTravelIntakeSelection(scope: scope, conversationID: id, goalID: goal.goalId,

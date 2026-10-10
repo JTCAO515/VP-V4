@@ -203,9 +203,10 @@ extension NativeTravelDirectionsTests {
         let selection = NativeTravelDirectionsSelection(scope: .init(endpoint: "http://127.0.0.1:59321", subject: "owner", mobileEpoch: 1, generation: 1),
             conversationID: conversation, goalID: goal, goalVersion: 1, parentMessageID: parent, planningPolicyID: policy)
         for mismatched in [false, true] {
+            var liveSelection = selection
             let store = NativeTravelDirectionsIntakeStore()
             store.bind(selection)
-            await store.load(current: { selection }, read: { kind, _, _ in
+            await store.load(current: { liveSelection }, read: { kind, _, _ in
                 let data: [String: Any] = kind == "basis" ? ["kind": "directions_write_basis", "conversationId": conversation, "goalId": goal,
                     "goalVersion": 1, "parentMessageId": parent, "messageSequence": 7, "intakeRevision": 0, "intakeDigest": NSNull(), "policyId": policy]
                     : ["kind": "unavailable", "reason": "intake_unrecorded"]
@@ -214,8 +215,10 @@ extension NativeTravelDirectionsTests {
             var values = NativeTravelDirectionsFormValues(); values.destinations = "Shanghai\nBeijing"; values.duration = "10"; values.interests = "food\nwalks"
             var captured: [String: Any] = [:]
             var resultReads = 0
-            await store.submit(values: values, text: "Ten days in Shanghai and Beijing", locale: "en", current: { selection }, post: { bytes in
+            await store.submit(values: values, text: "Ten days in Shanghai and Beijing", locale: "en", current: { liveSelection }, post: { bytes in
                 captured = try XCTUnwrap(JSONSerialization.jsonObject(with: bytes) as? [String: Any])
+                liveSelection = .init(scope: selection.scope, conversationID: conversation, goalID: goal, goalVersion: 1,
+                    parentMessageID: try XCTUnwrap(captured["messageId"] as? String), planningPolicyID: policy)
                 return try JSONSerialization.data(withJSONObject: ["version": 1, "kind": "published", "artifactId": artifact, "revision": 1,
                     "reused": false, "taskId": captured["taskId"]!, "turnId": captured["turnId"]!, "conversationId": conversation, "goalId": goal,
                     "goalVersion": 1, "inputMessageId": captured["messageId"]!, "inputSequence": 100, "intakeRevision": 1, "intakeDigest": digest, "current": true])

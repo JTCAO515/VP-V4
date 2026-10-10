@@ -9,6 +9,11 @@ struct NativeTravelDirectionsSelection: Equatable, Identifiable {
     let goalVersion: Int
     let parentMessageID: String
     let planningPolicyID: String
+    func sameRequestContext(as other: Self?) -> Bool {
+        guard let other else { return false }
+        return scope == other.scope && conversationID == other.conversationID && goalID == other.goalID
+            && planningPolicyID == other.planningPolicyID
+    }
     var valid: Bool {
         [conversationID, goalID, parentMessageID, planningPolicyID].allSatisfy { UUID(uuidString: $0) != nil }
             && (1...9999).contains(goalVersion)

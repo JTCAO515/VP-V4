@@ -77,18 +77,18 @@ final class NativeTravelDirectionsIntakeStore {
     }
     func retry(current: @escaping () -> NativeTravelDirectionsSelection?, post: (Data) async throws -> Data,
                read: (String, Int) async throws -> Data, readIntake: (String, String) async throws -> Data) async {
-        guard !busy, let target = selection, target == current(), let bytes = pendingBody,
+        guard !busy, let target = selection, target.sameRequestContext(as: current()), let bytes = pendingBody,
               let request = try? JSONSerialization.jsonObject(with: bytes) as? [String: Any] else { return }
         let own = generation; busy = true; notice = nil; publication = nil
         defer { if generation == own { busy = false } }
         do {
             let reply = try await post(bytes)
-            guard generation == own, target == current(), !Task.isCancelled else { return }
+            guard generation == own, target.sameRequestContext(as: current()), !Task.isCancelled else { return }
             let receipt = try NativeTravelDirectionsPublication.decode(reply, request: request)
             guard receipt.current else { pendingBody = nil; basis = nil; deadline = 0; notice = "stale"; return }
             let start = uptime()
             let intakeBytes = try await readIntake(target.conversationID, target.goalID)
-            guard generation == own, target == current(), !Task.isCancelled else { return }
+            guard generation == own, target.sameRequestContext(as: current()), !Task.isCancelled else { return }
             guard let freshIntake = try NativeTravelDirectionsIntakeBasis.decode(intakeBytes),
                   freshIntake.conversationId == target.conversationID, freshIntake.goalId == target.goalID,
                   freshIntake.goalVersion == receipt.goalVersion, freshIntake.inputMessageId == receipt.inputMessageID,
@@ -101,7 +101,7 @@ final class NativeTravelDirectionsIntakeStore {
             guard Set(memoryRefs.map { "\($0.id):\($0.revision)" }) == Set(freshIntake.memoryBasis.map { "\($0.id):\($0.revision)" }),
                   memoryRefs.count == freshIntake.memoryBasis.count else { throw NativeDataError.staleSessionResponse }
             let content = try await read(receipt.artifactID, receipt.revision)
-            guard generation == own, target == current(), !Task.isCancelled else { return }
+            guard generation == own, target.sameRequestContext(as: current()), !Task.isCancelled else { return }
             guard uptime() - start < 30,
                   let record = try NativeFiveResultRecord.decode(content, artifactID: receipt.artifactID, revision: receipt.revision), record.current,
                   record.source.taskId == receipt.taskID, record.source.taskTurnId == receipt.turnID,
@@ -113,7 +113,7 @@ final class NativeTravelDirectionsIntakeStore {
                   case .directions(let directions) = record.content, directions.intake == freshIntake.intake else { throw NativeDataError.staleSessionResponse }
             publication = receipt; pendingBody = nil; basis = nil; deadline = 0
         } catch {
-            guard generation == own, target == current() else { return }
+            guard generation == own, target.sameRequestContext(as: current()) else { return }
             basis = nil; deadline = 0; notice = "unconfirmed"
             if case NativeDataError.server(let code) = error, ["UNAUTHENTICATED", "DATA_POLICY_BLOCKED"].contains(code) {
                 pendingBody = nil; intake = nil; notice = "blocked"

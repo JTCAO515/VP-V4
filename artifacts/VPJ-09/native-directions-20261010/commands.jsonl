@@ -5,3 +5,5 @@
 {"tool": "exec 49aa73 -> write_stdin 74e3f5", "exit": 0, "scope": "r4 one affected strict text boundary test PASS"}
 {"tool": "exec fec014 -> write_stdin 43ce60", "exit": 0, "scope": "r5 two affected publication/source tests PASS; current source matches harness"}
 {"tool": "exec 7e16ea", "exit": 0, "scope": "PBX parsed equality / own Simulator shutdown / delete"}
+{"tool": "exec 1d088f -> write_stdin a06216", "exit": 0, "scope": "r6 only affected source readback test with same-goal parent pulse and digest refusal"}
+{"tool": "exec current cleanup", "commands": ["xcrun simctl shutdown 9B6206E6-86F1-4C04-8B46-5CE4A4A7F183", "xcrun simctl delete 9B6206E6-86F1-4C04-8B46-5CE4A4A7F183"], "exit": null, "scope": "owned delta Simulator cleanup", "outcome": "shutdown reported already Shutdown (SimError405); subsequent delete emitted no error; device absence verified separately by simctl list"}

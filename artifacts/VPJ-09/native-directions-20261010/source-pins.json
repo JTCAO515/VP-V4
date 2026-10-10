@@ -23,8 +23,8 @@
     },
     {
       "path": "ios/VisePanda/VisePanda/Features/TravelDirections/NativeTravelDirectionsIntakeStore.swift",
-      "blob": "97ecce83d08391c735cf32315c11e94a5c2dbb93",
-      "sha256": "4e87f127e8f89a0092608181d4a037edba61dd4b4b07302b00406a506ededa38"
+      "blob": "c7c5479baaf7eb5b0191fe60fa46ad76f45b30d8",
+      "sha256": "adccffcaa14e2d09237dcd5a866379129826850a425df724a607b921348826b5"
     },
     {
       "path": "ios/VisePanda/VisePanda/Features/TravelDirections/NativeTravelDirectionsResultView.swift",
@@ -33,8 +33,8 @@
     },
     {
       "path": "ios/VisePanda/VisePanda/Features/TravelDirections/NativeTravelDirectionsSheet.swift",
-      "blob": "8aae0231e58ea30a5d7ef4c0572798915b9f8d8a",
-      "sha256": "e1f60e85df76fdefe40f5878c81879f8dcb1ab65811335eb9a351225db2385a7"
+      "blob": "e7817c252fc363dd5985bd33377c55c0af6b8172",
+      "sha256": "20c14770c2281474843b243821b0ddb8fe388b9cc82cc46c52ba161d06db96e3"
     },
     {
       "path": "ios/VisePanda/VisePanda/Features/TravelDirections/NativeTravelDirectionsStore.swift",
@@ -43,13 +43,13 @@
     },
     {
       "path": "ios/VisePanda/VisePanda/Features/TravelDirections/NativeTravelDirectionsWire.swift",
-      "blob": "be91ed602ed2c00ea5f63000107e86a07993dffb",
-      "sha256": "7b1a5da6ae12c73f1e973551a97a5a01367bd4b1e667476a0eb9adf94d4a376b"
+      "blob": "d98ad1fbba1fcc27da9793f175752261de71d66a",
+      "sha256": "b2cedb742f29f65f6a5b07c24baef861789da6d6baddbec8281a102321437c16"
     },
     {
       "path": "ios/VisePanda/VisePandaTests/NativeTravelDirectionsTests.swift",
-      "blob": "ecf4469dbc1e2a15c77c57ba557ad14ca4742e8d",
-      "sha256": "c674f259065ed7c29475b60d70f8f587923edfc010fdf12c0200998ea97cce1b"
+      "blob": "b821903c79781467c7a5f03ea62f33107ee4403a",
+      "sha256": "1ce04921f87836d6af926f49289cd5ef59dad9b5e766c80f99cc575d5ef81d3f"
     }
   ],
   "shared": [
@@ -66,12 +66,12 @@
     {
       "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift",
       "before": "96674b88a9f27b08af69e7acc57c8683ed2a6a7e",
-      "after": "2cdc3acfe2c60bc285d5a0aca07ea2be62541dc5",
+      "after": "9fbdf34f38b0c89f92aa9b903f092270d3cfa9ff",
       "baseWT": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj08-native-assistant-events-20261010",
       "baseHEAD": "c226e0f044a9a975347de3adf0ababd9096af5c4",
       "beforeSHA256": "1a0e5f6997318334288d26ce29bbbcc597e47de69e1d2b5a62106c54395aad11",
-      "afterSHA256": "18ee9924d6cf9353a38216b77811c3163456abf35b6f191de3bc36e53b3a222b",
-      "patchSHA256": "eb9486b49717f54704ba620ecbc636cb9ba743586f0cb4bff6890cb50cdc9bfd"
+      "afterSHA256": "399121f9dcd5b0fabafe80a028d159aa1cc8fa100018e1646f09acaa19703759",
+      "patchSHA256": "10d5a071e3a378c9e0f4b6ae046dda1b1b3a4d24b028fc3013064e4f85b9094a"
     },
     {
       "path": "ios/VisePanda/VisePanda/Features/Knowledge/NativeFiveResultModels.swift",
@@ -104,6 +104,6 @@
       "patchSHA256": "9be6e9deecfba6e66611ee0a010a7e9f4e23661fc8fa77f769ccada6e76ad29b"
     }
   ],
-  "r5HarnessExactSourceMatch": true,
-  "tests": "r3 8 PASS; r4 changed text boundary 1 PASS; r5 fresh publication semantic 2 PASS. Separate runs, never one 11-test suite."
+  "tests": "Separate evidence: r3 eight, r4 text one, r5 cross-goal sequence one and pre-pulse source one; r6 replaces that source-readback point with same-goal parent advancement plus digest failure. No repeated suite or final aggregate.",
+  "r6HarnessExactSourceMatch": true
 }

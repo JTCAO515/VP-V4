@@ -12,12 +12,12 @@
   {
     "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift",
     "before": "96674b88a9f27b08af69e7acc57c8683ed2a6a7e",
-    "after": "2cdc3acfe2c60bc285d5a0aca07ea2be62541dc5",
+    "after": "9fbdf34f38b0c89f92aa9b903f092270d3cfa9ff",
     "baseWT": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj08-native-assistant-events-20261010",
     "baseHEAD": "c226e0f044a9a975347de3adf0ababd9096af5c4",
     "beforeSHA256": "1a0e5f6997318334288d26ce29bbbcc597e47de69e1d2b5a62106c54395aad11",
-    "afterSHA256": "18ee9924d6cf9353a38216b77811c3163456abf35b6f191de3bc36e53b3a222b",
-    "patchSHA256": "eb9486b49717f54704ba620ecbc636cb9ba743586f0cb4bff6890cb50cdc9bfd"
+    "afterSHA256": "399121f9dcd5b0fabafe80a028d159aa1cc8fa100018e1646f09acaa19703759",
+    "patchSHA256": "10d5a071e3a378c9e0f4b6ae046dda1b1b3a4d24b028fc3013064e4f85b9094a"
   },
   {
     "path": "ios/VisePanda/VisePanda/Features/Knowledge/NativeFiveResultModels.swift",

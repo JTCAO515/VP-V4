@@ -32,6 +32,10 @@ for path in paths:
         marker='    @State private var planningPolicy: AssistantPlanningPolicy?'
         assert after.count(marker)==1
         after=after.replace(marker,'    @State private var directionsPresentation: NativeTravelDirectionsSelection?\n    @State private var directionsIntake = NativeTravelDirectionsIntakeStore()\n'+marker)
+        after=after.replace('busy: busy || planningBusy || tripBusy || entryBlocking || paceOperationBlocked || memoryOperationBlocked,',
+            'busy: busy || planningBusy || tripBusy || entryBlocking || paceOperationBlocked || memoryOperationBlocked || directionsIntake.busy,')
+        after=after.replace('intakePending: pending != nil || selectedSources.pending != nil, planningPending:',
+            'intakePending: pending != nil || selectedSources.pending != nil || directionsIntake.pendingBody != nil, planningPending:')
         marker='    private var goalHasCurrentMessage: Bool {'
         assert after.count(marker)==1
         addition='''    private var directionsSelection: NativeTravelDirectionsSelection? {
