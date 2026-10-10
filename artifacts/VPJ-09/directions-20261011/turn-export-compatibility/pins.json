@@ -1,6 +1,6 @@
 {
   "sourceHead": "dec1355b2c7beeede96bd4ddf28bcee81c13cc4a",
-  "lease": "not granted; private candidate only",
+  "lease": "Main final precise two shared hunks/new3 soleowned paths; guarded applied; unit10 same-source reused",
   "shared": [
     {
       "path": "lib/server/privacy/turn-data/export.ts",
@@ -22,7 +22,8 @@
     },
     {
       "target": "lib/server/planning/directions/turn-export-rows.ts",
-      "SHA256": "39e271a0f3cb8fb83dcdc58a1d834bf62223ab19566f41c4fb62778a5ca2aaef"
+      "SHA256": "39e271a0f3cb8fb83dcdc58a1d834bf62223ab19566f41c4fb62778a5ca2aaef",
+      "candidateFile": "turn-export-rows.ts.txt"
     },
     {
       "target": "tests/unit/planning/directions/turn-export-compatibility.test.mjs",

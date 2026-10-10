@@ -1,5 +1,7 @@
 import { createHash } from 'node:crypto';
 import schema from './source-schema.json' with { type: 'json' };
+import { DIRECTION_TURN_SOURCE_SCHEMA, validDirectionTurnExportRow } from '../../planning/directions/turn-export-rows.ts';
+const exportSchema = [...schema, ...DIRECTION_TURN_SOURCE_SCHEMA];
 import { exact, record, hash } from '../../guide/contract.ts';
 import { exportCanonical, type ExportHandler, type ExportLease, type ExportModuleReceipt, type ExportPage } from '../export-dispatcher.ts';
 import type { ExportDomainRPC } from '../export-worker.ts';
@@ -8,7 +10,7 @@ import { validOperationRow } from './protocol.ts';
 
 export const TURN_EXPORT_SCHEMA = 'turn-core-export/1' as const;
 export const TURN_EXPORT_SECTIONS = ['snapshot'] as const;
-export const TURN_SOURCE_SCHEMA = schema;
+export const TURN_SOURCE_SCHEMA = exportSchema;
 const instant = (v: unknown): v is string => typeof v === 'string'
   && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|[+-]\d{2}:\d{2})$/.test(v) && Number.isFinite(Date.parse(v));
 /** Original JSON columns are data only. Bound every recursive walk, including imported source bytes. */
@@ -35,7 +37,7 @@ function columnValue(v: unknown, type: string, required: boolean): boolean {
     default: return false;
   }
 }
-function increasing(row: Record<string, unknown>, prior: Record<string, unknown>, spec: typeof schema[number]): boolean {
+function increasing(row: Record<string, unknown>, prior: Record<string, unknown>, spec: Pick<typeof schema[number], 'pk' | 'columns'>): boolean {
   for (const key of spec.pk) {
     const type = spec.columns.find(c => c.name === key)?.type, a = prior[key], b = row[key];
     if (a === b) continue;
@@ -54,8 +56,10 @@ function closedSourceGraph(sources: Sources): boolean {
   const tasks = ids('turn_private.service_tasks', 'id'), messages = ids('turn_private.assistant_messages', 'id');
   const artifacts = ids('turn_private.result_artifacts', 'id'), executions = ids('turn_private.planning_v2_execution_runs', 'id');
   const linkedMessages = new Set([...rows('turn_private.planning_comparisons').map(r => String(r.message_id)),
-    ...rows('turn_private.result_artifacts').map(r => String(r.input_message_id))]);
-  for (const spec of schema) for (const row of rows(spec.relation)) {
+    ...rows('turn_private.result_artifacts').map(r => String(r.input_message_id)),
+    ...rows('turn_private.assistant_directions_intakes_v1').map(r => String(r.message_id))]);
+  for (const spec of exportSchema) for (const row of rows(spec.relation)) {
+    if (spec.relation === 'turn_private.directions_operations_v1' && row.erased === true) continue;
     if ('turn_id' in row && row.turn_id !== null && !turns.has(String(row.turn_id))) return false;
     if ('task_turn_id' in row && !turns.has(String(row.task_turn_id))) return false;
     if ('task_id' in row && row.task_id !== null && !tasks.has(String(row.task_id))
@@ -63,6 +67,9 @@ function closedSourceGraph(sources: Sources): boolean {
     if ('message_id' in row && !messages.has(String(row.message_id))) return false;
     if ('artifact_id' in row && !artifacts.has(String(row.artifact_id))) return false;
     if ('execution_id' in row && !executions.has(String(row.execution_id))) return false;
+    if (spec.relation === 'turn_private.directions_operations_v1' && !messages.has(String(row.source_message_id))) return false;
+    if (spec.relation === 'turn_private.directions_result_sources_v1' && (!rows('turn_private.assistant_directions_intakes_v1').some(intake => intake.message_id === row.message_id && intake.task_turn_id === row.task_turn_id)
+      || row.previous_artifact_id !== null && !artifacts.has(String(row.previous_artifact_id)))) return false;
     if (spec.relation === 'turn_private.service_tasks' && (!turns.has(String(row.goal_turn_id)) || !turns.has(String(row.last_turn_id)))) return false;
     if (spec.relation === 'turn_private.service_task_turns' && row.parent_turn_id !== null && !turns.has(String(row.parent_turn_id))) return false;
     // Planning's real submitter binds a follow_up message with turn_id=NULL.
@@ -81,19 +88,20 @@ export function decodeTurnExportPage(v: unknown, limit: number, owner: string, n
   const item = v.items[0];
   if (!record(item) || !exact(item, ['ownerId', 'sources', 'operations', 'fences', 'sourceIdentityKeys', 'sourceRows', 'sourceAuthorities']) || item.ownerId !== owner
     || !validSourceAuthorities(item.sourceAuthorities)
-    || !Array.isArray(item.sources) || item.sources.length !== schema.length || !Array.isArray(item.operations) || !Array.isArray(item.fences)
+    || !Array.isArray(item.sources) || item.sources.length !== exportSchema.length || !Array.isArray(item.operations) || !Array.isArray(item.fences)
     || !Array.isArray(item.sourceIdentityKeys) || item.sourceIdentityKeys.length > TURN_LIMITS.tableRows
     || item.operations.length > TURN_LIMITS.tableRows || item.fences.length > TURN_LIMITS.tableRows || !record(item.sourceRows)
     || !exact(item.sourceRows, ['data', 'operations', 'fences', 'sourceIdentityKeys']) || item.sourceRows.operations !== item.operations.length
     || item.sourceRows.fences !== item.fences.length || item.sourceRows.sourceIdentityKeys !== item.sourceIdentityKeys.length) return null;
   const sources: Sources = new Map(); let dataRows = 0;
-  for (const [index, spec] of schema.entries()) {
+  for (const [index, spec] of exportSchema.entries()) {
     const group = item.sources[index];
     if (!record(group) || !exact(group, ['relation', 'rows']) || group.relation !== spec.relation || !Array.isArray(group.rows) || group.rows.length > TURN_LIMITS.tableRows) return null;
     let previous: Record<string, unknown> | null = null;
     for (const row of group.rows) {
       if (!record(row) || !exact(row, spec.columns.map(c => c.name)) || !spec.columns.every(c => columnValue(row[c.name], c.type, c.notNull))
         || spec.hasOwner && row.owner_id !== owner || previous && !increasing(row, previous, spec)) return null;
+      if (DIRECTION_TURN_SOURCE_SCHEMA.some(s => s.relation === spec.relation) && !validDirectionTurnExportRow(spec.relation, row)) return null;
       previous = row;
     }
     dataRows += group.rows.length; if (dataRows > TURN_LIMITS.tableRows) return null;

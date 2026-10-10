@@ -1,0 +1,29 @@
+{
+  "sharedAfter": {
+    "lib/server/privacy/turn-data/export.ts": "a39aecd74f7d4827f80a5b6a110da6080404c8c7bffcc6ef9dfd7dcc625ee3d5",
+    "tests/integration/privacy/turn-data/export.test.mjs": "5b2f288e9c698bfc966e437f097d6cf35f90192c80e7262e344005566389dece"
+  },
+  "privateSource": {
+    "lib/server/planning/directions/direction-turn-source-schema.json": "9b6fabcb4fa1777eb3c43d2b677acaddc19f3277a0bdd2e67aeb72180aeb8343",
+    "lib/server/planning/directions/turn-export-rows.ts": "39e271a0f3cb8fb83dcdc58a1d834bf62223ab19566f41c4fb62778a5ca2aaef",
+    "tests/unit/planning/directions/turn-export-compatibility.test.mjs": "0cbb6f72d40f17da19b1ca3cd456d4ade008eaf4df124b624f7412f9897ad4b8"
+  },
+  "sameSourceUnitReuse": "candidate-validation.json10PASS/0FAIL/0SKIP; no rerun",
+  "typecheckRuns": [
+    {
+      "run": "r1",
+      "command": "pnpm exec tsc --noEmit --incremental false",
+      "exitCode": 2,
+      "logSHA256": "beb3596f932ebe704c3955cab995d9e9736a0e0e49566a4fb3a3b6c473b8e32d",
+      "note": "r1 artifact candidate TS wrongly included in project glob; rename only artifact to text preserved product bytes; r2 PASS"
+    },
+    {
+      "run": "r2",
+      "command": "pnpm exec tsc --noEmit --incremental false",
+      "exitCode": 0,
+      "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "note": "r1 artifact candidate TS wrongly included in project glob; rename only artifact to text preserved product bytes; r2 PASS"
+    }
+  ],
+  "sqlSourceState": "product6354 unchanged; retained-input SQL candidate pending Main lease/sourceeq; signedTurn UNRUN"
+}
