@@ -1,10 +1,10 @@
 --- a/scripts/ci-suites/db-integration.mjs
 +++ b/scripts/ci-suites/db-integration.mjs
-@@ -212,6 +212,7 @@
-       { name: "native-local-session", runner: node("tests/integration/identity/run-native-io.mjs"), files: ["tests/integration/identity/native-local-session.test.mjs"] },
-       { name: "trip-lifecycle-http", runner: node("tests/integration/trip/run-lifecycle-http.mjs", "--port-base", "64600"), files: ["tests/integration/trip/lifecycle-http.test.mjs"] },
-       { name: "native-same-trip", runner: node("tests/integration/identity/run-native-io.mjs", "--same-trip"), files: ["tests/integration/trip/native-same-trip.test.mjs"] },
-+      { name: "native-assistant-events", runner: node("tests/integration/turn/assistant-events/run.mjs", "--port-base", "62960"), files: ["tests/integration/turn/assistant-events/auth-http.test.mjs"] },
-       { name: "native-text-http", runner: node("tests/integration/turn/run-native-http.mjs", "--port-base", "64420"), files: ["tests/integration/turn/native-text-http.test.mjs"] },
-       { name: "translation-history-http", runner: node("tests/integration/turn/run-native-http.mjs", "--translation-history", "--port-base", "64420"), files: ["tests/integration/translate/history-http.test.mjs"] },
-       { name: "translation-trip-source-http", runner: node("tests/integration/translate/run-trip-source-http.mjs", "--port-base", "64460"), files: ["tests/integration/translate/trip-source-http.test.mjs"] },
+@@ -244,6 +244,7 @@
+       { name: "profile-data-http", runner: node("tests/integration/privacy/profile-data/run-http.mjs", "--port-base", "63040"), files: ["tests/integration/privacy/profile-data/auth-http.test.mjs"] },
+       { name: "profile-export-http", runner: node("tests/integration/privacy/profile-export/run-http.mjs", "--port-base", "63000"), files: ["tests/integration/privacy/profile-export/auth-http.test.mjs"] },
+       { name: "turn-data-http", runner: node("tests/integration/privacy/turn-data/run-http.mjs", "--port-base", "62960"), files: ["tests/integration/privacy/turn-data/auth-http.test.mjs"] },
++      { name: "native-assistant-events", runner: node("tests/integration/turn/assistant-events/run.mjs", "--port-base", "62720"), files: ["tests/integration/turn/assistant-events/auth-http.test.mjs"] },
+     ],
+   },
+   "supabase-http-ops": {
