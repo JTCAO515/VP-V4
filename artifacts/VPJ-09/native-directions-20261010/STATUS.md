@@ -1,0 +1,23 @@
+# VPJ-09 Native complete consumer candidate package
+
+Sole Native writer branch `vpj09-native-directions-20261010`; product base actual main `35a2b640`, originally `e3698f64`. Source scope is nine new `Features/TravelDirections` Swift files and only `NativeTravelDirectionsTests.swift`. No old shared product file has been applied or staged.
+
+Consumes the sole TS unique WIRE `0f1572f2` plus closed contract `407b8571`, explicitly approved by Main. No alternate schema, comparison-as-plan, fabricated calendar date, place, opening hour, price, provider completion or confirmation is generated. Selection / saving / editing / binding are distinct endpoints. Existing original V2 result envelope handles source/basis/current/history. Every mutation receipt is followed by a fresh exact original artifact read. Binding returns original proposal-reference identity; the Native wrapper reads current pending identity/digest and opens existing Trip view with its exact reference for original visible diff and explicit confirmation. The old local 2–7 parser and appendOutline are untouched.
+
+Unknown date/budget/duration/destination can be left blank. Complete 1–30 relative days and multiple destinations/themes survive; edits send only changed ordinals. A specific purpose offers the server's single option. Date/quantity/budget format checks are deterministic; real affordability, travel times and fixed external facts remain unknown. Session/source/actor changes and read TTL block actions. In-flight immutable retries use their exact original body; result events suspend displays and reject late callbacks. Background suspension preserves current request bytes and entered fields. Ask remains underneath an explicit sheet, keeping its original anchor and old pending state.
+
+## Shared candidate lease request
+
+Five precise patches and `Candidates/pins.json` are based on actual current #196 Native tree `c226e0f0`, not old main Session/Ask/PBX. This dependency is explicit. Exact before/after hashes are in the manifest. Session: scoped read/action methods and original Turn/Result projection fences for the approved directions namespace. Ask: separate feature store/sheet/current-goal & accepted-policy entry. Library: new exact inert content variant, card, and explicit editor sheet. PBX: ten new source/test refs, two source-phase additions. Trip needs no shared edit. Current owners' exact releases and Main lease are required before applying any patch; no permission change is inferred.
+
+## Checks and limits
+
+- Swift parser PASS for nine new files.
+- Candidate PBX plutil PASS; schema registration still candidate only.
+- Actual unsigned candidate-overlay App build PASS. Overlay reuses #196 current source plus the five proposed seams; this is not a product checkout build or network capability claim.
+- Focused candidate tests r1 FAIL at compile: new #196 NativeDataScope endpoint absent in two test constructions; corrected without production contract changes.
+- r2 INTERRUPTED after test target compiled and before terminal test evidence. No PASS inferred; no own xcodebuild process remained.
+- r3 affected eight tests in flight on own Simulator `B814E8E1-F1D3-4DFC-AF9C-52119BB7292D`, iOS 26.5, owned Harness/DerivedData path in `harness.json`. Only the new class is selected, not the old green matrix.
+- Shared applied registration/API: UNRUN, awaiting exact lease. Canonical real Auth/SQL actions and both-client durable reload: UNRUN until the original TS/SQL integration supplies actual functions.
+- Saved Profile qualification for durable server results is still unavailable and fails closed. The UI identifies local preview only; it does not silently copy saved pace into current input. A real traveller can explicitly choose a this-journey pace. Whole #197 remains OPEN until the accepted core is complete.
+- Target/device/human/VoiceOver, target grants/provider/fees/deployment: UNRUN/not authorized here. No credentials, real user data or phone were accessed.

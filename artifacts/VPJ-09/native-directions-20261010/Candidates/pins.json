@@ -1,0 +1,37 @@
+[
+  {
+    "path": "ios/VisePanda/VisePanda/App/NativeSession.swift",
+    "before": "12952882184b48fa74fe5a3b3faf103c09e4f65f",
+    "after": "08f1bf5f6a4934828812e8c8fffdd9be457a45b5",
+    "baseWT": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj08-native-assistant-events-20261010",
+    "baseHEAD": "c226e0f044a9a975347de3adf0ababd9096af5c4"
+  },
+  {
+    "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift",
+    "before": "96674b88a9f27b08af69e7acc57c8683ed2a6a7e",
+    "after": "2cdc3acfe2c60bc285d5a0aca07ea2be62541dc5",
+    "baseWT": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj08-native-assistant-events-20261010",
+    "baseHEAD": "c226e0f044a9a975347de3adf0ababd9096af5c4"
+  },
+  {
+    "path": "ios/VisePanda/VisePanda/Features/Knowledge/NativeFiveResultModels.swift",
+    "before": "33dcde9166eb0de724f736dbd6956d8bab594b01",
+    "after": "ce992bc63726399c0c5d9ceebc994eb1834f8c94",
+    "baseWT": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj08-native-assistant-events-20261010",
+    "baseHEAD": "c226e0f044a9a975347de3adf0ababd9096af5c4"
+  },
+  {
+    "path": "ios/VisePanda/VisePanda/Features/Knowledge/NativeFiveResultView.swift",
+    "before": "a24d93a8a1689d4cb42ee67724c577d205eb6e6f",
+    "after": "ebfd8fe71fa760f6d6377a106aca798e0dab78ac",
+    "baseWT": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj08-native-assistant-events-20261010",
+    "baseHEAD": "c226e0f044a9a975347de3adf0ababd9096af5c4"
+  },
+  {
+    "path": "ios/VisePanda/VisePanda.xcodeproj/project.pbxproj",
+    "before": "324a9ce677357c4d928e5e55b9f4009344128052",
+    "after": "00141ee3c3d0750dcdaaef126ff91bdf8c81554a",
+    "baseWT": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj08-native-assistant-events-20261010",
+    "baseHEAD": "c226e0f044a9a975347de3adf0ababd9096af5c4"
+  }
+]
