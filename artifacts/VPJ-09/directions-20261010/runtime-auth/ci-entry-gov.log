@@ -1,0 +1,19 @@
+✔ every gated integration test file is in a DB integration lane or on the reasoned allowlist (8.274208ms)
+✔ a DB integration lane fails on skip, todo, cancel, failure, non-zero exit or a missing summary (0.357333ms)
+✔ DB Integration dynamically selects lanes with a stable fail-closed aggregate and real classification (7.998625ms)
+✔ deduplicated four PG workflows keep manual commands covered by the selected postgres step (0.267917ms)
+✔ every workflow declares least-privilege token permissions (0.377542ms)
+✔ the self-hosted iOS runner never executes fork pull request code (0.098208ms)
+✔ stable DB aggregate executes strict result predicates for empty/full/error/cancel states (16.423708ms)
+✔ native PR uses unsigned build or affected permission/data code tests; manual remains full (42.062958ms)
+✔ changed noncritical native test classes and unknown native sources are never omitted (28.857959ms)
+✔ bounded CI shards preserve every logical step exactly once and reject malformed partitions (0.539ms)
+✔ CI matrix CLI and actual workflow projection fail before emitting an output on bad plans (415.217208ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 563.789292
