@@ -45,6 +45,28 @@ final class NativeAssistantEventsTests: XCTestCase {
         XCTAssertThrowsError(try NativeAssistantEventsCursor.metadata(JSONSerialization.data(withJSONObject: secret), scope: selected.scope, sessionID: selected.sessionID))
     }
 
+    func testPartialDenialAAndReceiptARetainAcknowledgedCursorB() throws {
+        let a = selection
+        let b = NativeAssistantEventsSelection(scope: a.scope, sessionID: a.sessionID, policyID: a.policyID,
+            conversationID: "44444444-4444-4444-8444-444444444444", selectionGeneration: UUID())
+        let savedB = try NativeAssistantEventsCursor.encode(12, selection: b)
+        XCTAssertFalse(try NativeAssistantEventsCursor.matches(savedB, selection: a))
+        XCTAssertTrue(try NativeAssistantEventsCursor.matches(savedB, selection: b))
+        XCTAssertFalse(try NativeAssistantEventsCursor.matches(savedB, scope: a.scope, sessionID: a.sessionID, affectedConversationIDs: [a.conversationID]))
+        XCTAssertTrue(try NativeAssistantEventsCursor.matches(savedB, scope: a.scope, sessionID: a.sessionID, affectedConversationIDs: [b.conversationID]))
+        XCTAssertEqual(try NativeAssistantEventsCursor.decode(savedB, selection: b, qualified: true), 12)
+    }
+    func testPartialCleanupMalformedRecordIsNotDifferentOrAbsent() throws {
+        let a = selection
+        var broken = try JSONSerialization.jsonObject(with: NativeAssistantEventsCursor.encode(2, selection: a)) as! [String: Any]
+        broken["unexpected"] = "synthetic"
+        let bytes = try JSONSerialization.data(withJSONObject: broken)
+        XCTAssertThrowsError(try NativeAssistantEventsCursor.matches(bytes, selection: a))
+        XCTAssertThrowsError(try NativeAssistantEventsCursor.matches(bytes, scope: a.scope, sessionID: a.sessionID, affectedConversationIDs: [a.conversationID]))
+        broken.removeValue(forKey: "unexpected"); broken["sequence"] = true
+        XCTAssertThrowsError(try NativeAssistantEventsCursor.matches(JSONSerialization.data(withJSONObject: broken), selection: a))
+    }
+
     func testFiniteReplayRequiresCompleteCheckpointAndClosedSchema() throws {
         let bytes = stream()
         let page = try NativeAssistantEventsDecoder.decode(bytes, conversationID: conversation, after: 0)

@@ -3,8 +3,8 @@
     "baseWorktree": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-journal-data-20261008",
     "baseHead": "0ef351c2afdae917a8297c4120410865173d8376",
     "before": "763351e2ee21b7bbce0024d8db40eb98c4efef270f77ff405172af6f1997ecab",
-    "after": "57cf9e9061850288e2d98b98c04a0bf9265a4a9aaa10136d6ec7e0811f535e11",
-    "patch": "1e76b02320985835eca5eba8c39dfab7a9de4076dd9c6a15e5412ca3be2dbe9b",
+    "after": "3181beb05c194a33d61a7dc79b8039f6d66fe9f1bd3b451fbd20285be1bfe508",
+    "patch": "6c71ab6876c39c80f1c27f41b04142125dd44dd0f8defbb396b831270e3c3046",
     "hunks": 5,
     "hunkPins": [
       {
@@ -17,26 +17,26 @@
       {
         "range": "-637,0 +646",
         "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-        "afterSHA256": "41817d8f5180d9466612db60c3bfb56318650c77ee8ccb4e85a2a2c1e63adc06",
+        "afterSHA256": "cdc0d5ff923638d5800516edbcf1ef3f4f773324dee18808f59b05a6978dfa97",
         "beforeLines": 0,
         "afterLines": 1
       },
       {
-        "range": "-1987,0 +1997,83",
+        "range": "-1987,0 +1997,106",
         "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-        "afterSHA256": "de1efc0c56f31fd012133aec01a4004710079bd54a943be92d1ebe71b9f2b848",
+        "afterSHA256": "de2f11366972c08212ba66e1520bbf97856a3256ad518e26ecb340082602fc71",
         "beforeLines": 0,
-        "afterLines": 83
+        "afterLines": 106
       },
       {
-        "range": "-2264,0 +2357",
+        "range": "-2264,0 +2380",
         "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "afterSHA256": "9d243aebfb6a600a78e9b774795539804783f09d7ee0f702dbc8d6bd21421b30",
         "beforeLines": 0,
         "afterLines": 1
       },
       {
-        "range": "-2314,0 +2408,2",
+        "range": "-2314,0 +2431,2",
         "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "afterSHA256": "f8f07a9347b10d071af21796df4b1d36d613796532d6228bb98d9aaedcd15875",
         "beforeLines": 0,
