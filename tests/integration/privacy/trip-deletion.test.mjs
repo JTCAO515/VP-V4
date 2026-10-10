@@ -20,9 +20,7 @@ test('Trip deletion SQL: reauthentication, fencing, atomic completion, isolation
   }
   assert.ok(ready);
   await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql', 'utf8') + `
-    create function auth.role() returns text language sql stable as $$
-      select nullif(current_setting('request.jwt.claim.role',true),'')
-    $$;
+    create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;
     grant usage on schema auth to authenticated, service_role;
     grant execute on function auth.role() to authenticated, service_role;`);
   await db(readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort().map(f=>'begin;\n'+readFileSync('supabase/migrations/'+f,'utf8')+'\ncommit;').join('\n'));

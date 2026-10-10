@@ -38,7 +38,7 @@ before(async () => {
   }
   assert.ok(ready);
   await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql', 'utf8'));
-  await db("create function auth.role() returns text language sql as $$ select nullif(current_setting('request.jwt.claim.role',true),'') $$; create schema extensions; create extension pgcrypto with schema extensions;");
+  await db("create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$; create schema extensions; create extension pgcrypto with schema extensions;");
   for (const file of readdirSync('supabase/migrations').filter(f => f.endsWith('.sql')).sort()) {
     const migration = readFileSync('supabase/migrations/' + file, 'utf8');
     if (file === '20261002050000_vpj82_translation_history.sql') {
