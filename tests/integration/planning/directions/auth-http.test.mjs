@@ -69,7 +69,17 @@ test('directions: real source, exact bytes, preserved draft, both-client reload 
  const nativeTrip=await request(`/api/trips/native/v2/${tripId}`,token),webTrip=await request(`/api/trips/${tripId}`,null,'GET',undefined,{Cookie:cookie(),Origin:e.api});assert.equal(nativeTrip.status,200);assert.equal(webTrip.status,200);assert.deepEqual(nativeTrip.body.content,webTrip.body.content);assert.equal(nativeTrip.body.trip.headVersion,2);assert.equal(nativeTrip.body.content.days.length,11);assert.equal(nativeTrip.body.content.days[0].items[0].id,oldItem);
  assert.equal((await exact()).current,false);await tripDirectionsRef();assert.equal((await web('')).body.data.current,false,'original qualified historical directions remain read-only after Trip confirmation');
  assert.equal(e.counts.http,0,'zero provider calls; fixture counts are not production evidence');
+ // Separate policy withdrawal from the already-observed confirmed-Trip stale source.
+ const staleChoice=await request(root+'/choose',token,'POST',{artifactId,expectedRevision:revision,operationId:uuid(),directionId:'breadth'});
+ assert.equal(staleChoice.status,409,'confirmed Trip source CAS remains rejected before policy withdrawal');assert.deepEqual(staleChoice.body,{error:{code:'SERVICE_TASK_CONFLICT'}});
+ const policyGoalId=uuid();await goal(policyGoalId);
+ const policyBasis=async()=>{const r=await request(root+`/basis?conversationId=${conversationId}&goalId=${policyGoalId}`,token);assert.equal(r.status,200);return r.body.data;};
+ const policyBody=async()=>{const b=await policyBasis();return {...firstBody,goalId:policyGoalId,expectedGoalVersion:b.goalVersion,parentMessageId:b.parentMessageId,expectedSourceSequence:b.messageSequence,expectedIntakeRevision:b.intakeRevision,expectedIntakeDigest:b.intakeDigest,messageId:uuid(),messageKey:uuid(),threadId:uuid(),turnId:uuid(),taskId:uuid(),taskKey:uuid()};};
+ const policyPublished=await request(root+'/submit',token,'POST',await policyBody());assert.equal(policyPublished.status,201);assert.equal(policyPublished.body.current,true);
+ const policyChosen=await request(root+'/choose',token,'POST',{artifactId:policyPublished.body.artifactId,expectedRevision:policyPublished.body.revision,operationId:uuid(),directionId:'depth'});assert.equal(policyChosen.status,200,'independent unlinked source can act before withdrawal');
+ const policyExact=await exact(policyChosen.body.artifactId,policyChosen.body.revision);assert.equal(policyExact.current,true);assert.equal(policyExact.source.tripId,null);
+ const rejectedAdmission=await policyBody();
  assert.equal((await request(base+'/planning/policy',token,'DELETE',{policyId:planningPolicyId})).status,200);
- assert.equal((await request(root+'/choose',token,'POST',{artifactId,expectedRevision:revision,operationId:uuid(),directionId:'breadth'})).status,403,'withdrawn policy blocks effects');
+ const deniedAdmission=await request(root+'/submit',token,'POST',rejectedAdmission);assert.equal(deniedAdmission.status,403,'withdrawn policy blocks new admission independently of Trip staleness');assert.deepEqual(deniedAdmission.body,{error:{code:'DATA_POLICY_BLOCKED'}});
  t.diagnostic('DIRECTIONS_AUTH_REAL_CHAIN: ordinary signed actors + Cookie/Bearer + canonical source + exact bytes + preserved draft + original visible diff/confirmation + both-client reload; zero provider');
 });
