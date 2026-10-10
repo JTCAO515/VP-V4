@@ -1,0 +1,73 @@
+// Real signed Auth -> production routes -> current migrated disposable SQL.
+// Explicit runner only; no fixture response is substituted for canonical RPC.
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {randomUUID as uuid} from 'node:crypto';
+import {createServerClient} from '@supabase/ssr';
+import {createNativeTextEnvironment} from '../../turn/native-text-environment.mjs';
+import {identityLocalEnv} from '../../identity/local-supabase.mjs';
+if(process.env.VP_DIRECTIONS_AUTH_CASE!=='1')throw Error('Use only the owned directions Auth runner');
+test('directions: real source, exact bytes, preserved draft, both-client reload and original confirmation',{timeout:240000},async t=>{
+ const local=identityLocalEnv();assert.ok(local&&/^supabase_db_vp-native-ask-[a-f0-9]{8}$/.test(local.DB_CONTAINER));
+ const e=await createNativeTextEnvironment();t.after(()=>e.cleanup());
+ const base='/api/chat/native/v5',root=base+'/planning/directions';
+ const request=async(path,token,method='GET',body,headers={})=>{
+  const r=await fetch(e.api+path,{method,headers:{...(token?{Authorization:'Bearer '+token}:{}),...(body===undefined?{}:{'Content-Type':'application/json'}),...headers},...(body===undefined?{}:{body:typeof body==='string'?body:JSON.stringify(body)})});
+  return {status:r.status,body:await r.json()};
+ };
+ const login=async user=>{const attemptId=uuid(),c=await request('/api/auth/native/v2/credentials',null,'POST',{email:user.email,password:user.password,attemptId});assert.equal(c.status,200,'owned credential login');assert.equal((await request('/api/auth/native/v2/login',c.body.accessToken,'POST',{attemptId})).status,200,'owned mobile proof');return c.body.accessToken;};
+ const token=await login(e.users[0]),other=await login(e.users[1]),planningPolicyId=uuid(),noticeHash='a'.repeat(64);
+ assert.equal((await request(base+'/consent',token,'POST',{policyId:e.policyId,noticeHash:e.noticeHash})).status,200);
+ e.sql(`insert into turn_private.planning_policies(id,text_policy_id,environment,notice_version,notice_hash,notice_zh,notice_en,effective_at,expires_at) values('${planningPolicyId}','${e.policyId}','local_synthetic','test','${noticeHash}','本机合成','Local synthetic',now()-interval '1 minute',now()+interval '1 day');`);
+ assert.equal((await request(base+'/planning/policy',token,'POST',{policyId:planningPolicyId,noticeHash})).status,201);
+ const conversationId=uuid(),goalId=uuid();
+ const goal=async id=>{const r=await request(base+'/conversation',token,'POST',{conversationId,messageId:uuid(),idempotencyKey:uuid(),policyId:e.policyId,locale:'en',text:'Ten days in Shanghai and Beijing; food and walking; dates unknown',relationship:'goal_start',goalId:id,expectedGoalVersion:null,taskId:null,parentMessageId:null,turnId:null});assert.equal(r.status,201,'actual original goal admission');return r.body;};
+ await goal(goalId);await goal(uuid()); // A/B -> A: real shared Conversation sequence gap.
+ const intake={schemaVersion:'travel-directions-intake/1',destinations:['Shanghai','Beijing'],durationDays:10,interests:['food','walking'],currentPace:null,budget:null,dates:null,intent:'explore'};
+ const basis=async()=>{const r=await request(root+`/basis?conversationId=${conversationId}&goalId=${goalId}`,token);assert.equal(r.status,200,'current canonical directions basis');return r.body.data;};
+ const submitBody=async()=>{const b=await basis();return {conversationId,goalId,expectedGoalVersion:b.goalVersion,parentMessageId:b.parentMessageId,messageId:uuid(),messageKey:uuid(),threadId:uuid(),turnId:uuid(),taskId:uuid(),taskKey:uuid(),planningPolicyId,locale:'en',text:'Keep the current explicit ten-day ideas',memoryBasis:[],expectedSourceSequence:b.messageSequence,expectedIntakeRevision:b.intakeRevision,expectedIntakeDigest:b.intakeDigest,intake,useSavedPace:false,expectedProfileRevision:null};};
+ const firstBody=await submitBody();const raw=JSON.stringify(firstBody);
+ assert.equal((await request(root+'/submit',null,'POST',raw)).status,401);
+ assert.equal((await request(root+'/submit',other,'POST',raw)).status,403,'cross-owner admission blocked');
+ assert.equal((await request(root+'/submit',token,'POST',{...firstBody,ownerId:e.users[1].id})).status,400);
+ assert.equal((await request(root+'/submit',token,'POST',{...firstBody,useSavedPace:true,expectedProfileRevision:0})).status,403,'local-only saved Profile purpose cannot become server consent');
+ const published=await request(root+'/submit',token,'POST',raw);assert.equal(published.status,201,'actual canonical producer must publish');assert.equal(published.body.current,true);assert.ok(published.body.inputSequence>firstBody.expectedSourceSequence+1,'A/B conversation gap remains real');
+ const replay=await request(root+'/submit',token,'POST',raw);assert.equal(replay.status,200);assert.equal(replay.body.reused,true);assert.equal(replay.body.artifactId,published.body.artifactId);
+ assert.equal((await request(root+'/submit',token,'POST',' '+raw)).status,409,'same operation with changed bytes is not a retry');
+ let artifactId=published.body.artifactId,revision=published.body.revision;
+ const exact=async(id=artifactId,rev=revision)=>{const r=await request(`/api/results/native/v2?artifactId=${id}&revision=${rev}`,token);assert.equal(r.status,200,'original exact result read');assert.equal(r.body.data.artifactId,id);assert.equal(r.body.data.revision,rev);return r.body.data;};
+ const act=async(action,extra={})=>{const r=await request(root+'/'+action,token,'POST',{artifactId,expectedRevision:revision,operationId:uuid(),...extra});assert.equal(r.status,200,'canonical '+action);revision=r.body.revision;return r.body;};
+ assert.equal((await exact()).content.draft,null,'submit does not silently save');
+ await act('choose',{directionId:'depth'});assert.equal((await exact()).content.draft,null,'selection is separate');await act('save');
+ const before=await exact();assert.equal(before.content.draft.days.length,10);assert.deepEqual([...new Set(before.content.draft.days.map(d=>d.destination))],intake.destinations);
+ const changed={...before.content.draft.days[2],activities:['Explicit user edit retained across linking']};
+ await act('edit',{replacements:[changed]});const edited=await exact();assert.deepEqual(edited.content.draft.days[0],before.content.draft.days[0]);assert.deepEqual(edited.content.draft.days[2],changed);
+ const tripId=uuid(),oldDay='preserved_day',oldItem='preserved_item';
+ assert.equal((await request('/api/trips/native/v2',token,'POST',{tripId,title:'Existing fixture Trip'})).status,201);
+ const oldPatch={expectedVersion:0,operations:[{kind:'upsert_day',dayId:oldDay,date:'2026-10-01',timeZone:'Asia/Shanghai'},{kind:'upsert_item',dayId:oldDay,itemId:oldItem,title:'Preserve original user item'}]};
+ const p=await request(`/api/trips/native/v2/${tripId}/proposal`,token,'POST',{patch:oldPatch});assert.equal(p.status,201);
+ const pending=await request(`/api/trips/native/v2/${tripId}/proposal?proposalId=${p.body.proposalId}`,token);assert.equal(pending.status,200);
+ assert.equal((await request(`/api/trips/native/v2/${tripId}/confirm`,token,'POST',{proposalId:p.body.proposalId,idempotencyKey:uuid(),digest:pending.body.proposal.digest})).status,200);
+ const b=await basis();const linked=await request(`${base}/goals/${goalId}/trip`,token,'POST',{operationId:uuid(),conversationId,sourceMessageId:b.parentMessageId,expectedGoalScopeVersion:b.goalVersion,expectedLinkVersion:0,action:'link',tripId,expectedTripVersion:1,confirmed:true});assert.equal(linked.status,201);
+ assert.equal((await exact()).current,false,'old unlinked source must become stale');
+ assert.equal((await request(root+'/bind',token,'POST',{artifactId,expectedRevision:revision,operationId:uuid(),tripId,expectedTripVersion:1,startDate:'2026-11-01'})).status,409,'stale source cannot bind');
+ // Explicit fresh request, never an automatic paid retry or a currentness exception.
+ const fresh=await request(root+'/submit',token,'POST',await submitBody());assert.equal(fresh.status,201);artifactId=fresh.body.artifactId;revision=fresh.body.revision;
+ const restored=await exact();assert.equal(restored.content.selectedDirectionId,'depth');assert.deepEqual(restored.content.draft.days[2],changed,'fresh linked-scope source preserves user-edited draft');
+ const jar=new Map();const ssr=createServerClient(local.API_URL,local.PUBLISHABLE_KEY||local.ANON_KEY,{cookies:{getAll:()=>[...jar].map(([name,value])=>({name,value})),setAll:values=>values.forEach(({name,value})=>jar.set(name,value))}});
+ const signIn=await ssr.auth.signInWithPassword({email:e.users[0].email,password:e.users[0].password});assert.ifError(signIn.error);const cookie=()=>[...jar].map(([k,v])=>`${k}=${v}`).join('; ');
+ const web=(action,body)=>request(`/api/trips/${tripId}/directions${action?'/'+action:''}`,null,body===undefined?'GET':'POST',body,{Cookie:cookie(),Origin:e.api});
+ const webRead=await web('');assert.equal(webRead.status,200);assert.equal(webRead.body.data.artifactId,artifactId);assert.deepEqual(webRead.body.data.content,restored.content);
+ const webDay={...restored.content.draft.days[6],activities:['Explicit Web edit']};const webEdit=await web('edit',{artifactId,expectedRevision:revision,operationId:uuid(),replacements:[webDay]});assert.equal(webEdit.status,200);revision=webEdit.body.revision;
+ const nativeReload=await exact();assert.deepEqual(nativeReload.content.draft.days[6],webDay);assert.deepEqual((await web('')).body.data.content,nativeReload.content);
+ const bound=await act('bind',{tripId,expectedTripVersion:1,startDate:'2026-11-01'});assert.equal(bound.tripVersion,1);
+ const original=await request(`/api/trips/native/v2/${tripId}/proposal?proposalId=${bound.proposalId}`,token);assert.equal(original.status,200);assert.equal(original.body.proposal.revision,bound.proposalRevision);assert.equal(original.body.proposal.before.days[0].items[0].id,oldItem);
+ assert.equal((await request(`/api/trips/native/v2/${tripId}`,token)).body.trip.headVersion,1,'binding did not write Trip');
+ const confirm={proposalId:bound.proposalId,idempotencyKey:uuid(),digest:original.body.proposal.digest};assert.equal((await request(`/api/trips/native/v2/${tripId}/confirm`,token,'POST',confirm)).status,200);
+ const nativeTrip=await request(`/api/trips/native/v2/${tripId}`,token),webTrip=await request(`/api/trips/${tripId}`,null,'GET',undefined,{Cookie:cookie(),Origin:e.api});assert.equal(nativeTrip.status,200);assert.equal(webTrip.status,200);assert.deepEqual(nativeTrip.body.content,webTrip.body.content);assert.equal(nativeTrip.body.trip.headVersion,2);assert.equal(nativeTrip.body.content.days.length,11);assert.equal(nativeTrip.body.content.days[0].items[0].id,oldItem);
+ assert.equal((await exact()).current,false);assert.equal((await web('')).body.data.current,false,'original qualified historical directions remain read-only after Trip confirmation');
+ assert.equal(e.counts.http,0,'zero provider calls; fixture counts are not production evidence');
+ assert.equal((await request(base+'/planning/policy',token,'DELETE',{policyId:planningPolicyId})).status,200);
+ assert.equal((await request(root+'/choose',token,'POST',{artifactId,expectedRevision:revision,operationId:uuid(),directionId:'breadth'})).status,403,'withdrawn policy blocks effects');
+ t.diagnostic('DIRECTIONS_AUTH_REAL_CHAIN: ordinary signed actors + Cookie/Bearer + canonical source + exact bytes + preserved draft + original visible diff/confirmation + both-client reload; zero provider');
+});
