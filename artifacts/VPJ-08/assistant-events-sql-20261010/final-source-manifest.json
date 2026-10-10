@@ -1,5 +1,5 @@
 {
-  "sourceHead": "1b8efcbc174bc116cd3b85524525b1d538fafe45",
+  "sourceHead": "930b66d6fd7425c63e2ddbe1c6bd0970b489d564",
   "migrations": [
     {
       "path": "supabase/migrations/20260824101500_v4_baseline.sql",

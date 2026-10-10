@@ -10,7 +10,7 @@ for(let n=0;n<100;n++){if((await command('docker',['exec',container,'pg_isready'
 async function db(q){const r=await sql(container,q);if(r.code)throw Error(r.stderr);return r.stdout.trim();}
 await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));
 await db("create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;create schema extensions;create extension pgcrypto with schema extensions;");
-const sourceHead='1b8efcbc174bc116cd3b85524525b1d538fafe45';
+const sourceHead='930b66d6fd7425c63e2ddbe1c6bd0970b489d564';
 const listed=await command('git',['ls-tree','-r','--name-only',sourceHead,'supabase/migrations']);if(listed.code)throw Error(listed.stderr);
 const paths=listed.stdout.trim().split('\n').filter(f=>f.endsWith('.sql')).sort();const manifest=[];
 for(const file of paths){const source=await command('git',['show',sourceHead+':'+file]);if(source.code)throw Error(source.stderr);
@@ -18,4 +18,4 @@ for(const file of paths){const source=await command('git',['show',sourceHead+':'
  await db('begin;'+source.stdout+'commit;').catch(e=>{throw Error(file+': '+e.message)});
 }
 writeFileSync('artifacts/VPJ-08/assistant-events-sql-20261010/final-source-manifest.json',JSON.stringify({sourceHead,migrations:manifest},null,2)+'\n');
-console.log('complete exact final1b8efcbc sorted Git source migration replay PASS',paths.length,'migrations');
+console.log('complete exact main930b66d6 sorted Git source migration replay PASS',paths.length,'migrations');
