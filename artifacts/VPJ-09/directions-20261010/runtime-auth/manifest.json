@@ -1,0 +1,51 @@
+{
+  "testedHead": "16cc284f2cd46da3ceeda23d0b8c50236cc06d29",
+  "integratedHead": "49d380063df53c09b17ba8c9a86c9fc05fedc365",
+  "sourceSHA256": {
+    "supabase/migrations/20261010020000_assistant_events.sql": "16de8c627c10ea9799658491ab0e6fb60b8092c8d6f55662f01fb45133ca3062",
+    "supabase/migrations/20261010030000_vpj09_travel_directions.sql": "6354e482331453289311c4d7f2a363d1012a3bc9d11f0324d300b5bc8cb58584",
+    "tests/integration/planning/directions/auth-http.test.mjs": "5a8798d104446e4d1abee3aa2b9d5df43057720e30705b60dd66efd2a80d1598",
+    "tests/integration/planning/directions/run-auth.mjs": "64b67bd46ee70763bdc1b60eb4aa661e8b91bbbb02432eb06e1c0a5c610a44b6",
+    "scripts/ci-suites/db-integration.mjs": "8ba3504146416e13565c651b59893143ba66ad5a579cfe4c761719f1ab972542",
+    "lib/server/planning/directions/http.ts": "74433dde6ddc7a513969740fe830ed0a35342629117594fc8187cebf2fb85242",
+    "lib/server/planning/directions/web-http.ts": "6dbdf6fe16dc05e7c1dbd5166caf3dc5cc4ce4ad6a7921a5f7fa74a3a335834f",
+    "lib/server/planning/directions/native-trip-reference.ts": "9d4d8d4bb3378a364c5fbe31573e7d2b192f920e086a9b8c37af65e9ef2dd377",
+    "components/canvas/TripDirectionsResult.tsx": "4eb31ad84424e39a671aa748081bbedd682402bf41c651ab6dd02c1017610eb6"
+  },
+  "r1": {
+    "runnerExit": 1,
+    "casePass": 0,
+    "caseFail": 1,
+    "skip": 0,
+    "reason": "mixed confirmedTrip-stale artifact versus policy403 fixture; retained"
+  },
+  "r2": {
+    "runnerExit": 0,
+    "casePass": 1,
+    "caseFail": 0,
+    "skip": 0,
+    "testedHead": "053d8f388da3a03c7e58594d1a837a5626ed31c2",
+    "scope": "policy403/source409 and count snapshot before message/content additions"
+  },
+  "r3": {
+    "runnerExit": 0,
+    "casePass": 1,
+    "caseFail": 0,
+    "skip": 0,
+    "elapsedCaseMs": 8206.386334,
+    "project": "vp-native-ask-cf4c93a5",
+    "cleanup": "PASS",
+    "postCleanupEightPortPreflight": "PASS",
+    "scope": "signedNative+ordinaryWebCookie/currentSource/bytes/dayEdit/firstLinkDraftRetention/typedTripRef/originalProposal-diff-confirm/bothReload/policy403-source409/fullNoEffect"
+  },
+  "ciGov": {
+    "pass": 11,
+    "fail": 0,
+    "skip": 0
+  },
+  "dirtyRetained": [
+    "AGENTS.md",
+    "next-env.d.ts"
+  ],
+  "limits": "onlyowned62520; zero provider; no target/device/human acceptance"
+}

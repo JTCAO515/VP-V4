@@ -1,0 +1,16 @@
+[
+  {
+    "path": "lib/server/artifacts/result-content.ts",
+    "beforeSHA256": "10a24278e8ccd03b7a5d7e87291367d401c7f5f5153465bac8408bd9231228c3",
+    "afterSHA256": "af418c5b954b4bcca3f1794ca22f705bde5132ea49a339b59c92952925a24ad0",
+    "patchSHA256": "c730e31543755f1cc3c36eaf6d0653787bb2d3806df879942f8a7cbde2335f86",
+    "hunks": 3
+  },
+  {
+    "path": "lib/server/artifacts/result-v2-contract.ts",
+    "beforeSHA256": "e5a323069accc9a6526ac237575b1065639d98e6a31f238d0693c14eca44a853",
+    "afterSHA256": "dc6f450fd4a400115c2f78dc724207e618d94a05ca677a679019479c0e59dc60",
+    "patchSHA256": "c6e34d5dda2868a94da0986fdb7b38b556d96e9d994f7a61181b66098b9ec397",
+    "hunks": 1
+  }
+]

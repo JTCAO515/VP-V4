@@ -1,0 +1,18 @@
+--- a/tests/integration/identity/function-acl.test.mjs
++++ b/tests/integration/identity/function-acl.test.mjs
+@@ -49,6 +49,7 @@
+   "public.list_text_turns(uuid,integer)",
+   "public.native_task_travel_pace_v1(jsonb)",
+   "public.native_travel_pace_v1(jsonb)",
++  "public.native_travel_directions_v1(text,uuid,text)",
+   "public.native_session_v2(text,uuid)",
+   "public.ops_budget_scope_read_v1(uuid)",
+   "public.ops_knowledge_provenance_read_v1(jsonb)",
+@@ -72,6 +73,7 @@
+   "public.read_result_artifact_v2(uuid,integer)",
+   "public.read_task_result_reference_v2(uuid)",
+   "public.read_trip_result_reference_v2(uuid)",
++  "public.read_trip_directions_reference_v1(uuid)",
+   "public.search_result_artifacts_v2(text,uuid)",
+   "public.read_change_proposal_reference_v1(uuid,integer)",
+   "public.read_trip_change_proposal_reference_v1(uuid)",

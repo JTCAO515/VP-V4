@@ -1,0 +1,18 @@
+✔ all actual groups and original input/output are one source-bound owner snapshot (3.156084ms)
+✔ retained operation/fence bytes stay finite and original authorities cannot be omitted (0.854917ms)
+✔ legacy Turn budget identity preserves exact decimal financial amounts and rejects lossy/foreign values (0.338166ms)
+✔ actual read progress/source digest/lease do not silently turn outer capacity failure into completion (1.986583ms)
+✔ changed bytes/digest/cursor under same source lease never requalify a forged snapshot (0.566791ms)
+✔ supplemental immutable source keys are exact typed terminal provenance with native PK order and complete effect counts (1.307792ms)
+✔ SQL appended empty direction groups require exact38 shape and cannot be silently omitted (2.690666ms)
+✔ erased permanent direction receipts preserve exact identity but never revive null business parents (1.166959ms)
+✔ active direction intake/source/operation rows retain typed original parents and reject orphan or forged rows (2.920667ms)
+✔ Result-only erasure keeps the qualified direction intake and original NULL-turn follow-up input (0.329792ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 83.449125

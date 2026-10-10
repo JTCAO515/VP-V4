@@ -1,0 +1,13 @@
+✔ actual SQL authority and existing module exports interoperate with production worker encryption and strict receipt (9264.452333ms)
+✔ actual encrypted SQL artifact reaches protected HTTP only after real SQL one-use ACK (synthetic credentials) (342.31875ms)
+✔ real authenticated and service roles remain unable to EXECUTE new domain (no grants) (62.558291ms)
+✔ actual SQL failed terminal receipt decodes as failure with timestamp and no artifact (143.547375ms)
+✔ real SQL commit accepts partial SOURCE_UNAVAILABLE after existing conversation pages (1809.482583ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 11813.078375

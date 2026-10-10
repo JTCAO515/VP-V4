@@ -1,0 +1,194 @@
+[
+  {
+    "job": "114249788656",
+    "steps": [
+      {
+        "step": "change-proposal-reference",
+        "start": "2026-10-10T15:43:15.048550+00:00",
+        "ready": "2026-10-10T15:47:32.077557+00:00",
+        "end": "2026-10-10T15:48:17.086966+00:00",
+        "seconds": 302.0,
+        "setupUpperSeconds": 257.0
+      },
+      {
+        "step": "trip-lifecycle-http",
+        "start": "2026-10-10T15:48:17.087619+00:00",
+        "ready": "2026-10-10T15:51:34.596567+00:00",
+        "end": "2026-10-10T15:51:57.350786+00:00",
+        "seconds": 220.3,
+        "setupUpperSeconds": 197.5
+      },
+      {
+        "step": "translation-history-http",
+        "start": "2026-10-10T15:51:57.351248+00:00",
+        "ready": "2026-10-10T15:55:12.408908+00:00",
+        "end": "2026-10-10T15:55:38.092504+00:00",
+        "seconds": 220.7,
+        "setupUpperSeconds": 195.1
+      },
+      {
+        "step": "traveler-brief-http",
+        "start": "2026-10-10T15:55:38.092882+00:00",
+        "ready": "2026-10-10T15:58:48.934140+00:00",
+        "end": "2026-10-10T15:59:05.077889+00:00",
+        "seconds": 207.0,
+        "setupUpperSeconds": 190.8
+      },
+      {
+        "step": "notification-data-http",
+        "start": "2026-10-10T15:59:05.078243+00:00",
+        "ready": "2026-10-10T16:02:24.601328+00:00",
+        "end": "2026-10-10T16:02:52.305740+00:00",
+        "seconds": 227.2,
+        "setupUpperSeconds": 199.5
+      },
+      {
+        "step": "coverage-progress-http",
+        "start": "2026-10-10T16:02:52.306180+00:00",
+        "ready": "2026-10-10T16:06:14.147740+00:00",
+        "end": "2026-10-10T16:06:30.688327+00:00",
+        "seconds": 218.4,
+        "setupUpperSeconds": 201.8
+      },
+      {
+        "step": "community-j1-http",
+        "start": "2026-10-10T16:06:30.688752+00:00",
+        "ready": "2026-10-10T16:09:53.741315+00:00",
+        "end": "2026-10-10T16:10:08.503954+00:00",
+        "seconds": 217.8,
+        "setupUpperSeconds": 203.1
+      },
+      {
+        "step": "place-guide-http",
+        "start": "2026-10-10T16:10:08.504324+00:00",
+        "end": "CANCELLED/uncompleted"
+      }
+    ]
+  },
+  {
+    "job": "114249788706",
+    "steps": [
+      {
+        "step": "trip-proposal-reference-discovery",
+        "start": "2026-10-10T15:43:19.775653+00:00",
+        "ready": "2026-10-10T15:47:48.925403+00:00",
+        "end": "2026-10-10T15:48:18.643130+00:00",
+        "seconds": 298.9,
+        "setupUpperSeconds": 269.1
+      },
+      {
+        "step": "native-same-trip",
+        "start": "2026-10-10T15:48:18.643747+00:00",
+        "ready": "2026-10-10T15:52:00.424284+00:00",
+        "end": "2026-10-10T15:53:31.708188+00:00",
+        "seconds": 313.1,
+        "setupUpperSeconds": 221.8
+      },
+      {
+        "step": "translation-trip-source-http",
+        "start": "2026-10-10T15:53:31.708622+00:00",
+        "ready": "2026-10-10T15:57:16.654014+00:00",
+        "end": "2026-10-10T15:57:38.206796+00:00",
+        "seconds": 246.5,
+        "setupUpperSeconds": 224.9
+      },
+      {
+        "step": "data-coverage-http",
+        "start": "2026-10-10T15:57:38.207164+00:00",
+        "ready": "2026-10-10T16:01:19.569203+00:00",
+        "end": "2026-10-10T16:01:34.745236+00:00",
+        "seconds": 236.5,
+        "setupUpperSeconds": 221.4
+      },
+      {
+        "step": "archive-data-http",
+        "start": "2026-10-10T16:01:34.745717+00:00",
+        "ready": "2026-10-10T16:04:54.021806+00:00",
+        "end": "2026-10-10T16:05:11.794580+00:00",
+        "seconds": 217.0,
+        "setupUpperSeconds": 199.3
+      },
+      {
+        "step": "pdf-intake-http",
+        "start": "2026-10-10T16:05:11.795018+00:00",
+        "ready": "2026-10-10T16:08:32.682855+00:00",
+        "end": "2026-10-10T16:08:56.778717+00:00",
+        "seconds": 225.0,
+        "setupUpperSeconds": 200.9
+      },
+      {
+        "step": "community-safety-http",
+        "start": "2026-10-10T16:08:56.779157+00:00",
+        "ready": "2026-10-10T16:12:21.356441+00:00",
+        "setupUpperSeconds": 204.6,
+        "end": "CANCELLED/uncompleted"
+      }
+    ]
+  },
+  {
+    "job": "114249788635",
+    "steps": [
+      {
+        "step": "native-local-session",
+        "start": "2026-10-10T15:42:59.185507+00:00",
+        "ready": "2026-10-10T15:47:16.687545+00:00",
+        "end": "2026-10-10T15:47:32.038191+00:00",
+        "seconds": 272.9,
+        "setupUpperSeconds": 257.5
+      },
+      {
+        "step": "native-text-http",
+        "start": "2026-10-10T15:47:32.038865+00:00",
+        "ready": "2026-10-10T15:50:49.292308+00:00",
+        "end": "2026-10-10T15:52:42.514594+00:00",
+        "seconds": 310.5,
+        "setupUpperSeconds": 197.3
+      },
+      {
+        "step": "service-operations-http",
+        "start": "2026-10-10T15:52:42.515133+00:00",
+        "ready": "2026-10-10T15:56:02.780579+00:00",
+        "end": "2026-10-10T15:56:21.265898+00:00",
+        "seconds": 218.8,
+        "setupUpperSeconds": 200.3
+      },
+      {
+        "step": "material-reference-http",
+        "start": "2026-10-10T15:56:21.266277+00:00",
+        "ready": "2026-10-10T15:59:37.997371+00:00",
+        "end": "2026-10-10T16:00:00.560638+00:00",
+        "seconds": 219.3,
+        "setupUpperSeconds": 196.7
+      },
+      {
+        "step": "conversation-data-http",
+        "start": "2026-10-10T16:00:00.561048+00:00",
+        "ready": "2026-10-10T16:03:16.605570+00:00",
+        "end": "2026-10-10T16:03:34.154797+00:00",
+        "seconds": 213.6,
+        "setupUpperSeconds": 196.0
+      },
+      {
+        "step": "community-j1-jwt",
+        "start": "2026-10-10T16:03:34.155187+00:00",
+        "ready": "2026-10-10T16:06:52.091897+00:00",
+        "end": "2026-10-10T16:06:57.442083+00:00",
+        "seconds": 203.3,
+        "setupUpperSeconds": 197.9
+      },
+      {
+        "step": "community-publication-http",
+        "start": "2026-10-10T16:06:57.442508+00:00",
+        "ready": "2026-10-10T16:10:14.329127+00:00",
+        "end": "2026-10-10T16:10:38.987142+00:00",
+        "seconds": 221.5,
+        "setupUpperSeconds": 196.9
+      },
+      {
+        "step": "native-planning-http",
+        "start": "2026-10-10T16:10:38.987415+00:00",
+        "end": "CANCELLED/uncompleted"
+      }
+    ]
+  }
+]

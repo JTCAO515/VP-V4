@@ -1,0 +1,52 @@
+[
+  {
+    "path": "app/api/trips/[tripId]/directions/route.ts",
+    "candidate": "artifacts/VPJ-09/directions-20261010/web-candidates/read.route.ts.txt",
+    "before": "ABSENT",
+    "afterSHA256": "451c6fec40fd4f15d0f5ea5cf34d6d12be755030d867b413ddeeb4f61202bb50"
+  },
+  {
+    "path": "app/api/trips/[tripId]/directions/choose/route.ts",
+    "candidate": "artifacts/VPJ-09/directions-20261010/web-candidates/choose.route.ts.txt",
+    "before": "ABSENT",
+    "afterSHA256": "732be5853d333ac32bef925e7c041e2d689fa7cec3704c92e208f89279084c0a"
+  },
+  {
+    "path": "app/api/trips/[tripId]/directions/save/route.ts",
+    "candidate": "artifacts/VPJ-09/directions-20261010/web-candidates/save.route.ts.txt",
+    "before": "ABSENT",
+    "afterSHA256": "592d710b525063450fbb0d415ec4979fed0f487fb568cdf3b25b03e510c683ec"
+  },
+  {
+    "path": "app/api/trips/[tripId]/directions/edit/route.ts",
+    "candidate": "artifacts/VPJ-09/directions-20261010/web-candidates/edit.route.ts.txt",
+    "before": "ABSENT",
+    "afterSHA256": "a83245100156d7896c9671a54434bd11df4009d30ce27248582394b16ad715f9"
+  },
+  {
+    "path": "app/api/trips/[tripId]/directions/bind/route.ts",
+    "candidate": "artifacts/VPJ-09/directions-20261010/web-candidates/bind.route.ts.txt",
+    "before": "ABSENT",
+    "afterSHA256": "4c2dc33cf0d936ce85dfa0ca7e6c121293bedb7a827d08f4d2b3f276585fe03c"
+  },
+  {
+    "path": "components/canvas/TripDirectionsResult.tsx",
+    "candidate": "artifacts/VPJ-09/directions-20261010/web-candidates/TripDirectionsResult.tsx.txt",
+    "before": "ABSENT",
+    "afterSHA256": "26f4f8ca901c02b5c3a324807236b833789cc74789e5f9f62489a38366d4a0c8"
+  },
+  {
+    "path": "components/canvas/TripDirectionsResult.module.css",
+    "candidate": "artifacts/VPJ-09/directions-20261010/web-candidates/TripDirectionsResult.module.css.txt",
+    "before": "ABSENT",
+    "afterSHA256": "8960650289299b8bbac7eada019d6fdcefabf7408e8a4a2059b6cdaf4f3aa6fd"
+  },
+  {
+    "path": "components/canvas/TripCanvas.tsx",
+    "beforeSHA256": "c8f078db3585adf9fefd6669f4e7ada0d0552bee4ff4a5643b35830fe8ea33b8",
+    "afterSHA256": "6b32718f90545663fbe24b205986489f091477c9ea0d72c08b9ed39263dfa54f",
+    "patchSHA256": "be2fa41b8b7478318f81013f84edd72790162c8a411fd015f52a314a6692b326",
+    "candidate": "artifacts/VPJ-09/directions-20261010/web-candidates/TripCanvas.tsx.patch",
+    "hunks": 2
+  }
+]

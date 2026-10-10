@@ -1,0 +1,23 @@
+DIRECTIONS_ACL_TARGET {"project":"vp-native-ask-d7f4a266","base":62520,"api":"http://127.0.0.1:62551","supabaseAPI":"http://127.0.0.1:62541"}
+▶ repository functions grant EXECUTE to anon and authenticated only through the reviewed allowlist
+  ✔ anon executes only the public research intake (46.879709ms)
+  ✔ authenticated executes exactly the reviewed caller list (41.080292ms)
+  ✔ selected-source export remains exactly service-only and source storage private (131.390459ms)
+  ✔ internal Trip content helpers are not callable by any API role (99.708459ms)
+  ✔ Memory create/Undo grants only authenticated, never anonymous or service role (61.760292ms)
+  ✔ result publication is internal and result tables have no direct API grants (195.574833ms)
+  ✔ five-result v2 exact grants keep publisher/export internal and helpers inaccessible (402.023334ms)
+  ✔ planning execution stays service-only with private, RLS-enabled storage (434.126042ms)
+  ✔ Memory create/Undo definer RPCs guard replay and read branches against replaced mobile sessions (31.261208ms)
+  ✔ default privileges give a new function no implicit anon, authenticated or PUBLIC EXECUTE (61.133208ms)
+  ✔ PostgREST rejects anonymous calls at the privilege layer and still serves the intake (32.599042ms)
+✔ repository functions grant EXECUTE to anon and authenticated only through the reviewed allowlist (1778.142416ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1818.802083
+DIRECTIONS_ACL_CLEANUP {"project":"vp-native-ask-d7f4a266","result":"PASS"}

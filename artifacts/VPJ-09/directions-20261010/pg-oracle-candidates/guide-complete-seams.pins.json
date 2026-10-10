@@ -1,0 +1,8 @@
+{
+  "path": "tests/integration/guide/place-guide-postgres.test.mjs",
+  "beforeSHA256": "ac4e774aba54f0d2a64b8f19ecd7d92d31b6c7fe2ae1cd661f7daee9da554882",
+  "afterSHA256": "1f1a4ad845a9222502ef54d2daa425293cdcff1c91d71e9e8a8a5a620f826687",
+  "patchSHA256": "5f854e3ca230ebcd5dda8d7072cd201e2e0d19918e7542f8bfb07647eec1e8f5",
+  "scope": "four explicit original snapshot keys, exact reviewed exclusion literals blocked/stale, both once assertions then unchanged all-body equality/ACL",
+  "lease": "pending Main extended precise candidate grant"
+}

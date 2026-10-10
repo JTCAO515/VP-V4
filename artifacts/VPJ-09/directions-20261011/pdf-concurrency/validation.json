@@ -1,0 +1,31 @@
+{
+  "sourceAfterSHA256": "a60abbfe21582ba332471480b077a93679356ce2fe8ad21dca5b5eb4bcecd780",
+  "runs": [
+    {
+      "run": "r1",
+      "exitCode": 1,
+      "pass": 1,
+      "fail": 1,
+      "skip": 0,
+      "logSHA256": "05b3906562a6e61fc92832a870a272ef96e00cba10d98d919bc18b34459fcadb"
+    },
+    {
+      "run": "r2",
+      "exitCode": 0,
+      "pass": 3,
+      "fail": 0,
+      "skip": 0,
+      "logSHA256": "56bafad02576518b972da0f49aa95d8a21915ea4cd105763b424cdbf32737b34"
+    }
+  ],
+  "r1Reason": "exact filtered race/source test also required existing test111 export-policy/role enrollment; missing fixture-only precondition, preserved FAIL",
+  "r2Scope": "only existing ACL/RLS enrollment + existing exact export lease enrollment + original race/source test, original5s helper and --test-concurrency4; no SQL/grant/timeout modification",
+  "observed": "cancel committed cancelled; confirm code3 CONFIRMATION_DIGEST_MISMATCH; strict terminalcoupling and complete Trip content/head/events/idempotency no-effect passed; original source contention/deadlocks0 passed",
+  "unobserved": [
+    "double explicit lock denial -> exactpending/fullrollback branch",
+    "confirm applied -> exactconfirmed/fullpatch/event/idempotency branch"
+  ],
+  "cleanup": "original after hook asserted removal of own nonce container; filtered namespace inventory empty",
+  "productSQLSHA256": "6354e482331453289311c4d7f2a363d1012a3bc9d11f0324d300b5bc8cb58584",
+  "officialCI": "dec135 PG test168 FAIL retained; originalCI outcome was untraced, not claimed identical to observed local outcome"
+}

@@ -1,0 +1,12 @@
+DIRECTIONS_AUTH_TARGET {"project":"vp-native-ask-a901f888","base":62520,"api":"http://127.0.0.1:62551","supabaseAPI":"http://127.0.0.1:62541"}
+✔ directions: real source, exact bytes, preserved draft, both-client reload and original confirmation (8295.486084ms)
+ℹ DIRECTIONS_AUTH_REAL_CHAIN: ordinary signed actors + Cookie/Bearer + canonical source + exact bytes + preserved draft + original visible diff/confirmation + both-client reload; zero provider
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 11283.963208
+DIRECTIONS_AUTH_CLEANUP {"project":"vp-native-ask-a901f888","result":"PASS"}

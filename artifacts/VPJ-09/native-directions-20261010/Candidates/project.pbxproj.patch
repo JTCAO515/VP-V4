@@ -1,0 +1,80 @@
+--- a/ios/VisePanda/VisePanda.xcodeproj/project.pbxproj
++++ b/ios/VisePanda/VisePanda.xcodeproj/project.pbxproj
+@@ -462,6 +462,16 @@
+ 		4C29712843AC2A67522787FF /* NativeAssistantEventsProjection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C6353DEC34DD0712D8A9A36; };
+ 		31A9C304FBBAD1023800CED6 /* NativeAssistantEventsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4AA538EFA68AD7F109A5A1; };
+ 		0BD4939F55027574D03C6C07 /* NativeAssistantEventsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611E9CEBB132A76CF9F2E7A4; };
++		B197200000000000000000001 = {isa = PBXBuildFile; fileRef = B197100000000000000000001; };
++		B197200000000000000000002 = {isa = PBXBuildFile; fileRef = B197100000000000000000002; };
++		B197200000000000000000003 = {isa = PBXBuildFile; fileRef = B197100000000000000000003; };
++		B197200000000000000000004 = {isa = PBXBuildFile; fileRef = B197100000000000000000004; };
++		B197200000000000000000005 = {isa = PBXBuildFile; fileRef = B197100000000000000000005; };
++		B197200000000000000000006 = {isa = PBXBuildFile; fileRef = B197100000000000000000006; };
++		B197200000000000000000007 = {isa = PBXBuildFile; fileRef = B197100000000000000000007; };
++		B197200000000000000000008 = {isa = PBXBuildFile; fileRef = B197100000000000000000008; };
++		B197200000000000000000009 = {isa = PBXBuildFile; fileRef = B197100000000000000000009; };
++		B19720000000000000000000A = {isa = PBXBuildFile; fileRef = B19710000000000000000000A; };
+ /* End PBXBuildFile section */
+ 
+ /* Begin PBXContainerItemProxy section */
+@@ -930,6 +940,16 @@
+ 		0C6353DEC34DD0712D8A9A36 /* NativeAssistantEventsProjection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeAssistantEventsProjection.swift; sourceTree = "<group>"; };
+ 		2F4AA538EFA68AD7F109A5A1 /* NativeAssistantEventsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeAssistantEventsStore.swift; sourceTree = "<group>"; };
+ 		611E9CEBB132A76CF9F2E7A4 /* NativeAssistantEventsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeAssistantEventsTests.swift; sourceTree = "<group>"; };
++		B197100000000000000000001 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/TravelDirections/NativeTravelDirectionsContent.swift; sourceTree = SOURCE_ROOT; };
++		B197100000000000000000002 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/TravelDirections/NativeTravelDirectionsEditing.swift; sourceTree = SOURCE_ROOT; };
++		B197100000000000000000003 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/TravelDirections/NativeTravelDirectionsEditor.swift; sourceTree = SOURCE_ROOT; };
++		B197100000000000000000004 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/TravelDirections/NativeTravelDirectionsIntakeForm.swift; sourceTree = SOURCE_ROOT; };
++		B197100000000000000000005 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/TravelDirections/NativeTravelDirectionsIntakeStore.swift; sourceTree = SOURCE_ROOT; };
++		B197100000000000000000006 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/TravelDirections/NativeTravelDirectionsResultView.swift; sourceTree = SOURCE_ROOT; };
++		B197100000000000000000007 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/TravelDirections/NativeTravelDirectionsSheet.swift; sourceTree = SOURCE_ROOT; };
++		B197100000000000000000008 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/TravelDirections/NativeTravelDirectionsStore.swift; sourceTree = SOURCE_ROOT; };
++		B197100000000000000000009 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/TravelDirections/NativeTravelDirectionsWire.swift; sourceTree = SOURCE_ROOT; };
++		B19710000000000000000000A = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePandaTests/NativeTravelDirectionsTests.swift; sourceTree = SOURCE_ROOT; };
+ /* End PBXFileReference section */
+ 
+ /* Begin PBXFrameworksBuildPhase section */
+@@ -944,6 +964,17 @@
+ 		600000000000000000000001 = {
+ 			isa = PBXGroup;
+ 			children = (
++				B197100000000000000000001,
++				B197100000000000000000002,
++				B197100000000000000000003,
++				B197100000000000000000004,
++				B197100000000000000000005,
++				B197100000000000000000006,
++				B197100000000000000000007,
++				B197100000000000000000008,
++				B197100000000000000000009,
++				B19710000000000000000000A,
++
+ 				F158D3000000000000000001 /* OfflineData */,
+ 				919274CE6EB07948C71E2647 /* JournalData */,
+ 				541C4A7662005C1FCE8B757B /* GuideCacheData */,
+@@ -1120,6 +1151,16 @@
+ 			isa = PBXSourcesBuildPhase;
+ 			buildActionMask = 2147483647;
+ 			files = (
++				B197200000000000000000001,
++				B197200000000000000000002,
++				B197200000000000000000003,
++				B197200000000000000000004,
++				B197200000000000000000005,
++				B197200000000000000000006,
++				B197200000000000000000007,
++				B197200000000000000000008,
++				B197200000000000000000009,
++
+ 				2C3CFBB9BEB9DD8A8E961E45 /* NativeAssistantEventsCursor.swift in Sources */,
+ 				6B0693B4CC5457CB1E91376B /* NativeAssistantEventsDecoder.swift in Sources */,
+ 				476D1262ED83B3806228F809 /* NativeAssistantEventsInvalidation.swift in Sources */,
+@@ -1207,7 +1248,7 @@
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+-		800000000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (
++		800000000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B19720000000000000000000A,
+ 				0BD4939F55027574D03C6C07 /* NativeAssistantEventsTests.swift in Sources */,
+ AB9F95F58FBF649DAE1B75FF /* NativeJournalDataTests.swift in Sources */,
+ 210A5218D6BDE6B5029405EA,

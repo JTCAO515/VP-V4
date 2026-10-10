@@ -1,0 +1,13 @@
+{
+  "beforeHEAD": "236ce39ead8df8560fb0d5e67cf07f1ec40798a2",
+  "applied": [
+    {
+      "path": "lib/server/privacy/export-modules.ts",
+      "afterSHA256": "ab4bf02238e4100eabf1659c9149bd5d7960db2212805af4124521c4627a143e"
+    },
+    {
+      "path": "tests/contract/privacy/core-export.test.mjs",
+      "afterSHA256": "f1e2c785eac5116d8f3071c197c566aad3ed6a297096b8e4b6234c68322e407d"
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "base": "35a2b64014f87ed51581381ef4da68df1a2c5a15",
+  "sources": [
+    {
+      "path": "ios/VisePanda/VisePanda/Features/TravelDirections/NativeTravelDirectionsContent.swift",
+      "blob": "e39ac8e1a21834cfa818a54ced8ad0d3e40b7a50",
+      "sha256": "15ed623a4cb9993f9a75e6fefafe3e7190700d30763e4cb62d194fc95113dd03"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/TravelDirections/NativeTravelDirectionsEditing.swift",
+      "blob": "d2008ddda1bce185a9b52d0a60a606e39b750f40",
+      "sha256": "ea32f5e63949a2bda2d5f5b212bd968b01d005a8e7aae1ec563b4f4873c2c432"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/TravelDirections/NativeTravelDirectionsEditor.swift",
+      "blob": "232285e3de933c758e2c7884cb18dd58d242f95e",
+      "sha256": "7e8db096f89e42aa5ccf13a03e229cc03c9ef8d20d93826c1494b0ee26f3f7e8"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/TravelDirections/NativeTravelDirectionsIntakeForm.swift",
+      "blob": "2bc23af96d33442eb3201fe33de68f7aa5116353",
+      "sha256": "4e194322ba5597723dde98a42aa2d738fa761c0a4577de92ce2cc3591ee0b865"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/TravelDirections/NativeTravelDirectionsIntakeStore.swift",
+      "blob": "c7c5479baaf7eb5b0191fe60fa46ad76f45b30d8",
+      "sha256": "adccffcaa14e2d09237dcd5a866379129826850a425df724a607b921348826b5"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/TravelDirections/NativeTravelDirectionsResultView.swift",
+      "blob": "013703ad8cd3db4e778620ccf98afcc8084fee92",
+      "sha256": "45ec107593336f9cd5a953413c8e0782faa1ea00117c92bbab8ce71e6337b489"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/TravelDirections/NativeTravelDirectionsSheet.swift",
+      "blob": "e7817c252fc363dd5985bd33377c55c0af6b8172",
+      "sha256": "20c14770c2281474843b243821b0ddb8fe388b9cc82cc46c52ba161d06db96e3"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/TravelDirections/NativeTravelDirectionsStore.swift",
+      "blob": "0f35948c692393ea93ab6fcc867707295224b385",
+      "sha256": "303a7b5aa8be0494e93aeecaa2da3d9dcc8b20d364510ef3bf71a8560757a2f5"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/TravelDirections/NativeTravelDirectionsWire.swift",
+      "blob": "d98ad1fbba1fcc27da9793f175752261de71d66a",
+      "sha256": "b2cedb742f29f65f6a5b07c24baef861789da6d6baddbec8281a102321437c16"
+    },
+    {
+      "path": "ios/VisePanda/VisePandaTests/NativeTravelDirectionsTests.swift",
+      "blob": "b821903c79781467c7a5f03ea62f33107ee4403a",
+      "sha256": "1ce04921f87836d6af926f49289cd5ef59dad9b5e766c80f99cc575d5ef81d3f"
+    }
+  ],
+  "shared": [
+    {
+      "path": "ios/VisePanda/VisePanda/App/NativeSession.swift",
+      "before": "12952882184b48fa74fe5a3b3faf103c09e4f65f",
+      "after": "08f1bf5f6a4934828812e8c8fffdd9be457a45b5",
+      "baseWT": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj08-native-assistant-events-20261010",
+      "baseHEAD": "c226e0f044a9a975347de3adf0ababd9096af5c4",
+      "beforeSHA256": "3181beb05c194a33d61a7dc79b8039f6d66fe9f1bd3b451fbd20285be1bfe508",
+      "afterSHA256": "d47f68e27ad98bd375b8fc85deff069226d44da5f0611f92261c5c5af1be795d",
+      "patchSHA256": "6d5434651a4dacce755eb89dd254db90f1609747952eab2a71a0dc1a5bb07fa2"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift",
+      "before": "96674b88a9f27b08af69e7acc57c8683ed2a6a7e",
+      "after": "9fbdf34f38b0c89f92aa9b903f092270d3cfa9ff",
+      "baseWT": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj08-native-assistant-events-20261010",
+      "baseHEAD": "c226e0f044a9a975347de3adf0ababd9096af5c4",
+      "beforeSHA256": "1a0e5f6997318334288d26ce29bbbcc597e47de69e1d2b5a62106c54395aad11",
+      "afterSHA256": "399121f9dcd5b0fabafe80a028d159aa1cc8fa100018e1646f09acaa19703759",
+      "patchSHA256": "10d5a071e3a378c9e0f4b6ae046dda1b1b3a4d24b028fc3013064e4f85b9094a"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/Knowledge/NativeFiveResultModels.swift",
+      "before": "33dcde9166eb0de724f736dbd6956d8bab594b01",
+      "after": "ce992bc63726399c0c5d9ceebc994eb1834f8c94",
+      "baseWT": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj08-native-assistant-events-20261010",
+      "baseHEAD": "c226e0f044a9a975347de3adf0ababd9096af5c4",
+      "beforeSHA256": "47e6daca837e9e996fa8ed58e3027c0a7966bef6dfd723fbdf9c9a135ead33bc",
+      "afterSHA256": "be0041c5561e1dde067c3c5b61bc3dafee4f3e5f63135acd4043fc1794139c5a",
+      "patchSHA256": "e02efcb8158cc7f7011f84162af407dce9a7295a5bd8bf6eec45ed19bc87e208"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/Knowledge/NativeFiveResultView.swift",
+      "before": "a24d93a8a1689d4cb42ee67724c577d205eb6e6f",
+      "after": "ebfd8fe71fa760f6d6377a106aca798e0dab78ac",
+      "baseWT": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj08-native-assistant-events-20261010",
+      "baseHEAD": "c226e0f044a9a975347de3adf0ababd9096af5c4",
+      "beforeSHA256": "dfe72277a3998473d5451403877a9247138b5b96a4623cdcc59501a046bd3729",
+      "afterSHA256": "84177720744109dcc33268ab566a57e371339c837d39e379bf4410df82b6fbd9",
+      "patchSHA256": "eecea06d22929e1c1cc32755be7abf152a819beff1c8cfed337ead04d12c3fb5"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda.xcodeproj/project.pbxproj",
+      "before": "324a9ce677357c4d928e5e55b9f4009344128052",
+      "after": "103c4ba9a137a0a77c65c555bd1bee089d30416b",
+      "baseWT": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj08-native-assistant-events-20261010",
+      "baseHEAD": "c226e0f044a9a975347de3adf0ababd9096af5c4",
+      "beforeSHA256": "16b20c00184a9f6f5aea53358d6dafc8cc9f1cee1a2d9aca4546416303fb6696",
+      "afterSHA256": "776b535443c344b72866864e2efb1c8c479a94719ab2866076bcccdf6f9f7b47",
+      "patchSHA256": "9be6e9deecfba6e66611ee0a010a7e9f4e23661fc8fa77f769ccada6e76ad29b"
+    }
+  ],
+  "tests": "Separate evidence: r3 eight, r4 text one, r5 cross-goal sequence one and pre-pulse source one; r6 replaces that source-readback point with same-goal parent advancement plus digest failure. No repeated suite or final aggregate.",
+  "r6HarnessExactSourceMatch": true
+}

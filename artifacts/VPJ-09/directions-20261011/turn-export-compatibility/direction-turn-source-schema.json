@@ -1,0 +1,265 @@
+[
+  {
+    "relation": "turn_private.assistant_directions_intakes_v1",
+    "pk": [
+      "message_id"
+    ],
+    "columns": [
+      {
+        "name": "message_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "conversation_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "goal_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "task_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "task_turn_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "policy_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "consent_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "planning_policy_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "planning_consent_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "message_sequence",
+        "type": "bigint",
+        "notNull": true
+      },
+      {
+        "name": "goal_version",
+        "type": "integer",
+        "notNull": true
+      },
+      {
+        "name": "intake_revision",
+        "type": "integer",
+        "notNull": true
+      },
+      {
+        "name": "idempotency_key",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "request_bytes_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "intake",
+        "type": "jsonb",
+        "notNull": true
+      },
+      {
+        "name": "memory_basis",
+        "type": "jsonb",
+        "notNull": true
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      }
+    ],
+    "hasOwner": true
+  },
+  {
+    "relation": "turn_private.directions_result_sources_v1",
+    "pk": [
+      "artifact_id"
+    ],
+    "columns": [
+      {
+        "name": "artifact_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "message_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "task_turn_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "source_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "initial_content_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "initial_output_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "previous_artifact_id",
+        "type": "uuid",
+        "notNull": false
+      },
+      {
+        "name": "previous_revision",
+        "type": "integer",
+        "notNull": false
+      },
+      {
+        "name": "publication_key",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      }
+    ],
+    "hasOwner": true
+  },
+  {
+    "relation": "turn_private.directions_operations_v1",
+    "pk": [
+      "owner_id",
+      "operation_id"
+    ],
+    "columns": [
+      {
+        "name": "operation_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "session_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "action",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "request_bytes_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "erased",
+        "type": "boolean",
+        "notNull": true
+      },
+      {
+        "name": "artifact_id",
+        "type": "uuid",
+        "notNull": false
+      },
+      {
+        "name": "source_message_id",
+        "type": "uuid",
+        "notNull": false
+      },
+      {
+        "name": "task_turn_id",
+        "type": "uuid",
+        "notNull": false
+      },
+      {
+        "name": "expected_revision",
+        "type": "integer",
+        "notNull": false
+      },
+      {
+        "name": "result_revision",
+        "type": "integer",
+        "notNull": false
+      },
+      {
+        "name": "source_digest",
+        "type": "text",
+        "notNull": false
+      },
+      {
+        "name": "output_content_digest",
+        "type": "text",
+        "notNull": false
+      },
+      {
+        "name": "trip_id",
+        "type": "uuid",
+        "notNull": false
+      },
+      {
+        "name": "proposal_id",
+        "type": "uuid",
+        "notNull": false
+      },
+      {
+        "name": "proposal_artifact_id",
+        "type": "uuid",
+        "notNull": false
+      },
+      {
+        "name": "receipt",
+        "type": "jsonb",
+        "notNull": false
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      }
+    ],
+    "hasOwner": true
+  }
+]

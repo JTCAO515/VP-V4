@@ -1,0 +1,39 @@
+✖ ordinary original admission/queue/lock bodies and all original ACL unchanged; only exact marked seams (6862.371541ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6983.23025
+
+✖ failing tests:
+
+test at tests/integration/guide/place-guide-postgres.test.mjs:21:22
+✖ ordinary original admission/queue/lock bodies and all original ACL unchanged; only exact marked seams (6862.371541ms)
+  AssertionError [ERR_ASSERTION]: read_grounded_work(uuid,uuid) ordinary body byte equivalence after removing marked-only seams
+  + actual - expected
+  
+    '\n' +
+      'declare c turn_private.text_content%rowtype; p turn_private.text_policies%rowtype; g turn_private.grounded_turns%rowtype; payload jsonb;\n' +
+      'begin\n' +
+  +   "  if exists(select 1 from turn_private.work where turn_id=p_turn_id and execution_mode in('planning_intake_comparison_v2','scoped_trip_edit_v1','travel_directions_v1')) then return jsonb_build_object('kind','blocked'); end if;\n" +
+  -   "  if exists(select 1 from turn_private.work where turn_id=p_turn_id and execution_mode='planning_intake_comparison_v2') then return jsonb_build_object('kind','blocked'); end if;\n" +
+      " if not turn_private.lock_text_work(p_turn_id,p_lease_token) then return jsonb_build_object('kind','blocked'); end if;\n" +
+      ' select * into c from turn_private.text_content where turn_id=p_turn_id;\n' +
+      " select * into p from turn_private.text_policies where id=c.policy_id and context_mode='knowledge_intent_v1';\n" +
+      " if not found then return jsonb_build_object('kind','blocked'); end if;\n" +
+      ' select * into g from turn_private.grounded_turns where turn_id=c.turn_id and owner_id=c.owner_id and locale=c.locale;\n' +
+  
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj09-directions-server-20261010/tests/integration/guide/place-guide-postgres.test.mjs:138:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: "\ndeclare c turn_private.text_content%rowtype; p turn_private.text_policies%rowtype; g turn_private.grounded_turns%rowtype; payload jsonb;\nbegin\n  if exists(select 1 from turn_private.work where turn_id=p_turn_id and execution_mode in('planning_intake_comparison_v2','scoped_trip_edit_v1','travel_directions_v1')) then return jsonb_build_object('kind','blocked'); end if;\n if not turn_private.lock_text_work(p_turn_id,p_lease_token) then return jsonb_build_object('kind','blocked'); end if;\n select * into c from turn_private.text_content where turn_id=p_turn_id;\n select * into p from turn_private.text_policies where id=c.policy_id and context_mode='knowledge_intent_v1';\n if not found then return jsonb_build_object('kind','blocked'); end if;\n select * into g from turn_private.grounded_turns where turn_id=c.turn_id and owner_id=c.owner_id and locale=c.locale;\n if not found then return jsonb_build_object('kind','blocked'); end if;\n payload:=jsonb_build_object('kind','intent_input','text',c.input_text,'locale',c.locale,'policyId',p.id,'provider',p.provider,'endpoint',p.endpoint);\n return payload||jsonb_build_object('contextDigest',encode(pg_catalog.sha256(convert_to(jsonb_build_array(payload,g.city,g.scope_version)::text,'UTF8')),'hex'));\nend ",
+    expected: "\ndeclare c turn_private.text_content%rowtype; p turn_private.text_policies%rowtype; g turn_private.grounded_turns%rowtype; payload jsonb;\nbegin\n  if exists(select 1 from turn_private.work where turn_id=p_turn_id and execution_mode='planning_intake_comparison_v2') then return jsonb_build_object('kind','blocked'); end if;\n if not turn_private.lock_text_work(p_turn_id,p_lease_token) then return jsonb_build_object('kind','blocked'); end if;\n select * into c from turn_private.text_content where turn_id=p_turn_id;\n select * into p from turn_private.text_policies where id=c.policy_id and context_mode='knowledge_intent_v1';\n if not found then return jsonb_build_object('kind','blocked'); end if;\n select * into g from turn_private.grounded_turns where turn_id=c.turn_id and owner_id=c.owner_id and locale=c.locale;\n if not found then return jsonb_build_object('kind','blocked'); end if;\n payload:=jsonb_build_object('kind','intent_input','text',c.input_text,'locale',c.locale,'policyId',p.id,'provider',p.provider,'endpoint',p.endpoint);\n return payload||jsonb_build_object('contextDigest',encode(pg_catalog.sha256(convert_to(jsonb_build_array(payload,g.city,g.scope_version)::text,'UTF8')),'hex'));\nend ",
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

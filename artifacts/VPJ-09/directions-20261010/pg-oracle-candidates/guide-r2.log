@@ -1,0 +1,39 @@
+✖ ordinary original admission/queue/lock bodies and all original ACL unchanged; only exact marked seams (6827.601125ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6954.639792
+
+✖ failing tests:
+
+test at tests/integration/guide/place-guide-postgres.test.mjs:21:22
+✖ ordinary original admission/queue/lock bodies and all original ACL unchanged; only exact marked seams (6827.601125ms)
+  AssertionError [ERR_ASSERTION]: authorize_grounded_dispatch(uuid,uuid,uuid,text,text) ordinary body byte equivalence after removing marked-only seams
+  + actual - expected
+  
+    '\n' +
+      'declare payload jsonb; c turn_private.text_content%rowtype;\n' +
+      'begin\n' +
+  +   "  if exists(select 1 from turn_private.work where turn_id=p_turn_id and execution_mode in('planning_intake_comparison_v2','scoped_trip_edit_v1','travel_directions_v1')) then return jsonb_build_object('kind','blocked'); end if;\n" +
+  -   "  if exists(select 1 from turn_private.work where turn_id=p_turn_id and execution_mode='planning_intake_comparison_v2') then return jsonb_build_object('kind','blocked'); end if;\n" +
+      ' payload:=public.read_grounded_work(p_turn_id,p_lease_token);\n' +
+      " if payload->>'kind' is distinct from 'intent_input' or payload->>'policyId' is distinct from p_policy_id::text\n" +
+      "   or payload->>'provider' is distinct from p_provider or payload->>'contextDigest' is distinct from p_context_digest then return jsonb_build_object('kind','blocked'); end if;\n" +
+      ' select * into c from turn_private.text_content where turn_id=p_turn_id;\n' +
+      ' insert into turn_private.text_dispatches(lease_token,turn_id,consent_id,policy_id) values(p_lease_token,p_turn_id,c.consent_id,c.policy_id) on conflict do nothing;\n' +
+  
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj09-directions-server-20261010/tests/integration/guide/place-guide-postgres.test.mjs:138:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: "\ndeclare payload jsonb; c turn_private.text_content%rowtype;\nbegin\n  if exists(select 1 from turn_private.work where turn_id=p_turn_id and execution_mode in('planning_intake_comparison_v2','scoped_trip_edit_v1','travel_directions_v1')) then return jsonb_build_object('kind','blocked'); end if;\n payload:=public.read_grounded_work(p_turn_id,p_lease_token);\n if payload->>'kind' is distinct from 'intent_input' or payload->>'policyId' is distinct from p_policy_id::text\n   or payload->>'provider' is distinct from p_provider or payload->>'contextDigest' is distinct from p_context_digest then return jsonb_build_object('kind','blocked'); end if;\n select * into c from turn_private.text_content where turn_id=p_turn_id;\n insert into turn_private.text_dispatches(lease_token,turn_id,consent_id,policy_id) values(p_lease_token,p_turn_id,c.consent_id,c.policy_id) on conflict do nothing;\n if not found then return jsonb_build_object('kind','blocked'); end if;\n return jsonb_build_object('kind','authorized');\nend ",
+    expected: "\ndeclare payload jsonb; c turn_private.text_content%rowtype;\nbegin\n  if exists(select 1 from turn_private.work where turn_id=p_turn_id and execution_mode='planning_intake_comparison_v2') then return jsonb_build_object('kind','blocked'); end if;\n payload:=public.read_grounded_work(p_turn_id,p_lease_token);\n if payload->>'kind' is distinct from 'intent_input' or payload->>'policyId' is distinct from p_policy_id::text\n   or payload->>'provider' is distinct from p_provider or payload->>'contextDigest' is distinct from p_context_digest then return jsonb_build_object('kind','blocked'); end if;\n select * into c from turn_private.text_content where turn_id=p_turn_id;\n insert into turn_private.text_dispatches(lease_token,turn_id,consent_id,policy_id) values(p_lease_token,p_turn_id,c.consent_id,c.policy_id) on conflict do nothing;\n if not found then return jsonb_build_object('kind','blocked'); end if;\n return jsonb_build_object('kind','authorized');\nend ",
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

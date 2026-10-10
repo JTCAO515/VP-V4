@@ -1,0 +1,10 @@
+{
+  "path": "tests/integration/identity/function-acl.test.mjs",
+  "beforeSHA256": "60d8b99414ccee4c1d32e02b8d86ecb95f337b383ab1a2cb9947e9d68e674359",
+  "afterSHA256": "f8f6f0037e0a5055719917831d9a0891759be693d050db57231696aeedfb4f57",
+  "patchSHA256": "eb84336846ccd181e5de8d0c658a797a2d296a87a1571cc7ccac0ca1857150d3",
+  "scope": "only exact2 signatures appended AUTHENTICATED; ANON/executable scan/deepEqual/all deny/runtime unchanged",
+  "sourceHead": "8f88669b253cae3b0563b5a5f5a8db82d247e36c",
+  "productMigrationSHA256": "6354e482331453289311c4d7f2a363d1012a3bc9d11f0324d300b5bc8cb58584",
+  "currentLease": "Main 01a12606 exact two-entry grant after original676 and current list holder974 releases; guarded apply completed"
+}

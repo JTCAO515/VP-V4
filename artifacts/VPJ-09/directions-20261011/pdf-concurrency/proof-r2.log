@@ -1,0 +1,12 @@
+✔ append replay, RLS and default deny before isolated enrollment (6858.93075ms)
+✔ new exact export lease owner pages, actual cursor/source invalidation, no old completion retrofit (1050.914875ms)
+✔ concurrent cancel/confirm and privacy/source contention abort without deadlock or partial apply (1207.763042ms)
+ℹ PDF_CANCEL_CONFIRM {"requests":[{"action":"confirm","code":3,"outcome":"","stderr":"ERROR:  CONFIRMATION_DIGEST_MISMATCH\nCONTEXT:  PL/pgSQL function confirm_and_apply_trip_proposal(uuid,text,text) line 11 at RAISE"},{"action":"cancel","code":0,"outcome":"{\"kind\": \"pdf_intake_operation/1\", \"state\": \"cancelled\", \"tripId\": \"3cfa92fb-4aa1-4d2c-a091-8cab64d672b3\", \"expiresAt\": \"2026-10-10T18:08:17.360Z\", \"proposalId\": \"c04e95c6-31ea-4ea3-bcf2-45a939f86c89\", \"operationId\": \"978e647d-2fb8-4bdc-832e-30164002b135\", \"sessionEpoch\": 1, \"commandDigest\": \"1901f50affaf9726b6411463445c1a4421c6070b7f664dfc957687de10eb2deb\", \"previewDigest\": \"e6d10f423c83c4f61888fcbd687787082f74ef3a028b5c12344bdedc01939656\", \"requestDigest\": \"7373b1b5636237831bf883d235c6c6fe4c14921e38b63f92e8243a582680511c\", \"baseTripVersion\": 0, \"proposalRevision\": 1, \"resultingVersion\": null, \"confirmationEventId\": null}","stderr":""}],"recoveredState":"cancelled","head":0,"events":[],"idempotency":[],"operationBytesDigest":"04911d236598d694a2ca5ad1733a08d4537118a755cd54f72a906dd5e58c21c0"}
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9254.92975

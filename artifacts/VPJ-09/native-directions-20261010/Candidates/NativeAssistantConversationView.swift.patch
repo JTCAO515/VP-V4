@@ -1,0 +1,69 @@
+--- a/ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift
++++ b/ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift
+@@ -457,6 +457,8 @@
+     @State private var selectedMemoryBasis:[NativeTravelMemoryReference]=[]
+     @State private var draft = ""
+     @State private var planningDraft = ""
++    @State private var directionsPresentation: NativeTravelDirectionsSelection?
++    @State private var directionsIntake = NativeTravelDirectionsIntakeStore()
+     @State private var planningPolicy: AssistantPlanningPolicy?
+     @State private var planningAgreed = false
+     @State private var planningBusy = false
+@@ -497,8 +499,8 @@
+     private var resultActive: Bool { isActive && scenePhase == .active }
+     private var refreshBusy: Bool { refreshState.busy }
+     private var shellSwitchBlocked: Bool {
+-        AssistantShellSwitchGate.blocked(busy: busy || planningBusy || tripBusy || entryBlocking || paceOperationBlocked || memoryOperationBlocked,
+-            intakePending: pending != nil || selectedSources.pending != nil, planningPending: planningPending != nil, tripPending: pendingTripMutation != nil)
++        AssistantShellSwitchGate.blocked(busy: busy || planningBusy || tripBusy || entryBlocking || paceOperationBlocked || memoryOperationBlocked || directionsIntake.busy,
++            intakePending: pending != nil || selectedSources.pending != nil || directionsIntake.pendingBody != nil, planningPending: planningPending != nil, tripPending: pendingTripMutation != nil)
+     }
+     private var composerScopeCurrent: Bool { session.dataScope != nil && boundScope == session.dataScope }
+     private var confirmedConversation: Bool {
+@@ -526,6 +528,14 @@
+               let parent = AssistantPlanningEligibility.parent(for: goal, messages: conversation?.messages ?? []) else { return nil }
+         return NativeTravelIntakeSelection(scope: scope, conversationID: id, goalID: goal.goalId,
+             goalVersion: goal.scopeVersion, parentMessageID: parent.messageId, policyID: policy.id)
++    }
++    private var directionsSelection: NativeTravelDirectionsSelection? {
++        guard let intake = travelIntakeSelection, let planningPolicy, planningPolicy.valid,
++              planningPolicy.consentState == "accepted", let policyID = planningPolicy.policyId,
++              !busy, !planningBusy, !tripBusy, pending == nil, planningPending == nil,
++              pendingTripMutation == nil, selectedSources.pending == nil else { return nil }
++        return .init(scope: intake.scope, conversationID: intake.conversationID, goalID: intake.goalID,
++            goalVersion: intake.goalVersion, parentMessageID: intake.parentMessageID, planningPolicyID: policyID)
+     }
+     private var goalHasCurrentMessage: Bool {
+         guard let goal else { return false }
+@@ -651,6 +661,11 @@
+                             linkedTripID: tripLink?.current == true ? tripLink?.tripId : nil,
+                             onPendingChange: { scope, blocked in if scope == session.dataScope { paceOperationBlocked = blocked } },
+                             artifactID: selectedResult?.artifactId, artifactRevision: selectedResult?.revision)
++                        if let target = directionsSelection {
++                            Button(chinese ? "查看旅行方向 · 日期可未定" : "Explore travel directions · Dates optional") {
++                                directionsPresentation = target
++                            }.accessibilityIdentifier("assistant.directions.open")
++                        }
+                         ForEach(conversation?.messages ?? []) { message in
+                             VStack(alignment: .leading, spacing: 8) {
+                                 Text(message.text).font(.body).accessibilityIdentifier("assistant.message.\(message.sequence)")
+@@ -711,6 +726,11 @@
+                 selectedSources.sources.evidence.append(evidence)
+             }
+         }
++        .sheet(item: $directionsPresentation, onDismiss: { Task { await reload() } }) { target in
++            NativeTravelDirectionsSheet(selection: target, currentSelection: { directionsSelection },
++                originalRequest: conversation?.messages.first(where: { $0.messageId == target.parentMessageID })?.text ?? "",
++                session: session, chinese: chinese, store: directionsIntake)
++        }
+         .sheet(isPresented: $showTravelIntake) {
+             NavigationStack {
+                 NativeTravelIntakeView(currentSelection: { travelIntakeSelection }, selection: travelIntakeSelection, session: session, chinese: chinese,
+@@ -861,6 +881,7 @@
+             selectedTaskID = nil; selectedArtifactID = nil; selectedArtifactTaskID = nil
+             selectedResult = nil; resultNotice = nil; resultFence.clear()
+             tripLink = nil; ownedTrips = []; pendingTripMutation = nil; privacyLinks = []; privacyNextCursor = nil
++            directionsPresentation = nil; directionsIntake.bind(nil)
+             tripNotice = nil; tripConfirmation = nil; showTripPicker = false
+             guard requested != nil else { return }
+             while busy || refreshBusy {

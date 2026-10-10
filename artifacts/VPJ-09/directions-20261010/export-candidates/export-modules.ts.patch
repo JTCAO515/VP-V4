@@ -1,0 +1,35 @@
+--- a/lib/server/privacy/export-modules.ts
++++ b/lib/server/privacy/export-modules.ts
+@@ -1,3 +1,4 @@
++import { DIRECTION_EXPORT_ANCHORS, validDirectionExportRow, type DirectionExportSection } from '../planning/directions/export-rows.ts';
+ import { supabaseWorkerHeaders } from "../jobs/supabase-worker-headers.ts";
+ import { exportCanonical, type ExportLease, type ExportHandler, type ExportPage } from "./export-dispatcher.ts";
+ 
+@@ -38,7 +39,7 @@
+ /** Owner is taken solely from the durable validated job lease, never a download/query field. */
+ export function existingExportHandlers(lease: ExportLease, rpc: ExportRPC): { conversations: ExportHandler; results: ExportHandler } {
+   if (!uuid(lease.ownerId)) throw Error("Export owner invalid");
+-  const conversations = ["conversations", "goals", "messages", "goalTripLinks", "goalTripReceipts", "messageSources", "travelIntakes"] as const;
++  const conversations = ["conversations", "goals", "messages", "goalTripLinks", "goalTripReceipts", "messageSources", "travelIntakes", "directionIntakes", "directionSources", "directionOperations"] as const;
+   const results = ["artifacts", "revisions", "events"] as const;
+   return {
+     conversations: { sections: conversations, consistency: "live_bounded", page: async (section, cursor, limit, signal) => {
+@@ -58,6 +59,18 @@
+         return p;
+       }
+       const p = page(await rpc("assistant_conversation_export_owner_v1", { p_owner: lease.ownerId, p_section: section, p_after_id: cursor, p_limit: limit }, signal), "assistant-conversation-export/1", section, limit);
++      const direction = Object.hasOwn(DIRECTION_EXPORT_ANCHORS, section) ? section as DirectionExportSection : null;
++      if (direction !== null) {
++        const anchor = DIRECTION_EXPORT_ANCHORS[direction];
++        let previous = cursor;
++        for (const row of p.items) {
++          if (!validDirectionExportRow(direction, row) || !record(row) || !uuid(row[anchor])
++            || previous !== null && row[anchor] <= String(previous)) throw Error("Export row invalid");
++          previous = row[anchor];
++        }
++        if (p.hasMore && (!uuid(p.nextCursor) || p.nextCursor !== previous)) throw Error("Export cursor invalid");
++        return p;
++      }
+       if (p.hasMore) {
+         const id = { conversations: "conversationId", goals: "goalId", messages: "messageId", goalTripLinks: "goalId", goalTripReceipts: "operationId" }[section];
+         const last = p.items.at(-1);

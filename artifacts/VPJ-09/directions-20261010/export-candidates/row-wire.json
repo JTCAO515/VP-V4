@@ -1,0 +1,73 @@
+{
+  "envelope": "assistant-conversation-export/1",
+  "module": "conversations existing",
+  "maxLimit": 100,
+  "maxPageUtf8Bytes": 1000000,
+  "ownerField": "none; original service lease provides owner",
+  "anchorSemantics": "existing same-owner exact section UUID; deleted/foreign reject; nextCursor last delivered; smaller byte-bound page hasMore=true",
+  "sections": {
+    "directionIntakes": {
+      "anchor": "messageId",
+      "fields": {
+        "messageId": "uuid",
+        "intakeRevision": "integer1..1000",
+        "goalId": "uuid",
+        "conversationId": "uuid",
+        "taskId": "uuid",
+        "taskTurnId": "uuid",
+        "messageSequence": "integer1..1000000",
+        "goalVersion": "integer1..10000",
+        "policyId": "uuid",
+        "consentId": "uuid",
+        "planningPolicyId": "uuid",
+        "planningConsentId": "uuid",
+        "idempotencyKey": "uuid",
+        "requestBytesDigest": "sha256hex64",
+        "intake": "closed travel-directions-intake/1",
+        "memoryBasis": "qualified refs id/revision array<=3",
+        "createdAt": "timestamp"
+      }
+    },
+    "directionSources": {
+      "anchor": "artifactId",
+      "fields": {
+        "artifactId": "uuid",
+        "messageId": "uuid",
+        "taskTurnId": "uuid",
+        "sourceDigest": "sha256hex64",
+        "initialContentDigest": "sha256hex64",
+        "initialOutputDigest": "sha256hex64",
+        "previousArtifactId": "uuid|null (paired previousRevision)",
+        "previousRevision": "integer1..1000|null",
+        "publicationKey": "uuid",
+        "createdAt": "timestamp"
+      }
+    },
+    "directionOperations": {
+      "anchor": "operationId",
+      "fields": {
+        "operationId": "uuid",
+        "sessionId": "uuid",
+        "action": "choose|save|edit|bind",
+        "requestBytesDigest": "sha256hex64",
+        "erased": "boolean",
+        "artifactId": "uuid|null",
+        "sourceMessageId": "uuid|null",
+        "taskTurnId": "uuid|null",
+        "expectedRevision": "integer1..1000|null",
+        "resultRevision": "integer1..1000|null",
+        "sourceDigest": "sha256hex64|null",
+        "outputContentDigest": "sha256hex64|null",
+        "tripId": "uuid|null",
+        "proposalId": "uuid|null",
+        "proposalArtifactId": "uuid|null",
+        "receipt": "exact action receipt|null",
+        "createdAt": "timestamp"
+      },
+      "scrub": "erased=true requires every business field artifactId..receipt null, permanent operationId/sessionId/action/requestBytesDigest/createdAt retained; no reconstruction",
+      "live": "choose/save/edit resultRevision=expectedRevision+1<=1000/outputContentDigest required and trip/proposal identities null; bind resultRevision=expectedRevision and outputContentDigest null, trip/proposal identities required"
+    }
+  },
+  "sqlSha256": "1770467b2fe8436217d280338d55547ebaf95d4f5a1c3954bb820eb06ed9853b",
+  "status": "Mainapproved section concept; concrete SQL/row closed after candidate for TS/Main review"
+}

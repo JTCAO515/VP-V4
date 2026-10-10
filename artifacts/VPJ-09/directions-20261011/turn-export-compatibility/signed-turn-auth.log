@@ -1,0 +1,14 @@
+VP_TURN_DATA_HTTP_TARGET {"project":"vp-native-ask-dfdcef0a","base":62960}
+✔ real signed owner erases one completed Turn and preserves actual parents/other Turn, then original D2 exports remaining sources (7918.787875ms)
+ℹ Only owned disposable fixture grants existing-role RPCs; no target grants/new role/provider send/fees or real-user data.
+ℹ OWNED_TURN_RUNTIME {"result": true, "schema": true, "authJwt": "20054548ba2003f61a6bcb472175700b", "authUid": "ea3b41bf29e2ad573067939329aa088e", "profile": true, "runtime": true, "authRole": "8a3e05459e07e0633d43c6fba2a2cdf4"}
+ℹ DIRECT_SIGNED_LIST {"error":null,"kind":"list","keys":["kind","items","scope","hasMore","ownerId","expiresAt","sessionId","capturedAt","nextCursor","mobileEpoch","sourceDigest","schemaVersion","allUserDataCompleted"],"items":3}
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 10859.70225
+VP_TURN_DATA_HTTP_CLEANUP {"project":"vp-native-ask-dfdcef0a","result":"PASS"}

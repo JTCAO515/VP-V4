@@ -1,0 +1,17 @@
+{
+  "sourceBaseHead": "d9aa1eec2bf6d9917c8f982e69f63b5237b2312d",
+  "testedACL_SHA256": "f8f6f0037e0a5055719917831d9a0891759be693d050db57231696aeedfb4f57",
+  "productMigrationSHA256": "6354e482331453289311c4d7f2a363d1012a3bc9d11f0324d300b5bc8cb58584",
+  "command": "node artifacts/VPJ-09/directions-20261010/acl-candidates/run-acl.mjs",
+  "scope": "original function-acl parent suite only; all migrations in fresh owned fixture",
+  "exitCode": 0,
+  "pass": 12,
+  "fail": 0,
+  "skip": 0,
+  "project": "vp-native-ask-d7f4a266",
+  "portBase": 62520,
+  "cleanup": "PASS; own stop --no-backup, temporary workdir removed, strict eight-port postflight PASS",
+  "logSHA256": "d2f3f1760e86ba7f208e8d59a35d321c032e491cabf47def9ca03c2224e200b7",
+  "runnerSHA256": "23599b2050c6a7774d077522a0221d59585e86e1066ff6f224ae4636e9a1f16c",
+  "reused": "signed Auth r3, Native/App compile and prior governance; no repeat"
+}

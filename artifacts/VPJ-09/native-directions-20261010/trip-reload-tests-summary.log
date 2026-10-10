@@ -1,0 +1,8 @@
+Test Case '-[VisePandaTests.NativeTravelDirectionsTests testTripDirectionsReloadLateCallbackAndExpiryCannotRestoreOldSelection]' started.
+Test Case '-[VisePandaTests.NativeTravelDirectionsTests testTripDirectionsReloadLateCallbackAndExpiryCannotRestoreOldSelection]' passed (0.027 seconds).
+Test Case '-[VisePandaTests.NativeTravelDirectionsTests testTripDirectionsReloadReadsExactHistoricalDirectionsAndRejectsOtherTripOrProposalFallback]' started.
+Test Case '-[VisePandaTests.NativeTravelDirectionsTests testTripDirectionsReloadReadsExactHistoricalDirectionsAndRejectsOtherTripOrProposalFallback]' passed (0.004 seconds).
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.031 (0.032) seconds
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.031 (0.032) seconds
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.031 (0.032) seconds
+** TEST SUCCEEDED **
