@@ -1,0 +1,14 @@
+# PR676 exact ACL oracle repair and separate PG failures
+
+Old head59dc1731 RLS job114171995309/run38037856588 failed only authenticated reviewed caller list at function-acl.test.mjs137: actual included the approved public.read_assistant_events_v1(uuid,uuid,bigint,integer). Main original holder01a0ded5-974 released only this added exact entry; Main e17658 granted beforebe37da48da78cfa42a6eda2bc29c2778f3012736b827bebbf8e28825a1932eed → after60d8b99414ccee4c1d32e02b8d86ecb95f337b383ab1a2cb9947e9d68e674359, patchd0c4e184fc4ff0fc3793d05fd68d638b77d174901190d05845a517bbbd6159ed.
+
+Applied one AUTHENTICATED literal only; full deepEqual, all original entries, privilege SQL, anon/service/default-deny/PostgREST/helper/privacy negatives unchanged. No product ACL/migration/role/pin/guard changed.
+
+Actual necessary original whole parent suite: command `node --experimental-strip-types /tmp/vpj08-acl-parent-run.mjs --port-base 62720`, exec736e5c/session94812 final1a9327 exit0. This temporary entry uses the unchanged own disposable runner and original strict eight ports, selecting only tests/integration/identity/function-acl.test.mjs; no test source replacement or fixture grant. PASS12/12 (parent plus11 children), no skips. Exact callable list/default privileges/anonymous denial/internal helper/data storage/service-only publisher negatives PASS. Owned stackvp-native-ask-4014e005 cleanup PASS. Prior signed Auth/SSE/Native evidence reused, not rerun for this oracle change.
+
+Separate old59dc PG job114171995356 has actual failures, recorded from official job log at /tmp/vpv5-676-59dc-pg-114171995356.log (initial gh log retrieval needed explicit escape-output option; stripped ANSI for inspection, not a CI cause). Actual failure families:
+- grounded-turn.test.mjs121 session replacement terminal history expected1 got2; durable-work session-replacement result-events expected0 got1. These require original canonical terminal writer/contract qualification, not wildcard/count loosening.
+- assistant-data-rights/result-data-rights/trip-deletion/translation-history fixture setup throws ASSISTANT_EVENTS_BASELINE_DRIFT at before-block26. Unknown predecessor metadata remains fail-closed; do not adopt live hash or weaken guard. Original fixture source order/body must be diagnosed by its current owner.
+- planning-worker, planning-publisher and durable-work direct source-delete cases throw ASSISTANT_EVENT_ERASE_AUTHORITY inside retire_assistant_event_v1; original authorized erasure/CAS and identity fences remain. Need original handler/fixture authority qualification by SQL owner.
+
+This ACL repair is not resolution of the separate PG failures. New exact-head formal/all applicable CI remain required; Main coordinates original SQL/shared-fixture qualifications. #196 owned core stays Closed by Main's prior decision; current PR remains merge HOLD. No blind rerun of old failed/green matrix or target environment operation.
