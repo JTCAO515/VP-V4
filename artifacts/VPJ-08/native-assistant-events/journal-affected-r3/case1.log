@@ -1,0 +1,43 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -derivedDataPath /tmp/vpj08-native-registered-r1-derived -destination "platform=iOS Simulator,id=1BA9F96B-2B37-4AD1-838D-0FCEC80AD423" CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- -parallel-testing-enabled NO -collect-test-diagnostics never "-only-testing:VisePandaTests/NativeJournalDataTests/actualSessionOriginalVaultProtectedExportOriginalReceiptProjectionCompleteAndReadback()" -resultBundlePath /tmp/vpj08-journal-affected-r3.xcresult
+
+Build settings from command line:
+    CODE_SIGN_IDENTITY = -
+    CODE_SIGNING_ALLOWED = YES
+
+2026-10-10 16:13:41.317 xcodebuild[90090:534492] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionsModels.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-10 16:13:41.317 xcodebuild[90090:534492] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionsStore.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-10 16:13:41.317 xcodebuild[90090:534492] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionDestination.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-10 16:13:41.317 xcodebuild[90090:534492] warning:  The file reference for "ShareIntakeCore/ShareIntakeInbox.swift" is a member of multiple groups ("ShareIntakeExtension" and "Features"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+Writing result bundle at path:
+	/tmp/vpj08-journal-affected-r3.xcresult
+
+Test Suite 'Selected tests' started at 2026-10-10 16:13:46.103.
+Test Suite 'VisePandaTests.xctest' started at 2026-10-10 16:13:46.104.
+Test Suite 'VisePandaTests.xctest' passed at 2026-10-10 16:13:46.104.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-10 16:13:46.104.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64-apple-ios17.0-simulator
+◇ Suite NativeJournalDataTests started.
+◇ Test actualSessionOriginalVaultProtectedExportOriginalReceiptProjectionCompleteAndReadback() started.
+2026-10-10 16:13:46.136491+0800 VisePanda[90402:535079] [plugin] AddInstanceForFactory: No factory registered for id <CFUUID 0x126cc33e0> F8BB1C28-BAE8-11D6-9C31-00039315CD46
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+DEVICE_UNRUN: physical Complete protection/lock state; Simulator verifies POSIX, backup exclusion and exact bytes only
+✔ Test actualSessionOriginalVaultProtectedExportOriginalReceiptProjectionCompleteAndReadback() passed after 0.286 seconds.
+✔ Suite NativeJournalDataTests passed after 0.287 seconds.
+✔ Test run with 1 test in 1 suite passed after 0.287 seconds.
+2026-10-10 16:13:46.672 xcodebuild[90090:534492] [MT] IDETestOperationsObserverDebug: 5.067 elapsed -- Testing started completed.
+2026-10-10 16:13:46.672 xcodebuild[90090:534492] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-10 16:13:46.672 xcodebuild[90090:534492] [MT] IDETestOperationsObserverDebug: 5.067 sec, +5.067 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/vpj08-journal-affected-r3.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

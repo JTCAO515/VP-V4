@@ -4,5 +4,7 @@
   "after": "539ec51ee203df9478e33c0782cfc7218c5ab65a342d33bc48ee8a437c171317",
   "patch": "560ff1a5a30a8573423effa6127344aac66080e8abe626b6e9181fe54987c861",
   "hunks": 3,
-  "applied": false
+  "applied": true,
+  "applyCommit": "4cc82c3944ada01327fe0d4b9f82783ca8f26a06",
+  "mainExactLease": true
 }
