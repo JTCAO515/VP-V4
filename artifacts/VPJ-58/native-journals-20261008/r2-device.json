@@ -1,0 +1,10 @@
+{
+  "owned": true,
+  "udid": "864F0FF6-AEEB-4637-A15F-BDD717D8132C",
+  "runtime": "iOS-26-5",
+  "test": "only original failed method",
+  "borrowedDevice": false,
+  "testsExitCode": 0,
+  "shutdownExitCode": 0,
+  "deleteExitCode": 0
+}

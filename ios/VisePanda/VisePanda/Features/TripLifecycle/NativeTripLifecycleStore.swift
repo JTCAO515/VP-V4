@@ -34,6 +34,8 @@ import Observation
 }
 
 @MainActor @Observable final class NativeTripLifecycleStore {
+    var journalObservation: NativeJournalDataObservation?
+
     private(set) var scope: NativeDataScope?
     private(set) var snapshot: NativeTripLifecycleSnapshot?
     private(set) var trips: [NativeTripLifecycleTrip] = []
@@ -123,10 +125,12 @@ import Observation
             let result = try resend || abandon ? NativeTripLifecycleTerminal(bytes: bytes, actor: actor, command: command)
                 : NativeTripLifecycleTerminal.recovery(bytes: bytes, actor: actor, command: command)
             guard let result else { notice = "unknown"; return }
+            let journalTicket = journalObservation?.begin()
             try client.complete(journal, actor)
             let outcome: String
             switch result { case .applied: outcome = "acknowledged"; case .declined(let reason): outcome = reason }
             pending = nil; receipt = result; snapshot = nil; trips = []; deadline = 0; notice = outcome
+            journalObservation?.finish(journalTicket, command.operationID)
             busy = false
             await load(client)
             if generation == own, snapshot != nil { notice = outcome }

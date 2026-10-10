@@ -2,6 +2,8 @@ import Foundation
 import Observation
 
 @MainActor @Observable final class NativeReservationStore {
+    var journalObservation: NativeJournalDataObservation?
+
     typealias Request = (_ path: String, _ method: String, _ body: Data?) async throws -> Data
     private(set) var scope: NativeDataScope?
     private(set) var trips: [NativeTripSummary] = []
@@ -150,8 +152,10 @@ import Observation
         }
         try check(actor, own, current)
         let receipt = try NativeReservationWire.confirmation(bytes, trip: pending.tripId, input: command)
+        let journalTicket = journalObservation?.begin()
         try journal.complete(pending, scope: actor)
         self.pending = nil; recoveryChecked = true; items = [receipt]; pageLoaded = false
+        journalObservation?.finish(journalTicket, command.operationId)
         notice = "CONFIRMED_RELOAD_REQUIRED"
     }
     func recover(retryOriginal: Bool, current: @escaping () -> NativeDataScope?, request: @escaping Request) async {
@@ -167,8 +171,10 @@ import Observation
                 let bytes = try await request(self.base + "/" + saved.tripId + "/reservations", "POST", body)
                 try self.check(actor, own, current)
                 let result = try NativeReservationWire.operation(bytes, trip: saved.tripId, input: command)
+                let journalTicket = self.journalObservation?.begin()
                 try self.journal.complete(saved, scope: actor)
                 self.pending = nil; self.items = [result.current]; self.pageLoaded = false; self.invalidatePreview()
+                self.journalObservation?.finish(journalTicket, command.operationId)
                 self.notice = result.superseded ? "SUPERSEDED_RELOAD_CURRENT" : "CONFIRMED_RELOAD_REQUIRED"
             } catch {
                 try self.check(actor, own, current)

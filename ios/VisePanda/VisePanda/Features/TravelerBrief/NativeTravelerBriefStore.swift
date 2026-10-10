@@ -2,6 +2,8 @@ import Foundation
 import Observation
 
 @MainActor @Observable final class NativeTravelerBriefStore {
+    var journalObservation: NativeJournalDataObservation?
+
     private(set) var scope: NativeDataScope?
     private(set) var preview: NativeTravelerBriefSnapshot?
     private(set) var brief: NativeTravelerBriefSnapshot?
@@ -192,7 +194,9 @@ import Observation
                 value = result["receipt"] as Any
             }
             let result = try NativeTravelerBriefReceipt(raw: value, command: frozen)
+            let journalTicket = journalObservation?.begin()
             try complete(original); pending = nil; receipt = result; notice = nil; erased = false
+            journalObservation?.finish(journalTicket, frozen.operationID)
         } catch { if own == generation { notice = Self.code(error); if notice == "BRIEF_OPERATION_ERASED" { erased = true } } }
     }
     /// Explicit device cleanup after server erasure has no outcome/Undo proof.

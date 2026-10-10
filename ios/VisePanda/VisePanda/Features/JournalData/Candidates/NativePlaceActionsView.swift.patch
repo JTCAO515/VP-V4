@@ -1,0 +1,11 @@
+--- a/ios/VisePanda/VisePanda/Features/PlaceActions/NativePlaceActionsView.swift
++++ b/ios/VisePanda/VisePanda/Features/PlaceActions/NativePlaceActionsView.swift
+@@ -77,7 +77,7 @@
+             } else { Text(t("请登录后操作自己的行程。", "Sign in to act on your own Trip.")) }
+             Link(t("打开 VP 手动提问", "Open VP to ask manually"), destination: URL(string: "visepanda://ask")!)
+         }
+-        .task(id: key) { await loadTrips() }
++        .task(id: key) { store.journalObservation = session.journalDataObservation(.placeAction); await loadTrips() }
+         .task(id: selectedTrip) { await selectTrip() }
+         .onChange(of: selectedTrip) { _, _ in task?.cancel(); store.invalidateContext(); dayId = nil; windowConfirmed = false }
+         .onChange(of: dayId) { _, _ in windowConfirmed = false }

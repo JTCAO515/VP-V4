@@ -1,0 +1,46 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -derivedDataPath /tmp/vpj08-native-registered-r1-derived -destination "platform=iOS Simulator,id=85646BD4-B710-4F39-8117-D3D57F3BEAF2" CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- -parallel-testing-enabled NO "-only-testing:VisePandaTests/NativeAssistantEventsTests/testRegisteredSessionCursorJournalExportPartialPurgeAndLogoutPhysicalAbsence" "-only-testing:VisePandaTests/NativeAssistantEventsTests/testRegisteredFiniteSSEOriginalActivityReadBeforeCursorPersistence" -resultBundlePath /tmp/vpj08-native-affected-r1.xcresult
+
+Build settings from command line:
+    CODE_SIGN_IDENTITY = -
+    CODE_SIGNING_ALLOWED = YES
+
+2026-10-10 16:07:38.757 xcodebuild[86551:514930] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionsModels.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-10 16:07:38.757 xcodebuild[86551:514930] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionsStore.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-10 16:07:38.758 xcodebuild[86551:514930] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionDestination.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-10 16:07:38.758 xcodebuild[86551:514930] warning:  The file reference for "ShareIntakeCore/ShareIntakeInbox.swift" is a member of multiple groups ("ShareIntakeExtension" and "Features"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+Writing result bundle at path:
+	/tmp/vpj08-native-affected-r1.xcresult
+
+Test Suite 'Selected tests' started at 2026-10-10 16:07:44.449.
+Test Suite 'VisePandaTests.xctest' started at 2026-10-10 16:07:44.450.
+Test Suite 'NativeAssistantEventsTests' started at 2026-10-10 16:07:44.450.
+Test Case '-[VisePandaTests.NativeAssistantEventsTests testRegisteredFiniteSSEOriginalActivityReadBeforeCursorPersistence]' started.
+2026-10-10 16:07:44.474956+0800 VisePanda[86858:515708] [plugin] AddInstanceForFactory: No factory registered for id <CFUUID 0x10b4a93c0> F8BB1C28-BAE8-11D6-9C31-00039315CD46
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native logout HTTP 200
+Test Case '-[VisePandaTests.NativeAssistantEventsTests testRegisteredFiniteSSEOriginalActivityReadBeforeCursorPersistence]' passed (0.121 seconds).
+Test Case '-[VisePandaTests.NativeAssistantEventsTests testRegisteredSessionCursorJournalExportPartialPurgeAndLogoutPhysicalAbsence]' started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native logout HTTP 200
+Test Case '-[VisePandaTests.NativeAssistantEventsTests testRegisteredSessionCursorJournalExportPartialPurgeAndLogoutPhysicalAbsence]' passed (0.171 seconds).
+Test Suite 'NativeAssistantEventsTests' passed at 2026-10-10 16:07:44.743.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.292 (0.293) seconds
+Test Suite 'VisePandaTests.xctest' passed at 2026-10-10 16:07:44.743.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.292 (0.294) seconds
+Test Suite 'Selected tests' passed at 2026-10-10 16:07:44.743.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.292 (0.294) seconds
+2026-10-10 16:07:45.021 xcodebuild[86551:514930] [MT] IDETestOperationsObserverDebug: 5.970 elapsed -- Testing started completed.
+2026-10-10 16:07:45.021 xcodebuild[86551:514930] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-10 16:07:45.021 xcodebuild[86551:514930] [MT] IDETestOperationsObserverDebug: 5.970 sec, +5.970 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/vpj08-native-affected-r1.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

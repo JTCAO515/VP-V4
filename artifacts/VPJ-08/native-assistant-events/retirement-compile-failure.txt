@@ -1,0 +1,8 @@
+error: SwiftCompile normal arm64 /private/var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/vpj08-native-events-o1ltzzzg/Sources/VisePanda/NativeAssistantEventsStore.swift failed with a nonzero exit code. Command line:     cd /private/var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T
+/private/var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/vpj08-native-events-o1ltzzzg/Sources/VisePanda/NativeAssistantEventsStore.swift:69:62: error: escaping closure captures non-escaping parameter 'readCurrent'
+    |                                                              `- error: escaping closure captures non-escaping parameter 'readCurrent'
+/private/var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/vpj08-native-events-o1ltzzzg/Sources/VisePanda/NativeAssistantEventsStore.swift:69:62: error: escaping closure captures non-escaping parameter 'current'
+    |                                                              `- error: escaping closure captures non-escaping parameter 'current'
+error: Build failed
+error: fatalError
+Original log retained /tmp/vpj08-retirement-tests.log; corrected escaping closure annotations, same targeted2 point then PASS.

@@ -1,0 +1,102 @@
+def observe_store(folder,name,changes):
+ path=base/'Features'/folder/(name+'.swift');text=(root/path).read_text();pos=text.index('{',text.index('final class'))+1
+ text=text[:pos]+'\n    var journalObservation: NativeJournalDataObservation?\n'+text[pos:]
+ for before,after,count in changes:text=replace(text,before,after,count)
+ write(path,text)
+# These are exact successful decoder branches. Explicit local discard/UNKNOWN branches stay untouched.
+observe_store('CommunitySafety','NativeCommunitySafetyStore',[(
+ 'do { try complete(value) } catch',
+ 'let journalTicket = journalObservation?.begin()\n        do { try complete(value) } catch',1),(
+ '        pending = nil\n        if case .operation',
+ '        pending = nil\n        journalObservation?.finish(journalTicket, try NativeCommunitySafetyCommand(body: value.body).operationID)\n        if case .operation',1)])
+observe_store('CommunitySubmission','NativeCommunityStore',[(
+ 'do { try complete(durable) } catch { journalReady = false; storageReady = false; throw error }; pending = nil; apply(outcome, command: command)',
+ 'let journalTicket = journalObservation?.begin()\n            do { try complete(durable) } catch { journalReady = false; storageReady = false; throw error }; pending = nil; apply(outcome, command: command)\n            journalObservation?.finish(journalTicket, command.operationID)',1),(
+ 'do { try complete(pending) } catch { journalReady = false; storageReady = false; throw error }; self.pending = nil; apply(outcome, command: command)',
+ 'let journalTicket = journalObservation?.begin()\n                do { try complete(pending) } catch { journalReady = false; storageReady = false; throw error }; self.pending = nil; apply(outcome, command: command)\n                journalObservation?.finish(journalTicket, command.operationID)',2)])
+observe_store('CommunityExperience','NativeExperienceStore',[(
+ '            do { try complete(pending); self.pending = nil }',
+ '            let journalTicket = journalObservation?.begin()\n            do { try complete(pending); self.pending = nil }',1),(
+ '            // Receipts are acknowledgements.',
+ '            journalObservation?.finish(journalTicket, try NativeExperienceCommand(body: pending.body).operationID)\n            // Receipts are acknowledgements.',1)])
+observe_store('ServiceOperations','NativeServiceOperationStore',[(
+ '            try complete(original); pending = nil; receipt = result; notice = nil\n            cases = []; capacity = nil; deadline = 0',
+ '            let journalTicket = journalObservation?.begin()\n            try complete(original); pending = nil; receipt = result; notice = nil\n            cases = []; capacity = nil; deadline = 0\n            journalObservation?.finish(journalTicket, try frozen.operationId)',1)])
+observe_store('TravelerBrief','NativeTravelerBriefStore',[(
+ '            try complete(original); pending = nil; receipt = result; notice = nil; erased = false',
+ '            let journalTicket = journalObservation?.begin()\n            try complete(original); pending = nil; receipt = result; notice = nil; erased = false\n            journalObservation?.finish(journalTicket, frozen.operationID)',1)])
+observe_store('Reservations','NativeReservationStore',[(
+ '        try journal.complete(pending, scope: actor)\n        self.pending = nil; recoveryChecked = true; items = [receipt]; pageLoaded = false',
+ '        let journalTicket = journalObservation?.begin()\n        try journal.complete(pending, scope: actor)\n        self.pending = nil; recoveryChecked = true; items = [receipt]; pageLoaded = false\n        journalObservation?.finish(journalTicket, command.operationId)',1),(
+ '                try self.journal.complete(saved, scope: actor)\n                self.pending = nil; self.items = [result.current]; self.pageLoaded = false; self.invalidatePreview()',
+ '                let journalTicket = self.journalObservation?.begin()\n                try self.journal.complete(saved, scope: actor)\n                self.pending = nil; self.items = [result.current]; self.pageLoaded = false; self.invalidatePreview()\n                self.journalObservation?.finish(journalTicket, command.operationId)',1)])
+observe_store('Recovery','NativeRecoveryStore',[(
+ '        try journal.remove(pending, scope: current); self.pending = nil; self.outcome = nil; readAttempted = false\n        clearPreview(); notice = nil',
+ '        let journalTicket = journalObservation?.begin()\n        try journal.remove(pending, scope: current); self.pending = nil; self.outcome = nil; readAttempted = false\n        clearPreview(); notice = nil\n        journalObservation?.finish(journalTicket, pending.operationID)',1)])
+observe_store('TripLifecycle','NativeTripLifecycleStore',[(
+ '            try client.complete(journal, actor)\n            let outcome: String',
+ '            let journalTicket = journalObservation?.begin()\n            try client.complete(journal, actor)\n            let outcome: String',1),(
+ '            busy = false\n            await load(client)',
+ '            journalObservation?.finish(journalTicket, command.operationID)\n            busy = false\n            await load(client)',1)])
+observe_store('PlaceActions','NativePlaceActionStore',[(
+ '                try complete(value); pending = nil; receipt = nil; self.cancelled = cancelled; receiptAbsent = false',
+ '                let journalTicket = journalObservation?.begin()\n                try complete(value); pending = nil; receipt = nil; self.cancelled = cancelled; receiptAbsent = false\n                journalObservation?.finish(journalTicket, try value.command.operationId)',1),(
+ '            try complete(value); pending = nil; receipt = result; cancelled = nil; if result.action == "unsave" { rememberedSaved = nil }; context = nil; deadline = 0',
+ '            let journalTicket = journalObservation?.begin()\n            try complete(value); pending = nil; receipt = result; cancelled = nil; if result.action == "unsave" { rememberedSaved = nil }; context = nil; deadline = 0\n            journalObservation?.finish(journalTicket, try value.command.operationId)',1)])
+# Notifications are deliberately metadata-only; the existing view retains its explicit replay/permission gates.
+observe_store('Notifications','NativeNoticeStore',[(
+ '            try complete(original, receipt); pending = nil',
+ '            let journalTicket = journalObservation?.begin()\n            try complete(original, receipt); pending = nil\n            journalObservation?.finish(journalTicket, original.command.operationId)',1)])
+for folder,name,source,marker in [
+ ('CommunitySafety','NativeCommunitySafetyView','communitySafety','    private func reload() async {'),
+ ('CommunitySubmission','NativeCommunitySubmissionView','community','    private func reload() async {'),
+ ('CommunityExperience','NativeExperienceView','experience','    private func reload(_ actor: NativeCommunitySafetyActor) async {'),
+ ('ServiceOperations','NativeServiceOperationsView','serviceOperation','    private func load(actor: NativeDataScope, captured: Key) async {'),
+ ('TravelerBrief','NativeTravelerBriefView','travelerBrief','    private func load(_ actor: NativeDataScope) async {'),
+ ('Reservations','NativeReservationsView','reservation','        .task(id: actor) {'),
+ ('Recovery','NativeRecoveryView','recovery','    private func refresh() async {'),
+ ('TripLifecycle','NativeTripLifecycleView','tripLifecycle','        .task(id: session.dataScope) {'),
+ ('PlaceActions','NativePlaceActionsView','placeAction','        .task(id: key) { await loadTrips() }'),
+ ('Trip','NativeTravelRemindersView','notification','    @MainActor private func refresh() async {')]:
+ path=base/'Features'/folder/(name+'.swift');text=(root/path).read_text()
+ nativeSession='settings.nativeSession' if source=='experience' else 'session'
+ if source=='placeAction':text=replace(text,marker,'        .task(id: key) { store.journalObservation = session.journalDataObservation(.placeAction); await loadTrips() }')
+ else:text=replace(text,marker,marker+'\n        store.journalObservation = '+nativeSession+'.journalDataObservation(.'+source+')')
+ write(path,text)
+# Stores already receive Session: no extra callback API or wrapper executor.
+path=base/'Features/PDFIntake/NativePDFIntakeStore.swift';text=(root/path).read_text()
+for marker in [
+ '                try session.completePDFIntake(value, actor: source.actor); journal = nil; message = "confirmed"',
+ '            try session.completePDFIntake(value, actor: source.actor); journal = nil\n']:
+ spaces=marker[:len(marker)-len(marker.lstrip())]
+ text=replace(text,marker,spaces+'let journalObserver = session.journalDataObservation(.pdf), journalTicket = journalObserver.begin()\n'+marker.rstrip('\n')+'\n'+spaces+'journalObserver.finish(journalTicket, value.command.operationId)'+('\n' if marker.endswith('\n') else ''))
+write(path,text)
+path=base/'Features/ScopedTripEdit/NativeScopedTripEditStore.swift';text=(root/path).read_text()
+# Only the four strict original receipt decoders; an outcome envelope with no receipt stays UNKNOWN locally.
+for marker in [
+ '            let declined = try NativeScopedTripDeclined.decode(raw, journal: saved)',
+ '            let ready = try NativeScopedTripCandidates.decode(bytes, journal: saved, context: context)',
+ '            let candidate = try NativeScopedTripProposalReceipt.decode(bytes, journal: saved, context: context)']:
+ text=replace(text,marker,marker+'\n            let journalObserver = session.journalDataObservation(.scopedTrip), journalTicket = journalObserver.begin()')
+for marker in [
+ '            notice = "declined:" + declined.reason',
+ '            } else { candidates = nil; candidatesJournal = nil; notice = "refreshRequired" }',
+ '            else { receipt = nil; notice = "refreshRequired" }']:
+ text=replace(text,marker,marker+'\n            journalObserver.finish(journalTicket, command.operationID)')
+marker='            try session.completeScopedTripEdit(saved, actor: actor); journal = nil; context = nil; receipt = nil; notice = "lockSaved"'
+text=replace(text,marker,'            let journalObserver = session.journalDataObservation(.scopedTrip), journalTicket = journalObserver.begin()\n'+marker+'\n            journalObserver.finish(journalTicket, command.operationID)')
+write(path,text)
+path=base/'Features/Ask/NativeAskStore.swift';text=(root/path).read_text()
+marker='''                guard pending.matches(recovered) else { throw NativeDataError.invalidResponse }
+                try session.clearPendingAsk(matching: pending)
+                self.pending = nil; pendingNotice = nil; pendingAcknowledged = false; draft = ""
+                intent = mode.usesTask ? .awaiting(recovered.id) : .newGoal'''
+text=replace(text,marker,marker.replace('                try session.clearPendingAsk','                let journalObserver = session.journalDataObservation(.ask), journalTicket = journalObserver.begin()\n                try session.clearPendingAsk')+'\n                journalObserver.finish(journalTicket, pending.idempotencyKey)')
+write(path,text)
+# Coverage itself: only original terminal verifier + original module completion, not stop/UNKNOWN.
+path=base/'Features/DataCoverage/NativeDataCoverageStore.swift';text=(root/path).read_text()
+text=replace(text,'    let completeOriginal:', '    var journalObservation: NativeJournalDataObservation?\n    let completeOriginal:')
+text=replace(text,'        complete = { try session.completeDataCoverage($0, actor: $1) }','        complete = { try session.completeDataCoverage($0, actor: $1) }\n        journalObservation = session.journalDataObservation(.coverage)')
+text=replace(text,'                try client.completeOriginal(original, reply, actor)\n                try client.complete(pending, actor); self.pending = nil',
+ '                let journalTicket = client.journalObservation?.begin()\n                try client.completeOriginal(original, reply, actor)\n                try client.complete(pending, actor); self.pending = nil\n                client.journalObservation?.finish(journalTicket, command.operationID)')
+write(path,text)

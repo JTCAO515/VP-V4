@@ -2,6 +2,8 @@ import Foundation
 import Observation
 
 @MainActor @Observable final class NativeCommunitySafetyStore {
+    var journalObservation: NativeJournalDataObservation?
+
     typealias Request = (Data) async throws -> Data
     private(set) var actor: NativeCommunitySafetyActor?
     private(set) var objects: [NativeCommunitySafetyObject] = []
@@ -195,12 +197,15 @@ import Observation
         return true
     }
     private func finish(_ value: NativeCommunitySafetyPending, outcome: NativeCommunitySafetyOutcome, start: Double, complete: (NativeCommunitySafetyPending) throws -> Void) throws {
+        let journalEligible: Bool = { switch outcome { case .deleted: true; case .operation(_, let state, _): state == "committed"; default: false } }()
+        let journalTicket = journalEligible ? journalObservation?.begin() : nil
         do { try complete(value) } catch { journalReady = false; storageReady = false; throw error }
         pending = nil
         if case .operation(_, let state, let record) = outcome {
             selectedRecord = record; loaded = record != nil; deadline = start + 30
             notice = state == "abandoned" ? "ABANDONED" : "ACKNOWLEDGED"
         } else { notice = "MODULE_DELETED" }
+        journalObservation?.finish(journalTicket, try NativeCommunitySafetyCommand(body: value.body).operationID)
     }
     private func fail(_ error: Error, own: UUID) {
         guard own == generation else { return }

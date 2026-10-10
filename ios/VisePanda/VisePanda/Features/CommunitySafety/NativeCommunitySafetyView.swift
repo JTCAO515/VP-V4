@@ -227,6 +227,7 @@ struct NativeCommunitySafetyView: View {
     }
     private func hide() { action?.cancel(); action = nil; modal = nil; store.suspend() }
     private func reload() async {
+        store.journalObservation = session.journalDataObservation(.communitySafety)
         hide(); store.bind(actor)
         guard let actor else { return }
         store.restore(actor) { try session.communitySafetyRecovery(actor: actor) }
