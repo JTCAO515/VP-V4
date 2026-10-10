@@ -42,11 +42,12 @@ final class NativeAssistantEventsStore {
     /// One bounded finite replay request. Background/replacement invalidates it;
     /// read failures leave immutable intake/planning journals outside this store.
     func read(selection: NativeAssistantEventsSelection,
-              current: () -> NativeAssistantEventsSelection?,
+              current: @escaping () -> NativeAssistantEventsSelection?,
               request: (String, Int) async throws -> Data,
               clear: (NativeAssistantEventsReference.Object) -> Void,
-              readCurrent: (NativeAssistantEventsDecoder.Event) async throws -> Bool,
-              saveCursor: (NativeAssistantEventsSelection, Int) throws -> Void,
+              retire: (NativeAssistantEventsReference.Object?) -> Void = { _ in },
+              readCurrent: @escaping (NativeAssistantEventsDecoder.Event) async throws -> Bool,
+              saveCursor: @escaping (NativeAssistantEventsSelection, Int) throws -> Void,
               clearDisplays: () -> Void) async {
         guard active, boundSelection == selection, current() == selection,
               !inFlight, !Task.isCancelled else { return }
@@ -65,15 +66,25 @@ final class NativeAssistantEventsStore {
             let page = try NativeAssistantEventsDecoder.decode(bytes, conversationID: selection.conversationID, after: requestedCursor)
             for event in page.events {
                 guard valid() else { if generation == own { fail(clearDisplays) }; return }
-                let outcome = try await projection.consume(event.reference, selection: selection, clear: clear,
-                    readCurrent: { _ in
+                let qualifiedRead: () async throws -> Bool = {
                         let eligible = try await readCurrent(event)
                         guard valid() else { throw NativeDataError.staleSessionResponse }
                         return eligible
-                    }, saveCursor: { captured, _ in
+                    }
+                let persist: (NativeAssistantEventsSelection, String) throws -> Void = { captured, _ in
                         guard valid() else { throw NativeDataError.staleSessionResponse }
                         try saveCursor(captured, event.sequence)
-                    })
+                    }
+                let outcome: NativeAssistantEventsProjection.Outcome
+                if case .retired(let retired) = event.change {
+                    outcome = try await projection.consumeRetirement(eventID: event.eventID, sequence: event.sequence,
+                        retiredSequence: retired, selection: selection, clear: retire,
+                        readCurrent: qualifiedRead, saveCursor: persist)
+                } else {
+                    guard let reference = event.reference else { throw NativeDataError.invalidResponse }
+                    outcome = try await projection.consume(reference, selection: selection, clear: clear,
+                        readCurrent: { _ in try await qualifiedRead() }, saveCursor: persist)
+                }
                 guard valid(), outcome == .applied || outcome == .duplicate else {
                     if generation == own { fail(clearDisplays) }; return
                 }
@@ -85,6 +96,11 @@ final class NativeAssistantEventsStore {
             hasMore = page.hasMore; state = .ready
         } catch {
             guard generation == own else { return }
+            // A newer original source read can supersede this read while actor and
+            // selection remain current. Keep that projection, ack nothing, reconnect.
+            if case NativeDataError.staleSessionResponse = error, valid() {
+                hasMore = false; state = .ready; return
+            }
             fail(clearDisplays)
         }
     }

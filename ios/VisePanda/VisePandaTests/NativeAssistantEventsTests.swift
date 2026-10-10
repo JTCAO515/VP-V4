@@ -94,6 +94,47 @@ final class NativeAssistantEventsTests: XCTestCase {
         XCTAssertEqual(saved, 0); XCTAssertGreaterThanOrEqual(clearCount, 2)
     }
 
+    private func retiredStream(sequence: Int, retired: Int, extra: String = "") -> Data {
+        Data("id: \(sequence)\nevent: assistant\ndata: {\"schemaVersion\":\"assistant-events/1\",\"conversationId\":\"\(conversation)\",\"eventId\":\"\(conversation):\(sequence)\",\"sequence\":\(sequence),\"type\":\"source_retired\",\"retiredSequence\":\(retired)\(extra)}\n\nretry: 2000\nevent: checkpoint\ndata: {\"schemaVersion\":\"assistant-events/1\",\"conversationId\":\"\(conversation)\",\"afterSequence\":\(sequence),\"hasMore\":false}\n\n".utf8)
+    }
+    func testRetirementClosedFieldsAndAlreadyAcknowledgedOrdinal() throws {
+        let page = try NativeAssistantEventsDecoder.decode(retiredStream(sequence: 2, retired: 1), conversationID: conversation, after: 1)
+        XCTAssertEqual(page.events.first?.change, .retired(sequence: 1))
+        XCTAssertNil(page.events.first?.taskID); XCTAssertNil(page.events.first?.turnID)
+        XCTAssertNil(page.events.first?.reference)
+        XCTAssertThrowsError(try NativeAssistantEventsDecoder.decode(retiredStream(sequence: 2, retired: 3), conversationID: conversation, after: 1))
+        XCTAssertThrowsError(try NativeAssistantEventsDecoder.decode(retiredStream(sequence: 2, retired: 0), conversationID: conversation, after: 1))
+        XCTAssertThrowsError(try NativeAssistantEventsDecoder.decode(retiredStream(sequence: 2, retired: 1, extra: ",\"taskId\":\"\(task)\""), conversationID: conversation, after: 1))
+        XCTAssertThrowsError(try NativeAssistantEventsDecoder.decode(Data(retiredStream(sequence: 2, retired: 1).dropLast()), conversationID: conversation, after: 1))
+    }
+    @MainActor func testRetirementEvictsKnownHintAndUnknownOrdinalWithoutInventingSource() async throws {
+        let selected = selection, projection = NativeAssistantEventsProjection()
+        projection.bind(selected, active: true)
+        let reference = NativeAssistantEventsReference(eventID: "\(conversation):1", cursor: "1", object: .task(task), revision: 1, invalidated: false)
+        _ = try await projection.consume(reference, selection: selected, clear: { _ in }, readCurrent: { _ in true }, saveCursor: { _, _ in })
+        var cleared: NativeAssistantEventsReference.Object?, count = 0
+        let result = try await projection.consumeRetirement(eventID: "\(conversation):2", sequence: 2, retiredSequence: 1,
+            selection: selected, clear: { cleared = $0; count += 1 }, readCurrent: { true }, saveCursor: { _, _ in })
+        XCTAssertEqual(result, .applied); XCTAssertEqual(cleared, .task(task)); XCTAssertEqual(projection.cursor, "2")
+        let duplicate = try await projection.consumeRetirement(eventID: "\(conversation):2", sequence: 2, retiredSequence: 1,
+            selection: selected, clear: { _ in count += 1 }, readCurrent: { XCTFail("duplicate rechecked"); return true }, saveCursor: { _, _ in XCTFail("duplicate ack") })
+        XCTAssertEqual(duplicate, .duplicate); XCTAssertEqual(count, 1)
+        _ = try await projection.consumeRetirement(eventID: "\(conversation):3", sequence: 3, retiredSequence: 1,
+            selection: selected, clear: { XCTAssertNil($0) }, readCurrent: { true }, saveCursor: { _, _ in })
+        XCTAssertEqual(projection.cursor, "3"); XCTAssertEqual(projection.lifetime.selection, selected); XCTAssertTrue(projection.lifetime.active)
+    }
+
+    @MainActor func testNewerOriginalSourceRejectsOldReadWithoutClearingFreshProjection() async {
+        let selected = selection, store = NativeAssistantEventsStore()
+        var allClears = 0, saves = 0
+        store.bind(selected, active: true, clearDisplays: {})
+        await store.read(selection: selected, current: { selected }, request: { _, _ in self.stream() },
+            clear: { _ in }, readCurrent: { _ in throw NativeDataError.staleSessionResponse },
+            saveCursor: { _, _ in saves += 1 }, clearDisplays: { allClears += 1 })
+        XCTAssertEqual(store.state, .ready); XCTAssertFalse(store.hasMore)
+        XCTAssertEqual(store.afterSequence, 0); XCTAssertEqual(saves, 0); XCTAssertEqual(allClears, 0)
+    }
+
     @MainActor func testExpiredReadAndTruncatedFrameCannotReachOriginalReader() async {
         let selected = selection
         var clock: TimeInterval = 0, reads = 0, saves = 0

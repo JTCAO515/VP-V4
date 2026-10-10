@@ -11,7 +11,7 @@
 +            assistantEventsSourceVersion = conversation?.nextSequence
 +            await receiveAssistantEvents(captured)
 +        }
-@@ -1485,0 +1495,113 @@
+@@ -1485,0 +1495,131 @@
 +    private var assistantEventsSelection: NativeAssistantEventsSelection? {
 +        guard resultActive, !entryBlocking, policy?.consentState == .accepted,
 +              let policy, let id = conversation?.conversationId, id == selection.conversationID,
@@ -45,6 +45,18 @@
 +        try? session.invalidateAssistantEvents(selection: captured, object: object)
 +    }
 +
++    private func retireAssistantEventObject(_ object: NativeAssistantEventsReference.Object?,
++                                           captured: NativeAssistantEventsSelection) {
++        guard assistantEventsSelection == captured else { return }
++        if let object { clearAssistantEventObject(object, captured: captured); return }
++        // Unknown old ordinal: clear read caches only, never reconstruct deleted IDs.
++        refreshState.invalidate(); fiveResultRequestGeneration = UUID(); resultFence.clear()
++        taskTurns = []; taskSourceMessages = []; taskNextCursor = nil; taskPageCursor = nil; taskSnapshotSequence = nil
++        selectedResult = nil; referencedResultUntil = 0
++        try? session.invalidateAssistantEvents(selection: captured, object: nil)
++        // Keep current Conversation/policy/selection/navigation and all pending bytes.
++    }
++
 +    private func recheckAssistantEvent(_ event: NativeAssistantEventsDecoder.Event,
 +                                      captured: NativeAssistantEventsSelection) async throws -> Bool {
 +        func current() -> Bool { assistantEventsSelection == captured && !Task.isCancelled }
@@ -64,13 +76,14 @@
 +            current() && canonical.nextSequence >= (conversation?.nextSequence ?? 0) &&
 +                canonical.nextSequence >= (assistantEventsSourceVersion ?? 0)
 +        }
-+        guard sourceCurrent() else { return false }
++        guard sourceCurrent() else { throw NativeDataError.staleSessionResponse }
 +        switch event.change {
 +        case .task, .progress:
-+            let activityBytes = try await session.taskActivityRequest(conversationID: captured.conversationID, taskID: event.taskID)
++            guard let taskID = event.taskID else { throw NativeDataError.invalidResponse }
++            let activityBytes = try await session.taskActivityRequest(conversationID: captured.conversationID, taskID: taskID)
 +            guard sourceCurrent() else { throw NativeDataError.staleSessionResponse }
 +            let activity = try JSONDecoder().decode(NativeTaskActivity.self, from: activityBytes)
-+            guard activity.conversationId == captured.conversationID, activity.taskId == event.taskID else { return false }
++            guard activity.conversationId == captured.conversationID, activity.taskId == taskID else { return false }
 +            // A version-bound page cursor cannot be replayed against a newer source.
 +            // Requalify the read page, retaining selected Task/artifact/navigation IDs.
 +            let pageCursor = taskSnapshotSequence == canonical.nextSequence ? taskPageCursor : nil
@@ -84,16 +97,20 @@
 +            assistantEventsSourceVersion = canonical.nextSequence; taskNotice = nil
 +            return true
 +        case .artifact(let id, let revision, _, _):
++            guard let taskID = event.taskID, let turnID = event.turnID else { throw NativeDataError.invalidResponse }
 +            let bytes = try await session.fiveResultRequest(artifactID: id, revision: revision)
 +            guard sourceCurrent() else { throw NativeDataError.staleSessionResponse }
 +            let value = try NativeFiveResultRecord.decode(bytes, artifactID: id, revision: revision)
 +            if let value {
-+                guard value.source.taskId == event.taskID, value.source.taskTurnId == event.turnID else { return false }
++                guard value.source.taskId == taskID, value.source.taskTurnId == turnID else { return false }
 +            }
 +            assistantEventsSourceVersion = canonical.nextSequence
 +            // nil/historical is an authoritative unavailable read, not current content.
 +            // Existing selected exact-revision reader remains the only content publisher.
 +            return true
++        case .retired:
++            assistantEventsSourceVersion = canonical.nextSequence
++            return true // original policy + canonical conversation qualified; no source tuple exists.
 +        }
 +    }
 +
@@ -108,6 +125,7 @@
 +            await assistantEvents.read(selection: captured, current: { assistantEventsSelection },
 +                request: { _, after in try await session.assistantEventsRequest(selection: captured, after: after) },
 +                clear: { clearAssistantEventObject($0, captured: captured) },
++                retire: { retireAssistantEventObject($0, captured: captured) },
 +                readCurrent: { event in
 +                    do { return try await recheckAssistantEvent(event, captured: captured) }
 +                    catch {

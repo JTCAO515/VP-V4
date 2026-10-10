@@ -41,8 +41,8 @@
     "baseWorktree": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-journal-data-20261008",
     "baseHead": "0ef351c2afdae917a8297c4120410865173d8376",
     "before": "dccc7414b2affa571c09ccb5b5ca607b77afd44f991fc520b26d56774142eb9f",
-    "after": "3ae756923f958eb9636b808840feed14b261f2c6355bb897cb9b8dae9289f2e7",
-    "patch": "b59a0d41ae731e7d453d3bc979115c402bfa32b34ce1ef15026d43f7c1d3259a",
+    "after": "ffc50a9b061350d212cc9be49271a9e7108d8323c1ba6de834b1e87901e61302",
+    "patch": "9d8efab56e2fbc7a06a308fa6c17aaaed7510b941c0c60e564bb19c625c1bb54",
     "hunks": 3,
     "hunkPins": [
       {
@@ -60,11 +60,11 @@
         "afterLines": 7
       },
       {
-        "range": "-1485,0 +1495,113",
+        "range": "-1485,0 +1495,131",
         "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-        "afterSHA256": "3c2ab422abbea9b891c4ccf17566a88461733446b6b4f6272b25238b95081dad",
+        "afterSHA256": "55db0a2248e0ceb16854ddc11012ea40566783ee3f25f8315392a4ee3c1e4244",
         "beforeLines": 0,
-        "afterLines": 113
+        "afterLines": 131
       }
     ]
   },

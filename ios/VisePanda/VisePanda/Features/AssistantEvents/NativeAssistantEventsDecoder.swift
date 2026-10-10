@@ -13,24 +13,27 @@ enum NativeAssistantEventsDecoder {
         case task(Status)
         case progress(Tool, ReceiptState)
         case artifact(id: String, revision: Int, invalidated: Bool, unavailable: Bool)
+        case retired(sequence: Int)
     }
     enum Tool: String { case evidence = "evidence.lookup", place = "place.read", constraints = "constraints.evaluate", result = "result.prepare" }
     enum ReceiptState: String { case started, completed, unknown }
     struct Event: Equatable {
         let eventID: String
         let sequence: Int
-        let taskID: String
-        let turnID: String
+        let taskID: String?
+        let turnID: String?
         let change: Change
 
-        var reference: NativeAssistantEventsReference {
+        var reference: NativeAssistantEventsReference? {
             switch change {
             case .task, .progress:
+                guard let taskID else { return nil }
                 return .init(eventID: eventID, cursor: String(sequence), object: .task(taskID),
                              revision: sequence, invalidated: false)
             case .artifact(let id, let revision, let invalidated, _):
                 return .init(eventID: eventID, cursor: String(sequence), object: .artifact(id),
                              revision: revision, invalidated: invalidated)
+            case .retired: return nil
             }
         }
     }
@@ -75,8 +78,16 @@ enum NativeAssistantEventsDecoder {
                       let rawID = fields["id"], rawID.range(of: "^[1-9][0-9]{0,14}$", options: .regularExpression) != nil,
                       let sequence = Int(rawID), sequence == previous + 1,
                       try integer(object["sequence"]) == sequence,
-                      object["eventId"] as? String == "\(conversationID):\(sequence)",
-                      let taskID = object["taskId"] as? String, UUID(uuidString: taskID) != nil,
+                      object["eventId"] as? String == "\(conversationID):\(sequence)" else { throw NativeDataError.invalidResponse }
+                if object["type"] as? String == "source_retired" {
+                    guard Set(object.keys) == ["schemaVersion", "conversationId", "eventId", "sequence", "type", "retiredSequence"] else { throw NativeDataError.invalidResponse }
+                    let retired = try integer(object["retiredSequence"])
+                    guard retired > 0, retired <= sequence else { throw NativeDataError.invalidResponse }
+                    events.append(.init(eventID: "\(conversationID):\(sequence)", sequence: sequence, taskID: nil, turnID: nil, change: .retired(sequence: retired)))
+                    previous = sequence
+                    continue
+                }
+                guard let taskID = object["taskId"] as? String, UUID(uuidString: taskID) != nil,
                       let turnID = object["turnId"] as? String, UUID(uuidString: turnID) != nil else { throw NativeDataError.invalidResponse }
                 let base: Set<String> = ["schemaVersion", "conversationId", "eventId", "sequence", "taskId", "turnId", "type"]
                 let change: Change
