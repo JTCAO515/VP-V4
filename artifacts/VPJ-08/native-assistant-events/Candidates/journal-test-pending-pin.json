@@ -1,0 +1,8 @@
+{
+  "path": "ios/VisePanda/VisePandaTests/NativeJournalDataTests.swift",
+  "before": "1edde6dd16402ac59b49f2d1bb9fe6cc0d13e0f2cf6db62532b5d39ed4615fb9",
+  "after": "539ec51ee203df9478e33c0782cfc7218c5ab65a342d33bc48ee8a437c171317",
+  "patch": "560ff1a5a30a8573423effa6127344aac66080e8abe626b6e9181fe54987c861",
+  "hunks": 3,
+  "applied": false
+}

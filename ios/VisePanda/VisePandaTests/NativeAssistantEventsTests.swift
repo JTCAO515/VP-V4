@@ -1,19 +1,19 @@
 import XCTest
 @testable import VisePanda
 
-final class NativeAssistantEventsTests: XCTestCase {
+nonisolated final class NativeAssistantEventsTests: XCTestCase {
     private let conversation = "11111111-1111-4111-8111-111111111111"
     private let task = "22222222-2222-4222-8222-222222222222"
     private let turn = "33333333-3333-4333-8333-333333333333"
     private func stream(_ status: String = "completed") -> Data {
         Data("id: 1\nevent: assistant\ndata: {\"schemaVersion\":\"assistant-events/1\",\"conversationId\":\"\(conversation)\",\"eventId\":\"\(conversation):1\",\"sequence\":1,\"taskId\":\"\(task)\",\"turnId\":\"\(turn)\",\"type\":\"task_status\",\"status\":\"\(status)\"}\n\nretry: 2000\nevent: checkpoint\ndata: {\"schemaVersion\":\"assistant-events/1\",\"conversationId\":\"\(conversation)\",\"afterSequence\":1,\"hasMore\":false}\n\n".utf8)
     }
-    private var selection: NativeAssistantEventsSelection {
+    @MainActor private var selection: NativeAssistantEventsSelection {
         .init(scope: .init(endpoint: "https://example.invalid", subject: "owner", mobileEpoch: 2, generation: 3),
               sessionID: "session", policyID: "policy", conversationID: conversation, selectionGeneration: UUID())
     }
 
-    func testCursorNeedsFreshQualificationAndSameSessionEpochPolicySelection() throws {
+    @MainActor func testCursorNeedsFreshQualificationAndSameSessionEpochPolicySelection() throws {
         let selected = selection
         let bytes = try NativeAssistantEventsCursor.encode(42, selection: selected)
         XCTAssertEqual(try NativeAssistantEventsCursor.decode(bytes, selection: selected, qualified: true), 42)
@@ -27,7 +27,7 @@ final class NativeAssistantEventsTests: XCTestCase {
         XCTAssertThrowsError(try NativeAssistantEventsCursor.decode(bytes, selection: newSession, qualified: true))
     }
 
-    func testPrivacyCursorMetadataIsOwnerBoundAndNeverRawEnvelope() throws {
+    @MainActor func testPrivacyCursorMetadataIsOwnerBoundAndNeverRawEnvelope() throws {
         let selected = selection, bytes = try NativeAssistantEventsCursor.encode(42, selection: selected)
         let metadata = try NativeAssistantEventsCursor.metadata(bytes, scope: selected.scope, sessionID: selected.sessionID)
         XCTAssertTrue(metadata.valid)
@@ -45,7 +45,7 @@ final class NativeAssistantEventsTests: XCTestCase {
         XCTAssertThrowsError(try NativeAssistantEventsCursor.metadata(JSONSerialization.data(withJSONObject: secret), scope: selected.scope, sessionID: selected.sessionID))
     }
 
-    func testPartialDenialAAndReceiptARetainAcknowledgedCursorB() throws {
+    @MainActor func testPartialDenialAAndReceiptARetainAcknowledgedCursorB() throws {
         let a = selection
         let b = NativeAssistantEventsSelection(scope: a.scope, sessionID: a.sessionID, policyID: a.policyID,
             conversationID: "44444444-4444-4444-8444-444444444444", selectionGeneration: UUID())
@@ -56,7 +56,7 @@ final class NativeAssistantEventsTests: XCTestCase {
         XCTAssertTrue(try NativeAssistantEventsCursor.matches(savedB, scope: a.scope, sessionID: a.sessionID, affectedConversationIDs: [b.conversationID]))
         XCTAssertEqual(try NativeAssistantEventsCursor.decode(savedB, selection: b, qualified: true), 12)
     }
-    func testPartialCleanupMalformedRecordIsNotDifferentOrAbsent() throws {
+    @MainActor func testPartialCleanupMalformedRecordIsNotDifferentOrAbsent() throws {
         let a = selection
         var broken = try JSONSerialization.jsonObject(with: NativeAssistantEventsCursor.encode(2, selection: a)) as! [String: Any]
         broken["unexpected"] = "synthetic"
@@ -67,7 +67,7 @@ final class NativeAssistantEventsTests: XCTestCase {
         XCTAssertThrowsError(try NativeAssistantEventsCursor.matches(JSONSerialization.data(withJSONObject: broken), selection: a))
     }
 
-    func testFiniteReplayRequiresCompleteCheckpointAndClosedSchema() throws {
+    @MainActor func testFiniteReplayRequiresCompleteCheckpointAndClosedSchema() throws {
         let bytes = stream()
         let page = try NativeAssistantEventsDecoder.decode(bytes, conversationID: conversation, after: 0)
         XCTAssertEqual(page.afterSequence, 1)
@@ -80,7 +80,7 @@ final class NativeAssistantEventsTests: XCTestCase {
         XCTAssertThrowsError(try NativeAssistantEventsDecoder.decode(Data(future.utf8), conversationID: conversation, after: 0))
     }
 
-    func testProgressUnionMatchesOriginalToolReceiptsOnly() throws {
+    @MainActor func testProgressUnionMatchesOriginalToolReceiptsOnly() throws {
         let wire = String(decoding: stream(), as: UTF8.self).replacingOccurrences(of: "\"type\":\"task_status\",\"status\":\"completed\"", with: "\"type\":\"task_progress\",\"tool\":\"evidence.lookup\",\"state\":\"completed\"")
         let page = try NativeAssistantEventsDecoder.decode(Data(wire.utf8), conversationID: conversation, after: 0)
         XCTAssertEqual(page.events.first?.change, .progress(.evidence, .completed))
@@ -137,7 +137,7 @@ final class NativeAssistantEventsTests: XCTestCase {
     private func retiredStream(sequence: Int, retired: Int, extra: String = "") -> Data {
         Data("id: \(sequence)\nevent: assistant\ndata: {\"schemaVersion\":\"assistant-events/1\",\"conversationId\":\"\(conversation)\",\"eventId\":\"\(conversation):\(sequence)\",\"sequence\":\(sequence),\"type\":\"source_retired\",\"retiredSequence\":\(retired)\(extra)}\n\nretry: 2000\nevent: checkpoint\ndata: {\"schemaVersion\":\"assistant-events/1\",\"conversationId\":\"\(conversation)\",\"afterSequence\":\(sequence),\"hasMore\":false}\n\n".utf8)
     }
-    func testRetirementClosedFieldsAndAlreadyAcknowledgedOrdinal() throws {
+    @MainActor func testRetirementClosedFieldsAndAlreadyAcknowledgedOrdinal() throws {
         let page = try NativeAssistantEventsDecoder.decode(retiredStream(sequence: 2, retired: 1), conversationID: conversation, after: 1)
         XCTAssertEqual(page.events.first?.change, .retired(sequence: 1))
         XCTAssertNil(page.events.first?.taskID); XCTAssertNil(page.events.first?.turnID)
@@ -189,3 +189,139 @@ final class NativeAssistantEventsTests: XCTestCase {
         XCTAssertEqual(reads, 0); XCTAssertEqual(saves, 0)
     }
 }
+
+#if os(iOS)
+import Security
+
+extension NativeAssistantEventsTests {
+    @MainActor func testRegisteredFiniteSSEOriginalActivityReadBeforeCursorPersistence() async throws {
+        let vault = NativeKeychainVault(), suite = "vpj08-stream-" + UUID().uuidString
+        let defaults = UserDefaults(suiteName: suite)!
+        let configuration = URLSessionConfiguration.ephemeral; configuration.protocolClasses = [AssistantEventsAuthProtocol.self]
+        let session = NativeSession(arguments: ["-VisePandaNativeAPI", "http://127.0.0.1:65184", "-VisePandaAssistantConversation"],
+            defaults: defaults, configuration: configuration, bundleConfiguration: [:], vault: vault)
+        await session.login(email: "vpj08-stream@example.invalid", password: "SYNTHETIC_ONLY")
+        let actor = try session.communitySafetyActor()
+        let selected = NativeAssistantEventsSelection(scope: actor.scope, sessionID: actor.sessionID,
+            policyID: "55555555-5555-4555-8555-555555555555", conversationID: "11111111-1111-4111-8111-111111111111", selectionGeneration: UUID())
+        let store = NativeAssistantEventsStore(); store.bind(selected, active: true, clearDisplays: {})
+        var qualifiedReads = 0
+        await store.read(selection: selected, current: { selected },
+            request: { _, after in try await session.assistantEventsRequest(selection: selected, after: after) },
+            clear: { _ in }, readCurrent: { event in
+                let bytes = try await session.taskActivityRequest(conversationID: selected.conversationID, taskID: event.taskID!)
+                let activity = try JSONDecoder().decode(NativeTaskActivity.self, from: bytes)
+                qualifiedReads += 1
+                return activity.matches(.init(scope: actor.scope, conversationID: selected.conversationID, taskID: event.taskID!, latestTurnID: event.turnID!, eligible: true))
+            }, saveCursor: { try session.rememberAssistantEventsCursor(selection: $0, sequence: $1) }, clearDisplays: {})
+        XCTAssertEqual(qualifiedReads, 1); XCTAssertEqual(store.afterSequence, 1); XCTAssertEqual(store.state, .ready)
+        XCTAssertEqual(try session.assistantEventsCursor(selection: selected, qualified: true), 1)
+        await session.logout()
+        XCTAssertEqual(vault.read(service: "com.visepanda.native.local-session.v2.assistant-events-cursor." + actor.scope.endpoint, owner: actor.scope.subject).0, errSecItemNotFound)
+        UserDefaults.standard.removePersistentDomain(forName: suite)
+    }
+    @MainActor func testRegisteredSessionCursorJournalExportPartialPurgeAndLogoutPhysicalAbsence() async throws {
+        let vault = NativeKeychainVault(), suite = "vpj08-owned-" + UUID().uuidString
+        let defaults = UserDefaults(suiteName: suite)!
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [AssistantEventsAuthProtocol.self]
+        let session = NativeSession(arguments: ["-VisePandaNativeAPI", "http://127.0.0.1:65184", "-VisePandaAssistantConversation"],
+            defaults: defaults, configuration: configuration, bundleConfiguration: [:], vault: vault)
+        await session.login(email: "vpj08-synthetic@example.invalid", password: "SYNTHETIC_ONLY")
+        XCTAssertEqual(session.status, "active")
+        let actor = try session.communitySafetyActor()
+        let service = "com.visepanda.native.local-session.v2.assistant-events-cursor." + actor.scope.endpoint
+        let folder = FileManager.default.temporaryDirectory.appendingPathComponent("vpj08-private-" + UUID().uuidString)
+        defer {
+            for key in [service, NativeResultDataJournal.service(actor.scope.endpoint), "com.visepanda.native.local-session.v2." + actor.scope.endpoint] {
+                XCTAssertTrue([errSecSuccess, errSecItemNotFound].contains(vault.remove(service: key, owner: actor.scope.subject)))
+                XCTAssertEqual(vault.read(service: key, owner: actor.scope.subject).0, errSecItemNotFound)
+            }
+            UserDefaults.standard.removePersistentDomain(forName: suite)
+            try? FileManager.default.removeItem(at: folder)
+        }
+        func selected(_ id: String) -> NativeAssistantEventsSelection {
+            .init(scope: actor.scope, sessionID: actor.sessionID, policyID: "55555555-5555-4555-8555-555555555555",
+                  conversationID: id, selectionGeneration: UUID())
+        }
+        let a = selected("11111111-1111-4111-8111-111111111111")
+        let b = selected("44444444-4444-4444-8444-444444444444")
+        let fixtureURL = Bundle(for: NativeAssistantEventsTests.self).url(forResource: "commands", withExtension: "json", subdirectory: "ResultData")!
+        let fields = try JSONSerialization.jsonObject(with: Data(contentsOf: fixtureURL)) as! [String: Any]
+        let command = try NativeResultDataCommand(body: Data((fields["eraseBytes"] as! String).utf8))
+        let journal = NativeResultDataJournal(vault: vault, validateConfirmation: NativeResultDataCommand.validateConfirmation)
+        _ = try journal.retain(command.body, actor: actor)
+        let retained = vault.read(service: NativeResultDataJournal.service(actor.scope.endpoint), owner: actor.scope.subject).1
+        try session.rememberAssistantEventsCursor(selection: b, sequence: 12)
+        let beforeB = vault.read(service: service, owner: actor.scope.subject).1
+        try session.eraseAssistantEventsCursor(selection: a)
+        XCTAssertEqual(vault.read(service: service, owner: actor.scope.subject).1, beforeB)
+        XCTAssertEqual(vault.read(service: NativeResultDataJournal.service(actor.scope.endpoint), owner: actor.scope.subject).1, retained)
+        XCTAssertEqual(try session.assistantEventsCursor(selection: b, qualified: true), 12)
+        let store = NativeJournalDataStore(source: session.journalDataSource(), root: folder)
+        store.load(current: actor)
+        XCTAssertEqual(Set(store.rows.map { $0.record.source }), Set(NativeJournalDataSourceID.allCases))
+        XCTAssertEqual(store.rows.filter { $0.record.source != .assistantEventsCursor }.count, 29)
+        let cache = store.rows.first { $0.record.source == .assistantEventsCursor }!
+        XCTAssertEqual(cache.record.state, .projection); XCTAssertNil(cache.record.originalOperationBytes)
+        XCTAssertEqual(cache.record.assistantEventsCursor?.afterSequence, 12)
+        store.select(current: actor); XCTAssertTrue(store.export(current: actor))
+        let exported = try JSONSerialization.jsonObject(with: Data(contentsOf: store.exportURL(current: actor)!)) as! [String: Any]
+        XCTAssertEqual(exported["schemaVersion"] as? String, "native-owner-journals/2")
+        let records = exported["records"] as! [[String: Any]]
+        let cursor = records.first { $0["source"] as? String == "assistantEventsCursor" }!
+        XCTAssertNil(cursor["originalOperationBytes"])
+        XCTAssertEqual(Set((cursor["assistantEventsCursor"] as! [String: Any]).keys), ["conversationID", "afterSequence"])
+        XCTAssertFalse(store.canReturnToOriginal(.assistantEventsCursor, current: actor))
+        XCTAssertNil(store.inspectCompletion(source: .assistantEventsCursor, current: actor))
+        try session.eraseAssistantEventsCursor(selection: b)
+        XCTAssertEqual(vault.read(service: service, owner: actor.scope.subject).0, errSecItemNotFound)
+        XCTAssertTrue(try session.journalDataSource().physicallyAbsent(source: .assistantEventsCursor, actor: actor))
+        XCTAssertEqual(vault.read(service: NativeResultDataJournal.service(actor.scope.endpoint), owner: actor.scope.subject).1, retained)
+        try session.rememberAssistantEventsCursor(selection: b, sequence: 13)
+        await session.logout()
+        XCTAssertEqual(session.status, "signedOut")
+        XCTAssertEqual(vault.read(service: service, owner: actor.scope.subject).0, errSecItemNotFound)
+        XCTAssertNil(vault.read(service: service, owner: actor.scope.subject).1)
+    }
+}
+
+nonisolated private final class AssistantEventsAuthProtocol: URLProtocol, @unchecked Sendable {
+    static let owner = "00000000-0000-4000-8000-000000000001"
+    static let sessionID = "00000000-0000-4000-8000-000000000002"
+    static let token: String = {
+        let payload = try! JSONSerialization.data(withJSONObject: ["sub": owner, "session_id": sessionID]).base64EncodedString()
+            .replacingOccurrences(of: "+", with: "-").replacingOccurrences(of: "/", with: "_").replacingOccurrences(of: "=", with: "")
+        return "SYNTHETIC_ACCESS." + payload + ".SYNTHETIC_SIGNATURE"
+    }()
+    override class func canInit(with request: URLRequest) -> Bool { request.url?.host == "127.0.0.1" && request.url?.port == 65184 }
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+    override func stopLoading() {}
+    override func startLoading() {
+        guard let url = request.url else { return }
+        if url.path.contains("/assistant-events/") {
+            let conversation = "11111111-1111-4111-8111-111111111111"
+            let event: [String: Any] = ["schemaVersion":"assistant-events/1", "conversationId":conversation,
+                "eventId":conversation+":1", "sequence":1, "type":"task_status", "taskId":"22222222-2222-4222-8222-222222222222", "turnId":"33333333-3333-4333-8333-333333333333", "status":"completed"]
+            let checkpoint: [String: Any] = ["schemaVersion":"assistant-events/1", "conversationId":conversation, "afterSequence":1, "hasMore":false]
+            let text = "id: 1\nevent: assistant\ndata: " + String(data: try! JSONSerialization.data(withJSONObject:event), encoding:.utf8)! + "\n\nretry: 2000\nevent: checkpoint\ndata: " + String(data:try! JSONSerialization.data(withJSONObject:checkpoint),encoding:.utf8)! + "\n\n"
+            client?.urlProtocol(self,didReceive:HTTPURLResponse(url:url,statusCode:200,httpVersion:nil,headerFields:["Content-Type":"text/event-stream"])!,cacheStoragePolicy:.notAllowed)
+            client?.urlProtocol(self,didLoad:Data(text.utf8));client?.urlProtocolDidFinishLoading(self);return
+        }
+        let fields: [String: Any]
+        if url.path.hasSuffix("/activity") {
+            fields = ["version":5,"kind":"task_activity","conversationId":"11111111-1111-4111-8111-111111111111","taskId":"22222222-2222-4222-8222-222222222222","turnId":"33333333-3333-4333-8333-333333333333","turnStatus":"completed","limit":4,"recording":"unrecorded","actions":[]]
+        }
+        else if url.path.hasSuffix("/profile") { fields = ["subject": Self.owner, "displayName": "SYNTHETIC"] }
+        else if url.path.hasSuffix("/login") { fields = ["subject": Self.owner, "mobileEpoch": 3] }
+        else if url.path.hasSuffix("/logout") { fields = [:] }
+        else if url.path.hasSuffix("/credentials") || url.path.hasSuffix("/refresh") {
+            fields = ["subject": Self.owner, "accessToken": Self.token, "refreshToken": "SYNTHETIC_REFRESH",
+                "expiresAt": Date().addingTimeInterval(3600).timeIntervalSince1970, "mobileEpoch": 3]
+        } else { client?.urlProtocol(self, didFailWithError: URLError(.unsupportedURL)); return }
+        let data = try! JSONSerialization.data(withJSONObject: fields)
+        client?.urlProtocol(self, didReceive: HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: ["Content-Type": "application/json", "Cache-Control":"private, no-store", "X-Content-Type-Options":"nosniff"])!, cacheStoragePolicy: .notAllowed)
+        client?.urlProtocol(self, didLoad: data); client?.urlProtocolDidFinishLoading(self)
+    }
+}
+#endif
