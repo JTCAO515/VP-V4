@@ -1,0 +1,28 @@
+--- a/tests/integration/turn/native-text-environment.mjs
++++ b/tests/integration/turn/native-text-environment.mjs
+@@ -92,10 +92,17 @@
+    if(input.includes('HOLD'))pendingResponses.add(deliver);else deliver();
+   });
+   model.listen(0,'127.0.0.1');await once(model,'listening');const modelURL='http://127.0.0.1:'+model.address().port;
++  async function startNativeAPI(){
+   const log=createWriteStream(join(process.env.VP_IDENTITY_SUPABASE_WORKDIR,'native-text-api-'+randomUUID()+'.log'),{mode:0o600});
+   next=spawn(process.execPath,['node_modules/next/dist/bin/next','dev','--webpack','--hostname','127.0.0.1','--port',String(ports.apiPort)],{env:{...process.env,NEXT_PUBLIC_SUPABASE_URL:e.API_URL,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:key,VISEPANDA_NATIVE_LOCAL_SESSION:'true',VISEPANDA_NATIVE_LOCAL_SERVICE_KEY:e.SERVICE_ROLE_KEY,VISEPANDA_NATIVE_LOCAL_TRIP:'true',VISEPANDA_NATIVE_LOCAL_TEXT:grounded?'false':'true',VISEPANDA_NATIVE_LOCAL_ASSISTANT_CONVERSATION:'true',VISEPANDA_NATIVE_LOCAL_GOAL_CONTEXT:'true',VISEPANDA_NATIVE_LOCAL_TEXT_POLICY:policyId,VISEPANDA_NATIVE_LOCAL_TASK_POLICY:taskPolicyId,...(grounded?{VISEPANDA_GROUNDED_WEB_READ:'true',VISEPANDA_NATIVE_LOCAL_GROUNDED:'true',VISEPANDA_NATIVE_LOCAL_GROUNDED_POLICY:groundedPolicyId}:{})},stdio:['ignore','pipe','pipe']});
+   next.stdout.pipe(log);next.stderr.pipe(log);next.once('exit',()=>log.end());
+   await waitForNativeAPI(api,next);
++  }
++  await startNativeAPI();
++  async function restartNativeAPI(){
++    if(next && next.exitCode===null){const exited=once(next,"exit");next.kill("SIGTERM");await Promise.race([exited,new Promise(r=>setTimeout(r,3000))]);if(next.exitCode===null){next.kill("SIGKILL");await exited;}}
++    await startNativeAPI();
++  }
+   // Exercise the exact Staging job composition through an explicit closed test
+   // mapper. Both official destinations go only to this disposable DB/model.
+   const stagedDatabase='https://dzqdzetcctkhbrhlxxgn.supabase.co';
+@@ -140,6 +147,6 @@
+     if(result==='finished')counts.finished++;
+    }
+   })().catch(()=>{}).finally(()=>{busy=false;});},500);
+-  return {api,policyId,noticeHash,taskPolicyId,taskNoticeHash,groundedPolicyId,groundedNoticeHash,groundedPublications,requests,users,sql,counts,releaseModels,controlURL:modelURL+'/release',cleanup,restartServiceWorkers,serviceEvidence};
++  return {api,policyId,noticeHash,taskPolicyId,taskNoticeHash,groundedPolicyId,groundedNoticeHash,groundedPublications,requests,users,sql,counts,releaseModels,controlURL:modelURL+'/release',cleanup,restartNativeAPI,restartServiceWorkers,serviceEvidence};
+  }catch(error){await cleanup();throw error;}
+ }
