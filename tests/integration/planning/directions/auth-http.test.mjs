@@ -53,18 +53,21 @@ test('directions: real source, exact bytes, preserved draft, both-client reload 
  // Explicit fresh request, never an automatic paid retry or a currentness exception.
  const fresh=await request(root+'/submit',token,'POST',await submitBody());assert.equal(fresh.status,201);artifactId=fresh.body.artifactId;revision=fresh.body.revision;
  const restored=await exact();assert.equal(restored.content.selectedDirectionId,'depth');assert.deepEqual(restored.content.draft.days[2],changed,'fresh linked-scope source preserves user-edited draft');
+ const tripDirectionsRef=async()=>{const r=await request(`/api/results/native/v2/trip-directions?tripId=${tripId}`,token);assert.equal(r.status,200,'Native typed Trip identity reader');assert.deepEqual(r.body,{version:2,data:{kind:'result_reference',tripId,artifactId,revision}});return r.body.data;};
+ await tripDirectionsRef();
+
  const jar=new Map();const ssr=createServerClient(local.API_URL,local.PUBLISHABLE_KEY||local.ANON_KEY,{cookies:{getAll:()=>[...jar].map(([name,value])=>({name,value})),setAll:values=>values.forEach(({name,value})=>jar.set(name,value))}});
  const signIn=await ssr.auth.signInWithPassword({email:e.users[0].email,password:e.users[0].password});assert.ifError(signIn.error);const cookie=()=>[...jar].map(([k,v])=>`${k}=${v}`).join('; ');
  const web=(action,body)=>request(`/api/trips/${tripId}/directions${action?'/'+action:''}`,null,body===undefined?'GET':'POST',body,{Cookie:cookie(),Origin:e.api});
  const webRead=await web('');assert.equal(webRead.status,200);assert.equal(webRead.body.data.artifactId,artifactId);assert.deepEqual(webRead.body.data.content,restored.content);
  const webDay={...restored.content.draft.days[6],activities:['Explicit Web edit']};const webEdit=await web('edit',{artifactId,expectedRevision:revision,operationId:uuid(),replacements:[webDay]});assert.equal(webEdit.status,200);revision=webEdit.body.revision;
  const nativeReload=await exact();assert.deepEqual(nativeReload.content.draft.days[6],webDay);assert.deepEqual((await web('')).body.data.content,nativeReload.content);
- const bound=await act('bind',{tripId,expectedTripVersion:1,startDate:'2026-11-01'});assert.equal(bound.tripVersion,1);
+ const bound=await act('bind',{tripId,expectedTripVersion:1,startDate:'2026-11-01'});assert.equal(bound.tripVersion,1);await tripDirectionsRef();
  const original=await request(`/api/trips/native/v2/${tripId}/proposal?proposalId=${bound.proposalId}`,token);assert.equal(original.status,200);assert.equal(original.body.proposal.revision,bound.proposalRevision);assert.equal(original.body.proposal.before.days[0].items[0].id,oldItem);
  assert.equal((await request(`/api/trips/native/v2/${tripId}`,token)).body.trip.headVersion,1,'binding did not write Trip');
  const confirm={proposalId:bound.proposalId,idempotencyKey:uuid(),digest:original.body.proposal.digest};assert.equal((await request(`/api/trips/native/v2/${tripId}/confirm`,token,'POST',confirm)).status,200);
  const nativeTrip=await request(`/api/trips/native/v2/${tripId}`,token),webTrip=await request(`/api/trips/${tripId}`,null,'GET',undefined,{Cookie:cookie(),Origin:e.api});assert.equal(nativeTrip.status,200);assert.equal(webTrip.status,200);assert.deepEqual(nativeTrip.body.content,webTrip.body.content);assert.equal(nativeTrip.body.trip.headVersion,2);assert.equal(nativeTrip.body.content.days.length,11);assert.equal(nativeTrip.body.content.days[0].items[0].id,oldItem);
- assert.equal((await exact()).current,false);assert.equal((await web('')).body.data.current,false,'original qualified historical directions remain read-only after Trip confirmation');
+ assert.equal((await exact()).current,false);await tripDirectionsRef();assert.equal((await web('')).body.data.current,false,'original qualified historical directions remain read-only after Trip confirmation');
  assert.equal(e.counts.http,0,'zero provider calls; fixture counts are not production evidence');
  assert.equal((await request(base+'/planning/policy',token,'DELETE',{policyId:planningPolicyId})).status,200);
  assert.equal((await request(root+'/choose',token,'POST',{artifactId,expectedRevision:revision,operationId:uuid(),directionId:'breadth'})).status,403,'withdrawn policy blocks effects');
