@@ -1760,6 +1760,16 @@ final class NativeSession {
         return try await dataRequest(prefix:path,path:path,method:"GET",queryItems:q)
     }
 
+    /// Directed identity-only lookup; the original exact reader still supplies content.
+    func tripDirectionsReferenceRequest(tripID: String) async throws -> Data {
+        guard UUID(uuidString: tripID) != nil else { throw NativeDataError.invalidResponse }
+        let path = "api/results/native/v2/trip-directions"
+        let bytes = try await dataRequest(prefix: path, path: path, method: "GET",
+            queryItems: [.init(name: "tripId", value: tripID.lowercased())])
+        guard bytes.count <= 12_000 else { throw NativeDataError.invalidResponse }
+        return bytes
+    }
+
     func travelDirectionsReadRequest(kind: String, conversationID: String, goalID: String) async throws -> Data {
         guard ["basis", "intake"].contains(kind), UUID(uuidString: conversationID) != nil,
               UUID(uuidString: goalID) != nil else { throw NativeDataError.invalidResponse }
