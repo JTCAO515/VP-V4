@@ -1,9 +1,6 @@
 --- a/ios/VisePanda/VisePanda/App/NativeSession.swift
 +++ b/ios/VisePanda/VisePanda/App/NativeSession.swift
-@@ -1792,6 +1792,58 @@
-             guard try communitySafetyActor() == ticket.actor, resultDataProjectionFence.accepts(ticket, artifactID: resultArtifact) else { throw NativeDataError.staleSessionResponse }
-         }
-         return data
+@@ -1794,0 +1795,52 @@
 +    }
 +
 +    /// Finite assistant replay. Uses original credentials/session and never an Ask writer.
@@ -56,6 +53,3 @@
 +        guard dataScope == selection.scope, try communitySafetyActor().sessionID == selection.sessionID else { throw NativeDataError.staleSessionResponse }
 +        let bytes = try NativeAssistantEventsCursor.encode(sequence, selection: selection)
 +        guard vault.write(bytes, service: assistantEventsCursorService, owner: selection.scope.subject) == errSecSuccess else { throw NativeDataError.sessionUnavailable }
-     }
- 
-     /// Read one bounded live connection. Reconnection never sends an Ask request.

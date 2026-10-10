@@ -22,7 +22,7 @@ Cursor codec persists only owner/endpoint/epoch/session/policy/conversation/sequ
 ## Actual checks
 
 PASS: Swift typecheck on own source using exact minimal NativeDataScope/NativeDataError support types.
-PASS: 6 XCTest behavior tests on same owned source copied into a disposable macOS14 Swift package (check-foundation.py); 0 failures, exit0, log /tmp/vpj08-native-events-foundation.log. This is foundation evidence, not App target/Simulator/Auth evidence.
+PASS: 7 XCTest behavior tests on same owned source copied into a disposable macOS14 Swift package (check-foundation.py); 0 failures, exit0, log /tmp/vpj08-native-events-foundation.log. This is foundation evidence, not App target/Simulator/Auth evidence.
 Initial package build failed because temporary package lacked macOS14 Observation minimum; fixed only temporary package platform, no production source change.
 UNRUN: registered App target/owned Simulator, actual signed Auth/durable SQL/SSE integration, process restart/cross-account server replay, original privacy erasure consumer integration. Shared lease and reviewed durable WIRE are still inputs.
 UNRUN: physical device/SDK physical attributes/sharing/provider target. No production/permission/payment/model operations.

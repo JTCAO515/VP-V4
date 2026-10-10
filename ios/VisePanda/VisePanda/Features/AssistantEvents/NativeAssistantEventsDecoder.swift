@@ -11,8 +11,11 @@ enum NativeAssistantEventsDecoder {
     }
     enum Change: Equatable {
         case task(Status)
+        case progress(Tool, ReceiptState)
         case artifact(id: String, revision: Int, invalidated: Bool, unavailable: Bool)
     }
+    enum Tool: String { case evidence = "evidence.lookup", place = "place.read", constraints = "constraints.evaluate", result = "result.prepare" }
+    enum ReceiptState: String { case started, completed, unknown }
     struct Event: Equatable {
         let eventID: String
         let sequence: Int
@@ -22,7 +25,7 @@ enum NativeAssistantEventsDecoder {
 
         var reference: NativeAssistantEventsReference {
             switch change {
-            case .task:
+            case .task, .progress:
                 return .init(eventID: eventID, cursor: String(sequence), object: .task(taskID),
                              revision: sequence, invalidated: false)
             case .artifact(let id, let revision, let invalidated, _):
@@ -81,6 +84,11 @@ enum NativeAssistantEventsDecoder {
                     guard Set(object.keys) == base.union(["status"]),
                           let raw = object["status"] as? String, let status = Status(rawValue: raw) else { throw NativeDataError.invalidResponse }
                     change = .task(status)
+                } else if object["type"] as? String == "task_progress" {
+                    guard Set(object.keys) == base.union(["tool", "state"]),
+                          let tool = object["tool"] as? String, let parsedTool = Tool(rawValue: tool),
+                          let state = object["state"] as? String, let parsedState = ReceiptState(rawValue: state) else { throw NativeDataError.invalidResponse }
+                    change = .progress(parsedTool, parsedState)
                 } else {
                     guard Set(object.keys) == base.union(["artifactId", "revision", "availability"]),
                           let type = object["type"] as? String, ["artifact_ready", "artifact_updated", "artifact_invalidated"].contains(type),

@@ -40,10 +40,17 @@ final class NativeAssistantEventsTests: XCTestCase {
         XCTAssertThrowsError(try NativeAssistantEventsDecoder.decode(Data(future.utf8), conversationID: conversation, after: 0))
     }
 
+    func testProgressUnionMatchesOriginalToolReceiptsOnly() throws {
+        let wire = String(decoding: stream(), as: UTF8.self).replacingOccurrences(of: "\"type\":\"task_status\",\"status\":\"completed\"", with: "\"type\":\"task_progress\",\"tool\":\"evidence.lookup\",\"state\":\"completed\"")
+        let page = try NativeAssistantEventsDecoder.decode(Data(wire.utf8), conversationID: conversation, after: 0)
+        XCTAssertEqual(page.events.first?.change, .progress(.evidence, .completed))
+        XCTAssertThrowsError(try NativeAssistantEventsDecoder.decode(Data(wire.replacingOccurrences(of: "evidence.lookup", with: "trip.confirm").utf8), conversationID: conversation, after: 0))
+    }
+
     @MainActor func testDedupRollbackAndCursorWriteBeforeAck() async throws {
         let selected = selection, projection = NativeAssistantEventsProjection()
         projection.bind(selected, active: true)
-        let reference = NativeAssistantEventsReference(eventID: "one", cursor: "1", object: .artifact(task), revision: 2, invalidated: false)
+        let reference = NativeAssistantEventsReference(eventID: "\(conversation):1", cursor: "1", object: .artifact(task), revision: 2, invalidated: false)
         var clears = 0, reads = 0, saves = 0
         let first = try await projection.consume(reference, selection: selected, clear: { _ in clears += 1 },
             readCurrent: { _ in reads += 1; return true }, saveCursor: { _, _ in saves += 1 })
@@ -52,12 +59,12 @@ final class NativeAssistantEventsTests: XCTestCase {
             readCurrent: { _ in reads += 1; return true }, saveCursor: { _, _ in saves += 1 })
         XCTAssertEqual(duplicate, .duplicate)
         XCTAssertEqual(clears, 1); XCTAssertEqual(reads, 1); XCTAssertEqual(saves, 1)
-        let rollback = NativeAssistantEventsReference(eventID: "two", cursor: "2", object: .artifact(task), revision: 1, invalidated: false)
+        let rollback = NativeAssistantEventsReference(eventID: "\(conversation):2", cursor: "2", object: .artifact(task), revision: 1, invalidated: false)
         do {
             _ = try await projection.consume(rollback, selection: selected, clear: { _ in }, readCurrent: { _ in true }, saveCursor: { _, _ in })
             XCTFail("rollback accepted")
         } catch { }
-        let next = NativeAssistantEventsReference(eventID: "three", cursor: "3", object: .artifact(task), revision: 3, invalidated: false)
+        let next = NativeAssistantEventsReference(eventID: "\(conversation):3", cursor: "3", object: .artifact(task), revision: 3, invalidated: false)
         do {
             _ = try await projection.consume(next, selection: selected, clear: { _ in }, readCurrent: { _ in true },
                 saveCursor: { _, _ in throw NativeDataError.invalidResponse })
@@ -69,7 +76,7 @@ final class NativeAssistantEventsTests: XCTestCase {
     @MainActor func testReplacementDuringReadCannotAcknowledgeOldEvent() async throws {
         let selected = selection, projection = NativeAssistantEventsProjection()
         projection.bind(selected, active: true)
-        let reference = NativeAssistantEventsReference(eventID: "one", cursor: "1", object: .task(task), revision: 1, invalidated: false)
+        let reference = NativeAssistantEventsReference(eventID: "\(conversation):1", cursor: "1", object: .task(task), revision: 1, invalidated: false)
         var saves = 0
         let result = try await projection.consume(reference, selection: selected, clear: { _ in },
             readCurrent: { _ in projection.suspend(); return true }, saveCursor: { _, _ in saves += 1 })

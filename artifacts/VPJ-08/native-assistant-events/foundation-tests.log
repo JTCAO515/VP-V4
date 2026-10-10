@@ -13,35 +13,38 @@ Building for debugging...
 [69 / 92] VisePanda
 [77 / 92] VisePanda
 [82 / 93] VisePandaTests-product
-[103 / 129]
-[108 / 129]
+[102 / 129]
+[106 / 129]
+[110 / 129]
 [111 / 129]
 [114 / 129]
 [115 / 129]
 [123 / 129] VisePandaTests-product
 [125 / 129] VisePandaTests-product
-Build complete! (5.28秒)
-Test Suite 'All tests' started at 2026-10-10 13:55:15.265.
-Test Suite 'VisePandaTests.xctest' started at 2026-10-10 13:55:15.266.
-Test Suite 'NativeAssistantEventsTests' started at 2026-10-10 13:55:15.266.
+Build complete! (5.81秒)
+Test Suite 'All tests' started at 2026-10-10 13:57:38.819.
+Test Suite 'VisePandaTests.xctest' started at 2026-10-10 13:57:38.820.
+Test Suite 'NativeAssistantEventsTests' started at 2026-10-10 13:57:38.820.
 Test Case '-[VisePandaTests.NativeAssistantEventsTests testCursorNeedsFreshQualificationAndSameSessionEpochPolicySelection]' started.
 Test Case '-[VisePandaTests.NativeAssistantEventsTests testCursorNeedsFreshQualificationAndSameSessionEpochPolicySelection]' passed (0.001 seconds).
 Test Case '-[VisePandaTests.NativeAssistantEventsTests testDedupRollbackAndCursorWriteBeforeAck]' started.
 Test Case '-[VisePandaTests.NativeAssistantEventsTests testDedupRollbackAndCursorWriteBeforeAck]' passed (0.000 seconds).
 Test Case '-[VisePandaTests.NativeAssistantEventsTests testDeniedReadClearsButDoesNotAdvanceCursor]' started.
-Test Case '-[VisePandaTests.NativeAssistantEventsTests testDeniedReadClearsButDoesNotAdvanceCursor]' passed (0.001 seconds).
+Test Case '-[VisePandaTests.NativeAssistantEventsTests testDeniedReadClearsButDoesNotAdvanceCursor]' passed (0.000 seconds).
 Test Case '-[VisePandaTests.NativeAssistantEventsTests testExpiredReadAndTruncatedFrameCannotReachOriginalReader]' started.
 Test Case '-[VisePandaTests.NativeAssistantEventsTests testExpiredReadAndTruncatedFrameCannotReachOriginalReader]' passed (0.000 seconds).
 Test Case '-[VisePandaTests.NativeAssistantEventsTests testFiniteReplayRequiresCompleteCheckpointAndClosedSchema]' started.
 Test Case '-[VisePandaTests.NativeAssistantEventsTests testFiniteReplayRequiresCompleteCheckpointAndClosedSchema]' passed (0.000 seconds).
+Test Case '-[VisePandaTests.NativeAssistantEventsTests testProgressUnionMatchesOriginalToolReceiptsOnly]' started.
+Test Case '-[VisePandaTests.NativeAssistantEventsTests testProgressUnionMatchesOriginalToolReceiptsOnly]' passed (0.000 seconds).
 Test Case '-[VisePandaTests.NativeAssistantEventsTests testReplacementDuringReadCannotAcknowledgeOldEvent]' started.
 Test Case '-[VisePandaTests.NativeAssistantEventsTests testReplacementDuringReadCannotAcknowledgeOldEvent]' passed (0.000 seconds).
-Test Suite 'NativeAssistantEventsTests' passed at 2026-10-10 13:55:15.268.
-	 Executed 6 tests, with 0 failures (0 unexpected) in 0.002 (0.002) seconds
-Test Suite 'VisePandaTests.xctest' passed at 2026-10-10 13:55:15.268.
-	 Executed 6 tests, with 0 failures (0 unexpected) in 0.002 (0.003) seconds
-Test Suite 'All tests' passed at 2026-10-10 13:55:15.268.
-	 Executed 6 tests, with 0 failures (0 unexpected) in 0.002 (0.003) seconds
+Test Suite 'NativeAssistantEventsTests' passed at 2026-10-10 13:57:38.822.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.002 (0.002) seconds
+Test Suite 'VisePandaTests.xctest' passed at 2026-10-10 13:57:38.822.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.002 (0.002) seconds
+Test Suite 'All tests' passed at 2026-10-10 13:57:38.822.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.002 (0.003) seconds
 ◇ Test run started.
 ↳ Testing Library Version: 2084
 ↳ Target Platform: arm64e-apple-macos14.0

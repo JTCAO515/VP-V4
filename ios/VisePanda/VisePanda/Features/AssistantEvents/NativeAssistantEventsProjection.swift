@@ -28,6 +28,7 @@ final class NativeAssistantEventsProjection {
     private(set) var cursor: String?
     private var revisions: [NativeAssistantEventsReference.Object: Int] = [:]
     private var identities: [String: NativeAssistantEventsReference] = [:]
+    private var identityOrder: [String] = []
     private var busy = false
 
     func bind(_ selection: NativeAssistantEventsSelection?, active: Bool) {
@@ -39,7 +40,7 @@ final class NativeAssistantEventsProjection {
     func suspend() { lifetime.invalidate(); resetProjection() }
 
     private func resetProjection() {
-        cursor = nil; revisions.removeAll(); identities.removeAll(); busy = false
+        cursor = nil; revisions.removeAll(); identities.removeAll(); identityOrder.removeAll(); busy = false
     }
 
     /// Calls no submit/cancel/confirm writer and never changes navigation or draft state.
@@ -52,12 +53,17 @@ final class NativeAssistantEventsProjection {
         let generation = lifetime.generation
         guard reference.valid, lifetime.accepts(selection, generation: generation), !busy,
               !Task.isCancelled else { return .stale }
+        guard let sequence = Int(reference.cursor), (1...999_999_999_999_999).contains(sequence),
+              reference.cursor == String(sequence), reference.eventID == "\(selection.conversationID):\(sequence)" else {
+            throw NativeDataError.invalidResponse
+        }
         if let previous = identities[reference.eventID] {
             guard previous == reference else { throw NativeDataError.invalidResponse }
             return .duplicate
         }
         guard reference.revision >= (revisions[reference.object] ?? 0),
-              identities.count < 2_000, revisions.count < 200 else {
+              sequence > (cursor.flatMap(Int.init) ?? 0),
+              revisions[reference.object] != nil || revisions.count < 200 else {
             throw NativeDataError.invalidResponse
         }
         busy = true
@@ -76,6 +82,8 @@ final class NativeAssistantEventsProjection {
         try saveCursor(selection, reference.cursor)
         revisions[reference.object] = reference.revision
         identities[reference.eventID] = reference
+        identityOrder.append(reference.eventID)
+        if identityOrder.count > 50 { identities.removeValue(forKey: identityOrder.removeFirst()) }
         cursor = reference.cursor
         return .applied
     }
