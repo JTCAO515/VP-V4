@@ -7,10 +7,11 @@ enum NativeJournalDataSourceID: String, CaseIterable, Codable, Identifiable {
     case community, recovery, tripLifecycle, travelerBrief, pdf, communitySafety
     case notificationData, coverageProgress, archive, experience, placeAction, scopedTrip, result
     case notification, guide, ask, tripSupport, deviceDelete, readinessSave, linkedTripDelete, memoryDelete, tripDelete
+    case assistantEventsCursor
     var id: String { rawValue }
 }
 
-enum NativeJournalDataReadState: String, Codable { case absent, pending, unavailable }
+enum NativeJournalDataReadState: String, Codable { case absent, pending, projection, unavailable }
 enum NativeJournalDataExportKind: String, Codable { case originalOperation, metadataOnly }
 
 /// Only validated operation bytes or explicitly selected, non-secret metadata can enter this wire.
@@ -24,6 +25,7 @@ struct NativeJournalDataExportRecord: Codable, Equatable {
     let originalOperationBytes: Data?
     let contentBoundary: String
     var objectID: String? = nil
+    var assistantEventsCursor: NativeAssistantEventsCursor.Metadata? = nil
 }
 
 struct NativeJournalDataSnapshot: Equatable {
@@ -42,9 +44,15 @@ struct NativeJournalDataSnapshot: Equatable {
               record.action == nil || record.action!.utf8.count <= 64 else { return false }
         switch record.state {
         case .absent, .unavailable:
-            return originalIdentity == nil && operationIdentity == nil && record.originalOperationBytes == nil
+            return record.assistantEventsCursor == nil && originalIdentity == nil && operationIdentity == nil && record.originalOperationBytes == nil
                 && record.operationID == nil && record.tripID == nil && record.objectID == nil && record.action == nil && record.kind == .metadataOnly
+        case .projection:
+            return record.source == .assistantEventsCursor && record.kind == .metadataOnly &&
+                record.assistantEventsCursor?.valid == true && originalIdentity != nil && !originalIdentity!.isEmpty && originalIdentity!.count <= 4096 &&
+                operationIdentity == originalIdentity && record.originalOperationBytes == nil &&
+                record.operationID == nil && record.tripID == nil && record.action == nil && record.objectID == nil
         case .pending:
+            guard record.assistantEventsCursor == nil, record.source != .assistantEventsCursor else { return false }
             let byteSources: Set<NativeJournalDataSourceID> = [.materialReference, .profile, .conversation, .turn, .notificationData, .coverageProgress, .archive, .result]
             return originalIdentity != nil && !originalIdentity!.isEmpty && originalIdentity!.count <= 262_144
             && operationIdentity != nil && !operationIdentity!.isEmpty && operationIdentity!.count <= 262_144

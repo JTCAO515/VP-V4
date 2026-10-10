@@ -58,6 +58,11 @@ struct NativeTaskActivityView: View {
         .onChange(of: LoadKey(selection: current, active: active)) { _, key in
             store.bind(selection: key.selection, active: key.active)
         }
+        .onChange(of: session.assistantEventsInvalidation?.id) { _, _ in
+            guard let signal = session.assistantEventsInvalidation, let current,
+                  signal.matches(scope: current.scope, sessionID: (try? session.communitySafetyActor())?.sessionID) else { return }
+            if signal.object == nil || signal.object == .task(current.taskID) { store.clear() }
+        }
         .onChange(of: session.turnDataErasure?.id) { _, _ in
             guard let erased = session.turnDataErasure,
                   (try? session.communitySafetyActor()) == erased.actor else { return }

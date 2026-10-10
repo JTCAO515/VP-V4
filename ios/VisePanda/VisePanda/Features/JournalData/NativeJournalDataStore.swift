@@ -87,7 +87,7 @@ import Observation
         do {
             guard let selection, accepts(selection, current: current) else { throw NativeDataError.staleSessionResponse }
             let encoder = JSONEncoder(); encoder.outputFormatting = [.sortedKeys, .prettyPrinted]
-            let document = Export(schemaVersion: "native-owner-journals/1", operationID: selection.id,
+            let document = Export(schemaVersion: "native-owner-journals/2", operationID: selection.id,
                 actorBinding: nativeJournalDataActorBinding(selection.actor), records: selection.snapshots.map(\.record),
                 completeSourceRead: !selection.snapshots.contains { $0.record.state == .unavailable },
                 credentials: "excluded", acknowledgements: "not_inferred", serverData: "unchanged", externalCopies: "not_recalled")

@@ -23,9 +23,15 @@ struct NativeJournalDataView: View {
                 ForEach(store.rows, id: \.record.source) { row in
                     VStack(alignment: .leading) {
                         Text(row.record.source.title(chinese: chinese)).font(.headline)
-                        Text(row.record.state == .absent ? t("原读取已确认无请求", "The original reader confirmed no request")
+                        Text(row.record.state == .absent ? (row.record.source == .assistantEventsCursor ? t("已确认无位置缓存", "Position cache confirmed absent") : t("原读取已确认无请求", "The original reader confirmed no request"))
                             : row.record.state == .unavailable ? t("资格或读取未确认；不视为空", "Qualification or read unconfirmed; not empty")
+                            : row.record.state == .projection ? t("缓存的事件读取位置；不是未确认操作", "Cached replay position; not an unresolved operation")
                             : t("读取时保留的原请求；本页不推断当前结果", "Request retained at the source read; this page does not infer its current outcome"))
+                        if row.record.state == .projection, let cursor = row.record.assistantEventsCursor {
+                            Text(t("可恢复事件的缓存位置；不是未确认操作或服务器完成证明", "Cached replay position; not an unresolved operation or server completion proof")).font(.caption)
+                            Text(cursor.conversationID + " · " + String(cursor.afterSequence)).font(.caption)
+                            Text(t("仅可导出位置元数据；换账号、退出或原权限失效会清除此缓存", "Only position metadata is exportable; account replacement, sign-out or original eligibility denial clears this cache")).font(.caption)
+                        }
                         if row.record.state == .pending {
                             Text(row.record.kind == .originalOperation ? t("可导出原操作字节", "Original operation bytes may be exported")
                                 : t("仅导出安全操作元数据；正文与授权保持受保护", "Only safe operation metadata is exported; body and authority remain protected")).font(.caption)
@@ -243,6 +249,7 @@ extension NativeJournalDataSourceID {
     }
     func title(chinese: Bool) -> String {
         let names: [Self: (String, String)] = [
+            .assistantEventsCursor: ("可恢复事件缓存", "Replay position cache"),
             .coverage: ("覆盖操作", "Coverage operation"), .materialReference: ("材料引用清理", "Material-reference cleanup"),
             .profile: ("档案清理", "Profile cleanup"), .conversation: ("对话清理", "Conversation cleanup"),
             .serviceOperation: ("服务协作", "Service operation"), .turn: ("轮次清理", "Turn cleanup"),
