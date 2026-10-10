@@ -3,7 +3,7 @@
   "beforeSHA256": "a0a172976b91319a20ce6af1902c81c9218747c09ba56afe323ecf705720022f",
   "afterSHA256": "a8425481a442c669d5c2aca4331f0d56bdfd10d675fdf01087dd14002e925063",
   "patchSHA256": "2d50ea1cc16cc466af6e9d8b5650056adb31269a7aab51619efd10a84ed89c9c",
-  "lease": "not granted; private fixture candidate only",
+  "lease": "Main final exact bootstrap lease a0a172/2d50\u2192a842548; original owner limited release; guarded applied",
   "failedSourceHead": "f7279b7890c8c8d993d378e285a74a03bb791e38",
   "scope": "after original0705 apply, ordered later current migrations before existing fixture data/roles; strict runtime+schema check; decoder/expectedsource/oldtests/5s/concurrency/cleanup unchanged",
   "validation": "syntax only; necessary owned full Turn fixture chain required once after lease due sequential prerequisites; no711/718test matrix"

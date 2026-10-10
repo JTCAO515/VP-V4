@@ -1,0 +1,62 @@
+▶ Turn source, actual erasure, permanent identities and original D2
+  ✔ exact fresh complete migration and fixed helpers (7296.677541ms)
+  ✔ actual selected legacy source and bounded own progress exact-byte recovery (1207.4275ms)
+  ✔ actual original independent message producer and scoped sensitive effects (1922.850458ms)
+  ✔ source writer concurrency and strict immutable/helper drift (1008.732458ms)
+  ✔ bounded UTF8/root capacity and absolute original 30s expiry (43477.061708ms)
+  ✔ original D2 canonical encrypted private lifecycle and supplemental key projection (2984.576167ms)
+  ✔ session fences and original account/ownerless-child cleanup (427.063625ms)
+  ✔ original canonical and legacy financial source retention (989.333292ms)
+✔ Turn source, actual erasure, permanent identities and original D2 (59383.545167ms)
+ℹ BASELINE vpj58-turn-38850227
+OWN_MIGRATION_APPLIED t
+CURRENT_APPEND_CHAIN_APPLIED 5 20261010040000_vpj09_retained_turn_export.sql
+ℹ SOURCE_CONFLICTS []
+ACTUAL_PREVIEW preview { textBodies: 1, taskDigests: 1, messageBodies: 0 } {
+  goals: 0,
+  tasks: 1,
+  turns: 1,
+  threads: 1,
+  capacity: 0,
+  messages: 0,
+  taskTurns: 1,
+  conversations: 0,
+  budgetAttempts: 0,
+  textDispatches: 0
+}
+ℹ PROGRESS_ERASE_EXACT_BYTES_RECOVERY_TS_DECODE_PASS
+ℹ CAS_ROLLBACK_POLICY_EPOCH_UNKNOWN_SCHEMA_DEFAULT_GUARD_NEGATIVES_PASS
+ℹ ORIGINAL_SUBMIT_CLAIM_AUTHORIZE_COMPLETE_INDEPENDENT_MESSAGE_ACTUAL_SQL_TS_PREVIEW_PASS
+ℹ ACTUAL_SENSITIVE_EFFECTS_PARENTS_OTHER_BUDGET_BYTES_RECOVERY_ROOT_AND_PK_PROOF_TS_RECEIPT_PASS 4
+ℹ PERMANENT_ERASED_EVENT_PK_NEW_PARENT_OLDNEW_DISPATCH_PROPOSAL_RESTORE_NEGATIVES_PASS
+ℹ ACTUAL_SELECTED_SOURCE_WRITER_ORIGINAL_ERROR_UNRELATED_SHARED_OWNER_CONCURRENCY_PASS
+ℹ FIXED_IDENTITY_DEFINITION_NEW_FUNCTION_CONFIG_AND_IMMUTABLE_KEYS_DRIFT_NEGATIVES_PASS
+ℹ ACTUAL_UTF8_1MB_AND_10001_ROOT_SNAPSHOT_FULL_FAILURE_ROLLBACK_PASS
+ℹ ORIGINAL_30S_DEADLINE_WAIT_START
+REAL_ABSOLUTE_30S_NO_RENEW_NO_EFFECT_RECOVERY_UNKNOWN_PASS
+ℹ ACTUAL_PAGE 38 { data: 20, fences: 3, operations: 7, sourceIdentityKeys: 4 }
+TS_PAGE_DECODE_PASS
+ℹ ORIGINAL_D2_ACTUAL_LEASE_COMMIT_PROVENANCE_REPLAY_CANONICAL_ENCRYPTED_DOWNLOAD_CONSUME_RECOVERY_PASS
+ℹ SESSION_DELETE_PERMANENT_ROOT_PK_FENCES_ORIGINAL_ACCOUNT_OWNERLESS_CHILD_CASCADE_PASS
+ℹ SOURCE_CONFLICTS []
+ACTUAL_PREVIEW preview { textBodies: 1, taskDigests: 1, messageBodies: 0 } {
+  goals: 0,
+  tasks: 1,
+  turns: 1,
+  threads: 1,
+  capacity: 0,
+  messages: 0,
+  taskTurns: 1,
+  conversations: 0,
+  budgetAttempts: 0,
+  textDispatches: 0
+}
+ℹ ORIGINAL_RESERVE_CANONICAL_TASK_PENDING_RETAIN_LEGACY_BUDGET_BIGINT_PASS
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 59425.716917

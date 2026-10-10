@@ -13,4 +13,10 @@ try{
  console.log('BASELINE',container);writeFileSync(fixturePath('vpj58-turn-sql-container'),container);
  check(await sql(container,'begin;'+readFileSync('supabase/migrations/20261007050000_turn_data.sql','utf8')+'commit;'));
  console.log('OWN_MIGRATION_APPLIED',check(await sql(container,'select turn_data_private.schema_supported_v1();')));
+ // Current TS/export consumers require the complete append chain. Apply later
+ // migrations before any fixture enrollment/data mutates reviewed ACL/body pins.
+ const later=readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&f>'20261007050000_turn_data.sql').sort();
+ for(const f of later)check(await sql(container,'begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;'));
+ console.log('CURRENT_APPEND_CHAIN_APPLIED',later.length,later.at(-1));
+ if(check(await sql(container,'select turn_data_private.runtime_supported_v1() and turn_data_private.schema_supported_v1();'))!=='t')throw Error('Current Turn runtime/schema unavailable after complete migration chain');
 }catch(e){console.error(e.message);process.exitCode=1;}

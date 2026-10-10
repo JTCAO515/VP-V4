@@ -3,7 +3,7 @@
   "beforeSHA256": "d6e14308976515154a5d6232bde5aef4b19338e8dbe9775f1f37ebb785a5cc16",
   "afterSHA256": "c88442ecc99f7ec4925d47393ad9472e0d354f55e1d9025c47c12e25225888d4",
   "patchSHA256": "1121d3258e568e79e71db4a388ee171e5d1b00b81ea79da2793e41c6fa0e6723",
-  "lease": "not granted; final private candidate",
+  "lease": "never applied; superseded by Main final exact runtime bootstrap grant",
   "failedSourceHead": "f7279b7890c8c8d993d378e285a74a03bb791e38",
   "scope": "Main-defined transition after original five historical subcases, before current TS+SQL export/D2; every later append ordered with exact filename/error propagation and current runtime/schema true; originalstrictdecoder/assertions/D2/cascade/budget/5s/concurrency unchanged",
   "superseded": "prior runtime-start candidate retained as historical private proposal only, not applied",
