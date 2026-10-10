@@ -1,3 +1,5 @@
+import { directionsPublishedSourceMatches, directionsProposalMatches } from './source-match.ts';
+import { parseResultArtifactReadV2 } from '../../artifacts/result-v2-contract.ts';
 import { directionsInputBytes } from './input-bytes.ts';
 import type { NextRequest } from 'next/server';
 import { nativeRequestScope } from '../../identity/native-request.ts';
@@ -44,6 +46,24 @@ export async function nativeDirectionsHTTP(request:NextRequest,action:Directions
    return await finish({data:second.data});
   }
   if(!directionsReceipt(action,first.data,params))return await denied('PROVIDER_UNAVAILABLE',503);
+  if(object(first.data)){
+   const reopened=await rpc('read_result_artifact_v2',{p_artifact_id:first.data.artifactId,p_revision:first.data.revision});
+   if(reopened.error)return await denied(...error(reopened.error.message));
+   if(action==='submit'&&first.data.current===true){
+    const basis=await rpc('native_travel_directions_v1',{p_action:'intake',p_policy_id:config.policyId,p_input_bytes:canonical({conversationId:params.conversationId,goalId:params.goalId})});
+    if(basis.error)return await denied(...error(basis.error.message));
+    if(!directionsPublishedSourceMatches(first.data,params,reopened.data,basis.data))return await denied('SERVICE_TASK_CONFLICT',409);
+   }else if(action!=='submit'){
+    const original=parseResultArtifactReadV2(reopened.data);
+    if(!original||!original.current||original.lifecycle!=='active'||original.content.schemaVersion!=='travel-directions/1'||original.artifactId!==first.data.artifactId||original.revision!==first.data.revision)return await denied('SERVICE_TASK_CONFLICT',409);
+    if(action==='bind'){
+     if(original.source.tripId!==params.tripId||original.source.tripVersion!==params.expectedTripVersion)return await denied('SERVICE_TASK_CONFLICT',409);
+     const proposal=await rpc('read_result_artifact_v2',{p_artifact_id:first.data.proposalArtifactId,p_revision:first.data.proposalArtifactRevision});
+     if(proposal.error)return await denied(...error(proposal.error.message));
+     if(!directionsProposalMatches(first.data,reopened.data,proposal.data))return await denied('SERVICE_TASK_CONFLICT',409);
+    }
+   }
+  }
   // Canonical SQL validates result/source/session/policy around every effect;
   // receipt is identity only. Clients must separately reopen original result.
   if(!object(first.data))return await denied('PROVIDER_UNAVAILABLE',503);

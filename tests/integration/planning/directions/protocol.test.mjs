@@ -16,6 +16,7 @@ test('choose/save/edit/bind are independent closed operations and edits do not c
 });
 test('receipts retain original identities, exact revision and source sequence without dispatch grant',()=>{
  const p=submit();const r={kind:'published',artifactId:id,revision:1,reused:false,taskId:p.taskId,turnId:p.turnId,conversationId:p.conversationId,goalId:p.goalId,goalVersion:1,inputMessageId:p.messageId,inputSequence:3,intakeRevision:1,intakeDigest:'a'.repeat(64),current:true};assert.equal(directionsReceipt('submit',r,p),true);
- for(const bad of [{...r,readyForProvider:true},{...r,inputSequence:4},{...r,taskId:randomUUID()},{...r,intakeRevision:2}])assert.equal(directionsReceipt('submit',bad,p),false);
+ for(const bad of [{...r,readyForProvider:true},{...r,inputSequence:2},{...r,inputSequence:1000001},{...r,taskId:randomUUID()},{...r,intakeRevision:2}])assert.equal(directionsReceipt('submit',bad,p),false);
+ assert.equal(directionsReceipt('submit',{...r,inputSequence:8},p),true);
  const action={artifactId:id,expectedRevision:1,operationId:op};assert.equal(directionsReceipt('choose',{kind:'selected',artifactId:id,revision:2,reused:false},action),true);assert.equal(directionsReceipt('save',{kind:'selected',artifactId:id,revision:2,reused:false},action),false);
 });
