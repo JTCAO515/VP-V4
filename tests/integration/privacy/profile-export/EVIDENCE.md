@@ -2,7 +2,8 @@
 
 2026-10-07 Asia/Shanghai. TS products and sole final WIRE fixed at
 11cdbc2a1bdb29e3c3a4dfe6d45e68effa4cbfac on the specified Profile base
-0f114f679b89553017a41d18f3fbd6444bf8259b. Profile base remains unmerged.
+0f114f679b89553017a41d18f3fbd6444bf8259b. Profile base was unmerged at the initial
+checkpoint; see the latest current-main compatibility checkpoint below.
 Initial checkpoint changed only owned profile-export directories;
 no SQL migration was written in this worktree. Later original-owner release and
 Main a7aabb granted exactly the export-worker.ts import/composition/receipt-guard.
@@ -163,3 +164,31 @@ additions are applied under existing lease. Current main78857 is consumed;
 Profile PR670 remains unmerged. Main whole-owned review/scoped record and unique
 main-base PR/exact formal/all applicable CI/protected merge are still pending.
 Parent #239/ALL1/ALL2 stays Open; no target/device/provider acceptance is claimed.
+
+2026-10-08 current-main engineering checkpoint: PR670 merged normally and main
+498ecf1a9b65318023da6850633c91d145391686 was fetched/merged as f3da9a4b. Three original
+Profile-owned add/add conflicts were resolved using actual merged main after
+verifying Root had no own edits there; registry's four leased additions were
+retained. Original0702 now matches main SHAaec808a083914b6414c129369ac96489463a1228fa802d26a68cc120f5fe42d3.
+Own0704 remains exact5f1502f4d93d500db35ba7ae52b6b03b474bbc67abd62b8756ec62c00eaa8989.
+No old migration or runtime pin was rewritten to obtain compatibility.
+
+PASS necessary current ordered PG command (same flag/file as above): actual
+0703->0704->080000 applied, all12 tests PASS/zero skipped/fail, total19636.472ms,
+owned cleanup PASS. Covers legal TIME endpoint/decoder/digest, default-deny/RLS,
+immutable source/provenance, old opaque/mixed Result blockers, both source races,
+missing-row two connections and post-effects expired-lease rollback. This fresh
+result covers the new merged predecessor set; old results remain scoped to theirs.
+PASS same original Auth command/base63000: ownedbfa37dbc, one PASS/zero skipped,
+5679.387ms (total8622.991ms), owned user/process/Supabase/tmp cleanup PASS. Original
+configured worker, protected exact bytes, TIME endpoint, fresh same-owner session
+and actual clear-before-consume denial all verified on this current set.
+Prior unaffected canonical6, producer11 and original affected19 evidence reused;
+no unrelated green matrix repeated. Diff check against actual origin/main PASS.
+Merge-stage whitespace warnings came only from already-merged upstream logs;
+those original historical logs were retained unchanged.
+
+No unmerged product dependency remains in this PR. Main ownedCODECOMPLETE6040227896
+and ff1de3a6 batch review remain the development record; exact new remote PR head,
+formal review/all applicable CI/protected merge still follow original gates.
+Whole #239/ALL1/ALL2 and target/provider/device acceptance remain separate.

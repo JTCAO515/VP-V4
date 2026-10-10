@@ -5,6 +5,7 @@ import {randomUUID as uuid,createHash} from 'node:crypto';
 import {readFileSync,readdirSync} from 'node:fs';
 import {decodeBrief,decodeBriefOwnerState,decodeBriefAudit,decodeBriefDataBundle,decodeBriefLocator,decodeBriefReceipt,decodeBriefSourceOptions} from '../../../lib/server/service-cases/brief/contract.ts';
 import {command,sql} from '../cost/fixtures/postgres-rpc.mjs';
+import {observedBriefAuditSeed} from '../privacy/profile-data/brief-seed-diagnostics.mjs';
 const enabled=process.env.VP_TRAVELER_BRIEF_DB_TEST==='1';
 const container=process.env.VP_TRAVELER_BRIEF_TEST_CONTAINER||'vp223-'+uuid().slice(0,8);let created=false;
 const migration='20261005060000_traveler_brief.sql';
@@ -255,7 +256,7 @@ run('export exact 30s lease, reference-only projection, invalidation after sourc
  await db(`update service_brief_private.export_leases set expires_at=clock_timestamp()-interval '1 second' where request_id='${r3.requestId}';`);await rejects(f.a,r3,'BRIEF_STALE');
  const g=await fixture();await db(`insert into service_brief_private.audit(case_id,owner_id,revision,actor_id,action,recipient_id,grant_revision,field_keys) select '${g.caseId}','${g.a.id}',0,'${g.a.id}','read','${g.staff.id}',1,'[]' from generate_series(1,201);`);
  await rejects(g.a,{action:'audit',caseId:g.caseId},'BRIEF_LIMIT');
- await db(`insert into service_brief_private.audit(case_id,owner_id,revision,actor_id,action,recipient_id,grant_revision,field_keys) select '${g.caseId}','${g.a.id}',0,'${g.a.id}','read','${g.staff.id}',1,'[]' from generate_series(1,9800);`);
+ await observedBriefAuditSeed(container,`insert into service_brief_private.audit(case_id,owner_id,revision,actor_id,action,recipient_id,grant_revision,field_keys) select '${g.caseId}','${g.a.id}',0,'${g.a.id}','read','${g.staff.id}',1,'[]' from generate_series(1,9800);`);
  await rejects(g.a,{action:'export',requestId:uuid(),confirmed:true},'BRIEF_LIMIT');
  const h=await fixture();await db(`insert into service_brief_private.audit(case_id,owner_id,revision,actor_id,action,recipient_id,grant_revision,field_keys) select '${h.caseId}','${h.a.id}',0,'${h.a.id}','read','${h.staff.id}',1,'[]' from generate_series(1,2500);`);await rejects(h.a,{action:'export',requestId:uuid(),confirmed:true},'BRIEF_LIMIT');
 });

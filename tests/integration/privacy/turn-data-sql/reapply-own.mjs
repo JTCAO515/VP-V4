@@ -1,0 +1,2 @@
+import { fixturePath } from './fixture-path.mjs';
+import{readFileSync}from'node:fs';import{sql}from'../../cost/fixtures/postgres-rpc.mjs';const c=readFileSync(fixturePath('vpj58-turn-sql-container'),'utf8').trim();const src=readFileSync('supabase/migrations/20261007050000_turn_data.sql','utf8');for(const f of src.matchAll(/create function [\s\S]*?\$\$[\s\S]*?\$\$;/g)){const r=await sql(c,f[0].replace('create function','create or replace function'));if(r.code){console.error(r.stderr);process.exit(1);}}console.log('REAPPLIED_OWN_FUNCTIONS');

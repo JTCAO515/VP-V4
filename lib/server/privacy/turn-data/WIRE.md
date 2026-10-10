@@ -165,9 +165,16 @@ exact qualified graph, all own finite operation rows and permanent Turn fences.
 Parents are IDs/necessary minimal task/capacity/budget metadata; independent
 conversation/goal bodies stay in original conversations export. Deduplicate each actual PK exactly once in fixed schema-group/PK native order,
 not a separate owner-wide scan of each table. Budget rows use exact selected
-task + authenticated scope/attempt graph; legacy text-worker.ts:61 uses
-budget taskId=lease.turnId, so qualify that exact Turn + scope owner too rather
-than require a nonexistent ServiceTask join or silently drop its ledger; ownerless execution copies use exact
+task + authenticated scope/attempt graph. text-worker.ts:61 passes client
+taskId=lease.turnId; original 20260911200339:159-178 reserve_model_budget resolves
+service_task_turns -> canonical ServiceTask and stores that task_id, binding
+service_tasks.budget_scope_id. Include the actual selected task + matching bound
+scope + scope.owner for ordinary text/task-history attempts even without planning
+dispatch/binding. Historical pre-canonical ledger may actually retain Turn ID;
+qualify that exact Turn + scope owner too. If multiple Turns share a Task without
+a per-Turn attempt receipt, do not invent attribution; accurately block unsafe
+active/ambiguous references or declare whole necessary financial metadata retained.
+Never omit a canonical Task ledger or its pending state as a false zero; ownerless execution copies use exact
 qualified execution IDs; no common owner/task identity alone pulls another Turn
 into erasure. Export sourceAuthorities is the bounded sorted union of actual
 text/message/task/dispatch/planning source pairs and original retained operations.
@@ -176,12 +183,12 @@ unknown source or truncation: entire snapshot fails capacity/unavailable honestl
 
 Page exact={schemaVersion,section,sourceDigest,items:[snapshot],hasMore:false,
 nextCursor:null,sectionComplete:true}. Snapshot exact={ownerId,sources,operations,
-fences,sourceRows,sourceAuthorities}. `sources` has EVERY pinned relation in schema order, each exact
+fences,sourceIdentityKeys,sourceRows,sourceAuthorities}. `sources` has EVERY pinned relation in schema order, each exact
 {relation,rows}; rows match exact pinned columns/types/nullability/PK order. PostgreSQL bigint
 and xid8 are canonical decimal STRINGS (including small values); integer is a
 safe JSON integer, timestamps preserve original offset/fractional precision. Empty
 groups are actual inspected empty tables, not synthesized missing-source fallback.
-`sourceRows` exact={data,operations,fences}; counts equal arrays, total<=10000;
+`sourceRows` exact={data,operations,fences,sourceIdentityKeys}; counts equal arrays, total<=10000;
 UTF8 page<=1MB. Operations use validOperationRow; fences exact={kind:'turn'|'message'|
 'artifact'|'operation',objectId,requestId,createdAt}; minimal permanent IDs only.
 No hidden source byte preimage in receipt/provenance.
@@ -317,3 +324,83 @@ Registered TS owner-handler coverage proof 1/1 PASS,0skip; original D2 worker/
 private-download contract regressions 6/6 PASS,0skip. Actual SQL/Auth download
 remains UNRUN. Lint/typecheck/diff PASS after shared integration. No CI/fixture
 metadata lease inferred from this registration grant.
+
+Next production build via repository pnpm build PASS (exit0), including new
+registered `/api/privacy/native/v1/turn-data`; original earlier nonexistent
+scripts/build.mjs invocation failed before work and was corrected to package.json
+command. No deployment or target runtime was run.
+
+Main exact CI append lease (b3545716cdb21c82bfcd0afb3585877ff9a710cee38ab727c704fd7e64847390)
+applied after current Profile/Export owner release. Only native-HTTP tail registers
+actual turn-data/run-http + auth-http/base62960; fresh port preflight remains in
+original runner and other ranges/indices/shards/strict zeroSkip/aggregate are
+unchanged. Classification --list PASS and existing DB integration governance
+11/11 PASS,0skip. Candidate retired. No speculative future SQL test registered.
+
+Early actual owned PG17 SQL-claims payloads consumed by current TS: preview
+decode PASS; 35-source export page decode PASS with schema-order mismatch[];
+finite progress erase original-byte receipt decode PASS and after-progress
+snapshot actual data6/operations2/fences1 decode PASS. Sensitive erasure deliberately
+requires all 56 registered source guards; unleased helper/trigger candidates
+remain unavailable, not a simulated erasure PASS. Full Auth/D2/Native still UNRUN.
+
+Main supplemental identity-key ruling (2026-10-08): original API/cleanup DTO/
+35-source SHA unchanged. decision.retainedFences strictly counts ONLY selected
+Turn/message/artifact root graph IDs, not every technical source key. Own immutable
+operations.source_identity_keys holds relation+actual erased-source PK, <=4100,
+no source body; it remains after source/progress clear with original bytes/decision.
+D2 owner snapshot exposes separate closed sourceIdentityKeys[] exact entries
+{requestId,relation,pk} from actual terminal sensitive operations. Relation must
+be an approved effect=erase source; pk EXACT pinned primary column names/types,
+non-null. Bigint/xid8 PK canonical decimal strings, original integer/UUID/text
+types retained; no invented UUID. Sort/dedupe by requestId, relation C, original
+native PK column order. sourceRows.sourceIdentityKeys equals exact flattened
+array length; total data+operations+fences+sourceIdentityKeys<=10000 and whole
+page UTF8<=1MB, linear accumulation. Existing original authority union/currentness/
+root fences/nonrenewing expiry/terminal recovery unchanged. Additional technical
+keys are inspectable separate metadata, never a recursive receipt/body preimage or
+new cleanup selection. Progress clearing retains these immutable keys.
+
+Closed snapshot additionally checks per terminal sensitive request that the
+flattened sourceIdentityKeys count for each approved countKey equals its immutable
+decision.erasedCounts. Matching an empty array counter cannot conceal omitted
+actual technical identities. This adds no root cleanup DTO or selection.
+
+## Final same-source Auth handoff
+
+Source: sole SQL `08b2edc3c52733dfd4d47cf71aa76557d2f1a451`, 0705 SHA256
+`33b066b7846626a03c93b8e34656215d09bbe9cf6ecfffd8dd70200dc7f3f85d`;
+Profile0702 `aec808...` source preserved. Native `82f09c8022489c8cabdb9fd24d1d23664d443904`
+normal-merged with exact source equality; original Native12 r2 and36 r1 are
+separate evidence, retaining original r1 clock FAIL/cancel75 and device UNRUN.
+35-source-schema SHA remains `1629f0b1382aa08a6bc8dfbe5c2f49f9775991691819f593ea95a9f57b5917a1`.
+
+Real signed GoTrue/native-proof -> original taskless independent-question and
+ServiceTask submit/claim/authorize/complete -> registered HTTP list/preview/
+explicit source-CAS erase -> original-whitespace immutable recovery -> finite
+progress -> independent actual preserved parent/otherTurn/confirmedTrip/Memory/
+dispatch/financial bytes -> fresh same-conversation original producer -> original
+D2 configured worker/bundle/private ticket/download/plaintext bytes/hash -> strict
+Turn snapshot including technical keys -> actual mixed CORE_EXPORT_COPY blocker:
+**r4 PASS1/0skip**, owned project `vp-native-ask-3e84a8e6`, port base62960,
+case6206ms/suite9128ms, owned cleanup PASS. No paid provider send, real-user data,
+target grants/keys/storage/deployment/device action. Main separately read actual
+run output; this is local Auth evidence, not target or all-account completion.
+
+Prior failures remain: r1 `27c62c29` owner list503 from fixture-only managed Auth
+definition pin mismatch; original identity/app105/own43 gates retained while Main
+approved exact observed official + fixture managed helper variants, unknown denied.
+r2 `2758b3d3` failed in my diagnostic-only SQL naming a nonexistent guard getter,
+not a new business result. r3 `42c49001` passed original clear/recover/retention and
+stopped at original D2 request503 because the owned fixture lacked original
+core_policies row/local worker configuration; r4 reused the existing Profile
+Export fixture's same policy/local switches and preserved the202 assertion.
+Every owned stack cleanup PASS; no retroactive green or unaffected matrix rerun.
+
+Owned source list: turn-data directory; new native/v1/turn-data route; turn-data
+integration files; sole SQL0705/turn-data-sql source (normal merges only); sole
+Native TurnData and precisely leased Session/Ask/coverage/project integrations
+(normal merge only). Shared TS exact leases: export-worker plus four coverage
+files; CI only actual Auth runner tail62960. Original Profile/Offline/Export
+dependencies preserved. Whole Main source review, one PR/exact formal/current
+applicable CI/protected merge remain; #239 whole scope remains open.
