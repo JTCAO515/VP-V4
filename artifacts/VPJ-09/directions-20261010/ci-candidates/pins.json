@@ -1,10 +1,16 @@
 {
   "path": "scripts/ci-suites/db-integration.mjs",
   "beforeWT": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj08-assistant-events-server-20261010",
-  "beforeHEAD": "f21c60820618b148918c287c73e9cfe99fe12272",
-  "beforeSHA256": "7af1d9beb14671e96b8e32ad08e264123befe05da144205e500920699ac7d513",
-  "afterSHA256": "b16686f53c89214c2ad1001be5a894b9964b3f69b1535ce809afb4e721c6a355",
+  "beforeHEAD": "5d7b4ec2c0de1ab9ba18e01044b5df6711a8bbfb",
+  "beforeSHA256": "4d73f5247d6645260a09c4e929b696dfc3fa771be1b96f596a54fd2e079e0289",
+  "afterSHA256": "8ba3504146416e13565c651b59893143ba66ad5a579cfe4c761719f1ab972542",
   "patchSHA256": "d6ec371fa392d6c8b63dd1a43361a9e87f3b5a9d711a6d987b4dc38831d51da8",
   "hunks": 1,
-  "scope": "one native DB lane runner+gated file; no selector/workflow/role/port/offset/cap changes; unknown runner dependency still conservative full"
+  "scope": "one native DB lane runner+gated file; no selector/workflow/role/port/offset/cap changes; unknown runner dependency still conservative full",
+  "superseded": {
+    "beforeHEAD": "f21c60820618b148918c287c73e9cfe99fe12272",
+    "beforeSHA256": "7af1d9beb14671e96b8e32ad08e264123befe05da144205e500920699ac7d513",
+    "afterSHA256": "b16686f53c89214c2ad1001be5a894b9964b3f69b1535ce809afb4e721c6a355"
+  },
+  "condition": "Only after PR6765d7b4ec2 actual protected main merge and source equivalence; exact before must match. Preserve all three-shard logic/old entries/selector/workflow/30min/gates."
 }
