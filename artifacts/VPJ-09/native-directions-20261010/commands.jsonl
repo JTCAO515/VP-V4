@@ -13,3 +13,4 @@
 {"tool": "exec 463bcd -> write_stdin 35a2c0", "exit": 0, "scope": "only two Trip directions consumer reload/late/foreign/proposal/TTL points"}
 {"tool": "exec 41d204 -> write_stdin ef722e", "exit": 0, "scope": "only one strict identity reference/archive/foreign/boolean negative point"}
 {"tool": "exec c44304", "exit": 0, "scope": "both shared candidates parse; actual product shared files untouched"}
+{"tool": "exec 3c52a4 -> write_stdin 3eec01", "command": "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' -derivedDataPath /tmp/vpj09-native-directions-product-DD-20261010 CODE_SIGNING_ALLOWED=NO", "exit": 0, "head": "6a77d126672744a5d6a5013c94855272a7cbf32d", "scope": "only actual ordinary Trip new identity-reader/card wiring compiler; existing 2+1 consumer tests same-source reused"}
