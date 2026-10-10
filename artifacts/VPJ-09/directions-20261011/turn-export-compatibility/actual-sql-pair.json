@@ -1,0 +1,12 @@
+{
+  "sqlOwnerSourceCommit": "89011be07a1ca1db315880acd247ad873cd1c563",
+  "integratedSQLCommit": "ba3d1eed",
+  "old100300SHA256": "6354e482331453289311c4d7f2a363d1012a3bc9d11f0324d300b5bc8cb58584",
+  "new100400SHA256": "8eafae69e14d0913ad94541db5b3ef5e87cfd1056c896665a26a264686639ed0",
+  "snapshotSHA256": "dc6ec8d02e27284899dcbb5fdb6a7b83005a297218bdf01e369f640f388e872a",
+  "pairedTSAfterSHA256": "a39aecd74f7d4827f80a5b6a110da6080404c8c7bffcc6ef9dfd7dcc625ee3d5",
+  "result": "PASS actual38groups/11data retained NULL-turn input and canonical sourceDigest pair",
+  "preparatoryHarnessErrors": "two envelope-shape mistakes were rejected before corrected original turn_page envelope; no SQL/product changes",
+  "scope": "actual snapshot from owner Result-only erase SQL proof; separate from pending original signedTurn chain",
+  "SQLProofReuse": "386420cd source metadata9guards/actualResulterase and unknownbodynegative; not repeated"
+}

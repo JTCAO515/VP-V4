@@ -1,0 +1,29 @@
+{
+  "testedHead": "ba3d1eededccb2a12c5a7492e3a70a07e4699d19",
+  "sourceSHA256": {
+    "lib/server/privacy/turn-data/export.ts": "a39aecd74f7d4827f80a5b6a110da6080404c8c7bffcc6ef9dfd7dcc625ee3d5",
+    "lib/server/planning/directions/direction-turn-source-schema.json": "9b6fabcb4fa1777eb3c43d2b677acaddc19f3277a0bdd2e67aeb72180aeb8343",
+    "lib/server/planning/directions/turn-export-rows.ts": "39e271a0f3cb8fb83dcdc58a1d834bf62223ab19566f41c4fb62778a5ca2aaef",
+    "supabase/migrations/20261010030000_vpj09_travel_directions.sql": "6354e482331453289311c4d7f2a363d1012a3bc9d11f0324d300b5bc8cb58584",
+    "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql": "8eafae69e14d0913ad94541db5b3ef5e87cfd1056c896665a26a264686639ed0",
+    "tests/integration/privacy/turn-data/auth-http.test.mjs": "e2c38cd6f9534f2ab0c789496ebcd00fb2d35911419544cfa68841112409b9b4",
+    "tests/integration/pdf-intake/pdf-intake-postgres.test.mjs": "a60abbfe21582ba332471480b077a93679356ce2fe8ad21dca5b5eb4bcecd780"
+  },
+  "command": "node --experimental-strip-types tests/integration/privacy/turn-data/run-http.mjs --port-base62960",
+  "exitCode": 0,
+  "pass": 1,
+  "fail": 0,
+  "skip": 0,
+  "project": "vp-native-ask-dfdcef0a",
+  "cleanup": "PASS original own stop/temp cleanup and strict eight-port postflight",
+  "logSHA256": "24036ce7caff3f7970581ce9e8bf368f3cfc0109f4af38b97048ca412bb68008",
+  "sameSourceEvidenceReused": [
+    "candidate-unit10PASS",
+    "typecheck-r2exit0",
+    "actual retained SQL38groups/11data decoder+digest pair",
+    "SQL owner Result-only erase/metadata9guards/unknownbodynegative proof",
+    "PDF necessary3PASS/observedcancelcommit branch only"
+  ],
+  "historicalFailures": "dec135 TurnSOURCE_UNAVAILABLE and PDForacleFAIL, PDFprerequisite r1FAIL, oldNative30mCANCELLED retained",
+  "remaining": "final remote exact-head formal review/allapplicableCI/protectedmerge; target/device/humanUNRUN; PDFdoublelock andconfirm branches not observed"
+}

@@ -1,0 +1,362 @@
+{
+  "actor": {
+    "ownerId": "ebdc8dd5-3eb1-41bf-a64a-e4de0cff8a5f",
+    "sessionId": "d8bd48f6-0133-45a1-ba80-1ff6dee2a4d1",
+    "mobileEpoch": 1
+  },
+  "snapshot": {
+    "snapshot": {
+      "fences": [],
+      "ownerId": "ebdc8dd5-3eb1-41bf-a64a-e4de0cff8a5f",
+      "sources": [
+        {
+          "rows": [
+            {
+              "id": "26b0908b-6afd-4887-bdd6-134c4ed08d68",
+              "state": "completed",
+              "turn_id": "e6482d34-6e7d-4a93-aef2-7717d730f0a5",
+              "event_id": "worker-terminal-1",
+              "owner_id": "ebdc8dd5-3eb1-41bf-a64a-e4de0cff8a5f",
+              "sequence": 2,
+              "thread_id": "c9e82d50-00f6-4268-986d-a619605535ed",
+              "created_at": "2026-10-10T17:03:25.585407+00:00",
+              "event_type": "terminal",
+              "schema_version": "turn-sse-v1"
+            },
+            {
+              "id": "886ea15c-8104-45bf-9492-bfd34ad5a952",
+              "state": "accepted",
+              "turn_id": "e6482d34-6e7d-4a93-aef2-7717d730f0a5",
+              "event_id": "accepted",
+              "owner_id": "ebdc8dd5-3eb1-41bf-a64a-e4de0cff8a5f",
+              "sequence": 1,
+              "thread_id": "c9e82d50-00f6-4268-986d-a619605535ed",
+              "created_at": "2026-10-10T17:03:25.585407+00:00",
+              "event_type": "accepted",
+              "schema_version": "turn-sse-v1"
+            }
+          ],
+          "relation": "public.chat_turn_events"
+        },
+        {
+          "rows": [
+            {
+              "digest": "chat-state-control-v1",
+              "turn_id": "e6482d34-6e7d-4a93-aef2-7717d730f0a5",
+              "owner_id": "ebdc8dd5-3eb1-41bf-a64a-e4de0cff8a5f",
+              "thread_id": "c9e82d50-00f6-4268-986d-a619605535ed",
+              "created_at": "2026-10-10T17:03:25.585407+00:00",
+              "idempotency_key": "f2f7a81a-e48c-4c22-b6dd-9d4bbb9bed01"
+            }
+          ],
+          "relation": "public.chat_turn_idempotency"
+        },
+        {
+          "rows": [],
+          "relation": "public.memory_consumer_receipts"
+        },
+        {
+          "rows": [],
+          "relation": "public.model_budget_attempts"
+        },
+        {
+          "rows": [],
+          "relation": "public.turn_feedback"
+        },
+        {
+          "rows": [],
+          "relation": "turn_private.assistant_message_source_receipts"
+        },
+        {
+          "rows": [
+            {
+              "id": "870a42c0-39b5-4263-98c0-3eb04cb80c66",
+              "locale": "en",
+              "goal_id": "47c31d0c-6d87-4d1f-ab58-937694cdd344",
+              "task_id": "b4097e34-e598-4821-be18-a6f27214d71a",
+              "turn_id": null,
+              "owner_id": "ebdc8dd5-3eb1-41bf-a64a-e4de0cff8a5f",
+              "sequence": "2",
+              "policy_id": "d67f9e66-8692-460a-996a-8a840907f8dd",
+              "consent_id": "6c4618e0-54a7-4f49-8514-3a6db56f6283",
+              "created_at": "2026-10-10T17:03:25.844036+00:00",
+              "input_text": "  Ten days\nFood and walking  ",
+              "relationship": "follow_up",
+              "scope_version": 1,
+              "request_digest": "8928916555471fdc291a0bcce79f419b5a6e3f6bbfd252139efa8587dd52f38d",
+              "conversation_id": "6f6e57c7-17ad-4081-95df-9967153e5ec9",
+              "idempotency_key": "e4b8ca1d-0912-4373-97c4-1a4a980f913b",
+              "parent_message_id": "2187e9d9-5fc2-43e5-adee-c0757f7c275c"
+            }
+          ],
+          "relation": "turn_private.assistant_messages"
+        },
+        {
+          "rows": [],
+          "relation": "turn_private.assistant_travel_intakes"
+        },
+        {
+          "rows": [],
+          "relation": "turn_private.grounded_ai_assist_jobs"
+        },
+        {
+          "rows": [],
+          "relation": "turn_private.grounded_turns"
+        },
+        {
+          "rows": [],
+          "relation": "turn_private.planning_action_receipts"
+        },
+        {
+          "rows": [],
+          "relation": "turn_private.planning_comparisons"
+        },
+        {
+          "rows": [],
+          "relation": "turn_private.planning_intake_bindings"
+        },
+        {
+          "rows": [],
+          "relation": "turn_private.planning_model_dispatches"
+        },
+        {
+          "rows": [],
+          "relation": "turn_private.planning_observations"
+        },
+        {
+          "rows": [],
+          "relation": "turn_private.planning_v2_collector_origins"
+        },
+        {
+          "rows": [],
+          "relation": "turn_private.planning_v2_collector_outputs"
+        },
+        {
+          "rows": [],
+          "relation": "turn_private.planning_v2_completed_receipts"
+        },
+        {
+          "rows": [],
+          "relation": "turn_private.planning_v2_completion_proofs"
+        },
+        {
+          "rows": [],
+          "relation": "turn_private.planning_v2_execution_runs"
+        },
+        {
+          "rows": [],
+          "relation": "turn_private.planning_v2_external_call_windows"
+        },
+        {
+          "rows": [],
+          "relation": "turn_private.planning_v2_model_attempt_bindings"
+        },
+        {
+          "rows": [],
+          "relation": "turn_private.planning_v2_model_local_journal"
+        },
+        {
+          "rows": [],
+          "relation": "turn_private.planning_v2_place_checkpoints"
+        },
+        {
+          "rows": [],
+          "relation": "turn_private.planning_v2_result_claims"
+        },
+        {
+          "rows": [],
+          "relation": "turn_private.result_artifacts"
+        },
+        {
+          "rows": [],
+          "relation": "turn_private.result_events"
+        },
+        {
+          "rows": [],
+          "relation": "turn_private.result_revisions"
+        },
+        {
+          "rows": [],
+          "relation": "turn_private.service_task_capacity"
+        },
+        {
+          "rows": [
+            {
+              "task_id": "b4097e34-e598-4821-be18-a6f27214d71a",
+              "turn_id": "e6482d34-6e7d-4a93-aef2-7717d730f0a5",
+              "owner_id": "ebdc8dd5-3eb1-41bf-a64a-e4de0cff8a5f",
+              "relationship": "new_goal",
+              "parent_turn_id": null,
+              "request_digest": "83027b0382275bf194eaa0fd14ff090c68b4b605949a841d73a291407251f178",
+              "idempotency_key": "f2f7a81a-e48c-4c22-b6dd-9d4bbb9bed01"
+            }
+          ],
+          "relation": "turn_private.service_task_turns"
+        },
+        {
+          "rows": [
+            {
+              "id": "b4097e34-e598-4821-be18-a6f27214d71a",
+              "owner_id": "ebdc8dd5-3eb1-41bf-a64a-e4de0cff8a5f",
+              "policy_id": "d67f9e66-8692-460a-996a-8a840907f8dd",
+              "thread_id": "c9e82d50-00f6-4268-986d-a619605535ed",
+              "consent_id": "6c4618e0-54a7-4f49-8514-3a6db56f6283",
+              "created_at": "2026-10-10T17:03:25.82693+00:00",
+              "goal_digest": "b2059026b476797ab2e9963eaba63b504917f4473d2b81b1febd16b2bf48657e",
+              "goal_turn_id": "e6482d34-6e7d-4a93-aef2-7717d730f0a5",
+              "last_turn_id": "e6482d34-6e7d-4a93-aef2-7717d730f0a5",
+              "scope_version": 1,
+              "budget_scope_id": null,
+              "expected_result": "text_answer",
+              "capacity_enforced": false
+            }
+          ],
+          "relation": "turn_private.service_tasks"
+        },
+        {
+          "rows": [
+            {
+              "locale": "en",
+              "turn_id": "e6482d34-6e7d-4a93-aef2-7717d730f0a5",
+              "owner_id": "ebdc8dd5-3eb1-41bf-a64a-e4de0cff8a5f",
+              "hidden_at": null,
+              "policy_id": "d67f9e66-8692-460a-996a-8a840907f8dd",
+              "thread_id": "c9e82d50-00f6-4268-986d-a619605535ed",
+              "consent_id": "6c4618e0-54a7-4f49-8514-3a6db56f6283",
+              "created_at": "2026-10-10T17:03:25.837847+00:00",
+              "input_text": "  Ten days\nFood and walking  ",
+              "output_kind": "answered",
+              "output_text": "Your travel directions are ready. Choosing a direction, saving a relative-day draft and confirming a Trip are separate actions; transport, opening hours and prices remain unverified."
+            }
+          ],
+          "relation": "turn_private.text_content"
+        },
+        {
+          "rows": [],
+          "relation": "turn_private.text_dispatches"
+        },
+        {
+          "rows": [
+            {
+              "state": "completed",
+              "attempt": 1,
+              "turn_id": "e6482d34-6e7d-4a93-aef2-7717d730f0a5",
+              "lease_ms": 120000,
+              "owner_id": "ebdc8dd5-3eb1-41bf-a64a-e4de0cff8a5f",
+              "created_at": "2026-10-10T17:03:25.840793+00:00",
+              "expires_at": null,
+              "session_id": "d8bd48f6-0133-45a1-ba80-1ff6dee2a4d1",
+              "lease_token": null,
+              "max_attempts": 3,
+              "execution_mode": "travel_directions_v1"
+            }
+          ],
+          "relation": "turn_private.work"
+        },
+        {
+          "rows": [
+            {
+              "id": "e6482d34-6e7d-4a93-aef2-7717d730f0a5",
+              "status": "completed",
+              "trip_id": null,
+              "owner_id": "ebdc8dd5-3eb1-41bf-a64a-e4de0cff8a5f",
+              "thread_id": "c9e82d50-00f6-4268-986d-a619605535ed",
+              "created_at": "2026-10-10T17:03:25.585407+00:00",
+              "updated_at": "2026-10-10T17:03:25.86582+00:00"
+            }
+          ],
+          "relation": "public.turns"
+        },
+        {
+          "rows": [
+            {
+              "intake": {
+                "dates": null,
+                "budget": null,
+                "intent": "explore",
+                "interests": [
+                  "food",
+                  "walking"
+                ],
+                "currentPace": null,
+                "destinations": [
+                  "Shanghai",
+                  "Beijing"
+                ],
+                "durationDays": 10,
+                "schemaVersion": "travel-directions-intake/1"
+              },
+              "goal_id": "47c31d0c-6d87-4d1f-ab58-937694cdd344",
+              "task_id": "b4097e34-e598-4821-be18-a6f27214d71a",
+              "owner_id": "ebdc8dd5-3eb1-41bf-a64a-e4de0cff8a5f",
+              "policy_id": "d67f9e66-8692-460a-996a-8a840907f8dd",
+              "consent_id": "6c4618e0-54a7-4f49-8514-3a6db56f6283",
+              "created_at": "2026-10-10T17:03:25.851301+00:00",
+              "message_id": "870a42c0-39b5-4263-98c0-3eb04cb80c66",
+              "goal_version": 1,
+              "memory_basis": [],
+              "task_turn_id": "e6482d34-6e7d-4a93-aef2-7717d730f0a5",
+              "conversation_id": "6f6e57c7-17ad-4081-95df-9967153e5ec9",
+              "idempotency_key": "e4b8ca1d-0912-4373-97c4-1a4a980f913b",
+              "intake_revision": 1,
+              "message_sequence": "2",
+              "planning_policy_id": "06bbb734-0aa2-40a8-bdb1-907571478698",
+              "planning_consent_id": "0d78e096-9811-4b84-a310-8ab6263ea190",
+              "request_bytes_digest": "1821acc2ef058bec7af70ba9f930d2f9ed635e39246806b9750ec8a239808ab9"
+            }
+          ],
+          "relation": "turn_private.assistant_directions_intakes_v1"
+        },
+        {
+          "rows": [],
+          "relation": "turn_private.directions_result_sources_v1"
+        },
+        {
+          "rows": [
+            {
+              "action": "choose",
+              "erased": true,
+              "receipt": null,
+              "trip_id": null,
+              "owner_id": "ebdc8dd5-3eb1-41bf-a64a-e4de0cff8a5f",
+              "created_at": "2026-10-10T17:03:25.882437+00:00",
+              "session_id": "d8bd48f6-0133-45a1-ba80-1ff6dee2a4d1",
+              "artifact_id": null,
+              "proposal_id": null,
+              "operation_id": "8243c88b-1792-4757-8b9c-775202fb7e1d",
+              "task_turn_id": null,
+              "source_digest": null,
+              "result_revision": null,
+              "expected_revision": null,
+              "source_message_id": null,
+              "proposal_artifact_id": null,
+              "request_bytes_digest": "42f17d33758be189ba89e8d7958999652da3f1bb768f170e81d8c414af7596cc",
+              "output_content_digest": null
+            }
+          ],
+          "relation": "turn_private.directions_operations_v1"
+        }
+      ],
+      "operations": [],
+      "sourceRows": {
+        "data": 11,
+        "fences": 0,
+        "operations": 0,
+        "sourceIdentityKeys": 0
+      },
+      "sourceAuthorities": [
+        {
+          "policyId": "06bbb734-0aa2-40a8-bdb1-907571478698",
+          "consentId": "0d78e096-9811-4b84-a310-8ab6263ea190"
+        },
+        {
+          "policyId": "d67f9e66-8692-460a-996a-8a840907f8dd",
+          "consentId": "6c4618e0-54a7-4f49-8514-3a6db56f6283"
+        }
+      ],
+      "sourceIdentityKeys": []
+    },
+    "sourceDigest": "0beb8668ef3778723da516534b4cf0d48b933ae494b8ecb2b94a68df9d52e82e",
+    "sourceStateDigest": "b2e86c092553b1a1c5808d5ad1853773a7e6abdec45025e351c482ad39519a4c"
+  }
+}
