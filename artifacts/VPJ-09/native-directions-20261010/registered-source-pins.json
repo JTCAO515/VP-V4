@@ -1,0 +1,67 @@
+{
+  "head": "78387b77e7591485b95c5d2ed1947ab889e55137",
+  "checks": [
+    {
+      "path": "ios/VisePanda/VisePanda/Features/TravelDirections/NativeTravelDirectionsContent.swift",
+      "sha256": "15ed623a4cb9993f9a75e6fefafe3e7190700d30763e4cb62d194fc95113dd03"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/TravelDirections/NativeTravelDirectionsEditing.swift",
+      "sha256": "ea32f5e63949a2bda2d5f5b212bd968b01d005a8e7aae1ec563b4f4873c2c432"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/TravelDirections/NativeTravelDirectionsEditor.swift",
+      "sha256": "7e8db096f89e42aa5ccf13a03e229cc03c9ef8d20d93826c1494b0ee26f3f7e8"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/TravelDirections/NativeTravelDirectionsIntakeForm.swift",
+      "sha256": "4e194322ba5597723dde98a42aa2d738fa761c0a4577de92ce2cc3591ee0b865"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/TravelDirections/NativeTravelDirectionsIntakeStore.swift",
+      "sha256": "adccffcaa14e2d09237dcd5a866379129826850a425df724a607b921348826b5"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/TravelDirections/NativeTravelDirectionsResultView.swift",
+      "sha256": "45ec107593336f9cd5a953413c8e0782faa1ea00117c92bbab8ce71e6337b489"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/TravelDirections/NativeTravelDirectionsSheet.swift",
+      "sha256": "20c14770c2281474843b243821b0ddb8fe388b9cc82cc46c52ba161d06db96e3"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/TravelDirections/NativeTravelDirectionsStore.swift",
+      "sha256": "303a7b5aa8be0494e93aeecaa2da3d9dcc8b20d364510ef3bf71a8560757a2f5"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/TravelDirections/NativeTravelDirectionsWire.swift",
+      "sha256": "b2cedb742f29f65f6a5b07c24baef861789da6d6baddbec8281a102321437c16"
+    },
+    {
+      "path": "ios/VisePanda/VisePandaTests/NativeTravelDirectionsTests.swift",
+      "sha256": "1ce04921f87836d6af926f49289cd5ef59dad9b5e766c80f99cc575d5ef81d3f"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/App/NativeSession.swift",
+      "sha256": "d47f68e27ad98bd375b8fc85deff069226d44da5f0611f92261c5c5af1be795d"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift",
+      "sha256": "399121f9dcd5b0fabafe80a028d159aa1cc8fa100018e1646f09acaa19703759"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/Knowledge/NativeFiveResultModels.swift",
+      "sha256": "be0041c5561e1dde067c3c5b61bc3dafee4f3e5f63135acd4043fc1794139c5a"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/Knowledge/NativeFiveResultView.swift",
+      "sha256": "84177720744109dcc33268ab566a57e371339c837d39e379bf4410df82b6fbd9"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda.xcodeproj/project.pbxproj",
+      "sha256": "776b535443c344b72866864e2efb1c8c479a94719ab2866076bcccdf6f9f7b47"
+    }
+  ],
+  "all15FrozenSourcesMatch": true,
+  "build": "actual registered product WT unsigned generic Simulator build PASS; no test/runtime/SQL claim"
+}
