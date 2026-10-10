@@ -32,3 +32,9 @@ The complete flow preserves current goal/intake and source versions, produces ho
 No specific owned core implementation gap remains after Main's full accepted-scope review. Engineering still requires the unique final PR, exact-head independent formal review, all applicable CI and original protected match-head merge/readback. Any new actual failure is diagnosed on this same scope and fixed by its original owner.
 
 Physical iPhone/VoiceOver/user observation, target deployment/provider/backup/release and broader deletion/concurrency/Memory environment acceptance remain explicitly UNRUN in their original evidence and unified acceptance homes. Signed HTTP readback and Simulator/compiler checks do not imply real Native UI or physical-device acceptance. Original RLS/session/sourceCAS/TTL/1MB-row-clock bounds/budget/Trip confirmation stay intact. No new notice/purpose/role, provider fee, real-user operation or deployment is authorized by this package.
+
+## ACL allowlist CI repair
+
+PR677 head 8f88669b RLS failure is preserved: the authenticated exact caller list omitted two explicitly granted approved directions RPC signatures. The precise two-entry lease was applied (60d8b994 → f8f6f003; patch eb843368). ANON, full privilege scan, deepEqual, deny assertions, SQL and roles remain unchanged.
+
+The original function-acl parent suite ran once against a fresh fully migrated owned fixture vp-native-ask-d7f4a266 at base62520: exit0, 12 PASS / 0 FAIL / 0 SKIP. Own cleanup and strict eight-port postflight passed. See acl-candidates/validation.json and acl-suite.log. Prior signed Auth, Native/App and governance evidence is reused. Remote new-head CI and formal review remain required.

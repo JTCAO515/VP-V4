@@ -6,5 +6,5 @@
   "scope": "only exact2 signatures appended AUTHENTICATED; ANON/executable scan/deepEqual/all deny/runtime unchanged",
   "sourceHead": "8f88669b253cae3b0563b5a5f5a8db82d247e36c",
   "productMigrationSHA256": "6354e482331453289311c4d7f2a363d1012a3bc9d11f0324d300b5bc8cb58584",
-  "currentLease": "not held by #197 TS; prior676 scope only assistant_events signature"
+  "currentLease": "Main 01a12606 exact two-entry grant after original676 and current list holder974 releases; guarded apply completed"
 }
