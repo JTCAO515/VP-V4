@@ -1,0 +1,19 @@
+{
+  "sourceHead": "6adb2cff8dca012ada01f749745400827e15cc03",
+  "lease": "not granted; private candidate only",
+  "scope": "Native CI execution count3\u21928 and exact bounded shard parsing; companion coverage/capacity assertions. All37 logical steps, runner commands/env/files/order modulo, workflow30m/selection/aggregate remain unchanged",
+  "files": [
+    {
+      "path": "scripts/ci-suites/db-integration.mjs",
+      "beforeSHA256": "8ba3504146416e13565c651b59893143ba66ad5a579cfe4c761719f1ab972542",
+      "afterSHA256": "1b2244a123ebc9b1094b0f5429fae081d72465b20d01bcddd1012be2e11d2b19",
+      "patchSHA256": "e62309d26ecaa8d7a6b4a139cffcb733c4e0ae3f575843e636058368bfbe5972"
+    },
+    {
+      "path": "tests/unit/governance/db-integration-ci.test.mjs",
+      "beforeSHA256": "61dabf02227289b40a786818f2d8f1384a560157027e3321288f430b1bfc622e",
+      "afterSHA256": "a6ea25cd88919d6d84e0f24b621f0c1aaa6c91a446e6f4695fb24972ef124608",
+      "patchSHA256": "6c4e6147042cc163af9dddfe49cbac99ed033a3992a2243b7675a4d6b413727a"
+    }
+  ]
+}
