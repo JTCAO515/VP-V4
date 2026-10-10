@@ -70,6 +70,16 @@ test('real registered Auth/session/policy and durable task/artifact replay survi
  // Original signed, confirmed sensitive-source erasure must scrub delivery metadata
  // while allowing a genuinely new Task in the same retained conversation.
  const sourceScope={scope:'turn-sensitive-data/1',requestId:uuid(),turnId:turn,objectIds:[]};
+ const privilege=role=>e.sql(`select has_function_privilege('${role}','public.privacy_turn_data_v1(text,text,bigint)','execute');`);
+ const denied=await call('/api/privacy/native/v1/turn-data',owner,'POST',{action:'preview',...sourceScope});
+ assert.equal(denied.status,503,'original production RPC defaults deny even with current signed owner');
+ for(const role of ['anon','authenticated','service_role'])assert.equal(privilege(role),'f');
+ // Main-authorized existing original fixture convention, this uniquely owned
+ // disposable DB only. No production migration/role/pin or D2 grant is changed.
+ e.sql('grant execute on function public.privacy_turn_data_v1(text,text,bigint) to authenticated;');
+ assert.equal(privilege('authenticated'),'t');
+ for(const role of ['anon','service_role'])assert.equal(privilege(role),'f');
+ t.diagnostic('Original default deny and three-role negatives PASS; only exact Turn RPC granted authenticated inside owned disposable fixture, no D2/target grants.');
  const previewRequest={action:'preview',...sourceScope},previewHTTP=await call('/api/privacy/native/v1/turn-data',owner,'POST',previewRequest),preview=await previewHTTP.json();
  if(!previewHTTP.ok){
   const signed=createClient(local.API_URL,local.PUBLISHABLE_KEY||local.ANON_KEY,{auth:{persistSession:false,autoRefreshToken:false},global:{headers:{Authorization:'Bearer '+owner}}});
