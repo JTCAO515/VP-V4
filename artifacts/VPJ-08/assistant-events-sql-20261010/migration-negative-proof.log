@@ -1,0 +1,1 @@
+unknown original function config rejected before any new object; failed transaction restores original config/runtime and both new tables absent PASS; repository source untouched

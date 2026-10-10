@@ -1,0 +1,2 @@
+ERROR:  ASSISTANT_EVENTS_BASELINE_DRIFT
+CONTEXT:  PL/pgSQL function inline_code_block line 24 at RAISE
