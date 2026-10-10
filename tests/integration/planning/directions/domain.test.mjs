@@ -25,3 +25,12 @@ test('local edit preserves untouched objects; date binding only appends and conf
  const trip={version:3,title:'Existing',days:[{id:'old',date:'2026-10-01',items:[{id:'old_item',dayId:'old',title:'Keep'}]}]}; const patch=bindRelativeDates(edited,trip,'2026-11-01','draft'); const preview=applyPatch(trip,patch); assert.deepEqual(preview.days[0],trip.days[0]); assert.equal(preview.title,'Existing'); assert.equal(patch.expectedVersion,3); assert.equal(trip.days.length,1); assert.equal(patch.operations.some(o=>'startsAt' in o||'endsAt' in o||o.kind.startsWith('delete')),false);
  assert.throws(()=>bindRelativeDates(p,trip,'2026-10-01','draft'),/TRIP_DAY_CONFLICT/); assert.throws(()=>bindRelativeDates(p,trip,'2026-02-30','draft'),/INVALID_BINDING/);
 });
+
+test('mutation boundaries reject injected dated fields, oversized activities and malformed ordinal',()=>{
+ const p=relativePlan(input,'depth'); const trip={version:0,title:'Trip',days:[]};
+ for(const bad of [{...p,actions:['confirm']},{...p,days:[{...p.days[0],date:'2026-11-01'},...p.days.slice(1)]},{...p,days:[{...p.days[0],ordinal:2},...p.days.slice(1)]},{...p,days:[{...p.days[0],activities:['x'.repeat(161)]},...p.days.slice(1)]}]) {
+  assert.throws(()=>editRelativeDays(bad,[p.days[0]]),/INVALID_RELATIVE_PLAN/);
+  assert.throws(()=>bindRelativeDates(bad,trip,'2026-11-01','draft'),/INVALID_RELATIVE_PLAN/);
+ }
+ assert.throws(()=>bindRelativeDates(relativePlan({...input,durationDays:null},'depth'),trip,'2026-11-01','draft'),/INVALID_BINDING/);
+});

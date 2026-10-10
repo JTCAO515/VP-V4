@@ -66,14 +66,30 @@ export function relativePlan(input: DirectionsInput, directionId: Direction['id'
   }
   return { directionId, requestedDays: input.durationDays, days, coverage: days.length > 0 && input.destinations.length <= days.length ? 'complete_relative' : 'partial_relative', limitations, pace: selected.pace, paceSource: selected.source };
 }
+/** Defense at internal mutation boundaries; a relative object never carries dates or actions. */
+function validatePlan(plan: RelativePlan): void {
+  if (!plan || Object.keys(plan).sort().join() !== 'coverage,days,directionId,limitations,pace,paceSource,requestedDays'
+    || !['depth', 'breadth'].includes(plan.directionId) || plan.requestedDays !== null && !int(plan.requestedDays, 1, 30)
+    || !Array.isArray(plan.days) || plan.days.length > 30 || plan.days.length > 0 && plan.days.length !== plan.requestedDays
+    || !['complete_relative', 'partial_relative'].includes(plan.coverage) || plan.coverage === 'complete_relative' && !plan.days.length
+    || !Array.isArray(plan.limitations) || !plan.limitations.length || plan.limitations.length > 10 || plan.limitations.some(l => !text(l, 3000))
+    || !['current_input', 'profile', 'none'].includes(plan.paceSource) || plan.pace === null && plan.paceSource !== 'none'
+    || plan.pace !== null && (!TRAVEL_PACES.includes(plan.pace) || plan.paceSource === 'none')) fail('INVALID_RELATIVE_PLAN');
+  for (const [index, day] of plan.days.entries()) {
+    if (!day || Object.keys(day).sort().join() !== 'activities,destination,ordinal' || day.ordinal !== index + 1 || !text(day.destination, 80)
+      || !Array.isArray(day.activities) || !day.activities.length || day.activities.length > 8 || day.activities.some(a => !text(a, 160))) fail('INVALID_RELATIVE_PLAN');
+  }
+}
 /** Only listed relative days change; no other day is regenerated. */
 export function editRelativeDays(plan: RelativePlan, replacements: readonly RelativeDay[]): RelativePlan {
+  validatePlan(plan);
   if (!Array.isArray(replacements) || !replacements.length || new Set(replacements.map(d => d.ordinal)).size !== replacements.length) fail('INVALID_EDIT');
   for (const d of replacements) if (!d || Object.keys(d).sort().join() !== 'activities,destination,ordinal' || !int(d.ordinal, 1, plan.days.length) || !text(d.destination, 80) || !Array.isArray(d.activities) || !d.activities.length || d.activities.length > 8 || d.activities.some(a => !text(a, 160))) fail('INVALID_EDIT');
   return { ...plan, days: plan.days.map(day => replacements.find(r => r.ordinal === day.ordinal) ?? day) };
 }
 /** No writer or confirmation receipt: this only creates the existing Patch candidate. */
 export function bindRelativeDates(plan: RelativePlan, snapshot: TripSnapshot, startDate: string, idPrefix: string): TripPatch {
+  validatePlan(plan);
   assertTripSnapshot(snapshot);
   if (!/^\d{4}-\d{2}-\d{2}$/.test(startDate) || !Number.isFinite(Date.parse(startDate)) || new Date(startDate).toISOString().slice(0, 10) !== startDate || !/^[A-Za-z0-9_-]{1,40}$/.test(idPrefix) || !plan.days.length || plan.days.length > 30) fail('INVALID_BINDING');
   const operations: TripPatchOperation[] = [];
