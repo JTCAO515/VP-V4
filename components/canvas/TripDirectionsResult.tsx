@@ -68,7 +68,7 @@ export function TripDirectionsResult({tripId,tripVersion,locale,bindBlocked,onPr
  async function act(action:'choose'|'save'|'edit'|'bind',extra:Record<string,unknown>={},retry=false){
   if(!read||!scopeKey||!sourceKey||!actorKey||!baseCanAct||(!retry&&pending.current!==null)||(retry&&!pendingHere)||action==='bind'&&bindBlocked)return;
   const current=generation.current,captured={scopeKey,tripId,tripVersion},startedAt=performance.now(),controller=new AbortController();write.current=controller;
-  if(action==='edit'&&(!edit||edit.scopeKey!==scopeKey||edit.sourceKey!==sourceKey||edit.artifactId!==read.artifactId))return;
+  if(!retry&&action==='edit'&&(!edit||edit.scopeKey!==scopeKey||edit.sourceKey!==sourceKey||edit.artifactId!==read.artifactId))return;
   const params={artifactId:read.artifactId,expectedRevision:action==='edit'&&edit?edit.baseRevision:read.revision,operationId:crypto.randomUUID(),...extra};
   if(!retry)pending.current={scopeKey,sourceKey,actorKey,tripId,artifactId:read.artifactId,revision:Number(params.expectedRevision),action,bytes:JSON.stringify(params)};
   const original=pending.current;if(!original||!directionsClientPendingCurrent(original,scopeKey,sourceKey))return;
