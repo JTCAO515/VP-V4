@@ -25,7 +25,7 @@ extension NativeVoiceAudioDriver {
 }
 
 /// One push-to-talk capture and one explicitly selected final translation, scoped to the live session.
-@MainActor @Observable final class NativeVoiceAudioController {
+@MainActor @Observable final class NativeVoiceAudioController: NativeGuideCacheDataRenderer {
     private(set) var phase: NativeVoiceAudioPhase = .idle
     private(set) var failure: NativeVoiceAudioFailure?
     private(set) var transcript: NativeVoiceTranscript?
@@ -36,7 +36,8 @@ extension NativeVoiceAudioDriver {
     private(set) var scope: NativeDataScope?
     var cleanupPending: Bool { files.cleanupPending }
     var onFinalTranscript: (@MainActor (NativeVoiceTranscript) -> Void)?
-    var onGuideProgress: (@MainActor (String, Bool, Int) -> Void)?
+    var onGuideProgress: (@MainActor (String, Bool, Int) -> Void)? { didSet { guideCallbackRevision = UUID() } }
+    @ObservationIgnored private var guideCallbackRevision = UUID()
     private(set) var guidePlaybackID: String?
     private(set) var guidePaused = false
 
@@ -197,6 +198,30 @@ extension NativeVoiceAudioDriver {
             }
             armDeadline(seconds: min(NativeVoiceAudioLimits.temporaryLifetime, expiresAt.timeIntervalSinceNow), own: own)
         } catch { cancel(reason: audioFailure(error)) }
+    }
+
+    func guideCacheRendererState(current: NativeDataScope) -> NativeGuideCacheDataRendererState? {
+        // An unbound, never-used renderer is verifiably empty; another actor is unavailable.
+        guard scope == nil || scope == current else { return nil }
+        return .init(generation: generation, callbackRevision: guideCallbackRevision, playbackID: guidePlaybackID, hasText: guideText != nil,
+            hasProgressCallback: onGuideProgress != nil, paused: guidePaused,
+            characters: guidePlaybackID == nil ? 0 : spokenCharacters)
+    }
+    func clearGuideCacheRenderer(expected: NativeGuideCacheDataRendererState, current: NativeDataScope) -> Bool {
+        guard guideCacheRendererState(current: current) == expected else { return false }
+        if guidePlaybackID != nil || guideText != nil {
+            // Guide TTS has no recording file. Do not call generic cancel()/eraseAll() on other-purpose audio.
+            generation = UUID(); deadlineTask?.cancel(); deadlineTask = nil
+            driver.stopAudio(); phase = .idle; spokenCharacters = 0; playbackCharacters = 0
+            guidePlaybackID = nil; guideText = nil; guideLocale = nil; guideExpiresAt = nil
+            guidePlaybackDeadline = nil; guideOffset = 0; guidePaused = false
+        }
+        onGuideProgress = nil
+        return guideCacheRendererIsEmpty(current: current)
+    }
+    func guideCacheRendererIsEmpty(current: NativeDataScope) -> Bool {
+        (scope == nil || scope == current) && guidePlaybackID == nil && guideText == nil && guideLocale == nil
+        && guideExpiresAt == nil && guidePlaybackDeadline == nil && guideOffset == 0 && !guidePaused && onGuideProgress == nil
     }
 
     func pauseGuide() {

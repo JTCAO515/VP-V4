@@ -1,6 +1,6 @@
 {
   "schemaVersion": "data-coverage/1",
-  "catalogVersion": "data-coverage-catalog/2026-10-07.9",
+  "catalogVersion": "data-coverage-catalog/2026-10-07.11",
   "actorId": "00000000-0000-4000-8000-000000000001",
   "sessionId": "00000000-0000-4000-8000-000000000002",
   "mobileEpoch": 1,
@@ -132,18 +132,32 @@
     {
       "id": "turn",
       "location": "server",
-      "version": "core-export-d2/1",
-      "scope": "core-export-d2/1",
+      "version": "turn-data/1",
+      "scope": "turn-data/1",
       "exportHandler": "core",
-      "deleteHandler": null,
+      "deleteHandler": "turn_data",
       "selection": "owner",
-      "capacity": "100 rows/page; 1000 pages/module; 8MiB artifact; original protected download/expiry",
+      "capacity": "one explicitly selected completed owner Turn; bounded4100 graph/1MB; fixed30s source CAS; active/shared/independent domains rejected; own1..20 preview metadata exit",
       "retention": [
-        "original_module_retention",
-        "external_copies_not_recallable"
+        "turn_message_task_thread_conversation_goal_identity",
+        "other_turns_and_parent_contents_except_selected_root_task_digest",
+        "confirmed_trip_content_history_proposals",
+        "explicit_memory_profiles_receipts_consents",
+        "capacity_budget_dispatch_financial_metadata",
+        "permanent_identity_operation_fences",
+        "original_policy_consent_authority_ids",
+        "original_selection_actor_epoch_hash_time_operation_fences",
+        "immutable_minimal_decisions"
       ],
       "missing": [
-        "scoped_delete_not_registered"
+        "active_shared_cross_turn_and_mixed_result_references_blocked",
+        "guide_brief_proposal_knowledge_source_references_require_original_flow",
+        "mixed_core_export_copies_require_original_cleanup",
+        "provider_external_copies_not_erased",
+        "backup_restore_old_device_acceptance_unverified",
+        "source_turn_data_not_erased",
+        "unselected_operations",
+        "external_copies"
       ]
     },
     {

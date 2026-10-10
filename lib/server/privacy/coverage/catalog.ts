@@ -1,3 +1,4 @@
+import { TURN_MODULE, TURN_CATALOG_VERSION } from '../turn-data/coverage.ts';
 import { NOTIFICATION_MODULES } from '../notification-data/coverage.ts';
 import { ARCHIVE_MODULE } from '../archive-data/coverage.ts';
 import { CONVERSATION_MODULE } from '../conversation-data/coverage.ts';
@@ -5,7 +6,7 @@ import { RESULT_MODULE } from '../result-data/coverage.ts';
 import { PROFILE_MODULE } from '../profile-data/coverage.ts';
 import { COVERAGE_PROGRESS_MODULE } from '../coverage-progress/coverage.ts';
 /** ALL1 denominator. A registered scoped handler is not all-account completion. */
-export { PROFILE_CATALOG_VERSION as CATALOG_VERSION } from '../profile-data/coverage.ts';
+export { TURN_CATALOG_VERSION as CATALOG_VERSION };
 export type Location = 'server' | 'device' | 'external';
 export type Module = Readonly<{
   id: string; location: Location; version: string; scope: string;
@@ -25,7 +26,7 @@ export const MODULE_CATALOG: readonly Module[] = [
   CONVERSATION_MODULE, RESULT_MODULE, PROFILE_MODULE,
   server('memory', 'memory-bulk-delete-d4/1', 'memory-bulk-delete-d4/1', 'core', 'memory', 'memory_plan',
     '100 selected memories; original preview/CAS/selection required', ['original_chat_input', 'trip_intent', 'financial_records']),
-  core('turn'), core('user_artifact'),
+  TURN_MODULE, core('user_artifact'),
   server('brief', 'traveler-brief-data/1', 'traveler-brief-data/1', 'brief', 'brief', 'case',
     'owner export: 10000 rows/512KiB, double sourceDigest read/30s expiry; delete: selected case/recipient/grant/Brief revision', ['operation_fences', 'minimal_audit_metadata']),
   server('entitlements', 'core-export-d2/1', 'core-export-d2/1', 'core', null, 'owner', 'original core lease/pages/artifact',

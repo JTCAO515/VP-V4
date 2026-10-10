@@ -1,0 +1,28 @@
+# Turn SQL delivery evidence
+
+Sole new append: `20261007050000_turn_data.sql`. Base `2b60e4fdf272f44ab8111491df5a30b36cf4554a`; normal predecessor merge `4e1f3ee54c537c4bba54c387df4f555f7ef619dc` retains complete Profile0702 SHA `aec808a083914b6414c129369ac96489463a1228fa802d26a68cc120f5fe42d3`.
+Source schema35 SHA remains `1629f0b1382aa08a6bc8dfbe5c2f49f9775991691819f593ea95a9f57b5917a1`.
+
+Main granted the six exact shared definitions and 57 additional source/reverse-writer triggers. Only the reviewed Profile schema dependency pin for the changed Profile hook body was subsequently updated, with exact candidate SHA `08120a86b89e698556f64501ef67feb8dcdd3a2fb6c7eab09847c8d7f06faa2b`. Whole app table catalog remains `75695f209c10f7d1486505632ada19c18337bfa099680caad726a3984d666ec9`. No old table/column/FK/trigger was removed or modified by the new append, no target grants/roles/configuration/provider calls occurred. Fixed own runtime checks retain105 application definition identities,43 own-function inventory and only two verified exact definitions for each managed Auth accessor (isolated fixture and actual official local Supabase), rejecting unknown definitions.
+
+## Actual PostgreSQL evidence
+
+Network-none PostgreSQL17, synthetic SQL claims, existing real source/writer RPCs:
+
+- Complete current predecessors plus the entire new append apply; Turn/Profile/Result catalog, original Profile30 hooks,57 writer registrations and fixed runtime definition guards all true.
+- Original independent message submit/claim/authorize/complete with legitimate NULL task/goal/version produces an eligible selected Turn. Private text/message copies and actual events/idempotency/work erase atomically; root/message identities remain. Root digest redaction is counted only when actual task goal_turn_id is selected.
+- Parent conversation, other Turn/text and original financial ledger retain exact original bytes; original whitespace-bearing mutation bytes recover the same immutable decision; reserialization fails. Original absolute30s does not renew or mutate after expiry.
+- Permanently retained original source PKs block erased event PK reuse under a fresh parent; OLD/NEW retained dispatch-parent movement, text restoration and actual authenticated Proposal JSON reference writes fail. A fresh original independent producer in the same retained conversation succeeds.
+- Controlled selected-source hold rejects the original ordinary writer with original CONVERSATION_CONFLICT; same-owner unrelated source writes proceed. Session deletion preserves root/PK fences; original auth-account cascade and ownerless retained dispatch cleanup succeed.
+- Source CAS, epoch, consent and unknown empty-table/column/FK failures roll back. Unknown own helper/additional definition or function config changes are denied; terminal private source identity keys cannot be altered.
+- Original model reserve RPC stores canonical ServiceTask identity and exact budget_scope; pending ledger blocks ACTIVE_WORK. Released canonical and historical raw Turn-ID ledger rows remain financial metadata; bigint strings are exact.
+- Actual Unicode4000-character source rows exceeding1MB and10001 actual owner roots reject the whole snapshot. Fixture10001-root setup uses250-row transactions because per-root original and new advisory guards exhaust the unchanged PG lock table in one huge fixture transaction; no limit/assertion/trigger/timeout/configuration was weakened.
+- Original D2 actual lease/page/SHA-canonical snapshot/AES artifact commit/immutable Turn provenance/exact commit replay/private ticket/prepare/decrypt bytes/consume/execution receipt lifecycle pass. Source snapshot exposes all35 groups, actual finite operations, root fences and actual typed supplemental erased PKs; soleTS closed decoder accepts actual pages and receipts.
+
+Canonical owned runner: `VP_TURN_DATA_SQL=1 node --test tests/integration/privacy/turn-data-sql/postgres.test.mjs`. It starts a uniquely named disposable database, isolates synthetic temporary files and removes its owned container. Initial run:7 PASS/2 FAIL/0 skip (capacity fixture shared-memory failure and parent), retained at `evidence/initial-suite.txt`. The only affected repair run `VP_TURN_DATA_SQL=1 VP_TURN_DATA_SQL_CAPACITY_ONLY=1 ...` is3 PASS/0 FAIL/0 skip, with exact full-source bootstrap and real30s expiry; `evidence/capacity-deadline-repair.txt`. Seven unchanged case results are reused, not recounted as a new all-green matrix.
+
+## Cross-layer boundary
+
+SoleTS separately reported real signed GoTrue/native proof, registered coverage erase/recovery/progress, preserved original Task/parents/otherTurn/confirmedTrip/explicitMemory/dispatch/ledger bytes, fresh same-conversation writer, configured original D2 worker and protected private download passed1 case/0 skip on its owned62960 stack. Its earlier r1 stub-Auth pin mismatch, r2 diagnostic typo and r3 missing original D2 fixture settings are retained separately and are not these PG tests. SQL claims are not signed Auth. Target migration/deployment, physical-device/backup/restore and all-user-data completion remain UNRUN/false; parent#239 and release closure are not asserted here.
+
+Supplemental private source_identity_keys stores only relation+exact erased PK, never source bodies. It is immutable and survives explicit preview cleanup. Public receipt retainedFences counts the three root graph identity groups, never the additional technical PK total. D2's distinct sourceIdentityKeys projection and four sourceRows counters include every real technical key in the source digest/CAS and keep total<=10000/whole<=1MB.

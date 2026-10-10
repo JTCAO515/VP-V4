@@ -58,6 +58,11 @@ struct NativeTaskActivityView: View {
         .onChange(of: LoadKey(selection: current, active: active)) { _, key in
             store.bind(selection: key.selection, active: key.active)
         }
+        .onChange(of: session.turnDataErasure?.id) { _, _ in
+            guard let erased = session.turnDataErasure,
+                  (try? session.communitySafetyActor()) == erased.actor else { return }
+            store.applyTurnErasure(erased)
+        }
         .onDisappear { store.bind(selection: nil, active: false) }
         .task {
             while !Task.isCancelled {

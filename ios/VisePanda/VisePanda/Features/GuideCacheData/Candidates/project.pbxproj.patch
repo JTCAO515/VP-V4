@@ -1,0 +1,22 @@
+--- a/ios/VisePanda/VisePanda.xcodeproj/project.pbxproj
++++ b/ios/VisePanda/VisePanda.xcodeproj/project.pbxproj
+@@ -447,0 +448,4 @@
++		D8CBF3C5FFCEF0644EB38ACE /* NativeGuideCacheDataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888B4B0A91E5548A09C37C11 /* NativeGuideCacheDataModels.swift */; };
++		C8F1373D438FBA2EDAE6AA9B /* NativeGuideCacheDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCCC553B21229B4E730955A /* NativeGuideCacheDataStore.swift */; };
++		02EC30953F6AB8E137371A83 /* NativeGuideCacheDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5CF2667A5B8D2C33188E839 /* NativeGuideCacheDataView.swift */; };
++		0423D65F61601E64A59BFF19 /* NativeGuideCacheDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4478C92C24D0CDB8CD07CEF /* NativeGuideCacheDataTests.swift */; };
+@@ -898,0 +903,4 @@
++		888B4B0A91E5548A09C37C11 /* NativeGuideCacheDataModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/GuideCacheData/NativeGuideCacheDataModels.swift; sourceTree = SOURCE_ROOT; };
++		0BCCC553B21229B4E730955A /* NativeGuideCacheDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/GuideCacheData/NativeGuideCacheDataStore.swift; sourceTree = SOURCE_ROOT; };
++		B5CF2667A5B8D2C33188E839 /* NativeGuideCacheDataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/GuideCacheData/NativeGuideCacheDataView.swift; sourceTree = SOURCE_ROOT; };
++		C4478C92C24D0CDB8CD07CEF /* NativeGuideCacheDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePandaTests/NativeGuideCacheDataTests.swift; sourceTree = SOURCE_ROOT; };
+@@ -913,0 +922 @@
++				541C4A7662005C1FCE8B757B /* GuideCacheData */,
+@@ -989,0 +999 @@
++		541C4A7662005C1FCE8B757B /* GuideCacheData */ = {isa = PBXGroup; children = (888B4B0A91E5548A09C37C11, 0BCCC553B21229B4E730955A, B5CF2667A5B8D2C33188E839, C4478C92C24D0CDB8CD07CEF); name = GuideCacheData; sourceTree = "<group>"; };
+@@ -1098,0 +1109,3 @@
++				02EC30953F6AB8E137371A83 /* NativeGuideCacheDataView.swift in Sources */,
++				C8F1373D438FBA2EDAE6AA9B /* NativeGuideCacheDataStore.swift in Sources */,
++				D8CBF3C5FFCEF0644EB38ACE /* NativeGuideCacheDataModels.swift in Sources */,
+@@ -1156,0 +1170 @@
++				0423D65F61601E64A59BFF19 /* NativeGuideCacheDataTests.swift in Sources */,

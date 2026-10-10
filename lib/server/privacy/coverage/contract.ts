@@ -1,3 +1,4 @@
+import { validTurnCoverageSelection } from '../turn-data/coverage.ts';
 import { createHash } from 'node:crypto';
 import { CATALOG_VERSION, moduleById } from './catalog.ts';
 import { record, exact, uuid } from '../../guide/contract.ts';
@@ -52,6 +53,7 @@ export function parseCoverageInput(value: unknown): SelectedCommand | null {
   if ('operationId' in command && command.operationId !== input.operationId || 'requestId' in command && command.requestId !== input.operationId) return null;
   if (handler === 'conversation_data') return validConversationCoverageSelection(input, command) ? { input, command, handler } : null;
   if (handler === 'result_data') return validResultCoverageSelection(input, command) ? { input, command, handler } : null;
+  if (handler === 'turn_data') return validTurnCoverageSelection(input, command) ? { input, command, handler } : null;
   if (handler === 'profile_data') return validProfileCoverageSelection(input, command) ? { input, command, handler } : null;
   if (handler === 'materials') return validMaterialCoverageSelection(input, command) ? { input, command, handler } : null;
   if (handler === 'coverage_progress') return validCoverageProgressCoverageSelection(input, command) ? { input, command, handler } : null;

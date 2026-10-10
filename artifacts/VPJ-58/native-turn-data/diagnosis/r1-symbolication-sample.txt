@@ -1,0 +1,108 @@
+Analysis of sampling VisePanda (pid 12482) every 1 millisecond
+Process:         VisePanda [12482]
+Path:            /Users/USER/Library/Developer/CoreSimulator/Devices/350EF0FC-EEE7-4101-82F7-9EAE1AC7E5C8/data/Containers/Bundle/Application/A9B1AC0A-F7EC-4574-99DC-AF5F36B35A42/VisePanda.app/VisePanda
+Load Address:    0x104664000
+Identifier:      space.go2china.VisePanda
+Version:         0.1.0 (1)
+Code Type:       ARM64
+Platform:        iOS Simulator
+Parent Process:  launchd_sim [11521]
+Target Type:     live task (Roots Present)
+
+Date/Time:       2026-10-08 00:34:28.401 +0800
+Launch Time:     2026-10-08 00:25:08.833 +0800
+OS Version:      macOS 27.0.1 (26A434)
+Report Version:  7
+Analysis Tool:   /usr/bin/sample
+
+Physical footprint:         74.7M
+Physical footprint (peak):  79.3M
+Idle exit:                  untracked
+----
+
+Call graph:
+    782 Thread_1567486   DispatchQueue_1: com.apple.main-thread  (serial)
+    + 782 start  (in dyld) + 6688  [0x1048e5e80]
+    +   782 start_sim  (in dyld_sim) + 20  [0x10471b0e4]
+    +     782 __debug_main_executable_dylib_entry_point  (in VisePanda.debug.dylib) + 12  [0x10faed568]  VisePandaApp.swift:0
+    +       782 static VisePandaApp.$main()  (in VisePanda.debug.dylib) + 40  [0x10faed32c]  /<compiler-generated>:0
+    +         782 static App.main()  (in SwiftUI) + 148  [0x1d2c5f094]
+    +           782 runApp<A>(_:)  (in SwiftUI) + 180  [0x1d2ecdd18]
+    +             782 closure #1 in KitRendererCommon(_:)  (in SwiftUI) + 164  [0x1d2ecdfa4]
+    +               782 UIApplicationMain  (in UIKitCore) + 120  [0x186b9f910]
+    +                 782 -[UIApplication _run]  (in UIKitCore) + 776  [0x1864a54cc]
+    +                   782 GSEventRunModal  (in GraphicsServices) + 116  [0x1933599c0]
+    +                     782 _CFRunLoopRunSpecificWithOptions  (in CoreFoundation) + 496  [0x18041c904]
+    +                       782 __CFRunLoopRun  (in CoreFoundation) + 2100  [0x180421d44]
+    +                         782 __CFRunLoopDoSource1  (in CoreFoundation) + 476  [0x180422c78]
+    +                           782 __CFRUNLOOP_IS_CALLING_OUT_TO_A_SOURCE1_PERFORM_FUNCTION__  (in CoreFoundation) + 56  [0x180423628]
+    +                             782 __CFMachPortPerform  (in CoreFoundation) + 164  [0x1803e6c50]
+    +                               782 RunTestsFromRunLoop  (in libXCTestBundleInject.dylib) + 108  [0x10469d274]
+    +                                 782 _XCTestMain  (in XCTestCore) + 84  [0x105739c1c]
+    +                                   782 -[XCTestDriver _runTests]  (in XCTestCore) + 932  [0x105737f28]
+    +                                     782 -[XCTestObservationCenter _observeTestExecutionForTestBundle:inBlock:]  (in XCTestCore) + 92  [0x1057480d0]
+    +                                       782 __25-[XCTestDriver _runTests]_block_invoke.324  (in XCTestCore) + 52  [0x1057383ec]
+    +                                         782 -[XCTExecutionWorker runWithError:]  (in XCTestCore) + 68  [0x10573a398]
+    +                                           782 __72-[XCTExecutionWorker enqueueTestIdentifiersToRun:testIdentifiersToSkip:]_block_invoke  (in XCTestCore) + 108  [0x105739f04]
+    +                                             782 XCTAsyncEnumerateWithWaiter  (in XCTestCore) + 464  [0x10573a120]
+    +                                               782 __XCTAsyncEnumerate_block_invoke.99  (in XCTestCore) + 52  [0x10573b204]
+    +                                                 782 __XCTAsyncEnumerateWithWaiter_block_invoke  (in XCTestCore) + 212  [0x10573b098]
+    +                                                   782 __72-[XCTExecutionWorker enqueueTestIdentifiersToRun:testIdentifiersToSkip:]_block_invoke_2  (in XCTestCore) + 116  [0x10573a288]
+    +                                                     782 -[XCTTestRunSession executeTestsWithIdentifiers:skippingTestsWithIdentifiers:completion:]  (in XCTestCore) + 324  [0x1057434e0]
+    +                                                       782 __72-[XCTExecutionWorker enqueueTestIdentifiersToRun:testIdentifiersToSkip:]_block_invoke_3  (in XCTestCore) + 112  [0x10573a330]
+    +                                                         782 __XCTAsyncEnumerateWithWaiter_block_invoke_2  (in XCTestCore) + 44  [0x10573b1a4]
+    +                                                           782 __XCTAsyncEnumerate_block_invoke.99  (in XCTestCore) + 52  [0x10573b204]
+    +                                                             782 __XCTAsyncEnumerateWithWaiter_block_invoke  (in XCTestCore) + 260  [0x10573b0c8]
+    +                                                               782 -[XCTWaiter waitForExpectations:timeout:enforceOrder:]  (in XCTestCore) + 108  [0x105763a84]
+    +                                                                 782 -[XCTWaiter _waitForExpectations:timeout:enforceOrder:synchronously:completionHandler:]  (in XCTestCore) + 484  [0x105763cb8]
+    +                                                                   782 -[XCTWaiter _performWait:manager:completionHandler:]  (in XCTestCore) + 808  [0x105765b20]
+    +                                                                     782 +[XCTWaiter _synchronouslyWaitForTimeInterval:]  (in XCTestCore) + 108  [0x105765320]
+    +                                                                       782 _CFRunLoopRunSpecificWithOptions  (in CoreFoundation) + 496  [0x18041c904]
+    +                                                                         782 __CFRunLoopRun  (in CoreFoundation) + 1128  [0x180421978]
+    +                                                                           782 __CFRunLoopServiceMachPort  (in CoreFoundation) + 156  [0x1804227c0]
+    +                                                                             782 mach_msg  (in libsystem_kernel.dylib) + 20  [0x1047ccedc]
+    +                                                                               782 mach_msg_overwrite  (in libsystem_kernel.dylib) + 484  [0x1047d4c58]
+    +                                                                                 782 mach_msg2_internal  (in libsystem_kernel.dylib) + 72  [0x1047de0e4]
+    +                                                                                   782 mach_msg2_trap  (in libsystem_kernel.dylib) + 8  [0x1047ccb5c]
+    782 Thread_1567658   DispatchQueue_18: com.apple.root.user-initiated-qos.cooperative  (concurrent)
+    + 782 completeTaskWithClosure(swift::AsyncContext*, swift::SwiftError*)  (in libswift_Concurrency.dylib) + 1  [0x2378c9555]
+    +   782 <deduplicated_symbol>  (in XCTestCore) + 1  [0x10577b8ed]
+    +     782 <deduplicated_symbol>  (in XCTestCore) + 1  [0x10577bd79]
+    +       782 <deduplicated_symbol>  (in XCTestCore) + 1  [0x10577c115]
+    +         782 closure #1 in Queue.init(named:priority:)  (in XCTestCore) + 1  [0x10577b58d]
+    +           782 <deduplicated_symbol>  (in XCTestCore) + 1  [0x10577c115]
+    +             782 <deduplicated_symbol>  (in XCTestCore) + 1  [0x10577b8ed]
+    +               782 <deduplicated_symbol>  (in libXCTestSwiftSupport.dylib) + 1  [0x1078097a1]
+    +                 782 closure #4 in SwiftTestingExecutionExtension.handleEvent<A, B>(_:in:)  (in libXCTestSwiftSupport.dylib) + 28  [0x10782a48c]
+    +                   782 SwiftTestingExecutionExtension.applyEventHandlers(_:)  (in libXCTestSwiftSupport.dylib) + 48  [0x10782a4c8]
+    +                     782 closure #1 in SwiftTestingExecutionExtension.handleEvent<A, B>(_:in:)  (in libXCTestSwiftSupport.dylib) + 144  [0x10782a374]
+    +                       782 specialized closure #11 in static HarnessEventHandler.handler<A, B>(for:in:)  (in libXCTestSwiftSupport.dylib) + 256  [0x107821c28]
+    +                         782 specialized HarnessEventHandler.issueRecorded<A, B>(_:knownIssueComment:testCase:test:at:)  (in libXCTestSwiftSupport.dylib) + 3240  [0x107823d34]
+    +                           782 XCTSourceCodeContext.prepareForReporting(fallbackLocation:)  (in libXCTestSwiftSupport.dylib) + 144  [0x107818364]
+    +                             782 -[XCTSourceCodeContext prepareForReportingWithEmphasizedSymbolName:fallbackLocation:]  (in XCTestCore) + 128  [0x10576d15c]
+    +                               782 +[XCTSourceCodeContext _callStackByRemovingCompilerOrMacroGeneratedFrames:]  (in XCTestCore) + 24  [0x10576ce40]
+    +                                 782 -[NSArray(XCTestAdditions) xct_arrayByApplyingBlock:]  (in XCTestCore) + 156  [0x105707e60]
+    +                                   782 -[__NSFrozenArrayM enumerateObjectsWithOptions:usingBlock:]  (in CoreFoundation) + 272  [0x1803a57c8]
+    +                                     782 __NSARRAY_IS_CALLING_OUT_TO_A_BLOCK__  (in CoreFoundation) + 16  [0x1804268b8]
+    +                                       782 __53-[NSArray(XCTestAdditions) xct_arrayByApplyingBlock:]_block_invoke  (in XCTestCore) + 32  [0x105707f38]
+    +                                         782 __75+[XCTSourceCodeContext _callStackByRemovingCompilerOrMacroGeneratedFrames:]_block_invoke  (in XCTestCore) + 28  [0x10576ce68]
+    +                                           782 -[XCTSourceCodeFrame _symbolInfoWithError:ignoringUnderlyingErrors:]  (in XCTestCore) + 216  [0x10576be40]
+    +                                             782 -[XCTInProcessSymbolicationService symbolInfoForAddressInCurrentProcess:error:]  (in XCTestCore) + 620  [0x1057009cc]
+    +                                               782 +[XCTSymbolicationService _symbolInfoForAddress:symbolOwner:symbolicationFunctions:allowedImageNames:error:]  (in XCTestCore) + 236  [0x1056ff738]
+    +                                                 782 CSSymbolOwnerGetSymbolWithAddress  (in CoreSymbolication) + 40  [0x1ae3364cc]
+    +                                                   782 CSCppSymbolOwner::_fault_data_purging_empty(bool)  (in CoreSymbolication) + 104  [0x1ae354f80]
+    +                                                     782 CSCppSymbolOwnerCache::data_for_symbol_owner(CSCppSymbolOwner*, bool)  (in CoreSymbolication) + 160  [0x1ae358ca8]
+    +                                                       782 invocation function for block in CSCppSymbolOwnerCache::data_for_symbol_owner(CSCppSymbolOwner*, bool)  (in CoreSymbolication) + 408  [0x1ae358e84]
+    +                                                         782 CSExceptionSafeThreadProtectBlockWithHandler  (in CoreSymbolication) + 64  [0x1ae407220]
+    +                                                           782 invocation function for block in CSCppSymbolOwnerCache::data_for_symbol_owner(CSCppSymbolOwner*, bool)  (in CoreSymbolication) + 28  [0x1ae358f0c]
+    +                                                             782 CSCppSymbolOwnerCache::create_symbol_owner_data(CSCppSymbolOwner*, CSCppDsymData*)  (in CoreSymbolication) + 388  [0x1ae3586fc]
+    +                                                               782 create_symbol_owner_data2(CSCppSymbolOwner*, CSCppDsymData*)  (in CoreSymbolication) + 196  [0x1ae358a4c]
+    +                                                                 782 CSCppSymbolOwnerData* create_symbol_owner_data_arch_specific<SizeAndEndianness<Pointer64, LittleEndian>>(CSCppSymbolOwner*, CSCppDsymData*)  (in CoreSymbolication) + 412  [0x1ae35a1f8]
+    +                                                                   782 TRawSymbolOwnerData<SizeAndEndianness<Pointer64, LittleEndian>::SIZE>* create_traw_symbol_owner_data_arch_specific<SizeAndEndianness<Pointer64, LittleEndian>>(CSCppSymbolOwner*, CSCppDsymData*)  (in CoreSymbolication) + 1996  [0x1ae376360]
+    +                                                                     782 extract_debug_map_data_from_header<SizeAndEndianness<Pointer64, LittleEndian>>(TExtendedMachOHeader<SizeAndEndianness<Pointer64, LittleEndian>>&, TRawSymbolOwnerData<SizeAndEndianness<Pointer64, LittleEndian>::SIZE>&)  (in CoreSymbolication) + 276  [0x1ae379918]
+    +                                                                       782 extract_debug_maps_from_header<SizeAndEndianness<Pointer64, LittleEndian>>(TExtendedMachOHeader<SizeAndEndianness<Pointer64, LittleEndian>>&, TRawSymbolOwnerData<SizeAndEndianness<Pointer64, LittleEndian>::SIZE>&, TNList<SizeAndEndianness<Pointer64, LittleEndian>> const*, unsigned int, TRange<SizeAndEndianness<Pointer64, LittleEndian>::SIZE>)  (in CoreSymbolication) + 528  [0x1ae383b1c]
+    +                                                                         782 CSSymbolicatorCreateWithPathArchitectureFlagsAndNotification  (in CoreSymbolication) + 60  [0x1ae301fa4]
+    +                                                                           782 CSFileIsCoreFile  (in CoreSymbolication) + 48  [0x1ae3ddbc0]
+    +                                                                             782 fopen  (in libsystem_c.dylib) + 128  [0x180142144]
+    +                                                                               782 open$NOCANCEL  (in libsystem_kernel.dylib) + 72  [0x1047e06e8]
+    +                                                                                 782 __open_nocancel  (in libsystem_kernel.dylib) + 8  [0x1047cd6e0]

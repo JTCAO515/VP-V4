@@ -1,0 +1,108 @@
+{
+  "bytes": " {\"action\":\"erase\",\"scope\":\"turn-delete-progress/1\",\"requestId\":\"4017c822-38d2-46ef-942b-da6df3bcc3b1\",\"turnId\":null,\"objectIds\":[\"f1a6ea66-6207-4152-af83-c336f9652347\"],\"sourceDigest\":\"c8e3c50b1003f90ee5d55ec55d4a6edbb692e0acb2160adc14b8e07be0619ff0\",\"previewDigest\":\"03618b5998c06a24148dcc91c8c6e41431b83e5ad41571b1f2a5884021810ee1\",\"confirmed\":true}\n",
+  "r": {
+    "kind": "receipt",
+    "scope": "turn-delete-progress/1",
+    "state": "erased",
+    "turnId": null,
+    "ownerId": "66528d47-8f71-47f7-8473-ce100cb9cead",
+    "decision": {
+      "graph": {
+        "turnIds": [],
+        "messageIds": [],
+        "artifactIds": []
+      },
+      "decidedAt": 1791391300524,
+      "parentData": "not_modified",
+      "sourceTrip": "not_modified",
+      "sourceTurn": "not_modified",
+      "erasedCounts": {
+        "work": 0,
+        "events": 0,
+        "intakes": 0,
+        "feedback": 0,
+        "grounded": 0,
+        "planning": 0,
+        "artifacts": 0,
+        "revisions": 0,
+        "assistJobs": 0,
+        "callWindows": 0,
+        "checkpoints": 0,
+        "idempotency": 0,
+        "observations": 0,
+        "resultClaims": 0,
+        "resultEvents": 0,
+        "executionRuns": 0,
+        "localJournals": 0,
+        "actionReceipts": 0,
+        "intakeBindings": 0,
+        "sourceReceipts": 0,
+        "attemptBindings": 0,
+        "memoryConsumers": 0,
+        "modelDispatches": 0,
+        "collectorOrigins": 0,
+        "collectorOutputs": 0,
+        "completionProofs": 0,
+        "completedReceipts": 0
+      },
+      "financialData": "not_modified",
+      "requestDigest": "c7219d1e9e855eab6eaf339d892d99e964aa288e372e5bcf4434afae0bb26351",
+      "explicitMemory": "not_modified",
+      "externalCopies": "not_erased",
+      "redactedCounts": {
+        "textBodies": 0,
+        "taskDigests": 0,
+        "messageBodies": 0
+      },
+      "retainedCounts": {
+        "goals": 0,
+        "tasks": 0,
+        "turns": 0,
+        "threads": 0,
+        "capacity": 0,
+        "messages": 0,
+        "taskTurns": 0,
+        "conversations": 0,
+        "budgetAttempts": 0,
+        "textDispatches": 0
+      },
+      "retainedFences": 1,
+      "clearedPreviews": 1
+    },
+    "expiresAt": 1791391330483,
+    "objectIds": [
+      "f1a6ea66-6207-4152-af83-c336f9652347"
+    ],
+    "requestId": "4017c822-38d2-46ef-942b-da6df3bcc3b1",
+    "sessionId": "46e41736-5679-4f29-8ffe-8cc179a49032",
+    "boundaries": {
+      "missing": [
+        "source_turn_data_not_erased",
+        "unselected_operations",
+        "external_copies",
+        "backup_restore_old_device_acceptance_unverified"
+      ],
+      "retained": [
+        "original_selection_actor_epoch_hash_time_operation_fences",
+        "immutable_minimal_decisions",
+        "original_policy_consent_authority_ids"
+      ],
+      "eraseFields": [
+        "selected_transient_preview_graph_counts_references_conflicts"
+      ],
+      "redactFields": []
+    },
+    "capturedAt": 1791391300483,
+    "mobileEpoch": 1,
+    "sourceDigest": "c8e3c50b1003f90ee5d55ec55d4a6edbb692e0acb2160adc14b8e07be0619ff0",
+    "previewDigest": "03618b5998c06a24148dcc91c8c6e41431b83e5ad41571b1f2a5884021810ee1",
+    "schemaVersion": "turn-data/1",
+    "sourceAuthorities": [
+      {
+        "policyId": "9b5a2f7d-771b-4239-96c3-456089c21e9b",
+        "consentId": "6f27a3a2-2993-4137-877a-4bbe053f6bea"
+      }
+    ],
+    "allUserDataCompleted": false
+  }
+}

@@ -18,6 +18,11 @@ final class NativeTaskActivityStore {
         guard boundSelection != current || boundActive != active else { return }
         clear(); boundSelection = current; boundActive = active
     }
+    func applyTurnErasure(_ erased: NativeTurnDataErasure) {
+        guard let current = boundSelection, current.scope == erased.scope,
+              erased.turnIDs.contains(current.latestTurnID) else { return }
+        clear()
+    }
     func clear() {
         generation = UUID(); activity = nil; selection = nil; deadline = 0; state = .idle
     }

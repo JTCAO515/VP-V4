@@ -22,6 +22,7 @@ final class NativeAskStore {
     }
     private var operation: UUID?
     private var readGeneration = UUID()
+    private var eventTurnID: String?
     private var eventRead: UUID?
     private var eventCursors: [String: Int] = [:]
     enum AiAssistState: Equatable { case loading, done(NativeAiAssistStatus), error }
@@ -109,6 +110,17 @@ final class NativeAskStore {
         eventRead = nil
         aiAssist = [:]; aiAssistTokens = [:]
         operation = nil; busy = false; policy = nil; turns = []; notice = nil
+    }
+
+    /// Clears only old selected read projections; immutable pending bytes, drafts and sends survive.
+    func applyTurnErasure(_ erased: NativeTurnDataErasure) {
+        guard scope == erased.scope else { return }
+        readGeneration = UUID()
+        turns.removeAll { erased.turnIDs.contains($0.turnId) }
+        if let eventTurnID, erased.turnIDs.contains(eventTurnID) { eventRead = nil; self.eventTurnID = nil }
+        for id in erased.turnIDs { aiAssist[id] = nil; aiAssistTokens[id] = nil; eventCursors[id] = nil }
+        // A continuation carries old sensitive source content. Keep the draft, require an explicit new question.
+        if case .continuation(let source) = intent, erased.turnIDs.contains(source.turnId) { intent = .blocked }
     }
 
     func applyConversationErasure(_ erased: NativeConversationDataErasure) {
@@ -206,8 +218,8 @@ final class NativeAskStore {
         guard mode == .grounded, !busy, policy?.consentState == .accepted,
               let current = scope, session.dataScope == current,
               let selected = turns.first(where: \.waiting), let identity = noticeIdentity else { return }
-        let token = UUID(); eventRead = token
-        defer { if eventRead == token { eventRead = nil } }
+        let token = UUID(); eventRead = token; eventTurnID = selected.id
+        defer { if eventRead == token { eventRead = nil; eventTurnID = nil } }
         do {
             try await session.askEvents(turnId: selected.id, after: eventCursors[selected.id] ?? 0) { frame, elapsed in
                 guard !Task.isCancelled, self.eventRead == token, !self.busy,
