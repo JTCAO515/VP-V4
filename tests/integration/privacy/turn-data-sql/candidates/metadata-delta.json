@@ -1,0 +1,124 @@
+{
+  "columns": {
+    "added": [
+      "turn_data_private.export_provenance_v1",
+      "turn_data_private.operations_v1"
+    ],
+    "removed": [],
+    "changed": []
+  },
+  "fks": {
+    "added": [
+      [
+        "turn_data_private.export_provenance_v1",
+        "export_private.core_jobs_v1",
+        "export_provenance_v1_request_id_fkey",
+        "FOREIGN KEY (request_id) REFERENCES export_private.core_jobs_v1(request_id) ON DELETE CASCADE"
+      ],
+      [
+        "turn_data_private.operations_v1",
+        "auth.users",
+        "operations_v1_owner_id_fkey",
+        "FOREIGN KEY (owner_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+      ]
+    ],
+    "removed": [],
+    "changed": []
+  },
+  "triggers": {
+    "added": [
+      [
+        "public.model_budget_attempts",
+        "turn_data_parent_fence_v1",
+        "CREATE TRIGGER turn_data_parent_fence_v1 BEFORE INSERT OR DELETE OR UPDATE ON public.model_budget_attempts FOR EACH ROW EXECUTE FUNCTION turn_data_private.guard_source_v1()",
+        "turn_data_private.guard_source_v1()"
+      ],
+      [
+        "public.turns",
+        "turn_data_parent_fence_v1",
+        "CREATE TRIGGER turn_data_parent_fence_v1 BEFORE INSERT OR DELETE OR UPDATE ON public.turns FOR EACH ROW EXECUTE FUNCTION turn_data_private.guard_source_v1()",
+        "turn_data_private.guard_source_v1()"
+      ],
+      [
+        "scoped_edit_private.contexts_v1",
+        "turn_data_parent_fence_v1",
+        "CREATE TRIGGER turn_data_parent_fence_v1 BEFORE INSERT OR DELETE OR UPDATE ON scoped_edit_private.contexts_v1 FOR EACH ROW EXECUTE FUNCTION turn_data_private.guard_source_v1()",
+        "turn_data_private.guard_source_v1()"
+      ],
+      [
+        "scoped_edit_private.operations_v1",
+        "turn_data_parent_fence_v1",
+        "CREATE TRIGGER turn_data_parent_fence_v1 BEFORE INSERT OR DELETE OR UPDATE ON scoped_edit_private.operations_v1 FOR EACH ROW EXECUTE FUNCTION turn_data_private.guard_source_v1()",
+        "turn_data_private.guard_source_v1()"
+      ],
+      [
+        "scoped_edit_private.requests_v1",
+        "turn_data_parent_fence_v1",
+        "CREATE TRIGGER turn_data_parent_fence_v1 BEFORE INSERT OR DELETE OR UPDATE ON scoped_edit_private.requests_v1 FOR EACH ROW EXECUTE FUNCTION turn_data_private.guard_source_v1()",
+        "turn_data_private.guard_source_v1()"
+      ],
+      [
+        "scoped_edit_private.work_v1",
+        "turn_data_parent_fence_v1",
+        "CREATE TRIGGER turn_data_parent_fence_v1 BEFORE INSERT OR DELETE OR UPDATE ON scoped_edit_private.work_v1 FOR EACH ROW EXECUTE FUNCTION turn_data_private.guard_source_v1()",
+        "turn_data_private.guard_source_v1()"
+      ],
+      [
+        "service_brief_private.briefs",
+        "turn_data_parent_fence_v1",
+        "CREATE TRIGGER turn_data_parent_fence_v1 BEFORE INSERT OR DELETE OR UPDATE ON service_brief_private.briefs FOR EACH ROW EXECUTE FUNCTION turn_data_private.guard_source_v1()",
+        "turn_data_private.guard_source_v1()"
+      ],
+      [
+        "service_brief_private.operations",
+        "turn_data_parent_fence_v1",
+        "CREATE TRIGGER turn_data_parent_fence_v1 BEFORE INSERT OR DELETE OR UPDATE ON service_brief_private.operations FOR EACH ROW EXECUTE FUNCTION turn_data_private.guard_source_v1()",
+        "turn_data_private.guard_source_v1()"
+      ],
+      [
+        "service_brief_private.previews",
+        "turn_data_parent_fence_v1",
+        "CREATE TRIGGER turn_data_parent_fence_v1 BEFORE INSERT OR DELETE OR UPDATE ON service_brief_private.previews FOR EACH ROW EXECUTE FUNCTION turn_data_private.guard_source_v1()",
+        "turn_data_private.guard_source_v1()"
+      ],
+      [
+        "turn_data_private.export_provenance_v1",
+        "immutable_turn_export_provenance",
+        "CREATE TRIGGER immutable_turn_export_provenance BEFORE DELETE OR UPDATE ON turn_data_private.export_provenance_v1 FOR EACH ROW EXECUTE FUNCTION turn_data_private.export_provenance_immutable_v1()",
+        "turn_data_private.export_provenance_immutable_v1()"
+      ],
+      [
+        "turn_data_private.operations_v1",
+        "turn_operation_immutable_v1",
+        "CREATE TRIGGER turn_operation_immutable_v1 BEFORE DELETE OR UPDATE ON turn_data_private.operations_v1 FOR EACH ROW EXECUTE FUNCTION turn_data_private.immutable_operation_v1()",
+        "turn_data_private.immutable_operation_v1()"
+      ],
+      [
+        "turn_private.service_tasks",
+        "turn_data_parent_fence_v1",
+        "CREATE TRIGGER turn_data_parent_fence_v1 BEFORE INSERT OR DELETE OR UPDATE ON turn_private.service_tasks FOR EACH ROW EXECUTE FUNCTION turn_data_private.guard_source_v1()",
+        "turn_data_private.guard_source_v1()"
+      ],
+      [
+        "turn_private.text_content",
+        "turn_data_parent_fence_v1",
+        "CREATE TRIGGER turn_data_parent_fence_v1 BEFORE INSERT OR DELETE OR UPDATE ON turn_private.text_content FOR EACH ROW EXECUTE FUNCTION turn_data_private.guard_source_v1()",
+        "turn_data_private.guard_source_v1()"
+      ],
+      [
+        "turn_private.text_dispatches",
+        "turn_data_parent_fence_v1",
+        "CREATE TRIGGER turn_data_parent_fence_v1 BEFORE INSERT OR DELETE OR UPDATE ON turn_private.text_dispatches FOR EACH ROW EXECUTE FUNCTION turn_data_private.guard_source_v1()",
+        "turn_data_private.guard_source_v1()"
+      ],
+      [
+        "turn_private.work",
+        "turn_data_parent_fence_v1",
+        "CREATE TRIGGER turn_data_parent_fence_v1 BEFORE INSERT OR DELETE OR UPDATE ON turn_private.work FOR EACH ROW EXECUTE FUNCTION turn_data_private.guard_source_v1()",
+        "turn_data_private.guard_source_v1()"
+      ]
+    ],
+    "removed": [],
+    "changed": []
+  }
+}

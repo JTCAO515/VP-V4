@@ -4,8 +4,9 @@ import { sql } from '../../cost/fixtures/postgres-rpc.mjs';
 export let container=process.env.VP_PROFILE_TEST_CONTAINER || 'vpj58-profile-data-sql-20261007';
 export function setContainer(v){container=v;}
 export async function db(q){const r=await sql(container,q);if(r.code)throw Error(r.stderr);return r.stdout.trim();}
-if(['init','catalog'].includes(process.argv[2])){
- if(process.argv[2]==='init'){
+// init-base is the explicit 0702 prefix for an owner applying ordered later migrations.
+if(['init','init-base','catalog'].includes(process.argv[2])){
+ if(['init','init-base'].includes(process.argv[2])){
  await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));
  await db("create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;create schema extensions;create extension pgcrypto with schema extensions;");
  const migrations=readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&f<'20261007020000').sort();
@@ -22,6 +23,10 @@ if(['init','catalog'].includes(process.argv[2])){
  if(await functions()!==original || await db("select to_regnamespace('profile_data_private') is null and result_data_private.schema_supported_v1()")!=='t')throw Error('Profile migration rollback mismatch');
  console.log('Actual full migration rollback/source/ACL restoration PASS');
  await db('begin;'+profileSource+'commit;');
+ if(process.argv[2]==='init'){
+ // Apply the current append-only Web compatibility source, not a stale 0702-only writer.
+ await db('begin;'+readFileSync('supabase/migrations/20261010010000_profile_web_lock_error.sql','utf8')+'commit;');
+ }
  }
  if(process.argv[2]==='catalog'){
  const sources=await db("select jsonb_agg(jsonb_build_object('signature',p.oid::regprocedure::text,'definition',pg_get_functiondef(p.oid)) order by p.oid::regprocedure::text) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname not in('pg_catalog','information_schema') and (p.prosrc like '%user_profiles%' or p.prosrc like '%profile_basis%' or p.prosrc like '%profilePace%');");

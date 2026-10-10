@@ -3,7 +3,7 @@ import schema from './source-schema.json' with { type: 'json' };
 import { exact, record, hash } from '../../guide/contract.ts';
 import { exportCanonical, type ExportHandler, type ExportLease, type ExportModuleReceipt, type ExportPage } from '../export-dispatcher.ts';
 import type { ExportDomainRPC } from '../export-worker.ts';
-import { identifier, positive, validSourceAuthorities, TURN_LIMITS } from './contract.ts';
+import { identifier, positive, validSourceAuthorities, ERASED_KEYS, TURN_LIMITS } from './contract.ts';
 import { validOperationRow } from './protocol.ts';
 
 export const TURN_EXPORT_SCHEMA = 'turn-core-export/1' as const;
@@ -58,7 +58,7 @@ function closedSourceGraph(sources: Sources): boolean {
   for (const spec of schema) for (const row of rows(spec.relation)) {
     if ('turn_id' in row && row.turn_id !== null && !turns.has(String(row.turn_id))) return false;
     if ('task_turn_id' in row && !turns.has(String(row.task_turn_id))) return false;
-    if ('task_id' in row && !tasks.has(String(row.task_id))
+    if ('task_id' in row && row.task_id !== null && !tasks.has(String(row.task_id))
       && !(spec.relation === 'public.model_budget_attempts' && turns.has(String(row.task_id)))) return false;
     if ('message_id' in row && !messages.has(String(row.message_id))) return false;
     if ('artifact_id' in row && !artifacts.has(String(row.artifact_id))) return false;
@@ -79,11 +79,13 @@ export function decodeTurnExportPage(v: unknown, limit: number, owner: string, n
     || v.schemaVersion !== TURN_EXPORT_SCHEMA || v.section !== 'snapshot' || !hash(v.sourceDigest) || !Array.isArray(v.items) || v.items.length !== 1
     || v.hasMore !== false || v.nextCursor !== null || v.sectionComplete !== true || Buffer.byteLength(JSON.stringify(v), 'utf8') > TURN_LIMITS.maxBytes) return null;
   const item = v.items[0];
-  if (!record(item) || !exact(item, ['ownerId', 'sources', 'operations', 'fences', 'sourceRows', 'sourceAuthorities']) || item.ownerId !== owner
+  if (!record(item) || !exact(item, ['ownerId', 'sources', 'operations', 'fences', 'sourceIdentityKeys', 'sourceRows', 'sourceAuthorities']) || item.ownerId !== owner
     || !validSourceAuthorities(item.sourceAuthorities)
     || !Array.isArray(item.sources) || item.sources.length !== schema.length || !Array.isArray(item.operations) || !Array.isArray(item.fences)
+    || !Array.isArray(item.sourceIdentityKeys) || item.sourceIdentityKeys.length > TURN_LIMITS.tableRows
     || item.operations.length > TURN_LIMITS.tableRows || item.fences.length > TURN_LIMITS.tableRows || !record(item.sourceRows)
-    || !exact(item.sourceRows, ['data', 'operations', 'fences']) || item.sourceRows.operations !== item.operations.length || item.sourceRows.fences !== item.fences.length) return null;
+    || !exact(item.sourceRows, ['data', 'operations', 'fences', 'sourceIdentityKeys']) || item.sourceRows.operations !== item.operations.length
+    || item.sourceRows.fences !== item.fences.length || item.sourceRows.sourceIdentityKeys !== item.sourceIdentityKeys.length) return null;
   const sources: Sources = new Map(); let dataRows = 0;
   for (const [index, spec] of schema.entries()) {
     const group = item.sources[index];
@@ -97,16 +99,20 @@ export function decodeTurnExportPage(v: unknown, limit: number, owner: string, n
     dataRows += group.rows.length; if (dataRows > TURN_LIMITS.tableRows) return null;
     sources.set(spec.relation, group.rows);
   }
-  if (item.sourceRows.data !== dataRows || dataRows + item.operations.length + item.fences.length > TURN_LIMITS.tableRows || !closedSourceGraph(sources)) return null;
+  if (item.sourceRows.data !== dataRows || dataRows + item.operations.length + item.fences.length + item.sourceIdentityKeys.length > TURN_LIMITS.tableRows || !closedSourceGraph(sources)) return null;
   const authorityPairs = new Set<string>();
   for (const group of sources.values()) for (const row of group) {
     for (const [policyKey, consentKey] of [['policy_id', 'consent_id'], ['planning_policy_id', 'planning_consent_id']])
       if (policyKey in row && consentKey in row) authorityPairs.add(`${row[policyKey]}:${row[consentKey]}`);
   }
-  let previousOperation = '';
+  let previousOperation = ''; const terminalSensitiveOperations = new Map<string, Record<string, number>>();
   for (const operation of item.operations) {
     if (!record(operation) || !identifier(operation.requestId) || operation.requestId <= previousOperation || !validOperationRow(operation, owner, now)) return null;
     previousOperation = operation.requestId;
+    if (operation.scope === 'turn-sensitive-data/1' && operation.state === 'erased') {
+      const decision = operation.decision as { erasedCounts: Record<string, number> };
+      terminalSensitiveOperations.set(operation.requestId, decision.erasedCounts);
+    }
     for (const pair of operation.sourceAuthorities as { policyId: string; consentId: string }[]) authorityPairs.add(`${pair.policyId}:${pair.consentId}`);
   }
   if (JSON.stringify([...authorityPairs].sort()) !== JSON.stringify(item.sourceAuthorities.map(pair => `${pair.policyId}:${pair.consentId}`))) return null;
@@ -116,6 +122,27 @@ export function decodeTurnExportPage(v: unknown, limit: number, owner: string, n
       || !identifier(fence.objectId) || !identifier(fence.requestId) || !positive(fence.createdAt) || fence.createdAt > now) return null;
     const key = `${fence.kind}:${fence.objectId}`; if (key <= previousFence) return null; previousFence = key;
   }
+  let previousIdentity: { requestId: string; relation: string; pk: Record<string, unknown> } | null = null;
+  const identityCounts = new Map<string, Record<string, number>>();
+  for (const identity of item.sourceIdentityKeys) {
+    if (!record(identity) || !exact(identity, ['requestId', 'relation', 'pk']) || !identifier(identity.requestId)
+      || !terminalSensitiveOperations.has(identity.requestId) || typeof identity.relation !== 'string' || !record(identity.pk)) return null;
+    const spec = schema.find(s => s.relation === identity.relation && s.effect === 'erase');
+    const pk = identity.pk;
+    if (!spec || !exact(pk, spec.pk) || 'owner_id' in pk && pk.owner_id !== owner || !spec.pk.every(key => {
+      const column = spec.columns.find(c => c.name === key);
+      return !!column && columnValue(pk[key], column.type, true);
+    })) return null;
+    if (previousIdentity && (identity.requestId < previousIdentity.requestId
+      || identity.requestId === previousIdentity.requestId && (identity.relation < previousIdentity.relation
+        || identity.relation === previousIdentity.relation && !increasing(pk, previousIdentity.pk, spec)))) return null;
+    const actual = identityCounts.get(identity.requestId) ?? Object.fromEntries(ERASED_KEYS.map(k => [k, 0]));
+    actual[spec.countKey]++; identityCounts.set(identity.requestId, actual);
+    previousIdentity = { requestId: identity.requestId, relation: identity.relation, pk };
+  }
+  // One immutable key per actual erased source row; omission cannot be disguised by a matching empty counter.
+  for (const [requestId, erased] of terminalSensitiveOperations)
+    if (!ERASED_KEYS.every(k => (identityCounts.get(requestId)?.[k] ?? 0) === erased[k])) return null;
   return { items: structuredClone(v.items), sourceDigest: v.sourceDigest, hasMore: false, nextCursor: null, sectionComplete: true };
 }
 export type TurnExportHandler = ExportHandler & { progress(): { pages: number; rows: number; terminalSections: number }; matchesReceipt(receipt: ExportModuleReceipt | undefined): boolean };

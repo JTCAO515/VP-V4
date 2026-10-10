@@ -29,7 +29,7 @@ export function snapshot() {
   const row = { id:selection.turnId,owner_id:actor.ownerId,trip_id:null,status:'completed',created_at:new Date(now-200).toISOString(),thread_id:id(7),updated_at:new Date(now-100).toISOString() };
   sources.find(s=>s.relation==='public.turns').rows=[row];
   sources.find(s=>s.relation==='turn_private.text_content').rows=[{ turn_id:selection.turnId,owner_id:actor.ownerId,thread_id:id(7),policy_id:id(20),consent_id:id(21),locale:'zh',input_text:'真实用户输入',output_kind:'answered',output_text:'原始输出',hidden_at:null,created_at:row.created_at }];
-  return { ownerId:actor.ownerId,sources,sourceAuthorities:structuredClone(sourceAuthorities),operations:[],fences:[],sourceRows:{data:2,operations:0,fences:0} };
+  return { ownerId:actor.ownerId,sources,sourceAuthorities:structuredClone(sourceAuthorities),operations:[],fences:[],sourceIdentityKeys:[],sourceRows:{data:2,operations:0,fences:0,sourceIdentityKeys:0} };
 }
 export function page(item=snapshot()) {
   return { schemaVersion:'turn-core-export/1',section:'snapshot',sourceDigest:createHash('sha256').update(exportCanonical({snapshot:[item]}),'utf8').digest('hex'),items:[item],hasMore:false,nextCursor:null,sectionComplete:true };

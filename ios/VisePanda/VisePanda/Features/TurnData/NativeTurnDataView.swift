@@ -157,7 +157,10 @@ struct NativeTurnDataView: View {
             Text(receipt.binding.requestID).font(.caption).textSelection(.enabled)
             Text(receipt.decidedAt, format: .dateTime)
             Text(t("Trip 与原显式 Memory 保留，外部副本未擦除；不代表全账户清理完成。", "Trips and original explicit Memory remain, and external copies were not erased. This does not complete account-wide cleanup."))
-            Text(t("清理预览 \(receipt.clearedPreviews)；保留围栏 \(receipt.retainedFences)。", "Cleared previews: \(receipt.clearedPreviews); retained fences: \(receipt.retainedFences)."))
+            let fenceLabel = receipt.binding.scope == .sensitive
+                ? t("轮次／消息／成果身份围栏", "Turn/message/result identity fences")
+                : t("所选操作身份围栏", "Selected operation identity fences")
+            Text(t("清理预览 \(receipt.clearedPreviews)；", "Cleared previews: \(receipt.clearedPreviews); ") + fenceLabel + " · \(receipt.retainedFences)")
             if let file = store.visibleReceiptFile(actor) {
                 ShareLink(item: file) { Text(t("分享本次核验回执", "Share this verified receipt")) }
             }
