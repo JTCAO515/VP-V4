@@ -20,3 +20,8 @@ test('receipts retain original identities, exact revision and source sequence wi
  assert.equal(directionsReceipt('submit',{...r,inputSequence:8},p),true);
  const action={artifactId:id,expectedRevision:1,operationId:op};assert.equal(directionsReceipt('choose',{kind:'selected',artifactId:id,revision:2,reused:false},action),true);assert.equal(directionsReceipt('save',{kind:'selected',artifactId:id,revision:2,reused:false},action),false);
 });
+
+test('UUID spelling is canonical for receipt comparison while original operation bytes stay separate',()=>{
+ const p=submit();p.conversationId=p.conversationId.toUpperCase();p.taskId=p.taskId.toUpperCase();p.memoryBasis=[{id:id.toUpperCase(),revision:1}];
+ const normalized=directionsParams('submit',p);assert.equal(normalized.conversationId,p.conversationId.toLowerCase());assert.equal(normalized.taskId,p.taskId.toLowerCase());assert.equal(normalized.memoryBasis[0].id,id.toLowerCase());assert.equal(p.conversationId,p.conversationId.toUpperCase());
+});

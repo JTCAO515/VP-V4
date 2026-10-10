@@ -33,6 +33,7 @@ export async function nativeDirectionsHTTP(request:NextRequest,action:Directions
   let input:unknown;let inputBytes:string;
   if(read){input=Object.fromEntries(query);inputBytes=canonical(input);}else{try{const raw=await directionsInputBytes(request,scope.run);if(raw===null)return await denied('INVALID_INPUT',400);inputBytes=raw;input=JSON.parse(raw);}catch{return await denied('INVALID_INPUT',400);}}
   const params=directionsParams(action,input);if(!params)return await denied('INVALID_INPUT',400);
+  if(read)inputBytes=canonical(params);
   // Existing local-only saved Profile notice cannot grant server consumption.
   if(action==='submit'&&params.useSavedPace===true)return await denied('DATA_POLICY_BLOCKED',403);
   const call=()=>rpc('native_travel_directions_v1',{p_action:action,p_policy_id:config.policyId,p_input_bytes:inputBytes});

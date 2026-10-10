@@ -11,25 +11,27 @@ const text=(v:unknown,n:number):v is string=>typeof v==='string'&&v===v.trim()&&
 const date=(v:unknown):v is string=>typeof v==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(v)&&Number.isFinite(Date.parse(v))&&new Date(v).toISOString().slice(0,10)===v;
 const memories=(v:unknown)=>Array.isArray(v)&&v.length<=3&&v.every(r=>object(r)&&exact(r,['id','revision'])&&uuid(r.id)&&integer(r.revision,1,999999999999999))&&new Set(v.map(r=>r.id.toLowerCase())).size===v.length;
 const base=['artifactId','expectedRevision','operationId'];
+const ids=new Set(['artifactId','operationId','conversationId','goalId','parentMessageId','messageId','messageKey','threadId','turnId','taskId','taskKey','planningPolicyId','tripId']);
+function canonicalParams(v:Row):Row{return Object.fromEntries(Object.entries(v).map(([k,x])=>[k,ids.has(k)&&typeof x==='string'?x.toLowerCase():k==='memoryBasis'&&Array.isArray(x)?x.map(r=>({...r,id:String(r.id).toLowerCase()})):x]));}
 export function directionsParams(action:DirectionsAction,v:unknown):Row|null{
  if(!object(v))return null;
- if(action==='basis'||action==='intake')return exact(v,['conversationId','goalId'])&&uuid(v.conversationId)&&uuid(v.goalId)?v:null;
+ if(action==='basis'||action==='intake')return exact(v,['conversationId','goalId'])&&uuid(v.conversationId)&&uuid(v.goalId)?canonicalParams(v):null;
  if(action==='submit'){
   const keys=['conversationId','goalId','expectedGoalVersion','parentMessageId','messageId','messageKey','threadId','turnId','taskId','taskKey','planningPolicyId','locale','text','memoryBasis','expectedSourceSequence','expectedIntakeRevision','expectedIntakeDigest','intake','useSavedPace','expectedProfileRevision'];
   if(!exact(v,keys)||!['conversationId','goalId','parentMessageId','messageId','messageKey','threadId','turnId','taskId','taskKey','planningPolicyId'].every(k=>uuid(v[k]))||v.taskId===v.turnId||v.messageId===v.parentMessageId
    ||!integer(v.expectedGoalVersion,1,9999)||!integer(v.expectedSourceSequence,1,999999)||!integer(v.expectedIntakeRevision,0,999)||!(v.expectedIntakeRevision===0?v.expectedIntakeDigest===null:digest(v.expectedIntakeDigest))
    ||!['zh','en'].includes(String(v.locale))||!text(v.text,4000)||!memories(v.memoryBasis)||!parseDirectionsIntake(v.intake)||typeof v.useSavedPace!=='boolean'
    ||!(v.expectedProfileRevision===null||integer(v.expectedProfileRevision,0,9007199254740990))||v.useSavedPace&&v.expectedProfileRevision===null)return null;
-  return v;
+  return canonicalParams(v);
  }
  if(!uuid(v.artifactId)||!uuid(v.operationId)||!integer(v.expectedRevision,1,action==='bind'?1000:999))return null;
- if(action==='save')return exact(v,base)?v:null;
- if(action==='choose')return exact(v,[...base,'directionId'])&&['depth','breadth'].includes(String(v.directionId))?v:null;
- if(action==='bind')return exact(v,[...base,'tripId','expectedTripVersion','startDate'])&&uuid(v.tripId)&&integer(v.expectedTripVersion,0,2147483647)&&date(v.startDate)?v:null;
+ if(action==='save')return exact(v,base)?canonicalParams(v):null;
+ if(action==='choose')return exact(v,[...base,'directionId'])&&['depth','breadth'].includes(String(v.directionId))?canonicalParams(v):null;
+ if(action==='bind')return exact(v,[...base,'tripId','expectedTripVersion','startDate'])&&uuid(v.tripId)&&integer(v.expectedTripVersion,0,2147483647)&&date(v.startDate)?canonicalParams(v):null;
  if(action==='edit'){
   if(!exact(v,[...base,'replacements'])||!Array.isArray(v.replacements)||!v.replacements.length||v.replacements.length>30)return null;
   for(const d of v.replacements)if(!object(d)||!exact(d,['ordinal','destination','activities'])||!integer(d.ordinal,1,30)||!text(d.destination,80)||!Array.isArray(d.activities)||!d.activities.length||d.activities.length>8||!d.activities.every(a=>text(a,160))||new Set(d.activities).size!==d.activities.length)return null;
-  return new Set(v.replacements.map(d=>d.ordinal)).size===v.replacements.length?v:null;
+  return new Set(v.replacements.map(d=>d.ordinal)).size===v.replacements.length?canonicalParams(v):null;
  }
  return null;
 }
