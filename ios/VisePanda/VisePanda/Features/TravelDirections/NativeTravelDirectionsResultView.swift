@@ -237,3 +237,75 @@ private struct NativeTravelDirectionsLocalPacePreviewView: View {
         .onDisappear { local.clear() }
     }
 }
+
+/// Plain Trip reload resolves an owned identity, then reopens that exact original
+/// directions artifact. The reference transport is injected by the approved seam.
+struct NativeTravelDirectionsTripCard: View {
+    let session: NativeSession
+    let scope: NativeDataScope
+    let tripID: String
+    let tripVersion: Int
+    let active: Bool
+    let chinese: Bool
+    let reference: (String) async throws -> NativeFiveResultReference?
+    @Environment(\.scenePhase) private var phase
+    @State private var store = NativeTravelDirectionsTripResultStore()
+    @State private var refresh = UUID()
+    @State private var selected: Selection?
+    private struct Selection: Identifiable { let id = UUID(); let scope: NativeDataScope; let artifactID: String; let revision: Int }
+    private struct Load: Equatable { let key: NativeTravelDirectionsTripResultStore.Key?; let refresh: UUID }
+    private var key: NativeTravelDirectionsTripResultStore.Key? {
+        guard active, phase == .active, session.dataScope == scope else { return nil }
+        return .init(scope: scope, tripID: tripID, tripVersion: tripVersion)
+    }
+    private func t(_ zh: String, _ en: String) -> String { chinese ? zh : en }
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(t("此行程的旅行方向", "Travel directions for this Trip")).font(.headline)
+            Button(t("重新读取已保存方向", "Reload saved directions")) { refresh = UUID() }
+                .disabled(store.busy)
+            TimelineView(.periodic(from: .now, by: 1)) { _ in
+                if let value = store.visible(current: key) {
+                    NativeFiveResultCard(record: value, chinese: chinese)
+                    if !value.current {
+                        Text(t("这是本次可读的历史方向，当前资格已变化，仅供查看。", "This is readable historical direction content. Its current eligibility changed; viewing only."))
+                            .font(.footnote).accessibilityIdentifier("trip.directions.history")
+                    }
+                    Button(t("打开此精确方向版本", "Open this exact directions revision")) {
+                        guard let key, let current = store.visible(current: key) else { return }
+                        selected = .init(scope: key.scope, artifactID: current.artifactID, revision: current.revision)
+                    }.accessibilityIdentifier("trip.directions.open")
+                } else if store.busy { ProgressView() }
+                else { Text(t("暂无本次可读的已保存方向，或读取已过期。", "No saved directions are readable at this read, or the read has expired."))
+                    .font(.footnote).accessibilityIdentifier("trip.directions.unavailable") }
+            }
+        }
+        .task(id: Load(key: key, refresh: refresh)) {
+            guard let key else { store.clear(); return }
+            await store.load(key: key, current: { self.key }, reference: reference,
+                exact: { try await session.fiveResultRequest(artifactID: $0, revision: $1) })
+        }
+        .onChange(of: key) { _, _ in store.clear() }
+        .onChange(of: session.dataScope) { _, _ in store.clear(); selected = nil }
+        .onChange(of: tripID) { _, _ in store.clear(); selected = nil }
+        .onChange(of: session.assistantEventsInvalidation?.id) { _, _ in
+            guard let signal = session.assistantEventsInvalidation,
+                  signal.matches(scope: session.dataScope, sessionID: (try? session.communitySafetyActor())?.sessionID) else { return }
+            store.invalidate(signal)
+        }
+        .onChange(of: session.resultDataErasure?.id) { _, _ in
+            guard let erased = session.resultDataErasure, (try? session.communitySafetyActor()) == erased.actor else { return }
+            store.erase(erased)
+            if let selected, erased.artifactIDs.contains(selected.artifactID) { self.selected = nil }
+        }
+        .onDisappear { store.clear() }
+        .sheet(item: $selected, onDismiss: { refresh = UUID() }) { value in
+            NavigationStack {
+                ScrollView {
+                    NativeTravelDirectionsResultView(artifactID: value.artifactID, revision: value.revision, session: session,
+                        chinese: chinese, active: active && session.dataScope == value.scope).padding()
+                }
+            }
+        }
+    }
+}

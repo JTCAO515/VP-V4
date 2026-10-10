@@ -238,3 +238,75 @@ final class NativeTravelDirectionsLocalPaceStore {
         }
     }
 }
+
+/// Identity discovery is supplied by the single approved native adapter. Content
+/// always comes from the original exact V2 result reader; no generic Trip fallback.
+@MainActor @Observable
+final class NativeTravelDirectionsTripResultStore {
+    struct Key: Equatable { let scope: NativeDataScope; let tripID: String; let tripVersion: Int }
+    private(set) var record: NativeFiveResultRecord?
+    private(set) var busy = false
+    private var key: Key?
+    private var generation = UUID()
+    private var readStart = 0.0
+    private let uptime: () -> TimeInterval
+    init(uptime: @escaping () -> TimeInterval = { ProcessInfo.processInfo.systemUptime }) { self.uptime = uptime }
+    func clear() { generation = UUID(); key = nil; record = nil; busy = false; readStart = 0 }
+    func visible(current: Key?) -> NativeFiveResultRecord? {
+        let elapsed = uptime() - readStart
+        guard current != nil, current == key, elapsed.isFinite, (0..<30).contains(elapsed) else { return nil }
+        return record
+    }
+    func load(key target: Key, current: @escaping () -> Key?,
+              reference: (String) async throws -> NativeFiveResultReference?,
+              exact: (String, Int) async throws -> Data) async {
+        clear()
+        guard current() == target, UUID(uuidString: target.tripID) != nil, (0...2_147_483_647).contains(target.tripVersion) else { return }
+        key = target; let own = generation; busy = true; readStart = uptime()
+        defer { if generation == own { busy = false } }
+        do {
+            guard let selected = try await reference(target.tripID) else { return }
+            guard generation == own, current() == target, !Task.isCancelled,
+                  UUID(uuidString: selected.artifactID) != nil, (1...1000).contains(selected.revision) else { return }
+            let bytes = try await exact(selected.artifactID, selected.revision)
+            guard generation == own, current() == target, !Task.isCancelled else { return }
+            let elapsed = uptime() - readStart
+            guard elapsed.isFinite, (0..<30).contains(elapsed),
+                  let result = try NativeFiveResultRecord.decode(bytes, artifactID: selected.artifactID, revision: selected.revision),
+                  case .directions = result.content, result.source.tripId == target.tripID,
+                  !result.current || result.source.tripVersion == target.tripVersion else { throw NativeDataError.invalidResponse }
+            // current:false is readable history only. The existing detail consumer
+            // keeps all choose/edit/save/bind actions disabled for such records.
+            record = result
+        } catch {
+            guard generation == own, current() == target else { return }
+            record = nil
+        }
+    }
+    static func decodeReference(_ bytes: Data, tripID: String) throws -> NativeFiveResultReference? {
+        guard UUID(uuidString: tripID) != nil, bytes.count <= 12_000,
+              let root = try JSONSerialization.jsonObject(with: bytes) as? [String: Any],
+              Set(root.keys) == Set(["version", "data"]), NativeFiveResultContent.integer(root["version"]) == 2,
+              let data = root["data"] as? [String: Any] else { throw NativeDataError.invalidResponse }
+        if ["empty", "unavailable"].contains(data["kind"] as? String ?? "") {
+            guard Set(data.keys) == Set(["kind"]) else { throw NativeDataError.invalidResponse }
+            return nil
+        }
+        guard Set(data.keys) == Set(["kind", "tripId", "artifactId", "revision"]),
+              data["kind"] as? String == "result_reference", data["tripId"] as? String == tripID.lowercased(),
+              (data["artifactId"] as? String).flatMap(UUID.init(uuidString:)) != nil,
+              NativeFiveResultContent.integer(data["revision"], maximum: 1000) != nil else { throw NativeDataError.invalidResponse }
+        return try NativeFiveResultReference.decode(bytes, field: "tripId", expectedID: tripID.lowercased())
+    }
+    func invalidate(_ signal: NativeAssistantEventsInvalidation) {
+        guard key?.scope == signal.selection.scope else { return }
+        // Cancel any matching-scope discovery read as well as the visible cache;
+        // this store owns no pending mutation or original Trip journal.
+        clear()
+    }
+    func erase(_ erased: NativeResultDataErasure) {
+        guard key?.scope == erased.scope,
+              record.map({ erased.artifactIDs.contains($0.artifactID) }) == true || busy else { return }
+        clear()
+    }
+}

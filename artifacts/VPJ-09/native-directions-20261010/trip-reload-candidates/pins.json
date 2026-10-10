@@ -1,0 +1,22 @@
+[
+  {
+    "path": "ios/VisePanda/VisePanda/App/NativeSession.swift",
+    "baseWT": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj09-directions-server-20261010",
+    "baseHEAD": "8d6c9e0adbde56c211ef1b971faf536fbbb7a2f4",
+    "beforeBlob": "08f1bf5f6a4934828812e8c8fffdd9be457a45b5",
+    "afterBlob": "64572653e1e5d352cf767e7f111d471bd36b13e8",
+    "beforeSHA256": "d47f68e27ad98bd375b8fc85deff069226d44da5f0611f92261c5c5af1be795d",
+    "afterSHA256": "024589ade4e95202e73942b536c18a8e2def4c262076e2b47f6935905973e8d1",
+    "patchSHA256": "2aaf97fcd6af203c333842096216ce086232cc8dc0e7581b2075dad8e5c4e7d0"
+  },
+  {
+    "path": "ios/VisePanda/VisePanda/Features/Trip/NativeTripView.swift",
+    "baseWT": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj09-directions-server-20261010",
+    "baseHEAD": "8d6c9e0adbde56c211ef1b971faf536fbbb7a2f4",
+    "beforeBlob": "84135591afcc70404e4ee7cea9902cd77b7aed18",
+    "afterBlob": "540453f1f459ccd747dbf27b14f8059ade185175",
+    "beforeSHA256": "cef0e8445a7bd82293e54072a0eb219b47cac2a91f1be15d299c818e37c022f4",
+    "afterSHA256": "8b8c897d6dd31a59c0a47af81c495b737ac7af429535b34b0488aca1181db5d7",
+    "patchSHA256": "9514a0fd1430a9f2658fb48ef9ec55f97bb91ff245fa04b9b0b711f4ff57c211"
+  }
+]
