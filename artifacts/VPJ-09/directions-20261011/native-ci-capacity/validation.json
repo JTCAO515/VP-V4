@@ -1,0 +1,19 @@
+{
+  "sourceParentHead": "21a94ff9edadc943a9a1459b9167e5ad37397f54",
+  "sourceSHA256": {
+    "scripts/ci-suites/db-integration.mjs": "1b2244a123ebc9b1094b0f5429fae081d72465b20d01bcddd1012be2e11d2b19",
+    "tests/unit/governance/db-integration-ci.test.mjs": "a6ea25cd88919d6d84e0f24b621f0c1aaa6c91a446e6f4695fb24972ef124608",
+    ".github/workflows/db-integration.yml": "f61abcc2f7fe4ed8aadba349b11e84d3dcbab33b7c75536676b5bf4672513eff",
+    "scripts/ci-change-scope.mjs": "10daab6cd34372d9989a4af62378ae29eb894f2943053e657bc35492792bd1a6",
+    "supabase/migrations/20261010030000_vpj09_travel_directions.sql": "6354e482331453289311c4d7f2a363d1012a3bc9d11f0324d300b5bc8cb58584"
+  },
+  "command": "node --test tests/unit/governance/db-integration-ci.test.mjs",
+  "exitCode": 0,
+  "pass": 11,
+  "fail": 0,
+  "skip": 0,
+  "logSHA256": "81b56a281b4db06bd78346fc13aeb9b701fa871c32b6e07a3e7d082472e80018",
+  "scope": "existing governance suite once includes exact-once coverage, max5 Native steps/job, malformed shard denial and CLI/workflow projection",
+  "notRun": "no local business matrix repeated; new remote CI pending",
+  "historical": "6adb Native3 CANCELLED confirmed30m annotations; interrupted last fixtures cleanup UNKNOWN, preceding successful cleanup preserved"
+}
