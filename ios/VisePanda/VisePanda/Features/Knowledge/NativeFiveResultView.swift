@@ -88,6 +88,8 @@ struct NativeFiveResultDetail:View {
     @State private var store=NativeFiveResultStore()
     @State private var comparison=NativeFiveResultStore()
     @State private var choosing:String?
+    private struct DirectionsEntry: Identifiable { let id = UUID(); let scope: NativeDataScope; let artifactID: String; let revision: Int }
+    @State private var directionsEntry: DirectionsEntry?
     @State private var refresh=UUID()
     @Environment(\.dismiss) private var dismiss
     var onReference:((NativeDataScope,String,Int)->Void)? = nil
@@ -104,6 +106,11 @@ struct NativeFiveResultDetail:View {
             TimelineView(.periodic(from:.now,by:1)){_ in
                 if let value=store.visible(key?.scope){
                     NativeFiveResultCard(record:value,chinese:chinese)
+                    if case .directions = value.content, let scope = key?.scope {
+                        Button(chinese ? "打开旅行方向" : "Open travel directions") {
+                            directionsEntry = .init(scope: scope, artifactID: value.artifactID, revision: value.revision)
+                        }.accessibilityIdentifier("library.directions.open")
+                    }
                     if let onReference,value.current,let scope=key?.scope {Button(chinese ? "以此精确成果继续 / 改口":"Continue or amend from this exact result"){onReference(scope,value.artifactID,value.revision);dismiss()}}
                     if value.current,case .decision(let decision)=value.content,decision.state=="pending",let basis=comparison.visible(key?.scope),basis.current,case .comparison(let content)=basis.content{
                         ForEach(content.options ?? []){option in Button(chinese ? "明确选择："+option.title:"Choose explicitly: "+option.title){choosing=option.id}}
@@ -135,7 +142,15 @@ struct NativeFiveResultDetail:View {
             store.applyResultErasure(erased); comparison.applyResultErasure(erased)
             if erased.artifactIDs.contains(artifactID){choosing=nil}
         }
-        .onChange(of:key){_,_ in store.clear();comparison.clear();choosing=nil}.onDisappear{store.clear();comparison.clear();choosing=nil}
+        .sheet(item: $directionsEntry) { entry in
+            NavigationStack {
+                ScrollView {
+                    NativeTravelDirectionsResultView(artifactID: entry.artifactID, revision: entry.revision, session: session,
+                        chinese: chinese, active: active && session.dataScope == entry.scope).padding()
+                }
+            }
+        }
+        .onChange(of:key){_,_ in store.clear();comparison.clear();choosing=nil;directionsEntry=nil}.onDisappear{store.clear();comparison.clear();choosing=nil;directionsEntry=nil}
     }
     private struct Load:Equatable{let key:NativeFiveResultStore.Key?;let refresh:UUID}
 }
@@ -151,6 +166,15 @@ struct NativeFiveResultCard:View {
             case .proposal(let id,let revision):Text(t("提案引用","Proposal reference")).font(.headline);Text("\(id) · r\(revision)");Text(t("确认仍须原 Trip 提案差异与原子确认流程。","Confirmation still requires the existing Trip diff and atomic confirmation flow."))
             case .journey(let draft):Text(draft.title).font(.headline);Text(draft.summary);Text(draft.tripTitle);Text(t("不可编辑的行程预览，不是第二份 Trip。","Immutable journey preview, not a second editable Trip."));ForEach(draft.days){day in Text(day.date).font(.headline);ForEach(day.items){item in Text(item.title)}}
             case .decision(let value):Text(value.title).font(.headline);Text(value.summary);Text(value.state=="chosen" ? t("已记录明确选择：","Recorded explicit choice: ")+(value.chosenOptionID ?? ""):t("待明确选择，未推断替你决定。","Pending explicit choice; no decision is inferred."));Text("\(value.comparison.artifactId) · r\(value.comparison.revision)");Text(t("选择依据此比较的当前有效选项。","Choose from the currently available options in this comparison."))
+            case .directions(let value):
+                Text(value.title).font(.headline); Text(value.summary)
+                ForEach(value.directions, id: \.id) { option in Text(option.title).font(.headline); Text(option.tradeoff) }
+                if let draft = value.draft {
+                    ForEach(draft.days, id: \.ordinal) { day in
+                        Text(t("第 \(day.ordinal) 天 · \(day.destination)", "Day \(day.ordinal) · \(day.destination)")).font(.headline)
+                        ForEach(Array(day.activities.enumerated()), id: \.offset) { _, activity in Text(activity) }
+                    }
+                }
             case .practical(let value):Text(t("已保存翻译","Saved translation")).font(.headline);Text("\(value.sourceLocale) → \(value.targetLocale)");Text(value.translation).textSelection(.enabled);Text(t("回译：","Back translation: ")+value.backTranslation)
             }
             Text(t("记录依据：","Recorded basis: ")+t("记忆 \(record.memories.count) 项，证据 \(record.evidence.count) 项","\(record.memories.count) Memory references, \(record.evidence.count) evidence references"))

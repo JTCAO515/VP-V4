@@ -1760,6 +1760,19 @@ final class NativeSession {
         return try await dataRequest(prefix:path,path:path,method:"GET",queryItems:q)
     }
 
+    func travelDirectionsReadRequest(kind: String, conversationID: String, goalID: String) async throws -> Data {
+        guard ["basis", "intake"].contains(kind), UUID(uuidString: conversationID) != nil,
+              UUID(uuidString: goalID) != nil else { throw NativeDataError.invalidResponse }
+        let root = "api/chat/native/v5/planning/directions"
+        return try await dataRequest(prefix: root, path: root + "/" + kind, method: "GET",
+            queryItems: [.init(name: "conversationId", value: conversationID), .init(name: "goalId", value: goalID)])
+    }
+    func travelDirectionsActionRequest(action: String, body: Data) async throws -> Data {
+        guard ["submit", "choose", "save", "edit", "bind"].contains(action), body.count <= 16_384 else { throw NativeDataError.invalidResponse }
+        let root = "api/chat/native/v5/planning/directions"
+        return try await dataRequest(prefix: root, path: root + "/" + action, method: "POST", body: body)
+    }
+
     func fiveResultReference(field: String, id: String) async throws -> Data {
         guard ["task", "trip"].contains(field), UUID(uuidString:id) != nil else { throw NativeDataError.invalidResponse }
         let path = "api/results/native/v2/" + field
@@ -1937,7 +1950,8 @@ final class NativeSession {
 
     private func dataRequest(prefix: String, path: String, method: String, body: Data? = nil, queryItems: [URLQueryItem] = []) async throws -> Data {
         guard enabled, !busy, let initial = dataScope else { throw NativeDataError.sessionUnavailable }
-        let guardsTurnProjection = method == "GET" && path.hasPrefix("api/chat/native/")
+        let directionsProjection = path.hasPrefix("api/chat/native/v5/planning/directions/")
+        let guardsTurnProjection = directionsProjection || method == "GET" && path.hasPrefix("api/chat/native/")
         var turnTicket: NativeTurnDataProjectionFence.Ticket?
         var turnReadGeneration: UUID?
         if guardsTurnProjection {
@@ -1948,11 +1962,11 @@ final class NativeSession {
             }
             turnReadGeneration = turnDataProjectionFence.generation
         }
-        let guardsResultProjection = path.hasPrefix("api/results/native/") ||
+        let guardsResultProjection = directionsProjection || path.hasPrefix("api/results/native/") ||
             ((path == "api/library/native/v1/items" || path == "api/library/native/v1/item") && queryItems.contains { $0.name == "source" && $0.value == "results" })
         let resultActor = guardsResultProjection ? try communitySafetyActor() : nil
         let resultArtifact = queryItems.first { $0.name == "artifactId" || guardsResultProjection && path == "api/library/native/v1/item" && $0.name == "id" }?.value ??
-            (path == "api/results/native/v2/decision" ? ((try? JSONSerialization.jsonObject(with: body ?? Data())) as? [String: Any])?["artifactId"] as? String : nil)
+            (path == "api/results/native/v2/decision" || directionsProjection ? ((try? JSONSerialization.jsonObject(with: body ?? Data())) as? [String: Any])?["artifactId"] as? String : nil)
         var resultTicket: NativeResultDataProjectionFence.Ticket?
         if let actor = resultActor {
             resultDataProjectionFence.bind(actor)
