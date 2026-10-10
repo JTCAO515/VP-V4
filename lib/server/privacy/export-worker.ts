@@ -1,3 +1,4 @@
+import { turnExportHandler } from './turn-data/export.ts';
 import { entitlementExportHandler } from './export-entitlements.ts';
 import { profileExportHandler } from './profile-export/handler.ts';
 import { parseExportJob, exportRecord, exportExact } from "./export-contract.ts";
@@ -39,7 +40,9 @@ export async function runCoreExportJob(requestId: string, operationId: string, p
   const memory = memoryExportHandler(lease, domain);
   const entitlements = entitlementExportHandler(lease,domain);
   const profile = profileExportHandler(lease, domain);
-  const bundle = await collectCoreExport(lease, { ...handlers, trip, memory, entitlements, profile }, policy, valid, bounded);
+  const turn = turnExportHandler(lease, domain);
+  const bundle = await collectCoreExport(lease, { ...handlers, trip, memory, entitlements, profile, turn }, policy, valid, bounded);
+  if (bundle && !turn.matchesReceipt(bundle.modules.find(module => module.module === 'turn'))) return { kind: 'unavailable' };
   if (bundle && !profile.matchesReceipt(bundle.modules.find(module => module.module === "profile"))) return { kind: "unavailable" };
   if(bundle){const receipt=bundle.modules.find(m=>m.module==='entitlements'),actual=entitlements.progress();if(!receipt||receipt.pages!==actual.pages||receipt.rows!==actual.rows||receipt.reason==='LIVE_TRAVERSAL'&&!actual.terminal)return {kind:'unavailable'};}
   if (!bundle) return { kind: "unavailable" }; // Unknown/expired lease cannot be failed or completed by this caller.

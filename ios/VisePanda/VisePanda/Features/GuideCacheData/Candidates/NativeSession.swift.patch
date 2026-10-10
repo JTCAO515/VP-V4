@@ -1,0 +1,8 @@
+--- a/ios/VisePanda/VisePanda/App/NativeSession.swift
++++ b/ios/VisePanda/VisePanda/App/NativeSession.swift
+@@ -2030,0 +2031,2 @@
++        do { try NativeGuideCacheDataStore.eraseExports() }
++        catch { failureCode="guideCacheExportCleanupRequired";status="storageError";return }
+@@ -2180,0 +2183,2 @@
++        do { try NativeGuideCacheDataStore.eraseExports() }
++        catch { failureCode="guideCacheExportCleanupRequired"; status="storageError"; return false }

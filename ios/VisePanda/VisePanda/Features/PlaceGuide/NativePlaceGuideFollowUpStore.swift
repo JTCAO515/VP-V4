@@ -25,6 +25,10 @@ import Observation
         generation = UUID(); selection = nil; submitted = nil; pending = nil; turn = nil
         policy = nil; draft = ""; busy = false; notice = nil; answerDeadline = 0; continuation = nil; awaiting = false
     }
+    /// Hide/fence old renderer requests without changing draft, pending bytes or acknowledgement status.
+    func hideForLocalGuideCacheClear() {
+        generation = UUID(); turn = nil; policy = nil; busy = false; answerDeadline = 0
+    }
     func suspend() { generation = UUID(); turn = nil; policy = nil; busy = false; answerDeadline = 0; draft = "" }
     func visible(scope: NativeDataScope?) -> NativeTextTurn? {
         scope != nil && scope == selection?.scope && ProcessInfo.processInfo.systemUptime < answerDeadline ? turn : nil

@@ -1,0 +1,62 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -derivedDataPath /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-turn-data-20261007/artifacts/VPJ-58/native-turn-data/r2-derived -destination "platform=iOS Simulator,id=D6386E0B-80AE-4C69-A0BA-4084BEBDC3A9" CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- -parallel-testing-enabled NO "-only-testing:VisePandaTests/NativeTurnDataTests" -resultBundlePath /Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-turn-data-20261007/artifacts/VPJ-58/native-turn-data/r2/tests.xcresult
+
+Build settings from command line:
+    CODE_SIGN_IDENTITY = -
+    CODE_SIGNING_ALLOWED = YES
+
+2026-10-08 00:39:36.419 xcodebuild[16833:1597334] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionsModels.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-08 00:39:36.420 xcodebuild[16833:1597334] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionsStore.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-08 00:39:36.420 xcodebuild[16833:1597334] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionDestination.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-08 00:39:36.420 xcodebuild[16833:1597334] warning:  The file reference for "ShareIntakeCore/ShareIntakeInbox.swift" is a member of multiple groups ("ShareIntakeExtension" and "Features"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+Writing result bundle at path:
+	/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-turn-data-20261007/artifacts/VPJ-58/native-turn-data/r2/tests.xcresult
+
+2026-10-08 00:39:41.545627+0800 VisePanda[17059:1598734] [General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+2026-10-08 00:39:41.624088+0800 VisePanda[17059:1598740] [General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
+Test Suite 'Selected tests' started at 2026-10-08 00:39:41.862.
+Test Suite 'VisePandaTests.xctest' started at 2026-10-08 00:39:41.863.
+Test Suite 'VisePandaTests.xctest' passed at 2026-10-08 00:39:41.863.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-08 00:39:41.863.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64-apple-ios17.0-simulator
+◇ Suite NativeTurnDataTests started.
+◇ Test soleTSProducerEnvelopesAdmitExactMutationBytesAndFiniteProgress() started.
+✔ Test soleTSProducerEnvelopesAdmitExactMutationBytesAndFiniteProgress() passed after 0.007 seconds.
+◇ Test parentDigestTruthfulnessOwnerEpochAndClosedFieldsFailBeforeCompletion() started.
+✔ Test parentDigestTruthfulnessOwnerEpochAndClosedFieldsFailBeforeCompletion() passed after 0.005 seconds.
+◇ Test explicitReviewUnknownAckAndReadOnlyRecoveryRetainOriginalBytes() started.
+✔ Test explicitReviewUnknownAckAndReadOnlyRecoveryRetainOriginalBytes() passed after 0.007 seconds.
+◇ Test lateActorResponseCannotConsumeReceiptOrErasePendingJournal() started.
+✔ Test lateActorResponseCannotConsumeReceiptOrErasePendingJournal() passed after 0.002 seconds.
+◇ Test selectedProjectionNotificationKeepsDraftAndUnselectedTaskActivity() started.
+✔ Test selectedProjectionNotificationKeepsDraftAndUnselectedTaskActivity() passed after 0.004 seconds.
+◇ Test actualLocalPostgresPreviewAdmitsSoleNativeDecoder() started.
+✔ Test actualLocalPostgresPreviewAdmitsSoleNativeDecoder() passed after 0.001 seconds.
+◇ Test actorEpochAndBackgroundInvalidateLateReadAuthority() started.
+✔ Test actorEpochAndBackgroundInvalidateLateReadAuthority() passed after 0.001 seconds.
+◇ Test previewAuthorityCannotRenewWithLateArrivalOrClockRollback() started.
+✔ Test previewAuthorityCannotRenewWithLateArrivalOrClockRollback() passed after 0.001 seconds.
+◇ Test erasureRejectsOldReadAndPreservesFreshUnselectedTurn() started.
+✔ Test erasureRejectsOldReadAndPreservesFreshUnselectedTurn() passed after 0.001 seconds.
+◇ Test pendingJournalKeepsExactBytesAcrossUnknownAckAndRefusesReplacement() started.
+✔ Test pendingJournalKeepsExactBytesAcrossUnknownAckAndRefusesReplacement() passed after 0.001 seconds.
+◇ Test privateReceiptExpiresPhysicallyAndCannotCrossActor() started.
+✔ Test privateReceiptExpiresPhysicallyAndCannotCrossActor() passed after 0.003 seconds.
+◇ Test failedPhysicalPurgeDeniesAccessAndKeepsFailureVisible() started.
+✔ Test failedPhysicalPurgeDeniesAccessAndKeepsFailureVisible() passed after 0.001 seconds.
+✔ Suite NativeTurnDataTests passed after 0.035 seconds.
+✔ Test run with 12 tests in 1 suite passed after 0.035 seconds.
+2026-10-08 00:39:42.186 xcodebuild[16833:1597334] [MT] IDETestOperationsObserverDebug: 5.496 elapsed -- Testing started completed.
+2026-10-08 00:39:42.186 xcodebuild[16833:1597334] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-08 00:39:42.186 xcodebuild[16833:1597334] [MT] IDETestOperationsObserverDebug: 5.496 sec, +5.496 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-turn-data-20261007/artifacts/VPJ-58/native-turn-data/r2/tests.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

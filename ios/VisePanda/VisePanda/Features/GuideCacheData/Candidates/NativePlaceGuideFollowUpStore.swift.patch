@@ -1,0 +1,7 @@
+--- a/ios/VisePanda/VisePanda/Features/PlaceGuide/NativePlaceGuideFollowUpStore.swift
++++ b/ios/VisePanda/VisePanda/Features/PlaceGuide/NativePlaceGuideFollowUpStore.swift
+@@ -26,0 +27,4 @@
++    }
++    /// Hide/fence old renderer requests without changing draft, pending bytes or acknowledgement status.
++    func hideForLocalGuideCacheClear() {
++        generation = UUID(); turn = nil; policy = nil; busy = false; answerDeadline = 0

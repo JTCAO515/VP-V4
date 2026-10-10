@@ -1,0 +1,5 @@
+--- a/ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageModuleView.swift
++++ b/ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageModuleView.swift
+@@ -52,0 +53,2 @@
++            } else if module.id == "guide_cache" {
++                NativeGuideCacheDataView(coverage: store, session: session, chinese: chinese)

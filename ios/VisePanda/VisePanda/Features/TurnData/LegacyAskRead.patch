@@ -1,0 +1,71 @@
+--- a/ios/VisePanda/VisePanda/App/NativeSession.swift
++++ b/ios/VisePanda/VisePanda/App/NativeSession.swift
+@@ -1832,9 +1832,14 @@
+         guard enabled, !busy, let initial = dataScope else { throw NativeDataError.sessionUnavailable }
+         let guardsTurnProjection = method == "GET" && path.hasPrefix("api/chat/native/")
+         var turnTicket: NativeTurnDataProjectionFence.Ticket?
++        var turnReadGeneration: UUID?
+         if guardsTurnProjection {
+-            let actor = try communitySafetyActor(); turnDataProjectionFence.bind(actor)
+-            turnTicket = try turnDataProjectionFence.capture(actor)
++            // Existing Ask readers keep their original authority when no privacy session is available.
++            // Their old list response still loses its generation if a verified erasure arrives.
++            if let actor = try? communitySafetyActor() {
++                turnDataProjectionFence.bind(actor); turnTicket = try turnDataProjectionFence.capture(actor)
++            }
++            turnReadGeneration = turnDataProjectionFence.generation
+         }
+         let guardsResultProjection = path.hasPrefix("api/results/native/") ||
+             ((path == "api/library/native/v1/items" || path == "api/library/native/v1/item") && queryItems.contains { $0.name == "source" && $0.value == "results" })
+@@ -1874,6 +1879,7 @@
+             let envelope = try? JSONDecoder().decode(NativeDataFailure.self, from: data)
+             throw NativeDataError.server(code: envelope?.error.code ?? "HTTP_\(http.statusCode)")
+         }
++        if let captured = turnReadGeneration, captured != turnDataProjectionFence.generation { throw NativeDataError.staleSessionResponse }
+         if let ticket = turnTicket {
+             guard try communitySafetyActor() == ticket.actor, turnDataProjectionFence.accepts(ticket) else { throw NativeDataError.staleSessionResponse }
+         }
+@@ -1887,10 +1893,16 @@
+     func askEvents(turnId: String, after: Int, receive: (NativeAskEventDecoder.Frame, TimeInterval) throws -> Void) async throws {
+         guard askMode == .grounded, enabled, !busy, UUID(uuidString: turnId) != nil,
+               after >= 0, after <= 999_999_999_999_999, let initial = dataScope else { throw NativeDataError.sessionUnavailable }
+-        let actor = try communitySafetyActor(); turnDataProjectionFence.bind(actor)
+-        let turnTicket = try turnDataProjectionFence.capture(actor, turnID: turnId.lowercased())
++        let actor = try? communitySafetyActor()
++        if let actor { turnDataProjectionFence.bind(actor) }
++        let turnTicket = try actor.map { try turnDataProjectionFence.capture($0, turnID: turnId.lowercased()) }
++        let legacyVersion = turnDataProjectionFence.readVersion(turnID: turnId.lowercased())
++        func currentRead() -> Bool {
++            if let turnTicket { return (try? communitySafetyActor()) == turnTicket.actor && turnDataProjectionFence.accepts(turnTicket) }
++            return turnDataProjectionFence.readVersion(turnID: turnId.lowercased()) == legacyVersion
++        }
+         if let credential, credential.expiresAt <= Date().timeIntervalSince1970 + 15 { await validate() }
+-        guard dataScope == initial, turnDataProjectionFence.accepts(turnTicket), let credential, let endpoint else { throw NativeDataError.sessionUnavailable }
++        guard dataScope == initial, currentRead(), let credential, let endpoint else { throw NativeDataError.sessionUnavailable }
+         let url = endpoint.appendingPathComponent("api/chat/native/v4/turns/\(turnId)/events")
+         var request = URLRequest(url: url)
+         request.httpShouldHandleCookies = false
+@@ -1907,7 +1919,7 @@
+             bytes.task.cancel()
+         }
+         defer { deadline.cancel() }
+-        guard dataScope == initial, try communitySafetyActor() == actor, turnDataProjectionFence.accepts(turnTicket) else { throw NativeDataError.staleSessionResponse }
++        guard dataScope == initial, currentRead() else { throw NativeDataError.staleSessionResponse }
+         guard let http = response as? HTTPURLResponse else { throw NativeDataError.invalidResponse }
+         if http.statusCode == 401 { handle(SessionError.denied); throw NativeDataError.sessionUnavailable }
+         guard http.statusCode == 200,
+@@ -1917,12 +1929,12 @@
+         for try await byte in bytes {
+             try Task.checkCancellation()
+             count += 1
+-            guard dataScope == initial, try communitySafetyActor() == actor, turnDataProjectionFence.accepts(turnTicket) else { throw NativeDataError.staleSessionResponse }
++            guard dataScope == initial, currentRead() else { throw NativeDataError.staleSessionResponse }
+             guard count <= 2_097_152, ProcessInfo.processInfo.systemUptime - started < 15 else { throw NativeDataError.invalidResponse }
+             if let frame = try parser.append(byte) { try receive(frame, ProcessInfo.processInfo.systemUptime - started) }
+         }
+         try Task.checkCancellation()
+-        guard dataScope == initial, try communitySafetyActor() == actor, turnDataProjectionFence.accepts(turnTicket) else { throw NativeDataError.staleSessionResponse }
++        guard dataScope == initial, currentRead() else { throw NativeDataError.staleSessionResponse }
+         try parser.finish()
+     }
+ 

@@ -1,0 +1,60 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -derivedDataPath /tmp/vpj58-guide-cache-native-r1-3e4cfc4e-derived -destination "platform=iOS Simulator,id=EE95D83C-0372-470D-9B3A-E2CCE7C065B0" CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- -parallel-testing-enabled NO -collect-test-diagnostics never "-only-testing:VisePandaTests/NativeGuideCacheDataTests" -resultBundlePath /tmp/vpj58-guide-cache-native-r2-runtime-e4c15aa4/tests.xcresult
+
+Build settings from command line:
+    CODE_SIGN_IDENTITY = -
+    CODE_SIGNING_ALLOWED = YES
+
+2026-10-08 01:47:47.888 xcodebuild[42871:1753476] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionsModels.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-08 01:47:47.888 xcodebuild[42871:1753476] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionsStore.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-08 01:47:47.888 xcodebuild[42871:1753476] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionDestination.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-08 01:47:47.889 xcodebuild[42871:1753476] warning:  The file reference for "ShareIntakeCore/ShareIntakeInbox.swift" is a member of multiple groups ("ShareIntakeExtension" and "Features"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+Writing result bundle at path:
+	/tmp/vpj58-guide-cache-native-r2-runtime-e4c15aa4/tests.xcresult
+
+Test Suite 'Selected tests' started at 2026-10-08 01:47:52.199.
+Test Suite 'VisePandaTests.xctest' started at 2026-10-08 01:47:52.199.
+Test Suite 'VisePandaTests.xctest' passed at 2026-10-08 01:47:52.199.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-08 01:47:52.199.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64-apple-ios17.0-simulator
+◇ Suite NativeGuideCacheDataTests started.
+◇ Test actualEmptyInstanceDoesNotInventRecordOrSuccessReceipt() started.
+✔ Test actualEmptyInstanceDoesNotInventRecordOrSuccessReceipt() passed after 0.003 seconds.
+◇ Test retainedActualMetadataProtectedExportExcludesBodiesAndConfirmsOnlyRealCallback() started.
+✘ Test retainedActualMetadataProtectedExportExcludesBodiesAndConfirmsOnlyRealCallback() recorded an issue at NativeGuideCacheDataTests.swift:51:9: Expectation failed: (protection as? String) == FileProtectionType.complete.rawValue
+↳ Actual protection attribute: nil
+↳ (protection as? String) == FileProtectionType.complete.rawValue → false
+↳   (protection as? String) → nil
+↳   FileProtectionType.complete.rawValue → "NSFileProtectionComplete"
+✘ Test retainedActualMetadataProtectedExportExcludesBodiesAndConfirmsOnlyRealCallback() failed after 0.019 seconds with 1 issue.
+◇ Test fixedDualClocksSessionEpochRightsAndSourceStateCannotBeRenewedOrRebased() started.
+✔ Test fixedDualClocksSessionEpochRightsAndSourceStateCannotBeRenewedOrRebased() passed after 0.005 seconds.
+◇ Test clearFencesOldInflightReadAndSaveButFreshExplicitRecheckWorks() started.
+✔ Test clearFencesOldInflightReadAndSaveButFreshExplicitRecheckWorks() passed after 0.008 seconds.
+◇ Test guideOnlyRendererClearFencesLateSpeechAndPreservesOriginalTranslation() started.
+✔ Test guideOnlyRendererClearFencesLateSpeechAndPreservesOriginalTranslation() passed after 0.005 seconds.
+◇ Test clearingGuideDoesNotStopAnActiveOtherPurposeTranslation() started.
+✔ Test clearingGuideDoesNotStopAnActiveOtherPurposeTranslation() passed after 0.003 seconds.
+◇ Test ownedExportRemovalFailureCannotBecomeSourceClearReceipt() started.
+✔ Test ownedExportRemovalFailureCannotBecomeSourceClearReceipt() passed after 0.005 seconds.
+◇ Test unlicensedPositionsAreExcludedAndActorLossPhysicallyRemovesOwnExport() started.
+✔ Test unlicensedPositionsAreExcludedAndActorLossPhysicallyRemovesOwnExport() passed after 0.006 seconds.
+✘ Suite NativeGuideCacheDataTests failed after 0.060 seconds with 1 issue.
+✘ Test run with 8 tests in 1 suite failed after 0.060 seconds with 1 issue.
+2026-10-08 01:47:52.865 xcodebuild[42871:1753476] [MT] IDETestOperationsObserverDebug: 4.692 elapsed -- Testing started completed.
+2026-10-08 01:47:52.865 xcodebuild[42871:1753476] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-08 01:47:52.865 xcodebuild[42871:1753476] [MT] IDETestOperationsObserverDebug: 4.692 sec, +4.692 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/vpj58-guide-cache-native-r2-runtime-e4c15aa4/tests.xcresult
+
+Failing tests:
+	NativeGuideCacheDataTests.retainedActualMetadataProtectedExportExcludesBodiesAndConfirmsOnlyRealCallback()
+
+** TEST EXECUTE FAILED **
+
+Testing started

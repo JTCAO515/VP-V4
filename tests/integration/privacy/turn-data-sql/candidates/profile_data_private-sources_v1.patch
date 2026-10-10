@@ -1,0 +1,10 @@
+--- tests/integration/privacy/turn-data-sql/candidates/profile_data_private-sources_v1.before.sql	2026-10-08 00:44:35
++++ tests/integration/privacy/turn-data-sql/candidates/profile_data_private-sources_v1.after.sql	2026-10-08 00:44:35
+@@ -33,5 +33,7 @@
+  ('export_private.core_artifacts_v1','request_id in(select request_id from export_private.core_jobs_v1 where owner_id=$1)','request_id'),
+  ('export_private.core_tickets_v1','request_id in(select request_id from export_private.core_jobs_v1 where owner_id=$1)','operation_id'),
+  ('export_private.profile_snapshot_provenance_v1','request_id in(select request_id from export_private.core_jobs_v1 where owner_id=$1)','request_id,generation'),
++ ('turn_data_private.operations_v1','owner_id=$1','request_id'),
++ ('turn_data_private.export_provenance_v1','owner_id=$1','request_id,generation'),
+  ('public.privacy_requests','owner_id=$1','id')
+ $function$

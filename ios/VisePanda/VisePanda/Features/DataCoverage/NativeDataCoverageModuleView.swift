@@ -1,9 +1,9 @@
 import SwiftUI
 
 private enum NativeDataCoverageDestination: Identifiable {
-    case profileData, resultData, conversationData, archiveData, coverageProgress, core, memory, trip(NativeLinkedTripDeleteSelection), deviceExport, deviceDelete, material(NativeMaterialReferenceScope), notification(NativeNotificationDataScope)
+    case turnData, profileData, resultData, conversationData, archiveData, coverageProgress, core, memory, trip(NativeLinkedTripDeleteSelection), deviceExport, deviceDelete, material(NativeMaterialReferenceScope), notification(NativeNotificationDataScope)
     var id: String {
-        switch self { case .profileData: "profile-data"; case .resultData: "result-data"; case .conversationData: "conversation-data"; case .archiveData: "archive-data"; case .coverageProgress: "coverage-progress"; case .core: "core"; case .memory: "memory"; case .trip(let v): v.tripID; case .deviceExport: "device-export"; case .deviceDelete: "device-delete"; case .material(let scope): scope.rawValue; case .notification(let scope): scope.rawValue }
+        switch self { case .turnData: "turn-data"; case .profileData: "profile-data"; case .resultData: "result-data"; case .conversationData: "conversation-data"; case .archiveData: "archive-data"; case .coverageProgress: "coverage-progress"; case .core: "core"; case .memory: "memory"; case .trip(let v): v.tripID; case .deviceExport: "device-export"; case .deviceDelete: "device-delete"; case .material(let scope): scope.rawValue; case .notification(let scope): scope.rawValue }
     }
 }
 
@@ -50,6 +50,8 @@ struct NativeDataCoverageModuleView: View {
                 }.disabled(actor == nil || !registered)
             } else if module.id == "offline" {
                 NativeDataCoverageOfflineView(coverage: store, session: session, chinese: chinese)
+            } else if module.id == "guide_cache" {
+                NativeGuideCacheDataView(coverage: store, session: session, chinese: chinese)
             } else {
                 Section { Text(NativeDataCoverageCopy.missing(module.id, chinese: chinese)) }
             }
@@ -77,6 +79,9 @@ struct NativeDataCoverageModuleView: View {
             .sheet(item: $destination) { target in
                 NavigationStack {
                     switch target {
+                    case .turnData:
+                        NativeTurnDataConsumer(module: module, coverage: store, client: session.turnDataClient,
+                            makeStore: { session.turnDataStore(scope: $0) }, chinese: chinese)
                     case .resultData:
                         NativeResultDataConsumer(module: module, coverage: store, client: session.resultDataClient,
                             makeStore: { session.resultDataStore(scope: $0) }, chinese: chinese)
@@ -161,7 +166,13 @@ struct NativeDataCoverageModuleView: View {
             }
         } else { Section(t("导出缺项", "Export unavailable")) { Text(NativeDataCoverageCopy.missing(module.id, chinese: chinese)) } }
 
-        if NativeResultDataWire.catalog(module) {
+        if NativeTurnDataWire.catalog(module) {
+            Section(t("本人所选轮次资料", "My selected Turn data")) {
+                Button(t("选择一个已完成轮次，核对敏感副本并确认清理", "Select a completed Turn, review sensitive copies and confirm cleanup")) { destination = .turnData }
+                    .disabled(!registered || actor == nil)
+                Text(t("原任务、会话与轮次身份保留。相关任务摘要副本若需清理，会单独列明。跨轮次、共享或在途工作会阻挡清理；临时预览进度有独立出口。", "Original Task, conversation and Turn identities remain. Any related Task digest copy to clear is shown separately. Cross Turn, shared or active work blocks cleanup; transient preview progress has its own exit."))
+            }
+        } else if NativeResultDataWire.catalog(module) {
             Section(t("本人选定成果资料", "My selected result data")) {
                 Button(t("选择一个成果，核对全部版本与事件并确认清理", "Select one result, review every revision and event, and confirm cleanup")) { destination = .resultData }
                     .disabled(!registered || actor == nil)

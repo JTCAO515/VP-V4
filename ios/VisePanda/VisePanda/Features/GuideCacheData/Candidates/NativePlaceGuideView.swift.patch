@@ -1,0 +1,39 @@
+--- a/ios/VisePanda/VisePanda/Features/PlaceGuide/NativePlaceGuideView.swift
++++ b/ios/VisePanda/VisePanda/Features/PlaceGuide/NativePlaceGuideView.swift
+@@ -43 +43 @@
+-                Button(t("Recheck sources", "重新核对来源")) { run { await refresh() } }
++                Button(t("Recheck sources", "重新核对来源")) { run { await refresh(explicit: true) } }
+@@ -75 +75 @@
+-            store.bind(selection); followUp.bind(selection); audio.bind(scope: scope)
++            store.guideCacheFollowUp = followUp; store.bind(selection, explicit: false); followUp.bind(selection); audio.bind(scope: scope)
+@@ -84,0 +85,3 @@
++        .onChange(of: store.guideCacheGeneration) { _, _ in
++            exportText = nil; exportDeadline = 0; exportExpiry?.cancel(); exportExpiry = nil
++        }
+@@ -166 +169 @@
+-    private func refresh() async {
++    private func refresh(explicit: Bool = false) async {
+@@ -167,0 +171,3 @@
++        if explicit { store.bind(selection) }
++        guard store.selection == selection else { return }
++        let cacheGeneration = store.guideCacheGeneration
+@@ -169 +175,2 @@
+-        let valid = await store.read(current: { scope }, request: request)
++        let valid = await store.read(explicit: explicit, current: { scope }, request: request)
++        guard store.guideCacheGeneration == cacheGeneration, store.selection == selection else { return }
+@@ -191,0 +199 @@
++        let cacheGeneration = store.guideCacheGeneration
+@@ -193 +201 @@
+-            guard playbackID == id, scope == selection.scope, store.visible(scope)?.digest == ready.digest else { return }
++            guard store.guideCacheGeneration == cacheGeneration, playbackID == id, scope == selection.scope, store.visible(scope)?.digest == ready.digest else { return }
+@@ -201,0 +210 @@
++        let generation = store.guideCacheGeneration
+@@ -205 +214 @@
+-            guard scope == selection.scope, !Task.isCancelled else { return }
++            guard generation == store.guideCacheGeneration, store.selection == selection, scope == selection.scope, !Task.isCancelled else { return }
+@@ -211 +220,4 @@
+-    private func run(_ operation: @escaping @MainActor () async -> Void) { action?.cancel(); action = Task { await operation() } }
++    private func run(_ operation: @escaping @MainActor () async -> Void) {
++        let generation = store.guideCacheGeneration
++        action?.cancel(); action = Task { guard generation == store.guideCacheGeneration else { return }; await operation() }
++    }

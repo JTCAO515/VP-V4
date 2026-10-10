@@ -19,7 +19,7 @@ try {
     if((await command('docker',['exec',container,'pg_isready','-h','/tmp/vpj59-socket','-U','postgres'])).code===0)break;
     await new Promise(r=>setTimeout(r,100));
   }
-  const replay=await command(process.execPath,['tests/integration/privacy/profile-data-sql/replay.mjs','init']);
+  const replay=await command(process.execPath,['tests/integration/privacy/profile-data-sql/replay.mjs','init-base']);
   process.stdout.write(replay.stdout);process.stderr.write(replay.stderr);assert.equal(replay.code,0);
   await replayPostProfileMigrations(true);
   console.log('Current ordered append replay/catalog and fixed source identities PASS');

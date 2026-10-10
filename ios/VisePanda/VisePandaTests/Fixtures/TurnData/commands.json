@@ -1,0 +1,16 @@
+{
+  "synthetic": true,
+  "now": 1791388800000,
+  "actor": {
+    "ownerId": "00000000-0000-4000-8000-000000000001",
+    "sessionId": "00000000-0000-4000-8000-000000000002",
+    "mobileEpoch": 3
+  },
+  "previewBytes": "{\"action\":\"preview\",\"scope\":\"turn-sensitive-data/1\",\"requestId\":\"00000000-0000-4000-8000-000000000003\",\"turnId\":\"00000000-0000-4000-8000-000000000004\",\"objectIds\":[]}",
+  "eraseBytes": "  {\"action\":\"erase\",\"scope\":\"turn-sensitive-data/1\",\"requestId\":\"00000000-0000-4000-8000-000000000003\",\"turnId\":\"00000000-0000-4000-8000-000000000004\",\"objectIds\":[],\"sourceDigest\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"previewDigest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"confirmed\":true}\n",
+  "recoverBytes": "{\"action\":\"recover\",\"scope\":\"turn-sensitive-data/1\",\"requestId\":\"00000000-0000-4000-8000-000000000003\",\"turnId\":\"00000000-0000-4000-8000-000000000004\",\"objectIds\":[],\"mutationBytes\":\"  {\\\"action\\\":\\\"erase\\\",\\\"scope\\\":\\\"turn-sensitive-data/1\\\",\\\"requestId\\\":\\\"00000000-0000-4000-8000-000000000003\\\",\\\"turnId\\\":\\\"00000000-0000-4000-8000-000000000004\\\",\\\"objectIds\\\":[],\\\"sourceDigest\\\":\\\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\\",\\\"previewDigest\\\":\\\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\\\",\\\"confirmed\\\":true}\\n\"}",
+  "listBytes": "{\"action\":\"list\",\"scope\":\"turn-sensitive-data/1\",\"cursor\":null,\"limit\":20}",
+  "progressPreviewBytes": "{\"action\":\"preview\",\"scope\":\"turn-delete-progress/1\",\"requestId\":\"00000000-0000-4000-8000-000000000050\",\"turnId\":null,\"objectIds\":[\"00000000-0000-4000-8000-000000000003\"]}",
+  "progressEraseBytes": "{\"action\":\"erase\",\"scope\":\"turn-delete-progress/1\",\"requestId\":\"00000000-0000-4000-8000-000000000050\",\"turnId\":null,\"objectIds\":[\"00000000-0000-4000-8000-000000000003\"],\"sourceDigest\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"previewDigest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"confirmed\":true}",
+  "progressListBytes": "{\"action\":\"list\",\"scope\":\"turn-delete-progress/1\",\"cursor\":null,\"limit\":20}"
+}
