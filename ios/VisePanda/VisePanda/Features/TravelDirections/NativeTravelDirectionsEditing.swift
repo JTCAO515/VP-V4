@@ -99,3 +99,27 @@ enum NativeTravelDirectionsDateBinding {
         return draft
     }
 }
+
+/// In-memory preview only. Saved result, user edits and confirmed Trip remain
+/// the original values. No conversion to current_input or calendar-date binding.
+enum NativeTravelDirectionsLocalPacePreview {
+    static func days(_ original: [NativeTravelDirectionsContent.Day], pace: NativeTravelPace,
+                     chinese: Bool) -> [NativeTravelDirectionDay] {
+        original.map { day in
+            let themes: [String]
+            switch pace {
+            case .relaxed:
+                themes = day.ordinal.isMultiple(of: 2)
+                    ? [chinese ? "保留自由时间，具体活动待定" : "Leave free time; activities undecided"]
+                    : Array(day.activities.prefix(1))
+            case .balanced:
+                themes = Array(day.activities.prefix(1))
+            case .packed:
+                themes = day.activities.count >= 2 ? Array(day.activities.prefix(2))
+                    : day.activities + [chinese ? "第二个兴趣主题待确认" : "A second interest theme to decide"]
+            }
+            return .init(id: "local_preview_\(day.ordinal)", relativeDay: day.ordinal, city: day.destination,
+                         activities: themes, fixed: true)
+        }
+    }
+}

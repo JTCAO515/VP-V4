@@ -1,0 +1,40 @@
+{
+  "base": "56befa2e4e6a40924a1c1b08f54d4ec09b0d3644",
+  "sharedChanges": [],
+  "notice": "local-planning-cross-trip-v1",
+  "purpose": "local_trip_planning",
+  "tests": "3 new affected points PASS / exit0 b90d86 -> 09be95; no old matrix rerun",
+  "sources": [
+    {
+      "path": "ios/VisePanda/VisePanda/Features/TravelDirections/NativeTravelDirectionsEditing.swift",
+      "beforeBlob": "d2008ddda1bce185a9b52d0a60a606e39b750f40",
+      "afterBlob": "2f0bde41dc3aee594efa28f5de59b6eb71b1e15c",
+      "sha256": "e92f292a0ab91f422c91d286ea712bc5d4a98ed56d9f7b84c670dfea3a4c34b4"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/TravelDirections/NativeTravelDirectionsResultView.swift",
+      "beforeBlob": "013703ad8cd3db4e778620ccf98afcc8084fee92",
+      "afterBlob": "d304de127c340db4f2d8f2093b6b8f30a5141480",
+      "sha256": "70c9423e826d1ce0417c8201a686314fce74546d49e81687b3698ba0435f695c"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/TravelDirections/NativeTravelDirectionsStore.swift",
+      "beforeBlob": "0f35948c692393ea93ab6fcc867707295224b385",
+      "afterBlob": "de9d6e018cc08ff7e2d894ea14c1dc7e02bd2b59",
+      "sha256": "fe38ef2d4cfdc1cdc031bd841ee22b0f8a0d78613f78a157284b5fa5f8007a6e"
+    },
+    {
+      "path": "ios/VisePanda/VisePandaTests/NativeTravelDirectionsTests.swift",
+      "beforeBlob": "b821903c79781467c7a5f03ea62f33107ee4403a",
+      "afterBlob": "7826944ec9170044e266912bbb1a87fd6bdc3dec",
+      "sha256": "d8a4d78c917e83262c8fbfa2497307aae5355f4360e6089ec851911f6b0029f7"
+    }
+  ],
+  "cleanup": {
+    "id": "E686AD42-9CB6-49F6-BC5A-4D532B7013F4",
+    "beforeState": "Shutdown",
+    "shutdown": "not needed: already Shutdown",
+    "deleteExit": 0,
+    "verifiedAbsent": true
+  }
+}
