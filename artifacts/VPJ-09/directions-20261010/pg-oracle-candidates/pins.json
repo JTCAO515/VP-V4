@@ -1,0 +1,20 @@
+{
+  "sourceHead": "a34e134c077f06b65665b4506c712f40e734f58f",
+  "lease": "NOT GRANTED; candidates only",
+  "files": [
+    {
+      "path": "tests/integration/guide/place-guide-postgres.test.mjs",
+      "beforeSHA256": "c15eae65cb585014b30e592115de8b94b77534da2901a93e3679ea2c1d335e90",
+      "afterSHA256": "25b866a8002135a5b3a04f5bc59453a1ee871d37ce877d3fab9182729ab4e60d",
+      "patchSHA256": "5677683f250b9b462e96b575fdbb73b31e5c834a25f56db92097b9d5f62bb528",
+      "scope": "precise approved worker seam normalization only"
+    },
+    {
+      "path": "tests/integration/privacy/core-export-consumer.test.mjs",
+      "beforeSHA256": "2af6779e3da484707e3d4c7a63a7c4fc8272a5b7738c1fdec95c7f52f639502d",
+      "afterSHA256": "f9fd853ec979e96bb5a527b7d3055bb64e276a70678b5faf9d02d38443c57e8c",
+      "patchSHA256": "e706887a4c792c8dcd8669fdc64c9d7e25fc93fdeac6c29face4c6df2e483287",
+      "scope": "exact ten-section conversation traversal and pages10; all existing privacy assertions preserved"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+--- a/tests/integration/guide/place-guide-postgres.test.mjs
++++ b/tests/integration/guide/place-guide-postgres.test.mjs
+@@ -129,6 +129,12 @@
+   body=body.replace("payload:=payload||jsonb_build_object('contextDigest',encode(pg_catalog.sha256(convert_to(jsonb_build_array(payload,g.city,g.scope_version)::text,'UTF8')),'hex')); if exists(select 1 from guide_private.bindings_v1 where turn_id=p_turn_id) then return guide_private.input_v1(p_turn_id,p_lease_token,payload);end if;return payload;", "return payload||jsonb_build_object('contextDigest',encode(pg_catalog.sha256(convert_to(jsonb_build_array(payload,g.city,g.scope_version)::text,'UTF8')),'hex'));");
+   body=body.replaceAll('if (exists(select 1 from guide_private.bindings_v1 where turn_id=p_turn_id) and guide_private.bound_v1(p_turn_id,p_lease_token) is null) or not turn_private.lock_text_work(p_turn_id,p_lease_token) then','if not turn_private.lock_text_work(p_turn_id,p_lease_token) then');
+   body=body.replace('knowledge_review_private.resolve_question(knowledge_review_private.selected_question_input(p_intent,g.city,g.locale,p_subject),case when exists(select 1 from guide_private.bindings_v1 where turn_id=p_turn_id) then guide_private.answer_basis_v1(p_turn_id,p_lease_token,p_intent,p_subject) else null end)','knowledge_review_private.resolve_question(knowledge_review_private.selected_question_input(p_intent,g.city,g.locale,p_subject))');
++  if(key==='public.read_grounded_work(uuid,uuid)'){
++    const approved="  if exists(select 1 from turn_private.work where turn_id=p_turn_id and execution_mode in('planning_intake_comparison_v2','scoped_trip_edit_v1','travel_directions_v1')) then return jsonb_build_object('kind','blocked'); end if;\n",original="  if exists(select 1 from turn_private.work where turn_id=p_turn_id and execution_mode='planning_intake_comparison_v2') then return jsonb_build_object('kind','blocked'); end if;\n";
++    assert.equal(body.split(approved).length,2,'exact approved worker exclusion occurs once');
++    assert.equal(baseline[key].body.split(original).length,2,'original planning exclusion occurs once');
++    body=body.replace(approved,original);
++  }
+   assert.equal(body,baseline[key].body,key+' ordinary body byte equivalence after removing marked-only seams');
+  }
+ });
