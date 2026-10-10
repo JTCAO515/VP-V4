@@ -1,0 +1,11 @@
+{
+  "path": "lib/server/privacy/export-modules.ts",
+  "beforeSHA256": "8ddd86e5c447da1c2e1b937b966741c972901290a1489623936d0b5bcc17be06",
+  "patchSHA256": "b456780d3f56cae5ba4a8caf836766418bdf3fc359d5aec89aee5f2b4436fcb3",
+  "afterSHA256": "ab4bf02238e4100eabf1659c9149bd5d7960db2212805af4124521c4627a143e",
+  "hunks": 3,
+  "rowParserPath": "lib/server/planning/directions/export-rows.ts",
+  "rowParserSHA256": "4ab1afd62995101f8bfebc314861cc4640203d828171832f762bb6ca6374bb2f",
+  "rowWireSHA256": "c4212d0d1b23faa3950e23975a2575d48ff29616699b4b0e350bd84628f680b0",
+  "scope": "existing conversations3sections+exact rows/UUID anchors only; old7/result3/CORE9/lease/transport/protection unchanged"
+}

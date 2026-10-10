@@ -1,0 +1,7 @@
+{
+  "path": "tests/contract/privacy/core-export.test.mjs",
+  "beforeSHA256": "ac1cd8f00c42ca16afd5c1d05d553145a8d46c9a4e299d6747c104720b241f44",
+  "afterSHA256": "f1e2c785eac5116d8f3071c197c566aad3ed6a297096b8e4b6234c68322e407d",
+  "patchSHA256": "da8b808cdad657aa69c8efc4830358e54d18486f4b681b0af113d009792493d6",
+  "scope": "one exact section RPC count10\u219213; original allpartial/lease/clock/ACL/transport assertions unchanged"
+}
