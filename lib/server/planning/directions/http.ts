@@ -1,3 +1,4 @@
+import { directionsInputBytes } from './input-bytes.ts';
 import type { NextRequest } from 'next/server';
 import { nativeRequestScope } from '../../identity/native-request.ts';
 import { verifyNativeCredentials } from '../../identity/native-credentials.ts';
@@ -27,10 +28,12 @@ export async function nativeDirectionsHTTP(request:NextRequest,action:Directions
   await session();
   const finish=async(data:unknown,status=200)=>{await session();return reply({version:1,...(object(data)?data:{data})},status);};
   const denied=async(code:string,status:number)=>{await session();return fail(code,status);};
-  let input:unknown;
-  if(read)input=Object.fromEntries(query);else{try{const raw=await scope.run(()=>scope.body(request,16384));input=raw===null?null:JSON.parse(raw);}catch{return await denied('INVALID_INPUT',400);}}
+  let input:unknown;let inputBytes:string;
+  if(read){input=Object.fromEntries(query);inputBytes=canonical(input);}else{try{const raw=await directionsInputBytes(request,scope.run);if(raw===null)return await denied('INVALID_INPUT',400);inputBytes=raw;input=JSON.parse(raw);}catch{return await denied('INVALID_INPUT',400);}}
   const params=directionsParams(action,input);if(!params)return await denied('INVALID_INPUT',400);
-  const call=()=>rpc('native_travel_directions_v1',{p_action:action,p_policy_id:config.policyId,p_input:params});
+  // Existing local-only saved Profile notice cannot grant server consumption.
+  if(action==='submit'&&params.useSavedPace===true)return await denied('DATA_POLICY_BLOCKED',403);
+  const call=()=>rpc('native_travel_directions_v1',{p_action:action,p_policy_id:config.policyId,p_input_bytes:inputBytes});
   const first=await call();if(first.error)return await denied(...error(first.error.message));
   if(read){
    if(unavailable(first.data))return first.data.reason==='blocked'?await denied('DATA_POLICY_BLOCKED',403):await finish({data:first.data});
