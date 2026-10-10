@@ -1,0 +1,35 @@
+{
+  "sourceHead": "dec1355b2c7beeede96bd4ddf28bcee81c13cc4a",
+  "lease": "not granted; private candidate only",
+  "shared": [
+    {
+      "path": "lib/server/privacy/turn-data/export.ts",
+      "beforeSHA256": "e2ff6889c28509baf7e7fff150d01a746c58cadb5444347be8e7813267d7c513",
+      "afterSHA256": "67f2b3378c7eeb23c6a281cdced9d0958da9d53211b97dff5530935354b858da",
+      "patchSHA256": "2b3544a75c1d04ada5f3288e1e3c930b9b4d6bda46f58248fe87045944b9312e"
+    },
+    {
+      "path": "tests/integration/privacy/turn-data/export.test.mjs",
+      "beforeSHA256": "7e29c3e428e4ecd12bf380cccd78bac7d6af071b268493d1bfc2803050f28e7d",
+      "afterSHA256": "5b2f288e9c698bfc966e437f097d6cf35f90192c80e7262e344005566389dece",
+      "patchSHA256": "c4b9e24076dcd660277fa3304a0d57193bcda37616115ad4e4176f8450f7edfb"
+    }
+  ],
+  "newPrivateFiles": [
+    {
+      "target": "lib/server/planning/directions/direction-turn-source-schema.json",
+      "SHA256": "9b6fabcb4fa1777eb3c43d2b677acaddc19f3277a0bdd2e67aeb72180aeb8343"
+    },
+    {
+      "target": "lib/server/planning/directions/turn-export-rows.ts",
+      "SHA256": "39e271a0f3cb8fb83dcdc58a1d834bf62223ab19566f41c4fb62778a5ca2aaef"
+    },
+    {
+      "target": "tests/integration/planning/directions/turn-export-compatibility.test.mjs",
+      "SHA256": "e39262b7a3795f3b6373214da3b09eb6fe67831ec6ce3c80658307254551d18d"
+    }
+  ],
+  "scope": "export-only appended3 raw-row specs plus reviewed semantic row adapter; original35/schema deletion keys/operations/provenance remain unchanged; exact38groups; scrubbed permanent ops preserve null parent state; active parents qualified",
+  "companionNeeded": "original export.test.mjs exactcount35\u219238; source-derived private regressions and necessary signed Turn Auth case once after lease",
+  "productSQLSHA256": "6354e482331453289311c4d7f2a363d1012a3bc9d11f0324d300b5bc8cb58584"
+}
