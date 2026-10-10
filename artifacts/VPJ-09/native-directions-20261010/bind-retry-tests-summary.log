@@ -1,0 +1,6 @@
+Test Case '-[VisePandaTests.NativeTravelDirectionsTests testBindRetryKeepsOriginalBytesAndReturnsOnlyFreshOriginalProposal]' started.
+Test Case '-[VisePandaTests.NativeTravelDirectionsTests testBindRetryKeepsOriginalBytesAndReturnsOnlyFreshOriginalProposal]' passed (0.033 seconds).
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.033 (0.034) seconds
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.033 (0.034) seconds
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.033 (0.035) seconds
+** TEST SUCCEEDED **

@@ -320,3 +320,39 @@ extension NativeTravelDirectionsTests {
         XCTAssertEqual(content.draft?.paceSource, "none")
     }
 }
+
+extension NativeTravelDirectionsTests {
+    @MainActor func testBindRetryKeepsOriginalBytesAndReturnsOnlyFreshOriginalProposal() async throws {
+        let artifact = "11111111-1111-4111-8111-111111111111", trip = "22222222-2222-4222-8222-222222222222"
+        let proposalID = "33333333-3333-4333-8333-333333333333", proposalArtifact = "44444444-4444-4444-8444-444444444444"
+        let key = NativeTravelDirectionsStore.Key(scope: .init(endpoint: "http://127.0.0.1:59321", subject: "owner", mobileEpoch: 1, generation: 1), artifactID: artifact)
+        func withTrip(_ bytes: Data) throws -> Data {
+            var envelope = try XCTUnwrap(JSONSerialization.jsonObject(with: bytes) as? [String: Any])
+            var data = try XCTUnwrap(envelope["data"] as? [String: Any])
+            var source = try XCTUnwrap(data["source"] as? [String: Any]); source["tripId"] = trip; source["tripVersion"] = 4
+            data["source"] = source; envelope["data"] = data
+            return try JSONSerialization.data(withJSONObject: envelope)
+        }
+        let directions = try withTrip(envelope(content(), id: artifact, revision: 1))
+        let reference = try withTrip(envelope(["schemaVersion": "change-proposal-reference/1", "proposalId": proposalID, "proposalRevision": 1, "actions": []], id: proposalArtifact, revision: 1))
+        let store = NativeTravelDirectionsStore()
+        await store.load(key: key, revision: 1, current: { key }, read: { _, _ in directions })
+        var originalBody: Data?
+        await store.perform(.bind(tripID: trip, tripVersion: 4, startDate: "2026-11-01"), current: { key }, post: { _, body in
+            originalBody = body
+            throw NativeDataError.server(code: "PROVIDER_UNAVAILABLE")
+        }, read: { _, _ in directions })
+        XCTAssertNotNil(store.pending); XCTAssertNil(store.proposal)
+        await store.retry(current: { key }, post: { action, body in
+            XCTAssertEqual(action, "bind"); XCTAssertEqual(body, originalBody)
+            return try JSONSerialization.data(withJSONObject: ["version": 1, "kind": "proposal_created", "artifactId": artifact, "revision": 1,
+                "reused": true, "tripId": trip, "tripVersion": 4, "proposalId": proposalID, "proposalRevision": 1,
+                "proposalArtifactId": proposalArtifact, "proposalArtifactRevision": 1])
+        }, read: { id, _ in id == artifact ? directions : reference })
+        XCTAssertNil(store.pending)
+        XCTAssertEqual(store.proposal?.proposalID, proposalID)
+        XCTAssertEqual(store.proposal?.artifactID, proposalArtifact)
+        XCTAssertNotNil(store.visible(current: key))
+        XCTAssertNil(store.visible(current: nil), "A new actor/inactive consumer cannot present the old qualified proposal")
+    }
+}

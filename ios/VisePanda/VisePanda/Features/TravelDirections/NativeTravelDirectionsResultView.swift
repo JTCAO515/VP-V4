@@ -22,7 +22,13 @@ struct NativeTravelDirectionsResultView: View {
     private func act(_ action: NativeTravelDirectionsAction) async {
         await store.perform(action, current: { key }, post: { try await session.travelDirectionsActionRequest(action: $0, body: $1) },
             read: { try await session.fiveResultRequest(artifactID: $0, revision: $1) })
-        if let proposal = store.proposal, let scope = key?.scope { review = .init(scope: scope, proposal: proposal) }
+        presentQualifiedProposal()
+    }
+    private func presentQualifiedProposal() {
+        guard let key, let record = store.visible(current: key), record.current,
+              let proposal = store.proposal, record.source.tripId == proposal.tripID,
+              record.source.tripVersion == proposal.tripVersion else { return }
+        review = .init(scope: key.scope, proposal: proposal)
     }
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -34,6 +40,7 @@ struct NativeTravelDirectionsResultView: View {
                     Task {
                         await store.retry(current: { key }, post: { try await session.travelDirectionsActionRequest(action: $0, body: $1) },
                             read: { try await session.fiveResultRequest(artifactID: $0, revision: $1) })
+                        presentQualifiedProposal()
                     }
                 }.disabled(store.busy)
             }
@@ -110,7 +117,7 @@ struct NativeTravelDirectionsResultView: View {
             store.clear(); review = nil; startDate = ""
         }
         .onDisappear { store.clear() }
-        .sheet(item: $review) { value in
+        .sheet(item: $review, onDismiss: { refresh = UUID() }) { value in
             NavigationStack { NativeTravelDirectionsTripReview(scope: value.scope, proposal: value.proposal, session: session, chinese: chinese) }
         }
     }
