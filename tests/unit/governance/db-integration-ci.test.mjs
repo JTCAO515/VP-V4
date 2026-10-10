@@ -95,7 +95,7 @@ test("bounded CI shards preserve every logical step exactly once and reject malf
   const jobs = executionMatrix(Object.keys(LANES)).include;
   for (const lane of Object.keys(LANES)) {
     const own = jobs.filter(job => job.lane === lane);
-    assert.equal(own.length, lane === "supabase-http-native" ? 2 : 1);
+    assert.equal(own.length, lane === "supabase-http-native" ? 3 : 1);
     const selected = own.flatMap(job => executionSteps(lane, job.shard));
     assert.equal(new Set(selected).size, LANES[lane].steps.length);
     assert.equal(selected.length, LANES[lane].steps.length);
@@ -109,7 +109,7 @@ test("bounded CI shards preserve every logical step exactly once and reject malf
   }
   for (const input of [null, [], ["unknown"], ["postgres", "postgres"], ["none", "postgres"]]) assert.throws(() => executionMatrix(input));
   assert.deepEqual(executionMatrix(["none"]).include, [{lane:"none",shard:"1/1",name:"lane (none)"}]);
-  for (const shard of ["0/2", "3/2", "1/3", "2/1", "1/1", "garbage"]) assert.throws(() => executionSteps("supabase-http-native", shard));
+  for (const shard of ["0/3", "4/3", "1/2", "2/2", "3/2", "1/4", "2/1", "1/1", "01/3", "garbage"]) assert.throws(() => executionSteps("supabase-http-native", shard));
   assert.throws(() => executionSteps("postgres", "1/2"));
   assert.throws(() => executionSteps("unknown", "1/1"));
   assert.match(read(".github/workflows/db-integration.yml"), /timeout-minutes: 30/);
