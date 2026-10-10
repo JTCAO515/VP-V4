@@ -1,0 +1,36 @@
+✔ append replay, RLS and default deny before isolated enrollment (6904.006125ms)
+✖ concurrent cancel/confirm and privacy/source contention abort without deadlock or partial apply (540.964166ms)
+ℹ PDF_CANCEL_CONFIRM {"requests":[{"action":"confirm","code":3,"outcome":"","stderr":"ERROR:  CONFIRMATION_DIGEST_MISMATCH\nCONTEXT:  PL/pgSQL function confirm_and_apply_trip_proposal(uuid,text,text) line 11 at RAISE"},{"action":"cancel","code":0,"outcome":"{\"kind\": \"pdf_intake_operation/1\", \"state\": \"cancelled\", \"tripId\": \"a07c391c-4161-4110-aaab-afb2d752c454\", \"expiresAt\": \"2026-10-10T18:07:30.709Z\", \"proposalId\": \"0caf791d-246a-4b48-948b-43217306f4b3\", \"operationId\": \"910af99e-2c90-45f4-a180-5ea7c79e4f54\", \"sessionEpoch\": 1, \"commandDigest\": \"05b2491b7ad4252c5bcb6d29cfbec7aaa6ed52b58fddcedbc738b805b7fbd25b\", \"previewDigest\": \"b1a53168e82b36bdb821b569f83485dd78841bd3f30d358e5ecef834c40f18f6\", \"requestDigest\": \"85f5f45a5933b1b437c22180f592ce9ad0c8d10c243630027be2e6dd1471c24d\", \"baseTripVersion\": 0, \"proposalRevision\": 1, \"resultingVersion\": null, \"confirmationEventId\": null}","stderr":""}],"recoveredState":"cancelled","head":0,"events":[],"idempotency":[],"operationBytesDigest":"5dde7b88515377eba5b418f762ede449ec25c6631a6b0baeb80fb62ee8257e25"}
+ℹ tests 2
+ℹ suites 0
+ℹ pass 1
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7570.474917
+
+✖ failing tests:
+
+test at tests/integration/pdf-intake/pdf-intake-postgres.test.mjs:22:22
+✖ concurrent cancel/confirm and privacy/source contention abort without deadlock or partial apply (540.964166ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  EXPORT_POLICY_UNCONFIGURED
+  CONTEXT:  PL/pgSQL function public.privacy_core_export_v1(text,jsonb) line 43 at RAISE
+  
+  
+  3 !== 0
+  
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj09-directions-server-20261010/tests/integration/pdf-intake/pdf-intake-postgres.test.mjs:18:58)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async exportCall (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj09-directions-server-20261010/tests/integration/pdf-intake/pdf-intake-postgres.test.mjs:99:52)
+      at async lease (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj09-directions-server-20261010/tests/integration/pdf-intake/pdf-intake-postgres.test.mjs:100:52)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj09-directions-server-20261010/tests/integration/pdf-intake/pdf-intake-postgres.test.mjs:159:53)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -3,7 +3,7 @@
   "beforeSHA256": "acd82985e4fafc3a9f2ab34a193ace0a2404c2cb3a4d30a6347c471a9ff51244",
   "afterSHA256": "a60abbfe21582ba332471480b077a93679356ce2fe8ad21dca5b5eb4bcecd780",
   "patchSHA256": "e99abc1f372c3825f2c46b9499f6983f8bedd4e55b41cc192aa6372e82453b12",
-  "lease": "not granted; private candidate only",
+  "lease": "Main final precise race-hunk grant after original holder release; guarded applied",
   "scope": "same original race strict commit/outcome coupling, only double explicit lockdenials admit exact unchanged pending; source/privacy holder tail unchanged",
   "validation": "candidate not yet executed; controlled lock trace proof plan needed"
 }
