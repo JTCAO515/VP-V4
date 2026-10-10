@@ -30,7 +30,8 @@ import Testing
     private func root() -> URL { FileManager.default.temporaryDirectory.appendingPathComponent("journal-data-test-" + UUID().uuidString, isDirectory: true) }
     private func cleanup(vault: any NativeCredentialVault, actor: NativeCommunitySafetyActor, suite: String) {
         // Exact synthetic endpoint services only. Never enumerate Keychain or clear another owner.
-        for service in [NativeResultDataJournal.service(actor.scope.endpoint), NativeNotificationJournal.service(actor.scope.endpoint),
+        for service in ["com.visepanda.native.local-session.v2.assistant-events-cursor." + actor.scope.endpoint,
+                        NativeResultDataJournal.service(actor.scope.endpoint), NativeNotificationJournal.service(actor.scope.endpoint),
                         "com.visepanda.native.local-session.v2.place-guide-operation." + actor.scope.endpoint,
                         "com.visepanda.native.local-session.v2.trip-deletion." + actor.scope.endpoint,
                         "com.visepanda.native.local-session.v2." + actor.scope.endpoint] {
@@ -49,7 +50,24 @@ import Testing
         let journal = NativeResultDataJournal(vault: vault, validateConfirmation: NativeResultDataCommand.validateConfirmation)
         _ = try journal.retain(original.body, actor: actor)
         let source = session.journalDataSource(), exported = NativeJournalDataStore(source: source, root: folder.appendingPathComponent("export"))
-        exported.load(current: actor); #expect(exported.rows.count == 29)
+        let cursorSelection = NativeAssistantEventsSelection(scope: actor.scope, sessionID: actor.sessionID,
+            policyID: "55555555-5555-4555-8555-555555555555", conversationID: "11111111-1111-4111-8111-111111111111", selectionGeneration: UUID())
+        try session.rememberAssistantEventsCursor(selection: cursorSelection, sequence: 7)
+        exported.load(current: actor)
+        let originalSources: Set<NativeJournalDataSourceID> = [.coverage, .materialReference, .profile, .conversation, .serviceOperation, .turn, .reservation,
+            .community, .recovery, .tripLifecycle, .travelerBrief, .pdf, .communitySafety, .notificationData, .coverageProgress, .archive,
+            .experience, .placeAction, .scopedTrip, .result, .notification, .guide, .ask, .tripSupport, .deviceDelete, .readinessSave,
+            .linkedTripDelete, .memoryDelete, .tripDelete]
+        #expect(originalSources.count == 29)
+        #expect(Set(exported.rows.filter { $0.record.source != .assistantEventsCursor }.map { $0.record.source }) == originalSources)
+        #expect(exported.rows.count == 30)
+        let cursorRows = exported.rows.filter { $0.record.source == .assistantEventsCursor }
+        #expect(cursorRows.count == 1)
+        let cursorRow = try #require(cursorRows.first)
+        #expect(cursorRow.valid && cursorRow.record.state == .projection && cursorRow.record.kind == .metadataOnly)
+        #expect(cursorRow.record.originalOperationBytes == nil && cursorRow.record.operationID == nil)
+        #expect(cursorRow.record.assistantEventsCursor == .init(conversationID: cursorSelection.conversationID, afterSequence: 7))
+        #expect(source.completion(source: .assistantEventsCursor, actor: actor) == nil)
         exported.select(current: actor); #expect(exported.export(current: actor))
         let url = try #require(exported.exportURL(current: actor)), id = try #require(exported.exportOperationID)
         let bytes = try Data(contentsOf: url), text = try #require(String(data: bytes, encoding: .utf8))
@@ -57,6 +75,13 @@ import Testing
         #expect(!text.contains("REFRESH_SECRET_SENTINEL") && !text.contains("\"accessToken\"") && !text.contains("\"password\""))
         let document = try #require(JSONSerialization.jsonObject(with: bytes) as? [String: Any])
         let records = try #require(document["records"] as? [[String: Any]])
+        #expect(document["schemaVersion"] as? String == "native-owner-journals/2")
+        let cursorRecord = try #require(records.first { $0["source"] as? String == "assistantEventsCursor" })
+        let safeCursor = try #require(cursorRecord["assistantEventsCursor"] as? [String: Any])
+        #expect(Set(safeCursor.keys) == ["conversationID", "afterSequence"])
+        #expect(cursorRecord["originalOperationBytes"] == nil && cursorRecord["operationID"] == nil)
+        #expect(!exported.canReturnToOriginal(.assistantEventsCursor, current: actor))
+        #expect(exported.inspectCompletion(source: .assistantEventsCursor, current: actor) == nil)
         let result = try #require(records.first { $0["source"] as? String == "result" })
         #expect(Data(base64Encoded: try #require(result["originalOperationBytes"] as? String)) == original.body)
         let attributes = try FileManager.default.attributesOfItem(atPath: url.path)
