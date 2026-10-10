@@ -1,0 +1,45 @@
+--- a/ios/VisePanda/VisePanda/Features/Knowledge/NativeFiveResultView.swift
++++ b/ios/VisePanda/VisePanda/Features/Knowledge/NativeFiveResultView.swift
+@@ -12,0 +13,7 @@
++    }
++    private var eventGeneration = UUID()
++    func invalidateAssistantEvent(_ signal: NativeAssistantEventsInvalidation) {
++        guard key?.scope == signal.selection.scope else { return }
++        guard signal.object == nil || signal.object == .artifact(key?.artifactID ?? "") else { return }
++        eventGeneration = UUID(); record = nil; deadline = 0
++        // Preserve immutable pendingChoice/pendingBody, submitting and writer generation.
+@@ -32 +39 @@
+-        guard request.optionId==option,let body=pendingBody ?? (try? JSONEncoder().encode(request)) else{return};pendingChoice=request;pendingBody=body;choiceNotice=nil;let own=generation
++        guard request.optionId==option,let body=pendingBody ?? (try? JSONEncoder().encode(request)) else{return};pendingChoice=request;pendingBody=body;choiceNotice=nil;let own=generation,eventOwn=eventGeneration
+@@ -35 +42 @@
+-            let bytes=try await post(body);guard generation==own,current()==authority,!Task.isCancelled else{return}
++            let bytes=try await post(body);guard generation==own,eventGeneration==eventOwn,current()==authority,!Task.isCancelled else{return}
+@@ -42 +49 @@
+-            guard generation==own,current()==authority,!Task.isCancelled else{return}
++            guard generation==own,eventGeneration==eventOwn,current()==authority,!Task.isCancelled else{return}
+@@ -45 +52 @@
+-        }catch{guard generation==own,current()==authority else{return};choiceFailed(error)}
++        }catch{guard generation==own,eventGeneration==eventOwn,current()==authority else{return};choiceFailed(error)}
+@@ -48 +55 @@
+-        guard !submitting,let request=pendingChoice,let body=pendingBody,let authority=key,authority==current() else{return};let scope=authority.scope;let own=generation
++        guard !submitting,let request=pendingChoice,let body=pendingBody,let authority=key,authority==current() else{return};let scope=authority.scope;let own=generation,eventOwn=eventGeneration
+@@ -51 +58 @@
+-            let bytes=try await post(body);guard generation==own,current()==authority,!Task.isCancelled else{return}
++            let bytes=try await post(body);guard generation==own,eventGeneration==eventOwn,current()==authority,!Task.isCancelled else{return}
+@@ -58 +65 @@
+-            guard generation==own,current()==authority,!Task.isCancelled else{return}
++            guard generation==own,eventGeneration==eventOwn,current()==authority,!Task.isCancelled else{return}
+@@ -61 +68 @@
+-        }catch{guard generation==own,current()==authority else{return};choiceFailed(error)}
++        }catch{guard generation==own,eventGeneration==eventOwn,current()==authority else{return};choiceFailed(error)}
+@@ -70,2 +77,2 @@
+-        let own=generation,started=uptime();key=requested
+-        do{let bytes=try await request();guard generation==own,requested==current(),!Task.isCancelled else{return}
++        let own=generation,eventOwn=eventGeneration,started=uptime();key=requested
++        do{let bytes=try await request();guard generation==own,eventGeneration==eventOwn,requested==current(),!Task.isCancelled else{return}
+@@ -120,0 +128,5 @@
++        .onChange(of:session.assistantEventsInvalidation?.id){_,_ in
++            guard let signal=session.assistantEventsInvalidation,
++                  signal.matches(scope:session.dataScope,sessionID:(try? session.communitySafetyActor())?.sessionID) else{return}
++            store.invalidateAssistantEvent(signal);comparison.invalidateAssistantEvent(signal)
++        }

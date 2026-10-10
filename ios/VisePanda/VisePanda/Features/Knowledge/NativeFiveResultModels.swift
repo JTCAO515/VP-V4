@@ -14,11 +14,13 @@ enum NativeFiveResultContent {
     case journey(Draft)
     case decision(Decision)
     case practical(Translation)
+    case directions(NativeTravelDirectionsContent)
     static func text(_ value:Any?,max:Int)->String? {guard let s=value as? String,!s.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty,s.utf16.count<=max,!s.unicodeScalars.contains(where:{$0.value<32 && ![9,10,13].contains($0.value)}) else{return nil};return s}
     static func integer(_ value:Any?,minimum:Int=1,maximum:Int=2_147_483_647)->Int? {guard let n=value as? NSNumber,CFGetTypeID(n) != CFBooleanGetTypeID(),n.doubleValue.isFinite,n.doubleValue.rounded()==n.doubleValue,n.doubleValue>=Double(minimum),n.doubleValue<=Double(maximum) else{return nil};return n.intValue}
     static func decode(_ r:[String:Any]) throws ->Self {
         guard let schema=r["schemaVersion"] as? String,let actions=r["actions"] as? [Any],actions.isEmpty else{throw NativeDataError.invalidResponse}
         func exact(_ keys:[String])->Bool{Set(r.keys)==Set(keys)}
+        if schema=="travel-directions/1" { return .directions(try NativeTravelDirectionsContent.decode(r)) }
         if schema=="comparison/1" {
             guard exact(["schemaVersion","title","summary","options","actions"]) else{throw NativeDataError.invalidResponse}
             let content=try JSONDecoder().decode(NativeResultContent.self,from:JSONSerialization.data(withJSONObject:r))
@@ -119,7 +121,7 @@ enum NativeFiveResultSearch {
         guard let root=try JSONSerialization.jsonObject(with:bytes) as? [String:Any],Set(root.keys)==Set(["version","data"]),root["version"] as? Int==2,let page=root["data"] as? [String:Any] else{throw NativeDataError.invalidResponse}
         if page["kind"] as? String=="unavailable" {guard Set(page.keys)==Set(["kind"]) else{throw NativeDataError.invalidResponse};return}
         guard Set(page.keys)==Set(["kind","results","nextCursor"]),page["kind"] as? String=="result_search",let rows=page["results"] as? [[String:Any]] else{throw NativeDataError.invalidResponse}
-        let schemas=["comparison/1","change-proposal-reference/1","journey-draft/1","decision/1","practical/1"]
+        let schemas=["comparison/1","change-proposal-reference/1","journey-draft/1","decision/1","practical/1","travel-directions/1"]
         guard rows.allSatisfy({Set($0.keys)==Set(["artifactId","revision","schemaVersion","title","summary","tripId","tripVersion"]) && schemas.contains($0["schemaVersion"] as? String ?? "")}) else{throw NativeDataError.invalidResponse}
     }
 }

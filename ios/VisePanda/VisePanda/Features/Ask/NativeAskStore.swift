@@ -380,9 +380,11 @@ final class NativeAskStore {
             guard !changed, pendingNotice == identity, pending.policyId == policy.policy.id else { draft = ""; intent = .blocked; return }
             if let recovered = turns.first(where: { $0.id == pending.turnId }) {
                 guard pending.matches(recovered) else { throw NativeDataError.invalidResponse }
+                let journalObserver = session.journalDataObservation(.ask), journalTicket = journalObserver.begin()
                 try session.clearPendingAsk(matching: pending)
                 self.pending = nil; pendingNotice = nil; pendingAcknowledged = false; draft = ""
                 intent = mode.usesTask ? .awaiting(recovered.id) : .newGoal
+                journalObserver.finish(journalTicket, pending.idempotencyKey)
             } else {
                 draft = pendingAcknowledged ? "" : pending.text
                 if pendingAcknowledged { intent = .awaiting(pending.turnId) }

@@ -1,0 +1,52 @@
+[
+  {
+    "path": "ios/VisePanda/VisePanda/App/NativeSession.swift",
+    "before": "12952882184b48fa74fe5a3b3faf103c09e4f65f",
+    "after": "08f1bf5f6a4934828812e8c8fffdd9be457a45b5",
+    "baseWT": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj08-native-assistant-events-20261010",
+    "baseHEAD": "c226e0f044a9a975347de3adf0ababd9096af5c4",
+    "beforeSHA256": "3181beb05c194a33d61a7dc79b8039f6d66fe9f1bd3b451fbd20285be1bfe508",
+    "afterSHA256": "d47f68e27ad98bd375b8fc85deff069226d44da5f0611f92261c5c5af1be795d",
+    "patchSHA256": "6d5434651a4dacce755eb89dd254db90f1609747952eab2a71a0dc1a5bb07fa2"
+  },
+  {
+    "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift",
+    "before": "96674b88a9f27b08af69e7acc57c8683ed2a6a7e",
+    "after": "9fbdf34f38b0c89f92aa9b903f092270d3cfa9ff",
+    "baseWT": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj08-native-assistant-events-20261010",
+    "baseHEAD": "c226e0f044a9a975347de3adf0ababd9096af5c4",
+    "beforeSHA256": "1a0e5f6997318334288d26ce29bbbcc597e47de69e1d2b5a62106c54395aad11",
+    "afterSHA256": "399121f9dcd5b0fabafe80a028d159aa1cc8fa100018e1646f09acaa19703759",
+    "patchSHA256": "10d5a071e3a378c9e0f4b6ae046dda1b1b3a4d24b028fc3013064e4f85b9094a"
+  },
+  {
+    "path": "ios/VisePanda/VisePanda/Features/Knowledge/NativeFiveResultModels.swift",
+    "before": "33dcde9166eb0de724f736dbd6956d8bab594b01",
+    "after": "ce992bc63726399c0c5d9ceebc994eb1834f8c94",
+    "baseWT": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj08-native-assistant-events-20261010",
+    "baseHEAD": "c226e0f044a9a975347de3adf0ababd9096af5c4",
+    "beforeSHA256": "47e6daca837e9e996fa8ed58e3027c0a7966bef6dfd723fbdf9c9a135ead33bc",
+    "afterSHA256": "be0041c5561e1dde067c3c5b61bc3dafee4f3e5f63135acd4043fc1794139c5a",
+    "patchSHA256": "e02efcb8158cc7f7011f84162af407dce9a7295a5bd8bf6eec45ed19bc87e208"
+  },
+  {
+    "path": "ios/VisePanda/VisePanda/Features/Knowledge/NativeFiveResultView.swift",
+    "before": "a24d93a8a1689d4cb42ee67724c577d205eb6e6f",
+    "after": "ebfd8fe71fa760f6d6377a106aca798e0dab78ac",
+    "baseWT": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj08-native-assistant-events-20261010",
+    "baseHEAD": "c226e0f044a9a975347de3adf0ababd9096af5c4",
+    "beforeSHA256": "dfe72277a3998473d5451403877a9247138b5b96a4623cdcc59501a046bd3729",
+    "afterSHA256": "84177720744109dcc33268ab566a57e371339c837d39e379bf4410df82b6fbd9",
+    "patchSHA256": "eecea06d22929e1c1cc32755be7abf152a819beff1c8cfed337ead04d12c3fb5"
+  },
+  {
+    "path": "ios/VisePanda/VisePanda.xcodeproj/project.pbxproj",
+    "before": "324a9ce677357c4d928e5e55b9f4009344128052",
+    "after": "103c4ba9a137a0a77c65c555bd1bee089d30416b",
+    "baseWT": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj08-native-assistant-events-20261010",
+    "baseHEAD": "c226e0f044a9a975347de3adf0ababd9096af5c4",
+    "beforeSHA256": "16b20c00184a9f6f5aea53358d6dafc8cc9f1cee1a2d9aca4546416303fb6696",
+    "afterSHA256": "776b535443c344b72866864e2efb1c8c479a94719ab2866076bcccdf6f9f7b47",
+    "patchSHA256": "9be6e9deecfba6e66611ee0a010a7e9f4e23661fc8fa77f769ccada6e76ad29b"
+  }
+]

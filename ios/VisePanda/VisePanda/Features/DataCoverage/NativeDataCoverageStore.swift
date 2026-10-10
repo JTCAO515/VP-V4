@@ -8,6 +8,7 @@ import Observation
     let retain: (Data, NativeCommunitySafetyActor) throws -> NativeDataCoveragePending
     let complete: (NativeDataCoveragePending, NativeCommunitySafetyActor) throws -> Void
     let retainOriginal: (NativeDataCoverageCommand, NativeCommunitySafetyActor) throws -> Void
+    var journalObservation: NativeJournalDataObservation?
     let completeOriginal: (NativeDataCoverageCommand, NativeDataCoverageReceipt, NativeCommunitySafetyActor) throws -> Void
 
     init(session: NativeSession, active: @escaping () -> Bool) {
@@ -16,6 +17,7 @@ import Observation
         saved = { try session.dataCoverageRecovery(actor: $0) }
         retain = { try session.rememberDataCoverage(body: $0, actor: $1) }
         complete = { try session.completeDataCoverage($0, actor: $1) }
+        journalObservation = session.journalDataObservation(.coverage)
         retainOriginal = { try NativeDataCoverageOriginal.retain($0, using: session, actor: $1) }
         completeOriginal = { try NativeDataCoverageOriginal.complete($0, reply: $1, using: session, actor: $2) }
     }
@@ -177,12 +179,15 @@ struct NativeDataCoverageRow: Identifiable {
                 guard files.visible(current: actor) != nil else { throw NativeDataError.sessionUnavailable }
                 exportedRow = command.moduleID
             }
+            let journalTicket = command.action == .delete && verified.terminal && verified.state == .scopedComplete && pending != nil
+                ? client.journalObservation?.begin() : nil
             if command.action == .delete, verified.terminal, let pending {
                 try client.completeOriginal(original, reply, actor)
                 try client.complete(pending, actor); self.pending = nil
             }
             record(reply, state: verified.state, selection: selection)
             storageReady = files.ready && journalReady
+            client.journalObservation?.finish(journalTicket, command.operationID)
         } catch { failed(error, own: own, client: client) }
     }
 

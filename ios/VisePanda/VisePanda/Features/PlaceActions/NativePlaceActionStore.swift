@@ -2,6 +2,8 @@ import Foundation
 import Observation
 
 @MainActor @Observable final class NativePlaceActionStore {
+    var journalObservation: NativeJournalDataObservation?
+
     private(set) var context: NativePlaceActionContext?
     private(set) var receipt: NativePlaceActionReceipt?
     private(set) var pending: NativePlaceActionPending?
@@ -99,11 +101,15 @@ import Observation
             let bytes = try await request(value.command.tripId, body)
             guard own == generation, current() == scope, !Task.isCancelled else { return }
             if let cancelled = try NativePlaceActionCancelled.decode(bytes, pending: value) {
+                let journalTicket = journalObservation?.begin()
                 try complete(value); pending = nil; receipt = nil; self.cancelled = cancelled; receiptAbsent = false
+                journalObservation?.finish(journalTicket, try value.command.operationId)
                 context = nil; deadline = 0; notice = "PLACE_ACTION_CANCELLED"; return
             }
             guard let result = try NativePlaceActionReceipt.decode(bytes, pending: value) else { receiptAbsent = true; notice = "PLACE_ACTION_RECEIPT_ABSENT"; return }
+            let journalTicket = journalObservation?.begin()
             try complete(value); pending = nil; receipt = result; cancelled = nil; if result.action == "unsave" { rememberedSaved = nil }; context = nil; deadline = 0
+            journalObservation?.finish(journalTicket, try value.command.operationId)
             notice = "PLACE_ACTION_RELOAD_REQUIRED"
         } catch { if own == generation, current() == scope { notice = Self.code(error) } }
     }

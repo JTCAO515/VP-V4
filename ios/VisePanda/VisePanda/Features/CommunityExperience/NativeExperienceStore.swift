@@ -2,6 +2,8 @@ import Foundation
 import Observation
 
 @MainActor @Observable final class NativeExperienceStore {
+    var journalObservation: NativeJournalDataObservation?
+
     typealias Request = (Data) async throws -> Data
     let window = NativeExperienceReadWindow<NativeExperienceOutcome>()
     private(set) var pending: NativeExperiencePending?
@@ -119,8 +121,11 @@ import Observation
             if case .operation(_, let state, _, _) = outcome, state == "abandoned" { notice = "ABANDONED" }
             else if case .deleted = outcome { notice = "MODULE_DELETED" }
             else { notice = "COMMITTED_REFRESH_REQUIRED" }
+            let journalEligible: Bool = { switch outcome { case .deleted: true; case .operation(_, let state, _, _): state == "committed"; default: false } }()
+            let journalTicket = journalEligible ? journalObservation?.begin() : nil
             do { try complete(pending); self.pending = nil }
             catch { journalReady = false; storageReady = false; throw error }
+            journalObservation?.finish(journalTicket, try NativeExperienceCommand(body: pending.body).operationID)
             // Receipts are acknowledgements. Fresh detail/reference/inspect reads supply display rights.
         } catch {
             guard own == generation else { return }

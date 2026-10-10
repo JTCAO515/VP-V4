@@ -1,0 +1,5 @@
+--- a/ios/VisePanda/VisePanda/Features/JournalData/NativeJournalDataVaultSources.swift
++++ b/ios/VisePanda/VisePanda/Features/JournalData/NativeJournalDataVaultSources.swift
+@@ -233 +233 @@
+-        for id in [NativeJournalDataSourceID.tripSupport, .deviceDelete, .readinessSave, .linkedTripDelete, .memoryDelete, .tripDelete] {
++        for id in [NativeJournalDataSourceID.tripSupport, .deviceDelete, .readinessSave, .linkedTripDelete, .memoryDelete, .tripDelete, .assistantEventsCursor] {

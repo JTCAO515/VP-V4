@@ -1,0 +1,5 @@
+/var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/vpj09-native-directions-harness-20261010-hnqxhwhy/ios/VisePanda/VisePandaTests/NativeTravelDirectionsTests.swift:116:37: error: missing argument for parameter 'endpoint' in call
+    |                                     `- error: missing argument for parameter 'endpoint' in call
+/var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/vpj09-native-directions-harness-20261010-hnqxhwhy/ios/VisePanda/VisePandaTests/NativeTravelDirectionsTests.swift:142:64: error: missing argument for parameter 'endpoint' in call
+    |                                                                `- error: missing argument for parameter 'endpoint' in call
+** TEST FAILED **

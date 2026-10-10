@@ -1,0 +1,365 @@
+{
+  "ios/VisePanda/VisePanda/App/NativeSession.swift": {
+    "baseWorktree": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-journal-data-20261008",
+    "baseHead": "0ef351c2afdae917a8297c4120410865173d8376",
+    "before": "763351e2ee21b7bbce0024d8db40eb98c4efef270f77ff405172af6f1997ecab",
+    "after": "3181beb05c194a33d61a7dc79b8039f6d66fe9f1bd3b451fbd20285be1bfe508",
+    "patch": "6c71ab6876c39c80f1c27f41b04142125dd44dd0f8defbb396b831270e3c3046",
+    "hunks": 5,
+    "hunkPins": [
+      {
+        "range": "-70,0 +71,8",
+        "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSHA256": "2932cd00e037d81aa1b366dd1f3cdbad82171d31f007539ed355484ed7fedf44",
+        "beforeLines": 0,
+        "afterLines": 8
+      },
+      {
+        "range": "-637,0 +646",
+        "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSHA256": "cdc0d5ff923638d5800516edbcf1ef3f4f773324dee18808f59b05a6978dfa97",
+        "beforeLines": 0,
+        "afterLines": 1
+      },
+      {
+        "range": "-1987,0 +1997,106",
+        "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSHA256": "de2f11366972c08212ba66e1520bbf97856a3256ad518e26ecb340082602fc71",
+        "beforeLines": 0,
+        "afterLines": 106
+      },
+      {
+        "range": "-2264,0 +2380",
+        "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSHA256": "9d243aebfb6a600a78e9b774795539804783f09d7ee0f702dbc8d6bd21421b30",
+        "beforeLines": 0,
+        "afterLines": 1
+      },
+      {
+        "range": "-2314,0 +2431,2",
+        "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSHA256": "f8f07a9347b10d071af21796df4b1d36d613796532d6228bb98d9aaedcd15875",
+        "beforeLines": 0,
+        "afterLines": 2
+      }
+    ]
+  },
+  "ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift": {
+    "baseWorktree": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-journal-data-20261008",
+    "baseHead": "0ef351c2afdae917a8297c4120410865173d8376",
+    "before": "dccc7414b2affa571c09ccb5b5ca607b77afd44f991fc520b26d56774142eb9f",
+    "after": "1a0e5f6997318334288d26ce29bbbcc597e47de69e1d2b5a62106c54395aad11",
+    "patch": "c931f5989c4d5b0575ed2e860cc65af5d8a75cd1ddc20ee453b75257ccff3fe4",
+    "hunks": 3,
+    "hunkPins": [
+      {
+        "range": "-442,0 +443,2",
+        "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSHA256": "0f592e5b81de9fc18b9a1d93cf73f3e75e3874d47dec27a1643497e67ebe6fb1",
+        "beforeLines": 0,
+        "afterLines": 2
+      },
+      {
+        "range": "-806,0 +809,7",
+        "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSHA256": "8b7071c669cae6176f34f59a3e12527a27f039836091848b98ecd147cbfcfd39",
+        "beforeLines": 0,
+        "afterLines": 7
+      },
+      {
+        "range": "-1485,0 +1495,131",
+        "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSHA256": "ff78cf9abdc3fdbfff6d504bb4192f61614309f4ca20f68ff4807bb4b3e6eec4",
+        "beforeLines": 0,
+        "afterLines": 131
+      }
+    ]
+  },
+  "ios/VisePanda/VisePanda/Features/Ask/NativeTaskActivityView.swift": {
+    "baseWorktree": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-journal-data-20261008",
+    "baseHead": "0ef351c2afdae917a8297c4120410865173d8376",
+    "before": "1248a8a96288f93156fce18e700df093e162e2557c38f5d19a41be93289a74cb",
+    "after": "d2f3200e69e6ce04e047ddf924e70b4e1b9aafb2192b27c8f397b8be6854df98",
+    "patch": "1c66530d237f669b742f5bfe4186b9bea9320bad8877a5fe6cf3c4cece0f0931",
+    "hunks": 1,
+    "hunkPins": [
+      {
+        "range": "-60,0 +61,5",
+        "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSHA256": "47649a832fd76f04000defa551adaa979587c67c3e56254b0dea8f8f229a35fd",
+        "beforeLines": 0,
+        "afterLines": 5
+      }
+    ]
+  },
+  "ios/VisePanda/VisePanda/Features/Knowledge/NativeFiveResultView.swift": {
+    "baseWorktree": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-journal-data-20261008",
+    "baseHead": "0ef351c2afdae917a8297c4120410865173d8376",
+    "before": "659649478b2f2461af22eb18c5bb64e5a54bc97141bb3813e253df78a5792abb",
+    "after": "dfe72277a3998473d5451403877a9247138b5b96a4623cdcc59501a046bd3729",
+    "patch": "0efdeba9811537f1605670cdacc405f0e9e3d747872951437d2db966717bf218",
+    "hunks": 11,
+    "hunkPins": [
+      {
+        "range": "-12,0 +13,7",
+        "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSHA256": "1573438371909e91f5a88d88371cdb914f66db8b8203f517575d14f29ca6a777",
+        "beforeLines": 0,
+        "afterLines": 7
+      },
+      {
+        "range": "-32 +39",
+        "beforeSHA256": "098752e119c0699c6a7277b7908e454955ec85427845ad9a337c1b969d4cc87d",
+        "afterSHA256": "dd0441fe45e0089c5112d18a2f417ff9766558d2c21c757a5cfe64991293cbdf",
+        "beforeLines": 1,
+        "afterLines": 1
+      },
+      {
+        "range": "-35 +42",
+        "beforeSHA256": "dab3edf6bf195bcee8f639b31f8453a0b7b4bfe10b5a7d2120a518dd4da07316",
+        "afterSHA256": "3d7e3157e12ca6742a81598749f639246d6cc62edd4089468dcd9b1b09d7b0e5",
+        "beforeLines": 1,
+        "afterLines": 1
+      },
+      {
+        "range": "-42 +49",
+        "beforeSHA256": "7011cf4f0ead65d184bbf6acb2ea1d71adde3eff44993e089d95cb7cad36b032",
+        "afterSHA256": "18091d129f65d1bd2c77f15323e9dd0ee7615bebecd9a1f970510fb4a3a8a914",
+        "beforeLines": 1,
+        "afterLines": 1
+      },
+      {
+        "range": "-45 +52",
+        "beforeSHA256": "5f3e41cf52dbb2bfc5c2c59699c2d380863b26758df6babcd3563ba7598d91a3",
+        "afterSHA256": "01722fc9cae07fd14498efc8f46441f4024a95f02df195c6107e60a3bd36a06a",
+        "beforeLines": 1,
+        "afterLines": 1
+      },
+      {
+        "range": "-48 +55",
+        "beforeSHA256": "340af9d9601bde3d2ba2c939ebbb8f3e24fa251b287b390a8642acae945e268a",
+        "afterSHA256": "ac6f4ce779297f2f6a3ba11307d15f9769d2410af5713a25e3d277b0069369a1",
+        "beforeLines": 1,
+        "afterLines": 1
+      },
+      {
+        "range": "-51 +58",
+        "beforeSHA256": "dab3edf6bf195bcee8f639b31f8453a0b7b4bfe10b5a7d2120a518dd4da07316",
+        "afterSHA256": "3d7e3157e12ca6742a81598749f639246d6cc62edd4089468dcd9b1b09d7b0e5",
+        "beforeLines": 1,
+        "afterLines": 1
+      },
+      {
+        "range": "-58 +65",
+        "beforeSHA256": "7011cf4f0ead65d184bbf6acb2ea1d71adde3eff44993e089d95cb7cad36b032",
+        "afterSHA256": "18091d129f65d1bd2c77f15323e9dd0ee7615bebecd9a1f970510fb4a3a8a914",
+        "beforeLines": 1,
+        "afterLines": 1
+      },
+      {
+        "range": "-61 +68",
+        "beforeSHA256": "5f3e41cf52dbb2bfc5c2c59699c2d380863b26758df6babcd3563ba7598d91a3",
+        "afterSHA256": "01722fc9cae07fd14498efc8f46441f4024a95f02df195c6107e60a3bd36a06a",
+        "beforeLines": 1,
+        "afterLines": 1
+      },
+      {
+        "range": "-70,2 +77,2",
+        "beforeSHA256": "cecd13ac185158999f14a4d3c89605580d0c0966f2f75671c1fd160289c70919",
+        "afterSHA256": "7137b0667f4eba59900b33d0a1cbff4b581d3da90d9e2e59e13f7f6c36548157",
+        "beforeLines": 2,
+        "afterLines": 2
+      },
+      {
+        "range": "-120,0 +128,5",
+        "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSHA256": "9ac773f9e35b3f8c54262bba38362966ef9d1f146be6c03ba61c70cc608ea872",
+        "beforeLines": 0,
+        "afterLines": 5
+      }
+    ]
+  },
+  "ios/VisePanda/VisePanda/Features/JournalData/NativeJournalDataModels.swift": {
+    "baseWorktree": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-journal-data-20261008",
+    "baseHead": "0ef351c2afdae917a8297c4120410865173d8376",
+    "before": "fc7ede8f616215eaecaaa881b08716800efb0e077e6c63d375d2717f42051ec5",
+    "after": "02823f2e81e0d3d3f5cede10075883b458fca977f7d1b90728e9d775c148d3ab",
+    "patch": "7ae2220bf5b278647d275d2fb6044ea28d04bd32880d22faaefc9fd1976d87f4",
+    "hunks": 6,
+    "hunkPins": [
+      {
+        "range": "-9,0 +10",
+        "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSHA256": "436aa5f1e11b13abb28d8814beeda0c600f635bbe74c9301b5e4fdd61c6ec7e1",
+        "beforeLines": 0,
+        "afterLines": 1
+      },
+      {
+        "range": "-13 +14",
+        "beforeSHA256": "0c1ace7808a4e4577b95cf3965553d89365e7842b3dcfdc271a5b51f7672f9d4",
+        "afterSHA256": "74e3be170d05039acf62f9bc652e3b6b7e1fa07cb03f58db81971157df5e6967",
+        "beforeLines": 1,
+        "afterLines": 1
+      },
+      {
+        "range": "-26,0 +28",
+        "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSHA256": "2cf6ac6e48bc508aed21ea783f14db0851d466f1fc0d81864a09ef811ff8e4c8",
+        "beforeLines": 0,
+        "afterLines": 1
+      },
+      {
+        "range": "-45 +47",
+        "beforeSHA256": "49c99d4e594bfc02603b358221f2c84faf8a0eb14bda6465f357cb5dbd747fa5",
+        "afterSHA256": "9f0cf93c65410581274383dc31b0c84fd7347d10b839b37d3f49367b06c15851",
+        "beforeLines": 1,
+        "afterLines": 1
+      },
+      {
+        "range": "-46,0 +49,5",
+        "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSHA256": "8203f72ccf8947c7075f2332450d291e13dc702cf7b1c139d40b4e70afbef7c6",
+        "beforeLines": 0,
+        "afterLines": 5
+      },
+      {
+        "range": "-47,0 +55",
+        "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSHA256": "20fc2ee0ff9a1ea07aa962c4b10ad35b7d01727c6a4032532bdb70c8e049cde1",
+        "beforeLines": 0,
+        "afterLines": 1
+      }
+    ]
+  },
+  "ios/VisePanda/VisePanda/Features/JournalData/NativeJournalDataVaultSources.swift": {
+    "baseWorktree": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-journal-data-20261008",
+    "baseHead": "0ef351c2afdae917a8297c4120410865173d8376",
+    "before": "f905670b8c65b184d09b50704a33811e5aca44f47bacf131fdc7b9fdf945e100",
+    "after": "92f978e2e14b3cec82e286445c9480a752b699af31977128640a0ae23a986738",
+    "patch": "c67590bdbfbcdef552462ab7e0cc4dba3c6d75ff88d94f80dd3f30e968103398",
+    "hunks": 1,
+    "hunkPins": [
+      {
+        "range": "-233 +233",
+        "beforeSHA256": "0dcca0608d101c5adc9ca8dac7942983fddabfab60f0965024c38b6462fdfb47",
+        "afterSHA256": "eb17f2ef6af45c099470adcb8d001dc4221807612796b2167453a4c072ce08f9",
+        "beforeLines": 1,
+        "afterLines": 1
+      }
+    ]
+  },
+  "ios/VisePanda/VisePanda/Features/JournalData/NativeJournalDataStore.swift": {
+    "baseWorktree": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-journal-data-20261008",
+    "baseHead": "0ef351c2afdae917a8297c4120410865173d8376",
+    "before": "d69cdc62e2f18592e809e2f7378e0a97915411685866b9cda8e19e00bab3830a",
+    "after": "f4befb27e16a7696bc5a472f53cbbb8cc8ae05dd3c3c7d3bd7c17ecfce30f7a5",
+    "patch": "66797ddb505bbed902d3983c3c56cfb0773916f7d9eece8ebcab8c6868d693ee",
+    "hunks": 1,
+    "hunkPins": [
+      {
+        "range": "-90 +90",
+        "beforeSHA256": "f17483a7e55e03880175b65adbd65881e92a41fb4be06a4bec327c381516872a",
+        "afterSHA256": "a5336fe97f7dba9886f406222ad83cda943dbe49b492a59d49a6d372c13a1d28",
+        "beforeLines": 1,
+        "afterLines": 1
+      }
+    ]
+  },
+  "ios/VisePanda/VisePanda/Features/JournalData/NativeJournalDataView.swift": {
+    "baseWorktree": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-journal-data-20261008",
+    "baseHead": "0ef351c2afdae917a8297c4120410865173d8376",
+    "before": "2a62999e055a34b9fbe105484428536a1b629fc18a60383afd7222599c73bd44",
+    "after": "e99cda51607b944da1a30ae0dd0f15d83c554418dd2123dc51d2d3999728efd4",
+    "patch": "38cd60b4bc4dc895352d4bd7745efeee4b74dda2def9d5f8e53b65e2e8cb6cf3",
+    "hunks": 4,
+    "hunkPins": [
+      {
+        "range": "-26 +26",
+        "beforeSHA256": "c4f29af9ec3ec53a3d4ce3a972347edb8afa11e96e3877c4906a3ea9f64fca7b",
+        "afterSHA256": "639c79dbc08c2f0de919db6925bc59649801c4365e14c6c8ef121c470c1c1ec8",
+        "beforeLines": 1,
+        "afterLines": 1
+      },
+      {
+        "range": "-27,0 +28",
+        "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSHA256": "b5bf5af574ebab1334f444b26407810e65fa51d3e963002dfffda33d24ee6b94",
+        "beforeLines": 0,
+        "afterLines": 1
+      },
+      {
+        "range": "-28,0 +30,5",
+        "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSHA256": "325dacbc36f047198b20b49d016b6fc1e40fe088089dc17c118d6ed56893cb1d",
+        "beforeLines": 0,
+        "afterLines": 5
+      },
+      {
+        "range": "-245,0 +252",
+        "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSHA256": "cb6b9e8a49742b4dd9fd1e00df981967946feae719c48be9ca6133b5161ae7e5",
+        "beforeLines": 0,
+        "afterLines": 1
+      }
+    ]
+  },
+  "ios/VisePanda/VisePanda.xcodeproj/project.pbxproj": {
+    "baseWorktree": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-journal-data-20261008",
+    "baseHead": "0ef351c2afdae917a8297c4120410865173d8376",
+    "before": "ddd62d6a7d15e3f75ce051d6e377ae18bc80989d707cf995ff120bcd84519840",
+    "after": "16b20c00184a9f6f5aea53358d6dafc8cc9f1cee1a2d9aca4546416303fb6696",
+    "patch": "5c97b9b0c98f0e367cb830bf96b8ad892c85c2e0c9ab92adbb5526ed64cc21a0",
+    "hunks": 7,
+    "hunkPins": [
+      {
+        "range": "-457,0 +458,7",
+        "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSHA256": "18d8d978f7e979127da46d5e7481e04ede907ffca5137409e40524c9ebda9e7a",
+        "beforeLines": 0,
+        "afterLines": 7
+      },
+      {
+        "range": "-918,0 +926,7",
+        "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSHA256": "3c0380ca640c0db2b4e5ae66c6512c067187abaa64fb5ebc2d170cfc94454038",
+        "beforeLines": 0,
+        "afterLines": 7
+      },
+      {
+        "range": "-977 +991",
+        "beforeSHA256": "24c18e07f9a7d3c98162933c60b91571a9dddc0e3b7466b6b3e9dc0b5fa62ae9",
+        "afterSHA256": "94a182c14263f4a2bc3d3e632f69c11d6a99e6402e89fcb66ac675f1b6ea7143",
+        "beforeLines": 1,
+        "afterLines": 1
+      },
+      {
+        "range": "-984 +998",
+        "beforeSHA256": "e5c3aaaa9ff1a6acfdc866ce2239ad4ab83140d8eed27a96c5d631fab4fed3cd",
+        "afterSHA256": "2194ee676093981195b4f435a9b087af439fdd871f94aa27920d7391162916d3",
+        "beforeLines": 1,
+        "afterLines": 1
+      },
+      {
+        "range": "-1013,0 +1028",
+        "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSHA256": "866f482e048a3fc5d0ccb1657fb8702b1a9615e52c9eaf94dcaa714ac59a5ffd",
+        "beforeLines": 0,
+        "afterLines": 1
+      },
+      {
+        "range": "-1107,0 +1123,7",
+        "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSHA256": "f1f6a590c296c6e3a11d9d409b599ab70617586ae6d3fcea277658b5803382be",
+        "beforeLines": 0,
+        "afterLines": 7
+      },
+      {
+        "range": "-1188 +1210,3",
+        "beforeSHA256": "02df3c28ffa8e210a44f9a524d318ca33f14d07de890b45475f7c50ad5da9c9e",
+        "afterSHA256": "b2fda3f51ef57b6517b84a107216beddb31c86be30095a1f9329975e772c4a09",
+        "beforeLines": 1,
+        "afterLines": 3
+      }
+    ]
+  }
+}

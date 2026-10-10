@@ -64,8 +64,15 @@ import Observation
             if let chain = NativeTaskChain(containing: found, history: history.turns), chain.turns.count < 4,
                [.clarification, .technicalFailure].contains(found.outcome) { continuation = found }
             // Original history proves acceptance, including a lost Guide HTTP acknowledgement.
+            let journalObserver = session.journalDataObservation(.guide)
+            let exactOriginalQuestion = pending?.fencedReference == nil && pending != nil
+                && (try? pending?.fields()["question"] as? String) == found.input
+            let journalTicket = exactOriginalQuestion && reply.policy.consentState == .accepted
+                && reply.policy.id == selected.policyID && reply.policy.noticeHash == selected.noticeHash
+                && guide.visible(session.dataScope)?.digest == selected.digest ? journalObserver.begin() : nil
             if let pending { try session.completePlaceGuide(pending, actor: selection.scope); submitted = selected; self.pending = nil }
             if !found.waiting { guide.clearUnlicensedProgress() }
+            journalObserver.finish(journalTicket, selected.operationID)
             guard reply.policy.consentState == .accepted, reply.policy.noticeHash == selected.noticeHash,
                   reply.policy.id == selected.policyID,
                   let current = guide.visible(session.dataScope), current.digest == selected.digest,

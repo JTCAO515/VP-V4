@@ -1,0 +1,82 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -derivedDataPath /private/tmp/vpj58-journal-native-r1-derived -destination "platform=iOS Simulator,id=79FEA6A2-39B4-42B0-A716-600587FCFA0B" CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- -parallel-testing-enabled NO "-only-testing:VisePandaTests/NativeJournalDataTests" -resultBundlePath /private/tmp/vpj58-journal-native-r1/tests.xcresult
+
+Build settings from command line:
+    CODE_SIGN_IDENTITY = -
+    CODE_SIGNING_ALLOWED = YES
+
+2026-10-08 05:31:01.514 xcodebuild[29311:2211564] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionsModels.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-08 05:31:01.514 xcodebuild[29311:2211564] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionsStore.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-08 05:31:01.514 xcodebuild[29311:2211564] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionDestination.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-08 05:31:01.514 xcodebuild[29311:2211564] warning:  The file reference for "ShareIntakeCore/ShareIntakeInbox.swift" is a member of multiple groups ("ShareIntakeExtension" and "Features"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+Writing result bundle at path:
+	/private/tmp/vpj58-journal-native-r1/tests.xcresult
+
+Test Suite 'Selected tests' started at 2026-10-08 05:31:06.725.
+Test Suite 'VisePandaTests.xctest' started at 2026-10-08 05:31:06.725.
+Test Suite 'VisePandaTests.xctest' passed at 2026-10-08 05:31:06.725.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-08 05:31:06.725.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64-apple-ios17.0-simulator
+◇ Suite NativeJournalDataTests started.
+◇ Test actualSessionOriginalVaultProtectedExportOriginalReceiptProjectionCompleteAndReadback() started.
+2026-10-08 05:31:06.759932+0800 VisePanda[29383:2212274] [plugin] AddInstanceForFactory: No factory registered for id <CFUUID 0x10d4af200> F8BB1C28-BAE8-11D6-9C31-00039315CD46
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+DEVICE_UNRUN: physical Complete protection/lock state; Simulator verifies POSIX, backup exclusion and exact bytes only
+✔ Test actualSessionOriginalVaultProtectedExportOriginalReceiptProjectionCompleteAndReadback() passed after 0.248 seconds.
+◇ Test originalRemoveFailurePreservesExactBytesAndNoLocalCompletion() started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+✔ Test originalRemoveFailurePreservesExactBytesAndNoLocalCompletion() passed after 0.016 seconds.
+◇ Test notificationSecretAskCredentialAndOldEpochAreNeverExportedOrCountedEmpty() started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+✘ Test notificationSecretAskCredentialAndOldEpochAreNeverExportedOrCountedEmpty() recorded an issue at NativeJournalDataTests.swift:118:6: Caught error: .invalidResponse
+✘ Test notificationSecretAskCredentialAndOldEpochAreNeverExportedOrCountedEmpty() failed after 0.015 seconds with 1 issue.
+◇ Test vanishedSourceWithoutOriginalReceiptNeverCreatesSuccess() started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+✔ Test vanishedSourceWithoutOriginalReceiptNeverCreatesSuccess() passed after 0.014 seconds.
+◇ Test fixedDualClockSourceCASAndLateHandoffRejectDriftWithoutRewritingPending() started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+✔ Test fixedDualClockSourceCASAndLateHandoffRejectDriftWithoutRewritingPending() passed after 0.032 seconds.
+◇ Test physicalSourceCASDetectsChangeBetweenOriginalQualifiedReads() started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+✔ Test physicalSourceCASDetectsChangeBetweenOriginalQualifiedReads() passed after 0.009 seconds.
+◇ Test newExplicitWriteRemainsLegalAndCannotReuseOldReceiptOrActor() started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+✔ Test newExplicitWriteRemainsLegalAndCannotReuseOldReceiptOrActor() passed after 0.013 seconds.
+◇ Test ownCleanupFailureFencesFileDeliveryAndPreservesEveryOriginalRequest() started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+✔ Test ownCleanupFailureFencesFileDeliveryAndPreservesEveryOriginalRequest() passed after 0.015 seconds.
+✘ Suite NativeJournalDataTests failed after 0.367 seconds with 1 issue.
+✘ Test run with 8 tests in 1 suite failed after 0.367 seconds with 1 issue.
+2026-10-08 05:31:17.861 xcodebuild[29311:2211564] [MT] IDETestOperationsObserverDebug: 16.034 elapsed -- Testing started completed.
+2026-10-08 05:31:17.861 xcodebuild[29311:2211564] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-08 05:31:17.861 xcodebuild[29311:2211564] [MT] IDETestOperationsObserverDebug: 16.034 sec, +16.034 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/vpj58-journal-native-r1/tests.xcresult
+
+Failing tests:
+	NativeJournalDataTests.notificationSecretAskCredentialAndOldEpochAreNeverExportedOrCountedEmpty()
+
+** TEST EXECUTE FAILED **
+
+Testing started

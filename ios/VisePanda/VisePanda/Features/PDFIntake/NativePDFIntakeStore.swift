@@ -141,7 +141,9 @@ struct NativePDFIntakeSource: Identifiable {
                 // The server proves the original applied receipt. A higher Trip head alone never proves this.
                 await tripStore.select(value.tripID, using: session)
                 guard current(session), tripStore.selectedID == value.tripID, tripStore.detail?.trip.id == value.tripID, (tripStore.detail?.trip.headVersion ?? -1) >= (result.resultingVersion ?? Int.max) else { throw NativeDataError.staleSessionResponse }
+                let journalObserver = session.journalDataObservation(.pdf), journalTicket = journalObserver.begin()
                 try session.completePDFIntake(value, actor: source.actor); journal = nil; message = "confirmed"
+                journalObserver.finish(journalTicket, value.command.operationId)
                 return clearCopy()
             }
             message = result.state // Terminal read keeps the unknown journal. Explicit Cancel resolves it.
@@ -157,7 +159,9 @@ struct NativePDFIntakeSource: Identifiable {
             let bytes = try await session.pdfIntakeRequest(tripID: value.tripID, action: "cancel", body: body, actor: source.actor)
             let result = try JSONDecoder().decode(NativePDFOperation.self, from: bytes)
             guard operationMatches(result, value: value), result.state == "cancelled" else { throw NativeDataError.invalidResponse }
+            let journalObserver = session.journalDataObservation(.pdf), journalTicket = journalObserver.begin()
             try session.completePDFIntake(value, actor: source.actor); journal = nil
+            journalObserver.finish(journalTicket, value.command.operationId)
             return clearCopy()
         } catch { message = errorCode(error); return false }
     }

@@ -19,6 +19,8 @@ struct NativeResultDataCompletion: Identifiable {
 }
 
 @MainActor @Observable final class NativeResultDataStore {
+    var journalObservation: NativeJournalDataObservation?
+
     let scope: NativeResultDataScope
     let rootKind: NativeResultDataRoot?
     private(set) var objects: [NativeResultDataObject] = []
@@ -186,7 +188,9 @@ struct NativeResultDataCompletion: Identifiable {
             _ = try privateFile.write(bytes)
             try client.consumeReceipt(result, actor)
             try check(generation, actor: actor, client: client)
+            let journalTicket = journalObservation?.begin()
             try journal.complete(pending, actor: actor)
+            journalObservation?.finish(journalTicket, result.binding.requestID)
             self.pending = nil; clearVisible(keepFile: true)
             receiptInventory = inventoryText
             receipt = result; receiptLease = displayLease; completion = .init(receipt: result); message = "erased"

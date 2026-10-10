@@ -1,0 +1,10 @@
+{
+  "ios/VisePanda/VisePandaTests/NativeJournalDataTests.swift": "539ec51ee203df9478e33c0782cfc7218c5ab65a342d33bc48ee8a437c171317",
+  "ios/VisePanda/VisePandaTests/NativeAssistantEventsTests.swift": "a67a2b9b6b185c636b6f506289f7b670b6238c05f4a8218c8c7af2296d903e44",
+  "ios/VisePanda/VisePanda/Features/AssistantEvents/NativeAssistantEventsCursor.swift": "635492bcfa87cbc9faa329e518db5c8e118fd1ecc1f40d598e02a7da64a35575",
+  "ios/VisePanda/VisePanda/Features/AssistantEvents/NativeAssistantEventsDecoder.swift": "f4e4a011c3facdd6abc9a6190c1aad36a6e2667d5b5c836ccf736168d1a74c6b",
+  "ios/VisePanda/VisePanda/Features/AssistantEvents/NativeAssistantEventsInvalidation.swift": "4b7ba1d3ea074490a64121269c07d42ff4b7840b0a4f6924d18982a768059ed5",
+  "ios/VisePanda/VisePanda/Features/AssistantEvents/NativeAssistantEventsLifetime.swift": "9025d22421d0723c6b69c71df08f714b82d65537280b7513ee84033c4ff9ddbc",
+  "ios/VisePanda/VisePanda/Features/AssistantEvents/NativeAssistantEventsProjection.swift": "eb734f1b73f2de1a74e00ed0af36e431f56b699d9e9780272fa6fc79e21c33bb",
+  "ios/VisePanda/VisePanda/Features/AssistantEvents/NativeAssistantEventsStore.swift": "02a447e8d79f5977b58dd3bcca79488611619fd4683ceae5dc242497bc68b457"
+}
