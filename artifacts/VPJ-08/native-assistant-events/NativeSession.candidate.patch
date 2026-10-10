@@ -1,0 +1,61 @@
+--- a/ios/VisePanda/VisePanda/App/NativeSession.swift
++++ b/ios/VisePanda/VisePanda/App/NativeSession.swift
+@@ -1792,6 +1792,58 @@
+             guard try communitySafetyActor() == ticket.actor, resultDataProjectionFence.accepts(ticket, artifactID: resultArtifact) else { throw NativeDataError.staleSessionResponse }
+         }
+         return data
++    }
++
++    /// Finite assistant replay. Uses original credentials/session and never an Ask writer.
++    func assistantEventsRequest(selection: NativeAssistantEventsSelection, after: Int) async throws -> Data {
++        guard askMode == .assistant, enabled, !busy, selection.valid,
++              dataScope == selection.scope, (0...999_999_999_999_999).contains(after),
++              try communitySafetyActor().sessionID == selection.sessionID else { throw NativeDataError.sessionUnavailable }
++        if let credential, credential.expiresAt <= Date().timeIntervalSince1970 + 15 { await validate() }
++        guard dataScope == selection.scope, let credential, let endpoint,
++              try communitySafetyActor().sessionID == selection.sessionID else { throw NativeDataError.staleSessionResponse }
++        var request = URLRequest(url: endpoint.appendingPathComponent("api/chat/native/v5/assistant-events/\(selection.conversationID)"))
++        request.httpShouldHandleCookies = false; request.timeoutInterval = 15
++        request.setValue("text/event-stream", forHTTPHeaderField: "Accept")
++        request.setValue("Bearer \(credential.accessToken)", forHTTPHeaderField: "Authorization")
++        request.setValue(String(after), forHTTPHeaderField: "Last-Event-ID")
++        let started = ProcessInfo.processInfo.systemUptime
++        let (stream, response) = try await transport.bytes(for: request)
++        defer { stream.task.cancel() }
++        let remaining = max(0, 15 - (ProcessInfo.processInfo.systemUptime - started))
++        let deadline = Task { try await Task.sleep(for: .seconds(remaining)); stream.task.cancel() }
++        defer { deadline.cancel() }
++        guard dataScope == selection.scope, try communitySafetyActor().sessionID == selection.sessionID else { throw NativeDataError.staleSessionResponse }
++        guard let http = response as? HTTPURLResponse else { throw NativeDataError.invalidResponse }
++        if http.statusCode == 401 { handle(SessionError.denied); throw NativeDataError.sessionUnavailable }
++        if http.statusCode == 403 { throw NativeDataError.server(code: "DATA_POLICY_BLOCKED") }
++        guard http.statusCode == 200, http.value(forHTTPHeaderField: "Content-Type")?.lowercased().hasPrefix("text/event-stream") == true else { throw NativeDataError.invalidResponse }
++        var bytes = Data()
++        for try await byte in stream {
++            try Task.checkCancellation()
++            guard dataScope == selection.scope, try communitySafetyActor().sessionID == selection.sessionID else { throw NativeDataError.staleSessionResponse }
++            guard bytes.count < 65_536, ProcessInfo.processInfo.systemUptime - started < 15 else { throw NativeDataError.invalidResponse }
++            bytes.append(byte)
++        }
++        try Task.checkCancellation()
++        guard dataScope == selection.scope, try communitySafetyActor().sessionID == selection.sessionID else { throw NativeDataError.staleSessionResponse }
++        _ = try NativeAssistantEventsDecoder.decode(bytes, conversationID: selection.conversationID, after: after)
++        return bytes
++    }
++
++    private var assistantEventsCursorService: String { keychainService + ".assistant-events-cursor." + (endpoint?.absoluteString ?? "disabled") }
++    func assistantEventsCursor(selection: NativeAssistantEventsSelection, qualified: Bool) throws -> Int? {
++        guard dataScope == selection.scope, try communitySafetyActor().sessionID == selection.sessionID else { throw NativeDataError.staleSessionResponse }
++        let (status, bytes) = vault.read(service: assistantEventsCursorService, owner: selection.scope.subject)
++        if status == errSecItemNotFound { return nil }
++        guard status == errSecSuccess, let bytes else { throw NativeDataError.sessionUnavailable }
++        // A stale selection/session/policy record remains only a discarded projection hint.
++        return try? NativeAssistantEventsCursor.decode(bytes, selection: selection, qualified: qualified)
++    }
++    func rememberAssistantEventsCursor(selection: NativeAssistantEventsSelection, sequence: Int) throws {
++        guard dataScope == selection.scope, try communitySafetyActor().sessionID == selection.sessionID else { throw NativeDataError.staleSessionResponse }
++        let bytes = try NativeAssistantEventsCursor.encode(sequence, selection: selection)
++        guard vault.write(bytes, service: assistantEventsCursorService, owner: selection.scope.subject) == errSecSuccess else { throw NativeDataError.sessionUnavailable }
+     }
+ 
+     /// Read one bounded live connection. Reconnection never sends an Ask request.
