@@ -13,7 +13,7 @@
 +        }
 @@ -1485,0 +1495,131 @@
 +    private var assistantEventsSelection: NativeAssistantEventsSelection? {
-+        guard resultActive, !entryBlocking, policy?.consentState == .accepted,
++        guard session.assistantEventsEnabled, resultActive, !entryBlocking, policy?.consentState == .accepted,
 +              let policy, let id = conversation?.conversationId, id == selection.conversationID,
 +              let actor = try? session.communitySafetyActor(), actor.scope == boundScope else { return nil }
 +        return .init(scope: actor.scope, sessionID: actor.sessionID, policyID: policy.id,

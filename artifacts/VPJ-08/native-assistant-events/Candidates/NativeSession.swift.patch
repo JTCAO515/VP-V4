@@ -2,7 +2,7 @@
 +++ b/ios/VisePanda/VisePanda/App/NativeSession.swift
 @@ -637,0 +638 @@
 +        try eraseAssistantEventsCursor(owner: actor.scope.subject)
-@@ -1987,0 +1989,67 @@
+@@ -1987,0 +1989,72 @@
 +    }
 +
 +    /// Finite assistant replay. Uses original credentials/session and never an Ask writer.
@@ -57,6 +57,11 @@
 +        guard vault.write(bytes, service: assistantEventsCursorService, owner: selection.scope.subject) == errSecSuccess else { throw NativeDataError.sessionUnavailable }
 +    }
 +
++    var assistantEventsEnabled: Bool {
++        askMode == .assistant && !ProcessInfo.processInfo.arguments.contains("-VisePandaLegacyAssistantEvents") &&
++            (ProcessInfo.processInfo.arguments.contains("-VisePandaAssistantEvents") ||
++             Bundle.main.object(forInfoDictionaryKey: "VisePandaAssistantEventsEnabled") as? Bool == true)
++    }
 +    private(set) var assistantEventsInvalidation: NativeAssistantEventsInvalidation?
 +    func invalidateAssistantEvents(selection: NativeAssistantEventsSelection,
 +                                   object: NativeAssistantEventsReference.Object?) throws {
@@ -70,8 +75,8 @@
 +    private func eraseAssistantEventsCursor(owner: String) throws {
 +        let result = vault.remove(service: assistantEventsCursorService, owner: owner)
 +        guard result == errSecSuccess || result == errSecItemNotFound else { throw NativeDataError.sessionUnavailable }
-@@ -2264,0 +2333 @@
+@@ -2264,0 +2338 @@
 +        assistantEventsInvalidation = nil
-@@ -2314,0 +2384,2 @@
+@@ -2314,0 +2389,2 @@
 +            do { try eraseAssistantEventsCursor(owner: owner) }
 +            catch { failureCode="assistantEventsCursorCleanupRequired";status="storageError";return false }
