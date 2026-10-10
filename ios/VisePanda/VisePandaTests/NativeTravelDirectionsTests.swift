@@ -356,3 +356,64 @@ extension NativeTravelDirectionsTests {
         XCTAssertNil(store.visible(current: nil), "A new actor/inactive consumer cannot present the old qualified proposal")
     }
 }
+
+extension NativeTravelDirectionsTests {
+    @MainActor private func tripDirectionsEnvelope(trip: String, tripVersion: Int, current: Bool, content: [String: Any]? = nil) throws -> Data {
+        let artifact = "11111111-1111-4111-8111-111111111111"
+        var root = try XCTUnwrap(JSONSerialization.jsonObject(with: envelope(content ?? self.content(), id: artifact, revision: 1)) as? [String: Any])
+        var data = try XCTUnwrap(root["data"] as? [String: Any]), source = try XCTUnwrap(data["source"] as? [String: Any])
+        source["tripId"] = trip; source["tripVersion"] = tripVersion; data["source"] = source; data["current"] = current; root["data"] = data
+        return try JSONSerialization.data(withJSONObject: root)
+    }
+    @MainActor func testTripDirectionsReloadReadsExactHistoricalDirectionsAndRejectsOtherTripOrProposalFallback() async throws {
+        let trip = "22222222-2222-4222-8222-222222222222", artifact = "11111111-1111-4111-8111-111111111111"
+        let key = NativeTravelDirectionsTripResultStore.Key(scope: .init(endpoint: "http://127.0.0.1:59321", subject: "owner", mobileEpoch: 1, generation: 1), tripID: trip, tripVersion: 5)
+        let store = NativeTravelDirectionsTripResultStore()
+        let historical = try tripDirectionsEnvelope(trip: trip, tripVersion: 4, current: false)
+        await store.load(key: key, current: { key }, reference: { _ in .init(artifactID: artifact, revision: 1) }, exact: { id, revision in
+            XCTAssertEqual(id, artifact); XCTAssertEqual(revision, 1); return historical
+        })
+        XCTAssertEqual(store.visible(current: key)?.current, false)
+        let foreign = try tripDirectionsEnvelope(trip: "33333333-3333-4333-8333-333333333333", tripVersion: 5, current: true)
+        await store.load(key: key, current: { key }, reference: { _ in .init(artifactID: artifact, revision: 1) }, exact: { _, _ in foreign })
+        XCTAssertNil(store.visible(current: key))
+        let proposal = try tripDirectionsEnvelope(trip: trip, tripVersion: 5, current: true,
+            content: ["schemaVersion": "change-proposal-reference/1", "proposalId": "44444444-4444-4444-8444-444444444444", "proposalRevision": 1, "actions": []])
+        var lookups = 0
+        await store.load(key: key, current: { key }, reference: { _ in lookups += 1; return .init(artifactID: artifact, revision: 1) }, exact: { _, _ in proposal })
+        XCTAssertNil(store.visible(current: key)); XCTAssertEqual(lookups, 1)
+    }
+    @MainActor func testTripDirectionsReloadLateCallbackAndExpiryCannotRestoreOldSelection() async throws {
+        let trip = "22222222-2222-4222-8222-222222222222", artifact = "11111111-1111-4111-8111-111111111111"
+        let key = NativeTravelDirectionsTripResultStore.Key(scope: .init(endpoint: "http://127.0.0.1:59321", subject: "owner", mobileEpoch: 1, generation: 1), tripID: trip, tripVersion: 5)
+        var clock = 100.0, live: NativeTravelDirectionsTripResultStore.Key? = key
+        let store = NativeTravelDirectionsTripResultStore(uptime: { clock }), bytes = try tripDirectionsEnvelope(trip: trip, tripVersion: 5, current: true)
+        var pending: CheckedContinuation<Data, Error>?
+        let reading = Task { await store.load(key: key, current: { live }, reference: { _ in .init(artifactID: artifact, revision: 1) }, exact: { _, _ in
+            try await withCheckedThrowingContinuation { pending = $0 }
+        }) }
+        for _ in 0..<100 where pending == nil { await Task.yield() }
+        let parked = try XCTUnwrap(pending); live = nil; store.clear(); parked.resume(returning: bytes)
+        await reading.value; XCTAssertNil(store.record)
+        live = key
+        await store.load(key: key, current: { live }, reference: { _ in .init(artifactID: artifact, revision: 1) }, exact: { _, _ in bytes })
+        XCTAssertNotNil(store.visible(current: key))
+        clock = 130; XCTAssertNil(store.visible(current: key))
+    }
+}
+
+extension NativeTravelDirectionsTests {
+    @MainActor func testTripDirectionsReferenceRejectsArchiveExtraForeignAndBooleanRevision() throws {
+        let trip = "22222222-2222-4222-8222-222222222222", artifact = "11111111-1111-4111-8111-111111111111"
+        let data: [String: Any] = ["kind": "result_reference", "tripId": trip, "artifactId": artifact, "revision": 1]
+        func decode(_ data: [String: Any]) throws -> NativeFiveResultReference? {
+            try NativeTravelDirectionsTripResultStore.decodeReference(JSONSerialization.data(withJSONObject: ["version": 2, "data": data]), tripID: trip)
+        }
+        XCTAssertEqual(try decode(data)?.artifactID, artifact)
+        var extra = data; extra["archiveHistorical"] = true; XCTAssertThrowsError(try decode(extra))
+        var foreign = data; foreign["tripId"] = "33333333-3333-4333-8333-333333333333"; XCTAssertThrowsError(try decode(foreign))
+        var boolean = data; boolean["revision"] = true; XCTAssertThrowsError(try decode(boolean))
+        XCTAssertNil(try decode(["kind": "unavailable"]))
+        XCTAssertThrowsError(try decode(["kind": "empty", "artifactId": artifact]))
+    }
+}

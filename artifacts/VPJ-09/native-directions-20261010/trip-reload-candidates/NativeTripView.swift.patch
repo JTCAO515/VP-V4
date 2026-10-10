@@ -1,0 +1,18 @@
+--- a/ios/VisePanda/VisePanda/Features/Trip/NativeTripView.swift
++++ b/ios/VisePanda/VisePanda/Features/Trip/NativeTripView.swift
+@@ -208,6 +208,15 @@
+                                                  expectedTripID: detail.trip.id)
+                             }
+                         }
++                        if let scope = session.dataScope, store.scope == scope, store.archiveAvailable,
++                           store.archive == nil, store.deletionRequest == nil, store.deletionReceipt == nil {
++                            NativeTravelDirectionsTripCard(session: session, scope: scope, tripID: detail.trip.id,
++                                tripVersion: detail.trip.headVersion, active: scenePhase == .active, chinese: chinese,
++                                reference: { tripID in
++                                    try NativeTravelDirectionsTripResultStore.decodeReference(
++                                        await session.tripDirectionsReferenceRequest(tripID: tripID), tripID: tripID)
++                                })
++                        }
+                         NativeTravelRemindersView(detail: detail, session: session, chinese: chinese)
+                             .id("reminders-\(detail.trip.id)-\(session.dataScope?.subject ?? "")")
+                         if store.canEdit,store.draft==nil,store.pending==nil {
