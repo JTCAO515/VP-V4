@@ -14,10 +14,7 @@ Cursor codec persists only owner/endpoint/epoch/session/policy/conversation/sequ
 
 ## Shared full-scope candidate; not applied and not leased
 
-- NativeSession.swift: candidate patch in this directory, base SHA256 pinned alongside it. Add only bounded read-only finite SSE transport plus exact-owner cursor vault methods; reuse original credential refresh, session actor and byte-stream deadline. No old SSE parser change, new auth or vault scan.
-- NativeAssistantConversationView.swift: needs selected conversation/current accepted policy/current actor/scene generation binding; wire original task history and exact artifact GET publication to the owned store. Only update matching task/readable selected result; never call reload() wholesale from an event because it can reconcile pending bytes/drafts. Preserve existing erasure handlers and immutable journal rules. Candidate must be generated on released current shared source before application.
-- TaskActivity/Library readers: use their existing original eligibility/freshness/store publication; invalidation clears matching projection without navigation. No new result writer.
-- PBX: register the five new owned Swift files and one owned test file in original App/unit target, retaining all original IDs. No project mutation before release+Main exact lease.
+Complete five-file/26-hunk package is now in `Candidates/README.md` and `Candidates/pins.json` with actual current Journal baselines, individual full/hunk before/after SHA, current owner release requirements, and preserved original39 / PBX IDs. Main6e old Session candidate was removed because actual owners carry unmerged newer source. Candidate source parsing and isolated application are preparation checks, never actual registration/product delivery.
 
 ## Actual checks
 

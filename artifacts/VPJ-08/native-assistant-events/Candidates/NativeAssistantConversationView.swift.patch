@@ -1,0 +1,114 @@
+--- a/ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift
++++ b/ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift
+@@ -442,0 +443 @@
++    @State private var assistantEvents = NativeAssistantEventsStore()
+@@ -806,0 +808,6 @@
++        .task(id: assistantEventsSelection) {
++            guard let captured = assistantEventsSelection else {
++                assistantEvents.bind(nil, active: false, clearDisplays: {}); return
++            }
++            await receiveAssistantEvents(captured)
++        }
+@@ -1485,0 +1493,102 @@
++    private var assistantEventsSelection: NativeAssistantEventsSelection? {
++        guard resultActive, !entryBlocking, policy?.consentState == .accepted,
++              let policy, let id = conversation?.conversationId, id == selection.conversationID,
++              let actor = try? session.communitySafetyActor(), actor.scope == boundScope else { return nil }
++        return .init(scope: actor.scope, sessionID: actor.sessionID, policyID: policy.id,
++                     conversationID: id, selectionGeneration: selection.generation)
++    }
++
++    private func clearAssistantEventDisplay(_ captured: NativeAssistantEventsSelection) {
++        guard session.dataScope == captured.scope, selection.generation == captured.selectionGeneration else { return }
++        refreshState.invalidate(); fiveResultRequestGeneration = UUID(); resultFence.clear()
++        policy = nil; conversation = nil; planningPolicy = nil
++        taskTurns = []; taskSourceMessages = []; taskNextCursor = nil; taskPageCursor = nil; taskSnapshotSequence = nil
++        selectedResult = nil; referencedResultUntil = 0; tripLink = nil; ownedTrips = []
++        notice = "retry"; taskNotice = "retry"; resultNotice = "unavailable"
++        // Selection, sheets, focus, drafts and every immutable pending operation survive.
++        try? session.invalidateAssistantEvents(selection: captured, object: nil)
++    }
++
++    private func clearAssistantEventObject(_ object: NativeAssistantEventsReference.Object,
++                                          captured: NativeAssistantEventsSelection) {
++        guard assistantEventsSelection == captured else { return }
++        refreshState.invalidate()
++        switch object {
++        case .task(let id): taskTurns.removeAll { $0.serviceTaskId == id }
++        case .artifact(let id):
++            fiveResultRequestGeneration = UUID()
++            if selectedArtifactID == id || selectedResult?.artifactId == id { selectedResult = nil; resultFence.clear() }
++            if selectedSources.sources.artifact?.artifactId == id { referencedResultUntil = 0 }
++        }
++        try? session.invalidateAssistantEvents(selection: captured, object: object)
++    }
++
++    private func recheckAssistantEvent(_ event: NativeAssistantEventsDecoder.Event,
++                                      captured: NativeAssistantEventsSelection) async throws -> Bool {
++        func current() -> Bool { assistantEventsSelection == captured && !Task.isCancelled }
++        guard current() else { throw NativeDataError.staleSessionResponse }
++        let policyBytes = try await session.askRequest(path: "api/chat/native/v5/policy", method: "GET")
++        guard current() else { throw NativeDataError.staleSessionResponse }
++        let latestPolicy = try JSONDecoder().decode(NativeTextPolicyReply.self, from: policyBytes)
++        guard latestPolicy.kind == "policy", latestPolicy.policy.valid,
++              latestPolicy.policy.id == captured.policyID, latestPolicy.policy.consentState == .accepted else {
++            try session.eraseAssistantEventsCursor(selection: captured); return false
++        }
++        let canonical = try await AssistantConversationReader.read(requestedID: captured.conversationID,
++            isCurrent: current, load: { try await session.assistantConversationRequest(conversationID: captured.conversationID) })
++        guard current(), canonical.nextSequence == conversation?.nextSequence else { return false }
++        switch event.change {
++        case .task, .progress:
++            let activityBytes = try await session.taskActivityRequest(conversationID: captured.conversationID, taskID: event.taskID)
++            guard current() else { throw NativeDataError.staleSessionResponse }
++            let activity = try JSONDecoder().decode(NativeTaskActivity.self, from: activityBytes)
++            guard activity.conversationId == captured.conversationID, activity.taskId == event.taskID else { return false }
++            let bytes = try await session.assistantTaskHistoryRequest(conversationID: captured.conversationID, cursor: taskPageCursor)
++            guard current() else { throw NativeDataError.staleSessionResponse }
++            let page = try JSONDecoder().decode(AssistantConversationTaskPage.self, from: bytes)
++            guard page.valid, page.conversationId == captured.conversationID, page.conversationSequence == canonical.nextSequence else { return false }
++            // Original current page decides what is rendered; event status/tool never does.
++            taskTurns = page.turns; taskSourceMessages = page.messages; taskNextCursor = page.nextCursor
++            taskSnapshotSequence = page.conversationSequence; taskNotice = nil
++            return true
++        case .artifact(let id, let revision, _, _):
++            let bytes = try await session.fiveResultRequest(artifactID: id, revision: revision)
++            guard current() else { throw NativeDataError.staleSessionResponse }
++            let value = try NativeFiveResultRecord.decode(bytes, artifactID: id, revision: revision)
++            if let value {
++                guard value.source.taskId == event.taskID, value.source.taskTurnId == event.turnID else { return false }
++            }
++            // nil/historical is an authoritative unavailable read, not current content.
++            // Existing selected exact-revision reader remains the only content publisher.
++            return true
++        }
++    }
++
++    private func receiveAssistantEvents(_ captured: NativeAssistantEventsSelection) async {
++        assistantEvents.bind(captured, active: true, clearDisplays: {})
++        do {
++            if let cursor = try session.assistantEventsCursor(selection: captured, qualified: assistantEventsSelection == captured) {
++                try assistantEvents.restoreCursor(cursor, selection: captured, qualified: assistantEventsSelection == captured)
++            }
++        } catch { clearAssistantEventDisplay(captured); return }
++        while !Task.isCancelled && assistantEventsSelection == captured {
++            await assistantEvents.read(selection: captured, current: { assistantEventsSelection },
++                request: { _, after in try await session.assistantEventsRequest(selection: captured, after: after) },
++                clear: { clearAssistantEventObject($0, captured: captured) },
++                readCurrent: { event in
++                    do { return try await recheckAssistantEvent(event, captured: captured) }
++                    catch {
++                        if assistantEventsSelection == captured, case NativeDataError.server(let code) = error,
++                           ["DATA_POLICY_BLOCKED", "FORBIDDEN", "UNAUTHENTICATED"].contains(code) {
++                            try session.eraseAssistantEventsCursor(selection: captured)
++                        }
++                        throw error
++                    }
++                },
++                saveCursor: { try session.rememberAssistantEventsCursor(selection: $0, sequence: $1) },
++                clearDisplays: { clearAssistantEventDisplay(captured) })
++            guard assistantEvents.state == .ready, assistantEventsSelection == captured else { return }
++            if !assistantEvents.hasMore { do { try await Task.sleep(for: .seconds(2)) } catch { return } }
++        }
++    }
++
