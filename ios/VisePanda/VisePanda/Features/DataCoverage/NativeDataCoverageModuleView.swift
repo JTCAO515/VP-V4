@@ -50,6 +50,8 @@ struct NativeDataCoverageModuleView: View {
                 }.disabled(actor == nil || !registered)
             } else if module.id == "offline" {
                 NativeDataCoverageOfflineView(coverage: store, session: session, chinese: chinese)
+            } else if module.id == "local_journals" {
+                NativeJournalDataView(coverage: store, session: session, chinese: chinese)
             } else if module.id == "guide_cache" {
                 NativeGuideCacheDataView(coverage: store, session: session, chinese: chinese)
             } else {

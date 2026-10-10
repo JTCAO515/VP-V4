@@ -1,0 +1,10 @@
+--- a/ios/VisePanda/VisePanda/Features/CommunityExperience/NativeExperienceStore.swift
++++ b/ios/VisePanda/VisePanda/Features/CommunityExperience/NativeExperienceStore.swift
+@@ -4,0 +5,2 @@
++    var journalObservation: NativeJournalDataObservation?
++
+@@ -121,0 +124,2 @@
++            let journalEligible: Bool = { switch outcome { case .deleted: true; case .operation(_, let state, _, _): state == "committed"; default: false } }()
++            let journalTicket = journalEligible ? journalObservation?.begin() : nil
+@@ -123,0 +128 @@
++            journalObservation?.finish(journalTicket, try NativeExperienceCommand(body: pending.body).operationID)

@@ -13,6 +13,8 @@ struct NativeCoverageProgressCompletion: Identifiable {
 }
 
 @MainActor @Observable final class NativeCoverageProgressStore {
+    var journalObservation: NativeJournalDataObservation?
+
     private(set) var objects: [NativeCoverageProgressObject] = []
     private(set) var next: NativeCoverageProgressCursor?
     private(set) var selected = Set<String>()
@@ -163,7 +165,9 @@ struct NativeCoverageProgressCompletion: Identifiable {
         guard let pending else { throw NativeDataError.invalidResponse }
         clearVisible()
         guard storageReady else { throw NativeDataError.sessionUnavailable }
-        try journal.complete(pending, actor: actor)
+        let journalTicket = journalObservation?.begin()
+            try journal.complete(pending, actor: actor)
+            journalObservation?.finish(journalTicket, result.binding.requestID)
         self.pending = nil; receipt = result; receiptLease = lease
         publish(result.binding, action: "delete"); message = "erased"
     }

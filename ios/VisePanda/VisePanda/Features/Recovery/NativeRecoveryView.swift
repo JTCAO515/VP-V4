@@ -433,6 +433,7 @@ struct NativeRecoveryView: View {
     private func run(_ operation: @escaping @MainActor () async -> Void) { task?.cancel(); task = Task { await operation() } }
     private func clearInput() { selectedTransportScope = nil; dayID = ""; selected = []; fixed = []; bindings = [:]; navigation = nil; trafficItemID = ""; originID = ""; destinationID = ""; mapConsent = false; traffic.clearContext() }
     private func refresh() async {
+        store.journalObservation = session.journalDataObservation(.recovery)
         store.bind(session.dataScope); traffic.bind(session.dataScope); endTraffic(); clearInput()
         await store.refresh(tripID: tripID, current: { session.dataScope }, request: { path, method, body in
             try await session.tripRequest(path: path, method: method, body: body)

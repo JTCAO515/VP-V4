@@ -1,0 +1,21 @@
+--- a/ios/VisePanda/VisePanda/Features/MaterialReferenceData/NativeMaterialReferenceStore.swift
++++ b/ios/VisePanda/VisePanda/Features/MaterialReferenceData/NativeMaterialReferenceStore.swift
+@@ -18,6 +18,8 @@
+ /// Selection, preview, dispatch and recovery all use one original actor and
+ /// generation. Journals survive hiding; sensitive previews and files do not.
+ @MainActor @Observable final class NativeMaterialReferenceStore {
++    var journalObservation: NativeJournalDataObservation?
++
+     private(set) var objects: [NativeMaterialReferenceObject] = []
+     private(set) var next: NativeMaterialReferenceCursor?
+     private(set) var selectedIDs = Set<String>()
+@@ -188,7 +190,9 @@
+             guard let pending else { throw NativeDataError.invalidResponse }
+             clearVisible()
+             guard storageReady else { throw NativeDataError.sessionUnavailable }
++            let journalTicket = journalObservation?.begin()
+             try journal.complete(pending, actor: actor)
++            journalObservation?.finish(journalTicket, receipt.binding.requestID)
+             self.pending = nil
+             self.receipt = receipt; receiptLease = lease
+             publish(receipt.binding, action: "delete"); message = "erased"

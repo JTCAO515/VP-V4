@@ -252,6 +252,7 @@ struct NativeTravelRemindersView: View {
         }
     }
     @MainActor private func refresh() async {
+        store.journalObservation = session.journalDataObservation(.notification)
         guard let scope = session.dataScope else { return }
         await session.notifications.refreshPermission(session: session)
         await store.load(scope: scope, current: { session.dataScope }, read: { try session.notificationRecovery() },

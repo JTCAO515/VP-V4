@@ -1,0 +1,10 @@
+--- a/ios/VisePanda/VisePanda/Features/CommunitySubmission/NativeCommunitySubmissionView.swift
++++ b/ios/VisePanda/VisePanda/Features/CommunitySubmission/NativeCommunitySubmissionView.swift
+@@ -112,6 +112,7 @@
+         action?.cancel(); action = Task { await work(actor) }
+     }
+     private func reload() async {
++        store.journalObservation = session.journalDataObservation(.community)
+         hide(); store.bind(actor)
+         guard let actor else { return }
+         store.restore(actor) { try session.communityRecovery(actor: actor) }

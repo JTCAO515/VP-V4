@@ -4,6 +4,8 @@ import Observation
 @MainActor
 @Observable
 final class NativeRecoveryStore {
+    var journalObservation: NativeJournalDataObservation?
+
     private(set) var scope: NativeDataScope?
     private(set) var detail: NativeTripDetail?
     private(set) var reservations: [NativeRecoveryReservation] = []
@@ -189,8 +191,10 @@ final class NativeRecoveryStore {
         guard !busy, let current, current == scope, let pending, let outcome,
               ["applied", "rejected", "expired", "stale"].contains(outcome.operation.state)
         else { throw NativeDataError.invalidResponse }
+        let journalTicket = journalObservation?.begin()
         try journal.remove(pending, scope: current); self.pending = nil; self.outcome = nil; readAttempted = false
         clearPreview(); notice = nil
+        journalObservation?.finish(journalTicket, pending.operationID)
     }
     var reviewReference: String? {
         guard let outcome, outcome.operation.state == "pending",

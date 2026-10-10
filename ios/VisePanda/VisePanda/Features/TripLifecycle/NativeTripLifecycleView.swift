@@ -46,6 +46,7 @@ struct NativeTripLifecycleView: View {
         }
         .navigationTitle(t("结束与下一次旅行", "Finish and next Trip"))
         .task(id: session.dataScope) {
+        store.journalObservation = session.journalDataObservation(.tripLifecycle)
             store.bind(session.dataScope)
             if phase == .active {
                 await store.load(client)

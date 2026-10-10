@@ -1,0 +1,6 @@
+--- a/ios/VisePanda/VisePanda/Features/Trip/NativeTripStore.swift
++++ b/ios/VisePanda/VisePanda/Features/Trip/NativeTripStore.swift
+@@ -432,0 +433 @@
++            let journalObserver = session.journalDataObservation(.tripSupport), journalTicket = journalObserver.begin()
+@@ -438,0 +440 @@
++            journalObserver.finish(journalTicket, request.idempotencyKey)

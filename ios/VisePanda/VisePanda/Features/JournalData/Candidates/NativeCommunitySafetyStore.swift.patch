@@ -1,0 +1,10 @@
+--- a/ios/VisePanda/VisePanda/Features/CommunitySafety/NativeCommunitySafetyStore.swift
++++ b/ios/VisePanda/VisePanda/Features/CommunitySafety/NativeCommunitySafetyStore.swift
+@@ -4,0 +5,2 @@
++    var journalObservation: NativeJournalDataObservation?
++
+@@ -197,0 +200,2 @@
++        let journalEligible: Bool = { switch outcome { case .deleted: true; case .operation(_, let state, _): state == "committed"; default: false } }()
++        let journalTicket = journalEligible ? journalObservation?.begin() : nil
+@@ -203,0 +208 @@
++        journalObservation?.finish(journalTicket, try NativeCommunitySafetyCommand(body: value.body).operationID)

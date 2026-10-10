@@ -1,0 +1,11 @@
+--- a/ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageOriginal.swift
++++ b/ios/VisePanda/VisePanda/Features/DataCoverage/NativeDataCoverageOriginal.swift
+@@ -161,0 +162,6 @@
++        let observedSources: [String: NativeJournalDataSourceID] = ["ugc": .community, "safety": .communitySafety,
++            "publication": .experience, "case": .serviceOperation, "brief": .travelerBrief]
++        let journalQualification = try? verify(reply, original: original, actor: actor)
++        let journalCompleted = original.action == .delete && journalQualification?.terminal == true && journalQualification?.state == .scopedComplete
++        let journalObserver = journalCompleted ? observedSources[original.moduleID].map { session.journalDataObservation($0) } : nil
++        let journalTicket = journalObserver?.begin()
+@@ -201,0 +208 @@
++        journalObserver?.finish(journalTicket, original.operationID)

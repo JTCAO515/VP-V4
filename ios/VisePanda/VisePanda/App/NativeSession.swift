@@ -57,6 +57,85 @@ final class NativeSession {
     private let vault: any NativeCredentialVault
     private let storageKey: String
     private let keychainService = "com.visepanda.native.local-session.v2"
+    // Original JournalData's fixed readers receive the vault, never a credential.
+    private let journalDataEvidence = NativeJournalDataEvidence()
+    func journalDataSource() -> NativeJournalDataVaultSources {
+        func metadata(_ source: NativeJournalDataSourceID, operation: String? = nil, trip: String? = nil,
+                      action: String? = nil, boundary: String) -> NativeJournalDataExportRecord {
+            .init(source: source, state: .pending, kind: .metadataOnly, operationID: operation, tripID: trip,
+                  action: action, originalOperationBytes: nil, contentBoundary: boundary)
+        }
+        let base = keychainService
+        func service(_ suffix: String) -> (String) -> String { { base + suffix + $0 } }
+        let companions: [NativeJournalDataSourceID: NativeJournalDataVaultSources.Companion] = [
+            .tripSupport: .init(service: service(".trip-support-confirm."), read: { actor in
+                guard try self.communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
+                return try self.tripSupportConfirmationRecovery().map {
+                    let request = try $0.request()
+                    return metadata(.tripSupport, operation: request.idempotencyKey, trip: $0.tripID, action: "confirm",
+                                    boundary: "support_authority_and_proposal_body_excluded")
+                }
+            }),
+            .deviceDelete: .init(service: service(".device-delete-request."), read: { actor in
+                guard try self.communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
+                return try self.pendingDeviceMaterialDeletion().map {
+                    metadata(.deviceDelete, operation: $0.requestId, action: "delete", boundary: "file_identity_and_material_body_excluded")
+                }
+            }),
+            .readinessSave: .init(service: service(".readiness-save."), read: { actor in
+                guard try self.communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
+                return try self.readinessSaveRecovery().map {
+                    _ = try $0.parsed()
+                    return metadata(.readinessSave, trip: $0.tripId, action: "save", boundary: "private_declaration_and_material_body_excluded")
+                }
+            }),
+            .linkedTripDelete: .init(service: service(".linked-trip-delete."), read: { actor in
+                guard try self.communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
+                return try self.linkedTripDeletionRecovery().map {
+                    let c = try $0.decodedRequest()
+                    return metadata(.linkedTripDelete, operation: c.requestId, trip: $0.tripID, action: "confirm",
+                                    boundary: "linked_selection_and_authority_excluded")
+                }
+            }),
+            .memoryDelete: .init(service: service(".memory-bulk-delete."), read: { actor in
+                guard try self.communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
+                return try self.memoryDeletionRecovery().map {
+                    let c = try $0.command()
+                    return metadata(.memoryDelete, operation: c.requestId, action: "confirm", boundary: "memory_selection_and_authority_excluded")
+                }
+            }),
+            .tripDelete: .init(service: service(".trip-deletion."), read: { actor in
+                guard try self.communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
+                // This legacy request has no epoch/session field. Never invent current-epoch eligibility.
+                guard try self.pendingTripDeletion() == nil else { throw NativeDataError.staleSessionResponse }; return nil
+            })]
+        return NativeJournalDataVaultSources(vault: vault, current: { try? self.communitySafetyActor() },
+            guide: { actor in
+                guard let pending = try self.storedPlaceGuideRecovery(actor: actor) else { return nil }
+                guard pending.fencedReference != nil || pending.expiresAt > Date() else { throw NativeDataError.staleSessionResponse }
+                return pending
+            }, ask: {
+                let pending = try self.retainedPendingAsk()
+                guard let actor = try? self.communitySafetyActor(), let memory = self.credential,
+                      memory.subject == actor.scope.subject, memory.mobileEpoch == actor.scope.mobileEpoch else { throw NativeDataError.sessionUnavailable }
+                let physical = try self.read(owner: actor.scope.subject)
+                guard physical.mobileEpoch == actor.scope.mobileEpoch, physical.pendingAsk == pending else { throw NativeDataError.staleSessionResponse }
+                return pending
+            }, askAbsent: { actor in
+                guard try self.communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
+                let physical = try self.read(owner: actor.scope.subject)
+                let memoryPending = try self.retainedPendingAsk()
+                return physical.mobileEpoch == actor.scope.mobileEpoch && physical.pendingAsk == nil && memoryPending == nil
+            }, companions: companions,
+            evidence: { self.journalDataEvidence.completion($0, current: (try? self.communitySafetyActor()) == $1 ? $1 : nil) })
+    }
+    func journalDataObservation(_ source: NativeJournalDataSourceID) -> NativeJournalDataObservation {
+        .init(begin: {
+            self.journalDataEvidence.begin(source, using: self.journalDataSource(), current: try? self.communitySafetyActor())
+        }, finish: { ticket, receipt in
+            self.journalDataEvidence.finish(ticket, originalReceiptIdentity: receipt, using: self.journalDataSource(), current: try? self.communitySafetyActor())
+        })
+    }
 
     init(arguments: [String] = ProcessInfo.processInfo.arguments, defaults: UserDefaults = .standard, configuration: URLSessionConfiguration = .ephemeral, bundleConfiguration: [String: String] = Bundle.main.infoDictionary?.compactMapValues { $0 as? String } ?? [:], vault: any NativeCredentialVault = NativeKeychainVault(), deviceMaterials: NativeDeviceMaterials? = nil, entryResume: NativeEntryResumeCoordinator? = nil) {
         endpoint = Self.resolveEndpoint(arguments: arguments, bundleConfiguration: bundleConfiguration)
@@ -311,7 +390,8 @@ final class NativeSession {
               consumeReceipt: { try self.applyTurnDataReceipt($0, actor: $1) })
     }
     func turnDataStore(scope: NativeTurnDataScope) -> NativeTurnDataStore {
-        NativeTurnDataStore(scope: scope, vault: vault)
+        let store = NativeTurnDataStore(scope: scope, vault: vault)
+        store.journalObservation = journalDataObservation(.turn); return store
     }
     private func applyTurnDataReceipt(_ receipt: NativeTurnDataReceipt, actor: NativeCommunitySafetyActor) throws {
         guard try communitySafetyActor() == actor, receipt.binding.actor == actor,
@@ -389,7 +469,8 @@ final class NativeSession {
               consumeReceipt: { try self.applyResultDataReceipt($0, actor: $1) })
     }
     func resultDataStore(scope: NativeResultDataScope) -> NativeResultDataStore {
-        NativeResultDataStore(scope: scope, vault: vault)
+        let store = NativeResultDataStore(scope: scope, vault: vault)
+        store.journalObservation = journalDataObservation(.result); return store
     }
     func resultDataPermitsResult(_ id: String) -> Bool {
         guard let actor = try? communitySafetyActor() else { return false }
@@ -464,7 +545,8 @@ final class NativeSession {
               consumeReceipt: { try self.applyProfileDataReceipt($0, actor: $1) })
     }
     func profileDataStore(scope: NativeProfileDataScope) -> NativeProfileDataStore {
-        NativeProfileDataStore(scope: scope, vault: vault)
+        let store = NativeProfileDataStore(scope: scope, vault: vault)
+        store.journalObservation = journalDataObservation(.profile); return store
     }
     var currentProfileDataErasure: NativeProfileDataErasure? {
         guard let value = profileDataErasure, (try? communitySafetyActor()) == value.actor else { return nil }
@@ -536,7 +618,8 @@ final class NativeSession {
               consumeReceipt: { try self.applyConversationDataReceipt($0, actor: $1) })
     }
     func conversationDataStore(scope: NativeConversationDataScope) -> NativeConversationDataStore {
-        NativeConversationDataStore(scope: scope, vault: vault)
+        let store = NativeConversationDataStore(scope: scope, vault: vault)
+        store.journalObservation = journalDataObservation(.conversation); return store
     }
     private func applyConversationDataReceipt(_ receipt: NativeConversationDataReceipt, actor: NativeCommunitySafetyActor) throws {
         guard try communitySafetyActor() == actor, receipt.binding.actor == actor else { throw NativeDataError.staleSessionResponse }
@@ -598,7 +681,8 @@ final class NativeSession {
     }
 
     func archiveDataStore(scope: NativeArchiveDataScope) -> NativeArchiveDataStore {
-        NativeArchiveDataStore(scope: scope, vault: vault)
+        let store = NativeArchiveDataStore(scope: scope, vault: vault)
+        store.journalObservation = journalDataObservation(.archive); return store
     }
     func archiveDataRequest(body: Data, actor: NativeCommunitySafetyActor) async throws -> Data {
         guard !busy, try communitySafetyActor() == actor, !Task.isCancelled else { throw NativeDataError.sessionUnavailable }
@@ -644,7 +728,8 @@ final class NativeSession {
     }
 
     func coverageProgressStore() -> NativeCoverageProgressStore {
-        NativeCoverageProgressStore(vault: vault)
+        let store = NativeCoverageProgressStore(vault: vault)
+        store.journalObservation = journalDataObservation(.coverageProgress); return store
     }
     func coverageProgressRequest(body: Data, actor: NativeCommunitySafetyActor) async throws -> Data {
         guard !busy, try communitySafetyActor() == actor, !Task.isCancelled else { throw NativeDataError.sessionUnavailable }
@@ -685,7 +770,8 @@ final class NativeSession {
     }
 
     func notificationDataStore(scope: NativeNotificationDataScope) -> NativeNotificationDataStore {
-        NativeNotificationDataStore(scope: scope, vault: vault)
+        let store = NativeNotificationDataStore(scope: scope, vault: vault)
+        store.journalObservation = journalDataObservation(.notificationData); return store
     }
     func notificationDataRequest(body: Data, actor: NativeCommunitySafetyActor) async throws -> Data {
         guard !busy, try communitySafetyActor() == actor, !Task.isCancelled else { throw NativeDataError.sessionUnavailable }
@@ -730,7 +816,8 @@ final class NativeSession {
     }
 
     func materialReferenceStore(scope: NativeMaterialReferenceScope) -> NativeMaterialReferenceStore {
-        NativeMaterialReferenceStore(scope: scope, vault: vault)
+        let store = NativeMaterialReferenceStore(scope: scope, vault: vault)
+        store.journalObservation = journalDataObservation(.materialReference); return store
     }
     func materialReferenceRequest(body: Data, actor: NativeCommunitySafetyActor) async throws -> Data {
         guard !busy, try communitySafetyActor() == actor, !Task.isCancelled else { throw NativeDataError.sessionUnavailable }
@@ -1116,8 +1203,10 @@ final class NativeSession {
     func executeDeviceMaterialDeletion(_ request:NativeDeviceMaterialDeleteRequest) throws -> NativeDeviceMaterialDeleteReceipt {
         guard request.valid,let actor=dataScope,request.namespace.matches(actor),prepareDeviceMaterials() else{throw NativeDataError.sessionUnavailable}
         let pending=try pendingDeviceMaterialDeletion()
+        let journalObserver = journalDataObservation(.deviceDelete), journalTicket = journalObserver.begin()
         if let receipt=try lastDeviceMaterialDeletionReceipt(),receipt.matches(request){
             if let pending{guard pending==request else{throw NativeDataError.server(code:"DEVICE_DELETE_RECOVERY_REQUIRED")};try removeDeviceMaterialDeleteRequest(owner:actor.subject)}
+            journalObserver.finish(journalTicket, receipt.requestId)
             return receipt // Replay proves the earlier request only; never delete a newly imported copy.
         }
         guard pending==request else{throw NativeDataError.server(code:"DEVICE_DELETE_RECOVERY_REQUIRED")}
@@ -1127,6 +1216,7 @@ final class NativeSession {
         let bytes=try JSONEncoder().encode(receipt)
         guard bytes.count<=8192,vault.write(bytes,service:materialDeleteReceiptService,owner:actor.subject)==errSecSuccess else{throw NativeDataError.sessionUnavailable}
         try removeDeviceMaterialDeleteRequest(owner:actor.subject)
+        journalObserver.finish(journalTicket, receipt.requestId)
         return receipt
     }
     private func removeDeviceMaterialDeleteRequest(owner:String) throws {
@@ -1485,8 +1575,10 @@ final class NativeSession {
         guard target.scope==dataScope,receipt.state=="completed",let journal=try linkedTripDeletionRecovery(),try journal.matches(target) else{throw NativeDataError.invalidResponse}
         let request=try journal.decodedRequest()
         guard receipt.requestId==request.requestId,receipt.planId==request.planId,receipt.tripId==journal.tripID,receipt.scopeDigest==request.scopeDigest,receipt.selection==request.selection else{throw NativeDataError.invalidResponse}
+        let journalObserver = journalDataObservation(.linkedTripDelete), journalTicket = journalObserver.begin()
         let result=vault.remove(service:linkedDeleteVaultService,owner:target.scope.subject)
         guard result==errSecSuccess || result==errSecItemNotFound else{throw NativeDataError.sessionUnavailable}
+        journalObserver.finish(journalTicket, receipt.requestId)
     }
     private var linkedDeleteVaultService:String{keychainService+".linked-trip-delete."+(endpoint?.absoluteString ?? "disabled")}
 
@@ -1579,13 +1671,17 @@ final class NativeSession {
     }
 
     private var placeGuideJournalService: String { keychainService + ".place-guide-operation." + (endpoint?.absoluteString ?? "disabled") }
-    func pendingPlaceGuide(actor: NativeDataScope) throws -> NativePlaceGuidePending? {
+    private func storedPlaceGuideRecovery(actor: NativeDataScope) throws -> NativePlaceGuidePending? {
         guard dataScope == actor else { throw NativeDataError.sessionUnavailable }
         let (status, bytes) = vault.read(service: placeGuideJournalService, owner: actor.subject)
         if status == errSecItemNotFound { return nil }
         guard status == errSecSuccess, let bytes, bytes.count <= 32_000 else { throw NativeDataError.sessionUnavailable }
         let pending = try JSONDecoder().decode(NativePlaceGuidePending.self, from: bytes)
         _ = try pending.selection(for: actor); try pending.validatedRecovery()
+        return pending
+    }
+    func pendingPlaceGuide(actor: NativeDataScope) throws -> NativePlaceGuidePending? {
+        guard let pending = try storedPlaceGuideRecovery(actor: actor) else { return nil }
         if pending.fencedReference == nil && pending.expiresAt <= Date() {
             let fenced = try pending.fenced()
             try writePlaceGuideRecovery(fenced, actor: actor); return fenced
@@ -1771,8 +1867,10 @@ final class NativeSession {
         guard let scope=dataScope,let journal=try memoryDeletionRecovery(),receipt.state=="completed" else{throw NativeDataError.invalidResponse}
         let command=try journal.command()
         guard receipt.requestId==command.requestId,receipt.planId==command.planId,receipt.scopeDigest==command.scopeDigest,receipt.selection==command.selection,receipt.sourceTombstoned,!receipt.cleanupPending else{throw NativeDataError.invalidResponse}
+        let journalObserver = journalDataObservation(.memoryDelete), journalTicket = journalObserver.begin()
         let status=vault.remove(service:memoryDeleteVaultService,owner:scope.subject)
         guard status==errSecSuccess || status==errSecItemNotFound else{throw NativeDataError.sessionUnavailable}
+        journalObserver.finish(journalTicket, receipt.requestId)
     }
     func memoryDeletionRequest(body:Data?=nil,requestID:String?=nil) async throws -> Data {
         guard enabled,!busy,let initial=dataScope,body==nil || body!.count<=192_000,requestID==nil || NativeMemoryWire.uuid(requestID!),body != nil || requestID != nil,body==nil || requestID==nil else{throw NativeDataError.sessionUnavailable}
@@ -2028,6 +2126,9 @@ final class NativeSession {
         catch { failureCode="entryResumeCleanupRequired";status="storageError";return }
         do { try NativeOfflineDataStore.eraseExports() }
         catch { failureCode="offlineDataExportCleanupRequired";status="storageError";return }
+        journalDataEvidence.bind(nil)
+        do { try NativeJournalDataStore.eraseExports() }
+        catch { failureCode="journalDataFileCleanupRequired"; status="storageError"; return }
         do { try NativeGuideCacheDataStore.eraseExports() }
         catch { failureCode="guideCacheExportCleanupRequired";status="storageError";return }
         subject=nil; mobileEpoch=nil; displayName=nil; status="signingOut"
@@ -2180,6 +2281,9 @@ final class NativeSession {
         catch { failureCode="materialReferenceExportCleanupRequired"; status="storageError"; return false }
         do { try NativeOfflineDataStore.eraseExports() }
         catch { failureCode = "offlineDataExportCleanupRequired"; status = "storageError"; return false }
+        journalDataEvidence.bind(nil)
+        do { try NativeJournalDataStore.eraseExports() }
+        catch { failureCode="journalDataFileCleanupRequired"; status="storageError"; return false }
         do { try NativeGuideCacheDataStore.eraseExports() }
         catch { failureCode="guideCacheExportCleanupRequired"; status="storageError"; return false }
         do { try NativeDataCoverageExportFile.eraseAll() }

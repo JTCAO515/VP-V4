@@ -43,6 +43,7 @@ struct NativeReservationsView: View {
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button(t("关闭", "Close")) { dismiss() } } }
         }
         .task(id: actor) {
+        store.journalObservation = session.journalDataObservation(.reservation)
             clearEditor(); store.reset(actor)
             guard actor != nil else { return }
             await store.loadTrips(current: { actor }, request: request)

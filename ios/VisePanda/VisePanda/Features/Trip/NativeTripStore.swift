@@ -430,12 +430,14 @@ final class NativeTripStore {
             let journal=try session.rememberTripSupportConfirmation(request,tripID:pending.trip.id,actor:actor)
             let bytes=try await session.tripSupportConfirm(journal,actor:actor)
             let result=try NativeSupportedTripConfirmReceipt.decode(bytes,tripID:pending.trip.id,request:request)
+            let journalObserver = session.journalDataObservation(.tripSupport), journalTicket = journalObserver.begin()
             try session.completeTripSupportConfirmation(journal,receipt:result,actor:actor)
             try support.confirmed(key:request.idempotencyKey,choices:choices)
             self.pending=nil;self.draft=nil
             try await self.loadList(session,actor)
             try await self.loadSelected(session,actor)
             guard self.detail?.trip.headVersion == result.resultingVersion,self.detail?.confirmationState=="confirmed" else { throw NativeDataError.invalidResponse }
+            journalObserver.finish(journalTicket, request.idempotencyKey)
             self.notice="confirmed"
         }
     }

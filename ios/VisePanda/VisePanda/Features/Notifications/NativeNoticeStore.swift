@@ -3,6 +3,8 @@ import Observation
 
 @MainActor @Observable
 final class NativeNoticeStore {
+    var journalObservation: NativeJournalDataObservation?
+
     private(set) var view: NativeNoticeView?
     private(set) var pending: NativeNotificationPending?
     private(set) var busy = false
@@ -53,7 +55,9 @@ final class NativeNoticeStore {
             guard own == generation, current() == scope, !Task.isCancelled else { return }
             let result = try NativeNoticeView.decode(bytes, tripId: original.command.tripId)
             guard let receipt = result.mutationReceipt, receipt.matches(original.command) else { throw NativeDataError.invalidResponse }
+            let journalTicket = journalObservation?.begin()
             try complete(original, receipt); pending = nil
+            journalObservation?.finish(journalTicket, original.command.operationId)
             if result.tripId == tripId { view = result }
             notice = result.mutationReceipt?.outcome == "cancelled" ? "REMINDER_OPERATION_CANCELLED" : result.complete ? "REMINDER_OPERATION_CONFIRMED" : "SOURCE_UNAVAILABLE"
         } catch {

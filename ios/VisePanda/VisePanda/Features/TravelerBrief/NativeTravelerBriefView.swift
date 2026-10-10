@@ -227,6 +227,7 @@ struct NativeTravelerBriefView: View {
         if let file = exportFile { do { try NativeTravelerBriefExportFile.erase(file); exportFile = nil; exportCount = nil } catch { failed = true } }
     }
     private func load(_ actor: NativeDataScope) async {
+        store.journalObservation = session.journalDataObservation(.travelerBrief)
         failed = false; resetChoices(); eraseExport(); store.bind(actor)
         do { try NativeTravelerBriefExportFile.sweepOrphans() } catch { failed = true; return }
         store.restore(actor: actor, read: { try session.travelerBriefRecovery(actor: actor) })
