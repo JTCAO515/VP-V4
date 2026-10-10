@@ -118,3 +118,19 @@ related Turn/Profile/Offline dependencies enter main, with exact-head review, ap
 the original protected merge. No dependency draft or inclusion in already-reviewed Turn scope.
 Whole #239 remains open for other core gaps. Real system share, physical protection/phone, human
 UI acceptance, provider/fees and backup remain UNRUN; no production or target operation occurred.
+
+## Main-base engineering checkpoint — 2026-10-10
+
+Normal dependency merges consumed Profile670, Offline671, Export672 and finally Turn673 at
+main `930b66d6fd7425c63e2ddbe1c6bd0970b489d564`. The final normal merge `2e3f7bb3` resolved
+only three pure Guide PBX registration segments. Every original main PBX object value is retained
+after excluding the nine additional Guide objects. All 14 actually tested production/test source
+hashes still match the recorded r3 set exactly; own8 r3 and original16 individual r1 assertions
+and the App build remain source-equivalent and are reused without a new matrix.
+
+The actual main-base diff is only the three GuideCacheData production files, owned test/WIRE/
+evidence/candidate pins, and the precisely leased PlaceGuide/Audio/Session/Coverage/PBX integration.
+No JournalData, #196, server/SQL, model configuration or node_modules is included. This scope has
+no outstanding unmerged product dependency. Ready PR, exact-head independent review, applicable
+CI and ordinary protected merge are the remaining engineering steps; development completion
+and all target/device/physical Complete/share/provider/fee/backup UNRUN boundaries stay as recorded.
