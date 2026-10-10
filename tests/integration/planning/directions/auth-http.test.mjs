@@ -80,6 +80,10 @@ test('directions: real source, exact bytes, preserved draft, both-client reload 
  const policyExact=await exact(policyChosen.body.artifactId,policyChosen.body.revision);assert.equal(policyExact.current,true);assert.equal(policyExact.source.tripId,null);
  const rejectedAdmission=await policyBody();
  assert.equal((await request(base+'/planning/policy',token,'DELETE',{policyId:planningPolicyId})).status,200);
+ const effectState=()=>e.sql(`select jsonb_build_object('operationCount',(select count(*) from turn_private.directions_operations_v1 where owner_id='${e.users[0].id}'),'revisionCount',(select count(*) from turn_private.result_revisions where owner_id='${e.users[0].id}'),'taskCount',(select count(*) from turn_private.service_tasks where owner_id='${e.users[0].id}'),'policyResultRevision',(select current_revision from turn_private.result_artifacts where id='${policyChosen.body.artifactId}' and owner_id='${e.users[0].id}'),'tripVersion',(select head_version from public.trips where id='${tripId}' and owner_id='${e.users[0].id}'));`);
+ const beforePolicyReject=effectState();
  const deniedAdmission=await request(root+'/submit',token,'POST',rejectedAdmission);assert.equal(deniedAdmission.status,403,'withdrawn policy blocks new admission independently of Trip staleness');assert.deepEqual(deniedAdmission.body,{error:{code:'DATA_POLICY_BLOCKED'}});
+ const deniedAction=await request(root+'/choose',token,'POST',{artifactId:policyChosen.body.artifactId,expectedRevision:policyChosen.body.revision,operationId:uuid(),directionId:'breadth'});assert.equal(deniedAction.status,409,'withdrawal makes the formerly current artifact source ineligible');assert.deepEqual(deniedAction.body,{error:{code:'SERVICE_TASK_CONFLICT'}});
+ assert.equal(effectState(),beforePolicyReject,'policy and source rejection leave operation/revision/Task/Trip state unchanged');
  t.diagnostic('DIRECTIONS_AUTH_REAL_CHAIN: ordinary signed actors + Cookie/Bearer + canonical source + exact bytes + preserved draft + original visible diff/confirmation + both-client reload; zero provider');
 });
