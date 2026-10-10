@@ -27,6 +27,24 @@ final class NativeAssistantEventsTests: XCTestCase {
         XCTAssertThrowsError(try NativeAssistantEventsCursor.decode(bytes, selection: newSession, qualified: true))
     }
 
+    func testPrivacyCursorMetadataIsOwnerBoundAndNeverRawEnvelope() throws {
+        let selected = selection, bytes = try NativeAssistantEventsCursor.encode(42, selection: selected)
+        let metadata = try NativeAssistantEventsCursor.metadata(bytes, scope: selected.scope, sessionID: selected.sessionID)
+        XCTAssertTrue(metadata.valid)
+        let exported = try JSONSerialization.jsonObject(with: JSONEncoder().encode(metadata)) as! [String: Any]
+        XCTAssertEqual(Set(exported.keys), ["conversationID", "afterSequence"])
+        let foreign = NativeDataScope(endpoint: selected.scope.endpoint, subject: "foreign", mobileEpoch: selected.scope.mobileEpoch, generation: selected.scope.generation)
+        XCTAssertThrowsError(try NativeAssistantEventsCursor.metadata(bytes, scope: foreign, sessionID: selected.sessionID))
+        let oldEpoch = NativeDataScope(endpoint: selected.scope.endpoint, subject: selected.scope.subject, mobileEpoch: 99, generation: selected.scope.generation)
+        XCTAssertThrowsError(try NativeAssistantEventsCursor.metadata(bytes, scope: oldEpoch, sessionID: selected.sessionID))
+        XCTAssertThrowsError(try NativeAssistantEventsCursor.metadata(bytes, scope: selected.scope, sessionID: "replacement"))
+        let endpoint = NativeDataScope(endpoint: "https://foreign.invalid", subject: selected.scope.subject, mobileEpoch: selected.scope.mobileEpoch, generation: selected.scope.generation)
+        XCTAssertThrowsError(try NativeAssistantEventsCursor.metadata(bytes, scope: endpoint, sessionID: selected.sessionID))
+        var secret = try JSONSerialization.jsonObject(with: bytes) as! [String: Any]
+        secret["accessToken"] = "synthetic-excluded-field"
+        XCTAssertThrowsError(try NativeAssistantEventsCursor.metadata(JSONSerialization.data(withJSONObject: secret), scope: selected.scope, sessionID: selected.sessionID))
+    }
+
     func testFiniteReplayRequiresCompleteCheckpointAndClosedSchema() throws {
         let bytes = stream()
         let page = try NativeAssistantEventsDecoder.decode(bytes, conversationID: conversation, after: 0)

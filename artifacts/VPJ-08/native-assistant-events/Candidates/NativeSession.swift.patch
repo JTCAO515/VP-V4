@@ -1,8 +1,17 @@
 --- a/ios/VisePanda/VisePanda/App/NativeSession.swift
 +++ b/ios/VisePanda/VisePanda/App/NativeSession.swift
-@@ -637,0 +638 @@
+@@ -70,0 +71,8 @@
++            .assistantEventsCursor: .init(service: service(".assistant-events-cursor."), read: { actor in
++                guard try self.communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
++                return try self.assistantEventsCursorMetadata(actor: actor).map { value in
++                    var record = NativeJournalDataExportRecord(source: .assistantEventsCursor, state: .projection, kind: .metadataOnly,
++                        operationID: nil, tripID: nil, action: nil, originalOperationBytes: nil, contentBoundary: "assistant_events_cursor_metadata_only")
++                    record.assistantEventsCursor = value; return record
++                }
++            }),
+@@ -637,0 +646 @@
 +        try eraseAssistantEventsCursor(owner: actor.scope.subject)
-@@ -1987,0 +1989,72 @@
+@@ -1987,0 +1997,83 @@
 +    }
 +
 +    /// Finite assistant replay. Uses original credentials/session and never an Ask writer.
@@ -72,11 +81,22 @@
 +        guard dataScope == selection.scope, try communitySafetyActor().sessionID == selection.sessionID else { throw NativeDataError.staleSessionResponse }
 +        try eraseAssistantEventsCursor(owner: selection.scope.subject)
 +    }
++    func assistantEventsCursorMetadata(actor: NativeCommunitySafetyActor) throws -> NativeAssistantEventsCursor.Metadata? {
++        guard try communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
++        let (status, bytes) = vault.read(service: assistantEventsCursorService, owner: actor.scope.subject)
++        if status == errSecItemNotFound { guard bytes == nil else { throw NativeDataError.invalidResponse }; return nil }
++        guard status == errSecSuccess, let bytes else { throw NativeDataError.sessionUnavailable }
++        let value = try NativeAssistantEventsCursor.metadata(bytes, scope: actor.scope, sessionID: actor.sessionID)
++        guard try communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
++        return value
++    }
 +    private func eraseAssistantEventsCursor(owner: String) throws {
 +        let result = vault.remove(service: assistantEventsCursorService, owner: owner)
 +        guard result == errSecSuccess || result == errSecItemNotFound else { throw NativeDataError.sessionUnavailable }
-@@ -2264,0 +2338 @@
++        let absence = vault.read(service: assistantEventsCursorService, owner: owner)
++        guard absence.0 == errSecItemNotFound, absence.1 == nil else { throw NativeDataError.sessionUnavailable }
+@@ -2264,0 +2357 @@
 +        assistantEventsInvalidation = nil
-@@ -2314,0 +2389,2 @@
+@@ -2314,0 +2408,2 @@
 +            do { try eraseAssistantEventsCursor(owner: owner) }
 +            catch { failureCode="assistantEventsCursorCleanupRequired";status="storageError";return false }

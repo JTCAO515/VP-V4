@@ -3,33 +3,40 @@
     "baseWorktree": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-journal-data-20261008",
     "baseHead": "0ef351c2afdae917a8297c4120410865173d8376",
     "before": "763351e2ee21b7bbce0024d8db40eb98c4efef270f77ff405172af6f1997ecab",
-    "after": "18d15a2560a7d66613619b0a6334e7a89ab9237e3ee2a53f28950057cbaa98f2",
-    "patch": "4e4452b4af92dce08dacc2642de416f7f8dd3ff68e987da30835a0c900291ac0",
-    "hunks": 4,
+    "after": "57cf9e9061850288e2d98b98c04a0bf9265a4a9aaa10136d6ec7e0811f535e11",
+    "patch": "1e76b02320985835eca5eba8c39dfab7a9de4076dd9c6a15e5412ca3be2dbe9b",
+    "hunks": 5,
     "hunkPins": [
       {
-        "range": "-637,0 +638",
+        "range": "-70,0 +71,8",
+        "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSHA256": "2932cd00e037d81aa1b366dd1f3cdbad82171d31f007539ed355484ed7fedf44",
+        "beforeLines": 0,
+        "afterLines": 8
+      },
+      {
+        "range": "-637,0 +646",
         "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "afterSHA256": "41817d8f5180d9466612db60c3bfb56318650c77ee8ccb4e85a2a2c1e63adc06",
         "beforeLines": 0,
         "afterLines": 1
       },
       {
-        "range": "-1987,0 +1989,72",
+        "range": "-1987,0 +1997,83",
         "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-        "afterSHA256": "7ec1ff473ec127656d4db2a1e3092233d6537babf9d1cf5c9ac324c570608b9e",
+        "afterSHA256": "de1efc0c56f31fd012133aec01a4004710079bd54a943be92d1ebe71b9f2b848",
         "beforeLines": 0,
-        "afterLines": 72
+        "afterLines": 83
       },
       {
-        "range": "-2264,0 +2338",
+        "range": "-2264,0 +2357",
         "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "afterSHA256": "9d243aebfb6a600a78e9b774795539804783f09d7ee0f702dbc8d6bd21421b30",
         "beforeLines": 0,
         "afterLines": 1
       },
       {
-        "range": "-2314,0 +2389,2",
+        "range": "-2314,0 +2408,2",
         "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "afterSHA256": "f8f07a9347b10d071af21796df4b1d36d613796532d6228bb98d9aaedcd15875",
         "beforeLines": 0,
@@ -169,6 +176,130 @@
         "afterSHA256": "9ac773f9e35b3f8c54262bba38362966ef9d1f146be6c03ba61c70cc608ea872",
         "beforeLines": 0,
         "afterLines": 5
+      }
+    ]
+  },
+  "ios/VisePanda/VisePanda/Features/JournalData/NativeJournalDataModels.swift": {
+    "baseWorktree": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-journal-data-20261008",
+    "baseHead": "0ef351c2afdae917a8297c4120410865173d8376",
+    "before": "fc7ede8f616215eaecaaa881b08716800efb0e077e6c63d375d2717f42051ec5",
+    "after": "02823f2e81e0d3d3f5cede10075883b458fca977f7d1b90728e9d775c148d3ab",
+    "patch": "7ae2220bf5b278647d275d2fb6044ea28d04bd32880d22faaefc9fd1976d87f4",
+    "hunks": 6,
+    "hunkPins": [
+      {
+        "range": "-9,0 +10",
+        "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSHA256": "436aa5f1e11b13abb28d8814beeda0c600f635bbe74c9301b5e4fdd61c6ec7e1",
+        "beforeLines": 0,
+        "afterLines": 1
+      },
+      {
+        "range": "-13 +14",
+        "beforeSHA256": "0c1ace7808a4e4577b95cf3965553d89365e7842b3dcfdc271a5b51f7672f9d4",
+        "afterSHA256": "74e3be170d05039acf62f9bc652e3b6b7e1fa07cb03f58db81971157df5e6967",
+        "beforeLines": 1,
+        "afterLines": 1
+      },
+      {
+        "range": "-26,0 +28",
+        "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSHA256": "2cf6ac6e48bc508aed21ea783f14db0851d466f1fc0d81864a09ef811ff8e4c8",
+        "beforeLines": 0,
+        "afterLines": 1
+      },
+      {
+        "range": "-45 +47",
+        "beforeSHA256": "49c99d4e594bfc02603b358221f2c84faf8a0eb14bda6465f357cb5dbd747fa5",
+        "afterSHA256": "9f0cf93c65410581274383dc31b0c84fd7347d10b839b37d3f49367b06c15851",
+        "beforeLines": 1,
+        "afterLines": 1
+      },
+      {
+        "range": "-46,0 +49,5",
+        "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSHA256": "8203f72ccf8947c7075f2332450d291e13dc702cf7b1c139d40b4e70afbef7c6",
+        "beforeLines": 0,
+        "afterLines": 5
+      },
+      {
+        "range": "-47,0 +55",
+        "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSHA256": "20fc2ee0ff9a1ea07aa962c4b10ad35b7d01727c6a4032532bdb70c8e049cde1",
+        "beforeLines": 0,
+        "afterLines": 1
+      }
+    ]
+  },
+  "ios/VisePanda/VisePanda/Features/JournalData/NativeJournalDataVaultSources.swift": {
+    "baseWorktree": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-journal-data-20261008",
+    "baseHead": "0ef351c2afdae917a8297c4120410865173d8376",
+    "before": "f905670b8c65b184d09b50704a33811e5aca44f47bacf131fdc7b9fdf945e100",
+    "after": "92f978e2e14b3cec82e286445c9480a752b699af31977128640a0ae23a986738",
+    "patch": "c67590bdbfbcdef552462ab7e0cc4dba3c6d75ff88d94f80dd3f30e968103398",
+    "hunks": 1,
+    "hunkPins": [
+      {
+        "range": "-233 +233",
+        "beforeSHA256": "0dcca0608d101c5adc9ca8dac7942983fddabfab60f0965024c38b6462fdfb47",
+        "afterSHA256": "eb17f2ef6af45c099470adcb8d001dc4221807612796b2167453a4c072ce08f9",
+        "beforeLines": 1,
+        "afterLines": 1
+      }
+    ]
+  },
+  "ios/VisePanda/VisePanda/Features/JournalData/NativeJournalDataStore.swift": {
+    "baseWorktree": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-journal-data-20261008",
+    "baseHead": "0ef351c2afdae917a8297c4120410865173d8376",
+    "before": "d69cdc62e2f18592e809e2f7378e0a97915411685866b9cda8e19e00bab3830a",
+    "after": "f4befb27e16a7696bc5a472f53cbbb8cc8ae05dd3c3c7d3bd7c17ecfce30f7a5",
+    "patch": "66797ddb505bbed902d3983c3c56cfb0773916f7d9eece8ebcab8c6868d693ee",
+    "hunks": 1,
+    "hunkPins": [
+      {
+        "range": "-90 +90",
+        "beforeSHA256": "f17483a7e55e03880175b65adbd65881e92a41fb4be06a4bec327c381516872a",
+        "afterSHA256": "a5336fe97f7dba9886f406222ad83cda943dbe49b492a59d49a6d372c13a1d28",
+        "beforeLines": 1,
+        "afterLines": 1
+      }
+    ]
+  },
+  "ios/VisePanda/VisePanda/Features/JournalData/NativeJournalDataView.swift": {
+    "baseWorktree": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj58-native-journal-data-20261008",
+    "baseHead": "0ef351c2afdae917a8297c4120410865173d8376",
+    "before": "2a62999e055a34b9fbe105484428536a1b629fc18a60383afd7222599c73bd44",
+    "after": "e99cda51607b944da1a30ae0dd0f15d83c554418dd2123dc51d2d3999728efd4",
+    "patch": "38cd60b4bc4dc895352d4bd7745efeee4b74dda2def9d5f8e53b65e2e8cb6cf3",
+    "hunks": 4,
+    "hunkPins": [
+      {
+        "range": "-26 +26",
+        "beforeSHA256": "c4f29af9ec3ec53a3d4ce3a972347edb8afa11e96e3877c4906a3ea9f64fca7b",
+        "afterSHA256": "639c79dbc08c2f0de919db6925bc59649801c4365e14c6c8ef121c470c1c1ec8",
+        "beforeLines": 1,
+        "afterLines": 1
+      },
+      {
+        "range": "-27,0 +28",
+        "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSHA256": "b5bf5af574ebab1334f444b26407810e65fa51d3e963002dfffda33d24ee6b94",
+        "beforeLines": 0,
+        "afterLines": 1
+      },
+      {
+        "range": "-28,0 +30,5",
+        "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSHA256": "325dacbc36f047198b20b49d016b6fc1e40fe088089dc17c118d6ed56893cb1d",
+        "beforeLines": 0,
+        "afterLines": 5
+      },
+      {
+        "range": "-245,0 +252",
+        "beforeSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSHA256": "cb6b9e8a49742b4dd9fd1e00df981967946feae719c48be9ca6133b5161ae7e5",
+        "beforeLines": 0,
+        "afterLines": 1
       }
     ]
   },

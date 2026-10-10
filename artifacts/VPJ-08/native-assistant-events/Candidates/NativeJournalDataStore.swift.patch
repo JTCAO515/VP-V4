@@ -1,0 +1,5 @@
+--- a/ios/VisePanda/VisePanda/Features/JournalData/NativeJournalDataStore.swift
++++ b/ios/VisePanda/VisePanda/Features/JournalData/NativeJournalDataStore.swift
+@@ -90 +90 @@
+-            let document = Export(schemaVersion: "native-owner-journals/1", operationID: selection.id,
++            let document = Export(schemaVersion: "native-owner-journals/2", operationID: selection.id,
