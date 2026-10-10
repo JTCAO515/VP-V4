@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { createPasswordAuthClient } from '@/lib/server/identity/browser-auth-client';
 import { parseResultArtifactReadV2, type ResultArtifactReadV2 } from '@/lib/server/artifacts/result-v2-contract';
 import { directionsReceipt, object } from '@/lib/server/planning/directions/protocol';
-import { directionsClientActor, directionsClientScope, directionsClientSourceKey, directionsClientLeaseCurrent, directionsClientPendingCurrent, directionsClientActorChanged, type DirectionsClientPending } from '@/lib/server/planning/directions/client-state';
+import { directionsClientActor, directionsClientScope, directionsClientSourceKey, directionsClientSettlePending, directionsClientLeaseCurrent, directionsClientPendingCurrent, directionsClientActorChanged, type DirectionsClientPending } from '@/lib/server/planning/directions/client-state';
 import type { TravelDirectionsContent } from '@/lib/server/planning/directions/contract';
 import type { PendingProposalRead } from '@/lib/server/identity/user-data-adapter';
 import type { Locale } from '@/lib/i18n';
@@ -77,7 +77,7 @@ export function TripDirectionsResult({tripId,tripVersion,locale,bindBlocked,onPr
   try{
    const response=await fetch(`/api/trips/${original.tripId}/directions/${original.action}`,{method:'POST',headers:{'content-type':'application/json'},body:original.bytes,signal:controller.signal});
    const receipt:unknown=await response.json();if(!live())return;
-   if(!response.ok||!object(receipt)||receipt.version!==1||!directionsReceipt(original.action,Object.fromEntries(Object.entries(receipt).filter(([k])=>k!=='version')),JSON.parse(original.bytes))){setNotice(zh?'当前资料已变化或暂不可用，请刷新后重试。':'Source changed or unavailable. Refresh before trying again.');pending.current=null;return;}
+   if(!response.ok||!object(receipt)||receipt.version!==1||!directionsReceipt(original.action,Object.fromEntries(Object.entries(receipt).filter(([k])=>k!=='version')),JSON.parse(original.bytes))){pending.current=directionsClientSettlePending(original,response.status,false);setNotice(zh?'没有可验证的操作回执，结果仍未知；原请求字节已保留，请重新读取后明确重试或清除。':'No verifiable acknowledgement: outcome remains unknown. Original bytes are retained; reread and explicitly retry or clear.');return;}
    if(original.action==='bind'){
     const response=await fetch(`/api/trips/${original.tripId}/proposal?proposalId=${receipt.proposalId}`,{cache:'no-store',signal:controller.signal});const p=await response.json() as PendingProposalRead;
     if(!live())return;

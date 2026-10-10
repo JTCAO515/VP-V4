@@ -12,3 +12,8 @@ export function directionsClientLeaseCurrent(lease:DirectionsClientLease|null,sc
 export function directionsClientSourceKey(source:object,memories:readonly Readonly<{id:string;revision:number}>[]):string{return JSON.stringify([Object.entries(source).sort(([a],[b])=>a.localeCompare(b)),[...memories].sort((a,b)=>a.id.localeCompare(b.id))]);}
 export function directionsClientPendingCurrent(pending:DirectionsClientPending|null,scopeKey:string|null,sourceKey?:string|null):boolean{return !!pending&&scopeKey!==null&&pending.scopeKey===scopeKey&&(sourceKey===undefined||sourceKey!==null&&pending.sourceKey===sourceKey)&&directionsClientScope(pending.actorKey,pending.tripId)===scopeKey&&isUuid(pending.artifactId)&&Number.isSafeInteger(pending.revision)&&pending.revision>=1&&pending.revision<=1000;}
 export function directionsClientActorChanged(previous:string|null,next:string|null):boolean{return next===null||previous!==next;}
+/** HTTP failure/malformed acknowledgement cannot establish that a write had no effect.
+ * Keep the original object/bytes until a validated success or explicit user clear. */
+export function directionsClientSettlePending(pending:DirectionsClientPending,status:number,receiptValid:boolean):DirectionsClientPending|null{
+ return Number.isInteger(status)&&status>=200&&status<300&&receiptValid?null:pending;
+}
