@@ -4,6 +4,10 @@ create function turn_private.cancel_unclaimable_turn_v1(p_turn uuid,p_owner uuid
 returns void language plpgsql security definer set search_path='' as $$
 declare t public.turns%rowtype;attempt_n integer;
 begin
+ -- Only the newly versioned conversation Task observer emits a cancellation.
+ -- Legacy plain/grounded Turns retain their original history and projection.
+ if not exists(select 1 from turn_private.service_task_turns l where l.turn_id=p_turn
+  and l.owner_id=p_owner and turn_private.assistant_event_link_v1(p_owner,l.task_id,p_turn) is not null) then return;end if;
  -- lock_turn has already taken auth owner + account (unless owner is gone).
  -- Recheck using the same order; never require a now-revoked worker session
  -- in order to emit the actual cancellation that the original writer performs.

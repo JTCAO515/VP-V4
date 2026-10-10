@@ -14,6 +14,14 @@ create function turn_private.assistant_event_erase_authorized_v1(e turn_private.
 returns boolean language plpgsql volatile security definer set search_path='' as $$
 declare f privacy_private.linked_delete_fences_v1%rowtype;
 begin
+ -- Original authorized parent/FK erasure has already removed this exact
+ -- source parent. Only an active original DELETE-trigger chain can use this
+ -- retirement path; no role/postgres or arbitrary child DELETE authority.
+ if pg_trigger_depth()>0 and (
+  not exists(select 1 from public.turns t where t.id=e.turn_id and t.owner_id=e.owner_id)
+  or not exists(select 1 from turn_private.text_content c where c.turn_id=e.turn_id and c.owner_id=e.owner_id)
+  or (e.artifact_id is not null and not exists(select 1 from turn_private.result_artifacts a where a.id=e.artifact_id and a.owner_id=e.owner_id))
+ ) then return true;end if;
  if exists(select 1 from turn_data_private.transaction_proofs_v1 p
   join turn_data_private.operations_v1 o on o.request_id=p.request_id and o.owner_id=p.owner_id
   where p.transaction_id=pg_current_xact_id() and p.owner_id=e.owner_id
@@ -74,6 +82,11 @@ begin
  if not exists(select 1 from auth.users where id=old.owner_id) then return old;end if;
  for e in select conversation_id,sequence from turn_private.assistant_events_v1 x where x.owner_id=old.owner_id
   and x.source_kind<>'retired' and (
+   (tg_table_name='chat_turn_events' and x.turn_id=(to_jsonb(old)->>'turn_id')::uuid
+    and not exists(select 1 from public.turns t where t.id=x.turn_id and t.owner_id=x.owner_id))
+   or (tg_table_name='result_events' and x.artifact_id=(to_jsonb(old)->>'artifact_id')::uuid
+    and not exists(select 1 from turn_private.result_artifacts a where a.id=x.artifact_id and a.owner_id=x.owner_id))
+   or
    (tg_table_name='chat_turn_events' and x.source_kind='chat_turn_event'
     and x.source_key=(to_jsonb(old)->>'turn_id')||':'||(to_jsonb(old)->>'sequence'))
    or (tg_table_name='planning_action_receipts' and x.source_kind='action_receipt'
