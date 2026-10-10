@@ -20,7 +20,7 @@ test('real registered Auth/session/policy and durable task/artifact replay survi
  assert.equal(e.sql("select count(*) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='public' and p.proname='read_assistant_events_v1';"),'1','real appended SQL reader required, never inject a replacement');
  const local=identityLocalEnv(),service=createClient(local.API_URL,local.SERVICE_ROLE_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
  const call=async(path,token,method='GET',body)=>fetch(e.api+path,{method,headers:{...(token?{Authorization:'Bearer '+token}:{}),...(body===undefined?{}:{'Content-Type':'application/json'})},...(body===undefined?{}:{body:JSON.stringify(body)})});
- const ok=async(path,token,method='GET',body)=>{const r=await call(path,token,method,body);assert.ok(r.ok,`owned fixture setup ${r.status}`);return r.json();};
+ const ok=async(path,token,method='GET',body)=>{const r=await call(path,token,method,body);const data=await r.json();assert.ok(r.ok,JSON.stringify({path,status:r.status,code:typeof data?.error?.code==='string'?data.error.code:'UNKNOWN'}));return data;};
  const login=async user=>{const attemptId=uuid(),r=await ok('/api/auth/native/v2/credentials',null,'POST',{email:user.email,password:user.password,attemptId});await ok('/api/auth/native/v2/login',r.accessToken,'POST',{attemptId});return r.accessToken;};
  const owner=await login(e.users[0]),other=await login(e.users[1]);
  for(const token of [owner,other])await ok('/api/chat/native/v5/consent',token,'POST',{policyId:e.policyId,noticeHash:e.noticeHash});
@@ -67,6 +67,34 @@ test('real registered Auth/session/policy and durable task/artifact replay survi
  const historical=await decode(await replay(),0);assert.ok(historical.events.filter(x=>x.artifactId===artifact).every(x=>x.availability==='unavailable'));
  assert.equal((await replay(0,other)).status,403);assert.equal((await replay(withdrawn.lastSequence+1)).status,400);assert.equal((await replay(0,owner,{Cookie:'synthetic=only'})).status,400);
  assert.equal(attempts(),attemptsBefore,'event readers/restarts do not consume another logical task');assert.equal(e.sql(`select count(*) from public.chat_turn_events where turn_id='${turn}';`),originalTurnEvents,'reader never appends original source events');
+ // Original signed, confirmed sensitive-source erasure must scrub delivery metadata
+ // while allowing a genuinely new Task in the same retained conversation.
+ const sourceScope={scope:'turn-sensitive-data/1',requestId:uuid(),turnId:turn,objectIds:[]};
+ const previewRequest={action:'preview',...sourceScope},previewHTTP=await call('/api/privacy/native/v1/turn-data',owner,'POST',previewRequest),preview=await previewHTTP.json();
+ if(!previewHTTP.ok){
+  const signed=createClient(local.API_URL,local.PUBLISHABLE_KEY||local.ANON_KEY,{auth:{persistSession:false,autoRefreshToken:false},global:{headers:{Authorization:'Bearer '+owner}}});
+  const session=await signed.rpc('native_session_v2',{p_action:'session'});
+  const original=await signed.rpc('privacy_turn_data_v1',{p_action:'preview',p_input_bytes:JSON.stringify(previewRequest),p_expected_epoch:session.data.mobileEpoch});
+  t.diagnostic(JSON.stringify({phase:'original_signed_turn_preview',httpStatus:previewHTTP.status,httpCode:preview.error?.code,rpcCode:original.error?.code,rpcMessage:original.error?.message?.match(/^(?:TURN_[A-Z_]+|permission denied for (?:function|table|schema) [A-Za-z0-9_.]+)$/)?.[0]??null,kind:original.data?.kind,keys:original.data?Object.keys(original.data):[],eligible:original.data?.eligible,conflicts:original.data?.conflicts,runtimeGuards:JSON.parse(e.sql("select jsonb_build_object('turnRuntime',turn_data_private.runtime_supported_v1(),'turnSchema',turn_data_private.schema_supported_v1(),'resultSchema',result_data_private.schema_supported_v1(),'conversationSchema',conversation_data_private.schema_supported_v1());"))}));
+ }
+ assert.equal(previewHTTP.status,200,'original signed source preview');
+ assert.equal(preview.data.eligible,true,JSON.stringify({eligible:preview.data.eligible,conflicts:preview.data.conflicts}));
+ const erased=await ok('/api/privacy/native/v1/turn-data',owner,'POST',{action:'erase',...sourceScope,sourceDigest:preview.data.sourceDigest,previewDigest:preview.data.previewDigest,confirmed:true});
+ assert.equal(erased.data.kind,'receipt');assert.equal(erased.data.state,'erased');
+ const freshTask=uuid(),freshTurn=uuid();
+ await ok('/api/chat/native/v2/turns',owner,'POST',{...input,threadId:uuid(),turnId:freshTurn,idempotencyKey:uuid(),text:'Owned legitimate fresh task after source retirement',serviceTask:{...input.serviceTask,id:freshTask}});
+ await ok('/api/chat/native/v5/conversation',owner,'POST',{...base,messageId:uuid(),idempotencyKey:uuid(),taskId:freshTask,parentMessageId:root,relationship:'follow_up',expectedGoalVersion:1});
+ await waitUntil(()=>Promise.resolve(e.sql(`select status from public.turns where id='${freshTurn}';`)==='completed'),30000,'fresh original worker completion after retirement');
+ const drain=async after=>{const rows=[];for(let pages=0;pages<10;pages++){const p=await decode(await replay(after),after);rows.push(...p.events);after=p.lastSequence;if(!p.hasMore)return rows;}throw Error('Owned retirement page bound exceeded');};
+ const fromZero=await drain(0),fromDeletedAnchor=await drain(first.events[0].sequence);
+ assert.ok(fromZero.some(x=>x.type==='source_retired'&&x.sequence===x.retiredSequence));
+ assert.ok(fromDeletedAnchor.some(x=>x.type==='source_retired'&&x.retiredSequence===first.events[0].sequence),'later notification reaches previously acknowledged source');
+ for(const rows of [fromZero,fromDeletedAnchor]){
+  assert.ok(rows.some(x=>x.type==='task_status'&&x.taskId===freshTask),'same retained conversation remains recoverable');
+  assert.ok(rows.every(x=>x.type==='source_retired'||x.taskId!==task),'old metadata cannot revive');
+  for(const row of rows.filter(x=>x.type==='source_retired'))assert.deepEqual(Object.keys(row).sort(),['eventId','sequence','type','retiredSequence'].sort());
+ }
+ assert.equal(attempts(),attemptsBefore,'original accounting survives erasure/read without new old-task consumption');
  await ok('/api/chat/native/v5/consent',owner,'DELETE',{policyId:e.policyId});const revoked=await replay();assert.equal(revoked.status,403);assert.doesNotMatch(await revoked.text(),/eventId|id:/);
  await login(e.users[0]);assert.equal((await replay()).status,401,'original native session replacement denies old bearer');
  console.log('VPJ08_REAL_AUTH_SQL_HTTP_RESTART_PASS: disposable local original worker with synthetic model only; Native/device/provider/backup UNRUN');

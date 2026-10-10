@@ -31,7 +31,7 @@ try{
   console.log('VP_NATIVE_HTTP_TARGET '+JSON.stringify({project,base:ports.base,supabaseAPI:ports.supabaseAPI,api:ports.api}));
   exit=await run(process.execPath,['--experimental-strip-types','--test','--test-concurrency=1',
     'tests/integration/turn/assistant-events/auth-http.test.mjs'],true,
-    {...process.env,VP_NATIVE_TEXT_INTEGRATION:'true',VP_NATIVE_ASSISTANT_EVENTS_INTEGRATION:'true',VISEPANDA_NATIVE_ASSISTANT_EVENTS:'true',VISEPANDA_TRIP_PROTOCOL_V2:'true',...nativeHTTPChildEnv(ports,target)});
+    {...process.env,VP_NATIVE_TEXT_INTEGRATION:'true',VP_NATIVE_ASSISTANT_EVENTS_INTEGRATION:'true',VISEPANDA_NATIVE_ASSISTANT_EVENTS:'true',DATA_TURN_DATA_LOCAL:'1',VISEPANDA_TRIP_PROTOCOL_V2:'true',...nativeHTTPChildEnv(ports,target)});
 }finally{
   const stopped=await run('supabase',['stop','--workdir',target,'--no-backup']);
   if(stopped!==0){console.error('Disposable native Ask cleanup failed for '+project);exit=1;}else {rmSync(target,{recursive:true});console.log('VP_NATIVE_HTTP_CLEANUP '+JSON.stringify({project,result:'PASS'}));}
