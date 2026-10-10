@@ -1,15 +1,17 @@
 --- a/ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift
 +++ b/ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift
-@@ -442,0 +443 @@
+@@ -442,0 +443,2 @@
 +    @State private var assistantEvents = NativeAssistantEventsStore()
-@@ -806,0 +808,6 @@
++    @State private var assistantEventsSourceVersion: Int?
+@@ -806,0 +809,7 @@
 +        .task(id: assistantEventsSelection) {
 +            guard let captured = assistantEventsSelection else {
-+                assistantEvents.bind(nil, active: false, clearDisplays: {}); return
++                assistantEvents.bind(nil, active: false, clearDisplays: {}); assistantEventsSourceVersion = nil; return
 +            }
++            assistantEventsSourceVersion = conversation?.nextSequence
 +            await receiveAssistantEvents(captured)
 +        }
-@@ -1485,0 +1493,102 @@
+@@ -1485,0 +1495,113 @@
 +    private var assistantEventsSelection: NativeAssistantEventsSelection? {
 +        guard resultActive, !entryBlocking, policy?.consentState == .accepted,
 +              let policy, let id = conversation?.conversationId, id == selection.conversationID,
@@ -56,28 +58,39 @@
 +        }
 +        let canonical = try await AssistantConversationReader.read(requestedID: captured.conversationID,
 +            isCurrent: current, load: { try await session.assistantConversationRequest(conversationID: captured.conversationID) })
-+        guard current(), canonical.nextSequence == conversation?.nextSequence else { return false }
++        // UI Conversation is not the event authority. Another legal message may
++        // advance it; preserve its draft/write basis while projecting original readers.
++        func sourceCurrent() -> Bool {
++            current() && canonical.nextSequence >= (conversation?.nextSequence ?? 0) &&
++                canonical.nextSequence >= (assistantEventsSourceVersion ?? 0)
++        }
++        guard sourceCurrent() else { return false }
 +        switch event.change {
 +        case .task, .progress:
 +            let activityBytes = try await session.taskActivityRequest(conversationID: captured.conversationID, taskID: event.taskID)
-+            guard current() else { throw NativeDataError.staleSessionResponse }
++            guard sourceCurrent() else { throw NativeDataError.staleSessionResponse }
 +            let activity = try JSONDecoder().decode(NativeTaskActivity.self, from: activityBytes)
 +            guard activity.conversationId == captured.conversationID, activity.taskId == event.taskID else { return false }
-+            let bytes = try await session.assistantTaskHistoryRequest(conversationID: captured.conversationID, cursor: taskPageCursor)
-+            guard current() else { throw NativeDataError.staleSessionResponse }
++            // A version-bound page cursor cannot be replayed against a newer source.
++            // Requalify the read page, retaining selected Task/artifact/navigation IDs.
++            let pageCursor = taskSnapshotSequence == canonical.nextSequence ? taskPageCursor : nil
++            let bytes = try await session.assistantTaskHistoryRequest(conversationID: captured.conversationID, cursor: pageCursor)
++            guard sourceCurrent() else { throw NativeDataError.staleSessionResponse }
 +            let page = try JSONDecoder().decode(AssistantConversationTaskPage.self, from: bytes)
 +            guard page.valid, page.conversationId == captured.conversationID, page.conversationSequence == canonical.nextSequence else { return false }
 +            // Original current page decides what is rendered; event status/tool never does.
 +            taskTurns = page.turns; taskSourceMessages = page.messages; taskNextCursor = page.nextCursor
-+            taskSnapshotSequence = page.conversationSequence; taskNotice = nil
++            taskPageCursor = pageCursor; taskSnapshotSequence = page.conversationSequence
++            assistantEventsSourceVersion = canonical.nextSequence; taskNotice = nil
 +            return true
 +        case .artifact(let id, let revision, _, _):
 +            let bytes = try await session.fiveResultRequest(artifactID: id, revision: revision)
-+            guard current() else { throw NativeDataError.staleSessionResponse }
++            guard sourceCurrent() else { throw NativeDataError.staleSessionResponse }
 +            let value = try NativeFiveResultRecord.decode(bytes, artifactID: id, revision: revision)
 +            if let value {
 +                guard value.source.taskId == event.taskID, value.source.taskTurnId == event.turnID else { return false }
 +            }
++            assistantEventsSourceVersion = canonical.nextSequence
 +            // nil/historical is an authoritative unavailable read, not current content.
 +            // Existing selected exact-revision reader remains the only content publisher.
 +            return true
