@@ -1,0 +1,24 @@
+--- a/lib/server/artifacts/result-content.ts
++++ b/lib/server/artifacts/result-content.ts
+@@ -1,3 +1,4 @@
++import {parseTravelDirectionsContent,type TravelDirectionsContent} from '../planning/directions/contract.ts';
+ import {assertTripSnapshot,type TripSnapshot} from '../trip/patch/contract.ts';
+ import {parseChangeProposalReference,type ChangeProposalReference} from './change-proposal-reference.ts';
+ import type {ComparisonContent} from './result-contract.ts';
+@@ -5,7 +6,7 @@
+ export type JourneyDraftContent=Readonly<{schemaVersion:'journey-draft/1';title:string;summary:string;draft:TripSnapshot;source:JourneyDraftSource;actions:readonly []}>;
+ export type DecisionContent=Readonly<{schemaVersion:'decision/1';title:string;summary:string;comparisonRef:Readonly<{artifactId:string;revision:number}>;state:'pending'|'chosen';chosenOptionId:string|null;actions:readonly []}>;
+ export type PracticalContent=Readonly<{schemaVersion:'practical/1';kind:'translation';sourceTurnId:string;sourceLocale:'zh'|'en';targetLocale:'zh'|'en';translation:string;backTranslation:string;actions:readonly []}>;
+-export type ResultContent=ComparisonContent|JourneyDraftContent|DecisionContent|ChangeProposalReference|PracticalContent;
++export type ResultContent=TravelDirectionsContent|ComparisonContent|JourneyDraftContent|DecisionContent|ChangeProposalReference|PracticalContent;
+ /** Same canonical evidence descriptor as the v6 source-context owner; no copied quote/source body. */
+ export type ResultEvidenceRef=Readonly<{factId:string;assertionId:string;assertionRevision:number;city:'shanghai'|'beijing'|'guangzhou'|'chongqing';scene:'arrival'|'airport_transport'|'payment'|'connectivity'|'public_transport'|'taxi'|'rail'|'attraction'|'accommodation'|'emergency'}>;
+ const obj=(v:unknown):v is Record<string,unknown>=>v!==null&&typeof v==='object'&&!Array.isArray(v);
+@@ -31,6 +32,7 @@
+ }
+ export function parseResultContent(v:unknown):ResultContent|null{
+  if(!obj(v)||!actionless(v))return null;
++ if(v.schemaVersion==='travel-directions/1')return parseTravelDirectionsContent(v);
+  if(v.schemaVersion==='change-proposal-reference/1')return parseChangeProposalReference(v);
+  if(v.schemaVersion==='comparison/1'){
+   if(!exact(v,['schemaVersion','title','summary','options','actions'])||!text(v.title,120)||!text(v.summary,1000)||!Array.isArray(v.options)||v.options.length<2||v.options.length>4)return null;
