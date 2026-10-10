@@ -166,3 +166,79 @@ extension NativeTravelDirectionsTests {
         XCTAssertNil(store.proposal)
     }
 }
+
+extension NativeTravelDirectionsTests {
+    @MainActor func testEditableThemesRejectControlCharactersWhitespaceDuplicatesAndOversize() {
+        for bad in [" leading", "trailing ", "two\nlines", "tab\ttheme", String(repeating: "x", count: 161)] {
+            var editor = NativeTravelDirectionsEditing(days: days())
+            editor.edit(id: "relative_1", activity: 0, title: bad)
+            XCTAssertFalse(editor.valid)
+        }
+        var editor = NativeTravelDirectionsEditing(days: days())
+        editor.edit(id: "relative_1", activity: 0, title: "Walking theme")
+        XCTAssertFalse(editor.valid)
+        editor.edit(id: "relative_1", activity: 0, title: "Valid reviewed theme")
+        XCTAssertTrue(editor.valid)
+    }
+}
+
+extension NativeTravelDirectionsTests {
+    @MainActor func testPublicationAcceptsCrossGoalSequenceButNotReusedOrOutOfBoundsSequence() throws {
+        let id = "11111111-1111-4111-8111-111111111111"
+        let request: [String: Any] = ["taskId": id, "turnId": id, "conversationId": id, "goalId": id, "messageId": id, "expectedSourceSequence": 7]
+        var raw: [String: Any] = ["version": 1, "kind": "published", "artifactId": id, "revision": 1, "reused": false,
+            "taskId": id, "turnId": id, "conversationId": id, "goalId": id, "goalVersion": 1,
+            "inputMessageId": id, "inputSequence": 100, "intakeRevision": 1, "intakeDigest": String(repeating: "a", count: 64), "current": true]
+        let result = try NativeTravelDirectionsPublication.decode(JSONSerialization.data(withJSONObject: raw), request: request)
+        XCTAssertEqual(result.inputSequence, 100)
+        for invalid in [7, 1_000_001] {
+            raw["inputSequence"] = invalid
+            XCTAssertThrowsError(try NativeTravelDirectionsPublication.decode(JSONSerialization.data(withJSONObject: raw), request: request))
+        }
+    }
+    @MainActor func testPublicationNeedsFreshMatchingDigestIntakeAndOriginalResultSource() async throws {
+        let conversation = "11111111-1111-4111-8111-111111111111", goal = "22222222-2222-4222-8222-222222222222"
+        let parent = "33333333-3333-4333-8333-333333333333", policy = "44444444-4444-4444-8444-444444444444"
+        let artifact = "55555555-5555-4555-8555-555555555555", digest = String(repeating: "a", count: 64)
+        let selection = NativeTravelDirectionsSelection(scope: .init(endpoint: "http://127.0.0.1:59321", subject: "owner", mobileEpoch: 1, generation: 1),
+            conversationID: conversation, goalID: goal, goalVersion: 1, parentMessageID: parent, planningPolicyID: policy)
+        for mismatched in [false, true] {
+            let store = NativeTravelDirectionsIntakeStore()
+            store.bind(selection)
+            await store.load(current: { selection }, read: { kind, _, _ in
+                let data: [String: Any] = kind == "basis" ? ["kind": "directions_write_basis", "conversationId": conversation, "goalId": goal,
+                    "goalVersion": 1, "parentMessageId": parent, "messageSequence": 7, "intakeRevision": 0, "intakeDigest": NSNull(), "policyId": policy]
+                    : ["kind": "unavailable", "reason": "intake_unrecorded"]
+                return try JSONSerialization.data(withJSONObject: ["version": 1, "data": data])
+            })
+            var values = NativeTravelDirectionsFormValues(); values.destinations = "Shanghai\nBeijing"; values.duration = "10"; values.interests = "food\nwalks"
+            var captured: [String: Any] = [:]
+            var resultReads = 0
+            await store.submit(values: values, text: "Ten days in Shanghai and Beijing", locale: "en", current: { selection }, post: { bytes in
+                captured = try XCTUnwrap(JSONSerialization.jsonObject(with: bytes) as? [String: Any])
+                return try JSONSerialization.data(withJSONObject: ["version": 1, "kind": "published", "artifactId": artifact, "revision": 1,
+                    "reused": false, "taskId": captured["taskId"]!, "turnId": captured["turnId"]!, "conversationId": conversation, "goalId": goal,
+                    "goalVersion": 1, "inputMessageId": captured["messageId"]!, "inputSequence": 100, "intakeRevision": 1, "intakeDigest": digest, "current": true])
+            }, read: { id, revision in
+                resultReads += 1
+                var c = content(); c["intake"] = captured["intake"]; c["selectedDirectionId"] = NSNull(); c["draft"] = NSNull()
+                var envelope = try XCTUnwrap(JSONSerialization.jsonObject(with: self.envelope(c, id: id, revision: revision)) as? [String: Any])
+                var data = try XCTUnwrap(envelope["data"] as? [String: Any])
+                data["source"] = ["tripId": NSNull(), "tripVersion": NSNull(), "taskId": captured["taskId"]!, "taskTurnId": captured["turnId"]!,
+                    "goalId": goal, "goalVersion": 1, "inputMessageId": captured["messageId"]!, "inputSequence": 100]
+                envelope["data"] = data
+                return try JSONSerialization.data(withJSONObject: envelope)
+            }, readIntake: { _, _ in
+                try JSONSerialization.data(withJSONObject: ["version": 1, "data": ["kind": "directions_intake", "schemaVersion": "travel-directions-current-basis/1",
+                    "conversationId": conversation, "goalId": goal, "goalVersion": 1, "inputMessageId": captured["messageId"]!, "inputSequence": 100,
+                    "intakeRevision": 1, "intakeDigest": mismatched ? String(repeating: "b", count: 64) : digest,
+                    "intake": captured["intake"]!, "memoryBasis": [], "tripId": NSNull(), "tripVersion": NSNull(), "profilePace": NSNull()]])
+            })
+            if mismatched {
+                XCTAssertNil(store.publication); XCTAssertNotNil(store.pendingBody); XCTAssertEqual(resultReads, 0)
+            } else {
+                XCTAssertEqual(store.publication?.inputSequence, 100); XCTAssertNil(store.pendingBody); XCTAssertEqual(resultReads, 1)
+            }
+        }
+    }
+}

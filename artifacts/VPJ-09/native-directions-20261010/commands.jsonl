@@ -1,0 +1,7 @@
+{"tool": "exec ef64e6 -> write_stdin ac6dcd", "command": "xcodebuild build -project /var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/vpj09-native-directions-harness-20261010-hnqxhwhy/ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' -derivedDataPath /var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/vpj09-native-directions-harness-20261010-hnqxhwhy/DerivedData CODE_SIGNING_ALLOWED=NO", "exit": 0, "scope": "initial candidate overlay App build"}
+{"tool": "exec 2a515c -> write_stdin baccbd", "exit": 65, "scope": "r1 endpoint compile FAIL"}
+{"tool": "exec f05790 / interrupted", "exit": null, "scope": "r2 interrupted before terminal tests; no PASS"}
+{"tool": "exec 387163 -> write_stdin 1c5fb9", "exit": 0, "scope": "r3 eight own tests PASS on explicit B814E8E1-F1D3-4DFC-AF9C-52119BB7292D"}
+{"tool": "exec 49aa73 -> write_stdin 74e3f5", "exit": 0, "scope": "r4 one affected strict text boundary test PASS"}
+{"tool": "exec fec014 -> write_stdin 43ce60", "exit": 0, "scope": "r5 two affected publication/source tests PASS; current source matches harness"}
+{"tool": "exec 7e16ea", "exit": 0, "scope": "PBX parsed equality / own Simulator shutdown / delete"}

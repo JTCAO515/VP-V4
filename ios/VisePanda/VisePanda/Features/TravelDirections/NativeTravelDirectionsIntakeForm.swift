@@ -14,6 +14,20 @@ struct NativeTravelDirectionsFormValues: Equatable {
     var specific = false
     var useSavedPace = false
 
+    init() {}
+    init(intake: NativeTravelDirectionsIntake) {
+        destinations = intake.destinations.joined(separator: "\n")
+        duration = intake.durationDays.map(String.init) ?? ""
+        interests = intake.interests.joined(separator: "\n")
+        pace = intake.currentPace ?? ""
+        currency = intake.budget?.currency ?? "CNY"
+        budget = intake.budget.flatMap { NativeTravelBudgetAmount.display($0.totalMinorUnits) } ?? ""
+        startDate = intake.dates?.startDate ?? ""
+        endDate = intake.dates?.endDate ?? ""
+        specific = intake.intent == "specific"
+        useSavedPace = false
+    }
+
     private func lines(_ text: String) -> [String] {
         text.split(separator: "\n").map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty }
     }

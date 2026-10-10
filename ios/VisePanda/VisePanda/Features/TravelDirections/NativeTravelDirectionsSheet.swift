@@ -10,6 +10,7 @@ struct NativeTravelDirectionsSheet: View {
     @Environment(\.scenePhase) private var phase
     let store: NativeTravelDirectionsIntakeStore
     @State private var values = NativeTravelDirectionsFormValues()
+    @State private var formInitialized = false
     @State private var confirmReturn = false
     @State private var refresh = UUID()
     private struct Load: Equatable { let selection: NativeTravelDirectionsSelection?; let active: Bool; let refresh: UUID }
@@ -41,14 +42,16 @@ struct NativeTravelDirectionsSheet: View {
                                 Task {
                                     await store.submit(values: values, text: originalRequest, locale: chinese ? "zh" : "en", current: { current },
                                         post: { try await session.travelDirectionsActionRequest(action: "submit", body: $0) },
-                                        read: { try await session.fiveResultRequest(artifactID: $0, revision: $1) })
+                                        read: { try await session.fiveResultRequest(artifactID: $0, revision: $1) },
+                                        readIntake: { try await session.travelDirectionsReadRequest(kind: "intake", conversationID: $0, goalID: $1) })
                                 }
                             })
                         if store.pendingBody != nil {
                             Button(t("重试同一次方向请求", "Retry the same directions request")) {
                                 Task {
                                     await store.retry(current: { current }, post: { try await session.travelDirectionsActionRequest(action: "submit", body: $0) },
-                                        read: { try await session.fiveResultRequest(artifactID: $0, revision: $1) })
+                                        read: { try await session.fiveResultRequest(artifactID: $0, revision: $1) },
+                                        readIntake: { try await session.travelDirectionsReadRequest(kind: "intake", conversationID: $0, goalID: $1) })
                                 }
                             }.disabled(store.busy || current == nil)
                         }
@@ -74,6 +77,10 @@ struct NativeTravelDirectionsSheet: View {
                 store.bind(authority)
                 guard current != nil, store.pendingBody == nil else { return }
                 await store.load(current: { current }, read: { try await session.travelDirectionsReadRequest(kind: $0, conversationID: $1, goalID: $2) })
+                if current != nil, store.qualified(current), !formInitialized {
+                    if let intake = store.intake { values = .init(intake: intake.intake) }
+                    formInitialized = true
+                }
             }
         }
     }

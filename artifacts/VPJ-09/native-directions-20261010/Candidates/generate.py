@@ -125,7 +125,7 @@ for path in paths:
         after=after.replace(marker,marker+'\n'+''.join('\t\t\t\t'+r+',\n' for r in app))
         marker='800000000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = ('
         assert after.count(marker)==1
-        after=after.replace(marker,marker+', '.join(test)+', ')
+        after=after.replace(marker,marker+', '.join(test)+',')
     assert after!=before
     name=Path(path).name
     (out/(name+'.before')).write_text(before)

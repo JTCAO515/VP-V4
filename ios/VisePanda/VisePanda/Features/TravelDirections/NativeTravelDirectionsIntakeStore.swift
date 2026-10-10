@@ -46,7 +46,7 @@ final class NativeTravelDirectionsIntakeStore {
     }
     func submit(values: NativeTravelDirectionsFormValues, text: String, locale: String,
                 current: @escaping () -> NativeTravelDirectionsSelection?, post: (Data) async throws -> Data,
-                read: (String, Int) async throws -> Data) async {
+                read: (String, Int) async throws -> Data, readIntake: (String, String) async throws -> Data) async {
         guard qualified(current()), let target = selection, let basis, values.valid,
               NativeFiveResultContent.text(text, max: 4000) != nil, ["zh", "en"].contains(locale) else { return }
         let useSaved = values.useSavedPace && values.pace.isEmpty
@@ -72,11 +72,11 @@ final class NativeTravelDirectionsIntakeStore {
             let bytes = try JSONSerialization.data(withJSONObject: request, options: .sortedKeys)
             guard bytes.count <= 16_384 else { throw NativeDataError.invalidResponse }
             pendingBody = bytes
-            await retry(current: current, post: post, read: read)
+            await retry(current: current, post: post, read: read, readIntake: readIntake)
         } catch { notice = "invalid" }
     }
     func retry(current: @escaping () -> NativeTravelDirectionsSelection?, post: (Data) async throws -> Data,
-               read: (String, Int) async throws -> Data) async {
+               read: (String, Int) async throws -> Data, readIntake: (String, String) async throws -> Data) async {
         guard !busy, let target = selection, target == current(), let bytes = pendingBody,
               let request = try? JSONSerialization.jsonObject(with: bytes) as? [String: Any] else { return }
         let own = generation; busy = true; notice = nil; publication = nil
@@ -87,6 +87,19 @@ final class NativeTravelDirectionsIntakeStore {
             let receipt = try NativeTravelDirectionsPublication.decode(reply, request: request)
             guard receipt.current else { pendingBody = nil; basis = nil; deadline = 0; notice = "stale"; return }
             let start = uptime()
+            let intakeBytes = try await readIntake(target.conversationID, target.goalID)
+            guard generation == own, target == current(), !Task.isCancelled else { return }
+            guard let freshIntake = try NativeTravelDirectionsIntakeBasis.decode(intakeBytes),
+                  freshIntake.conversationId == target.conversationID, freshIntake.goalId == target.goalID,
+                  freshIntake.goalVersion == receipt.goalVersion, freshIntake.inputMessageId == receipt.inputMessageID,
+                  freshIntake.inputSequence == receipt.inputSequence, freshIntake.intakeRevision == receipt.intakeRevision,
+                  freshIntake.intakeDigest == receipt.intakeDigest,
+                  let requestedIntake = request["intake"] as? [String: Any],
+                  freshIntake.intake == (try NativeTravelDirectionsIntake.decode(requestedIntake)),
+                  let requestedMemories = request["memoryBasis"] as? [[String: Any]] else { throw NativeDataError.staleSessionResponse }
+            let memoryRefs = try JSONDecoder().decode([NativeTravelMemoryReference].self, from: JSONSerialization.data(withJSONObject: requestedMemories))
+            guard Set(memoryRefs.map { "\($0.id):\($0.revision)" }) == Set(freshIntake.memoryBasis.map { "\($0.id):\($0.revision)" }),
+                  memoryRefs.count == freshIntake.memoryBasis.count else { throw NativeDataError.staleSessionResponse }
             let content = try await read(receipt.artifactID, receipt.revision)
             guard generation == own, target == current(), !Task.isCancelled else { return }
             guard uptime() - start < 30,
@@ -94,7 +107,10 @@ final class NativeTravelDirectionsIntakeStore {
                   record.source.taskId == receipt.taskID, record.source.taskTurnId == receipt.turnID,
                   record.source.goalId == target.goalID, record.source.goalVersion == receipt.goalVersion,
                   record.source.inputMessageId == receipt.inputMessageID, record.source.inputSequence == receipt.inputSequence,
-                  case .directions = record.content else { throw NativeDataError.staleSessionResponse }
+                  record.source.tripId == freshIntake.tripId, record.source.tripVersion == freshIntake.tripVersion,
+                  Set(record.memories.map { "\($0.id):\($0.revision)" }) == Set(memoryRefs.map { "\($0.id):\($0.revision)" }),
+                  record.memories.count == memoryRefs.count,
+                  case .directions(let directions) = record.content, directions.intake == freshIntake.intake else { throw NativeDataError.staleSessionResponse }
             publication = receipt; pendingBody = nil; basis = nil; deadline = 0
         } catch {
             guard generation == own, target == current() else { return }

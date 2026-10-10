@@ -197,6 +197,7 @@ struct NativeTravelDirectionsPublication {
               let revision = NativeFiveResultContent.integer(raw["revision"], maximum: 1000),
               let goalVersion = NativeFiveResultContent.integer(raw["goalVersion"], maximum: 10_000),
               let sequence = NativeFiveResultContent.integer(raw["inputSequence"], maximum: 1_000_000),
+              let previousSequence = NativeFiveResultContent.integer(request["expectedSourceSequence"], maximum: 999_999), sequence > previousSequence,
               let intakeRevision = NativeFiveResultContent.integer(raw["intakeRevision"], maximum: 1000),
               let digest = raw["intakeDigest"] as? String, NativeTravelDirectionsWire.digest(digest),
               let current = raw["current"] as? NSNumber, CFGetTypeID(current) == CFBooleanGetTypeID(),

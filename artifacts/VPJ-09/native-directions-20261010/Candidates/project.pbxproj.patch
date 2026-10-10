@@ -74,7 +74,7 @@
  			runOnlyForDeploymentPostprocessing = 0;
  		};
 -		800000000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (
-+		800000000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B19720000000000000000000A, 
++		800000000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B19720000000000000000000A,
  				0BD4939F55027574D03C6C07 /* NativeAssistantEventsTests.swift in Sources */,
  AB9F95F58FBF649DAE1B75FF /* NativeJournalDataTests.swift in Sources */,
  210A5218D6BDE6B5029405EA,

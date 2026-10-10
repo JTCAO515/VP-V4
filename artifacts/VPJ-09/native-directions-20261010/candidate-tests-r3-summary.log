@@ -1,0 +1,20 @@
+Test Case '-[VisePandaTests.NativeTravelDirectionsTests testChoosingDoesNotSaveAndSavingDoesNotBindOrConfirm]' started.
+Test Case '-[VisePandaTests.NativeTravelDirectionsTests testChoosingDoesNotSaveAndSavingDoesNotBindOrConfirm]' passed (0.008 seconds).
+Test Case '-[VisePandaTests.NativeTravelDirectionsTests testClosedRelativeResultPreservesTenDaysAndRejectsSyntheticDatesAndTruncation]' started.
+Test Case '-[VisePandaTests.NativeTravelDirectionsTests testClosedRelativeResultPreservesTenDaysAndRejectsSyntheticDatesAndTruncation]' passed (0.003 seconds).
+Test Case '-[VisePandaTests.NativeTravelDirectionsTests testDateBindingRejectsUnknownInvalidOverlapAndCapacityWithoutPartialDraft]' started.
+Test Case '-[VisePandaTests.NativeTravelDirectionsTests testDateBindingRejectsUnknownInvalidOverlapAndCapacityWithoutPartialDraft]' passed (0.002 seconds).
+Test Case '-[VisePandaTests.NativeTravelDirectionsTests testEditChangesOnlyOneDayAndCannotChangeFixedArrangement]' started.
+Test Case '-[VisePandaTests.NativeTravelDirectionsTests testEditChangesOnlyOneDayAndCannotChangeFixedArrangement]' passed (0.000 seconds).
+Test Case '-[VisePandaTests.NativeTravelDirectionsTests testLateReadCannotReviveAnotherSessionAndReadExpires]' started.
+Test Case '-[VisePandaTests.NativeTravelDirectionsTests testLateReadCannotReviveAnotherSessionAndReadExpires]' passed (0.012 seconds).
+Test Case '-[VisePandaTests.NativeTravelDirectionsTests testReceiptCannotSelectAnotherArtifactOrInventConfirmation]' started.
+Test Case '-[VisePandaTests.NativeTravelDirectionsTests testReceiptCannotSelectAnotherArtifactOrInventConfirmation]' passed (0.000 seconds).
+Test Case '-[VisePandaTests.NativeTravelDirectionsTests testTenDayMultiCityDateBindingAppendsWithoutReplacingOrInventingTimes]' started.
+Test Case '-[VisePandaTests.NativeTravelDirectionsTests testTenDayMultiCityDateBindingAppendsWithoutReplacingOrInventingTimes]' passed (0.001 seconds).
+Test Case '-[VisePandaTests.NativeTravelDirectionsTests testUnknownsCanSaveEmptyRelativeDraftButCannotBindFakeDate]' started.
+Test Case '-[VisePandaTests.NativeTravelDirectionsTests testUnknownsCanSaveEmptyRelativeDraftButCannotBindFakeDate]' passed (0.000 seconds).
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.027 (0.029) seconds
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.027 (0.030) seconds
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.027 (0.030) seconds
+** TEST SUCCEEDED **

@@ -79,7 +79,7 @@ struct NativeTravelDirectionsResultView: View {
                                 .disabled(!store.canAct(current: key) || store.editing.hasChanges || !NativeTravelIntake.validDates(.init(startDate: startDate, endDate: startDate)))
                                 .accessibilityIdentifier("directions.bind.review")
                             } else {
-                                Text(t("请先在对话中明确关联同一目标的行程，再刷新成果；不会替你创建或覆盖旧行程。", "Explicitly link a Trip to this goal in the conversation, then refresh the result."))
+                                Text(t("请先在对话中明确关联同一目标的行程，再核对新依据并明确生成新方向。关联会使旧成果失去当前资格。", "Explicitly link a Trip to this goal in the conversation, then review the fresh basis and request new directions. Linking makes the old result stale."))
                                     .font(.footnote)
                             }
                         }
