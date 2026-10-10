@@ -132,6 +132,7 @@ run('concurrent cancel/confirm and privacy/source contention abort without deadl
  const a=await fixture(),s=await submit(a,cmd()),confirmKey=randomUUID();
  const observe=async()=>JSON.parse(await db(`select jsonb_build_object('head',t.head_version,'content',public.trip_content_snapshot(t.id,t.title),'events',(select coalesce(jsonb_agg(to_jsonb(e) order by e.id),'[]') from public.trip_events e where e.trip_id=t.id and e.owner_id=t.owner_id),'idempotency',(select coalesce(jsonb_agg(to_jsonb(i) order by i.idempotency_key),'[]') from public.trip_idempotency i where i.owner_id=t.owner_id and i.proposal_id='${s.r.proposalId}'),'operation',(select to_jsonb(o) from pdf_intake_private.operations_v1 o where o.owner_id=t.owner_id and o.operation_id='${s.c.operationId}'),'proposal',(select to_jsonb(p) from public.trip_proposals p where p.id='${s.r.proposalId}')) from public.trips t where t.id='${a.trip}';`));
  const before=await observe(),pendingBefore=await operation(a,s.c.operationId);
+ const expectedContent=JSON.parse(await db(`select public.apply_trip_content_patch(${json(before.content)},${json(s.p.patch)});`));
  assert.equal(pendingBefore.state,'pending');assert.equal(before.operation.input_bytes,s.raw);assert.equal(pendingBefore.requestDigest,digest(s.raw));
  const results=await Promise.all([sql(container,confirmSQL(a,s.r,confirmKey)),sql(container,callSQL(a,'cancel',{operationId:s.c.operationId}))]);
  for(const r of results)if(r.code!==0){assert.match(r.stderr,/LIFECYCLE_LOCK_CONFLICT|could not obtain lock|PROPOSAL_NOT_CONFIRMABLE|CONFIRMATION_DIGEST_MISMATCH/);assert.doesNotMatch(r.stderr,/deadlock/);}
@@ -143,10 +144,10 @@ run('concurrent cancel/confirm and privacy/source contention abort without deadl
  const committedConfirm=confirmed.code===0&&confirmOutcome==='applied',committedCancel=cancelled.code===0&&cancelOutcome.state==='cancelled';
  if(committedConfirm){
   assert.equal(committedCancel,false);assert.equal(recovered.state,'confirmed');if(cancelled.code===0)assert.equal(cancelOutcome.state,'confirmed');
-  assert.equal(after.head,before.head+1);assert.equal(recovered.resultingVersion,after.head);assert.equal(snapshot.days.length,1);
+  assert.equal(after.head,before.head+1);assert.equal(recovered.resultingVersion,after.head);assert.equal(snapshot.days.length,1);assert.deepEqual(after.content,expectedContent,'one complete original patch, no partial apply');
   assert.equal(snapshot.days[0].date,s.c.fields.find(f=>f.kind==='date').value);
   assert.equal(after.events.length,before.events.length+1);const event=after.events.find(e=>e.id===recovered.confirmationEventId);assert.ok(event);assert.equal(event.proposal_id,s.r.proposalId);assert.equal(event.resulting_version,after.head);assert.equal(event.event_type,'proposal_applied');
-  assert.equal(after.idempotency.length,before.idempotency.length+1);const receipt=after.idempotency.find(i=>i.idempotency_key===confirmKey);assert.ok(receipt);assert.equal(receipt.proposal_id,s.r.proposalId);assert.equal(receipt.outcome,'applied');assert.equal(receipt.resulting_version,after.head);
+  assert.equal(after.idempotency.length,before.idempotency.length+1);const receipt=after.idempotency.find(i=>i.idempotency_key===confirmKey);assert.ok(receipt);assert.equal(receipt.proposal_id,s.r.proposalId);assert.equal(receipt.outcome,'applied');assert.equal(receipt.resulting_version,after.head);assert.equal(receipt.digest,before.operation.proposal_digest);
  }else if(committedCancel){
   if(confirmed.code===0)assert.equal(confirmOutcome,'proposal_not_confirmable');assert.equal(recovered.state,'cancelled');assert.equal(after.head,before.head);assert.deepEqual(after.content,before.content);assert.deepEqual(after.events,before.events);assert.deepEqual(after.idempotency,before.idempotency);assert.equal(snapshot.days.length,0);
  }else{
