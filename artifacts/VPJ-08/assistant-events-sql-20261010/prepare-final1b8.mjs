@@ -1,0 +1,3 @@
+import{readFileSync}from'node:fs';import{sql}from'../../../tests/integration/cost/fixtures/postgres-rpc.mjs';const root='artifacts/VPJ-08/assistant-events-sql-20261010/';
+const files=['events-reader.candidate.sql','events-lifecycle.candidate.sql','events-witness.candidate.sql','privacy-handlers.candidate.sql','d3-handlers.candidate.sql','turn-handlers.candidate.sql','terminal-helper.candidate.sql','writers.candidate.sql'];
+const r=await sql('vpj08-events-sql-20261010','begin;'+files.map(n=>readFileSync(root+n,'utf8')).join('\n')+'commit;');console.log(r.stdout+r.stderr);console.log('final1b8 candidate functions own fixture compile exit',r.code);process.exitCode=r.code;

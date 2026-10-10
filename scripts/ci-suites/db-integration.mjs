@@ -244,6 +244,7 @@ export const LANES = {
       { name: "profile-data-http", runner: node("tests/integration/privacy/profile-data/run-http.mjs", "--port-base", "63040"), files: ["tests/integration/privacy/profile-data/auth-http.test.mjs"] },
       { name: "profile-export-http", runner: node("tests/integration/privacy/profile-export/run-http.mjs", "--port-base", "63000"), files: ["tests/integration/privacy/profile-export/auth-http.test.mjs"] },
       { name: "turn-data-http", runner: node("tests/integration/privacy/turn-data/run-http.mjs", "--port-base", "62960"), files: ["tests/integration/privacy/turn-data/auth-http.test.mjs"] },
+      { name: "native-assistant-events", runner: node("tests/integration/turn/assistant-events/run.mjs", "--port-base", "62720"), files: ["tests/integration/turn/assistant-events/auth-http.test.mjs"] },
     ],
   },
   "supabase-http-ops": {
@@ -268,7 +269,7 @@ export function executionMatrix(lanes) {
     || lanes.some(lane => lane !== "none" && !Object.hasOwn(LANES, lane))
     || lanes.includes("none") && lanes.length !== 1) throw Error("Invalid selected DB lanes");
   return { include: lanes.flatMap(lane => {
-    const count = lane === "supabase-http-native" ? 2 : 1;
+    const count = lane === "supabase-http-native" ? 3 : 1;
     return Array.from({ length: count }, (_, i) => ({ lane, shard: `${i + 1}/${count}`,
       name: count === 1 ? `lane (${lane})` : `lane (${lane} / ${i + 1} of ${count})` }));
   }) };
@@ -277,8 +278,8 @@ export function executionSteps(lane, shard = null) {
   if (!Object.hasOwn(LANES, lane)) throw Error("Unknown DB lane");
   const steps = LANES[lane].steps;
   if (shard === null) return steps;
-  const count = lane === "supabase-http-native" ? 2 : 1;
-  const match = /^([12])\/([12])$/.exec(shard);
+  const count = lane === "supabase-http-native" ? 3 : 1;
+  const match = /^([123])\/([123])$/.exec(shard);
   if (!match || Number(match[2]) !== count || Number(match[1]) > count)
     throw Error("Invalid DB lane shard");
   const selected = steps.filter((_, i) => i % count === Number(match[1]) - 1);

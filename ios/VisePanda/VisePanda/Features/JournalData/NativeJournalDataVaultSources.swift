@@ -230,7 +230,7 @@ import Security
             } else if value == nil { rows.append(empty(.ask, state: .absent)) }
             else { throw NativeDataError.invalidResponse }
         } catch { rows.append(empty(.ask, state: .unavailable)) } }
-        for id in [NativeJournalDataSourceID.tripSupport, .deviceDelete, .readinessSave, .linkedTripDelete, .memoryDelete, .tripDelete] {
+        for id in [NativeJournalDataSourceID.tripSupport, .deviceDelete, .readinessSave, .linkedTripDelete, .memoryDelete, .tripDelete, .assistantEventsCursor] {
             guard selected == nil || selected == id else { continue }
             if let companion = companions[id] {
                 add(id, companion.service(endpoint)) { try companion.read(actor) }

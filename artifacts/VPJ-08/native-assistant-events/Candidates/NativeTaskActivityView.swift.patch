@@ -1,0 +1,8 @@
+--- a/ios/VisePanda/VisePanda/Features/Ask/NativeTaskActivityView.swift
++++ b/ios/VisePanda/VisePanda/Features/Ask/NativeTaskActivityView.swift
+@@ -60,0 +61,5 @@
++        .onChange(of: session.assistantEventsInvalidation?.id) { _, _ in
++            guard let signal = session.assistantEventsInvalidation, let current,
++                  signal.matches(scope: current.scope, sessionID: (try? session.communitySafetyActor())?.sessionID) else { return }
++            if signal.object == nil || signal.object == .task(current.taskID) { store.clear() }
++        }

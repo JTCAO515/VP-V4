@@ -1,0 +1,7 @@
+import{writeFileSync}from'node:fs';import{sql}from'../../../tests/integration/cost/fixtures/postgres-rpc.mjs';
+const root='artifacts/VPJ-08/assistant-events-sql-20261010/';
+const query=`select jsonb_object_agg(n.nspname||'.'||p.proname||'('||pg_get_function_identity_arguments(p.oid)||')',pg_get_functiondef(p.oid)) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where (n.nspname in('profile_data_private','turn_data_private','result_data_private','conversation_data_private','export_private','privacy_private') and (p.proname in('schema_v1','export_source_v1') or p.proname like '%supported%' or p.proname like '%relations%' or p.proname like '%dependency%' or p.proname like '%manifest%' or p.proname like '%hook%' or p.proname like '%guard%' or p.proname like '%source%' or p.proname like '%copies%' or p.proname like '%commit%')) or (n.nspname='turn_private' and p.proname in('terminal','claim_text_mode')) or (n.nspname='public' and p.proname in('claim_turn_work','cancel_chat_turn','cancel_text_turn','append_chat_turn_event'))`;
+let r=await sql('vpj08-events-sql-20261010',query);if(r.code)throw Error(r.stderr);
+const funcs=JSON.parse(r.stdout);writeFileSync(root+'authority-functions-before.json',JSON.stringify(funcs,null,2)+'\n');
+for(const[k,v]of Object.entries(funcs)) console.log(k, v.split('\n').length);
+console.log((await sql('vpj08-events-sql-20261010',"select result_data_private.schema_supported_v1(),conversation_data_private.schema_supported_v1(),profile_private.schema_supported_v1()" )).stdout);

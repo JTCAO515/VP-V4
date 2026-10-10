@@ -1,0 +1,34 @@
+{
+  "provenance": "own disconnected PostgreSQL, released administrator synthetic source rows; no financial effect",
+  "originalBase": 8,
+  "witnesses": 3,
+  "seedCount": 4089,
+  "exactRows": 4100,
+  "exactGraphUTF8Bytes": 616237,
+  "overOriginalRows": 4098,
+  "overWithWitness": 4101,
+  "overResult": {
+    "graph": {},
+    "counts": {
+      "goals": 0,
+      "tasks": 0,
+      "turns": 0,
+      "exports": 0,
+      "threads": 0,
+      "messages": 0,
+      "artifacts": 0
+    },
+    "conflicts": [
+      "SCOPE_TOO_LARGE"
+    ],
+    "selection": {
+      "goalIds": [],
+      "taskIds": [],
+      "turnIds": [],
+      "threadIds": [],
+      "messageIds": [],
+      "artifactIds": [],
+      "exportRequestIds": []
+    }
+  }
+}

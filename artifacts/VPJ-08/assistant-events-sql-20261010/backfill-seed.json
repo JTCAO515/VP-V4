@@ -1,0 +1,20 @@
+{
+  "owner": "4afc2521-cc8c-47c3-b15b-46a0b2e5106f",
+  "session": "ed549f0a-3865-4c93-b2e9-118d006a98fb",
+  "policy": "a88bbc46-234a-42f7-9670-464938d70d0a",
+  "consent": "6b8a276c-c974-4f08-8cb2-22575f171079",
+  "conversation": "3c1b92d3-4002-4345-b08e-a9f3bb43767d",
+  "goal": "b0be778b-488d-4fc2-9dd1-c1e552b075dd",
+  "rootMessage": "002e6f8c-a6df-4717-9992-bce0e8480af1",
+  "message": "fe4bfb6a-5971-4fb9-a266-d6e33b455890",
+  "task": "12345b59-bbb3-4041-b1bf-7ce70e7db1f1",
+  "thread": "57094be2-0417-4683-ae0a-eef8d9ee75f7",
+  "turn": "e78b669f-0e4f-4659-8f08-77c7527528e6",
+  "artifact": "4d831cfb-7d53-47f7-9bac-270f5f93d6c0",
+  "publication": "5c4f7677-c967-4344-ae66-ef0b6a590e2a",
+  "trip": "78017992-8fc8-41ff-9379-a149cdcc42c4",
+  "goalVersion": 1,
+  "tripHead": 0,
+  "basis": [],
+  "backfillTotal": 1006
+}

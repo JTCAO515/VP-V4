@@ -1,0 +1,47 @@
+{
+  "provenance": "own actual PostgreSQL canonical synthetic source; SQL claims, not signed Auth/target/provider",
+  "events": {
+    "kind": "assistant_events",
+    "events": [
+      {
+        "type": "task_status",
+        "status": "accepted",
+        "taskId": "711ce4c4-389d-478b-9e18-b74983c3e765",
+        "turnId": "805bb0b6-9d4e-4c85-a3b9-b4ceb4d2037f",
+        "eventId": "0e91a33b-378c-43b6-a3f2-013ee4945f4b:1",
+        "sequence": 1
+      },
+      {
+        "type": "task_status",
+        "status": "completed",
+        "taskId": "711ce4c4-389d-478b-9e18-b74983c3e765",
+        "turnId": "805bb0b6-9d4e-4c85-a3b9-b4ceb4d2037f",
+        "eventId": "0e91a33b-378c-43b6-a3f2-013ee4945f4b:2",
+        "sequence": 2
+      },
+      {
+        "type": "artifact_ready",
+        "taskId": "711ce4c4-389d-478b-9e18-b74983c3e765",
+        "turnId": "805bb0b6-9d4e-4c85-a3b9-b4ceb4d2037f",
+        "eventId": "0e91a33b-378c-43b6-a3f2-013ee4945f4b:3",
+        "revision": 1,
+        "sequence": 3,
+        "artifactId": "864c2e38-e50f-4300-8d4d-e937f1854984",
+        "availability": "recheck"
+      }
+    ],
+    "hasMore": false,
+    "lastSequence": 3,
+    "afterSequence": 0,
+    "schemaVersion": "assistant-events/1",
+    "conversationId": "0e91a33b-378c-43b6-a3f2-013ee4945f4b"
+  },
+  "results": [
+    "canonical link-before-event/text-content/order PASS",
+    "status+result same source append PASS",
+    "retained-source dedup PASS",
+    "rollback duplicate no allocation PASS",
+    "future cursor fail closed PASS",
+    "foreign conversation no cursor disclosure PASS"
+  ]
+}

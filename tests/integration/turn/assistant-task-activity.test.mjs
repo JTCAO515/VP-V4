@@ -60,10 +60,36 @@ test('owner activity projects only canonical current-authority receipts, bounded
  }
  e.sql(`update public.turns set status='accepted' where id='${turnId}';update turn_private.text_content set output_kind=null,output_text=null where turn_id='${turnId}';
  update turn_private.planning_comparisons set state='queued' where turn_id='${turnId}';`);
- insert('5555555555555555555555555555555555555555555555555555555555555555',tools[0],'started');
- assert.equal((await call(path,owner)).status,403,'overflow cannot masquerade as four completed steps');
- e.sql(`delete from turn_private.planning_action_receipts where turn_id='${turnId}' and action_key='5555555555555555555555555555555555555555555555555555555555555555';
- update turn_private.planning_action_receipts set basis_digest='${'d'.repeat(64)}' where turn_id='${turnId}' and action_key='1111111111111111111111111111111111111111111111111111111111111111';`);
+ // Separate synthetic cancelled Task for overflow: preserve base four-receipt
+ // source, claims and all subsequent authority negatives; no extra worker dispatch.
+ const overflowTask=uuid(),overflowTurn=uuid(),overflowThread=uuid(),overflowMessage=uuid();
+ e.sql(`insert into public.chat_threads(id,owner_id) values('${overflowThread}','${e.users[0].id}');
+ insert into public.turns(id,owner_id,thread_id,status) values('${overflowTurn}','${e.users[0].id}','${overflowThread}','cancelled');
+ insert into turn_private.text_content(turn_id,owner_id,thread_id,policy_id,consent_id,locale,input_text)
+ select '${overflowTurn}',owner_id,'${overflowThread}',policy_id,consent_id,locale,input_text from turn_private.text_content where turn_id='${turnId}';
+ insert into turn_private.service_tasks(id,owner_id,thread_id,goal_turn_id,last_turn_id,policy_id,consent_id,scope_version,goal_digest)
+ select '${overflowTask}',owner_id,'${overflowThread}','${overflowTurn}','${overflowTurn}',policy_id,consent_id,1,goal_digest from turn_private.service_tasks where id='${taskId}';
+ insert into turn_private.service_task_turns(turn_id,task_id,owner_id,relationship,idempotency_key,request_digest)
+ values('${overflowTurn}','${overflowTask}','${e.users[0].id}','new_goal','${uuid()}','${'a'.repeat(64)}');
+ insert into turn_private.assistant_messages(id,conversation_id,owner_id,sequence,idempotency_key,request_digest,policy_id,consent_id,locale,input_text,relationship,goal_id,scope_version,task_id,parent_message_id)
+ select '${overflowMessage}',id,owner_id,next_sequence,'${uuid()}','${'a'.repeat(64)}',policy_id,consent_id,'en','Synthetic isolated overflow','follow_up','${root.goalId}',1,'${overflowTask}','${root.messageId}' from turn_private.assistant_conversations where id='${root.conversationId}';
+ update turn_private.assistant_conversations set next_sequence=next_sequence+1 where id='${root.conversationId}';
+ insert into turn_private.work(turn_id,owner_id,session_id,state,max_attempts,lease_ms)
+ select '${overflowTurn}',owner_id,session_id,'cancelled',max_attempts,lease_ms from turn_private.work where turn_id='${turnId}';
+ insert into turn_private.planning_comparisons(turn_id,owner_id,task_id,goal_id,message_id,goal_version,planning_policy_id,planning_consent_id,memory_basis,artifact_id,publication_key,state)
+ select '${overflowTurn}',owner_id,'${overflowTask}',goal_id,'${overflowMessage}',goal_version,planning_policy_id,planning_consent_id,memory_basis,'${uuid()}','${uuid()}','queued' from turn_private.planning_comparisons where turn_id='${turnId}';
+ insert into turn_private.planning_action_receipts(turn_id,action_key,owner_id,task_id,message_id,lease_token,tool_id,input_digest,basis_digest,memory_basis,state,receipt_digest)
+ select '${overflowTurn}',action_key,owner_id,'${overflowTask}','${overflowMessage}',lease_token,tool_id,input_digest,turn_private.planning_action_basis('${overflowTurn}',owner_id,'${overflowMessage}',memory_basis),memory_basis,state,receipt_digest from turn_private.planning_action_receipts where turn_id='${turnId}';
+`);
+ const overflowPath=base+'/conversations/'+root.conversationId+'/tasks/'+overflowTask+'/activity';
+ const overflowBefore=await call(overflowPath,owner);assert.equal(overflowBefore.status,200);assert.equal(overflowBefore.body.actions.length,4);
+ e.sql(`insert into turn_private.planning_action_receipts(turn_id,action_key,owner_id,task_id,message_id,lease_token,tool_id,input_digest,basis_digest,memory_basis,state)
+ values('${overflowTurn}','${'5'.repeat(64)}','${e.users[0].id}','${overflowTask}','${overflowMessage}','${uuid()}','${tools[0]}','${'b'.repeat(64)}',turn_private.planning_action_basis('${overflowTurn}','${e.users[0].id}','${overflowMessage}','[]'),'[]','started');`);
+ e.sql(`update turn_private.planning_comparisons set state='paused_unknown' where turn_id='${overflowTurn}';`);
+ assert.equal((await call(overflowPath,owner)).status,403,'overflow cannot masquerade as four completed steps');
+ assert.throws(()=>e.sql(`delete from turn_private.planning_action_receipts where turn_id='${overflowTurn}' and action_key='${'5'.repeat(64)}';`),/ASSISTANT_EVENT_ERASE_AUTHORITY/);
+ assert.equal((await call(path,owner)).status,200,'base four-receipt fixture remains independent');
+ e.sql(`update turn_private.planning_action_receipts set basis_digest='${'d'.repeat(64)}' where turn_id='${turnId}' and action_key='1111111111111111111111111111111111111111111111111111111111111111';`);
  assert.equal((await call(path,owner)).status,403,'stale receipt basis leaks no status');
  e.sql(`update turn_private.planning_action_receipts set basis_digest=turn_private.planning_action_basis('${turnId}','${e.users[0].id}','${messageId}','[]') where turn_id='${turnId}';
  update turn_private.assistant_goals set scope_version=2 where id='${root.goalId}';`);
