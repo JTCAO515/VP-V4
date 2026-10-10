@@ -1,0 +1,17 @@
+{
+  "preservedRuntimeLiterals": 120,
+  "addedConstituent": {
+    "privacy_private.linked_delete_graph_v1(uuid,uuid,jsonb)": "c05f2c9cfccb1d7db56431dd79dc8859"
+  },
+  "checks": {
+    "body": "c05f2c9cfccb1d7db56431dd79dc8859",
+    "turnHooks": true,
+    "turnSchema": true,
+    "turnRuntime": true,
+    "resultSchema": true,
+    "profileSchema": true,
+    "profileD2Hooks": true,
+    "turnWriteHooks": true,
+    "conversationSchema": true
+  }
+}
