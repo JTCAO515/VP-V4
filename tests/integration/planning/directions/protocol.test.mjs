@@ -25,3 +25,8 @@ test('UUID spelling is canonical for receipt comparison while original operation
  const p=submit();p.conversationId=p.conversationId.toUpperCase();p.taskId=p.taskId.toUpperCase();p.memoryBasis=[{id:id.toUpperCase(),revision:1}];
  const normalized=directionsParams('submit',p);assert.equal(normalized.conversationId,p.conversationId.toLowerCase());assert.equal(normalized.taskId,p.taskId.toLowerCase());assert.equal(normalized.memoryBasis[0].id,id.toLowerCase());assert.equal(p.conversationId,p.conversationId.toUpperCase());
 });
+
+test('current goal text retains accepted multiline and whitespace semantics, without changing bounds',()=>{
+ const p={...submit(),text:'  Shanghai and Beijing\nDates unknown; food and walking.  '};const normalized=directionsParams('submit',p);assert.ok(normalized);assert.equal(normalized.text,p.text);
+ assert.equal(directionsParams('submit',{...p,text:' \n '}),null);assert.equal(directionsParams('submit',{...p,text:'x'.repeat(4001)}),null);
+});

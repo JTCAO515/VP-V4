@@ -20,7 +20,7 @@ export function directionsParams(action:DirectionsAction,v:unknown):Row|null{
   const keys=['conversationId','goalId','expectedGoalVersion','parentMessageId','messageId','messageKey','threadId','turnId','taskId','taskKey','planningPolicyId','locale','text','memoryBasis','expectedSourceSequence','expectedIntakeRevision','expectedIntakeDigest','intake','useSavedPace','expectedProfileRevision'];
   if(!exact(v,keys)||!['conversationId','goalId','parentMessageId','messageId','messageKey','threadId','turnId','taskId','taskKey','planningPolicyId'].every(k=>uuid(v[k]))||v.taskId===v.turnId||v.messageId===v.parentMessageId
    ||!integer(v.expectedGoalVersion,1,9999)||!integer(v.expectedSourceSequence,1,999999)||!integer(v.expectedIntakeRevision,0,999)||!(v.expectedIntakeRevision===0?v.expectedIntakeDigest===null:digest(v.expectedIntakeDigest))
-   ||!['zh','en'].includes(String(v.locale))||!text(v.text,4000)||!memories(v.memoryBasis)||!parseDirectionsIntake(v.intake)||typeof v.useSavedPace!=='boolean'
+   ||!['zh','en'].includes(String(v.locale))||typeof v.text!=='string'||!v.text.trim()||v.text.length>4000||!memories(v.memoryBasis)||!parseDirectionsIntake(v.intake)||typeof v.useSavedPace!=='boolean'
    ||!(v.expectedProfileRevision===null||integer(v.expectedProfileRevision,0,9007199254740990))||v.useSavedPace&&v.expectedProfileRevision===null)return null;
   return canonicalParams(v);
  }
