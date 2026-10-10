@@ -245,3 +245,78 @@ extension NativeTravelDirectionsTests {
         }
     }
 }
+
+extension NativeTravelDirectionsTests {
+    @MainActor private func localPaceSnapshot(revision: Int = 5, state: String = "explicit") throws -> Data {
+        try JSONSerialization.data(withJSONObject: ["schemaVersion": "travel-pace/1", "revision": revision, "state": state,
+            "travelPace": "relaxed", "scope": "account", "purpose": "local_trip_planning", "noticeVersion": "local-planning-cross-trip-v1",
+            "operationId": "11111111-1111-4111-8111-111111111111"])
+    }
+    @MainActor private func localPaceProjection(trip: String) throws -> Data {
+        try JSONSerialization.data(withJSONObject: ["schemaVersion": "task-travel-pace/1", "tripId": trip, "travelPace": "relaxed",
+            "source": "profile", "sourceRevision": 5, "sourceOperationId": "11111111-1111-4111-8111-111111111111", "purpose": "local_trip_planning"])
+    }
+    @MainActor private func localPaceKey() -> NativeTravelDirectionsLocalPaceStore.Key {
+        .init(scope: .init(endpoint: "http://127.0.0.1:59321", subject: "owner", mobileEpoch: 1, generation: 1),
+            tripID: "22222222-2222-4222-8222-222222222222", artifactID: "33333333-3333-4333-8333-333333333333", revision: 1)
+    }
+    @MainActor func testLocalSavedPaceUsesOriginalProjectionAndBothReadClocks() async throws {
+        let key = localPaceKey(); var wall = 1000.0, uptime = 100.0
+        let store = NativeTravelDirectionsLocalPaceStore(wall: { wall }, uptime: { uptime })
+        let snapshot = try localPaceSnapshot(), projection = try localPaceProjection(trip: key.tripID)
+        var reads = 0
+        await store.load(key: key, current: { key }, snapshot: { reads += 1; return snapshot }, project: { body in
+            let request = try XCTUnwrap(JSONSerialization.jsonObject(with: body) as? [String: Any])
+            XCTAssertEqual(request["tripId"] as? String, key.tripID)
+            XCTAssertEqual(request["expectedSourceRevision"] as? Int, 5)
+            XCTAssertEqual(request["useSaved"] as? Bool, true)
+            XCTAssertTrue(request["currentPace"] is NSNull)
+            return projection
+        })
+        XCTAssertEqual(reads, 2)
+        XCTAssertEqual(store.visible(current: key)?.sourceRevision, 5)
+        wall = 999; XCTAssertNil(store.visible(current: key), "Wall clock rollback cannot prolong qualification")
+        wall = 1000; uptime = 99; XCTAssertNil(store.visible(current: key), "Uptime rollback cannot prolong qualification")
+        uptime = 130; XCTAssertNil(store.visible(current: key))
+    }
+    @MainActor func testLocalSavedPacePauseCorrectionErasureAndLateScopeCannotRevivePreview() async throws {
+        let key = localPaceKey(), explicit = try localPaceSnapshot(), projection = try localPaceProjection(trip: key.tripID)
+        let paused = try localPaceSnapshot(state: "paused")
+        let store = NativeTravelDirectionsLocalPaceStore()
+        var projects = 0
+        await store.load(key: key, current: { key }, snapshot: { paused }, project: { _ in projects += 1; return projection })
+        XCTAssertNil(store.visible(current: key)); XCTAssertEqual(projects, 0)
+        var reads = 0
+        let corrected = try localPaceSnapshot(revision: 6)
+        await store.load(key: key, current: { key }, snapshot: { reads += 1; return reads == 1 ? explicit : corrected }, project: { _ in projection })
+        XCTAssertNil(store.visible(current: key))
+        await store.load(key: key, current: { key }, snapshot: { explicit }, project: { _ in projection })
+        XCTAssertNotNil(store.visible(current: key))
+        store.applyErasure(scope: key.scope, floor: 5)
+        XCTAssertNil(store.visible(current: key))
+        await store.load(key: key, current: { key }, snapshot: { explicit }, project: { _ in projection })
+        XCTAssertNil(store.visible(current: key), "A fresh read cannot resurrect the erased revision")
+        let lateStore = NativeTravelDirectionsLocalPaceStore()
+        var live: NativeTravelDirectionsLocalPaceStore.Key? = key
+        var continuation: CheckedContinuation<Data, Error>?
+        let loading = Task { await lateStore.load(key: key, current: { live }, snapshot: {
+            try await withCheckedThrowingContinuation { continuation = $0 }
+        }, project: { _ in projection }) }
+        for _ in 0..<100 where continuation == nil { await Task.yield() }
+        let pending = try XCTUnwrap(continuation); live = nil; lateStore.clear(); pending.resume(returning: explicit)
+        await loading.value
+        XCTAssertNil(lateStore.projection)
+    }
+    @MainActor func testLocalSavedPacePreviewDoesNotAlterSavedDraftOrMakeTripGrant() throws {
+        let content = try NativeTravelDirectionsContent.decode(self.content())
+        let original = try XCTUnwrap(content.draft?.days)
+        let preview = NativeTravelDirectionsLocalPacePreview.days(original, pace: .relaxed, chinese: false)
+        XCTAssertEqual(preview.count, 10)
+        XCTAssertEqual(preview.last?.city, "Beijing")
+        XCTAssertEqual(preview[1].activities, ["Leave free time; activities undecided"])
+        XCTAssertTrue(preview.allSatisfy(\.fixed))
+        XCTAssertEqual(content.draft?.days.map(\.activities), original.map(\.activities))
+        XCTAssertNil(content.intake.currentPace)
+        XCTAssertEqual(content.draft?.paceSource, "none")
+    }
+}

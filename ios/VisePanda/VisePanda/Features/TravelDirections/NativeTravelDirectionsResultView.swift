@@ -67,6 +67,8 @@ struct NativeTravelDirectionsResultView: View {
                             .font(.footnote)
                     }
                     if let draft = content.draft {
+                        NativeTravelDirectionsLocalPacePreviewView(record: record, content: content, session: session,
+                            chinese: chinese, active: active && phase == .active && store.pending == nil)
                         ForEach(Array(draft.limitations.enumerated()), id: \.offset) { _, line in Text(line).font(.footnote) }
                         if !draft.days.isEmpty {
                             TextField(t("明确开始日期 YYYY-MM-DD", "Explicit start date YYYY-MM-DD"), text: $startDate)
@@ -161,5 +163,70 @@ struct NativeTravelDirectionsTripReview: View {
                   pending.proposal.status == "pending", !pending.proposal.stale else { failed = true; return }
             reference = trips.confirmationReference
         }
+    }
+}
+
+
+private struct NativeTravelDirectionsLocalPacePreviewView: View {
+    let record: NativeFiveResultRecord
+    let content: NativeTravelDirectionsContent
+    let session: NativeSession
+    let chinese: Bool
+    let active: Bool
+    @State private var local = NativeTravelDirectionsLocalPaceStore()
+    @Environment(\.scenePhase) private var phase
+    private func t(_ zh: String, _ en: String) -> String { chinese ? zh : en }
+    private var key: NativeTravelDirectionsLocalPaceStore.Key? {
+        guard active, phase == .active, record.current, content.intake.currentPace == nil,
+              let scope = session.dataScope, let trip = record.source.tripId,
+              content.draft?.days.isEmpty == false else { return nil }
+        return .init(scope: scope, tripID: trip, artifactID: record.artifactID, revision: record.revision)
+    }
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(t("保存节奏 · 本机预览", "Saved pace · On-device preview")).font(.headline)
+            Text(t("只用于此设备的临时方向预览，不更改已保存草稿、提交数据或行程提议。", "Used only for a temporary preview on this device. It does not change the saved draft, submitted data or a Trip proposal."))
+                .font(.footnote)
+            if content.intake.currentPace != nil {
+                Text(t("当前明确节奏优先，本次不读取保存节奏。", "Your explicit current pace takes priority; saved pace is not read."))
+                    .font(.footnote)
+            } else if let key {
+                Button(t("读取并本机预览保存节奏", "Read saved pace for an on-device preview")) {
+                    Task {
+                        if let erased = session.currentProfileDataErasure,
+                           (try? session.communitySafetyActor()) == erased.actor {
+                            local.applyErasure(scope: erased.actor.scope, floor: erased.paceFloor)
+                        }
+                        await local.load(key: key, current: { self.key }, snapshot: { try await session.memoryRequest(method: "GET") },
+                            project: { try await session.memoryRequest(path: "api/memory/native/v1/travel-pace/project", method: "POST", body: $0) })
+                    }
+                }.disabled(local.busy).accessibilityIdentifier("directions.localPace.preview")
+                TimelineView(.periodic(from: .now, by: 1)) { _ in
+                    if let projection = local.visible(current: self.key), let pace = projection.travelPace {
+                        Text(t("Profile 节奏 \(pace.label(chinese: true)) · 原版本 \(projection.sourceRevision ?? 0)", "Profile pace \(pace.label(chinese: false)) · Source revision \(projection.sourceRevision ?? 0)"))
+                            .font(.footnote).accessibilityIdentifier("directions.localPace.source")
+                        ForEach(NativeTravelDirectionsLocalPacePreview.days(content.draft?.days ?? [], pace: pace, chinese: chinese)) { day in
+                            Text(t("第 \(day.relativeDay) 天 · \(day.city)", "Day \(day.relativeDay) · \(day.city)")).font(.headline)
+                            ForEach(Array(day.activities.enumerated()), id: \.offset) { _, value in Text(value) }
+                        }
+                        Button(t("本次不用保存节奏", "Skip saved pace this time")) { local.clear() }
+                    } else if local.busy { ProgressView() }
+                    else if local.notice != nil {
+                        Text(t("保存节奏无资格、已变化或读取已过期。请重新读取；不会用默认值替代。", "Saved pace is ineligible, changed or expired. Re-read it; no default value is substituted."))
+                            .font(.footnote)
+                    }
+                }
+            } else {
+                Text(t("本机保存节奏资格读取需要已关联的真实行程；未知日期方向仍可正常保存。", "Saved pace qualification requires a real linked Trip. Directions with unknown dates can still be saved."))
+                    .font(.footnote)
+            }
+        }
+        .onChange(of: key) { _, _ in local.clear() }
+        .onChange(of: session.currentProfileDataErasure?.id) { _, _ in
+            guard let erased = session.currentProfileDataErasure,
+                  (try? session.communitySafetyActor()) == erased.actor else { return }
+            local.applyErasure(scope: erased.actor.scope, floor: erased.paceFloor)
+        }
+        .onDisappear { local.clear() }
     }
 }

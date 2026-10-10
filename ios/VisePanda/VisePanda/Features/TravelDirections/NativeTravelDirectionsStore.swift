@@ -149,3 +149,92 @@ final class NativeTravelDirectionsStore {
             city: $0.destination, activities: $0.activities, fixed: false) })
     }
 }
+
+/// Reuses only the existing local-planning Profile projection. This consumer has
+/// no submit/edit/bind/save method and never passes saved pace to the directions API.
+@MainActor @Observable
+final class NativeTravelDirectionsLocalPaceStore {
+    struct Key: Equatable {
+        let scope: NativeDataScope
+        let tripID: String
+        let artifactID: String
+        let revision: Int
+    }
+    private(set) var key: Key?
+    private(set) var projection: NativeTaskTravelPace?
+    private(set) var busy = false
+    private(set) var notice: String?
+    private var generation = UUID()
+    private var erasureScope: NativeDataScope?
+    private var erasureFloor = 0
+    private var beganWall = 0.0
+    private var beganUptime = 0.0
+    private let wall: () -> TimeInterval
+    private let uptime: () -> TimeInterval
+    init(wall: @escaping () -> TimeInterval = { Date().timeIntervalSince1970 },
+         uptime: @escaping () -> TimeInterval = { ProcessInfo.processInfo.systemUptime }) {
+        self.wall = wall; self.uptime = uptime
+    }
+    func clear() {
+        generation = UUID(); key = nil; projection = nil; busy = false
+        beganWall = 0; beganUptime = 0; notice = nil
+    }
+    func applyErasure(scope: NativeDataScope, floor: Int) {
+        guard floor > 0 else { return }
+        if erasureScope != scope { erasureScope = scope; erasureFloor = 0 }
+        guard floor > erasureFloor else { return }
+        erasureFloor = floor
+        if key?.scope == scope { clear(); notice = "profileCleared" }
+    }
+    func visible(current: Key?) -> NativeTaskTravelPace? {
+        guard let current, key == current, let projection,
+              erasureScope == current.scope, (projection.sourceRevision ?? 0) > erasureFloor,
+              clocksCurrent() else { return nil }
+        return projection
+    }
+    private func clocksCurrent() -> Bool {
+        let w = wall() - beganWall, u = uptime() - beganUptime
+        return w.isFinite && u.isFinite && (0..<30).contains(w) && (0..<30).contains(u)
+    }
+    func load(key target: Key, current: @escaping () -> Key?,
+              snapshot: () async throws -> Data, project: @escaping (Data) async throws -> Data) async {
+        guard current() == target, UUID(uuidString: target.tripID) != nil,
+              UUID(uuidString: target.artifactID) != nil, (1...1000).contains(target.revision) else { return }
+        clear()
+        if erasureScope != target.scope { erasureScope = target.scope; erasureFloor = 0 }
+        key = target; let own = generation; busy = true
+        beganWall = wall(); beganUptime = uptime()
+        defer { if generation == own { busy = false } }
+        do {
+            let bytes = try await snapshot()
+            guard generation == own, current() == target, !Task.isCancelled else { return }
+            guard bytes.count <= 32_000 else { throw NativeDataError.invalidResponse }
+            let source = try JSONDecoder().decode(NativeTravelPaceSnapshot.self, from: bytes)
+            guard source.valid, source.state == "explicit", source.revision > erasureFloor,
+                  clocksCurrent() else { throw NativeDataError.staleSessionResponse }
+            let value = try await NativeTaskTravelPaceReader.read(tripID: target.tripID, choice: .saved,
+                expectedSourceRevision: source.revision, currentScope: { current()?.scope }, request: { body in
+                    let response = try await project(body)
+                    guard response.count <= 32_000 else { throw NativeDataError.invalidResponse }
+                    return response
+                })
+            guard generation == own, current() == target, !Task.isCancelled else { return }
+            guard value.source == "profile", value.sourceRevision == source.revision,
+                  value.sourceOperationId == source.operationId, value.travelPace == source.travelPace,
+                  value.valid(for: target.tripID, choice: .saved), source.revision > erasureFloor else { throw NativeDataError.staleSessionResponse }
+            // Re-read the sole Profile authority after projection; pause/revoke/Undo,
+            // legacy writes and correction must not retain an earlier qualification.
+            let latestBytes = try await snapshot()
+            guard generation == own, current() == target, !Task.isCancelled else { return }
+            guard latestBytes.count <= 32_000 else { throw NativeDataError.invalidResponse }
+            let latest = try JSONDecoder().decode(NativeTravelPaceSnapshot.self, from: latestBytes)
+            guard latest.valid, latest.state == "explicit", latest.revision == source.revision,
+                  latest.operationId == source.operationId, latest.travelPace == source.travelPace,
+                  latest.revision > erasureFloor, clocksCurrent() else { throw NativeDataError.staleSessionResponse }
+            projection = value; notice = nil
+        } catch {
+            guard generation == own, current() == target else { return }
+            projection = nil; notice = "unavailable"
+        }
+    }
+}
