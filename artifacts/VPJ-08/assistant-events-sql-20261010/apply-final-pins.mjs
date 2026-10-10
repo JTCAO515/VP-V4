@@ -1,0 +1,2 @@
+import{readFileSync}from'node:fs';import{sql}from'../../../tests/integration/cost/fixtures/postgres-rpc.mjs';const root='artifacts/VPJ-08/assistant-events-sql-20261010/';
+const r=await sql('vpj08-events-sql-20261010','begin;'+['source-catalog.candidate.sql','schema-pins.candidate.sql','turn-schema.candidate.sql'].map(n=>readFileSync(root+n,'utf8')).join('\n')+'commit;');console.log(r.stdout+r.stderr);console.log('final1b8 exact catalog candidates own fixture apply exit',r.code);process.exitCode=r.code;

@@ -1,0 +1,67 @@
+{
+  "provenance": "explicit reviewed definition measurements only, not accepted pin updates",
+  "changes": {
+    "profile_data_private.schema_v1()": {
+      "before": "25d8a26f2729eb3532e3b7bf8b9c47c9",
+      "after": "19b69eb1a125238dfc516162819161df"
+    },
+    "turn_data_private.source_v1(uuid,uuid)": {
+      "before": "f3358ca638b58c9a1cd763893ccb2faf",
+      "after": "b0af550e60e5b264c09f6cf120ac1933"
+    },
+    "turn_data_private.schema_supported_v1()": {
+      "before": "2050d5036779ee3e84cc5fadf340a1fb",
+      "after": "ac007953971973c8a75e20ee323910ed"
+    },
+    "turn_data_private.write_hooks_valid_v1()": {
+      "before": "326935de538615613ded3f6fb3bc6dff",
+      "after": "5db8c284153852c56c13ee6cb81febd2"
+    },
+    "result_data_private.schema_supported_v1()": {
+      "before": "cf3d9ccb3e67706194fbbc2d44272b39",
+      "after": "411c44beb0511262ec425e7f65fc29cf"
+    },
+    "turn_data_private.lock_source_v1(uuid,jsonb)": {
+      "before": "e2b151a0b15282bc76d19e4b5c1c99fd",
+      "after": "4a3131e65308ef1a0cb9d8ae180312c9"
+    },
+    "turn_data_private.erase_source_v1(uuid,jsonb)": {
+      "before": "b5ec04e2994655a1ef4ad8a19e93a934",
+      "after": "460d6cadba9dcd99c98a8de1f90c42ba"
+    },
+    "conversation_data_private.schema_supported_v1()": {
+      "before": "fc76b5808b9f7f26075abaf44b37ab91",
+      "after": "c40c7e321f215e333a55d23e533ceb45"
+    },
+    "conversation_data_private.source_v1(uuid,text,uuid)": {
+      "before": "f53ca3e7e9203f87e4ca92187e0c845e",
+      "after": "18cbd02b5f99d2d4c8115324e8fccb88"
+    },
+    "conversation_data_private.lock_source_v1(uuid,jsonb)": {
+      "before": "c4028b3ee0e256430869a7324b12bb23",
+      "after": "edfa74f84c2bc73a5c7641e3138b3f51"
+    },
+    "conversation_data_private.erase_source_v1(uuid,jsonb)": {
+      "before": "5626307a0645240e5362c2b3a0885495",
+      "after": "7832c2bb1c5e63103aa83a9362cbc3a3"
+    }
+  },
+  "added": {
+    "turn_private.assistant_event_link_v1(uuid,uuid,uuid)": "7c683e0d00b0319d79349f58fd27b2ff",
+    "turn_private.append_assistant_event_v1(text,text)": "28bd94a4b0ae3a4a34c961c055811211",
+    "turn_private.collect_assistant_turn_events_v1(uuid)": "bde26b55bf9ca5014b29482bc9b1de00",
+    "turn_private.assistant_event_source_hook_v1()": "d78c2544495e5abf37b8985f877143b4",
+    "turn_private.assistant_event_eligible_v1(turn_private.assistant_events_v1,uuid)": "6c41275b576b225d78255e15e5c77470",
+    "public.read_assistant_events_v1(uuid,uuid,bigint,integer)": "043f05693d5c0dcbab534d2f778b23c7",
+    "turn_private.assistant_event_new_conversation_v1()": "fbbc2940eb5cbe22488e5d67491d044f",
+    "turn_private.assistant_event_erase_authorized_v1(turn_private.assistant_events_v1)": "8c9998ccbeb8766c6ccc3174c1a652a4",
+    "turn_private.retire_assistant_event_v1(uuid,bigint)": "51937839fe782a99a2508793c7688ef6",
+    "turn_private.assistant_event_immutable_v1()": "5f570729e94eafbbbcc4663f9b1b7d06",
+    "turn_private.assistant_event_erase_source_v1()": "aaaf591f41f56058ca34403ec0c8af6f",
+    "turn_private.assistant_delivery_source_v1(uuid,jsonb)": "906db0b9934c07bbe8612550f9a1e6cd",
+    "turn_private.lock_assistant_delivery_v1(uuid,jsonb,jsonb)": "989985a3a4a42f1340ba4404f6f835f7",
+    "turn_private.retire_assistant_delivery_v1(uuid,jsonb,jsonb)": "4e82e5d16bb03e1e189f8594838de17e",
+    "turn_private.cancel_unclaimable_turn_v1(uuid,uuid)": "299da33704bf5cc53b65ac264ebc0472"
+  },
+  "unchanged": 94
+}

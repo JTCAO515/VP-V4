@@ -1,0 +1,62 @@
+public.claim_turn_work() 28
+turn_data_private.sources_v1() 43
+profile_data_private.schema_v1() 29
+profile_data_private.sources_v1() 40
+privacy_private.guard_trip_write() 18
+result_data_private.relations_v1() 248
+turn_data_private.hooks_valid_v1() 7
+turn_data_private.guard_source_v1() 21
+result_data_private.guard_source_v1() 20
+conversation_data_private.sources_v1() 48
+export_private.bump_memory_source_v1() 20
+profile_data_private.empty_copies_v1() 7
+export_private.profile_hooks_valid_v1() 14
+profile_data_private.guard_profile_v1() 44
+public.cancel_chat_turn(p_turn_id uuid) 19
+turn_data_private.schema_supported_v1() 19
+export_private.profile_source_v1(u uuid) 51
+result_data_private.guard_core_copy_v1() 18
+turn_data_private.runtime_supported_v1() 21
+turn_data_private.write_hooks_valid_v1() 9
+profile_data_private.guard_operation_v1() 15
+profile_data_private.guard_watermark_v1() 10
+result_data_private.schema_supported_v1() 9
+turn_data_private.export_source_v1(u uuid) 71
+conversation_data_private.guard_source_v1() 66
+export_private.bump_entitlement_source_v1() 17
+turn_data_private.source_v1(u uuid, t uuid) 113
+conversation_data_private.guard_core_copy_v1() 19
+conversation_data_private.schema_supported_v1() 32
+export_private.profile_copies_valid_v1(v jsonb) 10
+privacy_private.guard_linked_delete_entity_v1() 46
+privacy_private.guard_linked_delete_export_v1() 15
+privacy_private.guard_memory_delete_derived_v1() 40
+result_data_private.infrastructure_supported_v1() 46
+turn_data_private.graph_source_v1(u uuid, t uuid) 61
+result_data_private.source_v1(u uuid, root_n uuid) 153
+turn_data_private.source_key_v1(rel text, v jsonb) 9
+turn_data_private.lock_source_v1(u uuid, src jsonb) 30
+turn_data_private.erase_source_v1(u uuid, src jsonb) 34
+privacy_private.guard_linked_delete_budget_insert_v1() 8
+result_data_private.lock_source_v1(u uuid, source_n jsonb) 34
+result_data_private.erase_source_v1(u uuid, source_n jsonb) 28
+turn_data_private.source_key_fenced_v1(rel text, pk_n jsonb) 9
+conversation_data_private.lock_source_v1(u uuid, source_n jsonb) 33
+conversation_data_private.erase_source_v1(u uuid, source_n jsonb) 42
+turn_private.terminal(p_turn uuid, p_state text, p_attempt integer) 24
+export_private.turn_source_current_v1(j export_private.core_jobs_v1) 18
+export_private.memory_source_current_v1(j export_private.core_jobs_v1) 14
+export_private.profile_source_current_v1(j export_private.core_jobs_v1) 22
+turn_data_private.progress_source_v1(u uuid, ids uuid[], request_n uuid) 21
+result_data_private.progress_source_v1(u uuid, ids uuid[], request_n uuid) 21
+export_private.entitlement_source_current_v1(j export_private.core_jobs_v1) 9
+conversation_data_private.source_v1(u uuid, root_kind_n text, root_id_n uuid) 155
+conversation_data_private.progress_source_v1(u uuid, ids uuid[], request_n uuid) 21
+turn_private.claim_text_mode(p_owner_id uuid, p_policy_id uuid, p_context_mode text) 42
+result_data_private.source_member_v1(relation_n text, v jsonb, refs_n jsonb, jobs_n uuid[]) 32
+public.append_chat_turn_event(p_turn_id uuid, p_event_id text, p_event_type text, p_state text) 32
+export_private.entitlement_commit_progress_v1(j export_private.core_jobs_v1, v jsonb, l uuid, g integer) 15
+export_private.turn_commit_qualifies_v1(j export_private.core_jobs_v1, modules jsonb, l uuid, g integer) 15
+export_private.profile_commit_qualifies_v1(j export_private.core_jobs_v1, modules jsonb, l uuid, g integer) 15
+export_private.memory_commit_progress_v1(j export_private.core_jobs_v1, v jsonb, p_lease uuid, p_gen integer) 18
+

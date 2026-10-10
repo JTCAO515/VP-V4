@@ -1,0 +1,1 @@
+exact new tables RLS, 24 table privilege negatives, narrow authenticated read, 14 internal functions nonpublic/nonclient PASS; candidate ACL own fixture, no target permissions
