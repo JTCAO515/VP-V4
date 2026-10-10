@@ -1,0 +1,22 @@
+--- a/ios/VisePanda/VisePanda/Features/ServiceOperations/NativeServiceOperationStore.swift
++++ b/ios/VisePanda/VisePanda/Features/ServiceOperations/NativeServiceOperationStore.swift
+@@ -3,6 +3,8 @@
+ import CoreFoundation
+ 
+ @MainActor @Observable final class NativeServiceOperationStore {
++    var journalObservation: NativeJournalDataObservation?
++
+     private(set) var cases: [NativeServiceProjection] = []
+     private(set) var capacity: NativeServiceCapacity?
+     private(set) var pending: NativeServiceOperationPending?
+@@ -87,8 +89,10 @@
+                 value = result["receipt"] as Any
+             }
+             let result = try NativeServiceOperationReceipt.decode(value, command: frozen)
++            let journalTicket = journalObservation?.begin()
+             try complete(original); pending = nil; receipt = result; notice = nil
+             cases = []; capacity = nil; deadline = 0
++            journalObservation?.finish(journalTicket, try frozen.operationId)
+         } catch { if own == generation { notice = Self.code(error); if notice == "CASE_OPERATION_ERASED" { erased = true } } }
+     }
+     /// Explicitly stops device recovery only. Server erasure provides no outcome or Undo proof.

@@ -1,0 +1,21 @@
+--- a/ios/VisePanda/VisePanda/Features/CommunitySubmission/NativeCommunityStore.swift
++++ b/ios/VisePanda/VisePanda/Features/CommunitySubmission/NativeCommunityStore.swift
+@@ -4,0 +5,2 @@
++    var journalObservation: NativeJournalDataObservation?
++
+@@ -100,0 +103,2 @@
++            let journalEligible: Bool = { switch outcome { case .deleted: true; case .operation(_, let state, _): state == "committed"; default: false } }()
++            let journalTicket = journalEligible ? journalObservation?.begin() : nil
+@@ -101,0 +106 @@
++            journalObservation?.finish(journalTicket, command.operationID)
+@@ -114,0 +120,2 @@
++                let journalEligible: Bool = { switch outcome { case .deleted: true; case .operation(_, let state, _): state == "committed"; default: false } }()
++            let journalTicket = journalEligible ? journalObservation?.begin() : nil
+@@ -115,0 +123 @@
++                journalObservation?.finish(journalTicket, command.operationID)
+@@ -134 +142,4 @@
+-            do { try complete(pending) } catch { journalReady = false; storageReady = false; throw error }; self.pending = nil; apply(outcome, command: command)
++            let journalEligible: Bool = { switch outcome { case .deleted: true; case .operation(_, let state, _): state == "committed"; default: false } }()
++            let journalTicket = journalEligible ? journalObservation?.begin() : nil
++                do { try complete(pending) } catch { journalReady = false; storageReady = false; throw error }; self.pending = nil; apply(outcome, command: command)
++                journalObservation?.finish(journalTicket, command.operationID)

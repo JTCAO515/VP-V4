@@ -1,0 +1,54 @@
+[
+  {
+    "argv": [
+      "xcrun",
+      "simctl",
+      "bootstatus",
+      "864F0FF6-AEEB-4637-A15F-BDD717D8132C",
+      "-b"
+    ],
+    "exitCode": 0
+  },
+  {
+    "argv": [
+      "xcodebuild",
+      "test-without-building",
+      "-project",
+      "ios/VisePanda/VisePanda.xcodeproj",
+      "-scheme",
+      "VisePanda",
+      "-derivedDataPath",
+      "/tmp/vpj58-journal-native-r1-derived",
+      "-destination",
+      "platform=iOS Simulator,id=864F0FF6-AEEB-4637-A15F-BDD717D8132C",
+      "CODE_SIGNING_ALLOWED=YES",
+      "CODE_SIGN_IDENTITY=-",
+      "-parallel-testing-enabled",
+      "NO",
+      "-collect-test-diagnostics",
+      "never",
+      "-only-testing:VisePandaTests/NativeJournalDataTests/notificationSecretAskCredentialAndOldEpochAreNeverExportedOrCountedEmpty()",
+      "-resultBundlePath",
+      "/tmp/vpj58-journal-failedpoint-r2/tests.xcresult"
+    ],
+    "exitCode": 0
+  },
+  {
+    "argv": [
+      "xcrun",
+      "simctl",
+      "shutdown",
+      "864F0FF6-AEEB-4637-A15F-BDD717D8132C"
+    ],
+    "exitCode": 0
+  },
+  {
+    "argv": [
+      "xcrun",
+      "simctl",
+      "delete",
+      "864F0FF6-AEEB-4637-A15F-BDD717D8132C"
+    ],
+    "exitCode": 0
+  }
+]

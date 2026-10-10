@@ -112,6 +112,7 @@ struct NativeCommunitySubmissionView: View {
         action?.cancel(); action = Task { await work(actor) }
     }
     private func reload() async {
+        store.journalObservation = session.journalDataObservation(.community)
         hide(); store.bind(actor)
         guard let actor else { return }
         store.restore(actor) { try session.communityRecovery(actor: actor) }

@@ -1,0 +1,10 @@
+--- a/ios/VisePanda/VisePanda/Features/CommunityExperience/NativeExperienceView.swift
++++ b/ios/VisePanda/VisePanda/Features/CommunityExperience/NativeExperienceView.swift
+@@ -104,6 +104,7 @@
+     }
+     private func hide() { action?.cancel(); action = nil; confirmation = nil; place = nil; store.suspend() }
+     private func reload(_ actor: NativeCommunitySafetyActor) async {
++        store.journalObservation = settings.nativeSession.journalDataObservation(.experience)
+         store.restore(actor) { try access.read(actor) }
+         if let initialSubmissionID { await load(["action": "preview", "submissionId": initialSubmissionID], actor: actor) }
+         else { await page(actor) }
