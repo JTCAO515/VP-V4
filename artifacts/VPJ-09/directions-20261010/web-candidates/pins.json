@@ -33,7 +33,7 @@
     "path": "components/canvas/TripDirectionsResult.tsx",
     "candidate": "artifacts/VPJ-09/directions-20261010/web-candidates/TripDirectionsResult.tsx.txt",
     "before": "ABSENT",
-    "afterSHA256": "06dd3499f1a50737583ecc6892f97fd07ec843e47461a730a9452e9af8b9100e"
+    "afterSHA256": "4ff8c206dd20cfa109c229da20ba00b0b0efe02d696aff3f863e1a5a93983a32"
   },
   {
     "path": "components/canvas/TripDirectionsResult.module.css",

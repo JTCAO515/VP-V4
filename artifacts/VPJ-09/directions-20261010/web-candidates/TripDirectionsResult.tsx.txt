@@ -15,9 +15,10 @@ export function TripDirectionsResult({tripId,tripVersion,locale,bindBlocked,onPr
  const [refresh,setRefresh]=useState(0),[busy,setBusy]=useState(false),[edit,setEdit]=useState<Edit|null>(null),[startDate,setStartDate]=useState(''),[notice,setNotice]=useState('');
  const pending=useRef<{action:string;bytes:string}|null>(null);
  useEffect(()=>{
-  const reload=()=>{generation.current++;setRead(null);setEdit(null);setBusy(false);pending.current=null;setRefresh(n=>n+1);};
+  const reload=()=>{generation.current++;setRead(null);setBusy(false);setRefresh(n=>n+1);};
+  const actorChanged=()=>{pending.current=null;setEdit(null);reload();};
   document.addEventListener('visibilitychange',reload);window.addEventListener('pageshow',reload);window.addEventListener('online',reload);
-  const auth=createPasswordAuthClient()?.auth.onAuthStateChange(reload);
+  const auth=createPasswordAuthClient()?.auth.onAuthStateChange(actorChanged);
   return()=>{document.removeEventListener('visibilitychange',reload);window.removeEventListener('pageshow',reload);window.removeEventListener('online',reload);auth?.data.subscription.unsubscribe();};
  },[]);
  useEffect(()=>{
@@ -34,9 +35,10 @@ export function TripDirectionsResult({tripId,tripVersion,locale,bindBlocked,onPr
   }catch{if(current===generation.current&&!controller.signal.aborted)setState('unavailable');}})();
   return()=>{generation.current++;controller.abort();};
  },[tripId,tripVersion,refresh]);
- const canAct=!!read&&read.current&&read.lifecycle==='active'&&read.source.tripVersion===tripVersion&&!busy;
+ const baseCanAct=!!read&&read.current&&read.lifecycle==='active'&&read.source.tripId===tripId&&read.source.tripVersion===tripVersion&&!busy;
+ const canAct=baseCanAct&&pending.current===null;
  async function act(action:'choose'|'save'|'edit'|'bind',extra:Record<string,unknown>={},retry=false){
-  if(!read||!canAct||action==='bind'&&bindBlocked)return;
+  if(!read||!baseCanAct||!retry&&pending.current!==null||action==='bind'&&bindBlocked)return;
   const current=generation.current;
   const params={artifactId:read.artifactId,expectedRevision:action==='edit'&&edit?edit.baseRevision:read.revision,operationId:crypto.randomUUID(),...extra};
   const bytes=retry&&pending.current?.action===action?pending.current.bytes:JSON.stringify(params);
@@ -57,7 +59,7 @@ export function TripDirectionsResult({tripId,tripVersion,locale,bindBlocked,onPr
  }
  if(state==='empty')return null;
  return <section className={styles.card} aria-label={zh?'旅行方向':'Travel directions'} data-testid="trip-directions">
-  <div className={styles.header}><h2>{zh?'旅行方向与相对日草稿':'Directions and relative-day draft'}</h2><button type="button" disabled={busy} onClick={()=>{pending.current=null;setEdit(null);setRefresh(n=>n+1);}}>{zh?'刷新':'Refresh'}</button></div>
+  <div className={styles.header}><h2>{zh?'旅行方向与相对日草稿':'Directions and relative-day draft'}</h2><button type="button" disabled={busy||pending.current!==null} onClick={()=>{setEdit(null);setRefresh(n=>n+1);}}>{zh?'刷新':'Refresh'}</button></div>
   <p role="status">{state==='loading'?(zh?'正在读取原成果…':'Reading the original result…'):state==='unavailable'?(zh?'目前无法读取合资格的方向成果。':'A qualified directions result is unavailable.'):notice}</p>
   {read?<><h3>{read.content.title}</h3><p>{read.content.summary}</p><p>{zh?'日期：':'Dates: '}{read.content.intake.dates?`${read.content.intake.dates.startDate} – ${read.content.intake.dates.endDate}`:zh?'未定，可稍后补':'Unknown; add later'} · {zh?'预算：':'Budget: '}{read.content.intake.budget?`${read.content.intake.budget.currency} ${read.content.intake.budget.totalMinorUnits/100}`:zh?'未知，可跳过':'Unknown; can skip'}</p>
    {!read.current?<p>{zh?'这是原有的历史版本；当前来源已变化，不能继续修改或提交。':'Historical revision: its source changed, so actions are unavailable.'}</p>:null}
@@ -67,7 +69,7 @@ export function TripDirectionsResult({tripId,tripVersion,locale,bindBlocked,onPr
     {edit?<form onSubmit={e=>{e.preventDefault();void act('edit',{replacements:[{ordinal:edit.ordinal,destination:edit.destination.trim(),activities:edit.activities.split('\n').map(a=>a.trim()).filter(Boolean)}]});}}><label>{zh?'目的地':'Destination'}<input maxLength={80} value={edit.destination} onChange={e=>setEdit({...edit,destination:e.target.value})}/></label><label>{zh?'主题，每行一个':'One activity theme per line'}<textarea maxLength={1288} value={edit.activities} onChange={e=>setEdit({...edit,activities:e.target.value})}/></label><button type="submit" disabled={!canAct||edit.baseRevision!==read.revision}>{zh?'保存本日修改':'Save this day'}</button><button type="button" onClick={()=>setEdit(null)}>{zh?'取消修改':'Cancel edit'}</button></form>:null}
     <form onSubmit={e=>{e.preventDefault();void act('bind',{tripId,expectedTripVersion:tripVersion,startDate});}}><label>{zh?'明确开始日期后，生成同 Trip 差异':'Choose a start date to prepare the same Trip diff'}<input type="date" required value={startDate} onChange={e=>setStartDate(e.target.value)}/></label><button type="submit" disabled={!canAct||bindBlocked||read.content.draft.days.length===0}>{zh?'生成待审阅计划':'Prepare plan for review'}</button></form>
    </>:null}
-   {pending.current?<button type="button" disabled={!canAct} onClick={()=>void act(pending.current!.action as 'choose'|'save'|'edit'|'bind',{},true)}>{zh?'重试相同请求':'Retry same request'}</button>:null}
+   {pending.current?<div><button type="button" disabled={!baseCanAct} onClick={()=>void act(pending.current!.action as 'choose'|'save'|'edit'|'bind',{},true)}>{zh?'重试相同请求':'Retry same request'}</button><button type="button" disabled={busy} onClick={()=>{pending.current=null;setRefresh(n=>n+1);}}>{zh?'清除未确认请求并重新读取原成果':'Clear unresolved request and reread originals'}</button></div>:null}
   </>:null}
  </section>;
 }
