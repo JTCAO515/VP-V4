@@ -5,8 +5,10 @@ export const ASSISTANT_EVENTS_SCHEMA = "assistant-events/1";
 export const ASSISTANT_EVENTS_LIMIT = 50;
 export const ASSISTANT_EVENTS_BYTES = 65_536;
 const states = ["accepted", "planning", "retrieving", "generating", "validating", "completed", "proposal_ready", "unavailable", "failed", "cancelled"];
-type Base = Readonly<{ eventId: string; sequence: number; taskId: string; turnId: string }>;
-export type AssistantEvent = Base & (
+type Base = Readonly<{ eventId: string; sequence: number }>;
+type LiveBase = Base & Readonly<{ taskId: string; turnId: string }>;
+export type AssistantEvent =
+  (Base & Readonly<{ type: "source_retired"; retiredSequence: number }>) | LiveBase & (
   Readonly<{ type: "task_status"; status: string }> |
   Readonly<{ type: "task_progress"; tool: "evidence.lookup" | "place.read" | "constraints.evaluate" | "result.prepare"; state: "started" | "completed" | "unknown" }> |
   Readonly<{ type: "artifact_ready" | "artifact_updated" | "artifact_invalidated"; artifactId: string; revision: number; availability: "recheck" | "unavailable" }>
@@ -34,9 +36,14 @@ export function decodeAssistantEvents(value: unknown, conversationId: string, af
   const events: AssistantEvent[] = [];
   for (const event of value.events) {
     if (!record(event) || !sequence(event.sequence) || event.sequence !== previous + 1
-      || event.eventId !== `${conversationId}:${event.sequence}` || !uuid(event.taskId) || !uuid(event.turnId)) throw new Error("Invalid assistant event");
+      || event.eventId !== `${conversationId}:${event.sequence}`) throw new Error("Invalid assistant event");
     const base = ["eventId", "sequence", "taskId", "turnId", "type"];
-    if (event.type === "task_status") {
+    if (event.type === "source_retired") {
+      if (!exact(event, ["eventId", "sequence", "type", "retiredSequence"])
+        || !sequence(event.retiredSequence) || event.retiredSequence < 1 || event.retiredSequence > event.sequence) throw new Error("Invalid retirement event");
+    } else if (!uuid(event.taskId) || !uuid(event.turnId)) {
+      throw new Error("Invalid assistant source reference");
+    } else if (event.type === "task_status") {
       if (!exact(event, [...base, "status"]) || typeof event.status !== "string" || !states.includes(event.status)) throw new Error("Invalid task event");
     } else if (event.type === "task_progress") {
       if (!exact(event, [...base, "tool", "state"])
