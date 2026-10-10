@@ -26,17 +26,20 @@
    for (const key of spec.pk) {
      const type = spec.columns.find(c => c.name === key)?.type, a = prior[key], b = row[key];
      if (a === b) continue;
-@@ -55,7 +57,8 @@
+@@ -54,8 +56,10 @@
+   const tasks = ids('turn_private.service_tasks', 'id'), messages = ids('turn_private.assistant_messages', 'id');
    const artifacts = ids('turn_private.result_artifacts', 'id'), executions = ids('turn_private.planning_v2_execution_runs', 'id');
    const linkedMessages = new Set([...rows('turn_private.planning_comparisons').map(r => String(r.message_id)),
-     ...rows('turn_private.result_artifacts').map(r => String(r.input_message_id))]);
+-    ...rows('turn_private.result_artifacts').map(r => String(r.input_message_id))]);
 -  for (const spec of schema) for (const row of rows(spec.relation)) {
++    ...rows('turn_private.result_artifacts').map(r => String(r.input_message_id)),
++    ...rows('turn_private.assistant_directions_intakes_v1').map(r => String(r.message_id))]);
 +  for (const spec of exportSchema) for (const row of rows(spec.relation)) {
 +    if (spec.relation === 'turn_private.directions_operations_v1' && row.erased === true) continue;
      if ('turn_id' in row && row.turn_id !== null && !turns.has(String(row.turn_id))) return false;
      if ('task_turn_id' in row && !turns.has(String(row.task_turn_id))) return false;
      if ('task_id' in row && row.task_id !== null && !tasks.has(String(row.task_id))
-@@ -63,6 +66,9 @@
+@@ -63,6 +67,9 @@
      if ('message_id' in row && !messages.has(String(row.message_id))) return false;
      if ('artifact_id' in row && !artifacts.has(String(row.artifact_id))) return false;
      if ('execution_id' in row && !executions.has(String(row.execution_id))) return false;
@@ -46,7 +49,7 @@
      if (spec.relation === 'turn_private.service_tasks' && (!turns.has(String(row.goal_turn_id)) || !turns.has(String(row.last_turn_id)))) return false;
      if (spec.relation === 'turn_private.service_task_turns' && row.parent_turn_id !== null && !turns.has(String(row.parent_turn_id))) return false;
      // Planning's real submitter binds a follow_up message with turn_id=NULL.
-@@ -81,19 +87,20 @@
+@@ -81,19 +88,20 @@
    const item = v.items[0];
    if (!record(item) || !exact(item, ['ownerId', 'sources', 'operations', 'fences', 'sourceIdentityKeys', 'sourceRows', 'sourceAuthorities']) || item.ownerId !== owner
      || !validSourceAuthorities(item.sourceAuthorities)

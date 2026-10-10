@@ -5,8 +5,8 @@
     {
       "path": "lib/server/privacy/turn-data/export.ts",
       "beforeSHA256": "e2ff6889c28509baf7e7fff150d01a746c58cadb5444347be8e7813267d7c513",
-      "afterSHA256": "67f2b3378c7eeb23c6a281cdced9d0958da9d53211b97dff5530935354b858da",
-      "patchSHA256": "2b3544a75c1d04ada5f3288e1e3c930b9b4d6bda46f58248fe87045944b9312e"
+      "afterSHA256": "a39aecd74f7d4827f80a5b6a110da6080404c8c7bffcc6ef9dfd7dcc625ee3d5",
+      "patchSHA256": "7982b45edab465cf637fac0053fa734c0b7f3c9f9ed610cfa298813073b6d1b1"
     },
     {
       "path": "tests/integration/privacy/turn-data/export.test.mjs",
@@ -26,10 +26,11 @@
     },
     {
       "target": "tests/unit/planning/directions/turn-export-compatibility.test.mjs",
-      "SHA256": "12d75870ccd32094ad2ed24a541b09318e2d6db2e47b6e9dcf439b4318f1ae9c"
+      "SHA256": "0cbb6f72d40f17da19b1ca3cd456d4ade008eaf4df124b624f7412f9897ad4b8"
     }
   ],
   "scope": "export-only appended3 raw-row specs plus reviewed semantic row adapter; original35/schema deletion keys/operations/provenance remain unchanged; exact38groups; scrubbed permanent ops preserve null parent state; active parents qualified",
   "companionNeeded": "original export.test.mjs exactcount35\u219238; source-derived private regressions and necessary signed Turn Auth case once after lease",
-  "productSQLSHA256": "6354e482331453289311c4d7f2a363d1012a3bc9d11f0324d300b5bc8cb58584"
+  "productSQLSHA256": "6354e482331453289311c4d7f2a363d1012a3bc9d11f0324d300b5bc8cb58584",
+  "retainedInputDependency": "SQL owner must qualify retained direction intake input message in original export_source collector; result-only erased state not yet runtime verified"
 }

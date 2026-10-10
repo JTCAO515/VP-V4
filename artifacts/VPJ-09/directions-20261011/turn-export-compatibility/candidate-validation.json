@@ -1,0 +1,29 @@
+{
+  "mode": "isolated temporary copy of source and original fixtures, candidate overlays only; live shared files unchanged",
+  "command": "node --experimental-strip-types --test tests/integration/privacy/turn-data/export.test.mjs tests/unit/planning/directions/turn-export-compatibility.test.mjs",
+  "exitCode": 0,
+  "pass": 10,
+  "fail": 0,
+  "skip": 0,
+  "cleanup": "private temporary copy removed",
+  "sourceSharedAfter": {
+    "lib/server/privacy/turn-data/export.ts": "a39aecd74f7d4827f80a5b6a110da6080404c8c7bffcc6ef9dfd7dcc625ee3d5",
+    "tests/integration/privacy/turn-data/export.test.mjs": "5b2f288e9c698bfc966e437f097d6cf35f90192c80e7262e344005566389dece"
+  },
+  "sourcePrivate": [
+    {
+      "target": "lib/server/planning/directions/direction-turn-source-schema.json",
+      "SHA256": "9b6fabcb4fa1777eb3c43d2b677acaddc19f3277a0bdd2e67aeb72180aeb8343"
+    },
+    {
+      "target": "lib/server/planning/directions/turn-export-rows.ts",
+      "SHA256": "39e271a0f3cb8fb83dcdc58a1d834bf62223ab19566f41c4fb62778a5ca2aaef"
+    },
+    {
+      "target": "tests/unit/planning/directions/turn-export-compatibility.test.mjs",
+      "SHA256": "0cbb6f72d40f17da19b1ca3cd456d4ade008eaf4df124b624f7412f9897ad4b8"
+    }
+  ],
+  "logSHA256": "8b6eabe41b900510cb9ebe84bef202a8b7385746106bbce390f6f1adcd86583e",
+  "runtimeSQL": "UNRUN pending SQL retained-input final collector and precise shared leases"
+}

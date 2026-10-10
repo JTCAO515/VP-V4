@@ -56,7 +56,8 @@ function closedSourceGraph(sources: Sources): boolean {
   const tasks = ids('turn_private.service_tasks', 'id'), messages = ids('turn_private.assistant_messages', 'id');
   const artifacts = ids('turn_private.result_artifacts', 'id'), executions = ids('turn_private.planning_v2_execution_runs', 'id');
   const linkedMessages = new Set([...rows('turn_private.planning_comparisons').map(r => String(r.message_id)),
-    ...rows('turn_private.result_artifacts').map(r => String(r.input_message_id))]);
+    ...rows('turn_private.result_artifacts').map(r => String(r.input_message_id)),
+    ...rows('turn_private.assistant_directions_intakes_v1').map(r => String(r.message_id))]);
   for (const spec of exportSchema) for (const row of rows(spec.relation)) {
     if (spec.relation === 'turn_private.directions_operations_v1' && row.erased === true) continue;
     if ('turn_id' in row && row.turn_id !== null && !turns.has(String(row.turn_id))) return false;
