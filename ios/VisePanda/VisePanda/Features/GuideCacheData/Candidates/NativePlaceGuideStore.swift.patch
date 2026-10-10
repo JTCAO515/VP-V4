@@ -1,0 +1,92 @@
+--- a/ios/VisePanda/VisePanda/Features/PlaceGuide/NativePlaceGuideStore.swift
++++ b/ios/VisePanda/VisePanda/Features/PlaceGuide/NativePlaceGuideStore.swift
+@@ -4 +4,9 @@
+-@MainActor @Observable final class NativePlaceGuideStore {
++@MainActor @Observable final class NativePlaceGuideStore: NativeGuideCacheDataSource {
++    let guideCacheInstanceID = UUID()
++    private(set) var guideCacheGeneration = UUID()
++    private var cacheRevision = UUID()
++    private var qualifiedSourceIdentifiers: [String] = []
++    private var qualifiedRightsRevision: Int?
++    private var qualifiedExpiresAt: Date?
++    private var requiresExplicitRead = false
++    weak var guideCacheFollowUp: NativePlaceGuideFollowUpStore?
+@@ -18 +26,2 @@
+-    func bind(_ next: NativePlaceGuideSelection?) {
++    func bind(_ next: NativePlaceGuideSelection?, explicit: Bool = true) {
++        guard !requiresExplicitRead || explicit else { return }
+@@ -23 +32,3 @@
+-        generation = UUID(); selection = nil; ready = nil; qualifiedDigest = nil
++        generation = UUID(); guideCacheGeneration = UUID(); cacheRevision = UUID()
++        qualifiedSourceIdentifiers = []; qualifiedRightsRevision = nil; qualifiedExpiresAt = nil
++        selection = nil; ready = nil; qualifiedDigest = nil
+@@ -28,2 +39,2 @@
+-        generation = UUID(); ready = nil; busy = false; deadline = 0
+-        if !cacheAllowed { qualifiedDigest = nil; progress = .init() }
++        generation = UUID(); guideCacheGeneration = UUID(); cacheRevision = UUID(); ready = nil; busy = false; deadline = 0
++        if !cacheAllowed { qualifiedDigest = nil; progress = .init(); qualifiedSourceIdentifiers = []; qualifiedRightsRevision = nil; qualifiedExpiresAt = nil }
+@@ -37,2 +48,2 @@
+-    @discardableResult func read(replay: Bool = false, current: () -> NativeDataScope?, request: Request) async -> Bool {
+-        guard !busy, let selection, selection.valid, current() == selection.scope else { return false }
++    @discardableResult func read(replay: Bool = false, explicit: Bool = true, current: () -> NativeDataScope?, request: Request) async -> Bool {
++        guard (!requiresExplicitRead || explicit), !busy, let selection, selection.valid, current() == selection.scope else { return false }
+@@ -41,2 +52,2 @@
+-        let own = generation, started = uptime(); busy = true; notice = nil
+-        defer { if generation == own { busy = false } }
++        let own = generation, started = uptime(); busy = true; cacheRevision = UUID(); notice = nil
++        defer { if generation == own { busy = false; cacheRevision = UUID() } }
+@@ -53 +64,2 @@
+-                ready = nil; deadline = 0; qualifiedDigest = nil; progress = .init(); cacheAllowed = false; notice = reason
++                ready = nil; deadline = 0; qualifiedDigest = nil; progress = .init(); cacheAllowed = false
++                qualifiedSourceIdentifiers = []; qualifiedRightsRevision = nil; qualifiedExpiresAt = nil; notice = reason
+@@ -59,0 +72,2 @@
++            qualifiedSourceIdentifiers = value.rights.cache ? Array(Set(value.segments.flatMap { $0.sources.map(\.sourceRevisionId) })).sorted() : []
++            qualifiedRightsRevision = value.rights.revision; qualifiedExpiresAt = value.playbackExpiresAt; requiresExplicitRead = false
+@@ -64 +78 @@
+-            ready = nil; deadline = 0; progress = .init(); qualifiedDigest = nil; cacheAllowed = false; notice = "unavailable"
++            ready = nil; deadline = 0; progress = .init(); qualifiedDigest = nil; cacheAllowed = false; qualifiedSourceIdentifiers = []; qualifiedRightsRevision = nil; qualifiedExpiresAt = nil; notice = "unavailable"
+@@ -70,0 +85 @@
++        let previous = progress
+@@ -71,0 +87 @@
++        if progress != previous { cacheRevision = UUID() }
+@@ -77 +93 @@
+-    func clearUnlicensedProgress() { if !cacheAllowed { progress = .init() } }
++    func clearUnlicensedProgress() { if !cacheAllowed { progress = .init(); cacheRevision = UUID() } }
+@@ -82,2 +98,2 @@
+-        let own = generation; busy = true
+-        defer { if generation == own { busy = false } }
++        let own = generation; busy = true; cacheRevision = UUID()
++        defer { if generation == own { busy = false; cacheRevision = UUID() } }
+@@ -90 +106,2 @@
+-            self.ready = value; deadline = min(deadline, uptime() + value.remaining())
++            self.ready = value; qualifiedRightsRevision = value.rights.revision; qualifiedExpiresAt = value.playbackExpiresAt
++            deadline = min(deadline, uptime() + value.remaining())
+@@ -97 +114 @@
+-        let own = generation, operation = UUID().uuidString.lowercased(); busy = true
++        let own = generation, operation = UUID().uuidString.lowercased(); busy = true; cacheRevision = UUID()
+@@ -99 +116,2 @@
+-        defer { if generation == own { busy = false } }
++        qualifiedSourceIdentifiers = []; qualifiedRightsRevision = nil; qualifiedExpiresAt = nil
++        defer { if generation == own { busy = false; cacheRevision = UUID() } }
+@@ -106,0 +125,21 @@
++    }
++
++    func guideCacheSnapshot(current: NativeDataScope) -> NativeGuideCacheDataSnapshot? {
++        guard let selection, selection.scope == current else { return nil }
++        let completed = cacheAllowed ? Array(Set((ready?.completedSegmentIds ?? []) + Array(progress.completedSegmentIDs))).sorted() : []
++        return .init(instanceID: guideCacheInstanceID, generation: guideCacheGeneration, revision: cacheRevision,
++            selection: selection, digest: qualifiedDigest, rightsRevision: qualifiedRightsRevision, cacheAllowed: cacheAllowed,
++            sourceIdentifiers: qualifiedSourceIdentifiers, completedSegmentIDs: completed,
++            progressSegmentID: cacheAllowed ? progress.segmentID : nil, progressCharacters: cacheAllowed ? progress.characters : 0,
++            hasReady: ready != nil, busy: busy, sourceExpiresAt: qualifiedExpiresAt)
++    }
++    func clearGuideCache(expected: NativeGuideCacheDataSnapshot, current: NativeDataScope) -> Bool {
++        guard guideCacheSnapshot(current: current) == expected else { return false }
++        guideCacheFollowUp?.hideForLocalGuideCacheClear()
++        clear(); requiresExplicitRead = true
++        return guideCacheIsEmpty(current: current)
++    }
++    func guideCacheIsEmpty(current: NativeDataScope) -> Bool {
++        selection == nil && ready == nil && qualifiedDigest == nil && progress == .init()
++        && qualifiedSourceIdentifiers.isEmpty && qualifiedRightsRevision == nil && qualifiedExpiresAt == nil
++        && !cacheAllowed && !busy && notice == nil && deadline == 0

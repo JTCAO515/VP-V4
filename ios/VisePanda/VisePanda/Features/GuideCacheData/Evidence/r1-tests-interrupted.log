@@ -1,0 +1,84 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -derivedDataPath /private/tmp/vpj58-guide-cache-native-r1-3e4cfc4e-derived -destination "platform=iOS Simulator,id=6784271C-EE80-4816-9399-72F1DD58A024" CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- -parallel-testing-enabled NO "-only-testing:VisePandaTests/NativeGuideCacheDataTests" "-only-testing:VisePandaTests/NativePlaceGuideTests" "-only-testing:VisePandaTests/NativePlaceGuideAudioTests" "-only-testing:VisePandaTests/NativeVoiceAudioTests" -resultBundlePath /private/tmp/vpj58-guide-cache-native-r1-3e4cfc4e/tests.xcresult
+
+Build settings from command line:
+    CODE_SIGN_IDENTITY = -
+    CODE_SIGNING_ALLOWED = YES
+
+2026-10-08 01:32:50.483 xcodebuild[39583:1725921] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionsModels.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-08 01:32:50.483 xcodebuild[39583:1725921] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionsStore.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-08 01:32:50.483 xcodebuild[39583:1725921] warning:  The file reference for "VisePanda/Features/Readiness/NativeReadinessActionDestination.swift" is a member of multiple groups ("Profile" and "Profile"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2026-10-08 01:32:50.483 xcodebuild[39583:1725921] warning:  The file reference for "ShareIntakeCore/ShareIntakeInbox.swift" is a member of multiple groups ("ShareIntakeExtension" and "Features"); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+Writing result bundle at path:
+	/private/tmp/vpj58-guide-cache-native-r1-3e4cfc4e/tests.xcresult
+
+Test Suite 'Selected tests' started at 2026-10-08 01:32:54.878.
+Test Suite 'VisePandaTests.xctest' started at 2026-10-08 01:32:54.878.
+Test Suite 'VisePandaTests.xctest' passed at 2026-10-08 01:32:54.878.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-08 01:32:54.878.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64-apple-ios17.0-simulator
+◇ Suite NativeGuideCacheDataTests started.
+◇ Test actualEmptyInstanceDoesNotInventRecordOrSuccessReceipt() started.
+✔ Test actualEmptyInstanceDoesNotInventRecordOrSuccessReceipt() passed after 0.003 seconds.
+◇ Test retainedActualMetadataProtectedExportExcludesBodiesAndConfirmsOnlyRealCallback() started.
+✘ Test retainedActualMetadataProtectedExportExcludesBodiesAndConfirmsOnlyRealCallback() recorded an issue at NativeGuideCacheDataTests.swift:50:9: Expectation failed: try FileManager.default.attributesOfItem(atPath: url.path)[.protectionKey] as? FileProtectionType == .complete
+↳ try FileManager.default.attributesOfItem(atPath: url.path)[.protectionKey] as? FileProtectionType == .complete → <not evaluated>
+✘ Test retainedActualMetadataProtectedExportExcludesBodiesAndConfirmsOnlyRealCallback() failed after 0.014 seconds with 1 issue.
+◇ Test fixedDualClocksSessionEpochRightsAndSourceStateCannotBeRenewedOrRebased() started.
+✔ Test fixedDualClocksSessionEpochRightsAndSourceStateCannotBeRenewedOrRebased() passed after 0.005 seconds.
+◇ Test clearFencesOldInflightReadAndSaveButFreshExplicitRecheckWorks() started.
+✔ Test clearFencesOldInflightReadAndSaveButFreshExplicitRecheckWorks() passed after 0.009 seconds.
+◇ Test guideOnlyRendererClearFencesLateSpeechAndPreservesOriginalTranslation() started.
+✔ Test guideOnlyRendererClearFencesLateSpeechAndPreservesOriginalTranslation() passed after 0.006 seconds.
+◇ Test clearingGuideDoesNotStopAnActiveOtherPurposeTranslation() started.
+✔ Test clearingGuideDoesNotStopAnActiveOtherPurposeTranslation() passed after 0.003 seconds.
+◇ Test ownedExportRemovalFailureCannotBecomeSourceClearReceipt() started.
+✔ Test ownedExportRemovalFailureCannotBecomeSourceClearReceipt() passed after 0.005 seconds.
+◇ Test unlicensedPositionsAreExcludedAndActorLossPhysicallyRemovesOwnExport() started.
+✔ Test unlicensedPositionsAreExcludedAndActorLossPhysicallyRemovesOwnExport() passed after 0.005 seconds.
+✘ Suite NativeGuideCacheDataTests failed after 0.055 seconds with 1 issue.
+◇ Suite NativePlaceGuideAudioTests started.
+◇ Test sourceQualifiedPauseContinueAndExplicitGuideReplayPreserveTranslationSinglePlay() started.
+✔ Test sourceQualifiedPauseContinueAndExplicitGuideReplayPreserveTranslationSinglePlay() passed after 0.001 seconds.
+◇ Test changedReceiptOrExpiredSourceCannotContinueAndLateCallbacksAreFenced() started.
+✔ Test changedReceiptOrExpiredSourceCannotContinueAndLateCallbacksAreFenced() passed after 0.001 seconds.
+◇ Test explicitContinuationUsesWholeUnicodeBoundaryAndConservativePosition() started.
+✔ Test explicitContinuationUsesWholeUnicodeBoundaryAndConservativePosition() passed after 0.001 seconds.
+✔ Suite NativePlaceGuideAudioTests passed after 0.001 seconds.
+◇ Suite NativePlaceGuideTests started.
+◇ Test captionIncludesEveryQualifierAndRejectsChangedScopeRightsExpiryAndInventedNarrative() started.
+✔ Test captionIncludesEveryQualifierAndRejectsChangedScopeRightsExpiryAndInventedNarrative() passed after 0.006 seconds.
+◇ Test replayDoesNotSubmitAskAndActorChangeFencesLateGuideRead() started.
+✔ Test replayDoesNotSubmitAskAndActorChangeFencesLateGuideRead() passed after 0.003 seconds.
+◇ Test pendingBodyKeepsSameOperationAndRejectsAnotherOwner() started.
+VPJ28_OWNED_NATIVE_COMMAND_PATH /Users/jtsm5p/Library/Developer/CoreSimulator/Devices/6784271C-EE80-4816-9399-72F1DD58A024/data/Containers/Data/Application/7906E643-2625-4EFC-AE3E-89021340C2DB/tmp/vpj28-owned-native-new-goal.json
+✔ Test pendingBodyKeepsSameOperationAndRejectsAnotherOwner() passed after 0.008 seconds.
+◇ Test canonicalMetadataExportConsumesFinalSQLShapeAndRejectsLegacyOrPrivateFields() started.
+✔ Test canonicalMetadataExportConsumesFinalSQLShapeAndRejectsLegacyOrPrivateFields() passed after 0.001 seconds.
+✔ Suite NativePlaceGuideTests passed after 0.020 seconds.
+◇ Suite NativeVoiceAudioTests started.
+◇ Test releaseBeforePermissionRejectsLateGrantWithSameProducerIdentity() started.
+✔ Test releaseBeforePermissionRejectsLateGrantWithSameProducerIdentity() passed after 0.001 seconds.
+◇ Test duplicateReleasePublishesExactlyOneOriginalFinalAfterDeletingCopy() started.
+✔ Test duplicateReleasePublishesExactlyOneOriginalFinalAfterDeletingCopy() passed after 0.007 seconds.
+◇ Test actorChangeAndCancelDropLateFinalAndClearTemporarySource() started.
+✔ Test actorChangeAndCancelDropLateFinalAndClearTemporarySource() passed after 0.006 seconds.
+◇ Test unavailableAndDeniedNeverStartMicrophoneAndInvalidFinalIsNotTruncated() started.
+✔ Test unavailableAndDeniedNeverStartMicrophoneAndInvalidFinalIsNotTruncated() passed after 0.006 seconds.
+◇ Test interruptionAndRecordingLimitKeepMeasuredDurationWithoutRestart() started.
+✔ Test interruptionAndRecordingLimitKeepMeasuredDurationWithoutRestart() passed after 0.006 seconds.
+◇ Test exactFinalSpeechRequiresExplicitStartAndNeverReplaysSameID() started.
+✔ Test exactFinalSpeechRequiresExplicitStartAndNeverReplaysSameID() passed after 0.001 seconds.
+◇ Test finalSpeechFinishRetainsExactCharacterBoundaryAndAccountClearFencesLateCallback() started.
+✔ Test finalSpeechFinishRetainsExactCharacterBoundaryAndAccountClearFencesLateCallback() passed after 0.001 seconds.
+◇ Test cleanupFailurePreventsFinalPublishNewCaptureAndNewAccountAudio() started.
+✔ Test cleanupFailurePreventsFinalPublishNewCaptureAndNewAccountAudio() passed after 0.007 seconds.
+◇ Test actualSyntheticPCMFileMeasuresFramesAndRejectsWrongFormatAndExpiredReceipt() started.
+✔ Test actualSyntheticPCMFileMeasuresFramesAndRejectsWrongFormatAndExpiredReceipt() passed after 0.053 seconds.
+✔ Suite NativeVoiceAudioTests passed after 0.090 seconds.
+✘ Test run with 24 tests in 4 suites failed after 0.167 seconds with 1 issue.
+Testing started

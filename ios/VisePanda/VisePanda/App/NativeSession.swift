@@ -2028,6 +2028,8 @@ final class NativeSession {
         catch { failureCode="entryResumeCleanupRequired";status="storageError";return }
         do { try NativeOfflineDataStore.eraseExports() }
         catch { failureCode="offlineDataExportCleanupRequired";status="storageError";return }
+        do { try NativeGuideCacheDataStore.eraseExports() }
+        catch { failureCode="guideCacheExportCleanupRequired";status="storageError";return }
         subject=nil; mobileEpoch=nil; displayName=nil; status="signingOut"
         do { try NativePDFInbox().eraseAll() }
         catch { failureCode="pdfIntakeCleanupRequired";status="storageError";return }
@@ -2178,6 +2180,8 @@ final class NativeSession {
         catch { failureCode="materialReferenceExportCleanupRequired"; status="storageError"; return false }
         do { try NativeOfflineDataStore.eraseExports() }
         catch { failureCode = "offlineDataExportCleanupRequired"; status = "storageError"; return false }
+        do { try NativeGuideCacheDataStore.eraseExports() }
+        catch { failureCode="guideCacheExportCleanupRequired"; status="storageError"; return false }
         do { try NativeDataCoverageExportFile.eraseAll() }
         catch { failureCode="dataCoverageExportCleanupRequired"; status="storageError"; return false }
         do { try NativeExperienceExportFile.eraseAll() }
