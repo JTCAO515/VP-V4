@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { decodeTurnExportPage } from '../../../../lib/server/privacy/turn-data/export.ts';
-import { snapshot, page, actor, id, now } from '../turn-data/fixtures.mjs';
+import { snapshot, page, actor, id, now } from '../../../integration/privacy/turn-data/fixtures.mjs';
 const decode = value => decodeTurnExportPage(value, 100, actor.ownerId, now + 40000);
 test('SQL appended empty direction groups require exact38 shape and cannot be silently omitted', () => {
   const s = snapshot(); assert.equal(s.sources.length, 38); assert.ok(decode(page(s)));

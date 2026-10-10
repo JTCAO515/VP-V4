@@ -25,8 +25,8 @@
       "SHA256": "39e271a0f3cb8fb83dcdc58a1d834bf62223ab19566f41c4fb62778a5ca2aaef"
     },
     {
-      "target": "tests/integration/planning/directions/turn-export-compatibility.test.mjs",
-      "SHA256": "e39262b7a3795f3b6373214da3b09eb6fe67831ec6ce3c80658307254551d18d"
+      "target": "tests/unit/planning/directions/turn-export-compatibility.test.mjs",
+      "SHA256": "12d75870ccd32094ad2ed24a541b09318e2d6db2e47b6e9dcf439b4318f1ae9c"
     }
   ],
   "scope": "export-only appended3 raw-row specs plus reviewed semantic row adapter; original35/schema deletion keys/operations/provenance remain unchanged; exact38groups; scrubbed permanent ops preserve null parent state; active parents qualified",
