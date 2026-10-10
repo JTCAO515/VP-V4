@@ -1,0 +1,21 @@
+{
+  "base": "b92844f61aead9f15b05a027f75fbdf9b60e4fe3",
+  "sharedChanges": [],
+  "sources": [
+    {
+      "path": "ios/VisePanda/VisePanda/Features/TravelDirections/NativeTravelDirectionsResultView.swift",
+      "sha256": "34f3b00aac16b026ca0393e7b5be99108db7a5016cb9fe296c1a2664dbfc0f58"
+    },
+    {
+      "path": "ios/VisePanda/VisePandaTests/NativeTravelDirectionsTests.swift",
+      "sha256": "0fa048d19048c8c422de1e9b07fa9753b87a9ff1863a7ad4e091454dfbeba808"
+    }
+  ],
+  "cleanup": {
+    "id": "449267F2-F708-47D8-8BFD-77E1AA5D549B",
+    "state": "Shutdown",
+    "shutdown": "not needed: already Shutdown",
+    "deleteExit": 0
+  },
+  "test": "only bind original exact retry/source/ref point PASS exit0; real Auth/SQL/diff UI remains UNRUN"
+}
