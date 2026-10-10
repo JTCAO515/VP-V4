@@ -37,13 +37,18 @@ run('actual SQL authority and existing module exports interoperate with producti
  await db(`insert into auth.users(id)values('${a.owner}');insert into auth.sessions(id,user_id)values('${a.session}','${a.owner}');insert into identity_private.mobile_accounts(owner_id,epoch,session_id)values('${a.owner}',1,'${a.session}');insert into identity_private.mobile_attempts(owner_id,attempt_id,session_id,epoch)values('${a.owner}','${randomUUID()}','${a.session}',1);${claims(a)}insert into public.trips(id,owner_id,title)values('${randomUUID()}','${a.owner}','My synthetic Trip');`);
  const queued=await call(a,'request',{requestId:a.request,confirmed:true});assert.ok(parseExportJob(queued,a.request));assert.equal(queued.state,'queued');
  const domain=async(action,input)=>call(null,action,input);
+ const conversationSections=[];
  const modules=async(name,input)=>{
+  if(name==='assistant_conversation_export_owner_v1')conversationSections.push(input.p_section);
+  else if(name==='assistant_message_source_export_owner_v2')conversationSections.push('messageSources');
+  else if(name==='assistant_travel_intake_export_owner_v1')conversationSections.push('travelIntakes');
   const params=Object.entries(input).map(([k,v])=>k+'=>'+(v===null?'null':typeof v==='number'?String(v):"'"+String(v).replaceAll("'","''")+"'")).join(',');
   return JSON.parse(await db(claims(null)+`select public.${name}(${params});`));
  };
  const receipt=await runCoreExportJob(a.request,randomUUID(),policy,parseExportKey(keyConfig),domain,modules,new AbortController().signal);
  assert.equal(receipt.state,'ready_partial');assert.equal(receipt.allUserDataCompleted,false);assert.ok(parseExportJob(receipt,a.request));
- assert.equal(receipt.modules.find(m=>m.module==='conversations').pages,7);
+ assert.deepEqual(conversationSections,['conversations','goals','messages','goalTripLinks','goalTripReceipts','messageSources','travelIntakes','directionIntakes','directionSources','directionOperations']);
+ assert.equal(receipt.modules.find(m=>m.module==='conversations').pages,10);
  assert.equal(receipt.modules.find(m=>m.module==='trip').rows,1);
  assert.equal(await db(`select status||':'||execution_state from public.privacy_requests where id='${a.request}';`),'requested:not_started');
  ready={a,receipt};

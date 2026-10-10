@@ -1,6 +1,6 @@
 {
   "sourceHead": "a34e134c077f06b65665b4506c712f40e734f58f",
-  "lease": "NOT GRANTED; candidates only",
+  "lease": "Main precise two-file grant after Guide/D2 current holder scoped releases; guarded applied",
   "files": [
     {
       "path": "tests/integration/guide/place-guide-postgres.test.mjs",

@@ -1,0 +1,23 @@
+{
+  "status": "private fixture candidate only; Main current-holder release and exact soleTS shared-file lease pending",
+  "target": "tests/integration/privacy/memory-delete-d4.test.mjs",
+  "failedSourceHead": "8f88669b253cae3b0563b5a5f5a8db82d247e36c",
+  "beforeSHA256": "1f72a52466fd9279114ddd0ca9d0a27847d3f93021b84d2628786592de24247d",
+  "afterSHA256": "d5183bf13a228f632f5d4d2dbe071a99090834c153c42806466056984b26b832",
+  "patchSHA256": "9d7851fbc486a876a03e805e783b5e846d6f848e2cd0ba8f563dd01f1b666d2b",
+  "beforeFile": "memory-overflow-test.before.mjs",
+  "afterFile": "memory-overflow-test.after.mjs",
+  "patchFile": "memory-overflow-test.patch",
+  "onlyDelta": "same original transaction: turns500+501, receipts stable order by id limit500 then offset500 limit501",
+  "preserved": [
+    "1001 Turns and1001 receipts",
+    "all row triggers and FKs",
+    "atomic original BEGIN/COMMIT",
+    "shared statement_timeout5s and lock_timeout5s",
+    "foreign IDs non-disclosure",
+    "SCOPE_TOO_LARGE and empty executable selections",
+    "all two-session account/Memory locking assertions",
+    "original role ACL and original helper/CI concurrency4"
+  ],
+  "evidence": "candidate syntax only; original5s affected case run remains soleTS after lease; prior diagnostic10s narrow observations do not replace CI FAIL"
+}

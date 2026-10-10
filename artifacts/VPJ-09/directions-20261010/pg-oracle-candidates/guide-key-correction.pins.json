@@ -1,0 +1,8 @@
+{
+  "path": "tests/integration/guide/place-guide-postgres.test.mjs",
+  "beforeSHA256": "25b866a8002135a5b3a04f5bc59453a1ee871d37ce877d3fab9182729ab4e60d",
+  "afterSHA256": "ac4e774aba54f0d2a64b8f19ecd7d92d31b6c7fe2ae1cd661f7daee9da554882",
+  "patchSHA256": "21e8e125e7d68fdf5fb075ee8b6ca108c919e204133e20313ca57b026bff1eab",
+  "reason": "real original snapshot regprocedure key omits public schema; first affected run FAIL preserved",
+  "lease": "Main precise corrected key grant; guarded applied"
+}

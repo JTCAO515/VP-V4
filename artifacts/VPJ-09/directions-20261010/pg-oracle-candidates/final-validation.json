@@ -1,0 +1,58 @@
+{
+  "sourceParentHead": "cd49ca35c1007d3eabcd462b4aa8b28985c37154",
+  "sourceSHA256": {
+    "tests/integration/guide/place-guide-postgres.test.mjs": "1f1a4ad845a9222502ef54d2daa425293cdcff1c91d71e9e8a8a5a620f826687",
+    "tests/integration/privacy/core-export-consumer.test.mjs": "f9fd853ec979e96bb5a527b7d3055bb64e276a70678b5faf9d02d38443c57e8c",
+    "tests/integration/privacy/memory-delete-d4.test.mjs": "d5183bf13a228f632f5d4d2dbe071a99090834c153c42806466056984b26b832",
+    "tests/integration/cost/fixtures/postgres-rpc.mjs": "ff3b37e39b04c3eb0d1e3dfcb69e61567bfdb8615b835de9ac9d302ad4c218a8",
+    "supabase/migrations/20261010030000_vpj09_travel_directions.sql": "6354e482331453289311c4d7f2a363d1012a3bc9d11f0324d300b5bc8cb58584",
+    "supabase/migrations/20261010020000_assistant_events.sql": "16de8c627c10ea9799658491ab0e6fb60b8092c8d6f55662f01fb45133ca3062"
+  },
+  "runs": [
+    {
+      "case": "guide-r1",
+      "exitCode": 1,
+      "pass": 0,
+      "fail": 1,
+      "skip": 0,
+      "logSHA256": "9c6513667034327bb515e8dd6d85311030e9ebc5ae3e4573aa59abdfd948b514"
+    },
+    {
+      "case": "guide-r2",
+      "exitCode": 1,
+      "pass": 0,
+      "fail": 1,
+      "skip": 0,
+      "logSHA256": "fae2f485be833b7f56458f41a515bdbdd9b33b7f97ff85e52b3d1953d7c85fb1"
+    },
+    {
+      "case": "guide-r3",
+      "exitCode": 0,
+      "pass": 1,
+      "fail": 0,
+      "skip": 0,
+      "logSHA256": "3d015e77136d87a780781d72120d144b89cb99c93f3491e6ad126accec7b23de"
+    },
+    {
+      "case": "export-r1",
+      "exitCode": 0,
+      "pass": 5,
+      "fail": 0,
+      "skip": 0,
+      "logSHA256": "c7843e2ca8aab3777418cb90726608c2951ee28b8ac5ecb32326d9da0197de93"
+    },
+    {
+      "case": "memory-overflow",
+      "exitCode": 0,
+      "pass": 1,
+      "fail": 0,
+      "skip": 0,
+      "logSHA256": "24891b7aabb7fc7c266898785f9d307d290387d943ba4fd8782f6e8e07384727"
+    }
+  ],
+  "cleanup": "original after hooks asserted own docker rm success; filtered guide/export/memory namespace inventory empty",
+  "scope": "Guide only exact body equality case and Memory only overflow/two-session case at original helper statement_timeout5s/lock_timeout5s, --test-concurrency=4; Export original dependent five tests once",
+  "reused": "ACL12, signed Auth r3, Native/App compile and governance; no repeat",
+  "sqlDiagnosticSource": "SQL owner commits 1b4b8006, e48b244eb700c47348ae7118d3f9e4301f18c9f9; narrow 10s diagnosis not a replacement for original5s CI evidence",
+  "remaining": "final exact-head formal review/current all applicable CI/normal protected merge; target/device/human remain UNRUN"
+}

@@ -38,3 +38,9 @@ Physical iPhone/VoiceOver/user observation, target deployment/provider/backup/re
 PR677 head 8f88669b RLS failure is preserved: the authenticated exact caller list omitted two explicitly granted approved directions RPC signatures. The precise two-entry lease was applied (60d8b994 → f8f6f003; patch eb843368). ANON, full privilege scan, deepEqual, deny assertions, SQL and roles remain unchanged.
 
 The original function-acl parent suite ran once against a fresh fully migrated owned fixture vp-native-ask-d7f4a266 at base62520: exit0, 12 PASS / 0 FAIL / 0 SKIP. Own cleanup and strict eight-port postflight passed. See acl-candidates/validation.json and acl-suite.log. Prior signed Auth, Native/App and governance evidence is reused. Remote new-head CI and formal review remain required.
+
+## PostgreSQL CI fixture repairs
+
+The original 8f PostgreSQL lane 711 PASS / 7 FAIL is preserved. Approved worker isolation added exact exclusions in four original functions, requiring four closed-key/kind seam normalizations followed by the unchanged complete body equality and ACL checks. Guide r1/r2 failed and are retained; r3 passed the sole affected body equality case (1 PASS / 0 FAIL / 0 SKIP). Export now verifies the exact ten-section traversal and pages10; the original five dependent SQL/worker/HTTP/deny/receipt tests passed once (5 PASS / 0 FAIL / 0 SKIP).
+
+Memory overflow preparation retains one original transaction and all1001 Turns/1001 receipts but splits each insertion into500+501 bounded statements. Every trigger/FK, original5s helper limit, foreign-ID/cap empty-subset assertion and two-session lock check remains intact. The sole affected original case passed (1 PASS / 0 FAIL / 0 SKIP) with --test-concurrency=4. Product SQL6354/formal16de remain unchanged. All owned containers were removed. Source-bound logs and hashes: pg-oracle-candidates/final-validation.json. Final remote CI and formal review remain required.
