@@ -143,6 +143,11 @@ struct NativeAskView: View {
                 do { try await Task.sleep(for: .seconds(delay)) } catch { return }
             } while !Task.isCancelled && visible && session.dataScope == initial
         }
+        .onChange(of: session.turnDataErasure?.id) { _, _ in
+            guard let erased = session.turnDataErasure,
+                  (try? session.communitySafetyActor()) == erased.actor else { return }
+            store.applyTurnErasure(erased)
+        }
         .onChange(of: session.conversationDataErasure?.id) { _, _ in
             guard let erased = session.conversationDataErasure,
                   (try? session.communitySafetyActor()) == erased.actor else { return }

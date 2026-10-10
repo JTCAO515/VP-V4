@@ -1,0 +1,26 @@
+{
+  "data": {
+    "ownerId": "00000000-0000-4000-8000-000000000001",
+    "sessionId": "00000000-0000-4000-8000-000000000002",
+    "mobileEpoch": 3,
+    "schemaVersion": "turn-data/1",
+    "kind": "list",
+    "scope": "turn-sensitive-data/1",
+    "sourceDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "capturedAt": 1791388800000,
+    "expiresAt": 1791388830000,
+    "items": [
+      {
+        "turnId": "00000000-0000-4000-8000-000000000004",
+        "threadId": "00000000-0000-4000-8000-000000000007",
+        "taskId": "00000000-0000-4000-8000-000000000006",
+        "createdAt": 1791388799800,
+        "status": "completed",
+        "erased": false
+      }
+    ],
+    "hasMore": false,
+    "nextCursor": null,
+    "allUserDataCompleted": false
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "synthetic": true,
+  "producer": "local PostgreSQL early preview; not registered HTTP or target acceptance",
+  "commandBytes": "{\"action\":\"preview\",\"scope\":\"turn-sensitive-data/1\",\"requestId\":\"3439c66f-5d29-465b-8052-0f21868f561d\",\"turnId\":\"fada2312-83ac-4965-9b87-fd650a41158b\",\"objectIds\":[]}",
+  "now": 1791390053745,
+  "ownerId": "83232edb-f455-4c44-8fca-d7b3f03a26a8",
+  "sessionId": "1120f946-0de4-4208-af36-4a134180abdc",
+  "mobileEpoch": 1
+}

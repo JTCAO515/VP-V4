@@ -1,0 +1,114 @@
+{
+  "actualBase": "a2f1c2d860000e3704ea16094ad8fb4298195151",
+  "rows": [
+    {
+      "stage": "original",
+      "floor": "committed",
+      "legacyError": "PROFILE_CONFLICT"
+    },
+    {
+      "stage": "candidate",
+      "kind": "owner34",
+      "floor": "committed",
+      "legacyError": "PROFILE_WRITE_FENCE"
+    },
+    {
+      "stage": "candidate",
+      "kind": "watermark",
+      "floor": "committed",
+      "legacyError": "PROFILE_WRITE_FENCE"
+    },
+    {
+      "stage": "candidate",
+      "kind": "authRow",
+      "floor": "committed",
+      "legacyError": "PROFILE_WRITE_FENCE"
+    },
+    {
+      "stage": "candidate",
+      "kind": "owner34",
+      "floor": "none",
+      "originalAndCandidateError": "ERROR:  PROFILE_CONFLICT"
+    },
+    {
+      "stage": "candidate",
+      "kind": "watermark",
+      "floor": "none",
+      "originalAndCandidateError": "ERROR:  could not obtain lock on row in relation \"watermarks_v1\""
+    }
+  ],
+  "uncommittedClear": {
+    "observedCommittedFloorBeforeCommit": 0,
+    "webBlockedBeforeSourceLock": true,
+    "waitSamples": [
+      {
+        "wait": "transactionid",
+        "blockers": [
+          1752
+        ],
+        "waitType": "Lock"
+      }
+    ],
+    "afterCommitError": "PROFILE_WRITE_FENCE"
+  },
+  "legalFutureV2": true,
+  "staleV2Conflict": true,
+  "unfencedLegacyStillLegal": true,
+  "failedSourceUnchanged": true,
+  "guards": "t|t|t|t",
+  "prosrcMD5": {
+    "before": "5b8e7a781f70ba4dfab448a2b0233f01",
+    "after": "783359ac74880bcba2261894453706dc"
+  },
+  "actualPinDelta": "No Profile0702/Export0704/Turn0705 pin for web_save_v1 or either public save wrapper; unchanged table/column/constraint/FK/trigger/ACL/signatures",
+  "noFloorWatermarkExactSQLstateAndMessage": {
+    "before": "ERROR:  55P03: could not obtain lock on row in relation \"watermarks_v1\"",
+    "after": "ERROR:  55P03: could not obtain lock on row in relation \"watermarks_v1\"",
+    "equal": true
+  },
+  "originalInputAuthCASUnchanged": [
+    {
+      "case": "invalid_input",
+      "error": "ERROR:  INVALID_PROFILE"
+    },
+    {
+      "case": "wrong_session",
+      "error": "ERROR:  SESSION_REPLACED"
+    },
+    {
+      "case": "stale_v2",
+      "error": "ERROR:  PROFILE_CONFLICT"
+    }
+  ],
+  "append": {
+    "path": "20261010010000_profile_web_lock_error.sql",
+    "beforeSource": "5b8e7a781f70ba4dfab448a2b0233f01",
+    "afterSource": "783359ac74880bcba2261894453706dc",
+    "fullMetadataACLBeforeAfterUnchanged": true,
+    "rollbackOriginalSource": true,
+    "guardBeforeAfter": "t|t|t|t",
+    "reapplyDriftFailsClosed": true,
+    "sha256": "ea6c9128f3576e03e5b3940ebd0cb5a89926e54da732091cc092a8845c1b7413"
+  },
+  "originalCase14": {
+    "sameSourceAndAssertions": true,
+    "testSummary": {
+      "tests": 2,
+      "pass": 2,
+      "fail": 0,
+      "skipped": 0
+    },
+    "log": "\u25b6 a2f original case14 on exact replay with Web fence candidate\n  \u2714 clear serializes against real old Native save/Undo/Web RPC transactions without weakening old errors (2163.116792ms)\nFixture RPC revoke PASS\n\u2714 a2f original case14 on exact replay with Web fence candidate (2304.063709ms)\n\u2139 tests 2\n\u2139 suites 0\n\u2139 pass 2\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 2347.967792\n"
+  },
+  "candidateSHA256": "d6dc6ba746c49eb89767bb6a0b6098710383a0450f111ad43672b5c2eabec89d",
+  "mainLease": "Main0c4a1a exact unused20261010010000 one append",
+  "retainedFailures": {
+    "remote_a2f": "original strictPROFILE_WRITE_FENCE gotPROFILE_CONFLICT; parent follows",
+    "probe_unqualified_owner_id": "42702 corrected to qualifiedmw; no old source modified",
+    "probe_original_case_setup": "providedcontainer grant leftover causedt!=f; actual revoke before final case run restored f",
+    "probe_noFloorWatermark": "incorrect proposedgenericmsg assumption corrected to actualbefore/after exact55P03; original case14 oracle unchanged"
+  },
+  "runtimeScope": "only lock_owner_v1\u53d6\u5f97 local55P03catch; legacyNULL+committedownfloor>0 fence, else originalRAISE",
+  "noSchemaACLOrPinDelta": true,
+  "migration0702Unchanged": true
+}

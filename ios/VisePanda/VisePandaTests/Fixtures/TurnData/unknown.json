@@ -1,0 +1,15 @@
+{
+  "data": {
+    "schemaVersion": "turn-data/1",
+    "kind": "unknown",
+    "scope": "turn-sensitive-data/1",
+    "requestId": "00000000-0000-4000-8000-000000000003",
+    "turnId": "00000000-0000-4000-8000-000000000004",
+    "objectIds": [],
+    "ownerId": "00000000-0000-4000-8000-000000000001",
+    "sessionId": "00000000-0000-4000-8000-000000000002",
+    "mobileEpoch": 3,
+    "requestDigest": "3641b9ba79ff08c0d37d0530677d3740af27c002eb25bffe9aa7d92764109753",
+    "allUserDataCompleted": false
+  }
+}

@@ -1,3 +1,5 @@
+import { turnDataNativeHTTP } from '../turn-data/http.ts';
+import { turnCoverageRequestBody } from '../turn-data/coverage.ts';
 import { NextRequest } from 'next/server.js';
 import { coreExportHTTP } from '../export-http.ts';
 import { tripDeletionHTTP } from '../trip-deletion-http.ts';
@@ -47,6 +49,7 @@ export const OWNER_HANDLERS: Readonly<Record<string, OwnerHandler>> = {
   archive_data: request => archiveDataNativeHTTP(request),
   conversation_data: request => conversationDataNativeHTTP(request),
   result_data: request => resultDataNativeHTTP(request),
+  turn_data: request => turnDataNativeHTTP(request),
   profile_data: request => profileDataNativeHTTP(request),
 };
 const paths: Readonly<Record<string, string>> = {
@@ -61,6 +64,7 @@ const paths: Readonly<Record<string, string>> = {
   archive_data: '/api/privacy/native/v1/archive-data',
   conversation_data: '/api/privacy/native/v1/conversation-data',
   result_data: '/api/privacy/native/v1/result-data',
+  turn_data: '/api/privacy/native/v1/turn-data',
   profile_data: '/api/privacy/native/v1/profile-data',
 };
 export function ownerHandlerRequest(request: Request, selected: SelectedCommand, signal: AbortSignal): NextRequest {
@@ -81,6 +85,7 @@ export function ownerHandlerRequest(request: Request, selected: SelectedCommand,
     else if (handler === 'archive_data') body = archiveCoverageRequestBody(input);
     else if (handler === 'conversation_data') body = conversationCoverageRequestBody(input);
     else if (handler === 'result_data') body = resultCoverageRequestBody(input);
+    else if (handler === 'turn_data') body = turnCoverageRequestBody(input);
     else if (handler === 'profile_data') body = profileCoverageRequestBody(input);
     else throw Error('RECOVERY_NOT_IMPLEMENTED');
   }

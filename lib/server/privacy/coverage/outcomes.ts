@@ -1,3 +1,4 @@
+import { turnCoverageOutcome } from '../turn-data/coverage.ts';
 import { record, exact, uuid } from '../../guide/contract.ts';
 import { isDeepStrictEqual } from 'node:util';
 import { decodeGuideOutcome } from '../../guide/projection.ts';
@@ -34,6 +35,7 @@ export function classifyOriginal(selected: SelectedCommand, body: unknown, now =
   if (handler === 'archive_data') return archiveCoverageOutcome(selected, data, now);
   if (handler === 'conversation_data') return conversationCoverageOutcome(selected, data, now);
   if (handler === 'result_data') return resultCoverageOutcome(selected, data, now);
+  if (handler === 'turn_data') return turnCoverageOutcome(selected, data, now);
   if (handler === 'profile_data') return profileCoverageOutcome(selected, data, now);
   if (handler === 'core') {
     const receipt = parseExportJob(body, input.operationId); if (!receipt) return null;

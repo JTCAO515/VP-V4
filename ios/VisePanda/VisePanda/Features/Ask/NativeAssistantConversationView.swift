@@ -871,6 +871,20 @@ struct NativeAssistantConversationView: View {
             if selectedArtifactID.map({ erased.artifactIDs.contains($0) }) == true { selectedArtifactID = nil; selectedArtifactTaskID = nil }
             retainNavigation()
         }
+        .onChange(of: session.turnDataErasure?.id) { _, _ in
+            guard let erased = session.turnDataErasure,
+                  (try? session.communitySafetyActor()) == erased.actor else { return }
+            refreshState.invalidate()
+            taskTurns.removeAll { erased.turnIDs.contains($0.turnId) }
+            taskSourceMessages.removeAll { erased.messageIDs.contains($0.messageId) || $0.turnId.map(erased.turnIDs.contains) == true }
+            if let value = conversation {
+                conversation = .init(version: value.version, kind: value.kind, conversationId: value.conversationId,
+                    nextSequence: value.nextSequence,
+                    messages: value.messages.filter { !erased.messageIDs.contains($0.messageId) && $0.turnId.map(erased.turnIDs.contains) != true },
+                    goals: value.goals)
+            }
+            // Keep selection, pending commands, drafts, Task identities and Trip confirmations.
+        }
         .onChange(of: session.conversationDataErasure?.id) { _, _ in
             guard let erased = session.conversationDataErasure,
                   (try? session.communitySafetyActor()) == erased.actor else { return }
