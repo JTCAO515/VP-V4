@@ -1,0 +1,67 @@
+{
+  "issue": 196,
+  "integratedSourceHead": "d785cf77161456e5ea9fb45f8b500e3fbd59ec76",
+  "nativeSource": "4cc82c3944ada01327fe0d4b9f82783ca8f26a06",
+  "backendAuthTestSource": "ad03807515f3e1fea20be58263cb3a063c1935b9",
+  "journalDependency": "020f9d72da3fc31344dfcd8eeabcbce93d2a623a",
+  "nineCurrentFullSource": [
+    {
+      "path": "ios/VisePanda/VisePanda/App/NativeSession.swift",
+      "sha256": "3181beb05c194a33d61a7dc79b8039f6d66fe9f1bd3b451fbd20285be1bfe508",
+      "fixedLeaseAfterMatch": true
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift",
+      "sha256": "1a0e5f6997318334288d26ce29bbbcc597e47de69e1d2b5a62106c54395aad11",
+      "fixedLeaseAfterMatch": true
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/Ask/NativeTaskActivityView.swift",
+      "sha256": "d2f3200e69e6ce04e047ddf924e70b4e1b9aafb2192b27c8f397b8be6854df98",
+      "fixedLeaseAfterMatch": true
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/Knowledge/NativeFiveResultView.swift",
+      "sha256": "dfe72277a3998473d5451403877a9247138b5b96a4623cdcc59501a046bd3729",
+      "fixedLeaseAfterMatch": true
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/JournalData/NativeJournalDataModels.swift",
+      "sha256": "02823f2e81e0d3d3f5cede10075883b458fca977f7d1b90728e9d775c148d3ab",
+      "fixedLeaseAfterMatch": true
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/JournalData/NativeJournalDataVaultSources.swift",
+      "sha256": "92f978e2e14b3cec82e286445c9480a752b699af31977128640a0ae23a986738",
+      "fixedLeaseAfterMatch": true
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/JournalData/NativeJournalDataStore.swift",
+      "sha256": "f4befb27e16a7696bc5a472f53cbbb8cc8ae05dd3c3c7d3bd7c17ecfce30f7a5",
+      "fixedLeaseAfterMatch": true
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/JournalData/NativeJournalDataView.swift",
+      "sha256": "e99cda51607b944da1a30ae0dd0f15d83c554418dd2123dc51d2d3999728efd4",
+      "fixedLeaseAfterMatch": true
+    },
+    {
+      "path": "ios/VisePanda/VisePanda.xcodeproj/project.pbxproj",
+      "sha256": "16b20c00184a9f6f5aea53358d6dafc8cc9f1cee1a2d9aca4546416303fb6696",
+      "fixedLeaseAfterMatch": true
+    }
+  ],
+  "nativeRegisteredTested16Match": true,
+  "journalDeltaTestSourceMatch": true,
+  "migrationSHA256": "679d03a6ea180432b996778f717773c60c60d9e25dd746e443f7d83fe014872a",
+  "validation": "Complete owned stable sources and scoped evidence received: frozenSQL13, signed local Auth source-retirement PASS, Native registered2 and Journal affected1 source hashes MATCH; same-source tests reused without rerun.",
+  "remaining": "PR675 actual protected Main merge and source equivalence before single196 main-base PR; final requiredCI/formal on exacthead; targetUNRUN separate.",
+  "nativeProofHead": "c226e0f044a9a975347de3adf0ababd9096af5c4",
+  "journalAffected1": {
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "currentTestedSourceMatch": true,
+    "ownedSimulatorCleanup": "original shutdown/delete logs exit0"
+  }
+}

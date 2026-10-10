@@ -1,0 +1,135 @@
+[
+  {
+    "name": "assistant_event_chat_v1",
+    "table": "public.chat_turn_events",
+    "function": "turn_private.assistant_event_source_hook_v1()",
+    "type": 5,
+    "updateColumn": null
+  },
+  {
+    "name": "assistant_event_message_v1",
+    "table": "turn_private.assistant_messages",
+    "function": "turn_private.assistant_event_source_hook_v1()",
+    "type": 5,
+    "updateColumn": null
+  },
+  {
+    "name": "assistant_event_text_v1",
+    "table": "turn_private.text_content",
+    "function": "turn_private.assistant_event_source_hook_v1()",
+    "type": 5,
+    "updateColumn": null
+  },
+  {
+    "name": "assistant_event_link_v1",
+    "table": "turn_private.service_task_turns",
+    "function": "turn_private.assistant_event_source_hook_v1()",
+    "type": 5,
+    "updateColumn": null
+  },
+  {
+    "name": "assistant_event_progress_v1",
+    "table": "turn_private.planning_action_receipts",
+    "function": "turn_private.assistant_event_source_hook_v1()",
+    "type": 21,
+    "updateColumn": "state"
+  },
+  {
+    "name": "assistant_event_result_v1",
+    "table": "turn_private.result_events",
+    "function": "turn_private.assistant_event_source_hook_v1()",
+    "type": 5,
+    "updateColumn": null
+  },
+  {
+    "name": "assistant_event_conversation_v1",
+    "table": "turn_private.assistant_conversations",
+    "function": "turn_private.assistant_event_new_conversation_v1()",
+    "type": 5,
+    "updateColumn": null
+  },
+  {
+    "name": "assistant_event_immutable_v1",
+    "table": "turn_private.assistant_events_v1",
+    "function": "turn_private.assistant_event_immutable_v1()",
+    "type": 19,
+    "updateColumn": null
+  },
+  {
+    "name": "assistant_event_erase_chat_v1",
+    "table": "public.chat_turn_events",
+    "function": "turn_private.assistant_event_erase_source_v1()",
+    "type": 9,
+    "updateColumn": null
+  },
+  {
+    "name": "assistant_event_erase_progress_v1",
+    "table": "turn_private.planning_action_receipts",
+    "function": "turn_private.assistant_event_erase_source_v1()",
+    "type": 9,
+    "updateColumn": null
+  },
+  {
+    "name": "assistant_event_erase_result_v1",
+    "table": "turn_private.result_events",
+    "function": "turn_private.assistant_event_erase_source_v1()",
+    "type": 9,
+    "updateColumn": null
+  },
+  {
+    "name": "assistant_event_erase_message_v1",
+    "table": "turn_private.assistant_messages",
+    "function": "turn_private.assistant_event_erase_source_v1()",
+    "type": 9,
+    "updateColumn": null
+  },
+  {
+    "name": "assistant_event_erase_link_v1",
+    "table": "turn_private.service_task_turns",
+    "function": "turn_private.assistant_event_erase_source_v1()",
+    "type": 9,
+    "updateColumn": null
+  },
+  {
+    "name": "conversation_source_fence_v1",
+    "table": "turn_private.assistant_events_v1",
+    "function": "conversation_data_private.guard_source_v1()",
+    "type": 31,
+    "updateColumn": null
+  },
+  {
+    "name": "result_source_fence_v1",
+    "table": "turn_private.assistant_events_v1",
+    "function": "result_data_private.guard_source_v1()",
+    "type": 31,
+    "updateColumn": null
+  },
+  {
+    "name": "linked_delete_fence_v1",
+    "table": "turn_private.assistant_events_v1",
+    "function": "privacy_private.guard_linked_delete_entity_v1()",
+    "type": 31,
+    "updateColumn": null
+  },
+  {
+    "name": "conversation_source_fence_v1",
+    "table": "turn_private.assistant_event_heads_v1",
+    "function": "conversation_data_private.guard_source_v1()",
+    "type": 31,
+    "updateColumn": null
+  },
+  {
+    "name": "turn_data_parent_fence_v1",
+    "table": "turn_private.assistant_events_v1",
+    "function": "turn_data_private.guard_source_v1()",
+    "type": 31,
+    "updateColumn": null
+  },
+  {
+    "name": "turn_data_parent_fence_v1",
+    "table": "turn_private.assistant_event_heads_v1",
+    "function": "turn_data_private.guard_source_v1()",
+    "type": 31,
+    "updateColumn": null
+  }
+]

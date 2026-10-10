@@ -88,12 +88,20 @@ test('existing pending Proposal references save/read exactly without executing o
  assert.notEqual(child.proposalId,a.proposal);assert.equal(child.revision,2);assert.equal((await read(a)).kind,'unavailable');
  const revised={...a,proposal:child.proposalId,proposalRevision:2,artifact:uuid()};await pub(revised);assert.equal((await read(revised)).content.proposalRevision,2);
  await ok('/api/trips/native/v2/'+a.trip+'/proposal/reject',owner,'POST',{proposalId:child.proposalId});assert.equal((await read(revised)).kind,'unavailable');
- for(const mutation of ['expire','tripHead','archive','sourceDelete','proposalDelete','revision','actor','withdraw','sourceHide','goal','taskTerminal']){
+ for(const mutation of ['expire','tripHead','archive','sourceTurnDelete','proposalDelete','revision','actor','withdraw','sourceHide','goal','taskTerminal']){
   const b=await fixture({baseVersion:mutation==='archive'?1:0});const initial=state(b.trip);await pub(b);
   if(mutation==='expire')e.sql(`update public.trip_proposals set expires_at=now()-interval '1 second' where id='${b.proposal}';`);
   if(mutation==='tripHead')e.sql(`update public.trips set head_version=1 where id='${b.trip}';`);
   if(mutation==='archive')e.sql(`insert into public.trip_archives(trip_id,owner_id,archived_version,idempotency_key) values('${b.trip}','${e.users[0].id}',1,'${uuid()}');`);
-  if(mutation==='sourceDelete')e.sql(`delete from turn_private.assistant_messages where id='${b.input}';`);
+  if(mutation==='sourceTurnDelete'){
+   // Admin synthetic missing-parent fault, not a user deletion capability.
+   // Private child DELETE remains denied; original accepted Turn parent/FK
+   // erasure removes this completed source without touching the confirmed Trip.
+   assert.throws(()=>e.sql(`delete from turn_private.assistant_messages where id='${b.input}';`),/ASSISTANT_EVENT_ERASE_AUTHORITY/);
+   assert.equal((await read(b)).current,true,'denied child deletion preserves current reference');
+   e.sql(`delete from public.turns where id='${b.turn}' and owner_id='${e.users[0].id}';`);
+   assert.equal(e.sql(`select count(*) from public.turns where id='${b.turn}';`),'0');
+  }
   if(mutation==='proposalDelete')e.sql(`delete from public.trip_proposals where id='${b.proposal}';`);
   if(mutation==='revision')e.sql(`update public.trip_proposals set revision=2 where id='${b.proposal}';`);
   if(mutation==='actor')e.sql(`update public.trip_proposals set owner_id='${e.users[1].id}' where id='${b.proposal}';`);

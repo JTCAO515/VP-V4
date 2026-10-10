@@ -1,0 +1,31 @@
+{
+  "main": "930b66d6fd7425c63e2ddbe1c6bd0970b489d564",
+  "currentTurn": "46ac168de80fe01121532944733e4adeb7b88114",
+  "currentTurnOwner": "01a11707-6e5f-7001-af57-1772a13d863c",
+  "portBaseCandidate": 62720,
+  "objects": [
+    {
+      "path": "tests/integration/turn/native-text-environment.mjs",
+      "patch": "NATIVE-ENV-RESTART.candidate.patch",
+      "beforeSha256": "a6ee86131ce7113546ce5e5399b497ebc2b9ca312b80b2e93664bd6e0f9013ba",
+      "afterSha256": "98769c0c148c86a538cb65466870325a3efbd8ec054fdc200e0f86192e97f743",
+      "patchSha256": "022b1301c10067c0490506d2ccf02b84c42e535edea3a2b527e234b925ef49a8",
+      "currentMainEqualsCurrentTurn": true,
+      "isolatedApplyCheck": "PASS",
+      "sharedApplied": false,
+      "releaseScope": "only frozen patch hunks; original caller/writer/actor/consent/provider/config/timeout/ports and all other CI registrations preserved"
+    },
+    {
+      "path": "scripts/ci-suites/db-integration.mjs",
+      "patch": "CI-REGISTRATION.candidate.patch",
+      "beforeSha256": "ea3242a7d8182d47fdf3c3711b4ba6ff7278bda1307fcdd709cde3d72685e2fa",
+      "afterSha256": "7af1d9beb14671e96b8e32ad08e264123befe05da144205e500920699ac7d513",
+      "patchSha256": "0c096ee5048e00bf5ff65bb20ad955d8af0b68908be05af9b014c8ab1a35abc6",
+      "currentMainEqualsCurrentTurn": true,
+      "isolatedApplyCheck": "PASS",
+      "sharedApplied": false,
+      "releaseScope": "only frozen patch hunks; original caller/writer/actor/consent/provider/config/timeout/ports and all other CI registrations preserved"
+    }
+  ],
+  "status": "Main-approved need; not an application lease. Current scoped owner release of these exact objects then Main frozen before/after lease still required."
+}

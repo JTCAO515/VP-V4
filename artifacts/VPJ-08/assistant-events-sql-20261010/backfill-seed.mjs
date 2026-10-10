@@ -1,0 +1,11 @@
+import assert from'node:assert/strict';import{writeFileSync}from'node:fs';import{randomUUID as uuid}from'node:crypto';import{sql}from'../../../tests/integration/cost/fixtures/postgres-rpc.mjs';
+process.env.VP_RESULT_DATA_SQL_CONTAINER='vpj08-events-sql-20261010';const{fixture,claims}=await import('../../../tests/integration/privacy/result-data-sql/ownproof/runtime.mjs');
+async function db(q){const r=await sql('vpj08-events-sql-20261010',q);assert.equal(r.code,0,r.stderr);return r.stdout.trim();}
+const a=await fixture();assert.equal(await db("select to_regclass('turn_private.assistant_events_v1') is null;"),'t');
+const thread=uuid(),turn=uuid(),task=uuid(),message=uuid();await db(`begin;${claims(a)}select public.submit_service_task_turn('${thread}','${turn}','${uuid()}','${a.policy}','en','Retained pre-feature task','${task}',1,'new_goal',null);select public.submit_assistant_message_v1('${a.conversation}','${message}','${uuid()}','${a.policy}','en','Retained pre-feature source','follow_up','${a.goal}',1,'${task}','${a.rootMessage}',null);commit;`);
+const lease=JSON.parse(await db(`set request.jwt.claim.role='service_role';select public.claim_text_work('${a.owner}','${a.policy}');`));assert.equal(lease.kind,'leased');assert.equal(lease.turnId,turn);
+const progress=JSON.parse(await db(`set request.jwt.claim.role='service_role';select public.claim_planning_action_v1('${turn}','${a.owner}','${lease.leaseToken}','${message}','${'a'.repeat(64)}','evidence.lookup','${'b'.repeat(64)}','[]');`));assert.equal(progress.kind,'claimed');
+const finished=JSON.parse(await db(`set request.jwt.claim.role='service_role';select public.finish_planning_action_v1('${turn}','${a.owner}','${lease.leaseToken}','${'a'.repeat(64)}','${'c'.repeat(64)}');`));assert.equal(finished.kind,'completed');
+await db(`begin;${claims(a)}set request.jwt.claim.role='service_role';do $$ begin for n in 1..1001 loop perform public.append_chat_turn_event('${turn}','retained-phase-'||n::text,'phase','planning');end loop;end $$;commit;`);
+a.backfillTotal=1006;
+writeFileSync('artifacts/VPJ-08/assistant-events-sql-20261010/backfill-seed.json',JSON.stringify(a,null,2)+'\n');console.log('canonical retained pre-feature accepted/completed/result source + 1001 original phase rows seeded; no delivery index yet');

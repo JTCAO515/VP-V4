@@ -1,5 +1,6 @@
 // Actual owned network-none PostgreSQL; synthetic SQL claims are not signed Auth.
 import test from 'node:test';
+import { spawn } from 'node:child_process';
 import assert from 'node:assert/strict';
 import { randomUUID as uuid, randomBytes, createHash } from 'node:crypto';
 import { db, setContainer } from '../profile-data-sql/replay.mjs';
@@ -23,7 +24,7 @@ async function actor() {
   return a;
 }
 const name = '旅途😀é\b\t\n\f\r"\\/';
-const save = (a,rev=null) => db(`begin;${claims(a)}set role authenticated;select * from public.${rev===null?'save_user_profile':'save_user_profile_v2'}(${lit(name)},'packed','en','USD','mile','fahrenheit','17:32:11.123456'${rev===null?'':','+rev});commit;`);
+const save = (a,rev=null,statementMarker='') => db(`begin;${claims(a)}set role authenticated;select ${statementMarker?`/*${statementMarker}*/ `:''}* from public.${rev===null?'save_user_profile':'save_user_profile_v2'}(${lit(name)},'packed','en','USD','mile','fahrenheit','17:32:11.123456'${rev===null?'':','+rev});commit;`);
 const pace = (a,input) => db(`begin;${claims(a)}set role authenticated;select public.native_travel_pace_v1(${json(input)});commit;`).then(JSON.parse);
 const selection = a => ({scope:'profile-sensitive-data/1',requestId:uuid(),profileId:a.owner,objectIds:[]});
 async function clear(a) {
@@ -113,24 +114,33 @@ test('bounded Profile source through current original D2 and permanent clear fen
     const newer=await page(f);await save(a,newer.items[0].watermark.profileRevision);await fail(call(null,'commit',commitInput(f,newer).input),'INVALID_OUTPUT');
   });
   await t.test('actual two-connection missing Profile/watermark capture versus original first Web save uses owner locks and refuses stale commit',async()=>{
-    const f=await job(),p=await page(f),c=commitInput(f,p),marker='PROFILE_SOURCE_HOLD_'+uuid();
-    const held=sql(process.env.VP_PROFILE_EXPORT_TEST_CONTAINER,`begin;do $hold$begin /*${marker}*/ perform export_private.lock_job_v1('${f.a.request}',true);perform export_private.profile_source_v1('${f.a.owner}');perform pg_sleep(0.6);end$hold$;commit;`);
-    let ready=false;
-    for(let n=0;n<20;n++) {
-      ready=await db(`select exists(select 1 from pg_stat_activity where wait_event='PgSleep' and position(${lit(marker)} in query)>0)`)==='t';
-      if(ready)break;await new Promise(r=>setTimeout(r,10));
-    }
-    assert.equal(ready,true);
-    assert.equal(await db(`select pg_try_advisory_xact_lock(hashtextextended('${f.a.owner}',34))`),'t');
-    const firstSave=save(f.a);
-    let waiting=false;
-    for(let n=0;n<10;n++) {
-      waiting=await db("select exists(select 1 from pg_stat_activity where wait_event_type='Lock' and query like '%save_user_profile(%')")==='t';
-      if(waiting)break;await new Promise(r=>setTimeout(r,10));
-    }
-    assert.equal(waiting,true,'Original Web RPC account gate blocks the first save before watermark/Profile writes');
-    assert.equal(await db(`select count(*) from profile_data_private.watermarks_v1 where owner_id='${f.a.owner}'`),'0');
-    assert.equal((await held).code,0);await firstSave;
+    const f=await job(),p=await page(f),c=commitInput(f,p),marker='PROFILE_SOURCE_HOLD_'+uuid(),saveMarker='PROFILE_FIRST_SAVE_'+uuid();
+    // Keep the original source/account transaction alive until the actual
+    // first-save wait and zero-write assertions finish; no timed sleep window.
+    const holder=spawn('docker',['exec','-i',process.env.VP_PROFILE_EXPORT_TEST_CONTAINER,'psql','-h','/tmp/vpj59-socket','-U','postgres','-X','-q','-At','-v','ON_ERROR_STOP=1'],{stdio:['pipe','pipe','pipe']});
+    let stdout='',stderr='',firstSave,saveState='not_started',saveError=null;
+    holder.stdout.setEncoding('utf8');holder.stderr.setEncoding('utf8');
+    holder.stdout.on('data',b=>{stdout+=b;});holder.stderr.on('data',b=>{stderr+=b;});holder.stdin.on('error',()=>{});
+    const held=new Promise((resolve,reject)=>{holder.once('error',reject);holder.once('close',code=>resolve({code,stdout,stderr}));});held.catch(()=>{});
+    holder.stdin.write(`set statement_timeout='5s';set lock_timeout='5s';begin;select export_private.lock_job_v1('${f.a.request}',true) is not null;select export_private.profile_source_v1('${f.a.owner}') is not null;select '${marker}';\n`);
+    let holderPID=null;
+    try {
+      for(let n=0;n<20;n++) {
+        const found=await db(`select pid from pg_stat_activity where state='idle in transaction' and position(${lit(marker)} in query)>0`);
+        if(found){holderPID=Number(found);break;}await new Promise(r=>setTimeout(r,10));
+      }
+      assert.ok(Number.isSafeInteger(holderPID)&&holderPID>0,'Original source transaction remains held on this connection');
+      assert.equal(await db(`select pg_try_advisory_xact_lock(hashtextextended('${f.a.owner}',34))`),'t');
+      firstSave=save(f.a,null,saveMarker).then(v=>{saveState='fulfilled';return v;},error=>{saveState='rejected';saveError=error.message.match(/(?:PROFILE_[A-Z_]+|lock timeout|statement timeout)/)?.[0]||'UNCLASSIFIED';throw error;});saveState='pending';firstSave.catch(()=>{});
+      let waiting=false;
+      for(let n=0;n<10;n++) {
+        waiting=await db(`select exists(select 1 from pg_stat_activity where wait_event_type='Lock' and query like '%save_user_profile(%' and position(${lit(saveMarker)} in query)>0 and ${holderPID}=any(pg_blocking_pids(pid)))`)==='t';
+        if(waiting)break;await new Promise(r=>setTimeout(r,10));
+      }
+      assert.equal(waiting,true,JSON.stringify({assertion:'Original Web RPC account gate blocks the first save before watermark/Profile writes',saveState,saveError}));
+      assert.equal(await db(`select count(*) from profile_data_private.watermarks_v1 where owner_id='${f.a.owner}'`),'0');
+    } finally {holder.stdin.end('commit;\n');assert.equal((await held).code,0,stderr);}
+    await firstSave;
     console.log('Source has no extra owner34 lock; actual original Web first save blocked on original RPC account gate, then committed after source transaction released');
     await fail(call(null,'commit',c.input),'INVALID_OUTPUT');assert.equal((await counts(f)).proofs,0);assert.equal((await counts(f)).artifacts,0);
   });

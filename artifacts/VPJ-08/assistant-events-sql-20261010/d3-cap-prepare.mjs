@@ -1,0 +1,2 @@
+import{readFileSync,writeFileSync}from'node:fs';import{sql}from'../../../tests/integration/cost/fixtures/postgres-rpc.mjs';const root='artifacts/VPJ-08/assistant-events-sql-20261010/';
+const r=await sql('vpj08-events-sql-20261010','begin;'+readFileSync(root+'d3-handlers.candidate.sql','utf8')+"select md5(pg_get_functiondef('privacy_private.linked_delete_graph_v1(uuid,uuid,jsonb)'::regprocedure));commit;");if(r.code)throw Error(r.stderr);writeFileSync(root+'d3-cap-body-measure.log',r.stdout.trim()+'\n');console.log(r.stdout);

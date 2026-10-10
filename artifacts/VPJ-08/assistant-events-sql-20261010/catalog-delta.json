@@ -1,0 +1,125 @@
+{
+  "sourceHead": "1b8efcbc174bc116cd3b85524525b1d538fafe45",
+  "added": [
+    {
+      "columns": [
+        [
+          "conversation_id",
+          "uuid",
+          true
+        ],
+        [
+          "owner_id",
+          "uuid",
+          true
+        ],
+        [
+          "last_sequence",
+          "bigint",
+          true
+        ],
+        [
+          "backfill_complete",
+          "boolean",
+          true
+        ]
+      ],
+      "relation": "turn_private.assistant_event_heads_v1",
+      "constraints": [
+        "FOREIGN KEY (conversation_id) REFERENCES turn_private.assistant_conversations(id) ON DELETE CASCADE",
+        "CHECK (((last_sequence >= 0) AND (last_sequence <= '999999999999999'::bigint)))",
+        "FOREIGN KEY (owner_id) REFERENCES auth.users(id) ON DELETE CASCADE",
+        "PRIMARY KEY (conversation_id)"
+      ]
+    },
+    {
+      "columns": [
+        [
+          "owner_id",
+          "uuid",
+          true
+        ],
+        [
+          "conversation_id",
+          "uuid",
+          true
+        ],
+        [
+          "sequence",
+          "bigint",
+          true
+        ],
+        [
+          "source_kind",
+          "text",
+          true
+        ],
+        [
+          "source_key",
+          "text",
+          true
+        ],
+        [
+          "task_id",
+          "uuid",
+          false
+        ],
+        [
+          "turn_id",
+          "uuid",
+          false
+        ],
+        [
+          "event_type",
+          "text",
+          true
+        ],
+        [
+          "status",
+          "text",
+          false
+        ],
+        [
+          "tool",
+          "text",
+          false
+        ],
+        [
+          "action_state",
+          "text",
+          false
+        ],
+        [
+          "artifact_id",
+          "uuid",
+          false
+        ],
+        [
+          "revision",
+          "integer",
+          false
+        ],
+        [
+          "retired_sequence",
+          "bigint",
+          false
+        ]
+      ],
+      "relation": "turn_private.assistant_events_v1",
+      "constraints": [
+        "CHECK (((source_kind = 'retired'::text) OR ((task_id IS NOT NULL) AND (turn_id IS NOT NULL))))",
+        "CHECK ((((source_kind = 'chat_turn_event'::text) AND (event_type = 'task_status'::text) AND (status IS NOT NULL) AND (status = ANY (ARRAY['accepted'::text, 'planning'::text, 'retrieving'::text, 'generating'::text, 'validating'::text, 'completed'::text, 'proposal_ready'::text, 'unavailable'::text, 'failed'::text, 'cancelled'::text])) AND (tool IS NULL) AND (action_state IS NULL) AND (artifact_id IS NULL) AND (revision IS NULL)) OR ((source_kind = 'action_receipt'::text) AND (event_type = 'task_progress'::text) AND (status IS NULL) AND (tool IS NOT NULL) AND (tool = ANY (ARRAY['evidence.lookup'::text, 'place.read'::text, 'constraints.evaluate'::text, 'result.prepare'::text])) AND (action_state IS NOT NULL) AND (action_state = ANY (ARRAY['started'::text, 'completed'::text, 'unknown'::text])) AND (artifact_id IS NULL) AND (revision IS NULL)) OR ((source_kind = 'result_event'::text) AND (event_type = ANY (ARRAY['artifact_ready'::text, 'artifact_updated'::text, 'artifact_invalidated'::text])) AND (status IS NULL) AND (tool IS NULL) AND (action_state IS NULL) AND (artifact_id IS NOT NULL) AND (revision IS NOT NULL) AND ((revision >= 1) AND (revision <= 1000))) OR ((source_kind = 'retired'::text) AND (event_type = 'source_retired'::text) AND (task_id IS NULL) AND (turn_id IS NULL) AND (status IS NULL) AND (tool IS NULL) AND (action_state IS NULL) AND (artifact_id IS NULL) AND (revision IS NULL) AND ((retired_sequence >= 1) AND (retired_sequence <= sequence)))))",
+        "CHECK (((source_kind = 'retired'::text) = (retired_sequence IS NOT NULL)))",
+        "FOREIGN KEY (conversation_id) REFERENCES turn_private.assistant_conversations(id) ON DELETE CASCADE",
+        "UNIQUE (owner_id, conversation_id, source_kind, source_key)",
+        "FOREIGN KEY (owner_id) REFERENCES auth.users(id) ON DELETE CASCADE",
+        "PRIMARY KEY (conversation_id, sequence)",
+        "CHECK (((sequence >= 1) AND (sequence <= '999999999999999'::bigint)))",
+        "CHECK (((length(source_key) >= 1) AND (length(source_key) <= 160)))",
+        "CHECK ((source_kind = ANY (ARRAY['chat_turn_event'::text, 'action_receipt'::text, 'result_event'::text, 'retired'::text])))"
+      ]
+    }
+  ],
+  "changed": [],
+  "removed": []
+}

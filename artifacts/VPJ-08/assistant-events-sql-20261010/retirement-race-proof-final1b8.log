@@ -1,0 +1,1 @@
+actual reader admission + original Result erase race: old page/source remain locked and coherent, original erase safe serialization or conflict then retry, atomic retirement notification and exact artifact absent PASS; SQL-claims only

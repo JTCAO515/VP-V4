@@ -1,0 +1,10 @@
+--- a/scripts/ci-suites/db-integration.mjs
++++ b/scripts/ci-suites/db-integration.mjs
+@@ -244,6 +244,7 @@
+       { name: "profile-data-http", runner: node("tests/integration/privacy/profile-data/run-http.mjs", "--port-base", "63040"), files: ["tests/integration/privacy/profile-data/auth-http.test.mjs"] },
+       { name: "profile-export-http", runner: node("tests/integration/privacy/profile-export/run-http.mjs", "--port-base", "63000"), files: ["tests/integration/privacy/profile-export/auth-http.test.mjs"] },
+       { name: "turn-data-http", runner: node("tests/integration/privacy/turn-data/run-http.mjs", "--port-base", "62960"), files: ["tests/integration/privacy/turn-data/auth-http.test.mjs"] },
++      { name: "native-assistant-events", runner: node("tests/integration/turn/assistant-events/run.mjs", "--port-base", "62720"), files: ["tests/integration/turn/assistant-events/auth-http.test.mjs"] },
+     ],
+   },
+   "supabase-http-ops": {

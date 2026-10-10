@@ -1,0 +1,3 @@
+import{readFileSync}from'node:fs';import{sql}from'../../../tests/integration/cost/fixtures/postgres-rpc.mjs';const root='artifacts/VPJ-08/assistant-events-sql-20261010/';
+const files=['source-catalog.candidate.sql','privacy-handlers.candidate.sql','d3-handlers.candidate.sql','schema-pins.candidate.sql'];
+const r=await sql('vpj08-events-sql-20261010','begin;'+files.map(n=>readFileSync(root+n,'utf8')).join('\n')+"select result_data_private.schema_supported_v1(),conversation_data_private.schema_supported_v1(),profile_data_private.schema_v1();rollback;");console.log(r.stdout+r.stderr);console.log('exact source catalog/privacy/D3/pins own fixture transaction compile exit',r.code);process.exitCode=r.code;

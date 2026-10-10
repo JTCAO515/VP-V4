@@ -1,0 +1,12 @@
+import assert from'node:assert/strict';import{readFileSync,writeFileSync}from'node:fs';import{sql}from'../../../tests/integration/cost/fixtures/postgres-rpc.mjs';
+const root='artifacts/VPJ-08/assistant-events-sql-20261010/';const spec=JSON.parse(readFileSync(root+'migration-approved-components.json','utf8'));
+const lit=s=>"'"+s.replaceAll("'","''")+"'";
+const signatures=Object.keys(spec.functions).filter(k=>spec.oldNames.includes(spec.functions[k].name));signatures.push('turn_private.terminal(uuid,text,integer)');
+const query=`set search_path='';select jsonb_object_agg(signature,jsonb_build_object('definition',pg_get_functiondef(p.oid),'prosrc',p.prosrc,'identity',pg_get_function_identity_arguments(p.oid),'arguments',pg_get_function_arguments(p.oid),'result',pg_get_function_result(p.oid),'config',p.proconfig,'owner',pg_get_userbyid(p.proowner),'acl',p.proacl::text,'securityDefiner',p.prosecdef,'volatility',p.provolatile,'strict',p.proisstrict,'parallel',p.proparallel,'kind',p.prokind,'language',l.lanname)) from unnest(array[${signatures.map(lit).join(',')}]) signature join pg_proc p on p.oid=to_regprocedure(signature) join pg_language l on l.oid=p.prolang;`;
+const r=await sql('vpj08-events-sql-20261010',query);assert.equal(r.code,0,r.stderr);const actual=JSON.parse(r.stdout.trim());assert.equal(Object.keys(actual).length,23);
+// Exact approved-source definitions are validated against already reviewed
+// predecessor literals, not accepted from arbitrary running target state.
+const known={...JSON.parse(readFileSync(root+'authority-functions-before.json','utf8')),...JSON.parse(readFileSync(root+'guard-extra-before.json','utf8')),...JSON.parse(readFileSync(root+'writers-before.json','utf8'))};
+const d3=readFileSync(root+'d3-handler-before.sql','utf8').replace(/;\n$/,'\n');
+for(const [signature,m]of Object.entries(actual)){let expected=Object.values(known).find(v=>v===m.definition);if(signature==='public.privacy_linked_trip_delete_v1(text,jsonb)'){assert.equal(m.definition,d3);expected=d3;}assert.ok(expected,signature+' reviewed predecessor exact');assert.equal(m.owner,'postgres',signature+' owner');assert.deepEqual(m.config,['search_path=""']);}
+writeFileSync(root+'migration-before-metadata.json',JSON.stringify(actual,null,2)+'\n');console.log('23 exact approved predecessor definitions/signatures/config/owner/ACL captured; every definition matches frozen reviewed source');
