@@ -6,8 +6,7 @@ import {randomUUID as uuid} from 'node:crypto';
 import {createServerClient} from '@supabase/ssr';
 import {createNativeTextEnvironment} from '../../turn/native-text-environment.mjs';
 import {identityLocalEnv} from '../../identity/local-supabase.mjs';
-if(process.env.VP_DIRECTIONS_AUTH_CASE!=='1')throw Error('Use only the owned directions Auth runner');
-test('directions: real source, exact bytes, preserved draft, both-client reload and original confirmation',{timeout:240000},async t=>{
+test('directions: real source, exact bytes, preserved draft, both-client reload and original confirmation',{skip:process.env.VP_DIRECTIONS_AUTH_CASE!=='1',timeout:240000},async t=>{
  const local=identityLocalEnv();assert.ok(local&&/^supabase_db_vp-native-ask-[a-f0-9]{8}$/.test(local.DB_CONTAINER));
  const e=await createNativeTextEnvironment();t.after(()=>e.cleanup());
  const base='/api/chat/native/v5',root=base+'/planning/directions';

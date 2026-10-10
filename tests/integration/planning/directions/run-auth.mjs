@@ -14,7 +14,7 @@ let code=1;
 try{
  if(await run('supabase',['start','--workdir',workdir,'-x','realtime,storage-api,imgproxy,mailpit,postgres-meta,studio,edge-runtime,logflare,vector,supavisor'])!==0)throw Error('Owned stack start failed; credential output suppressed');
  console.log('DIRECTIONS_AUTH_TARGET '+JSON.stringify({project,base:ports.base,api:ports.api,supabaseAPI:ports.supabaseAPI}));
- code=await run(process.execPath,['--experimental-strip-types','--test','tests/integration/planning/directions/auth-case.mjs'],true,{...env,...nativeHTTPChildEnv(ports,workdir),VP_DIRECTIONS_AUTH_CASE:'1',VISEPANDA_NATIVE_LOCAL_PLANNING:'true',VISEPANDA_TRIP_PROTOCOL_V2:'true'});
+ code=await run(process.execPath,['--experimental-strip-types','--test','tests/integration/planning/directions/auth-http.test.mjs'],true,{...env,...nativeHTTPChildEnv(ports,workdir),VP_DIRECTIONS_AUTH_CASE:'1',VISEPANDA_NATIVE_LOCAL_PLANNING:'true',VISEPANDA_TRIP_PROTOCOL_V2:'true'});
 }finally{
  const stopped=await run('supabase',['stop','--workdir',workdir,'--no-backup']);if(stopped!==0){console.error('Owned cleanup failed for '+project);code=1;}else{rmSync(workdir,{recursive:true});console.log('DIRECTIONS_AUTH_CLEANUP '+JSON.stringify({project,result:'PASS'}));}
 }

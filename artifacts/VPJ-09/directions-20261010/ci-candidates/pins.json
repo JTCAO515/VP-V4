@@ -1,0 +1,10 @@
+{
+  "path": "scripts/ci-suites/db-integration.mjs",
+  "beforeWT": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj08-assistant-events-server-20261010",
+  "beforeHEAD": "f21c60820618b148918c287c73e9cfe99fe12272",
+  "beforeSHA256": "7af1d9beb14671e96b8e32ad08e264123befe05da144205e500920699ac7d513",
+  "afterSHA256": "b16686f53c89214c2ad1001be5a894b9964b3f69b1535ce809afb4e721c6a355",
+  "patchSHA256": "d6ec371fa392d6c8b63dd1a43361a9e87f3b5a9d711a6d987b4dc38831d51da8",
+  "hunks": 1,
+  "scope": "one native DB lane runner+gated file; no selector/workflow/role/port/offset/cap changes; unknown runner dependency still conservative full"
+}
