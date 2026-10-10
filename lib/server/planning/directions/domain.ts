@@ -30,8 +30,8 @@ function validate(input: DirectionsInput): void {
 export function directions(input: DirectionsInput): readonly Direction[] {
   validate(input);
   const zh = input.locale === 'zh';
-  const depth: Direction = { id: 'depth', title: zh ? '留白与深入' : 'Space to explore', tradeoff: zh ? '每天少安排一项，给个人兴趣留更多时间；覆盖面较小。' : 'Fewer activities each day leave more time for your interests, with less breadth.' };
-  const breadth: Direction = { id: 'breadth', title: zh ? '更多主题' : 'More variety', tradeoff: zh ? '每天多安排一个兴趣主题，探索面更广；休息和临时调整空间较少。' : 'An extra interest theme each day gives more variety, with less room for rest or changes.' };
+  const depth: Direction = { id: 'depth', title: zh ? '留白与深入' : 'Space to explore', tradeoff: zh ? '给单次体验与个人兴趣留更多时间；覆盖面较小。' : 'More time for each experience and your interests, with less breadth.' };
+  const breadth: Direction = { id: 'breadth', title: zh ? '比较更多体验' : 'Compare more experiences', tradeoff: input.currentPace === 'relaxed' || input.interests.length < 2 ? (zh ? '比较同一兴趣的不同体验；留给单次体验的时间会少一些，具体地点仍待选择。' : 'Compare different experiences of one interest, leaving less time for each; specific places are still to be chosen.') : (zh ? '每天多安排一个兴趣主题，探索面更广；休息和临时调整空间较少。' : 'An extra interest theme each day gives more variety, with less room for rest or changes.') };
   return input.intent === 'specific' ? [input.currentPace === 'packed' ? breadth : depth] : [depth, breadth];
 }
 /** Accept only the existing task-scoped Profile projection. It grants no server/model consent. */
@@ -52,6 +52,7 @@ export function relativePlan(input: DirectionsInput, directionId: Direction['id'
   const zh = input.locale === 'zh';
   const limitations = [zh ? '日期、交通、营业时间与价格尚未核实；这是相对日想法，不是可执行行程。' : 'Dates, transport, opening hours and prices are unverified; this is a relative-day idea, not an executable itinerary.'];
   if (input.budgetMinorUnits !== null) limitations.push(zh ? '预算已保留；没有报价依据，不能证明安排符合预算。' : 'Your budget is retained; without price evidence, affordability is unknown.');
+  if (!input.interests.length) limitations.push(zh ? '兴趣尚未指定；这里只保留自主探索意图，主题和地点待你选择。' : 'Interests are unspecified; only exploration intentions are reserved, with themes and places for you to choose.');
   if (input.durationDays === null) limitations.push(zh ? '天数未定，可跳过后再补。' : 'Duration is unknown and can be added later.');
   if (!input.destinations.length) limitations.push(zh ? '目的地未定，可先选方向。' : 'Destination is unknown; you can choose a direction first.');
   if (input.durationDays !== null && input.destinations.length) {
@@ -60,7 +61,7 @@ export function relativePlan(input: DirectionsInput, directionId: Direction['id'
     for (let i = 0; i < input.durationDays; i++) {
       const destination = input.destinations[Math.min(used - 1, Math.floor(i * used / input.durationDays))];
       const count = selected.pace === 'relaxed' ? 1 : directionId === 'breadth' || selected.pace === 'packed' ? 2 : 1;
-      const activities = input.interests.length ? Array.from({ length: Math.min(count, input.interests.length) }, (_, n) => (zh ? '预留主题：' : 'Time for: ') + input.interests[(i + n) % input.interests.length]) : [zh ? '预留自由探索时间' : 'Leave time for your own exploration'];
+      const activities = input.interests.length ? Array.from({ length: Math.min(count, input.interests.length) }, (_, n) => (directionId === 'depth' ? (zh ? '深入体验：' : 'Explore in depth: ') : (zh ? '比较不同体验：' : 'Compare experiences of: ')) + input.interests[(i + n) % input.interests.length]) : [directionId === 'depth' ? (zh ? '保留留白，随性探索' : 'Leave space for spontaneous exploration') : (zh ? '比较可自选的探索主题，具体内容待定' : 'Compare exploration themes you choose; details remain open')];
       days.push({ ordinal: i + 1, destination, activities });
     }
   }

@@ -34,3 +34,11 @@ test('mutation boundaries reject injected dated fields, oversized activities and
  }
  assert.throws(()=>bindRelativeDates(relativePlan({...input,durationDays:null},'depth'),trip,'2026-11-01','draft'),/INVALID_BINDING/);
 });
+
+test('exploration alternatives remain distinct for one interest, no interest and explicit relaxed pace',()=>{
+ for(const patch of [{interests:['food']},{interests:[]},{currentPace:'relaxed'}]){
+  const current={...input,...patch};const a=relativePlan(current,'depth'),b=relativePlan(current,'breadth');
+  assert.notDeepEqual(a.days.map(d=>d.activities),b.days.map(d=>d.activities));
+  if(current.interests.length===0)assert.ok(a.limitations.some(l=>l.includes('兴趣')));
+ }
+});
