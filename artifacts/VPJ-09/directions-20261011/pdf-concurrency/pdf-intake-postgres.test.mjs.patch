@@ -1,0 +1,39 @@
+--- a/tests/integration/pdf-intake/pdf-intake-postgres.test.mjs
++++ b/tests/integration/pdf-intake/pdf-intake-postgres.test.mjs
+@@ -128,11 +128,32 @@
+  assert.equal((await exportCall(a,'read',{requestId:l.requestId})).kind,'unavailable','ready controlled artifact invalidates on real source erasure');
+ });
+ 
+-run('concurrent cancel/confirm and privacy/source contention abort without deadlock or partial apply',async()=>{
+- const a=await fixture(),s=await submit(a,cmd());
+- const results=await Promise.all([sql(container,confirmSQL(a,s.r)),sql(container,callSQL(a,'cancel',{operationId:s.c.operationId}))]);
++run('concurrent cancel/confirm and privacy/source contention abort without deadlock or partial apply',async t=>{
++ const a=await fixture(),s=await submit(a,cmd()),confirmKey=randomUUID();
++ const observe=async()=>JSON.parse(await db(`select jsonb_build_object('head',t.head_version,'content',public.trip_content_snapshot(t.id,t.title),'events',(select coalesce(jsonb_agg(to_jsonb(e) order by e.id),'[]') from public.trip_events e where e.trip_id=t.id and e.owner_id=t.owner_id),'idempotency',(select coalesce(jsonb_agg(to_jsonb(i) order by i.idempotency_key),'[]') from public.trip_idempotency i where i.owner_id=t.owner_id and i.proposal_id='${s.r.proposalId}'),'operation',(select to_jsonb(o) from pdf_intake_private.operations_v1 o where o.owner_id=t.owner_id and o.operation_id='${s.c.operationId}'),'proposal',(select to_jsonb(p) from public.trip_proposals p where p.id='${s.r.proposalId}')) from public.trips t where t.id='${a.trip}';`));
++ const before=await observe(),pendingBefore=await operation(a,s.c.operationId);
++ assert.equal(pendingBefore.state,'pending');assert.equal(before.operation.input_bytes,s.raw);assert.equal(pendingBefore.requestDigest,digest(s.raw));
++ const results=await Promise.all([sql(container,confirmSQL(a,s.r,confirmKey)),sql(container,callSQL(a,'cancel',{operationId:s.c.operationId}))]);
+  for(const r of results)if(r.code!==0){assert.match(r.stderr,/LIFECYCLE_LOCK_CONFLICT|could not obtain lock|PROPOSAL_NOT_CONFIRMABLE|CONFIRMATION_DIGEST_MISMATCH/);assert.doesNotMatch(r.stderr,/deadlock/);}
+- const recovered=await operation(a,s.c.operationId),snapshot=await snap(a);assert.ok(['confirmed','cancelled'].includes(recovered.state));assert.equal(snapshot.days.length,recovered.state==='confirmed'?1:0);
++ const [confirmed,cancelled]=results,confirmOutcome=confirmed.stdout.trim(),cancelOutcome=cancelled.code===0?JSON.parse(cancelled.stdout.trim()):null;
++ const recovered=await operation(a,s.c.operationId),snapshot=await snap(a),after=await observe();
++ t.diagnostic('PDF_CANCEL_CONFIRM '+JSON.stringify({requests:results.map((r,index)=>({action:index===0?'confirm':'cancel',code:r.code,outcome:r.stdout.trim(),stderr:r.stderr.trim()})),recoveredState:recovered.state,head:after.head,events:after.events,idempotency:after.idempotency,operationBytesDigest:digest(canonical(after.operation))}));
++ if(confirmed.code===0)assert.ok(['applied','proposal_not_confirmable'].includes(confirmOutcome),'only exact fresh original confirmation outcomes');
++ if(cancelled.code===0){assert.equal(cancelOutcome.kind,'pdf_intake_operation/1');assert.equal(cancelOutcome.operationId,s.c.operationId);assert.equal(cancelOutcome.tripId,a.trip);assert.ok(['confirmed','cancelled'].includes(cancelOutcome.state),'cancel must have a committed terminal outcome');}
++ const committedConfirm=confirmed.code===0&&confirmOutcome==='applied',committedCancel=cancelled.code===0&&cancelOutcome.state==='cancelled';
++ if(committedConfirm){
++  assert.equal(committedCancel,false);assert.equal(recovered.state,'confirmed');if(cancelled.code===0)assert.equal(cancelOutcome.state,'confirmed');
++  assert.equal(after.head,before.head+1);assert.equal(recovered.resultingVersion,after.head);assert.equal(snapshot.days.length,1);
++  assert.equal(snapshot.days[0].date,s.c.fields.find(f=>f.kind==='date').value);
++  assert.equal(after.events.length,before.events.length+1);const event=after.events.find(e=>e.id===recovered.confirmationEventId);assert.ok(event);assert.equal(event.proposal_id,s.r.proposalId);assert.equal(event.resulting_version,after.head);assert.equal(event.event_type,'proposal_applied');
++  assert.equal(after.idempotency.length,before.idempotency.length+1);const receipt=after.idempotency.find(i=>i.idempotency_key===confirmKey);assert.ok(receipt);assert.equal(receipt.proposal_id,s.r.proposalId);assert.equal(receipt.outcome,'applied');assert.equal(receipt.resulting_version,after.head);
++ }else if(committedCancel){
++  if(confirmed.code===0)assert.equal(confirmOutcome,'proposal_not_confirmable');assert.equal(recovered.state,'cancelled');assert.equal(after.head,before.head);assert.deepEqual(after.content,before.content);assert.deepEqual(after.events,before.events);assert.deepEqual(after.idempotency,before.idempotency);assert.equal(snapshot.days.length,0);
++ }else{
++  const lockDenied=r=>r.code!==0&&r.stdout.trim()===''&&/LIFECYCLE_LOCK_CONFLICT|could not obtain lock/.test(r.stderr)&&!/CONFIRMATION_DIGEST_MISMATCH|PROPOSAL_NOT_CONFIRMABLE/.test(r.stderr);
++  assert.ok(results.every(lockDenied),'pending allowed only for two explicit original lock denials with no committed outcome');
++  assert.equal(recovered.state,'pending');assert.deepEqual(after,before,'double rollback preserves original content/head/events/idempotency and complete operation bytes/digests');assert.deepEqual(recovered,pendingBefore);assert.equal(snapshot.days.length,0);
++ }
+  assert.equal(await db('select deadlocks from pg_stat_database where datname=current_database();'),'0');
+  const b=await fixture(),bs=await submit(b,cmd()),l=await lease(b);const holder=sql(container,`set application_name='pdf_export_holder';begin;${exportSQL(exportInput(l))}select pg_sleep(0.5);commit;`);
+  for(let n=0;n<60;n++){if(await db("select exists(select 1 from pg_stat_activity where application_name='pdf_export_holder' and wait_event_type='Timeout');")==='t')break;if(n===59)assert.fail('holder unobserved');await new Promise(r=>setTimeout(r,10));}
