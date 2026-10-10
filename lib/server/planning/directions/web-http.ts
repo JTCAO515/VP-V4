@@ -21,7 +21,7 @@ export async function readWebDirectionsForTrip(tripId:string,rpc:Rpc){
  if(!validResultReference(ref.data,'tripId',tripId)||ref.data.archiveHistorical===true)return failure('PROVIDER_UNAVAILABLE',503);
  const raw=await rpc.call('read_result_artifact_v2',{p_artifact_id:ref.data.artifactId,p_revision:ref.data.revision});if(raw.error)return rpcFailure(raw.error.message);
  const result=parseResultArtifactReadV2(raw.data);
- if(!result||result.content.schemaVersion!=='travel-directions/1'||!result.current||result.lifecycle!=='active'||result.source.tripId!==tripId||result.artifactId!==ref.data.artifactId||result.revision!==ref.data.revision)return failure('PROVIDER_UNAVAILABLE',503);
+ if(!result||result.content.schemaVersion!=='travel-directions/1'||result.historicalReadable!==true||result.lifecycle!=='active'||result.source.tripId!==tripId||result.artifactId!==ref.data.artifactId||result.revision!==ref.data.revision)return failure('PROVIDER_UNAVAILABLE',503);
  if(await rpc.authenticate()!==actor)return failure('UNAUTHENTICATED',401);
  return {status:200,body:{version:2,data:result}};
 }

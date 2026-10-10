@@ -9,7 +9,7 @@ const content={schemaVersion:'travel-directions/1',title:'Ideas',summary:'Dates 
 const result=(fields={})=>({kind:'result_artifact',artifactId:artifact,revision:1,currentRevision:1,current:true,historicalReadable:true,lifecycle:'active',source:{taskId:randomUUID(),taskTurnId:randomUUID(),goalId:randomUUID(),goalVersion:1,inputMessageId:randomUUID(),inputSequence:3,tripId:trip,tripVersion:0},basis:{memories:[],evidence:[]},content,createdAt:'2026-10-10T08:00:00Z',...fields});
 test('Web sameTrip original reader accepts qualified ref only and denies replaced actor/crossTrip',async()=>{
  const run=async(exact,auth)=>readWebDirectionsForTrip(trip,{authenticate:auth??(async()=>actor),call:async name=>({error:null,data:name==='read_trip_directions_reference_v1'?{kind:'result_reference',artifactId:artifact,revision:1,tripId:trip}:exact})});
- assert.equal((await run(result())).status,200);assert.equal((await run(result({source:{...result().source,tripId:randomUUID()}}))).status,503);
+ assert.equal((await run(result())).status,200);assert.equal((await run(result({current:false}))).status,200);assert.equal((await run(result({source:{...result().source,tripId:randomUUID()}}))).status,503);
  let n=0;assert.equal((await run(result(),async()=>n++?randomUUID():actor)).status,401);
 });
 test('Web mutation retains exact bytes and can replay old revision only through canonical gateway and fresh original read',async()=>{
