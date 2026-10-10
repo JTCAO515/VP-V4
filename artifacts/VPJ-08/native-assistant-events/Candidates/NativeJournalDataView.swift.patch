@@ -1,0 +1,15 @@
+--- a/ios/VisePanda/VisePanda/Features/JournalData/NativeJournalDataView.swift
++++ b/ios/VisePanda/VisePanda/Features/JournalData/NativeJournalDataView.swift
+@@ -26 +26 @@
+-                        Text(row.record.state == .absent ? t("原读取已确认无请求", "The original reader confirmed no request")
++                        Text(row.record.state == .absent ? (row.record.source == .assistantEventsCursor ? t("已确认无位置缓存", "Position cache confirmed absent") : t("原读取已确认无请求", "The original reader confirmed no request"))
+@@ -27,0 +28 @@
++                            : row.record.state == .projection ? t("缓存的事件读取位置；不是未确认操作", "Cached replay position; not an unresolved operation")
+@@ -28,0 +30,5 @@
++                        if row.record.state == .projection, let cursor = row.record.assistantEventsCursor {
++                            Text(t("可恢复事件的缓存位置；不是未确认操作或服务器完成证明", "Cached replay position; not an unresolved operation or server completion proof")).font(.caption)
++                            Text(cursor.conversationID + " · " + String(cursor.afterSequence)).font(.caption)
++                            Text(t("仅可导出位置元数据；换账号、退出或原权限失效会清除此缓存", "Only position metadata is exportable; account replacement, sign-out or original eligibility denial clears this cache")).font(.caption)
++                        }
+@@ -245,0 +252 @@
++            .assistantEventsCursor: ("可恢复事件缓存", "Replay position cache"),

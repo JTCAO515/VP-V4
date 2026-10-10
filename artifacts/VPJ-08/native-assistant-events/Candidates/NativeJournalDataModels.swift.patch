@@ -1,0 +1,20 @@
+--- a/ios/VisePanda/VisePanda/Features/JournalData/NativeJournalDataModels.swift
++++ b/ios/VisePanda/VisePanda/Features/JournalData/NativeJournalDataModels.swift
+@@ -9,0 +10 @@
++    case assistantEventsCursor
+@@ -13 +14 @@
+-enum NativeJournalDataReadState: String, Codable { case absent, pending, unavailable }
++enum NativeJournalDataReadState: String, Codable { case absent, pending, projection, unavailable }
+@@ -26,0 +28 @@
++    var assistantEventsCursor: NativeAssistantEventsCursor.Metadata? = nil
+@@ -45 +47 @@
+-            return originalIdentity == nil && operationIdentity == nil && record.originalOperationBytes == nil
++            return record.assistantEventsCursor == nil && originalIdentity == nil && operationIdentity == nil && record.originalOperationBytes == nil
+@@ -46,0 +49,5 @@
++        case .projection:
++            return record.source == .assistantEventsCursor && record.kind == .metadataOnly &&
++                record.assistantEventsCursor?.valid == true && originalIdentity != nil && !originalIdentity!.isEmpty && originalIdentity!.count <= 4096 &&
++                operationIdentity == originalIdentity && record.originalOperationBytes == nil &&
++                record.operationID == nil && record.tripID == nil && record.action == nil && record.objectID == nil
+@@ -47,0 +55 @@
++            guard record.assistantEventsCursor == nil, record.source != .assistantEventsCursor else { return false }

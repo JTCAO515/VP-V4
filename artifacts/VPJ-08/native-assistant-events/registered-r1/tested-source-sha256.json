@@ -1,0 +1,18 @@
+{
+  "ios/VisePanda/VisePanda/Features/AssistantEvents/NativeAssistantEventsCursor.swift": "635492bcfa87cbc9faa329e518db5c8e118fd1ecc1f40d598e02a7da64a35575",
+  "ios/VisePanda/VisePanda/Features/AssistantEvents/NativeAssistantEventsDecoder.swift": "f4e4a011c3facdd6abc9a6190c1aad36a6e2667d5b5c836ccf736168d1a74c6b",
+  "ios/VisePanda/VisePanda/Features/AssistantEvents/NativeAssistantEventsInvalidation.swift": "4b7ba1d3ea074490a64121269c07d42ff4b7840b0a4f6924d18982a768059ed5",
+  "ios/VisePanda/VisePanda/Features/AssistantEvents/NativeAssistantEventsLifetime.swift": "9025d22421d0723c6b69c71df08f714b82d65537280b7513ee84033c4ff9ddbc",
+  "ios/VisePanda/VisePanda/Features/AssistantEvents/NativeAssistantEventsProjection.swift": "eb734f1b73f2de1a74e00ed0af36e431f56b699d9e9780272fa6fc79e21c33bb",
+  "ios/VisePanda/VisePanda/Features/AssistantEvents/NativeAssistantEventsStore.swift": "02a447e8d79f5977b58dd3bcca79488611619fd4683ceae5dc242497bc68b457",
+  "ios/VisePanda/VisePanda/App/NativeSession.swift": "3181beb05c194a33d61a7dc79b8039f6d66fe9f1bd3b451fbd20285be1bfe508",
+  "ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift": "1a0e5f6997318334288d26ce29bbbcc597e47de69e1d2b5a62106c54395aad11",
+  "ios/VisePanda/VisePanda/Features/Ask/NativeTaskActivityView.swift": "d2f3200e69e6ce04e047ddf924e70b4e1b9aafb2192b27c8f397b8be6854df98",
+  "ios/VisePanda/VisePanda/Features/Knowledge/NativeFiveResultView.swift": "dfe72277a3998473d5451403877a9247138b5b96a4623cdcc59501a046bd3729",
+  "ios/VisePanda/VisePanda/Features/JournalData/NativeJournalDataModels.swift": "02823f2e81e0d3d3f5cede10075883b458fca977f7d1b90728e9d775c148d3ab",
+  "ios/VisePanda/VisePanda/Features/JournalData/NativeJournalDataVaultSources.swift": "92f978e2e14b3cec82e286445c9480a752b699af31977128640a0ae23a986738",
+  "ios/VisePanda/VisePanda/Features/JournalData/NativeJournalDataStore.swift": "f4befb27e16a7696bc5a472f53cbbb8cc8ae05dd3c3c7d3bd7c17ecfce30f7a5",
+  "ios/VisePanda/VisePanda/Features/JournalData/NativeJournalDataView.swift": "e99cda51607b944da1a30ae0dd0f15d83c554418dd2123dc51d2d3999728efd4",
+  "ios/VisePanda/VisePanda.xcodeproj/project.pbxproj": "16b20c00184a9f6f5aea53358d6dafc8cc9f1cee1a2d9aca4546416303fb6696",
+  "ios/VisePanda/VisePandaTests/NativeAssistantEventsTests.swift": "a67a2b9b6b185c636b6f506289f7b670b6238c05f4a8218c8c7af2296d903e44"
+}

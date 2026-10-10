@@ -68,6 +68,14 @@ final class NativeSession {
         let base = keychainService
         func service(_ suffix: String) -> (String) -> String { { base + suffix + $0 } }
         let companions: [NativeJournalDataSourceID: NativeJournalDataVaultSources.Companion] = [
+            .assistantEventsCursor: .init(service: service(".assistant-events-cursor."), read: { actor in
+                guard try self.communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
+                return try self.assistantEventsCursorMetadata(actor: actor).map { value in
+                    var record = NativeJournalDataExportRecord(source: .assistantEventsCursor, state: .projection, kind: .metadataOnly,
+                        operationID: nil, tripID: nil, action: nil, originalOperationBytes: nil, contentBoundary: "assistant_events_cursor_metadata_only")
+                    record.assistantEventsCursor = value; return record
+                }
+            }),
             .tripSupport: .init(service: service(".trip-support-confirm."), read: { actor in
                 guard try self.communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
                 return try self.tripSupportConfirmationRecovery().map {
@@ -635,6 +643,7 @@ final class NativeSession {
             navigation.viewedArtifact.map({ erased.artifactIDs.contains($0.artifactId) }) == true {
             assistantNavigation = nil
         }
+        try eraseAssistantEventsCursor(actor: actor, affectedConversationIDs: erased.conversationIDs)
         conversationDataErasure = erased
     }
     func conversationDataRequest(body: Data, actor: NativeCommunitySafetyActor) async throws -> Data {
@@ -1987,6 +1996,112 @@ final class NativeSession {
         return data
     }
 
+    /// Finite assistant replay. Uses original credentials/session and never an Ask writer.
+    func assistantEventsRequest(selection: NativeAssistantEventsSelection, after: Int) async throws -> Data {
+        guard askMode == .assistant, enabled, !busy, selection.valid,
+              dataScope == selection.scope, (0...999_999_999_999_999).contains(after),
+              try communitySafetyActor().sessionID == selection.sessionID else { throw NativeDataError.sessionUnavailable }
+        if let credential, credential.expiresAt <= Date().timeIntervalSince1970 + 15 { await validate() }
+        guard dataScope == selection.scope, let credential, let endpoint,
+              try communitySafetyActor().sessionID == selection.sessionID else { throw NativeDataError.staleSessionResponse }
+        var request = URLRequest(url: endpoint.appendingPathComponent("api/chat/native/v5/assistant-events/\(selection.conversationID)"))
+        request.httpShouldHandleCookies = false; request.timeoutInterval = 10
+        request.setValue("text/event-stream", forHTTPHeaderField: "Accept")
+        request.setValue("Bearer \(credential.accessToken)", forHTTPHeaderField: "Authorization")
+        request.setValue(String(after), forHTTPHeaderField: "Last-Event-ID")
+        let started = ProcessInfo.processInfo.systemUptime
+        let (stream, response) = try await transport.bytes(for: request)
+        defer { stream.task.cancel() }
+        let remaining = max(0, 10 - (ProcessInfo.processInfo.systemUptime - started))
+        let deadline = Task { try await Task.sleep(for: .seconds(remaining)); stream.task.cancel() }
+        defer { deadline.cancel() }
+        guard dataScope == selection.scope, try communitySafetyActor().sessionID == selection.sessionID else { throw NativeDataError.staleSessionResponse }
+        guard let http = response as? HTTPURLResponse else { throw NativeDataError.invalidResponse }
+        if http.statusCode == 401 { handle(SessionError.denied); throw NativeDataError.sessionUnavailable }
+        if http.statusCode == 403 { try eraseAssistantEventsCursor(selection: selection); throw NativeDataError.server(code: "DATA_POLICY_BLOCKED") }
+        guard http.statusCode == 200, http.value(forHTTPHeaderField: "Content-Type")?.lowercased().hasPrefix("text/event-stream") == true else { throw NativeDataError.invalidResponse }
+        var bytes = Data()
+        for try await byte in stream {
+            try Task.checkCancellation()
+            guard dataScope == selection.scope, try communitySafetyActor().sessionID == selection.sessionID else { throw NativeDataError.staleSessionResponse }
+            guard bytes.count < 65_536, ProcessInfo.processInfo.systemUptime - started < 10 else { throw NativeDataError.invalidResponse }
+            bytes.append(byte)
+        }
+        try Task.checkCancellation()
+        guard dataScope == selection.scope, try communitySafetyActor().sessionID == selection.sessionID else { throw NativeDataError.staleSessionResponse }
+        _ = try NativeAssistantEventsDecoder.decode(bytes, conversationID: selection.conversationID, after: after)
+        return bytes
+    }
+
+    private var assistantEventsCursorService: String { keychainService + ".assistant-events-cursor." + (endpoint?.absoluteString ?? "disabled") }
+    func assistantEventsCursor(selection: NativeAssistantEventsSelection, qualified: Bool) throws -> Int? {
+        guard dataScope == selection.scope, try communitySafetyActor().sessionID == selection.sessionID else { throw NativeDataError.staleSessionResponse }
+        let (status, bytes) = vault.read(service: assistantEventsCursorService, owner: selection.scope.subject)
+        if status == errSecItemNotFound { return nil }
+        guard status == errSecSuccess, let bytes else { throw NativeDataError.sessionUnavailable }
+        // A stale selection/session/policy record remains only a discarded projection hint.
+        return try? NativeAssistantEventsCursor.decode(bytes, selection: selection, qualified: qualified)
+    }
+    func rememberAssistantEventsCursor(selection: NativeAssistantEventsSelection, sequence: Int) throws {
+        guard dataScope == selection.scope, try communitySafetyActor().sessionID == selection.sessionID else { throw NativeDataError.staleSessionResponse }
+        let bytes = try NativeAssistantEventsCursor.encode(sequence, selection: selection)
+        guard vault.write(bytes, service: assistantEventsCursorService, owner: selection.scope.subject) == errSecSuccess else { throw NativeDataError.sessionUnavailable }
+    }
+
+    var assistantEventsEnabled: Bool {
+        askMode == .assistant && !ProcessInfo.processInfo.arguments.contains("-VisePandaLegacyAssistantEvents") &&
+            (ProcessInfo.processInfo.arguments.contains("-VisePandaAssistantEvents") ||
+             Bundle.main.object(forInfoDictionaryKey: "VisePandaAssistantEventsEnabled") as? Bool == true)
+    }
+    private(set) var assistantEventsInvalidation: NativeAssistantEventsInvalidation?
+    func invalidateAssistantEvents(selection: NativeAssistantEventsSelection,
+                                   object: NativeAssistantEventsReference.Object?) throws {
+        guard dataScope == selection.scope, try communitySafetyActor().sessionID == selection.sessionID else { throw NativeDataError.staleSessionResponse }
+        assistantEventsInvalidation = .init(id: UUID(), selection: selection, object: object)
+    }
+    func eraseAssistantEventsCursor(selection: NativeAssistantEventsSelection) throws {
+        guard dataScope == selection.scope, try communitySafetyActor().sessionID == selection.sessionID else { throw NativeDataError.staleSessionResponse }
+        try eraseAssistantEventsCursor(owner: selection.scope.subject,
+            matches: { try NativeAssistantEventsCursor.matches($0, selection: selection) },
+            current: { self.dataScope == selection.scope && (try? self.communitySafetyActor())?.sessionID == selection.sessionID })
+    }
+    private func eraseAssistantEventsCursor(actor: NativeCommunitySafetyActor, affectedConversationIDs: Set<String>) throws {
+        guard try communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
+        try eraseAssistantEventsCursor(owner: actor.scope.subject,
+            matches: { try NativeAssistantEventsCursor.matches($0, scope: actor.scope, sessionID: actor.sessionID, affectedConversationIDs: affectedConversationIDs) },
+            current: { (try? self.communitySafetyActor()) == actor })
+    }
+    private func eraseAssistantEventsCursor(owner: String, matches: (Data) throws -> Bool, current: () -> Bool) throws {
+        guard current() else { throw NativeDataError.staleSessionResponse }
+        let first = vault.read(service: assistantEventsCursorService, owner: owner)
+        if first.0 == errSecItemNotFound {
+            let second = vault.read(service: assistantEventsCursorService, owner: owner)
+            guard first.1 == nil, second.0 == errSecItemNotFound, second.1 == nil, current() else { throw NativeDataError.sessionUnavailable }
+            return
+        }
+        guard first.0 == errSecSuccess, let bytes = first.1 else { throw NativeDataError.sessionUnavailable }
+        let affected = try matches(bytes)
+        let second = vault.read(service: assistantEventsCursorService, owner: owner)
+        guard second.0 == first.0, second.1 == first.1, current() else { throw NativeDataError.staleSessionResponse }
+        guard affected else { return } // a different qualified cursor is retained, not called absent.
+        try eraseAssistantEventsCursor(owner: owner)
+    }
+    func assistantEventsCursorMetadata(actor: NativeCommunitySafetyActor) throws -> NativeAssistantEventsCursor.Metadata? {
+        guard try communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
+        let (status, bytes) = vault.read(service: assistantEventsCursorService, owner: actor.scope.subject)
+        if status == errSecItemNotFound { guard bytes == nil else { throw NativeDataError.invalidResponse }; return nil }
+        guard status == errSecSuccess, let bytes else { throw NativeDataError.sessionUnavailable }
+        let value = try NativeAssistantEventsCursor.metadata(bytes, scope: actor.scope, sessionID: actor.sessionID)
+        guard try communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
+        return value
+    }
+    private func eraseAssistantEventsCursor(owner: String) throws {
+        let result = vault.remove(service: assistantEventsCursorService, owner: owner)
+        guard result == errSecSuccess || result == errSecItemNotFound else { throw NativeDataError.sessionUnavailable }
+        let absence = vault.read(service: assistantEventsCursorService, owner: owner)
+        guard absence.0 == errSecItemNotFound, absence.1 == nil else { throw NativeDataError.sessionUnavailable }
+    }
+
     /// Read one bounded live connection. Reconnection never sends an Ask request.
     func askEvents(turnId: String, after: Int, receive: (NativeAskEventDecoder.Frame, TimeInterval) throws -> Void) async throws {
         guard askMode == .grounded, enabled, !busy, UUID(uuidString: turnId) != nil,
@@ -2262,6 +2377,7 @@ final class NativeSession {
     @discardableResult private func clear(preservePendingJournals: Bool = false, preservingAnonymousResume: UUID? = nil) -> Bool {
         // Fence consumers before cleanup; a locked file is not proof of erasure.
         dataGeneration += 1
+        assistantEventsInvalidation = nil
         notifications.actorChanged(to: nil)
         placeGuide.clear()
         do { try voiceAudio.erase() }
@@ -2312,6 +2428,8 @@ final class NativeSession {
         memoryPreferences.clear()
         exploreAskHandoff=nil
         if let owner = credential?.subject ?? defaults.string(forKey: storageKey) ?? defaults.string(forKey: storageKey + ".pendingJournalCleanupOwner") ?? defaults.string(forKey: storageKey + ".recoveryCleanupOwner") {
+            do { try eraseAssistantEventsCursor(owner: owner) }
+            catch { failureCode="assistantEventsCursorCleanupRequired";status="storageError";return false }
             do { try NativeDataCoverageJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
             catch { failureCode="dataCoverageJournalCleanupRequired"; status="storageError"; return false }
             do { try NativeExperienceJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }

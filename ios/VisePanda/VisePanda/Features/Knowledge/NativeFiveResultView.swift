@@ -11,6 +11,13 @@ import Observation
         if record.map({erased.artifactIDs.contains($0.artifactID)})==true{record=nil;deadline=0}
         // Preserve original pendingChoice/pendingBody/submitting and writer generation.
     }
+    private var eventGeneration = UUID()
+    func invalidateAssistantEvent(_ signal: NativeAssistantEventsInvalidation) {
+        guard key?.scope == signal.selection.scope else { return }
+        guard signal.object == nil || signal.object == .artifact(key?.artifactID ?? "") else { return }
+        eventGeneration = UUID(); record = nil; deadline = 0
+        // Preserve immutable pendingChoice/pendingBody, submitting and writer generation.
+    }
     private var generation=UUID()
     private var key:Key?
     private(set) var pendingChoice: NativeDecisionChoice?
@@ -29,36 +36,36 @@ import Observation
               comparison.artifactID==decision.comparison.artifactId,comparison.revision==decision.comparison.revision,
               case .comparison(let content)=comparison.content,content.options?.contains(where:{$0.id==option})==true,selected.revision<1000 else{return}
         let request=pendingChoice ?? NativeDecisionChoice(artifactId:selected.artifactID,expectedRevision:selected.revision,operationId:UUID().uuidString.lowercased(),optionId:option)
-        guard request.optionId==option,let body=pendingBody ?? (try? JSONEncoder().encode(request)) else{return};pendingChoice=request;pendingBody=body;choiceNotice=nil;let own=generation
+        guard request.optionId==option,let body=pendingBody ?? (try? JSONEncoder().encode(request)) else{return};pendingChoice=request;pendingBody=body;choiceNotice=nil;let own=generation,eventOwn=eventGeneration
         submitting=true;defer{if generation==own{submitting=false}}
         do{
-            let bytes=try await post(body);guard generation==own,current()==authority,!Task.isCancelled else{return}
+            let bytes=try await post(body);guard generation==own,eventGeneration==eventOwn,current()==authority,!Task.isCancelled else{return}
             guard let root=try JSONSerialization.jsonObject(with:bytes) as? [String:Any],Set(root.keys)==Set(["version","data"]),root["version"] as? Int==2,let data=root["data"] as? [String:Any] else{throw NativeDataError.invalidResponse}
             if data["kind"] as? String=="unavailable"{guard Set(data.keys)==Set(["kind"]) else{throw NativeDataError.invalidResponse};clear();return}
             guard Set(data.keys)==Set(["kind","artifactId","revision","reused"]),data["kind"] as? String=="selected",data["artifactId"] as? String==request.artifactId,
                   data["revision"] as? Int==request.expectedRevision+1,data["reused"] is Bool else{throw NativeDataError.invalidResponse}
             let readStarted=uptime()
             let next=try NativeFiveResultRecord.decode(await read(request.artifactId,request.expectedRevision+1),artifactID:request.artifactId,revision:request.expectedRevision+1)
-            guard generation==own,current()==authority,!Task.isCancelled else{return}
+            guard generation==own,eventGeneration==eventOwn,current()==authority,!Task.isCancelled else{return}
             guard uptime()-readStarted<30,let next,next.current,case .decision(let chosen)=next.content,chosen.state=="chosen",chosen.chosenOptionID==option else{throw NativeDataError.invalidResponse}
             record=next;key = .init(scope:scope,artifactID:next.artifactID,revision:next.revision);deadline=readStarted+30;pendingChoice=nil;pendingBody=nil
-        }catch{guard generation==own,current()==authority else{return};choiceFailed(error)}
+        }catch{guard generation==own,eventGeneration==eventOwn,current()==authority else{return};choiceFailed(error)}
     }
     func retryChoice(current:@escaping()->Key?,post:(Data)async throws->Data,read:(String,Int)async throws->Data)async{
-        guard !submitting,let request=pendingChoice,let body=pendingBody,let authority=key,authority==current() else{return};let scope=authority.scope;let own=generation
+        guard !submitting,let request=pendingChoice,let body=pendingBody,let authority=key,authority==current() else{return};let scope=authority.scope;let own=generation,eventOwn=eventGeneration
         submitting=true;defer{if generation==own{submitting=false}}
         do{
-            let bytes=try await post(body);guard generation==own,current()==authority,!Task.isCancelled else{return}
+            let bytes=try await post(body);guard generation==own,eventGeneration==eventOwn,current()==authority,!Task.isCancelled else{return}
             guard let root=try JSONSerialization.jsonObject(with:bytes) as? [String:Any],Set(root.keys)==Set(["version","data"]),root["version"] as? Int==2,let data=root["data"] as? [String:Any] else{throw NativeDataError.invalidResponse}
             if data["kind"] as? String=="unavailable"{guard Set(data.keys)==Set(["kind"]) else{throw NativeDataError.invalidResponse};clear();return}
             guard Set(data.keys)==Set(["kind","artifactId","revision","reused"]),data["kind"] as? String=="selected",data["artifactId"] as? String==request.artifactId,
                   data["revision"] as? Int==request.expectedRevision+1,data["reused"] is Bool else{throw NativeDataError.invalidResponse}
             let readStarted=uptime()
             let next=try NativeFiveResultRecord.decode(await read(request.artifactId,request.expectedRevision+1),artifactID:request.artifactId,revision:request.expectedRevision+1)
-            guard generation==own,current()==authority,!Task.isCancelled else{return}
+            guard generation==own,eventGeneration==eventOwn,current()==authority,!Task.isCancelled else{return}
             guard uptime()-readStarted<30,let next,next.current,case .decision(let chosen)=next.content,chosen.state=="chosen",chosen.chosenOptionID==request.optionId else{throw NativeDataError.invalidResponse}
             record=next;key = .init(scope:scope,artifactID:next.artifactID,revision:next.revision);deadline=readStarted+30;pendingChoice=nil;pendingBody=nil;choiceNotice=nil
-        }catch{guard generation==own,current()==authority else{return};choiceFailed(error)}
+        }catch{guard generation==own,eventGeneration==eventOwn,current()==authority else{return};choiceFailed(error)}
     }
     private func choiceFailed(_ error: Error) {
         if case NativeDataError.server(let code)=error, ["UNAUTHENTICATED","DATA_POLICY_BLOCKED"].contains(code) {clear();return}
@@ -67,8 +74,8 @@ import Observation
     func load(key requested:Key,current:@escaping ()->Key?,request:()async throws->Data)async{
         clear();guard requested==current(),UUID(uuidString:requested.artifactID) != nil,(1...1000).contains(requested.revision) else{return}
         if erasureScope != requested.scope{erasureScope=requested.scope;erasedResultIDs=[]}
-        let own=generation,started=uptime();key=requested
-        do{let bytes=try await request();guard generation==own,requested==current(),!Task.isCancelled else{return}
+        let own=generation,eventOwn=eventGeneration,started=uptime();key=requested
+        do{let bytes=try await request();guard generation==own,eventGeneration==eventOwn,requested==current(),!Task.isCancelled else{return}
             guard uptime()-started<30 else{throw NativeDataError.invalidResponse}
             guard !erasedResultIDs.contains(requested.artifactID) else{throw NativeDataError.staleSessionResponse}
             record=try NativeFiveResultRecord.decode(bytes,artifactID:requested.artifactID,revision:requested.revision);deadline=started+30
@@ -117,6 +124,11 @@ struct NativeFiveResultDetail:View {
                 let comparisonKey=NativeFiveResultStore.Key(scope:key.scope,artifactID:decision.comparison.artifactId,revision:decision.comparison.revision)
                 await comparison.load(key:comparisonKey,current:{self.key?.scope==key.scope ? comparisonKey:nil}){try await session.fiveResultRequest(artifactID:comparisonKey.artifactID,revision:comparisonKey.revision)}
             }
+        }
+        .onChange(of:session.assistantEventsInvalidation?.id){_,_ in
+            guard let signal=session.assistantEventsInvalidation,
+                  signal.matches(scope:session.dataScope,sessionID:(try? session.communitySafetyActor())?.sessionID) else{return}
+            store.invalidateAssistantEvent(signal);comparison.invalidateAssistantEvent(signal)
         }
         .onChange(of:session.resultDataErasure?.id){_,_ in
             guard let erased=session.resultDataErasure,(try? session.communitySafetyActor())==erased.actor else{return}
