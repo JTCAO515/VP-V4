@@ -39,11 +39,23 @@ export async function createGoalReturnAuthEnvironment(){
   NEXT_PUBLIC_SUPABASE_URL:local.API_URL,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:key,VISEPANDA_NATIVE_LOCAL_SERVICE_KEY:local.SERVICE_ROLE_KEY,
   VISEPANDA_NATIVE_LOCAL_SESSION:'true',VISEPANDA_NATIVE_LOCAL_TRIP:'true',VISEPANDA_TRIP_PROTOCOL_V2:'true',VISEPANDA_NATIVE_LOCAL_TEXT:'true',
   VISEPANDA_NATIVE_LOCAL_TEXT_POLICY:policyId,VISEPANDA_NATIVE_LOCAL_ASSISTANT_CONVERSATION:'true',VPJ13_E3_AUTH_CONTROL:control};
- const next=spawn(process.execPath,['--import',resolve('tests/integration/journey-entry/goal-return/timing-control.mjs'),'node_modules/next/dist/bin/next','dev','--webpack','--hostname','127.0.0.1','--port',String(ports.apiPort)],{env,stdio:['ignore','pipe','pipe']});
+ const next=spawn(process.execPath,['--import',resolve('tests/integration/journey-entry/goal-return/timing-control.mjs'),'node_modules/next/dist/bin/next','dev','--webpack','--hostname','127.0.0.1','--port',String(ports.apiPort)],{env,detached:true,stdio:['ignore','pipe','pipe']});
  // Startup streams may contain environment/SDK diagnostics; never persist them.
  next.stdout.resume();next.stderr.resume();
+ const heldLocks=new Set();
+ const stopLock=async child=>{
+  if(!heldLocks.has(child))return;heldLocks.delete(child);
+  if(child.exitCode!==null)return;
+  const exited=once(child,'exit');child.stdin.end('rollback;\n\\q\n');
+  await Promise.race([exited,new Promise(r=>setTimeout(r,3000))]);
+  if(child.exitCode===null){child.kill('SIGTERM');await exited;}
+ };
  const cleanup=async()=>{
-  if(next.exitCode===null){const exited=once(next,'exit');next.kill('SIGTERM');await Promise.race([exited,new Promise(r=>setTimeout(r,3000))]);if(next.exitCode===null){next.kill('SIGKILL');await exited;}}
+  for(const child of [...heldLocks])await stopLock(child);
+  // This isolated process group was created by this spawn; never search/kill by name.
+  const signalGroup=signal=>{try{process.kill(-next.pid,signal);}catch(error){if(error.code!=='ESRCH')throw error;}};
+  const exited=next.exitCode===null?once(next,'exit'):Promise.resolve();signalGroup('SIGTERM');
+  await Promise.race([exited,new Promise(r=>setTimeout(r,3000))]);signalGroup('SIGKILL');await exited;
   rmSync(directory,{recursive:true});
  };
  try{await waitForNativeAPI(ports.api,next);}catch(error){await cleanup();throw error;}
@@ -54,12 +66,12 @@ export async function createGoalReturnAuthEnvironment(){
  const lockAccount=async id=>{
   if(!users.some(u=>u.id===id))throw Error('Only owned synthetic actor lock');
   const child=spawn('docker',['exec','-i',local.DB_CONTAINER,'psql','-U','postgres','-d','postgres','-X','-Atq','-v','ON_ERROR_STOP=1'],{stdio:['pipe','pipe','pipe']});
+  heldLocks.add(child);child.stdin.on('error',()=>{});
   const ready=new Promise((resolve,reject)=>{child.stdout.on('data',bytes=>{if(bytes.toString().includes('E3_LOCK_READY'))resolve();});child.once('error',()=>reject(Error('Own lock process launch failed')));child.once('exit',()=>reject(Error('Own lock exited before readiness')));child.stderr.resume();});
   child.stdin.write(`begin;set local statement_timeout='5s';select 1 from identity_private.mobile_accounts where owner_id='${id}' for update;select 'E3_LOCK_READY';\n`);
-  await Promise.race([ready,new Promise((_,reject)=>setTimeout(()=>reject(Error('Own lock readiness timed out')),5000))]);
-  let released=false;
-  const release=async()=>{if(released)return;released=true;const exited=once(child,'exit');child.stdin.end('rollback;\n\\q\n');await exited;};
-  return {release};
+  try{await Promise.race([ready,new Promise((_,reject)=>setTimeout(()=>reject(Error('Own lock readiness timed out')),5000))]);}
+  catch(error){await stopLock(child);throw error;}
+  return {release:()=>stopLock(child)};
  };
  return {api:ports.api,local,sql,users,policyId,noticeHash,client,service,timing,lockAccount,cleanup};
 }
