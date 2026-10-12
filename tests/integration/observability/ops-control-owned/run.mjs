@@ -9,7 +9,7 @@ import {decodeOpsPause,decodeOpsRefusal} from '../../../../lib/server/observabil
 const results=[];
 async function check(label,fn){if(process.argv[2]&&!label.startsWith('actual '+process.argv[2]+' '))return;try{await fn();results.push({label,result:'PASS'});console.log('PASS '+label);}catch(error){results.push({label,result:'FAIL',error:String(error)});throw error;}finally{writeFileSync(out+'actual-results.json',JSON.stringify({sourceBodySha256:lease.source.fullbodySha256,environment:'Own PG17.6 SQL Auth rows/claims, synthetic policy/observations/usage; no GoTrue/provider',results,providerCalls:0,targetDevice:'UNRUN'},null,2)+'\n');}}
 await owned();
-assert.equal(sha(readFileSync('/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj37-ops-control-sql-20261011/artifacts/VPJ-37/ops-control-sql-20261011/fullbody.candidate.sql')),lease.source.fullbodySha256);
+assert.equal(sha(readFileSync('supabase/migrations/20261012103151_vpj37_ops_control_w2.sql').subarray(0,-Buffer.byteLength("\nnotify pgrst,'reload schema';\n"))),lease.source.fullbodySha256);
 const ops={owner:uuid(),session:uuid()};
 await db(`insert into auth.users(id) values('${ops.owner}');insert into auth.sessions(id,user_id) values('${ops.session}','${ops.owner}');insert into identity_private.mobile_accounts(owner_id) values('${ops.owner}');update knowledge_review_private.settings set enabled=true;insert into knowledge_review_private.members(actor_id,active) values('${ops.owner}',true);`);
 const operation=input=>rpc('ops_control_operations_v1',{p_input:input},ops);

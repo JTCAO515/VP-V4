@@ -3,11 +3,11 @@ import assert from 'node:assert/strict';import {randomUUID as uuid} from 'node:c
 import {db,rpc,out,owned,lease,sha} from './fixture.mjs';
 import {workerFixture,leaseAsk,saveCandidate,readOp,submit,basis,snap,privilegedScopedRPC} from './scoped-kernel-seeds.mjs';
 import {executeScopedTripEdit} from '../../../../lib/server/turn/scoped-edit/executor.ts';
-const decision='/Users/jtsm5p/Documents/Codex/2026-10-12/v8-main/w2-scoped-role-contract-decision.json';
+const decision='artifacts/VPJ-37/ops-control-server-20261011/owned-proof/w2-scoped-role-contract-decision.json';
 const approved=JSON.parse(readFileSync(decision,'utf8'));assert.equal(approved.decision,'Preserve original scoped-edit default-closed EXECUTE enrollment; W2 grants no new scoped service capability');
 assert.equal(sha(readFileSync('docs/contracts/scoped-edit-sql-v1.md')),approved.source.contractSHA);assert.equal(sha(readFileSync('supabase/migrations/20261005020000_scoped_edit.sql')),approved.source.migrationSHA);
-const drainDecision=JSON.parse(readFileSync('/Users/jtsm5p/Documents/Codex/2026-10-12/v8-main/w2-settled-publish-contract-decision.json','utf8'));assert.ok(drainDecision);
-await owned();assert.equal(sha(readFileSync('/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj37-ops-control-sql-20261011/artifacts/VPJ-37/ops-control-sql-20261011/fullbody.candidate.sql')),lease.source.fullbodySha256);
+const drainDecision=JSON.parse(readFileSync('artifacts/VPJ-37/ops-control-server-20261011/owned-proof/w2-settled-publish-contract-decision.json','utf8'));assert.ok(drainDecision);
+await owned();assert.equal(sha(readFileSync('supabase/migrations/20261012103151_vpj37_ops_control_w2.sql').subarray(0,-Buffer.byteLength("\nnotify pgrst,'reload schema';\n"))),lease.source.fullbodySha256);
 const summary={case:'privileged-disposable-scoped-kernel-settled-drain',role:'postgres + synthetic SQL claims only',serviceRole:'Original actual permission-denied FAIL retained; enrollment UNRUN',GoTrueTargetProviderDevice:'UNRUN',providerCalls:0,sourceBodySha256:lease.source.fullbodySha256,decision,result:'IN_PROGRESS'};
 try{
  const ops={owner:uuid(),session:uuid()};await db(`insert into auth.users(id) values('${ops.owner}');insert into auth.sessions(id,user_id) values('${ops.session}','${ops.owner}');insert into identity_private.mobile_accounts(owner_id) values('${ops.owner}');update knowledge_review_private.settings set enabled=true;insert into knowledge_review_private.members(actor_id,active) values('${ops.owner}',true);`);
