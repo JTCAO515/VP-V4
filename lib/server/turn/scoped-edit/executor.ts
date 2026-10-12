@@ -122,7 +122,8 @@ export async function executeScopedTripEdit(lease: DurableTurnLease, ports: Scop
       if(result.value.kind==='unavailable'&&result.value.code==='SAFETY_BLOCKED')return decline('safety_refused');
       output=await recover(signal);
     }
-    if(!output||output.accounting!=='settled'||!await allow('publish',signal))return 'pending';
+    if(!output||output.accounting!=='settled')return 'pending';
+    if(!await allow('publish',signal))return refusal?await pauseOps(refusal):'pending';
     if(output.output.kind!=='candidate')return decline(output.output.reason);
     const patch=candidatePatch(input,output.output.edits);
     let completed:unknown;
