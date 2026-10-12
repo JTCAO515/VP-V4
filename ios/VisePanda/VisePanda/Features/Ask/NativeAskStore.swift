@@ -89,7 +89,7 @@ final class NativeAskStore {
         switch intent { case .newGoal, .continuation: return true; default: return false }
     }
     var canSend: Bool {
-        !pendingAcknowledged && mode != .unavailable && permitsSubmission && policy?.consentState == .accepted && !busy
+        !["OPS_CONTROL_DISABLED", "OPS_SCOPE_UNAVAILABLE"].contains(notice ?? "") && !pendingAcknowledged && mode != .unavailable && permitsSubmission && policy?.consentState == .accepted && !busy
         && !(pending?.text ?? draft).trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         && (pending?.text ?? draft).utf16.count <= 4000
     }

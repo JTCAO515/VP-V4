@@ -90,10 +90,10 @@
     {
       "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift",
       "beforeSha256": "9103ee2e7700daf3b31678a0b992e283f250c7bac865327cbb1218231f8e3dcf",
-      "afterSha256": "46aae22c331f7379597dd70cab1a782e381eafff86073a53012dd758118f2043",
+      "afterSha256": "0e9fda055c991afc788e069d094875cd207135327510f768d1e7e098fa023313",
       "currentHolder": "Main identified TurnNative01a11707-7127-7bd0-90ba-4c781a012426 / 196Native01a1245a-e7d1-7261-9dbe-32041ac5ea1a; exact hunk ownership/release pending",
       "applied": false,
-      "leaseEligibility": "HOLD exact currentholder/Main release still required; before refreshed after normal PR678 merge",
+      "leaseEligibility": "HOLD updated only two JourneyEntry send-denial conditions; full body/currentholder Main review required",
       "sourceBase": "daa7bae44a660381fb3295d0d2afc327ea98d3ba"
     },
     {
@@ -203,5 +203,6 @@
     }
   ],
   "readyForApply": false,
-  "sharedApplied": false
+  "sharedApplied": false,
+  "sourceDelta": "Only ConversationView after/patch changed for JourneyEntry canContinue+callback refusal; other27 unchanged"
 }

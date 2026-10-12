@@ -2,6 +2,12 @@
 +++ b/ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift
 @@ -485,0 +486 @@
 +    private var opsRefusal: Bool { [notice, planningNotice].contains { $0 == "OPS_CONTROL_DISABLED" || $0 == "OPS_SCOPE_UNAVAILABLE" } }
+@@ -623 +624 @@
+-                        canContinue: NativeJourneyEntryContinuation.relationship(authorized: resultActive && !composerWaitingForAuthority,
++                        canContinue: NativeJourneyEntryContinuation.relationship(authorized: resultActive && !composerWaitingForAuthority && !opsRefusal,
+@@ -628 +629 @@
+-                                authorized: resultActive && !composerWaitingForAuthority, pending: shellSwitchBlocked,
++                                authorized: resultActive && !composerWaitingForAuthority && !opsRefusal, pending: shellSwitchBlocked,
 @@ -735 +736,7 @@
 -                if notice != nil && privacyLinks.isEmpty {
 +                if opsRefusal {

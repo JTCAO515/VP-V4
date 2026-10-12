@@ -103,3 +103,12 @@ normal no-ff merge preserved all own dirty/private commits without conflict. Act
 Assistant source SHA matches merged9103. Only that candidate regenerated; source before/after/patch
 hashes refreshed and syntax/patch checks PASS. Previous #203 HOLD is historical; current precise
 holder release still HOLD. Other candidates and their same-source proof reused.
+
+Main mature-four Native lease applied: every full before, approved three-context patch SHA and
+full after verified; only AskStore, AskView, ScopedStore, ScopedSheet changed and staged.
+Evidence native-four-lease-apply.json. All original Journal observer hunks retained. No build or
+historical matrix rerun per lease; final applied bundle owns necessary affected validation.
+Remaining24 shared/SQL still HOLD. ConversationView candidate only gains two JourneyEntry
+canContinue/callback !opsRefusal conditions, preserving currentRead/pending/parent/entryBlocking
+and read/material/Trip entry. Newafter0e9fda055c991afc788e069d094875cd207135327510f768d1e7e098fa023313;
+other27 before/after unchanged, syntax/patch checks PASS. Not applied; Main exact lease pending.

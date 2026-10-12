@@ -621,12 +621,12 @@ struct NativeAssistantConversationView: View {
                                 && taskTurn(for: message)?.waiting == true
                         }.count,
                         memoryVersions: qualifiedMemoryBasis.map(\.revision),
-                        canContinue: NativeJourneyEntryContinuation.relationship(authorized: resultActive && !composerWaitingForAuthority,
+                        canContinue: NativeJourneyEntryContinuation.relationship(authorized: resultActive && !composerWaitingForAuthority && !opsRefusal,
                             pending: shellSwitchBlocked, goalVersion: goal?.scopeVersion, hasCurrentParent: goalHasCurrentMessage) != nil,
                         hasResult: selectedSources.sources.artifact != nil || lastViewedArtifact != nil,
                         idea: $draft, continueIdea: {
                             guard let relationship = NativeJourneyEntryContinuation.relationship(
-                                authorized: resultActive && !composerWaitingForAuthority, pending: shellSwitchBlocked,
+                                authorized: resultActive && !composerWaitingForAuthority && !opsRefusal, pending: shellSwitchBlocked,
                                 goalVersion: goal?.scopeVersion, hasCurrentParent: goalHasCurrentMessage) else { return }
                             operation = relationship
                             Task { await send() }

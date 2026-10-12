@@ -196,6 +196,7 @@ struct NativeScopedTripEditSheet: View {
                 .accessibilityIdentifier("trip.scoped.recovery.read")
             Button(t("Retry exact saved request", "重试原请求")) { Task { await recover("retry") } }
                 .accessibilityIdentifier("trip.scoped.recovery.retry")
+                .disabled(["OPS_CONTROL_DISABLED", "OPS_SCOPE_UNAVAILABLE", "ops_control_disabled", "ops_scope_unavailable"].contains(store.notice ?? ""))
             Button(t("Stop pending operation…", "停止未决操作…"), role: .destructive) { abandonVisible = true }
                 .accessibilityIdentifier("trip.scoped.recovery.abandon")
         }.disabled(store.busy || journal.tripID != selection.tripID)
@@ -303,6 +304,7 @@ struct NativeScopedTripEditSheet: View {
         case "declined:no_change": t("VP finished with no change. No proposal was created, the Trip is unchanged and no external order was cancelled.", "VP 已处理，本次无变化。未创建提议，行程未修改，未取消外部订单。")
         case "declined:unsupported_request": t("VP finished but cannot support this request. No proposal was created, the Trip is unchanged and no external order was cancelled.", "VP 已处理，当前不支持这一请求。未创建提议，行程未修改，未取消外部订单。")
         case "declined:safety_refused": t("VP finished and could not process this request. No proposal was created, the Trip is unchanged and no external order was cancelled.", "VP 已处理，无法处理这一请求。未创建提议，行程未修改，未取消外部订单。")
+        case "OPS_CONTROL_DISABLED", "OPS_SCOPE_UNAVAILABLE", "ops_control_disabled", "ops_scope_unavailable": t("VP editing is paused or the current scope cannot be qualified. Close this sheet to read the same retained Trip and edit manually through its original confirmation flow. Sent operations are not retried automatically.", "VP 编辑暂时停用，或当前范围无法核实。关闭此页可查看同一已有行程，按原确认流程手工调整；不会自动重发已发送操作。")
         case "queued": t("VP is working. Check the same operation for its candidate.", "VP 正在处理，请查询同一操作的候选。")
         case "provider_unavailable": t("VP execution is currently unavailable. The same request is retained; no AI candidate is claimed.", "VP 执行当前不可用，原请求保留；尚无 AI 候选。")
         case "candidatesReady": t("Candidates are ready. Choose an option before a proposal is created.", "候选已准备好。选择后才会生成提议。")

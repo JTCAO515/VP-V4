@@ -34,7 +34,13 @@ struct NativeAskView: View {
                         Button("ask.task.stop_previous") { Task { await store.stopPreviousRequest(using: session) } }
                             .disabled(store.busy).accessibilityIdentifier("native-ask.stop-previous")
                     }
-                    if store.notice != nil { Text("ask.local.retry_hint").font(.footnote).accessibilityIdentifier("native-ask.error") }
+                    if let code = store.notice, ["OPS_CONTROL_DISABLED", "OPS_SCOPE_UNAVAILABLE"].contains(code) {
+                        Text(settings.selectedLocale == .zh ? "此能力暂时停用，或当前城市范围无法核实。已有行程与成果保留；请查看原行程并按原确认流程手工调整。" : "This capability is paused or the current city scope cannot be qualified. Existing Trips and results are retained; edit through the original confirmation flow.")
+                            .font(.footnote).accessibilityIdentifier("native-ask.ops-refusal")
+                        NavigationLink(destination: NativeJourneysView()) {
+                            Text(settings.selectedLocale == .zh ? "查看已有行程与成果" : "Open existing Trips and results")
+                        }.accessibilityIdentifier("native-ask.ops-alternative")
+                    } else if store.notice != nil { Text("ask.local.retry_hint").font(.footnote).accessibilityIdentifier("native-ask.error") }
                     Text("ask.local.history").font(.title2.bold())
                     TimelineView(.periodic(from: .now, by: 1)) { _ in
                         let readable = store.mode != .grounded || (visible && store.groundedCurrent)
@@ -297,6 +303,11 @@ struct NativeAskView: View {
     /// textually distinct from the reviewed cards above it, mirroring the
     /// Web counterpart (components/chat/SavedAnswers.tsx, slice 8).
     @ViewBuilder private func aiAssistPanel(_ turn: NativeTextTurn, chinese: Bool) -> some View {
+        if case .done(let status)=store.aiAssist[turn.id], ["ops_control_disabled","ops_scope_unavailable"].contains(status.reason ?? status.outcome?.reason ?? "") {
+            Text(chinese ? "此能力暂时停用，或当前城市范围无法核实。已有成果保留，不自动重发。" : "This capability is paused or the current city scope cannot be qualified. Saved results are retained; no automatic retry.")
+                .accessibilityIdentifier("grounded.ai-assist.ops-refusal")
+            NavigationLink(destination: NativeJourneysView()) {Text(chinese ? "查看已有行程与成果" : "Open existing Trips and results")}
+        } else {
         switch store.aiAssist[turn.id] {
         case nil:
             Button(chinese ? "用 AI 深度搜索（未经审核）" : "Search further with AI (unreviewed)") {
@@ -312,6 +323,7 @@ struct NativeAskView: View {
             }.accessibilityIdentifier("grounded.ai-assist.error.\(turn.id)")
         case .done(let reply):
             aiAssistResult(turn, reply, chinese: chinese)
+        }
         }
     }
 

@@ -234,5 +234,17 @@
     }
   ],
   "refresh": "Only NativeAssistantConversationView candidate regenerated; Swift syntax/patch check PASS on before9103; unchanged checks reused",
-  "patchFormat": "zero context to avoid nested diff context whitespace; use --unidiff-zero only after exact full before SHA and lease"
+  "patchFormat": "zero context to avoid nested diff context whitespace; use --unidiff-zero only after exact full before SHA and lease",
+  "latestDelta": {
+    "onlyFile": "ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift",
+    "onlyConditions": [
+      "JourneyEntry.canContinue",
+      "JourneyEntry.continueIdea authorization"
+    ],
+    "afterSha256": "0e9fda055c991afc788e069d094875cd207135327510f768d1e7e098fa023313",
+    "otherAfterHashesUnchanged": 27,
+    "swiftSyntax": "PASS",
+    "patchCheck": "PASS",
+    "applied": false
+  }
 }

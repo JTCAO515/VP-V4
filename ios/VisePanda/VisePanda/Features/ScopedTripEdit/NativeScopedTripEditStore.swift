@@ -184,7 +184,7 @@ import Observation
             guard command.action == "ask", raw["contextId"] as? String == basis["contextId"] as? String,
                   raw["contextDigest"] as? String == basis["contextDigest"] as? String,
                   NativeScopedTripWire.integer(raw["baseVersion"]) == NativeScopedTripWire.integer(basis["baseVersion"]),
-                  let reason = raw["reason"] as? String, ["queued", "provider_unavailable"].contains(reason),
+                  let reason = raw["reason"] as? String, ["queued", "provider_unavailable", "ops_control_disabled", "ops_scope_unavailable"].contains(reason),
                   NativeScopedTripWire.bool(raw["reused"]) != nil else { throw NativeDataError.invalidResponse }
             notice = reason
         case "scoped_edit_operation/1":
