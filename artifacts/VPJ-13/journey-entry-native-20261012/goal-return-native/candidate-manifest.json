@@ -11,13 +11,13 @@
     },
     {
       "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift",
-      "before": "0e9fda055c991afc788e069d094875cd207135327510f768d1e7e098fa023313",
-      "patch": "8cb0a35de42c82c8f95832c4ac1bf7d3db254d883679d6f146fc42c92b7d8127",
-      "after": "588b015b48e3014e9723faecd0d08102e9bb4f27094cbcb16f18808c968ad0d2",
+      "before": "44004e5ee5b2db315c9b08ea438dedb3cadc999f777af4b9dfea1b0c3cf81d44",
+      "patch": "04bc17ef0055374df967fa88d6ff2ed19349e69662868b5e203bbb5bcd124dfd",
+      "after": "936f657f6ce83ece60005433ac4201132fd1840bb5b2a3d974d7664954f0cc69",
       "applied": false,
       "holder": "Main must live-confirm holders and grant exact lease; no prior lease is reused",
       "beforeSource": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj37-ops-control-server-20261011/ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift",
-      "beforeProvenance": "actual W2 applied source; exact approved Ops after; read-only snapshot"
+      "beforeProvenance": "actual W2 final getter-repaired product source 2396c1387b315655f7d663612a811c675ed3030d"
     },
     {
       "path": "ios/VisePanda/VisePanda.xcodeproj/project.pbxproj",
@@ -52,8 +52,13 @@
       "patch": "8450ef863d93ca260f4fb4de5c06031f438a6ce3f3a7ac05a7566d39384070df",
       "after": "f617359b9e3961cbc9606270e4677a1bf2bf67e9e5f00fcd67901199fea7dc00"
     },
-    "predecessor": "0e9fda055c991afc788e069d094875cd207135327510f768d1e7e098fa023313",
+    "predecessor": "44004e5ee5b2db315c9b08ea438dedb3cadc999f777af4b9dfea1b0c3cf81d44",
     "ownAskStill": "9103ee2e7700daf3b31678a0b992e283f250c7bac865327cbb1218231f8e3dcf",
-    "applyLease": "NOT GRANTED"
+    "applyLease": "NOT GRANTED",
+    "priorBeforeGetterRepair": {
+      "before": "0e9fda055c991afc788e069d094875cd207135327510f768d1e7e098fa023313",
+      "patch": "8cb0a35de42c82c8f95832c4ac1bf7d3db254d883679d6f146fc42c92b7d8127",
+      "after": "588b015b48e3014e9723faecd0d08102e9bb4f27094cbcb16f18808c968ad0d2"
+    }
   }
 }

@@ -483,7 +483,11 @@ struct NativeAssistantConversationView: View {
     @State private var agreed = false
     @State private var busy = false
     @State private var refreshState = AssistantConversationRefreshState()
-    private var opsRefusal: Bool { [notice, planningNotice].contains { $0 == "OPS_CONTROL_DISABLED" || $0 == "OPS_SCOPE_UNAVAILABLE" } }
+    private var opsRefusal: Bool {
+        let textRefused: Bool = notice == "OPS_CONTROL_DISABLED" || notice == "OPS_SCOPE_UNAVAILABLE"
+        let planningRefused: Bool = planningNotice == "OPS_CONTROL_DISABLED" || planningNotice == "OPS_SCOPE_UNAVAILABLE"
+        return textRefused || planningRefused
+    }
     @State private var notice: String?
     @State private var pending: AssistantSubmission?
     @State private var boundScope: NativeDataScope?
