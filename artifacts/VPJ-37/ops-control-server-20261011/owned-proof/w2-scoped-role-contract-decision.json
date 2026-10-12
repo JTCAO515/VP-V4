@@ -1,0 +1,16 @@
+{
+  "at": "2026-10-12T10:18:03.583127+00:00",
+  "decision": "Preserve original scoped-edit default-closed EXECUTE enrollment; W2 grants no new scoped service capability",
+  "source": {
+    "contract": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj37-ops-control-server-20261011/docs/contracts/scoped-edit-sql-v1.md",
+    "contractSHA": "e4fb2c439dbf1782aaed04c469fc541a3bb427780270dbbb40f5d69b81ce4577",
+    "migration": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj37-ops-control-server-20261011/supabase/migrations/20261005020000_scoped_edit.sql",
+    "migrationSHA": "999d376403fe8d6c159a4dcf7438debacae80a61d6b5a9abd2cc526b91391a65",
+    "evidence": "First paragraph and original migration final block explicitly revoke every scoped RPC from all ordinary/service roles pending separate enrollment"
+  },
+  "actualFailure": "service_role call claim_scoped_trip_edit_work_v1 -> permission denied",
+  "actualACL": "Six checked RPCs all postgres-only; serviceExecute=false",
+  "implementationEffect": "No blanket grant or postgres switch to relabel the true role attempt. Keep W2 source defaults and exact installed ACL pins. Registered controls are structural mapping plus additional denial, never host/policy/provider/role enrollment.",
+  "verificationPlan": "Keep actual service-role FAIL and runtime enrollment UNRUN. A separately labelled privileged disposable kernel test may prove W2 scoped tuple/stop/pause invariants without changing roles or ACLs; that does not establish actual service-role/GoTrue/target acceptance. Preserve text/V1/V2 actual-role PASS without rerun.",
+  "closure": "Cannot claim the scoped service-role operational chain passed or complete target #229 acceptance. Full W2 source/proof package and parent full-scope closure still assessed independently."
+}

@@ -10,7 +10,8 @@
     "NativeAskModels": "UNKNOWN/HOLD unchanged",
     "SQL product append/shared bodies": "HOLD: original SQL owner/Main, no authorization to substitute writer",
     "scoped publish refusal incremental": "APPLIED V8 exact lease; original sole integrator retained",
-    "owned integration fixture54bf": "TEST ATTEMPT COMPLETE: three mode groups PASS, scoped actual permission FAIL; exact own cleanup ABSENT"
+    "owned integration fixture54bf": "CLOSED: actualtext/V1/V2 PASS; separately labelled scopedkernel drain+reservedpause PASS, actualroleFAIL retained; cleanupABSENT",
+    "scoped role boundary": "Original #198 EXECUTE defaultclosed retained by Main decision; no grant changes; original role FAIL/enrollmentUNRUN"
   },
   "resources": {
     "own TCP63437": "STOPPED; current lsof no listener",
@@ -23,7 +24,6 @@
     "own PG vpj37-w2-integration-20261012-54bf86c1": "CLEANED: exact labels checked then rm; docker ps exact-name ABSENT"
   },
   "remaining": [
-    "Actual scoped worker service-role EXECUTE is denied; Main/original SQL resolve default-closed enable/permission contract, not bypassed",
     "Original SQL owner full actual pause/readback/lifecycle proof and Main exact append/shared leases; reviewable17/fullbody source exists",
     "Main exact-head formal review, applicable full CI and normal protected merge/readback"
   ],

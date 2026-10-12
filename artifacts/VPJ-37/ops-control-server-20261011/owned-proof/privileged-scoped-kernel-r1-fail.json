@@ -1,0 +1,12 @@
+{
+  "case": "privileged-disposable-scoped-kernel",
+  "role": "postgres + synthetic SQL claims only",
+  "serviceRole": "Original actual permission-denied FAIL retained; enrollment UNRUN",
+  "GoTrueTargetProviderDevice": "UNRUN",
+  "providerCalls": 0,
+  "sourceBodySha256": "96b545afbd306da94ca8360afed3d6754c1de598bbab2d1d6e40562aec818b36",
+  "decision": "/Users/jtsm5p/Documents/Codex/2026-10-12/v8-main/w2-scoped-role-contract-decision.json",
+  "result": "FAIL",
+  "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'persisted'\n- 'ops_paused'\n",
+  "diagnosis": "Actual pinned SQL calls Ops gate only for reserve/dispatch; settled publish remains original allowed completion. Main contract decision needed before test/source repair."
+}

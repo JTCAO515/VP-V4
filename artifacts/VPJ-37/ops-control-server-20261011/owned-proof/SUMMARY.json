@@ -11,11 +11,13 @@
   "scoped": "FAIL actual service_role EXECUTE denied at claim; no admin workaround/grant change; settled output/TS/pause/readback UNRUN",
   "historicalFailures": [
     "r1 V1 expected work unavailable instead of original terminal mapping failed; corrected exact one assertion, affected V1 only rerun",
-    "scoped r1 permission denied claim_scoped_trip_edit_work_v1; all six actual worker functions serviceExecute=false"
+    "scoped r1 permission denied claim_scoped_trip_edit_work_v1; all six actual worker functions serviceExecute=false",
+    "privileged r1 expected Ops pause after genuinely settled output; Main confirmed original drain allows persisted, expectation was wrong; FAIL/source retained",
+    "reserved-pause r2 expected Ops code from original budget wrapper; wrapper intentionally returns closed kind blocked after upstream authority denial; exact-code upstream checks retained and wrapper expectation repaired; FAIL retained"
   ],
   "providerCalls": 0,
   "targetGoTrueDevice": "UNRUN",
-  "cleanup": "PASS exact label-checked own container ABSENT",
+  "cleanup": "PASS exact label-checked own container ABSENT after both fixture phases",
   "otherResources": "UNTOUCHED",
   "sourcePins": [
     {
@@ -31,13 +33,33 @@
       "sha256": "8bf43a83d27e34a3058fb8025a62efdef8f6579a240d413e1e3587b7b81f4702"
     },
     {
+      "file": "tests/integration/observability/ops-control-owned/scoped-kernel-seeds.mjs",
+      "sha256": "8b6b556d9618eb3b44b433a951f941e4f0effe153777deee2b25b58064e53bec"
+    },
+    {
+      "file": "tests/integration/observability/ops-control-owned/privileged-scoped-kernel.mjs",
+      "sha256": "a3304f3935276e13f9a39fd01e421eb4c229165e60ca57ec8896502a787fd592"
+    },
+    {
       "file": "tests/integration/observability/ops-control-owned/scoped-seeds.mjs",
       "sha256": "6b05666f445bccd482c8075da745af030226d8b2c74cac5264b0774f63ca4568"
     },
     {
       "file": "tests/integration/observability/ops-control-owned/readback.mjs",
       "sha256": "273556ff26f3b626a12875ceff6f98911c23b58d90446e922fdb58f6d8cfb184"
+    },
+    {
+      "file": "tests/integration/observability/ops-control-owned/privileged-scoped-settled-drain.mjs",
+      "sha256": "fbb97908d34219a36ce99f434c2b7dfb0bf68b79c1cf77259497ada3b90f8142"
     }
   ],
-  "MainRemaining": "OriginalSQL/Main resolve actual scoped default-closed/enable contract under exact shared/append source lease; SQL owner remainder concurrency/restore/erase-export-copy/oldTrip"
+  "MainRemaining": "Original SQL concurrency/restore/erase-export-copy/oldTrip full proof and Main exact product/shared append lease; scoped default-closed contract explicitly preserved, no grant/enrollment added",
+  "scopedInternalKernel": {
+    "result": "PASS",
+    "case1": "Privileged actual settled20 -> control stop -> TS persisted -> original binding/operation candidate readback; 0provider/Proposal/Trip mutation",
+    "case2": "Privileged original reserved attempt -> stop -> exact reserve/dispatch Ops refusal and unchanged blocked budget wrapper; direct pause closed same binding/operation receipt, original reserved row released with actual null; new Ask denied",
+    "scope": "postgres + synthetic claims only; no ACL/grant/static-pin change",
+    "sourceBodySha256": "96b545afbd306da94ca8360afed3d6754c1de598bbab2d1d6e40562aec818b36",
+    "serviceRole": "Original genuine claim permission-denied FAIL retained; original #198 enrollment remains UNRUN by Main contract decision"
+  }
 }
