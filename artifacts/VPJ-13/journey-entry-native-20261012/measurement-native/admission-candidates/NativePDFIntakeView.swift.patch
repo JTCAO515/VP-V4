@@ -1,0 +1,6 @@
+--- a/ios/VisePanda/VisePanda/Features/PDFIntake/NativePDFIntakeView.swift
++++ b/ios/VisePanda/VisePanda/Features/PDFIntake/NativePDFIntakeView.swift
+@@ -129,0 +130 @@
++                model.measurementHooks?.explicitSelection()
+@@ -134,0 +136 @@
++                    model.measurementHooks?.explicitSelection()

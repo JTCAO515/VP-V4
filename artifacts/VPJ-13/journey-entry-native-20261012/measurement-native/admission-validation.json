@@ -1,0 +1,11 @@
+{
+  "decisionSHA256": "cd41746618d7f38c40cced867657da8af3866628192da1f2840dfe8eef8fce4b",
+  "domainCasesExecuted": 43,
+  "r3": "PASS changed private source in own registered shadow",
+  "r4": "PASS 3 complete old-source candidates in shadow; no actual source apply",
+  "scope": "generic App both Simulator architectures; no device execution",
+  "allSharedAdmissionHooks": "HOLD",
+  "collection": "DISABLED/unwired",
+  "sourceAssociation": "Trip equality never proves PDF/screenshot result; unresolved complete union",
+  "AuthHTTP/realSource/coverage/30day/D2/UI/device": "UNRUN"
+}

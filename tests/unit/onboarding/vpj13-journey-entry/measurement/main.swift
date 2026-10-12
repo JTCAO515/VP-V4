@@ -75,13 +75,13 @@ import Foundation
         await drain(); expect(observer.status == .unavailable, "metric failure isolated, no business exception/retry")
         observer.configure(policy, actor: 2, sender: { _, e in sent.append(e) })
         _ = observer.accept(consent, actor: 2, receiptActor: 2, explicitlyOptedIn: true)
-        let timed = M.Admission(id: UUID(), entry: .e2, source: .init(kind: .materialOperation, id: UUID(), revision: nil))
+        let timed = M.Admission(id: UUID(), entry: .e2, source: .init(kind: .nativeTripEntry, id: UUID(), revision: nil))
         observer.accepted(timed, actor: 2, receiptActor: 2, localPoint: .init(process: process, uptime: 99))
-        await drain(); expect(sent.last?.time == .elapsedMilliseconds(1000), "only same-process local authority endpoint times")
+        await drain(); expect(sent.last?.time == .nativeElapsedMilliseconds(1000), "same-process Native claim is labeled, not admittedAt")
         clock = 101
         observer.accepted(timed, actor: 2, receiptActor: 2, localPoint: .init(process: process, uptime: 101))
         observer.terminal(.technicalFailure, actor: 2)
-        await drain(); expect(sent.last?.time == .elapsedMilliseconds(2000), "retry does not reset start; failure preserved")
+        await drain(); expect(sent.last?.time == .nativeElapsedMilliseconds(2000), "retry does not reset start; failure preserved")
         clock = 120; let expired = sent.count
         observer.terminal(.completed, actor: 2)
         await drain(); expect(sent.count == expired, "expired policy/consent read lease rejects")
@@ -100,6 +100,32 @@ import Foundation
         observer.accepted(.init(id: UUID(), entry: .e1, source: source), actor: 2, receiptActor: 2)
         observer.bind(3)
         await drain(); expect(sent.count == queuedCount, "actor replacement cancels queued/in-flight generation")
+        typealias A = NativeJourneyMeasurementAdmission
+        var scope = A.Scope<Int>(); let measurementConsent = UUID(); let trip = UUID()
+        scope.bind(actor: 1, consent: measurementConsent)
+        let tripAnchor = A.Anchor.nativeEntry(trip: trip, version: 0, material: .pdf)
+        expect(scope.guardedStart(tripAnchor, actor: 1, consent: measurementConsent, active: true, qualifiedOwnerAnchor: true, process: process, nativeStart: 100) == nil, "E2 requires explicit material selection")
+        scope.selectMaterial()
+        let first = scope.guardedStart(tripAnchor, actor: 1, consent: measurementConsent, active: true, qualifiedOwnerAnchor: true, process: process, nativeStart: 100)!
+        let retry = scope.guardedStart(tripAnchor, actor: 1, consent: measurementConsent, active: true, qualifiedOwnerAnchor: true, process: process, nativeStart: 110)
+        expect(first == retry, "same E2 retry retains all report metadata bytes and clock")
+        expect(scope.guardedStart(.nativeEntry(trip: trip, version: 1, material: .pdf), actor: 1, consent: measurementConsent, active: true, qualifiedOwnerAnchor: true, process: process, nativeStart: 110) == nil, "changed E2 anchor cannot mint cohort without new selection")
+        scope.selectMaterial()
+        let second = scope.guardedStart(tripAnchor, actor: 1, consent: measurementConsent, active: true, qualifiedOwnerAnchor: true, process: process, nativeStart: 110)!
+        expect(second.logicalID != first.logicalID && second.operationID != first.operationID, "explicit new selection rotates E2 logical/report identity")
+        expect(scope.guardedStart(tripAnchor, actor: 2, consent: measurementConsent, active: true, qualifiedOwnerAnchor: true, process: process, nativeStart: 110) == nil, "foreign guarded actor rejected")
+        expect(scope.guardedStart(tripAnchor, actor: 1, consent: UUID(), active: true, qualifiedOwnerAnchor: true, process: process, nativeStart: 110) == nil, "replaced consent rejected")
+        expect(scope.guardedStart(tripAnchor, actor: 1, consent: measurementConsent, active: false, qualifiedOwnerAnchor: true, process: process, nativeStart: 110) == nil, "inactive start not reported")
+        expect(scope.guardedStart(tripAnchor, actor: 1, consent: measurementConsent, active: true, qualifiedOwnerAnchor: false, process: process, nativeStart: 110) == nil, "unqualified owner anchor rejected")
+        let goalID = UUID(); let goalAnchor = A.Goal(conversationID: UUID(), goalID: goalID, goalVersion: 2, parentMessageID: UUID(), inputSequence: 3)
+        let goalAttempt = scope.guardedStart(.goal(goalAnchor), actor: 1, consent: measurementConsent, active: true, qualifiedOwnerAnchor: true, process: process, nativeStart: 111)!
+        expect(goalAttempt.logicalID == goalID, "E3 logical ID is original Goal ID")
+        expect(scope.guardedStart(.goal(goalAnchor), actor: 1, consent: measurementConsent, active: true, qualifiedOwnerAnchor: true, process: process, nativeStart: 115) == goalAttempt, "same goal full tuple reopen does not reset ticket")
+        let changedGoal = A.Goal(conversationID: goalAnchor.conversationID, goalID: goalID, goalVersion: 3, parentMessageID: UUID(), inputSequence: 4)
+        let freshGoal = scope.guardedStart(.goal(changedGoal), actor: 1, consent: measurementConsent, active: true, qualifiedOwnerAnchor: true, process: process, nativeStart: 115)!
+        expect(freshGoal.logicalID == goalID && freshGoal.operationID != goalAttempt.operationID, "new qualified tuple has same goal logical ID and distinct report")
+        scope.bind(actor: 2, consent: measurementConsent)
+        expect(scope.attempt == nil, "actor switch clears transient admission identity")
         print("PASS \(checks) transient measurement domain checks; no wire, consent collection, sink or business runtime claim")
     }
     enum TestFailure: Error { case metric }

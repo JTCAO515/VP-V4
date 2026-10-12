@@ -1,0 +1,34 @@
+{
+  "decision": "VPJ13-measurement-admission-main-decision-20261012",
+  "shared": [
+    {
+      "path": "ios/VisePanda/VisePanda/Features/PDFIntake/NativePDFIntakeStore.swift",
+      "before": "956a79a7fcd38be71f6bca8875f2ee43ab2f2f1ed4b438ab77ece32e6dd25b06",
+      "patch": "2d74ebc6611e63bf5a9f55c16b6e99286cb610b060b565ce4ccb67fd9a349928",
+      "after": "9f59a445a424800454f61284d1abb32d9a640553c973a4aeaf730e1b2b44f92d",
+      "applied": false,
+      "holder": "Main must live-confirm exact original holder; no release inferred"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/PDFIntake/NativePDFIntakeView.swift",
+      "before": "6447038360d2089759685e68a22a7c79cdb687a6fe5b37204593ab7d970e5f8d",
+      "patch": "3db67ebe4f42c81a8ee5d42b749bdbd79494435f4115cbe5af0cda986b8b7e36",
+      "after": "4793359058f8cf46a7277776dfb9720b75e0597e15420a6bfe97afc99efd81b0",
+      "applied": false,
+      "holder": "Main must live-confirm exact original holder; no release inferred"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/Trip/NativeScreenshotReviewView.swift",
+      "before": "f9cd41547ff4233759fdea79f1b97e01afbfc71cef784066ae99704883d1da35",
+      "patch": "cf84c0272c4d63d1152905748ecd1e309683b16ead94e70eb4520abbd76404f3",
+      "after": "6c273e635777c794b219747c91a28f5e846644474db47883caf9b0ab026ecad3",
+      "applied": false,
+      "holder": "Main must live-confirm exact original holder; no release inferred"
+    }
+  ],
+  "replay": "PASS exact after for3",
+  "syntax": "PASS all3 full source",
+  "callerAdapter": "HOLD; only qualified #203 Trip entry, no standalone/anonymous import",
+  "resultAssociation": "NOT PROVEN by Trip equality; independent original handoff required",
+  "transport": "UNWIRED; no RPC invented"
+}

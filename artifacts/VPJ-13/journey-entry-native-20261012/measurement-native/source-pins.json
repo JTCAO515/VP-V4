@@ -1,16 +1,20 @@
 {
   "fixedContractSHA256": "bafd91ef67140ea7494435ac60c6da8a6b104f62ab6ed696198ece39f35e9586",
   "privateSource": {
-    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyMeasurementController.swift": "c203494e3081a39f27402f1e6edb18f61d2e9134b5d97686e74ae025917ab379",
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyMeasurementController.swift": "74d37e90a0444d738858aa77070ecacb7fdaf5bd81778ddda44c15af61d6142e",
     "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyMeasurementNoticeView.swift": "b14691f53e4d65ca7af211c0fb5f274bd58ff5e7820acca489acb62f2a4feab3",
-    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyMeasurementRenderProbe.swift": "cbdbe91eba6573e22554e7b6174d1906a58e2e14dc03a79ca0b225774d2d1a02"
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyMeasurementRenderProbe.swift": "cbdbe91eba6573e22554e7b6174d1906a58e2e14dc03a79ca0b225774d2d1a02",
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyMeasurementAdmission.swift": "0755ca7805261d5cbe8f48db08be1627560af2fe227c2a21895ad09cc3f59432",
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyMeasurementMaterialHooks.swift": "453bb0c778235245725799fed1877c2ef02e42a2d863b28a571d790c1ea9ed28",
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnView.swift": "9e125779729c320342adf462fd4dbb7fa4baaba1aeec5be5ca49c60ecda71938",
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyEntryView.swift": "7f4b15c37e6e1bb04ffb92bb8e56f9e7383c432f6101ee1140c5e04937a9ef50"
   },
   "defaultConfiguration": "NONE",
   "defaultConsent": "NONE",
   "actualGateway": "ABSENT",
   "sharedObserverHooks": "HOLD; no guessed wire or callbacks applied",
   "validation": {
-    "transientDomainChecks": 31,
+    "transientDomainChecks": 43,
     "Swift6DomainCompile": "PASS",
     "registeredPrivateAppCopy": "PASS; explicit BUILD SUCCEEDED, both architectures",
     "r1": "INVALID_SCOPE; command cwd mistakenly own worktree; never used as measurement proof",
@@ -20,5 +24,7 @@
     "realConsentOrCollection": "NOT EXECUTED",
     "privacyLifecycleSource": "not implemented by this Native domain; must have actual qualified gateway/backend before enable",
     "realUI/Auth/30dayPurge/D2/Device": "UNRUN"
-  }
+  },
+  "acceptanceDecisionSHA256": "cd41746618d7f38c40cced867657da8af3866628192da1f2840dfe8eef8fce4b",
+  "acceptanceVersion": "Main frozen pre-result authenticated report, native_entry Trip only / E3 full Goal tuple"
 }

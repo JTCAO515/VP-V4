@@ -7,6 +7,7 @@ struct NativeJourneyGoalReturnView: View {
     let chinese: Bool
     let discover: (NativeJourneyGoalReturnWire.Scope, NativeCommunitySafetyActor) async throws -> Data
     let open: (String, Int) -> Void
+    var measurementAccepted: ((NativeJourneyGoalReturnContext, TimeInterval) -> Void)? = nil
     @Environment(\.scenePhase) private var phase
     @State private var store = NativeJourneyGoalReturnStore()
     @State private var refresh = UUID()
@@ -41,7 +42,10 @@ struct NativeJourneyGoalReturnView: View {
                 .accessibilityIdentifier("journeyEntry.goalReturn.refresh")
         }
         .task(id: Load(current: current, refresh: refresh)) {
-            guard let current else { store.clear(); return }
+            guard let current, current.source.valid, !Task.isCancelled else { store.clear(); return }
+            // Before discover GET and regardless of its result. Callback is
+            // nonthrowing/nonblocking and absent until the qualified gateway.
+            measurementAccepted?(current, ProcessInfo.processInfo.systemUptime)
             await store.load(current, current: { self.current },
                 discover: { try await discover($0, selection.actor) },
                 read: { try await session.fiveResultRequest(artifactID: $0, revision: $1) })

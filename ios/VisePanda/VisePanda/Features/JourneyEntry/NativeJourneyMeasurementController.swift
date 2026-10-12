@@ -9,7 +9,7 @@ enum NativeJourneyMeasurement {
     enum Entry: String { case e1, e2, e3 }
     enum Outcome: String { case completed, partial, blocked, technicalFailure, unknown }
     enum Capability: CaseIterable { case receive, aggregate, export, erase, restoreFence, purge }
-    enum SourceKind { case serviceTask, materialOperation, goalRead }
+    enum SourceKind { case serviceTask, nativeTripEntry, goalRead }
     struct Policy {
         let purpose: String
         let schema: String
@@ -54,9 +54,9 @@ enum NativeJourneyMeasurement {
     enum DeclineReason: String { case notUseful, changedNeed, other, unspecified }
     enum Field: String { case city, comparisonTarget, durationDays, partySize, interests, pace, lodgingBudget, dates, mobilityConstraints }
     enum QuestionBasis: String { case alreadyKnownApplicable, genuinelyMissing, userChanged, sourceConflict, unknown }
-    enum Time: Equatable { case unknown; case elapsedMilliseconds(Int) }
-    /// Only a real local admission authority may supply this point. An HTTP ACK
-    /// or server receive timestamp is not converted into local admission time.
+    enum Time: Equatable { case unknown; case nativeElapsedMilliseconds(Int) }
+    /// Labeled Native guarded-start claim only, never business admittedAt or
+    /// server latency. HTTP ACK/server receive/Goal.created_at are not its origin.
     struct LocalAdmissionPoint { let process: UUID; let uptime: TimeInterval }
     struct Admission: Equatable {
         /// Actual measurement admission receipt supplied by its qualified source
@@ -170,7 +170,7 @@ final class NativeJourneyMeasurementController<Actor: Equatable> {
         guard let point, point.process == process else { return .unknown }
         let now = uptime(), delta = now - point.uptime
         guard point.uptime.isFinite, now.isFinite, delta >= 0, delta * 1000 <= Double(Int32.max) else { return .unknown }
-        return .elapsedMilliseconds(Int(delta * 1000))
+        return .nativeElapsedMilliseconds(Int(delta * 1000))
     }
     private func report(_ signal: M.Signal, actor expected: Actor) {
         guard eligible(expected), inFlight.count < 4, let consent, let admission, let sender else { return }

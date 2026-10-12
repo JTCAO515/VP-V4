@@ -14,6 +14,7 @@ struct NativeJourneyEntryView: View {
     var currentGoalReturn: () -> NativeJourneyGoalReturnContext? = { nil }
     var discoverGoalReturn: ((NativeJourneyGoalReturnWire.Scope, NativeCommunitySafetyActor) async throws -> Data)? = nil
     var openGoalDecision: ((String, Int) -> Void)? = nil
+    var measurementGoalAccepted: ((NativeJourneyGoalReturnContext, TimeInterval) -> Void)? = nil
     @Environment(AppSettings.self) private var settings
     @Binding var idea: String
     let continueIdea: () -> Void
@@ -41,7 +42,8 @@ struct NativeJourneyEntryView: View {
                 }
                 if let goalReturn, let discoverGoalReturn, let openGoalDecision {
                     NativeJourneyGoalReturnView(selection: goalReturn, currentSelection: currentGoalReturn,
-                        session: settings.nativeSession, chinese: chinese, discover: discoverGoalReturn, open: openGoalDecision)
+                        session: settings.nativeSession, chinese: chinese, discover: discoverGoalReturn, open: openGoalDecision,
+                        measurementAccepted: measurementGoalAccepted)
                 } else {
                     Text(t("上次决定以已保存成果为准；未读取时不作推断。", "Your saved result is the basis for the last decision; it is unknown until read."))
                         .font(.footnote)

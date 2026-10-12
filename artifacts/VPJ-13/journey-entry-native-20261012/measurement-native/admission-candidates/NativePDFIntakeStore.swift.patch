@@ -1,0 +1,6 @@
+--- a/ios/VisePanda/VisePanda/Features/PDFIntake/NativePDFIntakeStore.swift
++++ b/ios/VisePanda/VisePanda/Features/PDFIntake/NativePDFIntakeStore.swift
+@@ -23,0 +24 @@
++    var measurementHooks: NativeJourneyMeasurementMaterialHooks? = nil
+@@ -44,0 +46 @@
++        measurementHooks?.guardedStart(session: session, tripID: source.detail.trip.id, tripVersion: source.detail.trip.headVersion, material: .pdf)

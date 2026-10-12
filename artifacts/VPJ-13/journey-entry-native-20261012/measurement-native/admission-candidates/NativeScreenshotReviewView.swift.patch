@@ -1,0 +1,15 @@
+--- a/ios/VisePanda/VisePanda/Features/Trip/NativeScreenshotReviewView.swift
++++ b/ios/VisePanda/VisePanda/Features/Trip/NativeScreenshotReviewView.swift
+@@ -83,0 +84,2 @@
++    var measurementHooks: NativeJourneyMeasurementMaterialHooks? = nil
++    @Environment(\.scenePhase) private var measurementScenePhase
+@@ -254,0 +257 @@
++                measurementHooks?.explicitSelection()
+@@ -320,0 +324,7 @@
++            if loadID == id, !Task.isCancelled, measurementScenePhase == .active,
++               let session, session.subject == source.ownerID, let detail = source.detail,
++               detail.trip.id == source.tripID, detail.trip.headVersion == source.tripVersion,
++               store?.scope == session.dataScope, store?.detail?.trip.id == source.tripID,
++               store?.detail?.trip.headVersion == source.tripVersion {
++                measurementHooks?.guardedStart(session: session, tripID: source.tripID, tripVersion: source.tripVersion, material: .screenshot)
++            }
