@@ -1,8 +1,9 @@
 // Source preparation does not authorize execution; Main exact resource lease required.
-import {mkdtempSync,mkdirSync,readFileSync,writeFileSync,cpSync,rmSync,readdirSync} from 'node:fs';
+import {mkdtempSync,mkdirSync,readFileSync,writeFileSync,cpSync,rmSync,readdirSync,realpathSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {tmpdir} from 'node:os';
-import {join} from 'node:path';
+import {join,resolve,delimiter} from 'node:path';
+import {pathToFileURL} from 'node:url';
 import {spawn,execFileSync} from 'node:child_process';
 import assert from 'node:assert/strict';
 import {nativeHTTPPorts,nativeHTTPChildEnv,nativeHTTPSupabaseConfig,assertNativeHTTPPortsFree} from '../../turn/native-http-ports.mjs';
@@ -11,9 +12,11 @@ import {owner,nonce,project,network,portBase,imageIds} from './scope.mjs';
 if(process.argv.length!==2 || process.env.VPJ13_E3_AUTH_NONCE!==undefined && process.env.VPJ13_E3_AUTH_NONCE!==nonce) throw Error('Exact E3 fixture nonce required');
 const lease=JSON.parse(readFileSync('/Users/jtsm5p/Documents/Codex/2026-10-12/task/VPJ13-E3-AuthHTTP-fixture-exact-lease-20261012.json','utf8'));
 assert.equal(lease.soleOwner,owner);assert.equal(lease.nonce,nonce);assert.equal(lease.project,project);assert.equal(lease.network,network);assert.equal(lease.worktree,process.cwd());
-assert.equal(lease.amendmentMarker,'VPJ13-E3-AuthHTTP-own-bridge-amendment-20261012');assert.equal(lease.networkInternal,false);
+assert.equal(lease.amendmentMarker,'VPJ13-E3-AuthHTTP-process-loopback-adapter-20261012');assert.equal(lease.networkInternal,false);
+assert.equal(lease.processLoopbackAdapter.state,'GRANTED_WITH_EXACT_GUARDS');
 if(process.env.DOCKER_HOST || process.env.DOCKER_CONTEXT) throw Error('Docker overrides refused');
-const docker=(args)=>execFileSync('docker',args,{encoding:'utf8',stdio:['ignore','pipe','pipe']}).trim();
+const officialDocker=realpathSync(execFileSync('/usr/bin/which',['docker'],{encoding:'utf8'}).trim());
+const docker=(args)=>execFileSync(officialDocker,args,{encoding:'utf8',stdio:['ignore','pipe','pipe']}).trim();
 const context=docker(['context','show']);
 assert.ok(JSON.parse(docker(['context','inspect',context]))[0].Endpoints.docker.Host.startsWith('unix:///'),'Only local Docker');
 const ports=nativeHTTPPorts(portBase);await assertNativeHTTPPortsFree(ports);
@@ -28,6 +31,11 @@ const target=mkdtempSync(join(tmpdir(),nonce+'-'));mkdirSync(join(target,'supaba
 writeFileSync(join(target,'supabase/config.toml'),nativeHTTPSupabaseConfig(readFileSync('supabase/config.toml','utf8'),project,ports),{mode:0o600});
 cpSync('supabase/migrations',join(target,'supabase/migrations'),{recursive:true});
 const env={...process.env,DOCKER_CONTEXT:context,VPJ13_E3_AUTH_NONCE:nonce,SUPABASE_TELEMETRY_DISABLED:'true',DO_NOT_TRACK:'1',NEXT_TELEMETRY_DISABLED:'1'};
+const adapterBin=join(target,'adapter-bin');mkdirSync(adapterBin,{mode:0o700});
+const adapterConfig=join(target,'adapter-config.json');writeFileSync(adapterConfig,JSON.stringify({nonce,owner,officialDocker}),{mode:0o600});
+assert.ok(!/\s/.test(process.execPath),'Unambiguous Node interpreter path');
+writeFileSync(join(adapterBin,'docker'),'#!'+process.execPath+'\nimport '+JSON.stringify(pathToFileURL(resolve('tests/integration/journey-entry/goal-return/docker-adapter-entry.mjs')).href)+';\n',{mode:0o700});
+const supabaseEnv={...env,PATH:adapterBin+delimiter+process.env.PATH,VPJ13_E3_DOCKER_ADAPTER_CONFIG:adapterConfig};
 let lastErrors=[];
 const run=(cmd,args,visible=false,childEnv=env)=>new Promise((resolve,reject)=>{
  const child=spawn(cmd,args,{env:childEnv,stdio:visible?'inherit':['ignore','pipe','pipe']});
@@ -60,7 +68,7 @@ try{
  assert.equal(beforeNetwork.Options['com.docker.network.bridge.host_binding_ipv4'],'127.0.0.1');assert.equal(Object.keys(beforeNetwork.Containers).length,0);
  console.log('E3_AUTH_NETWORK '+JSON.stringify({nonce,amendment:lease.amendmentMarker,internal:beforeNetwork.Internal,defaultBinding:'127.0.0.1',technicalEgress:true,externalRequestsAuthorized:false}));
  started=true;
- const start=await run('supabase',['start','--agent','no','--workdir',target,'--network-id',network,'-x','realtime,storage-api,imgproxy,mailpit,postgres-meta,studio,edge-runtime,logflare,vector,supavisor']);
+ const start=await run('supabase',['start','--agent','no','--workdir',target,'--network-id',network,'-x','realtime,storage-api,imgproxy,mailpit,postgres-meta,studio,edge-runtime,logflare,vector,supavisor'],false,supabaseEnv);
  if(start!==0){
   const ownNames=docker(['ps','-a','--filter','name='+project,'--format','{{.Names}}']).split('\n').filter(Boolean);
   const owned=ownNames.length?JSON.parse(docker(['inspect',...ownNames])):[];
@@ -96,7 +104,7 @@ try{
  code=await run(process.execPath,['--test','tests/integration/journey-entry/goal-return/auth-http.test.mjs'],true,
   {...env,...nativeHTTPChildEnv(ports,target),VPJ13_E3_AUTH:'true',VPJ13_E3_AUTH_NONCE:nonce});
 }finally{
- if(started){const stopped=await run('supabase',['stop','--workdir',target,'--no-backup']);if(stopped!==0){code=1;console.error('Own E3 stack cleanup failed: '+project);}}
+ if(started){const stopped=await run('supabase',['stop','--workdir',target,'--no-backup'],false,supabaseEnv);if(stopped!==0){code=1;console.error('Own E3 stack cleanup failed: '+project);}}
  if(created){
   const remaining=docker(['network','ls','-q','--filter','name=^'+network+'$']);
   if(remaining){const n=JSON.parse(docker(['network','inspect',network]))[0];assert.equal(n.Labels['vp.owner'],owner);assert.equal(n.Labels['vp.nonce'],nonce);assert.equal(Object.keys(n.Containers).length,0);docker(['network','rm',network]);}
