@@ -1,0 +1,27 @@
+{
+  "base": "4f3c7b322316f3c6be3d505bdeb86b300a1596f4",
+  "shared": [
+    {
+      "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift",
+      "before": "399121f9dcd5b0fabafe80a028d159aa1cc8fa100018e1646f09acaa19703759",
+      "patch": "5d86c207bfdf594b21b01fe79da253a6e2605294ac4097d9bca09c8aca5ba095",
+      "after": "9103ee2e7700daf3b31678a0b992e283f250c7bac865327cbb1218231f8e3dcf",
+      "applied": false,
+      "holder": "Main must verify current holder and obtain limited release"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda.xcodeproj/project.pbxproj",
+      "before": "776b535443c344b72866864e2efb1c8c479a94719ab2866076bcccdf6f9f7b47",
+      "patch": "e691b8d7d23ed8c6b85ec612567d13706a92212b8e59c87241b7b22b98c7fb15",
+      "after": "f8fea8634aa126749543706188a96242e6bc9414550c600e2b369df265747fd9",
+      "applied": false,
+      "holder": "Main must verify current holder and obtain limited release"
+    }
+  ],
+  "source": {
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyDirectionsView.swift": "a1429c736926633283d78a01b2aa88da834a461bb7d34be6d88899b4e56d52a7",
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyEntryContinuation.swift": "6c8f8e3e0ff34a2616f7c410660f6047412baf1f2acea360da68f9e85be71241",
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyEntryView.swift": "67ef48ed24c406aa7de43c7fa048db287fc0572a0230e7de1037b73657a9185b",
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyMaterialsView.swift": "71cecb9d34d3f641cf4357e29d0af15f64d79144f7a206ee7d0d02d524048513"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "base": "140a980753fc12d39b352c8039ff0f2aeb1b0152",
+  "coordinator": "01a12dad-d333-70c3-9bf9-58cc26f1803d",
+  "releaseEvidence": "Main conveyed limited releases from f861 (552f92 clean) and 197Native (fed142 clean), no overlap; exact two-file lease only",
+  "operation": "git apply --unidiff-zero; all before/patch/after guards MATCH",
+  "sharedAfter": {
+    "ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift": "9103ee2e7700daf3b31678a0b992e283f250c7bac865327cbb1218231f8e3dcf",
+    "ios/VisePanda/VisePanda.xcodeproj/project.pbxproj": "f8fea8634aa126749543706188a96242e6bc9414550c600e2b369df265747fd9"
+  },
+  "privateSource": {
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyDirectionsView.swift": "a1429c736926633283d78a01b2aa88da834a461bb7d34be6d88899b4e56d52a7",
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyEntryContinuation.swift": "6c8f8e3e0ff34a2616f7c410660f6047412baf1f2acea360da68f9e85be71241",
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyEntryView.swift": "67ef48ed24c406aa7de43c7fa048db287fc0572a0230e7de1037b73657a9185b",
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyMaterialsView.swift": "71cecb9d34d3f641cf4357e29d0af15f64d79144f7a206ee7d0d02d524048513"
+  },
+  "plutil": "PASS",
+  "gitDiffCheck": "PASS",
+  "r3CompileReused": "identical four private files and two registered shared files; no runtime or target claim",
+  "issue203": "OPEN/incomplete"
+}
