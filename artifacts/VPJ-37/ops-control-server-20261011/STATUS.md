@@ -131,3 +131,10 @@ tokens remain. Exact positive two envelopes, extra/foreign/unknown/duplicate/nul
 and deadline negatives PASS in extracted exact Swift helper fixture; two syntax/patch checks PASS.
 Fixture first compile FAIL (fixture-only == enum spacing); corrected then PASS, no app claim.
 New hunk lease HOLD; not covered by prior four/23 lease. No Models write or App matrix rerun.
+
+Conversation exact9hunk lease now applied: Main W2-conversation-exact-lease-20261012.json,
+original notice/composer/planning owner and sole203 Entry owner limited releases. Full before9103,
+patch91e9 and after0e9 verified immediately, then working source+INDEX MATCH. Evidence in
+conversation-lease-apply.json. Existing JourneyEntry/materials/directions preserved; only new
+send/continuation refusal conditions and Ops display changed. New dedicated-state2file and
+SQL append remain HOLD. Final mature Native package owns one affected registered App build.
