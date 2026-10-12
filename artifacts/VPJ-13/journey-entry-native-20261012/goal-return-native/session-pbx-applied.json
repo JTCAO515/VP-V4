@@ -1,0 +1,17 @@
+{
+  "marker": "VPJ13-E3-Native-Session-PBX-exact-lease-20261012",
+  "leaseSHA256": "7cb9b1fe47163ce3223fa7a8ec8978e41180734a95a571afeaf42b55fdef6c90",
+  "sourceCommit": "7c871669138a78c3d2ab99418d007bb0a95d56b2",
+  "files": {
+    "ios/VisePanda/VisePanda/App/NativeSession.swift": "9ec74862d5be2f7af0b7ff2574ebf45d39a689db25434041325ee3259dfce2c8",
+    "ios/VisePanda/VisePanda.xcodeproj/project.pbxproj": "96ea62833e904042af54148b0ab1bd987611e2f2c27cfb61027cc6bf7140735d"
+  },
+  "fullBeforePatchAfterIndex": "MATCH",
+  "plutil": "PASS",
+  "diff": "PASS",
+  "onlyTwoSourcePathsStaged": true,
+  "ConversationStillHold": "9103ee2e7700daf3b31678a0b992e283f250c7bac865327cbb1218231f8e3dcf",
+  "observationDirtyPreserved": true,
+  "noAppRerun": true,
+  "actualE3CallerIntegration": "HOLD; source is registered but Ask wiring unapplied"
+}

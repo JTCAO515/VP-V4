@@ -1,0 +1,24 @@
+{
+  "fixedContractSHA256": "bafd91ef67140ea7494435ac60c6da8a6b104f62ab6ed696198ece39f35e9586",
+  "privateSource": {
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyMeasurementController.swift": "c203494e3081a39f27402f1e6edb18f61d2e9134b5d97686e74ae025917ab379",
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyMeasurementNoticeView.swift": "b14691f53e4d65ca7af211c0fb5f274bd58ff5e7820acca489acb62f2a4feab3",
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyMeasurementRenderProbe.swift": "cbdbe91eba6573e22554e7b6174d1906a58e2e14dc03a79ca0b225774d2d1a02"
+  },
+  "defaultConfiguration": "NONE",
+  "defaultConsent": "NONE",
+  "actualGateway": "ABSENT",
+  "sharedObserverHooks": "HOLD; no guessed wire or callbacks applied",
+  "validation": {
+    "transientDomainChecks": 31,
+    "Swift6DomainCompile": "PASS",
+    "registeredPrivateAppCopy": "PASS; explicit BUILD SUCCEEDED, both architectures",
+    "r1": "INVALID_SCOPE; command cwd mistakenly own worktree; never used as measurement proof",
+    "initialCompile": "sandbox macro plugin denied; actual approved compile then PASS",
+    "actualObserverRegistration": "UNAPPLIED; temporary copy only",
+    "liveNoticeGatewaySink": "ABSENT",
+    "realConsentOrCollection": "NOT EXECUTED",
+    "privacyLifecycleSource": "not implemented by this Native domain; must have actual qualified gateway/backend before enable",
+    "realUI/Auth/30dayPurge/D2/Device": "UNRUN"
+  }
+}
