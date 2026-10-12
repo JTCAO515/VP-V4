@@ -8,7 +8,9 @@
     "failures": [
       "old 24-code snapshot",
       "missing/misindexed five-locale copy"
-    ]
+    ],
+    "rawLog": "artifacts/VPJ-37/ops-control-server-20261011/failure-copy-candidate/applied-baseline.log.gz",
+    "rawLogSha256": "6400e4f1069f4afcdc016e95f1c6adb55ee2da3b9f05840a76f431738c77fff2"
   },
   "candidate": {
     "result": "PASS",
@@ -21,5 +23,10 @@
     ]
   },
   "command": "node --experimental-strip-types /private/tmp/w2-failure-copy-validate.mjs",
-  "targetProviderDevice": "UNRUN"
+  "targetProviderDevice": "UNRUN",
+  "ciPlan": {
+    "result": "full",
+    "reason": "unknown_dependency",
+    "note": "Conservative existing selector includes evidence artifacts; no gate narrowing. Final exact-head CI pending full SQL integration."
+  }
 }
