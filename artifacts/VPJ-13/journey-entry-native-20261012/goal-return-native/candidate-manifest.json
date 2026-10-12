@@ -1,0 +1,47 @@
+{
+  "base": "e32daffb8e0413540dfdeac4fcb0e21b9cf9ba1f",
+  "shared": [
+    {
+      "path": "ios/VisePanda/VisePanda/App/NativeSession.swift",
+      "before": "024589ade4e95202e73942b536c18a8e2def4c262076e2b47f6935905973e8d1",
+      "patch": "460744213160bad2c28a47c2634a22e4373d9b06f1fff5b1d632ba32fee6bc14",
+      "after": "9ec74862d5be2f7af0b7ff2574ebf45d39a689db25434041325ee3259dfce2c8",
+      "applied": false,
+      "holder": "Main must live-confirm holders and grant exact lease; no prior lease is reused"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift",
+      "before": "9103ee2e7700daf3b31678a0b992e283f250c7bac865327cbb1218231f8e3dcf",
+      "patch": "8450ef863d93ca260f4fb4de5c06031f438a6ce3f3a7ac05a7566d39384070df",
+      "after": "f617359b9e3961cbc9606270e4677a1bf2bf67e9e5f00fcd67901199fea7dc00",
+      "applied": false,
+      "holder": "Main must live-confirm holders and grant exact lease; no prior lease is reused"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda.xcodeproj/project.pbxproj",
+      "before": "f8fea8634aa126749543706188a96242e6bc9414550c600e2b369df265747fd9",
+      "patch": "b92e3afb1fbc7b29d2eb52cbbb3c038ccfb0edcfc65b3165fcac8297bd2cb0f8",
+      "after": "96ea62833e904042af54148b0ab1bd987611e2f2c27cfb61027cc6bf7140735d",
+      "applied": false,
+      "holder": "Main must live-confirm holders and grant exact lease; no prior lease is reused"
+    }
+  ],
+  "privateSource": {
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnStore.swift": "8ff4e2ee49eae64a7bbe90a3f97ff1e43ec1e27bc960e9bfe911dfb9d125be05",
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyEntryContinuation.swift": "ef1f94c544b9de2b94841b7af6a505f306f287d0a9362dc99290929dbe82ade3",
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnWire.swift": "3bbe57aa4f1fe8ce3f4aa0d9098bba19f58a1e90dd0c5a75078611cbbcaaf7d2",
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyMaterialsView.swift": "71cecb9d34d3f641cf4357e29d0af15f64d79144f7a206ee7d0d02d524048513",
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyEntryView.swift": "8ebbde951024977f1dabbde74a354e4363fb53756f16f6cc04443d4865621af9",
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnView.swift": "cce3d0f28c0b3f9d1a4cfc49257ac423dccb1c0c89dad8941bd941e338da9fba",
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyDirectionsView.swift": "f6d564698af9e029b161a170b327c24c7785aa5506e4a0131d93cd815ab68db3"
+  },
+  "serverWirePins": {
+    "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj13-goal-return-server-20261012/artifacts/VPJ-13/goal-return-server-20261012/WIRE.md": "9d98b24eca9d2ecb3baa944ed78635c55c2e1f4b940800f880083a45b22698b6",
+    "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj13-goal-return-server-20261012/lib/server/journey-entry/goal-return/contract.ts": "e17ec8ee3053a8941989bd61affc212f6e54bee0df3bf5d1b8b4373cea038107",
+    "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj13-goal-return-server-20261012/lib/server/journey-entry/goal-return/http.ts": "06c27f7378344defaf227f887f1adeeabe047817116fe78d2c4b3381376a84e6"
+  },
+  "rpcInstalled": "UNVERIFIED; WIRE explicitly says absent",
+  "liveInvocation": "UNAPPLIED",
+  "serverHead": "268306253b3fdd551118728cadb4e7c7e4cf1cb8",
+  "serverUUIDContract": "canonical lowercase v1-v5 / standard variant, same original isUuid"
+}

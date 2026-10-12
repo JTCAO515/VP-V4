@@ -1,0 +1,17 @@
+{
+  "candidateManifestSHA256": "addfa53da33da6a378c2942d25c75a3d6b1f99ee4630188b26b2fefb81221285",
+  "wireCasesExecuted": 24,
+  "compile": {
+    "exit": 0,
+    "explicitBuildSucceeded": true,
+    "errors": 0,
+    "rawLogSHA256": "72800407e6179dd60a938729bccc1a2d707a5e670ca00c121b90fc01b26085ea",
+    "scope": "temporary registered App copy, both Simulator architectures",
+    "derivedData": "/private/tmp/vpj13-goal-return-dd-20261012-64f02d"
+  },
+  "sharedApplied": false,
+  "installedRPC": "UNINSTALLED according to frozen Server WIRE; no local database claim",
+  "defaultInvocation": "disabled, optional transports nil until new exact shared lease",
+  "actualAuthHTTP/SQL/lifecycle/UI/device": "UNRUN",
+  "initialTestCompile": "FAIL throwing expression in precondition autoclosure; test harness fixed before successful compile and run; no assertion removed"
+}

@@ -1,0 +1,20 @@
+--- a/ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift
++++ b/ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift
+@@ -532,0 +533,10 @@
++    private var journeyGoalReturnContext: NativeJourneyGoalReturnContext? {
++        guard resultActive, !entryBlocking, confirmedConversation, policy?.consentState == .accepted,
++              let actor = try? session.communitySafetyActor(), actor.scope == session.dataScope,
++              let goal, let id = conversation?.conversationId,
++              let parent = AssistantPlanningEligibility.parent(for: goal, messages: conversation?.messages ?? []) else { return nil }
++        let source = NativeJourneyGoalReturnWire.Scope(conversationID: id, goalID: goal.goalId, goalVersion: goal.scopeVersion,
++            parentMessageID: parent.messageId, inputSequence: parent.sequence)
++        guard source.valid else { return nil }
++        return .init(actor: actor, source: source)
++    }
+@@ -625,0 +636,6 @@
++                        goalReturn: journeyGoalReturnContext, currentGoalReturn: { journeyGoalReturnContext },
++                        discoverGoalReturn: { try await session.journeyGoalReturnRequest(source: $0, actor: $1) },
++                        openGoalDecision: { id, revision in
++                            guard journeyGoalReturnContext != nil else { return }
++                            fiveResultSelection = .init(artifactID: id, revision: revision)
++                        },

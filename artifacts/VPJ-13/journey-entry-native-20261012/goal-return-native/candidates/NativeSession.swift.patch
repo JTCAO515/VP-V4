@@ -1,0 +1,17 @@
+--- a/ios/VisePanda/VisePanda/App/NativeSession.swift
++++ b/ios/VisePanda/VisePanda/App/NativeSession.swift
+@@ -1820,0 +1821,11 @@
++    /// Read-only current-goal discovery. Missing backend authority stays unavailable.
++    func journeyGoalReturnRequest(source: NativeJourneyGoalReturnWire.Scope, actor: NativeCommunitySafetyActor) async throws -> Data {
++        guard askMode == .assistant, source.valid, dataScope == actor.scope,
++              try communitySafetyActor() == actor, !Task.isCancelled else { throw NativeDataError.sessionUnavailable }
++        let path = "api/chat/native/v5/goal-return"
++        let bytes = try await dataRequest(prefix: path, path: path, method: "GET", queryItems: source.query)
++        guard dataScope == actor.scope, try communitySafetyActor() == actor, !Task.isCancelled,
++              bytes.count <= 16384 else { throw NativeDataError.staleSessionResponse }
++        return bytes
++    }
++
+@@ -1975 +1986 @@
+-        let guardsResultProjection = directionsProjection || path.hasPrefix("api/results/native/") ||
++        let guardsResultProjection = directionsProjection || path == "api/chat/native/v5/goal-return" || path.hasPrefix("api/results/native/") ||
