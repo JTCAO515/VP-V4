@@ -1,0 +1,30 @@
+{
+  "lease": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-native-refusal-state-exact-lease-20261012.json",
+  "leaseSha256": "219e2be0801b5ed6a39766d652428998b84ceafaf995d2d80a191e188f7d45d2",
+  "sourceHeadBefore": "aba83d7b23410fbbabfa920d12dd90d99b2d89ab",
+  "files": [
+    {
+      "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAskStore.swift",
+      "beforeSha256": "0339303f27f4a45fad2c46396f5512d060ba3818fa84dd8ddea184348ac5b083",
+      "patchSha256": "5959b014cfc6d1ea4134f81a0c40f3063846e8d25eb1e91a3b35e61cff46987d",
+      "afterSha256": "38bdbf747d749d52ae64665c8d08642eb9b4d1cfcd5f1a78a66d28a3202c3487",
+      "releaseOwners": [
+        "01a11707-7127-7bd0-90ba-4c781a012426",
+        "01a117c2-8686-7d93-8dd8-41d1f0de733d"
+      ]
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAskView.swift",
+      "beforeSha256": "043f01d84004fd88e2c505e8075b1026cad3f0c60b4569f55d07cf9a5c1d593b",
+      "patchSha256": "49938622c54a18d3ac1dc9c69d8c6b7585fdbf00edee5ca6f36969bcde77c0f2",
+      "afterSha256": "b9126747e0dc8e967351351b5a6e8b11f0f17d9a5cbb0ecac2c199bc9992b47e",
+      "releaseOwners": [
+        "01a11707-7127-7bd0-90ba-4c781a012426"
+      ]
+    }
+  ],
+  "beforePatchAfterIndex": "PASS",
+  "modelsUnchanged": "0181f41629bc8dd749cd9b8523b31089b191d2b2082bed759304569dba0cf453",
+  "buildNonce": "w2-native-final-build-20261012-01",
+  "SQLappend": "HOLD"
+}
