@@ -1,0 +1,13 @@
+{
+  "error": "Error: Expected real wait absent vpj13-own-publisher51fb6d9a:transactionid",
+  "publisher": {
+    "code": 3,
+    "stdout": "",
+    "stderr": "ERROR:  could not obtain lock on row in relation \"assistant_goals\"\nCONTEXT:  SQL statement \"SELECT 1 from turn_private.assistant_goals where id=ref.entity_id for key share nowait\"\nPL/pgSQL function conversation_data_private.guard_source_v1() line 44 at PERFORM\nSQL statement \"insert into turn_private.result_artifacts(id,owner_id,task_id,goal_id,input_message_id,trip_id,proposal_id,source_result_id,source_turn_id,current_revision)\n      values(p_artifact_id,p_owner_id,p_task_id,p_goal_id,p_input_message_id,p_trip_id,reference_id,source_result_n,case when p_content->>'schemaVersion'='practical/1' then (p_content->>'sourceTurnId')::uuid when p_content->>'schemaVersion'='journey-draft/1' and p_content->'source'->>'kind'='task_output' then (p_content->'source'->>'taskTurnId')::uuid end,1)\"\nPL/pgSQL function turn_private.publish_result_v2(uuid,uuid,integer,uuid,uuid,uuid,uuid,uuid,integer,integer,jsonb,jsonb,jsonb,boolean) line 101 at SQL statement\nSQL function \"publish_result_artifact_v2\" statement 1\n"
+  },
+  "reader": {
+    "code": 0,
+    "stdout": "{\"kind\": \"goal_return\", \"scope\": {\"goalId\": \"aefa8eaa-2695-4206-8ac0-628c87a8bee2\", \"goalVersion\": 1, \"inputSequence\": 2, \"conversationId\": \"4e2adeea-dcb3-456a-998b-1182dfb17cd5\", \"parentMessageId\": \"d5df127c-16c5-4b8a-9273-c9aeb4b00a17\"}, \"nextStep\": {\"kind\": \"unknown\"}, \"lastDecision\": {\"eventId\": \"93\", \"revision\": 2, \"artifactId\": \"078e8126-ec90-4f2c-8052-09cd9cb20897\"}, \"schemaVersion\": \"goal-return/1\"}\n\n",
+    "stderr": ""
+  }
+}

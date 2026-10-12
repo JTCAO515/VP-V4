@@ -1,0 +1,23 @@
+[
+  {
+    "label": "Current Trip+explicit Memory source positive",
+    "result": "PASS"
+  },
+  {
+    "label": "Changed Memory revision rejects",
+    "result": "PASS"
+  },
+  {
+    "label": "Revoked Memory consent rejects",
+    "result": "PASS"
+  },
+  {
+    "label": "Changed Trip head rejects",
+    "result": "PASS"
+  },
+  {
+    "label": "Terminal Goal link rejects",
+    "result": "FAIL",
+    "error": "AssertionError [ERR_ASSERTION]: ERROR:  SERVICE_TASK_CONFLICT\nCONTEXT:  PL/pgSQL function turn_private.guard_goal_terminal_scope_v1() line 6 at RAISE\n\n\n3 !== 0\n"
+  }
+]

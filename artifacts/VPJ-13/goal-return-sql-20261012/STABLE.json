@@ -1,0 +1,11 @@
+{
+  "base": "daa7bae44a660381fb3295d0d2afc327ea98d3ba",
+  "candidateSha256": "15fd14818a09a1e0418aaf31deb639b7e6b9f269c51b3782410d536564e8596b",
+  "productAppend": "ABSENT",
+  "phase": "private stable SQL + own PG17.6 affected proof",
+  "wireChange": false,
+  "privacyOldBodyChanges": 0,
+  "actualAfterCatalog": true,
+  "outerPostgRESTTimeout": "UNRUN",
+  "ordinaryAuthHTTP": "UNRUN"
+}

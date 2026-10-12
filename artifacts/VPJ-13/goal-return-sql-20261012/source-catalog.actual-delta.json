@@ -1,0 +1,68 @@
+{
+  "beforeCount": 1083,
+  "afterCount": 1085,
+  "oldFullMetadataAndACL": "all1083 unchanged",
+  "relationMetadata": "all265 unchanged",
+  "newFunctions": [
+    {
+      "signature": "public.read_goal_return_reference_v1(uuid,uuid,uuid,integer,uuid,bigint,bigint)",
+      "definitionSha256": "8187e611855e22f4fe47a58f14e167a66c186e29555e698aba20b589ba3754ad",
+      "prosrcSha256": "01edbf5b8f0cdd9ed73230c6604925079d92d05e6d08ca6ae68267cc90420f7d",
+      "metadata": {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "md5": "2422f9a2a39262552928a1c29d4cebb2",
+        "kind": "f",
+        "owner": "postgres",
+        "config": [
+          "search_path=\"\"",
+          "statement_timeout=5s",
+          "lock_timeout=250ms"
+        ],
+        "result": "jsonb",
+        "strict": false,
+        "identity": "p_policy_id uuid, p_conversation_id uuid, p_goal_id uuid, p_goal_version integer, p_parent_message_id uuid, p_input_sequence bigint, p_mobile_epoch bigint",
+        "language": "sql",
+        "parallel": "u",
+        "arguments": "p_policy_id uuid, p_conversation_id uuid, p_goal_id uuid, p_goal_version integer, p_parent_message_id uuid, p_input_sequence bigint, p_mobile_epoch bigint",
+        "signature": "public.read_goal_return_reference_v1(uuid,uuid,uuid,integer,uuid,bigint,bigint)",
+        "volatility": "v",
+        "securityDefiner": true
+      }
+    },
+    {
+      "signature": "turn_private.goal_return_reference_v1(uuid,uuid,uuid,integer,uuid,bigint,bigint)",
+      "definitionSha256": "54e721d47372a5e36241040f95a1f16fafd4ca1adffcc488a735a3357774b2e5",
+      "prosrcSha256": "94e86001928c4e289e1034cb63db16b0901318801b27dd5b20faae79e6955532",
+      "metadata": {
+        "acl": "{postgres=X/postgres}",
+        "md5": "2c2d0f45c0530a5b868b799b16f2c373",
+        "kind": "f",
+        "owner": "postgres",
+        "config": [
+          "search_path=\"\"",
+          "statement_timeout=5s",
+          "lock_timeout=250ms"
+        ],
+        "result": "jsonb",
+        "strict": false,
+        "identity": "p_policy_id uuid, p_conversation_id uuid, p_goal_id uuid, p_goal_version integer, p_parent_message_id uuid, p_input_sequence bigint, p_mobile_epoch bigint",
+        "language": "plpgsql",
+        "parallel": "u",
+        "arguments": "p_policy_id uuid, p_conversation_id uuid, p_goal_id uuid, p_goal_version integer, p_parent_message_id uuid, p_input_sequence bigint, p_mobile_epoch bigint",
+        "signature": "turn_private.goal_return_reference_v1(uuid,uuid,uuid,integer,uuid,bigint,bigint)",
+        "volatility": "v",
+        "securityDefiner": true
+      }
+    }
+  ],
+  "privacyGatesActual": "t|t|t|t|t",
+  "oldPinUpdatesRequired": "NONE observed against own exact154 catalog, Main release still required",
+  "actualMigrationHead": "20261010030000_vpj09_travel_directions.sql",
+  "productAppend": "ABSENT",
+  "rawCatalogsLocalOnly": [
+    "catalog-after.json",
+    "catalog-relations-before.json",
+    "catalog-relations-after.json",
+    "catalog-before.json"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "source": "read-only W2 stable154 evidence, no resource access",
+  "files": [
+    {
+      "file": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj37-ops-control-sql-20261011/artifacts/VPJ-37/ops-control-sql-20261011/catalog-before.json",
+      "sha256": "420ccd6ed61aa9a51801c87c49ff3805ea9c37736767f227ceef6613aeaba4fa"
+    },
+    {
+      "file": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj37-ops-control-sql-20261011/artifacts/VPJ-37/ops-control-sql-20261011/catalog-relations-before.json",
+      "sha256": "5cda4b5e1cd145c1638ec1b72a1537863a1dfd26da2a2f706f8aeb64c407a473"
+    }
+  ],
+  "functionCount": 1083,
+  "relationCount": 265,
+  "actualOwnReplay": "UNRUN"
+}

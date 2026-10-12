@@ -1,0 +1,80 @@
+[
+  {
+    "label": "Pending newest is unavailable",
+    "result": "PASS"
+  },
+  {
+    "label": "Ordinary authenticated original choice -> qualified reference",
+    "result": "PASS"
+  },
+  {
+    "label": "Wrong scope p_policy_id",
+    "result": "PASS"
+  },
+  {
+    "label": "Wrong scope p_conversation_id",
+    "result": "PASS"
+  },
+  {
+    "label": "Wrong scope p_goal_id",
+    "result": "PASS"
+  },
+  {
+    "label": "Wrong scope p_goal_version",
+    "result": "PASS"
+  },
+  {
+    "label": "Wrong scope p_parent_message_id",
+    "result": "PASS"
+  },
+  {
+    "label": "Wrong scope p_input_sequence",
+    "result": "PASS"
+  },
+  {
+    "label": "Replaced epoch rejects",
+    "result": "PASS"
+  },
+  {
+    "label": "Effective ACL private/public",
+    "result": "PASS"
+  },
+  {
+    "label": "Old privacy gates after candidate",
+    "result": "PASS"
+  },
+  {
+    "label": "Missing owned head event rejects injection",
+    "result": "UNRUN",
+    "reason": "ERROR:  ASSISTANT_EVENT_ERASE_AUTHORITY\nCONTEXT:  PL/pgSQL function turn_private.retire_assistant_event_v1(uuid,bigint) line 10 at RAISE\nSQL statement \"SELECT turn_private.retire_assistant_event_v1(e.conversation_id,e.sequence)\"\nPL/pgSQL function turn_private.assistant_event_erase_source_v1() line 26 at PERFORM"
+  },
+  {
+    "label": "Missing owned head event rejects",
+    "result": "PASS"
+  },
+  {
+    "label": "Duplicate ready/revised head rejects",
+    "result": "PASS"
+  },
+  {
+    "label": "Foreign head event rejects",
+    "result": "PASS"
+  },
+  {
+    "label": "Withdrawn latest rejects",
+    "result": "PASS"
+  },
+  {
+    "label": "Withdrawn consent rejects",
+    "result": "PASS"
+  },
+  {
+    "label": "Hidden source Turn rejects",
+    "result": "PASS"
+  },
+  {
+    "label": "Changed Task generation rejects",
+    "result": "FAIL",
+    "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  {\n+   kind: 'goal_return',\n+   lastDecision: {\n+     artifactId: '9cc95f85-45ac-4893-9369-280e50fdafdc',\n+     eventId: '15',\n+     revision: 2\n+   },\n+   nextStep: {\n+     kind: 'unknown'\n+   },\n+   schemaVersion: 'goal-return/1',\n+   scope: {\n+     conversationId: '9d0de72f-7c0e-4e30-bb09-28a5888e7d3d',\n+     goalId: 'e8e1c4ca-4469-4153-904e-a7698c72a6b7',\n+     goalVersion: 1,\n+     inputSequence: 2,\n+     parentMessageId: 'b0eead46-f854-4304-801e-7d012537850a'\n+   }\n-   kind: 'unavailable'\n  }\n"
+  }
+]
