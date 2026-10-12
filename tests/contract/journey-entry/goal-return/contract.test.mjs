@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {parseGoalReturnScope,parseGoalReturn,qualifyGoalReturnArtifact} from '../../../../lib/server/journey-entry/goal-return/contract.ts';
 
-const id=n=>`00000000-0000-0000-0000-${String(n).padStart(12,'0')}`;
+const id=n=>`00000000-0000-4000-8000-${String(n).padStart(12,'0')}`;
 const scope={conversationId:id(1),goalId:id(2),goalVersion:1,parentMessageId:id(3),inputSequence:1};
 const ref={kind:'goal_return',schemaVersion:'goal-return/1',scope,lastDecision:{artifactId:id(4),revision:2,eventId:'9223372036854775807'},nextStep:{kind:'unknown'}};
 const artifact={kind:'result_artifact',artifactId:id(4),revision:2,currentRevision:2,current:true,historicalReadable:true,lifecycle:'active',
@@ -20,6 +20,8 @@ test('foreign scope, extra authority and noncanonical event sequences fail close
  assert.equal(parseGoalReturn({...ref,nextStep:{kind:'save'}},scope),null);
  assert.equal(parseGoalReturnScope({...scope,ownerId:id(9)}),null);
  assert.equal(parseGoalReturnScope({...scope,inputSequence:1000001}),null);
+ for (const value of ['00000000-0000-0000-0000-000000000000','00000000-0000-6000-8000-000000000001','00000000-0000-4000-0000-000000000001'])
+  assert.equal(parseGoalReturnScope({...scope,conversationId:value}),null);
 });
 test('readable historical, stale, pending or wrong reference cannot be current decision',()=>{
  for (const change of [{current:false},{lifecycle:'withdrawn',current:false},{artifactId:id(99)},{revision:1},{currentRevision:3},

@@ -1,11 +1,12 @@
 import {parseResultArtifactReadV2, type ResultArtifactReadV2} from '../../artifacts/result-v2-contract.ts';
+import {isUuid} from '../../identity/request-guards.ts';
 
 export type GoalReturnScope = Readonly<{conversationId:string; goalId:string; goalVersion:number; parentMessageId:string; inputSequence:number}>;
 export type GoalReturnReference = Readonly<{artifactId:string; revision:number; eventId:string}>;
 export type GoalReturn = Readonly<{kind:'goal_return'; schemaVersion:'goal-return/1'; scope:GoalReturnScope; lastDecision:GoalReturnReference; nextStep:Readonly<{kind:'unknown'}>}>;
 export const object = (v:unknown):v is Record<string,unknown> => v !== null && typeof v === 'object' && !Array.isArray(v);
 export const exact = (v:Record<string,unknown>, keys:readonly string[]) => Object.keys(v).length === keys.length && keys.every(k => Object.hasOwn(v,k));
-export const uuid = (v:unknown):v is string => typeof v === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(v);
+export const uuid = (v:unknown):v is string => typeof v === 'string' && v===v.toLowerCase() && isUuid(v);
 export const integer = (v:unknown, max=2147483647):v is number => typeof v === 'number' && Number.isSafeInteger(v) && v >= 1 && v <= max;
 export function parseGoalReturnScope(v:unknown):GoalReturnScope|null {
   return object(v) && exact(v,['conversationId','goalId','goalVersion','parentMessageId','inputSequence'])
