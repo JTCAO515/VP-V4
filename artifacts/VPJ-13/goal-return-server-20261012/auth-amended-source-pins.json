@@ -1,0 +1,16 @@
+{
+  "sourceHead": "965116f0de3e0895e835f620316641456d42d86a",
+  "amendmentMarker": "VPJ13-E3-AuthHTTP-own-bridge-amendment-20261012",
+  "networkInternal": false,
+  "singleChangedVariable": "own temporary network removes --internal; roles/server/155SQL unchanged",
+  "sources": {
+    "tests/integration/journey-entry/goal-return/auth-http.test.mjs": "6b4547c735f6da26f62c02370a27f1b12b41d63ea73c7e1f27f293227bd6fec5",
+    "tests/integration/journey-entry/goal-return/environment.mjs": "cdf936f1c7207210afd811fddde9d4403113fe21a98fe7126908f2623f85685e",
+    "tests/integration/journey-entry/goal-return/run-auth.mjs": "f73a6d60bdaef73a22d55f4fa4d48ec2cc08d5eed433bee729309ee1d2d37ade",
+    "tests/integration/journey-entry/goal-return/scope.mjs": "3567677cc3506b16d6332da0ff970a33ef3b1d29febf0bb2e72d84914565bea4",
+    "tests/integration/journey-entry/goal-return/timing-control.mjs": "c27909869f9ba86b4ce9dd4120444f36ab0a5913395aee07b3d2b7ee9aec896b",
+    "tests/integration/journey-entry/goal-return/timing-record.mjs": "75e8567f32fb89bbb9ef4a47bd12c06580ecd7c539a7a79c55c74d99956e9128"
+  },
+  "productSha256": "15fd14818a09a1e0418aaf31deb639b7e6b9f269c51b3782410d536564e8596b",
+  "phase": "before controlled amended runtime; auth UNRUN"
+}
