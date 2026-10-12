@@ -1,0 +1,5 @@
+--- a/ios/VisePanda/VisePanda/Features/Ask/NativeAskStore.swift
++++ b/ios/VisePanda/VisePanda/Features/Ask/NativeAskStore.swift
+@@ -92 +92 @@
+-        !pendingAcknowledged && mode != .unavailable && permitsSubmission && policy?.consentState == .accepted && !busy
++        !["OPS_CONTROL_DISABLED", "OPS_SCOPE_UNAVAILABLE"].contains(notice ?? "") && !pendingAcknowledged && mode != .unavailable && permitsSubmission && policy?.consentState == .accepted && !busy

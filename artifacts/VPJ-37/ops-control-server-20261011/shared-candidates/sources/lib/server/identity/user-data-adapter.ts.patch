@@ -1,0 +1,4 @@
+--- a/lib/server/identity/user-data-adapter.ts
++++ b/lib/server/identity/user-data-adapter.ts
+@@ -1481,0 +1482 @@
++  if (message === "OPS_CONTROL_DISABLED" || message === "OPS_SCOPE_UNAVAILABLE") return message;

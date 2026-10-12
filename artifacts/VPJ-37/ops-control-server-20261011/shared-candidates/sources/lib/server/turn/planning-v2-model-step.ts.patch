@@ -1,0 +1,27 @@
+--- a/lib/server/turn/planning-v2-model-step.ts
++++ b/lib/server/turn/planning-v2-model-step.ts
+@@ -0,0 +1 @@
++import {decodeOpsRefusal,opsRefusalCode,OpsControlRefusal,type OpsRefusalCode} from '../observability/ops-control/refusal.ts';
+@@ -48 +49,5 @@
+- let output:PlanningV2ModelOutputReceipt|null=null;
++ let output:PlanningV2ModelOutputReceipt|null=null;let refusal:OpsRefusalCode|null=null;
++ const authorize=async(effect:'model_reserve'|'model_dispatch',s:AbortSignal)=>{
++  const value=await ports.authorize(effect,b,s),code=decodeOpsRefusal(value);
++  if(code){refusal=code;throw new OpsControlRefusal(code);}return authority(value,effect,b);
++ };
+@@ -50 +55 @@
+-  const initial=await current(signal);if(!initial||!authority(await ports.authorize('model_reserve',b,signal),'model_reserve',b))return {kind:'blocked'} as const;
++  const initial=await current(signal);if(!initial||!await authorize('model_reserve',signal))return {kind:'blocked'} as const;
+@@ -56,3 +61,3 @@
+-   if(name==='dispatch_model_budget'&&(signal.aborted||!await current(signal)||!authority(await ports.authorize('model_dispatch',b,signal),'model_dispatch',b)))return {kind:'blocked'};
+-   if(name==='reserve_model_budget'&&(!await current(signal)||!authority(await ports.authorize('model_reserve',b,signal),'model_reserve',b)))return {kind:'blocked'};
+-   const result=await attemptBudget(name,p);
++   if(name==='dispatch_model_budget'&&(signal.aborted||!await current(signal)||!await authorize('model_dispatch',signal)))return {kind:'blocked'};
++   if(name==='reserve_model_budget'&&(!await current(signal)||!await authorize('model_reserve',signal)))return {kind:'blocked'};
++   const result=await attemptBudget(name,p);const denied=decodeOpsRefusal(result);if(denied)refusal=denied;
+@@ -73,0 +79,2 @@
++  const denied=result.kind==='completed'&&result.value.kind==='unavailable'?opsRefusalCode(result.value.code):refusal;
++  if(denied)return {kind:'ops_refused',code:denied} as const;
+@@ -75 +82 @@
+- }catch{return {kind:'unknown'} as const;}
++ }catch(error){const denied=opsRefusalCode(error);return denied?{kind:'ops_refused',code:denied} as const:{kind:'unknown'} as const;}

@@ -69,3 +69,37 @@ Post-handoff DTO alignment: canonical lowercase UUID validation accepts the full
 lexical form (including v7); removed the uncontracted v1-v5 restriction. Focused input2 and
 TypeScript rerun for this parser-only change. Prior browser/build source evidence remains tied
 to b1c01dca UI/runtime source; no affected layout or module integration change.
+
+## Full shared seam candidate handoff, 2026-10-12
+
+Own private source head8e22e3f4 plus refusal.ts decoder/copy and focused refusal2 PASS.
+shared-candidates contains28 old-file full before/patch/after (all SHA256 pinned), source map,
+closed runtime execution-denial union and reproducible generation/type overlay checks. No shared
+apply or source/actor/config permission change. 22 TS/TSX overlay typechecks PASS; 6 Swift syntax
+checks PASS; all28 same-base before/hash/git-apply --check PASS. These are preparation checks,
+not applied native build, permissions, DB, stop race or paid provider proof.
+Initial Swift syntax of the generated NativeAskView candidate FAIL (misplaced wrapper brace);
+fixed the exact aiAssistPanel boundary, then all6 pinned Swift after sources parse PASS. This
+failure is retained rather than counted as an earlier success.
+
+Main C2 ruling consumed: existing AI supplement stays the same text/grounded capability. Original
+seven-key context and completed/pending/complete reads are preserved. New physical egress repeats
+SQL context then refuses OPS_SCOPE_UNAVAILABLE because no proven current job/source/config AND
+original durable scope binding exists; no invented provider/digest DTO, second ledger, normal
+C2 paid recovery or erased unknown fees. SQL must block fresh ensure/expired reclaim without
+repeating old unknown sends. SOURCE-MAP and EXECUTION-WIRE give complete named dependencies.
+
+NativeAssistantConversationView.swift candidate is HOLD: its old before399121f9 must never
+apply over #203 after9103ee2e7700daf3b31678a0b992e283f250c7bac865327cbb1218231f8e3dcf
+in PR678. Do not stack that unmerged head. After normal merge preserve JourneyEntry/materials/
+directions, regenerate only this candidate and necessary evidence, then obtain exact holder lease.
+Other source pins remain candidate-only. Native holder UNKNOWN, W1/worker/request holders HOLD.
+Complete SQL pause/blocked readback metadata and each runtime after function must match this
+runtime union before applying any caller decoder. All affected behavior/DB/native build after
+actual apply and final CI/formal review/protected merge remain UNRUN. #229 remains OPEN.
+
+PR678 merged in main daa7bae4. FF-only failed normally because the branch has private commits;
+normal no-ff merge preserved all own dirty/private commits without conflict. Actual Native
+Assistant source SHA matches merged9103. Only that candidate regenerated; source before/after/patch
+hashes refreshed and syntax/patch checks PASS. Previous #203 HOLD is historical; current precise
+holder release still HOLD. Other candidates and their same-source proof reused.

@@ -1,0 +1,10 @@
+--- a/lib/server/knowledge/wiki/grounded-ai-assist-job.ts
++++ b/lib/server/knowledge/wiki/grounded-ai-assist-job.ts
+@@ -0,0 +1 @@
++import {decodeOpsRefusal,opsRefusalCode} from "../../observability/ops-control/refusal.ts";
+@@ -21 +22 @@
+-  | Readonly<{ status: "not_offered"; reason: "unauthorized" | "not_blocked" | "job_unavailable" }>
++  | Readonly<{ status: "not_offered"; reason: "unauthorized" | "not_blocked" | "job_unavailable" | "ops_control_disabled" | "ops_scope_unavailable" }>
+@@ -39,0 +41,2 @@
++  const denied=decodeOpsRefusal(ensure.data)??opsRefusalCode(ensure.error?.message);
++  if(denied)return {status:"not_offered",reason:denied==="OPS_CONTROL_DISABLED"?"ops_control_disabled":"ops_scope_unavailable"};

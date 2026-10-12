@@ -1,0 +1,9 @@
+--- a/lib/server/model-gateway/adapters/http-transport.ts
++++ b/lib/server/model-gateway/adapters/http-transport.ts
+@@ -0,0 +1 @@
++import {opsRefusalCode,OpsControlRefusal} from "../../observability/ops-control/refusal.ts";
+@@ -113 +114 @@
+-    } catch {
++    } catch (error) {
+@@ -114,0 +116 @@
++      const refusal=opsRefusalCode(error);if(refusal)throw new OpsControlRefusal(refusal);

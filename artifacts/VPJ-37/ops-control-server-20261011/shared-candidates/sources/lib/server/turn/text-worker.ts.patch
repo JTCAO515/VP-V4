@@ -1,0 +1,19 @@
+--- a/lib/server/turn/text-worker.ts
++++ b/lib/server/turn/text-worker.ts
+@@ -0,0 +1 @@
++import {decodeOpsRefusal,opsRefusalCode,opsRefusalCopy,type OpsRefusalCode} from "../observability/ops-control/refusal.ts";
+@@ -65 +66,8 @@
+-    const result = await runWithDurableBudget(attempt, budgetRpc, async budgetSignal => {
++    let refusal:OpsRefusalCode|null=null;
++    const guardedBudget:BudgetRpc=async(name,params)=>{const value=await budgetRpc(name,params);const denied=decodeOpsRefusal(value);if(denied)refusal=denied;return value;};
++    const persistRefusal=async()=>{
++      const persisted=await textRpc(grounded?"complete_grounded_work":"complete_text_work",{...keys,...(grounded?{p_intent:"blocked",p_request_scope:"unknown"}:{p_kind:"blocked",p_text:opsRefusalCopy(String(input.locale))})});
++      if(!record(persisted)||persisted.kind!=="finished")throw Error("Operational denial acknowledgment unknown");
++      return "persisted" as const;
++    };
++    const result = await runWithDurableBudget(attempt, guardedBudget, async budgetSignal => {
+@@ -86 +94 @@
+-    if (result.kind !== "completed") return "provider_failure";
++    if (result.kind !== "completed") return refusal?await persistRefusal():"provider_failure";
+@@ -87,0 +96 @@
++    if(output.kind==="unavailable"&&opsRefusalCode(output.code))return await persistRefusal();

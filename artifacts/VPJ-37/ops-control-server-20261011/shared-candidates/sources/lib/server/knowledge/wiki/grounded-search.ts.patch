@@ -1,0 +1,9 @@
+--- a/lib/server/knowledge/wiki/grounded-search.ts
++++ b/lib/server/knowledge/wiki/grounded-search.ts
+@@ -0,0 +1 @@
++import {opsRefusalCode} from "../../observability/ops-control/refusal.ts";
+@@ -51 +52 @@
+-export type GroundedSearchReasonCode = "missing_content" | "retrieval_miss" | "user_input_missing" | "capability_unsupported" | "policy_denied" | "provider_failure";
++export type GroundedSearchReasonCode = "missing_content" | "retrieval_miss" | "user_input_missing" | "capability_unsupported" | "policy_denied" | "provider_failure" | "ops_control_disabled" | "ops_scope_unavailable";
+@@ -148,0 +150 @@
++      if(opsRefusalCode(outcome.errorCode))return {kind:"unavailable",reason:outcome.errorCode==="OPS_CONTROL_DISABLED"?"ops_control_disabled":"ops_scope_unavailable"};

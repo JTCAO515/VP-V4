@@ -1,0 +1,16 @@
+--- a/lib/server/model-gateway/adapters/provider-protocol.ts
++++ b/lib/server/model-gateway/adapters/provider-protocol.ts
+@@ -0,0 +1 @@
++import {decodeOpsRefusal,opsRefusalCode,OpsControlRefusal} from "../../observability/ops-control/refusal.ts";
+@@ -114 +115,2 @@
+-    return record(decision) && decision.kind === "authorized";
++    const refusal=decodeOpsRefusal(decision);if(refusal)throw new OpsControlRefusal(refusal);
++    return record(decision) && Object.keys(decision).length===1 && decision.kind === "authorized";
+@@ -138 +140,2 @@
+-    return record(decision) && decision.kind === "authorized";
++    const refusal=decodeOpsRefusal(decision);if(refusal)throw new OpsControlRefusal(refusal);
++    return record(decision) && Object.keys(decision).length===1 && decision.kind === "authorized";
+@@ -200 +203,2 @@
+-      } catch {
++      } catch (error) {
++        const refusal=opsRefusalCode(error);if(refusal)return unavailable(refusal);

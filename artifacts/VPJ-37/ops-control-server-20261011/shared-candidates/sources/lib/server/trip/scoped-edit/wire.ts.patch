@@ -1,0 +1,8 @@
+--- a/lib/server/trip/scoped-edit/wire.ts
++++ b/lib/server/trip/scoped-edit/wire.ts
+@@ -22 +22 @@
+-export type ScopedPendingReceipt = Readonly<{ kind: "scoped_edit_pending/1"; operationId: string; tripId: string; contextId: string; contextDigest: string; baseVersion: number; reason: "provider_unavailable" | "queued"; reused: boolean }>;
++export type ScopedPendingReceipt = Readonly<{ kind: "scoped_edit_pending/1"; operationId: string; tripId: string; contextId: string; contextDigest: string; baseVersion: number; reason: "provider_unavailable" | "queued" | "ops_control_disabled" | "ops_scope_unavailable"; reused: boolean }>;
+@@ -66 +66 @@
+-  if (v.kind === "scoped_edit_pending/1") return exact(v, ["kind", "operationId", "tripId", "contextId", "contextDigest", "baseVersion", "reason", "reused"]) && ["provider_unavailable", "queued"].includes(String(v.reason)) ? v as ScopedPendingReceipt : null;
++  if (v.kind === "scoped_edit_pending/1") return exact(v, ["kind", "operationId", "tripId", "contextId", "contextDigest", "baseVersion", "reason", "reused"]) && ["provider_unavailable", "queued", "ops_control_disabled", "ops_scope_unavailable"].includes(String(v.reason)) ? v as ScopedPendingReceipt : null;

@@ -1,0 +1,238 @@
+{
+  "base": "daa7bae44a660381fb3295d0d2afc327ea98d3ba",
+  "sharedApplied": false,
+  "candidateCount": 28,
+  "tsOverlayFiles": 22,
+  "tsOverlay": "PASS",
+  "runtime": "UNRUN",
+  "db": "UNRUN",
+  "nativeBuild": "UNRUN",
+  "files": [
+    {
+      "path": "lib/server/contracts/errors/index.ts",
+      "hashes": "PASS",
+      "sameBaseBefore": "PASS",
+      "patchSyntax": "PASS",
+      "swiftSyntax": "NOT_APPLICABLE",
+      "applyLease": "HOLD currentholder/Main required"
+    },
+    {
+      "path": "lib/server/identity/user-data-adapter.ts",
+      "hashes": "PASS",
+      "sameBaseBefore": "PASS",
+      "patchSyntax": "PASS",
+      "swiftSyntax": "NOT_APPLICABLE",
+      "applyLease": "HOLD currentholder/Main required"
+    },
+    {
+      "path": "lib/server/turn/native-http.ts",
+      "hashes": "PASS",
+      "sameBaseBefore": "PASS",
+      "patchSyntax": "PASS",
+      "swiftSyntax": "NOT_APPLICABLE",
+      "applyLease": "HOLD currentholder/Main required"
+    },
+    {
+      "path": "lib/server/turn/native-assistant-http.ts",
+      "hashes": "PASS",
+      "sameBaseBefore": "PASS",
+      "patchSyntax": "PASS",
+      "swiftSyntax": "NOT_APPLICABLE",
+      "applyLease": "HOLD currentholder/Main required"
+    },
+    {
+      "path": "lib/server/turn/native-planning-intake-http.ts",
+      "hashes": "PASS",
+      "sameBaseBefore": "PASS",
+      "patchSyntax": "PASS",
+      "swiftSyntax": "NOT_APPLICABLE",
+      "applyLease": "HOLD currentholder/Main required"
+    },
+    {
+      "path": "lib/server/turn/native-planning-http.ts",
+      "hashes": "PASS",
+      "sameBaseBefore": "PASS",
+      "patchSyntax": "PASS",
+      "swiftSyntax": "NOT_APPLICABLE",
+      "applyLease": "HOLD currentholder/Main required"
+    },
+    {
+      "path": "lib/server/trip/scoped-edit/service.ts",
+      "hashes": "PASS",
+      "sameBaseBefore": "PASS",
+      "patchSyntax": "PASS",
+      "swiftSyntax": "NOT_APPLICABLE",
+      "applyLease": "HOLD currentholder/Main required"
+    },
+    {
+      "path": "components/chat/ChatThreadWorkspace.tsx",
+      "hashes": "PASS",
+      "sameBaseBefore": "PASS",
+      "patchSyntax": "PASS",
+      "swiftSyntax": "NOT_APPLICABLE",
+      "applyLease": "HOLD currentholder/Main required"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAskStore.swift",
+      "hashes": "PASS",
+      "sameBaseBefore": "PASS",
+      "patchSyntax": "PASS",
+      "swiftSyntax": "PASS",
+      "applyLease": "HOLD currentholder/Main required"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAskView.swift",
+      "hashes": "PASS",
+      "sameBaseBefore": "PASS",
+      "patchSyntax": "PASS",
+      "swiftSyntax": "PASS",
+      "applyLease": "HOLD currentholder/Main required"
+    },
+    {
+      "path": "lib/server/model-gateway/adapters/provider-protocol.ts",
+      "hashes": "PASS",
+      "sameBaseBefore": "PASS",
+      "patchSyntax": "PASS",
+      "swiftSyntax": "NOT_APPLICABLE",
+      "applyLease": "HOLD currentholder/Main required"
+    },
+    {
+      "path": "lib/server/turn/text-worker.ts",
+      "hashes": "PASS",
+      "sameBaseBefore": "PASS",
+      "patchSyntax": "PASS",
+      "swiftSyntax": "NOT_APPLICABLE",
+      "applyLease": "HOLD currentholder/Main required"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift",
+      "hashes": "PASS",
+      "sameBaseBefore": "PASS",
+      "patchSyntax": "PASS",
+      "swiftSyntax": "PASS",
+      "applyLease": "HOLD pending PR678 merge and regeneration; 203 current after9103ee2e7700daf3b31678a0b992e283f250c7bac865327cbb1218231f8e3dcf"
+    },
+    {
+      "path": "lib/server/model-gateway/adapters/http-transport.ts",
+      "hashes": "PASS",
+      "sameBaseBefore": "PASS",
+      "patchSyntax": "PASS",
+      "swiftSyntax": "NOT_APPLICABLE",
+      "applyLease": "HOLD currentholder/Main required"
+    },
+    {
+      "path": "lib/server/turn/planning-comparison-worker.ts",
+      "hashes": "PASS",
+      "sameBaseBefore": "PASS",
+      "patchSyntax": "PASS",
+      "swiftSyntax": "NOT_APPLICABLE",
+      "applyLease": "HOLD currentholder/Main required"
+    },
+    {
+      "path": "lib/server/turn/planning-v2-model-step.ts",
+      "hashes": "PASS",
+      "sameBaseBefore": "PASS",
+      "patchSyntax": "PASS",
+      "swiftSyntax": "NOT_APPLICABLE",
+      "applyLease": "HOLD currentholder/Main required"
+    },
+    {
+      "path": "lib/server/turn/planning-v2-bounded-worker.ts",
+      "hashes": "PASS",
+      "sameBaseBefore": "PASS",
+      "patchSyntax": "PASS",
+      "swiftSyntax": "NOT_APPLICABLE",
+      "applyLease": "HOLD currentholder/Main required"
+    },
+    {
+      "path": "lib/server/turn/planning-v2-hosted-job.ts",
+      "hashes": "PASS",
+      "sameBaseBefore": "PASS",
+      "patchSyntax": "PASS",
+      "swiftSyntax": "NOT_APPLICABLE",
+      "applyLease": "HOLD currentholder/Main required"
+    },
+    {
+      "path": "lib/server/turn/scoped-edit/executor.ts",
+      "hashes": "PASS",
+      "sameBaseBefore": "PASS",
+      "patchSyntax": "PASS",
+      "swiftSyntax": "NOT_APPLICABLE",
+      "applyLease": "HOLD currentholder/Main required"
+    },
+    {
+      "path": "lib/server/turn/scoped-edit/hosted-job.ts",
+      "hashes": "PASS",
+      "sameBaseBefore": "PASS",
+      "patchSyntax": "PASS",
+      "swiftSyntax": "NOT_APPLICABLE",
+      "applyLease": "HOLD currentholder/Main required"
+    },
+    {
+      "path": "lib/server/trip/scoped-edit/wire.ts",
+      "hashes": "PASS",
+      "sameBaseBefore": "PASS",
+      "patchSyntax": "PASS",
+      "swiftSyntax": "NOT_APPLICABLE",
+      "applyLease": "HOLD currentholder/Main required"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/ScopedTripEdit/NativeScopedTripEditStore.swift",
+      "hashes": "PASS",
+      "sameBaseBefore": "PASS",
+      "patchSyntax": "PASS",
+      "swiftSyntax": "PASS",
+      "applyLease": "HOLD currentholder/Main required"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/ScopedTripEdit/NativeScopedTripEditSheet.swift",
+      "hashes": "PASS",
+      "sameBaseBefore": "PASS",
+      "patchSyntax": "PASS",
+      "swiftSyntax": "PASS",
+      "applyLease": "HOLD currentholder/Main required"
+    },
+    {
+      "path": "lib/server/knowledge/wiki/grounded-ai-assist.ts",
+      "hashes": "PASS",
+      "sameBaseBefore": "PASS",
+      "patchSyntax": "PASS",
+      "swiftSyntax": "NOT_APPLICABLE",
+      "applyLease": "HOLD currentholder/Main required"
+    },
+    {
+      "path": "lib/server/knowledge/wiki/grounded-search.ts",
+      "hashes": "PASS",
+      "sameBaseBefore": "PASS",
+      "patchSyntax": "PASS",
+      "swiftSyntax": "NOT_APPLICABLE",
+      "applyLease": "HOLD currentholder/Main required"
+    },
+    {
+      "path": "lib/server/knowledge/wiki/grounded-ai-assist-job.ts",
+      "hashes": "PASS",
+      "sameBaseBefore": "PASS",
+      "patchSyntax": "PASS",
+      "swiftSyntax": "NOT_APPLICABLE",
+      "applyLease": "HOLD currentholder/Main required"
+    },
+    {
+      "path": "components/chat/SavedAnswers.tsx",
+      "hashes": "PASS",
+      "sameBaseBefore": "PASS",
+      "patchSyntax": "PASS",
+      "swiftSyntax": "NOT_APPLICABLE",
+      "applyLease": "HOLD currentholder/Main required"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAskModels.swift",
+      "hashes": "PASS",
+      "sameBaseBefore": "PASS",
+      "patchSyntax": "PASS",
+      "swiftSyntax": "PASS",
+      "applyLease": "HOLD currentholder/Main required"
+    }
+  ],
+  "refresh": "Only NativeAssistantConversationView candidate regenerated; Swift syntax/patch check PASS on before9103; unchanged checks reused",
+  "patchFormat": "zero context to avoid nested diff context whitespace; use --unidiff-zero only after exact full before SHA and lease"
+}
