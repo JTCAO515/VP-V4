@@ -42,10 +42,11 @@ begin
   if not found then return denied;end if;
   select array_agg(x.id order by x.id) into head_events from (
    select id from turn_private.result_events where artifact_id=a.id and revision=r.revision
-    and owner_id=u and event_type in('ready','revised') order by id limit 2
+    and event_type in('ready','revised') order by id limit 2
   ) x;
   if coalesce(cardinality(head_events),0)<>1 then return denied;end if;
   head_event:=head_events[1];
+  if not exists(select 1 from turn_private.result_events where id=head_event and owner_id=u) then return denied;end if;
   if r.content->>'schemaVersion'='decision/1' then
    if head_event=selected_event then return denied;end if;
    if head_event>selected_event then selected_event:=head_event;selected_id:=a.id;selected_rev:=r.revision;end if;
@@ -65,7 +66,7 @@ begin
   'scope',jsonb_build_object('conversationId',c.id,'goalId',g.id,'goalVersion',g.scope_version,'parentMessageId',m.id,'inputSequence',m.sequence),
   'lastDecision',jsonb_build_object('artifactId',selected_id,'revision',selected_rev,'eventId',selected_event::text),
   'nextStep',jsonb_build_object('kind','unknown'));
-exception when lock_not_available or query_canceled then return denied;
+exception when lock_not_available then return denied;
 end $$;
 revoke all on function turn_private.goal_return_reference_candidate_v1(uuid,uuid,uuid,integer,uuid,bigint,bigint) from public,anon,authenticated,service_role;
 
