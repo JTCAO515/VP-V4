@@ -1,0 +1,33 @@
+✔ actual settled selection gives exact factual comparison and atomic original publication (4096.9575ms)
+✔ foreign tuple, wrong source/current lease/attempt/output/usage and mutated factual body deny (1608.593416ms)
+✔ original recovered attempt and new current work lease publish without another paid attempt (1276.544875ms)
+✖ current source, hidden text, planning consent, profile and budget limits fail closed (8130.927291ms)
+✔ late capacity/publisher failures rollback all completion writes, wrong content/proof/transaction never publish (1724.640167ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 4
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 16954.938208
+
+✖ failing tests:
+
+test at artifacts/VPJ-13/idea-result-sql-20261012/affected-proof.test.mjs:37:22
+✖ current source, hidden text, planning consent, profile and budget limits fail closed (8130.927291ms)
+  AssertionError [ERR_ASSERTION]: task
+
+  'f' !== 't'
+
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj13-idea-result-sql-20261012/artifacts/VPJ-13/idea-result-sql-20261012/affected-proof.test.mjs:114:40)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'f',
+    expected: 't',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

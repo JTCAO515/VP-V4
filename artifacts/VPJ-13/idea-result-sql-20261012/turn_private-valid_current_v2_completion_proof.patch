@@ -1,0 +1,25 @@
+--- turn_private-valid_current_v2_completion_proof.before.sql
++++ turn_private-valid_current_v2_completion_proof.after.sql
+@@ -1,4 +1,4 @@
+-create function turn_private.valid_current_v2_completion_proof(p_turn uuid) returns boolean
++create or replace function turn_private.valid_current_v2_completion_proof(p_turn uuid) returns boolean
+ language plpgsql security definer set search_path='' as $$
+ declare proof turn_private.planning_v2_completion_proofs%rowtype;r turn_private.planning_v2_execution_runs%rowtype;o turn_private.planning_v2_collector_origins%rowtype;v turn_private.planning_v2_collector_outputs%rowtype;claim turn_private.planning_v2_result_claims%rowtype;
+ begin
+@@ -14,6 +14,16 @@
+  or turn_private.planning_v2_content_digest(proof.content) is distinct from proof.content_digest or turn_private.validate_planning_v2_output_v1(v.output_wire,o.binding) is distinct from true
+  or not exists(select 1 from public.model_budget_attempts a join public.model_budget_scopes sc on sc.id=a.scope_id where a.scope_id=proof.scope_id and a.attempt_id=proof.attempt_id and a.task_id=proof.task_id and sc.owner_id=proof.owner_id and sc.currency='CNY' and a.provider=r.execution->>'provider' and a.model=r.execution->>'model' and a.price_version=r.execution->>'priceVersion' and a.reserved_micros=(r.execution->>'reservedMicros')::bigint and a.status='settled' and a.actual_micros is not null and a.actual_micros=turn_private.planning_v2_usage_cost(v.output_wire,r.execution))
+  or not exists(select 1 from turn_private.planning_comparisons where turn_id=p_turn and owner_id=proof.owner_id and task_id=proof.task_id and artifact_id=proof.artifact_id) then return false;end if;
++ -- The original transaction proof remains the only terminal/publication gate.
++ -- Its immutable collector output also fixes option order, including recovered
++ -- original attempts. Caller supplied selection/content digests cannot override it.
++ if proof.content->'actions' is distinct from '[]'::jsonb
++  or jsonb_array_length(proof.content->'options') is distinct from 2
++  or proof.content->'options'->0->>'id' is distinct from
++   (case v.output_wire->'output'->>'highlight' when 'peoples_square' then 'peoples_square' when 'jingan' then 'jingan' when 'none' then 'jingan' end)
++  or proof.content->'options'->1->>'id' is distinct from
++   (case v.output_wire->'output'->>'highlight' when 'peoples_square' then 'jingan' when 'jingan' then 'peoples_square' when 'none' then 'peoples_square' end)
++ then return false;end if;
+  return true;
+ exception when lock_not_available then return false;
+ end $$;

@@ -1,0 +1,6 @@
+{
+  "unknownBody": "DENIED",
+  "addedServiceGrant": "DENIED",
+  "rollbackRestoresFixedPins": "PASS",
+  "ordinaryAndServiceRoles": "NO EXECUTE"
+}

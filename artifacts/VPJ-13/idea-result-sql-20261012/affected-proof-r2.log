@@ -1,0 +1,33 @@
+✖ current source, hidden text, planning consent, profile and budget limits fail closed (13709.539166ms)
+✔ withdrawn Memory source and unsettled model never produce a personalized content (2820.265333ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 1
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 16632.781167
+
+✖ failing tests:
+
+test at artifacts/VPJ-13/idea-result-sql-20261012/affected-proof.test.mjs:37:22
+✖ current source, hidden text, planning consent, profile and budget limits fail closed (13709.539166ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  SERVICE_TASK_CONFLICT
+  CONTEXT:  PL/pgSQL function turn_private.guard_goal_terminal_scope_v1() line 6 at RAISE
+
+
+  3 !== 0
+
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj13-idea-result-sql-20261012/artifacts/VPJ-13/idea-result-sql-20261012/affected-proof.test.mjs:15:58)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj13-idea-result-sql-20261012/artifacts/VPJ-13/idea-result-sql-20261012/affected-proof.test.mjs:114:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

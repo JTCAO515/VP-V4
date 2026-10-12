@@ -1,0 +1,17 @@
+--- public-complete_planning_intake_comparison_v1.before.sql
++++ public-complete_planning_intake_comparison_v1.after.sql
+@@ -1,4 +1,4 @@
+-create function public.complete_planning_intake_comparison_v1(p_owner uuid,p_task uuid,p_turn uuid,p_lease uuid,p_intake_digest text,p_planning_digest text,p_action_key text,p_scope uuid,p_attempt uuid,p_output_digest text,p_usage_digest text,p_content jsonb) returns jsonb
++create or replace function public.complete_planning_intake_comparison_v1(p_owner uuid,p_task uuid,p_turn uuid,p_lease uuid,p_intake_digest text,p_planning_digest text,p_action_key text,p_scope uuid,p_attempt uuid,p_output_digest text,p_usage_digest text,p_content jsonb) returns jsonb
+ language plpgsql security definer set search_path='' as $$
+ declare q jsonb;model jsonb;digest text;key text;c turn_private.planning_v2_result_claims%rowtype;job turn_private.planning_comparisons%rowtype;place turn_private.planning_v2_place_checkpoints%rowtype;w turn_private.work%rowtype;cap turn_private.service_task_capacity%rowtype;locale text;published jsonb;receipt jsonb;capacity_required boolean;
+ begin
+@@ -7,7 +7,7 @@
+  if model->>'state' is distinct from 'settled' or model->'binding'->>'attempt' is distinct from p_attempt::text or model->'output'->>'outputDigest' is distinct from p_output_digest or model->'output'->>'usageDigest' is distinct from p_usage_digest then return jsonb_build_object('kind','blocked');end if;
+  select * into place from turn_private.planning_v2_place_checkpoints where turn_id=p_turn for share nowait;
+  select m.locale into locale from turn_private.planning_comparisons j join turn_private.assistant_messages m on m.id=j.message_id where j.turn_id=p_turn;
+- if not found or place.state<>'completed' or turn_private.valid_planning_qualified_comparison_v1(p_owner,p_turn,p_lease,p_intake_digest,p_planning_digest,place.observation,locale,p_content) is distinct from true then return jsonb_build_object('kind','blocked');end if;
++ if not found or place.state<>'completed' or p_content is distinct from turn_private.journey_idea_result_content_v1(p_owner,p_task,p_turn,p_lease,p_intake_digest,p_planning_digest,p_scope,p_attempt,p_output_digest,p_usage_digest,locale) or p_content is null then return jsonb_build_object('kind','blocked');end if;
+  digest:=turn_private.planning_v2_content_digest(p_content);
+  key:=encode(sha256(convert_to('['||turn_private.planning_v2_json_string_v1(p_task::text)||','||turn_private.planning_v2_json_string_v1(p_turn::text)||','||turn_private.planning_v2_json_string_v1(p_intake_digest)||','||turn_private.planning_v2_json_string_v1(p_planning_digest)||',"result.prepare",'||turn_private.planning_v2_json_string_v1(digest)||']','UTF8')),'hex');
+  select * into c from turn_private.planning_v2_result_claims where execution_id=(q->>'runId')::uuid for update nowait;

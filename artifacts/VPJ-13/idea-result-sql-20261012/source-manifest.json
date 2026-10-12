@@ -1,0 +1,18 @@
+{
+  "baseline": "daa7bae44a660381fb3295d0d2afc327ea98d3ba",
+  "stage": "PRIVATE CANDIDATE ONLY",
+  "functions": [
+    {
+      "name": "public-complete_planning_intake_comparison_v1",
+      "beforeSHA256": "b09b8fcd4cac3e396f4761c5805f7a318486a15e2abbfc58f17713dc4a5118e1",
+      "afterSHA256": "5b949a9717ea5e03c10590fca71c240830f4988ce42eff3d08618dbff7118413",
+      "patchSHA256": "7a4e7d1b77e328e78286118807436624010f0c022f20869387d48ff8ced693ec"
+    },
+    {
+      "name": "turn_private-valid_current_v2_completion_proof",
+      "beforeSHA256": "90ff0978aa48e057b4dc04af61ca3c5f286ca43f0edb04587b2f118293c31394",
+      "afterSHA256": "c3c87785e1631ad9ca6504d3a6818a53105d49e0c3190c80283c3507f75ed448",
+      "patchSHA256": "ef4d720f9bf74737064ebd7d93cfc76e8e6fff2ea4c03888f15e6a1839e43806"
+    }
+  ]
+}

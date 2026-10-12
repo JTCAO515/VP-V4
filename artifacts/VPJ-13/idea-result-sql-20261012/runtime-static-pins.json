@@ -1,0 +1,53 @@
+{
+  "public.complete_planning_intake_comparison_v1(uuid,uuid,uuid,uuid,text,text,text,uuid,uuid,text,text,jsonb)": {
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}",
+    "securityDefiner": true,
+    "config": [
+      "search_path=\"\""
+    ],
+    "language": "plpgsql",
+    "volatility": "v",
+    "strict": false,
+    "parallel": "u",
+    "kind": "f",
+    "identity": "p_owner uuid, p_task uuid, p_turn uuid, p_lease uuid, p_intake_digest text, p_planning_digest text, p_action_key text, p_scope uuid, p_attempt uuid, p_output_digest text, p_usage_digest text, p_content jsonb",
+    "arguments": "p_owner uuid, p_task uuid, p_turn uuid, p_lease uuid, p_intake_digest text, p_planning_digest text, p_action_key text, p_scope uuid, p_attempt uuid, p_output_digest text, p_usage_digest text, p_content jsonb",
+    "result": "jsonb",
+    "md5": "69fa777ace2e64c39935ad1879a0c726"
+  },
+  "turn_private.valid_current_v2_completion_proof(uuid)": {
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}",
+    "securityDefiner": true,
+    "config": [
+      "search_path=\"\""
+    ],
+    "language": "plpgsql",
+    "volatility": "v",
+    "strict": false,
+    "parallel": "u",
+    "kind": "f",
+    "identity": "p_turn uuid",
+    "arguments": "p_turn uuid",
+    "result": "boolean",
+    "md5": "c80c9ab8e844bec1c833fd5c6328293b"
+  },
+  "turn_private.journey_idea_result_content_v1(uuid,uuid,uuid,uuid,text,text,uuid,uuid,text,text,text)": {
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}",
+    "securityDefiner": true,
+    "config": [
+      "search_path=\"\""
+    ],
+    "language": "plpgsql",
+    "volatility": "v",
+    "strict": false,
+    "parallel": "u",
+    "kind": "f",
+    "identity": "p_owner uuid, p_task uuid, p_turn uuid, p_lease uuid, p_intake_digest text, p_planning_digest text, p_scope uuid, p_attempt uuid, p_output_digest text, p_usage_digest text, p_locale text",
+    "arguments": "p_owner uuid, p_task uuid, p_turn uuid, p_lease uuid, p_intake_digest text, p_planning_digest text, p_scope uuid, p_attempt uuid, p_output_digest text, p_usage_digest text, p_locale text",
+    "result": "jsonb",
+    "md5": "9015774f11fd23ea441101e526ef28a2"
+  }
+}

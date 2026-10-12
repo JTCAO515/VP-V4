@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import {writeFileSync} from 'node:fs';
+import {db,owned} from './kernel.mjs';
+await owned();
+const signature='turn_private.journey_idea_result_content_v1(uuid,uuid,uuid,uuid,text,text,uuid,uuid,text,text,text)';
+const acl=await db(`begin;grant execute on function ${signature} to service_role;select turn_data_private.runtime_supported_v1();rollback;`);assert.equal(acl,'f');
+const body=await db(`begin;do $$declare source text;begin source:=pg_get_functiondef('${signature}'::regprocedure);execute replace(source,'return content;','return null;');end $$;select turn_data_private.runtime_supported_v1();rollback;`);assert.equal(body,'f');
+assert.equal(await db('select turn_data_private.runtime_supported_v1();'),'t');
+assert.equal(await db(`select has_function_privilege('anon','${signature}','EXECUTE') or has_function_privilege('authenticated','${signature}','EXECUTE') or has_function_privilege('service_role','${signature}','EXECUTE');`),'f');
+writeFileSync(new URL('pin-negative-proof.json',import.meta.url),JSON.stringify({unknownBody:'DENIED',addedServiceGrant:'DENIED',rollbackRestoresFixedPins:'PASS',ordinaryAndServiceRoles:'NO EXECUTE'},null,2)+'\n');
+console.log('Fixed body/ACL negatives and rollback PASS');

@@ -1,0 +1,18 @@
+{
+  "owner": "01a12e46-03b6-73e0-a000-86f2fb074fc6",
+  "nonce": "vpj13-idea-result-sql-20261012-7d19c5ea",
+  "image": "public.ecr.aws/supabase/postgres@sha256:86a2e078779e5bdccda1f6f6c5063aa9779a322d1fface5fb408d051909b230f",
+  "architecture": "arm64",
+  "noncePreflight": "EMPTY",
+  "imagePreflight": "MATCH",
+  "network": "none",
+  "ports": [],
+  "mounts": [],
+  "user": "postgres",
+  "socket": "/tmp/vpj13-7d19c5ea-socket",
+  "socketMode": "0700",
+  "data": "/tmp/vpj13-7d19c5ea-db",
+  "dataMode": "0700",
+  "purpose": "Own SQL fixture replay154/candidate/catalog/source-pins/affected tests; no HTTP/Auth/provider",
+  "lease": "NOT YET GRANTED"
+}

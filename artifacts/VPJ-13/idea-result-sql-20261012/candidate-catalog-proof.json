@@ -1,0 +1,12 @@
+{
+  "oldFunctionCount": 1083,
+  "oldMetadataUnchanged": "PASS",
+  "changedBodies": [
+    "public.complete_planning_intake_comparison_v1(uuid,uuid,uuid,uuid,text,text,text,uuid,uuid,text,text,jsonb)",
+    "turn_private.valid_current_v2_completion_proof(uuid)"
+  ],
+  "newFunctionCount": 1,
+  "relationMetadata": "ALL UNCHANGED",
+  "privacyGates": "t|t|t|t|t",
+  "actualCandidateCompileAndRollback": "PASS"
+}
