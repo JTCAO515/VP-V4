@@ -1,0 +1,34 @@
+{
+  "state": "INCOMPLETE_RETAINED_FOR_ORIGINAL_TASK",
+  "head": "d4b9ef6651b34a8b96b609a6262f6e30e4b34a31",
+  "leases": {
+    "W2 private/source ownership": "RETAINED: original sole integrator, no writer replacement",
+    "five Main source lease batches": "APPLIED exact guarded sources; retained for final integration, not whole-file released",
+    "failureCopy two-file candidate": "HOLD: exact Main lease requested, no product apply",
+    "Conversation E3": "LIMITED_RELEASE exact 16 inserted lines only; no whole-file release",
+    "planning-v2-bounded-worker E1": "LIMITED_RELEASE exact candidate hunk only; no product apply in W2",
+    "NativeAskModels": "UNKNOWN/HOLD unchanged",
+    "SQL product append/shared bodies": "HOLD: original SQL owner/Main, no authorization to substitute writer"
+  },
+  "resources": {
+    "own TCP63437": "STOPPED; current lsof no listener",
+    "own node TypeScript session62042": "FINISHED exit0",
+    "own Swift fixtures": "FILES RETAINED; no active process claimed",
+    "own native build r1/r2/r3 artifacts and DerivedData": "RETAINED for failure history and exact source evidence",
+    "worktree/branch": "RETAINED; clean after record commit",
+    "SQL container vpj37-w2sql-20261011-6c527b9d": "OTHER OWNER RETAINED; docker ps Up4hours unhealthy, no cleanup/action by integrator",
+    "other Docker resources": "UNTOUCHED"
+  },
+  "remaining": [
+    "actual SQL full pause/readback/lifecycle package and exact append/shared leases",
+    "apply localized refusal candidate after exact lease; rerun affected failing tests",
+    "Main exact-head formal review, applicable full CI and normal protected merge/readback"
+  ],
+  "unrun": [
+    "Staging stop/resume/rollback",
+    "actual provider fees/calls",
+    "real device",
+    "final full SQL lifecycle/restore integration",
+    "final remote CI and protected merge"
+  ]
+}
