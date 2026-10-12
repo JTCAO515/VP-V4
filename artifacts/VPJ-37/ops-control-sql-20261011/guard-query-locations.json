@@ -1,0 +1,17 @@
+[
+  {
+    "signature": "profile_data_private.schema_v1()",
+    "key": "global-profile_data_private.schema_v1()",
+    "oldHash": "0ec0fcfc206909a38756272a65a877c6ab857c00fd114178d135837da951c73a"
+  },
+  {
+    "signature": "result_data_private.schema_supported_v1()",
+    "key": "global-result_data_private.schema_supported_v1()",
+    "oldHash": "0ec0fcfc206909a38756272a65a877c6ab857c00fd114178d135837da951c73a"
+  },
+  {
+    "signature": "turn_data_private.schema_supported_v1()",
+    "key": "global-turn_data_private.schema_supported_v1()",
+    "oldHash": "0ec0fcfc206909a38756272a65a877c6ab857c00fd114178d135837da951c73a"
+  }
+]

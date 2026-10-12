@@ -1,0 +1,7 @@
+[
+  {
+    "path": "/constraints/9/definition",
+    "expected": "FOREIGN KEY (turn_id) REFERENCES turns(id) ON DELETE CASCADE",
+    "actual": "FOREIGN KEY (turn_id) REFERENCES public.turns(id) ON DELETE CASCADE"
+  }
+]

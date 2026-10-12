@@ -1,0 +1,3 @@
+ERROR:  PROFILE_GUARD_STAGE_13 turn_private.work
+CONTEXT:  PL/pgSQL function inline_code_block line 14 at RAISE
+

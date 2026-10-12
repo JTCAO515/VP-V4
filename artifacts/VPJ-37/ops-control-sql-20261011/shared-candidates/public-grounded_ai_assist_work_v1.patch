@@ -1,0 +1,22 @@
+--- public-grounded_ai_assist_work_v1.before.sql
++++ public-grounded_ai_assist_work_v1.after.sql
+@@ -29,7 +29,8 @@
+ 
+     select * into job from turn_private.grounded_ai_assist_jobs where turn_id = tid for update;
+     if not found then
+-      insert into turn_private.grounded_ai_assist_jobs(turn_id, owner_id, status, started_at)
++      return ops_control_private.c2_unqualified_decision_v1(tid);
++insert into turn_private.grounded_ai_assist_jobs(turn_id, owner_id, status, started_at)
+         values (tid, u, 'running', clock_timestamp())
+         returning * into job;
+       return jsonb_build_object('kind', 'claimed', 'jobId', job.id, 'claimToken', job.claim_token);
+@@ -45,7 +46,8 @@
+     -- starts a job 'running' directly) or a 'running' claim old enough to
+     -- treat as an abandoned attempt. A fresh claim_token fences off any late
+     -- completion from whoever held the job before this reclaim.
+-    update turn_private.grounded_ai_assist_jobs
++    return ops_control_private.c2_unqualified_decision_v1(tid);
++update turn_private.grounded_ai_assist_jobs
+       set status = 'running', started_at = clock_timestamp(), finished_at = null, outcome = null, error_code = null, claim_token = gen_random_uuid()
+       where id = job.id
+       returning * into job;

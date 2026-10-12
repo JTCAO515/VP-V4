@@ -1,0 +1,41 @@
+--- public-pause_planning_comparison_v1.before.sql
++++ public-pause_planning_comparison_v1.after.sql
+@@ -4,7 +4,7 @@
+  SECURITY DEFINER
+  SET search_path TO ''
+ AS $function$
+-declare w turn_private.work%rowtype;
++declare ops_decision jsonb; w turn_private.work%rowtype;
+ begin
+   if exists(select 1 from turn_private.work where turn_id=p_turn_id and execution_mode in('planning_intake_comparison_v2','scoped_trip_edit_v1','travel_directions_v1')) then return jsonb_build_object('kind','stale'); end if;
+   if (select auth.role())<>'service_role' or p_turn_id is null or p_lease_token is null then raise exception 'INVALID_INPUT'; end if;
+@@ -13,7 +13,28 @@
+   select * into w from turn_private.work where turn_id=p_turn_id for update;
+   if w.state<>'leased' or w.lease_token is distinct from p_lease_token or w.expires_at<=clock_timestamp()
+     or w.execution_mode<>'planning_comparison_v1' then return jsonb_build_object('kind','stale'); end if;
+-  update turn_private.planning_comparisons set state='paused_unknown' where turn_id=p_turn_id and state='queued';
++  ops_decision:=ops_control_private.work_decision_v1(p_turn_id,p_lease_token,'model');
++ if not(ops_decision ? 'code') then ops_decision:=ops_control_private.work_decision_v1(p_turn_id,p_lease_token,'tool');end if;
++ if ops_decision->>'code' in('OPS_CONTROL_DISABLED','OPS_SCOPE_UNAVAILABLE') then
++ declare ops_attempt record;ops_accounting text:='not_dispatched';ops_task uuid;begin
++  ops_task:=(select task_id from turn_private.planning_comparisons where turn_id=p_turn_id and owner_id=w.owner_id);
++  for ops_attempt in select a.scope_id,a.attempt_id,a.status from public.model_budget_attempts a
++   join public.model_budget_scopes s on s.id=a.scope_id where a.task_id=ops_task and s.owner_id=w.owner_id
++   order by a.scope_id,a.attempt_id loop
++   if ops_attempt.status in('dispatched','pending','settled') then ops_accounting:='pending';end if;
++   if ops_attempt.status='dispatched' then perform public.finish_model_budget(ops_attempt.scope_id,w.owner_id,ops_attempt.attempt_id,'pending',null);
++   elsif ops_attempt.status='reserved' then perform public.finish_model_budget(ops_attempt.scope_id,w.owner_id,ops_attempt.attempt_id,'release',null);end if;
++  end loop;
++  update turn_private.planning_comparisons set state='paused_unknown' where turn_id=p_turn_id and owner_id=w.owner_id;
++  update turn_private.text_content set output_kind='blocked',output_text=case when locale='zh'
++   then '此能力暂时停用，或当前城市范围无法核实。请打开已有行程或已保存成果，按原确认流程手工调整；不会自动重发已发送请求。'
++   else 'This capability is paused or the current city scope cannot be qualified. Open an existing Trip or saved result and edit manually through its original confirmation flow. Sent requests will not be retried automatically.' end
++   where turn_id=p_turn_id and owner_id=w.owner_id and hidden_at is null;
++  perform turn_private.terminal(p_turn_id,'unavailable',(select attempt from turn_private.work where turn_id=p_turn_id));
++  update turn_private.service_task_capacity set state='released',released_at=clock_timestamp() where task_id=ops_task and state='reserved';
++  return jsonb_build_object('kind','ops_paused','code',ops_decision->>'code','accounting',ops_accounting);
++ end;end if;
++update turn_private.planning_comparisons set state='paused_unknown' where turn_id=p_turn_id and state='queued';
+   update turn_private.work set state='queued',lease_token=null,expires_at=null where turn_id=p_turn_id;
+   return jsonb_build_object('kind','paused_unknown');
+ end $function$

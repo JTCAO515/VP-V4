@@ -1,0 +1,29 @@
+{
+  "environment": "Owned network-none PG17; SQL Auth claims fixture, not GoTrue/provider",
+  "results": [
+    {
+      "label": "live Ops identity/current real session; anon/nonmember/private kernel denied",
+      "result": "PASS"
+    },
+    {
+      "label": "private restore reconciliation keeps controls stopped and advances floors",
+      "result": "PASS"
+    },
+    {
+      "label": "global CAS, exact replay, payload/subject collision, receipt uniform unavailability",
+      "result": "PASS"
+    },
+    {
+      "label": "actual legacy text turn tuple, real reserve/dispatch; differing provider refused",
+      "result": "PASS"
+    },
+    {
+      "label": "budget stop keeps in-flight pending; resume refuses then genuinely settled overrun recovers without resets",
+      "result": "PASS"
+    },
+    {
+      "label": "actor metadata projection counts actual audits; membership revoke denies replay",
+      "result": "PASS"
+    }
+  ]
+}

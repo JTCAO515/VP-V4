@@ -1,0 +1,58 @@
+[
+  {
+    "signature": "profile_data_private.schema_v1()",
+    "kind": "exact_owned_schema_catalog_delta",
+    "before": "0ec0fcfc206909a38756272a65a877c6ab857c00fd114178d135837da951c73a",
+    "after": "c35b58a5b5744c5ea02ccc818435d060a3da5078fe6353c6d5c1b9d0f5c5f161"
+  },
+  {
+    "signature": "result_data_private.schema_supported_v1()",
+    "kind": "exact_owned_schema_catalog_delta",
+    "before": "0ec0fcfc206909a38756272a65a877c6ab857c00fd114178d135837da951c73a",
+    "after": "c35b58a5b5744c5ea02ccc818435d060a3da5078fe6353c6d5c1b9d0f5c5f161"
+  },
+  {
+    "signature": "turn_data_private.schema_supported_v1()",
+    "kind": "exact_owned_schema_catalog_delta",
+    "before": "0ec0fcfc206909a38756272a65a877c6ab857c00fd114178d135837da951c73a",
+    "after": "c35b58a5b5744c5ea02ccc818435d060a3da5078fe6353c6d5c1b9d0f5c5f161"
+  },
+  {
+    "signature": "profile_data_private.schema_v1()",
+    "kind": "exact_new_deferred_admission_pg_constraint_entry",
+    "relations": [
+      "turn_private.work"
+    ],
+    "originalConstraintsPreserved": true
+  },
+  {
+    "signature": "profile_data_private.schema_v1()",
+    "kind": "only_new_ops_triggers",
+    "added": [
+      [
+        "public.model_budget_attempts",
+        "ops_control_attempt_version_v1",
+        "CREATE TRIGGER ops_control_attempt_version_v1 AFTER INSERT OR DELETE OR UPDATE ON public.model_budget_attempts FOR EACH ROW EXECUTE FUNCTION ops_control_private.budget_source_changed_v1()",
+        "ops_control_private.budget_source_changed_v1()"
+      ],
+      [
+        "public.model_budget_scopes",
+        "ops_control_scope_retire_v1",
+        "CREATE TRIGGER ops_control_scope_retire_v1 BEFORE DELETE ON public.model_budget_scopes FOR EACH ROW EXECUTE FUNCTION ops_control_private.budget_source_changed_v1()",
+        "ops_control_private.budget_source_changed_v1()"
+      ],
+      [
+        "public.model_budget_scopes",
+        "ops_control_scope_version_v1",
+        "CREATE TRIGGER ops_control_scope_version_v1 AFTER INSERT OR UPDATE ON public.model_budget_scopes FOR EACH ROW EXECUTE FUNCTION ops_control_private.budget_source_changed_v1()",
+        "ops_control_private.budget_source_changed_v1()"
+      ],
+      [
+        "turn_private.work",
+        "ops_control_admission_v1",
+        "CREATE CONSTRAINT TRIGGER ops_control_admission_v1 AFTER INSERT OR UPDATE OF execution_mode, state ON turn_private.work DEFERRABLE INITIALLY DEFERRED FOR EACH ROW WHEN ((new.state = 'queued'::text)) EXECUTE FUNCTION ops_control_private.admission_guard_v1()",
+        "ops_control_private.admission_guard_v1()"
+      ]
+    ]
+  }
+]

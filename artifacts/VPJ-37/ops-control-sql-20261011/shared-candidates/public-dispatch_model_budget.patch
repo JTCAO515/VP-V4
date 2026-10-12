@@ -1,0 +1,19 @@
+--- public-dispatch_model_budget.before.sql
++++ public-dispatch_model_budget.after.sql
+@@ -1,12 +1,14 @@
+ CREATE OR REPLACE FUNCTION public.dispatch_model_budget(p_scope_id uuid, p_owner_id uuid, p_attempt_id uuid)
+  RETURNS jsonb
+  LANGUAGE plpgsql
++ SECURITY DEFINER
+  SET search_path TO ''
+ AS $function$
+-declare s public.model_budget_scopes%rowtype; a public.model_budget_attempts%rowtype; p public.model_budget_provider_limits%rowtype;
++declare ops_decision jsonb; s public.model_budget_scopes%rowtype; a public.model_budget_attempts%rowtype; p public.model_budget_provider_limits%rowtype;
+   total_cost numeric; provider_cost numeric; task_cost numeric; active_count bigint; task_count bigint;
+ begin
+-  select * into s from public.model_budget_scopes where id = p_scope_id for update;
++  ops_decision:=ops_control_private.ledger_decision_v1(p_scope_id,p_owner_id,p_attempt_id);if ops_decision->>'kind' is distinct from 'allowed' then if ops_decision->>'kind'='unavailable' then return ops_decision;end if;return ops_decision||jsonb_build_object('kind','disabled');end if;
++select * into s from public.model_budget_scopes where id = p_scope_id for update;
+   if not found or s.owner_id is distinct from p_owner_id then return jsonb_build_object('kind','unavailable'); end if;
+   select * into a from public.model_budget_attempts where scope_id = p_scope_id and attempt_id = p_attempt_id;
+   if not found then return jsonb_build_object('kind','unavailable'); end if;

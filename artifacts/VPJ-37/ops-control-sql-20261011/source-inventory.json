@@ -1,0 +1,4484 @@
+{
+  "head": "4f3c7b322316f3c6be3d505bdeb86b300a1596f4",
+  "migrationCount": 154,
+  "migrationManifest": [
+    {
+      "path": "supabase/migrations/20260824101500_v4_baseline.sql",
+      "sha256": "2296639fa00f329fe239032a31bfbec7e8d3458318fe04411ff8c625fdee8a78"
+    },
+    {
+      "path": "supabase/migrations/20260824104424_plat_conf_connection_probes.sql",
+      "sha256": "d56ace82f308e66e8796e461b944a9b308e1cfc9d033a24ab0752a06ac2edbcb"
+    },
+    {
+      "path": "supabase/migrations/20260824104547_plat_conf_ops_probe.sql",
+      "sha256": "7a753059eb93336e45f9e19e9e3c179ea6f15b34943b1ff0194bd8b5a409ac90"
+    },
+    {
+      "path": "supabase/migrations/20260824105759_plat_conf_worker_probe_grant.sql",
+      "sha256": "8831e6412a5edccd3b3eb59fe071407b632d45d2a96e3bd232a1d5016b2a0115"
+    },
+    {
+      "path": "supabase/migrations/20260825052328_ai14_actor_rls_fault_probes.sql",
+      "sha256": "460990e1301406b2d91c5e7e9dbdef265ba915baac8fe2f8f72012401373b57a"
+    },
+    {
+      "path": "supabase/migrations/20260825153534_ai14_reviewer_separation_probe.sql",
+      "sha256": "39b627433eddcfc61f12380ce33d202a1343d254055656ce3b3010591d508869"
+    },
+    {
+      "path": "supabase/migrations/20260825153613_ai14_reviewer_select_probe.sql",
+      "sha256": "1f8a9fc86b62a4a76bc3216a6ea6148eac309b82016d2a66eab39dd75228e55e"
+    },
+    {
+      "path": "supabase/migrations/20260825160314_ai10_durable_trip_proposals.sql",
+      "sha256": "81f70084f62681b1535a1a3e1cd7c0f75aeccb3e3a0c192181570158e1cb03cf"
+    },
+    {
+      "path": "supabase/migrations/20260825160458_ai10_confirm_outcomes.sql",
+      "sha256": "f8f0d173bdfb4b746ed0e5891d956c4f78a5ab3611a328939abe057686a4afca"
+    },
+    {
+      "path": "supabase/migrations/20260825161535_ai10_confirm_fault_triggers.sql",
+      "sha256": "b097da413d7eb61392aaeb67c878ae56851ac8b5f4028038a111d50b8014a85d"
+    },
+    {
+      "path": "supabase/migrations/20260827030717_ai13b_proposal_revision_lineage.sql",
+      "sha256": "5a71c406c7257b3ca2a2b30bcdb835c8d0106cc28cee19211d0ddc45d3acbd05"
+    },
+    {
+      "path": "supabase/migrations/20260828153000_v4_08_durable_chat_threads.sql",
+      "sha256": "3def5e5859894a6aeea0d6d4d8f87b365f65d385a5f91ac16dd6d6ddbfb916d9"
+    },
+    {
+      "path": "supabase/migrations/20260828160000_v4_09_chat_feedback.sql",
+      "sha256": "0dc1f1f90a7d1c62815d66d5c9b611fd39b1c5469cf1a3073d857ccef69edadf"
+    },
+    {
+      "path": "supabase/migrations/20260828170000_v4_10_trip_version_snapshots.sql",
+      "sha256": "f93e9ffde58da85da9920bfcd2b2dfcdd5a08c36425730fca470b5032298db95"
+    },
+    {
+      "path": "supabase/migrations/20260828180000_v4_11_trip_place_references.sql",
+      "sha256": "dd154a707314884a5539b3d34f3989b71e1e341a78d884bc233b15198eef541f"
+    },
+    {
+      "path": "supabase/migrations/20260828190000_v4_12_trip_action_references.sql",
+      "sha256": "064e40e9dda61027d46c5cb12e71e4b35fe2b42ba79b787a7cb0cadf14cfc03b"
+    },
+    {
+      "path": "supabase/migrations/20260828193000_v4_13_memory_profile.sql",
+      "sha256": "8a8c6cdb0eb608f83adcc1c3a861ac20f64314e0016fb2d8293331630ee77050"
+    },
+    {
+      "path": "supabase/migrations/20260828194000_v4_15_memory_consumer_receipts.sql",
+      "sha256": "edbfc1ec79d214bd8a0ccdc76ecf5135c595150720cf1706265c38250ac223b7"
+    },
+    {
+      "path": "supabase/migrations/20260828200000_v4_16_user_profiles.sql",
+      "sha256": "235b46b4fb5487742a59254cac4c54e1321fee7bb966df62935caf1380bb310e"
+    },
+    {
+      "path": "supabase/migrations/20260828210000_v4_17_privacy_lifecycle.sql",
+      "sha256": "0def9e7d3c12d65a9b3c82c18edde5259e8ddb533a5cc9bbe01a8a0dbe19332a"
+    },
+    {
+      "path": "supabase/migrations/20260829191000_v4_14_server_minted_memory_consent.sql",
+      "sha256": "92abec29621d91e1fc1ae3a2fb05dd0b968eb4821044cf9854297821943d025e"
+    },
+    {
+      "path": "supabase/migrations/20260830100000_launch_03_trip_content_snapshots.sql",
+      "sha256": "f7dc7df5af0334d09cb43a0bb3853f8e5c2d5fec43a43ded26b5a59a986d5774"
+    },
+    {
+      "path": "supabase/migrations/20260830210000_launch_11_trip_proposal_patch.sql",
+      "sha256": "afd46ad677053987e3b7b6082e50c2fe0f6ba94d1d1d24594e6f8fc2d766232b"
+    },
+    {
+      "path": "supabase/migrations/20260830211000_launch_11_trip_proposal_patch_revision.sql",
+      "sha256": "e068f17653de2eedb812b763f732cfaba9e0903aac097a94432160b1275b5d6d"
+    },
+    {
+      "path": "supabase/migrations/20260909033302_vpj_02_repair_local_rpc_runtime.sql",
+      "sha256": "94f5c718802c3f60cd100b7713ac005930d5d62bf24f714ad25f2b3aff4f3950"
+    },
+    {
+      "path": "supabase/migrations/20260909184816_vpj_59_durable_model_budget.sql",
+      "sha256": "31feafbdbf096c61d0131754217427e28403b616f36ecb04cfa512c0f03db4f0"
+    },
+    {
+      "path": "supabase/migrations/20260909223841_vpj_04_native_mobile_sessions.sql",
+      "sha256": "e768c4003a2c72b036db40fedf9751a8c5ec237bfc58c76052aa5aa30bbb22cc"
+    },
+    {
+      "path": "supabase/migrations/20260910002858_vpj_05_confirm_intent_authority.sql",
+      "sha256": "0818eb4fd8666f5385d5995a8a95d41d1fa5c82220b02fb92522056a2c88f587"
+    },
+    {
+      "path": "supabase/migrations/20260910163426_vpj_07_durable_turn_work.sql",
+      "sha256": "e7d04e2c0598ed0707c05e90d8720e5eca08da22b1c78d59f52b03ac89912705"
+    },
+    {
+      "path": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+      "sha256": "60ee64bc586921a8ea2972fe9d4aa7fdccade9a4ff2da7f44d8b9345aaacea81"
+    },
+    {
+      "path": "supabase/migrations/20260910174748_vpj_07_native_text_consumer.sql",
+      "sha256": "156ec168fabffa251df49e4b255d5f6f6d2f1711adf06d0a5736c4aee7f1cc75"
+    },
+    {
+      "path": "supabase/migrations/20260910190526_vpj_59_stop_model_budget.sql",
+      "sha256": "44b3d19177c2d4f5c73f3ed4cf556054af57a45e517af396193eb563c6717330"
+    },
+    {
+      "path": "supabase/migrations/20260910190658_vpj_37_ops_scope_read_model.sql",
+      "sha256": "e000845700f84b86da70c9cbddb23b95eb25e07f9f24ce263e93b4915656677a"
+    },
+    {
+      "path": "supabase/migrations/20260910200522_vpj_14_ops_candidate_review.sql",
+      "sha256": "db19dafa4305d5344c9f5ca4e98647479edb454546591b99ddb2cee09f2a0fb9"
+    },
+    {
+      "path": "supabase/migrations/20260910213151_vpj_15_private_source_assertion.sql",
+      "sha256": "d70008af48f80c1159d0a76156dbc95fb30af17a6f0c8082bfe4ec32b641537d"
+    },
+    {
+      "path": "supabase/migrations/20260911072414_vpj_07_scoped_text_claim.sql",
+      "sha256": "894b3664176648d7fb4370d4c9bc2a158da67b660b53526285c7cc48b853345c"
+    },
+    {
+      "path": "supabase/migrations/20260911200339_vpj_07_service_task_records.sql",
+      "sha256": "6d600e076b8e637790ba31e42c2ab1cd65fc67b8a8856fd9d586b8bd3786e21d"
+    },
+    {
+      "path": "supabase/migrations/20260911205200_vpj_07_task_context.sql",
+      "sha256": "6d0f3ccd3a895e987b1b24fa6b341dd309d3c1cf3888669853a198425ad519ef"
+    },
+    {
+      "path": "supabase/migrations/20260912042452_vpj_15_knowledge_publication.sql",
+      "sha256": "6c4a29f57d4c0fc42fe8698295aee19e12ce881d4629e4e785f1a4938dc993cb"
+    },
+    {
+      "path": "supabase/migrations/20260912183000_vpj_16_reviewed_question.sql",
+      "sha256": "5bc653c2555311658c58a9d13b06105b8ae1800b09f1cbb545ad629b0a90c2e4"
+    },
+    {
+      "path": "supabase/migrations/20260912190000_vpj_16_grounded_turn.sql",
+      "sha256": "333133ded04a741772037f52d3b07013fe365256f9dd594a0880e9da1bd58389"
+    },
+    {
+      "path": "supabase/migrations/20260913080000_vpj_08_grounded_events.sql",
+      "sha256": "95572557f24ed329aa95ab72a8c02fbf19e46fded15468036888292f2a9ac1a4"
+    },
+    {
+      "path": "supabase/migrations/20260913090000_vpj_16_payment_questions.sql",
+      "sha256": "12c8e8f5ebac210dd197d6cc226614b43cd81abd571af47daffe6a9cea719912"
+    },
+    {
+      "path": "supabase/migrations/20260913100000_vpj_16_connectivity_questions.sql",
+      "sha256": "430c8523e2fe3f5e832c9581e1418484b444b0c45e45fa5a0116b0e1c63b98e7"
+    },
+    {
+      "path": "supabase/migrations/20260913145239_vpj_16_cancelled_work_projection.sql",
+      "sha256": "d61ddab3409271b8c4d3ab03a84d21485e078127d75e9fc6adbc2de9cccc4fd6"
+    },
+    {
+      "path": "supabase/migrations/20260914001000_vpj_16_unanswered_needs.sql",
+      "sha256": "fccd414ce79d6850fa0b5947158fbc49cb1e95ff60df9108ffd195172c220f5a"
+    },
+    {
+      "path": "supabase/migrations/20260914040000_vpj_16_place_statements.sql",
+      "sha256": "399bb7ae2be20cf27e90392e931e3c4d3151988eb02489a6b52dea098e227160"
+    },
+    {
+      "path": "supabase/migrations/20260914041000_vpj_16_place_questions.sql",
+      "sha256": "1ff7ef254e9d88d51840a4a6c3b0b176d98d5307cea761fdbb382b576a7fe618"
+    },
+    {
+      "path": "supabase/migrations/20260914080000_vpj_74_ontology_provenance.sql",
+      "sha256": "e257bea7707b3b36cf806e48ec995f2aeabd81f30ba4c28e46fd77779defaec0"
+    },
+    {
+      "path": "supabase/migrations/20260914090000_vpj_74_lineage_tracking.sql",
+      "sha256": "35a1818502f4ffc381b4b3d32e106fb787fd10661cfb6157a4bf2f074ece4ed8"
+    },
+    {
+      "path": "supabase/migrations/20260914100000_vpj_19_363_place_identity.sql",
+      "sha256": "0d93768a812b2bdc88bd003f5c0225c3ca2e08fa5d21ac96e9f9dd49f710b758"
+    },
+    {
+      "path": "supabase/migrations/20260914110000_vpj_75_359_wiki_schema.sql",
+      "sha256": "d36d15528cd1ace7f13bfa19f5e665dbd427cb0eeab7945f0f1f0880cf9e827d"
+    },
+    {
+      "path": "supabase/migrations/20260914120000_vpj_75_359_wiki_dispatcher.sql",
+      "sha256": "6dd342fb3d396816cb0712ee21d7ac0a9bbce27ec05200a2917393d9e1d27f38"
+    },
+    {
+      "path": "supabase/migrations/20260914130000_vpj_75_wiki_draft_content.sql",
+      "sha256": "7e786cecdb30b239d8ea1c343a9c33bef27dda2e58c426d002997526799a38e0"
+    },
+    {
+      "path": "supabase/migrations/20260914140000_vpj_75_wiki_statement_review.sql",
+      "sha256": "6e421acb5bc68aeb6dbec5f2662b405f67176a4d251ed10149bb9fa7e2f72e2b"
+    },
+    {
+      "path": "supabase/migrations/20260914150000_vpj_75_wiki_statement_proposals.sql",
+      "sha256": "028267898392d5284da2c8268d8ef4c61c506aa58ab60f0485cbd4f97802268f"
+    },
+    {
+      "path": "supabase/migrations/20260915180000_vpj_75_wiki_job_reclaim.sql",
+      "sha256": "3db127bd5ca4692f56997cfd5e1ff582583177008de9ee7937c5ce1074914f52"
+    },
+    {
+      "path": "supabase/migrations/20260915190000_vpj_76_360_grounded_ai_assist_context.sql",
+      "sha256": "13e1ab3ed22295fe54f8635512e7121d39f96a8331f76731b3db360073149962"
+    },
+    {
+      "path": "supabase/migrations/20260915200000_vpj_76_360_grounded_ai_assist_jobs.sql",
+      "sha256": "f3a0319dfb3152d01491e3747e4fd6c2911f318e5070ffdb48ff60655ac77950"
+    },
+    {
+      "path": "supabase/migrations/20260916120000_vpj_75_359_wiki_source_withdrawal.sql",
+      "sha256": "181126845acf52919cf91e46666720b475c07a5b35855f4906c9db58b9fad60a"
+    },
+    {
+      "path": "supabase/migrations/20260917062305_revoke_unreviewed_mobile_guard_rpc_acl.sql",
+      "sha256": "12a7985ec6b785a9caa9d7ab96306e7337b29d6baa6405e10e0f5b36cf3eb6b8"
+    },
+    {
+      "path": "supabase/migrations/20260917064821_vpj_04_reapply_mobile_guard_start_chat.sql",
+      "sha256": "99bca24e1e93069cae50460bc779bc8e9f8a232f1f47274b047a8d707e097a5d"
+    },
+    {
+      "path": "supabase/migrations/20260917100000_vpj_75_359_wiki_read_withdrawal_status.sql",
+      "sha256": "963e2b9124cf7f211f6d35134161e9d7d3414eb978bcd2e952c47c27a575a1c7"
+    },
+    {
+      "path": "supabase/migrations/20260917110000_vpj_75_359_wiki_withdrawal_scan.sql",
+      "sha256": "3c296cf21aed950054d6d9d8842b145776dc0186c4c12e1b93157be96aac1a6a"
+    },
+    {
+      "path": "supabase/migrations/20260917131633_vpj_37_ops_budget_member_read.sql",
+      "sha256": "82b31ebbb07c9305d10919818b1af02397fc53b8126f21151008ea6da2f19d2f"
+    },
+    {
+      "path": "supabase/migrations/20260917140000_vpj_62_research_intake.sql",
+      "sha256": "256d042da73874d8b990be903e9a6f94e2c57366925bc52eb094859bf0a8290a"
+    },
+    {
+      "path": "supabase/migrations/20260918032847_revoke_ai10_fault_trigger_public_acl.sql",
+      "sha256": "b41c4de30bb9193d9d163252f68316c5be1c969d875dc307970426e275b8d19f"
+    },
+    {
+      "path": "supabase/migrations/20260921205157_vpj_61_trip_archive.sql",
+      "sha256": "699556bafccf94d7fed8e71e9b62d185bf8ef93d65d1c4edd60d6383a142159d"
+    },
+    {
+      "path": "supabase/migrations/20260922002626_vpj_30_travel_reminders.sql",
+      "sha256": "961ef01e87ef0b8e5ea231638c2b8ca90c22cec8917dfba4653e98faedda8573"
+    },
+    {
+      "path": "supabase/migrations/20260922004906_vpj_57_service_case_grants.sql",
+      "sha256": "035fadace0c096b96ba1e18566e51ffd60c704fadb57fa5b958e279d3926efb1"
+    },
+    {
+      "path": "supabase/migrations/20260922005110_vpj_36_trip_deletion.sql",
+      "sha256": "b752381d381e2c6fe79b482c018f2975efa5c3441c3e92760edc38b41cbfa5ff"
+    },
+    {
+      "path": "supabase/migrations/20260922014000_vpj_48_community_review.sql",
+      "sha256": "b4522f0f6c84ab290333ddb087e47ba1d8cffbc64639c9bbb661a1f7fe8116b3"
+    },
+    {
+      "path": "supabase/migrations/20260922033000_vpj_11_travel_pace_control.sql",
+      "sha256": "a13cc3d1b950f40b25b84219f5d53dff894fe9bca1bdd397665489a31e3364ab"
+    },
+    {
+      "path": "supabase/migrations/20260923090000_vpj_07_hosted_text_worker.sql",
+      "sha256": "06a72f9f2ee71849e4fd545bda2a4dbd14353765fc5dbef1c95881f3fa681ff5"
+    },
+    {
+      "path": "supabase/migrations/20260923120000_revoke_default_function_execute.sql",
+      "sha256": "c375d22f1d71888031ef411f435883d3f9924c1a08d9809e15e1f01124845ac1"
+    },
+    {
+      "path": "supabase/migrations/20260923140000_places_provider_quota.sql",
+      "sha256": "0bf6f50b86cf1b0cfee2d4039f116aa639480cb0914f6f51b4b820e4247bec40"
+    },
+    {
+      "path": "supabase/migrations/20260926113804_vpj34_storekit_grants.sql",
+      "sha256": "9c283d9228200138918b792c22d25e8c3da62cd67d48a4b3a422d6124ecdef90"
+    },
+    {
+      "path": "supabase/migrations/20260926132008_vpj35_u1_text_capacity.sql",
+      "sha256": "c8465ff6aee2903f3e9038078d235e68c25b242788dc0b4a61125c0256b779ee"
+    },
+    {
+      "path": "supabase/migrations/20260926150000_vpj36_trip_deletion_queue_reader.sql",
+      "sha256": "cd3a626eae0ebad3d58c46ae4e0aa3fc37b09745ea334d2e61c2ca220b8e8887"
+    },
+    {
+      "path": "supabase/migrations/20260926170000_vpj35_u2_trip_confirmation_receipt.sql",
+      "sha256": "cf14d2ca56174a3090aaf974ec7e5bd630bd0e84e1515658fb23fd5c9d0a9552"
+    },
+    {
+      "path": "supabase/migrations/20260926180000_vpj35_u2_text_capacity_boundary.sql",
+      "sha256": "bd351027e6f635baccfa0147db599ca6349b451832b501aa0e4c1ccee4b15b23"
+    },
+    {
+      "path": "supabase/migrations/20260927010000_vpj11_explicit_memory_create_undo.sql",
+      "sha256": "db18aeab79085741379b79582caa09695df32a61ccea56915a09666873c5e55f"
+    },
+    {
+      "path": "supabase/migrations/20260927021000_vpj78_conversation_membership.sql",
+      "sha256": "6ac03da655243884e87a7eacf6952cad6ee1d3472d4092bcb8a3b2effd9ee2a3"
+    },
+    {
+      "path": "supabase/migrations/20260927030000_vpj79_comparison_results.sql",
+      "sha256": "d998622c2611dd1f1c8d9cd1c487d43f4900810f59ab274ce1e282fd8d789b73"
+    },
+    {
+      "path": "supabase/migrations/20260927040000_vpj80_planning_action_receipts.sql",
+      "sha256": "b473dff39b063c7889ed5498d38931d2de335eb47c72d7e850339019d1dca5d9"
+    },
+    {
+      "path": "supabase/migrations/20260927050000_vpj78_goal_trip_link.sql",
+      "sha256": "7ef73b962ebe4a9dcaa04fc2825bba7a29d8eed5631df059216b1ad855be2f9f"
+    },
+    {
+      "path": "supabase/migrations/20260927055000_vpj79_exact_trip_results.sql",
+      "sha256": "c28813d89fade5d3a3377193b8c672077188c55a817d9342996f912ed2f334aa"
+    },
+    {
+      "path": "supabase/migrations/20260927060000_vpj80_planning_comparison.sql",
+      "sha256": "1d0bf3dcc94d2fbf6477a45ea3f3f6040f2fd80a0e291733e182d02a3a6555f6"
+    },
+    {
+      "path": "supabase/migrations/20260930010000_vpj82_result_search.sql",
+      "sha256": "78067b6d01a7f15b47a18fb7fd62eee364dd1d80024e0dee50f765bf8b31e2c7"
+    },
+    {
+      "path": "supabase/migrations/20260930020000_vpj80_hosted_planning_target.sql",
+      "sha256": "273bd319b4a8a4b32729e12f17ccf69a04ae14929a403da5dcd2eacc4003a26d"
+    },
+    {
+      "path": "supabase/migrations/20261001010000_vpj79_task_result_reference.sql",
+      "sha256": "d8d16342d2d9ec046b8b8a7b4b91efa9b624ee5e9b89d0913db16c912bf1b7a2"
+    },
+    {
+      "path": "supabase/migrations/20261002010000_vpj78_conversation_export.sql",
+      "sha256": "81f3d4cbf80fba50bd3ee516dbc44f76db3e039520dd1397dd48ed5e541d02d9"
+    },
+    {
+      "path": "supabase/migrations/20261002020000_vpj81_conversation_selection.sql",
+      "sha256": "f8d955a662f20de923f7cfd7505f3fd9c717c9775bfedfaa5f952447bc4bd514"
+    },
+    {
+      "path": "supabase/migrations/20261002030000_vpj79_result_export.sql",
+      "sha256": "8f7d604820435e9637accf405e7638ab1b885ceaed006e0aea207dc0532d2678"
+    },
+    {
+      "path": "supabase/migrations/20261002040000_vpj83_journeys_pages.sql",
+      "sha256": "384638001e4feaf9f8d78bd9084c5ebabfff1b8442437461c88961d04e70c0ec"
+    },
+    {
+      "path": "supabase/migrations/20261002050000_vpj82_translation_history.sql",
+      "sha256": "91e98d022c219ce5422918f9ac0e4e5cf5c53e5ed0502c7045a52434931e8a72"
+    },
+    {
+      "path": "supabase/migrations/20261002060000_vpj81_conversation_task_history.sql",
+      "sha256": "47f8a7eeff1c8ee290834944bc66c913f23bd667a86cc7f7b7d2d95969c4d2bc"
+    },
+    {
+      "path": "supabase/migrations/20261002080000_vpj80_owner_task_activity.sql",
+      "sha256": "34b2fd61a6756207353c8f48ce5cb5418ae36b5e613fdce8a94296ebcafa5f78"
+    },
+    {
+      "path": "supabase/migrations/20261002110000_vpj79_change_proposal_reference.sql",
+      "sha256": "54b5f54f50c9bce7008289eea806028a2fc3d70beba052df901d5fc14f7878d8"
+    },
+    {
+      "path": "supabase/migrations/20261002120000_journeys_goal_index.sql",
+      "sha256": "038ea8aa30566afead70dc8d6d3f3ab9a731a68031254bc2e311ad3a9c64e92f"
+    },
+    {
+      "path": "supabase/migrations/20261002130000_vpj79_trip_proposal_reference_discovery.sql",
+      "sha256": "1d58dc6a50d2a87780f992441426a8ecfd7653b6a3b58ed0e8148a34abbd3cdc"
+    },
+    {
+      "path": "supabase/migrations/20261002200000_vpj78_explicit_travel_intake.sql",
+      "sha256": "9253e8375e61a72a3e6a8c98b2c990655d10d79b611c9eeb7af7193ead697f78"
+    },
+    {
+      "path": "supabase/migrations/20261003020000_vpj80_intake_admission_binding.sql",
+      "sha256": "12add9b54fa7739541c50d0f53d34b043c3a3185d27cb63153e7defc2e779cfa"
+    },
+    {
+      "path": "supabase/migrations/20261003030000_vpj79_private_qualified_comparison.sql",
+      "sha256": "2086d93f6378bf933e674bda3d14b86f5cc8b8ccf73250d22adaeca676465c9b"
+    },
+    {
+      "path": "supabase/migrations/20261003040000_vpj78_v2_durable_checkpoints.sql",
+      "sha256": "3a8ff1dc288549ae7bb9a6ce72bd3d32771bfb8f8ba1ef28b7c7ded3e3622e01"
+    },
+    {
+      "path": "supabase/migrations/20261003050000_vpj78_v2_model_attempt_binding.sql",
+      "sha256": "124c1b37b33f8c89edcb3a0f65c8896add98fe9a47d69ff4dacd368d673f257c"
+    },
+    {
+      "path": "supabase/migrations/20261003060000_vpj78_v2_model_local_journal.sql",
+      "sha256": "6120eafe95fc529cfbc95050038e727d1bde82145f64dbbdec2923d07fd80563"
+    },
+    {
+      "path": "supabase/migrations/20261003090000_vpj78_selected_message_sources.sql",
+      "sha256": "4e7d2cd56be437c0325dc8087938cc6ae4778416e3946b4aca87c7ec1b4c256e"
+    },
+    {
+      "path": "supabase/migrations/20261003110000_vpj79_five_result_lifecycle.sql",
+      "sha256": "4332903ba58da8ba7ca98f2eb8b6cec5c2e102415d3553612739b7e0510ff77e"
+    },
+    {
+      "path": "supabase/migrations/20261003120000_vpj78_result_v2_context_compat.sql",
+      "sha256": "271a770010e66a38d6b33d3670d9565694cf56b39a02c58441edbe5be8f66ee6"
+    },
+    {
+      "path": "supabase/migrations/20261003130000_vpj81_native_memory_commands.sql",
+      "sha256": "40a65cb611dcc29425bb3dc317a5a560940fd16eaabe0ef16b21fdd37099cc27"
+    },
+    {
+      "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+      "sha256": "91f9da2d2399bbfacf3ea400b226f209397bb8bd449cdf6a3639aa30da493ab7"
+    },
+    {
+      "path": "supabase/migrations/20261003160000_vpj25_controlled_offline_text_provenance.sql",
+      "sha256": "4346364671e6e628a82f51a1e935137e262d5564d5cddb5bf3a68be50e14f48b"
+    },
+    {
+      "path": "supabase/migrations/20261003170000_vpj36_core_export_d2.sql",
+      "sha256": "5a4fc34e436dc17ae822dc3a213e953b1226efc301cab84a2d6663c2f9fe11b2"
+    },
+    {
+      "path": "supabase/migrations/20261003180000_vpj17_source_impact_outbox.sql",
+      "sha256": "c80ca1ecc0106bba26e942231ce3ed96ce02812363f26defec445d9dccc0ed0d"
+    },
+    {
+      "path": "supabase/migrations/20261003190000_vpj36_linked_trip_delete_d3.sql",
+      "sha256": "9fe92a25d8d0524e8099f2f63e406d4edc21bc92c9967cfd60fec452292c448c"
+    },
+    {
+      "path": "supabase/migrations/20261003200000_vpj65_trip_item_support.sql",
+      "sha256": "1d19fabf88f118c9857b51e05e89e9afbe9ea4b888e597d724a546644ef4c18c"
+    },
+    {
+      "path": "supabase/migrations/20261003210000_vpj36_memory_export_source_fence.sql",
+      "sha256": "204200258c4bbc1cef67cbfebe09adbf2a508ba82d39bbedea1cec28308bbdf2"
+    },
+    {
+      "path": "supabase/migrations/20261003220000_vpj36_entitlement_export_source_fence.sql",
+      "sha256": "2c8ddf4420d25a4956e82f283606b64039a9dce9b0c2260ce271b148c40b3420"
+    },
+    {
+      "path": "supabase/migrations/20261003230000_vpj36_memory_bulk_delete_d4.sql",
+      "sha256": "6da3b6b6b631c5a585e653522cb0e4cceac24ede20b5a270ee3a11f288adb50a"
+    },
+    {
+      "path": "supabase/migrations/20261004000000_readiness_declarations.sql",
+      "sha256": "a9e8db8cd4581f32b79c1c110463bd3b8f4bf78ced0bd086ed0b05da0d933089"
+    },
+    {
+      "path": "supabase/migrations/20261004010000_vpj23_reviewed_lodging_classification.sql",
+      "sha256": "82aff2d0aa0c5a25e5aa134b17f451a8f3ad29a1b80bcd744203227e4b92bee8"
+    },
+    {
+      "path": "supabase/migrations/20261004020000_reservation_ledger.sql",
+      "sha256": "ac0e2b1ad8371f03bdd3da1f19cfcc3b945cf63dc70ffea101d5bd9ec3525fe2"
+    },
+    {
+      "path": "supabase/migrations/20261004030000_local_recovery_guard.sql",
+      "sha256": "f4cd8db5f1682a3908494715c601b164db9ab1a9f2a313780fb9bf9d05d8b088"
+    },
+    {
+      "path": "supabase/migrations/20261004040000_foreground_traffic_authority.sql",
+      "sha256": "97844fca279fd5cf8a9db6509848ccf0fff3483025a23294e0b9337f00bcb728"
+    },
+    {
+      "path": "supabase/migrations/20261005010000_vpj20_place_actions.sql",
+      "sha256": "fbfc81129bef773411bc873d62c0d2f15c60673df7edc9660d04116af9554a4c"
+    },
+    {
+      "path": "supabase/migrations/20261005020000_scoped_edit.sql",
+      "sha256": "999d376403fe8d6c159a4dcf7438debacae80a61d6b5a9abd2cc526b91391a65"
+    },
+    {
+      "path": "supabase/migrations/20261005030000_reminder_delivery.sql",
+      "sha256": "deb196b483d196451b3bd28f6b5e905d347c012bb6cb8c189d889c8f539b6e10"
+    },
+    {
+      "path": "supabase/migrations/20261005040000_vpj61_trip_lifecycle.sql",
+      "sha256": "9c79f65484366aa5c69c8d01094afe76ea2edae412c1db8a69e149e743c75630"
+    },
+    {
+      "path": "supabase/migrations/20261005050000_service_operations.sql",
+      "sha256": "6a58e78a892699d14d43bf21e80cca7ccb0a7c0ba41ae03c2768f3f2084622b7"
+    },
+    {
+      "path": "supabase/migrations/20261005060000_traveler_brief.sql",
+      "sha256": "bb39317153e96e55592e4e016c2056dd4926285d851417df9dd674a44ea40767"
+    },
+    {
+      "path": "supabase/migrations/20261005070000_pdf_intake.sql",
+      "sha256": "cc672c2d0afbc9651b97f3f054a72c673a1cbc9e61d1af2e41ed3d06182274e7"
+    },
+    {
+      "path": "supabase/migrations/20261005080000_place_guide.sql",
+      "sha256": "087d6b254d035106ee6b5ace7390e70d501067deb4852f790f285cb0022c9147"
+    },
+    {
+      "path": "supabase/migrations/20261005081000_traveler_brief_export_clock.sql",
+      "sha256": "a210990a81f47ff57e6313eae73b2e0d356cab37da9cca43812c03887a17883b"
+    },
+    {
+      "path": "supabase/migrations/20261005090000_community_submission_j1.sql",
+      "sha256": "7a27a768dc48e99770f9f82ef4bbd09579cba2004a34a321f0aecfe526326468"
+    },
+    {
+      "path": "supabase/migrations/20261005091000_community_safety_j2.sql",
+      "sha256": "600cda44514ef046b77cf0ce14a9a412da25ec3c80d2119dbc6128ef455ffc7f"
+    },
+    {
+      "path": "supabase/migrations/20261005092000_community_publication_j3j4.sql",
+      "sha256": "ad91f81a102353d8b0cd0a10d4a7cbb769e15c9266bdb1abda0680815302db8c"
+    },
+    {
+      "path": "supabase/migrations/20261006010000_owner_module_export.sql",
+      "sha256": "ae1d79b5bbe804e8039809cf58bf199bc8ac2bb6af2cf97f5931fe4326d7a8fd"
+    },
+    {
+      "path": "supabase/migrations/20261006011000_community_safety_frontier_lock.sql",
+      "sha256": "e9ec10defe315db9038eb1dafdf411dc763a3f1de2282b78ae6374330b018809"
+    },
+    {
+      "path": "supabase/migrations/20261006020000_material_reference_data.sql",
+      "sha256": "facf7657da20198bb0dc10481446f6b0b072f15ce5efc2420ede72009a14d8e9"
+    },
+    {
+      "path": "supabase/migrations/20261006030000_notification_data_exit.sql",
+      "sha256": "58797f9ceaf09c43f007a523238cf554dc30b302ac1ae4f5d8a52f178000787a"
+    },
+    {
+      "path": "supabase/migrations/20261006040000_coverage_progress_data.sql",
+      "sha256": "bb1c89c79826e16b2e69a6a353835d1d52a506880e0cd11f707e58fae117fa1c"
+    },
+    {
+      "path": "supabase/migrations/20261006050000_archive_data.sql",
+      "sha256": "d51da2d52b1e7c000c6174859340839e3fc2a0b92ebefde8629c3fb3ceaec617"
+    },
+    {
+      "path": "supabase/migrations/20261006060000_conversation_data.sql",
+      "sha256": "4e0cb6cad922c5198d5ad0bebf9c4510a5701680b25d407cb281b5a3e282b763"
+    },
+    {
+      "path": "supabase/migrations/20261007010000_result_data.sql",
+      "sha256": "3a87c300ecc448238071472b52a2a7d513cc60a8d92dea95a03098b33dddccf9"
+    },
+    {
+      "path": "supabase/migrations/20261007020000_profile_data.sql",
+      "sha256": "aec808a083914b6414c129369ac96489463a1228fa802d26a68cc120f5fe42d3"
+    },
+    {
+      "path": "supabase/migrations/20261007030000_conversation_guide_invalidation_compat.sql",
+      "sha256": "708d01f0f57c8347b122139ec214691712dff2345d7df2dc9ceb0c48405dfc25"
+    },
+    {
+      "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+      "sha256": "5f1502f4d93d500db35ba7ae52b6b03b474bbc67abd62b8756ec62c00eaa8989"
+    },
+    {
+      "path": "supabase/migrations/20261007050000_turn_data.sql",
+      "sha256": "33b066b7846626a03c93b8e34656215d09bbe9cf6ecfffd8dd70200dc7f3f85d"
+    },
+    {
+      "path": "supabase/migrations/20261008000000_result_reference_parser_cost.sql",
+      "sha256": "6a94c0613895e7126108e2f44d0dd2fa5762c63a71ae04ef3858fc6c03d5c3a4"
+    },
+    {
+      "path": "supabase/migrations/20261010010000_profile_web_lock_error.sql",
+      "sha256": "ea6c9128f3576e03e5b3940ebd0cb5a89926e54da732091cc092a8845c1b7413"
+    },
+    {
+      "path": "supabase/migrations/20261010020000_assistant_events.sql",
+      "sha256": "16de8c627c10ea9799658491ab0e6fb60b8092c8d6f55662f01fb45133ca3062"
+    },
+    {
+      "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+      "sha256": "6354e482331453289311c4d7f2a363d1012a3bc9d11f0324d300b5bc8cb58584"
+    },
+    {
+      "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+      "sha256": "8eafae69e14d0913ad94541db5b3ef5e87cfd1056c896665a26a264686639ed0"
+    }
+  ],
+  "functions": {
+    "public.reserve_model_budget": {
+      "path": "supabase/migrations/20260911200339_vpj_07_service_task_records.sql",
+      "line": 154,
+      "sha256": "2c76f8414fd015c4820cf41d1aed751ea346ed168f1f415f998fbef11a22eeef",
+      "references": [
+        {
+          "path": "supabase/migrations/20260911200339_vpj_07_service_task_records.sql",
+          "line": 151,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 573,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261005020000_scoped_edit.sql",
+          "line": 556,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.dispatch_model_budget": {
+      "path": "supabase/migrations/20260909184816_vpj_59_durable_model_budget.sql",
+      "line": 100,
+      "sha256": "82a0d118c27e450c13c92f993956ae858836b25010e5b0816729f31b4c80dc83",
+      "references": [
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 580,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261005020000_scoped_edit.sql",
+          "line": 557,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.finish_model_budget": {
+      "path": "supabase/migrations/20260909184816_vpj_59_durable_model_budget.sql",
+      "line": 134,
+      "sha256": "3ce615d15163360ebedb3bab3f0f1a2f06b9cded524311aadedb2a9caaefcfb8",
+      "references": [
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 593,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261005020000_scoped_edit.sql",
+          "line": 553,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "identity_private.mobile_access_v2": {
+      "path": "supabase/migrations/20260909223841_vpj_04_native_mobile_sessions.sql",
+      "line": 102,
+      "sha256": "80b2304f8ef2fbbd8ee2a25e9f3a024bb320203861e38f0aaea83c815437af2c",
+      "references": [
+        {
+          "path": "supabase/migrations/20260909223841_vpj_04_native_mobile_sessions.sql",
+          "line": 117,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260909223841_vpj_04_native_mobile_sessions.sql",
+          "line": 125,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260909223841_vpj_04_native_mobile_sessions.sql",
+          "line": 136,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260921205157_vpj_61_trip_archive.sql",
+          "line": 18,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260922002626_vpj_30_travel_reminders.sql",
+          "line": 23,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261005040000_vpj61_trip_lifecycle.sql",
+          "line": 109,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261006010000_owner_module_export.sql",
+          "line": 117,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261006020000_material_reference_data.sql",
+          "line": 331,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261006030000_notification_data_exit.sql",
+          "line": 336,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261006040000_coverage_progress_data.sql",
+          "line": 221,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261006050000_archive_data.sql",
+          "line": 284,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 142,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007010000_result_data.sql",
+          "line": 140,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007020000_profile_data.sql",
+          "line": 192,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007020000_profile_data.sql",
+          "line": 286,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 1008,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 1035,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 92,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1538,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1567,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1626,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 30,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1917,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1946,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2006,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2027,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2046,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 4,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3591,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3770,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3783,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 3,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 138,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 151,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "identity_private.guard_mobile_rpc_v2": {
+      "path": "supabase/migrations/20260909223841_vpj_04_native_mobile_sessions.sql",
+      "line": 132,
+      "sha256": "bfc6711a0c8491da074e735532b71c4ce0e98dbdff693786da4a561c398f3f3e",
+      "references": [
+        {
+          "path": "supabase/migrations/20260909223841_vpj_04_native_mobile_sessions.sql",
+          "line": 170,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260909223841_vpj_04_native_mobile_sessions.sql",
+          "line": 171,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260910002858_vpj_05_confirm_intent_authority.sql",
+          "line": 33,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260910002858_vpj_05_confirm_intent_authority.sql",
+          "line": 78,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+          "line": 103,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260910200522_vpj_14_ops_candidate_review.sql",
+          "line": 64,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260912042452_vpj_15_knowledge_publication.sql",
+          "line": 194,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260917064821_vpj_04_reapply_mobile_guard_start_chat.sql",
+          "line": 20,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260917064821_vpj_04_reapply_mobile_guard_start_chat.sql",
+          "line": 23,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260917064821_vpj_04_reapply_mobile_guard_start_chat.sql",
+          "line": 26,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260921205157_vpj_61_trip_archive.sql",
+          "line": 32,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260922002626_vpj_30_travel_reminders.sql",
+          "line": 35,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260922004906_vpj_57_service_case_grants.sql",
+          "line": 47,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260922005110_vpj_36_trip_deletion.sql",
+          "line": 33,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260922005110_vpj_36_trip_deletion.sql",
+          "line": 68,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260922014000_vpj_48_community_review.sql",
+          "line": 74,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260927010000_vpj11_explicit_memory_create_undo.sql",
+          "line": 31,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260927010000_vpj11_explicit_memory_create_undo.sql",
+          "line": 66,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003130000_vpj81_native_memory_commands.sql",
+          "line": 63,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003160000_vpj25_controlled_offline_text_provenance.sql",
+          "line": 57,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003170000_vpj36_core_export_d2.sql",
+          "line": 61,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003190000_vpj36_linked_trip_delete_d3.sql",
+          "line": 33,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003200000_vpj65_trip_item_support.sql",
+          "line": 58,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261004010000_vpj23_reviewed_lodging_classification.sql",
+          "line": 195,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261005060000_traveler_brief.sql",
+          "line": 111,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261005090000_community_submission_j1.sql",
+          "line": 87,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261006010000_owner_module_export.sql",
+          "line": 116,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261006020000_material_reference_data.sql",
+          "line": 330,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261006030000_notification_data_exit.sql",
+          "line": 334,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261006030000_notification_data_exit.sql",
+          "line": 488,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261006030000_notification_data_exit.sql",
+          "line": 489,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261006040000_coverage_progress_data.sql",
+          "line": 220,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261006050000_archive_data.sql",
+          "line": 283,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 141,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007010000_result_data.sql",
+          "line": 139,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007020000_profile_data.sql",
+          "line": 144,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007020000_profile_data.sql",
+          "line": 191,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007020000_profile_data.sql",
+          "line": 286,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 1008,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 1035,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 91,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1538,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1567,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1626,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010010000_profile_web_lock_error.sql",
+          "line": 16,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 30,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 275,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1917,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1946,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2006,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2027,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2046,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 4,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3591,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3770,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3783,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 3,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 138,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 151,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.start_text_turn": {
+      "path": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+      "line": 137,
+      "sha256": "c6d68d8a95a7093f80b381dc0b2f99e0a894869c0543134a0ce88b1c717c36e6",
+      "references": [
+        {
+          "path": "supabase/migrations/20260910174748_vpj_07_native_text_consumer.sql",
+          "line": 23,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260911200339_vpj_07_service_task_records.sql",
+          "line": 113,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260911200339_vpj_07_service_task_records.sql",
+          "line": 141,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260912190000_vpj_16_grounded_turn.sql",
+          "line": 176,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260912190000_vpj_16_grounded_turn.sql",
+          "line": 204,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260912190000_vpj_16_grounded_turn.sql",
+          "line": 248,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260912190000_vpj_16_grounded_turn.sql",
+          "line": 279,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "turn_private.lock_text_work": {
+      "path": "supabase/migrations/20260912190000_vpj_16_grounded_turn.sql",
+      "line": 287,
+      "sha256": "1faf1e4b2916faf73cfaff93bb1197dbc4a3e6d869cc1d4bfa07b0df8c536087",
+      "references": [
+        {
+          "path": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+          "line": 179,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+          "line": 189,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+          "line": 222,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260911205200_vpj_07_task_context.sql",
+          "line": 82,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260911205200_vpj_07_task_context.sql",
+          "line": 98,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260912190000_vpj_16_grounded_turn.sql",
+          "line": 386,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260912190000_vpj_16_grounded_turn.sql",
+          "line": 410,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260912190000_vpj_16_grounded_turn.sql",
+          "line": 443,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260912190000_vpj_16_grounded_turn.sql",
+          "line": 489,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260912190000_vpj_16_grounded_turn.sql",
+          "line": 510,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260913090000_vpj_16_payment_questions.sql",
+          "line": 128,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260913090000_vpj_16_payment_questions.sql",
+          "line": 149,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260914001000_vpj_16_unanswered_needs.sql",
+          "line": 17,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260914041000_vpj_16_place_questions.sql",
+          "line": 139,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260914041000_vpj_16_place_questions.sql",
+          "line": 160,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260914041000_vpj_16_place_questions.sql",
+          "line": 244,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260927060000_vpj80_planning_comparison.sql",
+          "line": 314,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260927060000_vpj80_planning_comparison.sql",
+          "line": 333,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261005020000_scoped_edit.sql",
+          "line": 524,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261005080000_place_guide.sql",
+          "line": 234,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261005080000_place_guide.sql",
+          "line": 290,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 4,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 666,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 704,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 938,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 963,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 1001,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 1047,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 1085,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3783,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.read_text_work": {
+      "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+      "line": 927,
+      "sha256": "326f4b68ec62bc07230412fa1e81463da526cadbd392ed070d3cd3c3638b6b6e",
+      "references": [
+        {
+          "path": "supabase/migrations/20260911205200_vpj_07_task_context.sql",
+          "line": 112,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003020000_vpj80_intake_admission_binding.sql",
+          "line": 208,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 4,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 981,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3783,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.authorize_text_dispatch": {
+      "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+      "line": 952,
+      "sha256": "960d9936a268b16f394f380928cf71e623d73adc7a76b5305eb8d1a2be16021c",
+      "references": [
+        {
+          "path": "supabase/migrations/20261003020000_vpj80_intake_admission_binding.sql",
+          "line": 208,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 4,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3783,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.stop_model_budget": {
+      "path": "supabase/migrations/20260910190526_vpj_59_stop_model_budget.sql",
+      "line": 4,
+      "sha256": "9113641d47be50e11e6b7e63d7a876eab8acad13e9469bae85b002df26c4b907",
+      "references": [],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "knowledge_review_private.current_actor": {
+      "path": "supabase/migrations/20260910200522_vpj_14_ops_candidate_review.sql",
+      "line": 53,
+      "sha256": "75340bbf18a1ec5016194ac54a221b05e33ab364006157bba1e5b5e894491d7f",
+      "references": [
+        {
+          "path": "supabase/migrations/20260910200522_vpj_14_ops_candidate_review.sql",
+          "line": 89,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260910213151_vpj_15_private_source_assertion.sql",
+          "line": 56,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260912042452_vpj_15_knowledge_publication.sql",
+          "line": 127,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260914041000_vpj_16_place_questions.sql",
+          "line": 224,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260914080000_vpj_74_ontology_provenance.sql",
+          "line": 77,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260914090000_vpj_74_lineage_tracking.sql",
+          "line": 20,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260914120000_vpj_75_359_wiki_dispatcher.sql",
+          "line": 24,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260914130000_vpj_75_wiki_draft_content.sql",
+          "line": 40,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260914130000_vpj_75_wiki_draft_content.sql",
+          "line": 161,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260914140000_vpj_75_wiki_statement_review.sql",
+          "line": 39,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260914150000_vpj_75_wiki_statement_proposals.sql",
+          "line": 73,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260914150000_vpj_75_wiki_statement_proposals.sql",
+          "line": 216,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260915180000_vpj_75_wiki_job_reclaim.sql",
+          "line": 28,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260916120000_vpj_75_359_wiki_source_withdrawal.sql",
+          "line": 35,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260916120000_vpj_75_359_wiki_source_withdrawal.sql",
+          "line": 94,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260917100000_vpj_75_359_wiki_read_withdrawal_status.sql",
+          "line": 18,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260917110000_vpj_75_359_wiki_withdrawal_scan.sql",
+          "line": 55,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260917110000_vpj_75_359_wiki_withdrawal_scan.sql",
+          "line": 218,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260917131633_vpj_37_ops_budget_member_read.sql",
+          "line": 10,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003180000_vpj17_source_impact_outbox.sql",
+          "line": 84,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003180000_vpj17_source_impact_outbox.sql",
+          "line": 101,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003180000_vpj17_source_impact_outbox.sql",
+          "line": 117,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003180000_vpj17_source_impact_outbox.sql",
+          "line": 132,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003180000_vpj17_source_impact_outbox.sql",
+          "line": 152,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003180000_vpj17_source_impact_outbox.sql",
+          "line": 165,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003180000_vpj17_source_impact_outbox.sql",
+          "line": 181,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003180000_vpj17_source_impact_outbox.sql",
+          "line": 191,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003200000_vpj65_trip_item_support.sql",
+          "line": 77,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003200000_vpj65_trip_item_support.sql",
+          "line": 99,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003200000_vpj65_trip_item_support.sql",
+          "line": 322,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003200000_vpj65_trip_item_support.sql",
+          "line": 335,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003200000_vpj65_trip_item_support.sql",
+          "line": 357,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003200000_vpj65_trip_item_support.sql",
+          "line": 366,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261004010000_vpj23_reviewed_lodging_classification.sql",
+          "line": 108,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261005080000_place_guide.sql",
+          "line": 77,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261005080000_place_guide.sql",
+          "line": 92,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.submit_service_task_turn": {
+      "path": "supabase/migrations/20260926132008_vpj35_u1_text_capacity.sql",
+      "line": 79,
+      "sha256": "118eec5bb70793a86b487944a0932dc9a440e29305bcd229067f1f0b1e98fa38",
+      "references": [
+        {
+          "path": "supabase/migrations/20260926132008_vpj35_u1_text_capacity.sql",
+          "line": 35,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260927060000_vpj80_planning_comparison.sql",
+          "line": 176,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003020000_vpj80_intake_admission_binding.sql",
+          "line": 163,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261005020000_scoped_edit.sql",
+          "line": 487,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 1544,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3783,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.authorize_text_task_dispatch": {
+      "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+      "line": 972,
+      "sha256": "17821e49a18ab014267e5863715be299ef71b66a2e66569384c470c8156d2650",
+      "references": [
+        {
+          "path": "supabase/migrations/20261003020000_vpj80_intake_admission_binding.sql",
+          "line": 208,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 4,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3783,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.submit_grounded_turn": {
+      "path": "supabase/migrations/20260912190000_vpj_16_grounded_turn.sql",
+      "line": 209,
+      "sha256": "451be4d17c0088235520e45258bc0218a4eea82c65eaf2716f51461f6e422b85",
+      "references": [
+        {
+          "path": "supabase/migrations/20261005080000_place_guide.sql",
+          "line": 219,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.read_grounded_work": {
+      "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+      "line": 991,
+      "sha256": "3c2980866e9c0423924969642d5101d0c8c4f3741bf0eeb0ae17d2c72ce1948e",
+      "references": [
+        {
+          "path": "supabase/migrations/20260912190000_vpj_16_grounded_turn.sql",
+          "line": 426,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003020000_vpj80_intake_admission_binding.sql",
+          "line": 209,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261005080000_place_guide.sql",
+          "line": 281,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261005080000_place_guide.sql",
+          "line": 292,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 4,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 1022,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3783,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.authorize_grounded_dispatch": {
+      "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+      "line": 1012,
+      "sha256": "f254c839921e5ea7496e8a92b41bcbe2679769e64b14dc726fe5bdefcad3b170",
+      "references": [
+        {
+          "path": "supabase/migrations/20261003020000_vpj80_intake_admission_binding.sql",
+          "line": 209,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261005080000_place_guide.sql",
+          "line": 281,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261005080000_place_guide.sql",
+          "line": 289,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 4,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3783,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.hosted_worker_heartbeat": {
+      "path": "supabase/migrations/20260923090000_vpj_07_hosted_text_worker.sql",
+      "line": 34,
+      "sha256": "50a52804a3b5997e3e9acc3175963590df67dd9034ddde9255dce2d5306a2de9",
+      "references": [],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.hosted_worker_ready_groups": {
+      "path": "supabase/migrations/20260927060000_vpj80_planning_comparison.sql",
+      "line": 275,
+      "sha256": "5da83c48ab08af76b68eeb5758dd2a7abdf1bdffa5c9e5df4423d07d6da260a0",
+      "references": [],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.set_hosted_worker_enabled": {
+      "path": "supabase/migrations/20260923090000_vpj_07_hosted_text_worker.sql",
+      "line": 101,
+      "sha256": "a26a429f911e729c48cd5f2841c4c2d0552b9f1f297c50379928f0a65b3e4e30",
+      "references": [],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.read_hosted_worker_status": {
+      "path": "supabase/migrations/20260923090000_vpj_07_hosted_text_worker.sql",
+      "line": 110,
+      "sha256": "4c9a1a84f4cb1d8e3ba9aa6e31bcdd0a3fef6048bb52b054af41a9bf15118d7e",
+      "references": [],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.submit_planning_comparison_v1": {
+      "path": "supabase/migrations/20260927060000_vpj80_planning_comparison.sql",
+      "line": 149,
+      "sha256": "5824274ec92021f1a51977d13895d5a4b1b32ca50ec4675e5d9c3d34f720d576",
+      "references": [
+        {
+          "path": "supabase/migrations/20260927060000_vpj80_planning_comparison.sql",
+          "line": 203,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260927060000_vpj80_planning_comparison.sql",
+          "line": 206,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.authorize_planning_read_v1": {
+      "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+      "line": 1269,
+      "sha256": "9ea64be22a510a251094f5c6173ecbd3d69994cfeb23984a6e9fcd940b957780",
+      "references": [
+        {
+          "path": "supabase/migrations/20261003020000_vpj80_intake_admission_binding.sql",
+          "line": 214,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 4,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3783,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.authorize_planning_dispatch_v1": {
+      "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+      "line": 1285,
+      "sha256": "1709d771c075d4fb33f3c2b03a54a0a909a33c41e23413cbf6ca556f5352b79f",
+      "references": [
+        {
+          "path": "supabase/migrations/20260927060000_vpj80_planning_comparison.sql",
+          "line": 553,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20260927060000_vpj80_planning_comparison.sql",
+          "line": 556,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003020000_vpj80_intake_admission_binding.sql",
+          "line": 214,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 4,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3783,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.hosted_planning_target_v1": {
+      "path": "supabase/migrations/20260930020000_vpj80_hosted_planning_target.sql",
+      "line": 4,
+      "sha256": "698b41a58767dd78eb54cdcc0bd40f4773466592aebb231e011dbaecb0e86bc2",
+      "references": [],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.assistant_conversation_export_owner_v1": {
+      "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+      "line": 3166,
+      "sha256": "8c9469bbf616db810bb0df83a40128274cb406425ec49ebb2fb9abf770e6ef1f",
+      "references": [
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 4,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3783,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "turn_private.read_planning_qualified_intake_v1": {
+      "path": "supabase/migrations/20261003020000_vpj80_intake_admission_binding.sql",
+      "line": 68,
+      "sha256": "7775cbf6f7d182e18a87d07729907629aece6cb450fbd2637d1eb6d4eaa91def",
+      "references": [
+        {
+          "path": "supabase/migrations/20261003020000_vpj80_intake_admission_binding.sql",
+          "line": 155,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003020000_vpj80_intake_admission_binding.sql",
+          "line": 190,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003030000_vpj79_private_qualified_comparison.sql",
+          "line": 13,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003040000_vpj78_v2_durable_checkpoints.sql",
+          "line": 47,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003050000_vpj78_v2_model_attempt_binding.sql",
+          "line": 62,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 113,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 152,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.submit_planning_comparison_v2": {
+      "path": "supabase/migrations/20261003020000_vpj80_intake_admission_binding.sql",
+      "line": 112,
+      "sha256": "59750f6dc0ef52c3f3a81d7d949d009da342c08b052ebd100c4b78bb39e24285",
+      "references": [],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "turn_private.planning_v2_run_basis": {
+      "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+      "line": 98,
+      "sha256": "0249e5c086b5ad074cbc57e19666740a26b07b9c7c90db75afd546e55cae98d4",
+      "references": [
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 178,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 190,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 199,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 208,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 217,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 226,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 235,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 279,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 384,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 402,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 416,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 504,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.claim_planning_intake_work_v1": {
+      "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+      "line": 128,
+      "sha256": "8d7104a322f2dae7689d673565424fddb76c8e17d843ddc57f2276daea70feb7",
+      "references": [],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "turn_private.planning_v2_exact_model_basis": {
+      "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+      "line": 174,
+      "sha256": "821e7b028e01af9774ffa8b023130488f91fc24d205437150692fe22dc992588",
+      "references": [
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 251,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 268,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 291,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 350,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 372,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 567,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.claim_planning_intake_place_v1": {
+      "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+      "line": 204,
+      "sha256": "e7c7a6f8e338314fa707bb38ac993be3eaeb5665acf9ec4837778e0baf0b9997",
+      "references": [],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.authorize_planning_intake_external_read_v1": {
+      "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+      "line": 231,
+      "sha256": "f120fe879fe913abc99cea53b75f4ca96e2beb48b5c091308eaa6d09564457a0",
+      "references": [],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.authorize_planning_intake_model_v1": {
+      "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+      "line": 247,
+      "sha256": "2f1c89496adc85bb40806d42c7c6a8a725b9c0da06e5dd31ba8b0d5fbc13c906",
+      "references": [
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 571,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+          "line": 578,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.record_planning_intake_provider_destination_v1": {
+      "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+      "line": 287,
+      "sha256": "e976cf931f6220b19b82d9725ba45acb75da13c0158f4636eea588210c8b580d",
+      "references": [],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.planning_intake_budget_v1": {
+      "path": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+      "line": 561,
+      "sha256": "e74b87bda1217eb0fcdca7b5e68754808ccaac1d8fe89ebd4a8382e0b7e16055",
+      "references": [],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.privacy_core_export_v1": {
+      "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+      "line": 3346,
+      "sha256": "3505b71001d340a33ab151a7ea88056477ae16463c866d307700fbe41402be30",
+      "references": [
+        {
+          "path": "supabase/migrations/20261003210000_vpj36_memory_export_source_fence.sql",
+          "line": 114,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261003220000_vpj36_entitlement_export_source_fence.sql",
+          "line": 63,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261005040000_vpj61_trip_lifecycle.sql",
+          "line": 483,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261005070000_pdf_intake.sql",
+          "line": 521,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 343,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 409,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1058,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1600,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1614,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1626,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 30,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2006,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2027,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2046,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 4,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3558,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3770,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3783,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 3,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 138,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 151,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.authorize_scoped_trip_edit_effect_v1": {
+      "path": "supabase/migrations/20261005020000_scoped_edit.sql",
+      "line": 538,
+      "sha256": "251a5d3c687a235564e242d677c94f5ad12a8339e90369d8490b0911d4409e04",
+      "references": [
+        {
+          "path": "supabase/migrations/20261005020000_scoped_edit.sql",
+          "line": 555,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261005020000_scoped_edit.sql",
+          "line": 639,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261005020000_scoped_edit.sql",
+          "line": 706,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.scoped_trip_edit_budget_v1": {
+      "path": "supabase/migrations/20261005020000_scoped_edit.sql",
+      "line": 545,
+      "sha256": "6ccd313eca8488296192ecd553a4b00b27a41d55f4a1737a8d2e61296aff6f54",
+      "references": [],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.guide_place_v1": {
+      "path": "supabase/migrations/20261005080000_place_guide.sql",
+      "line": 177,
+      "sha256": "57ab5aeb7b131f4441bee8993c70121ffa485c5199cc668e084bfc3ce1ecda82",
+      "references": [],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "conversation_data_private.schema_supported_v1": {
+      "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+      "line": 3598,
+      "sha256": "f2ebfe507aade8dd17486aa29e06a1bf371d0bebb1e23a5d2353c0648d051d7a",
+      "references": [
+        {
+          "path": "supabase/migrations/20261006060000_conversation_data.sql",
+          "line": 584,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 263,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1626,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 30,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 35,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 542,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1830,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1972,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1991,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2006,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2027,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2046,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2107,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 4,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 13,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 2488,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3657,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3770,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3783,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3792,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 3,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 7,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 138,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 151,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 155,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "result_data_private.schema_supported_v1": {
+      "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+      "line": 3631,
+      "sha256": "f15fae48fa848c985b4295dbb67c3fa221e7b6d9097b9234c660f1d3f9c2551b",
+      "references": [
+        {
+          "path": "supabase/migrations/20261007010000_result_data.sql",
+          "line": 772,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007010000_result_data.sql",
+          "line": 1180,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 1044,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1575,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1626,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 30,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 35,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 779,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1811,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2006,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2027,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2046,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2107,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 4,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 13,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 2262,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3770,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3783,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3792,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 3,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 7,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 138,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 151,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 155,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "profile_data_private.schema_v1": {
+      "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+      "line": 3568,
+      "sha256": "0e0bc05b45ba0915c5fedca5a61ab5fbee8dd1d2e400647736a511feac4e845f",
+      "references": [
+        {
+          "path": "supabase/migrations/20261007020000_profile_data.sql",
+          "line": 297,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007020000_profile_data.sql",
+          "line": 525,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 77,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 271,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 865,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 927,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 986,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 1050,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 1059,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1516,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1581,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1590,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1626,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 30,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 35,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1817,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1826,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1895,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2006,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2027,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2046,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2107,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 4,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 13,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3637,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3770,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3783,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3792,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 3,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 7,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 138,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 151,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 155,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "public.privacy_profile_data_v1": {
+      "path": "supabase/migrations/20261007020000_profile_data.sql",
+      "line": 391,
+      "sha256": "cc1d0be80df0e4344c299f28ea6712fe0c5a9831a00efbee802d8ceadb1fa462",
+      "references": [],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "export_private.profile_source_v1": {
+      "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+      "line": 70,
+      "sha256": "e1160353182275d235e4ddac739f854356dd6f8927f7895ad1da3eb0add02a51",
+      "references": [
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 116,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 247,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 262,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 301,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 325,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 343,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1600,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1614,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 4,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3558,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3783,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "export_private.profile_hooks_valid_v1": {
+      "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+      "line": 3552,
+      "sha256": "1e77f8e098ee75ecb9e73cb9627225a71030d98ec5604e3f8586e5eaa98ac654",
+      "references": [
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 271,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 1035,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007040000_profile_core_export.sql",
+          "line": 1038,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1538,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1541,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1567,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1570,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1594,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1626,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 30,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 35,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1917,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1920,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1946,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1949,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2006,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2027,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2046,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2107,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 4,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 13,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3591,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3594,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3770,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3783,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3792,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 3,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 7,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 138,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 151,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 155,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "turn_data_private.schema_supported_v1": {
+      "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+      "line": 3640,
+      "sha256": "53af349ece6d64fecf87bd55ac73b946e9da1797f7bd020386123b856553e117",
+      "references": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 351,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 835,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 925,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1626,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 30,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 35,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1445,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1956,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2006,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2027,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2046,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2107,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 4,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 13,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 2714,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3672,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3770,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3783,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3792,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 3,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 7,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 19,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 138,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 151,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 155,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "turn_data_private.write_hooks_valid_v1": {
+      "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+      "line": 3753,
+      "sha256": "51692dc5f5890a76c1b8bc82027eb8f3686c3872dfb619bb1780ff8bc1cbc133",
+      "references": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 593,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1626,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 30,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 35,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1594,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2006,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2027,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2046,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2107,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 4,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 13,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 2866,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3770,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3783,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3792,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 3,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 7,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 138,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 151,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 155,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "turn_data_private.export_source_v1": {
+      "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+      "line": 9,
+      "sha256": "62f09df558cc07865724b986abfb639aa2db78510ae726741a744781e0e81c2b",
+      "references": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 905,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 918,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 955,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 970,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 1626,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 30,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2006,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2027,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2046,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 4,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3770,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3783,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 3,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 138,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 151,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    },
+    "turn_data_private.runtime_supported_v1": {
+      "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+      "line": 130,
+      "sha256": "b9882c97f354a9114b7e069cabc53265fb9c21e1a906c380f5359b646c7d0fcf",
+      "references": [
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 593,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 626,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261007050000_turn_data.sql",
+          "line": 835,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 30,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 35,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 279,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 475,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1594,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 1998,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2046,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010020000_assistant_events.sql",
+          "line": 2107,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 4,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 13,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 2866,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3672,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3783,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010030000_vpj09_travel_directions.sql",
+          "line": 3792,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 3,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 7,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 19,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 151,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        },
+        {
+          "path": "supabase/migrations/20261010040000_vpj09_retained_turn_export.sql",
+          "line": 155,
+          "kind": "source_reference_may_be_dynamic_replacement_or_pin"
+        }
+      ],
+      "catalogVerified": false,
+      "reason": "explicit source DDL only; dynamic DO replacements and pg_get_functiondef metadata require PG17 replay"
+    }
+  },
+  "unresolvedNames": [
+    "public.read_planning_work_v1",
+    "public.scoped_trip_edit_dispatch_v1"
+  ],
+  "allExplicitFunctionNames": [
+    "archive_data_private.archive_source_v1",
+    "archive_data_private.binding_v1",
+    "archive_data_private.boundaries_v1",
+    "archive_data_private.deadline_v1",
+    "archive_data_private.digest_v1",
+    "archive_data_private.immutable_v1",
+    "archive_data_private.input_v1",
+    "archive_data_private.inventory_v1",
+    "archive_data_private.progress_item_v1",
+    "archive_data_private.receipt_v1",
+    "archive_data_private.sections_v1",
+    "archive_data_private.source_v1",
+    "community_private.account_erasure_j1",
+    "community_private.actor_j1",
+    "community_private.current_actor",
+    "community_private.erase_j1",
+    "community_private.exact_j1",
+    "community_private.item_j1",
+    "community_private.submission_json",
+    "community_private.text_j1",
+    "community_private.uuid_j1",
+    "community_private.valid_j1",
+    "community_private.workspace_j1",
+    "community_publication_private.account_erasure",
+    "community_publication_private.disclosure_changed",
+    "community_publication_private.eligible",
+    "community_publication_private.erase",
+    "community_publication_private.experience_json",
+    "community_publication_private.export_json",
+    "community_publication_private.independent",
+    "community_publication_private.invalidate_actor",
+    "community_publication_private.invalidate_source",
+    "community_publication_private.j1_qualification_changed",
+    "community_publication_private.no_revive",
+    "community_publication_private.preview_digest",
+    "community_publication_private.qualification_changed",
+    "community_publication_private.qualified",
+    "community_publication_private.record_json",
+    "community_publication_private.reference_json",
+    "community_publication_private.retained",
+    "community_publication_private.review_changed",
+    "community_publication_private.safety_changed",
+    "community_publication_private.source_changed",
+    "community_publication_private.source_current",
+    "community_publication_private.source_deleting",
+    "community_publication_private.terminal",
+    "community_publication_private.valid",
+    "community_publication_private.workspace",
+    "community_safety_private.account_erasure",
+    "community_safety_private.blocked",
+    "community_safety_private.erase",
+    "community_safety_private.erase_sources",
+    "community_safety_private.export_json",
+    "community_safety_private.fence",
+    "community_safety_private.independent",
+    "community_safety_private.j1_allowed",
+    "community_safety_private.moderator",
+    "community_safety_private.object_allowed",
+    "community_safety_private.object_json",
+    "community_safety_private.own_ids",
+    "community_safety_private.record_json",
+    "community_safety_private.source_frontier",
+    "community_safety_private.source_reader",
+    "community_safety_private.valid",
+    "community_safety_private.workspace",
+    "conversation_data_private.actor_v1",
+    "conversation_data_private.authorities_current_v1",
+    "conversation_data_private.authorities_shape_v1",
+    "conversation_data_private.authorities_union_v1",
+    "conversation_data_private.binding_v1",
+    "conversation_data_private.boundaries_v1",
+    "conversation_data_private.clear_proof_required_v1",
+    "conversation_data_private.closure_v1",
+    "conversation_data_private.conflicts_v1",
+    "conversation_data_private.deadline_v1",
+    "conversation_data_private.digest_v1",
+    "conversation_data_private.documents_v1",
+    "conversation_data_private.empty_graph_v1",
+    "conversation_data_private.entity_kind_v1",
+    "conversation_data_private.erase_order_v1",
+    "conversation_data_private.erase_source_v1",
+    "conversation_data_private.fenced_v1",
+    "conversation_data_private.graph_v1",
+    "conversation_data_private.guard_core_copy_v1",
+    "conversation_data_private.guard_source_v1",
+    "conversation_data_private.ids_v1",
+    "conversation_data_private.immutable_operation_v1",
+    "conversation_data_private.impact_inventory_v1",
+    "conversation_data_private.impact_sets_v1",
+    "conversation_data_private.input_v1",
+    "conversation_data_private.json_references_v1",
+    "conversation_data_private.lock_source_v1",
+    "conversation_data_private.operation_row_v1",
+    "conversation_data_private.parents_v1",
+    "conversation_data_private.preview_v1",
+    "conversation_data_private.progress_source_v1",
+    "conversation_data_private.proof_v1",
+    "conversation_data_private.receipt_v1",
+    "conversation_data_private.reference_kind_v1",
+    "conversation_data_private.related_v1",
+    "conversation_data_private.row_key_v1",
+    "conversation_data_private.schema_supported_v1",
+    "conversation_data_private.selection_v1",
+    "conversation_data_private.source_v1",
+    "conversation_data_private.sources_v1",
+    "conversation_data_private.union_ids_v1",
+    "conversation_data_private.zero_counts_v1",
+    "coverage_export_private.notifications_v1",
+    "coverage_export_private.sources_v1",
+    "coverage_progress_private.binding_v1",
+    "coverage_progress_private.boundaries_v1",
+    "coverage_progress_private.deadline_v1",
+    "coverage_progress_private.digest_v1",
+    "coverage_progress_private.ids_v1",
+    "coverage_progress_private.immutable_v1",
+    "coverage_progress_private.input_v1",
+    "coverage_progress_private.inventory_fingerprint_v1",
+    "coverage_progress_private.inventory_v1",
+    "coverage_progress_private.items_v1",
+    "coverage_progress_private.receipt_v1",
+    "export_private.artifact_wire_v1",
+    "export_private.b64_v1",
+    "export_private.bump_entitlement_source_v1",
+    "export_private.bump_memory_source_v1",
+    "export_private.core_memory_page_v1",
+    "export_private.core_profile_page_v1",
+    "export_private.core_turn_page_v1",
+    "export_private.current_native_v1",
+    "export_private.directions_source_current_v1",
+    "export_private.entitlement_commit_progress_v1",
+    "export_private.entitlement_page_v1",
+    "export_private.entitlement_source_current_v1",
+    "export_private.immutable_artifact_v1",
+    "export_private.job_receipt_v1",
+    "export_private.live_lease_v1",
+    "export_private.lock_job_v1",
+    "export_private.memory_commit_progress_v1",
+    "export_private.memory_rows_v1",
+    "export_private.memory_source_current_v1",
+    "export_private.ms_v1",
+    "export_private.profile_commit_qualifies_v1",
+    "export_private.profile_conflicts_valid_v1",
+    "export_private.profile_copies_valid_v1",
+    "export_private.profile_decision_valid_v1",
+    "export_private.profile_hooks_valid_v1",
+    "export_private.profile_ids_v1",
+    "export_private.profile_integer_v1",
+    "export_private.profile_managed_copy_v1",
+    "export_private.profile_natural_v1",
+    "export_private.profile_normalize_integers_v1",
+    "export_private.profile_operation_valid_v1",
+    "export_private.profile_provenance_immutable_v1",
+    "export_private.profile_row_valid_v1",
+    "export_private.profile_source_current_v1",
+    "export_private.profile_source_v1",
+    "export_private.profile_summary_valid_v1",
+    "export_private.protect_policy_v1",
+    "export_private.record_profile_provenance_v1",
+    "export_private.record_turn_provenance_v1",
+    "export_private.trip_content_v1",
+    "export_private.turn_commit_qualifies_v1",
+    "export_private.turn_managed_copy_v1",
+    "export_private.turn_source_current_v1",
+    "export_private.unb64_v1",
+    "export_private.valid_modules_v1",
+    "guide_private.answer_basis_v1",
+    "guide_private.bound_v1",
+    "guide_private.clear_position_v1",
+    "guide_private.hash",
+    "guide_private.input_v1",
+    "guide_private.instant",
+    "guide_private.invalidate_v1",
+    "guide_private.mapping_v1",
+    "guide_private.place_complete_v1",
+    "guide_private.projection_v1",
+    "guide_private.proof_v1",
+    "guide_private.strict_integer",
+    "guide_private.unavailable",
+    "guide_private.use_current_v1",
+    "guide_private.utf16",
+    "guide_private.valid_command_v1",
+    "identity_private.guard_mobile_rpc_v2",
+    "identity_private.guard_mobile_write_v2",
+    "identity_private.mobile_access_v2",
+    "identity_private.mobile_session_v2",
+    "identity_private.prepare_mobile_v2",
+    "knowledge_review_private.bounded_text",
+    "knowledge_review_private.candidate_json",
+    "knowledge_review_private.clear_source_impact_private_turn",
+    "knowledge_review_private.closed_object",
+    "knowledge_review_private.current_actor",
+    "knowledge_review_private.identifier_list",
+    "knowledge_review_private.immutable_source_impact_effect",
+    "knowledge_review_private.impact_current",
+    "knowledge_review_private.impact_delivery_wire",
+    "knowledge_review_private.impact_graph",
+    "knowledge_review_private.impact_hash",
+    "knowledge_review_private.impact_receipt",
+    "knowledge_review_private.impact_review_current",
+    "knowledge_review_private.impact_source",
+    "knowledge_review_private.ops_review_workspace_publication_v1",
+    "knowledge_review_private.place_name",
+    "knowledge_review_private.place_subject",
+    "knowledge_review_private.place_text",
+    "knowledge_review_private.question_definition",
+    "knowledge_review_private.resolve_question",
+    "knowledge_review_private.selected_question_input",
+    "knowledge_review_private.source_impact_text_lifecycle",
+    "knowledge_review_private.source_valid",
+    "knowledge_review_private.statement_valid",
+    "knowledge_review_private.wiki_draft_valid",
+    "knowledge_review_private.wiki_proposal_sources_valid",
+    "knowledge_review_private.wiki_text_valid",
+    "lodging_classification_private.candidate_reply",
+    "lodging_classification_private.hash",
+    "lodging_classification_private.identity_fence",
+    "lodging_classification_private.mapping_basis",
+    "lodging_classification_private.mapping_reply",
+    "lodging_classification_private.provider_hash",
+    "lodging_classification_private.publication_basis",
+    "lodging_classification_private.source_basis",
+    "lodging_classification_private.statement_valid_v1",
+    "material_exit_private.binding_v1",
+    "material_exit_private.boundaries_v1",
+    "material_exit_private.ids_v1",
+    "material_exit_private.input_v1",
+    "material_exit_private.list_v1",
+    "material_exit_private.receipt_v1",
+    "material_exit_private.request_guard_v1",
+    "material_exit_private.reservation_guard_v1",
+    "material_exit_private.sources_v1",
+    "material_exit_private.trip_progress_erase_v1",
+    "material_exit_private.trips_v1",
+    "material_exit_private.uuid_v1",
+    "memory_private.bump_profile_revision_v1",
+    "memory_private.immutable_native_receipt_v1",
+    "memory_private.invalidate_legacy_pace",
+    "memory_private.pace_json",
+    "memory_private.scrub_native_preimage_v1",
+    "notification_exit_private.add_fence",
+    "notification_exit_private.authorize",
+    "notification_exit_private.binding",
+    "notification_exit_private.boundaries",
+    "notification_exit_private.digest",
+    "notification_exit_private.dismiss_id",
+    "notification_exit_private.erase_sources",
+    "notification_exit_private.fence_json",
+    "notification_exit_private.fences_for",
+    "notification_exit_private.has_fence",
+    "notification_exit_private.ids",
+    "notification_exit_private.input",
+    "notification_exit_private.inventory",
+    "notification_exit_private.lock_sources",
+    "notification_exit_private.ms",
+    "notification_exit_private.pair_id",
+    "notification_exit_private.producer_guard",
+    "notification_exit_private.receipt",
+    "notification_exit_private.request_guard",
+    "notification_exit_private.row_json",
+    "notification_exit_private.sources",
+    "notification_private.actor",
+    "notification_private.attempt_receipt",
+    "notification_private.canonical",
+    "notification_private.current",
+    "notification_private.delete_for_trip_v1",
+    "notification_private.exact",
+    "notification_private.export_metadata_v1",
+    "notification_private.hash",
+    "notification_private.immutable_receipt",
+    "notification_private.in_quiet",
+    "notification_private.integer",
+    "notification_private.lock_scope",
+    "notification_private.mapping",
+    "notification_private.mobile_changed",
+    "notification_private.next_steps",
+    "notification_private.opaque",
+    "notification_private.outcome",
+    "notification_private.quiet",
+    "notification_private.service",
+    "notification_private.source",
+    "notification_private.source_valid",
+    "notification_private.stamp",
+    "notification_private.time",
+    "notification_private.trip_live",
+    "notification_private.uuid",
+    "notification_private.valid",
+    "notification_private.view",
+    "offline_private.bind_confirmed_text_v1",
+    "offline_private.canonical_v1",
+    "offline_private.current_actor_v1",
+    "offline_private.export_trip_text_sources_v1",
+    "offline_private.field_digest_v1",
+    "offline_private.field_value_v1",
+    "offline_private.immutable_text_receipt_v1",
+    "ops_budget_private.read_ops_budget_scope_for_member_v1",
+    "pdf_intake_private.actor_v1",
+    "pdf_intake_private.auth_session_erasure_v1",
+    "pdf_intake_private.canonical_v1",
+    "pdf_intake_private.command_v1",
+    "pdf_intake_private.confirm_event_v1",
+    "pdf_intake_private.confirmation_v1",
+    "pdf_intake_private.digest_v1",
+    "pdf_intake_private.erase_v1",
+    "pdf_intake_private.export_commit_v1",
+    "pdf_intake_private.export_current_v1",
+    "pdf_intake_private.integer_v1",
+    "pdf_intake_private.operation_guard_v1",
+    "pdf_intake_private.preview_v1",
+    "pdf_intake_private.prewrite_v1",
+    "pdf_intake_private.proposal_guard_v1",
+    "pdf_intake_private.receipt_v1",
+    "pdf_intake_private.session_erasure_v1",
+    "pdf_intake_private.source_changed_v1",
+    "pdf_intake_private.trip_erasure_v1",
+    "pdf_intake_private.utf16_length_v1",
+    "pdf_intake_private.uuid_v1",
+    "place_actions_private.actor_v1",
+    "place_actions_private.exact_v1",
+    "place_actions_private.export_metadata_v1",
+    "place_actions_private.hash_v1",
+    "place_actions_private.immutable_v1",
+    "place_actions_private.mapping_v1",
+    "place_actions_private.revision_v1",
+    "place_actions_private.saved_v1",
+    "place_actions_private.selection_v1",
+    "place_actions_private.snapshot_v1",
+    "place_actions_private.sources_v1",
+    "place_actions_private.time_v1",
+    "place_actions_private.utf16_length_v1",
+    "place_actions_private.uuid_v1",
+    "place_actions_private.valid_v1",
+    "privacy_private.guard_linked_delete_budget_insert_v1",
+    "privacy_private.guard_linked_delete_entity_v1",
+    "privacy_private.guard_linked_delete_export_v1",
+    "privacy_private.guard_memory_delete_derived_v1",
+    "privacy_private.guard_trip_write",
+    "privacy_private.linked_delete_actor_v1",
+    "privacy_private.linked_delete_array_v1",
+    "privacy_private.linked_delete_erase_authority_v1",
+    "privacy_private.linked_delete_graph_v1",
+    "privacy_private.linked_delete_lock_graph_v1",
+    "privacy_private.linked_delete_receipt_v1",
+    "privacy_private.memory_delete_graph_v1",
+    "privacy_private.memory_delete_ids_v1",
+    "privacy_private.memory_delete_lock_v1",
+    "privacy_private.memory_delete_proof_v1",
+    "privacy_private.memory_delete_receipt_v1",
+    "privacy_private.trip_deletion_receipt",
+    "private.ai10_confirm_fault_trigger",
+    "private.ai14_fault_probe",
+    "private.connection_probe_worker_count",
+    "private.guard_archived_trip_content",
+    "profile_data_private.actor_v1",
+    "profile_data_private.binding_v1",
+    "profile_data_private.boundaries_v1",
+    "profile_data_private.deadline_v1",
+    "profile_data_private.digest_v1",
+    "profile_data_private.empty_copies_v1",
+    "profile_data_private.guard_operation_v1",
+    "profile_data_private.guard_profile_v1",
+    "profile_data_private.guard_watermark_v1",
+    "profile_data_private.input_v1",
+    "profile_data_private.inventory_v1",
+    "profile_data_private.lock_owner_v1",
+    "profile_data_private.no_result_references_v1",
+    "profile_data_private.now_v1",
+    "profile_data_private.operation_row_v1",
+    "profile_data_private.profile_v1",
+    "profile_data_private.progress_v1",
+    "profile_data_private.proof_must_clear_v1",
+    "profile_data_private.record_watermark_v1",
+    "profile_data_private.schema_v1",
+    "profile_data_private.sources_v1",
+    "profile_data_private.summary_v1",
+    "profile_data_private.verify_effects_v1",
+    "profile_data_private.web_save_v1",
+    "public.abandon_scoped_trip_edit_operation_v1",
+    "public.accept_planning_policy_v1",
+    "public.accept_text_policy",
+    "public.append_chat_turn_event",
+    "public.append_source_impact_v1",
+    "public.apply_reviewed_trip_support_delivery_v1",
+    "public.apply_source_impact_projection_v1",
+    "public.apply_trip_content_patch",
+    "public.apply_trip_item_source_impact_v1",
+    "public.archive_trip_v1",
+    "public.assistant_conversation_export_owner_v1",
+    "public.assistant_goal_trip_erase_owner_v1",
+    "public.assistant_goal_trip_export_owner_v1",
+    "public.assistant_message_source_export_owner_v2",
+    "public.assistant_travel_intake_export_owner_v1",
+    "public.authorize_grounded_dispatch",
+    "public.authorize_planning_dispatch_v1",
+    "public.authorize_planning_intake_external_read_v1",
+    "public.authorize_planning_intake_model_v1",
+    "public.authorize_planning_read_v1",
+    "public.authorize_scoped_trip_edit_effect_v1",
+    "public.authorize_text_dispatch",
+    "public.authorize_text_task_dispatch",
+    "public.bind_planning_intake_model_attempt_v1",
+    "public.cancel_chat_turn",
+    "public.capture_initial_trip_version",
+    "public.capture_source_impact_v1",
+    "public.choose_result_decision_v2",
+    "public.claim_grounded_work",
+    "public.claim_planning_action_v1",
+    "public.claim_planning_comparison_work_v1",
+    "public.claim_planning_intake_place_v1",
+    "public.claim_planning_intake_result_v1",
+    "public.claim_planning_intake_work_v1",
+    "public.claim_scoped_trip_edit_work_v1",
+    "public.claim_source_impact_delivery_v1",
+    "public.claim_text_task_work",
+    "public.claim_text_work",
+    "public.claim_trip_support_impact_delivery_v1",
+    "public.claim_turn_work",
+    "public.community_workspace",
+    "public.complete_grounded_place_work",
+    "public.complete_grounded_work",
+    "public.complete_grounded_work_with_needs",
+    "public.complete_planning_comparison_v1",
+    "public.complete_planning_intake_comparison_v1",
+    "public.complete_planning_observation_v1",
+    "public.complete_scoped_trip_edit_work_v1",
+    "public.complete_text_work",
+    "public.confirm_and_apply_supported_trip_proposal_v1",
+    "public.confirm_and_apply_trip_proposal",
+    "public.confirm_reservation_reference_v1",
+    "public.connection_probe_ops_visible_count",
+    "public.consume_place_quota_v1",
+    "public.create_explicit_memory_profile",
+    "public.create_explicit_memory_profile_v2",
+    "public.create_memory_retrieval_consent",
+    "public.create_trip_proposal_patch",
+    "public.create_trip_rollback_proposal",
+    "public.dispatch_model_budget",
+    "public.dispatch_travel_notification_v2",
+    "public.enqueue_turn_work",
+    "public.execute_place_action_v1",
+    "public.execute_trip_deletion_v1",
+    "public.export_offline_trip_text_metadata_v1",
+    "public.fail_reviewed_trip_support_delivery_v1",
+    "public.fail_source_impact_delivery_v1",
+    "public.finish_model_budget",
+    "public.finish_planning_action_v1",
+    "public.finish_turn_work",
+    "public.foreground_traffic_policy_v1",
+    "public.foreground_traffic_producer_v1",
+    "public.grant_memory_retrieval_consent",
+    "public.grounded_ai_assist_work_v1",
+    "public.guide_place_v1",
+    "public.hosted_planning_target_v1",
+    "public.hosted_scoped_trip_edit_target_v1",
+    "public.hosted_worker_heartbeat",
+    "public.hosted_worker_ready_groups",
+    "public.knowledge_answer_v1",
+    "public.knowledge_read_v1",
+    "public.list_assistant_conversation_tasks_v1",
+    "public.list_assistant_conversations_v1",
+    "public.list_assistant_goal_trip_links_v1",
+    "public.list_grounded_turns",
+    "public.list_saved_translations_v1",
+    "public.list_service_task_turns",
+    "public.list_text_turns",
+    "public.native_memory_command_v1",
+    "public.native_prepare_v2",
+    "public.native_session_v2",
+    "public.native_task_travel_pace_v1",
+    "public.native_travel_directions_v1",
+    "public.native_travel_pace_v1",
+    "public.next_trip_deletion_v1",
+    "public.notification_metadata_export_v1",
+    "public.ops_budget_scope_read_v1",
+    "public.ops_knowledge_provenance_read_v1",
+    "public.ops_lodging_classification_v1",
+    "public.ops_review_workspace",
+    "public.ops_source_revision_withdraw_v1",
+    "public.ops_wiki_generation_v1",
+    "public.ops_wiki_read_v1",
+    "public.ops_wiki_withdrawal_scan_v1",
+    "public.pause_planning_comparison_v1",
+    "public.pause_planning_intake_work_v1",
+    "public.pause_scoped_trip_edit_work_v1",
+    "public.pdf_intake_export_v1",
+    "public.pdf_intake_prune_v1",
+    "public.pdf_intake_v1",
+    "public.planning_intake_binding_export_owner_v1",
+    "public.planning_intake_budget_v1",
+    "public.planning_v2_checkpoint_export_owner_v1",
+    "public.poll_travel_notifications_v2",
+    "public.prepare_local_recovery_v1",
+    "public.prepare_scoped_trip_edit_v1",
+    "public.prepare_transport_recovery_v1",
+    "public.prepare_trip_item_support_v1",
+    "public.privacy_archive_data_v1",
+    "public.privacy_conversation_data_v1",
+    "public.privacy_core_export_v1",
+    "public.privacy_coverage_module_export_v1",
+    "public.privacy_coverage_progress_v1",
+    "public.privacy_linked_trip_delete_v1",
+    "public.privacy_material_reference_v1",
+    "public.privacy_memory_delete_v1",
+    "public.privacy_notification_data_drain_v1",
+    "public.privacy_notification_data_v1",
+    "public.privacy_profile_data_v1",
+    "public.privacy_result_data_v1",
+    "public.privacy_turn_data_v1",
+    "public.project_planning_intake_comparison_v1",
+    "public.publish_change_proposal_reference_v1",
+    "public.publish_comparison_result_v1",
+    "public.publish_result_artifact_v2",
+    "public.read_assistant_conversation_v1",
+    "public.read_assistant_events_v1",
+    "public.read_assistant_goal_trip_link_v1",
+    "public.read_assistant_journeys_page_v1",
+    "public.read_assistant_message_sources_v2",
+    "public.read_assistant_task_activity_v1",
+    "public.read_assistant_travel_intake_v1",
+    "public.read_assistant_travel_intake_write_basis_v1",
+    "public.read_change_proposal_reference_v1",
+    "public.read_completed_planning_intake_receipt_v1",
+    "public.read_foreground_traffic_scope_v1",
+    "public.read_foreground_traffic_v1",
+    "public.read_grounded_ai_assist_context_v1",
+    "public.read_grounded_events",
+    "public.read_grounded_policy",
+    "public.read_grounded_turn",
+    "public.read_grounded_work",
+    "public.read_hosted_worker_status",
+    "public.read_journeys_goal_index_v1",
+    "public.read_local_recovery_operation_v1",
+    "public.read_offline_trip_text_provenance_v1",
+    "public.read_ops_budget_scope_v1",
+    "public.read_place_action_context_v1",
+    "public.read_planning_comparison_work_v1",
+    "public.read_planning_intake_checkpoints_v1",
+    "public.read_planning_intake_model_output_receipt_v1",
+    "public.read_planning_intake_model_output_v1",
+    "public.read_planning_intake_work_v1",
+    "public.read_planning_observations_v1",
+    "public.read_planning_policy_v1",
+    "public.read_readiness_declarations_v1",
+    "public.read_reservation_operation_v1",
+    "public.read_reservation_references_v1",
+    "public.read_result_artifact_v2",
+    "public.read_result_artifacts_v1",
+    "public.read_result_events_v1",
+    "public.read_retrievable_memory_profiles",
+    "public.read_reviewed_lodging_classifications_v1",
+    "public.read_reviewed_trip_support_delivery_v1",
+    "public.read_saved_translation_v1",
+    "public.read_scoped_trip_edit_completion_v1",
+    "public.read_scoped_trip_edit_operation_v1",
+    "public.read_scoped_trip_edit_output_v1",
+    "public.read_scoped_trip_edit_proposal_current_v1",
+    "public.read_scoped_trip_edit_usage_v1",
+    "public.read_scoped_trip_edit_work_v1",
+    "public.read_source_impact_delivery_v1",
+    "public.read_source_impact_v1",
+    "public.read_supported_trip_confirmation_receipt_v1",
+    "public.read_task_result_reference_v1",
+    "public.read_task_result_reference_v2",
+    "public.read_text_policy",
+    "public.read_text_task_policy",
+    "public.read_text_turn",
+    "public.read_text_work",
+    "public.read_trip_change_proposal_reference_v1",
+    "public.read_trip_confirmation_receipt_v1",
+    "public.read_trip_deletion_v1",
+    "public.read_trip_directions_reference_v1",
+    "public.read_trip_item_support_candidates_v1",
+    "public.read_trip_item_support_context_v1",
+    "public.read_trip_item_support_v1",
+    "public.read_trip_proposal_v2",
+    "public.read_trip_result_reference_v1",
+    "public.read_trip_result_reference_v2",
+    "public.record_planning_intake_model_output_v1",
+    "public.record_planning_intake_provider_destination_v1",
+    "public.record_scoped_trip_edit_destination_v1",
+    "public.record_scoped_trip_edit_output_v1",
+    "public.record_scoped_trip_edit_usage_v1",
+    "public.record_turn_feedback",
+    "public.reject_trip_proposal_v2",
+    "public.renew_trip_item_support_v1",
+    "public.request_privacy_action",
+    "public.request_trip_deletion_v1",
+    "public.research_intake_record_event_v1",
+    "public.research_intake_v1",
+    "public.reserve_model_budget",
+    "public.resolve_travel_notification_v2",
+    "public.result_artifact_export_owner_v1",
+    "public.review_guide_use_v1",
+    "public.review_source_impact_v1",
+    "public.review_trip_support_entity_mapping_v1",
+    "public.revise_trip_proposal",
+    "public.revise_trip_proposal_patch",
+    "public.revoke_memory_retrieval_consent",
+    "public.revoke_offline_trip_text_provenance_v1",
+    "public.revoke_trip_item_support_preparation_v1",
+    "public.save_planning_intake_place_v1",
+    "public.save_readiness_declaration_v1",
+    "public.save_user_profile",
+    "public.save_user_profile_v2",
+    "public.scoped_trip_edit_budget_v1",
+    "public.search_result_artifacts_v1",
+    "public.search_result_artifacts_v2",
+    "public.service_case_brief_v1",
+    "public.service_case_data_v1",
+    "public.service_case_export_v1",
+    "public.service_case_operations_v1",
+    "public.service_case_v1",
+    "public.service_task_capacity_erase_owner_v1",
+    "public.service_task_capacity_export_owner_v1",
+    "public.set_assistant_goal_trip_link_v1",
+    "public.set_hosted_worker_enabled",
+    "public.start_chat_turn",
+    "public.start_text_turn",
+    "public.stop_foreground_traffic_v1",
+    "public.stop_model_budget",
+    "public.storekit_apply_verified_v1",
+    "public.storekit_erase_owner_v1",
+    "public.storekit_export_owner_v1",
+    "public.submit_assistant_message_sources_v2",
+    "public.submit_assistant_message_v1",
+    "public.submit_assistant_travel_intake_v1",
+    "public.submit_grounded_turn",
+    "public.submit_guide_use_v1",
+    "public.submit_local_recovery_v1",
+    "public.submit_offline_trip_text_proposal_v1",
+    "public.submit_planning_comparison_v1",
+    "public.submit_planning_comparison_v2",
+    "public.submit_scoped_trip_edit_v1",
+    "public.submit_service_task_turn",
+    "public.submit_text_turn",
+    "public.submit_trip_support_entity_mapping_v1",
+    "public.transition_memory_profile",
+    "public.travel_reminders_v1",
+    "public.travel_reminders_v2",
+    "public.trip_content_snapshot",
+    "public.trip_item_support_owner_metadata_v1",
+    "public.trip_lifecycle_export_v2",
+    "public.trip_lifecycle_v1",
+    "public.undo_explicit_memory_create_v1",
+    "public.unknown_planning_intake_place_v1",
+    "public.withdraw_planning_policy_v1",
+    "public.withdraw_result_artifact_v1",
+    "public.withdraw_text_policy",
+    "readiness_private.actor_v1",
+    "readiness_private.cleanup_source_v1",
+    "readiness_private.export_metadata_v1",
+    "readiness_private.immutable_operation_v1",
+    "readiness_private.reply_v1",
+    "readiness_private.source_v1",
+    "readiness_private.valid_declaration_v1",
+    "recovery_private.actor_basis_v1",
+    "recovery_private.actor_v1",
+    "recovery_private.cleanup_expired_v1",
+    "recovery_private.cleanup_trip_v1",
+    "recovery_private.confirm_guard_v1",
+    "recovery_private.context_wire_v1",
+    "recovery_private.exact_v1",
+    "recovery_private.export_metadata_v1",
+    "recovery_private.hash_v1",
+    "recovery_private.ids_v1",
+    "recovery_private.immutable_v1",
+    "recovery_private.ms_v1",
+    "recovery_private.patch_v1",
+    "recovery_private.prepare_context_v1",
+    "recovery_private.prewrite_transport_v1",
+    "recovery_private.profile_v1",
+    "recovery_private.proposal_guard_v1",
+    "recovery_private.reservations_v1",
+    "recovery_private.time_v1",
+    "recovery_private.transport_basis_v1",
+    "recovery_private.transport_proof_current_v1",
+    "recovery_private.trip_v1",
+    "recovery_private.uuid_v1",
+    "recovery_private.valid_common_v1",
+    "recovery_private.valid_prepare_v1",
+    "recovery_private.valid_select_v1",
+    "recovery_private.valid_transport_v1",
+    "reservation_private.actor_v1",
+    "reservation_private.cleanup_trip_v1",
+    "reservation_private.command_v1",
+    "reservation_private.confirmation_v1",
+    "reservation_private.current_wire_v1",
+    "reservation_private.digest_v1",
+    "reservation_private.exact_v1",
+    "reservation_private.export_metadata_v1",
+    "reservation_private.identity_v1",
+    "reservation_private.immutable_v1",
+    "reservation_private.integer_v1",
+    "reservation_private.ms_v1",
+    "reservation_private.text_v1",
+    "reservation_private.timestamp_v1",
+    "reservation_private.trip_v1",
+    "reservation_private.utf16_length_v1",
+    "reservation_private.uuid_v1",
+    "reservation_private.valid_command_v1",
+    "reservation_private.valid_fields_v1",
+    "reservation_private.valid_source_v1",
+    "reservation_private.whitespace_v1",
+    "result_data_private.actor_v1",
+    "result_data_private.application_identity_v1",
+    "result_data_private.binding_v1",
+    "result_data_private.boundaries_v1",
+    "result_data_private.clear_proof_required_v1",
+    "result_data_private.completed_copy_v1",
+    "result_data_private.conflicts_v1",
+    "result_data_private.deadline_v1",
+    "result_data_private.deletion_witnesses_v1",
+    "result_data_private.digest_v1",
+    "result_data_private.documents_v1",
+    "result_data_private.empty_graph_v1",
+    "result_data_private.empty_refs_v1",
+    "result_data_private.erase_member_v1",
+    "result_data_private.erase_source_v1",
+    "result_data_private.fenced_v1",
+    "result_data_private.guard_core_copy_v1",
+    "result_data_private.guard_source_v1",
+    "result_data_private.ids_v1",
+    "result_data_private.immutable_operation_v1",
+    "result_data_private.impact_sets_v1",
+    "result_data_private.infrastructure_namespaces_v1",
+    "result_data_private.infrastructure_supported_v1",
+    "result_data_private.input_v1",
+    "result_data_private.journal_copy_v1",
+    "result_data_private.json_references_v1",
+    "result_data_private.lock_source_v1",
+    "result_data_private.notification_parents_v1",
+    "result_data_private.operation_row_v1",
+    "result_data_private.parents_v1",
+    "result_data_private.preview_v1",
+    "result_data_private.progress_source_v1",
+    "result_data_private.proof_v1",
+    "result_data_private.receipt_v1",
+    "result_data_private.reference_kind_v1",
+    "result_data_private.related_v1",
+    "result_data_private.relations_v1",
+    "result_data_private.reverse_binding_v1",
+    "result_data_private.row_key_v1",
+    "result_data_private.schema_supported_v1",
+    "result_data_private.selection_v1",
+    "result_data_private.source_member_v1",
+    "result_data_private.source_v1",
+    "result_data_private.zero_counts_v1",
+    "scoped_edit_private.candidate_patch_v1",
+    "scoped_edit_private.cleanup_expired_v1",
+    "scoped_edit_private.cleanup_trip_v1",
+    "scoped_edit_private.confirm_guard_v1",
+    "scoped_edit_private.context_wire_v1",
+    "scoped_edit_private.current_v1",
+    "scoped_edit_private.diff_v1",
+    "scoped_edit_private.enqueue_v1",
+    "scoped_edit_private.export_metadata_v1",
+    "scoped_edit_private.export_records_v1",
+    "scoped_edit_private.guard_candidate_v1",
+    "scoped_edit_private.hash_v1",
+    "scoped_edit_private.immutable_v1",
+    "scoped_edit_private.manual_patch_v1",
+    "scoped_edit_private.memory_basis_v1",
+    "scoped_edit_private.prewrite_v1",
+    "scoped_edit_private.proposal_guard_v1",
+    "scoped_edit_private.publish_v1",
+    "scoped_edit_private.scope_v1",
+    "scoped_edit_private.select_v1",
+    "scoped_edit_private.service_current_v1",
+    "scoped_edit_private.settings_immutable_v1",
+    "scoped_edit_private.source_v1",
+    "scoped_edit_private.unavailable_v1",
+    "scoped_edit_private.valid_candidate_edit_v1",
+    "scoped_edit_private.valid_mutation_v1",
+    "scoped_edit_private.valid_usage_v1",
+    "scoped_edit_private.work_current_v1",
+    "scoped_edit_private.worker_policy_v1",
+    "scoped_edit_private.worker_source_v1",
+    "service_brief_private.actor",
+    "service_brief_private.affected",
+    "service_brief_private.audit_json",
+    "service_brief_private.binding",
+    "service_brief_private.case_changed",
+    "service_brief_private.current_fields",
+    "service_brief_private.current_intake",
+    "service_brief_private.erase",
+    "service_brief_private.event",
+    "service_brief_private.export",
+    "service_brief_private.export_rows",
+    "service_brief_private.fields",
+    "service_brief_private.hash",
+    "service_brief_private.intake_fields",
+    "service_brief_private.intake_source",
+    "service_brief_private.invalidate",
+    "service_brief_private.lock_memories",
+    "service_brief_private.memory_field",
+    "service_brief_private.memory_options",
+    "service_brief_private.operation_guard",
+    "service_brief_private.profile_field",
+    "service_brief_private.qualify",
+    "service_brief_private.recipient_changed",
+    "service_brief_private.selected",
+    "service_brief_private.selected_refs",
+    "service_brief_private.session_changed",
+    "service_brief_private.source_changed",
+    "service_brief_private.valid",
+    "service_brief_private.valid_sources",
+    "service_cases_private.actor",
+    "service_cases_private.execute",
+    "service_cases_private.owner_json",
+    "service_operations_private.capacity",
+    "service_operations_private.data_immutable",
+    "service_operations_private.delete_case_v1",
+    "service_operations_private.erase_case",
+    "service_operations_private.exact",
+    "service_operations_private.expire_cases",
+    "service_operations_private.expire_owner_cases",
+    "service_operations_private.export_rows",
+    "service_operations_private.grant_changed",
+    "service_operations_private.immutable_operation",
+    "service_operations_private.integer",
+    "service_operations_private.ms",
+    "service_operations_private.occupied",
+    "service_operations_private.projection",
+    "service_operations_private.qualify",
+    "service_operations_private.shift_guard",
+    "service_operations_private.staff_qualified",
+    "service_operations_private.trip_deleted",
+    "service_operations_private.uuid",
+    "service_operations_private.valid",
+    "traffic_private.actor_v1",
+    "traffic_private.association_v1",
+    "traffic_private.dispatch_current_v1",
+    "traffic_private.endpoints_v1",
+    "traffic_private.exact_v1",
+    "traffic_private.export_metadata_v1",
+    "traffic_private.fingerprint_v1",
+    "traffic_private.policy_changed_v1",
+    "traffic_private.policy_v1",
+    "traffic_private.producer_changed_v1",
+    "traffic_private.producer_v1",
+    "traffic_private.purge_expired_v1",
+    "traffic_private.qualify_recovery_v1",
+    "traffic_private.quota_v1",
+    "traffic_private.receipt_wire_v1",
+    "traffic_private.recovery_basis_v1",
+    "traffic_private.scope_v1",
+    "traffic_private.valid_summary_v1",
+    "traffic_private.validate_recovery_proof_v1",
+    "trip_lifecycle_private.actor_v1",
+    "trip_lifecycle_private.archived_v1",
+    "trip_lifecycle_private.bump_v1",
+    "trip_lifecycle_private.capacity_v1",
+    "trip_lifecycle_private.command_v1",
+    "trip_lifecycle_private.deletion_queued_v1",
+    "trip_lifecycle_private.immutable_operation_v1",
+    "trip_lifecycle_private.integer_v1",
+    "trip_lifecycle_private.lock_owner_v1",
+    "trip_lifecycle_private.prelock_statement_v1",
+    "trip_lifecycle_private.qualify_memory_v1",
+    "trip_lifecycle_private.scrub_memory_v1",
+    "trip_lifecycle_private.trip_change_v1",
+    "trip_lifecycle_private.trip_inserted_v1",
+    "trip_lifecycle_private.trips_v1",
+    "trip_lifecycle_private.uuid_v1",
+    "trip_lifecycle_private.validate_insert_statement_v1",
+    "trip_support_private.applicability",
+    "trip_support_private.bind_confirmed_event",
+    "trip_support_private.claim_basis",
+    "trip_support_private.clear_deleted_support_impact",
+    "trip_support_private.enroll_source_delivery",
+    "trip_support_private.hash",
+    "trip_support_private.item",
+    "trip_support_private.mapping_basis",
+    "trip_support_private.owner",
+    "trip_support_private.typed_claim",
+    "trip_support_private.valid_typed_value",
+    "turn_data_private.actor_v1",
+    "turn_data_private.authorities_current_v1",
+    "turn_data_private.authorities_shape_v1",
+    "turn_data_private.authorities_union_v1",
+    "turn_data_private.binding_v1",
+    "turn_data_private.boundaries_v1",
+    "turn_data_private.clear_proof_required_v1",
+    "turn_data_private.conflicts_v1",
+    "turn_data_private.deadline_v1",
+    "turn_data_private.digest_v1",
+    "turn_data_private.empty_graph_v1",
+    "turn_data_private.empty_references_v1",
+    "turn_data_private.erase_source_v1",
+    "turn_data_private.export_predicate_v1",
+    "turn_data_private.export_provenance_immutable_v1",
+    "turn_data_private.export_row_v1",
+    "turn_data_private.export_source_v1",
+    "turn_data_private.fenced_v1",
+    "turn_data_private.graph_source_v1",
+    "turn_data_private.guard_source_v1",
+    "turn_data_private.hooks_valid_v1",
+    "turn_data_private.ids_v1",
+    "turn_data_private.immutable_operation_v1",
+    "turn_data_private.input_v1",
+    "turn_data_private.json_references_v1",
+    "turn_data_private.lock_source_v1",
+    "turn_data_private.operation_row_v1",
+    "turn_data_private.preview_v1",
+    "turn_data_private.progress_source_v1",
+    "turn_data_private.receipt_v1",
+    "turn_data_private.reference_kind_v1",
+    "turn_data_private.related_v1",
+    "turn_data_private.row_key_v1",
+    "turn_data_private.runtime_supported_v1",
+    "turn_data_private.schema_supported_v1",
+    "turn_data_private.source_key_fenced_v1",
+    "turn_data_private.source_key_v1",
+    "turn_data_private.source_v1",
+    "turn_data_private.sources_v1",
+    "turn_data_private.union_ids_v1",
+    "turn_data_private.write_hooks_valid_v1",
+    "turn_data_private.writer_references_v1",
+    "turn_data_private.zero_counts_v1",
+    "turn_private.act_directions_v1",
+    "turn_private.append_assistant_event_v1",
+    "turn_private.assistant_delivery_source_v1",
+    "turn_private.assistant_event_eligible_v1",
+    "turn_private.assistant_event_erase_authorized_v1",
+    "turn_private.assistant_event_erase_source_v1",
+    "turn_private.assistant_event_immutable_v1",
+    "turn_private.assistant_event_link_v1",
+    "turn_private.assistant_event_new_conversation_v1",
+    "turn_private.assistant_event_source_hook_v1",
+    "turn_private.assistant_task_member_v1",
+    "turn_private.assistant_travel_current_basis_v1",
+    "turn_private.bind_planning_travel_intake_v1",
+    "turn_private.bind_planning_v2_model_attempt_v1",
+    "turn_private.bound_task_history",
+    "turn_private.cancel_unclaimable_turn_v1",
+    "turn_private.claim_directions_inline_v1",
+    "turn_private.claim_planning_v2_place_v1",
+    "turn_private.claim_text_mode",
+    "turn_private.collect_assistant_turn_events_v1",
+    "turn_private.complete_directions_work_v1",
+    "turn_private.complete_selected_grounded_work",
+    "turn_private.complete_text_work_unmetered",
+    "turn_private.create_planning_v2_request_intent_v1",
+    "turn_private.directions_append_patch_v1",
+    "turn_private.directions_current_basis_v1",
+    "turn_private.directions_domain_state_v1",
+    "turn_private.directions_erase_authorized_v1",
+    "turn_private.directions_exact_v1",
+    "turn_private.directions_export_page_v1",
+    "turn_private.directions_export_source_digest_v1",
+    "turn_private.directions_history_readable_v1",
+    "turn_private.directions_initial_projection_v1",
+    "turn_private.directions_input_v1",
+    "turn_private.directions_integer_v1",
+    "turn_private.directions_options_v1",
+    "turn_private.directions_parents_v1",
+    "turn_private.directions_read_intake_v1",
+    "turn_private.directions_relative_projection_v1",
+    "turn_private.directions_schema_members_v1",
+    "turn_private.directions_source_witness_v1",
+    "turn_private.directions_strings_v1",
+    "turn_private.directions_task_output_v1",
+    "turn_private.directions_text_v1",
+    "turn_private.directions_uuid_v1",
+    "turn_private.directions_write_basis_v1",
+    "turn_private.erase_directions_witness_v1",
+    "turn_private.explicit_intake_memory_binding_v1",
+    "turn_private.guard_directions_export_source_v1",
+    "turn_private.guard_directions_linked_parent_v1",
+    "turn_private.guard_directions_operation_v1",
+    "turn_private.guard_directions_source_delete_v1",
+    "turn_private.guard_goal_terminal_scope_v1",
+    "turn_private.guard_goal_trip_deletion_v1",
+    "turn_private.guard_metered_task_type",
+    "turn_private.guard_metered_thread_trip",
+    "turn_private.guard_planning_v2_checkpoint_v1",
+    "turn_private.guard_planning_v2_local_journal_v1",
+    "turn_private.guard_planning_v2_model_binding_v1",
+    "turn_private.guard_text_capacity_scope",
+    "turn_private.hide_text_content",
+    "turn_private.immutable_directions_source_v1",
+    "turn_private.immutable_planning_consent_v1",
+    "turn_private.immutable_planning_intake_binding_v1",
+    "turn_private.immutable_planning_policy_v1",
+    "turn_private.immutable_text_policy",
+    "turn_private.immutable_travel_intake_v1",
+    "turn_private.journeys_goal_index_snapshot_v1",
+    "turn_private.lock_assistant_delivery_v1",
+    "turn_private.lock_directions_witness_v1",
+    "turn_private.lock_text_work",
+    "turn_private.lock_turn",
+    "turn_private.planning_action_basis",
+    "turn_private.planning_policy_current",
+    "turn_private.planning_v2_binding_bytes_v1",
+    "turn_private.planning_v2_checkpoint_basis_v1",
+    "turn_private.planning_v2_collector_principal",
+    "turn_private.planning_v2_completed_current",
+    "turn_private.planning_v2_content_digest",
+    "turn_private.planning_v2_exact_model_basis",
+    "turn_private.planning_v2_immutable_collector_record",
+    "turn_private.planning_v2_integer_bytes_v1",
+    "turn_private.planning_v2_journal_wire_v1",
+    "turn_private.planning_v2_json_string_v1",
+    "turn_private.planning_v2_local_observation_v1",
+    "turn_private.planning_v2_model_attempt_v1",
+    "turn_private.planning_v2_model_binding_basis_v1",
+    "turn_private.planning_v2_run_basis",
+    "turn_private.planning_v2_server_ms_v1",
+    "turn_private.planning_v2_usage_cost",
+    "turn_private.planning_v2_valid_ms_v1",
+    "turn_private.project_planning_qualified_comparison_v1",
+    "turn_private.project_result_display_v2",
+    "turn_private.proposal_reference_current_v1",
+    "turn_private.publish_result_v1",
+    "turn_private.publish_result_v2",
+    "turn_private.qualify_assistant_selected_sources_v2",
+    "turn_private.read_planning_qualified_intake_v1",
+    "turn_private.read_planning_v2_checkpoints_v1",
+    "turn_private.read_planning_v2_model_binding_v1",
+    "turn_private.read_planning_v2_request_journal_v1",
+    "turn_private.record_planning_v2_response_v1",
+    "turn_private.record_planning_v2_send_ack_v1",
+    "turn_private.reject_assistant_source_receipt_update_v2",
+    "turn_private.reject_result_revision_update",
+    "turn_private.reject_unavailable_intake_completion_v1",
+    "turn_private.require_text_task",
+    "turn_private.reserve_service_task_capacity",
+    "turn_private.result_basis_state",
+    "turn_private.result_domain_state_v2",
+    "turn_private.result_evidence_current_v2",
+    "turn_private.result_int_v2",
+    "turn_private.result_state_v2",
+    "turn_private.result_summary_v2",
+    "turn_private.result_title_v2",
+    "turn_private.result_translation_projection_v2",
+    "turn_private.result_uuid_v2",
+    "turn_private.retire_assistant_delivery_v1",
+    "turn_private.retire_assistant_event_v1",
+    "turn_private.save_planning_v2_place_v1",
+    "turn_private.saved_translation_candidate_v1",
+    "turn_private.serialize_planning_v2_request_v1",
+    "turn_private.submit_directions_v1",
+    "turn_private.task_history",
+    "turn_private.terminal",
+    "turn_private.text_owner",
+    "turn_private.text_policy_current",
+    "turn_private.translation_numbers_v2",
+    "turn_private.unknown_planning_v2_model_attempt_v1",
+    "turn_private.unknown_planning_v2_place_v1",
+    "turn_private.unknown_planning_v2_request_v1",
+    "turn_private.valid_assistant_selected_sources_v2",
+    "turn_private.valid_comparison_v1",
+    "turn_private.valid_current_v2_completion_proof",
+    "turn_private.valid_current_v2_publication_proof",
+    "turn_private.valid_directions_intake_v1",
+    "turn_private.valid_directions_relative_v1",
+    "turn_private.valid_explicit_travel_intake_v1",
+    "turn_private.valid_planning_comparison_v1",
+    "turn_private.valid_planning_observation_v1",
+    "turn_private.valid_planning_qualified_comparison_v1",
+    "turn_private.valid_planning_v2_place_v1",
+    "turn_private.valid_proposal_reference_v1",
+    "turn_private.valid_result_content_v2",
+    "turn_private.valid_result_draft_v2",
+    "turn_private.valid_result_evidence_v2",
+    "turn_private.valid_text",
+    "turn_private.valid_travel_directions_v1",
+    "turn_private.validate_planning_v2_output_v1"
+  ],
+  "catalogReplay": "UNRUN"
+}

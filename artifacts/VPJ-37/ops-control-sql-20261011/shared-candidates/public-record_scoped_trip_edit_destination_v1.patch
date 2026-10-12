@@ -1,0 +1,21 @@
+--- public-record_scoped_trip_edit_destination_v1.before.sql
++++ public-record_scoped_trip_edit_destination_v1.after.sql
+@@ -4,7 +4,7 @@
+  SECURITY DEFINER
+  SET search_path TO ''
+ AS $function$
+-declare j scoped_edit_private.work_v1%rowtype;r scoped_edit_private.requests_v1%rowtype;cfg scoped_edit_private.worker_settings_v1%rowtype;tp turn_private.text_policies%rowtype;payload jsonb;input jsonb;user_payload jsonb;expected_digest text;phase text;begin
++declare ops_decision jsonb; j scoped_edit_private.work_v1%rowtype;r scoped_edit_private.requests_v1%rowtype;cfg scoped_edit_private.worker_settings_v1%rowtype;tp turn_private.text_policies%rowtype;payload jsonb;input jsonb;user_payload jsonb;expected_digest text;phase text;begin
+  if auth.role() is distinct from 'service_role' then raise exception 'FORBIDDEN';end if;
+  select * into j from scoped_edit_private.work_v1 where binding=p_binding;
+  if not found then return jsonb_build_object('kind','pending');end if;
+@@ -18,7 +18,8 @@
+  or recovery_private.time_v1(p_destination->>'observedAt')>clock_timestamp()+interval '30 seconds' or recovery_private.time_v1(p_destination->>'observedAt')<clock_timestamp()-interval '1 minute'
+  or p_request_id is distinct from j.attempt_id::text or coalesce(p_request_digest,'') !~ '^[a-f0-9]{64}$' or coalesce(p_payload_digest,'') !~ '^[a-f0-9]{64}$'
+  or p_payload_text is null or pg_column_size(p_payload_text)>65536 or encode(sha256(convert_to(p_payload_text,'UTF8')),'hex') is distinct from p_payload_digest then raise exception 'INVALID_DESTINATION';end if;
+- expected_digest:=encode(sha256(convert_to('["scoped-trip-edit-request/1",'||replace((jsonb_build_array(p_binding->'ownerId',p_binding->'taskId',p_binding->'turnId',p_binding->'operationId',p_binding->'contextId',p_binding->'contextDigest',p_binding->'sourceDigest',p_binding->'tripId',p_binding->'baseVersion',p_binding->'policyId',p_binding->'scopeId',p_binding->'attemptId',p_binding->'provider',p_binding->'model',p_binding->'priceVersion'))::text,', ',',')||',"'||p_payload_digest||'"]','UTF8')),'hex');
++ if phase in('configured','attempted') then ops_decision:=ops_control_private.work_decision_v1(j.turn_id,(p_binding->>'leaseToken')::uuid,'model');if ops_decision->>'kind' is distinct from 'allowed' then if ops_decision ? 'code' then return ops_decision;end if;return jsonb_build_object('kind','pending');end if;end if;
++expected_digest:=encode(sha256(convert_to('["scoped-trip-edit-request/1",'||replace((jsonb_build_array(p_binding->'ownerId',p_binding->'taskId',p_binding->'turnId',p_binding->'operationId',p_binding->'contextId',p_binding->'contextDigest',p_binding->'sourceDigest',p_binding->'tripId',p_binding->'baseVersion',p_binding->'policyId',p_binding->'scopeId',p_binding->'attemptId',p_binding->'provider',p_binding->'model',p_binding->'priceVersion'))::text,', ',',')||',"'||p_payload_digest||'"]','UTF8')),'hex');
+  if p_request_digest<>expected_digest then raise exception 'INVALID_DESTINATION';end if;
+  select * into r from scoped_edit_private.requests_v1 where turn_id=j.turn_id for update;
+  if found then

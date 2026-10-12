@@ -1,0 +1,35 @@
+{
+  "base": "daa7bae44a660381fb3295d0d2afc327ea98d3ba",
+  "sqlBase": "4f3c7b322316f3c6be3d505bdeb86b300a1596f4",
+  "migrationCount": 154,
+  "fullbodySha256": "96b545afbd306da94ca8360afed3d6754c1de598bbab2d1d6e40562aec818b36",
+  "bytes": 1220093,
+  "constituents": [
+    {
+      "file": "new-kernel.candidate.sql",
+      "sha256": "cff7ebaefeed490cfd67feffc7cb18798d2bd0f41119b316cfbc65ce7bb5a3dd"
+    },
+    {
+      "file": "lifecycle.candidate.sql",
+      "sha256": "c404addf10ded83d028256d7816c6d1653f1e99d1938e199d7ebff4dfe80fc5d"
+    },
+    {
+      "file": "shared-functions.candidate.sql",
+      "sha256": "22dc202b76fbe999cde43fccf554cf85a199ed52c82f4847b774d68b234ed9a9"
+    },
+    {
+      "file": "guard-functions.candidate.sql",
+      "sha256": "2528f24b785cc1aebab07225b9f916ba8a61e48b2a0dbd95c6c8d222ffd395c2"
+    },
+    {
+      "file": "installed-guard.candidate.sql",
+      "sha256": "1a4d53cbc3bd177ced20ebac6044662e99ad7647e8778acabe7a01edb8f15e90"
+    }
+  ],
+  "sharedFunctionReplacements": 17,
+  "metadataGuardReplacements": 5,
+  "privateFunctionCount": 24,
+  "scope": "W2 AC3 only",
+  "productAppend": "ABSENT; Main body lease not granted",
+  "behavior": "6 actual isolated SQL/RPC cases PASS; extended pause/restore/export/oldTrip proof remaining"
+}

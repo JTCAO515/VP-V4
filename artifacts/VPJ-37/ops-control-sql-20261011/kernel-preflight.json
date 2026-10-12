@@ -1,0 +1,11 @@
+{
+  "nonce": "vpj37-w2sql-20261011-6c527b9d",
+  "owner": "01a126aa-2822-75d1-800b-ccd4fefcdc64",
+  "image": "public.ecr.aws/supabase/postgres@sha256:86a2e078779e5bdccda1f6f6c5063aa9779a322d1fface5fb408d051909b230f",
+  "version": "17.6",
+  "network": "none",
+  "publishedPorts": 0,
+  "mounts": 0,
+  "socketMode": "0700",
+  "actualPreflight": "PASS"
+}

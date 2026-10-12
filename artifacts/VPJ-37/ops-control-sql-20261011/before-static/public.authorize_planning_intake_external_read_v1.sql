@@ -1,0 +1,14 @@
+create function public.authorize_planning_intake_external_read_v1(p_owner uuid,p_task uuid,p_turn uuid,p_lease uuid,p_intake_digest text,p_planning_digest text,p_scope uuid,p_max_calls integer) returns jsonb
+language plpgsql security definer set search_path='' as $$
+declare q jsonb;p turn_private.planning_v2_execution_profiles%rowtype;n integer;
+begin
+q:=turn_private.planning_v2_run_basis(p_owner,p_task,p_turn,p_lease,p_intake_digest,p_planning_digest);if q is null or p_max_calls is distinct from 13 or q->'execution'->>'scopeId' is distinct from p_scope::text then return jsonb_build_object('kind','blocked');end if;
+ if not exists(select 1 from turn_private.planning_v2_place_checkpoints cp where cp.turn_id=p_turn and cp.owner_id=p_owner and cp.task_id=p_task and cp.claim_lease=p_lease and cp.state='started' and cp.intake_digest=p_intake_digest and cp.planning_digest=p_planning_digest) then return jsonb_build_object('kind','blocked');end if;
+ select profile.* into p from turn_private.planning_v2_execution_profiles profile where profile.id=(q->'execution'->>'profileId')::uuid;
+ if not p.map_fee_approved or p.map_fee_window_until<=clock_timestamp() then return jsonb_build_object('kind','blocked');end if;
+ insert into turn_private.planning_v2_external_call_windows values((q->>'runId')::uuid,0) on conflict do nothing;
+ update turn_private.planning_v2_external_call_windows set calls=calls+1 where execution_id=(q->>'runId')::uuid and calls<13 returning calls into n;
+ if not found then return jsonb_build_object('kind','blocked');end if;
+ return jsonb_build_object('schemaVersion','planning-v2-tool-authority/1','kind','authorized','binding',jsonb_build_object('ownerId',p_owner,'taskId',p_task,'turnId',p_turn,'leaseToken',p_lease,'intakeContextDigest',p_intake_digest,'planningContextDigest',p_planning_digest),'scopeId',p_scope,'maxCalls',13);
+exception when lock_not_available then return jsonb_build_object('kind','blocked');
+end $$;

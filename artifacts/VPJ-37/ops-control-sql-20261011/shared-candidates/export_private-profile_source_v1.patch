@@ -1,0 +1,10 @@
+--- export_private-profile_source_v1.before.sql
++++ export_private-profile_source_v1.after.sql
+@@ -46,5 +46,6 @@
+  item:=jsonb_build_object('ownerId',u,'profile',profile_n,'watermark',watermark_n,'operations',ops,
+   'sourceRows',jsonb_build_object('profiles',case when p.owner_id is null then 0 else 1 end,'watermarks',case when w.owner_id is null then 0 else 1 end,'operations',n));
+  if octet_length(notification_private.canonical(jsonb_build_object('snapshot',jsonb_build_array(item))))>1000000 then raise exception 'PROFILE_SCOPE_TOO_LARGE';end if;
+- return item;
++ ops:=ops||ops_control_private.export_actor_operations_v1(u);n:=jsonb_array_length(ops);if rows_n+n>10000 then raise exception 'PROFILE_SCOPE_TOO_LARGE';end if;item:=jsonb_set(jsonb_set(item,'{operations}',ops),'{sourceRows,operations}',to_jsonb(n));if octet_length(notification_private.canonical(jsonb_build_object('snapshot',jsonb_build_array(item))))>1000000 then raise exception 'PROFILE_SCOPE_TOO_LARGE';end if;
++return item;
+ end$function$

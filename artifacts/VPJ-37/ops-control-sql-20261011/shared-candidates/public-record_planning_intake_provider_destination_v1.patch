@@ -1,0 +1,21 @@
+--- public-record_planning_intake_provider_destination_v1.before.sql
++++ public-record_planning_intake_provider_destination_v1.after.sql
+@@ -4,7 +4,7 @@
+  SECURITY DEFINER
+  SET search_path TO ''
+ AS $function$
+-declare q jsonb;e jsonb;b jsonb;o turn_private.planning_v2_collector_origins%rowtype;phase text;at_time timestamptz;canonical jsonb;payload jsonb;user_input jsonb;place jsonb;
++declare ops_decision jsonb; q jsonb;e jsonb;b jsonb;o turn_private.planning_v2_collector_origins%rowtype;phase text;at_time timestamptz;canonical jsonb;payload jsonb;user_input jsonb;place jsonb;
+ begin
+ q:=turn_private.planning_v2_exact_model_basis(p_owner,p_task,p_turn,p_lease,p_text_policy,p_planning_policy,p_scope,p_attempt,p_provider,p_model,p_price_version,p_intake_digest,p_planning_digest);if q is null then return jsonb_build_object('kind','blocked');end if;e:=q->'execution';b:=jsonb_build_object('owner',p_owner,'task',p_task,'turn',p_turn,'lease',p_lease,'textPolicy',p_text_policy,'planningPolicy',p_planning_policy,'scope',p_scope,'attempt',p_attempt,'provider',p_provider,'model',p_model,'priceVersion',p_price_version,'intakeDigest',p_intake_digest,'planningDigest',p_planning_digest);
+  if p_destination is null or jsonb_typeof(p_destination) is distinct from 'object' or p_destination-array['schemaVersion','invocationId','provider','model','endpoint','configurationId','configurationVersion','phase','observedAt']<>'{}' or (select count(*) from jsonb_object_keys(p_destination))<>9
+@@ -22,7 +22,8 @@
+  if not exists(select 1 from public.model_budget_attempts where scope_id=p_scope and attempt_id=p_attempt and task_id=p_task and status='dispatched' and reserved_micros=(e->>'reservedMicros')::bigint) or (select count(*) from public.model_budget_attempts where task_id=p_task)<>1 then return jsonb_build_object('kind','blocked');end if;
+  if turn_private.read_planning_v2_model_binding_v1(p_owner,p_task,p_turn,p_lease,p_text_policy,p_planning_policy,p_scope,p_attempt,p_provider,p_model,p_price_version,p_intake_digest,p_planning_digest)->'unknown' is distinct from 'false'::jsonb then return jsonb_build_object('kind','blocked');end if;
+  select * into o from turn_private.planning_v2_collector_origins where execution_id=(q->>'runId')::uuid for update nowait;
+- if phase='configured' then
++ if phase in('configured','attempted') then ops_decision:=ops_control_private.work_decision_v1(p_turn,p_lease,'model');if ops_decision->>'kind' is distinct from 'allowed' then if ops_decision ? 'code' then return ops_decision;end if;return jsonb_build_object('kind','blocked');end if;end if;
++if phase='configured' then
+   if found then return jsonb_build_object('kind','blocked');end if;
+   insert into turn_private.planning_v2_collector_origins(execution_id,scope_id,attempt_id,invocation_id,request_id,request_digest,payload_digest,binding,origin_kind,configured_at,configuration_id,configuration_version,endpoint) values((q->>'runId')::uuid,p_scope,p_attempt,(p_destination->>'invocationId')::uuid,p_request_id,p_request_digest,p_payload_digest,b,q->>'originKind',at_time,(e->>'providerConfigurationId')::uuid,(e->>'providerConfigurationVersion')::integer,e->>'endpoint');
+  else

@@ -1,0 +1,15 @@
+CREATE OR REPLACE FUNCTION public.authorize_planning_read_v1(p_turn_id uuid, p_lease_token uuid, p_context_digest text)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare ops_decision jsonb; payload jsonb;
+begin
+  if exists(select 1 from turn_private.work where turn_id=p_turn_id and execution_mode in('planning_intake_comparison_v2','scoped_trip_edit_v1','travel_directions_v1')) then return jsonb_build_object('kind','blocked'); end if;
+  if (select auth.role())<>'service_role' or p_context_digest !~ '^[a-f0-9]{64}$' then raise exception 'INVALID_INPUT'; end if;
+  payload:=public.read_planning_comparison_work_v1(p_turn_id,p_lease_token);
+  if payload->>'kind'<>'planning_input' or payload->>'contextDigest' is distinct from p_context_digest then return jsonb_build_object('kind','blocked'); end if;
+  ops_decision:=ops_control_private.work_decision_v1(p_turn_id,p_lease_token,'tool');if ops_decision->>'kind' is distinct from 'allowed' then if ops_decision ? 'code' then return ops_decision;end if;return jsonb_build_object('kind','blocked');end if;
+return jsonb_build_object('kind','authorized');
+end $function$

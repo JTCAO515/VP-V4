@@ -1,0 +1,19 @@
+--- public-stop_model_budget.before.sql
++++ public-stop_model_budget.after.sql
+@@ -1,6 +1,7 @@
+ CREATE OR REPLACE FUNCTION public.stop_model_budget(p_scope_id uuid, p_owner_id uuid)
+  RETURNS jsonb
+  LANGUAGE plpgsql
++ SECURITY DEFINER
+  SET search_path TO ''
+ AS $function$
+ declare
+@@ -19,6 +20,7 @@
+   update public.model_budget_attempts set status = 'pending', updated_at = clock_timestamp()
+     where scope_id = p_scope_id and status = 'dispatched';
+   get diagnostics pending_count = row_count;
+-  return jsonb_build_object('kind','stopped','released',released_count,'pending',pending_count);
++  perform ops_control_private.repeated_budget_stop_v1(p_scope_id,p_owner_id,s.enabled);
++return jsonb_build_object('kind','stopped','released',released_count,'pending',pending_count);
+ end;
+ $function$

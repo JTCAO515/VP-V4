@@ -1,0 +1,9 @@
+{
+  "installedBefore": true,
+  "disabledOwnNewHook": {
+    "installed": false,
+    "recovery": false
+  },
+  "rollbackInstalled": true,
+  "result": "PASS"
+}

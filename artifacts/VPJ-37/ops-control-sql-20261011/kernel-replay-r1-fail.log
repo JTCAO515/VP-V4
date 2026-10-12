@@ -1,0 +1,17 @@
+Retained actual tool result from the first ordered main4f3 PG17 replay.
+Fixture db helper set search_path='' before top-level migration evaluation.
+No old migration or guard was changed.
+
+AssertionError [ERR_ASSERTION]: ERROR:  DIRECTIONS_BEFORE_TABLE_MISMATCH turn_private.work
+CONTEXT:  PL/pgSQL function inline_code_block line 8 at RAISE
+3 !== 0
+
+Own prefix read-only diagnostic work-prefix-delta.json identified one difference:
+expected: FOREIGN KEY (turn_id) REFERENCES turns(id) ON DELETE CASCADE
+actual:   FOREIGN KEY (turn_id) REFERENCES public.turns(id) ON DELETE CASCADE
+
+Correction: restore the repository fixture's public search_path for top-level replay;
+retain empty search_path explicitly for canonical catalog acquisition/function bodies.
+Verified own nonce cleanup, recreated same leased fixture, replayed the same154 source
+hashes without changing the migration or weakening the guard. kernel-replay.json records
+the actual subsequent PASS. This original run remains FAIL.

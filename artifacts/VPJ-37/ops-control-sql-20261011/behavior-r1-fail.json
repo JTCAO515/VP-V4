@@ -1,0 +1,14 @@
+{
+  "environment": "Owned network-none PG17; SQL Auth claims fixture, not GoTrue/provider",
+  "results": [
+    {
+      "label": "live Ops identity/current real session; anon/nonmember/private kernel denied",
+      "result": "PASS"
+    },
+    {
+      "label": "private restore reconciliation keeps controls stopped and advances floors",
+      "result": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: ERROR:  column reference \"x\" is ambiguous\nLINE 1: (select count(distinct(x->'scope')::text) from jsonb_array_e...\n                               ^\nDETAIL:  It could refer to either a PL/pgSQL variable or a table column.\nQUERY:  (select count(distinct(x->'scope')::text) from jsonb_array_elements(v->'controls') x)<>12\n  or(select count(distinct x->>'scopeId') from jsonb_array_elements(v->'budgets') x)<>jsonb_array_length(v->'budgets')\n  or(select count(distinct x->>'operationId') from jsonb_array_elements(v->'retiredOperations') x)<>jsonb_array_length(v->'retiredOperations')\n  or(select count(distinct x::text) from jsonb_array_elements(v->'erasedActors') x)<>jsonb_array_length(v->'erasedActors')\nCONTEXT:  PL/pgSQL function ops_control_private.reconcile_restore_v1(jsonb,text) line 14 at IF\n\n\n3 !== 0\n"
+    }
+  ]
+}

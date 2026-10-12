@@ -1,0 +1,17 @@
+{
+  "environment": "Owned network-none PG17; SQL Auth claims fixture, not GoTrue/provider",
+  "results": [
+    {
+      "label": "live Ops identity/current real session; anon/nonmember/private kernel denied",
+      "result": "PASS"
+    },
+    {
+      "label": "private restore reconciliation keeps controls stopped and advances floors",
+      "result": "PASS"
+    },
+    {
+      "label": "global CAS, exact replay, payload/subject collision, receipt uniform unavailability",
+      "result": "PASS"
+    }
+  ]
+}

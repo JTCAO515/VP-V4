@@ -1,0 +1,7 @@
+AssertionError [ERR_ASSERTION]: ERROR:  syntax error at end of input
+LINE 14: ...nct from case when p_reason='ops_control_disabled' then 'OPS...
+                                                              ^
+
+
+3 !== 0
+
