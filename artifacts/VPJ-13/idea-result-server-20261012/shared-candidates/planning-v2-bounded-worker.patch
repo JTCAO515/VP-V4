@@ -1,6 +1,7 @@
 --- a/lib/server/turn/planning-v2-bounded-worker.ts
 +++ b/lib/server/turn/planning-v2-bounded-worker.ts
-@@ -1,6 +1,9 @@
+@@ -1,7 +1,10 @@
+ import {decodeOpsPause,decodeOpsRefusal,OpsControlRefusal} from '../observability/ops-control/refusal.ts';
  import {createHash,randomUUID} from 'node:crypto';
  import {decodePlanningV2Read,decodePlanningV2Checkpoints,validPlanningV2Lease,validPlanningV2PreparedProjection,type V2Lease} from './planning-intake-worker-protocol.ts';
 -import {runPlanningV2ModelStep,type PlanningV2ModelStepPorts} from './planning-v2-model-step.ts';
@@ -11,7 +12,7 @@
  import {parsePlanningV2ModelOutputReceipt,type PlanningV2ModelOutputReceipt} from './planning-v2-model-output-receipt.ts';
  import {PROTOCOL_MODELS} from '../model-gateway/adapters/provider-protocol.ts';
  import type {PlanningV2ModelRequestBinding} from './planning-v2-model-request.ts';
-@@ -41,7 +44,8 @@
+@@ -42,7 +45,8 @@
    const e=claim.execution,expected={schemaVersion:'planning-v2-execution/1',...config.execution,textPolicyId:config.textPolicyId,scopeId:config.scopeId,provider:'qwen',model:PROTOCOL_MODELS.qwen,priceVersion:config.priceVersion,reservedMicros:config.reservedMicros,timeoutMs:config.timeoutMs,maxOutputTokens:config.maxOutputTokens,maxMapCalls:13,maxSteps:4,maxRetries:0,deadlineMs:120000};
    if(!exact(e,[...Object.keys(expected),'executionId','profileRevision'])||!uuid(e.executionId)||!Number.isSafeInteger(e.profileRevision)||Number(e.profileRevision)<1||Object.entries(expected).some(([k,v])=>e[k]!==v))return await pause('blocked');
    const l=lease;
@@ -21,7 +22,7 @@
    let input=await current();const checkpoints=decodePlanningV2Checkpoints(await invoke('read_planning_intake_checkpoints_v1',six(l)),l,ports.now());if(!checkpoints)return await pause('blocked');
    const placeState=checkpoints.place as Row;let place:Row;
    if(['started','unknown'].includes(String(placeState.state)))return await pause('reconciliation');
-@@ -60,7 +64,7 @@
+@@ -61,7 +65,7 @@
      if(await invoke('save_planning_intake_place_v1',{...six(l),p_observation:place})!==true)return await pause('reconciliation');
     }catch{try{await invoke('unknown_planning_intake_place_v1',six(l));}catch{}return await pause('reconciliation');}
    }
@@ -30,13 +31,13 @@
    const model=await invoke('read_planning_intake_model_output_v1',{...six(l),p_scope:config.scopeId,p_text_policy:config.textPolicyId,p_price_version:config.priceVersion});let output:PlanningV2ModelOutputReceipt|null=null;
    if(row(model)&&exact(model,['kind','state','binding','output'])&&model.kind==='model_state'&&model.state==='settled'&&row(model.binding)){
     const b=model.binding as PlanningV2ModelRequestBinding;
-@@ -68,11 +72,12 @@
+@@ -69,11 +73,12 @@
     output=parsePlanningV2ModelOutputReceipt(model.output,b);if(!output)return await pause('reconciliation');
    }else if(row(model)&&exact(model,['kind','state'])&&model.kind==='model_state'&&model.state==='none'&&checkpoints.modelAttempt==='none'){
     const binding:PlanningV2ModelRequestBinding={owner:l.ownerId,task:l.taskId,turn:l.turnId,lease:l.leaseToken,textPolicy:config.textPolicyId,planningPolicy:l.planningPolicyId,scope:config.scopeId,attempt:randomUUID(),provider:'qwen',model:PROTOCOL_MODELS.qwen,priceVersion:config.priceVersion,intakeDigest:l.intakeContextDigest,planningDigest:l.planningContextDigest};
 -   const prompt=JSON.stringify({goal:input.goalText,delegation:input.delegation,intake:input.qualifiedIntake.intake,observation:place,unknown:['hotel_price','availability','safety','quietness','food','photography','pace_suitability']});
--   const result=await runPlanningV2ModelStep({enabled:true,lease:l,binding,reservedMicros:config.reservedMicros,timeoutMs:config.timeoutMs,maxOutputTokens:config.maxOutputTokens,prompt},ports.model,controller.signal);if(result.kind!=='settled')return await pause('reconciliation');output=result.output;
-+   const result=await runIdeaResultModel({enabled:true,lease:l,binding,reservedMicros:config.reservedMicros,timeoutMs:config.timeoutMs,maxOutputTokens:config.maxOutputTokens,observation:place,observedNow:ports.now()},ports.model,controller.signal);if(result.kind!=='settled')return await pause('reconciliation');output=result.output;
+-   const result=await runPlanningV2ModelStep({enabled:true,lease:l,binding,reservedMicros:config.reservedMicros,timeoutMs:config.timeoutMs,maxOutputTokens:config.maxOutputTokens,prompt},ports.model,controller.signal);if(result.kind==='ops_refused')return await pause('blocked');if(result.kind!=='settled')return await pause('reconciliation');output=result.output;
++   const result=await runIdeaResultModel({enabled:true,lease:l,binding,reservedMicros:config.reservedMicros,timeoutMs:config.timeoutMs,maxOutputTokens:config.maxOutputTokens,observation:place,observedNow:ports.now()},ports.model,controller.signal);if(result.kind==='ops_refused')return await pause('blocked');if(result.kind!=='settled')return await pause('reconciliation');output=result.output;
    }else return await pause('reconciliation');
    input=await current();const projection=await invoke('project_planning_intake_comparison_v1',{...six(l),p_observation:place});if(!validPlanningV2PreparedProjection(projection,input,l,place,ports.now())||!row(projection))return await pause('blocked');
 -  const content=projection.content as Row,options=content.options as Row[],contentTuple=[content.schemaVersion,content.title,content.summary,options.map(o=>[o.id,o.title,o.tradeoff]),content.actions],digest=createHash('sha256').update(JSON.stringify(contentTuple)).digest('hex'),key=createHash('sha256').update(JSON.stringify([l.taskId,l.turnId,l.intakeContextDigest,l.planningContextDigest,'result.prepare',digest])).digest('hex');

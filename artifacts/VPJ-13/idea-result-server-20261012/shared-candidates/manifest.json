@@ -1,12 +1,15 @@
 {
   "base": "daa7bae44a660381fb3295d0d2afc327ea98d3ba",
   "path": "lib/server/turn/planning-v2-bounded-worker.ts",
-  "before": "d45a2115693593511cc0c912ea485a3886371d09beb66c5a2af6c04021fabf1a",
-  "after": "17b6f9e18308f4398c70cce3c83943cb97bc8a0ef186de3439de60346d6254c3",
-  "patch": "8f9956ea541898ee92dfdc6f532be0caf29bbf5e029bb790c4919e0b6315437e",
+  "beforeOwner": "01a126a8-7cb5-7a70-aca6-0ba38c99efe2",
+  "beforeOwnerHead": "a42562a3a918613af2e64475e8e378f5c207bcd4",
+  "beforeSourceWorktree": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj37-ops-control-server-20261011",
+  "before": "6496b1bfd7d05aaf6399a41e1a29cfdb7a646284d2f14c4449743bc2a3d271d6",
+  "after": "799d0ba111e642115b2d1dc755ba2ea37ecb381fb8b9c6a7d85316f33fa5e74b",
+  "patch": "5deb172d2c394e10121bd64d4b2391281109e1440ca1d6fbf1763a8eb9127cf0",
   "applied": false,
   "requires": [
-    "exact current-holder release and Main lease",
+    "exact W2 current-holder limited release and Main lease; no wholefile transfer",
     "professional SQL completion validator for source-qualified model selection; no append slot granted",
     "no host/provider/admission activation"
   ]

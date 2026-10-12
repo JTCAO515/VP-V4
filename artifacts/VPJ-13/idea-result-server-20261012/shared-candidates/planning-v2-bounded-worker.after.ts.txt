@@ -1,3 +1,4 @@
+import {decodeOpsPause,decodeOpsRefusal,OpsControlRefusal} from '../observability/ops-control/refusal.ts';
 import {createHash,randomUUID} from 'node:crypto';
 import {decodePlanningV2Read,decodePlanningV2Checkpoints,validPlanningV2Lease,validPlanningV2PreparedProjection,type V2Lease} from './planning-intake-worker-protocol.ts';
 import {type PlanningV2ModelStepPorts} from './planning-v2-model-step.ts';
@@ -33,7 +34,7 @@ export async function runPlanningV2BoundedWorker(config:PlanningV2WorkerConfig,p
   if(!lease)return 'blocked' as const;
   // Cleanup has a separate finite scope, since the worker may already be aborted.
   const cleanup=new AbortController(),limit=setTimeout(()=>cleanup.abort(),15000);
-  try{const v=await ports.rpc('pause_planning_intake_work_v1',{...six(lease),p_reason:reason},cleanup.signal);return row(v)&&exact(v,['kind','taskId','turnId'])&&v.kind==='paused'&&v.taskId===lease.taskId&&v.turnId===lease.turnId?'paused' as const:'unknown' as const;}catch{return 'unknown' as const;}finally{clearTimeout(limit);}
+  try{const v=await ports.rpc('pause_planning_intake_work_v1',{...six(lease),p_reason:reason},cleanup.signal);if(row(v)&&exact(v,['kind','taskId','turnId','code','accounting'])&&v.taskId===lease.taskId&&v.turnId===lease.turnId&&decodeOpsPause({kind:v.kind,code:v.code,accounting:v.accounting}))return 'paused' as const;return row(v)&&exact(v,['kind','taskId','turnId'])&&v.kind==='paused'&&v.taskId===lease.taskId&&v.turnId===lease.turnId?'paused' as const:'unknown' as const;}catch{return 'unknown' as const;}finally{clearTimeout(limit);}
  };
  try{
   const claim=await invoke('claim_planning_intake_work_v1',{p_owner_id:config.ownerId,p_planning_policy_id:config.planningPolicyId,p_execution_profile_id:config.execution.profileId});
@@ -72,7 +73,7 @@ export async function runPlanningV2BoundedWorker(config:PlanningV2WorkerConfig,p
    output=parsePlanningV2ModelOutputReceipt(model.output,b);if(!output)return await pause('reconciliation');
   }else if(row(model)&&exact(model,['kind','state'])&&model.kind==='model_state'&&model.state==='none'&&checkpoints.modelAttempt==='none'){
    const binding:PlanningV2ModelRequestBinding={owner:l.ownerId,task:l.taskId,turn:l.turnId,lease:l.leaseToken,textPolicy:config.textPolicyId,planningPolicy:l.planningPolicyId,scope:config.scopeId,attempt:randomUUID(),provider:'qwen',model:PROTOCOL_MODELS.qwen,priceVersion:config.priceVersion,intakeDigest:l.intakeContextDigest,planningDigest:l.planningContextDigest};
-   const result=await runIdeaResultModel({enabled:true,lease:l,binding,reservedMicros:config.reservedMicros,timeoutMs:config.timeoutMs,maxOutputTokens:config.maxOutputTokens,observation:place,observedNow:ports.now()},ports.model,controller.signal);if(result.kind!=='settled')return await pause('reconciliation');output=result.output;
+   const result=await runIdeaResultModel({enabled:true,lease:l,binding,reservedMicros:config.reservedMicros,timeoutMs:config.timeoutMs,maxOutputTokens:config.maxOutputTokens,observation:place,observedNow:ports.now()},ports.model,controller.signal);if(result.kind==='ops_refused')return await pause('blocked');if(result.kind!=='settled')return await pause('reconciliation');output=result.output;
   }else return await pause('reconciliation');
   input=await current();const projection=await invoke('project_planning_intake_comparison_v1',{...six(l),p_observation:place});if(!validPlanningV2PreparedProjection(projection,input,l,place,ports.now())||!row(projection))return await pause('blocked');
   const captured=pinnedIdea;if(!captured)return await pause('stale');
