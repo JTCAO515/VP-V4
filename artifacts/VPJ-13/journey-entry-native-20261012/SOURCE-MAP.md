@@ -12,14 +12,14 @@ Base: main 4f3c7b322316f3c6be3d505bdeb86b300a1596f4, fetched 2026-10-12. Origina
 
 Only Ask owns goal admission and continuation. Candidate adds a private entry card and material sheet, replaces the existing directions sheet consumer with the private compact page, and registers the new private Swift files in the app project. It preserves all original pending request, scope/generation, source, policy, consent and writer paths. Existing goal without a current parent is blocked rather than replaced with a new goal. New input does not itself imply accepted execution or first value.
 
-Candidate full before/patch/after + hashes: `candidate-manifest.json`, `candidates/`. Shared Ask and project files remain unchanged in this worktree. Current holders must be live-confirmed by Main; COORDINATION contains historical overlapping scopes, not release evidence. No lease is inferred from clean state, last author, original root dirty or an old reservation. Temporary validation copy is solely a compilation of the candidate; it grants no integration lease.
+Candidate full before/patch/after + hashes: `candidate-manifest.json`, `candidates/`. Shared Ask and project changes were subsequently applied by exact guarded patch under Main’s limited two-file lease after original-holder releases. See `lease-applied.json`. Original root dirty and other worktrees remain untouched. Temporary validation copy compilation is reused because all six source hashes match the registered worktree, not because compilation grants a lease.
 
 ## Missing product contracts and consumers
 
 1. Personalized single-idea directions: existing directions/domain.ts produces fixed depth/breadth options from reviewed intake fields. Raw `text` binds input provenance but is not an extractor. Party size/service intent are absent from `travel-directions-intake/1`. No inference/default city/date is implemented. Full E1 personalized outcome and reuse of those fields remain incomplete; requires an accepted existing-source projection seam from the original planning owner, not a new RPC or framework here.
 2. Actual first value/adoption observability: source search found first_value only in research intake migration 20260917140000. Its research application status/event writer is unrelated to product execution. No product analytics consent read, event allowlist, native sink, retention/export/delete registration or activation/outcome reducer was found. Existing AssistantEvents is task/result lifecycle delivery and invalidation, not an analytics collection permission. We do not send research first_value, raw ideas/materials, diagnostic logs or events.
 3. Last decision: the current conversation and Trip summary have no authoritative typed last-decision field. Exact saved-result read is the current consumer. No decision text or claimed update is invented.
-4. App integration: Ask/project candidate needs limited original-holder release and exact Main lease before applying. New private source alone is not an installed app flow.
+4. App registration: exact Ask/project candidate is now applied under the original-holder releases and Main lease. Four sources are registered in app Sources and the Ask consumer invokes them. Installed UI and actual E1/E2/E3 behavior remain UNRUN.
 
 ## Minimal observation candidate for the existing telemetry owner
 
@@ -33,4 +33,4 @@ New files introduce transient SwiftUI input/presentation state only. No disk cac
 
 ## Outstanding acceptance
 
-Shared registered delivery, real permitted E1/E2/E3 integration, personalized provenance, persistent consented observations, final exact-head review/CI, installation, physical device, VoiceOver and target acceptance remain UNRUN/incomplete. #203 must remain OPEN. No new server/SQL/queue/provider deployment, real-account data or resource cleanup is authorized or performed in this slice.
+Real permitted E1/E2/E3 integration, personalized provenance, persistent consented observations, final exact-head review/CI, installation, physical device, VoiceOver and target acceptance remain UNRUN/incomplete. #203 must remain OPEN. No new server/SQL/queue/provider deployment, real-account data or resource cleanup is authorized or performed in this slice.

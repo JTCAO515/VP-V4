@@ -472,6 +472,10 @@
 		B197200000000000000000008 = {isa = PBXBuildFile; fileRef = B197100000000000000000008; };
 		B197200000000000000000009 = {isa = PBXBuildFile; fileRef = B197100000000000000000009; };
 		B19720000000000000000000A = {isa = PBXBuildFile; fileRef = B19710000000000000000000A; };
+		B203200000000000000000001 = {isa = PBXBuildFile; fileRef = B203100000000000000000001; };
+		B203200000000000000000002 = {isa = PBXBuildFile; fileRef = B203100000000000000000002; };
+		B203200000000000000000003 = {isa = PBXBuildFile; fileRef = B203100000000000000000003; };
+		B203200000000000000000004 = {isa = PBXBuildFile; fileRef = B203100000000000000000004; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -950,6 +954,10 @@
 		B197100000000000000000008 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/TravelDirections/NativeTravelDirectionsStore.swift; sourceTree = SOURCE_ROOT; };
 		B197100000000000000000009 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/TravelDirections/NativeTravelDirectionsWire.swift; sourceTree = SOURCE_ROOT; };
 		B19710000000000000000000A = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePandaTests/NativeTravelDirectionsTests.swift; sourceTree = SOURCE_ROOT; };
+		B203100000000000000000001 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/JourneyEntry/NativeJourneyDirectionsView.swift; sourceTree = SOURCE_ROOT; };
+		B203100000000000000000002 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/JourneyEntry/NativeJourneyEntryView.swift; sourceTree = SOURCE_ROOT; };
+		B203100000000000000000003 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/JourneyEntry/NativeJourneyMaterialsView.swift; sourceTree = SOURCE_ROOT; };
+		B203100000000000000000004 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/JourneyEntry/NativeJourneyEntryContinuation.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -971,6 +979,10 @@
 				B197100000000000000000005,
 				B197100000000000000000006,
 				B197100000000000000000007,
+				B203100000000000000000004,
+				B203100000000000000000001,
+				B203100000000000000000002,
+				B203100000000000000000003,
 				B197100000000000000000008,
 				B197100000000000000000009,
 				B19710000000000000000000A,
@@ -1158,6 +1170,10 @@
 				B197200000000000000000005,
 				B197200000000000000000006,
 				B197200000000000000000007,
+				B203200000000000000000004,
+				B203200000000000000000001,
+				B203200000000000000000002,
+				B203200000000000000000003,
 				B197200000000000000000008,
 				B197200000000000000000009,
 

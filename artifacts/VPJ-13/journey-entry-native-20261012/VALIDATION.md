@@ -10,3 +10,7 @@
 - INCOMPLETE: authoritative party-size/service-intent/personalization projection and actual consented product telemetry consumer. No first_value pipeline invented, no #203 closure or merge claim.
 
 First Swift compile: `error opening ~/.cache/clang/ModuleCache/...swiftmodule for output: Operation not permitted`; subsequent executable absence was command chaining noise. Successful retry used `swiftc -module-cache-path /private/tmp/vpj13-swift-modulecache-20261012 ...`; executable ran only after observed compile exit 0. No security configuration was changed.
+
+## Subsequent exact lease application
+
+Main supplied the two limited original-holder releases and exact before/patch/after lease. Guarded zero-context apply matched both after hashes; all four private source hashes still match the final r3 compilation copy. Actual worktree app registration and Ask invocation now landed. `plutil -lint` and `git diff --check` PASS; source-registration readback PASS. Earlier UNAPPLIED statements above describe the earlier validation stage. Reuse r3 compilation and 10 continuation cases without repeating unrelated Native/197 checks. Installed behavior, persona/party/service projection and consented telemetry remain incomplete; #203 stays OPEN.

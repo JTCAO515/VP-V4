@@ -457,6 +457,7 @@ struct NativeAssistantConversationView: View {
     @State private var selectedMemoryBasis:[NativeTravelMemoryReference]=[]
     @State private var draft = ""
     @State private var planningDraft = ""
+    @State private var showJourneyMaterials = false
     @State private var directionsPresentation: NativeTravelDirectionsSelection?
     @State private var directionsIntake = NativeTravelDirectionsIntakeStore()
     @State private var planningPolicy: AssistantPlanningPolicy?
@@ -611,6 +612,31 @@ struct NativeAssistantConversationView: View {
                 Text(chinese ? "与 VP 继续" : "Continue with VP").font(.title2.bold())
                 Text(chinese ? "对话和目标会保存。你可以继续提问，也可以委托一项比较任务。" : "Your conversation and goal are saved. Keep asking questions while a comparison runs.")
                     .font(.footnote).foregroundStyle(Color.vpSecondaryText)
+                if !entryBlocking && confirmedConversation && policy?.consentState == .accepted {
+                    NativeJourneyEntryView(chinese: chinese, goalText: goal?.text,
+                        tripTitle: tripLink?.current == true ? linkedTripTitle : nil,
+                        unresolvedTasks: taskMessages.filter { message in
+                            message.goalId == goal?.goalId && message.scopeVersion == goal?.scopeVersion
+                                && taskTurn(for: message)?.waiting == true
+                        }.count,
+                        memoryVersions: qualifiedMemoryBasis.map(\.revision),
+                        canContinue: NativeJourneyEntryContinuation.relationship(authorized: resultActive && !composerWaitingForAuthority,
+                            pending: shellSwitchBlocked, goalVersion: goal?.scopeVersion, hasCurrentParent: goalHasCurrentMessage) != nil,
+                        hasResult: selectedSources.sources.artifact != nil || lastViewedArtifact != nil,
+                        idea: $draft, continueIdea: {
+                            guard let relationship = NativeJourneyEntryContinuation.relationship(
+                                authorized: resultActive && !composerWaitingForAuthority, pending: shellSwitchBlocked,
+                                goalVersion: goal?.scopeVersion, hasCurrentParent: goalHasCurrentMessage) else { return }
+                            operation = relationship
+                            Task { await send() }
+                        }, openMaterials: { showJourneyMaterials = true }, openResult: {
+                            if let artifact = selectedSources.sources.artifact ?? lastViewedArtifact {
+                                fiveResultSelection = .init(artifactID: artifact.artifactId, revision: artifact.revision)
+                            }
+                        })
+                } else if !entryBlocking {
+                    Button(chinese ? "已有安排或本机保存内容" : "Existing arrangements or locally saved text") { showJourneyMaterials = true }
+                }
                 if !entryBlocking && session.dataScope != nil && (policy?.consentState == .accepted || selection.conversationID != nil) {
                     conversationControls
                 }
@@ -726,8 +752,11 @@ struct NativeAssistantConversationView: View {
                 selectedSources.sources.evidence.append(evidence)
             }
         }
+        .sheet(isPresented: $showJourneyMaterials) {
+            NativeJourneyMaterialsView(session: session, chinese: chinese)
+        }
         .sheet(item: $directionsPresentation, onDismiss: { Task { await reload() } }) { target in
-            NativeTravelDirectionsSheet(selection: target, currentSelection: { directionsSelection },
+            NativeJourneyDirectionsView(selection: target, currentSelection: { directionsSelection },
                 originalRequest: conversation?.messages.first(where: { $0.messageId == target.parentMessageID })?.text ?? "",
                 session: session, chinese: chinese, store: directionsIntake)
         }
