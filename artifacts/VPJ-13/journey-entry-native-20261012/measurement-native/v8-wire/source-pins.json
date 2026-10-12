@@ -1,0 +1,25 @@
+{
+  "soleMain": "01a12f81-dd0f-752f-a6ff-869b2887400d",
+  "serverWire": {
+    "lib/server/journey-entry/experience-measurement/acceptance.ts": "b207991e1cd1a83e4a3bb0d33a5d8af1e746bef7941aced4e05ab2e924c39e6d",
+    "lib/server/journey-entry/experience-measurement/contract.ts": "7185070c169e8e7f90e23461cf2a8859f58be416c9d801e61d39cceb3918861e",
+    "lib/server/journey-entry/experience-measurement/protocol.ts": "6611ccde60b4ef56e20f86d75723c6e9dac33ad8076b5cd31c346bae7de3203e",
+    "lib/server/journey-entry/experience-measurement/http.ts": "bac1a492ec8132528c0a9fc1aa77bf6d1743c1842e21b99154ec01a6364233fa",
+    "lib/server/privacy/experience-measurement/LIFECYCLE-WIRE.md": "88e8d15ffeca61988355de3cca43a5998a4d78f3501a0171710efff4cfdeead4"
+  },
+  "SQLcontract": "2832fe7391420a930196e02f067eb89a5e9848c4772847b66e00c0d5ebb83e1f",
+  "private": {
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyMeasurementController.swift": "5cdecc6562336984bb537f61b4d24a571c60b8ded6b0927ebc58a74e3bf6439d",
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyMeasurementWire.swift": "15500c74246f8abe270be0a87b6a7ea9115d2961bee2a82b06161b42cd760c5e",
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyMeasurementGateway.swift": "750d39cf41d05a5712083bcbec91f6422e5e693d10d57f9ddf35ccaa1c92ae90"
+  },
+  "tests": {
+    "wireGateway": 25,
+    "domain": 43
+  },
+  "candidateApp": "PASS source matched both architectures; no real registration",
+  "wireTransport": "injected only; no real Native Session observer method applied",
+  "liveCore": "ABSENT; default-deny regardless policy bit",
+  "E2Result/question/zeroQuestions": "current source unavailable; do not emit",
+  "realCollection/UI/Auth/D2/purge/restore": "UNRUN"
+}

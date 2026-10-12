@@ -72,7 +72,7 @@ enum NativeJourneyMeasurement {
         case writer(WriterReceipt)
         case declined(Artifact, DeclineReason)
         case terminal(Outcome)
-        case question(Field, QuestionBasis)
+        case question(Field, QuestionBasis, UUID)
         case zeroQuestions
     }
     struct Envelope {
@@ -83,6 +83,7 @@ enum NativeJourneyMeasurement {
         let reportID: UUID
         let signal: Signal
         let time: Time
+        let processID: UUID
         // Deliberately no actor, raw text/material/error, content digest,
         // client first_value/activated counter, or business mutation.
     }
@@ -159,7 +160,9 @@ final class NativeJourneyMeasurementController<Actor: Equatable> {
         guard let presented else { return }; report(.declined(presented, reason), actor: expected)
     }
     func terminal(_ outcome: M.Outcome, actor expected: Actor) { report(.terminal(outcome), actor: expected) }
-    func question(_ field: M.Field, basis: M.QuestionBasis, actor expected: Actor) { report(.question(field, basis), actor: expected) }
+    func question(_ field: M.Field, basis: M.QuestionBasis, questionID: UUID, actor expected: Actor) {
+        report(.question(field, basis, questionID), actor: expected)
+    }
     func zeroQuestions(actor expected: Actor, allOpportunitiesObservable: Bool) {
         guard allOpportunitiesObservable else { return }; report(.zeroQuestions, actor: expected)
     }
@@ -175,7 +178,7 @@ final class NativeJourneyMeasurementController<Actor: Equatable> {
     private func report(_ signal: M.Signal, actor expected: Actor) {
         guard eligible(expected), inFlight.count < 4, let consent, let admission, let sender else { return }
         let own = generation, id = UUID()
-        let envelope = M.Envelope(consentID: consent.id, admission: admission, reportID: id, signal: signal, time: time())
+        let envelope = M.Envelope(consentID: consent.id, admission: admission, reportID: id, signal: signal, time: time(), processID: process)
         inFlight[id] = Task { @MainActor in
             defer { if generation == own { inFlight[id] = nil } }
             guard generation == own, eligible(expected), !Task.isCancelled else { return }
