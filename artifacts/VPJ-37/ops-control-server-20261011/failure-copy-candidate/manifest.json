@@ -7,7 +7,7 @@
       "before": "851e8aaa1062d7d2b6b79f2b16990b5f824ff3f91c4362db1b1eac0f75b9a50d",
       "after": "32de0099fa221b4ff8ac62e02b2f75bc61b50f14c715ef9e1e34355f694c24e5",
       "patch": "da47342e8925fcd8177a06224171ac1552ffe15507cca762c45d1089be61b7c5",
-      "candidate": "artifacts/VPJ-37/ops-control-server-20261011/failure-copy-candidate/i18n.after.ts",
+      "candidate": "artifacts/VPJ-37/ops-control-server-20261011/failure-copy-candidate/i18n.after.ts.txt",
       "patchPath": "artifacts/VPJ-37/ops-control-server-20261011/failure-copy-candidate/i18n.patch"
     },
     {
@@ -15,7 +15,7 @@
       "before": "7e33a13f69a4a93c627e5507041702665c9c9c92e3ca392876ecd6ad5c3b0413",
       "after": "97761651ec2d210a3d841b547cbb6d9366bf2a466cdcf27daa4e695718abb2f2",
       "patch": "324beb2a38672bb25212606c0098580ce3c1d6e5eda9be6cf7b250547c5de6ef",
-      "candidate": "artifacts/VPJ-37/ops-control-server-20261011/failure-copy-candidate/failure-taxonomy.test.after.ts",
+      "candidate": "artifacts/VPJ-37/ops-control-server-20261011/failure-copy-candidate/failure-taxonomy.test.after.ts.txt",
       "patchPath": "artifacts/VPJ-37/ops-control-server-20261011/failure-copy-candidate/failure-taxonomy.test.patch"
     }
   ]
