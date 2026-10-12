@@ -1,0 +1,20 @@
+{
+  "sourceHead": "af6e4d61c4acd3edaa81fed5b970f2a732fe4dae",
+  "amendmentMarker": "VPJ13-E3-AuthHTTP-reject-observation-20261012",
+  "diagnosticOnly": true,
+  "actors": 0,
+  "nextStarted": false,
+  "sources": {
+    "tests/integration/journey-entry/goal-return/auth-http.test.mjs": "6b4547c735f6da26f62c02370a27f1b12b41d63ea73c7e1f27f293227bd6fec5",
+    "tests/integration/journey-entry/goal-return/docker-adapter-entry.mjs": "aa52f7608b7feeb05a4795df7807c40068b3b978d7be7fcafe79c9752e8d877d",
+    "tests/integration/journey-entry/goal-return/docker-argv.mjs": "6601d225cf77b8ffeaabf1765d82bc8e7d6b39af4ecf2c261324ed40120ffdc4",
+    "tests/integration/journey-entry/goal-return/environment.mjs": "cdf936f1c7207210afd811fddde9d4403113fe21a98fe7126908f2623f85685e",
+    "tests/integration/journey-entry/goal-return/reject-observation.mjs": "4e2a2420046b54e146dc924645a9691e633c89972147b784c0bcc4568c7c6b04",
+    "tests/integration/journey-entry/goal-return/run-auth.mjs": "02c3b7a17a08931d018712d0b8976858385d811395986a0bc54df25ed0dfd023",
+    "tests/integration/journey-entry/goal-return/scope.mjs": "3567677cc3506b16d6332da0ff970a33ef3b1d29febf0bb2e72d84914565bea4",
+    "tests/integration/journey-entry/goal-return/timing-control.mjs": "c27909869f9ba86b4ce9dd4120444f36ab0a5913395aee07b3d2b7ee9aec896b",
+    "tests/integration/journey-entry/goal-return/timing-record.mjs": "75e8567f32fb89bbb9ef4a47bd12c06580ecd7c539a7a79c55c74d99956e9128"
+  },
+  "checks": "4 affected pure tests PASS/0FAIL/0skip plus syntax/diff; no resources in tests",
+  "productSha256": "15fd14818a09a1e0418aaf31deb639b7e6b9f269c51b3782410d536564e8596b"
+}
