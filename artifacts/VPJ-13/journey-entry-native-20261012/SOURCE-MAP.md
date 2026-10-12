@@ -1,0 +1,36 @@
+# VPJ-13 source and bridge contract
+
+Base: main 4f3c7b322316f3c6be3d505bdeb86b300a1596f4, fetched 2026-10-12. Original checkout e0f2b3a1 / eight dirty paths was not edited. #203 OPEN/planned. This is incomplete product source, not Issue closure.
+
+## Actual inputs and consumers
+
+- E1: Ask `AssistantSubmission` POST /api/chat/native/v5/conversation records `goal_start`; `follow_up` uses existing goal/current parent. Goal recording alone produces no result. The current conversation/policy and `NativeTravelDirectionsSelection` qualify the original parent. `NativeTravelDirectionsIntakeStore` reads basis/intake, submits through the existing directions action, then validates exact Task/Turn/goal/message/intake/Memory/Trip/revision readback. `NativeTravelDirectionsResultView` chooses/saves relative drafts and requires the original explicit Trip diff confirmation for writes. New private directions page skips mandatory field entry, preserves authoritative existing intake, and defaults unknown fields to unknown. It does not extract cities, dates, party size or service intent from raw words.
+- E2: `NativeJourneyMaterialsView` reads current owner Trip v2 summaries through `NativeTripStore`, then opens `NativeTripView` for the exact selected ID/scope. Its original Files/PDF and device screenshot consumers perform correction, proposal and explicit same-Trip confirmation. Skip/close/failure returns to the unchanged underlying conversation. `NativeEntryResumeView`/session coordinator continue to own shared material receipts. No new goal, material storage, import request or Trip writer is introduced by this entry.
+- E3: candidate entry card consumes only current validated conversation/goal, current goal-to-Trip link, current eligible explicitly selected Memory revisions, and waiting task projections matching goal/version. Artifact pointers are opened through exact existing result reads, never treated as read eligibility themselves. Last decision remains unknown until that read. `NativeOfflineSavedTripsView` and `NativeOfflineTodayPanel` retain original owner/namespace/permit/withdrawal/trusted-time/lease checks. No permissive offline copy or stale transcript fallback is added. Missing/stale permissions show unavailable.
+
+## Unique bridge
+
+Only Ask owns goal admission and continuation. Candidate adds a private entry card and material sheet, replaces the existing directions sheet consumer with the private compact page, and registers the new private Swift files in the app project. It preserves all original pending request, scope/generation, source, policy, consent and writer paths. Existing goal without a current parent is blocked rather than replaced with a new goal. New input does not itself imply accepted execution or first value.
+
+Candidate full before/patch/after + hashes: `candidate-manifest.json`, `candidates/`. Shared Ask and project files remain unchanged in this worktree. Current holders must be live-confirmed by Main; COORDINATION contains historical overlapping scopes, not release evidence. No lease is inferred from clean state, last author, original root dirty or an old reservation. Temporary validation copy is solely a compilation of the candidate; it grants no integration lease.
+
+## Missing product contracts and consumers
+
+1. Personalized single-idea directions: existing directions/domain.ts produces fixed depth/breadth options from reviewed intake fields. Raw `text` binds input provenance but is not an extractor. Party size/service intent are absent from `travel-directions-intake/1`. No inference/default city/date is implemented. Full E1 personalized outcome and reuse of those fields remain incomplete; requires an accepted existing-source projection seam from the original planning owner, not a new RPC or framework here.
+2. Actual first value/adoption observability: source search found first_value only in research intake migration 20260917140000. Its research application status/event writer is unrelated to product execution. No product analytics consent read, event allowlist, native sink, retention/export/delete registration or activation/outcome reducer was found. Existing AssistantEvents is task/result lifecycle delivery and invalidation, not an analytics collection permission. We do not send research first_value, raw ideas/materials, diagnostic logs or events.
+3. Last decision: the current conversation and Trip summary have no authoritative typed last-decision field. Exact saved-result read is the current consumer. No decision text or claimed update is invented.
+4. App integration: Ask/project candidate needs limited original-holder release and exact Main lease before applying. New private source alone is not an installed app flow.
+
+## Minimal observation candidate for the existing telemetry owner
+
+No runtime sink exists, so this is a contract candidate only. Use the original product consent gate and source receipts, once its owner supplies an actual consumer. Collect no raw content. Closed event names: first_value, adopted, saved, activated, outcome_declined, technical_failure, partial, blocked. First value requires a fresh owner-qualified readable usable result with exact artifact/revision and current Task/goal basis; upload, goal recording, OCR completion and generating are ineligible. Adoption/save require their actual original action receipts. Activation needs its independently accepted definition/receipt; never infer it from first value or a tap. Decline reason should be an optional closed code, separate from transport/policy/quota failure. Record durations with monotonic per-attempt clocks, not guessed provider time. Dedup by original attempt/source/action receipt within the existing sink's lifecycle. Revocation must clear pending telemetry and preserve the original export/delete policy; unknown consent/storage fails closed.
+
+Denominators: first value = eligible consented task attempts with an observed usable-result read; adoption/save = eligible presented usable results; decline = explicit decisions offered; technical failures/partial/blocked = admitted eligible executions; repeat-question rate = repeated already-known questions / all clarification questions with audited current-field provenance. Report observed N/D and unknown/unobserved separately, no forecast benefit numbers.
+
+## Retained data inventory
+
+New files introduce transient SwiftUI input/presentation state only. No disk cache, UserDefaults, credential, transcript, result copy, material, Memory or telemetry storage. The original session/Trip/result/material/offline inventories and export/delete/restore writers remain authoritative. Scope/background and cancellation fences remain; unknown offline watermark is handled by the original fail-closed consumer. No new retained-data handler is required unless the observation owner later introduces persistent data.
+
+## Outstanding acceptance
+
+Shared registered delivery, real permitted E1/E2/E3 integration, personalized provenance, persistent consented observations, final exact-head review/CI, installation, physical device, VoiceOver and target acceptance remain UNRUN/incomplete. #203 must remain OPEN. No new server/SQL/queue/provider deployment, real-account data or resource cleanup is authorized or performed in this slice.

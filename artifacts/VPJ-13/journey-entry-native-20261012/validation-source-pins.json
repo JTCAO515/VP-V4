@@ -1,0 +1,9 @@
+{
+  "candidateManifestSHA256": "a3cf75ac550f56ccfe8a88a0ce7ab5b55c540b134ebadae24495f10652407067",
+  "r1RawLogSHA256": "28ce9f73d2ad6c50de6bee70fabfa543fa71203aa568b39f7676f325463dc344",
+  "finalCompileExit": 0,
+  "finalLogSHA256": "0c4edfda8052e8a20ad7bd2fcead1070bcbb9f45b73979e34c2de82afaca602a",
+  "continuationCases": 10,
+  "installedUI": "UNRUN",
+  "sharedApplied": false
+}
