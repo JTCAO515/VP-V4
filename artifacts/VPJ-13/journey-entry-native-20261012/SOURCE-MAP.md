@@ -34,3 +34,7 @@ New files introduce transient SwiftUI input/presentation state only. No disk cac
 ## Outstanding acceptance
 
 Real permitted E1/E2/E3 integration, personalized provenance, persistent consented observations, final exact-head review/CI, installation, physical device, VoiceOver and target acceptance remain UNRUN/incomplete. #203 must remain OPEN. No new server/SQL/queue/provider deployment, real-account data or resource cleanup is authorized or performed in this slice.
+
+## Post-merge remaining-contract audit
+
+After normal FF to merged main daa7bae4, the private compact directions page gained a bounded read-only display of existing same-parent explicit party/date/city requirements. It does not add those fields to the directions producer. The refined three-gap source map and original-contract dependencies are in `remaining-contracts/CONTRACT.md`; existing typed decision content and actual choice receipts are present, while goal-last-decision discovery remains absent. New consumer source pins and affected validation are in `remaining-contracts/SOURCE-PINS.json` and `VALIDATION.md`. No new shared hunk or event sink is applied.

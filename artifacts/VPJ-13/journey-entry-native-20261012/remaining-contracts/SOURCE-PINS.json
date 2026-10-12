@@ -1,0 +1,36 @@
+{
+  "base": "daa7bae44a660381fb3295d0d2afc327ea98d3ba",
+  "privateSource": {
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyDirectionsView.swift": "f6d564698af9e029b161a170b327c24c7785aa5506e4a0131d93cd815ab68db3",
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyEntryContinuation.swift": "ef1f94c544b9de2b94841b7af6a505f306f287d0a9362dc99290929dbe82ade3",
+    "tests/unit/onboarding/vpj13-journey-entry/main.swift": "3e19ba47dd84c676b74fcb3f620be1a449c7009c1a155afddc6b9734f8d1fb39"
+  },
+  "existingAuthority": {
+    "ios/VisePanda/VisePanda/Features/Ask/NativeTravelIntakeModels.swift": "2a6ad0122bfe1703741d72c98ee3ce409557f61399cd4fa333923fbe381f2e0d",
+    "ios/VisePanda/VisePanda/Features/Ask/NativeTravelIntakeStore.swift": "dca4009db47b08ce080a3e83af8bf5ca4fa92d0cd41c92beb503dd7eb159a195",
+    "ios/VisePanda/VisePanda/Features/Knowledge/NativeFiveResultModels.swift": "be0041c5561e1dde067c3c5b61bc3dafee4f3e5f63135acd4043fc1794139c5a",
+    "ios/VisePanda/VisePanda/Features/Knowledge/NativeFiveResultView.swift": "84177720744109dcc33268ab566a57e371339c837d39e379bf4410df82b6fbd9",
+    "lib/server/turn/native-travel-intake-http.ts": "6365bf91abed85559c6813d2a9d412eecee3c2aaca615f7ed2c5702fe07c0a27",
+    "lib/server/planning/directions/contract.ts": "763874efb93c9ec3edbcb861bc561e2cce597b9384e18057ce55fa0e44d7904d",
+    "lib/server/planning/directions/domain.ts": "537a162fd485c8b9d5d195d59940e16539163c09c08aa146e1338b15f71c82cb",
+    "lib/server/artifacts/native-result-v2-http.ts": "58de74c83ad70506d8b95137563b5d319cefb06f573e3d2b339dd32bd1f1a810",
+    "lib/server/observability/launch-14.ts": "4bd906b6591623d2153703dc77b9ca992878db742be48a411084e5c31198a045",
+    "supabase/migrations/20261003110000_vpj79_five_result_lifecycle.sql": "4332903ba58da8ba7ca98f2eb8b6cec5c2e102415d3553612739b7e0510ff77e"
+  },
+  "r4": {
+    "exit": 0,
+    "status": "UNKNOWN due to exit0/no-output toolchain diagnostics",
+    "rawLogSHA256": "73c13684544cee87376a0748933fb5478d934a43854fa3bfbba65648d44141f8"
+  },
+  "r5": {
+    "exit": 0,
+    "status": "PASS; explicit BUILD SUCCEEDED; no error diagnostics",
+    "rawLogSHA256": "843b5f77ed188db3138b3f1a8bbc88127b99d625eb44c556a72b64850c361888",
+    "resultBundle": "/private/tmp/vpj13-known-requirements-r5-20261012.xcresult",
+    "scope": "generic iOS Simulator App build; new consumer compiles arm64/x86_64"
+  },
+  "executedCases": 18,
+  "sharedDeltaApplied": false,
+  "telemetryEmitter": "ABSENT",
+  "realHTTP/UI/device/VoiceOver": "UNRUN"
+}
