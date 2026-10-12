@@ -23,8 +23,12 @@ cpSync('supabase/migrations',join(target,'supabase/migrations'),{recursive:true}
 const env={...process.env,DOCKER_CONTEXT:context};
 const run=(cmd,args,visible=false,childEnv=env)=>new Promise((resolve,reject)=>{
  const child=spawn(cmd,args,{env:childEnv,stdio:visible?'inherit':['ignore','pipe','pipe']});
+ let timedOut=false,force;
+ const limit=cmd==='supabase' && args[0]==='stop'?60000:visible?210000:240000;
+ const timer=setTimeout(()=>{timedOut=true;child.kill('SIGTERM');force=setTimeout(()=>child.kill('SIGKILL'),3000);},limit);
+ const finish=()=>{clearTimeout(timer);clearTimeout(force);};
  if(!visible){child.stdout.resume();child.stderr.resume();} // CLI status/start may contain ephemeral secrets; never retain.
- child.once('error',()=>reject(Error('Owned fixture process launch failed')));child.once('exit',code=>resolve(code??1));
+ child.once('error',()=>{finish();reject(Error('Owned fixture process launch failed'));});child.once('exit',code=>{finish();resolve(timedOut?124:code??1);});
 });
 let code=1,created=false,started=false;
 try{
