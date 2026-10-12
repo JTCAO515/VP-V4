@@ -117,5 +117,20 @@
   ],
   "guards": "t|t|t|t|t|t",
   "actual": "PASS",
-  "product": "NOT_APPLIED"
+  "product": "NOT_APPLIED",
+  "oldFunctionMetadataAllPreserved": "PASS",
+  "unchangedOldFunctions": 1073,
+  "changedFunctionsExact": [
+    "conversation_data_private.schema_supported_v1()",
+    "export_private.core_profile_page_v1(jsonb)",
+    "export_private.profile_commit_qualifies_v1(export_private.core_jobs_v1,jsonb,uuid,integer)",
+    "export_private.profile_hooks_valid_v1()",
+    "export_private.profile_source_current_v1(export_private.core_jobs_v1)",
+    "export_private.record_profile_provenance_v1(export_private.core_jobs_v1,timestamp with time zone)",
+    "profile_data_private.schema_v1()",
+    "result_data_private.schema_supported_v1()",
+    "turn_data_private.runtime_supported_v1()",
+    "turn_data_private.schema_supported_v1()"
+  ],
+  "unknownRuntimeAdoption": false
 }

@@ -1,0 +1,18 @@
+{
+  "candidateSha256": "1d6d46cec4906fb0b2b2e4acb2f5b932ef2d6e6734115a9b7e210726088f6e05",
+  "results": [
+    {
+      "name": "self preview/CAS erase/recover clears retained payload, no receipt TTL refresh",
+      "result": "PASS"
+    },
+    {
+      "name": "external copy unknown preserves consent stop/incomplete and original receipt TTL",
+      "result": "PASS"
+    }
+  ],
+  "scope": "actual own PG17 ordinary SQL Native session scoped erase, retained rows seeded synthetically",
+  "collection": "DEFAULT_DENIED",
+  "wholeLifecycle": "INCOMPLETE",
+  "managedEncryptedCopyPositive": "UNRUN",
+  "ownAccountCleanup": "PASS"
+}

@@ -1,16 +1,17 @@
 {
-  "stage": "PRIVATE_SOURCE_PREPARATION_INCOMPLETE_LIFECYCLE",
+  "stage": "PRIVATE_CANDIDATE_SOURCE_LIFECYCLE_INCOMPLETE",
   "base": "daa7bae44a660381fb3295d0d2afc327ea98d3ba",
   "owner": "01a12e77-c953-7313-923e-164c863a37c0",
-  "soleMain": "01a12f21-5586-7473-ab9d-31cb49204f10",
+  "soleMain": "01a12f81-dd0f-752f-a6ff-869b2887400d",
   "productSlot": "ABSENT_NOT_CREATED",
+  "sharedLease": "NOT_GRANTED",
   "tableCount": 8,
-  "schemaGuardsRuntime": "t|t|t|t|t|t",
-  "resource": "owned_retained_running_no_network_ports_mounts",
+  "guards": "t|t|t|t|t|t",
+  "ownResource": "retained_running_exact_nonce_no_network_ports_mounts",
   "sourcePins": [
     {
       "path": "measurement.candidate.sql",
-      "sha256": "8e5b2ab7d12ffe755e2f80ded85af833517117bd855f9e5fc1abed9d006d24b4"
+      "sha256": "4b20947a512d36cd6bd860e27474b73ae8ca89a215bddf41ca5c07529f82b658"
     },
     {
       "path": "recovery.candidate.sql",
@@ -22,19 +23,23 @@
     },
     {
       "path": "profile-static-composition.candidate.sql",
-      "sha256": "216bb1f6ad739555b0da4a15f84fe05c80dbe5eb037b3c8c85f81c17e3bc701d"
+      "sha256": "7ed3c708f9316bd654eb99887f28d375951a488a76081894959fd235121ee51f"
     },
     {
       "path": "module-runtime-pins.candidate.sql",
-      "sha256": "a5e40da24e3b85f37ade433a5113593c4acd69a4e710ed15808f97291e085035"
+      "sha256": "20202e9de694761698f36f98c1d39dac262f472b17cce46321366b067ebea5ac"
+    },
+    {
+      "path": "SQL-WIRE-SCHEMA.json",
+      "sha256": "aa40dd0cf33cad435321c98798a055c37d4e6a9048d1af14782815b008a0d752"
     },
     {
       "path": "WIRE.md",
-      "sha256": "f26bdf2bd86c06a9af2a3cb68bc66e5949a57ca7bed34fcf189b6e51bafff0a4"
+      "sha256": "2832fe7391420a930196e02f067eb89a5e9848c4772847b66e00c0d5ebb83e1f"
     },
     {
       "path": "CONTRACT.md",
-      "sha256": "d0b9b781674568d31ea4b1cbd1d973c8ea6d8e3f7eb00b14e32e0bcdec462c38"
+      "sha256": "09fe6b30d4f0d8d02b15080ccd19ec76770e2d7bb91187410f2f8bf84f7a4e01"
     }
   ]
 }
