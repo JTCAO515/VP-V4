@@ -1,3 +1,4 @@
+import {decodeOpsRefusal,opsRefusalCode,opsRefusalCopy,type OpsRefusalCode} from "../observability/ops-control/refusal.ts";
 import { textTurnFailureCopy, type Locale } from "../../i18n.ts";
 import { randomUUID } from "node:crypto";
 import { CostGuard } from "../model-gateway/budget/index.ts";
@@ -62,7 +63,14 @@ export async function runTextWorker(
       provider: binding.provider, model: PROTOCOL_MODELS[binding.provider], priceVersion: config.priceVersion,
       reservedMicros: config.reservedMicros, timeoutMs: config.timeoutMs,
     };
-    const result = await runWithDurableBudget(attempt, budgetRpc, async budgetSignal => {
+    let refusal:OpsRefusalCode|null=null;
+    const guardedBudget:BudgetRpc=async(name,params)=>{const value=await budgetRpc(name,params);const denied=decodeOpsRefusal(value);if(denied)refusal=denied;return value;};
+    const persistRefusal=async()=>{
+      const persisted=await textRpc(grounded?"complete_grounded_work":"complete_text_work",{...keys,...(grounded?{p_intent:"blocked",p_request_scope:"unknown"}:{p_kind:"blocked",p_text:opsRefusalCopy(String(input.locale))})});
+      if(!record(persisted)||persisted.kind!=="finished")throw Error("Operational denial acknowledgment unknown");
+      return "persisted" as const;
+    };
+    const result = await runWithDurableBudget(attempt, guardedBudget, async budgetSignal => {
       const value = grounded
         ? await invokeKnowledgeIntentProtocol(lease, { provider: binding.provider, endpoint: binding.endpoint, maxOutputTokens: config.maxOutputTokens, timeoutMs: config.timeoutMs }, textRpc, guard, binding.transport, budgetSignal)
         : await invokeTextProviderProtocol(lease, { thinkingBudgetTokens: binding.thinkingBudgetTokens, inputMode: binding.inputMode === "task_history_v1" ? "task_history_v1" : "current_input_v1", provider: binding.provider, endpoint: binding.endpoint, maxOutputTokens: config.maxOutputTokens, timeoutMs: config.timeoutMs }, textRpc, guard, binding.transport, budgetSignal);
@@ -83,8 +91,9 @@ export async function runTextWorker(
     if (leaseSignal.aborted) throw new Error("Interrupted");
     // A transport failure may have incurred charges. Let the durable queue retry
     // with a separate budget attempt, subject to its bounded retry count.
-    if (result.kind !== "completed") return "provider_failure";
+    if (result.kind !== "completed") return refusal?await persistRefusal():"provider_failure";
     const output = result.value;
+    if(output.kind==="unavailable"&&opsRefusalCode(output.code))return await persistRefusal();
     if (grounded) {
       let intent: KnowledgeIntent | null = null;
       let reason: KnowledgeValidationReceipt["reason"] = "protocol_unavailable";

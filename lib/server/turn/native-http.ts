@@ -99,6 +99,7 @@ export async function nativeTextHTTP(request: NextRequest, action: Action, turnI
   finally { scope.dispose(); }
 }
 function mapError(message: string): FailureCode {
+  if (message === "OPS_CONTROL_DISABLED" || message === "OPS_SCOPE_UNAVAILABLE") return message;
   if (/UNAUTHENTICATED|SESSION_REPLACED/.test(message)) return "UNAUTHENTICATED";
   if (message.includes("SERVICE_TASK_CONFLICT")) return "SERVICE_TASK_CONFLICT";
   if (message.includes("SERVICE_TASK_CAPACITY_EXHAUSTED")) return "SERVICE_TASK_CAPACITY_EXHAUSTED";

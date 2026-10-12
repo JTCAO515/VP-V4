@@ -112,3 +112,12 @@ Remaining24 shared/SQL still HOLD. ConversationView candidate only gains two Jou
 canContinue/callback !opsRefusal conditions, preserving currentRead/pending/parent/entryBlocking
 and read/material/Trip entry. Newafter0e9fda055c991afc788e069d094875cd207135327510f768d1e7e098fa023313;
 other27 before/after unchanged, syntax/patch checks PASS. Not applied; Main exact lease pending.
+
+Second mature23 source lease applied: Main W2-server-profile-exact-lease.json granted exact22
+runtime/Web/C2 source transitions plus Profile metadata decoder. Each current full before,
+released three-context patch bytes/strip level (Profile p0, others p1), full after and staged
+blob SHA verified. Evidence server-profile-lease-apply.json. Only granted hunks applied; prior
+four Native exact after unchanged. ConversationView/NativeAskModels and product SQL append stay
+HOLD. Profile consumer compatibility is not actual metadata export acceptance; matching SQL
+source/counter/digest/lifecycle body and final affected proof remain UNRUN. No whole-App/history
+matrix rerun or helper PR; final full W2 integration owns those applicable checks.

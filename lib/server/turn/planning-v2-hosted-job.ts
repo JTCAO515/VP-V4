@@ -1,3 +1,4 @@
+import {decodeOpsRefusal,OpsControlRefusal} from '../observability/ops-control/refusal.ts';
 import {nativeRequestScope} from '../identity/native-request.ts';
 import {supabaseWorkerHeaders} from '../jobs/supabase-worker-headers.ts';
 import {createProviderHttpTransport,type HttpProviderConfiguration,type HttpTransportDependencies} from '../model-gateway/adapters/http-transport.ts';
@@ -47,6 +48,7 @@ export function createPlanningV2HostedJob(config:PlanningV2HostedConfig,deps:Rea
     const canonical=createPlanningV2ModelRequest({schemaVersion:'planning-v2-model-request/1',binding:b,requestId:b.attempt,payload:JSON.parse(request.body)},b);if(!canonical||canonical.body!==request.body)throw Error('Planning canonical request unavailable');
     return createProviderHttpTransport(config.provider,{credential:deps.providerCredential,...(deps.fetcher?{fetch:deps.fetcher}:{}),recordDestination:async(receipt,s)=>{
     const saved=await rpc('record_planning_intake_provider_destination_v1',{...tuple(b),p_destination:receipt,p_request_id:canonical.requestId,p_request_digest:canonical.requestDigest,p_payload_digest:canonical.payloadDigest,p_payload_text:canonical.body},s);
+    const refused=decodeOpsRefusal(saved);if(refused)throw new OpsControlRefusal(refused);
     if(saved===null||typeof saved!=='object'||Array.isArray(saved)||Object.keys(saved).length!==4||(saved as Record<string,unknown>).kind!=='destination_recorded'||(saved as Record<string,unknown>).attemptId!==b.attempt||(saved as Record<string,unknown>).invocationId!==receipt.invocationId||(saved as Record<string,unknown>).phase!==receipt.phase)throw Error('Planning destination unavailable');
    }})(request);},price,recordUsage:deps.recordUsage,
    persistOutput:(o,s)=>rpc('record_planning_intake_model_output_v1',{...tuple(o.binding),p_output_wire:o},s),

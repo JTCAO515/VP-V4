@@ -117,6 +117,7 @@ async function boundedBody(request: NextRequest, parent: AbortSignal): Promise<u
 }
 
 function mapError(message: string): FailureCode {
+  if (message === "OPS_CONTROL_DISABLED" || message === "OPS_SCOPE_UNAVAILABLE") return message;
   if (/UNAUTHENTICATED|SESSION_REPLACED/.test(message)) return "UNAUTHENTICATED";
   if (/SERVICE_TASK_CONFLICT|duplicate key/.test(message)) return "SERVICE_TASK_CONFLICT";
   if (message.includes("IDEMPOTENCY_KEY_REUSE")) return "IDEMPOTENCY_KEY_REUSE";

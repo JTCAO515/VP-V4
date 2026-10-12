@@ -1,3 +1,4 @@
+import {opsRefusalCode,OpsControlRefusal} from "../../observability/ops-control/refusal.ts";
 import { randomUUID } from "node:crypto";
 import { PROTOCOL_MODELS, type ProtocolProvider, type ProtocolTransport } from "./provider-protocol.ts";
 
@@ -110,8 +111,9 @@ export function createProviderHttpTransport(configuration: HttpProviderConfigura
         return new Response(bytes, { status: 200, headers: { "content-type": "application/json" } });
       };
       return await Promise.race([work(), interrupted]);
-    } catch {
+    } catch (error) {
       controller.abort();
+      const refusal=opsRefusalCode(error);if(refusal)throw new OpsControlRefusal(refusal);
       throw unavailable();
     } finally {
       clearTimeout(timer);

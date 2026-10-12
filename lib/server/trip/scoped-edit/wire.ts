@@ -19,7 +19,7 @@ export type ScopedProposalReceipt = Readonly<{
   proposalDigest: string; baseVersion: number; expiresAt: string; returnScope: EditScope; diff: ScopedEditDiff; reused: boolean;
 }>;
 export type ScopedLockReceipt = Readonly<{ kind: "scoped_edit_lock/1"; operationId: string; tripId: string; baseVersion: number; lockRevision: number; itemId: string; locked: boolean; reused: boolean }>;
-export type ScopedPendingReceipt = Readonly<{ kind: "scoped_edit_pending/1"; operationId: string; tripId: string; contextId: string; contextDigest: string; baseVersion: number; reason: "provider_unavailable" | "queued"; reused: boolean }>;
+export type ScopedPendingReceipt = Readonly<{ kind: "scoped_edit_pending/1"; operationId: string; tripId: string; contextId: string; contextDigest: string; baseVersion: number; reason: "provider_unavailable" | "queued" | "ops_control_disabled" | "ops_scope_unavailable"; reused: boolean }>;
 export type ScopedCandidatesReceipt = Readonly<{
   kind: "scoped_edit_candidates/1"; operationId: string; tripId: string; contextId: string; contextDigest: string; baseVersion: number; expiresAt: string;
   returnScope: EditScope; candidates: readonly Readonly<{ candidateId: string; edits: readonly CandidateEdit[]; diff: ScopedEditDiff }>[]; reused: boolean;
@@ -63,7 +63,7 @@ export function parseScopedReceipt(v: unknown, tripId: string, operationId: stri
   if (v.kind === "scoped_edit_lock/1") return exact(v, ["kind", "operationId", "tripId", "baseVersion", "lockRevision", "itemId", "locked", "reused"]) && integer(v.lockRevision) && identifier(v.itemId) && typeof v.locked === "boolean" ? v as ScopedLockReceipt : null;
   if (!uuid(v.contextId) || !digest(v.contextDigest)) return null;
   if (v.kind === "scoped_edit_declined/1") return exact(v, ["kind", "operationId", "tripId", "contextId", "contextDigest", "baseVersion", "reason", "reused"]) && ["unsupported_request", "no_change", "safety_refused"].includes(String(v.reason)) ? v as ScopedDeclinedReceipt : null;
-  if (v.kind === "scoped_edit_pending/1") return exact(v, ["kind", "operationId", "tripId", "contextId", "contextDigest", "baseVersion", "reason", "reused"]) && ["provider_unavailable", "queued"].includes(String(v.reason)) ? v as ScopedPendingReceipt : null;
+  if (v.kind === "scoped_edit_pending/1") return exact(v, ["kind", "operationId", "tripId", "contextId", "contextDigest", "baseVersion", "reason", "reused"]) && ["provider_unavailable", "queued", "ops_control_disabled", "ops_scope_unavailable"].includes(String(v.reason)) ? v as ScopedPendingReceipt : null;
   if (v.kind === "scoped_edit_candidates/1") {
     if (!exact(v, ["kind", "operationId", "tripId", "contextId", "contextDigest", "baseVersion", "expiresAt", "returnScope", "candidates", "reused"]) || !time(v.expiresAt) || !validScope(v.returnScope) || !Array.isArray(v.candidates) || v.candidates.length < 1 || v.candidates.length > 2) return null;
     if (v.candidates.some(c => !record(c) || !exact(c, ["candidateId", "edits", "diff"]) || !uuid(c.candidateId) || !Array.isArray(c.edits) || c.edits.length < 1 || c.edits.length > 16 || !c.edits.every(validCandidateEdit) || !validDiff(c.diff)) || new Set(v.candidates.map(c => c.candidateId)).size !== v.candidates.length) return null;

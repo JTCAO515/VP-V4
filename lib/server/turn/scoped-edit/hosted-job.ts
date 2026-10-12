@@ -1,3 +1,4 @@
+import {decodeOpsRefusal,OpsControlRefusal} from '../../observability/ops-control/refusal.ts';
 import { createHash } from 'node:crypto';
 import { nativeRequestScope } from '../../identity/native-request.ts';
 import { supabaseWorkerHeaders } from '../../jobs/supabase-worker-headers.ts';
@@ -69,10 +70,12 @@ export function createHostedScopedEditWorker(raw:ScopedHostedProfile,deps:Hosted
         if(!validBinding(currentBinding)||!requestIdentity)throw Error('Scoped destination binding unavailable');
         if(destination.phase==='configured'){
           const decision=await scopedRpc('authorize_scoped_trip_edit_effect_v1',{p_binding:currentBinding,p_effect:'dispatch'},s);
+          const denied=decodeOpsRefusal(decision);if(denied)throw new OpsControlRefusal(denied);
           if(!authorized(decision,currentBinding,'dispatch'))throw Error('Scoped destination unavailable');
         }
         await deps.journal.destination(destination,s);
         const stored=await scopedRpc('record_scoped_trip_edit_destination_v1',{p_binding:currentBinding,p_destination:destination,p_request_id:requestIdentity.requestId,p_request_digest:requestIdentity.requestDigest,p_payload_digest:requestIdentity.payloadDigest,p_payload_text:requestIdentity.body},s);
+        const denied=decodeOpsRefusal(stored);if(denied)throw new OpsControlRefusal(denied);
         if(!record(stored)||!exact(stored,['kind','attemptId','invocationId','phase'])||stored.kind!=='destination_recorded'||stored.attemptId!==currentBinding.attemptId||stored.invocationId!==destination.invocationId||stored.phase!==destination.phase)throw Error('Scoped destination unavailable');
       }});
       const wrapped:typeof transport=async request=>{
@@ -84,7 +87,7 @@ export function createHostedScopedEditWorker(raw:ScopedHostedProfile,deps:Hosted
         return transport(request);
       };
       const result=await executeScopedTripEdit(lease,{rpc:scopedRpc,transport:wrapped,price:pricing,recordUsage:(receipt,s)=>deps.journal.planningUsage!(configDigest,receipt,s),now:Date.now},stop);
-      if(result==='persisted'||result==='declined')return 'persisted';
+      if(result==='persisted'||result==='declined'||result==='ops_paused')return 'persisted';
       throw Error('Scoped work pending');
     },signal);
   };

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { createPasswordAuthClient } from "@/lib/server/identity/browser-auth-client";
 import { savedAnswerCopy, savedAnswerNotice, savedClaimGapCopy } from "@/lib/grounded/copy";
@@ -58,6 +59,8 @@ function AiAssistPanel({ turnId, locale }: { turnId: string; locale: "zh" | "en"
   if (state === "idle") return <button type="button" onClick={() => void run()}>{language.aiAssistPrompt}</button>;
   if (state === "loading") return <p role="status">{language.aiAssistLoading}</p>;
   if (state === "error" || !result) return <p>{language.aiAssistUnavailable} <button type="button" onClick={() => void run()}>{language.aiAssistRetry}</button></p>;
+  const opsReason=result.status==="not_offered"?result.reason:result.status==="succeeded"&&result.outcome.kind==="unavailable"?result.outcome.reason:null;
+  if(opsReason==="ops_control_disabled"||opsReason==="ops_scope_unavailable")return <aside role="status"><p>{locale==="zh"?"此能力暂时停用，或当前城市范围无法核实。已有行程和成果保留；不会自动重发已发送请求。":"This capability is paused or its current city scope cannot be qualified. Existing Trips and results are retained; sent requests are not retried automatically."}</p><Link href="/visepanda/trips">{locale==="zh"?"查看已有行程并手工调整":"Open existing Trips to edit manually"}</Link></aside>;
   if (result.status === "not_offered") return <p>{language.aiAssistNotOffered}</p>;
   if (result.status === "cancelled") return <p>{language.aiAssistCancelled}</p>;
   if (result.status === "failed") return <p>{language.aiAssistUnavailable} <button type="button" onClick={() => void run()}>{language.aiAssistRetry}</button></p>;
