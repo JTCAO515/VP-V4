@@ -1,0 +1,6 @@
+{
+  "actual": "FAIL",
+  "case": "finite physical purge fixture seed",
+  "error": "separate clock_timestamp calls differ by 2 microseconds; exact fixed TTL constraint rejected fixture",
+  "correction": "use same transaction_timestamp origin; no constraint change"
+}

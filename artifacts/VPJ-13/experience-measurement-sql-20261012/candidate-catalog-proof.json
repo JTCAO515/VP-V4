@@ -1,0 +1,8 @@
+{
+  "actual": "PASS",
+  "oldFunctionsUnchanged": 1083,
+  "oldTablesUnchanged": 265,
+  "newFunctions": 30,
+  "newTables": 8,
+  "productLease": "NOT_GRANTED"
+}

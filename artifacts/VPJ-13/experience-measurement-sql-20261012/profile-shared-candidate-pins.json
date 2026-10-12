@@ -1,0 +1,18 @@
+[
+  {
+    "signature": "export_private.profile_source_v1",
+    "beforeSha256": "c3c7fd4ad0892dcebbddb5b08e447055f7c6788e4f6f581023043803aa2f3853",
+    "afterSha256": "eb494271ed587e30e33afec61f7c571dc8b7b6df425d085cd592b51b2e806e9c",
+    "patchSha256": "961e642259e3e3be8ef38aedb42eaef2375b612e70b209559bb886f72cc46741",
+    "sharedLease": "NOT_GRANTED",
+    "candidate": "Initial source suffix only; not complete lifecycle composition"
+  },
+  {
+    "signature": "export_private.profile_source_current_v1",
+    "beforeSha256": "b32d1999eca56493116f314e236ded97f4825d69ae1f9380088daf0f3025e402",
+    "afterSha256": "2714415c822ab463681cdcafb7ee39803017cb72d5e3700b04961c5d4788c6de",
+    "patchSha256": "febce3e58407fac66ab31175329d0fbc3c792283abdbabda2cbf7f593f14faad",
+    "sharedLease": "NOT_GRANTED",
+    "candidate": "Initial source suffix only; not complete lifecycle composition"
+  }
+]

@@ -1,0 +1,14 @@
+--- export_private.profile_source_v1(uuid).before
++++ export_private.profile_source_v1(uuid).after
+@@ -46,5 +46,11 @@
+  item:=jsonb_build_object('ownerId',u,'profile',profile_n,'watermark',watermark_n,'operations',ops,
+   'sourceRows',jsonb_build_object('profiles',case when p.owner_id is null then 0 else 1 end,'watermarks',case when w.owner_id is null then 0 else 1 end,'operations',n));
+  if octet_length(notification_private.canonical(jsonb_build_object('snapshot',jsonb_build_array(item))))>1000000 then raise exception 'PROFILE_SCOPE_TOO_LARGE';end if;
++ -- New closed typed measurement suffix; no tenth module or second D2 engine.
++ item:=item||jsonb_build_object('journeyMeasurement',journey_measurement_private.export_source_v1(u));
++ item:=jsonb_set(item,'{sourceRows,measurement}',item->'journeyMeasurement'->'sourceRows');
++ select rows_n+n+coalesce(sum(value::text::integer),0) into rows_n from jsonb_each(item->'journeyMeasurement'->'sourceRows');
++ if rows_n>10000 or octet_length(notification_private.canonical(jsonb_build_object('snapshot',jsonb_build_array(item))))>1000000
++ then raise exception 'PROFILE_SCOPE_TOO_LARGE';end if;
+  return item;
+ end$function$

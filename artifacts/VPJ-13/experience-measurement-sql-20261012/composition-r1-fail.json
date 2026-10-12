@@ -1,0 +1,6 @@
+{
+  "actual": "FAIL",
+  "error": "pg_get_functiondef returns no terminating semicolon; batch serialization lacked statement separators",
+  "runtimeWrites": "rollback/no shared source writes",
+  "correction": "explicit semicolon delimiters between captured full definitions"
+}

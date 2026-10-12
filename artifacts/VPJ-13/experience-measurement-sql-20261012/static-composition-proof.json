@@ -1,0 +1,121 @@
+{
+  "pinnedCandidateSha256": "4b20947a512d36cd6bd860e27474b73ae8ca89a215bddf41ca5c07529f82b658",
+  "oldApplicationHash": "0ec0fcfc206909a38756272a65a877c6ab857c00fd114178d135837da951c73a",
+  "staticallyComposedApplicationHash": "86ecb9b9a24e703d20f661a0d9236310ee49208026bd1b82e72023267bca3b83",
+  "oldTablesUnchanged": 265,
+  "exactNewTables": [
+    "journey_measurement_private.admissions_v1",
+    "journey_measurement_private.configuration_v1",
+    "journey_measurement_private.consents_v1",
+    "journey_measurement_private.copy_obligations_v1",
+    "journey_measurement_private.erasure_receipts_v1",
+    "journey_measurement_private.journals_v1",
+    "journey_measurement_private.recovery_controls_v1",
+    "journey_measurement_private.reports_v1"
+  ],
+  "manifest": [
+    {
+      "signature": "export_private.core_profile_page_v1(jsonb)",
+      "beforeDefinitionSha256": "4b56b3a2e2d39027e1406b2e7bf50da2043666137e3dee0685c4c88142505ad7",
+      "afterDefinitionSha256": "259f20acec4a05fc102aa7c216d865864f7c79613396748c7401c97571179054",
+      "oldACL": "{postgres=X/postgres}",
+      "oldConfig": [
+        "search_path=\"\""
+      ],
+      "oldOwner": "postgres"
+    },
+    {
+      "signature": "export_private.profile_commit_qualifies_v1(export_private.core_jobs_v1,jsonb,uuid,integer)",
+      "beforeDefinitionSha256": "7f153d8ba70f63ee8c3c62b6486d195c9de143166f7f7f13b17f3f361bd4a6a5",
+      "afterDefinitionSha256": "7ea2aa21aa614652607cc192fade1cf1c12c1ce52c53f5551a11f11d8b9e1a04",
+      "oldACL": "{postgres=X/postgres}",
+      "oldConfig": [
+        "search_path=\"\""
+      ],
+      "oldOwner": "postgres"
+    },
+    {
+      "signature": "export_private.record_profile_provenance_v1(export_private.core_jobs_v1,timestamp with time zone)",
+      "beforeDefinitionSha256": "607c887a969acd54587c86b4bea22976a6edbeec8b29e61c38c9021d968444a7",
+      "afterDefinitionSha256": "d89183ae948bf9ebe2a24e8ffa77da4e63b8df839fee40cfbdf67bf138ca19d7",
+      "oldACL": "{postgres=X/postgres}",
+      "oldConfig": [
+        "search_path=\"\""
+      ],
+      "oldOwner": "postgres"
+    },
+    {
+      "signature": "export_private.profile_source_current_v1(export_private.core_jobs_v1)",
+      "beforeDefinitionSha256": "5cfbffbe59b7cb0c18b5d93fe21424afee2fc1343cea0cad44ca01f5e13ef41c",
+      "afterDefinitionSha256": "8d9b1d58da887d34543154eff7fac3908ebfaeff7980d635fdefa0465eba94b0",
+      "oldACL": "{postgres=X/postgres}",
+      "oldConfig": [
+        "search_path=\"\""
+      ],
+      "oldOwner": "postgres"
+    },
+    {
+      "signature": "export_private.profile_hooks_valid_v1()",
+      "beforeDefinitionSha256": "4dd156e1feb2a070d5546042456f9af3caf9f48259e355e56e958a574462b559",
+      "afterDefinitionSha256": "1d345469f784e4134fc81ee1071429028704cbfee3b64b14548e3759a0bc20e5",
+      "oldACL": "{postgres=X/postgres}",
+      "oldConfig": [
+        "search_path=\"\""
+      ],
+      "oldOwner": "postgres"
+    },
+    {
+      "signature": "conversation_data_private.schema_supported_v1()",
+      "beforeDefinitionSha256": "e322ee83a00e0f781ba7fe59617707f1713c190a04d538bb5fbb823b88ab0699",
+      "afterDefinitionSha256": "2e32fbc2bd9f1419260c0f199f3f88335efd102a41e018c4f6a1c5cb9ff2c105",
+      "oldACL": "{postgres=X/postgres}",
+      "oldConfig": [
+        "search_path=\"\""
+      ],
+      "oldOwner": "postgres"
+    },
+    {
+      "signature": "profile_data_private.schema_v1()",
+      "beforeDefinitionSha256": "871526b81e706f1e6972cde7b8868689648340a11d97f2920a8758c83d011dc9",
+      "afterDefinitionSha256": "ea891256652b896fb5101fc5d5dcc579ba7f52873b99699a602fbf7e31cdfe06",
+      "oldACL": "{postgres=X/postgres}",
+      "oldConfig": [
+        "search_path=\"\""
+      ],
+      "oldOwner": "postgres"
+    },
+    {
+      "signature": "result_data_private.schema_supported_v1()",
+      "beforeDefinitionSha256": "9d662a65d35e152b4fff1ff83478c8f087681867ca8ecf337b5079e190331235",
+      "afterDefinitionSha256": "08d64de902fbe0c0dd8b42233648fe542d07da5a15ac6296ed0cb91ce51c044f",
+      "oldACL": "{postgres=X/postgres}",
+      "oldConfig": [
+        "search_path=\"\""
+      ],
+      "oldOwner": "postgres"
+    },
+    {
+      "signature": "turn_data_private.schema_supported_v1()",
+      "beforeDefinitionSha256": "a9b105a9a5b58b4a5f59789fd0600ef8418c999b1616e052e5445251c0dd148d",
+      "afterDefinitionSha256": "6c85daad3aef65af8892cfa6e8cd830ba3471448714ae3deef3c4ac9d75d790c",
+      "oldACL": "{postgres=X/postgres}",
+      "oldConfig": [
+        "search_path=\"\""
+      ],
+      "oldOwner": "postgres"
+    },
+    {
+      "signature": "turn_data_private.runtime_supported_v1()",
+      "beforeDefinitionSha256": "a58b77b6202b6344e962b11b99ad6f9fa9447d5640731d2ef1df2d34fbe07377",
+      "afterDefinitionSha256": "0da9fefd32512cecfd21b063dd0e936ec887fc1939bd077c5229487b6b30c5f1",
+      "oldACL": "{postgres=X/postgres}",
+      "oldConfig": [
+        "search_path=\"\""
+      ],
+      "oldOwner": "postgres"
+    }
+  ],
+  "guards": "t|t|t|t|t|t",
+  "actual": "PASS",
+  "product": "NOT_APPLIED"
+}

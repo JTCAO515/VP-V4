@@ -1,0 +1,63 @@
+{
+  "candidateSha256": "4b20947a512d36cd6bd860e27474b73ae8ca89a215bddf41ca5c07529f82b658",
+  "results": [
+    {
+      "name": "unconfigured/default off",
+      "result": "PASS"
+    },
+    {
+      "name": "config cannot replace missing lifecycle",
+      "result": "PASS"
+    },
+    {
+      "name": "raw duplicate keys reject before jsonb",
+      "result": "PASS"
+    },
+    {
+      "name": "closed signals reject activation/raw fields",
+      "result": "PASS"
+    },
+    {
+      "name": "decline vs skip/quota/permission",
+      "result": "PASS"
+    },
+    {
+      "name": "clock unknown not server receive",
+      "result": "PASS"
+    },
+    {
+      "name": "foreign/missing/E2/E3 authority unavailable",
+      "result": "PASS"
+    },
+    {
+      "name": "all eight tables RLS/no role table access",
+      "result": "PASS"
+    },
+    {
+      "name": "private functions deny roles",
+      "result": "PASS"
+    },
+    {
+      "name": "gateway and purge exact role grants",
+      "result": "PASS"
+    },
+    {
+      "name": "actual finite physical purge and account cascade",
+      "result": "PASS"
+    },
+    {
+      "name": "new immutable triggers enabled",
+      "result": "PASS"
+    }
+  ],
+  "actual": "PASS",
+  "proofScope": "Own actual PG17 SQL primitive fixture only",
+  "fullLifecycle": "INCOMPLETE",
+  "unrun": [
+    "ordinaryAuth/NativeHTTP",
+    "complete E1/E2/E3 admission/render/writer chain",
+    "D2 Profile suffix/coverage/independent restore journal",
+    "automatic consumer integration",
+    "target/native/user acceptance"
+  ]
+}

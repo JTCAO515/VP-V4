@@ -1,0 +1,40 @@
+{
+  "stage": "PRIVATE_SOURCE_PREPARATION_INCOMPLETE_LIFECYCLE",
+  "base": "daa7bae44a660381fb3295d0d2afc327ea98d3ba",
+  "owner": "01a12e77-c953-7313-923e-164c863a37c0",
+  "soleMain": "01a12f21-5586-7473-ab9d-31cb49204f10",
+  "productSlot": "ABSENT_NOT_CREATED",
+  "tableCount": 8,
+  "schemaGuardsRuntime": "t|t|t|t|t|t",
+  "resource": "owned_retained_running_no_network_ports_mounts",
+  "sourcePins": [
+    {
+      "path": "measurement.candidate.sql",
+      "sha256": "8e5b2ab7d12ffe755e2f80ded85af833517117bd855f9e5fc1abed9d006d24b4"
+    },
+    {
+      "path": "recovery.candidate.sql",
+      "sha256": "6d46eb407039781d0bf54a9a2c468c7fc111aee6126c317e5f25a895c450bb23"
+    },
+    {
+      "path": "profile-request-suffix.new.candidate.sql",
+      "sha256": "e5e082eb64e92166f3c55ced6157243129a8b85868e0b017e29bb0565f6b3ad1"
+    },
+    {
+      "path": "profile-static-composition.candidate.sql",
+      "sha256": "216bb1f6ad739555b0da4a15f84fe05c80dbe5eb037b3c8c85f81c17e3bc701d"
+    },
+    {
+      "path": "module-runtime-pins.candidate.sql",
+      "sha256": "a5e40da24e3b85f37ade433a5113593c4acd69a4e710ed15808f97291e085035"
+    },
+    {
+      "path": "WIRE.md",
+      "sha256": "f26bdf2bd86c06a9af2a3cb68bc66e5949a57ca7bed34fcf189b6e51bafff0a4"
+    },
+    {
+      "path": "CONTRACT.md",
+      "sha256": "d0b9b781674568d31ea4b1cbd1d973c8ea6d8e3f7eb00b14e32e0bcdec462c38"
+    }
+  ]
+}

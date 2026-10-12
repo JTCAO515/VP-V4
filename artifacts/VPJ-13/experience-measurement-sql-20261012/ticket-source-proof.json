@@ -1,0 +1,36 @@
+{
+  "candidateSha256": "4b20947a512d36cd6bd860e27474b73ae8ca89a215bddf41ca5c07529f82b658",
+  "results": [
+    {
+      "name": "pdf pre-result current Trip anchor; foreign/stale rejects",
+      "result": "PASS"
+    },
+    {
+      "name": "screenshot pre-result current Trip anchor; foreign/stale rejects",
+      "result": "PASS"
+    },
+    {
+      "name": "no-Trip/local_import branch rejected",
+      "result": "PASS"
+    },
+    {
+      "name": "E3 logicalId equals Goal, missing full source rejects",
+      "result": "PASS"
+    },
+    {
+      "name": "closed anchor raw fields reject",
+      "result": "PASS"
+    },
+    {
+      "name": "E2 acceptance source has zero successful operations/Tasks/results",
+      "result": "PASS"
+    }
+  ],
+  "scope": "actual PG17 private source qualification, not configured lifecycle or authenticated HTTP",
+  "ownSyntheticCleanup": "PASS",
+  "unrun": [
+    "positive E3 original input writer tuple",
+    "Native guarded selection/render source association",
+    "complete lifecycle"
+  ]
+}

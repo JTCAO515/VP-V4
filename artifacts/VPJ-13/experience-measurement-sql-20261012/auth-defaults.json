@@ -1,0 +1,38 @@
+{
+  "candidateSha256": "d10b6423b6321d00f7c4293b2cf21f54da032d5f4eb496a0258e99b36bcd54c1",
+  "results": [
+    {
+      "name": "ordinary SQL-native-session owner/default-off/no existing consent",
+      "result": "PASS"
+    },
+    {
+      "name": "unconfigured consent refuses",
+      "result": "PASS"
+    },
+    {
+      "name": "wrong purpose rejects",
+      "result": "PASS"
+    },
+    {
+      "name": "caller actor rejects",
+      "result": "PASS"
+    },
+    {
+      "name": "replaced epoch rejects",
+      "result": "PASS"
+    },
+    {
+      "name": "denials created zero consent rows",
+      "result": "PASS"
+    },
+    {
+      "name": "uncomposed original global schema guards",
+      "result": "FAIL",
+      "actual": "f|f|f|f",
+      "reason": "Initial module candidate requires exact static-after composition before product append; not waived"
+    }
+  ],
+  "authEvidence": "actual SQL native session fixture; not GoTrue/JWT cryptographic validation or HTTP",
+  "ownSyntheticAccountCleanup": "PASS",
+  "fullLifecycle": "INCOMPLETE"
+}

@@ -1,0 +1,50 @@
+{
+  "candidateSha256": "1d6d46cec4906fb0b2b2e4acb2f5b932ef2d6e6734115a9b7e210726088f6e05",
+  "results": [
+    {
+      "name": "caller/latest flag and restored control data cannot authenticate source",
+      "result": "PASS"
+    },
+    {
+      "name": "uninstalled independent live source keeps collection disabled",
+      "result": "PASS"
+    },
+    {
+      "name": "whole database denies before data writes",
+      "result": "PASS"
+    },
+    {
+      "name": "same source/target instance denies before data writes",
+      "result": "PASS"
+    },
+    {
+      "name": "missing independently acquired journal denies before data writes",
+      "result": "PASS"
+    },
+    {
+      "name": "expired journal denies before data writes",
+      "result": "PASS"
+    },
+    {
+      "name": "foreign owner denies before data writes",
+      "result": "PASS"
+    },
+    {
+      "name": "wrong layout/pins denies before data writes",
+      "result": "PASS"
+    },
+    {
+      "name": "persistent immutable floor event duplicate does not mint or renew another event",
+      "result": "PASS"
+    },
+    {
+      "name": "issuer/reconcile/floor have no Native or blanket service execute grant",
+      "result": "PASS"
+    }
+  ],
+  "scope": "actual own PG17 denial/retained event proof",
+  "productionLiveSource": "UNAVAILABLE",
+  "syntheticProtectedAcquisitionPositive": "UNRUN",
+  "fullLifecycle": "INCOMPLETE",
+  "collection": "DEFAULT_DENIED"
+}
