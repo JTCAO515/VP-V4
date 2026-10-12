@@ -9,4 +9,3 @@ AS $function$declare n numeric;begin
  if n<0 or n>max_n or n<>trunc(n) then raise exception 'PROFILE_SOURCE_UNAVAILABLE';end if;
  return to_jsonb(n::bigint);
 end$function$
-

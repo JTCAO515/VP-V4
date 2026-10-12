@@ -19,4 +19,3 @@ AS $function$declare m jsonb;item jsonb;p export_private.profile_snapshot_proven
   and (item->'watermark'->>'profileErasureFloor')::bigint is not distinct from p.profile_floor
   and (item->'watermark'->>'paceErasureFloor')::bigint is not distinct from p.pace_floor;
 exception when lock_not_available then return false;end$function$
-

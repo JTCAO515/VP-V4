@@ -20,4 +20,3 @@ AS $function$declare k text;x jsonb;out_n jsonb;begin
  elsif jsonb_typeof(v)='number' then raise exception 'PROFILE_SOURCE_UNAVAILABLE';
  else return v;end if;
 end$function$
-

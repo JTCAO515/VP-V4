@@ -22,4 +22,3 @@ AS $function$declare k text;begin
   and v->'erasedFields'='[]' and v->'briefCasesInvalidated'='[]' and v->'retainedCopies'=profile_data_private.empty_copies_v1()
   and (v->>'clearedPreviews')::numeric<=selected and (v->>'retainedFences')::numeric=selected,false);
 exception when others then return false;end$function$
-

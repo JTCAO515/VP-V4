@@ -27,4 +27,3 @@ declare r record;actual jsonb;expected jsonb;fk jsonb;names text[]:=array['publi
  if export_private.profile_hooks_valid_v1() is not true then return false;end if;
  return true;
 end$function$
-

@@ -11,4 +11,3 @@ AS $function$declare r record;p pg_proc;begin
  end loop;
  return true;
 end$function$
-

@@ -35,4 +35,3 @@ AS $function$declare p jsonb;s jsonb;req jsonb;undo_n jsonb;mask jsonb;present j
     and (undo_n->>'state' not in('explicit','paused') or undo_n->>'noticeVersion'='local-planning-cross-trip-v1'),false) is not true then return false;end if;
  end if;return true;
 exception when others then return false;end$function$
-

@@ -27,4 +27,3 @@ declare j export_private.core_jobs_v1;a export_private.core_artifacts_v1;item js
   j.artifact_digest,j.artifact_bytes,j.commit_digest,j.completed_at,j.artifact_expires_at,a.key_id);
  if export_private.profile_managed_copy_v1(j.request_id,j.owner_id) is not true or lease_deadline<=clock_timestamp() then raise exception 'INVALID_OUTPUT';end if;
 end$function$
-

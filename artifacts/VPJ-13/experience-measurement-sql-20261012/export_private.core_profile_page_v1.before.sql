@@ -23,4 +23,3 @@ declare j export_private.core_jobs_v1;l uuid;g integer;item jsonb;page jsonb;beg
  if export_private.live_lease_v1(j,l,g) is not true then return jsonb_build_object('kind','unavailable');end if;
  return page;
 end$function$
-

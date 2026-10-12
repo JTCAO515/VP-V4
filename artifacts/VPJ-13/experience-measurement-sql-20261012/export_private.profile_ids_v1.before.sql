@@ -9,4 +9,3 @@ AS $function$declare x jsonb;last_n text:='';begin
   if notification_private.uuid(x) is not true or (x#>>'{}') collate "C"<=last_n collate "C" then return false;end if;last_n:=x#>>'{}';
  end loop;return true;
 end$function$
-

@@ -30,4 +30,3 @@ AS $function$declare s text;c bigint;e bigint;selected integer;begin
  return coalesce(v->'previewErased'='true' and jsonb_typeof(v->'requestDigest')='string' and v->>'requestDigest' ~ '^[a-f0-9]{64}$'
   and export_private.profile_decision_valid_v1(v->'decision',s,c,e,now_n,selected) and v->'decision'->>'requestDigest'=v->>'requestDigest',false);
 exception when others then return false;end$function$
-

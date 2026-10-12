@@ -48,4 +48,3 @@ begin
  if octet_length(notification_private.canonical(jsonb_build_object('snapshot',jsonb_build_array(item))))>1000000 then raise exception 'PROFILE_SCOPE_TOO_LARGE';end if;
  return item;
 end$function$
-

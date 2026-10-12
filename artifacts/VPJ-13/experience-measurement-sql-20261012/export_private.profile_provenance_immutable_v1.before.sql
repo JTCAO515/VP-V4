@@ -9,4 +9,3 @@ AS $function$begin
  end if;
  return OLD;
 end$function$
-

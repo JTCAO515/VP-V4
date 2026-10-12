@@ -13,4 +13,3 @@ AS $function$declare expected jsonb;begin
   and (v->>'profileErasureFloor')::numeric<=(v->>'profileRevision')::numeric and (v->>'paceErasureFloor')::numeric<=(v->>'paceRevision')::numeric
   and v->>'paceState' in('unset','explicit','paused','revoked') and jsonb_typeof(v->'hasPaceRequest')='boolean' and jsonb_typeof(v->'hasPaceUndo')='boolean',false);
 exception when others then return false;end$function$
-

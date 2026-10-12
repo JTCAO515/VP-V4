@@ -12,4 +12,3 @@ AS $function$declare m jsonb;item jsonb;begin
  item:=export_private.profile_source_v1(j.owner_id);
  return notification_private.hash(jsonb_build_object('snapshot',jsonb_build_array(item)))=m->>'digest' and export_private.live_lease_v1(j,l,g);
 exception when lock_not_available then return false;end$function$
-

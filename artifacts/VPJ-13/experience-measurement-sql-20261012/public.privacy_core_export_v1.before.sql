@@ -189,4 +189,3 @@ begin
  end if;
  raise exception 'INVALID_INPUT';
 end $function$
-

@@ -27,4 +27,3 @@ declare j export_private.core_jobs_v1;p export_private.profile_snapshot_provenan
   and a.expires_at=p.artifact_expires_at and a.expires_at<=j.expires_at and p.completed_at>=j.created_at
   and a.created_at<=p.completed_at and p.completed_at<a.expires_at,false);
 exception when lock_not_available then return false;end$function$
-

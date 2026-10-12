@@ -54,4 +54,3 @@ begin
  then raise exception 'PROFILE_SCOPE_TOO_LARGE';end if;
  return item;
 end$function$
-
