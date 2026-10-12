@@ -104,3 +104,11 @@ if(process.argv[2]==='candidate-reset'){
  await owned();await db('drop function public.read_goal_return_reference_v1(uuid,uuid,uuid,integer,uuid,bigint,bigint);drop function turn_private.goal_return_reference_v1(uuid,uuid,uuid,integer,uuid,bigint,bigint);');
  console.log('Own candidate reset only PASS');
 }
+
+if(process.argv[2]==='cleanup'){
+ const before=await owned();
+ const clean=await command('docker',['rm','-f',name]);assert.equal(clean.code,0,clean.stderr);
+ const absent=await command('docker',['ps','-a','--filter','name=^/'+name+'$','--format','{{.Names}}']);assert.equal(absent.code,0,absent.stderr);assert.equal(absent.stdout.trim(),'');
+ writeFileSync(out+'resource-cleanup.json',JSON.stringify({observedAt:new Date().toISOString(),nonce:name,owner,image,verifiedLabels:before.Config.Labels,network:before.HostConfig.NetworkMode,mountCount:before.Mounts.length,publishedPorts:before.HostConfig.PortBindings??{},cleanup:'PASS',exactNonceAbsentAfter:true,otherResources:'not accessed or changed',persistentDataOrVolumes:'none'},null,2)+'\n');
+ console.log('Verified own fixture removed; exact nonce absent PASS');
+}

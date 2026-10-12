@@ -1,0 +1,52 @@
+{
+  "observedAt": "2026-10-12T06:03:29.173898+00:00",
+  "instruction": "Sentinel_d7d62f88e41481919d6c4100f46462e1 freeze consumed from actual DEVELOPMENT-RULES and Main snapshot",
+  "task": "existing #203 E3 soleSQL scope only",
+  "owner": "01a12e1c-6772-7e82-a89a-9111f5488a3a",
+  "branch": "codex/vpj13-goal-return-sql-20261012",
+  "productCommit": "d94c54c5755efb1a89a8635cd69ac13622f4a61c",
+  "productPath": "supabase/migrations/20261012010000_vpj13_goal_return_source.sql",
+  "productSha256Unchanged": "15fd14818a09a1e0418aaf31deb639b7e6b9f269c51b3782410d536564e8596b",
+  "ownPR": "NONE: no helper PR, original Server integrates coherent #203",
+  "issue203": "OPEN live gh readback",
+  "leases": [
+    {
+      "name": "VPJ13-E3-SQL-product-exact-lease-20261012",
+      "state": "consumed exact append then released for active writing; no wholesale writer transfer",
+      "evidence": "product-append-proof.json; Main original integration keeps exact d94c source"
+    },
+    {
+      "name": "private artifacts/VPJ-13/goal-return-sql-20261012/**",
+      "state": "released after this closure record commit; retained evidence only, no new scope"
+    },
+    {
+      "name": "own fixture vpj13-goal-return-sql-20261012-51fb6d9a",
+      "state": "released, removed and exact nonce absence verified",
+      "evidence": "resource-cleanup.json"
+    }
+  ],
+  "retainedResources": {
+    "worktree": "retained existing checkout and branch, no ownerless cleanup or new worktree",
+    "catalogs": "host-local raw before/after catalog files retained inside own ignored artifact directory",
+    "container": "none",
+    "ports": "none",
+    "network": "none",
+    "volumes": "none",
+    "otherOwnerResources": "not accessed or changed"
+  },
+  "checks": "exact-source PG17.6/catalog/ACL/privacy/qualification/concurrency evidence reused; no reporting rerun",
+  "preservedFail": [
+    "pnpm engine identity/signature request launch FAIL; exact docs script separately PASS",
+    "original destructive event deletion injection denied; complementary missing-head proof PASS",
+    "initial synthetic fixture and concurrency expectation FAIL retained in named proof records"
+  ],
+  "unrun": [
+    "ordinary GoTrue/Auth verified JWT HTTP",
+    "PostgREST actual outer timer",
+    "Server 15-second HTTP cancellation full chain",
+    "Native target/device and deployment acceptance",
+    "final coherent integration formal review/CI/protected merge handled by original Main/Server; not claimed complete here"
+  ],
+  "forbiddenActionsPerformed": false,
+  "next": "original Server integrates stable E3 source; same SQL owner only resumes for concrete defect within existing scope, no new task/thread/writer"
+}
