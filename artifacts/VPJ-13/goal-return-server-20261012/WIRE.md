@@ -30,6 +30,8 @@ No new retained rows, table, index, queue, export registry or copied content. Ex
 
 Main review identified an unresolved SQL concurrency gap: candidate Goal/Conversation SHARE locks do not prevent artifact FK membership phantoms. Rediscovery does not establish a linearizable full membership snapshot. Independent SQL owner must prove a minimal compatible source lock/snapshot plan (including Trip→link→goal and latest-message/publish/choose order); no new publisher global advisory/table lock or old body change is authorized. Candidate function SET statement_timeout must not be reported as proven RPC5-second timing; actual SQL/HTTP cancellation proof remains UNRUN. SQL candidate is intentionally retained as review input with these known gaps.
 
+Subsequent independent SQL stable source e4ae9200 supplies an unchanged-wire UPDATE/NOWAIT fence and actual own-fixture source/catalog/concurrency evidence. See `SQL-SOURCE-INTEGRATION.md` for the exact consumed source and limits. The original SHARE candidate above remains historical input; stable SQL product append is still subject to Main's exact lease and original SQL writer. No HTTP/target installation is inferred.
+
 ## Required catalog/source evidence before SQL product write
 
 Before: proposed signature absent; capture current pg_get_functiondef + prosrc/full-definition hashes, owner, language, volatility, security, search_path/config and effective ACL for original result read/state/domain/common basis, text_owner, native guard/session, relevant privacy schema/source hooks. Capture relevant source tables/columns/constraints/indexes and current actual migration head. Hashes must come from the permitted exact catalog and match source; do not derive or adopt them at runtime.
