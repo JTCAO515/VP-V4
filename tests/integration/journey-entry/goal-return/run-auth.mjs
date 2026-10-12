@@ -55,7 +55,7 @@ let code=1,created=false,started=false;
 try{
  docker(['network','create','--internal','--label','vp.owner='+owner,'--label','vp.nonce='+nonce,'--opt','com.docker.network.bridge.host_binding_ipv4=127.0.0.1',network]);created=true;
  started=true;
- const start=await run('supabase',['start','--workdir',target,'--network-id',network,'-x','realtime,storage-api,imgproxy,mailpit,postgres-meta,studio,edge-runtime,logflare,vector,supavisor']);
+ const start=await run('supabase',['start','--agent','no','--workdir',target,'--network-id',network,'-x','realtime,storage-api,imgproxy,mailpit,postgres-meta,studio,edge-runtime,logflare,vector,supavisor']);
  if(start!==0){
   const ownNames=docker(['ps','-a','--filter','name='+project,'--format','{{.Names}}']).split('\n').filter(Boolean);
   const owned=ownNames.length?JSON.parse(docker(['inspect',...ownNames])):[];

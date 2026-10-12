@@ -1,0 +1,14 @@
+{
+  "sourceHead": "a0b2531d43f9f6649359d295ada96f49e968d4e9",
+  "nonce": "vpj13-e3-auth-20261012-8c4e13ab",
+  "result": "FAIL",
+  "phase": "owned startup reachability diagnostic",
+  "actualErrorCode": "LegacyDbConnectError",
+  "actualError": "connect ECONNREFUSED 127.0.0.1:63842",
+  "actualResourcesAfterCLIExit": [],
+  "internalDBReady": "UNRUN; no own running DB existed",
+  "historicalOwnDBEventQuery": "No records returned from the exact own-container filter; not proof of another resource state",
+  "cleanup": {"containers": "ABSENT", "volumes": "ABSENT", "ports": "FREE", "result": "PASS"},
+  "authHTTP": "UNRUN",
+  "nextAction": "CLI2.117.0 official help exposes per-command --agent yes/no/auto. Diagnose normal --agent no startup path; default agent adapter preconnect is a hypothesis, not a confirmed network defect. Network/ports/images/roles/daemon lease unchanged."
+}
