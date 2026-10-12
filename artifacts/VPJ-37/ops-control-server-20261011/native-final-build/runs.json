@@ -1,0 +1,77 @@
+{
+  "owner": "01a126a8-7cb5-7a70-aca6-0ba38c99efe2",
+  "nonce": "w2-native-final-build-20261012-01",
+  "runs": [
+    {
+      "name": "w2-native-final-build-20261012-01",
+      "sourceHead": "f6f36add7a4a9887c768bd926ca941dc460f5637",
+      "xcode": "Xcode 27.0\nBuild version 27A266a",
+      "runtime": null,
+      "deviceUDID": null,
+      "signing": "disabled",
+      "testsRun": false,
+      "buildCommand": {
+        "startedAt": "2026-10-12T03:44:10.686069+00:00",
+        "argv": [
+          "xcodebuild",
+          "build",
+          "-project",
+          "ios/VisePanda/VisePanda.xcodeproj",
+          "-scheme",
+          "VisePanda",
+          "-derivedDataPath",
+          "/private/tmp/w2-native-final-build-20261012-01-derived",
+          "-destination",
+          "generic/platform=iOS Simulator",
+          "CODE_SIGNING_ALLOWED=NO",
+          "-resultBundlePath",
+          "/private/tmp/w2-native-final-build-20261012-01/build.xcresult"
+        ],
+        "command": "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -derivedDataPath /private/tmp/w2-native-final-build-20261012-01-derived -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO -resultBundlePath /private/tmp/w2-native-final-build-20261012-01/build.xcresult",
+        "cwd": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj37-ops-control-server-20261011",
+        "developerDir": "/Applications/Xcode.app/Contents/Developer",
+        "exitCode": -5
+      },
+      "logSha256": "3229333c9d2be24e92740d09697f3b1c001502700f9a5ad6b28a62679680a06d",
+      "result": "FAIL",
+      "diagnosis": "sandbox macro Operation not permitted/SIGTRAP"
+    },
+    {
+      "name": "w2-native-final-build-20261012-01-r2",
+      "sourceHead": "f6f36add7a4a9887c768bd926ca941dc460f5637",
+      "xcode": "Xcode 27.0\nBuild version 27A266a",
+      "runtime": null,
+      "deviceUDID": null,
+      "signing": "disabled",
+      "testsRun": false,
+      "buildCommand": {
+        "startedAt": "2026-10-12T03:47:19.502995+00:00",
+        "argv": [
+          "xcodebuild",
+          "build",
+          "-project",
+          "ios/VisePanda/VisePanda.xcodeproj",
+          "-scheme",
+          "VisePanda",
+          "-derivedDataPath",
+          "/private/tmp/w2-native-final-build-20261012-01-r2-derived",
+          "-destination",
+          "generic/platform=iOS Simulator",
+          "CODE_SIGNING_ALLOWED=NO",
+          "-resultBundlePath",
+          "/private/tmp/w2-native-final-build-20261012-01-r2/build.xcresult"
+        ],
+        "command": "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -derivedDataPath /private/tmp/w2-native-final-build-20261012-01-r2-derived -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO -resultBundlePath /private/tmp/w2-native-final-build-20261012-01-r2/build.xcresult",
+        "cwd": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj37-ops-control-server-20261011",
+        "developerDir": "/Applications/Xcode.app/Contents/Developer",
+        "exitCode": 65
+      },
+      "logSha256": "0c2650f123871ddd4ac243ae125950395bb1730acdee937f001fb390fa3c3e7b",
+      "result": "FAIL",
+      "diagnosis": "NativeAssistantConversationView486 opsRefusal typecheck timeout/exit65"
+    }
+  ],
+  "repairCandidate": "conversation-compile-repair",
+  "noSimulatorCreatedOrLaunched": true,
+  "SQLappend": "HOLD"
+}

@@ -1,0 +1,10 @@
+{
+  "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift",
+  "before": "0e9fda055c991afc788e069d094875cd207135327510f768d1e7e098fa023313",
+  "after": "44004e5ee5b2db315c9b08ea438dedb3cadc999f777af4b9dfea1b0c3cf81d44",
+  "patch": "205d21e5d77e613de74902e634b4196b3135f1be107ec8a7013a33b15153e268",
+  "scope": "Only same operational refusal computed property split into typed Bool statements; no behavior/Entry/decoder changes",
+  "applied": false,
+  "buildError": "Xcode27 actual typecheck timeout at line486",
+  "lease": "Main precise source repair review pending"
+}

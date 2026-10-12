@@ -138,3 +138,14 @@ patch91e9 and after0e9 verified immediately, then working source+INDEX MATCH. Ev
 conversation-lease-apply.json. Existing JourneyEntry/materials/directions preserved; only new
 send/continuation refusal conditions and Ops display changed. New dedicated-state2file and
 SQL append remain HOLD. Final mature Native package owns one affected registered App build.
+
+Dedicated-state lease applied at f6f36add: two exact before/patch/after/INDEX guards PASS,
+Models0181 unchanged, original Journal+ordinary Models.valid+90s/cancel preserved. One mature
+registered App build attempted with own nonce only. r1 FAIL sandbox ObservationMacros/SIGTRAP;
+normal concrete tool approval permits r2 same source/range, which FAIL exits65 at the new
+Conversation opsRefusal collection expression486 (type inference timeout). No Simulator
+creation/launch/test/provider/device occurred. Both exact logs compressed+hash manifest under
+native-final-build; no FAIL replaced. Minimal one-getter typed-Bool repair candidate before0e9
+→after44004e5e, patch205d21e5 prepared/syntax/patchcheck PASS, not applied; Main exact repair
+lease pending. No unrelated source/timeout/SDK/role adjustment. Final compile and SQL integration
+remain incomplete.

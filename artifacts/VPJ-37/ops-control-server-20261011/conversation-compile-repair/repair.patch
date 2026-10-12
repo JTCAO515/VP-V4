@@ -1,0 +1,9 @@
+--- a/ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift
++++ b/ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift
+@@ -486 +486,5 @@
+-    private var opsRefusal: Bool { [notice, planningNotice].contains { $0 == "OPS_CONTROL_DISABLED" || $0 == "OPS_SCOPE_UNAVAILABLE" } }
++    private var opsRefusal: Bool {
++        let textRefused: Bool = notice == "OPS_CONTROL_DISABLED" || notice == "OPS_SCOPE_UNAVAILABLE"
++        let planningRefused: Bool = planningNotice == "OPS_CONTROL_DISABLED" || planningNotice == "OPS_SCOPE_UNAVAILABLE"
++        return textRefused || planningRefused
++    }
