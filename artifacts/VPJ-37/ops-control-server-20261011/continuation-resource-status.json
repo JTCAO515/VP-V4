@@ -4,7 +4,7 @@
   "leases": {
     "W2 private/source ownership": "RETAINED: original sole integrator, no writer replacement",
     "five Main source lease batches": "APPLIED exact guarded sources; retained for final integration, not whole-file released",
-    "failureCopy two-file candidate": "HOLD: exact Main lease requested, no product apply",
+    "failureCopy two-file candidate": "APPLIED: Main W2-failure-copy exact lease; full before/raw patch/temp replay/full after/INDEX MATCH",
     "Conversation E3": "LIMITED_RELEASE exact 16 inserted lines only; no whole-file release",
     "planning-v2-bounded-worker E1": "LIMITED_RELEASE exact candidate hunk only; no product apply in W2",
     "NativeAskModels": "UNKNOWN/HOLD unchanged",
@@ -21,7 +21,6 @@
   },
   "remaining": [
     "actual SQL full pause/readback/lifecycle package and exact append/shared leases",
-    "apply localized refusal candidate after exact lease; rerun affected failing tests",
     "Main exact-head formal review, applicable full CI and normal protected merge/readback"
   ],
   "unrun": [
@@ -30,5 +29,6 @@
     "real device",
     "final full SQL lifecycle/restore integration",
     "final remote CI and protected merge"
-  ]
+  ],
+  "latestSourceHead": "5f108031bef7b3bf6211eebfa684f190f905e4af"
 }
