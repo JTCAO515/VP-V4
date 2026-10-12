@@ -18,7 +18,7 @@ test('foreign namespace/image/network, alternate protocol/address/range, duplica
   ...['63841:5432','63842:5433','[::1]:63842:5432','63842-63843:5432','63842:5432/udp','63842:5432/tcp/udp','63842','01:63842:5432'].map(p=>create('db',tags[0],['-p',p])),
   create('db',tags[0],['-p','63842:5432','-p','63842:5432']),create('db',tags[0],['--name','supabase_db_'+project,'-p','63842:5432']),
   create('db',tags[0],['--network',network,'-p','63842:5432']),create('db',tags[0],['-P']),create('db',tags[0],['--publish-all']),
-  create('db',tags[0],['--privileged','-p','63842:5432']),create('db',tags[0]),create('auth',tags[1],['-p','63842:5432']),['run','--rm',tags[0]],['compose','up']];
+  create('db',tags[0],['--privileged','-p','63842:5432']),create('db',tags[0]),create('auth',tags[1],['-p','63842:5432']),['run','--rm',tags[0]],['compose','up'],['pull',tags[0]],['image','pull',tags[0]]];
  for(const args of bad)assert.throws(()=>loopbackDockerArgv(args),/^Error: E3_DOCKER_/);
  assert.deepEqual(loopbackDockerArgv(['inspect','owned']).args,['inspect','owned']);
 });

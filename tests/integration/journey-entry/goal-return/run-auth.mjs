@@ -8,12 +8,14 @@ import {spawn,execFileSync} from 'node:child_process';
 import assert from 'node:assert/strict';
 import {nativeHTTPPorts,nativeHTTPChildEnv,nativeHTTPSupabaseConfig,assertNativeHTTPPortsFree} from '../../turn/native-http-ports.mjs';
 import {owner,nonce,project,network,portBase,imageIds} from './scope.mjs';
+import {readReject} from './reject-observation.mjs';
 
 if(process.argv.length!==2 || process.env.VPJ13_E3_AUTH_NONCE!==undefined && process.env.VPJ13_E3_AUTH_NONCE!==nonce) throw Error('Exact E3 fixture nonce required');
 const lease=JSON.parse(readFileSync('/Users/jtsm5p/Documents/Codex/2026-10-12/task/VPJ13-E3-AuthHTTP-fixture-exact-lease-20261012.json','utf8'));
 assert.equal(lease.soleOwner,owner);assert.equal(lease.nonce,nonce);assert.equal(lease.project,project);assert.equal(lease.network,network);assert.equal(lease.worktree,process.cwd());
-assert.equal(lease.amendmentMarker,'VPJ13-E3-AuthHTTP-process-loopback-adapter-20261012');assert.equal(lease.networkInternal,false);
+assert.equal(lease.amendmentMarker,'VPJ13-E3-AuthHTTP-reject-observation-20261012');assert.equal(lease.networkInternal,false);
 assert.equal(lease.processLoopbackAdapter.state,'GRANTED_WITH_EXACT_GUARDS');
+assert.equal(lease.rejectObservation.state,'GRANTED_DIAGNOSTIC_ONLY');
 if(process.env.DOCKER_HOST || process.env.DOCKER_CONTEXT) throw Error('Docker overrides refused');
 const officialDocker=realpathSync(execFileSync('/usr/bin/which',['docker'],{encoding:'utf8'}).trim());
 const docker=(args)=>execFileSync(officialDocker,args,{encoding:'utf8',stdio:['ignore','pipe','pipe']}).trim();
@@ -27,7 +29,7 @@ assert.equal(docker(['ps','-aq','--filter','name='+project]),'','Fresh exact pro
 assert.equal(docker(['volume','ls','-q','--filter','name='+project]),'','Fresh exact project volumes required');
 assert.equal(docker(['network','ls','-q','--filter','name=^'+network+'$']),'','Fresh exact network required');
 for(const [tag,id] of Object.entries(imageIds)) assert.equal(docker(['image','inspect',tag,'--format','{{.Id}}']),id,'Pinned installed image required');
-const target=mkdtempSync(join(tmpdir(),nonce+'-'));mkdirSync(join(target,'supabase'),{mode:0o700});
+const target=realpathSync(mkdtempSync(join(tmpdir(),nonce+'-')));mkdirSync(join(target,'supabase'),{mode:0o700});
 writeFileSync(join(target,'supabase/config.toml'),nativeHTTPSupabaseConfig(readFileSync('supabase/config.toml','utf8'),project,ports),{mode:0o600});
 cpSync('supabase/migrations',join(target,'supabase/migrations'),{recursive:true});
 const env={...process.env,DOCKER_CONTEXT:context,VPJ13_E3_AUTH_NONCE:nonce,SUPABASE_TELEMETRY_DISABLED:'true',DO_NOT_TRACK:'1',NEXT_TELEMETRY_DISABLED:'1'};
@@ -69,6 +71,7 @@ try{
  console.log('E3_AUTH_NETWORK '+JSON.stringify({nonce,amendment:lease.amendmentMarker,internal:beforeNetwork.Internal,defaultBinding:'127.0.0.1',technicalEgress:true,externalRequestsAuthorized:false}));
  started=true;
  const start=await run('supabase',['start','--agent','no','--workdir',target,'--network-id',network,'-x','realtime,storage-api,imgproxy,mailpit,postgres-meta,studio,edge-runtime,logflare,vector,supavisor'],false,supabaseEnv);
+ const rejected=readReject(target);console.log('E3_AUTH_REJECT_OBSERVATION '+JSON.stringify(rejected??{state:'OBSERVATION_UNAVAILABLE'}));
  if(start!==0){
   const ownNames=docker(['ps','-a','--filter','name='+project,'--format','{{.Names}}']).split('\n').filter(Boolean);
   const owned=ownNames.length?JSON.parse(docker(['inspect',...ownNames])):[];
@@ -101,8 +104,8 @@ try{
   }
  }
  console.log('E3_AUTH_TARGET '+JSON.stringify({nonce,owner,project,network,ports:ports.ports,services:expectedServices,sourceHead:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim()}));
- code=await run(process.execPath,['--test','tests/integration/journey-entry/goal-return/auth-http.test.mjs'],true,
-  {...env,...nativeHTTPChildEnv(ports,target),VPJ13_E3_AUTH:'true',VPJ13_E3_AUTH_NONCE:nonce});
+ // This exact amendment grants observation only: even success cannot seed actors.
+ console.log('E3_AUTH_DIAGNOSTIC_ONLY '+JSON.stringify({actors:0,nextStarted:false,authHTTP:'UNRUN'}));code=0;
 }finally{
  if(started){const stopped=await run('supabase',['stop','--workdir',target,'--no-backup'],false,supabaseEnv);if(stopped!==0){code=1;console.error('Own E3 stack cleanup failed: '+project);}}
  if(created){

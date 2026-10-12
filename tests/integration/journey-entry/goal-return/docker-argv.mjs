@@ -15,7 +15,7 @@ const deny=code=>{throw new Error('E3_DOCKER_'+code);};
 /** Pure, argv-only guard. No environment/secret/file/daemon access. */
 export function loopbackDockerArgv(args){
  if(!Array.isArray(args)||!args.every(v=>typeof v==='string'))deny('INVALID_ARGV');
- if(args[0]==='run'||args[0]==='compose')deny('OPERATION_DENIED');
+ if(args[0]==='run'||args[0]==='compose'||args[0]==='pull'||args[0]==='image'&&args[1]==='pull')deny('OPERATION_DENIED');
  if(args[0]!=='create')return {args:[...args],record:null};
  const output=[...args],publications=[];let name,net,image,index=1;
  while(index<args.length){
