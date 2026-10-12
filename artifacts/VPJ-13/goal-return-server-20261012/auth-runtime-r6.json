@@ -1,0 +1,14 @@
+{
+  "sourceHead": "c892380954f3f6b3063bd5d95e2b97c3c870fda9",
+  "nonce": "vpj13-e3-auth-20261012-8c4e13ab",
+  "amendmentMarker": "VPJ13-E3-AuthHTTP-own-bridge-amendment-20261012",
+  "actualNetwork": {"internal": false, "defaultBinding": "127.0.0.1", "technicalEgress": true, "externalRequestsAuthorized": false},
+  "bootstrap": "Supabase CLI start exit0; proceeded to after-start resource guard",
+  "result": "FAIL",
+  "actualFailure": "No wildcard or external exposure: actual HostIp 0.0.0.0, expected127.0.0.1",
+  "sourcePoint": "run-auth.mjs after-start published binding assertion",
+  "ordinaryActorsCreated": 0,
+  "authHTTP": "UNRUN; actor seed/Next startup/test not reached",
+  "cleanup": {"containers": "ABSENT", "volumes": "ABSENT", "ports": "FREE", "network": "removed after own label/zero-attachment checks", "result": "PASS"},
+  "nextAction": "Do not relax binding assertion or repeat unchanged startup. Resolve public CLI's explicit port publishing behavior within same resource scope under new Main's exact adjudication; no global daemon, auth role/server setting, foreign resource or fake Auth/RPC."
+}
