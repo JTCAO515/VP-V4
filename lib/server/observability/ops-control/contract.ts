@@ -17,7 +17,7 @@ export type ControlInput = Readonly<{schemaVersion:typeof CONTROL_SCHEMA}> & (
 );
 export const record = (v:unknown):v is Record<string,unknown> => v!==null && typeof v==='object' && !Array.isArray(v);
 export const exact = (v:Record<string,unknown>,keys:readonly string[]) => Object.keys(v).length===keys.length && keys.every(k=>Object.hasOwn(v,k));
-export const uuid = (v:unknown):v is string => typeof v==='string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(v);
+export const uuid = (v:unknown):v is string => typeof v==='string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(v);
 export const revision = (v:unknown):v is number => Number.isSafeInteger(v) && Number(v)>=0 && Number(v)<=9007199254740990;
 const member=(v:unknown,list:readonly string[]):v is string=>typeof v==='string'&&list.includes(v);
 export function parseControlScope(v:unknown):ControlScope|null {

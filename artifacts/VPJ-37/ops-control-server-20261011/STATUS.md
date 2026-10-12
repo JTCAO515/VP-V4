@@ -64,3 +64,8 @@ All core SQL/request/worker/real-user fallback integration is still incomplete; 
 Staging stop/resume/fault rollback, deployed Auth/database and real provider/device: UNRUN.
 Whole bundle normal PR, all applicable CI, exact final formal review and protected merge are Main's
 next integration stage. This private commit is a stable handoff, not complete W2/229 or a release.
+
+Post-handoff DTO alignment: canonical lowercase UUID validation accepts the full SQL uuid
+lexical form (including v7); removed the uncontracted v1-v5 restriction. Focused input2 and
+TypeScript rerun for this parser-only change. Prior browser/build source evidence remains tied
+to b1c01dca UI/runtime source; no affected layout or module integration change.
