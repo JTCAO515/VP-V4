@@ -1,0 +1,23 @@
+{
+  "stage": "PRIVATE SOURCE COMPOSITION; W2 ACTIVE/NOT FINAL; PRODUCT APPEND HOLD",
+  "owner": "01a12e46-03b6-73e0-a000-86f2fb074fc6",
+  "base": "daa7bae44a660381fb3295d0d2afc327ea98d3ba",
+  "main": "01a12f81-dd0f-752f-a6ff-869b2887400d",
+  "w2RuntimeSourceMD5": "e8cc78b8214d8379d6a9ce9c4d280431",
+  "composedRuntimeActualMD5": "7508ac3cf2747d110fb80ce35787a351",
+  "files": {
+    "runtime-on-w2.before.sql": "1cb2246f6400707c19575a24e0e672d7f8246dd73a1077a27f72f5535c5ec534",
+    "runtime-on-w2.after.sql": "fa433bc60debbf8dfada5ae0be7d5be1efba7ced620c941178856965dc4fac71",
+    "runtime-on-w2.patch": "64155c0079f6b75fcd08ab72869512fd1f5fedbf2c43794a492cb07918572118",
+    "runtime-on-w2.actual-after.json": "703e660540378f7c50a3c6cd2964c619258434037cdbeaf52753b3e3390b4f19",
+    "runtime-on-w2.source-proof.json": "57043dc718ea721adc260cc792d50ff04d678974e98d6cfbb28184edeaa13dfd",
+    "runtime-on-w2.compile-proof.json": "bc9fed8a5a219c85a9d348a3c102e0a322aa4e3dfc6acc3e8147cb2ea6e0c1bd",
+    "idea-result-on-w2-runtime.candidate.sql": "fcff73bd72376d5577af707ce7f13ecc8865a1fd4165b03d0504467e22b70129",
+    "compose-w2-runtime.py": "c76d38ccfad0e5a9bcd74ab845b2e294341c5207a89eeaff82de81ca598cc845",
+    "compile-w2-runtime.mjs": "b8bfec7c1871adc15a050ede0c93ff115521671c7dd9aaaff53d1cdd353d0b85"
+  },
+  "originalCoreBehaviorEvidence": "UNMODIFIED; reuse6165c80d r1-r4",
+  "finalW2CombinedRuntimePrivacyEvidence": "UNRUN",
+  "sharedWriterRelease": "NONE",
+  "ownResource": "7d19c5ea retained under original fixture lease"
+}

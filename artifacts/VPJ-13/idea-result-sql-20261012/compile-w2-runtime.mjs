@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import {readFileSync,writeFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+import {db,owned} from './kernel.mjs';
+await owned();const out=new URL('.',import.meta.url);
+const candidate=readFileSync(new URL('runtime-on-w2.after.sql',out),'utf8');
+const result=JSON.parse(await db('begin;'+candidate+`\nset search_path='';select jsonb_build_object('signature',p.oid::regprocedure::text,'definition',pg_get_functiondef(p.oid),'prosrc',p.prosrc,'identity',pg_get_function_identity_arguments(p.oid),'arguments',pg_get_function_arguments(p.oid),'result',pg_get_function_result(p.oid),'config',p.proconfig,'owner',pg_get_userbyid(p.proowner),'acl',p.proacl::text,'securityDefiner',p.prosecdef,'volatility',p.provolatile,'strict',p.proisstrict,'parallel',p.proparallel,'kind',p.prokind,'language',l.lanname,'md5',md5(pg_get_functiondef(p.oid))) from pg_proc p join pg_language l on l.oid=p.prolang where p.oid='turn_data_private.runtime_supported_v1()'::regprocedure;rollback;`));
+assert.equal(result.definition,candidate,'Actual PG full function definition differs from source candidate');
+const before=JSON.parse(readFileSync(new URL('catalog-full-after.json',out),'utf8')).find(f=>f.signature===result.signature);
+const metadata=f=>Object.fromEntries(Object.entries(f).filter(([k])=>!['definition','prosrc','md5'].includes(k)));
+assert.deepEqual(metadata(result),metadata(before));
+assert.equal(await db('select turn_data_private.runtime_supported_v1();'),'t','Rollback did not restore own standalone E1 fixed guard');
+writeFileSync(new URL('runtime-on-w2.actual-after.json',out),JSON.stringify(result,null,2)+'\n');
+writeFileSync(new URL('runtime-on-w2.compile-proof.json',out),JSON.stringify({ownPG:'17.6',compileAndRollback:'PASS',actualDefinitionEqualsExactSource:'PASS',oldMetadataAndACL:'UNCHANGED',composedDefinitionMD5:result.md5,composedDefinitionSHA256:createHash('sha256').update(result.definition).digest('hex'),rollbackStandaloneFiveGateEvidence:'UNCHANGED; runtime t verified',combinedW2PrivacyGates:'UNRUN; W2 four guard bodies not installed in this own fixture'},null,2)+'\n');
+console.log('W2-on-E1 exact composed runtime compile/metadata/rollback PASS; md5='+result.md5);

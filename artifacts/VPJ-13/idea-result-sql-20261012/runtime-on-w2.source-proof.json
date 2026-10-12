@@ -1,0 +1,28 @@
+{
+  "stage": "PRIVATE SOURCE COMPOSITION ONLY; PRODUCT HOLD",
+  "w2CatalogSHA256": "055ef5f4df1eddc1e5628500b1c159090aea46b2fadcdb4c816271938f434da0",
+  "w2RuntimeBeforeBodyMD5": "9ae302a02415fe2d7aa22d39350d56ed",
+  "w2RuntimeActualAfterMD5": "e8cc78b8214d8379d6a9ce9c4d280431",
+  "preservedW2Pins": {
+    "profile_data_private.schema_v1()": [
+      "af41a55b4b5eb9c89d19f96fb27720c5",
+      "889dc17d85f9747b81745a0625a8cdae"
+    ],
+    "export_private.profile_hooks_valid_v1()": [
+      "61dcdc9d225dc74f6d82744d1fa02c73",
+      "d2861aa68f1c9cfd112f9acf19db417c"
+    ],
+    "turn_data_private.schema_supported_v1()": [
+      "81eab8c4cdb31f2fd9289af2b5b4b63d",
+      "8d7a571aebe6c6afc61d5d450d69a3ff"
+    ],
+    "result_data_private.schema_supported_v1()": [
+      "9f419ac01a94ce6cb8a351cb37f29cb9",
+      "a2b5cf59c92ed83a2fef97a6b6b102b8"
+    ]
+  },
+  "onlyOverlay": "E1 fixed three-function full-body/metadata loop and its local variable",
+  "fullW2BytesRecoveredAfterRemovingOverlay": true,
+  "actualCombinedW2PrivacyGates": "UNRUN; own fixture has base four guards, W2 source not applied",
+  "w2InstalledSupportedSuccessor": "Must include three E1 funcs and composed runtime exact metadata; W2 current holder owns final source"
+}

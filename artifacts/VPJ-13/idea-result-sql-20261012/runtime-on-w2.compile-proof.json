@@ -1,0 +1,10 @@
+{
+  "ownPG": "17.6",
+  "compileAndRollback": "PASS",
+  "actualDefinitionEqualsExactSource": "PASS",
+  "oldMetadataAndACL": "UNCHANGED",
+  "composedDefinitionMD5": "7508ac3cf2747d110fb80ce35787a351",
+  "composedDefinitionSHA256": "fa433bc60debbf8dfada5ae0be7d5be1efba7ced620c941178856965dc4fac71",
+  "rollbackStandaloneFiveGateEvidence": "UNCHANGED; runtime t verified",
+  "combinedW2PrivacyGates": "UNRUN; W2 four guard bodies not installed in this own fixture"
+}
