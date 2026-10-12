@@ -3,7 +3,7 @@ import {join,basename,dirname} from 'node:path';
 import {tmpdir} from 'node:os';
 import {project,network,imageIds,nonce} from './scope.mjs';
 const reasons=new Set(['INVALID_ARGV','OPERATION_DENIED','AMBIGUOUS_CREATE','BOOLEAN_FORMAT','UNKNOWN_FLAG','MISSING_VALUE','DUPLICATE_NAME','DUPLICATE_NETWORK',
- 'INCOMPLETE_CREATE','FOREIGN_CONTAINER','FOREIGN_NETWORK','FOREIGN_IMAGE','PUBLISH_FORMAT','FOREIGN_PORT','DUPLICATE_PUBLISH','MISSING_PUBLISH','CONFIG','LAUNCH_FAILED','ADAPTER_UNAVAILABLE']);
+ 'INCOMPLETE_CREATE','FOREIGN_CONTAINER','FOREIGN_NETWORK','FOREIGN_IMAGE','PUBLISH_FORMAT','FOREIGN_PORT','DUPLICATE_PUBLISH','MISSING_PUBLISH','CONFIG','LAUNCH_FAILED','ADAPTER_UNAVAILABLE','AUTH_BOOTSTRAP_DENIED']);
 const operations=new Set(['create','run','compose','image_pull','other']);
 const images=new Set(['pinned_db','pinned_auth','pinned_rest','pinned_kong','realtime_unleased','storage_unleased','unclassified']);
 const keys=['schemaVersion','reason','operationClass','imageClass','ownProjectLabels','ownNetwork','ownContainerName'];
@@ -36,16 +36,16 @@ export function classifyReject(args,error){
 export function validReject(v){return v!==null&&typeof v==='object'&&!Array.isArray(v)&&Object.keys(v).length===keys.length&&keys.every(k=>Object.hasOwn(v,k))
  &&v.schemaVersion==='e3-docker-reject/1'&&reasons.has(v.reason)&&operations.has(v.operationClass)&&images.has(v.imageClass)
  &&['ownProjectLabels','ownNetwork','ownContainerName'].every(k=>typeof v[k]==='boolean');}
-function directoryGuard(directory){const s=lstatSync(directory);if(!s.isDirectory()||s.isSymbolicLink()||realpathSync(directory)!==directory||(s.mode&0o777)!==0o700||s.uid!==process.getuid()
+export function fixtureDirectoryGuard(directory){const s=lstatSync(directory);if(!s.isDirectory()||s.isSymbolicLink()||realpathSync(directory)!==directory||(s.mode&0o777)!==0o700||s.uid!==process.getuid()
  ||dirname(directory)!==realpathSync(tmpdir())||!basename(directory).startsWith(nonce+'-'))throw Error('E3_OBSERVATION_DIRECTORY');}
 export function writeReject(directory,record){
- directoryGuard(directory);if(!validReject(record))throw Error('E3_OBSERVATION_SCHEMA');
+ fixtureDirectoryGuard(directory);if(!validReject(record))throw Error('E3_OBSERVATION_SCHEMA');
  const bytes=Buffer.from(JSON.stringify(record));if(bytes.length>4096)throw Error('E3_OBSERVATION_SIZE');
  let fd;try{fd=openSync(join(directory,'reject-observation.json'),constants.O_WRONLY|constants.O_CREAT|constants.O_EXCL|constants.O_NOFOLLOW,0o600);writeFileSync(fd,bytes);return true;}
  catch(error){if(error.code==='EEXIST')return false;throw error;}finally{if(fd!==undefined)closeSync(fd);}
 }
 export function readReject(directory){
- directoryGuard(directory);let fd;
+ fixtureDirectoryGuard(directory);let fd;
  try{fd=openSync(join(directory,'reject-observation.json'),constants.O_RDONLY|constants.O_NOFOLLOW);const s=fstatSync(fd);
   if(!s.isFile()||(s.mode&0o777)!==0o600||s.uid!==process.getuid()||s.size>4096)throw Error('E3_OBSERVATION_FILE');
   const bytes=Buffer.alloc(4097),count=readSync(fd,bytes,0,bytes.length,null);if(count>4096)throw Error('E3_OBSERVATION_SIZE');

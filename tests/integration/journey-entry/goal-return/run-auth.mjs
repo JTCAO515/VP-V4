@@ -9,13 +9,15 @@ import assert from 'node:assert/strict';
 import {nativeHTTPPorts,nativeHTTPChildEnv,nativeHTTPSupabaseConfig,assertNativeHTTPPortsFree} from '../../turn/native-http-ports.mjs';
 import {owner,nonce,project,network,portBase,imageIds} from './scope.mjs';
 import {readReject} from './reject-observation.mjs';
+import {goalReturnTemporaryConfig} from './temporary-config.mjs';
 
 if(process.argv.length!==2 || process.env.VPJ13_E3_AUTH_NONCE!==undefined && process.env.VPJ13_E3_AUTH_NONCE!==nonce) throw Error('Exact E3 fixture nonce required');
 const lease=JSON.parse(readFileSync('/Users/jtsm5p/Documents/Codex/2026-10-12/task/VPJ13-E3-AuthHTTP-fixture-exact-lease-20261012.json','utf8'));
 assert.equal(lease.soleOwner,owner);assert.equal(lease.nonce,nonce);assert.equal(lease.project,project);assert.equal(lease.network,network);assert.equal(lease.worktree,process.cwd());
-assert.equal(lease.amendmentMarker,'VPJ13-E3-AuthHTTP-reject-observation-20261012');assert.equal(lease.networkInternal,false);
+assert.equal(lease.amendmentMarker,'VPJ13-E3-AuthHTTP-temp-config-pinned-auth-bootstrap-20261012-V8');assert.equal(lease.networkInternal,false);
 assert.equal(lease.processLoopbackAdapter.state,'GRANTED_WITH_EXACT_GUARDS');
-assert.equal(lease.rejectObservation.state,'GRANTED_DIAGNOSTIC_ONLY');
+assert.equal(lease.temporaryConfig.state,'GRANTED');assert.equal(lease.authBootstrapJob.state,'GRANTED_WITH_EXACT_GUARDS');
+for(const key of ['SUPABASE_REALTIME_ENABLED','SUPABASE_STORAGE_ENABLED','SUPABASE_AUTH_ENABLED'])assert.equal(process.env[key],undefined,'No ambient override of exact temporary config');
 if(process.env.DOCKER_HOST || process.env.DOCKER_CONTEXT) throw Error('Docker overrides refused');
 const officialDocker=realpathSync(execFileSync('/usr/bin/which',['docker'],{encoding:'utf8'}).trim());
 const docker=(args)=>execFileSync(officialDocker,args,{encoding:'utf8',stdio:['ignore','pipe','pipe']}).trim();
@@ -26,15 +28,20 @@ assert.deepEqual(lease.ports,ports.ports);
 assert.equal(readdirSync('supabase/migrations').filter(name=>name.endsWith('.sql')).length,155,'Exact current migration chain');
 assert.equal(createHash('sha256').update(readFileSync('supabase/migrations/20261012010000_vpj13_goal_return_source.sql')).digest('hex'),'15fd14818a09a1e0418aaf31deb639b7e6b9f269c51b3782410d536564e8596b','Exact leased SQL bytes');
 assert.equal(docker(['ps','-aq','--filter','name='+project]),'','Fresh exact project required');
+assert.equal(docker(['ps','-aq','--filter','label=com.supabase.cli.project='+project]),'','Fresh transient project jobs required');
 assert.equal(docker(['volume','ls','-q','--filter','name='+project]),'','Fresh exact project volumes required');
 assert.equal(docker(['network','ls','-q','--filter','name=^'+network+'$']),'','Fresh exact network required');
 for(const [tag,id] of Object.entries(imageIds)) assert.equal(docker(['image','inspect',tag,'--format','{{.Id}}']),id,'Pinned installed image required');
 const target=realpathSync(mkdtempSync(join(tmpdir(),nonce+'-')));mkdirSync(join(target,'supabase'),{mode:0o700});
-writeFileSync(join(target,'supabase/config.toml'),nativeHTTPSupabaseConfig(readFileSync('supabase/config.toml','utf8'),project,ports),{mode:0o600});
+const sourceConfig=readFileSync('supabase/config.toml','utf8'),beforeConfig=nativeHTTPSupabaseConfig(sourceConfig,project,ports),afterConfig=goalReturnTemporaryConfig(beforeConfig);
+const configHash=v=>createHash('sha256').update(v).digest('hex');
+assert.equal(configHash(sourceConfig),lease.temporaryConfig.sourceRepositorySHA256);assert.equal(configHash(beforeConfig),lease.temporaryConfig.exactTemporaryBeforeSHA256);
+assert.equal(configHash(afterConfig),lease.temporaryConfig.exactTemporaryAfterSHA256);
+writeFileSync(join(target,'supabase/config.toml'),afterConfig,{mode:0o600});
 cpSync('supabase/migrations',join(target,'supabase/migrations'),{recursive:true});
 const env={...process.env,DOCKER_CONTEXT:context,VPJ13_E3_AUTH_NONCE:nonce,SUPABASE_TELEMETRY_DISABLED:'true',DO_NOT_TRACK:'1',NEXT_TELEMETRY_DISABLED:'1'};
 const adapterBin=join(target,'adapter-bin');mkdirSync(adapterBin,{mode:0o700});
-const adapterConfig=join(target,'adapter-config.json');writeFileSync(adapterConfig,JSON.stringify({nonce,owner,officialDocker}),{mode:0o600});
+const adapterConfig=join(target,'adapter-config.json');writeFileSync(adapterConfig,JSON.stringify({nonce,owner,officialDocker,authBootstrap:true}),{mode:0o600});
 assert.ok(!/\s/.test(process.execPath),'Unambiguous Node interpreter path');
 writeFileSync(join(adapterBin,'docker'),'#!'+process.execPath+'\nimport '+JSON.stringify(pathToFileURL(resolve('tests/integration/journey-entry/goal-return/docker-adapter-entry.mjs')).href)+';\n',{mode:0o700});
 const supabaseEnv={...env,PATH:adapterBin+delimiter+process.env.PATH,VPJ13_E3_DOCKER_ADAPTER_CONFIG:adapterConfig};
@@ -104,15 +111,16 @@ try{
   }
  }
  console.log('E3_AUTH_TARGET '+JSON.stringify({nonce,owner,project,network,ports:ports.ports,services:expectedServices,sourceHead:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim()}));
- // This exact amendment grants observation only: even success cannot seed actors.
- console.log('E3_AUTH_DIAGNOSTIC_ONLY '+JSON.stringify({actors:0,nextStarted:false,authHTTP:'UNRUN'}));code=0;
+ assert.equal(docker(['ps','-aq','--filter','label=com.supabase.cli.project='+project]).split('\n').filter(Boolean).length,4,'No residual transient job before actors');
+ code=await run(process.execPath,['--test','tests/integration/journey-entry/goal-return/auth-http.test.mjs'],true,
+  {...env,...nativeHTTPChildEnv(ports,target),VPJ13_E3_AUTH:'true',VPJ13_E3_AUTH_NONCE:nonce});
 }finally{
  if(started){const stopped=await run('supabase',['stop','--workdir',target,'--no-backup'],false,supabaseEnv);if(stopped!==0){code=1;console.error('Own E3 stack cleanup failed: '+project);}}
  if(created){
   const remaining=docker(['network','ls','-q','--filter','name=^'+network+'$']);
   if(remaining){const n=JSON.parse(docker(['network','inspect',network]))[0];assert.equal(n.Labels['vp.owner'],owner);assert.equal(n.Labels['vp.nonce'],nonce);assert.equal(Object.keys(n.Containers).length,0);docker(['network','rm',network]);}
  }
- const remaining=docker(['ps','-aq','--filter','name='+project]),volumes=docker(['volume','ls','-q','--filter','name='+project]);
- if(remaining || volumes){code=1;console.error('Own E3 containers/volumes remain: '+project);}else{await assertNativeHTTPPortsFree(ports);rmSync(target,{recursive:true});console.log('E3_AUTH_CLEANUP '+JSON.stringify({nonce,project,containers:'ABSENT',volumes:'ABSENT',ports:'FREE',result:'PASS'}));}
+ const remaining=docker(['ps','-aq','--filter','name='+project]),jobs=docker(['ps','-aq','--filter','label=com.supabase.cli.project='+project]),volumes=docker(['volume','ls','-q','--filter','name='+project]);
+ if(remaining || jobs || volumes){code=1;console.error('Own E3 containers/jobs/volumes remain: '+project);}else{await assertNativeHTTPPortsFree(ports);rmSync(target,{recursive:true});console.log('E3_AUTH_CLEANUP '+JSON.stringify({nonce,project,containers:'ABSENT',transientJobs:'ABSENT',volumes:'ABSENT',ports:'FREE',tempAdapterAndCounter:'REMOVED',result:'PASS'}));}
 }
 process.exitCode=code;
