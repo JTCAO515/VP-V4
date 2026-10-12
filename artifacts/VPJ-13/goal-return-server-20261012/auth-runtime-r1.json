@@ -1,0 +1,11 @@
+{
+  "sourceHead": "35d91201",
+  "nonce": "vpj13-e3-auth-20261012-8c4e13ab",
+  "phase": "supabase start",
+  "result": "FAIL",
+  "exitCode": 1,
+  "diagnostic": "Owned Supabase start exit 1; credential-bearing output suppressed. Actual cause not yet classified; do not infer.",
+  "authHTTP": "UNRUN; test was not reached",
+  "cleanup": {"containers": "ABSENT", "volumes": "ABSENT", "ports": "FREE", "network": "removed by own label-checked cleanup", "result": "PASS"},
+  "nextAction": "Capture only allowlisted non-secret startup errors in memory and diagnose the failed startup; no green suite repeat."
+}

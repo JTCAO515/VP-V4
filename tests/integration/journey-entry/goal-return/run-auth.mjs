@@ -27,21 +27,34 @@ const target=mkdtempSync(join(tmpdir(),nonce+'-'));mkdirSync(join(target,'supaba
 writeFileSync(join(target,'supabase/config.toml'),nativeHTTPSupabaseConfig(readFileSync('supabase/config.toml','utf8'),project,ports),{mode:0o600});
 cpSync('supabase/migrations',join(target,'supabase/migrations'),{recursive:true});
 const env={...process.env,DOCKER_CONTEXT:context,VPJ13_E3_AUTH_NONCE:nonce};
+let lastErrors=[];
 const run=(cmd,args,visible=false,childEnv=env)=>new Promise((resolve,reject)=>{
  const child=spawn(cmd,args,{env:childEnv,stdio:visible?'inherit':['ignore','pipe','pipe']});
+ let pending='',errors=[];
  let timedOut=false,force;
  const limit=cmd==='supabase' && args[0]==='stop'?60000:visible?210000:240000;
  const timer=setTimeout(()=>{timedOut=true;child.kill('SIGTERM');force=setTimeout(()=>child.kill('SIGKILL'),3000);},limit);
  const finish=()=>{clearTimeout(timer);clearTimeout(force);};
- if(!visible){child.stdout.resume();child.stderr.resume();} // CLI status/start may contain ephemeral secrets; never retain.
- child.once('error',()=>{finish();reject(Error('Owned fixture process launch failed'));});child.once('exit',code=>{finish();resolve(timedOut?124:code??1);});
+ if(!visible){
+  child.stdout.resume(); // CLI credentials are never retained.
+  child.stderr.on('data',chunk=>{
+   pending+=chunk.toString();const lines=pending.split('\n');pending=lines.pop().slice(-2000);
+   for(const line of lines){
+    if(!/\b(error|failed|failure|invalid|denied|refused|panic)\b/i.test(line))continue;
+    // Drop, rather than hash/store, any potentially secret-bearing line.
+    if(/password|token|secret|credential|\bkey\b|bearer|eyJ[a-z0-9_-]+\.[a-z0-9_-]+\.[a-z0-9_-]+|(?:postgres(?:ql)?|https?):\/\/[^\s]*@/i.test(line))continue;
+    errors.push(line.replace(/\x1b\[[0-9;]*m/g,'').slice(0,300));if(errors.length>8)errors.shift();
+   }
+  });
+ }
+ child.once('error',()=>{finish();reject(Error('Owned fixture process launch failed'));});child.once('exit',code=>{finish();lastErrors=errors;resolve(timedOut?124:code??1);});
 });
 let code=1,created=false,started=false;
 try{
  docker(['network','create','--internal','--label','vp.owner='+owner,'--label','vp.nonce='+nonce,'--opt','com.docker.network.bridge.host_binding_ipv4=127.0.0.1',network]);created=true;
  started=true;
  const start=await run('supabase',['start','--workdir',target,'--network-id',network,'-x','realtime,storage-api,imgproxy,mailpit,postgres-meta,studio,edge-runtime,logflare,vector,supavisor']);
- if(start!==0) throw Error('Owned Supabase start exit '+start+'; credential-bearing output suppressed');
+ if(start!==0) throw Error('Owned Supabase start exit '+start+'; non-secret errors: '+JSON.stringify(lastErrors));
  const expectedServices=['db','auth','rest','kong'].map(kind=>'supabase_'+kind+'_'+project);
  const names=docker(['ps','-a','--filter','name='+project,'--format','{{.Names}}']).split('\n').filter(Boolean);
  assert.deepEqual([...names].sort(),[...expectedServices].sort(),'Only four leased services');
