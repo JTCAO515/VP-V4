@@ -1,0 +1,26 @@
+{
+  "state": "CANDIDATE_NOT_APPLIED",
+  "baseline": {
+    "pass": 0,
+    "fail": 2,
+    "expected": "ops_paused",
+    "actual": "pending",
+    "rawLogSha256": "e30e97f6aba74ec8138130bd0d72795f72f21df203c08c6c344fd5ecf5d5f505"
+  },
+  "candidate": {
+    "pass": 2,
+    "fail": 0,
+    "providerCalls": 0,
+    "pauseCallsPerCase": 1,
+    "completeCalls": 0,
+    "originalSettledOutput": "retained",
+    "strictTypecheck": "PASS"
+  },
+  "fixtureInitialFailure": {
+    "result": "FAIL",
+    "reason": "Copied typed fixture declarations under .mjs; SyntaxError at n:number before executor ran",
+    "correction": "Removed fixture-only TS annotations; source patch unchanged"
+  },
+  "SQLActualProof": "UNRUN original owner",
+  "lease": "HOLD Main exact shared increment"
+}

@@ -1,0 +1,11 @@
+{
+  "state": "CANDIDATE_NOT_APPLIED",
+  "path": "lib/server/turn/scoped-edit/executor.ts",
+  "before": "9cab38e894a1233d7165e7180978e1b618dd5d847b7909132abb65b14ca625cc",
+  "after": "821450a5d9e0a9e5f6304067d7ac6d43c49826b3176691fdbb1be16ca1c93d36",
+  "patch": "87d388da994ba26ccb8b4d973bbcaf688aeb136563d698471de8977e6c7cb373",
+  "candidate": "artifacts/VPJ-37/ops-control-server-20261011/scoped-publish-refusal-candidate/executor.after.ts.txt",
+  "patchPath": "artifacts/VPJ-37/ops-control-server-20261011/scoped-publish-refusal-candidate/executor.patch",
+  "scope": "After genuine existing saved settled output only, consume publish Ops refusal through same original-operation pauseOps; no new provider, attempt, proposal, Trip write or accounting mutation",
+  "baseHead": "9e7f09a88d8b1f9108c6049177fa1647c2958046"
+}

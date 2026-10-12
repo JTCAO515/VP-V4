@@ -1,0 +1,8 @@
+diff --git a/artifacts/VPJ-37/ops-control-server-20261011/scoped-publish-refusal-candidate/executor.before.ts.txt b/artifacts/VPJ-37/ops-control-server-20261011/scoped-publish-refusal-candidate/executor.after.ts.txt
+index 144c9eaa..5ee41040 100644
+--- a/artifacts/VPJ-37/ops-control-server-20261011/scoped-publish-refusal-candidate/executor.before.ts.txt
++++ b/artifacts/VPJ-37/ops-control-server-20261011/scoped-publish-refusal-candidate/executor.after.ts.txt
+@@ -125 +125,2 @@ export async function executeScopedTripEdit(lease: DurableTurnLease, ports: Scop
+-    if(!output||output.accounting!=='settled'||!await allow('publish',signal))return 'pending';
++    if(!output||output.accounting!=='settled')return 'pending';
++    if(!await allow('publish',signal))return refusal?await pauseOps(refusal):'pending';
