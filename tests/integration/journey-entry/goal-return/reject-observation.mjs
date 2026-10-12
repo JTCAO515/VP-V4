@@ -13,7 +13,7 @@ const valueFlags=new Set(['--name','--network','--hostname','--env','-e','--volu
 const boolFlags=new Set(['--rm','--init','--read-only','--interactive','-i','--tty','-t','--no-healthcheck']);
 export function classifyReject(args,error){
  const reason=reasons.has(String(error?.message??'').replace(/^E3_DOCKER_/,''))?String(error.message).replace(/^E3_DOCKER_/,''):'ADAPTER_UNAVAILABLE';
- const operationClass=args?.[0]==='pull'||args?.[0]==='image'&&args?.[1]==='pull'?'image_pull':operations.has(args?.[0])?args[0]:'other';
+ const operationClass=args?.[0]==='pull'||args?.[0]==='image'&&args?.[1]==='pull'?'image_pull':['create','run','compose'].includes(args?.[0])?args[0]:'other';
  let image,ns=[],nets=[],labels=[];
  if(Array.isArray(args)&&args.every(v=>typeof v==='string')){
   if(operationClass==='image_pull')image=args[args[0]==='image'?2:1];

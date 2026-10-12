@@ -1,0 +1,15 @@
+{
+  "sourceHead": "97c459387d89b3fc2db43b78f237b89188c539fa",
+  "nonce": "vpj13-e3-auth-20261012-8c4e13ab",
+  "amendmentMarker": "VPJ13-E3-AuthHTTP-reject-observation-20261012",
+  "diagnosticOnly": true,
+  "affectedPureTests": "4 PASS/0FAIL/0skip",
+  "result": "FAIL",
+  "observedReject": {"schemaVersion":"e3-docker-reject/1","reason":"OPERATION_DENIED","operationClass":"run","imageClass":"realtime_unleased","ownProjectLabels":true,"ownNetwork":true,"ownContainerName":false},
+  "actualCLIError": "error running container: exit 126",
+  "ordinaryActorsCreated": 0,
+  "nextStarted": false,
+  "authHTTP": "UNRUN",
+  "cleanup": {"containers":"ABSENT","volumes":"ABSENT","ports":"FREE","network":"label-checked empty then removed","tempAdapterAndObservation":"removed with own target directory","result":"PASS"},
+  "nextAction": "V6 adjudicates exact necessary bootstrap job or temporary-config boundary using this observed category and official source. No run/pull/extra-image permission is inferred, no unchanged diagnostic retry. Original r1..r7 preserved."
+}
