@@ -1,7 +1,7 @@
 --- public-grounded_ai_assist_work_v1.before.sql
 +++ public-grounded_ai_assist_work_v1.after.sql
 @@ -29,7 +29,8 @@
- 
+
      select * into job from turn_private.grounded_ai_assist_jobs where turn_id = tid for update;
      if not found then
 -      insert into turn_private.grounded_ai_assist_jobs(turn_id, owner_id, status, started_at)

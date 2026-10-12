@@ -3,7 +3,7 @@
 @@ -31,6 +31,26 @@
      && v.profileErasureFloor <= v.profileRevision && v.paceErasureFloor <= v.paceRevision;
  }
- 
+
 +
 +/** Owner audit metadata only; never an Ops RPC receipt or authorization. */
 +function validOpsControlExportRow(v: Record<string, unknown>, owner: string): boolean {
