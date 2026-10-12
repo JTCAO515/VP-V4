@@ -69,9 +69,44 @@
       "logSha256": "0c2650f123871ddd4ac243ae125950395bb1730acdee937f001fb390fa3c3e7b",
       "result": "FAIL",
       "diagnosis": "NativeAssistantConversationView486 opsRefusal typecheck timeout/exit65"
+    },
+    {
+      "name": "w2-native-final-build-20261012-01-r3",
+      "sourceHead": "2396c1387b315655f7d663612a811c675ed3030d",
+      "xcode": "Xcode 27.0\nBuild version 27A266a",
+      "runtime": null,
+      "deviceUDID": null,
+      "signing": "disabled",
+      "testsRun": false,
+      "buildCommand": {
+        "startedAt": "2026-10-12T03:55:04.619473+00:00",
+        "argv": [
+          "xcodebuild",
+          "build",
+          "-project",
+          "ios/VisePanda/VisePanda.xcodeproj",
+          "-scheme",
+          "VisePanda",
+          "-derivedDataPath",
+          "/private/tmp/w2-native-final-build-20261012-01-r3-derived",
+          "-destination",
+          "generic/platform=iOS Simulator",
+          "CODE_SIGNING_ALLOWED=NO",
+          "-resultBundlePath",
+          "/private/tmp/w2-native-final-build-20261012-01-r3/build.xcresult"
+        ],
+        "command": "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -derivedDataPath /private/tmp/w2-native-final-build-20261012-01-r3-derived -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO -resultBundlePath /private/tmp/w2-native-final-build-20261012-01-r3/build.xcresult",
+        "cwd": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj37-ops-control-server-20261011",
+        "developerDir": "/Applications/Xcode.app/Contents/Developer",
+        "exitCode": 0
+      },
+      "logSha256": "0a499dcfb89207845f227e4000d22692289d1bdf82a249ddb4982c29ec765b69",
+      "result": "PASS",
+      "diagnosis": "Registered full App generic unsigned compile after exact same-getter fix"
     }
   ],
   "repairCandidate": "conversation-compile-repair",
   "noSimulatorCreatedOrLaunched": true,
-  "SQLappend": "HOLD"
+  "SQLappend": "HOLD",
+  "stableGetterSha256": "44004e5ee5b2db315c9b08ea438dedb3cadc999f777af4b9dfea1b0c3cf81d44"
 }

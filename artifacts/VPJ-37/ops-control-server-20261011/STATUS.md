@@ -149,3 +149,12 @@ native-final-build; no FAIL replaced. Minimal one-getter typed-Bool repair candi
 →after44004e5e, patch205d21e5 prepared/syntax/patchcheck PASS, not applied; Main exact repair
 lease pending. No unrelated source/timeout/SDK/role adjustment. Final compile and SQL integration
 remain incomplete.
+
+Main exact same-getter compile-repair lease applied: before0e9/patch205d/source+INDEXafter4400
+MATCH, commit2396c138. Necessary r3 same generic SDK/unsigned registered App build PASS on that
+exact head (Xcode27.0 build27A266a). Original sandbox r1 and source-typecheck r2 FAIL logs retained.
+No SDK/Observation setting, timeout, Models, Journal or target permission changed; no Simulator
+launch/create/test, provider or device run. runs.json carries exact source/command/log hashes.
+Stable Conversation getter source44004e5e now available for sole203 E3 candidate regeneration
+without alternating writers. Full SQL integration/lifecycle/qualified execution proof and final
+CI/formal review/protected merge still incomplete; #229 remains OPEN.
