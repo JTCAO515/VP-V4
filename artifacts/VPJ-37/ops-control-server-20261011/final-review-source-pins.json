@@ -1,0 +1,241 @@
+{
+  "state": "PRE_SQL_REVIEW_INPUT_NOT_FINAL_PR",
+  "head": "b021681fe56a71e69334f20120bcfb68c6cdd0ba",
+  "base": "daa7bae44a660381fb3295d0d2afc327ea98d3ba",
+  "productFiles": [
+    {
+      "path": "app/api/ops/controls/route.ts",
+      "sha256": "6f1ca2ad7a4e3d8473a78efc098c570e6029380dcdfcfaa7d27d1e02d676a045"
+    },
+    {
+      "path": "app/ops/controls/controller.ts",
+      "sha256": "3931a9127f820d060c3739b27b1acffc96252fbd003ffa6535612ccf7fcd6ba7"
+    },
+    {
+      "path": "app/ops/controls/page.tsx",
+      "sha256": "09af561a2e164b98b541346507b273fc62a212de0313038d4a30e8a84e4d8728"
+    },
+    {
+      "path": "app/ops/controls/workspace.module.css",
+      "sha256": "b813e72bed5ff4317b5c43a94935d28ff274c0b6bca9346356e6dbd5a908cbb3"
+    },
+    {
+      "path": "app/ops/controls/workspace.tsx",
+      "sha256": "4255a167f7b492b9cace812b0130ce9e3576c7a613cb6690dd5da27682bb59a0"
+    },
+    {
+      "path": "components/chat/ChatThreadWorkspace.tsx",
+      "sha256": "2976b1af77770cdb5be2f3b89837dd2c532016d2b857ffc24f58325932ac15c4"
+    },
+    {
+      "path": "components/chat/SavedAnswers.tsx",
+      "sha256": "b22f96f8f969fa240ffd0bdc60fb794b333cbdf89cef84d662aa1cb78c8c0694"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAskStore.swift",
+      "sha256": "38bdbf747d749d52ae64665c8d08642eb9b4d1cfcd5f1a78a66d28a3202c3487"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAskView.swift",
+      "sha256": "b9126747e0dc8e967351351b5a6e8b11f0f17d9a5cbb0ecac2c199bc9992b47e"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift",
+      "sha256": "44004e5ee5b2db315c9b08ea438dedb3cadc999f777af4b9dfea1b0c3cf81d44"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/ScopedTripEdit/NativeScopedTripEditSheet.swift",
+      "sha256": "d5af901903b12b46eabe8a51cbe416cf185390d52715f803be1f727c931e088e"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/ScopedTripEdit/NativeScopedTripEditStore.swift",
+      "sha256": "ca9c1c26f71b2716cd868a5aa64aadcbf76c003d25fd9beb55625dad6fc8e9dd"
+    },
+    {
+      "path": "lib/i18n.ts",
+      "sha256": "32de0099fa221b4ff8ac62e02b2f75bc61b50f14c715ef9e1e34355f694c24e5"
+    },
+    {
+      "path": "lib/server/contracts/errors/index.ts",
+      "sha256": "4ea64312aa49707fd93bb82c47975a03f721c660037fcf089b0a4fefe2e8bdc6"
+    },
+    {
+      "path": "lib/server/identity/user-data-adapter.ts",
+      "sha256": "2e98dbc3b06465d45e6983b0cc3b1db01050145d6229b9503bbf256444c5949d"
+    },
+    {
+      "path": "lib/server/knowledge/wiki/grounded-ai-assist-job.ts",
+      "sha256": "fdab8182f47f77ce5de5eae272d3933159d70ef58dad96716adb9fc272732895"
+    },
+    {
+      "path": "lib/server/knowledge/wiki/grounded-ai-assist.ts",
+      "sha256": "e073c77a488a486ce33c16ba6ba984c735cb3ba2c94531e8996084dd7a6b236e"
+    },
+    {
+      "path": "lib/server/knowledge/wiki/grounded-search.ts",
+      "sha256": "56fc9381650087105b4a3f6cf45f44c0f0dabad88077c0789927bdfd575be834"
+    },
+    {
+      "path": "lib/server/model-gateway/adapters/http-transport.ts",
+      "sha256": "4c2a42a93b905d3682e40d3caf6ba2c387e0299d30c3f7c982090b47c635e757"
+    },
+    {
+      "path": "lib/server/model-gateway/adapters/provider-protocol.ts",
+      "sha256": "61c465defa3bdf0ee775f17ecd5d879782ab678d18cbbdd960c9325eb5c88860"
+    },
+    {
+      "path": "lib/server/observability/ops-control/WIRE.md",
+      "sha256": "89bf9c8cf62e5ff7fa9f4cde1716aaff0c7484e744ba7443a683d0c97e19c449"
+    },
+    {
+      "path": "lib/server/observability/ops-control/contract.ts",
+      "sha256": "ec429dcc8c38cbcfa0734041b031494affa0c88b1bb84df7bd5dc0131ee76e2a"
+    },
+    {
+      "path": "lib/server/observability/ops-control/envelope.ts",
+      "sha256": "9ffd624f445b3d215e67ccedd2859b606cf91f5a284b317d4aea34dfaf4c490b"
+    },
+    {
+      "path": "lib/server/observability/ops-control/http.ts",
+      "sha256": "2017706db4fd4a815a3d54338c406ed76bc71ef1d4a344151c5326f275d53aea"
+    },
+    {
+      "path": "lib/server/observability/ops-control/input-json.ts",
+      "sha256": "29f094b3c5ae216144778462deece797629dfa94bd7d83db29cb814a7d755a3e"
+    },
+    {
+      "path": "lib/server/observability/ops-control/projection.ts",
+      "sha256": "9f53eab718fc2b55b364e69eeddd4ed025e9fcb5c551ee88f0e20fd727812003"
+    },
+    {
+      "path": "lib/server/observability/ops-control/refusal.ts",
+      "sha256": "11c5fd07bc698e78321cb3db4c06c1294c37ea32a5c37268499a54f6fd3bf2d9"
+    },
+    {
+      "path": "lib/server/privacy/profile-export/contract.ts",
+      "sha256": "729f931ae9ae0314581167a67a0db49b4363217d6c5b50dd08b2e685a84df4de"
+    },
+    {
+      "path": "lib/server/trip/scoped-edit/service.ts",
+      "sha256": "7b04c2a0976720e9f74d60646e0633a720e1f6f43bbe3fb3b09924ecb7af8ad0"
+    },
+    {
+      "path": "lib/server/trip/scoped-edit/wire.ts",
+      "sha256": "fed29d276656072b5878d7d4c562eab0808f4ee216cc7f56e31ef92d704be02e"
+    },
+    {
+      "path": "lib/server/turn/native-assistant-http.ts",
+      "sha256": "1dc69845f5853078ae7198e0bde914770a438de84c762c9d4f7eff0d19411dde"
+    },
+    {
+      "path": "lib/server/turn/native-http.ts",
+      "sha256": "587f38d41f39fdd2c2d2eef7c93138507047a6c7efdb7cebce9c2ac11f67eb78"
+    },
+    {
+      "path": "lib/server/turn/native-planning-http.ts",
+      "sha256": "52e0d9814d92454688e6fb835c09cdc50dd80ffea2eb569eefd4289930715650"
+    },
+    {
+      "path": "lib/server/turn/native-planning-intake-http.ts",
+      "sha256": "4921e73293eaea16427663b4500dc88a169855f065d6ff3fb3a870ee9404baff"
+    },
+    {
+      "path": "lib/server/turn/planning-comparison-worker.ts",
+      "sha256": "5f85af041b897e1e8afa03475c5764a752bb5cbadb5c44b6c3feceaaa6578288"
+    },
+    {
+      "path": "lib/server/turn/planning-v2-bounded-worker.ts",
+      "sha256": "6496b1bfd7d05aaf6399a41e1a29cfdb7a646284d2f14c4449743bc2a3d271d6"
+    },
+    {
+      "path": "lib/server/turn/planning-v2-hosted-job.ts",
+      "sha256": "197c6621e1223689b18455c43424686827ada8e1383d14f64b0a72e49b879d2e"
+    },
+    {
+      "path": "lib/server/turn/planning-v2-model-step.ts",
+      "sha256": "23c7bc97b8608f790e2968a6a650c3b90654b9575b9fcb3910ca60775352d006"
+    },
+    {
+      "path": "lib/server/turn/scoped-edit/executor.ts",
+      "sha256": "9cab38e894a1233d7165e7180978e1b618dd5d847b7909132abb65b14ca625cc"
+    },
+    {
+      "path": "lib/server/turn/scoped-edit/hosted-job.ts",
+      "sha256": "a4502d984d0e979bf85305ea4ecd5a05445aa227173894f1baa264e31dcc3a0e"
+    },
+    {
+      "path": "lib/server/turn/text-worker.ts",
+      "sha256": "5b302b25d5cb33989d2081b4d01658d2f53904c5fdf3e766286c17f405c839b4"
+    },
+    {
+      "path": "tests/contract/errors/failure-taxonomy.test.ts",
+      "sha256": "97761651ec2d210a3d841b547cbb6d9366bf2a466cdcf27daa4e695718abb2f2"
+    },
+    {
+      "path": "tests/contract/observability/ops-control-client.test.mjs",
+      "sha256": "f6f4da069fecaee8671cc6007c950f76a509e6ddc465dfff306048d5e9c8150e"
+    },
+    {
+      "path": "tests/contract/observability/ops-control-envelope.test.mjs",
+      "sha256": "1734b0ac33d248aea51371eb8bf917a10e3b382eff6df5707607aa2c898ec02e"
+    },
+    {
+      "path": "tests/contract/observability/ops-control-http.test.mjs",
+      "sha256": "d4ba6a0799a21fc8f40bc5e8844cac198f372cc52b9004f132e9b97a45073d42"
+    },
+    {
+      "path": "tests/contract/observability/ops-control-input.test.mjs",
+      "sha256": "2a21cd3f0d73bd25be170c13657866ad4dd6245338eb7bd6c0a01f505e7e9f53"
+    },
+    {
+      "path": "tests/contract/observability/ops-control-json.test.mjs",
+      "sha256": "059aa5da465ff1c1f94b4673c6c7d6535dfac5adcc5679f4e0d14387efaf7b09"
+    },
+    {
+      "path": "tests/contract/observability/ops-control-refusal.test.mjs",
+      "sha256": "049489bd640648b1e8dde2c57f917b95e782ae4375588f32da4bb735023f600e"
+    }
+  ],
+  "productFileCount": 48,
+  "sqlIntegrated": false,
+  "ciPlan": {
+    "version": 1,
+    "profile": "full",
+    "reason": "unknown_dependency",
+    "checks": {
+      "typecheck": true,
+      "build": true,
+      "test": true,
+      "unit": true,
+      "contract": true,
+      "integration": true,
+      "security": true,
+      "e2e": true,
+      "browser": true,
+      "evals": true,
+      "flags": true,
+      "assets": true
+    },
+    "dbLanes": [
+      "postgres",
+      "postgres-native",
+      "supabase-rls",
+      "supabase-http-native",
+      "supabase-http-ops"
+    ]
+  },
+  "ciRun": "UNRUN final exact head",
+  "nativeSameSource": {
+    "testedHead": "2396c1387b315655f7d663612a811c675ed3030d",
+    "currentRelevantDelta": [],
+    "result": "PASS reused full registered unsigned generic App compile",
+    "limitations": "No launch/test/device/provider"
+  },
+  "scope": "Only #229 W2; E1/E3 future limited-release records confer no new scope or apply",
+  "remaining": [
+    "Original SQL owner final wholebody/pause/readback/lifecycle proof",
+    "Main exact shared/append lease",
+    "Integrate SQL under final body pins and necessary affected proof",
+    "Complete one W2 PR, exact-head independent review, all applicable CI, normal protected match-head merge/readback"
+  ]
+}
