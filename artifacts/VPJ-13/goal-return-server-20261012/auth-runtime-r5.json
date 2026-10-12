@@ -1,0 +1,15 @@
+{
+  "sourceHead": "8ff5a77d82af3d8048343cbca40c502f6bd9a371",
+  "nonce": "vpj13-e3-auth-20261012-8c4e13ab",
+  "phase": "documented --agent no path",
+  "result": "FAIL",
+  "actualError": "failed to connect to postgres: host=127.0.0.1 user=postgres database=postgres: connect ECONNREFUSED 127.0.0.1:63842",
+  "actualResourcesAfterCLIExit": [],
+  "agentModeHypothesis": "Not supported: same connection failure in normal mode",
+  "bootstrapSourceFinding": "Official CLI2.117.0 start-database.ts creates/starts DB, health-checks it, then runs fresh DB setup; caller rolls back on error. Empty resources after CLI exit does not prove DB was never created. Earlier pre-Docker interpretation is superseded, with original evidence retained.",
+  "bootstrapSource": "https://github.com/supabase/cli/blob/v2.117.0/apps/cli/src/command-internal/db-bootstrap/start-database.ts",
+  "rollbackSource": "https://github.com/supabase/cli/blob/v2.117.0/apps/cli/src/commands/start/start.handler.ts",
+  "authHTTP": "UNRUN",
+  "cleanup": {"containers": "ABSENT", "volumes": "ABSENT", "ports": "FREE", "result": "PASS"},
+  "nextAction": "No further unchanged startup retry. Main must adjudicate exact own network/startup integration change; current internal bridge cannot be silently changed. No role/server/daemon setting or foreign resource change proposed."
+}
