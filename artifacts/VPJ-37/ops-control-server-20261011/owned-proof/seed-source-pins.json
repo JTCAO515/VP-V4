@@ -1,0 +1,12 @@
+[
+  {
+    "source": "tests/integration/turn/planning-v2-complete-worker-sql.test.mjs",
+    "sha256": "541198fc0c03b5cf24e462649823ccb70b68db86a0d91c372e619429fb564a70",
+    "reuse": "Copied only explicit synthetic seeding/public RPC helper definitions; own guarded fixture adapter"
+  },
+  {
+    "source": "tests/integration/scoped-edit/scoped-edit-postgres.test.mjs",
+    "sha256": "a49e500f23947a7ba1a34af9a91775e29069576d290f18abb455fe0c17e9f501",
+    "reuse": "Copied only explicit synthetic seeding/public RPC helper definitions; own guarded fixture adapter"
+  }
+]

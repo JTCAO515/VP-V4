@@ -1,0 +1,46 @@
+{
+  "kind": "conversation",
+  "goals": [
+    {
+      "text": "First China visit, ten days with partner, food and photography, relaxed pace.",
+      "goalId": "e815da4a-c528-4c65-883d-ea8563b8c304",
+      "scopeVersion": 1
+    }
+  ],
+  "messages": [
+    {
+      "text": "First China visit, ten days with partner, food and photography, relaxed pace.",
+      "goalId": "e815da4a-c528-4c65-883d-ea8563b8c304",
+      "locale": "en",
+      "output": null,
+      "status": "recorded",
+      "taskId": null,
+      "turnId": null,
+      "outcome": null,
+      "sequence": 1,
+      "createdAt": "2026-10-12T10:12:06.045814+00:00",
+      "messageId": "c2454205-d95a-4662-8839-0d601cc2349f",
+      "relationship": "goal_start",
+      "scopeVersion": 1,
+      "parentMessageId": null
+    },
+    {
+      "text": "Compare Shanghai areas",
+      "goalId": "e815da4a-c528-4c65-883d-ea8563b8c304",
+      "locale": "en",
+      "output": null,
+      "status": "recorded",
+      "taskId": "b8d02dad-0da4-43c9-b2bb-4c91dd9de770",
+      "turnId": null,
+      "outcome": null,
+      "sequence": 2,
+      "createdAt": "2026-10-12T10:12:06.129201+00:00",
+      "messageId": "ba0461dc-963c-4bbe-8b16-e58907b1366a",
+      "relationship": "follow_up",
+      "scopeVersion": 1,
+      "parentMessageId": "c2454205-d95a-4662-8839-0d601cc2349f"
+    }
+  ],
+  "nextSequence": 3,
+  "conversationId": "0f10ec8e-f971-42c1-9a5e-0892f566d5c5"
+}

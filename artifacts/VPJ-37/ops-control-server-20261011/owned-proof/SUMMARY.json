@@ -1,0 +1,43 @@
+{
+  "state": "PARTIAL_ACTUAL_PROOF_SCOPED_PERMISSION_FAIL",
+  "sourceHeadBeforeProof": "1d9e5da5e9e6f2180b60f986cdcbda5f104a6646",
+  "sourceBodySha256": "96b545afbd306da94ca8360afed3d6754c1de598bbab2d1d6e40562aec818b36",
+  "fixture": "vpj37-w2-integration-20261012-54bf86c1",
+  "preflight": "PASS",
+  "replay154AndBody": "PASS",
+  "text": "PASS actual correct task/provider dispatch and foreign task/capability stop negatives",
+  "V1": "PASS wrong-digest rejection, once dispatch, exact pause receipt, pending ledger, original authenticated activity/list readback",
+  "V2": "PASS canonical request/destination/output exact tuple, digest negative, exact pause task/turn, retained settled15, authenticated activity/list readback",
+  "scoped": "FAIL actual service_role EXECUTE denied at claim; no admin workaround/grant change; settled output/TS/pause/readback UNRUN",
+  "historicalFailures": [
+    "r1 V1 expected work unavailable instead of original terminal mapping failed; corrected exact one assertion, affected V1 only rerun",
+    "scoped r1 permission denied claim_scoped_trip_edit_work_v1; all six actual worker functions serviceExecute=false"
+  ],
+  "providerCalls": 0,
+  "targetGoTrueDevice": "UNRUN",
+  "cleanup": "PASS exact label-checked own container ABSENT",
+  "otherResources": "UNTOUCHED",
+  "sourcePins": [
+    {
+      "file": "tests/integration/observability/ops-control-owned/run.mjs",
+      "sha256": "fcc00f1df7f5bc5c358b4637881bde01d425dafc16524b5e7c7c08906d80c563"
+    },
+    {
+      "file": "tests/integration/observability/ops-control-owned/v2-seeds.mjs",
+      "sha256": "7f017838d00ddf4139136a8162a156f22f863488284fc678204ad63996558f20"
+    },
+    {
+      "file": "tests/integration/observability/ops-control-owned/fixture.mjs",
+      "sha256": "8bf43a83d27e34a3058fb8025a62efdef8f6579a240d413e1e3587b7b81f4702"
+    },
+    {
+      "file": "tests/integration/observability/ops-control-owned/scoped-seeds.mjs",
+      "sha256": "6b05666f445bccd482c8075da745af030226d8b2c74cac5264b0774f63ca4568"
+    },
+    {
+      "file": "tests/integration/observability/ops-control-owned/readback.mjs",
+      "sha256": "273556ff26f3b626a12875ceff6f98911c23b58d90446e922fdb58f6d8cfb184"
+    }
+  ],
+  "MainRemaining": "OriginalSQL/Main resolve actual scoped default-closed/enable contract under exact shared/append source lease; SQL owner remainder concurrency/restore/erase-export-copy/oldTrip"
+}
