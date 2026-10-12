@@ -1,0 +1,15 @@
+--- a/ios/VisePanda/VisePanda/Features/Ask/NativeAskView.swift
++++ b/ios/VisePanda/VisePanda/Features/Ask/NativeAskView.swift
+@@ -306,5 +305,0 @@
+-        if case .done(let status)=store.aiAssist[turn.id], ["ops_control_disabled","ops_scope_unavailable"].contains(status.reason ?? status.outcome?.reason ?? "") {
+-            Text(chinese ? "此能力暂时停用，或当前城市范围无法核实。已有成果保留，不自动重发。" : "This capability is paused or the current city scope cannot be qualified. Saved results are retained; no automatic retry.")
+-                .accessibilityIdentifier("grounded.ai-assist.ops-refusal")
+-            NavigationLink(destination: NativeJourneysView()) {Text(chinese ? "查看已有行程与成果" : "Open existing Trips and results")}
+-        } else {
+@@ -323,0 +319,4 @@
++        case .opsRefused:
++            Text(chinese ? "此能力暂时停用，或当前城市范围无法核实。已有成果保留，不自动重发。" : "This capability is paused or the current city scope cannot be qualified. Saved results are retained; no automatic retry.")
++                .accessibilityIdentifier("grounded.ai-assist.ops-refusal")
++            NavigationLink(destination: NativeJourneysView()) {Text(chinese ? "查看已有行程与成果" : "Open existing Trips and results")}
+@@ -326 +324,0 @@
+-        }

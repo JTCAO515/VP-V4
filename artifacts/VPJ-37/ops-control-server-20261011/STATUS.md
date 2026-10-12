@@ -121,3 +121,13 @@ four Native exact after unchanged. ConversationView/NativeAskModels and product 
 HOLD. Profile consumer compatibility is not actual metadata export acceptance; matching SQL
 source/counter/digest/lifecycle body and final affected proof remain UNRUN. No whole-App/history
 matrix rerun or helper PR; final full W2 integration owns those applicable checks.
+
+Main selected consumer-owned dedicated Ops refusal state to respect UNKNOWN/HOLD Models owner.
+NativeAskModels stays unchanged; its prior two-reason after is withdrawn from active apply list
+and retained only as historical candidate. New 2-file incremental package in native-refusal-state-
+candidate starts from current applied Store033/View043, adds typed two-code opsRefused state and
+strict exact envelopes before normal decode/Models.valid. Normal validation/reset/suspend/erase
+tokens remain. Exact positive two envelopes, extra/foreign/unknown/duplicate/null, stale current
+and deadline negatives PASS in extracted exact Swift helper fixture; two syntax/patch checks PASS.
+Fixture first compile FAIL (fixture-only == enum spacing); corrected then PASS, no app claim.
+New hunk lease HOLD; not covered by prior four/23 lease. No Models write or App matrix rerun.

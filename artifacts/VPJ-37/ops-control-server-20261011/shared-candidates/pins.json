@@ -193,16 +193,20 @@
       "afterSha256": "b22f96f8f969fa240ffd0bdc60fb794b333cbdf89cef84d662aa1cb78c8c0694",
       "currentHolder": "01a0af16-3f91-7e52-b444-c6f57f364c04 explicit HOLD; Main precise release required",
       "applied": false
-    },
+    }
+  ],
+  "readyForApply": false,
+  "sharedApplied": false,
+  "sourceDelta": "Only ConversationView after/patch changed for JourneyEntry canContinue+callback refusal; other27 unchanged",
+  "withdrawnHistoricalCandidates": [
     {
       "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAskModels.swift",
       "beforeSha256": "0181f41629bc8dd749cd9b8523b31089b191d2b2082bed759304569dba0cf453",
       "afterSha256": "5d9efaa6a64e4ecd3545b0f513f824a88ffd44646b837047c76d045a5be69407",
       "currentHolder": "UNKNOWN current shared native owner; Main must obtain exact release, no last-author inference",
-      "applied": false
+      "applied": false,
+      "status": "WITHDRAWN from apply list; NativeAskModels UNKNOWN/HOLD and unchanged, historical before/after retained"
     }
   ],
-  "readyForApply": false,
-  "sharedApplied": false,
-  "sourceDelta": "Only ConversationView after/patch changed for JourneyEntry canContinue+callback refusal; other27 unchanged"
+  "modelsSourceShaUnchanged": "0181f41629bc8dd749cd9b8523b31089b191d2b2082bed759304569dba0cf453"
 }
