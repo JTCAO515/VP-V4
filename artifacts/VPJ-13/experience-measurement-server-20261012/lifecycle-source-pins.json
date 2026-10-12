@@ -1,0 +1,43 @@
+{
+  "sourceBaseHead": "f3eac02ef24b2020c411abe92b48d255fca2844a",
+  "currentMain": "01a12f21-5586-7473-ab9d-31cb49204f10",
+  "files": [
+    {
+      "path": "lib/server/privacy/experience-measurement/recovery.ts",
+      "sha256": "c99dfb0c40752de0e9511af95af73c3e63d73003b3504ab9f80de0e5466cdee4"
+    },
+    {
+      "path": "lib/server/privacy/experience-measurement/control-erasure.ts",
+      "sha256": "9fce026ccfb0f308ca00842b54c6cb2c76002e295431e252008302fd00c93019"
+    },
+    {
+      "path": "lib/server/privacy/experience-measurement/retention.ts",
+      "sha256": "486c157c94ab12b489781556eddd8c49d017448279ef20a2fc70249fa4495d4b"
+    },
+    {
+      "path": "lib/server/privacy/experience-measurement/coverage.ts",
+      "sha256": "42a16cd6e5e22f0c9db202e51a106ce55d9707a57c6076bbeeda1d7c528df9e0"
+    },
+    {
+      "path": "lib/server/privacy/experience-measurement/LIFECYCLE-WIRE.md",
+      "sha256": "f416d6a23ac029cf8f52e0b027eccd1d3ae227de8a391c82f47914efc6f977d3"
+    },
+    {
+      "path": "lib/server/journey-entry/experience-measurement/protocol.ts",
+      "sha256": "4b5d3bbdebed045d1053b7f13b451344f0383cc760eed819ee7a2010ee9af7a9"
+    },
+    {
+      "path": "tests/unit/journey-experience-measurement/recovery.test.mjs",
+      "sha256": "9cb9311c815be2e3b01d69ee23a67bd880b20ab16b8408af379465713b05bc35"
+    },
+    {
+      "path": "tests/unit/journey-experience-measurement/consumer.test.mjs",
+      "sha256": "8ca7a401c60e8f303aef8b028378ceba1524eb1384c2de5950f9554054996ffe"
+    }
+  ],
+  "sharedApplied": false,
+  "productSQLApplied": false,
+  "installedLiveAdapter": false,
+  "actualEnvironment": "UNRUN",
+  "consumerUnitCases": 35
+}

@@ -35,18 +35,10 @@ export async function purgeMeasurement(policy: PurgePolicy | null, rpc: Maintena
     return { state: bounded.aborted ? 'unknown' : 'bounded', batches, erasedRows };
   } catch { return { state: 'unknown', batches, erasedRows }; }
 }
-export type RestoreJournal = Readonly<{ ownerId: string; journalId: string; floor: number; sourceLayoutDigest: string; capturedAt: number; expiresAt: number }>;
-/** Caller supplies a separately acquired LIVE journal; never take it from the
- * restored bundle. SQL independently checks latest journal/floor/source layout.
- * No restore writer exists in this consumer; default deny is explicit. */
-export async function measurementRestoreAllowed(journal: RestoreJournal | null, rpc: MaintenanceRPC, signal: AbortSignal, now = Date.now()): Promise<boolean> {
-  if (!journal || !uuid(journal.ownerId) || !uuid(journal.journalId) || !natural(journal.floor) || !hash(journal.sourceLayoutDigest)
-    || !positive(journal.capturedAt) || journal.capturedAt > now || journal.expiresAt <= now || journal.expiresAt > journal.capturedAt + 30000 || signal.aborted) return false;
-  try {
-    const bounded = AbortSignal.any([signal, AbortSignal.timeout(Math.max(1, Math.min(30000, journal.expiresAt - now)))]);
-    const v = await untilAbort(() => rpc('restore_check', { schemaVersion: SCHEMA, purpose: PURPOSE, ...journal }, bounded), bounded);
-    return !bounded.aborted && record(v) && exact(v, ['schemaVersion', 'purpose', 'kind', 'ownerId', 'journalId', 'floor', 'sourceLayoutDigest', 'allowed'])
-      && v.schemaVersion === SCHEMA && v.purpose === PURPOSE && v.kind === 'restore_check' && v.ownerId === journal.ownerId
-      && v.journalId === journal.journalId && v.floor === journal.floor && v.sourceLayoutDigest === journal.sourceLayoutDigest && v.allowed === true;
-  } catch { return false; }
+/** Legacy caller-journal entry is now negative-only per Main's lifecycle
+ * decision. Matching hashes/freshness or a target RPC's allowed:true cannot
+ * prove independent original source/latest coverage. Use recovery.ts's
+ * protected Core acquisition and opaque one-use handle; never Native JSON. */
+export async function measurementRestoreAllowed(_untrustedJournal: unknown, _rpc: MaintenanceRPC, _signal: AbortSignal, _now = Date.now()): Promise<boolean> {
+  return false;
 }

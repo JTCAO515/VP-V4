@@ -115,7 +115,7 @@ test('erasure success is bound to exact original metadata bytes and bounded rece
   const c=parseCommand(input({action:'erase',operationId:id(12),sourceDigest:'a'.repeat(64),previewDigest:'b'.repeat(64)}));
   const digest=createHash('sha256').update(JSON.stringify(c)).digest('hex');
   const v=output({kind:'erasure',operationId:id(12),requestDigest:digest,decidedAt:now-1,expiresAt:now+1000,scope:SCHEMA,state:'erased',
-    erasedRows:3,consentRevoked:true,fenceRecorded:true,allUserDataCompleted:false});
+    erasedRows:3,consentRevoked:true,fenceRecorded:true,lifecycle:{state:'complete',controls:'bounded_retained',copyState:'acknowledged',copyObligations:0,copyAcks:0},allUserDataCompleted:false});
   assert.ok(decode(v,c,actor,now,digest));assert.equal(decode(v,c,actor,now,'f'.repeat(64)),null);assert.equal(decode({...v,expiresAt:now},c,actor,now,digest),null);
 });
 test('coverage helper binds distinct measurement domain and exact erase recovery without claiming whole-account completion',()=>{
@@ -125,9 +125,13 @@ test('coverage helper binds distinct measurement domain and exact erase recovery
   assert.ok(validMeasurementCoverageSelection(selection,c));assert.equal(validMeasurementCoverageSelection({...selection,moduleId:'profile'},c),false);
   const recovered=JSON.parse(measurementCoverageRequestBody(selection));assert.equal(recovered.mutationBytes,bytes);assert.equal(recovered.operationId,id(12));
   const digest=createHash('sha256').update(bytes).digest('hex');const v=output({kind:'erasure',operationId:id(12),requestDigest:digest,decidedAt:now-1,expiresAt:now+1000,
-    scope:SCHEMA,state:'erased',erasedRows:3,consentRevoked:true,fenceRecorded:true,allUserDataCompleted:false});
+    scope:SCHEMA,state:'erased',erasedRows:3,consentRevoked:true,fenceRecorded:true,lifecycle:{state:'complete',controls:'bounded_retained',copyState:'acknowledged',copyObligations:0,copyAcks:0},allUserDataCompleted:false});
   assert.equal(measurementCoverageOutcome({input:selection,command:c,handler:'journey_measurement'},v,now).state,'scoped_complete');
   assert.equal(measurementCoverageOutcome({input:selection,command:c,handler:'journey_measurement'},{...v,ownerId:id(99)},now),null);
+  const incomplete={...v,lifecycle:{state:'incomplete',controls:'bounded_retained',copyState:'unknown',copyObligations:1,copyAcks:0}};
+  assert.equal(measurementCoverageOutcome({input:selection,command:c,handler:'journey_measurement'},incomplete,now).state,'partial');
+  assert.equal(decode({...incomplete,lifecycle:{...incomplete.lifecycle,state:'complete'}},parseCommand(c),actor,now,digest),null);
+  assert.equal(decode({...v,lifecycle:{...v.lifecycle,controls:'unknown'}},parseCommand(c),actor,now,digest),null);
 });
 const iso=n=>new Date(n).toISOString();
 const metadata = () => ({schemaVersion:SCHEMA,ownerId:actor.ownerId,consents:[{owner_id:actor.ownerId,consent_id:id(5),operation_id:id(15),session_id:actor.sessionId,mobile_epoch:3,notice_version:NOTICE,entries:['e1'],accepted_at:iso(now-1000),expires_at:iso(now-1000+TTL),revoked_at:null}],
@@ -175,11 +179,9 @@ test('controlled purge performs bounded physical-delete RPC and rejects no-progr
   assert.equal((await purgeMeasurement(purgePolicy,async()=>{throw Error('private');},new AbortController().signal)).state,'unknown');
   assert.equal((await purgeMeasurement(purgePolicy,async()=>({...input({}),kind:'purged',erasedRows:100,hasMore:true}),new AbortController().signal)).state,'bounded');
 });
-test('restore defaults deny and accepts only independent live journal with latest SQL floor/layout agreement',async()=>{
+test('legacy caller journal always denies even fresh target allowed:true; no RPC dispatch',async()=>{
   let calls=0;const journal={ownerId:actor.ownerId,journalId:id(30),floor:3,sourceLayoutDigest:'c'.repeat(64),capturedAt:now-1,expiresAt:now+1000};
   const rpc=async()=>{calls++;return {...input({}),kind:'restore_check',ownerId:journal.ownerId,journalId:journal.journalId,floor:3,sourceLayoutDigest:journal.sourceLayoutDigest,allowed:true};};
-  assert.equal(await measurementRestoreAllowed(null,rpc,new AbortController().signal,now),false);assert.equal(calls,0);
-  assert.equal(await measurementRestoreAllowed(journal,rpc,new AbortController().signal,now),true);
-  assert.equal(await measurementRestoreAllowed({...journal,floor:2},rpc,new AbortController().signal,now),false);
-  assert.equal(await measurementRestoreAllowed({...journal,expiresAt:now},rpc,new AbortController().signal,now),false);
+  for(const v of [null,journal,{...journal,floor:0},{...journal,expiresAt:now}])assert.equal(await measurementRestoreAllowed(v,rpc,new AbortController().signal,now),false);
+  assert.equal(calls,0);
 });

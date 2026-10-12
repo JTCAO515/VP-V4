@@ -7,6 +7,14 @@ export const COUNTERS = ['allTasks', 'availableTasks', 'firstValueTasks', 'activ
 const base = ['schemaVersion', 'purpose', 'kind', 'ownerId', 'sessionId', 'mobileEpoch'] as const;
 const retention = (v: Record<string, unknown>, now: number) => positive(v.receivedAt) && v.receivedAt <= now
   && positive(v.expiresAt) && v.expiresAt > now && v.expiresAt > v.receivedAt && v.expiresAt <= v.receivedAt + TTL;
+export function validErasureLifecycle(v: unknown): v is Readonly<{ state: 'complete' | 'incomplete'; controls: 'erased' | 'bounded_retained' | 'unknown';
+  copyState: 'acknowledged' | 'outstanding' | 'unknown'; copyObligations: number; copyAcks: number }> {
+  return record(v) && exact(v, ['state', 'controls', 'copyState', 'copyObligations', 'copyAcks'])
+    && ['complete', 'incomplete'].includes(String(v.state)) && ['erased', 'bounded_retained', 'unknown'].includes(String(v.controls))
+    && ['acknowledged', 'outstanding', 'unknown'].includes(String(v.copyState)) && natural(v.copyObligations) && v.copyObligations <= 10000
+    && natural(v.copyAcks) && v.copyAcks <= v.copyObligations && (v.copyState !== 'acknowledged' || v.copyAcks === v.copyObligations)
+    && (v.state !== 'complete' || v.controls !== 'unknown' && v.copyState === 'acknowledged' && v.copyAcks === v.copyObligations);
+}
 export function decode(value: unknown, command: Command, actor: Actor, now: number, requestDigest?: string): Record<string, unknown> | null {
   if (!record(value) || !bound(value, actor) || !Number.isFinite(now) || Buffer.byteLength(JSON.stringify(value)) > 65536) return null;
   const v = value;
@@ -54,11 +62,12 @@ export function decode(value: unknown, command: Command, actor: Actor, now: numb
       && v.kind === 'preview' && v.operationId === command.operationId && v.scope === SCHEMA && hash(v.sourceDigest) && hash(v.previewDigest)
       && positive(v.capturedAt) && v.capturedAt <= now && v.expiresAt === v.capturedAt + 30000 && Number(v.expiresAt) > now
       && natural(v.rows) && v.rows <= 10000 ? v : null;
-    case 'erase': case 'withdraw': case 'recover': return exact(v, [...base, 'operationId', 'requestDigest', 'decidedAt', 'expiresAt', 'scope', 'state', 'erasedRows', 'consentRevoked', 'fenceRecorded', 'allUserDataCompleted'])
+    case 'erase': case 'withdraw': case 'recover': return exact(v, [...base, 'operationId', 'requestDigest', 'decidedAt', 'expiresAt', 'scope', 'state', 'erasedRows', 'consentRevoked', 'fenceRecorded', 'lifecycle', 'allUserDataCompleted'])
       && v.kind === 'erasure' && v.operationId === command.operationId && v.scope === SCHEMA && v.state === 'erased'
       && hash(requestDigest) && v.requestDigest === requestDigest && positive(v.decidedAt) && v.decidedAt <= now
       && positive(v.expiresAt) && v.expiresAt > now && v.expiresAt <= v.decidedAt + TTL
-      && natural(v.erasedRows) && v.erasedRows <= 10000 && v.consentRevoked === true && v.fenceRecorded === true && v.allUserDataCompleted === false ? v : null;
+      && natural(v.erasedRows) && v.erasedRows <= 10000 && v.consentRevoked === true && v.fenceRecorded === true
+      && validErasureLifecycle(v.lifecycle) && v.allUserDataCompleted === false ? v : null;
   }
 }
 export const rate = (numerator: number, denominator: number) => denominator === 0 ? null : numerator / denominator;

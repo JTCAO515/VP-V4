@@ -1,0 +1,43 @@
+✔ strict JSON rejects duplicate/escaped aliases and hidden overwritten raw values before dispatch (9.505375ms)
+✔ closed input rejects actor, raw payloads, activation claims, client receipts and wrong entry source (0.183041ms)
+✔ new notice is mandatory and opt-in selection is nonempty sorted unique (0.098875ms)
+✔ clock preserves unknown, bounds duration and requires process provenance (0.059458ms)
+✔ pre-result tickets admit Trip-local PDF/OCR and Goal reads without a successful result pointer (0.123541ms)
+✔ native ticket ACK explicitly proves authenticated acceptance-report receipt and never goal-created latency (0.265375ms)
+✔ native aggregate labels missing local-intention coverage explicitly and unknown first-ever cannot inflate first value (0.097417ms)
+✔ all tasks remain denominator including failed, unfinished and unobservable; zero denominator is unknown (0.113125ms)
+✔ default off refuses before authentication/RPC and actual native route is unavailable without configuration (0.419833ms)
+✔ authenticated HTTP passes exact metadata bytes once to protected port and rechecks actor (0.428125ms)
+✔ foreign/stale/expired reply and replaced actor after mutation produce unknown ACK without retry (0.926417ms)
+✔ known SQL consent/source denials remain closed; raw errors are never reflected and no retry (0.511666ms)
+✔ erase recovery retains original exact bytes and refuses another operation or arbitrary payload (0.087792ms)
+✔ erasure success is bound to exact original metadata bytes and bounded receipt expiry (0.192791ms)
+✔ coverage helper binds distinct measurement domain and exact erase recovery without claiming whole-account completion (0.14275ms)
+✔ typed D2 metadata verifies actual rows, relationships, notice, order and bounded expiry (1.716417ms)
+✔ Profile suffix exports through original nine-module D2 and encrypted artifact, counters count snapshot once (1.856209ms)
+✔ Profile full digest/sourceRows/unknown arm/stale data fail closed and repeated page cannot change (0.475334ms)
+✔ original Profile schema remains exact and cannot claim an absent measurement suffix (0.087334ms)
+✔ SQL initial typed suffix uses exact journeyMeasurement owner/count-object and rejects aliases/unknown ticket columns (0.219542ms)
+✔ controlled purge performs bounded physical-delete RPC and rejects no-progress/malformed/unavailable ACK (0.2985ms)
+✔ legacy caller journal always denies even fresh target allowed:true; no RPC dispatch (0.048ms)
+✔ missing adapter/raw deserialized journal cannot authorize reconciliation or collection (0.843333ms)
+✔ controlled synthetic Core acquisition binds independent frame and one-use handle; never live/whole lifecycle evidence (1.699959ms)
+✔ whole-database/same-restored-instance/unknown provenance/lease/barrier rejects before issuer (0.418708ms)
+✔ valid metadata hash/source-looking seal without actual protected source authentication denies (0.244333ms)
+✔ foreign/layout/pin/floor generation/nonce/expiry/unknown coverage and old forgotten window deny even rehashed (2.1165ms)
+✔ unacknowledged copy or omitted copy inventory prevents restore qualification (0.763334ms)
+✔ latest barrier is rechecked before and after target reconciliation; stale/foreign ACK stays denied (1.867791ms)
+✔ expired acquired handle and lost/unknown target ACK deny with no effect retry (0.51475ms)
+✔ acquired metadata entry expires automatically even while an opaque handle remains referenced (17.722166ms)
+✔ adapter argument mutation cannot rewrite captured owner/source/floor or upgrade synthetic frame (0.427667ms)
+✔ explicit control scope inventories all seven groups and verifies scoped source plus copy ACK; lifecycle remains uninstalled (0.513584ms)
+✔ source erasure never claims unknown executor or foreign/missing external-copy ACK erased (0.5085ms)
+✔ control inventory omission/stale/foreign and retained observations/extended TTL/unknown erase ACK cannot claim completion (0.57325ms)
+ℹ tests 35
+ℹ suites 0
+ℹ pass 35
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 122.670708

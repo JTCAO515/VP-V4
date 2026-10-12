@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import type { CoverageInput, SelectedCommand, CoverageState } from '../coverage/contract.ts';
 import { SCHEMA, parseCommand, record, type Actor } from '../../journey-entry/experience-measurement/contract.ts';
-import { decode } from '../../journey-entry/experience-measurement/protocol.ts';
+import { decode, validErasureLifecycle } from '../../journey-entry/experience-measurement/protocol.ts';
 export const MEASUREMENT_MODULE = {
   id: 'journey_measurement', location: 'server' as const, version: SCHEMA, scope: SCHEMA,
   exportHandler: 'core', deleteHandler: 'journey_measurement', selection: 'owner' as const,
@@ -30,5 +30,7 @@ export function measurementCoverageOutcome(selected: SelectedCommand, value: unk
   const receipt = decode(value, c, actor, now, createHash('sha256').update(input.commandBytes).digest('hex'));
   if (!receipt) return null;
   return receipt.kind === 'preview' ? { state: 'preview', reason: 'EXPLICIT_MEASUREMENT_ERASURE_REQUIRED' }
-    : record(receipt) && receipt.kind === 'erasure' ? { state: 'scoped_complete', reason: 'MEASUREMENT_ERASED_CONSENT_REVOKED' } : null;
+    : record(receipt) && receipt.kind === 'erasure' && validErasureLifecycle(receipt.lifecycle) ? receipt.lifecycle.state === 'complete'
+      ? { state: 'scoped_complete', reason: 'MEASUREMENT_ERASED_CONSENT_REVOKED' }
+      : { state: 'partial', reason: 'MEASUREMENT_ERASED_COPY_OR_CONTROL_LIFECYCLE_INCOMPLETE' } : null;
 }
