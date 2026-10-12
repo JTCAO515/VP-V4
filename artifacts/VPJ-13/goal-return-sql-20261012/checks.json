@@ -1,0 +1,11 @@
+{
+  "candidateSourceCommit": "e4ae920071afd271f72445f6b30433418090ea27",
+  "jsSyntax": "PASS",
+  "gitDiffCheck": "PASS",
+  "docsCheckerDirectCommand": "node scripts/docs-check.mjs",
+  "docsCheckerDirectResult": "PASS",
+  "pnpmDocsLaunch": "FAIL ERR_PNPM_PNPM_ENGINE_IDENTITY_UNVERIFIABLE, registry signature request failed; no package-manager bypass, install or environment-lock change",
+  "database": "own strict PG17.6 exact154 replay and affected proofs PASS, see named records",
+  "productMigration": "ABSENT",
+  "postgrestAuthHttp": "UNRUN"
+}
