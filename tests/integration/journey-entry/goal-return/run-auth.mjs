@@ -11,6 +11,7 @@ import {owner,nonce,project,network,portBase,imageIds} from './scope.mjs';
 if(process.argv.length!==2 || process.env.VPJ13_E3_AUTH_NONCE!==undefined && process.env.VPJ13_E3_AUTH_NONCE!==nonce) throw Error('Exact E3 fixture nonce required');
 const lease=JSON.parse(readFileSync('/Users/jtsm5p/Documents/Codex/2026-10-12/task/VPJ13-E3-AuthHTTP-fixture-exact-lease-20261012.json','utf8'));
 assert.equal(lease.soleOwner,owner);assert.equal(lease.nonce,nonce);assert.equal(lease.project,project);assert.equal(lease.network,network);assert.equal(lease.worktree,process.cwd());
+assert.equal(lease.amendmentMarker,'VPJ13-E3-AuthHTTP-own-bridge-amendment-20261012');assert.equal(lease.networkInternal,false);
 if(process.env.DOCKER_HOST || process.env.DOCKER_CONTEXT) throw Error('Docker overrides refused');
 const docker=(args)=>execFileSync('docker',args,{encoding:'utf8',stdio:['ignore','pipe','pipe']}).trim();
 const context=docker(['context','show']);
@@ -26,7 +27,7 @@ for(const [tag,id] of Object.entries(imageIds)) assert.equal(docker(['image','in
 const target=mkdtempSync(join(tmpdir(),nonce+'-'));mkdirSync(join(target,'supabase'),{mode:0o700});
 writeFileSync(join(target,'supabase/config.toml'),nativeHTTPSupabaseConfig(readFileSync('supabase/config.toml','utf8'),project,ports),{mode:0o600});
 cpSync('supabase/migrations',join(target,'supabase/migrations'),{recursive:true});
-const env={...process.env,DOCKER_CONTEXT:context,VPJ13_E3_AUTH_NONCE:nonce};
+const env={...process.env,DOCKER_CONTEXT:context,VPJ13_E3_AUTH_NONCE:nonce,SUPABASE_TELEMETRY_DISABLED:'true',DO_NOT_TRACK:'1',NEXT_TELEMETRY_DISABLED:'1'};
 let lastErrors=[];
 const run=(cmd,args,visible=false,childEnv=env)=>new Promise((resolve,reject)=>{
  const child=spawn(cmd,args,{env:childEnv,stdio:visible?'inherit':['ignore','pipe','pipe']});
@@ -53,7 +54,11 @@ const run=(cmd,args,visible=false,childEnv=env)=>new Promise((resolve,reject)=>{
 });
 let code=1,created=false,started=false;
 try{
- docker(['network','create','--internal','--label','vp.owner='+owner,'--label','vp.nonce='+nonce,'--opt','com.docker.network.bridge.host_binding_ipv4=127.0.0.1',network]);created=true;
+ docker(['network','create','--label','vp.owner='+owner,'--label','vp.nonce='+nonce,'--opt','com.docker.network.bridge.host_binding_ipv4=127.0.0.1',network]);created=true;
+ const beforeNetwork=JSON.parse(docker(['network','inspect',network]))[0];
+ assert.equal(beforeNetwork.Driver,'bridge');assert.equal(beforeNetwork.Internal,false);assert.equal(beforeNetwork.Labels['vp.owner'],owner);assert.equal(beforeNetwork.Labels['vp.nonce'],nonce);
+ assert.equal(beforeNetwork.Options['com.docker.network.bridge.host_binding_ipv4'],'127.0.0.1');assert.equal(Object.keys(beforeNetwork.Containers).length,0);
+ console.log('E3_AUTH_NETWORK '+JSON.stringify({nonce,amendment:lease.amendmentMarker,internal:beforeNetwork.Internal,defaultBinding:'127.0.0.1',technicalEgress:true,externalRequestsAuthorized:false}));
  started=true;
  const start=await run('supabase',['start','--agent','no','--workdir',target,'--network-id',network,'-x','realtime,storage-api,imgproxy,mailpit,postgres-meta,studio,edge-runtime,logflare,vector,supavisor']);
  if(start!==0){
@@ -75,7 +80,7 @@ try{
  const inspect=JSON.parse(docker(['inspect',...names]));
  const roleTags={db:'public.ecr.aws/supabase/postgres:17.6.1.167',auth:'public.ecr.aws/supabase/gotrue:v2.196.0',rest:'public.ecr.aws/supabase/postgrest:v16.2',kong:'public.ecr.aws/supabase/kong:2.8.1'};
  const n=JSON.parse(docker(['network','inspect',network]))[0];
- assert.equal(n.Driver,'bridge');assert.equal(n.Internal,true);assert.equal(n.Labels['vp.owner'],owner);assert.equal(n.Labels['vp.nonce'],nonce);
+ assert.equal(n.Driver,'bridge');assert.equal(n.Internal,false);assert.equal(n.Labels['vp.owner'],owner);assert.equal(n.Labels['vp.nonce'],nonce);
  assert.equal(n.Options['com.docker.network.bridge.host_binding_ipv4'],'127.0.0.1');
  for(const c of inspect){
   const role=Object.keys(roleTags).find(kind=>c.Name==='/supabase_'+kind+'_'+project);
