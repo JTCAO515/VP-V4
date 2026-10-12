@@ -1,0 +1,6 @@
+create or replace function turn_private.reject_unavailable_intake_completion_v1() returns trigger language plpgsql set search_path='' as $$
+begin
+ if new.state='completed' and exists(select 1 from turn_private.work where turn_id=new.turn_id and execution_mode='planning_intake_comparison_v2') and turn_private.valid_current_v2_completion_proof(new.turn_id) is distinct from true then raise exception 'V2_EXECUTION_UNAVAILABLE';end if;
+ return new;
+end $$;
+revoke all on function turn_private.reject_unavailable_intake_completion_v1() from public,anon,authenticated,service_role;

@@ -1,0 +1,24 @@
+create function turn_private.planning_v2_completed_current(p_execution uuid) returns boolean
+language plpgsql security definer set search_path='' as $$
+declare r turn_private.planning_v2_execution_runs%rowtype;w turn_private.work%rowtype;j turn_private.planning_comparisons%rowtype;p turn_private.planning_v2_execution_profiles%rowtype;t turn_private.service_tasks%rowtype;origin text;d text;
+begin
+select * into r from turn_private.planning_v2_execution_runs where id=p_execution;if not found then return false;end if;
+ origin:=turn_private.planning_v2_collector_principal(r.profile_id);if origin is null or origin<>r.origin_kind then return false;end if;
+ select * into p from turn_private.planning_v2_execution_profiles where id=r.profile_id;if to_jsonb(p) is distinct from r.profile_snapshot then return false;end if;
+ perform pg_advisory_xact_lock(hashtextextended(r.owner_id::text,34));
+ perform 1 from auth.users where id=r.owner_id for key share nowait;if not found then return false;end if;
+ perform 1 from identity_private.mobile_accounts where owner_id=r.owner_id for update;if not found then return false;end if;
+ select * into t from turn_private.service_tasks where id=r.task_id and owner_id=r.owner_id for update nowait;
+ if not found or t.last_turn_id<>r.turn_id or t.policy_id<>p.text_policy_id or t.budget_scope_id<>p.scope_id then return false;end if;
+ select * into w from turn_private.work where turn_id=r.turn_id and owner_id=r.owner_id;
+ if not found or not turn_private.lock_turn(r.turn_id,r.owner_id,w.session_id) then return false;end if;
+ select * into j from turn_private.planning_comparisons where turn_id=r.turn_id and owner_id=r.owner_id;
+ if not found or j.task_id<>r.task_id or j.planning_policy_id<>p.planning_policy_id or not turn_private.planning_policy_current(j.planning_policy_id)
+ or not exists(select 1 from turn_private.planning_consents where owner_id=r.owner_id and policy_id=j.planning_policy_id and consent_id=j.planning_consent_id and revoked_at is null)
+ or not exists(select 1 from turn_private.text_content c join turn_private.text_consents k on k.owner_id=c.owner_id and k.policy_id=c.policy_id and k.consent_id=c.consent_id and k.revoked_at is null where c.turn_id=r.turn_id and c.owner_id=r.owner_id and c.hidden_at is null and turn_private.text_policy_current(c.policy_id)) then return false;end if;
+ d:=turn_private.assistant_travel_current_basis_v1(r.owner_id,j.message_id);if d is distinct from r.intake_digest then return false;end if;
+ if not exists(select 1 from turn_private.assistant_goals g join turn_private.assistant_messages m on m.goal_id=g.id and m.scope_version=g.scope_version where m.id=j.message_id and m.owner_id=r.owner_id and g.owner_id=r.owner_id and g.id=j.goal_id and g.scope_version=j.goal_version and not g.trip_terminal) then return false;end if;
+ return true;
+exception when lock_not_available then return false;
+end $$;
+revoke all on function turn_private.planning_v2_completed_current(uuid) from public,anon,authenticated,service_role;

@@ -1,0 +1,17 @@
+create function public.read_planning_intake_model_output_v1(p_owner uuid,p_task uuid,p_turn uuid,p_lease uuid,p_intake_digest text,p_planning_digest text,p_scope uuid,p_text_policy uuid,p_price_version text) returns jsonb
+language plpgsql security definer set search_path='' as $$
+declare q jsonb;o turn_private.planning_v2_collector_origins%rowtype;saved turn_private.planning_v2_collector_outputs%rowtype;a public.model_budget_attempts%rowtype;
+begin
+q:=turn_private.planning_v2_run_basis(p_owner,p_task,p_turn,p_lease,p_intake_digest,p_planning_digest);if q is null or q->'execution'->>'scopeId' is distinct from p_scope::text or q->'execution'->>'textPolicyId' is distinct from p_text_policy::text or q->'execution'->>'priceVersion' is distinct from p_price_version then return jsonb_build_object('kind','blocked');end if;
+ if (select count(*) from public.model_budget_attempts where task_id=p_task)>1 then return jsonb_build_object('kind','blocked');end if;
+ select * into a from public.model_budget_attempts where task_id=p_task and scope_id=p_scope for share nowait;
+ if not found then return jsonb_build_object('kind','model_state','state','none');end if;
+ if a.status in ('reserved','dispatched','pending') then return jsonb_build_object('kind','model_state','state',a.status);end if;
+ if a.status<>'settled' or a.actual_micros is null or a.provider is distinct from q->'execution'->>'provider' or a.model is distinct from q->'execution'->>'model' or a.price_version is distinct from q->'execution'->>'priceVersion' or a.reserved_micros is distinct from (q->'execution'->>'reservedMicros')::bigint then return jsonb_build_object('kind','blocked');end if;
+ select * into o from turn_private.planning_v2_collector_origins where execution_id=(q->>'runId')::uuid and scope_id=p_scope and attempt_id=a.attempt_id for share nowait;
+ select * into saved from turn_private.planning_v2_collector_outputs where execution_id=(q->>'runId')::uuid for share nowait;
+ if o.execution_id is null or saved.execution_id is null or o.unknown_at is not null or o.response_buffered_at is null or o.origin_kind is distinct from q->>'originKind' or saved.usage_wire->>'actualMicros' is distinct from a.actual_micros::text or turn_private.validate_planning_v2_output_v1(saved.output_wire,o.binding) is distinct from true or turn_private.planning_v2_usage_cost(saved.output_wire,q->'execution') is distinct from a.actual_micros then return jsonb_build_object('kind','blocked');end if;
+ return jsonb_build_object('kind','model_state','state','settled','binding',o.binding,'output',saved.output_wire);
+exception when lock_not_available then return jsonb_build_object('kind','blocked');
+end $$;
+revoke all on function public.read_planning_intake_model_output_v1(uuid,uuid,uuid,uuid,text,text,uuid,uuid,text) from public,anon,authenticated,service_role;

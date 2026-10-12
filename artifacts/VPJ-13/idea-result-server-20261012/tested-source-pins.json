@@ -1,0 +1,15 @@
+{
+  "base": "daa7bae44a660381fb3295d0d2afc327ea98d3ba",
+  "sourcePins": {
+    "lib/server/journey-entry/idea-result/model-adapter.ts": "d38fed69fd59fab0f39c9586919f5893865b9d955a4c9ee6a80261b8a58a9b0b",
+    "lib/server/journey-entry/idea-result/result-projection.ts": "c908ac854e8acfc105a570798fe1820f0092978b6fbf8888365607a33e49b6e3",
+    "lib/server/journey-entry/idea-result/source.ts": "c1e8b0cb606a04167d439f13bfd06cb8e69aa3d286134b05278de914d7269f07",
+    "tests/unit/journey-entry-idea-result/idea-result.test.ts": "d1eebe8f8cf87648cd01d582d4e94db669baa5908689756bfca24cde6ba3fd82"
+  },
+  "focusedTests": {
+    "pass": 24,
+    "fail": 0,
+    "skip": 0
+  },
+  "sharedCandidateApplied": false
+}

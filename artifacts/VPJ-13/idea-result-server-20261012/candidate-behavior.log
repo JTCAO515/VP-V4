@@ -1,0 +1,12 @@
+✔ full mocked SQL/provider flow binds before dispatch, records real-protocol usage/output before settlement then completes (11.706125ms)
+✔ lost output and completion ACK recover exact receipts without replay; restart reuses completed tool/model (1.500333ms)
+✔ unknown tool, changed dispatch authority and unknown price cannot produce settled completion or a replacement call (2.172667ms)
+✔ caller reservation cannot override the claimed server execution snapshot (0.11175ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 98.519792

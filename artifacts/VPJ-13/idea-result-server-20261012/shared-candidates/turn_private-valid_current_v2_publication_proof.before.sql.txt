@@ -1,0 +1,34 @@
+create function turn_private.valid_current_v2_publication_proof(p_owner uuid,p_artifact uuid,p_expected_revision integer,p_idempotency_key uuid,p_task uuid,p_goal uuid,p_message uuid,p_trip uuid,p_trip_version integer,p_goal_version integer,p_memory_basis jsonb,p_content jsonb) returns boolean
+language plpgsql security definer set search_path='' as $$
+declare proof turn_private.planning_v2_completion_proofs%rowtype;j turn_private.planning_comparisons%rowtype;
+begin
+ if p_expected_revision is distinct from 0 or p_trip is not null or p_trip_version is not null or turn_private.valid_comparison_v1(p_content) is distinct from true then return false;end if;
+ select * into proof from turn_private.planning_v2_completion_proofs where owner_id=p_owner and artifact_id=p_artifact and task_id=p_task and transaction_id=pg_current_xact_id();
+ if not found or proof.content is distinct from p_content or turn_private.valid_current_v2_completion_proof(proof.turn_id) is distinct from true then return false;end if;
+ select * into j from turn_private.planning_comparisons where turn_id=proof.turn_id;
+ if not found or j.state<>'queued' or j.publication_key is distinct from p_idempotency_key or j.goal_id is distinct from p_goal or j.message_id is distinct from p_message or j.goal_version is distinct from p_goal_version or j.memory_basis is distinct from p_memory_basis
+ or not exists(select 1 from public.turns t join turn_private.work w on w.turn_id=t.id join turn_private.text_content c on c.turn_id=t.id where t.id=proof.turn_id and t.owner_id=p_owner and t.status='completed' and w.state='completed' and w.lease_token is null and c.output_kind='answered' and c.output_text=p_content->>'summary')
+ or exists(select 1 from turn_private.result_artifacts where id=p_artifact)
+ or exists(select 1 from turn_private.planning_v2_completed_receipts where execution_id=proof.execution_id)
+ or not exists(select 1 from turn_private.planning_v2_result_claims where execution_id=proof.execution_id and state='started') then return false;end if;
+ return true;
+exception when lock_not_available then return false;
+end $$;
+revoke all on function turn_private.valid_current_v2_publication_proof(uuid,uuid,integer,uuid,uuid,uuid,uuid,uuid,integer,integer,jsonb,jsonb) from public,anon,authenticated,service_role;
+
+-- Existing publisher role fence only. All domain validation, signature and ACL stay intact.
+do $$
+declare f oid;definition text;needle text;replacement text;
+begin
+ f:='turn_private.publish_result_v1(uuid,uuid,integer,uuid,uuid,uuid,uuid,uuid,integer,integer,jsonb,jsonb)'::regprocedure;
+ definition:=pg_get_functiondef(f);
+ needle:='if (select auth.role())<>''service_role'' or p_owner_id is null';
+ replacement:='if ((select auth.role()) is distinct from ''service_role'' and turn_private.valid_current_v2_publication_proof(p_owner_id,p_artifact_id,p_expected_revision,p_idempotency_key,p_task_id,p_goal_id,p_input_message_id,p_trip_id,p_trip_version,p_goal_version,p_memory_basis,p_content) is distinct from true) or p_owner_id is null';
+ if position(needle in definition)=0 then raise exception 'V2_PUBLISHER_DEPENDENCY_CHANGED';end if;
+ execute replace(definition,needle,replacement);
+end $$;
+notify pgrst,'reload schema';
+
+do $$ declare name text;begin
+ foreach name in array array['planning_v2_registered_tariffs','planning_v2_collector_principals','planning_v2_execution_profiles','planning_v2_execution_runs','planning_v2_external_call_windows','planning_v2_collector_origins','planning_v2_collector_outputs','planning_v2_result_claims','planning_v2_completion_proofs','planning_v2_completed_receipts'] loop execute format('alter table turn_private.%I enable row level security',name);end loop;
+end $$;

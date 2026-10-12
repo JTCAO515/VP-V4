@@ -1,0 +1,32 @@
+✔ explicit10-day food/photo/relaxed goals remain requests, rail coverage and unknown lodging suitability are separate in both locales (2.861458ms)
+✔ explicit correction changes only recorded request projection; observation and unknown scope remain, caller data cannot mutate snapshots (0.418917ms)
+✔ missing/extra/unsupported explicit intake and readiness reject rather than infer Shanghai, weights, Memory or free-text constraints (0.248417ms)
+✔ binding/source revisions and fresh closed observation are mandatory; no stale admission rebinding or claims injected through labels (0.406875ms)
+✔ planning validator rejects arbitrary prose, unsupported recommendation, facts/actions/URLs and preserves JSON object-key independence (0.199292ms)
+✔ default off worker and hosted job do zero I/O and credential lookup (1.745916ms)
+✔ full mocked SQL/provider flow binds before dispatch, records real-protocol usage/output before settlement then completes (10.96275ms)
+✔ lost output and completion ACK recover exact receipts without replay; restart reuses completed tool/model (1.287208ms)
+✔ unknown tool, changed dispatch authority and unknown price cannot produce settled completion or a replacement call (0.920125ms)
+✔ caller reservation cannot override the claimed server execution snapshot (0.096708ms)
+✔ controlled host uses real HTTP transport but mock destinations: configured recipient gate after credential blocks supplier egress (2.619375ms)
+✔ false qualification or local fixture permit cannot become reserve authority; foreign attempt cannot dispatch (0.685541ms)
+✔ foreign output acknowledgement and revoked current source cannot publish or repeat supplier calls (0.712459ms)
+✔ known zero and nullable token counts survive closed constructor/wire roundtrip with no execution authority (2.410458ms)
+✔ all thirteen independent expected fields and every usage attempt/turn/planning-policy identity must match (0.34575ms)
+✔ enum arrays, unknown keys, supplied hashes/flags and invalid UTC millisecond timestamps fail closed (0.280583ms)
+✔ existing usage tariff/token invariants reject unknown money instead of inventing zero (0.313709ms)
+✔ module-computed digests ignore object order and detect output or usage changes separately (0.379292ms)
+✔ output binding/expected and usage identities require canonical lowercase UUIDs (0.405583ms)
+✔ literal idea, known party and dates reach original payload unchanged; unknown duration stays null (3.327625ms)
+✔ foreign, stale, unknown fields, unsupported service and city cannot form a source (0.479583ms)
+✔ real selection affects option order while original factual prose and no actions remain; none keeps order (1.179084ms)
+✔ adapter runs original protocol with exact literal/intake; disabled, stale and denied do no sends (11.343292ms)
+✔ settled late response preserves accounted receipt but never qualifies current result; abort never returns current source (1.499333ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 116.468334

@@ -1,0 +1,37 @@
+create function public.record_planning_intake_provider_destination_v1(p_owner uuid,p_task uuid,p_turn uuid,p_lease uuid,p_text_policy uuid,p_planning_policy uuid,p_scope uuid,p_attempt uuid,p_provider text,p_model text,p_price_version text,p_intake_digest text,p_planning_digest text,p_destination jsonb,p_request_id uuid,p_request_digest text,p_payload_digest text,p_payload_text text) returns jsonb
+language plpgsql security definer set search_path='' as $$
+declare q jsonb;e jsonb;b jsonb;o turn_private.planning_v2_collector_origins%rowtype;phase text;at_time timestamptz;canonical jsonb;payload jsonb;user_input jsonb;place jsonb;
+begin
+q:=turn_private.planning_v2_exact_model_basis(p_owner,p_task,p_turn,p_lease,p_text_policy,p_planning_policy,p_scope,p_attempt,p_provider,p_model,p_price_version,p_intake_digest,p_planning_digest);if q is null then return jsonb_build_object('kind','blocked');end if;e:=q->'execution';b:=jsonb_build_object('owner',p_owner,'task',p_task,'turn',p_turn,'lease',p_lease,'textPolicy',p_text_policy,'planningPolicy',p_planning_policy,'scope',p_scope,'attempt',p_attempt,'provider',p_provider,'model',p_model,'priceVersion',p_price_version,'intakeDigest',p_intake_digest,'planningDigest',p_planning_digest);
+ if p_destination is null or jsonb_typeof(p_destination) is distinct from 'object' or p_destination-array['schemaVersion','invocationId','provider','model','endpoint','configurationId','configurationVersion','phase','observedAt']<>'{}' or (select count(*) from jsonb_object_keys(p_destination))<>9
+ or p_destination->>'schemaVersion' is distinct from 'provider-destination/1' or p_destination->>'invocationId' !~ '^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$'
+ or p_destination->'provider' is distinct from e->'provider' or p_destination->'model' is distinct from e->'model' or p_destination->'endpoint' is distinct from e->'endpoint' or p_destination->'configurationId' is distinct from e->'providerConfigurationId' or p_destination->'configurationVersion' is distinct from e->'providerConfigurationVersion' or turn_private.planning_v2_valid_ms_v1(p_destination->'observedAt') is distinct from true then return jsonb_build_object('kind','blocked');end if;
+ if p_request_id is distinct from p_attempt or p_payload_text is null or octet_length(p_payload_text)>65536 then return jsonb_build_object('kind','blocked');end if;
+ payload:=p_payload_text::jsonb;canonical:=turn_private.serialize_planning_v2_request_v1(b,p_request_id,payload);
+ if canonical is null or canonical->>'body' is distinct from p_payload_text or canonical->>'requestDigest' is distinct from p_request_digest or canonical->>'payloadDigest' is distinct from p_payload_digest or payload->'max_tokens' is distinct from e->'maxOutputTokens' then return jsonb_build_object('kind','blocked');end if;
+ select observation into place from turn_private.planning_v2_place_checkpoints where turn_id=p_turn and state='completed';
+ if place is null then return jsonb_build_object('kind','blocked');end if;
+ user_input:=(payload->'messages'->1->>'content')::jsonb;
+ if user_input is distinct from jsonb_build_object('goal',q->'qualification'->'goalText','delegation',q->'qualification'->'delegation','intake',q->'qualification'->'qualifiedIntake'->'intake','observation',place,'unknown','["hotel_price","availability","safety","quietness","food","photography","pace_suitability"]'::jsonb) then return jsonb_build_object('kind','blocked');end if;
+ phase:=p_destination->>'phase';at_time:=(p_destination->>'observedAt')::timestamptz;
+ if phase not in ('configured','attempted','response_buffered') or at_time>clock_timestamp()+interval '5 seconds' or at_time<clock_timestamp()-interval '2 minutes' then return jsonb_build_object('kind','blocked');end if;
+ if not exists(select 1 from public.model_budget_attempts where scope_id=p_scope and attempt_id=p_attempt and task_id=p_task and status='dispatched' and reserved_micros=(e->>'reservedMicros')::bigint) or (select count(*) from public.model_budget_attempts where task_id=p_task)<>1 then return jsonb_build_object('kind','blocked');end if;
+ if turn_private.read_planning_v2_model_binding_v1(p_owner,p_task,p_turn,p_lease,p_text_policy,p_planning_policy,p_scope,p_attempt,p_provider,p_model,p_price_version,p_intake_digest,p_planning_digest)->'unknown' is distinct from 'false'::jsonb then return jsonb_build_object('kind','blocked');end if;
+ select * into o from turn_private.planning_v2_collector_origins where execution_id=(q->>'runId')::uuid for update nowait;
+ if phase='configured' then
+  if found then return jsonb_build_object('kind','blocked');end if;
+  insert into turn_private.planning_v2_collector_origins(execution_id,scope_id,attempt_id,invocation_id,request_id,request_digest,payload_digest,binding,origin_kind,configured_at,configuration_id,configuration_version,endpoint) values((q->>'runId')::uuid,p_scope,p_attempt,(p_destination->>'invocationId')::uuid,p_request_id,p_request_digest,p_payload_digest,b,q->>'originKind',at_time,(e->>'providerConfigurationId')::uuid,(e->>'providerConfigurationVersion')::integer,e->>'endpoint');
+ else
+  if not found or o.binding is distinct from b or o.request_id is distinct from p_request_id or o.request_digest is distinct from p_request_digest or o.payload_digest is distinct from p_payload_digest or o.invocation_id::text is distinct from p_destination->>'invocationId' or o.unknown_at is not null or at_time<o.configured_at then return jsonb_build_object('kind','conflict');end if;
+  if phase='attempted' then
+   if o.attempted_at is not null or o.response_buffered_at is not null then return jsonb_build_object('kind','conflict');end if;
+   update turn_private.planning_v2_collector_origins set attempted_at=at_time where execution_id=o.execution_id;
+  else
+   if o.attempted_at is null or o.response_buffered_at is not null or at_time<o.attempted_at then return jsonb_build_object('kind','conflict');end if;
+   update turn_private.planning_v2_collector_origins set response_buffered_at=at_time where execution_id=o.execution_id;
+  end if;
+ end if;
+ return jsonb_build_object('kind','destination_recorded','attemptId',p_attempt,'invocationId',p_destination->'invocationId','phase',phase);
+exception when lock_not_available then return jsonb_build_object('kind','blocked');
+end $$;
+revoke all on function public.record_planning_intake_provider_destination_v1(uuid,uuid,uuid,uuid,uuid,uuid,uuid,uuid,text,text,text,text,text,jsonb,uuid,text,text,text) from public,anon,authenticated,service_role;

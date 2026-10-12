@@ -1,0 +1,58 @@
+[
+  {
+    "function": "public.record_planning_intake_provider_destination_v1",
+    "beforeSHA256": "b8d230a0c2f200cf52eec47598b96f88568ee6cc44eaa415347c50c984f89f71",
+    "snapshot": "public-record_planning_intake_provider_destination_v1.before.sql.txt",
+    "source": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+    "authority": "source baseline only; live/W2 replacement must be reconciled before SQL implementation"
+  },
+  {
+    "function": "public.read_planning_intake_model_output_v1",
+    "beforeSHA256": "800b63fbd0272b8f9b6c74c5dd8d6027397c8ae6496d35e1a0f45fb2cc873de3",
+    "snapshot": "public-read_planning_intake_model_output_v1.before.sql.txt",
+    "source": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+    "authority": "source baseline only; live/W2 replacement must be reconciled before SQL implementation"
+  },
+  {
+    "function": "turn_private.planning_v2_completed_current",
+    "beforeSHA256": "75d74c1f786c47f37b597a99065d35c3ded1686bd8041e22f3234d76bf7a94c8",
+    "snapshot": "turn_private-planning_v2_completed_current.before.sql.txt",
+    "source": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+    "authority": "source baseline only; live/W2 replacement must be reconciled before SQL implementation"
+  },
+  {
+    "function": "turn_private.valid_current_v2_completion_proof",
+    "beforeSHA256": "90ff0978aa48e057b4dc04af61ca3c5f286ca43f0edb04587b2f118293c31394",
+    "snapshot": "turn_private-valid_current_v2_completion_proof.before.sql.txt",
+    "source": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+    "authority": "source baseline only; live/W2 replacement must be reconciled before SQL implementation"
+  },
+  {
+    "function": "public.complete_planning_intake_comparison_v1",
+    "beforeSHA256": "b09b8fcd4cac3e396f4761c5805f7a318486a15e2abbfc58f17713dc4a5118e1",
+    "snapshot": "public-complete_planning_intake_comparison_v1.before.sql.txt",
+    "source": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+    "authority": "source baseline only; live/W2 replacement must be reconciled before SQL implementation"
+  },
+  {
+    "function": "public.read_completed_planning_intake_receipt_v1",
+    "beforeSHA256": "983f9612fa66a0bb0a356b2fc6fd33f4b5dc056052325a3ffd3fe07d0120a291",
+    "snapshot": "public-read_completed_planning_intake_receipt_v1.before.sql.txt",
+    "source": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+    "authority": "source baseline only; live/W2 replacement must be reconciled before SQL implementation"
+  },
+  {
+    "function": "turn_private.reject_unavailable_intake_completion_v1",
+    "beforeSHA256": "c2ac2f08ec3ee2dde1d14abd7fc64c10b242e52954725b192a67ae6f8ce6be5e",
+    "snapshot": "turn_private-reject_unavailable_intake_completion_v1.before.sql.txt",
+    "source": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+    "authority": "source baseline only; live/W2 replacement must be reconciled before SQL implementation"
+  },
+  {
+    "function": "turn_private.valid_current_v2_publication_proof",
+    "beforeSHA256": "c1ea1af7cc4f4b74c39037f9db1e2f5cc66c0fb8f1a1f4fadef19de892c94fe9",
+    "snapshot": "turn_private-valid_current_v2_publication_proof.before.sql.txt",
+    "source": "supabase/migrations/20261003150000_vpj80_complete_worker_authority.sql",
+    "authority": "source baseline only; live/W2 replacement must be reconciled before SQL implementation"
+  }
+]

@@ -1,0 +1,48 @@
+--- a/lib/server/turn/planning-v2-bounded-worker.ts
++++ b/lib/server/turn/planning-v2-bounded-worker.ts
+@@ -1,6 +1,9 @@
+ import {createHash,randomUUID} from 'node:crypto';
+ import {decodePlanningV2Read,decodePlanningV2Checkpoints,validPlanningV2Lease,validPlanningV2PreparedProjection,type V2Lease} from './planning-intake-worker-protocol.ts';
+-import {runPlanningV2ModelStep,type PlanningV2ModelStepPorts} from './planning-v2-model-step.ts';
++import {type PlanningV2ModelStepPorts} from './planning-v2-model-step.ts';
++import {runIdeaResultModel} from '../journey-entry/idea-result/model-adapter.ts';
++import {captureIdeaResultSource,matchesIdeaResultSource,type IdeaResultSource} from '../journey-entry/idea-result/source.ts';
++import {projectIdeaResult} from '../journey-entry/idea-result/result-projection.ts';
+ import {parsePlanningV2ModelOutputReceipt,type PlanningV2ModelOutputReceipt} from './planning-v2-model-output-receipt.ts';
+ import {PROTOCOL_MODELS} from '../model-gateway/adapters/provider-protocol.ts';
+ import type {PlanningV2ModelRequestBinding} from './planning-v2-model-request.ts';
+@@ -41,7 +44,8 @@
+   const e=claim.execution,expected={schemaVersion:'planning-v2-execution/1',...config.execution,textPolicyId:config.textPolicyId,scopeId:config.scopeId,provider:'qwen',model:PROTOCOL_MODELS.qwen,priceVersion:config.priceVersion,reservedMicros:config.reservedMicros,timeoutMs:config.timeoutMs,maxOutputTokens:config.maxOutputTokens,maxMapCalls:13,maxSteps:4,maxRetries:0,deadlineMs:120000};
+   if(!exact(e,[...Object.keys(expected),'executionId','profileRevision'])||!uuid(e.executionId)||!Number.isSafeInteger(e.profileRevision)||Number(e.profileRevision)<1||Object.entries(expected).some(([k,v])=>e[k]!==v))return await pause('blocked');
+   const l=lease;
+-  const current=async()=>{if(controller.signal.aborted)throw Error('Planning stopped');const q=decodePlanningV2Read(await invoke('read_planning_intake_work_v1',six(l)),l);if(!q)throw Error('Planning basis unavailable');return q;};
++  let pinnedIdea:IdeaResultSource|null=null;
++  const current=async()=>{if(controller.signal.aborted)throw Error('Planning stopped');const q=decodePlanningV2Read(await invoke('read_planning_intake_work_v1',six(l)),l);if(!q||pinnedIdea&&!matchesIdeaResultSource(q,pinnedIdea))throw Error('Planning basis unavailable');return q;};
+   let input=await current();const checkpoints=decodePlanningV2Checkpoints(await invoke('read_planning_intake_checkpoints_v1',six(l)),l,ports.now());if(!checkpoints)return await pause('blocked');
+   const placeState=checkpoints.place as Row;let place:Row;
+   if(['started','unknown'].includes(String(placeState.state)))return await pause('reconciliation');
+@@ -60,7 +64,7 @@
+     if(await invoke('save_planning_intake_place_v1',{...six(l),p_observation:place})!==true)return await pause('reconciliation');
+    }catch{try{await invoke('unknown_planning_intake_place_v1',six(l));}catch{}return await pause('reconciliation');}
+   }
+-  input=await current();
++  input=await current();pinnedIdea=captureIdeaResultSource(input,l,place,ports.now());if(!pinnedIdea)return await pause('blocked');
+   const model=await invoke('read_planning_intake_model_output_v1',{...six(l),p_scope:config.scopeId,p_text_policy:config.textPolicyId,p_price_version:config.priceVersion});let output:PlanningV2ModelOutputReceipt|null=null;
+   if(row(model)&&exact(model,['kind','state','binding','output'])&&model.kind==='model_state'&&model.state==='settled'&&row(model.binding)){
+    const b=model.binding as PlanningV2ModelRequestBinding;
+@@ -68,11 +72,12 @@
+    output=parsePlanningV2ModelOutputReceipt(model.output,b);if(!output)return await pause('reconciliation');
+   }else if(row(model)&&exact(model,['kind','state'])&&model.kind==='model_state'&&model.state==='none'&&checkpoints.modelAttempt==='none'){
+    const binding:PlanningV2ModelRequestBinding={owner:l.ownerId,task:l.taskId,turn:l.turnId,lease:l.leaseToken,textPolicy:config.textPolicyId,planningPolicy:l.planningPolicyId,scope:config.scopeId,attempt:randomUUID(),provider:'qwen',model:PROTOCOL_MODELS.qwen,priceVersion:config.priceVersion,intakeDigest:l.intakeContextDigest,planningDigest:l.planningContextDigest};
+-   const prompt=JSON.stringify({goal:input.goalText,delegation:input.delegation,intake:input.qualifiedIntake.intake,observation:place,unknown:['hotel_price','availability','safety','quietness','food','photography','pace_suitability']});
+-   const result=await runPlanningV2ModelStep({enabled:true,lease:l,binding,reservedMicros:config.reservedMicros,timeoutMs:config.timeoutMs,maxOutputTokens:config.maxOutputTokens,prompt},ports.model,controller.signal);if(result.kind!=='settled')return await pause('reconciliation');output=result.output;
++   const result=await runIdeaResultModel({enabled:true,lease:l,binding,reservedMicros:config.reservedMicros,timeoutMs:config.timeoutMs,maxOutputTokens:config.maxOutputTokens,observation:place,observedNow:ports.now()},ports.model,controller.signal);if(result.kind!=='settled')return await pause('reconciliation');output=result.output;
+   }else return await pause('reconciliation');
+   input=await current();const projection=await invoke('project_planning_intake_comparison_v1',{...six(l),p_observation:place});if(!validPlanningV2PreparedProjection(projection,input,l,place,ports.now())||!row(projection))return await pause('blocked');
+-  const content=projection.content as Row,options=content.options as Row[],contentTuple=[content.schemaVersion,content.title,content.summary,options.map(o=>[o.id,o.title,o.tradeoff]),content.actions],digest=createHash('sha256').update(JSON.stringify(contentTuple)).digest('hex'),key=createHash('sha256').update(JSON.stringify([l.taskId,l.turnId,l.intakeContextDigest,l.planningContextDigest,'result.prepare',digest])).digest('hex');
++  const captured=pinnedIdea;if(!captured)return await pause('stale');
++  const personalized=projectIdeaResult(captured,projection,output,output.binding,ports.now());if(!personalized)return await pause('blocked');
++  const content=personalized.content as unknown as Row,options=content.options as Row[],contentTuple=[content.schemaVersion,content.title,content.summary,options.map(o=>[o.id,o.title,o.tradeoff]),content.actions],digest=createHash('sha256').update(JSON.stringify(contentTuple)).digest('hex'),key=createHash('sha256').update(JSON.stringify([l.taskId,l.turnId,l.intakeContextDigest,l.planningContextDigest,'result.prepare',digest])).digest('hex');
+   await current();const action=await invoke('claim_planning_intake_result_v1',{...six(l),p_action_key:key,p_content_digest:digest});if(!row(action)||!exact(action,['kind'])||!['claimed','duplicate'].includes(String(action.kind)))return await pause('reconciliation');
+   const p={...six(l),p_action_key:key,p_scope:output.binding.scope,p_attempt:output.binding.attempt,p_output_digest:output.outputDigest,p_usage_digest:output.usageDigest,p_content:content};
+   const published=(v:unknown)=>row(v)&&exact(v,['kind','taskId','turnId','artifactId','revision'])&&v.kind==='published'&&v.taskId===l.taskId&&v.turnId===l.turnId&&v.artifactId===l.artifactId&&Number.isSafeInteger(v.revision)&&Number(v.revision)>0;

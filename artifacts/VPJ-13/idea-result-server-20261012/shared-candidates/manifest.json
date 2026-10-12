@@ -1,0 +1,13 @@
+{
+  "base": "daa7bae44a660381fb3295d0d2afc327ea98d3ba",
+  "path": "lib/server/turn/planning-v2-bounded-worker.ts",
+  "before": "d45a2115693593511cc0c912ea485a3886371d09beb66c5a2af6c04021fabf1a",
+  "after": "17b6f9e18308f4398c70cce3c83943cb97bc8a0ef186de3439de60346d6254c3",
+  "patch": "8f9956ea541898ee92dfdc6f532be0caf29bbf5e029bb790c4919e0b6315437e",
+  "applied": false,
+  "requires": [
+    "exact current-holder release and Main lease",
+    "professional SQL completion validator for source-qualified model selection; no append slot granted",
+    "no host/provider/admission activation"
+  ]
+}
