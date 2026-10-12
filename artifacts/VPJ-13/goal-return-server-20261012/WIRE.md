@@ -32,6 +32,8 @@ Main review identified an unresolved SQL concurrency gap: candidate Goal/Convers
 
 Subsequent independent SQL stable source e4ae9200 supplies an unchanged-wire UPDATE/NOWAIT fence and actual own-fixture source/catalog/concurrency evidence. See `SQL-SOURCE-INTEGRATION.md` for the exact consumed source and limits. The original SHARE candidate above remains historical input; stable SQL product append is still subject to Main's exact lease and original SQL writer. No HTTP/target installation is inferred.
 
+Latest source/integration supersession: Main leased the original SQL product commit d94c54c5, normally integrated as c141bbf0 with exact15fd148 bytes. The own155/PG17.6.1.167 signed GoTrue/native-session/PostgREST/HTTP integration passed at5a4fece4; see AUTH-INTEGRATED-RESULT.md and auth-runtime-r9.json. The earlier candidate/lease-pending statements remain historical preparation. No remote/target installation or whole#203 completion follows; outer5s still UNRUN.
+
 ## Required catalog/source evidence before SQL product write
 
 Before: proposed signature absent; capture current pg_get_functiondef + prosrc/full-definition hashes, owner, language, volatility, security, search_path/config and effective ACL for original result read/state/domain/common basis, text_owner, native guard/session, relevant privacy schema/source hooks. Capture relevant source tables/columns/constraints/indexes and current actual migration head. Hashes must come from the permitted exact catalog and match source; do not derive or adopt them at runtime.
