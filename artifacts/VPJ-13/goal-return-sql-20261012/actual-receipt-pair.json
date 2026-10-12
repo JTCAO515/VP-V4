@@ -1,0 +1,67 @@
+{
+  "base": "daa7bae44a660381fb3295d0d2afc327ea98d3ba",
+  "candidateSourceCommit": "e4ae920071afd271f72445f6b30433418090ea27",
+  "nonce": "vpj13-goal-return-sql-20261012-51fb6d9a",
+  "observedAt": "2026-10-12T03:51:28.249Z",
+  "provenance": "Actual own PG17.6 SQL fixture, same ordinary-authenticated transaction; synthetic SQL claims only, not GoTrue/JWT/HTTP",
+  "reference": {
+    "kind": "goal_return",
+    "scope": {
+      "goalId": "9b4cd397-a765-4ddd-a78a-3172053f5375",
+      "goalVersion": 2,
+      "inputSequence": 2,
+      "conversationId": "e969d28c-c6b6-466b-8ed9-9017bb5a940a",
+      "parentMessageId": "66332c11-8f5f-489a-863f-f56f6a494573"
+    },
+    "nextStep": {
+      "kind": "unknown"
+    },
+    "lastDecision": {
+      "eventId": "130",
+      "revision": 2,
+      "artifactId": "5af63d1a-50ed-4a44-b343-20b4fd41722d"
+    },
+    "schemaVersion": "goal-return/1"
+  },
+  "result": {
+    "kind": "result_artifact",
+    "basis": {
+      "evidence": [],
+      "memories": [
+        {
+          "id": "0c18344f-2942-42e3-9249-018147d34e47",
+          "revision": 1
+        }
+      ]
+    },
+    "source": {
+      "goalId": "9b4cd397-a765-4ddd-a78a-3172053f5375",
+      "taskId": "cb835ea6-e446-49e0-9d68-2ff5fefc1bf9",
+      "tripId": "6ba3ae6d-da9f-464d-bf45-a24825856b5b",
+      "taskTurnId": "69d1f5bc-c0a7-49c4-a9db-07e035df1b28",
+      "goalVersion": 2,
+      "tripVersion": 0,
+      "inputSequence": 2,
+      "inputMessageId": "66332c11-8f5f-489a-863f-f56f6a494573"
+    },
+    "content": {
+      "state": "chosen",
+      "title": "Selected: Jingan",
+      "actions": [],
+      "summary": "Explicit owner selection; no Trip write.",
+      "comparisonRef": {
+        "revision": 1,
+        "artifactId": "c3593455-485c-47d6-a0e3-b6b9702e924e"
+      },
+      "schemaVersion": "decision/1",
+      "chosenOptionId": "jingan"
+    },
+    "current": true,
+    "revision": 2,
+    "createdAt": "2026-10-12T03:42:24.943426+00:00",
+    "lifecycle": "active",
+    "artifactId": "5af63d1a-50ed-4a44-b343-20b4fd41722d",
+    "currentRevision": 2,
+    "historicalReadable": true
+  }
+}
