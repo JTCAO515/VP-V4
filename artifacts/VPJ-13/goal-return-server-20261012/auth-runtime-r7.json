@@ -1,0 +1,14 @@
+{
+  "sourceHead": "ed997394",
+  "nonce": "vpj13-e3-auth-20261012-8c4e13ab",
+  "amendmentMarker": "VPJ13-E3-AuthHTTP-process-loopback-adapter-20261012",
+  "pureArgvTests": "2 PASS/0FAIL/0skip",
+  "result": "FAIL",
+  "phase": "controlled process-local publish adapter bootstrap",
+  "actualCLIError": "error running container: exit 126",
+  "actualResourcesAfterCLIExit": [],
+  "authHTTP": "UNRUN; actor seed and Next test were not reached",
+  "cleanup": {"containers": "ABSENT", "volumes": "ABSENT", "ports": "FREE", "result": "PASS"},
+  "sourceObservation": "Adapter deliberately rejects run/compose and nonleased create per exact V6 lease. Official CLI start runtime explicitly uses LegacyDockerRun for PG15+ fresh-volume one-shot migration jobs. This is a likely boundary conflict; the CLI failure wraps child exit126 without exposing the adapter's precise enum, so do not present inference as observed command argv.",
+  "nextAction": "No unchanged bootstrap retry. Resolve exact fresh-volume bootstrap job requirements with V6's explicit resource boundary; do not pass forbidden run/extra images by weakening adapter or fake the Auth schema."
+}
