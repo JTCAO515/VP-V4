@@ -1,0 +1,14 @@
+{
+  "sourceHead": "5a4fece466d5a261ca86f3bdbac53be25babb30d",
+  "nonce": "vpj13-e3-auth-20261012-8c4e13ab",
+  "amendmentMarker": "VPJ13-E3-AuthHTTP-temp-config-pinned-auth-bootstrap-20261012-V8",
+  "result": "PASS",
+  "exitCode": 0,
+  "actualTestCount": {"pass":1,"fail":0,"skip":0},
+  "actualRuntime": {"postgresImage":"17.6.1.167","ordinaryActors":2,"signedGoTrue":true,"actualRPC":true,"actualSource":true,"migrationChain":155,"fourPinnedRoleImagesAnd127Bindings":"PASS","hostBinds":"NONE","privacyGates":"t|t|t|t|t"},
+  "readback": {"originalAtomicChoice":"PASS","currentExactArtifact":"PASS","GETNoResultMessageTaskTripMemoryWrites":"PASS","anonymousForeignCookieOriginDuplicate":"PASS","epochAndServiceACL":"PASS","lateRevision2ResponseAfterOriginalRevision3Choice":"unavailable/PASS","replacedNativeSession":"PASS","originalTextConsentWithdrawal":"unavailable/PASS"},
+  "requestLifetime": {"controlledDeliveryDeadlineMs":15008,"callerCancellation":"PASS","actualBlockedPostgRESTMs":8012,"outerPostgREST5s":"UNRUN; no role/server setting change"},
+  "executionBoundary": {"realtimeStorageTemporaryConfig":false,"authEnabled":true,"oneOriginalPinnedAuthMigrateJob":"PASS","providerWorkerStarted":false,"budgetAttemptRows":0,"networkInternal":false,"technicalEgress":true,"externalRequestsAuthorized":false},
+  "cleanup": {"fourRuntimeContainers":"ABSENT","transientJobs":"ABSENT","projectVolumes":"ABSENT","eightPorts":"FREE","network":"own label-checked zero attachments then removed","temporaryConfigAdapterCounterAndTiming":"REMOVED","result":"PASS"},
+  "limitations": "Controlled20s delivery is an injected timing fault around an unchanged actual Response, not natural latency or fabricated Auth/RPC. Native UI/device/target and final whole-package review/CI/merge remain UNRUN. r1..r8 failures preserved."
+}

@@ -1,0 +1,13 @@
+E3_AUTH_REJECT_OBSERVATION {"state":"OBSERVATION_UNAVAILABLE"}
+E3_AUTH_TARGET {"nonce":"vpj13-e3-auth-20261012-8c4e13ab","owner":"01a12e09-e215-7c63-b179-21efa20514cd","project":"vp-native-ask-8c4e13ab","network":"vpj13-e3-auth-8c4e13ab","ports":[63840,63841,63842,63843,63844,63847,63849,63851],"services":["supabase_db_vp-native-ask-8c4e13ab","supabase_auth_vp-native-ask-8c4e13ab","supabase_rest_vp-native-ask-8c4e13ab","supabase_kong_vp-native-ask-8c4e13ab"],"sourceHead":"5a4fece466d5a261ca86f3bdbac53be25babb30d"}
+✔ E3: real GoTrue signed native session, original SQL choice, current HTTP readback and cancellation (27649.777042ms)
+ℹ E3_AUTH_HTTP {"ordinaryActors":2,"signedGoTrue":true,"actualRPC":true,"actualSource":true,"lateReadback":"PASS","controlledDeliveryDeadlineMs":15008,"callerCancellation":"PASS","actualBlockedPostgRESTMs":8012,"outerPostgREST5s":"UNRUN/no role setting change","budgetAttemptRows":0,"providerWorkerStarted":false}
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 30731.032375
+E3_AUTH_CLEANUP {"nonce":"vpj13-e3-auth-20261012-8c4e13ab","project":"vp-native-ask-8c4e13ab","containers":"ABSENT","transientJobs":"ABSENT","volumes":"ABSENT","ports":"FREE","tempAdapterAndCounter":"REMOVED","result":"PASS"}
