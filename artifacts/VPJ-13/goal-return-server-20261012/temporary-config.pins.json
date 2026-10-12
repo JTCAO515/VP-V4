@@ -1,0 +1,15 @@
+{
+  "phase": "private candidate only; not applied to running fixture",
+  "repositoryConfigSha256": "8781c6beed7a393a151a25dab6f72bc262b5e904a5562032f6e96dc305f21029",
+  "beforeSha256": "78cbeabd415842195d0ff3fb97df25c444279abe381860c0f0cb4d4820fb3d3a",
+  "afterSha256": "e60d0dfc130a54c1f93c9195bf9e8c045bc4b72f0595cedbc5e0b12797087fd4",
+  "changedFields": [
+    "realtime.enabled:true->false",
+    "storage.enabled:true->false"
+  ],
+  "authEnabled": true,
+  "project": "vp-native-ask-8c4e13ab",
+  "portBase": 63820,
+  "runtime": "UNRUN",
+  "authRunPermission": "NOT_GRANTED; current lease still denies run"
+}
