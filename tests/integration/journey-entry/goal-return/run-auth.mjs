@@ -56,7 +56,19 @@ try{
  docker(['network','create','--internal','--label','vp.owner='+owner,'--label','vp.nonce='+nonce,'--opt','com.docker.network.bridge.host_binding_ipv4=127.0.0.1',network]);created=true;
  started=true;
  const start=await run('supabase',['start','--workdir',target,'--network-id',network,'-x','realtime,storage-api,imgproxy,mailpit,postgres-meta,studio,edge-runtime,logflare,vector,supavisor']);
- if(start!==0) throw Error('Owned Supabase start exit '+start+'; non-secret errors: '+JSON.stringify(lastErrors));
+ if(start!==0){
+  const ownNames=docker(['ps','-a','--filter','name='+project,'--format','{{.Names}}']).split('\n').filter(Boolean);
+  const owned=ownNames.length?JSON.parse(docker(['inspect',...ownNames])):[];
+  const snapshot=owned.map(c=>({name:c.Name,image:c.Image,status:c.State.Status,running:c.State.Running,exitCode:c.State.ExitCode,errorPresent:Boolean(c.State.Error),
+   health:c.State.Health?.Status??'unknown',networks:Object.keys(c.NetworkSettings.Networks),ports:c.NetworkSettings.Ports}));
+  let internalDBReady='UNRUN';
+  const database=owned.find(c=>c.Name==='/supabase_db_'+project);
+  if(database?.State.Running && database.Image===imageIds['public.ecr.aws/supabase/postgres:17.6.1.167'] && Object.keys(database.NetworkSettings.Networks).length===1 && database.NetworkSettings.Networks[network]){
+   try{docker(['exec','supabase_db_'+project,'pg_isready','-h','127.0.0.1','-p','5432']);internalDBReady='PASS';}catch{internalDBReady='FAIL';}
+  }
+  console.log('E3_AUTH_START_DIAGNOSTIC '+JSON.stringify({nonce,actualResources:snapshot,internalDBReady}));
+  throw Error('Owned Supabase start exit '+start+'; non-secret errors: '+JSON.stringify(lastErrors));
+ }
  const expectedServices=['db','auth','rest','kong'].map(kind=>'supabase_'+kind+'_'+project);
  const names=docker(['ps','-a','--filter','name='+project,'--format','{{.Names}}']).split('\n').filter(Boolean);
  assert.deepEqual([...names].sort(),[...expectedServices].sort(),'Only four leased services');

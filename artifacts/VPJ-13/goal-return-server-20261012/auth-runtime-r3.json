@@ -1,0 +1,12 @@
+{
+  "sourceHead": "d8d9efe00169ff4c802a643a19a5e576bbfe8f6a",
+  "nonce": "vpj13-e3-auth-20261012-8c4e13ab",
+  "phase": "startup diagnostic with both filtered CLI streams",
+  "result": "FAIL",
+  "exitCode": 1,
+  "actualErrorCode": "LegacyDbConnectError",
+  "actualError": "failed to connect to postgres: host=127.0.0.1 user=postgres database=postgres: connect ECONNREFUSED 127.0.0.1:63842",
+  "authHTTP": "UNRUN; test was not reached",
+  "cleanup": {"containers": "ABSENT", "volumes": "ABSENT", "ports": "FREE", "result": "PASS"},
+  "nextAction": "Read only own startup container/image/status/network/port metadata and pg_isready before label-scoped cleanup to distinguish dead DB from host-port/network reachability. Do not assume a network change is authorized."
+}
