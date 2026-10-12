@@ -5,5 +5,6 @@
   "ordinaryModels": "UNCHANGED original decoder+valid remains",
   "firstFixtureCompile": "FAIL spacing before enum literal; fixture-only syntax fixed then PASS",
   "nativeAppBuild": "UNRUN per Main final-package selection",
-  "modelsSha256": "0181f41629bc8dd749cd9b8523b31089b191d2b2082bed759304569dba0cf453"
+  "modelsSha256": "0181f41629bc8dd749cd9b8523b31089b191d2b2082bed759304569dba0cf453",
+  "latestDelta": "Main explicit !Task.isCancelled in current argument; helper semantics unchanged, currentfalse/TTL evidence reused"
 }

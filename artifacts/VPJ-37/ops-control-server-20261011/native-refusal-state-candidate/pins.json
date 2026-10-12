@@ -4,8 +4,8 @@
     {
       "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAskStore.swift",
       "beforeSha256": "0339303f27f4a45fad2c46396f5512d060ba3818fa84dd8ddea184348ac5b083",
-      "afterSha256": "e33e31c83e6250cba4afe2dcdbabb9556a6f15d4c51ea35e05e57c5854760f6a",
-      "patchSha256": "57fb5aff24aa6257a02590ad901d0c39712092cb0c5dca4fd986eca89d54b7ec",
+      "afterSha256": "38bdbf747d749d52ae64665c8d08642eb9b4d1cfcd5f1a78a66d28a3202c3487",
+      "patchSha256": "5959b014cfc6d1ea4134f81a0c40f3063846e8d25eb1e91a3b35e61cff46987d",
       "applied": false,
       "lease": "HOLD new exact hunk release required"
     },

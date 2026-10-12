@@ -31,7 +31,7 @@
 +    }
 +    enum AiAssistState: Equatable { case loading, done(NativeAiAssistStatus), opsRefused(OpsRefusal), error }
 @@ -170,0 +198,4 @@
-+                if let refusal = Self.aiAssistRefusal(data, current: aiAssistTokens[turnId] == token && scope == current && session.dataScope == current, now: .now, deadline: deadline) {
++                if let refusal = Self.aiAssistRefusal(data, current: !Task.isCancelled && aiAssistTokens[turnId] == token && scope == current && session.dataScope == current, now: .now, deadline: deadline) {
 +                    aiAssist[turnId] = .opsRefused(refusal)
 +                    return
 +                }

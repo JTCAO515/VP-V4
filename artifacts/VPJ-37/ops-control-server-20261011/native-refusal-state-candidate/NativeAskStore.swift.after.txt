@@ -195,7 +195,7 @@ final class NativeAskStore {
                 guard aiAssistTokens[turnId] == token, scope == current, session.dataScope == current else { return }
                 try Task.checkCancellation()
                 guard ContinuousClock.now < deadline else { throw URLError(.timedOut) }
-                if let refusal = Self.aiAssistRefusal(data, current: aiAssistTokens[turnId] == token && scope == current && session.dataScope == current, now: .now, deadline: deadline) {
+                if let refusal = Self.aiAssistRefusal(data, current: !Task.isCancelled && aiAssistTokens[turnId] == token && scope == current && session.dataScope == current, now: .now, deadline: deadline) {
                     aiAssist[turnId] = .opsRefused(refusal)
                     return
                 }

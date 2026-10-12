@@ -39,7 +39,7 @@ for name in (store,view):
   old='    enum AiAssistState: Equatable { case loading, done(NativeAiAssistStatus), error }';assert after.count(old)==1
   after=after.replace(old,helper+'    enum AiAssistState: Equatable { case loading, done(NativeAiAssistStatus), opsRefused(OpsRefusal), error }',1)
   old='                let reply = try JSONDecoder().decode(NativeAiAssistReply.self, from: data)';assert after.count(old)==1
-  after=after.replace(old,'''                if let refusal = Self.aiAssistRefusal(data, current: aiAssistTokens[turnId] == token && scope == current && session.dataScope == current, now: .now, deadline: deadline) {
+  after=after.replace(old,'''                if let refusal = Self.aiAssistRefusal(data, current: !Task.isCancelled && aiAssistTokens[turnId] == token && scope == current && session.dataScope == current, now: .now, deadline: deadline) {
                     aiAssist[turnId] = .opsRefused(refusal)
                     return
                 }
