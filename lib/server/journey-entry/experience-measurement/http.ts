@@ -16,11 +16,12 @@ const reply = (data: unknown, status = 200) => Response.json(data, { status, hea
 const fail = (code: string, status = 503) => reply({ error: { code } }, status);
 const codes = ['MEASUREMENT_DISABLED', 'MEASUREMENT_UNAVAILABLE', 'MEASUREMENT_SOURCE_UNAVAILABLE', 'MEASUREMENT_SOURCE_CHANGED',
   'MEASUREMENT_CAPACITY', 'MEASUREMENT_ACK_UNKNOWN', 'CONSENT_REQUIRED', 'DATA_POLICY_BLOCKED', 'INVALID_INPUT', 'UNAUTHENTICATED',
-  'SESSION_REPLACED', 'REAUTHENTICATION_REQUIRED', 'FORBIDDEN', 'IDEMPOTENCY_KEY_REUSE'] as const;
+  'SESSION_REPLACED', 'REAUTHENTICATION_REQUIRED', 'FORBIDDEN', 'IDEMPOTENCY_KEY_REUSE', 'MEASUREMENT_CONSENT_REQUIRED',
+  'MEASUREMENT_CONFLICT', 'MEASUREMENT_CLOCK_UNKNOWN', 'MEASUREMENT_NOT_PRESENTED', 'MEASUREMENT_QUESTION_AUTHORITY_UNAVAILABLE', 'MEASUREMENT_EXTERNAL_COPY_UNKNOWN'] as const;
 export const measurementError = (message: string) => codes.find(code => code === message) ?? 'MEASUREMENT_UNAVAILABLE';
 const status = (code: string) => ['UNAUTHENTICATED', 'SESSION_REPLACED', 'REAUTHENTICATION_REQUIRED'].includes(code) ? 401
-  : ['FORBIDDEN', 'CONSENT_REQUIRED', 'DATA_POLICY_BLOCKED'].includes(code) ? 403 : code === 'INVALID_INPUT' ? 400
-    : ['MEASUREMENT_SOURCE_CHANGED', 'IDEMPOTENCY_KEY_REUSE'].includes(code) ? 409 : 503;
+  : ['FORBIDDEN', 'CONSENT_REQUIRED', 'MEASUREMENT_CONSENT_REQUIRED', 'DATA_POLICY_BLOCKED'].includes(code) ? 403 : code === 'INVALID_INPUT' ? 400
+    : ['MEASUREMENT_SOURCE_CHANGED', 'MEASUREMENT_CONFLICT', 'IDEMPOTENCY_KEY_REUSE'].includes(code) ? 409 : 503;
 /** Protected SQL owns atomic source/consent/fence qualification and persistence.
  * No provider invocation, business mutation retry or operational outbox sink. */
 export async function handleMeasurement(request: Request, options: Options): Promise<Response> {

@@ -63,11 +63,11 @@ export function decode(value: unknown, command: Command, actor: Actor, now: numb
       && positive(v.capturedAt) && v.capturedAt <= now && v.expiresAt === v.capturedAt + 30000 && Number(v.expiresAt) > now
       && natural(v.rows) && v.rows <= 10000 ? v : null;
     case 'erase': case 'withdraw': case 'recover': return exact(v, [...base, 'operationId', 'requestDigest', 'decidedAt', 'expiresAt', 'scope', 'state', 'erasedRows', 'consentRevoked', 'fenceRecorded', 'lifecycle', 'allUserDataCompleted'])
-      && v.kind === 'erasure' && v.operationId === command.operationId && v.scope === SCHEMA && v.state === 'erased'
+      && v.kind === 'erasure' && v.operationId === command.operationId && v.scope === SCHEMA && ['erased', 'incomplete'].includes(String(v.state))
       && hash(requestDigest) && v.requestDigest === requestDigest && positive(v.decidedAt) && v.decidedAt <= now
       && positive(v.expiresAt) && v.expiresAt > now && v.expiresAt <= v.decidedAt + TTL
       && natural(v.erasedRows) && v.erasedRows <= 10000 && v.consentRevoked === true && v.fenceRecorded === true
-      && validErasureLifecycle(v.lifecycle) && v.allUserDataCompleted === false ? v : null;
+      && validErasureLifecycle(v.lifecycle) && (v.state !== 'incomplete' || v.lifecycle.state === 'incomplete') && v.allUserDataCompleted === false ? v : null;
   }
 }
 export const rate = (numerator: number, denominator: number) => denominator === 0 ? null : numerator / denominator;

@@ -1,0 +1,50 @@
+{
+  "currentMain": "01a12f81-dd0f-752f-a6ff-869b2887400d",
+  "ownBaseHead": "a69747982de5361f3f0d195d7b7a4c9928dda114",
+  "sqlCandidatePins": [
+    {
+      "file": "measurement.candidate.sql",
+      "sha256": "4b20947a512d36cd6bd860e27474b73ae8ca89a215bddf41ca5c07529f82b658",
+      "readOnly": true
+    },
+    {
+      "file": "recovery.candidate.sql",
+      "sha256": "6d46eb407039781d0bf54a9a2c468c7fc111aee6126c317e5f25a895c450bb23",
+      "readOnly": true
+    },
+    {
+      "file": "profile-request-suffix.new.candidate.sql",
+      "sha256": "e5e082eb64e92166f3c55ced6157243129a8b85868e0b017e29bb0565f6b3ad1",
+      "readOnly": true
+    }
+  ],
+  "serverFiles": [
+    {
+      "path": "lib/server/privacy/experience-measurement/rows.ts",
+      "sha256": "cdfa2681128dbdd5b18304b4b4cc0aa5f0709478e762ed73f9eea4955107062b"
+    },
+    {
+      "path": "lib/server/privacy/experience-measurement/export.ts",
+      "sha256": "6cdd059e3e173ba396445200809dc4cad136158e6f742d930c916e745699bb41"
+    },
+    {
+      "path": "lib/server/privacy/experience-measurement/core-adapter.ts",
+      "sha256": "8548b865719eb69a82bcb484148814eb96f3429fad113fb329f921ad977aa13f"
+    },
+    {
+      "path": "lib/server/journey-entry/experience-measurement/protocol.ts",
+      "sha256": "6611ccde60b4ef56e20f86d75723c6e9dac33ad8076b5cd31c346bae7de3203e"
+    },
+    {
+      "path": "lib/server/journey-entry/experience-measurement/http.ts",
+      "sha256": "bac1a492ec8132528c0a9fc1aa77bf6d1743c1842e21b99154ec01a6364233fa"
+    }
+  ],
+  "productApplied": false,
+  "sharedApplied": false,
+  "liveOriginalCoreSource": "UNINSTALLED",
+  "actualRoleHTTP": "UNRUN",
+  "controlledConsumerTests": 41,
+  "sqlStableHead": "1efb5da156b177743cfb82e00c9f0d9ea1fa55f4",
+  "sqlWireSchemaSha256": "aa40dd0cf33cad435321c98798a055c37d4e6a9048d1af14782815b008a0d752"
+}

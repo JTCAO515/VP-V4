@@ -130,13 +130,15 @@ test('coverage helper binds distinct measurement domain and exact erase recovery
   assert.equal(measurementCoverageOutcome({input:selection,command:c,handler:'journey_measurement'},{...v,ownerId:id(99)},now),null);
   const incomplete={...v,lifecycle:{state:'incomplete',controls:'bounded_retained',copyState:'unknown',copyObligations:1,copyAcks:0}};
   assert.equal(measurementCoverageOutcome({input:selection,command:c,handler:'journey_measurement'},incomplete,now).state,'partial');
+  assert.equal(measurementCoverageOutcome({input:selection,command:c,handler:'journey_measurement'},{...incomplete,state:'incomplete'},now).state,'partial');
+  assert.equal(decode({...v,state:'incomplete'},parseCommand(c),actor,now,digest),null);
   assert.equal(decode({...incomplete,lifecycle:{...incomplete.lifecycle,state:'complete'}},parseCommand(c),actor,now,digest),null);
   assert.equal(decode({...v,lifecycle:{...v.lifecycle,controls:'unknown'}},parseCommand(c),actor,now,digest),null);
 });
 const iso=n=>new Date(n).toISOString();
-const metadata = () => ({schemaVersion:SCHEMA,ownerId:actor.ownerId,consents:[{owner_id:actor.ownerId,consent_id:id(5),operation_id:id(15),session_id:actor.sessionId,mobile_epoch:3,notice_version:NOTICE,entries:['e1'],accepted_at:iso(now-1000),expires_at:iso(now-1000+TTL),revoked_at:null}],
-  admissions:[{owner_id:actor.ownerId,admission_id:id(6),consent_id:id(5),entry:'e1',source_kind:'service_task',source_id:source.id,source_revision:null,task_id:source.id,goal_id:null,accepted_at:iso(now-950),received_at:iso(now-900),expires_at:iso(now-1000+TTL),session_id:actor.sessionId,mobile_epoch:3,first_ever:'unknown'}],
-  reports:[{owner_id:actor.ownerId,report_id:id(7),admission_id:id(6),signal:receive().signal,clock:{kind:'unknown'},received_at:iso(now-800),expires_at:iso(now-1000+TTL)}],erasureReceipts:[],sourceRows:{consents:1,admissions:1,reports:1,erasureReceipts:0}});
+const metadata = () => ({schemaVersion:SCHEMA,ownerId:actor.ownerId,consents:[{owner_id:actor.ownerId,consent_id:id(5),operation_id:id(15),request_metadata_digest:'e'.repeat(64),session_id:actor.sessionId,mobile_epoch:3,notice_version:NOTICE,entries:['e1'],accepted_at:iso(now-1000),expires_at:iso(now-1000+TTL),revoked_at:null}],
+  admissions:[{owner_id:actor.ownerId,admission_id:id(6),request_metadata_digest:'e'.repeat(64),consent_id:id(5),entry:'e1',source_kind:'service_task',source_id:source.id,source_revision:null,source_ref:source,clock_origin:{kind:'unknown'},task_id:source.id,goal_id:null,accepted_at:iso(now-950),received_at:iso(now-900),expires_at:iso(now-1000+TTL),session_id:actor.sessionId,mobile_epoch:3,first_ever:'unknown'}],
+  reports:[{owner_id:actor.ownerId,report_id:id(7),request_metadata_digest:'e'.repeat(64),admission_id:id(6),signal:receive().signal,clock:{kind:'unknown'},received_at:iso(now-800),expires_at:iso(now-1000+TTL)}],erasureReceipts:[],recoveryControls:[],journals:[],copyObligations:[],sourceRows:{consents:1,admissions:1,reports:1,erasureReceipts:0,recoveryControls:0,journals:0,copyObligations:0}});
 const exportPage = () => {const m=metadata();const item={ownerId:actor.ownerId,profile:null,watermark:null,operations:[],sourceRows:{profiles:0,watermarks:0,operations:0,measurement:m.sourceRows},journeyMeasurement:m};
   return {schemaVersion:'profile-core-export/1',section:'snapshot',sourceDigest:createHash('sha256').update(exportCanonical({snapshot:[item]})).digest('hex'),items:[item],hasMore:false,nextCursor:null,sectionComplete:true};};
 const lease=()=>({requestId:id(20),ownerId:actor.ownerId,leaseId:id(21),generation:1,expiresAt:new Date(Date.now()+60000).toISOString()});
@@ -147,7 +149,7 @@ test('typed D2 metadata verifies actual rows, relationships, notice, order and b
 test('Profile suffix exports through original nine-module D2 and encrypted artifact, counters count snapshot once',async()=>{
   const own=lease();const profile=measurementProfileExportHandler(own,async()=>exportPage(),()=>now);const handlers=Object.fromEntries(CORE_EXPORT_MODULES.map(k=>[k,{sections:['snapshot'],consistency:'snapshot',page:async()=>({items:[],hasMore:false,nextCursor:null,sectionComplete:true})}]));handlers.profile=profile;
   const bundle=await collectCoreExport(own,handlers,{enabled:true,maxPages:100,maxBytes:8388608,pageSize:100},async()=>true,new AbortController().signal);
-  assert.ok(bundle);assert.equal(bundle.modules.length,9);assert.ok(profile.matchesReceipt(bundle.modules.find(m=>m.module==='profile')));assert.deepEqual(bundle.data.profile.snapshot[0].sourceRows.measurement,{consents:1,admissions:1,reports:1,erasureReceipts:0});
+  assert.ok(bundle);assert.equal(bundle.modules.length,9);assert.ok(profile.matchesReceipt(bundle.modules.find(m=>m.module==='profile')));assert.deepEqual(bundle.data.profile.snapshot[0].sourceRows.measurement,{consents:1,admissions:1,reports:1,erasureReceipts:0,recoveryControls:0,journals:0,copyObligations:0});
   const key={keyId:'synthetic-only',key:Buffer.alloc(32,1)};const encrypted=encryptExportArtifact(bundle,own,key,new Date(Date.now()+60000).toISOString());assert.ok(encrypted);
   assert.ok(decryptExportArtifact(encrypted,own,key));
 });
@@ -163,12 +165,54 @@ test('original Profile schema remains exact and cannot claim an absent measureme
   const h=measurementProfileExportHandler(lease(),async()=>v,()=>now);const p=await h.page('snapshot',null,100,new AbortController().signal);
   assert.equal(Object.hasOwn(p.items[0],'journeyMeasurement'),false);
 });
-test('SQL initial typed suffix uses exact journeyMeasurement owner/count-object and rejects aliases/unknown ticket columns',async()=>{
+test('SQL seven-section typed suffix uses exact journeyMeasurement owner/count-object and rejects aliases/unknown columns',async()=>{
   const page=exportPage();page.schemaVersion='profile-core-export/1';const h=measurementProfileExportHandler(lease(),async()=>page,()=>now);
   const result=await h.page('snapshot',null,100,new AbortController().signal);assert.deepEqual(result.items,page.items);
-  const wrong=metadata();wrong.admissions[0].clock_origin={kind:'unknown'};assert.equal(validMeasurementMetadata(wrong,now),false);
+  const wrong=metadata();wrong.admissions[0].caller_latest=true;assert.equal(validMeasurementMetadata(wrong,now),false);
   const alias=exportPage();alias.items[0].measurement=alias.items[0].journeyMeasurement;delete alias.items[0].journeyMeasurement;
   const bad=measurementProfileExportHandler(lease(),async()=>alias,()=>now);await assert.rejects(bad.page('snapshot',null,100,new AbortController().signal));
+});
+const sevenMetadata=()=>{
+  const m=metadata();m.recoveryControls=[{owner_id:actor.ownerId,control_id:id(60),reconciliation_generation:1,erasure_floor:0,
+    covered_from_at:iso(now-500),covered_through_at:iso(now-10),coverage_complete:false,authority_received_at:iso(now-500),expires_at:iso(now+1000)}];
+  m.journals=[{owner_id:actor.ownerId,journal_id:id(61),event_kind:'copy_obligation',authority_id:id(62),floor:0,authority_received_at:iso(now-500),expires_at:iso(now+1000)}];
+  m.copyObligations=[{owner_id:actor.ownerId,copy_id:id(62),generation:1,kind:'independent_journal',core_request_id:null,source_digest:'f'.repeat(64),
+    state:'unknown',received_at:iso(now-500),expires_at:iso(now+1000)}];
+  m.erasureReceipts=[{owner_id:actor.ownerId,operation_id:id(63),consent_id:null,state:'incomplete',source_digest:null,preview_digest:null,
+    request_metadata_digest:'e'.repeat(64),erased_rows:0,decided_at:iso(now-500),expires_at:iso(now+1000)}];
+  Object.assign(m.sourceRows,{erasureReceipts:1,recoveryControls:1,journals:1,copyObligations:1});return m;
+};
+test('seven-group control/journal/copy projection retains unknown copies without treating rows or erased state as live proof',()=>{
+  assert.ok(validMeasurementMetadata(sevenMetadata(),now));
+  const m=sevenMetadata();m.copyObligations.push({...m.copyObligations[0],generation:2});m.sourceRows.copyObligations=2;
+  assert.ok(validMeasurementMetadata(m,now));m.copyObligations.reverse();assert.equal(validMeasurementMetadata(m,now),false);
+  for(const mutate of [v=>delete v.journals,v=>delete v.sourceRows.recoveryControls,v=>v.recoveryControls[0].owner_id=id(99),
+    v=>v.recoveryControls[0].expires_at=iso(now+TTL+1),v=>v.journals[0].event_kind='caller_latest',v=>v.journals[0].owner_id=id(99),
+    v=>v.copyObligations[0].rawJournal='private',v=>v.sourceRows.copyObligations=0]){
+    const v=sevenMetadata();mutate(v);assert.equal(validMeasurementMetadata(v,now),false);
+  }
+});
+test('E2/E3 ticket rows export nullable admission origin and bind source/logical identity/process to retained consent',()=>{
+  for(const entry of ['e2','e3']){
+    const m=metadata();m.consents[0].entries=[entry];const a=m.admissions[0];
+    Object.assign(a,{entry,source_kind:'native_entry',source_id:id(65),task_id:null,accepted_at:null,source_revision:null,
+      clock_origin:{kind:'native_monotonic',processId:id(66)},source_ref:entry==='e2'
+        ?{kind:'native_entry',logicalId:id(65),entry,anchor:{kind:'trip',tripId:id(67),tripVersion:0,medium:'pdf'}}
+        :{kind:'native_entry',logicalId:id(65),entry,anchor:{kind:'goal',conversationId:id(68),goalId:id(65),goalVersion:1,parentMessageId:id(69),inputSequence:1}},
+      goal_id:entry==='e3'?id(65):null});m.reports[0].clock={kind:'local_elapsed',processId:id(66),elapsedMs:100};
+    assert.ok(validMeasurementMetadata(m,now));a.accepted_at=iso(now-950);assert.equal(validMeasurementMetadata(m,now),false);a.accepted_at=null;
+    m.reports[0].clock.processId=id(99);assert.equal(validMeasurementMetadata(m,now),false);
+  }
+});
+test('Profile snapshot excludes its own copy registration/journal and keeps all seven real source counts in the canonical digest',async()=>{
+  const own=lease(),m=sevenMetadata();const v=exportPage();Object.assign(v.items[0],{journeyMeasurement:m,sourceRows:{profiles:0,watermarks:0,operations:0,measurement:m.sourceRows}});
+  v.sourceDigest=createHash('sha256').update(exportCanonical({snapshot:v.items})).digest('hex');
+  const h=measurementProfileExportHandler(own,async()=>v,()=>now);assert.deepEqual((await h.page('snapshot',null,100,new AbortController().signal)).items,v.items);
+  const copy=structuredClone(v);copy.items[0].journeyMeasurement.copyObligations[0].copy_id=own.requestId;copy.sourceDigest=createHash('sha256').update(exportCanonical({snapshot:copy.items})).digest('hex');
+  await assert.rejects(measurementProfileExportHandler(own,async()=>copy,()=>now).page('snapshot',null,100,new AbortController().signal));
+  const journal=structuredClone(v);journal.items[0].journeyMeasurement.journals[0].authority_id=own.requestId;
+  journal.sourceDigest=createHash('sha256').update(exportCanonical({snapshot:journal.items})).digest('hex');
+  await assert.rejects(measurementProfileExportHandler(own,async()=>journal,()=>now).page('snapshot',null,100,new AbortController().signal));
 });
 const purgePolicy={enabled:true,schemaVersion:SCHEMA,maxBatches:2,batchSize:100,maxRunMs:1000};
 test('controlled purge performs bounded physical-delete RPC and rejects no-progress/malformed/unavailable ACK',async()=>{

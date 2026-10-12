@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { SCHEMA, PURPOSE, TTL } from '../../../lib/server/journey-entry/experience-measurement/contract.ts';
 import { acquireMeasurementRecovery, reconcileMeasurementRecovery, recoveryIntegrity, CONTROL_ROWS } from '../../../lib/server/privacy/experience-measurement/recovery.ts';
 import { eraseMeasurementControlScope } from '../../../lib/server/privacy/experience-measurement/control-erasure.ts';
+import { measurementCoreRecoveryAdapter } from '../../../lib/server/privacy/experience-measurement/core-adapter.ts';
 const id=n=>`00000000-0000-4000-8000-${String(n).padStart(12,'0')}`;
 const now=1791780000000;
 const sig=()=>new AbortController().signal;
@@ -91,6 +92,33 @@ test('adapter argument mutation cannot rewrite captured owner/source/floor or up
   const h=harness();h.adapter.authenticate=async(c,f)=>{c.ownerId=id(99);f.floor=0;f.source.kind='protected_live';return true;};
   const acquired=await acquireMeasurementRecovery(id(1),h.adapter,sig(),()=>now);assert.ok(acquired);
   const result=await reconcileMeasurementRecovery(acquired,sig(),()=>now);assert.equal(result.state,'synthetic_qualified');assert.equal(result.collectionEligible,false);
+});
+test('original Core bridge cannot be enabled by a missing verifier, config boolean or ordinary RPC allowed:true',async()=>{
+  let calls=0;const domain=async()=>{calls++;return {allowed:true};};
+  assert.equal(measurementCoreRecoveryAdapter(domain,null),null);
+  assert.equal(measurementCoreRecoveryAdapter(domain,{verifyOrigin:true,verifySeal:true}),null);assert.equal(calls,0);
+  const bridge=measurementCoreRecoveryAdapter(domain,{verifyOrigin:async()=>true,verifySeal:async()=>true});
+  assert.equal(await acquireMeasurementRecovery(id(1),bridge,sig(),()=>now),null);assert.equal(calls,1);
+});
+test('concrete original Core bridge sends only leased request metadata and delegates origin/seal proof outside RPC flags',async()=>{
+  const h=harness(),actions=[];let origin=0,seal=0;
+  const domain=async(action,input,signal)=>{actions.push(action);
+    if(action==='measurement_recovery_context'){assert.deepEqual(Object.keys(input),['requestId']);return h.adapter.open(input.requestId,signal);}
+    if(action==='measurement_recovery_issue')return h.adapter.issue(input,signal);
+    if(action==='measurement_recovery_current'){assert.deepEqual(Object.keys(input).sort(),['generation','leaseId','requestId']);return h.adapter.current(h.c,signal);}
+    assert.equal(action,'measurement_recovery_reconcile');assert.deepEqual(Object.keys(input).sort(),['acquisitionId','frame','generation','journalId','leaseId','requestId']);return h.adapter.reconcile(h.c,input.frame,signal);
+  };
+  const bridge=measurementCoreRecoveryAdapter(domain,{verifyOrigin:async()=>{origin++;return true;},verifySeal:async()=>{seal++;return true;}});
+  const acquired=await acquireMeasurementRecovery(id(1),bridge,sig(),()=>now);assert.ok(acquired);
+  assert.equal((await reconcileMeasurementRecovery(acquired,sig(),()=>now)).state,'synthetic_qualified');assert.equal(origin,2);assert.equal(seal,2);
+  assert.equal(actions.filter(a=>a==='measurement_recovery_reconcile').length,1);
+});
+test('currently unavailable Core action or failing independent origin remains denied with no target reconciliation',async()=>{
+  const denied=measurementCoreRecoveryAdapter(async()=>{throw Error('INVALID_INPUT');},{verifyOrigin:async()=>true,verifySeal:async()=>true});
+  assert.equal(await acquireMeasurementRecovery(id(1),denied,sig(),()=>now),null);
+  const h=harness();const domain=async(a,input,s)=>a==='measurement_recovery_context'?h.adapter.open(input.requestId,s):h.adapter.issue(input,s);
+  const badOrigin=measurementCoreRecoveryAdapter(domain,{verifyOrigin:async()=>false,verifySeal:async()=>true});
+  assert.equal(await acquireMeasurementRecovery(id(1),badOrigin,sig(),()=>now),null);assert.equal(h.calls.reconcile,0);
 });
 
 function eraseHarness({unknownExecutor=false,copyAckChange,sourceAckChange,inventoryChange}={}){
