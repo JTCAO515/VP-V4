@@ -1,0 +1,13 @@
+{
+  "state": "LIMITED_RELEASE",
+  "file": "lib/server/turn/planning-v2-bounded-worker.ts",
+  "fromOwner": "01a126a8-7cb5-7a70-aca6-0ba38c99efe2",
+  "toOwner": "sole203 E1 01a12e38-769a-7df2-bc88-17439c52316c; Main-selected exact writer only",
+  "before": "6496b1bfd7d05aaf6399a41e1a29cfdb7a646284d2f14c4449743bc2a3d271d6",
+  "after": "799d0ba111e642115b2d1dc755ba2ea37ecb381fb8b9c6a7d85316f33fa5e74b",
+  "patch": "5deb172d2c394e10121bd64d4b2391281109e1440ca1d6fbf1763a8eb9127cf0",
+  "scope": "Only exact E1 imports/source pin/model adapter/content projection hunk. Ops refusal/pause accounting and original control body preserved. Whole-file ownership not transferred. Main lease needed before product apply.",
+  "plannedOrInflightWriteOverlap": false,
+  "appliedInW2": false,
+  "semanticProof": "E1 owner/Main responsibility; release is preservation review only"
+}

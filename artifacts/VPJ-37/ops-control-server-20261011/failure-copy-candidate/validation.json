@@ -1,0 +1,25 @@
+{
+  "state": "CANDIDATE_NOT_APPLIED",
+  "baseline": {
+    "total": 89,
+    "pass": 87,
+    "fail": 2,
+    "skip": 0,
+    "failures": [
+      "old 24-code snapshot",
+      "missing/misindexed five-locale copy"
+    ]
+  },
+  "candidate": {
+    "result": "PASS",
+    "checks": [
+      "130 locale/code combinations",
+      "legacy positional copy",
+      "Ops no retry/provider fallback",
+      "manual read alternative",
+      "strict TypeScript"
+    ]
+  },
+  "command": "node --experimental-strip-types /private/tmp/w2-failure-copy-validate.mjs",
+  "targetProviderDevice": "UNRUN"
+}

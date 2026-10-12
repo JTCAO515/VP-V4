@@ -158,3 +158,5 @@ launch/create/test, provider or device run. runs.json carries exact source/comma
 Stable Conversation getter source44004e5e now available for sole203 E3 candidate regeneration
 without alternating writers. Full SQL integration/lifecycle/qualified execution proof and final
 CI/formal review/protected merge still incomplete; #229 remains OPEN.
+
+Current applied-source affected test batch: 89 total, 87 PASS / 2 FAIL / 0 skip. Exact failures are legacy 24-code taxonomy snapshot and missing/misindexed five-locale failure copy after Ops2 inserted into FAILURE_CODES. Precise two-file candidate prepared but NOT applied; candidate checks all 130 locale/code combinations, preserved legacy positions, Ops no retry/fallback/manual read alternative and strict TypeScript PASS. Main exact lease requested. No assertions weakened. E1 exact worker hunk limited-release record added; W2 Ops body unchanged and wholefile ownership retained. SQL full lifecycle/pause/readback package remains outstanding; #229 OPEN.
