@@ -30,22 +30,24 @@ const env={...process.env,DOCKER_CONTEXT:context,VPJ13_E3_AUTH_NONCE:nonce};
 let lastErrors=[];
 const run=(cmd,args,visible=false,childEnv=env)=>new Promise((resolve,reject)=>{
  const child=spawn(cmd,args,{env:childEnv,stdio:visible?'inherit':['ignore','pipe','pipe']});
- let pending='',errors=[];
+ let pending={stdout:'',stderr:''},errors=[];
  let timedOut=false,force;
  const limit=cmd==='supabase' && args[0]==='stop'?60000:visible?210000:240000;
  const timer=setTimeout(()=>{timedOut=true;child.kill('SIGTERM');force=setTimeout(()=>child.kill('SIGKILL'),3000);},limit);
  const finish=()=>{clearTimeout(timer);clearTimeout(force);};
  if(!visible){
-  child.stdout.resume(); // CLI credentials are never retained.
-  child.stderr.on('data',chunk=>{
-   pending+=chunk.toString();const lines=pending.split('\n');pending=lines.pop().slice(-2000);
+  const classify=(chunk,stream)=>{
+   pending[stream]+=chunk.toString();const lines=pending[stream].split('\n');pending[stream]=lines.pop().slice(-2000);
    for(const line of lines){
-    if(!/\b(error|failed|failure|invalid|denied|refused|panic)\b/i.test(line))continue;
+    if(!/error|fail|invalid|denied|refused|panic|cannot|unable|unknown|unsupported|missing|not found/i.test(line))continue;
     // Drop, rather than hash/store, any potentially secret-bearing line.
     if(/password|token|secret|credential|\bkey\b|bearer|eyJ[a-z0-9_-]+\.[a-z0-9_-]+\.[a-z0-9_-]+|(?:postgres(?:ql)?|https?):\/\/[^\s]*@/i.test(line))continue;
     errors.push(line.replace(/\x1b\[[0-9;]*m/g,'').slice(0,300));if(errors.length>8)errors.shift();
    }
-  });
+  };
+  // Modern CLI errors can be on stdout; both streams are filtered before output.
+  child.stdout.on('data',chunk=>classify(chunk,'stdout'));child.stderr.on('data',chunk=>classify(chunk,'stderr'));
+  child.once('exit',()=>{classify(Buffer.from('\n'),'stdout');classify(Buffer.from('\n'),'stderr');});
  }
  child.once('error',()=>{finish();reject(Error('Owned fixture process launch failed'));});child.once('exit',code=>{finish();lastErrors=errors;resolve(timedOut?124:code??1);});
 });

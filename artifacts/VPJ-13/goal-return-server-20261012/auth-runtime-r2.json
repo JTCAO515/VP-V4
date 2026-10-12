@@ -1,0 +1,11 @@
+{
+  "sourceHead": "837abd1f9d015f5fc97b79c72041ba4b0a8a539b",
+  "nonce": "vpj13-e3-auth-20261012-8c4e13ab",
+  "phase": "failed startup diagnostic",
+  "result": "FAIL",
+  "exitCode": 1,
+  "nonSecretStderrErrors": [],
+  "authHTTP": "UNRUN; test was not reached",
+  "cleanup": {"containers": "ABSENT", "volumes": "ABSENT", "ports": "FREE", "result": "PASS"},
+  "diagnosticFinding": "CLI error classification inspected only stderr/newline-complete records. Modern CLI may emit errors on stdout; collector updated to filter both streams and final line, with secret-bearing lines still dropped. No startup cause inferred from an empty list."
+}
