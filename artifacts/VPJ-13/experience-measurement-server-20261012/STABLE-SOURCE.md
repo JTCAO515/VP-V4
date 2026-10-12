@@ -1,5 +1,7 @@
 # Existing #203 sole Server stable source — 2026-10-12
 
+Historical initial handoff. Latest accepted admission wire, real SQL suffix alignment,22-case validation and five exact shared candidates are in TICKET-SOURCE-UPDATE.md; admission/product choice is no longer pending. Earlier failures and original-source limits below remain historical evidence.
+
 Owner task: this existing experience-measurement Server/Privacy consumer. No new task/thread/scope created after freeze. Main only 01a12dad-d333-70c3-9bf9-58cc26f1803d. Original Native and professional SQL owners retained; no source or resource takeover.
 
 Actual pwd `/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj13-experience-measurement-server-20261012`; base remote normal fetch daa7bae44a660381fb3295d0d2afc327ea98d3ba. Source first file birth `2026-10-12 13:56:14 CST` (`stat -f %SB contract.ts`), not created-worktree activity. Stable source commit65f962c1359bfc98ae5ab8408881376345bf4c51 normal push confirmed. That commit's newly expanded test had a syntax error; the next correction commit fixes only its extra parenthesis and adds evidence. Do not treat65f962 as 17-test green. Current final SHA comes from normal git rev-parse/log, not a self-referential value in this file.

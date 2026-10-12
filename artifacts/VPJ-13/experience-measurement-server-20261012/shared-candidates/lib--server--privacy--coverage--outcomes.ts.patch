@@ -1,0 +1,28 @@
+--- a/lib/server/privacy/coverage/outcomes.ts
++++ b/lib/server/privacy/coverage/outcomes.ts
+@@ -19,6 +19,7 @@
+ import { conversationCoverageOutcome } from '../conversation-data/coverage.ts';
+ import { resultCoverageOutcome } from '../result-data/coverage.ts';
+ import { profileCoverageOutcome } from '../profile-data/coverage.ts';
++import { measurementCoverageOutcome } from '../experience-measurement/coverage.ts';
+ import { notificationDataCoverageOutcome } from '../notification-data/coverage.ts';
+
+ type Outcome = Readonly<{ state: CoverageState; reason: string }>;
+@@ -37,12 +38,16 @@
+   if (handler === 'result_data') return resultCoverageOutcome(selected, data, now);
+   if (handler === 'turn_data') return turnCoverageOutcome(selected, data, now);
+   if (handler === 'profile_data') return profileCoverageOutcome(selected, data, now);
++  if (handler === 'journey_measurement') return measurementCoverageOutcome(selected, data, now);
+   if (handler === 'core') {
+     const receipt = parseExportJob(body, input.operationId); if (!receipt) return null;
+     if (receipt.state === 'queued' || receipt.state === 'running') return state('queued', 'ORIGINAL_JOB_PENDING');
+     if (receipt.state === 'expired' || receipt.state === 'failed') return state('unavailable', 'ORIGINAL_JOB_UNAVAILABLE');
+     if (!receipt.artifactExpiresAt || Date.parse(receipt.artifactExpiresAt) <= now) return null;
+-    const module = receipt.modules.find(m => m.module === input.moduleId);
++    // This logical scope is an explicit typed suffix of the existing Profile module.
++    // Completion remains partial until original protected download; SQL pins the
++    // complete suffix at commit/download and invalidates old/missing provenance.
++    const module = receipt.modules.find(m => m.module === (input.moduleId === 'journey_measurement' ? 'profile' : input.moduleId));
+     if (!module) return null;
+     return module.status === 'complete' ? state('partial', 'PROTECTED_DOWNLOAD_REQUIRED') : state('partial', module.reason);
+   }

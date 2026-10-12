@@ -1,0 +1,47 @@
+{
+  "baseHead": "7eb43d94fccb3b3a399b2cf48b055eba5cd5b642",
+  "files": [
+    {
+      "path": "lib/server/privacy/export-worker.ts",
+      "beforeSha256": "e135afe56764669a5d1cb29a43ec1150e319051dec86bf366063b5ec7efa693f",
+      "patchSha256": "261bd1978bf22605d28ef9e9da8e5036b4073ed67c6482f37485edc7889d5814",
+      "afterSha256": "53c76806e506b4f88334c75a62d3036055945f821a3ec6267bea16749b26a7f7",
+      "lease": "NOT_GRANTED",
+      "applied": false
+    },
+    {
+      "path": "lib/server/privacy/coverage/catalog.ts",
+      "beforeSha256": "a00e4b09c77f05c8a6c89129570f3e40ab5b23e264178c8f513204bc9bda4ce4",
+      "patchSha256": "90ca06a82d7d54f0569ef7458a153b0af710c4f45a3766af4455b22057ab8763",
+      "afterSha256": "602b9fb0dfd7b14a0aa129618d79ad6eba43826b30a64f80df2666b229cfb3b9",
+      "lease": "NOT_GRANTED",
+      "applied": false
+    },
+    {
+      "path": "lib/server/privacy/coverage/contract.ts",
+      "beforeSha256": "c75928ed0b24d3bf074fe1feb25a8ebc977f217faa2f4cf8bcf07ee117797bfc",
+      "patchSha256": "966414235410606cdca780813f5b9f7d1634a6cf4a6069ba805f1ef296b61ffa",
+      "afterSha256": "93cc1f85ba9c57e8c987bcdcef22a1bb62c0da37aa245e8b12881718735f1428",
+      "lease": "NOT_GRANTED",
+      "applied": false
+    },
+    {
+      "path": "lib/server/privacy/coverage/registry.ts",
+      "beforeSha256": "b8be9c095fbf2286fba0be69aa3ccbe6552dcc6b611a945e9922b3979b4b02d9",
+      "patchSha256": "539ca430f056293cb8245fc8663d4bfdca6b44249e41a1792b6b87ab997e92e5",
+      "afterSha256": "c6cf3c2c3ea2ad3d4871485177f0b8494e543dcda34943e2c240c4d056bd5ed5",
+      "lease": "NOT_GRANTED",
+      "applied": false
+    },
+    {
+      "path": "lib/server/privacy/coverage/outcomes.ts",
+      "beforeSha256": "cbf0fbfe389f87342f103a8d1d9ec9080eca6336c5de89fe3a2e8627cd6f47e1",
+      "patchSha256": "1a6480b24fdb9f1291c397187c43b42059c580cac23c603bdf623092cd2c6d36",
+      "afterSha256": "dcfbcea6dbf32f4533339ac02e3a60073c6d992a25678291b6cc24b8d4d25731",
+      "lease": "NOT_GRANTED",
+      "applied": false
+    }
+  ],
+  "purpose": "full before/patch/after review only; not shared-source apply",
+  "maintenanceHook": "NOT_PRESENT; actual runner registration still required"
+}

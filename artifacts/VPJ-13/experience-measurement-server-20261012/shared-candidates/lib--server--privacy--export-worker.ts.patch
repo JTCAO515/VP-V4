@@ -1,0 +1,10 @@
+--- a/lib/server/privacy/export-worker.ts
++++ b/lib/server/privacy/export-worker.ts
+@@ -1,6 +1,6 @@
+ import { turnExportHandler } from './turn-data/export.ts';
+ import { entitlementExportHandler } from './export-entitlements.ts';
+-import { profileExportHandler } from './profile-export/handler.ts';
++import { measurementProfileExportHandler as profileExportHandler } from './experience-measurement/export.ts';
+ import { parseExportJob, exportRecord, exportExact } from "./export-contract.ts";
+ import { memoryExportHandler } from "./export-memory.ts";
+ import { collectCoreExport, type ExportLease } from "./export-dispatcher.ts";

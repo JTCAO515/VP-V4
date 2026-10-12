@@ -1,5 +1,6 @@
 import { SCHEMA, PURPOSE, NOTICE, TTL, CAPABILITIES, ENTRIES, exact, record, uuid, natural, positive, hash, bound, source,
   sameSource, type Actor, type Command } from './contract.ts';
+import { clockOrigin, sameClockOrigin } from './acceptance.ts';
 export const COUNTERS = ['allTasks', 'availableTasks', 'firstValueTasks', 'activatedTasks', 'declinedOpportunities', 'presentedOpportunities',
   'technicalFailures', 'uncompletedTasks', 'unobservableTasks', 'unknownFirstEverTasks', 'repeatQuestions', 'judgableQuestions',
   'unknownQuestions', 'zeroQuestionTasks', 'unknownTimeTasks', 'completedTasks', 'partialTasks', 'blockedTasks'] as const;
@@ -24,21 +25,26 @@ export function decode(value: unknown, command: Command, actor: Actor, now: numb
     case 'consent': return exact(v, [...base, 'operationId', 'consentId', 'noticeVersion', 'entries', 'receivedAt', 'expiresAt', 'reused'])
       && v.kind === 'consent' && v.operationId === command.operationId && uuid(v.consentId) && v.noticeVersion === NOTICE
       && JSON.stringify(v.entries) === JSON.stringify(command.entries) && retention(v, now) && typeof v.reused === 'boolean' ? v : null;
-    case 'admit': return exact(v, [...base, 'operationId', 'consentId', 'admissionId', 'entry', 'source', 'admittedAt', 'firstEver', 'receivedAt', 'expiresAt', 'reused'])
+    case 'admit': return exact(v, [...base, 'operationId', 'consentId', 'admissionId', 'entry', 'source', 'clockOrigin', 'authority', 'admittedAt', 'firstEver', 'receivedAt', 'expiresAt', 'reused'])
       && v.kind === 'admission' && v.operationId === command.operationId && v.consentId === command.consentId && uuid(v.admissionId)
-      && v.entry === command.entry && source(v.source) && sameSource(v.source, command.source)
-      && (v.admittedAt === null || positive(v.admittedAt) && v.admittedAt <= now) && ['proven', 'unknown'].includes(String(v.firstEver))
+      && v.entry === command.entry && source(v.source, command.entry) && sameSource(v.source, command.source)
+      && clockOrigin(v.clockOrigin) && sameClockOrigin(v.clockOrigin, command.clockOrigin)
+      && (command.source.kind === 'service_task' ? v.authority === 'service_task' && positive(v.admittedAt) && v.admittedAt <= now
+        : v.authority === 'authenticated_native_acceptance_report' && v.admittedAt === null)
+      && ['proven', 'unknown'].includes(String(v.firstEver))
       && retention(v, now) && typeof v.reused === 'boolean' ? v : null;
     case 'receive': return exact(v, [...base, 'reportId', 'admissionId', 'consentId', 'state', 'receivedAt', 'expiresAt', 'reused'])
       && v.kind === 'received' && v.reportId === command.reportId && v.admissionId === command.admissionId && v.consentId === command.consentId
       && v.state === 'recorded' && retention(v, now) && typeof v.reused === 'boolean' ? v : null;
     case 'aggregate': {
-      if (!exact(v, [...base, 'consentId', 'entry', 'capturedAt', 'expiresAt', 'sample', 'counts']) || v.kind !== 'aggregate'
-        || v.consentId !== command.consentId || v.entry !== command.entry || v.sample !== 'qualified_opt_in_authorities'
+      if (!exact(v, [...base, 'consentId', 'entry', 'capturedAt', 'expiresAt', 'sample', 'coverage', 'counts']) || v.kind !== 'aggregate'
+        || v.consentId !== command.consentId || v.entry !== command.entry
+        || v.sample !== (command.entry === 'e1' ? 'qualified_original_service_tasks' : 'authenticated_native_acceptance_reports')
+        || v.coverage !== (command.entry === 'e1' ? 'original_authorities' : 'local_intentions_unknown')
         || !positive(v.capturedAt) || v.capturedAt > now || v.expiresAt !== v.capturedAt + 20000 || Number(v.expiresAt) <= now
         || !record(v.counts) || !exact(v.counts, COUNTERS) || !COUNTERS.every(k => natural((v.counts as Record<string, unknown>)[k]) && Number((v.counts as Record<string, unknown>)[k]) <= 10000)) return null;
       const c = v.counts as Record<typeof COUNTERS[number], number>;
-      if (c.firstValueTasks > c.availableTasks || c.availableTasks > c.allTasks || c.activatedTasks > c.availableTasks
+      if (c.firstValueTasks > c.availableTasks || c.firstValueTasks > c.allTasks - c.unknownFirstEverTasks || c.availableTasks > c.allTasks || c.activatedTasks > c.availableTasks
         || c.declinedOpportunities > c.presentedOpportunities || c.repeatQuestions > c.judgableQuestions
         || ['uncompletedTasks', 'unobservableTasks', 'unknownFirstEverTasks', 'zeroQuestionTasks', 'unknownTimeTasks', 'completedTasks', 'partialTasks', 'blockedTasks']
           .some(k => Number(c[k as keyof typeof c]) > c.allTasks)) return null;

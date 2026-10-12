@@ -1,0 +1,35 @@
+{
+  "checks": [
+    {
+      "path": "lib/server/privacy/export-worker.ts",
+      "liveBeforeHashMatch": true,
+      "patchCheckExit": 0,
+      "diagnostic": ""
+    },
+    {
+      "path": "lib/server/privacy/coverage/catalog.ts",
+      "liveBeforeHashMatch": true,
+      "patchCheckExit": 0,
+      "diagnostic": ""
+    },
+    {
+      "path": "lib/server/privacy/coverage/contract.ts",
+      "liveBeforeHashMatch": true,
+      "patchCheckExit": 0,
+      "diagnostic": ""
+    },
+    {
+      "path": "lib/server/privacy/coverage/registry.ts",
+      "liveBeforeHashMatch": true,
+      "patchCheckExit": 0,
+      "diagnostic": ""
+    },
+    {
+      "path": "lib/server/privacy/coverage/outcomes.ts",
+      "liveBeforeHashMatch": true,
+      "patchCheckExit": 0,
+      "diagnostic": ""
+    }
+  ],
+  "actualSharedWrite": false
+}

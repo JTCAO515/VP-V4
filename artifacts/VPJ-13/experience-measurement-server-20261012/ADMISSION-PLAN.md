@@ -1,5 +1,7 @@
 # Complete pre-result admission candidate for Main/Native/SQL — 2026-10-12
 
+Historical proposal: Main decision is now consumed. E2 local_import/no-Trip is rejected; current exact source/clockOrigin wire is in WIRE.md and TICKET-SOURCE-UPDATE.md. Original proposal remains for provenance and is not the current RPC shape.
+
 Existing scope only. No new tasks, threads, resources, architecture, runtime flag or business writer. Main's Oct12 instruction explicitly permits a short-term measurement-domain actor/session/consent/entry-bound ticket to close E2/E3 all-admissions denominators. Initial WIRE.md source-kind admit is not yet frozen and is insufficient for local failures; it must be replaced by this full proposal before installation.
 
 ## What the ticket proves

@@ -1,4 +1,7 @@
 import { parseClosedJSON } from './json.ts';
+import { source, clockOrigin, type Source, type ClockOrigin } from './acceptance.ts';
+export { source, sameSource } from './acceptance.ts';
+export type { Source, ClockOrigin } from './acceptance.ts';
 export const SCHEMA = 'journey-experience-measurement/1' as const;
 export const PURPOSE = 'journey_experience_measurement' as const;
 export const NOTICE = 'journey-experience-measurement/2026-10-12' as const;
@@ -14,15 +17,8 @@ export const natural = (v: unknown): v is number => typeof v === 'number' && Num
 export const positive = (v: unknown): v is number => natural(v) && v > 0;
 export const hash = (v: unknown): v is string => typeof v === 'string' && /^[a-f0-9]{64}$/.test(v);
 export const member = <T extends string>(v: unknown, values: readonly T[]): v is T => typeof v === 'string' && values.includes(v as T);
-export type Source = Readonly<{ kind: 'service_task' | 'material_operation' | 'goal_read'; id: string; revision: number | null }>;
-export function source(v: unknown): v is Source {
-  return record(v) && exact(v, ['kind', 'id', 'revision']) && member(v.kind, ['service_task', 'material_operation', 'goal_read'])
-    && uuid(v.id) && (v.kind === 'service_task' ? v.revision === null : positive(v.revision) && v.revision <= 10000);
-}
 export type Artifact = Readonly<{ id: string; revision: number }>;
 export const artifact = (v: unknown): v is Artifact => record(v) && exact(v, ['id', 'revision']) && uuid(v.id) && positive(v.revision) && v.revision <= 1000;
-export const sameSource = (a: Source, b: Source) => a.kind === b.kind && a.id === b.id && a.revision === b.revision;
-export const entrySource = (entry: Entry, value: Source) => value.kind === ({ e1: 'service_task', e2: 'material_operation', e3: 'goal_read' } as const)[entry];
 export const OUTCOMES = ['completed', 'partial', 'blocked', 'technical_failure', 'unknown'] as const;
 export const FIELDS = ['city', 'comparisonTarget', 'durationDays', 'partySize', 'interests', 'pace', 'lodgingBudget', 'dates', 'mobilityConstraints'] as const;
 export const BASES = ['already_known_applicable', 'genuinely_missing', 'user_changed', 'source_conflict', 'unknown'] as const;
@@ -55,7 +51,7 @@ export const clock = (v: unknown): v is Clock => record(v) && (v.kind === 'unkno
 export type Command = Readonly<{ action: 'policy' }>
   | Readonly<{ action: 'consent'; operationId: string; noticeVersion: typeof NOTICE; entries: readonly Entry[] }>
   | Readonly<{ action: 'withdraw'; operationId: string; consentId: string }>
-  | Readonly<{ action: 'admit'; operationId: string; consentId: string; entry: Entry; source: Source }>
+  | Readonly<{ action: 'admit'; operationId: string; consentId: string; entry: Entry; source: Source; clockOrigin: ClockOrigin }>
   | Readonly<{ action: 'receive'; consentId: string; admissionId: string; reportId: string; source: Source; entry: Entry; signal: Signal; clock: Clock }>
   | Readonly<{ action: 'aggregate'; consentId: string; entry: Entry }>
   | Readonly<{ action: 'preview'; operationId: string }>
@@ -71,9 +67,11 @@ export function parseCommand(v: unknown): Command | null {
       && Array.isArray(v.entries) && v.entries.length > 0 && v.entries.length <= 3
       && v.entries.every((s, i) => member(s, ENTRIES) && (i === 0 || ENTRIES.indexOf((v.entries as Entry[])[i - 1]) < ENTRIES.indexOf(s))); break;
     case 'withdraw': valid = exact(v, [...keys, 'operationId', 'consentId']) && uuid(v.operationId) && uuid(v.consentId); break;
-    case 'admit': valid = exact(v, [...keys, 'operationId', 'consentId', 'entry', 'source']) && uuid(v.operationId) && uuid(v.consentId) && member(v.entry, ENTRIES) && source(v.source); break;
+    case 'admit': valid = exact(v, [...keys, 'operationId', 'consentId', 'entry', 'source', 'clockOrigin']) && uuid(v.operationId) && uuid(v.consentId)
+      && member(v.entry, ENTRIES) && source(v.source, v.entry) && clockOrigin(v.clockOrigin); break;
     case 'receive': valid = exact(v, [...keys, 'consentId', 'admissionId', 'reportId', 'source', 'entry', 'signal', 'clock'])
-      && [v.consentId, v.admissionId, v.reportId].every(uuid) && member(v.entry, ENTRIES) && source(v.source) && signal(v.signal) && clock(v.clock); break;
+      && [v.consentId, v.admissionId, v.reportId].every(uuid) && member(v.entry, ENTRIES) && signal(v.signal) && clock(v.clock)
+      && source(v.source, v.entry); break;
     case 'aggregate': valid = exact(v, [...keys, 'consentId', 'entry']) && uuid(v.consentId) && member(v.entry, ENTRIES); break;
     case 'preview': valid = exact(v, [...keys, 'operationId']) && uuid(v.operationId); break;
     case 'erase': valid = exact(v, [...keys, 'operationId', 'sourceDigest', 'previewDigest']) && uuid(v.operationId) && hash(v.sourceDigest) && hash(v.previewDigest); break;
@@ -84,7 +82,6 @@ export function parseCommand(v: unknown): Command | null {
       break;
     }
   }
-  if (valid && (v.action === 'admit' || v.action === 'receive')) valid = entrySource(v.entry as Entry, v.source as Source);
   return valid ? v as unknown as Command : null;
 }
 export const bound = (v: Record<string, unknown>, actor: Actor) => v.schemaVersion === SCHEMA && v.purpose === PURPOSE

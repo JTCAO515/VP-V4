@@ -1,0 +1,23 @@
+--- a/lib/server/privacy/coverage/catalog.ts
++++ b/lib/server/privacy/coverage/catalog.ts
+@@ -4,9 +4,10 @@
+ import { CONVERSATION_MODULE } from '../conversation-data/coverage.ts';
+ import { RESULT_MODULE } from '../result-data/coverage.ts';
+ import { PROFILE_MODULE } from '../profile-data/coverage.ts';
++import { MEASUREMENT_MODULE } from '../experience-measurement/coverage.ts';
+ import { COVERAGE_PROGRESS_MODULE } from '../coverage-progress/coverage.ts';
+ /** ALL1 denominator. A registered scoped handler is not all-account completion. */
+-export { TURN_CATALOG_VERSION as CATALOG_VERSION };
++export const CATALOG_VERSION = 'data-coverage-catalog/2026-10-12.10' as const;
+ export type Location = 'server' | 'device' | 'external';
+ export type Module = Readonly<{
+   id: string; location: Location; version: string; scope: string;
+@@ -23,7 +24,7 @@
+ export const MODULE_CATALOG: readonly Module[] = [
+   server('trip', 'trip-core-v1', 'trip-core-v1', 'core', 'trip', 'trip', 'one explicitly selected Trip; async receipt; optional original linked-chat plan',
+     ['financial_records', 'provider_erasure_unknown', 'backup_erasure_unverified']),
+-  CONVERSATION_MODULE, RESULT_MODULE, PROFILE_MODULE,
++  CONVERSATION_MODULE, RESULT_MODULE, PROFILE_MODULE, MEASUREMENT_MODULE,
+   server('memory', 'memory-bulk-delete-d4/1', 'memory-bulk-delete-d4/1', 'core', 'memory', 'memory_plan',
+     '100 selected memories; original preview/CAS/selection required', ['original_chat_input', 'trip_intent', 'financial_records']),
+   TURN_MODULE, core('user_artifact'),

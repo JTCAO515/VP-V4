@@ -1,0 +1,18 @@
+--- a/lib/server/privacy/coverage/contract.ts
++++ b/lib/server/privacy/coverage/contract.ts
+@@ -16,6 +16,7 @@
+ import { validConversationCoverageSelection } from '../conversation-data/coverage.ts';
+ import { validResultCoverageSelection } from '../result-data/coverage.ts';
+ import { validProfileCoverageSelection } from '../profile-data/coverage.ts';
++import { validMeasurementCoverageSelection } from '../experience-measurement/coverage.ts';
+ import { validCoverageProgressCoverageSelection } from '../coverage-progress/coverage.ts';
+
+ export const COVERAGE_SCHEMA = 'data-coverage/1' as const;
+@@ -55,6 +56,7 @@
+   if (handler === 'result_data') return validResultCoverageSelection(input, command) ? { input, command, handler } : null;
+   if (handler === 'turn_data') return validTurnCoverageSelection(input, command) ? { input, command, handler } : null;
+   if (handler === 'profile_data') return validProfileCoverageSelection(input, command) ? { input, command, handler } : null;
++  if (handler === 'journey_measurement') return validMeasurementCoverageSelection(input, command) ? { input, command, handler } : null;
+   if (handler === 'materials') return validMaterialCoverageSelection(input, command) ? { input, command, handler } : null;
+   if (handler === 'coverage_progress') return validCoverageProgressCoverageSelection(input, command) ? { input, command, handler } : null;
+   if (handler === 'notification_data') return validNotificationDataCoverageSelection(input, command) ? { input, command, handler } : null;
