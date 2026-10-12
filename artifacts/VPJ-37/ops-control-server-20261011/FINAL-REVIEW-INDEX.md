@@ -38,3 +38,7 @@ Do not open a helper PR. After stable SQL and Main exact lease, integrate and fr
 Formal review must be independent and target the exact complete head. Normal protected merge must match that head and be read back via mergedAt and main; no admin bypass/branch-protection change. No complete-code/Issue closure or merge is claimed while SQL is missing.
 
 Target Staging stop/resume/rollback, provider billing, real roles, GoTrue/target behavior and physical device remain UNRUN unless actual evidence is added. Lease/resource facts are in `continuation-resource-status.json`; no resource or wholefile ownership transfer follows from this index.
+
+## V8 reviewed scoped publish-refusal delta
+
+Exact V8 incremental lease applied at `6cf0957879e96dfae758f8b824aa7a8212ecb507`: settled output publish Ops refusal now consumes the original-operation pause receipt. Delta source pins are `scoped-publish-source-delta.json`; one new task-owned regression file brings current product/test count to 49. Actual two new cases plus original affected executor suite: 35/35 PASS, zero skip. Candidate strict type evidence reused on exact same source; Native unchanged. Original baseline2 FAIL and fixture syntax FAIL retained. SQL fullbody source is reviewable with17 shared functions but final actual proof/append lease remain incomplete; this supersedes earlier statement that pause branches were absent.
