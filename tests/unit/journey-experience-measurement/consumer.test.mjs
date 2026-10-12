@@ -23,7 +23,7 @@ const options = (rpc, changes={}) => ({enabled:true,now:()=>now,authority:()=>({
 
 test('strict JSON rejects duplicate/escaped aliases and hidden overwritten raw values before dispatch',async()=>{
   for(const bytes of ['{"action":"raw private body","action":"policy"}','{"a":1,"\\u0061":2}','{"a":[{"x":1,"x":2}]}','[01]','{"x":1,}'])assert.throws(()=>parseClosedJSON(bytes));
-  assert.deepEqual(JSON.parse(JSON.stringify(parseClosedJSON('{"escaped":"a\\"b","values":[true,false,null,1.25,-2e3]}')))),{escaped:'a"b',values:[true,false,null,1.25,-2000]});
+  assert.deepEqual(JSON.parse(JSON.stringify(parseClosedJSON('{"escaped":"a\\"b","values":[true,false,null,1.25,-2e3]}'))),{escaped:'a"b',values:[true,false,null,1.25,-2000]});
   const raw=JSON.stringify(receive()).replace('"purpose":','"purpose":"raw hidden content","purpose":');let calls=0;
   const request=new Request('http://localhost',{method:'POST',headers:{'content-type':'application/json'},body:raw});
   const response=await handleMeasurement(request,options(async()=>{calls++;return ack();}));assert.equal(response.status,400);assert.equal(calls,0);

@@ -1,0 +1,25 @@
+✔ strict JSON rejects duplicate/escaped aliases and hidden overwritten raw values before dispatch (9.185959ms)
+✔ closed input rejects actor, raw payloads, activation claims, client receipts and wrong entry source (0.158ms)
+✔ new notice is mandatory and opt-in selection is nonempty sorted unique (0.060875ms)
+✔ clock preserves unknown, bounds duration and requires process provenance (0.07ms)
+✔ all tasks remain denominator including failed, unfinished and unobservable; zero denominator is unknown (0.248458ms)
+✔ default off refuses before authentication/RPC and actual native route is unavailable without configuration (0.342583ms)
+✔ authenticated HTTP passes exact metadata bytes once to protected port and rechecks actor (0.421334ms)
+✔ foreign/stale/expired reply and replaced actor after mutation produce unknown ACK without retry (0.94175ms)
+✔ known SQL consent/source denials remain closed; raw errors are never reflected and no retry (0.732291ms)
+✔ erase recovery retains original exact bytes and refuses another operation or arbitrary payload (0.139875ms)
+✔ erasure success is bound to exact original metadata bytes and bounded receipt expiry (0.190833ms)
+✔ typed D2 metadata verifies actual rows, relationships, notice, order and bounded expiry (0.280167ms)
+✔ Profile suffix exports through original nine-module D2 and encrypted artifact, counters count snapshot once (2.721666ms)
+✔ Profile full digest/sourceRows/unknown arm/stale data fail closed and repeated page cannot change (0.363375ms)
+✔ original Profile schema remains exact and cannot claim an absent measurement suffix (0.06475ms)
+✔ controlled purge performs bounded physical-delete RPC and rejects no-progress/malformed/unavailable ACK (0.241708ms)
+✔ restore defaults deny and accepts only independent live journal with latest SQL floor/layout agreement (0.104667ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 99.83025

@@ -1,0 +1,10 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": { "incremental": false },
+  "include": [
+    "../../../lib/server/journey-entry/experience-measurement/**/*.ts",
+    "../../../lib/server/privacy/experience-measurement/**/*.ts",
+    "../../../app/api/chat/native/v5/experience-measurement/**/*.ts"
+  ],
+  "exclude": ["../../../node_modules"]
+}
