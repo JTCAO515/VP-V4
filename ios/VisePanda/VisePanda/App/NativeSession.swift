@@ -1818,6 +1818,17 @@ final class NativeSession {
         return try await dataRequest(prefix: path, path: path, method: "POST", body: body)
     }
 
+    /// Read-only current-goal discovery. Missing backend authority stays unavailable.
+    func journeyGoalReturnRequest(source: NativeJourneyGoalReturnWire.Scope, actor: NativeCommunitySafetyActor) async throws -> Data {
+        guard askMode == .assistant, source.valid, dataScope == actor.scope,
+              try communitySafetyActor() == actor, !Task.isCancelled else { throw NativeDataError.sessionUnavailable }
+        let path = "api/chat/native/v5/goal-return"
+        let bytes = try await dataRequest(prefix: path, path: path, method: "GET", queryItems: source.query)
+        guard dataScope == actor.scope, try communitySafetyActor() == actor, !Task.isCancelled,
+              bytes.count <= 16384 else { throw NativeDataError.staleSessionResponse }
+        return bytes
+    }
+
     func travelIntakeRequest(conversationID: String, goalID: String) async throws -> Data {
         guard askMode == .assistant, UUID(uuidString: conversationID) != nil,
               UUID(uuidString: goalID) != nil else { throw NativeDataError.invalidResponse }
@@ -1972,7 +1983,7 @@ final class NativeSession {
             }
             turnReadGeneration = turnDataProjectionFence.generation
         }
-        let guardsResultProjection = directionsProjection || path.hasPrefix("api/results/native/") ||
+        let guardsResultProjection = directionsProjection || path == "api/chat/native/v5/goal-return" || path.hasPrefix("api/results/native/") ||
             ((path == "api/library/native/v1/items" || path == "api/library/native/v1/item") && queryItems.contains { $0.name == "source" && $0.value == "results" })
         let resultActor = guardsResultProjection ? try communitySafetyActor() : nil
         let resultArtifact = queryItems.first { $0.name == "artifactId" || guardsResultProjection && path == "api/library/native/v1/item" && $0.name == "id" }?.value ??

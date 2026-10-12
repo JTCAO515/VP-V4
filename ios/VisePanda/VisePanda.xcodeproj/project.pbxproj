@@ -476,6 +476,9 @@
 		B203200000000000000000002 = {isa = PBXBuildFile; fileRef = B203100000000000000000002; };
 		B203200000000000000000003 = {isa = PBXBuildFile; fileRef = B203100000000000000000003; };
 		B203200000000000000000004 = {isa = PBXBuildFile; fileRef = B203100000000000000000004; };
+		B203200000000000000000005 = {isa = PBXBuildFile; fileRef = B203100000000000000000005; };
+		B203200000000000000000006 = {isa = PBXBuildFile; fileRef = B203100000000000000000006; };
+		B203200000000000000000007 = {isa = PBXBuildFile; fileRef = B203100000000000000000007; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -958,6 +961,9 @@
 		B203100000000000000000002 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/JourneyEntry/NativeJourneyEntryView.swift; sourceTree = SOURCE_ROOT; };
 		B203100000000000000000003 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/JourneyEntry/NativeJourneyMaterialsView.swift; sourceTree = SOURCE_ROOT; };
 		B203100000000000000000004 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/JourneyEntry/NativeJourneyEntryContinuation.swift; sourceTree = SOURCE_ROOT; };
+		B203100000000000000000005 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnWire.swift; sourceTree = SOURCE_ROOT; };
+		B203100000000000000000006 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnStore.swift; sourceTree = SOURCE_ROOT; };
+		B203100000000000000000007 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnView.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -980,6 +986,9 @@
 				B197100000000000000000006,
 				B197100000000000000000007,
 				B203100000000000000000004,
+				B203100000000000000000007,
+				B203100000000000000000006,
+				B203100000000000000000005,
 				B203100000000000000000001,
 				B203100000000000000000002,
 				B203100000000000000000003,
@@ -1171,6 +1180,9 @@
 				B197200000000000000000006,
 				B197200000000000000000007,
 				B203200000000000000000004,
+				B203200000000000000000007,
+				B203200000000000000000006,
+				B203200000000000000000005,
 				B203200000000000000000001,
 				B203200000000000000000002,
 				B203200000000000000000003,
