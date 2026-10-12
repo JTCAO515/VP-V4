@@ -1,0 +1,37 @@
+--- a/ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift
++++ b/ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift
+@@ -459,0 +460 @@
++    @State private var showJourneyMaterials = false
+@@ -613,0 +615,25 @@
++                if !entryBlocking && confirmedConversation && policy?.consentState == .accepted {
++                    NativeJourneyEntryView(chinese: chinese, goalText: goal?.text,
++                        tripTitle: tripLink?.current == true ? linkedTripTitle : nil,
++                        unresolvedTasks: taskMessages.filter { message in
++                            message.goalId == goal?.goalId && message.scopeVersion == goal?.scopeVersion
++                                && taskTurn(for: message)?.waiting == true
++                        }.count,
++                        memoryVersions: qualifiedMemoryBasis.map(\.revision),
++                        canContinue: NativeJourneyEntryContinuation.relationship(authorized: resultActive && !composerWaitingForAuthority,
++                            pending: shellSwitchBlocked, goalVersion: goal?.scopeVersion, hasCurrentParent: goalHasCurrentMessage) != nil,
++                        hasResult: selectedSources.sources.artifact != nil || lastViewedArtifact != nil,
++                        idea: $draft, continueIdea: {
++                            guard let relationship = NativeJourneyEntryContinuation.relationship(
++                                authorized: resultActive && !composerWaitingForAuthority, pending: shellSwitchBlocked,
++                                goalVersion: goal?.scopeVersion, hasCurrentParent: goalHasCurrentMessage) else { return }
++                            operation = relationship
++                            Task { await send() }
++                        }, openMaterials: { showJourneyMaterials = true }, openResult: {
++                            if let artifact = selectedSources.sources.artifact ?? lastViewedArtifact {
++                                fiveResultSelection = .init(artifactID: artifact.artifactId, revision: artifact.revision)
++                            }
++                        })
++                } else if !entryBlocking {
++                    Button(chinese ? "已有安排或本机保存内容" : "Existing arrangements or locally saved text") { showJourneyMaterials = true }
++                }
+@@ -728,0 +755,3 @@
++        .sheet(isPresented: $showJourneyMaterials) {
++            NativeJourneyMaterialsView(session: session, chinese: chinese)
++        }
+@@ -730 +759 @@
+-            NativeTravelDirectionsSheet(selection: target, currentSelection: { directionsSelection },
++            NativeJourneyDirectionsView(selection: target, currentSelection: { directionsSelection },

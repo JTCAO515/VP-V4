@@ -1,0 +1,22 @@
+--- a/ios/VisePanda/VisePanda.xcodeproj/project.pbxproj
++++ b/ios/VisePanda/VisePanda.xcodeproj/project.pbxproj
+@@ -474,0 +475,4 @@
++		B203200000000000000000001 = {isa = PBXBuildFile; fileRef = B203100000000000000000001; };
++		B203200000000000000000002 = {isa = PBXBuildFile; fileRef = B203100000000000000000002; };
++		B203200000000000000000003 = {isa = PBXBuildFile; fileRef = B203100000000000000000003; };
++		B203200000000000000000004 = {isa = PBXBuildFile; fileRef = B203100000000000000000004; };
+@@ -952,0 +957,4 @@
++		B203100000000000000000001 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/JourneyEntry/NativeJourneyDirectionsView.swift; sourceTree = SOURCE_ROOT; };
++		B203100000000000000000002 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/JourneyEntry/NativeJourneyEntryView.swift; sourceTree = SOURCE_ROOT; };
++		B203100000000000000000003 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/JourneyEntry/NativeJourneyMaterialsView.swift; sourceTree = SOURCE_ROOT; };
++		B203100000000000000000004 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/JourneyEntry/NativeJourneyEntryContinuation.swift; sourceTree = SOURCE_ROOT; };
+@@ -973,0 +982,4 @@
++				B203100000000000000000004,
++				B203100000000000000000001,
++				B203100000000000000000002,
++				B203100000000000000000003,
+@@ -1160,0 +1173,4 @@
++				B203200000000000000000004,
++				B203200000000000000000001,
++				B203200000000000000000002,
++				B203200000000000000000003,
