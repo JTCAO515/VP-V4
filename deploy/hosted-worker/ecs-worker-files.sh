@@ -77,6 +77,23 @@ else
   command -v python3 >/dev/null || fail 'Python 3 is required to validate nonsecret profile'
   if $qa; then
     profile_json=$(python3 "$(dirname "$0")/validate-qa-profile.py" "$profile_file" --emit) || fail 'QA profile is unavailable'
+    target_file=/etc/visepanda/qa/qa-target.json
+    [[ -d /etc/visepanda/qa && ! -L /etc/visepanda/qa ]] || fail 'QA package directory is missing'
+    [[ $(stat -c '%u:%g:%a' /etc/visepanda/qa) == 0:0:700 ]] || fail 'QA package directory must be root:root mode 0700'
+    [[ -f $target_file && ! -L $target_file ]] || fail 'QA target is missing'
+    [[ $(stat -c '%u:%g:%a:%h' "$target_file") == 0:0:600:1 ]] || fail 'QA target must be root:root mode 0600 with one link'
+    bytes=$(stat -c %s "$target_file")
+    (( bytes >= 2 && bytes <= 4096 )) || fail 'QA target size is invalid'
+    command -v node >/dev/null || fail 'Node 22 is required to validate QA target'
+    checker="$(dirname "$0")/validate-qa-target.mjs"
+    if [[ $action == start ]]; then
+      validated=$(node --experimental-strip-types --disable-warning=ExperimentalWarning "$checker" "$profile_file" "$target_file" "$2" --emit) || fail 'QA package is unavailable'
+      profile_json=${validated%%$'\n'*}
+      endpoint=${validated#*$'\n'}
+      extra_env=(--env "VISEPANDA_QWEN_ENDPOINT=$endpoint")
+    else
+      node --experimental-strip-types --disable-warning=ExperimentalWarning "$checker" "$profile_file" "$target_file" || fail 'QA package is unavailable'
+    fi
   else
     profile_json=$(python3 "$(dirname "$0")/validate-s1-profile.py" "$profile_file" --emit) || fail 'S1 profile is unavailable'
   fi
