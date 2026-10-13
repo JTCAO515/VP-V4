@@ -1,0 +1,25 @@
+{
+  "sampleSeconds": 92.146,
+  "statsResetSame": true,
+  "database": {
+    "inserted": 0,
+    "updated": 0,
+    "deleted": 0,
+    "commits": 25,
+    "rollbacks": 0
+  },
+  "changedTables": [],
+  "quietness": false,
+  "readiness": false,
+  "removedTables": [],
+  "addedTables": [],
+  "coveredTables": {
+    "a": 120,
+    "b": 120
+  },
+  "statsReset": {
+    "a": "2026-07-24T11:23:13.916197+00:00",
+    "b": "2026-07-24T11:23:13.916197+00:00"
+  },
+  "statisticalCaveat": "Cumulative counters can lag; unchanged samples are not a write fence or future-window proof."
+}
