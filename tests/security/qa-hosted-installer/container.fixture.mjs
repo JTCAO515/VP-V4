@@ -68,6 +68,12 @@ mkdir -p /run/vp-worker-secrets /etc/visepanda/qa
 chown 1000:1000 /run/vp-worker-secrets; chmod 700 /run/vp-worker-secrets
 for f in db qwen; do printf 'SYNTHETIC_CANARY' > /run/vp-worker-secrets/$f.key; chown 1000:1000 /run/vp-worker-secrets/$f.key; chmod 400 /run/vp-worker-secrets/$f.key; done
 chmod 700 /etc/visepanda/qa
+mkdir -p /run/vp-worker-secrets/qa-abcdefghijklmnopqrst
+chown 1000:1000 /run/vp-worker-secrets/qa-abcdefghijklmnopqrst; chmod 700 /run/vp-worker-secrets/qa-abcdefghijklmnopqrst
+printf 'SYNTHETIC_NEW_DB' > /run/vp-worker-secrets/qa-abcdefghijklmnopqrst/db.key
+chown 1000:1000 /run/vp-worker-secrets/qa-abcdefghijklmnopqrst/db.key; chmod 400 /run/vp-worker-secrets/qa-abcdefghijklmnopqrst/db.key
+# The old DB slot is deliberately unusable. Independent QA must not inspect it.
+rm /run/vp-worker-secrets/db.key; ln -s /no-legacy-key /run/vp-worker-secrets/db.key
 reset_package() {
  cp /fixtures/profile.json /etc/visepanda/hosted-profile.json
  cp /fixtures/target.json /etc/visepanda/qa/qa-target.json
@@ -85,6 +91,11 @@ assert len(runs)==2 and runs[0][runs[0].index('--name')+1]!=runs[1][runs[1].inde
 w=[json.loads(x) for x in open('/tmp/worker-calls')]
 assert len(w)==2 and w[0][0]=='create' and w[1]==['start','vp-hosted-text-worker']
 assert w[0][-1]==os.environ['FIXTURE_IMAGE']
+assert 'VISEPANDA_QA_SUPABASE_PROJECT_REF=abcdefghijklmnopqrst' in w[0]
+assert 'type=bind,src=/run/vp-worker-secrets/qa-abcdefghijklmnopqrst/db.key,dst=/run/vp-worker-secrets/db.key,readonly' in w[0]
+assert 'type=bind,src=/run/vp-worker-secrets/qwen.key,dst=/run/vp-worker-secrets/qwen.key,readonly' in w[0]
+assert not any(a.startswith('type=bind,src=/run/vp-worker-secrets,') or a.startswith('type=bind,src=/run/vp-worker-secrets/db.key,') for a in w[0])
+assert w[0][w[0].index('--tmpfs')+1]=='/run/vp-worker-secrets:rw,noexec,nosuid,nodev,size=64k,mode=0700,uid=1000,gid=1000'
 assert w[0].count('VISEPANDA_QWEN_ENDPOINT=https://qa-workspace.cn-beijing.maas.aliyuncs.com/compatible-mode/v1/chat/completions')==1
 assert w[0][w[0].index('--restart')+1]=='no'
 assert 'SYNTHETIC_CANARY' not in str(calls) and '--env-file' not in str(calls)
@@ -121,7 +132,11 @@ reset_package
 sed -i 's/"groupLimit":1/"groupLimit":1,"groupLimit":1/' /etc/visepanda/hosted-profile.json
 reject preflight --qa
 reset_package
-for file in /etc/visepanda/hosted-profile.json /etc/visepanda/qa/qa-target.json /run/vp-worker-secrets/db.key; do
+mv /run/vp-worker-secrets/qa-abcdefghijklmnopqrst /run/vp-worker-secrets/qa-saved
+reject preflight --qa
+mv /run/vp-worker-secrets/qa-saved /run/vp-worker-secrets/qa-abcdefghijklmnopqrst
+chmod 755 /run/vp-worker-secrets/qa-abcdefghijklmnopqrst; reject preflight --qa; chmod 700 /run/vp-worker-secrets/qa-abcdefghijklmnopqrst
+for file in /etc/visepanda/hosted-profile.json /etc/visepanda/qa/qa-target.json /run/vp-worker-secrets/qa-abcdefghijklmnopqrst/db.key /run/vp-worker-secrets/qwen.key; do
  original=$(stat -c %a "$file")
  chmod 644 "$file"; reject preflight --qa; chmod "$original" "$file"
  ln "$file" "$file.link"; reject preflight --qa; rm "$file.link"

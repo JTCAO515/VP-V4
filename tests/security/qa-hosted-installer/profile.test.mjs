@@ -34,7 +34,7 @@ test('QA-only installer preflight uses closed v4 profile and retains legacy file
   {...valid,projectRef:undefined},
   {...valid,projectRef:'dzqdzetcctkhbrhlxxgn'},
   {...valid,projectRef:'ABCDEFGHIJKLMNOPQRST'},
-  {...valid,projectRef:'abcdefghijklmnopqrs1'},
+  {...valid,projectRef:'abcdefghijklmnopqrs-'},
   {...valid,projectRef:'abcdefghijklmnopqrst.supabase.co'},
   {...valid,modes:['current_input_v1']},
   {...valid,planning:{}},

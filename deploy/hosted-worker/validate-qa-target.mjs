@@ -2,6 +2,7 @@
 import {readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {parseQaHostedProfile} from '../../lib/server/qa-agent/hosted-profile.ts';
+import {readIndependentQaTarget} from '../../lib/server/qa-agent/target.ts';
 import {isQwenEndpoint} from '../../lib/server/model-gateway/adapters/provider-endpoints.ts';
 
 const keys=['schemaVersion','environment','projectRef','databaseUrl','ownerId','policyId','scopeId','noticeHash','build','qwenEndpoint','startupState','restartPolicy'];
@@ -9,9 +10,9 @@ const exact=(v,k)=>v&&typeof v==='object'&&!Array.isArray(v)&&Object.keys(v).len
 const uuid=v=>typeof v==='string'&&/^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/.test(v);
 const hash=v=>createHash('sha256').update(v).digest('hex');
 function prepare(profile,target){
+  const binding=readIndependentQaTarget(target?.projectRef);
   if(!exact(target,keys)||target.schemaVersion!=='qa-hosted-deployment-target/2'||target.environment!=='staging'
-    ||typeof target.projectRef!=='string'||!/^[a-z]{20}$/.test(target.projectRef)||target.projectRef==='dzqdzetcctkhbrhlxxgn'
-    ||target.databaseUrl!==`https://${target.projectRef}.supabase.co`||!['ownerId','policyId','scopeId'].every(k=>uuid(target[k]))
+    ||!binding||target.databaseUrl!==binding.databaseUrl||!['ownerId','policyId','scopeId'].every(k=>uuid(target[k]))
     ||typeof target.noticeHash!=='string'||!/^[a-f0-9]{64}$/.test(target.noticeHash)
     ||typeof target.build!=='string'||!/^[a-f0-9]{12,40}$/.test(target.build)||!isQwenEndpoint(target.qwenEndpoint)
     ||target.startupState!=='disabled'||target.restartPolicy!=='no')throw Error('target');

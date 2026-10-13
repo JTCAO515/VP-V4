@@ -91,7 +91,7 @@ exit 0
   // Node only. The target checker also runs the actual v4 TypeScript validator.
   await writeFile(join(dir,'python3'),`#!/bin/bash
 if [[ $1 == - ]]; then
- exec /usr/local/bin/node -e 'console.log(JSON.parse(require("fs").readFileSync(process.argv[1],"utf8")).build)' "$2"
+ exec /usr/local/bin/node -e 'const t=JSON.parse(require("fs").readFileSync(process.argv[1],"utf8"));console.log(t.build+String.fromCharCode(10)+t.projectRef)' "$2"
 fi
 cat "$2"
 `,{mode:0o755});
@@ -101,6 +101,10 @@ mkdir -p /run/vp-worker-secrets /etc/visepanda/qa
 chown 1000:1000 /run/vp-worker-secrets; chmod 700 /run/vp-worker-secrets
 for f in db qwen; do printf 'SYNTHETIC_CANARY' > /run/vp-worker-secrets/$f.key; chown 1000:1000 /run/vp-worker-secrets/$f.key; chmod 400 /run/vp-worker-secrets/$f.key; done
 chmod 700 /etc/visepanda/qa
+mkdir -p /run/vp-worker-secrets/qa-abcdefghijklmnopqrst
+chown 1000:1000 /run/vp-worker-secrets/qa-abcdefghijklmnopqrst; chmod 700 /run/vp-worker-secrets/qa-abcdefghijklmnopqrst
+printf 'SYNTHETIC_NEW_DB' > /run/vp-worker-secrets/qa-abcdefghijklmnopqrst/db.key
+chown 1000:1000 /run/vp-worker-secrets/qa-abcdefghijklmnopqrst/db.key; chmod 400 /run/vp-worker-secrets/qa-abcdefghijklmnopqrst/db.key
 cp /fixtures/profile.json /etc/visepanda/hosted-profile.json
 cp /fixtures/target.json /etc/visepanda/qa/qa-target.json
 chmod 600 /etc/visepanda/hosted-profile.json /etc/visepanda/qa/qa-target.json

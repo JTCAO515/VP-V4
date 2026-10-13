@@ -25,7 +25,7 @@ def valid(profile):
         return False
     if (profile["schemaVersion"] != "vpj07-hosted-text-worker/4"
             or not isinstance(profile["projectRef"], str)
-            or re.fullmatch(r"[a-z]{20}", profile["projectRef"]) is None
+            or re.fullmatch(r"[a-z0-9]{20}", profile["projectRef"]) is None
             or profile["projectRef"] == "dzqdzetcctkhbrhlxxgn"
             or profile["modes"] != ["qa_session_history_v1"]
             or profile["planning"] is not None):
