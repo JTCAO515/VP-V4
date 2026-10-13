@@ -1,0 +1,1213 @@
+{
+  "tables": [
+    {
+      "table": "audit_log_entries",
+      "schema": "auth",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "custom_oauth_providers",
+      "schema": "auth",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "flow_state",
+      "schema": "auth",
+      "deleted": 0,
+      "updated": 3,
+      "inserted": 4,
+      "hotUpdated": 3,
+      "deadEstimate": 3,
+      "liveEstimate": 4
+    },
+    {
+      "table": "identities",
+      "schema": "auth",
+      "deleted": 40,
+      "updated": 0,
+      "inserted": 49,
+      "hotUpdated": 0,
+      "deadEstimate": 40,
+      "liveEstimate": 9
+    },
+    {
+      "table": "instances",
+      "schema": "auth",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "mfa_amr_claims",
+      "schema": "auth",
+      "deleted": 424,
+      "updated": 0,
+      "inserted": 455,
+      "hotUpdated": 0,
+      "deadEstimate": 53,
+      "liveEstimate": 32
+    },
+    {
+      "table": "mfa_challenges",
+      "schema": "auth",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "mfa_factors",
+      "schema": "auth",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "mfa_recovery_code_sets",
+      "schema": "auth",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "mfa_recovery_codes",
+      "schema": "auth",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "oauth_authorizations",
+      "schema": "auth",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "oauth_client_states",
+      "schema": "auth",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "oauth_clients",
+      "schema": "auth",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "oauth_consents",
+      "schema": "auth",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "one_time_tokens",
+      "schema": "auth",
+      "deleted": 3,
+      "updated": 0,
+      "inserted": 3,
+      "hotUpdated": 0,
+      "deadEstimate": 3,
+      "liveEstimate": 0
+    },
+    {
+      "table": "refresh_tokens",
+      "schema": "auth",
+      "deleted": 451,
+      "updated": 56,
+      "inserted": 511,
+      "hotUpdated": 0,
+      "deadEstimate": 11,
+      "liveEstimate": 60
+    },
+    {
+      "table": "saml_providers",
+      "schema": "auth",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "saml_relay_states",
+      "schema": "auth",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "schema_migrations",
+      "schema": "auth",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 75,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 82
+    },
+    {
+      "table": "scim_tokens",
+      "schema": "auth",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "scim_users",
+      "schema": "auth",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "sessions",
+      "schema": "auth",
+      "deleted": 427,
+      "updated": 62,
+      "inserted": 458,
+      "hotUpdated": 62,
+      "deadEstimate": 17,
+      "liveEstimate": 31
+    },
+    {
+      "table": "sso_domains",
+      "schema": "auth",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "sso_providers",
+      "schema": "auth",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "users",
+      "schema": "auth",
+      "deleted": 44,
+      "updated": 679,
+      "inserted": 53,
+      "hotUpdated": 169,
+      "deadEstimate": 41,
+      "liveEstimate": 9
+    },
+    {
+      "table": "webauthn_challenges",
+      "schema": "auth",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "webauthn_credentials",
+      "schema": "auth",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "audit",
+      "schema": "community_private",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "receipts",
+      "schema": "community_private",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "reviewers",
+      "schema": "community_private",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "settings",
+      "schema": "community_private",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 1,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 1
+    },
+    {
+      "table": "submissions",
+      "schema": "community_private",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "mobile_accounts",
+      "schema": "identity_private",
+      "deleted": 21,
+      "updated": 580,
+      "inserted": 29,
+      "hotUpdated": 580,
+      "deadEstimate": 22,
+      "liveEstimate": 6
+    },
+    {
+      "table": "mobile_attempts",
+      "schema": "identity_private",
+      "deleted": 32,
+      "updated": 0,
+      "inserted": 318,
+      "hotUpdated": 0,
+      "deadEstimate": 32,
+      "liveEstimate": 286
+    },
+    {
+      "table": "mobile_login_proofs",
+      "schema": "identity_private",
+      "deleted": 35,
+      "updated": 0,
+      "inserted": 326,
+      "hotUpdated": 0,
+      "deadEstimate": 35,
+      "liveEstimate": 291
+    },
+    {
+      "table": "audit",
+      "schema": "knowledge_review_private",
+      "deleted": 2,
+      "updated": 0,
+      "inserted": 62,
+      "hotUpdated": 0,
+      "deadEstimate": 2,
+      "liveEstimate": 60
+    },
+    {
+      "table": "candidate_assertions",
+      "schema": "knowledge_review_private",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "candidates",
+      "schema": "knowledge_review_private",
+      "deleted": 1,
+      "updated": 29,
+      "inserted": 33,
+      "hotUpdated": 28,
+      "deadEstimate": 10,
+      "liveEstimate": 32
+    },
+    {
+      "table": "members",
+      "schema": "knowledge_review_private",
+      "deleted": 2,
+      "updated": 42,
+      "inserted": 6,
+      "hotUpdated": 42,
+      "deadEstimate": 44,
+      "liveEstimate": 4
+    },
+    {
+      "table": "ontology_relations",
+      "schema": "knowledge_review_private",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 9,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 9
+    },
+    {
+      "table": "ontology_types",
+      "schema": "knowledge_review_private",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 9,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 9
+    },
+    {
+      "table": "publication_audit",
+      "schema": "knowledge_review_private",
+      "deleted": 1,
+      "updated": 0,
+      "inserted": 44,
+      "hotUpdated": 0,
+      "deadEstimate": 1,
+      "liveEstimate": 43
+    },
+    {
+      "table": "publication_settings",
+      "schema": "knowledge_review_private",
+      "deleted": 0,
+      "updated": 99,
+      "inserted": 1,
+      "hotUpdated": 99,
+      "deadEstimate": 48,
+      "liveEstimate": 1
+    },
+    {
+      "table": "publications",
+      "schema": "knowledge_review_private",
+      "deleted": 1,
+      "updated": 16,
+      "inserted": 28,
+      "hotUpdated": 15,
+      "deadEstimate": 3,
+      "liveEstimate": 27
+    },
+    {
+      "table": "receipts",
+      "schema": "knowledge_review_private",
+      "deleted": 0,
+      "updated": 34,
+      "inserted": 113,
+      "hotUpdated": 31,
+      "deadEstimate": 9,
+      "liveEstimate": 113
+    },
+    {
+      "table": "settings",
+      "schema": "knowledge_review_private",
+      "deleted": 0,
+      "updated": 25,
+      "inserted": 1,
+      "hotUpdated": 25,
+      "deadEstimate": 25,
+      "liveEstimate": 1
+    },
+    {
+      "table": "source_revisions",
+      "schema": "knowledge_review_private",
+      "deleted": 1,
+      "updated": 1,
+      "inserted": 27,
+      "hotUpdated": 1,
+      "deadEstimate": 2,
+      "liveEstimate": 26
+    },
+    {
+      "table": "statement_sources",
+      "schema": "knowledge_review_private",
+      "deleted": 1,
+      "updated": 0,
+      "inserted": 32,
+      "hotUpdated": 0,
+      "deadEstimate": 1,
+      "liveEstimate": 31
+    },
+    {
+      "table": "statements",
+      "schema": "knowledge_review_private",
+      "deleted": 1,
+      "updated": 0,
+      "inserted": 32,
+      "hotUpdated": 0,
+      "deadEstimate": 1,
+      "liveEstimate": 31
+    },
+    {
+      "table": "wiki_generation_jobs",
+      "schema": "knowledge_review_private",
+      "deleted": 0,
+      "updated": 3,
+      "inserted": 3,
+      "hotUpdated": 0,
+      "deadEstimate": 3,
+      "liveEstimate": 3
+    },
+    {
+      "table": "wiki_page_revisions",
+      "schema": "knowledge_review_private",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 2,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 2
+    },
+    {
+      "table": "wiki_pages",
+      "schema": "knowledge_review_private",
+      "deleted": 0,
+      "updated": 2,
+      "inserted": 3,
+      "hotUpdated": 2,
+      "deadEstimate": 2,
+      "liveEstimate": 3
+    },
+    {
+      "table": "wiki_statement_candidates",
+      "schema": "knowledge_review_private",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 2,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 2
+    },
+    {
+      "table": "usage",
+      "schema": "place_quota_private",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "trip_deletions",
+      "schema": "privacy_private",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "audit_events",
+      "schema": "private",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "canonical_pois",
+      "schema": "public",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "chat_threads",
+      "schema": "public",
+      "deleted": 0,
+      "updated": 1002,
+      "inserted": 495,
+      "hotUpdated": 996,
+      "deadEstimate": 26,
+      "liveEstimate": 495
+    },
+    {
+      "table": "chat_turn_events",
+      "schema": "public",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 1002,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 1002
+    },
+    {
+      "table": "chat_turn_idempotency",
+      "schema": "public",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 502,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 502
+    },
+    {
+      "table": "connection_probe_resources",
+      "schema": "public",
+      "deleted": 1,
+      "updated": 0,
+      "inserted": 1,
+      "hotUpdated": 0,
+      "deadEstimate": 1,
+      "liveEstimate": 0
+    },
+    {
+      "table": "fact_records",
+      "schema": "public",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "memory_consents",
+      "schema": "public",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "memory_consumer_receipts",
+      "schema": "public",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "memory_profiles",
+      "schema": "public",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "memory_receipts",
+      "schema": "public",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "model_budget_attempts",
+      "schema": "public",
+      "deleted": 3,
+      "updated": 996,
+      "inserted": 498,
+      "hotUpdated": 935,
+      "deadEstimate": 80,
+      "liveEstimate": 495
+    },
+    {
+      "table": "model_budget_provider_limits",
+      "schema": "public",
+      "deleted": 1,
+      "updated": 0,
+      "inserted": 4,
+      "hotUpdated": 0,
+      "deadEstimate": 1,
+      "liveEstimate": 3
+    },
+    {
+      "table": "model_budget_scopes",
+      "schema": "public",
+      "deleted": 1,
+      "updated": 9,
+      "inserted": 4,
+      "hotUpdated": 9,
+      "deadEstimate": 10,
+      "liveEstimate": 3
+    },
+    {
+      "table": "privacy_receipts",
+      "schema": "public",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "privacy_requests",
+      "schema": "public",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "provider_poi_mappings",
+      "schema": "public",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "review_probe_changes",
+      "schema": "public",
+      "deleted": 1,
+      "updated": 1,
+      "inserted": 1,
+      "hotUpdated": 1,
+      "deadEstimate": 2,
+      "liveEstimate": 0
+    },
+    {
+      "table": "travel_reminders",
+      "schema": "public",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "trip_action_references",
+      "schema": "public",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "trip_archives",
+      "schema": "public",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "trip_audit_events",
+      "schema": "public",
+      "deleted": 19,
+      "updated": 0,
+      "inserted": 23,
+      "hotUpdated": 0,
+      "deadEstimate": 21,
+      "liveEstimate": 2
+    },
+    {
+      "table": "trip_days",
+      "schema": "public",
+      "deleted": 17,
+      "updated": 0,
+      "inserted": 18,
+      "hotUpdated": 0,
+      "deadEstimate": 17,
+      "liveEstimate": 1
+    },
+    {
+      "table": "trip_events",
+      "schema": "public",
+      "deleted": 19,
+      "updated": 0,
+      "inserted": 28,
+      "hotUpdated": 0,
+      "deadEstimate": 26,
+      "liveEstimate": 2
+    },
+    {
+      "table": "trip_idempotency",
+      "schema": "public",
+      "deleted": 19,
+      "updated": 0,
+      "inserted": 25,
+      "hotUpdated": 0,
+      "deadEstimate": 23,
+      "liveEstimate": 2
+    },
+    {
+      "table": "trip_items",
+      "schema": "public",
+      "deleted": 30,
+      "updated": 0,
+      "inserted": 31,
+      "hotUpdated": 0,
+      "deadEstimate": 30,
+      "liveEstimate": 1
+    },
+    {
+      "table": "trip_place_references",
+      "schema": "public",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "trip_proposals",
+      "schema": "public",
+      "deleted": 22,
+      "updated": 29,
+      "inserted": 25,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 3
+    },
+    {
+      "table": "trip_version_snapshots",
+      "schema": "public",
+      "deleted": 38,
+      "updated": 2,
+      "inserted": 42,
+      "hotUpdated": 2,
+      "deadEstimate": 38,
+      "liveEstimate": 4
+    },
+    {
+      "table": "trips",
+      "schema": "public",
+      "deleted": 23,
+      "updated": 29,
+      "inserted": 29,
+      "hotUpdated": 29,
+      "deadEstimate": 4,
+      "liveEstimate": 3
+    },
+    {
+      "table": "turn_feedback",
+      "schema": "public",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "turns",
+      "schema": "public",
+      "deleted": 0,
+      "updated": 500,
+      "inserted": 505,
+      "hotUpdated": 486,
+      "deadEstimate": 17,
+      "liveEstimate": 502
+    },
+    {
+      "table": "user_profiles",
+      "schema": "public",
+      "deleted": 1,
+      "updated": 0,
+      "inserted": 1,
+      "hotUpdated": 0,
+      "deadEstimate": 1,
+      "liveEstimate": 0
+    },
+    {
+      "table": "v4_migration_baseline",
+      "schema": "public",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "messages",
+      "schema": "realtime",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "schema_migrations",
+      "schema": "realtime",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 89,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 89
+    },
+    {
+      "table": "subscription",
+      "schema": "realtime",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "applications",
+      "schema": "research_intake_private",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "events",
+      "schema": "research_intake_private",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "receipts",
+      "schema": "research_intake_private",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "settings",
+      "schema": "research_intake_private",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 1,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 1
+    },
+    {
+      "table": "audit",
+      "schema": "service_cases_private",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "cases",
+      "schema": "service_cases_private",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "staff",
+      "schema": "service_cases_private",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "buckets",
+      "schema": "storage",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "buckets_analytics",
+      "schema": "storage",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "buckets_vectors",
+      "schema": "storage",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "migrations",
+      "schema": "storage",
+      "deleted": 0,
+      "updated": 1,
+      "inserted": 73,
+      "hotUpdated": 1,
+      "deadEstimate": 1,
+      "liveEstimate": 73
+    },
+    {
+      "table": "objects",
+      "schema": "storage",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "s3_multipart_uploads",
+      "schema": "storage",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "s3_multipart_uploads_parts",
+      "schema": "storage",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "vector_indexes",
+      "schema": "storage",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "schema_migrations",
+      "schema": "supabase_migrations",
+      "deleted": 0,
+      "updated": 1,
+      "inserted": 86,
+      "hotUpdated": 0,
+      "deadEstimate": 12,
+      "liveEstimate": 75
+    },
+    {
+      "table": "grounded_ai_assist_jobs",
+      "schema": "turn_private",
+      "deleted": 0,
+      "updated": 2,
+      "inserted": 1,
+      "hotUpdated": 2,
+      "deadEstimate": 2,
+      "liveEstimate": 1
+    },
+    {
+      "table": "grounded_turns",
+      "schema": "turn_private",
+      "deleted": 0,
+      "updated": 760,
+      "inserted": 470,
+      "hotUpdated": 560,
+      "deadEstimate": 83,
+      "liveEstimate": 470
+    },
+    {
+      "table": "hosted_worker_control",
+      "schema": "turn_private",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 1,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 1
+    },
+    {
+      "table": "hosted_worker_heartbeats",
+      "schema": "turn_private",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    },
+    {
+      "table": "service_task_turns",
+      "schema": "turn_private",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 483,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 483
+    },
+    {
+      "table": "service_tasks",
+      "schema": "turn_private",
+      "deleted": 0,
+      "updated": 953,
+      "inserted": 476,
+      "hotUpdated": 938,
+      "deadEstimate": 15,
+      "liveEstimate": 476
+    },
+    {
+      "table": "text_consents",
+      "schema": "turn_private",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 15,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 15
+    },
+    {
+      "table": "text_content",
+      "schema": "turn_private",
+      "deleted": 0,
+      "updated": 499,
+      "inserted": 501,
+      "hotUpdated": 445,
+      "deadEstimate": 55,
+      "liveEstimate": 501
+    },
+    {
+      "table": "text_dispatches",
+      "schema": "turn_private",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 501,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 501
+    },
+    {
+      "table": "text_policies",
+      "schema": "turn_private",
+      "deleted": 0,
+      "updated": 2,
+      "inserted": 8,
+      "hotUpdated": 1,
+      "deadEstimate": 1,
+      "liveEstimate": 8
+    },
+    {
+      "table": "work",
+      "schema": "turn_private",
+      "deleted": 0,
+      "updated": 1004,
+      "inserted": 501,
+      "hotUpdated": 2,
+      "deadEstimate": 82,
+      "liveEstimate": 501
+    },
+    {
+      "table": "secrets",
+      "schema": "vault",
+      "deleted": 0,
+      "updated": 0,
+      "inserted": 0,
+      "hotUpdated": 0,
+      "deadEstimate": 0,
+      "liveEstimate": 0
+    }
+  ],
+  "database": {
+    "commits": 2193175,
+    "deleted": 3286,
+    "updated": 12588,
+    "inserted": 23476,
+    "rollbacks": 1152,
+    "statsReset": "2026-07-24T11:23:13.916197+00:00"
+  },
+  "observedAt": "2026-10-13T08:40:00.585958+00:00"
+}
