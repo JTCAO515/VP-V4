@@ -46,11 +46,13 @@ export function createQaService(store: QaStore, policyId: string, contextMode: "
     if (text.kind !== "text" || text.turnId !== turn.id || typeof text.input !== "string" || !text.input.trim() || text.input.length > 4000
       || (text.output !== null && (typeof text.output !== "string" || !text.output.trim() || text.output.length > 8000))
       || (text.outcome !== null && !outcomes.includes(text.outcome as QaStatus))) throw new QaError("PROVIDER_UNAVAILABLE");
+    const reconciliationRequired = contextMode === "qa_session_history_v1" && protectedText?.reconciliationRequired === true;
+    if (reconciliationRequired && (text.output !== null || text.outcome !== null)) throw new QaError("DATA_POLICY_BLOCKED");
     const terminal = isTerminal(turn.status);
     if ((text.output === null) !== (text.outcome === null)) throw new QaError("PROVIDER_UNAVAILABLE");
     if (!terminal && text.output !== null) throw new QaError("PROVIDER_UNAVAILABLE");
     // Never manufacture an answer for terminal-without-text, including cancellation.
-    const status: QaStatus = text.outcome === null ? (terminal ? "technical_failure" : "pending") : text.outcome as QaStatus;
+    const status: QaStatus = reconciliationRequired ? "reconciliation_required" : text.outcome === null ? (terminal ? "technical_failure" : "pending") : text.outcome as QaStatus;
     return { requestId: turn.id, turnId: turn.id, sessionId, input: text.input, text: text.output as string | null, status, createdAt: turn.createdAt };
   }
   async function qaSession(detail: ThreadRead) {
@@ -64,6 +66,8 @@ export function createQaService(store: QaStore, policyId: string, contextMode: "
       const ids = new Set<string>(), texts: Record<string, unknown>[] = [];
       for (const item of value.messages) {
         if (!record(item) || item.kind !== "text" || !uuid(item.turnId) || ids.has(item.turnId)) throw new QaError("DATA_POLICY_BLOCKED");
+        if (typeof item.reconciliationRequired !== "boolean"
+          || (item.reconciliationRequired && (item.output !== null || item.outcome !== null))) throw new QaError("DATA_POLICY_BLOCKED");
         ids.add(item.turnId); texts.push(item);
       }
       if (texts.length && texts.at(-1)?.turnId !== value.lastTurnId) throw new QaError("DATA_POLICY_BLOCKED");

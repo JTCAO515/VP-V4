@@ -4,7 +4,7 @@ import {createQaService,rpcError} from '../../../lib/server/qa-agent/service.ts'
 const sid='11111111-1111-4111-8111-111111111111',pid='22222222-2222-4222-8222-222222222222',task='33333333-3333-4333-8333-333333333333',next='99999999-9999-4999-8999-999999999999';
 const ids=Array.from({length:8},(_,i)=>`44444444-4444-4444-8444-${String(i+1).padStart(12,'0')}`);
 function fixture(maxTurns,mode='qa_session_history_v1'){
- const calls=[],messages=ids.map(turnId=>({kind:'text',schemaVersion:'text-turn-v1',turnId,locale:'en',input:'Saved input',outcome:'answered',output:'Saved answer'}));let admitted=8;
+ const calls=[],messages=ids.map(turnId=>({kind:'text',reconciliationRequired:false,schemaVersion:'text-turn-v1',turnId,locale:'en',input:'Saved input',outcome:'answered',output:'Saved answer'}));let admitted=8;
  const thread={id:sid,status:'active',createdAt:'2026-10-13',updatedAt:'2026-10-13'};
  const store={list:async()=>[thread],create:async()=>thread,read:async()=>({thread,turns:ids.map(id=>({id,status:'completed',createdAt:'2026-10-13'}))}),rpc:async(name,p)=>{
  calls.push(name);

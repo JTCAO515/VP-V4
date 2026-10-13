@@ -16,9 +16,9 @@ function fixture({initialCount=1,refreshedState='completed',textState='answered'
   if(name==='qa_read_policy_v1')return {data:{kind:'policy',policy:{id:pid,contextMode:'qa_session_history_v1',maxTurns:8,noticeHash:'a'.repeat(64),noticeZh:'合成许可',noticeEn:'Synthetic permission',provider:'qwen',recipient:'Synthetic',consentState:'accepted'}},error:null};
   assert.equal(name,'qa_read_session_v1');assert.equal(p.p_thread_id,sid);protectedReads++;
   if(protectedReads===2&&revoke)return {data:null,error:{message:'UNAUTHENTICATED'}};
-  const first={kind:'text',schemaVersion:'text-turn-v1',turnId:root,locale:'en',input:'Root',output:'Original answer',outcome:'answered'};
+  const first={kind:'text',reconciliationRequired:false,schemaVersion:'text-turn-v1',turnId:root,locale:'en',input:'Root',output:'Original answer',outcome:'answered'};
   const fresh=protectedReads===2&&textState==='answered';
-  const second={kind,schemaVersion:'text-turn-v1',turnId:newTurn,locale:'en',input:'Other tab input',output:fresh?'Stored new reply':textState==='technical_failure'?'Actual failure reason':null,outcome:fresh?'answered':textState==='technical_failure'?'technical_failure':null};
+  const second={kind,reconciliationRequired:false,schemaVersion:'text-turn-v1',turnId:newTurn,locale:'en',input:'Other tab input',output:fresh?'Stored new reply':textState==='technical_failure'?'Actual failure reason':null,outcome:fresh?'answered':textState==='technical_failure'?'technical_failure':null};
   if(omitKind)delete second.kind;
   const messages=[first,second];if(protectedReads===2&&extraOnReread)messages.push({...second,turnId:later,input:'Continued append',output:null,outcome:null});
   return {data:{kind:'session',schemaVersion:'qa-session/1',threadId:sid,policyId:pid,serviceTaskId:task,lastTurnId:messages.at(-1).turnId,messages},error:null};

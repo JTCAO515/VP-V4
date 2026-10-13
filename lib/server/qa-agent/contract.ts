@@ -1,6 +1,6 @@
 /** Browser wire. Session IDs are original chat_threads IDs, never a second store. */
 export const QA_AGENT_WIRE_VERSION = "qa-agent/1" as const;
-export type QaStatus = "pending" | "answered" | "partial" | "clarification" | "blocked" | "technical_failure";
+export type QaStatus = "pending" | "reconciliation_required" | "answered" | "partial" | "clarification" | "blocked" | "technical_failure";
 export type QaSession = Readonly<{ id: string; label: string; createdAt: string; updatedAt: string }>;
 export type QaMessage = Readonly<{
   requestId: string; turnId: string; sessionId: string; input: string;

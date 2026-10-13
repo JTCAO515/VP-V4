@@ -8,7 +8,7 @@ Authorization, cross-site and query parameters rejected. No client model/history
 - POST same path `{}`: 201 `{session:{id,label,createdAt,updatedAt}}`. Original chat_threads ID; label is truthful generic `Session` metadata. No Trip.
 - GET `/api/qa-agent/sessions/:sessionId`: 200 `{session,messages,historyLimit:20,policy}`; newest 20 original protected turns in chronological order.
 - POST `/api/qa-agent/sessions/:sessionId/messages` `{requestId:UUID,text:string}`: 202 `{requestId,turnId,sessionId,status:"pending",reused:boolean}`. requestId equals original turn/idempotency ID. Accepted does not mean answered.
-- GET `/api/qa-agent/sessions/:sessionId/messages/:requestId`: 200 `{message:{requestId,turnId,sessionId,input,text,status,createdAt}}`. `text` is saved original output or null. Status pending/answered/partial/clarification/blocked/technical_failure. Refresh/retry poll the same original ID.
+- GET `/api/qa-agent/sessions/:sessionId/messages/:requestId`: 200 `{message:{requestId,turnId,sessionId,input,text,status,createdAt}}`. `text` is saved original output or null. Status pending/reconciliation_required/answered/partial/clarification/blocked/technical_failure. Refresh/retry poll the same original ID.
 - GET `/api/qa-agent/policy`: 200 `{policy:{id,noticeHash,noticeZh,noticeEn,provider,recipient,consentState,contextMode,maxTurns}}`.
 - POST `/api/qa-agent/consent` `{policyId,noticeHash}`: 200 same policy envelope, server reads immutable notice/consent. UI must show notice and await explicit acceptance before calling; no implied consent.
 
@@ -84,3 +84,25 @@ confirms an empty completed result, the existing terminal technical_failure/null
 projection remains; failed/cancelled/unavailable results and stored failure reasons
 are not retried indefinitely. Pending metadata plus non-null output still fails closed.
 Protected message `kind` must be exactly `text`; missing or other kinds are refused.
+
+Additive qa-agent/1 recovery projection: message.status may be
+`reconciliation_required` with `text:null`, preserving original requestId/turnId/Session.
+It is emitted only when the trusted qa_read_session_v1 message has
+`reconciliationRequired:true` and original output/outcome are both null. That protected
+field is mandatory boolean in QA mode; missing/wrong types or true with stored output/
+outcome fail closed. Legacy current-input reads may omit it and retain false behavior.
+Provider output outcomes are unchanged; the new status is not a model-generated answer.
+
+The SQL owner qualifies unknown work or expired dispatch through the original durable
+receipt/nonreleased budget and actor/policy guards. The service never infers the flag
+from time, client JSON or a null answer. Original Turn/ledger state is not changed.
+GET detail/message still perform reads only; no reserve, release, provider retry or
+new request UUID is generated. The status does not assert the provider did nothing,
+that cost is zero, or that resending is safe. UI should keep the original Session and
+request identity, show the need for reconciliation and not automatically send again.
+
+Existing bounded snapshot reconciliation applies: if metadata is now completed while
+an earlier protected recovery projection is null, one protected reread can reveal the
+new actual answer with flag:false. A single protected row true+nonnull is inconsistent
+and is refused rather than relabeled answered. Actual pending and terminal failure
+remain distinguishable when the protected flag is false.

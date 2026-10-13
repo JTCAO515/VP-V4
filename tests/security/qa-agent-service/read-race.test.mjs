@@ -20,9 +20,9 @@ function fixture({textPatch={},sessionPatch={},denyMetadata=false,denyProtected=
    assert.equal(calls.at(-1),'metadata','worker completes after the earlier metadata read');
    calls.push('worker-completed');protectedReads++;
    if(denyProtected)return {data:null,error:{message:'UNAUTHENTICATED'}};
-   // Exact original read_text_turn DTO: no status or createdAt fields.
+   // Original text DTO plus the protected QA flag; no status or createdAt fields.
    return {error:null,data:{kind:'session',schemaVersion:'qa-session/1',threadId:session,policyId:policy,serviceTaskId:task,lastTurnId:turn,
-    messages:[{kind:'text',schemaVersion:'text-turn-v1',turnId:turn,locale:'en',input:'Synthetic question',output:'Persisted worker answer',outcome:'answered',...textPatch}],...sessionPatch}};
+    messages:[{kind:'text',reconciliationRequired:false,schemaVersion:'text-turn-v1',turnId:turn,locale:'en',input:'Synthetic question',output:'Persisted worker answer',outcome:'answered',...textPatch}],...sessionPatch}};
   }};
  return {service:createQaService(store,policy,'qa_session_history_v1'),get metadataReads(){return metadataReads;},get protectedReads(){return protectedReads;}};
 }

@@ -16,7 +16,7 @@ function fixture({metadataCounts=[1,2],protectedCounts=[2,2],refreshError=false,
   assert.equal(name,'qa_read_session_v1');assert.equal(p.p_thread_id,sid);protectedReads++;
   if(protectedReads===2&&protectedError)return {data:null,error:{message:'DATA_POLICY_BLOCKED'}};
   const count=protectedCounts[protectedReads-1]??protectedCounts.at(-1);
-  const messages=ids.slice(0,count).map((turnId,i)=>({kind:'text',schemaVersion:'text-turn-v1',turnId,locale:'en',input:i===0?'Saved root':'New tab input',outcome:i===0?'answered':null,output:i===0?'Saved answer':null}));
+  const messages=ids.slice(0,count).map((turnId,i)=>({kind:'text',reconciliationRequired:false,schemaVersion:'text-turn-v1',turnId,locale:'en',input:i===0?'Saved root':'New tab input',outcome:i===0?'answered':null,output:i===0?'Saved answer':null}));
   return {error:null,data:{kind:'session',schemaVersion:'qa-session/1',threadId:protectedSession,policyId:count?pid:null,serviceTaskId:count?task:null,lastTurnId:messages.at(-1)?.turnId??null,messages}};
  }};
  return {service:createQaService(store,pid,'qa_session_history_v1'),calls,get metadataReads(){return metadataReads;},get protectedReads(){return protectedReads;}};
