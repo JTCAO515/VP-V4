@@ -1,0 +1,15 @@
+{
+  "mainBaseline": "934bbdc2e9aa0aa060515b9a002dd25c837ca8bd",
+  "originalFunction": "public.hosted_worker_ready_groups(integer)",
+  "originalSourceMigration": "20260927060000_vpj80_planning_comparison.sql",
+  "originalDefinitionSHA256": "5da83c48ab08af76b68eeb5758dd2a7abdf1bdffa5c9e5df4423d07d6da260a0",
+  "candidateSHA256": "63e3cd4c9b542eaa4f03e4b1460ff365a122c38fee55dca68d5a369d85895b28",
+  "ordinaryClaimAlignment": "qa_session_history_v1 plus no prior text_dispatches; current policy/consent/visible text and queued or expired leased work",
+  "legacyFunctionChanged": false,
+  "newTables": [],
+  "targetApply": "NONE",
+  "mainQaMigrationSHA256": "835cb185a1027949da9670c75f72e6cd62b49c25fd5ae0dcf88f8c87e0a477ba",
+  "latestProof": "qa-ready-groups-proof-1791874283186.log",
+  "namedPassChecks": 9,
+  "proofSHA256": "c220a54446a3886d8210a4969112142e44217213dc02aaf6fc403180ecaf0814"
+}

@@ -1,0 +1,13 @@
+OWN CONTAINER qaw005-ready-48c68958-d86
+MAIN MIGRATIONS 155
+PASS actual Main 934bbdc2 full migration replay plus candidate transaction rollback/apply
+PASS earlier legacy occupies original limit1, QA-filtered limit1 returns later actual QA group and unchanged DTO/price inventory
+PASS discovery matches ordinary claim; valid lease omitted and expired lease eligible
+PASS prior dispatch receipt excluded from ordinary group discovery exactly as QA claim, original pending retained
+PASS frozen/expired scopes and disabled provider limits never reported as eligible price scopes; empty inventory is not authorization
+PASS hidden input, withdrawn consent and revoked policy excluded before group limit
+PASS actual immutable policy expiry removes group and original QA claimer agrees
+PASS original disabled switch, service-only ACL and 1..50 limit bounds preserved
+PASS legacy RPC byte-identical and ten original lifecycle gates unchanged
+UNRUN target/provider/deployment; no live switch/budget/credential action
+OWN CLEANUP 0
