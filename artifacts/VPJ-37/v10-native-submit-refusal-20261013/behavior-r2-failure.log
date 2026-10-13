@@ -1,0 +1,7 @@
+behavior/Behavior.swift:513: Precondition failed: ordinary explicit retry keeps exact request bytes
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/v10-w2-native-refusal-20261013/artifacts/VPJ-37/v10-native-submit-refusal-20261013/run-behavior.py", line 182, in <module>
+    print(run.stdout+run.stderr,end=''); run.check_returncode()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py", line 460, in check_returncode
+    raise CalledProcessError(self.returncode, self.args, self.stdout,
+subprocess.CalledProcessError: Command '['/var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/v10-native-refusal-dlqn2br5/behavior']' died with <Signals.SIGTRAP: 5>.

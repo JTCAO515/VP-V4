@@ -1,0 +1,103 @@
+{
+  "base": "4a1824097ec6e7e9f67d94dc056ff2a8f70bcab3",
+  "branch": "codex/v10-w2-native-refusal-20261013",
+  "beforeSHA256": "44004e5ee5b2db315c9b08ea438dedb3cadc999f777af4b9dfea1b0c3cf81d44",
+  "afterSHA256": "956f4f74d785c37df89fd360b97b51f3a3d53e938ebd8bd0180928991402da87",
+  "patchSHA256": "ebf62c585f946710f523107bf629f113ad948f91508c92a3563010d1681cb928",
+  "unchangedDependencies": {
+    "ios/VisePanda/VisePanda/Features/Ask/NativeSelectedMessageStore.swift": "990e18bc49abfe158cf92675ed3c269f88452c5e0d3d0cabf957d2d54967b85c",
+    "ios/VisePanda/VisePanda/Features/Ask/NativeSelectedMessageModels.swift": "d514654fdc6652c0613fd1ca45b1699bbf597fc377e053617aed023e8eb32565"
+  },
+  "builds": [
+    {
+      "run": "r1",
+      "result": "PASS",
+      "sourceSHA256": "first candidate before private/source guard amendment",
+      "commands": {
+        "startedAt": "2026-10-13T03:06:49.293884+00:00",
+        "argv": [
+          "xcodebuild",
+          "build",
+          "-project",
+          "ios/VisePanda/VisePanda.xcodeproj",
+          "-scheme",
+          "VisePanda",
+          "-derivedDataPath",
+          "/private/tmp/v10-w2-native-refusal-20261013-build-r1-derived",
+          "-destination",
+          "generic/platform=iOS Simulator",
+          "CODE_SIGNING_ALLOWED=NO",
+          "-resultBundlePath",
+          "/private/tmp/v10-w2-native-refusal-20261013-build-r1/build.xcresult"
+        ],
+        "command": "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -derivedDataPath /private/tmp/v10-w2-native-refusal-20261013-build-r1-derived -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO -resultBundlePath /private/tmp/v10-w2-native-refusal-20261013-build-r1/build.xcresult",
+        "cwd": "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/v10-w2-native-refusal-20261013",
+        "developerDir": "/Applications/Xcode.app/Contents/Developer",
+        "exitCode": 0
+      },
+      "environment": {
+        "commit": "4a1824097ec6e7e9f67d94dc056ff2a8f70bcab3",
+        "xcode": "Xcode 27.0\nBuild version 27A266a",
+        "runtime": null,
+        "deviceName": null,
+        "deviceUDID": null,
+        "runnerImageVersion": null,
+        "preflightOnly": false,
+        "distributionSigned": false,
+        "genericBuildSigning": "disabled",
+        "simulatorTestSigning": null,
+        "simulatorTestSigningVerified": false,
+        "localTextIntegration": false,
+        "buildOnly": true,
+        "selectedTests": [],
+        "simulatorTestsRun": false
+      },
+      "rawLogSHA256": "ae1f1f4d680a4fd67513f9eebd76e088c96580936e1d69417d0d25b37af92c5a"
+    },
+    {
+      "run": "r2",
+      "result": "PASS",
+      "sourceSHA256": "956f4f74d785c37df89fd360b97b51f3a3d53e938ebd8bd0180928991402da87",
+      "commands": {
+        "startedAt": "2026-10-13T03:08:52.201486+00:00",
+        "argv": [
+          "xcodebuild",
+          "build",
+          "-project",
+          "ios/VisePanda/VisePanda.xcodeproj",
+          "-scheme",
+          "VisePanda",
+          "-derivedDataPath",
+          "/private/tmp/v10-w2-native-refusal-20261013-build-r2-derived",
+          "-destination",
+          "generic/platform=iOS Simulator",
+          "CODE_SIGNING_ALLOWED=NO",
+          "-resultBundlePath",
+          "/private/tmp/v10-w2-native-refusal-20261013-build-r2/build.xcresult"
+        ],
+        "command": "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -derivedDataPath /private/tmp/v10-w2-native-refusal-20261013-build-r2-derived -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO -resultBundlePath /private/tmp/v10-w2-native-refusal-20261013-build-r2/build.xcresult",
+        "cwd": "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/v10-w2-native-refusal-20261013",
+        "developerDir": "/Applications/Xcode.app/Contents/Developer",
+        "exitCode": 0
+      },
+      "environment": {
+        "commit": "4a1824097ec6e7e9f67d94dc056ff2a8f70bcab3",
+        "xcode": "Xcode 27.0\nBuild version 27A266a",
+        "runtime": null,
+        "deviceName": null,
+        "deviceUDID": null,
+        "runnerImageVersion": null,
+        "preflightOnly": false,
+        "distributionSigned": false,
+        "genericBuildSigning": "disabled",
+        "simulatorTestSigning": null,
+        "simulatorTestSigningVerified": false,
+        "localTextIntegration": false,
+        "buildOnly": true,
+        "selectedTests": [],
+        "simulatorTestsRun": false
+      },
+      "rawLogSHA256": "9859b90650a3e982383c9c8b552ce8d2bf766c00d304ce720a7a1048dba43076"
+    }
+  ]
+}
