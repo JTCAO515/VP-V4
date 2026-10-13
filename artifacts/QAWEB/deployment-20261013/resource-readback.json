@@ -1,5 +1,5 @@
 {
-  "observedAt": "2026-10-13T04:33:47.582419+00:00",
+  "observedAt": "2026-10-13T04:37:43.191477+00:00",
   "source": "official Vercel CLI exact API/team fallback for MCP 404",
   "project": {
     "id": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
@@ -428,16 +428,23 @@
     "customEnvironmentId": null
   },
   "dns": {
-    "configuredBy": null,
+    "configuredBy": "CNAME",
     "nameservers": [
-      "launch2.spaceship.net",
-      "launch1.spaceship.net"
+      "launch1.spaceship.net",
+      "launch2.spaceship.net"
     ],
     "serviceType": "external",
-    "cnames": [],
-    "aValues": [],
+    "cnames": [
+      "a37b0a5f0814fb3a.vercel-dns-016.com."
+    ],
+    "aValues": [
+      "216.150.16.193",
+      "216.150.1.193"
+    ],
     "conflicts": [],
-    "acceptedChallenges": [],
+    "acceptedChallenges": [
+      "http-01"
+    ],
     "recommendedIPv4": [
       {
         "rank": 1,
@@ -463,7 +470,7 @@
         "value": "cname.vercel-dns.com."
       }
     ],
-    "misconfigured": true
+    "misconfigured": false
   },
   "projectDomains": [
     {

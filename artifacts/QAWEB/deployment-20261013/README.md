@@ -14,7 +14,7 @@ Actual post-add configuration returned:
 - Rank-1 target: a37b0a5f0814fb3a.vercel-dns-016.com.
 - Nameservers: launch1.spaceship.net, launch2.spaceship.net.
 - No TXT ownership challenge returned; verified=true.
-- DNS misconfigured=true, no current CNAME/A values. DNS changes belong to JT.
+- Initial DNS misconfigured=true, no current CNAME/A values. Follow-up actual CNAME DNS read and Vercel configuration now show misconfigured=false with rank-1 target. No DNS write was made by this writer; DNS belongs to JT.
 
 Full allowlisted metadata is in resource-readback.json. No secret values are recorded. No protection settings, nameservers, DNS, existing aliases, billing, native/data permissions or production records changed.
 
@@ -30,3 +30,5 @@ Full allowlisted metadata is in resource-readback.json. No secret values are rec
 - Python AST syntax check: PASS for both scripts. git diff --check: PASS.
 
 Deployment request schema checked against official https://openapi.vercel.sh and https://vercel.com/docs/rest-api/deployments/create-a-new-deployment. Use Vercel MCP first, its documented exact-endpoint fallback only if the same 404 persists; inspect deployment SHA/target/state before claiming delivery. Preparation is not provider or target PASS.
+
+Follow-up HTTPS probe: FAIL from this local network (curl TLS SSL_ERROR_SYSCALL; local A lookup returned 198.18.0.68). This is not a target application result; no network/proxy change or security bypass attempted. Source deployment remains UNRUN. Documentation baseline check PASS.
