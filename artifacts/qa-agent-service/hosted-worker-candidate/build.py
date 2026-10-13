@@ -4,6 +4,7 @@ root=Path(__file__).resolve().parents[3]
 out=Path(__file__).parent
 path=Path('lib/server/jobs/hosted-text-worker.ts')
 before=(root/path).read_text()
+assert hashlib.sha256(before.encode()).hexdigest()=="c002967df7ff8bd08355618c3d45e0f138ce28f1693f287515170e70fd79e632", "Shared worker source changed; new Main review required"
 after=before
 imports='''import { createQaWorker, type QaWorkerConfiguration } from "../qa-agent/worker.ts";
 import { parseQaHostedProfile, planQaGroup, type QaHostedProfile } from "../qa-agent/hosted-profile.ts";
@@ -49,6 +50,7 @@ after=after.replace(needle,qa+needle,1)
 # companion is a candidate, not an edit to that shared source or a settlement.
 path=Path('lib/server/jobs/hosted-usage-audit.ts')
 before=(root/path).read_text()
+assert hashlib.sha256(before.encode()).hexdigest()=="8db9a70171754ce7255945cb8afd7074200855fbc332452fe5e1a85dfd553edb", "Shared audit source changed; new Main review required"
 after='import { qaJobConfig } from "../qa-agent/hosted-profile.ts";\nimport { auditQaUsage } from "../qa-agent/usage-audit.ts";\nimport type { QaWorkerConfiguration } from "../qa-agent/worker.ts";\n'+before
 after=after.replace('job: ReturnType<typeof jobConfig>;','job: ReturnType<typeof jobConfig> | QaWorkerConfiguration;')
 old='''      if (!profile.modes.includes(mode) || typeof job.ownerId !== "string" || !UUID.test(job.ownerId)'''
