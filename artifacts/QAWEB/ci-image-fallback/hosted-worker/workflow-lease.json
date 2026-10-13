@@ -1,0 +1,8 @@
+{
+  "mainSource": "06f5bea0",
+  "path": ".github/workflows/hosted-worker.yml",
+  "beforeSha256": "878836f7fd4826c8f52838a12f1ff4d0c1bc9e98e2caf29a038e885f5f18e4fc",
+  "patchSha256": "087d97944caa8701434a0e27a2463a7f60854d7f32cedcf3db882ada4846aa41",
+  "afterSha256": "844be464ffa5b65defe9eb4c0c1f46d2b60331fbaec197fc6be4bbd75faeae20",
+  "outsidePullPreparation": "byte-identical"
+}
