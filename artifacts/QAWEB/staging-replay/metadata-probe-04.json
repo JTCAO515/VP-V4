@@ -1,0 +1,3872 @@
+{
+  "status": "PASS_METADATA_PROBE_ONLY",
+  "target": "dzqdzetcctkhbrhlxxgn",
+  "secretOutput": false,
+  "userRowsRead": false,
+  "keysCreated": false,
+  "roleSwitched": false,
+  "backup": "UNRUN",
+  "restore": "UNRUN",
+  "projectInventory": {
+    "ref": "dzqdzetcctkhbrhlxxgn",
+    "organization": "ppfsagymaozpbkbarhes",
+    "linked": false,
+    "status": "ACTIVE_HEALTHY"
+  },
+  "accountLimit": "Same explicit project/org accessible in CLI and official Go2China; human OAuth subject equality not exposed/proven",
+  "migrationVerification": "Exact75 verified using fresh official Go2China catalog response; CLI role migration-history read failed42501 and was removed from narrowed catalog probe",
+  "metadata": {
+    "tls": {
+      "ssl": true,
+      "version": "TLSv1.3"
+    },
+    "roles": [
+      {
+        "name": "anon",
+        "login": false,
+        "inherit": true,
+        "bypassrls": false,
+        "superuser": false,
+        "create_role": false
+      },
+      {
+        "name": "authenticated",
+        "login": false,
+        "inherit": true,
+        "bypassrls": false,
+        "superuser": false,
+        "create_role": false
+      },
+      {
+        "name": "authenticator",
+        "login": true,
+        "inherit": false,
+        "bypassrls": false,
+        "superuser": false,
+        "create_role": false
+      },
+      {
+        "name": "cli_login_postgres",
+        "login": true,
+        "inherit": false,
+        "bypassrls": false,
+        "superuser": false,
+        "create_role": false
+      },
+      {
+        "name": "dashboard_user",
+        "login": false,
+        "inherit": true,
+        "bypassrls": false,
+        "superuser": false,
+        "create_role": true
+      },
+      {
+        "name": "pg_checkpoint",
+        "login": false,
+        "inherit": true,
+        "bypassrls": false,
+        "superuser": false,
+        "create_role": false
+      },
+      {
+        "name": "pg_create_subscription",
+        "login": false,
+        "inherit": true,
+        "bypassrls": false,
+        "superuser": false,
+        "create_role": false
+      },
+      {
+        "name": "pg_database_owner",
+        "login": false,
+        "inherit": true,
+        "bypassrls": false,
+        "superuser": false,
+        "create_role": false
+      },
+      {
+        "name": "pg_execute_server_program",
+        "login": false,
+        "inherit": true,
+        "bypassrls": false,
+        "superuser": false,
+        "create_role": false
+      },
+      {
+        "name": "pg_maintain",
+        "login": false,
+        "inherit": true,
+        "bypassrls": false,
+        "superuser": false,
+        "create_role": false
+      },
+      {
+        "name": "pg_monitor",
+        "login": false,
+        "inherit": true,
+        "bypassrls": false,
+        "superuser": false,
+        "create_role": false
+      },
+      {
+        "name": "pg_read_all_data",
+        "login": false,
+        "inherit": true,
+        "bypassrls": false,
+        "superuser": false,
+        "create_role": false
+      },
+      {
+        "name": "pg_read_all_settings",
+        "login": false,
+        "inherit": true,
+        "bypassrls": false,
+        "superuser": false,
+        "create_role": false
+      },
+      {
+        "name": "pg_read_all_stats",
+        "login": false,
+        "inherit": true,
+        "bypassrls": false,
+        "superuser": false,
+        "create_role": false
+      },
+      {
+        "name": "pg_read_server_files",
+        "login": false,
+        "inherit": true,
+        "bypassrls": false,
+        "superuser": false,
+        "create_role": false
+      },
+      {
+        "name": "pg_signal_backend",
+        "login": false,
+        "inherit": true,
+        "bypassrls": false,
+        "superuser": false,
+        "create_role": false
+      },
+      {
+        "name": "pg_stat_scan_tables",
+        "login": false,
+        "inherit": true,
+        "bypassrls": false,
+        "superuser": false,
+        "create_role": false
+      },
+      {
+        "name": "pg_use_reserved_connections",
+        "login": false,
+        "inherit": true,
+        "bypassrls": false,
+        "superuser": false,
+        "create_role": false
+      },
+      {
+        "name": "pg_write_all_data",
+        "login": false,
+        "inherit": true,
+        "bypassrls": false,
+        "superuser": false,
+        "create_role": false
+      },
+      {
+        "name": "pg_write_server_files",
+        "login": false,
+        "inherit": true,
+        "bypassrls": false,
+        "superuser": false,
+        "create_role": false
+      },
+      {
+        "name": "pgbouncer",
+        "login": true,
+        "inherit": true,
+        "bypassrls": false,
+        "superuser": false,
+        "create_role": false
+      },
+      {
+        "name": "postgres",
+        "login": true,
+        "inherit": true,
+        "bypassrls": true,
+        "superuser": false,
+        "create_role": true
+      },
+      {
+        "name": "service_role",
+        "login": false,
+        "inherit": true,
+        "bypassrls": true,
+        "superuser": false,
+        "create_role": false
+      },
+      {
+        "name": "supabase_admin",
+        "login": true,
+        "inherit": true,
+        "bypassrls": true,
+        "superuser": true,
+        "create_role": true
+      },
+      {
+        "name": "supabase_auth_admin",
+        "login": true,
+        "inherit": false,
+        "bypassrls": false,
+        "superuser": false,
+        "create_role": true
+      },
+      {
+        "name": "supabase_etl_admin",
+        "login": true,
+        "inherit": true,
+        "bypassrls": true,
+        "superuser": false,
+        "create_role": false
+      },
+      {
+        "name": "supabase_privileged_role",
+        "login": false,
+        "inherit": true,
+        "bypassrls": false,
+        "superuser": false,
+        "create_role": false
+      },
+      {
+        "name": "supabase_read_only_user",
+        "login": true,
+        "inherit": true,
+        "bypassrls": true,
+        "superuser": false,
+        "create_role": false
+      },
+      {
+        "name": "supabase_realtime_admin",
+        "login": false,
+        "inherit": false,
+        "bypassrls": false,
+        "superuser": false,
+        "create_role": false
+      },
+      {
+        "name": "supabase_replication_admin",
+        "login": true,
+        "inherit": true,
+        "bypassrls": false,
+        "superuser": false,
+        "create_role": false
+      },
+      {
+        "name": "supabase_storage_admin",
+        "login": true,
+        "inherit": false,
+        "bypassrls": false,
+        "superuser": false,
+        "create_role": true
+      }
+    ],
+    "schemas": [
+      "auth",
+      "community_private",
+      "extensions",
+      "graphql",
+      "graphql_public",
+      "identity_private",
+      "knowledge_review_private",
+      "ops_budget_private",
+      "pgbouncer",
+      "place_quota_private",
+      "privacy_private",
+      "private",
+      "public",
+      "realtime",
+      "research_intake_private",
+      "service_cases_private",
+      "storage",
+      "supabase_migrations",
+      "turn_private",
+      "vault"
+    ],
+    "database": "postgres",
+    "read_only": "on",
+    "relations": [
+      {
+        "acl": "{supabase_auth_admin=arwdDxtm/supabase_auth_admin,dashboard_user=arwdDxtm/supabase_auth_admin,postgres=ar*wdDxtm/supabase_auth_admin}",
+        "rls": true,
+        "kind": "r",
+        "name": "audit_log_entries",
+        "owner": "supabase_auth_admin",
+        "schema": "auth",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/supabase_auth_admin,supabase_auth_admin=arwdDxtm/supabase_auth_admin,dashboard_user=arwdDxtm/supabase_auth_admin}",
+        "rls": false,
+        "kind": "r",
+        "name": "custom_oauth_providers",
+        "owner": "supabase_auth_admin",
+        "schema": "auth",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=ar*wdDxtm/supabase_auth_admin,supabase_auth_admin=arwdDxtm/supabase_auth_admin,dashboard_user=arwdDxtm/supabase_auth_admin}",
+        "rls": true,
+        "kind": "r",
+        "name": "flow_state",
+        "owner": "supabase_auth_admin",
+        "schema": "auth",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=ar*wdDxtm/supabase_auth_admin,supabase_auth_admin=arwdDxtm/supabase_auth_admin,dashboard_user=arwdDxtm/supabase_auth_admin}",
+        "rls": true,
+        "kind": "r",
+        "name": "identities",
+        "owner": "supabase_auth_admin",
+        "schema": "auth",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{supabase_auth_admin=arwdDxtm/supabase_auth_admin,dashboard_user=arwdDxtm/supabase_auth_admin,postgres=ar*wdDxtm/supabase_auth_admin}",
+        "rls": true,
+        "kind": "r",
+        "name": "instances",
+        "owner": "supabase_auth_admin",
+        "schema": "auth",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=ar*wdDxtm/supabase_auth_admin,supabase_auth_admin=arwdDxtm/supabase_auth_admin,dashboard_user=arwdDxtm/supabase_auth_admin}",
+        "rls": true,
+        "kind": "r",
+        "name": "mfa_amr_claims",
+        "owner": "supabase_auth_admin",
+        "schema": "auth",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=ar*wdDxtm/supabase_auth_admin,supabase_auth_admin=arwdDxtm/supabase_auth_admin,dashboard_user=arwdDxtm/supabase_auth_admin}",
+        "rls": true,
+        "kind": "r",
+        "name": "mfa_challenges",
+        "owner": "supabase_auth_admin",
+        "schema": "auth",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=ar*wdDxtm/supabase_auth_admin,supabase_auth_admin=arwdDxtm/supabase_auth_admin,dashboard_user=arwdDxtm/supabase_auth_admin}",
+        "rls": true,
+        "kind": "r",
+        "name": "mfa_factors",
+        "owner": "supabase_auth_admin",
+        "schema": "auth",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/supabase_auth_admin,supabase_auth_admin=arwdDxtm/supabase_auth_admin,dashboard_user=arwdDxtm/supabase_auth_admin}",
+        "rls": false,
+        "kind": "r",
+        "name": "mfa_recovery_code_sets",
+        "owner": "supabase_auth_admin",
+        "schema": "auth",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/supabase_auth_admin,supabase_auth_admin=arwdDxtm/supabase_auth_admin,dashboard_user=arwdDxtm/supabase_auth_admin}",
+        "rls": false,
+        "kind": "r",
+        "name": "mfa_recovery_codes",
+        "owner": "supabase_auth_admin",
+        "schema": "auth",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/supabase_auth_admin,supabase_auth_admin=arwdDxtm/supabase_auth_admin,dashboard_user=arwdDxtm/supabase_auth_admin}",
+        "rls": false,
+        "kind": "r",
+        "name": "oauth_authorizations",
+        "owner": "supabase_auth_admin",
+        "schema": "auth",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/supabase_auth_admin,supabase_auth_admin=arwdDxtm/supabase_auth_admin,dashboard_user=arwdDxtm/supabase_auth_admin}",
+        "rls": false,
+        "kind": "r",
+        "name": "oauth_client_states",
+        "owner": "supabase_auth_admin",
+        "schema": "auth",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/supabase_auth_admin,supabase_auth_admin=arwdDxtm/supabase_auth_admin,dashboard_user=arwdDxtm/supabase_auth_admin}",
+        "rls": false,
+        "kind": "r",
+        "name": "oauth_clients",
+        "owner": "supabase_auth_admin",
+        "schema": "auth",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/supabase_auth_admin,supabase_auth_admin=arwdDxtm/supabase_auth_admin,dashboard_user=arwdDxtm/supabase_auth_admin}",
+        "rls": false,
+        "kind": "r",
+        "name": "oauth_consents",
+        "owner": "supabase_auth_admin",
+        "schema": "auth",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=ar*wdDxtm/supabase_auth_admin,supabase_auth_admin=arwdDxtm/supabase_auth_admin,dashboard_user=arwdDxtm/supabase_auth_admin}",
+        "rls": true,
+        "kind": "r",
+        "name": "one_time_tokens",
+        "owner": "supabase_auth_admin",
+        "schema": "auth",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{supabase_auth_admin=arwdDxtm/supabase_auth_admin,dashboard_user=arwdDxtm/supabase_auth_admin,postgres=ar*wdDxtm/supabase_auth_admin}",
+        "rls": true,
+        "kind": "r",
+        "name": "refresh_tokens",
+        "owner": "supabase_auth_admin",
+        "schema": "auth",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{supabase_auth_admin=rwU/supabase_auth_admin,dashboard_user=rwU/supabase_auth_admin,postgres=rwU/supabase_auth_admin}",
+        "rls": false,
+        "kind": "S",
+        "name": "refresh_tokens_id_seq",
+        "owner": "supabase_auth_admin",
+        "schema": "auth",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=ar*wdDxtm/supabase_auth_admin,supabase_auth_admin=arwdDxtm/supabase_auth_admin,dashboard_user=arwdDxtm/supabase_auth_admin}",
+        "rls": true,
+        "kind": "r",
+        "name": "saml_providers",
+        "owner": "supabase_auth_admin",
+        "schema": "auth",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=ar*wdDxtm/supabase_auth_admin,supabase_auth_admin=arwdDxtm/supabase_auth_admin,dashboard_user=arwdDxtm/supabase_auth_admin}",
+        "rls": true,
+        "kind": "r",
+        "name": "saml_relay_states",
+        "owner": "supabase_auth_admin",
+        "schema": "auth",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{supabase_auth_admin=arwdDxtm/supabase_auth_admin,postgres=r*/supabase_auth_admin}",
+        "rls": true,
+        "kind": "r",
+        "name": "schema_migrations",
+        "owner": "supabase_auth_admin",
+        "schema": "auth",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/supabase_auth_admin,supabase_auth_admin=arwdDxtm/supabase_auth_admin,dashboard_user=arwdDxtm/supabase_auth_admin}",
+        "rls": false,
+        "kind": "r",
+        "name": "scim_tokens",
+        "owner": "supabase_auth_admin",
+        "schema": "auth",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/supabase_auth_admin,supabase_auth_admin=arwdDxtm/supabase_auth_admin,dashboard_user=arwdDxtm/supabase_auth_admin}",
+        "rls": false,
+        "kind": "r",
+        "name": "scim_users",
+        "owner": "supabase_auth_admin",
+        "schema": "auth",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=ar*wdDxtm/supabase_auth_admin,supabase_auth_admin=arwdDxtm/supabase_auth_admin,dashboard_user=arwdDxtm/supabase_auth_admin}",
+        "rls": true,
+        "kind": "r",
+        "name": "sessions",
+        "owner": "supabase_auth_admin",
+        "schema": "auth",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=ar*wdDxtm/supabase_auth_admin,supabase_auth_admin=arwdDxtm/supabase_auth_admin,dashboard_user=arwdDxtm/supabase_auth_admin}",
+        "rls": true,
+        "kind": "r",
+        "name": "sso_domains",
+        "owner": "supabase_auth_admin",
+        "schema": "auth",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=ar*wdDxtm/supabase_auth_admin,supabase_auth_admin=arwdDxtm/supabase_auth_admin,dashboard_user=arwdDxtm/supabase_auth_admin}",
+        "rls": true,
+        "kind": "r",
+        "name": "sso_providers",
+        "owner": "supabase_auth_admin",
+        "schema": "auth",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{supabase_auth_admin=arwdDxtm/supabase_auth_admin,dashboard_user=arwdDxtm/supabase_auth_admin,postgres=ar*wdDxtm/supabase_auth_admin}",
+        "rls": true,
+        "kind": "r",
+        "name": "users",
+        "owner": "supabase_auth_admin",
+        "schema": "auth",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/supabase_auth_admin,supabase_auth_admin=arwdDxtm/supabase_auth_admin,dashboard_user=arwdDxtm/supabase_auth_admin}",
+        "rls": false,
+        "kind": "r",
+        "name": "webauthn_challenges",
+        "owner": "supabase_auth_admin",
+        "schema": "auth",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/supabase_auth_admin,supabase_auth_admin=arwdDxtm/supabase_auth_admin,dashboard_user=arwdDxtm/supabase_auth_admin}",
+        "rls": false,
+        "kind": "r",
+        "name": "webauthn_credentials",
+        "owner": "supabase_auth_admin",
+        "schema": "auth",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "audit",
+        "owner": "postgres",
+        "schema": "community_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=rwU/postgres}",
+        "rls": false,
+        "kind": "S",
+        "name": "audit_id_seq",
+        "owner": "postgres",
+        "schema": "community_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "receipts",
+        "owner": "postgres",
+        "schema": "community_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "reviewers",
+        "owner": "postgres",
+        "schema": "community_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "settings",
+        "owner": "postgres",
+        "schema": "community_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "submissions",
+        "owner": "postgres",
+        "schema": "community_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": null,
+        "rls": true,
+        "kind": "r",
+        "name": "mobile_accounts",
+        "owner": "postgres",
+        "schema": "identity_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": null,
+        "rls": true,
+        "kind": "r",
+        "name": "mobile_attempts",
+        "owner": "postgres",
+        "schema": "identity_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": null,
+        "rls": true,
+        "kind": "r",
+        "name": "mobile_login_proofs",
+        "owner": "postgres",
+        "schema": "identity_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "audit",
+        "owner": "postgres",
+        "schema": "knowledge_review_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "candidate_assertions",
+        "owner": "postgres",
+        "schema": "knowledge_review_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "candidates",
+        "owner": "postgres",
+        "schema": "knowledge_review_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "members",
+        "owner": "postgres",
+        "schema": "knowledge_review_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "ontology_relations",
+        "owner": "postgres",
+        "schema": "knowledge_review_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "ontology_types",
+        "owner": "postgres",
+        "schema": "knowledge_review_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "publication_audit",
+        "owner": "postgres",
+        "schema": "knowledge_review_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "publication_settings",
+        "owner": "postgres",
+        "schema": "knowledge_review_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "publications",
+        "owner": "postgres",
+        "schema": "knowledge_review_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "receipts",
+        "owner": "postgres",
+        "schema": "knowledge_review_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "settings",
+        "owner": "postgres",
+        "schema": "knowledge_review_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "source_revisions",
+        "owner": "postgres",
+        "schema": "knowledge_review_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "statement_sources",
+        "owner": "postgres",
+        "schema": "knowledge_review_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "statements",
+        "owner": "postgres",
+        "schema": "knowledge_review_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "wiki_generation_jobs",
+        "owner": "postgres",
+        "schema": "knowledge_review_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "wiki_page_revisions",
+        "owner": "postgres",
+        "schema": "knowledge_review_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "wiki_pages",
+        "owner": "postgres",
+        "schema": "knowledge_review_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "wiki_statement_candidates",
+        "owner": "postgres",
+        "schema": "knowledge_review_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "usage",
+        "owner": "postgres",
+        "schema": "place_quota_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "trip_deletions",
+        "owner": "postgres",
+        "schema": "privacy_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,service_role=ar/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "audit_events",
+        "owner": "postgres",
+        "schema": "private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "canonical_pois",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "chat_threads",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "chat_turn_events",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "chat_turn_idempotency",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "connection_probe_resources",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "fact_records",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "memory_consents",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "memory_consumer_receipts",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "memory_profiles",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "memory_receipts",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "model_budget_attempts",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "model_budget_provider_limits",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "model_budget_scopes",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "privacy_receipts",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "privacy_requests",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "provider_poi_mappings",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "review_probe_changes",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "travel_reminders",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "trip_action_references",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "trip_archives",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,authenticated=rDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "trip_audit_events",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "trip_days",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,authenticated=rDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "trip_events",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,authenticated=rDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "trip_idempotency",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "trip_items",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "trip_place_references",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,authenticated=arDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "trip_proposals",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "trip_version_snapshots",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,authenticated=arDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "trips",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "turn_feedback",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,authenticated=rwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "turns",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "user_profiles",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "v4_migration_baseline",
+        "owner": "postgres",
+        "schema": "public",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "applications",
+        "owner": "postgres",
+        "schema": "research_intake_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "events",
+        "owner": "postgres",
+        "schema": "research_intake_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=rwU/postgres}",
+        "rls": false,
+        "kind": "S",
+        "name": "events_id_seq",
+        "owner": "postgres",
+        "schema": "research_intake_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "receipts",
+        "owner": "postgres",
+        "schema": "research_intake_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "settings",
+        "owner": "postgres",
+        "schema": "research_intake_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "audit",
+        "owner": "postgres",
+        "schema": "service_cases_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "cases",
+        "owner": "postgres",
+        "schema": "service_cases_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "staff",
+        "owner": "postgres",
+        "schema": "service_cases_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{supabase_storage_admin=a*r*w*d*D*x*t*m*/supabase_storage_admin,service_role=arwdDxtm/supabase_storage_admin,authenticated=arwdDxtm/supabase_storage_admin,anon=arwdDxtm/supabase_storage_admin,postgres=a*r*w*d*D*x*t*m*/supabase_storage_admin}",
+        "rls": true,
+        "kind": "r",
+        "name": "buckets",
+        "owner": "supabase_storage_admin",
+        "schema": "storage",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{supabase_storage_admin=arwdDxtm/supabase_storage_admin,service_role=arwdDxtm/supabase_storage_admin,authenticated=arwdDxtm/supabase_storage_admin,anon=arwdDxtm/supabase_storage_admin}",
+        "rls": true,
+        "kind": "r",
+        "name": "buckets_analytics",
+        "owner": "supabase_storage_admin",
+        "schema": "storage",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{supabase_storage_admin=arwdDxtm/supabase_storage_admin,service_role=r/supabase_storage_admin,authenticated=r/supabase_storage_admin,anon=r/supabase_storage_admin}",
+        "rls": true,
+        "kind": "r",
+        "name": "buckets_vectors",
+        "owner": "supabase_storage_admin",
+        "schema": "storage",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": null,
+        "rls": true,
+        "kind": "r",
+        "name": "migrations",
+        "owner": "supabase_storage_admin",
+        "schema": "storage",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{supabase_storage_admin=a*r*w*d*D*x*t*m*/supabase_storage_admin,service_role=arwdDxtm/supabase_storage_admin,authenticated=arwdDxtm/supabase_storage_admin,anon=arwdDxtm/supabase_storage_admin,postgres=a*r*w*d*D*x*t*m*/supabase_storage_admin}",
+        "rls": true,
+        "kind": "r",
+        "name": "objects",
+        "owner": "supabase_storage_admin",
+        "schema": "storage",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{supabase_storage_admin=arwdDxtm/supabase_storage_admin,service_role=arwdDxtm/supabase_storage_admin,authenticated=r/supabase_storage_admin,anon=r/supabase_storage_admin}",
+        "rls": true,
+        "kind": "r",
+        "name": "s3_multipart_uploads",
+        "owner": "supabase_storage_admin",
+        "schema": "storage",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{supabase_storage_admin=arwdDxtm/supabase_storage_admin,service_role=arwdDxtm/supabase_storage_admin,authenticated=r/supabase_storage_admin,anon=r/supabase_storage_admin}",
+        "rls": true,
+        "kind": "r",
+        "name": "s3_multipart_uploads_parts",
+        "owner": "supabase_storage_admin",
+        "schema": "storage",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{supabase_storage_admin=arwdDxtm/supabase_storage_admin,service_role=r/supabase_storage_admin,authenticated=r/supabase_storage_admin,anon=r/supabase_storage_admin}",
+        "rls": true,
+        "kind": "r",
+        "name": "vector_indexes",
+        "owner": "supabase_storage_admin",
+        "schema": "storage",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "kind": "r",
+        "name": "schema_migrations",
+        "owner": "postgres",
+        "schema": "supabase_migrations",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "grounded_ai_assist_jobs",
+        "owner": "postgres",
+        "schema": "turn_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "grounded_turns",
+        "owner": "postgres",
+        "schema": "turn_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "hosted_worker_control",
+        "owner": "postgres",
+        "schema": "turn_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "hosted_worker_heartbeats",
+        "owner": "postgres",
+        "schema": "turn_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "service_task_turns",
+        "owner": "postgres",
+        "schema": "turn_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "service_tasks",
+        "owner": "postgres",
+        "schema": "turn_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "text_consents",
+        "owner": "postgres",
+        "schema": "turn_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "text_content",
+        "owner": "postgres",
+        "schema": "turn_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "text_dispatches",
+        "owner": "postgres",
+        "schema": "turn_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "text_policies",
+        "owner": "postgres",
+        "schema": "turn_private",
+        "select": false,
+        "force_rls": false
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "kind": "r",
+        "name": "work",
+        "owner": "postgres",
+        "schema": "turn_private",
+        "select": false,
+        "force_rls": false
+      }
+    ],
+    "extensions": [
+      {
+        "name": "pg_stat_statements",
+        "owner": "postgres",
+        "schema": "extensions",
+        "version": "1.11"
+      },
+      {
+        "name": "pgcrypto",
+        "owner": "postgres",
+        "schema": "extensions",
+        "version": "1.3"
+      },
+      {
+        "name": "plpgsql",
+        "owner": "supabase_admin",
+        "schema": "pg_catalog",
+        "version": "1.0"
+      },
+      {
+        "name": "supabase_vault",
+        "owner": "supabase_admin",
+        "schema": "vault",
+        "version": "0.3.1"
+      },
+      {
+        "name": "uuid-ossp",
+        "owner": "postgres",
+        "schema": "extensions",
+        "version": "1.1"
+      }
+    ],
+    "schema_acl": [
+      {
+        "acl": "{supabase_admin=UC/supabase_admin,anon=U/supabase_admin,authenticated=U/supabase_admin,service_role=U/supabase_admin,supabase_auth_admin=UC/supabase_admin,dashboard_user=UC/supabase_admin,postgres=U/supabase_admin}",
+        "owner": "supabase_admin",
+        "usage": false,
+        "schema": "auth"
+      },
+      {
+        "acl": "{postgres=UC/postgres}",
+        "owner": "postgres",
+        "usage": false,
+        "schema": "community_private"
+      },
+      {
+        "acl": "{postgres=UC/postgres,anon=U/postgres,authenticated=U/postgres,service_role=U/postgres,dashboard_user=UC/postgres}",
+        "owner": "postgres",
+        "usage": false,
+        "schema": "extensions"
+      },
+      {
+        "acl": "{supabase_admin=UC/supabase_admin,postgres=U*/supabase_admin,anon=U/supabase_admin,authenticated=U/supabase_admin,service_role=U/supabase_admin}",
+        "owner": "supabase_admin",
+        "usage": false,
+        "schema": "graphql"
+      },
+      {
+        "acl": "{supabase_admin=UC/supabase_admin,postgres=U*/supabase_admin,anon=U/supabase_admin,authenticated=U/supabase_admin,service_role=U/supabase_admin}",
+        "owner": "supabase_admin",
+        "usage": false,
+        "schema": "graphql_public"
+      },
+      {
+        "acl": "{postgres=UC/postgres,service_role=U/postgres,authenticated=U/postgres}",
+        "owner": "postgres",
+        "usage": false,
+        "schema": "identity_private"
+      },
+      {
+        "acl": "{postgres=UC/postgres}",
+        "owner": "postgres",
+        "usage": false,
+        "schema": "knowledge_review_private"
+      },
+      {
+        "acl": "{postgres=UC/postgres,authenticated=U/postgres}",
+        "owner": "postgres",
+        "usage": false,
+        "schema": "ops_budget_private"
+      },
+      {
+        "acl": null,
+        "owner": "pgbouncer",
+        "usage": false,
+        "schema": "pgbouncer"
+      },
+      {
+        "acl": "{postgres=UC/postgres}",
+        "owner": "postgres",
+        "usage": false,
+        "schema": "place_quota_private"
+      },
+      {
+        "acl": "{postgres=UC/postgres}",
+        "owner": "postgres",
+        "usage": false,
+        "schema": "privacy_private"
+      },
+      {
+        "acl": "{postgres=UC/postgres,service_role=U/postgres}",
+        "owner": "postgres",
+        "usage": false,
+        "schema": "private"
+      },
+      {
+        "acl": "{pg_database_owner=UC/pg_database_owner,=U/pg_database_owner,postgres=U/pg_database_owner,anon=U/pg_database_owner,authenticated=U/pg_database_owner,service_role=U/pg_database_owner}",
+        "owner": "pg_database_owner",
+        "usage": true,
+        "schema": "public"
+      },
+      {
+        "acl": "{supabase_admin=UC/supabase_admin,postgres=U*/supabase_admin,anon=U/supabase_admin,service_role=U/supabase_admin,supabase_realtime_admin=UC/supabase_admin,authenticated=U/supabase_admin}",
+        "owner": "supabase_admin",
+        "usage": false,
+        "schema": "realtime"
+      },
+      {
+        "acl": "{postgres=UC/postgres}",
+        "owner": "postgres",
+        "usage": false,
+        "schema": "research_intake_private"
+      },
+      {
+        "acl": "{postgres=UC/postgres}",
+        "owner": "postgres",
+        "usage": false,
+        "schema": "service_cases_private"
+      },
+      {
+        "acl": "{supabase_admin=UC/supabase_admin,postgres=U*/supabase_admin,anon=U/supabase_admin,authenticated=U/supabase_admin,service_role=U/supabase_admin,supabase_storage_admin=U*C*/supabase_admin,dashboard_user=UC/supabase_admin}",
+        "owner": "supabase_admin",
+        "usage": false,
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "owner": "postgres",
+        "usage": false,
+        "schema": "supabase_migrations"
+      },
+      {
+        "acl": "{postgres=UC/postgres}",
+        "owner": "postgres",
+        "usage": false,
+        "schema": "turn_private"
+      },
+      {
+        "acl": "{supabase_admin=UC/supabase_admin,postgres=U*/supabase_admin,service_role=U/supabase_admin}",
+        "owner": "supabase_admin",
+        "usage": false,
+        "schema": "vault"
+      }
+    ],
+    "default_acl": [
+      {
+        "acl": "{postgres=rwU/supabase_admin,anon=rwU/supabase_admin,authenticated=rwU/supabase_admin,service_role=rwU/supabase_admin}",
+        "type": "S",
+        "owner": "supabase_admin",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/supabase_admin,anon=X/supabase_admin,authenticated=X/supabase_admin,service_role=X/supabase_admin}",
+        "type": "f",
+        "owner": "supabase_admin",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=arwdDxtm/supabase_admin,anon=arwdDxtm/supabase_admin,authenticated=arwdDxtm/supabase_admin,service_role=arwdDxtm/supabase_admin}",
+        "type": "r",
+        "owner": "supabase_admin",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=r*w*U*/supabase_admin}",
+        "type": "S",
+        "owner": "supabase_admin",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{postgres=X*/supabase_admin}",
+        "type": "f",
+        "owner": "supabase_admin",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{postgres=a*r*w*d*D*x*t*m*/supabase_admin}",
+        "type": "r",
+        "owner": "supabase_admin",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{postgres=rwU/supabase_admin,dashboard_user=rwU/supabase_admin}",
+        "type": "S",
+        "owner": "supabase_admin",
+        "schema": "realtime"
+      },
+      {
+        "acl": "{postgres=X/supabase_admin,dashboard_user=X/supabase_admin}",
+        "type": "f",
+        "owner": "supabase_admin",
+        "schema": "realtime"
+      },
+      {
+        "acl": "{postgres=a*r*wdDxtm/supabase_admin,dashboard_user=arwdDxtm/supabase_admin}",
+        "type": "r",
+        "owner": "supabase_admin",
+        "schema": "realtime"
+      },
+      {
+        "acl": "{postgres=rwU/supabase_admin,anon=rwU/supabase_admin,authenticated=rwU/supabase_admin,service_role=rwU/supabase_admin}",
+        "type": "S",
+        "owner": "supabase_admin",
+        "schema": "graphql_public"
+      },
+      {
+        "acl": "{postgres=X/supabase_admin,anon=X/supabase_admin,authenticated=X/supabase_admin,service_role=X/supabase_admin}",
+        "type": "f",
+        "owner": "supabase_admin",
+        "schema": "graphql_public"
+      },
+      {
+        "acl": "{postgres=arwdDxtm/supabase_admin,anon=arwdDxtm/supabase_admin,authenticated=arwdDxtm/supabase_admin,service_role=arwdDxtm/supabase_admin}",
+        "type": "r",
+        "owner": "supabase_admin",
+        "schema": "graphql_public"
+      },
+      {
+        "acl": "{postgres=rwU/supabase_admin,anon=rwU/supabase_admin,authenticated=rwU/supabase_admin,service_role=rwU/supabase_admin}",
+        "type": "S",
+        "owner": "supabase_admin",
+        "schema": "graphql"
+      },
+      {
+        "acl": "{postgres=X/supabase_admin,anon=X/supabase_admin,authenticated=X/supabase_admin,service_role=X/supabase_admin}",
+        "type": "f",
+        "owner": "supabase_admin",
+        "schema": "graphql"
+      },
+      {
+        "acl": "{postgres=arwdDxtm/supabase_admin,anon=arwdDxtm/supabase_admin,authenticated=arwdDxtm/supabase_admin,service_role=arwdDxtm/supabase_admin}",
+        "type": "r",
+        "owner": "supabase_admin",
+        "schema": "graphql"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "type": "f",
+        "owner": "postgres",
+        "schema": "GLOBAL"
+      },
+      {
+        "acl": "{postgres=rwU/postgres,anon=rwU/postgres,authenticated=rwU/postgres,service_role=rwU/postgres}",
+        "type": "S",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "type": "f",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "type": "r",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=rwU/postgres,anon=rwU/postgres,authenticated=rwU/postgres,service_role=rwU/postgres}",
+        "type": "S",
+        "owner": "postgres",
+        "schema": "storage"
+      },
+      {
+        "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "type": "f",
+        "owner": "postgres",
+        "schema": "storage"
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "type": "r",
+        "owner": "postgres",
+        "schema": "storage"
+      },
+      {
+        "acl": "{postgres=rwU/supabase_auth_admin,dashboard_user=rwU/supabase_auth_admin}",
+        "type": "S",
+        "owner": "supabase_auth_admin",
+        "schema": "auth"
+      },
+      {
+        "acl": "{postgres=X/supabase_auth_admin,dashboard_user=X/supabase_auth_admin}",
+        "type": "f",
+        "owner": "supabase_auth_admin",
+        "schema": "auth"
+      },
+      {
+        "acl": "{postgres=arwdDxtm/supabase_auth_admin,dashboard_user=arwdDxtm/supabase_auth_admin}",
+        "type": "r",
+        "owner": "supabase_auth_admin",
+        "schema": "auth"
+      }
+    ],
+    "memberships": [
+      {
+        "set": true,
+        "role": "pg_monitor",
+        "admin": true,
+        "member": "postgres",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "pg_monitor",
+        "admin": false,
+        "member": "supabase_etl_admin",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "pg_monitor",
+        "admin": false,
+        "member": "supabase_read_only_user",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "pg_read_all_settings",
+        "admin": false,
+        "member": "pg_monitor",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "pg_read_all_stats",
+        "admin": false,
+        "member": "pg_monitor",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "pg_stat_scan_tables",
+        "admin": false,
+        "member": "pg_monitor",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "pg_signal_backend",
+        "admin": true,
+        "member": "postgres",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "pg_read_all_data",
+        "admin": true,
+        "member": "postgres",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "pg_read_all_data",
+        "admin": false,
+        "member": "supabase_etl_admin",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "pg_read_all_data",
+        "admin": false,
+        "member": "supabase_read_only_user",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "pg_create_subscription",
+        "admin": true,
+        "member": "postgres",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "postgres",
+        "admin": false,
+        "member": "cli_login_postgres",
+        "inherit": false
+      },
+      {
+        "set": true,
+        "role": "anon",
+        "admin": true,
+        "member": "postgres",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "anon",
+        "admin": false,
+        "member": "authenticator",
+        "inherit": false
+      },
+      {
+        "set": true,
+        "role": "anon",
+        "admin": false,
+        "member": "supabase_realtime_admin",
+        "inherit": false
+      },
+      {
+        "set": true,
+        "role": "authenticated",
+        "admin": true,
+        "member": "postgres",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "authenticated",
+        "admin": false,
+        "member": "authenticator",
+        "inherit": false
+      },
+      {
+        "set": true,
+        "role": "authenticated",
+        "admin": false,
+        "member": "supabase_realtime_admin",
+        "inherit": false
+      },
+      {
+        "set": true,
+        "role": "service_role",
+        "admin": true,
+        "member": "postgres",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "service_role",
+        "admin": false,
+        "member": "authenticator",
+        "inherit": false
+      },
+      {
+        "set": true,
+        "role": "service_role",
+        "admin": false,
+        "member": "supabase_realtime_admin",
+        "inherit": false
+      },
+      {
+        "set": true,
+        "role": "authenticator",
+        "admin": true,
+        "member": "postgres",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "authenticator",
+        "admin": false,
+        "member": "supabase_storage_admin",
+        "inherit": false
+      },
+      {
+        "set": true,
+        "role": "supabase_privileged_role",
+        "admin": false,
+        "member": "postgres",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "supabase_privileged_role",
+        "admin": false,
+        "member": "supabase_etl_admin",
+        "inherit": true
+      }
+    ],
+    "current_user": "cli_login_postgres",
+    "function_acl": [
+      {
+        "acl": "{=X/supabase_auth_admin,supabase_auth_admin=X/supabase_auth_admin,dashboard_user=X/supabase_auth_admin}",
+        "args": "",
+        "name": "email",
+        "owner": "supabase_auth_admin",
+        "schema": "auth"
+      },
+      {
+        "acl": "{=X/supabase_auth_admin,postgres=X/supabase_auth_admin,supabase_auth_admin=X/supabase_auth_admin,dashboard_user=X/supabase_auth_admin}",
+        "args": "",
+        "name": "jwt",
+        "owner": "supabase_auth_admin",
+        "schema": "auth"
+      },
+      {
+        "acl": "{=X/supabase_auth_admin,supabase_auth_admin=X/supabase_auth_admin,dashboard_user=X/supabase_auth_admin}",
+        "args": "",
+        "name": "role",
+        "owner": "supabase_auth_admin",
+        "schema": "auth"
+      },
+      {
+        "acl": "{=X/supabase_auth_admin,supabase_auth_admin=X/supabase_auth_admin,dashboard_user=X/supabase_auth_admin}",
+        "args": "",
+        "name": "uid",
+        "owner": "supabase_auth_admin",
+        "schema": "auth"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "",
+        "name": "current_actor",
+        "owner": "postgres",
+        "schema": "community_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "p_id uuid, p_internal boolean",
+        "name": "submission_json",
+        "owner": "postgres",
+        "schema": "community_private"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "bytea",
+        "name": "armor",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "bytea, text[], text[]",
+        "name": "armor",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "text, text",
+        "name": "crypt",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "text",
+        "name": "dearmor",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "bytea, bytea, text",
+        "name": "decrypt",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "bytea, bytea, bytea, text",
+        "name": "decrypt_iv",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "text, text",
+        "name": "digest",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "bytea, text",
+        "name": "digest",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "bytea, bytea, text",
+        "name": "encrypt",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "bytea, bytea, bytea, text",
+        "name": "encrypt_iv",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "integer",
+        "name": "gen_random_bytes",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "",
+        "name": "gen_random_uuid",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "text",
+        "name": "gen_salt",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "text, integer",
+        "name": "gen_salt",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/supabase_admin,supabase_admin=X*/supabase_admin,dashboard_user=X/supabase_admin}",
+        "args": "",
+        "name": "grant_pg_cron_access",
+        "owner": "supabase_admin",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/supabase_admin,supabase_admin=X/supabase_admin,postgres=X*/supabase_admin}",
+        "args": "",
+        "name": "grant_pg_graphql_access",
+        "owner": "supabase_admin",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/supabase_admin,supabase_admin=X*/supabase_admin,dashboard_user=X/supabase_admin}",
+        "args": "",
+        "name": "grant_pg_net_access",
+        "owner": "supabase_admin",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "text, text, text",
+        "name": "hmac",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "bytea, bytea, text",
+        "name": "hmac",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "showtext boolean, OUT userid oid, OUT dbid oid, OUT toplevel boolean, OUT queryid bigint, OUT query text, OUT plans bigint, OUT total_plan_time double precision, OUT min_plan_time double precision, OUT max_plan_time double precision, OUT mean_plan_time double precision, OUT stddev_plan_time double precision, OUT calls bigint, OUT total_exec_time double precision, OUT min_exec_time double precision, OUT max_exec_time double precision, OUT mean_exec_time double precision, OUT stddev_exec_time double precision, OUT rows bigint, OUT shared_blks_hit bigint, OUT shared_blks_read bigint, OUT shared_blks_dirtied bigint, OUT shared_blks_written bigint, OUT local_blks_hit bigint, OUT local_blks_read bigint, OUT local_blks_dirtied bigint, OUT local_blks_written bigint, OUT temp_blks_read bigint, OUT temp_blks_written bigint, OUT shared_blk_read_time double precision, OUT shared_blk_write_time double precision, OUT local_blk_read_time double precision, OUT local_blk_write_time double precision, OUT temp_blk_read_time double precision, OUT temp_blk_write_time double precision, OUT wal_records bigint, OUT wal_fpi bigint, OUT wal_bytes numeric, OUT jit_functions bigint, OUT jit_generation_time double precision, OUT jit_inlining_count bigint, OUT jit_inlining_time double precision, OUT jit_optimization_count bigint, OUT jit_optimization_time double precision, OUT jit_emission_count bigint, OUT jit_emission_time double precision, OUT jit_deform_count bigint, OUT jit_deform_time double precision, OUT stats_since timestamp with time zone, OUT minmax_stats_since timestamp with time zone",
+        "name": "pg_stat_statements",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "OUT dealloc bigint, OUT stats_reset timestamp with time zone",
+        "name": "pg_stat_statements_info",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "userid oid, dbid oid, queryid bigint, minmax_only boolean",
+        "name": "pg_stat_statements_reset",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "text, OUT key text, OUT value text",
+        "name": "pgp_armor_headers",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "bytea",
+        "name": "pgp_key_id",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "bytea, bytea",
+        "name": "pgp_pub_decrypt",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "bytea, bytea, text",
+        "name": "pgp_pub_decrypt",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "bytea, bytea, text, text",
+        "name": "pgp_pub_decrypt",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "bytea, bytea",
+        "name": "pgp_pub_decrypt_bytea",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "bytea, bytea, text",
+        "name": "pgp_pub_decrypt_bytea",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "bytea, bytea, text, text",
+        "name": "pgp_pub_decrypt_bytea",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "text, bytea",
+        "name": "pgp_pub_encrypt",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "text, bytea, text",
+        "name": "pgp_pub_encrypt",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "bytea, bytea",
+        "name": "pgp_pub_encrypt_bytea",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "bytea, bytea, text",
+        "name": "pgp_pub_encrypt_bytea",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "bytea, text",
+        "name": "pgp_sym_decrypt",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "bytea, text, text",
+        "name": "pgp_sym_decrypt",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "bytea, text",
+        "name": "pgp_sym_decrypt_bytea",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "bytea, text, text",
+        "name": "pgp_sym_decrypt_bytea",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "text, text",
+        "name": "pgp_sym_encrypt",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "text, text, text",
+        "name": "pgp_sym_encrypt",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "bytea, text",
+        "name": "pgp_sym_encrypt_bytea",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "bytea, text, text",
+        "name": "pgp_sym_encrypt_bytea",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/supabase_admin,supabase_admin=X/supabase_admin,postgres=X*/supabase_admin}",
+        "args": "",
+        "name": "pgrst_ddl_watch",
+        "owner": "supabase_admin",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/supabase_admin,supabase_admin=X/supabase_admin,postgres=X*/supabase_admin}",
+        "args": "",
+        "name": "pgrst_drop_watch",
+        "owner": "supabase_admin",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/supabase_admin,supabase_admin=X/supabase_admin,postgres=X*/supabase_admin}",
+        "args": "",
+        "name": "set_graphql_placeholder",
+        "owner": "supabase_admin",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "",
+        "name": "uuid_generate_v1",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "",
+        "name": "uuid_generate_v1mc",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "namespace uuid, name text",
+        "name": "uuid_generate_v3",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "",
+        "name": "uuid_generate_v4",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "namespace uuid, name text",
+        "name": "uuid_generate_v5",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "",
+        "name": "uuid_nil",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "",
+        "name": "uuid_ns_dns",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "",
+        "name": "uuid_ns_oid",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "",
+        "name": "uuid_ns_url",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X*/postgres,dashboard_user=X/postgres}",
+        "args": "",
+        "name": "uuid_ns_x500",
+        "owner": "postgres",
+        "schema": "extensions"
+      },
+      {
+        "acl": "{=X/supabase_admin,supabase_admin=X/supabase_admin,postgres=X/supabase_admin,anon=X/supabase_admin,authenticated=X/supabase_admin,service_role=X/supabase_admin}",
+        "args": "\"operationName\" text, query text, variables jsonb, extensions jsonb",
+        "name": "graphql",
+        "owner": "supabase_admin",
+        "schema": "graphql_public"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "",
+        "name": "guard_mobile_rpc_v2",
+        "owner": "postgres",
+        "schema": "identity_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "",
+        "name": "guard_mobile_write_v2",
+        "owner": "postgres",
+        "schema": "identity_private"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "",
+        "name": "mobile_access_v2",
+        "owner": "postgres",
+        "schema": "identity_private"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_action text, p_attempt uuid",
+        "name": "mobile_session_v2",
+        "owner": "postgres",
+        "schema": "identity_private"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "p_owner uuid, p_session uuid, p_attempt uuid",
+        "name": "prepare_mobile_v2",
+        "owner": "postgres",
+        "schema": "identity_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "p_value jsonb, p_max integer",
+        "name": "bounded_text",
+        "owner": "postgres",
+        "schema": "knowledge_review_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "p_id uuid",
+        "name": "candidate_json",
+        "owner": "postgres",
+        "schema": "knowledge_review_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "p_id uuid",
+        "name": "candidate_json_before_wiki_v1",
+        "owner": "postgres",
+        "schema": "knowledge_review_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "v jsonb, keys text[]",
+        "name": "closed_object",
+        "owner": "postgres",
+        "schema": "knowledge_review_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "",
+        "name": "current_actor",
+        "owner": "postgres",
+        "schema": "knowledge_review_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "v jsonb",
+        "name": "identifier_list",
+        "owner": "postgres",
+        "schema": "knowledge_review_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "p_input jsonb",
+        "name": "ops_review_workspace",
+        "owner": "postgres",
+        "schema": "knowledge_review_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "p_input jsonb",
+        "name": "ops_review_workspace_before_wiki_v1",
+        "owner": "postgres",
+        "schema": "knowledge_review_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "p_input jsonb",
+        "name": "ops_review_workspace_publication_v1",
+        "owner": "postgres",
+        "schema": "knowledge_review_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "p_input jsonb",
+        "name": "ops_review_workspace_source_v1",
+        "owner": "postgres",
+        "schema": "knowledge_review_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "v text",
+        "name": "place_name",
+        "owner": "postgres",
+        "schema": "knowledge_review_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "p_name text, p_city text",
+        "name": "place_subject",
+        "owner": "postgres",
+        "schema": "knowledge_review_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "v jsonb, maximum integer",
+        "name": "place_text",
+        "owner": "postgres",
+        "schema": "knowledge_review_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "p_id text",
+        "name": "question_definition",
+        "owner": "postgres",
+        "schema": "knowledge_review_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "p_id text",
+        "name": "question_definition_general_v1",
+        "owner": "postgres",
+        "schema": "knowledge_review_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "p_input jsonb, p_basis jsonb",
+        "name": "resolve_question",
+        "owner": "postgres",
+        "schema": "knowledge_review_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "p_id text, p_city text, p_locale text, p_subject text",
+        "name": "selected_question_input",
+        "owner": "postgres",
+        "schema": "knowledge_review_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "s jsonb",
+        "name": "source_valid",
+        "owner": "postgres",
+        "schema": "knowledge_review_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "v jsonb",
+        "name": "statement_valid",
+        "owner": "postgres",
+        "schema": "knowledge_review_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "v jsonb",
+        "name": "statement_valid_v1",
+        "owner": "postgres",
+        "schema": "knowledge_review_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "v jsonb",
+        "name": "wiki_draft_valid",
+        "owner": "postgres",
+        "schema": "knowledge_review_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "v jsonb, known_sources uuid[]",
+        "name": "wiki_proposal_sources_valid",
+        "owner": "postgres",
+        "schema": "knowledge_review_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "v jsonb, max_units integer",
+        "name": "wiki_text_valid",
+        "owner": "postgres",
+        "schema": "knowledge_review_private"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_scope_id uuid",
+        "name": "read_ops_budget_scope_for_member_v1",
+        "owner": "postgres",
+        "schema": "ops_budget_private"
+      },
+      {
+        "acl": "{supabase_admin=X/supabase_admin,pgbouncer=X/supabase_admin}",
+        "args": "p_usename text",
+        "name": "get_auth",
+        "owner": "supabase_admin",
+        "schema": "pgbouncer"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "",
+        "name": "guard_trip_write",
+        "owner": "postgres",
+        "schema": "privacy_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "r privacy_private.trip_deletions",
+        "name": "trip_deletion_receipt",
+        "owner": "postgres",
+        "schema": "privacy_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "",
+        "name": "ai10_confirm_fault_trigger",
+        "owner": "postgres",
+        "schema": "private"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "p_owner_id uuid, p_fail boolean",
+        "name": "ai14_fault_probe",
+        "owner": "postgres",
+        "schema": "private"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "",
+        "name": "connection_probe_worker_count",
+        "owner": "postgres",
+        "schema": "private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "",
+        "name": "guard_archived_trip_content",
+        "owner": "postgres",
+        "schema": "private"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_policy_id uuid, p_notice_hash text",
+        "name": "accept_text_policy",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "p_turn_id uuid, p_event_id text, p_event_type text, p_state text",
+        "name": "append_chat_turn_event",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "p_current jsonb, p_patch jsonb",
+        "name": "apply_trip_content_patch",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "args": "p_trip_id uuid, p_expected_version integer, p_idempotency_key uuid, p_confirmed boolean",
+        "name": "archive_trip_v1",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "p_turn_id uuid, p_lease_token uuid, p_policy_id uuid, p_provider text, p_context_digest text",
+        "name": "authorize_grounded_dispatch",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "p_turn_id uuid, p_lease_token uuid, p_policy_id uuid, p_provider text",
+        "name": "authorize_text_dispatch",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "p_turn_id uuid, p_lease_token uuid, p_policy_id uuid, p_provider text, p_context_digest text",
+        "name": "authorize_text_task_dispatch",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "args": "p_turn_id uuid",
+        "name": "cancel_chat_turn",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "",
+        "name": "capture_initial_trip_version",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "p_owner_id uuid, p_policy_id uuid",
+        "name": "claim_grounded_work",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "p_owner_id uuid, p_policy_id uuid",
+        "name": "claim_text_task_work",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "p_owner_id uuid, p_policy_id uuid",
+        "name": "claim_text_work",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "",
+        "name": "claim_turn_work",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_input jsonb",
+        "name": "community_workspace",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "p_turn_id uuid, p_lease_token uuid, p_intent text, p_request_scope text, p_unanswered_needs text, p_place_name text",
+        "name": "complete_grounded_place_work",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "p_turn_id uuid, p_lease_token uuid, p_intent text, p_request_scope text",
+        "name": "complete_grounded_work",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "p_turn_id uuid, p_lease_token uuid, p_intent text, p_request_scope text, p_unanswered_needs text",
+        "name": "complete_grounded_work_with_needs",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "p_turn_id uuid, p_lease_token uuid, p_kind text, p_text text",
+        "name": "complete_text_work",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "args": "p_proposal_id uuid, p_idempotency_key text, p_digest text",
+        "name": "confirm_and_apply_trip_proposal",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "args": "",
+        "name": "connection_probe_ops_visible_count",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_bucket text, p_minute_limit integer, p_day_limit integer",
+        "name": "consume_place_quota_v1",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "args": "p_memory_id uuid, p_receipt_id uuid, p_consent_id uuid, p_constraint_kind text, p_summary text",
+        "name": "create_explicit_memory_profile",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "args": "",
+        "name": "create_memory_retrieval_consent",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "args": "p_trip_id uuid, p_patch jsonb",
+        "name": "create_trip_proposal_patch",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "args": "p_trip_id uuid, p_target_version integer",
+        "name": "create_trip_rollback_proposal",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "p_scope_id uuid, p_owner_id uuid, p_attempt_id uuid",
+        "name": "dispatch_model_budget",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "p_turn_id uuid, p_owner_id uuid, p_session_id uuid, p_lease_ms integer, p_max_attempts integer",
+        "name": "enqueue_turn_work",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "p_request_id uuid",
+        "name": "execute_trip_deletion_v1",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "p_scope_id uuid, p_owner_id uuid, p_attempt_id uuid, p_action text, p_actual_micros bigint",
+        "name": "finish_model_budget",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "p_turn_id uuid, p_lease_token uuid, p_outcome text",
+        "name": "finish_turn_work",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "args": "p_consent_id uuid",
+        "name": "grant_memory_retrieval_consent",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_input jsonb",
+        "name": "grounded_ai_assist_work_v1",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "p_worker_id uuid, p_build text, p_started_at timestamp with time zone, p_phase text, p_result text, p_polls bigint, p_finished bigint, p_unavailable bigint, p_skipped bigint, p_stop_reason text",
+        "name": "hosted_worker_heartbeat",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "p_limit integer",
+        "name": "hosted_worker_ready_groups",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_input jsonb",
+        "name": "knowledge_answer_v1",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_input jsonb",
+        "name": "knowledge_read_v1",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_policy_id uuid, p_limit integer",
+        "name": "list_grounded_turns",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_policy_id uuid, p_limit integer",
+        "name": "list_service_task_turns",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_policy_id uuid, p_limit integer",
+        "name": "list_text_turns",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "p_owner uuid, p_session uuid, p_attempt uuid",
+        "name": "native_prepare_v2",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "args": "p_action text, p_attempt uuid",
+        "name": "native_session_v2",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_scope_id uuid",
+        "name": "ops_budget_scope_read_v1",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_input jsonb",
+        "name": "ops_knowledge_provenance_read_v1",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_input jsonb",
+        "name": "ops_review_workspace",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_input jsonb",
+        "name": "ops_source_revision_withdraw_v1",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_input jsonb",
+        "name": "ops_wiki_generation_v1",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_input jsonb",
+        "name": "ops_wiki_read_v1",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_input jsonb",
+        "name": "ops_wiki_withdrawal_scan_v1",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_turn_id uuid",
+        "name": "read_grounded_ai_assist_context_v1",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_policy_id uuid, p_turn_id uuid, p_after_sequence bigint",
+        "name": "read_grounded_events",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_policy_id uuid",
+        "name": "read_grounded_policy",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_turn_id uuid",
+        "name": "read_grounded_turn",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "p_turn_id uuid, p_lease_token uuid",
+        "name": "read_grounded_work",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "",
+        "name": "read_hosted_worker_status",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "p_scope_id uuid",
+        "name": "read_ops_budget_scope_v1",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "args": "",
+        "name": "read_retrievable_memory_profiles",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_policy_id uuid",
+        "name": "read_text_policy",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_policy_id uuid",
+        "name": "read_text_task_policy",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_turn_id uuid",
+        "name": "read_text_turn",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "p_turn_id uuid, p_lease_token uuid",
+        "name": "read_text_work",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "args": "p_request_id uuid",
+        "name": "read_trip_deletion_v1",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "args": "p_proposal_id uuid",
+        "name": "read_trip_proposal_v2",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "args": "p_turn_id uuid, p_feedback_kind text, p_reason_code text",
+        "name": "record_turn_feedback",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "args": "p_proposal_id uuid",
+        "name": "reject_trip_proposal_v2",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "args": "p_request_id uuid, p_action text",
+        "name": "request_privacy_action",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "args": "p_request_id uuid, p_trip_id uuid, p_expected_version integer, p_confirmed boolean",
+        "name": "request_trip_deletion_v1",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "p_id uuid, p_event text",
+        "name": "research_intake_record_event_v1",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres}",
+        "args": "p_input jsonb",
+        "name": "research_intake_v1",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "p_scope_id uuid, p_owner_id uuid, p_task_id uuid, p_attempt_id uuid, p_provider text, p_model text, p_price_version text, p_reserved_micros bigint",
+        "name": "reserve_model_budget",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "args": "p_proposal_id uuid, p_title text",
+        "name": "revise_trip_proposal",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "args": "p_proposal_id uuid, p_patch jsonb",
+        "name": "revise_trip_proposal_patch",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "args": "p_consent_id uuid",
+        "name": "revoke_memory_retrieval_consent",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "",
+        "name": "rls_auto_enable",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "args": "p_display_name text, p_travel_pace text, p_locale text, p_currency text, p_distance_unit text, p_temperature_unit text, p_default_departure_time time without time zone",
+        "name": "save_user_profile",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_input jsonb",
+        "name": "service_case_v1",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "p_enabled boolean, p_reason text",
+        "name": "set_hosted_worker_enabled",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "args": "p_thread_id uuid, p_turn_id uuid, p_idempotency_key uuid, p_digest text",
+        "name": "start_chat_turn",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_thread_id uuid, p_turn_id uuid, p_idempotency_key uuid, p_policy_id uuid, p_locale text, p_text text",
+        "name": "start_text_turn",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "args": "p_scope_id uuid, p_owner_id uuid",
+        "name": "stop_model_budget",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_thread_id uuid, p_turn_id uuid, p_idempotency_key uuid, p_policy_id uuid, p_locale text, p_text text, p_task_id uuid, p_scope_version integer, p_relationship text, p_parent_turn_id uuid, p_city text",
+        "name": "submit_grounded_turn",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_thread_id uuid, p_turn_id uuid, p_idempotency_key uuid, p_policy_id uuid, p_locale text, p_text text, p_task_id uuid, p_scope_version integer, p_relationship text, p_parent_turn_id uuid",
+        "name": "submit_service_task_turn",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_thread_id uuid, p_turn_id uuid, p_idempotency_key uuid, p_policy_id uuid, p_locale text, p_text text",
+        "name": "submit_text_turn",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "args": "p_memory_id uuid, p_next_state text",
+        "name": "transition_memory_profile",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "args": "p_trip uuid, p_action text, p_input jsonb",
+        "name": "travel_reminders_v1",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "p_trip_id uuid, p_title text",
+        "name": "trip_content_snapshot",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "args": "p_policy_id uuid",
+        "name": "withdraw_text_policy",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{=X/supabase_realtime_admin,supabase_realtime_admin=X/supabase_realtime_admin,postgres=X/supabase_realtime_admin,dashboard_user=X/supabase_realtime_admin,anon=X/supabase_realtime_admin,authenticated=X/supabase_realtime_admin,service_role=X/supabase_realtime_admin}",
+        "args": "wal jsonb, max_record_bytes integer",
+        "name": "apply_rls",
+        "owner": "supabase_realtime_admin",
+        "schema": "realtime"
+      },
+      {
+        "acl": "{=X/supabase_realtime_admin,supabase_realtime_admin=X/supabase_realtime_admin,postgres=X/supabase_realtime_admin,dashboard_user=X/supabase_realtime_admin}",
+        "args": "role_name text, topic_name text, claims text, sub text, headers text, read_extensions text[], write_extensions text[], OUT read_allowed boolean[], OUT write_allowed boolean[]",
+        "name": "authorize",
+        "owner": "supabase_realtime_admin",
+        "schema": "realtime"
+      },
+      {
+        "acl": "{=X/supabase_realtime_admin,supabase_realtime_admin=X/supabase_realtime_admin,postgres=X/supabase_realtime_admin,dashboard_user=X/supabase_realtime_admin}",
+        "args": "topic_name text, event_name text, operation text, table_name text, table_schema text, new record, old record, level text",
+        "name": "broadcast_changes",
+        "owner": "supabase_realtime_admin",
+        "schema": "realtime"
+      },
+      {
+        "acl": "{=X/supabase_realtime_admin,supabase_realtime_admin=X/supabase_realtime_admin,postgres=X/supabase_realtime_admin,dashboard_user=X/supabase_realtime_admin,anon=X/supabase_realtime_admin,authenticated=X/supabase_realtime_admin,service_role=X/supabase_realtime_admin}",
+        "args": "prepared_statement_name text, entity regclass, columns realtime.wal_column[]",
+        "name": "build_prepared_statement_sql",
+        "owner": "supabase_realtime_admin",
+        "schema": "realtime"
+      },
+      {
+        "acl": "{=X/supabase_realtime_admin,supabase_realtime_admin=X/supabase_realtime_admin,postgres=X/supabase_realtime_admin,dashboard_user=X/supabase_realtime_admin,anon=X/supabase_realtime_admin,authenticated=X/supabase_realtime_admin,service_role=X/supabase_realtime_admin}",
+        "args": "val text, type_ regtype",
+        "name": "cast",
+        "owner": "supabase_realtime_admin",
+        "schema": "realtime"
+      },
+      {
+        "acl": "{=X/supabase_realtime_admin,supabase_realtime_admin=X/supabase_realtime_admin,postgres=X/supabase_realtime_admin,dashboard_user=X/supabase_realtime_admin,anon=X/supabase_realtime_admin,authenticated=X/supabase_realtime_admin,service_role=X/supabase_realtime_admin}",
+        "args": "op realtime.equality_op, type_ regtype, val_1 text, val_2 text",
+        "name": "check_equality_op",
+        "owner": "supabase_realtime_admin",
+        "schema": "realtime"
+      },
+      {
+        "acl": "{=X/supabase_realtime_admin,supabase_realtime_admin=X/supabase_realtime_admin,postgres=X/supabase_realtime_admin,dashboard_user=X/supabase_realtime_admin,anon=X/supabase_realtime_admin,authenticated=X/supabase_realtime_admin,service_role=X/supabase_realtime_admin}",
+        "args": "op realtime.equality_op, type_ regtype, val_1 text, val_2 text, negate boolean",
+        "name": "check_equality_op",
+        "owner": "supabase_realtime_admin",
+        "schema": "realtime"
+      },
+      {
+        "acl": "{=X/supabase_realtime_admin,supabase_realtime_admin=X/supabase_realtime_admin,postgres=X/supabase_realtime_admin,dashboard_user=X/supabase_realtime_admin,anon=X/supabase_realtime_admin,authenticated=X/supabase_realtime_admin,service_role=X/supabase_realtime_admin}",
+        "args": "columns realtime.wal_column[], filters realtime.user_defined_filter[]",
+        "name": "is_visible_through_filters",
+        "owner": "supabase_realtime_admin",
+        "schema": "realtime"
+      },
+      {
+        "acl": "{=X/supabase_realtime_admin,supabase_realtime_admin=X/supabase_realtime_admin,postgres=X/supabase_realtime_admin,dashboard_user=X/supabase_realtime_admin}",
+        "args": "publication name, slot_name name, max_changes integer, max_record_bytes integer",
+        "name": "list_changes",
+        "owner": "supabase_realtime_admin",
+        "schema": "realtime"
+      },
+      {
+        "acl": "{=X/supabase_realtime_admin,supabase_realtime_admin=X/supabase_realtime_admin,postgres=X/supabase_realtime_admin,dashboard_user=X/supabase_realtime_admin}",
+        "args": "publication name, slot_name name, max_changes integer, max_record_bytes integer",
+        "name": "list_changes_sync",
+        "owner": "supabase_realtime_admin",
+        "schema": "realtime"
+      },
+      {
+        "acl": "{=X/supabase_realtime_admin,supabase_realtime_admin=X/supabase_realtime_admin,postgres=X/supabase_realtime_admin,dashboard_user=X/supabase_realtime_admin,anon=X/supabase_realtime_admin,authenticated=X/supabase_realtime_admin,service_role=X/supabase_realtime_admin}",
+        "args": "entity regclass",
+        "name": "quote_wal2json",
+        "owner": "supabase_realtime_admin",
+        "schema": "realtime"
+      },
+      {
+        "acl": "{=X/supabase_realtime_admin,supabase_realtime_admin=X/supabase_realtime_admin,postgres=X/supabase_realtime_admin,dashboard_user=X/supabase_realtime_admin}",
+        "args": "payload jsonb, event text, topic text, private boolean",
+        "name": "send",
+        "owner": "supabase_realtime_admin",
+        "schema": "realtime"
+      },
+      {
+        "acl": "{=X/supabase_realtime_admin,supabase_realtime_admin=X/supabase_realtime_admin,postgres=X/supabase_realtime_admin,dashboard_user=X/supabase_realtime_admin}",
+        "args": "payload bytea, event text, topic text, private boolean",
+        "name": "send_binary",
+        "owner": "supabase_realtime_admin",
+        "schema": "realtime"
+      },
+      {
+        "acl": "{=X/supabase_realtime_admin,supabase_realtime_admin=X/supabase_realtime_admin,postgres=X/supabase_realtime_admin,dashboard_user=X/supabase_realtime_admin}",
+        "args": "slot_name name, max_changes integer, VARIADIC opts text[]",
+        "name": "settled_changes",
+        "owner": "supabase_realtime_admin",
+        "schema": "realtime"
+      },
+      {
+        "acl": "{=X/supabase_realtime_admin,supabase_realtime_admin=X/supabase_realtime_admin,postgres=X/supabase_realtime_admin,dashboard_user=X/supabase_realtime_admin,anon=X/supabase_realtime_admin,authenticated=X/supabase_realtime_admin,service_role=X/supabase_realtime_admin}",
+        "args": "",
+        "name": "subscription_check_filters",
+        "owner": "supabase_realtime_admin",
+        "schema": "realtime"
+      },
+      {
+        "acl": "{=X/supabase_realtime_admin,supabase_realtime_admin=X/supabase_realtime_admin,postgres=X/supabase_realtime_admin,dashboard_user=X/supabase_realtime_admin,anon=X/supabase_realtime_admin,authenticated=X/supabase_realtime_admin,service_role=X/supabase_realtime_admin}",
+        "args": "role_name text",
+        "name": "to_regrole",
+        "owner": "supabase_realtime_admin",
+        "schema": "realtime"
+      },
+      {
+        "acl": "{=X/supabase_realtime_admin,supabase_realtime_admin=X/supabase_realtime_admin,postgres=X/supabase_realtime_admin,dashboard_user=X/supabase_realtime_admin}",
+        "args": "",
+        "name": "topic",
+        "owner": "supabase_realtime_admin",
+        "schema": "realtime"
+      },
+      {
+        "acl": "{=X/supabase_realtime_admin,supabase_realtime_admin=X/supabase_realtime_admin,postgres=X/supabase_realtime_admin,dashboard_user=X/supabase_realtime_admin}",
+        "args": "name text",
+        "name": "wal2json_escape_identifier",
+        "owner": "supabase_realtime_admin",
+        "schema": "realtime"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "",
+        "name": "actor",
+        "owner": "postgres",
+        "schema": "service_cases_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "p_input jsonb",
+        "name": "execute",
+        "owner": "postgres",
+        "schema": "service_cases_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "c service_cases_private.cases",
+        "name": "owner_json",
+        "owner": "postgres",
+        "schema": "service_cases_private"
+      },
+      {
+        "acl": null,
+        "args": "expected_operations text[]",
+        "name": "allow_any_operation",
+        "owner": "supabase_storage_admin",
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "args": "expected_operation text",
+        "name": "allow_only_operation",
+        "owner": "supabase_storage_admin",
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "args": "bucketid text, name text, owner uuid, metadata jsonb",
+        "name": "can_insert_object",
+        "owner": "supabase_storage_admin",
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "args": "",
+        "name": "enforce_bucket_lifecycle_service_role",
+        "owner": "supabase_storage_admin",
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "args": "",
+        "name": "enforce_bucket_name_length",
+        "owner": "supabase_storage_admin",
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "args": "name text",
+        "name": "extension",
+        "owner": "supabase_storage_admin",
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "args": "name text",
+        "name": "filename",
+        "owner": "supabase_storage_admin",
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "args": "name text",
+        "name": "foldername",
+        "owner": "supabase_storage_admin",
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "args": "p_key text, p_prefix text, p_delimiter text",
+        "name": "get_common_prefix",
+        "owner": "supabase_storage_admin",
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "args": "noncurrent_versions text, delete_markers text",
+        "name": "get_size_by_bucket",
+        "owner": "supabase_storage_admin",
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "args": "bucket_id text, prefix_param text, delimiter_param text, max_keys integer, next_key_token text, next_upload_token text, raw_prefix_param text",
+        "name": "list_multipart_uploads_with_delimiter",
+        "owner": "supabase_storage_admin",
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "args": "_bucket_id text, prefix_param text, delimiter_param text, max_keys integer, start_after text, next_token text, sort_order text, noncurrent_versions text, delete_markers text, next_token_archived_at timestamp with time zone, next_token_version text",
+        "name": "list_objects_with_delimiter",
+        "owner": "supabase_storage_admin",
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "args": "",
+        "name": "operation",
+        "owner": "supabase_storage_admin",
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "args": "",
+        "name": "protect_bucket_control_columns",
+        "owner": "supabase_storage_admin",
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "args": "",
+        "name": "protect_delete",
+        "owner": "supabase_storage_admin",
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "args": "prefix text, bucketname text, limits integer, levels integer, offsets integer, search text, sortcolumn text, sortorder text, noncurrent_versions text, delete_markers text",
+        "name": "search",
+        "owner": "supabase_storage_admin",
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "args": "p_prefix text, p_bucket_id text, p_limit integer, p_level integer, p_start_after text, p_sort_order text, p_sort_column text, p_sort_column_after text, noncurrent_versions text, delete_markers text, p_start_after_version text",
+        "name": "search_by_timestamp",
+        "owner": "supabase_storage_admin",
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "args": "prefix text, bucket_name text, limits integer, levels integer, start_after text, sort_order text, sort_column text, sort_column_after text, noncurrent_versions text, delete_markers text, start_after_archived_at timestamp with time zone, start_after_version text, start_after_is_continuation boolean",
+        "name": "search_v2",
+        "owner": "supabase_storage_admin",
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "args": "",
+        "name": "update_updated_at_column",
+        "owner": "supabase_storage_admin",
+        "schema": "storage"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "",
+        "name": "bound_task_history",
+        "owner": "postgres",
+        "schema": "turn_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "p_owner_id uuid, p_policy_id uuid, p_context_mode text",
+        "name": "claim_text_mode",
+        "owner": "postgres",
+        "schema": "turn_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "p_turn_id uuid, p_lease_token uuid, p_intent text, p_request_scope text, p_subject text",
+        "name": "complete_selected_grounded_work",
+        "owner": "postgres",
+        "schema": "turn_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "",
+        "name": "hide_text_content",
+        "owner": "postgres",
+        "schema": "turn_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "",
+        "name": "immutable_text_policy",
+        "owner": "postgres",
+        "schema": "turn_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "p_turn uuid, p_token uuid",
+        "name": "lock_text_work",
+        "owner": "postgres",
+        "schema": "turn_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "p_turn uuid, p_owner uuid, p_session uuid",
+        "name": "lock_turn",
+        "owner": "postgres",
+        "schema": "turn_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "",
+        "name": "require_text_task",
+        "owner": "postgres",
+        "schema": "turn_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "p_scope_id uuid, p_owner_id uuid, p_task_id uuid, p_attempt_id uuid, p_provider text, p_model text, p_price_version text, p_reserved_micros bigint",
+        "name": "reserve_model_budget_unbound",
+        "owner": "postgres",
+        "schema": "turn_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "p_turn uuid",
+        "name": "task_history",
+        "owner": "postgres",
+        "schema": "turn_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "p_turn uuid, p_state text, p_attempt integer",
+        "name": "terminal",
+        "owner": "postgres",
+        "schema": "turn_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "",
+        "name": "text_owner",
+        "owner": "postgres",
+        "schema": "turn_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "p_id uuid",
+        "name": "text_policy_current",
+        "owner": "postgres",
+        "schema": "turn_private"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "args": "p_text text, p_max integer",
+        "name": "valid_text",
+        "owner": "postgres",
+        "schema": "turn_private"
+      },
+      {
+        "acl": "{supabase_admin=X/supabase_admin,postgres=X*/supabase_admin,service_role=X/supabase_admin}",
+        "args": "message bytea, additional bytea, key_id bigint, context bytea, nonce bytea",
+        "name": "_crypto_aead_det_decrypt",
+        "owner": "supabase_admin",
+        "schema": "vault"
+      },
+      {
+        "acl": "{supabase_admin=X/supabase_admin}",
+        "args": "message bytea, additional bytea, key_id bigint, context bytea, nonce bytea",
+        "name": "_crypto_aead_det_encrypt",
+        "owner": "supabase_admin",
+        "schema": "vault"
+      },
+      {
+        "acl": "{supabase_admin=X/supabase_admin}",
+        "args": "",
+        "name": "_crypto_aead_det_noncegen",
+        "owner": "supabase_admin",
+        "schema": "vault"
+      },
+      {
+        "acl": "{supabase_admin=X/supabase_admin,postgres=X*/supabase_admin,service_role=X/supabase_admin}",
+        "args": "new_secret text, new_name text, new_description text, new_key_id uuid",
+        "name": "create_secret",
+        "owner": "supabase_admin",
+        "schema": "vault"
+      },
+      {
+        "acl": "{supabase_admin=X/supabase_admin,postgres=X*/supabase_admin,service_role=X/supabase_admin}",
+        "args": "secret_id uuid, new_secret text, new_name text, new_description text, new_key_id uuid",
+        "name": "update_secret",
+        "owner": "supabase_admin",
+        "schema": "vault"
+      }
+    ],
+    "session_user": "cli_login_postgres",
+    "event_triggers": [
+      {
+        "md5": "6998ea6b4c2480f5d2e34b5dcf3f8d36",
+        "name": "ensure_rls",
+        "tags": [
+          "CREATE TABLE",
+          "CREATE TABLE AS",
+          "SELECT INTO"
+        ],
+        "event": "ddl_command_end",
+        "enabled": "O"
+      },
+      {
+        "md5": "8da9dff6b2ae47498209d341acaeb60b",
+        "name": "issue_graphql_placeholder",
+        "tags": [
+          "DROP EXTENSION"
+        ],
+        "event": "sql_drop",
+        "enabled": "O"
+      },
+      {
+        "md5": "53a44336da0ac1dd62d89dbd988e6d1d",
+        "name": "issue_pg_cron_access",
+        "tags": [
+          "CREATE EXTENSION"
+        ],
+        "event": "ddl_command_end",
+        "enabled": "O"
+      },
+      {
+        "md5": "4e6d7efe4aed1b3b92063b648aa7a0cf",
+        "name": "issue_pg_graphql_access",
+        "tags": [
+          "CREATE EXTENSION"
+        ],
+        "event": "ddl_command_end",
+        "enabled": "O"
+      },
+      {
+        "md5": "1d06ef4fb47bb0ab6e6f8818a62013bb",
+        "name": "issue_pg_net_access",
+        "tags": [
+          "CREATE EXTENSION"
+        ],
+        "event": "ddl_command_end",
+        "enabled": "O"
+      },
+      {
+        "md5": "afaad7193dcf8f81e728d2bedb85e43e",
+        "name": "pgrst_ddl_watch",
+        "tags": null,
+        "event": "ddl_command_end",
+        "enabled": "O"
+      },
+      {
+        "md5": "4357772baf5cfcd5c6d7049585b3a537",
+        "name": "pgrst_drop_watch",
+        "tags": null,
+        "event": "sql_drop",
+        "enabled": "O"
+      }
+    ],
+    "server_version": "17.6",
+    "can_set_postgres": true
+  },
+  "readAccess": {
+    "relations": 119,
+    "selectDenied": [
+      "auth.audit_log_entries",
+      "auth.custom_oauth_providers",
+      "auth.flow_state",
+      "auth.identities",
+      "auth.instances",
+      "auth.mfa_amr_claims",
+      "auth.mfa_challenges",
+      "auth.mfa_factors",
+      "auth.mfa_recovery_code_sets",
+      "auth.mfa_recovery_codes",
+      "auth.oauth_authorizations",
+      "auth.oauth_client_states",
+      "auth.oauth_clients",
+      "auth.oauth_consents",
+      "auth.one_time_tokens",
+      "auth.refresh_tokens",
+      "auth.refresh_tokens_id_seq",
+      "auth.saml_providers",
+      "auth.saml_relay_states",
+      "auth.schema_migrations",
+      "auth.scim_tokens",
+      "auth.scim_users",
+      "auth.sessions",
+      "auth.sso_domains",
+      "auth.sso_providers",
+      "auth.users",
+      "auth.webauthn_challenges",
+      "auth.webauthn_credentials",
+      "community_private.audit",
+      "community_private.audit_id_seq",
+      "community_private.receipts",
+      "community_private.reviewers",
+      "community_private.settings",
+      "community_private.submissions",
+      "identity_private.mobile_accounts",
+      "identity_private.mobile_attempts",
+      "identity_private.mobile_login_proofs",
+      "knowledge_review_private.audit",
+      "knowledge_review_private.candidate_assertions",
+      "knowledge_review_private.candidates",
+      "knowledge_review_private.members",
+      "knowledge_review_private.ontology_relations",
+      "knowledge_review_private.ontology_types",
+      "knowledge_review_private.publication_audit",
+      "knowledge_review_private.publication_settings",
+      "knowledge_review_private.publications",
+      "knowledge_review_private.receipts",
+      "knowledge_review_private.settings",
+      "knowledge_review_private.source_revisions",
+      "knowledge_review_private.statement_sources",
+      "knowledge_review_private.statements",
+      "knowledge_review_private.wiki_generation_jobs",
+      "knowledge_review_private.wiki_page_revisions",
+      "knowledge_review_private.wiki_pages",
+      "knowledge_review_private.wiki_statement_candidates",
+      "place_quota_private.usage",
+      "privacy_private.trip_deletions",
+      "private.audit_events",
+      "public.canonical_pois",
+      "public.chat_threads",
+      "public.chat_turn_events",
+      "public.chat_turn_idempotency",
+      "public.connection_probe_resources",
+      "public.fact_records",
+      "public.memory_consents",
+      "public.memory_consumer_receipts",
+      "public.memory_profiles",
+      "public.memory_receipts",
+      "public.model_budget_attempts",
+      "public.model_budget_provider_limits",
+      "public.model_budget_scopes",
+      "public.privacy_receipts",
+      "public.privacy_requests",
+      "public.provider_poi_mappings",
+      "public.review_probe_changes",
+      "public.travel_reminders",
+      "public.trip_action_references",
+      "public.trip_archives",
+      "public.trip_audit_events",
+      "public.trip_days",
+      "public.trip_events",
+      "public.trip_idempotency",
+      "public.trip_items",
+      "public.trip_place_references",
+      "public.trip_proposals",
+      "public.trip_version_snapshots",
+      "public.trips",
+      "public.turn_feedback",
+      "public.turns",
+      "public.user_profiles",
+      "public.v4_migration_baseline",
+      "research_intake_private.applications",
+      "research_intake_private.events",
+      "research_intake_private.events_id_seq",
+      "research_intake_private.receipts",
+      "research_intake_private.settings",
+      "service_cases_private.audit",
+      "service_cases_private.cases",
+      "service_cases_private.staff",
+      "storage.buckets",
+      "storage.buckets_analytics",
+      "storage.buckets_vectors",
+      "storage.migrations",
+      "storage.objects",
+      "storage.s3_multipart_uploads",
+      "storage.s3_multipart_uploads_parts",
+      "storage.vector_indexes",
+      "supabase_migrations.schema_migrations",
+      "turn_private.grounded_ai_assist_jobs",
+      "turn_private.grounded_turns",
+      "turn_private.hosted_worker_control",
+      "turn_private.hosted_worker_heartbeats",
+      "turn_private.service_task_turns",
+      "turn_private.service_tasks",
+      "turn_private.text_consents",
+      "turn_private.text_content",
+      "turn_private.text_dispatches",
+      "turn_private.text_policies",
+      "turn_private.work"
+    ],
+    "currentRoleSuperuser": false,
+    "currentRoleBypassRls": false,
+    "canSetPostgres": true,
+    "setRoleActuallyPerformed": false
+  },
+  "backupReadiness": "UNPROVEN: grants alone do not prove RLS-complete dump, global-role restore, or managed-platform restore"
+}

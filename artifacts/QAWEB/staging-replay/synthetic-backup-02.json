@@ -1,0 +1,21 @@
+{
+  "status": "PASS_SYNTHETIC_BACKUP_RESTORE_ONLY",
+  "imageId": "sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b",
+  "stages": [
+    "PASS synthetic14 schemas seeded with explicit owner/ACL",
+    "PASS full ciphertext integrity before TOC",
+    "PASS fourteen TOC data+owner+ACL entries",
+    "PASS restored synthetic rows and owner/ACL exact",
+    "PASS corrupted ciphertext rejected",
+    "PASS temporary synthetic key and ciphertext removed"
+  ],
+  "manifest": {
+    "ciphertextBytes": 22212,
+    "ciphertextSha256": "13db785f5b13b502cf145a116a955d552d9781e712561b4a7b69e38b9ae2a00c"
+  },
+  "globalRoleRecovery": "UNRUN: own synthetic roles precreated in same cluster",
+  "targetBackup": "UNRUN",
+  "targetRowsRead": false,
+  "persistentKeyCreated": false,
+  "cleanup": "PASS"
+}

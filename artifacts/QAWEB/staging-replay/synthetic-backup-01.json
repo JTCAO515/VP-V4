@@ -1,0 +1,10 @@
+{
+  "status": "FAIL_SYNTHETIC",
+  "stages": [
+    "PASS synthetic14 schemas seeded with explicit owner/ACL",
+    "PASS full ciphertext integrity before TOC",
+    "PASS fourteen TOC data+owner+ACL entries"
+  ],
+  "reason": "SYNTHETIC_PROOF_FAILED_NO_RAW_DIAGNOSTICS",
+  "cleanup": "PASS"
+}
