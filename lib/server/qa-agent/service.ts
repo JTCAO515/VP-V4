@@ -46,13 +46,7 @@ export function createQaService(store: QaStore, policyId: string, contextMode: "
     if (text.kind !== "text" || text.turnId !== turn.id || typeof text.input !== "string" || !text.input.trim() || text.input.length > 4000
       || (text.output !== null && (typeof text.output !== "string" || !text.output.trim() || text.output.length > 8000))
       || (text.outcome !== null && !outcomes.includes(text.outcome as QaStatus))) throw new QaError("PROVIDER_UNAVAILABLE");
-    // QA's protected RPC returns state and text under the same locked read.
-    // The earlier RLS metadata read establishes membership, but its state may
-    // already be stale when the worker commits a result between those reads.
-    const state = protectedText ? text.status : turn.status;
-    if (typeof state !== "string" || !["accepted", "planning", "retrieving", "generating", "validating",
-      "completed", "proposal_ready", "unavailable", "failed", "cancelled"].includes(state)) throw new QaError("PROVIDER_UNAVAILABLE");
-    const terminal = ["completed", "failed", "unavailable", "cancelled", "proposal_ready"].includes(state);
+    const terminal = isTerminal(turn.status);
     if ((text.output === null) !== (text.outcome === null)) throw new QaError("PROVIDER_UNAVAILABLE");
     if (!terminal && text.output !== null) throw new QaError("PROVIDER_UNAVAILABLE");
     // Never manufacture an answer for terminal-without-text, including cancellation.
@@ -70,11 +64,24 @@ export function createQaService(store: QaStore, policyId: string, contextMode: "
     }
     if (value.policyId !== policyId || !uuid(value.serviceTaskId) || !uuid(value.lastTurnId)) throw new QaError("DATA_POLICY_BLOCKED");
     const ids = new Set<string>(), messages: QaMessage[] = [];
+    let needsRefresh = false;
     for (const item of value.messages) {
       if (!record(item) || !uuid(item.turnId) || ids.has(item.turnId)) throw new QaError("DATA_POLICY_BLOCKED");
       const turn = detail.turns.find(t => t.id === item.turnId);
       if (!turn) throw new QaError("DATA_POLICY_BLOCKED");
-      ids.add(item.turnId); messages.push(await saved(detail.thread.id, turn, item));
+      ids.add(item.turnId);
+      if (!isTerminal(turn.status) && typeof item.output === "string") needsRefresh = true;
+    }
+    // Original protected text DTO has no status. If the worker completed after
+    // the RLS metadata read, refresh that same actor/Session metadata once. An
+    // unchanged pending state still fails closed; text alone never proves it.
+    const current = needsRefresh ? await readable(detail.thread.id) : detail;
+    if (current.turns.length !== detail.turns.length) throw new QaError("DATA_POLICY_BLOCKED");
+    for (const item of value.messages) {
+      const text = item as Record<string, unknown>;
+      const turn = current.turns.find(t => t.id === text.turnId);
+      if (!turn) throw new QaError("DATA_POLICY_BLOCKED");
+      messages.push(await saved(detail.thread.id, turn, text));
     }
     if (messages.at(-1)?.turnId !== value.lastTurnId) throw new QaError("DATA_POLICY_BLOCKED");
     return { taskId: value.serviceTaskId, lastTurnId: value.lastTurnId, messages };
@@ -169,4 +176,8 @@ export function rpcError(message: string): QaError {
 function taskIdentity(sessionId: string): string {
   const hex = createHash("sha256").update("qa-agent-original-task/1:" + sessionId.toLowerCase()).digest("hex");
   return `${hex.slice(0,8)}-${hex.slice(8,12)}-4${hex.slice(13,16)}-8${hex.slice(17,20)}-${hex.slice(20,32)}`;
+}
+
+function isTerminal(status: string): boolean {
+  return ["completed", "failed", "unavailable", "cancelled", "proposal_ready"].includes(status);
 }
