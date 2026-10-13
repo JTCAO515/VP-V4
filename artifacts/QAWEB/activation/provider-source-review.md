@@ -10,8 +10,12 @@
 
 [隐私原文](https://help.aliyun.com/zh/model-studio/privacy-notice)：公开声明数据不用于训练，但依法保存调用数据；该页面没有明确 API 留存 TTL。候选保留这一差别，不声称零留存。账号所接受条款版本、签约主体、真实 key/权限、源 runtime 区域和端到端 storageRegion 均未核实。
 
-`supplier-price-candidate.json` 是带状态外壳的候选，`inputCandidate` 才是未来生成器输入。owner、configuration、预算上限和有效期仍 null，coverage=false，直接生成必须失败。supplier evidence 指向隐私页；地域和价格分别用各自证据，不把单页当成全部证明。termsVersion/sourceRegion/storageRegion 的 unknown 是实际未知。24 小时重新核对期限是本地审阅值，不是供应商保证的价目有效期。
+`supplier-price-candidate.json` 是带状态外壳的候选，`inputCandidate` 才是未来生成器输入。owner、configuration、预算上限和有效期仍 null，coverage=true 仅表示当前合法请求的计费项覆盖，直接生成仍因实际身份/预算缺项失败。supplier evidence 指向隐私页；地域和价格分别用各自证据，不把单页当成全部证明。termsVersion/sourceRegion/storageRegion 的 unknown 是实际未知。24 小时重新核对期限是本地审阅值，不是供应商保证的价目有效期。
 
-需要 Main 审明的技术边界：原预留公式 1,048,576 大于官方十进制上限 1,000,000。高档原价乘更大基数可作保守预留，但不能宣称供应商提供超范围报价；确认真实请求范围后再确认 coverage，不擅改公式/模型。以现有公式计算：128 output 上限需预留 6.294528 CNY；4096 output 上限为 6.389760 CNY。这只是数学上界，不是实付或已批准预算。task/scope/provider 实际总额和过期时间需 Main 明确，不能用价目代替资金授权。
+已解决的技术边界：[固定快照规格](https://help.aliyun.com/zh/model-studio/qwen3-7-plus) 明确最大输入991808、上下文1000000 token，均在官方价阶内；coverage.inputTokens=1000000。原1048576只作金额预留安全余量，不是供应商可接受输入长度。QA messages完整JSON上限32KiB是字节限制，不等同token数，也不是整个HTTP body。既有真实PG/consumer边界证据复用，不把fixture当目标验收。
+
+[缓存规则](https://help.aliyun.com/zh/model-studio/context-cache) 中显式缓存需主动cache_control标记；当前序列化器不发送该字段，也无工具/搜索/多模态内容。隐式缓存创建按标准输入价，命中可能优惠；候选仍将所有输入按6元核算，不扣优惠。当前QA不启用thinking，不作推理免费的假设。
+
+原预留公式不变：128 output上限为6.294528 CNY；4096 output上限为6.389760 CNY。按最大合法输入991808及4096输出以高档6/24计算为6.049152 CNY，小于原预留。报价覆盖因此无需继续阻断；实际账户、资金上限、同意和目标门禁不受此结论影响，所有启用字段仍关闭。
 
 本轮仅公开网页只读和候选文件；真实 provider/auth/部署/费用全部 UNRUN。迁移 manifest 已按 Main a8f00e8a 的稳定源 hash 复核更新，版本仍为155。

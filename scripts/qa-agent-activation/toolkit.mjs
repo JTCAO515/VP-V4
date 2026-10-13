@@ -60,7 +60,8 @@ export function generate(input, { now = Date.now() } = {}) {
     || (p.mode==='flat'?p.cachedInputMicrosPerMillion!==null:!int(p.cachedInputMicrosPerMillion))) fail('PRICE_UNKNOWN_OR_INVALID');
   evidence(p.evidence,now,'PRICE_EVIDENCE');
   exact(p.coverage, 'inputTokens outputTokens allBillableComponentsIncluded', 'PRICE_COVERAGE');
-  if (p.coverage.inputTokens!==1048576 || !int(p.coverage.outputTokens,4096) || p.coverage.allBillableComponentsIncluded!==true) fail('PRICE_COVERAGE');
+  // Official tariff range, not the larger conservative monetary reservation basis below.
+  if (p.coverage.inputTokens!==1000000 || !int(p.coverage.outputTokens,4096) || p.coverage.allBillableComponentsIncluded!==true) fail('PRICE_COVERAGE');
   exact(b, 'limitMicros taskLimitMicros providerLimitMicros attemptLimitMicros taskAttemptLimit concurrencyLimit maxOutputTokens timeoutMs evidence', 'BUDGET_SCHEMA');
   evidence(b.evidence,now,'BUDGET_EVIDENCE');
   for (const k of ['limitMicros','taskLimitMicros','providerLimitMicros','attemptLimitMicros']) if (!int(b[k])) fail('BUDGET_LIMIT');

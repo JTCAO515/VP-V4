@@ -23,7 +23,7 @@
     "outputMicrosPerMillion": null,
     "cachedInputMicrosPerMillion": null,
     "evidence": {"url": null, "observedAt": null, "validUntil": null, "sha256": null},
-    "coverage": {"inputTokens": 1048576, "outputTokens": 4096, "allBillableComponentsIncluded": false}
+    "coverage": {"inputTokens": 1000000, "outputTokens": 4096, "allBillableComponentsIncluded": false}
   },
   "budget": {
     "limitMicros": null,
