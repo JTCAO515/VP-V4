@@ -1,9 +1,10 @@
+import { catalog } from './reviewed-catalog.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { catalog, compare, snapshot, digest, repo, normalizeSchemaDump } from '../acceptance/v5-staging-migration-set.mjs';
+import { compare, snapshot, digest, repo, normalizeSchemaDump } from '../acceptance/v5-staging-migration-set.mjs';
 
 // No connection strings, resource names, remote context or target-write mode.
 const image = 'public.ecr.aws/supabase/postgres:17.6.1.159';
@@ -77,7 +78,7 @@ try {
   const difference=compare(local,input.applied);
   report.versionSet=difference;report.provenance=input.provenance;
   assert.ok(difference.replayable,'UNKNOWN_APPLIED_VERSION');
-  report.toolSha256=Object.fromEntries(['scripts/qa-agent-staging-replay/replay.mjs','scripts/qa-agent-staging-replay/fingerprint.sql','scripts/acceptance/v5-staging-migration-set.mjs','tests/fixtures/v5-staging-migration/baseline.sql','tests/fixtures/v5-staging-migration/probes.sql'].map(path=>[path,digest(readFileSync(resolve(repo,path)))]));
+  report.toolSha256=Object.fromEntries(['scripts/qa-agent-staging-replay/replay.mjs','scripts/qa-agent-staging-replay/fingerprint.sql','scripts/qa-agent-staging-replay/reviewed-catalog.mjs','scripts/acceptance/v5-staging-migration-set.mjs','tests/fixtures/v5-staging-migration/baseline.sql','tests/fixtures/v5-staging-migration/probes.sql'].map(path=>[path,digest(readFileSync(resolve(repo,path)))]));
   stage='local Docker preflight';context=command('docker',['context','show']);
   assert.match(context,/^[a-zA-Z0-9_.-]+$/);
   assert.match(JSON.parse(command('docker',['context','inspect',context]))[0].Endpoints.docker.Host,/^unix:\/\//);
@@ -121,7 +122,7 @@ try {
   stage='QA execute role vectors';
   const roles=JSON.parse(sql(forward,`select jsonb_agg(jsonb_build_object('schema',n.nspname,'name',p.proname,'anon',has_function_privilege('anon',p.oid,'EXECUTE'),'authenticated',has_function_privilege('authenticated',p.oid,'EXECUTE'),'service_role',has_function_privilege('service_role',p.oid,'EXECUTE')) order by n.nspname,p.proname) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname in ('public','turn_private') and p.proname like 'qa_%';`));
   const serviceNames=new Set(['qa_read_reconciliation_v1','qa_claim_work_v1','qa_read_work_v1','qa_authorize_dispatch_v1','qa_complete_work_v1']);
-  assert.equal(roles.length,15);
+  assert.equal(roles.length,16);assert.deepEqual(roles.find(r=>r.schema==='turn_private'&&r.name==='qa_consumer_window_v1'),{schema:'turn_private',name:'qa_consumer_window_v1',anon:false,authenticated:false,service_role:false});
   for(const r of roles){assert.equal(r.anon,false);assert.equal(r.authenticated,r.schema==='public'&&!serviceNames.has(r.name));assert.equal(r.service_role,r.schema==='public'&&serviceNames.has(r.name));}
   report.qaRoleVectors=roles;mark(stage);
   stage='actor and revocation invariants';sql(forward,fixture('probes.sql'));mark(stage);
