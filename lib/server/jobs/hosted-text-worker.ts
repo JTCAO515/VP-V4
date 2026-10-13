@@ -333,7 +333,7 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
   }
   const fetcher = dependencies.fetch ?? globalThis.fetch;
   const journaled = new Set<string>();
-  const rpc = async (name: "hosted_worker_heartbeat" | "hosted_worker_ready_groups" | "qa_ready_groups_v1" | "hosted_planning_target_v1", parameters: Record<string, unknown>, signal: AbortSignal) => {
+  const rpc = async (name: "hosted_worker_heartbeat" | "hosted_worker_ready_groups" | "qa_ready_groups_v2" | "hosted_planning_target_v1", parameters: Record<string, unknown>, signal: AbortSignal) => {
     if (process.env.VERCEL_ENV || signal.aborted) throw unavailable();
     const timeout = AbortSignal.any([signal, AbortSignal.timeout(10000)]);
     const secret = await dependencies.workerCredential(timeout);
@@ -362,10 +362,13 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
       return ok ? { enabled: value.enabled as boolean } : null;
     },
     readyGroups: async stop => {
-      // QA discovery filters its mode inside SQL, before ordering and limiting.
-      // A legacy group cannot occupy the QA-only profile's sole discovery slot.
-      const discovery = profile.schemaVersion === "vpj07-hosted-text-worker/3" ? "qa_ready_groups_v1" : "hosted_worker_ready_groups";
-      const value = await rpc(discovery, { p_limit: profile.groupLimit }, stop);
+      // SQL qualifies the exact provider binding and unique matching scope
+      // before LIMIT; an unexecutable group cannot occupy the sole QA slot.
+      const qa = profile.schemaVersion === "vpj07-hosted-text-worker/3";
+      const discovery = qa ? "qa_ready_groups_v2" : "hosted_worker_ready_groups";
+      const parameters = qa ? { p_limit: profile.groupLimit, p_model: PROTOCOL_MODELS.qwen,
+        p_price_version: profile.qwen.priceVersion, p_endpoint: dependencies.qwenEndpoint } : { p_limit: profile.groupLimit };
+      const value = await rpc(discovery, parameters, stop);
       if (record(value) && value.kind === "disabled") return "disabled";
       if (!record(value) || value.kind !== "groups" || !Array.isArray(value.groups) || value.groups.length > profile.groupLimit) return null;
       // This exact object is internal, never accepted from discovery JSON. The
