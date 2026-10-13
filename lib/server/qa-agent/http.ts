@@ -1,4 +1,4 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from "next/server.js";
 import { createUserDataAdapter } from "../identity/user-data-adapter.ts";
 import { nativeRequestScope } from "../identity/native-request.ts";
 import { createQaService, exact, record, type QaStore } from "./service.ts";

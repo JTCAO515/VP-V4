@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createQaService} from '../../lib/server/qa-agent/service.ts';
-import {QaError} from '../../lib/server/qa-agent/contract.ts';
-import {qaConfig} from '../../lib/server/qa-agent/config.ts';
-import {browserBoundary} from '../../lib/server/qa-agent/browser-boundary.ts';
+import {createQaService} from '../../../lib/server/qa-agent/service.ts';
+import {QaError} from '../../../lib/server/qa-agent/contract.ts';
+import {qaConfig} from '../../../lib/server/qa-agent/config.ts';
+import {browserBoundary} from '../../../lib/server/qa-agent/browser-boundary.ts';
 const sid='11111111-1111-4111-8111-111111111111',rid='22222222-2222-4222-8222-222222222222',pid='33333333-3333-4333-8333-333333333333',foreign='44444444-4444-4444-8444-444444444444';
 function fixture(){
  let consent='accepted',output=null,outcome=null,turnStatus='accepted',auth=true,fail=false, admissions=0;
