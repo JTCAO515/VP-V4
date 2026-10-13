@@ -22,7 +22,7 @@ export class ControlController{
   try{
    const result=await this.send(input,abort.signal);if(generation!==this.generation||abort.signal.aborted)return;
    if(result.status!==200){
-    const known=record(result.body)&&record(result.body.error)&&exact(result.body.error,['code'])&&['OPS_FORBIDDEN','OPS_CONFLICT','OPS_INVALID_INPUT','UNAUTHENTICATED'].includes(String(result.body.error.code))&&!Object.hasOwn(result.body,'acknowledgement');
+    const known=record(result.body)&&record(result.body.error)&&exact(result.body.error,['code'])&&['OPS_FORBIDDEN','OPS_CONFLICT','OPS_INVALID_INPUT','OPS_UNAVAILABLE','UNAUTHENTICATED'].includes(String(result.body.error.code))&&!Object.hasOwn(result.body,'acknowledgement');
     if(known&&mutation)this.publish({pending:null});
     this.publish({workspace:null,budget:null,message:this.view.pending?'unknown':result.status===409?'conflict':'unavailable'});return;
    }
