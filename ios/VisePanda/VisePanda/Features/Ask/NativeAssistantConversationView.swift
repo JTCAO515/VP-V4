@@ -42,6 +42,30 @@ struct AssistantConversationRefreshState {
     mutating func finish(_ token: UUID) { if owns(token) { active = nil } }
 }
 
+/// A saved-content GET is not an Ops eligibility receipt. Keep a submission
+/// denial until its scope/selection is replaced; never use readback to grant retry.
+private struct AssistantConversationOpsRefusal {
+    private var scope: NativeDataScope?
+    private var generation: UUID?
+    private var refusalCode: String?
+
+    static func code(for error: Error) -> String? {
+        guard case NativeDataError.server(let code) = error,
+              code == "OPS_CONTROL_DISABLED" || code == "OPS_SCOPE_UNAVAILABLE" else { return nil }
+        return code
+    }
+
+    func code(scope: NativeDataScope?, generation: UUID) -> String? {
+        guard let scope, self.scope == scope, self.generation == generation else { return nil }
+        return refusalCode
+    }
+
+    mutating func record(_ error: Error, scope: NativeDataScope, generation: UUID) {
+        guard let code = Self.code(for: error) else { return }
+        self.scope = scope; self.generation = generation; refusalCode = code
+    }
+}
+
 struct AssistantConversationSelection {
     var conversationID: String?
     var goalEntry: NativeJourneyGoalEntry?
@@ -483,8 +507,9 @@ struct NativeAssistantConversationView: View {
     @State private var agreed = false
     @State private var busy = false
     @State private var refreshState = AssistantConversationRefreshState()
+    @State private var submissionOpsRefusal = AssistantConversationOpsRefusal()
     private var opsRefusal: Bool {
-        let textRefused: Bool = notice == "OPS_CONTROL_DISABLED" || notice == "OPS_SCOPE_UNAVAILABLE"
+        let textRefused = submissionOpsRefusal.code(scope: session.dataScope, generation: selection.generation) != nil
         let planningRefused: Bool = planningNotice == "OPS_CONTROL_DISABLED" || planningNotice == "OPS_SCOPE_UNAVAILABLE"
         return textRefused || planningRefused
     }
@@ -1816,7 +1841,14 @@ struct NativeAssistantConversationView: View {
                 self.pending = nil
                 if draft.trimmingCharacters(in: .whitespacesAndNewlines) == pending.text { draft = "" }
             }
-            notice = nil
+            if let retained = selectedSources.pending, read.conversationId == retained.conversationId,
+               read.messages.contains(where: { $0.messageId == retained.messageId }) {
+                selectedSources.clear()
+                if draft.trimmingCharacters(in: .whitespacesAndNewlines) == retained.text { draft = "" }
+            }
+            // Accepted history resolves only the exact pending operation. It says
+            // nothing about whether new dispatch is currently permitted by Ops.
+            notice = submissionOpsRefusal.code(scope: initial, generation: generation)
         } catch {
             guard ownsRefresh(initial, generation, refreshToken) else { return }
             // A lost POST receipt followed by a transient read failure must retain
@@ -1828,8 +1860,8 @@ struct NativeAssistantConversationView: View {
             if authorityLost {
                 policy = nil; clearConversationContext()
             } else { clearConversationProjection() }
-            conversations = []; notice = "retry"
-            if case NativeDataError.server(let code)=error,["OPS_CONTROL_DISABLED","OPS_SCOPE_UNAVAILABLE"].contains(code){notice=code}
+            submissionOpsRefusal.record(error, scope: initial, generation: generation)
+            conversations = []; notice = submissionOpsRefusal.code(scope: initial, generation: generation) ?? "retry"
             if authorityLost { await loadPrivacyLinks(initial) }
         }
     }
@@ -1864,7 +1896,7 @@ struct NativeAssistantConversationView: View {
         await reload(replacing: true)
     }
     private func send() async {
-        guard !busy, !composerWaitingForAuthority, let policy, policy.consentState == .accepted, let initial = session.dataScope,
+        guard !busy, !opsRefusal, !composerWaitingForAuthority, let policy, policy.consentState == .accepted, let initial = session.dataScope,
               boundScope == initial,
               conversation != nil || (pending != nil && pending?.conversationId == selection.conversationID) else { return }
         if let pending, pending.conversationId != selection.conversationID || pending.policyId != policy.id { return }
@@ -1891,20 +1923,28 @@ struct NativeAssistantConversationView: View {
             pending = request
         }
         selection.conversationID = request.conversationId
+        let generation = selection.generation
         refreshState.invalidate()
         busy = true
         do {
             let body = try JSONEncoder().encode(request)
             let data = try await session.askRequest(path: "api/chat/native/v5/conversation", method: "POST", body: body)
-            guard session.dataScope == initial else { throw NativeDataError.staleSessionResponse }
+            guard ownsSelection(initial, generation) else { throw NativeDataError.staleSessionResponse }
             let accepted = try JSONDecoder().decode(AssistantAccepted.self, from: data)
             guard accepted.version == 5 && accepted.kind == "accepted" && accepted.messageId == request.messageId && accepted.conversationId == request.conversationId else { throw NativeDataError.invalidResponse }
             notice = nil
-        } catch { if session.dataScope == initial { notice = "retry" } }
+        } catch {
+            if ownsSelection(initial, generation) {
+                submissionOpsRefusal.record(error, scope: initial, generation: generation)
+                notice = submissionOpsRefusal.code(scope: initial, generation: generation) ?? "retry"
+            }
+        }
         busy = false
         await reload(replacing: true)
     }
     private func sendSelectedSources(initial: NativeDataScope, policyID: String) async {
+        guard !busy, ownsSelection(initial, selection.generation), !opsRefusal else { return }
+        let generation = selection.generation
         let request: NativeSelectedMessageRequest
         if let retained=selectedSources.pending { request=retained }
         else {
@@ -1921,9 +1961,14 @@ struct NativeAssistantConversationView: View {
             guard selectedSources.pending != nil || qualifiedMemoryBasis.count==selectedMemoryBasis.count else{notice="retry";return}
             _ = try selectedSources.prepare(request,memoryIDs:selectedMemoryBasis.map(\.id)); busy=true; refreshState.invalidate(); selection.conversationID=request.conversationId
             let accepted = try await selectedSources.send(currentScope:{session.dataScope},post:{try await session.selectedSourceMessageRequest($0)},context:{try await session.selectedSourceContextRequest($0)})
-            guard session.dataScope==initial, accepted.messageID==request.messageId else { throw NativeDataError.staleSessionResponse }
+            guard ownsSelection(initial, generation), accepted.messageID==request.messageId else { throw NativeDataError.staleSessionResponse }
             draft=""; notice=nil
-        } catch { if session.dataScope==initial { notice="retry" } }
+        } catch {
+            if ownsSelection(initial, generation), selectedSources.scope == initial, selectedSources.pending == request {
+                submissionOpsRefusal.record(error, scope: initial, generation: generation)
+                notice = submissionOpsRefusal.code(scope: initial, generation: generation) ?? "retry"
+            }
+        }
         busy=false; await reload()
     }
     private func acceptPlanning() async {

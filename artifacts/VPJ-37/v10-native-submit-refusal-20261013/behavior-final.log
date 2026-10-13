@@ -1,0 +1,2 @@
+PASS 98 runtime assertions; exact submit methods + readback tail/catch + actual selected-source store/models; no simulator/device/provider
+{"sourceSHA256": "956f4f74d785c37df89fd360b97b51f3a3d53e938ebd8bd0180928991402da87", "fixtureSHA256": "a036a87f9381f2827ca1fb05643be74225d1e3c663336621567ebe5d59565504"}
