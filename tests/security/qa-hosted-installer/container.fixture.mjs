@@ -88,7 +88,7 @@ assert w[0][-1]==os.environ['FIXTURE_IMAGE']
 assert 'VISEPANDA_QA_SUPABASE_PROJECT_REF=dzqdzetcctkhbrhlxxgn' in w[0]
 assert w[0].count('type=bind,src=/run/vp-worker-secrets,dst=/run/vp-worker-secrets,readonly')==1
 assert '--tmpfs' not in w[0]
-assert not any('/qa-' in a for a in w[0])
+assert not any('/run/vp-worker-secrets/qa-' in a for a in w[0])
 assert w[0].count('VISEPANDA_QWEN_ENDPOINT=https://qa-workspace.cn-beijing.maas.aliyuncs.com/compatible-mode/v1/chat/completions')==1
 assert w[0][w[0].index('--restart')+1]=='no'
 assert 'SYNTHETIC_CANARY' not in str(calls) and '--env-file' not in str(calls)

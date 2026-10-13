@@ -99,7 +99,7 @@ try:
     with open(sys.argv[1], encoding="utf-8") as source:
         target = json.load(source, object_pairs_hook=pairs)
     build, project_ref = target["build"], target["projectRef"]
-    if not isinstance(project_ref, str) or not re.fullmatch(r"[a-z0-9]{20}", project_ref):
+    if not isinstance(project_ref, str) or not re.fullmatch(r"[a-z0-9]{20}", project_ref) or project_ref != "dzqdzetcctkhbrhlxxgn":
         raise ValueError()
     if not isinstance(build, str) or not re.fullmatch(r"[0-9a-f]{12,40}", build):
         raise ValueError()

@@ -37,6 +37,31 @@ Current package keeps profile `/4` and target `/2` with mandatory matching proje
 
 The installer restores the original accepted fixed-root secret metadata checks and whole-directory read-only worker bind, exactly as before the separate-slot proposal. No new directory or key path is selectable. Validator mounts stay nonsecret-only and worker validation/creation keep the same immutable image ID. The separate-file mount fixture is removed from current source; its previous PASS remains historical evidence only.
 
-Backend dependency remains pending Main delivery: current local base still has `/3` only, while the known independent-source commit `1c1e94e3` still rejects dzt and must not be substituted as an accepted current dependency. Full `/4` package/container tests remain UNRUN until the updated backend commit is integrated. No actual cloud/ECS/DB/provider/credential operations are implied or performed. Export/DDL/fees keep their specific approval requirements.
+At the pre-integration checkpoint, backend dependency was pending Main delivery: current local base still has `/3` only, while the known independent-source commit `1c1e94e3` still rejects dzt and must not be substituted as an accepted current dependency. Full `/4` package/container tests were UNRUN at that checkpoint; the final integration results below supersede that pending state. No actual cloud/ECS/DB/provider/credential operations are implied or performed. Export/DDL/fees keep their specific approval requirements.
 
 Current targeted PASS: approved dzt Python profile plus five malformed/legacy/unknown-path negatives (6/6); byte comparison confirms original secret metadata-guard block and worker mount/create tail match accepted base `8b5975e4` exactly, so prior S1/planning and fixed-root file-mode evidence is reused. Shell/Node syntax, docs and diff checks PASS.
+
+## Final integrated approved-target result
+
+Main-approved backend commits `1c1e94e36f4bcb6bf74450032eac6f5cea8894db` and `d2c2cf7e` were cherry-picked without conflict as local `358fc90e` and `46d84e17`. `git diff d2c2cf7 -- lib` is empty: no backend source was authored or altered by this owner. The package now uses `readApprovedQaTarget` directly; Python and shell early checks likewise accept only explicit dzt. Even a self-consistent profile/target for a different well-formed ref is rejected.
+
+PASS: 9/9 focused tests, zero skips: QA installer/profile/canonical target/discovery plus backend `independent-target.test.mjs`. This covers v1/v2/v4 discovery, explicit approved-ref config, strict URL and no fallback, profile/composition/job agreement, actual CLI binding before key reading and rejection of env fallback, missing/wrong/unknown target fields, mismatched or absent image build, hash/endpoint/duplicate rejection and the retained mocked Linux installer.
+
+PASS: rebuilt runtime image from the integrated source plus the exact package-validator hash below, local Node base digest `sha256:43ac6c60b8f89723f746e8a92ce91abd5017e627ce1ddfe4238355d3a30b772c`, network-disabled build with synthetic BUILD_ID `abcdefabcdef`. `vp-qa-bound-validator-fixture:20261013` resolves to immutable ID `sha256:86e7003a58aff41d46944166fa7d6b509178ddfa57d977efda5e63b00fcc5e1d`.
+
+PASS: `container.fixture.mjs` 1/1, zero skips, actual local Linux fixture with no Node in host PATH. Its validator runs use the built image's Node and real read-only binds, no network/secret mounts/value env. Preflight/start success used explicit dzt; image ID was identical between validation and intercepted worker creation, which received only the approved ref and original whole-root secret directory read-only bind. Wrong/missing/legacy binding, changed profile hash, endpoint, duplicate fields, private file mode/hardlink/symlink and existing worker state are rejected. Worker create/start remained intercepted: no actual worker or provider ran. Own temporary containers/volume absent afterward.
+
+The first integrated container run failed a fixture assertion that searched for `/qa-` anywhere in worker argv and accidentally matched the legitimate Qwen endpoint hostname. The assertion now checks only `/run/vp-worker-secrets/qa-`; final run passed. Runtime code was not weakened for this fixture error.
+
+Current shell/Node syntax, docs and diff checks PASS. Original accepted root secret metadata/create-tail evidence and S1/planning 3/3 regression are reused; neither unchanged section was broadened. Project-wide TypeScript/build/remote CI are not rerun for this package-only delta; matching imported TS was executed inside the built image, and backend owner evidence remains separately scoped.
+
+Exact current SHA256:
+
+- installer: `8cfa236a42bdcde9132b3da5a812a962597672da3c78f66cdd15039f44a2dfa3`
+- Python profile validator: `851f41814b6bb46922dd7377a3ad87a62386b0c93abf0bb002c8d195d8a1d59a`
+- packaged target validator: `e4e45e84022ca735f99cf573f2642940f62c6bf86582c600dcb32d141a01b1a0`
+- Dockerfile: `446c8c92185ec868bdb522cec04ecbf46f247206671685e723f9b62dac9e210e`
+- backend target: `4bd3d303a2d91881e41d19cfc44e04cd49ff8475fb418a540f5fe062a6756cf6`
+- backend profile: `70958ae30f8dc17fa8bf21a20fdda45e7167e6d8e83e909732ec41667b1903f5`
+
+UNRUN: real ECS profile `/4`, credential authentication, worker/disabled heartbeat, provider/Auth/budget/SQL, shared Production operations, remote CI and Main final review. No new project/key/slot, secret import/read/overwrite, push/PR/merge or host resource operation. Final package source is ready for Main integration; dependency commits are already present in Main and need not be reapplied there.

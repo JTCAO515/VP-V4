@@ -32,6 +32,7 @@ test('QA-only installer preflight uses closed v4 profile and retains legacy file
  for(const bad of [
   {...valid,schemaVersion:'vpj07-hosted-text-worker/3'},
   {...valid,projectRef:undefined},
+  {...valid,projectRef:'abcdefghijklmnopqrst'},
   {...valid,projectRef:'ABCDEFGHIJKLMNOPQRST'},
   {...valid,projectRef:'abcdefghijklmnopqrs-'},
   {...valid,projectRef:'dzqdzetcctkhbrhlxxgn.supabase.co'},

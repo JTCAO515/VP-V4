@@ -63,6 +63,7 @@ test('QA package emits its exact reviewed endpoint and rejects stale build, prof
     {...p,projectRef:undefined},
     {...p,projectRef:'zyxwvutsrqponmlkjihg'},
   ])assert.equal(node(['--prepare'],JSON.stringify({profile:bad,target:s})).status,1,'profile target mismatch rejected');
+  assert.equal(node(['--prepare'],JSON.stringify({profile:{...p,projectRef:'abcdefghijklmnopqrst'},target:{...s,projectRef:'abcdefghijklmnopqrst',databaseUrl:'https://abcdefghijklmnopqrst.supabase.co'}})).status,1,'a self-consistent but unapproved project is not a trusted root');
   const secret='sb_secret_SYNTHETIC_CANARY';
   const denied=node(['--prepare'],JSON.stringify({profile:{...p,qwen:{...p.qwen,priceVersion:secret}},target:s}));
   assert.equal(denied.status,1);assert.equal(denied.stdout,'');assert.ok(!denied.stderr.includes(secret));
