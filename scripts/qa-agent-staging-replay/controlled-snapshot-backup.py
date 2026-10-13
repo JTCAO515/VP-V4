@@ -1,6 +1,7 @@
 """Scheme B candidate: separate opt-in gate, original strict capture unchanged.
 No real operation unless JT explicitly approves exact mode/scopes/boundaries and
-an operator confirms at a TTY. Root's technical choice alone is not authority.
+an operator confirms at a TTY or fixed direct-human/Main-start evidence passes.
+Root's technical choice alone is not authority.
 """
 import hashlib
 import importlib.util
@@ -23,6 +24,7 @@ def load(name,path):
 cap=load('strict_capture',HERE/'controlled-backup.py')
 protocol=load('snapshot_protocol',HERE/'shared-snapshot.py')
 contract=load('snapshot_contract',HERE/'snapshot-contract.py')
+authority=load('direct_authority',HERE/'direct-human-authority.py')
 plan=cap.plan
 MODE='shared-readonly-snapshot/1'
 BOUNDARIES=['application_ddl_and_migrations','managed_realtime_migrations','roles_and_memberships','acl_and_policy_ddl','extension_and_ledger_schema']
@@ -30,7 +32,7 @@ ACTIONS=sorted(cap.APPROVAL_ACTIONS+['hold-bounded-readonly-exporter','allow-con
 
 
 def code_hash():
-    files=['controlled-snapshot-backup.py','shared-snapshot.py','snapshot-contract.py']
+    files=['controlled-snapshot-backup.py','shared-snapshot.py','snapshot-contract.py','direct-human-authority.py']
     return hashlib.sha256(b''.join((HERE/f).read_bytes() for f in files)+cap.code_hash().encode()).hexdigest()
 
 
@@ -184,14 +186,21 @@ def execute(a,official):
 
 def main(args):
     if args in ([],['--dry-run']):return {'status':'DRY_RUN_NO_TARGET_IO','mode':MODE,'codeSha256':code_hash(),'originalStrictCaptureHash':cap.code_hash(),'actionsRequiringJTApproval':ACTIONS,'catalogBoundaryTypes':BOUNDARIES,'realCapture':'UNRUN','sequenceSafety':'REQUIRES_ISOLATED_RESTORE'}
-    plan.require(len(args)==3 and args[0]=='--snapshot-execute','SNAPSHOT_ARGUMENTS_REQUIRED')
-    plan.require(sys.stdin.isatty() and sys.stdout.isatty(),'HUMAN_TTY_REQUIRED')
+    record_mode=len(args)==3 and args[0]=='--snapshot-from-direct-record'
+    plan.require(record_mode or (len(args)==3 and args[0]=='--snapshot-execute'),'SNAPSHOT_ARGUMENTS_REQUIRED')
+    if not record_mode:plan.require(sys.stdin.isatty() and sys.stdout.isatty(),'HUMAN_TTY_REQUIRED')
     ap,op=map(Path,args[1:]);a=json.loads(ap.read_text());official=json.loads(op.read_text());validate_gate(a,official,cap.now())
-    phrase='JT APPROVED SCHEME B POINT COPY NO LIVE AUTHORITY '+plan.REF
-    plan.require(input('Confirm exact scheme B authority and DDL/DCL owner evidence: '+phrase+': ')==phrase,'SNAPSHOT_CONFIRMATION_REQUIRED')
+    receipt=None
+    if record_mode:receipt=authority.validate_packet(a,'capture',code_hash(),cap.now(),cap.stamp)
+    else:
+        phrase='JT APPROVED SCHEME B POINT COPY NO LIVE AUTHORITY '+plan.REF
+        plan.require(input('Confirm exact scheme B authority and DDL/DCL owner evidence: '+phrase+': ')==phrase,'SNAPSHOT_CONFIRMATION_REQUIRED')
     aa=json.loads(ap.read_text());oo=json.loads(op.read_text());validate_gate(aa,oo,cap.now())
     plan.require(aa==a and oo==official,'SNAPSHOT_CONFIRMED_INPUT_CHANGED')
-    return execute(a,official)
+    if record_mode:receipt=authority.validate_packet(aa,'capture',code_hash(),cap.now(),cap.stamp)
+    result=execute(a,official)
+    if receipt:result['directHumanAuthorization']=receipt
+    return result
 
 
 if __name__=='__main__':

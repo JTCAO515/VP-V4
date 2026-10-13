@@ -1,0 +1,1055 @@
+{
+  "status": "FAIL_LOCAL_RESTORE_REPLAY_PROOF",
+  "targetRead": false,
+  "realArchiveRead": false,
+  "stages": [
+    "PASS exact75 original-source baseline with fake auth/trip/revoked-consent/budget rows",
+    "PASS four encrypted archives share75/ledger snapshot; no target/archive input"
+  ],
+  "currentStage": "owned restore and80 replay before cleanup",
+  "schemaDifferenceHeaders": [
+    {
+      "header": "-- Name: turn_feedback; Type: TABLE; Schema: public; Owner: postgres",
+      "beforeSha256": "2da9a0463985447a9a618e6888151df0dd6f897911964bd88ba7ed7fc9ab1bbf",
+      "afterSha256": "d0e5b219a67ee774550fafc4b52311f71578e1c7cd8a16673dbcee0bb1c26fb2"
+    }
+  ],
+  "syntheticFeedbackDdlChangedLines": {
+    "before": [
+      "    CONSTRAINT turn_feedback_check CHECK ((((((feedback_kind = 'another_option'::text) AND (reason_code = 'different_preference'::text)) OR ((feedback_kind = 'inaccurate'::text) AND (reason_code = 'not_relevant'::text))) OR ((feedback_kind = 'reject_reason'::text) AND (reason_code = 'missing_evidence'::text))) OR ((feedback_kind = 'correction'::text) AND (reason_code = 'incorrect_detail'::text)))),"
+    ],
+    "after": [
+      "    CONSTRAINT turn_feedback_check CHECK ((((feedback_kind = 'another_option'::text) AND (reason_code = 'different_preference'::text)) OR ((feedback_kind = 'inaccurate'::text) AND (reason_code = 'not_relevant'::text)) OR ((feedback_kind = 'reject_reason'::text) AND (reason_code = 'missing_evidence'::text)) OR ((feedback_kind = 'correction'::text) AND (reason_code = 'incorrect_detail'::text)))),"
+    ]
+  },
+  "restoreReplay": {
+    "status": "FAIL_LOCAL_RESTORE_REPLAY",
+    "targetWritten": false,
+    "contentOutput": false,
+    "bootstrapProfile": "supabase-17.6.1.155-five-extensions/1",
+    "explicitPrecreatedObjects": [
+      "SCHEMA:extensions",
+      "SCHEMA:vault",
+      "EXTENSION:pg_stat_statements",
+      "EXTENSION:pgcrypto",
+      "EXTENSION:supabase_vault",
+      "EXTENSION:uuid-ossp"
+    ],
+    "schemaDigest": "03404dc08b6db12dbd3261b70f472c9618d09d4954153bacb337b911cec6969a",
+    "countRelations": 85,
+    "globalRoles": "PASS",
+    "ownerAclSchema": "PASS",
+    "platformCatalog": "PASS",
+    "counts": "PASS",
+    "platformLedger": "PASS_COUNT_AND_DIGEST",
+    "platformServices": "UNRUN_GOTRUE_STORAGE_REALTIME",
+    "migrationUpgrade": "UNRUN",
+    "userAcceptance": "UNRUN",
+    "cleanup": "PASS",
+    "restoreCompatibility": {
+      "status": "PASS_EXACT_LEGACY_ROW_IN_REPARSE",
+      "targetChanged": false,
+      "acceptedCheckVariants": 2
+    },
+    "sequenceSafety": {
+      "status": "PASS_MONOTONE_SEQUENCE_NO_COLLISION",
+      "sequences": 2,
+      "advancedBeyondSnapshotRowBound": 0,
+      "exactSnapshotSequenceState": false
+    },
+    "replay": {
+      "status": "FAIL_OWNED_RESTORED_REPLAY",
+      "failedVersion": "20261010030000",
+      "appliedBeforeFailure": [
+        "20260922033000",
+        "20260926113804",
+        "20260926132008",
+        "20260926150000",
+        "20260926170000",
+        "20260926180000",
+        "20260927010000",
+        "20260927021000",
+        "20260927030000",
+        "20260927040000",
+        "20260927050000",
+        "20260927055000",
+        "20260927060000",
+        "20260930010000",
+        "20260930020000",
+        "20261001010000",
+        "20261002010000",
+        "20261002020000",
+        "20261002030000",
+        "20261002040000",
+        "20261002050000",
+        "20261002060000",
+        "20261002080000",
+        "20261002110000",
+        "20261002120000",
+        "20261002130000",
+        "20261002200000",
+        "20261003020000",
+        "20261003030000",
+        "20261003040000",
+        "20261003050000",
+        "20261003060000",
+        "20261003090000",
+        "20261003110000",
+        "20261003120000",
+        "20261003130000",
+        "20261003150000",
+        "20261003160000",
+        "20261003170000",
+        "20261003180000",
+        "20261003190000",
+        "20261003200000",
+        "20261003210000",
+        "20261003220000",
+        "20261003230000",
+        "20261004000000",
+        "20261004010000",
+        "20261004020000",
+        "20261004030000",
+        "20261004040000",
+        "20261005010000",
+        "20261005020000",
+        "20261005030000",
+        "20261005040000",
+        "20261005050000",
+        "20261005060000",
+        "20261005070000",
+        "20261005080000",
+        "20261005081000",
+        "20261005090000",
+        "20261005091000",
+        "20261005092000",
+        "20261006010000",
+        "20261006011000",
+        "20261006020000",
+        "20261006030000",
+        "20261006040000",
+        "20261006050000",
+        "20261006060000",
+        "20261007010000",
+        "20261007020000",
+        "20261007030000",
+        "20261007040000",
+        "20261007050000",
+        "20261008000000",
+        "20261010010000",
+        "20261010020000"
+      ],
+      "sourceGuardDiagnostics": {
+        "20261010010000": {
+          "profileWeb": {
+            "acl": "{postgres=X/postgres}",
+            "kind": "f",
+            "owner": "postgres",
+            "config": [
+              "search_path=\"\""
+            ],
+            "bodyMd5": "5b8e7a781f70ba4dfab448a2b0233f01",
+            "definer": true
+          }
+        },
+        "20261010030000": {
+          "directionsFunctionGuardDifferences": [
+            {
+              "signature": "profile_data_private.schema_v1()",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "dc21dcd41a3f518fcd9644358b9a141d",
+              "actualBodyMd5": "dc21dcd41a3f518fcd9644358b9a141d",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres}",
+              "actualAcl": "{postgres=X/postgres}"
+            },
+            {
+              "signature": "public.read_text_work(uuid,uuid)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "d73fe7fce2f0aa6a8bc4645434b00374",
+              "actualBodyMd5": "d73fe7fce2f0aa6a8bc4645434b00374",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres,service_role=X/postgres}",
+              "actualAcl": "{postgres=X/postgres,service_role=X/postgres}"
+            },
+            {
+              "signature": "result_data_private.relations_v1()",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "557dce6af796d8a4029e99a3908e7cfa",
+              "actualBodyMd5": "557dce6af796d8a4029e99a3908e7cfa",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres}",
+              "actualAcl": "{postgres=X/postgres}"
+            },
+            {
+              "signature": "public.read_grounded_work(uuid,uuid)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "d18ccc9358bdd0fb908e551c2e3005b9",
+              "actualBodyMd5": "d18ccc9358bdd0fb908e551c2e3005b9",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres,service_role=X/postgres}",
+              "actualAcl": "{postgres=X/postgres,service_role=X/postgres}"
+            },
+            {
+              "signature": "turn_data_private.source_v1(uuid,uuid)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "0ba35767b734f7dbc8ff444674767cf0",
+              "actualBodyMd5": "0ba35767b734f7dbc8ff444674767cf0",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres}",
+              "actualAcl": "{postgres=X/postgres}"
+            },
+            {
+              "signature": "export_private.profile_hooks_valid_v1()",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "f22999badda4a9bfb165ff26a0cf981b",
+              "actualBodyMd5": "f22999badda4a9bfb165ff26a0cf981b",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres}",
+              "actualAcl": "{postgres=X/postgres}"
+            },
+            {
+              "signature": "public.finish_turn_work(uuid,uuid,text)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "52e747b53b136cc44ad8b9b31f019a4e",
+              "actualBodyMd5": "52e747b53b136cc44ad8b9b31f019a4e",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres,service_role=X/postgres}",
+              "actualAcl": "{postgres=X/postgres,service_role=X/postgres}"
+            },
+            {
+              "signature": "turn_data_private.schema_supported_v1()",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "f27dd66c548264e6658bfd6f47807672",
+              "actualBodyMd5": "f27dd66c548264e6658bfd6f47807672",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres}",
+              "actualAcl": "{postgres=X/postgres}"
+            },
+            {
+              "signature": "export_private.lock_job_v1(uuid,boolean)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "373ffaf9b07225a239e982d06e76ccb9",
+              "actualBodyMd5": "373ffaf9b07225a239e982d06e76ccb9",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres}",
+              "actualAcl": "{postgres=X/postgres}"
+            },
+            {
+              "signature": "result_data_private.source_v1(uuid,uuid)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "852aad4ea8aa72b4caefca7130883658",
+              "actualBodyMd5": "852aad4ea8aa72b4caefca7130883658",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres}",
+              "actualAcl": "{postgres=X/postgres}"
+            },
+            {
+              "signature": "turn_data_private.export_source_v1(uuid)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "71c432d85225b5c12fa6bedf40e6847f",
+              "actualBodyMd5": "71c432d85225b5c12fa6bedf40e6847f",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres}",
+              "actualAcl": "{postgres=X/postgres}"
+            },
+            {
+              "signature": "turn_data_private.runtime_supported_v1()",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "4f65c3640072075fda9b8a79e9e24fd6",
+              "actualBodyMd5": "4f65c3640072075fda9b8a79e9e24fd6",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres}",
+              "actualAcl": "{postgres=X/postgres}"
+            },
+            {
+              "signature": "turn_data_private.write_hooks_valid_v1()",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "3c218165dab024758a16a0e25774139b",
+              "actualBodyMd5": "3c218165dab024758a16a0e25774139b",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres}",
+              "actualAcl": "{postgres=X/postgres}"
+            },
+            {
+              "signature": "public.privacy_core_export_v1(text,jsonb)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "20db72e7d3f72233738ceb0ec93ba5cb",
+              "actualBodyMd5": "20db72e7d3f72233738ceb0ec93ba5cb",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres}",
+              "actualAcl": "{postgres=X/postgres}"
+            },
+            {
+              "signature": "result_data_private.schema_supported_v1()",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "f0a8904d50fb77e5c3d5d2d560583e48",
+              "actualBodyMd5": "f0a8904d50fb77e5c3d5d2d560583e48",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres}",
+              "actualAcl": "{postgres=X/postgres}"
+            },
+            {
+              "signature": "result_data_private.parents_v1(text,jsonb)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "2fb5d02aaa8d78214084f601db63f255",
+              "actualBodyMd5": "2fb5d02aaa8d78214084f601db63f255",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres}",
+              "actualAcl": "{postgres=X/postgres}"
+            },
+            {
+              "signature": "turn_data_private.source_key_v1(text,jsonb)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "e0291b96b8823d91acd2a3672ed24336",
+              "actualBodyMd5": "e0291b96b8823d91acd2a3672ed24336",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres}",
+              "actualAcl": "{postgres=X/postgres}"
+            },
+            {
+              "signature": "turn_private.valid_result_content_v2(jsonb)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "43f109c397d4c1923855894ea3f4662a",
+              "actualBodyMd5": "43f109c397d4c1923855894ea3f4662a",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres}",
+              "actualAcl": "{postgres=X/postgres}"
+            },
+            {
+              "signature": "turn_data_private.lock_source_v1(uuid,jsonb)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "47b8cc9b6388efefa4a8aea2b8676eb7",
+              "actualBodyMd5": "47b8cc9b6388efefa4a8aea2b8676eb7",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres}",
+              "actualAcl": "{postgres=X/postgres}"
+            },
+            {
+              "signature": "turn_data_private.erase_source_v1(uuid,jsonb)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "a18c6bd0ecaa86377f5e3d41353087e9",
+              "actualBodyMd5": "a18c6bd0ecaa86377f5e3d41353087e9",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres}",
+              "actualAcl": "{postgres=X/postgres}"
+            },
+            {
+              "signature": "public.pause_planning_comparison_v1(uuid,uuid)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "13d36b152c573277826a242987c8b888",
+              "actualBodyMd5": "13d36b152c573277826a242987c8b888",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres,service_role=X/postgres}",
+              "actualAcl": "{postgres=X/postgres,service_role=X/postgres}"
+            },
+            {
+              "signature": "result_data_private.lock_source_v1(uuid,jsonb)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "8e06a6ae621ddf2cfed1bbf382439cfc",
+              "actualBodyMd5": "8e06a6ae621ddf2cfed1bbf382439cfc",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres}",
+              "actualAcl": "{postgres=X/postgres}"
+            },
+            {
+              "signature": "conversation_data_private.schema_supported_v1()",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "2c470e22d38b75e1350b6fd7d41dd38b",
+              "actualBodyMd5": "2c470e22d38b75e1350b6fd7d41dd38b",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres}",
+              "actualAcl": "{postgres=X/postgres}"
+            },
+            {
+              "signature": "public.read_planning_observations_v1(uuid,uuid)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "5d75e865f715d3ba9cdec14191cf9ec5",
+              "actualBodyMd5": "5d75e865f715d3ba9cdec14191cf9ec5",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres,service_role=X/postgres}",
+              "actualAcl": "{postgres=X/postgres,service_role=X/postgres}"
+            },
+            {
+              "signature": "result_data_private.erase_source_v1(uuid,jsonb)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "509b1cab702d2b609150c83deebffc35",
+              "actualBodyMd5": "509b1cab702d2b609150c83deebffc35",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres}",
+              "actualAcl": "{postgres=X/postgres}"
+            },
+            {
+              "signature": "conversation_data_private.parents_v1(text,jsonb)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "635eb97926ad2c2346fcf59d9d83231c",
+              "actualBodyMd5": "635eb97926ad2c2346fcf59d9d83231c",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres}",
+              "actualAcl": "{postgres=X/postgres}"
+            },
+            {
+              "signature": "public.privacy_linked_trip_delete_v1(text,jsonb)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "0e85c65495f2d06754909aec606b8108",
+              "actualBodyMd5": "0e85c65495f2d06754909aec606b8108",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres}",
+              "actualAcl": "{postgres=X/postgres}"
+            },
+            {
+              "signature": "result_data_private.related_v1(text,jsonb,jsonb)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "9fc2ef49bb6c3935d900082344e1748d",
+              "actualBodyMd5": "9fc2ef49bb6c3935d900082344e1748d",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres}",
+              "actualAcl": "{postgres=X/postgres}"
+            },
+            {
+              "signature": "public.authorize_planning_read_v1(uuid,uuid,text)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "2c4bdd83fee9a2f1c6f0187580bd0980",
+              "actualBodyMd5": "2c4bdd83fee9a2f1c6f0187580bd0980",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres,service_role=X/postgres}",
+              "actualAcl": "{postgres=X/postgres,service_role=X/postgres}"
+            },
+            {
+              "signature": "public.complete_grounded_work(uuid,uuid,text,text)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "03dc718323ebce35aa4184bf33808c4b",
+              "actualBodyMd5": "03dc718323ebce35aa4184bf33808c4b",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres,service_role=X/postgres}",
+              "actualAcl": "{postgres=X/postgres,service_role=X/postgres}"
+            },
+            {
+              "signature": "public.read_planning_comparison_work_v1(uuid,uuid)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "3a5f0bcd23910f8e9f9cbce44e23bc5c",
+              "actualBodyMd5": "3a5f0bcd23910f8e9f9cbce44e23bc5c",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres,service_role=X/postgres}",
+              "actualAcl": "{postgres=X/postgres,service_role=X/postgres}"
+            },
+            {
+              "signature": "conversation_data_private.source_v1(uuid,text,uuid)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "1b5812e10eaa697b70b203d1ff4ecedf",
+              "actualBodyMd5": "1b5812e10eaa697b70b203d1ff4ecedf",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres}",
+              "actualAcl": "{postgres=X/postgres}"
+            },
+            {
+              "signature": "public.authorize_text_dispatch(uuid,uuid,uuid,text)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "d2431b5e9c7612b106dc6307a7a2eda7",
+              "actualBodyMd5": "d2431b5e9c7612b106dc6307a7a2eda7",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres,service_role=X/postgres}",
+              "actualAcl": "{postgres=X/postgres,service_role=X/postgres}"
+            },
+            {
+              "signature": "conversation_data_private.lock_source_v1(uuid,jsonb)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "ac15b6085a3f6c2207288548bb3901c7",
+              "actualBodyMd5": "ac15b6085a3f6c2207288548bb3901c7",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres}",
+              "actualAcl": "{postgres=X/postgres}"
+            },
+            {
+              "signature": "conversation_data_private.erase_source_v1(uuid,jsonb)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "68914a425269a4c1a0c51216f887e2f6",
+              "actualBodyMd5": "68914a425269a4c1a0c51216f887e2f6",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres}",
+              "actualAcl": "{postgres=X/postgres}"
+            },
+            {
+              "signature": "privacy_private.linked_delete_graph_v1(uuid,uuid,jsonb)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "a489157a621a1963edcc15f418e259c2",
+              "actualBodyMd5": "a489157a621a1963edcc15f418e259c2",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres}",
+              "actualAcl": "{postgres=X/postgres}"
+            },
+            {
+              "signature": "public.finish_planning_action_v1(uuid,uuid,uuid,text,text)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "1fb4892fd271e0fd0dfcfa28be173a43",
+              "actualBodyMd5": "1fb4892fd271e0fd0dfcfa28be173a43",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres,service_role=X/postgres}",
+              "actualAcl": "{postgres=X/postgres,service_role=X/postgres}"
+            },
+            {
+              "signature": "public.authorize_grounded_dispatch(uuid,uuid,uuid,text,text)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "9d4bb4655b29991276ba610ec25fae7b",
+              "actualBodyMd5": "9d4bb4655b29991276ba610ec25fae7b",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres,service_role=X/postgres}",
+              "actualAcl": "{postgres=X/postgres,service_role=X/postgres}"
+            },
+            {
+              "signature": "public.authorize_text_task_dispatch(uuid,uuid,uuid,text,text)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "c5d98ed0d3d03b2d549e3d79cf425efd",
+              "actualBodyMd5": "c5d98ed0d3d03b2d549e3d79cf425efd",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres,service_role=X/postgres}",
+              "actualAcl": "{postgres=X/postgres,service_role=X/postgres}"
+            },
+            {
+              "signature": "turn_private.complete_text_work_unmetered(uuid,uuid,text,text)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "8861772f24cd3d1e3a0e5f73e193da5b",
+              "actualBodyMd5": "8861772f24cd3d1e3a0e5f73e193da5b",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres}",
+              "actualAcl": "{postgres=X/postgres}"
+            },
+            {
+              "signature": "public.authorize_planning_dispatch_v1(uuid,uuid,text,uuid,uuid)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "81b6a2fefd3641270c0ae2a31ebe76a0",
+              "actualBodyMd5": "81b6a2fefd3641270c0ae2a31ebe76a0",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres,service_role=X/postgres}",
+              "actualAcl": "{postgres=X/postgres,service_role=X/postgres}"
+            },
+            {
+              "signature": "turn_private.result_domain_state_v2(uuid,uuid,uuid,integer,jsonb)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "c279bea2ad2860b2a512bd1bc6542515",
+              "actualBodyMd5": "c279bea2ad2860b2a512bd1bc6542515",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres}",
+              "actualAcl": "{postgres=X/postgres}"
+            },
+            {
+              "signature": "public.complete_grounded_place_work(uuid,uuid,text,text,text,text)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "4f30184e1f9bf720545676e63a777820",
+              "actualBodyMd5": "4f30184e1f9bf720545676e63a777820",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres,service_role=X/postgres}",
+              "actualAcl": "{postgres=X/postgres,service_role=X/postgres}"
+            },
+            {
+              "signature": "public.complete_grounded_work_with_needs(uuid,uuid,text,text,text)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "f5045a3e627fbc1455172839cca08f97",
+              "actualBodyMd5": "f5045a3e627fbc1455172839cca08f97",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres,service_role=X/postgres}",
+              "actualAcl": "{postgres=X/postgres,service_role=X/postgres}"
+            },
+            {
+              "signature": "public.complete_planning_observation_v1(uuid,uuid,uuid,text,jsonb)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "0237ac3c2986a862427678d360941070",
+              "actualBodyMd5": "0237ac3c2986a862427678d360941070",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres,service_role=X/postgres}",
+              "actualAcl": "{postgres=X/postgres,service_role=X/postgres}"
+            },
+            {
+              "signature": "public.assistant_conversation_export_owner_v1(uuid,text,uuid,integer)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "9bd389e5f50b60403a215c41e0138c2e",
+              "actualBodyMd5": "9bd389e5f50b60403a215c41e0138c2e",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres,service_role=X/postgres}",
+              "actualAcl": "{postgres=X/postgres,service_role=X/postgres}"
+            },
+            {
+              "signature": "public.claim_planning_action_v1(uuid,uuid,uuid,uuid,text,text,text,jsonb)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "e5c7e8e558b63a68995dc4eb5e21926a",
+              "actualBodyMd5": "e5c7e8e558b63a68995dc4eb5e21926a",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres,service_role=X/postgres}",
+              "actualAcl": "{postgres=X/postgres,service_role=X/postgres}"
+            },
+            {
+              "signature": "public.complete_planning_comparison_v1(uuid,uuid,uuid,text,uuid,text,jsonb)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "b6b1b930810f166da37b3c754bc4a653",
+              "actualBodyMd5": "b6b1b930810f166da37b3c754bc4a653",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres,service_role=X/postgres}",
+              "actualAcl": "{postgres=X/postgres,service_role=X/postgres}"
+            },
+            {
+              "signature": "turn_private.publish_result_v2(uuid,uuid,integer,uuid,uuid,uuid,uuid,uuid,integer,integer,jsonb,jsonb,jsonb,boolean)",
+              "changedFields": [
+                "result",
+                "strict",
+                "identity",
+                "language",
+                "parallel",
+                "arguments",
+                "definition"
+              ],
+              "expectedBodyMd5": "07055d52cdb68a3c41bc2684e85440db",
+              "actualBodyMd5": "07055d52cdb68a3c41bc2684e85440db",
+              "expectedOwner": "postgres",
+              "actualOwner": "postgres",
+              "expectedAcl": "{postgres=X/postgres}",
+              "actualAcl": "{postgres=X/postgres}"
+            }
+          ]
+        }
+      },
+      "reason": "LOCAL_SQLSTATE_P0001",
+      "targetWritten": false,
+      "liveRestoreAuthority": "NONE"
+    },
+    "failedStage": "owned replay before cleanup",
+    "reason": "LOCAL_SQLSTATE_P0001",
+    "captureMode": "shared-readonly-snapshot/1",
+    "dispatchAuthority": "NONE",
+    "liveRestoreAuthority": "NONE"
+  },
+  "reason": "OWNED_RESTORE_REPLAY_PROOF_FAILED",
+  "sourceCleanup": "PASS",
+  "elapsedSeconds": 23.627
+}

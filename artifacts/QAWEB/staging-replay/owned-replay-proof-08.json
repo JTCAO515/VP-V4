@@ -1,0 +1,59 @@
+{
+  "status": "FAIL_LOCAL_RESTORE_REPLAY_PROOF",
+  "targetRead": false,
+  "realArchiveRead": false,
+  "stages": [
+    "PASS exact75 original-source baseline with fake auth/trip/revoked-consent/budget rows",
+    "PASS four encrypted archives share75/ledger snapshot; no target/archive input"
+  ],
+  "currentStage": "owned restore and80 replay before cleanup",
+  "schemaDifferenceHeaders": [
+    {
+      "header": "-- Name: turn_feedback; Type: TABLE; Schema: public; Owner: postgres",
+      "beforeSha256": "2da9a0463985447a9a618e6888151df0dd6f897911964bd88ba7ed7fc9ab1bbf",
+      "afterSha256": "d0e5b219a67ee774550fafc4b52311f71578e1c7cd8a16673dbcee0bb1c26fb2"
+    }
+  ],
+  "syntheticFeedbackDdlChangedLines": {
+    "before": [
+      "    CONSTRAINT turn_feedback_check CHECK ((((((feedback_kind = 'another_option'::text) AND (reason_code = 'different_preference'::text)) OR ((feedback_kind = 'inaccurate'::text) AND (reason_code = 'not_relevant'::text))) OR ((feedback_kind = 'reject_reason'::text) AND (reason_code = 'missing_evidence'::text))) OR ((feedback_kind = 'correction'::text) AND (reason_code = 'incorrect_detail'::text)))),"
+    ],
+    "after": [
+      "    CONSTRAINT turn_feedback_check CHECK ((((feedback_kind = 'another_option'::text) AND (reason_code = 'different_preference'::text)) OR ((feedback_kind = 'inaccurate'::text) AND (reason_code = 'not_relevant'::text)) OR ((feedback_kind = 'reject_reason'::text) AND (reason_code = 'missing_evidence'::text)) OR ((feedback_kind = 'correction'::text) AND (reason_code = 'incorrect_detail'::text)))),"
+    ]
+  },
+  "restoreReplay": {
+    "status": "FAIL_LOCAL_RESTORE",
+    "targetWritten": false,
+    "contentOutput": false,
+    "bootstrapProfile": "supabase-17.6.1.155-five-extensions/1",
+    "explicitPrecreatedObjects": [
+      "SCHEMA:extensions",
+      "SCHEMA:vault",
+      "EXTENSION:pg_stat_statements",
+      "EXTENSION:pgcrypto",
+      "EXTENSION:supabase_vault",
+      "EXTENSION:uuid-ossp"
+    ],
+    "schemaDigest": "03404dc08b6db12dbd3261b70f472c9618d09d4954153bacb337b911cec6969a",
+    "countRelations": 85,
+    "globalRoles": "PASS",
+    "ownerAclSchema": "PASS",
+    "platformCatalog": "PASS",
+    "counts": "PASS",
+    "platformLedger": "PASS_COUNT_AND_DIGEST",
+    "platformServices": "UNRUN_GOTRUE_STORAGE_REALTIME",
+    "migrationUpgrade": "UNRUN",
+    "userAcceptance": "UNRUN",
+    "cleanup": "PASS",
+    "restoreCompatibility": {
+      "status": "PASS_EXACT_LEGACY_ROW_IN_REPARSE",
+      "targetChanged": false,
+      "acceptedCheckVariants": 2
+    },
+    "reason": "UNKNOWN_ARCHIVED_TABLE_ACL_DRIFT"
+  },
+  "reason": "OWNED_RESTORE_REPLAY_PROOF_FAILED",
+  "sourceCleanup": "PASS",
+  "elapsedSeconds": 10.655
+}

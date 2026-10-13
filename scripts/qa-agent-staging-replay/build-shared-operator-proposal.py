@@ -95,7 +95,7 @@ def build(main_head):
         'notAuthority':['new database/project/quota','new persistent API key','RLS bypass permission changes','provider calls/fees',
             'production deployment/domain change','automatic full live restore','discarding successful migration history','treating snapshot consent as current dispatch authority'],
         'toolingLimits':{'captureAndOwnedRestoreCandidates':'implemented/default dry-run/local PASS',
-            'existingRestoreDestroysCopyOnExit':True,'actualData80ReplayBeforeCleanup':'Main must bind its accepted migration rehearsal seam; existing synthetic replay is not an actual-data runner',
+            'existingRestoreDestroysCopyOnExit':True,'actualData80ReplayBeforeCleanup':'explicit owned-restored-75-to155/1 hook implemented; fixed manifest2305 and QA73b; real-data replay remains UNRUN',
             'noTarget80RunnerExecutedOrAuthorizedHere':True}}
 
 

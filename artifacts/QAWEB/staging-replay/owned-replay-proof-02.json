@@ -1,0 +1,40 @@
+{
+  "status": "FAIL_LOCAL_RESTORE_REPLAY_PROOF",
+  "targetRead": false,
+  "realArchiveRead": false,
+  "stages": [
+    "PASS exact75 original-source baseline with fake auth/trip/revoked-consent/budget rows",
+    "PASS four encrypted archives share75/ledger snapshot; no target/archive input"
+  ],
+  "currentStage": "owned restore and80 replay before cleanup",
+  "schemaDifferenceHeaders": [
+    {
+      "header": "-- Name: turn_feedback; Type: TABLE; Schema: public; Owner: postgres",
+      "beforeSha256": "2da9a0463985447a9a618e6888151df0dd6f897911964bd88ba7ed7fc9ab1bbf",
+      "afterSha256": "d0e5b219a67ee774550fafc4b52311f71578e1c7cd8a16673dbcee0bb1c26fb2"
+    }
+  ],
+  "restoreReplay": {
+    "status": "FAIL_LOCAL_RESTORE",
+    "targetWritten": false,
+    "contentOutput": false,
+    "bootstrapProfile": "supabase-17.6.1.155-five-extensions/1",
+    "explicitPrecreatedObjects": [
+      "SCHEMA:extensions",
+      "SCHEMA:vault",
+      "EXTENSION:pg_stat_statements",
+      "EXTENSION:pgcrypto",
+      "EXTENSION:supabase_vault",
+      "EXTENSION:uuid-ossp"
+    ],
+    "failedStage": "schema owner ACL policy trigger verification",
+    "reason": "SCHEMA_OWNER_ACL_OR_PLATFORM_MISMATCH",
+    "cleanup": "PASS",
+    "captureMode": "shared-readonly-snapshot/1",
+    "dispatchAuthority": "NONE",
+    "liveRestoreAuthority": "NONE"
+  },
+  "reason": "OWNED_RESTORE_REPLAY_PROOF_FAILED",
+  "sourceCleanup": "PASS",
+  "elapsedSeconds": 11.071
+}
