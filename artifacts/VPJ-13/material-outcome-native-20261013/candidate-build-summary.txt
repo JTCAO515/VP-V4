@@ -1,0 +1,6 @@
+Source commit: 52a8792396cd87295bf030a348e7c6e6b16f4b7f
+Generic iOS Simulator unsigned COPY build: PASS
+** BUILD SUCCEEDED **
+Final source/candidate SHA256 matches: PASS
+6 candidate patch dry-run: PASS (git apply --check --unidiff-zero)
+No shared file applied; no simulator booted; original UI/HTTP/target/device UNRUN.

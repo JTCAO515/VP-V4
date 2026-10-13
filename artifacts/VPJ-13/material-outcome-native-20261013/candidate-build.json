@@ -1,0 +1,59 @@
+{
+  "result": "PASS",
+  "sourceSHA256": {
+    "ios/VisePanda/VisePanda/Features/JourneyMaterialOutcome/NativeJourneyMaterialOutcomeBridge.swift": "157956e437404771a7cc4533217568244632a6866126cf5cb8a11eb6a3ba0d0e",
+    "ios/VisePanda/VisePanda/Features/JourneyMaterialOutcome/NativeJourneyMaterialOutcome.swift": "b6934cc775fefdcdd302fa42062fe92633226d8c66548ad4d0aea6daa425faf0"
+  },
+  "sharedCandidates": {
+    "baseHead": "daa7bae44a660381fb3295d0d2afc327ea98d3ba",
+    "applied": false,
+    "pins": [
+      {
+        "path": "ios/VisePanda/VisePanda/Features/Trip/NativeTripStore.swift",
+        "beforeSHA256": "898807a74fcfd892e00799958f0e3b7c08792d21a9570fed01112f4c87dc266d",
+        "afterSHA256": "2110075e82fe3f743458a6c0c7beb74fc7675311f17bc291b98a42deb491dcc8"
+      },
+      {
+        "path": "ios/VisePanda/VisePanda/Features/PDFIntake/NativePDFIntakeStore.swift",
+        "beforeSHA256": "956a79a7fcd38be71f6bca8875f2ee43ab2f2f1ed4b438ab77ece32e6dd25b06",
+        "afterSHA256": "2546e22d3c91fcb43335bb3e8334dbc3e7e9a6b2deba1bb10b9b851b1faaa3c4"
+      },
+      {
+        "path": "ios/VisePanda/VisePanda/Features/PDFIntake/NativePDFIntakeView.swift",
+        "beforeSHA256": "6447038360d2089759685e68a22a7c79cdb687a6fe5b37204593ab7d970e5f8d",
+        "afterSHA256": "c54a6b840bdc2aca003d52fbd58930630a6aeb6b760e3ab4d4f6442fd8b65917"
+      },
+      {
+        "path": "ios/VisePanda/VisePanda/Features/Trip/NativeTripView.swift",
+        "beforeSHA256": "8b8c897d6dd31a59c0a47af81c495b737ac7af429535b34b0488aca1181db5d7",
+        "afterSHA256": "d3671bd210ff9fca9d86632576200bb68d608feb314e2436176481d4d5b064c4"
+      },
+      {
+        "path": "ios/VisePanda/VisePanda/Features/Trip/NativeScreenshotReviewView.swift",
+        "beforeSHA256": "f9cd41547ff4233759fdea79f1b97e01afbfc71cef784066ae99704883d1da35",
+        "afterSHA256": "9b48c51bc8bf8180e5a56a27b6fe5f897d15178c231bb92ee965a43cb2895912"
+      },
+      {
+        "path": "ios/VisePanda/VisePanda.xcodeproj/project.pbxproj",
+        "beforeSHA256": "f8fea8634aa126749543706188a96242e6bc9414550c600e2b369df265747fd9",
+        "afterSHA256": "098341de34aef86a78faa1fac1300f7acc67d764b045d9f95164c6e404bf9cff"
+      }
+    ]
+  },
+  "command": [
+    "xcodebuild",
+    "build",
+    "-project",
+    "/var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/vpj13-material-native-build-5sx5se6s/ios/VisePanda/VisePanda.xcodeproj",
+    "-scheme",
+    "VisePanda",
+    "-destination",
+    "generic/platform=iOS Simulator",
+    "-derivedDataPath",
+    "/var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/vpj13-material-native-build-5sx5se6s/DerivedData",
+    "CODE_SIGNING_ALLOWED=NO",
+    "CODE_SIGNING_REQUIRED=NO"
+  ],
+  "simulatorBooted": false,
+  "sharedApplied": false
+}

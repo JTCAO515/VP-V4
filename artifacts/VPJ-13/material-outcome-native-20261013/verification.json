@@ -1,0 +1,35 @@
+{
+  "sourceCommit": "52a8792396cd87295bf030a348e7c6e6b16f4b7f",
+  "testCommand": "python3 tests/contract/journey-material-outcome/native/run.py",
+  "assertions": 39,
+  "result": "PASS",
+  "toolchain": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)\nTarget: arm64-apple-macosx27.0.0",
+  "originalDependenciesSHA256": {
+    "ios/VisePanda/VisePanda/App/NativeSession.swift": "024589ade4e95202e73942b536c18a8e2def4c262076e2b47f6935905973e8d1",
+    "ios/VisePanda/VisePanda/Features/PDFIntake/NativePDFDocument.swift": "5e92d5b3b197c2ac72195d621d152f4d8326319c324bc643f472b207064b8ae8",
+    "ios/VisePanda/VisePanda/Features/PDFIntake/NativePDFJournal.swift": "dfc241bc3b771538721e5519779a859312596bd011d3ab78d7875fbb85aec888",
+    "ios/VisePanda/VisePanda/Features/PDFIntake/NativePDFWire.swift": "3b5f6df9ce59d2183fb9b3c08c707eae1f074dd52029b8baa88fe56c1fa3befa",
+    "ios/VisePanda/VisePanda/Features/Trip/NativeTripModels.swift": "2d5543a25254a096db4f1dfde7ba4d20f4bcbc9446a268b646df789dfc509dd5",
+    "ios/VisePanda/VisePanda/Features/Trip/NativeScreenshotReviewView.swift": "f9cd41547ff4233759fdea79f1b97e01afbfc71cef784066ae99704883d1da35",
+    "ios/VisePanda/VisePanda/Features/ScopedTripEdit/NativeScopedTripCommand.swift": "003e13bc9706dedb373c70142ad82fc617397fa2bf4bc2ec5ce715e59e633ece"
+  },
+  "ownSourcesSHA256": {
+    "ios/VisePanda/VisePanda/Features/JourneyMaterialOutcome/NativeJourneyMaterialOutcomeBridge.swift": "157956e437404771a7cc4533217568244632a6866126cf5cb8a11eb6a3ba0d0e",
+    "ios/VisePanda/VisePanda/Features/JourneyMaterialOutcome/NativeJourneyMaterialOutcome.swift": "b6934cc775fefdcdd302fa42062fe92633226d8c66548ad4d0aea6daa425faf0"
+  },
+  "unrun": [
+    "original_writer_http",
+    "Files_Photos_UI",
+    "Simulator_UI",
+    "physical_device",
+    "target",
+    "VoiceOver",
+    "complete_measurement_lifecycle",
+    "shared_integration",
+    "exact_head_independent_review",
+    "required_CI",
+    "protected_merge"
+  ],
+  "sharedApplied": false,
+  "parentIssueClosed": false
+}
