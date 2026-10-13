@@ -13,7 +13,7 @@ export function auditQaUsage(config: QaWorkerConfiguration, rawReceipts: readonl
     if (config.databaseUrl !== `https://${SHARED_QA_PROJECT_REF}.supabase.co`) throw invalid();
     createStagingTextJob({ schemaVersion: "vpj07-staging-text-job/1", ownerId: config.ownerId, policyId: config.policyId,
       budget: config.budget, provider: config.provider, pricing: config.pricing },
-      { workerCredential: forbidden, providerCredential: forbidden, recordDestination: forbidden });
+      { workerCredential: forbidden, providerCredential: forbidden, recordDestination: forbidden, qwenEndpoint: config.provider.endpoint });
   } else createQaWorker(config, { workerCredential: forbidden, providerCredential: forbidden,
     recordDestination: forbidden, recordUsage: forbidden, invokeContext: forbidden,
     qwenEndpoint: config.provider.provider === "qwen" ? config.provider.endpoint : undefined }, compositionTarget);
