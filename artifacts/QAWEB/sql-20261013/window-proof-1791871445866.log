@@ -1,0 +1,16 @@
+OWN CONTAINER qaw005-window-54934563-c0c
+PASS original migrations plus combined candidate rollback/apply; new helper leaves no retained schema after rollback
+PASS PG to_json escaping matches current JS JSON.stringify for quotes/slashes/all non-NUL ASCII controls/emoji/U+2028/U+2029
+PASS 4000 Chinese x2 (24001 content bytes) rejected atomically; subsequent short followup admitted and real consumer assembles
+PASS old request replay after rejected and accepted followups reuses original admission without new task/work/charge
+PASS 16385 content bytes reject without mutation; exact 16384 boundary passes actual protected SQL envelope and JS consumer
+ESCAPE raw bytes=4900 rejected promptBytes=32769
+PASS control-escape 32769 serialized prompt rejects despite small raw bytes; shorter followup exact 32768 passes actual consumer
+PASS 4002 UTF16 emoji units reject with zero new root Task/Turn/work; 4000 units pass real SQL and JS
+PASS window selects last three complete pairs, not full older history; source qualification remains bounded upstream
+PASS selected and omitted-upstream emoji overflow helper refusals; original storage rejects impossible oversized history unchanged, valid emoji history continues
+PASS 8000 UTF16 assistant-history boundary passes actual protected envelope and consumer
+PASS legacy current-input admission remains unchanged for independent valid 4000-Chinese inputs
+PASS all ten original lifecycle gates unchanged; no new table/constraint or lifecycle patch delta
+UNRUN provider/target/browser; source-pinned actual consumer imported read-only; no target or other owner writes
+OWN CLEANUP 0

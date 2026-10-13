@@ -153,6 +153,36 @@ begin
 end $$;
 
 
+-- Bound to consumer-window-pins.json: current TEXT_TASK_SYSTEM_PROMPT serializes
+-- to 3775 UTF-8 bytes as one compact {role,content} JSON object (3777 with []).
+-- PostgreSQL text contains Unicode scalars, never unpaired JS surrogate halves.
+-- Construct compact role/content objects explicitly: jsonb::text adds spaces.
+create function turn_private.qa_consumer_window_v1(p_history jsonb,p_text text)
+returns boolean language plpgsql immutable set search_path='' as $$
+declare n integer;i integer;item jsonb;body_n text;role_n text;
+ content_n integer:=octet_length(p_text);prompt_n integer;
+begin
+ if not turn_private.valid_text(p_text,4000) or jsonb_typeof(p_history) is distinct from 'array' then return false;end if;
+ n:=jsonb_array_length(p_history);
+ if n>14 or n%2<>0 then return false;end if;
+ prompt_n:=2+3775+1+octet_length('{"role":"user","content":'||to_json(p_text)::text||'}');
+ for i in 0..n-1 loop
+  item:=p_history->i;body_n:=item->>'content';role_n:=case when i%2=0 then 'user' else 'assistant' end;
+  if item->>'role' is distinct from role_n or not turn_private.valid_text(body_n,case when i%2=0 then 4000 else 8000 end) then return false;end if;
+  -- Explicit JS UTF-16 units for every upstream message, including older pairs
+  -- outside the selected window. valid_text also enforces this on source rows.
+  if (select coalesce(sum(case when ascii(ch)>65535 then 2 else 1 end),0) from regexp_split_to_table(body_n,'') ch)
+   > (case when i%2=0 then 4000 else 8000 end) then return false;end if;
+  if i>=greatest(0,n-6) then
+   content_n:=content_n+octet_length(body_n);
+   prompt_n:=prompt_n+1+octet_length('{"role":'||to_json(role_n)::text||',"content":'||to_json(body_n)::text||'}');
+  end if;
+ end loop;
+ return content_n<=16384 and prompt_n<=32768;
+end $$;
+revoke all on function turn_private.qa_consumer_window_v1(jsonb,text) from public,anon,authenticated,service_role;
+
+
 
 create function public.qa_read_policy_v1(p_policy_id uuid) returns jsonb language plpgsql security definer set search_path='' as $$
 declare u uuid:=turn_private.text_owner();r jsonb;
@@ -178,6 +208,7 @@ declare u uuid:=turn_private.text_owner(); c turn_private.text_consents%rowtype;
   s turn_private.service_tasks%rowtype; prior turn_private.service_task_turns%rowtype;
   parent turn_private.text_content%rowtype; digest text; result jsonb;
 begin
+  if p_text is not null and (select coalesce(sum(case when ascii(ch)>65535 then 2 else 1 end),0) from regexp_split_to_table(p_text,'') ch)>4000 then raise exception 'QA_CONTEXT_LIMIT';end if;
   if p_thread_id is null or p_turn_id is null or p_task_id is null or p_turn_id=p_task_id
     or p_idempotency_key is null or p_scope_version is distinct from 1
     or p_relationship is null or p_relationship not in ('new_goal','qa_followup','qa_correction')
@@ -225,10 +256,12 @@ begin
       or exists(select 1 from public.model_budget_attempts where task_id=p_task_id)
       or exists(select 1 from turn_private.service_tasks where thread_id=p_thread_id)
       then raise exception 'SERVICE_TASK_CONFLICT'; end if;
+    if not turn_private.qa_consumer_window_v1('[]'::jsonb,p_text) then raise exception 'QA_CONTEXT_LIMIT';end if;
     insert into turn_private.service_tasks(id,owner_id,thread_id,goal_turn_id,last_turn_id,policy_id,consent_id,scope_version,goal_digest)
       values(p_task_id,u,p_thread_id,p_turn_id,p_turn_id,p_policy_id,c.consent_id,p_scope_version,
         encode(pg_catalog.sha256(convert_to(p_text,'UTF8')),'hex'));
   end if;
+  if p_relationship<>'new_goal' and not turn_private.qa_consumer_window_v1((turn_private.qa_history_v1(p_parent_turn_id)->'history')||jsonb_build_array(jsonb_build_object('turnId',p_parent_turn_id,'role','user','content',parent.input_text),jsonb_build_object('turnId',p_parent_turn_id,'role','assistant','content',parent.output_text)),p_text) then raise exception 'QA_CONTEXT_LIMIT';end if;
   if exists(select 1 from turn_private.service_tasks where id=p_task_id) and p_relationship<>'new_goal' then
     if turn_private.qa_history_v1(p_parent_turn_id) is null or octet_length(((turn_private.qa_history_v1(p_parent_turn_id)->'history')||jsonb_build_array(jsonb_build_object('turnId',p_parent_turn_id,'role','user','content',parent.input_text),jsonb_build_object('turnId',p_parent_turn_id,'role','assistant','content',parent.output_text)))::text)>65536 or (select count(*) from turn_private.service_task_turns where task_id=p_task_id)>=8 then raise exception 'QA_CONTEXT_LIMIT'; end if;
   end if;

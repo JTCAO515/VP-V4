@@ -5,15 +5,19 @@
   "sourcePins": "source-pins.json",
   "lifecyclePins": "lifecycle-pins.json",
   "sha256": {
-    "candidate.sql": "73f07ed8e60b5e84cb52ad56de55607b71ba7c53288734290cef6547fa65b621",
+    "candidate.sql": "0e3674022b9776bedf15e085442ead53fc45a2e35e457a8d8290e612aeffd458",
     "lifecycle-candidate.sql": "5934b630c39fcdcb74b2a14114e18f5daf22e310e5207b52629545cb910b6c87",
     "proof.mjs": "a282b97caef036974a40750084fdb48336d2dfac4e43612c5cd2e5ab2a0d2567",
-    "producer-contract.md": "49b70a7b2193881389dd012697a8aa6b53aa0ca83e7f6b7374c250ba9acf6c13",
-    "policy-notice-template.json": "01851f3b366af9d7180e6ceac12bc7c79ee968fc12d373012595d21932656cec",
+    "producer-contract.md": "70476c4294d8d393296ec97b3dffdcb3b0edadc6c5ff909332ca6b7279e76731",
+    "policy-notice-template.json": "104fe7c7ad1db1896924ee2e6453cda0dfe3234bc44ed2a1e834dd6f7133be23",
     "precondition-proof.mjs": "c92274615e44384ce829b74e7c7065ffbd27665f796b2135854e7e34ad1186d8",
     "hosted-discovery-assessment.md": "70657a7efd8312a9b1fc77468f4665e9c4645bf0575a91d564fc1b9dde70128f",
     "review-proof.mjs": "57687520cc88e0142528d762c3d73395595d4ae82bb9f5e1307a6b6a88e318e0",
-    "review-fixes-pins.json": "6fa945bc57c512647c5a690ebed857e544bdbf4b3b57e8345b605ac657635a03"
+    "review-fixes-pins.json": "6fa945bc57c512647c5a690ebed857e544bdbf4b3b57e8345b605ac657635a03",
+    "consumer-window.sql": "41a6431d5eae8cf3f8bb149b0e9c785ee752ee8a6b5f63a7c396f39b6ac4501d",
+    "consumer-window-pins.json": "6ea12f9483db1a2fd1257cb8b4aec9d6c9c3264fd3193fac48f953ce0f77ea42",
+    "window-proof.mjs": "ab9438136acc1be6f1e2d9f00739509527b047509fab84620dc9a99e58463309",
+    "admission-window.patch": "98c4950c4242e9d61ff4355daee41eeaf37c52269d00e1352104949d43d47ab3"
   },
   "targetApply": "UNRUN_NOT_GRANTED",
   "realProvider": "UNRUN",
@@ -26,5 +30,8 @@
   "originalGateAfter": "all-gates-after.json",
   "latestReviewFixProof": "review-proof-1791867747093.log",
   "reviewFixNamedPassChecks": 8,
-  "reviewFixPins": "review-fixes-pins.json"
+  "reviewFixPins": "review-fixes-pins.json",
+  "latestAdmissionWindowProof": "window-proof-1791871445866.log",
+  "admissionWindowNamedPassChecks": 12,
+  "consumerWindowPins": "consumer-window-pins.json"
 }
