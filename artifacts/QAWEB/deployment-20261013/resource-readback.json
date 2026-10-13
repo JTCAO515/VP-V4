@@ -1,5 +1,5 @@
 {
-  "observedAt": "2026-10-13T04:37:43.191477+00:00",
+  "observedAt": "2026-10-13T04:40:42.527791+00:00",
   "source": "official Vercel CLI exact API/team fallback for MCP 404",
   "project": {
     "id": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
@@ -414,6 +414,14 @@
           "production"
         ],
         "gitBranch": null
+      },
+      {
+        "key": "VISEPANDA_QA_AGENT_ORIGIN",
+        "type": "plain",
+        "target": [
+          "preview"
+        ],
+        "gitBranch": "codex/qaw005-main-20261013"
       }
     ]
   },
