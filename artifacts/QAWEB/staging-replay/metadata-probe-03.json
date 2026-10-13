@@ -1,0 +1,19 @@
+{
+  "status": "FAIL_METADATA_ONLY",
+  "target": "dzqdzetcctkhbrhlxxgn",
+  "secretOutput": false,
+  "userRowsRead": false,
+  "keysCreated": false,
+  "roleSwitched": false,
+  "backup": "UNRUN",
+  "restore": "UNRUN",
+  "projectInventory": {
+    "ref": "dzqdzetcctkhbrhlxxgn",
+    "organization": "ppfsagymaozpbkbarhes",
+    "linked": false,
+    "status": "ACTIVE_HEALTHY"
+  },
+  "accountLimit": "Same explicit project/org accessible in CLI and official Go2China; human OAuth subject equality not exposed/proven",
+  "failedStage": "TLS read-only metadata query",
+  "reason": "SQLSTATE_42501"
+}
