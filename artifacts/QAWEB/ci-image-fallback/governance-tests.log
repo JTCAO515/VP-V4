@@ -1,0 +1,29 @@
+✔ only bounded documentation pull requests use the smaller check set (0.385958ms)
+✔ runtime, contracts, unknown files and both sides of moves retain full checks (0.16975ms)
+✔ the known product-planning set uses documentation checks, while a single runtime change retains full checks (0.042083ms)
+✔ actual Git comparison includes both sides of a runtime-to-document rename (252.234708ms)
+✔ missing, invalid or unavailable comparison inputs fall back to the complete gate (11.217292ms)
+✔ affected selector docs/backend/native/UI/SQL matrices preserve required real checks (0.757292ms)
+✔ CI policy changes and unknown/unavailable/manual inputs fail closed to the full superset (16.232208ms)
+✔ actual registered test lane is selected while known Web failure coverage cannot be narrowed away (5.734ms)
+✔ wiki source imports select native PostgreSQL persistence and Ops readers without making all server full (0.11125ms)
+✔ every gated integration test file is in a DB integration lane or on the reasoned allowlist (27.444417ms)
+✔ a DB integration lane fails on skip, todo, cancel, failure, non-zero exit or a missing summary (0.381291ms)
+✔ DB Integration dynamically selects lanes with a stable fail-closed aggregate and real classification (21.935917ms)
+✔ deduplicated four PG workflows keep manual commands covered by the selected postgres step (0.740458ms)
+✔ every workflow declares least-privilege token permissions (1.031916ms)
+✔ the self-hosted iOS runner never executes fork pull request code (0.135625ms)
+✔ stable DB aggregate executes strict result predicates for empty/full/error/cancel states (18.80625ms)
+✔ native PR uses unsigned build or affected permission/data code tests; manual remains full (40.010917ms)
+✔ changed noncritical native test classes and unknown native sources are never omitted (31.387958ms)
+✔ bounded CI shards preserve every logical step exactly once and reject malformed partitions (0.639291ms)
+✔ CI matrix CLI and actual workflow projection fail before emitting an output on bad plans (428.112125ms)
+✔ pinned image pull falls back only after ECR throttling and fails closed on mirror errors (176.032084ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 793.468458

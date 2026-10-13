@@ -139,3 +139,52 @@ test("CI matrix CLI and actual workflow projection fail before emitting an outpu
     assert.equal(run.status,0,run.stderr);assert.equal(read(output),'matrix='+JSON.stringify(executionMatrix(["none"]))+'\n');
   } finally {rmSync(dir,{recursive:true,force:true});}
 });
+
+test("pinned image pull falls back only after ECR throttling and fails closed on mirror errors", () => {
+  const workflow = read(".github/workflows/db-integration.yml");
+  const match = workflow.match(/- name: Pull pinned test database images[\s\S]*?run: \|\n([\s\S]*?)(?=      - name:)/);
+  assert.ok(match);
+  const body = match[1].split("\n").map(line => line.startsWith("          ") ? line.slice(10) : line).join("\n");
+  assert.equal(spawnSync("/bin/bash", ["-n"], {input: body}).status, 0);
+  const evidence = JSON.parse(read("artifacts/QAWEB/ci-image-fallback/registry-digests.json"));
+  assert.deepEqual(evidence.images.map(row => `public.ecr.aws/supabase/${row.tag}`).sort(), [...pinnedImages()].sort());
+  const harness = `
+node() { printf '%s\\n' "$TEST_IMAGE"; }
+sleep() { :; }
+docker() {
+  printf 'DOCKER %s\\n' "$*" >&2
+  if [ "$1" = tag ]; then return "$TAG_STATUS"; fi
+  if [ "$2" = --platform ]; then return "$MIRROR_STATUS"; fi
+  printf '%s\\n' "$ECR_OUTPUT"
+  return "$ECR_STATUS"
+}
+`;
+  const run = (image, overrides = {}) => spawnSync("/bin/bash", ["--noprofile", "--norc", "-eo", "pipefail", "-c", harness + body], {
+    encoding: "utf8", env: {...process.env, TEST_IMAGE: image, ECR_STATUS: "7", ECR_OUTPUT: "toomanyrequests: Data limit exceeded", MIRROR_STATUS: "0", TAG_STATUS: "0", ...overrides},
+  });
+  for (const row of evidence.images) {
+    assert.equal(row["public.ecr.aws"], row["ghcr.io"]);
+    assert.match(row["ghcr.io"], /^sha256:[a-f0-9]{64}$/);
+    const image = `public.ecr.aws/supabase/${row.tag}`;
+    const mirror = `ghcr.io/supabase/${row.tag.split(":")[0]}@${row["ghcr.io"]}`;
+    for (const ECR_OUTPUT of ["toomanyrequests: Data limit exceeded", "Rate exceeded"]) {
+      const result = run(image, {ECR_OUTPUT});
+      assert.equal(result.status, 0, result.stderr);
+      assert.equal(result.stdout.split(`DOCKER pull ${image}`).length - 1, 3);
+      assert.equal(result.stderr, `DOCKER pull --platform linux/amd64 ${mirror}\nDOCKER tag ${mirror} ${image}\n`);
+    }
+    const success = run(image, {ECR_STATUS: "0"});
+    assert.equal(success.status, 0); assert.doesNotMatch(success.stderr, /ghcr.io|DOCKER tag/);
+    for (const ECR_OUTPUT of ["unauthorized", "manifest unknown", "TLS handshake timeout", "network unavailable"]) {
+      const failure = run(image, {ECR_OUTPUT});
+      assert.equal(failure.status, 7); assert.doesNotMatch(failure.stderr, /ghcr.io|DOCKER tag/);
+    }
+    const pullFailure = run(image, {MIRROR_STATUS: "8"});
+    assert.equal(pullFailure.status, 8); assert.doesNotMatch(pullFailure.stderr, /DOCKER tag/);
+    assert.equal(run(image, {TAG_STATUS: "9"}).status, 9);
+  }
+  for (const image of ["public.ecr.aws/supabase/postgres:unknown", "other.example/supabase/postgres:17.6.1.155"]) {
+    const result = run(image);
+    assert.equal(result.status, 7); assert.doesNotMatch(result.stderr, /ghcr.io|DOCKER tag/);
+  }
+});
