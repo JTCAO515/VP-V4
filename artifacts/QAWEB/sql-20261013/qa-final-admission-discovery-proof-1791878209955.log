@@ -1,0 +1,8 @@
+OWN CONTAINER qaw005-plan-700f23fa-489
+FAIL Error: ERROR:  QA_LEGACY_SOURCE_CONFLICT
+CONTEXT:  PL/pgSQL function inline_code_block line 1 at RAISE
+
+    at db (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-sql-20261013/artifacts/QAWEB/sql-20261013/qa-final-admission-discovery-proof.mjs:6:60)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-sql-20261013/artifacts/QAWEB/sql-20261013/qa-final-admission-discovery-proof.mjs:33:587
+OWN CLEANUP 0
