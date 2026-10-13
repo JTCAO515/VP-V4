@@ -1,0 +1,26 @@
+{
+  "status": "DRY_RUN_NO_TARGET_IO",
+  "mode": "shared-readonly-snapshot/1",
+  "codeSha256": "97f58fd3ea618c0d765344128c3166607d3a54e0a6f93b41791149e23314e2e7",
+  "originalStrictCaptureHash": "89a0255fb728b6ff9c2b9f7dd080826b04fd5f23d9bb96f9c81ee1b4501d5e9c",
+  "actionsRequiringJTApproval": [
+    "allow-concurrent-dml-at-fixed-snapshot",
+    "capture-global-roles-without-passwords-and-full-schema",
+    "capture-realtime-schema-migrations-ledger",
+    "create-local-age-recovery-identity",
+    "hold-bounded-readonly-exporter",
+    "read-target-data14",
+    "retain-encrypted-database-copy",
+    "set-role-postgres-for-read-only-backup",
+    "validate-monotone-sequences-no-live-restore"
+  ],
+  "catalogBoundaryTypes": [
+    "application_ddl_and_migrations",
+    "managed_realtime_migrations",
+    "roles_and_memberships",
+    "acl_and_policy_ddl",
+    "extension_and_ledger_schema"
+  ],
+  "realCapture": "UNRUN",
+  "sequenceSafety": "REQUIRES_ISOLATED_RESTORE"
+}
