@@ -1,0 +1,8 @@
+{
+  "pass": 10,
+  "fail": 4,
+  "providerCalls": 0,
+  "sourceSha256": "5e07bc1ce41f236c0fd29ece8f9f15525c9e234e78f9a7a25ab22751082babdf",
+  "syntheticHistoricalJobInsertion": true,
+  "actualAuthProviderTarget": "UNRUN"
+}

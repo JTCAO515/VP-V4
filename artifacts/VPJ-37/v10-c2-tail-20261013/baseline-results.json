@@ -1,0 +1,67 @@
+{
+  "mode": "baseline",
+  "results": [
+    {
+      "label": "fresh blocked source ensure exact closed refusal, no new job/task/budget/Trip/Proposal, TS physicalfetch0",
+      "result": "PASS"
+    },
+    {
+      "label": "missing and foreign original source unavailable",
+      "result": "PASS"
+    },
+    {
+      "label": "historical done and pending retain original IDs/tokens without provider",
+      "result": "PASS"
+    },
+    {
+      "label": "stale old claim refuses reclaim and preserves exact row/token",
+      "result": "PASS"
+    },
+    {
+      "label": "wrong token and foreign completion deny with unchanged original job",
+      "result": "PASS"
+    },
+    {
+      "label": "hidden source historical read/complete refuse, no side effect",
+      "result": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  {\n+   errorCode: null,\n+   jobId: '83553c82-cf6c-4529-b791-701945ebf23f',\n+   kind: 'done',\n+   outcome: {\n+     kind: 'synthetic_saved',\n+     text: 'original'\n+   },\n+   status: 'succeeded'\n-   kind: 'unavailable'\n  }\n"
+    },
+    {
+      "label": "withdrawn consent historical read/complete refuse, no side effect",
+      "result": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  {\n+   errorCode: null,\n+   jobId: '83553c82-cf6c-4529-b791-701945ebf23f',\n+   kind: 'done',\n+   outcome: {\n+     kind: 'synthetic_saved',\n+     text: 'original'\n+   },\n+   status: 'succeeded'\n-   kind: 'unavailable'\n  }\n"
+    },
+    {
+      "label": "revoked policy historical read/complete refuse, no side effect",
+      "result": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  {\n+   errorCode: null,\n+   jobId: '83553c82-cf6c-4529-b791-701945ebf23f',\n+   kind: 'done',\n+   outcome: {\n+     kind: 'synthetic_saved',\n+     text: 'original'\n+   },\n+   status: 'succeeded'\n-   kind: 'unavailable'\n  }\n"
+    },
+    {
+      "label": "unfinished original source historical read/complete refuse, no side effect",
+      "result": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  {\n+   kind: 'not_applicable'\n-   kind: 'unavailable'\n  }\n"
+    },
+    {
+      "label": "stale Auth session refuses existing read and complete",
+      "result": "PASS"
+    },
+    {
+      "label": "valid original completion keeps token and repeat completion conflicts",
+      "result": "PASS"
+    },
+    {
+      "label": "real SQL published original answered fact never grants C2 ensure",
+      "result": "PASS"
+    },
+    {
+      "label": "source withdrawal keeps original answered eligibility; no fresh C2 bypass",
+      "result": "PASS"
+    },
+    {
+      "label": "control stop retains eligible historical read, no new/reclaim/provider",
+      "result": "PASS"
+    }
+  ],
+  "providerCalls": 0,
+  "environment": "Own PG17.6, exact migration155; SQL rows/claims only; not GoTrue/provider enrollment"
+}

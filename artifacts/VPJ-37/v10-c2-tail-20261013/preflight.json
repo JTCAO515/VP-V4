@@ -1,0 +1,16 @@
+{
+  "result": "PASS",
+  "name": "vpj37-v10-c2-4a1c7940b2c4",
+  "socket": "/tmp/vpj37-v10-c2-4a1c7940b2c4-socket",
+  "data": "/tmp/vpj37-v10-c2-4a1c7940b2c4-db",
+  "image": "public.ecr.aws/supabase/postgres@sha256:86a2e078779e5bdccda1f6f6c5063aa9779a322d1fface5fb408d051909b230f",
+  "version": "17.6",
+  "network": "none",
+  "ports": 0,
+  "mounts": 0,
+  "user": "postgres",
+  "socketDataMode": "0700",
+  "model": "session inherited; not reconfigured",
+  "permissions": "danger-full-access, approval never",
+  "tools": "Docker/Node executable; network-none fixture"
+}

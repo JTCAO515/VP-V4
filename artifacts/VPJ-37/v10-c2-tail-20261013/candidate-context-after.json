@@ -1,0 +1,20 @@
+{
+  "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+  "md5": "e35f4ad1c9bc569ca1c81358f5f9c4f1",
+  "kind": "f",
+  "owner": "postgres",
+  "config": [
+    "search_path=\"\""
+  ],
+  "prosrc": "\ndeclare u uuid:=turn_private.text_owner(); g turn_private.grounded_turns%rowtype; c turn_private.text_content%rowtype;\nbegin\n  if not turn_private.lock_turn(p_turn_id,u,(auth.jwt()->>'session_id')::uuid) then return jsonb_build_object('kind','unavailable'); end if;\n  -- Reuse the existing full historical task/consent/source eligibility chain.\n  if public.read_grounded_turn(p_turn_id)->>'kind' is distinct from 'grounded_turn' then return jsonb_build_object('kind','unavailable'); end if;\n  select * into c from turn_private.text_content where turn_id=p_turn_id and owner_id=u and hidden_at is null for share;\n  if not found or not turn_private.text_policy_current(c.policy_id) then return jsonb_build_object('kind','unavailable'); end if;\n  select * into g from turn_private.grounded_turns where turn_id=p_turn_id and owner_id=u;\n  if not found or g.completed_at is null then return jsonb_build_object('kind','unavailable'); end if;\n  -- The one real gate: AI-assisted search is offered only as a supplement\n  -- when the authoritative structured answer genuinely found nothing for\n  -- every required claim. It is never offered as a bypass when the\n  -- resolver's own judgement was answered or partial.\n  if g.original_outcome <> 'blocked' then return jsonb_build_object('kind','not_applicable'); end if;\n  return jsonb_build_object('kind','context','turnId',c.turn_id,'city',g.city,'locale',c.locale,\n    'intent',g.intent,'inputText',c.input_text,'placeName',g.place_name);\nend ",
+  "result": "jsonb",
+  "strict": false,
+  "identity": "p_turn_id uuid",
+  "language": "plpgsql",
+  "parallel": "u",
+  "arguments": "p_turn_id uuid",
+  "signature": "public.read_grounded_ai_assist_context_v1(uuid)",
+  "definition": "CREATE OR REPLACE FUNCTION public.read_grounded_ai_assist_context_v1(p_turn_id uuid)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare u uuid:=turn_private.text_owner(); g turn_private.grounded_turns%rowtype; c turn_private.text_content%rowtype;\nbegin\n  if not turn_private.lock_turn(p_turn_id,u,(auth.jwt()->>'session_id')::uuid) then return jsonb_build_object('kind','unavailable'); end if;\n  -- Reuse the existing full historical task/consent/source eligibility chain.\n  if public.read_grounded_turn(p_turn_id)->>'kind' is distinct from 'grounded_turn' then return jsonb_build_object('kind','unavailable'); end if;\n  select * into c from turn_private.text_content where turn_id=p_turn_id and owner_id=u and hidden_at is null for share;\n  if not found or not turn_private.text_policy_current(c.policy_id) then return jsonb_build_object('kind','unavailable'); end if;\n  select * into g from turn_private.grounded_turns where turn_id=p_turn_id and owner_id=u;\n  if not found or g.completed_at is null then return jsonb_build_object('kind','unavailable'); end if;\n  -- The one real gate: AI-assisted search is offered only as a supplement\n  -- when the authoritative structured answer genuinely found nothing for\n  -- every required claim. It is never offered as a bypass when the\n  -- resolver's own judgement was answered or partial.\n  if g.original_outcome <> 'blocked' then return jsonb_build_object('kind','not_applicable'); end if;\n  return jsonb_build_object('kind','context','turnId',c.turn_id,'city',g.city,'locale',c.locale,\n    'intent',g.intent,'inputText',c.input_text,'placeName',g.place_name);\nend $function$\n",
+  "volatility": "v",
+  "securityDefiner": true
+}

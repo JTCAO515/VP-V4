@@ -1,0 +1,9 @@
+{
+  "path": "supabase/migrations/20261012103151_vpj37_ops_control_w2.sql",
+  "beforeSha256": "5e07bc1ce41f236c0fd29ece8f9f15525c9e234e78f9a7a25ab22751082babdf",
+  "afterSha256": "42f2fd6c0117579bedb24aa1cf75659c0bb90eff8c32f7bd6b3cacfeae89afa1",
+  "functionBeforeMd5": "6cddf0f1630f8f79be4122fdc715ba37",
+  "functionAfterMd5": "d99f9666afd994783d72abadc44fa4e0",
+  "catalogEntryCount": 52,
+  "scope": "existing context reuses read_grounded_turn full source eligibility; ensure/completion guard and completion lock order; two exact installed catalog entries; no ACL/RLS/trigger changes"
+}

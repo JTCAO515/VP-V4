@@ -1,0 +1,63 @@
+PASS fresh blocked source ensure exact closed refusal, no new job/task/budget/Trip/Proposal, TS physicalfetch0
+PASS missing and foreign original source unavailable
+PASS historical done and pending retain original IDs/tokens without provider
+PASS stale old claim refuses reclaim and preserves exact row/token
+PASS wrong token and foreign completion deny with unchanged original job
+FAIL hidden source historical read/complete refuse, no side effect Expected values to be strictly deep-equal:
++ actual - expected
+
+  {
++   errorCode: null,
++   jobId: '83553c82-cf6c-4529-b791-701945ebf23f',
++   kind: 'done',
++   outcome: {
++     kind: 'synthetic_saved',
++     text: 'original'
++   },
++   status: 'succeeded'
+-   kind: 'unavailable'
+  }
+
+FAIL withdrawn consent historical read/complete refuse, no side effect Expected values to be strictly deep-equal:
++ actual - expected
+
+  {
++   errorCode: null,
++   jobId: '83553c82-cf6c-4529-b791-701945ebf23f',
++   kind: 'done',
++   outcome: {
++     kind: 'synthetic_saved',
++     text: 'original'
++   },
++   status: 'succeeded'
+-   kind: 'unavailable'
+  }
+
+FAIL revoked policy historical read/complete refuse, no side effect Expected values to be strictly deep-equal:
++ actual - expected
+
+  {
++   errorCode: null,
++   jobId: '83553c82-cf6c-4529-b791-701945ebf23f',
++   kind: 'done',
++   outcome: {
++     kind: 'synthetic_saved',
++     text: 'original'
++   },
++   status: 'succeeded'
+-   kind: 'unavailable'
+  }
+
+FAIL unfinished original source historical read/complete refuse, no side effect Expected values to be strictly deep-equal:
++ actual - expected
+
+  {
++   kind: 'not_applicable'
+-   kind: 'unavailable'
+  }
+
+PASS stale Auth session refuses existing read and complete
+PASS valid original completion keeps token and repeat completion conflicts
+PASS real SQL published original answered fact never grants C2 ensure
+PASS source withdrawal keeps original answered eligibility; no fresh C2 bypass
+PASS control stop retains eligible historical read, no new/reclaim/provider

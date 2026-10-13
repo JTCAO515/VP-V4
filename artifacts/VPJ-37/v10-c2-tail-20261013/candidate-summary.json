@@ -1,0 +1,9 @@
+{
+  "testedMigrationSha256": "42f2fd6c0117579bedb24aa1cf75659c0bb90eff8c32f7bd6b3cacfeae89afa1",
+  "pass": 19,
+  "fail": 0,
+  "providerCalls": 0,
+  "sourceSha256": "5e07bc1ce41f236c0fd29ece8f9f15525c9e234e78f9a7a25ab22751082babdf",
+  "syntheticHistoricalJobInsertion": true,
+  "actualAuthProviderTarget": "UNRUN"
+}

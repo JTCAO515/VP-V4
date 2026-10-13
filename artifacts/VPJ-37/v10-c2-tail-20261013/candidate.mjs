@@ -1,0 +1,54 @@
+import assert from 'node:assert/strict';
+import {readFileSync,writeFileSync} from 'node:fs';
+import {db,out,sha,lit} from './fixture.mjs';
+const signature='public.grounded_ai_assist_work_v1(jsonb)',path='supabase/migrations/20261012103151_vpj37_ops_control_w2.sql',source=readFileSync(path,'utf8');
+assert.equal(sha(source),'5e07bc1ce41f236c0fd29ece8f9f15525c9e234e78f9a7a25ab22751082babdf');
+const old=JSON.parse(readFileSync(out+'candidate-function-before.json','utf8')).definition.trim();
+const contextSignature='public.read_grounded_ai_assist_context_v1(uuid)';
+const contextOld=JSON.parse(readFileSync(out+'candidate-context-before.json','utf8')).definition.trim();
+const contextCandidate=contextOld.replace("  select * into c from turn_private.text_content where turn_id=p_turn_id and owner_id=u and hidden_at is null;",`  -- Reuse the existing full historical task/consent/source eligibility chain.
+  if public.read_grounded_turn(p_turn_id)->>'kind' is distinct from 'grounded_turn' then return jsonb_build_object('kind','unavailable'); end if;
+  select * into c from turn_private.text_content where turn_id=p_turn_id and owner_id=u and hidden_at is null for share;`);
+assert.notEqual(contextCandidate,contextOld);
+let candidate=old.replace("    select * into g from turn_private.grounded_turns where turn_id = tid and owner_id = u;",`    -- Historical jobs retain identity only while the original source is eligible.
+    result := public.read_grounded_ai_assist_context_v1(tid);
+    if result->>'kind' is distinct from 'context' then
+      return jsonb_build_object('kind',case when result->>'kind'='not_applicable' then 'not_applicable' else 'unavailable' end);
+    end if;
+    select * into g from turn_private.grounded_turns where turn_id = tid and owner_id = u;`);
+const original=`  select * into job from turn_private.grounded_ai_assist_jobs where id = (p_input->>'jobId')::uuid for update;
+  if not found then raise exception 'OPS_NOT_FOUND'; end if;
+  if job.owner_id <> u then raise exception 'UNAUTHENTICATED'; end if;`;
+assert.ok(candidate.includes(original));
+candidate=candidate.replace(original,`  -- Read identity, acquire the original owner/session/source fence, then lock job.
+  select * into job from turn_private.grounded_ai_assist_jobs where id = (p_input->>'jobId')::uuid;
+  if not found then raise exception 'OPS_NOT_FOUND'; end if;
+  if job.owner_id <> u then raise exception 'UNAUTHENTICATED'; end if;
+  result := public.read_grounded_ai_assist_context_v1(job.turn_id);
+  if result->>'kind' is distinct from 'context' then return jsonb_build_object('kind','unavailable'); end if;
+  select * into job from turn_private.grounded_ai_assist_jobs where id = (p_input->>'jobId')::uuid for update;
+  if not found or job.owner_id <> u then return jsonb_build_object('kind','unavailable'); end if;`);
+assert.notEqual(candidate,old);
+const catalogQuery=`select jsonb_build_object('signature','${signature}','definition',pg_get_functiondef(p.oid),'prosrc',p.prosrc,'identity',pg_get_function_identity_arguments(p.oid),'arguments',pg_get_function_arguments(p.oid),'result',pg_get_function_result(p.oid),'config',p.proconfig,'owner',pg_get_userbyid(p.proowner),'acl',p.proacl::text,'securityDefiner',p.prosecdef,'volatility',p.provolatile,'strict',p.proisstrict,'parallel',p.proparallel,'kind',p.prokind,'language',(select lanname from pg_language where oid=p.prolang),'md5',md5(pg_get_functiondef(p.oid))) from pg_proc p where oid='${signature}'::regprocedure;`;
+const before=JSON.parse(readFileSync(out+'candidate-function-before.json','utf8'));
+const contextQuery=catalogQuery.replaceAll(signature,contextSignature);
+const contextBefore=JSON.parse(readFileSync(out+'candidate-context-before.json','utf8'));
+const contextAfter=JSON.parse(await db('begin;'+contextCandidate+';'+contextQuery+'rollback;'));
+writeFileSync(out+'candidate-context-before.json',JSON.stringify(contextBefore,null,2));writeFileSync(out+'candidate-context-after.json',JSON.stringify(contextAfter,null,2));
+const after=JSON.parse(await db('begin;'+candidate+';'+catalogQuery+'rollback;'));
+writeFileSync(out+'candidate-function-before.json',JSON.stringify(before,null,2));writeFileSync(out+'candidate-function-after.json',JSON.stringify(after,null,2));
+let installed=source.slice(source.indexOf('create function ops_control_private.installed_supported_v1()'),source.indexOf('end $installed$;')+'end $installed$;'.length).replace('create function','create or replace function');
+const m=installed.match(/jsonb_each\('(.+)'::jsonb\)/);assert.ok(m);const catalog=JSON.parse(m[1].replaceAll("''","'"));assert.deepEqual(catalog[signature],before);catalog[signature]=after;assert.deepEqual(catalog[contextSignature],contextBefore);catalog[contextSignature]=contextAfter;
+const replacement=JSON.stringify(catalog).replaceAll("'","''");installed=installed.replace(m[1],()=>replacement);
+const sql=contextCandidate+';\n'+candidate+';\n'+installed+'\n';
+const functionStart=source.indexOf('\nCREATE OR REPLACE FUNCTION public.grounded_ai_assist_work_v1(p_input jsonb)')+1;const functionEnd=source.indexOf('end $function$;',functionStart)+'end $function$;'.length;assert.ok(functionStart>0&&functionEnd>functionStart);
+let full=source.slice(0,functionStart)+contextCandidate.trim()+';\n'+candidate.trim()+';'+source.slice(functionEnd);
+const installedStart=full.indexOf('create function ops_control_private.installed_supported_v1()');const installedEnd=full.indexOf('end $installed$;',installedStart)+'end $installed$;'.length;
+full=full.slice(0,installedStart)+installed.trim()+';'+full.slice(installedEnd);
+writeFileSync(out+'shared-candidate.sql',sql);writeFileSync(out+'shared-migration-candidate.sql',full);
+writeFileSync(out+'candidate-pins.json',JSON.stringify({path,beforeSha256:sha(source),afterSha256:sha(full),functionBeforeMd5:before.md5,functionAfterMd5:after.md5,catalogEntryCount:Object.keys(catalog).length,scope:'two guard insertions, completion lock order, exact installed catalog entry; no ACL/RLS/trigger changes'},null,2));
+const checkBefore=await db("select ops_control_private.installed_supported_v1();");assert.equal(checkBefore,'t');
+const currentBefore=await db(`select pg_get_functiondef('${signature}'::regprocedure);`);await db('begin;'+sql+'rollback;');assert.equal(await db(`select pg_get_functiondef('${signature}'::regprocedure);`),currentBefore);assert.equal(await db("select ops_control_private.installed_supported_v1();"),'t');
+await db('begin;'+sql+'commit;');assert.equal(await db("select ops_control_private.installed_supported_v1();"),'t');
+writeFileSync(out+'candidate-install-rollback.json',JSON.stringify({result:'PASS',installedSupportedBefore:true,rollbackExactFunction:true,installedSupportedAfter:true,sourceModified:false},null,2));
+console.log('candidate exact guards/catalog/rollback PASS');

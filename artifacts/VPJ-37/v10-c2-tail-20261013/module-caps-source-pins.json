@@ -1,0 +1,38 @@
+{
+  "result": "PASS",
+  "database": "c2_release_proof",
+  "moduleCaps": "t|t|t|t|t|t|t|t|t|t",
+  "jobSource": {
+    "acl": "{postgres=arwdDxtm/postgres}",
+    "rls": true,
+    "owner": "postgres",
+    "triggers": [
+      [
+        "conversation_data_parent_fence_v1",
+        "O",
+        "CREATE TRIGGER conversation_data_parent_fence_v1 BEFORE INSERT OR DELETE OR UPDATE ON turn_private.grounded_ai_assist_jobs FOR EACH ROW EXECUTE FUNCTION conversation_data_private.guard_source_v1()"
+      ],
+      [
+        "result_source_fence_v1",
+        "O",
+        "CREATE TRIGGER result_source_fence_v1 BEFORE INSERT OR DELETE OR UPDATE ON turn_private.grounded_ai_assist_jobs FOR EACH ROW EXECUTE FUNCTION result_data_private.guard_source_v1()"
+      ],
+      [
+        "turn_data_parent_fence_v1",
+        "O",
+        "CREATE TRIGGER turn_data_parent_fence_v1 BEFORE INSERT OR DELETE OR UPDATE ON turn_private.grounded_ai_assist_jobs FOR EACH ROW EXECUTE FUNCTION turn_data_private.guard_source_v1()"
+      ]
+    ]
+  },
+  "budgetAttempts": 0,
+  "opsFreshBootstrap": "default denial, pristine root/control/budget validation, restore manifest reconciliation via pinned helper",
+  "sourcePins": {
+    "supabase/migrations/20261012103151_vpj37_ops_control_w2.sql": "5e07bc1ce41f236c0fd29ece8f9f15525c9e234e78f9a7a25ab22751082babdf",
+    "tests/integration/observability/ops-control-owned/fresh-bootstrap.mjs": "2d79e2166bc3e2161eab493dc1f3773417a3c51816fa7c4b317cc1e005464057",
+    "lib/server/turn/native-ai-assist-http.ts": "ef5228793bebe3da66ca16b1da98e76460ff2e440c0d3a1f2ebcf0cd8937261e",
+    "lib/server/identity/native-credentials.ts": "e10462967462e359914e7f4a4fb925911ce33b8017570d06993bcf403c95281e",
+    "lib/server/identity/user-data-adapter.ts": "2e98dbc3b06465d45e6983b0cc3b1db01050145d6229b9503bbf256444c5949d",
+    "lib/server/knowledge/wiki/grounded-ai-assist-job.ts": "fdab8182f47f77ce5de5eae272d3933159d70ef58dad96716adb9fc272732895",
+    "lib/server/knowledge/wiki/grounded-ai-assist.ts": "e073c77a488a486ce33c16ba6ba984c735cb3ba2c94531e8996084dd7a6b236e"
+  }
+}

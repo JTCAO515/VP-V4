@@ -1,0 +1,19 @@
+PASS fresh blocked source ensure exact closed refusal, no new job/task/budget/Trip/Proposal, TS physicalfetch0
+PASS missing and foreign original source unavailable
+PASS historical done and pending retain original IDs/tokens without provider
+PASS stale old claim refuses reclaim and preserves exact row/token
+PASS wrong token and foreign completion deny with unchanged original job
+PASS absent consent historical read/complete refuse, no side effect
+PASS absent grounded source historical read/complete refuse, no side effect
+PASS hidden source historical read/complete refuse, no side effect
+PASS withdrawn consent historical read/complete refuse, no side effect
+PASS revoked policy historical read/complete refuse, no side effect
+PASS unfinished original source historical read/complete refuse, no side effect
+PASS stale Auth session refuses existing read and complete
+PASS valid original completion keeps token and repeat completion conflicts
+PASS real SQL published original answered fact never grants C2 ensure
+PASS source withdrawal keeps original answered eligibility; no fresh C2 bypass
+PASS control stop retains eligible historical read, no new/reclaim/provider
+PASS control stop permits eligible original claim completion, original token/row, no new cost/task/Trip/Proposal
+PASS ordinary anon/service/direct-table ACL denies
+PASS actual SQL mobile login replacement fences old actor, keeps eligible current historical read

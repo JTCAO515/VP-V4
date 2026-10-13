@@ -1,0 +1,83 @@
+{
+  "mode": "candidate",
+  "results": [
+    {
+      "label": "fresh blocked source ensure exact closed refusal, no new job/task/budget/Trip/Proposal, TS physicalfetch0",
+      "result": "PASS"
+    },
+    {
+      "label": "missing and foreign original source unavailable",
+      "result": "PASS"
+    },
+    {
+      "label": "historical done and pending retain original IDs/tokens without provider",
+      "result": "PASS"
+    },
+    {
+      "label": "stale old claim refuses reclaim and preserves exact row/token",
+      "result": "PASS"
+    },
+    {
+      "label": "wrong token and foreign completion deny with unchanged original job",
+      "result": "PASS"
+    },
+    {
+      "label": "absent consent historical read/complete refuse, no side effect",
+      "result": "PASS"
+    },
+    {
+      "label": "absent grounded source historical read/complete refuse, no side effect",
+      "result": "PASS"
+    },
+    {
+      "label": "hidden source historical read/complete refuse, no side effect",
+      "result": "PASS"
+    },
+    {
+      "label": "withdrawn consent historical read/complete refuse, no side effect",
+      "result": "PASS"
+    },
+    {
+      "label": "revoked policy historical read/complete refuse, no side effect",
+      "result": "PASS"
+    },
+    {
+      "label": "unfinished original source historical read/complete refuse, no side effect",
+      "result": "PASS"
+    },
+    {
+      "label": "stale Auth session refuses existing read and complete",
+      "result": "PASS"
+    },
+    {
+      "label": "valid original completion keeps token and repeat completion conflicts",
+      "result": "PASS"
+    },
+    {
+      "label": "real SQL published original answered fact never grants C2 ensure",
+      "result": "PASS"
+    },
+    {
+      "label": "source withdrawal keeps original answered eligibility; no fresh C2 bypass",
+      "result": "PASS"
+    },
+    {
+      "label": "control stop retains eligible historical read, no new/reclaim/provider",
+      "result": "PASS"
+    },
+    {
+      "label": "control stop permits eligible original claim completion, original token/row, no new cost/task/Trip/Proposal",
+      "result": "PASS"
+    },
+    {
+      "label": "ordinary anon/service/direct-table ACL denies",
+      "result": "PASS"
+    },
+    {
+      "label": "actual SQL mobile login replacement fences old actor, keeps eligible current historical read",
+      "result": "PASS"
+    }
+  ],
+  "providerCalls": 0,
+  "environment": "Own PG17.6, exact migration155; SQL rows/claims only; not GoTrue/provider enrollment"
+}

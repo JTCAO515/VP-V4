@@ -1,0 +1,7 @@
+{
+  "result": "PASS",
+  "installedSupportedBefore": true,
+  "rollbackExactFunction": true,
+  "installedSupportedAfter": true,
+  "sourceModified": false
+}

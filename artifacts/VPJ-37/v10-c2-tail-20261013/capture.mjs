@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import {readFileSync,writeFileSync} from 'node:fs';
+import {db,out,sha,lease} from './fixture.mjs';
+const caps=await db('select ops_control_private.installed_supported_v1(),ops_control_private.recovery_ready_v1(),profile_data_private.schema_v1(),conversation_data_private.schema_supported_v1(),result_data_private.schema_supported_v1(),turn_data_private.schema_supported_v1(),turn_data_private.runtime_supported_v1(),turn_data_private.write_hooks_valid_v1(),turn_data_private.hooks_valid_v1(),export_private.profile_hooks_valid_v1();');
+assert.equal(caps,'t|t|t|t|t|t|t|t|t|t');
+const jobs=JSON.parse(await db("select jsonb_build_object('rls',c.relrowsecurity,'owner',pg_get_userbyid(c.relowner),'acl',c.relacl::text,'triggers',(select jsonb_agg(jsonb_build_array(t.tgname,t.tgenabled::text,pg_get_triggerdef(t.oid)) order by t.tgname) from pg_trigger t where t.tgrelid=c.oid and not t.tgisinternal)) from pg_class c where c.oid='turn_private.grounded_ai_assist_jobs'::regclass;"));assert.equal(jobs.rls,true);
+const result={result:'PASS',database:lease.database,moduleCaps:caps,jobSource:jobs,budgetAttempts:Number(await db('select count(*) from public.model_budget_attempts;')),opsFreshBootstrap:'default denial, pristine root/control/budget validation, restore manifest reconciliation via pinned helper',sourcePins:{}};
+assert.equal(result.budgetAttempts,0);
+for(const p of ['supabase/migrations/20261012103151_vpj37_ops_control_w2.sql','tests/integration/observability/ops-control-owned/fresh-bootstrap.mjs','lib/server/turn/native-ai-assist-http.ts','lib/server/identity/native-credentials.ts','lib/server/identity/user-data-adapter.ts','lib/server/knowledge/wiki/grounded-ai-assist-job.ts','lib/server/knowledge/wiki/grounded-ai-assist.ts'])result.sourcePins[p]=sha(readFileSync(p));
+assert.equal(result.sourcePins['supabase/migrations/20261012103151_vpj37_ops_control_w2.sql'],'5e07bc1ce41f236c0fd29ece8f9f15525c9e234e78f9a7a25ab22751082babdf');assert.equal(result.sourcePins['tests/integration/observability/ops-control-owned/fresh-bootstrap.mjs'],'2d79e2166bc3e2161eab493dc1f3773417a3c51816fa7c4b317cc1e005464057');
+writeFileSync(out+'module-caps-source-pins.json',JSON.stringify(result,null,2));

@@ -1,0 +1,86 @@
+diff --git a/supabase/migrations/20261012103151_vpj37_ops_control_w2.sql b/supabase/migrations/20261012103151_vpj37_ops_control_w2.sql
+index 9f709b97..50433d7c 100644
+--- a/supabase/migrations/20261012103151_vpj37_ops_control_w2.sql
++++ b/supabase/migrations/20261012103151_vpj37_ops_control_w2.sql
+@@ -1054,6 +1054,29 @@ begin
+  ops:=ops||ops_control_private.export_actor_operations_v1(u);n:=jsonb_array_length(ops);if rows_n+n>10000 then raise exception 'PROFILE_SCOPE_TOO_LARGE';end if;item:=jsonb_set(jsonb_set(item,'{operations}',ops),'{sourceRows,operations}',to_jsonb(n));if octet_length(notification_private.canonical(jsonb_build_object('snapshot',jsonb_build_array(item))))>1000000 then raise exception 'PROFILE_SCOPE_TOO_LARGE';end if;
+ return item;
+ end$function$;
++CREATE OR REPLACE FUNCTION public.read_grounded_ai_assist_context_v1(p_turn_id uuid)
++ RETURNS jsonb
++ LANGUAGE plpgsql
++ SECURITY DEFINER
++ SET search_path TO ''
++AS $function$
++declare u uuid:=turn_private.text_owner(); g turn_private.grounded_turns%rowtype; c turn_private.text_content%rowtype;
++begin
++  if not turn_private.lock_turn(p_turn_id,u,(auth.jwt()->>'session_id')::uuid) then return jsonb_build_object('kind','unavailable'); end if;
++  -- Reuse the existing full historical task/consent/source eligibility chain.
++  if public.read_grounded_turn(p_turn_id)->>'kind' is distinct from 'grounded_turn' then return jsonb_build_object('kind','unavailable'); end if;
++  select * into c from turn_private.text_content where turn_id=p_turn_id and owner_id=u and hidden_at is null for share;
++  if not found or not turn_private.text_policy_current(c.policy_id) then return jsonb_build_object('kind','unavailable'); end if;
++  select * into g from turn_private.grounded_turns where turn_id=p_turn_id and owner_id=u;
++  if not found or g.completed_at is null then return jsonb_build_object('kind','unavailable'); end if;
++  -- The one real gate: AI-assisted search is offered only as a supplement
++  -- when the authoritative structured answer genuinely found nothing for
++  -- every required claim. It is never offered as a bypass when the
++  -- resolver's own judgement was answered or partial.
++  if g.original_outcome <> 'blocked' then return jsonb_build_object('kind','not_applicable'); end if;
++  return jsonb_build_object('kind','context','turnId',c.turn_id,'city',g.city,'locale',c.locale,
++    'intent',g.intent,'inputText',c.input_text,'placeName',g.place_name);
++end $function$;
+ CREATE OR REPLACE FUNCTION public.grounded_ai_assist_work_v1(p_input jsonb)
+  RETURNS jsonb
+  LANGUAGE plpgsql
+@@ -1080,6 +1103,11 @@ begin
+     s := (auth.jwt()->>'session_id')::uuid;
+     if not turn_private.lock_turn(tid, u, s) then return jsonb_build_object('kind', 'unavailable'); end if;
+
++    -- Historical jobs retain identity only while the original source is eligible.
++    result := public.read_grounded_ai_assist_context_v1(tid);
++    if result->>'kind' is distinct from 'context' then
++      return jsonb_build_object('kind',case when result->>'kind'='not_applicable' then 'not_applicable' else 'unavailable' end);
++    end if;
+     select * into g from turn_private.grounded_turns where turn_id = tid and owner_id = u;
+     if not found or g.original_outcome is distinct from 'blocked' then return jsonb_build_object('kind', 'not_applicable'); end if;
+
+@@ -1120,9 +1148,14 @@ update turn_private.grounded_ai_assist_jobs
+     then raise exception 'INVALID_INPUT'; end if;
+
+   u := turn_private.text_owner();
+-  select * into job from turn_private.grounded_ai_assist_jobs where id = (p_input->>'jobId')::uuid for update;
++  -- Read identity, acquire the original owner/session/source fence, then lock job.
++  select * into job from turn_private.grounded_ai_assist_jobs where id = (p_input->>'jobId')::uuid;
+   if not found then raise exception 'OPS_NOT_FOUND'; end if;
+   if job.owner_id <> u then raise exception 'UNAUTHENTICATED'; end if;
++  result := public.read_grounded_ai_assist_context_v1(job.turn_id);
++  if result->>'kind' is distinct from 'context' then return jsonb_build_object('kind','unavailable'); end if;
++  select * into job from turn_private.grounded_ai_assist_jobs where id = (p_input->>'jobId')::uuid for update;
++  if not found or job.owner_id <> u then return jsonb_build_object('kind','unavailable'); end if;
+   if job.status <> 'running' then raise exception 'OPS_CONFLICT'; end if;
+   if (p_input->>'claimToken')::uuid is distinct from job.claim_token then raise exception 'OPS_CONFLICT'; end if;
+
+@@ -1366,12 +1399,12 @@ begin
+  return conversation_data_private.schema_supported_v1() and result_data_private.infrastructure_supported_v1() and result_data_private.digest_v1((select coalesce(jsonb_agg(jsonb_build_object('relation',n.nspname||'.'||c.relname,'columns',(select jsonb_agg(jsonb_build_array(a.attname,format_type(a.atttypid,a.atttypmod),a.attnotnull) order by a.attnum) from pg_attribute a where a.attrelid=c.oid and a.attnum>0 and not a.attisdropped),'constraints',(select jsonb_agg(pg_get_constraintdef(k.oid) order by k.conname) from pg_constraint k where k.conrelid=c.oid)) order by n.nspname,c.relname),'[]'::jsonb) from pg_class c join pg_namespace n on n.oid=c.relnamespace where c.relkind='r' and n.nspname not in('pg_catalog','information_schema','extensions','auth','result_data_private','storage','realtime','_realtime','vault','supabase_functions','supabase_migrations'))::text)='c35b58a5b5744c5ea02ccc818435d060a3da5078fe6353c6d5c1b9d0f5c5f161';
+ end$function$;
+
+-create function ops_control_private.installed_supported_v1() returns boolean
++create or replace function ops_control_private.installed_supported_v1() returns boolean
+ language plpgsql stable security definer set search_path='' as $installed$
+ declare spec record;p pg_proc;actual_n jsonb;begin
+  if(select count(*) from pg_proc f join pg_namespace n on n.oid=f.pronamespace
+   where n.nspname='ops_control_private')<>24 then return false;end if;
+[Exact fixed catalog payload: see before/after function JSON and tested shared-migration-candidate.sql]
+[Exact fixed catalog payload: see before/after function JSON and tested shared-migration-candidate.sql]
+   if to_regprocedure(spec.key) is null then return false;end if;
+   select * into p from pg_proc where oid=spec.key::regprocedure;
+   select jsonb_build_object('signature',spec.key,'definition',pg_get_functiondef(p.oid),'prosrc',p.prosrc,
+@@ -1401,7 +1434,7 @@ declare spec record;p pg_proc;actual_n jsonb;begin
+   and result_data_private.schema_supported_v1() and turn_data_private.schema_supported_v1()
+   and turn_data_private.runtime_supported_v1() and turn_data_private.write_hooks_valid_v1()
+   and turn_data_private.hooks_valid_v1() and export_private.profile_hooks_valid_v1();
+-end $installed$;
++end $installed$;;
+ revoke all on function ops_control_private.installed_supported_v1() from public,anon,authenticated,service_role;
+
+ notify pgrst,'reload schema';
