@@ -1,0 +1,24 @@
+--- association-before.sql
++++ association-after.sql
+@@ -4 +4 @@
+-  if exists(select 1 from turn_private.text_policies where id=NEW.policy_id and context_mode in ('task_history_v1','knowledge_intent_v1'))
++  if exists(select 1 from turn_private.text_policies where id=NEW.policy_id and context_mode in ('task_history_v1','knowledge_intent_v1','qa_session_history_v1'))
+@@ -12 +12 @@
+-create function public.qa_claim_work_v1(p_owner_id uuid,p_policy_id uuid)
++create or replace function public.qa_claim_work_v1(p_owner_id uuid,p_policy_id uuid)
+@@ -28,0 +29 @@
++      and not exists(select 1 from public.model_budget_attempts a join public.model_budget_scopes b on b.id=a.scope_id where b.owner_id=q.owner_id and a.status<>'released' and (a.task_id=q.turn_id or a.attempt_id=q.lease_token))
+@@ -47 +48 @@
+-    if exists(select 1 from turn_private.text_dispatches d where d.turn_id=w.turn_id) then return jsonb_build_object('kind','reconciliation_required','turnId',w.turn_id); end if;
++    if exists(select 1 from turn_private.text_dispatches d where d.turn_id=w.turn_id) or exists(select 1 from public.model_budget_attempts a join public.model_budget_scopes b on b.id=a.scope_id where b.owner_id=w.owner_id and a.status<>'released' and (a.task_id=w.turn_id or a.attempt_id=w.lease_token)) then return jsonb_build_object('kind','reconciliation_required','turnId',w.turn_id); end if;
+@@ -51 +52,6 @@
+-    if turn_private.qa_history_v1(w.turn_id) is null then return jsonb_build_object('kind','empty'); end if;
++    if turn_private.qa_history_v1(w.turn_id) is null then
++      -- No receipt/uncertain ledger can reach this branch. Keep all retained text;
++      -- use the original terminal/event path, and return after this owner's locks.
++      perform turn_private.terminal(w.turn_id,'cancelled',w.attempt);
++      return jsonb_build_object('kind','empty');
++    end if;
+@@ -63 +69 @@
+-    and exists(select 1 from turn_private.text_dispatches d where d.turn_id=q.turn_id)
++    and (exists(select 1 from turn_private.text_dispatches d where d.turn_id=q.turn_id) or exists(select 1 from public.model_budget_attempts a join public.model_budget_scopes b on b.id=a.scope_id where b.owner_id=q.owner_id and a.status<>'released' and (a.task_id=q.turn_id or a.attempt_id=q.lease_token)))

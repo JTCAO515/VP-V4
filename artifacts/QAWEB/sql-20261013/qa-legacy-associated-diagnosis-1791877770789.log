@@ -1,0 +1,17 @@
+OWN CONTAINER qaw005-legacy-diag-b4079030-039
+MAIN967 MIGRATIONS 155
+PASS actual Main967 complete migrations replay, no candidate changes applied
+OBSERVED legacy QA associated root ACCEPTED Chinese 24001 content bytes
+PASS Chinese 24001 content bytes: legacy followup cannot bypass capacity because QA relationship trigger rejects; protected preflight rejects and both leave counts/last/ledger unchanged
+PASS legacy new root cannot append or create replacement Task in the same Session; QA relationship label rejected by old signature contract
+PASS legacy exact associated-root replay does not enqueue or charge again
+PASS short protected QA followup remains usable after rejected legacy/capacity attempts
+OBSERVED legacy QA associated root ACCEPTED escaped prompt 32769 bytes
+PASS escaped prompt 32769 bytes: legacy followup cannot bypass capacity because QA relationship trigger rejects; protected preflight rejects and both leave counts/last/ledger unchanged
+PASS legacy new root cannot append or create replacement Task in the same Session; QA relationship label rejected by old signature contract
+PASS legacy exact associated-root replay does not enqueue or charge again
+PASS short protected QA followup remains usable after rejected legacy/capacity attempts
+PASS ten lifecycle gates remain true; no source function changed by diagnosis
+CONCLUSION root alias accepts QA policy, but continuation/8-turn or prompt-capacity bypass NOT REPRODUCED. Current qa_submit_turn_v1 is an independent body, not delegated to submit_service_task_turn.
+UNRUN target/provider; source changes require Main interface choice
+OWN CLEANUP 0

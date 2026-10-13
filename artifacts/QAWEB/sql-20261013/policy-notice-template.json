@@ -1,0 +1,14 @@
+{
+  "status": "UNPUBLISHED_TEMPLATE_ONLY",
+  "contextMode": "qa_session_history_v1",
+  "requiredNewPolicyId": true,
+  "maxTotalTurns": 8,
+  "maxPriorPairs": 7,
+  "maxSerializedHistoryBytes": 65536,
+  "zh": "为回答问题，本策略可对同一 Session 内最多七组较早的输入和回答进行受保护检查（上游历史最多 64 KiB，共最多八轮）。实际发送至 {{recipient}}、由 {{provider}} 通过 {{endpointDisclosure}} 处理的模型请求，只包含最近最多三组完整输入和回答以及本次输入。所选内容的 UTF-8 总大小最多 16 KiB，包含系统提示的序列化请求最多 32 KiB；超出容量的请求会被拒绝且不送出。来源区域为 {{sourceRegion}}，处理区域为 {{processingRegion}}，存储区域为 {{storageRegion}}。供应商保留信息：{{providerRetentionDisclosure}}。服务器输入和回答遵循 retain_after_hide_v1：删除会话或账号会隐藏正文，隐藏不等于已永久删除；导出及敏感资料删除沿原有数据管理机制处理。可撤回后续处理许可；撤回、到期或来源隐藏后不继续使用历史。普通追问和明确纠正在原服务任务内继续，每次模型尝试仍受实际预算和容量限制。新 Session 不读取其他 Session；不会自动修改 Trip 或长期 Memory。",
+  "en": "To answer, this policy may perform protected checks on up to seven earlier input/answer pairs from this same Session (at most 64 KiB of upstream history and eight total turns). The actual model request sent to {{recipient}}, processed by {{provider}} through {{endpointDisclosure}}, contains only the most recent three or fewer complete pairs plus the current input. Selected content is limited to 16 KiB of UTF-8 bytes, and the serialized request including the system prompt to 32 KiB; over-capacity requests are rejected without being sent. Source region: {{sourceRegion}}; processing region: {{processingRegion}}; storage region: {{storageRegion}}. Provider retention disclosure: {{providerRetentionDisclosure}}. Server input and answers use retain_after_hide_v1: deleting a conversation or account hides content; hiding does not mean permanent erasure. Export and sensitive-data deletion use the original data-management mechanism. You can withdraw further processing permission; withdrawal, expiry or hidden sources prevent further use of history. Follow-ups and explicit corrections continue the original ServiceTask, and each model attempt remains subject to actual budget and capacity limits. A new Session does not read another Session. Trip and long-term Memory are not changed automatically.",
+  "activation": "NONE; replace all placeholders with actual current metadata, use a new immutable noticeVersion and hash, review with Main, then require exact user consent",
+  "maxSelectedHistoryPairs": 3,
+  "maxSelectedContentBytes": 16384,
+  "maxSerializedPromptBytes": 32768
+}

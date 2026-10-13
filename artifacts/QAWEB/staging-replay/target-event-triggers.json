@@ -1,0 +1,63 @@
+[
+  {
+    "evtname": "ensure_rls",
+    "evtevent": "ddl_command_end",
+    "evtenabled": "O",
+    "evttags": [
+      "CREATE TABLE",
+      "CREATE TABLE AS",
+      "SELECT INTO"
+    ],
+    "function": "rls_auto_enable()"
+  },
+  {
+    "evtname": "issue_graphql_placeholder",
+    "evtevent": "sql_drop",
+    "evtenabled": "O",
+    "evttags": [
+      "DROP EXTENSION"
+    ],
+    "function": "set_graphql_placeholder()"
+  },
+  {
+    "evtname": "issue_pg_cron_access",
+    "evtevent": "ddl_command_end",
+    "evtenabled": "O",
+    "evttags": [
+      "CREATE EXTENSION"
+    ],
+    "function": "grant_pg_cron_access()"
+  },
+  {
+    "evtname": "issue_pg_graphql_access",
+    "evtevent": "ddl_command_end",
+    "evtenabled": "O",
+    "evttags": [
+      "CREATE EXTENSION"
+    ],
+    "function": "grant_pg_graphql_access()"
+  },
+  {
+    "evtname": "issue_pg_net_access",
+    "evtevent": "ddl_command_end",
+    "evtenabled": "O",
+    "evttags": [
+      "CREATE EXTENSION"
+    ],
+    "function": "grant_pg_net_access()"
+  },
+  {
+    "evtname": "pgrst_ddl_watch",
+    "evtevent": "ddl_command_end",
+    "evtenabled": "O",
+    "evttags": null,
+    "function": "pgrst_ddl_watch()"
+  },
+  {
+    "evtname": "pgrst_drop_watch",
+    "evtevent": "sql_drop",
+    "evtenabled": "O",
+    "evttags": null,
+    "function": "pgrst_drop_watch()"
+  }
+]

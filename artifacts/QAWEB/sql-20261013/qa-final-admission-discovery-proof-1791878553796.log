@@ -1,0 +1,11 @@
+OWN CONTAINER qaw005-plan-a4ae4498-94e
+PASS actual Main967 replay + combined rollback/apply retains old definitions/ACLs and no extra retained table
+PASS earlier zero/disabled/frozen/expired/wrong model-price/provider/endpoint/ambiguous/inflight groups do not occupy limit1; later exact-one valid owner wins
+PASS all rejected owners retain original queued/uncertain work and accounting; discovery never deletes or releases
+PASS exact match after five earlier nonmatching scopes is found; matching precedes two-witness ambiguity bound
+PASS safe legacy QA root alias remains compatible; protected QA followup remains operational
+PASS old API signature and legacy mode root behavior preserved
+PASS closed parameters, 1..50, disabled switch and service-only role vectors preserved
+PASS old discovery v1/legacy RPC definitions and ACLs unchanged; all ten gates true without any legacy policy interface change
+UNRUN target/provider/deployment/independent final review; fixture zero-budget rows are synthetic and queue rows are never deleted
+OWN CLEANUP 0

@@ -1,0 +1,90 @@
+{
+  "observedAt": "2026-10-13T07:03:24.683043+00:00",
+  "sourceSha": "16018dd23f3546a2be8acd81d5f85c4754d9845d",
+  "automaticGithubDeploymentId": 7032154246,
+  "deployment": {
+    "id": "dpl_4RokMsjVow4qL8tMB15vMwfUzmZs",
+    "url": "vp-v4-ifv7usxvo-jtcao515s-projects.vercel.app",
+    "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+    "target": null,
+    "readyState": "READY",
+    "alias": [
+      "qatesting.go2china.space",
+      "vp-v4-git-codex-qaw005-main-20261013-jtcao515s-projects.vercel.app"
+    ],
+    "createdAt": 1791874624792,
+    "buildingAt": 1791874625893,
+    "ready": 1791874679709,
+    "regions": [
+      "iad1"
+    ],
+    "gitSource": {
+      "type": "github",
+      "repoId": 1341685139,
+      "ref": "codex/qaw005-main-20261013",
+      "sha": "16018dd23f3546a2be8acd81d5f85c4754d9845d"
+    }
+  },
+  "effectiveQaEnvKeys": [
+    {
+      "key": "VISEPANDA_QA_AGENT_ORIGIN",
+      "type": "plain",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/qaw005-main-20261013"
+    }
+  ],
+  "publicGuardChecks": [
+    {
+      "name": "root",
+      "status": 307,
+      "location": "/qa",
+      "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+      "requestId": "sin1::iad1::ljdfm-1791874998147-1015589dff91"
+    },
+    {
+      "name": "qa",
+      "status": 200,
+      "location": null,
+      "cacheControl": "public, max-age=0, must-revalidate",
+      "requestId": "sin1::gm86q-1791875000090-0ddd9927cfe5"
+    },
+    {
+      "name": "signin",
+      "status": 200,
+      "location": null,
+      "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+      "requestId": "sin1::iad1::lm7kw-1791875001359-ca173aa1ba77"
+    },
+    {
+      "name": "anonymousSessions",
+      "status": 503,
+      "location": null,
+      "cacheControl": "private, no-store",
+      "requestId": "sin1::iad1::4pqpq-1791875002908-f1ad57b73be9",
+      "version": "qa-agent/1",
+      "error": {
+        "code": "PROVIDER_UNAVAILABLE",
+        "ack": "not_submitted"
+      },
+      "privateDataPresent": false
+    },
+    {
+      "name": "foreignOrigin",
+      "status": 403,
+      "location": null,
+      "cacheControl": "private, no-store",
+      "requestId": "sin1::iad1::gm86q-1791875004344-8a7bc7575c48",
+      "version": "qa-agent/1",
+      "error": {
+        "code": "FORBIDDEN",
+        "ack": "not_submitted"
+      },
+      "privateDataPresent": false
+    }
+  ],
+  "manualDeploymentCreated": false,
+  "reusedEvidence": "4e477a7f login layout/style/screenshots and signed-out link/form structure; no full UI matrix repeated",
+  "invalidatedOrUnrun": "Authenticated workspace/recovery/capacity/context/discovery require latest-source actor/target/provider evidence; all remain UNRUN"
+}

@@ -1,0 +1,11 @@
+test_capture_does_not_read_ledger_values_before_profile_and_count_pass (__main__.PlatformLedgerTests) ... ok
+test_count_drift_or_service_content_rejected (__main__.PlatformLedgerTests) ... ok
+test_descriptor_requires_explicit_exact_supplement (__main__.PlatformLedgerTests) ... ok
+test_real_count_observation_defeats_old_zero_gate (__main__.PlatformLedgerTests) ... ok
+test_supplement_toc_cannot_include_service_rows (__main__.PlatformLedgerTests) ... ok
+test_unknown_or_changed_platform_relation_rejected (__main__.PlatformLedgerTests) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.014s
+
+OK

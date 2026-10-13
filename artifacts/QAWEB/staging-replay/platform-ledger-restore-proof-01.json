@@ -1,0 +1,42 @@
+{
+  "status": "PASS_SYNTHETIC_RESTORE_ENTRY_ONLY",
+  "targetRead": false,
+  "stages": [
+    "PASS four-ciphertext restore,14 counts,89 synthetic ledger rows/digest,roles/ACL/platform catalog",
+    "PASS wrong expected count rejected after isolated restore with cleanup",
+    "PASS wrong logical ledger digest rejected; no substitute seed versions",
+    "PASS unknown managed extension rejected before archive read/container creation",
+    "PASS capture lacking restoration expectations rejected",
+    "PASS altered ciphertext rejected before container",
+    "PASS synthetic key/ciphertexts removed"
+  ],
+  "captureSeconds": 0.33,
+  "restoreSeconds": 1.844,
+  "restore": {
+    "status": "PASS_LOCAL_BUNDLE_RESTORE_ONLY",
+    "targetWritten": false,
+    "contentOutput": false,
+    "bootstrapProfile": "supabase-17.6.1.155-five-extensions/1",
+    "explicitPrecreatedObjects": [
+      "SCHEMA:extensions",
+      "SCHEMA:vault",
+      "EXTENSION:pg_stat_statements",
+      "EXTENSION:pgcrypto",
+      "EXTENSION:supabase_vault",
+      "EXTENSION:uuid-ossp"
+    ],
+    "schemaDigest": "0917b8472c7bd0886c66bbbf0b0370693dfe0e6db37ed817d8fe7aa798d02705",
+    "countRelations": 14,
+    "globalRoles": "PASS",
+    "ownerAclSchema": "PASS",
+    "platformCatalog": "PASS",
+    "counts": "PASS",
+    "platformLedger": "PASS_COUNT_AND_DIGEST",
+    "platformServices": "UNRUN_GOTRUE_STORAGE_REALTIME",
+    "migrationUpgrade": "UNRUN",
+    "userAcceptance": "UNRUN",
+    "cleanup": "PASS"
+  },
+  "sourceCleanup": "PASS",
+  "elapsedSeconds": 7.881
+}

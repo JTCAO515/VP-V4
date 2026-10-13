@@ -1,0 +1,17 @@
+{
+  "beforeOwnerHead": "62abff9972b0b33b3f6459aa07f70c61d796786e",
+  "reviewedMainHead": "a4c0a74a",
+  "functions": {
+    "qa_authorize_dispatch_v1": {
+      "beforeSHA256": "7998f3f4eb94f988b52f934d8ebf8f08521ddb150859973597f65614a7ea0dfb",
+      "afterSHA256": "121732e336109cefa85a2ee3c8969826aaeffeff3898c94363ef3893a8cccbf9"
+    },
+    "qa_claim_work_v1": {
+      "beforeSHA256": "732d3b8445515929233318f6ffa7aab07350ede94b63bff9ed3ebca93a18b713",
+      "afterSHA256": "abe2f87181637b6b375745ba3dda7bde64ec9a747423e692c1bfd9b507aeed82"
+    }
+  },
+  "newServiceOnlyReadonlyFunction": "public.qa_read_reconciliation_v1(uuid,uuid,uuid)",
+  "newTables": [],
+  "targetApply": "NONE"
+}

@@ -1,0 +1,25 @@
+{
+  "base": "c7d4814bce0a16313b32a604be08e5147ed5f5b1",
+  "reviewHead": "01d61033",
+  "contractConfirmedByMain": "backend93c8→Main7156: protected reconciliationRequired true only with output/outcome null maps viewstatus reconciliation_required and text:null; stored actual outcomes retain original statuses. Supplier outcome enums unchanged.",
+  "sourceSha256": {
+    "components/qa-agent/api.ts": "d7cf3d7ba0ef62dc59f53c626ea5d9e48d1551196c08e70e5c1aec3f19921a38",
+    "components/qa-agent/QaAgentWorkspace.tsx": "a086f28e08ea892ba60db8dd60a4f39cefa5177e68ad883f16a8a78b5dfdc2d0"
+  },
+  "changes": [
+    "Accept reconciliation_required as a protected non-answer; reject nonnull answer or wrong identity/unknown status.",
+    "Show plain human notice, stop reconciliation-only spinner/polling, lock Session composer against new POST/UUID. Manual Check again is protected GET of the same saved requestId.",
+    "Explicit new Session clears prior draft and never carries/resends original body. Unknown admission marker confirmation remains separate from unresolved answer/billing state."
+  ],
+  "checks": {
+    "lint": "PASS",
+    "typecheck": "PASS",
+    "productionBuild": "PASS",
+    "adapter": "8 PASS / 0 FAIL / 0 SKIP including reconciliation-null positive and reconciliation+text/wrongSession/unknownStatus failclosed",
+    "affectedProductionBrowser": "9 distinct PASS: initial8/9 then one corrected-selector test PASS. Covers durable refresh/manual sameUUID GET→stored answer withPOST1; explicit newSession no old body carry; reconciliation/technicalFailure/normalPending distinction; Session-switch late read fence; unknown journal→confirmed reconciliation; actor/logout, storage-read failure, pending503 bounded read, uncertain replay guard."
+  },
+  "historicalFailure": "One test initially looked for Send while legitimate other pending message labels submit Replying. Product content assertions passed; locator changed to form submit button. No product behavior weakened.",
+  "privacy": "Reuses content-free sessionStorage/no raw text/digest/credential retention and actor/epoch/abort fencing. No billing/refund/zero-charge promises or technical lease/budget/source details in UI.",
+  "target": "Production-built actual UI with synthetic Auth/API. Real authenticated QA/provider/billing remain UNRUN. No shared/backend/SQL/deploy/credential writes.",
+  "delivery": "Local commit only, no push/PR/agent/task creation. AGENTS auto dirty preserved uncommitted."
+}

@@ -1,0 +1,21 @@
+(node:49672) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2m[WebServer] [22m(node:49674) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 7 tests using 1 worker
+
+(node:49675) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49675) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:49675) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/e2e/qa-agent-ui/workspace.spec.mjs:137:3 › consent, IME, send, refresh and mobile controls at 1280 (3.7s)
+  ✓  2 tests/e2e/qa-agent-ui/workspace.spec.mjs:137:3 › consent, IME, send, refresh and mobile controls at 390 (3.6s)
+  ✓  3 tests/e2e/qa-agent-ui/workspace.spec.mjs:199:1 › lost ACK retains original ID and never automatically POSTs a second message (547ms)
+  ✓  4 tests/e2e/qa-agent-ui/workspace.spec.mjs:253:1 › session switch fences late replies and preserves request recovery in the original session (558ms)
+  ✓  5 tests/e2e/qa-agent-ui/workspace.spec.mjs:313:1 › 401 clears private history and offers existing sign-in (369ms)
+  ✓  6 tests/e2e/qa-agent-ui/workspace.spec.mjs:341:1 › duplicate submit is locked immediately and terminal errors never become answers (3.3s)
+  ✓  7 tests/e2e/qa-agent-ui/workspace.spec.mjs:404:1 › SDK owner replacement clears messages and aborts old in-flight work (512ms)
+
+  7 passed (13.4s)

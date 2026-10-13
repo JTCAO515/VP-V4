@@ -1,0 +1,13 @@
+{
+  "mainBaseline": "96767520f19fd75a4270cf550c43c435a5efdcd4",
+  "v2CandidateSHA256": "ee2f3b8269ae7eb6843717b4cd04ae4424183ed5ef27617cc0183ea21eb2d9ba",
+  "v1Changed": false,
+  "newTables": [],
+  "targetApply": "NONE",
+  "legacyAssociatedApiChanged": false,
+  "latestProof": "qa-final-admission-discovery-proof-1791878698581.log",
+  "namedPassChecks": 8,
+  "proofSHA256": "4d627ce28bf06f4586cc878c4e9197a90d38784452189e0630858cc44d8cbd65",
+  "v2Signature": "public.qa_ready_groups_v2(integer,text,text,text)",
+  "oldInterfacesChanged": false
+}

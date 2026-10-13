@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "qa-activation-input/1",
+  "projectId": "dzqdzetcctkhbrhlxxgn",
+  "contextMode": "qa_session_history_v1",
+  "ownerId": null,
+  "supplier": {
+    "provider": "qwen",
+    "recipient": null,
+    "endpoint": null,
+    "termsVersion": "unknown",
+    "sourceRegion": "unknown",
+    "processingRegion": "unknown",
+    "storageRegion": "unknown",
+    "providerRetentionDisclosure": "unknown",
+    "evidence": {"url": null, "observedAt": null, "validUntil": null, "sha256": null}
+  },
+  "pricing": {
+    "model": null,
+    "priceVersion": null,
+    "currency": null,
+    "mode": "flat",
+    "inputMicrosPerMillion": null,
+    "outputMicrosPerMillion": null,
+    "cachedInputMicrosPerMillion": null,
+    "evidence": {"url": null, "observedAt": null, "validUntil": null, "sha256": null},
+    "coverage": {"inputTokens": 1000000, "outputTokens": 4096, "allBillableComponentsIncluded": false}
+  },
+  "budget": {
+    "limitMicros": null,
+    "taskLimitMicros": null,
+    "providerLimitMicros": null,
+    "attemptLimitMicros": null,
+    "taskAttemptLimit": 8,
+    "concurrencyLimit": 1,
+    "maxOutputTokens": null,
+    "timeoutMs": null,
+    "evidence": {"url": null, "observedAt": null, "validUntil": null, "sha256": null}
+  },
+  "validity": {"effectiveAt": null, "expiresAt": null, "termsRecheckAt": null},
+  "configuration": {"id": null, "version": 1}
+}

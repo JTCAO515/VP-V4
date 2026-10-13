@@ -1,0 +1,26 @@
+{
+  "verifiedAt": "2026-10-13T08:10:57.139056+00:00",
+  "sourceTag": "docker.io/library/node:22-bookworm-slim",
+  "platform": "linux/amd64",
+  "reference": "docker.io/library/node@sha256:efd0ab5780c2d9ab1f0f869571a00d5edb17793bff4cce4a2792e3eb0ffc7562",
+  "manifest": {
+    "annotations": {
+      "com.docker.official-images.bashbrew.arch": "amd64",
+      "org.opencontainers.image.base.digest": "sha256:a4672c0cb26fbdde88e38fa2dfb6c681942306680e41e4378b28770b6e79ee91",
+      "org.opencontainers.image.base.name": "debian:bookworm-slim",
+      "org.opencontainers.image.created": "2026-10-06T01:45:03Z",
+      "org.opencontainers.image.revision": "81f419144a1251854c6d9afb09eaa39928e724e8",
+      "org.opencontainers.image.source": "https://github.com/nodejs/docker-node.git#81f419144a1251854c6d9afb09eaa39928e724e8:22/bookworm-slim",
+      "org.opencontainers.image.url": "https://hub.docker.com/_/node",
+      "org.opencontainers.image.version": "22-bookworm-slim"
+    },
+    "digest": "sha256:efd0ab5780c2d9ab1f0f869571a00d5edb17793bff4cce4a2792e3eb0ffc7562",
+    "mediaType": "application/vnd.oci.image.manifest.v1+json",
+    "platform": {
+      "architecture": "amd64",
+      "os": "linux"
+    },
+    "size": 1929
+  },
+  "digestReadback": "PASS"
+}

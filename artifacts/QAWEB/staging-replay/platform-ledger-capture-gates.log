@@ -1,0 +1,11 @@
+test_approval_exact_code_scope_window_destination (__main__.Gates) ... ok
+test_default_no_network_or_process (__main__.Gates) ... ok
+test_legacy_approval_cannot_add_platform_ledger_scope (__main__.Gates) ... ok
+test_no_unbounded_relay_or_plaintext_dump_flags (__main__.Gates) ... ok
+test_non_tty_cannot_execute (__main__.Gates) ... ok
+test_once_only_exclusive_record (__main__.Gates) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.004s
+
+OK

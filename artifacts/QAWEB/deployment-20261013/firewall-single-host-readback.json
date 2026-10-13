@@ -1,0 +1,65 @@
+{
+  "observedAt": "2026-10-13T05:30:01.069270+00:00",
+  "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+  "teamId": "team_vLT8SL2mQJJSnXbD9GzVLP4K",
+  "beforeVersion": 106,
+  "activeVersion": 107,
+  "ruleId": "rule_vpj_02_staging_schema_maintenance_N0pDWD",
+  "firewallEnabled": true,
+  "rule": {
+    "name": "VPJ02 Staging schema maintenance",
+    "action": {
+      "mitigate": {
+        "redirect": null,
+        "action": "deny",
+        "rateLimit": null,
+        "actionDuration": null
+      }
+    },
+    "active": true,
+    "description": "Approved maintenance window: deny all project deployments until verified v2 hosts are released",
+    "id": "rule_vpj_02_staging_schema_maintenance_N0pDWD",
+    "conditionGroup": [
+      {
+        "conditions": [
+          {
+            "type": "host",
+            "op": "ninc",
+            "value": [
+              "go2china.space",
+              "staging.go2china.space",
+              "testing.go2china.space",
+              "vp-v4-45251eox5-jtcao515s-projects.vercel.app",
+              "vp-v4-5dcdig8mo-jtcao515s-projects.vercel.app",
+              "vp-v4-64u5z6ck5-jtcao515s-projects.vercel.app",
+              "vp-v4-6gmyp6494-jtcao515s-projects.vercel.app",
+              "vp-v4-7rftlyb4r-jtcao515s-projects.vercel.app",
+              "vp-v4-b468sog8m-jtcao515s-projects.vercel.app",
+              "vp-v4-be9i2998m-jtcao515s-projects.vercel.app",
+              "vp-v4-d6yc4thvq-jtcao515s-projects.vercel.app",
+              "vp-v4-git-main-jtcao515s-projects.vercel.app",
+              "vp-v4-hoqbl7dj0-jtcao515s-projects.vercel.app",
+              "vp-v4-jtcao515s-projects.vercel.app",
+              "vp-v4-noqwmrvwb-jtcao515s-projects.vercel.app",
+              "vp-v4.vercel.app",
+              "www.go2china.space",
+              "qatesting.go2china.space"
+            ]
+          }
+        ]
+      }
+    ],
+    "valid": true,
+    "validationErrors": null
+  },
+  "addedHosts": [
+    "qatesting.go2china.space"
+  ],
+  "removedHosts": [],
+  "previewHostAdded": false,
+  "exactAddOnly": "PASS",
+  "draftEmpty": true,
+  "authorization": "JT explicit single-host agreement relayed by BestJ/Main; Main reviewed exact diff",
+  "mutation": "one CLI rules.update stage; one publish; exact full active rule readback PASS",
+  "localPrepublishCheck": "initial comparison incorrectly included GET-only valid/validationErrors; corrected without another stage or platform denial"
+}

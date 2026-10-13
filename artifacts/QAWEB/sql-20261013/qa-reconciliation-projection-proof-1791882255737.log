@@ -1,0 +1,14 @@
+OWN CONTAINER qaw005-projection-8c1d1cda-203
+PASS actual Main01d migrations plus guarded projection rollback/apply; existing ACL/signature retained
+PASS synthetic provider timeout -> original pending ledger -> real lease expiry projects true; no new claim/physical attempt or stored state change
+PASS settled accounting without stored output still projects unresolved reply, no zero-cost or never-processed claim
+PASS stored answered output is not marked reconciliation
+PASS actual explicit failed output is not marked unresolved
+PASS real max-attempt quarantine creates failed terminal without output and projects false
+PASS actual cancelled terminal without output remains false despite retained unknown ledger/receipt
+PASS queued no marker is false; wrong-owner budget attempt cannot mark another actor
+PASS exact expired reservation marker true; explicit release without receipt false
+PASS revoked policy, withdrawn consent and wrong actor remain fail-closed before any projection
+PASS all ten lifecycle gates remain true; no new enum/table/grant or caller flag
+UNRUN real provider/target/UI integration/final review; physical timeout is a controlled local transport simulation, not external provider evidence
+OWN CLEANUP 0

@@ -1,0 +1,17 @@
+(node:8890) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2m[WebServer] [22m(node:9028) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:9218) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:9218) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:9218) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/e2e/qa-agent-ui/workspace.spec.mjs:137:3 › consent, IME, send, refresh and mobile controls at 1280 (3.6s)
+  ✓  2 tests/e2e/qa-agent-ui/workspace.spec.mjs:500:3 › legacy policy current_input_v1 cannot admit new QA messages (265ms)
+  ✓  3 tests/e2e/qa-agent-ui/workspace.spec.mjs:500:3 › legacy policy task_history_v1 cannot admit new QA messages (361ms)
+
+  3 passed (5.0s)

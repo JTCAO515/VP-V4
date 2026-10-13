@@ -1,0 +1,21 @@
+(node:78899) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2m[WebServer] [22m(node:78901) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 7 tests using 1 worker
+
+(node:78902) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:78902) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:78902) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/e2e/qa-agent-ui/workspace.spec.mjs:1183:1 › unknown ACK refresh restores only original UUID and late row is recovered with one POST (839ms)
+  ✓  2 tests/e2e/qa-agent-ui/workspace.spec.mjs:1276:1 › unknown ACK refresh finds matching history receipt and clears only its recovery marker (544ms)
+  ✓  3 tests/e2e/qa-agent-ui/workspace.spec.mjs:1372:1 › unknown recovery identity is cleared on actor change and logout, never leaked to new actor (525ms)
+  ✓  4 tests/e2e/qa-agent-ui/workspace.spec.mjs:1474:1 › confirmed accepted receipt clears recovery identity before pending GET polling (499ms)
+  ✓  5 tests/e2e/qa-agent-ui/workspace.spec.mjs:1500:1 › confirmed receipt cleanup failure retains marker and blocks new sends until safe readback cleanup (3.6s)
+  ✓  6 tests/e2e/qa-agent-ui/workspace.spec.mjs:1546:1 › replay not_submitted cannot erase an earlier unknown ACK identity across refresh (529ms)
+  ✓  7 tests/e2e/qa-agent-ui/workspace.spec.mjs:1628:1 › late old actor receipt cannot clear new actor unknown recovery marker (744ms)
+
+  7 passed (8.2s)

@@ -1,0 +1,28 @@
+{
+  "status": "PASS_SYNTHETIC_RESTORE_ENTRY_ONLY",
+  "targetRead": false,
+  "stages": [
+    "PASS actual three-ciphertext restore,14 counts,roles/memberships,full schema owner ACL triggers/platform catalog",
+    "PASS wrong expected count rejected after isolated restore with cleanup",
+    "PASS unknown managed extension rejected before archive read/container creation",
+    "PASS capture lacking restoration expectations rejected",
+    "PASS altered ciphertext rejected before container",
+    "PASS synthetic key/ciphertexts removed"
+  ],
+  "restore": {
+    "status": "PASS_LOCAL_BUNDLE_RESTORE_ONLY",
+    "targetWritten": false,
+    "contentOutput": false,
+    "schemaDigest": "a7a5580306120bc024f9475a3809f111460770cf8e8f07d1d0b14bb9d3ed545a",
+    "countRelations": 14,
+    "globalRoles": "PASS",
+    "ownerAclSchema": "PASS",
+    "platformCatalog": "PASS",
+    "counts": "PASS",
+    "platformServices": "UNRUN_GOTRUE_STORAGE_REALTIME",
+    "migrationUpgrade": "UNRUN",
+    "userAcceptance": "UNRUN",
+    "cleanup": "PASS"
+  },
+  "sourceCleanup": "PASS"
+}

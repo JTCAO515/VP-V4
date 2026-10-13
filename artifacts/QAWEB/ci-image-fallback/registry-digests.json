@@ -1,0 +1,31 @@
+{
+  "verifiedAt": "2026-10-13T05:20:54.282214+00:00",
+  "platform": "linux/amd64",
+  "command": "docker buildx imagetools inspect <registry>/supabase/<tag> --raw",
+  "images": [
+    {
+      "tag": "postgres:17.6.1.155",
+      "public.ecr.aws": "sha256:3e2a7ab48783077d0122dc72ed5174afb543110c38266c845716c51d130658e4",
+      "ghcr.io": "sha256:3e2a7ab48783077d0122dc72ed5174afb543110c38266c845716c51d130658e4",
+      "digestReadback": "PASS: exact manifest bytes from both registry digest references hash to the pinned digest"
+    },
+    {
+      "tag": "postgres:17.6.1.159",
+      "public.ecr.aws": "sha256:617b62a16858dc8436c1ded1970fa13e33539feb4c98b580cf6274b46b2ab1ef",
+      "ghcr.io": "sha256:617b62a16858dc8436c1ded1970fa13e33539feb4c98b580cf6274b46b2ab1ef",
+      "digestReadback": "PASS: exact manifest bytes from both registry digest references hash to the pinned digest"
+    },
+    {
+      "tag": "postgres:17.6.1.167",
+      "public.ecr.aws": "sha256:16c0944c77885446d4f2ebbb2191b357feeb3b1295bde2fb1978c113129dbeb4",
+      "ghcr.io": "sha256:16c0944c77885446d4f2ebbb2191b357feeb3b1295bde2fb1978c113129dbeb4",
+      "digestReadback": "PASS: exact manifest bytes from both registry digest references hash to the pinned digest"
+    },
+    {
+      "tag": "postgrest:v16.2",
+      "public.ecr.aws": "sha256:6e83b0277ea5de980847e9246d2ec2803e99dfce0e69066f6484bd10c4a5b819",
+      "ghcr.io": "sha256:6e83b0277ea5de980847e9246d2ec2803e99dfce0e69066f6484bd10c4a5b819",
+      "digestReadback": "PASS: exact manifest bytes from both registry digest references hash to the pinned digest"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+docker: Error response from daemon: No such image: qaw005-node-cold:20261013
+
+Run 'docker run --help' for more information
+PASS: isolated local alias absent before preparation (exit 125)
+COMMAND ["docker", "pull", "--platform", "linux/amd64", "docker.io/library/node@sha256:efd0ab5780c2d9ab1f0f869571a00d5edb17793bff4cce4a2792e3eb0ffc7562"]
+docker.io/library/node@sha256:efd0ab5780c2d9ab1f0f869571a00d5edb17793bff4cce4a2792e3eb0ffc7562: Pulling from library/node
+a8de9fa05220: Pulling fs layer
+7fd1ebe418b5: Pulling fs layer
+d22c69a95cf4: Pulling fs layer
+f0400f4b55b0: Pulling fs layer
+2cfab517365c: Pulling fs layer
+a8de9fa05220: Download complete
+f0400f4b55b0: Download complete
+7fd1ebe418b5: Download complete
+2cfab517365c: Download complete
+f0400f4b55b0: Pull complete
+7fd1ebe418b5: Pull complete
+d22c69a95cf4: Download complete
+a8de9fa05220: Pull complete
+2cfab517365c: Pull complete
+d22c69a95cf4: Pull complete
+Digest: sha256:efd0ab5780c2d9ab1f0f869571a00d5edb17793bff4cce4a2792e3eb0ffc7562
+Status: Downloaded newer image for node@sha256:efd0ab5780c2d9ab1f0f869571a00d5edb17793bff4cce4a2792e3eb0ffc7562
+docker.io/library/node@sha256:efd0ab5780c2d9ab1f0f869571a00d5edb17793bff4cce4a2792e3eb0ffc7562
+EXIT 0
+COMMAND ["docker", "tag", "docker.io/library/node@sha256:efd0ab5780c2d9ab1f0f869571a00d5edb17793bff4cce4a2792e3eb0ffc7562", "qaw005-node-cold:20261013"]
+EXIT 0
+COMMAND ["docker", "run", "--rm", "--pull=never", "--network", "none", "--platform", "linux/amd64", "qaw005-node-cold:20261013", "node", "-p", "JSON.stringify({version:process.version,arch:process.arch})"]
+{"version":"v22.23.3","arch":"x64"}
+EXIT 0
+COMMAND ["node", "--experimental-strip-types", "--test", "tests/security/qa-hosted-installer/target.test.mjs", "tests/security/turn/hosted-planning-deployment.test.mjs"]
+✔ QA package emits its exact reviewed endpoint and rejects stale build, profile and destinations (816.497042ms)
+✔ Linux QA installer passes the workspace endpoint to its sole mocked Docker create (4114.79625ms)
+✔ offline package binds selection, hash and runtime schema without exposing rejected input (1294.01675ms)
+✔ Linux wrapper validates private tmpfs and selected package before its single Docker lifecycle (6069.416583ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7403.575125
+EXIT 0

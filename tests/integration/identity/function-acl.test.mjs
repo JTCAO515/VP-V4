@@ -58,6 +58,13 @@ const AUTHENTICATED = [
   "public.ops_wiki_generation_v1(jsonb)",
   "public.ops_wiki_read_v1(jsonb)",
   "public.ops_wiki_withdrawal_scan_v1(jsonb)",
+  "public.qa_accept_policy_v1(uuid,text)",
+  "public.qa_list_sessions_v1(integer)",
+  "public.qa_read_message_v1(uuid,uuid)",
+  "public.qa_read_policy_v1(uuid)",
+  "public.qa_read_session_v1(uuid)",
+  "public.qa_submit_message_v1(uuid,uuid,uuid,uuid,text,text,uuid,text)",
+  "public.qa_submit_turn_v1(uuid,uuid,uuid,uuid,text,text,uuid,integer,text,uuid)",
   "public.read_grounded_ai_assist_context_v1(uuid)",
   "public.read_grounded_events(uuid,uuid,bigint)",
   "public.read_grounded_policy(uuid)",
@@ -139,6 +146,26 @@ test("repository functions grant EXECUTE to anon and authenticated only through 
 
   await t.test("authenticated executes exactly the reviewed caller list", () => {
     assert.deepEqual(sql(executable("authenticated")), [...AUTHENTICATED].sort());
+  });
+
+  await t.test("QA browser RPCs and worker RPCs keep disjoint exact role grants", () => {
+    for (const fn of [
+      "qa_accept_policy_v1(uuid,text)", "qa_list_sessions_v1(integer)",
+      "qa_read_message_v1(uuid,uuid)", "qa_read_policy_v1(uuid)",
+      "qa_read_session_v1(uuid)",
+      "qa_submit_message_v1(uuid,uuid,uuid,uuid,text,text,uuid,text)",
+      "qa_submit_turn_v1(uuid,uuid,uuid,uuid,text,text,uuid,integer,text,uuid)",
+    ]) {
+      assert.deepEqual(sql(`select has_function_privilege('anon','public.${fn}'::regprocedure,'EXECUTE'),has_function_privilege('authenticated','public.${fn}'::regprocedure,'EXECUTE'),has_function_privilege('service_role','public.${fn}'::regprocedure,'EXECUTE');`), ["f|t|f"], fn);
+    }
+    for (const fn of [
+      "qa_claim_work_v1(uuid,uuid)", "qa_read_work_v1(uuid,uuid)",
+      "qa_authorize_dispatch_v1(uuid,uuid,uuid,uuid,text,text)",
+      "qa_complete_work_v1(uuid,uuid,text,text)",
+      "qa_read_reconciliation_v1(uuid,uuid,uuid)",
+    ]) {
+      assert.deepEqual(sql(`select has_function_privilege('anon','public.${fn}'::regprocedure,'EXECUTE'),has_function_privilege('authenticated','public.${fn}'::regprocedure,'EXECUTE'),has_function_privilege('service_role','public.${fn}'::regprocedure,'EXECUTE');`), ["f|f|t"], fn);
+    }
   });
 
   await t.test("selected-source export remains exactly service-only and source storage private",()=>{

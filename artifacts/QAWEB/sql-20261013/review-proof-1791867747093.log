@@ -1,0 +1,13 @@
+OWN CONTAINER qaw005-review-81c6a8ff-349
+PASS unchanged original migrations + complete core/lifecycle candidate apply
+ACTUAL scope row blocker lease pid=1224
+PASS actual budget scope lock wait + lease expiry returns blocked, rolls dispatch back to reserved and writes no receipt
+ACTUAL scope row blocker policy pid=1460
+PASS actual budget scope lock wait + policy expiry returns blocked, rolls dispatch back to reserved and writes no receipt
+PASS healthy fresh dispatch still authorizes exactly once
+PASS oldest pending receipt does not starve another same-owner/policy Session; original pending work/receipt/ledger are exact
+PASS independent service-only accounting read is bounded to exact owner/policy/task and is read-only/content-free
+PASS no ordinary ready work returns original reconciliation DTO without redispatch or new charge
+PASS all ten original schema/runtime/hook gates remain unchanged
+UNRUN independent re-review, target migration/provider/browser/delete/restore; original target permission block not bypassed
+OWN CLEANUP 0

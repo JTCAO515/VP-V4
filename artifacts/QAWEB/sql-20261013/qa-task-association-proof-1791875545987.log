@@ -1,0 +1,16 @@
+OWN CONTAINER qaw005-association-ce5ede81-60f
+MAIN MIGRATIONS 155
+PASS Main 16018dd2 actual full migration replay
+REPRODUCED P1: three empty polls, both rows queued:0
+PASS review P1 reproduced with real authenticated legacy submit and protected QA submit
+PASS rollback preserves exact function definitions/ACLs, retained inputs/work/tasks/ledger and ten gates
+PASS ten lifecycle gates remain true; require_text_task body hash delta does not require widening existing live gate fingerprints
+PASS authenticated legacy standalone QA admission rejects atomically before queue; no new thread/Turn/text/work
+PASS direct start_text_turn also rejects missing QA Task association
+PASS preexisting invalid unsent item terminal-cancels once via original event path, retains content and spends no attempt
+PASS valid next Session claims; independent unknown dispatched/pending ledger is retained for reconciliation and never cancelled/requeued
+PASS protected wrapper insert association-before-text order remains compatible for root and followup
+PASS legacy current-input standalone acceptance and task/knowledge association requirements preserved; old protected task root still works
+PASS final ten gates and private trigger execute boundaries preserved
+UNRUN target/provider/deployment/independent final review; no target or shared writes
+OWN CLEANUP 0

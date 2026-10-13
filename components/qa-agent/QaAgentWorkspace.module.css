@@ -1,0 +1,27 @@
+.workspace { display: grid; grid-template-columns: 16rem minmax(0, 1fr); height: 100dvh; min-height: 30rem; color: #17251e; background: #fff; font-size: 1rem; }
+.workspace button, .workspace textarea { font: inherit; }
+.workspace button { min-height: 44px; padding: .5rem .75rem; border: 1px solid #7a8980; border-radius: .4rem; background: #fff; color: #17251e; cursor: pointer; }
+.workspace button:disabled { opacity: .55; cursor: default; }
+.workspace button:focus-visible, .workspace textarea:focus-visible { outline: 3px solid #28674c; outline-offset: 2px; }
+.sessions { padding: 1rem; border-right: 1px solid #ccd3ce; overflow: auto; }
+.sessions h1 { margin: 0 0 1rem; font-size: 1.25rem; }
+.sessions ul { list-style: none; margin: 1rem 0 0; padding: 0; }
+.sessions li { margin-bottom: .5rem; }
+.sessions li button { width: 100%; text-align: left; overflow-wrap: anywhere; }
+.sessions button[aria-current] { background: #e2eee7; border-color: #28674c; }
+.chat { min-height: 0; min-width: 0; display: flex; flex-direction: column; padding: 1rem; gap: .75rem; }
+.messages { flex: 1; min-height: 0; overflow: auto; overscroll-behavior: contain; }
+.messages article { padding: .75rem 0; border-bottom: 1px solid #e1e6e3; }
+.text { white-space: pre-wrap; overflow-wrap: anywhere; }
+.notice { font-size: .875rem; max-height: 9rem; overflow: auto; }
+.composer { display: grid; grid-template-columns: 1fr auto; gap: .5rem; padding-bottom: env(safe-area-inset-bottom); }
+.composer label { grid-column: 1 / -1; }
+.composer textarea { min-height: 5rem; max-height: 12rem; resize: vertical; width: 100%; padding: .6rem; border: 1px solid #7a8980; border-radius: .4rem; }
+@media (max-width: 640px) {
+ .workspace { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); min-height: 0; }
+ .sessions { border-right: 0; border-bottom: 1px solid #ccd3ce; padding: .5rem .75rem; max-height: 10rem; }
+ .sessions h1 { display: inline; margin-right: 1rem; font-size: 1rem; }
+ .sessions ul { display: flex; gap: .5rem; overflow: auto; margin-top: .5rem; }
+ .sessions li { flex: 0 0 11rem; margin: 0; }
+ .chat { padding: .75rem; }
+}

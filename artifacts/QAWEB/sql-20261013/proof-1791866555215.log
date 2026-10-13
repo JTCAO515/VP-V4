@@ -1,0 +1,30 @@
+OWN CONTAINER qaw005-sql-73ee9fc8-6e0
+PASS full original migration replay
+SCHEMA BASE t|t
+PASS candidate transaction rollback preserves original private functions
+PASS candidate applies in own database
+PASS unknown notice and missing consent reject
+PASS concurrent identical retry admits once and changed input rejects
+PASS legacy global claimer excludes QA
+PASS original budget dispatch/settlement and truthful completion
+PASS why simplify second correction share original Task and finite real sources
+PASS all provider attempts billed to original canonical Task
+PASS actor isolation and new Session history empty
+PASS original RLS and RPC execute role vectors
+PASS withdrawal blocks source read late completion and owner session
+PASS ordinary QA does not create or force Trip
+PASS same actor new conversation has no other Session context
+PASS protected refresh reads original completed text
+PASS invalid login session rejects
+PASS competing different followups use lastTurn CAS and admit one
+PASS eight total turns finite bound, ninth rejected
+PASS source hiding after read denies dispatch and late output
+PASS lease expiry rejects late reads and writes
+PASS policy revocation denies new admission
+PASS unknown ACK keeps original pending attempt and prevents second dispatch
+PASS budget-disabled prevents physical dispatch authorization
+SCHEMA CANDIDATE t|f
+FAIL original turn lifecycle schema gate - exact constraint extensions need Main reviewed lifecycle delta; no hash adopted
+PASS legacy text consumer cannot read QA payload
+UNRUN real target/provider/browser/device, independent review, target managed export/delete/restore
+OWN CLEANUP 0

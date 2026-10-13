@@ -1,0 +1,33 @@
+{
+  "authoredFunctionChanges": {
+    "turn_data_private.schema_supported_v1": {
+      "beforePgDefMD5": "81eab8c4cdb31f2fd9289af2b5b4b63d",
+      "afterAuthoredPgDefMD5": "73d47b42837fc6a228570e905e190063"
+    },
+    "profile_data_private.schema_v1": {
+      "beforePgDefMD5": "af41a55b4b5eb9c89d19f96fb27720c5",
+      "afterAuthoredPgDefMD5": "f269b8f9db0c7bbc7d5652b629844bf5"
+    },
+    "result_data_private.schema_supported_v1": {
+      "beforePgDefMD5": "9f419ac01a94ce6cb8a351cb37f29cb9",
+      "afterAuthoredPgDefMD5": "655525516474fbe18a142ef349e7d49b"
+    }
+  },
+  "unchangedTurnApplicationSchemaSHA256": "0ec0fcfc206909a38756272a65a877c6ab857c00fd114178d135837da951c73a",
+  "normalizesOnly": [
+    [
+      "turn_private.text_policies",
+      "text_policies_context_mode_check"
+    ],
+    [
+      "turn_private.service_task_turns",
+      "service_task_turns_relationship_check"
+    ]
+  ],
+  "activation": "NONE",
+  "runtimeChangedPins": [
+    "turn_data_private.schema_supported_v1()",
+    "profile_data_private.schema_v1()",
+    "result_data_private.schema_supported_v1()"
+  ]
+}

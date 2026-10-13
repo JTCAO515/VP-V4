@@ -139,3 +139,85 @@ test("CI matrix CLI and actual workflow projection fail before emitting an outpu
     assert.equal(run.status,0,run.stderr);assert.equal(read(output),'matrix='+JSON.stringify(executionMatrix(["none"]))+'\n');
   } finally {rmSync(dir,{recursive:true,force:true});}
 });
+
+test("pinned images pull only exact official GHCR digests and fail closed", () => {
+  const workflow = read(".github/workflows/db-integration.yml");
+  const match = workflow.match(/- name: Pull pinned test database images[\s\S]*?run: \|\n([\s\S]*?)(?=      - name:)/);
+  assert.ok(match);
+  const body = match[1].split("\n").map(line => line.startsWith("          ") ? line.slice(10) : line).join("\n");
+  assert.equal(spawnSync("/bin/bash", ["-n"], {input: body}).status, 0);
+  const evidence = JSON.parse(read("artifacts/QAWEB/ci-image-fallback/registry-digests.json"));
+  assert.deepEqual(evidence.images.map(row => `public.ecr.aws/supabase/${row.tag}`).sort(), [...pinnedImages()].sort());
+  const harness = `
+node() { printf '%s\\n' "$TEST_IMAGES"; return "$LIST_STATUS"; }
+docker() {
+  printf 'DOCKER %s\\n' "$*" >&2
+  if [ "$1" = tag ]; then return "$TAG_STATUS"; fi
+  if [ "$1" = pull ] && [ "$2" = --platform ] && [ "$3" = linux/amd64 ]; then
+    case "$4" in ghcr.io/supabase/*@sha256:*) return "$MIRROR_STATUS" ;; esac
+  fi
+  return 99
+}
+`;
+  const run = (images, overrides = {}) => spawnSync("/bin/bash", ["--noprofile", "--norc", "-eo", "pipefail", "-c", harness + body], {
+    encoding: "utf8", env: {...process.env, TEST_IMAGES: images, LIST_STATUS: "0", MIRROR_STATUS: "0", TAG_STATUS: "0", ...overrides},
+  });
+  let expected = "";
+  for (const row of evidence.images) {
+    assert.equal(row["public.ecr.aws"], row["ghcr.io"]);
+    assert.match(row["ghcr.io"], /^sha256:[a-f0-9]{64}$/);
+    const image = `public.ecr.aws/supabase/${row.tag}`;
+    const mirror = `ghcr.io/supabase/${row.tag.split(":")[0]}@${row["ghcr.io"]}`;
+    const calls = `DOCKER pull --platform linux/amd64 ${mirror}\nDOCKER tag ${mirror} ${image}\n`;
+    expected += calls;
+    const success = run(image);
+    assert.equal(success.status, 0, success.stderr);
+    assert.equal(success.stderr, calls);
+    // Digest verification is enforced by Docker's immutable digest pull. Any pull
+    // failure (including content digest mismatch) must prevent tagging/continuation.
+    const pullFailure = run(image, {MIRROR_STATUS: "8"});
+    assert.equal(pullFailure.status, 8);
+    assert.equal(pullFailure.stderr, `DOCKER pull --platform linux/amd64 ${mirror}\n`);
+    assert.equal(run(image, {TAG_STATUS: "9"}).status, 9);
+  }
+  const images = evidence.images.map(row => `public.ecr.aws/supabase/${row.tag}`).join("\n");
+  const all = run(images);
+  assert.equal(all.status, 0, all.stderr); assert.equal(all.stderr, expected);
+  for (const overrides of [{MIRROR_STATUS: "8"}, {TAG_STATUS: "9"}]) {
+    const result = run(images, overrides);
+    assert.notEqual(result.status, 0);
+    assert.equal((result.stderr.match(/DOCKER pull/g) || []).length, 1);
+  }
+  for (const image of ["", "public.ecr.aws/supabase/postgres:unknown", "other.example/supabase/postgres:17.6.1.155"]) {
+    const result = run(image);
+    assert.equal(result.status, 1); assert.doesNotMatch(result.stderr, /DOCKER/);
+  }
+  const listFailure = run(images, {LIST_STATUS: "7"});
+  assert.equal(listFailure.status, 7); assert.doesNotMatch(listFailure.stderr, /DOCKER/);
+});
+
+test("security workflows prepare the exact official Node fixture before offline tests", () => {
+  const pin = JSON.parse(read("artifacts/QAWEB/ci-image-fallback/node-fixture/registry-digest.json"));
+  assert.equal(pin.sourceTag, "docker.io/library/node:22-bookworm-slim");
+  assert.equal(pin.platform, "linux/amd64");
+  assert.match(pin.reference, /^docker\.io\/library\/node@sha256:[a-f0-9]{64}$/);
+  const harness = `docker() { printf '%s\\n' "$*"; if [ "$1" = pull ]; then return "$PULL_STATUS"; fi; return "$TAG_STATUS"; }\n`;
+  for (const name of ["quality-pr", "quality-nightly", "quality-release-candidate"]) {
+    const workflow = read(`.github/workflows/${name}.yml`);
+    const match = workflow.match(/- name: Prepare pinned Node fixture for offline security tests\n([\s\S]*?)        run: \|\n([\s\S]*?)(?=      - )/);
+    assert.ok(match, name);
+    assert.match(match[1], /shell: bash/);
+    if (name === "quality-pr") assert.match(match[1], /if: steps.scope.outputs.security == 'true'/);
+    const body = match[2].split("\n").map(line => line.startsWith("          ") ? line.slice(10) : line).join("\n");
+    assert.equal(spawnSync("/bin/bash", ["-n"], {input: body}).status, 0);
+    const next = workflow.slice(match.index + match[0].length);
+    assert.match(next, name === "quality-pr" ? /^      - if: steps.scope.outputs.security == 'true'\n        run: pnpm test:security/ : /^      - run: pnpm test:security/);
+    for (const [pull, tag, status] of [[0, 0, 0], [7, 0, 7], [0, 8, 8]]) {
+      const result = spawnSync("/bin/bash", ["--noprofile", "--norc", "-eo", "pipefail", "-c", harness + body], {
+        encoding: "utf8", env: {...process.env, PULL_STATUS: String(pull), TAG_STATUS: String(tag)},
+      });
+      assert.equal(result.status, status, result.stderr);
+      assert.equal(result.stdout, `pull --platform linux/amd64 ${pin.reference}\n` + (pull ? "" : `tag ${pin.reference} node:22-bookworm-slim\n`));
+    }
+  }
+});

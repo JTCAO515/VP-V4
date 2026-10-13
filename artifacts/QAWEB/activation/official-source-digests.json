@@ -1,0 +1,34 @@
+[
+  {
+    "url": "https://help.aliyun.com/zh/model-studio/model-pricing",
+    "observedAt": "2026-10-13T06:52:24.184054+00:00",
+    "sha256": "b28eebd078b4f08de9489909c8f39d854bee288792cfcd01de6f99f2b04d0406",
+    "bytes": 1458919,
+    "status": 200,
+    "digestScope": "raw public HTTP response bytes; no authenticated session"
+  },
+  {
+    "url": "https://help.aliyun.com/zh/model-studio/regions",
+    "observedAt": "2026-10-13T06:52:24.755181+00:00",
+    "sha256": "61191a25b6ef82abc96902ee250a7b38cadb9e88e1e44f3486848fb37c4b2026",
+    "bytes": 79876,
+    "status": 200,
+    "digestScope": "raw public HTTP response bytes; no authenticated session"
+  },
+  {
+    "url": "https://help.aliyun.com/zh/model-studio/privacy-notice",
+    "observedAt": "2026-10-13T06:52:25.316963+00:00",
+    "sha256": "2e0e56b1582fe7ca8d974bfaca42763be1600ba82568cd334a805e22197d769d",
+    "bytes": 42709,
+    "status": 200,
+    "digestScope": "raw public HTTP response bytes; no authenticated session"
+  },
+  {
+    "url": "https://help.aliyun.com/zh/model-studio/beijing-access-information",
+    "observedAt": "2026-10-13T06:53:27.185366+00:00",
+    "sha256": "e415bb3eee7364f9d9e309686b096066898acee91cc08fcc91d91bb653cc1c8c",
+    "bytes": 61790,
+    "status": 200,
+    "digestScope": "raw public HTTP response bytes; no authenticated session"
+  }
+]

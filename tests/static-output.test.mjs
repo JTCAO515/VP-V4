@@ -27,8 +27,11 @@ const readBuildOutputDir = (relativePath) => {
   }
 };
 
-const htmlPath = ".next/server/app/index.html";
+// The QA hostname makes `/` dynamic; `/journey` retains the same prerendered
+// public page for every other hostname.
+const htmlPath = ".next/server/app/journey.html";
 const html = readBuildOutput(htmlPath);
+const rootPageSource = readFileSync("app/page.tsx", "utf8");
 const relocatedHomepageHtml = readBuildOutput(".next/server/app/homepage.html");
 const appPaths = JSON.parse(readBuildOutput(".next/server/app-paths-manifest.json"));
 const homepageSource = readFileSync("components/homepage/Homepage.tsx", "utf8");
@@ -55,7 +58,12 @@ assert.ok(cssNames.length > 0, `compiled Homepage CSS links must exist — ${BUI
 for (const file of cssNames) assert.ok(cssFiles.includes(file), `linked Homepage CSS ${file} must exist — ${BUILD_OUTPUT_HINT}`);
 const css = cssNames.map((file) => readBuildOutput(`.next/static/css/${file}`)).join("\n");
 
-test("renders Journey at the root while preserving the relocated preview", () => {
+test("renders Journey on ordinary hosts and sends only the QA host to /qa", () => {
+  assert.equal(appPaths["/page"], "app/page.js");
+  assert.ok(existsSync(".next/server/app/page.js"), "dynamic root route is compiled");
+  assert.match(rootPageSource, /host === "qatesting\.go2china\.space"/);
+  assert.match(rootPageSource, /redirect\("\/qa"\)/);
+  assert.match(rootPageSource, /return <JourneyPage\s*\/>/);
   assert.match(html, /<html lang="zh-CN"/);
   assert.match(html, /<meta name="theme-color" content="#fefdf9"/);
   assert.match(html, /VisePanda — A little wonder/);

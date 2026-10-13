@@ -1,0 +1,7 @@
+--- qa-ready-before.sql
++++ qa-ready-after.sql
+@@ -1 +1 @@
+-create function public.qa_ready_groups_v1(p_limit integer)
++create or replace function public.qa_ready_groups_v1(p_limit integer)
+@@ -25,0 +26 @@
++      and not exists(select 1 from public.model_budget_attempts a join public.model_budget_scopes b on b.id=a.scope_id where b.owner_id=q.owner_id and a.status<>'released' and (a.task_id=q.turn_id or a.attempt_id=q.lease_token))

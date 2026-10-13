@@ -1,0 +1,28 @@
+{
+  "id": "dpl_9uyTDjXayWprQaTBrLmut6upeM7r",
+  "url": "vp-v4-d6v0i347q-jtcao515s-projects.vercel.app",
+  "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+  "target": null,
+  "readyState": "READY",
+  "alias": [
+    "qatesting.go2china.space",
+    "vp-v4-git-codex-qaw005-main-20261013-jtcao515s-projects.vercel.app"
+  ],
+  "createdAt": 1791868280185,
+  "buildingAt": 1791868282341,
+  "ready": 1791868371567,
+  "source": "git",
+  "regions": [
+    "iad1"
+  ],
+  "gitSource": {
+    "type": "github",
+    "repoId": 1341685139,
+    "ref": "codex/qaw005-main-20261013",
+    "sha": "4e477a7f7bb05af1539bf940da204dd93df90bf3"
+  },
+  "gitMeta": {
+    "githubCommitSha": "4e477a7f7bb05af1539bf940da204dd93df90bf3",
+    "githubCommitRef": "codex/qaw005-main-20261013"
+  }
+}

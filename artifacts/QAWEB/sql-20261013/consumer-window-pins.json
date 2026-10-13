@@ -1,0 +1,17 @@
+{
+  "reviewedMainHead": "fe7867ab",
+  "historyMessages": 6,
+  "sourceTurns": 8,
+  "upstreamHistoryBytes": 65536,
+  "totalBytes": 16384,
+  "promptBytes": 32768,
+  "userUtf16Units": 4000,
+  "assistantUtf16Units": 8000,
+  "systemMessageJsonBytes": 3775,
+  "systemPromptSHA256": "a905b79d2e0084a47bb227e60439d96034dc5b1bba8b8cea42ce349b8945187a",
+  "sourceSHA256": {
+    "lib/server/qa-agent-context/session.ts": "62263650cd30de79d0d8715d7d863a4bf64c7b502b681d5b904cce9767338a91",
+    "lib/server/qa-agent-context/index.ts": "d298d97ac5a30332d586f53035d80fade9750aeb43ca159ae12a86a9f874557c",
+    "lib/server/model-gateway/prompt/text-turn.ts": "e70923accf4d8a8c52762bbcdc271389e2bd827a3424e648577fd6f4bcb5d045"
+  }
+}

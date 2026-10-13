@@ -1,0 +1,10 @@
+OWN CONTAINER qaw005-sql-712a776c-442
+PASS full original migration replay
+SCHEMA BASE t|t
+FAIL Error: ERROR:  QA_SHARED_SOURCE_CONFLICT
+CONTEXT:  PL/pgSQL function inline_code_block line 2 at RAISE
+
+    at db (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-sql-20261013/artifacts/QAWEB/sql-20261013/proof.mjs:6:60)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-sql-20261013/artifacts/QAWEB/sql-20261013/proof.mjs:37:2
+OWN CLEANUP 0

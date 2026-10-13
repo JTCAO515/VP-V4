@@ -1,0 +1,12 @@
+{
+  "mainBaseline": "01d610331cd43219ba67c6079932b1dc715fbeb8",
+  "beforeProsrcMD5": "01b936c45eafca232b075c9a1b272f14",
+  "afterProsrcMD5": "c7da7d109223bde9a840b544cb9c7222",
+  "candidateSHA256": "a6b4ebe2df525a38946f914ecc75471929f1140da99740ee6e54b99707b24682",
+  "newTables": [],
+  "storedStateChanges": false,
+  "targetApply": "NONE",
+  "latestProof": "qa-reconciliation-projection-proof-1791882255737.log",
+  "namedPassChecks": 11,
+  "proofSHA256": "d9fedaeeb331d888871d1cf5ff7c9025fc789ca87470c891b19668f3686b0b53"
+}

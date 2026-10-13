@@ -1,0 +1,47 @@
+{
+  "groups": [
+    {
+      "backends": 1,
+      "role_bucket": "authenticator",
+      "hidden_state": 0,
+      "state_bucket": "idle",
+      "with_backend_xid": 0,
+      "with_transaction": 0,
+      "with_backend_xmin": 0,
+      "oldest_transaction_seconds": 0
+    },
+    {
+      "backends": 1,
+      "role_bucket": "postgres",
+      "hidden_state": 0,
+      "state_bucket": "idle",
+      "with_backend_xid": 0,
+      "with_transaction": 0,
+      "with_backend_xmin": 0,
+      "oldest_transaction_seconds": 0
+    },
+    {
+      "backends": 2,
+      "role_bucket": "supabase_admin",
+      "hidden_state": 0,
+      "state_bucket": "idle",
+      "with_backend_xid": 0,
+      "with_transaction": 0,
+      "with_backend_xmin": 0,
+      "oldest_transaction_seconds": 0
+    },
+    {
+      "backends": 1,
+      "role_bucket": "supabase_admin",
+      "hidden_state": 1,
+      "state_bucket": "OTHER_OR_HIDDEN",
+      "with_backend_xid": 0,
+      "with_transaction": 0,
+      "with_backend_xmin": 0,
+      "oldest_transaction_seconds": 0
+    }
+  ],
+  "observedAt": "2026-10-13T08:41:33.30962+00:00",
+  "readAllStatsMember": true,
+  "observationPidExcluded": true
+}

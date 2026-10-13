@@ -29,6 +29,14 @@ jobs:
       - run: pnpm test:unit
       - run: pnpm test:contract
       - run: pnpm test:integration
+      - name: Prepare pinned Node fixture for offline security tests
+        shell: bash
+        run: |
+          # Official Node linux/amd64 manifest; provenance is recorded under
+          # artifacts/QAWEB/ci-image-fallback/node-fixture/registry-digest.json.
+          image="docker.io/library/node@sha256:efd0ab5780c2d9ab1f0f869571a00d5edb17793bff4cce4a2792e3eb0ffc7562"
+          docker pull --platform linux/amd64 "$image"
+          docker tag "$image" node:22-bookworm-slim
       - run: pnpm test:security
       # The nightly run is the unscoped superset of quality-pr.yml: a PR only runs the
       # suites its changed paths select, so gates skipped there must still run here.

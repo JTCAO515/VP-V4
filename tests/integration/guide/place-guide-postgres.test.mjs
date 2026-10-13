@@ -129,6 +129,12 @@ run('ordinary original admission/queue/lock bodies and all original ACL unchange
   body=body.replace("payload:=payload||jsonb_build_object('contextDigest',encode(pg_catalog.sha256(convert_to(jsonb_build_array(payload,g.city,g.scope_version)::text,'UTF8')),'hex')); if exists(select 1 from guide_private.bindings_v1 where turn_id=p_turn_id) then return guide_private.input_v1(p_turn_id,p_lease_token,payload);end if;return payload;", "return payload||jsonb_build_object('contextDigest',encode(pg_catalog.sha256(convert_to(jsonb_build_array(payload,g.city,g.scope_version)::text,'UTF8')),'hex'));");
   body=body.replaceAll('if (exists(select 1 from guide_private.bindings_v1 where turn_id=p_turn_id) and guide_private.bound_v1(p_turn_id,p_lease_token) is null) or not turn_private.lock_text_work(p_turn_id,p_lease_token) then','if not turn_private.lock_text_work(p_turn_id,p_lease_token) then');
   body=body.replace('knowledge_review_private.resolve_question(knowledge_review_private.selected_question_input(p_intent,g.city,g.locale,p_subject),case when exists(select 1 from guide_private.bindings_v1 where turn_id=p_turn_id) then guide_private.answer_basis_v1(p_turn_id,p_lease_token,p_intent,p_subject) else null end)','knowledge_review_private.resolve_question(knowledge_review_private.selected_question_input(p_intent,g.city,g.locale,p_subject))');
+  if(key==='turn_private.lock_text_work(uuid,uuid)'){
+    const qaExclusion="  if not found or not turn_private.text_policy_current(c.policy_id) or exists(select 1 from turn_private.text_policies where id=c.policy_id and context_mode='qa_session_history_v1') then return false; end if;\n";
+    const original="  if not found or not turn_private.text_policy_current(c.policy_id) then return false; end if;\n";
+    assert.equal(body.split(qaExclusion).length,2,'exact QA-only legacy-lock exclusion occurs once');
+    body=body.replace(qaExclusion,original);
+  }
   const approvedModes={
     'read_grounded_work(uuid,uuid)':'blocked',
     'authorize_grounded_dispatch(uuid,uuid,uuid,text,text)':'blocked',

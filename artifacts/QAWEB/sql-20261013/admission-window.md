@@ -1,0 +1,19 @@
+# PR #684 producer/consumer admission alignment
+
+Review baseline fe7867ab; SQL owner predecessor 388204d953dc5e32a15773c9ded2e41f4b0ecf93. Read-only actual consumer source/prompt hashes and limits are pinned in consumer-window-pins.json. No consumer, Main migration, target or other owner directory is changed.
+
+Private qa_consumer_window_v1 qualifies all upstream user/assistant texts, including unselected older pairs, against 4000/8000 JS UTF-16 units and original nonempty rules. It uses the last six chronological messages (three complete pairs) plus new input for both content UTF-8 bytes <=16384 and compact full prompt JSON <=32768. Original 64-KiB upstream / eight-Turn chain qualification stays enforced. Both guards execute before a new link/Turn/work/lastTurn write; the first Task guard runs before Task INSERT. Any refusal raises QA_CONTEXT_LIMIT and rolls back the whole RPC, including a just-created thread. Exact old request replay stays ahead of the new continuation gate.
+
+The exact prompt count is 2 array brackets + 3775-byte current serialized system-message object + one comma per message + compact {role,content} JSON object bytes. to_json(text) supplies JSON-string escaping, while the object syntax is constructed without jsonb::text whitespace. Actual PostgreSQL and current JSON.stringify agree for quotes, backslashes, slash, all persistable ASCII control characters, emoji and U+2028/U+2029. NUL and lone surrogate halves cannot be valid PostgreSQL text; no invented stored representation is used. A prompt or consumer limit change requires renewing these source pins and the SQL count together.
+
+Original valid_text already counts UTF-16, as confirmed by original migration 20260910171836 lines 68–71 and the context owner's boundary assessment. The new helper also states the calculation explicitly for every history item. Therefore oversized retained emoji history cannot be manufactured through the original storage contract: tests prove the original bounded_text_content constraint rejects that update, preserve all original rows, separately exercise malformed selected/unselected history JSON against the private helper, and show valid history continues normally. No constraint or trigger is disabled.
+
+Actual own PG `window-proof-1791871445866.log`: **12 named PASS**, exit 0; unique cached PG17.6, pull=never, network=none, no ports/mounts, own cleanup confirmed. Tests use real protected qa_read_work_v1 envelopes with the actual source-pinned assembleQaSessionContext:
+
+- Two 4000-Chinese inputs plus one-byte answer: 24001 content bytes rejected; every original owner table/Task/lastTurn/work/receipt/ledger/event/idempotency snapshot unchanged; short followup succeeds.
+- Content 16385 rejects; exact 16384 assembles. Control-escaped full prompt 32769 rejects despite small content; exact 32768 and shorter followup assemble.
+- Current emoji 4002 UTF16 units rejects with zero new root work; 4000 passes. History user/assistant boundaries and selected/unselected overflow refusals verified.
+- Old request replay creates no new admission/charge; last-three-pair selection can omit a large oldest pair while still qualifying all upstream sources.
+- Legacy current-input admission unchanged. Combined core/lifecycle rollback removes the new helper; all ten original schema/runtime/hook gates remain unchanged. Lifecycle candidate SHA remains 5934b630c39fcdcb74b2a14114e18f5daf22e310e5207b52629545cb910b6c87.
+
+Earlier JS fixture quoting and SQL CASE-parenthesis failures remain in tool/raw evidence; final corrected source has the PASS run above. Existing 37/6/8 evidence is reused for unaffected contracts. Target/provider/browser/independent re-review remain UNRUN. The bilingual policy template remains unpublished: protected qualification up to seven pairs, actual sending at most recent three pairs plus current input, explicit 16/32 KiB rejection, original retention/withdrawal and placeholders retained.

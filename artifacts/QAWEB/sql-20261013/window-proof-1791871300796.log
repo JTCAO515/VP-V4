@@ -1,0 +1,9 @@
+OWN CONTAINER qaw005-window-c5065c44-198
+FAIL Error: ERROR:  syntax error at end of input
+LINE 16:    >case when i%2=0 then 4000 else 8000 end then return fals...
+                            ^
+
+    at db (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-sql-20261013/artifacts/QAWEB/sql-20261013/window-proof.mjs:6:60)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-sql-20261013/artifacts/QAWEB/sql-20261013/window-proof.mjs:44:85
+OWN CLEANUP 0

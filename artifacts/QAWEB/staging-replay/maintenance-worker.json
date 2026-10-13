@@ -1,0 +1,19 @@
+{
+  "work": {
+    "rows": 501,
+    "ready": 0,
+    "leasedCurrent": 0,
+    "leasedExpired": 0
+  },
+  "control": {
+    "rows": 1,
+    "enabled": false
+  },
+  "heartbeats": {
+    "rows": 0,
+    "recent60s": 0,
+    "activePhases": 0
+  },
+  "observedAt": "2026-10-13T08:40:45.253172+00:00",
+  "qaReadyGroups": "UNKNOWN_RPC_NOT_APPLIED"
+}

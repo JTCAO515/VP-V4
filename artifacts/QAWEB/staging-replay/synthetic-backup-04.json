@@ -1,0 +1,22 @@
+{
+  "status": "PASS_SYNTHETIC_BACKUP_RESTORE_ONLY",
+  "imageId": "sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b",
+  "stages": [
+    "PASS synthetic14 schemas seeded with explicit owner/ACL",
+    "PASS executor full ciphertext integrity before TOC",
+    "PASS fourteen TOC data+owner+ACL entries",
+    "PASS encrypted global-role restore into independent empty cluster with membership/admin option",
+    "PASS restored synthetic rows and owner/ACL exact",
+    "PASS corrupted ciphertext rejected",
+    "PASS temporary synthetic key and ciphertext removed"
+  ],
+  "manifest": {
+    "ciphertextBytes": 22212,
+    "ciphertextSha256": "bc374e8b16414f4f00ce720f9cc72754ddca509ee80cea61b922ad8f8e261894"
+  },
+  "globalRoleRecovery": "PASS_SYNTHETIC_INDEPENDENT_CLUSTER: explicit bootstrap postgres reconciliation only; target managed roles UNRUN",
+  "targetBackup": "UNRUN",
+  "targetRowsRead": false,
+  "persistentKeyCreated": false,
+  "cleanup": "PASS"
+}

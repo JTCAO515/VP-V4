@@ -1,0 +1,13 @@
+✔ content-free identity survives reload and cannot be replaced by another UUID (0.684834ms)
+✔ different actor and logout clear recovery metadata without exposing old requests (0.064708ms)
+✔ only matching confirmed receipt clears unresolved identity (0.062708ms)
+✔ unavailable, malformed, silent write and cleanup failure all fail closed (0.099ms)
+✔ stale actor mutation cannot delete or overwrite a new actor recovery identity (0.066584ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 155.308833
