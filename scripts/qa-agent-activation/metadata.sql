@@ -1,6 +1,6 @@
 -- READ ONLY. Execute ONLY through official Go2China link
--- link_6acdbe0471c081919ff47de24ca53b0f; project ONLY from the independent operator target package.
--- Reject dzqdzetcctkhbrhlxxgn. Run AFTER fresh complete initialization; do not execute against an empty schema.
+-- link_6acdbe0471c081919ff47de24ca53b0f; project ONLY from the current shared operator target package, dzqdzetcctkhbrhlxxgn.
+-- Run post-upgrade query only AFTER all155 reviewed migrations; no target upgrade is performed here.
 -- Project identity comes from the connector invocation, not current_database().
 -- No text, credentials, consent creation, DDL or DML.
 select

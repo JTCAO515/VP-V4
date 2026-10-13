@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "qa-independent-public-source-candidate/1",
+  "schemaVersion": "qa-current-target-public-source-candidate/1",
   "status": "UNPUBLISHED_DISABLED",
   "activationAllowed": false,
   "providerCalled": false,
   "accountVerified": false,
   "inputCandidate": {
     "schemaVersion": "qa-activation-input/2",
-    "projectId": null,
+    "projectId": "dzqdzetcctkhbrhlxxgn",
     "contextMode": "qa_session_history_v1",
     "ownerId": null,
     "supplier": {
@@ -70,9 +70,9 @@
       "id": null,
       "version": 1
     },
-    "supabaseUrl": null,
+    "supabaseUrl": "https://dzqdzetcctkhbrhlxxgn.supabase.co",
     "targetReceipts": {
-      "projectRef": null,
+      "projectRef": "dzqdzetcctkhbrhlxxgn",
       "ownerId": null,
       "configurationId": null,
       "accountEvidenceHash": null,
@@ -94,8 +94,7 @@
       "API retention TTL",
       "owner/configuration identity",
       "approved budget caps",
-      "independent project ref and exact URL",
-      "new-target secure access provenance"
+      "current trusted owned slot/holder/service_role evidence"
     ],
     "productDecision": [
       "Confirm finite actual attempt/task/scope/provider spend caps and expiry before any activation; no caps inferred from tariff."

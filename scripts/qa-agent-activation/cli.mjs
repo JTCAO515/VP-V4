@@ -18,4 +18,4 @@ try {
   }
   writeFileSync(output,JSON.stringify(result,null,2)+'\n',{flag:'wx',mode:0o600});
   if(command==='preflight'&&!result.reviewReady)process.exitCode=2;
-} catch {console.error('Offline independent QA check failed. Verify target binding, schema, evidence and unused output path. Input values are never logged.');process.exitCode=1;}
+} catch {console.error('Offline current-target QA check failed. Verify target binding, schema, evidence and unused output path. Input values are never logged.');process.exitCode=1;}

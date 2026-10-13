@@ -1,0 +1,11 @@
+# Current shared-target activation preparation
+
+Latest Main direction supersedes new independent project provisioning. Same owner/WT/branch retained; 64458d44/03faed33/63104f95 preserved in source history. Empty-new-target implementation is also preserved behind explicit independent-historical-* CLI/module/manifest; no implicit fallback.
+
+Default kit now requires operator-explicit dzqdzetcctkhbrhlxxgn and strict matching URL, profile /4/projectRef and target /2. Full155/source hash and baseline75+missing80 are restored. Existing owned dzt access slots are permitted via current nonsecret project/sourceProject/authorizedForTarget/RPC-role/purpose/slot/holder/evidence/timestamp metadata; key values are never read or required in input. No generic grants or new-key/new-project flow. Backup and restore each need verified new evidence digests for the pinned baseline plus fresh observation; source75/current missing migration, unverified recovery, cross-project access and wrong role are blocked.
+
+PASS: 17 affected contract tests, including explicit shared operator target/CLI acceptance, existing trusted slot acceptance, wrong target/job/URL refusal, source75 blocker, backup/restore negative checks, actual v2 ACL/source drift, new immutable notice/scope and exact consent identities. Current shared inventory may contain historical disabled policies/budgets, but their IDs/notice/consent cannot become the new candidate. PASS: docs-check, syntax and diff-check. Prior independent/history test evidence remains in its original files, not reclassified as current target evidence.
+
+PROFILE_VALIDATION_PENDING remains a real blocker until Main integrates the stable /4 validator for the current target. Source build/policy/budget fields remain bound, all outputs UNPUBLISHED_DISABLED/activationAllowed=false. Quote coverage1000000 and reserve1048576 are unchanged. Actual target backup/restore/schema/Auth/provider/role/slot verification was not performed by this owner; supplied preparation facts do not fabricate new evidence.
+
+No target reads/writes, project/organization/fee/new-ref/new-key actions, credential values, provider calls, role grants, maintenance/copy operations or shared source edits. Actual high-privilege copy/DDL/window/spending remains a separately approved Main operation.

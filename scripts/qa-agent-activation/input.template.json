@@ -1,6 +1,6 @@
 {
   "schemaVersion": "qa-activation-input/2",
-  "projectId": null,
+  "projectId": "dzqdzetcctkhbrhlxxgn",
   "contextMode": "qa_session_history_v1",
   "ownerId": null,
   "supplier": {
@@ -64,9 +64,9 @@
     "id": null,
     "version": 1
   },
-  "supabaseUrl": null,
+  "supabaseUrl": "https://dzqdzetcctkhbrhlxxgn.supabase.co",
   "targetReceipts": {
-    "projectRef": null,
+    "projectRef": "dzqdzetcctkhbrhlxxgn",
     "ownerId": null,
     "configurationId": null,
     "accountEvidenceHash": null,

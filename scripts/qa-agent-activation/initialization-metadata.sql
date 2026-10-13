@@ -1,3 +1,4 @@
+-- HISTORICAL NEW-TARGET FIXTURE ONLY, not current shared-target readiness.
 -- READ ONLY pre-initialization inventory. Connector project must equal the reviewed independent operator binding.
 -- No project ref is inferred from current_database(), and no shared target is permitted.
 -- Read counts only, no account rows or secrets. Preserve this separate inventory as initialization evidence.
