@@ -5,13 +5,15 @@
   "sourcePins": "source-pins.json",
   "lifecyclePins": "lifecycle-pins.json",
   "sha256": {
-    "candidate.sql": "8e188da17a0bf4f384c862885226d4d1ae03f24393c6058bb53bfec2aed821c0",
+    "candidate.sql": "73f07ed8e60b5e84cb52ad56de55607b71ba7c53288734290cef6547fa65b621",
     "lifecycle-candidate.sql": "5934b630c39fcdcb74b2a14114e18f5daf22e310e5207b52629545cb910b6c87",
     "proof.mjs": "a282b97caef036974a40750084fdb48336d2dfac4e43612c5cd2e5ab2a0d2567",
-    "producer-contract.md": "63a4f433aa27d2b5138bb1fab75afc121316582bc0cb18c713ed0f856fa3f55d",
+    "producer-contract.md": "49b70a7b2193881389dd012697a8aa6b53aa0ca83e7f6b7374c250ba9acf6c13",
     "policy-notice-template.json": "01851f3b366af9d7180e6ceac12bc7c79ee968fc12d373012595d21932656cec",
     "precondition-proof.mjs": "c92274615e44384ce829b74e7c7065ffbd27665f796b2135854e7e34ad1186d8",
-    "hosted-discovery-assessment.md": "70657a7efd8312a9b1fc77468f4665e9c4645bf0575a91d564fc1b9dde70128f"
+    "hosted-discovery-assessment.md": "70657a7efd8312a9b1fc77468f4665e9c4645bf0575a91d564fc1b9dde70128f",
+    "review-proof.mjs": "57687520cc88e0142528d762c3d73395595d4ae82bb9f5e1307a6b6a88e318e0",
+    "review-fixes-pins.json": "6fa945bc57c512647c5a690ebed857e544bdbf4b3b57e8345b605ac657635a03"
   },
   "targetApply": "UNRUN_NOT_GRANTED",
   "realProvider": "UNRUN",
@@ -21,5 +23,8 @@
   "affectedNamedPassChecks": 6,
   "preservedOriginalGateCount": 10,
   "originalGateBefore": "all-gates-before.json",
-  "originalGateAfter": "all-gates-after.json"
+  "originalGateAfter": "all-gates-after.json",
+  "latestReviewFixProof": "review-proof-1791867747093.log",
+  "reviewFixNamedPassChecks": 8,
+  "reviewFixPins": "review-fixes-pins.json"
 }

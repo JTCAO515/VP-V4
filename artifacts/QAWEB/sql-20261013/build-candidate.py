@@ -12,6 +12,17 @@ claim=fn('20260911205200_vpj_07_task_context.sql','turn_private.claim_text_mode'
 claim=claim.replace("      update turn_private.work set state='cancelled'","      perform turn_private.cancel_unclaimable_turn_v1(candidate.turn_id,candidate.owner_id);\n      update turn_private.work set state='cancelled'")
 claim=claim.replace("    select status into turn_state from public.turns where id=w.turn_id;","    if exists(select 1 from turn_private.text_dispatches d where d.turn_id=w.turn_id) then return jsonb_build_object('kind','reconciliation_required','turnId',w.turn_id); end if;\n    select status into turn_state from public.turns where id=w.turn_id;")
 claim=claim.replace("    -- A slow policy/consent", "    if turn_private.qa_history_v1(w.turn_id) is null then return jsonb_build_object('kind','empty'); end if;\n    -- A slow policy/consent")
+claim=claim.replace("      and (q.state='queued' or (q.state='leased' and q.expires_at<=clock_timestamp()))", "      and not exists(select 1 from turn_private.text_dispatches d where d.turn_id=q.turn_id)\n      and (q.state='queued' or (q.state='leased' and q.expires_at<=clock_timestamp()))")
+claim=claim.replace("  return jsonb_build_object('kind','empty');\nend $$;", """  select q.turn_id into candidate from turn_private.work q
+   join turn_private.text_content x on x.turn_id=q.turn_id and x.owner_id=q.owner_id
+   join turn_private.text_policies p on p.id=x.policy_id
+   where q.owner_id=p_owner_id and x.policy_id=p_policy_id and p.context_mode='qa_session_history_v1'
+    and q.state in ('queued','leased') and (q.state='queued' or q.expires_at<=clock_timestamp())
+    and exists(select 1 from turn_private.text_dispatches d where d.turn_id=q.turn_id)
+   order by q.created_at,q.turn_id limit 1;
+  if found then return jsonb_build_object('kind','reconciliation_required','turnId',candidate.turn_id);end if;
+  return jsonb_build_object('kind','empty');
+end $$;""")
 global_before=re.search(r'^CREATE OR REPLACE FUNCTION public\.claim_turn_work\(\).*?^end \$function\$\n;', (root/'20261010020000_assistant_events.sql').read_text(),re.S|re.M).group()
 global_after=global_before.replace("('task_history_v1','knowledge_intent_v1')","('task_history_v1','knowledge_intent_v1','qa_session_history_v1')")
 (out/'claim-before.sql').write_text(global_before+'\n');(out/'claim-after.sql').write_text(global_after+'\n')
@@ -93,7 +104,7 @@ begin
 end $$;
 
 create function public.qa_authorize_dispatch_v1(p_turn_id uuid,p_lease_token uuid,p_scope_id uuid,p_policy_id uuid,p_provider text,p_context_digest text) returns jsonb language plpgsql security definer set search_path='' as $$
-declare payload jsonb;r jsonb;task_n uuid;
+declare payload jsonb;fresh_n jsonb;r jsonb;task_n uuid;
 begin
  payload:=public.qa_read_work_v1(p_turn_id,p_lease_token);
  if payload->>'kind' is distinct from 'qa_input' or payload->>'policyId' is distinct from p_policy_id::text or payload->>'provider' is distinct from p_provider or payload->>'contextDigest' is distinct from p_context_digest then return jsonb_build_object('kind','blocked');end if;
@@ -103,9 +114,19 @@ begin
  where a.scope_id=p_scope_id and a.attempt_id=p_lease_token and a.task_id=task_n and a.provider=p_provider and a.status='reserved'
  and b.owner_id=(select owner_id from turn_private.text_content where turn_id=p_turn_id))
  or exists(select 1 from turn_private.text_dispatches where lease_token=p_lease_token) then return jsonb_build_object('kind','blocked');end if;
- r:=public.dispatch_model_budget(p_scope_id,(select owner_id from turn_private.text_content where turn_id=p_turn_id),p_lease_token);
- if r->>'kind' is distinct from 'dispatched' then return jsonb_build_object('kind','blocked');end if;
- insert into turn_private.text_dispatches(lease_token,turn_id,consent_id,policy_id) values(p_lease_token,p_turn_id,(payload->>'consentId')::uuid,p_policy_id);
+ -- The original budget RPC may wait on its scope row. Roll back THIS dispatch
+ -- if the lease or any locked source expires while that lock is awaited.
+ begin
+  r:=public.dispatch_model_budget(p_scope_id,(select owner_id from turn_private.text_content where turn_id=p_turn_id),p_lease_token);
+  if r->>'kind' is distinct from 'dispatched' then return jsonb_build_object('kind','blocked');end if;
+  fresh_n:=public.qa_read_work_v1(p_turn_id,p_lease_token);
+  if fresh_n->>'kind' is distinct from 'qa_input' or fresh_n->>'policyId' is distinct from p_policy_id::text
+   or fresh_n->>'provider' is distinct from p_provider or fresh_n->>'contextDigest' is distinct from p_context_digest
+   then raise exception using errcode='PQA01',message='QA_DISPATCH_SOURCE_EXPIRED';end if;
+  insert into turn_private.text_dispatches(lease_token,turn_id,consent_id,policy_id) values(p_lease_token,p_turn_id,(fresh_n->>'consentId')::uuid,p_policy_id);
+ exception when sqlstate 'PQA01' then
+  return jsonb_build_object('kind','blocked');
+ end;
  return jsonb_build_object('kind','authorized');
 end $$;
 
@@ -207,13 +228,31 @@ begin
  return v||jsonb_build_object('requestId',p_request_id,'threadId',p_thread_id,'serviceTaskId',s->'serviceTaskId');
 end $$;
 '''
-parts=[base,policy,admit,wrapper,message,claim,global_after,lock_after]
+reconciliation='''
+-- Accounting metadata only: no input/output/history or permission to retry.
+create function public.qa_read_reconciliation_v1(p_owner_id uuid,p_policy_id uuid,p_turn_id uuid)
+returns jsonb language plpgsql security definer set search_path='' as $$
+declare c turn_private.text_content%rowtype;s turn_private.service_tasks%rowtype;attempts_n jsonb;
+begin
+ select * into c from turn_private.text_content where turn_id=p_turn_id and owner_id=p_owner_id and policy_id=p_policy_id;
+ if not found or not exists(select 1 from turn_private.text_policies where id=p_policy_id and context_mode='qa_session_history_v1') then return jsonb_build_object('kind','unavailable');end if;
+ select t.* into s from turn_private.service_tasks t join turn_private.service_task_turns l on l.task_id=t.id and l.owner_id=t.owner_id where l.turn_id=p_turn_id and t.owner_id=p_owner_id and t.thread_id=c.thread_id and t.policy_id=p_policy_id and t.consent_id=c.consent_id;
+ if not found then return jsonb_build_object('kind','unavailable');end if;
+ select coalesce(jsonb_agg(jsonb_build_object('attemptId',d.lease_token,'scopeId',a.scope_id,'status',a.status,'provider',a.provider,'model',a.model,'priceVersion',a.price_version,'reservedMicros',a.reserved_micros,'actualMicros',a.actual_micros,'dispatchedAt',d.dispatched_at) order by d.dispatched_at,d.lease_token),'[]'::jsonb) into attempts_n
+ from turn_private.text_dispatches d join public.model_budget_attempts a on a.attempt_id=d.lease_token and a.task_id=s.id and a.scope_id=s.budget_scope_id
+ join public.model_budget_scopes b on b.id=a.scope_id and b.owner_id=p_owner_id
+ where d.turn_id=p_turn_id and d.policy_id=p_policy_id and d.consent_id=c.consent_id;
+ if jsonb_array_length(attempts_n)=0 then return jsonb_build_object('kind','unavailable');end if;
+ return jsonb_build_object('kind','reconciliation','schemaVersion','qa-reconciliation/1','ownerId',p_owner_id,'policyId',p_policy_id,'turnId',p_turn_id,'threadId',c.thread_id,'serviceTaskId',s.id,'attempts',attempts_n);
+end $$;
+'''
+parts=[base,policy,admit,wrapper,message,reconciliation,claim,global_after,lock_after]
 acl='''
 revoke all on function turn_private.qa_link_mode_v1(),turn_private.qa_history_v1(uuid),turn_private.qa_lock_work_v1(uuid,uuid) from public,anon,authenticated,service_role;
 revoke all on function public.qa_read_policy_v1(uuid),public.qa_accept_policy_v1(uuid,text),public.qa_submit_message_v1(uuid,uuid,uuid,uuid,text,text,uuid,text),public.qa_submit_turn_v1(uuid,uuid,uuid,uuid,text,text,uuid,integer,text,uuid),public.qa_read_session_v1(uuid),public.qa_read_message_v1(uuid,uuid),public.qa_list_sessions_v1(integer) from public,anon,service_role;
 grant execute on function public.qa_read_policy_v1(uuid),public.qa_accept_policy_v1(uuid,text),public.qa_submit_message_v1(uuid,uuid,uuid,uuid,text,text,uuid,text),public.qa_submit_turn_v1(uuid,uuid,uuid,uuid,text,text,uuid,integer,text,uuid),public.qa_read_session_v1(uuid),public.qa_read_message_v1(uuid,uuid),public.qa_list_sessions_v1(integer) to authenticated;
-revoke all on function public.qa_claim_work_v1(uuid,uuid),public.qa_read_work_v1(uuid,uuid),public.qa_authorize_dispatch_v1(uuid,uuid,uuid,uuid,text,text),public.qa_complete_work_v1(uuid,uuid,text,text) from public,anon,authenticated;
-grant execute on function public.qa_claim_work_v1(uuid,uuid),public.qa_read_work_v1(uuid,uuid),public.qa_authorize_dispatch_v1(uuid,uuid,uuid,uuid,text,text),public.qa_complete_work_v1(uuid,uuid,text,text) to service_role;
+revoke all on function public.qa_read_reconciliation_v1(uuid,uuid,uuid),public.qa_claim_work_v1(uuid,uuid),public.qa_read_work_v1(uuid,uuid),public.qa_authorize_dispatch_v1(uuid,uuid,uuid,uuid,text,text),public.qa_complete_work_v1(uuid,uuid,text,text) from public,anon,authenticated;
+grant execute on function public.qa_read_reconciliation_v1(uuid,uuid,uuid),public.qa_claim_work_v1(uuid,uuid),public.qa_read_work_v1(uuid,uuid),public.qa_authorize_dispatch_v1(uuid,uuid,uuid,uuid,text,text),public.qa_complete_work_v1(uuid,uuid,text,text) to service_role;
 notify pgrst,'reload schema';
 '''
 body=lambda f:re.search(r'\bAS\s+(\$\w*\$)(.*?)\1',f,re.S|re.I).group(2)
