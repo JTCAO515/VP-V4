@@ -1,0 +1,9 @@
+{
+  "status": "FAIL_SYNTHETIC_SNAPSHOT_ONLY",
+  "targetRead": false,
+  "realCredentialsOrKeys": false,
+  "stages": [],
+  "reason": "LOCAL_POSTGRES_NOT_READY",
+  "cleanup": "FAIL",
+  "elapsedSeconds": 14.833
+}

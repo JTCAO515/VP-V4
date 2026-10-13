@@ -1,0 +1,8 @@
+{
+  "status": "DRY_RUN_NO_ARCHIVE_OR_DOCKER_IO",
+  "mode": "shared-readonly-snapshot/1",
+  "codeSha256": "60d9fa62262eb88027d5fe88d3e0d7fdb1b64332040bc136c41e4665c25db993",
+  "sequenceSafety": "MONOTONE_NO_COLLISION_ONLY",
+  "realArchiveRead": false,
+  "actualRestore": "UNRUN"
+}

@@ -1,0 +1,15 @@
+{
+  "status": "FAIL_SYNTHETIC_SNAPSHOT_ONLY",
+  "targetRead": false,
+  "realCredentialsOrKeys": false,
+  "stages": [],
+  "currentStage": "TLS metadata transport",
+  "reason": "LOCAL_SNAPSHOT_DIAGNOSTIC_SUPPRESSED",
+  "safeExceptionLocation": {
+    "type": "TypeError",
+    "file": "snapshot-proof.py",
+    "line": 73
+  },
+  "cleanup": "PASS",
+  "elapsedSeconds": 1.93
+}
