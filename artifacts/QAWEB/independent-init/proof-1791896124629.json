@@ -1,0 +1,90 @@
+{
+  "status": "PASS_OWN_DB_DEADLINE_ONLY",
+  "target": "UNRUN",
+  "managedAuth": "UNRUN",
+  "provider": "UNRUN",
+  "schemaAcceptance": "PURE_PG_FIXTURE_ONLY",
+  "checks": [
+    {
+      "result": "PASS",
+      "check": "actual newly created empty application database, no archive or imported data"
+    },
+    {
+      "result": "PASS",
+      "check": "exact original local Auth/role/engine fingerprints; empty Auth rows"
+    },
+    {
+      "result": "PASS",
+      "check": "unknown managed target engine/Auth profile refuses rather than normalization"
+    },
+    {
+      "result": "PASS",
+      "check": "real AccessShare holder blocks first ALTER; packet500ms DB lock_timeout aborts current txn, no ledger/history change"
+    },
+    {
+      "result": "PASS",
+      "check": "real long statement before COMMIT is DB-cancelled before remaining window; DDL/ledger current transaction rolls back"
+    },
+    {
+      "result": "PASS",
+      "check": "after DB cancellation original first-missing packet can safely commit once; previous source/data preserved"
+    },
+    {
+      "result": "PASS",
+      "check": "remaining79 packets with actual database deadlines complete155; no source bytes altered"
+    },
+    {
+      "result": "PASS",
+      "check": "all10 lifecycle gates, QA-v2 service-only ACL, original export/delete presence; no stored budget activated or real user rows touched"
+    },
+    {
+      "result": "PASS",
+      "check": "original QA/context/reconciliation regressions reused; this run isolates exact80 failure/resume"
+    }
+  ],
+  "runId": "19372c83-f6c1-4cde-ad28-45d673652c25",
+  "reviewSource": "8b5975e48e850d0cbb1bf6f8ef7c4b0c9ff6b888",
+  "sourceCount": 155,
+  "platform": {
+    "profile": "local-pg-fixture/1",
+    "authSdkAcceptance": "UNRUN_PURE_PG_ONLY"
+  },
+  "appliedCount": 155,
+  "postconditions": {
+    "gates": {
+      "profile_data_private.schema_v1": true,
+      "turn_data_private.hooks_valid_v1": true,
+      "export_private.profile_hooks_valid_v1": true,
+      "turn_data_private.schema_supported_v1": true,
+      "turn_data_private.runtime_supported_v1": true,
+      "turn_data_private.write_hooks_valid_v1": true,
+      "result_data_private.schema_supported_v1": true,
+      "turn_private.directions_schema_members_v1": true,
+      "conversation_data_private.schema_supported_v1": true,
+      "result_data_private.infrastructure_supported_v1": true
+    },
+    "qaV2Acl": {
+      "anon": false,
+      "public": false,
+      "signature": "public.qa_ready_groups_v2(integer,text,text,text)",
+      "serviceRole": true,
+      "authenticated": false
+    },
+    "unactivated": {
+      "authUsers": 0,
+      "authSessions": 0,
+      "budgetScopes": 0,
+      "textConsents": 0,
+      "textPolicies": 0,
+      "hostedEnabled": false,
+      "budgetAttempts": 0
+    },
+    "originalLifecycle": {
+      "turnDelete": true,
+      "turnExport": true,
+      "conversationDelete": true
+    }
+  },
+  "cleanup": "PASS_OWN_ONLY",
+  "completedAt": "2026-10-13T12:55:24.629Z"
+}
