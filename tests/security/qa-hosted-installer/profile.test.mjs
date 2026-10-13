@@ -9,7 +9,7 @@ import {parseQaHostedProfile} from '../../../lib/server/qa-agent/hosted-profile.
 
 const validator=resolve('deploy/hosted-worker/validate-qa-profile.py');
 const installer=resolve('deploy/hosted-worker/ecs-worker-files.sh');
-const profile=()=>({schemaVersion:'vpj07-hosted-text-worker/4',projectRef:'abcdefghijklmnopqrst',pollIntervalMs:3000,maxLifetimeMs:86400000,
+const profile=()=>({schemaVersion:'vpj07-hosted-text-worker/4',projectRef:'dzqdzetcctkhbrhlxxgn',pollIntervalMs:3000,maxLifetimeMs:86400000,
  drainMs:45000,concurrency:1,groupLimit:1,modes:['qa_session_history_v1'],planning:null,
  qwen:{priceVersion:'synthetic-qa-price-v1',pricing:{mode:'flat',inputMicrosPerMillion:6000000,
  outputMicrosPerMillion:24000000,cachedInputMicrosPerMillion:null},reservedMicros:7000000,
@@ -32,10 +32,9 @@ test('QA-only installer preflight uses closed v4 profile and retains legacy file
  for(const bad of [
   {...valid,schemaVersion:'vpj07-hosted-text-worker/3'},
   {...valid,projectRef:undefined},
-  {...valid,projectRef:'dzqdzetcctkhbrhlxxgn'},
   {...valid,projectRef:'ABCDEFGHIJKLMNOPQRST'},
   {...valid,projectRef:'abcdefghijklmnopqrs-'},
-  {...valid,projectRef:'abcdefghijklmnopqrst.supabase.co'},
+  {...valid,projectRef:'dzqdzetcctkhbrhlxxgn.supabase.co'},
   {...valid,modes:['current_input_v1']},
   {...valid,planning:{}},
   {...valid,VISEPANDA_HOSTED_WORKER_DB_KEY:secret},

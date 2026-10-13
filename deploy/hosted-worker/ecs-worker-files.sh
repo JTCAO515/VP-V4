@@ -38,8 +38,6 @@ docker info >/dev/null || fail 'Docker daemon is unavailable'
 [[ $(stat -c '%u:%g:%a' "$secret_dir") == 1000:1000:700 ]] || fail 'secret directory must be uid/gid 1000 mode 0700'
 [[ -z $(swapon --show --noheadings) ]] || fail 'swap must be disabled'
 secret_files=(db.key qwen.key)
-# Independent QA must never inspect or mount the legacy root DB key.
-if $qa; then secret_files=(qwen.key); fi
 if $planning; then
   profile_file=/etc/visepanda/planning/hosted-profile.json
   target_file=/etc/visepanda/planning/planning-target.json
@@ -101,7 +99,7 @@ try:
     with open(sys.argv[1], encoding="utf-8") as source:
         target = json.load(source, object_pairs_hook=pairs)
     build, project_ref = target["build"], target["projectRef"]
-    if not isinstance(project_ref, str) or not re.fullmatch(r"[a-z0-9]{20}", project_ref) or project_ref == "dzqdzetcctkhbrhlxxgn":
+    if not isinstance(project_ref, str) or not re.fullmatch(r"[a-z0-9]{20}", project_ref):
         raise ValueError()
     if not isinstance(build, str) or not re.fullmatch(r"[0-9a-f]{12,40}", build):
         raise ValueError()
@@ -127,16 +125,6 @@ PYBUILD
       --experimental-strip-types --disable-warning=ExperimentalWarning \
       /app/deploy/hosted-worker/validate-qa-target.mjs \
       /qa/profile.json /qa/target.json "$qa_build" --emit-runtime) || fail 'QA package is unavailable'
-    qa_secret_dir="$secret_dir/qa-$qa_project_ref"
-    [[ -d $qa_secret_dir && ! -L $qa_secret_dir ]] || fail 'independent QA secret directory is missing'
-    [[ $(findmnt -T "$qa_secret_dir" -no FSTYPE) == tmpfs ]] || fail 'QA secret directory must be tmpfs'
-    [[ $(stat -c '%u:%g:%a' "$qa_secret_dir") == 1000:1000:700 ]] || fail 'QA secret directory must be uid/gid 1000 mode 0700'
-    qa_db_file="$qa_secret_dir/db.key"
-    [[ -f $qa_db_file && ! -L $qa_db_file ]] || fail 'independent QA DB key file is missing'
-    [[ $(findmnt -T "$qa_db_file" -no FSTYPE) == tmpfs ]] || fail 'QA DB key file must reside on tmpfs'
-    [[ $(stat -c '%u:%g:%a:%h' "$qa_db_file") == 1000:1000:400:1 ]] || fail 'QA DB key file must be uid/gid 1000 mode 0400 with one link'
-    bytes=$(stat -c %s "$qa_db_file")
-    (( bytes >= 1 && bytes <= 4096 )) || fail 'QA DB key file size is invalid'
     if [[ $action == start ]]; then
       profile_json=${validated%%$'\n'*}
       endpoint=${validated#*$'\n'}
@@ -161,12 +149,6 @@ fi
 image="vp-hosted-text-worker:$2"
 if $qa; then image=$qa_image; fi
 docker image inspect "$image" >/dev/null || fail 'image tag is not loaded locally'
-secret_mounts=(--mount "type=bind,src=$secret_dir,dst=/run/vp-worker-secrets,readonly")
-if $qa; then
-  secret_mounts=(--tmpfs /run/vp-worker-secrets:rw,noexec,nosuid,nodev,size=64k,mode=0700,uid=1000,gid=1000
-    --mount "type=bind,src=$qa_db_file,dst=/run/vp-worker-secrets/db.key,readonly"
-    --mount "type=bind,src=$secret_dir/qwen.key,dst=/run/vp-worker-secrets/qwen.key,readonly")
-fi
 # The profile and flags are nonsecret. Docker receives only /run bind paths,
 # never key values or an env-file. A host reboot clears /run; no auto-restart.
 docker create --name "$name" \
@@ -182,7 +164,7 @@ docker create --name "$name" \
   --env VISEPANDA_HOSTED_WORKER_JOURNAL_DIR=/var/lib/vp-worker/journal \
   --env VISEPANDA_HOSTED_WORKER_HEALTH_PORT=8765 \
   --env VISEPANDA_HOSTED_WORKER_HEALTH_HOST=127.0.0.1 \
-  "${secret_mounts[@]}" \
+  --mount "type=bind,src=$secret_dir,dst=/run/vp-worker-secrets,readonly" \
   --mount "type=bind,src=$journal_dir,dst=/var/lib/vp-worker/journal" \
   --health-interval 30s --health-timeout 5s --health-start-period 90s \
   --health-cmd 'node -e "fetch(\"http://127.0.0.1:8765/healthz\").then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"' \

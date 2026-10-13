@@ -1,4 +1,4 @@
-"""Fail closed before a nonsecret independent QA-only v4 profile enters Docker Config.Env."""
+"""Fail closed before a nonsecret explicit-target QA-only v4 profile enters Docker Config.Env."""
 import json
 import re
 import sys
@@ -26,7 +26,6 @@ def valid(profile):
     if (profile["schemaVersion"] != "vpj07-hosted-text-worker/4"
             or not isinstance(profile["projectRef"], str)
             or re.fullmatch(r"[a-z0-9]{20}", profile["projectRef"]) is None
-            or profile["projectRef"] == "dzqdzetcctkhbrhlxxgn"
             or profile["modes"] != ["qa_session_history_v1"]
             or profile["planning"] is not None):
         return False

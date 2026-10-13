@@ -7,13 +7,13 @@ import {join,resolve} from 'node:path';
 import {randomUUID} from 'node:crypto';
 const root=resolve('.'),checker=resolve('deploy/hosted-worker/validate-qa-target.mjs');
 const endpoint='https://qa-workspace.cn-beijing.maas.aliyuncs.com/compatible-mode/v1/chat/completions';
-const profile=()=>({schemaVersion:'vpj07-hosted-text-worker/4',projectRef:'abcdefghijklmnopqrst',pollIntervalMs:3000,maxLifetimeMs:60000,
+const profile=()=>({schemaVersion:'vpj07-hosted-text-worker/4',projectRef:'dzqdzetcctkhbrhlxxgn',pollIntervalMs:3000,maxLifetimeMs:60000,
   drainMs:1000,concurrency:1,groupLimit:1,modes:['qa_session_history_v1'],planning:null,
   qwen:{priceVersion:'synthetic-price-v1',pricing:{mode:'flat',inputMicrosPerMillion:6000000,
     outputMicrosPerMillion:24000000,cachedInputMicrosPerMillion:null},reservedMicros:7000000,
     maxOutputTokens:1024,timeoutMs:60000,configurationId:randomUUID(),configurationVersion:1}});
-const target=()=>({schemaVersion:'qa-hosted-deployment-target/2',environment:'staging',projectRef:'abcdefghijklmnopqrst',
-  databaseUrl:'https://abcdefghijklmnopqrst.supabase.co',ownerId:randomUUID(),policyId:randomUUID(),scopeId:randomUUID(),
+const target=()=>({schemaVersion:'qa-hosted-deployment-target/2',environment:'staging',projectRef:'dzqdzetcctkhbrhlxxgn',
+  databaseUrl:'https://dzqdzetcctkhbrhlxxgn.supabase.co',ownerId:randomUUID(),policyId:randomUUID(),scopeId:randomUUID(),
   noticeHash:'a'.repeat(64),build:'abcdefabcdef',qwenEndpoint:endpoint,startupState:'disabled',restartPolicy:'no'});
 const node=(args,input)=>spawnSync(process.execPath,['--experimental-strip-types',checker,...args],{input,encoding:'utf8'});
 test('QA package emits its exact reviewed endpoint and rejects stale build, profile and destinations',async t=>{
@@ -45,25 +45,23 @@ test('QA package emits its exact reviewed endpoint and rejects stale build, prof
   for(const bad of [
     {...s,schemaVersion:'qa-hosted-deployment-target/1'},
     {...s,projectRef:undefined},
-    {...s,projectRef:'dzqdzetcctkhbrhlxxgn',databaseUrl:'https://dzqdzetcctkhbrhlxxgn.supabase.co'},
     {...s,projectRef:'ABCDEFGHIJKLMNOPQRST'},
     {...s,databaseUrl:'https://zyxwvutsrqponmlkjihg.supabase.co'},
     {...s,databaseUrl:s.databaseUrl+'/'},
     {...s,databaseUrl:s.databaseUrl+':443'},
     {...s,databaseUrl:s.databaseUrl+'?project=CANARY'},
     {...s,databaseUrl:s.databaseUrl+'#CANARY'},
-    {...s,databaseUrl:'https://CANARY@abcdefghijklmnopqrst.supabase.co'},
+    {...s,databaseUrl:'https://CANARY@dzqdzetcctkhbrhlxxgn.supabase.co'},
     {...s,jobDatabaseUrl:s.databaseUrl},
   ]){
     const denied=node(['--prepare'],JSON.stringify({profile:p,target:bad}));
-    assert.equal(denied.status,1,'unbound/shared/alternate URL target rejected');
+    assert.equal(denied.status,1,'unbound/alternate URL target rejected');
     assert.equal(denied.stdout,'');assert.ok(!denied.stderr.includes('CANARY'));
   }
   for(const bad of [
     {...p,schemaVersion:'vpj07-hosted-text-worker/3'},
     {...p,projectRef:undefined},
     {...p,projectRef:'zyxwvutsrqponmlkjihg'},
-    {...p,projectRef:'dzqdzetcctkhbrhlxxgn'},
   ])assert.equal(node(['--prepare'],JSON.stringify({profile:bad,target:s})).status,1,'profile target mismatch rejected');
   const secret='sb_secret_SYNTHETIC_CANARY';
   const denied=node(['--prepare'],JSON.stringify({profile:{...p,qwen:{...p.qwen,priceVersion:secret}},target:s}));
@@ -101,10 +99,6 @@ mkdir -p /run/vp-worker-secrets /etc/visepanda/qa
 chown 1000:1000 /run/vp-worker-secrets; chmod 700 /run/vp-worker-secrets
 for f in db qwen; do printf 'SYNTHETIC_CANARY' > /run/vp-worker-secrets/$f.key; chown 1000:1000 /run/vp-worker-secrets/$f.key; chmod 400 /run/vp-worker-secrets/$f.key; done
 chmod 700 /etc/visepanda/qa
-mkdir -p /run/vp-worker-secrets/qa-abcdefghijklmnopqrst
-chown 1000:1000 /run/vp-worker-secrets/qa-abcdefghijklmnopqrst; chmod 700 /run/vp-worker-secrets/qa-abcdefghijklmnopqrst
-printf 'SYNTHETIC_NEW_DB' > /run/vp-worker-secrets/qa-abcdefghijklmnopqrst/db.key
-chown 1000:1000 /run/vp-worker-secrets/qa-abcdefghijklmnopqrst/db.key; chmod 400 /run/vp-worker-secrets/qa-abcdefghijklmnopqrst/db.key
 cp /fixtures/profile.json /etc/visepanda/hosted-profile.json
 cp /fixtures/target.json /etc/visepanda/qa/qa-target.json
 chmod 600 /etc/visepanda/hosted-profile.json /etc/visepanda/qa/qa-target.json

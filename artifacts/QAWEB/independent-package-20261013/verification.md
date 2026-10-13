@@ -1,15 +1,15 @@
-# #683 independent QA package candidate
+# #683 QA explicit-target package — current and historical evidence
 
 2026-10-13 Asia/Shanghai. Base `8b5975e48e850d0cbb1bf6f8ef7c4b0c9ff6b888`; branch/worktree `qaw005-independent-package-20261013`. Scope is the renewed Main lease: QA package validators, QA docs/tests and own evidence. Existing `115f0b70` container execution proof is reused; Dockerfile remains byte-identical to the accepted base. The follow-up key-slot lease changes only the QA installer secret selection/mount and its tests.
 
-## Contract implemented
+## Historical independent-target candidate (superseded)
 
 - Closed profile `vpj07-hosted-text-worker/4` requires lowercase alphanumeric 20-character `projectRef`, excluding `dzqdzetcctkhbrhlxxgn`.
 - Closed target `qa-hosted-deployment-target/2` adds the same `projectRef`; its `databaseUrl` must equal exactly `https://<projectRef>.supabase.co`. Existing `environment: staging` denotes deployment class, not the old project. All original identity/hash/build/endpoint/startup/restart checks remain.
 - Profile/target reference mismatch, missing/invalid/shared refs, unknown fields, alternate origins, explicit ports, credentials, paths/query/fragment, legacy QA `/3` profile or `/1` target fail closed. No request/header/job-derived binding and no shared-project fallback.
 - Existing image Node/same immutable ID, offline validator, private files and disabled-heartbeat workflow stay unchanged. S1/planning are untouched. No actual project reference, key or project provisioning is introduced.
 
-## Current evidence and dependency
+## Historical candidate evidence and dependency
 
 PASS: independent Python profile 6 cases (new synthetic ref accepted; missing/shared/uppercase/hyphenated ref and legacy version rejected); Python AST, Node syntax of package validator and container fixture; docs check and diff check.
 
@@ -19,7 +19,7 @@ At this checkpoint, no candidate runtime image has been built, no live worker/DB
 
 Main owns dependency integration and final review/CI; this candidate is a local commit only, with no push/PR/merge. Once the backend dependency arrives, continue this same task and update this evidence with exact source/build/test results. No second task or new writer is needed.
 
-## Follow-up: frozen backend interface and isolated key slots
+## Historical follow-up: separate key slots (superseded)
 
 Main supplied the source-owned `readIndependentQaTarget(ref)` contract; the target validator now consumes that export, keeping reference syntax consistent with the backend (`[a-z0-9]{20}`). The Python/shell early metadata selectors mirror it. Backend code remains untouched in this worktree; its stable commit is still required before package integration tests.
 
@@ -28,3 +28,15 @@ QA installer now checks `/run/vp-worker-secrets/qa-<ref>/db.key` only after cano
 PASS: `secret-mount.fixture.mjs` 1/1, zero skips, real local Linux Docker tmpfs volume and the unchanged runtime secret reader. Synthetic independent DB and original Qwen selected; parent/files all statfs TMPFS, per-file mountinfo read-only, write rejected, mode 0644 rejected. No actual worker process or real key used. Fixture-owned donor/volume cleanup completed. Existing S1/planning targeted regression was rerun because installer mount composition changed; 3/3 PASS, zero skips. Current Python reference syntax was separately checked: 7/7 PASS (letter/digit refs accepted; missing/shared/uppercase/hyphen/legacy refused).
 
 Full independent package/preflight/start fixture remains UNRUN until Main integrates the exact backend dependency. It now includes an unusable legacy root DB slot, mandatory new DB slot, reference environment and individual-mount argv assertions. No ECS key slot has been created and no existing credential read, copied, replaced or authenticated.
+
+## Current JT direction: approved shared target and original key directory
+
+JT superseded the independent-project direction: formal testing continues on `dzqdzetcctkhbrhlxxgn`, with existing root `db.key` and `qwen.key`; no new project/ref/key slot or key input. Historical commits `7fbe169f` and `bea1f92a` and their actual observations above remain preserved, but their shared-ref rejection and separate-key-mount contract are no longer current requirements.
+
+Current package keeps profile `/4` and target `/2` with mandatory matching projectRef and exact derived databaseUrl. It delegates target acceptance to the backend-owned helper, removes the shared-ref exclusion from Python/shell, and emits the validated reference into worker configuration. Unknown/missing/mismatched target fields and legacy QA versions still fail closed. Current tests use the explicitly approved dzt binding; changing a job/request URL cannot select the root.
+
+The installer restores the original accepted fixed-root secret metadata checks and whole-directory read-only worker bind, exactly as before the separate-slot proposal. No new directory or key path is selectable. Validator mounts stay nonsecret-only and worker validation/creation keep the same immutable image ID. The separate-file mount fixture is removed from current source; its previous PASS remains historical evidence only.
+
+Backend dependency remains pending Main delivery: current local base still has `/3` only, while the known independent-source commit `1c1e94e3` still rejects dzt and must not be substituted as an accepted current dependency. Full `/4` package/container tests remain UNRUN until the updated backend commit is integrated. No actual cloud/ECS/DB/provider/credential operations are implied or performed. Export/DDL/fees keep their specific approval requirements.
+
+Current targeted PASS: approved dzt Python profile plus five malformed/legacy/unknown-path negatives (6/6); byte comparison confirms original secret metadata-guard block and worker mount/create tail match accepted base `8b5975e4` exactly, so prior S1/planning and fixed-root file-mode evidence is reused. Shell/Node syntax, docs and diff checks PASS.

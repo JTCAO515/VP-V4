@@ -12,16 +12,16 @@ test('Linux host without Node validates in real offline containers; worker creat
  const id=randomUUID(),volume=`qa-validator-${id}`,name=`qa-installer-${id}`;
  const dir=await mkdtemp(join(root,'.qa-validator-'));
  t.after(()=>{docker(['volume','rm',volume]);return rm(dir,{recursive:true,force:true});});
- const image=ok(docker(['image','inspect','--format','{{.Id}}','vp-qa-independent-validator-fixture:20261013']));
+ const image=ok(docker(['image','inspect','--format','{{.Id}}','vp-qa-bound-validator-fixture:20261013']));
  ok(docker(['volume','create',volume]));
  const mountpoint=ok(docker(['volume','inspect','--format','{{.Mountpoint}}',volume]));
- const profile={schemaVersion:'vpj07-hosted-text-worker/4',projectRef:'abcdefghijklmnopqrst',pollIntervalMs:3000,maxLifetimeMs:60000,
+ const profile={schemaVersion:'vpj07-hosted-text-worker/4',projectRef:'dzqdzetcctkhbrhlxxgn',pollIntervalMs:3000,maxLifetimeMs:60000,
   drainMs:1000,concurrency:1,groupLimit:1,modes:['qa_session_history_v1'],planning:null,
   qwen:{priceVersion:'synthetic-price-v1',pricing:{mode:'flat',inputMicrosPerMillion:6000000,
   outputMicrosPerMillion:24000000,cachedInputMicrosPerMillion:null},reservedMicros:7000000,
   maxOutputTokens:1024,timeoutMs:60000,configurationId:randomUUID(),configurationVersion:1}};
- const target={schemaVersion:'qa-hosted-deployment-target/2',environment:'staging',projectRef:'abcdefghijklmnopqrst',
-  databaseUrl:'https://abcdefghijklmnopqrst.supabase.co',ownerId:randomUUID(),policyId:randomUUID(),scopeId:randomUUID(),
+ const target={schemaVersion:'qa-hosted-deployment-target/2',environment:'staging',projectRef:'dzqdzetcctkhbrhlxxgn',
+  databaseUrl:'https://dzqdzetcctkhbrhlxxgn.supabase.co',ownerId:randomUUID(),policyId:randomUUID(),scopeId:randomUUID(),
   noticeHash:'a'.repeat(64),build:'abcdefabcdef',qwenEndpoint:'https://qa-workspace.cn-beijing.maas.aliyuncs.com/compatible-mode/v1/chat/completions',startupState:'disabled',restartPolicy:'no'};
  const prep=spawnSync(process.execPath,['--experimental-strip-types','deploy/hosted-worker/validate-qa-target.mjs','--prepare'],{input:JSON.stringify({profile,target}),encoding:'utf8'});
  const bundle=JSON.parse(ok(prep));
@@ -68,12 +68,6 @@ mkdir -p /run/vp-worker-secrets /etc/visepanda/qa
 chown 1000:1000 /run/vp-worker-secrets; chmod 700 /run/vp-worker-secrets
 for f in db qwen; do printf 'SYNTHETIC_CANARY' > /run/vp-worker-secrets/$f.key; chown 1000:1000 /run/vp-worker-secrets/$f.key; chmod 400 /run/vp-worker-secrets/$f.key; done
 chmod 700 /etc/visepanda/qa
-mkdir -p /run/vp-worker-secrets/qa-abcdefghijklmnopqrst
-chown 1000:1000 /run/vp-worker-secrets/qa-abcdefghijklmnopqrst; chmod 700 /run/vp-worker-secrets/qa-abcdefghijklmnopqrst
-printf 'SYNTHETIC_NEW_DB' > /run/vp-worker-secrets/qa-abcdefghijklmnopqrst/db.key
-chown 1000:1000 /run/vp-worker-secrets/qa-abcdefghijklmnopqrst/db.key; chmod 400 /run/vp-worker-secrets/qa-abcdefghijklmnopqrst/db.key
-# The old DB slot is deliberately unusable. Independent QA must not inspect it.
-rm /run/vp-worker-secrets/db.key; ln -s /no-legacy-key /run/vp-worker-secrets/db.key
 reset_package() {
  cp /fixtures/profile.json /etc/visepanda/hosted-profile.json
  cp /fixtures/target.json /etc/visepanda/qa/qa-target.json
@@ -91,11 +85,10 @@ assert len(runs)==2 and runs[0][runs[0].index('--name')+1]!=runs[1][runs[1].inde
 w=[json.loads(x) for x in open('/tmp/worker-calls')]
 assert len(w)==2 and w[0][0]=='create' and w[1]==['start','vp-hosted-text-worker']
 assert w[0][-1]==os.environ['FIXTURE_IMAGE']
-assert 'VISEPANDA_QA_SUPABASE_PROJECT_REF=abcdefghijklmnopqrst' in w[0]
-assert 'type=bind,src=/run/vp-worker-secrets/qa-abcdefghijklmnopqrst/db.key,dst=/run/vp-worker-secrets/db.key,readonly' in w[0]
-assert 'type=bind,src=/run/vp-worker-secrets/qwen.key,dst=/run/vp-worker-secrets/qwen.key,readonly' in w[0]
-assert not any(a.startswith('type=bind,src=/run/vp-worker-secrets,') or a.startswith('type=bind,src=/run/vp-worker-secrets/db.key,') for a in w[0])
-assert w[0][w[0].index('--tmpfs')+1]=='/run/vp-worker-secrets:rw,noexec,nosuid,nodev,size=64k,mode=0700,uid=1000,gid=1000'
+assert 'VISEPANDA_QA_SUPABASE_PROJECT_REF=dzqdzetcctkhbrhlxxgn' in w[0]
+assert w[0].count('type=bind,src=/run/vp-worker-secrets,dst=/run/vp-worker-secrets,readonly')==1
+assert '--tmpfs' not in w[0]
+assert not any('/qa-' in a for a in w[0])
 assert w[0].count('VISEPANDA_QWEN_ENDPOINT=https://qa-workspace.cn-beijing.maas.aliyuncs.com/compatible-mode/v1/chat/completions')==1
 assert w[0][w[0].index('--restart')+1]=='no'
 assert 'SYNTHETIC_CANARY' not in str(calls) and '--env-file' not in str(calls)
@@ -109,9 +102,6 @@ p='/etc/visepanda/qa/qa-target.json'
 t=json.load(open(p));t['projectRef']='zyxwvutsrqponmlkjihg';t['databaseUrl']='https://zyxwvutsrqponmlkjihg.supabase.co'
 open(p,'w').write(json.dumps(t,separators=(',',':'))+'\n')
 PYNEG
-reject preflight --qa
-reset_package
-sed -i 's/abcdefghijklmnopqrst/dzqdzetcctkhbrhlxxgn/g' /etc/visepanda/hosted-profile.json /etc/visepanda/qa/qa-target.json
 reject preflight --qa
 reset_package
 sed -i 's@vpj07-hosted-text-worker/4@vpj07-hosted-text-worker/3@' /etc/visepanda/hosted-profile.json
@@ -132,11 +122,7 @@ reset_package
 sed -i 's/"groupLimit":1/"groupLimit":1,"groupLimit":1/' /etc/visepanda/hosted-profile.json
 reject preflight --qa
 reset_package
-mv /run/vp-worker-secrets/qa-abcdefghijklmnopqrst /run/vp-worker-secrets/qa-saved
-reject preflight --qa
-mv /run/vp-worker-secrets/qa-saved /run/vp-worker-secrets/qa-abcdefghijklmnopqrst
-chmod 755 /run/vp-worker-secrets/qa-abcdefghijklmnopqrst; reject preflight --qa; chmod 700 /run/vp-worker-secrets/qa-abcdefghijklmnopqrst
-for file in /etc/visepanda/hosted-profile.json /etc/visepanda/qa/qa-target.json /run/vp-worker-secrets/qa-abcdefghijklmnopqrst/db.key /run/vp-worker-secrets/qwen.key; do
+for file in /etc/visepanda/hosted-profile.json /etc/visepanda/qa/qa-target.json /run/vp-worker-secrets/db.key /run/vp-worker-secrets/qwen.key; do
  original=$(stat -c %a "$file")
  chmod 644 "$file"; reject preflight --qa; chmod "$original" "$file"
  ln "$file" "$file.link"; reject preflight --qa; rm "$file.link"
