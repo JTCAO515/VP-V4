@@ -1,0 +1,34 @@
+{
+  "sourceSha": "e9d455e7fe6ab2b6aea71e36998f2655b9610e88",
+  "publicNativeEvidence": [
+    {
+      "path": "ios/VisePanda/VisePanda/NativeEnvironment.plist",
+      "fileSha256": "9fe856c8729ab402f6740fbf6b4f12e17432ca9ad4aff47c611495481eec32dd",
+      "supabaseRefs": [],
+      "knownVpHostReferences": [],
+      "bindingKind": "public source/config reference only; installed build not observed"
+    },
+    {
+      "path": "ios/VisePanda/Distribution/testflight-staging.json",
+      "fileSha256": "3ca460ef9051ac926115c9a832a32269c58df6798e42c1eb7bc33a8278ee1b19",
+      "supabaseRefs": [],
+      "knownVpHostReferences": [
+        "staging.go2china.space"
+      ],
+      "bindingKind": "public source/config reference only; installed build not observed"
+    },
+    {
+      "path": "lib/server/identity/native-config.ts",
+      "sourceSha": "e9d455e7fe6ab2b6aea71e36998f2655b9610e88",
+      "stagingFixedRef": "dzqdzetcctkhbrhlxxgn",
+      "productionSourceGuard": "requires operator production ref different from dzqdzetcctkhbrhlxxgn; current deployed flag/ref not read",
+      "sourceContractOnly": true
+    }
+  ],
+  "installedNativeRuntimeRef": "UNKNOWN",
+  "nativeCallerOwnerAndControls": "UNKNOWN; Main/Native holder and actual installed build must confirm",
+  "hostNode22": "UNKNOWN; no ECS executable/version read by this writer",
+  "jtInputEvidence": "Main relay reports instance check true and then key-directory absent; no import-complete receipt",
+  "noPrivateDirectoryScan": true,
+  "noValuesOrKeysExtracted": true
+}
