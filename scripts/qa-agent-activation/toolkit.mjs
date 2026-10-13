@@ -7,15 +7,16 @@ import { parseQaHostedProfile } from '../../lib/server/qa-agent/hosted-profile.t
 export const PROJECT = 'dzqdzetcctkhbrhlxxgn';
 export const LINK = 'link_6acdbe0471c081919ff47de24ca53b0f';
 export const MODE = 'qa_session_history_v1';
-export const MIGRATION_MANIFEST_HASH = 'dbdffa5b401c03e012df9919817227ce95ffd3c6b46f789f8f8426f0397db086';
+export const MIGRATION_MANIFEST_HASH = 'f0e96cbcbdf4941f36c522e7faf6b7a22d24974412c1c91dc29076cfd91a9f1c';
 const manifestBytes=readFileSync(new URL('./migration-manifest.json',import.meta.url));
 if (createHash('sha256').update(manifestBytes).digest('hex')!==MIGRATION_MANIFEST_HASH) throw Error('MIGRATION_MANIFEST_CHANGED');
 export const migrationManifest=JSON.parse(manifestBytes);
-function sourceMigrationsMatch() {
-  const root=new URL('../../supabase/migrations/',import.meta.url);
+function sourceMigrationsMatch(root=new URL('../../supabase/migrations/',import.meta.url)) {
+  try {
   const files=readdirSync(root).filter(x=>x.endsWith('.sql')).sort();
   return JSON.stringify(files)===JSON.stringify(Object.keys(migrationManifest.sourceSha256).sort())
     && files.every(f=>createHash('sha256').update(readFileSync(new URL(f,root))).digest('hex')===migrationManifest.sourceSha256[f]);
+  } catch { return false; }
 }
 const template = JSON.parse(readFileSync(new URL('../../artifacts/QAWEB/sql-20261013/policy-notice-template.json', import.meta.url), 'utf8'));
 const UUID = /^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/;
@@ -108,7 +109,7 @@ export function validatePackage(bundle) {
     || bundle.scopeInsertParameters.enabled!==false || bundle.providerLimitInsertParameters.enabled!==false) fail('PACKAGE_CHANGED');
 }
 /** Local evidence evaluation only: no evidence blob can grant runtime authority. */
-export function preflight(bundle, observation, now=Date.now()) {
+export function preflight(bundle, observation, now=Date.now(), migrationRoot) {
   validatePackage(bundle); clean(observation);
   const blockers=[]; const check=(ok,code)=>{if(!ok)blockers.push(code);};
   check(observation.projectId===PROJECT && observation.linkId===LINK,'FIXED_TARGET');
@@ -116,7 +117,10 @@ export function preflight(bundle, observation, now=Date.now()) {
   check(canonical(observation.migrations)===canonical(migrationManifest.expected155),'EXACT_REVIEWED_155_MIGRATIONS');
   check(canonical(observation.reviewedMigrations)===canonical(migrationManifest.reviewedMissing80)
     && observation.migrationManifestHash===MIGRATION_MANIFEST_HASH && bundle.migrationManifestHash===MIGRATION_MANIFEST_HASH,'PINNED_MISSING_80');
-  check(sourceMigrationsMatch(),'SOURCE_MIGRATION_DRIFT');
+  check(sourceMigrationsMatch(migrationRoot),'SOURCE_MIGRATION_DRIFT');
+  const acl=observation.qaReadyGroupsAcl;
+  check(acl?.signature==='public.qa_ready_groups_v1(integer)' && acl.serviceRoleExecute===true
+    && acl.publicExecute===false && acl.anonExecute===false && acl.authenticatedExecute===false,'QA_READY_GROUPS_SERVICE_ROLE_ONLY');
   check(observation.qaRpcPresent===true && observation.turnDataPrivatePresent===true && observation.qaSchemaFingerprintMatches===true,'QA_SCHEMA');
   check(observation.restorePoint?.ready===true && HASH.test(observation.restorePoint?.evidenceHash??''),'RESTORE_POINT');
   check(observation.workerStopped===true && observation.webDisabled===true,'STOPPED_HOST_AND_WEB');

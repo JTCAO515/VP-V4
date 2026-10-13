@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "qa-public-source-candidate/1",
+  "status": "UNPUBLISHED_DISABLED",
+  "activationAllowed": false,
+  "providerCalled": false,
+  "accountVerified": false,
+  "inputCandidate": {
+    "schemaVersion": "qa-activation-input/1",
+    "projectId": "dzqdzetcctkhbrhlxxgn",
+    "contextMode": "qa_session_history_v1",
+    "ownerId": null,
+    "supplier": {
+      "provider": "qwen",
+      "recipient": "阿里云百炼（公开服务品牌；实际账号签约主体未核）",
+      "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+      "termsVersion": "unknown",
+      "sourceRegion": "unknown",
+      "processingRegion": "公开北京接入文档：旧模型限中国内地；本账号实际调用未验证",
+      "storageRegion": "unknown",
+      "providerRetentionDisclosure": "公开隐私说明称数据不用于模型训练，并依法存储调用数据；本次所读页面未披露明确 API 留存 TTL，不能承诺零留存。",
+      "evidence": {
+        "url": "https://help.aliyun.com/zh/model-studio/privacy-notice",
+        "observedAt": "2026-10-13T06:52:25.316963+00:00",
+        "validUntil": "2026-10-14T06:52:00Z",
+        "sha256": "2e0e56b1582fe7ca8d974bfaca42763be1600ba82568cd334a805e22197d769d"
+      }
+    },
+    "pricing": {
+      "model": "qwen3.7-plus-2026-05-26",
+      "priceVersion": "aliyun-public-20261013-qwen37-beijing-upper-6-24",
+      "currency": "CNY",
+      "mode": "flat",
+      "inputMicrosPerMillion": 6000000,
+      "outputMicrosPerMillion": 24000000,
+      "cachedInputMicrosPerMillion": null,
+      "evidence": {
+        "url": "https://help.aliyun.com/zh/model-studio/model-pricing",
+        "observedAt": "2026-10-13T06:52:24.184054+00:00",
+        "validUntil": "2026-10-14T06:52:00Z",
+        "sha256": "b28eebd078b4f08de9489909c8f39d854bee288792cfcd01de6f99f2b04d0406"
+      },
+      "coverage": {
+        "inputTokens": 1048576,
+        "outputTokens": 4096,
+        "allBillableComponentsIncluded": false
+      }
+    },
+    "budget": {
+      "limitMicros": null,
+      "taskLimitMicros": null,
+      "providerLimitMicros": null,
+      "attemptLimitMicros": null,
+      "taskAttemptLimit": 8,
+      "concurrencyLimit": 1,
+      "maxOutputTokens": null,
+      "timeoutMs": null,
+      "evidence": {
+        "url": null,
+        "observedAt": null,
+        "validUntil": null,
+        "sha256": null
+      }
+    },
+    "validity": {
+      "effectiveAt": null,
+      "expiresAt": null,
+      "termsRecheckAt": null
+    },
+    "configuration": {
+      "id": null,
+      "version": 1
+    }
+  },
+  "reviewNotes": {
+    "sourceDigests": "official-source-digests.json",
+    "operatorRecheckDeadline": "2026-10-14T06:52:00Z; local conservative deadline, not supplier price guarantee",
+    "pricingCoverage": "Public tariff stops at decimal 1,000,000 input tokens; existing reservation multiplies by 1,048,576. Extra 48,576 is a potential conservative margin, not a publicly quoted tier. Coverage flag remains false until Main reviews supported request bound and excludes explicit cache creation/other surcharges.",
+    "discounts": "No temporary discount, free quota, batch discount or cache savings assumed. Flat pricing charges all reported input at 6 CNY/million.",
+    "accountUnknowns": [
+      "actual contracting recipient",
+      "account terms/version",
+      "source runtime region",
+      "end-to-end storage region",
+      "actual configured regional access",
+      "API retention TTL",
+      "owner/configuration identity",
+      "approved budget caps"
+    ],
+    "productDecision": [
+      "Confirm finite actual attempt/task/scope/provider spend caps and expiry before any activation; no caps inferred from tariff."
+    ],
+    "engineeringReview": [
+      "Confirm 1,048,576 reservation is safety margin while supported requests remain within documented tier; no model/endpoint change.",
+      "Inspect final migration hash from Main before repinning; not auto-accepted."
+    ]
+  }
+}
