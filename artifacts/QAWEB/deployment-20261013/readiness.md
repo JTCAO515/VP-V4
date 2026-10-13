@@ -6,8 +6,8 @@ Scope: exact existing vp-v4 project/team, QA preview branch only. Main integrati
 
 | Slot | Actual status | Next input |
 | --- | --- | --- |
-| NEXT_PUBLIC_SUPABASE_URL | Generic preview key exists | Match QA fixed Staging target before activation |
-| NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY | Generic preview key exists | Existing authorized public configuration, no secret-copy path |
+| NEXT_PUBLIC_SUPABASE_URL | Generic preview value verified against fixed QA Staging URL | PASS, no override required |
+| NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY | Generic preview public/anon key kind verified | PASS, value never printed or persisted |
 | VISEPANDA_QA_AGENT_ORIGIN | Created and read back only on codex/qaw005-main-20261013, preview, plain Config | Fixed authorized QA hostname |
 | VISEPANDA_QA_AGENT | Absent, so QA disabled | Enable true only with reviewed source and valid new policy/worker chain |
 | VISEPANDA_QA_AGENT_POLICY_ID | Absent | Main's new bounded QA policy; old policy is not reusable authorization |
@@ -33,3 +33,5 @@ No worker target profile, secure slot presence, current price/budget/consent, re
 ## Validation
 
 PASS: exact branch-origin readback, previous domain/DNS readback, script syntax, baseline pin rejection, docs check and diff check. UNRUN: reviewed P0 source deployment, target HTTPS/login/persistence and real provider/multi-turn cases. The live DNS is configured; the earlier local TLS probe failed and remains diagnostic evidence only.
+
+2026-10-13 follow-up: project getter keeps encrypted public values opaque; exact GET /v1/projects/{project}/env/{id} for only the two effective preview PUBLIC fields verified the fixed Staging URL and public/anon key kind in memory. Only booleans were emitted; no production variable was fetched. QA Origin branch match also PASS. In-app browser target probe returned net::ERR_CONNECTION_CLOSED before any QA deployment; this does not establish application behavior.
