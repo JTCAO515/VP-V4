@@ -219,6 +219,20 @@ def execute(a, official):
                 env.pop('PGPASSWORD',None)
 
 
+def validate_operator_gate(approval, official, instant):
+    # Read-only check: never create directories or consume the one-time marker.
+    # Keep the original >=20-minute entry margin (stricter than capture's11min).
+    validate_approval(approval, instant)
+    plan.require(official.get('link_id')==plan.ACCOUNT['link_id'] and official.get('project')==plan.REF,'OFFICIAL_ACCOUNT_EVIDENCE_REQUIRED')
+    plan.require(timedelta(0)<=instant-stamp(official['observedAt'])<=timedelta(minutes=5),'FRESH_OFFICIAL_EVIDENCE_REQUIRED')
+    plan.validate_versions(official['versions'])
+    pinned=json.loads((ROOT/'artifacts/QAWEB/staging-replay/probe-official-metadata.json').read_text())
+    for field in ('schemas','event_triggers'):
+        plan.require(official[field]==pinned[field], 'UNKNOWN_TARGET_CATALOG_REVIEW_REQUIRED')
+    marker=Path(plan.ARCHIVE_ROOT)/('approval-'+approval['approvalId']+'.used.json')
+    plan.require(not os.path.lexists(marker), 'APPROVAL_ALREADY_USED')
+
+
 def main(args):
     if args in ([], ['--dry-run']):
         return {'status':'DRY_RUN_NO_TARGET_IO','codeSha256':code_hash(),'target':plan.REF,'actionsRequiringJTApproval':APPROVAL_ACTIONS,
@@ -226,17 +240,19 @@ def main(args):
                 'schemaCount':14,'newPersistentKeys':False,'targetRead':False,'actualRestore':'UNRUN'}
     plan.require(len(args)==3 and args[0]=='--execute','INVALID_EXECUTION_ARGUMENTS')
     plan.require(sys.stdin.isatty() and sys.stdout.isatty(),'HUMAN_TTY_REQUIRED')
-    approval=json.loads(Path(args[1]).read_text()); validate_approval(approval,now())
+    approval=json.loads(Path(args[1]).read_text())
     official=json.loads(Path(args[2]).read_text())
-    plan.require(official.get('link_id')==plan.ACCOUNT['link_id'] and official.get('project')==plan.REF,'OFFICIAL_ACCOUNT_EVIDENCE_REQUIRED')
-    plan.require(timedelta(0)<=now()-stamp(official['observedAt'])<=timedelta(minutes=5),'FRESH_OFFICIAL_EVIDENCE_REQUIRED')
-    plan.validate_versions(official['versions'])
-    pinned=json.loads((ROOT/'artifacts/QAWEB/staging-replay/probe-official-metadata.json').read_text())
-    for field in ('schemas','event_triggers'):
-        plan.require(official[field]==pinned[field], 'UNKNOWN_TARGET_CATALOG_REVIEW_REQUIRED')
+    validate_operator_gate(approval,official,now())
     phrase='JT APPROVED '+plan.REF+' POSTGRES READ BACKUP NEW AGE KEY'
     print('Operator: verify JT explicitly approved this exact code, scopes, retention and quiesced maintenance window. JSON is not authenticated consent.')
     plan.require(input('Type '+phrase+': ') == phrase,'OPERATOR_CONFIRMATION_REQUIRED')
+    # input() may have blocked indefinitely. Re-read the local evidence, then
+    # revalidate at one fresh instant before any credential/target/file creation.
+    confirmed_approval=json.loads(Path(args[1]).read_text())
+    confirmed_official=json.loads(Path(args[2]).read_text())
+    validate_operator_gate(confirmed_approval,confirmed_official,now())
+    plan.require(confirmed_approval==approval and confirmed_official==official,
+                 'CONFIRMED_INPUT_CHANGED_RESTART_REQUIRED')
     return execute(approval,official)
 
 

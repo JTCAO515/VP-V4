@@ -1,0 +1,44 @@
+test_code_changed_during_confirmation (__main__.DelayedConfirmation) ... ok
+test_delayed_official_observation_expired (__main__.DelayedConfirmation) ... ok
+test_delayed_window_fully_expired (__main__.DelayedConfirmation) ... ok
+test_delayed_window_has_less_than_eleven_minutes (__main__.DelayedConfirmation) ... ok
+test_project_changed_during_confirmation (__main__.DelayedConfirmation) ... FAIL
+test_schema_changed_during_confirmation (__main__.DelayedConfirmation) ... FAIL
+test_uuid_consumed_during_confirmation (__main__.DelayedConfirmation) ... ok
+test_valid_delayed_confirmation_enters_executor_once (__main__.DelayedConfirmation) ... ok
+test_versions_changed_during_confirmation (__main__.DelayedConfirmation) ... FAIL
+
+======================================================================
+FAIL: test_project_changed_during_confirmation (__main__.DelayedConfirmation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-delayed-confirmation.py", line 76, in test_project_changed_during_confirmation
+    self.scenario(lambda s,o:o.update(project='other'), 'OFFICIAL_ACCOUNT_EVIDENCE_REQUIRED')
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-delayed-confirmation.py", line 52, in scenario
+    m.main(['--execute','synthetic-approval','synthetic-official'])
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_schema_changed_during_confirmation (__main__.DelayedConfirmation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-delayed-confirmation.py", line 79, in test_schema_changed_during_confirmation
+    self.scenario(lambda s,o:o.update(schemas=o['schemas']+['unknown']), 'UNKNOWN_TARGET_CATALOG_REVIEW_REQUIRED')
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-delayed-confirmation.py", line 52, in scenario
+    m.main(['--execute','synthetic-approval','synthetic-official'])
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_versions_changed_during_confirmation (__main__.DelayedConfirmation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-delayed-confirmation.py", line 82, in test_versions_changed_during_confirmation
+    self.scenario(lambda s,o:o.update(versions=o['versions'][:-1]), 'MIGRATION_COUNT_CONFLICT')
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-delayed-confirmation.py", line 52, in scenario
+    m.main(['--execute','synthetic-approval','synthetic-official'])
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.011s
+
+FAILED (failures=3)
