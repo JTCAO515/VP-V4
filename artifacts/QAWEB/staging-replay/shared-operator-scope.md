@@ -24,7 +24,11 @@ JT 已直接批准 A–D，并条件式批准满足全部门禁后的 E。固定
 
 显式 replay 模式仅对 owned clone 做两项精确兼容：已知 turn_feedback ROW-IN pg_dump deparse 差异重建为原约束；归档 owner MAINTAIN/默认 ACL 精确恢复。未知差异拒绝，不改源 SQL/门禁/真实库权限。默认 restore 不采用该兼容。
 
-## 最小缺失证据
+## 最新维护事实与剩余执行准备
+
+已消费 Main 独立 0600 记录 `shared-owner-boundary-human-confirmation-20261013.json`，SHA256 `a393dadbbcab5e0fd912ad12f50879a7632832471956a9c4ef0bf14422bc6aa4`；问题 `call_3f04477e8b7b46b6bb896265d3109334` 的直接答复为“无其他变更安排，由 V10 协调该窗口”。这解决五类维护安排的信息缺口，原 A–D 授权 hash 不变。Main 可在 source review/preflight 齐备后填写 owner=V10 Main 协调、实际窗口及该引用/hash；当前 packet 的 confirmed/时间仍不虚填。此事实不保证未来 vendor 无非计划变更，capture before/after catalog 或 restore 不符继续 fail closed。普通 DML 继续，无新 freeze 权限。
+
+以下表格保留原控制范围诊断；其“UNKNOWN”不再表示还需 JT 提供计划变更事实，而表示非计划外部变化不能预先保证。
 
 | 边界 | Main 可在原范围确认的内容 | 当前仍 UNKNOWN 的内容 |
 | --- | --- | --- |
@@ -33,7 +37,7 @@ JT 已直接批准 A–D，并条件式批准满足全部门禁后的 E。固定
 | managed Realtime migrations | 当前账本89的只读观测 | managed migrator/自动 partition DDL 的完整窗口稳定依据 |
 | extension/ledger schema | 固定结构/扩展的当前观测 | managed service 更新及其它 owner 变更控制 |
 
-不需要静止所有普通 DML；也不能把 WAF、短时计数平稳、AccessExclusive=0 或仓库 writer lease 当作全库 60 分钟控制。现有证据只确认 Main 自己的写入边界；未确认项继续 false，由 Main 在现有 owner 范围补具体引用/哈希/有效期，不向 JT 重复索取既有 A–D 授权。
+不需要静止所有普通 DML；也不能把 WAF、短时计数平稳、AccessExclusive=0 或仓库 writer lease 当作全库 60 分钟控制。现有证据只确认 Main 自己的写入边界；窗口尚未启动，执行字段继续 false，由 Main 使用新直接维护事实补具体引用/哈希/有效期，不向 JT 重复索取既有 A–D 授权。
 
 还需 Main 对最终 code/source 审阅及真实启动回执；当次 <=5min 官方 metadata、实际权限/TLS/FileVault/窗口检查；捕获后实际 manifest/key 绑定；真实共享数据恢复及重放 PASS。任一门禁失败就停止，保留受保护密文/身份与已成功迁移历史；只回滚当前未提交事务，无 live 恢复 fallback。
 

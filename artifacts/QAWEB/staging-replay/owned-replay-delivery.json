@@ -25,7 +25,7 @@
   "target80Writer": "Main only conditional E",
   "blockers": [
     "Main exact source/code review and private start receipt bound to this UUID and final hashes",
-    "existing-owner evidence covering the full60min for five DDL/DCL boundaries; managed/external owners still UNKNOWN",
+    "Main fill five coordinated boundary evidence/hash and actual validity intervals from new direct human maintenance fact",
     "actual window timestamps and official<=5min project/catalog/ledger metadata at execution",
     "actual fixed-target privilege/TLS/safety checks without new grants",
     "after capture: exact ciphertext manifest and identity paths plus real-data restore/replay PASS"
@@ -34,5 +34,6 @@
   "MainFilesWritten": false,
   "livePermissionChanged": false,
   "liveTargetWritten": false,
-  "providerCalled": false
+  "providerCalled": false,
+  "maintenanceHumanFact": "CONSUMED actual direct record a393dadb; no other planned changes/V10 Main60min coordinator; window not started; source hashes unchanged"
 }

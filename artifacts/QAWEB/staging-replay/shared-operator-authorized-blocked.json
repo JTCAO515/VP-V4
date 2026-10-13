@@ -1496,7 +1496,7 @@
   },
   "remainingOperatorInputs": [
     "Main exact source/code review and private start receipt bound to this UUID and final hashes",
-    "existing-owner evidence covering the full60min for five DDL/DCL boundaries; managed/external owners still UNKNOWN",
+    "Main populate five owner=V10 Main coordinator confirmations using direct human no-other-planned-change record/hash and actual full60min validity; unplanned catalog changes still fail closed",
     "actual window timestamps and official<=5min project/catalog/ledger metadata at execution",
     "actual fixed-target privilege/TLS/safety checks without new grants",
     "after capture: exact ciphertext manifest and identity paths plus real-data restore/replay PASS"
@@ -1565,5 +1565,14 @@
     "repeatedHumanTtyPhraseRequired": false,
     "oldTtyModesPreserved": true,
     "recordAuthenticityBasis": "trusted independent Main UI evidence; no platform cryptographic signature; fixed actual record hash required"
+  },
+  "maintenanceHumanConfirmation": {
+    "recordPath": "/Users/jtsm5p/Documents/Codex/2026-10-13/v10-main/shared-owner-boundary-human-confirmation-20261013.json",
+    "sha256": "a393dadbbcab5e0fd912ad12f50879a7632832471956a9c4ef0bf14422bc6aa4",
+    "questionItemId": "call_3f04477e8b7b46b6bb896265d3109334",
+    "humanAnswer": "\u65e0\u5176\u4ed6\u53d8\u66f4\u5b89\u6392\uff0c\u7531 V10 \u534f\u8c03\u8be5\u7a97\u53e3",
+    "fivePlannedChangeBoundariesConfirmedByHuman": true,
+    "windowStarted": false,
+    "unplannedVendorChangesGuaranteedAbsent": false
   }
 }
