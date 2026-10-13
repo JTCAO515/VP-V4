@@ -1,0 +1,40 @@
+{
+  "status": "PASS_SYNTHETIC_RESTORE_ENTRY_ONLY",
+  "targetRead": false,
+  "stages": [
+    "PASS actual three-ciphertext restore,14 counts,roles/memberships,full schema owner ACL triggers/platform catalog",
+    "PASS wrong expected count rejected after isolated restore with cleanup",
+    "PASS unknown managed extension rejected before archive read/container creation",
+    "PASS capture lacking restoration expectations rejected",
+    "PASS altered ciphertext rejected before container",
+    "PASS synthetic key/ciphertexts removed"
+  ],
+  "captureSeconds": 0.222,
+  "restoreSeconds": 1.835,
+  "restore": {
+    "status": "PASS_LOCAL_BUNDLE_RESTORE_ONLY",
+    "targetWritten": false,
+    "contentOutput": false,
+    "bootstrapProfile": "supabase-17.6.1.155-five-extensions/1",
+    "explicitPrecreatedObjects": [
+      "SCHEMA:extensions",
+      "SCHEMA:vault",
+      "EXTENSION:pg_stat_statements",
+      "EXTENSION:pgcrypto",
+      "EXTENSION:supabase_vault",
+      "EXTENSION:uuid-ossp"
+    ],
+    "schemaDigest": "22c24afb0f5a02b2def2d80a57c4a7df3f19f18c927b9ec78ecc2751d73b19aa",
+    "countRelations": 14,
+    "globalRoles": "PASS",
+    "ownerAclSchema": "PASS",
+    "platformCatalog": "PASS",
+    "counts": "PASS",
+    "platformServices": "UNRUN_GOTRUE_STORAGE_REALTIME",
+    "migrationUpgrade": "UNRUN",
+    "userAcceptance": "UNRUN",
+    "cleanup": "PASS"
+  },
+  "sourceCleanup": "PASS",
+  "elapsedSeconds": 5.777
+}

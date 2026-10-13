@@ -27,6 +27,7 @@ def load(name, path):
 
 probe = load('probe', HERE / 'metadata-probe.py')
 verification = load('verification', HERE / 'restore-verification.py')
+managed_profile = load('managed_profile', HERE / 'managed-profile.py')
 plan = probe.plan
 APPROVAL_ACTIONS = sorted(['read-target-data14', 'set-role-postgres-for-read-only-backup',
                            'create-local-age-recovery-identity', 'retain-encrypted-database-copy',
@@ -44,7 +45,7 @@ def stamp(value):
 
 
 def code_hash():
-    names = ['controlled-backup.py', 'metadata-probe.py', 'metadata-probe.sql', 'backup-candidate.py', 'backup-relay.py','restore-verification.py']
+    names = ['controlled-backup.py', 'metadata-probe.py', 'metadata-probe.sql', 'backup-candidate.py', 'backup-relay.py','restore-verification.py','managed-profile.py']
     return hashlib.sha256(b''.join((name + '\n').encode() + (HERE / name).read_bytes() for name in names)+(ROOT/'artifacts/QAWEB/staging-replay/probe-official-metadata.json').read_bytes()).hexdigest()
 
 
@@ -135,12 +136,16 @@ def metadata(env, port):
 def restore_expectations(env, port, metadata):
     sql="begin read only;set local role postgres;set local statement_timeout='10s';"
     sql+=verification.counts_sql(metadata['relations'])
+    sql+=verification.counts_sql(metadata['platform_relations'])
     sql+="select jsonb_build_object('encoding',pg_encoding_to_char(encoding),'collate',datcollate,'ctype',datctype,'localeProvider',datlocprovider,'owner',pg_get_userbyid(datdba),'bootstrapRole',(select rolname from pg_roles where oid=10)) from pg_database where datname=current_database();rollback;"
     raw=probe.checked([plan.PG_ROOT+'/psql','-X','-q','-At','-w','-v','ON_ERROR_STOP=1','-h','db.'+plan.REF+'.supabase.co','-p',str(port),'-U','cli_login_postgres','-d','postgres'],env=env,stdin=sql,timeout=30)
-    counts,facts=map(json.loads,raw.splitlines())
+    counts,platform_counts,facts=map(json.loads,raw.splitlines())
+    plan.require(all(value==0 for value in platform_counts.values()),'UNCOVERED_PLATFORM_DATA_NOT_EMPTY')
     owner=facts.pop('owner'); bootstrap=facts.pop('bootstrapRole')
-    return {'contract':'qaw-restore-verification/1','dataSchemas':list(plan.SCHEMAS),
-            'metadata':metadata,'counts':counts,'databaseFacts':facts,'databaseOwner':owner,'bootstrapRole':bootstrap}
+    expected={'contract':'qaw-restore-verification/1','dataSchemas':list(plan.SCHEMAS),
+            'metadata':metadata,'counts':counts,'platformCounts':platform_counts,'databaseFacts':facts,'databaseOwner':owner,'bootstrapRole':bootstrap}
+    managed_profile.classify(expected)
+    return expected
 
 
 def execute(a, official):
@@ -212,6 +217,7 @@ def execute(a, official):
                         for chunk in iter(lambda:f.read(1024*1024), b''): digest.update(chunk)
                     results.append({'file':archive.name,'bytes':archive.stat().st_size,'sha256':digest.hexdigest(),'fullIntegrity':'PASS','toc':'PASS' if custom else 'UNRUN_ROLE_SEMANTIC_RESTORE'})
                 stage = 'post-dump metadata'
+                plan.require(now()+timedelta(minutes=1)<stamp(a['windowEnd']),'WINDOW_EXPIRED_BEFORE_POSTCHECK')
                 after = metadata(env, port)
                 plan.require(before == after, 'METADATA_CHANGED_QUARANTINE')
                 plan.require(restore_expectations(env,port,after)==expected_restore,'COUNTS_CHANGED_QUARANTINE')
