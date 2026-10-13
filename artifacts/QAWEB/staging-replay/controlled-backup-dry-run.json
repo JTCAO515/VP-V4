@@ -1,0 +1,17 @@
+{
+  "status": "DRY_RUN_NO_TARGET_IO",
+  "codeSha256": "efd7af1db840d0ae8082b36a91885eb6e370257ddf63b7993ad4083892e9d23d",
+  "target": "dzqdzetcctkhbrhlxxgn",
+  "actionsRequiringJTApproval": [
+    "capture-global-roles-without-passwords-and-full-schema",
+    "create-local-age-recovery-identity",
+    "read-target-data14",
+    "retain-encrypted-database-copy",
+    "set-role-postgres-for-read-only-backup"
+  ],
+  "execution": "--execute <approval.json> <fresh-official-metadata.json>, human TTY confirmation required",
+  "schemaCount": 14,
+  "newPersistentKeys": false,
+  "targetRead": false,
+  "actualRestore": "UNRUN"
+}
