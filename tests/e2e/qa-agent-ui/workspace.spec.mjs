@@ -238,7 +238,7 @@ test('eighth accepted turn completes and preserves history while new sends stop;
  });
  await page.getByLabel('Message',{exact:true}).fill('Eighth');await page.getByRole('button',{name:'Send',exact:true}).click();
  await expect(page.getByRole('log')).toContainText('Accepted answer');
- await expect(page.getByText('This session has reached its turn limit. Please start a new session to continue.')).toBeVisible();
+ await expect(page.getByText('This session has reached its context capacity limit. Please start a new session with a shorter question.')).toBeVisible();
  await expect(page.getByRole('log')).toContainText('Answer 1');await expect(page.getByRole('log').locator('article')).toHaveCount(8);
  await expect(page.getByRole('button',{name:'Send',exact:true})).toBeDisabled();
  await page.locator('form').evaluate(form=>form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true})));expect(submitted).toHaveLength(1);
@@ -261,7 +261,7 @@ test('ninth rejection keeps history and notice, prevents retries, and new sessio
   return false;
  });
  await page.getByLabel('Message',{exact:true}).fill('Ninth');await page.getByRole('button',{name:'Send',exact:true}).click();
- await expect(page.getByText('This session has reached its turn limit. Please start a new session to continue.')).toBeVisible();
+ await expect(page.getByText('This session has reached its context capacity limit. Please start a new session with a shorter question.')).toBeVisible();
  await expect(page.getByRole('log')).toContainText('Answer 7');await expect(page.getByText(policy.noticeEn,{exact:true})).toBeVisible();
  await expect(page.getByRole('button',{name:'Agree to the notice above'})).toHaveCount(0);await expect(page.getByRole('button',{name:'Check original request'})).toHaveCount(0);
  await expect(page.getByRole('button',{name:'Send',exact:true})).toBeDisabled();
