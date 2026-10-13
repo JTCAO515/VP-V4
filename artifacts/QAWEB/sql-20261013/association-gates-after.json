@@ -1,0 +1,12 @@
+{
+  "profile_data_private.schema_v1": true,
+  "turn_data_private.hooks_valid_v1": true,
+  "export_private.profile_hooks_valid_v1": true,
+  "turn_data_private.schema_supported_v1": true,
+  "turn_data_private.runtime_supported_v1": true,
+  "turn_data_private.write_hooks_valid_v1": true,
+  "result_data_private.schema_supported_v1": true,
+  "turn_private.directions_schema_members_v1": true,
+  "conversation_data_private.schema_supported_v1": true,
+  "result_data_private.infrastructure_supported_v1": true
+}

@@ -1,0 +1,22 @@
+{
+  "mainBaseline": "16018dd23f3546a2be8acd81d5f85c4754d9845d",
+  "functions": {
+    "turn_private.require_text_task()": {
+      "beforeProsrcMD5": "95fb74d25934ea29de80eeb3fdc640fd",
+      "afterProsrcMD5": "f05aaf350aff657dc79cc313498e1af9",
+      "afterSHA256": "0720bbc9e59c8b2254524274de71d299195dac4fd935ccdcf23328aa92a4571b"
+    },
+    "public.qa_claim_work_v1(uuid,uuid)": {
+      "beforeProsrcMD5": "85a4f8d5a317769bccaa455c1ed0d3ff",
+      "afterProsrcMD5": "94a06d571315167d5ab5faf43a332304",
+      "afterSHA256": "63bff9517a04ee8b7b9960950e1c82c689c5e82027c38b4296e661c3c7b2572f"
+    }
+  },
+  "newTables": [],
+  "candidateSHA256": "b63a05c2ddf02a50fe16909db8f22f527f9afafe3b0063fcfd6ecd5b41c329b6",
+  "latestProof": "qa-task-association-proof-1791875545987.log",
+  "namedPassChecks": 11,
+  "liveLifecycleFingerprintUpdates": [],
+  "gateEvidence": "association-gates-after.json",
+  "gateNote": "All ten existing live gates remain true after the exact require_text_task/QA claimer edits; do not invent or relax an unrelated allowed hash."
+}
