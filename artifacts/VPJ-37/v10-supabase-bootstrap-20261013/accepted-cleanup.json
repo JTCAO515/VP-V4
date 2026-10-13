@@ -1,0 +1,23 @@
+{
+  "project": "vp-ops-review-ec3df603",
+  "container": "supabase_db_vp-ops-review-ec3df603",
+  "stackStop": true,
+  "serverExited": true,
+  "completed": true,
+  "source": "543e2617627fe7eddb8564ee4027e4c59cb986d77db2508da12a7a37ae633dea",
+  "projects": [
+    "vp-ops-review-09330f32",
+    "vp-ops-review-ae18d4f1",
+    "vp-ops-review-e32ebd51",
+    "vp-ops-review-2495c037",
+    "vp-ops-review-ec3df603"
+  ],
+  "containers": "ABSENT",
+  "volumes": "ABSENT",
+  "networks": "ABSENT",
+  "ports62120To62131": "NO_LISTENERS_IPV4_OR_IPV6",
+  "processSessions": "ALL_EXITED",
+  "scope": "RELEASED",
+  "otherOwners": "UNTOUCHED",
+  "nextGeneratedTrackedFiles": "EXACT_ORIGINAL_BYTES_RESTORED"
+}

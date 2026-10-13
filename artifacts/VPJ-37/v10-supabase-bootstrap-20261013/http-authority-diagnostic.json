@@ -1,0 +1,8 @@
+{
+  "directRPCSucceeded": true,
+  "error": null,
+  "jwtAuthenticated": true,
+  "jwtAnonymous": false,
+  "sessionPresent": true,
+  "cookieCount": 1
+}

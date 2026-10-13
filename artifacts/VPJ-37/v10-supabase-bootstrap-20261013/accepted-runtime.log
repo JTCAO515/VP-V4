@@ -1,0 +1,5 @@
+PASS official CLI isolated GoTrue/PostgREST/SQL startup
+PASS staged fresh helper initializes during actual CLI startup
+PASS real GoTrue cookie and Ops HTTP consumer: workspace/CAS/readback/conflict/negative/revocation
+PASS HTTP actor cleanup keeps all receipts retired and no auth identities
+OWNED_CLEANUP {"stackStop":true,"completed":true}

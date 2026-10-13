@@ -1,0 +1,50 @@
+[
+  {
+    "action": "workspace",
+    "status": 200,
+    "error": null,
+    "origin": "http://localhost:62131"
+  },
+  {
+    "action": "workspace",
+    "status": 401,
+    "error": "UNAUTHENTICATED",
+    "origin": "http://localhost:62131"
+  },
+  {
+    "action": "workspace",
+    "status": 403,
+    "error": "OPS_FORBIDDEN",
+    "origin": "https://untrusted.example"
+  },
+  {
+    "action": "set",
+    "status": 200,
+    "error": null,
+    "origin": "http://localhost:62131"
+  },
+  {
+    "action": "receipt",
+    "status": 200,
+    "error": null,
+    "origin": "http://localhost:62131"
+  },
+  {
+    "action": "set",
+    "status": 409,
+    "error": "OPS_CONFLICT",
+    "origin": "http://localhost:62131"
+  },
+  {
+    "action": "set",
+    "status": 200,
+    "error": null,
+    "origin": "http://localhost:62131"
+  },
+  {
+    "action": "workspace",
+    "status": 403,
+    "error": "OPS_FORBIDDEN",
+    "origin": "http://localhost:62131"
+  }
+]

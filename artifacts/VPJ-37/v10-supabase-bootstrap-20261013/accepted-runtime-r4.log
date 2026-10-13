@@ -1,0 +1,8 @@
+PASS official CLI isolated GoTrue/PostgREST/SQL startup
+PASS actual table privilege vectors and exact named policies
+PASS installed true, original eight guards true, attribute/policy mutation fail closed
+PASS restored/reconciled revision-zero database refuses fresh initializer without resetting data
+PASS fresh actual initialization executes 12 authenticated CAS, retires receipts and cleans actor
+PASS reuse refuses already initialized database and keeps exact snapshot
+Owned verification failed at real GoTrue cookie and Ops HTTP consumer: workspace/CAS/readback/conflict/negative/revocation
+OWNED_CLEANUP {"stackStop":true,"completed":false}

@@ -1,0 +1,16 @@
+{
+  "target": "/var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/v10-accepted-ops-0kHudZ",
+  "project": "vp-ops-review-ec3df603",
+  "container": "supabase_db_vp-ops-review-ec3df603",
+  "ports": [
+    62120,
+    62121,
+    62122,
+    62123,
+    62124,
+    62127,
+    62129,
+    62131
+  ],
+  "source": "543e2617627fe7eddb8564ee4027e4c59cb986d77db2508da12a7a37ae633dea"
+}

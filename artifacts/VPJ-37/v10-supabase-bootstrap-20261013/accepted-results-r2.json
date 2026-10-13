@@ -1,0 +1,81 @@
+{
+  "source": "543e2617627fe7eddb8564ee4027e4c59cb986d77db2508da12a7a37ae633dea",
+  "project": "vp-ops-review-ae18d4f1",
+  "results": [
+    {
+      "label": "official CLI isolated GoTrue/PostgREST/SQL startup",
+      "result": "PASS",
+      "detail": {
+        "code": 0,
+        "syntaxError": false,
+        "sourceUnavailable": false
+      }
+    },
+    {
+      "label": "actual table privilege vectors and exact named policies",
+      "result": "PASS",
+      "detail": {
+        "policies": [
+          {
+            "roles": [
+              "authenticated"
+            ],
+            "table": "model_budget_scopes",
+            "policy": "native_mobile_access_v2",
+            "restrictive": true
+          },
+          {
+            "roles": [
+              "authenticated"
+            ],
+            "table": "model_budget_provider_limits",
+            "policy": "native_mobile_access_v2",
+            "restrictive": true
+          },
+          {
+            "roles": [
+              "authenticated"
+            ],
+            "table": "model_budget_attempts",
+            "policy": "native_mobile_access_v2",
+            "restrictive": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "installed true, original eight guards true, attribute/policy mutation fail closed",
+      "result": "PASS",
+      "detail": {
+        "installed": true,
+        "profile": true,
+        "conversation": true,
+        "result": true,
+        "turnSchema": true,
+        "turnRuntime": true,
+        "writeHooks": true,
+        "hooks": true,
+        "profileHooks": true
+      }
+    },
+    {
+      "label": "restored/reconciled revision-zero database refuses fresh initializer without resetting data",
+      "result": "PASS",
+      "detail": {
+        "code": "W2_FIXTURE_NOT_PRISTINE",
+        "snapshotUnchanged": true
+      }
+    },
+    {
+      "label": "fresh actual initialization executes 12 authenticated CAS, retires receipts and cleans actor",
+      "result": "FAIL",
+      "detail": {
+        "assertion": true,
+        "actual": 13,
+        "expected": 12
+      }
+    }
+  ],
+  "providerCalls": 0,
+  "target": "UNRUN"
+}

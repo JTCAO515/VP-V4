@@ -1,0 +1,10 @@
+{
+  "authorizedBefore": "5e07bc1ce41f236c0fd29ece8f9f15525c9e234e78f9a7a25ab22751082babdf",
+  "productAfter": "543e2617627fe7eddb8564ee4027e4c59cb986d77db2508da12a7a37ae633dea",
+  "helperAfter": "e36c0c3b34e2d70b079d14015c649a935ee76a1b97bc9a05768e167af1bc9ec2",
+  "sharedMigrationCommitted": false,
+  "otherOverlays": {
+    "tests/integration/turn/text-work.test.mjs": "fd4f3f53aa5a188c8dd9152085bf109251b6b66c802b6818a8a3e7c4583f9c6e",
+    "tests/integration/turn/durable-work.test.mjs": "a4f3a64e0ff880f06b9e3951c3477ff02584d363dee24a89aa38d68a960368c6"
+  }
+}

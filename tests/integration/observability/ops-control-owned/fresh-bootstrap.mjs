@@ -12,7 +12,7 @@ export const freshOpsScopes = Object.freeze([
   ['provider','amap'], ['provider','deepseek'], ['provider','glm'], ['provider','qwen'],
 ]);
 const migration = 'supabase/migrations/20261012103151_vpj37_ops_control_w2.sql';
-const sourceHash = '5e07bc1ce41f236c0fd29ece8f9f15525c9e234e78f9a7a25ab22751082babdf';
+const sourceHash = '543e2617627fe7eddb8564ee4027e4c59cb986d77db2508da12a7a37ae633dea';
 const emptyJournal = JSON.stringify({ schemaVersion:'ops-control-restore/1', revision:0,
   controls:freshOpsScopes.map(([kind,key])=>({scope:{kind,key},stopRevision:0})),
   budgets:[], retiredOperations:[], erasedActors:[],

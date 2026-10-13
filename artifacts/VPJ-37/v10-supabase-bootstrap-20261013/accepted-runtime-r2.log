@@ -1,0 +1,6 @@
+PASS official CLI isolated GoTrue/PostgREST/SQL startup
+PASS actual table privilege vectors and exact named policies
+PASS installed true, original eight guards true, attribute/policy mutation fail closed
+PASS restored/reconciled revision-zero database refuses fresh initializer without resetting data
+Owned verification failed at fresh actual initialization executes 12 authenticated CAS, retires receipts and cleans actor
+OWNED_CLEANUP {"stackStop":true,"completed":false}

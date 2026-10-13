@@ -1,0 +1,113 @@
+{
+  "beforeSource": "5e07bc1ce41f236c0fd29ece8f9f15525c9e234e78f9a7a25ab22751082babdf",
+  "afterSource": "543e2617627fe7eddb8564ee4027e4c59cb986d77db2508da12a7a37ae633dea",
+  "environment": "Separate uniquely owned instances, same CLI 2.117.0 / PG17.6 cached image. Before reuses original source diagnostic; after from accepted-source actual runtime.",
+  "deltas": [
+    {
+      "table": "public.model_budget_scopes",
+      "role": "service_role",
+      "privilege": "DELETE",
+      "before": true,
+      "after": false
+    },
+    {
+      "table": "public.model_budget_scopes",
+      "role": "service_role",
+      "privilege": "TRIGGER",
+      "before": true,
+      "after": false
+    },
+    {
+      "table": "public.model_budget_scopes",
+      "role": "service_role",
+      "privilege": "MAINTAIN",
+      "before": true,
+      "after": false
+    },
+    {
+      "table": "public.model_budget_scopes",
+      "role": "service_role",
+      "privilege": "TRUNCATE",
+      "before": true,
+      "after": false
+    },
+    {
+      "table": "public.model_budget_scopes",
+      "role": "service_role",
+      "privilege": "REFERENCES",
+      "before": true,
+      "after": false
+    },
+    {
+      "table": "public.model_budget_attempts",
+      "role": "service_role",
+      "privilege": "DELETE",
+      "before": true,
+      "after": false
+    },
+    {
+      "table": "public.model_budget_attempts",
+      "role": "service_role",
+      "privilege": "TRIGGER",
+      "before": true,
+      "after": false
+    },
+    {
+      "table": "public.model_budget_attempts",
+      "role": "service_role",
+      "privilege": "MAINTAIN",
+      "before": true,
+      "after": false
+    },
+    {
+      "table": "public.model_budget_attempts",
+      "role": "service_role",
+      "privilege": "TRUNCATE",
+      "before": true,
+      "after": false
+    },
+    {
+      "table": "public.model_budget_attempts",
+      "role": "service_role",
+      "privilege": "REFERENCES",
+      "before": true,
+      "after": false
+    },
+    {
+      "table": "public.model_budget_provider_limits",
+      "role": "service_role",
+      "privilege": "DELETE",
+      "before": true,
+      "after": false
+    },
+    {
+      "table": "public.model_budget_provider_limits",
+      "role": "service_role",
+      "privilege": "TRIGGER",
+      "before": true,
+      "after": false
+    },
+    {
+      "table": "public.model_budget_provider_limits",
+      "role": "service_role",
+      "privilege": "MAINTAIN",
+      "before": true,
+      "after": false
+    },
+    {
+      "table": "public.model_budget_provider_limits",
+      "role": "service_role",
+      "privilege": "TRUNCATE",
+      "before": true,
+      "after": false
+    },
+    {
+      "table": "public.model_budget_provider_limits",
+      "role": "service_role",
+      "privilege": "REFERENCES",
+      "before": true,
+      "after": false
+    }
+  ],
+  "otherVectorsUnchanged": true
+}

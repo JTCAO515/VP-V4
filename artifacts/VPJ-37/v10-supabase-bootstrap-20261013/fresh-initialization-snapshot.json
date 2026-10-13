@@ -1,0 +1,44 @@
+{
+  "before": {
+    "root": [
+      {
+        "revision": 0,
+        "manifestNull": true
+      }
+    ],
+    "ready": false,
+    "users": 0,
+    "fences": 0,
+    "budgets": 0,
+    "members": 0,
+    "attempts": 0,
+    "sessions": 0,
+    "settings": false,
+    "operations": 0,
+    "mobileAccounts": 0,
+    "enabledControls": 0,
+    "activeOperations": 0,
+    "disabledControls": 12
+  },
+  "after": {
+    "root": [
+      {
+        "revision": 13,
+        "manifestNull": false
+      }
+    ],
+    "ready": true,
+    "users": 0,
+    "fences": 0,
+    "budgets": 0,
+    "members": 0,
+    "attempts": 0,
+    "sessions": 0,
+    "settings": false,
+    "operations": 12,
+    "mobileAccounts": 0,
+    "enabledControls": 12,
+    "activeOperations": 0,
+    "disabledControls": 0
+  }
+}
