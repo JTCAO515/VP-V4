@@ -12,12 +12,12 @@ export const freshOpsScopes = Object.freeze([
   ['provider','amap'], ['provider','deepseek'], ['provider','glm'], ['provider','qwen'],
 ]);
 const migration = 'supabase/migrations/20261012103151_vpj37_ops_control_w2.sql';
-const sourceHash = '87f24b4714bb7538f50de85392541b2ac96d12ab59137762e0370dd45722b553';
+const sourceHash = '5e07bc1ce41f236c0fd29ece8f9f15525c9e234e78f9a7a25ab22751082babdf';
 const emptyJournal = JSON.stringify({ schemaVersion:'ops-control-restore/1', revision:0,
   controls:freshOpsScopes.map(([kind,key])=>({scope:{kind,key},stopRevision:0})),
   budgets:[], retiredOperations:[], erasedActors:[],
 });
-export function freshOpsBootstrapSQL() {
+function ownedOpsBootstrapSQL(preservedUpgradeData = false) {
   const bytes=readFileSync(migration);
   if(createHash('sha256').update(bytes).digest('hex')!==sourceHash)throw Error('W2 fixture source changed: explicit review required');
   return `begin;
@@ -35,9 +35,9 @@ begin
     or exists(select 1 from ops_control_private.budget_fences_v1)
     or exists(select 1 from public.model_budget_scopes)
     or exists(select 1 from public.model_budget_attempts)
-    or exists(select 1 from public.turns)
+    ${preservedUpgradeData ? '' : `or exists(select 1 from public.turns)
     or exists(select 1 from turn_private.work)
-    or exists(select 1 from auth.users)
+    or exists(select 1 from auth.users)`}
     then raise exception 'W2_FIXTURE_NOT_PRISTINE';end if;
   if ops_control_private.recovery_ready_v1() then raise exception 'W2_FIXTURE_DEFAULT_DENIAL_LOST';end if;
   perform ops_control_private.reconcile_restore_v1(journal_n,encode(sha256(convert_to(journal_n::text,'UTF8')),'hex'));
@@ -77,8 +77,16 @@ begin
 end $fresh_fixture$;
 commit;`;
 }
+export function freshOpsBootstrapSQL() { return ownedOpsBootstrapSQL(); }
 export async function initializeFreshOpsFixture(db) {
   await db(freshOpsBootstrapSQL());
+}
+// Separate network-none upgrade-fixture path: the caller has just replayed W2
+// over its retained legacy rows and asserts its original snapshot before/after.
+// Ops itself must still be the exact new, revision-zero, disabled installation;
+// restored/reconciled controls, receipts, fences and budget records still refuse.
+export async function initializeOwnedUpgradeOpsFixture(db) {
+  await db(ownedOpsBootstrapSQL(true));
 }
 
 // The caller has just created this owned temporary stack and copied product migrations.
@@ -88,11 +96,15 @@ export function stageFreshOpsFixtureBootstrap(workdir) {
   const target=realpathSync(workdir),temp=realpathSync(tmpdir()),within=relative(temp,target);
   if(!within||within==='..'||within.startsWith('..'+sep)||isAbsolute(within))throw Error('W2 fixture directory outside temporary root');
   const folder=join(target,'supabase','migrations'),name='20990101000000_disposable_w2_fixture_initialization.sql';
+  for(const path of [join(target,'supabase'),folder])if(lstatSync(path).isSymbolicLink()||!lstatSync(path).isDirectory())throw Error('W2 fixture migration directory must be owned without symlinks');
   if(!existsSync(join(folder,migration.split('/').at(-1))))return false; // Historical pre-W2 prefix remains unchanged.
   const files=readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort();
   const copied=readdirSync(folder).filter(f=>f.endsWith('.sql')).sort();
   if(JSON.stringify(files)!==JSON.stringify(copied))throw Error('W2 fixture copied migration inventory differs');
-  for(const file of files)if(!readFileSync(join(folder,file)).equals(readFileSync(join('supabase/migrations',file))))throw Error('W2 fixture copied product source differs');
+  for(const file of files){
+    if(lstatSync(join(folder,file)).isSymbolicLink()||!lstatSync(join(folder,file)).isFile())throw Error('W2 fixture copied product source must be regular without symlinks');
+    if(!readFileSync(join(folder,file)).equals(readFileSync(join('supabase/migrations',file))))throw Error('W2 fixture copied product source differs');
+  }
   writeFileSync(join(folder,name),freshOpsBootstrapSQL(),{flag:'wx',mode:0o600});
   return true;
 }

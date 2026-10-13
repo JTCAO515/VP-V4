@@ -39,3 +39,16 @@ test('historical pre-W2 fixture prefix receives no activation or additional migr
     assert.deepEqual(readdirSync(join(dir,'supabase/migrations')),[]);
   }finally{rmSync(dir,{recursive:true,force:true});}
 });
+test('byte-identical migration symlinks and linked migration directories refuse before initialization',()=>{
+  const dir=mkdtempSync(join(tmpdir(),'vp-w2-bootstrap-'));
+  try{
+    mkdirSync(join(dir,'supabase'));cpSync('supabase/migrations',join(dir,'supabase/migrations'),{recursive:true});
+    const source=join(dir,'supabase/migrations/20261012103151_vpj37_ops_control_w2.sql');
+    rmSync(source);symlinkSync(join(process.cwd(),'supabase/migrations/20261012103151_vpj37_ops_control_w2.sql'),source);
+    assert.throws(()=>stageFreshOpsFixtureBootstrap(dir),/regular without symlinks/);
+    assert.equal(existsSync(join(dir,'supabase/migrations/20990101000000_disposable_w2_fixture_initialization.sql')),false);
+    rmSync(join(dir,'supabase/migrations'),{recursive:true});
+    symlinkSync(join(process.cwd(),'supabase/migrations'),join(dir,'supabase/migrations'),'dir');
+    assert.throws(()=>stageFreshOpsFixtureBootstrap(dir),/owned without symlinks/);
+  }finally{rmSync(dir,{recursive:true,force:true});}
+});

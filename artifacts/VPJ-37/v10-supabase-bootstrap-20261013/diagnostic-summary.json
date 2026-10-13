@@ -1,0 +1,326 @@
+{
+  "staticFunctionsMatched": 52,
+  "staticRelationsCompared": 8,
+  "differences": [
+    {
+      "signature": "public.model_budget_scopes",
+      "fields": [
+        "acl",
+        "policies"
+      ],
+      "expectedAcl": "{postgres=arwdDxtm/postgres,service_role=arw/postgres}",
+      "actualAcl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "expectedConstraints": [
+        [
+          "model_budget_scopes_check",
+          "CHECK (((task_limit_micros >= 1) AND (task_limit_micros <= limit_micros)))"
+        ],
+        [
+          "model_budget_scopes_concurrency_limit_check",
+          "CHECK (((concurrency_limit >= 1) AND (concurrency_limit <= 1000)))"
+        ],
+        [
+          "model_budget_scopes_currency_check",
+          "CHECK ((currency = ANY (ARRAY['CNY'::text, 'USD'::text])))"
+        ],
+        [
+          "model_budget_scopes_limit_micros_check",
+          "CHECK (((limit_micros >= 1) AND (limit_micros <= '1000000000000'::bigint)))"
+        ],
+        [
+          "model_budget_scopes_owner_id_fkey",
+          "FOREIGN KEY (owner_id) REFERENCES auth.users(id) ON DELETE RESTRICT"
+        ],
+        [
+          "model_budget_scopes_pkey",
+          "PRIMARY KEY (id)"
+        ],
+        [
+          "model_budget_scopes_task_attempt_limit_check",
+          "CHECK (((task_attempt_limit >= 1) AND (task_attempt_limit <= 1000)))"
+        ]
+      ],
+      "actualConstraints": [
+        [
+          "model_budget_scopes_check",
+          "CHECK (((task_limit_micros >= 1) AND (task_limit_micros <= limit_micros)))"
+        ],
+        [
+          "model_budget_scopes_concurrency_limit_check",
+          "CHECK (((concurrency_limit >= 1) AND (concurrency_limit <= 1000)))"
+        ],
+        [
+          "model_budget_scopes_currency_check",
+          "CHECK ((currency = ANY (ARRAY['CNY'::text, 'USD'::text])))"
+        ],
+        [
+          "model_budget_scopes_limit_micros_check",
+          "CHECK (((limit_micros >= 1) AND (limit_micros <= '1000000000000'::bigint)))"
+        ],
+        [
+          "model_budget_scopes_owner_id_fkey",
+          "FOREIGN KEY (owner_id) REFERENCES auth.users(id) ON DELETE RESTRICT"
+        ],
+        [
+          "model_budget_scopes_pkey",
+          "PRIMARY KEY (id)"
+        ],
+        [
+          "model_budget_scopes_task_attempt_limit_check",
+          "CHECK (((task_attempt_limit >= 1) AND (task_attempt_limit <= 1000)))"
+        ]
+      ],
+      "expectedPolicies": [
+        {
+          "name": "native_mobile_access_v2",
+          "check": "identity_private.mobile_access_v2()",
+          "roles": "{16385}",
+          "using": "identity_private.mobile_access_v2()",
+          "command": "*",
+          "permissive": false
+        }
+      ],
+      "actualPolicies": [
+        {
+          "name": "native_mobile_access_v2",
+          "check": "identity_private.mobile_access_v2()",
+          "roles": "{16444}",
+          "using": "identity_private.mobile_access_v2()",
+          "command": "*",
+          "permissive": false
+        }
+      ],
+      "actualPolicyRoleNames": [
+        {
+          "roles": [
+            "authenticated"
+          ],
+          "policy": "native_mobile_access_v2"
+        }
+      ]
+    },
+    {
+      "signature": "public.model_budget_attempts",
+      "fields": [
+        "acl",
+        "policies"
+      ],
+      "expectedAcl": "{postgres=arwdDxtm/postgres,service_role=arw/postgres}",
+      "actualAcl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "expectedConstraints": [
+        [
+          "model_budget_attempts_actual_micros_check",
+          "CHECK (((actual_micros >= 0) AND (actual_micros <= '1000000000000'::bigint)))"
+        ],
+        [
+          "model_budget_attempts_check",
+          "CHECK (((status = 'settled'::text) = (actual_micros IS NOT NULL)))"
+        ],
+        [
+          "model_budget_attempts_pkey",
+          "PRIMARY KEY (scope_id, attempt_id)"
+        ],
+        [
+          "model_budget_attempts_reserved_micros_check",
+          "CHECK (((reserved_micros >= 1) AND (reserved_micros <= '1000000000000'::bigint)))"
+        ],
+        [
+          "model_budget_attempts_scope_id_provider_fkey",
+          "FOREIGN KEY (scope_id, provider) REFERENCES public.model_budget_provider_limits(scope_id, provider) ON DELETE RESTRICT"
+        ],
+        [
+          "model_budget_attempts_status_check",
+          "CHECK ((status = ANY (ARRAY['reserved'::text, 'dispatched'::text, 'pending'::text, 'settled'::text, 'released'::text])))"
+        ]
+      ],
+      "actualConstraints": [
+        [
+          "model_budget_attempts_actual_micros_check",
+          "CHECK (((actual_micros >= 0) AND (actual_micros <= '1000000000000'::bigint)))"
+        ],
+        [
+          "model_budget_attempts_check",
+          "CHECK (((status = 'settled'::text) = (actual_micros IS NOT NULL)))"
+        ],
+        [
+          "model_budget_attempts_pkey",
+          "PRIMARY KEY (scope_id, attempt_id)"
+        ],
+        [
+          "model_budget_attempts_reserved_micros_check",
+          "CHECK (((reserved_micros >= 1) AND (reserved_micros <= '1000000000000'::bigint)))"
+        ],
+        [
+          "model_budget_attempts_scope_id_provider_fkey",
+          "FOREIGN KEY (scope_id, provider) REFERENCES public.model_budget_provider_limits(scope_id, provider) ON DELETE RESTRICT"
+        ],
+        [
+          "model_budget_attempts_status_check",
+          "CHECK ((status = ANY (ARRAY['reserved'::text, 'dispatched'::text, 'pending'::text, 'settled'::text, 'released'::text])))"
+        ]
+      ],
+      "expectedPolicies": [
+        {
+          "name": "native_mobile_access_v2",
+          "check": "identity_private.mobile_access_v2()",
+          "roles": "{16385}",
+          "using": "identity_private.mobile_access_v2()",
+          "command": "*",
+          "permissive": false
+        }
+      ],
+      "actualPolicies": [
+        {
+          "name": "native_mobile_access_v2",
+          "check": "identity_private.mobile_access_v2()",
+          "roles": "{16444}",
+          "using": "identity_private.mobile_access_v2()",
+          "command": "*",
+          "permissive": false
+        }
+      ],
+      "actualPolicyRoleNames": [
+        {
+          "roles": [
+            "authenticated"
+          ],
+          "policy": "native_mobile_access_v2"
+        }
+      ]
+    },
+    {
+      "signature": "public.model_budget_provider_limits",
+      "fields": [
+        "acl",
+        "policies"
+      ],
+      "expectedAcl": "{postgres=arwdDxtm/postgres,service_role=arw/postgres}",
+      "actualAcl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "expectedConstraints": [
+        [
+          "model_budget_provider_limits_check",
+          "CHECK (((attempt_limit_micros >= 1) AND (attempt_limit_micros <= limit_micros)))"
+        ],
+        [
+          "model_budget_provider_limits_limit_micros_check",
+          "CHECK (((limit_micros >= 1) AND (limit_micros <= '1000000000000'::bigint)))"
+        ],
+        [
+          "model_budget_provider_limits_model_check",
+          "CHECK ((model ~ '^[A-Za-z0-9._-]{1,100}$'::text))"
+        ],
+        [
+          "model_budget_provider_limits_pkey",
+          "PRIMARY KEY (scope_id, provider)"
+        ],
+        [
+          "model_budget_provider_limits_price_version_check",
+          "CHECK ((price_version ~ '^[A-Za-z0-9._-]{1,100}$'::text))"
+        ],
+        [
+          "model_budget_provider_limits_provider_check",
+          "CHECK ((provider = ANY (ARRAY['qwen'::text, 'glm'::text, 'deepseek'::text])))"
+        ],
+        [
+          "model_budget_provider_limits_scope_id_fkey",
+          "FOREIGN KEY (scope_id) REFERENCES public.model_budget_scopes(id) ON DELETE RESTRICT"
+        ]
+      ],
+      "actualConstraints": [
+        [
+          "model_budget_provider_limits_check",
+          "CHECK (((attempt_limit_micros >= 1) AND (attempt_limit_micros <= limit_micros)))"
+        ],
+        [
+          "model_budget_provider_limits_limit_micros_check",
+          "CHECK (((limit_micros >= 1) AND (limit_micros <= '1000000000000'::bigint)))"
+        ],
+        [
+          "model_budget_provider_limits_model_check",
+          "CHECK ((model ~ '^[A-Za-z0-9._-]{1,100}$'::text))"
+        ],
+        [
+          "model_budget_provider_limits_pkey",
+          "PRIMARY KEY (scope_id, provider)"
+        ],
+        [
+          "model_budget_provider_limits_price_version_check",
+          "CHECK ((price_version ~ '^[A-Za-z0-9._-]{1,100}$'::text))"
+        ],
+        [
+          "model_budget_provider_limits_provider_check",
+          "CHECK ((provider = ANY (ARRAY['qwen'::text, 'glm'::text, 'deepseek'::text])))"
+        ],
+        [
+          "model_budget_provider_limits_scope_id_fkey",
+          "FOREIGN KEY (scope_id) REFERENCES public.model_budget_scopes(id) ON DELETE RESTRICT"
+        ]
+      ],
+      "expectedPolicies": [
+        {
+          "name": "native_mobile_access_v2",
+          "check": "identity_private.mobile_access_v2()",
+          "roles": "{16385}",
+          "using": "identity_private.mobile_access_v2()",
+          "command": "*",
+          "permissive": false
+        }
+      ],
+      "actualPolicies": [
+        {
+          "name": "native_mobile_access_v2",
+          "check": "identity_private.mobile_access_v2()",
+          "roles": "{16444}",
+          "using": "identity_private.mobile_access_v2()",
+          "command": "*",
+          "permissive": false
+        }
+      ],
+      "actualPolicyRoleNames": [
+        {
+          "roles": [
+            "authenticated"
+          ],
+          "policy": "native_mobile_access_v2"
+        }
+      ]
+    }
+  ],
+  "originalGuards": {
+    "installed": false,
+    "profile": true,
+    "conversation": true,
+    "result": true,
+    "turnSchema": true,
+    "turnRuntime": true,
+    "writeHooks": true,
+    "hooks": true,
+    "profileHooks": true
+  },
+  "strictFreshRefusal": {
+    "beforeStatus": 0,
+    "afterStatus": 0,
+    "refused": true,
+    "sourceUnavailable": true,
+    "unchanged": true,
+    "initial": {
+      "root": [
+        {
+          "revision": 0,
+          "manifestNull": true
+        }
+      ],
+      "ready": false,
+      "users": 0,
+      "fences": 0,
+      "budgets": 0,
+      "attempts": 0,
+      "controls": 12,
+      "operations": 0
+    }
+  },
+  "startup": "PASS_DEFAULT_DENIAL_DIAGNOSTIC_STACK",
+  "freshInitialization": "FAIL_SOURCE_UNAVAILABLE",
+  "candidateApplied": false,
+  "candidateInitialization": "UNRUN"
+}

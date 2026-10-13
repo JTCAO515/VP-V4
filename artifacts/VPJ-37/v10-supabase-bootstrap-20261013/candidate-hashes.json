@@ -1,0 +1,35 @@
+{
+  "source": "5e07bc1ce41f236c0fd29ece8f9f15525c9e234e78f9a7a25ab22751082babdf",
+  "candidate": "543e2617627fe7eddb8564ee4027e4c59cb986d77db2508da12a7a37ae633dea",
+  "applied": false,
+  "expectedEffectiveDelta": {
+    "service_role": {
+      "DELETE": [
+        true,
+        false
+      ],
+      "TRUNCATE": [
+        true,
+        false
+      ],
+      "REFERENCES": [
+        true,
+        false
+      ],
+      "TRIGGER": [
+        true,
+        false
+      ],
+      "MAINTAIN": [
+        true,
+        false
+      ]
+    },
+    "SELECT_INSERT_UPDATE": "unchanged true",
+    "postgres": "unchanged all true",
+    "PUBLIC_anon_authenticated": "unchanged all false"
+  },
+  "guardBytesUnchanged": false,
+  "originalEightGuardsUnchanged": true,
+  "staticPolicyRoleChange": "Budget three-table policy role identity normalized to exact sorted names; expected only authenticated. No role changes or grants."
+}

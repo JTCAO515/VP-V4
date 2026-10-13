@@ -1,0 +1,12 @@
+✔ owned temporary fixture preserves all product bytes and appends a separate guarded initialization (37.56225ms)
+✔ fixture staging refuses source mutations and repository or symlink destinations (28.10625ms)
+✔ historical pre-W2 fixture prefix receives no activation or additional migration (0.511083ms)
+✔ byte-identical migration symlinks and linked migration directories refuse before initialization (25.659125ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 130.587042

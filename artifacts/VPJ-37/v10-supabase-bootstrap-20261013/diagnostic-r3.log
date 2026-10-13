@@ -1,0 +1,11 @@
+OWNED_RESOURCE {"project":"vp-ops-review-0fa2883c","target":"/var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/vpj14-ops-TcUbzY"}
+OWNED_PROCESS {"code":1,"sourceUnavailable":true,"syntaxError":false}
+file:///private/var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/v10-bootstrap-diagnostic-XKoo5z/run.mjs:35
+  if(started!==0)throw new Error('Disposable Ops stack failed to start; credential-bearing output suppressed');
+                       ^
+
+Error: Disposable Ops stack failed to start; credential-bearing output suppressed
+    at file:///private/var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/v10-bootstrap-diagnostic-XKoo5z/run.mjs:35:24
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+Node.js v26.8.2
