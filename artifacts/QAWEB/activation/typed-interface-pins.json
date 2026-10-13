@@ -1,0 +1,18 @@
+{
+  "mainRevision": "ea9ad482e8697f41299d94b448e11822662409af",
+  "files": [
+    {
+      "path": "lib/server/qa-agent/target.ts",
+      "sha256": "4bd3d303a2d91881e41d19cfc44e04cd49ff8475fb418a540f5fe062a6756cf6"
+    },
+    {
+      "path": "lib/server/qa-agent/hosted-profile.ts",
+      "sha256": "70958ae30f8dc17fa8bf21a20fdda45e7167e6d8e83e909732ec41667b1903f5"
+    },
+    {
+      "path": "lib/server/qa-agent/worker.ts",
+      "sha256": "c34785aa897de3a36d315644b969c159ee447dbb8cdbdc43b7cbd0cd33287a4e"
+    }
+  ],
+  "meaning": "read-only source identity; not target or activation evidence"
+}

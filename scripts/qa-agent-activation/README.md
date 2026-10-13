@@ -74,7 +74,11 @@ inventory记录发布新policy/scope前的共享现存IDs/notice版本/hash；�
 
 ## backend接缝与运行边界
 
-阶段一用闭合 /4+projectRef接口候选，复用既有 /3 tariff离线验证；明确profileValidation=CANDIDATE_NOT_BACKEND_VERIFIED且preflight阻断。Main整合目标绑定backend函数后，owner替换为其正式typed validator并补验；不能把候选标记改成成功骗过验证。hosttarget /2、image/sourceBuild/profileHash和trusted composition root由原package/backend owner负责，kit不改那些目录。
+已接Main稳定backend接口：使用正式 `parseQaHostedProfile` 验证闭合 /4，使用 `readApprovedQaTarget` 获取明确operator目标，再经 `requireQaProfileTarget` 核对trusted composition binding。私有 /3 shim已从当前工具删除。生成和preflight都会重新执行正式验证，输出profileValidation=BACKEND_TYPED_VALIDATED；这只表示源码接口验证。
+
+package同时包含 `workerJobCandidate`（正式 `qaJobConfig` 生成 /2）、canonical workerJobHash/profileHash，绑定同一ref/URL/owner/policy/scope/endpoint。preflight复算job并拒绝缺ref、/3、其他project/URL和policy/scope替换。hosttarget /2、image/build和owned-slot mount仍由原package owner审核，kit不启用它们。
+
+历史工具允许离线parse /3留证；正式runtime root拒绝 /3或旧job /1，不能把旧helper或历史candidate当作实际执行入口。PROFILE_VALIDATION_PENDING接缝已解决；缺真实actor/role/owned-slot、full155、backup/restore、policy同意或预算证据仍各自阻断。
 
 运行和停用沿原账本/生命周期：每次leaseToken对应原attempt，在同目标reserve→dispatch→真实usage→settle。unknown费用仍pending；不抹零或免费重试。停止先禁用Web admission与新预算，停止poll并drain现有host，再终端撤销policy，核账；不删除ledger/consent/data、不复活撤销policy。
 

@@ -52,7 +52,7 @@ test('reservation integer arithmetic and bounded budget reject underfunding, ove
  for(const modify of [x=>x.budget.attemptLimitMicros=1,x=>x.budget.limitMicros=0,x=>x.budget.taskAttemptLimit=9,x=>x.budget.concurrencyLimit=2,x=>x.budget.maxOutputTokens=4097,x=>x.pricing.currency='EUR',x=>x.pricing.inputMicrosPerMillion=Number.MAX_SAFE_INTEGER,x=>x.budget.limitMicros=1.1,x=>x.pricing.coverage.inputTokens=32768]) {const x=input();modify(x);assert.throws(()=>build(x));}
 });
 test('shared 75-plus-80 exact source set and verified recovery required; current75 stays blocked',()=>{
- const b=build(),s=snapshot(b);assert.equal(preflight(b,s,now).reviewReady,false);assert.deepEqual(preflight(b,s,now).blockers,['PROFILE_VALIDATION_PENDING']);assert.equal(preflight(b,s,now).activationAllowed,false);
+ const b=build(),s=snapshot(b);assert.equal(preflight(b,s,now).reviewReady,true);assert.deepEqual(preflight(b,s,now).blockers,[]);assert.equal(preflight(b,s,now).activationAllowed,false);
  for(const patch of [{migrations:migrationManifest.baseline75},{migrations:s.migrations.slice(1)},{migrations:[...s.migrations,'20269999000000']},{migrations:[...s.migrations].reverse()},{reviewedMigrations:s.reviewedMigrations.slice(1)},{reviewedMigrations:[...s.reviewedMigrations].reverse()},{reviewedMigrations:[...s.reviewedMigrations.slice(1),'20269999000000']},{migrationManifestHash:'a'.repeat(64)},{migrations:[...s.migrations.slice(1),'20269999000000']},{qaRpcPresent:false},{turnDataPrivatePresent:false},{qaSchemaFingerprintMatches:false},{backupRestore:{backupVerified:false}},{workerStopped:false},{webDisabled:false},{projectId:'another-project'},{linkId:'another-account'},{ownerId:'another-user'},{reviewedPackageHash:'c'.repeat(64)},{existingPolicyIds:[b.notice.policyId]},{existingNoticeHashes:[b.noticeHash]},{existingScopeIds:[b.scopeInsertParameters.id]},{observedAt:'2026-09-13T00:00:00Z'}]) {
   const failure={migrations:'EXACT_REVIEWED_155_MIGRATIONS',reviewedMigrations:'PINNED_SHARED_75_PLUS_80',migrationManifestHash:'PINNED_SHARED_75_PLUS_80',qaRpcPresent:'QA_SCHEMA',turnDataPrivatePresent:'QA_SCHEMA',qaSchemaFingerprintMatches:'QA_SCHEMA',backupRestore:'VERIFIED_SHARED_BACKUP_RESTORE',workerStopped:'STOPPED_HOST_AND_WEB',webDisabled:'STOPPED_HOST_AND_WEB',projectId:'CURRENT_SHARED_TARGET',linkId:'CURRENT_SHARED_TARGET',ownerId:'OWNER',reviewedPackageHash:'EXACT_PACKAGE_REVIEW',existingPolicyIds:'FRESH_POLICY_ONLY',existingNoticeHashes:'FRESH_POLICY_ONLY',existingScopeIds:'FRESH_BUDGET_ONLY',observedAt:'STALE_OBSERVATION',supabaseUrl:'CURRENT_SHARED_TARGET',accessBinding:'CURRENT_TRUSTED_ACCESS_SLOT',identityReceipts:'TARGET_IDENTITY_RECEIPTS',exactConsent:'EXACT_CURRENT_TARGET_CONSENT'}[Object.keys(patch)[0]];
   assert.ok(failure);assert.ok(preflight(b,{...s,...patch},now).blockers.includes(failure),failure);
@@ -97,7 +97,7 @@ test('stable Main migration hash and actual v2 QA RPC ACL are mandatory; v1 and 
  for(const patch of [{qaReadyGroupsAcl:null},{qaReadyGroupsAcl:{...s.qaReadyGroupsAcl,signature:'public.qa_ready_groups_v1(integer)'}},{qaReadyGroupsAcl:{...s.qaReadyGroupsAcl,signature:'public.qa_ready_groups_v2(integer)'}},{qaReadyGroupsAcl:{...s.qaReadyGroupsAcl,signature:'public.text_ready_groups_v1(integer)'}},...['publicExecute','anonExecute','authenticatedExecute'].map(k=>({qaReadyGroupsAcl:{...s.qaReadyGroupsAcl,[k]:true}})),{qaReadyGroupsAcl:{...s.qaReadyGroupsAcl,serviceRoleExecute:false}}]) assert.ok(preflight(b,{...s,...patch},now).blockers.includes('QA_READY_GROUPS_SERVICE_ROLE_ONLY'));
  const file=new URL('20261013050429_qa_agent_web.sql',sourceRoot),original=readFileSync(file);
  try {writeFileSync(file,Buffer.concat([original,Buffer.from('\n-- drift')]));assert.ok(preflight(b,s,now).blockers.includes('SOURCE_MIGRATION_DRIFT'));} finally {writeFileSync(file,original);}
- assert.equal(preflight(b,s,now).reviewReady,false);assert.deepEqual(preflight(b,s,now).blockers,['PROFILE_VALIDATION_PENDING']);
+ assert.equal(preflight(b,s,now).reviewReady,true);assert.deepEqual(preflight(b,s,now).blockers,[]);
 });
 
 test('official legal input fee stays below unchanged full-context reserve; incomplete coverage rejects',()=>{
@@ -138,12 +138,12 @@ test('current trusted owned slot is valid; backup, role, foreign job receipts an
  for(const change of [x=>x.targetReceipts.projectRef=OTHER_PROJECT,x=>delete x.targetReceipts,x=>x.targetReceipts.ownerId='other',x=>x.targetReceipts.accountEvidenceHash=null,x=>x.targetReceipts.budgetEvidenceHash='b'.repeat(64)]) {const x=input();change(x);assert.throws(()=>build(x));}
  const b=build(),s=snapshot(b);
  const current=preflight(b,{...s,existingPolicyIds:['old-disabled-policy'],existingNoticeVersions:['old-version'],existingNoticeHashes:['a'.repeat(64)],existingScopeIds:['old-disabled-budget']},now);
- assert.deepEqual(current.blockers,['PROFILE_VALIDATION_PENDING']); // Existing dzt slot/inventory does not require new keys.
+ assert.deepEqual(current.blockers,[]); // Existing dzt slot/inventory does not require new keys.
  for(const patch of [{supabaseUrl:`https://${OTHER_PROJECT}.supabase.co`},{backupRestore:null},{backupRestore:{...s.backupRestore,backupVerified:false}},{backupRestore:{...s.backupRestore,restoreVerified:false}},{backupRestore:{...s.backupRestore,baselineVersionSetHash:'a'.repeat(64)}},{backupRestore:{...s.backupRestore,projectRef:OTHER_PROJECT}},{accessBinding:{...s.accessBinding,sourceProjectRef:OTHER_PROJECT}},{accessBinding:{...s.accessBinding,authorizedForTarget:false}},{accessBinding:{...s.accessBinding,rpcRole:'authenticated'}},{accessBinding:{...s.accessBinding,slotId:null}},{accessBinding:null},{identityReceipts:{...s.identityReceipts,projectRef:OTHER_PROJECT}},{identityReceipts:{...s.identityReceipts,scopeId:'old-budget'}},{identityReceipts:{...s.identityReceipts,policyId:'old-policy'}},{identityReceipts:{...s.identityReceipts,hostedProfileHash:'a'.repeat(64)}},{exactConsent:null},{exactConsent:{...s.exactConsent,accepted:false}},{exactConsent:{...s.exactConsent,revoked:true}},{exactConsent:{...s.exactConsent,projectRef:OTHER_PROJECT}},{exactConsent:{...s.exactConsent,noticeHash:'a'.repeat(64)}},{existingPolicyIds:[b.notice.policyId]},{existingScopeIds:[b.scopeInsertParameters.id]}]) {
   const failure={supabaseUrl:'CURRENT_SHARED_TARGET',backupRestore:'VERIFIED_SHARED_BACKUP_RESTORE',accessBinding:'CURRENT_TRUSTED_ACCESS_SLOT',identityReceipts:'TARGET_IDENTITY_RECEIPTS',exactConsent:'EXACT_CURRENT_TARGET_CONSENT',existingPolicyIds:'FRESH_POLICY_ONLY',existingScopeIds:'FRESH_BUDGET_ONLY'}[Object.keys(patch)[0]];
   assert.ok(preflight(b,{...s,...patch},now).blockers.includes(failure),failure);
  }
- const swapped=structuredClone(b);swapped.hostedProfile.projectRef=OTHER_PROJECT;const {packageHash,...body}=swapped;swapped.packageHash=digest(body);assert.throws(()=>preflight(swapped,s,now),/PACKAGE_CHANGED/);
+ const swapped=structuredClone(b);swapped.hostedProfile.projectRef=OTHER_PROJECT;const {packageHash,...body}=swapped;swapped.packageHash=digest(body);assert.throws(()=>preflight(swapped,s,now),/PACKAGE_CHANGED|QA hosted profile unavailable/);
 });
 test('missing pinned source file fails closed without repository mutation',()=>{
  const name=Object.keys(migrationManifest.sourceSha256)[0],file=new URL(name,sourceRoot),bytes=readFileSync(file);
@@ -158,6 +158,17 @@ test('shared operator target works through offline CLI; a different job target c
  writeFileSync(source,JSON.stringify(x));writeFileSync(targetFile,JSON.stringify(target));
  execFileSync(process.execPath,[new URL('../../../scripts/qa-agent-activation/cli.mjs',import.meta.url).pathname,'generate',source.pathname,output.pathname,targetFile.pathname]);
  const b=JSON.parse(readFileSync(output));assert.equal(b.projectId,SHARED_PROJECT);assert.equal(b.activationAllowed,false);
- assert.equal(b.profileValidation,'CANDIDATE_NOT_BACKEND_VERIFIED');
+ assert.equal(b.profileValidation,'BACKEND_TYPED_VALIDATED');
  assert.throws(()=>generate({...x,projectId:OTHER_PROJECT,supabaseUrl:`https://${OTHER_PROJECT}.supabase.co`},{now:time,approvedTarget:target}),/TARGET_OR_MODE/);
+});
+
+test('formal profile4 and worker job2 bind the operator root and cannot bypass pending recovery',()=>{
+ const b=build(),s=snapshot(b);assert.equal(b.profileValidation,'BACKEND_TYPED_VALIDATED');
+ assert.equal(b.workerJobCandidate.schemaVersion,'qa-agent-worker/2');assert.equal(b.workerJobCandidate.projectRef,PROJECT);assert.equal(b.workerJobCandidate.databaseUrl,target.supabaseUrl);
+ assert.equal(b.workerJobCandidate.ownerId,b.scopeInsertParameters.owner_id);assert.equal(b.workerJobCandidate.policyId,b.notice.policyId);assert.equal(b.workerJobCandidate.budget.scopeId,b.scopeInsertParameters.id);
+ for(const change of [x=>delete x.hostedProfile.projectRef,x=>x.hostedProfile.schemaVersion='vpj07-hosted-text-worker/3',x=>x.hostedProfile.projectRef=OTHER_PROJECT,x=>x.workerJobCandidate.projectRef=OTHER_PROJECT,x=>x.workerJobCandidate.databaseUrl=`https://${OTHER_PROJECT}.supabase.co`,x=>x.workerJobCandidate.budget.scopeId='wrong-scope',x=>x.workerJobCandidate.policyId='old-policy']) {
+  const altered=structuredClone(b);change(altered);const {packageHash,...body}=altered;altered.packageHash=digest(body);assert.throws(()=>preflight(altered,s,now));
+ }
+ const pending=preflight(b,{...s,backupRestore:{...s.backupRestore,backupVerified:false,restoreVerified:false}},now);
+ assert.ok(pending.blockers.includes('VERIFIED_SHARED_BACKUP_RESTORE'));assert.equal(pending.reviewReady,false);assert.equal(pending.activationAllowed,false);
 });

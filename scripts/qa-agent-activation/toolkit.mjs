@@ -3,7 +3,8 @@ import { createHash, randomUUID } from 'node:crypto';
 import { readFileSync, readdirSync } from 'node:fs';
 import { PROTOCOL_MODELS } from '../../lib/server/model-gateway/adapters/provider-protocol.ts';
 import { isQwenEndpoint } from '../../lib/server/model-gateway/adapters/provider-endpoints.ts';
-import { parseQaHostedProfile } from '../../lib/server/qa-agent/hosted-profile.ts';
+import { parseQaHostedProfile, requireQaProfileTarget, qaJobConfig } from '../../lib/server/qa-agent/hosted-profile.ts';
+import { readApprovedQaTarget } from '../../lib/server/qa-agent/target.ts';
 export const SHARED_PROJECT = 'dzqdzetcctkhbrhlxxgn';
 export const LINK = 'link_6acdbe0471c081919ff47de24ca53b0f';
 export const MODE = 'qa_session_history_v1';
@@ -46,8 +47,8 @@ function clean(x) {
 }
 export function validateTarget(binding) {
   exact(binding, 'projectRef supabaseUrl', 'OPERATOR_TARGET_REQUIRED');
-  if (typeof binding.projectRef!=='string' || !/^[a-z0-9]{20}$/.test(binding.projectRef) || binding.projectRef!==SHARED_PROJECT
-    || binding.supabaseUrl!==`https://${binding.projectRef}.supabase.co`) fail('CURRENT_SHARED_TARGET_BINDING');
+  const approved=readApprovedQaTarget(binding.projectRef);
+  if (!approved || binding.supabaseUrl!==approved.databaseUrl) fail('CURRENT_SHARED_TARGET_BINDING');
   return Object.freeze({...binding});
 }
 function targetReceipts(r, input, now) {
@@ -56,14 +57,14 @@ function targetReceipts(r, input, now) {
     || !HASH.test(r.accountEvidenceHash) || r.budgetEvidenceHash!==input.budget.evidence.sha256
     || !stamp(r.observedAt) || Date.parse(r.observedAt)>now || now-Date.parse(r.observedAt)>3600000) fail('TARGET_RECEIPTS');
 }
-// Closed /4 interface candidate. Stable backend validation is required before delivery.
-function boundProfile(profile) {
-  const {projectRef,...legacyShape}=profile;
-  validateTarget({projectRef,supabaseUrl:`https://${projectRef}.supabase.co`});
+/** Formal closed /4 validator plus separate operator composition binding; offline only. */
+function boundProfile(profile, target) {
+  validateTarget(target);
   if (profile.schemaVersion!=='vpj07-hosted-text-worker/4') fail('BOUND_PROFILE');
-  // Reuse the accepted tariff/limits validator offline; this never invokes its worker.
-  const validated=parseQaHostedProfile({...legacyShape,schemaVersion:'vpj07-hosted-text-worker/3'});
-  return Object.freeze({...validated,schemaVersion:'vpj07-hosted-text-worker/4',projectRef});
+  const validated=parseQaHostedProfile(profile);
+  const root=requireQaProfileTarget(validated,target.projectRef);
+  if (root.databaseUrl!==target.supabaseUrl) fail('BOUND_PROFILE');
+  return validated;
 }
 export function generate(input, { now = Date.now(), approvedTarget } = {}) {
   clean(input);
@@ -110,16 +111,17 @@ export function generate(input, { now = Date.now(), approvedTarget } = {}) {
   const hostedProfile=boundProfile({schemaVersion:'vpj07-hosted-text-worker/4',projectRef:target.projectRef,pollIntervalMs:1000,maxLifetimeMs:60000,drainMs:10000,
     concurrency:1,groupLimit:1,modes:[MODE],planning:null,qwen:{priceVersion:p.priceVersion,
       pricing:{mode:p.mode,inputMicrosPerMillion:p.inputMicrosPerMillion,outputMicrosPerMillion:p.outputMicrosPerMillion,cachedInputMicrosPerMillion:p.cachedInputMicrosPerMillion},
-      reservedMicros:Number(worst),maxOutputTokens:b.maxOutputTokens,timeoutMs:b.timeoutMs,configurationId:c.id,configurationVersion:c.version}});
+      reservedMicros:Number(worst),maxOutputTokens:b.maxOutputTokens,timeoutMs:b.timeoutMs,configurationId:c.id,configurationVersion:c.version}},target);
+  const workerJobCandidate=qaJobConfig(hostedProfile,input.ownerId,policyId,scopeId,s.endpoint);
   const result={schemaVersion:'qa-activation-review/2',projectId:target.projectRef,supabaseUrl:target.supabaseUrl,targetBinding:target,linkId:LINK,generatedAt:new Date(now).toISOString(),status:'UNPUBLISHED_DISABLED',
-    activationAllowed:false,policyInserted:false,workerEnabled:false,profileValidation:'CANDIDATE_NOT_BACKEND_VERIFIED',migrationManifestHash:MIGRATION_MANIFEST_HASH,notice,noticeHash,inputDigest:digest(input),
+    activationAllowed:false,policyInserted:false,workerEnabled:false,profileValidation:'BACKEND_TYPED_VALIDATED',migrationManifestHash:MIGRATION_MANIFEST_HASH,notice,noticeHash,inputDigest:digest(input),
     policyInsertParameters:{id:policyId,provider:s.provider,recipient:s.recipient,endpoint:s.endpoint,source_region:s.sourceRegion,processing_region:s.processingRegion,
       storage_region:s.storageRegion,terms_version:s.termsVersion,notice_version:noticeVersion,notice_hash:noticeHash,notice_zh:notice.noticeZh,notice_en:notice.noticeEn,
       retention:notice.retention,context_mode:MODE,effective_at:v.effectiveAt,expires_at:v.expiresAt,terms_recheck_at:v.termsRecheckAt,revoked_at:null},
     scopeInsertParameters:{id:scopeId,owner_id:input.ownerId,currency:p.currency,limit_micros:b.limitMicros,task_limit_micros:b.taskLimitMicros,
       task_attempt_limit:b.taskAttemptLimit,concurrency_limit:1,enabled:false,frozen:false,expires_at:v.expiresAt},
     providerLimitInsertParameters:{scope_id:scopeId,provider:s.provider,model:p.model,price_version:p.priceVersion,limit_micros:b.providerLimitMicros,attempt_limit_micros:b.attemptLimitMicros,enabled:false},
-    hostedProfile,hostedProfileHash:digest(hostedProfile),sourceEvidence:{supplier:s.evidence,price:p.evidence,budget:b.evidence},targetReceipts:input.targetReceipts,
+    hostedProfile,hostedProfileHash:digest(hostedProfile),workerJobCandidate,workerJobHash:digest(workerJobCandidate),sourceEvidence:{supplier:s.evidence,price:p.evidence,budget:b.evidence},targetReceipts:input.targetReceipts,
     initialization:{fromMigrations:migrationManifest.baseline75,missingMigrations:migrationManifest.reviewedMissing80,toMigrations:migrationManifest.expected155,sharedProductionDatabase:true,requiresVerifiedBackupRestore:true},
     accessRequirements:{projectRef:target.projectRef,existingOwnedSlotsPermitted:true,valuesIncluded:false,secureOperatorHandoffRequired:true,requiredTypes:['current target Web publishable access','current target prepared owned hosted worker access slot','separately authorized existing Qwen account access']},
     serverEnvironment:{VISEPANDA_QA_SUPABASE_PROJECT_REF:target.projectRef,NEXT_PUBLIC_SUPABASE_URL:target.supabaseUrl,VISEPANDA_QA_AGENT:'false',VISEPANDA_QA_AGENT_CONTEXT_MODE:MODE,VISEPANDA_QA_AGENT_POLICY_ID:policyId,VISEPANDA_QWEN_ENDPOINT:s.endpoint},
@@ -129,8 +131,13 @@ export function generate(input, { now = Date.now(), approvedTarget } = {}) {
 }
 export function validatePackage(bundle, approvedTarget) {
   const target=validateTarget(approvedTarget);
+  const validatedProfile=boundProfile(bundle.hostedProfile,target);
+  const expectedJob=qaJobConfig(validatedProfile,bundle.scopeInsertParameters.owner_id,bundle.notice.policyId,bundle.scopeInsertParameters.id,bundle.notice.supplier.endpoint);
   const {packageHash,...body}=bundle;
   if (!HASH.test(packageHash) || digest(body)!==packageHash || digest(bundle.notice)!==bundle.noticeHash
+    || bundle.profileValidation!=='BACKEND_TYPED_VALIDATED'
+    || bundle.workerJobCandidate?.schemaVersion!=='qa-agent-worker/2' || bundle.workerJobCandidate?.projectRef!==target.projectRef || bundle.workerJobCandidate?.databaseUrl!==target.supabaseUrl
+    || canonical(bundle.workerJobCandidate)!==canonical(expectedJob) || digest(bundle.workerJobCandidate)!==bundle.workerJobHash
     || bundle.schemaVersion!=='qa-activation-review/2' || bundle.projectId!==target.projectRef || bundle.supabaseUrl!==target.supabaseUrl
     || canonical(bundle.targetBinding)!==canonical(target) || bundle.notice.projectRef!==target.projectRef
     || digest(bundle.hostedProfile)!==bundle.hostedProfileHash || bundle.hostedProfile.schemaVersion!=='vpj07-hosted-text-worker/4' || bundle.hostedProfile.projectRef!==target.projectRef
