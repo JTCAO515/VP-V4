@@ -42,3 +42,11 @@ Earlier failures01–07 are retained. First TLS boot attempts found openssl abse
 ## Remaining conditions for Main
 
 This is code/local protocol evidence, not an overall real-execution PASS. Main must prepare genuine mode authority and current DDL/DCL owner boundary evidence, recheck public DB bindings/Production sharing, and review exact new code hashes. Fixed-target source sequence profiles, actual export/import permissions, account/transport lifetime, managed migration control, real encrypted capture/restore, services and actual80-version rollout remain UNRUN. If those DDL/role/sequence boundaries cannot be established, reject actual mode B instead of declaring the shared project safe.
+
+## Delivery boundary after independent-QA direction
+
+JT's latest direction retires this shared-project candidate from the new independent QA activation prerequisites. Code/proof commit7e27e7af is retained for review; both capture/restore defaults remain dry-run. Namespace ownership is limited to scripts/qa-agent-staging-replay/** and artifacts/QAWEB/staging-replay/** in this original worktree; idle/clean does not transfer that ownership.
+
+The fixed dzqdzetcctkhbrhlxxgn ref, historical75 migration metadata,89-row Realtime count, source role/catalog snapshots and all fake fixture/role archives are scoped to this older shared-project investigation. They are not real initialization, identity/data provenance or acceptance evidence for any newly provisioned independent QA database. No old user/role archive or applied-version assertion is handed to fresh init as current authority. This session makes no further shared-target probe/export/SET ROLE/real dump/upgrade/provider/permission or production operation.
+
+Delivery resource check: latest proof source and restore cleanup PASS; the current local Docker label inventory found no qaw.restore.owner or qaw.backup.owner container, and no fixture-tls-/snapshot-proof- temporary directory remained. No shared container was stopped or removed. Historical FAIL records and the original worktree/branch remain saved. Owner is idle pending a new explicit task in this same scope.
