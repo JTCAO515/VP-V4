@@ -46,8 +46,9 @@ Run `metadata.sql` using the official Go2China account link `link_6acdbe0471c081
   "observedAt": "ACTUAL_ISO_TIMESTAMP",
   "migrations": [],
   "reviewedMigrations": [],
-  "migrationManifestHash": "dbdffa5b401c03e012df9919817227ce95ffd3c6b46f789f8f8426f0397db086",
+  "migrationManifestHash": "f0e96cbcbdf4941f36c522e7faf6b7a22d24974412c1c91dc29076cfd91a9f1c",
   "qaRpcPresent": false,
+  "qaReadyGroupsAcl": {"signature":"public.qa_ready_groups_v1(integer)","serviceRoleExecute":false,"publicExecute":false,"anonExecute":false,"authenticatedExecute":false},
   "turnDataPrivatePresent": false,
   "qaSchemaFingerprintMatches": false,
   "restorePoint": {"ready": false, "evidenceHash": null},
@@ -73,3 +74,14 @@ Run `metadata.sql` using the official Go2China account link `link_6acdbe0471c081
 5. To stop: disable admission/Web, disable the new budget scope/provider limits so reservation/dispatch fail closed, stop polling and drain the original hosted worker under its existing timeout/lease rules, terminally revoke the new policy to block further use, reconcile in-flight/pending attempts with actual usage. Keep ledger/consents/content and recovery evidence. Do not delete rows, clear frozen, erase pending spend, reopen a revoked policy or revive old policies. Runtime dispatch already sent cannot be undone by disabling switches.
 
 No target write, budget enablement, provider call, deployment or restore was executed by this kit. Main owns integration and exact-head review; no shared source or HANDOFF edits are included.
+
+## Current public-source candidate
+
+`artifacts/QAWEB/activation/supplier-price-candidate.json` is an explicitly disabled review wrapper with an incomplete `inputCandidate`, supported by `provider-source-review.md` and `official-source-digests.json`. It records the fixed Qwen snapshot/legacy endpoint and current public upper-tier rates. It cannot generate until actual account/budget/configuration gaps and the documented decimal-1M versus reservation-margin coverage review are resolved. Do not remove its wrapper and fill gaps with synthetic test values.
+
+
+## Stable Main migration repin
+
+The manifest records Main revision `a8f00e8a` and QA migration SHA-256 `df5565ae49363dc83d4e0db9686653d43dc79cb2b011e4d56e343f45d654afa9`; version sets stay 75/80/155. The new v3-only discovery signature `public.qa_ready_groups_v1(integer)` must exist and permit EXECUTE to service_role only (PUBLIC/anon/authenticated false). Map `qa_ready_groups_acl` from the read-only metadata query into `qaReadyGroupsAcl`; absent/legacy signature or grants fail closed. No query invokes the discovery RPC.
+
+This owned branch deliberately does not import Main's shared source. Before integration its default preflight correctly reports SOURCE_MIGRATION_DRIFT. To read a separate approved checkout without altering either tree, the CLI accepts a final optional absolute repository root after observation.json. All 155 source hashes are still verified; this parameter never changes expected hashes or the database target. After Main cherry-picks this kit onto its matching source, omit the option. Contract tests read matching checkout bytes, or the pinned Main Git object into their own disposable temporary fixture; an integrated CI checkout uses its matching local bytes and needs no historical Git object. Tests never modify repository migrations.
