@@ -30,7 +30,8 @@ try{
   }else{
     if(args.length<2||args.length>4)throw Error('arguments');
     const [profilePath,targetPath,build,emit]=args;
-    if(emit!==undefined&&emit!=='--emit'||build!==undefined&&!/^[a-f0-9]{12,40}$/.test(build))throw Error('arguments');
+    if(emit!==undefined&&!['--emit','--emit-runtime'].includes(emit)||build!==undefined&&!/^[a-f0-9]{12,40}$/.test(build))throw Error('arguments');
+    if(emit==='--emit-runtime'&&(!build||process.env.VISEPANDA_HOSTED_WORKER_BUILD!==build))throw Error('image build');
     const [profileJson,targetJson]=await Promise.all([readFile(profilePath,'utf8'),readFile(targetPath,'utf8')]);
     if(Buffer.byteLength(profileJson)>16384||Buffer.byteLength(targetJson)>4096)throw Error('size');
     const target=JSON.parse(targetJson);
@@ -38,7 +39,7 @@ try{
     const {profileSha256,...selected}=target;
     const canonical=prepare(JSON.parse(profileJson),selected);
     if(profileJson!==canonical.profileJson||targetJson!==canonical.targetJson||build!==undefined&&target.build!==build)throw Error('package');
-    if(emit==='--emit')process.stdout.write(profileJson.trim()+'\n'+target.qwenEndpoint);
+    if(emit==='--emit'||emit==='--emit-runtime')process.stdout.write(profileJson.trim()+'\n'+target.qwenEndpoint);
   }
 }catch{
   console.error('QA deployment package unavailable.');process.exitCode=1;

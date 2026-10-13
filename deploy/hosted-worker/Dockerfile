@@ -13,6 +13,8 @@ WORKDIR /app
 RUN printf '{"type":"module","private":true}\n' > package.json \
  && install -d -o node -g node -m 0700 /var/lib/vp-worker /var/lib/vp-worker/journal /run/vp-worker-secrets
 COPY lib ./lib
+# Nonsecret offline QA package validator; uses the same runtime/type validator.
+COPY deploy/hosted-worker/validate-qa-target.mjs ./deploy/hosted-worker/validate-qa-target.mjs
 USER node
 # Journals (metadata-only usage/destination receipts) must survive restarts for
 # reconciliation of unknown charges: mount a persistent volume here.

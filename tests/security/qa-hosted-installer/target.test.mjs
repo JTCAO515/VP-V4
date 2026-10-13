@@ -25,6 +25,14 @@ test('QA package emits its exact reviewed endpoint and rejects stale build, prof
   const emitted=node([...paths,s.build,'--emit']);assert.equal(emitted.status,0,emitted.stderr);
   assert.equal(emitted.stdout,JSON.stringify(p)+'\n'+endpoint);
   assert.equal(node([...paths,'abcdefabcdee','--emit']).status,1);
+  for(const imageBuild of [undefined,'abcdefabcdee',s.build]){
+    const env={...process.env};
+    if(imageBuild===undefined)delete env.VISEPANDA_HOSTED_WORKER_BUILD;
+    else env.VISEPANDA_HOSTED_WORKER_BUILD=imageBuild;
+    const runtime=spawnSync(process.execPath,['--experimental-strip-types',checker,...paths,s.build,'--emit-runtime'],{env,encoding:'utf8'});
+    assert.equal(runtime.status,imageBuild===s.build?0:1,'runtime image build must match');
+    if(runtime.status!==0)assert.equal(runtime.stdout,'');
+  }
   await writeFile(paths[0],bundle.profileJson.replace('"groupLimit":1','"groupLimit":2'));
   assert.equal(node(paths).status,1,'profile hash mismatch');
   await writeFile(paths[0],bundle.profileJson);await writeFile(paths[1],bundle.targetJson.replace('"restartPolicy":"no"','"restartPolicy":"no","restartPolicy":"no"'));
@@ -38,15 +46,32 @@ test('QA package emits its exact reviewed endpoint and rejects stale build, prof
   const denied=node(['--prepare'],JSON.stringify({profile:{...p,qwen:{...p.qwen,priceVersion:secret}},target:s}));
   assert.equal(denied.status,1);assert.equal(denied.stdout,'');assert.ok(!denied.stderr.includes(secret));
 });
+
 test('Linux QA installer passes the workspace endpoint to its sole mocked Docker create',async t=>{
-  const dir=await mkdtemp(join(root,'.qa-target-wrapper-'));t.after(()=>rm(dir,{recursive:true,force:true}));
+  const dir=await mkdtemp(join(resolve('.'),'.qa-target-wrapper-'));t.after(()=>rm(dir,{recursive:true,force:true}));
   const r=node(['--prepare'],JSON.stringify({profile:profile(),target:target()}));assert.equal(r.status,0,r.stderr);
   const bundle=JSON.parse(r.stdout);await writeFile(join(dir,'profile.json'),bundle.profileJson);await writeFile(join(dir,'target.json'),bundle.targetJson);
-  await writeFile(join(dir,'docker'),'#!/bin/bash\ncase "$1 $2" in\n "container inspect") exit 1;;\n "create --name") printf "%s\\n" "$@" > /tmp/docker-argv;;\nesac\nexit 0\n',{mode:0o755});
+  await writeFile(join(dir,'docker'),`#!/bin/bash
+case "$1 $2" in
+ "container inspect") exit 1;;
+ "image inspect") printf 'sha256:%064d\\n' 0;;
+ "create --name") printf "%s\\n" "$@" > /tmp/docker-argv;;
+ *) if [[ $1 == run ]]; then
+      export VISEPANDA_HOSTED_WORKER_BUILD=abcdefabcdef
+      exec /usr/local/bin/node --experimental-strip-types --disable-warning=ExperimentalWarning /repo/deploy/hosted-worker/validate-qa-target.mjs /etc/visepanda/hosted-profile.json /etc/visepanda/qa/qa-target.json abcdefabcdef --emit-runtime
+    fi;;
+esac
+exit 0
+`,{mode:0o755});
   await writeFile(join(dir,'swapon'),'#!/bin/bash\nexit 0\n',{mode:0o755});
   // The real closed Python validator is covered by profile.test; this image has
   // Node only. The target checker also runs the actual v3 TypeScript validator.
-  await writeFile(join(dir,'python3'),'#!/bin/bash\ncat "$2"\n',{mode:0o755});
+  await writeFile(join(dir,'python3'),`#!/bin/bash
+if [[ $1 == - ]]; then
+ exec /usr/local/bin/node -e 'console.log(JSON.parse(require("fs").readFileSync(process.argv[1],"utf8")).build)' "$2"
+fi
+cat "$2"
+`,{mode:0o755});
   const script=String.raw`set -eu
 export PATH=/fixtures:$PATH
 mkdir -p /run/vp-worker-secrets /etc/visepanda/qa
