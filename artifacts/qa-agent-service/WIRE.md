@@ -21,17 +21,35 @@ No raw transport/DB/provider messages, content, headers or credentials in failur
 QA environment contract (Main sole config/deployment writer): VISEPANDA_QA_AGENT=true,
 VISEPANDA_QA_AGENT_ORIGIN=https://qatesting.go2china.space,
 VISEPANDA_QA_AGENT_POLICY_ID=existing immutable policy UUID,
-VISEPANDA_QA_AGENT_CONTEXT_MODE=current_input_v1 or task_history_v1;
+VISEPANDA_QA_AGENT_CONTEXT_MODE=current_input_v1 or qa_session_history_v1;
 NEXT_PUBLIC_SUPABASE_URL pinned Staging project, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.
 Production is refused. Local requires loopback origin AND loopback database, no VERCEL_ENV.
 
-Task mode invokes original read_text_task_policy and submit_service_task_turn with
-server-derived original task/parent relation. The new protected metadata RPC candidate
-in task-basis-candidate.sql is NOT APPLIED; Main must review/install it. Original task mode
-allows first new_goal then clarification/repair only, with SQL authorization before provider
-sends at most three pairs. Ordinary answered-after-answered follow-up is not claimed.
+QA Session mode invokes protected qa_read_policy_v1 / qa_accept_policy_v1,
+qa_read_session_v1 and qa_submit_message_v1. The immutable new policy must grant
+qa_session_history_v1 with matching notice/recipient/region/consent. Ordinary
+why/simplify/second/correction text stays on the original canonical ServiceTask.
+The SQL wrapper selects the persisted original parent on retry; request identity
+and bytes survive lost ACK and later turns. No client parent or model is accepted.
 
-This service uses original queue; the existing dedicated hosted worker executes actual
-provider protocol, budget attempts, pricing and atomic saved output. It does not execute
-on Vercel. Target worker/provider/policy/budget readiness and actual browser/DB/provider
-acceptance remain UNRUN until Main connects the original worker and target deployment.
+SQL qualifies up to eight total turns/seven prior pairs/64 KiB history; the context
+composer validates the full chain and sends the most recent three whole pairs under
+its 16 KiB content / 32 KiB prompt caps. Legacy task_history_v1 semantics stay native
+and unchanged; QA no longer references the discarded metadata-only task-basis RPC.
+
+createQaWorker is a callable component of the original dedicated hosted worker.
+It refuses all VERCEL_ENV values, binds existing secure credentials separately to
+fixed Staging DB and the selected supported provider endpoint, uses original work
+leases and budget attempts, records validated usage before settlement, and saves
+original output only after settlement. The original leaseToken is the attempt ID.
+Unknown dispatch/settlement/completion ACK never creates an automatic extra send.
+
+Original hosted-loop/CLI/stop switch/private journal remain the execution host.
+Closed v3 profile supports only qa_session_history_v1 and planning:null; v1/v2 retain
+their old modes. Exact shared hosted worker and read-only usage auditor candidates
+are under hosted-worker-candidate, with before/after SHA pins; Main alone applies them.
+The candidate auditor accepts versioned QA jobs and validates original usage/actual
+micros without a settlement or provider capability.
+
+Target worker/provider/policy/budget readiness and actual browser/DB/provider
+acceptance remain UNRUN until Main connects the original host and QA deployment.

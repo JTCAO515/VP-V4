@@ -1,0 +1,95 @@
+--- a/lib/server/jobs/hosted-text-worker.ts
++++ b/lib/server/jobs/hosted-text-worker.ts
+@@ -1,3 +1,6 @@
++import { createQaWorker, type QaWorkerConfiguration } from "../qa-agent/worker.ts";
++import { parseQaHostedProfile, planQaGroup, type QaHostedProfile } from "../qa-agent/hosted-profile.ts";
++import { createQaContextInvoker } from "../qa-agent-context/executor-adapter.ts";
+ import { setTimeout as delay } from "node:timers/promises";
+ import { createHash } from "node:crypto";
+ import { createStagingTextJob, type StagingTextJobConfig, type StagingTextJobDependencies, type TextJobPricing } from "./staging-text-job.ts";
+@@ -35,7 +38,7 @@
+   configurationId: string;
+   configurationVersion: number;
+ }>;
+-export type HostedWorkerProfile = Readonly<{
++export type LegacyHostedWorkerProfile = Readonly<{
+   schemaVersion: "vpj07-hosted-text-worker/1" | "vpj07-hosted-text-worker/2";
+   pollIntervalMs: number;
+   maxLifetimeMs: number;
+@@ -47,6 +50,7 @@
+   /** v2 only; null keeps the planning producer off. No task text or credential. */
+   planning?: Readonly<{ ownerId: string; planningPolicyId: string; scopeId: string }> | null;
+ }>;
++export type HostedWorkerProfile = LegacyHostedWorkerProfile | QaHostedProfile;
+ export type ReadyGroup = Readonly<{
+   ownerId: string; policyId: string; contextMode: string; provider: string; endpoint: string;
+   scopes: readonly Readonly<{ scopeId: string; model: string; priceVersion: string }>[];
+@@ -65,6 +69,7 @@
+ 
+ /** Strict, closed profile. Non-secret and content-free; secrets never enter it. */
+ export function parseHostedWorkerProfile(raw: unknown): HostedWorkerProfile {
++  if (record(raw) && raw.schemaVersion === "vpj07-hosted-text-worker/3") return parseQaHostedProfile(raw);
+   if (!record(raw) || (raw.schemaVersion === "vpj07-hosted-text-worker/1"
+     ? Object.keys(raw).length !== 8 || Object.hasOwn(raw,"planning")
+     : raw.schemaVersion !== "vpj07-hosted-text-worker/2" || Object.keys(raw).length !== 9 || !Object.hasOwn(raw,"planning")
+@@ -79,7 +84,7 @@
+     || !int(raw.qwen.reservedMicros, 1, 1_000_000_000_000) || !int(raw.qwen.maxOutputTokens, 1, 4096)
+     || !int(raw.qwen.timeoutMs, 1, 60000) || typeof raw.qwen.configurationId !== "string" || !UUID.test(raw.qwen.configurationId)
+     || !int(raw.qwen.configurationVersion, 1, Number.MAX_SAFE_INTEGER)) throw unavailable();
+-  const profile = raw as unknown as HostedWorkerProfile;
++  const profile = raw as unknown as LegacyHostedWorkerProfile;
+   // Qualify the tariff/reservation once through the exact existing job validator.
+   createStagingTextJob(jobConfig(profile, "current_input_v1", NIL, NIL, NIL, "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"), {
+     workerCredential: () => null, providerCredential: () => null, recordDestination: async () => {},
+@@ -92,7 +97,7 @@
+ const NIL = "00000000-0000-4000-8000-000000000000";
+ 
+ /** The exact existing job shape for one discovered group. */
+-export function jobConfig(profile: HostedWorkerProfile, mode: HostedMode, ownerId: string, policyId: string, scopeId: string, endpoint: string): StagingTextJobConfig {
++export function jobConfig(profile: LegacyHostedWorkerProfile, mode: HostedMode, ownerId: string, policyId: string, scopeId: string, endpoint: string): StagingTextJobConfig {
+   const tariff = profile.qwen;
+   const version = mode === "knowledge_intent_v1" ? "vpj07-staging-text-job/4" : mode === "task_history_v1" ? "vpj07-staging-text-job/2" : "vpj07-staging-text-job/1";
+   return {
+@@ -106,6 +111,7 @@
+ 
+ /** Select exactly one qualifying scope; anything else is a skipped group. */
+ export function planGroup(profile: HostedWorkerProfile, raw: unknown, qwenEndpoint: string): StagingTextJobConfig | null {
++  if (profile.schemaVersion === "vpj07-hosted-text-worker/3") return null;
+   if (!record(raw) || typeof raw.ownerId !== "string" || !UUID.test(raw.ownerId) || typeof raw.policyId !== "string" || !UUID.test(raw.policyId)
+     || !profile.modes.includes(raw.contextMode as HostedMode) || raw.provider !== "qwen" || raw.endpoint !== qwenEndpoint
+     || !Array.isArray(raw.scopes)) return null;
+@@ -255,7 +261,7 @@
+ }
+ 
+ export type HostedJournal = Readonly<{
+-  job: (digest: string, job: StagingTextJobConfig) => Promise<void>;
++  job: (digest: string, job: StagingTextJobConfig | QaWorkerConfiguration) => Promise<void>;
+   usage: (digest: string, receipt: ValidatedUsageReceipt, signal: AbortSignal) => Promise<void>;
+   knowledge: (digest: string, receipt: KnowledgeValidationReceipt) => Promise<void>;
+   destination: (receipt: DestinationReceipt, signal: AbortSignal) => Promise<void>;
+@@ -365,6 +371,25 @@
+     },
+     workerFor: group => {
+       if (planningTarget && group === planningTarget) return {ownerId:planningTarget.ownerId,poll:planningPoll!};
++      if (profile.schemaVersion === "vpj07-hosted-text-worker/3") {
++        const job = planQaGroup(profile, group, dependencies.qwenEndpoint);
++        if (!job) return null;
++        const digest = createHash("sha256").update(JSON.stringify(job)).digest("hex");
++        const poll = createQaWorker(job, {
++          workerCredential: dependencies.workerCredential, providerCredential: dependencies.providerCredential,
++          qwenEndpoint: dependencies.qwenEndpoint, recordDestination: dependencies.journal.destination,
++          recordUsage: (receipt, stop) => dependencies.journal.usage(digest, receipt, stop),
++          invokeContext: createQaContextInvoker(),
++          ...(dependencies.fetch ? { fetch: dependencies.fetch } : {}),
++        });
++        return { ownerId: job.ownerId, poll: async stop => {
++          if (!journaled.has(digest)) { await dependencies.journal.job(digest, job); journaled.add(digest); }
++          const result = await poll(stop);
++          // Existing heartbeat vocabulary remains unchanged. SQL retains the
++          // dispatched attempt for explicit reconciliation, never a second send.
++          return result === "reconciliation_required" ? "unavailable" : result;
++        } };
++      }
+       const job = planGroup(profile, group, dependencies.qwenEndpoint);
+       if (!job) return null;
+       const digest = createHash("sha256").update(JSON.stringify(job)).digest("hex");

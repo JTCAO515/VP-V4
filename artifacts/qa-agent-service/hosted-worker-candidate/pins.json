@@ -1,0 +1,6 @@
+{
+  "status": "NOT_APPLIED",
+  "path": "lib/server/jobs/hosted-text-worker.ts",
+  "beforeSha256": "c002967df7ff8bd08355618c3d45e0f138ce28f1693f287515170e70fd79e632",
+  "afterSha256": "f969aa9bca08bad537b79a93e6d6fa23b759c5f3db2c112b5c3e9238c6aaa204"
+}

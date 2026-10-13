@@ -15,7 +15,7 @@ export const exact = (value: Record<string, unknown>, keys: readonly string[]) =
 const outcomes: readonly QaStatus[] = ["answered", "partial", "clarification", "blocked", "technical_failure"];
 
 /** Uses original protected admission, work queue and text authority exclusively. */
-export function createQaService(store: QaStore, policyId: string, contextMode: "current_input_v1" | "task_history_v1" = "current_input_v1") {
+export function createQaService(store: QaStore, policyId: string, contextMode: "current_input_v1" | "qa_session_history_v1" = "current_input_v1") {
   async function call(name: string, params: Record<string, unknown>) {
     const result = await store.rpc(name, params);
     if (result.error) throw rpcError(result.error.message);
@@ -24,8 +24,9 @@ export function createQaService(store: QaStore, policyId: string, contextMode: "
     return result.data;
   }
   async function policy(): Promise<QaPolicy> {
-    const data = await call(contextMode === "task_history_v1" ? "read_text_task_policy" : "read_text_policy", { p_policy_id: policyId });
+    const data = await call(contextMode === "qa_session_history_v1" ? "qa_read_policy_v1" : "read_text_policy", { p_policy_id: policyId });
     const p = data.policy;
+    if (contextMode === "qa_session_history_v1" && (!record(p) || p.contextMode !== contextMode)) throw new QaError("DATA_POLICY_BLOCKED");
     if (data.kind !== "policy" || !record(p) || p.id !== policyId || typeof p.noticeHash !== "string" || !/^[a-f0-9]{64}$/.test(p.noticeHash)
       || ![p.noticeZh, p.noticeEn, p.provider, p.recipient].every(v => typeof v === "string" && v.length > 0)
       || !["not_accepted", "accepted", "withdrawn"].includes(String(p.consentState))) throw new QaError("DATA_POLICY_BLOCKED");
@@ -40,8 +41,8 @@ export function createQaService(store: QaStore, policyId: string, contextMode: "
     if (detail.thread.id !== sessionId || detail.thread.status !== "active") throw new QaError("FORBIDDEN");
     return detail;
   }
-  async function saved(sessionId: string, turn: ThreadRead["turns"][number]): Promise<QaMessage> {
-    const text = await call("read_text_turn", { p_turn_id: turn.id });
+  async function saved(sessionId: string, turn: ThreadRead["turns"][number], protectedText?: Record<string, unknown>): Promise<QaMessage> {
+    const text = protectedText ?? await call("read_text_turn", { p_turn_id: turn.id });
     if (text.kind !== "text" || text.turnId !== turn.id || typeof text.input !== "string" || !text.input.trim() || text.input.length > 4000
       || (text.output !== null && (typeof text.output !== "string" || !text.output.trim() || text.output.length > 8000))
       || (text.outcome !== null && !outcomes.includes(text.outcome as QaStatus))) throw new QaError("PROVIDER_UNAVAILABLE");
@@ -52,6 +53,26 @@ export function createQaService(store: QaStore, policyId: string, contextMode: "
     const status: QaStatus = text.outcome === null ? (terminal ? "technical_failure" : "pending") : text.outcome as QaStatus;
     return { requestId: turn.id, turnId: turn.id, sessionId, input: text.input, text: text.output as string | null, status, createdAt: turn.createdAt };
   }
+  async function qaSession(detail: ThreadRead) {
+    const value = await call("qa_read_session_v1", { p_thread_id: detail.thread.id });
+    if (value.kind !== "session" || value.schemaVersion !== "qa-session/1" || value.threadId !== detail.thread.id
+      || !Array.isArray(value.messages) || value.messages.length > 8
+      || value.messages.length !== detail.turns.length) throw new QaError("DATA_POLICY_BLOCKED");
+    if (value.messages.length === 0) {
+      if (value.policyId !== null || value.serviceTaskId !== null || value.lastTurnId !== null) throw new QaError("DATA_POLICY_BLOCKED");
+      return null;
+    }
+    if (value.policyId !== policyId || !uuid(value.serviceTaskId) || !uuid(value.lastTurnId)) throw new QaError("DATA_POLICY_BLOCKED");
+    const ids = new Set<string>(), messages: QaMessage[] = [];
+    for (const item of value.messages) {
+      if (!record(item) || !uuid(item.turnId) || ids.has(item.turnId)) throw new QaError("DATA_POLICY_BLOCKED");
+      const turn = detail.turns.find(t => t.id === item.turnId);
+      if (!turn) throw new QaError("DATA_POLICY_BLOCKED");
+      ids.add(item.turnId); messages.push(await saved(detail.thread.id, turn, item));
+    }
+    if (messages.at(-1)?.turnId !== value.lastTurnId) throw new QaError("DATA_POLICY_BLOCKED");
+    return { taskId: value.serviceTaskId, lastTurnId: value.lastTurnId, messages };
+  }
   const session = (t: Thread): QaSession => ({ id: t.id, label: "Session", createdAt: t.createdAt, updatedAt: t.updatedAt });
   return {
     policy,
@@ -59,11 +80,22 @@ export function createQaService(store: QaStore, policyId: string, contextMode: "
       if (!record(input) || !exact(input, ["policyId", "noticeHash"]) || input.policyId !== policyId || typeof input.noticeHash !== "string" || !/^[a-f0-9]{64}$/.test(input.noticeHash)) throw new QaError("INVALID_INPUT");
       const p = await policy();
       if (p.noticeHash !== input.noticeHash) throw new QaError("DATA_POLICY_BLOCKED");
-      const result = await call("accept_text_policy", { p_policy_id: policyId, p_notice_hash: input.noticeHash });
+      const result = await call(contextMode === "qa_session_history_v1" ? "qa_accept_policy_v1" : "accept_text_policy", { p_policy_id: policyId, p_notice_hash: input.noticeHash });
       if (result.kind !== "accepted" || result.policyId !== policyId) throw new QaError("PROVIDER_UNAVAILABLE");
       return policy();
     },
-    async list() { return { sessions: (await store.list()).filter(t => t.status === "active").map(session) }; },
+    async list() {
+      const threads = (await store.list()).filter(t => t.status === "active");
+      if (contextMode !== "qa_session_history_v1") return { sessions: threads.map(session) };
+      const value = await call("qa_list_sessions_v1", { p_limit: 20 });
+      if (value.kind !== "sessions" || !Array.isArray(value.sessions) || value.sessions.length > 20) throw new QaError("PROVIDER_UNAVAILABLE");
+      const ids = new Set<string>();
+      for (const item of value.sessions) {
+        if (!record(item) || !uuid(item.threadId) || ids.has(item.threadId)) throw new QaError("PROVIDER_UNAVAILABLE");
+        ids.add(item.threadId);
+      }
+      return { sessions: threads.filter(t => ids.has(t.id)).map(session) };
+    },
     async create(input: unknown) {
       if (!record(input) || !exact(input, [])) throw new QaError("INVALID_INPUT");
       return { session: session(await store.create()) };
@@ -73,8 +105,8 @@ export function createQaService(store: QaStore, policyId: string, contextMode: "
       if (p.consentState !== "accepted") throw new QaError("DATA_POLICY_BLOCKED");
       const detail = await readable(sessionId);
       // Bound protected text work to twenty original turns; no global-history filter.
-      const messages: QaMessage[] = [];
-      for (const turn of detail.turns.slice(-20)) messages.push(await saved(sessionId, turn));
+      const messages: QaMessage[] = contextMode === "qa_session_history_v1" ? (await qaSession(detail))?.messages ?? [] : [];
+      if (contextMode !== "qa_session_history_v1") for (const turn of detail.turns.slice(-20)) messages.push(await saved(sessionId, turn));
       return { session: session(detail.thread), messages, historyLimit: 20, policy: p };
     },
     async message(sessionId: string, requestId: string) {
@@ -83,11 +115,16 @@ export function createQaService(store: QaStore, policyId: string, contextMode: "
       if (p.consentState !== "accepted") throw new QaError("DATA_POLICY_BLOCKED");
       const detail = await readable(sessionId), turn = detail.turns.find(t => t.id === requestId);
       if (!turn) throw new QaError("FORBIDDEN");
+      if (contextMode === "qa_session_history_v1") {
+        const message = (await qaSession(detail))?.messages.find(m => m.requestId === requestId);
+        if (!message) throw new QaError("FORBIDDEN");
+        return { message };
+      }
       return { message: await saved(sessionId, turn) };
     },
     async submit(sessionId: string, input: unknown) {
       if (!record(input) || !exact(input, ["requestId", "text"]) || !uuid(input.requestId) || typeof input.text !== "string" || !input.text.trim() || input.text.length > 4000) throw new QaError("INVALID_INPUT");
-      await readable(sessionId);
+      const detail = await readable(sessionId);
       const p = await policy();
       if (p.consentState !== "accepted") throw new QaError("DATA_POLICY_BLOCKED");
       // Same request UUID is original turn+idempotency identity. Do not trim or
@@ -96,15 +133,12 @@ export function createQaService(store: QaStore, policyId: string, contextMode: "
       try {
         const params = { p_thread_id: sessionId, p_turn_id: input.requestId, p_idempotency_key: input.requestId,
           p_policy_id: policyId, p_locale: /[\u3400-\u9fff]/u.test(input.text) ? "zh" : "en", p_text: input.text };
-        if (contextMode === "task_history_v1") {
-          const basis = await call("qa_agent_task_basis_v1", { p_policy_id: policyId, p_thread_id: sessionId, p_turn_id: input.requestId });
-          if (basis.kind !== "basis" || !(basis.taskId === null || uuid(basis.taskId))
-            || !(basis.parentTurnId === null || uuid(basis.parentTurnId))
-            || !["new_goal", "clarification", "repair"].includes(String(basis.relationship))
-            || ((basis.relationship === "new_goal") !== (basis.parentTurnId === null))) throw new QaError("DATA_POLICY_BLOCKED");
-          const taskId = basis.taskId ?? taskIdentity(sessionId);
-          result = await call("submit_service_task_turn", { ...params, p_task_id: taskId, p_scope_version: 1,
-            p_relationship: basis.relationship, p_parent_turn_id: basis.parentTurnId });
+        if (contextMode === "qa_session_history_v1") {
+          const prior = await qaSession(detail);
+          // The versioned SQL wrapper resolves the original request's persisted
+          // parent on retry, including after a newer turn has completed.
+          result = await call("qa_submit_message_v1", { ...params, p_task_id: prior?.taskId ?? taskIdentity(sessionId),
+            p_relationship: "qa_followup" });
         } else result = await call("submit_text_turn", params);
       } catch (error) {
         if (error instanceof QaError && error.code !== "PROVIDER_UNAVAILABLE") throw error;
@@ -121,7 +155,7 @@ export function rpcError(message: string): QaError {
   if (/FORBIDDEN/.test(message)) return new QaError("FORBIDDEN");
   if (/IDEMPOTENCY_KEY_REUSE/.test(message)) return new QaError("IDEMPOTENCY_KEY_REUSE");
   if (/INVALID_INPUT/.test(message)) return new QaError("INVALID_INPUT");
-  if (/DATA_POLICY_BLOCKED|SERVICE_TASK/.test(message)) return new QaError("DATA_POLICY_BLOCKED");
+  if (/DATA_POLICY_BLOCKED|SERVICE_TASK|QA_CONTEXT_LIMIT|QA_MODE_CONFLICT/.test(message)) return new QaError("DATA_POLICY_BLOCKED");
   return new QaError("PROVIDER_UNAVAILABLE");
 }
 

@@ -1,0 +1,47 @@
+--- a/lib/server/jobs/hosted-usage-audit.ts
++++ b/lib/server/jobs/hosted-usage-audit.ts
+@@ -1,3 +1,6 @@
++import { qaJobConfig } from "../qa-agent/hosted-profile.ts";
++import { auditQaUsage } from "../qa-agent/usage-audit.ts";
++import type { QaWorkerConfiguration } from "../qa-agent/worker.ts";
+ import { createHash } from "node:crypto";
+ import { jobConfig, parseHostedWorkerProfile, type HostedMode } from "./hosted-text-worker.ts";
+ import { stagingUsageReconciliation } from "./staging-usage-reconciliation.ts";
+@@ -22,7 +25,7 @@
+     || typeof first.build !== "string" || !/^[A-Za-z0-9._-]{1,64}$/.test(first.build)
+     || !iso(first.startedAt) || typeof first.qwenEndpoint !== "string") invalid();
+   const profile = parseHostedWorkerProfile(first.profile);
+-  const groups = new Map<string, { job: ReturnType<typeof jobConfig>; receipts: unknown[] }>();
++  const groups = new Map<string, { job: ReturnType<typeof jobConfig> | QaWorkerConfiguration; receipts: unknown[] }>();
+   const attemptGroups = new Map<string, string>();
+   let receiptRows = 0;
+   let processEndObserved = false;
+@@ -35,10 +38,12 @@
+         || !record(row.job) || groups.has(row.jobDigest) || groups.size >= 150) invalid();
+       const job = row.job;
+       const mode: HostedMode = job.inputMode === undefined ? "current_input_v1" : job.inputMode as HostedMode;
+-      if (!profile.modes.includes(mode) || typeof job.ownerId !== "string" || !UUID.test(job.ownerId)
++      if ((profile.schemaVersion === "vpj07-hosted-text-worker/3" ? job.schemaVersion !== "qa-agent-worker/1" : !profile.modes.includes(mode)) || typeof job.ownerId !== "string" || !UUID.test(job.ownerId)
+         || typeof job.policyId !== "string" || !UUID.test(job.policyId)
+         || !record(job.budget) || typeof job.budget.scopeId !== "string" || !UUID.test(job.budget.scopeId)) invalid();
+-      const expected = jobConfig(profile, mode, job.ownerId, job.policyId, job.budget.scopeId, first.qwenEndpoint);
++      const expected = profile.schemaVersion === "vpj07-hosted-text-worker/3"
++        ? qaJobConfig(profile, job.ownerId, job.policyId, job.budget.scopeId, first.qwenEndpoint)
++        : jobConfig(profile, mode, job.ownerId, job.policyId, job.budget.scopeId, first.qwenEndpoint);
+       if (JSON.stringify(job) !== JSON.stringify(expected)
+         || createHash("sha256").update(JSON.stringify(job)).digest("hex") !== row.jobDigest) invalid();
+       groups.set(row.jobDigest, { job: expected, receipts: [] });
+@@ -68,10 +73,11 @@
+   }
+   const result = [];
+   for (const [digest, group] of groups) {
+-    stagingUsageReconciliation(group.job, []);
++    const validate = (rows: readonly unknown[]) => group.job.schemaVersion === "qa-agent-worker/1" ? auditQaUsage(group.job, rows) : stagingUsageReconciliation(group.job, rows);
++    validate([]);
+     const receipts = new Map<string, ValidatedUsageReceipt>();
+     for (let i = 0; i < group.receipts.length; i += 100) {
+-      for (const receipt of stagingUsageReconciliation(group.job, group.receipts.slice(i, i + 100)).receipts) {
++      for (const receipt of validate(group.receipts.slice(i, i + 100)).receipts) {
+         const id = receipt.attempt.attemptId;
+         if (attemptGroups.has(id) && attemptGroups.get(id) !== digest) invalid();
+         attemptGroups.set(id, digest);
