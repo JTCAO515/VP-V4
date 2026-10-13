@@ -9,7 +9,7 @@ export type QaMessage = Readonly<{
 export type QaPolicy = Readonly<{
   id: string; noticeHash: string; noticeZh: string; noticeEn: string;
   provider: string; recipient: string; consentState: "not_accepted" | "accepted" | "withdrawn";
-  contextMode: "current_input_v1" | "task_history_v1";
+  contextMode: "current_input_v1" | "qa_session_history_v1";
 }>;
 export type QaErrorCode = "INVALID_INPUT" | "UNAUTHENTICATED" | "FORBIDDEN" | "DATA_POLICY_BLOCKED" | "IDEMPOTENCY_KEY_REUSE" | "PROVIDER_UNAVAILABLE";
 export class QaError extends Error {

@@ -20,7 +20,7 @@ export function qaConfig(url: string, env: Readonly<Record<string, string | unde
     && database.origin === "https://dzqdzetcctkhbrhlxxgn.supabase.co";
   if (!local && !qa) return null;
   const mode = env.VISEPANDA_QA_AGENT_CONTEXT_MODE ?? "current_input_v1";
-  if (!["current_input_v1", "task_history_v1"].includes(mode)) return null;
+  if (!["current_input_v1", "qa_session_history_v1"].includes(mode)) return null;
   return { url: database.origin, publishableKey: env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
-    policyId: env.VISEPANDA_QA_AGENT_POLICY_ID.toLowerCase(), contextMode: mode as "current_input_v1" | "task_history_v1" };
+    policyId: env.VISEPANDA_QA_AGENT_POLICY_ID.toLowerCase(), contextMode: mode as "current_input_v1" | "qa_session_history_v1" };
 }
