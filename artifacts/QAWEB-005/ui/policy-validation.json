@@ -1,0 +1,18 @@
+{
+  "base": "b85e95515eb242b6fd96acc8bf7697949c8d5844",
+  "change": "Consume real qa_session_history_v1 policy; only accepted version permits new submission and same-ID replay. Legacy notices remain visible but cannot authorize QA sending. Read-only original recovery remains separate.",
+  "sourceSha256": {
+    "components/qa-agent/QaAgentWorkspace.tsx": "4d2134ddb3599238d6eff7141783f93f624ab30c9071054d77847b69250fcd69",
+    "components/qa-agent/api.ts": "0cc86d7f8f4d185bb6541a8a997e62f44d6af0a8754df0f43d2b2fe26ed02761"
+  },
+  "checks": {
+    "typecheck": "PASS",
+    "lint": "PASS",
+    "productionBuild": "PASS",
+    "adapterTests": "5 PASS / 0 FAIL",
+    "affectedProductionBrowser": "3 PASS / 0 FAIL: new mode consent/send/refresh desktop; accepted current_input_v1 and task_history_v1 block button/Enter/form admission"
+  },
+  "reusedEvidence": "b85e9551 production browser 7/7 for unchanged mobile layout, abort fences, lost ACK, duplicate click, owner replacement and 401. Not reported as a fresh full run.",
+  "historicalFailure": "Next dev intermittent JSON pageerror retained from prior run; prior production7/7 and this production3/3 have no corresponding pageerror.",
+  "target": "New SQL policy not activated here. Real Auth/DB/provider/QA domain remain UNRUN and Main owned."
+}

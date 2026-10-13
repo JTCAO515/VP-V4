@@ -4,12 +4,12 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { createPasswordAuthClient } from "@/lib/server/identity/browser-auth-client";
-import { ApiError, qaApi, type Message, type Policy, type Session } from "./api";
+import { ApiError, permitsQaSubmission, qaApi, type Message, type Policy, type Session } from "./api";
 import styles from "./QaAgentWorkspace.module.css";
 
 const copy = {
-  zh: { sessions: "会话", new: "新会话", empty: "选择或新建会话", input: "输入消息", send: "发送", loading: "正在读取…", replying: "正在回复…", error: "暂时无法完成请求，请检查原请求状态。", recover: "检查原请求", retry: "重发原请求", forbidden: "无法读取原请求。重发仍使用原请求编号，由服务器核验权限及幂等性。", refresh: "重新读取", signIn: "登录", consent: "同意以上说明", unknown: "发送结果尚未确认。原请求编号已保留。", you: "你", assistant: "助手", blocked: "请求被阻止", failure: "请求未完成", partial: "部分答复", clarification: "需要补充信息" },
-  en: { sessions: "Sessions", new: "New session", empty: "Select or create a session", input: "Message", send: "Send", loading: "Loading…", replying: "Replying…", error: "The request could not be completed. Check the original request status.", recover: "Check original request", retry: "Resend original request", forbidden: "The original request is unavailable. Resending keeps its original ID; the server verifies permission and idempotency.", refresh: "Reload", signIn: "Sign in", consent: "Agree to the notice above", unknown: "Delivery is unconfirmed. The original request ID is retained.", you: "You", assistant: "Assistant", blocked: "Request blocked", failure: "Request incomplete", partial: "Partial answer", clarification: "More information needed" },
+  zh: { sessions: "会话", new: "新会话", empty: "选择或新建会话", input: "输入消息", send: "发送", loading: "正在读取…", replying: "正在回复…", error: "暂时无法完成请求，请检查原请求状态。", recover: "检查原请求", retry: "重发原请求", forbidden: "无法读取原请求。重发仍使用原请求编号，由服务器核验权限及幂等性。", refresh: "重新读取", signIn: "登录", unsupportedPolicy: "当前会话尚未获得连续对话授权，暂时无法发送。", consent: "同意以上说明", unknown: "发送结果尚未确认。原请求编号已保留。", you: "你", assistant: "助手", blocked: "请求被阻止", failure: "请求未完成", partial: "部分答复", clarification: "需要补充信息" },
+  en: { sessions: "Sessions", new: "New session", empty: "Select or create a session", input: "Message", send: "Send", loading: "Loading…", replying: "Replying…", error: "The request could not be completed. Check the original request status.", recover: "Check original request", retry: "Resend original request", forbidden: "The original request is unavailable. Resending keeps its original ID; the server verifies permission and idempotency.", refresh: "Reload", signIn: "Sign in", unsupportedPolicy: "This session is not yet authorized for ongoing conversation. Sending is unavailable.", consent: "Agree to the notice above", unknown: "Delivery is unconfirmed. The original request ID is retained.", you: "You", assistant: "Assistant", blocked: "Request blocked", failure: "Request incomplete", partial: "Partial answer", clarification: "More information needed" },
 };
 type Pending = { requestId: string; text: string; retryAllowed: boolean };
 
@@ -96,7 +96,7 @@ function Workspace({ locale, initialSession }: { locale: "zh" | "en"; initialSes
     finally { if (current.current === token) { token.busy = false; setBusy(false); } }
   }
   async function submit(recover = false) {
-    if (!selected || loading || (!recover && !historyReady) || current.current.busy || messages.some(message => message.status === "pending") || !policy?.consented) return;
+    if (!selected || loading || (!recover && !historyReady) || current.current.busy || messages.some(message => message.status === "pending") || !policy?.consented || (!recover && !permitsQaSubmission(policy))) return;
     const id = selected;
     const original = pendingBySession.current.get(id) ?? { requestId: crypto.randomUUID(), text, retryAllowed: false };
     if (!original.text.trim()) return;
@@ -130,7 +130,7 @@ function Workspace({ locale, initialSession }: { locale: "zh" | "en"; initialSes
     return () => window.clearTimeout(timer);
   }, [selected, messages]);
   async function consent() {
-    if (!policy || current.current.busy) return;
+    if (!policy || policy.contextMode !== "qa_session_history_v1" || current.current.busy) return;
     const token = current.current; token.busy = true; setBusy(true);
     try { const result = await qaApi.consent(policy, token.controller.signal); if (current.current === token) { setPolicy(result); if (selected) await select(selected); } }
     catch (reason) { fail(reason, token); }
@@ -156,14 +156,14 @@ function Workspace({ locale, initialSession }: { locale: "zh" | "en"; initialSes
           </>}
         </article>)}<div ref={scroll} />
       </div>
-      {policy ? <div className={styles.notice}><p className={styles.text}>{locale === "zh" ? policy.noticeZh : policy.noticeEn}</p>{!policy.consented ? <button type="button" disabled={busy} onClick={() => void consent()}>{c.consent}</button> : null}</div> : null}
-      {pending ? <div role="status"><p>{forbidden ? c.forbidden : c.unknown}</p><button type="button" disabled={busy} onClick={() => void submit(!pending.retryAllowed)}>{pending.retryAllowed ? c.retry : c.recover}</button></div> : null}
+      {policy ? <div className={styles.notice}><p className={styles.text}>{locale === "zh" ? policy.noticeZh : policy.noticeEn}</p>{policy.contextMode !== "qa_session_history_v1" ? <p role="status">{c.unsupportedPolicy}</p> : !policy.consented ? <button type="button" disabled={busy} onClick={() => void consent()}>{c.consent}</button> : null}</div> : null}
+      {pending ? <div role="status"><p>{forbidden ? c.forbidden : c.unknown}</p><button type="button" disabled={busy || (pending.retryAllowed && !permitsQaSubmission(policy))} onClick={() => void submit(!pending.retryAllowed)}>{pending.retryAllowed ? c.retry : c.recover}</button></div> : null}
       <form className={styles.composer} onSubmit={event => { event.preventDefault(); if (!pending) void submit(); }}>
         <label htmlFor="qa-message">{c.input}</label>
         <textarea maxLength={4000} id="qa-message" value={text} disabled={!selected || loading || busy || !historyReady || !!pending || waiting} onChange={event => setText(event.target.value)} onCompositionStart={() => { composing.current = true; }} onCompositionEnd={() => { composing.current = false; }} onKeyDown={event => {
           if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing && !composing.current && event.keyCode !== 229) { event.preventDefault(); if (!pending && !waiting) void submit(); }
         }} />
-        <button type="submit" disabled={!selected || loading || !historyReady || busy || !!pending || waiting || !policy?.consented || !text.trim()}>{busy || waiting ? c.replying : c.send}</button>
+        <button type="submit" disabled={!selected || loading || !historyReady || busy || !!pending || waiting || !permitsQaSubmission(policy) || !text.trim()}>{busy || waiting ? c.replying : c.send}</button>
       </form>
     </section>
   </main>;
