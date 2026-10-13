@@ -1,0 +1,99 @@
+{
+  "status": "OFFLINE_CANDIDATE_ONLY_LIVE_EXECUTION_UNAVAILABLE",
+  "target": "dzqdzetcctkhbrhlxxgn",
+  "account": {
+    "name": "Go2China",
+    "link_id": "link_6acdbe0471c081919ff47de24ca53b0f"
+  },
+  "organization": "ppfsagymaozpbkbarhes",
+  "expectedPostgres": "17.6.1.155",
+  "migrationCount": 75,
+  "migrationHashAlgorithm": "sha256(sorted versions joined by LF plus final LF)",
+  "migrationSha256": "55081cf98085b602190d951112ae3bbaa76ec5db9a96d504d61c6433987e07cd",
+  "dataSchemas": [
+    "auth",
+    "community_private",
+    "identity_private",
+    "knowledge_review_private",
+    "ops_budget_private",
+    "place_quota_private",
+    "privacy_private",
+    "private",
+    "public",
+    "research_intake_private",
+    "service_cases_private",
+    "storage",
+    "supabase_migrations",
+    "turn_private"
+  ],
+  "archiveDirectory": "/Users/jtsm5p/.codex/secure-backups/qaw005-fixed-staging/archives",
+  "identityDirectory": "/Users/jtsm5p/.codex/secure-backups/qaw005-fixed-staging/identities",
+  "directoryMode": "0700",
+  "fileMode": "0600",
+  "creation": "UNRUN",
+  "oldArchives": "Sep19 status supplied by Main, not inspected; never a current recovery point",
+  "livePreflight": [
+    "Separate scoped authorization and operator confirmation for data read, backup destination/retention and restore; fixture/dry-run is never authorization",
+    "Fresh official Go2China get_project + list_migrations and complete namespace inventory in this operation; exact project/org/engine/75-version hash and fourteen data schemas must match; unknown namespace or migration stops",
+    "Independently verify approved database transport/account/session identity using metadata only; plugin identity does not prove CLI identity; do not acquire temporary login credentials or SET ROLE by inference",
+    "FileVault On, trusted age/age-keygen, pg_dump and pg_restore major17; symlink-free owned ancestor chain; umask077; separate new exclusive0700 archive/identity subdirectories; no archive/key reuse",
+    "Review all owners/default ACLs/role memberships/extensions/event triggers and dependent platform namespaces; fourteen data schemas alone do not prove recoverability",
+    "Quiesce writers/migrators for final recovery point or separately validate a consistent snapshot and concurrent DDL protection; recheck versions/schema at snapshot boundary and after dump; abort on drift"
+  ],
+  "tls": {
+    "host": "db.dzqdzetcctkhbrhlxxgn.supabase.co",
+    "sslmode": "verify-full",
+    "caUrl": "https://supabase-downloads.s3-ap-southeast-1.amazonaws.com/prod/ssl/prod-ca-2021.crt",
+    "caSha256": "700723581420dd1ac98fd7e9ac529f0ef210eadcaf87fc868a3ad7d114c2f3b7",
+    "state": "Historical pin; validate official source under future authorization; mismatch fails closed"
+  },
+  "dumpArgvTemplate": [
+    "/opt/homebrew/opt/postgresql@17/bin/pg_dump",
+    "-Fc",
+    "--strict-names",
+    "--host=db.dzqdzetcctkhbrhlxxgn.supabase.co",
+    "--username=<independently-verified-approved-role>",
+    "--dbname=postgres",
+    "--schema=auth",
+    "--schema=community_private",
+    "--schema=identity_private",
+    "--schema=knowledge_review_private",
+    "--schema=ops_budget_private",
+    "--schema=place_quota_private",
+    "--schema=privacy_private",
+    "--schema=private",
+    "--schema=public",
+    "--schema=research_intake_private",
+    "--schema=service_cases_private",
+    "--schema=storage",
+    "--schema=supabase_migrations",
+    "--schema=turn_private"
+  ],
+  "credentialRule": "No values in argv/report/files; future approved secure credential handoff only. No CLI credential helper in this candidate.",
+  "encryptionProtocol": [
+    "Generate fresh identity exclusively in separate0700 identity directory with0600 file; derive recipient in memory; neither value logged",
+    "Stream pg_dump custom archive stdout directly to age -r recipient; stdout exclusively to new0600 .partial ciphertext; never plaintext temporary dump",
+    "Preserve owner/ACL archive entries; intentionally omit old --no-owner/--no-privileges/--role=postgres options; required privileges must be independently authorized, never escalated automatically",
+    "Use bounded pipeline deadline, concurrently drain/suppress stderr, check both process statuses; on any error stop/reap both children and mark failed; no raw database diagnostics",
+    "Consume complete age-decrypted stream to null and require exit0 before TOC inspection. Early TOC success alone is not ciphertext integrity proof",
+    "Second decrypt into pg_restore -l in memory; validate exact required schema objects and table-data entries versus snapshot catalog manifest, ACL/owner/dependency coverage; count>20 is insufficient",
+    "Hash complete ciphertext with streaming SHA256, fsync and promote .partial only after checks. Preserve failed artifacts under protected quarantine for operator disposition; do not delete keys automatically",
+    "Emit only sanitized manifest: observation time, project/account evidence refs, versions/schema hash, bytes/hash, TOC coverage, role/platform gaps, RESTORE_UNRUN; do not emit content/keys/credentials"
+  ],
+  "remainingRestoreDependencies": [
+    "Authorized isolated target with compatible Supabase managed Auth/Storage/roles/extensions/platform hooks and event triggers",
+    "Current archive restore test with complete schema/ACL/sequence/trigger and content-free integrity checks; original revocation fences retained",
+    "Main official metadata reported storage.objects=0 and storage.buckets=0 on 2026-10-13; not independently rechecked here. Fresh recheck before backup; preserve storage schema; cover bytes separately if no longer empty",
+    "75-to155 replay plus actual-data recovery rehearsal; synthetic PASS is not target recovery evidence"
+  ],
+  "blockingReuseFindings": [
+    "Old eight-schema list omits six live business schemas",
+    "Old --no-owner/--no-privileges cannot prove ownership/ACL restoration",
+    "Old CLI temporary-role + --role=postgres does not establish authorized same-account transport",
+    "Old archiveItems>=20 does not establish fourteen-schema/dependency/data completeness",
+    "Old proxy relay has forty-second connection deadline; unsuitable until backup duration/transport is separately verified"
+  ],
+  "targetRead": "UNRUN",
+  "encryptedBackup": "UNRUN",
+  "restore": "UNRUN"
+}
