@@ -19,7 +19,7 @@
 - Production等browser编译配置已观察；server runtime、Development env值、所有历史immutable deployment和直接API调用者没有逐一读回，UNKNOWN。不取全env/任何key来填空。
 - 已打开browser/SDK可直连Supabase，Auth refresh及已进入函数/事务也不受Vercel域名WAF阻断。已知worker聚合为0或仅HTTP deny不能证明所有调用者静默。
 - Main为统筹；此chat只保留QA Vercel scoped唯一writer，不拥有Production维护或直接DB/Native/ECS控制权。旧Preview/Production/Native/controller与在途writer清单尚未完整，不能自行停机。
-- JT最新metadata中继只证明实例校验true和当时key目录不存在；没有导入完成/worker ready回执。宿主Node22当前UNKNOWN，需JT本人只输出command existence/version metadata。96a8新增QA target验证源要求Node22，不能沿用a212“无需宿主Node”的旧断言；此处不安装软件。
+- 当前JT本人metadata已核宿主 `node: not found`，key放置已完成但仅属文件准备，真实认证/provider/worker heartbeat仍UNRUN。96a8曾要求宿主Node22，保留为历史；当前QA实现 `115f0b70bf45778ef74a74ce6fdb88ad5b74fae8` → Main `bb73bb5779108dee71b3606d94fc4afae8f85280` 使用本地已批准的不可变worker image ID内Node，短命校验容器仅只读挂载非秘密profile/target包、无keys且无network，校验与worker create使用同一image ID。QA不再以前置安装或确认HostNode为条件；S1/planning旧路径仍保留各自依赖，不泛化。实际ECS上的新容器校验路径、认证、provider和heartbeat未运行；此文档修复不执行安装、重导key或启动。
 
 ## 给BestJ一次集中JT决定的最小选择（仅方案，未执行）
 
