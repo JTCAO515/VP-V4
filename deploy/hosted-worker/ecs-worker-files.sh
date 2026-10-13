@@ -84,15 +84,46 @@ else
     [[ $(stat -c '%u:%g:%a:%h' "$target_file") == 0:0:600:1 ]] || fail 'QA target must be root:root mode 0600 with one link'
     bytes=$(stat -c %s "$target_file")
     (( bytes >= 2 && bytes <= 4096 )) || fail 'QA target size is invalid'
-    command -v node >/dev/null || fail 'Node 22 is required to validate QA target'
-    checker="$(dirname "$0")/validate-qa-target.mjs"
+    # Read only the nonsecret build selector before the full canonical check.
+    # preflight has no build argument; start must still match the target build.
+    qa_build=$(python3 - "$target_file" <<'PYBUILD'
+import json, re, sys
+try:
+    def pairs(items):
+        result = {}
+        for key, value in items:
+            if key in result:
+                raise ValueError()
+            result[key] = value
+        return result
+    with open(sys.argv[1], encoding="utf-8") as source:
+        build = json.load(source, object_pairs_hook=pairs)["build"]
+    if not isinstance(build, str) or not re.fullmatch(r"[0-9a-f]{12,40}", build):
+        raise ValueError()
+    print(build)
+except (OSError, ValueError, TypeError, KeyError):
+    sys.exit(1)
+PYBUILD
+    ) || fail 'QA target build is unavailable'
+    [[ $action != start || $qa_build == "$2" ]] || fail 'QA target build does not match start'
+    # Resolve once: both validation and worker creation consume this same local
+    # immutable image ID. Never pull a tag or execute a host-supplied validator.
+    qa_image=$(docker image inspect --format '{{.Id}}' "vp-hosted-text-worker:$qa_build") || fail 'QA image is not loaded locally'
+    [[ $qa_image =~ ^sha256:[0-9a-f]{64}$ ]] || fail 'QA image identity is unavailable'
+    validated=$(docker run --rm --pull=never \
+      --name "vp-qa-validator-$$-$RANDOM" --network none --restart no \
+      --read-only --user 0:0 --cap-drop ALL --security-opt no-new-privileges \
+      --ulimit core=0:0 --memory 256m --pids-limit 32 --log-driver none \
+      --mount "type=bind,src=$profile_file,dst=/qa/profile.json,readonly" \
+      --mount "type=bind,src=$target_file,dst=/qa/target.json,readonly" \
+      --entrypoint /usr/local/bin/node "$qa_image" \
+      --experimental-strip-types --disable-warning=ExperimentalWarning \
+      /app/deploy/hosted-worker/validate-qa-target.mjs \
+      /qa/profile.json /qa/target.json "$qa_build" --emit-runtime) || fail 'QA package is unavailable'
     if [[ $action == start ]]; then
-      validated=$(node --experimental-strip-types --disable-warning=ExperimentalWarning "$checker" "$profile_file" "$target_file" "$2" --emit) || fail 'QA package is unavailable'
       profile_json=${validated%%$'\n'*}
       endpoint=${validated#*$'\n'}
       extra_env=(--env "VISEPANDA_QWEN_ENDPOINT=$endpoint")
-    else
-      node --experimental-strip-types --disable-warning=ExperimentalWarning "$checker" "$profile_file" "$target_file" || fail 'QA package is unavailable'
     fi
   else
     profile_json=$(python3 "$(dirname "$0")/validate-s1-profile.py" "$profile_file" --emit) || fail 'S1 profile is unavailable'
@@ -111,6 +142,7 @@ if [[ $action == preflight ]]; then
 fi
 
 image="vp-hosted-text-worker:$2"
+if $qa; then image=$qa_image; fi
 docker image inspect "$image" >/dev/null || fail 'image tag is not loaded locally'
 # The profile and flags are nonsecret. Docker receives only /run bind paths,
 # never key values or an env-file. A host reboot clears /run; no auto-restart.

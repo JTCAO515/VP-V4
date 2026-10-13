@@ -1,0 +1,135 @@
+COMMAND ["docker", "image", "inspect", "qaw005-hosted-cold-ed1b81d5:fixture"]
+[]
+Error response from daemon: No such image: qaw005-hosted-cold-ed1b81d5:fixture
+
+EXIT 1
+COMMAND ["docker", "pull", "--platform", "linux/amd64", "ghcr.io/supabase/postgres@sha256:617b62a16858dc8436c1ded1970fa13e33539feb4c98b580cf6274b46b2ab1ef"]
+ghcr.io/supabase/postgres@sha256:617b62a16858dc8436c1ded1970fa13e33539feb4c98b580cf6274b46b2ab1ef: Pulling from supabase/postgres
+e6f31ffc071e: Pulling fs layer
+0f4863cd9c52: Pulling fs layer
+92132f761160: Pulling fs layer
+82cf28f3d1b5: Pulling fs layer
+d9ff237b3bdf: Pulling fs layer
+c331a95a3ded: Pulling fs layer
+e4d9ec943689: Pulling fs layer
+d438d0655c04: Pulling fs layer
+0de693b11719: Pulling fs layer
+ae2e3acb5669: Pulling fs layer
+7455df3e077d: Pulling fs layer
+caa5116ed4b8: Pulling fs layer
+4af8ac3da2f9: Pulling fs layer
+60d9b26a23ef: Pulling fs layer
+9f7b4105d9d2: Pulling fs layer
+bbcd8e2f47bd: Pulling fs layer
+e4c75db06451: Pulling fs layer
+e70bd6858950: Pulling fs layer
+0f0f5d6c6a72: Pulling fs layer
+439d07cca121: Pulling fs layer
+fa7f1f248d5e: Pulling fs layer
+a1bc17dd40b2: Pulling fs layer
+67dbb4ddc3a7: Pulling fs layer
+c91442609c05: Pulling fs layer
+30eceb95cc71: Pulling fs layer
+319ec79ee793: Pulling fs layer
+ff48e91a05e9: Pulling fs layer
+a8c0be2aef64: Pulling fs layer
+540d1d9604d2: Pulling fs layer
+d9ff237b3bdf: Download complete
+0f4863cd9c52: Download complete
+92132f761160: Download complete
+e6f31ffc071e: Download complete
+e6f31ffc071e: Pull complete
+82cf28f3d1b5: Download complete
+0de693b11719: Download complete
+e4d9ec943689: Download complete
+d438d0655c04: Download complete
+60d9b26a23ef: Download complete
+c331a95a3ded: Download complete
+9f7b4105d9d2: Download complete
+0de693b11719: Pull complete
+c331a95a3ded: Pull complete
+4af8ac3da2f9: Download complete
+7455df3e077d: Download complete
+0f0f5d6c6a72: Download complete
+caa5116ed4b8: Download complete
+e4c75db06451: Download complete
+bbcd8e2f47bd: Download complete
+e70bd6858950: Download complete
+a1bc17dd40b2: Download complete
+439d07cca121: Download complete
+fa7f1f248d5e: Download complete
+67dbb4ddc3a7: Download complete
+c91442609c05: Download complete
+30eceb95cc71: Download complete
+ff48e91a05e9: Download complete
+540d1d9604d2: Download complete
+319ec79ee793: Download complete
+a8c0be2aef64: Download complete
+ae2e3acb5669: Download complete
+ae2e3acb5669: Pull complete
+60d9b26a23ef: Pull complete
+9f7b4105d9d2: Pull complete
+4af8ac3da2f9: Pull complete
+7455df3e077d: Pull complete
+0f0f5d6c6a72: Pull complete
+caa5116ed4b8: Pull complete
+e4c75db06451: Pull complete
+bbcd8e2f47bd: Pull complete
+e70bd6858950: Pull complete
+a1bc17dd40b2: Pull complete
+439d07cca121: Pull complete
+fa7f1f248d5e: Pull complete
+67dbb4ddc3a7: Pull complete
+c91442609c05: Pull complete
+30eceb95cc71: Pull complete
+ff48e91a05e9: Pull complete
+540d1d9604d2: Pull complete
+319ec79ee793: Pull complete
+a8c0be2aef64: Pull complete
+d9ff237b3bdf: Pull complete
+0f4863cd9c52: Pull complete
+92132f761160: Pull complete
+82cf28f3d1b5: Pull complete
+e4d9ec943689: Pull complete
+d438d0655c04: Pull complete
+Digest: sha256:617b62a16858dc8436c1ded1970fa13e33539feb4c98b580cf6274b46b2ab1ef
+Status: Downloaded newer image for ghcr.io/supabase/postgres@sha256:617b62a16858dc8436c1ded1970fa13e33539feb4c98b580cf6274b46b2ab1ef
+ghcr.io/supabase/postgres@sha256:617b62a16858dc8436c1ded1970fa13e33539feb4c98b580cf6274b46b2ab1ef
+
+EXIT 0
+COMMAND ["docker", "tag", "ghcr.io/supabase/postgres@sha256:617b62a16858dc8436c1ded1970fa13e33539feb4c98b580cf6274b46b2ab1ef", "qaw005-hosted-cold-ed1b81d5:fixture"]
+
+EXIT 0
+COMMAND ["docker", "run", "--pull=never", "--rm", "-d", "--platform", "linux/amd64", "--network", "none", "--name", "qaw005-hosted-cold-ed1b81d5", "--user", "postgres", "--entrypoint", "/bin/sh", "qaw005-hosted-cold-ed1b81d5:fixture", "-c", "umask 077; mkdir /tmp/vpj59-socket; initdb -D /tmp/vpj59-db -A trust --no-locale -E UTF8 >/tmp/init.log 2>&1 && exec postgres -D /tmp/vpj59-db -c listen_addresses= -c unix_socket_directories=/tmp/vpj59-socket -c unix_socket_permissions=0700"]
+a6fb70032bacfc4f67f605ecd9c06c62a1894c20afba64bb82d2f26ed590517c
+
+EXIT 0
+COMMAND ["docker", "exec", "qaw005-hosted-cold-ed1b81d5", "pg_isready", "-h", "/tmp/vpj59-socket", "-U", "postgres"]
+/tmp/vpj59-socket:5432 - no response
+
+EXIT 2
+COMMAND ["docker", "exec", "qaw005-hosted-cold-ed1b81d5", "pg_isready", "-h", "/tmp/vpj59-socket", "-U", "postgres"]
+/tmp/vpj59-socket:5432 - no response
+
+EXIT 2
+COMMAND ["docker", "exec", "qaw005-hosted-cold-ed1b81d5", "pg_isready", "-h", "/tmp/vpj59-socket", "-U", "postgres"]
+/tmp/vpj59-socket:5432 - no response
+
+EXIT 2
+COMMAND ["docker", "exec", "qaw005-hosted-cold-ed1b81d5", "pg_isready", "-h", "/tmp/vpj59-socket", "-U", "postgres"]
+/tmp/vpj59-socket:5432 - no response
+
+EXIT 2
+COMMAND ["docker", "exec", "qaw005-hosted-cold-ed1b81d5", "pg_isready", "-h", "/tmp/vpj59-socket", "-U", "postgres"]
+/tmp/vpj59-socket:5432 - accepting connections
+
+EXIT 0
+COMMAND ["docker", "exec", "qaw005-hosted-cold-ed1b81d5", "psql", "-h", "/tmp/vpj59-socket", "-U", "postgres", "-d", "postgres", "-At", "-c", "select current_setting('server_version'), 1+1;"]
+17.6|2
+
+EXIT 0
+COMMAND ["docker", "rm", "-f", "qaw005-hosted-cold-ed1b81d5"]
+qaw005-hosted-cold-ed1b81d5
+
+EXIT 0
+PASS: cold independent tag, exact amd64 image, unchanged offline PostgreSQL fixture bootstrap/readiness, SQL query. Not full worker integration or target acceptance.

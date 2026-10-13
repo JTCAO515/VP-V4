@@ -1,0 +1,18 @@
+{
+  "base": "2dbc7136620bd75ce81e99103aac1ea1b5dfd6ae",
+  "scope": "VP-V10 rule adoption only; external files explicitly handed off by Main",
+  "files": [
+    {
+      "path": "/Users/jtsm5p/.codex/AGENTS.md",
+      "beforeSha256": "ca79d7f80cd864b48aa64e99c391a623c68b7b9a96569269f3db67e2041cec7d",
+      "afterSha256": "4e1672a81ade02cedc3224f3fb071b45f8916838d3b5857f06f7f811802cca53",
+      "diff": "global-AGENTS.diff"
+    },
+    {
+      "path": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/DEVELOPMENT-RULES.md",
+      "beforeSha256": "7821c33e3116c77d6abef522b5013e0c8161ac5659c0e0748058304f78d5c432",
+      "afterSha256": "40e45650a1b272b42e1a821f890d4a126c7f984e273e0ece7d0f5c84f3ceda2f",
+      "diff": "DEVELOPMENT-RULES.diff"
+    }
+  ]
+}

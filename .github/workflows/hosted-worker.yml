@@ -38,21 +38,11 @@ jobs:
       - name: Pull the pinned local test database image
         shell: bash
         run: |
-          for attempt in 1 2 3; do
-            if output=$(docker pull public.ecr.aws/supabase/postgres:17.6.1.159 2>&1); then
-              printf '%s\n' "$output"
-              exit 0
-            else
-              status=$?
-            fi
-            printf '%s\n' "$output"
-            case "$output" in
-              *toomanyrequests*|*"Rate exceeded"*) ;;
-              *) exit "$status" ;;
-            esac
-            if [ "$attempt" -eq 3 ]; then exit "$status"; fi
-            sleep "$((attempt * 10))"
-          done
+          # Same official Supabase linux/amd64 manifest as DB Integration.
+          # Verified registry equivalence: artifacts/QAWEB/ci-image-fallback/registry-digests.json.
+          image="ghcr.io/supabase/postgres@sha256:617b62a16858dc8436c1ded1970fa13e33539feb4c98b580cf6274b46b2ab1ef"
+          docker pull --platform linux/amd64 "$image"
+          docker tag "$image" public.ecr.aws/supabase/postgres:17.6.1.159
       - name: Hosted worker loop, profile and CLI fail-closed checks
         run: node --experimental-strip-types --test tests/security/turn/hosted-text-worker.test.mjs tests/security/turn/hosted-secret-profile.test.mjs tests/security/turn/hosted-planning-deployment.test.mjs
       - name: Offline hosted journal audit and receipt isolation
