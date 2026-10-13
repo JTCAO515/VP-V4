@@ -1,0 +1,17 @@
+--- a/ios/VisePanda/VisePanda/Features/Trip/NativeTripView.swift
++++ b/ios/VisePanda/VisePanda/Features/Trip/NativeTripView.swift
+@@ -204,0 +205,6 @@
++                            .task(id: store.materialOutcome.confirmed?.source.confirmationEventID) {
++                                guard let value = store.materialOutcome.confirmed,
++                                      let context = NativeJourneyMaterialOutcomeBridge.context(store: store, session: session, active: scenePhase == .active),
++                                      store.materialOutcome.presented(value, context: context) != nil else { return }
++                                _ = NativeJourneyMaterialOutcomeConsumer().measurementQualification(for: .confirmedReadback(value))
++                            }
+@@ -339,0 +346,7 @@
++        .task(id: scenePhase) {
++            store.materialActive = scenePhase == .active
++            store.materialOutcome.invalidate(context: NativeJourneyMaterialOutcomeBridge.context(store: store, session: session, active: store.materialActive))
++        }
++        .onChange(of: store.detail?.trip.headVersion) { _, _ in
++            store.materialOutcome.invalidate(context: NativeJourneyMaterialOutcomeBridge.context(store: store, session: session, active: store.materialActive))
++        }

@@ -1,0 +1,11 @@
+--- a/ios/VisePanda/VisePanda.xcodeproj/project.pbxproj
++++ b/ios/VisePanda/VisePanda.xcodeproj/project.pbxproj
+@@ -478,0 +479,2 @@
++		FE2210000000000000000001 = {isa = PBXBuildFile; fileRef = FE2200000000000000000001; };
++		FE2210000000000000000002 = {isa = PBXBuildFile; fileRef = FE2200000000000000000002; };
+@@ -960,0 +963,2 @@
++		FE2200000000000000000001 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/JourneyMaterialOutcome/NativeJourneyMaterialOutcome.swift; sourceTree = SOURCE_ROOT; };
++		FE2200000000000000000002 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/JourneyMaterialOutcome/NativeJourneyMaterialOutcomeBridge.swift; sourceTree = SOURCE_ROOT; };
+@@ -1165,0 +1170,2 @@
++				FE2210000000000000000002,
++				FE2210000000000000000001,

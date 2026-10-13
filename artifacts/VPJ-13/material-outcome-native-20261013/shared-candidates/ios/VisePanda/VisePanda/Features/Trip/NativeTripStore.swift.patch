@@ -1,0 +1,18 @@
+--- a/ios/VisePanda/VisePanda/Features/Trip/NativeTripStore.swift
++++ b/ios/VisePanda/VisePanda/Features/Trip/NativeTripStore.swift
+@@ -19,0 +20,3 @@
++    let materialOutcome = NativeJourneyMaterialOutcomeStore()
++    var materialActive = false
++    private(set) var materialHandoff: NativeJourneyMaterialOutcome.Handoff?
+@@ -35,0 +39 @@
++        materialOutcome.exit(.scopeChanged); materialHandoff = nil
+@@ -409,0 +414,4 @@
++            if let selection = self.materialOutcome.selection,
++               let context = NativeJourneyMaterialOutcomeBridge.context(store: self, session: session, active: self.materialActive) {
++                _ = self.materialOutcome.confirmStarted(pending: pending, key: key, selection: selection, context: context)
++            }
+@@ -418,0 +427,2 @@
++            self.materialHandoff = await NativeJourneyMaterialOutcomeBridge.confirmed(outcome: self.materialOutcome,
++                store: self, session: session, active: { self.materialActive }, receipt: result)
+@@ -451,0 +462 @@
++            self.materialOutcome.exit(.rejected); self.materialHandoff = nil
