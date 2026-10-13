@@ -7,7 +7,7 @@ import { parseQaHostedProfile } from '../../lib/server/qa-agent/hosted-profile.t
 export const PROJECT = 'dzqdzetcctkhbrhlxxgn';
 export const LINK = 'link_6acdbe0471c081919ff47de24ca53b0f';
 export const MODE = 'qa_session_history_v1';
-export const MIGRATION_MANIFEST_HASH = 'f0e96cbcbdf4941f36c522e7faf6b7a22d24974412c1c91dc29076cfd91a9f1c';
+export const MIGRATION_MANIFEST_HASH = 'b8b4c27efa683f9fbb8a82b7a9febd2a42846345af473a4519b426d1c9b1f61f';
 const manifestBytes=readFileSync(new URL('./migration-manifest.json',import.meta.url));
 if (createHash('sha256').update(manifestBytes).digest('hex')!==MIGRATION_MANIFEST_HASH) throw Error('MIGRATION_MANIFEST_CHANGED');
 export const migrationManifest=JSON.parse(manifestBytes);

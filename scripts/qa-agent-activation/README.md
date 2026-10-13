@@ -46,7 +46,7 @@ Run `metadata.sql` using the official Go2China account link `link_6acdbe0471c081
   "observedAt": "ACTUAL_ISO_TIMESTAMP",
   "migrations": [],
   "reviewedMigrations": [],
-  "migrationManifestHash": "f0e96cbcbdf4941f36c522e7faf6b7a22d24974412c1c91dc29076cfd91a9f1c",
+  "migrationManifestHash": "b8b4c27efa683f9fbb8a82b7a9febd2a42846345af473a4519b426d1c9b1f61f",
   "qaRpcPresent": false,
   "qaReadyGroupsAcl": {"signature":"public.qa_ready_groups_v1(integer)","serviceRoleExecute":false,"publicExecute":false,"anonExecute":false,"authenticatedExecute":false},
   "turnDataPrivatePresent": false,
@@ -82,7 +82,7 @@ No target write, budget enablement, provider call, deployment or restore was exe
 
 ## Stable Main migration repin
 
-The manifest records Main revision `a8f00e8a` and QA migration SHA-256 `df5565ae49363dc83d4e0db9686653d43dc79cb2b011e4d56e343f45d654afa9`; version sets stay 75/80/155. The new v3-only discovery signature `public.qa_ready_groups_v1(integer)` must exist and permit EXECUTE to service_role only (PUBLIC/anon/authenticated false). Map `qa_ready_groups_acl` from the read-only metadata query into `qaReadyGroupsAcl`; absent/legacy signature or grants fail closed. No query invokes the discovery RPC.
+The manifest records Main revision `d9447720` and QA migration SHA-256 `b4cfba3e31627e1200f331800eb85a5769744fb300c6799fde53661385c7c6de`; version sets stay 75/80/155. The new v3-only discovery signature `public.qa_ready_groups_v1(integer)` must exist and permit EXECUTE to service_role only (PUBLIC/anon/authenticated false). Map `qa_ready_groups_acl` from the read-only metadata query into `qaReadyGroupsAcl`; absent/legacy signature or grants fail closed. No query invokes the discovery RPC.
 
 This owned branch deliberately does not import Main's shared source. Before integration its default preflight correctly reports SOURCE_MIGRATION_DRIFT. To read a separate approved checkout without altering either tree, the CLI accepts a final optional absolute repository root after observation.json. All 155 source hashes are still verified; this parameter never changes expected hashes or the database target. After Main cherry-picks this kit onto its matching source, omit the option. Contract tests read matching checkout bytes, or the pinned Main Git object into their own disposable temporary fixture; an integrated CI checkout uses its matching local bytes and needs no historical Git object. Tests never modify repository migrations.
 

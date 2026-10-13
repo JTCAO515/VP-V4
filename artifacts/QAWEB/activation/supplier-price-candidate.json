@@ -91,7 +91,7 @@
     ],
     "engineeringReview": [
       "Technical coverage resolved using official snapshot limits and cache rules: current serializer emits no explicit cache_control, tools or multimodal content; implicit cache creation is standard-price and hits can only reduce cost. Keep flat 6/24 upper-tier pricing without discounts.",
-      "Migration manifest remains pinned to Main a8f00e8a; all target/schema/ACL and authorization preconditions still apply."
+      "Migration manifest remains pinned to Main d9447720; all target/schema/ACL and authorization preconditions still apply."
     ],
     "technicalSources": [
       "https://help.aliyun.com/zh/model-studio/qwen3-7-plus",
