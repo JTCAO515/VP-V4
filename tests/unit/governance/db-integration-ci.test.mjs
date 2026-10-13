@@ -140,7 +140,7 @@ test("CI matrix CLI and actual workflow projection fail before emitting an outpu
   } finally {rmSync(dir,{recursive:true,force:true});}
 });
 
-test("pinned image pull falls back only after ECR throttling and fails closed on mirror errors", () => {
+test("pinned images pull only exact official GHCR digests and fail closed", () => {
   const workflow = read(".github/workflows/db-integration.yml");
   const match = workflow.match(/- name: Pull pinned test database images[\s\S]*?run: \|\n([\s\S]*?)(?=      - name:)/);
   assert.ok(match);
@@ -149,42 +149,49 @@ test("pinned image pull falls back only after ECR throttling and fails closed on
   const evidence = JSON.parse(read("artifacts/QAWEB/ci-image-fallback/registry-digests.json"));
   assert.deepEqual(evidence.images.map(row => `public.ecr.aws/supabase/${row.tag}`).sort(), [...pinnedImages()].sort());
   const harness = `
-node() { printf '%s\\n' "$TEST_IMAGE"; }
-sleep() { :; }
+node() { printf '%s\\n' "$TEST_IMAGES"; return "$LIST_STATUS"; }
 docker() {
   printf 'DOCKER %s\\n' "$*" >&2
   if [ "$1" = tag ]; then return "$TAG_STATUS"; fi
-  if [ "$2" = --platform ]; then return "$MIRROR_STATUS"; fi
-  printf '%s\\n' "$ECR_OUTPUT"
-  return "$ECR_STATUS"
+  if [ "$1" = pull ] && [ "$2" = --platform ] && [ "$3" = linux/amd64 ]; then
+    case "$4" in ghcr.io/supabase/*@sha256:*) return "$MIRROR_STATUS" ;; esac
+  fi
+  return 99
 }
 `;
-  const run = (image, overrides = {}) => spawnSync("/bin/bash", ["--noprofile", "--norc", "-eo", "pipefail", "-c", harness + body], {
-    encoding: "utf8", env: {...process.env, TEST_IMAGE: image, ECR_STATUS: "7", ECR_OUTPUT: "toomanyrequests: Data limit exceeded", MIRROR_STATUS: "0", TAG_STATUS: "0", ...overrides},
+  const run = (images, overrides = {}) => spawnSync("/bin/bash", ["--noprofile", "--norc", "-eo", "pipefail", "-c", harness + body], {
+    encoding: "utf8", env: {...process.env, TEST_IMAGES: images, LIST_STATUS: "0", MIRROR_STATUS: "0", TAG_STATUS: "0", ...overrides},
   });
+  let expected = "";
   for (const row of evidence.images) {
     assert.equal(row["public.ecr.aws"], row["ghcr.io"]);
     assert.match(row["ghcr.io"], /^sha256:[a-f0-9]{64}$/);
     const image = `public.ecr.aws/supabase/${row.tag}`;
     const mirror = `ghcr.io/supabase/${row.tag.split(":")[0]}@${row["ghcr.io"]}`;
-    for (const ECR_OUTPUT of ["toomanyrequests: Data limit exceeded", "Rate exceeded"]) {
-      const result = run(image, {ECR_OUTPUT});
-      assert.equal(result.status, 0, result.stderr);
-      assert.equal(result.stdout.split(`DOCKER pull ${image}`).length - 1, 3);
-      assert.equal(result.stderr, `DOCKER pull --platform linux/amd64 ${mirror}\nDOCKER tag ${mirror} ${image}\n`);
-    }
-    const success = run(image, {ECR_STATUS: "0"});
-    assert.equal(success.status, 0); assert.doesNotMatch(success.stderr, /ghcr.io|DOCKER tag/);
-    for (const ECR_OUTPUT of ["unauthorized", "manifest unknown", "TLS handshake timeout", "network unavailable"]) {
-      const failure = run(image, {ECR_OUTPUT});
-      assert.equal(failure.status, 7); assert.doesNotMatch(failure.stderr, /ghcr.io|DOCKER tag/);
-    }
+    const calls = `DOCKER pull --platform linux/amd64 ${mirror}\nDOCKER tag ${mirror} ${image}\n`;
+    expected += calls;
+    const success = run(image);
+    assert.equal(success.status, 0, success.stderr);
+    assert.equal(success.stderr, calls);
+    // Digest verification is enforced by Docker's immutable digest pull. Any pull
+    // failure (including content digest mismatch) must prevent tagging/continuation.
     const pullFailure = run(image, {MIRROR_STATUS: "8"});
-    assert.equal(pullFailure.status, 8); assert.doesNotMatch(pullFailure.stderr, /DOCKER tag/);
+    assert.equal(pullFailure.status, 8);
+    assert.equal(pullFailure.stderr, `DOCKER pull --platform linux/amd64 ${mirror}\n`);
     assert.equal(run(image, {TAG_STATUS: "9"}).status, 9);
   }
-  for (const image of ["public.ecr.aws/supabase/postgres:unknown", "other.example/supabase/postgres:17.6.1.155"]) {
-    const result = run(image);
-    assert.equal(result.status, 7); assert.doesNotMatch(result.stderr, /ghcr.io|DOCKER tag/);
+  const images = evidence.images.map(row => `public.ecr.aws/supabase/${row.tag}`).join("\n");
+  const all = run(images);
+  assert.equal(all.status, 0, all.stderr); assert.equal(all.stderr, expected);
+  for (const overrides of [{MIRROR_STATUS: "8"}, {TAG_STATUS: "9"}]) {
+    const result = run(images, overrides);
+    assert.notEqual(result.status, 0);
+    assert.equal((result.stderr.match(/DOCKER pull/g) || []).length, 1);
   }
+  for (const image of ["", "public.ecr.aws/supabase/postgres:unknown", "other.example/supabase/postgres:17.6.1.155"]) {
+    const result = run(image);
+    assert.equal(result.status, 1); assert.doesNotMatch(result.stderr, /DOCKER/);
+  }
+  const listFailure = run(images, {LIST_STATUS: "7"});
+  assert.equal(listFailure.status, 7); assert.doesNotMatch(listFailure.stderr, /DOCKER/);
 });

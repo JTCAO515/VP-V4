@@ -1,4 +1,37 @@
-# PR 684: bounded official image fallback
+# PR 684: direct digest-pinned official GHCR pulls
+
+## Current repair, 2026-10-13
+
+Follow-up baseline: `801522beee5efc2ca2cbca92f506272dd6bd658d`.
+Main reported PR head `a21be165`; GitHub job `115161288349` logs were read directly.
+At 06:27:35 UTC ECR returned `Rate exceeded`, and at 06:28:36 UTC the ECR
+PostgREST pull returned `context deadline exceeded`, before database tests.
+The earlier throttling-only fallback did not handle that distinct failure.
+
+The image step now pulls all four official GHCR references directly by the same
+verified linux/amd64 manifest digests, then tags each as its existing ECR local
+name. There are no ECR network calls, retries, added timeouts, third registries or
+credential changes. Docker enforces the requested content digest during pull;
+any pull/digest failure or tag failure exits the step unchanged. Unknown pins,
+empty image lists and failed image-list commands fail before Docker is called.
+Lane selection, integration assertions, timeouts and `--pull=never` stay intact.
+
+- PASS: governance tests 21/21, zero skipped/todo/cancelled, including exact four-pin
+  command traces, no ECR pull, unknown/empty/failed list, pull and tag failures,
+  and stopping before subsequent images after a failure. See
+  `ghcr-direct-governance-tests.log`. Docker is stubbed in these shell tests.
+- PASS: workflow actionlint 1.7.12 (ShellCheck unavailable, disabled), actual
+  candidate Bash `-n`, docs check and diff check.
+- Reused: unchanged exact digest readback from both registries in
+  `registry-digests.json`, performed earlier in this same repair session.
+- UNRUN: real large image pulls and full database matrix locally; Main will
+  cherry-pick this follow-up and assess the resulting exact PR head's real CI.
+- Tool/network: GitHub job-log read succeeded using existing authentication.
+  No new permission or registry access was requested.
+
+Rollback: revert this follow-up commit to the previous throttling-only behavior.
+
+## Historical throttling-only repair (superseded)
 
 Baseline: `4e477a7f7bb05af1539bf940da204dd93df90bf3`.
 Branch: `codex/qaw005-ci-image-fallback-20261013`.

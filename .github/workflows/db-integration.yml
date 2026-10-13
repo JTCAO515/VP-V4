@@ -81,35 +81,20 @@ jobs:
         if: matrix.lane == 'postgres'
         shell: bash
         run: |
-          for image in $(node scripts/ci-suites/db-integration.mjs --images); do
-            for attempt in 1 2 3; do
-              if output=$(docker pull "$image" 2>&1); then
-                printf '%s\n' "$output" | tail -1
-                break
-              else
-                status=$?
-              fi
-              printf '%s\n' "$output"
-              case "$output" in
-                *toomanyrequests*|*"Rate exceeded"*) ;;
-                *) exit "$status" ;;
-              esac
-              if [ "$attempt" -eq 3 ]; then
-                # Official Supabase mirror; identical linux/amd64 manifests verified in
-                # artifacts/QAWEB/ci-image-fallback/registry-digests.json. Unknown pins fail closed.
-                case "$image" in
-                  public.ecr.aws/supabase/postgres:17.6.1.155) mirror="ghcr.io/supabase/postgres@sha256:3e2a7ab48783077d0122dc72ed5174afb543110c38266c845716c51d130658e4" ;;
-                  public.ecr.aws/supabase/postgres:17.6.1.159) mirror="ghcr.io/supabase/postgres@sha256:617b62a16858dc8436c1ded1970fa13e33539feb4c98b580cf6274b46b2ab1ef" ;;
-                  public.ecr.aws/supabase/postgres:17.6.1.167) mirror="ghcr.io/supabase/postgres@sha256:16c0944c77885446d4f2ebbb2191b357feeb3b1295bde2fb1978c113129dbeb4" ;;
-                  public.ecr.aws/supabase/postgrest:v16.2) mirror="ghcr.io/supabase/postgrest@sha256:6e83b0277ea5de980847e9246d2ec2803e99dfce0e69066f6484bd10c4a5b819" ;;
-                  *) exit "$status" ;;
-                esac
-                docker pull --platform linux/amd64 "$mirror"
-                docker tag "$mirror" "$image"
-                break
-              fi
-              sleep "$((attempt * 10))"
-            done
+          images=$(node scripts/ci-suites/db-integration.mjs --images)
+          test -n "$images"
+          for image in $images; do
+            # Official Supabase mirror; identical linux/amd64 manifests verified in
+            # artifacts/QAWEB/ci-image-fallback/registry-digests.json. Unknown pins fail closed.
+            case "$image" in
+              public.ecr.aws/supabase/postgres:17.6.1.155) mirror="ghcr.io/supabase/postgres@sha256:3e2a7ab48783077d0122dc72ed5174afb543110c38266c845716c51d130658e4" ;;
+              public.ecr.aws/supabase/postgres:17.6.1.159) mirror="ghcr.io/supabase/postgres@sha256:617b62a16858dc8436c1ded1970fa13e33539feb4c98b580cf6274b46b2ab1ef" ;;
+              public.ecr.aws/supabase/postgres:17.6.1.167) mirror="ghcr.io/supabase/postgres@sha256:16c0944c77885446d4f2ebbb2191b357feeb3b1295bde2fb1978c113129dbeb4" ;;
+              public.ecr.aws/supabase/postgrest:v16.2) mirror="ghcr.io/supabase/postgrest@sha256:6e83b0277ea5de980847e9246d2ec2803e99dfce0e69066f6484bd10c4a5b819" ;;
+              *) printf 'Unknown test image pin: %s\n' "$image" >&2; exit 1 ;;
+            esac
+            docker pull --platform linux/amd64 "$mirror"
+            docker tag "$mirror" "$image"
           done
       - name: Prepare native PostgreSQL for the Wiki lane
         if: matrix.lane == 'postgres-native'
