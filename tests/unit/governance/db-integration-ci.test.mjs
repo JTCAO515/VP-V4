@@ -221,3 +221,23 @@ test("security workflows prepare the exact official Node fixture before offline 
     }
   }
 });
+
+test("hosted worker prepares the identical GHCR database pin without ECR network access", () => {
+  const workflow = read(".github/workflows/hosted-worker.yml");
+  const match = workflow.match(/- name: Pull the pinned local test database image\n        shell: bash\n        run: \|\n([\s\S]*?)(?=      - name: Hosted worker loop)/);
+  assert.ok(match);
+  const body = match[1].split("\n").map(line => line.startsWith("          ") ? line.slice(10) : line).join("\n");
+  assert.equal(spawnSync("/bin/bash", ["-n"], {input: body}).status, 0);
+  const evidence = JSON.parse(read("artifacts/QAWEB/ci-image-fallback/registry-digests.json"));
+  const pin = evidence.images.find(row => row.tag === "postgres:17.6.1.159");
+  assert.equal(pin["public.ecr.aws"], pin["ghcr.io"]);
+  const reference = `ghcr.io/supabase/postgres@${pin["ghcr.io"]}`;
+  const harness = `docker() { printf '%s\\n' "$*"; if [ "$1" = pull ]; then return "$PULL_STATUS"; fi; return "$TAG_STATUS"; }\n`;
+  for (const [pull, tag, status] of [[0, 0, 0], [7, 0, 7], [0, 8, 8]]) {
+    const result = spawnSync("/bin/bash", ["--noprofile", "--norc", "-eo", "pipefail", "-c", harness + body], {
+      encoding: "utf8", env: {...process.env, PULL_STATUS: String(pull), TAG_STATUS: String(tag)},
+    });
+    assert.equal(result.status, status, result.stderr);
+    assert.equal(result.stdout, `pull --platform linux/amd64 ${reference}\n` + (pull ? "" : `tag ${reference} public.ecr.aws/supabase/postgres:17.6.1.159\n`));
+  }
+});
