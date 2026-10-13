@@ -40,9 +40,9 @@
         "sha256": "b28eebd078b4f08de9489909c8f39d854bee288792cfcd01de6f99f2b04d0406"
       },
       "coverage": {
-        "inputTokens": 1048576,
+        "inputTokens": 1000000,
         "outputTokens": 4096,
-        "allBillableComponentsIncluded": false
+        "allBillableComponentsIncluded": true
       }
     },
     "budget": {
@@ -74,7 +74,7 @@
   "reviewNotes": {
     "sourceDigests": "official-source-digests.json",
     "operatorRecheckDeadline": "2026-10-14T06:52:00Z; local conservative deadline, not supplier price guarantee",
-    "pricingCoverage": "Public tariff stops at decimal 1,000,000 input tokens; existing reservation multiplies by 1,048,576. Extra 48,576 is a potential conservative margin, not a publicly quoted tier. Coverage flag remains false until Main reviews supported request bound and excludes explicit cache creation/other surcharges.",
+    "pricingCoverage": "Official fixed snapshot maximum input is 991808 tokens, context 1000000; the tariff covers legal requests through 1000000 input tokens. Coverage=true covers billable components of the current text-only QA request, not account verification or activation. The unchanged 1048576 reservation basis is a conservative monetary margin, not a quoted or sendable token range. QA messages JSON is capped at 32768 UTF-8 bytes; bytes are not tokens.",
     "discounts": "No temporary discount, free quota, batch discount or cache savings assumed. Flat pricing charges all reported input at 6 CNY/million.",
     "accountUnknowns": [
       "actual contracting recipient",
@@ -90,8 +90,12 @@
       "Confirm finite actual attempt/task/scope/provider spend caps and expiry before any activation; no caps inferred from tariff."
     ],
     "engineeringReview": [
-      "Confirm 1,048,576 reservation is safety margin while supported requests remain within documented tier; no model/endpoint change.",
-      "Inspect final migration hash from Main before repinning; not auto-accepted."
+      "Technical coverage resolved using official snapshot limits and cache rules: current serializer emits no explicit cache_control, tools or multimodal content; implicit cache creation is standard-price and hits can only reduce cost. Keep flat 6/24 upper-tier pricing without discounts.",
+      "Migration manifest remains pinned to Main a8f00e8a; all target/schema/ACL and authorization preconditions still apply."
+    ],
+    "technicalSources": [
+      "https://help.aliyun.com/zh/model-studio/qwen3-7-plus",
+      "https://help.aliyun.com/zh/model-studio/context-cache"
     ]
   }
 }

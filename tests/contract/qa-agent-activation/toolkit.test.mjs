@@ -22,7 +22,7 @@ const id='11111111-1111-4111-8111-111111111111';
 const proof=()=>({url:'https://example.invalid/synthetic-only',observedAt:'2026-10-13T03:00:00Z',validUntil:'2026-10-14T04:00:00Z',sha256:'a'.repeat(64)});
 const input=()=>({schemaVersion:'qa-activation-input/1',projectId:PROJECT,contextMode:MODE,ownerId:id,
  supplier:{provider:'qwen',recipient:'SYNTHETIC recipient; not a real provider assertion',endpoint:'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',termsVersion:'SYNTHETIC-terms-1',sourceRegion:'SYNTHETIC source',processingRegion:'unknown',storageRegion:'not disclosed',providerRetentionDisclosure:'unknown; supplier has not disclosed retention',evidence:proof()},
- pricing:{model:'qwen3.7-plus-2026-05-26',priceVersion:'synthetic-only-v1',currency:'CNY',mode:'flat',inputMicrosPerMillion:1000000,outputMicrosPerMillion:2000000,cachedInputMicrosPerMillion:null,evidence:proof(),coverage:{inputTokens:1048576,outputTokens:4096,allBillableComponentsIncluded:true}},
+ pricing:{model:'qwen3.7-plus-2026-05-26',priceVersion:'synthetic-only-v1',currency:'CNY',mode:'flat',inputMicrosPerMillion:1000000,outputMicrosPerMillion:2000000,cachedInputMicrosPerMillion:null,evidence:proof(),coverage:{inputTokens:1000000,outputTokens:4096,allBillableComponentsIncluded:true}},
  budget:{limitMicros:10000000,taskLimitMicros:5000000,providerLimitMicros:10000000,attemptLimitMicros:2000000,taskAttemptLimit:8,concurrencyLimit:1,maxOutputTokens:128,timeoutMs:1000,evidence:proof()},
  validity:{effectiveAt:'2026-10-13T03:00:00Z',expiresAt:'2026-10-14T03:00:00Z',termsRecheckAt:'2026-10-14T03:00:00Z'},configuration:{id,version:1}});
 const build=x=>generate(x??input(),{now});
@@ -70,9 +70,10 @@ test('public source candidate cannot become an activatable package with missing 
  assert.equal(candidate.status,'UNPUBLISHED_DISABLED');assert.equal(candidate.activationAllowed,false);assert.equal(candidate.accountVerified,false);
  assert.equal(candidate.inputCandidate.supplier.endpoint,'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions');
  assert.equal(candidate.inputCandidate.pricing.model,'qwen3.7-plus-2026-05-26');
- assert.equal(candidate.inputCandidate.pricing.coverage.allBillableComponentsIncluded,false);
+ assert.equal(candidate.inputCandidate.pricing.coverage.allBillableComponentsIncluded,true);
+ assert.equal(candidate.inputCandidate.pricing.coverage.inputTokens,1000000);
  assert.throws(()=>build(candidate.inputCandidate),/TARGET_OR_MODE/);
- const x=input();x.pricing={...candidate.inputCandidate.pricing,evidence:proof()};assert.throws(()=>build(x),/PRICE_COVERAGE/);
+ const x=input();x.pricing={...candidate.inputCandidate.pricing,evidence:proof()};x.pricing.coverage={...x.pricing.coverage,allBillableComponentsIncluded:false};assert.throws(()=>build(x),/PRICE_COVERAGE/);
 });
 test('6/24 upper-tier arithmetic preserves full-context reserve without cache or free-quota discounts',()=>{
  const x=input();x.pricing.inputMicrosPerMillion=6000000;x.pricing.outputMicrosPerMillion=24000000;
@@ -88,4 +89,26 @@ test('stable Main migration hash and new QA RPC ACL are mandatory; source drift 
  const file=new URL('20261013050429_qa_agent_web.sql',sourceRoot),original=readFileSync(file);
  try {writeFileSync(file,Buffer.concat([original,Buffer.from('\n-- drift')]));assert.ok(preflight(b,s,now).blockers.includes('SOURCE_MIGRATION_DRIFT'));} finally {writeFileSync(file,original);}
  assert.equal(preflight(b,s,now).reviewReady,true);
+});
+
+test('official legal input fee stays below unchanged full-context reserve; incomplete coverage rejects',()=>{
+ const x=input();x.pricing.inputMicrosPerMillion=6000000;x.pricing.outputMicrosPerMillion=24000000;
+ x.budget.limitMicros=20000000;x.budget.providerLimitMicros=20000000;x.budget.taskLimitMicros=10000000;x.budget.attemptLimitMicros=7000000;x.budget.maxOutputTokens=4096;
+ // Official qwen3-7-plus snapshot: input 991808, context 1000000.
+ // 32768 is serialized message BYTES, not measured provider tokens.
+ const legalMaximumMicros=(991808n*6000000n+4096n*24000000n+999999n)/1000000n;
+ assert.equal(legalMaximumMicros,6049152n);assert.equal(build(x).hostedProfile.qwen.reservedMicros,6389760);
+ assert.ok(legalMaximumMicros<=BigInt(build(x).hostedProfile.qwen.reservedMicros));
+ for(const mutate of [p=>delete p.coverage,p=>delete p.coverage.allBillableComponentsIncluded,p=>p.coverage.allBillableComponentsIncluded=false,p=>p.coverage.inputTokens=1048576,p=>p.coverage.inputTokens=32768]) {
+  const bad=structuredClone(x);mutate(bad.pricing);assert.throws(()=>build(bad),/PRICE_SCHEMA|PRICE_COVERAGE/);
+ }
+});
+test('CLI fixture uses official coverage with unchanged disabled output and reservation',()=>{
+ const x=input(),time=Date.now(),iso=n=>new Date(n).toISOString();
+ for(const section of ['supplier','pricing','budget'])x[section].evidence={...proof(),observedAt:iso(time-1000),validUntil:iso(time+86400000)};
+ x.validity={effectiveAt:iso(time-1000),expiresAt:iso(time+3600000),termsRecheckAt:iso(time+3600000)};
+ const source=new URL('cli-input.json',sourceRoot),output=new URL('cli-output.json',sourceRoot);
+ writeFileSync(source,JSON.stringify(x));
+ execFileSync(process.execPath,[new URL('../../../scripts/qa-agent-activation/cli.mjs',import.meta.url).pathname,'generate',source.pathname,output.pathname]);
+ const b=JSON.parse(readFileSync(output));assert.equal(b.activationAllowed,false);assert.equal(b.scopeInsertParameters.enabled,false);assert.equal(b.hostedProfile.qwen.reservedMicros,1048832);
 });
