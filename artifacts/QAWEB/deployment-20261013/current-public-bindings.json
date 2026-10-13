@@ -1,0 +1,307 @@
+{
+  "observedAt": "2026-10-13T09:45:12.408365+00:00",
+  "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+  "teamId": "team_vLT8SL2mQJJSnXbD9GzVLP4K",
+  "domains": [
+    {
+      "name": "qatesting.go2china.space",
+      "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+      "gitBranch": "codex/qaw005-main-20261013",
+      "verified": true
+    },
+    {
+      "name": "testing.go2china.space",
+      "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+      "gitBranch": null,
+      "verified": true
+    },
+    {
+      "name": "staging.go2china.space",
+      "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+      "gitBranch": "codex/s2-native-ask-io-20260911",
+      "verified": true
+    },
+    {
+      "name": "go2china.space",
+      "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+      "gitBranch": null,
+      "verified": true
+    },
+    {
+      "name": "www.go2china.space",
+      "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+      "gitBranch": null,
+      "verified": true
+    },
+    {
+      "name": "vp-v4.vercel.app",
+      "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+      "gitBranch": null,
+      "verified": true
+    }
+  ],
+  "deploymentMetadata": [
+    {
+      "host": "go2china.space",
+      "aliasMetadata": "OBSERVED",
+      "deploymentId": "dpl_9t4iY7YF48r9Suru34hZFdxH8sdw",
+      "deploymentHost": "vp-v4-ebks7kvsh-jtcao515s-projects.vercel.app",
+      "target": "production",
+      "readyState": "READY",
+      "gitSha": "30e9801309803ea06d38e7cb2df3249aa4741436",
+      "gitBranch": "hotfix/next-16-3-6-20260923"
+    },
+    {
+      "host": "www.go2china.space",
+      "aliasMetadata": "OBSERVED",
+      "deploymentId": "dpl_9t4iY7YF48r9Suru34hZFdxH8sdw",
+      "deploymentHost": "vp-v4-ebks7kvsh-jtcao515s-projects.vercel.app",
+      "target": "production",
+      "readyState": "READY",
+      "gitSha": "30e9801309803ea06d38e7cb2df3249aa4741436",
+      "gitBranch": "hotfix/next-16-3-6-20260923"
+    },
+    {
+      "host": "testing.go2china.space",
+      "aliasMetadata": "OBSERVED",
+      "deploymentId": "dpl_9t4iY7YF48r9Suru34hZFdxH8sdw",
+      "deploymentHost": "vp-v4-ebks7kvsh-jtcao515s-projects.vercel.app",
+      "target": "production",
+      "readyState": "READY",
+      "gitSha": "30e9801309803ea06d38e7cb2df3249aa4741436",
+      "gitBranch": "hotfix/next-16-3-6-20260923"
+    },
+    {
+      "host": "vp-v4.vercel.app",
+      "aliasMetadata": "OBSERVED",
+      "deploymentId": "dpl_9t4iY7YF48r9Suru34hZFdxH8sdw",
+      "deploymentHost": "vp-v4-ebks7kvsh-jtcao515s-projects.vercel.app",
+      "target": "production",
+      "readyState": "READY",
+      "gitSha": "30e9801309803ea06d38e7cb2df3249aa4741436",
+      "gitBranch": "hotfix/next-16-3-6-20260923"
+    },
+    {
+      "host": "qatesting.go2china.space",
+      "aliasMetadata": "OBSERVED",
+      "deploymentId": "dpl_Fecxy5fLhyxBgNf5dLzRNFcRVDS1",
+      "deploymentHost": "vp-v4-3hf2fbb0m-jtcao515s-projects.vercel.app",
+      "target": null,
+      "readyState": "READY",
+      "gitSha": "e9d455e7fe6ab2b6aea71e36998f2655b9610e88",
+      "gitBranch": "codex/qaw005-main-20261013"
+    },
+    {
+      "host": "staging.go2china.space",
+      "aliasMetadata": "OBSERVED",
+      "deploymentId": "dpl_5eBh1Exfo4W8rXEh1T3AazJnUjXW",
+      "deploymentHost": "vp-v4-4w4k9phxw-jtcao515s-projects.vercel.app",
+      "target": null,
+      "readyState": "READY",
+      "gitSha": "b542eadff6a5057445c6d3311ebd5d166c0dad55",
+      "gitBranch": "codex/s2-native-ask-io-20260911"
+    }
+  ],
+  "publicObservations": [
+    {
+      "host": "go2china.space",
+      "pages": [
+        {
+          "path": "/",
+          "status": 200,
+          "refs": []
+        },
+        {
+          "path": "/auth/sign-in?returnTo=%2Fqa",
+          "status": 200,
+          "refs": []
+        }
+      ],
+      "htmlLinkedAssetCount": 13,
+      "assetsChecked": 13,
+      "supabaseRefs": [
+        "dzqdzetcctkhbrhlxxgn"
+      ],
+      "evidence": [
+        {
+          "publicAssetPath": "/_next/static/chunks/app/(auth)/auth/sign-in/page-59e8fdc7dc6a1e99.js",
+          "status": 200,
+          "supabaseRefs": [
+            "dzqdzetcctkhbrhlxxgn"
+          ]
+        }
+      ],
+      "bindingKind": "public browser build-time configuration; server/runtime binding not attested",
+      "result": "OBSERVED"
+    },
+    {
+      "host": "www.go2china.space",
+      "pages": [
+        {
+          "path": "/",
+          "status": 200,
+          "refs": []
+        },
+        {
+          "path": "/auth/sign-in?returnTo=%2Fqa",
+          "status": 200,
+          "refs": []
+        }
+      ],
+      "htmlLinkedAssetCount": 13,
+      "assetsChecked": 13,
+      "supabaseRefs": [
+        "dzqdzetcctkhbrhlxxgn"
+      ],
+      "evidence": [
+        {
+          "publicAssetPath": "/_next/static/chunks/app/(auth)/auth/sign-in/page-59e8fdc7dc6a1e99.js",
+          "status": 200,
+          "supabaseRefs": [
+            "dzqdzetcctkhbrhlxxgn"
+          ]
+        }
+      ],
+      "bindingKind": "public browser build-time configuration; server/runtime binding not attested",
+      "result": "OBSERVED"
+    },
+    {
+      "host": "testing.go2china.space",
+      "pages": [
+        {
+          "path": "/",
+          "status": 200,
+          "refs": []
+        },
+        {
+          "path": "/auth/sign-in?returnTo=%2Fqa",
+          "status": 200,
+          "refs": []
+        }
+      ],
+      "htmlLinkedAssetCount": 13,
+      "assetsChecked": 13,
+      "supabaseRefs": [
+        "dzqdzetcctkhbrhlxxgn"
+      ],
+      "evidence": [
+        {
+          "publicAssetPath": "/_next/static/chunks/app/(auth)/auth/sign-in/page-59e8fdc7dc6a1e99.js",
+          "status": 200,
+          "supabaseRefs": [
+            "dzqdzetcctkhbrhlxxgn"
+          ]
+        }
+      ],
+      "bindingKind": "public browser build-time configuration; server/runtime binding not attested",
+      "result": "OBSERVED"
+    },
+    {
+      "host": "vp-v4.vercel.app",
+      "pages": [
+        {
+          "path": "/",
+          "status": 200,
+          "refs": []
+        },
+        {
+          "path": "/auth/sign-in?returnTo=%2Fqa",
+          "status": 200,
+          "refs": []
+        }
+      ],
+      "htmlLinkedAssetCount": 13,
+      "assetsChecked": 13,
+      "supabaseRefs": [
+        "dzqdzetcctkhbrhlxxgn"
+      ],
+      "evidence": [
+        {
+          "publicAssetPath": "/_next/static/chunks/app/(auth)/auth/sign-in/page-59e8fdc7dc6a1e99.js",
+          "status": 200,
+          "supabaseRefs": [
+            "dzqdzetcctkhbrhlxxgn"
+          ]
+        }
+      ],
+      "bindingKind": "public browser build-time configuration; server/runtime binding not attested",
+      "result": "OBSERVED"
+    },
+    {
+      "host": "qatesting.go2china.space",
+      "pages": [
+        {
+          "path": "/",
+          "status": 200,
+          "refs": []
+        },
+        {
+          "path": "/auth/sign-in?returnTo=%2Fqa",
+          "status": 200,
+          "refs": []
+        }
+      ],
+      "htmlLinkedAssetCount": 12,
+      "assetsChecked": 12,
+      "supabaseRefs": [
+        "dzqdzetcctkhbrhlxxgn"
+      ],
+      "evidence": [
+        {
+          "publicAssetPath": "/_next/static/chunks/app/(auth)/auth/sign-in/page-5674a5aedee6b41e.js",
+          "status": 200,
+          "supabaseRefs": [
+            "dzqdzetcctkhbrhlxxgn"
+          ]
+        },
+        {
+          "publicAssetPath": "/_next/static/chunks/app/qa/page-3b606732f9671c00.js",
+          "status": 200,
+          "supabaseRefs": [
+            "dzqdzetcctkhbrhlxxgn"
+          ]
+        }
+      ],
+      "bindingKind": "public browser build-time configuration; server/runtime binding not attested",
+      "result": "OBSERVED"
+    },
+    {
+      "host": "staging.go2china.space",
+      "pages": [
+        {
+          "path": "/",
+          "status": 200,
+          "refs": []
+        },
+        {
+          "path": "/auth/sign-in?returnTo=%2Fqa",
+          "status": 200,
+          "refs": []
+        }
+      ],
+      "htmlLinkedAssetCount": 13,
+      "assetsChecked": 13,
+      "supabaseRefs": [
+        "dzqdzetcctkhbrhlxxgn"
+      ],
+      "evidence": [
+        {
+          "publicAssetPath": "/_next/static/chunks/app/(auth)/auth/sign-in/page-87555fded10c1de9.js",
+          "status": 200,
+          "supabaseRefs": [
+            "dzqdzetcctkhbrhlxxgn"
+          ]
+        }
+      ],
+      "bindingKind": "public browser build-time configuration; server/runtime binding not attested",
+      "result": "OBSERVED"
+    }
+  ],
+  "environmentSecretGetterUsed": false,
+  "writes": false,
+  "developmentEnvironmentRef": "UNKNOWN: no per-URL safe environment lookup performed",
+  "nativeInstalledRuntime": "UNKNOWN: no device evidence",
+  "hostNode22": "UNKNOWN: JT host metadata not checked here",
+  "keyJwtCookieExtractedOrOutput": false,
+  "bundleBodyPersisted": false
+}
