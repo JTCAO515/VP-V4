@@ -46,7 +46,13 @@ export function createQaService(store: QaStore, policyId: string, contextMode: "
     if (text.kind !== "text" || text.turnId !== turn.id || typeof text.input !== "string" || !text.input.trim() || text.input.length > 4000
       || (text.output !== null && (typeof text.output !== "string" || !text.output.trim() || text.output.length > 8000))
       || (text.outcome !== null && !outcomes.includes(text.outcome as QaStatus))) throw new QaError("PROVIDER_UNAVAILABLE");
-    const terminal = ["completed", "failed", "unavailable", "cancelled", "proposal_ready"].includes(turn.status);
+    // QA's protected RPC returns state and text under the same locked read.
+    // The earlier RLS metadata read establishes membership, but its state may
+    // already be stale when the worker commits a result between those reads.
+    const state = protectedText ? text.status : turn.status;
+    if (typeof state !== "string" || !["accepted", "planning", "retrieving", "generating", "validating",
+      "completed", "proposal_ready", "unavailable", "failed", "cancelled"].includes(state)) throw new QaError("PROVIDER_UNAVAILABLE");
+    const terminal = ["completed", "failed", "unavailable", "cancelled", "proposal_ready"].includes(state);
     if ((text.output === null) !== (text.outcome === null)) throw new QaError("PROVIDER_UNAVAILABLE");
     if (!terminal && text.output !== null) throw new QaError("PROVIDER_UNAVAILABLE");
     // Never manufacture an answer for terminal-without-text, including cancellation.
