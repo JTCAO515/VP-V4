@@ -54,7 +54,7 @@ export async function executeQaWork(
   const attempt: BudgetAttempt = { scopeId: config.scopeId, ownerId, taskId: lease.turnId, attemptId: lease.leaseToken,
     provider: dependencies.provider.provider, model: PROTOCOL_MODELS[dependencies.provider.provider], priceVersion: config.priceVersion,
     reservedMicros: config.reservedMicros, timeoutMs: config.timeoutMs };
-  let reserved = false, dispatchAttempted = false, dispatchAuthorized = false, sent = false, accounted = false;
+  let reserved = false, dispatchAttempted = false, dispatchDenied = false, dispatchAuthorized = false, sent = false, accounted = false;
   const call = (name: string, params: Readonly<Record<string, string | number | null>>) => bounded(() => dependencies.rpc(name, params, controller.signal), controller.signal);
   try {
     const raw = await call("qa_read_work_v1", keys);
@@ -76,7 +76,12 @@ export async function executeQaWork(
         dispatchAttempted = true;
       }
       const result = await call(name, params);
-      if (name === "qa_authorize_dispatch_v1") dispatchAuthorized = record(result) && result.kind === "authorized";
+      if (name === "qa_authorize_dispatch_v1") {
+        dispatchAuthorized = record(result) && result.kind === "authorized";
+        // This exact SQL decision proves its dispatch transaction did not occur
+        // (or was rolled back). Missing/unknown ACK never proves a safe release.
+        dispatchDenied = record(result) && Object.keys(result).length === 1 && result.kind === "blocked";
+      }
       return result;
     };
     const guardedTransport: ProtocolTransport = async request => {
@@ -109,7 +114,7 @@ export async function executeQaWork(
     // deadline so caller cancellation cannot turn an actual cost into zero.
     if (reserved && !accounted) {
       const drain = AbortSignal.timeout(3000);
-      try { await bounded(() => dependencies.rpc("finish_model_budget", { ...identity, p_action: dispatchAttempted ? "pending" : "release", p_actual_micros: null }, drain), drain); } catch { /* original durable reservation/dispatch survives */ }
+      try { await bounded(() => dependencies.rpc("finish_model_budget", { ...identity, p_action: !dispatchAttempted || (dispatchDenied && !dispatchAuthorized && !sent) ? "release" : "pending", p_actual_micros: null }, drain), drain); } catch { /* original durable reservation/dispatch survives */ }
     }
     controller.abort();
   }

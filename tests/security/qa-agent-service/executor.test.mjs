@@ -54,3 +54,13 @@ test('cancellation bounds a hostile composer and records reserved attempt withou
  const started=Date.now(),running=f.run(controller.signal);setTimeout(()=>controller.abort(),10);
  assert.equal(await running,'unavailable');assert.ok(Date.now()-started<1000);assert.equal(f.sent,0);assert.equal(f.calls.at(-1).p.p_action,'release');
 });
+
+test('definite SQL blocked dispatch releases reserved budget, never settles a zero cost',async()=>{
+ const f=fixture({qa_authorize_dispatch_v1:{kind:'blocked'}});assert.equal(await f.run(),'unavailable');assert.equal(f.sent,0);
+ assert.equal(f.calls.at(-1).name,'finish_model_budget');assert.equal(f.calls.at(-1).p.p_action,'release');assert.equal(f.calls.at(-1).p.p_actual_micros,null);
+ assert.equal(f.usageReceipts.length,0);assert.equal(f.calls.filter(x=>x.name==='qa_authorize_dispatch_v1').length,1);
+});
+test('unrecognized dispatch ACK and post-authorization transport failure retain pending cost',async()=>{
+ for(const response of [{kind:'unknown'},{kind:'blocked',unexpected:true}]){const uncertain=fixture({qa_authorize_dispatch_v1:response});assert.equal(await uncertain.run(),'unavailable');assert.equal(uncertain.sent,0);assert.equal(uncertain.calls.at(-1).p.p_action,'pending');}
+ const transport=fixture();transport.deps.provider.transport=async()=>{throw Error('Synthetic physical transport failure');};assert.equal(await transport.run(),'unavailable');assert.equal(transport.calls.at(-1).p.p_action,'pending');assert.equal(transport.calls.filter(x=>x.name==='qa_authorize_dispatch_v1').length,1);
+});

@@ -1,0 +1,82 @@
+{
+  "container": "qa-agent-denial-86e15414-752",
+  "nonce": "86e15414-752",
+  "owner": "01a13385-177b-7351-b540-2530568af80d",
+  "reviewedRevision": "16018dd2",
+  "migration": "supabase/migrations/20261013050429_qa_agent_web.sql",
+  "expectedMigrationSha": "df5565ae49363dc83d4e0db9686653d43dc79cb2b011e4d56e343f45d654afa9",
+  "cases": [
+    {
+      "label": "original migrations and exact reviewed QA SQL installed only in owned fixture",
+      "result": "PASS"
+    },
+    {
+      "label": "blocked",
+      "result": "PASS",
+      "state": {
+        "status": "released",
+        "actualMicros": null
+      },
+      "sends": 0,
+      "dispatches": 0,
+      "nextReservation": "reserved",
+      "finalAction": "release",
+      "authorization": "blocked"
+    },
+    {
+      "label": "unknown-before",
+      "result": "PASS",
+      "state": {
+        "status": "reserved",
+        "actualMicros": null
+      },
+      "sends": 0,
+      "dispatches": 0,
+      "nextReservation": "exhausted",
+      "finalAction": "pending",
+      "authorization": "unknown"
+    },
+    {
+      "label": "unknown-after",
+      "result": "PASS",
+      "state": {
+        "status": "pending",
+        "actualMicros": null
+      },
+      "sends": 0,
+      "dispatches": 1,
+      "nextReservation": "exhausted",
+      "finalAction": "pending",
+      "authorization": "authorized"
+    },
+    {
+      "label": "transport-failure",
+      "result": "PASS",
+      "state": {
+        "status": "pending",
+        "actualMicros": null
+      },
+      "sends": 1,
+      "dispatches": 1,
+      "nextReservation": "exhausted",
+      "finalAction": "pending",
+      "authorization": "authorized"
+    },
+    {
+      "label": "normal",
+      "result": "PASS",
+      "state": {
+        "status": "settled",
+        "actualMicros": 20
+      },
+      "sends": 1,
+      "dispatches": 1,
+      "nextReservation": "reserved",
+      "finalAction": "settle",
+      "authorization": "authorized"
+    }
+  ],
+  "cleanup": true,
+  "imageId": "sha256:86a2e078779e5bdccda1f6f6c5063aa9779a322d1fface5fb408d051909b230f",
+  "result": "PASS"
+}
