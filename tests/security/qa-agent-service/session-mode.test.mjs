@@ -7,7 +7,7 @@ function fixture(){
  const thread={id:sid,status:'active',createdAt:'2026-10-13',updatedAt:'2026-10-13'};
  const store={list:async()=>[thread],create:async()=>thread,read:async()=>({thread,turns:messages.map(m=>({id:m.turnId,status:m.output?'completed':'accepted',createdAt:'2026-10-13'}))}),rpc:async(name,p)=>{
  calls.push({name,p});const ok=data=>({data,error:null});
- if(name==='qa_read_policy_v1')return ok({kind:'policy',policy:{id:pid,contextMode:mode,noticeHash:'a'.repeat(64),noticeZh:'合成同Session许可',noticeEn:'Synthetic same Session permission',provider:'qwen',recipient:'Synthetic',consentState:'accepted'}});
+ if(name==='qa_read_policy_v1')return ok({kind:'policy',policy:{id:pid,contextMode:mode,maxTurns:8,noticeHash:'a'.repeat(64),noticeZh:'合成同Session许可',noticeEn:'Synthetic same Session permission',provider:'qwen',recipient:'Synthetic',consentState:'accepted'}});
  if(name==='qa_read_session_v1')return ok({kind:'session',schemaVersion:'qa-session/1',threadId:sid,policyId:messages.length?pid:null,serviceTaskId:task,lastTurnId:messages.at(-1)?.turnId??null,messages});
  if(name==='qa_list_sessions_v1')return ok({kind:'sessions',sessions:[{threadId:sid}]});
  if(name==='qa_submit_message_v1'){

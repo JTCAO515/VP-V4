@@ -10,8 +10,9 @@ export type QaPolicy = Readonly<{
   id: string; noticeHash: string; noticeZh: string; noticeEn: string;
   provider: string; recipient: string; consentState: "not_accepted" | "accepted" | "withdrawn";
   contextMode: "current_input_v1" | "qa_session_history_v1";
+  maxTurns: 8 | null;
 }>;
-export type QaErrorCode = "INVALID_INPUT" | "UNAUTHENTICATED" | "FORBIDDEN" | "DATA_POLICY_BLOCKED" | "IDEMPOTENCY_KEY_REUSE" | "PROVIDER_UNAVAILABLE";
+export type QaErrorCode = "INVALID_INPUT" | "UNAUTHENTICATED" | "FORBIDDEN" | "DATA_POLICY_BLOCKED" | "IDEMPOTENCY_KEY_REUSE" | "QA_CONTEXT_LIMIT" | "PROVIDER_UNAVAILABLE";
 export class QaError extends Error {
   readonly code: QaErrorCode;
   readonly ack: "not_submitted" | "unknown";
