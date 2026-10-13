@@ -1,0 +1,93 @@
+{
+  "status": "PASS_OWN_EXACT80_FAILURE_RESUME_ONLY",
+  "target": "UNRUN",
+  "managedAuth": "UNRUN",
+  "provider": "UNRUN",
+  "schemaAcceptance": "PURE_PG_FIXTURE_ONLY",
+  "checks": [
+    {
+      "result": "PASS",
+      "check": "actual newly created empty application database, no archive or imported data"
+    },
+    {
+      "result": "PASS",
+      "check": "exact original local Auth/role/engine fingerprints; empty Auth rows"
+    },
+    {
+      "result": "PASS",
+      "check": "unknown managed target engine/Auth profile refuses rather than normalization"
+    },
+    {
+      "result": "PASS",
+      "check": "first missing20260922033000 applies, next file injected failure rolls back its standard ledger only, prior append/data retained"
+    },
+    {
+      "result": "PASS",
+      "check": "actual standard statements ledger source-consistent prefix resumes remaining79 to155, without history repair/skip/overwrite"
+    },
+    {
+      "result": "PASS",
+      "check": "explicit QA transaction packet has exactly one original finalCOMMIT and its standard ledger before commit"
+    },
+    {
+      "result": "PASS",
+      "check": "all10 lifecycle gates, QA-v2 service-only ACL, original export/delete presence; no stored budget activated or real user rows touched"
+    },
+    {
+      "result": "PASS",
+      "check": "original QA/context/reconciliation regressions reused; this run isolates exact80 failure/resume"
+    }
+  ],
+  "runId": "da8e3d6e-1c6e-4451-9c17-2bc48fae18bf",
+  "reviewSource": "8b5975e48e850d0cbb1bf6f8ef7c4b0c9ff6b888",
+  "sourceCount": 155,
+  "platform": {
+    "profile": "local-pg-fixture/1",
+    "authSdkAcceptance": "UNRUN_PURE_PG_ONLY"
+  },
+  "injectedFailure": {
+    "version": "20260926113804",
+    "result": "CURRENT_TRANSACTION_ROLLBACK",
+    "firstMissingCommitted": true,
+    "dataPreserved": true
+  },
+  "appliedCount": 155,
+  "sourceConsistentPrefixResume": true,
+  "postconditions": {
+    "gates": {
+      "profile_data_private.schema_v1": true,
+      "turn_data_private.hooks_valid_v1": true,
+      "export_private.profile_hooks_valid_v1": true,
+      "turn_data_private.schema_supported_v1": true,
+      "turn_data_private.runtime_supported_v1": true,
+      "turn_data_private.write_hooks_valid_v1": true,
+      "result_data_private.schema_supported_v1": true,
+      "turn_private.directions_schema_members_v1": true,
+      "conversation_data_private.schema_supported_v1": true,
+      "result_data_private.infrastructure_supported_v1": true
+    },
+    "qaV2Acl": {
+      "anon": false,
+      "public": false,
+      "signature": "public.qa_ready_groups_v2(integer,text,text,text)",
+      "serviceRole": true,
+      "authenticated": false
+    },
+    "unactivated": {
+      "authUsers": 1,
+      "authSessions": 0,
+      "budgetScopes": 0,
+      "textConsents": 0,
+      "textPolicies": 0,
+      "hostedEnabled": false,
+      "budgetAttempts": 0
+    },
+    "originalLifecycle": {
+      "turnDelete": true,
+      "turnExport": true,
+      "conversationDelete": true
+    }
+  },
+  "cleanup": "PASS_OWN_ONLY",
+  "completedAt": "2026-10-13T12:24:45.785Z"
+}
