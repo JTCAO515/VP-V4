@@ -64,3 +64,14 @@ This is capacity exhaustion, not consent withdrawal: retain the selected Session
 its saved messages, and keep history/message reads available. No new admission,
 provider attempt or billing follows this original SQL denial. Existing DATA_POLICY_BLOCKED
 still denotes actual policy/permission refusal and retains its 403 semantics.
+
+Read-snapshot conflicts use the existing retryable PROVIDER_UNAVAILABLE/HTTP503
+wire, not DATA_POLICY_BLOCKED. A concurrent same-account tab can append a Turn
+between metadata and protected text reads. The server shares one extra actor-scoped
+metadata read with completion races and performs at most one extra protected text
+read if membership/count still differs (at most two of each per request).
+Persistent mismatch returns no partial history, and actual protected policy/Session/
+UUID/envelope failures remain permission refusals. Normal aligned reads add no work.
+A conflict detected before admission has ack:not_submitted; no new Turn/budget or
+provider call occurs. Clients retain their selected Session and use the existing
+bounded retry for PROVIDER_UNAVAILABLE/503 rather than clearing saved history.

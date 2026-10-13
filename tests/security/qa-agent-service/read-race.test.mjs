@@ -42,8 +42,8 @@ test('still pending after one refresh and inconsistent text cannot manufacture a
  const inconsistent=fixture({textPatch:{output:null},metadataStatus:'completed'});await assert.rejects(inconsistent.service.message(session,turn),e=>e.code==='PROVIDER_UNAVAILABLE');assert.equal(inconsistent.metadataReads,1);
 });
 test('refresh rejects changed Session, inactive Session and missing original Turn',async()=>{
- for(const refreshPatch of [{thread:{id:other,status:'active'}},{thread:{id:session,status:'archived'}},{turns:[{id:other,status:'completed',createdAt:'2026-10-13'}]}]){
-  const f=fixture({refreshPatch});await assert.rejects(f.service.message(session,turn),e=>['FORBIDDEN','DATA_POLICY_BLOCKED'].includes(e.code));assert.equal(f.metadataReads,2);
+ for(const [refreshPatch,code] of [[{thread:{id:other,status:'active'}},'FORBIDDEN'],[{thread:{id:session,status:'archived'}},'FORBIDDEN'],[{turns:[{id:other,status:'completed',createdAt:'2026-10-13'}]},'PROVIDER_UNAVAILABLE']]){
+  const f=fixture({refreshPatch});await assert.rejects(f.service.message(session,turn),e=>e.code===code);assert.equal(f.metadataReads,2);
  }
 });
 test('protected foreign Session, policy and Turn are rejected before any refresh',async()=>{

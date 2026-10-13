@@ -54,37 +54,44 @@ export function createQaService(store: QaStore, policyId: string, contextMode: "
     return { requestId: turn.id, turnId: turn.id, sessionId, input: text.input, text: text.output as string | null, status, createdAt: turn.createdAt };
   }
   async function qaSession(detail: ThreadRead) {
-    const value = await call("qa_read_session_v1", { p_thread_id: detail.thread.id });
-    if (value.kind !== "session" || value.schemaVersion !== "qa-session/1" || value.threadId !== detail.thread.id
-      || !Array.isArray(value.messages) || value.messages.length > 8
-      || value.messages.length !== detail.turns.length) throw new QaError("DATA_POLICY_BLOCKED");
-    if (value.messages.length === 0) {
-      if (value.policyId !== null || value.serviceTaskId !== null || value.lastTurnId !== null) throw new QaError("DATA_POLICY_BLOCKED");
-      return null;
-    }
-    if (value.policyId !== policyId || !uuid(value.serviceTaskId) || !uuid(value.lastTurnId)) throw new QaError("DATA_POLICY_BLOCKED");
-    const ids = new Set<string>(), messages: QaMessage[] = [];
-    let needsRefresh = false;
-    for (const item of value.messages) {
-      if (!record(item) || !uuid(item.turnId) || ids.has(item.turnId)) throw new QaError("DATA_POLICY_BLOCKED");
-      const turn = detail.turns.find(t => t.id === item.turnId);
-      if (!turn) throw new QaError("DATA_POLICY_BLOCKED");
-      ids.add(item.turnId);
-      if (!isTerminal(turn.status) && typeof item.output === "string") needsRefresh = true;
-    }
-    // Original protected text DTO has no status. If the worker completed after
-    // the RLS metadata read, refresh that same actor/Session metadata once. An
-    // unchanged pending state still fails closed; text alone never proves it.
-    const current = needsRefresh ? await readable(detail.thread.id) : detail;
-    if (current.turns.length !== detail.turns.length) throw new QaError("DATA_POLICY_BLOCKED");
-    for (const item of value.messages) {
-      const text = item as Record<string, unknown>;
+    const readSnapshot = async () => {
+      const value = await call("qa_read_session_v1", { p_thread_id: detail.thread.id });
+      if (value.kind !== "session" || value.schemaVersion !== "qa-session/1" || value.threadId !== detail.thread.id
+        || !Array.isArray(value.messages) || value.messages.length > 8) throw new QaError("DATA_POLICY_BLOCKED");
+      if (value.messages.length === 0) {
+        if (value.policyId !== null || value.serviceTaskId !== null || value.lastTurnId !== null) throw new QaError("DATA_POLICY_BLOCKED");
+      } else if (value.policyId !== policyId || !uuid(value.serviceTaskId) || !uuid(value.lastTurnId)) throw new QaError("DATA_POLICY_BLOCKED");
+      const ids = new Set<string>(), texts: Record<string, unknown>[] = [];
+      for (const item of value.messages) {
+        if (!record(item) || !uuid(item.turnId) || ids.has(item.turnId)) throw new QaError("DATA_POLICY_BLOCKED");
+        ids.add(item.turnId); texts.push(item);
+      }
+      if (texts.length && texts.at(-1)?.turnId !== value.lastTurnId) throw new QaError("DATA_POLICY_BLOCKED");
+      return { taskId: value.serviceTaskId, lastTurnId: value.lastTurnId, texts };
+    };
+    const matches = (snapshot: Awaited<ReturnType<typeof readSnapshot>>, current: ThreadRead) =>
+      snapshot.texts.length === current.turns.length && snapshot.texts.every(text => current.turns.some(turn => turn.id === text.turnId));
+    let snapshot = await readSnapshot(), current = detail;
+    const completedBetweenReads = snapshot.texts.some(text => {
       const turn = current.turns.find(t => t.id === text.turnId);
-      if (!turn) throw new QaError("DATA_POLICY_BLOCKED");
+      return turn && !isTerminal(turn.status) && typeof text.output === "string";
+    });
+    // Another tab may append a Turn between the actor-scoped metadata read and
+    // protected text read. Share one metadata refresh budget with completion
+    // races, then reread protected text at most once if membership still differs.
+    if (!matches(snapshot, current) || completedBetweenReads) current = await readable(detail.thread.id);
+    if (!matches(snapshot, current)) snapshot = await readSnapshot();
+    // A persistent or continuing snapshot mismatch is retryable, not evidence
+    // of consent withdrawal. Fail closed without returning a partial history.
+    if (!matches(snapshot, current)) throw new QaError("PROVIDER_UNAVAILABLE");
+    if (!snapshot.texts.length) return null;
+    const messages: QaMessage[] = [];
+    for (const text of snapshot.texts) {
+      const turn = current.turns.find(t => t.id === text.turnId);
+      if (!turn) throw new QaError("PROVIDER_UNAVAILABLE");
       messages.push(await saved(detail.thread.id, turn, text));
     }
-    if (messages.at(-1)?.turnId !== value.lastTurnId) throw new QaError("DATA_POLICY_BLOCKED");
-    return { taskId: value.serviceTaskId, lastTurnId: value.lastTurnId, messages };
+    return { taskId: snapshot.taskId as string, lastTurnId: snapshot.lastTurnId as string, messages };
   }
   const session = (t: Thread): QaSession => ({ id: t.id, label: "Session", createdAt: t.createdAt, updatedAt: t.updatedAt });
   return {
@@ -142,12 +149,12 @@ export function createQaService(store: QaStore, policyId: string, contextMode: "
       if (p.consentState !== "accepted") throw new QaError("DATA_POLICY_BLOCKED");
       // Same request UUID is original turn+idempotency identity. Do not trim or
       // regenerate: SQL compares the original bytes on duplicate/lost ACK replay.
+      const prior = contextMode === "qa_session_history_v1" ? await qaSession(detail) : null;
       let result;
       try {
         const params = { p_thread_id: sessionId, p_turn_id: input.requestId, p_idempotency_key: input.requestId,
           p_policy_id: policyId, p_locale: /[\u3400-\u9fff]/u.test(input.text) ? "zh" : "en", p_text: input.text };
         if (contextMode === "qa_session_history_v1") {
-          const prior = await qaSession(detail);
           // The versioned SQL wrapper resolves the original request's persisted
           // parent on retry, including after a newer turn has completed.
           result = await call("qa_submit_message_v1", { ...params, p_task_id: prior?.taskId ?? taskIdentity(sessionId),
