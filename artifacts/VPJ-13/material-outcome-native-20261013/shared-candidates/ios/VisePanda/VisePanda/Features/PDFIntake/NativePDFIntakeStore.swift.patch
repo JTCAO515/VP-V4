@@ -1,0 +1,23 @@
+--- a/ios/VisePanda/VisePanda/Features/PDFIntake/NativePDFIntakeStore.swift
++++ b/ios/VisePanda/VisePanda/Features/PDFIntake/NativePDFIntakeStore.swift
+@@ -36 +36 @@
+-    func load(_ url: URL, using session: NativeSession, expiresNoLaterThan: Date? = nil) async {
++    func load(_ url: URL, using session: NativeSession, tripStore: NativeTripStore, active: Bool, expiresNoLaterThan: Date? = nil) async {
+@@ -41,0 +42,4 @@
++        guard let context = NativeJourneyMaterialOutcomeBridge.context(store: tripStore, session: session, active: active),
++              context.eligible, context.actor == source.actor, context.tripID == source.detail.trip.id,
++              context.tripVersion == source.detail.trip.headVersion else { message = "scope"; return }
++        _ = tripStore.materialOutcome.select(context: context, medium: .pdf)
+@@ -102,0 +107,4 @@
++            if let selected = tripStore.materialOutcome.selection,
++               let context = NativeJourneyMaterialOutcomeBridge.context(store: tripStore, session: session, active: tripStore.materialActive) {
++                _ = tripStore.materialOutcome.bindPDF(value, selection: selected, context: context)
++            }
+@@ -122,0 +131,4 @@
++        if let selected = tripStore.materialOutcome.selection, let pending = tripStore.pending,
++           let context = NativeJourneyMaterialOutcomeBridge.context(store: tripStore, session: session, active: tripStore.materialActive) {
++            _ = tripStore.materialOutcome.proposalReady(pending, selection: selected, context: context)
++        }
+@@ -143,0 +156,2 @@
++                _ = await NativeJourneyMaterialOutcomeBridge.confirmed(outcome: tripStore.materialOutcome, store: tripStore,
++                    session: session, active: { tripStore.materialActive })

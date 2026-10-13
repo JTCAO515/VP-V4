@@ -1,0 +1,541 @@
+import Foundation
+import Observation
+
+@MainActor
+@Observable
+final class NativeTripStore {
+    private(set) var trips: [NativeTripSummary] = []
+    private(set) var selectedID: String?
+    private(set) var detail: NativeTripDetail?
+    private(set) var pending: NativeTripPending?
+    private(set) var archive: NativeTripArchive?
+    private(set) var archiveAvailable = false
+    private(set) var deletionReceipt: NativeTripDeletionReceipt?
+    private(set) var deletionRequest: NativePendingTripDeletion?
+    private var archiveKeys: [String: String] = [:]
+    var draft: NativeTripDraft?
+    private(set) var busy = false
+    private(set) var notice: String?
+    private(set) var scope: NativeDataScope?
+    let materialOutcome = NativeJourneyMaterialOutcomeStore()
+    var materialActive = false
+    private(set) var materialHandoff: NativeJourneyMaterialOutcome.Handoff?
+    private var confirmationKeys: [String: String] = [:]
+    private var proposalOutcomeUnknown = false
+    private var uncertainProposalPatch: NativeTripPatch?
+    private var pendingOfflineText:NativeOfflineTextSubmission?
+    private var creation: (id: String, title: String)?
+    private let base = "api/trips/native/v2"
+
+    var confirmationReference: String? {
+        pending.map { "\($0.proposal.id):\($0.proposal.revision):\($0.proposal.digest)" }
+    }
+
+    var hasUncertainProposal: Bool { proposalOutcomeUnknown }
+    var canEdit: Bool { archiveAvailable && archive == nil }
+
+    func reset(for scope: NativeDataScope?) {
+        guard self.scope != scope else { return }
+        materialOutcome.exit(.scopeChanged); materialHandoff = nil
+        self.scope = scope
+        trips = []; selectedID = nil; detail = nil; pending = nil; draft = nil
+        archive = nil; archiveAvailable = false; archiveKeys = [:]
+        deletionReceipt = nil; deletionRequest = nil
+        confirmationKeys = [:]; creation = nil; notice = nil; busy = false
+        proposalOutcomeUnknown = false
+        uncertainProposalPatch = nil
+    }
+
+    func list(using session: NativeSession) async {
+        await perform(session) { scope in
+            try await self.loadList(session, scope)
+        }
+    }
+
+    func select(_ id: String, using session: NativeSession) async {
+        guard draft == nil || selectedID == id else { notice = "finishDraft"; return }
+        await perform(session) { scope in
+            guard UUID(uuidString: id) != nil else { throw NativeDataError.invalidResponse }
+            if self.deletionReceipt?.tripId != id { self.deletionReceipt = nil }
+            if self.selectedID != id { self.detail = nil; self.pending = nil; self.archive = nil; self.archiveAvailable = false }
+            self.selectedID = id
+            try await self.loadSelected(session, scope)
+        }
+    }
+
+    func reload(using session: NativeSession) async {
+        await perform(session) { scope in
+            try await self.reconcileDeletion(session, scope)
+            try await self.loadList(session, scope)
+            if self.selectedID != nil && self.selectedID != self.deletionRequest?.tripID {
+                try await self.loadSelected(session, scope)
+            }
+        }
+    }
+
+    var deletionReference: String? {
+        guard !busy, deletionRequest == nil, let detail, selectedID == detail.trip.id,
+              draft == nil, pending == nil, !proposalOutcomeUnknown else { return nil }
+        return "\(detail.trip.id):\(detail.trip.headVersion)"
+    }
+
+    func deleteTrip(reviewedReference: String, using session: NativeSession) async {
+        guard deletionReference == reviewedReference, let detail, let scope,
+              session.dataScope == scope else { return }
+        let request = NativePendingTripDeletion(owner: scope.subject, tripID: detail.trip.id,
+            requestID: UUID().uuidString.lowercased(), expectedVersion: detail.trip.headVersion)
+        await perform(session) { scope in
+            self.deletionReceipt = nil
+            try session.rememberTripDeletion(request)
+            if let namespace=try? NativeOfflineTripNamespace(scope:scope,tripID:request.tripID){try session.offlineTrips.removeTrip(namespace,scope:scope)}
+            self.deletionRequest = request
+            self.clearDeletedTripCache(request.tripID)
+            try await self.postDeletion(request, session, scope)
+            try await self.loadList(session, scope)
+        }
+    }
+
+    func retryDeletion(using session: NativeSession) async {
+        await perform(session) { scope in
+            try await self.reconcileDeletion(session, scope)
+            try await self.loadList(session, scope)
+        }
+    }
+
+    private func reconcileDeletion(_ session: NativeSession, _ scope: NativeDataScope) async throws {
+        let saved: NativePendingTripDeletion?
+        do { saved = try session.pendingTripDeletion() }
+        catch {
+            trips = []; selectedID = nil; detail = nil; pending = nil; draft = nil
+            throw error
+        }
+        guard let request = saved else { return }
+        if deletionReceipt?.requestId.lowercased() != request.requestID.lowercased() {
+            deletionReceipt = nil
+        }
+        deletionRequest = request
+        clearDeletedTripCache(request.tripID)
+        let data: Data
+        do { data = try await session.tripDeletionRequest(method: "GET", requestID: request.requestID) }
+        catch NativeDataError.server(let code) where code == "FORBIDDEN" {
+            // The journal was written before POST. A lost first send has no
+            // receipt; replay exactly that confirmed request, never a new key.
+            try await postDeletion(request, session, scope)
+            return
+        }
+        guard self.scope == scope, session.dataScope == scope else { throw NativeDataError.staleSessionResponse }
+        let receipt = try JSONDecoder().decode(NativeTripDeletionReceipt.self, from: data)
+        guard receipt.isValid(for: request) else { throw NativeDataError.invalidResponse }
+        deletionReceipt = receipt
+        if receipt.state == "completed" {
+            try session.forgetTripDeletion(request)
+            deletionRequest = nil
+        }
+    }
+
+    private func postDeletion(_ request: NativePendingTripDeletion, _ session: NativeSession,
+                              _ scope: NativeDataScope) async throws {
+        let body = DeleteBody(requestId: request.requestID, tripId: request.tripID,
+                              expectedVersion: request.expectedVersion, confirmed: true)
+        let data: Data
+        do { data = try await session.tripDeletionRequest(method: "POST", body: JSONEncoder().encode(body)) }
+        catch NativeDataError.server(let code) where ["FORBIDDEN", "INVALID_INPUT", "STALE_TRIP_VERSION", "TRIP_HAS_CHAT_REFERENCES", "IDEMPOTENCY_KEY_REUSE", "DELETION_ALREADY_REQUESTED"].contains(code) {
+            // These are admission rejections. Keep an uncertain transport result
+            // and a reauthentication requirement under the original request ID.
+            try session.forgetTripDeletion(request)
+            deletionRequest = nil
+            throw NativeDataError.server(code: code)
+        }
+        guard self.scope == scope, session.dataScope == scope else { throw NativeDataError.staleSessionResponse }
+        let receipt = try JSONDecoder().decode(NativeTripDeletionReceipt.self, from: data)
+        guard receipt.isValid(for: request) else { throw NativeDataError.invalidResponse }
+        deletionReceipt = receipt
+        if receipt.state == "completed" {
+            try session.forgetTripDeletion(request)
+            deletionRequest = nil
+        }
+    }
+
+    func hideLinkedDeletionScope(_ tripID:String) {
+        guard let scope else{return}
+        if let namespace=try? NativeOfflineTripNamespace(scope:scope,tripID:tripID){try? NativeOfflineTripStore().removeTrip(namespace,scope:scope)}
+        clearDeletedTripCache(tripID)
+    }
+
+    private func clearDeletedTripCache(_ tripID: String) {
+        trips.removeAll { $0.id == tripID }
+        guard selectedID == tripID else { return }
+        selectedID = nil; detail = nil; pending = nil; draft = nil
+        archive = nil; archiveAvailable = false; archiveKeys = [:]
+        confirmationKeys = [:]; proposalOutcomeUnknown = false; uncertainProposalPatch = nil; pendingOfflineText=nil
+    }
+
+    /// Read the saved snapshot before handing local content to the system share UI.
+    /// A failed read must not authorize sharing a possibly stale cached snapshot.
+    func refreshForSharing(using session: NativeSession) async -> Bool {
+        guard !busy, let scope, session.dataScope == scope, selectedID != nil else { return false }
+        await perform(session) { scope in try await self.loadSelected(session, scope) }
+        return self.scope == scope && session.dataScope == scope && notice == nil
+    }
+
+    func create(title: String, using session: NativeSession) async {
+        guard draft == nil else { notice = "finishDraft"; return }
+        let title = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !title.isEmpty, title.count <= 160 else { notice = "INVALID_INPUT"; return }
+        await perform(session) { scope in
+            self.deletionReceipt = nil
+            if self.creation?.title != title { self.creation = (UUID().uuidString.lowercased(), title) }
+            guard let creation = self.creation else { throw NativeDataError.invalidResponse }
+            let reply: NativeTripCreated = try await self.call(session, scope, path: self.base, method: "POST", body: ["tripId": creation.id, "title": title])
+            guard reply.version == 2, reply.trip.id == creation.id else { throw NativeDataError.invalidResponse }
+            self.creation = nil
+            self.detail = nil; self.pending = nil; self.archive = nil; self.archiveAvailable = false
+            self.selectedID = reply.trip.id
+            try await self.loadList(session, scope)
+            try await self.loadSelected(session, scope)
+        }
+    }
+
+    var archiveReference: String? {
+        guard archiveAvailable, archive == nil, draft == nil, pending == nil,
+              !proposalOutcomeUnknown, let detail, detail.confirmationState == "confirmed" else { return nil }
+        return "\(detail.trip.id):\(detail.trip.headVersion)"
+    }
+
+    func archive(reviewedReference: String, using session: NativeSession) async {
+        guard archiveReference == reviewedReference, let detail else { return }
+        await perform(session) { scope in
+            let key = self.archiveKeys[reviewedReference] ?? UUID().uuidString
+            self.archiveKeys[reviewedReference] = key
+            let result: NativeTripArchiveReply = try await self.call(session, scope,
+                path: "\(self.base)/\(detail.trip.id)/archive", method: "POST",
+                body: ArchiveBody(expectedVersion: detail.trip.headVersion, idempotencyKey: key, confirmed: true))
+            guard result.version == 1, let archive = result.archive,
+                  archive.tripId == detail.trip.id, archive.archivedVersion == detail.trip.headVersion else {
+                throw NativeDataError.invalidResponse
+            }
+            self.archive = archive
+            try await self.loadSelected(session, scope)
+            guard self.archive?.tripId == detail.trip.id else { throw NativeDataError.invalidResponse }
+            if let namespace=try? NativeOfflineTripNamespace(scope:scope,tripID:detail.trip.id){try session.offlineTrips.removeTrip(namespace,scope:scope)}
+            self.notice = "archived"
+        }
+    }
+
+    func beginDraft() {
+        guard !busy, canEdit, pendingOfflineText==nil,pending == nil, !proposalOutcomeUnknown, let detail else { return }
+        draft = NativeTripDraft(detail)
+        notice = nil
+    }
+
+    /// Adopt the producer's exact immutable proposal for the original visible
+    /// diff and explicit confirmation. Opening Ask never invokes a Trip writer.
+    func openScopedProposal(_ reference: NativeScopedTripProposal, selection: NativeScopedTripSelection,
+                            using session: NativeSession) async -> Bool {
+        guard !busy, draft == nil, !proposalOutcomeUnknown, pendingOfflineText == nil,
+              canEdit, scope == selection.actor,
+              selection.isCurrent(actor: session.dataScope, detail: detail) else { return false }
+        var opened = false
+        await perform(session) { actor in
+            let fresh: NativeTripDetail = try await self.call(session, actor,
+                path: "\(self.base)/\(selection.tripID)", method: "GET")
+            guard selection.isCurrent(actor: session.dataScope, detail: fresh) else { throw NativeDataError.staleSessionResponse }
+            let proposal = try await self.readPending(selection.tripID, proposalID: reference.proposalID, session, actor)
+            guard reference.matches(proposal, selection: selection) else { throw NativeDataError.invalidResponse }
+            self.detail = fresh; self.pending = proposal; self.notice = "reviewRequired"; opened = true
+        }
+        return opened && scope == selection.actor && session.dataScope == selection.actor && confirmationReference == reference.reference
+    }
+
+    /// Hotel selection is not a Trip write. The user names exactly one
+    /// existing first/last-day item; the ordinary Proposal review remains next.
+    func prepareLodgingDraft(expectedTripVersion:Int,dayID:String,itemID:String,title:String,using session:NativeSession) async -> Bool {
+        guard !busy,canEdit,draft==nil,pending==nil,!proposalOutcomeUnknown,
+              let scope=session.dataScope,self.scope==scope,detail?.trip.headVersion==expectedTripVersion else{return false}
+        guard await refreshForSharing(using:session),self.scope==scope,session.dataScope==scope,
+              canEdit,draft==nil,pending==nil,!proposalOutcomeUnknown,let detail,
+              detail.confirmationState=="confirmed",detail.trip.id==selectedID,
+              detail.trip.headVersion==expectedTripVersion else{return false}
+        guard let prepared=NativeLodgingTripAdjustment.prepare(detail:detail,dayID:dayID,itemID:itemID,title:title) else{return false}
+        draft=prepared;notice=nil
+        return true
+    }
+
+    var offlineTextPending:Bool{pendingOfflineText != nil}
+    func proposeOfflineText(date:String,title:String,saveOffline:Bool,using session:NativeSession)async->Bool {
+        guard !busy,canEdit,draft==nil,pending==nil,!proposalOutcomeUnknown,let detail,let scope=session.dataScope,self.scope==scope,detail.trip.id==selectedID,deletionRequest==nil,deletionReceipt==nil,saveOffline else{return false}
+        let request:NativeOfflineTextSubmission
+        do{request=try pendingOfflineText ?? NativeOfflineTextSubmission(headVersion:detail.trip.headVersion,date:date,title:title)}catch{notice="INVALID_INPUT";return false}
+        pendingOfflineText=request;busy=true;defer{if self.scope==scope{busy=false}}
+        do {
+            let bytes=try await session.offlineTripTextCommand(tripID:detail.trip.id.lowercased(),action:"proposal",body:JSONEncoder().encode(request))
+            guard self.scope==scope,session.dataScope==scope,!Task.isCancelled else{return false}
+            let created=try JSONDecoder().decode(NativeProposalCreated.self,from:bytes)
+            guard created.version==2,created.baseTripVersion==request.expectedHeadVersion,UUID(uuidString:created.proposalId) != nil,created.revision>0 else{throw NativeDataError.invalidResponse}
+            let result=try await readPending(detail.trip.id,proposalID:created.proposalId,session,scope)
+            let ops=result.proposal.patch.operations
+            guard result.proposal.id==created.proposalId,result.proposal.revision==created.revision,result.proposal.baseTripVersion==request.expectedHeadVersion,ops.count==2,
+                  ops.contains(where:{$0.kind == .upsertDay && $0.date==request.date}),ops.contains(where:{$0.kind == .upsertItem && $0.title==request.title}) else{throw NativeDataError.invalidResponse}
+            pending=result;pendingOfflineText=nil;notice="reviewRequired";return true
+        }catch{if self.scope==scope,session.dataScope==scope{notice="OFFLINE_TEXT_UNCONFIRMED"};return false}
+    }
+
+    func restoreOfflineUserDraft(_ local:NativeOfflineTripDraft,using session:NativeSession)async->Bool {
+        guard !busy,draft==nil,pending==nil,!proposalOutcomeUnknown,let scope=session.dataScope,local.namespace.matches(scope) else{return false}
+        guard let localGeneration=try? session.offlineTrips.offlineDataGeneration(local.namespace,scope:scope),
+              (try? session.offlineTrips.readUserDraft(local.namespace,scope:scope))==local else{return false}
+        if self.scope != scope || selectedID != local.namespace.tripID {await select(local.namespace.tripID,using:session)}
+        else {guard await refreshForSharing(using:session) else{return false}}
+        guard session.dataScope==scope,self.scope==scope,canEdit,deletionRequest==nil,deletionReceipt==nil,pending==nil,!proposalOutcomeUnknown,let detail,selectedID==local.namespace.tripID else{return false}
+        do {
+            guard try session.offlineTrips.offlineDataGeneration(local.namespace,scope:scope)==localGeneration,
+                  try session.offlineTrips.readUserDraft(local.namespace,scope:scope)==local else{throw NativeOfflineTripError.versionConflict}
+            draft=try NativeOfflineDraftRecovery.restore(local,scope:scope,detail:detail);notice=nil;return true
+        }
+        catch{notice=error is NativeOfflineTripError ? "OFFLINE_DRAFT_REVIEW_REQUIRED":"INVALID_INPUT";return false}
+    }
+
+    func beginOutline(_ titles: [String], starting date: String, using session: NativeSession) -> Bool {
+        guard !busy, canEdit, session.dataScope == scope, scope != nil,
+              draft == nil, pending == nil, !proposalOutcomeUnknown, let detail,
+              detail.trip.id == selectedID else { return false }
+        var prepared = NativeTripDraft(detail)
+        guard prepared.appendOutline(titles, starting: date) else { return false }
+        draft = prepared
+        notice = nil
+        return true
+    }
+
+    func proposeScreenshot(source: NativeScreenshotReviewSource, digest: String,
+                           corrections: [NativeScreenshotCorrection], using session: NativeSession) async -> Bool {
+        guard !busy, canEdit, draft == nil, pending == nil,
+              let scope, session.dataScope == scope, scope.subject == source.ownerID,
+              selectedID == source.tripID, let detail,
+              detail.trip.id == source.tripID,
+              detail.trip.headVersion == source.tripVersion else {
+            notice = "STALE_TRIP_VERSION"
+            return false
+        }
+        switch NativeScreenshotTripDraft.make(detail: detail, digest: digest, corrections: corrections) {
+        case .invalid:
+            notice = "INVALID_INPUT"
+            return false
+        case .duplicate:
+            notice = "noChanges"
+            return false
+        case .ready(let prepared, _):
+            draft = prepared
+            await propose(using: session)
+            return self.scope == scope && session.dataScope == scope && pending != nil
+        }
+    }
+
+    /// Reads a server-created PDF proposal into the original reviewed-diff/explicit-confirm flow.
+    func adoptPDFProposal(tripID: String, proposalID: String, revision: Int, baseVersion: Int,
+                          expectedPatch: NativeTripPatch?, using session: NativeSession) async -> Bool {
+        guard !busy, let actor = scope, session.dataScope == actor, selectedID == tripID,
+              detail?.trip.id == tripID, detail?.trip.headVersion == baseVersion, draft == nil,
+              pending == nil || pending?.proposal.id == proposalID, !proposalOutcomeUnknown,
+              NativePDFWire.uuid(proposalID), revision >= 1 else { return false }
+        var adopted = false
+        await perform(session) { scope in
+            let result = try await self.readPending(tripID, proposalID: proposalID, session, scope)
+            guard result.proposal.id == proposalID, result.proposal.revision == revision,
+                  result.proposal.baseTripVersion == baseVersion, result.trip.headVersion == baseVersion,
+                  !result.proposal.stale, NativePDFWire.date(result.proposal.expiresAt).map({ $0 > Date() }) == true,
+                  expectedPatch == nil || result.proposal.patch == expectedPatch else { throw NativeDataError.invalidResponse }
+            self.pending = result; self.notice = "reviewRequired"; adopted = true
+        }
+        return adopted && session.dataScope == actor && scope == actor
+    }
+
+    func discardDraft() {
+        guard !busy, pending == nil, !proposalOutcomeUnknown else { return }
+        draft = nil
+        notice = nil
+    }
+
+    func propose(using session: NativeSession) async {
+        guard pendingOfflineText==nil,(canEdit || proposalOutcomeUnknown) else { notice = "PROPOSAL_NOT_CONFIRMABLE"; return }
+        guard let draft, !draft.patch.operations.isEmpty else { notice = "noChanges"; return }
+        let patch = draft.patch
+        await perform(session) { scope in
+            if self.proposalOutcomeUnknown {
+                do {
+                    let existing = try await self.readPending(draft.tripId, proposalID: nil, session, scope)
+                    guard existing.proposal.baseTripVersion == draft.baseVersion,
+                          existing.proposal.patch == self.uncertainProposalPatch else { throw NativeDataError.invalidResponse }
+                    self.pending = existing
+                    self.proposalOutcomeUnknown = false
+                    self.uncertainProposalPatch = nil
+                    self.notice = "reviewRequired"
+                    return
+                } catch NativeDataError.server(let code) where code == "PROPOSAL_NOT_CONFIRMABLE" {
+                    // A successful read proved there is no pending proposal;
+                    // only now is another POST safe.
+                    self.proposalOutcomeUnknown = false
+                    self.uncertainProposalPatch = nil
+                }
+            }
+            guard self.canEdit else { throw NativeDataError.server(code: "PROPOSAL_NOT_CONFIRMABLE") }
+            self.proposalOutcomeUnknown = true
+            self.uncertainProposalPatch = patch
+            let created: NativeProposalCreated
+            do {
+                created = try await self.call(session, scope, path: "\(self.base)/\(draft.tripId)/proposal", method: "POST", body: ProposalBody(patch: patch))
+            } catch NativeDataError.server(let code) where code == "STALE_TRIP_VERSION" || code == "INVALID_INPUT" {
+                // These rejection codes are emitted before proposal creation.
+                // Transport loss and post-commit auth failures stay unknown.
+                self.proposalOutcomeUnknown = false
+                self.uncertainProposalPatch = nil
+                throw NativeDataError.server(code: code)
+            }
+            let result = try await self.readPending(draft.tripId, proposalID: created.proposalId, session, scope)
+            guard result.proposal.id == created.proposalId,
+                  result.proposal.revision == created.revision,
+                  result.proposal.baseTripVersion == draft.baseVersion,
+                  result.proposal.patch == patch else { throw NativeDataError.invalidResponse }
+            self.pending = result
+            self.proposalOutcomeUnknown = false
+            self.uncertainProposalPatch = nil
+            self.notice = "reviewRequired"
+        }
+    }
+
+    func confirm(reviewedReference: String, using session: NativeSession) async {
+        guard canEdit, confirmationReference == reviewedReference, let pending, !pending.proposal.stale, pending.proposal.status == "pending", detail?.trip.headVersion == pending.proposal.baseTripVersion else { notice = "PROPOSAL_NOT_CONFIRMABLE"; return }
+        do { if let recovery=try session.tripSupportConfirmationRecovery(),recovery.tripID==pending.trip.id { notice="SUPPORT_CONFIRM_RECOVERY_REQUIRED";return } }
+        catch { notice="sessionUnavailable";return }
+        let proposal = pending.proposal
+        await perform(session) { scope in
+            let keyID = "\(proposal.id):\(proposal.revision):\(proposal.digest)"
+            let key = self.confirmationKeys[keyID] ?? UUID().uuidString
+            self.confirmationKeys[keyID] = key
+            if let selection = self.materialOutcome.selection,
+               let context = NativeJourneyMaterialOutcomeBridge.context(store: self, session: session, active: self.materialActive) {
+                _ = self.materialOutcome.confirmStarted(pending: pending, key: key, selection: selection, context: context)
+            }
+            let result: NativeTripConfirmed = try await self.call(session, scope, path: "\(self.base)/\(pending.trip.id)/confirm", method: "POST", body: ConfirmBody(proposalId: proposal.id, idempotencyKey: key, digest: proposal.digest))
+            guard result.version == 2, ["applied", "already_applied"].contains(result.outcome) else { throw NativeDataError.invalidResponse }
+            // Never infer the new content from the submitted patch or an HTTP success.
+            self.pending = nil
+            self.draft = nil
+            try await self.loadList(session, scope)
+            try await self.loadSelected(session, scope)
+            guard let detail = self.detail, detail.trip.headVersion >= result.resultingVersion, detail.confirmationState == "confirmed" else { throw NativeDataError.invalidResponse }
+            self.notice = "confirmed"
+            self.materialHandoff = await NativeJourneyMaterialOutcomeBridge.confirmed(outcome: self.materialOutcome,
+                store: self, session: session, active: { self.materialActive }, receipt: result)
+        }
+    }
+
+    func confirmSupported(reviewedReference:String,reviewedSelection:String,support:NativeTripSupportStore,using session:NativeSession) async {
+        guard canEdit,confirmationReference==reviewedReference,let pending,!pending.proposal.stale,pending.proposal.status=="pending",detail?.trip.headVersion==pending.proposal.baseTripVersion else { notice="PROPOSAL_NOT_CONFIRMABLE";return }
+        do { if try session.tripSupportConfirmationRecovery() != nil { notice="SUPPORT_CONFIRM_RECOVERY_REQUIRED";return } }
+        catch { notice="sessionUnavailable";return }
+        let proposal=pending.proposal
+        await perform(session) { actor in
+            let choices=try support.freezeConfirmation(reviewedSelection:reviewedSelection,proposal:proposal,current:actor)
+            guard let request=support.frozenRequest else { throw NativeDataError.invalidResponse }
+            let journal=try session.rememberTripSupportConfirmation(request,tripID:pending.trip.id,actor:actor)
+            let bytes=try await session.tripSupportConfirm(journal,actor:actor)
+            let result=try NativeSupportedTripConfirmReceipt.decode(bytes,tripID:pending.trip.id,request:request)
+            let journalObserver = session.journalDataObservation(.tripSupport), journalTicket = journalObserver.begin()
+            try session.completeTripSupportConfirmation(journal,receipt:result,actor:actor)
+            try support.confirmed(key:request.idempotencyKey,choices:choices)
+            self.pending=nil;self.draft=nil
+            try await self.loadList(session,actor)
+            try await self.loadSelected(session,actor)
+            guard self.detail?.trip.headVersion == result.resultingVersion,self.detail?.confirmationState=="confirmed" else { throw NativeDataError.invalidResponse }
+            journalObserver.finish(journalTicket, request.idempotencyKey)
+            self.notice="confirmed"
+        }
+    }
+
+    func reject(using session: NativeSession) async {
+        guard let pending else { return }
+        await perform(session) { scope in
+            let result: Rejected = try await self.call(session, scope, path: "\(self.base)/\(pending.trip.id)/proposal/reject", method: "POST", body: ["proposalId": pending.proposal.id])
+            guard result.version == 2, result.status == "rejected", result.proposalId == pending.proposal.id else { throw NativeDataError.invalidResponse }
+            self.pending = nil
+            // Existing local edits remain available after rejecting a proposal.
+            self.materialOutcome.exit(.rejected); self.materialHandoff = nil
+            self.notice = "rejected"
+            try await self.loadSelected(session, scope)
+        }
+    }
+
+    private func loadList(_ session: NativeSession, _ scope: NativeDataScope) async throws {
+        let result: NativeTripList = try await call(session, scope, path: base, method: "GET")
+        guard result.version == 2, result.trips.allSatisfy({ UUID(uuidString: $0.id) != nil }) else { throw NativeDataError.invalidResponse }
+        trips = result.trips.filter { $0.id != deletionRequest?.tripID }
+    }
+
+    private func loadSelected(_ session: NativeSession, _ scope: NativeDataScope) async throws {
+        guard let selectedID else { return }
+        let result: NativeTripDetail = try await call(session, scope, path: "\(base)/\(selectedID)", method: "GET")
+        guard result.version == 2, result.trip.id == selectedID,
+              result.hardLocks == .notEnabled, result.externalOrderStatus == .notConnected else { throw NativeDataError.invalidResponse }
+        detail = result
+        if archive?.tripId != selectedID || archive?.archivedVersion != result.trip.headVersion { archive = nil }
+        archiveAvailable = false
+        do {
+            let state: NativeTripArchiveReply = try await call(session, scope, path: "\(base)/\(selectedID)/archive", method: "GET")
+            guard state.version == 1, state.archive == nil ||
+                    (state.archive?.tripId == selectedID && state.archive?.archivedVersion == result.trip.headVersion) else {
+                throw NativeDataError.invalidResponse
+            }
+            archive = state.archive; archiveAvailable = true
+        } catch {
+            guard self.scope == scope, session.dataScope == scope else { throw NativeDataError.staleSessionResponse }
+            // Missing migration or transient archive outage must not hide saved results.
+            archiveAvailable = false
+        }
+        do { pending = try await readPending(selectedID, proposalID: nil, session, scope) }
+        catch NativeDataError.server(let code) where code == "PROPOSAL_NOT_CONFIRMABLE" { pending = nil }
+        if let draft, draft.baseVersion != result.trip.headVersion { notice = "STALE_TRIP_VERSION" }
+    }
+
+    private func readPending(_ tripID: String, proposalID: String?, _ session: NativeSession, _ scope: NativeDataScope) async throws -> NativeTripPending {
+        let query = proposalID.map { [URLQueryItem(name: "proposalId", value: $0)] } ?? []
+        let result: NativeTripPending = try await call(session, scope, path: "\(base)/\(tripID)/proposal", method: "GET", query: query)
+        guard result.version == 2, result.trip.id == tripID, result.proposal.status == "pending",
+              !result.proposal.digest.isEmpty, result.proposal.patch.expectedVersion == result.proposal.baseTripVersion,
+              NativeScopedTripProposal.hasCompleteOrderDiff(result) else { throw NativeDataError.invalidResponse }
+        return result
+    }
+
+    private func perform(_ session: NativeSession, operation: (NativeDataScope) async throws -> Void) async {
+        guard !busy, let scope, session.dataScope == scope else { return }
+        busy = true; notice = nil
+        defer { if self.scope == scope { busy = false } }
+        do { try await operation(scope) }
+        catch {
+            guard self.scope == scope, session.dataScope == scope else { reset(for: session.retainedDataScope); return }
+            switch error {
+            case NativeDataError.server(let code): notice = code
+            case NativeDataError.invalidResponse, is DecodingError: notice = "invalidResponse"
+            case NativeDataError.sessionUnavailable, NativeDataError.staleSessionResponse: notice = "sessionUnavailable"
+            default: notice = "networkRetry"
+            }
+        }
+    }
+
+    private func call<T: Decodable>(_ session: NativeSession, _ scope: NativeDataScope, path: String, method: String, query: [URLQueryItem] = []) async throws -> T {
+        let data = try await session.tripRequest(path: path, method: method, queryItems: query)
+        guard self.scope == scope, session.dataScope == scope else { throw NativeDataError.staleSessionResponse }
+        return try JSONDecoder().decode(T.self, from: data)
+    }
+
+    private func call<T: Decodable, Body: Encodable>(_ session: NativeSession, _ scope: NativeDataScope, path: String, method: String, body: Body) async throws -> T {
+        let data = try await session.tripRequest(path: path, method: method, body: JSONEncoder().encode(body))
+        guard self.scope == scope, session.dataScope == scope else { throw NativeDataError.staleSessionResponse }
+        return try JSONDecoder().decode(T.self, from: data)
+    }
+
+    private struct ArchiveBody: Encodable { let expectedVersion: Int; let idempotencyKey: String; let confirmed: Bool }
+    private struct ProposalBody: Encodable { let patch: NativeTripPatch }
+    private struct ConfirmBody: Encodable { let proposalId: String; let idempotencyKey: String; let digest: String }
+    private struct Rejected: Decodable { let version: Int; let proposalId: String; let status: String }
+    private struct DeleteBody: Encodable { let requestId: String; let tripId: String; let expectedVersion: Int; let confirmed: Bool }
+}

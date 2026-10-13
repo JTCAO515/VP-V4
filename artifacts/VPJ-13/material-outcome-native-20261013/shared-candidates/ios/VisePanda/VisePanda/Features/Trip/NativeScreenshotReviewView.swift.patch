@@ -1,0 +1,17 @@
+--- a/ios/VisePanda/VisePanda/Features/Trip/NativeScreenshotReviewView.swift
++++ b/ios/VisePanda/VisePanda/Features/Trip/NativeScreenshotReviewView.swift
+@@ -82,0 +83 @@
++    @Environment(\.scenePhase) private var phase
+@@ -246,0 +248,3 @@
++            .onChange(of: phase) { _, phase in
++                if phase != .active { store?.materialOutcome.exit(.scopeChanged) }
++            }
+@@ -254,0 +259,6 @@
++                if let store, let session {
++                    guard let context = NativeJourneyMaterialOutcomeBridge.context(store: store, session: session, active: phase == .active),
++                          context.eligible, context.tripID == source.tripID, context.tripVersion == source.tripVersion else { status = .unavailable; return }
++                    _ = store.materialOutcome.select(context: context, medium: .screenshot)
++                    _ = NativeJourneyMaterialOutcomeConsumer().measurementQualification(for: .continuation(.screenshotLineageUnavailable))
++                }
+@@ -351,0 +362 @@
++        store?.materialOutcome.exit(.cancelled)

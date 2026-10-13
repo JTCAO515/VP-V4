@@ -1,0 +1,22 @@
+--- a/ios/VisePanda/VisePanda/Features/PDFIntake/NativePDFIntakeView.swift
++++ b/ios/VisePanda/VisePanda/Features/PDFIntake/NativePDFIntakeView.swift
+@@ -17,0 +18 @@
++    @Environment(\.scenePhase) private var phase
+@@ -124 +125 @@
+-                Button(text("Close", "关闭")) { if model.clearCopy() { dismiss() } }.disabled(model.busy)
++                Button(text("Close", "关闭")) { if model.clearCopy() { tripStore.materialOutcome.exit(.cancelled); dismiss() } }.disabled(model.busy)
+@@ -130 +131 @@
+-                Task { await model.load(url, using: session) }
++                Task { await model.load(url, using: session, tripStore: tripStore, active: phase == .active) }
+@@ -132,0 +134 @@
++                tripStore.materialActive = phase == .active
+@@ -135 +137 @@
+-                    await model.load(url, using: session, expiresNoLaterThan: expiry)
++                    await model.load(url, using: session, tripStore: tripStore, active: phase == .active, expiresNoLaterThan: expiry)
+@@ -145,0 +148,4 @@
++            .onChange(of: phase) { _, phase in
++                tripStore.materialActive = phase == .active
++                if phase != .active { tripStore.materialOutcome.exit(.scopeChanged) }
++            }
+@@ -146,0 +153 @@
++                tripStore.materialOutcome.exit(.scopeChanged)
