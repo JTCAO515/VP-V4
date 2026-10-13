@@ -26,10 +26,11 @@ def load(name,path):
 capture=load('capture',HERE/'controlled-backup.py')
 verify=load('verify',HERE/'restore-verification.py')
 managed=load('managed',HERE/'managed-profile.py')
+ledger=capture.platform_ledger
 plan=capture.plan
 IMAGE='public.ecr.aws/supabase/postgres:17.6.1.155'
 IMAGE_ID='sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b'
-FILES={'data14.dump.age.partial','schema-all.dump.age.partial','roles.sql.age.partial'}
+FILES={'data14.dump.age.partial','schema-all.dump.age.partial','roles.sql.age.partial',ledger.ARCHIVE}
 
 
 def run(args,data=None,timeout=60):
@@ -107,12 +108,13 @@ class OwnCluster:
 def bundle_preflight(manifest):
     plan.require(manifest.get('status')=='ENCRYPTED_CAPTURE_INTEGRITY_PASS_RESTORE_UNRUN' and manifest.get('target')==plan.REF,'CAPTURE_MANIFEST_REQUIRED')
     entries=manifest.get('entries',[])
-    plan.require(len(entries)==3 and {e['file'] for e in entries}==FILES,'EXACT_THREE_ARCHIVES_REQUIRED')
+    plan.require(len(entries)==4 and {e['file'] for e in entries}==FILES,'EXACT_FOUR_ARCHIVES_REQUIRED')
     expected=manifest.get('verification')
-    plan.require(expected and expected.get('contract')=='qaw-restore-verification/1','RESTORE_EXPECTATIONS_MISSING')
+    plan.require(expected and expected.get('contract')=='qaw-restore-verification/2','RESTORE_EXPECTATIONS_MISSING')
     plan.require(expected.get('dataSchemas')==list(plan.SCHEMAS),'FOURTEEN_SCHEMA_CONFLICT')
     plan.require(expected.get('counts') and expected.get('metadata') and expected.get('databaseFacts') and expected.get('databaseOwner') and expected.get('bootstrapRole'),'BOOTSTRAP_EVIDENCE_MISSING')
-    plan.require(isinstance(expected.get('platformCounts'),dict) and all(v==0 for v in expected['platformCounts'].values()),'UNCOVERED_PLATFORM_DATA_NOT_EMPTY')
+    ledger.validate(expected.get('platformCounts'),expected['metadata']['platform_relations'])
+    ledger.validate_descriptor(expected.get('platformSupplement'))
     managed.classify(expected)
     for e in entries:
         plan.require(re.fullmatch('[a-f0-9]{64}',e.get('sha256','')) and isinstance(e.get('bytes'),int) and e['bytes']>0,'ARCHIVE_MANIFEST_INVALID')
@@ -138,6 +140,7 @@ def restore_bundle(directory,identity,manifest):
         p=directory/name
         plan.require(p.is_file() and not p.is_symlink() and p.stat().st_mode&0o077==0 and p.stat().st_uid==os.getuid() and p.stat().st_size==e['bytes'] and file_hash(p)==e['sha256'],'ARCHIVE_INTEGRITY_OR_PATH_CONFLICT')
         listings[name]=capture.validate_ciphertext(identity,p,custom=name!='roles.sql.age.partial')
+    ledger.validate_toc(listings[ledger.ARCHIVE])
     decrypt=lambda name:['age','-d','-i',str(identity),str(directory/name)]
     source_sql=pipeline(decrypt('schema-all.dump.age.partial'),[plan.PG_ROOT+'/pg_restore','--schema-only','--file=-'],collect=True).decode()
     source_schema=verify.normalize_schema(source_sql)
@@ -185,6 +188,8 @@ def restore_bundle(directory,identity,manifest):
         pipeline(decrypt('schema-all.dump.age.partial'),db.command('pg_restore')+['--exit-on-error','--section=pre-data','--use-list=/tmp/pre-data.list'])
         stage='fourteen-schema data'
         pipeline(decrypt('data14.dump.age.partial'),db.command('pg_restore')+['--exit-on-error','--data-only'])
+        stage='platform migration ledger data'
+        pipeline(decrypt(ledger.ARCHIVE),db.command('pg_restore')+['--exit-on-error','--data-only'])
         stage='schema post-data'
         pipeline(decrypt('schema-all.dump.age.partial'),db.command('pg_restore')+['--exit-on-error','--section=post-data'])
         stage='schema owner ACL policy trigger verification'
@@ -199,10 +204,11 @@ def restore_bundle(directory,identity,manifest):
         plan.require(counts==expected['counts'],'RESTORED_COUNTS_MISMATCH')
         platform_counts=json.loads(db.sql(verify.counts_sql(expected['metadata']['platform_relations'])))
         plan.require(platform_counts==expected['platformCounts'],'PLATFORM_COUNTS_MISMATCH')
+        plan.require(db.sql(ledger.digest_sql())==expected['platformSupplement']['sha256Rows'],'PLATFORM_LEDGER_ROWS_MISMATCH')
         for name,e in entries.items():
             plan.require(file_hash(directory/name)==e['sha256'],'ARCHIVE_CHANGED_DURING_RESTORE')
         report.update(status='PASS_LOCAL_BUNDLE_RESTORE_ONLY',schemaDigest=verify.fingerprint(restored_schema),countRelations=len(counts),
-                      globalRoles='PASS',ownerAclSchema='PASS',platformCatalog='PASS',counts='PASS',
+                      globalRoles='PASS',ownerAclSchema='PASS',platformCatalog='PASS',counts='PASS',platformLedger='PASS_COUNT_AND_DIGEST',
                       platformServices='UNRUN_GOTRUE_STORAGE_REALTIME',migrationUpgrade='UNRUN',userAcceptance='UNRUN')
     except Exception as e:
         report.update(failedStage=stage,reason=str(e) if isinstance(e,ValueError) and re.fullmatch('[A-Z_0-9]+',str(e)) else 'RESTORE_FAILED_DETAILS_SUPPRESSED')
@@ -219,7 +225,7 @@ def code_hash():
 
 def validate_approval(a,manifest_path,identity_path):
     plan.require(a.get('target')==plan.REF and a.get('codeSha256')==code_hash(),'RESTORE_APPROVAL_CONFLICT')
-    plan.require(a.get('actions')==['decrypt-approved-bundle','restore-own-isolated-docker','verify-no-content-output','destroy-own-restored-copy'],'RESTORE_SCOPE_CONFLICT')
+    plan.require(a.get('actions')==['decrypt-approved-bundle','restore-own-isolated-docker','verify-no-content-output','destroy-own-restored-copy','restore-realtime-schema-migrations-ledger'],'RESTORE_SCOPE_CONFLICT')
     plan.require(a.get('manifestPath')==str(manifest_path.resolve()) and a.get('identityPath')==str(identity_path.resolve()),'RESTORE_INPUT_CONFLICT')
     instant=datetime.now(timezone.utc)
     plan.require(capture.stamp(a['windowStart'])<=instant and instant+timedelta(minutes=30)<=capture.stamp(a['windowEnd']),'RESTORE_WINDOW_EXPIRED')
@@ -229,7 +235,7 @@ def validate_approval(a,manifest_path,identity_path):
 def main(args):
     if args in ([],['--dry-run']):
         return {'status':'DRY_RUN_NO_ARCHIVE_OR_DOCKER_IO','codeSha256':code_hash(),'requiredBundle':sorted(FILES),
-                'requiredContract':'qaw-restore-verification/1','image':IMAGE,'imageId':IMAGE_ID,
+                'requiredContract':'qaw-restore-verification/2','image':IMAGE,'imageId':IMAGE_ID,
                 'unknownManagedBootstrap':'FAIL_CLOSED','realArchiveRead':False,'actualRestore':'UNRUN'}
     plan.require(len(args)==4 and args[0]=='--restore-approved','RESTORE_ARGUMENTS_INVALID')
     plan.require(sys.stdin.isatty() and sys.stdout.isatty(),'HUMAN_TTY_REQUIRED')

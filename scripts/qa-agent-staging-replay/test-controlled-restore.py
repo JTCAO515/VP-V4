@@ -29,10 +29,13 @@ class RestoreGates(unittest.TestCase):
 
     def test_known_profile_exact_and_unknown_rejected(self):
         metadata=json.loads((m.ROOT/'artifacts/QAWEB/staging-replay/metadata-probe-04.json').read_text())['metadata']
+        observation=json.loads((m.ROOT/'artifacts/QAWEB/staging-replay/platform-count-observation.json').read_text())
+        catalog={c['relation']:c for c in observation['catalog']}
+        metadata['platform_relations']=[{**r,'columns':catalog[r['schema']+'.'+r['name']]['columns']} for r in observation['inventory']]
         manifest={'status':'ENCRYPTED_CAPTURE_INTEGRITY_PASS_RESTORE_UNRUN','target':m.plan.REF,
                   'entries':[{'file':n,'sha256':'0'*64,'bytes':1} for n in m.FILES],
-                  'verification':{'contract':'qaw-restore-verification/1','dataSchemas':list(m.plan.SCHEMAS),
-                                  'metadata':metadata,'counts':{'synthetic-placeholder':0},'platformCounts':{},'databaseFacts':{'placeholder':'not-live'},'databaseOwner':'postgres','bootstrapRole':'supabase_admin'}}
+                  'verification':{'contract':'qaw-restore-verification/2','dataSchemas':list(m.plan.SCHEMAS),
+                                  'metadata':metadata,'counts':{'synthetic-placeholder':0},'platformCounts':observation['counts'],'platformSupplement':m.ledger.descriptor('0'*64),'databaseFacts':{'placeholder':'not-live'},'databaseOwner':'postgres','bootstrapRole':'supabase_admin'}}
         m.bundle_preflight(manifest)
         altered=copy.deepcopy(manifest);altered['verification']['metadata']['extensions'][0]['version']='unknown'
         with self.assertRaisesRegex(ValueError,'MANAGED_EXTENSION_PROFILE_CONFLICT'):m.bundle_preflight(altered)
@@ -43,8 +46,13 @@ class RestoreGates(unittest.TestCase):
             altered=copy.deepcopy(manifest)
             next(role for role in altered['verification']['metadata']['roles'] if role['name']==name)['superuser']=value
             with self.subTest(role=name),self.assertRaisesRegex(ValueError,'MANAGED_ROLE_PROFILE_CONFLICT'):m.bundle_preflight(altered)
-        altered=copy.deepcopy(manifest);altered['verification']['platformCounts']={'vault.secrets':1}
+        altered=copy.deepcopy(manifest);altered['verification']['platformCounts']['vault.secrets']=1
         with self.assertRaisesRegex(ValueError,'UNCOVERED_PLATFORM_DATA_NOT_EMPTY'):m.bundle_preflight(altered)
+
+    def test_three_file_package_cannot_silently_drop_ledger(self):
+        manifest={'status':'ENCRYPTED_CAPTURE_INTEGRITY_PASS_RESTORE_UNRUN','target':m.plan.REF,
+                  'entries':[{'file':n,'sha256':'0'*64,'bytes':1} for n in m.FILES if n!=m.ledger.ARCHIVE]}
+        with self.assertRaisesRegex(ValueError,'EXACT_FOUR_ARCHIVES_REQUIRED'):m.bundle_preflight(manifest)
 
     def test_identifier_quoting_and_count_batching(self):
         rels=[{'schema':'odd"schema','name':'table'+str(i),'kind':'r'} for i in range(119)]

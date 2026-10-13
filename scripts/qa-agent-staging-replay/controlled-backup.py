@@ -28,10 +28,11 @@ def load(name, path):
 probe = load('probe', HERE / 'metadata-probe.py')
 verification = load('verification', HERE / 'restore-verification.py')
 managed_profile = load('managed_profile', HERE / 'managed-profile.py')
+platform_ledger = load('platform_ledger', HERE / 'platform-ledger.py')
 plan = probe.plan
 APPROVAL_ACTIONS = sorted(['read-target-data14', 'set-role-postgres-for-read-only-backup',
                            'create-local-age-recovery-identity', 'retain-encrypted-database-copy',
-                           'capture-global-roles-without-passwords-and-full-schema'])
+                           'capture-global-roles-without-passwords-and-full-schema',platform_ledger.ACTION])
 
 
 def now():
@@ -45,7 +46,7 @@ def stamp(value):
 
 
 def code_hash():
-    names = ['controlled-backup.py', 'metadata-probe.py', 'metadata-probe.sql', 'backup-candidate.py', 'backup-relay.py','restore-verification.py','managed-profile.py']
+    names = ['controlled-backup.py', 'metadata-probe.py', 'metadata-probe.sql', 'backup-candidate.py', 'backup-relay.py','restore-verification.py','managed-profile.py','platform-ledger.py']
     return hashlib.sha256(b''.join((name + '\n').encode() + (HERE / name).read_bytes() for name in names)+(ROOT/'artifacts/QAWEB/staging-replay/probe-official-metadata.json').read_bytes()).hexdigest()
 
 
@@ -134,16 +135,22 @@ def metadata(env, port):
 
 
 def restore_expectations(env, port, metadata):
-    sql="begin read only;set local role postgres;set local statement_timeout='10s';"
-    sql+=verification.counts_sql(metadata['relations'])
-    sql+=verification.counts_sql(metadata['platform_relations'])
+    # Reject unknown namespaces/structure before even composing an outside14
+    # count query. Do not read ledger fields until the exact count gate passes.
+    platform_ledger.validate_relations(metadata['platform_relations'])
+    command=[plan.PG_ROOT+'/psql','-X','-q','-At','-w','-v','ON_ERROR_STOP=1','-h','db.'+plan.REF+'.supabase.co','-p',str(port),'-U','cli_login_postgres','-d','postgres']
+    prefix="begin read only;set local role postgres;set local statement_timeout='10s';"
+    sql=prefix+verification.counts_sql(metadata['relations'])+verification.counts_sql(metadata['platform_relations'])+'rollback;'
+    raw=probe.checked(command,env=env,stdin=sql,timeout=30)
+    counts,platform_counts=map(json.loads,raw.splitlines())
+    platform_ledger.validate(platform_counts,metadata['platform_relations'])
+    sql=prefix+platform_ledger.digest_sql()
     sql+="select jsonb_build_object('encoding',pg_encoding_to_char(encoding),'collate',datcollate,'ctype',datctype,'localeProvider',datlocprovider,'owner',pg_get_userbyid(datdba),'bootstrapRole',(select rolname from pg_roles where oid=10)) from pg_database where datname=current_database();rollback;"
-    raw=probe.checked([plan.PG_ROOT+'/psql','-X','-q','-At','-w','-v','ON_ERROR_STOP=1','-h','db.'+plan.REF+'.supabase.co','-p',str(port),'-U','cli_login_postgres','-d','postgres'],env=env,stdin=sql,timeout=30)
-    counts,platform_counts,facts=map(json.loads,raw.splitlines())
-    plan.require(all(value==0 for value in platform_counts.values()),'UNCOVERED_PLATFORM_DATA_NOT_EMPTY')
+    raw=probe.checked(command,env=env,stdin=sql,timeout=30)
+    digest_line,fact_line=raw.splitlines();facts=json.loads(fact_line)
     owner=facts.pop('owner'); bootstrap=facts.pop('bootstrapRole')
-    expected={'contract':'qaw-restore-verification/1','dataSchemas':list(plan.SCHEMAS),
-            'metadata':metadata,'counts':counts,'platformCounts':platform_counts,'databaseFacts':facts,'databaseOwner':owner,'bootstrapRole':bootstrap}
+    expected={'contract':'qaw-restore-verification/2','dataSchemas':list(plan.SCHEMAS),
+            'metadata':metadata,'counts':counts,'platformCounts':platform_counts,'platformSupplement':platform_ledger.descriptor(digest_line),'databaseFacts':facts,'databaseOwner':owner,'bootstrapRole':bootstrap}
     managed_profile.classify(expected)
     return expected
 
@@ -193,6 +200,7 @@ def execute(a, official):
                 entries = [
                     ('data14.dump.age', [plan.PG_ROOT+'/pg_dump','-Fc','--strict-names','-d','postgres',*connect,*['--schema='+s for s in plan.SCHEMAS]], True),
                     ('schema-all.dump.age', [plan.PG_ROOT+'/pg_dump','-Fc','--schema-only','-d','postgres',*connect], True),
+                    ('platform-ledger.dump.age', [plan.PG_ROOT+'/pg_dump','-Fc','--data-only','--strict-names','--table='+platform_ledger.RELATION,'-d','postgres',*connect], True),
                     ('roles.sql.age', [plan.PG_ROOT+'/pg_dumpall','--roles-only','--no-role-passwords',*connect], False),
                 ]
                 results = []
@@ -209,6 +217,8 @@ def execute(a, official):
                             data_kind={'r':'TABLE DATA','S':'SEQUENCE SET','m':'MATERIALIZED VIEW DATA'}.get(r['kind'])
                             if data_kind:
                                 plan.require(data_kind+' '+r['schema']+' '+r['name']+' ' in listing, 'TOC_RELATION_DATA_MISSING')
+                    if name == 'platform-ledger.dump.age':
+                        platform_ledger.validate_toc(listing)
                     if name == 'schema-all.dump.age':
                         for e in before['event_triggers']:
                             plan.require('EVENT TRIGGER - '+e['name']+' ' in listing, 'TOC_EVENT_TRIGGER_MISSING')
@@ -217,7 +227,7 @@ def execute(a, official):
                         for chunk in iter(lambda:f.read(1024*1024), b''): digest.update(chunk)
                     results.append({'file':archive.name,'bytes':archive.stat().st_size,'sha256':digest.hexdigest(),'fullIntegrity':'PASS','toc':'PASS' if custom else 'UNRUN_ROLE_SEMANTIC_RESTORE'})
                 stage = 'post-dump metadata'
-                plan.require(now()+timedelta(minutes=1)<stamp(a['windowEnd']),'WINDOW_EXPIRED_BEFORE_POSTCHECK')
+                plan.require(now()+timedelta(minutes=2)<stamp(a['windowEnd']),'WINDOW_EXPIRED_BEFORE_POSTCHECK')
                 after = metadata(env, port)
                 plan.require(before == after, 'METADATA_CHANGED_QUARANTINE')
                 plan.require(restore_expectations(env,port,after)==expected_restore,'COUNTS_CHANGED_QUARANTINE')
@@ -258,13 +268,13 @@ def main(args):
     if args in ([], ['--dry-run']):
         return {'status':'DRY_RUN_NO_TARGET_IO','codeSha256':code_hash(),'target':plan.REF,'actionsRequiringJTApproval':APPROVAL_ACTIONS,
                 'execution':'--execute <approval.json> <fresh-official-metadata.json>, human TTY confirmation required',
-                'schemaCount':14,'newPersistentKeys':False,'targetRead':False,'actualRestore':'UNRUN'}
+                'schemaCount':14,'platformSupplement':platform_ledger.RELATION,'newPersistentKeys':False,'targetRead':False,'actualRestore':'UNRUN'}
     plan.require(len(args)==3 and args[0]=='--execute','INVALID_EXECUTION_ARGUMENTS')
     plan.require(sys.stdin.isatty() and sys.stdout.isatty(),'HUMAN_TTY_REQUIRED')
     approval=json.loads(Path(args[1]).read_text())
     official=json.loads(Path(args[2]).read_text())
     validate_operator_gate(approval,official,now())
-    phrase='JT APPROVED '+plan.REF+' POSTGRES READ BACKUP NEW AGE KEY'
+    phrase='JT APPROVED '+plan.REF+' POSTGRES READ BACKUP NEW AGE KEY REALTIME LEDGER'
     print('Operator: verify JT explicitly approved this exact code, scopes, retention and quiesced maintenance window. JSON is not authenticated consent.')
     plan.require(input('Type '+phrase+': ') == phrase,'OPERATOR_CONFIRMATION_REQUIRED')
     # input() may have blocked indefinitely. Re-read the local evidence, then
