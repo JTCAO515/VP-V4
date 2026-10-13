@@ -1,0 +1,29 @@
+PASS static exact 52-function catalog: only budget body/definition/md5 delta, 13 attributes retained
+PASS owned immutable PG17.6 network none, zero ports/mounts, private socket/data
+PASS actual fresh 155 migration compile and installed-supported exact function/relation/hook catalog
+PASS fresh installation recovery remains default closed
+PASS sealed retired journal + disabled scope reconcile succeeds: retired owner null, floor monotonic, exact generation and known ledger drain
+PASS exact disabled no-op leaves retired fence and floors unchanged
+PASS repeat reconcile succeeds with original repeated-stop monotonic marker, ledger idempotent
+PASS prepatch exact body reproduces retired disabled stop failure and transaction rollback retains rows
+PASS retired false to true denied and transaction rollback retains rows
+PASS retired owner change denied and transaction rollback retains rows
+PASS retired generation change denied and transaction rollback retains rows
+PASS retired tariff change denied and transaction rollback retains rows
+PASS retired attempt identity change denied and transaction rollback retains rows
+PASS retired other field change denied and transaction rollback retains rows
+PASS retired ledger destructive reset denied and transaction rollback retains rows
+PASS deleted retired scope recreation denied and transaction rollback retains rows
+PASS late reconcile overflow rolls back all prior writes and transaction rollback retains rows
+PASS actual authenticated Ops member cannot resume retired owner budget and transaction rollback retains rows
+PASS retired budget eligibility remains retired
+PASS original stop on disabled retired scope remains successful
+PASS original exact settle/duplicate/conflict/overrun freeze and foreign owner refusal preserved
+PASS settled actual cannot be rewritten and transaction rollback retains rows
+PASS ordinary authenticated stop denied and transaction rollback retains rows
+PASS ordinary service reconcile denied and transaction rollback retains rows
+PASS actual service-role fresh reserve disabled; no privilege grant
+PASS unknown source refused by installed guard and reconcile and transaction rollback retains rows
+PASS renamed required hook refused by installed guard and reconcile and transaction rollback retains rows
+PASS incorrect sealed manifest digest refused and transaction rollback retains rows
+PASS final installed source exact; Trip/proposals unchanged; retired owner never restored

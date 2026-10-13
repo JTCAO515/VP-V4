@@ -1,0 +1,7 @@
+PASS static exact 52-function catalog: only budget body/definition/md5 delta, 13 attributes retained
+PASS owned immutable PG17.6 network none, zero ports/mounts, private socket/data
+PASS actual fresh 155 migration compile and installed-supported exact function/relation/hook catalog
+PASS fresh installation recovery remains default closed
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+103 !== 101

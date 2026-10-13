@@ -1,0 +1,48 @@
+{
+  "result": "FAIL",
+  "owner": "01a1334b-d22d-74b2-bebd-83006b5072bf",
+  "name": "vpj37-v10-retired-20261013-0c086404",
+  "image": "public.ecr.aws/supabase/postgres@sha256:86a2e078779e5bdccda1f6f6c5063aa9779a322d1fface5fb408d051909b230f",
+  "sourceSHA": "5e07bc1ce41f236c0fd29ece8f9f15525c9e234e78f9a7a25ab22751082babdf",
+  "base": "304c3fd65ada710af09f0ed171854d56ff0c3be2",
+  "checks": [
+    {
+      "label": "static exact 52-function catalog: only budget body/definition/md5 delta, 13 attributes retained",
+      "result": "PASS"
+    },
+    {
+      "label": "owned immutable PG17.6 network none, zero ports/mounts, private socket/data",
+      "result": "PASS"
+    },
+    {
+      "label": "actual fresh 155 migration compile and installed-supported exact function/relation/hook catalog",
+      "result": "PASS"
+    },
+    {
+      "label": "fresh installation recovery remains default closed",
+      "result": "PASS"
+    }
+  ],
+  "providerCalls": 0,
+  "roles": "postgres and synthetic SQL claims; no GoTrue",
+  "unrun": [
+    "target deployment/provider/device/TripProposal acceptance",
+    "disabled-trigger injection prohibited by delegated no TRIGGER disable rule"
+  ],
+  "otherResources": "UNTOUCHED",
+  "catalog": {
+    "functions": 52,
+    "unchangedFunctions": 51,
+    "unchangedAttributes": 13,
+    "changedFields": [
+      "definition",
+      "md5",
+      "prosrc"
+    ]
+  },
+  "version": "17.6",
+  "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n103 !== 101\n",
+  "cleanup": "ABSENT",
+  "replayedMigrationCount": 155,
+  "sourceInventory": "Identical ordered inventory retained in final manifest.json"
+}
