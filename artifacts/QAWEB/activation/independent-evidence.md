@@ -1,0 +1,9 @@
+# Independent activation kit — same #680 scope
+
+Preparation base 8b5975e48e850d0cbb1bf6f8ef7c4b0c9ff6b888; WT qaw005-independent-activation-20261013, branch codex/qaw005-independent-activation-20261013. Old WT/source pins remain preserved. Read current DEVELOPMENT-RULES and docs/contracts/qa-independent-target.md before changes.
+
+Phase one: independent /2 input/review/preflight, separate operator target, strict ref/URL refusal and explicit historical entry. Default manifest is fresh empty -> full155, not shared75 -> missing80. Profile /4+projectRef is an explicitly blocked interface candidate awaiting stable Main backend typed validator; no live readiness claimed. Nonsecret target receipts/consent/access provenance bind the new project to owner/policy/noticeHash/scope/profile/endpoint. No secret values accepted or output.
+
+PASS: 16 independent contract tests plus 13 retained historical tests on this source. New negatives cover absent/shared/invalid operator ref, cross-project/wrong URL, old75/partial/additional migrations, source mutation/missing file, v1/incorrect/public v2 ACL, old Supabase access provenance, missing/wrong exact consent and mixed policy/scope/profile identity. Synthetic project ref abcdefghijklmnopqrst is a fixture, not an existing project. CLI generation is offline and defaults disabled. PASS: docs-check and diff-check. No source, migration, target, provider, account, project, permission, fee or credential action.
+
+Known account/cost discovery supplied by Main is not reprobed here: one Pro organization/shared project, cost API unavailable and no confirmed quote. It is not free-capacity or provisioning authorization. Actual new project/ref/URL, secure new-target access handoff, Auth/Session/consent/provider/host-image acceptance remain UNRUN. Phase-one typed profile validation remains pending, never PASS.

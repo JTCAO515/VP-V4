@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "qa-public-source-candidate/1",
+  "schemaVersion": "qa-independent-public-source-candidate/1",
   "status": "UNPUBLISHED_DISABLED",
   "activationAllowed": false,
   "providerCalled": false,
   "accountVerified": false,
   "inputCandidate": {
-    "schemaVersion": "qa-activation-input/1",
-    "projectId": "dzqdzetcctkhbrhlxxgn",
+    "schemaVersion": "qa-activation-input/2",
+    "projectId": null,
     "contextMode": "qa_session_history_v1",
     "ownerId": null,
     "supplier": {
@@ -69,6 +69,15 @@
     "configuration": {
       "id": null,
       "version": 1
+    },
+    "supabaseUrl": null,
+    "targetReceipts": {
+      "projectRef": null,
+      "ownerId": null,
+      "configurationId": null,
+      "accountEvidenceHash": null,
+      "budgetEvidenceHash": null,
+      "observedAt": null
     }
   },
   "reviewNotes": {
@@ -84,7 +93,9 @@
       "actual configured regional access",
       "API retention TTL",
       "owner/configuration identity",
-      "approved budget caps"
+      "approved budget caps",
+      "independent project ref and exact URL",
+      "new-target secure access provenance"
     ],
     "productDecision": [
       "Confirm finite actual attempt/task/scope/provider spend caps and expiry before any activation; no caps inferred from tariff."
