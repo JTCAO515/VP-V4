@@ -39,7 +39,8 @@ def main():
     domain = api(f'/v9/projects/{PROJECT}/domains/{DOMAIN}')
     if domain.get('gitBranch') != BRANCH or domain.get('projectId') != PROJECT:
         raise SystemExit('QA domain scope mismatch')
-    payload = {'name': 'vp-v4', 'project': PROJECT, 'target': 'preview',
+    # REST API: omit target for preview; 'staging' assigns a different alias.
+    payload = {'name': 'vp-v4', 'project': PROJECT,
         'gitSource': {'type': 'github', 'org': 'JTCAO515', 'repo': 'VP-V4',
                       'ref': BRANCH, 'sha': sha}, 'withLatestCommit': False}
     OUTPUT.mkdir(parents=True, exist_ok=True)
