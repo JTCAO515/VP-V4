@@ -64,3 +64,10 @@ target/provider/human/device PASS/FAIL/UNRUN in #187 / #233 / #242 for unified a
 Batch related small fixes. Select CI from actual changed paths, reuse unchanged evidence, and keep required
 merge checks plus affected permission/data/migration negatives; unknown scope fails closed or runs full.
 No remote branch-protection, production, payment or permission change follows from this rule.
+
+## VP-V10 dispatch and skill adaptation
+
+For authorized VP-V10 spec/ticket work, task dispatch, integration or retrospectives, read
+[DEVELOPMENT-RULES.md](/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/DEVELOPMENT-RULES.md).
+It owns the current Main, ready-frontier concurrency and installed-skill adaptations; preserve
+this repository's domain, permission and protected-merge contracts. Other projects use the rules above.

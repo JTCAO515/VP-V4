@@ -1,0 +1,7 @@
+--- /Users/jtsm5p/.codex/AGENTS.md (before)
++++ /Users/jtsm5p/.codex/AGENTS.md (after)
+@@ -68,0 +69,4 @@
++
++## VP-V10 条件入口
++
++仅在 VP-V10 已授权研发、spec/ticket 拆分、派工、整合或阶段复盘时，先读 [DEVELOPMENT-RULES.md](/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/DEVELOPMENT-RULES.md)。该文件集中维护本轮技能适配、唯一 Main、ready 前沿、独立聊天及模型目标；其他项目仍按上述个人规则。
