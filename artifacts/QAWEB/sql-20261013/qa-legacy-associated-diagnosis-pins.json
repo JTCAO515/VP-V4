@@ -1,0 +1,10 @@
+{
+  "mainBaseline": "96767520f19fd75a4270cf550c43c435a5efdcd4",
+  "proofLog": "qa-legacy-associated-diagnosis-1791877770789.log",
+  "namedPassChecks": 10,
+  "proofSHA256": "0916f616c52a0c402df5e06ec35062f4afd5126da83e54aeb96ee2ae01b7187a",
+  "rootAliasAccepted": true,
+  "continuationCapacityBypassReproduced": false,
+  "sourceChanged": false,
+  "targetApply": "NONE"
+}
