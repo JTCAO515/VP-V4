@@ -7,5 +7,9 @@
   "globalClaimBeforeProsrcMD5": "18f9e80f8fbad1d1bb50f0f4fb22273c",
   "globalClaimAfterProsrcMD5": "f916ed0cf81081d64da9919cd16ab119",
   "legacyLockBeforeProsrcMD5": "6784eb5b499638a9692adb2ad5037719",
-  "legacyLockAfterProsrcMD5": "2830f39fd05a86b9d5fabeb96f21b23d"
+  "legacyLockAfterProsrcMD5": "2830f39fd05a86b9d5fabeb96f21b23d",
+  "originalCheckDefinitions": {
+    "text_policies_context_mode_check": "CHECK ((context_mode = ANY (ARRAY['current_input_v1'::text, 'task_history_v1'::text, 'knowledge_intent_v1'::text])))",
+    "service_task_turns_relationship_check": "CHECK ((relationship = ANY (ARRAY['new_goal'::text, 'clarification'::text, 'repair'::text])))"
+  }
 }

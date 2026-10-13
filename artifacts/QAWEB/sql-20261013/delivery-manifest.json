@@ -1,18 +1,25 @@
 {
   "base": "daa7bae44a660381fb3295d0d2afc327ea98d3ba",
-  "latestProof": "proof-1791867015856.log",
-  "namedPassChecks": 35,
+  "latestProof": "proof-1791867235869.log",
+  "namedPassChecks": 37,
   "sourcePins": "source-pins.json",
   "lifecyclePins": "lifecycle-pins.json",
   "sha256": {
-    "candidate.sql": "a2c2c78ed2528321aa1a033f83035e77a2f9bf02205158c584c4180ef04138f9",
-    "lifecycle-candidate.sql": "737be11c73c4c625b93827d209fdcbab3b5629e5b2d6b18e6f1bb09fe84cd848",
-    "proof.mjs": "b3858af7a89517826b243c1ca2f0d3279269fc6cbb93ff6bc3ec685b3c49223e",
-    "producer-contract.md": "028a809704f800226642f95710ccc9023c7850a7a973e940874cf120940e3116",
-    "policy-notice-template.json": "01851f3b366af9d7180e6ceac12bc7c79ee968fc12d373012595d21932656cec"
+    "candidate.sql": "8e188da17a0bf4f384c862885226d4d1ae03f24393c6058bb53bfec2aed821c0",
+    "lifecycle-candidate.sql": "5934b630c39fcdcb74b2a14114e18f5daf22e310e5207b52629545cb910b6c87",
+    "proof.mjs": "a282b97caef036974a40750084fdb48336d2dfac4e43612c5cd2e5ab2a0d2567",
+    "producer-contract.md": "63a4f433aa27d2b5138bb1fab75afc121316582bc0cb18c713ed0f856fa3f55d",
+    "policy-notice-template.json": "01851f3b366af9d7180e6ceac12bc7c79ee968fc12d373012595d21932656cec",
+    "precondition-proof.mjs": "c92274615e44384ce829b74e7c7065ffbd27665f796b2135854e7e34ad1186d8",
+    "hosted-discovery-assessment.md": "70657a7efd8312a9b1fc77468f4665e9c4645bf0575a91d564fc1b9dde70128f"
   },
   "targetApply": "UNRUN_NOT_GRANTED",
   "realProvider": "UNRUN",
   "review": "UNRUN_MAIN_REVIEW_REQUIRED",
-  "managedDeleteRestore": "UNRUN"
+  "managedDeleteRestore": "UNRUN",
+  "latestAffectedProof": "precondition-1791867385251.log",
+  "affectedNamedPassChecks": 6,
+  "preservedOriginalGateCount": 10,
+  "originalGateBefore": "all-gates-before.json",
+  "originalGateAfter": "all-gates-after.json"
 }

@@ -221,4 +221,12 @@ corepins=json.loads((out/'source-pins.json').read_text())
 corepins.update({'globalClaimBeforeProsrcMD5':hashlib.md5(body(global_before).encode()).hexdigest(),'globalClaimAfterProsrcMD5':hashlib.md5(body(global_after).encode()).hexdigest(),'legacyLockBeforeProsrcMD5':hashlib.md5(body(lock_before).encode()).hexdigest(),'legacyLockAfterProsrcMD5':hashlib.md5(body(lock_after).encode()).hexdigest()})
 (out/'source-pins.json').write_text(json.dumps(corepins,indent=2)+'\n')
 guards="do $$begin\n if (select md5(prosrc) from pg_proc where oid='public.claim_turn_work()'::regprocedure)<>"+"'"+corepins['globalClaimBeforeProsrcMD5']+"'"+" or (select md5(prosrc) from pg_proc where oid='turn_private.lock_text_work(uuid,uuid)'::regprocedure)<>"+"'"+corepins['legacyLockBeforeProsrcMD5']+"'"+" then raise exception 'QA_SHARED_SOURCE_CONFLICT';end if;\nend$$;\n"
-(out/'candidate.sql').write_text('-- Main-reviewed source pins required; apply as one transaction.\n'+guards+'\n\n'.join(parts)+acl)
+original_checks=json.loads((out/'constraints-before.json').read_text())
+check_guards=[]
+for relation,name in [('turn_private.text_policies','text_policies_context_mode_check'),('turn_private.service_task_turns','service_task_turns_relationship_check')]:
+ value=original_checks[name];q=lambda v:"'"+v.replace("'","''")+"'"
+ check_guards.append("(select pg_get_constraintdef(oid) from pg_constraint where conrelid="+q(relation)+"::regclass and conname="+q(name)+") is distinct from "+q(value))
+corepins['originalCheckDefinitions']={n:original_checks[n]for n in ['text_policies_context_mode_check','service_task_turns_relationship_check']}
+(out/'source-pins.json').write_text(json.dumps(corepins,indent=2)+'\n')
+constraint_guard="do $$begin\n if "+'\n or '.join(check_guards)+" then raise exception 'QA_SHARED_CONSTRAINT_CONFLICT';end if;\nend$$;\n"
+(out/'candidate.sql').write_text('-- Main-reviewed source pins required; apply as one transaction.\n'+guards+constraint_guard+'\n\n'.join(parts)+acl)

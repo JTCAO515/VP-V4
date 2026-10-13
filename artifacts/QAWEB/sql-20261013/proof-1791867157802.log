@@ -1,0 +1,44 @@
+OWN CONTAINER qaw005-sql-a74fa0d0-9cc
+PASS full original migration replay
+SCHEMA BASE t|t
+PASS candidate transaction rollback preserves original private functions
+PASS candidate applies in own database
+PASS original current-input worker remains usable and old answered followup contract is not widened
+PASS blank original Session survives protected read and list
+PASS original hosted SQL discovery admits actual QA group only with active consent and remains disabled by default
+PASS unknown notice and missing consent reject
+PASS QA policy DTO exposes authoritative bounded mode and enforces exact notice
+PASS concurrent identical retry admits once and changed input rejects
+PASS legacy global claimer excludes QA
+PASS original budget dispatch/settlement and truthful completion
+PASS why simplify second correction share original Task and finite real sources
+PASS all provider attempts billed to original canonical Task
+PASS actor isolation and new Session history empty
+PASS original RLS and RPC execute role vectors
+PASS withdrawal blocks source read late completion and owner session
+PASS ordinary QA does not create or force Trip
+PASS API exact request replay after later turn preserves original parent and charges no new attempt
+PASS request-ID message read returns actual persisted status within exact QA Session
+PASS same actor new conversation has no other Session context
+PASS protected refresh reads original completed text
+PASS invalid login session rejects
+PASS competing different followups use lastTurn CAS and admit one
+PASS eight total turns finite bound, ninth rejected
+PASS source hiding after read denies dispatch and late output
+PASS lease expiry rejects late reads and writes
+PASS actual immutable policy expiry denies consent and admission
+PASS policy revocation denies new admission
+PASS unknown ACK keeps original pending attempt and prevents second dispatch
+PASS budget-disabled prevents physical dispatch authorization
+SCHEMA CANDIDATE t|f
+FAIL original turn lifecycle schema gate - exact constraint extensions need Main reviewed lifecycle delta; no hash adopted
+PASS legacy text consumer cannot read QA payload
+PASS exact lifecycle interpretation retains original schema digest and reviewed single source pin
+GATE DELTA {"profile_data_private.schema_v1":[true,false],"result_data_private.schema_supported_v1":[true,false]}
+PASS unknown constraint extension fails original lifecycle gate
+PASS over-64KiB finite history fails closed rather than truncating or falling back
+EXPORT KEYS snapshot,sourceDigest,sourceStateDigest
+PASS original managed export includes new QA relationship rows without second store
+PASS original TypeScript managed export decoder accepts actual QA SQL snapshot
+UNRUN real target/provider/browser/device, independent review, target managed export/delete/restore
+OWN CLEANUP 0

@@ -2,6 +2,10 @@
 do $$begin
  if (select md5(prosrc) from pg_proc where oid='public.claim_turn_work()'::regprocedure)<>'18f9e80f8fbad1d1bb50f0f4fb22273c' or (select md5(prosrc) from pg_proc where oid='turn_private.lock_text_work(uuid,uuid)'::regprocedure)<>'6784eb5b499638a9692adb2ad5037719' then raise exception 'QA_SHARED_SOURCE_CONFLICT';end if;
 end$$;
+do $$begin
+ if (select pg_get_constraintdef(oid) from pg_constraint where conrelid='turn_private.text_policies'::regclass and conname='text_policies_context_mode_check') is distinct from 'CHECK ((context_mode = ANY (ARRAY[''current_input_v1''::text, ''task_history_v1''::text, ''knowledge_intent_v1''::text])))'
+ or (select pg_get_constraintdef(oid) from pg_constraint where conrelid='turn_private.service_task_turns'::regclass and conname='service_task_turns_relationship_check') is distinct from 'CHECK ((relationship = ANY (ARRAY[''new_goal''::text, ''clarification''::text, ''repair''::text])))' then raise exception 'QA_SHARED_CONSTRAINT_CONFLICT';end if;
+end$$;
 -- REVIEW CANDIDATE ONLY. No target apply / no policy or budget activation.
 -- Shared deltas only after Main checks actual holders and exact source pins.
 alter table turn_private.text_policies drop constraint text_policies_context_mode_check;

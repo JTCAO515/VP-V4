@@ -1,0 +1,11 @@
+OWN CONTAINER qaw005-check-904e59cf-217
+PASS unchanged full migration replay
+PASS combined rollback preserves both original checks, six function definitions/ACLs, QA function/trigger absence and retained original policy row
+EXPECTED REFUSAL text_policies_context_mode_check ERROR:  QA_SHARED_CONSTRAINT_CONFLICT
+CONTEXT:  PL/pgSQL function inline_code_block line 3 at RAISE
+PASS unknown prior text_policies_context_mode_check rejected before DROP; exact altered checks/functions/retained data unchanged
+EXPECTED REFUSAL service_task_turns_relationship_check ERROR:  QA_SHARED_CONSTRAINT_CONFLICT
+CONTEXT:  PL/pgSQL function inline_code_block line 3 at RAISE
+PASS unknown prior service_task_turns_relationship_check rejected before DROP; exact altered checks/functions/retained data unchanged
+PASS exact original preconditions permit combined candidate with lifecycle gates true
+OWN CLEANUP 0
