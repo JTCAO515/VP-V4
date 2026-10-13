@@ -25,10 +25,12 @@ def main():
         raise SystemExit('Wrong source branch')
     if git('rev-parse', 'HEAD') != sha or git('status', '--porcelain'):
         raise SystemExit('Source differs from reviewed pin or has pending changes')
-    if git('ls-remote', 'origin', 'refs/heads/' + BRANCH).split()[0] != sha:
-        raise SystemExit('Remote branch differs from reviewed pin')
-    if not git('ls-tree', '-r', '--name-only', sha, 'app/qa', 'app/api/qa-agent'):
-        raise SystemExit('QA product paths missing; baseline is not deliverable')
+    remote = git('ls-remote', 'origin', 'refs/heads/' + BRANCH).split()
+    if len(remote) != 2 or remote[0] != sha:
+        raise SystemExit('Remote branch missing or differs from reviewed pin')
+    for path in ('app/qa', 'app/api/qa-agent'):
+        if not git('ls-tree', '-r', '--name-only', sha, path):
+            raise SystemExit(f'QA product path missing: {path}; baseline is not deliverable')
     project = api(f'/v9/projects/{PROJECT}')
     link = project.get('link') or {}
     if (project.get('id'), project.get('accountId'), link.get('org'), link.get('repo'),
