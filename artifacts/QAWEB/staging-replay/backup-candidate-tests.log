@@ -1,0 +1,11 @@
+test_dry_run (__main__.CandidateTests) ... ok
+test_execution_and_external_inputs_rejected (__main__.CandidateTests) ... ok
+test_metadata_contract_fail_closed (__main__.CandidateTests) ... ok
+test_migrations_exact_not_count_only (__main__.CandidateTests) ... ok
+test_schema_unknown_or_missing_or_duplicate_rejected (__main__.CandidateTests) ... ok
+test_static_no_network_process_write_or_credentials (__main__.CandidateTests) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.002s
+
+OK
