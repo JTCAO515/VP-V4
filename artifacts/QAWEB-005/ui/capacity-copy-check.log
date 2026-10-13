@@ -1,0 +1,6 @@
+{
+  "result": "PASS",
+  "zh": "本会话已达到上下文容量限制。请新建会话并缩短提问。",
+  "en": "This session has reached its context capacity limit. Please start a new session with a shorter question.",
+  "scope": "Production TSX copy AST assertions; quota state/error/recovery behavior unchanged"
+}

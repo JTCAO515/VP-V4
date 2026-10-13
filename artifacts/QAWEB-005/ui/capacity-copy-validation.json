@@ -1,0 +1,14 @@
+{
+  "base": "3a39e38d20b662367a1764be9162793411b49819",
+  "reviewHead": "fe7867ab",
+  "change": "Context capacity notice covers turn count and context-size refusal; asks new Session and shorter question. Only zh/en copy and existing assertion expectations changed.",
+  "sourceSha256": "9dc852808d0c8580954fed24b13bd0f8119ad34295f3efa4933f99bae8c34eb3",
+  "checks": {
+    "productionCopyAst": "PASS zh/en capacity+newSession+shorterQuestion assertions, no turn-only wording",
+    "sourceLint": "PASS",
+    "diff": "PASS"
+  },
+  "reusedEvidence": "3a39e38d adapter6/6 and affected production browser7/7 remain valid for unchanged error/state/history/recovery/actor code. No fresh full browser/build run claimed.",
+  "contract": "Current backend QA_CONTEXT_LIMIT→HTTP409, QaError ack default not_submitted. SQL byte/UTF16 pre-admission producer is still being finalized; final source code/ack confirmation pending Main/SQL owner. Copy is compatible with existing count limit and new size limit.",
+  "target": "Authenticated real QA/provider remains UNRUN; no deployment/data/provider changes."
+}
