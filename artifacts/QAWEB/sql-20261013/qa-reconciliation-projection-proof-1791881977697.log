@@ -1,0 +1,6 @@
+OWN CONTAINER qaw005-projection-a57b9154-447
+PASS actual Main01d migrations plus guarded projection rollback/apply; existing ACL/signature retained
+FAIL TypeError: Cannot read properties of undefined (reading 'length')
+    at file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-sql-20261013/artifacts/QAWEB/sql-20261013/qa-reconciliation-projection-proof.mjs:38:206
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+OWN CLEANUP 0

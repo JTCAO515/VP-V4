@@ -1,0 +1,21 @@
+--- session-before.sql
++++ session-after.sql
+@@ -1 +1 @@
+-create function public.qa_read_session_v1(p_thread_id uuid) returns jsonb language plpgsql security definer set search_path='' as $$
++create or replace function public.qa_read_session_v1(p_thread_id uuid) returns jsonb language plpgsql security definer set search_path='' as $$
+@@ -15 +15,14 @@
+-  messages:=messages||jsonb_build_array(v||jsonb_build_object('status',(select status from public.turns where id=r.turn_id and owner_id=u),'createdAt',(select created_at from public.turns where id=r.turn_id and owner_id=u)));
++  messages:=messages||jsonb_build_array(v||jsonb_build_object('status',(select status from public.turns where id=r.turn_id and owner_id=u),'createdAt',(select created_at from public.turns where id=r.turn_id and owner_id=u),
++   'reconciliationRequired',exists(
++    select 1 from turn_private.text_content body_n join public.turns turn_n on turn_n.id=body_n.turn_id and turn_n.owner_id=u
++    join turn_private.work work_n on work_n.turn_id=body_n.turn_id and work_n.owner_id=u
++    where body_n.turn_id=r.turn_id and body_n.owner_id=u and body_n.thread_id=p_thread_id
++     and body_n.policy_id=s.policy_id and body_n.consent_id=s.consent_id and body_n.hidden_at is null
++     and body_n.output_text is null and body_n.output_kind is null
++     and turn_n.status not in ('completed','proposal_ready','unavailable','failed','cancelled')
++     and (work_n.state='queued' or (work_n.state='leased' and work_n.expires_at<=clock_timestamp()))
++     and (exists(select 1 from turn_private.text_dispatches d where d.turn_id=body_n.turn_id and d.policy_id=body_n.policy_id and d.consent_id=body_n.consent_id)
++      or exists(select 1 from public.model_budget_attempts attempt_n join public.model_budget_scopes scope_n on scope_n.id=attempt_n.scope_id
++       where scope_n.owner_id=u and attempt_n.status<>'released'
++        and (attempt_n.task_id=work_n.turn_id or attempt_n.attempt_id=work_n.lease_token)))
++   )));
