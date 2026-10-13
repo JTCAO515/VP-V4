@@ -22,6 +22,6 @@ test('historical /3 workspace journal validates empty batch and validated usage 
 test('historical audit still refuses forged workspace and price; /3 cannot execute or read credentials',()=>{
  const f=fixture();let keys=0;
  assert.throws(()=>createHostedTextWorker(f.profile,{workerCredential:()=>{keys++;return 'synthetic';}}));assert.equal(keys,0);
- const foreign=structuredClone(f.rows);foreign[0].qwenEndpoint='https://evil.invalid/compatible-mode/v1/chat/completions';foreign[1].job.provider.endpoint=foreign[0].qwenEndpoint;foreign[1].jobDigest=createHash('sha256').update(JSON.stringify(foreign[1].job)).digest('hex');assert.throws(()=>auditHostedUsageJournal(foreign));
+ const foreign=structuredClone(f.rows);foreign[0].qwenEndpoint='https://evil.invalid/compatible-mode/v1/chat/completions';foreign[1].job.provider.endpoint=foreign[0].qwenEndpoint;foreign[1].jobDigest=createHash('sha256').update(JSON.stringify(foreign[1].job)).digest('hex');foreign[2].configurationDigest=foreign[1].jobDigest;assert.throws(()=>auditHostedUsageJournal(foreign),{message:'Provider transport configuration unavailable.'});
  const cost=structuredClone(f.rows);cost[2].receipt.actualMicros=61;assert.throws(()=>auditHostedUsageJournal(cost));
 });
