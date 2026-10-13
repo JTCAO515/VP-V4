@@ -18,9 +18,18 @@ const call=async(name,p={})=>{
   assert.ok(Object.keys(p).every(k=>/^p_[a-z_]+$/.test(k)));
   return JSON.parse(await db('set role service_role; select public.'+name+'('+Object.entries(p).map(([k,v])=>k+'=>'+lit(v)).join(',')+');'));
 };
-async function fixture(max=3,owner=uuid()){
+async function fixture(max=3,owner=uuid(),qualified=true){
   const a={turn:uuid(),owner,session:uuid(),thread:uuid()};
   await db(`insert into auth.users values('${a.owner}') on conflict do nothing; insert into identity_private.mobile_accounts(owner_id) values('${a.owner}') on conflict do nothing; insert into auth.sessions(id,user_id) values('${a.session}','${a.owner}'); insert into public.chat_threads(id,owner_id) values('${a.thread}','${a.owner}'); insert into public.turns(id,owner_id,thread_id,status) values('${a.turn}','${a.owner}','${a.thread}','accepted'); insert into public.chat_turn_events(owner_id,thread_id,turn_id,event_id,sequence,schema_version,event_type,state) values('${a.owner}','${a.thread}','${a.turn}','accepted',1,'turn-sse-v1','accepted','accepted');`);
+  if(qualified){
+    // Mirror start_text_turn's qualified source, without its automatic enqueue:
+    // these tests own the original admission parameters and duplicate races.
+    a.policy=uuid();const notice='a'.repeat(64);
+    await db(`insert into turn_private.text_policies(id,provider,recipient,endpoint,source_region,processing_region,storage_region,terms_version,notice_version,notice_hash,notice_zh,notice_en,retention,effective_at,expires_at,terms_recheck_at,context_mode) values('${a.policy}','qwen','synthetic-test-only','https://synthetic.invalid/inference','fixture-source','fixture-processing','fixture-storage','test-terms-v1','test-notice-v1','${notice}','合成测试告知','Synthetic test notice','retain_after_hide_v1',now()-interval '1 day',now()+interval '1 day',now()+interval '1 day','current_input_v1');`);
+    const consent=JSON.parse(await db(`set request.jwt.claim.sub='${a.owner}'; set request.jwt.claims='${JSON.stringify({session_id:a.session})}'; set role authenticated; select public.accept_text_policy('${a.policy}','${notice}');`));
+    assert.equal(consent.kind,'accepted');a.consent=consent.consentId;
+    await db(`insert into turn_private.text_content(turn_id,owner_id,thread_id,policy_id,consent_id,locale,input_text) values('${a.turn}','${a.owner}','${a.thread}','${a.policy}','${a.consent}','en','Synthetic durable queue input');`);
+  }
   a.params={p_turn_id:a.turn,p_owner_id:a.owner,p_session_id:a.session,p_lease_ms:300000,p_max_attempts:max};
   return a;
 }
@@ -32,13 +41,15 @@ before(async()=>{
   if(!enabled)return;
   const r=await command('docker',['run','--pull=never','--rm','-d','--network','none','--name',container,'--user','postgres','--entrypoint','/bin/sh','public.ecr.aws/supabase/postgres:17.6.1.159','-c','umask 077; mkdir /tmp/vpj59-socket; initdb -D /tmp/vpj59-db -A trust --no-locale -E UTF8 >/tmp/init.log 2>&1 && exec postgres -D /tmp/vpj59-db -c listen_addresses= -c unix_socket_directories=/tmp/vpj59-socket -c unix_socket_permissions=0700']);
   assert.equal(r.code,0,r.stderr);created=true;
-  assert.equal(JSON.parse((await command('docker',['inspect',container])).stdout)[0].HostConfig.NetworkMode,'none');
+  const inspected=JSON.parse((await command('docker',['inspect',container])).stdout)[0];
+  assert.equal(inspected.HostConfig.NetworkMode,'none');assert.deepEqual(inspected.HostConfig.PortBindings,{});assert.deepEqual(inspected.Mounts,[]);
   let ready=false;for(let i=0;i<40;i++){if((await command('docker',['exec',container,'pg_isready','-h','/tmp/vpj59-socket','-U','postgres'])).code===0){ready=true;break;}await new Promise(r=>setTimeout(r,250));}assert.ok(ready);
+  assert.match(await db('show server_version;'),/^17\.6(?:\D|$)/);
   await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));
  await db("create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;");
   const migrations=readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort();
   for(const file of migrations.slice(0,-1)) await db('begin;'+readFileSync('supabase/migrations/'+file,'utf8')+'commit;');
-  const preserved=await fixture();
+  const preserved=await fixture(3,uuid(),false);
   const snapshot=()=>db(`select row_to_json(t) from public.turns t where id='${preserved.turn}'; select row_to_json(e) from public.chat_turn_events e where turn_id='${preserved.turn}';`);
   const prior=await snapshot();
   await db('begin;'+readFileSync('supabase/migrations/'+migrations.at(-1),'utf8')+'commit;');
@@ -137,4 +148,25 @@ run('competing claimers clean expired items across owners without accumulating o
     assert.equal(leases.length,2);await Promise.all(leases.map(l=>finish(l)));
     for(const f of [a,b,a2,b2])assert.equal(await terminals(f),'1');
   }
+});
+
+run('unqualified sources roll back admission without granting provider or budget authority',async()=>{
+  for(const mode of ['missing','hidden','revoked-consent','foreign-consent','expired-policy']){
+    const a=await fixture(3,uuid(),mode!=='missing');
+    if(mode==='hidden')await db(`update turn_private.text_content set hidden_at=clock_timestamp() where turn_id='${a.turn}';`);
+    if(mode==='revoked-consent')await db(`update turn_private.text_consents set revoked_at=clock_timestamp() where owner_id='${a.owner}' and policy_id='${a.policy}';`);
+    if(mode==='foreign-consent'){
+      const foreign=await fixture();
+      await db(`update turn_private.text_content set consent_id='${foreign.consent}' where turn_id='${a.turn}';`);
+    }
+    if(mode==='expired-policy'){
+      const expired=uuid(),expiredConsent=uuid();
+      await db(`insert into turn_private.text_policies select '${expired}'::uuid,provider,recipient,endpoint,source_region,processing_region,storage_region,terms_version,notice_version,notice_hash,notice_zh,notice_en,retention,now()-interval '2 days',now()-interval '1 day',now()-interval '1 day',revoked_at,context_mode from turn_private.text_policies where id='${a.policy}'; insert into turn_private.text_consents(owner_id,policy_id,consent_id,accepted_at) values('${a.owner}','${expired}','${expiredConsent}',now()-interval '2 days'); update turn_private.text_content set policy_id='${expired}',consent_id='${expiredConsent}' where turn_id='${a.turn}';`);
+    }
+    await assert.rejects(call('enqueue_turn_work',a.params),/TURN_UNAVAILABLE/);
+    assert.equal(await db(`select count(*) from turn_private.work where turn_id='${a.turn}';`),'0',mode+' leaves no queued work');
+    assert.equal(await status(a),'accepted');assert.equal(await terminals(a),'0');
+  }
+  assert.equal(await db('select count(*) from turn_private.text_dispatches;'),'0','queue tests never authorize provider dispatch');
+  assert.equal(await db('select count(*) from public.model_budget_attempts;'),'0','queue admission grants no paid authority');
 });
