@@ -1,0 +1,41 @@
+# QAWEB-005 fixed Staging prerequisite replay
+
+2026-10-13, base `6b260db59f332af34e791afed63b3b42537617ba`, dedicated branch `codex/qaw005-staging-replay-20261013`. No target write, user-row read, backup access, credentials, deployment, paid resource, or other owner's container used.
+
+## Result
+
+**PASS_LOCAL_SYNTHETIC_REPLAY_ONLY** (`run-03.json`). Official Go2China plugin metadata: project `dzqdzetcctkhbrhlxxgn`, ACTIVE_HEALTHY, PostgreSQL 17.6.1.155. Exactly 75 applied versions; repo has 155. The missing 80 were appended in filename/version order after reconstruction of exactly the 75 present versions. First appended version `20260922033000` (local travel pace) predates three already-applied Sep23 migrations. No migration source was changed. Full exact missing list and catalog SHA256 are in each report.
+
+Nine stage checks PASS: applied baseline, QA transaction rollback, shared-source and lifecycle-source negative guards, missing-set replay, synthetic preexisting Trip/budget/revoked-consent invariants, all ten original lifecycle gates, all fifteen QA function execute vectors, original actor/revocation probes. Anonymous denied all QA functions; authenticated only seven public read/admit functions; service_role only five work/accounting functions; three private helpers denied all three roles. PUBLIC inheritance is included by has_function_privilege.
+
+QA rollback substitutes only the final transaction COMMIT with ROLLBACK, comparing normalized whole schema/ACL pg_dump before/after at version154. Source guard tests modify only local synthetic function-body comments, require `QA_SHARED_SOURCE_CONFLICT` / `QA_LIFECYCLE_SOURCE_CONFLICT`, and prove the rejected migration leaves that altered schema exact. This does not establish rollback of the whole 80-version upgrade: migrations have their own transaction boundaries. Do not wrap all files in a nominal outer transaction and assume their internal COMMITs are contained.
+
+`run-01.json` preserves initial replay PASS. `run-02.json` preserves a test-harness FAIL: author incorrectly expected sixteen QA functions; actual migration declares fifteen (7+5+3). Corrected count matches authored SQL; no product code/ACL changed. `run-03.json` is final PASS. Historical source-owner failures under sql-20261013 remain untouched.
+
+## Target equivalence and first real discrepancy
+
+Target and pure75 replay have the same **11** business schemas. Target has 140 non-extension functions in those namespaces: 139 match reconstructed definitions by signature + MD5; `public.rls_auto_enable()` is target-only, MD5 `6998ea6b4c2480f5d2e34b5dcf3f8d36`. Target enabled `ensure_rls` DDL event trigger invokes it on CREATE TABLE / CREATE TABLE AS / SELECT INTO. Seven enabled platform event triggers were observed (target-event-triggers.json). Thus **exact target equivalence FAIL**, even though ordered synthetic replay PASS. The custom function/event-trigger behavior and platform hooks were not installed into the synthetic fixture. No new allowlist or accepted fingerprint was adopted.
+
+Fingerprint query reads only pg_catalog definitions/hashes and namespace names. Matching function definitions does not compare owners, ACLs/default privileges, memberships, tables, indexes, RLS policy definitions, managed Auth/Storage/platform internals, or data. No target schema gate function was invoked. All of those remain target reconciliation/restore requirements. Local engine uses cached 17.6.1.159 (image ID recorded), not exact target patch .155; Auth/session functions are fixture stubs, not GoTrue acceptance.
+
+## Offline backup coverage preflight
+
+Run `node scripts/qa-agent-staging-replay/backup-coverage.mjs`. This accepts no target argument and has no network, process execution, credential access or backup operation. It derives required coverage from captured target metadata and returns a plan only.
+
+Current business schemas are community_private, identity_private, knowledge_review_private, ops_budget_private, place_quota_private, privacy_private, private, public, research_intake_private, service_cases_private, turn_private. With auth/storage/supabase_migrations the minimum data-schema inventory is **14**, not the historic eight or proposed ten. The old `scripts/acceptance/vpj-75-76-staging-backup.py` omits **six** current schemas: community_private, ops_budget_private, place_quota_private, privacy_private, research_intake_private, service_cases_private. It was inspected, never executed or edited. Historical Sep19 archives are not a current recovery point (Main-provided status; not accessed here).
+
+## Minimum controlled path for Main
+
+1. Keep current target unchanged and QA policy/worker/budget disabled. Refresh metadata and exact applied versions immediately before a separately authorized operation. Reconcile target-only RLS hook plus platform/role/ACL differences without silently adopting unknown source pins.
+2. Obtain explicit scoped authorization for a current coherent encrypted backup and isolated actual-data restore rehearsal, including destination, retention, recovery identity handling, all14 current data schemas and dependent platform schema/extension/role/event-trigger objects. Verify authenticated account/project and tools at execution time. Never commit archives or credentials. Database Storage metadata is not object-store byte backup; cover bytes separately if applicable.
+3. Restore to an authorized isolated equivalent with the correct supported platform bootstrap; inspect archive TOC, integrity, constraints/triggers/RLS/default ACLs/owners/roles/sequences/migration ledger. Prove recovery of the fresh snapshot with content-free invariants. Latest existing archive or a successful pg_dump is not restore proof.
+4. Replay captured actual75 then exact missing80, including Sep22 hole, against that restored state. Validate all original10 gates, QA guard/role negatives, existing aggregate/data integrity and disabled hosted state. Test failure recovery from the same current backup. Stop on any unexpected fingerprint, constraint or data conflict; retain the first failure. Do not repair migration history merely to skip the missing earlier version.
+5. Only after that proof and separate target-upgrade authority: obtain a bounded write-quiescence window, establish final consistent recovery point, apply the identical reviewed sequence, verify ledger155 and gates, and retain a tested recovery path. QA policy, budget, provider and hosted activation are later independently scoped actions. Preserve existing application users/data and original revocation fences.
+
+Real-data restore/upgrade, target migration, browser/provider, managed deletion/recovery, backup completeness/integrity, full-role/platform parity, whole-upgrade rollback, required remote CI and Main review: **UNRUN**. Current target aggregate counts from Main are not independent evidence in this replay.
+
+## Reproduce / ownership
+
+From this worktree: `node scripts/qa-agent-staging-replay/replay.mjs --execute > <new report path> 2>&1`. Snapshot defaults to observed.json. Local Docker Unix endpoint only, overrides rejected, cached image pull=never, nonce-owned containers, network none, ports absent, mounts absent, private Unix socket. Cleanup verifies matching owner label. All three owned containers were removed successfully. No fresh155 duplicate matrix run; Main's same-base fresh replay is contextual evidence only.
+
+Local validation: node syntax check, executable replay, offline coverage planner, repository docs check, diff check PASS. Scope contains only the two authorized new directories. Main receives the branch for review; this does not modify PR684 or close parent acceptance.
