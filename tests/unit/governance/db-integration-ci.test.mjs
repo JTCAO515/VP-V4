@@ -195,3 +195,29 @@ docker() {
   const listFailure = run(images, {LIST_STATUS: "7"});
   assert.equal(listFailure.status, 7); assert.doesNotMatch(listFailure.stderr, /DOCKER/);
 });
+
+test("security workflows prepare the exact official Node fixture before offline tests", () => {
+  const pin = JSON.parse(read("artifacts/QAWEB/ci-image-fallback/node-fixture/registry-digest.json"));
+  assert.equal(pin.sourceTag, "docker.io/library/node:22-bookworm-slim");
+  assert.equal(pin.platform, "linux/amd64");
+  assert.match(pin.reference, /^docker\.io\/library\/node@sha256:[a-f0-9]{64}$/);
+  const harness = `docker() { printf '%s\\n' "$*"; if [ "$1" = pull ]; then return "$PULL_STATUS"; fi; return "$TAG_STATUS"; }\n`;
+  for (const name of ["quality-pr", "quality-nightly", "quality-release-candidate"]) {
+    const workflow = read(`.github/workflows/${name}.yml`);
+    const match = workflow.match(/- name: Prepare pinned Node fixture for offline security tests\n([\s\S]*?)        run: \|\n([\s\S]*?)(?=      - )/);
+    assert.ok(match, name);
+    assert.match(match[1], /shell: bash/);
+    if (name === "quality-pr") assert.match(match[1], /if: steps.scope.outputs.security == 'true'/);
+    const body = match[2].split("\n").map(line => line.startsWith("          ") ? line.slice(10) : line).join("\n");
+    assert.equal(spawnSync("/bin/bash", ["-n"], {input: body}).status, 0);
+    const next = workflow.slice(match.index + match[0].length);
+    assert.match(next, name === "quality-pr" ? /^      - if: steps.scope.outputs.security == 'true'\n        run: pnpm test:security/ : /^      - run: pnpm test:security/);
+    for (const [pull, tag, status] of [[0, 0, 0], [7, 0, 7], [0, 8, 8]]) {
+      const result = spawnSync("/bin/bash", ["--noprofile", "--norc", "-eo", "pipefail", "-c", harness + body], {
+        encoding: "utf8", env: {...process.env, PULL_STATUS: String(pull), TAG_STATUS: String(tag)},
+      });
+      assert.equal(result.status, status, result.stderr);
+      assert.equal(result.stdout, `pull --platform linux/amd64 ${pin.reference}\n` + (pull ? "" : `tag ${pin.reference} node:22-bookworm-slim\n`));
+    }
+  }
+});
