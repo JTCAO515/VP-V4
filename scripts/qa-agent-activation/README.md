@@ -4,7 +4,7 @@
 
 ## 目标来源与命令
 
-operator 单独提供 `operator-target.template.json` 的两个字段：`projectRef`（20个小写字母，禁止共享 dzqdzetcctkhbrhlxxgn）与 `supabaseUrl`（严格 `https://<ref>.supabase.co`，无斜杠路径、默认端口、认证、query、fragment）。这是 CLI/服务端配置输入，不能由浏览器、请求、cookie、job 决定。空值不能推导、回退或创建项目；URL 必须与 approved ref 完全一致。
+operator 单独提供 `operator-target.template.json` 的两个字段：`projectRef`（20位小写字母或数字，禁止共享 dzqdzetcctkhbrhlxxgn）与 `supabaseUrl`（严格 `https://<ref>.supabase.co`，无斜杠路径、默认端口、认证、query、fragment）。这是 CLI/服务端配置输入，不能由浏览器、请求、cookie、job 决定。空值不能推导、回退或创建项目；URL 必须与 approved ref 完全一致。
 
 ```sh
 node scripts/qa-agent-activation/cli.mjs generate /absolute/operator-input.json /absolute/new-package.json /absolute/operator-target.json

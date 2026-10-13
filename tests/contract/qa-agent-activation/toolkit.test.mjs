@@ -125,7 +125,7 @@ test('CLI fixture uses official coverage with unchanged disabled output and rese
 
 test('independent target requires separate operator binding and exact lowercase ref URL, never shared fallback',()=>{
  assert.throws(()=>generate(input(),{now}),/OPERATOR_TARGET_REQUIRED/);
- for(const projectRef of [undefined,'',SHARED_PROJECT,'ABCdefghijklmnopqrst','abcdefghijklmnopqrs','abcdefghijklmnopqrstu','abcd1234abcdefghijkl']) {
+ for(const projectRef of [undefined,'',SHARED_PROJECT,'ABCdefghijklmnopqrst','abcdefghijklmnopqrs','abcdefghijklmnopqrstu','abcd-234abcdefghijkl']) {
   assert.throws(()=>validateTarget({projectRef,supabaseUrl:`https://${projectRef}.supabase.co`}));
  }
  for(const supabaseUrl of [target.supabaseUrl+'/',target.supabaseUrl+':443',target.supabaseUrl+'?x=1',target.supabaseUrl+'#x',target.supabaseUrl+'/rest/v1','https://user:pass@'+PROJECT+'.supabase.co','https://'+SHARED_PROJECT+'.supabase.co']) assert.throws(()=>validateTarget({...target,supabaseUrl}));
@@ -147,4 +147,21 @@ test('independent target receipts, database access provenance and exact QA conse
 test('missing pinned source file fails closed without repository mutation',()=>{
  const name=Object.keys(migrationManifest.sourceSha256)[0],file=new URL(name,sourceRoot),bytes=readFileSync(file);
  try {rmSync(file);assert.ok(preflight(build(),snapshot(build()),now).blockers.includes('SOURCE_MIGRATION_DRIFT'));} finally {writeFileSync(file,bytes);}
+});
+
+test('lowercase alphanumeric independent ref is accepted by root and CLI while shared or mismatched binding rejects',()=>{
+ const mixed={projectRef:'abcd1234abcdefghijkl',supabaseUrl:'https://abcd1234abcdefghijkl.supabase.co'};
+ assert.deepEqual(validateTarget(mixed),mixed);
+ const x=input(),time=Date.now(),iso=n=>new Date(n).toISOString();
+ x.projectId=mixed.projectRef;x.supabaseUrl=mixed.supabaseUrl;x.targetReceipts.projectRef=mixed.projectRef;x.targetReceipts.observedAt=iso(time-1000);
+ for(const section of ['supplier','pricing','budget'])x[section].evidence={...proof(),observedAt:iso(time-1000),validUntil:iso(time+86400000)};
+ x.validity={effectiveAt:iso(time-1000),expiresAt:iso(time+3600000),termsRecheckAt:iso(time+3600000)};
+ const rootPackage=generate(x,{now:time,approvedTarget:mixed});assert.equal(rootPackage.hostedProfile.projectRef,mixed.projectRef);
+ const source=new URL('mixed-ref-input.json',sourceRoot),targetFile=new URL('mixed-ref-target.json',sourceRoot),output=new URL('mixed-ref-output.json',sourceRoot);
+ writeFileSync(source,JSON.stringify(x));writeFileSync(targetFile,JSON.stringify(mixed));
+ execFileSync(process.execPath,[new URL('../../../scripts/qa-agent-activation/cli.mjs',import.meta.url).pathname,'generate',source.pathname,output.pathname,targetFile.pathname]);
+ assert.equal(JSON.parse(readFileSync(output)).projectId,mixed.projectRef);
+ assert.throws(()=>validateTarget({projectRef:SHARED_PROJECT,supabaseUrl:`https://${SHARED_PROJECT}.supabase.co`}));
+ assert.throws(()=>generate({...x,supabaseUrl:target.supabaseUrl},{now:time,approvedTarget:mixed}),/TARGET_OR_MODE/);
+ assert.equal(rootPackage.profileValidation,'CANDIDATE_NOT_BACKEND_VERIFIED');assert.equal(rootPackage.activationAllowed,false);
 });

@@ -46,7 +46,7 @@ function clean(x) {
 }
 export function validateTarget(binding) {
   exact(binding, 'projectRef supabaseUrl', 'OPERATOR_TARGET_REQUIRED');
-  if (typeof binding.projectRef!=='string' || !/^[a-z]{20}$/.test(binding.projectRef) || binding.projectRef===SHARED_PROJECT
+  if (typeof binding.projectRef!=='string' || !/^[a-z0-9]{20}$/.test(binding.projectRef) || binding.projectRef===SHARED_PROJECT
     || binding.supabaseUrl!==`https://${binding.projectRef}.supabase.co`) fail('INDEPENDENT_TARGET_BINDING');
   return Object.freeze({...binding});
 }
