@@ -18,6 +18,16 @@ def git(*args):
     return subprocess.check_output(['git', '-C', str(SOURCE), *args], text=True).strip()
 
 
+
+def valid_git_branch(value):
+    if not isinstance(value, str) or not value or value.startswith('-'):
+        return False
+    # Syntax only: no reflog expansion, network, or branch-value output.
+    result = subprocess.run(['git', 'check-ref-format', 'refs/heads/' + value],
+                            capture_output=True, timeout=5)
+    return result.returncode == 0
+
+
 def validate_binding(project, domain, branch, expected_domain_branch, target_ref):
     if branch not in QA_BRANCHES or expected_domain_branch not in QA_BRANCHES:
         raise ValueError('Unapproved QA branch')
@@ -29,9 +39,28 @@ def validate_binding(project, domain, branch, expected_domain_branch, target_ref
         raise ValueError('Live project/team/Git connection mismatch')
     if (domain.get('name'), domain.get('projectId'), domain.get('gitBranch')) != (DOMAIN, PROJECT, expected_domain_branch):
         raise ValueError('Current QA domain scope changed')
-    selected = [item for item in project.get('env', [])
-                if 'preview' in item.get('target', []) and item.get('gitBranch') in (None, branch)
-                and item.get('key', '').startswith('VISEPANDA_QA')]
+    inventory = project.get('env')
+    if not isinstance(inventory, list):
+        raise ValueError('Complete environment inventory required')
+    for item in inventory:
+        if not isinstance(item, dict) or not {'key', 'type', 'target', 'gitBranch'}.issubset(item):
+            raise ValueError('Incomplete environment scope metadata')
+        key, kind, targets, git_branch = (item[name] for name in ('key', 'type', 'target', 'gitBranch'))
+        if (not isinstance(key, str) or re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]{0,255}', key) is None
+                or kind not in ('system', 'plain', 'encrypted', 'sensitive')
+                or not isinstance(targets, list) or not targets
+                or any(not isinstance(target, str) or target not in ('production', 'preview', 'development') for target in targets)
+                or len(set(targets)) != len(targets)
+                or (git_branch is not None and (not valid_git_branch(git_branch) or 'preview' not in targets))):
+            raise ValueError('Invalid environment scope metadata')
+        custom = item.get('customEnvironmentIds')
+        if custom is not None and (not isinstance(custom, list)
+                or any(not isinstance(value, str) or not value or value != value.strip() for value in custom)
+                or len(set(custom)) != len(custom)):
+            raise ValueError('Invalid custom environment scope metadata')
+    selected = [item for item in inventory
+                if 'preview' in item['target'] and item['gitBranch'] in (None, branch)
+                and item['key'].startswith('VISEPANDA_QA')]
     if any(item.get('key') == 'VISEPANDA_QA_AGENT' for item in selected):
         raise ValueError('QA enable variable exists; cannot attest disabled from names only')
     refs = [item for item in selected if item.get('key') == REF_KEY]
