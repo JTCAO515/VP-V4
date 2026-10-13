@@ -13,7 +13,7 @@ function fixture(){
  if(name==='qa_submit_message_v1'){
  const prior=messages.find(m=>m.turnId===p.p_turn_id);
  if(prior&&prior.input!==p.p_text)return {data:null,error:{message:'IDEMPOTENCY_KEY_REUSE'}};
- if(!prior){task=p.p_task_id;messages.push({kind:'text',turnId:p.p_turn_id,input:p.p_text,output:'Synthetic saved answer',outcome:'answered'});}
+ if(!prior){task=p.p_task_id;messages.push({kind:'text',turnId:p.p_turn_id,input:p.p_text,output:'Synthetic saved answer',outcome:'answered',status:'completed'});}
  if(lost)throw new Error('Unknown ACK');return ok({kind:'accepted',turnId:p.p_turn_id,reused:!!prior});
  }
  throw new Error('unexpected '+name);
