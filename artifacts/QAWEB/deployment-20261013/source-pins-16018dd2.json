@@ -1,0 +1,51 @@
+{
+  "sourceSha": "16018dd23f3546a2be8acd81d5f85c4754d9845d",
+  "sourceReviewAndCi": "Main reports two P1 and UI P2 under repair;16018dd2 is source/preview evidence, not final merge or activation approval",
+  "filesSha256": {
+    "supabase/migrations/20261013050429_qa_agent_web.sql": "df5565ae49363dc83d4e0db9686653d43dc79cb2b011e4d56e343f45d654afa9",
+    "scripts/qa-agent-activation/migration-manifest.json": "f0e96cbcbdf4941f36c522e7faf6b7a22d24974412c1c91dc29076cfd91a9f1c",
+    "scripts/qa-agent-activation/metadata.sql": "8f7968935f57cd810160a02b7541c31517a2aad475590abb5afd6dab3a5ea2a7",
+    "scripts/qa-agent-activation/toolkit.mjs": "3d0f323cf3fa40db75618879449b46c752495b9c81a524072de61be5b8885f6d",
+    "scripts/qa-agent-activation/cli.mjs": "d5526780505afd41333f1f618e6897aea03a31dda81f537f96f46205a37d9164",
+    "deploy/hosted-worker/ecs-worker-files.sh": "c5b5cc55b2ddd24f7b9bfe57ef5085a931d16c53c3580f78fa6001bd1dd02afb",
+    "deploy/hosted-worker/validate-qa-profile.py": "84a65a0977269f0ca06ba0c058b2c755fed20ec65b60d9685d1ee254e8a17220",
+    "deploy/hosted-worker/Dockerfile": "d5266147e6433912767d340ed4aee62fb5380904841cbe5e0162fc87dc034688",
+    "lib/server/jobs/hosted-text-worker.ts": "2648530f6b8a8220b83e2197820c4623033bb3c8e005b579c0824d51f54c3ccd",
+    "lib/server/jobs/hosted-worker-secrets.mjs": "bc4bdde59dac41b12abecf881887c594a77fa50040978d226385f42e1f21d91a",
+    "lib/server/qa-agent/hosted-profile.ts": "9c71a953913595fcee99a54a3464231a59760dd368b9867778338dea0f482ee5",
+    "lib/server/qa-agent/worker.ts": "f62817d63a5722eca652bfbf2ffc61dcaaed170b4279d2545740de67a29162df",
+    "lib/server/qa-agent-context/executor-adapter.ts": "19319cc6f88b08f0f013fc17c487e111b21dcd72df989e5673818e9ebd483727",
+    "artifacts/QAWEB/activation/supplier-price-candidate.json": "18fa230a95448472c44bcecf7a613113c95a48af6528a851792e5169c993fe60",
+    "artifacts/QAWEB/sql-20261013/policy-notice-template.json": "104fe7c7ad1db1896924ee2e6453cda0dfe3234bc44ed2a1e834dd6f7133be23"
+  },
+  "sourceManifestCheck": {
+    "result": "PASS",
+    "baseline": 75,
+    "reviewedMissing": 80,
+    "expected": 155,
+    "all155SourceHashesMatch": true
+  },
+  "qaDiscovery": {
+    "signature": "public.qa_ready_groups_v1(integer)",
+    "profileMode": "vpj07-hosted-text-worker/3",
+    "sourceAcl": {
+      "serviceRoleExecute": true,
+      "publicExecute": false,
+      "anonExecute": false,
+      "authenticatedExecute": false
+    },
+    "legacyDiscoveryPreserved": true,
+    "targetPresenceAclFingerprint": "UNRUN; Main target-readback required"
+  },
+  "reusableFrom4eSource": {
+    "components/qa-agent/QaAgentWorkspace.module.css": true,
+    "app/qa/page.tsx": true,
+    "app/(auth)/auth/sign-in/page.tsx": true,
+    "components/auth/PasswordSignInForm.tsx": true,
+    "lib/navigation/safe-return-to.ts": true,
+    "qaSignedOutAuthShell": true
+  },
+  "invalidatedScope": "Authenticated workspace/API retry/capacity/bookmark; QA RPC/discovery/installer/schema and real provider readiness require16018dd2 or later final merged source; old isolated/local or UI tests do not attest target",
+  "targetActivation": "UNRUN; no host/database/credential/budget/provider operations",
+  "endpointPrerequisite": "Main owns --qa approved endpoint propagation P2; workspace-bound policy groups cannot be declared ready until that seam is fixed and repinned"
+}

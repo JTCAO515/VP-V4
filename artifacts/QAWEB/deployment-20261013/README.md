@@ -1,3 +1,5 @@
+> 最新只读检查点：源码 `16018dd23f3546a2be8acd81d5f85c4754d9845d` 的自动Preview `dpl_4RokMsjVow4qL8tMB15vMwfUzmZs` 已READY并绑定同QA域；fresh公开guard仍闭合，见 `preview-16018dd2.json`。以下4e为原始交付历史。CSS/QA未登录壳/登录表单/returnTo源码字节相同，原截图和尺寸证据复用；已登录workspace/恢复/容量/bookmark与新RPC/worker/schema不能复用为新目标验收。新155源码hash与ACL source pin见 `source-pins-16018dd2.json`；集中启用前清单已追加到原恢复包。Main报告review返修与endpoint P2仍在推进，真实Auth/Session/provider均UNRUN。没有新部署/配置/WAF/host/数据写入。
+
 # QAWEB-DEPLOY #683: actual disabled QA preview
 
 Owner: deployment chat 01a13387-0e68-7300-9608-85aba0f18aba, sole writer of QA Vercel domain/config/deploy resource. Main owns integration source, target migration/policy/worker and PR #684. No parent closure or merge performed here.
