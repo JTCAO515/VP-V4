@@ -6,7 +6,7 @@ import ts from 'typescript';
 const source=ts.transpileModule(readFileSync('components/qa-agent/api.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
 const sid='11111111-1111-4111-8111-111111111111', rid='22222222-2222-4222-8222-222222222222';
 function fixture(data,status=200){
- const seen=[],exports={};vm.runInNewContext(source,{exports,AbortSignal,fetch:async(url,init)=>{seen.push({url,init});return {status,ok:status>=200&&status<300,json:async()=>data};}});return {api:exports.qaApi,seen};
+ const seen=[],exports={};vm.runInNewContext(source,{exports,AbortSignal,fetch:async(url,init)=>{seen.push({url,init});return {status,ok:status>=200&&status<300,json:async()=>data};}});return {api:exports.qaApi,permits:exports.permitsQaSubmission,seen};
 }
 const wire=data=>({version:'qa-agent/1',...data});
 const saved=overrides=>({requestId:rid,turnId:rid,sessionId:sid,input:'original bytes ',text:'Saved answer',status:'answered',createdAt:'2026-10-13T00:00:00Z',...overrides});
@@ -33,4 +33,16 @@ test('policy consent is never inferred and server denial is preserved',async()=>
  const denied=fixture(wire({error:{code:'DATA_POLICY_BLOCKED',ack:'not_submitted'}}),403);
  await assert.rejects(denied.api.send(sid,{requestId:rid,text:'Original'},new AbortController().signal),e=>e.code==='DATA_POLICY_BLOCKED'&&e.ack==='not_submitted');
  const missing=fixture(wire({policy:{...notice,consentState:undefined}}));await assert.rejects(missing.api.policy(new AbortController().signal));
+});
+
+test('only accepted versioned QA session policy permits submission',async()=>{
+ const base={id:sid,noticeHash:'a'.repeat(64),noticeZh:'当前会话的有界历史',noticeEn:'Bounded history of the current session',contextMode:'qa_session_history_v1',consentState:'accepted'};
+ const allowed=fixture(wire({policy:base}));assert.equal(allowed.permits(await allowed.api.policy(new AbortController().signal)),true);
+ for(const contextMode of ['current_input_v1','task_history_v1','qa_session_history_v1']) {
+  for(const consentState of ['accepted','not_accepted','withdrawn']) {
+   const f=fixture(wire({policy:{...base,contextMode,consentState}}));
+   assert.equal(f.permits(await f.api.policy(new AbortController().signal)),contextMode==='qa_session_history_v1'&&consentState==='accepted');
+  }
+ }
+ const unknown=fixture(wire({policy:{...base,contextMode:'qa_session_history_v2'}}));await assert.rejects(unknown.api.policy(new AbortController().signal));
 });

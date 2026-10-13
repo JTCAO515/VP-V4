@@ -4,7 +4,7 @@ import { expect, test } from '@playwright/test';
 const idA = '11111111-1111-4111-8111-111111111111';
 const idB = '22222222-2222-4222-8222-222222222222';
 const session = id => ({ id, label: 'Session', createdAt: '2026-10-13T00:00:00Z', updatedAt: '2026-10-13T00:00:00Z' });
-const policy = { id: '33333333-3333-4333-8333-333333333333', noticeHash: 'a'.repeat(64), noticeZh: '合成供应商说明', noticeEn: 'Synthetic provider notice', provider: 'synthetic', recipient: 'synthetic', consentState: 'not_accepted', contextMode: 'current_input_v1' };
+const policy = { id: '33333333-3333-4333-8333-333333333333', noticeHash: 'a'.repeat(64), noticeZh: '合成供应商说明', noticeEn: 'Synthetic provider notice', provider: 'synthetic', recipient: 'synthetic', consentState: 'not_accepted', contextMode: 'qa_session_history_v1' };
 const wire = data => ({version: 'qa-agent/1', ...data});
 const message = (id, input, answer='Saved answer', status='answered') => ({...input, sessionId:id,turnId:input.requestId,input:input.text,text:answer,status,createdAt:'2026-10-13T00:00:00Z'});
 async function login(context, owner = idA) {
@@ -136,3 +136,18 @@ test('SDK owner replacement clears messages and aborts old in-flight work',async
   await page.evaluate(()=>{const channel=new BroadcastChannel('sb-127-auth-token');channel.postMessage({event:'SIGNED_OUT',session:null});setTimeout(()=>channel.close(),100);});
   await expect(page.getByRole('link',{name:'Sign in',exact:true})).toBeVisible();
 });
+
+for (const mode of ['current_input_v1', 'task_history_v1']) {
+  test(`legacy policy ${mode} cannot admit new QA messages`, async ({page,context})=>{
+    const {sent}=await fixture(page,context,async(route,{path,fulfill})=>{
+      if(path.endsWith('/policy')) {await fulfill({policy:{...policy,contextMode:mode,consentState:'accepted'}});return true;}
+      return false;
+    });
+    await expect(page.getByText('This session is not yet authorized for ongoing conversation. Sending is unavailable.')).toBeVisible();
+    await page.getByLabel('Message',{exact:true}).fill('Must not send under old consent');
+    await expect(page.getByRole('button',{name:'Send',exact:true})).toBeDisabled();
+    await page.getByLabel('Message',{exact:true}).press('Enter');
+    await page.locator('form').evaluate(form=>form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true})));
+    expect(sent).toHaveLength(0);
+  });
+}
