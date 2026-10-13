@@ -151,3 +151,45 @@ for (const mode of ['current_input_v1', 'task_history_v1']) {
     expect(sent).toHaveLength(0);
   });
 }
+
+for (const entry of ['select', 'create', 'query']) {
+  test(`pre-consent ${entry} preserves notice through protected 403 and reload`, async ({page,context})=>{
+    await login(context);
+    let consented=false, saved=[], sends=0, denied=0;
+    const selected=entry==='create'?idB:idA;
+    const errors=[];page.on('pageerror',error=>errors.push(error.message));
+    await page.route('**/api/qa-agent/**',async route=>{
+      const path=new URL(route.request().url()).pathname, method=route.request().method();
+      const fulfill=data=>route.fulfill({contentType:'application/json',body:JSON.stringify(wire(data))});
+      if(path.endsWith('/policy')) return fulfill({policy:{...policy,consentState:consented?'accepted':'not_accepted'}});
+      if(path.endsWith('/consent')) {
+        expect(route.request().postDataJSON()).toEqual({policyId:policy.id,noticeHash:policy.noticeHash});
+        consented=true;return fulfill({policy:{...policy,consentState:'accepted'}});
+      }
+      if(path.endsWith('/sessions')) return fulfill(method==='POST'?{session:session(idB)}:{sessions:[session(idA),session(idB)]});
+      if(!consented) {denied++;return route.fulfill({status:403,contentType:'application/json',body:JSON.stringify(wire({error:{code:'DATA_POLICY_BLOCKED',ack:'not_submitted'}}))});}
+      if(method==='POST') {
+        sends++;const body=route.request().postDataJSON();saved=[message(selected,body,'Consented answer')];
+        return fulfill({requestId:body.requestId,turnId:body.requestId,sessionId:selected,status:'pending',reused:false});
+      }
+      return fulfill({session:session(selected),messages:saved});
+    });
+    await page.goto(`/qa?locale=en${entry==='query'?`&session=${idA}`:''}`);
+    if(entry==='select') await page.getByRole('button',{name:`Session ${idA}`,exact:true}).click();
+    if(entry==='create') await page.getByRole('button',{name:'New session',exact:true}).click();
+    await expect.poll(()=>denied).toBeGreaterThan(0);
+    await expect(page.getByRole('region',{name:'Agent QA'}).getByRole('alert')).toContainText('The request could not be completed.');
+    await expect(page.getByText(policy.noticeEn,{exact:true})).toBeVisible();
+    await expect(page.getByRole('button',{name:'Agree to the notice above'})).toBeEnabled();
+    await expect(page.getByRole('button',{name:'Send',exact:true})).toBeDisabled();
+    await page.locator('form').evaluate(form=>form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true})));expect(sends).toBe(0);
+    const previousDenied=denied;await page.reload();
+    await expect.poll(()=>denied).toBeGreaterThan(previousDenied);
+    await expect(page.getByText(policy.noticeEn,{exact:true})).toBeVisible();
+    await page.getByRole('button',{name:'Agree to the notice above'}).click();
+    await expect(page.getByLabel('Message',{exact:true})).toBeEnabled();
+    await page.getByLabel('Message',{exact:true}).fill('Now authorized');
+    await page.getByRole('button',{name:'Send',exact:true}).click();
+    await expect(page.getByRole('log')).toContainText('Consented answer');expect(sends).toBe(1);expect(errors).toEqual([]);
+  });
+}

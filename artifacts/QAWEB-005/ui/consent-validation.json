@@ -1,0 +1,17 @@
+{
+  "base": "0f8cfb2cff9eae71b95dd858c586058261ef2373",
+  "review": "Main independent review P2 on integration 525fc2e9: pre-consent Session detail 403 removed notice/consent UI",
+  "change": "On DATA_POLICY_BLOCKED retain real previously-read policy and consent action; clear protected messages and historyReady. 401 account reset unchanged. No policy activation or consent inference.",
+  "sourceSha256": {
+    "components/qa-agent/QaAgentWorkspace.tsx": "5d8c21f662138ba7cffe64e3a207257ddc1550a56ff563b5a826c6b390a7fcc5"
+  },
+  "checks": {
+    "lint": "PASS",
+    "typecheck": "PASS",
+    "productionBuild": "PASS",
+    "affectedProductionBrowser": "5 PASS / 0 FAIL / 0 SKIP: pre-consent select/create/query, reload, exact policyId+noticeHash consent, blocked pre-consent form, answer readback, 401, owner replacement"
+  },
+  "historicalTestFailure": "Initial 3 added cases stopped at ambiguous alert selector including Next route announcer. Selector scoped to Agent QA region. This harness failure is not reported as a successful product reproduction.",
+  "reusedEvidence": "Unchanged adapter/policy guards and unrelated original browser cases retain prior scoped evidence; no repeated full matrix.",
+  "target": "Synthetic browser Auth/API fixture only. Real database/provider/target acceptance remains Main-owned and UNRUN here."
+}
