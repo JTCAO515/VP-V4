@@ -35,3 +35,7 @@ No worker target profile, secure slot presence, current price/budget/consent, re
 PASS: exact branch-origin readback, previous domain/DNS readback, script syntax, baseline pin rejection, docs check and diff check. UNRUN: reviewed P0 source deployment, target HTTPS/login/persistence and real provider/multi-turn cases. The live DNS is configured; the earlier local TLS probe failed and remains diagnostic evidence only.
 
 2026-10-13 follow-up: project getter keeps encrypted public values opaque; exact GET /v1/projects/{project}/env/{id} for only the two effective preview PUBLIC fields verified the fixed Staging URL and public/anon key kind in memory. Only booleans were emitted; no production variable was fetched. QA Origin branch match also PASS. In-app browser target probe returned net::ERR_CONNECTION_CLOSED before any QA deployment; this does not establish application behavior.
+
+## HTTPS convergence
+
+Official Vercel MCP list_certs returned QA certificate cert_SYmDaxFvmKmaCXiJ1ssfGOIv for qatesting.go2china.space, createdAt=1791866705993, expiresAt=1799639194000, autoRenew=true. A fresh in-app browser subsequently opened the HTTPS domain and rendered Vercel 404 DEPLOYMENT_NOT_FOUND, request ID sin1::b8ksz-1791867172120-57a18c8b35c7. DNS/TLS prerequisites now PASS. Earlier TLS/connection failures remain historical diagnostics; no application/login/provider success is inferred. No domain/DNS mutation or TLS bypass was used.
