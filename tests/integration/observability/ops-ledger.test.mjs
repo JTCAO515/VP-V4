@@ -1,3 +1,4 @@
+import { initializeFreshOpsFixture } from './ops-control-owned/fresh-bootstrap.mjs';
 import test, { before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID as uuid } from 'node:crypto';
@@ -75,6 +76,7 @@ before(async () => {
   const prior = await snapshotTables();
   await db('begin;' + readFileSync('supabase/migrations/' + migration, 'utf8') + 'commit;');
   await db('begin;' + readFileSync('supabase/migrations/' + memberMigration, 'utf8') + 'commit;');
+ await initializeFreshOpsFixture(db);
   assert.equal(await snapshotTables(), prior, 'migration does not change pre-existing ledger/Turn/body records');
 });
 after(async () => { if (created) assert.equal((await command('docker', ['rm', '-f', container])).code, 0); });

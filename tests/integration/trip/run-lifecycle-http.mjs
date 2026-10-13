@@ -1,3 +1,4 @@
+import { stageFreshOpsFixtureBootstrap } from '../observability/ops-control-owned/fresh-bootstrap.mjs';
 /** Owned disposable Auth/HTTP stack; no repository .env, target or provider access. */
 import { mkdtempSync, mkdirSync, readFileSync, writeFileSync, cpSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -15,6 +16,7 @@ const project='vp-native-ask-'+randomUUID().slice(0,8),target=mkdtempSync(join(t
 mkdirSync(join(target,'supabase'));
 writeFileSync(join(target,'supabase/config.toml'),nativeHTTPSupabaseConfig(readFileSync('supabase/config.toml','utf8'),project,ports));
 cpSync('supabase/migrations',join(target,'supabase/migrations'),{recursive:true});
+stageFreshOpsFixtureBootstrap(target);
 const env={...process.env,DOCKER_CONTEXT:context};
 async function run(command,args,visible=false,childEnv=env){
  return new Promise((resolve,reject)=>{

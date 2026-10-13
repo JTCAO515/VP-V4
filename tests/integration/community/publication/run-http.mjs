@@ -1,3 +1,4 @@
+import { stageFreshOpsFixtureBootstrap } from '../../observability/ops-control-owned/fresh-bootstrap.mjs';
 /** This runner owns only a freshly named disposable local stack; no target credentials. */
 import {mkdtempSync,mkdirSync,readFileSync,writeFileSync,cpSync,rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';import {join} from 'node:path';import {spawn,execFileSync} from 'node:child_process';import {randomUUID} from 'node:crypto';
@@ -11,6 +12,7 @@ const endpoint=JSON.parse(execFileSync('docker',['context','inspect',context],{e
 if (!endpoint.startsWith('unix:///')) throw Error('Owned local Docker context required');
 const project='vp-native-ask-'+randomUUID().slice(0,8),target=mkdtempSync(join(tmpdir(),'vpj48-publication-http-'));
 mkdirSync(join(target,'supabase'));writeFileSync(join(target,'supabase/config.toml'),nativeHTTPSupabaseConfig(readFileSync('supabase/config.toml','utf8'),project,ports));cpSync('supabase/migrations',join(target,'supabase/migrations'),{recursive:true});
+stageFreshOpsFixtureBootstrap(target);
 const env={...process.env,DOCKER_CONTEXT:context};let exit=1;
 try {
  if (await runOpsProcess('supabase',['start','--workdir',target,'-x','realtime,storage-api,imgproxy,mailpit,postgres-meta,studio,edge-runtime,logflare,vector,supavisor'],{phase:'start',cwd:process.cwd(),env})!==0) throw Error('Owned publication startup failed; credential-bearing output suppressed');

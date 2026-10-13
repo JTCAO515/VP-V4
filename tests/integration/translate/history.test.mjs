@@ -1,3 +1,4 @@
+import { initializeFreshOpsFixture } from '../observability/ops-control-owned/fresh-bootstrap.mjs';
 // Disposable, network-disabled PostgreSQL; identities and answers are synthetic.
 // SQL claims exercise database contracts, not GoTrue/HTTP or an account executor.
 import test, { before, after } from 'node:test';
@@ -47,6 +48,7 @@ before(async () => {
     }
     await db('begin;' + migration + 'commit;');
   }
+ await initializeFreshOpsFixture(db);
 });
 after(async () => { if (created) assert.equal((await command('docker', ['rm', '-f', container])).code, 0); });
 

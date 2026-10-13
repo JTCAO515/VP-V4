@@ -1,3 +1,4 @@
+import { initializeFreshOpsFixture } from '../observability/ops-control-owned/fresh-bootstrap.mjs';
 // Real disposable PostgreSQL; synthetic role/consent fixtures are not target Auth or APNs.
 import test,{before,after} from 'node:test';
 import assert from 'node:assert/strict';
@@ -29,6 +30,7 @@ before(async()=>{
    await db('begin;'+source+'commit;');
   }
  }
+ await initializeFreshOpsFixture(db);
 });
 after(async()=>{if(created)assert.equal((await command('docker',['rm','-f',container])).code,0);});
 run('full replay rollback and ACL/RLS default deny, SQL transport disabled',async()=>{

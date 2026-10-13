@@ -1,3 +1,4 @@
+import { stageFreshOpsFixtureBootstrap } from '../observability/ops-control-owned/fresh-bootstrap.mjs';
 /** One affected HTTP proof; owns and removes only its uniquely named local stack. */
 import { mkdtempSync, mkdirSync, readFileSync, writeFileSync, cpSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -16,6 +17,7 @@ const project = 'vp-native-ask-' + randomUUID().slice(0, 8), target = mkdtempSyn
 mkdirSync(join(target, 'supabase'));
 writeFileSync(join(target, 'supabase/config.toml'), nativeHTTPSupabaseConfig(readFileSync(join(repo, 'supabase/config.toml'), 'utf8'), project, ports));
 cpSync(join(repo, 'supabase/migrations'), join(target, 'supabase/migrations'), { recursive: true });
+stageFreshOpsFixtureBootstrap(target);
 const run = (command, args, visible = false, env = process.env) => new Promise((resolve, reject) => {
   const child = spawn(command, args, { cwd: repo, env: { ...env, DOCKER_CONTEXT: context }, stdio: visible ? 'inherit' : ['ignore', 'pipe', 'pipe'] });
   if (!visible) { child.stdout.resume(); child.stderr.resume(); }

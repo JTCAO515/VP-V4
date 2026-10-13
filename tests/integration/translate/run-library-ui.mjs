@@ -1,3 +1,4 @@
+import { stageFreshOpsFixtureBootstrap } from '../observability/ops-control-owned/fresh-bootstrap.mjs';
 /** Owned disposable Auth → Library UI; no existing fixture or producer is modified. */
 import { createNativeTextEnvironment } from '../turn/native-text-environment.mjs';
 import { spawn, execFileSync } from 'node:child_process';
@@ -22,6 +23,7 @@ const target=mkdtempSync(join(tmpdir(),'vp-library-ui-')),project='vp-native-ask
 mkdirSync(join(target,'supabase'));
 writeFileSync(join(target,'supabase/config.toml'),nativeHTTPSupabaseConfig(readFileSync('supabase/config.toml','utf8'),project,ports));
 cpSync('supabase/migrations',join(target,'supabase/migrations'),{recursive:true});
+stageFreshOpsFixtureBootstrap(target);
 const env={...process.env,DOCKER_CONTEXT:context,...nativeHTTPChildEnv(ports,target),VISEPANDA_TRIP_PROTOCOL_V2:'true'};
 Object.assign(process.env,env);
 async function run(command,args,name){

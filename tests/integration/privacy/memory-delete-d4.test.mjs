@@ -1,3 +1,4 @@
+import { initializeFreshOpsFixture } from '../observability/ops-control-owned/fresh-bootstrap.mjs';
 import {createServer} from 'node:http';
 import {createMemoryDeletionWorker} from '../../../lib/server/privacy/memory-delete/server-worker.ts';
 import {memoryDeletionHTTP} from '../../../lib/server/privacy/memory-delete/http.ts';
@@ -27,6 +28,7 @@ const binding=f=>({requestId:f.a.request,leaseId:f.lease.leaseId,generation:f.le
 async function ready(){const f=await fixture(),art=artifact(f);const p={...binding(f),artifact:art.wire,modules:modules(),coverage:'partial'};const r=await call(null,'commit',p);assert.equal(r.state,'ready_partial');return {...f,art,commit:p,receipt:r};}
 before(async()=>{if(!enabled)return;const r=await command('docker',['run','--pull=never','--rm','-d','--network','none','--name',container,'--user','postgres','--entrypoint','/bin/sh','public.ecr.aws/supabase/postgres:17.6.1.159','-c','umask 077;mkdir /tmp/vpj59-socket;initdb -D /tmp/vpj59-db -A trust --no-locale -E UTF8 >/tmp/init.log 2>&1 && exec postgres -D /tmp/vpj59-db -c listen_addresses= -c unix_socket_directories=/tmp/vpj59-socket -c unix_socket_permissions=0700']);assert.equal(r.code,0,r.stderr);created=true;for(let n=0;n<100;n++){if((await command('docker',['exec',container,'pg_isready','-h','/tmp/vpj59-socket','-U','postgres'])).code===0)break;await new Promise(r=>setTimeout(r,100));}
  await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));await db("create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;create schema extensions;create extension pgcrypto with schema extensions;");for(const f of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort())await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;');
+ await initializeFreshOpsFixture(db);
  await db(`insert into export_private.core_policies_v1(id,revision,enabled,environment,key_id,max_run_ms,artifact_ttl_ms,ticket_ttl_ms,max_pages,page_size,max_bytes,valid_until) values('${uuid()}',1,true,'local','synthetic-key',90000,600000,300000,1000,100,8388608,clock_timestamp()+interval '1 day');`);
 });
 after(async()=>{if(created)assert.equal((await command('docker',['rm','-f',container])).code,0);});

@@ -13,6 +13,7 @@ import test from "node:test";
 const ANON = ["public.research_intake_v1(jsonb)"];
 
 const AUTHENTICATED = [
+  "public.ops_control_operations_v1(jsonb)",
   "public.native_memory_command_v1(jsonb)",
   "public.read_assistant_message_sources_v2(uuid,uuid,uuid,uuid,integer)",
   "public.submit_assistant_message_sources_v2(uuid,uuid,uuid,uuid,text,text,text,uuid,integer,uuid,uuid,uuid,jsonb)",

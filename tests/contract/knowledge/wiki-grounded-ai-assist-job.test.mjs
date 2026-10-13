@@ -57,7 +57,7 @@ test("ensure kind:done with status failed/cancelled maps straight through", asyn
   assert.deepEqual(cancelled, { status: "cancelled" });
 });
 
-test("ensure kind:claimed runs the real search loop and completes the job with a succeeded outcome carrying the exact claimToken", async () => {
+test("legacy claimed C2 job without execution-budget authority completes bounded refusal with exact claimToken and zero provider", async () => {
   let completeInput;
   const jobRpc = async (name, params) => {
     if (params.p_input.action === "ensure") return { data: { kind: "claimed", jobId, claimToken }, error: null };
@@ -66,15 +66,16 @@ test("ensure kind:claimed runs the real search loop and completes the job with a
   };
   const contextRpc = async () => ({ data: contextRow, error: null });
   const rpc = async () => ({ data: knowledgeReadResponse([{ factId: "f1", assertionId: "assertion-1", assertion: { subjectId: "international_card_payment", predicate: "requires_action", objectId: "merchant_acceptance_check" }, sources: [{ sourceRevisionId: "11111111-1111-1111-1111-111111111111" }], text: "Most large merchants accept international cards.", conditions: [], exclusions: [] }]), error: null });
-  const outcome = await runGroundedAiAssistJob(turnId, jobRpc, searchInput, { ...jobDeps, rpc, contextRpc, fetch: async () => chatResponse(answer) }, new AbortController().signal);
+  let providerCalls = 0;
+  const outcome = await runGroundedAiAssistJob(turnId, jobRpc, searchInput, { ...jobDeps, rpc, contextRpc, fetch: async () => { providerCalls++; return chatResponse(answer); } }, new AbortController().signal);
+  assert.equal(providerCalls, 0, "readable context and a synthetic claim never authorize a physical paid call");
   assert.equal(outcome.status, "succeeded");
-  assert.equal(outcome.outcome.kind, "answered");
-  assert.equal(outcome.outcome.summary, answer.summary);
+  assert.deepEqual(outcome.outcome, { kind: "unavailable", reason: "ops_scope_unavailable" });
   assert.equal(completeInput.action, "complete");
   assert.equal(completeInput.jobId, jobId);
   assert.equal(completeInput.claimToken, claimToken);
   assert.equal(completeInput.outcome.kind, "succeeded");
-  assert.equal(completeInput.outcome.result.kind, "answered");
+  assert.deepEqual(completeInput.outcome.result, { kind: "unavailable", reason: "ops_scope_unavailable" });
 });
 
 test("ensure kind:claimed, but the search loop itself throws, completes the job as failed with an errorCode instead of losing the claim", async () => {
@@ -93,16 +94,18 @@ test("ensure kind:claimed, but the search loop itself throws, completes the job 
   assert.equal(completeInput.outcome.kind, "succeeded");
 });
 
-test("a claimed job whose complete() call itself fails to reach the server still returns the real outcome to the caller", async () => {
+test("legacy C2 completion outage still returns exact source refusal and makes zero provider calls", async () => {
   const jobRpc = async (name, params) => {
     if (params.p_input.action === "ensure") return { data: { kind: "claimed", jobId, claimToken }, error: null };
     throw new Error("network down");
   };
   const contextRpc = async () => ({ data: contextRow, error: null });
   const rpc = async () => ({ data: knowledgeReadResponse([{ factId: "f1", assertionId: "assertion-1", assertion: { subjectId: "international_card_payment", predicate: "requires_action", objectId: "merchant_acceptance_check" }, sources: [{ sourceRevisionId: "11111111-1111-1111-1111-111111111111" }], text: "Most large merchants accept international cards.", conditions: [], exclusions: [] }]), error: null });
-  const outcome = await runGroundedAiAssistJob(turnId, jobRpc, searchInput, { ...jobDeps, rpc, contextRpc, fetch: async () => chatResponse(answer) }, new AbortController().signal);
+  let providerCalls = 0;
+  const outcome = await runGroundedAiAssistJob(turnId, jobRpc, searchInput, { ...jobDeps, rpc, contextRpc, fetch: async () => { providerCalls++; return chatResponse(answer); } }, new AbortController().signal);
+  assert.equal(providerCalls, 0, "readable context and a synthetic claim never authorize a physical paid call");
   assert.equal(outcome.status, "succeeded");
-  assert.equal(outcome.outcome.kind, "answered");
+  assert.deepEqual(outcome.outcome, { kind: "unavailable", reason: "ops_scope_unavailable" });
 });
 
 test("an ensure call that throws or errors is not_offered/job_unavailable, never crashes", async () => {

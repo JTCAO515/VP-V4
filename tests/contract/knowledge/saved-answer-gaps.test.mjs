@@ -20,6 +20,7 @@ function render(locale, gaps, overrides = {}) {
   const exports = {};
   vm.runInNewContext(compiled, { exports, require(name) {
     if (name === 'react/jsx-runtime') return jsx;
+    if (name === 'next/link') return { default: ({ href, children, ...props }) => jsx.jsx('a', { href, ...props, children }) };
     if (name === 'react') return { useState: () => [stateIndex++ === 0 ? history : 'ready', () => {}], useRef: current => ({ current }), useEffect() {} };
     if (name.includes('browser-auth-client')) return {};
     if (name.includes('grounded/copy')) return copy;

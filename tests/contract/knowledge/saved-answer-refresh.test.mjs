@@ -21,7 +21,7 @@ async function harness(){
  const exports={};const context={exports,AbortController,performance:{now:()=>now},navigator:nav,document:doc,window:{addEventListener:listen,removeEventListener:remove},queueMicrotask,
   setTimeout:(fn,ms)=>{const id=++sequence;timers.set(id,{at:now+ms,fn});return id;},clearTimeout:id=>timers.delete(id),
   fetch:(_url,options)=>new Promise(resolve=>requests.push({signal:options.signal,resolve})),
-  require:name=>{if(name==='react')return react;if(name==='react/jsx-runtime')return {jsx:()=>null,jsxs:()=>null};if(name.includes('browser-auth-client'))return {createPasswordAuthClient:()=>auth};if(name.includes('grounded/copy'))return {savedAnswerCopy:{en:{}}};if(name.endsWith('.css'))return {default:{}};throw Error('Unexpected import '+name);},
+  require:name=>{if(name==='next/link')return {default:()=>null};if(name==='react')return react;if(name==='react/jsx-runtime')return {jsx:()=>null,jsxs:()=>null};if(name.includes('browser-auth-client'))return {createPasswordAuthClient:()=>auth};if(name.includes('grounded/copy'))return {savedAnswerCopy:{en:{}}};if(name.endsWith('.css'))return {default:{}};throw Error('Unexpected import '+name);},
  };
  vm.runInNewContext(compiled,context,{filename:'SavedAnswers.tsx'});exports.SavedAnswers({locale:'en'});
  const h={states,requests,doc,nav,

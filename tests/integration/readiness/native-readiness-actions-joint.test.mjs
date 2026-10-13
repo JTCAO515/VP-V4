@@ -1,3 +1,4 @@
+import { initializeFreshOpsFixture } from '../observability/ops-control-owned/fresh-bootstrap.mjs';
 // Actual current SQL + production Native HTTP. Admin SQL transport and synthetic
 // signed Auth prove composition; default authenticated ACL denial remains explicit.
 import test from 'node:test';import assert from 'node:assert/strict';
@@ -20,6 +21,7 @@ test('actual SQL declaration/current date/source permissions survive Native HTTP
   await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));
   await db("create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;create schema extensions;create extension pgcrypto with schema extensions;");
   for(const file of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort())await db('begin;'+readFileSync('supabase/migrations/'+file,'utf8')+'commit;');
+  await initializeFreshOpsFixture(db);
   await db(`insert into auth.users(id) values('${subject}');insert into auth.sessions(id,user_id) values('${sessionId}','${subject}');insert into identity_private.mobile_accounts(owner_id,epoch,session_id) values('${subject}',1,'${sessionId}');insert into identity_private.mobile_attempts values('${subject}','${uuid()}','${sessionId}',1);${claims}
    insert into public.trips(id,owner_id,title) values('${a.trip}','${subject}','Synthetic owned Trip');
    insert into turn_private.text_policies(id,provider,recipient,endpoint,source_region,processing_region,storage_region,terms_version,notice_version,notice_hash,notice_zh,notice_en,retention,effective_at,expires_at,terms_recheck_at) values('${a.policy}','qwen','synthetic','https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions','local','local','local','test','test','${'a'.repeat(64)}','合成','Synthetic','retain_after_hide_v1',now()-interval '1 hour',now()+interval '1 day',now()+interval '1 day');
