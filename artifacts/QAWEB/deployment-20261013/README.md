@@ -50,7 +50,7 @@ No DNS/domain addition was repeated, no deployment protection or application log
 
 ## Current downstream dependencies
 
-Main's latest real evidence supersedes the earlier Supabase permission blocker: fixed Go2China Staging read-only access recovered; only 75/155 migrations are present and QA RPCs absent. ECS actual Docker inventory is empty; hosted switch disabled with no retained workers/ready/leased work, and secure file slots are absent. Main is reviewing migration prerequisites and safe credential handoff. No broad migration/application is inferred.
+Main's latest real evidence supersedes the earlier Supabase permission blocker: fixed Go2China Staging read-only access recovered; only 75/155 migrations are present and QA RPCs absent. ECS actual Docker inventory is empty; hosted switch disabled with no retained workers/ready/leased work, and secure file slots are absent. Main is reviewing migration prerequisites and safe credential handoff. Its local installer candidate a21202455b09eb2b953224e840f5bb8216ab689d adds explicit QA file-mode validation; final review/CI/merge and target readiness are still required. QA uses existing host Python3 and needs no new host Node installation. No broad migration/application is inferred.
 
 The requested sidecar preparation was stopped by Main after this real empty-host evidence. Its local unexecuted drafts are archived under stopped-sidecar/ with sidecar-candidate.md marked STOPPED. Do not use them to start a worker or introduce a new flow.
 
