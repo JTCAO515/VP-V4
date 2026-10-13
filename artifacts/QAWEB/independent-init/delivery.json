@@ -1,0 +1,30 @@
+{
+  "base": "8b5975e48e850d0cbb1bf6f8ef7c4b0c9ff6b888",
+  "proof": "proof-1791890185777.json",
+  "contractTests": {
+    "pass": 4,
+    "fail": 0,
+    "skip": 0
+  },
+  "ownedPG": "PASS_OWN_EMPTY_PG_ONLY",
+  "ownedPGChecks": 7,
+  "cleanup": "PASS_OWN_ONLY",
+  "sources": {
+    "scripts/qa-agent-independent-init/README.md": "0d7e89c23b8fae081ca2f73751107d16179d4f3297158fdb3309ffc9f92f89ad",
+    "scripts/qa-agent-independent-init/local-pg-bootstrap.sql": "9dcedddb223099ab59a31d8e870b965cae701af68d742859b87c24f965c971ee",
+    "scripts/qa-agent-independent-init/migration-sources.json": "0b8ff8c6100544e82c3ecb50f54f5baa82f8c9b0fc875cc9d825ec6bcb631767",
+    "scripts/qa-agent-independent-init/platform-pins.json": "727e2d84c18ef97239af7a80171b6ad5ae1613070a3696325ad391b1034dc6c8",
+    "scripts/qa-agent-independent-init/platform-probe.sql": "93b47f9b567a7572d8e213e63a8c14635e8d5de83cc48e100dcaf01893fd3d99",
+    "scripts/qa-agent-independent-init/postconditions.sql": "f166a581ee26e5a61591b93512eacaf0e89d494a3ee46354f1977a460b6b9f09",
+    "scripts/qa-agent-independent-init/prepare.mjs": "b9a7f8c47029b74dbb5712c14ad875a73bc1aa6ff403ed8377c0f17c8c301fb5",
+    "scripts/qa-agent-independent-init/prove-empty-pg.mjs": "07cc6c0e081195b77467461ff79768e31d8921ee4f8cfe82400a5b5fc9e5de72",
+    "tests/contract/qa-agent-independent-init/prepare.test.mjs": "ede94fa88c6100c807e1a84ccf5ba7afc60e488f1e068b557092213ddeff9764"
+  },
+  "target": "UNRUN",
+  "managedPlatform": "BLOCKED_UNREVIEWED",
+  "newReferenceExists": "UNRUN",
+  "authSdk": "UNRUN_PURE_PG_ONLY",
+  "credentials": "UNRUN_NOT_READ",
+  "provider": "UNRUN",
+  "cloudCreation": "UNRUN_NOT_AUTHORIZED"
+}

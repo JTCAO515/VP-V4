@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "qa-independent-platform/1",
+  "profile": "local-pg-fixture/1",
+  "source": "original durable-work-schema fixture plus original auth.role fixture; no managed JWT acceptance",
+  "engine": {
+    "versionNumber": "170006",
+    "encoding": "UTF8"
+  },
+  "functions": {
+    "auth.uid()": {
+      "sourceMd5": "d4912fc78afe67d60072be172cfb8a8e",
+      "result": "uuid",
+      "language": "sql",
+      "securityDefiner": false,
+      "volatility": "v",
+      "config": null,
+      "owner": "postgres"
+    },
+    "auth.jwt()": {
+      "sourceMd5": "675fc999ebb16a3bbb0a0d0deda9d848",
+      "result": "jsonb",
+      "language": "sql",
+      "securityDefiner": false,
+      "volatility": "v",
+      "config": null,
+      "owner": "postgres"
+    },
+    "auth.role()": {
+      "sourceMd5": "ed7e2d7ef3b7ef9eb79237d84fcd71e5",
+      "result": "text",
+      "language": "sql",
+      "securityDefiner": false,
+      "volatility": "v",
+      "config": null,
+      "owner": "postgres"
+    }
+  },
+  "roles": {
+    "anon": {
+      "superuser": false,
+      "login": false,
+      "bypassRls": false
+    },
+    "authenticated": {
+      "superuser": false,
+      "login": false,
+      "bypassRls": false
+    },
+    "service_role": {
+      "superuser": false,
+      "login": false,
+      "bypassRls": true
+    }
+  },
+  "authColumns": {
+    "auth.users": [
+      "id:uuid:true"
+    ],
+    "auth.sessions": [
+      "id:uuid:true",
+      "user_id:uuid:false",
+      "created_at:timestamp with time zone:false"
+    ]
+  },
+  "managedProfile": null
+}
