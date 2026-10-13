@@ -23,7 +23,7 @@ Full allowlisted metadata is in resource-readback.json. No secret values are rec
 - Deployment SHA: UNRUN; Main has not provided a reviewed ready P0 integration pin.
 - Actual QA preview URL: UNRUN; exact branch list returned no deployments.
 - HTTPS/login/Session persistence/provider/multi-turn acceptance: UNRUN pending source and authorized configuration.
-- QA branch env readiness: generic preview has Supabase public config and Qwen endpoint; QA branch overrides/provider policy/budget readiness not established. Production secrets are not copied.
+- QA branch env readiness: generic preview has Supabase public config and Qwen endpoint; QA origin override is now configured on the exact branch; QA enable/policy/context and worker budget readiness remain pending. Production secrets are not copied.
 - Observed backend working config accepts only custom QA hostname, preventing pre-DNS preview use. Shared config candidate belongs to Main/backend owner; gap reported to Main.
 - snapshot.py: read-only official CLI API, bounded response, live scope checks, allowlisted metadata only.
 - pin.py: read-only verifies full reviewed SHA, clean source, matching remote branch, QA source paths and live scope. Creates Git-source preview request with exact SHA; no deployment mutation. Baseline daa7bae44a660381fb3295d0d2afc327ea98d3ba correctly rejected as missing QA product paths.
@@ -32,3 +32,5 @@ Full allowlisted metadata is in resource-readback.json. No secret values are rec
 Deployment request schema checked against official https://openapi.vercel.sh and https://vercel.com/docs/rest-api/deployments/create-a-new-deployment. Use Vercel MCP first, its documented exact-endpoint fallback only if the same 404 persists; inspect deployment SHA/target/state before claiming delivery. Preparation is not provider or target PASS.
 
 Follow-up HTTPS probe: FAIL from this local network (curl TLS SSL_ERROR_SYSCALL; local A lookup returned 198.18.0.68). This is not a target application result; no network/proxy change or security bypass attempted. Source deployment remains UNRUN. Documentation baseline check PASS.
+
+Current precise configuration slots and source-backed hosted-worker requirements: [readiness.md](readiness.md).
