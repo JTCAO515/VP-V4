@@ -1,0 +1,12 @@
+✔ accepted receipt stays pending and transport uses same-origin cookies without auth headers (1.445958ms)
+✔ version, owner/session, request, terminal-without-answer and unknown outcome fail closed (1.751166ms)
+✔ unknown ACK stays unknown and explicit original request recovery is GET only (0.312041ms)
+✔ policy consent is never inferred and server denial is preserved (0.702625ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 180.506583

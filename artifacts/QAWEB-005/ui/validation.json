@@ -1,0 +1,63 @@
+{
+  "issue": 681,
+  "base": "daa7bae44a660381fb3295d0d2afc327ea98d3ba",
+  "wire": "qa-agent/1",
+  "sourceSha256": {
+    "app/qa/page.tsx": "3ae6516a177c2c555201c13a3f5d94ed81c98f9a4c407c0fa99668e28f8bcb6a",
+    "components/qa-agent/api.ts": "dfe0d7916ab99f1d695e9fa31f3c36ce698cee9ff2c707e7a247ac24bf561a65",
+    "components/qa-agent/QaAgentWorkspace.tsx": "814de8df9be458fb6013e7b6921bb8118e94d83164d61f2e6bc639a78794bdcd",
+    "components/qa-agent/QaAgentWorkspace.module.css": "2ee930970897537c9e2a686b8b95c348e2bb0a564d6077fb5d3d25d5b3ada3a4"
+  },
+  "checks": {
+    "typecheck": "PASS",
+    "sourcePolicyLint": "PASS",
+    "productionBuild": "PASS",
+    "productionBrowser": {
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "viewports": [
+        "1280x844",
+        "390x844"
+      ],
+      "scope": "Actual production-compiled React UI; synthetic cookie and API responses. No real Auth/database/provider claim."
+    },
+    "adapterNegatives": {
+      "passed": 4,
+      "failed": 0
+    }
+  },
+  "historicalResults": [
+    {
+      "result": "FAIL",
+      "scope": "First 5 browser cases: Strict Mode aborted initial controller. Product fixed."
+    },
+    {
+      "result": "FAIL",
+      "scope": "Recovery input cleared after consent readback; same-Session reload now retains draft and busy input is disabled."
+    },
+    {
+      "result": "FAIL",
+      "scope": "Owner replacement fixture incorrectly served old owner data after switch. Fixture corrected to owner-scoped responses."
+    },
+    {
+      "result": "FAIL",
+      "scope": "Intermittent Next dev Unexpected end of JSON input. Production build/start has 7/7 PASS and zero page errors in desktop/mobile checks."
+    },
+    {
+      "result": "UNRUN",
+      "scope": "Restricted local listener EPERM before official escalation; subsequently permitted test run PASS."
+    }
+  ],
+  "targetEvidence": {
+    "realSignInAndCookieIdentity": "UNRUN: Main target integration",
+    "databasePersistenceAndRLS": "UNRUN: Main service/SQL/target integration",
+    "realProviderAnswer": "UNRUN: Main target integration",
+    "qaDomainDesktopMobile": "UNRUN: Main deployment"
+  },
+  "buildCommand": "NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54389 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=synthetic-ui-test-public-key node node_modules/next/dist/bin/next build --webpack",
+  "browserCommand": "node node_modules/@playwright/test/cli.js test --config tests/e2e/qa-agent-ui/playwright.config.mjs --workers=1",
+  "adapterCommand": "node --test tests/e2e/qa-agent-ui/adapter.test.mjs",
+  "sharedChanges": "safeReturnTo narrow /qa allowlist candidate only, Main owns application; next dev auto-appended AGENTS.md left unstaged; no root/API/config changes committed",
+  "runtime": "Initial unrestricted/never; after user model change workspace-write/restricted network/auto_review. Main requested gpt-6-astra medium via official thread tool; actual Fast Mode not exposed."
+}
