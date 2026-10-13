@@ -7,17 +7,18 @@ secret_dir=/run/vp-worker-secrets
 profile_file=/etc/visepanda/hosted-profile.json
 journal_dir=/var/lib/vp-worker/journal
 fail() { echo "hosted file worker: $*" >&2; exit 1; }
-usage() { echo "usage: $0 preflight [--planning]|start <12-40 hex git SHA> [--planning]|status|stop" >&2; exit 2; }
+usage() { echo "usage: $0 preflight [--planning|--qa]|start <12-40 hex git SHA> [--planning|--qa]|status|stop" >&2; exit 2; }
 [[ ${EUID} -eq 0 ]] || fail 'run as root'
 [[ $# -ge 1 ]] || usage
 action=$1
 planning=false
+qa=false
 case "$action" in
   status|stop) [[ $# -eq 1 ]] || usage ;;
-  preflight) [[ $# -eq 1 || ( $# -eq 2 && $2 == --planning ) ]] || usage
-    [[ $# -eq 1 ]] || planning=true ;;
-  start) [[ ( $# -eq 2 || ( $# -eq 3 && $3 == --planning ) ) && $2 =~ ^[0-9a-f]{12,40}$ ]] || usage
-    [[ $# -eq 2 ]] || planning=true ;;
+  preflight) [[ $# -eq 1 || ( $# -eq 2 && ( $2 == --planning || $2 == --qa ) ) ]] || usage
+    if [[ $# -eq 2 ]]; then [[ $2 == --planning ]] && planning=true || qa=true; fi ;;
+  start) [[ ( $# -eq 2 || ( $# -eq 3 && ( $3 == --planning || $3 == --qa ) ) ) && $2 =~ ^[0-9a-f]{12,40}$ ]] || usage
+    if [[ $# -eq 3 ]]; then [[ $3 == --planning ]] && planning=true || qa=true; fi ;;
   *) usage ;;
 esac
 
@@ -74,7 +75,11 @@ if $planning; then
   fi
 else
   command -v python3 >/dev/null || fail 'Python 3 is required to validate nonsecret profile'
-  profile_json=$(python3 "$(dirname "$0")/validate-s1-profile.py" "$profile_file" --emit) || fail 'S1 profile is unavailable'
+  if $qa; then
+    profile_json=$(python3 "$(dirname "$0")/validate-qa-profile.py" "$profile_file" --emit) || fail 'QA profile is unavailable'
+  else
+    profile_json=$(python3 "$(dirname "$0")/validate-s1-profile.py" "$profile_file" --emit) || fail 'S1 profile is unavailable'
+  fi
 fi
 [[ ! -L $journal_dir ]] || fail 'journal directory must not be a symlink'
 install -d -o 1000 -g 1000 -m 0700 "$journal_dir"
