@@ -6,7 +6,7 @@ import { qaConfig } from "./config.ts";
 import { QaError, QA_AGENT_WIRE_VERSION } from "./contract.ts";
 
 export type QaAction = "list" | "create" | "detail" | "submit" | "message" | "policy" | "consent";
-const statuses = { INVALID_INPUT: 400, UNAUTHENTICATED: 401, FORBIDDEN: 403, DATA_POLICY_BLOCKED: 403, IDEMPOTENCY_KEY_REUSE: 409, PROVIDER_UNAVAILABLE: 503 } as const;
+const statuses = { INVALID_INPUT: 400, UNAUTHENTICATED: 401, FORBIDDEN: 403, DATA_POLICY_BLOCKED: 403, IDEMPOTENCY_KEY_REUSE: 409, QA_CONTEXT_LIMIT: 409, PROVIDER_UNAVAILABLE: 503 } as const;
 import { browserBoundary } from "./browser-boundary.ts";
 export async function qaAgentHTTP(request: NextRequest, action: QaAction, sessionId?: string, requestId?: string) {
   const reply = (body: unknown, status = 200) => NextResponse.json({ version: QA_AGENT_WIRE_VERSION, ...(record(body) ? body : {}) },

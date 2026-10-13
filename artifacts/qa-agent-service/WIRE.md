@@ -9,11 +9,12 @@ Authorization, cross-site and query parameters rejected. No client model/history
 - GET `/api/qa-agent/sessions/:sessionId`: 200 `{session,messages,historyLimit:20,policy}`; newest 20 original protected turns in chronological order.
 - POST `/api/qa-agent/sessions/:sessionId/messages` `{requestId:UUID,text:string}`: 202 `{requestId,turnId,sessionId,status:"pending",reused:boolean}`. requestId equals original turn/idempotency ID. Accepted does not mean answered.
 - GET `/api/qa-agent/sessions/:sessionId/messages/:requestId`: 200 `{message:{requestId,turnId,sessionId,input,text,status,createdAt}}`. `text` is saved original output or null. Status pending/answered/partial/clarification/blocked/technical_failure. Refresh/retry poll the same original ID.
-- GET `/api/qa-agent/policy`: 200 `{policy:{id,noticeHash,noticeZh,noticeEn,provider,recipient,consentState,contextMode}}`.
+- GET `/api/qa-agent/policy`: 200 `{policy:{id,noticeHash,noticeZh,noticeEn,provider,recipient,consentState,contextMode,maxTurns}}`.
 - POST `/api/qa-agent/consent` `{policyId,noticeHash}`: 200 same policy envelope, server reads immutable notice/consent. UI must show notice and await explicit acceptance before calling; no implied consent.
 
 Errors `{version,error:{code,ack}}`: INVALID_INPUT 400; UNAUTHENTICATED 401;
 FORBIDDEN 403; DATA_POLICY_BLOCKED 403; IDEMPOTENCY_KEY_REUSE 409;
+QA_CONTEXT_LIMIT 409 with ack:"not_submitted";
 PROVIDER_UNAVAILABLE 503. ack `unknown` means original submission may have committed;
 retain same requestId/text and poll/replay. Never generate another UUID for an unknown ACK.
 No raw transport/DB/provider messages, content, headers or credentials in failures.
@@ -53,3 +54,13 @@ micros without a settlement or provider capability.
 
 Target worker/provider/policy/budget readiness and actual browser/DB/provider
 acceptance remain UNRUN until Main connects the original host and QA deployment.
+
+Additive qa-agent/1 capacity contract: policy.maxTurns is `8` only when the protected
+qa_read_policy_v1 supplies contextMode=qa_session_history_v1 AND maxTurns=8; missing,
+non-numeric or non-8 values fail closed. Legacy current_input_v1 returns maxTurns:null.
+Client/deployment flags never create this limit. The ninth new submission returns
+HTTP409 `{version:"qa-agent/1",error:{code:"QA_CONTEXT_LIMIT",ack:"not_submitted"}}`.
+This is capacity exhaustion, not consent withdrawal: retain the selected Session and
+its saved messages, and keep history/message reads available. No new admission,
+provider attempt or billing follows this original SQL denial. Existing DATA_POLICY_BLOCKED
+still denotes actual policy/permission refusal and retains its 403 semantics.

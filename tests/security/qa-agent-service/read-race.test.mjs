@@ -15,7 +15,7 @@ function fixture({textPatch={},sessionPatch={},denyMetadata=false,denyProtected=
    return metadataReads>1?{...detail,...refreshPatch}:detail;
   },
   rpc:async(name,params)=>{
-   if(name==='qa_read_policy_v1')return {error:null,data:{kind:'policy',policy:{id:policy,contextMode:'qa_session_history_v1',noticeHash:'a'.repeat(64),noticeZh:'合成测试同意',noticeEn:'Synthetic consent',provider:'qwen',recipient:'Synthetic',consentState:'accepted'}}};
+   if(name==='qa_read_policy_v1')return {error:null,data:{kind:'policy',policy:{id:policy,contextMode:'qa_session_history_v1',maxTurns:8,noticeHash:'a'.repeat(64),noticeZh:'合成测试同意',noticeEn:'Synthetic consent',provider:'qwen',recipient:'Synthetic',consentState:'accepted'}}};
    assert.equal(name,'qa_read_session_v1');assert.equal(params.p_thread_id,session);
    assert.equal(calls.at(-1),'metadata','worker completes after the earlier metadata read');
    calls.push('worker-completed');protectedReads++;

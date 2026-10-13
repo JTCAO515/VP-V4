@@ -5,9 +5,9 @@ import {qaConfig} from '../../../lib/server/qa-agent/config.ts';
 import {qaAgentHTTP} from '../../../lib/server/qa-agent/http.ts';
 import {nativeFixture} from '../../contract/identity/native-fixture.ts';
 const sid='11111111-1111-4111-8111-111111111111',rid='22222222-2222-4222-8222-222222222222',pid='33333333-3333-4333-8333-333333333333';
-async function setup(t){
+async function setup(t,qaCapacity=false){
  const fixture=await nativeFixture(t,'http://127.0.0.1:58259'),fallback=globalThis.fetch,calls=[];
- const env={VISEPANDA_QA_AGENT:'true',VISEPANDA_QA_AGENT_ORIGIN:'http://localhost:3000',VISEPANDA_QA_AGENT_POLICY_ID:pid,VISEPANDA_QA_AGENT_CONTEXT_MODE:'current_input_v1',NEXT_PUBLIC_SUPABASE_URL:fixture.config.url,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:fixture.config.publishableKey};
+ const env={VISEPANDA_QA_AGENT:'true',VISEPANDA_QA_AGENT_ORIGIN:'http://localhost:3000',VISEPANDA_QA_AGENT_POLICY_ID:pid,VISEPANDA_QA_AGENT_CONTEXT_MODE:qaCapacity?'qa_session_history_v1':'current_input_v1',NEXT_PUBLIC_SUPABASE_URL:fixture.config.url,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:fixture.config.publishableKey};
  const prior=Object.fromEntries([...Object.keys(env),'VERCEL_ENV'].map(k=>[k,process.env[k]]));delete process.env.VERCEL_ENV;Object.assign(process.env,env);
  t.after(()=>{for(const [key,value]of Object.entries(prior))value===undefined?delete process.env[key]:process.env[key]=value;});
  let input=null,answer=null,count=0;
@@ -15,7 +15,9 @@ async function setup(t){
  const request=new Request(url,init),u=new URL(request.url);if(!u.pathname.startsWith('/rest/v1/'))return fallback(url,init);
  assert.equal(u.origin,fixture.config.url);assert.equal(request.headers.get('Authorization'),'Bearer '+fixture.token);
  const path=u.pathname.split('/').at(-1);calls.push(path);
- if(path==='read_text_policy')return Response.json({kind:'policy',policy:{id:pid,noticeHash:'a'.repeat(64),noticeZh:'合成测试',noticeEn:'Synthetic testing',provider:'qwen',recipient:'Synthetic recipient',consentState:'accepted'}});
+ if(path==='read_text_policy'||path==='qa_read_policy_v1')return Response.json({kind:'policy',policy:{id:pid,contextMode:qaCapacity?'qa_session_history_v1':'current_input_v1',maxTurns:qaCapacity?8:null,noticeHash:'a'.repeat(64),noticeZh:'合成测试',noticeEn:'Synthetic testing',provider:'qwen',recipient:'Synthetic recipient',consentState:'accepted'}});
+ if(path==='qa_read_session_v1')return Response.json({kind:'session',schemaVersion:'qa-session/1',threadId:sid,policyId:null,serviceTaskId:null,lastTurnId:null,messages:[]});
+ if(path==='qa_submit_message_v1')return Response.json({code:'P0001',message:'QA_CONTEXT_LIMIT',details:null,hint:null},{status:400});
  if(path==='submit_text_turn'){
  const data=await request.json();assert.equal(data.p_thread_id,sid);assert.equal(data.p_idempotency_key,rid);assert.equal(data.p_turn_id,rid);
  if(!input){input=data.p_text;count++;return Response.json({kind:'accepted',turnId:rid,reused:false});}
@@ -48,4 +50,12 @@ test('aborted request lifetime stops SDK and cannot create another admission',as
  const f=await setup(t),controller=new AbortController();controller.abort();
  const request=new NextRequest('http://localhost:3000/api/qa-agent',{method:'POST',headers:{Cookie:f.cookie(),Origin:'http://localhost:3000','Content-Type':'application/json'},body:JSON.stringify({requestId:rid,text:'Synthetic cancel'}),signal:controller.signal});
  const response=await qaAgentHTTP(request,'submit',sid);assert.equal(response.status,503);assert.equal(f.count,0);
+});
+
+test('capacity error keeps versioned HTTP409/not_submitted distinct from policy refusal',async t=>{
+ const f=await setup(t,true);
+ const result=await qaAgentHTTP(f.request('POST',{requestId:rid,text:'Synthetic ninth turn'}),'submit',sid);
+ assert.equal(result.status,409);assert.deepEqual(await result.json(),{version:'qa-agent/1',error:{code:'QA_CONTEXT_LIMIT',ack:'not_submitted'}});
+ const policy=await qaAgentHTTP(f.request(),'policy');assert.equal(policy.status,200);const p=(await policy.json()).policy;assert.equal(p.maxTurns,8);assert.equal(p.consentState,'accepted');
+ const history=await qaAgentHTTP(f.request(),'detail',sid);assert.equal(history.status,200);assert.equal(f.count,0);assert.equal(f.calls.some(x=>x.includes('budget')),false);
 });

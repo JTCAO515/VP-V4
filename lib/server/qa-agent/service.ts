@@ -26,14 +26,14 @@ export function createQaService(store: QaStore, policyId: string, contextMode: "
   async function policy(): Promise<QaPolicy> {
     const data = await call(contextMode === "qa_session_history_v1" ? "qa_read_policy_v1" : "read_text_policy", { p_policy_id: policyId });
     const p = data.policy;
-    if (contextMode === "qa_session_history_v1" && (!record(p) || p.contextMode !== contextMode)) throw new QaError("DATA_POLICY_BLOCKED");
+    if (contextMode === "qa_session_history_v1" && (!record(p) || p.contextMode !== contextMode || p.maxTurns !== 8)) throw new QaError("DATA_POLICY_BLOCKED");
     if (data.kind !== "policy" || !record(p) || p.id !== policyId || typeof p.noticeHash !== "string" || !/^[a-f0-9]{64}$/.test(p.noticeHash)
       || ![p.noticeZh, p.noticeEn, p.provider, p.recipient].every(v => typeof v === "string" && v.length > 0)
       || !["not_accepted", "accepted", "withdrawn"].includes(String(p.consentState))) throw new QaError("DATA_POLICY_BLOCKED");
     // The task-policy RPC verifies the real stored context mode. Provider history
     // remains bounded and SQL-authorized by the original same-Task dispatcher.
     return { id: policyId, noticeHash: p.noticeHash, noticeZh: p.noticeZh as string, noticeEn: p.noticeEn as string,
-      provider: p.provider as string, recipient: p.recipient as string, consentState: p.consentState as QaPolicy["consentState"], contextMode };
+      provider: p.provider as string, recipient: p.recipient as string, consentState: p.consentState as QaPolicy["consentState"], contextMode, maxTurns: contextMode === "qa_session_history_v1" ? p.maxTurns as 8 : null };
   }
   async function readable(sessionId: string) {
     if (!uuid(sessionId)) throw new QaError("INVALID_INPUT");
@@ -168,7 +168,8 @@ export function rpcError(message: string): QaError {
   if (/FORBIDDEN/.test(message)) return new QaError("FORBIDDEN");
   if (/IDEMPOTENCY_KEY_REUSE/.test(message)) return new QaError("IDEMPOTENCY_KEY_REUSE");
   if (/INVALID_INPUT/.test(message)) return new QaError("INVALID_INPUT");
-  if (/DATA_POLICY_BLOCKED|SERVICE_TASK|QA_CONTEXT_LIMIT|QA_MODE_CONFLICT/.test(message)) return new QaError("DATA_POLICY_BLOCKED");
+  if (/QA_CONTEXT_LIMIT/.test(message)) return new QaError("QA_CONTEXT_LIMIT");
+  if (/DATA_POLICY_BLOCKED|SERVICE_TASK|QA_MODE_CONFLICT/.test(message)) return new QaError("DATA_POLICY_BLOCKED");
   return new QaError("PROVIDER_UNAVAILABLE");
 }
 
