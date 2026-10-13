@@ -1,44 +1,44 @@
-# 给 BestJ / JT 的一次集中执行范围提案
+# 共享 Staging 执行范围与当前阻塞
 
-状态：**未批准提案，副作用全部未执行。** JT 最新经 Main 的指令已明确选择原 Go2China `dzqdzetcctkhbrhlxxgn`，知道测试与 Production 同 data；本包不再请求共享方向、新项目、免费配额或新平台 key。这个方向选择不自动批准下面实际的数据读取、恢复身份、角色使用、DDL 或服务影响。
+JT 已直接批准 A–D，并条件式批准满足全部门禁后的 E。固定目标为 Go2China `dzqdzetcctkhbrhlxxgn`，同 data Production 影响已在原问题中告知。不再请求 JT 重复选择方向或重复批准已授权组。
 
-Main 可直接预填 `shared-operator-proposal-unapproved.json` 并据此形成一份集中批准记录，不让 JT 手写 JSON。所有 approved/confirmed 字段当前为 false/null，actions为空，不可通过现有执行 gate。JT 对所列具体组的实际批准后，才由 Main 转为相应已批准操作记录；文件、技术选型及本地 PASS 均不自授批准。
+直接授权来源是 Main 私有记录 `/Users/jtsm5p/Documents/Codex/2026-10-13/v10-main/shared-operator-human-authorization-20261013.json`，SHA256 `5637fbd49d992ba58f004a2a0f39fc56f5315cfbc96a8c44175f0c875367737c`。记录绑定完整问题、原答复和 questionItemId。`shared-operator-authorized-blocked.json` 已预填 A–D 范围、一次 UUID、当前 code hash；维护窗口、Main 启动回执和五项 owner 确认仍为空/false，因此不能执行。旧 `shared-operator-proposal-unapproved.json` 保留为历史未批准提案。
 
-## 不可替代的具体动作与范围
+## 已授权范围
 
-| 组 | 请求实际批准的动作 | 限界与先后条件 |
+- A：现有同账户官方 CLI、只读 SET LOCAL ROLE postgres；14 data schemas、Realtime 89 行迁移账本、完整 schema/owner/ACL、无密码全局角色，直接流入四份 AGE 密文。
+- B：新本地 AGE 恢复身份；FileVault 私有固定 archive/identity 目录；保留至 `2026-10-20T23:59:59+08:00`。
+- C：唯一自有、无网/无端口/无 mount 的 cached PG17.6.1.155 Docker；恢复验证后在该副本重放固定 80 条，退出销毁解密副本。
+- D：现有 owner/control 机制下的 DDL/DCL 稳定边界；60 分钟窗口，普通 DML 可以继续。无新权限、全 DML 暂停、live 覆盖或 provider 费用。
+- E：仅由 Main 在实际恢复、80 演练及全部门禁成立后执行共享目标升级。此 owner 不获得目标迁移写权。
+
+## 可审阅入口与固定源
+
+`controlled-snapshot-backup.py --snapshot-from-direct-record <capture-packet> <fresh-official>` 与 `controlled-snapshot-restore.py --restore-replay-from-direct-record <restore-packet> <actual-manifest> <identity> <reviewed-replay-manifest>` 消费上述固定授权 SHA，不模拟人工 TTY 输入。
+
+两个入口还必须消费独立 Main 私有启动记录 `/Users/jtsm5p/Documents/Codex/2026-10-13/v10-main/shared-operator-main-start-20261013.json`。Main 审阅后写入 `MAIN_REVIEWED_EXECUTION_START`、target、授权 SHA、UUID、allowedStages、各阶段 codeHashes、reviewedSourceCommit、validFrom/validUntil，并将回执 SHA 绑定到各 packet。该 owner/helper 不创建这个记录。可信依据为独立 Main UI 授权证据及其固定实际 hash；没有宣称平台签名或 JSON 自授权。
+
+原 TTY 模式保留；原 strict capture/restore 文件不变；默认 dry-run 不产生外部 IO。所有原范围、窗口、freshness、TLS、FileVault、schema/role/ACL/sequence 门禁照常执行。
+
+固定 Main 源为 `7d0c5128857e859720452d8a9f864fd8b20c8388`；manifest SHA256 `230500975ecbd08df8eb1663b073ae96a11c79f3f2806d611fc5ce2d0a2e2a2f`；QA SQL SHA256 `73b6fa9ee63ad48bdff43da4a1f88ddf19e28e46786948e30314a111bb25285d`。hook 核每份 155 源文件、精确原 75/缺失 80/最终 155、原账本不变、原行多重集合保留、10 项门禁及 v2 signature/ACL。逐文件事务，在原 COMMIT 前登记；不把 80 条称为全局原子事务。
+
+显式 replay 模式仅对 owned clone 做两项精确兼容：已知 turn_feedback ROW-IN pg_dump deparse 差异重建为原约束；归档 owner MAINTAIN/默认 ACL 精确恢复。未知差异拒绝，不改源 SQL/门禁/真实库权限。默认 restore 不采用该兼容。
+
+## 最小缺失证据
+
+| 边界 | Main 可在原范围确认的内容 | 当前仍 UNKNOWN 的内容 |
 | --- | --- | --- |
-| A：共享真实数据加密捕获 | 使用既有同账户官方 CLI 上下文，临时登录凭据只在子进程内存中；仅为该 ref 的只读捕获执行 SET LOCAL ROLE postgres。读取完整14 data schemas及 Realtime89行原迁移账本，原样直接流入 AGE；另捕获完整schema、owner/ACL、无密码 globals | 包含共享库的真实身份/会话/任务/Trips/同意等数据，不能说只有 QA 样例。没有新永久 API key、GRANT/RLS变更、跨项目或聊天秘密。实际权限不足立即停止，不换身份绕过。既有 JT 已放置的 keys不查值、不重导；备份用官方现有 CLI 登录流程，不消费Qwen key。 |
-| B：本地恢复身份与保留 | 新建一次 AGE local恢复identity，分别放固定私有 FileVault目录；保留密文和身份至2026-10-20 23:59:59+08 | 这是新本地恢复key，不是新 Supabase/provider key，仍需明确批准创建与保留。0700目录、0600文件；失败保受保护quarantine，不自动删除恢复身份。 |
-| C：真实数据本机恢复与演练 | 仅解密指定四archive到唯一自有、无网/无端口/无mount的本机 Docker PG17.6.1.155；核全部schema/roles/owner/ACL/计数/ledger摘要和sequence安全，随后在该离线copy演练精确80个缺失迁移 | 不打印用户内容、不读模型上下文、不对外送数据；完成销毁该解密副本。真实14-data restore+80 replay仍UNRUN。现有候选restore会在完成后删除copy，Main必须先绑定本轮接受的实际数据replay接缝，不能拿fresh/synthetic replay替代。 |
-| D：稳定边界及共享服务影响 | 按现有owner/control机制协调 application DDL/migrators、managed Realtime migrations、roles/membership、ACL/policy DDL、extension/ledger schema 的维护边界，保持或按明确批准停下QA producer/入口 | 可能影响同data Production，不能谎称Staging独占。只读snapshot可容纳普通 managedAuth/SDK DML；没有全DML静止保证，不虚填quiet=true。不新增全库冻结权限/配置，不改未知WAF规则。任何需要更广服务暂停或权限修改的情况先停止并另列具体范围。 |
-| E：条件成立后的共享80升级 | 在该同一ref上，按原顺序逐个执行源文件/校验哈希固定的80迁移，保留已应用75历史 | 仅当实际恢复+80演练PASS、相同最终源码/manifest、所有所需稳定边界、实际时间窗口及当前源前置检查通过后才可执行。A-D批准不自行包含E；JT可在一次集中批准中给E明确条件式授权，条件不成立就不执行。Provider激活/费用不在本包。 |
+| application DDL/migrations | 唯一 Main migration dispatch、source/CI fixture lease，无并发 Main writer | 外部 dashboard/directDB/worker DDL 在完整窗口内的控制 |
+| roles/membership、ACL/policy DDL | 原范围内 Main 管理动作与 CLI credential refresh 的协调 | 外部 owner/admin/IAM、managed Auth 角色或策略 DDL |
+| managed Realtime migrations | 当前账本89的只读观测 | managed migrator/自动 partition DDL 的完整窗口稳定依据 |
+| extension/ledger schema | 固定结构/扩展的当前观测 | managed service 更新及其它 owner 变更控制 |
 
-## 推荐实际参数
+不需要静止所有普通 DML；也不能把 WAF、短时计数平稳、AccessExclusive=0 或仓库 writer lease 当作全库 60 分钟控制。现有证据只确认 Main 自己的写入边界；未确认项继续 false，由 Main 在现有 owner 范围补具体引用/哈希/有效期，不向 JT 重复索取既有 A–D 授权。
 
-- 唯一隔离恢复目的地：自有本机 cached `public.ecr.aws/supabase/postgres:17.6.1.155`，image ID `sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b`；不新建付费项目、不借共享容器。
-- Archive root：`/Users/jtsm5p/.codex/secure-backups/qaw005-fixed-staging/archives`。
-- Identity root：`/Users/jtsm5p/.codex/secure-backups/qaw005-fixed-staging/identities`。
-- 保留至：`2026-10-20T23:59:59+08:00`；未创建删除/保留自动化。
-- 窗口：60min，实际 start/end 由 Main 在已批准且安全边界完成时填入；exporter每次最多600s。建议捕获10min、恢复核对15min、80动作15min、最终核对10min、失败退出预留10min；若批准只覆盖恢复演练，目标DDL槽不执行。
+还需 Main 对最终 code/source 审阅及真实启动回执；当次 <=5min 官方 metadata、实际权限/TLS/FileVault/窗口检查；捕获后实际 manifest/key 绑定；真实共享数据恢复及重放 PASS。任一门禁失败就停止，保留受保护密文/身份与已成功迁移历史；只回滚当前未提交事务，无 live 恢复 fallback。
 
-## Source/code/pins 与当前证据
+## 实际验证与限制
 
-当前只读确认 Main WT clean、HEAD `f8bfe5ff93453a40a7914d2e94ef9aec14122965`；Git对象和工作文件的QA迁移一致，SHA256 `73b6fa9ee63ad48bdff43da4a1f88ddf19e28e46786948e30314a111bb25285d`。完整155 `{version,file,sha256}` catalog SHA256 `4a0221a727b2961d79395d43246acff8ab5d1365d67d5580ab1065e6c4a3c8b4`；该定义与activation整体manifest hash不同，不能混用。全部75已应用版本的本地源与原owner源相同；完整155及缺80列表、逐文件SHA均在JSON内。第一个补项是早于远端max的 `20260922033000`，不能删/补造旧迁移历史来跳过。
+`owned-replay-proof-12.json` 通过完整假数据捕获、恢复、80 replay、10 gates、v2 ACL、原数据/账本保留及 owned cleanup。先前 FAIL 均保留；本轮缺少 --synthetic-only 的调用也拒绝并留档。最终受影响复验及测试结果见本轮 delivery 文档。
 
-B capture/restore代码pin分别 `97f58fd3ea618c0d765344128c3166607d3a54e0a6f93b41791149e23314e2e7` / `60d9fa62262eb88027d5fe88d3e0d7fdb1b64332040bc136c41e4665c25db993`，源码commit7e27e7af，旧strict接口不变。任何源码/head漂移必须由Main重新固定和核相关证据，不自动接受旧批准。
-
-保留并复用：actual metadata75版本（版本列表SHA55081cf9…）、14schema+Realtime账本89的官方COUNT/结构证据、同PG17.6.155/同image、四密文假数据恢复、五extension owner/ACL、角色无密码restore、共享exporter/TLS/临时CLI角色、并发DML及sequence安全负例。旧实际75→155本地演练测试的QA源835cb185…与当前73b6源不同；当前源码review/CI/smoke由Main负责，不能把旧hash的证明升级为新实际数据证明。真实目标最新状态还需当次fresh核，历史metadata不是当前执行许可。
-
-**仍未验收：**真实共享14-data capture/restore和80 rehearsal、实际sequence profile、DDL/DCL owner控制、长时真实连接、服务影响、当前head保护检查。NoProdOverwrite；不自动把旧snapshot恢复到已有later writes的live库。Snapshot内旧consent/role数据不赋予当前provider/模型派发资格。
-
-## 执行的不可替代顺序（Main预填，不让JT逐字段操作）
-
-1. Main将本包变成一次清楚的A–E授权请求，包含共享真实数据与Production影响。依据JT的真实选择只填被批准组，不用方向批准替代副作用批准。
-2. Main在自己原owner范围取得实际DDL/DCL/服务控制的owner确认及可核引用/哈希；窗口/UUID/fresh官方metadata由Main填。WAF只能阻Vercel HTTP，不能召回已开页面 SDK、Native、directDB/Management/pooler、Auth刷新或其它worker；不用WAF当全库静止门。
-3. 在被批准A/B/D后，执行独立B入口 `controlled-snapshot-backup.py --snapshot-execute <approved-mode.json> <fresh-official.json>`。严格复验同账户/同项目/75+schema/89ledger/profile；共享read-only exporter统一三个pg_dump和计数/ledger摘要。Globalroles/catalog/DDL/ACL稳定另核。任何拒绝/过期/丢失即失败并保受保护产物，没有live fallback。
-4. 在被批准C后，执行 `controlled-snapshot-restore.py --restore-snapshot-approved <approved-restore.json> <actual-manifest.json> <identity>` 的离线恢复核对，并由Main绑定受控实际数据80 replay。该接缝未就绪/证明不通过，则E不能执行。不要拿原replay.mjs的全新synthetic schema作为真实数据演练。
-5. 只有E有实际条件式批准且C等所有条件成功，Main才在原迁移执行权限内应用精确包。包中已有各自BEGIN/COMMIT，不能用外套一个BEGIN假装80全原子。每一步登记/核readback，不启动QA/model/provider费用。
-6. 失败只回滚当前未提交transaction；保持QA入口/worker off，已成功apply文件与历史append保留。记录当前版本/失败/实际数据完整性，Main决定后续。全库live restore、覆盖later writes、删除部分已应用迁移、复活已撤销记录都不在默认失败处置中，必须另有具体实际批准。
-
-此文及JSON不是实际批准。没有目标连接、高privilege、用户行读取、dump、恢复key创建、DDL、暂停或provider动作发生；本轮只作离线proposal/固定源码pin/文档检查。
+共享真实 14-data capture/restore、实际 AGE 身份、实际 SET ROLE/长连接、共享目标 80 DDL、真实维护边界、provider 费用全部 UNRUN。没有读取 JT 已放置 key 的值、重导凭据、写 Main 文件、迁移或共享容器。

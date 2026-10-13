@@ -1,0 +1,11 @@
+test_default_acl_repair_is_bounded_and_verified (__main__.HookTests) ... ok
+test_registration_stays_inside_original_transaction (__main__.HookTests) ... ok
+test_source_manifest_drift_fails_before_source_load (__main__.HookTests) ... ok
+test_unknown_newer_extra_baseline_refuses_before_any_migration (__main__.HookTests) ... ok
+test_unknown_schema_and_acl_remain_rejected (__main__.HookTests) ... ok
+test_unknown_transaction_layout_is_not_wrapped_as_atomic (__main__.HookTests) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.002s
+
+OK

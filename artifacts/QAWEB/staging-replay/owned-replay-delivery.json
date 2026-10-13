@@ -1,0 +1,38 @@
+{
+  "status": "PASS_LOCAL_IMPLEMENTATION_REAL_OPERATIONS_UNRUN",
+  "base": "4fa01802dafa28218eaed0e9a4237ceaaa52a217",
+  "scope": [
+    "scripts/qa-agent-staging-replay/**",
+    "artifacts/QAWEB/staging-replay/**"
+  ],
+  "proof": "owned-replay-proof-15.json",
+  "proofElapsedSeconds": 36.446,
+  "checks": {
+    "hookAndCompatibilityNegatives": 6,
+    "directHumanAndNoTtyAuthority": 8,
+    "preservedSnapshotGates": 10,
+    "pythonSyntax": "PASS",
+    "diffWhitespace": "PASS",
+    "strictCaptureRestoreOriginalBytes": "UNCHANGED"
+  },
+  "codeHashes": {
+    "capture": "998078025f5b471a75ecbcffec186e60ecaccb2a53347f626c6cf65b803c1af7",
+    "restoreReplay": "c379c01f08bfdb0beed1e32e91afa9fe9f6bc7405d148830523b331a821c5df8"
+  },
+  "history": "proof01-11 retained failures;12 PASS;13 explicit synthetic-only argument rejection;14 and15 PASS; no target reads",
+  "actualTargetCapture": "UNRUN",
+  "actualSharedRestoreReplay": "UNRUN",
+  "target80Writer": "Main only conditional E",
+  "blockers": [
+    "Main exact source/code review and private start receipt bound to this UUID and final hashes",
+    "existing-owner evidence covering the full60min for five DDL/DCL boundaries; managed/external owners still UNKNOWN",
+    "actual window timestamps and official<=5min project/catalog/ledger metadata at execution",
+    "actual fixed-target privilege/TLS/safety checks without new grants",
+    "after capture: exact ciphertext manifest and identity paths plus real-data restore/replay PASS"
+  ],
+  "credentialsRead": false,
+  "MainFilesWritten": false,
+  "livePermissionChanged": false,
+  "liveTargetWritten": false,
+  "providerCalled": false
+}
