@@ -25,6 +25,7 @@ def load(name,path):
 
 capture=load('capture',HERE/'controlled-backup.py')
 verify=load('verify',HERE/'restore-verification.py')
+managed=load('managed',HERE/'managed-profile.py')
 plan=capture.plan
 IMAGE='public.ecr.aws/supabase/postgres:17.6.1.155'
 IMAGE_ID='sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b'
@@ -61,10 +62,15 @@ def pipeline(producer,consumer,collect=False):
 
 
 class OwnCluster:
-    def __init__(self, bootstrap_admin=None):
+    def __init__(self, bootstrap_admin=None, database_facts=None):
         self.nonce=uuid.uuid4().hex;self.name='qaw-restore-'+self.nonce[:12]
         self.admin=bootstrap_admin or 'qaw_restore_'+self.nonce[:12]
         plan.require(re.fullmatch('[a-zA-Z_][a-zA-Z_0-9]{0,62}',self.admin),'UNSUPPORTED_BOOTSTRAP_IDENTIFIER')
+        self.locale='C'
+        if database_facts:
+            plan.require(database_facts['encoding']=='UTF8' and database_facts['localeProvider']=='c' and database_facts['collate']==database_facts['ctype'],'UNSUPPORTED_DATABASE_LOCALE_PROFILE')
+            self.locale=database_facts['collate']
+            plan.require(re.fullmatch('[a-zA-Z0-9_.@-]+',self.locale),'UNSUPPORTED_DATABASE_LOCALE_IDENTIFIER')
         self.context=None;self.created=False
     def docker(self,args,data=None):return run(['docker','--context',self.context]+args,data)
     def command(self,program):
@@ -82,7 +88,7 @@ class OwnCluster:
         self.docker(['run','--pull=never','--rm','-d','--network','none','--name',self.name,'--label','qaw.restore.owner='+self.nonce,
                      '--memory','2g','--cpus','2','--pids-limit','256','--cap-drop','ALL','--security-opt','no-new-privileges',
                      '--user','postgres','--entrypoint','/bin/sh',IMAGE,'-c',
-                     'umask 077; mkdir /tmp/restore-socket; initdb -U '+self.admin+' -D /tmp/restore-db -A trust --no-locale -E UTF8 >/tmp/init.log 2>&1 && exec postgres -D /tmp/restore-db -c listen_addresses= -c unix_socket_directories=/tmp/restore-socket -c unix_socket_permissions=0700'])
+                     'umask 077; mkdir /tmp/restore-socket; initdb -U '+self.admin+' -D /tmp/restore-db -A trust --locale='+self.locale+' -E UTF8 >/tmp/init.log 2>&1 && exec postgres -D /tmp/restore-db -c listen_addresses= -c unix_socket_directories=/tmp/restore-socket -c unix_socket_permissions=0700'])
         self.created=True
         info=json.loads(self.docker(['inspect',self.name]))[0]
         plan.require(info['HostConfig']['NetworkMode']=='none' and not info['Mounts'] and not info['HostConfig']['PortBindings'],'ISOLATION_FAILED')
@@ -106,8 +112,8 @@ def bundle_preflight(manifest):
     plan.require(expected and expected.get('contract')=='qaw-restore-verification/1','RESTORE_EXPECTATIONS_MISSING')
     plan.require(expected.get('dataSchemas')==list(plan.SCHEMAS),'FOURTEEN_SCHEMA_CONFLICT')
     plan.require(expected.get('counts') and expected.get('metadata') and expected.get('databaseFacts') and expected.get('databaseOwner') and expected.get('bootstrapRole'),'BOOTSTRAP_EVIDENCE_MISSING')
-    non_builtin=[e for e in expected['metadata']['extensions'] if e['name']!='plpgsql']
-    plan.require(not non_builtin,'MANAGED_EXTENSION_BOOTSTRAP_NOT_YET_ACCEPTED')
+    plan.require(isinstance(expected.get('platformCounts'),dict) and all(v==0 for v in expected['platformCounts'].values()),'UNCOVERED_PLATFORM_DATA_NOT_EMPTY')
+    managed.classify(expected)
     for e in entries:
         plan.require(re.fullmatch('[a-f0-9]{64}',e.get('sha256','')) and isinstance(e.get('bytes'),int) and e['bytes']>0,'ARCHIVE_MANIFEST_INVALID')
     return expected
@@ -127,14 +133,15 @@ def restore_bundle(directory,identity,manifest):
     directory=Path(directory);identity=Path(identity)
     plan.require(identity.is_file() and not identity.is_symlink() and identity.stat().st_mode&0o077==0 and identity.stat().st_uid==os.getuid(),'IDENTITY_FILE_UNSAFE')
     entries={e['file']:e for e in manifest['entries']}
+    listings={}
     for name,e in entries.items():
         p=directory/name
         plan.require(p.is_file() and not p.is_symlink() and p.stat().st_mode&0o077==0 and p.stat().st_uid==os.getuid() and p.stat().st_size==e['bytes'] and file_hash(p)==e['sha256'],'ARCHIVE_INTEGRITY_OR_PATH_CONFLICT')
-        capture.validate_ciphertext(identity,p,custom=name!='roles.sql.age.partial')
+        listings[name]=capture.validate_ciphertext(identity,p,custom=name!='roles.sql.age.partial')
     decrypt=lambda name:['age','-d','-i',str(identity),str(directory/name)]
     source_sql=pipeline(decrypt('schema-all.dump.age.partial'),[plan.PG_ROOT+'/pg_restore','--schema-only','--file=-'],collect=True).decode()
     source_schema=verify.normalize_schema(source_sql)
-    db=OwnCluster(expected['bootstrapRole']);stage='bootstrap';report={'status':'FAIL_LOCAL_RESTORE','targetWritten':False,'contentOutput':False}
+    db=OwnCluster(expected['bootstrapRole'],expected['databaseFacts']);stage='bootstrap';report={'status':'FAIL_LOCAL_RESTORE','targetWritten':False,'contentOutput':False}
     try:
         db.start()
         facts=json.loads(db.sql("select jsonb_build_object('encoding',pg_encoding_to_char(encoding),'collate',datcollate,'ctype',datctype,'localeProvider',datlocprovider) from pg_database where datname=current_database();"))
@@ -168,8 +175,14 @@ def restore_bundle(directory,identity,manifest):
         # Drop that empty local bootstrap schema only when archive recreates it.
         if re.search(r'^CREATE SCHEMA public;',source_sql,re.M):
             db.sql('drop schema public cascade;')
+        stage='exact managed extension bootstrap'
+        prepared=managed.prepare(db,expected,verify.quote,verify.literal)
+        selected,skipped=managed.predata_list(listings['schema-all.dump.age.partial'],prepared)
+        db.docker(['exec','-i',db.name,'/bin/sh','-c','umask 077; cat > /tmp/pre-data.list'],selected.encode())
+        report['bootstrapProfile']=managed.classify(expected)
+        report['explicitPrecreatedObjects']=skipped
         stage='schema pre-data'
-        pipeline(decrypt('schema-all.dump.age.partial'),db.command('pg_restore')+['--exit-on-error','--section=pre-data'])
+        pipeline(decrypt('schema-all.dump.age.partial'),db.command('pg_restore')+['--exit-on-error','--section=pre-data','--use-list=/tmp/pre-data.list'])
         stage='fourteen-schema data'
         pipeline(decrypt('data14.dump.age.partial'),db.command('pg_restore')+['--exit-on-error','--data-only'])
         stage='schema post-data'
@@ -184,6 +197,8 @@ def restore_bundle(directory,identity,manifest):
         plan.require(metadata['schemas']==expected['metadata']['schemas'] and metadata['extensions']==expected['metadata']['extensions'] and metadata['event_triggers']==expected['metadata']['event_triggers'],'PLATFORM_CATALOG_MISMATCH')
         counts=json.loads(db.sql(verify.counts_sql(expected['metadata']['relations'])))
         plan.require(counts==expected['counts'],'RESTORED_COUNTS_MISMATCH')
+        platform_counts=json.loads(db.sql(verify.counts_sql(expected['metadata']['platform_relations'])))
+        plan.require(platform_counts==expected['platformCounts'],'PLATFORM_COUNTS_MISMATCH')
         for name,e in entries.items():
             plan.require(file_hash(directory/name)==e['sha256'],'ARCHIVE_CHANGED_DURING_RESTORE')
         report.update(status='PASS_LOCAL_BUNDLE_RESTORE_ONLY',schemaDigest=verify.fingerprint(restored_schema),countRelations=len(counts),
@@ -198,7 +213,7 @@ def restore_bundle(directory,identity,manifest):
 
 
 def code_hash():
-    names=['controlled-restore.py','restore-verification.py','controlled-backup.py','metadata-probe.sql']
+    names=['controlled-restore.py','restore-verification.py','managed-profile.py','controlled-backup.py','metadata-probe.sql']
     return hashlib.sha256(b''.join((HERE/n).read_bytes() for n in names)+capture.code_hash().encode()).hexdigest()
 
 

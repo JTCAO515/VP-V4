@@ -27,13 +27,24 @@ class RestoreGates(unittest.TestCase):
                   'entries':[{'file':n,'sha256':'0'*64,'bytes':1} for n in m.FILES]}
         with self.assertRaisesRegex(ValueError,'RESTORE_EXPECTATIONS_MISSING'):m.bundle_preflight(manifest)
 
-    def test_known_real_platform_not_silently_accepted(self):
+    def test_known_profile_exact_and_unknown_rejected(self):
         metadata=json.loads((m.ROOT/'artifacts/QAWEB/staging-replay/metadata-probe-04.json').read_text())['metadata']
         manifest={'status':'ENCRYPTED_CAPTURE_INTEGRITY_PASS_RESTORE_UNRUN','target':m.plan.REF,
                   'entries':[{'file':n,'sha256':'0'*64,'bytes':1} for n in m.FILES],
                   'verification':{'contract':'qaw-restore-verification/1','dataSchemas':list(m.plan.SCHEMAS),
-                                  'metadata':metadata,'counts':{'synthetic-placeholder':0},'databaseFacts':{'placeholder':'not-live'},'databaseOwner':'postgres','bootstrapRole':'supabase_admin'}}
-        with self.assertRaisesRegex(ValueError,'MANAGED_EXTENSION_BOOTSTRAP_NOT_YET_ACCEPTED'):m.bundle_preflight(manifest)
+                                  'metadata':metadata,'counts':{'synthetic-placeholder':0},'platformCounts':{},'databaseFacts':{'placeholder':'not-live'},'databaseOwner':'postgres','bootstrapRole':'supabase_admin'}}
+        m.bundle_preflight(manifest)
+        altered=copy.deepcopy(manifest);altered['verification']['metadata']['extensions'][0]['version']='unknown'
+        with self.assertRaisesRegex(ValueError,'MANAGED_EXTENSION_PROFILE_CONFLICT'):m.bundle_preflight(altered)
+        for field,value in [('owner','unknown_owner'),('schema','unknown_schema')]:
+            altered=copy.deepcopy(manifest);altered['verification']['metadata']['extensions'][0][field]=value
+            with self.subTest(field=field),self.assertRaisesRegex(ValueError,'MANAGED_EXTENSION_PROFILE_CONFLICT'):m.bundle_preflight(altered)
+        for name,value in [('postgres',True),('supabase_admin',False)]:
+            altered=copy.deepcopy(manifest)
+            next(role for role in altered['verification']['metadata']['roles'] if role['name']==name)['superuser']=value
+            with self.subTest(role=name),self.assertRaisesRegex(ValueError,'MANAGED_ROLE_PROFILE_CONFLICT'):m.bundle_preflight(altered)
+        altered=copy.deepcopy(manifest);altered['verification']['platformCounts']={'vault.secrets':1}
+        with self.assertRaisesRegex(ValueError,'UNCOVERED_PLATFORM_DATA_NOT_EMPTY'):m.bundle_preflight(altered)
 
     def test_identifier_quoting_and_count_batching(self):
         rels=[{'schema':'odd"schema','name':'table'+str(i),'kind':'r'} for i in range(119)]
