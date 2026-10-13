@@ -1,0 +1,27 @@
+{
+  "base": "e08959c3a194310462b619cac19e5bf2784fdea4",
+  "reviewHead": "16018dd2",
+  "sourceSha256": {
+    "components/qa-agent/QaAgentWorkspace.tsx": "a17568039ba0de0169e83fdcb3fecf75c950789a0394966e9a58eb37bb7b1d15",
+    "components/qa-agent/pending-identity.ts": "ffae9fbcc1d689cc9ee153dfabd899bc4503a568f9cc1521c571492f549db29e"
+  },
+  "privacyBoundary": "ADR0020 content-free receipt: tab sessionStorage contains only version, actor UUID, Session UUID and request UUID; no original text, text digest, cookie, token, credential or provider output. Raw replay text remains in process only.",
+  "behavior": [
+    "Persist and readback-check original identity before POST. Unavailable/malformed/silent/uncleared storage blocks new sending.",
+    "Refresh restores the original request UUID even with empty history. It permits protected GET for that UUID, not a substitute UUID. Refreshed records have no raw text and cannot POST replay; original in-process text may replay only its same UUID.",
+    "A protected matching history/message or accepted receipt confirms identity and removes the marker. A retry-specific not_submitted cannot erase an earlier uncertain attempt. No automatic new Task/POST.",
+    "Logout/actor change/401 purge metadata. Mutation helpers reject another actor namespace; mounted/epoch/abort fences prevent late old-actor callbacks from modifying new-actor records."
+  ],
+  "checks": {
+    "finalLint": "PASS",
+    "finalTypecheck": "PASS",
+    "finalProductionBuild": "PASS",
+    "finalIdentityUnit": "5 PASS / 0 FAIL / 0 SKIP including stale-actor mutation refusal",
+    "preFinalAffectedProductionBrowser": "13 PASS / 0 FAIL / 0 SKIP: refresh unknown identity/late row, history confirmation, storage read/write failure, actor/logout, accepted cleanup, cleanup failure, plus in-process recovery, bookmark, 8th/9th and temporary GET retry regression",
+    "replayNegative": "1 PASS: same-ID replay not_submitted leaves uncertain original marker across refresh",
+    "finalProductionBrowser": "7 PASS / 0 FAIL / 0 SKIP after additional actor fences: refresh→same UUID GET/late row one POST; matching history clear; actor/logout clear; accepted receipt clear; cleanup failure; prior uncertain replay guard; late old actor response cannot clear new actor journal"
+  },
+  "evidenceScope": "Production-built actual UI; synthetic Auth/API only. No actual provider/double-charge/runtime billing PASS claim. Real authenticated target remains UNRUN.",
+  "delivery": "Local commit only per Main; do not push branch/PR, no shared/API/SQL/deploy edits.",
+  "excludedDirty": "AGENTS.md Next-dev auto block preserved and uncommitted."
+}

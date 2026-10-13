@@ -335,3 +335,138 @@ test('Session switch cancels scheduled pending-history backoff without leaking t
  await expect(page.getByLabel('Message',{exact:true})).toBeEnabled();await page.waitForTimeout(2200);
  expect(reads).toBe(1);expect(sent).toHaveLength(1);await expect(page.getByRole('log')).not.toContainText('Old pending input');
 });
+
+const recoveryKey='vp.qa.pending-identity/v1';
+test('unknown ACK refresh restores only original UUID and late row is recovered with one POST',async({page,context})=>{
+ let late=false;const recovered=[];
+ const {sent}=await fixture(page,context,async(route,{path,method,sent,fulfill})=>{
+  if(method==='POST'&&path.endsWith('/messages')) {sent.push(route.request().postDataJSON());await route.abort();return true;}
+  if(path.includes('/messages/')) {
+   recovered.push(path.split('/').at(-1));
+   if(late) await fulfill({message:message(idA,sent[0],'Late original answer')});
+   else await route.fulfill({status:403,contentType:'application/json',body:JSON.stringify(wire({error:{code:'FORBIDDEN',ack:'not_submitted'}}))});
+   return true;
+  }
+  return false;
+ });
+ await page.getByRole('button',{name:'Agree to the notice above'}).click();await expect(page.getByLabel('Message',{exact:true})).toBeEnabled();
+ await page.getByLabel('Message',{exact:true}).fill('Private original input 原文');await page.getByRole('button',{name:'Send',exact:true}).click();
+ await expect(page.getByRole('button',{name:'Check original request'})).toBeVisible();
+ const stored=await page.evaluate(key=>sessionStorage.getItem(key),recoveryKey);
+ expect(JSON.parse(stored)).toEqual({version:1,actorId:idA,requests:[{sessionId:idA,requestId:sent[0].requestId}]});expect(stored).not.toContain('Private original input');
+ await page.reload();await expect(page.getByText('Original delivery is unconfirmed.',{exact:false})).toBeVisible();
+ await expect(page.getByRole('button',{name:'Send',exact:true})).toBeDisabled();
+ await page.locator('form').evaluate(form=>form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true})));expect(sent).toHaveLength(1);
+ await page.getByRole('button',{name:'Check original request'}).click();await expect.poll(()=>recovered.length).toBe(1);
+ await expect(page.getByRole('button',{name:'Resend original request'})).toHaveCount(0);expect(sent).toHaveLength(1);
+ late=true;await page.getByRole('button',{name:'Check original request'}).click();await expect(page.getByRole('log')).toContainText('Late original answer');
+ expect(recovered).toEqual([sent[0].requestId,sent[0].requestId]);expect(sent).toHaveLength(1);
+ expect(await page.evaluate(key=>sessionStorage.getItem(key),recoveryKey)).toBeNull();
+});
+test('unknown ACK refresh finds matching history receipt and clears only its recovery marker',async({page,context})=>{
+ let late=false;
+ const {sent}=await fixture(page,context,async(route,{path,method,sent,fulfill})=>{
+  if(method==='POST'&&path.endsWith('/messages')) {sent.push(route.request().postDataJSON());await route.abort();return true;}
+  if(late&&method==='GET'&&path.endsWith(idA)) {await fulfill({session:session(idA),messages:[message(idA,sent[0],'Confirmed original history')]});return true;}
+  return false;
+ });
+ await page.getByRole('button',{name:'Agree to the notice above'}).click();await expect(page.getByLabel('Message',{exact:true})).toBeEnabled();
+ await page.getByLabel('Message',{exact:true}).fill('Original history input');await page.getByRole('button',{name:'Send',exact:true}).click();
+ await expect(page.getByRole('button',{name:'Check original request'})).toBeVisible();late=true;await page.reload();
+ await expect(page.getByRole('log')).toContainText('Confirmed original history');await expect(page.getByRole('button',{name:'Check original request'})).toHaveCount(0);
+ expect(await page.evaluate(key=>sessionStorage.getItem(key),recoveryKey)).toBeNull();expect(sent).toHaveLength(1);
+});
+for(const failure of ['read','write']) {
+ test(`recovery storage ${failure} failure blocks message POST before admission`,async({page,context})=>{
+  await page.addInitScript(({key,failure})=>{
+   const method=failure==='read'?'getItem':'setItem',original=Storage.prototype[method];
+   Storage.prototype[method]=function(...args){if(args[0]===key)throw new DOMException('Synthetic recovery storage failure','SecurityError');return original.apply(this,args);};
+  },{key:recoveryKey,failure});
+  const {sent}=await fixture(page,context,()=>false,{ready:failure!=='read'});
+  await page.getByRole('button',{name:'Agree to the notice above'}).click();
+  if(failure==='write') {await page.getByLabel('Message',{exact:true}).fill('Must not leave browser');await page.getByRole('button',{name:'Send',exact:true}).click();}
+  await expect(page.getByText('Request recovery storage is unavailable. New sending is paused. Please click Reload.')).toBeVisible();
+  await expect(page.getByRole('button',{name:'Send',exact:true})).toBeDisabled();expect(sent).toHaveLength(0);
+ });
+}
+test('unknown recovery identity is cleared on actor change and logout, never leaked to new actor',async({page,context})=>{
+ let changed=false;
+ const {sent}=await fixture(page,context,async(route,{path,method,sent,fulfill})=>{
+  if(changed&&method==='GET'&&path.endsWith('/sessions')) {await fulfill({sessions:[session(idB)]});return true;}
+  if(changed&&path.endsWith(idA)) {await route.fulfill({status:403,contentType:'application/json',body:JSON.stringify(wire({error:{code:'FORBIDDEN',ack:'not_submitted'}}))});return true;}
+  if(method==='POST'&&path.endsWith('/messages')) {sent.push(route.request().postDataJSON());await route.abort();return true;}
+  return false;
+ });
+ await page.getByRole('button',{name:'Agree to the notice above'}).click();await expect(page.getByLabel('Message',{exact:true})).toBeEnabled();
+ await page.getByLabel('Message',{exact:true}).fill('Owner A private draft');await page.getByRole('button',{name:'Send',exact:true}).click();
+ await expect(page.getByRole('button',{name:'Check original request'})).toBeVisible();changed=true;
+ await page.evaluate(owner=>{const c=new BroadcastChannel('sb-127-auth-token');c.postMessage({event:'SIGNED_IN',session:{user:{id:owner}}});setTimeout(()=>c.close(),100);},idB);
+ await expect(page.getByRole('button',{name:'Check original request'})).toHaveCount(0);
+ expect(await page.evaluate(key=>sessionStorage.getItem(key),recoveryKey)).toBeNull();expect(sent).toHaveLength(1);
+ // An unresolved same-actor record is also erased by the SDK logout event.
+ await page.evaluate(({key,owner})=>{sessionStorage.setItem(key,JSON.stringify({version:1,actorId:owner,requests:[{sessionId:owner,requestId:'44444444-4444-4444-8444-444444444444'}]}));const c=new BroadcastChannel('sb-127-auth-token');c.postMessage({event:'SIGNED_OUT',session:null});setTimeout(()=>c.close(),100);},{key:recoveryKey,owner:idB});
+ await expect(page.getByRole('link',{name:'Sign in',exact:true})).toBeVisible();expect(await page.evaluate(key=>sessionStorage.getItem(key),recoveryKey)).toBeNull();
+});
+test('confirmed accepted receipt clears recovery identity before pending GET polling',async({page,context})=>{
+ const {sent}=await fixture(page,context);
+ await page.getByRole('button',{name:'Agree to the notice above'}).click();await expect(page.getByLabel('Message',{exact:true})).toBeEnabled();
+ await page.getByLabel('Message',{exact:true}).fill('Accepted once');await page.getByRole('button',{name:'Send',exact:true}).click();
+ await expect(page.getByLabel('Message',{exact:true})).toHaveValue('');
+ expect(await page.evaluate(key=>sessionStorage.getItem(key),recoveryKey)).toBeNull();expect(sent).toHaveLength(1);
+});
+test('confirmed receipt cleanup failure retains marker and blocks new sends until safe readback cleanup',async({page,context})=>{
+ await page.addInitScript(key=>{
+  window.blockRecoveryCleanup=true;const original=Storage.prototype.removeItem;
+  Storage.prototype.removeItem=function(candidate){if(candidate===key&&window.blockRecoveryCleanup)throw new DOMException('Synthetic cleanup failure','SecurityError');return original.call(this,candidate);};
+ },recoveryKey);
+ const {sent}=await fixture(page,context);
+ await page.getByRole('button',{name:'Agree to the notice above'}).click();await expect(page.getByLabel('Message',{exact:true})).toBeEnabled();
+ await page.getByLabel('Message',{exact:true}).fill('Confirmed before cleanup');await page.getByRole('button',{name:'Send',exact:true}).click();
+ await expect(page.getByText('Request recovery storage is unavailable. New sending is paused. Please click Reload.')).toBeVisible();
+ expect(JSON.parse(await page.evaluate(key=>sessionStorage.getItem(key),recoveryKey)).requests[0].requestId).toBe(sent[0].requestId);
+ await expect(page.getByRole('button',{name:'Send',exact:true})).toBeDisabled();expect(sent).toHaveLength(1);
+ await page.evaluate(()=>{window.blockRecoveryCleanup=false;});await page.getByRole('button',{name:'Reload',exact:true}).click();
+ await expect(page.getByRole('log')).toContainText('Saved answer');expect(await page.evaluate(key=>sessionStorage.getItem(key),recoveryKey)).toBeNull();expect(sent).toHaveLength(1);
+});
+test('replay not_submitted cannot erase an earlier unknown ACK identity across refresh',async({page,context})=>{
+ const lookups=[];
+ const {sent}=await fixture(page,context,async(route,{path,method,sent})=>{
+  if(method==='POST'&&path.endsWith('/messages')) {
+   sent.push(route.request().postDataJSON());
+   if(sent.length===1) await route.abort();
+   else await route.fulfill({status:503,contentType:'application/json',body:JSON.stringify(wire({error:{code:'PROVIDER_UNAVAILABLE',ack:'not_submitted'}}))});
+   return true;
+  }
+  if(path.includes('/messages/')) {lookups.push(path.split('/').at(-1));await route.fulfill({status:403,contentType:'application/json',body:JSON.stringify(wire({error:{code:'FORBIDDEN',ack:'not_submitted'}}))});return true;}
+  return false;
+ });
+ await page.getByRole('button',{name:'Agree to the notice above'}).click();await expect(page.getByLabel('Message',{exact:true})).toBeEnabled();
+ await page.getByLabel('Message',{exact:true}).fill(' Original bytes preserved ');await page.getByRole('button',{name:'Send',exact:true}).click();
+ await page.getByRole('button',{name:'Check original request'}).click();await page.getByRole('button',{name:'Resend original request'}).click();
+ await expect.poll(()=>sent.length).toBe(2);expect(sent[1]).toEqual(sent[0]);expect(lookups).toEqual([sent[0].requestId]);
+ expect(JSON.parse(await page.evaluate(key=>sessionStorage.getItem(key),recoveryKey)).requests[0].requestId).toBe(sent[0].requestId);
+ await page.reload();await expect(page.getByText('Original delivery is unconfirmed.',{exact:false})).toBeVisible();
+ await expect(page.getByRole('button',{name:'Send',exact:true})).toBeDisabled();await expect(page.getByRole('button',{name:'Resend original request'})).toHaveCount(0);
+ await page.locator('form').evaluate(form=>form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true})));expect(sent).toHaveLength(2);
+});
+test('late old actor receipt cannot clear new actor unknown recovery marker',async({page,context})=>{
+ let newActor=false,releaseOld;const posts=[];
+ await fixture(page,context,async(route,{path,method,fulfill})=>{
+  if(path.endsWith('/policy')) {await fulfill({policy:{...policy,consentState:'accepted'}});return true;}
+  if(newActor&&method==='GET'&&path.endsWith('/sessions')) {await fulfill({sessions:[session(idB)]});return true;}
+  if(newActor&&path.endsWith(idA)) {await route.fulfill({status:403,contentType:'application/json',body:JSON.stringify(wire({error:{code:'FORBIDDEN',ack:'not_submitted'}}))});return true;}
+  if(method==='POST'&&path.endsWith('/messages')) {
+   const body=route.request().postDataJSON();posts.push(body);
+   if(posts.length===1) {await new Promise(resolve=>{releaseOld=resolve;});await fulfill({requestId:body.requestId,turnId:body.requestId,sessionId:idA,status:'pending',reused:false}).catch(()=>{});}
+   else await route.abort();
+   return true;
+  }
+  return false;
+ });
+ await page.getByLabel('Message',{exact:true}).fill('Old actor in flight');await page.getByRole('button',{name:'Send',exact:true}).click();await expect.poll(()=>!!releaseOld).toBe(true);
+ newActor=true;await page.evaluate(owner=>{const c=new BroadcastChannel('sb-127-auth-token');c.postMessage({event:'SIGNED_IN',session:{user:{id:owner}}});setTimeout(()=>c.close(),100);},idB);
+ await page.getByRole('button',{name:`Session ${idB}`,exact:true}).click();await page.getByLabel('Message',{exact:true}).fill('New actor unknown');await page.getByRole('button',{name:'Send',exact:true}).click();
+ await expect(page.getByRole('button',{name:'Check original request'})).toBeVisible();
+ const record=await page.evaluate(key=>sessionStorage.getItem(key),recoveryKey);expect(JSON.parse(record).actorId).toBe(idB);expect(JSON.parse(record).requests[0].requestId).toBe(posts[1].requestId);
+ releaseOld();await page.waitForTimeout(200);expect(await page.evaluate(key=>sessionStorage.getItem(key),recoveryKey)).toBe(record);expect(posts).toHaveLength(2);
+});

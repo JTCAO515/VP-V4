@@ -1,0 +1,27 @@
+(node:71130) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2m[WebServer] [22m(node:71134) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 13 tests using 1 worker
+
+(node:71136) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:71136) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:71136) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/e2e/qa-agent-ui/workspace.spec.mjs:200:1 › lost ACK retains original ID and never automatically POSTs a second message (689ms)
+  ✓   2 tests/e2e/qa-agent-ui/workspace.spec.mjs:679:3 › explicit bookmark outside twenty-session list loads protected detail and joins list (363ms)
+  ✓   3 tests/e2e/qa-agent-ui/workspace.spec.mjs:679:3 › explicit bookmark outside twenty-session list retains RLS refusal (227ms)
+  ✓   4 tests/e2e/qa-agent-ui/workspace.spec.mjs:756:1 › eighth accepted turn completes and preserves history while new sends stop; switch restores composer (6.2s)
+  ✓   5 tests/e2e/qa-agent-ui/workspace.spec.mjs:837:1 › ninth rejection keeps history and notice, prevents retries, and new session restores sending (3.4s)
+  ✓   6 tests/e2e/qa-agent-ui/workspace.spec.mjs:945:1 › pending history retries one temporary 503 and automatically reads answer without a second POST (4.3s)
+  ✓   7 tests/e2e/qa-agent-ui/workspace.spec.mjs:1183:1 › unknown ACK refresh restores only original UUID and late row is recovered with one POST (729ms)
+  ✓   8 tests/e2e/qa-agent-ui/workspace.spec.mjs:1276:1 › unknown ACK refresh finds matching history receipt and clears only its recovery marker (632ms)
+  ✓   9 tests/e2e/qa-agent-ui/workspace.spec.mjs:1329:3 › recovery storage read failure blocks message POST before admission (300ms)
+  ✓  10 tests/e2e/qa-agent-ui/workspace.spec.mjs:1329:3 › recovery storage write failure blocks message POST before admission (402ms)
+  ✓  11 tests/e2e/qa-agent-ui/workspace.spec.mjs:1372:1 › unknown recovery identity is cleared on actor change and logout, never leaked to new actor (525ms)
+  ✓  12 tests/e2e/qa-agent-ui/workspace.spec.mjs:1474:1 › confirmed accepted receipt clears recovery identity before pending GET polling (506ms)
+  ✓  13 tests/e2e/qa-agent-ui/workspace.spec.mjs:1500:1 › confirmed receipt cleanup failure retains marker and blocks new sends until safe readback cleanup (3.6s)
+
+  13 passed (22.7s)
