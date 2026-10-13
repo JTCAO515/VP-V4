@@ -2,7 +2,7 @@
 export type Session = { id: string; createdAt: string; updatedAt: string; label: string };
 export type Message = { requestId: string; text: string; answer: string | null; status: "pending" | "answered" | "partial" | "clarification" | "blocked" | "technical_failure" };
 export type History = { session: Session; messages: Message[] };
-export type Policy = { policyId: string; noticeHash: string; noticeZh: string; noticeEn: string; consented: boolean; contextMode: "current_input_v1" | "task_history_v1" | "qa_session_history_v1" };
+export type Policy = { policyId: string; noticeHash: string; noticeZh: string; noticeEn: string; consented: boolean; contextMode: "current_input_v1" | "task_history_v1" | "qa_session_history_v1"; maxTurns: number | null };
 export const permitsQaSubmission = (policy: Policy | null): boolean => policy?.contextMode === "qa_session_history_v1" && policy.consented;
 export class ApiError extends Error {
   constructor(public status: number, public code = "PROVIDER_UNAVAILABLE", public ack: "not_submitted" | "unknown" = "unknown") { super(`QA request failed (${status})`); }
@@ -32,8 +32,9 @@ function policy(value: unknown): Policy {
   if (!record(value) || !uuid(value.id) || typeof value.noticeHash !== "string" || !/^[a-f0-9]{64}$/.test(value.noticeHash)
     || typeof value.noticeZh !== "string" || !value.noticeZh.trim() || typeof value.noticeEn !== "string" || !value.noticeEn.trim()
     || !["accepted", "not_accepted", "withdrawn"].includes(String(value.consentState))
-    || !["current_input_v1", "task_history_v1", "qa_session_history_v1"].includes(String(value.contextMode))) invalid();
-  return { policyId: value.id, noticeHash: value.noticeHash, noticeZh: value.noticeZh, noticeEn: value.noticeEn, consented: value.consentState === "accepted", contextMode: value.contextMode as Policy["contextMode"] };
+    || !["current_input_v1", "task_history_v1", "qa_session_history_v1"].includes(String(value.contextMode))
+    || (value.contextMode === "qa_session_history_v1" ? value.maxTurns !== 8 : value.maxTurns !== null)) invalid();
+  return { policyId: value.id, noticeHash: value.noticeHash, noticeZh: value.noticeZh, noticeEn: value.noticeEn, consented: value.consentState === "accepted", contextMode: value.contextMode as Policy["contextMode"], maxTurns: value.maxTurns as number | null };
 }
 function message(value: unknown, sessionId: string, requestId?: string): Message {
   if (!record(value) || !uuid(value.requestId) || value.turnId !== value.requestId || value.sessionId !== sessionId

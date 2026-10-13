@@ -1,0 +1,24 @@
+{
+  "base": "e9f512442dbf326d8ef622f344b829d5bd151975",
+  "reviewHead": "6b260db5",
+  "backendCapacityContract": "89b2e09e6da76cce33fef97b905ba78993aa715c",
+  "sourceSha256": {
+    "components/qa-agent/api.ts": "611ebb7cc21f3121041d5913de90881c74d024c50453ef3a911895552d8c35da",
+    "components/qa-agent/QaAgentWorkspace.tsx": "79b77ee96bc149cf06f49a43a2bc24d5fb82ab9356503cb37d07441bf3c6d25a"
+  },
+  "changes": [
+    "Explicit bookmarked Session calls protected detail even when absent from the latest twenty Session metadata rows. Only a successful validated detail response inserts its real Session into the list. Foreign/invalid detail keeps refusal and empty history.",
+    "Policy maxTurns is required: versioned QA mode must report 8, known legacy modes null; missing/mismatched field fails closed. No invented capacity authority.",
+    "At the protected quota, show new-Session continuation message and disable new admission. HTTP409 QA_CONTEXT_LIMIT/not_submitted latches only the current Session, preserves history/notice, clears unadmitted request, never auto retries or creates a new Task. Switching/new Session restores composer readiness. Original read/replay retains request identity."
+  ],
+  "checks": {
+    "sourceLint": "PASS",
+    "typecheck": "PASS",
+    "productionBuild": "PASS",
+    "adapterNegatives": "6 PASS / 0 FAIL / 0 SKIP",
+    "productionBrowser": "7 PASS / 0 FAIL / 0 SKIP: latest20-excluded bookmark and reload, foreign UUID refusal, eighth-turn answer preserved with composer cap, raced ninth-turn409 preserved history and new-session continuation, lost ACK original GET only, 401 cleanup, SDK actor replacement"
+  },
+  "reusedEvidence": "Unchanged mobile layout and unrelated prior 7/7 plus pre-consent5/5 retained, not re-run as a full matrix.",
+  "target": "Authenticated real QA/provider remains UNRUN. Current public QAflag-disabled deployment/read-only evidence from4e477a7f remains separate. No Vercel/DB/config writes.",
+  "dirtyExcluded": "Next-dev generated AGENTS.md preserved, not committed."
+}
