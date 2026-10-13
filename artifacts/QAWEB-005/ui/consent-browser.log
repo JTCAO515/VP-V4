@@ -1,0 +1,19 @@
+(node:49597) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2m[WebServer] [22m(node:49599) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 5 tests using 1 worker
+
+(node:49609) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49609) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:49609) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/e2e/qa-agent-ui/workspace.spec.mjs:313:1 › 401 clears private history and offers existing sign-in (505ms)
+  ✓  2 tests/e2e/qa-agent-ui/workspace.spec.mjs:404:1 › SDK owner replacement clears messages and aborts old in-flight work (542ms)
+  ✓  3 tests/e2e/qa-agent-ui/workspace.spec.mjs:541:3 › pre-consent select preserves notice through protected 403 and reload (3.4s)
+  ✓  4 tests/e2e/qa-agent-ui/workspace.spec.mjs:541:3 › pre-consent create preserves notice through protected 403 and reload (3.5s)
+  ✓  5 tests/e2e/qa-agent-ui/workspace.spec.mjs:541:3 › pre-consent query preserves notice through protected 403 and reload (3.4s)
+
+  5 passed (12.3s)

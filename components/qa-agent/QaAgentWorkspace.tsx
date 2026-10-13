@@ -58,7 +58,11 @@ function Workspace({ locale, initialSession }: { locale: "zh" | "en"; initialSes
     if (reason instanceof ApiError && reason.status === 401) {
       pendingBySession.current.clear(); setMessages([]); setSessions([]); setPolicy(null); setPending(null); setUnauthenticated(true);
     } else {
-      if (reason instanceof ApiError && reason.code === "DATA_POLICY_BLOCKED") { setPolicy(null); setMessages([]); }
+      if (reason instanceof ApiError && reason.code === "DATA_POLICY_BLOCKED") {
+        // Protected history may require consent to the already-read notice.
+        // Keep that notice/action available; denial never grants send readiness.
+        setMessages([]); setHistoryReady(false);
+      }
       setError(true);
     }
   }
