@@ -1,0 +1,21 @@
+(node:18564) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2m[WebServer] [22m(node:18566) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 7 tests using 1 worker
+
+(node:18567) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:18567) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:18567) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/e2e/qa-agent-ui/workspace.spec.mjs:405:1 › SDK owner replacement clears messages and aborts old in-flight work (653ms)
+  ✓  2 tests/e2e/qa-agent-ui/workspace.spec.mjs:945:1 › pending history retries one temporary 503 and automatically reads answer without a second POST (4.3s)
+  ✓  3 tests/e2e/qa-agent-ui/workspace.spec.mjs:997:1 › pending history stops after three retries and manual Reload reads only the original answer (12.6s)
+  ✓  4 tests/e2e/qa-agent-ui/workspace.spec.mjs:1062:3 › pending history 401 stops immediately and clears private messages (5.5s)
+  ✓  5 tests/e2e/qa-agent-ui/workspace.spec.mjs:1062:3 › pending history 403 stops immediately and clears private messages (5.5s)
+  ✓  6 tests/e2e/qa-agent-ui/workspace.spec.mjs:1062:3 › pending history invalid stops immediately and clears private messages (5.6s)
+  ✓  7 tests/e2e/qa-agent-ui/workspace.spec.mjs:1128:1 › Session switch cancels scheduled pending-history backoff without leaking the old reply (5.6s)
+
+  7 passed (40.6s)

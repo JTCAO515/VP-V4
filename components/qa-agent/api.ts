@@ -7,6 +7,12 @@ export const permitsQaSubmission = (policy: Policy | null): boolean => policy?.c
 export class ApiError extends Error {
   constructor(public status: number, public code = "PROVIDER_UNAVAILABLE", public ack: "not_submitted" | "unknown" = "unknown") { super(`QA request failed (${status})`); }
 }
+/** Only temporary read failures may be retried. Protocol/permission errors stop. */
+export function retryableHistoryError(reason: unknown): boolean {
+  if (reason instanceof ApiError) return reason.code === "PROVIDER_UNAVAILABLE"
+    && [408, 429, 500, 502, 503, 504].includes(reason.status);
+  return reason instanceof TypeError || (reason instanceof Error && reason.name === "TimeoutError");
+}
 const record = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null && !Array.isArray(value);
 const uuid = (value: unknown): value is string => typeof value === "string" && /^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(value);
 function invalid(): never { throw new ApiError(502, "INVALID_RESPONSE"); }
@@ -16,7 +22,10 @@ async function request(path: string, signal: AbortSignal, body?: object): Promis
     ...(body ? { headers: { "content-type": "application/json" }, body: JSON.stringify(body) } : {}),
   });
   let data: unknown;
-  try { data = await response.json(); } catch { throw new ApiError(response.status || 502); }
+  try { data = await response.json(); } catch {
+    if (response.ok) invalid();
+    throw new ApiError(response.status || 502);
+  }
   if (!response.ok) {
     const error = record(data) && record(data.error) ? data.error : null;
     throw new ApiError(response.status, typeof error?.code === "string" ? error.code : "PROVIDER_UNAVAILABLE", error?.ack === "not_submitted" ? "not_submitted" : "unknown");

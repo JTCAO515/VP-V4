@@ -270,3 +270,68 @@ test('ninth rejection keeps history and notice, prevents retries, and new sessio
  await page.getByRole('button',{name:'Send',exact:true}).click();await expect(page.getByRole('log')).toContainText('New session answer');expect(submitted).toHaveLength(2);
  await page.getByRole('button',{name:`Session ${idA}`,exact:true}).click();await expect(page.getByRole('button',{name:'Send',exact:true})).toBeDisabled();
 });
+
+test('pending history retries one temporary 503 and automatically reads answer without a second POST',async({page,context})=>{
+ let reads=0;
+ const {sent}=await fixture(page,context,async(route,{path,method,sent,fulfill,saved})=>{
+  if(method==='GET'&&path.endsWith(idA)&&sent.length) {
+   reads++;
+   if(reads===1) await route.fulfill({status:503,contentType:'application/json',body:JSON.stringify(wire({error:{code:'PROVIDER_UNAVAILABLE',ack:'not_submitted'}}))});
+   else await fulfill({session:session(idA),messages:saved.get(idA)});
+   return true;
+  }
+  return false;
+ });
+ await page.getByRole('button',{name:'Agree to the notice above'}).click();await expect(page.getByLabel('Message',{exact:true})).toBeEnabled();
+ await page.getByLabel('Message',{exact:true}).fill('Wait for original reply');await page.getByRole('button',{name:'Send',exact:true}).click();
+ await expect(page.getByRole('log')).toContainText('Saved answer',{timeout:10000});expect(reads).toBe(2);expect(sent).toHaveLength(1);
+});
+test('pending history stops after three retries and manual Reload reads only the original answer',async({page,context})=>{
+ let reads=0,healthy=false;
+ const {sent}=await fixture(page,context,async(route,{path,method,sent,fulfill,saved})=>{
+  if(method==='GET'&&path.endsWith(idA)&&sent.length) {
+   reads++;
+   if(!healthy) await route.fulfill({status:503,contentType:'application/json',body:JSON.stringify(wire({error:{code:'PROVIDER_UNAVAILABLE',ack:'not_submitted'}}))});
+   else await fulfill({session:session(idA),messages:saved.get(idA)});
+   return true;
+  }
+  return false;
+ });
+ await page.getByRole('button',{name:'Agree to the notice above'}).click();await expect(page.getByLabel('Message',{exact:true})).toBeEnabled();
+ await page.getByLabel('Message',{exact:true}).fill('Keep original pending');await page.getByRole('button',{name:'Send',exact:true}).click();
+ await expect(page.getByText('Automatic reading has paused. Click Reload to check the original reply.')).toBeVisible({timeout:15000});
+ await expect(page.getByRole('log')).toContainText('Keep original pending');await expect(page.getByRole('log')).not.toContainText('Saved answer');
+ expect(reads).toBe(4);await page.waitForTimeout(2200);expect(reads).toBe(4);expect(sent).toHaveLength(1);
+ healthy=true;await page.getByRole('button',{name:'Reload',exact:true}).click();await expect(page.getByRole('log')).toContainText('Saved answer');expect(sent).toHaveLength(1);
+});
+for(const kind of ['401','403','invalid']) {
+ test(`pending history ${kind} stops immediately and clears private messages`,async({page,context})=>{
+  let reads=0;
+  const {sent}=await fixture(page,context,async(route,{path,method,sent,fulfill})=>{
+   if(method==='GET'&&path.endsWith(idA)&&sent.length) {
+    reads++;
+    if(kind==='invalid') await fulfill({session:session(idB),messages:[]});
+    else await route.fulfill({status:Number(kind),contentType:'application/json',body:JSON.stringify(wire({error:{code:kind==='401'?'UNAUTHENTICATED':'DATA_POLICY_BLOCKED',ack:'not_submitted'}}))});
+    return true;
+   }
+   return false;
+  });
+  await page.getByRole('button',{name:'Agree to the notice above'}).click();await expect(page.getByLabel('Message',{exact:true})).toBeEnabled();
+  await page.getByLabel('Message',{exact:true}).fill('Private pending input');await page.getByRole('button',{name:'Send',exact:true}).click();
+  if(kind==='401') {await expect(page.getByRole('link',{name:'Sign in',exact:true})).toBeVisible();await expect(page.getByRole('log')).toHaveCount(0);}
+  else {await expect(page.getByRole('region',{name:'Agent QA'}).getByRole('alert')).toContainText('The request could not be completed.');await expect(page.getByRole('log')).toBeEmpty();await expect(page.getByRole('button',{name:'Send',exact:true})).toBeDisabled();}
+  await page.waitForTimeout(2200);expect(reads).toBe(1);expect(sent).toHaveLength(1);
+ });
+}
+test('Session switch cancels scheduled pending-history backoff without leaking the old reply',async({page,context})=>{
+ let reads=0;
+ const {sent}=await fixture(page,context,async(route,{path,method,sent})=>{
+  if(method==='GET'&&path.endsWith(idA)&&sent.length) {reads++;await route.fulfill({status:503,contentType:'application/json',body:JSON.stringify(wire({error:{code:'PROVIDER_UNAVAILABLE',ack:'not_submitted'}}))});return true;}
+  return false;
+ });
+ await page.getByRole('button',{name:'Agree to the notice above'}).click();await expect(page.getByLabel('Message',{exact:true})).toBeEnabled();
+ await page.getByLabel('Message',{exact:true}).fill('Old pending input');await page.getByRole('button',{name:'Send',exact:true}).click();
+ await expect.poll(()=>reads).toBe(1);await page.getByRole('button',{name:`Session ${idB}`,exact:true}).click();
+ await expect(page.getByLabel('Message',{exact:true})).toBeEnabled();await page.waitForTimeout(2200);
+ expect(reads).toBe(1);expect(sent).toHaveLength(1);await expect(page.getByRole('log')).not.toContainText('Old pending input');
+});
