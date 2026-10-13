@@ -1,0 +1,19 @@
+{
+  "schemaBeforePgDefMD5": "81eab8c4cdb31f2fd9289af2b5b4b63d",
+  "schemaAfterAuthoredPgDefMD5": "73d47b42837fc6a228570e905e190063",
+  "unchangedApplicationSchemaSHA256": "0ec0fcfc206909a38756272a65a877c6ab857c00fd114178d135837da951c73a",
+  "normalizesOnly": [
+    [
+      "turn_private.text_policies",
+      "text_policies_context_mode_check"
+    ],
+    [
+      "turn_private.service_task_turns",
+      "service_task_turns_relationship_check"
+    ]
+  ],
+  "activation": "NONE",
+  "runtimeChangedPins": [
+    "turn_data_private.schema_supported_v1()"
+  ]
+}

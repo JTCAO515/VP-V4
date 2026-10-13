@@ -1,0 +1,15 @@
+# QAWEB SQL candidate verification — 2026-10-13
+
+Base `daa7bae44a660381fb3295d0d2afc327ea98d3ba`; owner branch `codex/qaw005-sql-20261013`. Product files: only this artifacts directory. Full shared deltas remain candidate-only; migration path NOT_GRANTED. Main reviews exact role vectors, new policy/notice and lifecycle source changes before integration.
+
+Run `node artifacts/QAWEB/sql-20261013/proof.mjs` from worktree root. Fresh unique own Docker container each run, cached `public.ecr.aws/supabase/postgres:17.6.1.159` image `sha256:86a2e078779e5bdccda1f6f6c5063aa9779a322d1fface5fb408d051909b230f`, pull=never, network=none, no exposed ports/mounts. Original fixture and all original migrations replayed unchanged. Own container cleanup confirmed; no other resources touched.
+
+Latest `proof-1791867015856.log`: **35 named PASS checks**, process exit 0. Actual original SQL roles, actor/session gates, request replay/concurrency, follow-up CAS, why/simplify/second/correction same Task, canonical budget and settlement, pending-ACK reconciliation, root old-worker exclusion, current-input compatibility, max8/max64KiB, expiry/withdraw/hide/late sender, no Trip, original managed export and real TypeScript export decode included. Fresh ownerId/authSessionId assertions read original locked work, included in contextDigest.
+
+Original baseline schema `t|t`; core-only candidate `t|f` is an observed FAIL and remains in raw logs. Separate fully shown lifecycle candidate maps exactly two known CHECK extensions to their original definitions, retains the accepted application fingerprint, updates only its authored schema-function runtime pin, guards exact prior sources, and rejects unknown extensions. Combined schema/runtime `t|t` PASS. This is an explicit Main-review source delta, not unknown hash adoption. All other pins and schema members remain checked.
+
+Earlier raw failures retained: initial incorrect original budget dispatch signature; incorrect test export-envelope shape; core-only lifecycle mismatch; source-pin rejection exposed obsolete global-claim template. Latest template is taken from original `20261010020000_assistant_events.sql`, preserves `cancel_unclaimable_turn_v1`, and adds only QA-mode exclusion. No failed original test or old owner evidence was edited or removed.
+
+UNRUN: target migration/real browser/provider/deployment/device, independent exact-head review/required CI, target managed deletion/restore. Local managed SQL export and original TS decode are PASS; neither establishes target lifecycle acceptance. Policy notice is an unexpanded unpublished template, no policy or budget enabled. Restore must preserve original revocation/source fences; no new table/registry or retained authority was added.
+
+Rollback: use one transaction for core + lifecycle before activation; disable QA entry/worker/policy on rollout rollback, retain original QA rows, budget receipts and cancel/read ability. Do not drop extended enum values after rows exist, rewrite applied migrations, revive hidden sources, or reroute to unrelated old context consent.

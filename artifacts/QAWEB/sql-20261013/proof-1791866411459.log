@@ -1,0 +1,20 @@
+OWN CONTAINER qaw005-sql-065f9084-46d
+PASS full original migration replay
+PASS candidate transaction rollback preserves original private functions
+PASS candidate applies in own database
+PASS unknown notice and missing consent reject
+PASS concurrent identical retry admits once and changed input rejects
+PASS legacy global claimer excludes QA
+FAIL Error: ERROR:  function public.dispatch_model_budget(uuid, uuid) does not exist
+LINE 1: r:=public.dispatch_model_budget(p_scope_id,p_lease_token)
+           ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+QUERY:  r:=public.dispatch_model_budget(p_scope_id,p_lease_token)
+CONTEXT:  PL/pgSQL function public.qa_authorize_dispatch_v1(uuid,uuid,uuid,uuid,text,text) line 12 at assignment
+
+    at db (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-sql-20261013/artifacts/QAWEB/sql-20261013/proof.mjs:6:60)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-sql-20261013/artifacts/QAWEB/sql-20261013/proof.mjs:8:53
+    at async answer (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-sql-20261013/artifacts/QAWEB/sql-20261013/proof.mjs:21:131)
+    at async file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-sql-20261013/artifacts/QAWEB/sql-20261013/proof.mjs:38:14
+OWN CLEANUP 0

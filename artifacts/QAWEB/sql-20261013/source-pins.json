@@ -1,0 +1,11 @@
+{
+  "base": "daa7bae44a660381fb3295d0d2afc327ea98d3ba",
+  "globalClaimBeforeSHA256": "4587aa38ea7ed3eb1c93aed9e5d298ffa4a4346646e9a881fc035ca9adf5b21d",
+  "globalClaimAfterSHA256": "e132742d8e6747379d4ea0c7f1d4288c079fab6efecb5ffa11163bf3900b2aba",
+  "policyNoticeActivation": "NONE",
+  "newTables": [],
+  "globalClaimBeforeProsrcMD5": "18f9e80f8fbad1d1bb50f0f4fb22273c",
+  "globalClaimAfterProsrcMD5": "f916ed0cf81081d64da9919cd16ab119",
+  "legacyLockBeforeProsrcMD5": "6784eb5b499638a9692adb2ad5037719",
+  "legacyLockAfterProsrcMD5": "2830f39fd05a86b9d5fabeb96f21b23d"
+}

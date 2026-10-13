@@ -1,0 +1,18 @@
+{
+  "base": "daa7bae44a660381fb3295d0d2afc327ea98d3ba",
+  "latestProof": "proof-1791867015856.log",
+  "namedPassChecks": 35,
+  "sourcePins": "source-pins.json",
+  "lifecyclePins": "lifecycle-pins.json",
+  "sha256": {
+    "candidate.sql": "a2c2c78ed2528321aa1a033f83035e77a2f9bf02205158c584c4180ef04138f9",
+    "lifecycle-candidate.sql": "737be11c73c4c625b93827d209fdcbab3b5629e5b2d6b18e6f1bb09fe84cd848",
+    "proof.mjs": "b3858af7a89517826b243c1ca2f0d3279269fc6cbb93ff6bc3ec685b3c49223e",
+    "producer-contract.md": "028a809704f800226642f95710ccc9023c7850a7a973e940874cf120940e3116",
+    "policy-notice-template.json": "01851f3b366af9d7180e6ceac12bc7c79ee968fc12d373012595d21932656cec"
+  },
+  "targetApply": "UNRUN_NOT_GRANTED",
+  "realProvider": "UNRUN",
+  "review": "UNRUN_MAIN_REVIEW_REQUIRED",
+  "managedDeleteRestore": "UNRUN"
+}

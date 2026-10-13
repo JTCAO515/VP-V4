@@ -1,0 +1,16 @@
+OWN CONTAINER qaw005-sql-ec216afa-7aa
+PASS full original migration replay
+PASS candidate transaction rollback preserves original private functions
+PASS candidate applies in own database
+PASS unknown notice and missing consent reject
+PASS concurrent identical retry admits once and changed input rejects
+PASS legacy global claimer excludes QA
+PASS original budget dispatch/settlement and truthful completion
+PASS why simplify second correction share original Task and finite real sources
+PASS all provider attempts billed to original canonical Task
+PASS actor isolation and new Session history empty
+PASS original RLS and RPC execute role vectors
+PASS withdrawal blocks source read late completion and owner session
+PASS ordinary QA does not create or force Trip
+UNRUN real target/provider/browser/device, independent review, target managed export/delete/restore
+OWN CLEANUP 0
