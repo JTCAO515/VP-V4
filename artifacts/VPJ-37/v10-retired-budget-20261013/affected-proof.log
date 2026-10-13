@@ -1,0 +1,19 @@
+PASS 52-function all-field catalog and 154 earlier migrations unchanged; 29 prior budget checks reused
+PASS owned immutable PG17.6 network none, zero ports/mounts, private socket/data
+PASS actual fresh 155 migration compile and installed-supported exact function/relation/hook catalog
+PASS fresh installation recovery remains default closed
+PASS 96 actual role/table/privilege vectors: service arw only, postgres all, anon/authenticated none; PUBLIC no table ACL
+PASS authenticated role has different local OID; exact three named-role policy catalog and installed support still pass
+PASS new source retired disabled reconcile succeeds with exact scope, retired owner null, floors 101/101
+PASS exact retired no-op retains fence; repeated original stop remains successful with monotonic marker
+PASS retired false to true remains refused; exact rollback
+PASS actual authenticated active Ops member resume remains refused; exact rollback
+PASS actual service role budget DELETE denied before write; exact rollback
+PASS actual service role budget TRUNCATE denied before write; exact rollback
+PASS actual authenticated budget SELECT denied; exact rollback
+PASS actual service role original budget SELECT remains allowed
+PASS bad sealed digest remains refused; exact rollback
+PASS late maximum revision overflow retains all earlier rows; exact rollback
+PASS unknown exact budget source rejected by installed guard and reconcile; exact rollback
+PASS renamed required hook rejected by installed guard and reconcile; exact rollback
+PASS final exact source/guard retained, retired owner remains null, zero Trip/Proposal writes

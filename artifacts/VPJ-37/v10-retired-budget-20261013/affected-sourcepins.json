@@ -1,0 +1,20 @@
+{
+  "result": "PASS",
+  "oldMigrationSHA": "5e07bc1ce41f236c0fd29ece8f9f15525c9e234e78f9a7a25ab22751082babdf",
+  "newMigrationSHA": "543e2617627fe7eddb8564ee4027e4c59cb986d77db2508da12a7a37ae633dea",
+  "oldHelperSHA": "2d79e2166bc3e2161eab493dc1f3773417a3c51816fa7c4b317cc1e005464057",
+  "newHelperSHA": "ed268f90a58c499359089cf94ef468812a5355a59afdeb90c6a31f3ecb08ffc3",
+  "functionCatalogSHA": "03212eb867be370bc5f0941763d599cfa562dca6eb9e8585c752730cfe8ef4a4",
+  "functionCatalogCount": 52,
+  "functionCatalogAllFieldsIdentical": true,
+  "budgetDefinitionMD5": "6e9254b145253d96940793fc6d09e2d2",
+  "policyRoleNormalizationOnly": [
+    "public.model_budget_attempts",
+    "public.model_budget_provider_limits",
+    "public.model_budget_scopes"
+  ],
+  "exactReverseDeltaRestoresOldSource": true,
+  "delta": "only revoke five extras on three budget tables plus exact sorted policy role names; own helper hash only",
+  "otherOverlays": "unchanged",
+  "rootHelperAdditionalSymlinkHardening": "not copied; another writer scope"
+}
