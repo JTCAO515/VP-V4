@@ -28,7 +28,7 @@ test('unknown ACK stays unknown and explicit original request recovery is GET on
  assert.equal(seen.length,1);assert.equal(seen[0].init.method,'GET');assert.ok(seen[0].url.endsWith(`/messages/${rid}`));
 });
 test('policy consent is never inferred and server denial is preserved',async()=>{
- const notice={id:sid,noticeHash:'a'.repeat(64),noticeZh:'真实说明',noticeEn:'Actual notice',contextMode:'current_input_v1',consentState:'not_accepted'};
+ const notice={id:sid,noticeHash:'a'.repeat(64),noticeZh:'真实说明',noticeEn:'Actual notice',contextMode:'current_input_v1',maxTurns:null,consentState:'not_accepted'};
  const {api}=fixture(wire({policy:notice}));assert.equal((await api.policy(new AbortController().signal)).consented,false);
  const denied=fixture(wire({error:{code:'DATA_POLICY_BLOCKED',ack:'not_submitted'}}),403);
  await assert.rejects(denied.api.send(sid,{requestId:rid,text:'Original'},new AbortController().signal),e=>e.code==='DATA_POLICY_BLOCKED'&&e.ack==='not_submitted');
@@ -36,13 +36,23 @@ test('policy consent is never inferred and server denial is preserved',async()=>
 });
 
 test('only accepted versioned QA session policy permits submission',async()=>{
- const base={id:sid,noticeHash:'a'.repeat(64),noticeZh:'当前会话的有界历史',noticeEn:'Bounded history of the current session',contextMode:'qa_session_history_v1',consentState:'accepted'};
+ const base={id:sid,noticeHash:'a'.repeat(64),noticeZh:'当前会话的有界历史',noticeEn:'Bounded history of the current session',contextMode:'qa_session_history_v1',maxTurns:8,consentState:'accepted'};
  const allowed=fixture(wire({policy:base}));assert.equal(allowed.permits(await allowed.api.policy(new AbortController().signal)),true);
  for(const contextMode of ['current_input_v1','task_history_v1','qa_session_history_v1']) {
   for(const consentState of ['accepted','not_accepted','withdrawn']) {
-   const f=fixture(wire({policy:{...base,contextMode,consentState}}));
+   const f=fixture(wire({policy:{...base,contextMode,maxTurns:contextMode==='qa_session_history_v1'?8:null,consentState}}));
    assert.equal(f.permits(await f.api.policy(new AbortController().signal)),contextMode==='qa_session_history_v1'&&consentState==='accepted');
   }
  }
  const unknown=fixture(wire({policy:{...base,contextMode:'qa_session_history_v2'}}));await assert.rejects(unknown.api.policy(new AbortController().signal));
+});
+test('missing, mismatched and unknown quota authority fail closed; limit denial retains not_submitted',async()=>{
+ const base={id:sid,noticeHash:'a'.repeat(64),noticeZh:'有界历史',noticeEn:'Bounded history',contextMode:'qa_session_history_v1',consentState:'accepted'};
+ for(const maxTurns of [undefined,null,0,7,9,'8']) {
+  const f=fixture(wire({policy:{...base,maxTurns}}));await assert.rejects(f.api.policy(new AbortController().signal),e=>e.code==='INVALID_RESPONSE');
+ }
+ const allowed=fixture(wire({policy:{...base,maxTurns:8}}));assert.equal((await allowed.api.policy(new AbortController().signal)).maxTurns,8);
+ const legacy=fixture(wire({policy:{...base,contextMode:'current_input_v1',maxTurns:8}}));await assert.rejects(legacy.api.policy(new AbortController().signal));
+ const denied=fixture(wire({error:{code:'QA_CONTEXT_LIMIT',ack:'not_submitted'}}),409);
+ await assert.rejects(denied.api.send(sid,{requestId:rid,text:'Ninth'},new AbortController().signal),e=>e.status===409&&e.code==='QA_CONTEXT_LIMIT'&&e.ack==='not_submitted');
 });

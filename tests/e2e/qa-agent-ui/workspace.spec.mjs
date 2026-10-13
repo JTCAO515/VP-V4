@@ -4,7 +4,7 @@ import { expect, test } from '@playwright/test';
 const idA = '11111111-1111-4111-8111-111111111111';
 const idB = '22222222-2222-4222-8222-222222222222';
 const session = id => ({ id, label: 'Session', createdAt: '2026-10-13T00:00:00Z', updatedAt: '2026-10-13T00:00:00Z' });
-const policy = { id: '33333333-3333-4333-8333-333333333333', noticeHash: 'a'.repeat(64), noticeZh: '合成供应商说明', noticeEn: 'Synthetic provider notice', provider: 'synthetic', recipient: 'synthetic', consentState: 'not_accepted', contextMode: 'qa_session_history_v1' };
+const policy = { id: '33333333-3333-4333-8333-333333333333', noticeHash: 'a'.repeat(64), noticeZh: '合成供应商说明', noticeEn: 'Synthetic provider notice', provider: 'synthetic', recipient: 'synthetic', consentState: 'not_accepted', contextMode: 'qa_session_history_v1', maxTurns: 8 };
 const wire = data => ({version: 'qa-agent/1', ...data});
 const message = (id, input, answer='Saved answer', status='answered') => ({...input, sessionId:id,turnId:input.requestId,input:input.text,text:answer,status,createdAt:'2026-10-13T00:00:00Z'});
 async function login(context, owner = idA) {
@@ -13,7 +13,7 @@ async function login(context, owner = idA) {
   const data = { access_token: jwt, refresh_token: 'synthetic-refresh', token_type: 'bearer', expires_at: Math.floor(Date.now()/1000)+3600, expires_in: 3600, user: { id: owner } };
   await context.addCookies([{name:'sb-127-auth-token',value:`base64-${encode(data)}`,url:'http://127.0.0.1:3019'}]);
 }
-async function fixture(page, context, hook = () => false) {
+async function fixture(page, context, hook = () => false, entry = {}) {
   await login(context);
   const saved = new Map([[idA, []], [idB, []]]), sent = [];
   let consented = false;
@@ -34,10 +34,10 @@ async function fixture(page, context, hook = () => false) {
     if(path.includes('/messages/')) return fulfill({message:saved.get(id)[0]});
     return fulfill({session:session(id),messages:saved.get(id)});
   });
-  await page.goto('/qa?locale=en');
+  await page.goto(entry.url ?? '/qa?locale=en');
   await expect(page.getByRole('button',{name:'New session'})).toBeEnabled();
-  await page.getByRole('button',{name:`Session ${idA}`,exact:true}).click();
-  await expect(page.getByLabel('Message',{exact:true})).toBeEnabled();
+  if(entry.select !== false) await page.getByRole('button',{name:`Session ${idA}`,exact:true}).click();
+  if(entry.ready !== false) await expect(page.getByLabel('Message',{exact:true})).toBeEnabled();
   return {saved,sent};
 }
 for (const width of [1280,390]) {
@@ -140,7 +140,7 @@ test('SDK owner replacement clears messages and aborts old in-flight work',async
 for (const mode of ['current_input_v1', 'task_history_v1']) {
   test(`legacy policy ${mode} cannot admit new QA messages`, async ({page,context})=>{
     const {sent}=await fixture(page,context,async(route,{path,fulfill})=>{
-      if(path.endsWith('/policy')) {await fulfill({policy:{...policy,contextMode:mode,consentState:'accepted'}});return true;}
+      if(path.endsWith('/policy')) {await fulfill({policy:{...policy,contextMode:mode,maxTurns:null,consentState:'accepted'}});return true;}
       return false;
     });
     await expect(page.getByText('This session is not yet authorized for ongoing conversation. Sending is unavailable.')).toBeVisible();
@@ -193,3 +193,80 @@ for (const entry of ['select', 'create', 'query']) {
     await expect(page.getByRole('log')).toContainText('Consented answer');expect(sends).toBe(1);expect(errors).toEqual([]);
   });
 }
+
+const earlierId='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
+const recentTwenty=Array.from({length:20},(_,index)=>session(`00000000-0000-4000-8000-${String(index+1).padStart(12,'0')}`));
+const savedTurns=(id,count)=>Array.from({length:count},(_,index)=>message(id,{requestId:`bbbbbbbb-bbbb-4bbb-8bbb-${String(index+1).padStart(12,'0')}`,text:`Prior ${index+1}`},`Answer ${index+1}`));
+for(const foreign of [false,true]) {
+ test(`explicit bookmark outside twenty-session list ${foreign?'retains RLS refusal':'loads protected detail and joins list'}`,async({page,context})=>{
+  let details=0;
+  await fixture(page,context,async(route,{path,method,fulfill})=>{
+   if(path.endsWith('/policy')) {await fulfill({policy:{...policy,consentState:'accepted'}});return true;}
+   if(method==='GET'&&path.endsWith('/sessions')) {await fulfill({sessions:recentTwenty});return true;}
+   if(path.endsWith(earlierId)) {
+    details++;
+    if(foreign) await route.fulfill({status:403,contentType:'application/json',body:JSON.stringify(wire({error:{code:'FORBIDDEN',ack:'not_submitted'}}))});
+    else await fulfill({session:{...session(earlierId),label:'Earlier session'},messages:[message(earlierId,{requestId:idB,text:'Saved bookmark'},'Saved bookmarked answer')]});
+    return true;
+   }
+   return false;
+  },{url:`/qa?locale=en&session=${earlierId}`,select:false,ready:!foreign});
+  await expect.poll(()=>details).toBeGreaterThan(0);
+  if(foreign) {
+   await expect(page.getByRole('region',{name:'Agent QA'}).getByRole('alert')).toContainText('The request could not be completed.');
+   await expect(page.getByRole('log')).toBeEmpty();await expect(page.getByRole('button',{name:'Earlier session'})).toHaveCount(0);
+   await expect(page.getByRole('button',{name:'Send',exact:true})).toBeDisabled();
+  } else {
+   await expect(page.getByRole('log')).toContainText('Saved bookmarked answer');
+   await expect(page.getByRole('button',{name:'Earlier session'})).toHaveAttribute('aria-current','true');
+   await page.reload();await expect(page.getByRole('log')).toContainText('Saved bookmarked answer');
+  }
+ });
+}
+test('eighth accepted turn completes and preserves history while new sends stop; switch restores composer',async({page,context})=>{
+ const prior=savedTurns(idA,7);const submitted=[];
+ await fixture(page,context,async(route,{path,method,saved,fulfill})=>{
+  const id=path.split('/')[4];
+  if(path.endsWith('/policy')) {await fulfill({policy:{...policy,consentState:'accepted'}});return true;}
+  if(method==='GET'&&path.endsWith(idA)) {await fulfill({session:session(idA),messages:saved.get(idA).length?saved.get(idA):prior});return true;}
+  if(method==='POST'&&path.endsWith('/messages')) {
+   const body=route.request().postDataJSON();submitted.push({id,...body});
+   saved.set(id,[...(id===idA?prior:[]),message(id,body,'Accepted answer')]);
+   await fulfill({requestId:body.requestId,turnId:body.requestId,sessionId:id,status:'pending',reused:false});return true;
+  }
+  return false;
+ });
+ await page.getByLabel('Message',{exact:true}).fill('Eighth');await page.getByRole('button',{name:'Send',exact:true}).click();
+ await expect(page.getByRole('log')).toContainText('Accepted answer');
+ await expect(page.getByText('This session has reached its turn limit. Please start a new session to continue.')).toBeVisible();
+ await expect(page.getByRole('log')).toContainText('Answer 1');await expect(page.getByRole('log').locator('article')).toHaveCount(8);
+ await expect(page.getByRole('button',{name:'Send',exact:true})).toBeDisabled();
+ await page.locator('form').evaluate(form=>form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true})));expect(submitted).toHaveLength(1);
+ await page.getByRole('button',{name:`Session ${idB}`,exact:true}).click();await page.getByLabel('Message',{exact:true}).fill('New session question');
+ await page.getByRole('button',{name:'Send',exact:true}).click();await expect(page.getByRole('log')).toContainText('Accepted answer');expect(submitted).toHaveLength(2);
+});
+test('ninth rejection keeps history and notice, prevents retries, and new session restores sending',async({page,context})=>{
+ const prior=savedTurns(idA,7);const submitted=[];
+ await fixture(page,context,async(route,{path,method,saved,fulfill})=>{
+  const id=path.split('/')[4];
+  if(path.endsWith('/policy')) {await fulfill({policy:{...policy,consentState:'accepted'}});return true;}
+  // Another tab has used the last slot since this protected seven-turn read.
+  if(method==='GET'&&path.endsWith(idA)) {await fulfill({session:session(idA),messages:prior});return true;}
+  if(method==='POST'&&path.endsWith('/messages')) {
+   const body=route.request().postDataJSON();submitted.push({id,...body});
+   if(id===idA) await route.fulfill({status:409,contentType:'application/json',body:JSON.stringify(wire({error:{code:'QA_CONTEXT_LIMIT',ack:'not_submitted'}}))});
+   else {saved.set(id,[message(id,body,'New session answer')]);await fulfill({requestId:body.requestId,turnId:body.requestId,sessionId:id,status:'pending',reused:false});}
+   return true;
+  }
+  return false;
+ });
+ await page.getByLabel('Message',{exact:true}).fill('Ninth');await page.getByRole('button',{name:'Send',exact:true}).click();
+ await expect(page.getByText('This session has reached its turn limit. Please start a new session to continue.')).toBeVisible();
+ await expect(page.getByRole('log')).toContainText('Answer 7');await expect(page.getByText(policy.noticeEn,{exact:true})).toBeVisible();
+ await expect(page.getByRole('button',{name:'Agree to the notice above'})).toHaveCount(0);await expect(page.getByRole('button',{name:'Check original request'})).toHaveCount(0);
+ await expect(page.getByRole('button',{name:'Send',exact:true})).toBeDisabled();
+ await page.locator('form').evaluate(form=>form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true})));expect(submitted).toHaveLength(1);
+ await page.getByRole('button',{name:'New session',exact:true}).click();await page.getByLabel('Message',{exact:true}).fill('Continue');
+ await page.getByRole('button',{name:'Send',exact:true}).click();await expect(page.getByRole('log')).toContainText('New session answer');expect(submitted).toHaveLength(2);
+ await page.getByRole('button',{name:`Session ${idA}`,exact:true}).click();await expect(page.getByRole('button',{name:'Send',exact:true})).toBeDisabled();
+});

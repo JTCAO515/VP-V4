@@ -1,0 +1,21 @@
+(node:72625) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2m[WebServer] [22m(node:72627) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 7 tests using 1 worker
+
+(node:72628) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:72628) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:72628) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/e2e/qa-agent-ui/workspace.spec.mjs:200:1 › lost ACK retains original ID and never automatically POSTs a second message (667ms)
+  ✓  2 tests/e2e/qa-agent-ui/workspace.spec.mjs:314:1 › 401 clears private history and offers existing sign-in (381ms)
+  ✓  3 tests/e2e/qa-agent-ui/workspace.spec.mjs:405:1 › SDK owner replacement clears messages and aborts old in-flight work (514ms)
+  ✓  4 tests/e2e/qa-agent-ui/workspace.spec.mjs:679:3 › explicit bookmark outside twenty-session list loads protected detail and joins list (263ms)
+  ✓  5 tests/e2e/qa-agent-ui/workspace.spec.mjs:679:3 › explicit bookmark outside twenty-session list retains RLS refusal (230ms)
+  ✓  6 tests/e2e/qa-agent-ui/workspace.spec.mjs:756:1 › eighth accepted turn completes and preserves history while new sends stop; switch restores composer (6.1s)
+  ✓  7 tests/e2e/qa-agent-ui/workspace.spec.mjs:837:1 › ninth rejection keeps history and notice, prevents retries, and new session restores sending (3.4s)
+
+  7 passed (12.4s)
