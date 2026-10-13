@@ -1,0 +1,857 @@
+{
+  "schemas": [
+    "community_private",
+    "identity_private",
+    "knowledge_review_private",
+    "ops_budget_private",
+    "place_quota_private",
+    "privacy_private",
+    "private",
+    "public",
+    "research_intake_private",
+    "service_cases_private",
+    "turn_private"
+  ],
+  "functions": [
+    {
+      "md5": "351d5c18579aab59ce85086d149eae61",
+      "args": "",
+      "name": "current_actor",
+      "schema": "community_private"
+    },
+    {
+      "md5": "397ee8fc478821680138d9489efaa481",
+      "args": "p_id uuid, p_internal boolean",
+      "name": "submission_json",
+      "schema": "community_private"
+    },
+    {
+      "md5": "377d5154601b14c543b5eb13f44bdd5d",
+      "args": "",
+      "name": "guard_mobile_rpc_v2",
+      "schema": "identity_private"
+    },
+    {
+      "md5": "fb197165e1684c2a28caf18f689ade54",
+      "args": "",
+      "name": "guard_mobile_write_v2",
+      "schema": "identity_private"
+    },
+    {
+      "md5": "af0a0da7136bc600f99b39548315ae36",
+      "args": "",
+      "name": "mobile_access_v2",
+      "schema": "identity_private"
+    },
+    {
+      "md5": "923fb387129e222afb4ba9d9e94f0307",
+      "args": "p_action text, p_attempt uuid",
+      "name": "mobile_session_v2",
+      "schema": "identity_private"
+    },
+    {
+      "md5": "a47b58e6d9bdda4494714b1b33caf644",
+      "args": "p_owner uuid, p_session uuid, p_attempt uuid",
+      "name": "prepare_mobile_v2",
+      "schema": "identity_private"
+    },
+    {
+      "md5": "cc6260c1f3be5fb8d80bcc58d7032b4b",
+      "args": "p_value jsonb, p_max integer",
+      "name": "bounded_text",
+      "schema": "knowledge_review_private"
+    },
+    {
+      "md5": "8e5837b0496444d2c7d5cdba51fbd60e",
+      "args": "p_id uuid",
+      "name": "candidate_json",
+      "schema": "knowledge_review_private"
+    },
+    {
+      "md5": "3f1048e7254f0d1d7c4fce61c862ac12",
+      "args": "p_id uuid",
+      "name": "candidate_json_before_wiki_v1",
+      "schema": "knowledge_review_private"
+    },
+    {
+      "md5": "c550cc06092a08de15557e83d5be023b",
+      "args": "v jsonb, keys text[]",
+      "name": "closed_object",
+      "schema": "knowledge_review_private"
+    },
+    {
+      "md5": "f4bfb792894a3881791eadfd1e362613",
+      "args": "",
+      "name": "current_actor",
+      "schema": "knowledge_review_private"
+    },
+    {
+      "md5": "938e989542072c6905bfd30d19088dfb",
+      "args": "v jsonb",
+      "name": "identifier_list",
+      "schema": "knowledge_review_private"
+    },
+    {
+      "md5": "8e8d784fe454e963d3a63779701fb586",
+      "args": "p_input jsonb",
+      "name": "ops_review_workspace",
+      "schema": "knowledge_review_private"
+    },
+    {
+      "md5": "e707bd145be36b32910b062959ded1f5",
+      "args": "p_input jsonb",
+      "name": "ops_review_workspace_before_wiki_v1",
+      "schema": "knowledge_review_private"
+    },
+    {
+      "md5": "f75f8968d8266bb60a15b24f81f4aef6",
+      "args": "p_input jsonb",
+      "name": "ops_review_workspace_publication_v1",
+      "schema": "knowledge_review_private"
+    },
+    {
+      "md5": "39c3b530b149b5e36cbed2c6a25f734e",
+      "args": "p_input jsonb",
+      "name": "ops_review_workspace_source_v1",
+      "schema": "knowledge_review_private"
+    },
+    {
+      "md5": "6246df57d531aafad5bc7be18dcf327d",
+      "args": "v text",
+      "name": "place_name",
+      "schema": "knowledge_review_private"
+    },
+    {
+      "md5": "9656d0ce8faf7d0b902595b3bcc2569c",
+      "args": "p_name text, p_city text",
+      "name": "place_subject",
+      "schema": "knowledge_review_private"
+    },
+    {
+      "md5": "37875c7f8170a4f015e2b825e85864ca",
+      "args": "v jsonb, maximum integer",
+      "name": "place_text",
+      "schema": "knowledge_review_private"
+    },
+    {
+      "md5": "b18cb717b5661f134fffca36e0bd8c2d",
+      "args": "p_id text",
+      "name": "question_definition",
+      "schema": "knowledge_review_private"
+    },
+    {
+      "md5": "390fd59e4218125d6168be2346238d38",
+      "args": "p_id text",
+      "name": "question_definition_general_v1",
+      "schema": "knowledge_review_private"
+    },
+    {
+      "md5": "40095042db74830fb08a56b2d8f2c6fc",
+      "args": "p_input jsonb, p_basis jsonb",
+      "name": "resolve_question",
+      "schema": "knowledge_review_private"
+    },
+    {
+      "md5": "470e4e0b39f21eec3fb4ac6279a3353b",
+      "args": "p_id text, p_city text, p_locale text, p_subject text",
+      "name": "selected_question_input",
+      "schema": "knowledge_review_private"
+    },
+    {
+      "md5": "3d048cf752de43c1b48fc6bef503c8f7",
+      "args": "s jsonb",
+      "name": "source_valid",
+      "schema": "knowledge_review_private"
+    },
+    {
+      "md5": "e0cf8bf6de669c69fc35adbf931289bc",
+      "args": "v jsonb",
+      "name": "statement_valid",
+      "schema": "knowledge_review_private"
+    },
+    {
+      "md5": "80856fa1c87d48d9f36df4c759b1ee24",
+      "args": "v jsonb",
+      "name": "statement_valid_v1",
+      "schema": "knowledge_review_private"
+    },
+    {
+      "md5": "bb69a6f21caa040999fa7c6ef3900826",
+      "args": "v jsonb",
+      "name": "wiki_draft_valid",
+      "schema": "knowledge_review_private"
+    },
+    {
+      "md5": "3fc90c8f3a866acfd72f93d42e0c7073",
+      "args": "v jsonb, known_sources uuid[]",
+      "name": "wiki_proposal_sources_valid",
+      "schema": "knowledge_review_private"
+    },
+    {
+      "md5": "4bfd0e91f405c1e081fb733b0ddbf8cf",
+      "args": "v jsonb, max_units integer",
+      "name": "wiki_text_valid",
+      "schema": "knowledge_review_private"
+    },
+    {
+      "md5": "333ec8ba01323d75bd9e65a567d3bab4",
+      "args": "p_scope_id uuid",
+      "name": "read_ops_budget_scope_for_member_v1",
+      "schema": "ops_budget_private"
+    },
+    {
+      "md5": "28b5e82ce55179d2f77adfff516dc308",
+      "args": "",
+      "name": "guard_trip_write",
+      "schema": "privacy_private"
+    },
+    {
+      "md5": "7e21e35681fea979339c04eac2b799c8",
+      "args": "r privacy_private.trip_deletions",
+      "name": "trip_deletion_receipt",
+      "schema": "privacy_private"
+    },
+    {
+      "md5": "9debd7a8557437214b0bda82622bda38",
+      "args": "",
+      "name": "ai10_confirm_fault_trigger",
+      "schema": "private"
+    },
+    {
+      "md5": "08d43a72b321f3811978fca408cab4b5",
+      "args": "p_owner_id uuid, p_fail boolean",
+      "name": "ai14_fault_probe",
+      "schema": "private"
+    },
+    {
+      "md5": "1db8c3d67ef60addabde3b6b08b8c2d2",
+      "args": "",
+      "name": "connection_probe_worker_count",
+      "schema": "private"
+    },
+    {
+      "md5": "0ef5dc2558e8d973adef81b5c38b6acc",
+      "args": "",
+      "name": "guard_archived_trip_content",
+      "schema": "private"
+    },
+    {
+      "md5": "fc26d86e8247b92b948607aef4661d99",
+      "args": "p_policy_id uuid, p_notice_hash text",
+      "name": "accept_text_policy",
+      "schema": "public"
+    },
+    {
+      "md5": "58607d7f2347702aa9d919a5e2fb6cd2",
+      "args": "p_turn_id uuid, p_event_id text, p_event_type text, p_state text",
+      "name": "append_chat_turn_event",
+      "schema": "public"
+    },
+    {
+      "md5": "780f5674adcd4f78f06b76a343c45954",
+      "args": "p_current jsonb, p_patch jsonb",
+      "name": "apply_trip_content_patch",
+      "schema": "public"
+    },
+    {
+      "md5": "92cb781b1c67bb26e1cf058f752f22cf",
+      "args": "p_trip_id uuid, p_expected_version integer, p_idempotency_key uuid, p_confirmed boolean",
+      "name": "archive_trip_v1",
+      "schema": "public"
+    },
+    {
+      "md5": "d6e6a7bb5f1b5eddca8b57d88797027e",
+      "args": "p_turn_id uuid, p_lease_token uuid, p_policy_id uuid, p_provider text, p_context_digest text",
+      "name": "authorize_grounded_dispatch",
+      "schema": "public"
+    },
+    {
+      "md5": "8bea771ea387017005e54df02fc3a46e",
+      "args": "p_turn_id uuid, p_lease_token uuid, p_policy_id uuid, p_provider text",
+      "name": "authorize_text_dispatch",
+      "schema": "public"
+    },
+    {
+      "md5": "0d6c3d7b660cd13fec2d682a7e7cb1ca",
+      "args": "p_turn_id uuid, p_lease_token uuid, p_policy_id uuid, p_provider text, p_context_digest text",
+      "name": "authorize_text_task_dispatch",
+      "schema": "public"
+    },
+    {
+      "md5": "31a327ab151142452c301cb1dcd118cf",
+      "args": "p_turn_id uuid",
+      "name": "cancel_chat_turn",
+      "schema": "public"
+    },
+    {
+      "md5": "b477030d95ec68b62ea4688c247ecbfa",
+      "args": "",
+      "name": "capture_initial_trip_version",
+      "schema": "public"
+    },
+    {
+      "md5": "5489e20d4d683ec9378f84389dfc1e3f",
+      "args": "p_owner_id uuid, p_policy_id uuid",
+      "name": "claim_grounded_work",
+      "schema": "public"
+    },
+    {
+      "md5": "553417fb3f1b43deedee59f2e0487ca8",
+      "args": "p_owner_id uuid, p_policy_id uuid",
+      "name": "claim_text_task_work",
+      "schema": "public"
+    },
+    {
+      "md5": "113c6ac66a4af3422a5e9ee69c2ae17e",
+      "args": "p_owner_id uuid, p_policy_id uuid",
+      "name": "claim_text_work",
+      "schema": "public"
+    },
+    {
+      "md5": "c954f893d515e1d15a0167442b58025c",
+      "args": "",
+      "name": "claim_turn_work",
+      "schema": "public"
+    },
+    {
+      "md5": "2b26c04a5d6b0c030a9949a90543c66c",
+      "args": "p_input jsonb",
+      "name": "community_workspace",
+      "schema": "public"
+    },
+    {
+      "md5": "c29e1e9c798626519f066ad2f5a73356",
+      "args": "p_turn_id uuid, p_lease_token uuid, p_intent text, p_request_scope text, p_unanswered_needs text, p_place_name text",
+      "name": "complete_grounded_place_work",
+      "schema": "public"
+    },
+    {
+      "md5": "e34b726905bc86cd92f649f946ef1975",
+      "args": "p_turn_id uuid, p_lease_token uuid, p_intent text, p_request_scope text",
+      "name": "complete_grounded_work",
+      "schema": "public"
+    },
+    {
+      "md5": "506e1b608d2ea659aade7795d7518d18",
+      "args": "p_turn_id uuid, p_lease_token uuid, p_intent text, p_request_scope text, p_unanswered_needs text",
+      "name": "complete_grounded_work_with_needs",
+      "schema": "public"
+    },
+    {
+      "md5": "db8f30e3376bf0bd0e3e3a8320e90f3c",
+      "args": "p_turn_id uuid, p_lease_token uuid, p_kind text, p_text text",
+      "name": "complete_text_work",
+      "schema": "public"
+    },
+    {
+      "md5": "3466de05f41313bb6d9431e71dab429a",
+      "args": "p_proposal_id uuid, p_idempotency_key text, p_digest text",
+      "name": "confirm_and_apply_trip_proposal",
+      "schema": "public"
+    },
+    {
+      "md5": "31885b14125a76fc9800897932494ec8",
+      "args": "",
+      "name": "connection_probe_ops_visible_count",
+      "schema": "public"
+    },
+    {
+      "md5": "dd258a535cdbaea3155706a0258ea8dd",
+      "args": "p_bucket text, p_minute_limit integer, p_day_limit integer",
+      "name": "consume_place_quota_v1",
+      "schema": "public"
+    },
+    {
+      "md5": "e9a0037342d4d0a15c0fdd72359da9c0",
+      "args": "p_memory_id uuid, p_receipt_id uuid, p_consent_id uuid, p_constraint_kind text, p_summary text",
+      "name": "create_explicit_memory_profile",
+      "schema": "public"
+    },
+    {
+      "md5": "05bb38cba0ec7f980b0b61021915ba9d",
+      "args": "",
+      "name": "create_memory_retrieval_consent",
+      "schema": "public"
+    },
+    {
+      "md5": "32696c16beff2540b5dc1a8af571736b",
+      "args": "p_trip_id uuid, p_patch jsonb",
+      "name": "create_trip_proposal_patch",
+      "schema": "public"
+    },
+    {
+      "md5": "92c955542948beffcd03bfb34de8d33c",
+      "args": "p_trip_id uuid, p_target_version integer",
+      "name": "create_trip_rollback_proposal",
+      "schema": "public"
+    },
+    {
+      "md5": "4e60475a1ab978560c37da6fcd1818f7",
+      "args": "p_scope_id uuid, p_owner_id uuid, p_attempt_id uuid",
+      "name": "dispatch_model_budget",
+      "schema": "public"
+    },
+    {
+      "md5": "7fa5396d56bfdc34a8aa4f9306eda1f2",
+      "args": "p_turn_id uuid, p_owner_id uuid, p_session_id uuid, p_lease_ms integer, p_max_attempts integer",
+      "name": "enqueue_turn_work",
+      "schema": "public"
+    },
+    {
+      "md5": "f5e48508793fab543b1ef1274689d621",
+      "args": "p_request_id uuid",
+      "name": "execute_trip_deletion_v1",
+      "schema": "public"
+    },
+    {
+      "md5": "07a59059b9431f97f38e1b33de023228",
+      "args": "p_scope_id uuid, p_owner_id uuid, p_attempt_id uuid, p_action text, p_actual_micros bigint",
+      "name": "finish_model_budget",
+      "schema": "public"
+    },
+    {
+      "md5": "5704bf55417494f008f035a484f0d73b",
+      "args": "p_turn_id uuid, p_lease_token uuid, p_outcome text",
+      "name": "finish_turn_work",
+      "schema": "public"
+    },
+    {
+      "md5": "f9f4771a048a0cbd8626313777910031",
+      "args": "p_consent_id uuid",
+      "name": "grant_memory_retrieval_consent",
+      "schema": "public"
+    },
+    {
+      "md5": "f2198621e89b21f96e048b778aed0936",
+      "args": "p_input jsonb",
+      "name": "grounded_ai_assist_work_v1",
+      "schema": "public"
+    },
+    {
+      "md5": "87be7b64a565dc3cc9fcb7078fdadd5d",
+      "args": "p_worker_id uuid, p_build text, p_started_at timestamp with time zone, p_phase text, p_result text, p_polls bigint, p_finished bigint, p_unavailable bigint, p_skipped bigint, p_stop_reason text",
+      "name": "hosted_worker_heartbeat",
+      "schema": "public"
+    },
+    {
+      "md5": "8bb3cb5e7fdc747324c9667f49e074c0",
+      "args": "p_limit integer",
+      "name": "hosted_worker_ready_groups",
+      "schema": "public"
+    },
+    {
+      "md5": "e500d6bdfd24b7416d093770e21f4ae7",
+      "args": "p_input jsonb",
+      "name": "knowledge_answer_v1",
+      "schema": "public"
+    },
+    {
+      "md5": "7d9a93adb2a2720ff0ba850c6d915b94",
+      "args": "p_input jsonb",
+      "name": "knowledge_read_v1",
+      "schema": "public"
+    },
+    {
+      "md5": "2d2bb35c0821c8fdb1149e36be910a26",
+      "args": "p_policy_id uuid, p_limit integer",
+      "name": "list_grounded_turns",
+      "schema": "public"
+    },
+    {
+      "md5": "9c0384d4259968f59a8f3b1ccc3d698a",
+      "args": "p_policy_id uuid, p_limit integer",
+      "name": "list_service_task_turns",
+      "schema": "public"
+    },
+    {
+      "md5": "e8e93b98b7093ad188b8c52bce267cc7",
+      "args": "p_policy_id uuid, p_limit integer",
+      "name": "list_text_turns",
+      "schema": "public"
+    },
+    {
+      "md5": "b31b1d805c2203cc5ba939c8634dbf09",
+      "args": "p_owner uuid, p_session uuid, p_attempt uuid",
+      "name": "native_prepare_v2",
+      "schema": "public"
+    },
+    {
+      "md5": "6932d93a940c6e5d6bcb687ad2c059cf",
+      "args": "p_action text, p_attempt uuid",
+      "name": "native_session_v2",
+      "schema": "public"
+    },
+    {
+      "md5": "5d71b7de01963b6543787bf2719c5090",
+      "args": "p_scope_id uuid",
+      "name": "ops_budget_scope_read_v1",
+      "schema": "public"
+    },
+    {
+      "md5": "8579adf1ff2ad8a52516358746c15611",
+      "args": "p_input jsonb",
+      "name": "ops_knowledge_provenance_read_v1",
+      "schema": "public"
+    },
+    {
+      "md5": "c79bf8d1c069892f1322a54a9453f90c",
+      "args": "p_input jsonb",
+      "name": "ops_review_workspace",
+      "schema": "public"
+    },
+    {
+      "md5": "7962e186309eed5aba4c1a920edaeafa",
+      "args": "p_input jsonb",
+      "name": "ops_source_revision_withdraw_v1",
+      "schema": "public"
+    },
+    {
+      "md5": "3b9ac2eccd198cb997f89895176a5004",
+      "args": "p_input jsonb",
+      "name": "ops_wiki_generation_v1",
+      "schema": "public"
+    },
+    {
+      "md5": "67b68f0b7bd9149e9a3b9a49aa7d1343",
+      "args": "p_input jsonb",
+      "name": "ops_wiki_read_v1",
+      "schema": "public"
+    },
+    {
+      "md5": "611e1aa836393aa524425aa9aee913ec",
+      "args": "p_input jsonb",
+      "name": "ops_wiki_withdrawal_scan_v1",
+      "schema": "public"
+    },
+    {
+      "md5": "39104da820033549c14fa96e15a2a41b",
+      "args": "p_turn_id uuid",
+      "name": "read_grounded_ai_assist_context_v1",
+      "schema": "public"
+    },
+    {
+      "md5": "a3b8e8e184f55497277e77eca77ac2e5",
+      "args": "p_policy_id uuid, p_turn_id uuid, p_after_sequence bigint",
+      "name": "read_grounded_events",
+      "schema": "public"
+    },
+    {
+      "md5": "4e18dcc1088af31effd9b2cd4ed6badc",
+      "args": "p_policy_id uuid",
+      "name": "read_grounded_policy",
+      "schema": "public"
+    },
+    {
+      "md5": "9acfb79c646c943321cd8f33e91f387b",
+      "args": "p_turn_id uuid",
+      "name": "read_grounded_turn",
+      "schema": "public"
+    },
+    {
+      "md5": "2cba428ef9eb477aaf042c857d51f5a6",
+      "args": "p_turn_id uuid, p_lease_token uuid",
+      "name": "read_grounded_work",
+      "schema": "public"
+    },
+    {
+      "md5": "6c4115e5a55065aeb3f267f97d7703f5",
+      "args": "",
+      "name": "read_hosted_worker_status",
+      "schema": "public"
+    },
+    {
+      "md5": "d17e78efab45835824a6178e48f3cb33",
+      "args": "p_scope_id uuid",
+      "name": "read_ops_budget_scope_v1",
+      "schema": "public"
+    },
+    {
+      "md5": "a700320937d1e0bca2d6575134dcc96c",
+      "args": "",
+      "name": "read_retrievable_memory_profiles",
+      "schema": "public"
+    },
+    {
+      "md5": "c4d4019bca98dc4666203b07f9f08864",
+      "args": "p_policy_id uuid",
+      "name": "read_text_policy",
+      "schema": "public"
+    },
+    {
+      "md5": "1bdffe562940bfe6037c81aa1b29dffa",
+      "args": "p_policy_id uuid",
+      "name": "read_text_task_policy",
+      "schema": "public"
+    },
+    {
+      "md5": "59358d528a9c7f8a4ea2e633463e2b75",
+      "args": "p_turn_id uuid",
+      "name": "read_text_turn",
+      "schema": "public"
+    },
+    {
+      "md5": "3ab317907101f2c0276f84a2beb6512b",
+      "args": "p_turn_id uuid, p_lease_token uuid",
+      "name": "read_text_work",
+      "schema": "public"
+    },
+    {
+      "md5": "8b85b6f7409713e022d0c8896a529624",
+      "args": "p_request_id uuid",
+      "name": "read_trip_deletion_v1",
+      "schema": "public"
+    },
+    {
+      "md5": "fc74ac2e95b4b9fe96b54d82fe2e5533",
+      "args": "p_proposal_id uuid",
+      "name": "read_trip_proposal_v2",
+      "schema": "public"
+    },
+    {
+      "md5": "40b18dc71cb37a1531948d48251ddcfc",
+      "args": "p_turn_id uuid, p_feedback_kind text, p_reason_code text",
+      "name": "record_turn_feedback",
+      "schema": "public"
+    },
+    {
+      "md5": "e7e4c332e98adcca1ca9c316f3cf737d",
+      "args": "p_proposal_id uuid",
+      "name": "reject_trip_proposal_v2",
+      "schema": "public"
+    },
+    {
+      "md5": "5a72913a994e353939c9719d806aa5b7",
+      "args": "p_request_id uuid, p_action text",
+      "name": "request_privacy_action",
+      "schema": "public"
+    },
+    {
+      "md5": "4bd0da7437fe9e072d3378f6076f7d86",
+      "args": "p_request_id uuid, p_trip_id uuid, p_expected_version integer, p_confirmed boolean",
+      "name": "request_trip_deletion_v1",
+      "schema": "public"
+    },
+    {
+      "md5": "d586d7c19b5f5e075b064f956e477765",
+      "args": "p_id uuid, p_event text",
+      "name": "research_intake_record_event_v1",
+      "schema": "public"
+    },
+    {
+      "md5": "014d4a42f6114cb053dcce73b2bc74fa",
+      "args": "p_input jsonb",
+      "name": "research_intake_v1",
+      "schema": "public"
+    },
+    {
+      "md5": "2ecbcfdd23eaba4f7ed2d9beb4fc2d50",
+      "args": "p_scope_id uuid, p_owner_id uuid, p_task_id uuid, p_attempt_id uuid, p_provider text, p_model text, p_price_version text, p_reserved_micros bigint",
+      "name": "reserve_model_budget",
+      "schema": "public"
+    },
+    {
+      "md5": "e7dc72753b4f427582c1a454f62f3ebe",
+      "args": "p_proposal_id uuid, p_title text",
+      "name": "revise_trip_proposal",
+      "schema": "public"
+    },
+    {
+      "md5": "ab83a2326322079039029dfa86a4f55e",
+      "args": "p_proposal_id uuid, p_patch jsonb",
+      "name": "revise_trip_proposal_patch",
+      "schema": "public"
+    },
+    {
+      "md5": "67bb432f4cf66158ad53d3fe8604bbd6",
+      "args": "p_consent_id uuid",
+      "name": "revoke_memory_retrieval_consent",
+      "schema": "public"
+    },
+    {
+      "md5": "6998ea6b4c2480f5d2e34b5dcf3f8d36",
+      "args": "",
+      "name": "rls_auto_enable",
+      "schema": "public"
+    },
+    {
+      "md5": "6207b719243f5de192f4e1b81b78e29a",
+      "args": "p_display_name text, p_travel_pace text, p_locale text, p_currency text, p_distance_unit text, p_temperature_unit text, p_default_departure_time time without time zone",
+      "name": "save_user_profile",
+      "schema": "public"
+    },
+    {
+      "md5": "cdd2a64fa7268674d83237f88b1d5488",
+      "args": "p_input jsonb",
+      "name": "service_case_v1",
+      "schema": "public"
+    },
+    {
+      "md5": "f6164de36f2a37e3edc56b67737e53a4",
+      "args": "p_enabled boolean, p_reason text",
+      "name": "set_hosted_worker_enabled",
+      "schema": "public"
+    },
+    {
+      "md5": "36596b4c2a41e5ef7b5a844ab13dc1a1",
+      "args": "p_thread_id uuid, p_turn_id uuid, p_idempotency_key uuid, p_digest text",
+      "name": "start_chat_turn",
+      "schema": "public"
+    },
+    {
+      "md5": "659d946c1e5fe1d858516d3cc794c7d1",
+      "args": "p_thread_id uuid, p_turn_id uuid, p_idempotency_key uuid, p_policy_id uuid, p_locale text, p_text text",
+      "name": "start_text_turn",
+      "schema": "public"
+    },
+    {
+      "md5": "992dbb7ae5701f06f33a9d322d628010",
+      "args": "p_scope_id uuid, p_owner_id uuid",
+      "name": "stop_model_budget",
+      "schema": "public"
+    },
+    {
+      "md5": "190e27c74751a715072feef12cc92e08",
+      "args": "p_thread_id uuid, p_turn_id uuid, p_idempotency_key uuid, p_policy_id uuid, p_locale text, p_text text, p_task_id uuid, p_scope_version integer, p_relationship text, p_parent_turn_id uuid, p_city text",
+      "name": "submit_grounded_turn",
+      "schema": "public"
+    },
+    {
+      "md5": "a7c26bcd3cbfa1d6728e6eaa5dfc0a3b",
+      "args": "p_thread_id uuid, p_turn_id uuid, p_idempotency_key uuid, p_policy_id uuid, p_locale text, p_text text, p_task_id uuid, p_scope_version integer, p_relationship text, p_parent_turn_id uuid",
+      "name": "submit_service_task_turn",
+      "schema": "public"
+    },
+    {
+      "md5": "6f2759d8d09ed3fafe9a0e634402c9cf",
+      "args": "p_thread_id uuid, p_turn_id uuid, p_idempotency_key uuid, p_policy_id uuid, p_locale text, p_text text",
+      "name": "submit_text_turn",
+      "schema": "public"
+    },
+    {
+      "md5": "779b69261fd4ec345caa6020b1b5d980",
+      "args": "p_memory_id uuid, p_next_state text",
+      "name": "transition_memory_profile",
+      "schema": "public"
+    },
+    {
+      "md5": "be2219b0a94272f0c6c8280a5e2730a9",
+      "args": "p_trip uuid, p_action text, p_input jsonb",
+      "name": "travel_reminders_v1",
+      "schema": "public"
+    },
+    {
+      "md5": "fa54cc58aa2a51a14d6aaba85df72a24",
+      "args": "p_trip_id uuid, p_title text",
+      "name": "trip_content_snapshot",
+      "schema": "public"
+    },
+    {
+      "md5": "75d0288390d10b56a46559f241146466",
+      "args": "p_policy_id uuid",
+      "name": "withdraw_text_policy",
+      "schema": "public"
+    },
+    {
+      "md5": "f517a8414e04143241f252f531516f79",
+      "args": "",
+      "name": "actor",
+      "schema": "service_cases_private"
+    },
+    {
+      "md5": "ed2e2e7f8d9e3f5cad998dcd96fd0118",
+      "args": "p_input jsonb",
+      "name": "execute",
+      "schema": "service_cases_private"
+    },
+    {
+      "md5": "fa2342442ed4eb82a3b65003be7ba2e1",
+      "args": "c service_cases_private.cases",
+      "name": "owner_json",
+      "schema": "service_cases_private"
+    },
+    {
+      "md5": "76b389726107eeb740bd3b10b84ca1b0",
+      "args": "",
+      "name": "bound_task_history",
+      "schema": "turn_private"
+    },
+    {
+      "md5": "2768c4af4dd42a45f872a57f45a1dbe2",
+      "args": "p_owner_id uuid, p_policy_id uuid, p_context_mode text",
+      "name": "claim_text_mode",
+      "schema": "turn_private"
+    },
+    {
+      "md5": "74cebd401cccd18f885307f70627a252",
+      "args": "p_turn_id uuid, p_lease_token uuid, p_intent text, p_request_scope text, p_subject text",
+      "name": "complete_selected_grounded_work",
+      "schema": "turn_private"
+    },
+    {
+      "md5": "3c4d5dc0d39b86c35c17e4ec33c67d3f",
+      "args": "",
+      "name": "hide_text_content",
+      "schema": "turn_private"
+    },
+    {
+      "md5": "e1238864dfbce8ce6915c39f137fbd4f",
+      "args": "",
+      "name": "immutable_text_policy",
+      "schema": "turn_private"
+    },
+    {
+      "md5": "2505e473b416075188e5d56a1e828460",
+      "args": "p_turn uuid, p_token uuid",
+      "name": "lock_text_work",
+      "schema": "turn_private"
+    },
+    {
+      "md5": "be65a3b08e1c3105f08c438710c27738",
+      "args": "p_turn uuid, p_owner uuid, p_session uuid",
+      "name": "lock_turn",
+      "schema": "turn_private"
+    },
+    {
+      "md5": "9b72248f53406405aeff3326cc87f5ce",
+      "args": "",
+      "name": "require_text_task",
+      "schema": "turn_private"
+    },
+    {
+      "md5": "440820adcbf08178d783e12c5f550f36",
+      "args": "p_scope_id uuid, p_owner_id uuid, p_task_id uuid, p_attempt_id uuid, p_provider text, p_model text, p_price_version text, p_reserved_micros bigint",
+      "name": "reserve_model_budget_unbound",
+      "schema": "turn_private"
+    },
+    {
+      "md5": "4cebc9c5099fba0140cc941533e9c77f",
+      "args": "p_turn uuid",
+      "name": "task_history",
+      "schema": "turn_private"
+    },
+    {
+      "md5": "11fd9d2e796a41c55333440682e2ee8e",
+      "args": "p_turn uuid, p_state text, p_attempt integer",
+      "name": "terminal",
+      "schema": "turn_private"
+    },
+    {
+      "md5": "cd92b94b314310a3babe4074d5278ec6",
+      "args": "",
+      "name": "text_owner",
+      "schema": "turn_private"
+    },
+    {
+      "md5": "77f82e6d4efc66b7df90fb6abc7be40c",
+      "args": "p_id uuid",
+      "name": "text_policy_current",
+      "schema": "turn_private"
+    },
+    {
+      "md5": "cd460e80c1f57fb34476d44a28b02db8",
+      "args": "p_text text, p_max integer",
+      "name": "valid_text",
+      "schema": "turn_private"
+    }
+  ]
+}
