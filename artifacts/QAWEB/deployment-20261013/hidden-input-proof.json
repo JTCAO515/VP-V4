@@ -1,0 +1,17 @@
+{
+  "sourceSha256": "2e8272868159d7af42a4a63476d250ff16dcd3e37be72c41e0a1511359aacdc7",
+  "source": "scripts/qa-agent-deploy/hidden-key-input.py",
+  "defaultMode": "plan; no host access",
+  "executedImport": false,
+  "tests": {
+    "synthetic": 10,
+    "passed": 10,
+    "realKeys": false,
+    "realEcs": false
+  },
+  "targetInstance": "i-j6c7q3kftufyroypiqvu",
+  "targetProject": "dzqdzetcctkhbrhlxxgn",
+  "preparedByAgent": false,
+  "noSecretValueOutput": true,
+  "systemChangesPerformed": false
+}
