@@ -31,7 +31,7 @@ class DelayedConfirmation(unittest.TestCase):
             return original_read(path,*args,**kwargs)
         def confirm(prompt):
             if change:change(state,official)
-            return 'JT APPROVED '+m.plan.REF+' POSTGRES READ BACKUP NEW AGE KEY'
+            return 'JT APPROVED '+m.plan.REF+' POSTGRES READ BACKUP NEW AGE KEY REALTIME LEDGER'
         with contextlib.ExitStack() as stack:
             stack.enter_context(contextlib.redirect_stdout(io.StringIO()))
             stack.enter_context(patch.object(Path,'read_text',read))

@@ -1,0 +1,9 @@
+test_no_secret_from_process_error (__main__.ProbeTests) ... ok
+test_only_explicit_metadata_mode (__main__.ProbeTests) ... ok
+test_parse_not_execute_and_fail_closed (__main__.ProbeTests) ... ok
+test_sql_catalog_only_no_role_switch (__main__.ProbeTests) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.001s
+
+OK

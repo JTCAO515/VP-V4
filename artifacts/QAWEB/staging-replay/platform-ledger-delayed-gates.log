@@ -1,0 +1,15 @@
+test_code_changed_during_confirmation (__main__.DelayedConfirmation) ... ok
+test_delayed_official_observation_expired (__main__.DelayedConfirmation) ... ok
+test_delayed_window_fully_expired (__main__.DelayedConfirmation) ... ok
+test_delayed_window_has_less_than_eleven_minutes (__main__.DelayedConfirmation) ... ok
+test_project_changed_during_confirmation (__main__.DelayedConfirmation) ... ok
+test_replaced_still_fresh_evidence_requires_restart (__main__.DelayedConfirmation) ... ok
+test_schema_changed_during_confirmation (__main__.DelayedConfirmation) ... ok
+test_uuid_consumed_during_confirmation (__main__.DelayedConfirmation) ... ok
+test_valid_delayed_confirmation_enters_executor_once (__main__.DelayedConfirmation) ... ok
+test_versions_changed_during_confirmation (__main__.DelayedConfirmation) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.017s
+
+OK

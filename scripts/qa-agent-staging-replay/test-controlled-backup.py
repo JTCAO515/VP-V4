@@ -35,6 +35,10 @@ class Gates(unittest.TestCase):
             changed=copy.deepcopy(a);changed[key]=value
             with self.subTest(key=key),self.assertRaises(ValueError):m.validate_approval(changed,m.now())
 
+    def test_legacy_approval_cannot_add_platform_ledger_scope(self):
+        a=self.approval();a['actions']=[x for x in a['actions'] if x!='capture-realtime-schema-migrations-ledger']
+        with self.assertRaisesRegex(ValueError,'APPROVAL_SCOPE_INCOMPLETE'):m.validate_approval(a,m.now())
+
     def test_once_only_exclusive_record(self):
         with tempfile.TemporaryDirectory(dir=m.ROOT/'artifacts/QAWEB/staging-replay',prefix='gate-test-') as d:
             p=Path(d)/'synthetic-used.json';m.exclusive_json(p,{'synthetic':True})
