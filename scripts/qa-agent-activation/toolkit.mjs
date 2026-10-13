@@ -7,7 +7,7 @@ import { parseQaHostedProfile } from '../../lib/server/qa-agent/hosted-profile.t
 export const PROJECT = 'dzqdzetcctkhbrhlxxgn';
 export const LINK = 'link_6acdbe0471c081919ff47de24ca53b0f';
 export const MODE = 'qa_session_history_v1';
-export const MIGRATION_MANIFEST_HASH = 'b8b4c27efa683f9fbb8a82b7a9febd2a42846345af473a4519b426d1c9b1f61f';
+export const MIGRATION_MANIFEST_HASH = '9629eeb61c369739bd41ee8c53d5a466fc561a4eb74c672a92502e12c8745d73';
 const manifestBytes=readFileSync(new URL('./migration-manifest.json',import.meta.url));
 if (createHash('sha256').update(manifestBytes).digest('hex')!==MIGRATION_MANIFEST_HASH) throw Error('MIGRATION_MANIFEST_CHANGED');
 export const migrationManifest=JSON.parse(manifestBytes);
@@ -119,8 +119,9 @@ export function preflight(bundle, observation, now=Date.now(), migrationRoot) {
   check(canonical(observation.reviewedMigrations)===canonical(migrationManifest.reviewedMissing80)
     && observation.migrationManifestHash===MIGRATION_MANIFEST_HASH && bundle.migrationManifestHash===MIGRATION_MANIFEST_HASH,'PINNED_MISSING_80');
   check(sourceMigrationsMatch(migrationRoot),'SOURCE_MIGRATION_DRIFT');
+  // This field always describes the RPC consumed by hosted v3, currently v2.
   const acl=observation.qaReadyGroupsAcl;
-  check(acl?.signature==='public.qa_ready_groups_v1(integer)' && acl.serviceRoleExecute===true
+  check(acl?.signature==='public.qa_ready_groups_v2(integer,text,text,text)' && acl.serviceRoleExecute===true
     && acl.publicExecute===false && acl.anonExecute===false && acl.authenticatedExecute===false,'QA_READY_GROUPS_SERVICE_ROLE_ONLY');
   check(observation.qaRpcPresent===true && observation.turnDataPrivatePresent===true && observation.qaSchemaFingerprintMatches===true,'QA_SCHEMA');
   check(observation.restorePoint?.ready===true && HASH.test(observation.restorePoint?.evidenceHash??''),'RESTORE_POINT');

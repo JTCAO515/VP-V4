@@ -46,9 +46,9 @@ Run `metadata.sql` using the official Go2China account link `link_6acdbe0471c081
   "observedAt": "ACTUAL_ISO_TIMESTAMP",
   "migrations": [],
   "reviewedMigrations": [],
-  "migrationManifestHash": "b8b4c27efa683f9fbb8a82b7a9febd2a42846345af473a4519b426d1c9b1f61f",
+  "migrationManifestHash": "9629eeb61c369739bd41ee8c53d5a466fc561a4eb74c672a92502e12c8745d73",
   "qaRpcPresent": false,
-  "qaReadyGroupsAcl": {"signature":"public.qa_ready_groups_v1(integer)","serviceRoleExecute":false,"publicExecute":false,"anonExecute":false,"authenticatedExecute":false},
+  "qaReadyGroupsAcl": {"signature":"public.qa_ready_groups_v2(integer,text,text,text)","serviceRoleExecute":false,"publicExecute":false,"anonExecute":false,"authenticatedExecute":false},
   "turnDataPrivatePresent": false,
   "qaSchemaFingerprintMatches": false,
   "restorePoint": {"ready": false, "evidenceHash": null},
@@ -82,7 +82,7 @@ No target write, budget enablement, provider call, deployment or restore was exe
 
 ## Stable Main migration repin
 
-The manifest records Main revision `d9447720` and QA migration SHA-256 `b4cfba3e31627e1200f331800eb85a5769744fb300c6799fde53661385c7c6de`; version sets stay 75/80/155. The new v3-only discovery signature `public.qa_ready_groups_v1(integer)` must exist and permit EXECUTE to service_role only (PUBLIC/anon/authenticated false). Map `qa_ready_groups_acl` from the read-only metadata query into `qaReadyGroupsAcl`; absent/legacy signature or grants fail closed. No query invokes the discovery RPC.
+The manifest records Main revision `9e1b5f0e` and QA migration SHA-256 `d3ab56f866977838510e521566a2ea593b1d824d622f767995d2c6a82b4ecb0c`; version sets stay 75/80/155. The new v3-only discovery signature `public.qa_ready_groups_v2(integer,text,text,text)` must exist and permit EXECUTE to service_role only (PUBLIC/anon/authenticated false). The `qaReadyGroupsAcl` property now explicitly represents actual v3 consumption of v2: profile-owned limit/model/priceVersion/endpoint, fully qualified before LIMIT and requiring one matching scope. Legacy v1 remains compatible in the source; a v1 ACL cannot satisfy this requirement. Monetary caps remain checked by the original reserve/dispatch path. Map `qa_ready_groups_acl` from the read-only metadata query into `qaReadyGroupsAcl`; absent/legacy signature or grants fail closed. No query invokes the discovery RPC.
 
 This owned branch deliberately does not import Main's shared source. Before integration its default preflight correctly reports SOURCE_MIGRATION_DRIFT. To read a separate approved checkout without altering either tree, the CLI accepts a final optional absolute repository root after observation.json. All 155 source hashes are still verified; this parameter never changes expected hashes or the database target. After Main cherry-picks this kit onto its matching source, omit the option. Contract tests read matching checkout bytes, or the pinned Main Git object into their own disposable temporary fixture; an integrated CI checkout uses its matching local bytes and needs no historical Git object. Tests never modify repository migrations.
 

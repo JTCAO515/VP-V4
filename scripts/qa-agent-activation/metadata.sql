@@ -4,12 +4,12 @@
 -- No text, credentials, consent creation, DDL or DML.
 select
  clock_timestamp() as observed_at,
- jsonb_build_object('signature','public.qa_ready_groups_v1(integer)',
-  'serviceRoleExecute',coalesce(has_function_privilege('service_role',to_regprocedure('public.qa_ready_groups_v1(integer)'),'EXECUTE'),false),
-  'anonExecute',coalesce(has_function_privilege('anon',to_regprocedure('public.qa_ready_groups_v1(integer)'),'EXECUTE'),false),
-  'authenticatedExecute',coalesce(has_function_privilege('authenticated',to_regprocedure('public.qa_ready_groups_v1(integer)'),'EXECUTE'),false),
+ jsonb_build_object('signature','public.qa_ready_groups_v2(integer,text,text,text)',
+  'serviceRoleExecute',coalesce(has_function_privilege('service_role',to_regprocedure('public.qa_ready_groups_v2(integer,text,text,text)'),'EXECUTE'),false),
+  'anonExecute',coalesce(has_function_privilege('anon',to_regprocedure('public.qa_ready_groups_v2(integer,text,text,text)'),'EXECUTE'),false),
+  'authenticatedExecute',coalesce(has_function_privilege('authenticated',to_regprocedure('public.qa_ready_groups_v2(integer,text,text,text)'),'EXECUTE'),false),
   'publicExecute',exists(select 1 from pg_proc p cross join lateral aclexplode(coalesce(p.proacl,acldefault('f',p.proowner))) a
-    where p.oid=to_regprocedure('public.qa_ready_groups_v1(integer)') and a.grantee=0 and a.privilege_type='EXECUTE')) as qa_ready_groups_acl,
+    where p.oid=to_regprocedure('public.qa_ready_groups_v2(integer,text,text,text)') and a.grantee=0 and a.privilege_type='EXECUTE')) as qa_ready_groups_acl,
  (select jsonb_agg(version order by version) from supabase_migrations.schema_migrations) as migrations,
  to_regnamespace('turn_data_private') is not null as turn_data_private_present,
  (select jsonb_agg(p.oid::regprocedure::text order by p.proname) from pg_proc p join pg_namespace n on n.oid=p.pronamespace

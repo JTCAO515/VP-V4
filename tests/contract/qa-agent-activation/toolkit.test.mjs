@@ -26,7 +26,7 @@ const input=()=>({schemaVersion:'qa-activation-input/1',projectId:PROJECT,contex
  budget:{limitMicros:10000000,taskLimitMicros:5000000,providerLimitMicros:10000000,attemptLimitMicros:2000000,taskAttemptLimit:8,concurrencyLimit:1,maxOutputTokens:128,timeoutMs:1000,evidence:proof()},
  validity:{effectiveAt:'2026-10-13T03:00:00Z',expiresAt:'2026-10-14T03:00:00Z',termsRecheckAt:'2026-10-14T03:00:00Z'},configuration:{id,version:1}});
 const build=x=>generate(x??input(),{now});
-const snapshot=b=>({projectId:PROJECT,linkId:LINK,observedAt:'2026-10-13T03:30:00Z',migrations:[...migrationManifest.expected155],reviewedMigrations:[...migrationManifest.reviewedMissing80],migrationManifestHash:MIGRATION_MANIFEST_HASH,qaRpcPresent:true,qaReadyGroupsAcl:{signature:'public.qa_ready_groups_v1(integer)',serviceRoleExecute:true,publicExecute:false,anonExecute:false,authenticatedExecute:false},turnDataPrivatePresent:true,qaSchemaFingerprintMatches:true,restorePoint:{ready:true,evidenceHash:'b'.repeat(64)},workerStopped:true,webDisabled:true,ownerId:id,existingPolicyIds:[],existingNoticeVersions:[],existingNoticeHashes:[],existingScopeIds:[],reviewedPackageHash:b.packageHash});
+const snapshot=b=>({projectId:PROJECT,linkId:LINK,observedAt:'2026-10-13T03:30:00Z',migrations:[...migrationManifest.expected155],reviewedMigrations:[...migrationManifest.reviewedMissing80],migrationManifestHash:MIGRATION_MANIFEST_HASH,qaRpcPresent:true,qaReadyGroupsAcl:{signature:'public.qa_ready_groups_v2(integer,text,text,text)',serviceRoleExecute:true,publicExecute:false,anonExecute:false,authenticatedExecute:false},turnDataPrivatePresent:true,qaSchemaFingerprintMatches:true,restorePoint:{ready:true,evidenceHash:'b'.repeat(64)},workerStopped:true,webDisabled:true,ownerId:id,existingPolicyIds:[],existingNoticeVersions:[],existingNoticeHashes:[],existingScopeIds:[],reviewedPackageHash:b.packageHash});
 test('complete synthetic metadata produces a disabled, unpublished compatible profile, with zero sends',()=>{
  const original=globalThis.fetch;let sends=0;globalThis.fetch=()=>{sends++;throw Error('forbidden');};
  try {const b=build();assert.equal(b.hostedProfile.qwen.reservedMicros,1048832);assert.equal(b.scopeInsertParameters.enabled,false);assert.equal(b.providerLimitInsertParameters.enabled,false);assert.equal(b.policyInserted,false);assert.equal(b.activationAllowed,false);assert.equal(b.serverEnvironment.VISEPANDA_QA_AGENT,'false');assert.match(b.notice.noticeEn,/not disclosed/);assert.match(b.notice.noticeZh,/unknown/);assert.equal(b.noticeHash,digest(b.notice));assert.equal(sends,0);} finally {globalThis.fetch=original;}
@@ -83,9 +83,12 @@ test('6/24 upper-tier arithmetic preserves full-context reserve without cache or
  x.budget.attemptLimitMicros=6389759;assert.throws(()=>build(x),/UNDER_RESERVED/);
 });
 
-test('stable Main migration hash and new QA RPC ACL are mandatory; source drift is blocked',()=>{
+test('stable Main migration hash and actual v2 QA RPC ACL are mandatory; v1 and source drift are blocked',()=>{
  const b=build(),s=snapshot(b);
- for(const patch of [{qaReadyGroupsAcl:null},{qaReadyGroupsAcl:{...s.qaReadyGroupsAcl,signature:'public.text_ready_groups_v1(integer)'}},...['publicExecute','anonExecute','authenticatedExecute'].map(k=>({qaReadyGroupsAcl:{...s.qaReadyGroupsAcl,[k]:true}})),{qaReadyGroupsAcl:{...s.qaReadyGroupsAcl,serviceRoleExecute:false}}]) assert.ok(preflight(b,{...s,...patch},now).blockers.includes('QA_READY_GROUPS_SERVICE_ROLE_ONLY'));
+ const metadata=readFileSync(new URL('../../../scripts/qa-agent-activation/metadata.sql',import.meta.url),'utf8');
+ assert.equal(metadata.match(/public\.qa_ready_groups_v2\(integer,text,text,text\)/g)?.length,5);
+ assert.doesNotMatch(metadata,/qa_ready_groups_v1\(/);
+ for(const patch of [{qaReadyGroupsAcl:null},{qaReadyGroupsAcl:{...s.qaReadyGroupsAcl,signature:'public.qa_ready_groups_v1(integer)'}},{qaReadyGroupsAcl:{...s.qaReadyGroupsAcl,signature:'public.qa_ready_groups_v2(integer)'}},{qaReadyGroupsAcl:{...s.qaReadyGroupsAcl,signature:'public.text_ready_groups_v1(integer)'}},...['publicExecute','anonExecute','authenticatedExecute'].map(k=>({qaReadyGroupsAcl:{...s.qaReadyGroupsAcl,[k]:true}})),{qaReadyGroupsAcl:{...s.qaReadyGroupsAcl,serviceRoleExecute:false}}]) assert.ok(preflight(b,{...s,...patch},now).blockers.includes('QA_READY_GROUPS_SERVICE_ROLE_ONLY'));
  const file=new URL('20261013050429_qa_agent_web.sql',sourceRoot),original=readFileSync(file);
  try {writeFileSync(file,Buffer.concat([original,Buffer.from('\n-- drift')]));assert.ok(preflight(b,s,now).blockers.includes('SOURCE_MIGRATION_DRIFT'));} finally {writeFileSync(file,original);}
  assert.equal(preflight(b,s,now).reviewReady,true);
