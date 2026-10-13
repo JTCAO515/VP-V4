@@ -1,0 +1,43 @@
+{
+  "sourceSha": "4e477a7f7bb05af1539bf940da204dd93df90bf3",
+  "sourceReview": "Main independent review and CI running",
+  "automaticDeployment": {
+    "githubDeploymentId": 7030641047,
+    "environment": "Preview",
+    "state": "success",
+    "url": "https://vp-v4-d6v0i347q-jtcao515s-projects.vercel.app",
+    "vercelDashboardReference": "9uyTDjXayWprQaTBrLmut6upeM7r",
+    "vercelDeploymentId": "dpl_9uyTDjXayWprQaTBrLmut6upeM7r",
+    "readyState": "READY"
+  },
+  "vercelManagementReadback": {
+    "state": "DENIED",
+    "operation": "GET /v7/deployments",
+    "status": 403,
+    "code": "forbidden",
+    "requestId": "sin1:sfo1::p76tf-1791868326009-7ae9dbf1688b",
+    "equivalentRetry": false
+  },
+  "targetHttp": {
+    "domain": "https://qatesting.go2china.space",
+    "root": 403,
+    "qa": 403,
+    "signIn": 403,
+    "anonymousSessions": 403,
+    "exactPreviewQa": 403,
+    "server": "Vercel",
+    "classification": "platform-layer request blocked; not app authentication result",
+    "authenticatedWebsiteDiagnostic": "official same-account vercel curl also HTTP403",
+    "postAuthorizedWafUpdate": "custom domain now routes to actual app; earlier403 retained as historical cause"
+  },
+  "checks": {
+    "automaticBuild": "PASS via GitHub deployment/status",
+    "dnsTls": "PASS",
+    "appRootRedirect": "PASS: HTTP307 to /qa",
+    "loginBoundary": "PASS: signed-out /qa links to actual sign-in with returnTo=/qa; successful login UNRUN",
+    "appAnonymousApi": "PASS in disabled configuration:503/no private data; cross-originPOST403/not_submitted",
+    "providerAndMultiturn": "UNRUN: new policy/worker target evidence absent and Supabase permission denied"
+  },
+  "qaActivation": "disabled; QA enable/policy/context absent",
+  "changes": "One explicit authorized WAFhost append staged+published; no manual duplicate deploy, DNS/domain/protection/QA enable change"
+}

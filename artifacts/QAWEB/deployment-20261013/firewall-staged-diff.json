@@ -1,0 +1,54 @@
+{
+  "changes": [
+    {
+      "action": "rules.update",
+      "createdAt": "2026-10-13T05:27:55.035Z",
+      "id": "rule_vpj_02_staging_schema_maintenance_N0pDWD",
+      "userId": "eskAucTu7z5EieqxJDZq7j3d",
+      "username": "jtcao515",
+      "value": {
+        "action": {
+          "mitigate": {
+            "action": "deny",
+            "actionDuration": null,
+            "rateLimit": null,
+            "redirect": null
+          }
+        },
+        "active": true,
+        "conditionGroup": [
+          {
+            "conditions": [
+              {
+                "op": "ninc",
+                "type": "host",
+                "value": [
+                  "go2china.space",
+                  "staging.go2china.space",
+                  "testing.go2china.space",
+                  "vp-v4-45251eox5-jtcao515s-projects.vercel.app",
+                  "vp-v4-5dcdig8mo-jtcao515s-projects.vercel.app",
+                  "vp-v4-64u5z6ck5-jtcao515s-projects.vercel.app",
+                  "vp-v4-6gmyp6494-jtcao515s-projects.vercel.app",
+                  "vp-v4-7rftlyb4r-jtcao515s-projects.vercel.app",
+                  "vp-v4-b468sog8m-jtcao515s-projects.vercel.app",
+                  "vp-v4-be9i2998m-jtcao515s-projects.vercel.app",
+                  "vp-v4-d6yc4thvq-jtcao515s-projects.vercel.app",
+                  "vp-v4-git-main-jtcao515s-projects.vercel.app",
+                  "vp-v4-hoqbl7dj0-jtcao515s-projects.vercel.app",
+                  "vp-v4-jtcao515s-projects.vercel.app",
+                  "vp-v4-noqwmrvwb-jtcao515s-projects.vercel.app",
+                  "vp-v4.vercel.app",
+                  "www.go2china.space",
+                  "qatesting.go2china.space"
+                ]
+              }
+            ]
+          }
+        ],
+        "description": "Approved maintenance window: deny all project deployments until verified v2 hosts are released",
+        "name": "VPJ02 Staging schema maintenance"
+      }
+    }
+  ]
+}

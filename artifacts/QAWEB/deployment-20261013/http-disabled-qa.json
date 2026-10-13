@@ -1,0 +1,64 @@
+{
+  "observedAt": "2026-10-13T05:32:00.804079+00:00",
+  "origin": "https://qatesting.go2china.space",
+  "sourceSha": "4e477a7f7bb05af1539bf940da204dd93df90bf3",
+  "rows": [
+    {
+      "case": "root",
+      "status": 307,
+      "location": "/qa",
+      "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+      "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+      "contentType": "text/html; charset=utf-8",
+      "vercelRequestId": "sin1::iad1::j2q6k-1791869516882-8f1d1c504f38"
+    },
+    {
+      "case": "qa",
+      "status": 200,
+      "location": null,
+      "cacheControl": "public, max-age=0, must-revalidate",
+      "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+      "contentType": "text/html; charset=utf-8",
+      "vercelRequestId": "sin1::xb88x-1791869517627-7471932f30d6"
+    },
+    {
+      "case": "signIn",
+      "status": 200,
+      "location": null,
+      "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+      "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+      "contentType": "text/html; charset=utf-8",
+      "vercelRequestId": "sin1::iad1::j2q6k-1791869518073-b5f027e9fb8f"
+    },
+    {
+      "case": "anonymousSessions",
+      "status": 503,
+      "location": null,
+      "cacheControl": "private, no-store",
+      "vary": "Cookie, Origin",
+      "contentType": "application/json",
+      "vercelRequestId": "sin1::iad1::v57g8-1791869519609-730ef9caa8c9",
+      "version": "qa-agent/1",
+      "error": {
+        "code": "PROVIDER_UNAVAILABLE",
+        "ack": "not_submitted"
+      },
+      "privateDataPresent": false
+    },
+    {
+      "case": "crossOriginPost",
+      "status": 403,
+      "location": null,
+      "cacheControl": "private, no-store",
+      "vary": "Cookie, Origin",
+      "contentType": "application/json",
+      "vercelRequestId": "sin1::iad1::vb2sd-1791869520410-163a0a267925",
+      "version": "qa-agent/1",
+      "error": {
+        "code": "FORBIDDEN",
+        "ack": "not_submitted"
+      },
+      "privateDataPresent": false
+    }
+  ]
+}
