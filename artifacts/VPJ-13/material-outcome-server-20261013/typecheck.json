@@ -1,0 +1,22 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "typeRoots": [
+      "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj13-experience-measurement-server-20261012/node_modules/@types"
+    ],
+    "paths": {
+      "@/*": [
+        "../../../*"
+      ],
+      "*": [
+        "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj13-experience-measurement-server-20261012/node_modules/*"
+      ]
+    }
+  },
+  "include": [
+    "../../../lib/server/journey-entry/material-outcome/**/*.ts",
+    "../../../tests/contract/journey-material-outcome/server/**/*.ts"
+  ],
+  "exclude": []
+}
