@@ -63,7 +63,7 @@ export function createQaService(store: QaStore, policyId: string, contextMode: "
       } else if (value.policyId !== policyId || !uuid(value.serviceTaskId) || !uuid(value.lastTurnId)) throw new QaError("DATA_POLICY_BLOCKED");
       const ids = new Set<string>(), texts: Record<string, unknown>[] = [];
       for (const item of value.messages) {
-        if (!record(item) || !uuid(item.turnId) || ids.has(item.turnId)) throw new QaError("DATA_POLICY_BLOCKED");
+        if (!record(item) || item.kind !== "text" || !uuid(item.turnId) || ids.has(item.turnId)) throw new QaError("DATA_POLICY_BLOCKED");
         ids.add(item.turnId); texts.push(item);
       }
       if (texts.length && texts.at(-1)?.turnId !== value.lastTurnId) throw new QaError("DATA_POLICY_BLOCKED");
@@ -80,7 +80,18 @@ export function createQaService(store: QaStore, policyId: string, contextMode: "
     // protected text read. Share one metadata refresh budget with completion
     // races, then reread protected text at most once if membership still differs.
     if (!matches(snapshot, current) || completedBetweenReads) current = await readable(detail.thread.id);
-    if (!matches(snapshot, current)) snapshot = await readSnapshot();
+    const stateTextMismatch = () => snapshot.texts.some(text => {
+      const turn = current.turns.find(t => t.id === text.turnId);
+      return turn && ((!isTerminal(turn.status) && typeof text.output === "string")
+        || (["completed", "proposal_ready"].includes(turn.status) && text.output === null && text.outcome === null));
+    });
+    // Membership can now match while the earlier text is still pending/null and
+    // the refreshed metadata has completed. Spend the same one protected-reread
+    // budget on this state/text race; never convert that stale null to failure.
+    if (!matches(snapshot, current) || stateTextMismatch()) snapshot = await readSnapshot();
+    // A confirmed terminal-without-text retains the existing failure projection.
+    // Failed/cancelled/unavailable states already prove a terminal failure and do
+    // not trigger rereads. Pending + output remains fail-closed in saved().
     // A persistent or continuing snapshot mismatch is retryable, not evidence
     // of consent withdrawal. Fail closed without returning a partial history.
     if (!matches(snapshot, current)) throw new QaError("PROVIDER_UNAVAILABLE");

@@ -75,3 +75,12 @@ UUID/envelope failures remain permission refusals. Normal aligned reads add no w
 A conflict detected before admission has ack:not_submitted; no new Turn/budget or
 provider call occurs. Clients retain their selected Session and use the existing
 bounded retry for PROVIDER_UNAVAILABLE/503 rather than clearing saved history.
+
+The same protected reread budget also covers a state/content race after membership
+refresh: completed/proposal_ready metadata with an earlier pending/null text projection
+triggers one protected reread even when the Turn set already matches. The newer saved
+answer is then shown only with qualified terminal metadata. If the bounded reread
+confirms an empty completed result, the existing terminal technical_failure/null
+projection remains; failed/cancelled/unavailable results and stored failure reasons
+are not retried indefinitely. Pending metadata plus non-null output still fails closed.
+Protected message `kind` must be exactly `text`; missing or other kinds are refused.
