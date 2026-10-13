@@ -1,0 +1,63 @@
+{
+  "mode": "OFFLINE_PLAN_ONLY",
+  "target": "dzqdzetcctkhbrhlxxgn",
+  "observedOn": "2026-10-13",
+  "businessSchemas": [
+    "community_private",
+    "identity_private",
+    "knowledge_review_private",
+    "ops_budget_private",
+    "place_quota_private",
+    "privacy_private",
+    "private",
+    "public",
+    "research_intake_private",
+    "service_cases_private",
+    "turn_private"
+  ],
+  "requiredDataSchemas": [
+    "auth",
+    "community_private",
+    "identity_private",
+    "knowledge_review_private",
+    "ops_budget_private",
+    "place_quota_private",
+    "privacy_private",
+    "private",
+    "public",
+    "research_intake_private",
+    "service_cases_private",
+    "storage",
+    "supabase_migrations",
+    "turn_private"
+  ],
+  "oldBackupSchemas": [
+    "public",
+    "auth",
+    "storage",
+    "private",
+    "identity_private",
+    "knowledge_review_private",
+    "turn_private",
+    "supabase_migrations"
+  ],
+  "missingFromOldBackup": [
+    "community_private",
+    "ops_budget_private",
+    "place_quota_private",
+    "privacy_private",
+    "research_intake_private",
+    "service_cases_private"
+  ],
+  "oldCoverage": "FAIL",
+  "targetBackup": "UNRUN",
+  "restore": "UNRUN",
+  "additionalRequiredEvidence": [
+    "Fresh coherent snapshot with writes quiesced or database snapshot consistency; encrypted archive + separate recovery identity + integrity hash + retention destination approval",
+    "Role memberships/default ACLs/owners, extensions and versions, enabled event triggers and dependent functions; managed Auth/Storage handling reviewed",
+    "Restore into separately authorized isolated equivalent with supported platform schemas, role ownership and extension prerequisites",
+    "Verify constraints/indexes/triggers/RLS/ACLs/sequence values/migration history plus content-free aggregate invariants before and after upgrade",
+    "Object-store bytes are not contained in Storage metadata database backup; cover separately if applicable",
+    "No target apply until current recovery point and actual-data restore/replay are verified"
+  ]
+}
