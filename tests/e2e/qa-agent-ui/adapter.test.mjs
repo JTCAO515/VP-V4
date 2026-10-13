@@ -5,8 +5,8 @@ import { readFileSync } from 'node:fs';
 import ts from 'typescript';
 const source=ts.transpileModule(readFileSync('components/qa-agent/api.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
 const sid='11111111-1111-4111-8111-111111111111', rid='22222222-2222-4222-8222-222222222222';
-function fixture(data,status=200){
- const seen=[],exports={};vm.runInNewContext(source,{exports,AbortSignal,fetch:async(url,init)=>{seen.push({url,init});return {status,ok:status>=200&&status<300,json:async()=>data};}});return {api:exports.qaApi,permits:exports.permitsQaSubmission,seen};
+function fixture(data,status=200,jsonError=false){
+ const seen=[],exports={};vm.runInNewContext(source,{exports,AbortSignal,Error,TypeError,fetch:async(url,init)=>{seen.push({url,init});return {status,ok:status>=200&&status<300,json:async()=>{if(jsonError)throw new SyntaxError("Malformed synthetic JSON");return data;}};}});return {api:exports.qaApi,permits:exports.permitsQaSubmission,retry:exports.retryableHistoryError,ApiError:exports.ApiError,seen};
 }
 const wire=data=>({version:'qa-agent/1',...data});
 const saved=overrides=>({requestId:rid,turnId:rid,sessionId:sid,input:'original bytes ',text:'Saved answer',status:'answered',createdAt:'2026-10-13T00:00:00Z',...overrides});
@@ -55,4 +55,14 @@ test('missing, mismatched and unknown quota authority fail closed; limit denial 
  const legacy=fixture(wire({policy:{...base,contextMode:'current_input_v1',maxTurns:8}}));await assert.rejects(legacy.api.policy(new AbortController().signal));
  const denied=fixture(wire({error:{code:'QA_CONTEXT_LIMIT',ack:'not_submitted'}}),409);
  await assert.rejects(denied.api.send(sid,{requestId:rid,text:'Ninth'},new AbortController().signal),e=>e.status===409&&e.code==='QA_CONTEXT_LIMIT'&&e.ack==='not_submitted');
+});
+test('only temporary history errors retry; permission and successful malformed wire stop',async()=>{
+ const f=fixture({});
+ for(const status of [408,429,500,502,503,504]) assert.equal(f.retry(new f.ApiError(status)),true);
+ for(const [status,code] of [[401,'UNAUTHENTICATED'],[403,'FORBIDDEN'],[503,'DATA_POLICY_BLOCKED'],[502,'INVALID_RESPONSE'],[200,'PROVIDER_UNAVAILABLE'],[409,'QA_CONTEXT_LIMIT']]) assert.equal(f.retry(new f.ApiError(status,code)),false);
+ assert.equal(f.retry(new TypeError('Synthetic network failure')),true);
+ const timeout=new Error('Synthetic timeout');timeout.name='TimeoutError';assert.equal(f.retry(timeout),true);
+ assert.equal(f.retry(new Error('Unknown failure')),false);
+ const malformed=fixture({},200,true);await assert.rejects(malformed.api.recover(sid,rid,new AbortController().signal),error=>error.code==='INVALID_RESPONSE'&&!malformed.retry(error));
+ const gateway=fixture({},503,true);await assert.rejects(gateway.api.recover(sid,rid,new AbortController().signal),error=>gateway.retry(error));
 });

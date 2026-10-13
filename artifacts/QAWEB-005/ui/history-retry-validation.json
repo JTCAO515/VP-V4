@@ -1,0 +1,24 @@
+{
+  "base": "414088d8debd27a6f7f322e6e916b6d44db16928",
+  "reviewHead": "a21be165",
+  "sourceSha256": {
+    "components/qa-agent/QaAgentWorkspace.tsx": "1ef4cdc51034c9958cf61aeb6cdada3aef77cd6fc9bac4a342f6f12fe0a0da1f",
+    "components/qa-agent/api.ts": "fad9c6daaef13308076d8617f1df15cd1af3b0df5204f7e240d25d9546ef1ad9"
+  },
+  "change": "Pending history GET retries consecutive temporary transport/408/429/5xx failures at 1/2/4 seconds, max3 retries after the original poll. Normal successful pending snapshots continue regular polling. No POST or new request identity is created by polling.",
+  "failurePolicy": "401 resets all account data. 403/revocation and invalid successful wire stop immediately and clear protected history/readiness. Exhausted transient retries preserve pending messages and show explicit manual Reload. Effect owns child AbortController; Session/actor epoch, cleanup and switch fence timers and in-flight GETs.",
+  "checks": {
+    "lint": "PASS",
+    "typecheck": "PASS",
+    "productionBuild": "PASS",
+    "adapter": "7 PASS / 0 FAIL / 0 SKIP including temporary error classifier and malformed successful wire failclosed",
+    "affectedProductionBrowser": "7 PASS / 0 FAIL / 0 SKIP: 503→automatic actual saved-answer read, 4 failed GETs maximum then manual original-read, immediate401/403/invalid stop and cleanup, scheduled retry Session switch cancellation, SDK actor replacement. Each polling test observes exactly one message POST."
+  },
+  "evidenceCommands": [
+    "node --test tests/e2e/qa-agent-ui/adapter.test.mjs",
+    "node node_modules/@playwright/test/cli.js test --config tests/e2e/qa-agent-ui/playwright.config.mjs --workers=1 --grep 'pending history|pending-history backoff|SDK owner'"
+  ],
+  "scope": "Actual production-built UI with synthetic auth/API responses. Real provider/DB/authenticated QA target remain UNRUN.",
+  "reusedEvidence": "Unchanged unrelated prior matrices retained; no broad rerun.",
+  "excludedDirty": "AGENTS.md Next-dev generated block remains uncommitted."
+}
