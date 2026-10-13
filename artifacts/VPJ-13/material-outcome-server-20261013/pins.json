@@ -1,0 +1,39 @@
+{
+  "baselineHead": "daa7bae44a660381fb3295d0d2afc327ea98d3ba",
+  "branch": "codex/vpj13-material-outcome-server-20261013",
+  "receivedDraftSHA256": {
+    "consumer.ts": "16bb1205f01f9c9f18b54c6a468b2e1c3f721db20a1a3651d7537bbf42bca475",
+    "contract.ts": "9649bee7ad9fdb8a3b1d649b837d0cccd14f7585012194c901ba835254fec826",
+    "json.ts": "2302ebc8aea6885f89a6277f2f5b2db05f7df0cdf03b39581e2b56097dfa9eb5",
+    "original-reads.ts": "8efd8d064d611403fa4674d4dcf5410d431404d97019edb265aa9731be007b66"
+  },
+  "ownedSHA256": {
+    "lib/server/journey-entry/material-outcome/json.ts": "2302ebc8aea6885f89a6277f2f5b2db05f7df0cdf03b39581e2b56097dfa9eb5",
+    "lib/server/journey-entry/material-outcome/contract.ts": "de2aa35c33e2b68f7fd64f4ee206a8552d153b77ede4f6d9d31a68950d5052ff",
+    "lib/server/journey-entry/material-outcome/consumer.ts": "684cdd87f5537938336d648bc69dfda79a6fd22b209309f486b3dc0156da9886",
+    "lib/server/journey-entry/material-outcome/runtime.ts": "f56ae0a00af2320bbe95bbd02247b920566169baf2e298d8e1bb0fac9e84bd1e",
+    "lib/server/journey-entry/material-outcome/original-reads.ts": "fbf18912a0a10598c531dee0644f696c442b965e9bc559ebf4064905eb49ca27",
+    "tests/contract/journey-material-outcome/server/original-reads.test.ts": "31b8fd83eda1ee7b0754c4f9076130a9b650e6cc9f12fa0f7976c54724fdc85f",
+    "tests/contract/journey-material-outcome/server/consumer.test.ts": "a34c895416cb136f293650b14d685ebf08a6d30ca8c5c0136f02311dd6a508df"
+  },
+  "unchangedOriginalSourcesSHA256": {
+    "lib/server/intake/pdf/contract.ts": "e4d3b9ee1ed5bc2a004f5373521baa540c52fbe6e29a6d58a0b67c138eae63f5",
+    "lib/server/intake/pdf/repository.ts": "24c8024b6d42e892fff1a6e0db4172c9b0e83074067839797ac35e0f328a9e6a",
+    "lib/server/identity/user-data-adapter.ts": "ef3bb707c4b73290e841e65151b472cb0306f916ecb8b07e10d6b078857af1e4",
+    "lib/server/identity/native-request.ts": "38b7d98dd280d5be96c4157fea1d28d1753610f5f408509a137f9df3dd9ca728",
+    "lib/server/today/offline-native-authority.ts": "5eb014fc1473fa7d20e6ad6775a8b6e11bbcd022944336c623759364bdef30ef",
+    "supabase/migrations/20261005070000_pdf_intake.sql": "cc672c2d0afbc9651b97f3f054a72c673a1cbc9e61d1af2e41ed3d06182274e7"
+  },
+  "evidence": {
+    "newBehaviorTests": "55 PASS / 0 FAIL / 0 SKIP",
+    "reusedAffectedPdfTests": "6 PASS / 0 FAIL / 0 SKIP",
+    "affectedStrictTypecheck": "PASS",
+    "sourcePolicyLint": "PASS",
+    "realAuthSQL": "UNRUN",
+    "liveGuardedSelection": "ABSENT / default deny",
+    "nativeDevicePresentation": "UNRUN",
+    "measurementLifecycle": "UNRUN / default off",
+    "CIReviewProtectedMerge": "Main owned / UNRUN"
+  },
+  "writes": "owned new paths only; no shared source, SQL, metric or business writes"
+}

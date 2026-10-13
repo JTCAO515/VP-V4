@@ -1,0 +1,81 @@
+(node:68728) ExperimentalWarning: `--experimental-loader` may be removed in the future; instead use `register()`:
+--import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("./artifacts/VPJ-13/material-outcome-server-20261013/dependency-loader.mjs", pathToFileURL("./")); register("./artifacts/VPJ-13/material-outcome-server-20261013/dependency-loader.mjs", pathToFileURL("./"));'
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ bounded PDF command rejects unsupported claims, raw media, invalid dates, fields and locators without truncation (2.310542ms)
+✔ PDF preview is additive, preserves fixed originals/order, and distinguishes actual repeated and conflicting corrected imports (6.809542ms)
+✔ preview binds current Trip/head, complete corrected source/expiry, and refuses saved ID collisions (0.683958ms)
+(node:68729) ExperimentalWarning: `--experimental-loader` may be removed in the future; instead use `register()`:
+--import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("./artifacts/VPJ-13/material-outcome-server-20261013/dependency-loader.mjs", pathToFileURL("./")); register("./artifacts/VPJ-13/material-outcome-server-20261013/dependency-loader.mjs", pathToFileURL("./"));'
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ complete original receipt + two exact readbacks qualifies the internal tuple without mutating inputs (5.781916ms)
+✔ missing presentation stays unknown; lost confirmation ACK can recover only through original confirmed operation (0.740416ms)
+✔ missing protected selection, screenshot and caller claims do not qualify or read material (0.872125ms)
+✔ refuses foreign owner (0.339917ms)
+✔ refuses foreign session (0.171917ms)
+✔ refuses foreign epoch (0.210083ms)
+✔ refuses wrong selected logical entry (0.10625ms)
+✔ refuses different selected Trip (0.107042ms)
+✔ refuses guard installed after material read (0.344208ms)
+✔ refuses withdrawn selection (0.245792ms)
+✔ refuses expired selection (0.155917ms)
+✔ refuses operation alias (0.250125ms)
+✔ refuses operation Trip alias (0.355833ms)
+✔ refuses operation epoch alias (0.375125ms)
+✔ refuses body digest alias (0.558875ms)
+✔ refuses command digest alias (0.534292ms)
+✔ refuses preview digest alias (0.332125ms)
+✔ refuses base version alias (0.32525ms)
+✔ refuses receipt expiry alias (0.169042ms)
+✔ refuses readback Trip alias (0.32475ms)
+✔ refuses newer head is not exact resulting version (0.196875ms)
+✔ refuses older head (0.20675ms)
+✔ refuses unknown confirmation (0.282ms)
+✔ refuses event alias (0.2155ms)
+✔ refuses proposal alias (0.204708ms)
+✔ refuses event version alias (0.118083ms)
+✔ refuses wrong event kind (0.111833ms)
+✔ refuses ambiguous duplicated event (0.121208ms)
+✔ refuses oversize history is refused (0.130084ms)
+✔ refuses lexically different original bytes (0.208959ms)
+✔ refuses unknown original body field (0.126625ms)
+✔ refuses duplicate hidden body field (0.086041ms)
+✔ parse/preview/refused proposal state absent never activates (0.24225ms)
+✔ parse/preview/refused proposal state pending never activates (0.112833ms)
+✔ parse/preview/refused proposal state rejected never activates (0.093792ms)
+✔ parse/preview/refused proposal state cancelled never activates (0.585292ms)
+✔ parse/preview/refused proposal state expired never activates (0.365458ms)
+✔ refuses concurrent actor change at final reread (0.331166ms)
+✔ refuses concurrent epoch change at final reread (0.149417ms)
+✔ refuses concurrent selection change at final reread (0.139ms)
+✔ refuses concurrent withdraw change at final reread (0.116041ms)
+✔ refuses concurrent operation change at final reread (0.176583ms)
+✔ refuses concurrent snapshot change at final reread (0.1485ms)
+✔ refuses concurrent head change at final reread (0.402833ms)
+✔ expiry crossing, invalid authority clock, malformed closed JSON and mutable callback actor fail closed (0.818208ms)
+✔ abort and deadline bound a hung read with zero later reads (22.47625ms)
+(node:68730) ExperimentalWarning: `--experimental-loader` may be removed in the future; instead use `register()`:
+--import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("./artifacts/VPJ-13/material-outcome-server-20261013/dependency-loader.mjs", pathToFileURL("./")); register("./artifacts/VPJ-13/material-outcome-server-20261013/dependency-loader.mjs", pathToFileURL("./"));'
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ ordinary authenticated adapter complete: only original read RPCs, same JWT and exact source (26.638375ms)
+✔ ordinary authenticated adapter archived: only original read RPCs, same JWT and exact source (4.179334ms)
+✔ ordinary authenticated adapter archive_during_read: only original read RPCs, same JWT and exact source (3.330333ms)
+✔ ordinary authenticated adapter later_head: only original read RPCs, same JWT and exact source (2.512875ms)
+✔ ordinary authenticated adapter missing_idempotency: only original read RPCs, same JWT and exact source (3.912583ms)
+✔ ordinary authenticated adapter oversize: only original read RPCs, same JWT and exact source (1.605875ms)
+✔ ordinary authenticated adapter epoch_changed: only original read RPCs, same JWT and exact source (4.0325ms)
+✔ missing protected selection or screenshot refuses before authentication/network; malformed credentials never reach holder (0.168958ms)
+✔ per-read cancellation aborts underlying authenticated transport; disposal prevents subsequent reads (1.74675ms)
+(node:68731) ExperimentalWarning: `--experimental-loader` may be removed in the future; instead use `register()`:
+--import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("./artifacts/VPJ-13/material-outcome-server-20261013/dependency-loader.mjs", pathToFileURL("./")); register("./artifacts/VPJ-13/material-outcome-server-20261013/dependency-loader.mjs", pathToFileURL("./"));'
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ PDF migration exposes only disabled closed RPCs and retains original writer hook (0.499042ms)
+✔ PDF lineage stays marked through expiry, erased payload and ordinary successor rejection (0.084625ms)
+✔ PDF export stays on exact existing lease/source and enforces unenrolled partial (0.169416ms)
+ℹ tests 61
+ℹ suites 0
+ℹ pass 61
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 198.368125
