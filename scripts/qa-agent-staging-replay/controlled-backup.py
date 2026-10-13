@@ -26,6 +26,7 @@ def load(name, path):
 
 
 probe = load('probe', HERE / 'metadata-probe.py')
+verification = load('verification', HERE / 'restore-verification.py')
 plan = probe.plan
 APPROVAL_ACTIONS = sorted(['read-target-data14', 'set-role-postgres-for-read-only-backup',
                            'create-local-age-recovery-identity', 'retain-encrypted-database-copy',
@@ -43,7 +44,7 @@ def stamp(value):
 
 
 def code_hash():
-    names = ['controlled-backup.py', 'metadata-probe.py', 'metadata-probe.sql', 'backup-candidate.py', 'backup-relay.py']
+    names = ['controlled-backup.py', 'metadata-probe.py', 'metadata-probe.sql', 'backup-candidate.py', 'backup-relay.py','restore-verification.py']
     return hashlib.sha256(b''.join((name + '\n').encode() + (HERE / name).read_bytes() for name in names)+(ROOT/'artifacts/QAWEB/staging-replay/probe-official-metadata.json').read_bytes()).hexdigest()
 
 
@@ -131,6 +132,17 @@ def metadata(env, port):
     return m
 
 
+def restore_expectations(env, port, metadata):
+    sql="begin read only;set local role postgres;set local statement_timeout='10s';"
+    sql+=verification.counts_sql(metadata['relations'])
+    sql+="select jsonb_build_object('encoding',pg_encoding_to_char(encoding),'collate',datcollate,'ctype',datctype,'localeProvider',datlocprovider,'owner',pg_get_userbyid(datdba),'bootstrapRole',(select rolname from pg_roles where oid=10)) from pg_database where datname=current_database();rollback;"
+    raw=probe.checked([plan.PG_ROOT+'/psql','-X','-q','-At','-w','-v','ON_ERROR_STOP=1','-h','db.'+plan.REF+'.supabase.co','-p',str(port),'-U','cli_login_postgres','-d','postgres'],env=env,stdin=sql,timeout=30)
+    counts,facts=map(json.loads,raw.splitlines())
+    owner=facts.pop('owner'); bootstrap=facts.pop('bootstrapRole')
+    return {'contract':'qaw-restore-verification/1','dataSchemas':list(plan.SCHEMAS),
+            'metadata':metadata,'counts':counts,'databaseFacts':facts,'databaseOwner':owner,'bootstrapRole':bootstrap}
+
+
 def execute(a, official):
     # Only main() after the interactive gate calls this function.
     plan.require('FileVault is On.' in probe.checked(['fdesetup', 'status']), 'FILEVAULT_REQUIRED')
@@ -160,6 +172,7 @@ def execute(a, official):
                 for field in ('versions','schemas','event_triggers'):
                     plan.require(before[field] == official[field], 'FRESH_OFFICIAL_METADATA_CONFLICT')
                 plan.require(set(plan.SCHEMAS).issubset(before['schemas']), 'SCHEMA_COVERAGE_CONFLICT')
+                expected_restore=restore_expectations(env,port,before)
                 marker = now().strftime('%Y%m%dT%H%M%SZ')+'-'+uuid.uuid4().hex
                 archive_root=secure_directory(plan.ARCHIVE_ROOT)
                 exclusive_json(archive_root/('approval-'+a['approvalId']+'.used.json'), {'approvalId':a['approvalId'],'consumedAt':now().isoformat(),'codeSha256':code_hash()})
@@ -201,12 +214,14 @@ def execute(a, official):
                 stage = 'post-dump metadata'
                 after = metadata(env, port)
                 plan.require(before == after, 'METADATA_CHANGED_QUARANTINE')
+                plan.require(restore_expectations(env,port,after)==expected_restore,'COUNTS_CHANGED_QUARANTINE')
                 # Do not label this as a recoverable backup: actual-data restore and
                 # global-role/platform bootstrap are independently unverified.
                 manifest = {'status':'ENCRYPTED_CAPTURE_INTEGRITY_PASS_RESTORE_UNRUN','target':plan.REF,'entries':results,
                             'retainUntil':a['retainUntil'],'restoreDestination':a['restoreDestination'],
                             'ownersAclPreserved':True,'globalRolePasswords':'INTENTIONALLY_EXCLUDED_USE_APPROVED_IDENTITY_RECOVERY',
-                            'actualDataRestore':'UNRUN','roleSemanticRestore':'UNRUN','codeSha256':code_hash()}
+                            'actualDataRestore':'UNRUN','roleSemanticRestore':'UNRUN','codeSha256':code_hash(),
+                            'verification':expected_restore}
                 exclusive_json(archive_dir/'CAPTURED_RESTORE_UNRUN.json',manifest)
                 return manifest
             except BaseException:

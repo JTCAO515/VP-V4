@@ -1,0 +1,15 @@
+{
+  "status": "DRY_RUN_NO_ARCHIVE_OR_DOCKER_IO",
+  "codeSha256": "ef3c038a69003cb6780b82325562ea1b43452f4a89676b441451ba6b7fc5a671",
+  "requiredBundle": [
+    "data14.dump.age.partial",
+    "roles.sql.age.partial",
+    "schema-all.dump.age.partial"
+  ],
+  "requiredContract": "qaw-restore-verification/1",
+  "image": "public.ecr.aws/supabase/postgres:17.6.1.155",
+  "imageId": "sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b",
+  "unknownManagedBootstrap": "FAIL_CLOSED",
+  "realArchiveRead": false,
+  "actualRestore": "UNRUN"
+}

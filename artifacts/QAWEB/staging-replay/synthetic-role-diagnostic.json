@@ -1,0 +1,6 @@
+{
+  "target_superuser": "t",
+  "exit": 3,
+  "synthetic_only_diagnostic": "ERROR:  permission denied to grant privileges as role \"SYNTHETIC_ADMIN\"\nDETAIL:  The grantor must have the ADMIN option on role \"qaw_reader\".\n",
+  "cleanup": "PASS"
+}

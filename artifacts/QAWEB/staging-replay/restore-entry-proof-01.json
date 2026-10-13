@@ -1,0 +1,7 @@
+{
+  "status": "FAIL_SYNTHETIC_RESTORE_ENTRY",
+  "targetRead": false,
+  "stages": [],
+  "reason": "LOCAL_RESTORE_PIPE_FAILED",
+  "sourceCleanup": "PASS"
+}
