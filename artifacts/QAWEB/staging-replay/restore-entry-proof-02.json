@@ -1,0 +1,15 @@
+{
+  "status": "FAIL_SYNTHETIC_RESTORE_ENTRY",
+  "targetRead": false,
+  "stages": [],
+  "restore": {
+    "status": "FAIL_LOCAL_RESTORE",
+    "targetWritten": false,
+    "contentOutput": false,
+    "failedStage": "global roles",
+    "reason": "LOCAL_RESTORE_CONSUMER_FAILED",
+    "cleanup": "PASS"
+  },
+  "reason": "VALID_BUNDLE_RESTORE_FAILED",
+  "sourceCleanup": "PASS"
+}
