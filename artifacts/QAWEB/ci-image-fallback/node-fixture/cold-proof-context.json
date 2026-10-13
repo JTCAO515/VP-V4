@@ -1,0 +1,6 @@
+{
+  "snapshot": "96767520",
+  "directory": "/var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/qaw005-node-cold-71ayeeav",
+  "localAlias": "qaw005-node-cold:20261013",
+  "adaptation": "Only fixture image string replaced with isolated local alias, protecting existing shared arm64 node tag; all assertions and isolation flags unchanged."
+}
