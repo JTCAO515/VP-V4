@@ -1,0 +1,12 @@
+{
+  "baseMain": "16018dd23f3546a2be8acd81d5f85c4754d9845d",
+  "associationFix": "45e4e6d9be6d1012da30bdb9623cc6e0efcf50d7",
+  "beforeProsrcMD5": "3c7ce052508da60575c5db8c234d0b37",
+  "afterProsrcMD5": "5cffda2d1eb47a9c32e61c187b17c042",
+  "candidateSHA256": "ad0e0d25c422f2f485920a8e87de9e7cf164a00c28444c526338634aca57203a",
+  "newTables": [],
+  "targetApply": "NONE",
+  "latestProof": "qa-ready-budget-proof-1791875955391.log",
+  "namedPassChecks": 10,
+  "proofSHA256": "91ba96a4b2913064a54bf87d5915309383400e99bd1d47abd18d40f5756b3492"
+}

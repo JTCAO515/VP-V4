@@ -1,0 +1,13 @@
+OWN CONTAINER qaw005-budget-groups-246bb8cf-4d1
+PASS actual earlier unknown-budget-only group reproduces limit1 discovery starvation after the Task-association fix
+PASS candidate rollback preserves exact discovery definition/ACL and unknown work/ledger/text
+PASS limit1 now selects later ownerB while reserved ownerA original ledger/work/text stays exact
+PASS pending without receipt does not occupy earlier group; original accounting/reconciliation remains unchanged
+PASS settled without receipt does not occupy earlier group; original accounting/reconciliation remains unchanged
+PASS dispatched without receipt does not occupy earlier group; original accounting/reconciliation remains unchanged
+PASS same owner/policy group with a later normal Session remains discoverable and claimable
+PASS foreign budget owner with coincident attempt UUID cannot hide another actor group
+PASS an explicitly released reservation is not treated as uncertain accounting
+PASS execute ACL, disabled switch and ten lifecycle gates remain unchanged
+UNRUN target/provider/deployment; original receipt/price/legacy gate evidence reused for unchanged clauses
+OWN CLEANUP 0
