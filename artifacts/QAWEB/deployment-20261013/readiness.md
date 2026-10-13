@@ -39,3 +39,5 @@ PASS: exact branch-origin readback, previous domain/DNS readback, script syntax,
 ## HTTPS convergence
 
 Official Vercel MCP list_certs returned QA certificate cert_SYmDaxFvmKmaCXiJ1ssfGOIv for qatesting.go2china.space, createdAt=1791866705993, expiresAt=1799639194000, autoRenew=true. A fresh in-app browser subsequently opened the HTTPS domain and rendered Vercel 404 DEPLOYMENT_NOT_FOUND, request ID sin1::b8ksz-1791867172120-57a18c8b35c7. DNS/TLS prerequisites now PASS. Earlier TLS/connection failures remain historical diagnostics; no application/login/provider success is inferred. No domain/DNS mutation or TLS bypass was used.
+
+The official create-deployment API defines omitted target as preview (response target=null); the pin payload follows that contract and checks the non-production Git branch and productionBranch before writing the request. No staging/production/custom-environment target is requested. Artifact growth check PASS (+0.02 MB).
