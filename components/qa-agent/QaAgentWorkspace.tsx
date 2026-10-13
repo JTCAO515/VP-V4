@@ -9,8 +9,8 @@ import { clearPendingIdentities, confirmPendingIdentity, PendingIdentityStorageE
 import styles from "./QaAgentWorkspace.module.css";
 
 const copy = {
-  zh: { sessions: "会话", new: "新会话", empty: "选择或新建会话", input: "输入消息", send: "发送", loading: "正在读取…", replying: "正在回复…", error: "暂时无法完成请求，请检查原请求状态。", recover: "检查原请求", retry: "重发原请求", forbidden: "无法读取原请求。重发仍使用原请求编号，由服务器核验权限及幂等性。", readPaused: "自动读取已暂停，请点击“重新读取”检查原回复。", storageBlocked: "无法安全保存请求恢复标识，已暂停新发送。请重新读取。", restoredPending: "原请求尚未确认。仅保存了恢复标识，请继续检查原请求；不会发送替代请求。", refresh: "重新读取", signIn: "登录", limit: "本会话已达到上下文容量限制。请新建会话并缩短提问。", unsupportedPolicy: "当前会话尚未获得连续对话授权，暂时无法发送。", consent: "同意以上说明", unknown: "发送结果尚未确认。原请求编号已保留。", you: "你", assistant: "助手", blocked: "请求被阻止", failure: "请求未完成", partial: "部分答复", clarification: "需要补充信息" },
-  en: { sessions: "Sessions", new: "New session", empty: "Select or create a session", input: "Message", send: "Send", loading: "Loading…", replying: "Replying…", error: "The request could not be completed. Check the original request status.", recover: "Check original request", retry: "Resend original request", forbidden: "The original request is unavailable. Resending keeps its original ID; the server verifies permission and idempotency.", readPaused: "Automatic reading has paused. Click Reload to check the original reply.", storageBlocked: "Request recovery storage is unavailable. New sending is paused. Please click Reload.", restoredPending: "Original delivery is unconfirmed. Only its recovery ID was saved. Keep checking the original request; no replacement will be sent.", refresh: "Reload", signIn: "Sign in", limit: "This session has reached its context capacity limit. Please start a new session with a shorter question.", unsupportedPolicy: "This session is not yet authorized for ongoing conversation. Sending is unavailable.", consent: "Agree to the notice above", unknown: "Delivery is unconfirmed. The original request ID is retained.", you: "You", assistant: "Assistant", blocked: "Request blocked", failure: "Request incomplete", partial: "Partial answer", clarification: "More information needed" },
+  zh: { sessions: "会话", new: "新会话", empty: "选择或新建会话", input: "输入消息", send: "发送", loading: "正在读取…", replying: "正在回复…", error: "暂时无法完成请求，请检查原请求状态。", reconciliation: "答复暂无法确认；为避免重复处理，这条问题不会自动重发。可稍后再次查看。", checkReply: "再次查看", recover: "检查原请求", retry: "重发原请求", forbidden: "无法读取原请求。重发仍使用原请求编号，由服务器核验权限及幂等性。", readPaused: "自动读取已暂停，请点击“重新读取”检查原回复。", storageBlocked: "无法安全保存请求恢复标识，已暂停新发送。请重新读取。", restoredPending: "原请求尚未确认。仅保存了恢复标识，请继续检查原请求；不会发送替代请求。", refresh: "重新读取", signIn: "登录", limit: "本会话已达到上下文容量限制。请新建会话并缩短提问。", unsupportedPolicy: "当前会话尚未获得连续对话授权，暂时无法发送。", consent: "同意以上说明", unknown: "发送结果尚未确认。原请求编号已保留。", you: "你", assistant: "助手", blocked: "请求被阻止", failure: "请求未完成", partial: "部分答复", clarification: "需要补充信息" },
+  en: { sessions: "Sessions", new: "New session", empty: "Select or create a session", input: "Message", send: "Send", loading: "Loading…", replying: "Replying…", error: "The request could not be completed. Check the original request status.", reconciliation: "The reply cannot be confirmed yet. To avoid duplicate processing, this question will not be resent automatically. You can check again later.", checkReply: "Check again", recover: "Check original request", retry: "Resend original request", forbidden: "The original request is unavailable. Resending keeps its original ID; the server verifies permission and idempotency.", readPaused: "Automatic reading has paused. Click Reload to check the original reply.", storageBlocked: "Request recovery storage is unavailable. New sending is paused. Please click Reload.", restoredPending: "Original delivery is unconfirmed. Only its recovery ID was saved. Keep checking the original request; no replacement will be sent.", refresh: "Reload", signIn: "Sign in", limit: "This session has reached its context capacity limit. Please start a new session with a shorter question.", unsupportedPolicy: "This session is not yet authorized for ongoing conversation. Sending is unavailable.", consent: "Agree to the notice above", unknown: "Delivery is unconfirmed. The original request ID is retained.", you: "You", assistant: "Assistant", blocked: "Request blocked", failure: "Request incomplete", partial: "Partial answer", clarification: "More information needed" },
 };
 type Pending = { requestId: string; text: string | null; retryAllowed: boolean };
 
@@ -56,6 +56,7 @@ function Workspace({ locale, actorId, initialSession }: { locale: "zh" | "en"; a
   const [pending, setPending] = useState<Pending | null>(null);
   const pendingBySession = useRef(new Map<string, Pending>());
   const limitedSessions = useRef(new Set<string>());
+  const reconciling = messages.some(message => message.status === "reconciliation_required");
   const atLimit = limitReached || (policy?.maxTurns != null && messages.length >= policy.maxTurns);
   const mounted = useRef(true);
   const current = useRef<{ epoch: number; controller: AbortController; busy: boolean }>({ epoch: 0, controller: new AbortController(), busy: false });
@@ -136,6 +137,7 @@ function Workspace({ locale, actorId, initialSession }: { locale: "zh" | "en"; a
   }
   async function submit(recover = false) {
     if (!mounted.current) return;
+    if (!recover && reconciling) return;
     if (!selected || loading || (!recover && !historyReady) || current.current.busy || messages.some(message => message.status === "pending") || !policy?.consented || (!recover && !permitsQaSubmission(policy))) return;
     const id = selected;
     const retained = pendingBySession.current.get(id);
@@ -167,6 +169,25 @@ function Workspace({ locale, actorId, initialSession }: { locale: "zh" | "en"; a
         if (!recover && !retained && reason instanceof ApiError && reason.ack === "not_submitted") confirm(id, original.requestId);
         fail(reason, token);
       }
+    } finally { if (current.current === token && !token.controller.signal.aborted) { token.busy = false; setBusy(false); } }
+  }
+  async function inspectOriginal(requestId: string) {
+    if (!mounted.current || !selected || loading || current.current.busy || !policy?.consented) return;
+    const id = selected, token = current.current;
+    token.busy = true; setBusy(true); setError(false);
+    try {
+      // Saved admission identity is durable; this action never POSTs or replays.
+      const result = await qaApi.recover(id, requestId, token.controller.signal);
+      if (current.current !== token || token.controller.signal.aborted) return;
+      setMessages(list => list.map(message => message.requestId === requestId ? result.message : message));
+      if (pendingBySession.current.get(id)?.requestId === requestId) confirm(id, requestId);
+    } catch (reason) {
+      if (current.current !== token || token.controller.signal.aborted) return;
+      if (!retryableHistoryError(reason)) {
+        setMessages([]); setHistoryReady(false);
+        if (reason instanceof ApiError && reason.status === 403) setSessions(list => list.filter(session => session.id !== id));
+      }
+      fail(reason, token);
     } finally { if (current.current === token && !token.controller.signal.aborted) { token.busy = false; setBusy(false); } }
   }
   // Successful pending reads keep polling. Only consecutive temporary GET
@@ -228,7 +249,7 @@ function Workspace({ locale, actorId, initialSession }: { locale: "zh" | "en"; a
         {!selected ? <p>{c.empty}</p> : null}
         {messages.map(message => <article key={message.requestId}>
           <p><strong>{c.you}</strong></p><p className={styles.text}>{message.text}</p>
-          {message.status === "pending" ? <p role="status">{c.replying}</p> : message.status === "technical_failure" || message.status === "blocked" ? <p role="alert">{message.status === "blocked" ? c.blocked : c.failure}</p> : <>
+          {message.status === "pending" ? <p role="status">{c.replying}</p> : message.status === "reconciliation_required" ? <div><p role="status">{c.reconciliation}</p><button type="button" disabled={busy || loading} onClick={() => void inspectOriginal(message.requestId)}>{c.checkReply}</button></div> : message.status === "technical_failure" || message.status === "blocked" ? <p role="alert">{message.status === "blocked" ? c.blocked : c.failure}</p> : <>
             <p><strong>{c.assistant}</strong>{message.status === "partial" ? ` · ${c.partial}` : message.status === "clarification" ? ` · ${c.clarification}` : ""}</p>
             <p className={styles.text}>{message.answer}</p>
           </>}
@@ -236,13 +257,13 @@ function Workspace({ locale, actorId, initialSession }: { locale: "zh" | "en"; a
       </div>
       {policy ? <div className={styles.notice}><p className={styles.text}>{locale === "zh" ? policy.noticeZh : policy.noticeEn}</p>{policy.contextMode !== "qa_session_history_v1" ? <p role="status">{c.unsupportedPolicy}</p> : !policy.consented ? <button type="button" disabled={busy} onClick={() => void consent()}>{c.consent}</button> : null}</div> : null}
       {atLimit ? <p role="status">{c.limit}</p> : null}
-      {pending ? <div role="status"><p>{pending.text === null ? c.restoredPending : forbidden ? c.forbidden : c.unknown}</p><button type="button" disabled={busy || loading || (pending.retryAllowed && (!storageReady || !permitsQaSubmission(policy)))} onClick={() => void submit(!pending.retryAllowed)}>{pending.retryAllowed ? c.retry : c.recover}</button></div> : null}
+      {pending ? <div role="status"><p>{pending.text === null ? c.restoredPending : forbidden ? c.forbidden : c.unknown}</p><button type="button" disabled={busy || loading || (!reconciling && pending.retryAllowed && (!storageReady || !permitsQaSubmission(policy)))} onClick={() => void submit(reconciling || !pending.retryAllowed)}>{!reconciling && pending.retryAllowed ? c.retry : c.recover}</button></div> : null}
       <form className={styles.composer} onSubmit={event => { event.preventDefault(); if (!pending) void submit(); }}>
         <label htmlFor="qa-message">{c.input}</label>
-        <textarea maxLength={4000} id="qa-message" value={text} disabled={!selected || loading || busy || !historyReady || !!pending || waiting || atLimit || !storageReady} onChange={event => setText(event.target.value)} onCompositionStart={() => { composing.current = true; }} onCompositionEnd={() => { composing.current = false; }} onKeyDown={event => {
+        <textarea maxLength={4000} id="qa-message" value={text} disabled={!selected || loading || busy || !historyReady || !!pending || waiting || atLimit || reconciling || !storageReady} onChange={event => setText(event.target.value)} onCompositionStart={() => { composing.current = true; }} onCompositionEnd={() => { composing.current = false; }} onKeyDown={event => {
           if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing && !composing.current && event.keyCode !== 229) { event.preventDefault(); if (!pending && !waiting) void submit(); }
         }} />
-        <button type="submit" disabled={!selected || loading || !historyReady || busy || !!pending || waiting || !permitsQaSubmission(policy) || atLimit || !storageReady || !text.trim()}>{busy || waiting ? c.replying : c.send}</button>
+        <button type="submit" disabled={!selected || loading || !historyReady || busy || !!pending || waiting || !permitsQaSubmission(policy) || atLimit || reconciling || !storageReady || !text.trim()}>{waiting || (busy && !reconciling) ? c.replying : c.send}</button>
       </form>
     </section>
   </main>;

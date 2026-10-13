@@ -470,3 +470,68 @@ test('late old actor receipt cannot clear new actor unknown recovery marker',asy
  const record=await page.evaluate(key=>sessionStorage.getItem(key),recoveryKey);expect(JSON.parse(record).actorId).toBe(idB);expect(JSON.parse(record).requests[0].requestId).toBe(posts[1].requestId);
  releaseOld();await page.waitForTimeout(200);expect(await page.evaluate(key=>sessionStorage.getItem(key),recoveryKey)).toBe(record);expect(posts).toHaveLength(2);
 });
+
+const reconciliationText='The reply cannot be confirmed yet. To avoid duplicate processing, this question will not be resent automatically. You can check again later.';
+test('durable reconciliation survives refresh, stops spinner and POST, and manual original GET can read stored answer',async({page,context})=>{
+ let ready=false,historyReads=0;const originalReads=[];
+ const {sent}=await fixture(page,context,async(route,{path,method,sent,fulfill})=>{
+  if(sent.length&&method==='GET'&&path.endsWith(idA)) {historyReads++;await fulfill({session:session(idA),messages:[message(idA,sent[0],null,'reconciliation_required')]});return true;}
+  if(path.includes('/messages/')) {originalReads.push(path.split('/').at(-1));await fulfill({message:message(idA,sent[0],ready?'Eventually stored answer':null,ready?'answered':'reconciliation_required')});return true;}
+  return false;
+ });
+ await page.getByRole('button',{name:'Agree to the notice above'}).click();await expect(page.getByLabel('Message',{exact:true})).toBeEnabled();
+ await page.getByLabel('Message',{exact:true}).fill('Original dispatched question');await page.getByRole('button',{name:'Send',exact:true}).click();
+ await expect(page.getByRole('log')).toContainText(reconciliationText);await expect(page.getByRole('log')).not.toContainText('Replying');await expect(page.getByRole('button',{name:'Send',exact:true})).toBeDisabled();
+ const count=historyReads;await page.waitForTimeout(2200);expect(historyReads).toBe(count);expect(sent).toHaveLength(1);
+ await page.reload();await expect(page.getByRole('log')).toContainText(reconciliationText);await expect(page.getByRole('log')).not.toContainText('Request incomplete');
+ await page.locator('form').evaluate(form=>form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true})));expect(sent).toHaveLength(1);
+ await page.getByRole('button',{name:'Check again',exact:true}).click();await expect.poll(()=>originalReads.length).toBe(1);await expect(page.getByRole('log')).toContainText(reconciliationText);
+ ready=true;await page.getByRole('button',{name:'Check again',exact:true}).click();await expect(page.getByRole('log')).toContainText('Eventually stored answer');
+ expect(originalReads).toEqual([sent[0].requestId,sent[0].requestId]);expect(sent).toHaveLength(1);await expect(page.getByLabel('Message',{exact:true})).toHaveValue('');
+});
+test('explicit new Session does not carry or resend reconciled-question body',async({page,context})=>{
+ const prior={requestId:earlierId,text:'Old dispatched body'};
+ const {sent}=await fixture(page,context,async(route,{path,method,fulfill})=>{
+  if(path.endsWith('/policy')) {await fulfill({policy:{...policy,consentState:'accepted'}});return true;}
+  if(method==='GET'&&path.endsWith(idA)) {await fulfill({session:session(idA),messages:[message(idA,prior,null,'reconciliation_required')]});return true;}
+  return false;
+ },{ready:false});
+ await expect(page.getByRole('log')).toContainText(reconciliationText);await page.getByRole('button',{name:'New session',exact:true}).click();
+ await expect(page.getByLabel('Message',{exact:true})).toBeEnabled();await expect(page.getByLabel('Message',{exact:true})).toHaveValue('');expect(sent).toHaveLength(0);
+ await page.getByLabel('Message',{exact:true}).fill('A different question');await page.getByRole('button',{name:'Send',exact:true}).click();await expect(page.getByRole('log')).toContainText('Saved answer');
+ expect(sent).toHaveLength(1);expect(sent[0].text).toBe('A different question');expect(sent[0].requestId).not.toBe(prior.requestId);
+});
+test('reconciliation, actual technical failure and normal pending remain visibly distinct',async({page,context})=>{
+ await fixture(page,context,async(route,{path,method,fulfill})=>{
+  if(path.endsWith('/policy')) {await fulfill({policy:{...policy,consentState:'accepted'}});return true;}
+  if(method==='GET'&&path.endsWith(idA)) {await fulfill({session:session(idA),messages:[message(idA,{requestId:earlierId,text:'Reconciliation input'},null,'reconciliation_required'),message(idA,{requestId:idB,text:'Failed input'},'Hidden technical detail','technical_failure'),message(idA,{requestId:policy.id,text:'Pending input'},null,'pending')]});return true;}
+  return false;
+ },{ready:false});
+ const articles=page.getByRole('log').locator('article');
+ await expect(articles.filter({hasText:'Reconciliation input'})).toContainText(reconciliationText);await expect(articles.filter({hasText:'Reconciliation input'})).not.toContainText('Replying');
+ await expect(articles.filter({hasText:'Failed input'})).toContainText('Request incomplete');await expect(articles.filter({hasText:'Failed input'})).not.toContainText('Hidden technical detail');
+ await expect(articles.filter({hasText:'Pending input'})).toContainText('Replying');await expect(page.locator('form button[type=submit]')).toBeDisabled();
+});
+test('reconciliation original GET is fenced when Session changes during the read',async({page,context})=>{
+ let release;const prior={requestId:earlierId,text:'Old reconciliation input'};
+ const {sent}=await fixture(page,context,async(route,{path,method,fulfill})=>{
+  if(path.endsWith('/policy')) {await fulfill({policy:{...policy,consentState:'accepted'}});return true;}
+  if(method==='GET'&&path.endsWith(idA)) {await fulfill({session:session(idA),messages:[message(idA,prior,null,'reconciliation_required')]});return true;}
+  if(path.includes('/messages/')) {await new Promise(resolve=>{release=resolve;});await fulfill({message:message(idA,prior,'Old protected answer')}).catch(()=>{});return true;}
+  return false;
+ },{ready:false});
+ await page.getByRole('button',{name:'Check again',exact:true}).click();await expect.poll(()=>!!release).toBe(true);await page.getByRole('button',{name:`Session ${idB}`,exact:true}).click();
+ release();await expect(page.getByLabel('Message',{exact:true})).toBeEnabled();await expect(page.getByRole('log')).not.toContainText('Old protected answer');expect(sent).toHaveLength(0);
+});
+test('unknown admission journal becomes confirmed durable reconciliation without allowing replacement after refresh',async({page,context})=>{
+ let admitted=false;
+ const {sent}=await fixture(page,context,async(route,{path,method,sent,fulfill})=>{
+  if(method==='POST'&&path.endsWith('/messages')) {sent.push(route.request().postDataJSON());await route.abort();return true;}
+  if(admitted&&method==='GET'&&path.endsWith(idA)) {await fulfill({session:session(idA),messages:[message(idA,sent[0],null,'reconciliation_required')]});return true;}
+  return false;
+ });
+ await page.getByRole('button',{name:'Agree to the notice above'}).click();await expect(page.getByLabel('Message',{exact:true})).toBeEnabled();await page.getByLabel('Message',{exact:true}).fill('Uncertain dispatched question');await page.getByRole('button',{name:'Send',exact:true}).click();
+ await expect(page.getByRole('button',{name:'Check original request'})).toBeVisible();admitted=true;await page.reload();
+ await expect(page.getByRole('log')).toContainText(reconciliationText);await expect(page.getByRole('button',{name:'Resend original request'})).toHaveCount(0);await expect(page.getByRole('button',{name:'Send',exact:true})).toBeDisabled();
+ expect(await page.evaluate(key=>sessionStorage.getItem(key),recoveryKey)).toBeNull();expect(sent).toHaveLength(1);
+});

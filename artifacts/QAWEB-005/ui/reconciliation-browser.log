@@ -1,0 +1,64 @@
+(node:44434) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2m[WebServer] [22m(node:44436) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 9 tests using 1 worker
+
+(node:44437) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44437) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:44437) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/e2e/qa-agent-ui/workspace.spec.mjs:945:1 › pending history retries one temporary 503 and automatically reads answer without a second POST (4.4s)
+  ✓  2 tests/e2e/qa-agent-ui/workspace.spec.mjs:1329:3 › recovery storage read failure blocks message POST before admission (298ms)
+  ✓  3 tests/e2e/qa-agent-ui/workspace.spec.mjs:1372:1 › unknown recovery identity is cleared on actor change and logout, never leaked to new actor (523ms)
+  ✓  4 tests/e2e/qa-agent-ui/workspace.spec.mjs:1546:1 › replay not_submitted cannot erase an earlier unknown ACK identity across refresh (538ms)
+  ✓  5 tests/e2e/qa-agent-ui/workspace.spec.mjs:1731:1 › durable reconciliation survives refresh, stops spinner and POST, and manual original GET can read stored answer (5.8s)
+  ✓  6 tests/e2e/qa-agent-ui/workspace.spec.mjs:1812:1 › explicit new Session does not carry or resend reconciled-question body (3.4s)
+  ✘  7 tests/e2e/qa-agent-ui/workspace.spec.mjs:1871:1 › reconciliation, actual technical failure and normal pending remain visibly distinct (5.3s)
+(node:44481) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44481) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:44481) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  8 tests/e2e/qa-agent-ui/workspace.spec.mjs:1930:1 › reconciliation original GET is fenced when Session changes during the read (418ms)
+  ✓  9 tests/e2e/qa-agent-ui/workspace.spec.mjs:1991:1 › unknown admission journal becomes confirmed durable reconciliation without allowing replacement after refresh (550ms)
+
+
+  1) tests/e2e/qa-agent-ui/workspace.spec.mjs:1871:1 › reconciliation, actual technical failure and normal pending remain visibly distinct
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeDisabled[2m()[22m failed
+
+    Locator:  getByRole('button', { name: 'Send', exact: true })
+    Expected: disabled
+    Received: <element(s) not found>
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toBeDisabled" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('button', { name: 'Send', exact: true })[22m
+
+
+      511 |  await expect(articles.filter({hasText:'Reconciliation input'})).toContainText(reconciliationText);await expect(articles.filter({hasText:'Reconciliation input'})).not.toContainText('Replying');
+      512 |  await expect(articles.filter({hasText:'Failed input'})).toContainText('Request incomplete');await expect(articles.filter({hasText:'Failed input'})).not.toContainText('Hidden technical detail');
+    > 513 |  await expect(articles.filter({hasText:'Pending input'})).toContainText('Replying');await expect(page.getByRole('button',{name:'Send',exact:true})).toBeDisabled();
+          |                                                                                                                                                     ^
+      514 | });
+      515 | test('reconciliation original GET is fenced when Session changes during the read',async({page,context})=>{
+      516 |  let release;const prior={requestId:earlierId,text:'Old reconciliation input'};
+        at /Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-chat-ui-20261013/tests/e2e/qa-agent-ui/workspace.spec.mjs:513:149
+
+    Error Context: artifacts/QAWEB-005/ui/playwright/workspace-reconciliation-a-7ffd2-ing-remain-visibly-distinct/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    artifacts/QAWEB-005/ui/playwright/workspace-reconciliation-a-7ffd2-ing-remain-visibly-distinct/trace.zip
+    Usage:
+
+        npx playwright show-trace artifacts/QAWEB-005/ui/playwright/workspace-reconciliation-a-7ffd2-ing-remain-visibly-distinct/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/e2e/qa-agent-ui/workspace.spec.mjs:1871:1 › reconciliation, actual technical failure and normal pending remain visibly distinct
+  8 passed (22.4s)

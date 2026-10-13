@@ -66,3 +66,11 @@ test('only temporary history errors retry; permission and successful malformed w
  const malformed=fixture({},200,true);await assert.rejects(malformed.api.recover(sid,rid,new AbortController().signal),error=>error.code==='INVALID_RESPONSE'&&!malformed.retry(error));
  const gateway=fixture({},503,true);await assert.rejects(gateway.api.recover(sid,rid,new AbortController().signal),error=>gateway.retry(error));
 });
+test('reconciliation is a protected non-answer with original identity; unknown status and answer payload fail closed',async()=>{
+ const f=fixture(wire({message:saved({status:'reconciliation_required',text:null})}));
+ const result=await f.api.recover(sid,rid,new AbortController().signal);
+ assert.equal(result.message.status,'reconciliation_required');assert.equal(result.message.answer,null);assert.equal(result.message.requestId,rid);assert.equal(f.seen[0].init.method,'GET');
+ for(const value of [saved({status:'reconciliation_required',text:'Invented answer'}),saved({status:'reconciliation_required',sessionId:rid,text:null}),saved({status:'reconciliation_required_v2',text:null})]) {
+  const invalid=fixture(wire({message:value}));await assert.rejects(invalid.api.recover(sid,rid,new AbortController().signal),error=>error.code==='INVALID_RESPONSE');
+ }
+});

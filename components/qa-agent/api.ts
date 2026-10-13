@@ -1,6 +1,6 @@
 /** The sole browser wire mapping; cookie identity and saved text remain server authority. */
 export type Session = { id: string; createdAt: string; updatedAt: string; label: string };
-export type Message = { requestId: string; text: string; answer: string | null; status: "pending" | "answered" | "partial" | "clarification" | "blocked" | "technical_failure" };
+export type Message = { requestId: string; text: string; answer: string | null; status: "pending" | "answered" | "partial" | "clarification" | "blocked" | "technical_failure" | "reconciliation_required" };
 export type History = { session: Session; messages: Message[] };
 export type Policy = { policyId: string; noticeHash: string; noticeZh: string; noticeEn: string; consented: boolean; contextMode: "current_input_v1" | "task_history_v1" | "qa_session_history_v1"; maxTurns: number | null };
 export const permitsQaSubmission = (policy: Policy | null): boolean => policy?.contextMode === "qa_session_history_v1" && policy.consented;
@@ -48,9 +48,9 @@ function policy(value: unknown): Policy {
 function message(value: unknown, sessionId: string, requestId?: string): Message {
   if (!record(value) || !uuid(value.requestId) || value.turnId !== value.requestId || value.sessionId !== sessionId
     || (requestId && value.requestId !== requestId) || typeof value.input !== "string" || !value.input.trim() || value.input.length > 4000
-    || !["pending", "answered", "partial", "clarification", "blocked", "technical_failure"].includes(String(value.status))
+    || !["pending", "answered", "partial", "clarification", "blocked", "technical_failure", "reconciliation_required"].includes(String(value.status))
     || (value.text !== null && (typeof value.text !== "string" || !value.text.trim() || value.text.length > 8000))
-    || (value.status === "pending" && value.text !== null)
+    || (["pending", "reconciliation_required"].includes(String(value.status)) && value.text !== null)
     || (["answered", "partial", "clarification"].includes(String(value.status)) && value.text === null)) invalid();
   return { requestId: value.requestId, text: value.input, answer: value.text as string | null, status: value.status as Message["status"] };
 }

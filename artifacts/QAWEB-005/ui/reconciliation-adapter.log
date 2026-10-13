@@ -1,0 +1,16 @@
+✔ accepted receipt stays pending and transport uses same-origin cookies without auth headers (1.272792ms)
+✔ version, owner/session, request, terminal-without-answer and unknown outcome fail closed (1.447917ms)
+✔ unknown ACK stays unknown and explicit original request recovery is GET only (0.239083ms)
+✔ policy consent is never inferred and server denial is preserved (0.701459ms)
+✔ only accepted versioned QA session policy permits submission (1.851166ms)
+✔ missing, mismatched and unknown quota authority fail closed; limit denial retains not_submitted (1.529791ms)
+✔ only temporary history errors retry; permission and successful malformed wire stop (1.204208ms)
+✔ reconciliation is a protected non-answer with original identity; unknown status and answer payload fail closed (0.751042ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 170.411041
