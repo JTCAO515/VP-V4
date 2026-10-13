@@ -1,4 +1,4 @@
-import { initializeFreshOpsFixture } from '../observability/ops-control-owned/fresh-bootstrap.mjs';
+import { initializeOwnedUpgradeOpsFixture } from '../observability/ops-control-owned/fresh-bootstrap.mjs';
 import {spawn} from 'node:child_process';
 import test,{before,after} from 'node:test';
 import assert from 'node:assert/strict';
@@ -12,7 +12,7 @@ import {waitUntil} from '../identity/database-barrier.mjs';
 import {runTextWorker} from '../../../lib/server/turn/text-worker.ts';
 import {journeyPassCatalog} from '../../../lib/server/entitlements/journey-pass-catalog.ts';
 const enabled=process.env.VP_TURN_DB_TEST==='1',container='vpj07-text-'+uuid().slice(0,8);
-let created=false;
+let created=false,retainedMetadata;
 const run=(name,fn)=>test(name,{skip:!enabled},fn);
 const db=async q=>{const r=await sql(container,q);assert.equal(r.code,0,r.stderr);return r.stdout.trim();};
 const lit=v=>v===null?'null':typeof v==='number'?String(v):"'"+String(v).replaceAll("'","''")+"'";
@@ -73,11 +73,46 @@ before(async()=>{
    assert.equal(await db("select to_regprocedure('public.claim_text_task_work(uuid,uuid)') is null;"),'t');
    assert.equal(await db("select count(*) from information_schema.columns where table_schema='turn_private' and table_name='text_policies' and column_name='context_mode';"),'0');
   }
+  if(f.endsWith('_vpj37_ops_control_w2.sql')){
+   // Original durable admission precedes W2: a retained queue row is not fresh
+   // source authority and must survive the upgrade without a text payload.
+   retainedMetadata=await fixture();
+   await db(`insert into public.turns(id,owner_id,thread_id,status) values('${retainedMetadata.turn}','${retainedMetadata.owner}','${retainedMetadata.thread}','accepted');insert into public.chat_turn_events(owner_id,thread_id,turn_id,event_id,sequence,schema_version,event_type,state) values('${retainedMetadata.owner}','${retainedMetadata.thread}','${retainedMetadata.turn}','accepted',1,'turn-sse-v1','accepted','accepted');`);
+   assert.equal((await service('enqueue_turn_work',{p_turn_id:retainedMetadata.turn,p_owner_id:retainedMetadata.owner,p_session_id:retainedMetadata.session,p_lease_ms:120000,p_max_attempts:3})).kind,'queued');
+  }
+  const metadataSnapshot=retainedMetadata?await db(`select row_to_json(w) from turn_private.work w where turn_id='${retainedMetadata.turn}';`):null;
   await db('begin;'+migration+'commit;');
+  if(retainedMetadata)assert.equal(await db(`select row_to_json(w) from turn_private.work w where turn_id='${retainedMetadata.turn}';`),metadataSnapshot,'W2 upgrade preserves original metadata-only queue');
  }
- await initializeFreshOpsFixture(db);
+ const preservedUpgradeData=await snapshot();
+ const retainedMetadataSnapshot=await db(`select row_to_json(w) from turn_private.work w where turn_id='${retainedMetadata.turn}';`);
+ await initializeOwnedUpgradeOpsFixture(db);
+ assert.equal(await db(`select row_to_json(w) from turn_private.work w where turn_id='${retainedMetadata.turn}';`),retainedMetadataSnapshot,'owned initialization preserves metadata-only queue');
+ assert.equal(await snapshot(),preservedUpgradeData,'explicit owned fixture activation preserves retained upgrade rows');
 });
 after(async()=>{if(created)assert.equal((await command('docker',['rm','-f',container])).code,0);});
+// Run retained metadata isolation before global claimers drain the fixture queue.
+const scopedClaim=a=>service('claim_text_work',{p_owner_id:a.owner,p_policy_id:a.policy});
+run('scoped claimer leaves other owners, other policies and metadata-only work untouched',async()=>{
+ try{
+ const metadata=retainedMetadata.turn,a=retainedMetadata,b=await fixture();
+ a.turn=uuid();
+ await b.accept();await b.start();await a.accept();await a.start();
+ const second=uuid(),unknown=uuid();
+ assert.equal(await db(`select state from turn_private.work where turn_id='${metadata}' and owner_id='${a.owner}';`),'queued');
+ assert.equal(await db(`select count(*) from turn_private.text_content where turn_id='${metadata}';`),'0');
+ assert.equal(await db(`select ops_control_private.work_decision_v1('${metadata}',null,'admission')->>'kind';`),'blocked','retained metadata is not current source authority');
+ await a.call('accept_text_policy',{p_policy_id:b.policy,p_notice_hash:notice});
+ await a.call('start_text_turn',{p_thread_id:a.thread,p_turn_id:second,p_idempotency_key:uuid(),p_policy_id:b.policy,p_locale:'en',p_text:'Other policy synthetic'});
+ await db(`insert into public.turns(id,owner_id,thread_id,status) values('${unknown}','${a.owner}','${a.thread}','accepted');insert into public.chat_turn_events(owner_id,thread_id,turn_id,event_id,sequence,schema_version,event_type,state) values('${a.owner}','${a.thread}','${unknown}','accepted',1,'turn-sse-v1','accepted','accepted');`);
+ await assert.rejects(service('enqueue_turn_work',{p_turn_id:unknown,p_owner_id:a.owner,p_session_id:a.session,p_lease_ms:120000,p_max_attempts:3}),/TURN_UNAVAILABLE/);
+ assert.equal(await db(`select count(*) from turn_private.work where turn_id='${unknown}';`),'0','unknown-source admission rolls back');
+ const untouched=()=>db(`select jsonb_agg(to_jsonb(w) order by turn_id) from turn_private.work w where turn_id in ('${b.turn}','${second}','${metadata}');`);
+ const before=await untouched(),lease=await scopedClaim(a);
+ assert.equal(lease.kind,'leased');assert.equal(lease.turnId,a.turn);assert.equal(lease.ownerId,a.owner);
+ assert.equal((await scopedClaim(a)).kind,'empty');assert.equal(await untouched(),before);
+ }finally{await clean();}
+});
 run('durable owner consent gates input; exact retries reuse and changed text rejects',async()=>{
  const a=await fixture();assert.equal((await a.start()).kind,'blocked');
  assert.equal((await a.call('accept_text_policy',{p_policy_id:a.policy,p_notice_hash:'b'.repeat(64)})).kind,'blocked');
@@ -273,27 +308,16 @@ run('verified model charges survive business failures while unproved protocol fa
  }finally{server.closeAllConnections();await new Promise(resolve=>server.close(resolve));}
 });
 
-const scopedClaim=a=>service('claim_text_work',{p_owner_id:a.owner,p_policy_id:a.policy});
-run('scoped claimer leaves other owners, other policies and metadata-only work untouched',async()=>{
- const a=await fixture(),b=await fixture();await b.accept();await b.start();await a.accept();await a.start();
- const second=uuid(),metadata=uuid();
- await a.call('accept_text_policy',{p_policy_id:b.policy,p_notice_hash:notice});
- await a.call('start_text_turn',{p_thread_id:a.thread,p_turn_id:second,p_idempotency_key:uuid(),p_policy_id:b.policy,p_locale:'en',p_text:'Other policy synthetic'});
- await db(`insert into public.turns(id,owner_id,thread_id,status) values('${metadata}','${a.owner}','${a.thread}','accepted');insert into public.chat_turn_events(owner_id,thread_id,turn_id,event_id,sequence,schema_version,event_type,state) values('${a.owner}','${a.thread}','${metadata}','accepted',1,'turn-sse-v1','accepted','accepted');`);
- await service('enqueue_turn_work',{p_turn_id:metadata,p_owner_id:a.owner,p_session_id:a.session,p_lease_ms:120000,p_max_attempts:3});
- const untouched=()=>db(`select jsonb_agg(to_jsonb(w) order by turn_id) from turn_private.work w where turn_id in ('${b.turn}','${second}','${metadata}');`);
- const before=await untouched(),lease=await scopedClaim(a);
- assert.equal(lease.kind,'leased');assert.equal(lease.turnId,a.turn);assert.equal(lease.ownerId,a.owner);
- assert.equal((await scopedClaim(a)).kind,'empty');assert.equal(await untouched(),before);
- await clean();
-});
 run('scoped and legacy claimers serialize; expired leases recover once and old tokens cannot dispatch',async()=>{
+ await clean();
  const a=await fixture();await a.accept();await a.start();
  const simultaneous=await Promise.all([scopedClaim(a),service('claim_turn_work')]);
  assert.deepEqual(simultaneous.map(x=>x.kind).sort(),['empty','leased']);const old=simultaneous.find(x=>x.kind==='leased');
+ assert.equal(old.turnId,a.turn);assert.equal(old.ownerId,a.owner);
  await db(`update turn_private.work set expires_at=clock_timestamp()-interval '1 second' where turn_id='${a.turn}';`);
  const recovered=await Promise.all([scopedClaim(a),scopedClaim(a)]);
  assert.deepEqual(recovered.map(x=>x.kind).sort(),['empty','leased']);const fresh=recovered.find(x=>x.kind==='leased');
+ assert.equal(fresh.turnId,a.turn);assert.equal(fresh.ownerId,a.owner);
  assert.equal(fresh.attempt,2);assert.notEqual(fresh.leaseToken,old.leaseToken);
  assert.equal((await authorize(a,old)).kind,'blocked');assert.equal((await authorize(a,fresh)).kind,'authorized');
  assert.equal((await complete(fresh)).kind,'finished');assert.equal((await scopedClaim(a)).kind,'empty');
