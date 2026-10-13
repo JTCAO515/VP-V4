@@ -1,9 +1,10 @@
+import { catalog } from './reviewed-catalog.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { randomUUID, createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { catalog, compare, snapshot, digest, repo, normalizeSchemaDump } from '../acceptance/v5-staging-migration-set.mjs';
+import { compare, snapshot, digest, repo, normalizeSchemaDump } from '../acceptance/v5-staging-migration-set.mjs';
 
 // No connection strings, resource names, remote context or target-write mode.
 const image = 'public.ecr.aws/supabase/postgres:17.6.1.155';
@@ -71,7 +72,7 @@ try {
   const difference=compare(local,input.applied);
   report.versionSet=difference;report.provenance=input.provenance;
   assert.ok(difference.replayable,'UNKNOWN_APPLIED_VERSION');
-  report.toolSha256=Object.fromEntries(['scripts/qa-agent-staging-replay/hook-replay.mjs','scripts/qa-agent-staging-replay/fingerprint.sql','scripts/acceptance/v5-staging-migration-set.mjs','tests/fixtures/v5-staging-migration/baseline.sql','tests/fixtures/v5-staging-migration/probes.sql'].map(path=>[path,digest(readFileSync(resolve(repo,path)))]));
+  report.toolSha256=Object.fromEntries(['scripts/qa-agent-staging-replay/hook-replay.mjs','scripts/qa-agent-staging-replay/fingerprint.sql','scripts/qa-agent-staging-replay/reviewed-catalog.mjs','scripts/acceptance/v5-staging-migration-set.mjs','tests/fixtures/v5-staging-migration/baseline.sql','tests/fixtures/v5-staging-migration/probes.sql'].map(path=>[path,digest(readFileSync(resolve(repo,path)))]));
   stage='local Docker preflight';context=command('docker',['context','show']);
   assert.match(context,/^[a-zA-Z0-9_.-]+$/);
   assert.match(JSON.parse(command('docker',['context','inspect',context]))[0].Endpoints.docker.Host,/^unix:\/\//);
