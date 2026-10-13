@@ -43,7 +43,7 @@ assert needle in after
 after=after.replace(needle,qa+needle,1)
 (out/'before.ts.txt').write_text(before)
 (out/'after.ts.txt').write_text(after)
-(out/'hosted-text-worker.patch').write_text(''.join(difflib.unified_diff(before.splitlines(True),after.splitlines(True),fromfile='a/'+str(path),tofile='b/'+str(path))))
+(out/'hosted-text-worker.patch').write_text(''.join(difflib.unified_diff(before.splitlines(True),after.splitlines(True),fromfile='a/'+str(path),tofile='b/'+str(path),n=0)))
 (out/'pins.json').write_text(json.dumps({'status':'NOT_APPLIED','path':str(path),'beforeSha256':hashlib.sha256(before.encode()).hexdigest(),'afterSha256':hashlib.sha256(after.encode()).hexdigest()},indent=2)+'\n')
 # The profile union also reaches the existing read-only journal auditor. This
 # companion is a candidate, not an edit to that shared source or a settlement.
@@ -59,5 +59,5 @@ after=after.replace('    stagingUsageReconciliation(group.job, []);','    const 
 after=after.replace('stagingUsageReconciliation(group.job, group.receipts.slice(i, i + 100))','validate(group.receipts.slice(i, i + 100))')
 (out/'usage-audit.before.ts.txt').write_text(before)
 (out/'usage-audit.after.ts.txt').write_text(after)
-(out/'hosted-usage-audit.patch').write_text(''.join(difflib.unified_diff(before.splitlines(True),after.splitlines(True),fromfile='a/'+str(path),tofile='b/'+str(path))))
+(out/'hosted-usage-audit.patch').write_text(''.join(difflib.unified_diff(before.splitlines(True),after.splitlines(True),fromfile='a/'+str(path),tofile='b/'+str(path),n=0)))
 (out/'usage-audit-pins.json').write_text(json.dumps({'status':'NOT_APPLIED','path':str(path),'beforeSha256':hashlib.sha256(before.encode()).hexdigest(),'afterSha256':hashlib.sha256(after.encode()).hexdigest()},indent=2)+'\n')
