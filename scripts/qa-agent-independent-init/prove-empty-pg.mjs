@@ -12,7 +12,7 @@ const rpc=(role,a)=>async(fn,p={})=>JSON.parse(await sql(`set request.jwt.claim.
 const check=msg=>report.checks.push({result:'PASS',check:msg});
 try{
  if(JSON.stringify(process.argv.slice(2))!==JSON.stringify(['--prove-empty-pg']))throw Error('EXPLICIT_OWN_FIXTURE_REQUIRED');if(process.env.DOCKER_HOST!==undefined||process.env.DOCKER_CONTEXT!==undefined)throw Error('DOCKER_OVERRIDE_REJECTED');
- const m=reviewedSources();assert.equal(plan('abcdefghijklmnopqrst').apply,false);report.reviewSource=m.reviewSource;report.sourceCount=m.count;
+ const m=reviewedSources();assert.equal(plan(undefined,undefined,ROOT,{mode:'fresh-local-proof'}).apply,false);report.reviewSource=m.reviewSource;report.sourceCount=m.count;
  context=await command('docker',['context','show']);assert.match(context,/^[A-Za-z0-9_.-]+$/);assert.match(JSON.parse(await command('docker',['context','inspect',context]))[0].Endpoints.docker.Host,/^unix:\/\//);assert.equal(await docker(['image','inspect',IMAGE,'--format','{{.Id}}']),IMAGE_ID);
  try{await docker(['inspect',name]);throw Error('OWN_NAME_ALREADY_EXISTS');}catch(e){if(e.message==='OWN_NAME_ALREADY_EXISTS')throw e;}
  await docker(['run','--pull=never','--rm','-d','--network','none','--name',name,'--label','qa-independent.owner='+runId,'--user','postgres','--entrypoint','/bin/sh',IMAGE,'-c','umask 077; mkdir /tmp/qa-independent; initdb -D /tmp/qa-independent-db -A trust --no-locale -E UTF8 >/tmp/init.log 2>&1 && exec postgres -D /tmp/qa-independent-db -c listen_addresses= -c unix_socket_directories=/tmp/qa-independent -c unix_socket_permissions=0700']);created=true;
