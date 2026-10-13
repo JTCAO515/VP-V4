@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 import {NextRequest} from 'next/server.js';
 import {qaAgentHTTP} from '../../../lib/server/qa-agent/http.ts';
 import {nativeFixture} from '../../contract/identity/native-fixture.ts';
-const ref='abcdefghijklmnopqrst',shared='dzqdzetcctkhbrhlxxgn',sid='11111111-1111-4111-8111-111111111111',pid='22222222-2222-4222-8222-222222222222';
-test('foreground SSR cookie auth stays on the independent target and never selects DB from cookie/origin',async t=>{
+const ref='dzqdzetcctkhbrhlxxgn',shared='abcdefghijklmnopqrst',sid='11111111-1111-4111-8111-111111111111',pid='22222222-2222-4222-8222-222222222222';
+test('foreground SSR cookie auth stays on the explicitly approved shared target and never selects DB from cookie/origin',async t=>{
  const f=await nativeFixture(t,`https://${ref}.supabase.co`),fallback=globalThis.fetch,urls=[];
  const patch={VISEPANDA_QA_AGENT:'true',VISEPANDA_QA_AGENT_ORIGIN:'https://qatesting.go2china.space',VISEPANDA_QA_AGENT_POLICY_ID:pid,VISEPANDA_QA_AGENT_CONTEXT_MODE:'qa_session_history_v1',VISEPANDA_QA_SUPABASE_PROJECT_REF:ref,NEXT_PUBLIC_SUPABASE_URL:f.config.url,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:f.config.publishableKey,VERCEL_ENV:'preview'};
  const prior=Object.fromEntries(Object.keys(patch).map(k=>[k,process.env[k]]));Object.assign(process.env,patch);t.after(()=>{for(const [k,v]of Object.entries(prior))v===undefined?delete process.env[k]:process.env[k]=v;});

@@ -5,7 +5,7 @@ import {createQaWorker} from '../../../lib/server/qa-agent/worker.ts';
 import {PROTOCOL_MODELS} from '../../../lib/server/model-gateway/adapters/provider-protocol.ts';
 const owner='11111111-1111-4111-8111-111111111111',policy='22222222-2222-4222-8222-222222222222',turn='33333333-3333-4333-8333-333333333333',token='44444444-4444-4444-8444-444444444444',scope='55555555-5555-4555-8555-555555555555',task='66666666-6666-4666-8666-666666666666';
 const endpoint='https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
-const config={schemaVersion:'qa-agent-worker/2',projectRef:'abcdefghijklmnopqrst',databaseUrl:'https://abcdefghijklmnopqrst.supabase.co',ownerId:owner,policyId:policy,budget:{scopeId:scope,priceVersion:'synthetic-v1',reservedMicros:2,maxOutputTokens:128,timeoutMs:1000},provider:{provider:'qwen',endpoint,configurationId:task,configurationVersion:1,timeoutMs:1000},pricing:{mode:'flat',inputMicrosPerMillion:1,outputMicrosPerMillion:1,cachedInputMicrosPerMillion:null}};
+const config={schemaVersion:'qa-agent-worker/2',projectRef:'dzqdzetcctkhbrhlxxgn',databaseUrl:'https://dzqdzetcctkhbrhlxxgn.supabase.co',ownerId:owner,policyId:policy,budget:{scopeId:scope,priceVersion:'synthetic-v1',reservedMicros:2,maxOutputTokens:128,timeoutMs:1000},provider:{provider:'qwen',endpoint,configurationId:task,configurationVersion:1,timeoutMs:1000},pricing:{mode:'flat',inputMicrosPerMillion:1,outputMicrosPerMillion:1,cachedInputMicrosPerMillion:null}};
 test('concrete worker keeps DB and provider credentials on their distinct destinations',async()=>{
  const calls=[],destinations=[],receipts=[];
  const deps={workerCredential:()=> 'sb_secret_synthetic_worker',providerCredential:()=> 'synthetic-provider-secret',qwenEndpoint:endpoint,recordDestination:async r=>destinations.push(r),recordUsage:async r=>receipts.push(r),
@@ -21,9 +21,9 @@ test('concrete worker keeps DB and provider credentials on their distinct destin
  await args.transport({provider:'qwen',endpoint,method:'POST',body:JSON.stringify({model:PROTOCOL_MODELS.qwen}),signal:args.signal});
  return {kind:'protocol_validated',provider:'qwen',model:PROTOCOL_MODELS.qwen,output:JSON.stringify({outcome:'answered',text:'Synthetic original output'}),usage:{inputTokens:10,outputTokens:10,totalTokens:20,cachedInputTokens:null,uncachedInputTokens:null,reasoningTokens:null,cost:'unknown'}};
  }};
- assert.equal(await createQaWorker(config,deps,readIndependentQaTarget('abcdefghijklmnopqrst'))(new AbortController().signal),'finished');assert.equal(calls.filter(c=>c===endpoint).length,1);assert.equal(destinations.length,3);assert.equal(receipts[0].actualMicros,1);
- assert.throws(()=>createQaWorker({...config,databaseUrl:'https://other.supabase.co'},deps,readIndependentQaTarget('abcdefghijklmnopqrst')));
- assert.throws(()=>createQaWorker({...config,budget:{...config.budget,reservedMicros:1}},deps,readIndependentQaTarget('abcdefghijklmnopqrst')));
+ assert.equal(await createQaWorker(config,deps,readIndependentQaTarget('dzqdzetcctkhbrhlxxgn'))(new AbortController().signal),'finished');assert.equal(calls.filter(c=>c===endpoint).length,1);assert.equal(destinations.length,3);assert.equal(receipts[0].actualMicros,1);
+ assert.throws(()=>createQaWorker({...config,databaseUrl:'https://other.supabase.co'},deps,readIndependentQaTarget('dzqdzetcctkhbrhlxxgn')));
+ assert.throws(()=>createQaWorker({...config,budget:{...config.budget,reservedMicros:1}},deps,readIndependentQaTarget('dzqdzetcctkhbrhlxxgn')));
 });
 
 test('worker refuses every Vercel runtime while existing dedicated host remains possible',()=>{

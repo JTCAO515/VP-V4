@@ -1,4 +1,4 @@
-import { readIndependentQaTarget, type IndependentQaTarget } from "./target.ts";
+import { readApprovedQaTarget, type IndependentQaTarget } from "./target.ts";
 import { createStagingTextJob } from "../jobs/staging-text-job.ts";
 import { PROTOCOL_MODELS } from "../model-gateway/adapters/provider-protocol.ts";
 import type { HostedTariff } from "../jobs/hosted-text-worker.ts";
@@ -17,11 +17,11 @@ export type QaHostedProfile = LegacyQaHostedProfile | IndependentQaHostedProfile
 const nil = "00000000-0000-4000-8000-000000000000";
 const defaultEndpoint = "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions";
 const integer = (v: unknown, min: number, max: number): v is number => Number.isSafeInteger(v) && Number(v) >= min && Number(v) <= max;
-/** /4 independent QA; /3 parsing is retained only for historical evidence. */
+/** /4 explicitly approved QA; /3 parsing is retained only for historical evidence. */
 export function parseQaHostedProfile(raw: unknown): QaHostedProfile {
   if (!record(raw) || !exact(raw, ["schemaVersion", "pollIntervalMs", "maxLifetimeMs", "drainMs", "concurrency", "groupLimit", "modes", "qwen", "planning", ...(raw.schemaVersion === "vpj07-hosted-text-worker/4" ? ["projectRef"] : [])])
     || !["vpj07-hosted-text-worker/3", "vpj07-hosted-text-worker/4"].includes(String(raw.schemaVersion))
-    || (raw.schemaVersion === "vpj07-hosted-text-worker/4" && !readIndependentQaTarget(raw.projectRef)) || raw.planning !== null
+    || (raw.schemaVersion === "vpj07-hosted-text-worker/4" && !readApprovedQaTarget(raw.projectRef)) || raw.planning !== null
     || !integer(raw.pollIntervalMs, 1000, 60000) || !integer(raw.maxLifetimeMs, 60000, 86400000) || !integer(raw.drainMs, 0, 60000)
     || !integer(raw.concurrency, 1, 8) || !integer(raw.groupLimit, 1, 50)
     || !Array.isArray(raw.modes) || raw.modes.length !== 1 || raw.modes[0] !== "qa_session_history_v1"
@@ -40,7 +40,7 @@ export function parseQaHostedProfile(raw: unknown): QaHostedProfile {
     qwen: Object.freeze({ ...profile.qwen, pricing: Object.freeze({ ...profile.qwen.pricing }) }), planning: null });
 }
 export function requireQaProfileTarget(profile: QaHostedProfile, operatorProjectRef: unknown): IndependentQaTarget {
-  const target = readIndependentQaTarget(operatorProjectRef);
+  const target = readApprovedQaTarget(operatorProjectRef);
   if (profile.schemaVersion !== "vpj07-hosted-text-worker/4" || !target || profile.projectRef !== target.projectRef) throw new Error("QA profile target unavailable");
   return target;
 }
@@ -49,7 +49,7 @@ export function qaJobConfig(profile: LegacyQaHostedProfile, ownerId: string, pol
 export function qaJobConfig(profile: QaHostedProfile, ownerId: string, policyId: string, scopeId: string, endpoint: string): QaWorkerConfiguration;
 export function qaJobConfig(profile: QaHostedProfile, ownerId: string, policyId: string, scopeId: string, endpoint: string): QaWorkerConfiguration {
   const tariff = profile.qwen;
-  const binding = profile.schemaVersion === "vpj07-hosted-text-worker/4" ? readIndependentQaTarget(profile.projectRef) : null;
+  const binding = profile.schemaVersion === "vpj07-hosted-text-worker/4" ? readApprovedQaTarget(profile.projectRef) : null;
   if (profile.schemaVersion === "vpj07-hosted-text-worker/4" && !binding) throw new Error("QA profile target unavailable");
   return { ...(binding ? { schemaVersion: "qa-agent-worker/2" as const, projectRef: binding.projectRef, databaseUrl: binding.databaseUrl }
       : { schemaVersion: "qa-agent-worker/1" as const, databaseUrl: "https://dzqdzetcctkhbrhlxxgn.supabase.co" }), ownerId, policyId,

@@ -3,10 +3,12 @@ export const SHARED_QA_PROJECT_REF = "dzqdzetcctkhbrhlxxgn";
 export type IndependentQaTarget = Readonly<{ kind: "independent"; projectRef: string; databaseUrl: string }>;
 export type QaTarget = IndependentQaTarget
   | Readonly<{ kind: "local"; projectRef: null; databaseUrl: string }>;
-export function readIndependentQaTarget(value: unknown): IndependentQaTarget | null {
-  if (typeof value !== "string" || !/^[a-z0-9]{20}$/.test(value) || value === SHARED_QA_PROJECT_REF) return null;
+export function readApprovedQaTarget(value: unknown): IndependentQaTarget | null {
+  if (typeof value !== "string" || !/^[a-z0-9]{20}$/.test(value) || value !== SHARED_QA_PROJECT_REF) return null;
   return Object.freeze({ kind: "independent", projectRef: value, databaseUrl: `https://${value}.supabase.co` });
 }
+/** Compatibility name: independent refers to trusted-root binding, not a different DB. */
+export const readIndependentQaTarget = readApprovedQaTarget;
 export function readLocalQaTarget(value: unknown): QaTarget | null {
   if (typeof value !== "string" || process.env.VERCEL_ENV) return null;
   try {

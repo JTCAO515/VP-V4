@@ -1,3 +1,19 @@
+# Approved-shared-target revision evidence
+
+PASS: 21 necessary affected binding/SSR-cookie/profile/job/root/CLI/audit/discovery
+checks after JT selected the original approved dzt target. These now prove explicit
+dzt works and any other syntactically valid project is refused. Missing ref, URL
+mismatch/normalization, missing/mismatched root, cross-project cookie/job and non-QA
+Production cases remain refused. TypeScript and lint checks are recorded at commit.
+
+The prior approved local Docker/loopback regressions below retain their valid
+unchanged S1/v2 and fixed-file evidence. No new target/ref/key/slot was created or
+read, no actual Supabase/ECS/provider call occurred, no fees or DDL/export action.
+
+Earlier different-target evidence is historical, not the active allowed-ref rule.
+
+---
+
 # Source verification
 
 PASS: 78 initially unblocked affected tests plus the three initially sandbox-blocked

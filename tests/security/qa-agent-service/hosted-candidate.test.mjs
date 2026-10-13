@@ -5,7 +5,7 @@ const worker=await import('../../../lib/server/jobs/hosted-text-worker.ts');
 const audit=await import('../../../lib/server/jobs/hosted-usage-audit.ts');
 const owner='11111111-1111-4111-8111-111111111111',policy='22222222-2222-4222-8222-222222222222',turn='33333333-3333-4333-8333-333333333333',token='44444444-4444-4444-8444-444444444444',scope='55555555-5555-4555-8555-555555555555',task='66666666-6666-4666-8666-666666666666';
 const endpoint='https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
-const profile=()=>({schemaVersion:'vpj07-hosted-text-worker/4',projectRef:'abcdefghijklmnopqrst',pollIntervalMs:1000,maxLifetimeMs:60000,drainMs:1000,concurrency:1,groupLimit:10,modes:['qa_session_history_v1'],planning:null,qwen:{priceVersion:'synthetic-v1',pricing:{mode:'flat',inputMicrosPerMillion:1,outputMicrosPerMillion:1,cachedInputMicrosPerMillion:null},reservedMicros:2,maxOutputTokens:128,timeoutMs:1000,configurationId:task,configurationVersion:1}});
+const profile=()=>({schemaVersion:'vpj07-hosted-text-worker/4',projectRef:'dzqdzetcctkhbrhlxxgn',pollIntervalMs:1000,maxLifetimeMs:60000,drainMs:1000,concurrency:1,groupLimit:10,modes:['qa_session_history_v1'],planning:null,qwen:{priceVersion:'synthetic-v1',pricing:{mode:'flat',inputMicrosPerMillion:1,outputMicrosPerMillion:1,cachedInputMicrosPerMillion:null},reservedMicros:2,maxOutputTokens:128,timeoutMs:1000,configurationId:task,configurationVersion:1}});
 let journal;
 test('independent hosted loop executes sole context composer, original transport and secure usage journal',async()=>{
  const p=worker.parseHostedWorkerProfile(profile()),controller=new AbortController(),rows=[],startedAt=new Date().toISOString();let sent=0,completed=false;
@@ -18,7 +18,7 @@ test('independent hosted loop executes sole context composer, original transport
   assert.ok(values[name],'only original/QA qualified RPCs');if(name==='qa_complete_work_v1'){completed=true;assert.equal(JSON.parse(init.body).p_text,'Synthetic stored result');}
   return Response.json(values[name]);
  };
- const run=worker.createHostedTextWorker(p,{workerId:owner,build:'synthetic-qa',startedAt,qwenEndpoint:endpoint,qaProjectRef:'abcdefghijklmnopqrst',workerCredential:()=> 'sb_secret_synthetic',providerCredential:()=> 'synthetic-provider',fetch:fetcher,
+ const run=worker.createHostedTextWorker(p,{workerId:owner,build:'synthetic-qa',startedAt,qwenEndpoint:endpoint,qaProjectRef:'dzqdzetcctkhbrhlxxgn',workerCredential:()=> 'sb_secret_synthetic',providerCredential:()=> 'synthetic-provider',fetch:fetcher,
  journal:{job:async(digest,job)=>rows.push({schemaVersion:'vpj07-hosted-job/1',jobDigest:digest,job}),usage:async(digest,receipt)=>rows.push({schemaVersion:'vpj07-usage-journal/1',configurationDigest:digest,receipt}),knowledge:async()=>{throw Error('unexpected legacy knowledge');},destination:async receipt=>rows.push(receipt),event:async event=>{rows.push({schemaVersion:'vpj07-hosted-run/1',...event,observedAt:new Date().toISOString()});if(completed)controller.abort();}}});
  const result=await run(controller.signal);assert.equal(result.finished,1);assert.equal(sent,1);
  rows.push({schemaVersion:'vpj07-hosted-run/1',phase:'returned',...result,observedAt:new Date().toISOString()});journal=rows;

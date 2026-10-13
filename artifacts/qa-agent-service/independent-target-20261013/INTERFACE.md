@@ -1,3 +1,28 @@
+# Latest target decision: approved shared database
+
+JT explicitly reversed the different-database direction after source 1c1e94e3.
+The active target is only dzqdzetcctkhbrhlxxgn, declared explicitly in
+VISEPANDA_QA_SUPABASE_PROJECT_REF. Missing or any other reference fails closed;
+NEXT_PUBLIC_SUPABASE_URL must exactly equal https://dzqdzetcctkhbrhlxxgn.supabase.co.
+No fallback, new project, new key, new credential slot or secret reader is introduced.
+
+readApprovedQaTarget(ref) is the primary helper; readIndependentQaTarget is a
+compatibility alias with the SAME approved-ref semantics. `kind:independent` retains
+wire/helper compatibility and means an independently validated trusted composition
+root, not a physically different database. Profile /4, job /2 and root/ref equality
+remain mandatory for current QA. Legacy S1/v2 behavior is unchanged.
+
+The new QA container uses the existing root db.key/qwen.key as readonly fixed-file
+mounts in its private tmpfs. CLI still binds ref before reading files and rejects
+QA env-key fallback. Package/activation owners apply this latest plan; no new
+qa-<ref> host slot or input is required. No actual keys were read or copied here.
+
+The earlier direction and source evidence below are preserved as history and do
+not authorize a new project/key or supersede this active decision. Main owns the
+root contract update; this task edits only its scoped interface/evidence.
+
+---
+
 # Independent QA service interface
 
 Accepted specification: docs/contracts/qa-independent-target.md. Base 8b5975e48e850d0cbb1bf6f8ef7c4b0c9ff6b888.

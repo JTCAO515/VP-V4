@@ -9,7 +9,7 @@ const profile=version=>parseHostedWorkerProfile({
   schemaVersion:`vpj07-hosted-text-worker/${version}`,pollIntervalMs:1000,maxLifetimeMs:60000,
   drainMs:1000,concurrency:1,groupLimit:1,
   modes:[version===4?'qa_session_history_v1':'current_input_v1'],
-  ...(version>1?{planning:null}:{}),...(version===4?{projectRef:'abcdefghijklmnopqrst'}:{}),
+  ...(version>1?{planning:null}:{}),...(version===4?{projectRef:'dzqdzetcctkhbrhlxxgn'}:{}),
   qwen:{priceVersion:'synthetic-v1',pricing:{mode:'flat',inputMicrosPerMillion:1,
     outputMicrosPerMillion:1,cachedInputMicrosPerMillion:null},reservedMicros:2,
     maxOutputTokens:128,timeoutMs:1000,configurationId:id(6),configurationVersion:1},
@@ -22,7 +22,7 @@ for(const version of [1,2,4])test(`profile/${version} discovers in its bounded q
   const group={ownerId:id(1),policyId:id(2),contextMode:version===4?'qa_session_history_v1':'current_input_v1',
     provider:'qwen',endpoint,scopes:[{scopeId:id(5),model:PROTOCOL_MODELS.qwen,priceVersion:'synthetic-v1'}]};
   const run=createHostedTextWorker(profile(version),{
-    ...(version===4?{qaProjectRef:'abcdefghijklmnopqrst'}:{}),workerId:id(1),build:'synthetic-discovery',startedAt:new Date().toISOString(),qwenEndpoint:endpoint,
+    ...(version===4?{qaProjectRef:'dzqdzetcctkhbrhlxxgn'}:{}),workerId:id(1),build:'synthetic-discovery',startedAt:new Date().toISOString(),qwenEndpoint:endpoint,
     workerCredential:()=> 'synthetic-db',providerCredential:()=> 'synthetic-provider',
     journal:{job:async()=>{},usage:async()=>{},knowledge:async()=>{},destination:async()=>{},
       event:async event=>{if(event.phase==='cycle')controller.abort();}},
