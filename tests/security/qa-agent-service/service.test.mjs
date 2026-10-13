@@ -68,3 +68,13 @@ test('client model/history/Trip flags and invalid bodies never reach admission',
  const f=fixture();for(const body of [{requestId:rid,text:'',},{requestId:rid,text:'x'.repeat(4001)},{requestId:rid,text:'x',provider:'glm'},{requestId:rid,text:'x',readyForProvider:true},{requestId:rid,text:'x',history:[]}])await assert.rejects(f.service.submit(sid,body),e=>e.code==='INVALID_INPUT');
  await assert.rejects(f.service.consent({policyId:pid,noticeHash:'b'.repeat(64)}),e=>e.code==='DATA_POLICY_BLOCKED');assert.equal(f.admissions,0);
 });
+
+test('finite Vercel system preview URLs work without trusting request host headers or other projects',()=>{
+ const host='vp-v4-git-codex-qaw005-main-jtcao515s-projects.vercel.app';
+ const env={VISEPANDA_QA_AGENT:'true',VISEPANDA_QA_AGENT_ORIGIN:'https://qatesting.go2china.space',VISEPANDA_QA_AGENT_POLICY_ID:pid,NEXT_PUBLIC_SUPABASE_URL:'https://dzqdzetcctkhbrhlxxgn.supabase.co',NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:'synthetic-public',VERCEL_ENV:'preview',VERCEL_URL:host};
+ assert.ok(qaConfig('https://'+host+'/qa',env));
+ assert.equal(qaConfig('https://vp-v4-other-jtcao515s-projects.vercel.app/qa',env),null);
+ assert.equal(qaConfig('https://evil.invalid/qa',{...env,VERCEL_URL:'evil.invalid'}),null);
+ assert.equal(qaConfig('https://vp-v4-x-otherteam.vercel.app/qa',{...env,VERCEL_URL:'vp-v4-x-otherteam.vercel.app'}),null);
+ assert.equal(browserBoundary(new Request('https://evil.invalid/qa',{method:'POST',headers:{origin:'https://qatesting.go2china.space','x-forwarded-host':host}})),false);
+});
