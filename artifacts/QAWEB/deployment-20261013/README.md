@@ -1,36 +1,57 @@
-# QAWEB-DEPLOY #683 resource evidence
+# QAWEB-DEPLOY #683: actual disabled QA preview
 
-Owner: deployment chat 01a13387-0e68-7300-9608-85aba0f18aba, sole writer of QA Vercel domain/config/deploy resource. Main owns integration source.
+Owner: deployment chat 01a13387-0e68-7300-9608-85aba0f18aba, sole writer of QA Vercel domain/config/deploy resource. Main owns integration source, target migration/policy/worker and PR #684. No parent closure or merge performed here.
 
-## PASS: domain added and read back
+## Actual deployment
 
-2026-10-13 official CLI 59.20.0, authenticated jtcao515, explicit project prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2 / team team_vLT8SL2mQJJSnXbD9GzVLP4K. MCP list/add same selectors returned 404 not_found; documented official CLI fallback used the same endpoint/method/team. No account or team substitution.
+- User test URL: https://qatesting.go2china.space/qa
+- Deployment ID: dpl_9uyTDjXayWprQaTBrLmut6upeM7r
+- Source SHA: 4e477a7f7bb05af1539bf940da204dd93df90bf3
+- Branch: codex/qaw005-main-20261013
+- Project/team: prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2 / team_vLT8SL2mQJJSnXbD9GzVLP4K
+- Target: preview (REST target=null), READY, source=git. Existing automatic deployment reused; no duplicate manual deployment.
+- Automatic preview URL: https://vp-v4-d6v0i347q-jtcao515s-projects.vercel.app (still denied by original WAF; not added to its allowlist).
+- Official direct known-deployment getter confirms exact project, Git SHA/ref, and aliases qatesting plus the QA branch alias. Full allowlisted data: automatic-preview-readback.json.
 
-qatesting.go2china.space is assigned to codex/qaw005-main-20261013, not production. Domain readback verified=true. Existing testing/staging/apex/www/default project domains retain original branch assignments.
+MCP deployment LIST returned 403 forbidden; that operation was not retried through another identity/CLI. GitHub deployment metadata supplied the exact existing URL. Direct GET for that known deployment separately returned MCP404; its documented exact-endpoint/team official CLI fallback succeeded. These distinct results are preserved in preview-4e477a7f.json. CLI account remained jtcao515.
 
-Actual post-add configuration returned:
+## Actual target checks
 
-- CNAME host: qatesting (full name qatesting.go2china.space).
-- Rank-1 target: a37b0a5f0814fb3a.vercel-dns-016.com.
-- Nameservers: launch1.spaceship.net, launch2.spaceship.net.
-- No TXT ownership challenge returned; verified=true.
-- Initial DNS misconfigured=true, no current CNAME/A values. Follow-up actual CNAME DNS read and Vercel configuration now show misconfigured=false with rank-1 target. No DNS write was made by this writer; DNS belongs to JT.
+| Check | Result |
+| --- | --- |
+| Domain bound to exact non-production QA branch; actual Spaceship CNAME; valid issued certificate | PASS |
+| Effective inherited public Supabase URL matches fixed Staging, public/anon key kind; exact QA Origin branch override | PASS, no values printed/persisted |
+| Automatic source build/READY and exact SHA/branch/project/aliases | PASS |
+| Custom-domain HTTPS root | PASS: 307 Location /qa |
+| /qa signed out | PASS: 200 and actual login link, no private conversation |
+| Login link navigation | PASS: /auth/sign-in?returnTo=/qa; actual email/password closed-beta form |
+| Desktop and 390×844 login screen, zh/en rendering | PASS; mobile scrollWidth=390, no horizontal overflow |
+| /qa?locale=en signed out and browser error log | PASS: English sign-in link; no captured console errors |
+| Anonymous Sessions API with QA disabled | PASS: 503 PROVIDER_UNAVAILABLE, ack=not_submitted, private/no-store, no private data |
+| Cross-Origin POST to Sessions API | PASS: 403 FORBIDDEN, ack=not_submitted, no private data/no submission |
+| Successful account login, persisted test Session, original request recovery with real actor | UNRUN: safe authorized test-actor handoff and active QA policy/runtime still needed |
+| Real provider and bounded why/simplify/second-option/correction/fresh-Session cases | UNRUN: target migration/new policy/consent/budget/secure worker not ready |
 
-Full allowlisted metadata is in resource-readback.json. No secret values are recorded. No protection settings, nameservers, DNS, existing aliases, billing, native/data permissions or production records changed.
+HTTP evidence: http-disabled-qa.json. Actual empty-field login screenshots: login-desktop.jpg and login-mobile.jpg. These are application boundary checks for the disabled preview, not full P0 question-answer acceptance. Prepared actual-provider cases are in acceptance-cases.md.
 
-## Limits and next action
+## Exact authorized WAF change
 
-- Deployment SHA: UNRUN; Main has not provided a reviewed ready P0 integration pin.
-- Actual QA preview URL: UNRUN; exact branch list returned no deployments.
-- HTTPS/login/Session persistence/provider/multi-turn acceptance: UNRUN pending source and authorized configuration.
-- QA branch env readiness: generic preview has Supabase public config and Qwen endpoint; QA origin override is now configured on the exact branch; QA enable/policy/context and worker budget readiness remain pending. Production secrets are not copied.
-- Observed backend working config accepts only custom QA hostname, preventing pre-DNS preview use. Shared config candidate belongs to Main/backend owner; gap reported to Main.
-- snapshot.py: read-only official CLI API, bounded response, live scope checks, allowlisted metadata only.
-- pin.py: read-only verifies full reviewed SHA, clean source, matching remote branch, QA source paths and live scope. Creates Git-source preview request with exact SHA; no deployment mutation. Baseline daa7bae44a660381fb3295d0d2afc327ea98d3ba correctly rejected as missing QA product paths.
-- Python AST syntax check: PASS for both scripts. git diff --check: PASS.
+The original active Host-not-in-set deny rule omitted the new QA domain and blocked every request before the application. JT explicitly agreed to only adding qatesting.go2china.space; Main reviewed the full candidate.
 
-Deployment request schema checked against official https://openapi.vercel.sh and https://vercel.com/docs/rest-api/deployments/create-a-new-deployment. Use Vercel MCP first, its documented exact-endpoint fallback only if the same 404 persists; inspect deployment SHA/target/state before claiming delivery. Preparation is not provider or target PASS.
+- Rule: rule_vpj_02_staging_schema_maintenance_N0pDWD.
+- Active version: 106 → 107.
+- Only change: original 17-host array plus qatesting.go2china.space; no removed host, Preview hostname, wildcard or bypass.
+- Full rule, deny action and other fields preserved; firewall remains enabled. Fresh readback strictly equals candidate.after; no unpublished draft remains.
+- One CLI rules.update stage and one publish. Initial local prepublish comparison incorrectly included GET-only valid/validationErrors; corrected without another stage. No platform/auto-review rejection occurred on the authorized mutation.
+- Candidate, staged change and final readback: firewall-single-host-candidate.json, firewall-staged-diff.json, firewall-single-host-readback.json.
+- Rollback only within explicit operator scope: re-read the same current rule and remove only qatesting.go2china.space, preserving every other field/host and unknown concurrent changes. Never discard someone else's draft.
 
-Follow-up HTTPS probe: FAIL from this local network (curl TLS SSL_ERROR_SYSCALL; local A lookup returned 198.18.0.68). This is not a target application result; no network/proxy change or security bypass attempted. Source deployment remains UNRUN. Documentation baseline check PASS.
+No DNS/domain addition was repeated, no deployment protection or application login was disabled, and QA enable/policy/context variables remain absent/default-disabled. No provider call, worker startup, secret write or target SQL operation occurred here.
 
-Current precise configuration slots and source-backed hosted-worker requirements: [readiness.md](readiness.md).
+## Current downstream dependencies
+
+Main's latest real evidence supersedes the earlier Supabase permission blocker: fixed Go2China Staging read-only access recovered; only 75/155 migrations are present and QA RPCs absent. ECS actual Docker inventory is empty; hosted switch disabled with no retained workers/ready/leased work, and secure file slots are absent. Main is reviewing migration prerequisites and safe credential handoff. No broad migration/application is inferred.
+
+The requested sidecar preparation was stopped by Main after this real empty-host evidence. Its local unexecuted drafts are archived under stopped-sidecar/ with sidecar-candidate.md marked STOPPED. Do not use them to start a worker or introduce a new flow.
+
+Own preparation checks: Python/Bash/Node syntax, source pin default refusal, exact WAF add-only diff/readback, git diff check, documentation baseline and artifact-growth check PASS. Linux host/image/profile/window/startup/heartbeat remain UNRUN. Source independent review and full PR CI belong to Main; a later source SHA invalidates only affected target evidence.

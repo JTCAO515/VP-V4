@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+# Local preparation candidate. No SQL toggle, old-worker mutation or key writes.
+set -euo pipefail
+fail() { printf 'QA sidecar: %s\n' "$*" >&2; exit 1; }
+[[ $# -ge 2 ]] || fail 'usage: plan|preflight|status <full reviewed SHA>; start <SHA> <operator window receipt>'
+action=$1; sha=$2
+[[ $sha =~ ^[0-9a-f]{40}$ ]] || fail 'require a full reviewed source SHA'
+short=${sha:0:12}
+name="vp-qaw005-sidecar-$short"
+source_dir="/opt/vp-v4-qaw005/$short"
+package_dir="/etc/visepanda/qaw005-sidecar/$short"
+profile_file="$package_dir/profile.json"
+secret_dir=/run/vp-qaw005-sidecar-secrets
+journal_dir="/var/lib/vp-worker/qaw005-sidecar/$short/journal"
+image="vp-qaw005-sidecar:$sha"
+checker="$(cd "$(dirname "$0")" && pwd)/validate-sidecar.mjs"
+case "$action" in
+ plan)
+  [[ $# -eq 2 ]] || fail 'unexpected plan arguments'
+  printf 'candidate-only\ncontainer=%s\nsource=%s\nimage=%s\nprofile=%s\nprivate-secret-mount=%s\njournal=%s\n' "$name" "$source_dir" "$image" "$profile_file" "$secret_dir" "$journal_dir"
+  exit 0 ;;
+ preflight|status) [[ $# -eq 2 ]] || fail 'unexpected arguments' ;;
+ start) [[ $# -eq 3 ]] || fail 'start requires an existing operator-reviewed window receipt' ;;
+ *) fail 'unsupported action; stop/replace/remove/SQL toggles are intentionally absent' ;;
+esac
+[[ $(uname -s) == Linux && ${EUID} -eq 0 ]] || fail 'target checks require the approved Linux host operator as root'
+command -v docker >/dev/null || fail 'Docker must already be provisioned'
+if [[ $action == status ]]; then
+ docker inspect --format 'image={{.Image}} state={{.State.Status}} health={{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' "$name"
+ exit 0
+fi
+command -v node >/dev/null || fail 'existing Node with type stripping is required; do not install implicitly'
+command -v findmnt >/dev/null || fail 'findmnt unavailable'
+docker info >/dev/null || fail 'Docker daemon unavailable'
+[[ -z $(swapon --show --noheadings) ]] || fail 'file-secret mode requires swap disabled'
+for dir in "$package_dir" "$secret_dir" "$journal_dir"; do
+ [[ -d $dir && ! -L $dir ]] || fail 'operator must prepare each independent private directory'
+done
+[[ $(stat -c '%u:%g:%a' "$package_dir") == 0:0:700 ]] || fail 'profile package must be root:root 0700'
+[[ $(stat -c '%u:%g:%a' "$secret_dir") == 1000:1000:700 ]] || fail 'secret mount must be uid/gid 1000 0700'
+[[ $(stat -c '%u:%g:%a' "$journal_dir") == 1000:1000:700 ]] || fail 'journal must be uid/gid 1000 0700'
+[[ $(findmnt -T "$secret_dir" -no FSTYPE) == tmpfs ]] || fail 'secret mount must reside on tmpfs'
+for file in db.key qwen.key; do
+ path="$secret_dir/$file"
+ [[ -f $path && ! -L $path ]] || fail 'existing approved file-secret slot missing'
+ [[ $(findmnt -T "$path" -no FSTYPE) == tmpfs ]] || fail 'secret file must reside on tmpfs'
+ [[ $(stat -c '%u:%g:%a:%h' "$path") == 1000:1000:400:1 ]] || fail 'secret file must be uid/gid 1000 0400 with one link'
+ bytes=$(stat -c %s "$path"); (( bytes >= 1 && bytes <= 4096 )) || fail 'secret file size invalid'
+done
+# Metadata only. Never read the keys or inspect an existing container's environment.
+[[ $(git -C "$source_dir" rev-parse HEAD) == "$sha" ]] || fail 'isolated source checkout differs from reviewed SHA'
+[[ -z $(git -C "$source_dir" status --porcelain) ]] || fail 'isolated source checkout is dirty'
+docker container inspect "$name" >/dev/null 2>&1 && fail 'QA name already exists; never replace it'
+image_id=$(docker image inspect --format '{{.Id}}' "$image") || fail 'reviewed QA image must already be loaded'
+[[ $image_id =~ ^sha256:[0-9a-f]{64}$ ]] || fail 'image digest unavailable'
+# Require resource headroom while preserving the old worker; never stop it to fit.
+available_kib=$(awk '/^MemAvailable:/ {print $2}' /proc/meminfo)
+[[ $available_kib =~ ^[0-9]+$ ]] && (( available_kib >= 1048576 )) || fail 'insufficient headroom for the additional 768MiB container'
+if [[ $action == preflight ]]; then
+ node --experimental-strip-types --disable-warning=ExperimentalWarning "$checker" "$source_dir" "$profile_file" "$sha"
+ printf 'metadata preflight passed; live policy/budget/consent and global-disabled window remain operator checks\n'
+ exit 0
+fi
+receipt=$3
+validated=$(node --experimental-strip-types --disable-warning=ExperimentalWarning "$checker" "$source_dir" "$profile_file" "$sha" "$receipt" "$image_id") || fail 'operator window receipt/profile unavailable'
+profile_json=${validated%%$'\n'*}; endpoint=${validated#*$'\n'}
+[[ $endpoint != "$validated" ]] || fail 'validated endpoint unavailable'
+# Only the new name is created. No restart policy, ports, env-file or key values.
+docker create --name "$name" --label vp.task=QAWEB-005 --label "vp.source-sha=$sha" \
+ --restart no --stop-timeout 75 --ulimit core=0:0 --user 1000:1000 \
+ --read-only --cap-drop ALL --security-opt no-new-privileges --memory 768m --pids-limit 128 \
+ --log-opt max-size=10m --log-opt max-file=3 \
+ --env VISEPANDA_HOSTED_TEXT_WORKER=true --env VISEPANDA_HOSTED_WORKER_SECRET_MODE=files \
+ --env "VISEPANDA_HOSTED_WORKER_PROFILE=$profile_json" --env "VISEPANDA_QWEN_ENDPOINT=$endpoint" \
+ --env "VISEPANDA_HOSTED_WORKER_BUILD=$sha" --env VISEPANDA_HOSTED_WORKER_JOURNAL_DIR=/var/lib/vp-worker/journal \
+ --env VISEPANDA_HOSTED_WORKER_HEALTH_PORT=8765 --env VISEPANDA_HOSTED_WORKER_HEALTH_HOST=127.0.0.1 \
+ --mount "type=bind,src=$secret_dir,dst=/run/vp-worker-secrets,readonly" \
+ --mount "type=bind,src=$journal_dir,dst=/var/lib/vp-worker/journal" \
+ --health-interval 30s --health-timeout 5s --health-start-period 90s \
+ --health-cmd 'node -e "fetch(\"http://127.0.0.1:8765/healthz\").then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"' \
+ "$image_id" >/dev/null
+# The original file-mode entry requires actual SQL disabled before starting and
+# again at the first heartbeat. Failure preserves the new container and journals.
+docker start "$name" >/dev/null || fail 'new container failed to start; retain it and investigate without touching old workers'
+printf 'new QA container started; verify distinct disabled heartbeat before operator restores global switch\n'

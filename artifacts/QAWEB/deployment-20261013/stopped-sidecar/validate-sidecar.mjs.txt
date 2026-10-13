@@ -1,0 +1,43 @@
+/** Offline profile/window validator. Never reads keys, calls SQL or grants authority. */
+import { open, lstat } from 'node:fs/promises';
+import { constants } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { pathToFileURL } from 'node:url';
+import { resolve, isAbsolute } from 'node:path';
+
+const unavailable = () => { throw new Error('QA sidecar package unavailable'); };
+async function privateJson(path, limit) {
+ if (!isAbsolute(path)) unavailable();
+ const info = await lstat(path);
+ if (!info.isFile() || info.isSymbolicLink() || info.uid !== 0 || info.gid !== 0 || (info.mode & 0o777) !== 0o600 || info.nlink !== 1 || info.size < 2 || info.size > limit) unavailable();
+ const file = await open(path, constants.O_RDONLY | constants.O_NOFOLLOW);
+ try {
+  const bytes = await file.readFile();
+  if (bytes.length !== info.size) unavailable();
+  const current = await file.stat();
+  if (current.ino !== info.ino || current.dev !== info.dev || current.mtimeMs !== info.mtimeMs) unavailable();
+  return { value: JSON.parse(bytes.toString('utf8')), hash: createHash('sha256').update(bytes).digest('hex') };
+ } finally { await file.close(); }
+}
+try {
+ const [source, profilePath, sha, receiptPath, imageId] = process.argv.slice(2);
+ if (![3,5].includes(process.argv.length - 2) || !isAbsolute(source) || !/^[0-9a-f]{40}$/.test(sha)) unavailable();
+ const { parseQaHostedProfile } = await import(pathToFileURL(resolve(source,'lib/server/qa-agent/hosted-profile.ts')).href);
+ const { isQwenEndpoint } = await import(pathToFileURL(resolve(source,'lib/server/model-gateway/adapters/provider-endpoints.ts')).href);
+ const input = await privateJson(profilePath,16384);
+ const profile = parseQaHostedProfile(input.value);
+ if (profile.schemaVersion !== 'vpj07-hosted-text-worker/3' || profile.concurrency !== 1 || profile.groupLimit !== 1 || profile.maxLifetimeMs > 3600000) unavailable();
+ if (!receiptPath) { console.log('closed QA v3 profile validated offline; activation not authorized'); }
+ else {
+  const { value: r } = await privateJson(receiptPath,8192);
+  const keys=['schemaVersion','action','sourceSha','imageId','profileSha256','endpoint','operatorEvidence','disabledObservedAt','expiresAt'];
+  if (!r || Array.isArray(r) || Object.keys(r).length !== keys.length || !keys.every(k=>Object.hasOwn(r,k))
+   || r.schemaVersion !== 'qaw005-sidecar-window/1' || r.action !== 'start-additional-qa-worker'
+   || r.sourceSha !== sha || r.imageId !== imageId || !/^sha256:[0-9a-f]{64}$/.test(imageId)
+   || r.profileSha256 !== input.hash || !isQwenEndpoint(r.endpoint)
+   || typeof r.operatorEvidence !== 'string' || r.operatorEvidence.trim().length < 1 || r.operatorEvidence.length > 512) unavailable();
+  const observed=Date.parse(r.disabledObservedAt),expires=Date.parse(r.expiresAt),now=Date.now();
+  if (!Number.isFinite(observed) || !Number.isFinite(expires) || observed > now || now-observed > 300000 || expires <= now || expires-observed > 300000) unavailable();
+  console.log(JSON.stringify(profile)); console.log(r.endpoint);
+ }
+} catch { console.error('QA sidecar package unavailable. No activation or credential operation performed by validator.'); process.exitCode=1; }
