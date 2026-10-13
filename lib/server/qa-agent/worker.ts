@@ -1,3 +1,4 @@
+import { requireQaTarget, type QaTarget } from "./target.ts";
 import { createProviderHttpTransport, type HttpProviderConfiguration, type HttpTransportDependencies } from "../model-gateway/adapters/http-transport.ts";
 import { createTextJobPrice, type TextJobPricing } from "../jobs/staging-text-job.ts";
 import { supabaseWorkerHeaders } from "../jobs/supabase-worker-headers.ts";
@@ -6,10 +7,12 @@ import type { TextWorkerConfig } from "../turn/text-worker.ts";
 import { executeQaWork, type QaExecutorDependencies, type QaWorkerRpc } from "./executor.ts";
 import { record, uuid } from "./service.ts";
 
-export type QaWorkerConfiguration = Readonly<{
+export type LegacyQaWorkerConfiguration = Readonly<{
   schemaVersion: "qa-agent-worker/1"; databaseUrl: string; ownerId: string; policyId: string;
   budget: TextWorkerConfig; provider: HttpProviderConfiguration; pricing: TextJobPricing;
 }>;
+export type IndependentQaWorkerConfiguration = Omit<LegacyQaWorkerConfiguration, "schemaVersion"> & Readonly<{ schemaVersion: "qa-agent-worker/2"; projectRef: string | null }>;
+export type QaWorkerConfiguration = LegacyQaWorkerConfiguration | IndependentQaWorkerConfiguration;
 export type QaWorkerDependencies = Readonly<{
   workerCredential: HttpTransportDependencies["credential"];
   providerCredential: HttpTransportDependencies["credential"];
@@ -25,16 +28,15 @@ const RPCS = new Set(["qa_claim_work_v1", "qa_read_work_v1", "qa_authorize_dispa
  * user-selectable model, environment secret lookup or second queue is created.
  * The deployment supplies existing secure credentials and reviewed tariff.
  */
-export function createQaWorker(configuration: QaWorkerConfiguration, dependencies: QaWorkerDependencies) {
-  if (typeof window !== "undefined" || process.env.VERCEL_ENV || configuration.schemaVersion !== "qa-agent-worker/1" || !uuid(configuration.ownerId) || !uuid(configuration.policyId)
+export function createQaWorker(configuration: QaWorkerConfiguration, dependencies: QaWorkerDependencies, compositionTarget?: QaTarget) {
+  if (typeof window !== "undefined" || process.env.VERCEL_ENV || configuration.schemaVersion !== "qa-agent-worker/2" || !uuid(configuration.ownerId) || !uuid(configuration.policyId)
     || !uuid(configuration.budget.scopeId) || configuration.provider.timeoutMs !== configuration.budget.timeoutMs
     || typeof dependencies.workerCredential !== "function" || typeof dependencies.providerCredential !== "function"
     || typeof dependencies.recordDestination !== "function" || typeof dependencies.recordUsage !== "function" || typeof dependencies.invokeContext !== "function") throw unavailable();
-  let database: URL;
-  try { database = new URL(configuration.databaseUrl); } catch { throw unavailable(); }
-  const local = !process.env.VERCEL_ENV && database.protocol === "http:" && ["localhost", "127.0.0.1"].includes(database.hostname);
-  if ((!local && database.origin !== "https://dzqdzetcctkhbrhlxxgn.supabase.co") || database.username || database.password || database.search || database.hash || database.pathname !== "/") throw unavailable();
-  const config = Object.freeze({ ...configuration, databaseUrl: database.origin, budget: Object.freeze({ ...configuration.budget }),
+  const target = requireQaTarget(compositionTarget);
+  if (configuration.schemaVersion !== "qa-agent-worker/2" || configuration.projectRef !== target.projectRef
+    || configuration.databaseUrl !== target.databaseUrl) throw unavailable();
+  const config = Object.freeze({ ...configuration, databaseUrl: target.databaseUrl, budget: Object.freeze({ ...configuration.budget }),
     provider: Object.freeze({ ...configuration.provider }), pricing: Object.freeze({ ...configuration.pricing }) });
   const price = createTextJobPrice(config.pricing);
   // Full existing maximum model context reservation is deliberately conservative;

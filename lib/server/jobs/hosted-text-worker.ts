@@ -1,5 +1,5 @@
 import { createQaWorker, type QaWorkerConfiguration } from "../qa-agent/worker.ts";
-import { parseQaHostedProfile, planQaGroup, type QaHostedProfile } from "../qa-agent/hosted-profile.ts";
+import { parseQaHostedProfile, planQaGroup, requireQaProfileTarget, type QaHostedProfile } from "../qa-agent/hosted-profile.ts";
 import { createQaContextInvoker } from "../qa-agent-context/executor-adapter.ts";
 import { setTimeout as delay } from "node:timers/promises";
 import { createHash } from "node:crypto";
@@ -69,7 +69,7 @@ export type HostedEvent = Readonly<{
 
 /** Strict, closed profile. Non-secret and content-free; secrets never enter it. */
 export function parseHostedWorkerProfile(raw: unknown): HostedWorkerProfile {
-  if (record(raw) && raw.schemaVersion === "vpj07-hosted-text-worker/3") return parseQaHostedProfile(raw);
+  if (record(raw) && (raw.schemaVersion === "vpj07-hosted-text-worker/3" || raw.schemaVersion === "vpj07-hosted-text-worker/4")) return parseQaHostedProfile(raw);
   if (!record(raw) || (raw.schemaVersion === "vpj07-hosted-text-worker/1"
     ? Object.keys(raw).length !== 8 || Object.hasOwn(raw,"planning")
     : raw.schemaVersion !== "vpj07-hosted-text-worker/2" || Object.keys(raw).length !== 9 || !Object.hasOwn(raw,"planning")
@@ -111,7 +111,7 @@ export function jobConfig(profile: LegacyHostedWorkerProfile, mode: HostedMode, 
 
 /** Select exactly one qualifying scope; anything else is a skipped group. */
 export function planGroup(profile: HostedWorkerProfile, raw: unknown, qwenEndpoint: string): StagingTextJobConfig | null {
-  if (profile.schemaVersion === "vpj07-hosted-text-worker/3") return null;
+  if (profile.schemaVersion === "vpj07-hosted-text-worker/3" || profile.schemaVersion === "vpj07-hosted-text-worker/4") return null;
   if (!record(raw) || typeof raw.ownerId !== "string" || !UUID.test(raw.ownerId) || typeof raw.policyId !== "string" || !UUID.test(raw.policyId)
     || !profile.modes.includes(raw.contextMode as HostedMode) || raw.provider !== "qwen" || raw.endpoint !== qwenEndpoint
     || !Array.isArray(raw.scopes)) return null;
@@ -270,6 +270,8 @@ export type HostedJournal = Readonly<{
   planningUsage?: (digest: string, receipt: ValidatedPlanningUsageReceipt, signal: AbortSignal) => Promise<void>;
 }>;
 export type HostedWorkerDependencies = Readonly<{
+  /** Operator composition binding; never read from discovery/job payloads. */
+  qaProjectRef?: string;
   workerId: string;
   build: string;
   startedAt: string;
@@ -288,9 +290,17 @@ export type HostedWorkerDependencies = Readonly<{
   fetch?: typeof globalThis.fetch;
 }>;
 
+export function getHostedWorkerDatabaseTarget(profile: HostedWorkerProfile, operatorProjectRef?: string): string {
+  if (profile.schemaVersion === "vpj07-hosted-text-worker/4") return requireQaProfileTarget(profile, operatorProjectRef ?? profile.projectRef).databaseUrl;
+  if (profile.schemaVersion === "vpj07-hosted-text-worker/3") throw unavailable();
+  return HOSTED_STAGING_DATABASE_URL;
+}
+
 /** Compose the loop with the real Staging service RPCs and existing scoped jobs. */
 export function createHostedTextWorker(profile: HostedWorkerProfile, dependencies: HostedWorkerDependencies) {
   profile = parseHostedWorkerProfile(profile);
+  const databaseUrl = getHostedWorkerDatabaseTarget(profile, dependencies.qaProjectRef);
+  const qaTarget = profile.schemaVersion === "vpj07-hosted-text-worker/4" ? requireQaProfileTarget(profile, dependencies.qaProjectRef) : undefined;
   if (typeof window !== "undefined" || !UUID.test(dependencies.workerId) || !/^[A-Za-z0-9._-]{1,64}$/.test(dependencies.build)
     || !Number.isFinite(Date.parse(dependencies.startedAt)) || new Date(dependencies.startedAt).toISOString() !== dependencies.startedAt
     || typeof dependencies.workerCredential !== "function" || typeof dependencies.providerCredential !== "function") throw unavailable();
@@ -338,7 +348,7 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
     const timeout = AbortSignal.any([signal, AbortSignal.timeout(10000)]);
     const secret = await dependencies.workerCredential(timeout);
     if (typeof secret !== "string" || !/^[\x21-\x7e]{1,8192}$/.test(secret)) throw unavailable();
-    const response = await fetcher(HOSTED_STAGING_DATABASE_URL + "/rest/v1/rpc/" + name, {
+    const response = await fetcher(databaseUrl + "/rest/v1/rpc/" + name, {
       method: "POST", headers: supabaseWorkerHeaders(secret),
       body: JSON.stringify(parameters), redirect: "manual", credentials: "omit", cache: "no-store", signal: timeout,
     });
@@ -364,7 +374,7 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
     readyGroups: async stop => {
       // SQL qualifies the exact provider binding and unique matching scope
       // before LIMIT; an unexecutable group cannot occupy the sole QA slot.
-      const qa = profile.schemaVersion === "vpj07-hosted-text-worker/3";
+      const qa = profile.schemaVersion === "vpj07-hosted-text-worker/4";
       const discovery = qa ? "qa_ready_groups_v2" : "hosted_worker_ready_groups";
       const parameters = qa ? { p_limit: profile.groupLimit, p_model: PROTOCOL_MODELS.qwen,
         p_price_version: profile.qwen.priceVersion, p_endpoint: dependencies.qwenEndpoint } : { p_limit: profile.groupLimit };
@@ -377,7 +387,7 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
     },
     workerFor: group => {
       if (planningTarget && group === planningTarget) return {ownerId:planningTarget.ownerId,poll:planningPoll!};
-      if (profile.schemaVersion === "vpj07-hosted-text-worker/3") {
+      if (profile.schemaVersion === "vpj07-hosted-text-worker/4") {
         const job = planQaGroup(profile, group, dependencies.qwenEndpoint);
         if (!job) return null;
         const digest = createHash("sha256").update(JSON.stringify(job)).digest("hex");
@@ -387,7 +397,7 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
           recordUsage: (receipt, stop) => dependencies.journal.usage(digest, receipt, stop),
           invokeContext: createQaContextInvoker(),
           ...(dependencies.fetch ? { fetch: dependencies.fetch } : {}),
-        });
+        }, qaTarget);
         return { ownerId: job.ownerId, poll: async stop => {
           if (!journaled.has(digest)) { await dependencies.journal.job(digest, job); journaled.add(digest); }
           const result = await poll(stop);

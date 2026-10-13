@@ -1,3 +1,4 @@
+import { readIndependentQaTarget } from "./target.ts";
 import { uuid } from "./service.ts";
 
 /** QA only; neither cookies nor body can select a database, model or policy. */
@@ -16,11 +17,12 @@ export function qaConfig(url: string, env: Readonly<Record<string, string | unde
   for (const host of [env.VERCEL_URL, env.VERCEL_BRANCH_URL]) {
     if (typeof host === "string" && /^vp-v4-[a-z0-9-]+-jtcao515s-projects\.vercel\.app$/.test(host)) previewOrigins.add("https://" + host);
   }
+  const target = readIndependentQaTarget(env.VISEPANDA_QA_SUPABASE_PROJECT_REF);
   const qa = env.VERCEL_ENV === "preview" && previewOrigins.has(origin.origin) && previewOrigins.has(incoming.origin)
-    && database.origin === "https://dzqdzetcctkhbrhlxxgn.supabase.co";
+    && target !== null && env.NEXT_PUBLIC_SUPABASE_URL === target.databaseUrl;
   if (!local && !qa) return null;
   const mode = env.VISEPANDA_QA_AGENT_CONTEXT_MODE ?? "current_input_v1";
   if (!["current_input_v1", "qa_session_history_v1"].includes(mode)) return null;
-  return { url: database.origin, publishableKey: env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+  return { url: database.origin, projectRef: qa ? target?.projectRef : null, publishableKey: env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
     policyId: env.VISEPANDA_QA_AGENT_POLICY_ID.toLowerCase(), contextMode: mode as "current_input_v1" | "qa_session_history_v1" };
 }
