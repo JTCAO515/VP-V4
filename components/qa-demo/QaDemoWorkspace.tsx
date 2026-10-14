@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type FormEvent } from "react";
+import { useLayoutEffect, useRef, useState, type FormEvent } from "react";
 import { fixtures, prompts, sampleReply, type SampleMessage } from "./fixtures";
 import styles from "./QaDemoWorkspace.module.css";
 
@@ -13,25 +13,35 @@ export function QaDemoWorkspace() {
   const [section, setSection] = useState<typeof sections[number]>("VP");
   const [status, setStatus] = useState("已载入固定示例，未恢复任何真实 Session。");
   const input = useRef<HTMLTextAreaElement>(null);
+  const resetButton = useRef<HTMLButtonElement>(null);
+  const focusRequested = useRef(false);
   const fixture = fixtures[selected];
   const messages = histories[selected];
   const atLimit = messages.length >= 26;
 
+  useLayoutEffect(() => {
+    if (!focusRequested.current) return;
+    focusRequested.current = false;
+    if (section === "VP") {
+      (atLimit ? resetButton.current : input.current)?.focus();
+    }
+  }, [histories, section, atLimit]);
+
   function submit(value: string) {
     if (!value.trim() || atLimit) return;
+    focusRequested.current = true;
     setHistories(current => current.map((history, index) => index === selected
       ? [...history, { role: "user", text: value.trim() }, { role: "sample", text: sampleReply(fixture, value) }]
       : history));
     setText("");
     setStatus("已展示预设示例回应；未连接 Agent、未发送或保存数据。");
-    input.current?.focus();
   }
   function onSubmit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); submit(text); }
   function reset() {
+    focusRequested.current = section === "VP";
     setHistories(current => current.map((history, index) => index === selected ? [...fixture.messages] : history));
     setText("");
     setStatus("当前示例已重置到固定初始数据；没有真实 Session 被删除或恢复。");
-    if (section === "VP") input.current?.focus();
   }
 
   return <main className={styles.shell}>
@@ -49,7 +59,7 @@ export function QaDemoWorkspace() {
         <h2>示例 Session</h2>
         {fixtures.map((item, index) => <button key={item.id} type="button" aria-current={selected === index ? "true" : undefined} onClick={() => { setSelected(index); setText(""); setStatus(`已切换到 ${item.source}；仅使用本页内存中的示例。`); }}>{item.name}</button>)}
         <p>{fixture.source} · 静态合成内容</p>
-        <button type="button" onClick={reset}>重置当前示例 / Reset</button>
+        <button ref={resetButton} type="button" onClick={reset}>重置当前示例 / Reset</button>
       </aside>
       <section className={styles.chat} aria-label={`${section} 示例内容`}>
         {section === "VP" ? <>
@@ -73,7 +83,7 @@ export function QaDemoWorkspace() {
         </> : <div className={styles.placeholder}>
           <h2>{section} · 示例空状态</h2>
           <p>此分区仅展示四 Tab 入口，尚未连接真实能力。没有已保存的{section === "Journeys" ? "行程或 Proposal" : section === "Library" ? "成果" : "Memory"}。</p>
-          <button type="button" onClick={() => setSection("VP")}>返回 VP 示例对话</button>
+          <button type="button" onClick={() => { focusRequested.current = true; setSection("VP"); }}>返回 VP 示例对话</button>
         </div>}
         <p className={styles.status} role="status">{status}</p>
       </section>
