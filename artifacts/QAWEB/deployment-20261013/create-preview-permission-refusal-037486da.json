@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "operation": "POST /v13/deployments",
+  "status": 403,
+  "code": "forbidden",
+  "message": "You don't have permission to create a Preview Deployment for this Vercel project: vp-v4.",
+  "requestId": "sin1:sfo1::28ktf-1791952626558-f62c04d4ac4f",
+  "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+  "teamId": "team_vLT8SL2mQJJSnXbD9GzVLP4K",
+  "gitSource": {
+    "type": "github",
+    "org": "JTCAO515",
+    "repo": "VP-V4",
+    "ref": "codex/qaw005-independent-target-20261013",
+    "sha": "037486da3ec9a8ab61c72936fa94892961983f87"
+  },
+  "withLatestCommit": false,
+  "freshDeploymentCreated": false,
+  "domainChanged": false,
+  "preservedDomainBranch": "codex/qaw005-main-20261013",
+  "equivalentCliMutationAttempted": false,
+  "identityChanged": false,
+  "branchConfigurationReadback": "branch-config-037486da.json",
+  "sourceCiEvidence": "source-ci-037486da.json",
+  "workerReadiness": "UNRUN",
+  "realAuthSessionProviderMultiTurn": "UNRUN",
+  "resumeCondition": "Official project deployment permission restored or authorized holder supplies fresh exact-SHA deployment evidence. Existing user authorization remains valid."
+}

@@ -1,10 +1,17 @@
 {
-  "observedAt": "2026-10-14T04:28:53.851371+00:00",
+  "observedAt": "2026-10-14T04:35:23.102673+00:00",
   "sourceSha": "037486da3ec9a8ab61c72936fa94892961983f87",
   "sourceTree": "1c1f5fa66b8f9d04898ee324aa78383970bdad02",
   "acceptedSha": "eba6ea343cb2764e791f56bf24ccfbe454f91045",
   "acceptedTree": "1c1f5fa66b8f9d04898ee324aa78383970bdad02",
   "checks": [
+    {
+      "name": "db-integration",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "037486da3ec9a8ab61c72936fa94892961983f87",
+      "details_url": "https://github.com/JTCAO515/VP-V4/actions/runs/38509791564/job/115681142073"
+    },
     {
       "name": "Vercel Preview Comments",
       "status": "completed",
@@ -77,8 +84,8 @@
     },
     {
       "name": "lane (supabase-http-native / 5 of 8)",
-      "status": "in_progress",
-      "conclusion": null,
+      "status": "completed",
+      "conclusion": "success",
       "head_sha": "037486da3ec9a8ab61c72936fa94892961983f87",
       "details_url": "https://github.com/JTCAO515/VP-V4/actions/runs/38509791564/job/115675492383"
     },
@@ -118,7 +125,9 @@
       "details_url": "https://github.com/JTCAO515/VP-V4/actions/runs/38509791557/job/115675416303"
     }
   ],
-  "allReturnedChecksSuccessful": false,
+  "allReturnedChecksSuccessful": true,
   "domainChanged": false,
-  "runtimeAuthSessionProvider": "UNRUN"
+  "runtimeAuthSessionProvider": "UNRUN",
+  "requiredStableChecksSuccessful": true,
+  "latestMainCutoverInstruction": "Main final baseline pin 037486da3ec9a8ab61c72936fa94892961983f87 approved; preserve old QA binding until fresh exact-SHA build with new branch configuration is READY. Platform create-deployment permission denial blocks fresh build."
 }
