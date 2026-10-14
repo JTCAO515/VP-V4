@@ -1,4 +1,4 @@
-最终 head：`9891052926210b673d47bfcb032ae84277fc8cff`  
+最终 head：`9891052926210b673d47bfcb032ae84277fc8cff`
 对比：`65ec0cae07277e356710e3db3e887c2f2fdd350c`
 
 **Standards：0 findings。** Chat 已复用现有 `state.libraryChatText`；此前唯一 P3 重复格式化问题已消除。
