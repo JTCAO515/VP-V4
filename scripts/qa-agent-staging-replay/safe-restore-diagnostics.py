@@ -7,6 +7,7 @@ KINDS=('EVENT TRIGGER','DEFAULT ACL','FK CONSTRAINT','ROW SECURITY','CONSTRAINT'
 
 PUBLIC_SQLSTATES={'42501','42P07','42710','42P01','42883','42703','42704','22023','0A000'}
 ERROR_HEADER='pg_restore: error: could not execute query: ERROR:'
+CLIENT_ARCHIVE_VERSION=object()
 
 
 def error_frame(text):
@@ -24,7 +25,7 @@ def error_frame(text):
             return None,prelude,[]
         if line.startswith('pg_restore: error:'):
             if re.fullmatch(r'pg_restore: error: unsupported version \([0-9]{1,3}\.[0-9]{1,3}\) in file header',line):
-                return 'CLIENT_ARCHIVE_VERSION_UNSUPPORTED',prelude,[]
+                return CLIENT_ARCHIVE_VERSION,prelude,[]
             if not line.startswith(ERROR_HEADER):return None,prelude,[]
             return line[len(ERROR_HEADER):].lstrip(' \t'),prelude,lines[n+1:]
         prelude.append(line)
@@ -34,6 +35,8 @@ def error_frame(text):
 def diagnostic(raw,consumer):
     text=(raw or b'').decode('utf-8',errors='replace')
     message,prelude,tail=error_frame(text)
+    client_version=message is CLIENT_ARCHIVE_VERSION
+    if client_version:message=None
     state=None
     if message is not None:
         # A state is only the initial field of this actual error envelope.
@@ -58,7 +61,7 @@ def diagnostic(raw,consumer):
     category=None
     # Match canonical message templates, never keywords inside quoted names,
     # progress, statement text, context or values.
-    if message=='CLIENT_ARCHIVE_VERSION_UNSUPPORTED':category='RESTORE_ARCHIVE_VERSION_UNSUPPORTED'
+    if client_version:category='RESTORE_ARCHIVE_VERSION_UNSUPPORTED'
     elif (message or '').startswith('permission denied '):category='RESTORE_PERMISSION_DENIED'
     elif (message or '').startswith('unrecognized configuration parameter '):category='RESTORE_PARAMETER_UNSUPPORTED'
     elif re.fullmatch(r'(?:relation|schema|type|function|operator|constraint|index) .+ already exists',message or ''):category='RESTORE_OBJECT_EXISTS'

@@ -89,6 +89,9 @@ CONTEXT: hidden SQL
         d=m.diagnostic(b'pg_restore: error: arbitrary message "unsupported version ERROR: TOKEN:"\n',['pg_restore'])
         self.assertEqual(d['category'],'LOCAL_RESTORE_CONSUMER_FAILED');self.assertIsNone(d['sqlstate'])
 
+        d=m.diagnostic(b'pg_restore: error: could not execute query: ERROR: CLIENT_ARCHIVE_VERSION_UNSUPPORTED\n',['pg_restore'])
+        self.assertEqual(d['category'],'LOCAL_RESTORE_CONSUMER_FAILED');self.assertIsNone(d['sqlstate'])
+
     def test_success_preserves_output_and_has_no_failure_record(self):
         records=[]
         result=m.pipeline([sys.executable,'-c','print("fixture")'],[sys.executable,'-c','import sys;sys.stdout.write(sys.stdin.read())'],True,records)
