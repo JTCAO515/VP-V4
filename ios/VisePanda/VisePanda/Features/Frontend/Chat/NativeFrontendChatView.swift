@@ -56,11 +56,13 @@ import UIKit
                     }
                     .safeAreaInset(edge: .bottom, spacing: 0) { composer }
                 }
+                .accessibilityHidden(sidebarVisible)
                 NativeMuseChatHeader(avatarImage: avatarImage, avatarScale: avatarScale,
                     avatarVerticalOffset: avatarVerticalOffset,
                     sidebar: { dismissKeyboard(); withAnimation(.easeOut(duration: 0.2)) { sidebarVisible = true } },
                     assistant: { dismissKeyboard(); if let onShowAssistant { onShowAssistant() } else { sheet = .assistantUnavailable } },
                     referral: { dismissKeyboard(); sheet = .referral })
+                    .accessibilityHidden(sidebarVisible)
                 if sidebarVisible {
                     Button { closeSidebar() } label: { Color.black.opacity(0.18) }
                         .buttonStyle(.plain).ignoresSafeArea().accessibilityLabel("关闭侧栏")
