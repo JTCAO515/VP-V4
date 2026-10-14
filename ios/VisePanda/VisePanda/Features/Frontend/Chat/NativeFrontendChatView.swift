@@ -95,8 +95,8 @@ import UIKit
     private func contextCard(_ text: String) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Label("本次带入的样例上下文", systemImage: "link").font(.caption).foregroundStyle(.secondary)
-            if let material = state.materials.first(where: { $0.id == text }) {
-                Text("资料：\(material.title)\n\(material.content)")
+            if let materialText = state.libraryChatText(materialID: text) {
+                Text(materialText)
                     .font(.subheadline).textSelection(.enabled)
             } else {
                 Text(state.journeys.first(where: { $0.id == text })?.title ?? text)
