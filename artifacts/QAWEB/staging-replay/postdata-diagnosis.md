@@ -41,3 +41,10 @@ Main 的真实 retry-1 已通过 ICU bootstrap，随后 schema post-data 权限�
 ## e544 multiline TOC 返修
 
 改为先验证整个client framing，再作任何归因。多fatal、重复/嵌入PROCESSING/TOC、无法解释的owner/name续行或多行名字均返回genericFAIL，所有error-derived字段null，phase仅来自固定consumer参数。单一明确PROCESSING/TOC+permission frame仍可用；DETAIL/SQL内有伪client框架时也保守UNKNOWN，不再保留第一条看似合法归因。12项focusedtests在旧e544上FAIL、新版PASS；见diagnostics-whole-frame-delivery.json。未来新窗口候选单独未提交，未混入parser安全返修；实际尝试/窗口/markers均不变。
+
+
+## 757 typed-state 来源反证与最终契约
+
+Main 的真正假数据PG expression-index反例把函数改为ERRCODE=P0001、MESSAGE以42501开头，post-data失败；旧757仍错误返回42501。旧探针/清理报告只读复用，没有再建真实或假数据80副本。该反例说明stderr首字段与白名单都不能证明PG协议SQLSTATE；前述首字段/公开集合契约已被替代。
+
+当前stderr-only接口一律sqlstate=null，不解析/剥离像code的前缀，不用code覆盖category。保留的类别/permissionObjectClass只是明确标注STDERR_ONLY_UNSTRUCTURED_HINTS_NOT_PG_ERROR_FACTS的消息提示，不能当PG错误事实；TOC也是受保守整段framing约束的位置hint。歧义仍全部UNKNOWN/null。13项focusedtests PASS；P0001消息42501的同oracle在旧757 FAIL，新版PASS。见diagnostics-untyped-state-delivery.json。未来新窗口WIP继续单独保留，未混此稳定parser提交；实际IO仍STOP。
