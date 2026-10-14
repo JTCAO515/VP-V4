@@ -1,0 +1,5 @@
+PASS: 11 input scenarios; empty/whitespace voice, raw 2000/2001 limits, Unicode graphemes, blocked send
+PASS: iOS SDK typecheck, actual AppTab + baseline NativeFrontendState (iOS 17, Swift 6 strict concurrency)
+PASS: iOS SDK typecheck, actual AppTab + main-dependency NativeFrontendState (iOS 17, Swift 6 strict concurrency)
+PASS: Swift parse
+PASS: git diff --check
