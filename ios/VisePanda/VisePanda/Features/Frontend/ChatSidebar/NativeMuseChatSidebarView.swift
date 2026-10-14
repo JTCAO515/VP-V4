@@ -10,6 +10,7 @@ struct NativeMuseChatSidebarView: View {
         VStack(alignment: .leading, spacing: 20) {
             HStack(spacing: 12) {
                 Text("对话").font(.title2.weight(.semibold))
+                    .fixedSize(horizontal: false, vertical: true)
                 Spacer(minLength: 0)
                 Button(action: onClose) {
                     Image(systemName: "xmark").font(.body.weight(.medium))
@@ -34,18 +35,21 @@ struct NativeMuseChatSidebarView: View {
             .accessibilityHint("开始空白的本地样例对话并关闭侧栏")
             .accessibilityIdentifier("frontend.chat.sidebar.new")
 
-            VStack(alignment: .leading, spacing: 6) {
-                Text("本地样例历史").font(.headline)
-                Text("未接入真实历史服务；仅用于本次本地体验。")
-                    .font(.caption).foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            .accessibilityIdentifier("frontend.chat.sidebar.boundary")
-
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: 8) {
-                    ForEach(state.localConversations) { conversation in
-                        conversationRow(conversation)
+                VStack(alignment: .leading, spacing: 20) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("本地样例历史").font(.headline)
+                            .fixedSize(horizontal: false, vertical: true)
+                        Text("未接入真实历史服务；仅用于本次本地体验。")
+                            .font(.caption).foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .accessibilityIdentifier("frontend.chat.sidebar.boundary")
+
+                    LazyVStack(alignment: .leading, spacing: 8) {
+                        ForEach(state.localConversations) { conversation in
+                            conversationRow(conversation)
+                        }
                     }
                 }
             }
@@ -69,6 +73,7 @@ struct NativeMuseChatSidebarView: View {
                         .fixedSize(horizontal: false, vertical: true)
                     Text(selected ? "当前对话 · 本地样例" : "本地样例")
                         .font(.caption).foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 Spacer(minLength: 0)
                 if selected { Image(systemName: "checkmark.circle.fill").foregroundStyle(Color.accentColor) }
