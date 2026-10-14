@@ -27,10 +27,12 @@
 
 以下未获本专项写 lease，保持只读；不能宣称仓库所有入口已无矛盾：
 
-1. 根 `AGENTS.md` 和 `docs/INDEX.md` 已取得追加 lease 并更新方向入口。`docs/handoff.json` 及其 `CONTEXT.md`/`HANDOFF.md` 投影仍需唯一源 writer 同步；即使 CONTEXT 获准也不能绕过生成源手改。
+1. 根 `AGENTS.md` 和 `docs/INDEX.md` 已取得追加 lease 并更新方向入口。`docs/handoff.json` 及其 `CONTEXT.md`/`HANDOFF.md` 投影保持 2026-10-02 历史，根入口已指明当前方向与外部唯一 Main；可选仅导航补丁见 handoff-source-candidate.json，不要求重写当前状态。
 2. `docs/manifest.json` 与 `scripts/vpj-program.mjs`：manifest 登记新合同；生成器须保留 modularDirection/current 指针，避免下次 render/sync 抹掉此次重排。
 3. 候选新增 `docs/adr/ADR-0028-independent-ios-web-agent-projects.md`（编号须 Main 查占用）：将本轮接受决定定向 supersede ADR-0023/0027 的工程定位，不修改历史 ADR。
 4. `docs/contracts/qa-target.md`（如存在）、`qa-independent-target.md`、hosted-worker-staging 及原部署 owner 说明：只补工程归属指针，原实际共享目标、runtime/权限合同保持。
+
+`docs/handoff.json` 不需要重写状态；根入口已将旧投影标作历史，导航候选为可选。生成器/manifest 和正式 ADR 仍由 Main 精确整合。
 
 这些是同一交付的整合动作，不建立新 ticket 队列、不复制 HANDOFF。本专项可以在已给范围继续正文同步与检查；共享路径由 Main 精确批准或亲自整合后才能宣称全入口完成。
 

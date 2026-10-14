@@ -1,5 +1,7 @@
 # VisePanda — 贯穿中国自由行的 AI 旅行助手
 
+当前方向先读 `docs/contracts/vpv4-project-boundaries.md` 与当前 Issue。根 CONTEXT/HANDOFF 是 2026-10-02 生成记录，保留历史；VP-V10 当前管理状态以 `/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/HANDOFF.md` 的唯一 Main 为准，不从旧投影恢复排期或推导验收。
+
 VisePanda 面向国际来华自由行旅客，围绕同一个 Trip 连接规划、材料、准备、现场沟通与变化后的行程调整。同仓维护独立演进的 iOS、Web、Agent 三工程，复用同一业务合同与既有资源。发布范围为中英，既有 es/ru/ar 资产与协议兼容由 VPJ-01 迁移。
 
 [产品与任务入口](docs/program/2026-09-05/README.md) · [完整产品规划](docs/VISEPANDA-MASTER-PLAN-2026-09-05.md) · [当前交接与证据](CONTEXT.md) · [2026-09-24 开发状态](docs/program/2026-09-05/CURRENT-STATUS-2026-09-24.md)

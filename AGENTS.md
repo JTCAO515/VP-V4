@@ -1,5 +1,7 @@
 # VP-V4 Engineering Instructions
 
+当前方向先读 `docs/contracts/vpv4-project-boundaries.md` 与当前 Issue。根 CONTEXT/HANDOFF 是 2026-10-02 生成记录，保留历史；VP-V10 当前管理状态以 `/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/HANDOFF.md` 的唯一 Main 为准，不从旧投影恢复排期或推导验收。
+
 Active product: VPJ-00 #187. ADR-0027 defines the current personal-assistant upgrade;
 unaffected ADR-0023/0025 domain and safety contracts remain. iOS, Web and Agent evolve as independent projects in this same repository;
 current boundaries and direction-first sequencing are defined in
