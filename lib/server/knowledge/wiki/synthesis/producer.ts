@@ -1,3 +1,4 @@
+import { descriptorSnapshot } from "./descriptor-snapshot.ts";
 import { createHash } from "node:crypto";
 import { proposalInputDigest, type WikiProposalJobInput, type WikiProposalJobOutcome } from "../../../jobs/wiki-statement-proposal-job.ts";
 import { isSourceUri, type SourceDeclaration } from "../../review/source-assertion.ts";
@@ -34,25 +35,6 @@ const text = (value: unknown, max: number): value is string =>
 const uuid = (value: unknown): value is string => typeof value === "string" && UUID.test(value);
 const hash = (value: unknown): value is string => typeof value === "string" && HASH.test(value);
 const digest = (value: string) => createHash("sha256").update(value).digest("hex");
-/** Preserve exact JSON boundaries before cloning: hidden authority, Symbol keys,
- * accessors and non-finite numbers must not disappear during serialization. */
-function plainJson(value: unknown, depth = 0): boolean {
-  try {
-    if (depth > 12) return false;
-    if (value === null || typeof value === "string" || typeof value === "boolean") return true;
-    if (typeof value === "number") return Number.isFinite(value);
-    if (!value || typeof value !== "object") return false;
-    if (![Object.prototype, Array.prototype, null].includes(Object.getPrototypeOf(value))) return false;
-    const fields = Reflect.ownKeys(value);
-    if (Array.isArray(value) && fields.length !== value.length + 1) return false;
-    return fields.every(key => {
-      if (Array.isArray(value) && key === "length") return true;
-      const field = Object.getOwnPropertyDescriptor(value, key);
-      return typeof key === "string" && field?.enumerable === true && Object.hasOwn(field, "value")
-        && plainJson(field.value, depth + 1);
-    });
-  } catch { return false; }
-}
 function bytes(value: unknown): number {
   try { return Buffer.byteLength(JSON.stringify(value), "utf8"); } catch { return Infinity; }
 }
@@ -64,7 +46,6 @@ function freeze<T>(value: T): T {
   return value;
 }
 function validInput(value: unknown): value is SynthesisInput {
-  if (!plainJson(value)) return false;
   if (!keys(value, ["dataClass", "sources", "configDigest", "maxOutputTokens", "timeoutMs", "provider"])
     || value.dataClass !== "c0_synthetic" || !hash(value.configDigest)
     || !Number.isSafeInteger(value.maxOutputTokens) || (value.maxOutputTokens as number) < 1 || (value.maxOutputTokens as number) > 8192
@@ -74,7 +55,7 @@ function validInput(value: unknown): value is SynthesisInput {
   return value.sources.every(s => keys(s, ["sourceRevisionId", "snippetHash", "startOffset", "endOffset"])
     && uuid(s.sourceRevisionId) && hash(s.snippetHash) && Number.isSafeInteger(s.startOffset) && Number.isSafeInteger(s.endOffset)
     && (s.startOffset as number) >= 0 && (s.endOffset as number) > (s.startOffset as number) && (s.endOffset as number) <= 2000)
-    && new Set(value.sources.map(s => s.sourceRevisionId.toLowerCase())).size === value.sources.length && plainJson(value) && bytes(value) <= MAX_BYTES;
+    && new Set(value.sources.map(s => s.sourceRevisionId.toLowerCase())).size === value.sources.length && bytes(value) <= MAX_BYTES;
 }
 function validDeclaration(value: unknown): value is SourceDeclaration {
   return keys(value, ["sourceKey", "revisionLabel", "publisher", "uri", "locator", "snippet", "usageDeclaration"])
@@ -85,8 +66,9 @@ function validDeclaration(value: unknown): value is SourceDeclaration {
 }
 type SourceRow = WikiRead["revisions"][number]["sources"][number];
 function selectSources(raw: unknown, spans: readonly SourceSpan[]): readonly ProposalSource[] | null {
-  if (!Array.isArray(raw) || raw.length !== spans.length || !plainJson(raw) || bytes(raw) > MAX_BYTES) return null;
-  const rows = raw as SourceRow[];
+  const snapshot = descriptorSnapshot(raw, MAX_BYTES, 3);
+  if (!Array.isArray(snapshot) || snapshot.length !== spans.length) return null;
+  const rows = snapshot as SourceRow[];
   if (new Set(rows.map(r => r?.id?.toLowerCase())).size !== rows.length) return null;
   const result: ProposalSource[] = [];
   for (const span of spans) {
@@ -97,12 +79,12 @@ function selectSources(raw: unknown, spans: readonly SourceSpan[]): readonly Pro
     result.push({ id: row.id, declaration: row.declaration });
   }
   if (new Set(result.map(s => `${s.declaration.sourceKey}:${s.declaration.revisionLabel}`)).size !== result.length) return null;
-  return freeze(JSON.parse(JSON.stringify(result)) as ProposalSource[]);
+  return freeze(result);
 }
 function validUsage(value: unknown): boolean {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
   const usage = value as Record<string, unknown>;
-  if (!plainJson(usage) || !Reflect.ownKeys(usage).every(k => typeof k === "string" && ["inputTokens", "outputTokens", "totalTokens", "cachedInputTokens", "uncachedInputTokens", "reasoningTokens", "cost"].includes(k))) return false;
+  if (!Reflect.ownKeys(usage).every(k => typeof k === "string" && ["inputTokens", "outputTokens", "totalTokens", "cachedInputTokens", "uncachedInputTokens", "reasoningTokens", "cost"].includes(k))) return false;
   if (![usage.inputTokens, usage.outputTokens, usage.totalTokens].every(n => Number.isSafeInteger(n) && (n as number) >= 0)) return false;
   for (const [key, limit] of [["cachedInputTokens", usage.inputTokens], ["uncachedInputTokens", usage.inputTokens], ["reasoningTokens", usage.outputTokens]] as const) {
     const n = usage[key];
@@ -136,24 +118,27 @@ function validOutcome(value: WikiProposalJobOutcome, input: WikiProposalJobInput
  * Fresh requalification is advisory; atomic completion remains the original
  * authenticated dispatcher transaction's responsibility. No automatic retry. */
 export async function produceWikiSynthesis(input: SynthesisInput, generation: WikiProposalJobOutcome, deps: SynthesisDependencies, signal: AbortSignal): Promise<SynthesisOutcome> {
+  const startedAt = performance.now();
   let request: SynthesisInput;
   let authorId: string;
+  let readSources: SynthesisDependencies["readSources"];
   try {
-    if (!validInput(input) || !keys(deps, ["authorId", "readSources"]) || !uuid(deps.authorId)
-      || typeof deps.readSources !== "function") return { kind: "failed", errorCode: "INVALID_INPUT" };
-    request = freeze(JSON.parse(JSON.stringify(input)) as SynthesisInput);
-    authorId = deps.authorId;
+    const snapshot = descriptorSnapshot(input, MAX_BYTES);
+    if (!validInput(snapshot) || !keys(deps, ["authorId", "readSources"])) return { kind: "failed", errorCode: "INVALID_INPUT" };
+    const actor = Object.getOwnPropertyDescriptor(deps, "authorId")?.value as unknown;
+    const reader = Object.getOwnPropertyDescriptor(deps, "readSources")?.value as unknown;
+    if (!uuid(actor) || typeof reader !== "function") return { kind: "failed", errorCode: "INVALID_INPUT" };
+    request = freeze(snapshot);
+    authorId = actor;
+    readSources = reader as SynthesisDependencies["readSources"];
   } catch { return { kind: "failed", errorCode: "INVALID_INPUT" }; }
   if (signal.aborted) return { kind: "cancelled" };
   let generationSnapshot: WikiProposalJobOutcome;
   try {
-    // Validate descriptors recursively before reading kind/usage or serializing.
-    // Non-finite usage must not become acceptable nulls during JSON cloning.
-    if (!plainJson(generation) || bytes(generation) > MAX_BYTES + 2048) return { kind: "failed", errorCode: "MODEL_OUTPUT_INVALID" };
-    generationSnapshot = freeze(JSON.parse(JSON.stringify(generation)) as WikiProposalJobOutcome);
+    generationSnapshot = freeze(descriptorSnapshot(generation, MAX_BYTES + 2048) as WikiProposalJobOutcome);
   } catch { return { kind: "failed", errorCode: "MODEL_OUTPUT_INVALID" }; }
   const controller = new AbortController();
-  const deadline = performance.now() + request.timeoutMs;
+  const deadline = startedAt + request.timeoutMs;
   let timedOut = false;
   const cancel = () => controller.abort();
   signal.addEventListener("abort", cancel, { once: true });
@@ -178,7 +163,7 @@ export async function produceWikiSynthesis(input: SynthesisInput, generation: Wi
   };
   try {
     const ids = freeze(request.sources.map(s => s.sourceRevisionId));
-    const rawSources = await bounded(() => deps.readSources(ids, controller.signal));
+    const rawSources = await bounded(() => readSources(ids, controller.signal));
     checkLifetime();
     const sources = selectSources(rawSources, request.sources);
     if (!sources) return { kind: "failed", errorCode: "SOURCE_UNAVAILABLE" };
@@ -188,8 +173,8 @@ export async function produceWikiSynthesis(input: SynthesisInput, generation: Wi
     if (outcome?.kind === "cancelled") return { kind: "cancelled" };
     if (outcome?.kind === "failed") return { kind: "failed", errorCode: "GENERATION_FAILED" };
     if (!validOutcome(outcome, jobInput, request.sources)) return { kind: "failed", errorCode: "MODEL_OUTPUT_INVALID" };
-    const snapshot = freeze(JSON.parse(JSON.stringify(outcome)) as Extract<WikiProposalJobOutcome, { kind: "succeeded" }>);
-    const current = selectSources(await bounded(() => deps.readSources(ids, controller.signal)), request.sources);
+    const snapshot = outcome;
+    const current = selectSources(await bounded(() => readSources(ids, controller.signal)), request.sources);
     checkLifetime();
     if (!current || JSON.stringify(current) !== JSON.stringify(sources)) return { kind: "failed", errorCode: "SOURCE_CHANGED" };
     const cited = new Set(snapshot.output.statementProposals.flatMap(p => p.evidence.map(e => e.sourceRevisionId)));
