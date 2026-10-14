@@ -54,6 +54,9 @@
     "scopeExclusions": [
       "不是第四工程，不自动调度旧六线程",
       "不新增运行/资金/生产/数据权限"
+    ],
+    "frontendIncrementIds": [
+      "IOS-CHAT-MUSE-20261014"
     ]
   },
   "tasks": [
@@ -2955,7 +2958,7 @@
           "输入与附件/语音解释"
         ],
         "reuse": [
-          "原IOS001 JourneyEntry/Frontend未提交候选及18 Foundation状态断言",
+          "原IOS001已交stable59d92cc3；JourneyEntry/Frontend候选、18 Foundation状态断言和失败记录作为既有证据保留，不重做。",
           "r1编译FAIL与r2 BUILD SUCCEEDED均保留；shared Ask/Conversation/PBX候选仍由Main整合"
         ],
         "criteria": [
@@ -2963,7 +2966,10 @@
           "输入/附件/语音入口解释能力、来源与未接入边界，不伪造真实上传、识别或模型结果。",
           "复用四Tab/壳与原候选，不重建；E2/metrics default deny及旧暂停不恢复；真实目标/首值/服务验证单独保留。"
         ]
-      }
+      },
+      "frontendIncrementIds": [
+        "IOS-CHAT-MUSE-20261014"
+      ]
     },
     {
       "id": "IOS-002",
@@ -4539,5 +4545,62 @@
       "do not create a second Trip/Memory/identity authority",
       "source, synthetic, build, app interaction and real service acceptance stay distinct"
     ]
-  }
+  },
+  "authorizedFrontendIncrements": [
+    {
+      "id": "IOS-CHAT-MUSE-20261014",
+      "acceptedAt": "2026-10-14T10:01:00Z",
+      "source": "Sentinel_1de3567fc58481919ba98c6b17e8db4c via unique Main HANDOFF",
+      "outcome": "在既有完整四Tab前端上增量交付 Muse 聊天视觉、新/历史侧栏和输入交互；不新建运行工程或真实Session权威。",
+      "integration": "Main独占新WT ios-chat-muse-main-20261014 / branch codex/ios-chat-muse-main-20261014，base冻结945a，已记录接口fedd8de8与原图资产72275967。共享Root/NativeFrontendState/PBX/资产由Main单writer，规划owner不写。",
+      "writers": [
+        {
+          "owner": "01a12dba-36ee-7602-a285-698d04d2cbcc",
+          "branch": "codex/ios-chat-muse-20261014（原WT保留dirty）",
+          "scope": "ios/VisePanda/VisePanda/Features/Frontend/Chat/**",
+          "delivery": "正文、独立浮动双线、原图头像+VisePanda、gift空白页与drawer壳；保attachment/voice/confirmation及跨页联动。"
+        },
+        {
+          "owner": "01a139e4-1a8a-70a0-8d03-e725fa86b392",
+          "branch": "codex/ios-chat-composer-20261014，WT ios-chat-composer-20261014，base945a",
+          "scope": "ios/VisePanda/VisePanda/Features/Frontend/ChatComposer/**",
+          "delivery": "NativeMuseChatComposerView(state:onAttach:onExpression:onPlace:onVoice:)；开始聊天placeholder、plus工具、空voice/有字send、keyboard和原2000限制。"
+        },
+        {
+          "owner": "01a139e4-1cf2-7ec0-93b2-a11c7f873b2b",
+          "branch": "codex/ios-chat-sidebar-20261014，WT ios-chat-sidebar-20261014，base945a",
+          "scope": "ios/VisePanda/VisePanda/Features/Frontend/ChatSidebar/**",
+          "delivery": "NativeMuseChatSidebarView(state:onClose:)；new/history/currentselection和关闭，消费Main同一state，明确样例。"
+        }
+      ],
+      "reuse": [
+        "旧完整前端PR697冻结945a16094c62914f4922fec910cdb48b7ab3cc2e；继续原CI/正常整合，不因新视觉改旧审阅head或取消旧交付。",
+        "IOS001既有stable59d92cc3、共享四Tab/确认与对象联动及原失败记录复用；新增量尚未交付，不宣传新视觉已完成。",
+        "Main样例会话接口沿单一NativeFrontendState：messages=[]、activeLocalConversationID/localConversations、start/selectLocalConversation，逐Session保草稿/context/pendingConfirmation；不创建真实业务Session。"
+      ],
+      "assets": [
+        {
+          "role": "原图头像",
+          "path": "/Users/jtsm5p/Documents/Codex/2026-10-13/task/ios-chat-muse-assets-20261014/IMG_4852.jpeg",
+          "bytes": 269167,
+          "sha256": "a2bfdd463df05335d052c4485bfa613a422ef67a575aaacb2b886efd436cf29e"
+        },
+        {
+          "role": "只读视觉参考，不入产品",
+          "path": "/Users/jtsm5p/Documents/Codex/2026-10-13/task/ios-chat-muse-assets-20261014/IMG_5369.jpeg",
+          "bytes": 205730,
+          "sha256": "0856ac2c5b10fe441c7f134637b60c00fc1ab301ca31ff0f83e7c00e1977e96f"
+        }
+      ],
+      "assetStatus": "官方协调物化后Main已view；本规划owner只读字节/SHA核验一致。聊天资产缺口已解决，无需JT重传；不生成替代头像，原JPEG由Main纳入imageset，脸帽在UI圆形裁切。",
+      "criteria": [
+        "新/历史侧栏、当前选中/关闭与本地会话草稿/确认上下文一致；无真实Session或新数据权威。",
+        "原图脸帽、VisePanda名字/详情可达，gift空白页可返回；四Tab及表达/地点入口保持。",
+        "空/有字/键盘输入、plus、voice/send、原2000限制正确，长消息可上下滚动且顶部可读。",
+        "既有附件/语音解释、确认及跨页对象联动保留；统一标明本地样例，不冒真实Auth/provider/持久化完成。",
+        "按增量运行必要测试、实际模拟器/截图、正式review/适用CI和保护merge；新head不复用旧945a绿灯冒通过。"
+      ],
+      "boundaries": "不改旧PR697审阅头、MainHandoff/规则；不恢复旧E2/W2，不增加DB/费用/生产/窗口或被拒动作。三个owner真实工具开始由Main记录；规划owner不另派工。"
+    }
+  ]
 }

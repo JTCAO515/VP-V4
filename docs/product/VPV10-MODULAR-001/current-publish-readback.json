@@ -501,38 +501,6 @@
     "verified": true
   },
   {
-    "number": 187,
-    "taskId": "PROGRAM",
-    "title": "[PROGRAM] VP-V4 三工程成果、依赖批次与交付总览",
-    "labels": [
-      "documentation",
-      "priority:P0",
-      "status:in-progress",
-      "governance",
-      "project:agent",
-      "work:product-coordination"
-    ],
-    "updatedAt": "2026-10-14T08:04:08Z",
-    "url": "https://github.com/JTCAO515/VP-V4/issues/187",
-    "bodySha256": "b9c29837f93d07beb776db96e284ebb14c2d7974c7108fde2693084a37e77ab9",
-    "verified": true
-  },
-  {
-    "number": 203,
-    "taskId": "IOS-001",
-    "title": "[IOS-001] 首访委托和回访继续同一旅程目标",
-    "labels": [
-      "enhancement",
-      "priority:P0",
-      "status:in-progress",
-      "project:ios"
-    ],
-    "updatedAt": "2026-10-14T08:04:12Z",
-    "url": "https://github.com/JTCAO515/VP-V4/issues/203",
-    "bodySha256": "9af573cdef2a844119d79dbb958d698660b70051b04d3223022fddf6b725f283",
-    "verified": true
-  },
-  {
     "number": 209,
     "taskId": "IOS-003",
     "title": "[IOS-003] 地点发现保存消歧和导航保持同一准确实体",
@@ -588,6 +556,38 @@
     "updatedAt": "2026-10-14T08:11:52Z",
     "url": "https://github.com/JTCAO515/VP-V4/issues/693",
     "bodySha256": "07604deddeb869f465f25bd3e33acb0cf82b77d82288d864bd57c9846da72231",
+    "verified": true
+  },
+  {
+    "number": 187,
+    "taskId": "PROGRAM",
+    "title": "[PROGRAM] VP-V4 三工程成果、依赖批次与交付总览",
+    "labels": [
+      "documentation",
+      "priority:P0",
+      "status:in-progress",
+      "governance",
+      "project:agent",
+      "work:product-coordination"
+    ],
+    "updatedAt": "2026-10-14T10:14:17Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/187",
+    "bodySha256": "9ae59b5e24e2ce547d917d03db14b0db5ac07ac948e1c2269d5830cf6be8f56e",
+    "verified": true
+  },
+  {
+    "number": 203,
+    "taskId": "IOS-001",
+    "title": "[IOS-001] 首访委托和回访继续同一旅程目标",
+    "labels": [
+      "enhancement",
+      "priority:P0",
+      "status:in-progress",
+      "project:ios"
+    ],
+    "updatedAt": "2026-10-14T10:14:20Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/203",
+    "bodySha256": "59fa14cb3d9024fb9029a91280e2e5d476696096b2544769d8fe76bc5d465b72",
     "verified": true
   }
 ]

@@ -1,0 +1,44 @@
+{
+  "taskId": "IOS-CHAT-MUSE-20261014",
+  "integrationTarget": "codex/ios-chat-muse-main-20261014",
+  "scope": [
+    187,
+    203
+  ],
+  "originalTaskCountAcceptanceAndMappingUnchanged": true,
+  "officialAssetHashesVerified": true,
+  "rows": [
+    {
+      "number": 187,
+      "taskId": "PROGRAM",
+      "title": "[PROGRAM] VP-V4 三工程成果、依赖批次与交付总览",
+      "labels": [
+        "documentation",
+        "priority:P0",
+        "status:in-progress",
+        "governance",
+        "project:agent",
+        "work:product-coordination"
+      ],
+      "updatedAt": "2026-10-14T10:14:17Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/187",
+      "bodySha256": "9ae59b5e24e2ce547d917d03db14b0db5ac07ac948e1c2269d5830cf6be8f56e",
+      "verified": true
+    },
+    {
+      "number": 203,
+      "taskId": "IOS-001",
+      "title": "[IOS-001] 首访委托和回访继续同一旅程目标",
+      "labels": [
+        "enhancement",
+        "priority:P0",
+        "status:in-progress",
+        "project:ios"
+      ],
+      "updatedAt": "2026-10-14T10:14:20Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/203",
+      "bodySha256": "59fa14cb3d9024fb9029a91280e2e5d476696096b2544769d8fe76bc5d465b72",
+      "verified": true
+    }
+  ]
+}
