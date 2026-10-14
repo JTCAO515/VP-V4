@@ -93,8 +93,13 @@ import UIKit
     private func contextCard(_ text: String) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Label("本次带入的样例上下文", systemImage: "link").font(.caption).foregroundStyle(.secondary)
-            Text(state.journeys.first(where: { $0.id == text })?.title ?? text)
-                .font(.subheadline).textSelection(.enabled)
+            if let material = state.materials.first(where: { $0.id == text }) {
+                Text("资料：\(material.title)\n\(material.content)")
+                    .font(.subheadline).textSelection(.enabled)
+            } else {
+                Text(state.journeys.first(where: { $0.id == text })?.title ?? text)
+                    .font(.subheadline).textSelection(.enabled)
+            }
             if let id = linkedJourneyID(for: text) {
                 Button("查看关联旅程") {
                     guard state.chatContext == text, linkedJourneyID(for: text) == id else { return }
