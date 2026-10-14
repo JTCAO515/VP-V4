@@ -18,3 +18,11 @@ Toolchain observed: Xcode 27.0 build 27A266a, Apple Swift 6.4. Effective model/s
 UNRUN: full affected App build, existing NativeTranslationTests and simulator interaction/preview rendering (Main coordinates the unique nonce/DerivedData build window); keyboard, language toggle, larger text and Done have source/typecheck evidence only. Real Auth/provider, independent bilingual semantics, physical device/max Dynamic Type/VoiceOver and release acceptance UNRUN. Existing store tests were inspected, not rerun or claimed PASS.
 
 Code complete for this owned frontend slice; partial parent IOS-005/#216 stays open. Main handles exact-head review, applicable CI, navigation integration validation and protected merge. No merge or device/resource operations performed.
+
+## DEBUG sample integration entry
+
+Main can directly mount `NativeTranslationSampleExperienceView()` under the existing DEBUG navigation. No initializer arguments, environment objects, store, session, HTTP, provider, Trip, metrics or persistence are required. The leaf offers fixed English/Chinese direction and ready/pending/unavailable/unknown states, then presents the production `NativeTranslationCard` with `.sample` origin; its production Done callback dismisses back to the sample choices. All sample state lives in local SwiftUI State. It is compiled only under `#if DEBUG` and visibly labels Sample / not connected.
+
+Required SourceFiles: existing `ios/VisePanda/VisePanda/Features/Translation/NativeTranslationView.swift` only (already in project). Existing NativeTranslationPhrase and Color.vpBackground remain its normal module dependencies. No new PBX entry or shared source patch is needed. The main Sample preview uses the same no-argument entry and fixed fixture factory as the debug experience.
+
+PASS: affected real card + DEBUG sample SwiftUI SDK typecheck and full-view syntax parse; predicate negatives reused and rerun by the same scoped verifier. Sample rendered interaction is UNRUN here, owned by Main's unique simulator/build window.

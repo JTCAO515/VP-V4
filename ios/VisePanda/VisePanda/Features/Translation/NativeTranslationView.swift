@@ -431,14 +431,63 @@ struct NativeTranslationCard: View {
     }
 }
 
+#if DEBUG
+/// Local fixed fixtures only. Main may mount this leaf in the existing debug navigation.
+struct NativeTranslationSampleExperienceView: View {
+    @State private var source = "en"
+    @State private var state = "translated"
+    @State private var card: NativeTranslationPhrase?
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                Text("Sample · 未连接翻译服务 / Translation service not connected")
+                    .font(.headline).accessibilityIdentifier("translation.sample.notice")
+                Text("固定示例，仅体验展示与返回；不会发送文字或生成翻译。 / Fixed examples for presentation and return only. No text is sent or translated.")
+                    .font(.subheadline)
+                Picker("示例方向 / Sample direction", selection: $source) {
+                    Text("English → 中文").tag("en")
+                    Text("中文 → English").tag("zh")
+                }.pickerStyle(.segmented).accessibilityIdentifier("translation.sample.direction")
+                Picker("示例状态 / Sample state", selection: $state) {
+                    Text("就绪 / Ready").tag("translated")
+                    Text("等待 / Pending").tag("pending")
+                    Text("不可用 / Unavailable").tag("unavailable")
+                    Text("未知 / Unknown").tag("unknown")
+                }.pickerStyle(.menu).accessibilityIdentifier("translation.sample.state")
+                Text("原文 / Original").font(.headline)
+                Text(Self.phrase(source: source, state: state).original).font(.title3)
+                Button("打开示例大字卡 / Open sample card") {
+                    card = Self.phrase(source: source, state: state)
+                }.buttonStyle(.borderedProminent).accessibilityIdentifier("translation.sample.open")
+                Text("完成后返回这里，示例选择保持不变。 / Done returns here and keeps your sample selection.")
+                    .font(.footnote)
+            }.frame(maxWidth: .infinity, alignment: .leading).padding()
+        }
+        .navigationTitle("现场表达 Sample")
+        .fullScreenCover(item: $card) { phrase in
+            NativeTranslationCard(phrase: phrase, chinese: source == "en", origin: .sample)
+        }
+    }
+
+    fileprivate static func phrase(source: String, state: String) -> NativeTranslationPhrase {
+        let english = source == "en"
+        return .init(turnId: "33333333-3333-4333-8333-333333333333",
+            sourceLocale: source, targetLocale: english ? "zh" : "en",
+            original: english ? "Hello." : "你好。", state: state,
+            translation: state == "translated" ? (english ? "你好。" : "Hello.") : nil,
+            backTranslation: state == "translated" ? (english ? "Hello." : "你好。") : nil)
+    }
+}
+#endif
+
+#if DEBUG
 #Preview("Sample · not connected") {
-    NativeTranslationCard(phrase: .init(turnId: "33333333-3333-4333-8333-333333333333",
-        sourceLocale: "en", targetLocale: "zh", original: "Hello.", state: "translated",
-        translation: "你好。", backTranslation: "Hello."), chinese: true, origin: .sample)
+    NativeTranslationSampleExperienceView()
 }
 
 #Preview("Sample · unavailable") {
-    NativeTranslationCard(phrase: .init(turnId: "33333333-3333-4333-8333-333333333333",
-        sourceLocale: "zh", targetLocale: "en", original: "你好。", state: "pending",
-        translation: nil, backTranslation: nil), chinese: false, origin: .sample)
+    NativeTranslationCard(phrase: NativeTranslationSampleExperienceView.phrase(source: "zh", state: "pending"),
+                          chinese: false, origin: .sample)
 }
+#endif

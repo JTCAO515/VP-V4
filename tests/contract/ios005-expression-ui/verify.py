@@ -73,10 +73,10 @@ with tempfile.TemporaryDirectory(prefix='ios005-presentation-') as tmp:
     ''' + gate + '}\n' + checks)
     subprocess.run(['xcrun', 'swift', str(predicate)], check=True)
     card = directory / 'card.swift'
-    production_card = view[view.index('enum NativeTranslationCardOrigin {'):view.index('#Preview(')]
+    production_card = view[view.index('enum NativeTranslationCardOrigin {'):view.index('\n#if DEBUG\n#Preview(')]
     card.write_text('import Foundation\nimport SwiftUI\n' + phrase + '\n' + ready + '\nextension Color { static let vpBackground = Color.white }\n' + production_card)
     sdk = subprocess.check_output(['xcrun', '--sdk', 'iphonesimulator', '--show-sdk-path'], text=True).strip()
-    subprocess.run(['xcrun', 'swiftc', '-typecheck', '-sdk', sdk, '-target', 'arm64-apple-ios18.0-simulator', str(card)], check=True)
-    print('PASS: actual SwiftUI card typecheck against installed iOS Simulator SDK (no Simulator boot or app build)')
+    subprocess.run(['xcrun', 'swiftc', '-typecheck', '-D', 'DEBUG', '-sdk', sdk, '-target', 'arm64-apple-ios18.0-simulator', str(card)], check=True)
+    print('PASS: actual SwiftUI card and DEBUG sample experience typecheck against installed iOS Simulator SDK (no Simulator boot or app build)')
 subprocess.run(['xcrun', 'swiftc', '-frontend', '-parse', str(VIEW)], check=True)
 print('PASS: full changed view syntax parse; runtime UI/provider/device remains UNRUN')
