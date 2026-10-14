@@ -168,3 +168,21 @@ test('current three-project plan covers each migration input once and rejects du
   assert.ok(!generated.includes('尚未派发'));
   assert.ok(!generated.includes('no UI writer'));
 });
+
+
+test('merged Harness and flight inputs remain internal stages with unified completion, never old-ticket self-dependencies', () => {
+  const current = JSON.parse(readFileSync('docs/product/VPV10-MODULAR-001/current-plan.json', 'utf8'));
+  const harness = current.tasks.find(t=>t.number===264);
+  const generated = currentTaskBody(harness,current);
+  assert.ok(generated.includes('H5 消费内部 H3'));
+  assert.ok(generated.includes('H5 消费内部 H4'));
+  assert.ok(generated.includes('H1–H5 全部约定交付'));
+  assert.ok(!generated.includes('本票关闭限于只读比较'));
+  assert.ok(!generated.includes('保留原生硬依赖#266/#267'));
+  assert.ok(!generated.includes('当前输入 #264'));
+  const bad = structuredClone(current);
+  bad.tasks.find(t=>t.number===264).retainedDependencyNotes[1].currentTarget=264;
+  assert.throws(()=>validateCurrentPlan(bad), /external self-dependency/);
+  const flight = current.tasks.find(t=>t.number===249);
+  assert.ok(currentTaskBody(flight,current).includes('F2 消费内部 F1'));
+});

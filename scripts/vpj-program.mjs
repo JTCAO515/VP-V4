@@ -738,6 +738,16 @@ export function validateCurrentPlan(value) {
     assert.match(task.id, /^(AGENT|IOS|WEB)-\d{3}$/);
     assert.equal(task.primaryProject, task.id.split('-')[0].toLowerCase());
     assert.ok(task.lead && task.remaining && task.acceptance.length && task.checks.length);
+    const stages = new Set((task.internalStages ?? []).map(stage=>stage.id));
+    assert.equal(stages.size, (task.internalStages ?? []).length, 'duplicate internal stage');
+    if (stages.size) assert.ok(task.completionBoundary, 'merged stages need a unified completion boundary');
+    for (const note of task.retainedDependencyNotes ?? []) {
+      assert.notEqual(note.currentTarget, task.number, 'merged stage cannot remain an external self-dependency');
+      if (note.kind === 'internal') {
+        assert.ok(stages.has(note.stage) && stages.has(note.inputStage), 'unknown internal stage input');
+        assert.notEqual(note.stage, note.inputStage, 'internal stage cannot depend on itself');
+      }
+    }
     visit(task.id);
   }
   const original = json(value.legacyInput).map(i => i.number).sort((a,b)=>a-b);
@@ -762,7 +772,8 @@ export function currentTaskBody(task, value) {
     (task.sourceScope?.length ? `现有源码/验证范围（历史归属上限，非新增 lease）：${task.sourceScope.map(p => '\u0060'+p+'\u0060').join('、')}。\n\n` : '') +
     (task.retainedPullRequests?.length ? `原票保留的确切 PR 指针：${task.retainedPullRequests.map(n=>`[#${n}](https://github.com/${value.repo}/pull/${n})`).join('、')}；各 PR 的有效范围以原证据为准，本次未重新冒领目标验收。\n\n` : '') +
     `## 依赖与并行\n\n${dependency}\n\n同批可在输入和 lease 独立时并行；验收关联不伪装 GitHub 开工阻塞，不等待整个前批全部关票。\n\n` +
-    (task.retainedDependencyNotes?.length ? `保留的原依赖与子阶段顺序：\n${task.retainedDependencyNotes.map(d=>`- 原 #${d.sourceIssue} → #${d.originalDependency}，当前输入 #${d.currentTarget}；${d.scope}。`).join('\n')}\n\n` : '') +
+    (task.internalStages?.length ? `## 内部阶段与整票完成\n\n${task.internalStages.map(stage=>`- ${stage.id} ${stage.name}：输入 ${stage.inputs.join('；') || '核本阶段实际接口与许可'}；历史来源 ${stage.historicalSources.map(n=>'#'+n).join('、')}。`).join('\n')}\n\n${task.completionBoundary}\n\n` : '') +
+    (task.retainedDependencyNotes?.length ? `保留的原依赖与子阶段顺序：\n${task.retainedDependencyNotes.map(d=>d.kind === 'internal' ? `- ${d.stage} 消费内部 ${d.inputStage}；历史来源 #${d.sourceIssue} → #${d.originalDependency}。${d.scope}。` : `- 原 #${d.sourceIssue} → #${d.originalDependency}，当前输入 #${d.currentTarget}；${d.scope}。`).join('\n')}\n\n` : '') +
     `## 完成标准\n\n${task.acceptance.map(a=>`- [${a.checked ? 'x' : ' '}] ${a.text}（承接 #${a.sourceIssue}）`).join('\n')}\n\n` +
     (task.activationEvidence.length ? `后续激活条件：\n${task.activationEvidence.map(a=>`- 原 #${a.sourceIssue}：${a.condition}`).join('\n')}\n\n` : '') +
     `## 检查与边界\n\n${task.checks.map(c=>'- '+c).join('\n')}\n\n${task.scopeExclusions.map(c=>'- '+c).join('\n')}\n- Actor/RLS、Cookie/Bearer 各自安全适配、用途/接收方同意、预算/幂等、TripProposal 可见 diff→确认→原子 Patch 与生命周期保持。\n- 代码、synthetic、目标运行、设备与发布分开记录；规划迁移/样例不是功能交付。\n\n` +

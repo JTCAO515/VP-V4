@@ -540,7 +540,7 @@
         {
           "sourceIssue": 360,
           "checked": false,
-          "text": "记录同批结构化/直接读取baseline和本路径实测差异；向量化/重排仍归#248的真实召回和净收益激活门。iOS/Web实际读回、原Trip不变、历史证据和回退通过后才完成本票。"
+          "text": "K2 记录同批结构化/直接读取baseline与本路径实测差异；向量化/重排仍归AGENT-016真实召回和净收益激活门。iOS/Web实际读回、原Trip不变、历史证据和回退须通过，随后与K1共同核对整票完成标准。"
         }
       ],
       "activationEvidence": [],
@@ -588,7 +588,28 @@
       ],
       "retainedPullRequests": [
         416
-      ]
+      ],
+      "internalStages": [
+        {
+          "id": "K1",
+          "name": "有依据回答与部分答案边界",
+          "historicalSources": [
+            206
+          ],
+          "inputs": []
+        },
+        {
+          "id": "K2",
+          "name": "已发布Wiki/原子声明的实际消费者证据",
+          "historicalSources": [
+            360
+          ],
+          "inputs": [
+            "AGENT-004 的已发布知识及 K1 结果语义"
+          ]
+        }
+      ],
+      "completionBoundary": "AGENT-005 同时承接 K1 与 K2；K2 的读回/回退完成仅是一阶段证据，不单独关闭整票。向量化/重排仍受 AGENT-016 的真实召回与净收益激活门约束。"
     },
     {
       "id": "AGENT-006",
@@ -1428,12 +1449,12 @@
         {
           "sourceIssue": 264,
           "checked": false,
-          "text": "把12场景中本票负责的只读案例接入必测集合；fixture与真实Staging分栏，中英各至少一条实际任务链通过，不能以界面文字或mock结票。"
+          "text": "H1 将12场景中负责的只读案例接入必测集合；fixture与真实Staging分栏，中英各至少一条实际任务链通过，不能以界面文字或mock冒充H1完成。"
         },
         {
           "sourceIssue": 264,
           "checked": false,
-          "text": "验证原生消费者和现有Web Chat的结果语义，保留老客户端兼容；本票不扩充Web范围。"
+          "text": "H1 验证原生消费者和现有Web Chat结果语义并保留老客户端兼容；该阶段不扩充Web功能范围。"
         },
         {
           "sourceIssue": 265,
@@ -1458,12 +1479,12 @@
         {
           "sourceIssue": 265,
           "checked": false,
-          "text": "按12场景规格接入约束/偏好/证据不足及确认冲突案例；原生中英结果和精简Web同Trip/diff语义一致，应用后重载与事务回执一致。"
+          "text": "H2 按12场景规格接入约束/偏好/证据不足及确认冲突案例；原生中英结果和独立Web同Trip/diff语义一致，应用后重载与事务回执一致。"
         },
         {
           "sourceIssue": 265,
           "checked": false,
-          "text": "报告fixture与获准真实环境、测量依据及失败案例；缺路线口径或真实原子回执不可用不能关闭本票。"
+          "text": "H2 报告fixture与获准真实环境、测量依据及失败案例；缺路线口径或真实原子回执时不得宣称H2完成，也不能据此满足整票统一完成标准。"
         },
         {
           "sourceIssue": 265,
@@ -1528,7 +1549,7 @@
         {
           "sourceIssue": 267,
           "checked": false,
-          "text": "交付同一JSON报告/Markdown摘要与可复用配对入口；本票关闭限于只读比较，Trip配对与最终能力判定保留VPJ-71。开发接收方/地区按开发接入规则记录实际配置及用户同意，不等待第三方审批。"
+          "text": "H4 交付同源JSON报告/Markdown摘要与可复用只读配对入口；该阶段完成仅证明只读比较，Trip配对归内部H2、最终能力判定归内部H5，均不能省略。开发接收方/地区按开发接入规则记录实际配置及用户同意，不等待第三方审批。"
         },
         {
           "sourceIssue": 267,
@@ -1573,7 +1594,7 @@
         {
           "sourceIssue": 268,
           "checked": false,
-          "text": "使用同一选定commit/config与预冻结grader/阈值整合两条任务；选定配置可为达到门槛的原基线，仅对拟采纳候选复用VPJ-70入口扩充Trip配对。候选被拒可保留基线，不强制新增候选；完整回归与停用责任仍必需。"
+          "text": "H5 使用同一选定commit/config与预冻结grader/阈值整合只读和Trip两条真实任务；选定配置可为达到门槛的原基线，仅对拟采纳候选复用内部H4配对入口扩充H2的Trip比较。候选被拒可保留基线，不强制新增候选；完整回归与停用责任仍必需。"
         },
         {
           "sourceIssue": 268,
@@ -1583,7 +1604,7 @@
         {
           "sourceIssue": 268,
           "checked": false,
-          "text": "真实原生Ask/Trip、精简Web同Trip、持久worker、证据资格、步行量、准确确认/回执与预算/恢复证据可串联；fixture和录制回放不能替代规定真实模式。"
+          "text": "H5 将真实原生Ask/Trip、独立Web同Trip、持久worker、证据资格、步行量、准确确认/回执与预算/恢复证据串联；fixture和录制回放不能替代规定真实模式。"
         },
         {
           "sourceIssue": 268,
@@ -1603,7 +1624,7 @@
         {
           "sourceIssue": 268,
           "checked": false,
-          "text": "Harness门纳入现有发布验收资料；本票不授权生产、不自动关闭VPJ-41/42/43/45，不替代真实账号、原生设备、IAP、隐私或商店验收。"
+          "text": "H5 Harness门纳入现有发布验收资料；不授权生产，不自动关闭WEB-002/IOS-009/AGENT-015/AGENT-022，不替代真实账号、原生设备、IAP、隐私或商店验收。"
         },
         {
           "sourceIssue": 268,
@@ -1623,7 +1644,7 @@
         {
           "sourceIssue": 268,
           "checked": false,
-          "text": "保留原生硬依赖#266/#267，#265/#266真实Trip/故障证据缺失不伪造；报告准备可先做"
+          "text": "H5 消费内部H3故障恢复和H4只读候选比较的规定证据，并核对H2真实Trip结果；缺失不伪造。报告结构可先准备，但内部阶段先后不是对已superseded旧票的外部原生依赖。"
         },
         {
           "sourceIssue": 268,
@@ -1695,20 +1716,26 @@
         {
           "sourceIssue": 266,
           "originalDependency": 265,
-          "currentTarget": 264,
-          "scope": "被合并子阶段的先后输入；不将其升级为整票硬阻塞"
+          "scope": "同一任务内部阶段输入，旧编号仅为历史来源；不是外部阻塞或自依赖",
+          "kind": "internal",
+          "stage": "H3",
+          "inputStage": "H2"
         },
         {
           "sourceIssue": 268,
           "originalDependency": 266,
-          "currentTarget": 264,
-          "scope": "被合并子阶段的先后输入；不将其升级为整票硬阻塞"
+          "scope": "同一任务内部阶段输入，旧编号仅为历史来源；不是外部阻塞或自依赖",
+          "kind": "internal",
+          "stage": "H5",
+          "inputStage": "H3"
         },
         {
           "sourceIssue": 268,
           "originalDependency": 267,
-          "currentTarget": 264,
-          "scope": "被合并子阶段的先后输入；不将其升级为整票硬阻塞"
+          "scope": "同一任务内部阶段输入，旧编号仅为历史来源；不是外部阻塞或自依赖",
+          "kind": "internal",
+          "stage": "H5",
+          "inputStage": "H4"
         }
       ],
       "sourceScope": [
@@ -1742,7 +1769,58 @@
       "retainedPullRequests": [
         420,
         495
-      ]
+      ],
+      "internalStages": [
+        {
+          "id": "H1",
+          "name": "真实只读问答证据",
+          "historicalSources": [
+            264
+          ],
+          "inputs": []
+        },
+        {
+          "id": "H2",
+          "name": "真实 Trip 配对改稿证据",
+          "historicalSources": [
+            265
+          ],
+          "inputs": [
+            "H1 的任务/证据口径及既有路线与确认端口"
+          ]
+        },
+        {
+          "id": "H3",
+          "name": "故障取消与持久恢复证据",
+          "historicalSources": [
+            266
+          ],
+          "inputs": [
+            "H2 的真实 Trip 任务链和命名检查点"
+          ]
+        },
+        {
+          "id": "H4",
+          "name": "只读模型/提示词候选配对",
+          "historicalSources": [
+            267
+          ],
+          "inputs": [
+            "H1 的冻结只读任务；可与 H2/H3 独立准备"
+          ]
+        },
+        {
+          "id": "H5",
+          "name": "统一发布判定与停用恢复报告",
+          "historicalSources": [
+            268
+          ],
+          "inputs": [
+            "H1/H2/H3/H4 各自规定的真实证据；同一配置/阈值，不拼接通过"
+          ]
+        }
+      ],
+      "completionBoundary": "AGENT-013 的完成范围包含 H1–H5 全部约定交付。H4 只读比较通过只完成一个内部阶段，不能关闭整票或替代 H2/H3/H5。各阶段 fixture/获准真实模式、Trip/故障/只读候选/最终能力判定证据分别保留；任何未验项按原标准如实记录，不增加数据运行、资金或生产授权。"
     },
     {
       "id": "AGENT-014",
@@ -2094,8 +2172,10 @@
         {
           "sourceIssue": 250,
           "originalDependency": 249,
-          "currentTarget": 249,
-          "scope": "被合并子阶段的先后输入；不将其升级为整票硬阻塞"
+          "scope": "同一任务内部输入，旧编号仅为历史来源；不是外部自依赖",
+          "kind": "internal",
+          "stage": "F2",
+          "inputStage": "F1"
         }
       ],
       "sourceScope": [
@@ -2106,7 +2186,30 @@
         "ios/**",
         "tests/**/flight/**"
       ],
-      "retainedPullRequests": []
+      "retainedPullRequests": [],
+      "internalStages": [
+        {
+          "id": "F1",
+          "name": "航班来源和中国航线实证",
+          "historicalSources": [
+            249
+          ],
+          "inputs": [
+            "原来源激活条件"
+          ]
+        },
+        {
+          "id": "F2",
+          "name": "授权状态消费与相关Trip重验",
+          "historicalSources": [
+            250
+          ],
+          "inputs": [
+            "F1 合格来源及原状态消费激活条件"
+          ]
+        }
+      ],
+      "completionBoundary": "AGENT-017 保留 F1/F2 各自激活门与技术验收，F1 完成不能替代 F2；只有两阶段约定范围均满足才完成整票。规划不启动航班采购、运行或交易。"
     },
     {
       "id": "AGENT-018",
@@ -2307,7 +2410,7 @@
         {
           "sourceIssue": 246,
           "checked": false,
-          "text": "本票以两个周sprint的去敏任务/交付/分钟记录、需求复盘与下一轮负责人/节奏交接作为有限交付；后续每周经营持续进行，但不以永久运营义务让本票无法结项。"
+          "text": "C1 以两个周sprint的去敏任务/交付/分钟记录、需求复盘及下一轮负责人/节奏交接作为有限阶段交付；不以永久运营义务延长该阶段，但不能据此跳过C2或关闭合并后的整票。"
         },
         {
           "sourceIssue": 246,
@@ -2374,7 +2477,28 @@
         "apps/ops/**",
         "artifacts/VPJ-47/**"
       ],
-      "retainedPullRequests": []
+      "retainedPullRequests": [],
+      "internalStages": [
+        {
+          "id": "C1",
+          "name": "有限两周客户发现试点与交接",
+          "historicalSources": [
+            246
+          ],
+          "inputs": []
+        },
+        {
+          "id": "C2",
+          "name": "真实激活付款成本与回访观察",
+          "historicalSources": [
+            247
+          ],
+          "inputs": [
+            "原经营观察定义和获准真实产品数据；不以样例/试点曝光代真实指标"
+          ]
+        }
+      ],
+      "completionBoundary": "AGENT-019 统一交付 C1 的有限试点及 C2 当期真实经营观察与后续责任交接；C1 结束不意味着 C2 指标已获得或整票完成。长期每周运营属于后续持续工作，不据此制造永久无法结项的义务；缺少真实产品/付款输入如实保留。"
     },
     {
       "id": "AGENT-020",
