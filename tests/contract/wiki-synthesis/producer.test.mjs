@@ -139,6 +139,8 @@ test('actual worker rejects forged ID/quote/publication and excessive output, as
 test('assembler rejects stale invocation digest, forged spans/declarations, usage, authority and unauthorized spans', async () => {
   for (const mutate of [r => { r.inputDigest = 'b'.repeat(64); }, r => { r.usage.totalTokens++; }, r => { r.usage.inputTokens = NaN; },
     r => { r.usage.reasoningTokens = Infinity; }, r => { r.usage.cost = 'settled'; },
+    r => { r.usage.outputTokens = 2049; r.usage.totalTokens = 2079; },
+    r => { r.output.summary = 'x'.repeat(40000); },
     r => { r.output.statementProposals[0].evidence[0].startOffset++; r.output.statementProposals[0].evidence[0].endOffset++; },
     r => { r.output.statementProposals[0].statement.sources[0].publisher = 'Forged'; }, r => { r.reviewerId = author; },
     r => { r.output.summary = 'x'.repeat(601); }]) {
