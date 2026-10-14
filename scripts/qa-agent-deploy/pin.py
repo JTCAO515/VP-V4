@@ -43,9 +43,12 @@ def validate_binding(project, domain, branch, expected_domain_branch, target_ref
     if not isinstance(inventory, list):
         raise ValueError('Complete environment inventory required')
     for item in inventory:
-        if not isinstance(item, dict) or not {'key', 'type', 'target', 'gitBranch'}.issubset(item):
+        if not isinstance(item, dict) or not {'key', 'type', 'target'}.issubset(item):
             raise ValueError('Incomplete environment scope metadata')
-        key, kind, targets, git_branch = (item[name] for name in ('key', 'type', 'target', 'gitBranch'))
+        key, kind, targets = (item[name] for name in ('key', 'type', 'target'))
+        # Vercel's optional gitBranch means no branch restriction. Treat omitted
+        # scope as ALL branches, never exclude it or infer a narrower scope.
+        git_branch = item.get('gitBranch')
         if (not isinstance(key, str) or re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]{0,255}', key) is None
                 or kind not in ('system', 'plain', 'encrypted', 'sensitive')
                 or not isinstance(targets, list) or not targets
@@ -59,7 +62,7 @@ def validate_binding(project, domain, branch, expected_domain_branch, target_ref
                 or len(set(custom)) != len(custom)):
             raise ValueError('Invalid custom environment scope metadata')
     selected = [item for item in inventory
-                if 'preview' in item['target'] and item['gitBranch'] in (None, branch)
+                if 'preview' in item['target'] and item.get('gitBranch') in (None, branch)
                 and item['key'].startswith('VISEPANDA_QA')]
     if any(item.get('key') == 'VISEPANDA_QA_AGENT' for item in selected):
         raise ValueError('QA enable variable exists; cannot attest disabled from names only')

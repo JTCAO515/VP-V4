@@ -1,0 +1,38 @@
+{
+  "observedAt": "2026-10-14T04:26:14.493931+00:00",
+  "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+  "teamId": "team_vLT8SL2mQJJSnXbD9GzVLP4K",
+  "branch": "codex/qaw005-independent-target-20261013",
+  "sourceSha": "037486da3ec9a8ab61c72936fa94892961983f87",
+  "createdKeys": [
+    "VISEPANDA_QA_SUPABASE_PROJECT_REF",
+    "VISEPANDA_QA_AGENT_ORIGIN"
+  ],
+  "effectiveQaEnvironmentNames": [
+    {
+      "key": "VISEPANDA_QA_SUPABASE_PROJECT_REF",
+      "type": "plain",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/qaw005-independent-target-20261013"
+    },
+    {
+      "key": "VISEPANDA_QA_AGENT_ORIGIN",
+      "type": "plain",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/qaw005-independent-target-20261013"
+    }
+  ],
+  "approvedRef": "dzqdzetcctkhbrhlxxgn",
+  "origin": "https://qatesting.go2china.space",
+  "domainStillBoundTo": "codex/qaw005-main-20261013",
+  "unrelatedEnvMetadataUnchanged": true,
+  "keysReadOrCopied": false,
+  "qaEnableVariableAbsent": true,
+  "providerBudgetOrHostAction": false,
+  "existingAutoPreviewWasBuiltBeforeNewVariables": true,
+  "runtimeVerification": "UNRUN until fresh exact-source deployment; config presence is not runtime PASS"
+}

@@ -1,0 +1,28 @@
+{
+  "url": "http://127.0.0.1:3181/qa/demo",
+  "sourceSha256": "03ece0a86cc918dd46d656010cfced8ba5c2875371412c611caf816734505adf",
+  "results": [
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "result": "PASS",
+      "interaction": "keyboard preset, switch, simplify, unknown, correction, reset, four tabs, 12th-turn reset focus, enabled/limited return-to-VP focus, keyboard reset focus, navigation focus retained, refresh",
+      "unexpectedRequests": [],
+      "consoleErrors": [],
+      "boundaryAttempts": []
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "result": "PASS",
+      "interaction": "keyboard preset, switch, simplify, unknown, correction, reset, four tabs, 12th-turn reset focus, enabled/limited return-to-VP focus, keyboard reset focus, navigation focus retained, refresh",
+      "unexpectedRequests": [],
+      "consoleErrors": [],
+      "boundaryAttempts": []
+    }
+  ]
+}
