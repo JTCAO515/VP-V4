@@ -36,3 +36,9 @@ New no-argument `@MainActor NativeFrontendExpressionView()` is a DEBUG-only leaf
 The original text/actor/scope/policy/scene/saved-TTL gates are unchanged in this resumed increment. Production NativeTranslationView and the existing card/sample source have no new modifications. Existing sample card still supports interface language, text size, fixed bilingual direction, pending/unknown refusal and Done return.
 
 PASS: same scoped verifier now typechecks the actual card, DEBUG sample, actual shared state/boundary/panel, and new wrapper together against installed iOS SDK (only AppTab/Color constants stubbed for isolated module assembly). Full App and interaction remain Main-owned; earlier Main build report applied to the prior integrated source, not this new wrapper. No simulator/resource operation here.
+
+## Sample card provenance wording correction
+
+After Main observed the expression wrapper/card in its actual simulator, this increment routes labels exclusively through explicit NativeTranslationCardOrigin: sample shows 样例译文 / Sample translation and 样例回译 / Sample back-translation, with an explanation that all text is a fixed local example and no translation was performed. Recent/saved retain the exact previous AI labels and comparison notice. No notice substring or row ID inference; no readiness, actor, scope, consent, scene or TTL gate changed.
+
+PASS: executable actual-source bilingual sample/real label assertions, existing negative predicates, targeted SDK typecheck, full syntax parse and diff check. New wording's simulator rendering remains Main-owned/UNRUN here; Main's prior observed ready flow is not claimed as validation of this new text.

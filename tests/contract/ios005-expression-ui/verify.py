@@ -21,8 +21,21 @@ def block(source, marker):
 view, store = VIEW.read_text(), STORE.read_text()
 phrase = block(store, 'struct NativeTranslationPhrase:')
 ready = block(view, 'extension NativeTranslationPhrase {')
+origin = block(view, 'enum NativeTranslationCardOrigin {')
 gate = block(view, 'private func recentCardIsCurrent(').replace('private func', 'func', 1)
 checks = r'''
+precondition(NativeTranslationCardOrigin.sample.translationLabel(chinese: true) == "样例译文")
+precondition(NativeTranslationCardOrigin.sample.translationLabel(chinese: false) == "Sample translation")
+precondition(NativeTranslationCardOrigin.sample.backTranslationLabel(chinese: true) == "样例回译")
+precondition(NativeTranslationCardOrigin.sample.backTranslationLabel(chinese: false) == "Sample back-translation")
+for actual: NativeTranslationCardOrigin in [.recent, .saved] {
+    precondition(actual.translationLabel(chinese: true) == "译文 · AI 生成")
+    precondition(actual.translationLabel(chinese: false) == "Translation · AI-generated")
+    precondition(actual.backTranslationLabel(chinese: true) == "回译对照（AI 生成）")
+    precondition(actual.backTranslationLabel(chinese: false) == "Back-translation (AI-generated)")
+}
+print("PASS: explicit sample-origin bilingual labels; real recent/saved AI labels preserved")
+
 let id = "33333333-3333-4333-8333-333333333333"
 func phrase(_ state: String = "translated", _ translation: String? = "你好。", _ back: String? = "Hello.", _ source: String = "en", _ target: String = "zh", _ original: String = "Hello.") -> NativeTranslationPhrase {
     .init(turnId: id, sourceLocale: source, targetLocale: target, original: original,
@@ -70,7 +83,7 @@ with tempfile.TemporaryDirectory(prefix='ios005-presentation-') as tmp:
     struct Policy { var valid: Bool; var consentState: Consent }
     struct Store { var scope: String?; var policy: Policy?; var phrases: [NativeTranslationPhrase] }
     struct Gate { var activeScope: String?; var store: Store;
-    ''' + gate + '}\n' + checks)
+    ''' + gate + '}\n' + origin + '\n' + checks)
     subprocess.run(['xcrun', 'swift', str(predicate)], check=True)
     card = directory / 'card.swift'
     production_card = view[view.index('enum NativeTranslationCardOrigin {'):view.index('\n#if DEBUG\n#Preview(')]

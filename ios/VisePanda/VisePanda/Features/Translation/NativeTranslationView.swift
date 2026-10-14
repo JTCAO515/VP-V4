@@ -363,6 +363,29 @@ enum NativeTranslationCardOrigin {
         case .sample: chinese ? "Sample · 未连接翻译服务" : "Sample · translation service not connected"
         }
     }
+
+    func translationLabel(chinese: Bool) -> String {
+        switch self {
+        case .sample: chinese ? "样例译文" : "Sample translation"
+        case .recent, .saved: chinese ? "译文 · AI 生成" : "Translation · AI-generated"
+        }
+    }
+
+    func backTranslationLabel(chinese: Bool) -> String {
+        switch self {
+        case .sample: chinese ? "样例回译" : "Sample back-translation"
+        case .recent, .saved: chinese ? "回译对照（AI 生成）" : "Back-translation (AI-generated)"
+        }
+    }
+
+    func comparisonNotice(chinese: Bool) -> String {
+        switch self {
+        case .sample:
+            chinese ? "原文、译文与回译均为固定本地样例，没有执行翻译，也不代表真实语义核验。" : "Original, translation and back-translation are fixed local examples. No translation or real semantic verification was performed."
+        case .recent, .saved:
+            chinese ? "请核对金额、否定、地点和过敏信息。回译不是独立核验，本卡不是认证翻译。原始输入来自手动文字还是行程字段，此结果未提供来源信息。" : "Check amounts, negation, places and allergies. Back-translation is not an independent check; this is not a certified translation. This result does not identify whether the original was typed or selected from a Trip."
+        }
+    }
 }
 
 private func translationDirection(_ phrase: NativeTranslationPhrase, chinese: Bool) -> String {
@@ -396,17 +419,17 @@ struct NativeTranslationCard: View {
                         .accessibilityIdentifier("translation.card.direction")
                     if phrase.isPresentationReady,
                        let translation = phrase.translation, let back = phrase.backTranslation {
-                        Text(chinese ? "译文 · AI 生成" : "Translation · AI-generated").font(.headline)
+                        Text(origin.translationLabel(chinese: chinese)).font(.headline)
                         Text(translation).font(.system(size: size * (largerText ? 1.35 : 1), weight: .semibold))
                             .textSelection(.enabled).accessibilityIdentifier("translation.largeText")
                         Divider()
                         Text(chinese ? "原文" : "Original").font(.headline)
                         Text(phrase.original).font(.title3).textSelection(.enabled)
                             .accessibilityIdentifier("translation.card.original")
-                        Text(chinese ? "回译对照（AI 生成）" : "Back-translation (AI-generated)").font(.headline)
+                        Text(origin.backTranslationLabel(chinese: chinese)).font(.headline)
                         Text(back).font(.title3).textSelection(.enabled)
                             .accessibilityIdentifier("translation.card.backTranslation")
-                        Text(chinese ? "请核对金额、否定、地点和过敏信息。回译不是独立核验，本卡不是认证翻译。原始输入来自手动文字还是行程字段，此结果未提供来源信息。" : "Check amounts, negation, places and allergies. Back-translation is not an independent check; this is not a certified translation. This result does not identify whether the original was typed or selected from a Trip.")
+                        Text(origin.comparisonNotice(chinese: chinese))
                             .font(.footnote)
                         Toggle(chinese ? "更大字号" : "Larger text", isOn: $largerText)
                             .accessibilityIdentifier("translation.card.textSize")
