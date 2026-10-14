@@ -149,7 +149,7 @@ test('absolute lifetime ends the loop as expired and a throwing worker factory o
 });
 
 const CANARY_DB='SYNTHETIC_DB_CANARY_'+uuid(),CANARY_QWEN='SYNTHETIC_QWEN_CANARY_'+uuid(),CANARY_AMAP='SYNTHETIC_AMAP_CANARY_'+uuid();
-async function cli(t,{env={},mapper=null,journalMode=0o700,wait=null}={}){
+async function cli(t,{env={},mapper=null,journalMode=0o700,wait=null,ipc=false}={}){
  const dir=await mkdtemp(join(tmpdir(),'vp-hosted-cli-'));t.after(()=>rm(dir,{recursive:true,force:true}));
  const journals=join(dir,'j');await (await import('node:fs/promises')).mkdir(journals);await chmod(journals,journalMode);
  const args=['--experimental-strip-types'];
@@ -157,7 +157,7 @@ async function cli(t,{env={},mapper=null,journalMode=0o700,wait=null}={}){
  args.push(resolve('lib/server/jobs/run-hosted-text-worker.mjs'));
  const child=spawn(process.execPath,args,{env:{...process.env,NODE_OPTIONS:'',VERCEL_ENV:'',VISEPANDA_HOSTED_TEXT_WORKER:'true',
   VISEPANDA_HOSTED_WORKER_DB_KEY:CANARY_DB,VISEPANDA_HOSTED_WORKER_QWEN_KEY:CANARY_QWEN,VISEPANDA_HOSTED_WORKER_PROFILE:JSON.stringify(profile({pollIntervalMs:1000})),
-  VISEPANDA_HOSTED_WORKER_JOURNAL_DIR:journals,...env},stdio:['ignore','pipe','pipe']});
+  VISEPANDA_HOSTED_WORKER_JOURNAL_DIR:journals,...env},stdio:ipc?['ignore','pipe','pipe','ipc']:['ignore','pipe','pipe']});
  t.after(()=>{if(child.exitCode===null)child.kill('SIGKILL');});
  let stdout='',stderr='';child.stdout.on('data',d=>stdout+=d);child.stderr.on('data',d=>stderr+=d);
  const exited=new Promise(r=>child.once('close',code=>r(code)));
@@ -220,18 +220,61 @@ test('profile/2 requires separate planning opt-in and removes AMap secret before
  assert.doesNotMatch(r.journal,/vpj80-hosted-planning-job/,'disabled startup did not poll planning');
 });
 
+function fixtureMessage(child, kind) {
+ return new Promise((resolve,reject)=>{
+  const done=()=>{clearTimeout(timer);child.removeListener('message',message);child.removeListener('close',closed);};
+  const message=value=>{if(value?.kind===kind){done();resolve(value);}};
+  const closed=code=>{done();reject(Error(`Synthetic fixture exited before ${kind} (code ${code})`));};
+  const timer=setTimeout(()=>{done();reject(Error(`Synthetic fixture did not report ${kind} within the existing 5s bound`));},5000);
+  child.on('message',message);child.once('close',closed);
+ });
+}
+const secretHeaderMapper=key=>`globalThis.fetch=async(url,options)=>{
+ const headers=new Headers(options.headers);
+ if(headers.get('apikey')!==${JSON.stringify(key)}||headers.has('authorization'))throw Error('wrong headers');
+ if(options.redirect!=='manual'||options.credentials!=='omit'||url!=='https://dzqdzetcctkhbrhlxxgn.supabase.co/rest/v1/rpc/hosted_worker_heartbeat')throw Error('wrong binding');
+ if(typeof options.body!=='string'||options.body.includes(${JSON.stringify(key)})||typeof JSON.parse(options.body).p_worker_id!=='string')throw Error('wrong body');
+ process.send?.({kind:'synthetic-secret-headers-verified'});
+ return Response.json({kind:'ok',enabled:false});};`;
+
 test('hosted discovery accepts a dedicated Supabase secret key without a Bearer header',async t=>{
- const key='sb_secret_synthetic_hosted_only',port=String(40000+Math.floor(Math.random()*20000));
- const mapper=`globalThis.fetch=async(url,options)=>{
-  if(options.headers.apikey!==${JSON.stringify(key)}||Object.hasOwn(options.headers,'authorization'))throw Error('wrong headers');
-  if(url==='https://dzqdzetcctkhbrhlxxgn.supabase.co/rest/v1/rpc/hosted_worker_heartbeat')return Response.json({kind:'ok',enabled:false});
-  throw Error('unexpected route');};`;
- const r=await cli(t,{mapper,env:{VISEPANDA_HOSTED_WORKER_DB_KEY:key,VISEPANDA_HOSTED_WORKER_HEALTH_PORT:port},wait:async child=>{
-  for(let i=0;i<100;i++){
-   try{const response=await fetch('http://127.0.0.1:'+port+'/healthz');if((await response.json()).status==='disabled')break;}catch{}
-   await new Promise(resolve=>setTimeout(resolve,50));
+ const key='sb_secret_synthetic_hosted_only';
+ // Header evidence must not depend on an unrelated randomly selected health
+ // port. The real child reports only after its actual RPC headers/body pass.
+ const r=await cli(t,{mapper:secretHeaderMapper(key),ipc:true,
+  env:{VISEPANDA_HOSTED_WORKER_DB_KEY:key,VISEPANDA_HOSTED_WORKER_HEALTH_PORT:undefined},
+  wait:async child=>{await fixtureMessage(child,'synthetic-secret-headers-verified');child.kill('SIGTERM');}});
+ for(const sink of [r.stdout,r.stderr,r.journal])assert.ok(!sink.includes(key));
+ assert.equal(r.code,0,r.stderr);assert.match(r.stdout,/"reason":"stopped"/);
+ assert.match(r.journal,/"phase":"started"/);
+});
+
+test('occupied synthetic health port reproduces child exit1 without weakening header contract',async t=>{
+ const key='sb_secret_synthetic_conflict_only';
+ const conflict=`import {createServer,Server} from 'node:http';
+ const occupied=createServer();await new Promise(resolve=>occupied.listen(0,'127.0.0.1',resolve));
+ process.env.VISEPANDA_HOSTED_WORKER_HEALTH_PORT=String(occupied.address().port);
+ const emit=Server.prototype.emit;
+ Server.prototype.emit=function(event,...args){
+  if(this!==occupied&&event==='error'&&args[0]?.code==='EADDRINUSE'){
+   occupied.close();process.send?.({kind:'synthetic-health-port-conflict'});
   }
-  child.kill('SIGTERM');
- }});
- assert.equal(r.code,0,r.stderr);assert.ok(!r.stdout.includes(key));assert.ok(!r.journal.includes(key));
+  return emit.call(this,event,...args);
+ };
+ process.once('SIGTERM',()=>occupied.close());
+ `+secretHeaderMapper(key);
+ const r=await cli(t,{mapper:conflict,ipc:true,env:{VISEPANDA_HOSTED_WORKER_DB_KEY:key},
+  wait:child=>fixtureMessage(child,'synthetic-health-port-conflict')});
+ assert.equal(r.code,1,'a listen conflict remains a failed CLI startup, not a false header failure');
+ for(const sink of [r.stdout,r.stderr,r.journal])assert.ok(!sink.includes(key));
+});
+
+test('parallel real CLI header fixtures prove their own IPC receipt without competing health ports',async t=>{
+ await Promise.all(Array.from({length:3},(_,i)=>{
+  const key='sb_secret_synthetic_parallel_'+i;
+  return cli(t,{mapper:secretHeaderMapper(key),ipc:true,
+   env:{VISEPANDA_HOSTED_WORKER_DB_KEY:key,VISEPANDA_HOSTED_WORKER_HEALTH_PORT:undefined},
+   wait:async child=>{await fixtureMessage(child,'synthetic-secret-headers-verified');child.kill('SIGTERM');}})
+   .then(r=>{for(const sink of [r.stdout,r.stderr,r.journal])assert.ok(!sink.includes(key));assert.equal(r.code,0,r.stderr);assert.match(r.stdout,/"reason":"stopped"/);});
+ }));
 });
