@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { isFailureCode, FAILURE_TAXONOMY, type FailureCode } from "../../../lib/server/contracts/errors/index.ts";
-import { record, type RuntimeContext } from "./contract.ts";
+import { record, ownExact, type RuntimeContext } from "./contract.ts";
+import { uuid } from "../../../lib/server/today/recovery/contract.ts";
 
 export type RuntimeRequest = Readonly<{
   name: "native_session_v2" | "read_assistant_events_v1" | "cancel_chat_turn" | "read_local_recovery_operation_v1" | "read_trip_confirmation_receipt_v1" | "read_trip_proposal_v2" | "confirm_and_apply_trip_proposal" | "trip_reload";
@@ -24,6 +25,9 @@ export function createNativeRecoveryTransport(options: Readonly<{
   databaseOrigin: string; appOrigin: string;
   rpcFetch: typeof fetch; nativeFetch: typeof fetch;
 }>): RuntimeTransport {
+  if (!record(options) || !ownExact(options, ["databaseOrigin", "appOrigin", "rpcFetch", "nativeFetch"])
+    || typeof options.databaseOrigin !== "string" || typeof options.appOrigin !== "string"
+    || typeof options.rpcFetch !== "function" || typeof options.nativeFetch !== "function") throw new RuntimeFailure("INVALID_INPUT");
   const origin = (value: string) => {
     const url = new URL(value);
     if (url.protocol !== "https:" || url.origin !== value || url.username || url.password) throw new RuntimeFailure("INVALID_INPUT");
@@ -32,7 +36,18 @@ export function createNativeRecoveryTransport(options: Readonly<{
   const database = origin(options.databaseOrigin), app = origin(options.appOrigin);
   return async (request, signal) => {
     if (signal.aborted) throw new RuntimeFailure("CANCELLED");
+    const keys: Readonly<Record<RuntimeRequest["name"], readonly string[]>> = {
+      native_session_v2: ["p_action"], read_assistant_events_v1: ["p_policy_id", "p_conversation_id", "p_after_sequence", "p_limit"],
+      cancel_chat_turn: ["p_turn_id"], read_local_recovery_operation_v1: ["p_trip_id", "p_operation_id"],
+      read_trip_confirmation_receipt_v1: ["p_proposal_id"], read_trip_proposal_v2: ["p_proposal_id"],
+      confirm_and_apply_trip_proposal: ["p_proposal_id", "p_idempotency_key", "p_digest"], trip_reload: ["tripId"],
+    };
+    if (!record(request) || !ownExact(request, ["name", "params", "context"]) || !Object.hasOwn(keys, request.name)
+      || !record(request.params) || !ownExact(request.params, keys[request.name]) || !record(request.context)
+      || !ownExact(request.context, ["ownerId", "sessionId", "mobileEpoch", "taskId", "turnId", "conversationId", "policyId", "tripId", "source"])
+      || !uuid(request.context.tripId)) throw new RuntimeFailure("INVALID_INPUT");
     if (request.name === "trip_reload") {
+      if (request.params.tripId !== request.context.tripId) throw new RuntimeFailure("INVALID_INPUT");
       return options.nativeFetch(`${app}/api/trips/native/v2/${request.context.tripId}`, { method: "GET", signal, redirect: "error", cache: "no-store" });
     }
     return options.rpcFetch(`${database}/rest/v1/rpc/${request.name}`, {
@@ -42,12 +57,16 @@ export function createNativeRecoveryTransport(options: Readonly<{
   };
 }
 
-export function createBoundedPort(transport: RuntimeTransport, context: RuntimeContext, maxRequests: number, signal: AbortSignal) {
+export function createBoundedPort(transport: RuntimeTransport, context: RuntimeContext, maxRequests: number, signal: AbortSignal, deadline: number) {
   const observations: Observation[] = [];
   let requests = 0;
   let totalBytes = 0;
-  const call = async (name: RuntimeRequest["name"], params: Readonly<Record<string, unknown>>) => {
+  const check = (bytes = 0) => {
+    if (performance.now() >= deadline) throw new RuntimeFailure(bytes > 0 ? "TIMEOUT_AFTER_OUTPUT" : "TIMEOUT_BEFORE_OUTPUT");
     if (signal.aborted) throw new RuntimeFailure("CANCELLED");
+  };
+  const call = async (name: RuntimeRequest["name"], params: Readonly<Record<string, unknown>>) => {
+    check();
     if (++requests > maxRequests) throw new RuntimeFailure("RATE_LIMITED");
     const request = Object.freeze({ name, params: Object.freeze(structuredClone(params)), context });
     if (Buffer.byteLength(JSON.stringify(request)) > 8192) throw new RuntimeFailure("INVALID_INPUT");
@@ -61,10 +80,10 @@ export function createBoundedPort(transport: RuntimeTransport, context: RuntimeC
     });
     try {
       const pending = Promise.resolve().then(() => {
-        if (signal.aborted) throw new RuntimeFailure("CANCELLED");
+        check();
         return transport(request, signal);
       }).then(response => {
-        if (signal.aborted) { void response.body?.cancel().catch(() => {}); throw new RuntimeFailure("CANCELLED"); }
+        try { check(); } catch (error) { void response.body?.cancel().catch(() => {}); throw error; }
         return response;
       });
       const response = await Promise.race([pending, interrupted]);
@@ -80,20 +99,30 @@ export function createBoundedPort(transport: RuntimeTransport, context: RuntimeC
       }
       reader = response.body?.getReader();
       const chunks: Uint8Array[] = [];
+      let reads = 0, emptyReads = 0;
       if (reader) for (;;) {
+        check(bytes);
+        if (++reads > 4096) throw new RuntimeFailure("MODEL_OUTPUT_INVALID");
         const chunk = await Promise.race([reader.read(), interrupted]);
+        check(bytes);
         if (chunk.done) break;
+        if (!(chunk.value instanceof Uint8Array)) throw new RuntimeFailure("MODEL_OUTPUT_INVALID");
+        if (chunk.value.byteLength === 0) {
+          if (++emptyReads > 64) throw new RuntimeFailure("MODEL_OUTPUT_INVALID");
+          continue;
+        }
         bytes += chunk.value.byteLength;
         totalBytes += chunk.value.byteLength;
         if (bytes > 262144 || totalBytes > 1048576) throw new RuntimeFailure("MODEL_OUTPUT_INVALID");
         chunks.push(chunk.value);
       }
-      if (signal.aborted) throw new RuntimeFailure("CANCELLED");
+      check(bytes);
       const body = Buffer.concat(chunks);
       digest = createHash("sha256").update(body).digest("hex");
       let data: unknown;
       try { data = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(body)); }
       catch { throw new RuntimeFailure("MODEL_OUTPUT_INVALID"); }
+      check(bytes);
       if (!response.ok) {
         const error = record(data) && record(data.error) ? data.error.code : null;
         // Direct PostgREST errors differ from Native failure envelopes. Map only

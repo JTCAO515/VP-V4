@@ -246,7 +246,7 @@ test("immutable recovery receipt changes and malformed Trip snapshots cannot pro
 });
 
 test("caller mutation cannot redirect detached frozen task/Trip/key binding", async () => {
-  const mutable = structuredClone(input), f = boundary();
+  const mutable = { ...input, context: { ...input.context, source: { ...input.context.source } } }, f = boundary();
   const report = await runRuntimeRecovery(mutable, async (req, signal) => {
     mutable.context.taskId = id(99); mutable.context.tripId = id(99); mutable.idempotencyKey = id(99);
     assert.ok(Object.isFrozen(req.context)); assert.ok(Object.isFrozen(req.context.source));
@@ -298,11 +298,47 @@ test("pre-abort/missing transport/invalid inputs are NOT_RUN without requests", 
   assert.equal(f.requests.length, 0);
 });
 
+test("closed invocation rejects Symbol, nonenumerable and accessor fields at every input seam", async () => {
+  for (const target of ["root", "context", "source", "operation"]) for (const kind of ["symbol", "hidden", "getter"]) {
+    const value = structuredClone(input);
+    const object = target === "root" ? value : target === "context" ? value.context : target === "source" ? value.context.source : value.operation!;
+    if (kind === "symbol") Object.defineProperty(object, Symbol("extra"), { value: 1 });
+    else if (kind === "hidden") Object.defineProperty(object, "extra", { value: 1, enumerable: false });
+    else Object.defineProperty(object, "extra", { get() { throw Error("private getter"); } });
+    const f = boundary();
+    const report = await runRuntimeRecovery(value, f.transport);
+    assert.equal(report.code, "INVALID_INPUT"); assert.equal(report.outcome, "NOT_RUN"); assert.equal(f.requests.length, 0);
+  }
+});
+
+test("monotonic deadline rejects synchronous late transport despite unscheduled timer", async () => {
+  const f = boundary();
+  const report = await runRuntimeRecovery({ ...input, timeoutMs: 10 }, async (req, signal) => {
+    const until = performance.now() + 20;
+    while (performance.now() < until) { /* intentionally starve the timeout timer */ }
+    return f.transport(req, signal);
+  });
+  assert.equal(report.code, "TIMEOUT_BEFORE_OUTPUT"); assert.equal(report.outcome, "unknown"); assert.equal(report.confirmDispatches, 0);
+});
+
+test("zero-chunk and tiny-chunk streams have finite read bounds and release their reader", async () => {
+  for (const size of [0, 1]) {
+    let reads = 0, cancelled = false;
+    const report = await runRuntimeRecovery(input, async () => new Response(new ReadableStream<Uint8Array>({
+      pull(c) { reads++; c.enqueue(new Uint8Array(size)); }, cancel() { cancelled = true; },
+    }), { headers: { "content-type": "application/json" } }));
+    assert.equal(report.code, "MODEL_OUTPUT_INVALID"); assert.equal(report.outcome, "unknown"); assert.equal(report.confirmDispatches, 0);
+    assert.ok(reads <= (size === 0 ? 67 : 4098)); assert.equal(cancelled, true);
+  }
+});
+
 test("concrete native/RPC bridge calls existing paths with supplied fetch and forbids redirects", async () => {
   const calls: { url: string; init: RequestInit | undefined }[] = [];
   const fetcher: typeof fetch = async (url, init) => { calls.push({ url: String(url), init }); return Response.json({}); };
   const bridge = createNativeRecoveryTransport({ databaseOrigin: "https://db.example", appOrigin: "https://app.example", rpcFetch: fetcher, nativeFetch: fetcher });
-  for (const name of ["trip_reload", "cancel_chat_turn", "confirm_and_apply_trip_proposal"] as const) await bridge({ name, params: {}, context: input.context }, new AbortController().signal);
+  await bridge({ name: "trip_reload", params: { tripId: input.context.tripId }, context: input.context }, new AbortController().signal);
+  await bridge({ name: "cancel_chat_turn", params: { p_turn_id: input.context.turnId }, context: input.context }, new AbortController().signal);
+  await bridge({ name: "confirm_and_apply_trip_proposal", params: { p_proposal_id: input.proposalId, p_idempotency_key: input.idempotencyKey, p_digest: input.digest }, context: input.context }, new AbortController().signal);
   assert.equal(calls[0].url, `https://app.example/api/trips/native/v2/${input.context.tripId}`);
   assert.equal(calls[1].url, "https://db.example/rest/v1/rpc/cancel_chat_turn");
   assert.ok(calls.every(c => c.init?.redirect === "error"));

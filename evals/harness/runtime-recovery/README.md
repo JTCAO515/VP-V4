@@ -63,7 +63,11 @@ per replay. Default context is **not** created; every field is supplied. Respons
 are limited before JSON parsing to 262,144 bytes each and 1 MiB total, with a
 bounded UTF-8 decoder, closed error codes and validated status/content type.
 Request bytes are at most 8 KiB; generated JSON is at most 32 KiB. The timeout
-races transport and stream reads even when a transport ignores AbortSignal.
+races transport and stream reads even when a transport ignores AbortSignal;
+monotonic deadline checks also reject synchronous/microtask overruns before
+success. Each response permits at most 4,096 reads and 64 empty chunks; empty
+chunks are discarded. Invocation/options/bridge fields reject unknown own keys,
+including Symbols, nonenumerable extras and accessors.
 Late responses are cancelled and cannot resume the driver. No retry, refresh,
 provider attempt, budget/journal/Trip writer or settlement is added.
 
