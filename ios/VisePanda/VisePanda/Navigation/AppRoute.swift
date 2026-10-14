@@ -144,9 +144,19 @@ struct TabRootView: View {
                 switch tab {
                 case .vp:
 #if DEBUG
-                    NativeFrontendChatView(state: frontendState, onOpenExpression: { frontendTool = .expression }, onOpenPlace: { frontendTool = .place })
+                    NativeFrontendChatView(state: frontendState, onOpenExpression: { frontendTool = .expression }, onOpenPlace: { frontendTool = .place }, avatarImage: Image("MuseChatAvatarOriginal"), avatarScale: 1.6, avatarVerticalOffset: 0.39, onShowAssistant: onShowAssistant)
+                    .toolbar(.hidden, for: .navigationBar)
+                    .overlay(alignment: .top) {
+                        LinearGradient(stops: [.init(color: Color(uiColor: .systemBackground), location: 0), .init(color: Color(uiColor: .systemBackground), location: 0.68), .init(color: .clear, location: 1)], startPoint: .top, endPoint: .bottom)
+                            .frame(height: 56).ignoresSafeArea(edges: .top).allowsHitTesting(false)
+                    }
 #else
-                    NativeFrontendChatView(state: frontendState)
+                    NativeFrontendChatView(state: frontendState, avatarImage: Image("MuseChatAvatarOriginal"), avatarScale: 1.6, avatarVerticalOffset: 0.39, onShowAssistant: onShowAssistant)
+                    .toolbar(.hidden, for: .navigationBar)
+                    .overlay(alignment: .top) {
+                        LinearGradient(stops: [.init(color: Color(uiColor: .systemBackground), location: 0), .init(color: Color(uiColor: .systemBackground), location: 0.68), .init(color: .clear, location: 1)], startPoint: .top, endPoint: .bottom)
+                            .frame(height: 56).ignoresSafeArea(edges: .top).allowsHitTesting(false)
+                    }
 #endif
                 case .journeys: NativeFrontendJourneysView(state: frontendState)
                 case .library: NativeFrontendLibraryView(state: frontendState)
