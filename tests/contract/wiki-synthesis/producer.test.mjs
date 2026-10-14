@@ -313,3 +313,30 @@ test('actual Ops reader snapshots descriptor-passing Proxy pages/source arrays a
     assert.equal(direct.kind, 'draft'); assert.equal(counter.calls, 0);
   }
 });
+
+test('snapshot time is deducted from the timer while the subsequent source read is stalled', async t => {
+  const input = request(); input.timeoutMs = 200;
+  const snapshotWorkMs = 80;
+  let worked = false, scheduledDelay, fireDeadline, reads = 0;
+  const generation = new Proxy(scriptedOutcome(), { ownKeys(target) {
+    if (!worked) {
+      worked = true;
+      const end = performance.now() + snapshotWorkMs;
+      while (performance.now() < end) {}
+    }
+    return Reflect.ownKeys(target);
+  } });
+  // Inspect the actual timer delay deterministically, then fire that timer after
+  // the real producer has entered its pending source read. No wall-clock jitter
+  // threshold or second competing timeout can turn this regression green.
+  t.mock.method(globalThis, 'setTimeout', (callback, delay) => {
+    scheduledDelay = delay; fireDeadline = callback; return {};
+  });
+  t.mock.method(globalThis, 'clearTimeout', () => {});
+  const result = invoke(input, { authorId: author, readSources: () => { reads++; return new Promise(() => {}); } }, generation);
+  await Promise.resolve();
+  assert.equal(reads, 1);
+  assert.ok(scheduledDelay > 0 && scheduledDelay <= input.timeoutMs - snapshotWorkMs + 1, `remaining budget: ${scheduledDelay}`);
+  fireDeadline();
+  assert.deepEqual(await result, { kind: 'failed', errorCode: 'TIMEOUT' });
+});

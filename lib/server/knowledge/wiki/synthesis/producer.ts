@@ -142,7 +142,7 @@ export async function produceWikiSynthesis(input: SynthesisInput, generation: Wi
   let timedOut = false;
   const cancel = () => controller.abort();
   signal.addEventListener("abort", cancel, { once: true });
-  const timer = setTimeout(() => { timedOut = true; controller.abort(); }, request.timeoutMs);
+  const timer = setTimeout(() => { timedOut = true; controller.abort(); }, Math.max(0, deadline - performance.now()));
   let rejectAbort: (() => void) | undefined;
   const aborted = new Promise<never>((_resolve, reject) => {
     rejectAbort = () => reject(new Error("synthesis aborted"));
