@@ -1,0 +1,593 @@
+[
+  {
+    "number": 683,
+    "taskId": "WEB-003",
+    "title": "[WEB-003] QA Web 交付版本与真实问答验收一致",
+    "labels": [
+      "priority:P0",
+      "project:web",
+      "work:quality-delivery"
+    ],
+    "updatedAt": "2026-10-14T06:06:01Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/683",
+    "bodySha256": "5377b6a47f8b05cf75abc4be1b48081ecf05fcb23a181ced3574498f37c39144",
+    "verified": true
+  },
+  {
+    "number": 680,
+    "taskId": "AGENT-001",
+    "title": "[AGENT-001] 真实文本请求经持久执行返回可恢复回答",
+    "labels": [
+      "priority:P0",
+      "project:agent"
+    ],
+    "updatedAt": "2026-10-14T06:11:13Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/680",
+    "bodySha256": "acdacb6fd088e566e239e84bdbc6d85bd199bff5c6f8ba050396dd0514240501",
+    "verified": true
+  },
+  {
+    "number": 682,
+    "taskId": "AGENT-002",
+    "title": "[AGENT-002] 许可内同 Session 多轮与纠正真正进入模型",
+    "labels": [
+      "priority:P0",
+      "project:agent"
+    ],
+    "updatedAt": "2026-10-14T06:11:16Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/682",
+    "bodySha256": "68491c20f7f8cde90982374d6af24e924c4237e92b0df3d18c858f622aa70214",
+    "verified": true
+  },
+  {
+    "number": 199,
+    "taskId": "AGENT-003",
+    "title": "[AGENT-003] 显式 Memory 被正确消费且可纠正遗忘",
+    "labels": [
+      "enhancement",
+      "priority:P1",
+      "status:planned",
+      "project:agent",
+      "work:shared-data"
+    ],
+    "updatedAt": "2026-10-14T06:11:19Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/199",
+    "bodySha256": "3397e0d0c15c0a1adee7597778566cf244e136781108f962e584846a32b60e0d",
+    "verified": true
+  },
+  {
+    "number": 359,
+    "taskId": "AGENT-004",
+    "title": "[AGENT-004] 旅程来源经审核形成可发布的知识变更",
+    "labels": [
+      "enhancement",
+      "priority:P1",
+      "status:in-progress",
+      "project:agent"
+    ],
+    "updatedAt": "2026-10-14T06:11:22Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/359",
+    "bodySha256": "5c64039f9bc509ef9aebd0c694e5541e3761988559e2ab5c1a93ce9f78f3db05",
+    "verified": true
+  },
+  {
+    "number": 208,
+    "taskId": "AGENT-006",
+    "title": "[AGENT-006] 地图供应商按用途和成本受控补查降级",
+    "labels": [
+      "enhancement",
+      "priority:P1",
+      "status:planned",
+      "project:agent"
+    ],
+    "updatedAt": "2026-10-14T06:11:31Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/208",
+    "bodySha256": "eabcd88e1f99d69ae712e02fecad16624298d9bd98989da683ea6b4372a1210a",
+    "verified": true
+  },
+  {
+    "number": 200,
+    "taskId": "AGENT-007",
+    "title": "[AGENT-007] 图片语音模型在中英任务上具备可用资格",
+    "labels": [
+      "enhancement",
+      "priority:P1",
+      "status:planned",
+      "project:agent"
+    ],
+    "updatedAt": "2026-10-14T06:11:35Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/200",
+    "bodySha256": "caf8023c3fce227395b8cd5e49a993fb9d5175a96eda61d50a967f1d1b45bbf2",
+    "verified": true
+  },
+  {
+    "number": 227,
+    "taskId": "AGENT-008",
+    "title": "[AGENT-008] 完整 ServiceTask 的额度和实际尝试成本一致",
+    "labels": [
+      "enhancement",
+      "priority:P1",
+      "status:planned",
+      "project:agent"
+    ],
+    "updatedAt": "2026-10-14T06:11:39Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/227",
+    "bodySha256": "53148b0d6391d343d221a41f1abbeb266dbcd5c28d44702145265edda0e2c319",
+    "verified": true
+  },
+  {
+    "number": 226,
+    "taskId": "AGENT-009",
+    "title": "[AGENT-009] 一次官方测试购买产生双端同源权益",
+    "labels": [
+      "enhancement",
+      "priority:P1",
+      "status:planned",
+      "project:agent",
+      "work:shared-data"
+    ],
+    "updatedAt": "2026-10-14T06:11:42Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/226",
+    "bodySha256": "de4d6785682f3477b3589292cdfb542eb70141826d0c8dfe5274eace6354e245",
+    "verified": true
+  },
+  {
+    "number": 504,
+    "taskId": "AGENT-010",
+    "title": "[AGENT-010] Trip 删除后各端与迟到工作均遵守生命周期",
+    "labels": [
+      "enhancement",
+      "priority:P1",
+      "ready-for-agent",
+      "status:planned",
+      "project:agent",
+      "work:shared-data"
+    ],
+    "updatedAt": "2026-10-14T06:11:45Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/504",
+    "bodySha256": "827f73ddc690d011696ae1ad59ba02fa9cc06293dd47d2943f4ef4e38052a2e5",
+    "verified": true
+  },
+  {
+    "number": 230,
+    "taskId": "AGENT-011",
+    "title": "[AGENT-011] 恢复演练保留权限与删除状态并给出可核结果",
+    "labels": [
+      "enhancement",
+      "priority:P0",
+      "ready-for-human",
+      "status:planned",
+      "project:agent",
+      "work:quality-delivery"
+    ],
+    "updatedAt": "2026-10-14T06:11:49Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/230",
+    "bodySha256": "3c7e5e3105366a6d16bb9a258ac5351804941fc74ad669bd0933863b7d362548",
+    "verified": true
+  },
+  {
+    "number": 229,
+    "taskId": "AGENT-012",
+    "title": "[AGENT-012] 运营可见质量成本故障并安全停用恢复能力",
+    "labels": [
+      "enhancement",
+      "priority:P1",
+      "status:in-progress",
+      "project:agent"
+    ],
+    "updatedAt": "2026-10-14T06:11:53Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/229",
+    "bodySha256": "5fa937f5e0d88c11f1b5cbde535d523a50522efb708a49c449a4e7780b7be230",
+    "verified": true
+  },
+  {
+    "number": 222,
+    "taskId": "AGENT-014",
+    "title": "[AGENT-014] 人工服务只读取按任务授予的资料",
+    "labels": [
+      "enhancement",
+      "priority:P1",
+      "status:planned",
+      "project:agent",
+      "work:shared-data"
+    ],
+    "updatedAt": "2026-10-14T06:12:00Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/222",
+    "bodySha256": "95ade2a22dd8e1803a6b01aed851a9a4e23effad5e9b0ad3e978cf9d344850f4",
+    "verified": true
+  },
+  {
+    "number": 243,
+    "taskId": "AGENT-015",
+    "title": "[AGENT-015] 客户 Production 环境具有隔离和回滚保证",
+    "labels": [
+      "enhancement",
+      "priority:P1",
+      "ready-for-human",
+      "status:planned",
+      "project:agent",
+      "work:quality-delivery"
+    ],
+    "updatedAt": "2026-10-14T06:12:03Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/243",
+    "bodySha256": "a0786eec0fb15410b4f79aa0d1887078b7d43273fda719bb1356e489dd2e3848",
+    "verified": true
+  },
+  {
+    "number": 248,
+    "taskId": "AGENT-016",
+    "title": "[AGENT-016] 真实召回缺口触发最小混合检索改进",
+    "labels": [
+      "enhancement",
+      "priority:P2",
+      "status:planned",
+      "project:agent"
+    ],
+    "updatedAt": "2026-10-14T06:12:09Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/248",
+    "bodySha256": "d300df3b0c24cdd7b02060b022a6854beecc4d56bbef59cc3ad480e2e3e5cbd3",
+    "verified": true
+  },
+  {
+    "number": 225,
+    "taskId": "AGENT-018",
+    "title": "[AGENT-018] 商品服务边界清楚并凭证据决定后续订阅升级",
+    "labels": [
+      "enhancement",
+      "priority:P1",
+      "status:planned",
+      "project:agent",
+      "work:product-coordination"
+    ],
+    "updatedAt": "2026-10-14T06:12:16Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/225",
+    "bodySha256": "69f4cc47414d3b756b7991769b60251811f7a5939413e596d59b4460fbded1d1",
+    "verified": true
+  },
+  {
+    "number": 251,
+    "taskId": "AGENT-020",
+    "title": "[AGENT-020] 需求证据决定未来客户端与语言范围",
+    "labels": [
+      "enhancement",
+      "priority:P2",
+      "ready-for-human",
+      "status:planned",
+      "project:agent",
+      "work:product-coordination"
+    ],
+    "updatedAt": "2026-10-14T06:12:22Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/251",
+    "bodySha256": "f29dad3ff4de980105190311fbd860237ceb89ce0fa61d85f1606ccd280c752c",
+    "verified": true
+  },
+  {
+    "number": 232,
+    "taskId": "AGENT-021",
+    "title": "[AGENT-021] 境内外网络下三工程消费链路有实际证据",
+    "labels": [
+      "enhancement",
+      "priority:P1",
+      "ready-for-human",
+      "status:planned",
+      "project:agent",
+      "work:quality-delivery"
+    ],
+    "updatedAt": "2026-10-14T06:12:25Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/232",
+    "bodySha256": "3dd0d297551175a322685da3637d67090c33e515f7f31c582742ef932c145297",
+    "verified": true
+  },
+  {
+    "number": 245,
+    "taskId": "AGENT-022",
+    "title": "[AGENT-022] 客户收到产品后的支持和发布关账可追溯",
+    "labels": [
+      "enhancement",
+      "priority:P1",
+      "ready-for-human",
+      "status:planned",
+      "project:agent",
+      "work:quality-delivery"
+    ],
+    "updatedAt": "2026-10-14T06:12:29Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/245",
+    "bodySha256": "e6c9049696419787048088ef684ccc43899141d74094511076585d296ba7e5bf",
+    "verified": true
+  },
+  {
+    "number": 201,
+    "taskId": "IOS-002",
+    "title": "[IOS-002] 单张截图经校正和明确确认加入同一 Trip",
+    "labels": [
+      "enhancement",
+      "priority:P1",
+      "status:planned",
+      "project:ios"
+    ],
+    "updatedAt": "2026-10-14T06:12:36Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/201",
+    "bodySha256": "19a572c25fe93bf104b8d495d5eb72b5468431e59b613874a0c16af9135d5651",
+    "verified": true
+  },
+  {
+    "number": 506,
+    "taskId": "IOS-004",
+    "title": "[IOS-004] Today 显示确认版本行程和中文地址",
+    "labels": [
+      "enhancement",
+      "priority:P1",
+      "ready-for-agent",
+      "status:planned",
+      "project:ios"
+    ],
+    "updatedAt": "2026-10-14T06:12:42Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/506",
+    "bodySha256": "c0962a7742bcc38c3de0302d12a5b73b3edbd24558d42ec1cee24b50350acfea",
+    "verified": true
+  },
+  {
+    "number": 212,
+    "taskId": "IOS-006",
+    "title": "[IOS-006] 酒店官方出口在原生与 Web 正确交接",
+    "labels": [
+      "enhancement",
+      "priority:P1",
+      "status:planned",
+      "project:ios",
+      "work:shared-data"
+    ],
+    "updatedAt": "2026-10-14T06:12:52Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/212",
+    "bodySha256": "b2af48d02bcd57cdc74c1203100e3f06be045299e98467fcc4d6a0eeb6d59de1",
+    "verified": true
+  },
+  {
+    "number": 237,
+    "taskId": "IOS-007",
+    "title": "[IOS-007] 签名 Archive 产出可安装 TestFlight 包",
+    "labels": [
+      "enhancement",
+      "priority:P1",
+      "ready-for-human",
+      "status:planned",
+      "project:ios",
+      "work:quality-delivery"
+    ],
+    "updatedAt": "2026-10-14T06:12:55Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/237",
+    "bodySha256": "7846d87709f0b03587975cea76ade3f99d4ec51b015cfb1232045504269b1c78",
+    "verified": true
+  },
+  {
+    "number": 233,
+    "taskId": "IOS-008",
+    "title": "[IOS-008] 原生整链交互可访问且性能可接受",
+    "labels": [
+      "enhancement",
+      "priority:P1",
+      "status:planned",
+      "project:ios",
+      "work:quality-delivery"
+    ],
+    "updatedAt": "2026-10-14T06:12:58Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/233",
+    "bodySha256": "114c948827aa1b302c143259305b54d060d1a4d4b0afd3494b2fa8873d8379f4",
+    "verified": true
+  },
+  {
+    "number": 242,
+    "taskId": "IOS-009",
+    "title": "[IOS-009] TestFlight 真机贯通规划准备与旅途",
+    "labels": [
+      "enhancement",
+      "priority:P1",
+      "ready-for-human",
+      "status:planned",
+      "project:ios",
+      "work:quality-delivery"
+    ],
+    "updatedAt": "2026-10-14T06:13:01Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/242",
+    "bodySha256": "d964fd1b4acda6cf0a0aa64a962984c0a2a340d41352d3d2b142b0e910dd70aa",
+    "verified": true
+  },
+  {
+    "number": 244,
+    "taskId": "IOS-010",
+    "title": "[IOS-010] 满足原门禁后完成 App Store 1.0 审核交付",
+    "labels": [
+      "enhancement",
+      "priority:P1",
+      "ready-for-human",
+      "status:planned",
+      "project:ios",
+      "work:quality-delivery"
+    ],
+    "updatedAt": "2026-10-14T06:13:05Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/244",
+    "bodySha256": "722976ff16cb6b3f23679019771716e146b80acfc388bd504ab23a2ad9a3e022",
+    "verified": true
+  },
+  {
+    "number": 681,
+    "taskId": "WEB-001",
+    "title": "[WEB-001] 从已可体验样例走向真实持久会话",
+    "labels": [
+      "priority:P0",
+      "project:web"
+    ],
+    "updatedAt": "2026-10-14T06:13:07Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/681",
+    "bodySha256": "a8b37071edb1adb612354c903990a11430c750088895b16ac5d909da87d15b9e",
+    "verified": true
+  },
+  {
+    "number": 234,
+    "taskId": "WEB-002",
+    "title": "[WEB-002] Web 独立完成同 Trip 规划成果审阅与确认",
+    "labels": [
+      "enhancement",
+      "priority:P1",
+      "status:planned",
+      "project:web"
+    ],
+    "updatedAt": "2026-10-14T06:13:11Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/234",
+    "bodySha256": "911138a7733b115260b610c595b08b2bd387f14717b2af949c230ae3d76ef83a",
+    "verified": true
+  },
+  {
+    "number": 206,
+    "taskId": "AGENT-005",
+    "title": "[AGENT-005] 回答引用获准知识并显示部分答案与缺口",
+    "labels": [
+      "enhancement",
+      "priority:P1",
+      "status:planned",
+      "project:agent"
+    ],
+    "updatedAt": "2026-10-14T06:19:45Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/206",
+    "bodySha256": "9892463ba312c7c7da99e2a9212f0ff6a71b8a4b79b3484a274d1cbe5dfdb9e2",
+    "verified": true
+  },
+  {
+    "number": 264,
+    "taskId": "AGENT-013",
+    "title": "[AGENT-013] Harness 对真实问答改稿恢复和模型候选给出发布证据",
+    "labels": [
+      "enhancement",
+      "priority:P1",
+      "status:planned",
+      "project:agent",
+      "work:quality-delivery"
+    ],
+    "updatedAt": "2026-10-14T06:19:48Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/264",
+    "bodySha256": "8547ef0afbb5779776fd23987d26f764a642a5cab3282cc74494b48e93c9dd55",
+    "verified": true
+  },
+  {
+    "number": 249,
+    "taskId": "AGENT-017",
+    "title": "[AGENT-017] 获准航班来源支持变化后的行程重验",
+    "labels": [
+      "enhancement",
+      "priority:P2",
+      "status:planned",
+      "project:agent"
+    ],
+    "updatedAt": "2026-10-14T06:19:51Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/249",
+    "bodySha256": "5c4938b8296e28b29947756638413f9778fc8967af19bbc00d60f34920d3d5d8",
+    "verified": true
+  },
+  {
+    "number": 246,
+    "taskId": "AGENT-019",
+    "title": "[AGENT-019] 客户试点与真实经营观察支撑下一步产品选择",
+    "labels": [
+      "enhancement",
+      "priority:P1",
+      "ready-for-human",
+      "status:planned",
+      "project:agent",
+      "work:product-coordination"
+    ],
+    "updatedAt": "2026-10-14T06:19:54Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/246",
+    "bodySha256": "75c8af705bbfa7a2f936a422b4aad1f0d9b1ee11c8e552d4fc2e49cbc59647b9",
+    "verified": true
+  },
+  {
+    "number": 187,
+    "taskId": "PROGRAM",
+    "title": "[PROGRAM] VP-V4 三工程成果、依赖批次与交付总览",
+    "labels": [
+      "documentation",
+      "priority:P0",
+      "status:in-progress",
+      "governance",
+      "project:agent",
+      "work:product-coordination"
+    ],
+    "updatedAt": "2026-10-14T08:04:08Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/187",
+    "bodySha256": "b9c29837f93d07beb776db96e284ebb14c2d7974c7108fde2693084a37e77ab9",
+    "verified": true
+  },
+  {
+    "number": 203,
+    "taskId": "IOS-001",
+    "title": "[IOS-001] 首访委托和回访继续同一旅程目标",
+    "labels": [
+      "enhancement",
+      "priority:P0",
+      "status:in-progress",
+      "project:ios"
+    ],
+    "updatedAt": "2026-10-14T08:04:12Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/203",
+    "bodySha256": "9af573cdef2a844119d79dbb958d698660b70051b04d3223022fddf6b725f283",
+    "verified": true
+  },
+  {
+    "number": 209,
+    "taskId": "IOS-003",
+    "title": "[IOS-003] 地点发现保存消歧和导航保持同一准确实体",
+    "labels": [
+      "enhancement",
+      "priority:P0",
+      "status:in-progress",
+      "project:ios"
+    ],
+    "updatedAt": "2026-10-14T08:04:15Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/209",
+    "bodySha256": "773a52d9a08a8245916aa6a570af28d3ce43336c77bbc4ef5aa9ffb2c25c6ce1",
+    "verified": true
+  },
+  {
+    "number": 216,
+    "taskId": "IOS-005",
+    "title": "[IOS-005] 旅途中以可信中英表达和大字卡沟通",
+    "labels": [
+      "enhancement",
+      "priority:P0",
+      "status:in-progress",
+      "project:ios"
+    ],
+    "updatedAt": "2026-10-14T08:04:19Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/216",
+    "bodySha256": "860f17d8e865c427ad6f8fee68c74a9b7989598e2c29c4e4f79c8432c59702ae",
+    "verified": true
+  },
+  {
+    "number": 692,
+    "taskId": "IOS-011",
+    "title": "[IOS-011] 资料库与记忆前端共享对象、来源和偏好反馈",
+    "labels": [
+      "priority:P0",
+      "status:in-progress",
+      "project:ios"
+    ],
+    "updatedAt": "2026-10-14T08:11:48Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/692",
+    "bodySha256": "19493e7106a02ebf70953ee7c49481200e7ae4e30a3ec97014b7f7349e413ef7",
+    "verified": true
+  },
+  {
+    "number": 693,
+    "taskId": "IOS-012",
+    "title": "[IOS-012] 助手头像详情展示状态活动权限待办与可跳过定制",
+    "labels": [
+      "priority:P0",
+      "status:in-progress",
+      "project:ios"
+    ],
+    "updatedAt": "2026-10-14T08:11:52Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/693",
+    "bodySha256": "07604deddeb869f465f25bd3e33acb0cf82b77d82288d864bd57c9846da72231",
+    "verified": true
+  }
+]
