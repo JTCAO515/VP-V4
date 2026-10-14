@@ -52,13 +52,22 @@ class BindingChecks(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'inventory required'):self.validate()
     def test_missing_target_or_branch_never_hides_qa_records(self):
         for key in ['VISEPANDA_QA_AGENT',pin.REF_KEY,'UNRELATED_PRIVATE_KEY']:
-            for missing in ['target','gitBranch','key','type']:
+            for missing in ['target','key','type']:
                 row={'key':key,'type':'encrypted','target':['preview'],'gitBranch':NEW,'value':'SYNTHETIC_SECRET_SENTINEL'}
                 del row[missing];self.project['env']=[row]
                 for candidate in [True,False]:
                     with self.assertRaisesRegex(ValueError,'scope metadata'):
                         names=self.validate()
                         pin.make_package(SHA,NEW,pin.BRANCH,pin.APPROVED_REF,candidate,SHA,names,{})
+    def test_optional_branch_never_hides_enable_or_opaque_ref(self):
+        for key in ['VISEPANDA_QA_AGENT',pin.REF_KEY]:
+            self.project['env']=[{'key':key,'type':'encrypted','target':['preview'],'value':'SYNTHETIC_SECRET_SENTINEL'}]
+            with self.assertRaises(ValueError):self.validate()
+        self.project['env']=[{'key':'UNRELATED_PRIVATE_KEY','type':'sensitive','target':['preview']}]
+        self.assertEqual(self.validate(),[])
+        self.project['env']=[{'key':pin.REF_KEY,'type':'plain','target':['preview'],'value':pin.APPROVED_REF}]
+        names=self.validate();self.assertIsNone(names[0]['gitBranch']);self.assertNotIn('value',names[0])
+
     def test_invalid_scope_records_fail_closed(self):
         base={'key':'UNRELATED_PRIVATE_KEY','type':'sensitive','target':['production'],'gitBranch':None}
         variants=[None,'unknown-record',dict(base,target='preview'),dict(base,target=[]),
