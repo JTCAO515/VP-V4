@@ -478,18 +478,22 @@ export function validateRemoteTaskBody(task, markdown, { migrationSnapshot = fal
   return 'acceptance-present';
 }
 
+// Only checkbox markers may differ inside the generated prefix. The evidence tail is opaque.
+export function splitGeneratedIssueBody(currentBody, generatedBody, id = 'Issue') {
+  const current = normalizeNewlines(currentBody);
+  const generated = normalizeNewlines(generatedBody).trimEnd();
+  assert.ok(withoutCheckboxProgress(current).startsWith(withoutCheckboxProgress(generated)) &&
+    (current.length === generated.length || current[generated.length] === '\n'),
+  `${id} unknown body drift; no safe generated prefix. Review the remote body and preserve progress with a scoped update.`);
+  return { prefix: current.slice(0, generated.length), suffix: current.slice(generated.length) };
+}
+
 // Recognize a generated prefix, preserve its checked items and keep all appended history opaque.
 // Changes inside the generated prefix require an explicitly reviewed migration, not a blanket sync.
 export function preserveIssueProgress(currentBody, previousGeneratedBody, nextGeneratedBody, id = 'Issue') {
   const current = normalizeNewlines(currentBody);
   const previous = normalizeNewlines(previousGeneratedBody).trimEnd();
-  const canonicalCurrent = withoutCheckboxProgress(current);
-  const canonicalPrevious = withoutCheckboxProgress(previous);
-  assert.ok(canonicalCurrent.startsWith(canonicalPrevious) &&
-    (current.length === previous.length || current[previous.length] === '\n'),
-  `${id} unknown body drift; no safe generated prefix. Review the remote body and preserve progress with a scoped update.`);
-  const prefix = current.slice(0, previous.length);
-  const suffix = current.slice(previous.length);
+  const { prefix, suffix } = splitGeneratedIssueBody(current, previous, id);
   const currentEntries = new Map(checklistEntries(prefix).map(entry => [entry.lineIndex, entry]));
   for (const entry of checklistEntries(previous)) {
     assert.ok(!entry.checked || currentEntries.get(entry.lineIndex)?.checked,
@@ -824,7 +828,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(root,'scri
         const issue=api(`repos/${value.repo}/issues/${task.number}`);
         assert.equal(issue.title, `[${task.id}] ${task.title}`);
         assert.ok(issue.labels.some(l=>l.name===`project:${task.primaryProject}`));
-        assert.equal(withoutCheckboxProgress(issue.body).trimEnd(), withoutCheckboxProgress(currentTaskBody(task,value)).trimEnd(), `current body drift #${task.number}`);
+        splitGeneratedIssueBody(issue.body, currentTaskBody(task,value), `current #${task.number}`);
         receipts.push({number:task.number,taskId:task.id,state:issue.state,updatedAt:issue.updated_at});
       }
       saveJson('docs/product/VPV10-MODULAR-001/current-remote-verification.json',{at:new Date().toISOString(),runtimeAcceptance:false,receipts});
