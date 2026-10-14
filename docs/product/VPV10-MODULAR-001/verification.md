@@ -32,3 +32,9 @@ GitHub 传输异常保留：#681 首次补充的 GraphQL 预读 EOF（写入前�
 - PASS：最终 docs:check、diff 检查；lint 和隔离 render 同源相关证据仍有效。修改只涉及获准文档、生成器与必要治理回归。
 - 源提交由唯一 Main 审阅整合。本专项未 push、未创建 PR、未触发 Vercel 发布；远端 Issue 的分支文档链接在 Main 发布审阅分支前尚不可访问，本地 before/after/readback 和 commit 是当前可核证据。
 - 第一阶段方向、全部开放正文与 priority、当前入口、生成保留和部署只读计划已交付；运行层三工程物理拆分/独立 HTTP 尚未实现，样例前沿与真实 QA 验收保持分开。原目标数据库、provider、浏览器与设备验收仍 UNRUN。
+
+## Review branch publication follow-up (2026-10-14)
+
+Main explicitly authorized publication of the stable own branch. Commit 57386e1c was pushed to codex/vpv4-modular-entries-20261014. GitHub Contents API readback confirmed the contract blob c9bb96b95c275b57bd3f6acf4c7d4fb9351b299c and before.json blob 0bcba8f38ed04cef31fa8d1156d1213e3e6de5e0 match local contents. The earlier unpushed-link limitation is now resolved; these remain review-branch links, not main publication.
+
+The requested immutable f5d4ced46d1836d5178054c2faeb096ec3bf934a was merged without conflicts as e9a37e63588c3d2b3b910130617007ebec3e8fd5. Only the two specified hosted-worker test/evidence files were introduced. No reset, cherry-pick duplication, Main-branch write or self-merge occurred. Post-merge docs:check and diff checks passed; unchanged 62-test governance evidence is reused. No new product runtime or deployment acceptance is claimed.
