@@ -98,6 +98,7 @@ def main(args):
         base.plan.require(approval.get('mode')==MODE and approval.get('codeSha256')==code_hash(),'SNAPSHOT_RESTORE_APPROVAL_CONFLICT')
         expected=['decrypt-approved-bundle','restore-own-isolated-docker','verify-no-content-output','destroy-own-restored-copy','restore-realtime-schema-migrations-ledger','verify-monotone-sequence-no-collision']
         if with_replay:
+            authority.canonical_approval_id(approval.get('approvalId'))
             replay.load_plan(plan_path)
             base.plan.require(approval.get('replayMode')==replay.MODE and approval.get('replayManifestSha256')==replay.MANIFEST_HASH,'REPLAY_EXPLICIT_PLAN_APPROVAL_REQUIRED')
             base.plan.require(approval.get('actions')==expected+['replay-reviewed-missing80-owned-copy'],'SNAPSHOT_RESTORE_REPLAY_SCOPE_REQUIRED')
@@ -112,7 +113,9 @@ def main(args):
     base.plan.require(json.loads(ap.read_text())==approval,'SNAPSHOT_RESTORE_APPROVAL_CHANGED');validate()
     base.plan.require('FileVault is On.' in base.run(['fdesetup','status']).decode(),'FILEVAULT_REQUIRED')
     if record_mode:receipt=authority.validate_packet(approval,'restore-replay',code_hash(),base.capture.now(),base.capture.stamp)
+    claim=authority.claim_restore_replay(approval,code_hash()) if with_replay else None
     result=restore_bundle(mp.parent,ip,manifest,plan_path)
+    if claim:result['oneTimeRestoreClaim']=claim
     if receipt:result['directHumanAuthorization']=receipt
     return result
 

@@ -61,4 +61,11 @@ Main 从 `shared-operator-authorized-blocked.json` 的 `captureApprovalDraft` / 
 5. 完成 capture 后，restore：填真实 `manifestPath` 与 `identityPath` 的绝对 resolve 路径、`manifestSha256`；其它精确六项 restore action加第七项 `replay-reviewed-missing80-owned-copy`、replayMode及manifest2305 hash保持不变。CLI 第五参数传已审 `reviewed-replay-manifest.json`。不要把 synthetic proof 当真实manifest/key输入。
 6. 逐阶段记录真实输出，拒绝/FAIL立即保留受保护产物与证据，不能绕过门禁。本 owner 的所有 real I/O 仍UNRUN。E仍仅由Main在真实恢复+80 rehearsal及其它全部条件齐后处理。
 
-当前 code hash：capture `998078025f5b471a75ecbcffec186e60ecaccb2a53347f626c6cf65b803c1af7`；restore-replay `c379c01f08bfdb0beed1e32e91afa9fe9f6bc7405d148830523b331a821c5df8`。只有文档/receipt更新，执行源码及本地PASS证据未变，不需因此重跑演练。
+历史9d46185c执行源码的 code hash：capture `998078025f5b471a75ecbcffec186e60ecaccb2a53347f626c6cf65b803c1af7`；restore-replay `c379c01f08bfdb0beed1e32e91afa9fe9f6bc7405d148830523b331a821c5df8`。只有文档/receipt更新，执行源码及本地PASS证据未变，不需因此重跑演练。
+
+
+## 一次性 restore-replay 契约返修（2026-10-14）
+
+packet/START 均要求相同规范非空 UUID（拒绝空值、非canonical、全零UUID）。首次真实 archive 读取/hash/decrypt 之前，在固定 capture archive root 内原子创建 `approval-<UUID>.restore-replay.used.json`，0600，绑定 target/exact manifest SHA/code SHA/stage；固定root已有700/本人uid/无symlink要求，不随 bundle 路径改变。重复、并发及不同 manifest/code 的相同 UUID 均拒绝。即使 marker 写入/fsync 或后续恢复失败也不删除 marker；失败后重试不能复用消费过的授权。Main 不应清理标记以重试；新的实际尝试需独立可审执行记录与新一次UUID，原范围授权无需重复询问。
+
+实际 I/O 仍Main独占；本轮只测试专属临时假packet目录，无真实 archive/identity/target 操作。完整155未重跑，原恢复/cleanup及迁移源码不变。helper进入capture/restore code hash，因此Main需使用本轮 `one-time-restore-delivery.json` 的新hash重新绑定review/START/packet，旧hash不能执行。
