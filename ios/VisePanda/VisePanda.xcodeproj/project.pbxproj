@@ -13,6 +13,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin PBXBuildFile section */
+        1241CFC7C5B0D7FC4D1E48BD /* NativeExperienceSampleHub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11C4956B0AA9DFB178BE5816; };
 		200000000000000000000001 /* VisePandaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000001 /* VisePandaApp.swift */; };
 		200000000000000000000002 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000002 /* AppSettings.swift */; };
 		200000000000000000000003 /* AppShellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000003 /* AppShellView.swift */; };
@@ -476,6 +477,19 @@
 		B203200000000000000000002 = {isa = PBXBuildFile; fileRef = B203100000000000000000002; };
 		B203200000000000000000003 = {isa = PBXBuildFile; fileRef = B203100000000000000000003; };
 		B203200000000000000000004 = {isa = PBXBuildFile; fileRef = B203100000000000000000004; };
+		C58EE6E1A4B017C923DFA1FB /* NativeFrontendAssistantDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = F273A2955B6342EE3A163218; };
+		0E7276F3CC2C92F31B39C7F0 /* NativeFrontendAssistantPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F517CC044611481FA35D38BF; };
+		0474D97F07F73D3A10FABD50 /* NativeFrontendExpressionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B50D8131706FE8433F9F2A51; };
+		BD0C4BA050C2C41F666539CB /* NativeFrontendJourneysView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E53A4DAA5AD2C917ED34E81; };
+		0F7276DB4ACCDDD24D23145A /* NativeFrontendLibraryActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DEBC408272E3C6FA40FFD6D; };
+		A7D71AB3F98D25E3CAD4731B /* NativeFrontendLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDAE1F32E22BE6E5E1225E2F; };
+		56915B432DB289AD80A5FB8A /* NativeFrontendMemoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8A59B2C1B046BEFA414910; };
+		406CFB1AE629EA7DBF67B302 /* NativeFrontendState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EE1D6B4AF3D60A1022D717E; };
+		56B50753AB30DB8A824C4A87 /* NativeFrontendChatSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C027A0CA31619C39F379AD; };
+		61ED5BFB4D425C5EFA89714C /* NativeFrontendChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDE9310E83BFCDC2C2EB2FBB; };
+		7F2855DAE671CA70C6DF9821 /* coverage-producer-v11.json in Resources */ = {isa = PBXBuildFile; fileRef = EE8E10754415F6908C96606A; };
+		978EF0ADFA25E5A49A1B8B49 /* coverage-cancelled-v11.json in Resources */ = {isa = PBXBuildFile; fileRef = 6D37EA77E5D1627B5624ADAB; };
+		8C6DD3D4A6903A6C5CDD0F89 /* native-catalog-current-v11.json in Resources */ = {isa = PBXBuildFile; fileRef = BD61B35EC4CB25C3A885DB1E; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -490,6 +504,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+        11C4956B0AA9DFB178BE5816 /* NativeExperienceSampleHub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/NativeExperienceSamples/NativeExperienceSampleHub.swift; sourceTree = SOURCE_ROOT; };
 		300000000000000000000001 /* VisePandaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePandaApp.swift; sourceTree = "<group>"; };
 		300000000000000000000002 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		300000000000000000000003 /* AppShellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppShellView.swift; sourceTree = "<group>"; };
@@ -958,6 +973,19 @@
 		B203100000000000000000002 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/JourneyEntry/NativeJourneyEntryView.swift; sourceTree = SOURCE_ROOT; };
 		B203100000000000000000003 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/JourneyEntry/NativeJourneyMaterialsView.swift; sourceTree = SOURCE_ROOT; };
 		B203100000000000000000004 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/JourneyEntry/NativeJourneyEntryContinuation.swift; sourceTree = SOURCE_ROOT; };
+		F273A2955B6342EE3A163218 /* NativeFrontendAssistantDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/Assistant/NativeFrontendAssistantDetail.swift; sourceTree = SOURCE_ROOT; };
+		F517CC044611481FA35D38BF /* NativeFrontendAssistantPresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/Assistant/NativeFrontendAssistantPresentation.swift; sourceTree = SOURCE_ROOT; };
+		B50D8131706FE8433F9F2A51 /* NativeFrontendExpressionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/Expression/NativeFrontendExpressionView.swift; sourceTree = SOURCE_ROOT; };
+		5E53A4DAA5AD2C917ED34E81 /* NativeFrontendJourneysView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/Journeys/NativeFrontendJourneysView.swift; sourceTree = SOURCE_ROOT; };
+		9DEBC408272E3C6FA40FFD6D /* NativeFrontendLibraryActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/LibraryMemory/NativeFrontendLibraryActions.swift; sourceTree = SOURCE_ROOT; };
+		FDAE1F32E22BE6E5E1225E2F /* NativeFrontendLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/LibraryMemory/NativeFrontendLibraryView.swift; sourceTree = SOURCE_ROOT; };
+		7D8A59B2C1B046BEFA414910 /* NativeFrontendMemoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/LibraryMemory/NativeFrontendMemoryView.swift; sourceTree = SOURCE_ROOT; };
+		8EE1D6B4AF3D60A1022D717E /* NativeFrontendState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/NativeFrontendState.swift; sourceTree = SOURCE_ROOT; };
+		12C027A0CA31619C39F379AD /* NativeFrontendChatSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/Chat/NativeFrontendChatSheet.swift; sourceTree = SOURCE_ROOT; };
+		EDE9310E83BFCDC2C2EB2FBB /* NativeFrontendChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/Chat/NativeFrontendChatView.swift; sourceTree = SOURCE_ROOT; };
+		EE8E10754415F6908C96606A /* coverage-producer-v11.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = VisePandaTests/Fixtures/DataCoverage/coverage-producer-v11.json; sourceTree = SOURCE_ROOT; };
+		6D37EA77E5D1627B5624ADAB /* coverage-cancelled-v11.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = VisePandaTests/Fixtures/DataCoverage/coverage-cancelled-v11.json; sourceTree = SOURCE_ROOT; };
+		BD61B35EC4CB25C3A885DB1E /* native-catalog-current-v11.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = VisePandaTests/Fixtures/NotificationData/native-catalog-current-v11.json; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -972,6 +1000,20 @@
 		600000000000000000000001 = {
 			isa = PBXGroup;
 			children = (
+                BD61B35EC4CB25C3A885DB1E,
+                6D37EA77E5D1627B5624ADAB,
+                EE8E10754415F6908C96606A,
+                EDE9310E83BFCDC2C2EB2FBB,
+                12C027A0CA31619C39F379AD,
+                8EE1D6B4AF3D60A1022D717E,
+                7D8A59B2C1B046BEFA414910,
+                FDAE1F32E22BE6E5E1225E2F,
+                9DEBC408272E3C6FA40FFD6D,
+                5E53A4DAA5AD2C917ED34E81,
+                B50D8131706FE8433F9F2A51,
+                F517CC044611481FA35D38BF,
+                F273A2955B6342EE3A163218,
+                11C4956B0AA9DFB178BE5816,
 				B197100000000000000000001,
 				B197100000000000000000002,
 				B197100000000000000000003,
@@ -1136,7 +1178,7 @@
 
 /* Begin PBXResourcesBuildPhase section */
 		800000000000000000000002 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (200000000000000000000010, 200000000000000000000011, 200000000000000000000018, 200000000000000000000019); runOnlyForDeploymentPostprocessing = 0; };
-		800000000000000000000004 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (0BE4CD0A7ADDFE3FE67DDA05,B7BE276579871835D8FB669F,
+		800000000000000000000004 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (8C6DD3D4A6903A6C5CDD0F89 /* native-catalog-current-v11.json in Resources */, 978EF0ADFA25E5A49A1B8B49 /* coverage-cancelled-v11.json in Resources */, 7F2855DAE671CA70C6DF9821 /* coverage-producer-v11.json in Resources */, 0BE4CD0A7ADDFE3FE67DDA05,B7BE276579871835D8FB669F,
 				3E202B16F8CA949052172819,
 73839A21704A41C4F4A34CE5, 3F8ECFC8C506EEDE1D6C83A3, AFEC86C458B38C1CFBC62D1E, 20835F57B31A002583B5BEC4, 0023731A2F7F7F0D5EF461C0, 083E8C0D5650718EFE8258E8, F158020000000000000000F2, F158020000000000000000F3,); runOnlyForDeploymentPostprocessing = 0; };
 		800000000000000000000006 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
@@ -1163,6 +1205,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+                61ED5BFB4D425C5EFA89714C /* NativeFrontendChatView.swift in Sources */,
+                56B50753AB30DB8A824C4A87 /* NativeFrontendChatSheet.swift in Sources */,
+                406CFB1AE629EA7DBF67B302 /* NativeFrontendState.swift in Sources */,
+                56915B432DB289AD80A5FB8A /* NativeFrontendMemoryView.swift in Sources */,
+                A7D71AB3F98D25E3CAD4731B /* NativeFrontendLibraryView.swift in Sources */,
+                0F7276DB4ACCDDD24D23145A /* NativeFrontendLibraryActions.swift in Sources */,
+                BD0C4BA050C2C41F666539CB /* NativeFrontendJourneysView.swift in Sources */,
+                0474D97F07F73D3A10FABD50 /* NativeFrontendExpressionView.swift in Sources */,
+                0E7276F3CC2C92F31B39C7F0 /* NativeFrontendAssistantPresentation.swift in Sources */,
+                C58EE6E1A4B017C923DFA1FB /* NativeFrontendAssistantDetail.swift in Sources */,
+                1241CFC7C5B0D7FC4D1E48BD,
 				B197200000000000000000001,
 				B197200000000000000000002,
 				B197200000000000000000003,

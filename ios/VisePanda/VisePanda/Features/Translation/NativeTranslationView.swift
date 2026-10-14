@@ -8,6 +8,7 @@ struct NativeTranslationView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.dismiss) private var dismiss
     @State private var store = NativeTranslationStore()
+    @FocusState private var inputFocused: Bool
     @State private var source = "en"
     @State private var input = ""
     @State private var card: NativeTranslationPhrase?
@@ -49,10 +50,12 @@ struct NativeTranslationView: View {
                 }.pickerStyle(.segmented).disabled(store.pending != nil || store.busy)
                 TextField(text("Phrase or chosen address", "短句或已选地址"), text: $input, axis: .vertical)
                     .lineLimit(3...8).textFieldStyle(.roundedBorder)
+                    .focused($inputFocused)
                     .disabled(tripSelection != nil || store.pending != nil || store.busy).accessibilityIdentifier("translation.input")
                 Text("\(input.utf16.count)/600").font(.caption).foregroundStyle(.secondary)
                 Button(text(store.pending == nil ? "Translate" : "Retry same request", store.pending == nil ? "翻译" : "重试同一请求")) {
                     action?.cancel()
+                    inputFocused = false
                     action = Task {
                         let selected = tripSelection
                         // Resolve an ambiguous prior send from its original receipt before retrying.
@@ -94,9 +97,18 @@ struct NativeTranslationView: View {
                 Text(text("Recent phrases", "最近短语")).font(.title2.bold())
                 Text(text("From your 20 most recent text requests. Original text and results are retained under the notice above. Reading them does not generate another translation.", "显示最近 20 次文字请求中的翻译。原文及结果按上方说明保留；阅读不会再次生成译文。"))
                     .font(.caption).foregroundStyle(.secondary)
-                ForEach(store.phrases) { phrase in phraseView(phrase) }
+                if activeScope != nil, store.scope == activeScope, store.policy?.consentState == .accepted {
+                    ForEach(store.phrases) { phrase in phraseView(phrase) }
+                }
                 savedHistoryView
             }.padding()
+        }
+        .scrollDismissesKeyboard(.interactively)
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button(text("Done", "完成")) { inputFocused = false }
+            }
         }
         .background(Color.vpBackground)
         .navigationTitle(text("Translation", "翻译"))
@@ -107,7 +119,7 @@ struct NativeTranslationView: View {
             tripStore.clear(); tripSelection = nil; tripReturn = nil; tripChanged = false
         }
         .onChange(of: store.errorCode) { _, code in
-            if code == "STALE_TRIP_VERSION" || code == "TRIP_SOURCE_CHANGED" { tripChanged = true; tripStore.clear() }
+            if code == "STALE_TRIP_VERSION" || code == "TRIP_SOURCE_CHANGED" { tripChanged = true; tripStore.clear(); card = nil }
         }
         .onChange(of: scenePhase) { _, phase in
             if phase != .active { action?.cancel(); historyAction?.cancel(); card = nil; savedCard = nil; store.clear(); savedHistory.clear(); savedDetail.clear(); input = ""; savedQuery = ""; tripStore.clear(); tripSelection = nil; tripReturn = nil }
@@ -120,12 +132,16 @@ struct NativeTranslationView: View {
             if savedCard == nil { savedHistory.clear(); savedDetail.clear() }
         }
         .fullScreenCover(item: $card) { phrase in
-            NativeTranslationCard(phrase: phrase, chinese: settings.selectedLocale == .zh)
+            if recentCardIsCurrent(phrase) {
+                NativeTranslationCard(phrase: phrase, chinese: settings.selectedLocale == .zh, origin: .recent)
+            } else {
+                unavailableCard
+            }
         }
         .fullScreenCover(item: $savedCard, onDismiss: { savedDetail.clear() }) { reference in
             TimelineView(.periodic(from: .now, by: 1)) { _ in
                 if savedDetail.isCurrent(activeScope, query: reference.query), let phrase = savedDetail.opened {
-                    NativeTranslationCard(phrase: phrase, chinese: settings.selectedLocale == .zh)
+                    NativeTranslationCard(phrase: phrase, chinese: settings.selectedLocale == .zh, origin: .saved)
                 } else {
                     VStack(spacing: 20) {
                         if savedDetail.state == "loading" { ProgressView() }
@@ -276,6 +292,7 @@ struct NativeTranslationView: View {
                         VStack(alignment: .leading, spacing: 8) {
                             Text(phrase.original).textSelection(.enabled)
                             Button(text("Open saved translation", "打开已存翻译")) {
+                                inputFocused = false
                                 savedCard = savedHistory.reference(phrase, scope: activeScope, query: savedQuery.isEmpty ? nil : savedQuery)
                             }.accessibilityIdentifier("translation.history.open.\(phrase.id)")
                         }
@@ -292,18 +309,38 @@ struct NativeTranslationView: View {
         }
     }
 
+    private func recentCardIsCurrent(_ phrase: NativeTranslationPhrase) -> Bool {
+        activeScope != nil && store.scope == activeScope
+            && store.policy?.valid == true && store.policy?.consentState == .accepted
+            && phrase.isPresentationReady && store.phrases.contains(phrase)
+    }
+
+    private var unavailableCard: some View {
+        VStack(spacing: 20) {
+            Text(text("This translation is unavailable. Refresh to check its current permission.", "此翻译暂不可读，请刷新核对当前权限。"))
+            Button(text("Done", "完成")) { card = nil }
+        }.padding().accessibilityIdentifier("translation.card.unavailable")
+    }
+
     @ViewBuilder private func phraseView(_ phrase: NativeTranslationPhrase) -> some View {
         VStack(alignment: .leading, spacing: 10) {
+            Text(NativeTranslationCardOrigin.recent.label(chinese: settings.selectedLocale == .zh)).font(.caption).foregroundStyle(.secondary)
+            Text(translationDirection(phrase, chinese: settings.selectedLocale == .zh)).font(.headline)
             Text(text("Original", "原文")).font(.caption).foregroundStyle(.secondary)
             Text(phrase.original).textSelection(.enabled)
-            if phrase.state == "translated", let translation = phrase.translation, let back = phrase.backTranslation {
+            if phrase.isPresentationReady, let translation = phrase.translation, let back = phrase.backTranslation {
+                Text(text("Translation · AI-generated", "译文 · AI 生成")).font(.caption).foregroundStyle(.secondary)
                 Text(translation).font(.title2).textSelection(.enabled)
                 Text(text("Back-translation for comparison", "回译对照")).font(.caption).foregroundStyle(.secondary)
                 Text(back).textSelection(.enabled)
                 Text(text("Check amounts, negation, places and allergies against your original. The back-translation is also AI-generated, not an independent check or certified translation.", "请对照原文核对金额、否定、地点和过敏信息。回译同样由 AI 生成，并非独立核验或认证翻译。"))
                     .font(.caption)
-                Button(text("Show large card", "展示大字卡")) { card = phrase }
-                    .buttonStyle(.bordered).accessibilityIdentifier("translation.card.\(phrase.id)")
+                Button(text("Show large card", "展示大字卡")) {
+                    guard recentCardIsCurrent(phrase) else { return }
+                    inputFocused = false; card = phrase
+                }
+                    .buttonStyle(.bordered).disabled(!recentCardIsCurrent(phrase))
+                    .accessibilityIdentifier("translation.card.\(phrase.id)")
             } else {
                 Text(phrase.state == "pending" ? text("Translating… Refresh to check.", "翻译中，请刷新查看。") : text("No reliable translation card is available. Keep the original, clarify the phrase and try again.", "暂无可展示的可靠译文。请保留原文，明确措辞后重试。"))
             }
@@ -312,27 +349,168 @@ struct NativeTranslationView: View {
     }
 }
 
+extension NativeTranslationPhrase {
+    var isPresentationReady: Bool { valid && state == "translated" }
+}
+
+enum NativeTranslationCardOrigin {
+    case recent, saved, sample
+
+    func label(chinese: Bool) -> String {
+        switch self {
+        case .recent: chinese ? "来源：当前账号最近的文字请求" : "Source: recent text request for this account"
+        case .saved: chinese ? "来源：已存文字请求（已重新核对权限）" : "Source: saved text request (permission rechecked)"
+        case .sample: chinese ? "Sample · 未连接翻译服务" : "Sample · translation service not connected"
+        }
+    }
+
+    func translationLabel(chinese: Bool) -> String {
+        switch self {
+        case .sample: chinese ? "样例译文" : "Sample translation"
+        case .recent, .saved: chinese ? "译文 · AI 生成" : "Translation · AI-generated"
+        }
+    }
+
+    func backTranslationLabel(chinese: Bool) -> String {
+        switch self {
+        case .sample: chinese ? "样例回译" : "Sample back-translation"
+        case .recent, .saved: chinese ? "回译对照（AI 生成）" : "Back-translation (AI-generated)"
+        }
+    }
+
+    func comparisonNotice(chinese: Bool) -> String {
+        switch self {
+        case .sample:
+            chinese ? "原文、译文与回译均为固定本地样例，没有执行翻译，也不代表真实语义核验。" : "Original, translation and back-translation are fixed local examples. No translation or real semantic verification was performed."
+        case .recent, .saved:
+            chinese ? "请核对金额、否定、地点和过敏信息。回译不是独立核验，本卡不是认证翻译。原始输入来自手动文字还是行程字段，此结果未提供来源信息。" : "Check amounts, negation, places and allergies. Back-translation is not an independent check; this is not a certified translation. This result does not identify whether the original was typed or selected from a Trip."
+        }
+    }
+}
+
+private func translationDirection(_ phrase: NativeTranslationPhrase, chinese: Bool) -> String {
+    guard ["en", "zh"].contains(phrase.sourceLocale), ["en", "zh"].contains(phrase.targetLocale),
+          phrase.sourceLocale != phrase.targetLocale else { return chinese ? "语言方向未知" : "Unknown language direction" }
+    return phrase.sourceLocale == "en" ? "English → 中文" : "中文 → English"
+}
+
+/// Presentation only. Callers retain authority, freshness and scene checks.
 struct NativeTranslationCard: View {
     let phrase: NativeTranslationPhrase
-    let chinese: Bool
+    let origin: NativeTranslationCardOrigin
+    @State private var chinese: Bool
+    @State private var largerText = false
     @Environment(\.dismiss) private var dismiss
     @ScaledMetric(relativeTo: .largeTitle) private var size = 44.0
+
+    init(phrase: NativeTranslationPhrase, chinese: Bool, origin: NativeTranslationCardOrigin = .recent) {
+        self.phrase = phrase
+        self.origin = origin
+        _chinese = State(initialValue: chinese)
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    Text(phrase.translation ?? "").font(.system(size: size, weight: .semibold))
-                        .textSelection(.enabled).accessibilityIdentifier("translation.largeText")
-                    Divider()
-                    Text(chinese ? "原文" : "Original").font(.headline)
-                    Text(phrase.original).font(.title3).textSelection(.enabled)
-                    Text(chinese ? "回译对照（AI 生成）" : "Back-translation (AI-generated)").font(.headline)
-                    Text(phrase.backTranslation ?? "").textSelection(.enabled)
-                    Text(chinese ? "请核对金额、否定、地点和过敏信息。本卡不是认证翻译。" : "Check amounts, negation, places and allergies. This is not a certified translation.")
-                        .font(.footnote)
+                    Text(origin.label(chinese: chinese)).font(.subheadline).foregroundStyle(.secondary)
+                        .accessibilityIdentifier("translation.card.source")
+                    Text(translationDirection(phrase, chinese: chinese)).font(.title2.bold())
+                        .accessibilityIdentifier("translation.card.direction")
+                    if phrase.isPresentationReady,
+                       let translation = phrase.translation, let back = phrase.backTranslation {
+                        Text(origin.translationLabel(chinese: chinese)).font(.headline)
+                        Text(translation).font(.system(size: size * (largerText ? 1.35 : 1), weight: .semibold))
+                            .textSelection(.enabled).accessibilityIdentifier("translation.largeText")
+                        Divider()
+                        Text(chinese ? "原文" : "Original").font(.headline)
+                        Text(phrase.original).font(.title3).textSelection(.enabled)
+                            .accessibilityIdentifier("translation.card.original")
+                        Text(origin.backTranslationLabel(chinese: chinese)).font(.headline)
+                        Text(back).font(.title3).textSelection(.enabled)
+                            .accessibilityIdentifier("translation.card.backTranslation")
+                        Text(origin.comparisonNotice(chinese: chinese))
+                            .font(.footnote)
+                        Toggle(chinese ? "更大字号" : "Larger text", isOn: $largerText)
+                            .accessibilityIdentifier("translation.card.textSize")
+                    } else {
+                        Text(chinese ? "译文未就绪或无效，暂无可展示的大字译文。" : "Translation is not ready or is invalid. No large translation is available.")
+                            .accessibilityIdentifier("translation.card.unavailable")
+                    }
+                    Toggle("中文界面 / English interface", isOn: $chinese)
+                        .accessibilityIdentifier("translation.card.language")
                 }.frame(maxWidth: .infinity, alignment: .leading).padding(24)
             }.background(Color.vpBackground)
-                .toolbar { ToolbarItem(placement: .confirmationAction) { Button(chinese ? "完成" : "Done") { dismiss() } } }
+                .navigationTitle(chinese ? "大字卡" : "Large card")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button(chinese ? "完成" : "Done") { dismiss() }
+                            .accessibilityIdentifier("translation.card.done")
+                            .accessibilityHint(chinese ? "返回现场表达，不会重新翻译" : "Return to expression without translating again")
+                    }
+                }
         }
     }
 }
+
+#if DEBUG
+/// Local fixed fixtures only. Main may mount this leaf in the existing debug navigation.
+struct NativeTranslationSampleExperienceView: View {
+    @State private var source = "en"
+    @State private var state = "translated"
+    @State private var card: NativeTranslationPhrase?
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                Text("Sample · 未连接翻译服务 / Translation service not connected")
+                    .font(.headline).accessibilityIdentifier("translation.sample.notice")
+                Text("固定示例，仅体验展示与返回；不会发送文字或生成翻译。 / Fixed examples for presentation and return only. No text is sent or translated.")
+                    .font(.subheadline)
+                Picker("示例方向 / Sample direction", selection: $source) {
+                    Text("English → 中文").tag("en")
+                    Text("中文 → English").tag("zh")
+                }.pickerStyle(.segmented).accessibilityIdentifier("translation.sample.direction")
+                Picker("示例状态 / Sample state", selection: $state) {
+                    Text("就绪 / Ready").tag("translated")
+                    Text("等待 / Pending").tag("pending")
+                    Text("不可用 / Unavailable").tag("unavailable")
+                    Text("未知 / Unknown").tag("unknown")
+                }.pickerStyle(.menu).accessibilityIdentifier("translation.sample.state")
+                Text("原文 / Original").font(.headline)
+                Text(Self.phrase(source: source, state: state).original).font(.title3)
+                Button("打开示例大字卡 / Open sample card") {
+                    card = Self.phrase(source: source, state: state)
+                }.buttonStyle(.borderedProminent).accessibilityIdentifier("translation.sample.open")
+                Text("完成后返回这里，示例选择保持不变。 / Done returns here and keeps your sample selection.")
+                    .font(.footnote)
+            }.frame(maxWidth: .infinity, alignment: .leading).padding()
+        }
+        .navigationTitle("现场表达 Sample")
+        .fullScreenCover(item: $card) { phrase in
+            NativeTranslationCard(phrase: phrase, chinese: source == "en", origin: .sample)
+        }
+    }
+
+    fileprivate static func phrase(source: String, state: String) -> NativeTranslationPhrase {
+        let english = source == "en"
+        return .init(turnId: "33333333-3333-4333-8333-333333333333",
+            sourceLocale: source, targetLocale: english ? "zh" : "en",
+            original: english ? "Hello." : "你好。", state: state,
+            translation: state == "translated" ? (english ? "你好。" : "Hello.") : nil,
+            backTranslation: state == "translated" ? (english ? "Hello." : "你好。") : nil)
+    }
+}
+#endif
+
+#if DEBUG
+#Preview("Sample · not connected") {
+    NativeTranslationSampleExperienceView()
+}
+
+#Preview("Sample · unavailable") {
+    NativeTranslationCard(phrase: NativeTranslationSampleExperienceView.phrase(source: "zh", state: "pending"),
+                          chinese: false, origin: .sample)
+}
+#endif

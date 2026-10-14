@@ -365,8 +365,10 @@ import Testing
         return (errSecSuccess, data)
     }
     func remove(service: String, owner: String) -> OSStatus {
+        let storedKey = key(service, owner)
+        guard entries[storedKey] != nil else { return errSecItemNotFound }
         if failRemove { return errSecInteractionNotAllowed }
-        entries.removeValue(forKey: key(service, owner)); return errSecSuccess
+        entries.removeValue(forKey: storedKey); return errSecSuccess
     }
 }
 

@@ -6,7 +6,7 @@ private final class NotificationDataCatalogFixtureMarker: NSObject {}
 
 @MainActor struct NativeNotificationDataCatalogTests {
     @Test func immutableProducerHasThirtyFourVisibleScopesAndOnlyExactNotificationHandlersOpenConsumer() throws {
-        let url = try #require(Bundle(for: NotificationDataCatalogFixtureMarker.self).url(forResource: "native-catalog-v4", withExtension: "json"))
+        let url = try #require(Bundle(for: NotificationDataCatalogFixtureMarker.self).url(forResource: "native-catalog-current-v11", withExtension: "json"))
         let bytes = try Data(contentsOf: url)
         let raw = try NativeCommunityWire.object(JSONSerialization.jsonObject(with: bytes), ["schemaVersion", "catalogVersion", "actorId", "sessionId", "mobileEpoch", "modules", "allUserDataCompleted"])
         let actor = NativeCommunitySafetyActor(scope: .init(endpoint: "https://fixture.invalid/", subject: try NativeNotificationDataCommand.id(raw["actorId"]),

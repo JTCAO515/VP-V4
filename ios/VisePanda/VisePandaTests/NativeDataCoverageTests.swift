@@ -7,7 +7,7 @@ private final class CoverageFixtureMarker: NSObject {}
 
 @MainActor struct NativeDataCoverageTests {
     private func producer() throws -> [String: Any] {
-        let url = try #require(Bundle(for: CoverageFixtureMarker.self).url(forResource: "coverage-producer", withExtension: "json"))
+        let url = try #require(Bundle(for: CoverageFixtureMarker.self).url(forResource: "coverage-producer-v11", withExtension: "json"))
         return try NativeCommunityWire.object(JSONSerialization.jsonObject(with: Data(contentsOf: url)), ["evidence", "catalog", "requestBytes", "receipt"])
     }
     private func actor(_ epoch: Int = 1) -> NativeCommunitySafetyActor {
@@ -51,6 +51,15 @@ private final class CoverageFixtureMarker: NSObject {}
         let journal = journal(vault)
         return .init(current: current, request: request, saved: { try journal.read($0) }, retain: { try journal.retain($0, actor: $1) },
                      complete: { try journal.complete($0, actor: $1) }, retainOriginal: { _, _ in }, completeOriginal: completeOriginal)
+    }
+
+    @Test func retainedOldProducerCatalogIsRejectedByCurrentWire() throws {
+        let oldURL = try #require(Bundle(for: CoverageFixtureMarker.self).url(forResource: "coverage-producer", withExtension: "json"))
+        let old = try NativeCommunityWire.object(JSONSerialization.jsonObject(with: Data(contentsOf: oldURL)), ["evidence", "catalog", "requestBytes", "receipt"])
+        let oldCatalog = try NativeCommunityWire.bytes(old["catalog"] as! [String: Any])
+        #expect(throws: (any Error).self) { _ = try NativeDataCoverageCatalog(bytes: oldCatalog, actor: actor()) }
+        let current = try NativeDataCoverageCatalog(bytes: catalogBytes(), actor: actor())
+        #expect(current.modules.count == 34)
     }
 
     @Test func closedCatalogPreservesMissingDenominatorAndRejectsOldVersionActorBoolean() throws {
@@ -172,7 +181,7 @@ private final class CoverageFixtureMarker: NSObject {}
     }
 
     @Test func canonicalCancelledFixtureAndAllOriginalCancelledKindsRejectCompletedOuter() throws {
-        let url = try #require(Bundle(for: CoverageFixtureMarker.self).url(forResource: "coverage-cancelled", withExtension: "json"))
+        let url = try #require(Bundle(for: CoverageFixtureMarker.self).url(forResource: "coverage-cancelled-v11", withExtension: "json"))
         let fixture = try NativeCommunityWire.object(JSONSerialization.jsonObject(with: Data(contentsOf: url)), ["evidence", "requestBytes", "valid", "tampered"])
         let c = try NativeDataCoverageCommand(body: Data((try #require(fixture["requestBytes"] as? String)).utf8))
         let valid = try NativeDataCoverageReceipt(bytes: NativeCommunityWire.bytes(fixture["valid"] as! [String: Any]), actor: actor(), command: c)
@@ -348,7 +357,7 @@ nonisolated private final class CoverageSessionProtocol: URLProtocol, @unchecked
         else if path == "/api/privacy/native/v1/coverage", request.value(forHTTPHeaderField: "Cookie") == nil,
                 request.value(forHTTPHeaderField: "Origin") == nil, request.value(forHTTPHeaderField: "Authorization")?.hasPrefix("Bearer synthetic.") == true {
             if request.httpMethod == "GET" {
-                let url = Bundle(for: CoverageFixtureMarker.self).url(forResource: "coverage-producer", withExtension: "json")!
+                let url = Bundle(for: CoverageFixtureMarker.self).url(forResource: "coverage-producer-v11", withExtension: "json")!
                 value = (try! JSONSerialization.jsonObject(with: Data(contentsOf: url)) as! [String: Any])["catalog"] as! [String: Any]
             } else { status = 401; value = ["error": ["code": "UNAUTHENTICATED"]] }
         } else { status = 400; value = ["error": ["code": "INVALID_FIXTURE_TRANSPORT"]] }
