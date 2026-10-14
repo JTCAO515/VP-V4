@@ -11,6 +11,23 @@ extension NativeFrontendState {
         }
     }
 
+    // Keep navigation identity separate from the readable Chat presentation.
+    // Resolve readable content from the current material, rather than parsing identity from text.
+    func libraryChatText(materialID: String) -> String? {
+        guard let material = materials.first(where: { $0.id == materialID }) else { return nil }
+        return "资料：\(material.title)\n\(material.content)"
+    }
+
+    @discardableResult
+    func openLibraryMaterialChat(_ id: String) -> Bool {
+        guard materials.contains(where: { $0.id == id }) else {
+            notice = "这份资料已不可用，未带入对话。"
+            return false
+        }
+        openChat(context: id)
+        return true
+    }
+
     func toggleLibrarySave(_ id: String) {
         guard let index = materials.firstIndex(where: { $0.id == id }) else { return }
         materials[index].saved.toggle()
