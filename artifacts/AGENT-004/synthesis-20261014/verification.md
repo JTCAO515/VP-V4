@@ -52,8 +52,8 @@ from the existing protocol is preserved. Source binding is not semantic entailme
 
 ## Verification
 
-- PASS: `node --experimental-strip-types --test tests/contract/wiki-synthesis/producer.test.mjs tests/contract/knowledge/wiki-proposals.test.mjs tests/contract/knowledge/wiki-complete.test.mjs` — initial 30 tests, then 32 resource-boundary tests, then 36 accessor regressions, then 39 tests after descriptor snapshot redesign.
-- PASS: 21 synthesis tests including deadlines, hidden/Symbol fields, ordinary accessors, reflection exceptions and descriptor-passing Proxy get traps.
+- PASS: `node --experimental-strip-types --test tests/contract/wiki-synthesis/producer.test.mjs tests/contract/knowledge/wiki-proposals.test.mjs tests/contract/knowledge/wiki-complete.test.mjs` — initial 30 tests, then 32 resource-boundary tests, 36 accessor regressions, 39 snapshot redesign tests, and 40 tests after remaining-budget timer correction.
+- PASS: 22 synthesis tests including remaining-budget deadlines, hidden/Symbol fields, ordinary accessors, reflection exceptions and descriptor-passing Proxy get traps.
 - PASS: final source `pnpm typecheck`; `pnpm lint`; `pnpm docs:check`; `git diff --check`.
 - Actual scripted invocation: the first synthesis test invokes the existing
   production `runWikiStatementProposalJob` and provider protocol with an explicitly
@@ -122,6 +122,17 @@ The test RPC/Promise envelope is ordinary, separating JS Promise assimilation
 from reads performed by the decoder. No claim is made that arbitrary reflection
 or runtime Promise-resolution traps never run. Both previous P2 FAILs remain
 recorded; final delta review and CI belong to Main.
+
+Final snapshot review of `5ca95d11`: standards zero findings; spec retained one
+new P2 because the timer still received the complete request timeout after
+snapshot work. A stalled first read could therefore outlive the monotonic
+deadline. Timer now uses `Math.max(0, deadline - performance.now())`. A targeted
+test spends 80ms in allowed snapshot reflection under a 200ms request budget,
+captures the actual timer's remaining delay (at most 121ms), enters the real
+producer's stalled source read, and fires that timer to prove TIMEOUT. Timer
+scheduling is scripted to avoid a wall-clock-jitter assertion; no claim of
+live target timing is made. Synchronous/microtask deadlines and cancellation
+regressions still pass. Original spec P2 remains recorded pending Main's review.
 
 ## Remaining boundaries / Main integration
 
