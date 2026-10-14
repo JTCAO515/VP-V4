@@ -32,7 +32,7 @@ Local checks:
 - PASS: TypeScript check after the final resource/closed-input delta.
 - PASS: 10 imported CI selector tests; combined 32 tests at the prior 22-test
   runtime head. The unchanged Main CI dependency is reused.
-- PASS: source lint and documentation checks; `local-checks.log` records the
+- PASS: source lint and documentation checks; `local-checks.log.gz` records the
   refreshed 800ee3d7-source checks, including 25 tests and typecheck.
 - PASS: diff whitespace checks.
 - No Web build/visible UI changes in owned source; CI chooses its applicable
