@@ -45,14 +45,18 @@ final class NativeFrontendState {
         pendingConfirmation = true
     }
     func confirmPlan() {
-        guard pendingConfirmation else { return }
-        journeys[0].confirmed = true; pendingConfirmation = false
+        guard pendingConfirmation,
+              let index = journeys.firstIndex(where: { $0.id == "sample-shanghai" }) else { return }
+        journeys[index].confirmed = true; pendingConfirmation = false
         notice = "已确认本地样例安排。未写入真实 Trip，也没有预订服务。"
     }
     func cancelPlan() { pendingConfirmation = false; notice = "已取消这次样例调整，原安排保留。" }
     func reset() {
         let fresh = NativeFrontendState()
         journeys = fresh.journeys; materials = fresh.materials; memories = fresh.memories; messages = fresh.messages
+        assistantName = fresh.assistantName; assistantTagline = fresh.assistantTagline
+        assistantTone = fresh.assistantTone; customized = false
+        selectedTab = .vp
         draft = ""; pendingConfirmation = false; selectedJourneyID = nil; selectedMaterialID = nil
         chatContext = nil; screenState = .ready; notice = "体验示例已重置。"
     }
