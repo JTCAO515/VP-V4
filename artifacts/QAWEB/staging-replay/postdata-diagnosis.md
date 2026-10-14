@@ -27,3 +27,12 @@ Main 的真实 retry-1 已通过 ICU bootstrap，随后 schema post-data 权限�
 稳定候选给Main formal delta review。既有实际失败的TOC/error已被原pipeline丢弃，无法从role profile补造。确认实际原因需要真实失败对象类别/TOC与当时caller权限上下文的安全证据；不由本owner重新解密或重建真实copy去取。当前新增诊断不是实际permission repair，不构成再次尝试、新window或无限copy授权。Main集中决定合法证据取得与后续修复；在正确源复现/修复证明之前继续STOP actual attempts。
 
 分区、ACL/owner行为参照 [PG17 pg_restore官方文档](https://www.postgresql.org/docs/17/app-pgrestore.html)，物理证明以本轮自有fixture为准，不用文档或fixture替代真实恢复验收。
+
+
+## 41c7fc1d parser 独立审阅返修
+
+旧全stderr搜索SQLSTATE/关键词/TOC会接收用户SQL/DETAIL/对象名内的伪header，并被verbose成功进度污染分类。最终oracle直接载入Git41c7fc1d原bytes运行：10项测试中15个预期失败断言；新parser同oracle全PASS。失败日志和新PASS日志保留。
+
+现在仅接受首个合格pg_restore query错误头的首字段，并仅允许固定公开SQLSTATE集合；无实际字段/unknown token为null。不重新扫描SQL、DETAIL、CONTEXT、名字、progress或后续伪header。类别只由该错误头的标准消息模板/公开state决定，绝不搜整个stderr关键词。TOC须来自fatal头前紧邻的固定PROCESSING TOC/单一entry框架；无可靠框架或多行/歧义名字为null。operation无法从该纯stderr接口独立确认，统一null，不从Command was提取。可信version格式的client错误仍保留原unsupported archive分类。
+
+只变parser和focusedtests；pipeline/caller/timeout/cleanup/strict文件/marker/窗口不变。复用同源完整假数据成功证据，不重跑80或再次实际尝试。最新hash/验证见diagnostics-header-repair-delivery.json；实际权限根因仍UNKNOWN。

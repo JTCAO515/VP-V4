@@ -1,0 +1,30 @@
+test_failure_in_pipeline_keeps_category_and_cleans_children (__main__.SafeDiagnostics) ... ok
+test_only_fixed_states_at_actual_header_are_public (__main__.SafeDiagnostics) ... ok
+test_permission_context_is_allowlisted_without_sql_or_names (__main__.SafeDiagnostics) ... ok
+test_progress_multiline_names_cannot_supply_toc (__main__.SafeDiagnostics) ... FAIL
+test_success_preserves_output_and_has_no_failure_record (__main__.SafeDiagnostics) ... ok
+test_tail_payload_cannot_replace_toc_or_operation (__main__.SafeDiagnostics) ... FAIL
+test_user_text_cannot_supply_sqlstate_or_failure_category (__main__.SafeDiagnostics) ... ok
+test_verbose_actual_sqlstate_and_unknown_names_never_echo (__main__.SafeDiagnostics) ... ok
+test_verbose_and_object_names_do_not_override_error_header (__main__.SafeDiagnostics) ... ok
+
+======================================================================
+FAIL: test_progress_multiline_names_cannot_supply_toc (__main__.SafeDiagnostics)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-safe-restore-diagnostics.py", line 80, in test_progress_multiline_names_cannot_supply_toc
+    self.assertIsNone(d['tocEntryId']);self.assertIsNone(d['objectClass'])
+AssertionError: 9123456789 is not None
+
+======================================================================
+FAIL: test_tail_payload_cannot_replace_toc_or_operation (__main__.SafeDiagnostics)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-safe-restore-diagnostics.py", line 74, in test_tail_payload_cannot_replace_toc_or_operation
+    self.assertEqual(d['permissionObjectClass'],'SCHEMA');self.assertIsNone(d['operation']);self.assertIsNone(d['sqlstate'])
+AssertionError: 'CREATE EVENT TRIGGER' is not None
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.027s
+
+FAILED (failures=2)
