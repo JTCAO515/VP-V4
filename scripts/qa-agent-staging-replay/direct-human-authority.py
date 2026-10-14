@@ -7,6 +7,8 @@ import json
 import os
 from pathlib import Path
 import re
+import stat
+import uuid
 
 ROOT=Path('/Users/jtsm5p/Documents/Codex/2026-10-13/v10-main')
 AUTHORITY_FILE=ROOT/'shared-operator-human-authorization-20261013.json'
@@ -14,12 +16,54 @@ START_FILE=ROOT/'shared-operator-main-start-20261013.json'
 ANSWER='批准 A–D，并条件式批准满足全部门禁后的 E'
 QUESTION_ITEM_ID=['request_user_input_async','call_xeZ1HzPXM8vRQalSkY7wGJHz',0]
 TARGET='dzqdzetcctkhbrhlxxgn'
+CLAIM_ROOT=Path('/Users/jtsm5p/.codex/secure-backups/qaw005-fixed-staging/archives')
 # Exact record hash filled from the actual independent Main evidence below.
 AUTHORITY_SHA256='5637fbd49d992ba58f004a2a0f39fc56f5315cfbc96a8c44175f0c875367737c'
 
 
 def require(ok,reason):
     if not ok:raise ValueError(reason)
+
+
+def canonical_approval_id(value):
+    try:
+        parsed=uuid.UUID(value) if isinstance(value,str) else None
+    except ValueError:
+        parsed=None
+    require(parsed is not None and parsed.int!=0 and str(parsed)==value,'CANONICAL_APPROVAL_UUID_REQUIRED')
+    return value
+
+
+def claim_restore_replay(packet,code_hash):
+    """Irrevocable atomic claim before any archive read, even on later failure.
+
+    The fixed private capture root owns claims independently of bundle paths.
+    Never overwrite/remove a marker or retry with another manifest/code hash.
+    """
+    approval_id=canonical_approval_id(packet.get('approvalId'))
+    require(packet.get('target')==TARGET and packet.get('codeSha256')==code_hash
+            and re.fullmatch('[a-f0-9]{64}',code_hash or '')
+            and re.fullmatch('[a-f0-9]{64}',packet.get('manifestSha256') or ''),'RESTORE_CLAIM_BINDING_REQUIRED')
+    require(CLAIM_ROOT.resolve()==CLAIM_ROOT,'RESTORE_CLAIM_DIRECTORY_UNSAFE')
+    directory=os.open(CLAIM_ROOT,os.O_RDONLY|os.O_DIRECTORY|os.O_NOFOLLOW)
+    try:
+        st=os.fstat(directory)
+        require(stat.S_ISDIR(st.st_mode) and st.st_uid==os.getuid() and stat.S_IMODE(st.st_mode)==0o700,'RESTORE_CLAIM_DIRECTORY_UNSAFE')
+        name='approval-'+approval_id+'.restore-replay.used.json'
+        receipt={'status':'CONSUMED_BEFORE_ARCHIVE_READ','approvalId':approval_id,'stage':'restore-replay',
+                 'target':TARGET,'manifestSha256':packet['manifestSha256'],'codeSha256':code_hash}
+        try:
+            fd=os.open(name,os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW,0o600,dir_fd=directory)
+        except FileExistsError:
+            raise ValueError('RESTORE_REPLAY_APPROVAL_ALREADY_CONSUMED') from None
+        # O_EXCL is the concurrency boundary. A partial write/fsync failure also
+        # leaves this UUID consumed; no archive IO follows a failed claim.
+        with os.fdopen(fd,'w') as f:
+            json.dump(receipt,f,sort_keys=True);f.write('\n');f.flush();os.fsync(f.fileno())
+        os.fsync(directory)
+        return receipt
+    finally:
+        os.close(directory)
 
 
 def read_private(path):
@@ -47,6 +91,7 @@ def validate_packet(packet,stage,code_hash,now,stamp):
     require(packet.get('humanAuthorizationRecordSha256')==digest,'PACKET_DIRECT_HUMAN_BINDING_REQUIRED')
     require(packet.get('target')==TARGET and packet.get('codeSha256')==code_hash,'DIRECT_PACKET_TARGET_CODE_CHANGED')
     require(packet.get('approvedBy')=='JT' and packet.get('proposalOnly') is not True,'DIRECT_PACKET_UNAPPROVED')
+    approval_id=canonical_approval_id(packet.get('approvalId'))
     require(packet.get('retainUntil')==record['retainUntil'],'DIRECT_RETENTION_SCOPE_CHANGED')
     require((stamp(packet['windowEnd'])-stamp(packet['windowStart'])).total_seconds()==3600,'DIRECT_WINDOW_NOT_APPROVED_60_MINUTES')
     require(packet.get('liveRestoreAuthority','NONE')=='NONE' and packet.get('providerActivationOrExpenses',False) is False,'DIRECT_PACKET_SCOPE_EXPANDED')
@@ -57,7 +102,7 @@ def validate_packet(packet,stage,code_hash,now,stamp):
     require(packet.get('mainStartReceiptSha256')==start_hash,'DIRECT_MAIN_START_BINDING_REQUIRED')
     require(start.get('status')=='MAIN_REVIEWED_EXECUTION_START' and start.get('issuedBy')=='Main' and start.get('target')==TARGET
             and start.get('humanAuthorizationRecordSha256')==digest,'DIRECT_MAIN_START_INVALID')
-    require(stage in start.get('allowedStages',[]) and start.get('approvalId')==packet.get('approvalId')
+    require(stage in start.get('allowedStages',[]) and canonical_approval_id(start.get('approvalId'))==approval_id
             and start.get('codeHashes',{}).get(stage)==code_hash,'DIRECT_MAIN_STAGE_CODE_UUID_CHANGED')
     require(stamp(start['validFrom'])<=now and stamp(start['validUntil'])>=stamp(packet['windowEnd']),'DIRECT_MAIN_START_EXPIRED')
     require(re.fullmatch('[a-f0-9]{40}',start.get('reviewedSourceCommit','')),'DIRECT_MAIN_REVIEW_COMMIT_REQUIRED')
