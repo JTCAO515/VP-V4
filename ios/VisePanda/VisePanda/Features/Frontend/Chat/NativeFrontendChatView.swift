@@ -176,11 +176,14 @@ import SwiftUI
             }.padding(10).background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 22))
             if state.draft.count > 2000 { Text("请缩短到2000个字符以内，原文不会截断。").font(.caption).foregroundStyle(.secondary) }
             HStack(spacing: 18) {
-                Button { composerFocused = false; sheet = .voice } label: { Label("语音", systemImage: "waveform") }
-                Button { composerFocused = false; if let onOpenExpression { onOpenExpression() } else { sheet = .translationUnavailable } } label: { Label("表达", systemImage: "character.bubble") }
-                Button { composerFocused = false; if let onOpenPlace { onOpenPlace() } else { sheet = .placeUnavailable } } label: { Label("地点", systemImage: "mappin") }
-                Spacer(minLength: 0)
-                if composerFocused { Button("完成") { composerFocused = false } }
+                ScrollView(.horizontal) {
+                    HStack(spacing: 18) {
+                        Button { composerFocused = false; sheet = .voice } label: { Label("语音", systemImage: "waveform") }
+                        Button { composerFocused = false; if let onOpenExpression { onOpenExpression() } else { sheet = .translationUnavailable } } label: { Label("表达", systemImage: "character.bubble") }
+                        Button { composerFocused = false; if let onOpenPlace { onOpenPlace() } else { sheet = .placeUnavailable } } label: { Label("地点", systemImage: "mappin") }
+                    }.fixedSize(horizontal: true, vertical: false)
+                }.scrollIndicators(.hidden)
+                if composerFocused { Button("完成") { composerFocused = false }.fixedSize() }
             }.font(.caption).buttonStyle(.plain)
         }
         .padding(.horizontal, 16).padding(.top, 10).padding(.bottom, 8)
