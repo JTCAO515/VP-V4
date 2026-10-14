@@ -4,7 +4,7 @@
 
 VisePanda 面向国际来华自由行旅客，围绕同一个 Trip 连接规划、材料、准备、现场沟通与变化后的行程调整。同仓维护独立演进的 iOS、Web、Agent 三工程，复用同一业务合同与既有资源。发布范围为中英，既有 es/ru/ar 资产与协议兼容由 VPJ-01 迁移。
 
-[产品与任务入口](docs/program/2026-09-05/README.md) · [完整产品规划](docs/VISEPANDA-MASTER-PLAN-2026-09-05.md) · [当前工程边界](docs/contracts/vpv4-project-boundaries.md) · [历史交接记录（2026-10-02）](CONTEXT.md) · [2026-09-24 开发状态](docs/program/2026-09-05/CURRENT-STATUS-2026-09-24.md)
+[产品与任务入口](docs/program/2026-09-05/README.md) · [产品规划历史基线](docs/VISEPANDA-MASTER-PLAN-2026-09-05.md) · [当前工程边界](docs/contracts/vpv4-project-boundaries.md) · [历史交接记录（2026-10-02）](CONTEXT.md) · [2026-09-24 开发状态](docs/program/2026-09-05/CURRENT-STATUS-2026-09-24.md)
 
 当前先完成[三工程方向与端口边界](docs/contracts/vpv4-project-boundaries.md)及[开放 Issue 重排](docs/product/VPV10-MODULAR-001/README.md)，随后由唯一 Main 按真实 ready 前沿接续。第一项可体验交付是 `/qa` 的真实登录、首答、持久 Session 与有界多轮（#680–#683）。
 

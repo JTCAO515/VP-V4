@@ -53,7 +53,7 @@ shared 票按 `business-data`（原业务/数据 domain owner）、`quality-deli
 
 | 端口 | 生产者 → 消费者 | 兼容与验收 |
 | --- | --- | --- |
-| Session / Conversation / Turn | Agent 持久权威 → Web、iOS 的各自适配器 | 保留已实现 UUID、requestId、actor/auth-session、Session/Task/Turn 绑定、事件顺序与重放；不把 QA Session 直接假定等同所有 Native wire |
+| Session / Conversation / Turn | Agent 持久执行端口（沿 shared 数据/身份权威）→ Web、iOS 的各自适配器 | 保留已实现 UUID、requestId、actor/auth-session、Session/Task/Turn 绑定、事件顺序与重放；不把 QA Session 直接假定等同所有 Native wire |
 | Context / Memory | 唯一资格投影 → 获准模型调用 | 复用 `qa-context/1` 的同 Session、有界完整对、digest 与 consent/source 资格；记录保存、入选、实际消费三个事实；不新建画像存储 |
 | Result / Artifact | 持久执行结果 → 两端显示与重新打开 | 回答、partial、blocked、technical_failure、unknown 如实区分；source/version/receipt 与内容同归属 |
 | TripProposal / Patch | Trip 权威 → 两端确认界面 | Result → Proposal → 可见 diff → 明确确认 → 原子 Patch；旧版本冲突拒绝，草稿不直接写 Trip |

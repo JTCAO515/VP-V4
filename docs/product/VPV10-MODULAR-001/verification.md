@@ -38,3 +38,13 @@ GitHub 传输异常保留：#681 首次补充的 GraphQL 预读 EOF（写入前�
 Main explicitly authorized publication of the stable own branch. Commit 57386e1c was pushed to codex/vpv4-modular-entries-20261014. GitHub Contents API readback confirmed the contract blob c9bb96b95c275b57bd3f6acf4c7d4fb9351b299c and before.json blob 0bcba8f38ed04cef31fa8d1156d1213e3e6de5e0 match local contents. The earlier unpushed-link limitation is now resolved; these remain review-branch links, not main publication.
 
 The requested immutable f5d4ced46d1836d5178054c2faeb096ec3bf934a was merged without conflicts as e9a37e63588c3d2b3b910130617007ebec3e8fd5. Only the two specified hosted-worker test/evidence files were introduced. No reset, cherry-pick duplication, Main-branch write or self-merge occurred. Post-merge docs:check and diff checks passed; unchanged 62-test governance evidence is reused. No new product runtime or deployment acceptance is claimed.
+
+## PR687 first-phase repair
+
+Main returned a P2: a remote unchecked item could inherit a checked snapshot during sync. The repair refuses such preflight, including fallback templates and duplicate checked text; it never restores completion automatically. New completion and appended evidence remain supported. A meaningful regression covers #195 uncheck, fallback and duplicate cases. No live #195 mutation was made.
+
+Current navigation now prioritizes boundaries/current Issue; root CONTEXT/HANDOFF bytes remain historical and unchanged. Shared business/data authority, horizontal Harness/CI and the three release channels are explicit. #681 has a bounded future synthetic-only /qa/demo work unit with keyboard/reset/no-data-network/no-key criteria, retaining all real QA acceptance. Fifteen shared Issues have category/lead/affectedConsumers; #212 names iOS lead and iOS/Web cooperation without changing original AC or source owner. #243 retains its unmet Production obligations.
+
+Affected governance: 58/58 PASS; docs:check, lint and diff checks PASS. Original manifest semantics excluding modular attribution remain unchanged. Only 17 scoped Issue bodies are updated; repair-before.json/repair-readback.json hold the delta evidence. Earlier 52-ticket readback remains historical evidence. GitHub #226 PATCH returned EOF twice; each continuation GET confirmed the old body before another write, then the same-account gh body-file transport was used. No unknown outcome was blindly replayed.
+
+Repair closeout: 17/17 scoped bodies exactly read back; titles, labels and assignees unchanged. #681 also encountered a GraphQL EOF and was resolved by read-before-write continuation. Pure no-op preflight for all 40 migrated manifest tasks passed, without remote writes. Untouched 35 Issue bodies and original 52-ticket snapshots were not rewritten.
