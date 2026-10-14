@@ -21,3 +21,11 @@ PASS: `git diff --check` and owner review of exclusive changed paths.
 UNRUN: whole App target compile, PBX/outer-stack integration and Simulator click/visual/dynamic type QA: Main's exclusive integration/build/resource ownership. Real device/VoiceOver, real backend Auth/provider/persistence/Memory recomputation and release are also UNRUN; this code is an explicit local frontend example. UI alert cancellation and modal interaction are source-reviewed, not asserted as observed runtime behavior.
 
 No Issue closure: this slice does not complete #203 or #187. No remote deployment, permission/configuration change, provider fee, database operation or use of another owner's simulator/derived data. Revert the slice commit to roll back; it carries no migration or persistent state.
+
+## IOS-011/#692 navigation repair (2026-10-14)
+
+Main reported whole App build PASS (34.2s) and actual library list/detail/share preview/confirm/cancel/same-ID Chat PASS. Memory row tap succeeded but two subsequent snapshots and the supplied screenshot remained on the Memory root, with no edit/forget detail. This is retained as a real UI FAIL; the 22 state checks did not cover SwiftUI presentation. Read the provided runtime log (no navigation/destination error match) and inspected the provided root screenshot. Main owns the exact simulator feedback loop; no local simulator/resource copy was created.
+
+The suspected seam was a Boolean presentation binding derived from an optional local selection, combined with a conditional destination. Replace it with `NavigationLink(value: NativeFrontendMemoryRoute.detail(memoryID:))` and a dedicated Hashable route destination receiving the ID directly; remove the nullable selection and empty destination branch. Main's existing outer stack retains navigation ownership. This is a bounded repair hypothesis, not a confirmed root-cause claim before runtime retest.
+
+PASS: reran `verify.sh` against the repair (Swift parse, actual iOS17 Simulator SDK Swift6 typecheck, 22 unchanged actual-State assertions) and reviewed the source diff. No state/store/shared-shell change. UNRUN here: actual Memory row → detail → edit/correction confirm/cancel → forget confirm/cancel → empty restore. Main must rerun that original scenario and record observed PASS/FAIL; state assertions or typecheck cannot substitute for it.
