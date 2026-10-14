@@ -114,6 +114,18 @@ test("status/redirect/MIME/error and transport exceptions cannot become candidat
   assert(!JSON.stringify(result).includes("provider secret"));
 });
 
+test("explicit partial/refusal and malformed/overlapping/truncated segments reject; usage survives invalid output", async () => {
+  const valid = { ...payload(), segments: [{ start: 0, end: 0.1, text: payload().text }] };
+  assert.equal((await invokeSyntheticSpeech(asr(), turn(), async () => json(valid), signal())).kind, "candidate");
+  for (const changed of [{ partial: true }, { refusal: "blocked" }, { finish_reason: "length" }, { segments: [] }, { segments: null },
+    { segments: [{ start: 0, end: 0.1, text: "Only part" }] }, { segments: [{ start: -1, end: 0.1, text: payload().text }] },
+    { segments: [{ start: 0, end: 0.1, text: "Alice" }, { start: 0.05, end: 0.1, text: " NOT" }] },
+    { segments: [{ start: 0, end: 1, text: payload().text }] }]) {
+    const result = await invokeSyntheticSpeech(asr(), turn(), async () => json({ ...payload(), ...changed }), signal());
+    assert.equal(result.kind, "unavailable"); assert.deepEqual(result.receipt?.usage, { type: "duration", seconds: 0.1 });
+  }
+});
+
 test("TTS silence/truncation/non-WAV/oversize/duration limit rejected; byte limit cancels reader", async () => {
   const silent = wav(); silent.fill(0, 44);
   for (const bytes of [silent, wav().subarray(0, 100), Buffer.from("not wav"), wav(60.1)]) {

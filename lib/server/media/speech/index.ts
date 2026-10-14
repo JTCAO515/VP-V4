@@ -106,9 +106,10 @@ export async function invokeSyntheticSpeech(raw: SpeechRequest, budget: Budget, 
             || !finiteSeconds(value.usage.seconds)) return fail("MODEL_OUTPUT_INVALID", receipt());
           usage = Object.freeze({ type: "duration", seconds: value.usage.seconds });
         }
-        if (value.error != null || value.task !== "transcribe" || value.language !== (locale === "zh" ? "chinese" : "english")
+        if (value.error != null || value.refusal != null || value.partial != null || value.finish_reason != null
+          || value.task !== "transcribe" || value.language !== (locale === "zh" ? "chinese" : "english")
           || !finiteSeconds(value.duration) || Math.abs(value.duration - audio!.seconds) > 0.1
-          || !validText(value.text, 8000)) return fail("MODEL_OUTPUT_INVALID", receipt());
+          || !validText(value.text, 8000) || !validSegments(value)) return fail("MODEL_OUTPUT_INVALID", receipt());
         return { kind: "candidate", task, transcript: value.text, receipt: receipt() };
       } finally { bytes.fill(0); }
     };
@@ -134,6 +135,22 @@ function validText(value: unknown, max: number): value is string {
     && !/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/u.test(value) && value.isWellFormed();
 }
 function finiteSeconds(value: unknown): value is number { return typeof value === "number" && Number.isFinite(value) && value > 0 && value <= 60; }
+/** Optional verbose segments must be bounded, ordered and agree with the returned text.
+ * These checks do not certify acoustic completeness or recognition accuracy.
+ */
+function validSegments(value: Record<string, unknown>): boolean {
+  if (!Object.hasOwn(value, "segments")) return true;
+  if (!Array.isArray(value.segments) || !value.segments.length || value.segments.length > 256) return false;
+  let end = 0;
+  const texts: string[] = [];
+  for (const segment of value.segments) {
+    if (!record(segment) || typeof segment.start !== "number" || !Number.isFinite(segment.start) || segment.start < end
+      || !finiteSeconds(segment.end) || segment.end <= segment.start || segment.end > Number(value.duration) + 0.1
+      || !validText(segment.text, 8000)) return false;
+    end = segment.end; texts.push(segment.text);
+  }
+  return texts.join("").trim() === String(value.text).trim();
+}
 function record(value: unknown): value is Record<string, unknown> { return value !== null && typeof value === "object" && !Array.isArray(value); }
 async function readBounded(response: Response, signal: AbortSignal, limit: number, firstByte: () => void): Promise<Buffer> {
   const reader = response.body!.getReader(), chunks: Uint8Array[] = [];
