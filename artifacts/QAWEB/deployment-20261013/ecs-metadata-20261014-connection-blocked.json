@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-10-14T05:52:37.213631+00:00",
+  "scope": "existing fixed ECS metadata only",
+  "instanceId": "i-j6c7q3kftufyroypiqvu",
+  "approvedDatabaseRef": "dzqdzetcctkhbrhlxxgn",
+  "status": "BLOCKED_CONNECTION_RECORD_UNAVAILABLE",
+  "tools": {
+    "ssh": "/usr/bin/ssh",
+    "aliyun": null,
+    "acs": null,
+    "enabledEcsConnectorFound": false
+  },
+  "connection": {
+    "verifiedHostUserOrAlias": "UNKNOWN",
+    "normalCredentialEntrypoint": "UNKNOWN",
+    "connectionAttempted": false,
+    "credentialInternalsRead": false,
+    "newRouteOrIdentityAttempted": false,
+    "platformPermissionDenialObserved": false
+  },
+  "sourceOnlyExpectedPaths": [
+    "/opt/vp-v4",
+    "/run/vp-worker-secrets",
+    "/run/vp-worker-secrets/db.key",
+    "/run/vp-worker-secrets/qwen.key",
+    "/etc/visepanda/hosted-profile.json",
+    "/etc/visepanda/qa/qa-target.json",
+    "/var/lib/vp-worker/journal"
+  ],
+  "sourceOnlyWorkerContainerName": "vp-hosted-text-worker",
+  "currentHost": {
+    "instanceIdentityVerified": "UNRUN",
+    "uptime": "UNKNOWN",
+    "bootId": "UNKNOWN",
+    "bootTime": "UNKNOWN",
+    "workerContainerOrProcessExists": "UNKNOWN",
+    "image": "UNKNOWN",
+    "sourceSha": "UNKNOWN",
+    "publicDatabaseRef": "UNKNOWN",
+    "profileVersion": "UNKNOWN",
+    "readOnlyFlags": "UNKNOWN",
+    "tmpfs": "UNKNOWN"
+  },
+  "keyMetadata": [
+    {
+      "path": "/run/vp-worker-secrets/db.key",
+      "exists": "UNKNOWN",
+      "owner": "UNKNOWN",
+      "mode": "UNKNOWN",
+      "nonSymlink": "UNKNOWN",
+      "nonempty": "UNKNOWN"
+    },
+    {
+      "path": "/run/vp-worker-secrets/qwen.key",
+      "exists": "UNKNOWN",
+      "owner": "UNKNOWN",
+      "mode": "UNKNOWN",
+      "nonSymlink": "UNKNOWN",
+      "nonempty": "UNKNOWN"
+    }
+  ],
+  "authenticationValidity": "UNRUN",
+  "realWorkerQuestionAnswer": "UNRUN",
+  "providerRequests": 0,
+  "resourceMutations": 0,
+  "secretContentsReadOrPersisted": false,
+  "reimportOrKeyInputRequested": false,
+  "preflightScriptExecuted": false,
+  "blockedReason": "Accepted task records contain fixed instance identity and file slots but no trusted current SSH host/user/alias or normal credential entrypoint. No ECS connector is enabled and Alibaba CLIs are not in PATH. Existing ssh executable alone does not identify an approved target or establish access.",
+  "resumeRequirement": "Main supplies an existing approved nonsecret connection record/official entrypoint pointer; any new permission or credential action goes through Main/product."
+}
