@@ -1,0 +1,2 @@
+PASS: persona bounds, normalization, isolated draft, 3 tone previews, local todo states/reset
+PASS: iOS Simulator SDK typecheck with actual shared frontend state and AppTab
