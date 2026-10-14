@@ -91,6 +91,9 @@ export function selectCheckPlan(files,eventName,forceFull=false){
   if(f.startsWith('evals/')){checks.evals=true;checks.contract=true;continue;}
   known=false;
  }
+ // pnpm test reads .next static output: any selected static test requires a build.
+ // Close this dependency after combining all changed-path families.
+ if(checks.test)checks.build=true;
  return known?{version:1,profile:'affected',reason:'known_changed_paths',checks,dbLanes:DB_LANES.filter(l=>lanes.has(l))}:full('unknown_dependency');
 }
 export function detectPlan(env=process.env){
