@@ -122,7 +122,14 @@ struct AppShellView: View {
             open(.ask)
         }
         .task {
-            guard !frontendEnabled else { return }
+            if frontendEnabled {
+#if DEBUG
+                if ProcessInfo.processInfo.arguments.contains("-V10MuseLongChat") {
+                    frontend.loadLongLocalConversationSample()
+                }
+#endif
+                return
+            }
             settings.nativeSession.notifications.attach(session: settings.nativeSession)
             await settings.nativeSession.restore()
             await settings.nativeSession.notifications.finishRestoration(session: settings.nativeSession)
