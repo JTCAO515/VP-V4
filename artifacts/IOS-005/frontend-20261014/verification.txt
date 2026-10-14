@@ -1,3 +1,4 @@
+PASS: explicit sample-origin bilingual labels; real recent/saved AI labels preserved
 PASS: actual phrase/presentation readiness and actor/consent/current-result negative predicates
 PASS: actual SwiftUI card, DEBUG sample and shared-state expression wrapper typecheck against installed iOS Simulator SDK (no Simulator boot or app build)
 PASS: full changed view syntax parse; runtime UI/provider/device remains UNRUN
