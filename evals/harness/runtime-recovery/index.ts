@@ -44,12 +44,13 @@ export async function runRuntimeRecovery(input: unknown, transport?: RuntimeTran
   // Freeze a detached binding before any asynchronous operation (caller mutation cannot redirect it).
   Object.freeze(run.context.source); Object.freeze(run.context); Object.freeze(run.operation); Object.freeze(run);
   const controller = new AbortController();
+  const deadline = performance.now() + run.timeoutMs;
   const abort = () => controller.abort();
   signal.addEventListener("abort", abort, { once: true });
   if (signal.aborted) abort();
   let timedOut = false;
   const timer = setTimeout(() => { timedOut = true; abort(); }, run.timeoutMs);
-  const port = createBoundedPort(transport, run.context, run.maxRequests, controller.signal);
+  const port = createBoundedPort(transport, run.context, run.maxRequests, controller.signal, deadline);
   let taskState = "unknown", cursor = 0, retired = false;
   let lateEventsIgnored = 0;
   let tripVersion: number | "unknown" = "unknown", receipt: RecoveryReport["receipt"] = null;
@@ -176,6 +177,8 @@ export async function runRuntimeRecovery(input: unknown, transport?: RuntimeTran
       throw new RuntimeFailure("SERVICE_TASK_CONFLICT");
     const after = await tripRead();
     await replay(); // final authority and late terminal fence before classifying
+    if (performance.now() >= deadline) throw new RuntimeFailure("TIMEOUT_AFTER_OUTPUT");
+    if (controller.signal.aborted) throw new RuntimeFailure("CANCELLED");
     if (final?.state === "applied" && confirmed !== undefined && after.headVersion === final.resultingVersion) outcome = "applied";
     else if (run.scenario === "H10" && taskState === "cancelled" && confirmed === undefined && final?.state !== "applied"
       && before.headVersion === run.baseVersion && after.headVersion === run.baseVersion && before.contentDigest === after.contentDigest) outcome = "cancelled";

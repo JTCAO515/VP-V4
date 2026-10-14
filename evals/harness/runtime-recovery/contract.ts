@@ -1,4 +1,4 @@
-import { uuid, hash, integer, exact, parseRecoverySelection, type RecoverySelection } from "../../../lib/server/today/recovery/contract.ts";
+import { uuid, hash, integer, parseRecoverySelection, type RecoverySelection } from "../../../lib/server/today/recovery/contract.ts";
 
 export type RuntimeContext = Readonly<{
   ownerId: string; sessionId: string; mobileEpoch: number;
@@ -13,9 +13,18 @@ export type RecoveryRun = Readonly<{
   maxRequests: number; timeoutMs: number; replayPages: number;
 }>;
 export const record = (v: unknown): v is Record<string, unknown> => !!v && typeof v === "object" && !Array.isArray(v);
+export const ownExact = (v: Record<string, unknown>, keys: readonly string[]) => {
+  const own = Reflect.ownKeys(v);
+  return own.length === keys.length && own.every(k => typeof k === "string" && keys.includes(k)
+    && Object.hasOwn(Object.getOwnPropertyDescriptor(v, k) ?? {}, "value"));
+};
+const exact = ownExact;
 
 /** Exact, content-free invocation. Context describes caller binding; it grants no authority. */
 export function parseRun(v: unknown): RecoveryRun | null {
+  try { return parseExactRun(v); } catch { return null; }
+}
+function parseExactRun(v: unknown): RecoveryRun | null {
   if (!record(v) || !exact(v, ["scenario", "mode", "action", "context", "baseVersion", "operation", "proposalId", "proposalRevision", "digest", "idempotencyKey", "maxRequests", "timeoutMs", "replayPages"])
     || !["H09", "H10"].includes(String(v.scenario)) || !["controlled", "staging"].includes(String(v.mode))
     || (v.scenario === "H09" ? !["reconcile", "confirm_once"].includes(String(v.action)) : !["reconcile", "cancel"].includes(String(v.action)))
@@ -28,7 +37,8 @@ export function parseRun(v: unknown): RecoveryRun | null {
     || !integer(v.maxRequests, 1) || v.maxRequests > 64 || !integer(v.timeoutMs, 1) || v.timeoutMs > 60000
     || !integer(v.replayPages, 1) || v.replayPages > 8) return null;
   const absent = v.operation === null && v.proposalId === null && v.proposalRevision === null && v.digest === null && v.idempotencyKey === null;
-  if (absent ? v.scenario !== "H10" : !parseRecoverySelection(v.operation) || !uuid(v.proposalId) || !uuid(v.idempotencyKey)
+  if (absent ? v.scenario !== "H10" : !record(v.operation) || !exact(v.operation, ["operationId", "contextId", "contextDigest", "candidateId"])
+    || !parseRecoverySelection(v.operation) || !uuid(v.proposalId) || !uuid(v.idempotencyKey)
     || !integer(v.proposalRevision, 1) || typeof v.digest !== "string" || !/^trip-v2:[0-9a-f]{64}$/.test(v.digest)) return null;
   return structuredClone(v) as RecoveryRun;
 }
