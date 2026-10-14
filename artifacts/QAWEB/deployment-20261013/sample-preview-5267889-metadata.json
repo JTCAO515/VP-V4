@@ -1,0 +1,26 @@
+{
+  "id": "dpl_6X6tjWSmeLhb2qCBXtmQTxN1bLtc",
+  "url": "vp-v4-bvmnko5uy-jtcao515s-projects.vercel.app",
+  "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+  "ownerId": "team_vLT8SL2mQJJSnXbD9GzVLP4K",
+  "target": null,
+  "readyState": "READY",
+  "gitSource": {
+    "ref": "codex/vpv4-modular-implementation-20261014",
+    "repoId": 1341685139,
+    "sha": "5267889ab11c42a7a8da2a6e92f10b0d14aa367e",
+    "type": "github",
+    "prId": null
+  },
+  "gitMeta": null,
+  "cliReturnCode": 0,
+  "observedAt": "2026-10-14T04:58:41.145979+00:00",
+  "mcpLookupBySuppliedId": {
+    "status": 404,
+    "requestId": "sin1:sfo1::ghx8n-1791953874143-bd6b2d1f462d"
+  },
+  "mcpLookupByHostname": {
+    "status": 404,
+    "requestId": "sin1:sfo1::cvcbf-1791953907301-81f021d2307f"
+  }
+}

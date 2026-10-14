@@ -1,0 +1,17 @@
+{
+  "url": "https://vp-v4-git-codex-vpv4-modular-implemen-9b1e23-jtcao515s-projects.vercel.app",
+  "status": 403,
+  "headers": {
+    "Content-Type": "text/plain; charset=utf-8",
+    "Server": "Vercel",
+    "X-Vercel-Id": "sin1::brkql-1791953893932-64ca0a56f245"
+  },
+  "ordinaryAnonymousAccess": true,
+  "bypassUsed": false,
+  "bodyMarkers": {
+    "FORBIDDEN": true,
+    "Forbidden": true,
+    "Vercel Authentication": false,
+    "Access Denied": false
+  }
+}
