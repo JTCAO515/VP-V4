@@ -1,5 +1,46 @@
 # AGENT-007 C0 speech producer evidence
 
+## Current review repair
+
+Current speech source repair: `2575074c6a5d028b0843b5a9ec73d43daad88966`.
+The earlier963c/b2d validation below is historical and retained, not the current
+review-complete source. Main's dual-axis review found3P2 defects; this repair adds:
+
+- Complete Reflect own-key closure, descriptor snapshot and accessor/inherited
+  field rejection before reading request data. Symbols/hidden extras cannot dispatch.
+- Monotonic elapsed deadline checks before dispatch, after transport, before/after
+  each body read and before candidate return, alongside the async abort timer.
+  Synchronous blocking transport and immediately ready microtasks cannot return a
+  candidate after expiry.
+- Max4096 body reads, max64 empty reads, no empty chunks retained and event-loop
+  yield each64reads; limits reject and cancel the reader. Both late responses and
+  stalled/read-loop cancellations discard output.
+
+Actual delta checks:22/22 speech tests,0fail/0skip,164.16ms; full `pnpm typecheck`,
+`pnpm lint` (840files) and `git diff --check` PASS. Seven new tests cover the review
+negatives and event-loop cancellation; existing15 speech checks remain included.
+Unchanged vision source/regression evidence is reused, not rerun solely for docs.
+Repaired source SHA256:
+
+```text
+3f338c7d0835837604a30478bec3d3f1151c7f2b4f8047770a021fea4ec98d45 index.ts
+89b3de7e3cc2af022950edd5ca5dfc81f28ccd55fd4fe72e71ab35405be762c9 speech.test.ts
+```
+
+Main explicitly authorized importing exact shared CI dependency
+`ec29bdf9e998c69090c22d3c119ac05f9e0fe422`; local cherry commit
+`33968428a1d3fa71689ae29250760d24aa7588d8`. Only its2files
+`scripts/ci-change-scope.mjs` and `tests/unit/governance/ci-change-scope.test.mjs`
+were imported, with `git diff ec29bdf9 HEAD -- <two paths>` empty. Main's24CI
+governance/syntax/diff checks are reused against identical bytes; owner did not edit
+shared code. The fix selects a build when static-output tests are selected.
+
+PR702 original head7db Quality **FAIL** remains: `.next/server/app/journey.html`
+was missing because old selector picked static tests without their build. It is not
+a speech-test failure and was diagnosed/fixed by Main. No skip, weakening, workflow
+edit, admin merge, credential/permission change or retry bypass. New remote gates
+and formal delta review must be read against the updated exact head.
+
 Scope: #200 independent ASR/TTS C0 producer; no full parent closure.
 Worktree: `/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent007-speech-20261014`.
 Branch: `codex/agent007-speech-20261014`.

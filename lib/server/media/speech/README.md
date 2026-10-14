@@ -14,6 +14,8 @@ here and always returns `DATA_POLICY_BLOCKED` before budget or transport.
 - Request: exact requestId (ASCII identifier, max64), dataClass, zh/en locale,
   timeoutMs (1–60000), task and either wav or text. No URL, permission boolean,
   caller-selected voice/model/endpoint, translation, microphone or upload path.
+  Complete own keys are checked; Symbol/hidden extra fields, accessors and inherited
+  request fields reject before dispatch. Data fields are snapshotted without getters.
 - ASR: 0.1–60 second mono PCM16 WAV, 16/24 kHz, complete RIFF lengths and bounded
   bytes; silent buffers reject. Copied bytes and SHA bind admitted input. Sends
   multipart `whisper-1`, language zh/en, verbose_json, temperature0, synthetic.wav.
@@ -39,6 +41,10 @@ here and always returns `DATA_POLICY_BLOCKED` before budget or transport.
   Partial, empty, corrupt and unsupported outputs never become candidates.
 - Abort races return promptly even if transport ignores the signal. Late responses
   are cancelled; aborted body readers are cancelled and cannot return output.
+  A monotonic deadline is checked after transport, around every read and before
+  returning a candidate, so blocking work cannot escape an overdue timer. Reads
+  are capped at4096, empty chunks at64 (not retained); every64 reads yields to the
+  event loop for cancellation. Exceeding a read cap rejects and cancels the reader.
   Owned input/read buffers are cleared on exit. No files/cache are created.
   This is not secure-erasure proof for runtime/Blob copies or supplier storage.
   Successful output is caller-owned; caller must clear it when finished and obtain
