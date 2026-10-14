@@ -67,10 +67,10 @@ test('actual existing scripted worker output -> producer -> current Ops source r
 test('readable sources and self-certified C0/URI never authorize dispatch: no generation/fetch capability in assembler', async () => {
   let dispatches = 0; const d = dependencies();
   const deps = { ...d.deps, generate: () => { dispatches++; assert.fail('no dispatch authority'); }, fetch: () => assert.fail('no fetch') };
-  const result = await invoke(request(), deps, undefined);
-  assert.equal(result.kind, 'draft'); assert.equal(dispatches, 0);
+  const result = await invoke(request(), deps);
+  assert.equal(result.errorCode, 'INVALID_INPUT'); assert.equal(dispatches, 0);
   // No supplied generation outcome fails; reading a page cannot synthesize one.
-  assert.deepEqual(await produceWikiSynthesis(request(), undefined, deps, new AbortController().signal), { kind: 'failed', errorCode: 'MODEL_OUTPUT_INVALID' });
+  assert.deepEqual(await produceWikiSynthesis(request(), undefined, d.deps, new AbortController().signal), { kind: 'failed', errorCode: 'MODEL_OUTPUT_INVALID' });
   assert.equal(dispatches, 0);
 });
 
@@ -176,4 +176,36 @@ test('deadline bounds stalled reads; failed/cancelled generation outcomes and th
   assert.deepEqual(await invoke(request(), dependencies().deps, { kind: 'cancelled' }), { kind: 'cancelled' });
   assert.deepEqual(await invoke(request(), dependencies().deps, { kind: 'failed', errorCode: 'MODEL_OUTPUT_INVALID', rawResponseForDiagnostics: 'private diagnostics' }), { kind: 'failed', errorCode: 'GENERATION_FAILED' });
   assert.deepEqual(await invoke(request(), { authorId: author, readSources: async () => { throw new Error('private diagnostics'); } }), { kind: 'failed', errorCode: 'SOURCE_UNAVAILABLE' });
+});
+
+
+test('full own-key boundaries reject hidden/Symbol authority before JSON cloning', async () => {
+  for (const property of ['hiddenReviewer', Symbol('reviewer')]) {
+    for (const target of ['input', 'span', 'provider', 'outcome', 'statement', 'usage', 'sources', 'deps']) {
+      const input = request(), outcome = scriptedOutcome(), d = dependencies();
+      const at = { input, span: input.sources[0], provider: input.provider = { ...provider }, outcome,
+        statement: outcome.output.statementProposals[0].statement, usage: outcome.usage, sources: input.sources, deps: d.deps }[target];
+      Object.defineProperty(at, property, { value: author, enumerable: false });
+      const result = await invoke(input, d.deps, outcome);
+      assert.equal(result.kind, 'failed', target);
+      assert.equal(result.errorCode, ['outcome', 'statement', 'usage'].includes(target) ? 'MODEL_OUTPUT_INVALID' : 'INVALID_INPUT', target);
+    }
+  }
+  const sourceRows = structuredClone(rows); Object.defineProperty(sourceRows[0].declaration, Symbol('rights'), { value: true });
+  assert.equal((await invoke(request(), dependencies(sourceRows).deps)).errorCode, 'SOURCE_UNAVAILABLE');
+});
+
+test('monotonic deadline rejects late synchronous and microtask-starved source results even before timer fires', async () => {
+  for (const mode of ['synchronous', 'microtasks', 'second_read']) {
+    const input = request(); input.timeoutMs = 5; let reads = 0;
+    const deps = { authorId: author, readSources: () => {
+      reads++;
+      if (mode === 'second_read' && reads === 1) return Promise.resolve(rows);
+      const end = performance.now() + 15;
+      if (mode !== 'microtasks') { while (performance.now() < end) {} return Promise.resolve(rows); }
+      return new Promise(resolve => { const tick = () => performance.now() < end ? queueMicrotask(tick) : resolve(rows); tick(); });
+    } };
+    assert.deepEqual(await invoke(input, deps), { kind: 'failed', errorCode: 'TIMEOUT' });
+    assert.equal(reads, mode === 'second_read' ? 2 : 1);
+  }
 });

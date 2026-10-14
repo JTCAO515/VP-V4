@@ -1,6 +1,7 @@
 # AGENT-004 current-source Wiki synthesis assembler
 
-Source commit: `0161fe3e`. Base: `fcbac274d06ee9fd916ee06f74bb90464bcbd04d`.
+Initial stable source commit: `0161fe3e`; resource-boundary hardening follows in this PR.
+Base: `fcbac274d06ee9fd916ee06f74bb90464bcbd04d`.
 PR: [703](https://github.com/JTCAO515/VP-V4/pull/703), targeting the existing QA branch.
 Only the assigned new synthesis source/tests/artifacts directories are authored.
 Main explicitly authorized importing adjacent CI dependency `ec29bdf9e998c69090c22d3c119ac05f9e0fe422` unchanged.
@@ -37,7 +38,10 @@ existing generation input digest must match the same declarations/config/prompt.
 The second read must still match the pinned page/version and source declarations.
 Request/source/output byte caps, two-to-three-source bounds, existing proposal
 limits, finite integer usage, output-token cap and a single 1–60000ms deadline
-are enforced. Caller/generation snapshots are frozen; cancelled/timed-out reads
+are enforced. A monotonic clock is checked after reads and before returning a
+draft, so synchronous/microtask-starved late results reject even before the timer
+can run. Complete own-key checks reject Symbol/hidden/accessor authority before
+JSON cloning. Caller/generation snapshots are frozen; cancelled/timed-out reads
 cannot return a late draft. No implicit retries or diagnostics logging.
 
 The returned envelope contains the unchanged `wiki-draft/2` outcome, authenticated
@@ -48,8 +52,8 @@ from the existing protocol is preserved. Source binding is not semantic entailme
 
 ## Verification
 
-- PASS: `node --experimental-strip-types --test tests/contract/wiki-synthesis/producer.test.mjs tests/contract/knowledge/wiki-proposals.test.mjs tests/contract/knowledge/wiki-complete.test.mjs` — 30 tests.
-- PASS: final source's 12 synthesis tests after cancellation/token-cap tightening.
+- PASS: `node --experimental-strip-types --test tests/contract/wiki-synthesis/producer.test.mjs tests/contract/knowledge/wiki-proposals.test.mjs tests/contract/knowledge/wiki-complete.test.mjs` — initial 30 tests, final 32 tests after the two resource-boundary regressions.
+- PASS: 14 synthesis tests including synchronous/microtask-starved deadlines and hidden/Symbol fields.
 - PASS: final source `pnpm typecheck`; `pnpm lint`; `pnpm docs:check`; `git diff --check`.
 - Actual scripted invocation: the first synthesis test invokes the existing
   production `runWikiStatementProposalJob` and provider protocol with an explicitly
@@ -61,6 +65,8 @@ from the existing protocol is preserved. Source binding is not semantic entailme
   previous-only sources, forged IDs/quotes/declarations/offsets/digest, excessive
   sources/output, nonfinite usage, unauthorized spans, cancellation, deadline and
   read-only sources without a generation dispatch capability.
+- PASS: Main CI dependency's 24 selector/DB-governance tests. Source reading is
+  exactly two bounded calls with no byte/chunk stream loop.
 - Dependency setup: frozen-lockfile offline install with ignored `node_modules`;
   no tracked package/lock changes. Node 26.8.2. GitHub read/push/PR operations succeeded.
   Effective model/service tier not exposed by tools; no claim of verification.
