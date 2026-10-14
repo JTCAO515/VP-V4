@@ -1,3 +1,4 @@
+import {decodeOpsRefusal,opsRefusalCode} from "../../observability/ops-control/refusal.ts";
 import { runGroundedAiAssist, type GroundedAiAssistContextRpc, type GroundedAiAssistInput, type GroundedAiAssistOutcome } from "./grounded-ai-assist.ts";
 import type { GroundedSearchDependencies } from "./grounded-search.ts";
 
@@ -18,7 +19,7 @@ export type GroundedAiAssistJobRpc = (
 ) => Promise<Readonly<{ data: unknown; error: { message: string } | null }>>;
 
 export type GroundedAiAssistJobStatus =
-  | Readonly<{ status: "not_offered"; reason: "unauthorized" | "not_blocked" | "job_unavailable" }>
+  | Readonly<{ status: "not_offered"; reason: "unauthorized" | "not_blocked" | "job_unavailable" | "ops_control_disabled" | "ops_scope_unavailable" }>
   | Readonly<{ status: "pending" }>
   | Readonly<{ status: "succeeded"; outcome: GroundedAiAssistOutcome }>
   | Readonly<{ status: "failed"; errorCode: string | null }>
@@ -37,6 +38,8 @@ export async function runGroundedAiAssistJob(
   } catch {
     return { status: "not_offered", reason: "job_unavailable" };
   }
+  const denied=decodeOpsRefusal(ensure.data)??opsRefusalCode(ensure.error?.message);
+  if(denied)return {status:"not_offered",reason:denied==="OPS_CONTROL_DISABLED"?"ops_control_disabled":"ops_scope_unavailable"};
   if (ensure.error) return { status: "not_offered", reason: "job_unavailable" };
   const state = parseEnsure(ensure.data);
   if (state === null) return { status: "not_offered", reason: "job_unavailable" };

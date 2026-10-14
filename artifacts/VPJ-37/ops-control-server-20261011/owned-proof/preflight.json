@@ -1,0 +1,12 @@
+{
+  "lease": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-integrated-owned-proof-fixture-20261012-V8.json",
+  "name": "vpj37-w2-integration-20261012-54bf86c1",
+  "owner": "01a126a8-7cb5-7a70-aca6-0ba38c99efe2",
+  "image": "public.ecr.aws/supabase/postgres@sha256:86a2e078779e5bdccda1f6f6c5063aa9779a322d1fface5fb408d051909b230f",
+  "result": "PASS",
+  "network": "none",
+  "ports": 0,
+  "mounts": 0,
+  "socket": "0700",
+  "version": "17.6"
+}

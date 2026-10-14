@@ -1,3 +1,4 @@
+import { stageFreshOpsFixtureBootstrap } from '../observability/ops-control-owned/fresh-bootstrap.mjs';
 /** Creates and removes only a new uniquely named disposable Ops stack. */
 import { mkdtempSync, mkdirSync, readFileSync, writeFileSync, cpSync, rmSync, readdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -25,6 +26,7 @@ for(const offset of [20,21,22,23,24,27,29])config=config.replaceAll(String(54300
 config=config.replace(/(\[db.seed\][\s\S]*?enabled = )true/,'$1false');
 writeFileSync(join(target,'supabase/config.toml'),config);
 cpSync(join(repo,'supabase/migrations'),join(target,'supabase/migrations'),{recursive:true});
+stageFreshOpsFixtureBootstrap(target);
 if(before)for(const file of readdirSync(join(target,'supabase/migrations')))if(file>=before)rmSync(join(target,'supabase/migrations',file));
 function run(command,args,visible=false,env=process.env){return new Promise((resolve,reject)=>{const child=spawn(command,args,{cwd:repo,env,stdio:visible?'inherit':['ignore','pipe','pipe']});if(!visible){child.stdout.resume();child.stderr.resume();}child.once('error',()=>reject(new Error(`Disposable process launch failed: ${command}`)));child.once('exit',code=>resolve(code??1));});}
 let exit=1;

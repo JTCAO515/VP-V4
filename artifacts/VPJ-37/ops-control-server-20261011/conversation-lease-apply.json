@@ -1,0 +1,12 @@
+{
+  "lease": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-conversation-exact-lease-20261012.json",
+  "leaseSha256": "d73d6fba1e01b063c167d7ea3007dd90631a806a615458d2924d689f2f990fb7",
+  "sourceHeadBefore": "4142e71cff08f0b8de9f6834dbe48eea10b4bf53",
+  "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift",
+  "before": "9103ee2e7700daf3b31678a0b992e283f250c7bac865327cbb1218231f8e3dcf",
+  "patch": "91e9fa557961724c24c79c69096f81c09022d658acb7fc4fc9624e2a36279600",
+  "after": "0e9fda055c991afc788e069d094875cd207135327510f768d1e7e098fa023313",
+  "beforePatchAfterIndex": "PASS",
+  "newDedicatedStateAndSQL": "HOLD",
+  "affectedAppBuild": "UNRUN until final mature Native package per lease"
+}

@@ -1,0 +1,13 @@
+{
+  "sourceBodySha256": "96b545afbd306da94ca8360afed3d6754c1de598bbab2d1d6e40562aec818b36",
+  "environment": "Own PG17.6 SQL Auth rows/claims, synthetic policy/observations/usage; no GoTrue/provider",
+  "results": [
+    {
+      "label": "actual scoped settled output publish stop uses real TS executor and original-operation receipt/readback; foreign binding refused; Trip/no Proposal unchanged",
+      "result": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: ERROR:  permission denied for function claim_scoped_trip_edit_work_v1\n\n\n3 !== 0\n"
+    }
+  ],
+  "providerCalls": 0,
+  "targetDevice": "UNRUN"
+}

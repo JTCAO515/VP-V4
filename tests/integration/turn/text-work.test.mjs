@@ -1,3 +1,4 @@
+import { initializeFreshOpsFixture } from '../observability/ops-control-owned/fresh-bootstrap.mjs';
 import {spawn} from 'node:child_process';
 import test,{before,after} from 'node:test';
 import assert from 'node:assert/strict';
@@ -74,6 +75,7 @@ before(async()=>{
   }
   await db('begin;'+migration+'commit;');
  }
+ await initializeFreshOpsFixture(db);
 });
 after(async()=>{if(created)assert.equal((await command('docker',['rm','-f',container])).code,0);});
 run('durable owner consent gates input; exact retries reuse and changed text rejects',async()=>{

@@ -1,3 +1,4 @@
+import { stageFreshOpsFixtureBootstrap } from '../../observability/ops-control-owned/fresh-bootstrap.mjs';
 // Creates/removes only its new private disposable project. Await Main's port/fixture lease before running.
 import {mkdtempSync,mkdirSync,readFileSync,writeFileSync,cpSync,rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';import {join} from 'node:path';import {spawn,execFileSync} from 'node:child_process';import {randomUUID} from 'node:crypto';
@@ -8,6 +9,7 @@ if(process.env.DOCKER_HOST||process.env.DOCKER_CONTEXT)throw Error('Explicit Doc
 const context=execFileSync('docker',['context','show'],{encoding:'utf8'}).trim();const info=JSON.parse(execFileSync('docker',['context','inspect',context],{encoding:'utf8'}))[0];if(!info.Endpoints.docker.Host.startsWith('unix:///'))throw Error('Local Docker required');
 const project='vp-native-ask-'+randomUUID().slice(0,8),workdir=mkdtempSync(join(tmpdir(),'vpj09-directions-auth-'));mkdirSync(join(workdir,'supabase'));
 writeFileSync(join(workdir,'supabase/config.toml'),nativeHTTPSupabaseConfig(readFileSync('supabase/config.toml','utf8'),project,ports));cpSync('supabase/migrations',join(workdir,'supabase/migrations'),{recursive:true});
+stageFreshOpsFixtureBootstrap(workdir);
 const env={...process.env,DOCKER_CONTEXT:context};
 const run=(command,args,visible=false,childEnv=env)=>new Promise((resolve,reject)=>{const p=spawn(command,args,{cwd:repo,env:childEnv,stdio:visible?'inherit':['ignore','pipe','pipe']});if(!visible){p.stdout.resume();p.stderr.resume();}p.once('error',()=>reject(Error('Owned process launch failed')));p.once('exit',code=>resolve(code??1));});
 let code=1;

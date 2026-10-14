@@ -1,3 +1,4 @@
+import { initializeFreshOpsFixture } from '../observability/ops-control-owned/fresh-bootstrap.mjs';
 // Explicit network-none preparation only; all dependencies from this current checkout.
 import test,{before,after} from 'node:test';
 import assert from 'node:assert/strict';
@@ -40,6 +41,7 @@ before(async()=>{
  const m=readFileSync('supabase/migrations/'+mine,'utf8');await db('begin;'+m+'rollback;');assert.equal(await db("select to_regclass('turn_private.planning_v2_model_attempt_bindings') is null;"),'t');await db('begin;'+m+'commit;');
  // Apply every later dependent migration only after the original rollback/apply probe.
  for(const f of migrations.filter(f=>f>mine))await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;');
+ await initializeFreshOpsFixture(db);
 });
 after(async()=>{if(created)assert.equal((await command('docker',['rm','-f',container])).code,0);});
 const run=(name,fn)=>test(name,{skip:!enabled,timeout:120000},fn);

@@ -1,3 +1,4 @@
+import { stageFreshOpsFixtureBootstrap } from '../observability/ops-control-owned/fresh-bootstrap.mjs';
 /** New uniquely named disposable Auth/HTTP stack. No existing target or .env. */
 import {mkdtempSync,mkdirSync,readFileSync,writeFileSync,cpSync,rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
@@ -16,6 +17,7 @@ const project='vp-native-ask-'+randomUUID().slice(0,8),target=mkdtempSync(join(t
 mkdirSync(join(target,'supabase'));
 writeFileSync(join(target,'supabase/config.toml'),nativeHTTPSupabaseConfig(readFileSync('supabase/config.toml','utf8'),project,ports));
 cpSync('supabase/migrations',join(target,'supabase/migrations'),{recursive:true});
+stageFreshOpsFixtureBootstrap(target);
 const env={...process.env,DOCKER_CONTEXT:context};
 const run=(args,childEnv)=>new Promise((resolve,reject)=>{
  const child=spawn(process.execPath,args,{env:childEnv,stdio:'inherit'});

@@ -1,0 +1,23 @@
+{
+  "state": "APPLIED_INDEX_MATCH",
+  "lease": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-scoped-publish-refusal-exact-lease-20261012-V8.json",
+  "sourceHeadBefore": "ec1fd5911bd04557146d4239e2d261ca03c6f5eb",
+  "before": "9cab38e894a1233d7165e7180978e1b618dd5d847b7909132abb65b14ca625cc",
+  "rawPatch": "87d388da994ba26ccb8b4d973bbcaf688aeb136563d698471de8977e6c7cb373",
+  "mappedPatch": "adda0a76855490a52b7b4675a022637d05666f12e8187e70e8c31c8a53d32c94",
+  "after": "821450a5d9e0a9e5f6304067d7ac6d43c49826b3176691fdbb1be16ca1c93d36",
+  "temporaryReplay": "MATCH",
+  "newOwnedTest": "tests/contract/observability/ops-control-scoped-publish.test.mjs",
+  "testSha256": "a83f0a6beb3562f399f8a707d7159980754a06eec263f87fca05418e71e3f92a",
+  "productSQL": "NOT_APPLIED",
+  "sourceHeadAfter": "6cf0957879e96dfae758f8b824aa7a8212ecb507",
+  "validation": {
+    "command": "node --experimental-strip-types --test tests/contract/observability/ops-control-scoped-publish.test.mjs tests/unit/planning/scoped-edit-executor.test.ts",
+    "pass": 35,
+    "fail": 0,
+    "skip": 0,
+    "candidateStrictTypecheck": "REUSED exact after bytes",
+    "SQLActualProof": "UNRUN original owner",
+    "nativeBuild": "REUSED unchanged Native source"
+  }
+}

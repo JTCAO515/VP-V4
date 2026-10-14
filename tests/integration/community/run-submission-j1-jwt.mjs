@@ -1,3 +1,4 @@
+import { stageFreshOpsFixtureBootstrap } from '../observability/ops-control-owned/fresh-bootstrap.mjs';
 // Own fresh disposable Auth/PostgREST stack; no existing local/remote target.
 import {mkdtempSync,mkdirSync,readFileSync,writeFileSync,cpSync,rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
@@ -13,6 +14,7 @@ const inspected=JSON.parse(execFileSync('docker',['context','inspect',context],{
 if(!inspected.Endpoints.docker.Host.startsWith('unix:///'))throw Error('Local Docker context required');
 const project='vp-native-ask-'+randomUUID().slice(0,8),target=mkdtempSync(join(tmpdir(),'vpj48-j1-jwt-'));
 mkdirSync(join(target,'supabase'));writeFileSync(join(target,'supabase/config.toml'),nativeHTTPSupabaseConfig(readFileSync('supabase/config.toml','utf8'),project,ports));cpSync('supabase/migrations',join(target,'supabase/migrations'),{recursive:true});
+stageFreshOpsFixtureBootstrap(target);
 const run=(bin,args,visible=false,env=process.env)=>new Promise((ok,fail)=>{const child=spawn(bin,args,{env:{...env,DOCKER_CONTEXT:context},stdio:visible?'inherit':['ignore','pipe','pipe']});if(!visible){child.stdout.resume();child.stderr.resume();}child.once('error',()=>fail(Error('Disposable process launch failed')));child.once('exit',code=>ok(code??1));});
 let result=1;
 try{

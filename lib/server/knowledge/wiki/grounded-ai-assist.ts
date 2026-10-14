@@ -1,3 +1,5 @@
+import {isDeepStrictEqual} from "node:util";
+import {decodeOpsRefusal,opsRefusalCode,OpsControlRefusal} from "../../observability/ops-control/refusal.ts";
 import { isPlaceQuestionId, reviewedQuestionId } from "../claim/questions.ts";
 import type { KnowledgeIntent } from "../claim/intent.ts";
 import { runGroundedWikiSearch, type GroundedSearchDependencies, type GroundedSearchOutcome } from "./grounded-search.ts";
@@ -47,8 +49,10 @@ export async function runGroundedAiAssist(
   } catch {
     return { kind: "not_offered", reason: "context_unavailable" };
   }
+  const initialDenied=decodeOpsRefusal(raw.data)??opsRefusalCode(raw.error?.message);
+  if(initialDenied)return {kind:"unavailable",reason:initialDenied==="OPS_CONTROL_DISABLED"?"ops_control_disabled":"ops_scope_unavailable"};
   if (raw.error) return { kind: "not_offered", reason: "context_unavailable" };
-  const context = parseContext(raw.data);
+  const context = parseContext(raw.data,input.turnId);
   if (context === "unauthorized") return { kind: "not_offered", reason: "unauthorized" };
   if (context === "not_blocked" || context === null) return { kind: "not_offered", reason: "not_blocked" };
 
@@ -57,17 +61,30 @@ export async function runGroundedAiAssist(
       intent: context.intent, question: context.inputText, city: context.city, locale: context.locale,
       maxRounds: input.maxRounds, maxOutputTokens: input.maxOutputTokens, timeoutMs: input.timeoutMs, provider: input.provider,
     },
-    dependencies, signal,
+    {...dependencies,recordDestination:async(destination,requestSignal)=>{
+      if(destination.phase==="configured"){
+        const fresh=await dependencies.contextRpc("read_grounded_ai_assist_context_v1",{p_turn_id:input.turnId});
+        const denied=decodeOpsRefusal(fresh.data)??opsRefusalCode(fresh.error?.message);if(denied)throw new OpsControlRefusal(denied);
+        if(fresh.error||!isDeepStrictEqual(raw.data,fresh.data))throw Error("DATA_POLICY_BLOCKED");
+        // Main source ruling: this legacy C2 path has no proved durable scope,
+        // current job-claim/source/config/budget binding. Context reads alone
+        // never authorize another charged call; no new ledger or fake profile.
+        throw new OpsControlRefusal("OPS_SCOPE_UNAVAILABLE");
+      }
+      await dependencies.recordDestination(destination,requestSignal);
+    }}, signal,
   );
 }
 
 type Context = Readonly<{ intent: KnowledgeIntent; inputText: string; city: string; locale: "zh" | "en" }>;
 
-function parseContext(value: unknown): Context | "unauthorized" | "not_blocked" | null {
+function parseContext(value: unknown,expectedTurnId:string): Context | "unauthorized" | "not_blocked" | null {
   if (!record(value) || typeof value.kind !== "string") return null;
   if (value.kind === "unavailable") return "unauthorized";
   if (value.kind === "not_applicable") return "not_blocked";
   if (value.kind !== "context") return null;
+  const keys=["kind","turnId","city","locale","intent","inputText","placeName"];
+  if(Object.keys(value).length!==keys.length||!keys.every(k=>Object.hasOwn(value,k))||value.turnId!==expectedTurnId)return null;
   if (typeof value.city !== "string" || (value.locale !== "zh" && value.locale !== "en")) return null;
   if (typeof value.inputText !== "string" || value.inputText.trim().length === 0) return null;
   const id = reviewedQuestionId(value.intent);

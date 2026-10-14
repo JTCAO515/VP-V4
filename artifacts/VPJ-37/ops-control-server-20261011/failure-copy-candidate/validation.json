@@ -1,0 +1,32 @@
+{
+  "state": "CANDIDATE_NOT_APPLIED",
+  "baseline": {
+    "total": 89,
+    "pass": 87,
+    "fail": 2,
+    "skip": 0,
+    "failures": [
+      "old 24-code snapshot",
+      "missing/misindexed five-locale copy"
+    ],
+    "rawLog": "artifacts/VPJ-37/ops-control-server-20261011/failure-copy-candidate/applied-baseline.log.gz",
+    "rawLogSha256": "6400e4f1069f4afcdc016e95f1c6adb55ee2da3b9f05840a76f431738c77fff2"
+  },
+  "candidate": {
+    "result": "PASS",
+    "checks": [
+      "130 locale/code combinations",
+      "legacy positional copy",
+      "Ops no retry/provider fallback",
+      "manual read alternative",
+      "strict TypeScript"
+    ]
+  },
+  "command": "node --experimental-strip-types /private/tmp/w2-failure-copy-validate.mjs",
+  "targetProviderDevice": "UNRUN",
+  "ciPlan": {
+    "result": "full",
+    "reason": "unknown_dependency",
+    "note": "Conservative existing selector includes evidence artifacts; no gate narrowing. Final exact-head CI pending full SQL integration."
+  }
+}

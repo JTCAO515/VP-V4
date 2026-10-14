@@ -1,0 +1,5 @@
+--- a/ios/VisePanda/VisePanda/Features/ScopedTripEdit/NativeScopedTripEditStore.swift
++++ b/ios/VisePanda/VisePanda/Features/ScopedTripEdit/NativeScopedTripEditStore.swift
+@@ -187 +187 @@
+-                  let reason = raw["reason"] as? String, ["queued", "provider_unavailable"].contains(reason),
++                  let reason = raw["reason"] as? String, ["queued", "provider_unavailable", "ops_control_disabled", "ops_scope_unavailable"].contains(reason),

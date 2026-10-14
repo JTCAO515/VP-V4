@@ -1,0 +1,32 @@
+--- a/ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift
++++ b/ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift
+@@ -485,0 +486 @@
++    private var opsRefusal: Bool { [notice, planningNotice].contains { $0 == "OPS_CONTROL_DISABLED" || $0 == "OPS_SCOPE_UNAVAILABLE" } }
+@@ -623 +624 @@
+-                        canContinue: NativeJourneyEntryContinuation.relationship(authorized: resultActive && !composerWaitingForAuthority,
++                        canContinue: NativeJourneyEntryContinuation.relationship(authorized: resultActive && !composerWaitingForAuthority && !opsRefusal,
+@@ -628 +629 @@
+-                                authorized: resultActive && !composerWaitingForAuthority, pending: shellSwitchBlocked,
++                                authorized: resultActive && !composerWaitingForAuthority && !opsRefusal, pending: shellSwitchBlocked,
+@@ -735 +736,7 @@
+-                if notice != nil && privacyLinks.isEmpty {
++                if opsRefusal {
++                    Text(chinese ? "此能力暂时停用，或当前城市范围无法核实。已有行程和成果保留；请查看原行程，按原确认流程手工调整。" : "This capability is paused or the current city scope cannot be qualified. Existing Trips and results are retained; edit through the original confirmation flow.")
++                        .font(.footnote).accessibilityIdentifier("assistant.ops-refusal")
++                    NavigationLink(destination: NativeJourneysView()) {
++                        Text(chinese ? "查看已有行程与成果" : "Open existing Trips and results")
++                    }.accessibilityIdentifier("assistant.ops-alternative")
++                } else if notice != nil && privacyLinks.isEmpty {
+@@ -851 +858 @@
+-                            .disabled(busy || !composerScopeCurrent || composerWaitingForAuthority || (conversation == nil && pending == nil) || (pending == nil && selectedSources.pending == nil && draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty))
++                            .disabled(opsRefusal || busy || !composerScopeCurrent || composerWaitingForAuthority || (conversation == nil && pending == nil) || (pending == nil && selectedSources.pending == nil && draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty))
+@@ -1229 +1236 @@
+-                        .disabled(planningBusy || (planningPending == nil && planningDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty))
++                        .disabled(opsRefusal || planningBusy || (planningPending == nil && planningDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty))
+@@ -1245 +1252 @@
+-            if planningNotice != nil {
++            if planningNotice != nil && !opsRefusal {
+@@ -1820,0 +1828 @@
++            if case NativeDataError.server(let code)=error,["OPS_CONTROL_DISABLED","OPS_SCOPE_UNAVAILABLE"].contains(code){notice=code}
+@@ -1977,0 +1986 @@
++                if case NativeDataError.server(let code)=error,["OPS_CONTROL_DISABLED","OPS_SCOPE_UNAVAILABLE"].contains(code){planningNotice=code}

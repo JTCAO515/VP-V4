@@ -1,0 +1,31 @@
+--- a/lib/server/knowledge/wiki/grounded-ai-assist.ts
++++ b/lib/server/knowledge/wiki/grounded-ai-assist.ts
+@@ -0,0 +1,2 @@
++import {isDeepStrictEqual} from "node:util";
++import {decodeOpsRefusal,opsRefusalCode,OpsControlRefusal} from "../../observability/ops-control/refusal.ts";
+@@ -49,0 +52,2 @@
++  const initialDenied=decodeOpsRefusal(raw.data)??opsRefusalCode(raw.error?.message);
++  if(initialDenied)return {kind:"unavailable",reason:initialDenied==="OPS_CONTROL_DISABLED"?"ops_control_disabled":"ops_scope_unavailable"};
+@@ -51 +55 @@
+-  const context = parseContext(raw.data);
++  const context = parseContext(raw.data,input.turnId);
+@@ -60 +64,12 @@
+-    dependencies, signal,
++    {...dependencies,recordDestination:async(destination,requestSignal)=>{
++      if(destination.phase==="configured"){
++        const fresh=await dependencies.contextRpc("read_grounded_ai_assist_context_v1",{p_turn_id:input.turnId});
++        const denied=decodeOpsRefusal(fresh.data)??opsRefusalCode(fresh.error?.message);if(denied)throw new OpsControlRefusal(denied);
++        if(fresh.error||!isDeepStrictEqual(raw.data,fresh.data))throw Error("DATA_POLICY_BLOCKED");
++        // Main source ruling: this legacy C2 path has no proved durable scope,
++        // current job-claim/source/config/budget binding. Context reads alone
++        // never authorize another charged call; no new ledger or fake profile.
++        throw new OpsControlRefusal("OPS_SCOPE_UNAVAILABLE");
++      }
++      await dependencies.recordDestination(destination,requestSignal);
++    }}, signal,
+@@ -66 +81 @@
+-function parseContext(value: unknown): Context | "unauthorized" | "not_blocked" | null {
++function parseContext(value: unknown,expectedTurnId:string): Context | "unauthorized" | "not_blocked" | null {
+@@ -70,0 +86,2 @@
++  const keys=["kind","turnId","city","locale","intent","inputText","placeName"];
++  if(Object.keys(value).length!==keys.length||!keys.every(k=>Object.hasOwn(value,k))||value.turnId!==expectedTurnId)return null;

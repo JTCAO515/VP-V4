@@ -1,0 +1,244 @@
+{
+  "lease": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-server-profile-exact-lease.json",
+  "leaseSha256": "e758c93b513264f708cf1e875bffaddade3ddef0d05c59f3833ff0c7affa246d",
+  "base": "daa7bae44a660381fb3295d0d2afc327ea98d3ba",
+  "sourceHeadBefore": "5511c9ad17055bc59591dd264991fecef37a022d",
+  "sharedFilesApplied": [
+    {
+      "path": "lib/server/contracts/errors/index.ts",
+      "before": "e90fc76b6098eb6511c63b44c0a21259421f4e0b17d251af64ae7ffd7b26d2da",
+      "after": "4ea64312aa49707fd93bb82c47975a03f721c660037fcf089b0a4fefe2e8bdc6",
+      "patch": "95c7f9d9313a97c032335ebbb03dd50b2489f5862a8174e55bd6260630f94184",
+      "replayMatch": true,
+      "error": null,
+      "patchPath": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-released-patches/lib/server/contracts/errors/index.ts.patch",
+      "stripLevel": 1
+    },
+    {
+      "path": "lib/server/identity/user-data-adapter.ts",
+      "before": "ef3bb707c4b73290e841e65151b472cb0306f916ecb8b07e10d6b078857af1e4",
+      "after": "2e98dbc3b06465d45e6983b0cc3b1db01050145d6229b9503bbf256444c5949d",
+      "patch": "96dee645b89f0043847e40e1e8404c5ecc0385f71b7232491b8f9fa46ed1e2be",
+      "replayMatch": true,
+      "error": null,
+      "patchPath": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-released-patches/lib/server/identity/user-data-adapter.ts.patch",
+      "stripLevel": 1
+    },
+    {
+      "path": "lib/server/turn/native-http.ts",
+      "before": "4fb50a965014cc80e350efa113ee1fbcdbfa97edddbe1e0aea4ec4c55f2af82c",
+      "after": "587f38d41f39fdd2c2d2eef7c93138507047a6c7efdb7cebce9c2ac11f67eb78",
+      "patch": "c0f2c9d91dd8080d7e15c65862b548a15ebf353853dc6b901ba5d45d88454056",
+      "replayMatch": true,
+      "error": null,
+      "patchPath": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-released-patches/lib/server/turn/native-http.ts.patch",
+      "stripLevel": 1
+    },
+    {
+      "path": "lib/server/turn/native-assistant-http.ts",
+      "before": "25f2e95ed1961a029397e02b15e457d9d14b68ac84d1e19c6ebf197d51d2aa00",
+      "after": "1dc69845f5853078ae7198e0bde914770a438de84c762c9d4f7eff0d19411dde",
+      "patch": "9ff29682eae188b893d8957a7bd53b025c6a8237fd034bb81affa0fc67137af6",
+      "replayMatch": true,
+      "error": null,
+      "patchPath": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-released-patches/lib/server/turn/native-assistant-http.ts.patch",
+      "stripLevel": 1
+    },
+    {
+      "path": "lib/server/turn/native-planning-intake-http.ts",
+      "before": "e1bb047b0639203e093f39c9c0635cf65de289d9cf4adbd03e2edb6935089d06",
+      "after": "4921e73293eaea16427663b4500dc88a169855f065d6ff3fb3a870ee9404baff",
+      "patch": "bd7c084629d23d74ee46513cf6a3d35a16e5bcbeebcd3a8909cbca5d5b35dd9a",
+      "replayMatch": true,
+      "error": null,
+      "patchPath": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-released-patches/lib/server/turn/native-planning-intake-http.ts.patch",
+      "stripLevel": 1
+    },
+    {
+      "path": "lib/server/turn/native-planning-http.ts",
+      "before": "86b14150d9431d6391d972c498e5a0b8cbb8f15060d43dec192238674cb30c21",
+      "after": "52e0d9814d92454688e6fb835c09cdc50dd80ffea2eb569eefd4289930715650",
+      "patch": "b00fa106298b8469ef64b25dd4360ec4c78963e491d92419617d1c3409565d35",
+      "replayMatch": true,
+      "error": null,
+      "patchPath": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-released-patches/lib/server/turn/native-planning-http.ts.patch",
+      "stripLevel": 1
+    },
+    {
+      "path": "lib/server/trip/scoped-edit/service.ts",
+      "before": "0c025775234502a9dc4e3717ae0fb7f91e0872ed0b48e3fee0ea1a0190105625",
+      "after": "7b04c2a0976720e9f74d60646e0633a720e1f6f43bbe3fb3b09924ecb7af8ad0",
+      "patch": "1c8347ca02b85f70478f263e6d42596dbf7d1a2d13848c8f53b16f9082320433",
+      "replayMatch": true,
+      "error": null,
+      "patchPath": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-released-patches/lib/server/trip/scoped-edit/service.ts.patch",
+      "stripLevel": 1
+    },
+    {
+      "path": "components/chat/ChatThreadWorkspace.tsx",
+      "before": "d98778068017b223a07c68575e30ca34f0012422b809373142e4be15dfc8fbc9",
+      "after": "2976b1af77770cdb5be2f3b89837dd2c532016d2b857ffc24f58325932ac15c4",
+      "patch": "2befca2ce22fe3933ea46722b525a063370c8123065fdfd549cde28fd498716f",
+      "replayMatch": true,
+      "error": null,
+      "patchPath": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-released-patches/components/chat/ChatThreadWorkspace.tsx.patch",
+      "stripLevel": 1
+    },
+    {
+      "path": "lib/server/model-gateway/adapters/provider-protocol.ts",
+      "before": "756ffe06e6943460b9a7128ad1200a0780a5555aff3507d2c451a4173173016a",
+      "after": "61c465defa3bdf0ee775f17ecd5d879782ab678d18cbbdd960c9325eb5c88860",
+      "patch": "8d59b2d75df6466e1ea2c2f6c852eb0f30a5320447c599bd16dcdf31b407fa6c",
+      "replayMatch": true,
+      "error": null,
+      "patchPath": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-released-patches/lib/server/model-gateway/adapters/provider-protocol.ts.patch",
+      "stripLevel": 1
+    },
+    {
+      "path": "lib/server/turn/text-worker.ts",
+      "before": "9bb54e18b5bc6a0f6e9b9e961f15b05bc59d6dc277615b3ea17e98f7d6bb9627",
+      "after": "5b302b25d5cb33989d2081b4d01658d2f53904c5fdf3e766286c17f405c839b4",
+      "patch": "ae140973dc67c36cce1a000d09054a67e981eca8ac60961040a4afbb40b63389",
+      "replayMatch": true,
+      "error": null,
+      "patchPath": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-released-patches/lib/server/turn/text-worker.ts.patch",
+      "stripLevel": 1
+    },
+    {
+      "path": "lib/server/model-gateway/adapters/http-transport.ts",
+      "before": "016b0047cf692ed6b3f9e7b9b05d8268be58066035867c9ec2ee9f3adef65cd1",
+      "after": "4c2a42a93b905d3682e40d3caf6ba2c387e0299d30c3f7c982090b47c635e757",
+      "patch": "846b62f8c5793a8212a58d476a8964a373ccd73627ba2372cf2804ee0f6358d2",
+      "replayMatch": true,
+      "error": null,
+      "patchPath": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-released-patches/lib/server/model-gateway/adapters/http-transport.ts.patch",
+      "stripLevel": 1
+    },
+    {
+      "path": "lib/server/turn/planning-comparison-worker.ts",
+      "before": "2f61e6014791a445d96c658ae36f6066681e669156a210aa6210e9ed80a48f38",
+      "after": "5f85af041b897e1e8afa03475c5764a752bb5cbadb5c44b6c3feceaaa6578288",
+      "patch": "66265c292fc73f9f5622d76a293903526e7373362a1021d37ce8c8eb9ccf9bcd",
+      "replayMatch": true,
+      "error": null,
+      "patchPath": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-released-patches/lib/server/turn/planning-comparison-worker.ts.patch",
+      "stripLevel": 1
+    },
+    {
+      "path": "lib/server/turn/planning-v2-model-step.ts",
+      "before": "07e78f0627b012c5825d3fd8f40d270508c8937342db1a1952c832d201e7e803",
+      "after": "23c7bc97b8608f790e2968a6a650c3b90654b9575b9fcb3910ca60775352d006",
+      "patch": "c526a8b52b525a6220864616cab22c3ab37f831f1767ab8d42d8c6047cecf84a",
+      "replayMatch": true,
+      "error": null,
+      "patchPath": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-released-patches/lib/server/turn/planning-v2-model-step.ts.patch",
+      "stripLevel": 1
+    },
+    {
+      "path": "lib/server/turn/planning-v2-bounded-worker.ts",
+      "before": "d45a2115693593511cc0c912ea485a3886371d09beb66c5a2af6c04021fabf1a",
+      "after": "6496b1bfd7d05aaf6399a41e1a29cfdb7a646284d2f14c4449743bc2a3d271d6",
+      "patch": "446fb7468992faea33de432684804f8e728d2e3b45ef37a43db16ff95d087178",
+      "replayMatch": true,
+      "error": null,
+      "patchPath": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-released-patches/lib/server/turn/planning-v2-bounded-worker.ts.patch",
+      "stripLevel": 1
+    },
+    {
+      "path": "lib/server/turn/planning-v2-hosted-job.ts",
+      "before": "dd99ec78fa14b8247005b90843473cf5088ae486a80aed89b6e81c79fc459b86",
+      "after": "197c6621e1223689b18455c43424686827ada8e1383d14f64b0a72e49b879d2e",
+      "patch": "ae5e20d45e3ace2d886998bc9bd15885a3c605a182e5b8bead77d5566aa97372",
+      "replayMatch": true,
+      "error": null,
+      "patchPath": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-released-patches/lib/server/turn/planning-v2-hosted-job.ts.patch",
+      "stripLevel": 1
+    },
+    {
+      "path": "lib/server/turn/scoped-edit/executor.ts",
+      "before": "fe3eadb6372c6a2d0221a951c4ac98a33af35a5204ddb8204de02b71f60f3bc3",
+      "after": "9cab38e894a1233d7165e7180978e1b618dd5d847b7909132abb65b14ca625cc",
+      "patch": "ca54e2be4cafcf0f21f834eb0fb73f4cfe37a8315cfcbac55b46c877efd4953c",
+      "replayMatch": true,
+      "error": null,
+      "patchPath": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-released-patches/lib/server/turn/scoped-edit/executor.ts.patch",
+      "stripLevel": 1
+    },
+    {
+      "path": "lib/server/turn/scoped-edit/hosted-job.ts",
+      "before": "a9c5d170b25243b85af4c5e618ee88967fc9a6e2169332573dddbd7b641ddc02",
+      "after": "a4502d984d0e979bf85305ea4ecd5a05445aa227173894f1baa264e31dcc3a0e",
+      "patch": "28b92ff6e0a2c8be464110a5882672bf5c69be6c0cd8ac48c7699a0792d73d58",
+      "replayMatch": true,
+      "error": null,
+      "patchPath": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-released-patches/lib/server/turn/scoped-edit/hosted-job.ts.patch",
+      "stripLevel": 1
+    },
+    {
+      "path": "lib/server/trip/scoped-edit/wire.ts",
+      "before": "ce1f6a32f226c155d9b0bfa69619fd068ccc462aa321723cdf69f47621664095",
+      "after": "fed29d276656072b5878d7d4c562eab0808f4ee216cc7f56e31ef92d704be02e",
+      "patch": "eec992cd33bde8a8e8ed10ff75acd59b74ac59d711e55f0891fe117f9fcfa4e3",
+      "replayMatch": true,
+      "error": null,
+      "patchPath": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-released-patches/lib/server/trip/scoped-edit/wire.ts.patch",
+      "stripLevel": 1
+    },
+    {
+      "path": "lib/server/knowledge/wiki/grounded-ai-assist.ts",
+      "before": "1da27f24208cd76380eafbe5586d91675af87401617cd4c41e5628d54416441a",
+      "after": "e073c77a488a486ce33c16ba6ba984c735cb3ba2c94531e8996084dd7a6b236e",
+      "patch": "f40b5e46e0b7ee6d37a6f543e473ed85bbe01867273a393944b934cdffe1f8d7",
+      "replayMatch": true,
+      "error": null,
+      "patchPath": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-released-patches/lib/server/knowledge/wiki/grounded-ai-assist.ts.patch",
+      "stripLevel": 1
+    },
+    {
+      "path": "lib/server/knowledge/wiki/grounded-search.ts",
+      "before": "d1833f3faa0e93e9cb11f3751877f7e3c303579f3cbbca9e7c38c821cfd6dcca",
+      "after": "56fc9381650087105b4a3f6cf45f44c0f0dabad88077c0789927bdfd575be834",
+      "patch": "08ff77c1c3bdfc207b54c40aac7dc6332f9f86866f11062345973f39bcba607e",
+      "replayMatch": true,
+      "error": null,
+      "patchPath": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-released-patches/lib/server/knowledge/wiki/grounded-search.ts.patch",
+      "stripLevel": 1
+    },
+    {
+      "path": "lib/server/knowledge/wiki/grounded-ai-assist-job.ts",
+      "before": "10400a0abaa08d131f9b5f9c65dcb8aa18d671838177fa4a63c71226489c46da",
+      "after": "fdab8182f47f77ce5de5eae272d3933159d70ef58dad96716adb9fc272732895",
+      "patch": "fa82d0bd05255e8dec7fdcabaaa1182858cb84220f9219a2b17a3938a7ee5be6",
+      "replayMatch": true,
+      "error": null,
+      "patchPath": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-released-patches/lib/server/knowledge/wiki/grounded-ai-assist-job.ts.patch",
+      "stripLevel": 1
+    },
+    {
+      "path": "components/chat/SavedAnswers.tsx",
+      "before": "23df43db56bd512e3c8d871800f271cbab9b92ab08700030c363beb65bbf8876",
+      "after": "b22f96f8f969fa240ffd0bdc60fb794b333cbdf89cef84d662aa1cb78c8c0694",
+      "patch": "f7402dfec314dbcbe8962482460753d0ecd5ebfdbf8fbb2b04d9d20a81b6e74d",
+      "replayMatch": true,
+      "error": null,
+      "patchPath": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-released-patches/components/chat/SavedAnswers.tsx.patch",
+      "stripLevel": 1
+    },
+    {
+      "path": "lib/server/privacy/profile-export/contract.ts",
+      "before": "dca289e97e26c6bd1034bc70f80941d6593f9ba490b2439ace3374e27f2c274b",
+      "after": "729f931ae9ae0314581167a67a0db49b4363217d6c5b50dd08b2e685a84df4de",
+      "patchPath": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj37-ops-control-sql-20261011/artifacts/VPJ-37/ops-control-sql-20261011/export-decoder-candidate/contract.ts.patch",
+      "patch": "ac2aaf1d66f7edf546a0b9ddb173b0fcd4d57568d63a62cc5524616ba212168d",
+      "stripLevel": 0,
+      "replayMatch": true
+    }
+  ],
+  "beforePatchAfterIndex": "PASS",
+  "held": [
+    "NativeAssistantConversationView",
+    "NativeAskModels",
+    "SQLappend"
+  ],
+  "finalAffectedValidation": "UNRUN pending complete SQL integration per lease"
+}

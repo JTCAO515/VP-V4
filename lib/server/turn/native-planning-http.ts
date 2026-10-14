@@ -71,6 +71,7 @@ async function handle(request:NextRequest,kind:"policy"|"task"){
       });
     }else return fail("INVALID_INPUT",400);
     if(result.error){const message=String(result.error.message);
+      if(message==="OPS_CONTROL_DISABLED"||message==="OPS_SCOPE_UNAVAILABLE")return fail(message,503);
       return /UNAUTHENTICATED|SESSION_REPLACED/.test(message)?fail("UNAUTHENTICATED",401)
         :/DATA_POLICY_BLOCKED/.test(message)?fail("DATA_POLICY_BLOCKED",403)
           :/SERVICE_TASK_CONFLICT|STALE_BASIS|IDEMPOTENCY_KEY_REUSE/.test(message)?fail("SERVICE_TASK_CONFLICT",409)

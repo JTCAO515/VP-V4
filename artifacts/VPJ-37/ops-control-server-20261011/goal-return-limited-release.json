@@ -1,0 +1,15 @@
+{
+  "state": "LIMITED_RELEASE",
+  "fromOwner": "01a126a8-7cb5-7a70-aca6-0ba38c99efe2",
+  "toOwner": "sole203 01a12dba-36ee-7602-a285-698d04d2cbcc",
+  "productSourceHead": "2396c1387b315655f7d663612a811c675ed3030d",
+  "currentEvidenceHead": "2501613e7f5a9c8fe546c6865b41f60c16842ea6",
+  "before": "44004e5ee5b2db315c9b08ea438dedb3cadc999f777af4b9dfea1b0c3cf81d44",
+  "patch": "04bc17ef0055374df967fa88d6ff2ed19349e69662868b5e203bbb5bcd124dfd",
+  "after": "936f657f6ce83ece60005433ac4201132fd1840bb5b2a3d974d7664954f0cc69",
+  "insertedLines": 16,
+  "deletedOrReplacedLines": 0,
+  "scope": "Only current-qualified readonly journeyGoalReturnContext getter and six Entry parameters; no whole-file transfer, all W2 body/stop/refusal/catch/continuation preserved",
+  "plannedOrInflightWriteOverlap": false,
+  "build": "Not rerun; original stable W2 compile evidence reused; E3 new semantics proof belongs to sole203/Main"
+}

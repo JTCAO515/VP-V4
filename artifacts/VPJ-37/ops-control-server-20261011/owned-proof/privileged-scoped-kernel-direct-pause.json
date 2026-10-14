@@ -1,0 +1,63 @@
+{
+  "case": "privileged-disposable-scoped-kernel-direct-pause",
+  "role": "postgres + synthetic SQL claims only",
+  "serviceRole": "Original actual permission-denied FAIL retained; enrollment UNRUN",
+  "GoTrueTargetProviderDevice": "UNRUN",
+  "providerCalls": 0,
+  "sourceBodySha256": "96b545afbd306da94ca8360afed3d6754c1de598bbab2d1d6e40562aec818b36",
+  "decision": "/Users/jtsm5p/Documents/Codex/2026-10-12/v8-main/w2-scoped-role-contract-decision.json",
+  "result": "PASS",
+  "checks": [
+    "exact existing settled tuple permits original publish authority",
+    "foreign operation refuses",
+    "stop -> direct original pause RPC -> closed binding/operation pending receipt",
+    "original read_operation returns same receipt",
+    "known settled20 retained",
+    "new Ask denied",
+    "no Proposal or Trip mutation",
+    "six original service-role ACLs unchanged"
+  ],
+  "operationId": "7131bd1a-a134-4269-9357-e0d12b2f49e6",
+  "receipt": {
+    "kind": "scoped_edit_pending/1",
+    "reason": "ops_control_disabled",
+    "reused": true,
+    "tripId": "054ca60b-dad3-439d-8477-560d16518428",
+    "contextId": "8333a7c3-36ed-4fdc-8d13-32e619fff91e",
+    "baseVersion": 0,
+    "operationId": "7131bd1a-a134-4269-9357-e0d12b2f49e6",
+    "contextDigest": "c9f3f6aae7763116411fd4f96799f39205ea1567bb939b06c20f111176bf0ac4"
+  },
+  "acl": [
+    {
+      "acl": "{postgres=X/postgres}",
+      "signature": "public.authorize_scoped_trip_edit_effect_v1(jsonb,text)",
+      "serviceExecute": false
+    },
+    {
+      "acl": "{postgres=X/postgres}",
+      "signature": "public.claim_scoped_trip_edit_work_v1(uuid,uuid,uuid)",
+      "serviceExecute": false
+    },
+    {
+      "acl": "{postgres=X/postgres}",
+      "signature": "public.pause_scoped_trip_edit_work_v1(jsonb,text)",
+      "serviceExecute": false
+    },
+    {
+      "acl": "{postgres=X/postgres}",
+      "signature": "public.read_scoped_trip_edit_completion_v1(jsonb)",
+      "serviceExecute": false
+    },
+    {
+      "acl": "{postgres=X/postgres}",
+      "signature": "public.read_scoped_trip_edit_work_v1(uuid,uuid)",
+      "serviceExecute": false
+    },
+    {
+      "acl": "{postgres=X/postgres}",
+      "signature": "public.scoped_trip_edit_budget_v1(jsonb,text,bigint,bigint,text)",
+      "serviceExecute": false
+    }
+  ]
+}

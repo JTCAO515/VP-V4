@@ -75,6 +75,7 @@ function qualifiedCurrentIntake(v:unknown):v is Record<string,unknown>{
 function unavailable(v:unknown):"blocked"|"intake_unrecorded"|"stale_basis"|null{return record(v)&&exact(v,["kind","reason"])&&v.kind==="unavailable"&&typeof v.reason==="string"&&["blocked","intake_unrecorded","stale_basis"].includes(v.reason)?v.reason as "blocked"|"intake_unrecorded"|"stale_basis":null;}
 
 function mappedError(message:string):[string,number]{
+ if(message==="OPS_CONTROL_DISABLED"||message==="OPS_SCOPE_UNAVAILABLE")return [message,503];
  return /UNAUTHENTICATED|SESSION_REPLACED/.test(message)?["UNAUTHENTICATED",401]:/DATA_POLICY_BLOCKED|FORBIDDEN|CONSENT_REQUIRED/.test(message)?["DATA_POLICY_BLOCKED",403]
  :message.includes("IDEMPOTENCY_KEY_REUSE")?["IDEMPOTENCY_KEY_REUSE",409]:message.includes("MEMORY_CONFLICT")?["MEMORY_CONFLICT",409]:/SERVICE_TASK_CONFLICT|STALE_BASIS/.test(message)?["SERVICE_TASK_CONFLICT",409]
  :message.includes("INVALID_INPUT")?["INVALID_INPUT",400]:["PROVIDER_UNAVAILABLE",503];

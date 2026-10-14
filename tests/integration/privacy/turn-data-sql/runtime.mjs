@@ -1,3 +1,4 @@
+import { initializeFreshOpsFixture } from '../../observability/ops-control-owned/fresh-bootstrap.mjs';
 import { fixturePath } from './fixture-path.mjs';
 import { readFileSync,readdirSync,writeFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
@@ -17,6 +18,7 @@ try{
  // migrations before any fixture enrollment/data mutates reviewed ACL/body pins.
  const later=readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&f>'20261007050000_turn_data.sql').sort();
  for(const f of later)check(await sql(container,'begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;'));
+ await initializeFreshOpsFixture(async query=>check(await sql(container,query)));
  console.log('CURRENT_APPEND_CHAIN_APPLIED',later.length,later.at(-1));
  if(check(await sql(container,'select turn_data_private.runtime_supported_v1() and turn_data_private.schema_supported_v1();'))!=='t')throw Error('Current Turn runtime/schema unavailable after complete migration chain');
 }catch(e){console.error(e.message);process.exitCode=1;}

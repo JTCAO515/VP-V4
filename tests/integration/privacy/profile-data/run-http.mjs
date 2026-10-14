@@ -1,3 +1,4 @@
+import { stageFreshOpsFixtureBootstrap } from '../../observability/ops-control-owned/fresh-bootstrap.mjs';
 /** Starts/stops only a uniquely owned disposable local Auth/API/database fixture. */
 import { mkdtempSync, mkdirSync, readFileSync, writeFileSync, cpSync, rmSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -17,6 +18,7 @@ const project = 'vp-native-ask-' + randomUUID().slice(0,8), target = mkdtempSync
 mkdirSync(join(target,'supabase'));
 writeFileSync(join(target,'supabase/config.toml'), nativeHTTPSupabaseConfig(readFileSync('supabase/config.toml','utf8'), project, ports));
 cpSync('supabase/migrations', join(target,'supabase/migrations'), { recursive: true });
+stageFreshOpsFixtureBootstrap(target);
 // Consume the fixed sole upstream SQL only in the owned fixture until main includes it.
 // Never write the active Result worktree or invent a replacement source/hash.
 const resultMigration = join(target, 'supabase/migrations/20261007010000_result_data.sql');

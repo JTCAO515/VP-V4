@@ -1,0 +1,68 @@
+{
+  "state": "PRODUCT_SOURCE_INTEGRATED_NOT_CORE_COMPLETE",
+  "leaseMarker": "W2-reviewed-exact-repository-append-lease-20261012-V8",
+  "sourceOwnerCommit": "59f3ddd0b7d3e8b32269228ee9c53dc877de34a0",
+  "integratedHead": "0ff87c06fe54a573a3d421cb865eb9bef1a0582b",
+  "before": "98d881195e4af46206a52c55da0ec718cba84987",
+  "append": "supabase/migrations/20261012103151_vpj37_ops_control_w2.sql",
+  "appendBefore": "ABSENT",
+  "bodySha256": "96b545afbd306da94ca8360afed3d6754c1de598bbab2d1d6e40562aec818b36",
+  "afterSha256": "87f24b4714bb7538f50de85392541b2ac96d12ab59137762e0370dd45722b553",
+  "bytes": 1220124,
+  "indexAndSource": "MATCH",
+  "oldMigrationChanges": 0,
+  "privateCandidateBranchMerged": false,
+  "evidenceReused": "Own exact154+body96 fixture proofs; footer only schema reload notification, no source-function difference",
+  "remaining": "SQL concurrency/restore/erase-export-copy/oldTrip proof; final exact-head review/fullCI/protected merge; role/target UNRUN retained",
+  "portableSourceCheck": "PASS integrated migration after87f24/body96b545/footer exact; no external owner checkout dependency",
+  "affectedChecks": {
+    "contractAndTaxonomy": {
+      "pass": 22,
+      "fail": 0,
+      "skip": 0
+    },
+    "docs": "PASS",
+    "lint": "PASS",
+    "dbClassification": "PASS existing registered lanes; owned proof commands are manual explicit-resource evidence helpers, not a silently registered node:test suite",
+    "artifactGrowth": "+2.68MB/5MB PASS"
+  },
+  "portableHarnessChanges": "Runtime dependencies now repository relative fixture-manifest and reviewed decisions; original154 prefix plus integrated body exact check. Syntax/hash validation PASS, no already-passed role or kernel matrix rerun.",
+  "portableCurrentPins": [
+    {
+      "file": "tests/integration/observability/ops-control-owned/run.mjs",
+      "sha256": "ca726b84f99668037f496cde3edb6b03e178f5ff8eb9aec841ab9148619dc812"
+    },
+    {
+      "file": "tests/integration/observability/ops-control-owned/v2-seeds.mjs",
+      "sha256": "7f017838d00ddf4139136a8162a156f22f863488284fc678204ad63996558f20"
+    },
+    {
+      "file": "tests/integration/observability/ops-control-owned/fixture.mjs",
+      "sha256": "ff0cb3046f65be28f304b08ecf7dc8aa39ab45c97f84ea196b873e078683e3e4"
+    },
+    {
+      "file": "tests/integration/observability/ops-control-owned/fixture-lease.json",
+      "sha256": "d6414b2e336481bd9ef6e7efdfded5af26c8fdfdf7feac9d8e9b443c22d08a43"
+    },
+    {
+      "file": "tests/integration/observability/ops-control-owned/scoped-kernel-seeds.mjs",
+      "sha256": "8b6b556d9618eb3b44b433a951f941e4f0effe153777deee2b25b58064e53bec"
+    },
+    {
+      "file": "tests/integration/observability/ops-control-owned/privileged-scoped-kernel.mjs",
+      "sha256": "bd1a0510a00440f483a5aa5a8b8848cc0218a29221885ba082b1c0f770bbe253"
+    },
+    {
+      "file": "tests/integration/observability/ops-control-owned/scoped-seeds.mjs",
+      "sha256": "6b05666f445bccd482c8075da745af030226d8b2c74cac5264b0774f63ca4568"
+    },
+    {
+      "file": "tests/integration/observability/ops-control-owned/readback.mjs",
+      "sha256": "273556ff26f3b626a12875ceff6f98911c23b58d90446e922fdb58f6d8cfb184"
+    },
+    {
+      "file": "tests/integration/observability/ops-control-owned/privileged-scoped-settled-drain.mjs",
+      "sha256": "c6d038136459687f7a8635536204a191746d65ca230bdbcda13951cd7a51fcd8"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+--- a/lib/server/turn/planning-v2-bounded-worker.ts
++++ b/lib/server/turn/planning-v2-bounded-worker.ts
+@@ -0,0 +1 @@
++import {decodeOpsPause,decodeOpsRefusal,OpsControlRefusal} from '../observability/ops-control/refusal.ts';
+@@ -33 +34 @@
+-  try{const v=await ports.rpc('pause_planning_intake_work_v1',{...six(lease),p_reason:reason},cleanup.signal);return row(v)&&exact(v,['kind','taskId','turnId'])&&v.kind==='paused'&&v.taskId===lease.taskId&&v.turnId===lease.turnId?'paused' as const:'unknown' as const;}catch{return 'unknown' as const;}finally{clearTimeout(limit);}
++  try{const v=await ports.rpc('pause_planning_intake_work_v1',{...six(lease),p_reason:reason},cleanup.signal);if(row(v)&&exact(v,['kind','taskId','turnId','code','accounting'])&&v.taskId===lease.taskId&&v.turnId===lease.turnId&&decodeOpsPause({kind:v.kind,code:v.code,accounting:v.accounting}))return 'paused' as const;return row(v)&&exact(v,['kind','taskId','turnId'])&&v.kind==='paused'&&v.taskId===lease.taskId&&v.turnId===lease.turnId?'paused' as const:'unknown' as const;}catch{return 'unknown' as const;}finally{clearTimeout(limit);}
+@@ -72 +73 @@
+-   const result=await runPlanningV2ModelStep({enabled:true,lease:l,binding,reservedMicros:config.reservedMicros,timeoutMs:config.timeoutMs,maxOutputTokens:config.maxOutputTokens,prompt},ports.model,controller.signal);if(result.kind!=='settled')return await pause('reconciliation');output=result.output;
++   const result=await runPlanningV2ModelStep({enabled:true,lease:l,binding,reservedMicros:config.reservedMicros,timeoutMs:config.timeoutMs,maxOutputTokens:config.maxOutputTokens,prompt},ports.model,controller.signal);if(result.kind==='ops_refused')return await pause('blocked');if(result.kind!=='settled')return await pause('reconciliation');output=result.output;

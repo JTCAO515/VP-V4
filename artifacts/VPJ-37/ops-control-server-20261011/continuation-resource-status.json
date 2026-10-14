@@ -1,0 +1,38 @@
+{
+  "state": "INCOMPLETE_RETAINED_FOR_ORIGINAL_TASK",
+  "head": "d4b9ef6651b34a8b96b609a6262f6e30e4b34a31",
+  "leases": {
+    "W2 private/source ownership": "RETAINED: original sole integrator, no writer replacement",
+    "five Main source lease batches": "APPLIED exact guarded sources; retained for final integration, not whole-file released",
+    "failureCopy two-file candidate": "APPLIED: Main W2-failure-copy exact lease; full before/raw patch/temp replay/full after/INDEX MATCH",
+    "Conversation E3": "LIMITED_RELEASE exact 16 inserted lines only; no whole-file release",
+    "planning-v2-bounded-worker E1": "LIMITED_RELEASE exact candidate hunk only; no product apply in W2",
+    "NativeAskModels": "UNKNOWN/HOLD unchanged",
+    "SQL product append/shared bodies": "APPLIED SOURCE ONLY by original SQL productcommit59f3ddd0 then soleintegrator normalcherrypick0ff87c06; all exactbodyafter/INDEX MATCH, no old migration changes",
+    "scoped publish refusal incremental": "APPLIED V8 exact lease; original sole integrator retained",
+    "owned integration fixture54bf": "CLOSED: actualtext/V1/V2 PASS; separately labelled scopedkernel drain+reservedpause PASS, actualroleFAIL retained; cleanupABSENT",
+    "scoped role boundary": "Original #198 EXECUTE defaultclosed retained by Main decision; no grant changes; original role FAIL/enrollmentUNRUN"
+  },
+  "resources": {
+    "own TCP63437": "STOPPED; current lsof no listener",
+    "own node TypeScript session62042": "FINISHED exit0",
+    "own Swift fixtures": "FILES RETAINED; no active process claimed",
+    "own native build r1/r2/r3 artifacts and DerivedData": "RETAINED for failure history and exact source evidence",
+    "worktree/branch": "RETAINED; clean after record commit",
+    "SQL container vpj37-w2sql-20261011-6c527b9d": "OTHER OWNER RETAINED; docker ps Up4hours unhealthy, no cleanup/action by integrator",
+    "other Docker resources": "UNTOUCHED",
+    "own PG vpj37-w2-integration-20261012-54bf86c1": "CLEANED: exact labels checked then rm; docker ps exact-name ABSENT"
+  },
+  "remaining": [
+    "Original SQL owner remaining concurrency/restore/erase-export-copy/oldTrip proof; reviewed source append now integrated",
+    "Main exact-head formal review, applicable full CI and normal protected merge/readback"
+  ],
+  "unrun": [
+    "Staging stop/resume/rollback",
+    "actual provider fees/calls",
+    "real device",
+    "final full SQL lifecycle/restore integration",
+    "final remote CI and protected merge"
+  ],
+  "latestSourceHead": "0ff87c06fe54a573a3d421cb865eb9bef1a0582b"
+}

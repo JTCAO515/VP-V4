@@ -1,0 +1,47 @@
+{
+  "lease": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-native-four-exact-lease.json",
+  "leaseSha256": "cb6320fd48162b84dec42ed45b0768223bcc8715b9a5ab28c2bcb2bb60d96b40",
+  "base": "daa7bae44a660381fb3295d0d2afc327ea98d3ba",
+  "sourceHeadBefore": "f0d9fdea8ae6c69628426416b61bb78640771c42",
+  "sharedFilesApplied": [
+    {
+      "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAskStore.swift",
+      "before": "d3d49c5cf65b8267833008ae7e00b8a367b672b84b44362b430a07a0a5563078",
+      "after": "0339303f27f4a45fad2c46396f5512d060ba3818fa84dd8ddea184348ac5b083",
+      "patch": "bb54e6e51ba2eb7370858c8d910ae6d7151b374253e03ae9615cdd540c02d892",
+      "replayMatch": true,
+      "error": null,
+      "patchPath": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-released-patches/NativeAskStore.swift.patch"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAskView.swift",
+      "before": "12008229bba6ada4100027747e71253fabeb52eafac82a60269977452311396b",
+      "after": "043f01d84004fd88e2c505e8075b1026cad3f0c60b4569f55d07cf9a5c1d593b",
+      "patch": "9a5b5309e9fab2474cc195dc351b44a204238390b9e07cce2565c696bcd88cfa",
+      "replayMatch": true,
+      "error": null,
+      "patchPath": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-released-patches/NativeAskView.swift.patch"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/ScopedTripEdit/NativeScopedTripEditStore.swift",
+      "before": "ae71946bf18cd9157a026cab6b19568d8f78e72eb75938f7dd0646f67533a690",
+      "after": "ca9c1c26f71b2716cd868a5aa64aadcbf76c003d25fd9beb55625dad6fc8e9dd",
+      "patch": "a8a955161438f738783ede0d0646e825fb9f837853a46d424e574e0b9a8acdb1",
+      "replayMatch": true,
+      "error": null,
+      "patchPath": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-released-patches/NativeScopedTripEditStore.swift.patch"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/ScopedTripEdit/NativeScopedTripEditSheet.swift",
+      "before": "a7427cae5b58ec322afd77ead3e7e96ef2875dc4f476252c2f0191c673539dd5",
+      "after": "d5af901903b12b46eabe8a51cbe416cf185390d52715f803be1f727c931e088e",
+      "patch": "6348c1c208ba920aed372ebb402b05a6578b9452bf83828030583ef90ff2c0f0",
+      "replayMatch": true,
+      "error": null,
+      "patchPath": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-released-patches/NativeScopedTripEditSheet.swift.patch"
+    }
+  ],
+  "beforePatchAfter": "PASS",
+  "remainingShared": "HOLD",
+  "nativeBuild": "UNRUN final integration deferred per lease"
+}

@@ -31,6 +31,26 @@ export function validExportWatermarkRow(v: Record<string, unknown>, owner: strin
     && v.profileErasureFloor <= v.profileRevision && v.paceErasureFloor <= v.paceRevision;
 }
 
+
+/** Owner audit metadata only; never an Ops RPC receipt or authorization. */
+function validOpsControlExportRow(v: Record<string, unknown>, owner: string): boolean {
+  const common = ['kind', 'ownerId', 'operationId', 'action', 'revision', 'stopRevision', 'appliedAt', 'acknowledgement', 'effect'];
+  if (v.kind !== 'ops_control_operation/1' || v.ownerId !== owner || !identifier(v.operationId)
+    || !revision(v.revision) || v.revision < 1 || !revision(v.stopRevision) || v.stopRevision > v.revision
+    || !instant(v.appliedAt) || v.acknowledgement !== 'applied') return false;
+  if (v.action === 'budget_resume') return exact(v, [...common, 'scopeId']) && identifier(v.scopeId)
+    && v.effect === 'permits_fresh_budget_authorization';
+  if (v.action !== 'set' || !exact(v, [...common, 'scope', 'state']) || !record(v.scope)
+    || !exact(v.scope, ['kind', 'key']) || typeof v.scope.key !== 'string') return false;
+  const registry: Record<string, readonly string[]> = {
+    capability: ['text', 'planning_comparison_v1', 'planning_intake_comparison_v2', 'scoped_trip_edit_v1'],
+    provider: ['qwen', 'glm', 'deepseek', 'amap'], city: ['shanghai', 'beijing', 'guangzhou', 'chongqing'],
+  };
+  return typeof v.scope.kind === 'string' && !!registry[v.scope.kind]?.includes(v.scope.key)
+    && ((v.state === 'disabled' && v.effect === 'blocks_new_dispatch')
+      || (v.state === 'enabled' && v.effect === 'permits_fresh_authorization'));
+}
+
 /** Closed source projection; no arbitrary row/JSON fallback, client owner, or synthesized defaults. */
 export function decodeProfileExportPage(value: unknown, limit: number, owner: string, now: number): ProfileExportPage | null {
   if (!identifier(owner) || !Number.isSafeInteger(limit) || limit < 1 || limit > 100 || !Number.isFinite(now)
@@ -51,10 +71,17 @@ export function decodeProfileExportPage(value: unknown, limit: number, owner: st
     if (!record(watermark) || !record(summary) ||
       ['profileRevision', 'paceRevision', 'profileErasureFloor', 'paceErasureFloor'].some(k => watermark[k] !== summary[k])) return null;
   }
-  let previous = '';
+  let previous = '', previousOps = '', opsSuffix = false;
   for (const operation of item.operations) {
-    if (!record(operation) || !identifier(operation.requestId) || operation.requestId <= previous || !validOperationRow(operation, owner, now)) return null;
-    previous = operation.requestId;
+    if (!record(operation)) return null;
+    if (operation.kind === 'ops_control_operation/1') {
+      opsSuffix = true;
+      if (!validOpsControlExportRow(operation, owner) || !identifier(operation.operationId) || operation.operationId <= previousOps) return null;
+      previousOps = operation.operationId;
+    } else {
+      if (opsSuffix || !identifier(operation.requestId) || operation.requestId <= previous || !validOperationRow(operation, owner, now)) return null;
+      previous = operation.requestId;
+    }
   }
   return { sourceDigest: value.sourceDigest, items: structuredClone(value.items), hasMore: false, nextCursor: null, sectionComplete: true };
 }

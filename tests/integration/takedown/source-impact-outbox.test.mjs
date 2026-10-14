@@ -1,3 +1,4 @@
+import { initializeFreshOpsFixture } from '../observability/ops-control-owned/fresh-bootstrap.mjs';
 // Actual network-none PostgreSQL and ops/source relations; administrator claim
 // fixture is not deployed signed-ops, scheduler, supplier or fee evidence.
 import test,{before,after} from 'node:test';import assert from 'node:assert/strict';
@@ -13,6 +14,7 @@ before(async()=>{
  for(let n=0;n<100;n++){if((await command('docker',['exec',container,'pg_isready','-h','/tmp/vpj59-socket','-U','postgres'])).code===0)break;await new Promise(r=>setTimeout(r,100));}
  await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));await db("create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;create schema extensions;create extension pgcrypto with schema extensions;");
  for(const f of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort())await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;');
+ await initializeFreshOpsFixture(db);
 });
 after(async()=>{if(created)assert.equal((await command('docker',['rm','-f',container])).code,0);});
 const run=(name,fn)=>test(name,{skip:!enabled,timeout:120000},fn);

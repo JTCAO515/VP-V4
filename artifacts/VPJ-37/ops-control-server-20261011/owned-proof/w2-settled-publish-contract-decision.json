@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-12T10:22:46.147571+00:00",
+  "decision": "Preserve publication/completion/readback of already-sent, genuinely settled scoped output under all original privacy/source/lease fences; stop gates fresh reserve/dispatch/tool/destination claims",
+  "source": "CONTRACT dispatch linearization and lifecycle: Completion/readback of an already-sent effect remains possible under original privacy fences.",
+  "sourceSHA256": "fe3de30f6a724e53da29d89cff77f8a441e99a58b2ad0edbda817a7d94b745fa",
+  "bodySHA256": "96b545afbd306da94ca8360afed3d6754c1de598bbab2d1d6e40562aec818b36",
+  "noNewGrantOrGate": true,
+  "why": "Scoped publish saves one already-produced candidate from existing settled output. It spends no fresh provider budget and creates no Proposal/Trip write. A new publish Ops gate would contradict the accepted drain/readback contract.",
+  "actualFailureRetained": "privileged-scoped-kernel-r1 expected ops_paused but observed persisted after settled20 output and capability stop; source matches reviewed after; fixture expectation contradicted contract",
+  "necessaryAffectedProof": [
+    "Confirm settled output publish/readback after stop preserves exact original operation/binding/known actual20, zero provider call and zero Proposal/Trip changes",
+    "On a separate original unsettled/noncompleted operation, explicit original pause RPC under independent Ops refusal yields exact closed receipt with no cost resets/new dispatch",
+    "Fresh reserve/dispatch remain denied under control; no repeated already-passing text/V1/V2 groups"
+  ],
+  "limits": [
+    "Privileged kernel proof not service_role RPC enrollment",
+    "True service_role EXECUTE denial remains FAIL/history, target enrollment UNRUN",
+    "Defensive TS publish-refusal handler remains harmless for any legitimately returned Ops denial; no present SQL publish-refusal capability claimed"
+  ]
+}

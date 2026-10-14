@@ -1,3 +1,4 @@
+import {decodeOpsRefusal,opsRefusalCode,OpsControlRefusal,type OpsRefusalCode} from '../../observability/ops-control/refusal.ts';
 import { CostGuard } from '../../model-gateway/budget/index.ts';
 import { runWithDurableBudget, type BudgetRpc, type BudgetAttempt } from '../../model-gateway/budget/durable.ts';
 import { invokeScopedTripEditProtocol, type ProtocolTransport, type ProtocolUsage } from '../../model-gateway/adapters/provider-protocol.ts';
@@ -17,7 +18,7 @@ export type ScopedExecutorPorts = Readonly<{
 const leaseParams=(l:DurableTurnLease)=>({p_turn_id:l.turnId,p_lease_token:l.leaseToken});
 /** One durable turn/operation/attempt. No claim, scheduler, secret lookup, fallback,
  * second planner, Proposal producer, or Trip confirm. Unknown ACK can only recover original output. */
-export async function executeScopedTripEdit(lease: DurableTurnLease, ports: ScopedExecutorPorts, signal: AbortSignal): Promise<'persisted'|'declined'|'pending'|'unavailable'> {
+export async function executeScopedTripEdit(lease: DurableTurnLease, ports: ScopedExecutorPorts, signal: AbortSignal): Promise<'persisted'|'declined'|'ops_paused'|'pending'|'unavailable'> {
   if (signal.aborted) return 'unavailable';
   let input: ScopedInput | null=null;
   const read=async(s:AbortSignal)=>parseInput(await ports.rpc('read_scoped_trip_edit_work_v1',leaseParams(lease),s),lease,ports.now());
@@ -29,7 +30,19 @@ export async function executeScopedTripEdit(lease: DurableTurnLease, ports: Scop
       const next=await read(s);
       return next!==null && sameValue(next,input) && !s.aborted;
     };
-    const allow=async(effect:'reserve'|'dispatch'|'publish',s:AbortSignal)=>await current(s)&&authorized(await ports.rpc('authorize_scoped_trip_edit_effect_v1',{...params,p_effect:effect},s),b,effect)&&!s.aborted;
+    let refusal:OpsRefusalCode|null=null;
+    const pauseOps=async(code:OpsRefusalCode)=>{
+      const reason=code==='OPS_CONTROL_DISABLED'?'ops_control_disabled':'ops_scope_unavailable';
+      const v=await ports.rpc('pause_scoped_trip_edit_work_v1',{...params,p_reason:reason},signal);
+      if(!record(v)||!exact(v,['kind','binding','receipt'])||v.kind!=='ops_paused'||!sameValue(v.binding,b)||!record(v.receipt))return 'pending' as const;
+      const p=v.receipt;
+      return exact(p,['kind','operationId','tripId','contextId','contextDigest','baseVersion','reason','reused'])&&p.kind==='scoped_edit_pending/1'&&p.operationId===b.operationId&&p.tripId===b.tripId&&p.contextId===b.contextId&&p.contextDigest===b.contextDigest&&p.baseVersion===b.baseVersion&&p.reason===reason&&typeof p.reused==='boolean'?'ops_paused' as const:'pending' as const;
+    };
+    const allow=async(effect:'reserve'|'dispatch'|'publish',s:AbortSignal)=>{
+      if(!await current(s))return false;
+      const value=await ports.rpc('authorize_scoped_trip_edit_effect_v1',{...params,p_effect:effect},s),denied=decodeOpsRefusal(value);
+      if(denied){refusal=denied;return false;}return authorized(value,b,effect)&&!s.aborted;
+    };
     const decline=async(reason:'unsupported_request'|'no_change'|'safety_refused')=>{
       const valid=(v:unknown)=>{
         if(!record(v)||!exact(v,['kind','binding','receipt'])||v.kind!=='declined'||!sameValue(v.binding,b)||!record(v.receipt))return false;
@@ -71,17 +84,18 @@ export async function executeScopedTripEdit(lease: DurableTurnLease, ports: Scop
     if (!output) {
       // Only a definitive missing output permits the *same* SQL-owned attempt.
       // Its budget dispatch CAS still denies an already dispatched attempt.
-      if (!record(previous)||!exact(previous,['kind'])||previous.kind!=='missing'||!await allow('reserve',signal)) return 'pending';
+      if (!record(previous)||!exact(previous,['kind'])||previous.kind!=='missing'||!await allow('reserve',signal)) return refusal?await pauseOps(refusal):'pending';
       const a:BudgetAttempt={scopeId:b.scopeId,ownerId:b.ownerId,taskId:b.taskId,attemptId:b.attemptId,provider:b.provider,model:b.model,priceVersion:b.priceVersion,reservedMicros:input.reservedMicros,timeoutMs:input.timeoutMs};
       const budget:BudgetRpc=async(name,p)=>{
         const effect=name==='reserve_model_budget'?'reserve':name==='dispatch_model_budget'?'dispatch':name==='finish_model_budget'?'finish':null;
-        if (!effect || p.p_scope_id!==b.scopeId||p.p_owner_id!==b.ownerId||p.p_attempt_id!==b.attemptId || effect!=='finish'&&!await allow(effect,signal)) return {kind:'blocked'};
+        if (!effect || p.p_scope_id!==b.scopeId||p.p_owner_id!==b.ownerId||p.p_attempt_id!==b.attemptId) return {kind:'blocked'};
+        if(effect!=='finish'&&!await allow(effect,signal))return {kind:'blocked'};
         return ports.rpc('scoped_trip_edit_budget_v1',{...params,p_effect:effect,p_reserved_micros:p.p_reserved_micros??null,p_actual_micros:p.p_actual_micros??null,p_outcome:p.p_action??null},signal);
       };
       const guard=new CostGuard({windowMs:120000,perUserAttempts:8,perTaskAttempts:8,turnDeadlineMs:120000,maxModelSteps:1,maxToolSteps:1}).startTurn({userId:b.ownerId,taskId:b.taskId});
       if(guard.kind!=='turn')return 'pending';
       const result=await runWithDurableBudget(a,budget,async s=>{
-        const value=await invokeScopedTripEditProtocol({requestId:b.attemptId,text:promptInput(input!)},{provider:b.provider,endpoint:input!.endpoint,maxOutputTokens:input!.maxOutputTokens,timeoutMs:input!.timeoutMs},()=>allow('dispatch',s),guard,ports.transport,s);
+        const value=await invokeScopedTripEditProtocol({requestId:b.attemptId,text:promptInput(input!)},{provider:b.provider,endpoint:input!.endpoint,maxOutputTokens:input!.maxOutputTokens,timeoutMs:input!.timeoutMs},async()=>{const permitted=await allow('dispatch',s);if(!permitted&&refusal)throw new OpsControlRefusal(refusal);return permitted;},guard,ports.transport,s);
         // Invalid output may still have billable usage; do not invent a free call.
         const usage=value.usage;
         const priceable=value.kind==='protocol_validated'||value.kind==='unavailable'&&value.code==='SAFETY_BLOCKED';
@@ -101,11 +115,15 @@ export async function executeScopedTripEdit(lease: DurableTurnLease, ports: Scop
         if(!saved||!sameValue(saved.output,parsed)||!sameValue(saved.usage,usage)||saved.actualMicros!==actual)return {value,actualMicros:null};
         return {value,actualMicros:actual};
       },signal);
-      if(result.kind!=='completed'||result.accounting!=='settled'||signal.aborted)return 'pending';
+      if(signal.aborted)return 'pending';
+      const denied=result.kind==='completed'&&result.value.kind==='unavailable'?opsRefusalCode(result.value.code):refusal;
+      if(denied)return await pauseOps(denied);
+      if(result.kind!=='completed'||result.accounting!=='settled')return 'pending';
       if(result.value.kind==='unavailable'&&result.value.code==='SAFETY_BLOCKED')return decline('safety_refused');
       output=await recover(signal);
     }
-    if(!output||output.accounting!=='settled'||!await allow('publish',signal))return 'pending';
+    if(!output||output.accounting!=='settled')return 'pending';
+    if(!await allow('publish',signal))return refusal?await pauseOps(refusal):'pending';
     if(output.output.kind!=='candidate')return decline(output.output.reason);
     const patch=candidatePatch(input,output.output.edits);
     let completed:unknown;

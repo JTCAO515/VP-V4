@@ -1,3 +1,4 @@
+import { initializeFreshOpsFixture } from '../observability/ops-control-owned/fresh-bootstrap.mjs';
 import test, { before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
@@ -41,6 +42,7 @@ before(async()=>{
   const snapshot=()=>db(`select row_to_json(t) from public.turns t where id='${preserved.turn}'; select row_to_json(e) from public.chat_turn_events e where turn_id='${preserved.turn}';`);
   const prior=await snapshot();
   await db('begin;'+readFileSync('supabase/migrations/'+migrations.at(-1),'utf8')+'commit;');
+ await initializeFreshOpsFixture(db);
   assert.equal(await snapshot(),prior,'new migration preserves existing Turn and events');
 });
 after(async()=>{if(created)assert.equal((await command('docker',['rm','-f',container])).code,0);});

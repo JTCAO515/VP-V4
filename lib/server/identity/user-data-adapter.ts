@@ -1479,6 +1479,7 @@ export function pendingProposalRead(
 }
 
 function mapRpcFailure(message: string): FailureCode {
+  if (message === "OPS_CONTROL_DISABLED" || message === "OPS_SCOPE_UNAVAILABLE") return message;
   if (message.includes("SESSION_REPLACED") || message.includes("UNAUTHENTICATED")) return "UNAUTHENTICATED";
   if (message.includes("CONFIRMATION_DIGEST_MISMATCH") || message.includes("INVALID_INPUT")) return "INVALID_INPUT";
   if (

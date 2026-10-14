@@ -1,3 +1,4 @@
+import {decodeOpsRefusal,decodeOpsPause,OpsControlRefusal} from "../observability/ops-control/refusal.ts";
 import { createHash, randomUUID } from "node:crypto";
 import { CostGuard } from "../model-gateway/budget/index.ts";
 import { runWithDurableBudget, type BudgetRpc } from "../model-gateway/budget/durable.ts";
@@ -145,7 +146,7 @@ export async function runPlanningComparisonWorker(workRpc: TurnWorkRpc, rpc: Rpc
       const value=await invokePlanningComparisonProtocol({requestId:lease.leaseToken,text:prompt},
         {provider:binding.provider,endpoint:binding.endpoint,maxOutputTokens:config.maxOutputTokens,timeoutMs:config.timeoutMs},
         async()=>{const decision=await rpc("authorize_planning_dispatch_v1",{...keys,p_context_digest:input.contextDigest,
-          p_scope_id:config.scopeId,p_attempt_id:attemptId});return record(decision)&&decision.kind==="authorized";},guard,binding.transport,budgetSignal);
+          p_scope_id:config.scopeId,p_attempt_id:attemptId});const refused=decodeOpsRefusal(decision);if(refused)throw new OpsControlRefusal(refused);return record(decision)&&decision.kind==="authorized";},guard,binding.transport,budgetSignal);
       const actualMicros=value.kind==="protocol_validated"?binding.price(value.usage):null;
       if(actualMicros!==null&&value.kind==="protocol_validated"&&binding.recordUsage){
         await binding.recordUsage(validatedPlanningUsageReceipt({schemaVersion:"validated-planning-usage/1",attempt,
@@ -170,7 +171,7 @@ export async function runPlanningComparisonWorker(workRpc: TurnWorkRpc, rpc: Rpc
 
 async function pause(rpc:Rpc,lease:DurableTurnLease):Promise<"persisted">{
   const result=await rpc("pause_planning_comparison_v1",{p_turn_id:lease.turnId,p_lease_token:lease.leaseToken});
-  if(!record(result)||result.kind!=="paused_unknown")throw Error("Planning pause acknowledgement unknown");
+  if(!decodeOpsPause(result)&&(!record(result)||result.kind!=="paused_unknown"))throw Error("Planning pause acknowledgement unknown");
   return "persisted";
 }
 function record(v:unknown):v is Record<string,unknown>{return typeof v==="object"&&v!==null&&!Array.isArray(v);}

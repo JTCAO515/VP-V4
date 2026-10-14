@@ -34,7 +34,13 @@ struct NativeAskView: View {
                         Button("ask.task.stop_previous") { Task { await store.stopPreviousRequest(using: session) } }
                             .disabled(store.busy).accessibilityIdentifier("native-ask.stop-previous")
                     }
-                    if store.notice != nil { Text("ask.local.retry_hint").font(.footnote).accessibilityIdentifier("native-ask.error") }
+                    if let code = store.notice, ["OPS_CONTROL_DISABLED", "OPS_SCOPE_UNAVAILABLE"].contains(code) {
+                        Text(settings.selectedLocale == .zh ? "此能力暂时停用，或当前城市范围无法核实。已有行程与成果保留；请查看原行程并按原确认流程手工调整。" : "This capability is paused or the current city scope cannot be qualified. Existing Trips and results are retained; edit through the original confirmation flow.")
+                            .font(.footnote).accessibilityIdentifier("native-ask.ops-refusal")
+                        NavigationLink(destination: NativeJourneysView()) {
+                            Text(settings.selectedLocale == .zh ? "查看已有行程与成果" : "Open existing Trips and results")
+                        }.accessibilityIdentifier("native-ask.ops-alternative")
+                    } else if store.notice != nil { Text("ask.local.retry_hint").font(.footnote).accessibilityIdentifier("native-ask.error") }
                     Text("ask.local.history").font(.title2.bold())
                     TimelineView(.periodic(from: .now, by: 1)) { _ in
                         let readable = store.mode != .grounded || (visible && store.groundedCurrent)
@@ -310,6 +316,10 @@ struct NativeAskView: View {
                 Button(chinese ? "重试" : "Try again") { Task { await store.runAiAssist(turn.id, using: session) } }
                     .accessibilityIdentifier("grounded.ai-assist.retry.\(turn.id)")
             }.accessibilityIdentifier("grounded.ai-assist.error.\(turn.id)")
+        case .opsRefused:
+            Text(chinese ? "此能力暂时停用，或当前城市范围无法核实。已有成果保留，不自动重发。" : "This capability is paused or the current city scope cannot be qualified. Saved results are retained; no automatic retry.")
+                .accessibilityIdentifier("grounded.ai-assist.ops-refusal")
+            NavigationLink(destination: NativeJourneysView()) {Text(chinese ? "查看已有行程与成果" : "Open existing Trips and results")}
         case .done(let reply):
             aiAssistResult(turn, reply, chinese: chinese)
         }

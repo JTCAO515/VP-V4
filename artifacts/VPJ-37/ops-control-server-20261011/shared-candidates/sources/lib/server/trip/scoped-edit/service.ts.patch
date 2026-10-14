@@ -1,0 +1,4 @@
+--- a/lib/server/trip/scoped-edit/service.ts
++++ b/lib/server/trip/scoped-edit/service.ts
+@@ -15,0 +16 @@
++  if(message === "OPS_CONTROL_DISABLED" || message === "OPS_SCOPE_UNAVAILABLE") return message;

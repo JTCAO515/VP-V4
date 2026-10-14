@@ -1,0 +1,9 @@
+{
+  "lease": "/Users/jtsm5p/Documents/Codex/2026-10-12/task/W2-conversation-compile-repair-exact-lease-20261012.json",
+  "leaseSha256": "adf3849d003b3e9ae150ba6644cbd735b7e6de404981759721ca573a534c0c58",
+  "beforePatchAfterIndex": "PASS",
+  "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift",
+  "after": "44004e5ee5b2db315c9b08ea438dedb3cadc999f777af4b9dfea1b0c3cf81d44",
+  "scopeUnchanged": true,
+  "originalFailuresRetained": true
+}

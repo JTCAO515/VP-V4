@@ -10,6 +10,7 @@ import {readFileSync,readdirSync,mkdtempSync,writeFileSync,rmSync,chmodSync} fro
 import {tmpdir} from 'node:os';
 import {join,resolve} from 'node:path';
 import {command,sql} from '../cost/fixtures/postgres-rpc.mjs';
+import { initializeFreshOpsFixture } from '../observability/ops-control-owned/fresh-bootstrap.mjs';
 import {createHostedTextWorker,parseHostedWorkerProfile} from '../../../lib/server/jobs/hosted-text-worker.ts';
 
 const enabled=process.env.VP_TURN_DB_TEST==='1',container='vpj80-hosted-'+uuid().slice(0,8);
@@ -83,7 +84,7 @@ async function additional(a,label){
 }
 before(async()=>{
  if(!enabled)return;
- const r=await command('docker',['run','--pull=never','--rm','-d','--network','none','--name',container,'--user','postgres','--entrypoint','/bin/sh','public.ecr.aws/supabase/postgres:17.6.1.159','-c','umask 077; mkdir /tmp/vpj59-socket; initdb -D /tmp/vpj59-db -A trust --no-locale -E UTF8 >/tmp/init.log 2>&1 && exec postgres -D /tmp/vpj59-db -c listen_addresses= -c unix_socket_directories=/tmp/vpj59-socket -c unix_socket_permissions=0700']);
+ const r=await command('docker',['run','--pull=never','--rm','-d','--network','none','--name',container,'--label','vpj37.fixture=hosted-w2','--label','vpj37.nonce='+container,'--user','postgres','--entrypoint','/bin/sh','public.ecr.aws/supabase/postgres@sha256:86a2e078779e5bdccda1f6f6c5063aa9779a322d1fface5fb408d051909b230f','-c','umask 077; mkdir /tmp/vpj59-socket; initdb -D /tmp/vpj59-db -A trust --no-locale -E UTF8 >/tmp/init.log 2>&1 && exec postgres -D /tmp/vpj59-db -c listen_addresses= -c unix_socket_directories=/tmp/vpj59-socket -c unix_socket_permissions=0700']);
  assert.equal(r.code,0,r.stderr);created=true;
  await waitFor(async()=>(await command('docker',['exec',container,'pg_isready','-h','/tmp/vpj59-socket','-U','postgres'])).code===0,'PostgreSQL');
  await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));
@@ -94,6 +95,7 @@ before(async()=>{
    assert.equal(await db("select to_regprocedure('public.hosted_planning_target_v1(uuid,uuid,uuid,text,bigint,uuid,uuid)') is null;"),'t');}
   await db('begin;'+content+'commit;');
  }
+ await initializeFreshOpsFixture(db);
  gateway=createServer(async(req,res)=>{
   const name=/^\/rest\/v1\/rpc\/([a-z_0-9]+)$/.exec(req.url??'')?.[1],parts=[];for await(const p of req)parts.push(p);
   if(!name||req.headers.apikey!==DB_KEY||req.headers.authorization!=='Bearer '+DB_KEY){res.writeHead(401);res.end('{}');return;}
@@ -139,7 +141,7 @@ after(async()=>{
  for(const w of [...workers])await w.stop('SIGKILL');
  for(const reply of heldResponses)reply();
  for(const server of [gateway,model,maps])if(server){server.closeAllConnections();await new Promise(r=>server.close(r));}
- if(dir)rmSync(dir,{recursive:true,force:true});if(created)assert.equal((await command('docker',['rm','-f',container])).code,0);
+ if(dir)rmSync(dir,{recursive:true,force:true});if(created){const own=await command('docker',['inspect','--format','{{json .Config.Labels}}',container]);assert.equal(own.code,0,own.stderr);assert.deepEqual(JSON.parse(own.stdout),{'vpj37.fixture':'hosted-w2','vpj37.nonce':container});assert.equal((await command('docker',['rm','-f',container])).code,0);}
 });
 
 run('default closed and invalid owner/budget configuration send neither maps nor model',async()=>{

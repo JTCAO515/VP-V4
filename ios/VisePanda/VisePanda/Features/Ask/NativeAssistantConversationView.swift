@@ -483,6 +483,11 @@ struct NativeAssistantConversationView: View {
     @State private var agreed = false
     @State private var busy = false
     @State private var refreshState = AssistantConversationRefreshState()
+    private var opsRefusal: Bool {
+        let textRefused: Bool = notice == "OPS_CONTROL_DISABLED" || notice == "OPS_SCOPE_UNAVAILABLE"
+        let planningRefused: Bool = planningNotice == "OPS_CONTROL_DISABLED" || planningNotice == "OPS_SCOPE_UNAVAILABLE"
+        return textRefused || planningRefused
+    }
     @State private var notice: String?
     @State private var pending: AssistantSubmission?
     @State private var boundScope: NativeDataScope?
@@ -620,12 +625,12 @@ struct NativeAssistantConversationView: View {
                                 && taskTurn(for: message)?.waiting == true
                         }.count,
                         memoryVersions: qualifiedMemoryBasis.map(\.revision),
-                        canContinue: NativeJourneyEntryContinuation.relationship(authorized: resultActive && !composerWaitingForAuthority,
+                        canContinue: NativeJourneyEntryContinuation.relationship(authorized: resultActive && !composerWaitingForAuthority && !opsRefusal,
                             pending: shellSwitchBlocked, goalVersion: goal?.scopeVersion, hasCurrentParent: goalHasCurrentMessage) != nil,
                         hasResult: selectedSources.sources.artifact != nil || lastViewedArtifact != nil,
                         idea: $draft, continueIdea: {
                             guard let relationship = NativeJourneyEntryContinuation.relationship(
-                                authorized: resultActive && !composerWaitingForAuthority, pending: shellSwitchBlocked,
+                                authorized: resultActive && !composerWaitingForAuthority && !opsRefusal, pending: shellSwitchBlocked,
                                 goalVersion: goal?.scopeVersion, hasCurrentParent: goalHasCurrentMessage) else { return }
                             operation = relationship
                             Task { await send() }
@@ -732,7 +737,13 @@ struct NativeAssistantConversationView: View {
                          : (chinese ? "对话暂不可用；已有行程关联仍可在下方解除。" : "Conversation unavailable; existing Trip links can still be removed below."))
                 }
                 if policy?.consentState != .accepted && !privacyLinks.isEmpty { privacyTripControls }
-                if notice != nil && privacyLinks.isEmpty {
+                if opsRefusal {
+                    Text(chinese ? "此能力暂时停用，或当前城市范围无法核实。已有行程和成果保留；请查看原行程，按原确认流程手工调整。" : "This capability is paused or the current city scope cannot be qualified. Existing Trips and results are retained; edit through the original confirmation flow.")
+                        .font(.footnote).accessibilityIdentifier("assistant.ops-refusal")
+                    NavigationLink(destination: NativeJourneysView()) {
+                        Text(chinese ? "查看已有行程与成果" : "Open existing Trips and results")
+                    }.accessibilityIdentifier("assistant.ops-alternative")
+                } else if notice != nil && privacyLinks.isEmpty {
                     Text(chinese ? "请求未确认，请重试或刷新。" : "Request not confirmed. Retry or refresh.").font(.footnote).accessibilityIdentifier("assistant.notice")
                 }
             }.padding(VPSpacing.standard)
@@ -848,7 +859,7 @@ struct NativeAssistantConversationView: View {
                         TextField(chinese ? "告诉 VP…" : "Ask VP…", text: $draft, axis: .vertical)
                             .lineLimit(1...5).autocorrectionDisabled().accessibilityIdentifier("assistant.composer")
                         Button(selectedSources.pending != nil ? (chinese ? "重试同一次来源消息" : "Retry same source message") : pending != nil && conversation == nil ? (chinese ? "重试同一次消息" : "Retry same message") : (chinese ? "发送" : "Send")) { Task { await send() } }
-                            .disabled(busy || !composerScopeCurrent || composerWaitingForAuthority || (conversation == nil && pending == nil) || (pending == nil && selectedSources.pending == nil && draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty))
+                            .disabled(opsRefusal || busy || !composerScopeCurrent || composerWaitingForAuthority || (conversation == nil && pending == nil) || (pending == nil && selectedSources.pending == nil && draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty))
                             .accessibilityIdentifier("assistant.send")
                     }
                 }.padding().background(.bar)
@@ -1226,7 +1237,7 @@ struct NativeAssistantConversationView: View {
                                : (chinese ? "重试同一次委托" : "Retry the same request")) {
                             Task { await delegateComparison(currentGoal) }
                         }
-                        .disabled(planningBusy || (planningPending == nil && planningDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty))
+                        .disabled(opsRefusal || planningBusy || (planningPending == nil && planningDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty))
                         .accessibilityIdentifier("assistant.planning.send")
                     }
                 } else if planningPolicy.consentState == "not_accepted" {
@@ -1242,7 +1253,7 @@ struct NativeAssistantConversationView: View {
                 Text(chinese ? "此环境暂未开放后台比较。" : "Background comparison is unavailable in this environment.")
                     .font(.footnote).foregroundStyle(Color.vpSecondaryText)
             }
-            if planningNotice != nil {
+            if planningNotice != nil && !opsRefusal {
                 Text(chinese ? "委托尚未确认；请重试同一次请求或刷新。" : "Delegation is unconfirmed. Retry the same request or refresh.")
                     .font(.footnote).accessibilityIdentifier("assistant.planning.error")
             }
@@ -1818,6 +1829,7 @@ struct NativeAssistantConversationView: View {
                 policy = nil; clearConversationContext()
             } else { clearConversationProjection() }
             conversations = []; notice = "retry"
+            if case NativeDataError.server(let code)=error,["OPS_CONTROL_DISABLED","OPS_SCOPE_UNAVAILABLE"].contains(code){notice=code}
             if authorityLost { await loadPrivacyLinks(initial) }
         }
     }
@@ -1975,6 +1987,7 @@ struct NativeAssistantConversationView: View {
                     planningPending = nil
                 }
                 planningNotice = "retry"
+                if case NativeDataError.server(let code)=error,["OPS_CONTROL_DISABLED","OPS_SCOPE_UNAVAILABLE"].contains(code){planningNotice=code}
             }
         }
         planningBusy = false

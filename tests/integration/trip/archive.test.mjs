@@ -1,3 +1,4 @@
+import { initializeFreshOpsFixture } from '../observability/ops-control-owned/fresh-bootstrap.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID as uuid } from 'node:crypto';
@@ -24,6 +25,7 @@ test('archive SQL: owner isolation, atomic retries, failure preservation, servic
   for (const file of readdirSync('supabase/migrations').filter(f => f.endsWith('.sql')).sort()) {
     await db('begin;\n' + readFileSync('supabase/migrations/' + file, 'utf8') + '\ncommit;');
   }
+ await initializeFreshOpsFixture(db);
   const owner = uuid(), other = uuid(), trip = uuid(), fresh = uuid(), key = uuid(), turn = uuid(), session = uuid(), task = uuid(), taskTurn = uuid(), thread = uuid(), policy = uuid();
   await db(`insert into auth.users values('${owner}'),('${other}'); insert into auth.sessions(id,user_id) values('${session}','${owner}'); insert into public.trips(id,owner_id,title) values('${trip}','${owner}','Old trip');`);
   const as = (actor, text) => `set request.jwt.claim.sub='${actor}'; set request.jwt.claims='{"role":"authenticated"}'; set role authenticated; ${text}`;

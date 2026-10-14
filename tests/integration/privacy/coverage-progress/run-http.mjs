@@ -1,3 +1,4 @@
+import { stageFreshOpsFixtureBootstrap } from '../../observability/ops-control-owned/fresh-bootstrap.mjs';
 /** Starts/stops only a uniquely owned disposable local Auth/API/database fixture. */
 import { mkdtempSync, mkdirSync, readFileSync, writeFileSync, cpSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -17,6 +18,7 @@ const project = 'vp-native-ask-' + randomUUID().slice(0,8), target = mkdtempSync
 mkdirSync(join(target,'supabase'));
 writeFileSync(join(target,'supabase/config.toml'), nativeHTTPSupabaseConfig(readFileSync('supabase/config.toml','utf8'), project, ports));
 cpSync('supabase/migrations', join(target,'supabase/migrations'), { recursive: true });
+stageFreshOpsFixtureBootstrap(target);
 const env = { ...process.env, DOCKER_CONTEXT: context }; let exit = 1;
 try {
   if (await runOpsProcess('supabase', ['start','--workdir',target,'-x','realtime,storage-api,imgproxy,mailpit,postgres-meta,studio,edge-runtime,logflare,vector,supavisor'], { phase: 'start', cwd: process.cwd(), env }) !== 0)

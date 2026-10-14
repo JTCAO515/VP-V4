@@ -25,7 +25,34 @@ final class NativeAskStore {
     private var eventTurnID: String?
     private var eventRead: UUID?
     private var eventCursors: [String: Int] = [:]
-    enum AiAssistState: Equatable { case loading, done(NativeAiAssistStatus), error }
+    enum OpsRefusal: String, Equatable {
+        case controlDisabled = "ops_control_disabled"
+        case scopeUnavailable = "ops_scope_unavailable"
+    }
+    static func aiAssistRefusal(_ bytes: Data, current: Bool, now: ContinuousClock.Instant, deadline: ContinuousClock.Instant) -> OpsRefusal? {
+        guard current, now < deadline, bytes.count <= 2048,
+              let text = String(data: bytes, encoding: .utf8),
+              let root = try? JSONSerialization.jsonObject(with: bytes) as? [String: Any],
+              Set(root.keys) == ["data"], let data = root["data"] as? [String: Any],
+              let status = data["status"] as? String else { return nil }
+        let reason: String
+        let expectedStrings: Int
+        if status == "not_offered" {
+            guard Set(data.keys) == ["status", "reason"], let value = data["reason"] as? String else { return nil }
+            reason = value; expectedStrings = 5
+        } else if status == "succeeded" {
+            guard Set(data.keys) == ["status", "outcome"], let outcome = data["outcome"] as? [String: Any],
+                  Set(outcome.keys) == ["kind", "reason"], outcome["kind"] as? String == "unavailable",
+                  let value = outcome["reason"] as? String else { return nil }
+            reason = value; expectedStrings = 8
+        } else { return nil }
+        // These closed envelopes contain only known string keys/values. More
+        // string tokens reveal duplicate keys before Foundation discards them.
+        guard let strings = try? NSRegularExpression(pattern: #""(?:[^"\\]|\\.)*""#),
+              strings.numberOfMatches(in: text, range: NSRange(text.startIndex..., in: text)) == expectedStrings else { return nil }
+        return OpsRefusal(rawValue: reason)
+    }
+    enum AiAssistState: Equatable { case loading, done(NativeAiAssistStatus), opsRefused(OpsRefusal), error }
     private(set) var aiAssist: [String: AiAssistState] = [:]
     private var aiAssistTokens: [String: UUID] = [:]
     let mode: NativeAskMode
@@ -89,7 +116,7 @@ final class NativeAskStore {
         switch intent { case .newGoal, .continuation: return true; default: return false }
     }
     var canSend: Bool {
-        !pendingAcknowledged && mode != .unavailable && permitsSubmission && policy?.consentState == .accepted && !busy
+        !["OPS_CONTROL_DISABLED", "OPS_SCOPE_UNAVAILABLE"].contains(notice ?? "") && !pendingAcknowledged && mode != .unavailable && permitsSubmission && policy?.consentState == .accepted && !busy
         && !(pending?.text ?? draft).trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         && (pending?.text ?? draft).utf16.count <= 4000
     }
@@ -168,6 +195,10 @@ final class NativeAskStore {
                 guard aiAssistTokens[turnId] == token, scope == current, session.dataScope == current else { return }
                 try Task.checkCancellation()
                 guard ContinuousClock.now < deadline else { throw URLError(.timedOut) }
+                if let refusal = Self.aiAssistRefusal(data, current: !Task.isCancelled && aiAssistTokens[turnId] == token && scope == current && session.dataScope == current, now: .now, deadline: deadline) {
+                    aiAssist[turnId] = .opsRefused(refusal)
+                    return
+                }
                 let reply = try JSONDecoder().decode(NativeAiAssistReply.self, from: data)
                 guard reply.data.valid else { aiAssist[turnId] = .error; return }
                 if reply.data.status == "pending" {

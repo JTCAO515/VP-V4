@@ -1,3 +1,4 @@
+import { initializeFreshOpsFixture } from '../observability/ops-control-owned/fresh-bootstrap.mjs';
 import test from 'node:test';
 import {spawn} from 'node:child_process';
 import {once} from 'node:events';
@@ -47,6 +48,7 @@ test('grounded Turn: durable scope, private results and historical eligibility',
   assert.equal(await db("select to_regprocedure('public.complete_grounded_place_work(uuid,uuid,text,text,text,text)') is null;"),'t');
   await db('begin;'+content+'commit;');
  }else await db('begin;'+content+'commit;');}
+ await initializeFreshOpsFixture(db);
  const actor=async()=>{const a={owner:uuid(),session:uuid()};await db(`insert into auth.users values('${a.owner}');insert into auth.sessions(id,user_id) values('${a.session}','${a.owner}');`);return a;};
  const owner=await actor(),other=await actor(),author=await actor(),reviewer=await actor();
  const rpc=(role,a)=>async(name,params={})=>{assert.match(name,/^[a-z_]+$/);const claims=a?`set request.jwt.claim.sub='${a.owner}';set request.jwt.claims='${JSON.stringify({session_id:a.session})}';`:'';return JSON.parse(await db(claims+`set role ${role};select public.${name}(`+Object.entries(params).map(([k,v])=>k+'=>'+lit(v)).join(',')+');'));};

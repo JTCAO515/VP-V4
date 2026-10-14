@@ -1,0 +1,8 @@
+--- a/ios/VisePanda/VisePanda/Features/Ask/NativeAskModels.swift
++++ b/ios/VisePanda/VisePanda/Features/Ask/NativeAskModels.swift
+@@ -274 +274 @@
+-        case "not_offered": return ["unauthorized", "not_blocked", "job_unavailable"].contains(reason ?? "") && outcome == nil && errorCode == nil
++        case "not_offered": return ["unauthorized", "not_blocked", "job_unavailable", "ops_control_disabled", "ops_scope_unavailable"].contains(reason ?? "") && outcome == nil && errorCode == nil
+@@ -281 +281 @@
+-            case "unavailable": return ["missing_content", "retrieval_miss", "user_input_missing", "capability_unsupported", "policy_denied", "provider_failure"].contains(outcome.reason ?? "")
++            case "unavailable": return ["missing_content", "retrieval_miss", "user_input_missing", "capability_unsupported", "policy_denied", "provider_failure", "ops_control_disabled", "ops_scope_unavailable"].contains(outcome.reason ?? "")

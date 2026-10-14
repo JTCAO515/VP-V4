@@ -1,0 +1,7 @@
+--- a/lib/server/contracts/errors/index.ts
++++ b/lib/server/contracts/errors/index.ts
+@@ -2,0 +3 @@
++  "OPS_CONTROL_DISABLED", "OPS_SCOPE_UNAVAILABLE",
+@@ -35,0 +37,2 @@
++  OPS_CONTROL_DISABLED: spec(503, "unavailable", false, false, "ops_control_disabled"),
++  OPS_SCOPE_UNAVAILABLE: spec(503, "unavailable", false, false, "ops_scope_unavailable"),

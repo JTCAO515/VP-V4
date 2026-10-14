@@ -50,6 +50,7 @@ function AuthenticatedWorkspace({ initialThreadId, initialPlaceCandidate, ground
   const [selectedTripId, setSelectedTripId] = useState<string | null>(null);
   const [selected, setSelected] = useState<ThreadRead | null>(null);
   const [state, setState] = useState<LoadState>("loading");
+  const [opsRefusal, setOpsRefusal] = useState<"OPS_CONTROL_DISABLED" | "OPS_SCOPE_UNAVAILABLE" | null>(null);
   const [creating, setCreating] = useState(false);
   const [turnAction, setTurnAction] = useState<"starting" | "cancelling" | null>(null);
   const [feedbackTurnId, setFeedbackTurnId] = useState<string | null>(null);
@@ -191,7 +192,18 @@ function AuthenticatedWorkspace({ initialThreadId, initialPlaceCandidate, ground
       const pending = pendingStarts.current.get(selected.thread.id) ?? { turnId: crypto.randomUUID(), idempotencyKey: crypto.randomUUID() };
       pendingStarts.current.set(selected.thread.id, pending);
       const response = await fetch(`/api/chat/threads/${selected.thread.id}/turns`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ ...pending, digest: "chat-state-control-v1" }) });
-      if (!response.ok) { setState(response.status === 401 ? "unauthenticated" : "unavailable"); return; }
+      if (!response.ok) {
+        const body: unknown = await response.json().catch(() => null);
+        if (body && typeof body === "object" && !Array.isArray(body) && Object.keys(body).length === 2 && "error" in body && "status" in body) {
+          const error = body.error;
+          if (error && typeof error === "object" && !Array.isArray(error) && Object.keys(error).length === 1 && "code" in error
+            && (error.code === "OPS_CONTROL_DISABLED" || error.code === "OPS_SCOPE_UNAVAILABLE")) {
+            setOpsRefusal(error.code); return;
+          }
+        }
+        setState(response.status === 401 ? "unauthenticated" : "unavailable"); return;
+      }
+      setOpsRefusal(null);
       pendingStarts.current.delete(selected.thread.id);
       const refreshed = await readThread(selected.thread.id);
       if (refreshed) selectThreadRead(refreshed);
@@ -226,6 +238,7 @@ function AuthenticatedWorkspace({ initialThreadId, initialPlaceCandidate, ground
     <section className={styles.content} aria-labelledby="chat-threads-title"><p>{copy.eyebrow}</p><h1 id="chat-threads-title">{copy.title}</h1><p className={styles.body}>{copy.body}</p>{exactPoiId ? <p className={styles.status}>{copy.exactPlaceScope.replace("{poiId}", exactPoiId)}</p> : null}
       <div aria-live="polite" className={styles.status}>{state === "loading" ? copy.loading : state === "unavailable" ? copy.unavailable : null}</div>
       {state === "unauthenticated" ? <Link className={styles.primary} href="/auth/sign-in?returnTo=/visepanda">{copy.signIn}</Link> : null}
+      {opsRefusal ? <aside role="status"><p>{locale === "zh" ? "此能力暂时停用，或当前城市范围无法核实。已有行程保留，请查看原行程并手工调整。" : "This capability is paused or the current city scope cannot be qualified. Existing Trips are retained; open the original Trip to edit manually."}</p><Link href={selected?.thread.tripId ? `/visepanda/trips/${encodeURIComponent(selected.thread.tripId)}` : "/visepanda/trips"}>{locale === "zh" ? "查看已有行程" : "Open existing Trips"}</Link></aside> : null}
       {state === "ready" ? <>
         <label className={styles.tripScope}>{copy.tripScope}<select value={selectedTripId ?? ""} onChange={(event) => setSelectedTripId(event.target.value || null)}><option value="">{copy.noTripScope}</option>{trips.map((trip) => <option key={trip.id} value={trip.id}>{trip.title}</option>)}</select></label>
         <button className={styles.primary} type="button" onClick={createThread} disabled={creating}>{copy.create}</button>

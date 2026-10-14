@@ -1,3 +1,4 @@
+import {decodeOpsRefusal,opsRefusalCode,OpsControlRefusal} from "../../observability/ops-control/refusal.ts";
 import { WIKI_STATEMENT_PROPOSALS_PROMPT } from "../prompt/wiki-statement-proposals.ts";
 import { omitUnscopedProposals, type ProposalOutput } from "../../knowledge/wiki/proposals.ts";
 import { MODEL_PROFILES, validateKnownUnknownOutput, type KnownUnknownOutput, type ModelDataClass, type ModelTask } from "../index.ts";
@@ -111,7 +112,8 @@ export async function invokeKnowledgeIntentProtocol(
   budget, transport, signal, async () => {
     const decision = await rpc("authorize_grounded_dispatch", { ...keys, p_policy_id: policyId,
       p_provider: binding.provider, p_context_digest: digest });
-    return record(decision) && decision.kind === "authorized";
+    const refusal=decodeOpsRefusal(decision);if(refusal)throw new OpsControlRefusal(refusal);
+    return record(decision) && Object.keys(decision).length===1 && decision.kind === "authorized";
   }, binding.endpoint);
 }
 /**
@@ -135,7 +137,8 @@ export async function invokeTextProviderProtocol(
   const policyId = raw.policyId;
   return invokeProtocol({ requestId: lease.leaseToken, provider: binding.provider, dataClass: "c2_sensitive", input: raw.text, task: taskMode ? "text_task_v2" : "text_turn_v1", ...(taskMode ? { history: raw.history as ProtocolRequest["history"] } : {}), thinkingBudgetTokens: binding.thinkingBudgetTokens, maxOutputTokens: binding.maxOutputTokens, timeoutMs: binding.timeoutMs }, budget, transport, signal, async () => {
     const decision = await rpc(taskMode ? "authorize_text_task_dispatch" : "authorize_text_dispatch", { ...keys, p_policy_id: policyId, p_provider: binding.provider, ...(taskMode ? { p_context_digest: raw.contextDigest as string } : {}) });
-    return record(decision) && decision.kind === "authorized";
+    const refusal=decodeOpsRefusal(decision);if(refusal)throw new OpsControlRefusal(refusal);
+    return record(decision) && Object.keys(decision).length===1 && decision.kind === "authorized";
   }, binding.endpoint);
 }
 
@@ -197,7 +200,8 @@ async function invokeProtocol(
         if (request.dataClass === "c2_sensitive" && !(await authorizeText!())) return unavailable("DATA_POLICY_BLOCKED");
         if (controller.signal.aborted) return cancelled();
         response = await transport({ provider: request.provider, ...(endpoint === undefined ? {} : { endpoint }), method: "POST", body, signal: controller.signal });
-      } catch {
+      } catch (error) {
+        const refusal=opsRefusalCode(error);if(refusal)return unavailable(refusal);
         return controller.signal.aborted
           ? timedOut ? unavailable("TIMEOUT_BEFORE_OUTPUT") : cancelled()
           : unavailable("PROVIDER_UNAVAILABLE");

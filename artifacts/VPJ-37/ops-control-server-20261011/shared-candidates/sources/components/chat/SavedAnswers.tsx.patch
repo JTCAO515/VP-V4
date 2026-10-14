@@ -1,0 +1,7 @@
+--- a/components/chat/SavedAnswers.tsx
++++ b/components/chat/SavedAnswers.tsx
+@@ -2,0 +3 @@
++import Link from "next/link";
+@@ -60,0 +62,2 @@
++  const opsReason=result.status==="not_offered"?result.reason:result.status==="succeeded"&&result.outcome.kind==="unavailable"?result.outcome.reason:null;
++  if(opsReason==="ops_control_disabled"||opsReason==="ops_scope_unavailable")return <aside role="status"><p>{locale==="zh"?"此能力暂时停用，或当前城市范围无法核实。已有行程和成果保留；不会自动重发已发送请求。":"This capability is paused or its current city scope cannot be qualified. Existing Trips and results are retained; sent requests are not retried automatically."}</p><Link href="/visepanda/trips">{locale==="zh"?"查看已有行程并手工调整":"Open existing Trips to edit manually"}</Link></aside>;

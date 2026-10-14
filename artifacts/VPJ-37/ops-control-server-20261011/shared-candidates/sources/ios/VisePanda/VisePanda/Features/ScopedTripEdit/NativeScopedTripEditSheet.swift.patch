@@ -1,0 +1,6 @@
+--- a/ios/VisePanda/VisePanda/Features/ScopedTripEdit/NativeScopedTripEditSheet.swift
++++ b/ios/VisePanda/VisePanda/Features/ScopedTripEdit/NativeScopedTripEditSheet.swift
+@@ -198,0 +199 @@
++                .disabled(["OPS_CONTROL_DISABLED", "OPS_SCOPE_UNAVAILABLE", "ops_control_disabled", "ops_scope_unavailable"].contains(store.notice ?? ""))
+@@ -305,0 +307 @@
++        case "OPS_CONTROL_DISABLED", "OPS_SCOPE_UNAVAILABLE", "ops_control_disabled", "ops_scope_unavailable": t("VP editing is paused or the current scope cannot be qualified. Close this sheet to read the same retained Trip and edit manually through its original confirmation flow. Sent operations are not retried automatically.", "VP 编辑暂时停用，或当前范围无法核实。关闭此页可查看同一已有行程，按原确认流程手工调整；不会自动重发已发送操作。")

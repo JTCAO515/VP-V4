@@ -1,0 +1,17 @@
+{
+  "state": "APPLIED_PRE_SQL_REVIEW_DELTA",
+  "sourceHead": "6cf0957879e96dfae758f8b824aa7a8212ecb507",
+  "originalReviewIndexHead": "b021681fe56a71e69334f20120bcfb68c6cdd0ba",
+  "files": [
+    {
+      "path": "lib/server/turn/scoped-edit/executor.ts",
+      "sha256": "821450a5d9e0a9e5f6304067d7ac6d43c49826b3176691fdbb1be16ca1c93d36"
+    },
+    {
+      "path": "tests/contract/observability/ops-control-scoped-publish.test.mjs",
+      "sha256": "a83f0a6beb3562f399f8a707d7159980754a06eec263f87fca05418e71e3f92a"
+    }
+  ],
+  "proof": "35 affected executor/publication tests PASS, zero skip; exact after candidate strict typecheck reused",
+  "productSQL": "NOT_GRANTED/NOT_APPLIED"
+}

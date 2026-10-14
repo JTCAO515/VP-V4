@@ -1,5 +1,6 @@
 export const FAILURE_CODES = [
   "UNAUTHENTICATED", "FORBIDDEN", "RATE_LIMITED",
+  "OPS_CONTROL_DISABLED", "OPS_SCOPE_UNAVAILABLE",
   "INVALID_INPUT", "UNSUPPORTED_MEDIA", "AMBIGUOUS_SCOPE",
   "NO_ELIGIBLE_EVIDENCE", "DATA_POLICY_BLOCKED", "DATA_EXPIRED",
   "PROVIDER_UNAVAILABLE", "TIMEOUT_BEFORE_OUTPUT", "TIMEOUT_AFTER_OUTPUT",
@@ -33,6 +34,8 @@ export const FAILURE_TAXONOMY: Readonly<Record<FailureCode, FailureSpec>> = {
   NO_ELIGIBLE_EVIDENCE: spec(422, "unavailable", false, false, "no_eligible_evidence"),
   DATA_POLICY_BLOCKED: spec(403, "unavailable", false, false, "data_policy_blocked"),
   DATA_EXPIRED: spec(409, "unavailable", true, false, "data_expired"),
+  OPS_CONTROL_DISABLED: spec(503, "unavailable", false, false, "ops_control_disabled"),
+  OPS_SCOPE_UNAVAILABLE: spec(503, "unavailable", false, false, "ops_scope_unavailable"),
   PROVIDER_UNAVAILABLE: spec(503, "unavailable", true, true, "provider_unavailable"),
   TIMEOUT_BEFORE_OUTPUT: spec(504, "unavailable", true, true, "timeout_before_output"),
   TIMEOUT_AFTER_OUTPUT: spec(504, "failure", false, false, "timeout_after_output"),

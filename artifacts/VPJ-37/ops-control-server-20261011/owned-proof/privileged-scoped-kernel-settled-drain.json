@@ -1,0 +1,110 @@
+{
+  "case": "privileged-disposable-scoped-kernel-settled-drain",
+  "role": "postgres + synthetic SQL claims only",
+  "serviceRole": "Original actual permission-denied FAIL retained; enrollment UNRUN",
+  "GoTrueTargetProviderDevice": "UNRUN",
+  "providerCalls": 0,
+  "sourceBodySha256": "96b545afbd306da94ca8360afed3d6754c1de598bbab2d1d6e40562aec818b36",
+  "decision": "/Users/jtsm5p/Documents/Codex/2026-10-12/v8-main/w2-scoped-role-contract-decision.json",
+  "result": "PASS",
+  "checks": [
+    "exact existing settled tuple permits original publish authority",
+    "foreign operation refuses",
+    "stop -> actual TS executor -> persisted exact original settled candidate",
+    "original read_operation returns same receipt",
+    "known settled20 retained",
+    "new Ask denied",
+    "no Proposal or Trip mutation",
+    "six original service-role ACLs unchanged"
+  ],
+  "operationId": "20ad98d4-7cf0-45fd-82eb-69667e53147e",
+  "receipt": {
+    "kind": "scoped_edit_candidates/1",
+    "reused": true,
+    "tripId": "8716e319-89bf-4c0b-bbda-c6d07283f59a",
+    "contextId": "fd8445e6-508b-4cda-954f-94cc2875aa29",
+    "expiresAt": "2026-10-12T10:33:24.911Z",
+    "candidates": [
+      {
+        "diff": {
+          "changes": [
+            {
+              "kind": "changed",
+              "after": {
+                "id": "b",
+                "dayId": "d1",
+                "title": "B",
+                "endsAt": "2026-10-08T13:00:00+00:00",
+                "startsAt": "2026-10-08T12:00:00+00:00"
+              },
+              "before": {
+                "id": "b",
+                "dayId": "d1",
+                "title": "B"
+              },
+              "itemId": "b"
+            }
+          ],
+          "transferImpact": "pending",
+          "preservedItemIds": [
+            "a",
+            "c",
+            "z"
+          ],
+          "walkingImprovement": "unverified",
+          "externalOrderEffect": "none"
+        },
+        "edits": [
+          {
+            "kind": "set_time",
+            "endsAt": "2026-10-08T13:00:00+00:00",
+            "itemId": "b",
+            "startsAt": "2026-10-08T12:00:00+00:00"
+          }
+        ],
+        "candidateId": "f8ad544a-2482-4371-a799-e0dd441cec20"
+      }
+    ],
+    "baseVersion": 0,
+    "operationId": "20ad98d4-7cf0-45fd-82eb-69667e53147e",
+    "returnScope": {
+      "dayIds": [
+        "d1"
+      ],
+      "itemIds": []
+    },
+    "contextDigest": "6069f57f3ab8ce89c3802078784d4581add21d789081537877674b9ca9c63999"
+  },
+  "acl": [
+    {
+      "acl": "{postgres=X/postgres}",
+      "signature": "public.authorize_scoped_trip_edit_effect_v1(jsonb,text)",
+      "serviceExecute": false
+    },
+    {
+      "acl": "{postgres=X/postgres}",
+      "signature": "public.claim_scoped_trip_edit_work_v1(uuid,uuid,uuid)",
+      "serviceExecute": false
+    },
+    {
+      "acl": "{postgres=X/postgres}",
+      "signature": "public.pause_scoped_trip_edit_work_v1(jsonb,text)",
+      "serviceExecute": false
+    },
+    {
+      "acl": "{postgres=X/postgres}",
+      "signature": "public.read_scoped_trip_edit_completion_v1(jsonb)",
+      "serviceExecute": false
+    },
+    {
+      "acl": "{postgres=X/postgres}",
+      "signature": "public.read_scoped_trip_edit_work_v1(uuid,uuid)",
+      "serviceExecute": false
+    },
+    {
+      "acl": "{postgres=X/postgres}",
+      "signature": "public.scoped_trip_edit_budget_v1(jsonb,text,bigint,bigint,text)",
+      "serviceExecute": false
+    }
+  ]
+}

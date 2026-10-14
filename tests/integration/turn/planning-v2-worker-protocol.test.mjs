@@ -1,3 +1,4 @@
+import { initializeFreshOpsFixture } from '../observability/ops-control-owned/fresh-bootstrap.mjs';
 // Isolated protocol preparation only. Synthetic actor claims, fixture-only
 // durable checkpoint table, private SQL as fixture admin; no service grant.
 import test,{before,after} from 'node:test';
@@ -44,6 +45,7 @@ before(async()=>{if(!enabled)return;const r=await command('docker',['run','--pul
  for(let i=0;i<100;i++){if((await command('docker',['exec',container,'pg_isready','-h','/tmp/vpj59-socket','-U','postgres'])).code===0)break;await new Promise(r=>setTimeout(r,100));}
  await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));await db("create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;create schema extensions;create extension pgcrypto with schema extensions;");
  for(const f of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort())await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;');
+ await initializeFreshOpsFixture(db);
  await db('create schema protocol_fixture;create table protocol_fixture.steps(owner_id uuid,task_id uuid,turn_id uuid primary key,intake_digest text,planning_digest text,state text,observation jsonb);');
  server=createServer(async(req,res)=>{mapCalls++;const u=new URL(req.url,'http://fixture'),q=u.searchParams.get('keywords'),id=u.searchParams.get('id'),ids={'静安寺':'j','人民广场':'p','上海站':'s'},coords={j:'121.440000,31.220000',p:'121.480000,31.230000',s:'121.450000,31.250000'};assert.equal(u.searchParams.get('key'),'SYNTHETIC_PROTOCOL_KEY');let body;
  if(u.pathname.includes('place/text'))body={status:'1',infocode:'10000',pois:[{id:ids[q],name:q}]};else if(u.pathname.includes('place/detail'))body={status:'1',infocode:'10000',pois:[{id,name:id,location:coords[id],citycode:'021',address:'Synthetic'}]};else{const transit=u.pathname.includes('transit');body={status:'1',infocode:'10000',route:{origin:u.searchParams.get('origin'),destination:u.searchParams.get('destination'),[transit?'transits':'paths']:[{distance:'1000',cost:{duration:'960'},steps:[{instruction:'Synthetic'}],segments:[{walking:{distance:'100',steps:[{instruction:'Synthetic'}]},bus:{buslines:[{name:'Synthetic',departure_stop:{name:'A'},arrival_stop:{name:'B'}}]}}]}]}};}

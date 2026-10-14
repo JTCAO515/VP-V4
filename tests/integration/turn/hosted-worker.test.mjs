@@ -13,6 +13,7 @@ import {readFileSync,readdirSync,mkdtempSync,writeFileSync,rmSync,chmodSync} fro
 import {tmpdir} from 'node:os';
 import {join,resolve} from 'node:path';
 import {command,sql} from '../cost/fixtures/postgres-rpc.mjs';
+import { initializeFreshOpsFixture } from '../observability/ops-control-owned/fresh-bootstrap.mjs';
 import {PROTOCOL_MODELS} from '../../../lib/server/model-gateway/adapters/provider-protocol.ts';
 import {KNOWLEDGE_INTENT_SYSTEM_PROMPT} from '../../../lib/server/model-gateway/prompt/knowledge-intent.ts';
 import {translationPrompt,projectTranslation} from '../../../lib/server/media-translation/text/contract.ts';
@@ -75,7 +76,7 @@ const assertNoSecrets=w=>{for(const text of [w.stdout,w.stderr,w.journal()]){ass
 
 before(async()=>{
  if(!enabled)return;
- const r=await command('docker',['run','--pull=never','--rm','-d','--network','none','--name',container,'--user','postgres','--entrypoint','/bin/sh','public.ecr.aws/supabase/postgres:17.6.1.159','-c','umask 077; mkdir /tmp/vpj59-socket; initdb -D /tmp/vpj59-db -A trust --no-locale -E UTF8 >/tmp/init.log 2>&1 && exec postgres -D /tmp/vpj59-db -c listen_addresses= -c unix_socket_directories=/tmp/vpj59-socket -c unix_socket_permissions=0700']);
+ const r=await command('docker',['run','--pull=never','--rm','-d','--network','none','--name',container,'--label','vpj37.fixture=hosted-w2','--label','vpj37.nonce='+container,'--user','postgres','--entrypoint','/bin/sh','public.ecr.aws/supabase/postgres@sha256:86a2e078779e5bdccda1f6f6c5063aa9779a322d1fface5fb408d051909b230f','-c','umask 077; mkdir /tmp/vpj59-socket; initdb -D /tmp/vpj59-db -A trust --no-locale -E UTF8 >/tmp/init.log 2>&1 && exec postgres -D /tmp/vpj59-db -c listen_addresses= -c unix_socket_directories=/tmp/vpj59-socket -c unix_socket_permissions=0700']);
  assert.equal(r.code,0,r.stderr);created=true;
  let ready=false;for(let i=0;i<60;i++){if((await command('docker',['exec',container,'pg_isready','-h','/tmp/vpj59-socket','-U','postgres'])).code===0){ready=true;break;}await new Promise(r=>setTimeout(r,250));}assert.ok(ready);
  await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));
@@ -89,6 +90,7 @@ before(async()=>{
  await db('begin;'+content+'rollback;');assert.equal(await db("select to_regclass('turn_private.hosted_worker_control') is null;"),'t');
  await db('begin;'+content+'commit;');
  for(const f of migrations.slice(mine+1))await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;');
+ await initializeFreshOpsFixture(db);
  assert.equal(await db("select count(*) from turn_private.work;select count(*) from turn_private.text_policies;"),before);
 
  gateway=createServer(async(req,res)=>{
@@ -131,7 +133,7 @@ after(async()=>{
  if(gateway){gateway.closeAllConnections();await new Promise(r=>gateway.close(r));}
  if(model){model.closeAllConnections();await new Promise(r=>model.close(r));}
  if(dir)rmSync(dir,{recursive:true,force:true});
- if(created)assert.equal((await command('docker',['rm','-f',container])).code,0);
+ if(created){const own=await command('docker',['inspect','--format','{{json .Config.Labels}}',container]);assert.equal(own.code,0,own.stderr);assert.deepEqual(JSON.parse(own.stdout),{'vpj37.fixture':'hosted-w2','vpj37.nonce':container});assert.equal((await command('docker',['rm','-f',container])).code,0);}
 });
 
 run('migration is service-only and starts disabled: no discovery, no claim, no provider call',async()=>{

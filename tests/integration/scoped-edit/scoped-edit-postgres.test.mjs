@@ -1,3 +1,4 @@
+import { initializeFreshOpsFixture } from '../observability/ops-control-owned/fresh-bootstrap.mjs';
 // Disposable network-none PostgreSQL. Original actor/Trip authority, synthetic
 // admin-created auth/session rows and claims. This is not signed target Auth.
 import test,{before,after} from 'node:test';
@@ -24,6 +25,7 @@ before(async()=>{if(!enabled)return;
  await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));
  await db("create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;create schema extensions;create extension pgcrypto with schema extensions;");
  for(const f of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort()){if(f==='20261005020000_scoped_edit.sql'){const a=await fixture(),thread=uuid(),turn=uuid();legacyV2=turn;await db(`insert into public.chat_threads(id,owner_id,status) values('${thread}','${a.owner}','active');insert into public.turns(id,owner_id,thread_id,status) values('${turn}','${a.owner}','${thread}','accepted');insert into turn_private.work(turn_id,owner_id,session_id,max_attempts,lease_ms,execution_mode) values('${turn}','${a.owner}','${a.session}',3,30000,'planning_intake_comparison_v2');`);}await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;');}
+ await initializeFreshOpsFixture(db);
 });
 after(async()=>{if(created)assert.equal((await command('docker',['rm','-f',container])).code,0);});
 const run=(name,fn)=>test(name,{skip:!enabled,timeout:120000},fn);

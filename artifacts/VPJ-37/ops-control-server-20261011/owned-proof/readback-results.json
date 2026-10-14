@@ -1,0 +1,164 @@
+{
+  "results": [
+    {
+      "turn": "9a3a15ee-f3bf-4ce7-af7e-1eeafd639d3f",
+      "task": "d05be5e4-75ce-4525-8363-80971a2127d0",
+      "mode": "planning_comparison_v1",
+      "result": "PASS",
+      "activity": {
+        "kind": "task_activity",
+        "limit": 4,
+        "taskId": "d05be5e4-75ce-4525-8363-80971a2127d0",
+        "turnId": "9a3a15ee-f3bf-4ce7-af7e-1eeafd639d3f",
+        "actions": [],
+        "recording": "unrecorded",
+        "turnStatus": "unavailable",
+        "conversationId": "d03b97ac-3414-4641-a33a-0c1524274ecb"
+      },
+      "tasks": {
+        "kind": "conversation_tasks",
+        "limit": 20,
+        "turns": [
+          {
+            "status": "unavailable",
+            "turnId": "9a3a15ee-f3bf-4ce7-af7e-1eeafd639d3f",
+            "outcome": "blocked",
+            "parentTurnId": null,
+            "relationship": "new_goal",
+            "scopeVersion": 1,
+            "serviceTaskId": "d05be5e4-75ce-4525-8363-80971a2127d0",
+            "goalScopeVersion": 1,
+            "currentGoalScopeVersion": 1
+          }
+        ],
+        "messages": [
+          {
+            "text": "Compare Shanghai areas",
+            "goalId": "b3741446-d604-4d0b-bdf4-f0ad46f847f8",
+            "locale": "en",
+            "output": null,
+            "status": "recorded",
+            "taskId": "d05be5e4-75ce-4525-8363-80971a2127d0",
+            "turnId": null,
+            "outcome": null,
+            "sequence": 2,
+            "messageId": "b6549992-3e32-4e4d-ae6c-b189ab87984d",
+            "relationship": "follow_up",
+            "scopeVersion": 1,
+            "parentMessageId": "4fec6759-c349-4213-b195-d24ff92b4c7a"
+          }
+        ],
+        "nextCursor": null,
+        "conversationId": "d03b97ac-3414-4641-a33a-0c1524274ecb",
+        "conversationSequence": 3
+      }
+    },
+    {
+      "turn": "8fc9a174-d63f-42eb-8594-9af16c54d854",
+      "task": "b8d02dad-0da4-43c9-b2bb-4c91dd9de770",
+      "mode": "planning_comparison_v1",
+      "result": "PASS",
+      "activity": {
+        "kind": "task_activity",
+        "limit": 4,
+        "taskId": "b8d02dad-0da4-43c9-b2bb-4c91dd9de770",
+        "turnId": "8fc9a174-d63f-42eb-8594-9af16c54d854",
+        "actions": [],
+        "recording": "unrecorded",
+        "turnStatus": "unavailable",
+        "conversationId": "0f10ec8e-f971-42c1-9a5e-0892f566d5c5"
+      },
+      "tasks": {
+        "kind": "conversation_tasks",
+        "limit": 20,
+        "turns": [
+          {
+            "status": "unavailable",
+            "turnId": "8fc9a174-d63f-42eb-8594-9af16c54d854",
+            "outcome": "blocked",
+            "parentTurnId": null,
+            "relationship": "new_goal",
+            "scopeVersion": 1,
+            "serviceTaskId": "b8d02dad-0da4-43c9-b2bb-4c91dd9de770",
+            "goalScopeVersion": 1,
+            "currentGoalScopeVersion": 1
+          }
+        ],
+        "messages": [
+          {
+            "text": "Compare Shanghai areas",
+            "goalId": "e815da4a-c528-4c65-883d-ea8563b8c304",
+            "locale": "en",
+            "output": null,
+            "status": "recorded",
+            "taskId": "b8d02dad-0da4-43c9-b2bb-4c91dd9de770",
+            "turnId": null,
+            "outcome": null,
+            "sequence": 2,
+            "messageId": "ba0461dc-963c-4bbe-8b16-e58907b1366a",
+            "relationship": "follow_up",
+            "scopeVersion": 1,
+            "parentMessageId": "c2454205-d95a-4662-8839-0d601cc2349f"
+          }
+        ],
+        "nextCursor": null,
+        "conversationId": "0f10ec8e-f971-42c1-9a5e-0892f566d5c5",
+        "conversationSequence": 3
+      }
+    },
+    {
+      "turn": "b9ca0fb0-f622-4fa2-8c83-41c15a1e2b36",
+      "task": "26dce28b-b7ee-4906-8b05-0aedd8619e1f",
+      "mode": "planning_intake_comparison_v2",
+      "result": "PASS",
+      "activity": {
+        "kind": "task_activity",
+        "limit": 4,
+        "taskId": "26dce28b-b7ee-4906-8b05-0aedd8619e1f",
+        "turnId": "b9ca0fb0-f622-4fa2-8c83-41c15a1e2b36",
+        "actions": [],
+        "recording": "unrecorded",
+        "turnStatus": "unavailable",
+        "conversationId": "1fb95af3-130e-46ae-93fa-3c02f05783d3"
+      },
+      "tasks": {
+        "kind": "conversation_tasks",
+        "limit": 20,
+        "turns": [
+          {
+            "status": "unavailable",
+            "turnId": "b9ca0fb0-f622-4fa2-8c83-41c15a1e2b36",
+            "outcome": "blocked",
+            "parentTurnId": null,
+            "relationship": "new_goal",
+            "scopeVersion": 1,
+            "serviceTaskId": "26dce28b-b7ee-4906-8b05-0aedd8619e1f",
+            "goalScopeVersion": 1,
+            "currentGoalScopeVersion": 1
+          }
+        ],
+        "messages": [
+          {
+            "text": "Compare Shanghai areas",
+            "goalId": "4c9099b3-1eaf-4d48-b99a-99bbc73621f1",
+            "locale": "en",
+            "output": null,
+            "status": "recorded",
+            "taskId": "26dce28b-b7ee-4906-8b05-0aedd8619e1f",
+            "turnId": null,
+            "outcome": null,
+            "sequence": 2,
+            "messageId": "aaf08801-0423-4600-9332-2d54d3cc59ff",
+            "relationship": "follow_up",
+            "scopeVersion": 1,
+            "parentMessageId": "7c5c573d-d654-4112-9d6a-fd25a6e83bba"
+          }
+        ],
+        "nextCursor": null,
+        "conversationId": "1fb95af3-130e-46ae-93fa-3c02f05783d3",
+        "conversationSequence": 3
+      }
+    }
+  ],
+  "proof": "Actual authenticated-role public task activity/list RPCs; original unavailable terminal and exact task/turn, no new task"
+}

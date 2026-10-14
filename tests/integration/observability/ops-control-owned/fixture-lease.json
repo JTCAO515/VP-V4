@@ -1,0 +1,43 @@
+{
+  "marker": "W2-integrated-owned-proof-fixture-20261012-V8",
+  "at": "2026-10-12T10:06:22.234545+00:00",
+  "state": "GRANTED",
+  "soleOwner": "01a126a8-7cb5-7a70-aca6-0ba38c99efe2",
+  "worktree": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj37-ops-control-server-20261011",
+  "container": "vpj37-w2-integration-20261012-54bf86c1",
+  "image": "public.ecr.aws/supabase/postgres@sha256:86a2e078779e5bdccda1f6f6c5063aa9779a322d1fface5fb408d051909b230f",
+  "network": "none",
+  "ports": [],
+  "mounts": [],
+  "pull": "never",
+  "labels": {
+    "vpj37.owner": "01a126a8-7cb5-7a70-aca6-0ba38c99efe2",
+    "vpj37.nonce": "vpj37-w2-integration-20261012-54bf86c1"
+  },
+  "socket": "/tmp/vpj37-54bf86c1-socket",
+  "data": "/tmp/vpj37-54bf86c1-db",
+  "source": {
+    "base": "daa7bae44a660381fb3295d0d2afc327ea98d3ba",
+    "migrationCount": 154,
+    "candidateOwner": "01a126aa-2822-75d1-800b-ccd4fefcdc64",
+    "candidateHead": "ef89aeb8bee2d66e06b62922ec18a43726c9ec81",
+    "fullbodySha256": "96b545afbd306da94ca8360afed3d6754c1de598bbab2d1d6e40562aec818b36",
+    "tsSourceHead": "1d9e5da5"
+  },
+  "scope": "Only complete W2 actual canonical text/V1/V2/scoped positive/negative tuples and pause original-operation/readback integration. SQL owner runs concurrency/old restore/erase-export-copy/old Trip evidence; no duplicated historical matrices. SQL claims fixture, no GoTrue/provider/target/device claim.",
+  "guard": [
+    "Fresh exact name absent before create; collision refuses, no reuse",
+    "Only preinstalled immutable image with --pull=never --rm --network none --user postgres no host paths/volumes/ports",
+    "0700 private data/socket; trust auth only isolated Unix socket, listen_addresses empty; strict actual PG17.6/image/labels/network/mounts preflight before replay",
+    "Exactly current 154 migration replay and pinned fullbody as fixture candidate only, never modify applied old migration or product append",
+    "Non-secret test source/evidence only, own tests/contract/observability or tests/integration/observability paths; shared hook changes require precise before/patch/after",
+    "No run/cleanup/inspect data of original SQL owner fixture or other containers; Main never proxies owner execution",
+    "Applicable platform-specific approval remains; report exact action/error if rejected, no workaround",
+    "After tests remove only exact label-checked own container; record cleanup ABSENT and retained original failures"
+  ],
+  "notGranted": [
+    "product migration append",
+    "shared SQL overwrite",
+    "target/real user/provider/new image/credentials/daemon changes"
+  ]
+}

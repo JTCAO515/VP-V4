@@ -1,0 +1,4 @@
+--- a/lib/server/turn/native-planning-intake-http.ts
++++ b/lib/server/turn/native-planning-intake-http.ts
+@@ -77,0 +78 @@
++ if(message==="OPS_CONTROL_DISABLED"||message==="OPS_SCOPE_UNAVAILABLE")return [message,503];

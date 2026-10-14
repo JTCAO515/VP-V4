@@ -1,3 +1,4 @@
+import { stageFreshOpsFixtureBootstrap } from '../observability/ops-control-owned/fresh-bootstrap.mjs';
 // Starts/removes only its uniquely named local synthetic Ask stack. No repo .env.
 import { mkdtempSync, mkdirSync, readFileSync, writeFileSync, cpSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -16,6 +17,7 @@ const project = "vp-native-ask-" + randomUUID().slice(0, 8), target = mkdtempSyn
 mkdirSync(join(target, "supabase"));
 writeFileSync(join(target, "supabase/config.toml"), nativeHTTPSupabaseConfig(readFileSync("supabase/config.toml", "utf8"), project, ports));
 cpSync("supabase/migrations", join(target, "supabase/migrations"), { recursive: true });
+stageFreshOpsFixtureBootstrap(target);
 const env = { ...process.env, DOCKER_CONTEXT: context };
 const run = (cmd, args, visible = false, childEnv = env) => new Promise((resolve, reject) => {
   const child = spawn(cmd, args, { cwd: process.cwd(), env: childEnv, stdio: visible ? "inherit" : ["ignore", "pipe", "pipe"] });

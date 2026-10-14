@@ -1,3 +1,4 @@
+import { stageFreshOpsFixtureBootstrap } from '../observability/ops-control-owned/fresh-bootstrap.mjs';
 /** Creates and removes only a new uniquely named disposable native identity stack. */
 import { mkdtempSync, mkdirSync, readFileSync, writeFileSync, cpSync, rmSync, symlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -28,6 +29,7 @@ for(const offset of [20,21,22,23,24,27,29])config=config.replaceAll(String(54300
 config=config.replace(/(\[db.seed\][\s\S]*?enabled = )true/,'$1false');
 writeFileSync(join(target,'supabase/config.toml'),config);
 cpSync(join(repo,'supabase/migrations'),join(target,'supabase/migrations'),{recursive:true});
+stageFreshOpsFixtureBootstrap(target);
 // Only our test process has visible output; CLI startup/cleanup use #612's fixed diagnostic enums.
 function runTest(args,env){return new Promise(resolve=>{
   const child=spawn(process.execPath,args,{cwd:repo,env,stdio:'inherit'});

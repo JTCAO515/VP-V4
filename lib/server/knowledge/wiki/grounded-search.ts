@@ -1,3 +1,4 @@
+import {opsRefusalCode} from "../../observability/ops-control/refusal.ts";
 import { questionDefinition, isPlaceQuestionId } from "../claim/questions.ts";
 import type { KnowledgeIntent } from "../claim/intent.ts";
 import { buildPublishedWikiCorpus, type KnowledgeReadRpc } from "./published-corpus.ts";
@@ -48,7 +49,7 @@ export type GroundedSearchInput = Readonly<{
   provider: HttpProviderConfiguration;
 }>;
 
-export type GroundedSearchReasonCode = "missing_content" | "retrieval_miss" | "user_input_missing" | "capability_unsupported" | "policy_denied" | "provider_failure";
+export type GroundedSearchReasonCode = "missing_content" | "retrieval_miss" | "user_input_missing" | "capability_unsupported" | "policy_denied" | "provider_failure" | "ops_control_disabled" | "ops_scope_unavailable";
 export type GroundedSearchUsage = Readonly<{ inputTokens: number; outputTokens: number; totalTokens: number }>;
 
 export type GroundedSearchOutcome =
@@ -146,6 +147,7 @@ export async function runGroundedWikiSearch(
     case "cancelled":
       return { kind: "cancelled", rounds: outcome.rounds, usage: zeroUsage };
     case "failed":
+      if(opsRefusalCode(outcome.errorCode))return {kind:"unavailable",reason:outcome.errorCode==="OPS_CONTROL_DISABLED"?"ops_control_disabled":"ops_scope_unavailable"};
       return { kind: "unavailable", reason: "provider_failure", providerCode: outcome.errorCode };
   }
 }

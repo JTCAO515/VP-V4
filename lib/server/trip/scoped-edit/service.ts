@@ -13,6 +13,7 @@ async function call(rpc: ScopedEditRPC, name: string, params: Readonly<Record<st
   return r.data;
 }
 export function mappedError(message: string): string {
+  if(message === "OPS_CONTROL_DISABLED" || message === "OPS_SCOPE_UNAVAILABLE") return message;
   return /UNAUTHENTICATED|SESSION_REPLACED/.test(message) ? "UNAUTHENTICATED" : /FORBIDDEN|CONSENT_REQUIRED|DATA_POLICY_BLOCKED/.test(message) ? "FORBIDDEN" : /IDEMPOTENCY_KEY_REUSE/.test(message) ? "IDEMPOTENCY_KEY_REUSE" : /STALE_TRIP_VERSION|STALE_BASIS/.test(message) ? "STALE_TRIP_VERSION" : /INVALID_INPUT|INVALID_PATCH|INVALID_SCOPE/.test(message) ? "INVALID_INPUT" : "PROVIDER_UNAVAILABLE";
 }
 /** Stored procedure owns actor, CAS, locks, lifecycle and the sole Proposal producer.

@@ -1,0 +1,212 @@
+{
+  "base": "daa7bae44a660381fb3295d0d2afc327ea98d3ba",
+  "privateHead": "8e22e3f4006fed9e9e7d083e9c274727337b5c5f",
+  "applied": false,
+  "files": [
+    {
+      "path": "lib/server/contracts/errors/index.ts",
+      "beforeSha256": "e90fc76b6098eb6511c63b44c0a21259421f4e0b17d251af64ae7ffd7b26d2da",
+      "afterSha256": "4ea64312aa49707fd93bb82c47975a03f721c660037fcf089b0a4fefe2e8bdc6",
+      "currentHolder": "01a0af16-3f91-7e52-b444-c6f57f364c04 explicit HOLD; Main precise release required",
+      "applied": false
+    },
+    {
+      "path": "lib/server/identity/user-data-adapter.ts",
+      "beforeSha256": "ef3bb707c4b73290e841e65151b472cb0306f916ecb8b07e10d6b078857af1e4",
+      "afterSha256": "2e98dbc3b06465d45e6983b0cc3b1db01050145d6229b9503bbf256444c5949d",
+      "currentHolder": "01a0af16-3f91-7e52-b444-c6f57f364c04 explicit HOLD; Main precise release required",
+      "applied": false
+    },
+    {
+      "path": "lib/server/turn/native-http.ts",
+      "beforeSha256": "4fb50a965014cc80e350efa113ee1fbcdbfa97edddbe1e0aea4ec4c55f2af82c",
+      "afterSha256": "587f38d41f39fdd2c2d2eef7c93138507047a6c7efdb7cebce9c2ac11f67eb78",
+      "currentHolder": "01a0af16-3f91-7e52-b444-c6f57f364c04 explicit HOLD; Main precise release required",
+      "applied": false
+    },
+    {
+      "path": "lib/server/turn/native-assistant-http.ts",
+      "beforeSha256": "25f2e95ed1961a029397e02b15e457d9d14b68ac84d1e19c6ebf197d51d2aa00",
+      "afterSha256": "1dc69845f5853078ae7198e0bde914770a438de84c762c9d4f7eff0d19411dde",
+      "currentHolder": "01a0af16-3f91-7e52-b444-c6f57f364c04 explicit HOLD; Main precise release required",
+      "applied": false
+    },
+    {
+      "path": "lib/server/turn/native-planning-intake-http.ts",
+      "beforeSha256": "e1bb047b0639203e093f39c9c0635cf65de289d9cf4adbd03e2edb6935089d06",
+      "afterSha256": "4921e73293eaea16427663b4500dc88a169855f065d6ff3fb3a870ee9404baff",
+      "currentHolder": "01a0af16-3f91-7e52-b444-c6f57f364c04 explicit HOLD; Main precise release required",
+      "applied": false
+    },
+    {
+      "path": "lib/server/turn/native-planning-http.ts",
+      "beforeSha256": "86b14150d9431d6391d972c498e5a0b8cbb8f15060d43dec192238674cb30c21",
+      "afterSha256": "52e0d9814d92454688e6fb835c09cdc50dd80ffea2eb569eefd4289930715650",
+      "currentHolder": "01a0af16-3f91-7e52-b444-c6f57f364c04 explicit HOLD; Main precise release required",
+      "applied": false
+    },
+    {
+      "path": "lib/server/trip/scoped-edit/service.ts",
+      "beforeSha256": "0c025775234502a9dc4e3717ae0fb7f91e0872ed0b48e3fee0ea1a0190105625",
+      "afterSha256": "7b04c2a0976720e9f74d60646e0633a720e1f6f43bbe3fb3b09924ecb7af8ad0",
+      "currentHolder": "01a0af16-3f91-7e52-b444-c6f57f364c04 explicit HOLD; Main precise release required",
+      "applied": false
+    },
+    {
+      "path": "components/chat/ChatThreadWorkspace.tsx",
+      "beforeSha256": "d98778068017b223a07c68575e30ca34f0012422b809373142e4be15dfc8fbc9",
+      "afterSha256": "2976b1af77770cdb5be2f3b89837dd2c532016d2b857ffc24f58325932ac15c4",
+      "currentHolder": "01a0af16-3f91-7e52-b444-c6f57f364c04 explicit HOLD; Main precise release required",
+      "applied": false
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAskStore.swift",
+      "beforeSha256": "d3d49c5cf65b8267833008ae7e00b8a367b672b84b44362b430a07a0a5563078",
+      "afterSha256": "0339303f27f4a45fad2c46396f5512d060ba3818fa84dd8ddea184348ac5b083",
+      "currentHolder": "UNKNOWN current shared native owner; Main must obtain exact release, no last-author inference",
+      "applied": false
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAskView.swift",
+      "beforeSha256": "12008229bba6ada4100027747e71253fabeb52eafac82a60269977452311396b",
+      "afterSha256": "043f01d84004fd88e2c505e8075b1026cad3f0c60b4569f55d07cf9a5c1d593b",
+      "currentHolder": "UNKNOWN current shared native owner; Main must obtain exact release, no last-author inference",
+      "applied": false
+    },
+    {
+      "path": "lib/server/model-gateway/adapters/provider-protocol.ts",
+      "beforeSha256": "756ffe06e6943460b9a7128ad1200a0780a5555aff3507d2c451a4173173016a",
+      "afterSha256": "61c465defa3bdf0ee775f17ecd5d879782ab678d18cbbdd960c9325eb5c88860",
+      "currentHolder": "01a0af16-3f91-7e52-b444-c6f57f364c04 explicit HOLD; Main precise release required",
+      "applied": false
+    },
+    {
+      "path": "lib/server/turn/text-worker.ts",
+      "beforeSha256": "9bb54e18b5bc6a0f6e9b9e961f15b05bc59d6dc277615b3ea17e98f7d6bb9627",
+      "afterSha256": "5b302b25d5cb33989d2081b4d01658d2f53904c5fdf3e766286c17f405c839b4",
+      "currentHolder": "01a0af16-3f91-7e52-b444-c6f57f364c04 explicit HOLD; Main precise release required",
+      "applied": false
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift",
+      "beforeSha256": "9103ee2e7700daf3b31678a0b992e283f250c7bac865327cbb1218231f8e3dcf",
+      "afterSha256": "0e9fda055c991afc788e069d094875cd207135327510f768d1e7e098fa023313",
+      "currentHolder": "Main identified TurnNative01a11707-7127-7bd0-90ba-4c781a012426 / 196Native01a1245a-e7d1-7261-9dbe-32041ac5ea1a; exact hunk ownership/release pending",
+      "applied": false,
+      "leaseEligibility": "HOLD updated only two JourneyEntry send-denial conditions; full body/currentholder Main review required",
+      "sourceBase": "daa7bae44a660381fb3295d0d2afc327ea98d3ba"
+    },
+    {
+      "path": "lib/server/model-gateway/adapters/http-transport.ts",
+      "beforeSha256": "016b0047cf692ed6b3f9e7b9b05d8268be58066035867c9ec2ee9f3adef65cd1",
+      "afterSha256": "4c2a42a93b905d3682e40d3caf6ba2c387e0299d30c3f7c982090b47c635e757",
+      "currentHolder": "01a0af16-3f91-7e52-b444-c6f57f364c04 explicit HOLD; Main precise release required",
+      "applied": false
+    },
+    {
+      "path": "lib/server/turn/planning-comparison-worker.ts",
+      "beforeSha256": "2f61e6014791a445d96c658ae36f6066681e669156a210aa6210e9ed80a48f38",
+      "afterSha256": "5f85af041b897e1e8afa03475c5764a752bb5cbadb5c44b6c3feceaaa6578288",
+      "currentHolder": "01a0af16-3f91-7e52-b444-c6f57f364c04 explicit HOLD; Main precise release required",
+      "applied": false
+    },
+    {
+      "path": "lib/server/turn/planning-v2-model-step.ts",
+      "beforeSha256": "07e78f0627b012c5825d3fd8f40d270508c8937342db1a1952c832d201e7e803",
+      "afterSha256": "23c7bc97b8608f790e2968a6a650c3b90654b9575b9fcb3910ca60775352d006",
+      "currentHolder": "01a0af16-3f91-7e52-b444-c6f57f364c04 explicit HOLD; Main precise release required",
+      "applied": false
+    },
+    {
+      "path": "lib/server/turn/planning-v2-bounded-worker.ts",
+      "beforeSha256": "d45a2115693593511cc0c912ea485a3886371d09beb66c5a2af6c04021fabf1a",
+      "afterSha256": "6496b1bfd7d05aaf6399a41e1a29cfdb7a646284d2f14c4449743bc2a3d271d6",
+      "currentHolder": "01a0af16-3f91-7e52-b444-c6f57f364c04 explicit HOLD; Main precise release required",
+      "applied": false
+    },
+    {
+      "path": "lib/server/turn/planning-v2-hosted-job.ts",
+      "beforeSha256": "dd99ec78fa14b8247005b90843473cf5088ae486a80aed89b6e81c79fc459b86",
+      "afterSha256": "197c6621e1223689b18455c43424686827ada8e1383d14f64b0a72e49b879d2e",
+      "currentHolder": "01a0af16-3f91-7e52-b444-c6f57f364c04 explicit HOLD; Main precise release required",
+      "applied": false
+    },
+    {
+      "path": "lib/server/turn/scoped-edit/executor.ts",
+      "beforeSha256": "fe3eadb6372c6a2d0221a951c4ac98a33af35a5204ddb8204de02b71f60f3bc3",
+      "afterSha256": "9cab38e894a1233d7165e7180978e1b618dd5d847b7909132abb65b14ca625cc",
+      "currentHolder": "01a0af16-3f91-7e52-b444-c6f57f364c04 explicit HOLD; Main precise release required",
+      "applied": false
+    },
+    {
+      "path": "lib/server/turn/scoped-edit/hosted-job.ts",
+      "beforeSha256": "a9c5d170b25243b85af4c5e618ee88967fc9a6e2169332573dddbd7b641ddc02",
+      "afterSha256": "a4502d984d0e979bf85305ea4ecd5a05445aa227173894f1baa264e31dcc3a0e",
+      "currentHolder": "01a0af16-3f91-7e52-b444-c6f57f364c04 explicit HOLD; Main precise release required",
+      "applied": false
+    },
+    {
+      "path": "lib/server/trip/scoped-edit/wire.ts",
+      "beforeSha256": "ce1f6a32f226c155d9b0bfa69619fd068ccc462aa321723cdf69f47621664095",
+      "afterSha256": "fed29d276656072b5878d7d4c562eab0808f4ee216cc7f56e31ef92d704be02e",
+      "currentHolder": "01a0af16-3f91-7e52-b444-c6f57f364c04 explicit HOLD; Main precise release required",
+      "applied": false
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/ScopedTripEdit/NativeScopedTripEditStore.swift",
+      "beforeSha256": "ae71946bf18cd9157a026cab6b19568d8f78e72eb75938f7dd0646f67533a690",
+      "afterSha256": "ca9c1c26f71b2716cd868a5aa64aadcbf76c003d25fd9beb55625dad6fc8e9dd",
+      "currentHolder": "UNKNOWN current shared native owner; Main must obtain exact release, no last-author inference",
+      "applied": false
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/ScopedTripEdit/NativeScopedTripEditSheet.swift",
+      "beforeSha256": "a7427cae5b58ec322afd77ead3e7e96ef2875dc4f476252c2f0191c673539dd5",
+      "afterSha256": "d5af901903b12b46eabe8a51cbe416cf185390d52715f803be1f727c931e088e",
+      "currentHolder": "UNKNOWN current shared native owner; Main must obtain exact release, no last-author inference",
+      "applied": false
+    },
+    {
+      "path": "lib/server/knowledge/wiki/grounded-ai-assist.ts",
+      "beforeSha256": "1da27f24208cd76380eafbe5586d91675af87401617cd4c41e5628d54416441a",
+      "afterSha256": "e073c77a488a486ce33c16ba6ba984c735cb3ba2c94531e8996084dd7a6b236e",
+      "currentHolder": "01a0af16-3f91-7e52-b444-c6f57f364c04 explicit HOLD; Main precise release required",
+      "applied": false
+    },
+    {
+      "path": "lib/server/knowledge/wiki/grounded-search.ts",
+      "beforeSha256": "d1833f3faa0e93e9cb11f3751877f7e3c303579f3cbbca9e7c38c821cfd6dcca",
+      "afterSha256": "56fc9381650087105b4a3f6cf45f44c0f0dabad88077c0789927bdfd575be834",
+      "currentHolder": "01a0af16-3f91-7e52-b444-c6f57f364c04 explicit HOLD; Main precise release required",
+      "applied": false
+    },
+    {
+      "path": "lib/server/knowledge/wiki/grounded-ai-assist-job.ts",
+      "beforeSha256": "10400a0abaa08d131f9b5f9c65dcb8aa18d671838177fa4a63c71226489c46da",
+      "afterSha256": "fdab8182f47f77ce5de5eae272d3933159d70ef58dad96716adb9fc272732895",
+      "currentHolder": "01a0af16-3f91-7e52-b444-c6f57f364c04 explicit HOLD; Main precise release required",
+      "applied": false
+    },
+    {
+      "path": "components/chat/SavedAnswers.tsx",
+      "beforeSha256": "23df43db56bd512e3c8d871800f271cbab9b92ab08700030c363beb65bbf8876",
+      "afterSha256": "b22f96f8f969fa240ffd0bdc60fb794b333cbdf89cef84d662aa1cb78c8c0694",
+      "currentHolder": "01a0af16-3f91-7e52-b444-c6f57f364c04 explicit HOLD; Main precise release required",
+      "applied": false
+    }
+  ],
+  "readyForApply": false,
+  "sharedApplied": false,
+  "sourceDelta": "Only ConversationView after/patch changed for JourneyEntry canContinue+callback refusal; other27 unchanged",
+  "withdrawnHistoricalCandidates": [
+    {
+      "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAskModels.swift",
+      "beforeSha256": "0181f41629bc8dd749cd9b8523b31089b191d2b2082bed759304569dba0cf453",
+      "afterSha256": "5d9efaa6a64e4ecd3545b0f513f824a88ffd44646b837047c76d045a5be69407",
+      "currentHolder": "UNKNOWN current shared native owner; Main must obtain exact release, no last-author inference",
+      "applied": false,
+      "status": "WITHDRAWN from apply list; NativeAskModels UNKNOWN/HOLD and unchanged, historical before/after retained"
+    }
+  ],
+  "modelsSourceShaUnchanged": "0181f41629bc8dd749cd9b8523b31089b191d2b2082bed759304569dba0cf453"
+}

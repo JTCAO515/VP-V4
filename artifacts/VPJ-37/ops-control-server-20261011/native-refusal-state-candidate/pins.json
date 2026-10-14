@@ -1,0 +1,21 @@
+{
+  "scope": "Only dedicated closed Ops refusal consumer state; NativeAskModels unchanged",
+  "files": [
+    {
+      "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAskStore.swift",
+      "beforeSha256": "0339303f27f4a45fad2c46396f5512d060ba3818fa84dd8ddea184348ac5b083",
+      "afterSha256": "38bdbf747d749d52ae64665c8d08642eb9b4d1cfcd5f1a78a66d28a3202c3487",
+      "patchSha256": "5959b014cfc6d1ea4134f81a0c40f3063846e8d25eb1e91a3b35e61cff46987d",
+      "applied": false,
+      "lease": "HOLD new exact hunk release required"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAskView.swift",
+      "beforeSha256": "043f01d84004fd88e2c505e8075b1026cad3f0c60b4569f55d07cf9a5c1d593b",
+      "afterSha256": "b9126747e0dc8e967351351b5a6e8b11f0f17d9a5cbb0ecac2c199bc9992b47e",
+      "patchSha256": "49938622c54a18d3ac1dc9c69d8c6b7585fdbf00edee5ca6f36969bcde77c0f2",
+      "applied": false,
+      "lease": "HOLD new exact hunk release required"
+    }
+  ]
+}

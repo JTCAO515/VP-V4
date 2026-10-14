@@ -1,0 +1,11 @@
+--- a/lib/server/turn/scoped-edit/hosted-job.ts
++++ b/lib/server/turn/scoped-edit/hosted-job.ts
+@@ -0,0 +1 @@
++import {decodeOpsRefusal,OpsControlRefusal} from '../../observability/ops-control/refusal.ts';
+@@ -71,0 +73 @@
++          const denied=decodeOpsRefusal(decision);if(denied)throw new OpsControlRefusal(denied);
+@@ -75,0 +78 @@
++        const denied=decodeOpsRefusal(stored);if(denied)throw new OpsControlRefusal(denied);
+@@ -87 +90 @@
+-      if(result==='persisted'||result==='declined')return 'persisted';
++      if(result==='persisted'||result==='declined'||result==='ops_paused')return 'persisted';

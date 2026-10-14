@@ -1,0 +1,39 @@
+CREATE OR REPLACE FUNCTION public.read_assistant_conversation_v1(p_policy_id uuid, p_conversation_id uuid DEFAULT NULL::uuid)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare u uuid:=turn_private.text_owner(); c turn_private.text_consents%rowtype;
+  conversation turn_private.assistant_conversations%rowtype; messages jsonb; goals jsonb;
+begin
+  if p_policy_id is null or not turn_private.text_policy_current(p_policy_id) then return jsonb_build_object('kind','unavailable'); end if;
+  select * into c from turn_private.text_consents where owner_id=u and policy_id=p_policy_id and revoked_at is null for share;
+  if not found then return jsonb_build_object('kind','unavailable'); end if;
+  if p_conversation_id is null then
+    select * into conversation from turn_private.assistant_conversations where owner_id=u and policy_id=p_policy_id and consent_id=c.consent_id order by created_at desc,id desc limit 1;
+  else
+    select * into conversation from turn_private.assistant_conversations where id=p_conversation_id and owner_id=u and policy_id=p_policy_id and consent_id=c.consent_id;
+  end if;
+  if not found then return jsonb_build_object('kind','conversation','conversationId',null,'nextSequence',1,'messages','[]'::jsonb,'goals','[]'::jsonb); end if;
+  select coalesce(jsonb_agg(x.item order by x.sequence),'[]'::jsonb) into messages from (
+    select m.sequence,jsonb_build_object('messageId',m.id,'sequence',m.sequence,'locale',m.locale,'text',m.input_text,
+      'relationship',m.relationship,'goalId',m.goal_id,'scopeVersion',m.scope_version,
+      'taskId',case when m.task_id is not null and exists(select 1 from turn_private.service_tasks s
+        join turn_private.text_content root on root.turn_id=s.goal_turn_id and root.owner_id=u and root.hidden_at is null
+        join turn_private.text_consents tc on tc.owner_id=u and tc.policy_id=s.policy_id and tc.consent_id=s.consent_id and tc.revoked_at is null
+        where s.id=m.task_id and s.owner_id=u and turn_private.text_policy_current(s.policy_id)) then m.task_id else null end,
+      'parentMessageId',m.parent_message_id,
+      'turnId',m.turn_id,'status',case when m.turn_id is null then 'recorded' else t.status end,
+      'outcome',tc.output_kind,'output',tc.output_text,'createdAt',m.created_at) item
+    from turn_private.assistant_messages m
+    left join turn_private.text_content tc on tc.turn_id=m.turn_id and tc.owner_id=u and tc.hidden_at is null
+    left join public.turns t on t.id=m.turn_id and t.owner_id=u
+    where m.conversation_id=conversation.id and m.owner_id=u and m.policy_id=p_policy_id and m.consent_id=c.consent_id
+      and (m.turn_id is null or (tc.turn_id is not null and t.id is not null))
+    order by m.sequence desc limit 50
+  ) x;
+  select coalesce(jsonb_agg(jsonb_build_object('goalId',g.id,'scopeVersion',g.scope_version,'text',g.current_text) order by g.created_at,g.id),'[]'::jsonb)
+    into goals from turn_private.assistant_goals g where g.conversation_id=conversation.id and g.owner_id=u;
+  return jsonb_build_object('kind','conversation','conversationId',conversation.id,'nextSequence',conversation.next_sequence,'messages',messages,'goals',goals);
+end $function$
