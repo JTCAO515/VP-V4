@@ -15,6 +15,7 @@ export type RecoveryReport = Readonly<{
   sourceVerification: "caller_bound_not_attested" | "NOT_RUN";
   binding: Readonly<{ taskId: string; turnId: string; tripId: string; operationId: string | null; proposalId: string | null; idempotencyKey: string | null }> | null;
   taskState: string | "unknown"; tripVersion: number | "unknown";
+  lateEventsIgnored: number;
   receipt: Readonly<{ operationId: string; proposalId: string; proposalRevision: number; contextDigest: string; resultingVersion: number | null }> | null;
   confirmDispatches: number; cancelDispatches: number; acknowledgement: "observed" | "unknown" | "not_dispatched";
   commitCount: "unknown"; quotaDebit: "unknown"; providerUsage: "unknown"; vendorCost: "unknown";
@@ -34,7 +35,7 @@ export async function runRuntimeRecovery(input: unknown, transport?: RuntimeTran
     code: run ? null : "INVALID_INPUT", source: run?.context.source ?? null, sourceVerification: "NOT_RUN",
     binding: run ? { taskId: run.context.taskId, turnId: run.context.turnId, tripId: run.context.tripId,
       operationId: run.operation?.operationId ?? null, proposalId: run.proposalId, idempotencyKey: run.idempotencyKey } : null,
-    taskState: "unknown", tripVersion: "unknown", receipt: null, confirmDispatches: 0, cancelDispatches: 0,
+    taskState: "unknown", tripVersion: "unknown", lateEventsIgnored: 0, receipt: null, confirmDispatches: 0, cancelDispatches: 0,
     acknowledgement: "not_dispatched", commitCount: "unknown", quotaDebit: "unknown", providerUsage: "unknown", vendorCost: "unknown",
     taskTripCausalLink: "unknown", idempotencyReadback: "unknown",
     observations: [], fullAcceptance: "NOT_RUN",
@@ -50,6 +51,7 @@ export async function runRuntimeRecovery(input: unknown, transport?: RuntimeTran
   const timer = setTimeout(() => { timedOut = true; abort(); }, run.timeoutMs);
   const port = createBoundedPort(transport, run.context, run.maxRequests, controller.signal);
   let taskState = "unknown", cursor = 0, retired = false;
+  let lateEventsIgnored = 0;
   let tripVersion: number | "unknown" = "unknown", receipt: RecoveryReport["receipt"] = null;
   let acknowledgement: RecoveryReport["acknowledgement"] = "not_dispatched";
   let outcome: RecoveryReport["outcome"] = "unknown", code: FailureCode | null = null;
@@ -69,6 +71,11 @@ export async function runRuntimeRecovery(input: unknown, transport?: RuntimeTran
       for (const event of page.events) {
         if (event.type === "source_retired") { retired = true; continue; }
         if (event.taskId !== run.context.taskId || event.turnId !== run.context.turnId) continue;
+        if (taskState === "cancelled" && event.type !== "task_status") {
+          if (event.type === "task_progress" && event.state === "started" || event.type === "artifact_ready" || event.type === "artifact_updated")
+            throw new RuntimeFailure("SERVICE_TASK_CONFLICT");
+          lateEventsIgnored += 1;
+        }
         if (event.type === "task_status") {
           if (terminals.has(taskState) && event.status !== taskState) throw new RuntimeFailure("SERVICE_TASK_CONFLICT");
           taskState = event.status;
@@ -178,7 +185,7 @@ export async function runRuntimeRecovery(input: unknown, transport?: RuntimeTran
     outcome = "unknown";
   } finally { clearTimeout(timer); signal.removeEventListener("abort", abort); }
   return Object.freeze({ ...base, mode: run.mode, outcome, code, sourceVerification: "caller_bound_not_attested",
-    taskState, tripVersion, receipt,
+    taskState, tripVersion, lateEventsIgnored, receipt,
     confirmDispatches: port.observations.filter(o => o.request === "confirm_and_apply_trip_proposal").length,
     cancelDispatches: port.observations.filter(o => o.request === "cancel_chat_turn").length,
     acknowledgement, observations: Object.freeze([...port.observations]) });

@@ -118,6 +118,28 @@ test("H10 late conflicting completed event fails closed and never applies", asyn
   assert.equal(report.outcome, "unknown"); assert.equal(report.code, "SERVICE_TASK_CONFLICT"); assert.equal(report.confirmDispatches, 0);
 });
 
+test("H10 late tool completion is observed and ignored; new tools/artifacts after cancellation fail", async () => {
+  for (const kind of ["completed", "started", "artifact_ready"] as const) {
+    const run = h10(false), f = boundary(run);
+    let injected = false;
+    const report = await runRuntimeRecovery(run, async (req, signal) => {
+      const response = await f.transport(req, signal);
+      if (req.name !== "read_assistant_events_v1" || Number(req.params.p_after_sequence) !== 1 || injected) return response;
+      injected = true;
+      const data = await response.json();
+      const base = { eventId: `${run.context.conversationId}:3`, sequence: 3, taskId: run.context.taskId, turnId: run.context.turnId };
+      data.events.push(kind === "artifact_ready" ? { ...base, type: kind, artifactId: id(90), revision: 1, availability: "recheck" }
+        : { ...base, type: "task_progress", tool: "place.read", state: kind });
+      data.lastSequence = 3;
+      return Response.json(data);
+    });
+    assert.equal(report.outcome, kind === "completed" ? "cancelled" : "unknown");
+    if (kind === "completed") assert.equal(report.lateEventsIgnored, 1);
+    else assert.equal(report.code, "SERVICE_TASK_CONFLICT");
+    assert.equal(report.confirmDispatches, 0);
+  }
+});
+
 test("H10 a previously committed Trip reports applied rather than claiming undo", async () => {
   const run = h10(), f = boundary(run); f.applied = true;
   const report = await runRuntimeRecovery(run, f.transport);
@@ -199,6 +221,58 @@ test("closed production errors retain codes only with matching HTTP status", asy
     const report = await runRuntimeRecovery(input, async () => Response.json({ error: { code } }, { status }));
     assert.equal(report.code, code); assert.equal(report.outcome, "unknown");
   }
+});
+
+test("existing direct PostgREST errors map closed SQL tokens without detail leakage", async () => {
+  for (const [message, code] of [["SESSION_REPLACED", "UNAUTHENTICATED"], ["FORBIDDEN", "FORBIDDEN"], ["CONFIRMATION_DIGEST_MISMATCH", "INVALID_INPUT"],
+    ["__proto__", "PROVIDER_UNAVAILABLE"], ["toString", "PROVIDER_UNAVAILABLE"], ["arbitrary private SQL detail", "PROVIDER_UNAVAILABLE"]]) {
+    const report = await runRuntimeRecovery(input, async () => Response.json({ code: "P0001", message, details: "private SQL" }, { status: 400 }));
+    assert.equal(report.code, code); assert.equal(report.confirmDispatches, 0);
+    assert.ok(!JSON.stringify(report).includes("private SQL"));
+  }
+});
+
+test("immutable recovery receipt changes and malformed Trip snapshots cannot prove success", async () => {
+  for (const kind of ["receipt", "snapshot"]) {
+    const f = boundary(); let reads = 0;
+    const report = await runRuntimeRecovery(input, async (req, signal) => {
+      const response = await f.transport(req, signal), data = await response.json();
+      if (kind === "receipt" && req.name === "read_local_recovery_operation_v1" && ++reads > 1) data.receipt.expiresAt = "2098-01-01T00:00:00.000Z";
+      if (kind === "snapshot" && req.name === "trip_reload") data.content.days = [{ id: "Bad", date: "2026-02-30", items: [] }];
+      return Response.json(data);
+    });
+    assert.equal(report.outcome, "unknown");
+  }
+});
+
+test("caller mutation cannot redirect detached frozen task/Trip/key binding", async () => {
+  const mutable = structuredClone(input), f = boundary();
+  const report = await runRuntimeRecovery(mutable, async (req, signal) => {
+    mutable.context.taskId = id(99); mutable.context.tripId = id(99); mutable.idempotencyKey = id(99);
+    assert.ok(Object.isFrozen(req.context)); assert.ok(Object.isFrozen(req.context.source));
+    return f.transport(req, signal);
+  });
+  assert.equal(report.outcome, "applied");
+  assert.ok(f.requests.every(req => req.context.taskId === input.context.taskId && req.context.tripId === input.context.tripId));
+  assert.equal(report.binding?.idempotencyKey, input.idempotencyKey);
+});
+
+test("replay page budget and whole-run byte budget stop before any mutation", async () => {
+  const f = boundary();
+  const pageBound = await runRuntimeRecovery({ ...input, replayPages: 1 }, async (req, signal) => {
+    if (req.name !== "read_assistant_events_v1") return f.transport(req, signal);
+    return Response.json({ kind: "assistant_events", schemaVersion: "assistant-events/1", conversationId: input.context.conversationId,
+      afterSequence: 0, lastSequence: 50, hasMore: true,
+      events: Array.from({ length: 50 }, (_, i) => ({ eventId: `${input.context.conversationId}:${i + 1}`, sequence: i + 1, taskId: input.context.taskId, turnId: input.context.turnId, type: "task_status", status: "retrieving" })) });
+  });
+  assert.equal(pageBound.code, "SERVICE_TASK_CAPACITY_EXHAUSTED"); assert.equal(pageBound.confirmDispatches, 0);
+  const byteBound = await runRuntimeRecovery(input, async (req, signal) => {
+    const response = await f.transport(req, signal), data = await response.json();
+    // Session accepts future harmless fields; whole-run byte bounds still precede parsing.
+    if (req.name === "native_session_v2") data.extra = "x".repeat(240000);
+    return Response.json(data);
+  });
+  assert.equal(byteBound.code, "MODEL_OUTPUT_INVALID"); assert.equal(byteBound.confirmDispatches, 0);
 });
 
 test("request/time bounds terminate hanging transport or body even if it ignores abort", async () => {
