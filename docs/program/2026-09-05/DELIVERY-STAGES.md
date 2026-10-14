@@ -1,5 +1,7 @@
 # VPJ 分阶段交付与验收
 
+> 当前执行定义：[三工程任务与批次](../../product/VPV10-MODULAR-001/current-overview.md)。以下为旧 VPJ 定义与验收历史，不用于恢复当前标题、排期或正文。
+
 > 当前三工程方向见 [VPV10-MODULAR-001](../../contracts/vpv4-project-boundaries.md)，逐票当前归属见 [开放票映射](../../product/VPV10-MODULAR-001/issue-map.md)。以下保留原执行/验收定义；旧固定顺序不自动启动。
 
 生成自 `issue-plan.json`；复用既有 Issue，不建立第二套队列。阶段是用户可观察成果的归属，不是实时完成状态。
