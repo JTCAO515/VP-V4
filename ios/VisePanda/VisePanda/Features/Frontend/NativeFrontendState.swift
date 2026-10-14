@@ -10,8 +10,14 @@ final class NativeFrontendState {
     var selectedMaterialID: String?
     var chatContext: String?
     var draft = ""
-    var messages: [NativeFrontendMessage] = [
-        .init(id: "welcome", user: false, text: "你好，我是 VP。一起从一个旅行想法开始吧。这里是本地体验示例，未连接真实服务。")
+    var messages: [NativeFrontendMessage] = []
+    private(set) var activeLocalConversationID = "local-current"
+    private(set) var localConversations: [NativeFrontendConversation] = [
+        .init(id: "local-current", title: "新对话", messages: [], draft: "", context: nil, pendingConfirmation: false),
+        .init(id: "sample-history", title: "上海漫步 · 本地样例", messages: [
+            .init(id: "history-user", user: true, text: "想让上海的两日安排宽松一些。"),
+            .init(id: "history-result", user: false, text: "本地历史样例：可以查看两日安排并继续调整。真实历史会话服务尚未连接。")
+        ], draft: "", context: "sample-shanghai", pendingConfirmation: false)
     ]
     var journeys: [NativeFrontendJourney] = [.init(id: "sample-shanghai", title: "上海漫步 · 体验示例", subtitle: "两天的城市探索", days: ["第一天 · 城市与江景", "第二天 · 街区与休息"], confirmed: false)]
     var materials: [NativeFrontendMaterial] = [
@@ -35,23 +41,55 @@ final class NativeFrontendState {
         guard materials.contains(where: { $0.id == id }) else { return }
         selectedMaterialID = id; selectedTab = .library
     }
-    func openChat(context: String? = nil) { chatContext = context; selectedTab = .vp }
+    func openChat(context: String? = nil) {
+        chatContext = context; selectedTab = .vp; saveActiveLocalConversation()
+    }
+    func startLocalConversation() {
+        saveActiveLocalConversation()
+        if messages.isEmpty && draft.isEmpty && chatContext == nil && !pendingConfirmation {
+            selectedTab = .vp; return
+        }
+        let next = NativeFrontendConversation(id: "local-" + UUID().uuidString, title: "新对话", messages: [], draft: "", context: nil, pendingConfirmation: false)
+        localConversations.insert(next, at: 0)
+        activateLocalConversation(next)
+    }
+    func selectLocalConversation(_ id: String) {
+        guard id != activeLocalConversationID,
+              let next = localConversations.first(where: { $0.id == id }) else { return }
+        saveActiveLocalConversation(); activateLocalConversation(next)
+    }
+    private func activateLocalConversation(_ next: NativeFrontendConversation) {
+        activeLocalConversationID = next.id; messages = next.messages; draft = next.draft
+        chatContext = next.context; pendingConfirmation = next.pendingConfirmation
+        screenState = .ready; selectedTab = .vp; notice = nil
+    }
+    private func saveActiveLocalConversation() {
+        guard let index = localConversations.firstIndex(where: { $0.id == activeLocalConversationID }) else { return }
+        localConversations[index].messages = messages; localConversations[index].draft = draft
+        localConversations[index].context = chatContext
+        localConversations[index].pendingConfirmation = pendingConfirmation
+        if let first = messages.first(where: { $0.user }) {
+            localConversations[index].title = String(first.text.prefix(28))
+        }
+    }
     func submit() {
         let input = draft.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !input.isEmpty, input.count <= 2000 else { notice = "请输入 1–2000 个字符。"; return }
         messages.append(.init(id: UUID().uuidString, user: true, text: input))
         draft = ""
         messages.append(.init(id: UUID().uuidString, user: false, text: "本地演示回复：我们可以先看这份两日安排，或说明你想调整的内容。真实问答服务尚未连接。"))
-        pendingConfirmation = true
+        pendingConfirmation = true; saveActiveLocalConversation()
     }
     func confirmPlan() {
         guard pendingConfirmation else { return }
         journeys[0].confirmed = true; pendingConfirmation = false
         notice = "已确认本地样例安排。未写入真实 Trip，也没有预订服务。"
+        saveActiveLocalConversation()
     }
-    func cancelPlan() { pendingConfirmation = false; notice = "已取消这次样例调整，原安排保留。" }
+    func cancelPlan() { pendingConfirmation = false; notice = "已取消这次样例调整，原安排保留。"; saveActiveLocalConversation() }
     func reset() {
         let fresh = NativeFrontendState()
+        localConversations = fresh.localConversations; activeLocalConversationID = fresh.activeLocalConversationID
         journeys = fresh.journeys; materials = fresh.materials; memories = fresh.memories; messages = fresh.messages
         draft = ""; pendingConfirmation = false; selectedJourneyID = nil; selectedMaterialID = nil
         chatContext = nil; screenState = .ready; notice = "体验示例已重置。"
@@ -64,6 +102,14 @@ enum NativeFrontendScreenState: String, CaseIterable, Identifiable {
     var title: String {
         switch self { case .ready: "正常"; case .empty: "空白"; case .loading: "加载中"; case .failed: "失败"; case .cancelled: "取消" }
     }
+}
+struct NativeFrontendConversation: Identifiable {
+    let id: String
+    var title: String
+    var messages: [NativeFrontendMessage]
+    var draft: String
+    var context: String?
+    var pendingConfirmation: Bool
 }
 struct NativeFrontendMessage: Identifiable { let id: String; let user: Bool; let text: String }
 struct NativeFrontendJourney: Identifiable { let id: String; var title: String; let subtitle: String; let days: [String]; var confirmed: Bool }
