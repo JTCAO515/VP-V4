@@ -5,7 +5,7 @@
 Active product: VPJ-00 #187. ADR-0027 defines the current personal-assistant upgrade;
 unaffected ADR-0023/0025 domain and safety contracts remain. iOS, Web and Agent evolve as independent projects in this same repository;
 current boundaries and direction-first sequencing are defined in
-`docs/contracts/vpv4-project-boundaries.md`. Existing business, permission and release invariants remain. Start with `docs/contracts/vpv4-project-boundaries.md` and the current Issue. Read `CONTEXT.md` only for dated historical evidence.
+`docs/contracts/vpv4-project-boundaries.md`. Existing business, permission and release invariants remain. Start with `docs/contracts/vpv4-project-boundaries.md`, `docs/product/VPV10-MODULAR-001/current-overview.md` and the current Issue. Read `CONTEXT.md` only for dated historical evidence.
 Upgrade entry: `docs/product/assistant-upgrade-2026-09-27/README.md`.
 Product entry: `docs/program/2026-09-05/README.md`.
 

@@ -26,3 +26,19 @@ Main can directly mount `NativeTranslationSampleExperienceView()` under the exis
 Required SourceFiles: existing `ios/VisePanda/VisePanda/Features/Translation/NativeTranslationView.swift` only (already in project). Existing NativeTranslationPhrase and Color.vpBackground remain its normal module dependencies. No new PBX entry or shared source patch is needed. The main Sample preview uses the same no-argument entry and fixed fixture factory as the debug experience.
 
 PASS: affected real card + DEBUG sample SwiftUI SDK typecheck and full-view syntax parse; predicate negatives reused and rerun by the same scoped verifier. Sample rendered interaction is UNRUN here, owned by Main's unique simulator/build window.
+
+## Resumed Muse-reference frontend seam
+
+Main's single-file interface commit `de0ce108aab1df832913a2b9103f10977443c6af` was cherry-picked unchanged as `0645126f`. Main already owns/integrated that interface; do not integrate this dependency commit a second time.
+
+New no-argument `@MainActor NativeFrontendExpressionView()` is a DEBUG-only leaf using `.environment(Main's existing NativeFrontendState)` from the host. SourceFile: `ios/VisePanda/VisePanda/Features/Frontend/Expression/NativeFrontendExpressionView.swift` (Main adds its PBX reference). It reuses the delivered sample experience and production card; no replacement shell or parallel state/store. The wrapper uses NativeFrontendBoundary/NativeFrontendStatePanel, shared screenState and selectedJourneyID/selectedMaterialID. Selected context titles are read from the same shared arrays and never copied into translation input. Ready/empty/loading/failed/cancelled are selectable; empty has a return action, and the shared panel owns loading cancel/failure retry/cancelled return.
+
+The original text/actor/scope/policy/scene/saved-TTL gates are unchanged in this resumed increment. Production NativeTranslationView and the existing card/sample source have no new modifications. Existing sample card still supports interface language, text size, fixed bilingual direction, pending/unknown refusal and Done return.
+
+PASS: same scoped verifier now typechecks the actual card, DEBUG sample, actual shared state/boundary/panel, and new wrapper together against installed iOS SDK (only AppTab/Color constants stubbed for isolated module assembly). Full App and interaction remain Main-owned; earlier Main build report applied to the prior integrated source, not this new wrapper. No simulator/resource operation here.
+
+## Sample card provenance wording correction
+
+After Main observed the expression wrapper/card in its actual simulator, this increment routes labels exclusively through explicit NativeTranslationCardOrigin: sample shows 样例译文 / Sample translation and 样例回译 / Sample back-translation, with an explanation that all text is a fixed local example and no translation was performed. Recent/saved retain the exact previous AI labels and comparison notice. No notice substring or row ID inference; no readiness, actor, scope, consent, scene or TTL gate changed.
+
+PASS: executable actual-source bilingual sample/real label assertions, existing negative predicates, targeted SDK typecheck, full syntax parse and diff check. New wording's simulator rendering remains Main-owned/UNRUN here; Main's prior observed ready flow is not claimed as validation of this new text.

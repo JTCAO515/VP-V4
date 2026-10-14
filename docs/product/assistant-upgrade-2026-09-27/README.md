@@ -1,5 +1,7 @@
 # VP personal journey assistant — coding-agent development plan
 
+> 当前执行定义已迁至 [Agent / iOS / Web 计划](../VPV10-MODULAR-001/current-overview.md)。旧 issue-plan.json 的83任务、20 replacements及旧生成正文保留为历史定义/证据；旧同步命令禁止恢复旧标题正文。当前用户结果、稳定ID、依赖和批次只从新源读取。
+
 > 2026-10-14 当前方向：[同仓 iOS / Web / Agent 三工程](../../contracts/vpv4-project-boundaries.md)。该方向替代下文历史的端侧主从定位与固定实施次序；已有领域合同、验收条款、完成证据和权限门保留。先完成方向与开放 Issue 重排，后续实施由唯一 Main 按真实输入接续。
 
 Date: 2026-09-27. Authority: JT's explicit acceptance of the discussed experience and implementation direction, followed by authorization to revise documents, ADRs and GitHub tasks. Decision: [ADR-0027](../../adr/ADR-0027-personal-journey-assistant.md). Scope of this delivery: **planning and tracker changes only**; no runtime capability, pricing activation or release is claimed.

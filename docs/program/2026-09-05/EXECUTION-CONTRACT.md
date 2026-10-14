@@ -1,5 +1,7 @@
 # VPJ Issue 执行合同
 
+> 当前执行定义：[三工程任务与批次](../../product/VPV10-MODULAR-001/current-overview.md)。以下为旧 VPJ 定义与验收历史，不用于恢复当前标题、排期或正文。
+
 > 当前三工程方向见 [VPV10-MODULAR-001](../../contracts/vpv4-project-boundaries.md)，逐票当前归属见 [开放票映射](../../product/VPV10-MODULAR-001/issue-map.md)。以下保留原执行/验收定义；旧固定顺序不自动启动。
 
 生成自issue-plan.json。当前共享流程见 [development-workflow.md](../../agents/development-workflow.md) / ADR-0024。

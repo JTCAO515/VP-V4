@@ -1,0 +1,60 @@
+test_archive_version_category_requires_exact_client_header (__main__.SafeDiagnostics) ... ok
+test_failure_in_pipeline_keeps_category_and_cleans_children (__main__.SafeDiagnostics) ... ok
+test_one_fatal_with_injected_processing_or_toc_is_unknown (__main__.SafeDiagnostics) ... test_only_fixed_states_at_actual_header_are_public (__main__.SafeDiagnostics) ... ok
+test_permission_context_is_allowlisted_without_sql_or_names (__main__.SafeDiagnostics) ... ok
+test_progress_multiline_names_cannot_supply_toc (__main__.SafeDiagnostics) ... ok
+test_success_preserves_output_and_has_no_failure_record (__main__.SafeDiagnostics) ... ok
+test_tail_payload_cannot_replace_toc_or_operation (__main__.SafeDiagnostics) ... ok
+test_toc_owner_name_cannot_forge_first_fatal (__main__.SafeDiagnostics) ... FAIL
+test_user_text_cannot_supply_sqlstate_or_failure_category (__main__.SafeDiagnostics) ... ok
+test_verbose_actual_sqlstate_and_unknown_names_never_echo (__main__.SafeDiagnostics) ... ok
+test_verbose_and_object_names_do_not_override_error_header (__main__.SafeDiagnostics) ... ok
+
+======================================================================
+FAIL: test_one_fatal_with_injected_processing_or_toc_is_unknown (__main__.SafeDiagnostics) (frame=b'pg_restore: while PROCESSING TOC:\npg_restore: from TOC entry 3267; 2606 21444 CONSTRAINT auth table owner\npg_restore: while PROCESSING TOC:\npg_restore: from TOC entry 9123456789; 0 0 TABLE fake owner\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-safe-restore-diagnostics.py", line 116, in test_one_fatal_with_injected_processing_or_toc_is_unknown
+    self.assertEqual(d['category'],'LOCAL_RESTORE_CONSUMER_FAILED')
+AssertionError: 'RESTORE_PERMISSION_DENIED' != 'LOCAL_RESTORE_CONSUMER_FAILED'
+- RESTORE_PERMISSION_DENIED
++ LOCAL_RESTORE_CONSUMER_FAILED
+
+
+======================================================================
+FAIL: test_one_fatal_with_injected_processing_or_toc_is_unknown (__main__.SafeDiagnostics) (frame=b'pg_restore: while PROCESSING TOC:\npg_restore: from TOC entry 3267; 2606 21444 CONSTRAINT auth table owner\nraw-owner-continuation\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-safe-restore-diagnostics.py", line 116, in test_one_fatal_with_injected_processing_or_toc_is_unknown
+    self.assertEqual(d['category'],'LOCAL_RESTORE_CONSUMER_FAILED')
+AssertionError: 'RESTORE_PERMISSION_DENIED' != 'LOCAL_RESTORE_CONSUMER_FAILED'
+- RESTORE_PERMISSION_DENIED
++ LOCAL_RESTORE_CONSUMER_FAILED
+
+
+======================================================================
+FAIL: test_one_fatal_with_injected_processing_or_toc_is_unknown (__main__.SafeDiagnostics) (frame=b'pg_restore: while PROCESSING TOC:\npg_restore: from TOC entry 3267; 2606 21444 CONSTRAINT auth table pg_restore: from TOC entry 9123456789; 0 0 TABLE fake owner\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-safe-restore-diagnostics.py", line 116, in test_one_fatal_with_injected_processing_or_toc_is_unknown
+    self.assertEqual(d['category'],'LOCAL_RESTORE_CONSUMER_FAILED')
+AssertionError: 'RESTORE_PERMISSION_DENIED' != 'LOCAL_RESTORE_CONSUMER_FAILED'
+- RESTORE_PERMISSION_DENIED
++ LOCAL_RESTORE_CONSUMER_FAILED
+
+
+======================================================================
+FAIL: test_toc_owner_name_cannot_forge_first_fatal (__main__.SafeDiagnostics)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/qaw005-staging-replay-20261013/scripts/qa-agent-staging-replay/test-safe-restore-diagnostics.py", line 104, in test_toc_owner_name_cannot_forge_first_fatal
+    self.assertEqual(d['category'],'LOCAL_RESTORE_CONSUMER_FAILED')
+AssertionError: 'RESTORE_OBJECT_EXISTS' != 'LOCAL_RESTORE_CONSUMER_FAILED'
+- RESTORE_OBJECT_EXISTS
++ LOCAL_RESTORE_CONSUMER_FAILED
+
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.030s
+
+FAILED (failures=4)

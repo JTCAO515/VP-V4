@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
-import { body, executionContractHeader, executionContractRow, orderedTasks, renderDeliveryStages, validateDeliveryStages } from '../../../scripts/vpj-program.mjs';
+import { validateCurrentPlan, currentTaskBody, body, executionContractHeader, executionContractRow, orderedTasks, renderDeliveryStages, validateDeliveryStages } from '../../../scripts/vpj-program.mjs';
 
 const planDir = 'docs/program/2026-09-05';
 const plan = JSON.parse(readFileSync(`${planDir}/issue-plan.json`, 'utf8'));
@@ -148,4 +148,41 @@ test('acceptance-only dependencies retain ordering, missing-node and mixed-cycle
   backward.tasks[1].acceptanceDependencies = backward.tasks[1].blockedBy;
   backward.tasks[1].blockedBy = [];
   assert.throws(() => validateDeliveryStages(backward), /precedes dependency/);
+});
+
+
+test('current three-project plan covers each migration input once and rejects duplicate identities or dependency cycles', () => {
+  const current = JSON.parse(readFileSync('docs/product/VPV10-MODULAR-001/current-plan.json', 'utf8'));
+  const rows = validateCurrentPlan(current);
+  assert.equal(rows.flatMap(t=>t.originalIssues).length, 52, '52 is the original migration input count, not a required task count');
+  const duplicate = structuredClone(current); duplicate.tasks[1].id = duplicate.tasks[0].id;
+  assert.throws(()=>validateCurrentPlan(duplicate), /duplicate current task ID/);
+  const cycle = structuredClone(current); cycle.tasks[0].dependencies.push({taskId:cycle.tasks[0].id,kind:'implementation'});
+  assert.throws(()=>validateCurrentPlan(cycle), /current dependency cycle/);
+  const missing = structuredClone(current); missing.tasks[0].originalIssues.pop();
+  assert.throws(()=>validateCurrentPlan(missing), /coverage/);
+  const web = current.tasks.find(t=>t.number===681);
+  const generated = currentTaskBody(web,current);
+  assert.ok(generated.includes('PR688'));
+  assert.ok(generated.includes('真实登录'));
+  assert.ok(!generated.includes('尚未派发'));
+  assert.ok(!generated.includes('no UI writer'));
+});
+
+
+test('merged Harness and flight inputs remain internal stages with unified completion, never old-ticket self-dependencies', () => {
+  const current = JSON.parse(readFileSync('docs/product/VPV10-MODULAR-001/current-plan.json', 'utf8'));
+  const harness = current.tasks.find(t=>t.number===264);
+  const generated = currentTaskBody(harness,current);
+  assert.ok(generated.includes('H5 消费内部 H3'));
+  assert.ok(generated.includes('H5 消费内部 H4'));
+  assert.ok(generated.includes('H1–H5 全部约定交付'));
+  assert.ok(!generated.includes('本票关闭限于只读比较'));
+  assert.ok(!generated.includes('保留原生硬依赖#266/#267'));
+  assert.ok(!generated.includes('当前输入 #264'));
+  const bad = structuredClone(current);
+  bad.tasks.find(t=>t.number===264).retainedDependencyNotes[1].currentTarget=264;
+  assert.throws(()=>validateCurrentPlan(bad), /external self-dependency/);
+  const flight = current.tasks.find(t=>t.number===249);
+  assert.ok(currentTaskBody(flight,current).includes('F2 消费内部 F1'));
 });

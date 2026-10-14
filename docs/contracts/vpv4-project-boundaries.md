@@ -1,6 +1,6 @@
 # VP-V4 同仓三工程边界 — VPV10-MODULAR-001
 
-2026-10-14 接受方向；仓库仍为 `JTCAO515/VP-V4`，保留名称、历史、资源与有效实现。当前先完成方向、文档和开放 Issue 重排；现有源码返修仅安全收尾，新共享库、迁移、部署和自动新实现不由本文启动。
+2026-10-14 接受方向；仓库仍为 `JTCAO515/VP-V4`，保留名称、历史、资源与有效实现。当前任务、稳定编号和批次以 [current plan](../product/VPV10-MODULAR-001/current-overview.md) 为准；原52仅迁移输入，不固定新任务数。本专项只重排规划，不启动产品实现、共享库迁移或资源操作。
 
 ## Agent 复用核心原则
 
@@ -31,7 +31,7 @@ shared 票按 `business-data`（原业务/数据 domain owner）、`quality-deli
 
 复用 #680–#683：用户在 `qatesting.go2china.space/qa` 登录，新建 Session，获得真实 Agent 首答，刷新仍可读回，继续“为什么/简化/第二方案/纠正”并保持同 Session 上下文；新 Session 和其他用户隔离。客户不选择 LLM。#680 负责 Agent 服务入口，#681 负责 Web 会话，#682 负责真实上下文消费，#683 负责获准 QA 交付。
 
-源代码、合并、synthetic、目标运行、真人体验分别举证。PR684/685 的既有合并成果继续复用；PR686 与真实 Auth/provider 路径仍按实际证据判断。本文没有运行浏览器、provider、数据库或设备验收，全部该轮运行证据为 UNRUN。#229/PR679、#203 安全暂停成果保留，不前置恢复整个旧队列。
+源代码、合并、synthetic、目标运行、真人体验分别举证。PR684/685 的既有合并成果继续复用；PR686 与真实 Auth/provider 路径仍按实际证据判断。本规划 owner 没有新增运行验收；样例已有 Main 的明确观察，其余真实链按各自证据保持未完成。#229/PR679、#203 安全暂停成果保留，不前置恢复整个旧队列。
 
 ## 方向完成后的两条可并行前沿
 
@@ -40,22 +40,11 @@ shared 票按 `business-data`（原业务/数据 domain owner）、`quality-deli
 
 两条前沿都只在方向阶段完成后由唯一 Main 使用已有授权安排；本文不新增 UI route、演示实现或派工。共享消费者与端口有冲突时按精确 lease 串行整合，不让真实 provider 的等待阻塞所有独立 UX 工作。
 
-## #681 有限前端样例工作单元（规划，尚未派发）
+## 已交付样例与真实剩余
 
-用户结果：从明确标识 Sample / 未接入的 `/qa/demo` 入口，切换两组示例会话，输入追问并查看确定性的示例响应，随后重置到初始数据。
+WEB-001 #681 的 synthetic `/qa/demo` 已由 PR688 合入 QA 源 `8731c54ed45940477672233cb9f96dc2c0996421`；对应组件 SHA256 `03ece0a86cc918dd46d656010cfced8ba5c2875371412c611caf816734505adf`。Main 已正式记录部署后 desktop 1440×1000/mobile 390×844 样例交互 PASS，初次严格整页检查因 Vercel 反馈静态脚本 blocked 的 FAIL 保留。原样例输入/键盘/reset/no-data-network 证据沿 artifacts/VPV10-MODULAR-001/qa-demo 保留。
 
-- 计划范围：`app/qa/demo/**`、`components/qa-demo/**`；复用 `/qa` 的可用交互样式和四 Tab/VPJ77 的呈现经验。只在组件内使用标识 synthetic 的静态 fixtures 和内存状态。
-- 排除：不接 Agent/provider/Auth API，不持久化真实 Session/Memory/Trip，不使用 cookies、localStorage 或真实用户资料，不改真实 `/qa` 请求路径。
-- Source owner：方向阶段完成后由唯一 Main 派给新的独立开发聊天并授精确路径 lease；现在没有 UI writer、没有实现/新路由或新派工。
-- 输入与依赖：本规范、现有 UI 可读源码、两组明确 synthetic fixtures、可运行前端环境和路径 lease；不以真实 provider、全 80 迁移或 SDK/商业矩阵作为本样例前置。
-
-样例验收（不得用于替代本票真实验收）：
-
-- [ ] `/qa/demo` 始终可见 Sample / 未接入说明，静态内容不冒充真实模型回答或保存成果。
-- [ ] 可切换示例会话、键盘输入/提交追问、查看确定性示例响应，并一键 reset；切换与 reset 不丢失焦点路径或留下伪运行状态。
-- [ ] 浏览器验证示例操作不触发 Agent/Auth/provider/数据网络请求（正常静态资源加载除外），无 key/secret 引用，无真实数据持久化。
-- [ ] 明确链接到真实 `/qa` 入口，进入真实入口仍走原登录/许可边界；样例按钮不模拟已登录、已授权或真实成功。
-- [ ] 记录测试版本和实际交互证据；样例完成不关闭 #681，原 real Auth/persist/answer 全部验收继续独立保留。
+因此“尚未派发/no UI writer”已不再是当前状态。真实 Auth、持久 Session、provider、多轮、worker 和真实恢复/E 尚未由样例完成。具体任务见 current plan；不再复制旧六线程或固定52票的当前指令。
 
 ## 版本化业务接口
 
@@ -76,6 +65,6 @@ shared 票按 `business-data`（原业务/数据 domain owner）、`quality-deli
 
 保留 Vercel `vp-v4` / `prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2` / `team_vLT8SL2mQJJSnXbD9GzVLP4K`。数据库固定 `dzqdzetcctkhbrhlxxgn`，原 Production/QA 共享数据事实与明确目标绑定继续有效。方向调整不新建项目、不改 DNS、env、套餐、权限或凭据。
 
-原 Main A–D 与条件式 E 授权和维护确认保留；本专项不操作 backup/key/Docker/target。没有 START/window/actual capture 证据时不能填已执行。本轮不新增生产发布、provider 费用或真实数据权限。
+原 Main A–D 与条件式 E 授权和维护确认保留；本专项不操作 backup/key/Docker/target。Main 已记录真实 capture 四密文 PASS、restore locale/post-data 权限两次失败与 cleanup PASS，原窗口已过；本专项不再执行或扩大这些操作。本轮不新增生产发布、provider 费用或真实数据权限。
 
 唯一 Main 与唯一 HANDOFF 保持原处。本文件只拥有工程方向与端口责任；当前 writer/ready 前沿依唯一 HANDOFF 和 Main 的精确 lease。历史 ADR-0023/0027 的“iOS 完整产品、Web 轻量附属”及旧固定实施顺序被本次接受方向定向替代；未冲突的产品、安全和发布约束保留。本规范就是已接受方向的单一补充；根导航已同步，CONTEXT 保留生成历史，其它 owner 运行文档保持原权限与合同，见[当前文档映射](../product/VPV10-MODULAR-001/README.md)。

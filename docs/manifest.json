@@ -1,7 +1,8 @@
 {
   "schemaVersion": "vpj-docs/1",
-  "date": "2026-09-05",
+  "date": "2026-10-14",
   "authority": "docs/contracts/vpv4-project-boundaries.md",
+  "currentPlan": "docs/product/VPV10-MODULAR-001/current-plan.json",
   "files": [
     {
       "path": "docs/2026-08-29-vp-v4-launch-readiness-audit.md",
@@ -1433,6 +1434,162 @@
     },
     {
       "path": "docs/product/VPV10-MODULAR-001/after/683.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/187.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/199.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/200.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/201.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/203.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/206.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/208.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/209.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/212.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/216.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/222.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/225.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/226.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/227.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/229.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/230.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/232.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/233.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/234.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/237.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/242.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/243.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/244.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/245.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/246.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/248.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/249.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/251.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/264.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/359.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/504.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/506.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/680.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/681.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/682.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/683.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/692.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-bodies/693.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/VPV10-MODULAR-001/current-overview.md",
       "status": "document"
     },
     {

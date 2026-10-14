@@ -1,0 +1,37 @@
+{
+  "status": "FAIL_LOCAL_POSTDATA_PROBE",
+  "realArchiveRead": false,
+  "targetWritten": false,
+  "pre-data": {
+    "exitCode": 0
+  },
+  "post-data": {
+    "exitCode": 0
+  },
+  "permissionDenied": false,
+  "tocEventBeforeAcl": false,
+  "diagnosticSha256": "dfa881b384015b62b682a8c182c008d9305aafbfa373fe1ade7e9ea225e2f0d8",
+  "baselineSafeDiagnostic": {
+    "category": "LOCAL_RESTORE_CONSUMER_FAILED",
+    "sqlstate": null,
+    "tocEntryId": null,
+    "objectClass": "EVENT TRIGGER",
+    "permissionObjectClass": null,
+    "operation": null,
+    "phase": "post-data"
+  },
+  "eventBeforeAclHypothesis": "REJECTED_BASELINE_POSTDATA_SUCCEEDED",
+  "limitedCallerNegative": [
+    {
+      "category": "RESTORE_PERMISSION_DENIED",
+      "sqlstate": null,
+      "tocEntryId": 3267,
+      "objectClass": "CONSTRAINT",
+      "permissionObjectClass": "SCHEMA",
+      "operation": "ALTER TABLE",
+      "phase": "post-data"
+    }
+  ],
+  "reason": "SAFE_DIAGNOSTIC_WRONG_OBJECT_CLASS",
+  "cleanup": "PASS"
+}

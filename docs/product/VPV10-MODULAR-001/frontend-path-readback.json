@@ -1,0 +1,38 @@
+{
+  "scope": [
+    692,
+    693
+  ],
+  "pathPrefix": "ios/VisePanda/VisePanda/Features/Frontend/",
+  "acceptanceAndOriginalMappingUnchanged": true,
+  "rows": [
+    {
+      "number": 692,
+      "taskId": "IOS-011",
+      "title": "[IOS-011] 资料库与记忆前端共享对象、来源和偏好反馈",
+      "labels": [
+        "priority:P0",
+        "status:in-progress",
+        "project:ios"
+      ],
+      "updatedAt": "2026-10-14T08:11:48Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/692",
+      "bodySha256": "19493e7106a02ebf70953ee7c49481200e7ae4e30a3ec97014b7f7349e413ef7",
+      "verified": true
+    },
+    {
+      "number": 693,
+      "taskId": "IOS-012",
+      "title": "[IOS-012] 助手头像详情展示状态活动权限待办与可跳过定制",
+      "labels": [
+        "priority:P0",
+        "status:in-progress",
+        "project:ios"
+      ],
+      "updatedAt": "2026-10-14T08:11:52Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/693",
+      "bodySha256": "07604deddeb869f465f25bd3e33acb0cf82b77d82288d864bd57c9846da72231",
+      "verified": true
+    }
+  ]
+}
