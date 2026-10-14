@@ -713,10 +713,77 @@ function syncSelected(){
   render();
 }
 
+export const currentPlanPath = 'docs/product/VPV10-MODULAR-001/current-plan.json';
+
+export function validateCurrentPlan(value) {
+  assert.equal(value.schemaVersion, 'vpv4-current-plan/1');
+  const all = [value.parent, ...value.tasks];
+  assert.equal(value.parent.number, 187);
+  assert.equal(new Set(all.map(t => t.number)).size, all.length, 'duplicate current GitHub issue');
+  assert.equal(new Set(all.map(t => t.id)).size, all.length, 'duplicate current task ID');
+  const index = new Map(value.tasks.map(t => [t.id, t]));
+  const seen = new Set(), active = new Set();
+  const visit = id => {
+    assert.ok(index.has(id), `missing current dependency ${id}`);
+    assert.ok(!active.has(id), `current dependency cycle ${id}`);
+    if (seen.has(id)) return;
+    active.add(id);
+    for (const dep of index.get(id).dependencies) {
+      assert.ok(['implementation', 'acceptance'].includes(dep.kind)); visit(dep.taskId);
+    }
+    active.delete(id); seen.add(id);
+  };
+  for (const task of value.tasks) {
+    assert.match(task.id, /^(AGENT|IOS|WEB)-\d{3}$/);
+    assert.equal(task.primaryProject, task.id.split('-')[0].toLowerCase());
+    assert.ok(task.lead && task.remaining && task.acceptance.length && task.checks.length);
+    visit(task.id);
+  }
+  const original = json(value.legacyInput).map(i => i.number).sort((a,b)=>a-b);
+  const covered = all.flatMap(t => t.originalIssues).sort((a,b)=>a-b);
+  assert.deepEqual(covered, original, 'original issue coverage must be exactly once');
+  return all;
+}
+
+export function currentTaskBody(task, value) {
+  validateCurrentPlan(value);
+  const ref = 'https://github.com/JTCAO515/VP-V4/blob/codex/vpv4-modular-entries-20261014';
+  const dependency = task.dependencies.map(d => {
+    const t = value.tasks.find(t => t.id === d.taskId);
+    return `- ${d.kind === 'implementation' ? '开工硬依赖' : '集成/验收输入'}：[${t.id} #${t.number}](https://github.com/${value.repo}/issues/${t.number}) — ${d.reason}`;
+  }).join('\n') || '无新增整票开工硬依赖；开工仍核接口、环境、原 owner 与精确 lease。';
+  return `# ${task.id} · ${task.title}\n\n` +
+    `## 用户结果\n\n${task.userOutcome}。\n\n` +
+    `## 工程与责任\n\n- Primary：${task.primaryProject}；lead：${task.lead}。\n- 受影响消费者：${task.affectedConsumers.join(' / ')}。${task.workType ? `类型：${task.workType}（责任分类，非新工程）。` : ''}\n- 优先级：${task.priority}；执行批次：${task.batch}。实际 source owner/共享 writer 由唯一 Main 沿原 lease 协调，本文不自动转移写权。\n\n` +
+    `## 复用与当前剩余\n\n${task.remaining}\n\n` +
+    (task.evidence.length ? task.evidence.map(e => `- ${e.kind}：${e.ref ?? ''} ${e.commit ?? ''} ${e.scope ?? ''}${e.sourceSha256 ? `；source SHA256 ${e.sourceSha256}` : ''}`).join('\n') + '\n\n' : '本票已有实现与局部证据沿原 Issue/PR 保留；尚未逐项核实的真实目标结果保持未验，不能从代码存在推导完成。\n\n') +
+    (task.reusePaths.length ? `复用入口：${task.reusePaths.map(p=>`[${p}](${ref}/${p})`).join(' · ')}\n\n` : '') +
+    `## 依赖与并行\n\n${dependency}\n\n同批可在输入和 lease 独立时并行；验收关联不伪装 GitHub 开工阻塞，不等待整个前批全部关票。\n\n` +
+    `## 完成标准\n\n${task.acceptance.map(a=>`- [${a.checked ? 'x' : ' '}] ${a.text}（承接 #${a.sourceIssue}）`).join('\n')}\n\n` +
+    (task.activationEvidence.length ? `后续激活条件：\n${task.activationEvidence.map(a=>`- 原 #${a.sourceIssue}：${a.condition}`).join('\n')}\n\n` : '') +
+    `## 检查与边界\n\n${task.checks.map(c=>'- '+c).join('\n')}\n\n${task.scopeExclusions.map(c=>'- '+c).join('\n')}\n- Actor/RLS、Cookie/Bearer 各自安全适配、用途/接收方同意、预算/幂等、TripProposal 可见 diff→确认→原子 Patch 与生命周期保持。\n- 代码、synthetic、目标运行、设备与发布分开记录；规划迁移/样例不是功能交付。\n\n` +
+    (task.id === 'PROGRAM' ? `## 当前任务与先后成果\n\n先体验已交付的 synthetic /qa/demo；B1 补真实 QA 首答与多轮；B2 扩同 Trip 与原生旅途；B3 完成真实质量/设备/发布；EXPAND 只按激活证据。\n\n${value.tasks.map(t => `- [${t.id} #${t.number}](https://github.com/${value.repo}/issues/${t.number}) · ${t.batch}/${t.priority} · ${t.title}`).join('\n')}\n\n` : '') +
+    `## 旧任务去向与历史\n\n承接 ${task.originalIssues.map(n=>'#'+n).join('、')}；GitHub 号码不变，当前稳定 ID 为 ${task.id}。被整合的原票只按规划迁移 superseded/not_planned，不声称功能完成。\n\n[整理前完整正文和状态](${ref}/${value.liveInput}) · [原52输入与全部历史](${ref}/${value.legacyInput}) · [当前唯一任务定义](${ref}/${currentPlanPath})。旧阶段/六线程/旧端侧主从安排是历史，不作为当前执行要求；原评论、有效完成证据与失败不删除。\n`;
+}
+
+export function renderCurrentPlan(value) {
+  const all = validateCurrentPlan(value);
+  const base = 'docs/product/VPV10-MODULAR-001';
+  for (const task of all) save(`${base}/current-bodies/${task.number}.md`, currentTaskBody(task, value));
+  save(`${base}/current-overview.md`, `# VP-V4 当前三工程交付计划\n\n生成自 current-plan.json。原52是迁移输入；当前${value.tasks.length}张工程任务加原Program，不以固定数量验收。\n\n` +
+    value.batches.map(b=>`## ${b.id}\n\n${b.outcome}\n\n${b.parallel}\n\n`).join('') +
+    '| ID / GitHub | 工程 / 主责 | 批次 / 优先 | 用户结果 | 原票承接 |\n| --- | --- | --- | --- | --- |\n' + all.map(t=>`| [${t.id} #${t.number}](https://github.com/${value.repo}/issues/${t.number}) | ${t.primaryProject} / ${t.lead} | ${t.batch} / ${t.priority} | ${t.userOutcome} | ${t.originalIssues.map(n=>'#'+n).join(', ')} |`).join('\n')+'\n');
+  console.log(`Current plan rendered: ${value.tasks.length} tasks + original Program; legacy evidence unchanged.`);
+}
+
 if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(root,'scripts/vpj-program.mjs')) {
   const cmd=process.argv[2]??'verify';
-  if(cmd==='verify')validate();
-  else if(cmd==='render')render();
+  if (existsSync(currentPlanPath) && ['publish','sync-bodies','sync-selected','close-old'].includes(cmd)) {
+    throw new Error('Legacy remote mutation is disabled: current-plan.json owns current IDs, titles and bodies. Use an explicitly reviewed current-plan migration/readback; never restore VPJ templates.');
+  }
+  if(cmd==='verify'){ validate(); if(existsSync(currentPlanPath)) validateCurrentPlan(json(currentPlanPath)); }
+  else if(cmd==='render-current')renderCurrentPlan(json(currentPlanPath));
+  else if(cmd==='render'){ if(existsSync(currentPlanPath)) renderCurrentPlan(json(currentPlanPath)); else render(); }
   else if(cmd==='render-handoff')renderHandoff();
   else if(cmd==='publish')publish();
   else if(cmd==='sync-bodies')syncBodies();

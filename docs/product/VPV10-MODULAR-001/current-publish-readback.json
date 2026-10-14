@@ -1,0 +1,50 @@
+[
+  {
+    "number": 187,
+    "taskId": "PROGRAM",
+    "title": "[PROGRAM] VP-V4 三工程成果、依赖批次与交付总览",
+    "labels": [
+      "documentation",
+      "priority:P0",
+      "status:in-progress",
+      "governance",
+      "phase:R0",
+      "project:agent",
+      "work:product-coordination"
+    ],
+    "updatedAt": "2026-10-14T06:00:58Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/187",
+    "bodySha256": "c1ee7c96b32d5a2b8acc4e2f84ffe243a7dfd1c25d2a8e9433a34c0d2c105e3f",
+    "verified": true
+  },
+  {
+    "number": 681,
+    "taskId": "WEB-001",
+    "title": "[WEB-001] 从已可体验样例走向真实持久会话",
+    "labels": [
+      "priority:P0",
+      "project:web"
+    ],
+    "updatedAt": "2026-10-14T06:01:01Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/681",
+    "bodySha256": "d96c43567fbc24fe6b0652cdde0ff12e06e79cd3821cd938d992e2716d51977d",
+    "verified": true
+  },
+  {
+    "number": 234,
+    "taskId": "WEB-002",
+    "title": "[WEB-002] Web 独立完成同 Trip 规划成果审阅与确认",
+    "labels": [
+      "enhancement",
+      "priority:P1",
+      "phase:R4",
+      "status:planned",
+      "team:journey-experience",
+      "project:web"
+    ],
+    "updatedAt": "2026-10-14T06:01:04Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/234",
+    "bodySha256": "ce6aba7bc7f62dbd2e15a6453f9f62e3c7a7ebf433a1f70a3201adabbed692ec",
+    "verified": true
+  }
+]

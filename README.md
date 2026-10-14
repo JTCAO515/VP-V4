@@ -6,7 +6,7 @@ VisePanda 面向国际来华自由行旅客，围绕同一个 Trip 连接规划�
 
 [产品与任务入口](docs/program/2026-09-05/README.md) · [产品规划历史基线](docs/VISEPANDA-MASTER-PLAN-2026-09-05.md) · [当前工程边界](docs/contracts/vpv4-project-boundaries.md) · [历史交接记录（2026-10-02）](CONTEXT.md) · [2026-09-24 开发状态](docs/program/2026-09-05/CURRENT-STATUS-2026-09-24.md)
 
-当前先完成[三工程方向与端口边界](docs/contracts/vpv4-project-boundaries.md)及[开放 Issue 重排](docs/product/VPV10-MODULAR-001/README.md)，随后由唯一 Main 按真实 ready 前沿接续。第一项可体验交付是 `/qa` 的真实登录、首答、持久 Session 与有界多轮（#680–#683）。
+当前任务按 [Agent / iOS / Web 三工程计划](docs/product/VPV10-MODULAR-001/current-overview.md) 编号和编排。[PR688](https://github.com/JTCAO515/VP-V4/pull/688) 的 `/qa/demo` synthetic 样例已可体验；真实 `/qa` 登录、首答、持久 Session 与多轮仍待完成。先补真实 QA 闭环，再按实际端口并行推进同 Trip 与原生体验，最后验证设备、发布和客户结果。
 
 历史验收分类按[六个交付阶段](docs/program/2026-09-05/DELIVERY-STAGES.md)推进：同一 Trip 与真实环境 →
 真实有据 Ask → 共同计划与确认 → 旅途功能 → 完整 Beta → 正式客户交付。每阶段先验证一个完整用户行为，
