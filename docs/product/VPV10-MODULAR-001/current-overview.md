@@ -66,5 +66,5 @@
 | [WEB-001 #681](https://github.com/JTCAO515/VP-V4/issues/681) | web / web 原实施 owner，Main 按现 lease 协调 | B1 / P0 | 从已可体验样例走向真实持久会话 | #681 |
 | [WEB-002 #234](https://github.com/JTCAO515/VP-V4/issues/234) | web / web 原实施 owner，Main 按现 lease 协调 | B2 / P1 | Web 独立完成同 Trip 规划成果审阅与确认 | #234 |
 | [WEB-003 #683](https://github.com/JTCAO515/VP-V4/issues/683) | web / web 原实施 owner，Main 按现 lease 协调 | B1 / P0 | QA Web 交付版本与真实问答验收一致 | #683 |
-| [IOS-011 #692](https://github.com/JTCAO515/VP-V4/issues/692) | ios / Main 已指定的独立前端 owner 01a1396d-7aa8-7c70-b717-d9c47866bb28 | B2 / P0 | 在完整四 Tab 前端中查看资料来源和记忆，同一对象跨页一致，清楚区分保存/导出/分享与偏好修改/忘记反馈。 | 本轮批准前端切片；原52映射不变 |
-| [IOS-012 #693](https://github.com/JTCAO515/VP-V4/issues/693) | ios / Main 已指定的独立前端 owner 01a1396d-7ce1-70a2-b495-745aca4d18db | B2 / P0 | 用户从助手头像进入详情，理解状态、活动、权限、待办与人格，并可跳过首次定制后继续主体验。 | 本轮批准前端切片；原52映射不变 |
+| [IOS-011 #692](https://github.com/JTCAO515/VP-V4/issues/692) | ios / Main 已指定的独立前端 owner 01a1396d-7aa8-7c70-b717-d9c47866bb28 | B2 / P0 | 在完整四 Tab 前端中查看资料来源和记忆，同一对象跨页一致，清楚区分保存/导出/分享与偏好修改/忘记反馈 | 本轮批准前端切片；原52映射不变 |
+| [IOS-012 #693](https://github.com/JTCAO515/VP-V4/issues/693) | ios / Main 已指定的独立前端 owner 01a1396d-7ce1-70a2-b495-745aca4d18db | B2 / P0 | 用户从助手头像进入详情，理解状态、活动、权限、待办与人格，并可跳过首次定制后继续主体验 | 本轮批准前端切片；原52映射不变 |

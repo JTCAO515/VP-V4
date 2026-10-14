@@ -114,5 +114,11 @@
       "bodySha256": "8cd63dd56e9ac6d211ce8d266cfdcf9dcbf4dddf46c7e3bb6fe6c26b3a5fc444",
       "verified": true
     }
-  ]
+  ],
+  "currentPathCorrection": {
+    "IOS-011": "ios/VisePanda/VisePanda/Features/Frontend/LibraryMemory/**",
+    "IOS-012": "ios/VisePanda/VisePanda/Features/Frontend/Assistant/**",
+    "receipt": "frontend-path-readback.json",
+    "note": "Earlier timestamped readback rows remain historical; current-plan and current bodies own corrected paths."
+  }
 }

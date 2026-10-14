@@ -3,7 +3,7 @@
     "id": "IOS-011",
     "title": "资料库与记忆前端共享对象、来源和偏好反馈",
     "lead": "Main 指定的独立 LibraryMemory 前端 owner；chat/WT 以唯一 HANDOFF 为准",
-    "scope": "ios/VisePanda/VisePanda/Frontend/LibraryMemory/**",
+    "scope": "ios/VisePanda/VisePanda/Features/Frontend/LibraryMemory/**",
     "outcome": "在完整四 Tab 前端中查看资料来源和记忆，同一对象跨页一致，清楚区分保存/导出/分享与偏好修改/忘记反馈。",
     "acceptance": [
       "资料库列表/详情/来源归属、空态与不可用态可操作；同一资料跨对话、旅程、资料库使用 Main 给定的同一对象 ID。",
@@ -24,7 +24,7 @@
     "id": "IOS-012",
     "title": "助手头像详情展示状态活动权限待办与可跳过定制",
     "lead": "Main 指定的独立 Assistant 前端 owner；chat/WT 以唯一 HANDOFF 为准",
-    "scope": "ios/VisePanda/VisePanda/Frontend/Assistant/**",
+    "scope": "ios/VisePanda/VisePanda/Features/Frontend/Assistant/**",
     "outcome": "用户从助手头像进入详情，理解状态、活动、权限、待办与人格，并可跳过首次定制后继续主体验。",
     "acceptance": [
       "头像入口、详情及相关弹窗/关键状态与四 Tab 主体验连通；状态、活动、权限、待办、人格均在已批准范围内可查看。",

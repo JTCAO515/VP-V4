@@ -4321,13 +4321,13 @@
       "priority": "P0",
       "batch": "B2",
       "statusLabel": "status:in-progress",
-      "userOutcome": "在完整四 Tab 前端中查看资料来源和记忆，同一对象跨页一致，清楚区分保存/导出/分享与偏好修改/忘记反馈。",
+      "userOutcome": "在完整四 Tab 前端中查看资料来源和记忆，同一对象跨页一致，清楚区分保存/导出/分享与偏好修改/忘记反馈",
       "remaining": "已批准且由 Main 指定原独立前端线程开工；本规划 owner 未实施或验收。实际数据/账号/provider接入不是前端前置，仍需完成本切片前端交付与Main整合验证，不能假称真实服务完成。",
       "reusePaths": [
         "docs/contracts/vpv4-project-boundaries.md"
       ],
       "sourceScope": [
-        "ios/VisePanda/VisePanda/Frontend/LibraryMemory/**"
+        "ios/VisePanda/VisePanda/Features/Frontend/LibraryMemory/**"
       ],
       "evidence": [
         {
@@ -4389,7 +4389,7 @@
       ],
       "activeWork": {
         "owner": "01a1396d-7aa8-7c70-b717-d9c47866bb28",
-        "scope": "ios-library-memory-20261014；base de0ce108；ios/VisePanda/VisePanda/Frontend/LibraryMemory/**",
+        "scope": "ios-library-memory-20261014；base de0ce108；ios/VisePanda/VisePanda/Features/Frontend/LibraryMemory/**",
         "boundary": "共享导航/PBX/Conversation和前端内存对象由Main整合，原单writer lease保持。",
         "evidence": "Main正式回传已在VP-V10真实开工；本规划owner仅记录事实，不重派线程或宣称验收通过。"
       }
@@ -4408,13 +4408,13 @@
       "priority": "P0",
       "batch": "B2",
       "statusLabel": "status:in-progress",
-      "userOutcome": "用户从助手头像进入详情，理解状态、活动、权限、待办与人格，并可跳过首次定制后继续主体验。",
+      "userOutcome": "用户从助手头像进入详情，理解状态、活动、权限、待办与人格，并可跳过首次定制后继续主体验",
       "remaining": "已批准且由 Main 指定原独立前端线程开工；本规划 owner 未实施或验收。实际数据/账号/provider接入不是前端前置，仍需完成本切片前端交付与Main整合验证，不能假称真实服务完成。",
       "reusePaths": [
         "docs/contracts/vpv4-project-boundaries.md"
       ],
       "sourceScope": [
-        "ios/VisePanda/VisePanda/Frontend/Assistant/**"
+        "ios/VisePanda/VisePanda/Features/Frontend/Assistant/**"
       ],
       "evidence": [
         {
@@ -4470,7 +4470,7 @@
       ],
       "activeWork": {
         "owner": "01a1396d-7ce1-70a2-b495-745aca4d18db",
-        "scope": "ios-assistant-detail-20261014；base de0ce108；ios/VisePanda/VisePanda/Frontend/Assistant/**",
+        "scope": "ios-assistant-detail-20261014；base de0ce108；ios/VisePanda/VisePanda/Features/Frontend/Assistant/**",
         "boundary": "共享导航/PBX/Conversation和前端内存对象由Main整合，原单writer lease保持。",
         "evidence": "Main正式回传已在VP-V10真实开工；本规划owner仅记录事实，不重派线程或宣称验收通过。"
       }
