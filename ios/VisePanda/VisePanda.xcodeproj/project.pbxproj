@@ -487,6 +487,9 @@
 		406CFB1AE629EA7DBF67B302 /* NativeFrontendState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EE1D6B4AF3D60A1022D717E; };
 		56B50753AB30DB8A824C4A87 /* NativeFrontendChatSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C027A0CA31619C39F379AD; };
 		61ED5BFB4D425C5EFA89714C /* NativeFrontendChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDE9310E83BFCDC2C2EB2FBB; };
+		7F2855DAE671CA70C6DF9821 /* coverage-producer-v11.json in Resources */ = {isa = PBXBuildFile; fileRef = EE8E10754415F6908C96606A; };
+		978EF0ADFA25E5A49A1B8B49 /* coverage-cancelled-v11.json in Resources */ = {isa = PBXBuildFile; fileRef = 6D37EA77E5D1627B5624ADAB; };
+		8C6DD3D4A6903A6C5CDD0F89 /* native-catalog-current-v11.json in Resources */ = {isa = PBXBuildFile; fileRef = BD61B35EC4CB25C3A885DB1E; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -980,6 +983,9 @@
 		8EE1D6B4AF3D60A1022D717E /* NativeFrontendState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/NativeFrontendState.swift; sourceTree = SOURCE_ROOT; };
 		12C027A0CA31619C39F379AD /* NativeFrontendChatSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/Chat/NativeFrontendChatSheet.swift; sourceTree = SOURCE_ROOT; };
 		EDE9310E83BFCDC2C2EB2FBB /* NativeFrontendChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/Chat/NativeFrontendChatView.swift; sourceTree = SOURCE_ROOT; };
+		EE8E10754415F6908C96606A /* coverage-producer-v11.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = VisePandaTests/Fixtures/DataCoverage/coverage-producer-v11.json; sourceTree = SOURCE_ROOT; };
+		6D37EA77E5D1627B5624ADAB /* coverage-cancelled-v11.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = VisePandaTests/Fixtures/DataCoverage/coverage-cancelled-v11.json; sourceTree = SOURCE_ROOT; };
+		BD61B35EC4CB25C3A885DB1E /* native-catalog-current-v11.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = VisePandaTests/Fixtures/NotificationData/native-catalog-current-v11.json; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -994,6 +1000,9 @@
 		600000000000000000000001 = {
 			isa = PBXGroup;
 			children = (
+                BD61B35EC4CB25C3A885DB1E,
+                6D37EA77E5D1627B5624ADAB,
+                EE8E10754415F6908C96606A,
                 EDE9310E83BFCDC2C2EB2FBB,
                 12C027A0CA31619C39F379AD,
                 8EE1D6B4AF3D60A1022D717E,
@@ -1169,7 +1178,7 @@
 
 /* Begin PBXResourcesBuildPhase section */
 		800000000000000000000002 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (200000000000000000000010, 200000000000000000000011, 200000000000000000000018, 200000000000000000000019); runOnlyForDeploymentPostprocessing = 0; };
-		800000000000000000000004 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (0BE4CD0A7ADDFE3FE67DDA05,B7BE276579871835D8FB669F,
+		800000000000000000000004 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (8C6DD3D4A6903A6C5CDD0F89 /* native-catalog-current-v11.json in Resources */, 978EF0ADFA25E5A49A1B8B49 /* coverage-cancelled-v11.json in Resources */, 7F2855DAE671CA70C6DF9821 /* coverage-producer-v11.json in Resources */, 0BE4CD0A7ADDFE3FE67DDA05,B7BE276579871835D8FB669F,
 				3E202B16F8CA949052172819,
 73839A21704A41C4F4A34CE5, 3F8ECFC8C506EEDE1D6C83A3, AFEC86C458B38C1CFBC62D1E, 20835F57B31A002583B5BEC4, 0023731A2F7F7F0D5EF461C0, 083E8C0D5650718EFE8258E8, F158020000000000000000F2, F158020000000000000000F3,); runOnlyForDeploymentPostprocessing = 0; };
 		800000000000000000000006 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
