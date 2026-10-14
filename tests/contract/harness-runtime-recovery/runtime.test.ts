@@ -384,6 +384,18 @@ test("concrete native/RPC bridge calls existing paths with supplied fetch and fo
   assert.equal(calls[1].url, "https://db.example/rest/v1/rpc/cancel_chat_turn");
   assert.ok(calls.every(c => c.init?.redirect === "error"));
   assert.throws(() => createNativeRecoveryTransport({ databaseOrigin: "https://db.example/path", appOrigin: "https://app.example", rpcFetch: fetcher, nativeFetch: fetcher }));
+  const options = { databaseOrigin: "https://db.example", appOrigin: "https://app.example", rpcFetch: fetcher, nativeFetch: fetcher };
+  Object.defineProperty(options, Symbol("extra"), { value: 1 });
+  assert.throws(() => createNativeRecoveryTransport(options));
+  const context = structuredClone(input.context);
+  Object.defineProperty(context.source, "hidden", { value: 1 });
+  await assert.rejects(bridge({ name: "trip_reload", params: { tripId: context.tripId }, context }, new AbortController().signal));
+  assert.equal(calls.length, 3);
+  const stableOptions = { databaseOrigin: "https://db.example", appOrigin: "https://app.example", rpcFetch: fetcher, nativeFetch: fetcher };
+  const stableBridge = createNativeRecoveryTransport(stableOptions);
+  stableOptions.nativeFetch = async () => { throw Error("redirected dependency"); };
+  await stableBridge({ name: "trip_reload", params: { tripId: input.context.tripId }, context: input.context }, new AbortController().signal);
+  assert.equal(calls.length, 4);
 });
 
 test("existing production durable worker ignores a late result after caller cancellation", async () => {
