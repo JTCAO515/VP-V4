@@ -89,3 +89,22 @@ test('wiki source imports select native PostgreSQL persistence and Ops readers w
  for(const f of ['lib/server/knowledge/wiki/proposals.ts','lib/server/jobs/wiki-generation-job.ts']){const p=selectCheckPlan([f],'pull_request');assert.equal(p.profile,'affected');assert.ok(p.dbLanes.includes('postgres-native'));assert.ok(p.dbLanes.includes('supabase-http-ops'));}
  assert.equal(selectCheckPlan(['lib/server/turn/planning-v2-model-request.ts'],'pull_request').dbLanes.includes('postgres-native'),false);
 });
+
+test('static output tests always select their build prerequisite, while native and contract-only changes stay bounded',()=>{
+ for(const files of [
+  ['lib/server/media/speech/index.ts','tests/contract/agent-speech/speech.test.ts'],
+  ['lib/server/turn/planning-v2-model-request.ts'],
+  ['supabase/migrations/new.sql'],
+  ['lib/server/identity/request-guards.ts'],
+  ['components/canvas/Result.tsx'],
+ ]){
+  const plan=selectCheckPlan(files,'pull_request');
+  assert.equal(plan.checks.test,true,files.join(','));
+  assert.equal(plan.checks.build,true,files.join(','));
+ }
+ for(const files of [['ios/VisePanda/Features/Result.swift'],['tests/contract/agent-speech/speech.test.ts'],['README.md']]){
+  const plan=selectCheckPlan(files,'pull_request');
+  assert.equal(plan.checks.test,false,files.join(','));
+  assert.equal(plan.checks.build,false,files.join(','));
+ }
+});
