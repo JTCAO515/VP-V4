@@ -1,0 +1,22 @@
+{
+  "id": "dpl_GxZbDEZqXMwTrtqZzGWrPVv18Hgh",
+  "url": "vp-v4-iy7horfr1-jtcao515s-projects.vercel.app",
+  "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+  "ownerId": "team_vLT8SL2mQJJSnXbD9GzVLP4K",
+  "target": null,
+  "readyState": "READY",
+  "createdAt": 1791954170230,
+  "buildingAt": 1791954171182,
+  "ready": 1791954252651,
+  "gitSource": {
+    "ref": "codex/qaw005-independent-target-20261013",
+    "repoId": 1341685139,
+    "sha": "8731c54ed45940477672233cb9f96dc2c0996421",
+    "type": "github",
+    "prId": null
+  },
+  "observedAt": "2026-10-14T05:04:15.480828+00:00",
+  "mcpRead404RequestId": "sin1:sfo1::6d84f-1791954243482-fc28211e00e9",
+  "configurationCreatedAt": "2026-10-14T04:26:14.493931+00:00",
+  "environmentValuesInspected": false
+}

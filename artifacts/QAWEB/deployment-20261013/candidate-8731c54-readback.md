@@ -1,0 +1,9 @@
+# Latest QA candidate source 8731c54
+
+Main requested latest read-only QA candidate `8731c54ed45940477672233cb9f96dc2c0996421`; `037486da` is retained as historical evidence. Remote QA branch matches exactly. Source tree `7a1fb040601ca97f67f63c2a95b22495f2f20ac0` equals formally reviewed sample source `5267889ab11c42a7a8da2a6e92f10b0d14aa367e`. Main supplied the original sample formal/CI and expected-head squash merge evidence; this readback does not invent merged-head CI success.
+
+The immutable candidate package is `binding-candidate-8731c54ed459.json`. Live project/team/Git link and current domain scope passed existing validation. Both plain QA Ref/Origin entries apply to `codex/qaw005-independent-target-20261013`; the QA enable variable is absent in the validated applicable QA inventory. No flags or provider budget were enabled by this task; actual provider budget/runtime readiness remains UNRUN. Secret key values were not read or copied.
+
+Automatic Git deployment `dpl_GxZbDEZqXMwTrtqZzGWrPVv18Hgh` is READY for exact source873 and the matching QA branch on the original project/team. Its creation time `2026-10-14T05:02:50.230000+00:00` is later than configuration readback `2026-10-14T04:26:14.493931+00:00`. This supports configuration scope and build ordering, not an assertion about decrypted build variables or runtime behavior. Whitelisted evidence is `automatic-preview-8731c54-metadata.json`. MCP GET returned404; documented same endpoint/team CLI GET succeeded. No create request followed the prior403.
+
+No deployment URL was accessed, no authenticated link requested, and no route/identity changed in this readback. `qatesting.go2china.space` still binds `codex/qaw005-main-20261013`. Environment/domain/WAF/permissions were not changed. Worker readiness, real Auth/Session/provider multi-round validation, shared restore and E remain UNRUN/stopped under their existing gates.
