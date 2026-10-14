@@ -29,3 +29,9 @@ Screens01-quiet-chat.jpg,02-sidebar.jpg,03-referral-blank.jpg,04-keyboard-input.
 ## Limits
 
 Real Auth/provider/persistent Session/voice/attachment upload/referral/payment/Trip/Memory writes, physical device/VoiceOver and release are UNRUN. Source/history/fixture/simulator/production remain separate. Original5 dirty and ignored candidates remain with Chat owner; no forced stop or permission/identity/tool bypass. Full App uses Main's exact state, not the original owner's older State baseline or test signature stubs. Final head review and applicable remote CI are required before normal merge.
+
+## Formal review correction
+
+Original b2 review: Standards P3 duplicated DEBUG/Release nav/fade configuration (no hard violation); Spec P2 removed direct associated-journey return. Both reports remain at Main private muse-b2-{standards,spec}-review.md. Original Chat owner restored only an explicit current-context Journey/material-ID link in76617bc8; Main integrated647f9e8f, retaining stale/missing context guards and quiet new-page behavior. Main unified the shared nav/status modifier outside the build-condition branch, preserving both original callback variants.
+
+Affected full App build/install/launch PASS27.2s. Actual normal new chat has no journey link; explicit sample-history context displays 查看关联旅程, clicking opens the same sample-shanghai journey/day page. Evidence10-journey-return-repaired.jpg and review-repair-snapshots.json. No work-status/welcome card reintroduced. Original approval/model-capacity failures are not relabeled; original owner source/worktree/leases preserved.
