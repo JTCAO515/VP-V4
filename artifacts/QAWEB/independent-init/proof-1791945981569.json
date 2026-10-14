@@ -1,0 +1,44 @@
+{
+  "status": "PASS_OWN_INBOUND_TIMER_ONLY",
+  "target": "UNRUN",
+  "managedAuth": "UNRUN",
+  "provider": "UNRUN",
+  "schemaAcceptance": "PURE_PG_FIXTURE_ONLY",
+  "checks": [
+    {
+      "result": "PASS",
+      "check": "actual newly created empty application database, no archive or imported data"
+    },
+    {
+      "result": "PASS",
+      "check": "exact original local Auth/role/engine fingerprints; empty Auth rows"
+    },
+    {
+      "result": "PASS",
+      "check": "unknown managed target engine/Auth profile refuses rather than normalization"
+    },
+    {
+      "result": "PASS",
+      "check": "inbound120s active timer is really shortened; individually100ms sleeps cumulatively trigger DB transaction cancellation before COMMIT"
+    },
+    {
+      "result": "PASS",
+      "check": "current DDL/ledger rollback confirmed, baseline75 untouched"
+    },
+    {
+      "result": "PASS",
+      "check": "successful packet LOCAL timer reset preserves inbound session default120s after COMMIT, no persistent/global config change"
+    }
+  ],
+  "runId": "99569e2f-6225-4846-9a05-1f5674f9d319",
+  "reviewSource": "8b5975e48e850d0cbb1bf6f8ef7c4b0c9ff6b888",
+  "sourceCount": 155,
+  "platform": {
+    "profile": "local-pg-fixture/1",
+    "authSdkAcceptance": "UNRUN_PURE_PG_ONLY"
+  },
+  "actualError": "TRANSACTION_TIMEOUT",
+  "sourceCountAfter": 76,
+  "cleanup": "PASS_OWN_ONLY",
+  "completedAt": "2026-10-14T02:46:21.569Z"
+}

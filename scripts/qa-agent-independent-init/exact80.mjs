@@ -27,6 +27,10 @@ export function databaseDeadlineSql(expiresAt){
  return `do $qa_deadline$ declare remaining_ms integer;txn_ms integer;begin
  if current_setting('server_version_num')::integer<170000 then raise exception 'E_PG17_TRANSACTION_TIMEOUT_REQUIRED';end if;
  remaining_ms:=${remaining};if remaining_ms<=1000 then raise exception 'E_INSUFFICIENT_WINDOW';end if;
+ -- PG17 does not shorten an already active timer: cancel only the LOCAL
+ -- transaction timer, recalculate against DB clock, then arm the new bound.
+ perform set_config('transaction_timeout','0',true);
+ remaining_ms:=${remaining};if remaining_ms<=1000 then raise exception 'E_INSUFFICIENT_WINDOW';end if;
  txn_ms:=least(60000,remaining_ms)-1000;
  perform set_config('transaction_timeout',txn_ms::text||'ms',true);
  perform set_config('statement_timeout',least(30000,txn_ms)::text||'ms',true);
