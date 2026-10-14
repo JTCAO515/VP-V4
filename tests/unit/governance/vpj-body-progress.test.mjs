@@ -247,6 +247,7 @@ function commandFixture(t, command, { parentDrift = false, successfulPublish = f
     delete tasks[1].url;
   }
   const fixturePlan = { ...plan, tasks, sourceSnapshot: 'snapshot.json', oldIssueSuccessors: {} };
+  delete fixturePlan.modularDirection; // This fixture exercises the legacy baseline without migration snapshots.
   for (const directory of ['scripts', 'bin', `${planDir}/issue-bodies`]) mkdirSync(path.join(fixtureRoot, directory), { recursive: true });
   cpSync('scripts/vpj-program.mjs', path.join(fixtureRoot, 'scripts/vpj-program.mjs'));
   mkdirSync(path.join(fixtureRoot, 'scripts/lib'), { recursive: true });
@@ -336,3 +337,33 @@ test('publish can add an unassigned task while preserving a completed Issue and 
 
 test('publish keeps acceptance links without recreating native blocking relationships', t =>
   commandFixture(t, 'publish', { successfulPublish: true, acceptanceOnly: true }));
+
+
+test('reviewed modular bodies retain completed criteria and append-only progress while refusing unknown scope drift', () => {
+  const migrated = plan.tasks.find(entry => entry.number === 195);
+  const snapshot = readFileSync('docs/product/VPV10-MODULAR-001/after/195.md', 'utf8');
+  assert.equal(body(migrated), snapshot);
+  assert.ok(snapshot.includes('- [x] '), 'historical completed criteria remain completed');
+  const remote = snapshot + '\n## Later verified evidence\nNew scoped result remains.\n';
+  const issue = { number: migrated.number, id: migrated.databaseId, title: `[${migrated.id}] ${migrated.title}`, body: remote };
+  assert.equal(prepareBodyUpdates([migrated], [issue])[0].body, remote);
+  assert.throws(() => body({ ...migrated, acceptance: [...migrated.acceptance, 'New unreviewed criterion'] }), /task definition changed/);
+  assert.throws(() => body({ ...migrated, modularDirection: { ...migrated.modularDirection, priority: 'P0' } }), /modular attribution drift/);
+  assert.throws(() => prepareBodyUpdates([migrated], [{ ...issue, body: remote.replace('## 当前目标与工程责任', '## Concurrently rewritten scope') }]), /body preflight failed/);
+});
+
+
+test('unchecking a reviewed completed item refuses the whole body-update batch without restoring completion', () => {
+  const migrated = plan.tasks.find(entry => entry.number === 195);
+  const snapshot = body(migrated);
+  const remote = snapshot.replace('- [x] ', '- [ ] ') + '\n## New evidence\nRetain the explicit reopened criterion.\n';
+  const issue = { number: migrated.number, id: migrated.databaseId, title: `[${migrated.id}] ${migrated.title}`, body: remote };
+  assert.throws(() => prepareBodyUpdates([migrated], [issue]), /previously checked acceptance is now unchecked/);
+  assert.equal(issue.body, remote, 'preflight is read-only, including the unchecked criterion and appended evidence');
+  assert.throws(() => prepareBodyUpdates([migrated], [issue], new Map([[migrated.id, snapshot.replace('- [x] ', '- [ ] ')]])), /refuse automatic restoration/, 'an older unchecked template cannot bypass the refusal');
+  const newlyChecked = snapshot.replace('- [ ] ', '- [x] ') + '\n## More evidence\nNew completion remains.\n';
+  assert.equal(prepareBodyUpdates([migrated], [{ ...issue, body: newlyChecked }])[0].body, newlyChecked);
+  // A duplicate checked statement elsewhere cannot override the explicit uncheck at its original position.
+  const duplicate = remote + '\n' + snapshot.split('\n').find(line => line.startsWith('- [x] ')) + '\n';
+  assert.throws(() => preserveIssueProgress(duplicate, snapshot, snapshot, migrated.id), /previously checked acceptance is now unchecked/);
+});

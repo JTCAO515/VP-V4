@@ -1,5 +1,7 @@
 # VPJ 产品与开发入口
 
+> 2026-10-14 当前方向：[同仓 iOS / Web / Agent 三工程](../../contracts/vpv4-project-boundaries.md)。该方向替代下文历史的端侧主从定位与固定实施次序；已有领域合同、验收条款、完成证据和权限门保留。先完成方向与开放 Issue 重排，后续实施由唯一 Main 按真实输入接续。
+
 开发阶段以 [2026-09-12接入规则](../../agents/development-integration-policy.md)为准：不等待第三方、法务或产品许可。任务定义中的依赖用于真实接口与验收，不恢复历史审批阻塞。
 
 [VPJ-00 #187](https://github.com/JTCAO515/VP-V4/issues/187) 是唯一活动 Program：中英原生 iOS 完整旅程、同 Trip 轻量 Web Studio、一个 VP 与受控技能。完整范围、商业试验和客户交付由[主报告](../../VISEPANDA-MASTER-PLAN-2026-09-05.md)与 ADR-0023 定义。

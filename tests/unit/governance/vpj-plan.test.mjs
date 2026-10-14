@@ -114,7 +114,7 @@ test('compact Issue bodies keep task-specific acceptance and guardrails with ful
     // A clause the row shares with every other task is printed once in the contract header
     // and referenced from the row, so assert against the document the reader actually opens.
     const execution = executionContractHeader + executionContractRow(task);
-    for (const criterion of task.acceptance) assert.ok(generated.includes(`- [ ] ${criterion}`), `${task.id} lost acceptance`);
+    for (const criterion of task.acceptance) assert.ok(generated.includes(`- [ ] ${criterion}`) || generated.includes(`- [x] ${criterion}`), `${task.id} lost acceptance`);
     for (const guardrail of task.doNotTouch) assert.ok(generated.includes(`- ${guardrail}`), `${task.id} lost guardrail`);
     for (const dependency of [...task.blockedBy, ...(task.acceptanceDependencies ?? [])]) assert.ok(generated.includes(`[${dependency} #`), `${task.id} lost dependency`);
     assert.ok(generated.includes(`/EXECUTION-CONTRACT.md#${task.id.toLowerCase()}`));

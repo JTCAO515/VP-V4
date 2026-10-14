@@ -1,5 +1,7 @@
 # Practical development workflow
 
+> 2026-10-14 当前方向：[同仓 iOS / Web / Agent 三工程](../contracts/vpv4-project-boundaries.md)。该方向替代下文历史的端侧主从定位与固定实施次序；已有领域合同、验收条款、完成证据和权限门保留。先完成方向与开放 Issue 重排，后续实施由唯一 Main 按真实输入接续。
+
 ADR-0024, merged and effective. Shared workflow for VPJ work and explicitly requested maintenance; ADR-0023 defines
 product scope and safety. Development-stage approvals follow
 [the integration policy](development-integration-policy.md) (JT, 2026-09-12): available

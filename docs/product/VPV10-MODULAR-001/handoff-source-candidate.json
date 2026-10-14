@@ -1,0 +1,14 @@
+{
+  "candidateOnly": true,
+  "writer": "unique Main",
+  "source": "docs/handoff.json",
+  "beforeSha256": "6d14f23de2fce28d15f168b1ab28f616432cb04c8a0f096fe5fd3858a50fb0e6",
+  "patch": [
+    {
+      "op": "add",
+      "path": "/mandatoryReadingOrder/0",
+      "value": "docs/contracts/vpv4-project-boundaries.md"
+    }
+  ],
+  "afterAction": "Optional navigation-only candidate. Existing objective/status/phase/evidence remain dated historical records. Main alone decides whether to render CONTEXT/HANDOFF. Do not replace the external unique V10 HANDOFF."
+}

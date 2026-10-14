@@ -1,0 +1,106 @@
+[
+  {
+    "number": 683,
+    "before": [],
+    "after": [
+      "priority:P0"
+    ],
+    "at": "2026-10-14T03:19:19.330490+00:00",
+    "verified": true,
+    "nonPriorityLabelsBodyAssigneesStateUnchanged": true
+  },
+  {
+    "number": 682,
+    "before": [],
+    "after": [
+      "priority:P0"
+    ],
+    "at": "2026-10-14T03:19:22.314488+00:00",
+    "verified": true,
+    "nonPriorityLabelsBodyAssigneesStateUnchanged": true
+  },
+  {
+    "number": 681,
+    "before": [],
+    "after": [
+      "priority:P0"
+    ],
+    "at": "2026-10-14T03:19:26.173896+00:00",
+    "verified": true,
+    "nonPriorityLabelsBodyAssigneesStateUnchanged": true
+  },
+  {
+    "number": 680,
+    "before": [],
+    "after": [
+      "priority:P0"
+    ],
+    "at": "2026-10-14T03:19:31.193922+00:00",
+    "verified": true,
+    "nonPriorityLabelsBodyAssigneesStateUnchanged": true
+  },
+  {
+    "number": 246,
+    "before": [
+      "enhancement",
+      "priority:P0",
+      "ready-for-human",
+      "phase:R0",
+      "status:planned",
+      "team:platform-delivery"
+    ],
+    "after": [
+      "enhancement",
+      "priority:P1",
+      "ready-for-human",
+      "phase:R0",
+      "status:planned",
+      "team:platform-delivery"
+    ],
+    "at": "2026-10-14T03:19:35.215263+00:00",
+    "verified": true,
+    "nonPriorityLabelsBodyAssigneesStateUnchanged": true
+  },
+  {
+    "number": 237,
+    "before": [
+      "enhancement",
+      "priority:P0",
+      "ready-for-human",
+      "phase:R1",
+      "status:planned",
+      "team:platform-delivery"
+    ],
+    "after": [
+      "enhancement",
+      "priority:P1",
+      "ready-for-human",
+      "phase:R1",
+      "status:planned",
+      "team:platform-delivery"
+    ],
+    "at": "2026-10-14T03:19:40.131457+00:00",
+    "verified": true,
+    "nonPriorityLabelsBodyAssigneesStateUnchanged": true
+  },
+  {
+    "number": 225,
+    "before": [
+      "enhancement",
+      "priority:P0",
+      "phase:R0",
+      "status:planned",
+      "team:platform-delivery"
+    ],
+    "after": [
+      "enhancement",
+      "priority:P1",
+      "phase:R0",
+      "status:planned",
+      "team:platform-delivery"
+    ],
+    "at": "2026-10-14T03:20:39.892359+00:00",
+    "verified": true,
+    "nonPriorityLabelsBodyAssigneesStateUnchanged": true
+  }
+]

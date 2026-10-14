@@ -1,5 +1,7 @@
 # VPJ Issue 执行合同
 
+> 当前三工程方向见 [VPV10-MODULAR-001](../../contracts/vpv4-project-boundaries.md)，逐票当前归属见 [开放票映射](../../product/VPV10-MODULAR-001/issue-map.md)。以下保留原执行/验收定义；旧固定顺序不自动启动。
+
 生成自issue-plan.json。当前共享流程见 [development-workflow.md](../../agents/development-workflow.md) / ADR-0024。
 阅读当前Issue/PR、本行、受影响接口与代码；历史研究按需读取。
 
@@ -178,6 +180,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 [VPJ-07 #195](https://github.com/JTCAO515/VP-V4/issues/195) — 真实文本与持久任务执行基础
 
+当前工程：Agent；优先级：P1。持久文本任务执行并可恢复。复用完成文本纵切、hosted queue 和 worker；补剩余真实执行/恢复，QAWEB 是消费者不另建执行系统。
+
 ### 执行边界与首个切片
 
 - 首个可交付结果：保留现有文本纵切和真实worker验收；为新助手模式提供实际执行/恢复接缝。
@@ -310,6 +314,10 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 [VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199) — 可见Memory与真实偏好消费、纠正和遗忘
 
+当前工程：shared；优先级：P1。显式 Memory 影响结果且可纠正遗忘。复用唯一 Profile/Memory 权威与原生页面；补真实消费/撤回链，不复制画像库。
+
+分类：business-data；lead：Profile/Memory 原 domain owner；受影响消费者：iOS / Web / Agent。原 owner/精确 lease 保留。
+
 ### 执行边界与首个切片
 
 - 首个可交付结果：打通Memory独立页面→明确保存→真实规划使用→纠正/撤回→相关结果变化的一条链。
@@ -347,6 +355,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 [VPJ-12 #201](https://github.com/JTCAO515/VP-V4/issues/201) — 单张旅行截图导入、校正与加入 Trip
 
+当前工程：iOS；优先级：P1。单张旅行截图经校正加入 Trip。复用单图解析审阅及 #507；补许可内材料与确认链，不重做已否决 Docling。
+
 ### 执行边界与首个切片
 
 - 首个可交付结果：I1：用户用Photo Picker选择单图，校正原文中的日期/金额/地址，再经diff确认加入同一Trip并跨端重载。 PR #472/#474 已合并原生审阅/Proposal；不重写解析UI，不重新研究已否决Docling。
@@ -377,6 +387,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 ## VPJ-13
 
 [VPJ-13 #203](https://github.com/JTCAO515/VP-V4/issues/203) — VP首访、委托与回访的连续体验
+
+当前工程：iOS；优先级：P1。首访委托与回访继续同一目标。复用 VPJ77 四 Tab 与 JourneyEntry；保留 E2 生命周期安全暂停，真实回访缺口不前置为全部 QA 阻塞。
 
 ### 执行边界与首个切片
 
@@ -440,6 +452,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 [VPJ-15 #205](https://github.com/JTCAO515/VP-V4/issues/205) — 首批旅程内容从来源登记到已审核可用
 
+当前工程：Agent；优先级：P1。旅程内容从登记来源到审核可用。复用来源和编辑审核工具；补真实来源权利、定位和发布收据，保留作者审核分离。
+
 ### 执行边界与首个切片
 
 - 首个可交付结果：从已有已审中英声明和发布记录中选一个缺覆盖场景，补真实来源→异人审核→发布/撤回→产品读回。
@@ -469,6 +483,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 ## VPJ-16
 
 [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206) — 有依据的回答、诚实部分答案与知识缺口
+
+当前工程：Agent；优先级：P1。回答有依据且诚实显示部分答案和缺口。复用 evidence/eligibility/receipt；补当前 consumer 的真实引用与拒绝，文本成功不等于知识合格。
 
 ### 执行边界与首个切片
 
@@ -531,6 +547,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 [VPJ-18 #208](https://github.com/JTCAO515/VP-V4/issues/208) — 高德主选与腾讯补充的实测、用途与成本边界
 
+当前工程：Agent；优先级：P1。高德主选腾讯补充具有用途与成本证据。复用既有供应商适配和 #367；补真实输入和许可范围，不额外采购。
+
 ### 执行边界与首个切片
 
 - 首个可交付结果：复用#362已完成探针和高德主选决定，补一个确实未验的使用场景、字段用途或成本/配额记录；不重跑整批取数。
@@ -558,6 +576,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 ## VPJ-19
 
 [VPJ-19 #209](https://github.com/JTCAO515/VP-V4/issues/209) — 地点消歧、地图展示与路线出口
+
+当前工程：iOS；优先级：P1。地点消歧地图和路线出口保持一致。复用地图接口和 #363/#364；补准确实体/坐标/导航证据，provider 资格归 #208。
 
 ### 执行边界与首个切片
 
@@ -588,6 +608,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 ## VPJ-20
 
 [VPJ-20 #210](https://github.com/JTCAO515/VP-V4/issues/210) — 全局探索中的地点发现、保存和交给VP
+
+当前工程：iOS；优先级：P1。用户发现保存地点并交给 VP。复用 Explore/地点/目标入口；补真实成果交接，不改 Trip 确认路径。
 
 ### 执行边界与首个切片
 
@@ -651,6 +673,10 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 ## VPJ-22
 
 [VPJ-22 #212](https://github.com/JTCAO515/VP-V4/issues/212) — 酒店官方出口、参数落地与联盟归因验证
+
+当前工程：iOS；优先级：P1。酒店需求通过可信官方出口交接。复用酒店 allowlist/归因合同供双端消费；补参数实测，opened 不当 booked。
+
+分类：business-data；lead：iOS 酒店交接原 owner（与 Web consumer owner 协作）；受影响消费者：iOS / Web。原 owner/精确 lease 保留。
 
 ### 执行边界与首个切片
 
@@ -773,6 +799,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 ## VPJ-26
 
 [VPJ-26 #216](https://github.com/JTCAO515/VP-V4/issues/216) — 中英现场表达与大字展示
+
+当前工程：iOS；优先级：P1。旅途中展示可信中英表达与大字卡。复用原生卡片和文本能力；补实际来源/语言/失败处理，媒体能力单独验证。
 
 ### 执行边界与首个切片
 
@@ -982,6 +1010,10 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 [VPJ-33 #225](https://github.com/JTCAO515/VP-V4/issues/225) — Free与订阅服务边界、商品策略和旧Pass兼容
 
+当前工程：shared；优先级：P1。用户理解 Free/订阅和旧 Pass 边界。复用现行商品策略；工程划分不改变定价与旧 Pass 兼容，不自动启用年订阅。
+
+分类：product-operations；lead：商品策略原 owner；受影响消费者：iOS / Web / Agent。原 owner/精确 lease 保留。
+
 ### 执行边界与首个切片
 
 - 首个可交付结果：先定义行前可感知的免费/付费服务范围与旧Pass兼容矩阵，所有未选销售参数保持未激活。
@@ -1015,6 +1047,10 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 [VPJ-34 #226](https://github.com/JTCAO515/VP-V4/issues/226) — 官方购买、订阅兼容与同源权益
 
+当前工程：shared；优先级：P1。官方购买与旧订阅得到同源权益。复用购买/权益合同与 #503；补原真实验收，三工程不各自创建权益权威。
+
+分类：business-data；lead：购买与权益原 domain owner；受影响消费者：iOS / Web。原 owner/精确 lease 保留。
+
 ### 执行边界与首个切片
 
 - 首个可交付结果：保持#503官方测试交易到grant，按#225版本策略设计订阅续期/退款/恢复与旧Pass共存。
@@ -1046,6 +1082,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 ## VPJ-35
 
 [VPJ-35 #227](https://github.com/JTCAO515/VP-V4/issues/227) — Free/Pass 额度与完整任务成本控制
+
+当前工程：Agent；优先级：P1。完整任务额度与实际尝试成本受控。复用 durable budget/ServiceTask 账本；补消费与恢复边界，不重建账本或扩大收费。
 
 ### 执行边界与首个切片
 
@@ -1110,6 +1148,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 [VPJ-37 #229](https://github.com/JTCAO515/VP-V4/issues/229) — 运营看见质量、成本和故障并能停用能力
 
+当前工程：Agent；优先级：P1。运营看见质量成本故障并安全停用。保留 PR679/W2 安全暂停及全部未完成证据；不前置恢复整票到 QA 首答。
+
 ### 执行边界与首个切片
 
 - 首个可交付结果：W1：授权运营在质量/成本视图分辨answered、partial、失败、未观测及待核费用。 PR #501已合入main，复用聚合视图及受保护读接口；真实授权部署读取与实际成本验收仍未完成。
@@ -1137,6 +1177,10 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 ## VPJ-38
 
 [VPJ-38 #230](https://github.com/JTCAO515/VP-V4/issues/230) — 数据库、对象与删除状态的恢复演练
+
+当前工程：shared；优先级：P1。恢复演练保持对象和删除状态一致。复用历史恢复工具与失败；保留原 Main A–D/条件 E，当前无 START/actual capture 不执行。
+
+分类：quality-delivery；lead：恢复演练与数据生命周期原 owner；受影响消费者：iOS / Web / Agent。原 owner/精确 lease 保留。
 
 ### 执行边界与首个切片
 
@@ -1167,6 +1211,10 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 [VPJ-39 #232](https://github.com/JTCAO515/VP-V4/issues/232) — 境内外媒体、酒店跳转、IAP 与通知网络验收
 
+当前工程：shared；优先级：P1。用户在境内外网络得到真实可用服务。按 iOS/Web/Agent 分别记录媒体酒店IAP通知网络证据；复用现有适配不推导全国覆盖。
+
+分类：quality-delivery；lead：跨端网络验收原 owner；受影响消费者：iOS / Web / Agent。原 owner/精确 lease 保留。
+
 ### 执行边界与首个切片
 
 - 首个可交付结果：NET1：在真实境内外WiFi/漫游/弱网下使用图片/PDF/语音，断网能恢复或保留可读资料。
@@ -1195,6 +1243,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 ## VPJ-40
 
 [VPJ-40 #233](https://github.com/JTCAO515/VP-V4/issues/233) — 原生视觉动效、无障碍与性能整链复验
+
+当前工程：iOS；优先级：P1。原生完整体验可访问且性能可接受。复用已合原生四 Tab/动效/组件；补实体 VoiceOver、性能与整链观察。
 
 ### 执行边界与首个切片
 
@@ -1228,6 +1278,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 [VPJ-41 #234](https://github.com/JTCAO515/VP-V4/issues/234) — 精简 Web Planning Studio 的最终体验验收
 
+当前工程：Web；优先级：P1。Web 用户独立完成同 Trip 规划与确认。复用 TripCanvas、成果工作区及既有 Web 验收；QA 首体验由 #680–#683 承担，不要求复制全套 iOS UI。
+
 ### 执行边界与首个切片
 
 - 首个可交付结果：复验轻量Web与原生使用同一Trip、支持成果和准确确认revision。
@@ -1257,6 +1309,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 ## VPJ-42
 
 [VPJ-42 #242](https://github.com/JTCAO515/VP-V4/issues/242) — TestFlight 实机贯通 Plan、Ready、Travel 三段
+
+当前工程：iOS；优先级：P1。TestFlight 真机贯通规划准备与旅途。复用四 Tab 和已合功能；补真实设备整链，不把 iOS 总验收设为 Web 独立交付前置。
 
 ### 执行边界与首个切片
 
@@ -1289,6 +1343,10 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 [VPJ-43 #243](https://github.com/JTCAO515/VP-V4/issues/243) — 独立 Production 与可回滚的客户服务环境
 
+当前工程：shared；优先级：P1。客户环境具备明确隔离与回滚能力。保留未来 Production 交付目标；当前 QA 固定共享 dzt，不在本轮新建库或迁移。
+
+分类：quality-delivery；lead：Production 环境与回滚原 owner；受影响消费者：iOS / Web / Agent。原 owner/精确 lease 保留。
+
 ### 执行边界与首个切片
 
 - 首个可交付结果：先形成可审查的独立Production配置/迁移/回退包；取得指定环境执行授权后部署并核对真实状态。
@@ -1316,6 +1374,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 ## VPJ-44
 
 [VPJ-44 #244](https://github.com/JTCAO515/VP-V4/issues/244) — 正式 App Store 1.0 提交与数字商品审核
+
+当前工程：iOS；优先级：P1。提交可审核的 App Store 1.0。复用已验签名/隐私/商品材料；补真实提交与审核权限，方向阶段不提交。
 
 ### 执行边界与首个切片
 
@@ -1346,6 +1406,10 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 [VPJ-45 #245](https://github.com/JTCAO515/VP-V4/issues/245) — 客户收到产品后的观察、支持与发布关账
 
+当前工程：shared；优先级：P1。用户收到产品后有支持和关账证据。复用运营交付链；补真实交付观察和回滚，不因工程拆分重做发布史。
+
+分类：quality-delivery；lead：发布交付与支持原 owner；受影响消费者：iOS / Web / Agent。原 owner/精确 lease 保留。
+
 ### 执行边界与首个切片
 
 - 首个可交付结果：在已交付版本执行72小时系统及7天机会相关观察，归档未解缺陷、支持/事故责任和产品发布结论。
@@ -1373,6 +1437,10 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 ## VPJ-46
 
 [VPJ-46 #246](https://github.com/JTCAO515/VP-V4/issues/246) — 两周客户发现试点与后续运营交接
+
+当前工程：shared；优先级：P1。两周客户发现产生可执行结论。复用既有试点和访谈定义；保留真人与对外联系授权边界。
+
+分类：product-operations；lead：客户发现原 owner；受影响消费者：iOS / Web。原 owner/精确 lease 保留。
 
 ### 执行边界与首个切片
 
@@ -1404,6 +1472,10 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 ## VPJ-47
 
 [VPJ-47 #247](https://github.com/JTCAO515/VP-V4/issues/247) — 真实激活、付费与人工成本的经营观察
+
+当前工程：shared；优先级：P1。观察真实激活、付费与人工成本。复用事件与经营定义；补真实发布后的观察，不把 synthetic 当经营结果。
+
+分类：product-operations；lead：经营观察原 owner；受影响消费者：iOS / Web / Agent。原 owner/精确 lease 保留。
 
 ### 执行边界与首个切片
 
@@ -1485,6 +1557,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 [VPJ-50 #248](https://github.com/JTCAO515/VP-V4/issues/248) — 有真实召回失败才启用混合 RAG 与重排
 
+当前工程：Agent；优先级：P2。真实召回失败时引入混合检索与重排。复用现有知识索引；先保留失败证据和 activationEvidence，不预先换架构。
+
 ### 执行边界与首个切片
 
 - 首个可交付结果：保持expand门：先用真实召回失败归因决定是否启动；启动后同批baseline对比一个检索变量并记录净收益。
@@ -1518,6 +1592,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 [VPJ-51 #249](https://github.com/JTCAO515/VP-V4/issues/249) — 航班来源与中国航线对照（证据触发）
 
+当前工程：Agent；优先级：P2。有证据时验证中国航线来源。保留来源用途、授权和激活条件；不把数据采购前置到三工程入口。
+
 ### 执行边界与首个切片
 
 - 首个可交付结果：保持expand门：对实际存在的中国航线需求，按同一字段/时效样本比较最少候选来源与账户能力。
@@ -1546,6 +1622,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 ## VPJ-52
 
 [VPJ-52 #250](https://github.com/JTCAO515/VP-V4/issues/250) — 授权航班状态与相关行程重验
+
+当前工程：Agent；优先级：P2。授权航班变化触发相关行程重验。复用来源和影响合同；等待本票激活证据及 #249 实际数据，不制造状态。
 
 ### 执行边界与首个切片
 
@@ -1577,6 +1655,10 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 [VPJ-53 #251](https://github.com/JTCAO515/VP-V4/issues/251) — Android 与新增语言的需求触发设计
 
+当前工程：shared；优先级：P2。有需求证据时再设计 Android 与新语言。保留 activationEvidence；本轮不新建 Android/SDK 工程。
+
+分类：product-operations；lead：产品需求与语言范围负责人（沿原决策归属）；受影响消费者：iOS / Web。原 owner/精确 lease 保留。
+
 ### 执行边界与首个切片
 
 - 首个可交付结果：保持expand门：以真实需求及成本证据形成Android或新增语言的先后决定和一个明确实施范围。
@@ -1605,6 +1687,10 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 ## VPJ-54
 
 [VPJ-54 #252](https://github.com/JTCAO515/VP-V4/issues/252) — 年订阅与交易深度升级的证据决策
+
+当前工程：shared；优先级：P2。凭经营证据决定年订阅与交易扩展。保留 activationEvidence；不把商业全矩阵前置到 QA 首答。
+
+分类：product-operations；lead：产品商业策略负责人（沿原决策归属）；受影响消费者：iOS / Web / Agent。原 owner/精确 lease 保留。
 
 ### 执行边界与首个切片
 
@@ -1666,6 +1752,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 [VPJ-56 #237](https://github.com/JTCAO515/VP-V4/issues/237) — 原生 CI、签名 Archive 与首个 TestFlight 安装包
 
+当前工程：iOS；优先级：P1。获得签名 Archive 与可安装 TestFlight 包。复用已关闭 #508 的 unsigned Archive/CI 成果；补签名、上传与安装原范围。
+
 ### 执行边界与首个切片
 
 - 首个可交付结果：X1：同一commit在实际可用工具链构建，获得可审查Archive及版本/签名准备结果。
@@ -1694,6 +1782,10 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 ## VPJ-57
 
 [VPJ-57 #222](https://github.com/JTCAO515/VP-V4/issues/222) — 用户服务请求与按任务授予资料访问
+
+当前工程：shared；优先级：P1。人工服务只访问按任务授予的资料。复用 ServiceCase 与许可；保持用户同意和接收方隔离，不让 Agent 默认读取私有资料。
+
+分类：business-data；lead：ServiceCase 与资料许可原 domain owner；受影响消费者：iOS / Web / Agent。原 owner/精确 lease 保留。
 
 ### 执行边界与首个切片
 
@@ -1774,6 +1866,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 ## VPJ-60
 
 [VPJ-60 #200](https://github.com/JTCAO515/VP-V4/issues/200) — 图片和语音 Provider 的中英质量与数据流验收
+
+当前工程：Agent；优先级：P1。图片语音 provider 中英数据流可验收。复用 C0 适配器；保留 DeepSeek HTTP400 与真实 Qwen UNRUN，文本资格不代媒体资格。
 
 ### 执行边界与首个切片
 
@@ -1966,6 +2060,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 [VPJ-67 #264](https://github.com/JTCAO515/VP-V4/issues/264) — Harness：真实只读问答产生有依据的结果与回执
 
+当前工程：Agent；优先级：P1。只读问答返回有依据结果与回执。复用文本 Harness 和知识消费者；补真实许可 provider 的来源、结果和拒绝证据。
+
 ### 执行边界与首个切片
 
 - 首个可交付结果：先核对PR #420的H04离线切片（合入testing-chat-vpv4，尚未在main），独立接回可复用增量；再把一个仍NOT_RUN的只读场景接到真实producer/consumer并核对Trip不变。
@@ -1997,6 +2093,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 ## VPJ-68
 
 [VPJ-68 #265](https://github.com/JTCAO515/VP-V4/issues/265) — Harness：少走路且保留已确认晚餐的局部改稿闭环
+
+当前工程：Agent；优先级：P1。少走路改稿保留已确认晚餐。复用 scoped-edit、TripProposal 和 Memory；补真实已有 Trip 的候选→diff→确认闭环。
 
 ### 执行边界与首个切片
 
@@ -2031,6 +2129,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 [VPJ-69 #266](https://github.com/JTCAO515/VP-V4/issues/266) — Harness：故障取消与重连不伪造成功或重复提交
 
+当前工程：Agent；优先级：P1。取消与重连不伪造完成或重复提交。复用故障 Harness 与持久执行；补 #265 和规划恢复输入上的取消/未知结果链。
+
 ### 执行边界与首个切片
 
 - 首个可交付结果：在68同一任务的一个提交/回执检查点注入真实中断，验证原任务恢复、取消和重复投递的终态。
@@ -2062,6 +2162,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 ## VPJ-70
 
 [VPJ-70 #267](https://github.com/JTCAO515/VP-V4/issues/267) — Harness：只读模型或提示词候选的配对评测与校准
+
+当前工程：Agent；优先级：P1。对模型或提示词候选做可比评测。复用冻结案例与配对工具；补实际许可 provider 输入、usage 与校准，不改客户模型选择。
 
 ### 执行边界与首个切片
 
@@ -2095,6 +2197,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 ## VPJ-71
 
 [VPJ-71 #268](https://github.com/JTCAO515/VP-V4/issues/268) — Harness：核心任务发布判定与能力停用恢复验收
+
+当前工程：Agent；优先级：P1。按核心任务证据判断发布与停用恢复。复用 Harness 和运营合同；补实际候选/恢复证据，不能用矩阵通过冒充目标可用。
 
 ### 执行边界与首个切片
 
@@ -2200,6 +2304,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 [VPJ-75 #359](https://github.com/JTCAO515/VP-V4/issues/359) — 新来源经LLM Wiki整理为可审查并可发布的知识变更
 
+当前工程：Agent；优先级：P1。新来源形成可审查并可发布的知识变更。复用现有 Wiki 生成和审核；补来源到发布版本链，不自动发布模型候选。
+
 - Owner: coding-agent; vertical; 5专注日，估算专注日仅供排程；逐PR交付有界结果，整票以实际Staging生产者/消费者及故障验证为准
 - 验收阶段: S2
 - Blocked by: [VPJ-74 #358](https://github.com/JTCAO515/VP-V4/issues/358)
@@ -2222,6 +2328,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 ## VPJ-76
 
 [VPJ-76 #360](https://github.com/JTCAO515/VP-V4/issues/360) — Ask检索已发布Wiki与原子声明并返回完整证据和具体缺口
+
+当前工程：Agent；优先级：P1。回答引用已发布 Wiki 和原子声明并说明缺口。复用知识检索与来源资格；补真实 consumer 的证据完整性和不可访问拒绝。
 
 - Owner: coding-agent; vertical; 5专注日，估算专注日仅供排程；逐PR交付有界结果，整票以实际Staging生产者/消费者及故障验证为准
 - 验收阶段: S2

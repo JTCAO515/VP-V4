@@ -1,5 +1,7 @@
 # Issue tracker: GitHub
 
+> 2026-10-14 当前方向：[同仓 iOS / Web / Agent 三工程](../contracts/vpv4-project-boundaries.md)。该方向替代下文历史的端侧主从定位与固定实施次序；已有领域合同、验收条款、完成证据和权限门保留。先完成方向与开放 Issue 重排，后续实施由唯一 Main 按真实输入接续。
+
 Use [JTCAO515/VP-V4 Issues](https://github.com/JTCAO515/VP-V4/issues) through an authenticated
 GitHub tool or `gh`. Work units and checks follow [`development-workflow.md`](development-workflow.md);
 label semantics follow [`triage-labels.md`](triage-labels.md).
@@ -21,7 +23,7 @@ to use a guest actor, a service credential or a bypass.
 
 ## 生成正文与同步
 
-Full VPJ bodies are generated from `issue-plan.json`. The compact body keeps the user result,
+Full VPJ bodies are generated from `issue-plan.json`. For VPV10-MODULAR-001 migrated open Issues, `modularDirection` binds the reviewed mapping and full retained body snapshot; definition changes require an explicit snapshot refresh. Existing preflight still preserves checked progress and append-only evidence, and rejects unknown drift. The compact body keeps the user result,
 complete acceptance, blockers and task-specific red lines; the linked execution row owns scope,
 commands, evidence, external prerequisites and rollback. GitHub delivery milestones mirror
 `deliveryStage` in the same manifest.
