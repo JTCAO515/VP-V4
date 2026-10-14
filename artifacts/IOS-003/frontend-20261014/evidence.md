@@ -27,3 +27,7 @@ The candidate form and route panel are reused by two isolated #Preview fixtures 
 ## Remaining integration
 
 Main may integrate this exact stable commit, execute affected App build/tests and simulator checks in its own window, and perform fixed-head review/required CI/protected merge. No self-merge or parent #209 closure. UI receipt expiry still follows the original source TTL and requires rereading; no new authority or source qualification.
+
+## Main callable Sample entry
+
+`NativePlaceActionsSampleExperience()` is a no-argument internal View under `#if DEBUG`, in the same existing Swift source. It needs no new PBX registration or session dependencies. Main may mount it as a leaf in its sole Sample entry. Its Chinese/English segmented picker resets the in-memory child on locale changes; both #Preview instances call this entry (one accessibility3). Production candidate/route panels are reused. Full App/simulator execution remains Main-owned; no shared resources operated here.

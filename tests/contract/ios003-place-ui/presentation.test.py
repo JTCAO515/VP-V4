@@ -79,6 +79,9 @@ print("PASS: Swift presentation decisions, all bilingual reasons, unknown-result
         self.assertIn('Stop unsubmitted sample operation', fixture)
         self.assertIn('Reset sample', fixture)
         self.assertIn('.accessibility3', fixture)
+        self.assertIn('#if DEBUG\n', source)
+        self.assertIn('struct NativePlaceActionsSampleExperience: View', source)
+        self.assertIn('NativePlaceActionsSample(chinese: chinese).id(chinese)', source)
 
 if __name__ == '__main__':
     unittest.main()
