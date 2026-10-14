@@ -52,8 +52,8 @@ from the existing protocol is preserved. Source binding is not semantic entailme
 
 ## Verification
 
-- PASS: `node --experimental-strip-types --test tests/contract/wiki-synthesis/producer.test.mjs tests/contract/knowledge/wiki-proposals.test.mjs tests/contract/knowledge/wiki-complete.test.mjs` — initial 30 tests, then 32 resource-boundary tests, then 36 tests with accessor-before-read regressions.
-- PASS: 18 synthesis tests including synchronous/microtask-starved deadlines, hidden/Symbol fields and getter non-execution.
+- PASS: `node --experimental-strip-types --test tests/contract/wiki-synthesis/producer.test.mjs tests/contract/knowledge/wiki-proposals.test.mjs tests/contract/knowledge/wiki-complete.test.mjs` — initial 30 tests, then 32 resource-boundary tests, then 36 accessor regressions, then 39 tests after descriptor snapshot redesign.
+- PASS: 21 synthesis tests including deadlines, hidden/Symbol fields, ordinary accessors, reflection exceptions and descriptor-passing Proxy get traps.
 - PASS: final source `pnpm typecheck`; `pnpm lint`; `pnpm docs:check`; `git diff --check`.
 - Actual scripted invocation: the first synthesis test invokes the existing
   production `runWikiStatementProposalJob` and provider protocol with an explicitly
@@ -97,6 +97,31 @@ canonical source rows/declarations/snippets via both direct and Ops readers.
 Every getter call count stays zero. Throwing descriptor inspection proxies also
 return the defined input/outcome/source error outcomes rather than rejecting the
 producer Promise. Main must review the resulting delta; prior P2 is not erased.
+
+Main's delta review of `8232ccbd` retained P2 with new evidence: a Proxy could
+pass descriptor checks and still execute `get` traps during array length reads,
+subsequent field reads or JSON serialization of the original graph. The solution
+was redesigned: the synthesis-local `descriptorSnapshot` decoder constructs an
+independent plain graph exclusively from data descriptors. Array length comes
+from its own data descriptor; strings/keys/containers charge a bounded JSON-byte
+budget; depth (12), nodes (4096), fields (257) and array length (256, or 3 for
+selected sources) have fixed caps. The assembler decodes request/outcome/source
+graphs before reading fields, and captures author/read port from dependency data
+descriptors. The Ops reader decodes IDs and its bounded response before reading
+page/source arrays. Subsequent validation, traversal, freezing and serialization
+use only snapshots. Decoder time counts toward the monotonic request deadline.
+
+New tests directly invoke the production decoder with Object/Array Proxies whose
+descriptors pass but whose `get` traps count or throw, then verify the actual
+producer and Ops reader with proxied input/outcome/dependencies and nested
+page/source/declaration graphs. Get counts remain zero. Original accessor tests
+remain zero as well. Decoder snapshots do not alias originals; byte/depth/array
+limits reject. Reflection traps may execute as part of inspecting descriptors and
+may throw; their exceptions remain closed at input/outcome/source boundaries.
+The test RPC/Promise envelope is ordinary, separating JS Promise assimilation
+from reads performed by the decoder. No claim is made that arbitrary reflection
+or runtime Promise-resolution traps never run. Both previous P2 FAILs remain
+recorded; final delta review and CI belong to Main.
 
 ## Remaining boundaries / Main integration
 

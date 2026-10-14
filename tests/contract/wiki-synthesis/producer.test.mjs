@@ -1,3 +1,4 @@
+import { descriptorSnapshot } from '../../../lib/server/knowledge/wiki/synthesis/descriptor-snapshot.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
@@ -257,4 +258,58 @@ test('descriptor inspection exceptions close at their input/outcome/source bound
   assert.deepEqual(await invoke(trap(request()), dependencies().deps), { kind: 'failed', errorCode: 'INVALID_INPUT' });
   assert.deepEqual(await invoke(request(), dependencies().deps, trap(scriptedOutcome())), { kind: 'failed', errorCode: 'MODEL_OUTPUT_INVALID' });
   assert.deepEqual(await invoke(request(), { authorId: author, readSources: async () => trap(rows) }), { kind: 'failed', errorCode: 'SOURCE_UNAVAILABLE' });
+});
+
+
+function proxyGraph(value, counter, throws) {
+  if (!value || typeof value !== 'object') return value;
+  const target = Array.isArray(value) ? [] : {};
+  for (const key of Object.keys(value)) Object.defineProperty(target, key, {
+    value: proxyGraph(value[key], counter, throws), enumerable: true, configurable: true, writable: true,
+  });
+  return new Proxy(target, { get() { counter.calls++; if (throws) throw new Error('get trap must not run'); return 'forged'; } });
+}
+
+test('production descriptor decoder constructs independent bounded snapshots with zero Object/Array Proxy get traps', () => {
+  for (const throws of [false, true]) {
+    for (const value of [request(), scriptedOutcome(), rows]) {
+      const counter = { calls: 0 }; const wrapped = proxyGraph(value, counter, throws);
+      const snapshot = descriptorSnapshot(wrapped, 32768);
+      assert.equal(JSON.stringify(snapshot), JSON.stringify(value)); assert.equal(counter.calls, 0);
+    }
+  }
+  const original = { values: ['a'] }; const snapshot = descriptorSnapshot(original, 256);
+  original.values[0] = 'changed'; assert.equal(snapshot.values[0], 'a');
+  assert.throws(() => descriptorSnapshot(Array(257).fill(null), 32768), /SNAPSHOT_LIMIT/);
+  assert.throws(() => descriptorSnapshot({ value: 'x'.repeat(256) }, 128), /SNAPSHOT_LIMIT/);
+  let nested = null; for (let i = 0; i < 14; i++) nested = { nested };
+  assert.throws(() => descriptorSnapshot(nested, 32768), /SNAPSHOT_LIMIT/);
+  assert.throws(() => descriptorSnapshot({}, NaN), /SNAPSHOT_LIMIT/);
+});
+
+test('actual producer reads only snapshots after descriptor-passing input/outcome/dependency Proxy checks', async () => {
+  for (const throws of [false, true]) {
+    const counter = { calls: 0 };
+    const input = proxyGraph(request(), counter, throws);
+    const outcome = proxyGraph(scriptedOutcome(), counter, throws);
+    const deps = new Proxy(dependencies().deps, { get() { counter.calls++; if (throws) throw new Error('dependency get trap'); return 'forged'; } });
+    const result = await invoke(input, deps, outcome);
+    assert.equal(result.kind, 'draft'); assert.equal(counter.calls, 0);
+  }
+});
+
+test('actual Ops reader snapshots descriptor-passing Proxy pages/source arrays and declarations before reads', async () => {
+  for (const throws of [false, true]) {
+    const counter = { calls: 0 };
+    // The RPC Promise envelope is ordinary; its entire page graph is proxied.
+    const data = proxyGraph(page(rows), counter, throws);
+    const readSources = createOpsSynthesisSourceReader(async () => ({ data, error: null }), 'topic:fixture', 3);
+    const result = await invoke(request(), { authorId: author, readSources });
+    assert.equal(result.kind, 'draft'); assert.equal(counter.calls, 0);
+    // Direct source port also supplies nested canonical Proxy rows, independent
+    // of the language runtime's Promise assimilation of its ordinary array.
+    const proxiedRows = rows.map(row => proxyGraph(row, counter, throws));
+    const direct = await invoke(request(), { authorId: author, readSources: async () => proxiedRows });
+    assert.equal(direct.kind, 'draft'); assert.equal(counter.calls, 0);
+  }
 });
