@@ -1,0 +1,30 @@
+{
+  "status": "PASS_LOCAL_DIAGNOSTIC_SIGNAL_ONLY_NOT_ACTUAL_ROOT_CAUSE",
+  "realArchiveRead": false,
+  "targetWritten": false,
+  "pre-data": {
+    "exitCode": 0
+  },
+  "post-data": {
+    "exitCode": 0
+  },
+  "permissionDenied": false,
+  "tocEventBeforeAcl": false,
+  "diagnosticSha256": "dfa881b384015b62b682a8c182c008d9305aafbfa373fe1ade7e9ea225e2f0d8",
+  "baselinePostDataLastObjectClass": "EVENT TRIGGER",
+  "eventBeforeAclHypothesis": "REJECTED_BASELINE_POSTDATA_SUCCEEDED",
+  "limitedCallerNegative": [
+    {
+      "category": "RESTORE_PERMISSION_DENIED",
+      "sqlstate": null,
+      "tocEntryId": 3267,
+      "objectClass": "CONSTRAINT",
+      "permissionObjectClass": "SCHEMA",
+      "operation": "ALTER TABLE",
+      "phase": "post-data"
+    }
+  ],
+  "baselineKnownRoleAttrsDefaultAclAndSchema": "PASS_OWN_SUPERUSER_CALLER",
+  "actualFailedObjectOrEffectiveCaller": "UNKNOWN_NOT_ESTABLISHED_BY_SOURCE_ROLE_FLAGS",
+  "cleanup": "PASS"
+}
