@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { setImmediate as yieldToEventLoop } from "node:timers/promises";
 import type { CostGuard } from "../../model-gateway/budget/index.ts";
 import { inspectWav } from "./wav.ts";
 
@@ -32,12 +33,15 @@ export type SpeechOutcome = Readonly<{ kind: "candidate"; task: "asr"; transcrip
  */
 export async function invokeSyntheticSpeech(raw: SpeechRequest, budget: Budget, transport: SpeechTransport, signal: AbortSignal): Promise<SpeechOutcome> {
   const fail = (code: Code, receipt: SpeechReceipt | null = null): SpeechOutcome => ({ kind: "unavailable", code, receipt });
-  if (typeof window !== "undefined" || !record(raw)) return fail("INVALID_INPUT");
+  const snapshot = snapshotRequest(raw);
+  if (typeof window !== "undefined" || !snapshot) return fail("INVALID_INPUT");
+  raw = snapshot;
   if (raw.dataClass !== "c0_synthetic") return fail("DATA_POLICY_BLOCKED");
   if (!validRequest(raw) || !(signal instanceof AbortSignal) || typeof transport !== "function"
     || !budget || typeof budget.admitModelStep !== "function") return fail("INVALID_INPUT");
+  const started = performance.now(), deadline = started + raw.timeoutMs;
   // Snapshot admitted input before any await; caller mutation cannot alter digest or payload.
-  const task = raw.task, locale = raw.locale, requestId = raw.requestId, timeoutMs = raw.timeoutMs;
+  const task = raw.task, locale = raw.locale, requestId = raw.requestId;
   const input = raw.task === "asr" ? Buffer.from(raw.wav) : Buffer.from(raw.text, "utf8");
   const text = raw.task === "tts" ? raw.text : null;
   const audio = task === "asr" ? inspectWav(input) : null;
@@ -54,9 +58,16 @@ export async function invokeSyntheticSpeech(raw: SpeechRequest, budget: Budget, 
   const controller = new AbortController();
   let timedOut = false, timer: ReturnType<typeof setTimeout> | undefined;
   const abort = () => controller.abort();
+  const stopped = (): boolean => {
+    if (signal.aborted) abort();
+    if (controller.signal.aborted) return true;
+    if (performance.now() >= deadline) { timedOut = true; abort(); return true; }
+    return false;
+  };
+  const stopCode = (): Code => timedOut ? "TIMEOUT_BEFORE_OUTPUT" : "CANCELLED";
   let interrupt = () => {};
   try {
-    if (signal.aborted) return fail("CANCELLED", receipt());
+    if (stopped()) return fail(stopCode(), receipt());
     const admission = budget.admitModelStep();
     if (admission.kind !== "admitted") return fail(admission.kind === "invalid" ? "INVALID_INPUT" : admission.code, receipt());
     let body: FormData | string;
@@ -73,16 +84,15 @@ export async function invokeSyntheticSpeech(raw: SpeechRequest, budget: Budget, 
       interrupt = () => resolve(fail(timedOut ? "TIMEOUT_BEFORE_OUTPUT" : "CANCELLED", receipt()));
       controller.signal.addEventListener("abort", interrupt, { once: true });
     });
-    timer = setTimeout(() => { timedOut = true; abort(); }, timeoutMs);
+    timer = setTimeout(() => { timedOut = true; abort(); }, Math.max(0, deadline - performance.now()));
     // Admission/transport preparation could synchronously abort the caller signal.
-    if (signal.aborted) { abort(); return await stop; }
-    const started = performance.now();
+    if (stopped()) return fail(stopCode(), receipt());
     const work = async (): Promise<SpeechOutcome> => {
       dispatched = true;
       let response: Response;
       try { response = await transport({ endpoint: base.endpoint, method: "POST", body, signal: controller.signal }); }
-      catch { return fail(controller.signal.aborted ? timedOut ? "TIMEOUT_BEFORE_OUTPUT" : "CANCELLED" : "PROVIDER_UNAVAILABLE", receipt()); }
-      if (controller.signal.aborted) { void response.body?.cancel().catch(() => {}); return fail("CANCELLED", receipt()); }
+      catch { return fail(stopped() ? stopCode() : "PROVIDER_UNAVAILABLE", receipt()); }
+      if (stopped()) { void response.body?.cancel().catch(() => {}); return fail(stopCode(), receipt()); }
       const mime = response.headers.get("content-type")?.split(";")[0].trim().toLowerCase();
       if (response.status !== 200 || response.redirected || !response.body
         || (task === "asr" ? mime !== "application/json" : !["audio/wav", "audio/x-wav"].includes(mime ?? ""))) {
@@ -90,14 +100,16 @@ export async function invokeSyntheticSpeech(raw: SpeechRequest, budget: Budget, 
       }
       const bytes = await readBounded(response, controller.signal, task === "asr" ? 65536 : 2_880_128, () => {
         firstResponseByteMs = Math.max(0, performance.now() - started);
-      });
+      }, stopped);
       try {
-        if (controller.signal.aborted) return fail("CANCELLED", receipt());
+        if (stopped()) return fail(stopCode(), receipt());
         if (task === "tts") {
           const wav = inspectWav(bytes);
           if (!wav || wav.silent) return fail("MODEL_OUTPUT_INVALID", receipt());
+          const output = Uint8Array.from(bytes);
+          if (stopped()) { output.fill(0); return fail(stopCode(), receipt()); }
           outputSeconds = wav.seconds;
-          return { kind: "candidate", task, wav: Uint8Array.from(bytes), receipt: receipt() };
+          return { kind: "candidate", task, wav: output, receipt: receipt() };
         }
         const value: unknown = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes));
         if (!record(value)) return fail("MODEL_OUTPUT_INVALID", receipt());
@@ -110,12 +122,13 @@ export async function invokeSyntheticSpeech(raw: SpeechRequest, budget: Budget, 
           || value.task !== "transcribe" || value.language !== (locale === "zh" ? "chinese" : "english")
           || !finiteSeconds(value.duration) || Math.abs(value.duration - audio!.seconds) > 0.1
           || !validText(value.text, 8000) || !validSegments(value)) return fail("MODEL_OUTPUT_INVALID", receipt());
+        if (stopped()) return fail(stopCode(), receipt());
         return { kind: "candidate", task, transcript: value.text, receipt: receipt() };
       } finally { bytes.fill(0); }
     };
     return await Promise.race([work(), stop]);
   } catch {
-    return fail(controller.signal.aborted ? timedOut ? "TIMEOUT_BEFORE_OUTPUT" : "CANCELLED" : "MODEL_OUTPUT_INVALID", receipt());
+    return fail(stopped() ? stopCode() : "MODEL_OUTPUT_INVALID", receipt());
   } finally {
     clearTimeout(timer); signal.removeEventListener("abort", abort);
     controller.signal.removeEventListener("abort", interrupt); controller.abort(); input.fill(0);
@@ -124,11 +137,26 @@ export async function invokeSyntheticSpeech(raw: SpeechRequest, budget: Budget, 
 
 function validRequest(raw: SpeechRequest): boolean {
   const keys = ["requestId", "dataClass", "locale", "timeoutMs", "task", raw.task === "asr" ? "wav" : "text"];
-  if (Object.keys(raw).length !== keys.length || !keys.every(key => Object.hasOwn(raw, key))
+  if (Reflect.ownKeys(raw).length !== keys.length || !keys.every(key => Object.hasOwn(raw, key))
     || typeof raw.requestId !== "string" || !/^[A-Za-z0-9_-]{1,64}$/.test(raw.requestId)
     || !["zh", "en"].includes(raw.locale) || !Number.isSafeInteger(raw.timeoutMs) || raw.timeoutMs < 1 || raw.timeoutMs > 60000) return false;
   return raw.task === "asr" ? raw.wav instanceof Uint8Array && raw.wav.length <= 2_880_128
     : raw.task === "tts" && validText(raw.text, 2000);
+}
+/** Inspect descriptors before reading fields: symbols, hidden extra keys, inherited
+ * fields and accessors cannot sneak authority/configuration into the closed request.
+ * Snapshot data fields once; a throwing proxy is invalid input, not an escape.
+ */
+function snapshotRequest(raw: unknown): SpeechRequest | null {
+  try {
+    if (!record(raw) || ![Object.prototype, null].includes(Object.getPrototypeOf(raw))) return null;
+    const keys = Reflect.ownKeys(raw), descriptors = Object.getOwnPropertyDescriptors(raw);
+    if (keys.some(key => typeof key !== "string" || !Object.hasOwn(descriptors[key], "value"))) return null;
+    const task = descriptors.task?.value;
+    const allowed = ["requestId", "dataClass", "locale", "timeoutMs", "task", task === "asr" ? "wav" : "text"];
+    if (keys.length !== allowed.length || keys.some(key => !allowed.includes(String(key)))) return null;
+    return Object.freeze(Object.fromEntries(allowed.map(key => [key, descriptors[key].value]))) as SpeechRequest;
+  } catch { return null; }
 }
 function validText(value: unknown, max: number): value is string {
   return typeof value === "string" && !!value.trim() && value.length <= max
@@ -152,20 +180,28 @@ function validSegments(value: Record<string, unknown>): boolean {
   return texts.join("").trim() === String(value.text).trim();
 }
 function record(value: unknown): value is Record<string, unknown> { return value !== null && typeof value === "object" && !Array.isArray(value); }
-async function readBounded(response: Response, signal: AbortSignal, limit: number, firstByte: () => void): Promise<Buffer> {
+async function readBounded(response: Response, signal: AbortSignal, limit: number, firstByte: () => void, stopped: () => boolean): Promise<Buffer> {
   const reader = response.body!.getReader(), chunks: Uint8Array[] = [];
   const cancel = () => { void reader.cancel().catch(() => {}); };
-  let size = 0;
+  let size = 0, reads = 0, emptyReads = 0;
   signal.addEventListener("abort", cancel, { once: true });
   try {
     for (;;) {
+      if (stopped()) throw new Error("Interrupted");
+      if (++reads > 4096) throw new Error("Read limit");
       const { done, value } = await reader.read();
-      if (signal.aborted) throw new Error("Interrupted");
+      if (stopped()) { value?.fill(0); throw new Error("Interrupted"); }
       if (done) break;
-      if (value.byteLength && size === 0) firstByte();
-      size += value.byteLength;
-      if (size > limit) { value.fill(0); throw new Error("Response limit"); }
-      chunks.push(value);
+      if (!value.byteLength) {
+        if (++emptyReads > 64) throw new Error("Empty read limit");
+      } else {
+        if (size === 0) firstByte();
+        size += value.byteLength;
+        if (size > limit) { value.fill(0); throw new Error("Response limit"); }
+        chunks.push(value);
+      }
+      // Bound microtask runs so external abort/timers can run even for queued reads.
+      if (reads % 64 === 0) await yieldToEventLoop();
     }
     return Buffer.concat(chunks);
   } finally {
