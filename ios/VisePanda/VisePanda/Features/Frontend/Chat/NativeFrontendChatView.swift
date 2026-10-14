@@ -116,7 +116,8 @@ import SwiftUI
     private func contextCard(_ text: String) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Label("本次带入的样例上下文", systemImage: "link").font(.caption).foregroundStyle(.secondary)
-            Text(text).font(.subheadline).textSelection(.enabled)
+            Text(state.journeys.first(where: { $0.id == text })?.title ?? text)
+                .font(.subheadline).textSelection(.enabled)
             Button("暂时不用这段上下文") { state.chatContext = nil }
                 .font(.caption).accessibilityIdentifier("frontend.chat.context.clear")
         }.cardSurface()
