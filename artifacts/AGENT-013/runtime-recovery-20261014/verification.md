@@ -3,8 +3,10 @@
 Base: `f702d71aa59c2d3ad79b31df50261f76a4cd3ce0`, clean at startup,
 same tree as QA `1b8f372eaac378fb91844f48dc0a4bcf7543907a`.
 Branch: `codex/agent013-runtime-recovery-20261014`.
-Final source/test head: `bd74dafee4a0349bea35ae44b9c46e379bf61f34`;
+Initial delivery source/test head: `bd74dafee4a0349bea35ae44b9c46e379bf61f34`;
 subsequent evidence-only commits do not change the tested module or tests.
+The 2026-10-15 Main review fix supersedes that source snapshot; see
+`review-fix.md` and `review-fix-checks.log.gz`. Earlier failures/logs remain intact.
 Official model request: Sol/medium; effective model/tier not exposed, unknown.
 
 Implemented callable driver, concrete authorized-fetch bridge, existing-port
