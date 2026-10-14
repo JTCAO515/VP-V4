@@ -3,7 +3,7 @@
   "interfaceCherryPick": "243aa53c1d32ee9238523745e25c337e5c35955a",
   "interfaceFileSHA256": "5991bd60bd96565d5a7cb28a18bdc6190fd9492d9bc2d0f2a211a434ab718b0c",
   "leaf": {
-    "ios/VisePanda/VisePanda/Features/Frontend/Chat/NativeFrontendChatView.swift": "f4bc48720dad1608ed2f084af14b1437ec0397565fd96b02c2513921139b52a4",
+    "ios/VisePanda/VisePanda/Features/Frontend/Chat/NativeFrontendChatView.swift": "4f4f5c086291a81cb10f0b244a89cfe7b1339ade2019cac08a5bbce58bfafef0",
     "ios/VisePanda/VisePanda/Features/Frontend/Chat/NativeFrontendChatSheet.swift": "e869d97e342773430fbc3688396b6acfe8f7bc8c6350e19626c16e2f6cf99862"
   },
   "entry": "@MainActor NativeFrontendChatView(state: NativeFrontendState, onOpenExpression: (() -> Void)? = nil, onOpenPlace: (() -> Void)? = nil)",
@@ -12,7 +12,8 @@
     "stateAssertions": 15,
     "SwiftParse": "PASS",
     "iOSSDKTypecheck": "PASS iOS17 minimum / Simulator27 SDK / Swift6",
-    "physicalUI": "UNRUN; Main coordinated"
+    "physicalUI": "UNRUN; Main coordinated",
+    "finaliOSSDKTypecheck": "PASS r3, final source, no diagnostics"
   },
   "retainedDirty": "original5 untracked and ignored candidates retained, unstaged",
   "businessBoundary": "same local state only, no service/model/actor/Trip/telemetry/storage calls"
