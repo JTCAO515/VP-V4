@@ -1,0 +1,161 @@
+[
+  {
+    "label": "repair-quiet",
+    "type": "runtime-snapshot",
+    "rs": "1",
+    "screenHash": "084vl0u",
+    "seq": 291,
+    "count": 72,
+    "targets": [
+      "e33|typeText|text-field|开始聊天|开始聊天|frontend.chat.composer",
+      "e30|tap|button|添加附件、表达或地点 · 本地样例||frontend.chat.composer.tools",
+      "e31|tap|button|||",
+      "e34|tap|button|语音 · 本地样例说明||frontend.chat.voice",
+      "e35|tap|button|打开本地对话侧栏||muse.chat.sidebar.open",
+      "e36|tap|button|VisePanda 助手详情||muse.chat.assistant",
+      "e39|tap|button|打开邀请页面||muse.chat.referral",
+      "e48|tap|tab|对话|1|",
+      "e50|tap|tab|旅程|0|",
+      "e52|tap|tab|资料库|0|",
+      "e54|tap|tab|记忆|0|"
+    ],
+    "scroll": [
+      "e18|swipe|scroll-view|||"
+    ],
+    "text": [
+      "e38|text|text|VisePanda||",
+      "e25|text|text|体验示例 · 未连接真实服务||frontend.sample.boundary"
+    ],
+    "udid": "8F6CA72C-73C0-45C0-8606-0543B1F725BD"
+  },
+  {
+    "label": "repair-sidebar",
+    "type": "runtime-snapshot",
+    "rs": "1",
+    "screenHash": "1twlpeo",
+    "seq": 294,
+    "count": 96,
+    "targets": [
+      "e33|typeText|text-field|开始聊天|开始聊天|frontend.chat.composer",
+      "e30|tap|button|添加附件、表达或地点 · 本地样例||frontend.chat.composer.tools",
+      "e31|tap|button|||",
+      "e34|tap|button|语音 · 本地样例说明||frontend.chat.voice",
+      "e35|tap|button|打开本地对话侧栏||muse.chat.sidebar.open",
+      "e36|tap|button|VisePanda 助手详情||muse.chat.assistant",
+      "e39|tap|button|打开邀请页面||muse.chat.referral",
+      "e40|tap|button|关闭侧栏||muse.chat.sidebar.scrim",
+      "e42|tap|button|关闭侧栏，返回对话||frontend.chat.sidebar.close",
+      "e43|tap|button|新对话||frontend.chat.sidebar.new",
+      "e51|tap|button|新对话、当前对话 · 本地样例||frontend.chat.sidebar.session.local-current",
+      "e56|tap|button|上海漫步 · 本地样例、本地样例||frontend.chat.sidebar.session.sample-history",
+      "e72|tap|tab|对话|1|",
+      "e74|tap|tab|旅程|0|",
+      "e76|tap|tab|资料库|0|",
+      "e78|tap|tab|记忆|0|"
+    ],
+    "scroll": [
+      "e18|swipe|scroll-view|||",
+      "e48|swipe|scroll-view|||frontend.chat.sidebar.history"
+    ],
+    "text": [
+      "e41|text|text|对话||",
+      "e38|text|text|VisePanda||",
+      "e45|text|text|新对话||",
+      "e25|text|text|体验示例 · 未连接真实服务||frontend.sample.boundary",
+      "e46|text|text|本地样例历史||frontend.chat.sidebar.boundary",
+      "e47|text|text|未接入真实历史服务；仅用于本次本地体验。||frontend.chat.sidebar.boundary",
+      "e53|text|text|新对话||",
+      "e54|text|text|当前对话 · 本地样例||",
+      "e58|text|text|上海漫步 · 本地样例||",
+      "e59|text|text|本地样例||"
+    ],
+    "udid": "8F6CA72C-73C0-45C0-8606-0543B1F725BD"
+  },
+  {
+    "label": "repair-history-link",
+    "type": "runtime-snapshot",
+    "rs": "1",
+    "screenHash": "0h3zkrp",
+    "seq": 297,
+    "count": 83,
+    "targets": [
+      "e44|typeText|text-field|开始聊天|开始聊天|frontend.chat.composer",
+      "e27|tap|button|查看关联旅程||frontend.chat.journey",
+      "e28|tap|button|暂时不用这段上下文||frontend.chat.context.clear",
+      "e41|tap|button|添加附件、表达或地点 · 本地样例||frontend.chat.composer.tools",
+      "e42|tap|button|||",
+      "e45|tap|button|语音 · 本地样例说明||frontend.chat.voice",
+      "e46|tap|button|打开本地对话侧栏||muse.chat.sidebar.open",
+      "e47|tap|button|VisePanda 助手详情||muse.chat.assistant",
+      "e50|tap|button|打开邀请页面||muse.chat.referral",
+      "e59|tap|tab|对话|1|",
+      "e61|tap|tab|旅程|0|",
+      "e63|tap|tab|资料库|0|",
+      "e65|tap|tab|记忆|0|"
+    ],
+    "scroll": [
+      "e18|swipe|scroll-view|||"
+    ],
+    "text": [
+      "e49|text|text|VisePanda||",
+      "e25|text|text|本次带入的样例上下文||",
+      "e26|text|text|上海漫步 · 体验示例||",
+      "e29|text|text|你、想让上海的两日安排宽松一些。||",
+      "e30|text|text|你||",
+      "e31|text|text|想让上海的两日安排宽松一些。||",
+      "e32|text|text|VP、本地历史样例：可以查看两日安排并继续调整。真实历史会话服务尚未连接。||",
+      "e33|text|text|VP||",
+      "e34|text|text|本地历史样例：可以查看两日安排并继续调整。真实历史会话服务尚未连接。||",
+      "e36|text|text|体验示例 · 未连接真实服务||frontend.sample.boundary"
+    ],
+    "udid": "8F6CA72C-73C0-45C0-8606-0543B1F725BD"
+  },
+  {
+    "label": "repair-journey-open",
+    "type": "runtime-snapshot",
+    "rs": "1",
+    "screenHash": "1lliuz3",
+    "seq": 300,
+    "count": 106,
+    "targets": [
+      "e54|tap|button|1、第一天 · 城市与江景、先看当天重点，再核对地点与衔接。||frontend.journey.day.0",
+      "e59|tap|button|2、第二天 · 街区与休息、留出休息，再决定下一步。||frontend.journey.day.1",
+      "e15|tap|button|旅程||BackButton",
+      "e39|tap|button|查看本地地图示意说明||",
+      "e64|tap|button|和 VP 讨论这段旅程||frontend.journey.chat",
+      "e67|tap|button|查看安排资料||frontend.journey.material",
+      "e82|tap|tab|对话|0|",
+      "e84|tap|tab|旅程|1|",
+      "e86|tap|tab|资料库|0|",
+      "e88|tap|tab|记忆|0|"
+    ],
+    "scroll": [
+      "e7|swipe|other|||main-tab-view",
+      "e21|swipe|scroll-view|||"
+    ],
+    "text": [
+      "e34|text|text|体验示例 · 未连接真实服务||frontend.sample.boundary",
+      "e35|text|text|上海漫步 · 体验示例||",
+      "e36|text|text|两天的城市探索||",
+      "e37|text|text|安排待确认 · 本地样例||",
+      "e38|text|text|确认的是样例安排，不代表路线已核实或服务已预订。||",
+      "e41|text|text|地点分布||",
+      "e42|text|text|本地示意||",
+      "e47|text|text|江景||",
+      "e50|text|text|休息||",
+      "e44|text|text|城市漫步||",
+      "e51|text|text|不是实际地图 · 无真实坐标、距离或导航||",
+      "e52|text|text|每天的安排||",
+      "e53|text|text|相对日序||",
+      "e56|text|text|第一天 · 城市与江景||",
+      "e55|text|text|1||",
+      "e57|text|text|先看当天重点，再核对地点与衔接。||",
+      "e61|text|text|第二天 · 街区与休息||",
+      "e60|text|text|2||",
+      "e62|text|text|留出休息，再决定下一步。||",
+      "e66|text|text|和 VP 讨论这段旅程||",
+      "e69|text|text|查看安排资料||"
+    ],
+    "udid": "8F6CA72C-73C0-45C0-8606-0543B1F725BD"
+  }
+]
