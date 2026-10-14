@@ -311,6 +311,47 @@ test("closed invocation rejects Symbol, nonenumerable and accessor fields at eve
   }
 });
 
+test("enum fields reject arrays, boxed strings and coercion objects without executing user code", async () => {
+  for (const field of ["scenario", "mode", "action"] as const) {
+    for (const kind of ["array", "boxed", "object", "customArray", "primitiveGetter", "fieldGetter"]) {
+      let coercions = 0, getters = 0;
+      const expected = input[field], value = structuredClone(input);
+      const replacement = kind === "array" || kind === "customArray" ? [expected]
+        : kind === "boxed" ? new String(expected) : {};
+      if (kind === "object" || kind === "customArray") Object.defineProperty(replacement, "toString", {
+        value() { coercions++; return expected; }, enumerable: false,
+      });
+      if (kind === "primitiveGetter") Object.defineProperty(replacement, Symbol.toPrimitive, {
+        get() { getters++; return () => { coercions++; return expected; }; },
+      });
+      if (kind === "fieldGetter") Object.defineProperty(value, field, { get() { getters++; return expected; }, enumerable: true });
+      else Object.defineProperty(value, field, { value: replacement, enumerable: true });
+      const f = boundary(), report = await runRuntimeRecovery(value, f.transport);
+      assert.equal(report.code, "INVALID_INPUT", `${field}/${kind}`);
+      assert.equal(report.mode, "NOT_RUN"); assert.equal(report.outcome, "NOT_RUN");
+      assert.equal(f.requests.length, 0); assert.equal(coercions, 0); assert.equal(getters, 0);
+    }
+  }
+});
+
+test("nonenumerable required fields cannot disappear in the detached DTO or disable bounds", async () => {
+  for (const target of ["root", "context", "source", "operation"]) {
+    const template = target === "root" ? input : target === "context" ? input.context : target === "source" ? input.context.source : input.operation!;
+    for (const field of Object.keys(template)) {
+      const value = structuredClone(input);
+      const object = target === "root" ? value : target === "context" ? value.context : target === "source" ? value.context.source : value.operation!;
+      Object.defineProperty(object, field, { enumerable: false });
+      const f = boundary(), report = await runRuntimeRecovery(value, f.transport);
+      assert.equal(report.code, "INVALID_INPUT", `${target}/${field}`);
+      assert.equal(report.mode, "NOT_RUN"); assert.equal(report.outcome, "NOT_RUN"); assert.equal(f.requests.length, 0);
+    }
+  }
+  const oneRequest = structuredClone(input);
+  Object.defineProperty(oneRequest, "maxRequests", { value: 1, enumerable: false });
+  const f = boundary(), report = await runRuntimeRecovery(oneRequest, f.transport);
+  assert.equal(report.code, "INVALID_INPUT"); assert.equal(report.outcome, "NOT_RUN"); assert.equal(f.requests.length, 0);
+});
+
 test("monotonic deadline rejects synchronous late transport despite unscheduled timer", async () => {
   const f = boundary();
   const report = await runRuntimeRecovery({ ...input, timeoutMs: 10 }, async (req, signal) => {

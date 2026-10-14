@@ -15,8 +15,11 @@ export type RecoveryRun = Readonly<{
 export const record = (v: unknown): v is Record<string, unknown> => !!v && typeof v === "object" && !Array.isArray(v);
 export const ownExact = (v: Record<string, unknown>, keys: readonly string[]) => {
   const own = Reflect.ownKeys(v);
-  return own.length === keys.length && own.every(k => typeof k === "string" && keys.includes(k)
-    && Object.hasOwn(Object.getOwnPropertyDescriptor(v, k) ?? {}, "value"));
+  return own.length === keys.length && own.every(k => {
+    if (typeof k !== "string" || !keys.includes(k)) return false;
+    const descriptor = Object.getOwnPropertyDescriptor(v, k);
+    return descriptor?.enumerable === true && Object.hasOwn(descriptor, "value");
+  });
 };
 const exact = ownExact;
 
@@ -26,8 +29,9 @@ export function parseRun(v: unknown): RecoveryRun | null {
 }
 function parseExactRun(v: unknown): RecoveryRun | null {
   if (!record(v) || !exact(v, ["scenario", "mode", "action", "context", "baseVersion", "operation", "proposalId", "proposalRevision", "digest", "idempotencyKey", "maxRequests", "timeoutMs", "replayPages"])
-    || !["H09", "H10"].includes(String(v.scenario)) || !["controlled", "staging"].includes(String(v.mode))
-    || (v.scenario === "H09" ? !["reconcile", "confirm_once"].includes(String(v.action)) : !["reconcile", "cancel"].includes(String(v.action)))
+    || typeof v.scenario !== "string" || !["H09", "H10"].includes(v.scenario)
+    || typeof v.mode !== "string" || !["controlled", "staging"].includes(v.mode) || typeof v.action !== "string"
+    || (v.scenario === "H09" ? !["reconcile", "confirm_once"].includes(v.action) : !["reconcile", "cancel"].includes(v.action))
     || !record(v.context) || !exact(v.context, ["ownerId", "sessionId", "mobileEpoch", "taskId", "turnId", "conversationId", "policyId", "tripId", "source"])
     || ![v.context.ownerId, v.context.sessionId, v.context.taskId, v.context.turnId, v.context.conversationId, v.context.policyId, v.context.tripId].every(uuid)
     || v.context.taskId === v.context.turnId || !integer(v.context.mobileEpoch, 1)
