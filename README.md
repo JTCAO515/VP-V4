@@ -24,7 +24,7 @@ VisePanda 面向国际来华自由行旅客，围绕同一个 Trip 连接规划�
 | 数据库 | [supabase/migrations](supabase/migrations)：只追加迁移；文件存在不表示已应用到目标环境 |
 | Harness | [docs/harness](docs/harness/README.md)、[evals/harness](evals/harness)：复用现有领域链路的评测、配对与恢复验收 |
 
-仓库同时包含实际实现、离线准备和 fixture，验收要绑定具体版本、环境与行为。已有 [Staging 迁移和 JWT 隔离记录](artifacts/VPJ-02/staging-apply-20260910.md)、[持久预算本地验证](artifacts/VPJ-59/verification.md)、[Staging 预算迁移与 40 项 HTTP 检查](artifacts/VPJ-59/staging-20260910.md)及[原生验收记录](artifacts/VPJ-01/native-acceptance/verification.md)。Staging 预算使用合成数据，未调用真实付费 provider；这些是当日范围；后续已记录原生会话和有界 worker/Ask 运行证据，见[当前开发状态](docs/program/2026-09-05/CURRENT-STATUS-2026-09-22.md)。各父票完整验收仍需各自证据。任务进度以当前 GitHub Issue/PR 和对应运行证据核实。
+仓库同时包含实际实现、离线准备和 fixture，验收要绑定具体版本、环境与行为。已有 [Staging 迁移和 JWT 隔离记录](artifacts/VPJ-02/staging-apply-20260910.md)、[持久预算本地验证](artifacts/VPJ-59/verification.md)、[Staging 预算迁移与 40 项 HTTP 检查](artifacts/VPJ-59/staging-20260910.md)及[原生验收记录](artifacts/VPJ-01/native-acceptance/verification.md)。Staging 预算使用合成数据，未调用真实付费 provider；这些是当日范围；后续已记录原生会话和有界 worker/Ask 运行证据，见[2026-09-22 历史开发记录](docs/program/2026-09-05/CURRENT-STATUS-2026-09-22.md)。各父票完整验收仍需各自证据。任务进度以当前 GitHub Issue/PR 和对应运行证据核实。
 
 ## 本地开发
 
