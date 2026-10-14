@@ -1,6 +1,6 @@
 # 当前开放 Issue 旧新映射
 
-执行时读取 52 张开放票。每票保留 ID、原文全部字节和验收勾选；未修改 closed 票、评论、labels、assignees 或原生依赖。下面是正文规划映射，实际写入结果见 readback.json（存在后才构成写入证据）。
+执行时读取 52 张开放票。每票保留 ID、原文全部字节和验收勾选；未修改 closed 票、评论、assignees 或原生依赖。已有 priority 标签的必要差异按 priority-readback.json 同步，其它标签保持。下面是正文规划映射，实际写入结果见 readback.json（存在后才构成写入证据）。
 
 | Issue | 工程 | 优先 | 用户结果 | 复用与差距 |
 | --- | --- | --- | --- | --- |

@@ -10195,6 +10195,6 @@
     "contract": "docs/contracts/vpv4-project-boundaries.md",
     "openIssueMapping": "docs/product/VPV10-MODULAR-001/mapping.json",
     "scope": "direction-and-documents-first",
-    "note": "Existing task identities, acceptance, blockedBy and acceptanceDependencies remain authoritative; modularDirection adds current engineering attribution. Legacy renderer does not emit this overlay; preserve it during scoped body sync."
+    "note": "Existing task identities, acceptance, blockedBy and acceptanceDependencies remain authoritative. Renderer preserves reviewed modular body snapshots and current navigation; task-definition or attribution changes require an explicit reviewed snapshot refresh."
   }
 }

@@ -1,6 +1,6 @@
 # VPJ 分阶段交付与验收
 
-> 当前三工程方向见 [VPV10-MODULAR-001](../../contracts/vpv4-project-boundaries.md)，逐票当前归属见 [开放票映射](../../product/VPV10-MODULAR-001/issue-map.md)。以下保留原执行/验收定义；旧固定顺序不自动启动。生成器适配由 Main 精确整合后再 render，避免覆盖当前指针。
+> 当前三工程方向见 [VPV10-MODULAR-001](../../contracts/vpv4-project-boundaries.md)，逐票当前归属见 [开放票映射](../../product/VPV10-MODULAR-001/issue-map.md)。以下保留原执行/验收定义；旧固定顺序不自动启动。
 
 生成自 `issue-plan.json`；复用既有 Issue，不建立第二套队列。阶段是用户可观察成果的归属，不是实时完成状态。
 

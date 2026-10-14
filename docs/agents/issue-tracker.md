@@ -23,7 +23,7 @@ to use a guest actor, a service credential or a bypass.
 
 ## 生成正文与同步
 
-Full VPJ bodies are generated from `issue-plan.json`. The compact body keeps the user result,
+Full VPJ bodies are generated from `issue-plan.json`. For VPV10-MODULAR-001 migrated open Issues, `modularDirection` binds the reviewed mapping and full retained body snapshot; definition changes require an explicit snapshot refresh. Existing preflight still preserves checked progress and append-only evidence, and rejects unknown drift. The compact body keeps the user result,
 complete acceptance, blockers and task-specific red lines; the linked execution row owns scope,
 commands, evidence, external prerequisites and rollback. GitHub delivery milestones mirror
 `deliveryStage` in the same manifest.

@@ -20,21 +20,16 @@
 | agents/development-workflow、issue-tracker、domain | 明确当前方向优先；原权限/验收/原生依赖语义保留 |
 | program README、INTERFACES | 加入当前入口和定向替代说明，历史段落保留 |
 | issue-plan.json | 现有开放 task 增加 modularDirection；不改已关闭 task、原验收或依赖 |
-| EXECUTION-CONTRACT、DELIVERY-STAGES | 最小加入当前方向指针；现有生成器仍产生历史基线，下一次 render 须由 Main 同步适配 |
+| EXECUTION-CONTRACT、DELIVERY-STAGES | 最小加入当前方向指针；现有生成器保留当前方向指针和原执行行 |
 | assistant-upgrade README | 指向新的方向，四 Tab/Conversation/Memory 成果保留 |
 
-## Main 的精确整合缺口
+## 当前源与生成约定
 
-以下未获本专项写 lease，保持只读；不能宣称仓库所有入口已无矛盾：
+根 AGENTS、README 与总索引已更新当前方向；CONTEXT/HANDOFF 保留 2026-10-02 生成历史。外部唯一 Main 的 HANDOFF 继续拥有当前执行状态。本目录的 `handoff-source-candidate.json` 只是可选导航补丁，不重写状态，也不是第二套 HANDOFF。
 
-1. 根 `AGENTS.md` 和 `docs/INDEX.md` 已取得追加 lease 并更新方向入口。`docs/handoff.json` 及其 `CONTEXT.md`/`HANDOFF.md` 投影保持 2026-10-02 历史，根入口已指明当前方向与外部唯一 Main；可选仅导航补丁见 handoff-source-candidate.json，不要求重写当前状态。
-2. `docs/manifest.json` 与 `scripts/vpj-program.mjs`：manifest 登记新合同；生成器须保留 modularDirection/current 指针，避免下次 render/sync 抹掉此次重排。
-3. 候选新增 `docs/adr/ADR-0028-independent-ios-web-agent-projects.md`（编号须 Main 查占用）：将本轮接受决定定向 supersede ADR-0023/0027 的工程定位，不修改历史 ADR。
-4. `docs/contracts/qa-target.md`（如存在）、`qa-independent-target.md`、hosted-worker-staging 及原部署 owner 说明：只补工程归属指针，原实际共享目标、runtime/权限合同保持。
+Main 已追加 `scripts/vpj-program.mjs`、`docs/manifest.json` 与必要治理回归的精确 lease。生成器对本次已审核正文采用有 hash 的保留快照；同票未来任务定义或工程归属变化必须显式更新 mapping 与正文快照，不能静默输出旧合同。远端新勾选和追加证据由原 preflight 保留；未知正文漂移仍拒绝写入。非本次迁移任务保留原生成方式。
 
-`docs/handoff.json` 不需要重写状态；根入口已将旧投影标作历史，导航候选为可选。生成器/manifest 和正式 ADR 仍由 Main 精确整合。
-
-这些是同一交付的整合动作，不建立新 ticket 队列、不复制 HANDOFF。本专项可以在已给范围继续正文同步与检查；共享路径由 Main 精确批准或亲自整合后才能宣称全入口完成。
+本轮边界规范已明确接受方向和定向 supersede，足以作为单一决策补充，不自动新建 ADR。未来出现真正独立的新决策时再由 Main 判断。其它 owner 的 QA/worker 文档仍保持原合同；本轮只通过新规范明确工程归属，不抢写其运行或权限说明。
 
 ## 复用资产与证据等级
 

@@ -49,4 +49,4 @@ VisePanda 继续帮助来华旅客规划、准备与完成旅程。iOS、Web、A
 
 原 Main A–D 与条件式 E 授权和维护确认保留；本专项不操作 backup/key/Docker/target。没有 START/window/actual capture 证据时不能填已执行。本轮不新增生产发布、provider 费用或真实数据权限。
 
-唯一 Main 与唯一 HANDOFF 保持原处。本文件只拥有工程方向与端口责任；当前 writer/ready 前沿依唯一 HANDOFF 和 Main 的精确 lease。历史 ADR-0023/0027 的“iOS 完整产品、Web 轻量附属”及旧固定实施顺序被本次接受方向定向替代；未冲突的产品、安全和发布约束保留。正式新增 ADR、根 AGENTS/CONTEXT、总索引与其它 owner 文档需 Main 精确整合，见[当前文档映射](../product/VPV10-MODULAR-001/README.md)。
+唯一 Main 与唯一 HANDOFF 保持原处。本文件只拥有工程方向与端口责任；当前 writer/ready 前沿依唯一 HANDOFF 和 Main 的精确 lease。历史 ADR-0023/0027 的“iOS 完整产品、Web 轻量附属”及旧固定实施顺序被本次接受方向定向替代；未冲突的产品、安全和发布约束保留。本规范就是已接受方向的单一补充；根导航已同步，CONTEXT 保留生成历史，其它 owner 运行文档保持原权限与合同，见[当前文档映射](../product/VPV10-MODULAR-001/README.md)。

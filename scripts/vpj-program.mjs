@@ -105,6 +105,7 @@ function validate() {
     assert.ok(existsSync(task.contract));
     assert.ok(task.track !== 'expand' || task.activationEvidence);
     validateExecutionBrief(task);
+    if (task.modularDirection) modularBody(task.number, task);
   }
   if (existsSync(`${dir}/archive-manifest.json`)) {
     for (const item of json(`${dir}/archive-manifest.json`).files) {
@@ -146,7 +147,38 @@ function executionBriefBlock(t) {
     '- 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。\n\n';
 }
 
+// Approved direction snapshots preserve the complete pre-migration body and evidence.
+// Any later task-definition change requires a reviewed snapshot refresh, not silent stale output.
+export function modularBody(number, task, value = plan) {
+  if (!value.modularDirection) return null;
+  const mapping = json(value.modularDirection.openIssueMapping);
+  const entry = mapping.find(item => item.number === number);
+  if (!entry) {
+    assert.ok(!task?.modularDirection, `missing modular mapping for #${number}`);
+    return null;
+  }
+  if (task) {
+    assert.deepEqual(task.modularDirection, Object.fromEntries(
+      ['engineeringOwner', 'priority', 'userOutcome', 'deltaAndReuse'].map(key => [key, entry[key]])),
+    `modular attribution drift for #${number}; refresh the reviewed mapping`);
+    assert.equal(createHash('sha256').update(JSON.stringify(task)).digest('hex'), entry.taskDefinitionSha256,
+      `task definition changed for #${number}; refresh the reviewed modular snapshot`);
+  }
+  const snapshot = read(`${path.dirname(value.modularDirection.openIssueMapping)}/after/${number}.md`);
+  assert.equal(createHash('sha256').update(snapshot).digest('hex'), entry.afterSha256,
+    `modular body hash drift for #${number}`);
+  if (task) validateRemoteTaskBody(task, snapshot);
+  return snapshot;
+}
+
+export function modularNavigation(value = plan, prefix = '../../') {
+  if (!value.modularDirection) return '';
+  return `> 当前三工程方向见 [VPV10-MODULAR-001](${prefix}contracts/vpv4-project-boundaries.md)，逐票当前归属见 [开放票映射](${prefix}product/VPV10-MODULAR-001/issue-map.md)。以下保留原执行/验收定义；旧固定顺序不自动启动。\n\n`;
+}
+
 export function body(t) {
+  const reviewed = modularBody(t.number, t);
+  if (reviewed !== null) return reviewed;
   const source = `https://github.com/${plan.repo}/blob/${t.sourceRef ?? 'main'}`;
   const baselineNote = t.baselineNote ?? `历史规划基线：${plan.baselinePr ? '#' + plan.baselinePr : '尚未登记'}。当前执行读取 main 的合同，并核对实时依赖、可用接口和获准环境；本计划定义不代表任务已就绪或已验收。`;
   const entry = t.executionBrief
@@ -170,7 +202,7 @@ export function renderDeliveryStages(value) {
   validateDeliveryStages(value);
   const tasks = orderedTasks(value.tasks);
   const issueLink = number => `[#${number}](https://github.com/${value.repo}/issues/${number})`;
-  return '# VPJ 分阶段交付与验收\n\n生成自 `issue-plan.json`；复用既有 Issue，不建立第二套队列。阶段是用户可观察成果的归属，不是实时完成状态。\n\n' +
+  return '# VPJ 分阶段交付与验收\n\n' + modularNavigation(value) + '生成自 `issue-plan.json`；复用既有 Issue，不建立第二套队列。阶段是用户可观察成果的归属，不是实时完成状态。\n\n' +
     '阶段演示不等于整票验收或关闭；父 Issue 只有完整验收通过才关闭。独立准备可以跨阶段推进，仍保留实际依赖、运行条件和未验项；前一阶段的全部票不是后一阶段准备工作的额外阻塞。\n\n' +
     '按 [开发流程](../../agents/development-workflow.md) 执行；每次验收记录版本、环境、实际用户结果及 PASS / FAIL / UNRUN，fixture 不替代运行或发布证据。\n\n' +
     value.deliveryStages.map(stage => `## ${stage.id}\n\n**${stage.title}**\n\n` +
@@ -187,6 +219,7 @@ const defaulted = (value, fallback) => (value === fallback ? '默认（见文件
 
 export function executionContractRow(t) {
   return `## ${t.id}\n\n${link(t.id)} — ${t.title}\n\n` +
+    (t.modularDirection ? `当前工程：${t.modularDirection.engineeringOwner}；优先级：${t.modularDirection.priority}。${t.modularDirection.userOutcome}。${t.modularDirection.deltaAndReuse}。\n\n` : '') +
     executionBriefBlock(t).replace('## 执行边界与首个切片', '### 执行边界与首个切片') +
     `- Owner: ${t.owner}; ${t.kind}; ${t.effortDays}专注日，${t.observationWindow}\n` +
     `- 验收阶段: ${t.deliveryStage}\n` +
@@ -207,12 +240,12 @@ export function executionContractRow(t) {
 
 function render() {
   validate();
-  const header = '# VPJ 任务定义与依赖\n\n生成自 `issue-plan.json`；不要手工改此表。这是计划定义，不是实时进度；执行状态以 GitHub、已合并接口和获准环境的当前证据为准。\n\n';
+  const header = '# VPJ 任务定义与依赖\n\n' + modularNavigation() + '生成自 `issue-plan.json`；不要手工改此表。这是计划定义，不是实时进度；执行状态以 GitHub、已合并接口和获准环境的当前证据为准。\n\n';
   const table = '| 任务 | 交付 | 原生开工依赖 | 集成/验收关联 | Owner | 专注日/观察 | 验收阶段 | 范围 |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n' +
     orderedTasks(plan.tasks).map(t=>`| ${link(t.id)} | ${t.title} | ${t.blockedBy.map(link).join(', ') || '无'} | ${(t.acceptanceDependencies ?? []).map(link).join(', ') || '无'} | ${t.owner} | ${t.effortDays}日；${t.observationWindow} | [${t.deliveryStage}](DELIVERY-STAGES.md#${t.deliveryStage.toLowerCase()}) | ${t.track} |`).join('\n');
   save(`${dir}/ISSUES.md`, header + table + '\n\n后续expand必须另有activationEvidence，依赖完成不会自动开放。\n');
   save(`${dir}/DELIVERY-STAGES.md`, renderDeliveryStages(plan));
-  let contracts = executionContractHeader;
+  let contracts = executionContractHeader.replace('\n\n', '\n\n' + modularNavigation());
   for (const t of plan.tasks) {
     save(`${dir}/issue-bodies/${t.id}.md`, body(t));
     contracts += executionContractRow(t);
@@ -222,8 +255,8 @@ function render() {
   save(`${dir}/ISSUE-MIGRATION.md`, '# 2026-09-05 迁移快照：旧开放 Issue → 新责任映射\n\n当日全部旧项按用户授权superseded/not planned关闭，不代表已验收；原body/comments及关系快照保留。PR #185/#186在该迁移快照中为open；当前状态须查询GitHub，不由本历史记录推断。\n\n| 旧Issue | 标题 | 新责任 |\n| --- | --- | --- |\n' + snap.map(t=>`| [#${t.number}](${t.url}) | ${t.title} | ${plan.oldIssueSuccessors[String(t.number)].map(link).join(', ')} |`).join('\n')+'\n');
   renderHandoff();
   const files = walk('docs').filter(p=>p.endsWith('.md') && p !== 'docs/INDEX.md');
-  saveJson('docs/manifest.json',{schemaVersion:'vpj-docs/1',date:plan.date,authority:'docs/VISEPANDA-MASTER-PLAN-2026-09-05.md',files:files.map(p=>({path:p,status:p.startsWith('docs/archive/')?'archived':p.startsWith('docs/research/')?'evidence':'document'}))});
-  save('docs/INDEX.md','# Documentation index\n\nGenerated by `node scripts/vpj-program.mjs render`; active entry: [VPJ Program](program/2026-09-05/README.md). Archives and old plans are historical, not execution authority.\n\n'+files.map(p=>`- [${p.slice(5)}](${p.slice(5)})${p.startsWith('docs/archive/')?' — archived':''}`).join('\n')+'\n');
+  saveJson('docs/manifest.json',{schemaVersion:'vpj-docs/1',date:plan.date,authority:plan.modularDirection?.contract ?? 'docs/VISEPANDA-MASTER-PLAN-2026-09-05.md',files:files.map(p=>({path:p,status:p.startsWith('docs/archive/')?'archived':p.startsWith('docs/research/')?'evidence':'document'}))});
+  save('docs/INDEX.md','# Documentation index\n\n' + modularNavigation(plan, '') + 'Generated by `node scripts/vpj-program.mjs render`; active entry: [VPJ Program](program/2026-09-05/README.md). Archives and old plans are historical, not execution authority.\n\n'+files.map(p=>`- [${p.slice(5)}](${p.slice(5)})${p.startsWith('docs/archive/')?' — archived':''}`).join('\n')+'\n');
   console.log('Generated delivery stages, task bodies, execution contract, migration table and documentation index.');
 }
 
@@ -510,6 +543,8 @@ function applyBodyUpdate(update) {
 }
 
 export function programBody() {
+  const reviewed = modularBody(plan.parentNumber);
+  if (reviewed !== null) return reviewed;
   return read(`${dir}/program-body.md`) + '\n\n## 当前六阶段与后续扩展\n\n' +
     '阶段演示不是整票完成；完整验收、原生依赖及后续激活条件保留。当前调度以[Program入口](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/README.md)和当前用户授权为准；阶段是验收分类，不自动启动旧并发计划，既有活跃任务保留实际归属。\n\n' +
     '| 阶段 | 验收成果 | 现有任务数 |\n| --- | --- | --- |\n' +
@@ -536,7 +571,7 @@ function publish(){
       if(t.databaseId)assert.equal(match.id,t.databaseId,`database ID mismatch ${t.id}`);
       if(t.number)assert.equal(match.number,t.number,`number mismatch ${t.id}`);
     }
-    const labels=['enhancement',`phase:${t.phase}`,`priority:${t.track==='expand'?'P2':t.phase==='R0'||t.phase==='R1'?'P0':'P1'}`,'status:planned',t.owner==='operator'?'ready-for-human':'needs-triage'];
+    const labels=['enhancement',`phase:${t.phase}`,`priority:${t.modularDirection?.priority ?? (t.track==='expand'?'P2':t.phase==='R0'||t.phase==='R1'?'P0':'P1')}`,'status:planned',t.owner==='operator'?'ready-for-human':'needs-triage'];
     if(!match)match=api(`repos/${plan.repo}/issues`,'POST',{title:`[${t.id}] ${t.title}`,body:body(t),labels});
     t.number=match.number;t.databaseId=match.id;t.url=match.html_url;
     saveJson(planPath,plan);
