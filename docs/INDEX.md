@@ -396,6 +396,8 @@ Current execution: [Agent / iOS / Web tasks and batches](product/VPV10-MODULAR-0
 - [product/VPV10-MODULAR-001/current-bodies/681.md](product/VPV10-MODULAR-001/current-bodies/681.md)
 - [product/VPV10-MODULAR-001/current-bodies/682.md](product/VPV10-MODULAR-001/current-bodies/682.md)
 - [product/VPV10-MODULAR-001/current-bodies/683.md](product/VPV10-MODULAR-001/current-bodies/683.md)
+- [product/VPV10-MODULAR-001/current-bodies/692.md](product/VPV10-MODULAR-001/current-bodies/692.md)
+- [product/VPV10-MODULAR-001/current-bodies/693.md](product/VPV10-MODULAR-001/current-bodies/693.md)
 - [product/VPV10-MODULAR-001/current-overview.md](product/VPV10-MODULAR-001/current-overview.md)
 - [product/VPV10-MODULAR-001/issue-map.md](product/VPV10-MODULAR-001/issue-map.md)
 - [product/VPV10-MODULAR-001/verification.md](product/VPV10-MODULAR-001/verification.md)

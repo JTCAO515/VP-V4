@@ -1,0 +1,20 @@
+[
+  {
+    "id": "IOS-011",
+    "number": 692,
+    "title": "[IOS-011] 资料库与记忆前端共享对象、来源和偏好反馈",
+    "body": "# IOS-011 · 资料库与记忆前端共享对象、来源和偏好反馈\n\n## 已批准用户结果\n\n在完整四 Tab 前端中查看资料来源和记忆，同一对象跨页一致，清楚区分保存/导出/分享与偏好修改/忘记反馈。\n\nPrimary：ios；priority:P0；lead：Main 指定的独立 LibraryMemory 前端 owner；chat/WT 以唯一 HANDOFF 为准。本轮 Muse 完整前端切片，由 Main 另行分配实际 writer，本规划 owner 不派工。\n\n## 精确范围与协作\n\n独占候选范围：`ios/VisePanda/VisePanda/Frontend/LibraryMemory/**` 与对应独立 tests/artifacts。共享 AppShell/route/PBX/Conversation、统一前端内存状态和跨页对象 ID 由 Main 独占整合，不能直接改共享壳。\n\n## 完成标准\n\n- [ ] 资料库列表/详情/来源归属、空态与不可用态可操作；同一资料跨对话、旅程、资料库使用 Main 给定的同一对象 ID。\n- [ ] 保存、导出、分享分别显示真实前端动作与结果；本地样例不得声称已导出文件、已分享给他人或已写入真实 Library。\n- [ ] 记忆查看、修改、忘记都有明确反馈与取消路径，跨页展示随 Main 内存样例状态同步；不创建第二 Profile/Memory 权威或调用真实删除。\n- [ ] 统一标明本地体验样例/未连接真实服务；缺后端、DB/provider 不阻塞前端实现，真实功能验收仍归 AGENT-003 等原合同。\n- [ ] 复用既有 Library/Knowledge/Memory 消费者与组件；与 Main 的导航/对象接口整合后完成必要编译、模拟器交互和适用 CI，不以模型/fixture 单测冒完整 App 体验。\n\n## 边界\n\n本轮批准来源 Sentinel_8dcca8e4fe6881918c0053857e13cc9a / 04c7226a28988191a1f94586de5b2b40 / cf6853297ab4819193ce2c0bb09af443。批准 HTML 原件路径尚未定位，仅影响额外视觉细节复核；不编造设计内容，不另做研究。原35工程任务/52迁移映射和完整真实功能 AC 保留；该前端切片不授权 DB/keys/provider费用/生产/旧 E2 恢复，不把样例当真实服务完成。\n",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/692",
+    "updatedAt": "2026-10-14T08:01:01Z",
+    "verified": true
+  },
+  {
+    "id": "IOS-012",
+    "number": 693,
+    "title": "[IOS-012] 助手头像详情展示状态活动权限待办与可跳过定制",
+    "body": "# IOS-012 · 助手头像详情展示状态活动权限待办与可跳过定制\n\n## 已批准用户结果\n\n用户从助手头像进入详情，理解状态、活动、权限、待办与人格，并可跳过首次定制后继续主体验。\n\nPrimary：ios；priority:P0；lead：Main 指定的独立 Assistant 前端 owner；chat/WT 以唯一 HANDOFF 为准。本轮 Muse 完整前端切片，由 Main 另行分配实际 writer，本规划 owner 不派工。\n\n## 精确范围与协作\n\n独占候选范围：`ios/VisePanda/VisePanda/Frontend/Assistant/**` 与对应独立 tests/artifacts。共享 AppShell/route/PBX/Conversation、统一前端内存状态和跨页对象 ID 由 Main 独占整合，不能直接改共享壳。\n\n## 完成标准\n\n- [ ] 头像入口、详情及相关弹窗/关键状态与四 Tab 主体验连通；状态、活动、权限、待办、人格均在已批准范围内可查看。\n- [ ] 首次定制可跳过、取消和返回，不强制填完才可继续主体验；前端状态与 Main 统一对象/内存接口一致。\n- [ ] 权限呈现区分已知、未连接、未知与请求动作；样例开关不扩大真实账户/资料/模型/设备权限，也不伪称授权成功。\n- [ ] 复用现有头像/助手呈现和 accepted UI 范围；不重建四 Tab 壳，不新增后端人格服务或真实任务权威。\n- [ ] 统一标明本地体验样例及真实服务未连接；整合后完成必要编译、模拟器交互和适用 CI，真人/真实Auth/provider仍分开记录。\n\n## 边界\n\n本轮批准来源 Sentinel_8dcca8e4fe6881918c0053857e13cc9a / 04c7226a28988191a1f94586de5b2b40 / cf6853297ab4819193ce2c0bb09af443。批准 HTML 原件路径尚未定位，仅影响额外视觉细节复核；不编造设计内容，不另做研究。原35工程任务/52迁移映射和完整真实功能 AC 保留；该前端切片不授权 DB/keys/provider费用/生产/旧 E2 恢复，不把样例当真实服务完成。\n",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/693",
+    "updatedAt": "2026-10-14T08:01:07Z",
+    "verified": true
+  }
+]

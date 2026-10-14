@@ -767,6 +767,7 @@ export function currentTaskBody(task, value) {
     `## 用户结果\n\n${task.userOutcome}。\n\n` +
     `## 工程与责任\n\n- Primary：${task.primaryProject}；lead：${task.lead}。\n- 受影响消费者：${task.affectedConsumers.join(' / ')}。${task.workType ? `类型：${task.workType}（责任分类，非新工程）。` : ''}\n- 优先级：${task.priority}；执行批次：${task.batch}。实际 source owner/共享 writer 由唯一 Main 沿原 lease 协调，本文不自动转移写权。\n\n` +
     (task.activeWork ? `## 当前已启动前沿\n\nOwner：${task.activeWork.owner}。${task.activeWork.scope}\n\n${task.activeWork.boundary} ${task.activeWork.evidence}\n\n` : '') +
+    (task.frontendSlice ? `## 本轮完整前端切片\n\n范围：${task.frontendSlice.scope.join('；')}。\n\n复用：${task.frontendSlice.reuse.join('；')}。\n\n${task.frontendSlice.criteria.map(c=>'- [ ] '+c).join('\n')}\n\n这些是本轮前端交付条件；原完整真实功能AC继续保留，局部样例或编译不能据此关闭整票。共享入口/对象状态由Main整合。\n\n` : '') +
     `## 复用与当前剩余\n\n${task.remaining}\n\n` +
     (task.evidence.length ? task.evidence.map(e => `- ${e.kind}：${e.ref ?? ''} ${e.commit ?? ''} ${e.scope ?? ''}${e.sourceSha256 ? `；source SHA256 ${e.sourceSha256}` : ''}`).join('\n') + '\n\n' : '本票已有实现与局部证据沿原 Issue/PR 保留；尚未逐项核实的真实目标结果保持未验，不能从代码存在推导完成。\n\n') +
     (task.reusePaths.length ? `复用入口：${task.reusePaths.map(p=>`[${p}](${ref}/${p})`).join(' · ')}\n\n` : '') +
@@ -779,7 +780,7 @@ export function currentTaskBody(task, value) {
     (task.activationEvidence.length ? `后续激活条件：\n${task.activationEvidence.map(a=>`- 原 #${a.sourceIssue}：${a.condition}`).join('\n')}\n\n` : '') +
     `## 检查与边界\n\n${task.checks.map(c=>'- '+c).join('\n')}\n\n${task.scopeExclusions.map(c=>'- '+c).join('\n')}\n- Actor/RLS、Cookie/Bearer 各自安全适配、用途/接收方同意、预算/幂等、TripProposal 可见 diff→确认→原子 Patch 与生命周期保持。\n- 代码、synthetic、目标运行、设备与发布分开记录；规划迁移/样例不是功能交付。\n\n` +
     (task.id === 'PROGRAM' ? `## 当前任务与先后成果\n\n${value.currentFrontier?.summary ?? '按实际接口和授权推进，批次不是串行硬门。'}\n\n${value.tasks.map(t => `- [${t.id} #${t.number}](https://github.com/${value.repo}/issues/${t.number}) · ${t.batch}/${t.priority} · ${t.title}`).join('\n')}\n\n` : '') +
-    `## 旧任务去向与历史\n\n承接 ${task.originalIssues.map(n=>'#'+n).join('、')}；GitHub 号码不变，当前稳定 ID 为 ${task.id}。被整合的原票只按规划迁移 superseded/not_planned，不声称功能完成。\n\n[整理前完整正文和状态](${ref}/${value.liveInput}) · [原52输入与全部历史](${ref}/${value.legacyInput}) · [当前唯一任务定义](${ref}/${currentPlanPath})。旧阶段/六线程/旧端侧主从安排是历史，不作为当前执行要求；原评论、有效完成证据与失败不删除。\n`;
+    `## 旧任务去向与历史\n\n${task.originalIssues.length ? `承接 ${task.originalIssues.map(n=>'#'+n).join('、')}；GitHub 号码不变，当前稳定 ID 为 ${task.id}。被整合的原票只按规划迁移 superseded/not_planned，不声称功能完成。` : `本轮已批准的独立前端切片；不重新承接或关闭原52输入。关联 ${(task.relatedIssues ?? []).map(n=>'#'+n).join('、')}，不自动转移原domain/source owner。当前稳定 ID 为 ${task.id}。`}\n\n[整理前完整正文和状态](${ref}/${value.liveInput}) · [原52输入与全部历史](${ref}/${value.legacyInput}) · [当前唯一任务定义](${ref}/${currentPlanPath})。旧阶段/六线程/旧端侧主从安排是历史，不作为当前执行要求；原评论、有效完成证据与失败不删除。\n`;
 }
 
 export function renderCurrentPlan(value) {
@@ -789,7 +790,7 @@ export function renderCurrentPlan(value) {
   save(`${base}/current-overview.md`, `# VP-V4 当前三工程交付计划\n\n生成自 current-plan.json。原52是迁移输入；当前${value.tasks.length}张工程任务加原Program，不以固定数量验收。\n\n` +
     (value.currentFrontier ? `当前优先：${value.currentFrontier.summary}\n\n` : '') +
     value.batches.map(b=>`## ${b.id}\n\n${b.outcome}\n\n${b.parallel}\n\n`).join('') +
-    '| ID / GitHub | 工程 / 主责 | 批次 / 优先 | 用户结果 | 原票承接 |\n| --- | --- | --- | --- | --- |\n' + all.map(t=>`| [${t.id} #${t.number}](https://github.com/${value.repo}/issues/${t.number}) | ${t.primaryProject} / ${t.lead} | ${t.batch} / ${t.priority} | ${t.userOutcome} | ${t.originalIssues.map(n=>'#'+n).join(', ')} |`).join('\n')+'\n');
+    '| ID / GitHub | 工程 / 主责 | 批次 / 优先 | 用户结果 | 原票承接 |\n| --- | --- | --- | --- | --- |\n' + all.map(t=>`| [${t.id} #${t.number}](https://github.com/${value.repo}/issues/${t.number}) | ${t.primaryProject} / ${t.lead} | ${t.batch} / ${t.priority} | ${t.userOutcome} | ${t.originalIssues.length ? t.originalIssues.map(n=>'#'+n).join(', ') : '本轮批准前端切片；原52映射不变'} |`).join('\n')+'\n');
   const oldHeader = historicalExecutionNotice;
   for (const filename of ['EXECUTION-CONTRACT.md','DELIVERY-STAGES.md']) {
     const file = `${dir}/${filename}`;

@@ -1,14 +1,14 @@
 # VP-V4 当前三工程交付计划
 
-生成自 current-plan.json。原52是迁移输入；当前35张工程任务加原Program，不以固定数量验收。
+生成自 current-plan.json。原52是迁移输入；当前37张工程任务加原Program，不以固定数量验收。
 
-当前优先：JT 当前要求先推进 iOS：IOS-001/#203、IOS-003/#209、IOS-005/#216 已由 Main 接续/派发且实际工作开始。B1/B2/B3 仅分组依赖与并行结果，不是先全做完真实 QA 才能开发 iOS 的串行门。Agent/Web 仅接 iOS 必需依赖和必要安全收尾。
+当前优先：JT 已批准 Muse 参考规划并恢复整套连通 iOS 前端：Main 统一四 Tab/导航/PBX/前端内存状态与跨页对象 ID；IOS-001 对话与成果确认、IOS-003 旅程层级与地点路线、IOS-005 表达大字卡，以及独立资料库/记忆、头像详情切片一并覆盖。真实 QA/DB/provider 不是前端开工前置；真实功能 AC 与权限边界不变。
 
 ## B2
 
-当前优先前沿：先交 IOS-001 的 E1/E3 持续体验、IOS-003 准确地点动作/路线交接、IOS-005 表达大字卡；复用已交四 Tab/壳。
+当前最高优先：整套连通 iOS 前端，含 Main 四Tab整合、IOS-001/003/005及新IOS-011/012独立切片。
 
-三条独立源码 lease 已由 Main 安排，依实际端口并行；#199/#202 整票状态不阻塞本次独立 frontend。共享 AppShell/route/PBX/Conversation 仅 Main 整合，E2 旧暂停保留。
+原owner/dirty/PR复用，独立目录并行；共享导航/PBX/Conversation/前端对象状态由Main单writer整合。不因HTML尚未定位或真实QA/DB/provider未验暂停已批准页面范围。
 
 ## B1
 
@@ -66,3 +66,5 @@
 | [WEB-001 #681](https://github.com/JTCAO515/VP-V4/issues/681) | web / web 原实施 owner，Main 按现 lease 协调 | B1 / P0 | 从已可体验样例走向真实持久会话 | #681 |
 | [WEB-002 #234](https://github.com/JTCAO515/VP-V4/issues/234) | web / web 原实施 owner，Main 按现 lease 协调 | B2 / P1 | Web 独立完成同 Trip 规划成果审阅与确认 | #234 |
 | [WEB-003 #683](https://github.com/JTCAO515/VP-V4/issues/683) | web / web 原实施 owner，Main 按现 lease 协调 | B1 / P0 | QA Web 交付版本与真实问答验收一致 | #683 |
+| [IOS-011 #692](https://github.com/JTCAO515/VP-V4/issues/692) | ios / Main 已指定的独立前端 owner 01a1396d-7aa8-7c70-b717-d9c47866bb28 | B2 / P0 | 在完整四 Tab 前端中查看资料来源和记忆，同一对象跨页一致，清楚区分保存/导出/分享与偏好修改/忘记反馈。 | 本轮批准前端切片；原52映射不变 |
+| [IOS-012 #693](https://github.com/JTCAO515/VP-V4/issues/693) | ios / Main 已指定的独立前端 owner 01a1396d-7ce1-70a2-b495-745aca4d18db | B2 / P0 | 用户从助手头像进入详情，理解状态、活动、权限、待办与人格，并可跳过首次定制后继续主体验。 | 本轮批准前端切片；原52映射不变 |

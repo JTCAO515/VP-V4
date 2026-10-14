@@ -512,9 +512,9 @@
       "project:agent",
       "work:product-coordination"
     ],
-    "updatedAt": "2026-10-14T06:50:04Z",
+    "updatedAt": "2026-10-14T08:04:08Z",
     "url": "https://github.com/JTCAO515/VP-V4/issues/187",
-    "bodySha256": "f18cf5f64b26a7cb5b708e44a193014979c5b8c55aa94d6be6ceb3cb67233df2",
+    "bodySha256": "b9c29837f93d07beb776db96e284ebb14c2d7974c7108fde2693084a37e77ab9",
     "verified": true
   },
   {
@@ -527,9 +527,9 @@
       "status:in-progress",
       "project:ios"
     ],
-    "updatedAt": "2026-10-14T06:50:08Z",
+    "updatedAt": "2026-10-14T08:04:12Z",
     "url": "https://github.com/JTCAO515/VP-V4/issues/203",
-    "bodySha256": "7ef162676dce160069ebcad44b2ee045b7d2ba6dcaa763411766fa944f5da5a0",
+    "bodySha256": "9af573cdef2a844119d79dbb958d698660b70051b04d3223022fddf6b725f283",
     "verified": true
   },
   {
@@ -542,9 +542,9 @@
       "status:in-progress",
       "project:ios"
     ],
-    "updatedAt": "2026-10-14T06:50:12Z",
+    "updatedAt": "2026-10-14T08:04:15Z",
     "url": "https://github.com/JTCAO515/VP-V4/issues/209",
-    "bodySha256": "2538026cd424bcbf61f218dcb7995db70346e6048e6e98fa26b44cdc2efb2922",
+    "bodySha256": "773a52d9a08a8245916aa6a570af28d3ce43336c77bbc4ef5aa9ffb2c25c6ce1",
     "verified": true
   },
   {
@@ -557,9 +557,37 @@
       "status:in-progress",
       "project:ios"
     ],
-    "updatedAt": "2026-10-14T06:50:17Z",
+    "updatedAt": "2026-10-14T08:04:19Z",
     "url": "https://github.com/JTCAO515/VP-V4/issues/216",
-    "bodySha256": "5054aa97d724f337c79da6dd4e1826f7caeb53879187e34336e1c29779b34450",
+    "bodySha256": "860f17d8e865c427ad6f8fee68c74a9b7989598e2c29c4e4f79c8432c59702ae",
+    "verified": true
+  },
+  {
+    "number": 692,
+    "taskId": "IOS-011",
+    "title": "[IOS-011] 资料库与记忆前端共享对象、来源和偏好反馈",
+    "labels": [
+      "priority:P0",
+      "status:in-progress",
+      "project:ios"
+    ],
+    "updatedAt": "2026-10-14T08:04:26Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/692",
+    "bodySha256": "6d8c0250da3aaac94e154ac2c38819c50e2b0e1a1842e3b7573d7e40f367ab55",
+    "verified": true
+  },
+  {
+    "number": 693,
+    "taskId": "IOS-012",
+    "title": "[IOS-012] 助手头像详情展示状态活动权限待办与可跳过定制",
+    "labels": [
+      "priority:P0",
+      "status:in-progress",
+      "project:ios"
+    ],
+    "updatedAt": "2026-10-14T08:04:30Z",
+    "url": "https://github.com/JTCAO515/VP-V4/issues/693",
+    "bodySha256": "8cd63dd56e9ac6d211ce8d266cfdcf9dcbf4dddf46c7e3bb6fe6c26b3a5fc444",
     "verified": true
   }
 ]

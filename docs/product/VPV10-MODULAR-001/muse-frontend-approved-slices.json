@@ -1,0 +1,38 @@
+[
+  {
+    "id": "IOS-011",
+    "title": "资料库与记忆前端共享对象、来源和偏好反馈",
+    "lead": "Main 指定的独立 LibraryMemory 前端 owner；chat/WT 以唯一 HANDOFF 为准",
+    "scope": "ios/VisePanda/VisePanda/Frontend/LibraryMemory/**",
+    "outcome": "在完整四 Tab 前端中查看资料来源和记忆，同一对象跨页一致，清楚区分保存/导出/分享与偏好修改/忘记反馈。",
+    "acceptance": [
+      "资料库列表/详情/来源归属、空态与不可用态可操作；同一资料跨对话、旅程、资料库使用 Main 给定的同一对象 ID。",
+      "保存、导出、分享分别显示真实前端动作与结果；本地样例不得声称已导出文件、已分享给他人或已写入真实 Library。",
+      "记忆查看、修改、忘记都有明确反馈与取消路径，跨页展示随 Main 内存样例状态同步；不创建第二 Profile/Memory 权威或调用真实删除。",
+      "统一标明本地体验样例/未连接真实服务；缺后端、DB/provider 不阻塞前端实现，真实功能验收仍归 AGENT-003 等原合同。",
+      "复用既有 Library/Knowledge/Memory 消费者与组件；与 Main 的导航/对象接口整合后完成必要编译、模拟器交互和适用 CI，不以模型/fixture 单测冒完整 App 体验。"
+    ],
+    "dependencies": [
+      {
+        "taskId": "AGENT-003",
+        "kind": "acceptance",
+        "reason": "真实Memory权威与撤回消费者的最终接入输入，非本轮独立前端开工门"
+      }
+    ]
+  },
+  {
+    "id": "IOS-012",
+    "title": "助手头像详情展示状态活动权限待办与可跳过定制",
+    "lead": "Main 指定的独立 Assistant 前端 owner；chat/WT 以唯一 HANDOFF 为准",
+    "scope": "ios/VisePanda/VisePanda/Frontend/Assistant/**",
+    "outcome": "用户从助手头像进入详情，理解状态、活动、权限、待办与人格，并可跳过首次定制后继续主体验。",
+    "acceptance": [
+      "头像入口、详情及相关弹窗/关键状态与四 Tab 主体验连通；状态、活动、权限、待办、人格均在已批准范围内可查看。",
+      "首次定制可跳过、取消和返回，不强制填完才可继续主体验；前端状态与 Main 统一对象/内存接口一致。",
+      "权限呈现区分已知、未连接、未知与请求动作；样例开关不扩大真实账户/资料/模型/设备权限，也不伪称授权成功。",
+      "复用现有头像/助手呈现和 accepted UI 范围；不重建四 Tab 壳，不新增后端人格服务或真实任务权威。",
+      "统一标明本地体验样例及真实服务未连接；整合后完成必要编译、模拟器交互和适用 CI，真人/真实Auth/provider仍分开记录。"
+    ],
+    "dependencies": []
+  }
+]
