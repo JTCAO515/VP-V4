@@ -346,6 +346,24 @@ private struct NativePlaceRoutePendingPanel: View {
     }
 }
 
+#if DEBUG
+/// Main may mount this leaf directly: NativePlaceActionsSampleExperience().
+/// This entry uses the production presentation panels with synthetic callbacks only.
+struct NativePlaceActionsSampleExperience: View {
+    @State private var chinese = true
+    init() {}
+    var body: some View {
+        VStack(spacing: 0) {
+            Picker("Sample language / 样例语言", selection: $chinese) {
+                Text("中文").tag(true)
+                Text("English").tag(false)
+            }.pickerStyle(.segmented).padding()
+                .accessibilityIdentifier("place.sample.language")
+            NativePlaceActionsSample(chinese: chinese).id(chinese)
+        }
+    }
+}
+
 /// Isolated in-memory interaction fixture. Never creates a session, writes data or calls a provider.
 private struct NativePlaceActionsSample: View {
     let chinese: Bool
@@ -391,7 +409,8 @@ private struct NativePlaceActionsSample: View {
     }
 }
 
-#Preview("IOS-003 Sample 中文") { NativePlaceActionsSample(chinese: true) }
-#Preview("IOS-003 Sample English large text") {
-    NativePlaceActionsSample(chinese: false).environment(\.dynamicTypeSize, .accessibility3)
+#Preview("IOS-003 Sample 双语") { NativePlaceActionsSampleExperience() }
+#Preview("IOS-003 Sample 大字") {
+    NativePlaceActionsSampleExperience().environment(\.dynamicTypeSize, .accessibility3)
 }
+#endif
