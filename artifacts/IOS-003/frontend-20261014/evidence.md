@@ -31,3 +31,9 @@ Main may integrate this exact stable commit, execute affected App build/tests an
 ## Main callable Sample entry
 
 `NativePlaceActionsSampleExperience()` is a no-argument internal View under `#if DEBUG`, in the same existing Swift source. It needs no new PBX registration or session dependencies. Main may mount it as a leaf in its sole Sample entry. Its Chinese/English segmented picker resets the in-memory child on locale changes; both #Preview instances call this entry (one accessibility3). Production candidate/route panels are reused. Full App/simulator execution remains Main-owned; no shared resources operated here.
+
+## Main integration build evidence (2026-10-14)
+
+Main reported integrating `dc9cc127` + `19fbb6d1` with IOS-005 and its shared DEBUG SampleHub in the existing App, then executing the central Xcode 27 build_run_sim on its own iPhone17/iOS26.5 Simulator and DerivedData. Main reports build PASS in 54.2 seconds (0 errors, 6 existing warnings), installation and launch PASS. This owner independently read the supplied log and confirmed `** BUILD SUCCEEDED **` at line 2948; installation/launch are Main-reported, not independently exercised here.
+
+Read-only log: `/Users/jtsm5p/Library/Developer/XcodeBuildMCP/workspaces/Documents-2025647e2650/logs/build_run_sim_2026-10-14T07-04-44-684Z_pid3685_604a3678.log`. This supersedes the earlier UNRUN full-App build note for the Main-integrated Debug configuration; no build was repeated and no shared resource operated here. Full place-confirm/return/cancel/language rendered interactions remain Main's pending UI checks. NativePlaceActionTests, real Auth/provider, physical device/VoiceOver and release remain UNRUN unless separately evidenced by Main.
