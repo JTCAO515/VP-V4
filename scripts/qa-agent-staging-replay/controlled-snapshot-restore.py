@@ -18,6 +18,8 @@ contract=load('snapshot_contract',HERE/'snapshot-contract.py')
 replay=load('owned_replay',HERE/'owned-replay-hook.py')
 compat=load('replay_compat',HERE/'replay-restore-compat.py')
 authority=load('direct_authority',HERE/'direct-human-authority.py')
+locale_profile=load('owned_locale',HERE/'owned-locale-profile.py')
+retry_contract=load('reviewed_retry',HERE/'reviewed-restore-retry.py')
 MODE='shared-readonly-snapshot/1'
 RESTORE_CONTRACT='qaw-shared-snapshot-restoration/1'
 
@@ -38,16 +40,29 @@ def verify_manifest(manifest):
     return adapted,snapshot
 
 
-def restore_bundle(directory,identity,manifest,replay_manifest=None):
+def restore_bundle(directory,identity,manifest,replay_manifest=None,icu_profile=None):
     adapted,snapshot=verify_manifest(manifest)
     if replay_manifest is not None:
         plan,_=replay.load_plan(replay_manifest)
         if adapted['verification']['metadata'].get('versions')!=plan['baseline75']:
             raise ValueError('REPLAY_CAPTURE_BASELINE_NOT_EXACT_75')
+    if icu_profile is not None:
+        locale_profile.validate(icu_profile,adapted['verification']['databaseFacts'])
     original_class=base.OwnCluster;original_normalize=base.verify.normalize_schema;copies=[]
     class VerifiedOwnedCopy(original_class):
         def __init__(self,*args,**kwargs):
-            super().__init__(*args,**kwargs);copies.append(self)
+            if icu_profile is None:super().__init__(*args,**kwargs)
+            else:
+                # The strict constructor only accepts libc. Bootstrap through
+                # the explicit ICU adapter, without declaring the source libc.
+                super().__init__(args[0],None)
+            copies.append(self)
+        def docker(self,args,data=None):
+            if icu_profile is not None:args=locale_profile.patch_owned_run(args,icu_profile)
+            return super().docker(args,data)
+        def start(self):
+            super().start()
+            if icu_profile is not None:self.icuBootstrap=locale_profile.verify_owned(self,icu_profile)
         def close(self):
             # Private restore phase defers cleanup only until this synchronous
             # adapter verifies sequences/replays. Never return this handle.
@@ -62,6 +77,7 @@ def restore_bundle(directory,identity,manifest,replay_manifest=None):
         if result['status']=='PASS_LOCAL_BUNDLE_RESTORE_ONLY':
             if len(copies)!=1 or not copies[0].created:raise ValueError('OWNED_RESTORED_COPY_REQUIRED')
             db=copies[0]
+            if icu_profile is not None:result['icuBootstrap']=db.icuBootstrap
             if replay_manifest is not None:
                 result['restoreCompatibility']=compat.reinstate(db)
                 result['archivedAclCompatibility']=compat.restore_archived_owner_maintain(db,adapted['verification']['metadata'])
@@ -84,12 +100,14 @@ def restore_bundle(directory,identity,manifest,replay_manifest=None):
 
 
 def code_hash():
-    return hashlib.sha256((HERE/'controlled-snapshot-restore.py').read_bytes()+(HERE/'snapshot-contract.py').read_bytes()+(HERE/'owned-replay-hook.py').read_bytes()+(HERE/'replay-restore-compat.py').read_bytes()+(HERE/'direct-human-authority.py').read_bytes()+replay.MANIFEST_HASH.encode()+base.code_hash().encode()).hexdigest()
+    return hashlib.sha256((HERE/'controlled-snapshot-restore.py').read_bytes()+(HERE/'snapshot-contract.py').read_bytes()+(HERE/'owned-replay-hook.py').read_bytes()+(HERE/'replay-restore-compat.py').read_bytes()+(HERE/'direct-human-authority.py').read_bytes()+(HERE/'owned-locale-profile.py').read_bytes()+(HERE/'reviewed-restore-retry.py').read_bytes()+replay.MANIFEST_HASH.encode()+base.code_hash().encode()).hexdigest()
 
 
 def main(args):
     if args in ([],['--dry-run']):return {'status':'DRY_RUN_NO_ARCHIVE_OR_DOCKER_IO','mode':MODE,'codeSha256':code_hash(),'sequenceSafety':'MONOTONE_NO_COLLISION_ONLY','realArchiveRead':False,'actualRestore':'UNRUN','optionalReplayMode':replay.MODE,'replayManifestSha256':replay.MANIFEST_HASH}
-    record_mode=len(args)==5 and args[0]=='--restore-replay-from-direct-record'
+    retry_mode=len(args)==5 and args[0]=='--restore-replay-retry-from-direct-record'
+    record_mode=retry_mode or (len(args)==5 and args[0]=='--restore-replay-from-direct-record')
+    stage='restore-replay-retry' if retry_mode else 'restore-replay'
     with_replay=record_mode or (len(args)==5 and args[0]=='--restore-and-replay-approved')
     base.plan.require(with_replay or (len(args)==4 and args[0]=='--restore-snapshot-approved'),'SNAPSHOT_RESTORE_ARGUMENTS_REQUIRED')
     if not record_mode:base.plan.require(sys.stdin.isatty() and sys.stdout.isatty(),'HUMAN_TTY_REQUIRED')
@@ -108,13 +126,14 @@ def main(args):
     validate()
     phrase=('JT APPROVED OWNED REAL COPY RESTORE AND REPLAY NO LIVE AUTHORITY ' if with_replay else 'JT APPROVED POINT COPY RESTORE NO LIVE AUTHORITY ')+base.plan.REF
     receipt=None
-    if record_mode:receipt=authority.validate_packet(approval,'restore-replay',code_hash(),base.capture.now(),base.capture.stamp)
+    if record_mode:receipt=authority.validate_packet(approval,stage,code_hash(),base.capture.now(),base.capture.stamp)
     else:base.plan.require(input('Confirm exact scheme B bundle and sequence safety: '+phrase+': ')==phrase,'SNAPSHOT_RESTORE_CONFIRMATION_REQUIRED')
     base.plan.require(json.loads(ap.read_text())==approval,'SNAPSHOT_RESTORE_APPROVAL_CHANGED');validate()
     base.plan.require('FileVault is On.' in base.run(['fdesetup','status']).decode(),'FILEVAULT_REQUIRED')
-    if record_mode:receipt=authority.validate_packet(approval,'restore-replay',code_hash(),base.capture.now(),base.capture.stamp)
-    claim=authority.claim_restore_replay(approval,code_hash()) if with_replay else None
-    result=restore_bundle(mp.parent,ip,manifest,plan_path)
+    if record_mode:receipt=authority.validate_packet(approval,stage,code_hash(),base.capture.now(),base.capture.stamp)
+    icu_profile=retry_contract.validate(authority,approval,manifest,locale_profile,base.capture.now(),base.capture.stamp) if retry_mode else None
+    claim=authority.claim_restore_replay(approval,code_hash(),reviewed_retry=retry_mode) if with_replay else None
+    result=restore_bundle(mp.parent,ip,manifest,plan_path,icu_profile) if retry_mode else restore_bundle(mp.parent,ip,manifest,plan_path)
     if claim:result['oneTimeRestoreClaim']=claim
     if receipt:result['directHumanAuthorization']=receipt
     return result
