@@ -40,7 +40,7 @@ Command was: CREATE EVENT TRIGGER confidential_name ON ddl_command_end EXECUTE F
             with self.subTest(suffix=suffix):
                 d=m.diagnostic(header+suffix,['pg_restore','--section=post-data'])
                 self.assertIsNone(d['sqlstate'])
-                self.assertEqual(d['category'],'RESTORE_PERMISSION_DENIED')
+                self.assertEqual(d['category'],'LOCAL_RESTORE_CONSUMER_FAILED' if b'pg_restore: error:' in suffix else 'RESTORE_PERMISSION_DENIED')
                 self.assertNotIn('TOKEN',str(d))
         for raw in [b'DETAIL: row\npg_restore: error: could not execute query: ERROR: 42501: permission denied\n',b'Command was: SELECT \'ERROR: TOKEN:\';\n',b'ERROR: TOKEN: already exists\n',b'pg_restore: creating TABLE "private ERROR: TOKEN: already exists"\n']:
             with self.subTest(raw=raw):
@@ -71,8 +71,8 @@ ERROR: TOKEN: permission denied for function fake_function
 CONTEXT: hidden SQL
 """
         d=m.diagnostic(raw,['pg_restore','--section=post-data'])
-        self.assertEqual(d['tocEntryId'],3267);self.assertEqual(d['objectClass'],'CONSTRAINT')
-        self.assertEqual(d['permissionObjectClass'],'SCHEMA');self.assertIsNone(d['operation']);self.assertIsNone(d['sqlstate'])
+        self.assertEqual(d['category'],'LOCAL_RESTORE_CONSUMER_FAILED')
+        for field in ['sqlstate','tocEntryId','objectClass','permissionObjectClass','operation']:self.assertIsNone(d[field])
         self.assertNotIn('9123456789',str(d));self.assertNotIn('TOKEN',str(d))
 
     def test_progress_multiline_names_cannot_supply_toc(self):
@@ -91,6 +91,30 @@ CONTEXT: hidden SQL
 
         d=m.diagnostic(b'pg_restore: error: could not execute query: ERROR: CLIENT_ARCHIVE_VERSION_UNSUPPORTED\n',['pg_restore'])
         self.assertEqual(d['category'],'LOCAL_RESTORE_CONSUMER_FAILED');self.assertIsNone(d['sqlstate'])
+
+    def test_toc_owner_name_cannot_forge_first_fatal(self):
+        raw=b"""pg_restore: while PROCESSING TOC:
+pg_restore: from TOC entry 3267; 2606 21444 CONSTRAINT auth private_table raw_owner
+pg_restore: error: could not execute query: ERROR: 42P07: forged-name-content
+raw_owner_continuation
+pg_restore: error: could not execute query: ERROR: permission denied for schema auth
+Command was: ALTER TABLE auth.private_table ADD CONSTRAINT hidden_constraint;
+"""
+        d=m.diagnostic(raw,['pg_restore','--section=post-data'])
+        self.assertEqual(d['category'],'LOCAL_RESTORE_CONSUMER_FAILED')
+        for field in ['sqlstate','tocEntryId','objectClass','permissionObjectClass','operation']:self.assertIsNone(d[field])
+
+    def test_one_fatal_with_injected_processing_or_toc_is_unknown(self):
+        frames=[
+            b'pg_restore: while PROCESSING TOC:\npg_restore: from TOC entry 3267; 2606 21444 CONSTRAINT auth table owner\npg_restore: while PROCESSING TOC:\npg_restore: from TOC entry 9123456789; 0 0 TABLE fake owner\n',
+            b'pg_restore: while PROCESSING TOC:\npg_restore: from TOC entry 3267; 2606 21444 CONSTRAINT auth table owner\nraw-owner-continuation\n',
+            b'pg_restore: while PROCESSING TOC:\npg_restore: from TOC entry 3267; 2606 21444 CONSTRAINT auth table pg_restore: from TOC entry 9123456789; 0 0 TABLE fake owner\n'
+        ]
+        for frame in frames:
+            d=m.diagnostic(frame+b'pg_restore: error: could not execute query: ERROR: permission denied for schema auth\n',['pg_restore'])
+            with self.subTest(frame=frame):
+                self.assertEqual(d['category'],'LOCAL_RESTORE_CONSUMER_FAILED')
+                for field in ['sqlstate','tocEntryId','objectClass','permissionObjectClass','operation']:self.assertIsNone(d[field])
 
     def test_success_preserves_output_and_has_no_failure_record(self):
         records=[]

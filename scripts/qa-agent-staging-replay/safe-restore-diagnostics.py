@@ -11,25 +11,45 @@ CLIENT_ARCHIVE_VERSION=object()
 
 
 def error_frame(text):
-    # --exit-on-error emits one query failure. Only the first client error
-    # envelope is eligible. Never scan its SQL/DETAIL/CONTEXT continuations for
-    # another header/state; unsupported client errors also terminate parsing.
-    prelude=[]
+    # Validate the WHOLE client frame before trusting any individual header.
+    # Raw TOC names, owner fields, SQL and DETAIL can contain client-like lines.
+    # Multiple/embedded frames and unexplained metadata continuations therefore
+    # invalidate all attribution, including an otherwise plausible first fatal.
     lines=text.splitlines()
-    for n,line in enumerate(lines):
-        if line.startswith('pg_restore: creating ') and (line.count(chr(34))!=2 or not line.endswith(chr(34))):
-            # Multiline or ambiguous quoted object names can forge client-like
-            # lines. No diagnostic header in such a frame is trusted.
-            return None,[],[]
-        if line.startswith(('Command was:','DETAIL:','HINT:','CONTEXT:','STATEMENT:','ERROR:')):
-            return None,prelude,[]
-        if line.startswith('pg_restore: error:'):
-            if re.fullmatch(r'pg_restore: error: unsupported version \([0-9]{1,3}\.[0-9]{1,3}\) in file header',line):
-                return CLIENT_ARCHIVE_VERSION,prelude,[]
-            if not line.startswith(ERROR_HEADER):return None,prelude,[]
-            return line[len(ERROR_HEADER):].lstrip(' \t'),prelude,lines[n+1:]
-        prelude.append(line)
-    return None,prelude,[]
+    if any('pg_restore:' in line and (not line.startswith('pg_restore:') or line.count('pg_restore:')!=1) for line in lines):
+        return None,[],[]
+    fatals=[n for n,line in enumerate(lines) if line.startswith('pg_restore: error:')]
+    processing=[n for n,line in enumerate(lines) if line=='pg_restore: while PROCESSING TOC:']
+    tocs=[n for n,line in enumerate(lines) if line.startswith('pg_restore: from TOC entry ')]
+    if len(fatals)!=1 or len(processing)>1 or len(tocs)>1:return None,[],[]
+    n=fatals[0];prelude=lines[:n];tail=lines[n+1:];line=lines[n]
+    if any(k>=n for k in processing+tocs):return None,[],[]
+    if bool(processing)!=bool(tocs):return None,[],[]
+    if processing:
+        if processing[0]!=n-2 or tocs[0]!=n-1:return None,[],[]
+        toc=re.fullmatch(r'pg_restore: from TOC entry [0-9]{1,10}; [0-9]+ [0-9]+ (.*)',lines[tocs[0]])
+        kind=next((k for k in KINDS if toc and toc[1].startswith(k+' ')),None)
+        if kind is None:return None,[],[]
+        fields=toc[1][len(kind)+1:]
+        # Conservative single-line namespace/object/owner representation.
+        # Quoted, control-bearing or otherwise ambiguous names are UNKNOWN.
+        if len(fields.split())<3 or not re.fullmatch(r'[A-Za-z0-9_.$(),\[\] -]+',fields):return None,[],[]
+    for before in prelude:
+        if before in ('pg_restore: connecting to database for restore','pg_restore: while PROCESSING TOC:'):continue
+        if before.startswith('pg_restore: from TOC entry '):continue
+        if before.startswith('pg_restore: creating ') and before.count(chr(34))==2 and before.endswith(chr(34)):continue
+        if before.strip():return None,[],[]
+    # Unlabelled text directly following a header can be an owner/name
+    # continuation of a forged header. Only labelled diagnostic/SQL tails can
+    # begin a continuation; client-looking content anywhere already invalidates.
+    protected=False
+    for after in tail:
+        if after.startswith(('Command was:','DETAIL:','HINT:','CONTEXT:','STATEMENT:','LOCATION:','QUERY:')):protected=True
+        if after.strip() and not protected:return None,[],[]
+    if re.fullmatch(r'pg_restore: error: unsupported version \([0-9]{1,3}\.[0-9]{1,3}\) in file header',line):
+        return CLIENT_ARCHIVE_VERSION,prelude,[]
+    if not line.startswith(ERROR_HEADER):return None,[],[]
+    return line[len(ERROR_HEADER):].lstrip(' \t'),prelude,tail
 
 
 def diagnostic(raw,consumer):

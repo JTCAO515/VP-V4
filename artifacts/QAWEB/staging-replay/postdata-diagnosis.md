@@ -36,3 +36,8 @@ Main 的真实 retry-1 已通过 ICU bootstrap，随后 schema post-data 权限�
 现在仅接受首个合格pg_restore query错误头的首字段，并仅允许固定公开SQLSTATE集合；无实际字段/unknown token为null。不重新扫描SQL、DETAIL、CONTEXT、名字、progress或后续伪header。类别只由该错误头的标准消息模板/公开state决定，绝不搜整个stderr关键词。TOC须来自fatal头前紧邻的固定PROCESSING TOC/单一entry框架；无可靠框架或多行/歧义名字为null。operation无法从该纯stderr接口独立确认，统一null，不从Command was提取。可信version格式的client错误仍保留原unsupported archive分类。
 
 只变parser和focusedtests；pipeline/caller/timeout/cleanup/strict文件/marker/窗口不变。复用同源完整假数据成功证据，不重跑80或再次实际尝试。最新hash/验证见diagnostics-header-repair-delivery.json；实际权限根因仍UNKNOWN。
+
+
+## e544 multiline TOC 返修
+
+改为先验证整个client framing，再作任何归因。多fatal、重复/嵌入PROCESSING/TOC、无法解释的owner/name续行或多行名字均返回genericFAIL，所有error-derived字段null，phase仅来自固定consumer参数。单一明确PROCESSING/TOC+permission frame仍可用；DETAIL/SQL内有伪client框架时也保守UNKNOWN，不再保留第一条看似合法归因。12项focusedtests在旧e544上FAIL、新版PASS；见diagnostics-whole-frame-delivery.json。未来新窗口候选单独未提交，未混入parser安全返修；实际尝试/窗口/markers均不变。
