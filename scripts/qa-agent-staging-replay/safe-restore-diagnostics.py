@@ -5,7 +5,6 @@ import subprocess
 KINDS=('EVENT TRIGGER','DEFAULT ACL','FK CONSTRAINT','ROW SECURITY','CONSTRAINT','INDEX','TRIGGER','RULE','POLICY','ACL','COMMENT','FUNCTION','TABLE','SCHEMA','EXTENSION')
 
 
-PUBLIC_SQLSTATES={'42501','42P07','42710','42P01','42883','42703','42704','22023','0A000'}
 ERROR_HEADER='pg_restore: error: could not execute query: ERROR:'
 CLIENT_ARCHIVE_VERSION=object()
 
@@ -57,15 +56,9 @@ def diagnostic(raw,consumer):
     message,prelude,tail=error_frame(text)
     client_version=message is CLIENT_ARCHIVE_VERSION
     if client_version:message=None
-    state=None
-    if message is not None:
-        # A state is only the initial field of this actual error envelope.
-        # Unknown five-character tokens are neither echoed nor rescanned.
-        field=re.match(r'^([0-9A-Z]{5}):[ \t]*',message)
-        if field:
-            if field[1] in PUBLIC_SQLSTATES:
-                state=field[1];message=message[field.end():]
-            else:message=''
+    # stderr's apparent code prefix may be part of a RAISE MESSAGE (P0001),
+    # not libpq's typed PG_DIAG_SQLSTATE. Never parse or strip such a prefix.
+    # This stderr-only API always returns null for SQLSTATE.
     # Location requires the client's fixed processing frame immediately before
     # the fatal header. Bare/progress/multiline-name TOC lookalikes are unknown.
     location=None
@@ -86,12 +79,10 @@ def diagnostic(raw,consumer):
     elif (message or '').startswith('unrecognized configuration parameter '):category='RESTORE_PARAMETER_UNSUPPORTED'
     elif re.fullmatch(r'(?:relation|schema|type|function|operator|constraint|index) .+ already exists',message or ''):category='RESTORE_OBJECT_EXISTS'
     elif re.fullmatch(r'(?:relation|schema|type|function|operator|constraint|column|role) .+ does not exist',message or ''):category='RESTORE_OBJECT_MISSING'
-    if state=='42501':category='RESTORE_PERMISSION_DENIED'
-    elif state in ('42P07','42710'):category='RESTORE_OBJECT_EXISTS'
-    elif state in ('42P01','42883','42703'):category='RESTORE_OBJECT_MISSING'
-    return {'category':category or ('RESTORE_SQLSTATE_'+state if state else 'LOCAL_RESTORE_CONSUMER_FAILED'),
-            'sqlstate':state,'tocEntryId':int(location[1]) if location else None,
-            'objectClass':kind,'permissionObjectClass':denied[1].upper() if denied else None,'operation':operation,'phase':phase}
+    return {'category':category or 'LOCAL_RESTORE_CONSUMER_FAILED',
+            'sqlstate':None,'tocEntryId':int(location[1]) if location else None,
+            'objectClass':kind,'permissionObjectClass':denied[1].upper() if denied else None,'operation':operation,'phase':phase,
+            'provenance':'STDERR_ONLY_UNSTRUCTURED_HINTS_NOT_PG_ERROR_FACTS'}
 
 
 def pipeline(producer,consumer,collect,records):

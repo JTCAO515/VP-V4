@@ -16,13 +16,15 @@ pg_restore: error: could not execute query: ERROR:  permission denied to create 
 Command was: CREATE EVENT TRIGGER confidential_name ON ddl_command_end EXECUTE FUNCTION hidden_fn('secret-token');
 '''
         d=m.diagnostic(raw,['pg_restore','--section=post-data'])
-        self.assertEqual(d,{'category':'RESTORE_PERMISSION_DENIED','sqlstate':None,'tocEntryId':3844,'objectClass':'EVENT TRIGGER','permissionObjectClass':None,'operation':None,'phase':'post-data'})
+        self.assertEqual(d,{'category':'RESTORE_PERMISSION_DENIED','sqlstate':None,'tocEntryId':3844,'objectClass':'EVENT TRIGGER','permissionObjectClass':None,'operation':None,'phase':'post-data','provenance':'STDERR_ONLY_UNSTRUCTURED_HINTS_NOT_PG_ERROR_FACTS'})
         self.assertNotIn('confidential',str(d));self.assertNotIn('secret',str(d))
 
     def test_verbose_actual_sqlstate_and_unknown_names_never_echo(self):
         raw=b'pg_restore: error: could not execute query: ERROR:  42501: permission denied for function private_fn_secret\nDETAIL: private-user-row\nCommand was: GRANT EXECUTE ON FUNCTION private_fn_secret TO hidden_role;'
         d=m.diagnostic(raw,['pg_restore','--section=post-data'])
-        self.assertEqual(d['sqlstate'],'42501');self.assertEqual(d['permissionObjectClass'],'FUNCTION');self.assertIsNone(d['operation'])
+        self.assertIsNone(d['sqlstate']);self.assertIsNone(d['permissionObjectClass'])
+        self.assertEqual(d['category'],'LOCAL_RESTORE_CONSUMER_FAILED')
+        self.assertEqual(d['provenance'],'STDERR_ONLY_UNSTRUCTURED_HINTS_NOT_PG_ERROR_FACTS');self.assertIsNone(d['operation'])
         self.assertNotIn('private',str(d));self.assertNotIn('hidden',str(d))
         d=m.diagnostic(b'unknown: secret-password-sql',['pg_restore'])
         self.assertIsNone(d['sqlstate']);self.assertIsNone(d['objectClass']);self.assertIsNone(d['tocEntryId'])
@@ -30,9 +32,9 @@ Command was: CREATE EVENT TRIGGER confidential_name ON ddl_command_end EXECUTE F
     def test_failure_in_pipeline_keeps_category_and_cleans_children(self):
         records=[]
         producer=[sys.executable,'-c','import sys;sys.stdout.write("synthetic-pipe")']
-        consumer=[sys.executable,'-c','import sys;sys.stdin.read();sys.stderr.write("pg_restore: error: could not execute query: ERROR: 42501: permission denied for function hidden_name\\nCommand was: GRANT secret-value\\n");sys.exit(1)']
+        consumer=[sys.executable,'-c','import sys;sys.stdin.read();sys.stderr.write("pg_restore: error: could not execute query: ERROR: permission denied for function hidden_name\\nCommand was: GRANT secret-value\\n");sys.exit(1)']
         with self.assertRaisesRegex(ValueError,'^RESTORE_PERMISSION_DENIED$'):m.pipeline(producer,consumer,False,records)
-        self.assertEqual(len(records),1);self.assertEqual(records[0]['sqlstate'],'42501');self.assertNotIn('hidden',str(records));self.assertNotIn('secret',str(records))
+        self.assertEqual(len(records),1);self.assertIsNone(records[0]['sqlstate']);self.assertNotIn('hidden',str(records));self.assertNotIn('secret',str(records))
 
     def test_user_text_cannot_supply_sqlstate_or_failure_category(self):
         header=b'pg_restore: error: could not execute query: ERROR:  permission denied for function hidden_name\n'
@@ -115,6 +117,19 @@ Command was: ALTER TABLE auth.private_table ADD CONSTRAINT hidden_constraint;
             with self.subTest(frame=frame):
                 self.assertEqual(d['category'],'LOCAL_RESTORE_CONSUMER_FAILED')
                 for field in ['sqlstate','tocEntryId','objectClass','permissionObjectClass','operation']:self.assertIsNone(d[field])
+
+    def test_raised_message_prefix_is_not_a_typed_sqlstate(self):
+        # Main's real PG counterexample uses ERRCODE=P0001 with this message.
+        raw=b"""pg_restore: while PROCESSING TOC:
+pg_restore: from TOC entry 3256; 1259 16402 INDEX public synthetic_expression_idx supabase_admin
+pg_restore: error: could not execute query: ERROR: 42501: permission denied for schema synthetic_only
+CONTEXT: PL/pgSQL function synthetic_index_key(integer) line 1 at RAISE
+Command was: CREATE INDEX synthetic_expression_idx ON public.synthetic_row USING btree (public.synthetic_index_key(id));
+"""
+        value=m.diagnostic(raw,['pg_restore','--section=post-data'])
+        self.assertIsNone(value['sqlstate'])
+        self.assertEqual(value['category'],'LOCAL_RESTORE_CONSUMER_FAILED')
+        self.assertIsNone(value['permissionObjectClass'])
 
     def test_success_preserves_output_and_has_no_failure_record(self):
         records=[]
