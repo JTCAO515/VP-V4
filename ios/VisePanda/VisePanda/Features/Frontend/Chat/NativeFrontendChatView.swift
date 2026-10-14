@@ -84,11 +84,23 @@ import UIKit
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
     private func closeSidebar() { withAnimation(.easeOut(duration: 0.2)) { sidebarVisible = false } }
+    private func linkedJourneyID(for context: String) -> String? {
+        if state.journeys.contains(where: { $0.id == context }) { return context }
+        guard let material = state.materials.first(where: { $0.id == context }),
+              let id = material.journeyID, state.journeys.contains(where: { $0.id == id }) else { return nil }
+        return id
+    }
     private func contextCard(_ text: String) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Label("本次带入的样例上下文", systemImage: "link").font(.caption).foregroundStyle(.secondary)
             Text(state.journeys.first(where: { $0.id == text })?.title ?? text)
                 .font(.subheadline).textSelection(.enabled)
+            if let id = linkedJourneyID(for: text) {
+                Button("查看关联旅程") {
+                    guard state.chatContext == text, linkedJourneyID(for: text) == id else { return }
+                    state.openJourney(id)
+                }.font(.subheadline).accessibilityIdentifier("frontend.chat.journey")
+            }
             Button("暂时不用这段上下文") { state.chatContext = nil }
                 .font(.caption).accessibilityIdentifier("frontend.chat.context.clear")
         }.cardSurface()
