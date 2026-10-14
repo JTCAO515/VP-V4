@@ -209,3 +209,52 @@ test('monotonic deadline rejects late synchronous and microtask-starved source r
     assert.equal(reads, mode === 'second_read' ? 2 : 1);
   }
 });
+
+test('outcome accessors reject before reading kind/usage/output or proposal elements; getters never run', async () => {
+  for (const throws of [false, true]) {
+    for (const target of ['kind', 'usage', 'output', 'proposal_element', 'evidence_quote']) {
+      const outcome = structuredClone(scriptedOutcome()); let calls = 0;
+      const [at, field] = target === 'proposal_element' ? [outcome.output.statementProposals, '0']
+        : target === 'evidence_quote' ? [outcome.output.statementProposals[0].evidence[0], 'quote'] : [outcome, target];
+      Object.defineProperty(at, field, { enumerable: true, get() { calls++; if (throws) throw new Error('getter must not execute'); return 'forged'; } });
+      assert.deepEqual(await invoke(request(), dependencies().deps, outcome), { kind: 'failed', errorCode: 'MODEL_OUTPUT_INVALID' }, target);
+      assert.equal(calls, 0, target);
+    }
+  }
+});
+
+test('input source array/span and dependency getters never execute and return INVALID_INPUT', async () => {
+  for (const throws of [false, true]) {
+    for (const target of ['sources', 'source_element', 'span_id', 'author', 'read_port']) {
+      const input = request(), d = dependencies(); let calls = 0;
+      const [at, field] = target === 'sources' ? [input, 'sources'] : target === 'source_element' ? [input.sources, '0']
+        : target === 'span_id' ? [input.sources[0], 'sourceRevisionId'] : [d.deps, target === 'author' ? 'authorId' : 'readSources'];
+      Object.defineProperty(at, field, { enumerable: true, get() { calls++; if (throws) throw new Error('getter must not execute'); return 'forged'; } });
+      assert.deepEqual(await invoke(input, d.deps), { kind: 'failed', errorCode: 'INVALID_INPUT' }, target);
+      assert.equal(calls, 0, target);
+    }
+  }
+});
+
+test('canonical source getters never run through direct or Ops reader and return SOURCE_UNAVAILABLE', async () => {
+  for (const throws of [false, true]) {
+    for (const viaOps of [false, true]) {
+      for (const target of ['source_element', 'row_id', 'declaration', 'snippet']) {
+        const sources = structuredClone(rows); let calls = 0;
+        const [at, field] = target === 'source_element' ? [sources, '0'] : target === 'row_id' ? [sources[0], 'id']
+          : target === 'declaration' ? [sources[0], 'declaration'] : [sources[0].declaration, 'snippet'];
+        Object.defineProperty(at, field, { enumerable: true, get() { calls++; if (throws) throw new Error('getter must not execute'); return 'forged'; } });
+        const deps = viaOps ? dependencies(sources).deps : { authorId: author, readSources: async () => sources };
+        assert.deepEqual(await invoke(request(), deps), { kind: 'failed', errorCode: 'SOURCE_UNAVAILABLE' }, target);
+        assert.equal(calls, 0, target);
+      }
+    }
+  }
+});
+
+test('descriptor inspection exceptions close at their input/outcome/source boundaries', async () => {
+  const trap = value => new Proxy(value, { ownKeys() { throw new Error('descriptor inspection denied'); } });
+  assert.deepEqual(await invoke(trap(request()), dependencies().deps), { kind: 'failed', errorCode: 'INVALID_INPUT' });
+  assert.deepEqual(await invoke(request(), dependencies().deps, trap(scriptedOutcome())), { kind: 'failed', errorCode: 'MODEL_OUTPUT_INVALID' });
+  assert.deepEqual(await invoke(request(), { authorId: author, readSources: async () => trap(rows) }), { kind: 'failed', errorCode: 'SOURCE_UNAVAILABLE' });
+});

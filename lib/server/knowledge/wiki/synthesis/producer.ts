@@ -37,19 +37,21 @@ const digest = (value: string) => createHash("sha256").update(value).digest("hex
 /** Preserve exact JSON boundaries before cloning: hidden authority, Symbol keys,
  * accessors and non-finite numbers must not disappear during serialization. */
 function plainJson(value: unknown, depth = 0): boolean {
-  if (depth > 12) return false;
-  if (value === null || typeof value === "string" || typeof value === "boolean") return true;
-  if (typeof value === "number") return Number.isFinite(value);
-  if (!value || typeof value !== "object") return false;
-  if (![Object.prototype, Array.prototype, null].includes(Object.getPrototypeOf(value))) return false;
-  const fields = Reflect.ownKeys(value);
-  if (Array.isArray(value) && fields.length !== value.length + 1) return false;
-  return fields.every(key => {
-    if (Array.isArray(value) && key === "length") return true;
-    const field = Object.getOwnPropertyDescriptor(value, key);
-    return typeof key === "string" && field?.enumerable === true && Object.hasOwn(field, "value")
-      && plainJson(field.value, depth + 1);
-  });
+  try {
+    if (depth > 12) return false;
+    if (value === null || typeof value === "string" || typeof value === "boolean") return true;
+    if (typeof value === "number") return Number.isFinite(value);
+    if (!value || typeof value !== "object") return false;
+    if (![Object.prototype, Array.prototype, null].includes(Object.getPrototypeOf(value))) return false;
+    const fields = Reflect.ownKeys(value);
+    if (Array.isArray(value) && fields.length !== value.length + 1) return false;
+    return fields.every(key => {
+      if (Array.isArray(value) && key === "length") return true;
+      const field = Object.getOwnPropertyDescriptor(value, key);
+      return typeof key === "string" && field?.enumerable === true && Object.hasOwn(field, "value")
+        && plainJson(field.value, depth + 1);
+    });
+  } catch { return false; }
 }
 function bytes(value: unknown): number {
   try { return Buffer.byteLength(JSON.stringify(value), "utf8"); } catch { return Infinity; }
@@ -62,6 +64,7 @@ function freeze<T>(value: T): T {
   return value;
 }
 function validInput(value: unknown): value is SynthesisInput {
+  if (!plainJson(value)) return false;
   if (!keys(value, ["dataClass", "sources", "configDigest", "maxOutputTokens", "timeoutMs", "provider"])
     || value.dataClass !== "c0_synthetic" || !hash(value.configDigest)
     || !Number.isSafeInteger(value.maxOutputTokens) || (value.maxOutputTokens as number) < 1 || (value.maxOutputTokens as number) > 8192
@@ -133,17 +136,22 @@ function validOutcome(value: WikiProposalJobOutcome, input: WikiProposalJobInput
  * Fresh requalification is advisory; atomic completion remains the original
  * authenticated dispatcher transaction's responsibility. No automatic retry. */
 export async function produceWikiSynthesis(input: SynthesisInput, generation: WikiProposalJobOutcome, deps: SynthesisDependencies, signal: AbortSignal): Promise<SynthesisOutcome> {
-  if (!validInput(input) || !keys(deps, ["authorId", "readSources"]) || !uuid(deps.authorId)
-    || typeof deps.readSources !== "function") return { kind: "failed", errorCode: "INVALID_INPUT" };
+  let request: SynthesisInput;
+  let authorId: string;
+  try {
+    if (!validInput(input) || !keys(deps, ["authorId", "readSources"]) || !uuid(deps.authorId)
+      || typeof deps.readSources !== "function") return { kind: "failed", errorCode: "INVALID_INPUT" };
+    request = freeze(JSON.parse(JSON.stringify(input)) as SynthesisInput);
+    authorId = deps.authorId;
+  } catch { return { kind: "failed", errorCode: "INVALID_INPUT" }; }
   if (signal.aborted) return { kind: "cancelled" };
-  // JSON cloning must not turn non-finite optional usage into acceptable nulls.
-  if (generation?.kind === "succeeded" && !validUsage(generation.usage)) return { kind: "failed", errorCode: "MODEL_OUTPUT_INVALID" };
-  const request = freeze(JSON.parse(JSON.stringify(input)) as SynthesisInput);
-  const authorId = deps.authorId;
-  if (!plainJson(generation) || bytes(generation) > MAX_BYTES + 2048) return { kind: "failed", errorCode: "MODEL_OUTPUT_INVALID" };
   let generationSnapshot: WikiProposalJobOutcome;
-  try { generationSnapshot = freeze(JSON.parse(JSON.stringify(generation)) as WikiProposalJobOutcome); }
-  catch { return { kind: "failed", errorCode: "MODEL_OUTPUT_INVALID" }; }
+  try {
+    // Validate descriptors recursively before reading kind/usage or serializing.
+    // Non-finite usage must not become acceptable nulls during JSON cloning.
+    if (!plainJson(generation) || bytes(generation) > MAX_BYTES + 2048) return { kind: "failed", errorCode: "MODEL_OUTPUT_INVALID" };
+    generationSnapshot = freeze(JSON.parse(JSON.stringify(generation)) as WikiProposalJobOutcome);
+  } catch { return { kind: "failed", errorCode: "MODEL_OUTPUT_INVALID" }; }
   const controller = new AbortController();
   const deadline = performance.now() + request.timeoutMs;
   let timedOut = false;

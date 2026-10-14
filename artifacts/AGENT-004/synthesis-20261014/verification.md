@@ -52,8 +52,8 @@ from the existing protocol is preserved. Source binding is not semantic entailme
 
 ## Verification
 
-- PASS: `node --experimental-strip-types --test tests/contract/wiki-synthesis/producer.test.mjs tests/contract/knowledge/wiki-proposals.test.mjs tests/contract/knowledge/wiki-complete.test.mjs` — initial 30 tests, final 32 tests after the two resource-boundary regressions.
-- PASS: 14 synthesis tests including synchronous/microtask-starved deadlines and hidden/Symbol fields.
+- PASS: `node --experimental-strip-types --test tests/contract/wiki-synthesis/producer.test.mjs tests/contract/knowledge/wiki-proposals.test.mjs tests/contract/knowledge/wiki-complete.test.mjs` — initial 30 tests, then 32 resource-boundary tests, then 36 tests with accessor-before-read regressions.
+- PASS: 18 synthesis tests including synchronous/microtask-starved deadlines, hidden/Symbol fields and getter non-execution.
 - PASS: final source `pnpm typecheck`; `pnpm lint`; `pnpm docs:check`; `git diff --check`.
 - Actual scripted invocation: the first synthesis test invokes the existing
   production `runWikiStatementProposalJob` and provider protocol with an explicitly
@@ -83,6 +83,20 @@ the existing selector ran `pnpm test` without its required `pnpm build`, leaving
 above and explicitly authorized its unchanged cherry-pick. Original failure
 remains recorded; no assertions or required checks are skipped. Final-head CI
 must be read separately from local verification.
+
+Main's formal standards/spec reviews of `0c83e17a` both found the same P2:
+generation kind/usage and input source array elements could be read before
+descriptor rejection. Original review FAIL is retained. The repair validates
+the complete plain-JSON descriptor graph before those reads; input preflight
+and generation snapshot exceptions close as INVALID_INPUT/MODEL_OUTPUT_INVALID.
+Canonical source inspection exceptions close as SOURCE_UNAVAILABLE. The Ops
+reader checks data descriptors before accessing response/page/source fields or
+traversing arrays. Four new test groups exercise ordinary and throwing getters
+on outcome fields, proposal elements/quotes, input arrays/spans, dependencies,
+canonical source rows/declarations/snippets via both direct and Ops readers.
+Every getter call count stays zero. Throwing descriptor inspection proxies also
+return the defined input/outcome/source error outcomes rather than rejecting the
+producer Promise. Main must review the resulting delta; prior P2 is not erased.
 
 ## Remaining boundaries / Main integration
 
