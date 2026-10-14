@@ -24,3 +24,11 @@ GitHub 传输异常保留：#681 首次补充的 GraphQL 预读 EOF（写入前�
 后续必要回归：新增一项真实迁移正文/新勾选与追加证据/未知 scope 漂移的行为测试；原全验收断言允许已有 [x]，没有删除条款。初次测试暴露 legacy fixture 缺迁移文件和已勾选断言，修正 fixture 为明确 legacy、保留完成项后 47/47 PASS。
 
 最后 priority 差异 #225 的 POST 出现 EOF，续跑先读当前标签再仅补缺失操作，最终 7/7 priority 差异读回；status/phase/team/assignee 和正文未改。最终全开放票完整性以 final-readback.json 为准。
+
+## 最终收口
+
+- PASS：全分页最终读回 52/52 正文精确匹配、priority 一致、开放集合未变；7 个必要 priority 差异已同步，其它标签/标题/assignee 保留。见 final-readback.json 与 priority-readback.json。
+- 扩展读取受影响导出使用者发现 vpj-lifecycle 的执行 header 同步断言 FAIL；将当前导航纳入唯一导出 header，保留原断言，修复后相关六文件合计 62/62 PASS（vpj-plan、vpj-body-progress、vpj-sequence、handoff-documents、vpj-lifecycle、issue-refresh）。
+- PASS：最终 docs:check、diff 检查；lint 和隔离 render 同源相关证据仍有效。修改只涉及获准文档、生成器与必要治理回归。
+- 源提交由唯一 Main 审阅整合。本专项未 push、未创建 PR、未触发 Vercel 发布；远端 Issue 的分支文档链接在 Main 发布审阅分支前尚不可访问，本地 before/after/readback 和 commit 是当前可核证据。
+- 第一阶段方向、全部开放正文与 priority、当前入口、生成保留和部署只读计划已交付；运行层三工程物理拆分/独立 HTTP 尚未实现，样例前沿与真实 QA 验收保持分开。原目标数据库、provider、浏览器与设备验收仍 UNRUN。

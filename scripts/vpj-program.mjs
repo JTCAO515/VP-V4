@@ -22,7 +22,7 @@ export const contractDefaults = {
   externalPrerequisites: "本片实际输入与接口可用即可开始；上游Issue仍open不单独阻止有界实施。完整验收仍核对列出的技术依赖与真实环境。 Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial.",
 };
 
-export const executionContractHeader = `# VPJ Issue 执行合同\n\n生成自issue-plan.json。当前共享流程见 [development-workflow.md](../../agents/development-workflow.md) / ADR-0024。\n阅读当前Issue/PR、本行、受影响接口与代码；历史研究按需读取。\n\nChecks列是完整Issue验收清单；每条PR按实际改动选择本地验证，保留适用CI和最终运行门。\nAllowed列标示主要范围；必要的相邻文件调整、维护任务和独立准备片段按共享流程记录。\n运行依赖未完成时父Issue保持未验收；fixture不证明设备、数据库、provider或生产通过。\n\n## 默认条款\n\n下列三条对全部任务生效。任务行写「默认」即适用本节原文；偏离的任务在自己行里写出完整条款。\n\n- 运行门（默认）: ${contractDefaults.externalPrerequisites}\n- 不得触碰（默认）: ${contractDefaults.doNotTouch}\n- Rollback（默认）: ${contractDefaults.rollback}\n\n`;
+export const executionContractHeader = `# VPJ Issue 执行合同\n\n${modularNavigation()}生成自issue-plan.json。当前共享流程见 [development-workflow.md](../../agents/development-workflow.md) / ADR-0024。\n阅读当前Issue/PR、本行、受影响接口与代码；历史研究按需读取。\n\nChecks列是完整Issue验收清单；每条PR按实际改动选择本地验证，保留适用CI和最终运行门。\nAllowed列标示主要范围；必要的相邻文件调整、维护任务和独立准备片段按共享流程记录。\n运行依赖未完成时父Issue保持未验收；fixture不证明设备、数据库、provider或生产通过。\n\n## 默认条款\n\n下列三条对全部任务生效。任务行写「默认」即适用本节原文；偏离的任务在自己行里写出完整条款。\n\n- 运行门（默认）: ${contractDefaults.externalPrerequisites}\n- 不得触碰（默认）: ${contractDefaults.doNotTouch}\n- Rollback（默认）: ${contractDefaults.rollback}\n\n`;
 const byId = new Map(plan.tasks.map(t => [t.id, t]));
 const number = id => id === 'VPJ-00' ? plan.parentNumber : byId.get(id)?.number;
 const link = id => number(id) ? `[${id} #${number(id)}](https://github.com/${plan.repo}/issues/${number(id)})` : id;
@@ -245,7 +245,7 @@ function render() {
     orderedTasks(plan.tasks).map(t=>`| ${link(t.id)} | ${t.title} | ${t.blockedBy.map(link).join(', ') || '无'} | ${(t.acceptanceDependencies ?? []).map(link).join(', ') || '无'} | ${t.owner} | ${t.effortDays}日；${t.observationWindow} | [${t.deliveryStage}](DELIVERY-STAGES.md#${t.deliveryStage.toLowerCase()}) | ${t.track} |`).join('\n');
   save(`${dir}/ISSUES.md`, header + table + '\n\n后续expand必须另有activationEvidence，依赖完成不会自动开放。\n');
   save(`${dir}/DELIVERY-STAGES.md`, renderDeliveryStages(plan));
-  let contracts = executionContractHeader.replace('\n\n', '\n\n' + modularNavigation());
+  let contracts = executionContractHeader;
   for (const t of plan.tasks) {
     save(`${dir}/issue-bodies/${t.id}.md`, body(t));
     contracts += executionContractRow(t);
