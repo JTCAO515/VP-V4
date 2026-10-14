@@ -78,7 +78,7 @@ private struct NativeFrontendMaterialDetail: View {
                             .accessibilityIdentifier("frontend.library.openJourney")
                     } else { Text("未关联旅程").foregroundStyle(.secondary) }
                     Button("带着这份资料继续对话") {
-                        state.openChat(context: "资料：\(material.title)（\(material.id)）\n\(material.content)")
+                        state.openChat(context: "资料：\(material.title)\n\(material.content)")
                     }.accessibilityIdentifier("frontend.library.openChat")
                 }
                 Section("资料操作") {
