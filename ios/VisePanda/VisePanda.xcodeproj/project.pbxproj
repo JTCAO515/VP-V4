@@ -490,6 +490,10 @@
 		7F2855DAE671CA70C6DF9821 /* coverage-producer-v11.json in Resources */ = {isa = PBXBuildFile; fileRef = EE8E10754415F6908C96606A; };
 		978EF0ADFA25E5A49A1B8B49 /* coverage-cancelled-v11.json in Resources */ = {isa = PBXBuildFile; fileRef = 6D37EA77E5D1627B5624ADAB; };
 		8C6DD3D4A6903A6C5CDD0F89 /* native-catalog-current-v11.json in Resources */ = {isa = PBXBuildFile; fileRef = BD61B35EC4CB25C3A885DB1E; };
+		3A5982167C911CAF4ABB3CCB /* NativeMuseChatHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E41312944767B6D88ABB8702; };
+		684D8BA1F56881414D1ED1B9 /* NativeMuseChatComposerPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 861DB024CEB0412EB5ADA936; };
+		899BD3051970900EBE18021D /* NativeMuseChatComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5C56C774FBFC1973FE21F1E; };
+		F956A62603650C2D6438F1B7 /* NativeMuseChatSidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F435C61FA87AE46F7E1A1F03; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -986,6 +990,10 @@
 		EE8E10754415F6908C96606A /* coverage-producer-v11.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = VisePandaTests/Fixtures/DataCoverage/coverage-producer-v11.json; sourceTree = SOURCE_ROOT; };
 		6D37EA77E5D1627B5624ADAB /* coverage-cancelled-v11.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = VisePandaTests/Fixtures/DataCoverage/coverage-cancelled-v11.json; sourceTree = SOURCE_ROOT; };
 		BD61B35EC4CB25C3A885DB1E /* native-catalog-current-v11.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = VisePandaTests/Fixtures/NotificationData/native-catalog-current-v11.json; sourceTree = SOURCE_ROOT; };
+		E41312944767B6D88ABB8702 /* NativeMuseChatHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/Chat/NativeMuseChatHeader.swift; sourceTree = SOURCE_ROOT; };
+		861DB024CEB0412EB5ADA936 /* NativeMuseChatComposerPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/ChatComposer/NativeMuseChatComposerPolicy.swift; sourceTree = SOURCE_ROOT; };
+		E5C56C774FBFC1973FE21F1E /* NativeMuseChatComposerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/ChatComposer/NativeMuseChatComposerView.swift; sourceTree = SOURCE_ROOT; };
+		F435C61FA87AE46F7E1A1F03 /* NativeMuseChatSidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/ChatSidebar/NativeMuseChatSidebarView.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1000,6 +1008,10 @@
 		600000000000000000000001 = {
 			isa = PBXGroup;
 			children = (
+                F435C61FA87AE46F7E1A1F03,
+                E5C56C774FBFC1973FE21F1E,
+                861DB024CEB0412EB5ADA936,
+                E41312944767B6D88ABB8702,
                 BD61B35EC4CB25C3A885DB1E,
                 6D37EA77E5D1627B5624ADAB,
                 EE8E10754415F6908C96606A,
@@ -1205,6 +1217,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+                F956A62603650C2D6438F1B7 /* NativeMuseChatSidebarView.swift in Sources */,
+                899BD3051970900EBE18021D /* NativeMuseChatComposerView.swift in Sources */,
+                684D8BA1F56881414D1ED1B9 /* NativeMuseChatComposerPolicy.swift in Sources */,
+                3A5982167C911CAF4ABB3CCB /* NativeMuseChatHeader.swift in Sources */,
                 61ED5BFB4D425C5EFA89714C /* NativeFrontendChatView.swift in Sources */,
                 56B50753AB30DB8A824C4A87 /* NativeFrontendChatSheet.swift in Sources */,
                 406CFB1AE629EA7DBF67B302 /* NativeFrontendState.swift in Sources */,

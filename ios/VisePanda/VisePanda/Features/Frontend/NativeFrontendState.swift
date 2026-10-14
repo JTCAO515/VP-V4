@@ -88,6 +88,17 @@ final class NativeFrontendState {
         saveActiveLocalConversation()
     }
     func cancelPlan() { pendingConfirmation = false; notice = "已取消这次样例调整，原安排保留。"; saveActiveLocalConversation() }
+#if DEBUG
+    func loadLongLocalConversationSample() {
+        startLocalConversation()
+        messages = (0..<32).map { index in
+            NativeFrontendMessage(id: "long-local-\(index)", user: index.isMultiple(of: 2),
+                text: "本地滚动样例 \(index + 1) · " + String(repeating: "只验证长对话阅读与返回，未连接真实服务。", count: 4))
+        }
+        draft = ""; chatContext = nil; pendingConfirmation = false; notice = nil
+        saveActiveLocalConversation()
+    }
+#endif
     func reset() {
         let fresh = NativeFrontendState()
         localConversations = fresh.localConversations; activeLocalConversationID = fresh.activeLocalConversationID
