@@ -316,6 +316,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 当前工程：shared；优先级：P1。显式 Memory 影响结果且可纠正遗忘。复用唯一 Profile/Memory 权威与原生页面；补真实消费/撤回链，不复制画像库。
 
+分类：business-data；lead：Profile/Memory 原 domain owner；受影响消费者：iOS / Web / Agent。原 owner/精确 lease 保留。
+
 ### 执行边界与首个切片
 
 - 首个可交付结果：打通Memory独立页面→明确保存→真实规划使用→纠正/撤回→相关结果变化的一条链。
@@ -672,7 +674,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 [VPJ-22 #212](https://github.com/JTCAO515/VP-V4/issues/212) — 酒店官方出口、参数落地与联盟归因验证
 
-当前工程：Web；优先级：P1。酒店需求通过可信官方出口交接。复用酒店 allowlist/归因合同供双端消费；补参数实测，opened 不当 booked。
+当前工程：iOS；优先级：P1。酒店需求通过可信官方出口交接。复用酒店 allowlist/归因合同供双端消费；补参数实测，opened 不当 booked。
+
+分类：business-data；lead：iOS 酒店交接原 owner（与 Web consumer owner 协作）；受影响消费者：iOS / Web。原 owner/精确 lease 保留。
 
 ### 执行边界与首个切片
 
@@ -1008,6 +1012,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 当前工程：shared；优先级：P1。用户理解 Free/订阅和旧 Pass 边界。复用现行商品策略；工程划分不改变定价与旧 Pass 兼容，不自动启用年订阅。
 
+分类：product-operations；lead：商品策略原 owner；受影响消费者：iOS / Web / Agent。原 owner/精确 lease 保留。
+
 ### 执行边界与首个切片
 
 - 首个可交付结果：先定义行前可感知的免费/付费服务范围与旧Pass兼容矩阵，所有未选销售参数保持未激活。
@@ -1042,6 +1048,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 [VPJ-34 #226](https://github.com/JTCAO515/VP-V4/issues/226) — 官方购买、订阅兼容与同源权益
 
 当前工程：shared；优先级：P1。官方购买与旧订阅得到同源权益。复用购买/权益合同与 #503；补原真实验收，三工程不各自创建权益权威。
+
+分类：business-data；lead：购买与权益原 domain owner；受影响消费者：iOS / Web。原 owner/精确 lease 保留。
 
 ### 执行边界与首个切片
 
@@ -1172,6 +1180,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 当前工程：shared；优先级：P1。恢复演练保持对象和删除状态一致。复用历史恢复工具与失败；保留原 Main A–D/条件 E，当前无 START/actual capture 不执行。
 
+分类：quality-delivery；lead：恢复演练与数据生命周期原 owner；受影响消费者：iOS / Web / Agent。原 owner/精确 lease 保留。
+
 ### 执行边界与首个切片
 
 - 首个可交付结果：K1：在隔离目标恢复数据库和必要对象，重放删除/撤权后才允许测试用户读取。
@@ -1202,6 +1212,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 [VPJ-39 #232](https://github.com/JTCAO515/VP-V4/issues/232) — 境内外媒体、酒店跳转、IAP 与通知网络验收
 
 当前工程：shared；优先级：P1。用户在境内外网络得到真实可用服务。按 iOS/Web/Agent 分别记录媒体酒店IAP通知网络证据；复用现有适配不推导全国覆盖。
+
+分类：quality-delivery；lead：跨端网络验收原 owner；受影响消费者：iOS / Web / Agent。原 owner/精确 lease 保留。
 
 ### 执行边界与首个切片
 
@@ -1333,6 +1345,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 当前工程：shared；优先级：P1。客户环境具备明确隔离与回滚能力。保留未来 Production 交付目标；当前 QA 固定共享 dzt，不在本轮新建库或迁移。
 
+分类：quality-delivery；lead：Production 环境与回滚原 owner；受影响消费者：iOS / Web / Agent。原 owner/精确 lease 保留。
+
 ### 执行边界与首个切片
 
 - 首个可交付结果：先形成可审查的独立Production配置/迁移/回退包；取得指定环境执行授权后部署并核对真实状态。
@@ -1394,6 +1408,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 当前工程：shared；优先级：P1。用户收到产品后有支持和关账证据。复用运营交付链；补真实交付观察和回滚，不因工程拆分重做发布史。
 
+分类：quality-delivery；lead：发布交付与支持原 owner；受影响消费者：iOS / Web / Agent。原 owner/精确 lease 保留。
+
 ### 执行边界与首个切片
 
 - 首个可交付结果：在已交付版本执行72小时系统及7天机会相关观察，归档未解缺陷、支持/事故责任和产品发布结论。
@@ -1423,6 +1439,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 [VPJ-46 #246](https://github.com/JTCAO515/VP-V4/issues/246) — 两周客户发现试点与后续运营交接
 
 当前工程：shared；优先级：P1。两周客户发现产生可执行结论。复用既有试点和访谈定义；保留真人与对外联系授权边界。
+
+分类：product-operations；lead：客户发现原 owner；受影响消费者：iOS / Web。原 owner/精确 lease 保留。
 
 ### 执行边界与首个切片
 
@@ -1456,6 +1474,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 [VPJ-47 #247](https://github.com/JTCAO515/VP-V4/issues/247) — 真实激活、付费与人工成本的经营观察
 
 当前工程：shared；优先级：P1。观察真实激活、付费与人工成本。复用事件与经营定义；补真实发布后的观察，不把 synthetic 当经营结果。
+
+分类：product-operations；lead：经营观察原 owner；受影响消费者：iOS / Web / Agent。原 owner/精确 lease 保留。
 
 ### 执行边界与首个切片
 
@@ -1637,6 +1657,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 当前工程：shared；优先级：P2。有需求证据时再设计 Android 与新语言。保留 activationEvidence；本轮不新建 Android/SDK 工程。
 
+分类：product-operations；lead：产品需求与语言范围负责人（沿原决策归属）；受影响消费者：iOS / Web。原 owner/精确 lease 保留。
+
 ### 执行边界与首个切片
 
 - 首个可交付结果：保持expand门：以真实需求及成本证据形成Android或新增语言的先后决定和一个明确实施范围。
@@ -1667,6 +1689,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 [VPJ-54 #252](https://github.com/JTCAO515/VP-V4/issues/252) — 年订阅与交易深度升级的证据决策
 
 当前工程：shared；优先级：P2。凭经营证据决定年订阅与交易扩展。保留 activationEvidence；不把商业全矩阵前置到 QA 首答。
+
+分类：product-operations；lead：产品商业策略负责人（沿原决策归属）；受影响消费者：iOS / Web / Agent。原 owner/精确 lease 保留。
 
 ### 执行边界与首个切片
 
@@ -1760,6 +1784,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 [VPJ-57 #222](https://github.com/JTCAO515/VP-V4/issues/222) — 用户服务请求与按任务授予资料访问
 
 当前工程：shared；优先级：P1。人工服务只访问按任务授予的资料。复用 ServiceCase 与许可；保持用户同意和接收方隔离，不让 Agent 默认读取私有资料。
+
+分类：business-data；lead：ServiceCase 与资料许可原 domain owner；受影响消费者：iOS / Web / Agent。原 owner/精确 lease 保留。
 
 ### 执行边界与首个切片
 

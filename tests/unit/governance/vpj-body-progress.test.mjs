@@ -351,3 +351,19 @@ test('reviewed modular bodies retain completed criteria and append-only progress
   assert.throws(() => body({ ...migrated, modularDirection: { ...migrated.modularDirection, priority: 'P0' } }), /modular attribution drift/);
   assert.throws(() => prepareBodyUpdates([migrated], [{ ...issue, body: remote.replace('## 当前目标与工程责任', '## Concurrently rewritten scope') }]), /body preflight failed/);
 });
+
+
+test('unchecking a reviewed completed item refuses the whole body-update batch without restoring completion', () => {
+  const migrated = plan.tasks.find(entry => entry.number === 195);
+  const snapshot = body(migrated);
+  const remote = snapshot.replace('- [x] ', '- [ ] ') + '\n## New evidence\nRetain the explicit reopened criterion.\n';
+  const issue = { number: migrated.number, id: migrated.databaseId, title: `[${migrated.id}] ${migrated.title}`, body: remote };
+  assert.throws(() => prepareBodyUpdates([migrated], [issue]), /previously checked acceptance is now unchecked/);
+  assert.equal(issue.body, remote, 'preflight is read-only, including the unchecked criterion and appended evidence');
+  assert.throws(() => prepareBodyUpdates([migrated], [issue], new Map([[migrated.id, snapshot.replace('- [x] ', '- [ ] ')]])), /refuse automatic restoration/, 'an older unchecked template cannot bypass the refusal');
+  const newlyChecked = snapshot.replace('- [ ] ', '- [x] ') + '\n## More evidence\nNew completion remains.\n';
+  assert.equal(prepareBodyUpdates([migrated], [{ ...issue, body: newlyChecked }])[0].body, newlyChecked);
+  // A duplicate checked statement elsewhere cannot override the explicit uncheck at its original position.
+  const duplicate = remote + '\n' + snapshot.split('\n').find(line => line.startsWith('- [x] ')) + '\n';
+  assert.throws(() => preserveIssueProgress(duplicate, snapshot, snapshot, migrated.id), /previously checked acceptance is now unchecked/);
+});

@@ -159,7 +159,7 @@ export function modularBody(number, task, value = plan) {
   }
   if (task) {
     assert.deepEqual(task.modularDirection, Object.fromEntries(
-      ['engineeringOwner', 'priority', 'userOutcome', 'deltaAndReuse'].map(key => [key, entry[key]])),
+      ['engineeringOwner', 'priority', 'userOutcome', 'deltaAndReuse', 'category', 'lead', 'affectedConsumers'].filter(key => entry[key] !== undefined).map(key => [key, entry[key]])),
     `modular attribution drift for #${number}; refresh the reviewed mapping`);
     assert.equal(createHash('sha256').update(JSON.stringify(task)).digest('hex'), entry.taskDefinitionSha256,
       `task definition changed for #${number}; refresh the reviewed modular snapshot`);
@@ -220,6 +220,7 @@ const defaulted = (value, fallback) => (value === fallback ? '默认（见文件
 export function executionContractRow(t) {
   return `## ${t.id}\n\n${link(t.id)} — ${t.title}\n\n` +
     (t.modularDirection ? `当前工程：${t.modularDirection.engineeringOwner}；优先级：${t.modularDirection.priority}。${t.modularDirection.userOutcome}。${t.modularDirection.deltaAndReuse}。\n\n` : '') +
+    (t.modularDirection?.lead ? `分类：${t.modularDirection.category}；lead：${t.modularDirection.lead}；受影响消费者：${t.modularDirection.affectedConsumers.join(' / ')}。原 owner/精确 lease 保留。\n\n` : '') +
     executionBriefBlock(t).replace('## 执行边界与首个切片', '### 执行边界与首个切片') +
     `- Owner: ${t.owner}; ${t.kind}; ${t.effortDays}专注日，${t.observationWindow}\n` +
     `- 验收阶段: ${t.deliveryStage}\n` +
@@ -487,8 +488,19 @@ export function preserveIssueProgress(currentBody, previousGeneratedBody, nextGe
   `${id} unknown body drift; no safe generated prefix. Review the remote body and preserve progress with a scoped update.`);
   const prefix = current.slice(0, previous.length);
   const suffix = current.slice(previous.length);
+  const currentEntries = new Map(checklistEntries(prefix).map(entry => [entry.lineIndex, entry]));
+  for (const entry of checklistEntries(previous)) {
+    assert.ok(!entry.checked || currentEntries.get(entry.lineIndex)?.checked,
+      `${id} previously checked acceptance is now unchecked; refuse automatic restoration: ${entry.text}`);
+  }
   const next = normalizeNewlines(nextGeneratedBody).trimEnd();
   const nextEntries = checklistEntries(next);
+  const liveEntries = checklistEntries(current);
+  for (const entry of nextEntries.filter(item => item.checked)) {
+    const matches = liveEntries.filter(item => item.text === entry.text);
+    assert.ok(matches.length && matches.every(item => item.checked),
+      `${id} checked template acceptance is now unchecked or absent; refuse automatic restoration: ${entry.text}`);
+  }
   const nextCriteria = new Set(nextEntries.map(entry => entry.text));
   const prefixCompleted = new Set(checklistEntries(prefix).filter(entry => entry.checked).map(entry => entry.text));
   for (const criterion of prefixCompleted) {

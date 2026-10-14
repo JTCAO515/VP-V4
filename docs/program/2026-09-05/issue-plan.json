@@ -1002,7 +1002,14 @@
         "engineeringOwner": "shared",
         "priority": "P1",
         "userOutcome": "显式 Memory 影响结果且可纠正遗忘",
-        "deltaAndReuse": "复用唯一 Profile/Memory 权威与原生页面；补真实消费/撤回链，不复制画像库"
+        "deltaAndReuse": "复用唯一 Profile/Memory 权威与原生页面；补真实消费/撤回链，不复制画像库",
+        "category": "business-data",
+        "lead": "Profile/Memory 原 domain owner",
+        "affectedConsumers": [
+          "iOS",
+          "Web",
+          "Agent"
+        ]
       }
     },
     {
@@ -2026,10 +2033,16 @@
         "VPJ-03"
       ],
       "modularDirection": {
-        "engineeringOwner": "Web",
+        "engineeringOwner": "iOS",
         "priority": "P1",
         "userOutcome": "酒店需求通过可信官方出口交接",
-        "deltaAndReuse": "复用酒店 allowlist/归因合同供双端消费；补参数实测，opened 不当 booked"
+        "deltaAndReuse": "复用酒店 allowlist/归因合同供双端消费；补参数实测，opened 不当 booked",
+        "category": "business-data",
+        "lead": "iOS 酒店交接原 owner（与 Web consumer owner 协作）",
+        "affectedConsumers": [
+          "iOS",
+          "Web"
+        ]
       }
     },
     {
@@ -3028,7 +3041,14 @@
         "engineeringOwner": "shared",
         "priority": "P1",
         "userOutcome": "用户理解 Free/订阅和旧 Pass 边界",
-        "deltaAndReuse": "复用现行商品策略；工程划分不改变定价与旧 Pass 兼容，不自动启用年订阅"
+        "deltaAndReuse": "复用现行商品策略；工程划分不改变定价与旧 Pass 兼容，不自动启用年订阅",
+        "category": "product-operations",
+        "lead": "商品策略原 owner",
+        "affectedConsumers": [
+          "iOS",
+          "Web",
+          "Agent"
+        ]
       }
     },
     {
@@ -3132,7 +3152,13 @@
         "engineeringOwner": "shared",
         "priority": "P1",
         "userOutcome": "官方购买与旧订阅得到同源权益",
-        "deltaAndReuse": "复用购买/权益合同与 #503；补原真实验收，三工程不各自创建权益权威"
+        "deltaAndReuse": "复用购买/权益合同与 #503；补原真实验收，三工程不各自创建权益权威",
+        "category": "business-data",
+        "lead": "购买与权益原 domain owner",
+        "affectedConsumers": [
+          "iOS",
+          "Web"
+        ]
       }
     },
     {
@@ -3506,7 +3532,14 @@
         "engineeringOwner": "shared",
         "priority": "P1",
         "userOutcome": "恢复演练保持对象和删除状态一致",
-        "deltaAndReuse": "复用历史恢复工具与失败；保留原 Main A–D/条件 E，当前无 START/actual capture 不执行"
+        "deltaAndReuse": "复用历史恢复工具与失败；保留原 Main A–D/条件 E，当前无 START/actual capture 不执行",
+        "category": "quality-delivery",
+        "lead": "恢复演练与数据生命周期原 owner",
+        "affectedConsumers": [
+          "iOS",
+          "Web",
+          "Agent"
+        ]
       }
     },
     {
@@ -3591,7 +3624,14 @@
         "engineeringOwner": "shared",
         "priority": "P1",
         "userOutcome": "用户在境内外网络得到真实可用服务",
-        "deltaAndReuse": "按 iOS/Web/Agent 分别记录媒体酒店IAP通知网络证据；复用现有适配不推导全国覆盖"
+        "deltaAndReuse": "按 iOS/Web/Agent 分别记录媒体酒店IAP通知网络证据；复用现有适配不推导全国覆盖",
+        "category": "quality-delivery",
+        "lead": "跨端网络验收原 owner",
+        "affectedConsumers": [
+          "iOS",
+          "Web",
+          "Agent"
+        ]
       }
     },
     {
@@ -3993,7 +4033,14 @@
         "engineeringOwner": "shared",
         "priority": "P1",
         "userOutcome": "客户环境具备明确隔离与回滚能力",
-        "deltaAndReuse": "保留未来 Production 交付目标；当前 QA 固定共享 dzt，不在本轮新建库或迁移"
+        "deltaAndReuse": "保留未来 Production 交付目标；当前 QA 固定共享 dzt，不在本轮新建库或迁移",
+        "category": "quality-delivery",
+        "lead": "Production 环境与回滚原 owner",
+        "affectedConsumers": [
+          "iOS",
+          "Web",
+          "Agent"
+        ]
       }
     },
     {
@@ -4158,7 +4205,14 @@
         "engineeringOwner": "shared",
         "priority": "P1",
         "userOutcome": "用户收到产品后有支持和关账证据",
-        "deltaAndReuse": "复用运营交付链；补真实交付观察和回滚，不因工程拆分重做发布史"
+        "deltaAndReuse": "复用运营交付链；补真实交付观察和回滚，不因工程拆分重做发布史",
+        "category": "quality-delivery",
+        "lead": "发布交付与支持原 owner",
+        "affectedConsumers": [
+          "iOS",
+          "Web",
+          "Agent"
+        ]
       }
     },
     {
@@ -4240,7 +4294,13 @@
         "engineeringOwner": "shared",
         "priority": "P1",
         "userOutcome": "两周客户发现产生可执行结论",
-        "deltaAndReuse": "复用既有试点和访谈定义；保留真人与对外联系授权边界"
+        "deltaAndReuse": "复用既有试点和访谈定义；保留真人与对外联系授权边界",
+        "category": "product-operations",
+        "lead": "客户发现原 owner",
+        "affectedConsumers": [
+          "iOS",
+          "Web"
+        ]
       }
     },
     {
@@ -4327,7 +4387,14 @@
         "engineeringOwner": "shared",
         "priority": "P1",
         "userOutcome": "观察真实激活、付费与人工成本",
-        "deltaAndReuse": "复用事件与经营定义；补真实发布后的观察，不把 synthetic 当经营结果"
+        "deltaAndReuse": "复用事件与经营定义；补真实发布后的观察，不把 synthetic 当经营结果",
+        "category": "product-operations",
+        "lead": "经营观察原 owner",
+        "affectedConsumers": [
+          "iOS",
+          "Web",
+          "Agent"
+        ]
       }
     },
     {
@@ -4837,7 +4904,13 @@
         "engineeringOwner": "shared",
         "priority": "P2",
         "userOutcome": "有需求证据时再设计 Android 与新语言",
-        "deltaAndReuse": "保留 activationEvidence；本轮不新建 Android/SDK 工程"
+        "deltaAndReuse": "保留 activationEvidence；本轮不新建 Android/SDK 工程",
+        "category": "product-operations",
+        "lead": "产品需求与语言范围负责人（沿原决策归属）",
+        "affectedConsumers": [
+          "iOS",
+          "Web"
+        ]
       }
     },
     {
@@ -4918,7 +4991,14 @@
         "engineeringOwner": "shared",
         "priority": "P2",
         "userOutcome": "凭经营证据决定年订阅与交易扩展",
-        "deltaAndReuse": "保留 activationEvidence；不把商业全矩阵前置到 QA 首答"
+        "deltaAndReuse": "保留 activationEvidence；不把商业全矩阵前置到 QA 首答",
+        "category": "product-operations",
+        "lead": "产品商业策略负责人（沿原决策归属）",
+        "affectedConsumers": [
+          "iOS",
+          "Web",
+          "Agent"
+        ]
       }
     },
     {
@@ -5188,7 +5268,14 @@
         "engineeringOwner": "shared",
         "priority": "P1",
         "userOutcome": "人工服务只访问按任务授予的资料",
-        "deltaAndReuse": "复用 ServiceCase 与许可；保持用户同意和接收方隔离，不让 Agent 默认读取私有资料"
+        "deltaAndReuse": "复用 ServiceCase 与许可；保持用户同意和接收方隔离，不让 Agent 默认读取私有资料",
+        "category": "business-data",
+        "lead": "ServiceCase 与资料许可原 domain owner",
+        "affectedConsumers": [
+          "iOS",
+          "Web",
+          "Agent"
+        ]
       }
     },
     {

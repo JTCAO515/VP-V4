@@ -11,9 +11,13 @@ VisePanda 继续帮助来华旅客规划、准备与完成旅程。iOS、Web、A
 | iOS | `ios/VisePanda`，VP/Journeys/Library/Memory 四 Tab | 原生体验、设备能力、Native Bearer 适配、签名与设备验收 | 消费版本化业务 API；不嵌入 worker/provider 凭据 |
 | Web | `app`、`components`；首体验 `/qa`，已有 TripCanvas | 浏览器会话与成果呈现、Cookie/CSRF 适配、Web 构建与 Vercel 入口 | 服务端适配业务端口；不要求等待完整 iOS 发布 |
 | Agent | `lib/server/qa-agent`、`qa-agent-context`、`turn`、`model-gateway` 与现有 hosted worker | 持久任务、上下文资格、模型调用、预算、执行与结果收据 | 对两端提供同一业务语义，独立执行/版本验证；当前仍与 Next 服务入口共存 |
-| shared 业务合同 | 既有 `docs/contracts`、Trip/身份/政策/数据生命周期权威 | 对象身份、版本、授权、确认、幂等与兼容 | 是合同和权威归属，不是本轮新建共享 SDK 或第四产品 |
+| shared 业务与数据权威 | 现有 `lib/server` 的 Trip/身份/policy/lifecycle 模块、`supabase/migrations` 与 RLS，及 `docs/contracts` | 原领域 owner 保持对象身份、数据、授权、确认、幂等和生命周期权威，由 Main 协调精确单 writer lease | Agent/Web/iOS 消费这些领域端口；不是第四工程、新 SDK 或复制的数据层 |
+
+`lib/server` 是当前混合目录，不整体等于 Agent。Agent 负责执行/model/context/budget 的生产者与消费者接缝，仍消费 shared 身份、policy、Trip 和生命周期权威，不能自行接管全部 server/DB。Harness/CI 横向验证三工程与 shared 合同，既有测试和 CI owner/lease 保持。Web 的 Vercel、Agent 的 hosted worker、iOS 的签名发布各自消费对应渠道，不能互相取得部署或凭据权限。
 
 当前物理目录及构建保持原样。下一阶段先明确端口与可独立验证入口，再渐进抽取。不得先大搬目录、重写已合并能力或为了三个名字建立三个数据权威。
+
+shared 票按 `business-data`（原业务/数据 domain owner）、`quality-delivery`（恢复/基础设施/横向质量与交付 owner）、`product-operations`（产品经营决策和观察，非运行工程）分类。具体 lead 与受影响消费者见[现有逐票映射](../product/VPV10-MODULAR-001/issue-map.md)，不是把责任留给笼统 shared/HANDOFF；实际源码 writer 仍沿原 lease。
 
 ## 第一项可体验交付
 
@@ -27,6 +31,23 @@ VisePanda 继续帮助来华旅客规划、准备与完成旅程。iOS、Web、A
 - 真实 QA 最小闭环：#680–#683 保持真实 Auth/provider、持久化、多轮及隔离标准；依实际目标、策略/预算和原恢复门禁推进。前端样例完成不会关闭这些真实验收条款。
 
 两条前沿都只在方向阶段完成后由唯一 Main 使用已有授权安排；本文不新增 UI route、演示实现或派工。共享消费者与端口有冲突时按精确 lease 串行整合，不让真实 provider 的等待阻塞所有独立 UX 工作。
+
+## #681 有限前端样例工作单元（规划，尚未派发）
+
+用户结果：从明确标识 Sample / 未接入的 `/qa/demo` 入口，切换两组示例会话，输入追问并查看确定性的示例响应，随后重置到初始数据。
+
+- 计划范围：`app/qa/demo/**`、`components/qa-demo/**`；复用 `/qa` 的可用交互样式和四 Tab/VPJ77 的呈现经验。只在组件内使用标识 synthetic 的静态 fixtures 和内存状态。
+- 排除：不接 Agent/provider/Auth API，不持久化真实 Session/Memory/Trip，不使用 cookies、localStorage 或真实用户资料，不改真实 `/qa` 请求路径。
+- Source owner：方向阶段完成后由唯一 Main 派给新的独立开发聊天并授精确路径 lease；现在没有 UI writer、没有实现/新路由或新派工。
+- 输入与依赖：本规范、现有 UI 可读源码、两组明确 synthetic fixtures、可运行前端环境和路径 lease；不以真实 provider、全 80 迁移或 SDK/商业矩阵作为本样例前置。
+
+样例验收（不得用于替代本票真实验收）：
+
+- [ ] `/qa/demo` 始终可见 Sample / 未接入说明，静态内容不冒充真实模型回答或保存成果。
+- [ ] 可切换示例会话、键盘输入/提交追问、查看确定性示例响应，并一键 reset；切换与 reset 不丢失焦点路径或留下伪运行状态。
+- [ ] 浏览器验证示例操作不触发 Agent/Auth/provider/数据网络请求（正常静态资源加载除外），无 key/secret 引用，无真实数据持久化。
+- [ ] 明确链接到真实 `/qa` 入口，进入真实入口仍走原登录/许可边界；样例按钮不模拟已登录、已授权或真实成功。
+- [ ] 记录测试版本和实际交互证据；样例完成不关闭 #681，原 real Auth/persist/answer 全部验收继续独立保留。
 
 ## 版本化业务接口
 

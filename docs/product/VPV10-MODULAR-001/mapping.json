@@ -36,7 +36,17 @@
       "retainedInOriginalBody": true
     },
     "beforeSha256": "8c0834e49053f24c39f210c35989c22efc435b56d6a33aa46d1067283b1adb7c",
-    "afterSha256": "6df52023abf64194982c5b61ea1457749a169ee1b6b76eaff82be352aa28d355"
+    "afterSha256": "e95ff4ae488c8a96acb2ac012157dc58fa3d1035e5e05cde386d8e650787f736",
+    "plannedSampleWorkUnit": {
+      "entry": "/qa/demo",
+      "allowedPaths": [
+        "app/qa/demo/**",
+        "components/qa-demo/**"
+      ],
+      "owner": "Main assigns an independent chat after direction phase",
+      "implemented": false,
+      "doesNotCloseRealAcceptance": true
+    }
   },
   {
     "number": 680,
@@ -88,7 +98,14 @@
       "retainedInOriginalBody": true
     },
     "beforeSha256": "a32463ad6e3b85119c24c6a20360bd033935c6d02757905ca5f5a2a73082893c",
-    "afterSha256": "0c22b21afced624cb21a02ebe8b839b14f0ba24f063c6d8b8acc3498d9858513"
+    "afterSha256": "d57e7b1e41c8f171d1e9920fd26e2c8e635b7f6ce8fac4858d6e9ca34bf89a0e",
+    "category": "business-data",
+    "lead": "删除与数据生命周期原 domain owner",
+    "affectedConsumers": [
+      "iOS",
+      "Web",
+      "Agent"
+    ]
   },
   {
     "number": 503,
@@ -101,7 +118,13 @@
       "retainedInOriginalBody": true
     },
     "beforeSha256": "b4c3fa2e2930e756dbd237af3e5022ba2a6e385323449306e2d4ee39034844d5",
-    "afterSha256": "6f273fdb061b77f0c46e0e747bd11be2a1a88ef45b815cd7277aea97574056dc"
+    "afterSha256": "a274d08399ad3dc74a04a85b60f9973afaecec4494557e59d96f96eabaa9102e",
+    "category": "business-data",
+    "lead": "购买与权益原 domain owner",
+    "affectedConsumers": [
+      "iOS",
+      "Web"
+    ]
   },
   {
     "number": 367,
@@ -290,8 +313,15 @@
       "acceptanceDependencies": []
     },
     "beforeSha256": "c727b1d74d42d0672cbf896bb517aab9c80606e6397bdf2b0a264a8cf2ebf853",
-    "afterSha256": "6cd19f996831f7f9063d0b16093589333d48c0ac31bde296c39bfa5d4ef99a0a",
-    "taskDefinitionSha256": "f73411fd608a747b2bf5c15888cfb12de5c25b4f5b04997ed35fe540a7cd14a1"
+    "afterSha256": "71af0e22848577cd2439469f267bb6e5b4e963d52274923f4381f8ae3d6f54ea",
+    "taskDefinitionSha256": "c04bf501ec91228e37977c228519b3a9b05c43ec56589b624f9260063fa03576",
+    "category": "product-operations",
+    "lead": "产品商业策略负责人（沿原决策归属）",
+    "affectedConsumers": [
+      "iOS",
+      "Web",
+      "Agent"
+    ]
   },
   {
     "number": 251,
@@ -308,8 +338,14 @@
       "acceptanceDependencies": []
     },
     "beforeSha256": "22601625432139d88ca302e13542854b520888877e4b4b0c4869beddd10655d9",
-    "afterSha256": "cd9733fe52e3b43b5fa085702a3e90897d7cd3edb7be418036dce1e283a0333c",
-    "taskDefinitionSha256": "ab3567395b74355d904671d682160330deefa81cca21c751d673820f0073f114"
+    "afterSha256": "0af147af5cdb87fceb77a101456ba21372582179b840f816450cb78ef0838e6a",
+    "taskDefinitionSha256": "be4387f48e01e32b5b2bcb628122f1e51ff8c5d4ad50eac0a81d8da94ebba868",
+    "category": "product-operations",
+    "lead": "产品需求与语言范围负责人（沿原决策归属）",
+    "affectedConsumers": [
+      "iOS",
+      "Web"
+    ]
   },
   {
     "number": 250,
@@ -386,8 +422,15 @@
       ]
     },
     "beforeSha256": "3d238e473c45f2fb99a6e15da8eaada8f557869372ad58ec1585561df147e76f",
-    "afterSha256": "f6fc0b7cbf758cbe72b6059f481fc6d794c3dcad6e2d609408d81a285a9975a8",
-    "taskDefinitionSha256": "3b5f849a9cc978fe08e56d210b8559cce73a9237e9c5cea535ec492408a901e3"
+    "afterSha256": "c93ab1ee45e50fe4891f0362c91ae4a774b094e34f2a41f1253334ddc34e58cc",
+    "taskDefinitionSha256": "509634d0c8536fb5bd9d375782f73fe6a97e2e9c32d1f42a923b39421d04b4a2",
+    "category": "product-operations",
+    "lead": "经营观察原 owner",
+    "affectedConsumers": [
+      "iOS",
+      "Web",
+      "Agent"
+    ]
   },
   {
     "number": 246,
@@ -401,8 +444,14 @@
       "acceptanceDependencies": []
     },
     "beforeSha256": "7be5d1c3bee099c68759f66dd3b292570bf70d36d6051edac581e30860015978",
-    "afterSha256": "4049f2e2e3b5a22906d90d718d664ea59af2b24c3497f407de24ce74869103e0",
-    "taskDefinitionSha256": "fe289124544721f8bff8a46598d3c851f71845a22bc7a8b1c3957ec54df8ec46"
+    "afterSha256": "d628842aa56d3246656e8cbefea986492e00ba6a0f2d275c58d0adaff72ca985",
+    "taskDefinitionSha256": "37433828f1c8fe0acf1b704949c1b491f384f9b54d12f07925aaa0362916fdc6",
+    "category": "product-operations",
+    "lead": "客户发现原 owner",
+    "affectedConsumers": [
+      "iOS",
+      "Web"
+    ]
   },
   {
     "number": 245,
@@ -419,8 +468,15 @@
       "acceptanceDependencies": []
     },
     "beforeSha256": "ae96ac65b34063a803fb795f8b17d195e5ed588aa505bb1d3e699fa7aaf4957a",
-    "afterSha256": "747fca9be0fbb6cccb2bc4f8d9090f59cbc89d0363bae0da7a935069c758c42a",
-    "taskDefinitionSha256": "96dc28feebf251d8706abb94e37bac370ac18170eec8515f6ef362ea7005f70e"
+    "afterSha256": "d986397c17834e7b4db01ba46ff58803ed2f03f08a1fa13ecdf2797aad92d84c",
+    "taskDefinitionSha256": "06b2ee4a3ba37276a276f0d3571f15a5ce2c1342ec8cb41954e9d94da079f230",
+    "category": "quality-delivery",
+    "lead": "发布交付与支持原 owner",
+    "affectedConsumers": [
+      "iOS",
+      "Web",
+      "Agent"
+    ]
   },
   {
     "number": 244,
@@ -456,8 +512,15 @@
       ]
     },
     "beforeSha256": "5fc34792a57e0c2840ea3ced779e3d170bd5d4ee4ea1deccff6708b35fe651b4",
-    "afterSha256": "410d00ef409b18b56147db78fbf68e2c1ac075aa4b4c3f485afdf8b24a54fa6e",
-    "taskDefinitionSha256": "2b84092854fd9b80861900a3e039338811e0b9be7cdf1cc2b3328281dedafb05"
+    "afterSha256": "be2cc82b51aa4b0ff5225fe7b18774b81311485e4934e66d263753ddedbda24c",
+    "taskDefinitionSha256": "61f563e07f401afb0c24b5cb529bc7a346cefef7413c40c6a4384af478f7276c",
+    "category": "quality-delivery",
+    "lead": "Production 环境与回滚原 owner",
+    "affectedConsumers": [
+      "iOS",
+      "Web",
+      "Agent"
+    ]
   },
   {
     "number": 242,
@@ -591,8 +654,15 @@
       ]
     },
     "beforeSha256": "600c77b1b78b4c46bc2e782d65e7d9b799b0a15c97646baaa72eeeebde10453f",
-    "afterSha256": "f49ef5eaec48f70789f707ffc68380b75d477d550c068959b5e151e7379e92c5",
-    "taskDefinitionSha256": "57a4eb1db1d366aa1fdde48dbb14db7683b6743115deb0be418316fe378497dd"
+    "afterSha256": "5472c99857b4535a0d61376dc6b275afb852a1b5f0b6627ad3d5af85ef5dc08f",
+    "taskDefinitionSha256": "3093ebffd0efe71244fd568e005390134db75f3f7fefe8343d2ffbf635c7b59a",
+    "category": "quality-delivery",
+    "lead": "跨端网络验收原 owner",
+    "affectedConsumers": [
+      "iOS",
+      "Web",
+      "Agent"
+    ]
   },
   {
     "number": 230,
@@ -610,8 +680,15 @@
       ]
     },
     "beforeSha256": "6eb3cf5334baf130fc354f2ffcfce233706a73b8121f1f0b18d60095e846dc1c",
-    "afterSha256": "a70efe09f41b2aa58a83b52fb5a663ce57ffa94fad5bace042c459c9843f709f",
-    "taskDefinitionSha256": "376fd3bae871125b237bc61762274ed4c1b693479a5375287581a534f0619e75"
+    "afterSha256": "5a970e4997a822bfa838d7189ff675b041e3f8e8c55bbf09b713c44d59aec117",
+    "taskDefinitionSha256": "39671f293d42521d6ba8d88df0e217492278e80055a9c3dc612f3d169a26b3a7",
+    "category": "quality-delivery",
+    "lead": "恢复演练与数据生命周期原 owner",
+    "affectedConsumers": [
+      "iOS",
+      "Web",
+      "Agent"
+    ]
   },
   {
     "number": 229,
@@ -666,8 +743,14 @@
       ]
     },
     "beforeSha256": "6868e2699c82f437fcaf9598fa9cec07f89dd5cbc10386af21426f740af65085",
-    "afterSha256": "c3def98dc7b2fe73d6b379f1c54940d343de1f912d2ef68702dfbac3ee8493e7",
-    "taskDefinitionSha256": "dc27cf63aff950050cd54866ecc6b47af6e988be943780cff398356f01339ce9"
+    "afterSha256": "672c38f39b6be3dc56dd5134a1ed404ee0ab2b983def400c5d28149969b486bf",
+    "taskDefinitionSha256": "0691837be6803bac312ab86e42937045d6865cb674051955480623f3e3b264b0",
+    "category": "business-data",
+    "lead": "购买与权益原 domain owner",
+    "affectedConsumers": [
+      "iOS",
+      "Web"
+    ]
   },
   {
     "number": 225,
@@ -683,8 +766,15 @@
       ]
     },
     "beforeSha256": "7c1d96a7b4abfb0d77ecc50c6db6354f43b1e9f81a7456b5a3eb3f11ff52e21f",
-    "afterSha256": "630a799086ed050181c318f61ac2bad7b36efa0576500065eda68f132de23ca5",
-    "taskDefinitionSha256": "52e3ec9dfd7e07024a7e3bd84bbdf02b0fcf076e81e8ceb8fa56f402c5199eba"
+    "afterSha256": "4327353cc5a6ba326cdb11a7739d6f48d1945ef84d0ed80819146d071b2a1b80",
+    "taskDefinitionSha256": "f31d3609ecf71d7108eab05dda81c5875af65d3e7f393cfeda4ab81e889f3d4a",
+    "category": "product-operations",
+    "lead": "商品策略原 owner",
+    "affectedConsumers": [
+      "iOS",
+      "Web",
+      "Agent"
+    ]
   },
   {
     "number": 222,
@@ -702,8 +792,15 @@
       ]
     },
     "beforeSha256": "62ac9ee41738f5178001486cc11a989f7471889b4d4218b658d75c05db23ec8f",
-    "afterSha256": "8f13eba624dcb73403c4fe9ddb2772bda32406081bdfdbe67f937a7148dac4a3",
-    "taskDefinitionSha256": "73f5c22940574410470cbc68500ce816f00c02d3daacb53258d5642ed2cec610"
+    "afterSha256": "4bb6e05c8859ba9ac59a1cae7833c3765a9d0564ace71d9598ec12c49ebd7c0a",
+    "taskDefinitionSha256": "f0b8aa03e6d0c7d28a004b12a923147e70df153a4c79df5cef55d99c917e7d60",
+    "category": "business-data",
+    "lead": "ServiceCase 与资料许可原 domain owner",
+    "affectedConsumers": [
+      "iOS",
+      "Web",
+      "Agent"
+    ]
   },
   {
     "number": 216,
@@ -726,7 +823,7 @@
   {
     "number": 212,
     "title": "[VPJ-22] 酒店官方出口、参数落地与联盟归因验证",
-    "engineeringOwner": "Web",
+    "engineeringOwner": "iOS",
     "priority": "P1",
     "userOutcome": "酒店需求通过可信官方出口交接",
     "deltaAndReuse": "复用酒店 allowlist/归因合同供双端消费；补参数实测，opened 不当 booked",
@@ -737,8 +834,14 @@
       ]
     },
     "beforeSha256": "bf2a6731914538a56bd7ab2a8eed3321f35960e3a39e9fb9fc25e90f249cdd57",
-    "afterSha256": "a467f53084151ee2d5139ef240f92d46f1eb9a7059f933dbf4c1b26c29d0f308",
-    "taskDefinitionSha256": "5993347ae694f11a3ed46175bd169696fca3d7999804300c444c147737bdaaa0"
+    "afterSha256": "1966de3f47c23e83ed8f98e3570e32cbd23cc72cbe83c67aea04a257b8421097",
+    "taskDefinitionSha256": "c8e8b1fcb32146aa5ec74ed2cc2d46b2c658dde6216a7aeba8bb97378e4c1ea5",
+    "category": "business-data",
+    "lead": "iOS 酒店交接原 owner（与 Web consumer owner 协作）",
+    "affectedConsumers": [
+      "iOS",
+      "Web"
+    ]
   },
   {
     "number": 210,
@@ -905,8 +1008,15 @@
       ]
     },
     "beforeSha256": "81cfea288ff5524104333ec251f22ab8e04e0605e544284a2e289a029be7a8ff",
-    "afterSha256": "37e2bbd6969008ab74502e3facfddd4b2b2de33b5d973a882244966b69ad5210",
-    "taskDefinitionSha256": "65ed0d1d82ded6b24be65b1e82037a5eacbcf22b33c645fca84076f24fc49b42"
+    "afterSha256": "bdeb197033be76dfd7c2871b75bc4eaac97a858a03014d72e68aabeb90300bdf",
+    "taskDefinitionSha256": "9cf979a346d6ee08de84d5f53f8fd85044c0acb53cf7cf857148a51d84160398",
+    "category": "business-data",
+    "lead": "Profile/Memory 原 domain owner",
+    "affectedConsumers": [
+      "iOS",
+      "Web",
+      "Agent"
+    ]
   },
   {
     "number": 195,
@@ -939,6 +1049,13 @@
       "retainedInOriginalBody": true
     },
     "beforeSha256": "955535db1924352f270fd5166fb9ca207315f27032b672f94e5613151b22a2e9",
-    "afterSha256": "2e39c25473d7ccf8e231f6d9b158937e774104ef4766ab89997ed19220c6bbe5"
+    "afterSha256": "2a3670f867d32b2187509ea1a9c92d90ffb08bd74afc2bb4b82622d2769cb42a",
+    "category": "product-operations",
+    "lead": "唯一 Main 统筹，产品取舍沿 BestJ/CoolJ/JT 原职责",
+    "affectedConsumers": [
+      "iOS",
+      "Web",
+      "Agent"
+    ]
   }
 ]

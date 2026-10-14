@@ -4,7 +4,7 @@
 
 VisePanda 面向国际来华自由行旅客，围绕同一个 Trip 连接规划、材料、准备、现场沟通与变化后的行程调整。同仓维护独立演进的 iOS、Web、Agent 三工程，复用同一业务合同与既有资源。发布范围为中英，既有 es/ru/ar 资产与协议兼容由 VPJ-01 迁移。
 
-[产品与任务入口](docs/program/2026-09-05/README.md) · [完整产品规划](docs/VISEPANDA-MASTER-PLAN-2026-09-05.md) · [当前交接与证据](CONTEXT.md) · [2026-09-24 开发状态](docs/program/2026-09-05/CURRENT-STATUS-2026-09-24.md)
+[产品与任务入口](docs/program/2026-09-05/README.md) · [完整产品规划](docs/VISEPANDA-MASTER-PLAN-2026-09-05.md) · [当前工程边界](docs/contracts/vpv4-project-boundaries.md) · [历史交接记录（2026-10-02）](CONTEXT.md) · [2026-09-24 开发状态](docs/program/2026-09-05/CURRENT-STATUS-2026-09-24.md)
 
 当前先完成[三工程方向与端口边界](docs/contracts/vpv4-project-boundaries.md)及[开放 Issue 重排](docs/product/VPV10-MODULAR-001/README.md)，随后由唯一 Main 按真实 ready 前沿接续。第一项可体验交付是 `/qa` 的真实登录、首答、持久 Session 与有界多轮（#680–#683）。
 
@@ -19,7 +19,8 @@ VisePanda 面向国际来华自由行旅客，围绕同一个 Trip 连接规划�
 | Web / API | [app](app)、[components](components)：Next.js App Router、React、strict TypeScript、Tailwind CSS v4 |
 | 现有 Web 工作区 | [Chatbot](components/chat/ChatThreadWorkspace.tsx)、[Trip Canvas](components/canvas/TripCanvas.tsx)、[Today](components/today/TodayWorkspace.tsx) 及其[领域合同](docs/program/2026-09-05/INTERFACES.md)继续复用；真实链路按相应 Issue 验收 |
 | 原生 iOS | [ios/VisePanda](ios/VisePanda/README.md)：SwiftUI 工程、导航、语言与原生测试；配置后可使用登录、Trip、Ask、地点输入、截图审阅等已有消费者，未启用 endpoint 时显示开发预览 |
-| 领域与服务端 | [lib/server](lib/server)：Trip/Proposal/Patch、身份、模型协议、持久预算、知识及媒体模块 |
+| shared 业务与数据权威 | [lib/server](lib/server) 中 Trip/身份/policy/lifecycle 等现有领域模块及数据库权威由 Main 与原 domain owner 协调唯一 writer；不是全部归 Agent |
+| Agent 执行 | 现有 qa-agent/turn/model-gateway/hosted worker 消费领域端口，负责执行、模型、上下文与预算；不复制 Trip/身份/数据权威 |
 | 数据库 | [supabase/migrations](supabase/migrations)：只追加迁移；文件存在不表示已应用到目标环境 |
 | Harness | [docs/harness](docs/harness/README.md)、[evals/harness](evals/harness)：复用现有领域链路的评测、配对与恢复验收 |
 
@@ -39,7 +40,7 @@ pnpm docs:check
 git diff --check
 ```
 
-开始任务先读 [AGENTS.md](AGENTS.md)、[CONTEXT.md](CONTEXT.md) 和当前 Issue 的[执行行](docs/program/2026-09-05/EXECUTION-CONTRACT.md)。完整阅读与权威关系见 [Program 入口](docs/program/2026-09-05/README.md)，可复制的任务提示见 [Agent 启动说明](docs/program/2026-09-05/AGENT-KICKOFF.md)。
+开始任务先读 [AGENTS.md](AGENTS.md)、[当前工程边界](docs/contracts/vpv4-project-boundaries.md)、当前 Issue 及其[执行行](docs/program/2026-09-05/EXECUTION-CONTRACT.md)。完整阅读与权威关系见 [Program 入口](docs/program/2026-09-05/README.md)，可复制的任务提示见 [Agent 启动说明](docs/program/2026-09-05/AGENT-KICKOFF.md)。
 
 ## 专题导航
 
@@ -50,3 +51,5 @@ git diff --check
 - [历史 Issue 迁移](docs/program/2026-09-05/ISSUE-MIGRATION.md)、[归档与恢复](docs/program/2026-09-05/ARCHIVE.md)、[完整文档目录](docs/INDEX.md)
 
 现有 TripProposal → 可见 diff → 用户确认 → 原子 Patch、身份/RLS、数据与接收方许可、删除和迁移合同继续有效。运行素材使用本地 [VisePanda 资产](public/assets/visepanda)，保留许可与发布审核；研究、概念图和 fixture 不能当作真实模型、库存、支付、履约或全国覆盖的证明。
+
+工程发布渠道保持各自归属：Web 消费 Vercel，Agent hosted worker 消费既有执行环境，iOS 消费 Xcode/签名渠道；各自原 owner/lease 保留。Harness/CI 是横向验证职责，不是第四工程或新 SDK。

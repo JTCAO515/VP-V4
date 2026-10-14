@@ -44,7 +44,7 @@
 | #225 | shared | P1 | 用户理解 Free/订阅和旧 Pass 边界 | 复用现行商品策略；工程划分不改变定价与旧 Pass 兼容，不自动启用年订阅 |
 | #222 | shared | P1 | 人工服务只访问按任务授予的资料 | 复用 ServiceCase 与许可；保持用户同意和接收方隔离，不让 Agent 默认读取私有资料 |
 | #216 | iOS | P1 | 旅途中展示可信中英表达与大字卡 | 复用原生卡片和文本能力；补实际来源/语言/失败处理，媒体能力单独验证 |
-| #212 | Web | P1 | 酒店需求通过可信官方出口交接 | 复用酒店 allowlist/归因合同供双端消费；补参数实测，opened 不当 booked |
+| #212 | iOS | P1 | 酒店需求通过可信官方出口交接 | 复用酒店 allowlist/归因合同供双端消费；补参数实测，opened 不当 booked |
 | #210 | iOS | P1 | 用户发现保存地点并交给 VP | 复用 Explore/地点/目标入口；补真实成果交接，不改 Trip 确认路径 |
 | #209 | iOS | P1 | 地点消歧地图和路线出口保持一致 | 复用地图接口和 #363/#364；补准确实体/坐标/导航证据，provider 资格归 #208 |
 | #208 | Agent | P1 | 高德主选腾讯补充具有用途与成本证据 | 复用既有供应商适配和 #367；补真实输入和许可范围，不额外采购 |
@@ -56,3 +56,26 @@
 | #199 | shared | P1 | 显式 Memory 影响结果且可纠正遗忘 | 复用唯一 Profile/Memory 权威与原生页面；补真实消费/撤回链，不复制画像库 |
 | #195 | Agent | P1 | 持久文本任务执行并可恢复 | 复用完成文本纵切、hosted queue 和 worker；补剩余真实执行/恢复，QAWEB 是消费者不另建执行系统 |
 | #187 | shared | P0 | 统筹三工程与首个真实可体验交付 | 保留全部历史成果；先方向/文档/开放票重排，再由唯一 Main 接续真实 ready 前沿 |
+
+## shared 与酒店交接的主责分类
+
+这是责任分类，不增加运行工程；业务数据、横向质量交付、产品运营分别由原 owner 承接，Main 只协调共享 lease。
+
+| Issue | Category | Lead | Affected consumers |
+| --- | --- | --- | --- |
+| #504 | business-data | 删除与数据生命周期原 domain owner | iOS / Web / Agent |
+| #503 | business-data | 购买与权益原 domain owner | iOS / Web |
+| #252 | product-operations | 产品商业策略负责人（沿原决策归属） | iOS / Web / Agent |
+| #251 | product-operations | 产品需求与语言范围负责人（沿原决策归属） | iOS / Web |
+| #247 | product-operations | 经营观察原 owner | iOS / Web / Agent |
+| #246 | product-operations | 客户发现原 owner | iOS / Web |
+| #245 | quality-delivery | 发布交付与支持原 owner | iOS / Web / Agent |
+| #243 | quality-delivery | Production 环境与回滚原 owner | iOS / Web / Agent |
+| #232 | quality-delivery | 跨端网络验收原 owner | iOS / Web / Agent |
+| #230 | quality-delivery | 恢复演练与数据生命周期原 owner | iOS / Web / Agent |
+| #226 | business-data | 购买与权益原 domain owner | iOS / Web |
+| #225 | product-operations | 商品策略原 owner | iOS / Web / Agent |
+| #222 | business-data | ServiceCase 与资料许可原 domain owner | iOS / Web / Agent |
+| #199 | business-data | Profile/Memory 原 domain owner | iOS / Web / Agent |
+| #187 | product-operations | 唯一 Main 统筹，产品取舍沿 BestJ/CoolJ/JT 原职责 | iOS / Web / Agent |
+| #212 | business-data | iOS 酒店交接原 owner（与 Web consumer owner 协作） | iOS / Web |
