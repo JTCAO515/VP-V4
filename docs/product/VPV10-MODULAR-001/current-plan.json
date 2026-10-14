@@ -74,7 +74,7 @@
       "priority": "P0",
       "batch": "B1",
       "userOutcome": "真实文本请求经持久执行返回可恢复回答",
-      "remaining": "复用 qa-agent、hosted worker、ModelGateway 和原文本纵切；补真实 Auth→admission→worker→provider→持久读回、明确失败与预算收据。",
+      "remaining": "复用 qa-agent、hosted worker、ModelGateway 和原文本纵切；补真实 Auth→admission→worker→provider→持久读回、明确失败与预算收据。 既有 PR684/686 的服务、SQL/actorScope、客户端或context源码不因target未验视为缺码；先实测获准链路，再根据真实失败局部修复。",
       "reusePaths": [
         "docs/product/assistant-upgrade-2026-09-27/README.md",
         "docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md",
@@ -140,9 +140,9 @@
       "activationEvidence": [],
       "dependencies": [
         {
-          "taskId": "WEB-003",
+          "taskId": "AGENT-011",
           "kind": "acceptance",
-          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+          "reason": "真实目标恢复与权限就绪输入；独立源码/fixture工作不等待恢复整票"
         }
       ],
       "checks": [
@@ -154,6 +154,19 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "ios/**",
+        "app/api/chat/**",
+        "lib/server/turn/**",
+        "lib/server/jobs/**",
+        "supabase/migrations/**",
+        "tests/**/turn/**"
+      ],
+      "retainedPullRequests": [
+        684
       ]
     },
     {
@@ -172,7 +185,7 @@
       "priority": "P0",
       "batch": "B1",
       "userOutcome": "许可内同 Session 多轮与纠正真正进入模型",
-      "remaining": "复用 qa-context/1 资格、digest、有界完整对；补真实追问/纠正/新 Session 隔离与取消超时。",
+      "remaining": "复用 qa-context/1 资格、digest、有界完整对；补真实追问/纠正/新 Session 隔离与取消超时。 既有 PR684/686 的服务、SQL/actorScope、客户端或context源码不因target未验视为缺码；先实测获准链路，再根据真实失败局部修复。",
       "reusePaths": [],
       "evidence": [
         {
@@ -205,6 +218,12 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [],
+      "retainedPullRequests": [
+        684
       ]
     },
     {
@@ -307,7 +326,19 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
-      ]
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "ios/**",
+        "lib/server/memory/**",
+        "lib/server/context/**",
+        "supabase/migrations/**",
+        "tests/**/memory/**",
+        "app/api/memory/**",
+        "lib/server/identity/**"
+      ],
+      "retainedPullRequests": []
     },
     {
       "id": "AGENT-004",
@@ -400,7 +431,32 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
-      ]
+      ],
+      "nativeBlockedBy": [
+        358
+      ],
+      "retainedDependencyNotes": [
+        {
+          "sourceIssue": 359,
+          "originalDependency": 358,
+          "currentTarget": 358,
+          "scope": "原生开工依赖保留"
+        }
+      ],
+      "sourceScope": [
+        "apps/ops/**",
+        "lib/server/knowledge/**",
+        "lib/server/jobs/**",
+        "lib/server/model-gateway/**",
+        "supabase/migrations/**",
+        "tests/**/knowledge/**",
+        "tests/**/ops/**",
+        "evals/**",
+        "docs/knowledge-base/**",
+        "app/ops/**",
+        "app/api/ops/**"
+      ],
+      "retainedPullRequests": []
     },
     {
       "id": "AGENT-005",
@@ -509,6 +565,29 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [
+        {
+          "sourceIssue": 360,
+          "originalDependency": 359,
+          "currentTarget": 359,
+          "scope": "被合并子阶段的先后输入；不将其升级为整票硬阻塞"
+        }
+      ],
+      "sourceScope": [
+        "lib/server/knowledge/**",
+        "lib/server/turn/**",
+        "ios/**",
+        "components/chat/**",
+        "tests/**/knowledge/**",
+        "evals/**",
+        "lib/server/model-gateway/**",
+        "lib/grounded/**",
+        "supabase/migrations/**"
+      ],
+      "retainedPullRequests": [
+        416
       ]
     },
     {
@@ -588,7 +667,18 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
-      ]
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "docs/benchmarks/maps/**",
+        "docs/runbooks/**",
+        "docs/operator-actions.json",
+        "lib/server/maps/**",
+        "scripts/maps/**",
+        "tests/**/maps/**"
+      ],
+      "retainedPullRequests": []
     },
     {
       "id": "AGENT-007",
@@ -685,6 +775,18 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "lib/server/media/**",
+        "lib/server/media-translation/**",
+        "evals/**",
+        "docs/benchmarks/media/**",
+        "tests/**/media/**"
+      ],
+      "retainedPullRequests": [
+        484
       ]
     },
     {
@@ -831,7 +933,17 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
-      ]
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "lib/server/identity/quota/**",
+        "lib/server/model-gateway/**",
+        "lib/server/entitlements/**",
+        "ios/**",
+        "tests/**/cost/**"
+      ],
+      "retainedPullRequests": []
     },
     {
       "id": "AGENT-009",
@@ -969,7 +1081,17 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
-      ]
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "ios/**",
+        "app/api/storekit/**",
+        "lib/server/entitlements/**",
+        "supabase/migrations/**",
+        "tests/**/entitlements/**"
+      ],
+      "retainedPullRequests": []
     },
     {
       "id": "AGENT-010",
@@ -1020,6 +1142,12 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [],
+      "retainedPullRequests": [
+        496
       ]
     },
     {
@@ -1114,7 +1242,25 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
-      ]
+      ],
+      "nativeBlockedBy": [
+        189
+      ],
+      "retainedDependencyNotes": [
+        {
+          "sourceIssue": 230,
+          "originalDependency": 189,
+          "currentTarget": 189,
+          "scope": "原生开工依赖保留"
+        }
+      ],
+      "sourceScope": [
+        "scripts/db/restore/**",
+        "docs/runbooks/**",
+        "tests/**/restore/**",
+        "artifacts/VPJ-38/**"
+      ],
+      "retainedPullRequests": []
     },
     {
       "id": "AGENT-012",
@@ -1209,6 +1355,20 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "lib/server/observability/**",
+        "apps/ops/**",
+        "lib/flags/**",
+        "tests/**/observability/**",
+        "docs/runbooks/**",
+        "app/ops/**",
+        "app/api/ops/**"
+      ],
+      "retainedPullRequests": [
+        501
       ]
     },
     {
@@ -1523,6 +1683,65 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [
+        {
+          "sourceIssue": 265,
+          "originalDependency": 219,
+          "currentTarget": 219,
+          "scope": "被合并子阶段的先后输入；不将其升级为整票硬阻塞"
+        },
+        {
+          "sourceIssue": 266,
+          "originalDependency": 265,
+          "currentTarget": 264,
+          "scope": "被合并子阶段的先后输入；不将其升级为整票硬阻塞"
+        },
+        {
+          "sourceIssue": 268,
+          "originalDependency": 266,
+          "currentTarget": 264,
+          "scope": "被合并子阶段的先后输入；不将其升级为整票硬阻塞"
+        },
+        {
+          "sourceIssue": 268,
+          "originalDependency": 267,
+          "currentTarget": 264,
+          "scope": "被合并子阶段的先后输入；不将其升级为整票硬阻塞"
+        }
+      ],
+      "sourceScope": [
+        "lib/server/turn/**",
+        "lib/server/context/**",
+        "lib/server/knowledge/**",
+        "lib/server/observability/**",
+        "app/api/chat/**",
+        "components/chat/**",
+        "ios/VisePanda/**",
+        "evals/harness/**",
+        "tests/**/harness/**",
+        "docs/harness/**",
+        "artifacts/VPJ-67/**",
+        "lib/server/trip/**",
+        "lib/server/constraints/**",
+        "lib/server/memory/**",
+        "app/api/trips/**",
+        "components/canvas/**",
+        "artifacts/VPJ-68/**",
+        "lib/server/jobs/**",
+        "artifacts/VPJ-69/**",
+        "docs/benchmarks/**",
+        "lib/server/model-gateway/prompt/**",
+        "artifacts/VPJ-70/**",
+        "lib/flags/**",
+        "docs/acceptance/**",
+        "docs/runbooks/**",
+        "artifacts/VPJ-71/**"
+      ],
+      "retainedPullRequests": [
+        420,
+        495
       ]
     },
     {
@@ -1612,6 +1831,19 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "ios/**",
+        "apps/ops/**",
+        "lib/server/service-cases/**",
+        "lib/server/identity/**",
+        "supabase/migrations/**",
+        "tests/**/service-cases/**"
+      ],
+      "retainedPullRequests": [
+        497
       ]
     },
     {
@@ -1671,7 +1903,16 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
-      ]
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "docs/runbooks/**",
+        "scripts/db/**",
+        "docs/operator-actions.json",
+        "artifacts/VPJ-43/**"
+      ],
+      "retainedPullRequests": []
     },
     {
       "id": "AGENT-016",
@@ -1740,8 +1981,8 @@
       "dependencies": [
         {
           "taskId": "AGENT-005",
-          "kind": "acceptance",
-          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+          "kind": "implementation",
+          "reason": "保留原生开工硬依赖，superseded节点按其唯一承接任务重映射"
         }
       ],
       "checks": [
@@ -1753,7 +1994,25 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
-      ]
+      ],
+      "nativeBlockedBy": [
+        206
+      ],
+      "retainedDependencyNotes": [
+        {
+          "sourceIssue": 248,
+          "originalDependency": 360,
+          "currentTarget": 206,
+          "scope": "原生开工依赖保留"
+        }
+      ],
+      "sourceScope": [
+        "lib/server/knowledge/retrieval/**",
+        "evals/**",
+        "docs/benchmarks/**",
+        "supabase/migrations/**"
+      ],
+      "retainedPullRequests": []
     },
     {
       "id": "AGENT-017",
@@ -1829,7 +2088,25 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
-      ]
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [
+        {
+          "sourceIssue": 250,
+          "originalDependency": 249,
+          "currentTarget": 249,
+          "scope": "被合并子阶段的先后输入；不将其升级为整票硬阻塞"
+        }
+      ],
+      "sourceScope": [
+        "docs/benchmarks/aviation/**",
+        "docs/runbooks/**",
+        "artifacts/VPJ-51/**",
+        "lib/server/external-evidence/flight/**",
+        "ios/**",
+        "tests/**/flight/**"
+      ],
+      "retainedPullRequests": []
     },
     {
       "id": "AGENT-018",
@@ -1947,6 +2224,32 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [
+        {
+          "sourceIssue": 252,
+          "originalDependency": 245,
+          "currentTarget": 245,
+          "scope": "被合并子阶段的先后输入；不将其升级为整票硬阻塞"
+        },
+        {
+          "sourceIssue": 252,
+          "originalDependency": 247,
+          "currentTarget": 246,
+          "scope": "被合并子阶段的先后输入；不将其升级为整票硬阻塞"
+        }
+      ],
+      "sourceScope": [
+        "docs/commercial/**",
+        "docs/runbooks/**",
+        "lib/server/entitlements/**",
+        "tests/**/entitlements/**",
+        "docs/adr/**",
+        "artifacts/VPJ-54/**"
+      ],
+      "retainedPullRequests": [
+        482
       ]
     },
     {
@@ -2054,7 +2357,24 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
-      ]
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [
+        {
+          "sourceIssue": 247,
+          "originalDependency": 244,
+          "currentTarget": 244,
+          "scope": "被合并子阶段的先后输入；不将其升级为整票硬阻塞"
+        }
+      ],
+      "sourceScope": [
+        "docs/operations/**",
+        "docs/commercial/**",
+        "artifacts/VPJ-46/**",
+        "apps/ops/**",
+        "artifacts/VPJ-47/**"
+      ],
+      "retainedPullRequests": []
     },
     {
       "id": "AGENT-020",
@@ -2103,9 +2423,14 @@
       ],
       "dependencies": [
         {
+          "taskId": "AGENT-022",
+          "kind": "implementation",
+          "reason": "保留原生开工硬依赖，superseded节点按其唯一承接任务重映射"
+        },
+        {
           "taskId": "AGENT-019",
-          "kind": "acceptance",
-          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+          "kind": "implementation",
+          "reason": "保留原生开工硬依赖，superseded节点按其唯一承接任务重映射"
         }
       ],
       "checks": [
@@ -2117,7 +2442,31 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
-      ]
+      ],
+      "nativeBlockedBy": [
+        245,
+        246
+      ],
+      "retainedDependencyNotes": [
+        {
+          "sourceIssue": 251,
+          "originalDependency": 245,
+          "currentTarget": 245,
+          "scope": "原生开工依赖保留"
+        },
+        {
+          "sourceIssue": 251,
+          "originalDependency": 247,
+          "currentTarget": 246,
+          "scope": "原生开工依赖保留"
+        }
+      ],
+      "sourceScope": [
+        "docs/product/**",
+        "docs/benchmarks/**",
+        "artifacts/VPJ-53/**"
+      ],
+      "retainedPullRequests": []
     },
     {
       "id": "AGENT-021",
@@ -2222,7 +2571,15 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
-      ]
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "docs/benchmarks/network/**",
+        "scripts/diagnostics/**",
+        "artifacts/VPJ-39/**"
+      ],
+      "retainedPullRequests": []
     },
     {
       "id": "AGENT-022",
@@ -2268,13 +2625,13 @@
       "dependencies": [
         {
           "taskId": "IOS-009",
-          "kind": "acceptance",
-          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+          "kind": "implementation",
+          "reason": "保留原生开工硬依赖，superseded节点按其唯一承接任务重映射"
         },
         {
           "taskId": "IOS-010",
-          "kind": "acceptance",
-          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+          "kind": "implementation",
+          "reason": "保留原生开工硬依赖，superseded节点按其唯一承接任务重映射"
         }
       ],
       "checks": [
@@ -2286,7 +2643,32 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
-      ]
+      ],
+      "nativeBlockedBy": [
+        242,
+        244
+      ],
+      "retainedDependencyNotes": [
+        {
+          "sourceIssue": 245,
+          "originalDependency": 242,
+          "currentTarget": 242,
+          "scope": "原生开工依赖保留"
+        },
+        {
+          "sourceIssue": 245,
+          "originalDependency": 244,
+          "currentTarget": 244,
+          "scope": "原生开工依赖保留"
+        }
+      ],
+      "sourceScope": [
+        "docs/acceptance/**",
+        "docs/runbooks/**",
+        "artifacts/VPJ-45/**",
+        "docs/handoff.json"
+      ],
+      "retainedPullRequests": []
     },
     {
       "id": "IOS-001",
@@ -2416,7 +2798,24 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
-      ]
+      ],
+      "nativeBlockedBy": [
+        202
+      ],
+      "retainedDependencyNotes": [
+        {
+          "sourceIssue": 203,
+          "originalDependency": 202,
+          "currentTarget": 202,
+          "scope": "原生开工依赖保留"
+        }
+      ],
+      "sourceScope": [
+        "ios/**",
+        "tests/**/onboarding/**",
+        "docs/product/**"
+      ],
+      "retainedPullRequests": []
     },
     {
       "id": "IOS-002",
@@ -2529,6 +2928,19 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "ios/**",
+        "lib/server/artifacts/**",
+        "lib/server/media/**",
+        "app/api/artifacts/**",
+        "supabase/migrations/**",
+        "tests/**/artifacts/**"
+      ],
+      "retainedPullRequests": [
+        472
       ]
     },
     {
@@ -2662,7 +3074,30 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
-      ]
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [
+        {
+          "sourceIssue": 363,
+          "originalDependency": 362,
+          "currentTarget": 362,
+          "scope": "被合并子阶段的先后输入；不将其升级为整票硬阻塞"
+        }
+      ],
+      "sourceScope": [
+        "ios/**",
+        "lib/server/external-evidence/**",
+        "lib/server/explore/**",
+        "app/api/places/**",
+        "tests/**/places/**",
+        "lib/server/maps/**",
+        "scripts/maps/**",
+        "tests/**/maps/**",
+        "app/explore/**",
+        "components/explore/**",
+        "tests/**/explore/**"
+      ],
+      "retainedPullRequests": []
     },
     {
       "id": "IOS-004",
@@ -2710,7 +3145,11 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
-      ]
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [],
+      "retainedPullRequests": []
     },
     {
       "id": "IOS-005",
@@ -2802,6 +3241,19 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "ios/**",
+        "lib/server/media-translation/**",
+        "app/api/translate/**",
+        "tests/**/translate/**",
+        "evals/**",
+        "app/api/media/**"
+      ],
+      "retainedPullRequests": [
+        485
       ]
     },
     {
@@ -2889,6 +3341,16 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "docs/benchmarks/hotels/**",
+        "docs/runbooks/**",
+        "docs/operator-actions.json"
+      ],
+      "retainedPullRequests": [
+        498
       ]
     },
     {
@@ -2972,7 +3434,17 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
-      ]
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "ios/**",
+        ".github/workflows/**",
+        "scripts/ios/**",
+        "docs/runbooks/**",
+        "artifacts/VPJ-56/**"
+      ],
+      "retainedPullRequests": []
     },
     {
       "id": "IOS-008",
@@ -3102,7 +3574,25 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
-      ]
+      ],
+      "nativeBlockedBy": [
+        241
+      ],
+      "retainedDependencyNotes": [
+        {
+          "sourceIssue": 233,
+          "originalDependency": 241,
+          "currentTarget": 241,
+          "scope": "原生开工依赖保留"
+        }
+      ],
+      "sourceScope": [
+        "ios/**",
+        "tests/**/ios/**",
+        "docs/design/**",
+        "artifacts/VPJ-40/**"
+      ],
+      "retainedPullRequests": []
     },
     {
       "id": "IOS-009",
@@ -3227,7 +3717,25 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
-      ]
+      ],
+      "nativeBlockedBy": [
+        241
+      ],
+      "retainedDependencyNotes": [
+        {
+          "sourceIssue": 242,
+          "originalDependency": 241,
+          "currentTarget": 241,
+          "scope": "原生开工依赖保留"
+        }
+      ],
+      "sourceScope": [
+        "docs/acceptance/**",
+        "tests/e2e/**",
+        "artifacts/VPJ-42/**",
+        "docs/runbooks/**"
+      ],
+      "retainedPullRequests": []
     },
     {
       "id": "IOS-010",
@@ -3293,7 +3801,16 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
-      ]
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "ios/**",
+        "docs/release/**",
+        "docs/runbooks/**",
+        "artifacts/VPJ-44/**"
+      ],
+      "retainedPullRequests": []
     },
     {
       "id": "WEB-001",
@@ -3311,9 +3828,28 @@
       "priority": "P0",
       "batch": "B1",
       "userOutcome": "从已可体验样例走向真实持久会话",
-      "remaining": "PR688/873 已交付 synthetic 样例并完成 Main 两尺寸浏览器体验；剩余是真实登录、Session新建切换、首答、刷新读回、重复提交保护。",
-      "reusePaths": [],
+      "remaining": "真实 QA 客户端源码已存在：app/qa/page.tsx 挂载 QaAgentWorkspace，api.ts 提供 sessions/create/history/send，pending-identity.ts 保留原 requestId 与恢复；PR684 已合入，PR686 的873源延续现有 HTTP/SQL/context 客户端。当前剩余首先是获准目标的集成与实际验收；只有实际复现源码缺陷才最小返修，禁止因 target UNRUN 重做登录、Session、新建切换、刷新或重复提交逻辑。PR688 synthetic 样例已交付，真实首答/持久化/多轮未由样例完成。",
+      "reusePaths": [
+        "app/qa/page.tsx",
+        "components/qa-agent/QaAgentWorkspace.tsx",
+        "components/qa-agent/api.ts",
+        "components/qa-agent/pending-identity.ts",
+        "tests/e2e/qa-agent-ui",
+        "lib/server/qa-agent",
+        "lib/server/qa-agent-context"
+      ],
       "evidence": [
+        {
+          "kind": "source-inspected / merged-source",
+          "ref": "PR684",
+          "commit": "2dbc7136620bd75ce81e99103aac1ea1b5dfd6ae",
+          "scope": "真实客户端 Auth/policy/Session/history/恢复与拒绝路径已实现；本轮源盘点，不冒目标运行"
+        },
+        {
+          "kind": "source-in-QA / retained tests",
+          "ref": "PR686 at 8731c54ed45940477672233cb9f96dc2c0996421; tests/e2e/qa-agent-ui/**; artifacts/QAWEB-005/context/verification.md",
+          "scope": "HTTP/SQL/context 源与既有合成/契约证据复用；PR686 仍OPEN、未合production main，真实target链未验"
+        },
         {
           "kind": "merged-source",
           "ref": "PR688",
@@ -3380,6 +3916,12 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [],
+      "retainedPullRequests": [
+        684
       ]
     },
     {
@@ -3398,15 +3940,31 @@
       "priority": "P1",
       "batch": "B2",
       "userOutcome": "Web 独立完成同 Trip 规划成果审阅与确认",
-      "remaining": "复用 TripCanvas/成果工作区与同 Trip 端口；补 Web 自有完整交互、响应式和确认重载，消除轻量附属定位，不要求复制 iOS 全部功能。",
+      "remaining": "TripCanvas 与 ChatThreadWorkspace 已有真实 Web 消费者；复用同 Trip proposal/diff/confirm/revision、成果读取和方向消费者。PR599/f69780ba 已合的精确 Trip comparison 与5a8090be方向消费者保持；本票剩余是按 Web 独立工程核对现有链的实际集成、响应式/可访问性和确认重载，只有实证缺口才补码，不重新建Canvas或降为iOS轻量附属。",
       "reusePaths": [
-        "docs/product/assistant-upgrade-2026-09-27/README.md",
-        "docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md",
-        "docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md",
-        "docs/program/2026-09-05/INTERFACES.md",
-        "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        "components/canvas/TripCanvas.tsx",
+        "components/chat/ChatThreadWorkspace.tsx",
+        "docs/program/2026-09-05/INTERFACES.md"
       ],
-      "evidence": [],
+      "evidence": [
+        {
+          "kind": "merged-source",
+          "ref": "PR599",
+          "commit": "f69780ba5b407491a426ccfdc8ba1f9f7cb2437a",
+          "scope": "GitHub API确认merged；精确Trip comparisons消费者源复用，不冒真实环境验收"
+        },
+        {
+          "kind": "source-inspected",
+          "commit": "5a8090be9cfd87081d6b6bc2d59cf4fe2a18572c",
+          "scope": "TripCanvas既有directions/proposal/confirm/版本拒绝；QA873树中存在",
+          "ref": "PR677"
+        },
+        {
+          "kind": "source boundary",
+          "ref": "components/canvas/TripCanvas.tsx; components/chat/ChatThreadWorkspace.tsx",
+          "scope": "现有源码不是缺失；目标/设备/完整Web验收仍按原AC记录"
+        }
+      ],
       "acceptance": [
         {
           "sourceIssue": 234,
@@ -3456,7 +4014,18 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
-      ]
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [
+        "app/**",
+        "components/**",
+        "lib/i18n.ts",
+        "tests/**/frontend/**",
+        "docs/design/**",
+        "public/assets/**"
+      ],
+      "retainedPullRequests": []
     },
     {
       "id": "WEB-003",
@@ -3511,7 +4080,22 @@
         {
           "taskId": "AGENT-011",
           "kind": "acceptance",
-          "reason": "本用户结果最终集成需要其实际能力；不作为所有独立准备的开工硬依赖"
+          "reason": "QA真实交付消费其已验证行为，不把样例/部署READY代真实答案"
+        },
+        {
+          "taskId": "AGENT-001",
+          "kind": "acceptance",
+          "reason": "QA真实交付消费其已验证行为，不把样例/部署READY代真实答案"
+        },
+        {
+          "taskId": "AGENT-002",
+          "kind": "acceptance",
+          "reason": "QA真实交付消费其已验证行为，不把样例/部署READY代真实答案"
+        },
+        {
+          "taskId": "WEB-001",
+          "kind": "acceptance",
+          "reason": "QA真实交付消费其已验证行为，不把样例/部署READY代真实答案"
         }
       ],
       "checks": [
@@ -3523,6 +4107,12 @@
       "scopeExclusions": [
         "不新增数据权威、费用或生产权限",
         "不重做已完成切片，不删除原证据与评论"
+      ],
+      "nativeBlockedBy": [],
+      "retainedDependencyNotes": [],
+      "sourceScope": [],
+      "retainedPullRequests": [
+        684
       ]
     }
   ],

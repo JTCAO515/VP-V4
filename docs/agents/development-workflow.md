@@ -24,7 +24,7 @@ Authority classes, merge rules and the operator queue live in
 
 ## 1. Pick a visible result in the current stage
 
-`issue-plan.json` is the only task-definition source; the six
+`docs/product/VPV10-MODULAR-001/current-plan.json` is the current task-definition source. The historical six
 [delivery stages](../program/2026-09-05/DELIVERY-STAGES.md) group its Issues into user-observable
 results. A stage demonstration is evidence for its stated slice, not closure of the Issues in it.
 

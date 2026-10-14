@@ -367,3 +367,13 @@ test('unchecking a reviewed completed item refuses the whole body-update batch w
   const duplicate = remote + '\n' + snapshot.split('\n').find(line => line.startsWith('- [x] ')) + '\n';
   assert.throws(() => preserveIssueProgress(duplicate, snapshot, snapshot, migrated.id), /previously checked acceptance is now unchecked/);
 });
+
+
+test('legacy remote mutation commands fail before any GitHub access when the current plan is active', () => {
+  for (const command of ['publish','sync-bodies','sync-selected','close-old']) {
+    const result = spawnSync(process.execPath, ['scripts/vpj-program.mjs',command,'VPJ-07'], {encoding:'utf8',env:{...process.env,PATH:'/nonexistent-current-plan-test'}});
+    assert.notEqual(result.status,0);
+    assert.match(result.stderr,/Legacy remote mutation is disabled/);
+    assert.ok(!result.stderr.includes('spawnSync gh'), 'no GitHub subprocess may start');
+  }
+});

@@ -8,8 +8,8 @@ Use [JTCAO515/VP-V4 Issues](https://github.com/JTCAO515/VP-V4/issues) through an
 GitHub tool or `gh`. Work units and checks follow [`development-workflow.md`](development-workflow.md);
 label semantics follow [`triage-labels.md`](triage-labels.md).
 
-- VPJ-00 #187 is the active product program. `issue-plan.json` owns task identities, scope,
-  acceptance and dependencies; live GitHub and environment observations establish execution state.
+- VPJ-00 #187 is the active product program. `docs/product/VPV10-MODULAR-001/current-plan.json` owns current task identities, scope,
+  acceptance and dependencies; legacy `issue-plan.json` retains the original VPJ definitions; live GitHub and environment observations establish execution state.
 - Product Issues use their VPJ rows. Explicit maintenance uses a compact goal/scope/checks/
   acceptance/rollback brief — never a second program for a small fix.
 - Use `Related to` on partial PRs and keep the unverified checklist. An available interface may
@@ -23,7 +23,11 @@ label semantics follow [`triage-labels.md`](triage-labels.md).
 `UNAUTHENTICATED`, `SAFETY_BLOCKED` and `DATA_POLICY_BLOCKED` are runtime refusals, not permission
 to use a guest actor, a service credential or a bypass.
 
-## 生成正文与同步
+## 当前生成与同步
+
+`node scripts/vpj-program.mjs render-current` 只生成当前三工程正文、总览和索引。`render` 有 current plan 时路由同一当前生成器；旧 publish/sync-bodies/sync-selected/close-old 命令拒绝远端修改，不能把新编号恢复为旧 VPJ。当前迁移逐项比对 live before/after 后发布，真实状态及读回保留在专项证据。
+
+## 历史 VPJ 生成约定（非当前同步入口）
 
 Full VPJ bodies are generated from `issue-plan.json`. For VPV10-MODULAR-001 migrated open Issues, `modularDirection` binds the reviewed mapping and full retained body snapshot; definition changes require an explicit snapshot refresh. Existing preflight still preserves checked progress and append-only evidence, and rejects unknown drift. The compact body keeps the user result,
 complete acceptance, blockers and task-specific red lines; the linked execution row owns scope,

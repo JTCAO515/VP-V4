@@ -4,7 +4,7 @@
 
 [整体 spec 与版本接口](../../contracts/vpv4-project-boundaries.md) · [52 张开放票映射](issue-map.md) · [机器可核映射](mapping.json) · [原正文快照](before.json)
 
-本目录保存方向和这次正文变更证据，不是第二套 HANDOFF 或持续状态系统。执行 owner、lease、ready 前沿只由唯一 Main 的 HANDOFF 维护。
+本目录保存 current-plan.json 的任务定义、生成的当前正文和迁移证据；不是第二套 HANDOFF 或持续状态系统。执行 owner、lease、ready 前沿只由唯一 Main 的 HANDOFF 维护。
 
 ## 接受方向与文档覆盖
 
@@ -25,7 +25,7 @@
 | EXECUTION-CONTRACT、DELIVERY-STAGES | 最小加入当前方向指针；现有生成器保留当前方向指针和原执行行 |
 | assistant-upgrade README | 指向新的方向，四 Tab/Conversation/Memory 成果保留 |
 
-## 当前源与生成约定
+## 历史首轮静态快照约定（已被 current plan 替代）
 
 根 AGENTS、README 与总索引已更新当前方向；CONTEXT/HANDOFF 保留 2026-10-02 生成历史。外部唯一 Main 的 HANDOFF 继续拥有当前执行状态。本目录的 `handoff-source-candidate.json` 只是可选导航补丁，不重写状态，也不是第二套 HANDOFF。
 

@@ -13,6 +13,8 @@ const json = p => JSON.parse(read(p));
 const save = (p, value) => { mkdirSync(path.dirname(p), { recursive: true }); writeFileSync(p, value); };
 const saveJson = (p, value) => save(p, JSON.stringify(value, null, 2) + '\n');
 const plan = json(planPath);
+export const currentPlanPath = 'docs/product/VPV10-MODULAR-001/current-plan.json';
+const historicalExecutionNotice = '> 当前执行定义：[三工程任务与批次](../../product/VPV10-MODULAR-001/current-overview.md)。以下为旧 VPJ 定义与验收历史，不用于恢复当前标题、排期或正文。\n\n';
 // 76 行执行合同里，不得触碰(68/76)、Rollback(65/76) 和运行门(42/76) 逐字重复同一条款。
 // 提成默认条款后，行内只在偏离默认时展开原文：条款一字未改，每个 Issue 锚点少读约 800 字。
 // 改这里等于改全部默认任务的条款，改动要和 issue-plan.json 一起审查。
@@ -22,7 +24,7 @@ export const contractDefaults = {
   externalPrerequisites: "本片实际输入与接口可用即可开始；上游Issue仍open不单独阻止有界实施。完整验收仍核对列出的技术依赖与真实环境。 Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial.",
 };
 
-export const executionContractHeader = `# VPJ Issue 执行合同\n\n${modularNavigation()}生成自issue-plan.json。当前共享流程见 [development-workflow.md](../../agents/development-workflow.md) / ADR-0024。\n阅读当前Issue/PR、本行、受影响接口与代码；历史研究按需读取。\n\nChecks列是完整Issue验收清单；每条PR按实际改动选择本地验证，保留适用CI和最终运行门。\nAllowed列标示主要范围；必要的相邻文件调整、维护任务和独立准备片段按共享流程记录。\n运行依赖未完成时父Issue保持未验收；fixture不证明设备、数据库、provider或生产通过。\n\n## 默认条款\n\n下列三条对全部任务生效。任务行写「默认」即适用本节原文；偏离的任务在自己行里写出完整条款。\n\n- 运行门（默认）: ${contractDefaults.externalPrerequisites}\n- 不得触碰（默认）: ${contractDefaults.doNotTouch}\n- Rollback（默认）: ${contractDefaults.rollback}\n\n`;
+export const executionContractHeader = `# VPJ Issue 执行合同\n\n${existsSync(currentPlanPath) ? historicalExecutionNotice : ''}${modularNavigation()}生成自issue-plan.json。当前共享流程见 [development-workflow.md](../../agents/development-workflow.md) / ADR-0024。\n阅读当前Issue/PR、本行、受影响接口与代码；历史研究按需读取。\n\nChecks列是完整Issue验收清单；每条PR按实际改动选择本地验证，保留适用CI和最终运行门。\nAllowed列标示主要范围；必要的相邻文件调整、维护任务和独立准备片段按共享流程记录。\n运行依赖未完成时父Issue保持未验收；fixture不证明设备、数据库、provider或生产通过。\n\n## 默认条款\n\n下列三条对全部任务生效。任务行写「默认」即适用本节原文；偏离的任务在自己行里写出完整条款。\n\n- 运行门（默认）: ${contractDefaults.externalPrerequisites}\n- 不得触碰（默认）: ${contractDefaults.doNotTouch}\n- Rollback（默认）: ${contractDefaults.rollback}\n\n`;
 const byId = new Map(plan.tasks.map(t => [t.id, t]));
 const number = id => id === 'VPJ-00' ? plan.parentNumber : byId.get(id)?.number;
 const link = id => number(id) ? `[${id} #${number(id)}](https://github.com/${plan.repo}/issues/${number(id)})` : id;
@@ -713,7 +715,6 @@ function syncSelected(){
   render();
 }
 
-export const currentPlanPath = 'docs/product/VPV10-MODULAR-001/current-plan.json';
 
 export function validateCurrentPlan(value) {
   assert.equal(value.schemaVersion, 'vpv4-current-plan/1');
@@ -758,7 +759,10 @@ export function currentTaskBody(task, value) {
     `## 复用与当前剩余\n\n${task.remaining}\n\n` +
     (task.evidence.length ? task.evidence.map(e => `- ${e.kind}：${e.ref ?? ''} ${e.commit ?? ''} ${e.scope ?? ''}${e.sourceSha256 ? `；source SHA256 ${e.sourceSha256}` : ''}`).join('\n') + '\n\n' : '本票已有实现与局部证据沿原 Issue/PR 保留；尚未逐项核实的真实目标结果保持未验，不能从代码存在推导完成。\n\n') +
     (task.reusePaths.length ? `复用入口：${task.reusePaths.map(p=>`[${p}](${ref}/${p})`).join(' · ')}\n\n` : '') +
+    (task.sourceScope?.length ? `现有源码/验证范围（历史归属上限，非新增 lease）：${task.sourceScope.map(p => '\u0060'+p+'\u0060').join('、')}。\n\n` : '') +
+    (task.retainedPullRequests?.length ? `原票保留的确切 PR 指针：${task.retainedPullRequests.map(n=>`[#${n}](https://github.com/${value.repo}/pull/${n})`).join('、')}；各 PR 的有效范围以原证据为准，本次未重新冒领目标验收。\n\n` : '') +
     `## 依赖与并行\n\n${dependency}\n\n同批可在输入和 lease 独立时并行；验收关联不伪装 GitHub 开工阻塞，不等待整个前批全部关票。\n\n` +
+    (task.retainedDependencyNotes?.length ? `保留的原依赖与子阶段顺序：\n${task.retainedDependencyNotes.map(d=>`- 原 #${d.sourceIssue} → #${d.originalDependency}，当前输入 #${d.currentTarget}；${d.scope}。`).join('\n')}\n\n` : '') +
     `## 完成标准\n\n${task.acceptance.map(a=>`- [${a.checked ? 'x' : ' '}] ${a.text}（承接 #${a.sourceIssue}）`).join('\n')}\n\n` +
     (task.activationEvidence.length ? `后续激活条件：\n${task.activationEvidence.map(a=>`- 原 #${a.sourceIssue}：${a.condition}`).join('\n')}\n\n` : '') +
     `## 检查与边界\n\n${task.checks.map(c=>'- '+c).join('\n')}\n\n${task.scopeExclusions.map(c=>'- '+c).join('\n')}\n- Actor/RLS、Cookie/Bearer 各自安全适配、用途/接收方同意、预算/幂等、TripProposal 可见 diff→确认→原子 Patch 与生命周期保持。\n- 代码、synthetic、目标运行、设备与发布分开记录；规划迁移/样例不是功能交付。\n\n` +
@@ -773,6 +777,16 @@ export function renderCurrentPlan(value) {
   save(`${base}/current-overview.md`, `# VP-V4 当前三工程交付计划\n\n生成自 current-plan.json。原52是迁移输入；当前${value.tasks.length}张工程任务加原Program，不以固定数量验收。\n\n` +
     value.batches.map(b=>`## ${b.id}\n\n${b.outcome}\n\n${b.parallel}\n\n`).join('') +
     '| ID / GitHub | 工程 / 主责 | 批次 / 优先 | 用户结果 | 原票承接 |\n| --- | --- | --- | --- | --- |\n' + all.map(t=>`| [${t.id} #${t.number}](https://github.com/${value.repo}/issues/${t.number}) | ${t.primaryProject} / ${t.lead} | ${t.batch} / ${t.priority} | ${t.userOutcome} | ${t.originalIssues.map(n=>'#'+n).join(', ')} |`).join('\n')+'\n');
+  const oldHeader = historicalExecutionNotice;
+  for (const filename of ['EXECUTION-CONTRACT.md','DELIVERY-STAGES.md']) {
+    const file = `${dir}/${filename}`;
+    const content = read(file);
+    if (!content.includes(oldHeader)) save(file, content.replace('\n\n', '\n\n' + oldHeader));
+  }
+  const files = walk('docs').filter(p=>p.endsWith('.md') && p !== 'docs/INDEX.md');
+  saveJson('docs/manifest.json', {schemaVersion:'vpj-docs/1', date:value.acceptedAt, authority:value.contract,
+    currentPlan:currentPlanPath, files:files.map(p=>({path:p,status:p.startsWith('docs/archive/')?'archived':p.startsWith('docs/research/')?'evidence':'document'}))});
+  save('docs/INDEX.md', '# Documentation index\n\nCurrent execution: [Agent / iOS / Web tasks and batches](product/VPV10-MODULAR-001/current-overview.md). Current architecture: [project boundaries](contracts/vpv4-project-boundaries.md). Old VPJ plans, snapshots and dated evidence remain historical, not current instructions.\n\n' + files.map(p=>`- [${p.slice(5)}](${p.slice(5)})`).join('\n')+'\n');
   console.log(`Current plan rendered: ${value.tasks.length} tasks + original Program; legacy evidence unchanged.`);
 }
 
@@ -789,6 +803,18 @@ if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(root,'scri
   else if(cmd==='sync-bodies')syncBodies();
   else if(cmd==='sync-selected')syncSelected();
   else if(cmd==='close-old')await closeOld();
-  else if(cmd==='verify-remote')await verifyRemote();
+  else if(cmd==='verify-remote'){
+    if(existsSync(currentPlanPath)) {
+      const value=json(currentPlanPath); const all=validateCurrentPlan(value); const receipts=[];
+      for(const task of all) {
+        const issue=api(`repos/${value.repo}/issues/${task.number}`);
+        assert.equal(issue.title, `[${task.id}] ${task.title}`);
+        assert.ok(issue.labels.some(l=>l.name===`project:${task.primaryProject}`));
+        assert.equal(withoutCheckboxProgress(issue.body).trimEnd(), withoutCheckboxProgress(currentTaskBody(task,value)).trimEnd(), `current body drift #${task.number}`);
+        receipts.push({number:task.number,taskId:task.id,state:issue.state,updatedAt:issue.updated_at});
+      }
+      saveJson('docs/product/VPV10-MODULAR-001/current-remote-verification.json',{at:new Date().toISOString(),runtimeAcceptance:false,receipts});
+    } else await verifyRemote();
+  }
   else throw new Error('Use verify, render, publish, close-old or verify-remote. Mutating commands require explicit task authorization.');
 }

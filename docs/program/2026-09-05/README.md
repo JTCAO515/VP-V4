@@ -10,9 +10,9 @@
 
 本目录始于 2026-09-05，持续接纳已批准增量；目录日期不是当前状态日期。2026-09-10 本地规划为 **73 项子任务、212 条直接依赖**；该数值描述任务图，不描述完成率。最初 PR #253 的 65 项/198 条依赖、旧 20 项迁移结果保留在[历史验证](VERIFICATION.md)。
 
-## 当前状态
+## 历史阶段记录
 
-2026-09-27当前升级：先读[新开发计划](../../product/assistant-upgrade-2026-09-27/README.md)、
+2026-09-27当时升级：先读[新开发计划](../../product/assistant-upgrade-2026-09-27/README.md)、
 [体验合同](../../product/assistant-upgrade-2026-09-27/EXPERIENCE.md)与[ADR-0027](../../adr/ADR-0027-personal-journey-assistant.md)。
 JT确认重做交互层、复用领域核心；原生VP/Journeys/Library/Memory四Tab，全局Search与Memory四处可见。
 新增VPJ-77…83及修订既有任务仍以issue-plan.json为唯一定义源。新计划U0–U4优先于下方历史
@@ -41,7 +41,7 @@ JT确认重做交互层、复用领域核心；原生VP/Journeys/Library/Memory�
 
 历史研究是决策输入；归档、候选拆分和旧 AI/V4/LAUNCH 队列不产生第二套任务或当前操作授权。
 
-## 当前增量与对应入口
+## 历史增量与对应入口
 
 2026-09-22 [S4/S5细切片与六线程开工顺序（已确认）](S4-S5-SLICES-2026-09-22.md)：按最新实现和在途PR拆解剩余用户结果，最多六个活跃线程，不新增原生blocked边；保留父票身份、验收和既有owner。切片定义已归入正式manifest，首批子票及远端同步结果见同目录同步报告；阶段验收仍以真实证据为准。
 
