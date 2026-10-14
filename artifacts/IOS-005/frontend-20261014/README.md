@@ -6,7 +6,7 @@ Implemented in the existing NativeTranslationView/NativeTranslationCard, already
 - Recent/saved request source and English/Chinese direction labels; original, translation and AI back-translation remain separate.
 - Card-local Chinese/English interface switch, scalable 44-point translation with optional larger text, scrollable content, stable accessibility identifiers and Done return without a generation call.
 - Keyboard Done/interactive dismissal and dismissal before submitting/opening a card.
-- Direct card calls refuse invalid, pending, cancelled, unknown, empty or missing outputs. Recent card opening and displayed cover require the current actor scope, valid accepted policy and byte-equivalent current phrase. Scene/scope and saved history TTL checks remain in the original consumer; changed Trip source closes the recent card.
+- Direct card calls refuse invalid, pending, cancelled, unknown, empty or missing outputs. Recent card opening and displayed cover require the current actor scope, valid accepted policy and matching current phrase value. Scene/scope and saved history TTL checks remain in the original consumer; changed Trip source closes the recent card.
 - Isolated previews visibly say Sample / service not connected. They do not inject a production session or provider.
 
 Wire limitation: NativeTranslationPhrase has no typed-text versus Trip-source metadata. UI states that limitation explicitly and never reconstructs provenance from the current input/Trip selection. No store/history/provider/PBX/AppShell changes or shared seam needed.
