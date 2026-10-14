@@ -22,8 +22,8 @@
     ],
     "priority": "P0",
     "batch": "OVERVIEW",
-    "userOutcome": "先看到可体验样例，再获得真实 Agent 问答，再扩展同 Trip 结果和原生旅途体验",
-    "remaining": "维护三工程 current plan、实际 owner/依赖与用户可见成果；源/样例/真实运行/发布分开验收，不用票数或旧六线程替代结果。",
+    "userOutcome": "优先看到原生持续体验、准确地点动作与表达大字卡，沿已有 Agent/业务端口逐步接入真实能力",
+    "remaining": "当前 IOS-001/003/005 已开始独立 frontend 工作；Main 集中共享 AppShell/route/PBX/Conversation 整合和 App 验证。Agent/Web 限 iOS 必需依赖和必要安全收尾。原35任务/52承接与真实 QA 未验保持，不重新串行排队、不重建四 Tab/壳。",
     "reusePaths": [
       "docs/contracts/vpv4-project-boundaries.md"
     ],
@@ -2800,14 +2800,14 @@
       "title": "首访委托和回访继续同一旅程目标",
       "primaryProject": "ios",
       "workType": null,
-      "lead": "ios 原实施 owner，Main 按现 lease 协调",
+      "lead": "Main 已指定的原/新 iOS owner 01a12dba-36ee-7602-a285-698d04d2cbcc",
       "affectedConsumers": [
         "ios"
       ],
       "originalIssues": [
         203
       ],
-      "priority": "P1",
+      "priority": "P0",
       "batch": "B2",
       "userOutcome": "首访委托和回访继续同一旅程目标",
       "remaining": "复用 VPJ77 四 Tab、JourneyEntry、目标返回与成果；保留 E2 生命周期暂停，补真实回访连续性和原测量链。",
@@ -2939,7 +2939,14 @@
         "tests/**/onboarding/**",
         "docs/product/**"
       ],
-      "retainedPullRequests": []
+      "retainedPullRequests": [],
+      "statusLabel": "status:in-progress",
+      "activeWork": {
+        "owner": "01a12dba-36ee-7602-a285-698d04d2cbcc",
+        "scope": "原 Native owner 在原工作树续做安全 frontend：E1/E3 持续体验；E2 生命周期旧暂停保留。",
+        "boundary": "移至V10项目的额外来源 confirmation_required 未绕过，原项目/原已授权源码内继续。",
+        "evidence": "Main 已正式记录实际工具/source 开始；此处记录已派发事实，不自行派工或冒充交付。"
+      }
     },
     {
       "id": "IOS-002",
@@ -3073,7 +3080,7 @@
       "title": "地点发现保存消歧和导航保持同一准确实体",
       "primaryProject": "ios",
       "workType": null,
-      "lead": "ios 原实施 owner，Main 按现 lease 协调",
+      "lead": "Main 已指定的原/新 iOS owner 01a13928-1a52-7b00-84ac-d6c6523f0396",
       "affectedConsumers": [
         "ios"
       ],
@@ -3083,7 +3090,7 @@
         364,
         210
       ],
-      "priority": "P1",
+      "priority": "P0",
       "batch": "B2",
       "userOutcome": "地点发现保存消歧和导航保持同一准确实体",
       "remaining": "复用 Explore/地图/路线与三个子片；补双语同选中、保存交给 VP、步行公交驾车比较与供应商导航交接。",
@@ -3221,7 +3228,14 @@
         "components/explore/**",
         "tests/**/explore/**"
       ],
-      "retainedPullRequests": []
+      "retainedPullRequests": [],
+      "statusLabel": "status:in-progress",
+      "activeWork": {
+        "owner": "01a13928-1a52-7b00-84ac-d6c6523f0396",
+        "scope": "ios003-place-ui-20261014，base QA873；独占 PlaceActionsView、new PlacePresentation 和对应 UI tests，交付准确地点动作/路线交接。",
+        "boundary": "不接管共享 AppShell/route/PBX/Conversation；不新增 backend/实际数据操作。",
+        "evidence": "Main 已正式记录实际工具/source 开始；此处记录已派发事实，不自行派工或冒充交付。"
+      }
     },
     {
       "id": "IOS-004",
@@ -3281,14 +3295,14 @@
       "title": "旅途中以可信中英表达和大字卡沟通",
       "primaryProject": "ios",
       "workType": null,
-      "lead": "ios 原实施 owner，Main 按现 lease 协调",
+      "lead": "Main 已指定的原/新 iOS owner 01a13924-853c-7561-8b51-548950947cc9",
       "affectedConsumers": [
         "ios"
       ],
       "originalIssues": [
         216
       ],
-      "priority": "P1",
+      "priority": "P0",
       "batch": "B2",
       "userOutcome": "旅途中以可信中英表达和大字卡沟通",
       "remaining": "复用原生表达卡片/文本能力；补来源、语言一致性与失败路径，媒体能力单独验。",
@@ -3378,7 +3392,14 @@
       ],
       "retainedPullRequests": [
         485
-      ]
+      ],
+      "statusLabel": "status:in-progress",
+      "activeWork": {
+        "owner": "01a13924-853c-7561-8b51-548950947cc9",
+        "scope": "ios005-expression-ui-20261014，base QA873；独占 TranslationView、new TranslationPresentation 和对应 UI tests，交付表达与大字卡。",
+        "boundary": "不接管共享 AppShell/route/PBX/Conversation；不新增 provider费用/backend/生产动作。",
+        "evidence": "Main 已正式记录实际工具/source 开始；此处记录已派发事实，不自行派工或冒充交付。"
+      }
     },
     {
       "id": "IOS-006",
@@ -4242,14 +4263,14 @@
   ],
   "batches": [
     {
-      "id": "B1",
-      "outcome": "先复用已可体验 sample，同时补真实QA闭环；恢复只在原门禁与新有效窗口内由Main执行。",
-      "parallel": "WEB-001样例后续与AGENT-001/002真实链、AGENT-011恢复诊断准备可独立推进；实际资源写入串行。"
+      "id": "B2",
+      "outcome": "当前优先前沿：先交 IOS-001 的 E1/E3 持续体验、IOS-003 准确地点动作/路线交接、IOS-005 表达大字卡；复用已交四 Tab/壳。",
+      "parallel": "三条独立源码 lease 已由 Main 安排，依实际端口并行；#199/#202 整票状态不阻塞本次独立 frontend。共享 AppShell/route/PBX/Conversation 仅 Main 整合，E2 旧暂停保留。"
     },
     {
-      "id": "B2",
-      "outcome": "真实结果接入同Trip规划、Memory、地点/材料和原生旅途功能。",
-      "parallel": "按可用端口分配iOS/Web/Agent owner，不等待全部B1/B2任务关票。"
+      "id": "B1",
+      "outcome": "真实 QA 未完成部分作为 iOS 必需依赖或必要安全收尾推进；已可体验的 QA873 sample 不重做。",
+      "parallel": "不作为全部 iOS frontend 的前置完成门；恢复/目标操作仍受原具体授权、有效窗口与实际资源门禁约束，本次没有新增运行权限。"
     },
     {
       "id": "B3",
@@ -4261,5 +4282,15 @@
       "outcome": "只有原activationEvidence满足才考虑扩展。",
       "parallel": "不是当前实现承诺。"
     }
-  ]
+  ],
+  "currentFrontier": {
+    "acceptedAt": "2026-10-14T06:17:00Z",
+    "summary": "JT 当前要求先推进 iOS：IOS-001/#203、IOS-003/#209、IOS-005/#216 已由 Main 接续/派发且实际工作开始。B1/B2/B3 仅分组依赖与并行结果，不是先全做完真实 QA 才能开发 iOS 的串行门。Agent/Web 仅接 iOS 必需依赖和必要安全收尾。",
+    "activeTaskIds": [
+      "IOS-001",
+      "IOS-003",
+      "IOS-005"
+    ],
+    "authority": "JT via BestJ; Main formal owner handoff; this planner does not dispatch or implement"
+  }
 }

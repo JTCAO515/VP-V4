@@ -2,17 +2,19 @@
 
 生成自 current-plan.json。原52是迁移输入；当前35张工程任务加原Program，不以固定数量验收。
 
-## B1
-
-先复用已可体验 sample，同时补真实QA闭环；恢复只在原门禁与新有效窗口内由Main执行。
-
-WEB-001样例后续与AGENT-001/002真实链、AGENT-011恢复诊断准备可独立推进；实际资源写入串行。
+当前优先：JT 当前要求先推进 iOS：IOS-001/#203、IOS-003/#209、IOS-005/#216 已由 Main 接续/派发且实际工作开始。B1/B2/B3 仅分组依赖与并行结果，不是先全做完真实 QA 才能开发 iOS 的串行门。Agent/Web 仅接 iOS 必需依赖和必要安全收尾。
 
 ## B2
 
-真实结果接入同Trip规划、Memory、地点/材料和原生旅途功能。
+当前优先前沿：先交 IOS-001 的 E1/E3 持续体验、IOS-003 准确地点动作/路线交接、IOS-005 表达大字卡；复用已交四 Tab/壳。
 
-按可用端口分配iOS/Web/Agent owner，不等待全部B1/B2任务关票。
+三条独立源码 lease 已由 Main 安排，依实际端口并行；#199/#202 整票状态不阻塞本次独立 frontend。共享 AppShell/route/PBX/Conversation 仅 Main 整合，E2 旧暂停保留。
+
+## B1
+
+真实 QA 未完成部分作为 iOS 必需依赖或必要安全收尾推进；已可体验的 QA873 sample 不重做。
+
+不作为全部 iOS frontend 的前置完成门；恢复/目标操作仍受原具体授权、有效窗口与实际资源门禁约束，本次没有新增运行权限。
 
 ## B3
 
@@ -28,7 +30,7 @@ WEB-001样例后续与AGENT-001/002真实链、AGENT-011恢复诊断准备可独
 
 | ID / GitHub | 工程 / 主责 | 批次 / 优先 | 用户结果 | 原票承接 |
 | --- | --- | --- | --- | --- |
-| [PROGRAM #187](https://github.com/JTCAO515/VP-V4/issues/187) | agent / 唯一 Main；产品取舍沿 BestJ/CoolJ/JT | OVERVIEW / P0 | 先看到可体验样例，再获得真实 Agent 问答，再扩展同 Trip 结果和原生旅途体验 | #187 |
+| [PROGRAM #187](https://github.com/JTCAO515/VP-V4/issues/187) | agent / 唯一 Main；产品取舍沿 BestJ/CoolJ/JT | OVERVIEW / P0 | 优先看到原生持续体验、准确地点动作与表达大字卡，沿已有 Agent/业务端口逐步接入真实能力 | #187 |
 | [AGENT-001 #680](https://github.com/JTCAO515/VP-V4/issues/680) | agent / agent 原实施 owner，Main 按现 lease 协调 | B1 / P0 | 真实文本请求经持久执行返回可恢复回答 | #680, #195 |
 | [AGENT-002 #682](https://github.com/JTCAO515/VP-V4/issues/682) | agent / agent 原实施 owner，Main 按现 lease 协调 | B1 / P0 | 许可内同 Session 多轮与纠正真正进入模型 | #682 |
 | [AGENT-003 #199](https://github.com/JTCAO515/VP-V4/issues/199) | agent / Profile/Memory 原 domain owner | B2 / P1 | 显式 Memory 被正确消费且可纠正遗忘 | #199 |
@@ -51,11 +53,11 @@ WEB-001样例后续与AGENT-001/002真实链、AGENT-011恢复诊断准备可独
 | [AGENT-020 #251](https://github.com/JTCAO515/VP-V4/issues/251) | agent / 产品需求与语言范围负责人（沿原决策归属） | EXPAND / P2 | 需求证据决定未来客户端与语言范围 | #251 |
 | [AGENT-021 #232](https://github.com/JTCAO515/VP-V4/issues/232) | agent / 跨端网络验收原 owner | B3 / P1 | 境内外网络下三工程消费链路有实际证据 | #232 |
 | [AGENT-022 #245](https://github.com/JTCAO515/VP-V4/issues/245) | agent / 发布交付与支持原 owner | B3 / P1 | 客户收到产品后的支持和发布关账可追溯 | #245 |
-| [IOS-001 #203](https://github.com/JTCAO515/VP-V4/issues/203) | ios / ios 原实施 owner，Main 按现 lease 协调 | B2 / P1 | 首访委托和回访继续同一旅程目标 | #203 |
+| [IOS-001 #203](https://github.com/JTCAO515/VP-V4/issues/203) | ios / Main 已指定的原/新 iOS owner 01a12dba-36ee-7602-a285-698d04d2cbcc | B2 / P0 | 首访委托和回访继续同一旅程目标 | #203 |
 | [IOS-002 #201](https://github.com/JTCAO515/VP-V4/issues/201) | ios / ios 原实施 owner，Main 按现 lease 协调 | B2 / P1 | 单张截图经校正和明确确认加入同一 Trip | #201, #507 |
-| [IOS-003 #209](https://github.com/JTCAO515/VP-V4/issues/209) | ios / ios 原实施 owner，Main 按现 lease 协调 | B2 / P1 | 地点发现保存消歧和导航保持同一准确实体 | #209, #363, #364, #210 |
+| [IOS-003 #209](https://github.com/JTCAO515/VP-V4/issues/209) | ios / Main 已指定的原/新 iOS owner 01a13928-1a52-7b00-84ac-d6c6523f0396 | B2 / P0 | 地点发现保存消歧和导航保持同一准确实体 | #209, #363, #364, #210 |
 | [IOS-004 #506](https://github.com/JTCAO515/VP-V4/issues/506) | ios / ios 原实施 owner，Main 按现 lease 协调 | B2 / P1 | Today 显示确认版本行程和中文地址 | #506 |
-| [IOS-005 #216](https://github.com/JTCAO515/VP-V4/issues/216) | ios / ios 原实施 owner，Main 按现 lease 协调 | B2 / P1 | 旅途中以可信中英表达和大字卡沟通 | #216 |
+| [IOS-005 #216](https://github.com/JTCAO515/VP-V4/issues/216) | ios / Main 已指定的原/新 iOS owner 01a13924-853c-7561-8b51-548950947cc9 | B2 / P0 | 旅途中以可信中英表达和大字卡沟通 | #216 |
 | [IOS-006 #212](https://github.com/JTCAO515/VP-V4/issues/212) | ios / iOS 酒店交接原 owner（与 Web consumer owner 协作） | B2 / P1 | 酒店官方出口在原生与 Web 正确交接 | #212 |
 | [IOS-007 #237](https://github.com/JTCAO515/VP-V4/issues/237) | ios / ios 原实施 owner，Main 按现 lease 协调 | B2 / P1 | 签名 Archive 产出可安装 TestFlight 包 | #237 |
 | [IOS-008 #233](https://github.com/JTCAO515/VP-V4/issues/233) | ios / ios 原实施 owner，Main 按现 lease 协调 | B3 / P1 | 原生整链交互可访问且性能可接受 | #233 |
