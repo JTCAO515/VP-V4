@@ -1,0 +1,39 @@
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:20:25.4508599Z ##[group]supabase-http-native / place-guide-http
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:04.5264124Z VP_GUIDE_HTTP_TARGET {"project":"vp-native-ask-0b35a3d4","api":"http://127.0.0.1:64531","supabaseAPI":"http://127.0.0.1:64521"}
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:04.5535797Z TAP version 13
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:11.4816419Z # VP_GUIDE_PLAYED_CONFLICT_OBSERVATION {"kind":"unmodified original changed played-position request response","commandFingerprint":"6b2a62b7511f3eafbab0736b620b93c9d01434c44bbd4ce4c4e9f9dd6e0bcd2d","process":"native_http","status":503,"sqlstate":null,"message":null,"errorCode":"GUIDE_UNAVAILABLE","originalRequestForwarded":true,"sourceOrOracleChanged":false,"rawRequestHeadersOrBodyLogged":false,"ownerPG":{"kind":"unmodified original changed played-position request response","commandFingerprint":"6b2a62b7511f3eafbab0736b620b93c9d01434c44bbd4ce4c4e9f9dd6e0bcd2d","process":"owner_pg_rpc","status":500,"sqlstate":"55P03","message":"could not obtain lock on row in relation \\"chat_threads\\"","errorCode":null,"originalRequestForwarded":true,"sourceOrOracleChanged":false,"rawRequestHeadersOrBodyLogged":false}}
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:11.6970484Z # Subtest: Guide actual native owner HTTP reads, replays, scopes fresh grounded submission and revokes source
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:11.6977891Z not ok 1 - Guide actual native owner HTTP reads, replays, scopes fresh grounded submission and revokes source
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:11.6978300Z   ---
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:11.6978489Z   duration_ms: 7017.758395
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:11.6978716Z   type: 'test'
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:11.6979114Z   location: '/home/runner/work/VP-V4/VP-V4/tests/integration/guide/guide-http.test.mjs:8:1'
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:11.6979527Z   failureType: 'testCodeFailure'
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:11.6979774Z   error: |-
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:11.6980009Z     same operation freezes explicit played position
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:11.6980249Z
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:11.6980410Z     503 !== 409
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:11.6980573Z
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:11.6980737Z   code: 'ERR_ASSERTION'
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:11.6980936Z   name: 'AssertionError'
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:11.6981135Z   expected: 409
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:11.6981307Z   actual: 503
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:11.6981496Z   operator: 'strictEqual'
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:11.6981693Z   stack: |-
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:11.6982144Z     TestContext.<anonymous> (file:///home/runner/work/VP-V4/VP-V4/tests/integration/guide/guide-http.test.mjs:67:10)
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:11.6982735Z     process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:11.6983163Z     async Test.run (node:internal/test_runner/test:1054:7)
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:11.6983650Z     async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:11.6983972Z   ...
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:14.4964405Z 1..1
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:14.4964748Z # tests 1
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:14.4964884Z # suites 0
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:14.4965056Z # pass 0
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:14.4965269Z # fail 1
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:14.4965462Z # cancelled 0
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:14.4965663Z # skipped 0
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:14.4965839Z # todo 0
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:14.4966155Z # duration_ms 9949.931332
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:17.3555138Z VP_GUIDE_HTTP_CLEANUP {"project":"vp-native-ask-0b35a3d4","result":"PASS"}
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:17.3590559Z ##[endgroup]
+lane (supabase-http-native / 6 of 8)	UNKNOWN STEP	2026-10-13T12:22:17.3593309Z

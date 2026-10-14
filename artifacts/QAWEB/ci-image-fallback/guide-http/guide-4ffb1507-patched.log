@@ -1,0 +1,12 @@
+VP_GUIDE_HTTP_TARGET {"project":"vp-native-ask-f8d2fb29","api":"http://127.0.0.1:64831","supabaseAPI":"http://127.0.0.1:64821"}
+VP_GUIDE_PLAYED_CONFLICT_OBSERVATION {"kind":"unmodified original changed played-position request response","commandFingerprint":"0e83c3a0ab899ad168aa885f76bf0a0166eedf13a5f7b69851ed0a2f7302f8b2","process":"native_http","status":409,"sqlstate":null,"message":null,"errorCode":"IDEMPOTENCY_KEY_REUSE","originalRequestForwarded":true,"sourceOrOracleChanged":false,"rawRequestHeadersOrBodyLogged":false,"ownerPG":{"kind":"unmodified original changed played-position request response","commandFingerprint":"0e83c3a0ab899ad168aa885f76bf0a0166eedf13a5f7b69851ed0a2f7302f8b2","process":"owner_pg_rpc","status":400,"sqlstate":"P0001","message":"IDEMPOTENCY_KEY_REUSE","errorCode":null,"originalRequestForwarded":true,"sourceOrOracleChanged":false,"rawRequestHeadersOrBodyLogged":false}}
+✔ Guide actual native owner HTTP reads, replays, scopes fresh grounded submission and revokes source (6752.797375ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9775.12375
+VP_GUIDE_HTTP_CLEANUP {"project":"vp-native-ask-f8d2fb29","result":"PASS"}

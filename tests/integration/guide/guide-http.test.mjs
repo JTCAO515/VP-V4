@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { randomUUID as uuid } from "node:crypto";
 import { createNativeTextEnvironment } from "../turn/native-text-environment.mjs";
+import { waitUntil } from "../identity/database-barrier.mjs";
 import { identityLocalEnv } from "../identity/local-supabase.mjs";
 import { createClient } from "@supabase/supabase-js";
 
@@ -63,6 +64,10 @@ test("Guide actual native owner HTTP reads, replays, scopes fresh grounded submi
     completedSegmentIds: [ready.segments[0].id],
     serviceTask: { id: uuid(), scopeVersion: 1, relationship: "new_goal", parentTurnId: null } };
   const accepted = await call(path, tokens[0], follow); assert.equal(accepted.status, 200); assert.equal(accepted.body.data.kind, "submitted"); assert.equal(accepted.body.data.generationCost, null);
+  // Submission can race the fixture worker's NOWAIT thread lock. Once the
+  // original request reaches the held local provider, dispatch has committed
+  // and that worker stays parked while the replay/conflict contract is checked.
+  await waitUntil(() => e.requests.some(r => r.messages?.at(-1)?.content?.includes(follow.question)), 10000, "Guide follow-up reached held local provider");
   assert.equal((await call(path, tokens[0], follow)).body.data.reused, true);
   assert.equal((await call(path, tokens[0], { ...follow, completedSegmentIds: [] })).status, 409, "same operation freezes explicit played position");
   assert.equal(e.sql(`select trip_id is null from public.chat_threads where id='${follow.threadId}';`), "t");

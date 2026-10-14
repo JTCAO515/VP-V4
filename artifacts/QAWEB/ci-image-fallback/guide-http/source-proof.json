@@ -1,0 +1,17 @@
+{
+  "startedAt": "2026-10-14T02:33:03.043922+00:00",
+  "workingHead": "95d7b58d6aefe6885280cfc006f8e87634cdb856",
+  "failedPRHead": "8c445913",
+  "validatedSnapshot": "4ffb1507",
+  "path": "tests/integration/guide/guide-http.test.mjs",
+  "beforeSha256": "90660e7eed3640873c70af6f1975fc2395857197e5ecaa79585fd6d2586061d1",
+  "patchSha256": "c50d9d5ab85466bc499949789d4ad9309976eeb65409c2f32c92a8e07eb7c486",
+  "afterSha256": "54fac9265db439b135317ccf211ec1c6f88e1a56fddfc6a446932eed3f58ea4d",
+  "unchangedBetweenFailedAndCurrent": [
+    "tests/integration/guide/guide-http.test.mjs",
+    "tests/integration/guide/run-guide-http.mjs",
+    "tests/integration/turn/native-text-environment.mjs"
+  ],
+  "changes": "Import existing waitUntil and await actual original HOLD request before unchanged replay/conflict assertions",
+  "testRuntime": "v26.8.2"
+}
