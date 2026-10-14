@@ -772,6 +772,11 @@ export function currentTaskBody(task, value) {
     `## 工程与责任\n\n- Primary：${task.primaryProject}；lead：${task.lead}。\n- 受影响消费者：${task.affectedConsumers.join(' / ')}。${task.workType ? `类型：${task.workType}（责任分类，非新工程）。` : ''}\n- 优先级：${task.priority}；执行批次：${task.batch}。实际 source owner/共享 writer 由唯一 Main 沿原 lease 协调，本文不自动转移写权。\n\n` +
     (task.activeWork ? `## 当前已启动前沿\n\nOwner：${task.activeWork.owner}。${task.activeWork.scope}\n\n${task.activeWork.boundary} ${task.activeWork.evidence}\n\n` : '') +
     (task.frontendSlice ? `## 本轮完整前端切片\n\n范围：${task.frontendSlice.scope.join('；')}。\n\n复用：${task.frontendSlice.reuse.join('；')}。\n\n${task.frontendSlice.criteria.map(c=>'- [ ] '+c).join('\n')}\n\n这些是本轮前端交付条件；原完整真实功能AC继续保留，局部样例或编译不能据此关闭整票。共享入口/对象状态由Main整合。\n\n` : '') +
+    (task.frontendIncrementIds?.length ? task.frontendIncrementIds.map(id => {
+      const increment = value.authorizedFrontendIncrements.find(item=>item.id===id);
+      assert.ok(increment, `missing authorized frontend increment ${id}`);
+      return `## 已批准前端增量 ${id}\n\n${increment.acceptedAt} · ${increment.source}\n\n${increment.outcome}\n\n${increment.integration}\n\n${increment.writers.map(w=>`- Owner ${w.owner} · ${w.branch} · ${w.scope}：${w.delivery}`).join('\n')}\n\n复用：\n${increment.reuse.map(item=>'- '+item).join('\n')}\n\n官方资产：\n${increment.assets.map(a=>`- ${a.role}：${a.path}；${a.bytes} bytes；SHA256 ${a.sha256}`).join('\n')}\n\n${increment.assetStatus}\n\n增量完成标准（尚非已完成）：\n${increment.criteria.map(c=>'- [ ] '+c).join('\n')}\n\n${increment.boundaries}\n\n`;
+    }).join('') : '') +
     `## 复用与当前剩余\n\n${task.remaining}\n\n` +
     (task.evidence.length ? task.evidence.map(e => `- ${e.kind}：${e.ref ?? ''} ${e.commit ?? ''} ${e.scope ?? ''}${e.sourceSha256 ? `；source SHA256 ${e.sourceSha256}` : ''}`).join('\n') + '\n\n' : '本票已有实现与局部证据沿原 Issue/PR 保留；尚未逐项核实的真实目标结果保持未验，不能从代码存在推导完成。\n\n') +
     (task.reusePaths.length ? `复用入口：${task.reusePaths.map(p=>`[${p}](${ref}/${p})`).join(' · ')}\n\n` : '') +
