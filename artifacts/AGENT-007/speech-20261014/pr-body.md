@@ -17,10 +17,14 @@ invokeSyntheticSpeech
 ## Evidence
 
 - **Before:** PR484 delivered only vision; no ASR/TTS source under existing media.
-- **After:** actual new producer passes15speech tests plus8unchanged vision regressions,
-  23/23 with0skip. Full typecheck, lint, docs and diff checks PASS.
-- Source tested:963c46f801ccf5c877a4498a385e4df47890c89f; final evidence-only head
-  retains identical source bytes. Evidence:artifacts/AGENT-007/speech-20261014/evidence.md.
+- **After:** initial producer passed23/23 speech＋vision checks. Formal review found
+  threeP2s; fix2575074c passes22/22speech checks including complete own-key/accessor
+  rejection, monotonic deadlines and bounded empty/read counts with event-loop yield.
+  Full typecheck/lint/diff PASS; unchanged vision and docs evidence reused.
+- Main's exact CI dependency ec29bdf9 is imported: static-output tests now select
+  their required build. Main's24CI governance checks are reused against identical bytes.
+  Original7db Quality failure (missing .next/server/app/journey.html) is retained.
+- Evidence:artifacts/AGENT-007/speech-20261014/evidence.md.
 - No provider call, fees or user data. Real acoustic quality, hearing review, supplier
   receipts, C2 dispatch, worker/consumer runtime and device are UNRUN. #200 stays OPEN.
 
@@ -30,8 +34,10 @@ invokeSyntheticSpeech
 
 **Blast Radius:** speech
 
-New leased directories only. No old provider protocol, worker, native, policy/SQL,
-registry, package/lock or shared configuration changes. No default network transport,
+Speech source writes stay in new leased directories. The only shared changes are
+Main's explicitly authorized exact CI selector/test commit; no leaf edits to it.
+No old provider protocol, worker, native, policy/SQL, registry or package/lock changes.
+No default network transport,
 keys, retry, persisted media or ModelGateway qualification. Fixed protocol candidates
 use official transcription/speech wire docs; PCM subset may reject real outputs.
 Caller owns returned transient audio; secure runtime/provider deletion remains unproven.
