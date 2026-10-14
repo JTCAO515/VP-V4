@@ -20,6 +20,7 @@ compat=load('replay_compat',HERE/'replay-restore-compat.py')
 authority=load('direct_authority',HERE/'direct-human-authority.py')
 locale_profile=load('owned_locale',HERE/'owned-locale-profile.py')
 retry_contract=load('reviewed_retry',HERE/'reviewed-restore-retry.py')
+safe_diagnostics=load('safe_diagnostics',HERE/'safe-restore-diagnostics.py')
 MODE='shared-readonly-snapshot/1'
 RESTORE_CONTRACT='qaw-shared-snapshot-restoration/1'
 
@@ -48,7 +49,7 @@ def restore_bundle(directory,identity,manifest,replay_manifest=None,icu_profile=
             raise ValueError('REPLAY_CAPTURE_BASELINE_NOT_EXACT_75')
     if icu_profile is not None:
         locale_profile.validate(icu_profile,adapted['verification']['databaseFacts'])
-    original_class=base.OwnCluster;original_normalize=base.verify.normalize_schema;copies=[]
+    original_class=base.OwnCluster;original_normalize=base.verify.normalize_schema;original_pipeline=base.pipeline;copies=[];diagnostics=[]
     class VerifiedOwnedCopy(original_class):
         def __init__(self,*args,**kwargs):
             if icu_profile is None:super().__init__(*args,**kwargs)
@@ -69,6 +70,7 @@ def restore_bundle(directory,identity,manifest,replay_manifest=None,icu_profile=
             pass
     result={'status':'FAIL_LOCAL_RESTORE','cleanup':'PENDING_OWNED_COPY'}
     base.OwnCluster=VerifiedOwnedCopy
+    base.pipeline=lambda producer,consumer,collect=False:safe_diagnostics.pipeline(producer,consumer,collect,diagnostics)
     if replay_manifest is not None:
         base.verify.normalize_schema=lambda sql:compat.normalized(original_normalize(sql))
     try:
@@ -91,16 +93,17 @@ def restore_bundle(directory,identity,manifest,replay_manifest=None,icu_profile=
     except Exception as e:
         result.update(status='FAIL_LOCAL_RESTORE',reason=str(e) if isinstance(e,ValueError) else 'RESTORE_ADAPTER_FAILED_DETAILS_SUPPRESSED')
     finally:
-        base.OwnCluster=original_class;base.verify.normalize_schema=original_normalize
+        base.OwnCluster=original_class;base.verify.normalize_schema=original_normalize;base.pipeline=original_pipeline
         try:
             for db in copies:original_class.close(db)
             result['cleanup']='PASS'
         except Exception:result.update(status='FAIL_LOCAL_RESTORE',cleanup='FAIL')
+    if diagnostics:result['safeRestoreDiagnostics']=diagnostics
     return result
 
 
 def code_hash():
-    return hashlib.sha256((HERE/'controlled-snapshot-restore.py').read_bytes()+(HERE/'snapshot-contract.py').read_bytes()+(HERE/'owned-replay-hook.py').read_bytes()+(HERE/'replay-restore-compat.py').read_bytes()+(HERE/'direct-human-authority.py').read_bytes()+(HERE/'owned-locale-profile.py').read_bytes()+(HERE/'reviewed-restore-retry.py').read_bytes()+replay.MANIFEST_HASH.encode()+base.code_hash().encode()).hexdigest()
+    return hashlib.sha256((HERE/'controlled-snapshot-restore.py').read_bytes()+(HERE/'snapshot-contract.py').read_bytes()+(HERE/'owned-replay-hook.py').read_bytes()+(HERE/'replay-restore-compat.py').read_bytes()+(HERE/'direct-human-authority.py').read_bytes()+(HERE/'owned-locale-profile.py').read_bytes()+(HERE/'reviewed-restore-retry.py').read_bytes()+(HERE/'safe-restore-diagnostics.py').read_bytes()+replay.MANIFEST_HASH.encode()+base.code_hash().encode()).hexdigest()
 
 
 def main(args):
