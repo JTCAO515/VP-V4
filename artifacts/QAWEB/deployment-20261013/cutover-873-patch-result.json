@@ -1,0 +1,20 @@
+{
+  "operation": "PATCH /v9/projects/{id}/domains/qatesting.go2china.space",
+  "observedAt": "2026-10-14T05:31:49.679840+00:00",
+  "returnCode": 0,
+  "requestBody": {
+    "gitBranch": "codex/qaw005-independent-target-20261013"
+  },
+  "attempts": 1,
+  "response": {
+    "name": "qatesting.go2china.space",
+    "apexName": "go2china.space",
+    "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+    "redirect": null,
+    "gitBranch": "codex/qaw005-independent-target-20261013",
+    "customEnvironmentId": null,
+    "updatedAt": 1791955909384,
+    "createdAt": 1791865917868,
+    "verified": true
+  }
+}

@@ -1,0 +1,536 @@
+{
+  "observedAt": "2026-10-14T05:31:32.161050+00:00",
+  "project": {
+    "id": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+    "accountId": "team_vLT8SL2mQJJSnXbD9GzVLP4K",
+    "rootDirectory": null,
+    "framework": "nextjs",
+    "buildCommand": null,
+    "installCommand": null,
+    "outputDirectory": null,
+    "nodeVersion": "24.x"
+  },
+  "domain": {
+    "name": "qatesting.go2china.space",
+    "apexName": "go2china.space",
+    "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+    "redirect": null,
+    "redirectStatusCode": null,
+    "gitBranch": "codex/qaw005-main-20261013",
+    "customEnvironmentId": null,
+    "updatedAt": 1791865917868,
+    "createdAt": 1791865917868,
+    "verified": true
+  },
+  "deployment": {
+    "id": "dpl_GxZbDEZqXMwTrtqZzGWrPVv18Hgh",
+    "url": "vp-v4-iy7horfr1-jtcao515s-projects.vercel.app",
+    "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+    "ownerId": "team_vLT8SL2mQJJSnXbD9GzVLP4K",
+    "target": null,
+    "readyState": "READY",
+    "createdAt": 1791954170230,
+    "gitSource": {
+      "ref": "codex/qaw005-independent-target-20261013",
+      "repoId": 1341685139,
+      "sha": "8731c54ed45940477672233cb9f96dc2c0996421",
+      "type": "github",
+      "prId": null
+    }
+  },
+  "projectDomains": [
+    {
+      "name": "qatesting.go2china.space",
+      "apexName": "go2china.space",
+      "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+      "redirect": null,
+      "redirectStatusCode": null,
+      "gitBranch": "codex/qaw005-main-20261013",
+      "customEnvironmentId": null,
+      "updatedAt": 1791865917868,
+      "createdAt": 1791865917868,
+      "verified": true
+    },
+    {
+      "name": "testing.go2china.space",
+      "apexName": "go2china.space",
+      "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+      "redirect": null,
+      "redirectStatusCode": null,
+      "gitBranch": null,
+      "customEnvironmentId": null,
+      "updatedAt": 1789521484689,
+      "createdAt": 1789521484689,
+      "verified": true
+    },
+    {
+      "name": "staging.go2china.space",
+      "apexName": "go2china.space",
+      "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+      "redirect": null,
+      "gitBranch": "codex/s2-native-ask-io-20260911",
+      "customEnvironmentId": null,
+      "updatedAt": 1789152930672,
+      "createdAt": 1789152666873,
+      "verified": true
+    },
+    {
+      "name": "go2china.space",
+      "apexName": "go2china.space",
+      "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+      "redirect": null,
+      "redirectStatusCode": null,
+      "gitBranch": null,
+      "customEnvironmentId": null,
+      "updatedAt": 1789152318345,
+      "createdAt": 1789095911718,
+      "verified": true
+    },
+    {
+      "name": "www.go2china.space",
+      "apexName": "go2china.space",
+      "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+      "redirect": null,
+      "redirectStatusCode": null,
+      "gitBranch": null,
+      "customEnvironmentId": null,
+      "updatedAt": 1789095911218,
+      "createdAt": 1789095911218,
+      "verified": true
+    },
+    {
+      "name": "vp-v4.vercel.app",
+      "apexName": "vercel.app",
+      "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+      "redirect": null,
+      "gitBranch": null,
+      "customEnvironmentId": null,
+      "updatedAt": 1787317163362,
+      "createdAt": 1787317163362,
+      "verified": true
+    }
+  ],
+  "environmentMetadata": [
+    {
+      "key": "NEXT_PUBLIC_JOTFORM_EARLY_ACCESS_URL",
+      "type": "encrypted",
+      "target": [
+        "production"
+      ],
+      "gitBranch": null
+    },
+    {
+      "key": "NEXT_PUBLIC_JOTFORM_EARLY_ACCESS_URL",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": null
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_URL",
+      "type": "encrypted",
+      "target": [
+        "development"
+      ],
+      "gitBranch": null
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_URL",
+      "type": "encrypted",
+      "target": [
+        "production"
+      ],
+      "gitBranch": null
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      "type": "encrypted",
+      "target": [
+        "production"
+      ],
+      "gitBranch": null
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_URL",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": null
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": null
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      "type": "encrypted",
+      "target": [
+        "development"
+      ],
+      "gitBranch": null
+    },
+    {
+      "key": "VISEPANDA_TRIP_PROTOCOL_V2",
+      "type": "encrypted",
+      "target": [
+        "production",
+        "preview"
+      ],
+      "gitBranch": null
+    },
+    {
+      "key": "VISEPANDA_NATIVE_STAGING",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/s1-s2-resume-20260911"
+    },
+    {
+      "key": "VISEPANDA_TRIP_PROTOCOL_V2",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/s1-s2-resume-20260911"
+    },
+    {
+      "key": "VISEPANDA_NATIVE_STAGING_PROOF_KEY",
+      "type": "sensitive",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/s1-s2-resume-20260911"
+    },
+    {
+      "key": "VISEPANDA_NATIVE_STAGING",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/s2-native-ask-io-20260911"
+    },
+    {
+      "key": "VISEPANDA_TRIP_PROTOCOL_V2",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/s2-native-ask-io-20260911"
+    },
+    {
+      "key": "VISEPANDA_NATIVE_STAGING_PROOF_KEY",
+      "type": "sensitive",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/s2-native-ask-io-20260911"
+    },
+    {
+      "key": "VISEPANDA_NATIVE_STAGING_CUSTOM_ORIGIN",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/s2-native-ask-io-20260911"
+    },
+    {
+      "key": "VISEPANDA_NATIVE_STAGING_TEXT",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/s2-native-ask-io-20260911"
+    },
+    {
+      "key": "VISEPANDA_NATIVE_STAGING_TEXT_POLICY",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/s2-native-ask-io-20260911"
+    },
+    {
+      "key": "VISEPANDA_NATIVE_STAGING_TASK_POLICY",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/s2-native-ask-io-20260911"
+    },
+    {
+      "key": "TESTING_CHAT_ENABLED",
+      "type": "encrypted",
+      "target": [
+        "production"
+      ],
+      "gitBranch": null
+    },
+    {
+      "key": "TESTING_CHAT_POLICY_ID",
+      "type": "encrypted",
+      "target": [
+        "production"
+      ],
+      "gitBranch": null
+    },
+    {
+      "key": "TESTING_CHAT_SERVICE_ROLE_KEY",
+      "type": "sensitive",
+      "target": [
+        "production"
+      ],
+      "gitBranch": null
+    },
+    {
+      "key": "TESTING_CHAT_GLM_API_KEY",
+      "type": "sensitive",
+      "target": [
+        "production"
+      ],
+      "gitBranch": null
+    },
+    {
+      "key": "AMAP_REVERSE_GEOCODE_ENABLED",
+      "type": "sensitive",
+      "target": [
+        "production"
+      ],
+      "gitBranch": null
+    },
+    {
+      "key": "AMAP_REVERSE_GEOCODE_ENABLED",
+      "type": "sensitive",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": null
+    },
+    {
+      "key": "AMAP_REVERSE_GEOCODE_ENABLED",
+      "type": "encrypted",
+      "target": [
+        "development"
+      ],
+      "gitBranch": null
+    },
+    {
+      "key": "AMAP_WEB_SERVICE_KEY",
+      "type": "sensitive",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": null
+    },
+    {
+      "key": "AMAP_WEB_SERVICE_KEY",
+      "type": "sensitive",
+      "target": [
+        "production"
+      ],
+      "gitBranch": null
+    },
+    {
+      "key": "AMAP_IOS_MAP_KEY",
+      "type": "sensitive",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": null
+    },
+    {
+      "key": "AMAP_IOS_MAP_KEY",
+      "type": "sensitive",
+      "target": [
+        "production"
+      ],
+      "gitBranch": null
+    },
+    {
+      "key": "TENCENT_MAP_DISPLAY_KEY",
+      "type": "sensitive",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": null
+    },
+    {
+      "key": "TENCENT_MAP_DISPLAY_KEY",
+      "type": "sensitive",
+      "target": [
+        "production"
+      ],
+      "gitBranch": null
+    },
+    {
+      "key": "VISEPANDA_NATIVE_STAGING",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/team-c-vpj-12-acceptance-20260918"
+    },
+    {
+      "key": "VISEPANDA_TRIP_PROTOCOL_V2",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/team-c-vpj-12-acceptance-20260918"
+    },
+    {
+      "key": "VISEPANDA_NATIVE_STAGING_PROOF_KEY",
+      "type": "sensitive",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/team-c-vpj-12-acceptance-20260918"
+    },
+    {
+      "key": "OPS_STAGING_REVIEW",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/vpj-75-76-staging-acceptance-20260919"
+    },
+    {
+      "key": "KNOWLEDGE_STAGING_READ",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/vpj-75-76-staging-acceptance-20260919"
+    },
+    {
+      "key": "VISEPANDA_GROUNDED_AI_ASSIST_PROVIDER",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/vpj-75-76-staging-acceptance-20260919"
+    },
+    {
+      "key": "VISEPANDA_GROUNDED_AI_ASSIST_CONFIG_ID",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/vpj-75-76-staging-acceptance-20260919"
+    },
+    {
+      "key": "VISEPANDA_GROUNDED_AI_ASSIST_API_KEY",
+      "type": "sensitive",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/vpj-75-76-staging-acceptance-20260919"
+    },
+    {
+      "key": "VISEPANDA_TRIP_PROTOCOL_V2",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/vpj-75-76-staging-acceptance-20260919"
+    },
+    {
+      "key": "VISEPANDA_NATIVE_STAGING",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/vpj-75-76-staging-acceptance-20260919"
+    },
+    {
+      "key": "VISEPANDA_NATIVE_STAGING_GROUNDED",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/vpj-75-76-staging-acceptance-20260919"
+    },
+    {
+      "key": "VISEPANDA_NATIVE_STAGING_GROUNDED_POLICY",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/vpj-75-76-staging-acceptance-20260919"
+    },
+    {
+      "key": "VISEPANDA_GROUNDED_WEB_READ",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/vpj-75-76-staging-acceptance-20260919"
+    },
+    {
+      "key": "VISEPANDA_GROUNDED_AI_ASSIST",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/vpj-75-76-staging-acceptance-20260919"
+    },
+    {
+      "key": "VISEPANDA_NATIVE_STAGING_PROOF_KEY",
+      "type": "sensitive",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/vpj-75-76-staging-acceptance-20260919"
+    },
+    {
+      "key": "VISEPANDA_QWEN_ENDPOINT",
+      "type": "encrypted",
+      "target": [
+        "development",
+        "preview"
+      ],
+      "gitBranch": null
+    },
+    {
+      "key": "VISEPANDA_QWEN_ENDPOINT",
+      "type": "encrypted",
+      "target": [
+        "production"
+      ],
+      "gitBranch": null
+    },
+    {
+      "key": "VISEPANDA_QA_AGENT_ORIGIN",
+      "type": "plain",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/qaw005-main-20261013"
+    },
+    {
+      "key": "VISEPANDA_QA_SUPABASE_PROJECT_REF",
+      "type": "plain",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/qaw005-independent-target-20261013"
+    },
+    {
+      "key": "VISEPANDA_QA_AGENT_ORIGIN",
+      "type": "plain",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/qaw005-independent-target-20261013"
+    }
+  ],
+  "remoteSha": "8731c54ed45940477672233cb9f96dc2c0996421",
+  "authorization": "Main exact873 cutover gate provided 2026-10-14T05:30Z; patch only QA gitBranch",
+  "resourceMutations": 0
+}

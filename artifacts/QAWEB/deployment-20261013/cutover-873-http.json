@@ -1,0 +1,80 @@
+{
+  "observedAt": "2026-10-14T05:32:22.638541+00:00",
+  "host": "qatesting.go2china.space",
+  "results": [
+    {
+      "path": "/qa/demo",
+      "status": 200,
+      "headers": {
+        "Content-Type": "text/html; charset=utf-8",
+        "Server": "Vercel",
+        "X-Vercel-Cache": "PRERENDER",
+        "X-Vercel-Id": "sin1::6dh5l-1791955937997-a895fa6cb7f9"
+      },
+      "bodyBytesRead": 9807,
+      "bodySha256": "f2bdbe9cac75ae491de8c9c0dd85ab218343fe44055d89e0ef4538d23cad9669",
+      "markers": {
+        "synthetic": true,
+        "demo": true,
+        "\u767b\u5f55": true,
+        "sign in": false,
+        "FORBIDDEN": true,
+        "PROVIDER_UNAVAILABLE": false
+      },
+      "authenticated": false,
+      "responseBodyPersisted": false,
+      "visiblePublicText": "Sample \u00b7 \u672a\u8fde\u63a5 Agent | VisePanda Session \u793a\u4f8b \u00b7 Sample / \u672a\u8fde\u63a5\u771f\u5b9e Agent \u6a21\u62df\u8bb8\u53ef\u8303\u56f4\uff1a\u4ec5\u67e5\u770b\u4e24\u7ec4 synthetic fixtures \u548c\u9884\u8bbe\u4ea4\u4e92\u3002\u65e0\u7528\u6237\u6570\u636e\u3001\u65e0\u6a21\u578b\u9009\u62e9\u3001\u65e0\u8d39\u7528\u6216\u771f\u5b9e\u4efb\u52a1\u3002 \u72b6\u6001\u4ec5\u5728\u5f53\u524d\u9875\u9762\u5185\u5b58\u4e2d\uff1b\u5237\u65b0\u56de\u5230\u793a\u4f8b A\uff0c\u91cd\u7f6e\u53ea\u6062\u590d\u5f53\u524d\u793a\u4f8b\u3002\u8bf7\u52ff\u8f93\u5165\u4e2a\u4eba\u4fe1\u606f\u3002 \u8fdb\u5165\u771f\u5b9e QA\uff08\u9700\u539f\u767b\u5f55\u4e0e\u8bb8\u53ef\uff09 \u2192 VP Journeys Library Memory \u793a\u4f8b Session \u793a\u4f8b A \u00b7 \u51c6\u5907\u6e05\u5355 \u793a\u4f8b B \u00b7 \u65b9\u6848\u6bd4\u8f83 synthetic fixture A \u00b7 \u9759\u6001\u5408\u6210\u5185\u5bb9 \u91cd\u7f6e\u5f53\u524d\u793a\u4f8b / Reset \u793a\u4f8b A \u00b7 \u51c6\u5907\u6e05\u5355 \u793a\u4f8b\u8f93\u5165 \u793a\u4f8b\u95ee\u9898\uff1a\u5982\u4f55\u6574\u7406\u51fa\u53d1\u524d\u7684\u51c6\u5907\u4e8b\u9879\uff1f \u793a\u4f8b\u56de\u5e94 \u00b7 \u672a\u8fde\u63a5 Agent \u56fa\u5b9a\u793a\u4f8b\uff1a\u5148\u5217\u51fa\u5f85\u6838\u5bf9\u4e8b\u9879\uff0c\u518d\u6807\u8bb0\u54ea\u4e9b\u4fe1\u606f\u5c1a\u672a\u786e\u5b9a\u3002\u8fd9\u662f\u4ea4\u4e92\u6f14\u793a\uff0c\u4e0d\u63d0\u4f9b\u5b9e\u9645\u65c5\u884c\u5efa\u8bae\u3002 \u4e3a\u4ec0\u4e48 / why \u7b80\u5316 / simplify \u7ea0\u6b63 / correction \u8f93\u5165\u9884\u8bbe\u95ee\u9898 / Sample question \u4ec5\u5339\u914d why\u3001simplify\u3001correction \u6216\u5bf9\u5e94\u4e2d\u6587\u3002\u5176\u4ed6\u8f93\u5165\u53ea\u663e\u793a\u672a\u63a5\u5165\u63d0\u793a\uff1b\u6700\u591a 12 \u6b21\u4ea4\u4e92\u540e\u8bf7\u91cd\u7f6e\u3002 \u67e5\u770b\u793a\u4f8b\u56de\u5e94 \u5df2\u8f7d\u5165\u56fa\u5b9a\u793a\u4f8b\uff0c\u672a\u6062\u590d\u4efb\u4f55\u771f\u5b9e Session\u3002",
+      "unparsedMarkersAreNotAccessVerdicts": true
+    },
+    {
+      "path": "/qa",
+      "status": 200,
+      "headers": {
+        "Content-Type": "text/html; charset=utf-8",
+        "Server": "Vercel",
+        "X-Vercel-Cache": "PRERENDER",
+        "X-Vercel-Id": "sin1::m5crs-1791955939722-693a16c555de"
+      },
+      "bodyBytesRead": 7655,
+      "bodySha256": "f9caf6f0116a6d2cf9c21f6a979d877ba5f759e7f897ab6ea4c303a55f44ada5",
+      "markers": {
+        "synthetic": false,
+        "demo": false,
+        "\u767b\u5f55": false,
+        "sign in": false,
+        "FORBIDDEN": true,
+        "PROVIDER_UNAVAILABLE": false
+      },
+      "authenticated": false,
+      "responseBodyPersisted": false,
+      "visiblePublicText": "Agent QA | VisePanda Loading\u2026",
+      "unparsedMarkersAreNotAccessVerdicts": true
+    },
+    {
+      "path": "/",
+      "status": 307,
+      "headers": {
+        "Content-Type": "text/html; charset=utf-8",
+        "Location": "/qa",
+        "Server": "Vercel",
+        "X-Vercel-Cache": "MISS",
+        "X-Vercel-Id": "sin1::iad1::ss45d-1791955941270-0c1dab714bac"
+      },
+      "bodyBytesRead": 6174,
+      "bodySha256": "5cf90e25a86f66f241317d193a5837f1975c03ac55948bcdac0766e7d0f5fe71",
+      "markers": {
+        "synthetic": false,
+        "demo": false,
+        "\u767b\u5f55": false,
+        "sign in": false,
+        "FORBIDDEN": true,
+        "PROVIDER_UNAVAILABLE": false
+      },
+      "authenticated": false,
+      "responseBodyPersisted": false
+    }
+  ],
+  "onlyAuthorizedQaHostRequested": true,
+  "bypassUsed": false,
+  "realAuthSessionProvider": "UNRUN"
+}

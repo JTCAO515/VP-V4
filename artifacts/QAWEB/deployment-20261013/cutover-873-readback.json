@@ -1,0 +1,57 @@
+{
+  "observedAt": "2026-10-14T05:32:16.724111+00:00",
+  "domain": {
+    "name": "qatesting.go2china.space",
+    "apexName": "go2china.space",
+    "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+    "redirect": null,
+    "gitBranch": "codex/qaw005-independent-target-20261013",
+    "customEnvironmentId": null,
+    "updatedAt": 1791955909384,
+    "createdAt": 1791865917868,
+    "verified": true
+  },
+  "projectUnchanged": true,
+  "environmentMetadataUnchanged": true,
+  "otherProjectDomainsUnchanged": true,
+  "otherProjectDomainNames": [
+    "testing.go2china.space",
+    "staging.go2china.space",
+    "go2china.space",
+    "www.go2china.space",
+    "vp-v4.vercel.app"
+  ],
+  "resourceMutation": "single QA gitBranch patch",
+  "flagsOrBudgetEnabled": false,
+  "deploymentAliasReadback": {
+    "id": "dpl_GxZbDEZqXMwTrtqZzGWrPVv18Hgh",
+    "url": "vp-v4-iy7horfr1-jtcao515s-projects.vercel.app",
+    "alias": [
+      "vp-v4-git-codex-qaw005-independent-ta-ca8809-jtcao515s-projects.vercel.app"
+    ],
+    "readyState": "READY",
+    "gitSource": {
+      "ref": "codex/qaw005-independent-target-20261013",
+      "repoId": 1341685139,
+      "sha": "8731c54ed45940477672233cb9f96dc2c0996421",
+      "type": "github",
+      "prId": null
+    }
+  },
+  "qaDomainListedOnExactDeployment": false,
+  "cnameReadback": "a37b0a5f0814fb3a.vercel-dns-016.com.",
+  "dnsMutation": false,
+  "qaHostnameDeploymentLookup": {
+    "id": "dpl_GxZbDEZqXMwTrtqZzGWrPVv18Hgh",
+    "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+    "ownerId": "team_vLT8SL2mQJJSnXbD9GzVLP4K",
+    "gitSource": {
+      "ref": "codex/qaw005-independent-target-20261013",
+      "repoId": 1341685139,
+      "sha": "8731c54ed45940477672233cb9f96dc2c0996421",
+      "type": "github",
+      "prId": null
+    },
+    "readyState": "READY"
+  }
+}
