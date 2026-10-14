@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { isFailureCode, FAILURE_TAXONOMY, type FailureCode } from "../../../lib/server/contracts/errors/index.ts";
 import { record, ownExact, type RuntimeContext } from "./contract.ts";
-import { uuid } from "../../../lib/server/today/recovery/contract.ts";
+import { uuid, hash, integer } from "../../../lib/server/today/recovery/contract.ts";
 
 export type RuntimeRequest = Readonly<{
   name: "native_session_v2" | "read_assistant_events_v1" | "cancel_chat_turn" | "read_local_recovery_operation_v1" | "read_trip_confirmation_receipt_v1" | "read_trip_proposal_v2" | "confirm_and_apply_trip_proposal" | "trip_reload";
@@ -29,11 +29,13 @@ export function createNativeRecoveryTransport(options: Readonly<{
     || typeof options.databaseOrigin !== "string" || typeof options.appOrigin !== "string"
     || typeof options.rpcFetch !== "function" || typeof options.nativeFetch !== "function") throw new RuntimeFailure("INVALID_INPUT");
   const origin = (value: string) => {
-    const url = new URL(value);
+    let url: URL;
+    try { url = new URL(value); } catch { throw new RuntimeFailure("INVALID_INPUT"); }
     if (url.protocol !== "https:" || url.origin !== value || url.username || url.password) throw new RuntimeFailure("INVALID_INPUT");
     return value;
   };
   const database = origin(options.databaseOrigin), app = origin(options.appOrigin);
+  const rpcFetch = options.rpcFetch, nativeFetch = options.nativeFetch;
   return async (request, signal) => {
     if (signal.aborted) throw new RuntimeFailure("CANCELLED");
     const keys: Readonly<Record<RuntimeRequest["name"], readonly string[]>> = {
@@ -45,12 +47,16 @@ export function createNativeRecoveryTransport(options: Readonly<{
     if (!record(request) || !ownExact(request, ["name", "params", "context"]) || !Object.hasOwn(keys, request.name)
       || !record(request.params) || !ownExact(request.params, keys[request.name]) || !record(request.context)
       || !ownExact(request.context, ["ownerId", "sessionId", "mobileEpoch", "taskId", "turnId", "conversationId", "policyId", "tripId", "source"])
-      || !uuid(request.context.tripId)) throw new RuntimeFailure("INVALID_INPUT");
+      || ![request.context.ownerId, request.context.sessionId, request.context.taskId, request.context.turnId, request.context.conversationId,
+        request.context.policyId, request.context.tripId].every(uuid) || request.context.taskId === request.context.turnId || !integer(request.context.mobileEpoch, 1)
+      || !record(request.context.source) || !ownExact(request.context.source, ["apiSha", "workerSha", "configurationDigest"])
+      || ![request.context.source.apiSha, request.context.source.workerSha].every(v => typeof v === "string" && /^[0-9a-f]{40}$/.test(v))
+      || !hash(request.context.source.configurationDigest)) throw new RuntimeFailure("INVALID_INPUT");
     if (request.name === "trip_reload") {
       if (request.params.tripId !== request.context.tripId) throw new RuntimeFailure("INVALID_INPUT");
-      return options.nativeFetch(`${app}/api/trips/native/v2/${request.context.tripId}`, { method: "GET", signal, redirect: "error", cache: "no-store" });
+      return nativeFetch(`${app}/api/trips/native/v2/${request.context.tripId}`, { method: "GET", signal, redirect: "error", cache: "no-store" });
     }
-    return options.rpcFetch(`${database}/rest/v1/rpc/${request.name}`, {
+    return rpcFetch(`${database}/rest/v1/rpc/${request.name}`, {
       method: "POST", body: JSON.stringify(request.params), headers: { "Content-Type": "application/json" },
       signal, redirect: "error", cache: "no-store",
     });
