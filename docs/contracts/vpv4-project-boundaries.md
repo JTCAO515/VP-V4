@@ -1,0 +1,45 @@
+# VP-V4 同仓三工程边界 — VPV10-MODULAR-001
+
+2026-10-14 接受方向；仓库仍为 `JTCAO515/VP-V4`，保留名称、历史、资源与有效实现。当前先完成方向、文档和开放 Issue 重排；现有源码返修仅安全收尾，新共享库、迁移、部署和自动新实现不由本文启动。
+
+## 用户结果与工程责任
+
+VisePanda 继续帮助来华旅客规划、准备与完成旅程。iOS、Web、Agent 是同仓独立演进工程，按各自入口、版本、验证和交付负责。工程独立不意味着复制业务数据、另建队列或立即拆库。
+
+| 工程 | 当前复用入口 | 自有责任 | 跨边界方式 |
+| --- | --- | --- | --- |
+| iOS | `ios/VisePanda`，VP/Journeys/Library/Memory 四 Tab | 原生体验、设备能力、Native Bearer 适配、签名与设备验收 | 消费版本化业务 API；不嵌入 worker/provider 凭据 |
+| Web | `app`、`components`；首体验 `/qa`，已有 TripCanvas | 浏览器会话与成果呈现、Cookie/CSRF 适配、Web 构建与 Vercel 入口 | 服务端适配业务端口；不要求等待完整 iOS 发布 |
+| Agent | `lib/server/qa-agent`、`qa-agent-context`、`turn`、`model-gateway` 与现有 hosted worker | 持久任务、上下文资格、模型调用、预算、执行与结果收据 | 对两端提供同一业务语义，独立执行/版本验证；当前仍与 Next 服务入口共存 |
+| shared 业务合同 | 既有 `docs/contracts`、Trip/身份/政策/数据生命周期权威 | 对象身份、版本、授权、确认、幂等与兼容 | 是合同和权威归属，不是本轮新建共享 SDK 或第四产品 |
+
+当前物理目录及构建保持原样。下一阶段先明确端口与可独立验证入口，再渐进抽取。不得先大搬目录、重写已合并能力或为了三个名字建立三个数据权威。
+
+## 第一项可体验交付
+
+复用 #680–#683：用户在 `qatesting.go2china.space/qa` 登录，新建 Session，获得真实 Agent 首答，刷新仍可读回，继续“为什么/简化/第二方案/纠正”并保持同 Session 上下文；新 Session 和其他用户隔离。客户不选择 LLM。#680 负责 Agent 服务入口，#681 负责 Web 会话，#682 负责真实上下文消费，#683 负责获准 QA 交付。
+
+源代码、合并、synthetic、目标运行、真人体验分别举证。PR684/685 的既有合并成果继续复用；PR686 与真实 Auth/provider 路径仍按实际证据判断。本文没有运行浏览器、provider、数据库或设备验收，全部该轮运行证据为 UNRUN。#229/PR679、#203 安全暂停成果保留，不前置恢复整个旧队列。
+
+## 版本化业务接口
+
+| 端口 | 生产者 → 消费者 | 兼容与验收 |
+| --- | --- | --- |
+| Session / Conversation / Turn | Agent 持久权威 → Web、iOS 的各自适配器 | 保留已实现 UUID、requestId、actor/auth-session、Session/Task/Turn 绑定、事件顺序与重放；不把 QA Session 直接假定等同所有 Native wire |
+| Context / Memory | 唯一资格投影 → 获准模型调用 | 复用 `qa-context/1` 的同 Session、有界完整对、digest 与 consent/source 资格；记录保存、入选、实际消费三个事实；不新建画像存储 |
+| Result / Artifact | 持久执行结果 → 两端显示与重新打开 | 回答、partial、blocked、technical_failure、unknown 如实区分；source/version/receipt 与内容同归属 |
+| TripProposal / Patch | Trip 权威 → 两端确认界面 | Result → Proposal → 可见 diff → 明确确认 → 原子 Patch；旧版本冲突拒绝，草稿不直接写 Trip |
+| Task / Model / Budget | 现有队列、ModelGateway、预算账本 → worker | 同 ServiceTask 的延续与尝试，不另建队列/重复 admission；未知结果先 reconciliation，不盲重试/重复收费 |
+| Identity / Policy / Lifecycle | 原权威 → 所有端口 | Cookie/CSRF 与 Native Bearer 各自验证；统一业务资格不统一身份协议，不放宽 Origin/RLS、撤回、删除、接收方许可 |
+
+每个新增或变化端口在实施前记录：当前 schema/API 版本、生产者、消费者、错误集合、幂等键、权限范围、兼容窗口和定向验证。已有 wire 继续有效；本文不是凭空启用新的通用 `v1` API。三工程可独立发布，涉及合同变化时用消费者兼容矩阵约束，不强制全端同版本，也不允许无契约跨端破坏。
+
+采用 expand → 验证 → 迁移消费者 → 退役旧入口的顺序。旧入口退役必须证明原能力、数据与接口兼容，确认没有活跃消费者，并保留回退；永久删除另需具体授权。SDK、Android、新语言和完整商业矩阵不作为当前前置。
+
+## 资源与执行边界
+
+保留 Vercel `vp-v4` / `prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2` / `team_vLT8SL2mQJJSnXbD9GzVLP4K`。数据库固定 `dzqdzetcctkhbrhlxxgn`，原 Production/QA 共享数据事实与明确目标绑定继续有效。方向调整不新建项目、不改 DNS、env、套餐、权限或凭据。
+
+原 Main A–D 与条件式 E 授权和维护确认保留；本专项不操作 backup/key/Docker/target。没有 START/window/actual capture 证据时不能填已执行。本轮不新增生产发布、provider 费用或真实数据权限。
+
+唯一 Main 与唯一 HANDOFF 保持原处。本文件只拥有工程方向与端口责任；当前 writer/ready 前沿依唯一 HANDOFF 和 Main 的精确 lease。历史 ADR-0023/0027 的“iOS 完整产品、Web 轻量附属”及旧固定实施顺序被本次接受方向定向替代；未冲突的产品、安全和发布约束保留。正式新增 ADR、根 AGENTS/CONTEXT、总索引与其它 owner 文档需 Main 精确整合，见[当前文档映射](../product/VPV10-MODULAR-001/README.md)。

@@ -1,5 +1,7 @@
 # VPJ Issue 执行合同
 
+> 当前三工程方向见 [VPV10-MODULAR-001](../../contracts/vpv4-project-boundaries.md)，逐票当前归属见 [开放票映射](../../product/VPV10-MODULAR-001/issue-map.md)。以下保留原执行/验收定义；旧固定顺序不自动启动。生成器适配由 Main 精确整合后再 render，避免覆盖当前指针。
+
 生成自issue-plan.json。当前共享流程见 [development-workflow.md](../../agents/development-workflow.md) / ADR-0024。
 阅读当前Issue/PR、本行、受影响接口与代码；历史研究按需读取。
 

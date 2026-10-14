@@ -601,7 +601,13 @@
         "VPJ-05",
         "VPJ-06",
         "VPJ-59"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "Agent",
+        "priority": "P1",
+        "userOutcome": "持久文本任务执行并可恢复",
+        "deltaAndReuse": "复用完成文本纵切、hosted queue 和 worker；补剩余真实执行/恢复，QAWEB 是消费者不另建执行系统"
+      }
     },
     {
       "id": "VPJ-08",
@@ -991,7 +997,13 @@
         "VPJ-03",
         "VPJ-05",
         "VPJ-07"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "shared",
+        "priority": "P1",
+        "userOutcome": "显式 Memory 影响结果且可纠正遗忘",
+        "deltaAndReuse": "复用唯一 Profile/Memory 权威与原生页面；补真实消费/撤回链，不复制画像库"
+      }
     },
     {
       "id": "VPJ-12",
@@ -1087,7 +1099,13 @@
         "VPJ-04",
         "VPJ-07",
         "VPJ-60"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "iOS",
+        "priority": "P1",
+        "userOutcome": "单张旅行截图经校正加入 Trip",
+        "deltaAndReuse": "复用单图解析审阅及 #507；补许可内材料与确认链，不重做已否决 Docling"
+      }
     },
     {
       "id": "VPJ-13",
@@ -1183,7 +1201,13 @@
         "VPJ-09",
         "VPJ-11",
         "VPJ-12"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "iOS",
+        "priority": "P1",
+        "userOutcome": "首访委托与回访继续同一目标",
+        "deltaAndReuse": "复用 VPJ77 四 Tab 与 JourneyEntry；保留 E2 生命周期安全暂停，真实回访缺口不前置为全部 QA 阻塞"
+      }
     },
     {
       "id": "VPJ-14",
@@ -1361,7 +1385,13 @@
       },
       "acceptanceDependencies": [
         "VPJ-14"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "Agent",
+        "priority": "P1",
+        "userOutcome": "旅程内容从登记来源到审核可用",
+        "deltaAndReuse": "复用来源和编辑审核工具；补真实来源权利、定位和发布收据，保留作者审核分离"
+      }
     },
     {
       "id": "VPJ-16",
@@ -1453,7 +1483,13 @@
       "acceptanceDependencies": [
         "VPJ-07",
         "VPJ-15"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "Agent",
+        "priority": "P1",
+        "userOutcome": "回答有依据且诚实显示部分答案和缺口",
+        "deltaAndReuse": "复用 evidence/eligibility/receipt；补当前 consumer 的真实引用与拒绝，文本成功不等于知识合格"
+      }
     },
     {
       "id": "VPJ-17",
@@ -1620,7 +1656,13 @@
       "sourceRef": "main",
       "acceptanceDependencies": [
         "VPJ-03"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "Agent",
+        "priority": "P1",
+        "userOutcome": "高德主选腾讯补充具有用途与成本证据",
+        "deltaAndReuse": "复用既有供应商适配和 #367；补真实输入和许可范围，不额外采购"
+      }
     },
     {
       "id": "VPJ-19",
@@ -1710,7 +1752,13 @@
       "acceptanceDependencies": [
         "VPJ-05",
         "VPJ-18"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "iOS",
+        "priority": "P1",
+        "userOutcome": "地点消歧地图和路线出口保持一致",
+        "deltaAndReuse": "复用地图接口和 #363/#364；补准确实体/坐标/导航证据，provider 资格归 #208"
+      }
     },
     {
       "id": "VPJ-20",
@@ -1803,7 +1851,13 @@
         "VPJ-09",
         "VPJ-15",
         "VPJ-19"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "iOS",
+        "priority": "P1",
+        "userOutcome": "用户发现保存地点并交给 VP",
+        "deltaAndReuse": "复用 Explore/地点/目标入口；补真实成果交接，不改 Trip 确认路径"
+      }
     },
     {
       "id": "VPJ-21",
@@ -1970,7 +2024,13 @@
       "sourceRef": "main",
       "acceptanceDependencies": [
         "VPJ-03"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "Web",
+        "priority": "P1",
+        "userOutcome": "酒店需求通过可信官方出口交接",
+        "deltaAndReuse": "复用酒店 allowlist/归因合同供双端消费；补参数实测，opened 不当 booked"
+      }
     },
     {
       "id": "VPJ-23",
@@ -2324,7 +2384,13 @@
       "acceptanceDependencies": [
         "VPJ-07",
         "VPJ-16"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "iOS",
+        "priority": "P1",
+        "userOutcome": "旅途中展示可信中英表达与大字卡",
+        "deltaAndReuse": "复用原生卡片和文本能力；补实际来源/语言/失败处理，媒体能力单独验证"
+      }
     },
     {
       "id": "VPJ-27",
@@ -2957,7 +3023,13 @@
       },
       "acceptanceDependencies": [
         "VPJ-03"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "shared",
+        "priority": "P1",
+        "userOutcome": "用户理解 Free/订阅和旧 Pass 边界",
+        "deltaAndReuse": "复用现行商品策略；工程划分不改变定价与旧 Pass 兼容，不自动启用年订阅"
+      }
     },
     {
       "id": "VPJ-34",
@@ -3055,7 +3127,13 @@
         "VPJ-04",
         "VPJ-05",
         "VPJ-33"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "shared",
+        "priority": "P1",
+        "userOutcome": "官方购买与旧订阅得到同源权益",
+        "deltaAndReuse": "复用购买/权益合同与 #503；补原真实验收，三工程不各自创建权益权威"
+      }
     },
     {
       "id": "VPJ-35",
@@ -3150,7 +3228,13 @@
         "VPJ-06",
         "VPJ-08",
         "VPJ-34"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "Agent",
+        "priority": "P1",
+        "userOutcome": "完整任务额度与实际尝试成本受控",
+        "deltaAndReuse": "复用 durable budget/ServiceTask 账本；补消费与恢复边界，不重建账本或扩大收费"
+      }
     },
     {
       "id": "VPJ-36",
@@ -3334,7 +3418,13 @@
       "acceptanceDependencies": [
         "VPJ-07",
         "VPJ-35"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "Agent",
+        "priority": "P1",
+        "userOutcome": "运营看见质量成本故障并安全停用",
+        "deltaAndReuse": "保留 PR679/W2 安全暂停及全部未完成证据；不前置恢复整票到 QA 首答"
+      }
     },
     {
       "id": "VPJ-38",
@@ -3411,7 +3501,13 @@
       "sourceRef": "main",
       "acceptanceDependencies": [
         "VPJ-36"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "shared",
+        "priority": "P1",
+        "userOutcome": "恢复演练保持对象和删除状态一致",
+        "deltaAndReuse": "复用历史恢复工具与失败；保留原 Main A–D/条件 E，当前无 START/actual capture 不执行"
+      }
     },
     {
       "id": "VPJ-39",
@@ -3490,7 +3586,13 @@
         "VPJ-34",
         "VPJ-30",
         "VPJ-55"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "shared",
+        "priority": "P1",
+        "userOutcome": "用户在境内外网络得到真实可用服务",
+        "deltaAndReuse": "按 iOS/Web/Agent 分别记录媒体酒店IAP通知网络证据；复用现有适配不推导全国覆盖"
+      }
     },
     {
       "id": "VPJ-40",
@@ -3597,7 +3699,13 @@
         "VPJ-61",
         "VPJ-36",
         "VPJ-83"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "iOS",
+        "priority": "P1",
+        "userOutcome": "原生完整体验可访问且性能可接受",
+        "deltaAndReuse": "复用已合原生四 Tab/动效/组件；补实体 VoiceOver、性能与整链观察"
+      }
     },
     {
       "id": "VPJ-41",
@@ -3689,7 +3797,13 @@
         "VPJ-20",
         "VPJ-34",
         "VPJ-79"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "Web",
+        "priority": "P1",
+        "userOutcome": "Web 用户独立完成同 Trip 规划与确认",
+        "deltaAndReuse": "复用 TripCanvas、成果工作区及既有 Web 验收；QA 首体验由 #680–#683 承担，不要求复制全套 iOS UI"
+      }
     },
     {
       "id": "VPJ-42",
@@ -3793,7 +3907,13 @@
         "VPJ-64",
         "VPJ-65",
         "VPJ-83"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "iOS",
+        "priority": "P1",
+        "userOutcome": "TestFlight 真机贯通规划准备与旅途",
+        "deltaAndReuse": "复用四 Tab 和已合功能；补真实设备整链，不把 iOS 总验收设为 Web 独立交付前置"
+      }
     },
     {
       "id": "VPJ-43",
@@ -3868,7 +3988,13 @@
       "acceptanceDependencies": [
         "VPJ-38",
         "VPJ-42"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "shared",
+        "priority": "P1",
+        "userOutcome": "客户环境具备明确隔离与回滚能力",
+        "deltaAndReuse": "保留未来 Production 交付目标；当前 QA 固定共享 dzt，不在本轮新建库或迁移"
+      }
     },
     {
       "id": "VPJ-44",
@@ -3947,7 +4073,13 @@
         "VPJ-34",
         "VPJ-40",
         "VPJ-43"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "iOS",
+        "priority": "P1",
+        "userOutcome": "提交可审核的 App Store 1.0",
+        "deltaAndReuse": "复用已验签名/隐私/商品材料；补真实提交与审核权限，方向阶段不提交"
+      }
     },
     {
       "id": "VPJ-45",
@@ -4021,7 +4153,13 @@
         ]
       },
       "sourceRef": "main",
-      "acceptanceDependencies": []
+      "acceptanceDependencies": [],
+      "modularDirection": {
+        "engineeringOwner": "shared",
+        "priority": "P1",
+        "userOutcome": "用户收到产品后有支持和关账证据",
+        "deltaAndReuse": "复用运营交付链；补真实交付观察和回滚，不因工程拆分重做发布史"
+      }
     },
     {
       "id": "VPJ-46",
@@ -4097,6 +4235,12 @@
           "docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md",
           "docs/program/2026-09-05/INTERFACES.md"
         ]
+      },
+      "modularDirection": {
+        "engineeringOwner": "shared",
+        "priority": "P1",
+        "userOutcome": "两周客户发现产生可执行结论",
+        "deltaAndReuse": "复用既有试点和访谈定义；保留真人与对外联系授权边界"
       }
     },
     {
@@ -4178,7 +4322,13 @@
       "acceptanceDependencies": [
         "VPJ-42",
         "VPJ-46"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "shared",
+        "priority": "P1",
+        "userOutcome": "观察真实激活、付费与人工成本",
+        "deltaAndReuse": "复用事件与经营定义；补真实发布后的观察，不把 synthetic 当经营结果"
+      }
     },
     {
       "id": "VPJ-48",
@@ -4434,7 +4584,13 @@
       "acceptanceDependencies": [
         "VPJ-16",
         "VPJ-17"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "Agent",
+        "priority": "P2",
+        "userOutcome": "真实召回失败时引入混合检索与重排",
+        "deltaAndReuse": "复用现有知识索引；先保留失败证据和 activationEvidence，不预先换架构"
+      }
     },
     {
       "id": "VPJ-51",
@@ -4507,7 +4663,13 @@
       "acceptanceDependencies": [
         "VPJ-03",
         "VPJ-39"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "Agent",
+        "priority": "P2",
+        "userOutcome": "有证据时验证中国航线来源",
+        "deltaAndReuse": "保留来源用途、授权和激活条件；不把数据采购前置到三工程入口"
+      }
     },
     {
       "id": "VPJ-52",
@@ -4593,7 +4755,13 @@
       "acceptanceDependencies": [
         "VPJ-17",
         "VPJ-29"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "Agent",
+        "priority": "P2",
+        "userOutcome": "授权航班变化触发相关行程重验",
+        "deltaAndReuse": "复用来源和影响合同；等待本票激活证据及 #249 实际数据，不制造状态"
+      }
     },
     {
       "id": "VPJ-53",
@@ -4664,7 +4832,13 @@
         ]
       },
       "sourceRef": "main",
-      "acceptanceDependencies": []
+      "acceptanceDependencies": [],
+      "modularDirection": {
+        "engineeringOwner": "shared",
+        "priority": "P2",
+        "userOutcome": "有需求证据时再设计 Android 与新语言",
+        "deltaAndReuse": "保留 activationEvidence；本轮不新建 Android/SDK 工程"
+      }
     },
     {
       "id": "VPJ-54",
@@ -4739,7 +4913,13 @@
         ]
       },
       "sourceRef": "main",
-      "acceptanceDependencies": []
+      "acceptanceDependencies": [],
+      "modularDirection": {
+        "engineeringOwner": "shared",
+        "priority": "P2",
+        "userOutcome": "凭经营证据决定年订阅与交易扩展",
+        "deltaAndReuse": "保留 activationEvidence；不把商业全矩阵前置到 QA 首答"
+      }
     },
     {
       "id": "VPJ-55",
@@ -4905,7 +5085,13 @@
       "sourceRef": "main",
       "acceptanceDependencies": [
         "VPJ-01"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "iOS",
+        "priority": "P1",
+        "userOutcome": "获得签名 Archive 与可安装 TestFlight 包",
+        "deltaAndReuse": "复用已关闭 #508 的 unsigned Archive/CI 成果；补签名、上传与安装原范围"
+      }
     },
     {
       "id": "VPJ-57",
@@ -4997,7 +5183,13 @@
         "VPJ-03",
         "VPJ-04",
         "VPJ-14"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "shared",
+        "priority": "P1",
+        "userOutcome": "人工服务只访问按任务授予的资料",
+        "deltaAndReuse": "复用 ServiceCase 与许可；保持用户同意和接收方隔离，不让 Agent 默认读取私有资料"
+      }
     },
     {
       "id": "VPJ-58",
@@ -5252,7 +5444,13 @@
       "acceptanceDependencies": [
         "VPJ-03",
         "VPJ-06"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "Agent",
+        "priority": "P1",
+        "userOutcome": "图片语音 provider 中英数据流可验收",
+        "deltaAndReuse": "复用 C0 适配器；保留 DeepSeek HTTP400 与真实 Qwen UNRUN，文本资格不代媒体资格"
+      }
     },
     {
       "id": "VPJ-61",
@@ -5834,7 +6032,13 @@
       "acceptanceDependencies": [
         "VPJ-66",
         "VPJ-16"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "Agent",
+        "priority": "P1",
+        "userOutcome": "只读问答返回有依据结果与回执",
+        "deltaAndReuse": "复用文本 Harness 和知识消费者；补真实许可 provider 的来源、结果和拒绝证据"
+      }
     },
     {
       "track": "launch",
@@ -5936,7 +6140,13 @@
         "VPJ-10",
         "VPJ-11",
         "VPJ-79"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "Agent",
+        "priority": "P1",
+        "userOutcome": "少走路改稿保留已确认晚餐",
+        "deltaAndReuse": "复用 scoped-edit、TripProposal 和 Memory；补真实已有 Trip 的候选→diff→确认闭环"
+      }
     },
     {
       "track": "launch",
@@ -6033,7 +6243,13 @@
       },
       "acceptanceDependencies": [
         "VPJ-80"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "Agent",
+        "priority": "P1",
+        "userOutcome": "取消与重连不伪造完成或重复提交",
+        "deltaAndReuse": "复用故障 Harness 与持久执行；补 #265 和规划恢复输入上的取消/未知结果链"
+      }
     },
     {
       "track": "launch",
@@ -6125,7 +6341,13 @@
       "acceptanceDependencies": [
         "VPJ-67",
         "VPJ-72"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "Agent",
+        "priority": "P1",
+        "userOutcome": "对模型或提示词候选做可比评测",
+        "deltaAndReuse": "复用冻结案例与配对工具；补实际许可 provider 输入、usage 与校准，不改客户模型选择"
+      }
     },
     {
       "track": "launch",
@@ -6233,7 +6455,13 @@
         "VPJ-37",
         "VPJ-63",
         "VPJ-83"
-      ]
+      ],
+      "modularDirection": {
+        "engineeringOwner": "Agent",
+        "priority": "P1",
+        "userOutcome": "按核心任务证据判断发布与停用恢复",
+        "deltaAndReuse": "复用 Harness 和运营合同；补实际候选/恢复证据，不能用矩阵通过冒充目标可用"
+      }
     },
     {
       "track": "launch",
@@ -6531,7 +6759,13 @@
         "artifacts/VPJ-75/results.json"
       ],
       "databaseId": 5439163273,
-      "url": "https://github.com/JTCAO515/VP-V4/issues/359"
+      "url": "https://github.com/JTCAO515/VP-V4/issues/359",
+      "modularDirection": {
+        "engineeringOwner": "Agent",
+        "priority": "P1",
+        "userOutcome": "新来源形成可审查并可发布的知识变更",
+        "deltaAndReuse": "复用现有 Wiki 生成和审核；补来源到发布版本链，不自动发布模型候选"
+      }
     },
     {
       "phase": "R3",
@@ -6613,7 +6847,13 @@
       ],
       "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
       "databaseId": 5439169285,
-      "url": "https://github.com/JTCAO515/VP-V4/issues/360"
+      "url": "https://github.com/JTCAO515/VP-V4/issues/360",
+      "modularDirection": {
+        "engineeringOwner": "Agent",
+        "priority": "P1",
+        "userOutcome": "回答引用已发布 Wiki 和原子声明并说明缺口",
+        "deltaAndReuse": "复用知识检索与来源资格；补真实 consumer 的证据完整性和不可访问拒绝"
+      }
     },
     {
       "id": "VPJ-77",
@@ -9948,5 +10188,13 @@
       ],
       "slices": []
     }
+  },
+  "modularDirection": {
+    "id": "VPV10-MODULAR-001",
+    "date": "2026-10-14",
+    "contract": "docs/contracts/vpv4-project-boundaries.md",
+    "openIssueMapping": "docs/product/VPV10-MODULAR-001/mapping.json",
+    "scope": "direction-and-documents-first",
+    "note": "Existing task identities, acceptance, blockedBy and acceptanceDependencies remain authoritative; modularDirection adds current engineering attribution. Legacy renderer does not emit this overlay; preserve it during scoped body sync."
   }
 }
