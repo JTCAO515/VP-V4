@@ -19,6 +19,7 @@ def load(name,path):
 
 restore=load('restore',HERE/'controlled-snapshot-restore.py')
 snap=load('capture',HERE/'controlled-snapshot-backup.py');r=restore.base
+icu_profile={'databaseFacts':{'encoding':'UTF8','collate':'en_US.UTF-8','ctype':'en_US.UTF-8','localeProvider':'i'},'icuLocale':'en-US','icuRules':None,'collationVersion':'153.121','actualCollationVersion':'153.121'} if sys.argv[1:]==['--synthetic-icu-only'] else None
 report={'status':'FAIL_LOCAL_RESTORE_REPLAY_PROOF','targetRead':False,'realArchiveRead':False,'stages':[]};started=time.monotonic()
 
 
@@ -26,6 +27,7 @@ class TlsFixture(r.OwnCluster):
     def docker(self,args,data=None):
         args=list(args)
         if args[0]!='run':return super().docker(args,data)
+        if icu_profile is not None:args=restore.locale_profile.patch_owned_run(args,icu_profile)
         args.remove('--rm')
         setup="while [ ! -f /tmp/ssl-ready ]; do sleep .05; done; printf 'local all all trust\\nhostssl all cli_login_postgres 127.0.0.1/32 scram-sha-256\\nhostssl all cli_login_postgres ::1/128 scram-sha-256\\n' > /tmp/restore-db/pg_hba.conf; "
         args[-1]=args[-1].replace('exec postgres -D /tmp/restore-db -c listen_addresses=',setup+'exec postgres -D /tmp/restore-db -c ssl=on -c ssl_cert_file=/tmp/snapshot.crt -c ssl_key_file=/tmp/snapshot.key -c listen_addresses=localhost')
@@ -40,8 +42,9 @@ class TlsFixture(r.OwnCluster):
 
 source=TlsFixture('supabase_admin')
 try:
-    if sys.argv[1:]!=['--synthetic-only']:raise ValueError('SYNTHETIC_ONLY')
+    if sys.argv[1:] not in (['--synthetic-only'],['--synthetic-icu-only']):raise ValueError('SYNTHETIC_ONLY')
     plan,sql_sources=restore.replay.load_plan();source.start()
+    if icu_profile is not None:report['icuProfile']=restore.locale_profile.verify_owned(source,icu_profile)
     source.sql('create role postgres login createrole bypassrls;alter database postgres owner to postgres;create role anon nologin;create role authenticated nologin;create role service_role nologin bypassrls;create role dashboard_user nologin;create role supabase_realtime_admin nologin;')
     roles=json.loads(source.sql("select jsonb_agg(jsonb_build_object('name',rolname,'superuser',rolsuper)) from pg_roles;"))
     r.managed.prepare(source,{'bootstrapRole':'supabase_admin','metadata':{'extensions':r.managed.EXTENSIONS,'roles':roles,'schema_acl':[{'schema':'extensions','owner':'postgres'},{'schema':'vault','owner':'supabase_admin'}]}},r.verify.quote,r.verify.literal)
@@ -91,7 +94,7 @@ try:
             return original_acl_repair(db,metadata)
         restore.compat.restore_archived_owner_maintain=diagnostic_acl
         r.verify.normalize_schema=diagnostic_schema
-        try:result=restore.restore_bundle(d,key,manifest,r.ROOT/'artifacts/QAWEB/staging-replay/reviewed-replay-manifest.json')
+        try:result=restore.restore_bundle(d,key,manifest,r.ROOT/'artifacts/QAWEB/staging-replay/reviewed-replay-manifest.json',icu_profile)
         finally:r.verify.normalize_schema=original_normalize;restore.compat.restore_archived_owner_maintain=original_acl_repair
         report['restoreReplay']=result
         if result['status']!='PASS_LOCAL_BUNDLE_RESTORE_ONLY' or result.get('replay',{}).get('status')!='PASS_OWNED_RESTORED_REPLAY_ONLY' or result['cleanup']!='PASS':raise ValueError('OWNED_RESTORE_REPLAY_PROOF_FAILED')

@@ -34,7 +34,7 @@ def canonical_approval_id(value):
     return value
 
 
-def claim_restore_replay(packet,code_hash):
+def claim_restore_replay(packet,code_hash,reviewed_retry=False):
     """Irrevocable atomic claim before any archive read, even on later failure.
 
     The fixed private capture root owns claims independently of bundle paths.
@@ -45,12 +45,17 @@ def claim_restore_replay(packet,code_hash):
             and re.fullmatch('[a-f0-9]{64}',code_hash or '')
             and re.fullmatch('[a-f0-9]{64}',packet.get('manifestSha256') or ''),'RESTORE_CLAIM_BINDING_REQUIRED')
     require(CLAIM_ROOT.resolve()==CLAIM_ROOT,'RESTORE_CLAIM_DIRECTORY_UNSAFE')
+    if reviewed_retry:
+        original,_=read_private(CLAIM_ROOT/('approval-'+approval_id+'.restore-replay.used.json'))
+        require(original.get('stage')=='restore-replay' and original.get('approvalId')==approval_id
+                and original.get('target')==TARGET and original.get('manifestSha256')==packet['manifestSha256'],'ORIGINAL_CONSUMED_CLAIM_REQUIRED')
     directory=os.open(CLAIM_ROOT,os.O_RDONLY|os.O_DIRECTORY|os.O_NOFOLLOW)
     try:
         st=os.fstat(directory)
         require(stat.S_ISDIR(st.st_mode) and st.st_uid==os.getuid() and stat.S_IMODE(st.st_mode)==0o700,'RESTORE_CLAIM_DIRECTORY_UNSAFE')
-        name='approval-'+approval_id+'.restore-replay.used.json'
-        receipt={'status':'CONSUMED_BEFORE_ARCHIVE_READ','approvalId':approval_id,'stage':'restore-replay',
+        stage='restore-replay-retry-1' if reviewed_retry else 'restore-replay'
+        name='approval-'+approval_id+'.'+stage+'.used.json'
+        receipt={'status':'CONSUMED_BEFORE_ARCHIVE_READ','approvalId':approval_id,'stage':stage,
                  'target':TARGET,'manifestSha256':packet['manifestSha256'],'codeSha256':code_hash}
         try:
             fd=os.open(name,os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW,0o600,dir_fd=directory)

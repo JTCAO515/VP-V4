@@ -1,0 +1,24 @@
+{
+  "status": "PASS_STDERR_STATE_ALWAYS_NULL_WITH_EXPLICIT_HINT_PROVENANCE",
+  "base": "75763df5421fd6c29fb189465521b536118a2b3c",
+  "stableParserRestoreCodeSha256": "95f0ace3d65a6c7c3c5b68ece31c7f5ba775aa78becad88da91f733eb3c572af",
+  "stableCodeHashComputation": "757 committed snapshot adapter plus this parser delta; future WIP deliberately excluded",
+  "focusedTests": 13,
+  "old757CounterexampleOracle": "diagnostics-message-prefix-old757-fail.log expected FAIL",
+  "newPass": "diagnostics-untyped-message-pass.log",
+  "reusedMainRealPgCounterexample": {
+    "path": "/Users/jtsm5p/Documents/Codex/2026-10-13/v10-main/synthetic-sqlstate-provenance-probe.json",
+    "sha256": "c20fdb1f4114fb9fc94ad8b07c10c5d899d39d50272ac78ccf3f9dd1629b16c2",
+    "configuredTypedState": "P0001",
+    "unstructuredMessagePrefix": "42501",
+    "scope": "fake data only; Main reports two owned copies cleanupPASS"
+  },
+  "sqlstateContract": "always null; stderr does not provide independently typed PG_DIAG_SQLSTATE",
+  "provenance": "STDERR_ONLY_UNSTRUCTURED_HINTS_NOT_PG_ERROR_FACTS",
+  "hintBehavior": "no code-prefix stripping or category overrides; TOC remains conservative location hint; ambiguous framing unknown",
+  "pipelineCallerTimeoutCleanupStrictBase": "UNCHANGED",
+  "actualIo": "STOP",
+  "futureWindowWip": "preserved uncommitted snapshot adapter/module/tests, not part of parser commit",
+  "full80Evidence": "reused successful path; no rerun",
+  "actualPermissionRootCause": "UNKNOWN unchanged"
+}

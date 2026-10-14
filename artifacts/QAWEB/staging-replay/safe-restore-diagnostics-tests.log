@@ -1,0 +1,9 @@
+test_failure_in_pipeline_keeps_category_and_cleans_children (__main__.SafeDiagnostics) ... ok
+test_permission_context_is_allowlisted_without_sql_or_names (__main__.SafeDiagnostics) ... ok
+test_success_preserves_output_and_has_no_failure_record (__main__.SafeDiagnostics) ... ok
+test_verbose_actual_sqlstate_and_unknown_names_never_echo (__main__.SafeDiagnostics) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.026s
+
+OK

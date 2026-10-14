@@ -1,0 +1,37 @@
+{
+  "status": "PASS_LOCAL_SAFE_DIAGNOSTIC_SEAM_ACTUAL_ROOT_CAUSE_UNKNOWN",
+  "base": "f04dbbee124b13811d06531aa6346c32f080a48c",
+  "restoreCodeSha256": "5e944c1744104a1ef3a83b0c61c0af7532068b70f079eed37dc090d886a6be08",
+  "changes": "private snapshot adapter pipeline only; strict original bytes unchanged; verbose progress suppressed into enum/TOC-only error records; no role/ACL/creator semantics changes",
+  "tests": {
+    "safeDiagnostics": 4,
+    "localeRetryContract": 4,
+    "canonicalOneTimeAuthority": 11,
+    "snapshotModeGates": 10,
+    "syntax": "PASS",
+    "diffWhitespace": "PASS"
+  },
+  "positivePhysicalProof": "owned-icu-diagnostics-proof-01.json full fake data4archive+ICU+schema/role/ACL+80+10gates+cleanupPASS",
+  "negativePhysicalProof": "postdata-permission-probe-04.json limited caller reproduces permission denied at CONSTRAINT/SCHEMA TOC; known role attrs/defaultACL/trigger baseline succeeds",
+  "eliminatedHypothesis": "event-trigger-before-function-ACL hypothesis did not reproduce; archived functionACL applied during pre-data before eventtrigger",
+  "actualEvidence": "Main retry1 result FAIL_LOCAL_RESTORE schema post-data RESTORE_PERMISSION_DENIED cleanupPASS; ICU passed; replay absent; schema/roles/ACL/count/ledger/sequence not yet accepted",
+  "actualRootCause": "UNKNOWN: generic prior result discarded original failing TOC/error/caller context; safe source role flags alone insufficient",
+  "actualAttemptsStopped": true,
+  "retry2Added": false,
+  "oldMarkersDeleted": false,
+  "newWindowOrUuid": false,
+  "realCiphertextOrIdentityRead": false,
+  "targetWritten": false,
+  "MainActualIoLeaseTaken": false,
+  "newLivePrivilegeOrNewEnvironment": false,
+  "newDiagnosticsFields": [
+    "category",
+    "sqlstate if actually present else null",
+    "tocEntryId",
+    "objectClass enum",
+    "permissionObjectClass enum",
+    "operation enum",
+    "phase enum"
+  ],
+  "rawSqlStderrNamesOrValuesReturned": false
+}

@@ -1,0 +1,552 @@
+{
+  "status": "PASS_LOCAL_OWNED_RESTORE_REPLAY_ONLY",
+  "targetRead": false,
+  "realArchiveRead": false,
+  "stages": [
+    "PASS exact75 original-source baseline with fake auth/trip/revoked-consent/budget rows",
+    "PASS four encrypted archives share75/ledger snapshot; no target/archive input",
+    "PASS actual local restore -> old data/roles/ACL/count/sequence -> exact80 ->10gates/v2ACL/data/history ->owned cleanup",
+    "PASS synthetic keys/ciphertexts removed; real shared data and live80 remain UNRUN"
+  ],
+  "icuProfile": {
+    "status": "PASS_EXACT_ICU_PROFILE_AND_VERSION",
+    "profile": {
+      "databaseFacts": {
+        "encoding": "UTF8",
+        "collate": "en_US.UTF-8",
+        "ctype": "en_US.UTF-8",
+        "localeProvider": "i"
+      },
+      "icuLocale": "en-US",
+      "icuRules": null,
+      "collationVersion": "153.121",
+      "actualCollationVersion": "153.121"
+    },
+    "libcFallback": false
+  },
+  "currentStage": "owned restore and80 replay before cleanup",
+  "schemaDifferenceHeaders": [
+    {
+      "header": "-- Name: turn_feedback; Type: TABLE; Schema: public; Owner: postgres",
+      "beforeSha256": "2da9a0463985447a9a618e6888151df0dd6f897911964bd88ba7ed7fc9ab1bbf",
+      "afterSha256": "d0e5b219a67ee774550fafc4b52311f71578e1c7cd8a16673dbcee0bb1c26fb2"
+    }
+  ],
+  "syntheticFeedbackDdlChangedLines": {
+    "before": [
+      "    CONSTRAINT turn_feedback_check CHECK ((((((feedback_kind = 'another_option'::text) AND (reason_code = 'different_preference'::text)) OR ((feedback_kind = 'inaccurate'::text) AND (reason_code = 'not_relevant'::text))) OR ((feedback_kind = 'reject_reason'::text) AND (reason_code = 'missing_evidence'::text))) OR ((feedback_kind = 'correction'::text) AND (reason_code = 'incorrect_detail'::text)))),"
+    ],
+    "after": [
+      "    CONSTRAINT turn_feedback_check CHECK ((((feedback_kind = 'another_option'::text) AND (reason_code = 'different_preference'::text)) OR ((feedback_kind = 'inaccurate'::text) AND (reason_code = 'not_relevant'::text)) OR ((feedback_kind = 'reject_reason'::text) AND (reason_code = 'missing_evidence'::text)) OR ((feedback_kind = 'correction'::text) AND (reason_code = 'incorrect_detail'::text)))),"
+    ]
+  },
+  "archivedAclDifferences": [
+    {
+      "relation": "community_private.audit",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "community_private.receipts",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "community_private.reviewers",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "community_private.settings",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "community_private.submissions",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "knowledge_review_private.audit",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "knowledge_review_private.candidate_assertions",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "knowledge_review_private.candidates",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "knowledge_review_private.members",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "knowledge_review_private.ontology_relations",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "knowledge_review_private.ontology_types",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "knowledge_review_private.publication_audit",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "knowledge_review_private.publication_settings",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "knowledge_review_private.publications",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "knowledge_review_private.receipts",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "knowledge_review_private.settings",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "knowledge_review_private.source_revisions",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "knowledge_review_private.statement_sources",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "knowledge_review_private.statements",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "knowledge_review_private.wiki_generation_jobs",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "knowledge_review_private.wiki_page_revisions",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "knowledge_review_private.wiki_pages",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "knowledge_review_private.wiki_statement_candidates",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "place_quota_private.usage",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "privacy_private.trip_deletions",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "public.v4_migration_baseline",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "research_intake_private.applications",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "research_intake_private.events",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "research_intake_private.receipts",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "research_intake_private.settings",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "service_cases_private.audit",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "service_cases_private.cases",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "service_cases_private.staff",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "turn_private.grounded_ai_assist_jobs",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "turn_private.grounded_turns",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "turn_private.hosted_worker_control",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "turn_private.hosted_worker_heartbeats",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "turn_private.service_task_turns",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "turn_private.service_tasks",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "turn_private.text_consents",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "turn_private.text_content",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "turn_private.text_dispatches",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "turn_private.text_policies",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    },
+    {
+      "relation": "turn_private.work",
+      "owner": "postgres",
+      "expected": "{postgres=arwdDxtm/postgres}",
+      "actual": "NULL"
+    }
+  ],
+  "restoreReplay": {
+    "status": "PASS_LOCAL_BUNDLE_RESTORE_ONLY",
+    "targetWritten": false,
+    "contentOutput": false,
+    "bootstrapProfile": "supabase-17.6.1.155-five-extensions/1",
+    "explicitPrecreatedObjects": [
+      "SCHEMA:extensions",
+      "SCHEMA:vault",
+      "EXTENSION:pg_stat_statements",
+      "EXTENSION:pgcrypto",
+      "EXTENSION:supabase_vault",
+      "EXTENSION:uuid-ossp"
+    ],
+    "schemaDigest": "03404dc08b6db12dbd3261b70f472c9618d09d4954153bacb337b911cec6969a",
+    "countRelations": 85,
+    "globalRoles": "PASS",
+    "ownerAclSchema": "PASS",
+    "platformCatalog": "PASS",
+    "counts": "PASS",
+    "platformLedger": "PASS_COUNT_AND_DIGEST",
+    "platformServices": "UNRUN_GOTRUE_STORAGE_REALTIME",
+    "migrationUpgrade": "UNRUN",
+    "userAcceptance": "UNRUN",
+    "cleanup": "PASS",
+    "icuBootstrap": {
+      "status": "PASS_EXACT_ICU_PROFILE_AND_VERSION",
+      "profile": {
+        "databaseFacts": {
+          "encoding": "UTF8",
+          "collate": "en_US.UTF-8",
+          "ctype": "en_US.UTF-8",
+          "localeProvider": "i"
+        },
+        "icuLocale": "en-US",
+        "icuRules": null,
+        "collationVersion": "153.121",
+        "actualCollationVersion": "153.121"
+      },
+      "libcFallback": false
+    },
+    "restoreCompatibility": {
+      "status": "PASS_EXACT_LEGACY_ROW_IN_REPARSE",
+      "targetChanged": false,
+      "acceptedCheckVariants": 2
+    },
+    "archivedAclCompatibility": {
+      "status": "PASS_EXACT_ARCHIVED_TABLE_ACL",
+      "ownerMaintainRebuilt": [
+        "community_private.audit",
+        "community_private.receipts",
+        "community_private.reviewers",
+        "community_private.settings",
+        "community_private.submissions",
+        "knowledge_review_private.audit",
+        "knowledge_review_private.candidate_assertions",
+        "knowledge_review_private.candidates",
+        "knowledge_review_private.members",
+        "knowledge_review_private.ontology_relations",
+        "knowledge_review_private.ontology_types",
+        "knowledge_review_private.publication_audit",
+        "knowledge_review_private.publication_settings",
+        "knowledge_review_private.publications",
+        "knowledge_review_private.receipts",
+        "knowledge_review_private.settings",
+        "knowledge_review_private.source_revisions",
+        "knowledge_review_private.statement_sources",
+        "knowledge_review_private.statements",
+        "knowledge_review_private.wiki_generation_jobs",
+        "knowledge_review_private.wiki_page_revisions",
+        "knowledge_review_private.wiki_pages",
+        "knowledge_review_private.wiki_statement_candidates",
+        "place_quota_private.usage",
+        "privacy_private.trip_deletions",
+        "public.v4_migration_baseline",
+        "research_intake_private.applications",
+        "research_intake_private.events",
+        "research_intake_private.receipts",
+        "research_intake_private.settings",
+        "service_cases_private.audit",
+        "service_cases_private.cases",
+        "service_cases_private.staff",
+        "turn_private.grounded_ai_assist_jobs",
+        "turn_private.grounded_turns",
+        "turn_private.hosted_worker_control",
+        "turn_private.hosted_worker_heartbeats",
+        "turn_private.service_task_turns",
+        "turn_private.service_tasks",
+        "turn_private.text_consents",
+        "turn_private.text_content",
+        "turn_private.text_dispatches",
+        "turn_private.text_policies",
+        "turn_private.work"
+      ],
+      "targetPermissionChanged": false
+    },
+    "defaultAclCompatibility": {
+      "status": "PASS_EXACT_ARCHIVED_DEFAULT_ACL",
+      "entries": 2,
+      "targetPermissionChanged": false
+    },
+    "sequenceSafety": {
+      "status": "PASS_MONOTONE_SEQUENCE_NO_COLLISION",
+      "sequences": 2,
+      "advancedBeyondSnapshotRowBound": 0,
+      "exactSnapshotSequenceState": false
+    },
+    "replay": {
+      "status": "PASS_OWNED_RESTORED_REPLAY_ONLY",
+      "sourceHead": "7d0c5128857e859720452d8a9f864fd8b20c8388",
+      "manifestSha256": "230500975ecbd08df8eb1663b073ae96a11c79f3f2806d611fc5ce2d0a2e2a2f",
+      "qaMigrationSha256": "73b6fa9ee63ad48bdff43da4a1f88ddf19e28e46786948e30314a111bb25285d",
+      "appliedMissing80": [
+        "20260922033000",
+        "20260926113804",
+        "20260926132008",
+        "20260926150000",
+        "20260926170000",
+        "20260926180000",
+        "20260927010000",
+        "20260927021000",
+        "20260927030000",
+        "20260927040000",
+        "20260927050000",
+        "20260927055000",
+        "20260927060000",
+        "20260930010000",
+        "20260930020000",
+        "20261001010000",
+        "20261002010000",
+        "20261002020000",
+        "20261002030000",
+        "20261002040000",
+        "20261002050000",
+        "20261002060000",
+        "20261002080000",
+        "20261002110000",
+        "20261002120000",
+        "20261002130000",
+        "20261002200000",
+        "20261003020000",
+        "20261003030000",
+        "20261003040000",
+        "20261003050000",
+        "20261003060000",
+        "20261003090000",
+        "20261003110000",
+        "20261003120000",
+        "20261003130000",
+        "20261003150000",
+        "20261003160000",
+        "20261003170000",
+        "20261003180000",
+        "20261003190000",
+        "20261003200000",
+        "20261003210000",
+        "20261003220000",
+        "20261003230000",
+        "20261004000000",
+        "20261004010000",
+        "20261004020000",
+        "20261004030000",
+        "20261004040000",
+        "20261005010000",
+        "20261005020000",
+        "20261005030000",
+        "20261005040000",
+        "20261005050000",
+        "20261005060000",
+        "20261005070000",
+        "20261005080000",
+        "20261005081000",
+        "20261005090000",
+        "20261005091000",
+        "20261005092000",
+        "20261006010000",
+        "20261006011000",
+        "20261006020000",
+        "20261006030000",
+        "20261006040000",
+        "20261006050000",
+        "20261006060000",
+        "20261007010000",
+        "20261007020000",
+        "20261007030000",
+        "20261007040000",
+        "20261007050000",
+        "20261008000000",
+        "20261010010000",
+        "20261010020000",
+        "20261010030000",
+        "20261010040000",
+        "20261013050429"
+      ],
+      "lifecycleGates": {
+        "profile_data_private.schema_v1": true,
+        "turn_data_private.hooks_valid_v1": true,
+        "export_private.profile_hooks_valid_v1": true,
+        "turn_data_private.schema_supported_v1": true,
+        "turn_data_private.runtime_supported_v1": true,
+        "turn_data_private.write_hooks_valid_v1": true,
+        "result_data_private.schema_supported_v1": true,
+        "turn_private.directions_schema_members_v1": true,
+        "conversation_data_private.schema_supported_v1": true,
+        "result_data_private.infrastructure_supported_v1": true
+      },
+      "qaV2Acl": {
+        "anon": false,
+        "exists": true,
+        "public": false,
+        "service": true,
+        "authenticated": false
+      },
+      "retainedRelations": 84,
+      "retainedOriginalColumnRows": "PASS_ORIGINAL_ROW_MULTISET_PRESERVED_APPROVED_SOURCE_ADDITIONS_ALLOWED",
+      "baselineHistoryBeforeSha256": "60f0d9c019bf0c35294cca218b9007ebcac0c271573196eaf7607e44736447cf",
+      "sourceGuardDiagnostics": {
+        "20261010010000": {
+          "profileWeb": {
+            "acl": "{postgres=X/postgres}",
+            "kind": "f",
+            "owner": "postgres",
+            "config": [
+              "search_path=\"\""
+            ],
+            "bodyMd5": "5b8e7a781f70ba4dfab448a2b0233f01",
+            "definer": true
+          }
+        },
+        "20261010030000": {
+          "directionsFunctionGuardDifferences": [],
+          "directionsTableGuardDifferences": []
+        }
+      },
+      "targetWritten": false,
+      "providerCalled": false,
+      "liveRestoreAuthority": "NONE"
+    },
+    "captureMode": "shared-readonly-snapshot/1",
+    "dispatchAuthority": "NONE",
+    "liveRestoreAuthority": "NONE"
+  },
+  "sourceCleanup": "PASS",
+  "elapsedSeconds": 33.261
+}

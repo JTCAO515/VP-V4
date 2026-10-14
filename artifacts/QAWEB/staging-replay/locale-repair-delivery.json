@@ -1,0 +1,52 @@
+{
+  "status": "PASS_LOCAL_EXACT_ICU_RESTORE_REPLAY_AND_REVIEWED_RETRY_CONTRACT",
+  "base": "a87a5d239530be19d8b16d6edaa98d8c77f77e63",
+  "proof": "owned-icu-replay-proof-04.json",
+  "profile": {
+    "status": "PASS_EXACT_ICU_PROFILE_AND_VERSION",
+    "profile": {
+      "databaseFacts": {
+        "encoding": "UTF8",
+        "collate": "en_US.UTF-8",
+        "ctype": "en_US.UTF-8",
+        "localeProvider": "i"
+      },
+      "icuLocale": "en-US",
+      "icuRules": null,
+      "collationVersion": "153.121",
+      "actualCollationVersion": "153.121"
+    },
+    "libcFallback": false
+  },
+  "elapsedSeconds": 33.203,
+  "imageId": "sha256:3866d94d8426927e8db3f1c5d790752292bfbe27b5f1f46e199ae1b7d3c1710b",
+  "codeHashes": {
+    "capture": "ae2cb05c7493f24ccd64435db23f6d3c3293311eaffefb5184627323878becdc",
+    "restoreReplay": "ad48de791ea8a27841ca6eae585b4614013e4cf1e335e35ef9eb8c977ee028b8",
+    "restoreReplayRetry": "ad48de791ea8a27841ca6eae585b4614013e4cf1e335e35ef9eb8c977ee028b8"
+  },
+  "tests": {
+    "localeAndExplicitRetryNegatives": 4,
+    "canonicalOneTimeAuthority": 11,
+    "originalSnapshotGates": 10,
+    "syntax": "PASS",
+    "whitespace": "PASS"
+  },
+  "fixedSourcePins": {
+    "source": "7d0c5128857e859720452d8a9f864fd8b20c8388",
+    "manifest": "230500975ecbd08df8eb1663b073ae96a11c79f3f2806d611fc5ce2d0a2e2a2f",
+    "qaSql": "73b6fa9ee63ad48bdff43da4a1f88ddf19e28e46786948e30314a111bb25285d"
+  },
+  "consumedNonsecretMainSupplementSha256": "00ccbaa71e9e5b9fa13cf7c96dfd54377cfeafa5768f94d35291b3793f9ace14",
+  "changes": {
+    "originalStrictCaptureRestoreBytes": "UNCHANGED",
+    "snapshotContractAndCapturedFourFieldFacts": "UNCHANGED",
+    "targetMigrationFiles": "UNCHANGED",
+    "localeFallbackOrDeclaredCollationVersionOverride": false
+  },
+  "actualEvidenceBoundary": "Main reports actual four ciphertext capture PASS; first actual restore failed locale bootstrap with cleanupPASS before successful owned cluster/replay. This owner did not capture/read/decrypt real archives or write target.",
+  "retryBoundary": "one explicit reviewed retry-1, same original UUID/capture/identity/window, atomic immutable separate consumed marker, old marker/failure retained; no auto retry, recapture or new key",
+  "actualRetry": "UNRUN Main sole actual executor after final review/start/gates",
+  "sourceLocaleSupplementFreshness": "<=5min at execution; Main must refresh metadata/hash after final review if stale",
+  "window": "original04:18:21.883253Z\u201305:18:21.883253Z only; base restore still requires30min remaining; no extension authorized"
+}
