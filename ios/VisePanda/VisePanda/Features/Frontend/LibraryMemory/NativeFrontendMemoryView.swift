@@ -3,7 +3,6 @@ import SwiftUI
 @MainActor
 struct NativeFrontendMemoryView: View {
     let state: NativeFrontendState
-    @State private var selectedID: String?
 
     var body: some View {
         List {
@@ -25,7 +24,7 @@ struct NativeFrontendMemoryView: View {
             } else {
                 Section("旅行偏好") {
                     ForEach(state.memories) { memory in
-                        Button { selectedID = memory.id } label: {
+                        NavigationLink(value: NativeFrontendMemoryRoute.detail(memoryID: memory.id)) {
                             VStack(alignment: .leading, spacing: 8) {
                                 Text(memory.title).font(.headline)
                                 Text("适用：\(memory.scope)").font(.subheadline)
@@ -40,12 +39,18 @@ struct NativeFrontendMemoryView: View {
             if let notice = state.notice { Section("近期本地反馈") { Text(notice).font(.subheadline) } }
         }
         .navigationTitle("记忆")
-        .navigationDestination(isPresented: Binding(
-            get: { selectedID != nil }, set: { if !$0 { selectedID = nil } }
-        )) {
-            if let id = selectedID { NativeFrontendMemoryDetail(state: state, memoryID: id) }
+        .navigationDestination(for: NativeFrontendMemoryRoute.self) { route in
+            switch route {
+            case .detail(let memoryID):
+                NativeFrontendMemoryDetail(state: state, memoryID: memoryID)
+            }
         }
     }
+}
+
+// A dedicated value type avoids sharing a String destination with other tab routes.
+private enum NativeFrontendMemoryRoute: Hashable {
+    case detail(memoryID: String)
 }
 
 @MainActor
