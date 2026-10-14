@@ -1,7 +1,9 @@
 import { chromium } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { mkdirSync, writeFileSync } from 'node:fs';
-const output = 'artifacts/VPV10-MODULAR-001/qa-demo';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+const output = 'artifacts/VPV10-MODULAR-001/qa-demo/focus-fix';
+const sourceSha256 = createHash('sha256').update(readFileSync('components/qa-demo/QaDemoWorkspace.tsx')).digest('hex');
 mkdirSync(output, { recursive: true });
 const browser = await chromium.launch();
 const results = [];
@@ -59,10 +61,34 @@ try {
     for (const name of ['Journeys', 'Library', 'Memory']) {
       await page.getByRole('button', { name, exact: true }).click();
       await page.getByRole('heading', { name: `${name} · 示例空状态` }).waitFor();
-      await page.getByRole('button', { name: '返回 VP 示例对话' }).click();
+      await page.getByRole('button', { name: '返回 VP 示例对话' }).focus();
+      await page.keyboard.press('Enter');
+      assert.equal(await input.evaluate(el => el === document.activeElement), true);
     }
-    for (let n = 0; n < 12; n++) await page.getByRole('button', { name: '为什么 / why', exact: true }).click();
+    for (let n = 0; n < 11; n++) await page.getByRole('button', { name: '为什么 / why', exact: true }).click();
+    await input.fill('why');
+    await input.press('Tab');
+    await page.keyboard.press('Enter');
     assert.equal(await input.isDisabled(), true);
+    const reset = page.getByRole('button', { name: '重置当前示例 / Reset' });
+    assert.equal(await reset.evaluate(el => el === document.activeElement), true);
+    // Returning from an unmounted input must use the reset target at the limit.
+    const memory = page.getByRole('button', { name: 'Memory', exact: true });
+    await memory.focus();
+    await page.keyboard.press('Enter');
+    assert.equal(await memory.evaluate(el => el === document.activeElement), true);
+    await page.getByRole('button', { name: '返回 VP 示例对话' }).focus();
+    await page.keyboard.press('Enter');
+    assert.equal(await reset.evaluate(el => el === document.activeElement), true);
+    await page.keyboard.press('Enter');
+    assert.equal(await input.isDisabled(), false);
+    assert.equal(await input.evaluate(el => el === document.activeElement), true);
+    assert.equal(await page.getByRole('log').locator('article').count(), 2);
+    // Ordinary tab/session navigation retains its own focus.
+    const sessionA = page.getByRole('button', { name: '示例 A · 准备清单', exact: true });
+    await sessionA.focus();
+    await page.keyboard.press('Enter');
+    assert.equal(await sessionA.evaluate(el => el === document.activeElement), true);
     await page.reload();
     await send.waitFor();
     assert.equal(await page.getByRole('log').locator('article').count(), 2);
@@ -75,9 +101,9 @@ try {
     assert.deepEqual(unexpected, []);
     assert.deepEqual(errors, []);
     await page.screenshot({ path: `${output}/${viewport.width === 390 ? 'mobile' : 'desktop'}.png`, fullPage: true });
-    results.push({ viewport, result: 'PASS', interaction: 'keyboard preset, switch, simplify, unknown, correction, reset, four tabs, limit, refresh', unexpectedRequests: unexpected, consoleErrors: errors, boundaryAttempts: [] });
+    results.push({ viewport, result: 'PASS', interaction: 'keyboard preset, switch, simplify, unknown, correction, reset, four tabs, 12th-turn reset focus, enabled/limited return-to-VP focus, keyboard reset focus, navigation focus retained, refresh', unexpectedRequests: unexpected, consoleErrors: errors, boundaryAttempts: [] });
     await context.close();
   }
-  writeFileSync(`${output}/browser-results.json`, JSON.stringify({ url: 'http://127.0.0.1:3181/qa/demo', results }, null, 2) + '\n');
+  writeFileSync(`${output}/browser-results.json`, JSON.stringify({ url: 'http://127.0.0.1:3181/qa/demo', sourceSha256, results }, null, 2) + '\n');
   console.log(JSON.stringify(results, null, 2));
 } finally { await browser.close(); }
