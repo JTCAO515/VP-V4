@@ -173,3 +173,81 @@ test("cancellation interrupts stalled body consumption and cancels stream", asyn
   await ready; await new Promise(resolve => setImmediate(resolve)); c.abort();
   const result = await resultPromise; assert.equal(result.kind, "unavailable"); assert.equal(cancelled, true);
 });
+
+test("full own-key closure rejects symbols, hidden extras, accessors and inherited fields before dispatch", async () => {
+  let calls = 0, getters = 0;
+  const transport: SpeechTransport = async () => { calls++; return json(payload()); };
+  const requests: unknown[] = [Object.assign(asr(), { [Symbol("eligible")]: true }),
+    Object.defineProperty(asr(), "endpoint", { value: "https://example.test", enumerable: false }),
+    Object.defineProperty(asr(), "eligible", { get() { getters++; return true; } }),
+    Object.defineProperty(asr(), "dataClass", { get() { getters++; throw Error("Must not execute"); } }),
+    Object.defineProperty(asr(), "wav", { get() { getters++; return wav(); } }),
+    Object.assign(Object.create({ eligible: true }), asr()),
+    new Proxy(asr(), { ownKeys() { throw Error("Invalid proxy"); } })];
+  for (const request of requests) {
+    const result = await invokeSyntheticSpeech(request as SpeechRequest, turn(), transport, signal());
+    assert.equal(result.kind, "unavailable"); if (result.kind === "unavailable") assert.equal(result.code, "INVALID_INPUT");
+  }
+  assert.equal(calls, 0); assert.equal(getters, 0);
+  const hidden = asr(); Object.defineProperty(hidden, "locale", { value: "en", enumerable: false });
+  assert.equal((await invokeSyntheticSpeech(hidden, turn(), transport, signal())).kind, "candidate");
+});
+
+for (const task of ["asr", "tts"] as const) {
+  test(`${task} monotonic deadline rejects synchronously delayed transport before timer fires`, async () => {
+    let cancelled = false, captured!: AbortSignal;
+    const result = await invokeSyntheticSpeech({ ...(task === "asr" ? asr() : tts()), timeoutMs: 5 }, turn(), async req => {
+      captured = req.signal;
+      const until = performance.now() + 20;
+      while (performance.now() < until) { /* Simulate blocking provider preparation. */ }
+      return new Response(new ReadableStream({ cancel() { cancelled = true; } }), { headers: { "content-type": task === "asr" ? "application/json" : "audio/wav" } });
+    }, signal());
+    assert.equal(result.kind, "unavailable"); if (result.kind === "unavailable") assert.equal(result.code, "TIMEOUT_BEFORE_OUTPUT");
+    assert.equal(captured.aborted, true); assert.equal(cancelled, true);
+  });
+}
+
+test("deadline stops immediately resolving microtask body reads and cancels the reader", async () => {
+  let reads = 0, cancelled = false;
+  const stream = new ReadableStream<Uint8Array>({ pull(c) {
+    reads++;
+    const until = performance.now() + 1;
+    while (performance.now() < until) { /* No timer turn between immediately ready reads. */ }
+    c.enqueue(new Uint8Array([32]));
+  }, cancel() { cancelled = true; } });
+  const result = await invokeSyntheticSpeech({ ...asr(), timeoutMs: 10 }, turn(), async () => new Response(stream, { headers: { "content-type": "application/json" } }), signal());
+  assert.equal(result.kind, "unavailable"); if (result.kind === "unavailable") assert.equal(result.code, "TIMEOUT_BEFORE_OUTPUT");
+  assert.equal(cancelled, true); assert(reads < 64);
+});
+
+test("endless empty chunks reject at finite read count and cancel; a few empty chunks can precede output", async () => {
+  let reads = 0, cancelled = false;
+  const stream = new ReadableStream<Uint8Array>({ pull(c) { reads++; c.enqueue(new Uint8Array()); }, cancel() { cancelled = true; } });
+  const result = await invokeSyntheticSpeech(asr(), turn(), async () => new Response(stream, { headers: { "content-type": "application/json" } }), signal());
+  assert.equal(result.kind, "unavailable"); if (result.kind === "unavailable") assert.equal(result.code, "MODEL_OUTPUT_INVALID");
+  assert.equal(cancelled, true); assert(reads <= 67);
+  const bounded = new ReadableStream<Uint8Array>({ start(c) {
+    for (let n = 0; n < 5; n++) c.enqueue(new Uint8Array());
+    c.enqueue(new TextEncoder().encode(JSON.stringify(payload()))); c.close();
+  } });
+  assert.equal((await invokeSyntheticSpeech(asr(), turn(), async () => new Response(bounded, { headers: { "content-type": "application/json" } }), signal())).kind, "candidate");
+});
+
+test("many nonempty small chunks have a read cap independent of byte cap", async () => {
+  let reads = 0, cancelled = false;
+  const stream = new ReadableStream<Uint8Array>({ pull(c) { reads++; c.enqueue(new Uint8Array([32])); }, cancel() { cancelled = true; } });
+  const result = await invokeSyntheticSpeech(tts(), turn(), async () => new Response(stream, { headers: { "content-type": "audio/wav" } }), signal());
+  assert.equal(result.kind, "unavailable"); if (result.kind === "unavailable") assert.equal(result.code, "MODEL_OUTPUT_INVALID");
+  assert.equal(cancelled, true); assert(reads <= 4098);
+});
+
+test("periodic event-loop yield lets external cancellation interrupt queued body reads", async () => {
+  let cancelled = false;
+  const c = new AbortController();
+  const result = await invokeSyntheticSpeech(tts(), turn(), async () => {
+    setImmediate(() => c.abort());
+    return new Response(new ReadableStream<Uint8Array>({ pull(controller) { controller.enqueue(new Uint8Array([32])); }, cancel() { cancelled = true; } }), { headers: { "content-type": "audio/wav" } });
+  }, c.signal);
+  assert.equal(result.kind, "unavailable"); if (result.kind === "unavailable") assert.equal(result.code, "CANCELLED");
+  assert.equal(cancelled, true);
+});
