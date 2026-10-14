@@ -20,10 +20,14 @@ bytes are preserved; original cases/grader/registry/CLI/package/DB remain untouc
 ## Evidence
 
 - **Before:** no runtime-recovery directory/callable adapter in the clean f702d71a base.
-  **After:** 25 controlled tests drive the shipped adapter/endpoint bridge and
+  **After:** 27 controlled tests drive the shipped adapter/endpoint bridge and
   existing production durable-worker semantics: ACK loss, restart reconciliation,
   cancellation/late effects, identity/source/receipt conflicts, no retry/debit,
   monotonic deadline, request/read/byte/empty-chunk bounds and hidden own fields.
+- Main's original Std2P2/Spec1P2 review remains recorded. The two input defects
+  are fixed: primitive-string enums without coercion, and enumerable data-only
+  required fields before cloning. Added negatives reject arrays/boxed/coercion
+  objects, getters and hidden required bounds/context fields before transport.
 - PASS: typecheck, lint, docs check, diff check; unchanged CI selector tests pass.
 - Actual Staging/provider, persistence restart, DB/data/fee/production and
   Native/Web target consumers NOT_RUN. No whole #264 closure claim.
