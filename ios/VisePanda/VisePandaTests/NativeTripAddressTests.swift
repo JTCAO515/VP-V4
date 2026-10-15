@@ -162,4 +162,90 @@ nonisolated final class NativeTripAddressTests: XCTestCase {
             XCTAssertThrowsError(try NativeArchiveDataRows.content(archiveContent(address: value(text))))
         }
     }
+
+    @MainActor private func reviewDetail(_ days: [NativeTripDay], version: Int = 5) -> NativeTripDetail {
+        .init(version: 2, trip: .init(id: "11111111-1111-4111-8111-111111111111", title: "Trip", headVersion: version, updatedAt: "2026-10-16T00:00:00Z"), content: .init(days: days), hardLocks: .notEnabled, externalOrderStatus: .notConnected, confirmationState: "confirmed")
+    }
+    @MainActor private func reviewPending(_ before: NativeTripDetail, after: NativeTripContent?, operations: [NativeTripOperation]) -> NativeTripPending {
+        .init(version: 2, trip: before.trip, proposal: .init(id: "22222222-2222-4222-8222-222222222222", revision: 1, baseTripVersion: before.trip.headVersion, status: "pending", createdAt: "2026-10-16T00:00:00Z", expiresAt: "2099-01-01T00:00:00Z", titleDiff: .init(before: "Trip", after: "Trip"), dayDiffs: [], patch: .init(expectedVersion: before.trip.headVersion, operations: operations), digest: String(repeating: "a", count: 64), stale: false, evidence: "", assumptions: "", after: after))
+    }
+
+    @MainActor func testRollbackRebuildWithoutAddressOperationShowsActualAddressClear() throws {
+        let address = try NativeUserProvidedAddress(text: "  广州越秀区\n1号  ")
+        let item = NativeTripItem(id: "i", dayId: "d", title: "Item", userAddress: address)
+        let before = reviewDetail([.init(id: "d", date: "2026-10-16", items: [item])])
+        var restored = before.content
+        restored.days[0].items[0].userAddress = nil
+        let pending = reviewPending(before, after: restored, operations: [
+            .init(kind: .deleteDay, dayId: "d"), .init(kind: .upsertDay, dayId: "d", date: "2026-10-16"),
+            .init(kind: .upsertItem, title: "Item", dayId: "d", itemId: "i")
+        ])
+        let review = NativeTripAddressReview.evaluate(before: before, pending: pending)
+        XCTAssertTrue(review.canConfirm)
+        let change = try XCTUnwrap(review.changes.first)
+        XCTAssertEqual(review.changes.count, 1)
+        XCTAssertEqual(change.kind, .changed)
+        XCTAssertEqual(change.before?.address?.text, address.text)
+        XCTAssertNil(change.after?.address)
+        XCTAssertNotNil(change.after) // Clearing an address differs from removing its item.
+        XCTAssertEqual(before.content.days[0].items[0].userAddress, address)
+        let unknown = reviewPending(before, after: nil, operations: pending.proposal.patch.operations)
+        XCTAssertFalse(NativeTripAddressReview.evaluate(before: before, pending: unknown).canConfirm)
+    }
+
+    @MainActor func testRestoreDeletedAddressedItemAndCrossDayMoveAreVisible() throws {
+        let address = try NativeUserProvidedAddress(text: "广州 1号")
+        let before = reviewDetail([.init(id: "d", date: "2026-10-16", items: [])])
+        let restored = NativeTripContent(days: [.init(id: "d", date: "2026-10-16", items: [.init(id: "i", dayId: "d", title: "Restored", userAddress: address)])])
+        let addition = NativeTripAddressReview.evaluate(before: before, pending: reviewPending(before, after: restored, operations: [.init(kind: .upsertItem, title: "Restored", dayId: "d", itemId: "i")]))
+        XCTAssertTrue(addition.canConfirm)
+        XCTAssertEqual(addition.changes.count, 1)
+        XCTAssertEqual(addition.changes.first?.kind, .added)
+        XCTAssertNil(addition.changes.first?.before)
+        XCTAssertEqual(addition.changes.first?.after?.address, address)
+        let addressed = reviewDetail(restored.days)
+        let moved = NativeTripContent(days: [.init(id: "other", date: "2026-10-17", items: [.init(id: "i", dayId: "other", title: "Moved", userAddress: address)])])
+        let movement = NativeTripAddressReview.evaluate(before: addressed, pending: reviewPending(addressed, after: moved, operations: []))
+        XCTAssertTrue(movement.canConfirm)
+        XCTAssertEqual(movement.changes.count, 1)
+        XCTAssertEqual(movement.changes.first?.kind, .moved)
+        XCTAssertEqual(movement.changes.first?.before?.location.dayID, "d")
+        XCTAssertEqual(movement.changes.first?.after?.location.dayID, "other")
+        XCTAssertEqual(movement.changes.first?.before?.address, movement.changes.first?.after?.address)
+        let deletion = NativeTripAddressReview.evaluate(before: addressed, pending: reviewPending(addressed, after: .init(days: []), operations: [.init(kind: .deleteItem, dayId: "d", itemId: "i")]))
+        XCTAssertEqual(deletion.changes.first?.kind, .removed)
+        XCTAssertNil(deletion.changes.first?.after)
+    }
+
+    @MainActor func testUnknownAfterBlocksPotentialAddressChangesButNotOrdinarySameItemRename() throws {
+        let address = try NativeUserProvidedAddress(text: "广州")
+        let before = reviewDetail([.init(id: "d", date: "2026-10-16", items: [.init(id: "i", dayId: "d", title: "Item", userAddress: address)])])
+        for operation: NativeTripOperation in [
+            .init(kind: .deleteDay, dayId: "d"), .init(kind: .deleteItem, dayId: "d", itemId: "i"),
+            .init(kind: .setChineseAddress, dayId: "d", itemId: "i", addressText: .clear),
+            .init(kind: .upsertItem, title: "Restored", dayId: "d", itemId: "restored")
+        ] {
+            XCTAssertFalse(NativeTripAddressReview.evaluate(before: before, pending: reviewPending(before, after: nil, operations: [operation])).canConfirm)
+        }
+        let rename = NativeTripOperation(kind: .upsertItem, title: "Renamed", dayId: "d", itemId: "i")
+        let missing = NativeTripAddressReview.evaluate(before: before, pending: reviewPending(before, after: nil, operations: [rename]))
+        XCTAssertTrue(missing.canConfirm)
+        XCTAssertTrue(missing.changes.isEmpty)
+        var after = before.content; after.days[0].items[0].title = "Renamed"
+        let known = NativeTripAddressReview.evaluate(before: before, pending: reviewPending(before, after: after, operations: [rename]))
+        XCTAssertTrue(known.canConfirm)
+        XCTAssertTrue(known.changes.isEmpty)
+    }
+
+    @MainActor func testAddressReviewFailsClosedForMalformedAfterOrWrongBase() throws {
+        let before = reviewDetail([.init(id: "d", date: "2026-10-16", items: [])])
+        let duplicate = NativeTripContent(days: before.content.days + before.content.days)
+        XCTAssertFalse(NativeTripAddressReview.evaluate(before: before, pending: reviewPending(before, after: duplicate, operations: [])).canConfirm)
+        let wrongDay = NativeTripContent(days: [.init(id: "d", date: "2026-10-16", items: [.init(id: "i", dayId: "different", title: "Item")])])
+        XCTAssertFalse(NativeTripAddressReview.evaluate(before: before, pending: reviewPending(before, after: wrongDay, operations: [])).canConfirm)
+        let pending = reviewPending(before, after: before.content, operations: [])
+        XCTAssertFalse(NativeTripAddressReview.evaluate(before: reviewDetail(before.content.days, version: 6), pending: pending).canConfirm)
+        XCTAssertFalse(NativeTripAddressReview.evaluate(before: nil, pending: pending).canConfirm)
+    }
+
 }
