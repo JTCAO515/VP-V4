@@ -17,10 +17,11 @@ export type LocalTripRead = {
 type Notice = "conflict" | "pending" | "unavailable" | "noChanges" | "stored" | "rejected";
 const snapshotOf = (data: LocalTripRead): TripSnapshot => structuredClone({ version: data.trip.headVersion, title: data.trip.title, days: data.content.days });
 
-export function TripContentEditor({ data, pending, locale, onReload, onPending, onAddressBlockChange }: {
+export function TripContentEditor({ data, pending, locale, onReload, onPending, onAddressBlockChange, addressConfirmationBlocked = false }: {
   data: LocalTripRead; pending: PendingProposalRead | null; locale: Locale;
   onReload: () => Promise<LocalTripRead | null>; onPending: (pending: PendingProposalRead | null) => void;
   onAddressBlockChange?: (blocked: boolean) => void;
+  addressConfirmationBlocked?: boolean;
 }) {
   const copy = tripLocalEditorCopy[locale];
   const [base, setBase] = useState(() => snapshotOf(data));
@@ -65,6 +66,7 @@ export function TripContentEditor({ data, pending, locale, onReload, onPending, 
     } catch { if (live.current) setNotice("unavailable"); } finally { if (live.current) setBusy(false); }
   }
   async function confirm() {
+    if (addressConfirmationBlocked) return;
     if (!pending?.proposal.digest) return;
     const intent = pending.proposal;
     const id = intent.id + ":" + intent.digest;
@@ -100,7 +102,7 @@ export function TripContentEditor({ data, pending, locale, onReload, onPending, 
       </fieldset>)}
       <div className={styles.actions}><button type="button" disabled={busy} onClick={() => { const last = draft.days.at(-1)?.date; const date = last ? new Date(last + "T12:00:00Z") : new Date(); if (last) date.setUTCDate(date.getUTCDate() + 1); edit({ ...draft, days: [...draft.days, { id: crypto.randomUUID(), date: date.toISOString().slice(0, 10), items: [] }] }); }}>{copy.addDay}</button><button type="button" disabled={busy || !dirty || Boolean(pending)} onClick={() => void propose(false)}>{copy.review}</button>{pending ? <button type="button" disabled={busy || !dirty} onClick={() => void propose(true)}>{copy.revise}</button> : null}<button type="button" disabled={busy || !dirty} onClick={() => reset()}>{copy.reset}</button></div>
     </section>
-    {pending ? <section className={styles.pending}><h2>{copy.pending}</h2><p>{copy.proposalBase} {pending.proposal.baseTripVersion} · {copy.proposalRevision} {pending.proposal.revision}</p><div className={styles.diff}><div><h3>{copy.before}</h3>{pending.proposal.before ? <SnapshotContent value={pending.proposal.before} /> : <p>{pending.proposal.titleDiff.before}</p>}</div><div><h3>{copy.after}</h3>{pending.proposal.after ? <SnapshotContent value={pending.proposal.after} /> : <p>{pending.proposal.titleDiff.after}</p>}</div></div><div className={styles.actions}><button type="button" disabled={busy || pending.proposal.stale || !pending.proposal.digest} onClick={() => void confirm()}>{copy.confirm}</button><button type="button" disabled={busy} onClick={() => void reject()}>{copy.reject}</button></div></section> : null}
+    {pending ? <section className={styles.pending}><h2>{copy.pending}</h2><p>{copy.proposalBase} {pending.proposal.baseTripVersion} · {copy.proposalRevision} {pending.proposal.revision}</p><div className={styles.diff}><div><h3>{copy.before}</h3>{pending.proposal.before ? <SnapshotContent value={pending.proposal.before} /> : <p>{pending.proposal.titleDiff.before}</p>}</div><div><h3>{copy.after}</h3>{pending.proposal.after ? <SnapshotContent value={pending.proposal.after} /> : <p>{pending.proposal.titleDiff.after}</p>}</div></div><div className={styles.actions}><button type="button" disabled={busy || pending.proposal.stale || !pending.proposal.digest || addressConfirmationBlocked} onClick={() => void confirm()}>{copy.confirm}</button><button type="button" disabled={busy} onClick={() => void reject()}>{copy.reject}</button></div></section> : null}
   </section>;
 }
 function SnapshotContent({ value }: { value: TripSnapshot }) { return <div><strong>{value.title}</strong>{value.days.map(day => <div key={day.id}><h3>{day.date}{day.timeZone ? ` · ${day.timeZone}` : ""}</h3><ul>{(day.items ?? []).map(item => <li key={item.id}>{item.title}{item.startsAt ? ` · ${item.startsAt}` : ""}{item.endsAt ? ` – ${item.endsAt}` : ""}</li>)}</ul></div>)}</div>; }
