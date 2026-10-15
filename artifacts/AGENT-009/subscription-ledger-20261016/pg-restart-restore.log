@@ -1,0 +1,114 @@
+▶ subscription private PG17 persistence and denial vectors
+  ✔ migration apply rollback leaves no schema, old table/functions/policy/data unchanged (11.323833ms)
+  ✔ durable original period, exact replay, restart adapter and owner projection (6.067291ms)
+  ✔ injected verified source actually persists through branded adapter and reads same period (1.251708ms)
+  ✔ same id changed period, cross owner/family and overlapping period reject without row mutation (1.486208ms)
+  ✔ revocation before initial purchase persists tombstone, clean replay never resurrects (0.717083ms)
+  ✔ refund only matching period, newer observation monotonic, no extra capacity descriptor (0.888708ms)
+  ✔ renewal uses Apple next period; late historical arrival does not move any interval (0.5695ms)
+  ✔ expiry is server time and unknown/future state never active (0.779625ms)
+  ✔ invalid schema/source/types/size/null/baseline and expected epoch fail closed (2.21375ms)
+  ✔ same receipt digest with another signed payload rejects even if otherwise current (0.613042ms)
+  ✔ concurrent same transaction has one committed receipt/period and CAS conflict (6.170708ms)
+  ✔ transaction rollback and lost-ACK recovery do not issue extra identities (1.115208ms)
+  ✔ read-only legacy collision check denies an existing synthetic old identity (0.579833ms)
+  ✔ anon/authenticated/service_role actual table/function access all default denied (1.835208ms)
+  ✔ bounded private export/erasure preserves receipts and denies future family restores (0.970708ms)
+  ✖ freshness expiration and ambiguous active families conceal private period (0.436666ms)
+  ✖ private dump/restore retains erased family, revocation and epochs without adding role grants (71.872833ms)
+  ✖ owned PG restart preserves committed receipts and period identities (27424.871042ms)
+  ✖ legacy catalog/functions/constraints/ACL/policies/data remain byte equivalent (0.234667ms)
+✖ subscription private PG17 persistence and denial vectors (28165.557625ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 15
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 28207.255334
+
+✖ failing tests:
+
+test at tests/integration/subscription-ledger/selected-cases.mjs:128:11
+✖ freshness expiration and ambiguous active families conceal private period (0.436666ms)
+  error: new row for relation "periods" violates check constraint "periods_check1"
+      at /Users/jtsm5p/Documents/Codex/2026-10-13/v10-main/agent008-pg-client-20261015/node_modules/pg/lib/client.js:535:17
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/subscription-ledger-20261016/tests/integration/subscription-ledger/selected-cases.mjs:130:4)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async run (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/subscription-ledger-20261016/tests/integration/subscription-ledger/selected-cases.mjs:128:3)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/subscription-ledger-20261016/tests/integration/subscription-ledger/postgres.test.mjs:4:51)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    length: 472,
+    severity: 'ERROR',
+    code: '23514',
+    detail: 'Failing row contains (Sandbox, 10001, 10001, 2026-10-15 21:08:00.277+00, 2026-10-15 21:13:00.277+00, PURCHASE, 3, subscription-development-policy/1, {"burst": {"kind": "account_rolling", "hours": 24, "quantity": 1..., 2026-10-15 21:08:59.277+00, 2026-10-15 20:59:00.287935+00, null).',
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: undefined,
+    schema: 'subscription_development',
+    table: 'periods',
+    column: undefined,
+    dataType: undefined,
+    constraint: 'periods_check1',
+    file: 'execMain.c',
+    line: '2079',
+    routine: 'ExecConstraints'
+  }
+
+test at tests/integration/subscription-ledger/selected-cases.mjs:134:11
+✖ private dump/restore retains erased family, revocation and epochs without adding role grants (71.872833ms)
+  error: syntax error at or near "Sandbox"
+      at /Users/jtsm5p/Documents/Codex/2026-10-13/v10-main/agent008-pg-client-20261015/node_modules/pg/lib/client.js:535:17
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/subscription-ledger-20261016/tests/integration/subscription-ledger/selected-cases.mjs:141:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async run (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/subscription-ledger-20261016/tests/integration/subscription-ledger/selected-cases.mjs:134:3)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/subscription-ledger-20261016/tests/integration/subscription-ledger/postgres.test.mjs:4:51)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    length: 99,
+    severity: 'ERROR',
+    code: '42601',
+    detail: undefined,
+    hint: undefined,
+    position: '16870',
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: undefined,
+    schema: undefined,
+    table: undefined,
+    column: undefined,
+    dataType: undefined,
+    constraint: undefined,
+    file: 'scan.l',
+    line: '1248',
+    routine: 'scanner_yyerror'
+  }
+
+test at tests/integration/subscription-ledger/selected-cases.mjs:148:11
+✖ owned PG restart preserves committed receipts and period identities (27424.871042ms)
+  Error: connect ENOENT /var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/ios004-ge886y/s/.s.PGSQL.5432
+      at PipeConnectWrap.afterConnect [as oncomplete] (node:net:2021:16) {
+    errno: -2,
+    code: 'ENOENT',
+    syscall: 'connect',
+    address: '/var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/ios004-ge886y/s/.s.PGSQL.5432'
+  }
+
+test at tests/integration/subscription-ledger/selected-cases.mjs:158:11
+✖ legacy catalog/functions/constraints/ACL/policies/data remain byte equivalent (0.234667ms)
+  Error: Client was closed and is not queryable
+      at /Users/jtsm5p/Documents/Codex/2026-10-13/v10-main/agent008-pg-client-20261015/node_modules/pg/lib/client.js:535:17
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async fingerprint (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/subscription-ledger-20261016/tests/integration/subscription-ledger/selected-cases.mjs:29:37)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/subscription-ledger-20261016/tests/integration/subscription-ledger/selected-cases.mjs:158:118)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async run (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/subscription-ledger-20261016/tests/integration/subscription-ledger/selected-cases.mjs:158:3)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/subscription-ledger-20261016/tests/integration/subscription-ledger/postgres.test.mjs:4:51)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
