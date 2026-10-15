@@ -9,6 +9,7 @@ import SwiftUI
     let onPlace: () -> Void
     let onVoice: () -> Void
     @FocusState private var composerFocused: Bool
+    @State private var voicePresentation: NativeLocalVoicePresentation?
 
     init(
         state: NativeFrontendState,
@@ -49,11 +50,14 @@ import SwiftUI
                     .accessibilityHint("输入本地样例消息，回车发送；键盘工具栏可收起键盘。")
                     .accessibilityIdentifier("frontend.chat.composer")
                 if NativeMuseChatComposerPolicy.showsVoice(for: state.draft) {
-                    Button { openTool(onVoice) } label: {
+                    Button {
+                        composerFocused = false
+                        voicePresentation = NativeLocalVoicePresentation()
+                    } label: {
                         Image(systemName: "waveform").font(.system(size: 20, weight: .medium))
                             .frame(width: 44, height: 44)
                     }
-                    .accessibilityLabel("语音 · 本地样例说明")
+                    .accessibilityLabel("设备端语音输入")
                     .accessibilityIdentifier("frontend.chat.voice")
                 } else {
                     Button { submitDraft() } label: {
@@ -83,6 +87,7 @@ import SwiftUI
         }
         .padding(.horizontal, 16).padding(.top, 8).padding(.bottom, 8)
         .background(.regularMaterial)
+        .sheet(item: $voicePresentation) { _ in NativeLocalVoiceHost(state: state) }
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
                 if composerFocused {

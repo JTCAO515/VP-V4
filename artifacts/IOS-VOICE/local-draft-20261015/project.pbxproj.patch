@@ -1,0 +1,24 @@
+--- a/ios/VisePanda/VisePanda.xcodeproj/project.pbxproj
++++ b/ios/VisePanda/VisePanda.xcodeproj/project.pbxproj
+@@ -15,0 +16,4 @@
++        F10C15000000000000000401 = {isa = PBXBuildFile; fileRef = F10C15000000000000000301; };
++        F10C15000000000000000203 /* NativeLocalVoiceSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10C15000000000000000103; };
++        F10C15000000000000000202 /* NativeLocalVoiceCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10C15000000000000000102; };
++        F10C15000000000000000201 /* NativeLocalVoiceContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10C15000000000000000101; };
+@@ -514,0 +519,4 @@
++        F10C15000000000000000301 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "../../tests/contract/ios-local-voice/NativeLocalVoiceTests.swift"; sourceTree = SOURCE_ROOT; };
++        F10C15000000000000000103 /* NativeLocalVoiceSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/LocalVoice/NativeLocalVoiceSheet.swift; sourceTree = SOURCE_ROOT; };
++        F10C15000000000000000102 /* NativeLocalVoiceCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/LocalVoice/NativeLocalVoiceCapture.swift; sourceTree = SOURCE_ROOT; };
++        F10C15000000000000000101 /* NativeLocalVoiceContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/LocalVoice/NativeLocalVoiceContext.swift; sourceTree = SOURCE_ROOT; };
+@@ -1018 +1026,3 @@
+-			children = (
++			children = (F10C15000000000000000301,
++F10C15000000000000000101, F10C15000000000000000102, F10C15000000000000000103,
++
+@@ -1230,0 +1241,3 @@
++                F10C15000000000000000201,
++                F10C15000000000000000202,
++                F10C15000000000000000203,
+@@ -1350 +1363 @@
+-		800000000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B203200000000000000000008, B19720000000000000000000A,
++		800000000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (F10C15000000000000000401, B203200000000000000000008, B19720000000000000000000A,

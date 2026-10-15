@@ -1,0 +1,55 @@
+{
+  "schema": "xcodebuildmcp.output.capture-result",
+  "schemaVersion": "2",
+  "didError": false,
+  "error": null,
+  "data": {
+    "summary": {
+      "status": "SUCCEEDED"
+    },
+    "artifacts": {
+      "simulatorId": "0B61CBDA-D714-42F8-B9AF-974B922F9971"
+    },
+    "capture": {
+      "type": "runtime-snapshot",
+      "rs": "1",
+      "screenHash": "0jpyocl",
+      "seq": 3,
+      "count": 103,
+      "targets": [
+        "e34|typeText|text-field|开始聊天|开始聊天|frontend.chat.composer",
+        "e31|tap|button|添加附件、表达或地点 · 本地样例||frontend.chat.composer.tools",
+        "e32|tap|button|||",
+        "e35|tap|button|设备端语音输入||frontend.chat.voice",
+        "e36|tap|button|打开本地对话侧栏||muse.chat.sidebar.open",
+        "e37|tap|button|VisePanda 助手详情||muse.chat.assistant",
+        "e40|tap|button|打开邀请页面||muse.chat.referral",
+        "e49|tap|tab|对话|1|sparkles",
+        "e51|tap|tab|旅程|0|map",
+        "e53|tap|tab|资料库|0|books.vertical",
+        "e55|tap|tab|记忆|0|brain",
+        "e83|tap|button|关闭||",
+        "e96|tap|button|开始录音||frontend.voice.start",
+        "e97|tap|button|取消并手动输入||frontend.voice.type"
+      ],
+      "scroll": [
+        "e19|swipe|scroll-view|||",
+        "e89|swipe|scroll-view|||"
+      ],
+      "text": [
+        "e39|text|text|VisePanda||",
+        "e94|text|text|语音仅用于当前本地草稿；聊天仍为体验示例，未连接真实 Agent。不会自动发送、创建任务或调用付费服务。||",
+        "e26|text|text|体验示例 · 未连接真实服务||frontend.sample.boundary",
+        "e95|text|text|点击开始才申请系统权限并录音。||frontend.voice.status"
+      ],
+      "udid": "0B61CBDA-D714-42F8-B9AF-974B922F9971"
+    }
+  },
+  "nextSteps": [
+    "Refresh after layout changes: snapshot_ui({ simulatorId: \"0B61CBDA-D714-42F8-B9AF-974B922F9971\" })",
+    "Wait for UI to settle: wait_for_ui({ simulatorId: \"0B61CBDA-D714-42F8-B9AF-974B922F9971\", predicate: \"settled\" })",
+    "Batch same-screen taps: batch({ simulatorId: \"0B61CBDA-D714-42F8-B9AF-974B922F9971\", steps: [{\"action\":\"tap\",\"elementRef\":\"e31\"},{\"action\":\"tap\",\"elementRef\":\"e32\"}] })",
+    "Tap an elementRef: tap({ simulatorId: \"0B61CBDA-D714-42F8-B9AF-974B922F9971\", elementRef: \"e31\" })",
+    "Scroll visible content: swipe({ simulatorId: \"0B61CBDA-D714-42F8-B9AF-974B922F9971\", withinElementRef: \"e19\", direction: \"up\", distance: 0.5 })"
+  ]
+}

@@ -1,0 +1,247 @@
+{
+  "schemaVersion": "canonical-place-ask-fixture/1",
+  "environment": "nativePG17.11 synthetic Auth claims, no provider call",
+  "mode": "task",
+  "policyContextMode": "current_input_v1",
+  "requestBytes": "{\"schemaVersion\":\"canonical-place-ask/1\",\"submission\":{\"threadId\":\"2e7d1f44-ce9a-44d9-81e9-fdf3a95a583c\",\"turnId\":\"544dbf4f-ab82-4a8f-9245-1e0f5f81532c\",\"idempotencyKey\":\"6f210c3e-8c14-4877-9cd4-5bf6cb1d35f9\",\"policyId\":\"818ada52-bd02-475f-ae20-d57cc320a3aa\",\"locale\":\"en\",\"text\":\"What time does it open?\",\"serviceTask\":{\"id\":\"eade2232-c366-4a73-b899-ece442d7d550\",\"scopeVersion\":1,\"relationship\":\"new_goal\",\"parentTurnId\":null}},\"expectation\":{\"tripId\":\"4493d451-60e8-4acf-8965-b78f67fe1d1a\",\"headVersion\":0,\"canonicalPoiId\":\"78bb199b-39b9-4215-ba98-6f12c5460721\",\"provider\":\"amap\",\"providerPoiId\":\"self-only-d4d1d888-2bbc-4c20-b1ab-96164166e95a\",\"mappingDigest\":\"eab1fb14976bde902840d32dbdaac1055ece51b286b6bf3aa90c45c346efe54e\",\"contextDigest\":\"e836508165be8a5ed08f867c2c8a7f24cc4419b628a52e73b0131fbce0d549e1\",\"referenceId\":\"0cc240e1-6496-417c-b5f6-9ee5ff70fc92\",\"locale\":\"en\"}}",
+  "request": {
+    "schemaVersion": "canonical-place-ask/1",
+    "submission": {
+      "threadId": "2e7d1f44-ce9a-44d9-81e9-fdf3a95a583c",
+      "turnId": "544dbf4f-ab82-4a8f-9245-1e0f5f81532c",
+      "idempotencyKey": "6f210c3e-8c14-4877-9cd4-5bf6cb1d35f9",
+      "policyId": "818ada52-bd02-475f-ae20-d57cc320a3aa",
+      "locale": "en",
+      "text": "What time does it open?",
+      "serviceTask": {
+        "id": "eade2232-c366-4a73-b899-ece442d7d550",
+        "scopeVersion": 1,
+        "relationship": "new_goal",
+        "parentTurnId": null
+      }
+    },
+    "expectation": {
+      "tripId": "4493d451-60e8-4acf-8965-b78f67fe1d1a",
+      "headVersion": 0,
+      "canonicalPoiId": "78bb199b-39b9-4215-ba98-6f12c5460721",
+      "provider": "amap",
+      "providerPoiId": "self-only-d4d1d888-2bbc-4c20-b1ab-96164166e95a",
+      "mappingDigest": "eab1fb14976bde902840d32dbdaac1055ece51b286b6bf3aa90c45c346efe54e",
+      "contextDigest": "e836508165be8a5ed08f867c2c8a7f24cc4419b628a52e73b0131fbce0d549e1",
+      "referenceId": "0cc240e1-6496-417c-b5f6-9ee5ff70fc92",
+      "locale": "en"
+    }
+  },
+  "accepted": {
+    "kind": "accepted",
+    "binding": {
+      "goalId": null,
+      "turnId": "544dbf4f-ab82-4a8f-9245-1e0f5f81532c",
+      "expectation": {
+        "locale": "en",
+        "tripId": "4493d451-60e8-4acf-8965-b78f67fe1d1a",
+        "provider": "amap",
+        "headVersion": 0,
+        "referenceId": "0cc240e1-6496-417c-b5f6-9ee5ff70fc92",
+        "contextDigest": "e836508165be8a5ed08f867c2c8a7f24cc4419b628a52e73b0131fbce0d549e1",
+        "mappingDigest": "eab1fb14976bde902840d32dbdaac1055ece51b286b6bf3aa90c45c346efe54e",
+        "providerPoiId": "self-only-d4d1d888-2bbc-4c20-b1ab-96164166e95a",
+        "canonicalPoiId": "78bb199b-39b9-4215-ba98-6f12c5460721"
+      },
+      "goalVersion": null,
+      "requestDigest": "397a5410d18876f9827f605a9a229387abf9c7aa06dfc5453b7efdeabb2e5357",
+      "serviceTaskId": "eade2232-c366-4a73-b899-ece442d7d550"
+    },
+    "operation": {
+      "turnId": "544dbf4f-ab82-4a8f-9245-1e0f5f81532c",
+      "scopeId": "2e7d1f44-ce9a-44d9-81e9-fdf3a95a583c",
+      "messageId": null,
+      "scopeKind": "thread",
+      "operationId": "6f210c3e-8c14-4877-9cd4-5bf6cb1d35f9"
+    },
+    "schemaVersion": "canonical-place-ask/1",
+    "originalReceipt": {
+      "kind": "accepted",
+      "reused": false,
+      "turnId": "544dbf4f-ab82-4a8f-9245-1e0f5f81532c",
+      "version": 2,
+      "parentTurnId": null,
+      "relationship": "new_goal",
+      "scopeVersion": 1,
+      "serviceTaskId": "eade2232-c366-4a73-b899-ece442d7d550"
+    },
+    "readyForProvider": false,
+    "currentEligibilityRequiresRead": true
+  },
+  "recovered": {
+    "kind": "recovered",
+    "current": {
+      "kind": "grounded",
+      "turn": {
+        "kind": "grounded_turn",
+        "input": "What time does it open?",
+        "locale": "en",
+        "output": "reviewed-answer-v1",
+        "result": {
+          "city": "shanghai",
+          "type": "reviewed_answer",
+          "intent": "place_opening_hours",
+          "knowledge": {
+            "scope": {
+              "city": "shanghai",
+              "scene": "attraction",
+              "locale": "en"
+            },
+            "answer": {
+              "claims": [
+                {
+                  "id": "opening_hours",
+                  "status": "covered",
+                  "factIds": [
+                    "07204211-2248-4982-9f95-10e67cd88336"
+                  ],
+                  "reasons": []
+                }
+              ],
+              "outcome": "answered",
+              "subjectId": "fixture_8197492f29ad4144a4c12667528d002a",
+              "questionId": "place_opening_hours",
+              "questionVersion": 1
+            },
+            "status": "available",
+            "purpose": "trip_planning",
+            "recipient": "first_party",
+            "territory": "CN-mainland",
+            "statements": [
+              {
+                "text": "Synthetic Gallery opens during the published dated window.",
+                "place": {
+                  "names": {
+                    "en": "Fixture Gallery 528d002a",
+                    "zh": "样例展馆528d002a"
+                  }
+                },
+                "scope": {
+                  "scene": "attraction",
+                  "cities": [
+                    "shanghai"
+                  ],
+                  "audience": "international_independent_traveler"
+                },
+                "value": {
+                  "endsAt": "2026-10-15T09:00:00Z",
+                  "startsAt": "2026-10-15T01:00:00Z",
+                  "timeZone": "Asia/Shanghai"
+                },
+                "factId": "07204211-2248-4982-9f95-10e67cd88336",
+                "sources": [
+                  {
+                    "uri": "urn:vpj15:synthetic:agent005",
+                    "locator": "Local controlled test",
+                    "publisher": "Synthetic author",
+                    "sourceKey": "agent005-158f6551-69e6-4fe5-ac53-6f48b600ecc4",
+                    "revisionLabel": "v1",
+                    "sourceRevisionId": "e8a83f76-9bfd-4eb6-9291-dee49083fbeb"
+                  }
+                ],
+                "version": 1,
+                "assertion": {
+                  "objectId": "opening_hours",
+                  "predicate": "opens_during",
+                  "subjectId": "fixture_8197492f29ad4144a4c12667528d002a",
+                  "conditions": [
+                    "current_dated_window"
+                  ],
+                  "exclusions": [
+                    "no_holiday_guarantee"
+                  ]
+                },
+                "expiresAt": "2026-10-16T09:34:43.099+00:00",
+                "conditions": [
+                  "Current dated window only"
+                ],
+                "exclusions": [
+                  "No holiday guarantee"
+                ],
+                "reviewedAt": "2026-10-15T09:34:43.095387+00:00",
+                "assertionId": "4c48116a-db1a-49fe-a507-000ee7f62e7b",
+                "publishedAt": "2026-10-15T09:34:43.103953+00:00",
+                "assertionRevision": 1
+              }
+            ],
+            "evaluatedAt": "2026-10-15T09:34:43.313531+00:00",
+            "schemaVersion": "knowledge-answer/1"
+          },
+          "placeName": null,
+          "projection": "current",
+          "completedAt": "2026-10-15T09:34:43.26817+00:00",
+          "requestScope": "single",
+          "placeSubjectId": "fixture_8197492f29ad4144a4c12667528d002a",
+          "originalOutcome": "answered",
+          "placeResolution": "matched",
+          "unansweredNeeds": []
+        },
+        "status": "completed",
+        "turnId": "544dbf4f-ab82-4a8f-9245-1e0f5f81532c",
+        "outcome": "answered",
+        "threadId": "2e7d1f44-ce9a-44d9-81e9-fdf3a95a583c",
+        "createdAt": "2026-10-15T09:34:43.15976+00:00",
+        "parentTurnId": null,
+        "relationship": "new_goal",
+        "scopeVersion": 1,
+        "schemaVersion": "grounded-turn/1",
+        "serviceTaskId": "eade2232-c366-4a73-b899-ece442d7d550"
+      }
+    },
+    "receipt": {
+      "kind": "accepted",
+      "binding": {
+        "goalId": null,
+        "turnId": "544dbf4f-ab82-4a8f-9245-1e0f5f81532c",
+        "expectation": {
+          "locale": "en",
+          "tripId": "4493d451-60e8-4acf-8965-b78f67fe1d1a",
+          "provider": "amap",
+          "headVersion": 0,
+          "referenceId": "0cc240e1-6496-417c-b5f6-9ee5ff70fc92",
+          "contextDigest": "e836508165be8a5ed08f867c2c8a7f24cc4419b628a52e73b0131fbce0d549e1",
+          "mappingDigest": "eab1fb14976bde902840d32dbdaac1055ece51b286b6bf3aa90c45c346efe54e",
+          "providerPoiId": "self-only-d4d1d888-2bbc-4c20-b1ab-96164166e95a",
+          "canonicalPoiId": "78bb199b-39b9-4215-ba98-6f12c5460721"
+        },
+        "goalVersion": null,
+        "requestDigest": "397a5410d18876f9827f605a9a229387abf9c7aa06dfc5453b7efdeabb2e5357",
+        "serviceTaskId": "eade2232-c366-4a73-b899-ece442d7d550"
+      },
+      "operation": {
+        "turnId": "544dbf4f-ab82-4a8f-9245-1e0f5f81532c",
+        "scopeId": "2e7d1f44-ce9a-44d9-81e9-fdf3a95a583c",
+        "messageId": null,
+        "scopeKind": "thread",
+        "operationId": "6f210c3e-8c14-4877-9cd4-5bf6cb1d35f9"
+      },
+      "schemaVersion": "canonical-place-ask/1",
+      "originalReceipt": {
+        "kind": "accepted",
+        "reused": false,
+        "turnId": "544dbf4f-ab82-4a8f-9245-1e0f5f81532c",
+        "version": 2,
+        "parentTurnId": null,
+        "relationship": "new_goal",
+        "scopeVersion": 1,
+        "serviceTaskId": "eade2232-c366-4a73-b899-ece442d7d550"
+      },
+      "readyForProvider": false,
+      "currentEligibilityRequiresRead": true
+    },
+    "operation": {
+      "turnId": "544dbf4f-ab82-4a8f-9245-1e0f5f81532c",
+      "scopeId": "2e7d1f44-ce9a-44d9-81e9-fdf3a95a583c",
+      "messageId": null,
+      "scopeKind": "thread",
+      "operationId": "6f210c3e-8c14-4877-9cd4-5bf6cb1d35f9"
+    },
+    "schemaVersion": "canonical-place-ask/1",
+    "readyForProvider": false
+  }
+}
