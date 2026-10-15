@@ -5,9 +5,20 @@ import { join } from "node:path";
 import test from "node:test";
 import {spawnSync} from "node:child_process";
 import {selectCheckPlan,DB_LANES} from "../../../scripts/ci-change-scope.mjs";
-import { EXCLUDED, LANES, executionMatrix, executionSteps, classify, isGated, parseNodeTestSummary, pinnedImages, stepProblems } from "../../../scripts/ci-suites/db-integration.mjs";
+import { EXCLUDED, LANES, executionMatrix, executionSteps, classify, isGated, parseNodeTestSummary, failedNodeTestNames, pinnedImages, stepProblems } from "../../../scripts/ci-suites/db-integration.mjs";
 
 const read = (path) => readFileSync(path, "utf8");
+
+test('failure evidence keeps early and nested TAP case names bounded without changing strict totals', () => {
+  const output = 'not ok 1 - early failure\n' + 'ok 2 - not ok is only a title here\n' + '    not ok 3 - nested failure\r\n' + '# fail 2\n';
+  assert.deepEqual(failedNodeTestNames(output), ['early failure', 'nested failure']);
+  assert.deepEqual(stepProblems(1, parseNodeTestSummary(output)), ['exit 1', 'no node:test summary / zero tests', 'fail=2']);
+  const many = Array.from({ length: 30 }, (_, i) => `not ok ${i + 1} - ${'x'.repeat(300)}`).join('\n');
+  const bounded = failedNodeTestNames(many);
+  assert.equal(bounded.length, 16);
+  assert.ok(bounded.every((name) => name.length === 240));
+  assert.deepEqual(failedNodeTestNames('ok 1 - success\n# fail 0\n'), []);
+});
 
 test('canonical Place SQL and HTTP entries have one mandatory native17 step without weakening existing steps',()=>{
  const files=['tests/integration/canonical-place-ask-sql/postgres.test.mjs','tests/integration/canonical-place-ask-http/postgres.test.mjs'];
