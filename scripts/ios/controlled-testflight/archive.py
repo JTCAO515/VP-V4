@@ -104,6 +104,13 @@ def verify_sdk():
     return summary
 
 
+def verify_sdk_after(before):
+    after = verify_sdk()
+    if after != before:
+        raise Refusal("SDK inputs changed during build")
+    return after
+
+
 def overrides(profile, number):
     return [*(f"{key}={value}" for key, value in profile["buildSettings"].items()),
             "SWIFT_ACTIVE_COMPILATION_CONDITIONS=VP_CONTROLLED_SAMPLE", "CODE_SIGNING_ALLOWED=NO",
@@ -183,6 +190,20 @@ print(cases.map { NativeFrontendRollout.enabled(arguments: $0) ? "true" : "false
                       ["-V10FrontendExperience", "-V10RealServiceFrontend"]], "compiled": results}
 
 
+def verify_extension_info(info, profile, number):
+    expected = {"CFBundleIdentifier": profile["bundleIdentifier"] + ".ShareIntakeExtension",
+                "CFBundleShortVersionString": profile["marketingVersion"], "CFBundleVersion": number,
+                "MinimumOSVersion": profile["minimumOSVersion"], "DTPlatformName": "iphoneos"}
+    problems = [f"ShareIntakeExtension {key} mismatch" for key, value in expected.items() if info.get(key) != value]
+    for key in (*checks.INFO_KEYS.values(), "VisePandaAMapIOSKey"):
+        if info.get(key, "") != "":
+            problems.append(f"ShareIntakeExtension {key} must be empty or absent")
+    major = checks.sdk_major(info.get("DTSDKName"))
+    if major is None or major < checks.MINIMUM_UPLOAD_SDK_MAJOR:
+        problems.append("ShareIntakeExtension device SDK is below the repository upload floor")
+    return problems
+
+
 def verify_product(archive, profile, number):
     app = archive / "Products/Applications/VisePanda.app"
     with (app / "Info.plist").open("rb") as stream:
@@ -198,11 +219,17 @@ def verify_product(archive, profile, number):
     if not any(bundle.name == "ShareIntakeExtension.appex" for bundle in bundles):
         problems.append("ShareIntakeExtension is missing")
     binaries = {}
+    extension_info = None
     for bundle in bundles:
         if (bundle / "_CodeSignature").exists() or (bundle / "embedded.mobileprovision").exists():
             problems.append(f"Unexpected signing material in {bundle.name}")
         with (bundle / "Info.plist").open("rb") as stream:
             bundle_info = plistlib.load(stream)
+        if bundle.name == "ShareIntakeExtension.appex":
+            problems += verify_extension_info(bundle_info, profile, number)
+            extension_info = {key: bundle_info.get(key) for key in ["CFBundleIdentifier", "CFBundleShortVersionString",
+                "CFBundleVersion", "MinimumOSVersion", "DTPlatformName", "DTSDKName", *checks.INFO_KEYS.values(),
+                "VisePandaAMapIOSKey"]}
         if bundle_info.get("CFBundleVersion") != number:
             problems.append(f"Build number mismatch in {bundle.name}")
         executable = bundle / bundle_info["CFBundleExecutable"]
@@ -216,6 +243,7 @@ def verify_product(archive, profile, number):
     return {"appInfo": {key: info.get(key) for key in ["CFBundleIdentifier", "CFBundleShortVersionString",
              "CFBundleVersion", "MinimumOSVersion", "DTSDKName", "DTXcode", "DTXcodeBuild", "DTPlatformName",
              "ITSAppUsesNonExemptEncryption", *checks.INFO_KEYS.values()]},
+            "extensionInfo": extension_info,
             "privacyManifest": privacy, "purposeStrings": {key: value for key, value in info.items()
                                                          if key.endswith("UsageDescription")}, "bundles": binaries}
 
@@ -294,6 +322,7 @@ def main():
         final = source_snapshot(args.expected_head)
         if final != snapshot:
             raise Refusal("Source inputs changed during build")
+        manifest["sdkAfter"] = verify_sdk_after(sdk)
         manifest["sourceAfter"] = {"head": final["head"], "clean": final["clean"], "inputSetSHA256": final["inputSetSHA256"]}
         manifest["status"] = "PASS"
     except Exception as error:

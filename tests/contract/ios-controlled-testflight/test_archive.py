@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+import zipfile
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -90,6 +91,47 @@ class ControlledArchiveTests(unittest.TestCase):
         for value in ("abc", "1.2.3.4", "1\n", ""):
             with self.subTest(value=value), self.assertRaises(driver.Refusal):
                 driver.checks.validate_build_number(value)
+
+    def test_extension_merged_metadata_negatives(self):
+        info = {"CFBundleIdentifier": "space.go2china.VisePanda.ShareIntakeExtension",
+                "CFBundleShortVersionString": "0.1.0", "CFBundleVersion": "20261015.120536",
+                "MinimumOSVersion": "17.0", "DTPlatformName": "iphoneos", "DTSDKName": "iphoneos27.0"}
+        self.assertEqual(driver.verify_extension_info(info, self.profile, "20261015.120536"), [])
+        for key, value in [("CFBundleIdentifier", "other.app"), ("CFBundleShortVersionString", "1.0"),
+                           ("CFBundleVersion", "1"), ("MinimumOSVersion", "16.0"),
+                           ("DTPlatformName", "iphonesimulator"), ("DTSDKName", "iphoneos25.0"),
+                           *((key, "staging") for key in driver.checks.INFO_KEYS.values()),
+                           ("VisePandaAMapIOSKey", "fixture-key")]:
+            with self.subTest(key=key):
+                self.assertTrue(driver.verify_extension_info({**info, key: value}, self.profile, "20261015.120536"))
+        empty = {**info, **dict.fromkeys((*driver.checks.INFO_KEYS.values(), "VisePandaAMapIOSKey"), "")}
+        self.assertEqual(driver.verify_extension_info(empty, self.profile, "20261015.120536"), [])
+
+    def test_postbuild_sdk_raw_and_extracted_mutation_refused(self):
+        # Exercise the real pin/file validator with disposable archives, never the installed SDK.
+        for mutation in ("raw", "extracted"):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory(dir=driver.EVIDENCE_ROOT) as folder:
+                root = Path(folder)
+                sdk = root / "ios/VisePanda/.local/amap"
+                sdk.mkdir(parents=True)
+                pins = []
+                for name in ("map", "foundation"):
+                    relative = f"{name}.framework/{name}"
+                    path = sdk / f"{name}.zip"
+                    with zipfile.ZipFile(path, "w") as archive:
+                        archive.writestr(relative, b"pinned fixture binary")
+                        archive.extractall(sdk)
+                    pins.append(f"['{name}.zip', 'https://a.amap.com/fixture/{name}.zip', '{driver.digest(path)}']")
+                installer = root / "scripts/maps/install-ios-sdk.mjs"
+                installer.parent.mkdir(parents=True)
+                installer.write_text("\n".join(pins))
+                with patch.object(driver, "ROOT", root):
+                    before = driver.verify_sdk()
+                    self.assertEqual(driver.verify_sdk_after(before), before)
+                    changed = sdk / ("map.zip" if mutation == "raw" else "map.framework/map")
+                    changed.write_bytes(changed.read_bytes() + b"mutation")
+                    with self.assertRaises(driver.Refusal):
+                        driver.verify_sdk_after(before)
 
 
 if __name__ == "__main__":
