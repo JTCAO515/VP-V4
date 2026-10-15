@@ -24,3 +24,35 @@ test('A current-input original Task uses the configured plain policy instead of 
  try{for(const [k,v]of Object.entries(env))process.env[k]=v;for(const k of unset)delete process.env[k];const result=await canonicalPlaceAskHTTP(make());assert.equal(result.status,401,'reaches original identity gate without requiring or inventing another policy');}
  finally{for(const [k,v]of saved)if(v===undefined)delete process.env[k];else process.env[k]=v;}
 });
+
+// Actual handler + SDK credential verifier; synthetic transport only, no live Auth/DB.
+import {nativeFixture,subject,sessionId} from '../identity/native-fixture.ts';
+import {taskOperation,receipt} from './fixtures.mjs';
+for(const policyMode of ['task-only','plain-only','mixed'])test(`same-op recovery survives lost ACK and generation rollback: ${policyMode}`,async t=>{
+ const f=await nativeFixture(t,'http://127.0.0.1:59879');
+ const env={VISEPANDA_PLACE_ACTIONS_ENABLED:'true',VISEPANDA_NATIVE_LOCAL_TEXT:'true',VISEPANDA_NATIVE_LOCAL_TEXT_POLICY:policyMode==='task-only'?undefined:ids.policy,VISEPANDA_NATIVE_LOCAL_TASK_POLICY:policyMode==='plain-only'?undefined:ids.policy,NEXT_PUBLIC_SUPABASE_URL:f.config.url,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:f.config.publishableKey,VERCEL_ENV:undefined,VISEPANDA_NATIVE_STAGING:undefined,VISEPANDA_NATIVE_PRODUCTION:undefined,VISEPANDA_NATIVE_LOCAL_TRIP:undefined};
+ const saved=Object.fromEntries(Object.keys(env).map(k=>[k,process.env[k]]));for(const[k,v]of Object.entries(env))v===undefined?delete process.env[k]:process.env[k]=v;
+ t.after(()=>{for(const[k,v]of Object.entries(saved))v===undefined?delete process.env[k]:process.env[k]=v;});
+ const fallback=globalThis.fetch;const actions=[];
+ t.mock.method(globalThis,'fetch',async(input,init)=>{
+  const request=new Request(input,init),url=new URL(request.url);assert.equal(url.origin,f.config.url);assert.equal(request.redirect,'error');
+  if(url.pathname.endsWith('/native_session_v2'))return Response.json({subject,sessionId});
+  if(url.pathname.endsWith('/grounded_ai_assist_work_v1')){
+   const {p_input}=await request.json();actions.push(p_input.action);
+   if(p_input.action==='selected_submit')return Response.json(null); // committed admission, missing ACK
+   assert.deepEqual(p_input,{action:'selected_read',operation:taskOperation});
+   return Response.json({schemaVersion:'canonical-place-ask/1',kind:'recovered',operation:taskOperation,receipt:receipt(),current:{kind:'pending'},readyForProvider:false});
+  }return fallback(input,init);
+ });
+ const headers={authorization:'Bearer '+f.token};
+ const post=await canonicalPlaceAskHTTP(make('POST',{headers}));assert.equal(post.status,200);assert.equal((await post.json()).kind,'unknown');
+ const query=`?operationId=${ids.op}&scopeKind=thread&scopeId=${ids.thread}&turnId=${ids.turn}`;
+ const read=()=>canonicalPlaceAskHTTP(make('GET',{headers,query}));
+ assert.equal((await (await read()).json()).kind,'recovered');
+ delete process.env.VISEPANDA_NATIVE_LOCAL_TEXT;delete process.env.VISEPANDA_NATIVE_LOCAL_TEXT_POLICY;delete process.env.VISEPANDA_NATIVE_LOCAL_TASK_POLICY;delete process.env.VISEPANDA_PLACE_ACTIONS_ENABLED;
+ assert.equal((await (await read()).json()).kind,'recovered','generation policy removal does not revoke receipt read');
+ assert.equal((await canonicalPlaceAskHTTP(make('POST',{headers}))).status,503,'rollback still blocks admission');
+ process.env.NEXT_PUBLIC_SUPABASE_URL='https://unapproved.invalid';assert.equal((await read()).status,503);
+ process.env.NEXT_PUBLIC_SUPABASE_URL=f.config.url;process.env.VERCEL_ENV='preview';assert.equal((await read()).status,503);
+ assert.deepEqual(actions,['selected_submit','selected_read','selected_read']);
+});
