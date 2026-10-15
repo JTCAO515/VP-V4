@@ -139,3 +139,19 @@ test('malformed persisted answer is failed without model or completing', async (
   const out=await runGroundedAiAssistJob('turn',rpc,input,{...deps(statements),contextRpc:async()=>{throw Error('must not call');}},signal());
   assert.deepEqual(out,{status:'failed',errorCode:'MALFORMED_OUTCOME'});
 });
+test('explicit first-party resolved place subject with complete required facts answers; missing subject remains unavailable', async () => {
+  const placeInput={...input,intent:{intent:'place_address_and_hours',requestScope:'single',placeName:'Fixture Pavilion'},placeSubjectId:'fixture_pavilion'};
+  const rows=questionDefinition(placeInput.intent.intent,placeInput.placeSubjectId).claims.map((claim,i)=>({...statements[i],assertion:claim}));
+  const out=await runGroundedWikiSearch(placeInput,deps(rows),signal());
+  assert.equal(out.kind,'answered');assert.equal(out.coverage,'answered');assert.equal(out.evidence.required.length,2);
+  const {placeSubjectId,...unresolved}=placeInput;
+  assert.deepEqual(await runGroundedWikiSearch(unresolved,deps(rows),signal()),{kind:'unavailable',reason:'user_input_missing'});
+  assert.deepEqual(await runGroundedWikiSearch({...placeInput,placeSubjectId:'other_pavilion'},deps(rows),signal()),{kind:'unavailable',reason:'retrieval_miss'});
+});
+test('resolved place partial answer retains reliable claim and names the missing obligation', async () => {
+  const placeInput={...input,intent:{intent:'place_address_and_hours',requestScope:'single',placeName:'Fixture Pavilion'},placeSubjectId:'fixture_pavilion'};
+  const claim=questionDefinition(placeInput.intent.intent,placeInput.placeSubjectId).claims[0];
+  const rows=[{...statements[0],assertion:claim}];
+  const out=await runGroundedWikiSearch(placeInput,deps(rows),signal());
+  assert.equal(out.kind,'answered');assert.equal(out.coverage,'partial');assert.ok(out.gaps[0].includes('opening_hours'));
+});

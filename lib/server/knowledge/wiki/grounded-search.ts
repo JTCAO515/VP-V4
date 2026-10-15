@@ -12,6 +12,8 @@ import { buildEvidencePack, type EvidencePack } from "./evidence-pack.ts";
 
 export type GroundedSearchInput = Readonly<{
   intent: KnowledgeIntent;
+  /** First-party resolver output only; never derived from model/name similarity. */
+  placeSubjectId?: string;
   question: string;
   city: string;
   locale: "zh" | "en";
@@ -80,7 +82,7 @@ export async function runGroundedWikiSearch(
   // Preserve the scoped corpus read for place questions, but do not invent
   // the resolved subject required by questionDefinition's obligation set.
   const isPlace = isPlaceQuestionId(input.intent.intent);
-  const definition = isPlace ? null : questionDefinition(input.intent.intent);
+  const definition = questionDefinition(input.intent.intent, input.placeSubjectId);
   const scene = isPlace ? "attraction" : definition?.scene;
   if (!scene) return { kind: "unavailable", reason: "capability_unsupported" };
 
@@ -206,7 +208,7 @@ export async function revalidateGroundedWikiSearchResult(
   input: GroundedSearchInput, outcome: Extract<GroundedSearchOutcome, { kind: "answered" }>,
   dependencies: GroundedSearchDependencies, signal: AbortSignal,
 ): Promise<GroundedSearchOutcome> {
-  const definition = questionDefinition(input.intent.intent);
+  const definition = questionDefinition(input.intent.intent, input.placeSubjectId);
   if (!definition) return { kind: "unavailable", reason: "user_input_missing" };
   let subjects = new Map<string, string>();
   const rpc: KnowledgeReadRpc = async (name, params) => {
