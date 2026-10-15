@@ -39,7 +39,8 @@ import Testing
         #expect(vault.writes == 1 && vault.removes == 0)
         vault.afterWrite = nil
         current = scope
-        let restored = try #require(port.read(scope))
+        let saved = try port.read(scope)
+        let restored = try #require(saved)
         #expect(restored.identity == (try identity()))
         #expect(throws: NativeTranslationRecoveryError.self) { try port.retain(identity(), scope: scope) }
         #expect(vault.writes == 1)
@@ -49,7 +50,8 @@ import Testing
         let actor = NativeCommunitySafetyActor(scope: scope, sessionID: "77777777-7777-4777-8777-777777777777")
         let source = NativeJournalDataVaultSources(vault: TranslationSessionTestVault(), current: { actor },
             guide: { _ in nil }, ask: { nil }, askAbsent: { _ in false }, companions: [:], evidence: { _, _ in nil })
-        let row = try #require(source.snapshot(source: .translationRecovery, actor: actor))
+        let snapshot = try source.snapshot(source: .translationRecovery, actor: actor)
+        let row = try #require(snapshot)
         #expect(row.valid && row.record.state == .unavailable && row.record.kind == .metadataOnly)
         #expect(row.originalIdentity == nil && row.record.originalOperationBytes == nil && row.record.objectID == nil)
         #expect(source.completion(source: .translationRecovery, actor: actor) == nil)
