@@ -1,0 +1,1 @@
+tests/contract/subscription-development/probe-storekit.sh: line 27: 78075 Abort trap: 6           "$bundle/Contents/MacOS/monthly-probe" docs/commercial/subscription-development/monthly.storekit
