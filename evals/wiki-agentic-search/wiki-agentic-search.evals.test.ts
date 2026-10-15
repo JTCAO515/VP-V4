@@ -39,7 +39,7 @@ function knowledgeReadResponse(scenario: Scenario) {
     status: scenario.corpus.length > 0 ? "available" : "no_eligible_content",
     statements: scenario.corpus.map((entry) => ({
       factId: entry.factId, version: 1, assertionId: entry.assertionId, assertionRevision: 1,
-      assertion: { subjectId: "synthetic-subject", predicate: entry.predicate, objectId: entry.objectId },
+      assertion: { subjectId: scenario.claims.find((claim) => claim.predicate === entry.predicate && claim.objectId === entry.objectId)?.subjectId ?? "synthetic-subject", predicate: entry.predicate, objectId: entry.objectId },
       text: entry.text[scenario.locale], conditions: [], exclusions: [],
       sources: [{ sourceRevisionId: entry.sourceId, sourceKey: entry.factId, revisionLabel: "r1", publisher: "Synthetic", uri: "urn:synthetic", locator: "p1" }],
     })),
