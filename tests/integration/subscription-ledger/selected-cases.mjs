@@ -7,9 +7,13 @@ import {createRequire} from 'node:module';
 import {createOwnedPg} from '../ios004-user-address/owned-pg.mjs';
 import {developmentLedger} from '../../../lib/server/entitlements/subscription-ledger/persistence.ts';
 import {createDevelopmentVerifier} from '../../../lib/server/entitlements/subscription-ledger/verification.ts';
+import {snapshotConcurrency} from './snapshot-concurrency.mjs';
 import {parseSnapshot} from '../../../lib/server/entitlements/subscription-ledger/contract.ts';
 import {owner,other,jws,payload,options} from '../../contract/subscription-ledger/fixtures.mjs';
-const sql=readFileSync(new URL('../../../supabase/migrations/20261016051000_subscription_development_ledger.sql',import.meta.url),'utf8');
+// Baseline is the pinned, unapplied prior source and is only used for deterministic RED proof.
+const sql=readFileSync(new URL(process.env.SUBSCRIPTION_SNAPSHOT_BASELINE==='1'
+ ? '../../../artifacts/AGENT-009/subscription-ledger-20261016/snapshot-fix/baseline.sql'
+ : '../../../supabase/migrations/20261016051000_subscription_development_ledger.sql',import.meta.url),'utf8');
 const legacy=readFileSync(new URL('../../../supabase/migrations/20260926113804_vpj34_storekit_grants.sql',import.meta.url),'utf8');
 const digest=x=>createHash('sha256').update(JSON.stringify(x)).digest('hex');
 function raw(tx,family=tx,who=owner,changes={}){
@@ -147,6 +151,9 @@ export async function run(t){
    const stale=await read(own);assert.equal(stale.checkedAt,null);assert.equal(stale.lifetimeMs,0);assert.equal(stale.state,'reconciliation_required');assert.equal(stale.period,null);assert.equal(stale.ownerId,null);
    await db.query("update subscription_development.periods set checked_at=clock_timestamp()-interval '299 seconds' where transaction_id='10001'");const short=await read(own);assert.equal(short.state,'active');assert.ok(short.lifetimeMs>0&&short.lifetimeMs<=1000);
    await apply(raw('10002','10002',own),0);const ambiguous=await read(own);assert.equal(ambiguous.state,'reconciliation_required');assert.equal(ambiguous.period,null);
+  });
+  await t.test('READ COMMITTED concurrent family commit cannot mix count and selected period snapshots',async()=>{
+   await snapshotConcurrency({db,apply,read,raw,socket:resource.descriptor.socket});
   });
   await t.test('private dump/restore retains erased family, revocation and epochs without adding role grants',async()=>{
    const {socket}=resource.descriptor;
