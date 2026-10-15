@@ -16,8 +16,16 @@ It adds no source permission, provider activation or publication authority.
   never a model or name-similarity inference. Place questions without that input
   return `unavailable / user_input_missing`; with it, address/hours obligations
   use the existing ontology and current subject-bound evidence. The actual
-  Native/Web AI-assist context still lacks this resolved-subject input, so its
-  real place flow is not claimed complete by the callable search tests.
+  Native/Web AI-assist job consumes an exact-turn matched subject only from
+  its existing owner-authorized context RPC, with the original parser shared
+  by initial execution and historical replay. The guarded resolved-subject
+  append reuses the original current reader/Guide guard and requalifies work
+  before completion; no client-supplied subject becomes authority. Local SQL
+  and controlled producer tests cover this already-resolved-turn path.
+  Generic canonical PlaceActions Ask still has navigation/draft references
+  without a persistent selected-canonical-to-turn binding. Guide admission
+  remains conditional on its original reviewed source/prompt-use proof and
+  existing permissions; no ordinary Guide EXECUTE grant is added.
 - Source qualification is read again before disclosure. A model `no_content`
   result may receive a bounded direct lookup of existing authorized obligations;
   complete evidence must not be refused solely because the model missed it.
@@ -25,8 +33,9 @@ It adds no source permission, provider activation or publication authority.
 - AI-assist completion is successful only after a matching `{kind, jobId}`
   receipt. Errors or unknown acknowledgements stay pending without another
   completion write, model call or `ensure` call used as readback. Historical
-  results are requalified through read-only data; the existing cross-process
-  stale-reclaim behavior is not resolved by this server-only correction.
+  results use the same current qualification path. Its inherited Guide guard
+  may invalidate its own expired metadata; the existing cross-process
+  stale-reclaim behavior is not resolved by this correction.
 - The versioned current-input evaluation contract preserves original frozen
   inputs, cases, qrels, holdout membership, thresholds and denominator. Reports
   retain legacy expected/match and current expected/match separately, including

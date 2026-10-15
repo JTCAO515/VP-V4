@@ -1,0 +1,24 @@
+✔ full QA baseline lifecycle and only declared two-function append/rollback catalog proof (1518.088042ms)
+✔ real original Guide producer creates resolved blocked turn; ordinary owner context and real TS job execute without fixture grants (380.987791ms)
+✔ ordinary non-Guide submission and original resolver persist a matched subject; city mismatch does not borrow it (386.084667ms)
+✔ wrong actor, old turn, injected subject and duplicate completion cannot mutate another current binding/job (281.654583ms)
+✔ concurrent ordinary ensure and complete keep one original job/claim and no duplicated successful write (266.089667ms)
+✔ current source-withdrawal fences context, ensure and late completion (271.973958ms)
+✔ current canonical-change fences context, ensure and late completion (262.826708ms)
+✔ current trip-head-change fences context, ensure and late completion (257.6795ms)
+✔ current reference-deletion fences context, ensure and late completion (256.140041ms)
+✔ current trip-deletion fences context, ensure and late completion (260.0835ms)
+✔ unknown completion ACK reconciles by the original done poll without another model or write (304.179875ms)
+✔ done read after actual source withdrawal cannot display stored success or run another model (292.419459ms)
+✔ client cancellation during the controlled model call never completes successfully or reruns on a fresh pending poll (262.981083ms)
+✔ the original Guide command rejects changed input bytes instead of reusing an old selected context (241.938042ms)
+✔ deleted original session and a fresh same-owner session cannot revive the old selected binding (253.227458ms)
+✔ all declared lifecycle guards and original Guide/context/work ACL vectors remain intact after role/race/lifecycle cases (250.513167ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6484.408209

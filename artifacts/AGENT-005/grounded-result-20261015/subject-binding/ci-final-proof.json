@@ -1,0 +1,170 @@
+{
+  "head": "1e42c21c88960f73cc393644a13ba95a12314c2e",
+  "qaBase": "3f9b51d0cb32f3c10e318d77d3c6797c05051be6",
+  "ciCommit": "571bc35f",
+  "docCherryPick": "5726f483",
+  "lanes": [
+    "postgres",
+    "postgres-native",
+    "postgres-native-17",
+    "supabase-rls",
+    "supabase-http-native",
+    "supabase-http-ops"
+  ],
+  "matrix": {
+    "include": [
+      {
+        "lane": "postgres",
+        "shard": "1/1",
+        "name": "lane (postgres)"
+      },
+      {
+        "lane": "postgres-native",
+        "shard": "1/1",
+        "name": "lane (postgres-native)"
+      },
+      {
+        "lane": "postgres-native-17",
+        "shard": "1/1",
+        "name": "lane (postgres-native-17)"
+      },
+      {
+        "lane": "supabase-rls",
+        "shard": "1/1",
+        "name": "lane (supabase-rls)"
+      },
+      {
+        "lane": "supabase-http-native",
+        "shard": "1/8",
+        "name": "lane (supabase-http-native / 1 of 8)"
+      },
+      {
+        "lane": "supabase-http-native",
+        "shard": "2/8",
+        "name": "lane (supabase-http-native / 2 of 8)"
+      },
+      {
+        "lane": "supabase-http-native",
+        "shard": "3/8",
+        "name": "lane (supabase-http-native / 3 of 8)"
+      },
+      {
+        "lane": "supabase-http-native",
+        "shard": "4/8",
+        "name": "lane (supabase-http-native / 4 of 8)"
+      },
+      {
+        "lane": "supabase-http-native",
+        "shard": "5/8",
+        "name": "lane (supabase-http-native / 5 of 8)"
+      },
+      {
+        "lane": "supabase-http-native",
+        "shard": "6/8",
+        "name": "lane (supabase-http-native / 6 of 8)"
+      },
+      {
+        "lane": "supabase-http-native",
+        "shard": "7/8",
+        "name": "lane (supabase-http-native / 7 of 8)"
+      },
+      {
+        "lane": "supabase-http-native",
+        "shard": "8/8",
+        "name": "lane (supabase-http-native / 8 of 8)"
+      },
+      {
+        "lane": "supabase-http-ops",
+        "shard": "1/1",
+        "name": "lane (supabase-http-ops)"
+      }
+    ]
+  },
+  "classificationProblems": [],
+  "subject": [
+    {
+      "file": "tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs",
+      "gated": true,
+      "lane": "postgres-native-17"
+    }
+  ],
+  "e3Preserved": {
+    "file": "tests/integration/journey-entry/goal-return-current/current.test.mjs",
+    "gated": true,
+    "lane": "postgres"
+  },
+  "oldWikiPreparation": {
+    "before": "9a4cb066e716187ea79c6cd3bcc1c6fe79dd1c43c0025943479bc462c42acdff",
+    "after": "9a4cb066e716187ea79c6cd3bcc1c6fe79dd1c43c0025943479bc462c42acdff",
+    "unchanged": true
+  },
+  "requiredAggregateUnchanged": true,
+  "sourcePlan": {
+    "version": 1,
+    "profile": "affected",
+    "reason": "known_changed_paths",
+    "checks": {
+      "typecheck": true,
+      "build": true,
+      "test": true,
+      "unit": true,
+      "contract": true,
+      "integration": false,
+      "security": true,
+      "e2e": false,
+      "browser": false,
+      "evals": false,
+      "flags": true,
+      "assets": false
+    },
+    "dbLanes": [
+      "postgres",
+      "postgres-native",
+      "postgres-native-17",
+      "supabase-http-native",
+      "supabase-http-ops"
+    ]
+  },
+  "files": [
+    {
+      "path": ".github/workflows/db-integration.yml",
+      "gitBlob": "6d96916c1baa459d699523e5177112a328c17fe1",
+      "sha256": "bcf224f10b939798c9ab78cdcdc9c7a46c821405264121afe0358c4d13f708df"
+    },
+    {
+      "path": "scripts/ci-suites/db-integration.mjs",
+      "gitBlob": "725fdbee95b0bf3fb303f5f0b332c2a510862948",
+      "sha256": "80d301cfc4c61445a5e6309fad5a62f609c07409dbaea12364744746a6126b90"
+    },
+    {
+      "path": "scripts/ci-change-scope.mjs",
+      "gitBlob": "5255ffb97f99f02fbc8178c683c3f3d5df95fc4b",
+      "sha256": "937f5728b59fcc75a0ab8b9763501ef93ca5d4ab7eb4903c81af00023161d281"
+    },
+    {
+      "path": "tests/unit/governance/db-integration-ci.test.mjs",
+      "gitBlob": "633d31814041d977634e1a9767f2193cf1166a88",
+      "sha256": "002f976e531c98c24b484fc059945f353fe028e7202cc2d0c7818f2b8a8d7c70"
+    },
+    {
+      "path": "tests/unit/governance/ci-change-scope.test.mjs",
+      "gitBlob": "ad8fcd0d21da55489a2d92d00af0ef6ad764de3d",
+      "sha256": "6c56bb8a76e8cbfad504e6f81fe43644e1a8eaa421d97c76b64d3f02513936ab"
+    }
+  ],
+  "validation": {
+    "governance": "29/29 PASS 0skip",
+    "yaml": "Ruby YAML parse PASS",
+    "bash": "syntax and controlled mock flow PASS; no Linux apt execution",
+    "registeredNative17": "16/16 PASS 0skip through actual --lane driver",
+    "typecheck": "PASS combined QA base",
+    "docs": "PASS",
+    "actualLinuxApt": "UNRUN",
+    "actualGitHubCI": "UNRUN"
+  },
+  "ownership": {
+    "fiveCiFiles": "STABLE_STOPPED_RETURNED_TO_MAIN",
+    "otherSourceLease": "RETAINED",
+    "inFlightFileMutation": false
+  }
+}
