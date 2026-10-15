@@ -33,6 +33,11 @@ import Foundation
         rejects("overlong source TTL") { _=try capture(reply) }
         let original = NativeTextSubmission(threadId:id(10),turnId:id(11),idempotencyKey:id(12),policyId:id(13),locale:"en",text:"  What time does it open?  ",serviceTask:.init(id:id(14),scopeVersion:1,relationship:"new_goal",parentTurnId:nil))
         let pending = try NativeCanonicalPlaceAskPending(originalTask:original,capture:selected)
+        let longTask = NativeTextSubmission(threadId: original.threadId, turnId: original.turnId, idempotencyKey: original.idempotencyKey,
+            policyId: original.policyId, locale: original.locale, text: String(repeating: "\u{0001}", count: 3000) + "open?", serviceTask: original.serviceTask)
+        let longPending = try NativeCanonicalPlaceAskPending(originalTask: longTask, capture: selected)
+        check(longPending.body.count > 16_384 && longPending.body.count <= 24_000, "frozen 24KB envelope does not inherit legacy 16KB cap")
+        check(try! NativeCanonicalPlaceAskPending.restoring(body: longPending.body, scope: actor).body == longPending.body, "large allowed body remains exact after restart")
         let restored = try NativeCanonicalPlaceAskPending.restoring(body:pending.body,scope:actor)
         check(pending.body == restored.body,"root exact whole bytes")
         check(pending.operationID == restored.operationID && pending.turnID == restored.turnID,"original IDs")

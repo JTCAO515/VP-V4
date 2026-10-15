@@ -91,13 +91,13 @@ struct NativeCanonicalPlaceAskPending: Equatable {
 
     init(originalTask: NativeTextSubmission, capture: NativeCanonicalPlaceAskCapture) throws {
         guard originalTask.city == nil, originalTask.serviceTask != nil else { throw NativeDataError.invalidResponse }
-        let original = try NativePlaceActionWire.object(JSONEncoder().encode(originalTask))
+        let original = try NativePlaceActionWire.object(JSONEncoder().encode(originalTask), maximum: 24_000)
         let bytes = try NativePlaceActionWire.bytes(["schemaVersion": "canonical-place-ask/1", "submission": original, "expectation": capture.expectation.object])
         self = try Self.restoring(body: bytes, scope: capture.scope)
     }
 
     init(submission: Data, capture: NativeCanonicalPlaceAskCapture, root: NativeCanonicalPlaceAskRoot) throws {
-        let original = try NativePlaceActionWire.object(submission)
+        let original = try NativePlaceActionWire.object(submission, maximum: 24_000)
         _ = try NativePlaceActionWire.exact(original, ["conversationId", "messageId", "idempotencyKey", "policyId", "locale", "text", "relationship", "goalId", "expectedGoalVersion", "taskId", "parentMessageId", "turnId"])
         guard let conversation = NativePlaceActionWire.id(original["conversationId"]), conversation == root.conversationID,
               let message = NativePlaceActionWire.id(original["messageId"]),
@@ -204,7 +204,7 @@ enum NativeCanonicalPlaceAskResponse {
             let expected = try NativePlaceActionWire.exact(binding["expectation"] as Any, Array(pending.expectation.object.keys))
             guard NSDictionary(dictionary: expected).isEqual(to: pending.expectation.object),
                   NativePlaceActionWire.integer(expected["headVersion"]) == pending.expectation.headVersion else { throw NativeDataError.invalidResponse }
-            let original = try NativePlaceActionWire.object(pending.submission)
+            let original = try NativePlaceActionWire.object(pending.submission, maximum: 24_000)
             if pending.scopeKind == "thread" {
                 let receipt = try NativePlaceActionWire.exact(value["originalReceipt"] as Any,
                     ["version", "kind", "turnId", "reused", "serviceTaskId", "scopeVersion", "relationship", "parentTurnId"])
