@@ -1,0 +1,48 @@
+Building for debugging...
+[2 / 6] VisePandaTests-product
+[5 / 9] VisePandaTests-product
+[11 / 13] VisePandaTests-product
+Build complete! (0.91秒)
+Test Suite 'All tests' started at 2026-10-16 03:24:13.006.
+Test Suite 'VisePandaTests.xctest' started at 2026-10-16 03:24:13.007.
+Test Suite 'NativeTranslationRecoveryJournalTests' started at 2026-10-16 03:24:13.007.
+Test Case '-[VisePandaTests.NativeTranslationRecoveryJournalTests testCompareUsesExactBytesAndMissingIsNotCompletion]' started.
+Test Case '-[VisePandaTests.NativeTranslationRecoveryJournalTests testCompareUsesExactBytesAndMissingIsNotCompletion]' passed (0.001 seconds).
+Test Case '-[VisePandaTests.NativeTranslationRecoveryJournalTests testCorruptionUnknownFieldsTypesDuplicatesAndSizeFailClosed]' started.
+Test Case '-[VisePandaTests.NativeTranslationRecoveryJournalTests testCorruptionUnknownFieldsTypesDuplicatesAndSizeFailClosed]' passed (0.002 seconds).
+Test Case '-[VisePandaTests.NativeTranslationRecoveryJournalTests testEachSourceTerminalCompletesAndLocalAbandonNeedsNoReceipt]' started.
+Test Case '-[VisePandaTests.NativeTranslationRecoveryJournalTests testEachSourceTerminalCompletesAndLocalAbandonNeedsNoReceipt]' passed (0.002 seconds).
+Test Case '-[VisePandaTests.NativeTranslationRecoveryJournalTests testExplicitSessionEraseHandlesOldEpochCorruptionAndOnlyExactServiceOwner]' started.
+Test Case '-[VisePandaTests.NativeTranslationRecoveryJournalTests testExplicitSessionEraseHandlesOldEpochCorruptionAndOnlyExactServiceOwner]' passed (0.000 seconds).
+Test Case '-[VisePandaTests.NativeTranslationRecoveryJournalTests testLandedWriteWithFailedReadbackRecoversWithoutNewRetain]' started.
+Test Case '-[VisePandaTests.NativeTranslationRecoveryJournalTests testLandedWriteWithFailedReadbackRecoversWithoutNewRetain]' passed (0.000 seconds).
+Test Case '-[VisePandaTests.NativeTranslationRecoveryJournalTests testOwnerEndpointAndEpochIsolation]' started.
+Test Case '-[VisePandaTests.NativeTranslationRecoveryJournalTests testOwnerEndpointAndEpochIsolation]' passed (0.001 seconds).
+Test Case '-[VisePandaTests.NativeTranslationRecoveryJournalTests testReceiptRejectsWrongIdentityOriginalDirectionAndGenericCancel]' started.
+Test Case '-[VisePandaTests.NativeTranslationRecoveryJournalTests testReceiptRejectsWrongIdentityOriginalDirectionAndGenericCancel]' passed (0.002 seconds).
+Test Case '-[VisePandaTests.NativeTranslationRecoveryJournalTests testReconstructedJournalPreservesPhysicalBytesAndIgnoresGeneration]' started.
+Test Case '-[VisePandaTests.NativeTranslationRecoveryJournalTests testReconstructedJournalPreservesPhysicalBytesAndIgnoresGeneration]' passed (0.001 seconds).
+Test Case '-[VisePandaTests.NativeTranslationRecoveryJournalTests testRemoveFailureAndReadbackFailureRemainErrors]' started.
+Test Case '-[VisePandaTests.NativeTranslationRecoveryJournalTests testRemoveFailureAndReadbackFailureRemainErrors]' passed (0.001 seconds).
+Test Case '-[VisePandaTests.NativeTranslationRecoveryJournalTests testStaleCompletionCannotRemoveSuccessorAndReceiptDuplicateKeysReject]' started.
+Test Case '-[VisePandaTests.NativeTranslationRecoveryJournalTests testStaleCompletionCannotRemoveSuccessorAndReceiptDuplicateKeysReject]' passed (0.001 seconds).
+Test Case '-[VisePandaTests.NativeTranslationRecoveryJournalTests testStorageErrorsNeverMeanAbsent]' started.
+Test Case '-[VisePandaTests.NativeTranslationRecoveryJournalTests testStorageErrorsNeverMeanAbsent]' passed (0.000 seconds).
+Test Case '-[VisePandaTests.NativeTranslationRecoveryJournalTests testUnknownPendingAndNullTerminalCannotComplete]' started.
+Test Case '-[VisePandaTests.NativeTranslationRecoveryJournalTests testUnknownPendingAndNullTerminalCannotComplete]' passed (0.001 seconds).
+Test Case '-[VisePandaTests.NativeTranslationRecoveryJournalTests testUTF8HashPreservesUnicodeAndIdentityCanonicality]' started.
+Test Case '-[VisePandaTests.NativeTranslationRecoveryJournalTests testUTF8HashPreservesUnicodeAndIdentityCanonicality]' passed (0.000 seconds).
+Test Case '-[VisePandaTests.NativeTranslationRecoveryJournalTests testValidButChangedPhysicalReadbackNeverGrantsSend]' started.
+Test Case '-[VisePandaTests.NativeTranslationRecoveryJournalTests testValidButChangedPhysicalReadbackNeverGrantsSend]' passed (0.001 seconds).
+Test Case '-[VisePandaTests.NativeTranslationRecoveryJournalTests testWriteFailureAndPhysicalReadbackFailureDenySendPermit]' started.
+Test Case '-[VisePandaTests.NativeTranslationRecoveryJournalTests testWriteFailureAndPhysicalReadbackFailureDenySendPermit]' passed (0.000 seconds).
+Test Suite 'NativeTranslationRecoveryJournalTests' passed at 2026-10-16 03:24:13.021.
+	 Executed 15 tests, with 0 failures (0 unexpected) in 0.013 (0.014) seconds
+Test Suite 'VisePandaTests.xctest' passed at 2026-10-16 03:24:13.021.
+	 Executed 15 tests, with 0 failures (0 unexpected) in 0.013 (0.014) seconds
+Test Suite 'All tests' passed at 2026-10-16 03:24:13.021.
+	 Executed 15 tests, with 0 failures (0 unexpected) in 0.013 (0.015) seconds
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

@@ -41,7 +41,13 @@ struct NativeTranslationRecoveryReceipt: Equatable, Sendable {
             return .init(identity: original, state: state, phrase: nil)
         }
         guard state != .unknown else { throw NativeTranslationRecoveryError.invalidReceipt }
-        let p = try NativeTranslationRecoveryJSON.object(v["phrase"], keys: ["turnId", "sourceLocale", "targetLocale", "original", "state", "translation", "backTranslation"])
+        let baseKeys: Set<String> = ["turnId", "sourceLocale", "targetLocale", "original", "state"]
+        let fullKeys = baseKeys.union(["translation", "backTranslation"])
+        guard let rawPhrase = v["phrase"] as? [String: Any] else { throw NativeTranslationRecoveryError.invalidReceipt }
+        // Existing NativeTranslationPhrase optionals are omitted by the server for
+        // nontranslated states. Explicit null is equivalent, private text is not.
+        let expectedKeys = state != .translated && Set(rawPhrase.keys) == baseKeys ? baseKeys : fullKeys
+        let p = try NativeTranslationRecoveryJSON.object(rawPhrase, keys: expectedKeys)
         guard p["turnId"] as? String == original.turnId,
               p["sourceLocale"] as? String == original.sourceLocale, p["targetLocale"] as? String == original.targetLocale,
               p["state"] as? String == state.rawValue, let text = p["original"] as? String,
@@ -55,7 +61,8 @@ struct NativeTranslationRecoveryReceipt: Equatable, Sendable {
             }
             translation = t; backTranslation = b
         } else {
-            guard p["translation"] is NSNull, p["backTranslation"] is NSNull else { throw NativeTranslationRecoveryError.invalidReceipt }
+            guard (p["translation"] == nil || p["translation"] is NSNull),
+                  (p["backTranslation"] == nil || p["backTranslation"] is NSNull) else { throw NativeTranslationRecoveryError.invalidReceipt }
         }
         return .init(identity: original, state: state,
                      phrase: .init(turnId: original.turnId, sourceLocale: original.sourceLocale, targetLocale: original.targetLocale,
