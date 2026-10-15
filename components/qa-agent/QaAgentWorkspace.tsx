@@ -41,6 +41,7 @@ function Workspace({ locale, actorId, initialSession }: { locale: "zh" | "en"; a
   const c = copy[locale];
   const [sessions, setSessions] = useState<Session[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
+  const selectedId = useRef<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [historyReady, setHistoryReady] = useState(false);
   const [policy, setPolicy] = useState<Policy | null>(null);
@@ -62,6 +63,10 @@ function Workspace({ locale, actorId, initialSession }: { locale: "zh" | "en"; a
   const current = useRef<{ epoch: number; controller: AbortController; busy: boolean }>({ epoch: 0, controller: new AbortController(), busy: false });
   const scroll = useRef<HTMLDivElement>(null);
   const composing = useRef(false);
+  const routeMatchesSelection = initialSession === selected;
+  function selectionCurrent(id: string) {
+    return selectedId.current === id && new URL(window.location.href).searchParams.get("session") === id;
+  }
   function hydratePending() {
     try {
       for (const identity of readPendingIdentities(actorId)) {
@@ -88,7 +93,7 @@ function Workspace({ locale, actorId, initialSession }: { locale: "zh" | "en"; a
       try { clearPendingIdentities(); } catch { setStorageReady(false); }
       pendingBySession.current.clear(); limitedSessions.current.clear(); setLimitReached(false); setMessages([]); setSessions([]); setPolicy(null); setPending(null); setUnauthenticated(true);
     } else {
-      if (reason instanceof ApiError && reason.code === "DATA_POLICY_BLOCKED") {
+      if (reason instanceof ApiError && (reason.status === 403 || reason.code === "DATA_POLICY_BLOCKED")) {
         // Protected history may require consent to the already-read notice.
         // Keep that notice/action available; denial never grants send readiness.
         setMessages([]); setHistoryReady(false);
@@ -100,20 +105,30 @@ function Workspace({ locale, actorId, initialSession }: { locale: "zh" | "en"; a
     mounted.current = true;
     const token = scope(); hydratePending();
     void Promise.all([qaApi.sessions(token.controller.signal), qaApi.policy(token.controller.signal)])
-      .then(([list, notice]) => { if (current.current === token && !token.controller.signal.aborted) { setSessions(list.sessions); setPolicy(notice);
-        if (initialSession) void select(initialSession); } })
+      .then(([list, notice]) => { if (current.current === token && !token.controller.signal.aborted) { setSessions(list.sessions); setPolicy(notice); } })
       .catch(reason => fail(reason, token)).finally(() => { if (!token.controller.signal.aborted) setLoading(false); });
     return () => { mounted.current = false; current.current.controller.abort(); };
   }, []);
+  // A URL bookmark/back-forward change is a Session selection, not permission.
+  // Internal selections set this ref before changing the URL, avoiding rereads.
+  useEffect(() => {
+    if (!policy || initialSession === selectedId.current) return;
+    if (initialSession) { void select(initialSession); return; }
+    scope(); selectedId.current = null;
+    setSelected(null); setMessages([]); setText(""); setPending(null);
+    setHistoryReady(false); setLimitReached(false); setLoading(false);
+    setError(false); setForbidden(false);
+  }, [initialSession, policy?.policyId]);
   useEffect(() => { scroll.current?.scrollIntoView({ block: "end" }); }, [messages, pending]);
   async function select(id: string) {
     if (!mounted.current) return;
     const token = scope(); hydratePending();
+    selectedId.current = id;
     const url = new URL(window.location.href); url.searchParams.set("session", id); window.history.replaceState(null, "", url);
     setSelected(id); setLimitReached(limitedSessions.current.has(id)); setHistoryReady(false); setMessages([]); if (selected !== id) setText(""); setError(false); setForbidden(false); setLoading(true); setPending(pendingBySession.current.get(id) ?? null);
     try {
       const history = await qaApi.history(id, token.controller.signal);
-      if (current.current !== token || token.controller.signal.aborted) return;
+      if (current.current !== token || token.controller.signal.aborted || !selectionCurrent(id)) return;
       setMessages(history.messages); setHistoryReady(true);
       setSessions(list => list.some(session => session.id === history.session.id)
         ? list.map(session => session.id === history.session.id ? history.session : session)
@@ -138,7 +153,7 @@ function Workspace({ locale, actorId, initialSession }: { locale: "zh" | "en"; a
   async function submit(recover = false) {
     if (!mounted.current) return;
     if (!recover && reconciling) return;
-    if (!selected || loading || (!recover && !historyReady) || current.current.busy || messages.some(message => message.status === "pending") || !policy?.consented || (!recover && !permitsQaSubmission(policy))) return;
+    if (!selected || !selectionCurrent(selected) || loading || (!recover && !historyReady) || current.current.busy || messages.some(message => message.status === "pending") || !policy?.consented || (!recover && !permitsQaSubmission(policy))) return;
     const id = selected;
     const retained = pendingBySession.current.get(id);
     if ((recover && !retained) || (!recover && !storageReady)) return;
@@ -153,7 +168,7 @@ function Workspace({ locale, actorId, initialSession }: { locale: "zh" | "en"; a
       const result = recover
         ? await qaApi.recover(id, original.requestId, token.controller.signal)
         : await qaApi.send(id, { requestId: original.requestId, text: original.text! }, token.controller.signal);
-      if (current.current !== token || token.controller.signal.aborted) return;
+      if (current.current !== token || token.controller.signal.aborted || !selectionCurrent(id)) return;
       setMessages(list => [...list.filter(message => message.requestId !== result.message.requestId), result.message]);
       confirm(id, original.requestId); setText("");
     } catch (reason) {
@@ -172,13 +187,13 @@ function Workspace({ locale, actorId, initialSession }: { locale: "zh" | "en"; a
     } finally { if (current.current === token && !token.controller.signal.aborted) { token.busy = false; setBusy(false); } }
   }
   async function inspectOriginal(requestId: string) {
-    if (!mounted.current || !selected || loading || current.current.busy || !policy?.consented) return;
+    if (!mounted.current || !selected || !selectionCurrent(selected) || loading || current.current.busy || !policy?.consented) return;
     const id = selected, token = current.current;
     token.busy = true; setBusy(true); setError(false);
     try {
       // Saved admission identity is durable; this action never POSTs or replays.
       const result = await qaApi.recover(id, requestId, token.controller.signal);
-      if (current.current !== token || token.controller.signal.aborted) return;
+      if (current.current !== token || token.controller.signal.aborted || !selectionCurrent(id)) return;
       setMessages(list => list.map(message => message.requestId === requestId ? result.message : message));
       if (pendingBySession.current.get(id)?.requestId === requestId) confirm(id, requestId);
     } catch (reason) {
@@ -199,7 +214,7 @@ function Workspace({ locale, actorId, initialSession }: { locale: "zh" | "en"; a
     const controller = new AbortController();
     const signal = AbortSignal.any([token.controller.signal, controller.signal]);
     let disposed = false, retries = 0, timer: number | undefined;
-    const active = () => !disposed && current.current === token && !signal.aborted;
+    const active = () => !disposed && current.current === token && !signal.aborted && selectionCurrent(sessionId);
     const schedule = (delay: number) => { timer = window.setTimeout(() => { void read(); }, delay); };
     async function read() {
       if (!active()) return;
@@ -260,10 +275,10 @@ function Workspace({ locale, actorId, initialSession }: { locale: "zh" | "en"; a
       {pending ? <div role="status"><p>{pending.text === null ? c.restoredPending : forbidden ? c.forbidden : c.unknown}</p><button type="button" disabled={busy || loading || (!reconciling && pending.retryAllowed && (!storageReady || !permitsQaSubmission(policy)))} onClick={() => void submit(reconciling || !pending.retryAllowed)}>{!reconciling && pending.retryAllowed ? c.retry : c.recover}</button></div> : null}
       <form className={styles.composer} onSubmit={event => { event.preventDefault(); if (!pending) void submit(); }}>
         <label htmlFor="qa-message">{c.input}</label>
-        <textarea maxLength={4000} id="qa-message" value={text} disabled={!selected || loading || busy || !historyReady || !!pending || waiting || atLimit || reconciling || !storageReady} onChange={event => setText(event.target.value)} onCompositionStart={() => { composing.current = true; }} onCompositionEnd={() => { composing.current = false; }} onKeyDown={event => {
+        <textarea maxLength={4000} id="qa-message" value={text} disabled={!selected || !routeMatchesSelection || loading || busy || !historyReady || !!pending || waiting || atLimit || reconciling || !storageReady} onChange={event => setText(event.target.value)} onCompositionStart={() => { composing.current = true; }} onCompositionEnd={() => { composing.current = false; }} onKeyDown={event => {
           if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing && !composing.current && event.keyCode !== 229) { event.preventDefault(); if (!pending && !waiting) void submit(); }
         }} />
-        <button type="submit" disabled={!selected || loading || !historyReady || busy || !!pending || waiting || !permitsQaSubmission(policy) || atLimit || reconciling || !storageReady || !text.trim()}>{waiting || (busy && !reconciling) ? c.replying : c.send}</button>
+        <button type="submit" disabled={!selected || !routeMatchesSelection || loading || !historyReady || busy || !!pending || waiting || !permitsQaSubmission(policy) || atLimit || reconciling || !storageReady || !text.trim()}>{waiting || (busy && !reconciling) ? c.replying : c.send}</button>
       </form>
     </section>
   </main>;

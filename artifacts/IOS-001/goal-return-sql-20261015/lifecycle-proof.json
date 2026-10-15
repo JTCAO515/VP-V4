@@ -1,0 +1,46 @@
+[
+  {
+    "label": "Current Trip+explicit Memory source positive",
+    "result": "PASS"
+  },
+  {
+    "label": "Changed Memory revision rejects",
+    "result": "PASS"
+  },
+  {
+    "label": "Revoked Memory consent rejects",
+    "result": "PASS"
+  },
+  {
+    "label": "Deleted Memory cannot be revived",
+    "result": "PASS"
+  },
+  {
+    "label": "Original queued Trip deletion rejects",
+    "result": "PASS"
+  },
+  {
+    "label": "Changed Trip head rejects",
+    "result": "PASS"
+  },
+  {
+    "label": "Original confirmed unlink rejects current reference",
+    "result": "PASS"
+  },
+  {
+    "label": "Missing publication head rejects without bypassing guards",
+    "result": "PASS"
+  },
+  {
+    "label": "Late Trip lock never reverse-waits",
+    "result": "PASS"
+  },
+  {
+    "label": "Memory update contention is uniform unavailable",
+    "result": "PASS"
+  },
+  {
+    "label": "Consent revoke contention is uniform unavailable",
+    "result": "PASS"
+  }
+]

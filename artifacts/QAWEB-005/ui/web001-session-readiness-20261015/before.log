@@ -1,0 +1,93 @@
+(node:77501) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2m[WebServer] [22m(node:77503) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 1 worker
+
+(node:77504) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:77504) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:77504) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/e2e/qa-agent-ui/workspace.spec.mjs:2044:1 › WEB001 URL Session changes and browser back-forward bind the visible conversation before sending (5.5s)
+(node:77524) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:77524) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:77524) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 tests/e2e/qa-agent-ui/workspace.spec.mjs:2092:1 › WEB001 permission-denied send hides previously protected history and blocks further admission (5.6s)
+
+
+  1) tests/e2e/qa-agent-ui/workspace.spec.mjs:2044:1 › WEB001 URL Session changes and browser back-forward bind the visible conversation before sending
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveAttribute[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: getByRole('button', { name: 'Session 22222222-2222-4222-8222-222222222222', exact: true })
+    Expected string: [32m"true"[39m
+    Received string: [31m""[39m
+    Timeout: 5000ms
+
+    Call log:
+    [2m  - Expect "toHaveAttribute" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('button', { name: 'Session 22222222-2222-4222-8222-222222222222', exact: true })[22m
+    [2m    9 × locator resolved to <button type="button">Session 22222222-2222-4222-8222-222222222222</button>[22m
+    [2m      - unexpected value "null"[22m
+
+
+      543 |  await page.getByRole('button',{name:'Agree to the notice above'}).click();await expect(page.getByRole('log')).toContainText('Answer A');
+      544 |  await page.evaluate(id=>history.pushState(null,'',`/qa?locale=en&session=${id}`),idB);
+    > 545 |  await expect(page.getByRole('button',{name:`Session ${idB}`,exact:true})).toHaveAttribute('aria-current','true');await expect(page.getByRole('log')).toContainText('Answer B');await expect(page.getByRole('log')).not.toContainText('Answer A');
+          |                                                                            ^
+      546 |  await page.getByLabel('Message',{exact:true}).fill('B only');await page.getByRole('button',{name:'Send',exact:true}).click();await expect(page.getByRole('log')).toContainText('Saved answer');expect(destinations).toEqual([idB]);
+      547 |  await page.goBack();await expect(page.getByRole('log')).toContainText('Answer A');await expect(page.getByRole('log')).not.toContainText('B only');
+      548 |  await page.goForward();await expect(page.getByRole('log')).toContainText('B only');
+        at /Users/jtsm5p/Documents/Codex/VP-V10-worktrees/web001-session-readiness-20261015/tests/e2e/qa-agent-ui/workspace.spec.mjs:545:76
+
+    Error Context: artifacts/QAWEB-005/ui/playwright/workspace-WEB001-URL-Sessi-06ec0-conversation-before-sending/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    artifacts/QAWEB-005/ui/playwright/workspace-WEB001-URL-Sessi-06ec0-conversation-before-sending/trace.zip
+    Usage:
+
+        npx playwright show-trace artifacts/QAWEB-005/ui/playwright/workspace-WEB001-URL-Sessi-06ec0-conversation-before-sending/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests/e2e/qa-agent-ui/workspace.spec.mjs:2092:1 › WEB001 permission-denied send hides previously protected history and blocks further admission
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeEmpty[2m()[22m failed
+
+    Locator:  getByRole('log')
+    Expected: empty
+    Received: notEmpty
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toBeEmpty" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('log')[22m
+    [2m    9 × locator resolved to <div role="log" aria-live="polite" aria-relevant="additions text" class="QaAgentWorkspace_messages__9113o">…</div>[22m
+    [2m      - unexpected value "notEmpty"[22m
+
+
+      557 |  await page.getByRole('button',{name:'Agree to the notice above'}).click();await expect(page.getByRole('log')).toContainText('Private prior answer');
+      558 |  denied=true;await page.getByLabel('Message',{exact:true}).fill('Write now denied');await page.getByRole('button',{name:'Send',exact:true}).click();
+    > 559 |  await expect(page.getByRole('region',{name:'Agent QA'}).getByRole('alert')).toBeVisible();await expect(page.getByRole('log')).toBeEmpty();await expect(page.getByRole('button',{name:'Send',exact:true})).toBeDisabled();expect(attempts).toHaveLength(1);
+          |                                                                                                                                ^
+      560 | });
+      561 |
+        at /Users/jtsm5p/Documents/Codex/VP-V10-worktrees/web001-session-readiness-20261015/tests/e2e/qa-agent-ui/workspace.spec.mjs:559:128
+
+    Error Context: artifacts/QAWEB-005/ui/playwright/workspace-WEB001-permissio-11966-nd-blocks-further-admission/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    artifacts/QAWEB-005/ui/playwright/workspace-WEB001-permissio-11966-nd-blocks-further-admission/trace.zip
+    Usage:
+
+        npx playwright show-trace artifacts/QAWEB-005/ui/playwright/workspace-WEB001-permissio-11966-nd-blocks-further-admission/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    tests/e2e/qa-agent-ui/workspace.spec.mjs:2044:1 › WEB001 URL Session changes and browser back-forward bind the visible conversation before sending
+    tests/e2e/qa-agent-ui/workspace.spec.mjs:2092:1 › WEB001 permission-denied send hides previously protected history and blocks further admission

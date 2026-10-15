@@ -1800,6 +1800,14 @@ final class NativeSession {
         return try await dataRequest(prefix:path,path:path,method:"POST",body:body)
     }
 
+    func journeyGoalReturnRequest(_ source: NativeJourneyGoalReturnWire.Scope, actor: NativeCommunitySafetyActor) async throws -> Data {
+        guard source.valid, try communitySafetyActor() == actor else { throw NativeDataError.sessionUnavailable }
+        let path = "api/chat/native/v5/goal-return"
+        let bytes = try await dataRequest(prefix: path, path: path, method: "GET", queryItems: source.query)
+        guard try communitySafetyActor() == actor, bytes.count <= 16_384 else { throw NativeDataError.staleSessionResponse }
+        return bytes
+    }
+
     func fiveResultRequest(artifactID: String, revision: Int) async throws -> Data {
         guard UUID(uuidString: artifactID) != nil, (1...1000).contains(revision) else { throw NativeDataError.invalidResponse }
         let path = "api/results/native/v2"
@@ -1972,7 +1980,7 @@ final class NativeSession {
             }
             turnReadGeneration = turnDataProjectionFence.generation
         }
-        let guardsResultProjection = directionsProjection || path.hasPrefix("api/results/native/") ||
+        let guardsResultProjection = directionsProjection || path == "api/chat/native/v5/goal-return" || path.hasPrefix("api/results/native/") ||
             ((path == "api/library/native/v1/items" || path == "api/library/native/v1/item") && queryItems.contains { $0.name == "source" && $0.value == "results" })
         let resultActor = guardsResultProjection ? try communitySafetyActor() : nil
         let resultArtifact = queryItems.first { $0.name == "artifactId" || guardsResultProjection && path == "api/library/native/v1/item" && $0.name == "id" }?.value ??
