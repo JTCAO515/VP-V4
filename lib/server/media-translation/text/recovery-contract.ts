@@ -7,9 +7,13 @@ export type TranslationRecoveryIdentity = Readonly<{
   noticeHash: string; sourceLocale: "zh" | "en"; targetLocale: "zh" | "en"; inputHash: string;
 }>;
 export type TranslationRecoveryState = "unknown" | "pending" | "translated" | "cancelled" | "unavailable" | "needs_review";
+export type TranslationRecoveryPhrase = Readonly<{
+  turnId: string; sourceLocale: "zh" | "en"; targetLocale: "zh" | "en"; original: string;
+  state: Exclude<TranslationRecoveryState, "unknown">; translation: string | null; backTranslation: string | null;
+}>;
 export type TranslationRecovery = Readonly<{
   version: 1; kind: "translation_recovery"; identity: TranslationRecoveryIdentity;
-  state: TranslationRecoveryState; phrase: ReturnType<typeof projectTranslation>;
+  state: TranslationRecoveryState; phrase: TranslationRecoveryPhrase | null;
 }>;
 const keys = ["threadId", "idempotencyKey", "policyId", "noticeHash", "sourceLocale", "targetLocale", "inputHash"] as const;
 export const canonicalUuid = (value: unknown): value is string => typeof value === "string" && isUuid(value) && value === value.toLowerCase();
@@ -45,5 +49,7 @@ export function projectTranslationRecovery(identity: TranslationRecoveryIdentity
   // A completion racing its stored text is not evidence of failure.
   if (turn.status === "completed" && turn.output === null) return unknown;
   const phrase = projectTranslation(turn);
-  return phrase ? { ...unknown, state: phrase.state, phrase } : unknown;
+  return phrase ? { ...unknown, state: phrase.state, phrase: { ...phrase,
+    translation: phrase.state === "translated" ? phrase.translation : null,
+    backTranslation: phrase.state === "translated" ? phrase.backTranslation : null } } : unknown;
 }
