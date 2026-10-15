@@ -69,8 +69,8 @@ import Testing
         #expect(!cleared && selector.detail == nil && !selector.busy)
     }
 
-    @Test func selectedSubmissionRetriesSameWireAndRejectsOtherTripOrEditedText() async throws {
-        let store = NativeTranslationStore()
+    @Test func selectedSubmissionReconcilesSameIdentityAndRejectsOtherTripOrEditedText() async throws {
+        let store = NativeTranslationStore(recovery: NativeTranslationRecoveryTestPersistence())
         await store.load(scope: tripScope) { path, _, _ in path.hasSuffix("policy") ? policy() : history() }
         let selected = NativeTranslationTripSelection(scope: tripScope, source: selectedSource(), value: "No peanuts. CNY 50.")
         var bodies: [Data] = []
@@ -81,19 +81,18 @@ import Testing
         await store.submit(text: selected.value, sourceLocale: "en", tripSelection: selected, request: failed)
         let pending = try #require(store.pending)
         await store.submit(text: selected.value, sourceLocale: "en", tripSelection: selected, request: failed)
-        #expect(bodies.count == 2)
-        #expect(try JSONSerialization.jsonObject(with: bodies[0]) as? NSDictionary == JSONSerialization.jsonObject(with: bodies[1]) as? NSDictionary)
+        #expect(bodies.count == 1)
         let wire = try #require(JSONSerialization.jsonObject(with: bodies[0]) as? [String: Any])
         #expect(Set(wire.keys) == Set(["threadId", "turnId", "idempotencyKey", "policyId", "sourceLocale", "targetLocale", "text", "tripSource"]))
         #expect(wire["text"] as? String == selected.value && pending.tripSource == selected.source)
         await store.submit(text: "Edited", sourceLocale: "en", tripSelection: selected, request: failed)
         await store.submit(text: selected.value, sourceLocale: "en", request: failed)
-        #expect(bodies.count == 2 && store.pending == pending)
+        #expect(bodies.count == 1 && store.pending == pending)
     }
 
     @Test func selectedSubmissionDriftIsClosedAndNoConsentCannotPost() async {
         let selected = NativeTranslationTripSelection(scope: tripScope, source: selectedSource(), value: "My scene")
-        let store = NativeTranslationStore()
+        let store = NativeTranslationStore(recovery: NativeTranslationRecoveryTestPersistence())
         await store.load(scope: tripScope) { path, _, _ in path.hasSuffix("policy") ? policy() : history() }
         await store.submit(text: selected.value, sourceLocale: "en", tripSelection: selected) { _, _, _ in
             throw NativeDataError.server(code: "STALE_TRIP_VERSION")
@@ -106,7 +105,7 @@ import Testing
     }
 
     @Test func noConsentNeverSubmits() async {
-        let store = NativeTranslationStore()
+        let store = NativeTranslationStore(recovery: NativeTranslationRecoveryTestPersistence())
         var posts = 0
         let request: NativeTranslationStore.Request = { _, method, _ in
             if method == "POST" { posts += 1 }
@@ -118,8 +117,8 @@ import Testing
         #expect(store.pending == nil)
     }
 
-    @Test func ambiguousSendRetriesSameIdentityAndRejectsEditedInput() async throws {
-        let store = NativeTranslationStore()
+    @Test func ambiguousSendReadsSameIdentityAndRejectsEditedInput() async throws {
+        let store = NativeTranslationStore(recovery: NativeTranslationRecoveryTestPersistence())
         await store.load(scope: scope) { path, _, _ in path.hasSuffix("policy") ? policy() : history() }
         var bodies: [Data] = []
         let failing: NativeTranslationStore.Request = { _, _, body in
@@ -131,16 +130,15 @@ import Testing
         await store.submit(text: "Different address", sourceLocale: "en", request: failing)
         #expect(bodies.count == 1)
         await store.submit(text: first.text, sourceLocale: "en", request: failing)
-        #expect(bodies.count == 2)
+        #expect(bodies.count == 1)
         let one = try #require(JSONSerialization.jsonObject(with: bodies[0]) as? [String: String])
-        let two = try #require(JSONSerialization.jsonObject(with: bodies[1]) as? [String: String])
-        #expect(one == two)
+        #expect(one["turnId"] == first.turnId && one["threadId"] == first.threadId && one["idempotencyKey"] == first.idempotencyKey)
         #expect(one["text"] == first.text)
         #expect(store.pending == first)
     }
 
     @Test func scopeChangeDropsLateResponseAndPendingText() async {
-        let store = NativeTranslationStore()
+        let store = NativeTranslationStore(recovery: NativeTranslationRecoveryTestPersistence())
         await store.load(scope: scope) { _, _, _ in
             store.clear()
             return policy()
@@ -151,7 +149,7 @@ import Testing
     }
 
     @Test func withdrawalHidesCachedPhraseEvenIfNetworkFails() async {
-        let store = NativeTranslationStore()
+        let store = NativeTranslationStore(recovery: NativeTranslationRecoveryTestPersistence())
         await store.load(scope: scope) { path, _, _ in path.hasSuffix("policy") ? policy() : history() }
         await store.submit(text: "No peanuts", sourceLocale: "en") { _, _, _ in throw NativeDataError.invalidResponse }
         #expect(store.pending != nil)

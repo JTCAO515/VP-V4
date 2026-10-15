@@ -168,119 +168,270 @@ private struct NativeTranslationHistory: Decodable {
     let phrases: [NativeTranslationPhrase]
 }
 
-/// Only the active actor's last server-read phrases are kept in memory. No private
-/// history is used as model context; loading saved results never requests a model.
+/// Transient phrase bodies remain memory-only. The injected journal is the sole durable identity authority.
 @MainActor @Observable
 final class NativeTranslationStore {
     typealias Request = (_ path: String, _ method: String, _ body: Data?) async throws -> Data
+    typealias CurrentScope = () -> NativeDataScope?
+    enum RecoveryStatus: String {
+        case idle, checking, unknown, pending, translated, cancelled, unavailable
+        case needsReview = "needs_review", storageFailed = "storage_failed", blocked
+    }
     private(set) var scope: NativeDataScope?
     private(set) var policy: NativeTextPolicy?
     private(set) var phrases: [NativeTranslationPhrase] = []
     private(set) var pending: NativeTranslationSubmission?
     private(set) var busy = false
     private(set) var errorCode: String?
+    private(set) var recoveryRecord: NativeTranslationRecoveryRecord?
+    private(set) var recoveryStatus: RecoveryStatus = .checking
+    private var recoveryReady = false
+    private var recovery: (any NativeTranslationRecoveryPersistence)?
     private var generation = UUID()
     private var pendingNotice: String?
+    private var recoveredPhrase: NativeTranslationPhrase?
+    var hasUnresolvedRecovery: Bool { !recoveryReady || recoveryRecord != nil }
+    var recoveredTurnID: String? { recoveredPhrase?.id }
 
-    func clear() {
-        generation = UUID(); scope = nil; policy = nil; phrases = []; pending = nil
-        pendingNotice = nil; busy = false; errorCode = nil
+    // No in-memory durability fallback. Main injects the original Session/vault factory.
+    init(recovery: (any NativeTranslationRecoveryPersistence)? = nil) { self.recovery = recovery }
+    func configureRecovery(_ persistence: (any NativeTranslationRecoveryPersistence)?) {
+        guard recovery == nil, !busy else { return }
+        recovery = persistence
     }
 
-    func load(scope: NativeDataScope?, request: Request) async {
+    /// Background, departure or actor changes hide private text, never erase a durable identity.
+    func clear() {
+        generation = UUID(); scope = nil; policy = nil; phrases = []; pending = nil
+        pendingNotice = nil; recoveredPhrase = nil; recoveryRecord = nil; recoveryReady = false
+        recoveryStatus = .checking; busy = false; errorCode = nil
+    }
+
+    func load(scope: NativeDataScope?, currentScope: CurrentScope? = nil, request: Request) async {
         if self.scope != scope { clear(); self.scope = scope }
         guard scope != nil, !busy else { return }
         let own = generation
-        busy = true; errorCode = nil
+        busy = true; errorCode = nil; recoveryStatus = .checking
         defer { if own == generation { busy = false } }
-        do { try await refresh(own: own, request: request) }
+        do { try await refresh(own: own, currentScope: currentScope, request: request) }
         catch { failed(error, own: own) }
     }
 
-    func consent(accept: Bool, request: Request) async {
+    func consent(accept: Bool, currentScope: CurrentScope? = nil, request: Request) async {
         guard scope != nil, !busy, let policy else { return }
         let own = generation
         busy = true; errorCode = nil
         defer { if own == generation { busy = false } }
-        // Hide cached text immediately when the user withdraws its governing consent.
-        if !accept { phrases = []; pending = nil; pendingNotice = nil; self.policy = nil }
+        if !accept {
+            phrases = []; recoveredPhrase = nil; pending = nil; pendingNotice = nil; self.policy = nil
+            recoveryReady = false; recoveryStatus = .blocked
+        }
         do {
+            try check(own, currentScope)
             let body = accept ? ["policyId": policy.id, "noticeHash": policy.noticeHash] : ["policyId": policy.id]
             _ = try await request("api/translate/consent", accept ? "POST" : "DELETE", JSONEncoder().encode(body))
-            try await refresh(own: own, request: request)
+            try await refresh(own: own, currentScope: currentScope, request: request)
         } catch { failed(error, own: own) }
     }
 
-    func submit(text: String, sourceLocale: String, tripSelection: NativeTranslationTripSelection? = nil, request: Request) async {
-        guard scope != nil, !busy, let policy, policy.valid, policy.consentState == .accepted,
+    func submit(text: String, sourceLocale: String, tripSelection: NativeTranslationTripSelection? = nil,
+                currentScope: CurrentScope? = nil, request: Request) async {
+        guard let scope, !busy, let policy, policy.valid, policy.consentState == .accepted,
               ["zh", "en"].contains(sourceLocale), !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-              text.utf16.count <= 600 else { return }
+              text.utf16.count <= 600, !Task.isCancelled else { return }
         guard tripSelection == nil || (tripSelection!.source.valid && tripSelection!.matches(scope: scope, source: tripSelection!.source, value: text)) else {
             errorCode = "TRIP_SOURCE_CHANGED"; return
         }
+        // Repeating the explicit action is reconciliation only, never another admission POST.
+        if hasUnresolvedRecovery || pending != nil {
+            if let pending, (!pending.text.utf8.elementsEqual(text.utf8) || pending.sourceLocale != sourceLocale || pending.tripSource != tripSelection?.source) {
+                errorCode = "PENDING_REQUEST"; return
+            }
+            await load(scope: scope, currentScope: currentScope, request: request)
+            return
+        }
         let own = generation
-        let submission = pending ?? NativeTranslationSubmission(threadId: UUID().uuidString.lowercased(), turnId: UUID().uuidString.lowercased(),
-            idempotencyKey: UUID().uuidString.lowercased(), policyId: policy.id, sourceLocale: sourceLocale,
-            targetLocale: sourceLocale == "zh" ? "en" : "zh", text: text, tripSource: tripSelection?.source)
-        guard submission.text == text, submission.sourceLocale == sourceLocale, submission.policyId == policy.id,
-              submission.tripSource == tripSelection?.source,
-              pending == nil || pendingNotice == policy.noticeHash else { errorCode = "PENDING_REQUEST"; return }
-        pending = submission; pendingNotice = policy.noticeHash
         busy = true; errorCode = nil
         defer { if own == generation { busy = false } }
         do {
+            try check(own, currentScope)
+            guard let recovery else { throw NativeTranslationRecoveryError.storageFailure }
+            // A record discovered here can only be read back; retain may not replace it.
+            if let original = try recovery.read(scope) {
+                recoveryRecord = original; recoveryReady = false
+                try await reconcile(original, own: own, currentScope: currentScope, request: request)
+                return
+            }
+            let submission = NativeTranslationSubmission(threadId: UUID().uuidString.lowercased(), turnId: UUID().uuidString.lowercased(),
+                idempotencyKey: UUID().uuidString.lowercased(), policyId: policy.id, sourceLocale: sourceLocale,
+                targetLocale: sourceLocale == "zh" ? "en" : "zh", text: text, tripSource: tripSelection?.source)
+            let identity = try NativeTranslationRecoveryIdentity(threadId: submission.threadId, turnId: submission.turnId,
+                idempotencyKey: submission.idempotencyKey, policyId: submission.policyId, noticeHash: policy.noticeHash,
+                sourceLocale: submission.sourceLocale, targetLocale: submission.targetLocale,
+                inputHash: NativeTranslationRecoveryIdentity.hashInput(text))
+            recoveryReady = false
+            let original = try recovery.retain(identity, scope: scope)
+            guard original.matches(scope), original.identity == identity else {
+                throw NativeTranslationRecoveryError.storageFailure
+            }
+            recoveryRecord = original
+            guard try recovery.read(scope) == original else { throw NativeTranslationRecoveryError.storageFailure }
+            recoveryRecord = original; pending = submission; pendingNotice = policy.noticeHash; recoveryStatus = .unknown
+            try check(own, currentScope)
             let data = try await request("api/translate", "POST", JSONEncoder().encode(submission))
-            try check(own)
+            try check(own, currentScope)
             let accepted = try JSONDecoder().decode(NativeTextAccepted.self, from: data)
             guard accepted.version == 1, accepted.kind == "accepted", accepted.turnId == submission.turnId else { throw NativeDataError.invalidResponse }
-            try await refresh(own: own, request: request)
+            try await refresh(own: own, currentScope: currentScope, request: request)
         } catch { failed(error, own: own) }
     }
 
-    func cancel(request: Request) async {
-        guard scope != nil, !busy, let pending else { return }
+    func cancel(currentScope: CurrentScope? = nil, request: Request) async {
+        guard let scope, !busy, let original = recoveryRecord, let recovery,
+              policyAllows(original), original.matches(scope) else { return }
         let own = generation
         busy = true; errorCode = nil
         defer { if own == generation { busy = false } }
         do {
-            _ = try await request("api/translate/turns/\(pending.turnId)/cancel", "POST", Data("{}".utf8))
-            try check(own)
-            self.pending = nil; pendingNotice = nil
-            try await refresh(own: own, request: request)
+            try check(own, currentScope)
+            guard try recovery.read(scope) == original else { throw NativeTranslationRecoveryError.compareFailed }
+            _ = try await request("api/translate/turns/\(original.identity.turnId)/cancel", "POST", Data("{}".utf8))
+            try check(own, currentScope)
+            // A generic cancellation ACK cannot erase or settle the original journal.
+            try await reconcile(original, own: own, currentScope: currentScope, request: request)
         } catch { failed(error, own: own) }
     }
 
-    private func refresh(own: UUID, request: Request) async throws {
+    /// Caller must obtain explicit local-only abandonment confirmation; this never cancels the server.
+    func abandonLocalRecovery(_ reviewed: NativeTranslationRecoveryRecord, currentScope: CurrentScope? = nil) {
+        guard !busy, let scope, let original = recoveryRecord, original == reviewed, let recovery else { return }
+        do {
+            try check(generation, currentScope)
+            try recovery.abandonLocally(original, scope: scope)
+            pending = nil; pendingNotice = nil; recoveryRecord = nil
+            recoveryReady = policy?.valid == true && policy?.consentState == .accepted
+            recoveryStatus = .idle; errorCode = nil
+        } catch { failed(error, own: generation) }
+    }
+
+    private func policyAllows(_ record: NativeTranslationRecoveryRecord) -> Bool {
+        policy?.valid == true && policy?.consentState == .accepted
+            && policy?.id == record.identity.policyId && policy?.noticeHash == record.identity.noticeHash
+    }
+
+    private func refresh(own: UUID, currentScope: CurrentScope?, request: Request) async throws {
+        try check(own, currentScope)
         let data = try await request("api/translate/policy", "GET", nil)
-        try check(own)
+        try check(own, currentScope)
         let reply = try JSONDecoder().decode(NativeTextPolicyReply.self, from: data)
         guard reply.version == 1, reply.kind == "policy", reply.policy.valid else { throw NativeDataError.invalidResponse }
-        if policy?.id != reply.policy.id || policy?.noticeHash != reply.policy.noticeHash { phrases = [] }
+        if policy?.id != reply.policy.id || policy?.noticeHash != reply.policy.noticeHash { phrases = []; recoveredPhrase = nil }
         policy = reply.policy
-        if let pending, pending.policyId != reply.policy.id || pendingNotice != reply.policy.noticeHash {
-            self.pending = nil; pendingNotice = nil
+        guard let scope else { throw NativeDataError.staleSessionResponse }
+        guard let recovery else {
+            recoveryReady = false; recoveryStatus = .storageFailed
+            throw NativeTranslationRecoveryError.storageFailure
         }
-        guard reply.policy.consentState == .accepted else { phrases = []; pending = nil; pendingNotice = nil; return }
+        let physical = try recovery.read(scope)
+        if let original = recoveryRecord {
+            guard physical == original else { throw NativeTranslationRecoveryError.compareFailed }
+        }
+        recoveryRecord = physical
+        recoveryReady = recoveryRecord == nil
+        guard reply.policy.consentState == .accepted else {
+            phrases = []; recoveredPhrase = nil; pending = nil; pendingNotice = nil; recoveryStatus = .blocked; return
+        }
+        if let original = recoveryRecord {
+            guard policyAllows(original) else {
+                phrases = []; recoveredPhrase = nil; pending = nil; pendingNotice = nil; recoveryStatus = .blocked; return
+            }
+            try await reconcile(original, own: own, currentScope: currentScope, request: request)
+        } else { recoveryStatus = .idle }
         let historyData = try await request("api/translate", "GET", nil)
-        try check(own)
+        try check(own, currentScope)
         let history = try JSONDecoder().decode(NativeTranslationHistory.self, from: historyData)
         guard history.version == 1, history.kind == "translations", history.phrases.count <= 20,
               history.phrases.allSatisfy(\.valid), Set(history.phrases.map(\.id)).count == history.phrases.count else { throw NativeDataError.invalidResponse }
-        phrases = history.phrases
-        if let pending, let phrase = phrases.first(where: { $0.id == pending.turnId }), phrase.state != "pending" {
-            self.pending = nil; pendingNotice = nil
-        }
+        // Latest-20 is not the original recovery proof. It cannot substitute for an
+        // unknown original or overwrite the exact phrase verified by its recovery GET.
+        phrases = history.phrases.filter { $0.id != recoveryRecord?.identity.turnId && $0.id != recoveredPhrase?.id }
+        // A recovered original outside the latest-20 history window remains readable.
+        if let phrase = recoveredPhrase, !phrases.contains(where: { $0.id == phrase.id }) { phrases.insert(phrase, at: 0) }
     }
-    private func check(_ own: UUID) throws {
-        guard own == generation, !Task.isCancelled else { throw CancellationError() }
+
+    private func reconcile(_ original: NativeTranslationRecoveryRecord, own: UUID, currentScope: CurrentScope?, request: Request) async throws {
+        try check(own, currentScope)
+        guard let scope, let recovery, original.matches(scope), policyAllows(original), try recovery.read(scope) == original else {
+            throw NativeTranslationRecoveryError.compareFailed
+        }
+        recoveryStatus = .checking
+        let identity = original.identity
+        var components = URLComponents()
+        components.path = "api/translate/recovery/" + identity.turnId
+        components.queryItems = ["threadId": identity.threadId, "idempotencyKey": identity.idempotencyKey,
+            "policyId": identity.policyId, "noticeHash": identity.noticeHash, "sourceLocale": identity.sourceLocale,
+            "targetLocale": identity.targetLocale, "inputHash": identity.inputHash].sorted { $0.key < $1.key }
+            .map { URLQueryItem(name: $0.key, value: $0.value) }
+        guard let path = components.string else { throw NativeDataError.invalidResponse }
+        let data = try await request(path, "GET", nil)
+        try check(own, currentScope)
+        guard policyAllows(original), try recovery.read(scope) == original else { throw NativeTranslationRecoveryError.compareFailed }
+        let receipt: NativeTranslationRecoveryReceipt
+        do { receipt = try NativeTranslationRecoveryReceipt.verify(data, original: identity) }
+        catch { throw NativeDataError.invalidResponse }
+        if receipt.phrase != nil {
+            let policyData = try await request("api/translate/policy", "GET", nil)
+            try check(own, currentScope)
+            let latest = try JSONDecoder().decode(NativeTextPolicyReply.self, from: policyData)
+            guard latest.version == 1, latest.kind == "policy", latest.policy.valid else { throw NativeDataError.invalidResponse }
+            policy = latest.policy
+            guard policyAllows(original) else {
+                phrases = []; recoveredPhrase = nil; pending = nil; pendingNotice = nil
+                recoveryStatus = .blocked; return
+            }
+            guard try recovery.read(scope) == original else { throw NativeTranslationRecoveryError.compareFailed }
+        }
+        recoveryStatus = RecoveryStatus(rawValue: receipt.state.rawValue) ?? .unknown
+        if let result = receipt.phrase {
+            let phrase = NativeTranslationPhrase(turnId: result.turnId, sourceLocale: result.sourceLocale,
+                targetLocale: result.targetLocale, original: result.original, state: result.state,
+                translation: result.translation, backTranslation: result.backTranslation)
+            guard phrase.valid else { throw NativeDataError.invalidResponse }
+            recoveredPhrase = phrase
+            phrases.removeAll { $0.id == phrase.id }; phrases.insert(phrase, at: 0)
+        }
+        guard receipt.permitsCompletion else { return }
+        try recovery.complete(original, verifiedReceipt: receipt, scope: scope)
+        try check(own, currentScope)
+        pending = nil; pendingNotice = nil; recoveryRecord = nil; recoveryReady = true
+    }
+
+    private func check(_ own: UUID, _ currentScope: CurrentScope?) throws {
+        guard own == generation, scope != nil, !Task.isCancelled,
+              currentScope == nil || currentScope?() == scope else { throw NativeDataError.staleSessionResponse }
     }
     private func failed(_ error: Error, own: UUID) {
         guard own == generation, !Task.isCancelled else { return }
-        if case NativeDataError.server(let code) = error {
+        if let error = error as? NativeDataError {
+            switch error {
+            case .staleSessionResponse, .sessionUnavailable:
+                policy = nil; phrases = []; recoveredPhrase = nil; pending = nil; pendingNotice = nil
+                recoveryReady = false; recoveryStatus = .blocked; errorCode = "RECOVERY_SCOPE_UNAVAILABLE"
+                return
+            default: break
+            }
+        }
+        if error is NativeTranslationRecoveryError {
+            errorCode = "RECOVERY_STORAGE_UNAVAILABLE"; recoveryReady = false; recoveryStatus = .storageFailed
+        } else if case NativeDataError.server(let code) = error {
             errorCode = code
-            if code == "INVALID_INPUT" { pending = nil; pendingNotice = nil }
-            if ["DATA_POLICY_BLOCKED", "UNAUTHENTICATED", "FORBIDDEN"].contains(code) { policy = nil; phrases = []; pending = nil; pendingNotice = nil }
-        } else { errorCode = "PROVIDER_UNAVAILABLE" }
+            if ["DATA_POLICY_BLOCKED", "UNAUTHENTICATED", "FORBIDDEN"].contains(code) {
+                policy = nil; phrases = []; recoveredPhrase = nil; pending = nil; pendingNotice = nil; recoveryStatus = .blocked
+            } else if recoveryRecord != nil { recoveryStatus = .unknown }
+        } else {
+            errorCode = "PROVIDER_UNAVAILABLE"
+            if recoveryRecord != nil { recoveryStatus = .unknown }
+        }
     }
 }
 
