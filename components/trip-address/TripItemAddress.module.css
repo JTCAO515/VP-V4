@@ -1,0 +1,11 @@
+.panel { border: 1px solid var(--vp-butter-100); border-radius: 18px; background: #fff; padding: 1rem; margin-block: 1rem; }
+.panel h3 { margin-block: 0 .75rem; }
+.panel p { margin-block: .5rem; }
+.fact { padding-block: .5rem; }
+.text { white-space: pre-wrap; overflow-wrap: anywhere; }
+.editor { display: grid; gap: .5rem; margin-block: 1rem; }
+.editor textarea { width: 100%; min-height: 7rem; padding: .75rem; font: inherit; border: 1px solid var(--vp-butter-100); border-radius: 8px; }
+.panel button { min-height: 44px; background: #fff; color: var(--vp-plum-900); padding: .6rem .8rem; border: 1px solid var(--vp-butter-100); border-radius: 8px; font: inherit; cursor: pointer; }
+.panel button:disabled { cursor: default; opacity: .55; }
+.panel button:focus-visible, .editor textarea:focus-visible { outline: 2px solid var(--vp-plum-900); outline-offset: 3px; }
+.actions { display: flex; flex-wrap: wrap; gap: .5rem; }
