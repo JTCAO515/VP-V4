@@ -1,0 +1,39 @@
+{
+  "data": {
+    "schemaVersion": "subscription-development/1",
+    "catalogVersion": 3,
+    "policyVersion": "subscription-development-policy/1",
+    "locale": "zh",
+    "saleState": "development_only",
+    "purchaseEnabled": false,
+    "price": null,
+    "storeKitProductId": null,
+    "status": "月订阅开发配置，尚不可购买。",
+    "free": {
+      "name": "Free",
+      "sharedBenefits": [
+        "explicit_cross_trip_preferences",
+        "trip_and_data_controls"
+      ],
+      "description": "保留基础记忆、纠错、导出删除与可用首值。"
+    },
+    "subscription": {
+      "name": "月订阅（开发中）",
+      "kind": "auto_renewing",
+      "period": {
+        "unit": "month",
+        "value": 1
+      },
+      "durationAuthority": "apple_verified_period",
+      "sharedBenefits": [
+        "explicit_cross_trip_preferences",
+        "trip_and_data_controls"
+      ],
+      "description": "仅用于验证月度自动续订开发链路；周期以 Apple 可信交易为准，尚未提供销售权益或余额。"
+    },
+    "promises": {
+      "unlimited": false,
+      "humanServiceIncluded": false
+    }
+  }
+}

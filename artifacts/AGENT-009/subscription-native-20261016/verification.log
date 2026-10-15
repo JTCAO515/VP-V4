@@ -1,0 +1,62 @@
+Building for debugging...
+[Planning deferred tasks]
+[27 / 50]
+[28 / 51] VisePanda
+[38 / 91]
+[45 / 91]
+[47 / 91]
+[52 / 91]
+[56 / 91]
+[59 / 91]
+[61 / 91]
+[62 / 91]
+[68 / 91] VisePanda
+[76 / 91] VisePanda
+[81 / 92] SubscriptionTests-product
+[82 / 97]
+[86 / 97] SubscriptionTests-product
+[91 / 97] SubscriptionTests-product
+[93 / 97] SubscriptionTests-product
+Build complete! (5.18秒)
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite NativeSubscriptionTests started.
+◇ Test defaultIsRealUnavailableAndNeverSendsReads() started.
+◇ Test endpointEpochAndGenerationDriftHideLoadedState() started.
+◇ Test sessionPortChecksScopeBeforeAndAfterRead() started.
+◇ Test cancellationAndInvalidPayloadDoNotLeaveLoadedOrLoadingState() started.
+◇ Test oldNonceCannotOverwriteNewerReadEvenForSameAccount() started.
+◇ Test ownerScopeAndPeriodIdentityMustMatch() started.
+◇ Test halfOpenPeriodCannotBecomeActiveEarlyOrAfterExpiry() started.
+◇ Test unknownMalformedMissingAndOverlargeFieldsFailClosed() started.
+◇ Test sameProducerCatalogBothLocalesHasNoPriceOrBalance() started.
+◇ Test expirationAtRenderHidesActiveWithoutInventingExpiredReceipt() started.
+◇ Test readOnlyReloadStateTransitionsAndFailureClearOldPrivateData() started.
+◇ Test localTestNeverMasqueradesAsSandboxOrProduction() started.
+◇ Test localizedStatusNeverCallsUnknownAZeroOrAProductionSubscription() started.
+◇ Test backgroundAndSignOutRejectLateCallbacks() started.
+◇ Test catalogRejectsUnknownFieldsPolicyTypesAndSales() started.
+◇ Test actorSwitchImmediatelyHidesLoadedInformationBeforeReload() started.
+◇ Test allClosedStatesPreserveStateAndNullCapacity() started.
+✔ Test defaultIsRealUnavailableAndNeverSendsReads() passed after 0.001 seconds.
+✔ Test endpointEpochAndGenerationDriftHideLoadedState() passed after 0.006 seconds.
+✔ Test readOnlyReloadStateTransitionsAndFailureClearOldPrivateData() passed after 0.008 seconds.
+✔ Test expirationAtRenderHidesActiveWithoutInventingExpiredReceipt() passed after 0.009 seconds.
+✔ Test actorSwitchImmediatelyHidesLoadedInformationBeforeReload() passed after 0.010 seconds.
+✔ Test sessionPortChecksScopeBeforeAndAfterRead() passed after 0.019 seconds.
+✔ Test ownerScopeAndPeriodIdentityMustMatch() passed after 0.019 seconds.
+✔ Test allClosedStatesPreserveStateAndNullCapacity() passed after 0.019 seconds.
+✔ Test unknownMalformedMissingAndOverlargeFieldsFailClosed() passed after 0.019 seconds.
+✔ Test sameProducerCatalogBothLocalesHasNoPriceOrBalance() passed after 0.019 seconds.
+✔ Test halfOpenPeriodCannotBecomeActiveEarlyOrAfterExpiry() passed after 0.019 seconds.
+✔ Test localizedStatusNeverCallsUnknownAZeroOrAProductionSubscription() passed after 0.019 seconds.
+✔ Test cancellationAndInvalidPayloadDoNotLeaveLoadedOrLoadingState() passed after 0.019 seconds.
+✔ Test localTestNeverMasqueradesAsSandboxOrProduction() passed after 0.019 seconds.
+✔ Test oldNonceCannotOverwriteNewerReadEvenForSameAccount() passed after 0.019 seconds.
+✔ Test catalogRejectsUnknownFieldsPolicyTypesAndSales() passed after 0.019 seconds.
+✔ Test backgroundAndSignOutRejectLateCallbacks() passed after 0.019 seconds.
+✔ Suite NativeSubscriptionTests passed after 0.019 seconds.
+✔ Test run with 17 tests in 1 suite passed after 0.019 seconds.
+PASS: actual Swift 6 feature/Swift Testing synthetic-port behavior and actual iOS 17 Simulator SDK SwiftUI typecheck; device/App/target UNRUN
+PASS: module exposes no network-write, StoreKit/account-operation or persistence capability
