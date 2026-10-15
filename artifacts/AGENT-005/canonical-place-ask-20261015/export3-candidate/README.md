@@ -16,3 +16,9 @@ python3 artifacts/AGENT-005/canonical-place-ask-20261015/export3-candidate/prepa
 ```
 
 Clean the disposable validation tree before running root `pnpm typecheck`; the root configuration includes every `.ts` file. No shared SQL, permissions, deployment configuration, or provider flow was changed.
+
+## Actual SQL page cross-check
+
+SQL peer supplied the actual `public.privacy_core_export_v1(request → claim → turn_page)` output in `export3-page.json`, with original owner, limit 100 and captured time. `sql-export3-page.json` preserves its complete page value; `sql-export3-context.json` preserves the original context. The candidate's actual decoder accepted all 38 sources, preserved the entire snapshot with deep equality, and independently reproduced the original canonical SHA256 source digest. PASS. No fixture rows were substituted.
+
+Permission classification remains narrow: SQL executed the actor request with original postgres permissions plus synthetic auth/epoch, and claim/page with original postgres permissions plus synthetic service claims. Ordinary service_role page access was denied in the SQL peer check. This does not establish live Auth, an ordinary D2 permission grant, delivery, or mixed 43-source Trip acceptance. The candidate remains unapplied until Main accepts 707.
