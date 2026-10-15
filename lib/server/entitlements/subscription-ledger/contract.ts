@@ -19,7 +19,8 @@ export function closedSnapshot(state: "unavailable" | "reconciliation_required" 
     remainingCapacity: null, purchaseEnabled: false, runtimeCapacityEnabled: false });
 }
 /** A parser is not proof of signature. Only the server reader produces active snapshots. */
-export function parseSnapshot(v: unknown): Snapshot | null {
+export const MAX_SNAPSHOT_BYTES = 8192;
+export function parseSnapshot(v: unknown, now = Date.now()): Snapshot | null {
   if (!record(v) || !exact(v, ["schemaVersion", "sourceEnvironment", "localTest", "ownerId", "catalogVersion", "policyVersion", "state", "period", "remainingCapacity", "purchaseEnabled", "runtimeCapacityEnabled"])
     || v.schemaVersion !== SCHEMA || v.catalogVersion !== 3 || v.policyVersion !== "subscription-development-policy/1"
     || !states.includes(v.state as State) || v.remainingCapacity !== null || v.purchaseEnabled !== false || v.runtimeCapacityEnabled !== false
@@ -36,8 +37,17 @@ export function parseSnapshot(v: unknown): Snapshot | null {
         || typeof p.subscriptionGroupId !== "string" || !/^\d{1,32}$/.test(p.subscriptionGroupId)
         || !iso(p.purchaseAt) || !iso(p.expiresAt) || p.purchaseAt >= p.expiresAt || p.revokedAt !== null && !iso(p.revokedAt)
         || p.descriptorId !== `Sandbox:${p.transactionId}` || p.catalogVersion !== 3 || p.policyVersion !== v.policyVersion
-        || (v.state === "revoked") !== (p.revokedAt !== null)) return null;
+        || (v.state === "revoked") !== (p.revokedAt !== null)
+        || p.revokedAt !== null && p.revokedAt < p.purchaseAt
+        || v.state === "active" && (!Number.isSafeInteger(now) || Date.parse(p.purchaseAt) > now || Date.parse(p.expiresAt) <= now)
+        || v.state === "expired" && Date.parse(p.expiresAt) > now) return null;
     }
   }
   return Object.freeze(v) as Snapshot;
+}
+
+/** Bound raw transport before parsing; client clock may close active display, never grant it. */
+export function decodeSnapshotText(raw: string, now = Date.now()): Snapshot | null {
+  if (typeof raw !== "string" || new TextEncoder().encode(raw).byteLength > MAX_SNAPSHOT_BYTES) return null;
+  try { return parseSnapshot(JSON.parse(raw), now); } catch { return null; }
 }
