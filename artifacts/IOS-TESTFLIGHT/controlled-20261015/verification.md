@@ -37,6 +37,7 @@ and Foundation compilation checks. Products are separate from the committed evid
 - **Observed warnings**: pinned AMap SDK umbrella header omissions (6 warning occurrences), unavailable vendor build-machine debug object paths during dsymutil (4091), existing trailing closure warnings (14), duplicate project group membership (4), and skipped App Intents metadata extraction (2). Archive still succeeded. No SDK, product or project source was modified to suppress these warnings; complete raw log remains in the local products tree.
 - **PASS**: `node scripts/docs-check.mjs`.
 - **FAIL, unrelated inherited diff**: default `node scripts/check-artifact-growth.mjs` compared the old local `origin/main` merge-base and counted 5.56 MB from prior AGENT/IOS/QA work. No threshold or shared evidence was changed. The actual Main checkpoint-to-delivery evidence size is checked separately with the script's documented `VP_CI_BASE` / `VP_CI_HEAD` inputs.
+- **PASS, scoped artifact growth**: `VP_CI_BASE=ff936a93140032f7972a703ad6f74ae9a98ed367 VP_CI_HEAD=9a6f30fa4624a4f4abfb033b706c6c0772fc8e40 node scripts/check-artifact-growth.mjs`: +0.21 MB, below the unchanged 5 MB limit.
 
 Reproduction is documented in [the driver README](../../../../scripts/ios/controlled-testflight/README.md).
 Use a clean exact commit and fresh output nonce; no signing/export/upload mode exists.
@@ -52,3 +53,5 @@ SDK/tool availability and a compiled local sample do not demonstrate real-servic
 Actual local tools: Xcode 27.0 / `27A266a`, Python 3.9.6 and Node available; full filesystem
 and network access, approval policy never. No credentials or real user data were read by this line.
 Requested model/effort: Sol6.1 / medium; effective model/effort not exposed, **UNKNOWN**.
+Official `list_threads` readback confirms this chat `01a13f55-8f6b-7620-9554-82f0de225d6b`
+belongs to VP-V10 project ID `4f2191db-3e04-4042-94b5-ec94ff67b427`.
