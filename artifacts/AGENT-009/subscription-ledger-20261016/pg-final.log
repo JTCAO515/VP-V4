@@ -1,0 +1,29 @@
+▶ subscription private PG17 persistence and denial vectors
+  ✔ migration apply rollback leaves no schema, old table/functions/policy/data unchanged (11.40925ms)
+  ✔ durable original period, exact replay, restart adapter and owner projection (6.128333ms)
+  ✔ injected verified source actually persists through branded adapter and reads same period (1.253167ms)
+  ✔ same id changed period, cross owner/family and overlapping period reject without row mutation (1.54225ms)
+  ✔ revocation before initial purchase persists tombstone, clean replay never resurrects (0.812458ms)
+  ✔ refund only matching period, newer observation monotonic, no extra capacity descriptor (0.818417ms)
+  ✔ renewal uses Apple next period; late historical arrival does not move any interval (0.834417ms)
+  ✔ expiry is server time and unknown/future state never active (0.832084ms)
+  ✔ invalid schema/source/types/size/null/baseline and expected epoch fail closed (1.940042ms)
+  ✔ same receipt digest with another signed payload rejects even if otherwise current (0.565917ms)
+  ✔ concurrent same transaction has one committed receipt/period and CAS conflict (5.8225ms)
+  ✔ transaction rollback and lost-ACK recovery do not issue extra identities (0.904375ms)
+  ✔ read-only legacy collision check denies an existing synthetic old identity (0.543708ms)
+  ✔ anon/authenticated/service_role actual table/function access all default denied (2.016084ms)
+  ✔ bounded private export/erasure preserves receipts and denies future family restores (0.990125ms)
+  ✔ freshness expiration and ambiguous active families conceal private period (0.735042ms)
+  ✔ private dump/restore retains erased family, revocation and epochs without adding role grants (71.612667ms)
+  ✔ owned PG restart preserves committed receipts and period identities (219.07775ms)
+  ✔ legacy catalog/functions/constraints/ACL/policies/data remain byte equivalent (2.747792ms)
+✔ subscription private PG17 persistence and denial vectors (1084.739958ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1127.062

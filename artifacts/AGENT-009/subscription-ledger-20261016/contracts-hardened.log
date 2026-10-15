@@ -1,0 +1,35 @@
+✔ Free and Pass share consent-scoped benefits without enabling sales or legacy Ask capacity (0.56925ms)
+✔ price experiment changes exactly price, never duration, entitlement or SKU (0.493166ms)
+✔ localized presentation uses catalog inputs and never fabricates a storefront price or balance (0.126625ms)
+✔ generated native/development inputs cannot drift from the versioned authority (1.034417ms)
+✔ policy snapshots cannot be mutated through nested configuration or display projections (0.156583ms)
+✔ Sandbox grant routes reject Production even if its feature flag is enabled (0.366875ms)
+✔ same verified Sandbox transaction yields one catalog capacity snapshot (0.637041ms)
+✔ reject cross-account, mismatched receipt, unknown SKU, type, environment and future time (0.43125ms)
+✔ revoked Apple state stays explicit and server clock excludes queued/expired intervals (0.144917ms)
+✔ injected verifier/readback accepts accelerated Sandbox period and immutable version snapshot (2.142875ms)
+✔ renewal and revoked current evidence bind the original family without moving period (0.347459ms)
+✔ closed wire rejects unknown versions states, types, keys and private error fields (0.263625ms)
+✔ read errors and foreign snapshots fail closed; never none or zero (0.293708ms)
+✔ unknown ACK rejects and does not call the writer twice (0.273125ms)
+✔ transport bounded at 8192 UTF8 bytes; active requires bounded server lease, no client calendar (0.256792ms)
+✔ unconfigured and localTest paths perform zero port/credential/network/write calls (0.952541ms)
+✔ both signed sources reject owner, environment, SKU, type, dates, ownership and group mismatch (3.838458ms)
+✔ readback identity/date/revocation conflicts reject; old observation cannot un-revoke (0.528625ms)
+✔ bounded strict JWS, catalog and approved binding reject before verification (0.291208ms)
+✔ signature rejection and failed or malformed current readback never yield a candidate (0.283042ms)
+✔ async catalog/binding/ports mutation cannot change the frozen policy or verifier identity (0.636ms)
+✔ readback mutation of prior SDK payload cannot make a different requested transaction agree (0.208917ms)
+✔ SDK/catalog/ports getters are rejected without executing getter code (0.272334ms)
+✔ abort before verification calls zero ports; cancel after first verify never reads Apple (0.725916ms)
+✔ late verifier completion after abort never mints or starts readback (2.068125ms)
+✔ total deadline bounds stalled readback and ignores late completion without candidate (22.405291ms)
+✔ aborting a returned evidence lease refuses persistence before any SQL write (1.469833ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 149.959584

@@ -1,0 +1,30 @@
+▶ subscription private PG17 persistence and denial vectors
+  ✔ migration apply rollback leaves no schema, old table/functions/policy/data unchanged (11.228375ms)
+  ✔ durable original period, exact replay, restart adapter and owner projection (6.261583ms)
+  ✔ injected verified source actually persists through branded adapter and reads same period (1.351791ms)
+  ✔ same id changed period, cross owner/family and overlapping period reject without row mutation (1.426625ms)
+  ✔ revocation before initial purchase persists tombstone, clean replay never resurrects (0.727875ms)
+  ✔ refund only matching period, newer observation monotonic, no extra capacity descriptor (0.848959ms)
+  ✔ renewal uses Apple next period; late historical arrival does not move any interval (0.558541ms)
+  ✔ distinct verified renewal creates one next descriptor; restore/refund never replenishes it (1.642083ms)
+  ✔ expiry is server time and unknown/future state never active (0.761625ms)
+  ✔ invalid schema/source/types/size/null/baseline and expected epoch fail closed (1.927042ms)
+  ✔ same receipt digest with another signed payload rejects even if otherwise current (0.452792ms)
+  ✔ concurrent same transaction has one committed receipt/period and CAS conflict (5.596917ms)
+  ✔ transaction rollback and lost-ACK recovery do not issue extra identities (1.293709ms)
+  ✔ read-only legacy collision check denies an existing synthetic old identity (0.779709ms)
+  ✔ anon/authenticated/service_role actual table/function access all default denied (2.857833ms)
+  ✔ bounded private export/erasure preserves receipts and denies future family restores (0.982542ms)
+  ✔ freshness expiration and ambiguous active families conceal private period (0.762333ms)
+  ✔ private dump/restore retains erased family, revocation and epochs without adding role grants (71.719375ms)
+  ✔ owned PG restart preserves committed receipts and period identities (223.877917ms)
+  ✔ legacy catalog/functions/constraints/ACL/policies/data remain byte equivalent (2.537792ms)
+✔ subscription private PG17 persistence and denial vectors (1082.602625ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1126.888833

@@ -1,0 +1,28 @@
+✔ Free and Pass share consent-scoped benefits without enabling sales or legacy Ask capacity (0.61125ms)
+✔ price experiment changes exactly price, never duration, entitlement or SKU (0.403208ms)
+✔ localized presentation uses catalog inputs and never fabricates a storefront price or balance (0.170625ms)
+✔ generated native/development inputs cannot drift from the versioned authority (0.869542ms)
+✔ policy snapshots cannot be mutated through nested configuration or display projections (0.105292ms)
+✔ Sandbox grant routes reject Production even if its feature flag is enabled (0.338125ms)
+✔ same verified Sandbox transaction yields one catalog capacity snapshot (0.599708ms)
+✔ reject cross-account, mismatched receipt, unknown SKU, type, environment and future time (0.724917ms)
+✔ revoked Apple state stays explicit and server clock excludes queued/expired intervals (0.115625ms)
+✔ injected verifier/readback accepts accelerated Sandbox period and immutable version snapshot (1.582333ms)
+✔ renewal and revoked current evidence bind the original family without moving period (0.245084ms)
+✔ closed wire rejects unknown versions states, types, keys and private error fields (0.2935ms)
+✔ read errors and foreign snapshots fail closed; never none or zero (0.407542ms)
+✔ unknown ACK rejects and does not call the writer twice (0.215709ms)
+✔ transport bounded at 8192 UTF8 bytes; expired active snapshot fails closed (0.244958ms)
+✔ unconfigured and localTest paths perform zero port/credential/network/write calls (0.729833ms)
+✔ both signed sources reject owner, environment, SKU, type, dates, ownership and group mismatch (1.053792ms)
+✔ readback identity/date/revocation conflicts reject; old observation cannot un-revoke (0.2385ms)
+✔ bounded strict JWS, catalog and approved binding reject before verification (0.162625ms)
+✔ signature rejection and failed or malformed current readback never yield a candidate (0.10525ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 113.568167
