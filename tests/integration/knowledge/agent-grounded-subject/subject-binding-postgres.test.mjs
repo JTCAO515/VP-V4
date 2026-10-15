@@ -3,13 +3,14 @@ import test,{before,after} from 'node:test';
 import assert from 'node:assert/strict';
 import {execFileSync} from 'node:child_process';
 import {createRequire} from 'node:module';
-import {mkdtempSync,mkdirSync,chmodSync,readFileSync,readdirSync,writeFileSync,rmSync} from 'node:fs';
+import {mkdtempSync,mkdirSync,chmodSync,readFileSync,readdirSync,writeFileSync,rmSync,existsSync} from 'node:fs';
 import {join} from 'node:path';
 import {randomUUID,createHash} from 'node:crypto';
-const enabled=process.env.AGENT005_NATIVE_PG==='1';
-const bin=process.env.AGENT005_PG_BIN??'/opt/homebrew/opt/postgresql@17/bin';
+const enabled=process.env.AGENT005_NATIVE_PG==='1'||!!(process.env.VP_WIKI_PG_BIN&&process.env.VP_WIKI_PG_MODULE);
+const bin=process.env.AGENT005_PG_BIN??process.env.VP_WIKI_PG_BIN??'/opt/homebrew/opt/postgresql@17/bin';
 const append='20261015040456_agent005_resolved_subject_context.sql';
-const artifact=join(process.cwd(),'artifacts/AGENT-005/grounded-result-20261015/subject-binding');
+const artifactBase=join(process.cwd(),'artifacts/AGENT-005/grounded-result-20261015/subject-binding');
+let artifact=artifactBase;
 const require=createRequire(import.meta.url);
 let Client,nonce,data,socket,started=false,admin,baseline,baselineGuards;
 const sigs=['public.read_grounded_ai_assist_context_v1(uuid)','public.grounded_ai_assist_work_v1(jsonb)'];
@@ -31,9 +32,10 @@ const guardValues=async()=>{const result={};for(const sig of guards)result[sig]=
 const run=(name,fn)=>test(name,{skip:!enabled,timeout:120000},fn);
 before(async()=>{
  if(!enabled)return;
- ({Client}=require(process.env.AGENT005_PG_MODULE));
- assert.match(execFileSync(join(bin,'postgres'),['--version'],{encoding:'utf8'}),/17\.[0-9]+/);
- nonce=mkdtempSync('/private/tmp/a005-');chmodSync(nonce,0o700);data=join(nonce,'data');socket=join(nonce,'s');mkdirSync(socket,{mode:0o700});
+ ({Client}=require(process.env.AGENT005_PG_MODULE??process.env.VP_WIKI_PG_MODULE??'pg'));
+ const version=execFileSync(join(bin,'postgres'),['--version'],{encoding:'utf8'});
+ assert.match(version,/(16|17)\.[0-9]+/);artifact=join(artifactBase,'pg'+version.match(/(16|17)\.[0-9]+/)[1]);mkdirSync(artifact,{recursive:true,mode:0o700});
+ nonce=mkdtempSync(join(existsSync('/private/tmp')?'/private/tmp':'/tmp','a005-'));chmodSync(nonce,0o700);data=join(nonce,'data');socket=join(nonce,'s');mkdirSync(socket,{mode:0o700});
  execFileSync(join(bin,'initdb'),['-D',data,'-U','postgres','-A','trust','--no-locale','-E','UTF8'],{stdio:'pipe'});
  execFileSync(join(bin,'pg_ctl'),['-D',data,'-l',join(nonce,'server.log'),'-o',`-c listen_addresses='' -c unix_socket_directories='${socket}' -c unix_socket_permissions=0700`,'-w','start'],{stdio:'pipe'});started=true;admin=await connect();
  assert.equal(await scalar("select current_setting('listen_addresses') as value"),'');
@@ -46,6 +48,9 @@ before(async()=>{
    const diagnostics={file,error:error.message};
    try{
     diagnostics.guards=await guardValues();
+    diagnostics.postgres=await scalar('select version() value');
+    diagnostics.ownerTableAclDefault=await scalar("select acldefault('r',(select oid from pg_roles where rolname='postgres'))::text value");
+    diagnostics.requiredFrozenTableAcl=source.includes('{postgres=arwdDxtm/postgres}')?'{postgres=arwdDxtm/postgres}':null;
     const literal=source.match(/for spec in select key signature,value expected from jsonb_each\((.*)\) loop/);
     if(literal){
      await query('begin');await query("set local search_path=''");
@@ -72,7 +77,7 @@ run('full QA baseline lifecycle and only declared two-function append/rollback c
  const source=readFileSync(join('supabase/migrations',append),'utf8');
  await query('begin');await query('alter function public.read_grounded_ai_assist_context_v1(uuid) cost 99');
  await assert.rejects(query(source),/AGENT005_BEFORE_DEFINITION_MISMATCH/);await query('rollback');assert.deepEqual(await catalog(),baseline);
- const unaccepted=readFileSync(join(artifact,'context-function.before.sql'),'utf8').replace('create function','create or replace function').replace('as $$',()=> 'as $$\n-- unaccepted fixture source drift');
+ const unaccepted=readFileSync(join(artifactBase,'context-function.before.sql'),'utf8').replace('create function','create or replace function').replace('as $$',()=> 'as $$\n-- unaccepted fixture source drift');
  await query('begin');await query(unaccepted);await assert.rejects(query(source),/AGENT005_BEFORE_DEFINITION_MISMATCH/);await query('rollback');assert.deepEqual(await catalog(),baseline);
  await query('begin');await query(source);await query('rollback');assert.deepEqual(await catalog(),baseline);
  await query('begin');await query(source);await query('commit');
@@ -159,7 +164,7 @@ async function guideFixture(){
 run('real original Guide producer creates resolved blocked turn; ordinary owner context and real TS job execute without fixture grants',async()=>{
  const f=await guideFixture();
  const context=await actorRpc(f.owner,'read_grounded_ai_assist_context_v1',{p_turn_id:f.command.turnId});assert.equal(context.kind,'context',JSON.stringify(context));assert.equal(context.placeSubjectId,f.subject);assert.equal(context.placeResolution,'matched');
- const {runGroundedAiAssistJob}=await import('../../../lib/server/knowledge/wiki/grounded-ai-assist-job.ts');
+ const {runGroundedAiAssistJob}=await import('../../../../lib/server/knowledge/wiki/grounded-ai-assist-job.ts');
  let models=0;
  const provider={provider:'qwen',endpoint:'https://llm-fixture.cn-beijing.maas.aliyuncs.com/compatible-mode/v1/chat/completions',configurationId:'11111111-1111-1111-1111-111111111111',configurationVersion:1,timeoutMs:5000};
  const read=await actorRpc(f.owner,'knowledge_read_v1',{p_input:{city:'shanghai',scene:'attraction',locale:'en'}});const fact=read.statements.find(s=>s.assertion.subjectId===f.subject);assert.ok(fact);
@@ -230,7 +235,7 @@ for(const mode of ['source-withdrawal','canonical-change','trip-head-change','re
 });
 
 async function jobHarness(f,{dropAck=false,controller=null}={}){
- const {runGroundedAiAssistJob}=await import('../../../lib/server/knowledge/wiki/grounded-ai-assist-job.ts');
+ const {runGroundedAiAssistJob}=await import('../../../../lib/server/knowledge/wiki/grounded-ai-assist-job.ts');
  const provider={provider:'qwen',endpoint:'https://llm-fixture.cn-beijing.maas.aliyuncs.com/compatible-mode/v1/chat/completions',configurationId:'11111111-1111-1111-1111-111111111111',configurationVersion:1,timeoutMs:5000};
  const read=await actorRpc(f.owner,'knowledge_read_v1',{p_input:{city:'shanghai',scene:'attraction',locale:'en'}}),fact=read.statements.find(s=>s.assertion.subjectId===f.subject);assert.ok(fact);
  const counters={models:0,completes:0};
