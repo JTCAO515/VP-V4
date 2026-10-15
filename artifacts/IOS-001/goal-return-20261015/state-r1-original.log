@@ -1,0 +1,248 @@
+{
+  "actualSourcePins": {
+    "ios/VisePanda/VisePanda/App/NativeSession.swift#struct NativeDataScope:": "e41993ff637a44467b78464fe7916193002dd26c28cdf4f1daabd8af749831b8",
+    "ios/VisePanda/VisePanda/App/NativeSession.swift#enum NativeDataError:": "078f03b1fbbba898a551d2190fa554ae6eb164ae03a80cc8263a54090dabb4a1",
+    "ios/VisePanda/VisePanda/Features/CommunitySafety/NativeCommunitySafetyWire.swift#struct NativeCommunitySafetyActor:": "2c63a5764f7b6b51d3a9686f3b85c5f82ace8eddfa8e6bf9c9e1df0b0a47ae62",
+    "ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeView.swift#struct NativeResultSource:": "368dca4a73ab80d0015a6f383496b5e08cbf94372ad1714c4a055fdcd7c8f4d0",
+    "ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeView.swift#private struct NativeResultRecordKey:": "59f34f5c56584ccb1c5e53d9908001fd7118c6aab5a0da502d8e2221679813a3",
+    "ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeView.swift#struct NativeResultContent:": "7bc3d012d9bd6bd1258c8ffdcb5df40586ef3b493b1f83fbad40503683ad71e2",
+    "ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeView.swift#struct NativeResultOption:": "315451673b83bfb7c8a88d7f743eb4c8e6b5f51e198c5c37fb1a64ee136029c9",
+    "ios/VisePanda/VisePanda/Features/Ask/NativeSelectedMessageModels.swift#struct NativeSelectedSources:": "7a974b917197eec868701ccb4868878b2e08a75cb12ba532ed925081f4c281be",
+    "ios/VisePanda/VisePanda/Features/Trip/NativeTripModels.swift#struct NativeTripItem:": "2b436497bc168f1649b4f4c58b0dd4523551e8b504a4de57e07ef87a7196a471",
+    "ios/VisePanda/VisePanda/Features/Trip/NativeTripModels.swift#struct NativeTripDay:": "9b99ccced52adbd531d99575c21f8598702e8946f7a81786941f3544f61ae8a8",
+    "ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeModels.swift#static func date(": "0ead48b32914aabc622f4aec62d1533e4d3d697f239b0bc3ec12ec2a0ebfb879",
+    "ios/VisePanda/VisePanda/Features/Ask/NativeTravelIntakeModels.swift": "2a6ad0122bfe1703741d72c98ee3ce409557f61399cd4fa333923fbe381f2e0d",
+    "ios/VisePanda/VisePanda/Features/TravelDirections/NativeTravelDirectionsContent.swift": "15ed623a4cb9993f9a75e6fefafe3e7190700d30763e4cb62d194fc95113dd03",
+    "ios/VisePanda/VisePanda/Features/Knowledge/NativeFiveResultModels.swift": "be0041c5561e1dde067c3c5b61bc3dafee4f3e5f63135acd4043fc1794139c5a",
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnWire.swift": "3bbe57aa4f1fe8ce3f4aa0d9098bba19f58a1e90dd0c5a75078611cbbcaaf7d2",
+    "ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnStore.swift": "8ff4e2ee49eae64a7bbe90a3f97ff1e43ec1e27bc960e9bfe911dfb9d125be05"
+  },
+  "support": "unchanged original value declarations/date function extracted; no parser/actor/state stubs"
+}
+sandbox-exec: sandbox_apply: Operation not permitted
+/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios001-goal-return-20261015/ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnStore.swift:12:13: error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+10 | /// publish an outcome. The original readers remain the source authority.
+11 | @MainActor @Observable
+12 | final class NativeJourneyGoalReturnStore {
+   |             `- error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+13 |     struct SavedDecision {
+14 |         let reference: NativeJourneyGoalReturnWire.Reference
+
+Observation.Observable:2:210: note: 'Observable()' declared here
+1 | @available(macOS 14.0, iOS 17.0, watchOS 10.0, tvOS 17.0, *)
+2 | @attached(member, names: named(_$observationRegistrar), named(access), named(withMutation), named(shouldNotifyObservers)) @attached(memberAttribute) @attached(extension, conformances: Observable) public macro Observable() = #externalMacro(module: "ObservationMacros", type: "ObservableMacro")
+  |                                                                                                                                                                                                                  `- note: 'Observable()' declared here
+
+/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios001-goal-return-20261015/ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnStore.swift:13:12: error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+11 | @MainActor @Observable
+12 | final class NativeJourneyGoalReturnStore {
+13 |     struct SavedDecision {
+   |            `- error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+14 |         let reference: NativeJourneyGoalReturnWire.Reference
+15 |         let title: String
+
+Observation.Observable:2:210: note: 'Observable()' declared here
+1 | @available(macOS 14.0, iOS 17.0, watchOS 10.0, tvOS 17.0, *)
+2 | @attached(member, names: named(_$observationRegistrar), named(access), named(withMutation), named(shouldNotifyObservers)) @attached(memberAttribute) @attached(extension, conformances: Observable) public macro Observable() = #externalMacro(module: "ObservationMacros", type: "ObservableMacro")
+  |                                                                                                                                                                                                                  `- note: 'Observable()' declared here
+
+/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios001-goal-return-20261015/ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnStore.swift:19:10: error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+17 |         let chosenOptionID: String
+18 |     }
+19 |     enum State: Equatable { case idle, loading, unknown, unavailable, ready }
+   |          `- error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+20 |     var requestGeneration: UUID { generation }
+21 |     private(set) var state = State.idle
+
+Observation.Observable:2:210: note: 'Observable()' declared here
+1 | @available(macOS 14.0, iOS 17.0, watchOS 10.0, tvOS 17.0, *)
+2 | @attached(member, names: named(_$observationRegistrar), named(access), named(withMutation), named(shouldNotifyObservers)) @attached(memberAttribute) @attached(extension, conformances: Observable) public macro Observable() = #externalMacro(module: "ObservationMacros", type: "ObservableMacro")
+  |                                                                                                                                                                                                                  `- note: 'Observable()' declared here
+
+/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios001-goal-return-20261015/ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnStore.swift:20:9: error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+18 |     }
+19 |     enum State: Equatable { case idle, loading, unknown, unavailable, ready }
+20 |     var requestGeneration: UUID { generation }
+   |         `- error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+21 |     private(set) var state = State.idle
+22 |     private var decision: SavedDecision?
+
+Observation.Observable:2:210: note: 'Observable()' declared here
+1 | @available(macOS 14.0, iOS 17.0, watchOS 10.0, tvOS 17.0, *)
+2 | @attached(member, names: named(_$observationRegistrar), named(access), named(withMutation), named(shouldNotifyObservers)) @attached(memberAttribute) @attached(extension, conformances: Observable) public macro Observable() = #externalMacro(module: "ObservationMacros", type: "ObservableMacro")
+  |                                                                                                                                                                                                                  `- note: 'Observable()' declared here
+
+/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios001-goal-return-20261015/ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnStore.swift:21:22: error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+19 |     enum State: Equatable { case idle, loading, unknown, unavailable, ready }
+20 |     var requestGeneration: UUID { generation }
+21 |     private(set) var state = State.idle
+   |                      `- error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+22 |     private var decision: SavedDecision?
+23 |     private var context: NativeJourneyGoalReturnContext?
+
+Observation.Observable:2:210: note: 'Observable()' declared here
+1 | @available(macOS 14.0, iOS 17.0, watchOS 10.0, tvOS 17.0, *)
+2 | @attached(member, names: named(_$observationRegistrar), named(access), named(withMutation), named(shouldNotifyObservers)) @attached(memberAttribute) @attached(extension, conformances: Observable) public macro Observable() = #externalMacro(module: "ObservationMacros", type: "ObservableMacro")
+  |                                                                                                                                                                                                                  `- note: 'Observable()' declared here
+
+/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios001-goal-return-20261015/ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnStore.swift:22:17: error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+20 |     var requestGeneration: UUID { generation }
+21 |     private(set) var state = State.idle
+22 |     private var decision: SavedDecision?
+   |                 `- error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+23 |     private var context: NativeJourneyGoalReturnContext?
+24 |     private var generation = UUID()
+
+Observation.Observable:2:210: note: 'Observable()' declared here
+1 | @available(macOS 14.0, iOS 17.0, watchOS 10.0, tvOS 17.0, *)
+2 | @attached(member, names: named(_$observationRegistrar), named(access), named(withMutation), named(shouldNotifyObservers)) @attached(memberAttribute) @attached(extension, conformances: Observable) public macro Observable() = #externalMacro(module: "ObservationMacros", type: "ObservableMacro")
+  |                                                                                                                                                                                                                  `- note: 'Observable()' declared here
+
+/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios001-goal-return-20261015/ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnStore.swift:23:17: error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+21 |     private(set) var state = State.idle
+22 |     private var decision: SavedDecision?
+23 |     private var context: NativeJourneyGoalReturnContext?
+   |                 `- error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+24 |     private var generation = UUID()
+25 |     private var deadline: TimeInterval = 0
+
+Observation.Observable:2:210: note: 'Observable()' declared here
+1 | @available(macOS 14.0, iOS 17.0, watchOS 10.0, tvOS 17.0, *)
+2 | @attached(member, names: named(_$observationRegistrar), named(access), named(withMutation), named(shouldNotifyObservers)) @attached(memberAttribute) @attached(extension, conformances: Observable) public macro Observable() = #externalMacro(module: "ObservationMacros", type: "ObservableMacro")
+  |                                                                                                                                                                                                                  `- note: 'Observable()' declared here
+
+/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios001-goal-return-20261015/ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnStore.swift:24:17: error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+22 |     private var decision: SavedDecision?
+23 |     private var context: NativeJourneyGoalReturnContext?
+24 |     private var generation = UUID()
+   |                 `- error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+25 |     private var deadline: TimeInterval = 0
+26 |     private var started: TimeInterval = 0
+
+Observation.Observable:2:210: note: 'Observable()' declared here
+1 | @available(macOS 14.0, iOS 17.0, watchOS 10.0, tvOS 17.0, *)
+2 | @attached(member, names: named(_$observationRegistrar), named(access), named(withMutation), named(shouldNotifyObservers)) @attached(memberAttribute) @attached(extension, conformances: Observable) public macro Observable() = #externalMacro(module: "ObservationMacros", type: "ObservableMacro")
+  |                                                                                                                                                                                                                  `- note: 'Observable()' declared here
+
+/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios001-goal-return-20261015/ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnStore.swift:25:17: error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+23 |     private var context: NativeJourneyGoalReturnContext?
+24 |     private var generation = UUID()
+25 |     private var deadline: TimeInterval = 0
+   |                 `- error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+26 |     private var started: TimeInterval = 0
+27 |     private let uptime: () -> TimeInterval
+
+Observation.Observable:2:210: note: 'Observable()' declared here
+1 | @available(macOS 14.0, iOS 17.0, watchOS 10.0, tvOS 17.0, *)
+2 | @attached(member, names: named(_$observationRegistrar), named(access), named(withMutation), named(shouldNotifyObservers)) @attached(memberAttribute) @attached(extension, conformances: Observable) public macro Observable() = #externalMacro(module: "ObservationMacros", type: "ObservableMacro")
+  |                                                                                                                                                                                                                  `- note: 'Observable()' declared here
+
+/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios001-goal-return-20261015/ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnStore.swift:26:17: error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+24 |     private var generation = UUID()
+25 |     private var deadline: TimeInterval = 0
+26 |     private var started: TimeInterval = 0
+   |                 `- error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+27 |     private let uptime: () -> TimeInterval
+28 |     init(uptime: @escaping () -> TimeInterval = { ProcessInfo.processInfo.systemUptime }) { self.uptime = uptime }
+
+Observation.Observable:2:210: note: 'Observable()' declared here
+1 | @available(macOS 14.0, iOS 17.0, watchOS 10.0, tvOS 17.0, *)
+2 | @attached(member, names: named(_$observationRegistrar), named(access), named(withMutation), named(shouldNotifyObservers)) @attached(memberAttribute) @attached(extension, conformances: Observable) public macro Observable() = #externalMacro(module: "ObservationMacros", type: "ObservableMacro")
+  |                                                                                                                                                                                                                  `- note: 'Observable()' declared here
+
+/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios001-goal-return-20261015/ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnStore.swift:27:17: error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+25 |     private var deadline: TimeInterval = 0
+26 |     private var started: TimeInterval = 0
+27 |     private let uptime: () -> TimeInterval
+   |                 `- error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+28 |     init(uptime: @escaping () -> TimeInterval = { ProcessInfo.processInfo.systemUptime }) { self.uptime = uptime }
+29 |     func clear() { generation = UUID(); context = nil; decision = nil; deadline = 0; state = .idle }
+
+Observation.Observable:2:210: note: 'Observable()' declared here
+1 | @available(macOS 14.0, iOS 17.0, watchOS 10.0, tvOS 17.0, *)
+2 | @attached(member, names: named(_$observationRegistrar), named(access), named(withMutation), named(shouldNotifyObservers)) @attached(memberAttribute) @attached(extension, conformances: Observable) public macro Observable() = #externalMacro(module: "ObservationMacros", type: "ObservableMacro")
+  |                                                                                                                                                                                                                  `- note: 'Observable()' declared here
+
+/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios001-goal-return-20261015/ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnStore.swift:28:5: error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+26 |     private var started: TimeInterval = 0
+27 |     private let uptime: () -> TimeInterval
+28 |     init(uptime: @escaping () -> TimeInterval = { ProcessInfo.processInfo.systemUptime }) { self.uptime = uptime }
+   |     `- error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+29 |     func clear() { generation = UUID(); context = nil; decision = nil; deadline = 0; state = .idle }
+30 |     func expireRequest(_ own: UUID) { if generation == own, state == .loading { clear() } }
+
+Observation.Observable:2:210: note: 'Observable()' declared here
+1 | @available(macOS 14.0, iOS 17.0, watchOS 10.0, tvOS 17.0, *)
+2 | @attached(member, names: named(_$observationRegistrar), named(access), named(withMutation), named(shouldNotifyObservers)) @attached(memberAttribute) @attached(extension, conformances: Observable) public macro Observable() = #externalMacro(module: "ObservationMacros", type: "ObservableMacro")
+  |                                                                                                                                                                                                                  `- note: 'Observable()' declared here
+
+/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios001-goal-return-20261015/ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnStore.swift:29:10: error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+27 |     private let uptime: () -> TimeInterval
+28 |     init(uptime: @escaping () -> TimeInterval = { ProcessInfo.processInfo.systemUptime }) { self.uptime = uptime }
+29 |     func clear() { generation = UUID(); context = nil; decision = nil; deadline = 0; state = .idle }
+   |          `- error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+30 |     func expireRequest(_ own: UUID) { if generation == own, state == .loading { clear() } }
+31 |     func visible(current: NativeJourneyGoalReturnContext?) -> SavedDecision? {
+
+Observation.Observable:2:210: note: 'Observable()' declared here
+1 | @available(macOS 14.0, iOS 17.0, watchOS 10.0, tvOS 17.0, *)
+2 | @attached(member, names: named(_$observationRegistrar), named(access), named(withMutation), named(shouldNotifyObservers)) @attached(memberAttribute) @attached(extension, conformances: Observable) public macro Observable() = #externalMacro(module: "ObservationMacros", type: "ObservableMacro")
+  |                                                                                                                                                                                                                  `- note: 'Observable()' declared here
+
+/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios001-goal-return-20261015/ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnStore.swift:30:10: error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+28 |     init(uptime: @escaping () -> TimeInterval = { ProcessInfo.processInfo.systemUptime }) { self.uptime = uptime }
+29 |     func clear() { generation = UUID(); context = nil; decision = nil; deadline = 0; state = .idle }
+30 |     func expireRequest(_ own: UUID) { if generation == own, state == .loading { clear() } }
+   |          `- error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+31 |     func visible(current: NativeJourneyGoalReturnContext?) -> SavedDecision? {
+32 |         guard let current, context == current, uptime().isFinite, uptime() >= started, uptime() < deadline else { return nil }
+
+Observation.Observable:2:210: note: 'Observable()' declared here
+1 | @available(macOS 14.0, iOS 17.0, watchOS 10.0, tvOS 17.0, *)
+2 | @attached(member, names: named(_$observationRegistrar), named(access), named(withMutation), named(shouldNotifyObservers)) @attached(memberAttribute) @attached(extension, conformances: Observable) public macro Observable() = #externalMacro(module: "ObservationMacros", type: "ObservableMacro")
+  |                                                                                                                                                                                                                  `- note: 'Observable()' declared here
+
+/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios001-goal-return-20261015/ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnStore.swift:31:10: error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+29 |     func clear() { generation = UUID(); context = nil; decision = nil; deadline = 0; state = .idle }
+30 |     func expireRequest(_ own: UUID) { if generation == own, state == .loading { clear() } }
+31 |     func visible(current: NativeJourneyGoalReturnContext?) -> SavedDecision? {
+   |          `- error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+32 |         guard let current, context == current, uptime().isFinite, uptime() >= started, uptime() < deadline else { return nil }
+33 |         return decision
+
+Observation.Observable:2:210: note: 'Observable()' declared here
+1 | @available(macOS 14.0, iOS 17.0, watchOS 10.0, tvOS 17.0, *)
+2 | @attached(member, names: named(_$observationRegistrar), named(access), named(withMutation), named(shouldNotifyObservers)) @attached(memberAttribute) @attached(extension, conformances: Observable) public macro Observable() = #externalMacro(module: "ObservationMacros", type: "ObservableMacro")
+  |                                                                                                                                                                                                                  `- note: 'Observable()' declared here
+
+/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios001-goal-return-20261015/ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnStore.swift:35:10: error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+33 |         return decision
+34 |     }
+35 |     func load(_ target: NativeJourneyGoalReturnContext, current: @escaping () -> NativeJourneyGoalReturnContext?,
+   |          `- error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+36 |               discover: (NativeJourneyGoalReturnWire.Scope) async throws -> Data,
+37 |               read: (String, Int) async throws -> Data) async {
+
+Observation.Observable:2:210: note: 'Observable()' declared here
+1 | @available(macOS 14.0, iOS 17.0, watchOS 10.0, tvOS 17.0, *)
+2 | @attached(member, names: named(_$observationRegistrar), named(access), named(withMutation), named(shouldNotifyObservers)) @attached(memberAttribute) @attached(extension, conformances: Observable) public macro Observable() = #externalMacro(module: "ObservationMacros", type: "ObservableMacro")
+  |                                                                                                                                                                                                                  `- note: 'Observable()' declared here
+
+/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios001-goal-return-20261015/ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnStore.swift:12:13: error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+10 | /// publish an outcome. The original readers remain the source authority.
+11 | @MainActor @Observable
+12 | final class NativeJourneyGoalReturnStore {
+   |             `- error: external macro implementation type 'ObservationMacros.ObservableMacro' could not be found for macro 'Observable()'; '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server' produced malformed response
+13 |     struct SavedDecision {
+14 |         let reference: NativeJourneyGoalReturnWire.Reference
+
+Observation.Observable:2:210: note: 'Observable()' declared here
+1 | @available(macOS 14.0, iOS 17.0, watchOS 10.0, tvOS 17.0, *)
+2 | @attached(member, names: named(_$observationRegistrar), named(access), named(withMutation), named(shouldNotifyObservers)) @attached(memberAttribute) @attached(extension, conformances: Observable) public macro Observable() = #externalMacro(module: "ObservationMacros", type: "ObservableMacro")
+  |                                                                                                                                                                                                                  `- note: 'Observable()' declared here
+Traceback (most recent call last):
+  File "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios001-goal-return-20261015/tests/contract/ios001-goal-return/run.py", line 28, in <module>
+    subprocess.run(cmd,check=True);subprocess.run([str(scratch/'state-checks')],check=True)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py", line 528, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['swiftc', '-swift-version', '6', '-parse-as-library', '-module-cache-path', '/private/tmp/ios001-goal-return-state-_3ckfmny/cache', '/private/tmp/ios001-goal-return-state-_3ckfmny/OriginalValueDeclarations.swift', '/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios001-goal-return-20261015/ios/VisePanda/VisePanda/Features/Ask/NativeTravelIntakeModels.swift', '/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios001-goal-return-20261015/ios/VisePanda/VisePanda/Features/TravelDirections/NativeTravelDirectionsContent.swift', '/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios001-goal-return-20261015/ios/VisePanda/VisePanda/Features/Knowledge/NativeFiveResultModels.swift', '/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios001-goal-return-20261015/ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnWire.swift', '/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios001-goal-return-20261015/ios/VisePanda/VisePanda/Features/JourneyEntry/NativeJourneyGoalReturnStore.swift', '/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios001-goal-return-20261015/tests/contract/ios001-goal-return/main.swift', '-o', '/private/tmp/ios001-goal-return-state-_3ckfmny/state-checks']' returned non-zero exit status 1.

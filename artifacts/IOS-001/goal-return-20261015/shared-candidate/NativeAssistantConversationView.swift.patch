@@ -1,0 +1,32 @@
+--- a/ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift
++++ b/ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift
+@@ -530,6 +530,16 @@
+         return NativeTravelIntakeSelection(scope: scope, conversationID: id, goalID: goal.goalId,
+             goalVersion: goal.scopeVersion, parentMessageID: parent.messageId, policyID: policy.id)
+     }
++    private var journeyGoalReturnSelection: NativeJourneyGoalReturnContext? {
++        guard resultActive, confirmedConversation, !composerWaitingForAuthority,
++              !shellSwitchBlocked, !refreshBusy, let intake = travelIntakeSelection,
++              let goal, let parent = AssistantPlanningEligibility.parent(for: goal, messages: conversation?.messages ?? []),
++              let actor = try? session.communitySafetyActor(), actor.scope == intake.scope else { return nil }
++        let source = NativeJourneyGoalReturnWire.Scope(conversationID: intake.conversationID, goalID: intake.goalID,
++            goalVersion: intake.goalVersion, parentMessageID: parent.messageId, inputSequence: parent.sequence)
++        guard source.valid else { return nil }
++        return .init(actor: actor, source: source, selectionGeneration: selection.generation)
++    }
+     private var directionsSelection: NativeTravelDirectionsSelection? {
+         guard let intake = travelIntakeSelection, let planningPolicy, planningPolicy.valid,
+               planningPolicy.consentState == "accepted", let policyID = planningPolicy.policyId,
+@@ -623,6 +633,12 @@
+                         canContinue: NativeJourneyEntryContinuation.relationship(authorized: resultActive && !composerWaitingForAuthority,
+                             pending: shellSwitchBlocked, goalVersion: goal?.scopeVersion, hasCurrentParent: goalHasCurrentMessage) != nil,
+                         hasResult: selectedSources.sources.artifact != nil || lastViewedArtifact != nil,
++                        goalReturn: journeyGoalReturnSelection, currentGoalReturn: { journeyGoalReturnSelection },
++                        discoverGoalReturn: { try await session.journeyGoalReturnRequest($0, actor: $1) },
++                        openGoalDecision: { id, revision in
++                            guard journeyGoalReturnSelection != nil else { return }
++                            fiveResultSelection = .init(artifactID: id, revision: revision)
++                        },
+                         idea: $draft, continueIdea: {
+                             guard let relationship = NativeJourneyEntryContinuation.relationship(
+                                 authorized: resultActive && !composerWaitingForAuthority, pending: shellSwitchBlocked,

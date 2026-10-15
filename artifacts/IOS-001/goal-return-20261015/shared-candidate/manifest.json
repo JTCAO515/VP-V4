@@ -1,0 +1,25 @@
+{
+  "mainHEAD": "f14a8c9d7c1ba03bad84d93a02c8cfa510b09146",
+  "qaHEAD": "22559396eec5cd47d3a4d3d2a2bd5e49d52c6c7c",
+  "application": "Main only; exact before match required; source bodies remain unmodified",
+  "files": [
+    {
+      "path": "ios/VisePanda/VisePanda/App/NativeSession.swift",
+      "beforeSHA256": "024589ade4e95202e73942b536c18a8e2def4c262076e2b47f6935905973e8d1",
+      "afterSHA256": "48151cbc6906277953f497c99da835786b8619368666987f98c3ce5ec84e497e",
+      "patchSHA256": "9d4630f7940a11808f0604d689496180dcf946dbb3d68f0c7c851d80259401a8"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift",
+      "beforeSHA256": "9103ee2e7700daf3b31678a0b992e283f250c7bac865327cbb1218231f8e3dcf",
+      "afterSHA256": "f406ba40c689ac23a74a912047dd6babb0fd37d1ff744334c9b227512e88fcd6",
+      "patchSHA256": "0eb1180d4aed4373739852a223e37b1375bd07b4becc6cc684094e0018ef695a"
+    },
+    {
+      "path": "ios/VisePanda/VisePanda.xcodeproj/project.pbxproj",
+      "beforeSHA256": "31860a9f2e752f682b9e70d8564e0e45d04263a27a88d194891b983bff847052",
+      "afterSHA256": "a1dbd487425c24e271757d257dd3b95152072302f727d7265c9a737ca19c9194",
+      "patchSHA256": "27578e422e8ed3a80de93442cc3271939521b9ce5012c7242f48888645fcc05e"
+    }
+  ]
+}
