@@ -4,7 +4,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
-import { ownedPg } from '../../integration/ios004-user-address/owned-pg.mjs';
+import { ownedPg } from '../ios004-user-address/owned-pg.mjs';
 import { nativeFixture, subject, sessionId } from '../../contract/identity/native-fixture.ts';
 import { translationRecoveryHTTP } from '../../../lib/server/media-translation/text/recovery-http.ts';
 import { translationInputHash } from '../../../lib/server/media-translation/text/recovery-contract.ts';

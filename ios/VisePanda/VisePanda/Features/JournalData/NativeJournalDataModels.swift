@@ -7,7 +7,7 @@ enum NativeJournalDataSourceID: String, CaseIterable, Codable, Identifiable {
     case community, recovery, tripLifecycle, travelerBrief, pdf, communitySafety
     case notificationData, coverageProgress, archive, experience, placeAction, scopedTrip, result
     case notification, guide, ask, tripSupport, deviceDelete, readinessSave, linkedTripDelete, memoryDelete, tripDelete
-    case assistantEventsCursor
+    case assistantEventsCursor, translationRecovery
     var id: String { rawValue }
 }
 
