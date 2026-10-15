@@ -1,7 +1,11 @@
 # H1 runtime Ask scoped delivery — 2026-10-15
 
 Accepted base: `ded26ad709027350433c78fc746fdd3d6aaff575`.
-Source/test head: `1b521b379fc64eb085e272438d9cd10630282404`.
+Initial stable source/test head: `1b521b379fc64eb085e272438d9cd10630282404`.
+Final source/test head: `1251881fdc06286868abb048c8dfb851c5c71e38`.
+Delta 1251881f adds only the parser's questionId and explicit identityAttestation
+unknown to the same sanitized report; 16 tests and typecheck remain PASS.
+Subsequent commits in this range only capture documentation/evidence.
 Original `3e98bf4f` recovery branch and PR704 were preserved. The clean original
 WT was switched to new `codex/agent013-runtime-ask-20261015` from accepted QA.
 New owned source is only `evals/harness/runtime-ask/**`, its contract test scope
@@ -51,3 +55,7 @@ threshold, seed or holdout change. Frozen expectations are reported, not
 retrospectively adjusted to results. No target H1, Web/device, restart, complete
 parent #264 or production acceptance claim. Main owns exact-head review/CI,
 ordinary QA merge and any separately leased shared entry hookup.
+
+Final local check output is retained in `local-checks.log.gz`. Exact full commit
+range is accepted QA base ded26ad709027350433c78fc746fdd3d6aaff575 through this
+branch's final PR head; include every commit, including metadata delta 1251881f.

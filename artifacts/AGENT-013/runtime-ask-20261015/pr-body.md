@@ -23,7 +23,8 @@ expectations and resource limits are fixed before invocation; holdout is exclude
 - PASS: typecheck, lint, docs check, diff check. Covers actual path/ID order,
   unknown ACK/no second POST, qualification/identity/source invalidation,
   late response/abort, monotonic deadline, byte/read/request bounds, privacy
-  and missing Trip completeness. Source head 1b521b37.
+  and missing Trip completeness. Final source head 1251881f; it also retains the
+  existing parser's questionId and explicit identityAttestation unknown.
 - Live Staging/provider/DB/fees/ECS/production, Web/physical-device and full #264
   acceptance NOT_RUN. Full collection, usage/cost/quota/key/context authority
   gaps remain unknown; no required-mode PASS or parent closure claim.
