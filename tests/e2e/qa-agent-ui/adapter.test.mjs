@@ -4,9 +4,11 @@ import vm from 'node:vm';
 import { readFileSync } from 'node:fs';
 import ts from 'typescript';
 const source=ts.transpileModule(readFileSync('components/qa-agent/api.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+const cancellationCompiled=ts.transpileModule(readFileSync('lib/qa-agent/cancellation-contract.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+const cancellationExports={};vm.runInNewContext(cancellationCompiled,{exports:cancellationExports});
 const sid='11111111-1111-4111-8111-111111111111', rid='22222222-2222-4222-8222-222222222222';
 function fixture(data,status=200,jsonError=false){
- const seen=[],exports={};vm.runInNewContext(source,{exports,AbortSignal,Error,TypeError,fetch:async(url,init)=>{seen.push({url,init});return {status,ok:status>=200&&status<300,json:async()=>{if(jsonError)throw new SyntaxError("Malformed synthetic JSON");return data;}};}});return {api:exports.qaApi,permits:exports.permitsQaSubmission,retry:exports.retryableHistoryError,ApiError:exports.ApiError,seen};
+ const seen=[],exports={};vm.runInNewContext(source,{exports,AbortSignal,Error,TypeError,require:name=>{if(name==='@/lib/qa-agent/cancellation-contract')return cancellationExports;throw Error(name);},fetch:async(url,init)=>{seen.push({url,init});return {status,ok:status>=200&&status<300,json:async()=>{if(jsonError)throw new SyntaxError("Malformed synthetic JSON");return data;}};}});return {api:exports.qaApi,permits:exports.permitsQaSubmission,retry:exports.retryableHistoryError,ApiError:exports.ApiError,seen};
 }
 const wire=data=>({version:'qa-agent/1',...data});
 const saved=overrides=>({requestId:rid,turnId:rid,sessionId:sid,input:'original bytes ',text:'Saved answer',status:'answered',createdAt:'2026-10-13T00:00:00Z',...overrides});
@@ -73,4 +75,19 @@ test('reconciliation is a protected non-answer with original identity; unknown s
  for(const value of [saved({status:'reconciliation_required',text:'Invented answer'}),saved({status:'reconciliation_required',sessionId:rid,text:null}),saved({status:'reconciliation_required_v2',text:null})]) {
   const invalid=fixture(wire({message:value}));await assert.rejects(invalid.api.recover(sid,rid,new AbortController().signal),error=>error.code==='INVALID_RESPONSE');
  }
+});
+test('cancellation uses only its independent five-field wire and closed original-ID POST',async()=>{
+ const receipt=state=>({version:'qa-cancellation/1',sessionId:sid,requestId:rid,state,ack:['cancelled','terminal'].includes(state)?'observed':'unknown'});
+ for(const state of ['pending','cancelled','terminal','not_observed']) {
+  const f=fixture(receipt(state));assert.equal((await f.api.readCancellation(sid,rid,new AbortController().signal)).state,state);assert.equal(f.seen[0].init.method,'GET');
+ }
+ const f=fixture(receipt('cancelled'));await f.api.stop(sid,rid,new AbortController().signal);assert.equal(f.seen[0].init.method,'POST');assert.equal(f.seen[0].init.body,'{}');assert.equal(f.seen[0].init.credentials,'same-origin');assert.ok(f.seen[0].url.endsWith(`/sessions/${sid}/messages/${rid}/cancellation`));
+ for(const bad of [{...receipt('cancelled'),ack:'unknown'},{...receipt('pending'),ack:'observed'},{...receipt('terminal'),text:'private'},{...receipt('cancelled'),sessionId:rid},{...receipt('cancelled'),version:'qa-agent/1'}]) {const g=fixture(bad);await assert.rejects(g.api.stop(sid,rid,new AbortController().signal),e=>e.code==='INVALID_RESPONSE');}
+ const denied=fixture({version:'qa-cancellation/1',sessionId:sid,requestId:rid,error:{code:'PROVIDER_UNAVAILABLE',ack:'not_submitted'}},503);await assert.rejects(denied.api.stop(sid,rid,new AbortController().signal),e=>e.ack==='not_submitted'&&e.status===503);
+});
+test('cancellation scope uses canonical UUID case without replacing the original identity',async()=>{
+ const sessionId='abcdefab-abcd-4abc-8abc-abcdefabcdef',requestId='fedcbafe-dcba-4fed-8fed-fedcbafedcba';
+ const f=fixture({version:'qa-cancellation/1',sessionId,requestId,state:'cancelled',ack:'observed'});
+ assert.equal((await f.api.stop(sessionId.toUpperCase(),requestId.toUpperCase(),new AbortController().signal)).requestId,requestId);
+ assert.ok(f.seen[0].url.includes(`/sessions/${sessionId}/messages/${requestId}/cancellation`));
 });

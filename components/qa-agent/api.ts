@@ -1,3 +1,4 @@
+import { isQaCancellationReceipt, QA_CANCELLATION_VERSION, type QaCancellationReceipt } from "@/lib/qa-agent/cancellation-contract";
 /** The sole browser wire mapping; cookie identity and saved text remain server authority. */
 export type Session = { id: string; createdAt: string; updatedAt: string; label: string };
 export type Message = { requestId: string; text: string; answer: string | null; status: "pending" | "answered" | "partial" | "clarification" | "blocked" | "technical_failure" | "reconciliation_required" };
@@ -55,7 +56,29 @@ function message(value: unknown, sessionId: string, requestId?: string): Message
   return { requestId: value.requestId, text: value.input, answer: value.text as string | null, status: value.status as Message["status"] };
 }
 const sessionPath = (id: string) => `/sessions/${encodeURIComponent(id)}`;
+/** Cancellation has its own wire and never confirms message admission. */
+async function cancellation(sessionId: string, requestId: string, signal: AbortSignal, stop: boolean): Promise<QaCancellationReceipt> {
+  sessionId = sessionId.toLowerCase(); requestId = requestId.toLowerCase();
+  const response = await fetch(`/api/qa-agent${sessionPath(sessionId)}/messages/${encodeURIComponent(requestId)}/cancellation`, {
+    method: stop ? "POST" : "GET", credentials: "same-origin", cache: "no-store",
+    signal: AbortSignal.any([signal, AbortSignal.timeout(20_000)]),
+    ...(stop ? { headers: { "content-type": "application/json" }, body: "{}" } : {}),
+  });
+  let value: unknown;
+  try { value = await response.json(); } catch { throw new ApiError(response.status || 502, "CANCELLATION_UNCONFIRMED"); }
+  if (!response.ok) {
+    if (!record(value) || value.version !== QA_CANCELLATION_VERSION || value.sessionId !== sessionId || value.requestId !== requestId
+      || Object.keys(value).length !== 4 || !record(value.error) || Object.keys(value.error).length !== 2
+      || !["INVALID_INPUT", "UNAUTHENTICATED", "FORBIDDEN", "PROVIDER_UNAVAILABLE"].includes(String(value.error.code))
+      || !["unknown", "not_submitted"].includes(String(value.error.ack))) invalid();
+    throw new ApiError(response.status, value.error.code as string, value.error.ack as "unknown" | "not_submitted");
+  }
+  if (!isQaCancellationReceipt(value, { sessionId, requestId })) invalid();
+  return value;
+}
 export const qaApi = {
+  readCancellation: (id: string, requestId: string, signal: AbortSignal) => cancellation(id, requestId, signal, false),
+  stop: (id: string, requestId: string, signal: AbortSignal) => cancellation(id, requestId, signal, true),
   async sessions(signal: AbortSignal) { const data = await request("/sessions", signal); if (!Array.isArray(data.sessions)) invalid(); return { sessions: data.sessions.map(session) }; },
   async create(signal: AbortSignal) { return { session: session((await request("/sessions", signal, {})).session) }; },
   async history(id: string, signal: AbortSignal): Promise<History> {
