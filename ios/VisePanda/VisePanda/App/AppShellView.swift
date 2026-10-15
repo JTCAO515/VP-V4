@@ -61,8 +61,8 @@ struct AppShellView: View {
         .id(ShellNavigationIdentity(scope: settings.nativeSession.dataScope, assistant: assistantShell, generation: switchState.generation))
         .accessibilityIdentifier("main-tab-view")
         .environment(frontend)
-        .environment(\.locale, frontendEnabled ? Locale(identifier: "zh-Hans") : settings.selectedLocale.locale)
-        .environment(\.layoutDirection, frontendEnabled ? .leftToRight : settings.selectedLocale.layoutDirection)
+        .environment(\.locale, settings.selectedLocale.locale)
+        .environment(\.layoutDirection, settings.selectedLocale.layoutDirection)
         .sheet(item: $presentedEntry) { entry in
             ShellEntrySheet(entry: entry)
                 .id(settings.nativeSession.dataScope)
@@ -153,10 +153,10 @@ struct AppShellView: View {
     }
     private func frontendTitle(_ tab: AppTab) -> String {
         switch tab {
-        case .vp: "对话"
-        case .journeys: "旅程"
-        case .library: "资料库"
-        case .memory: "记忆"
+        case .vp: settings.selectedLocale == .zh ? "对话" : "Chat"
+        case .journeys: settings.selectedLocale == .zh ? "旅程" : "Journeys"
+        case .library: settings.selectedLocale == .zh ? "资料库" : "Library"
+        case .memory: settings.selectedLocale == .zh ? "记忆" : "Memory"
         default: tab.rawValue
         }
     }
