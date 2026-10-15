@@ -1,5 +1,18 @@
 # IOS-001 conversation fixed-copy locale repair
 
+## Main integration and runtime evidence
+
+Main received source `424b306a` as `701ff839` and the report-only leaf as `9a779fe0`; then normally merged accepted QA PR717 (`c1fc57a9`) to integration source `6f0133e4f0d97fead94ba94010aa1fca7c0f6803`. The remaining QA diff is exactly the three leased Chat source files and this Markdown record. Three Chat file bytes match the reviewed original source.
+
+- Independent Standards and Spec fixed-source reviews: 0 / 0 material findings at `a767…424b306a`. Callback/ID/layout/router/guard/payload preservation checked directly; static review is distinct from runtime evidence.
+- XcodeBuildMCP actual complete App build: PASS 40.315s, no warnings, Debug/SDK27/minimum17. Main-owned simulator `8F6CA72C-73C0-45C0-8606-0543B1F725BD`, runtime iOS26.5, reused Main project/DD serially after the self-hosted CI job completed.
+- Initial post-reboot simulator was Shutdown. After boot/install, launch returned a success wrapper but no process; actual runtime/SpringBoard logs reported Busy because the App was stuck being updated, and UI stayed on Home. These probes are not PASS. Restarting only the Main-owned simulator preserved data and resolved the update state; subsequent launch produced process11376 and actual Chat UI. No uninstall, erase, system setting change or other-owner resource action.
+- Actual launch-selected English PASS: Header sidebar/assistant/invitation accessibility labels; invitation blank page Close/return; attachment headings, import-unavailable explanation and actions; original Chinese material inserted into the draft unchanged; local sample Send, You role, result labels, confirmation diff/explicit buttons, Cancel and original unconfirmed plan retained. No real Trip/provider/network action occurred.
+- Actual English journey→Discuss with VP→same Chat context PASS after scrolling the original button into view: fixed context label/View linked journey/Skip context are English; original journey title remains Chinese. Dynamic sample messages, notice and materials remain the original payloads by design.
+- Actual launch-selected Chinese Header and complete attachment sheet retain original labels and original material titles/sources. This verifies the two app-locale launches, not an unexecuted settings-toggle or VoiceOver session.
+
+Private actual snapshots/reviews are under `/Users/jtsm5p/Documents/Codex/2026-10-13/v10-main/ios-chat-fixed-locale-20261015/`. Real service/provider/physical device/VoiceOver remain UNRUN; broad #203 stays open. Exact final-head CI and normal protected merge remain required.
+
 2026-10-15. Accepted base: `a76799149cec460e742ab101a8b8190512b24464`.
 Tested source commit: `424b306ad2fa95abcfc3cf9cfffb8025552294a0`.
 Branch: `codex/ios-chat-fixed-locale-20261015`.
