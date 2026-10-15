@@ -1,0 +1,41 @@
+✔ recovery query is closed, canonical and contains only original identity and UTF8 text digest (1.005542ms)
+✔ same original Turn projects pending then translated/failed/cancelled without changing identity (0.690166ms)
+✔ identity/content mismatches, unknown state and incomplete/late callback evidence never manufacture a terminal result (0.261833ms)
+✔ actual SDK synthetic transport reads original pending then translated/failure/cancelled; only allowlisted reads (31.581667ms)
+✔ missing/removed chat_threads is unknown with null phrase and no private text (3.239042ms)
+✔ missing/removed turns is unknown with null phrase and no private text (2.344625ms)
+✔ missing/removed chat_turn_idempotency is unknown with null phrase and no private text (2.24175ms)
+✔ missing/removed list_text_turns is unknown with null phrase and no private text (2.275333ms)
+✔ missing/removed read_text_turn is unknown with null phrase and no private text (2.397166ms)
+✔ wrong chat_threads.status cannot publish (3.623625ms)
+✔ wrong turns.owner_id cannot publish (1.960583ms)
+✔ wrong turns.thread_id cannot publish (1.962625ms)
+✔ wrong chat_turn_idempotency.turn_id cannot publish (1.949833ms)
+✔ wrong chat_turn_idempotency.idempotency_key cannot publish (2.693458ms)
+✔ content identity mismatch keeps original attempt unknown (3.603583ms)
+✔ content identity mismatch keeps original attempt unknown (2.781125ms)
+✔ current policy id denial is 403, never unknown (1.268958ms)
+✔ current policy noticeHash denial is 403, never unknown (1.132208ms)
+✔ current policy consentState denial is 403, never unknown (0.861292ms)
+✔ wrong current policy/notice query and session replacement keep original error semantics (0.984042ms)
+✔ malformed/unknown read_text_turn schema is unavailable, without private content (1.314041ms)
+✔ malformed/unknown chat_turn_idempotency schema is unavailable, without private content (2.453875ms)
+✔ malformed/unknown list_text_turns schema is unavailable, without private content (1.203417ms)
+✔ transport/permission error 403 does not become unknown (1.149792ms)
+✔ transport/permission error 503 does not become unknown (1.022334ms)
+✔ bounded upstream response fails closed (1.799583ms)
+✔ revalidation detects revocation/account/deletion/content race at read_text_policy (1.260542ms)
+✔ revalidation detects revocation/account/deletion/content race at native_session_v2 (1.952417ms)
+✔ revalidation detects revocation/account/deletion/content race at chat_threads (1.613584ms)
+✔ revalidation detects revocation/account/deletion/content race at read_text_turn (3.101291ms)
+✔ abort and late callback cannot continue reads or publish (1.725333ms)
+✔ closed GET-only query, no ambient credentials and production refusal (0.905917ms)
+✔ delayed callback after client abort cannot issue a successor read or publish stale data (1.517458ms)
+ℹ tests 33
+ℹ suites 0
+ℹ pass 33
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 196.967833

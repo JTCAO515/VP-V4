@@ -1,0 +1,19 @@
+PASS chronological current migrations 161 PG 17.11 (Homebrew)
+PASS owner-scoped ordinary authenticated RLS, current policy/notice/consent, exact key/text/hash/locale, archived/hidden, state mapping, late output, recent20 unknown; zero generation/admission/worker RPC in recovery [
+  'native_session_v2',
+  'read_text_policy',
+  'chat_threads',
+  'turns',
+  'chat_turn_idempotency',
+  'list_text_turns',
+  'read_text_turn'
+]
+✔ IOS005 owned PG17 full migration chain: ordinary RLS + exact protected readers recover only the same original submit (2545.759625ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2649.362041
