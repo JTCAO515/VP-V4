@@ -182,7 +182,25 @@ export const LANES = {
   "postgres-native-17": {
     needs: ["VP_WIKI_PG_BIN", "VP_WIKI_PG_MODULE"],
     steps: [{ name: "grounded-subject-native-17", concurrency: 1, env: { AGENT005_NATIVE_PG: "1" },
-      files: ["tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs"] }],
+      files: ["tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs"] },
+      { name: "trip-service-task-native-17", runner: node("tests/integration/service-task-trip/run-integration.mjs"), env: {},
+        files: [
+          "tests/integration/service-task-trip/adversarial.test.mjs",
+          "tests/integration/service-task-trip/cli-flow.test.mjs",
+          "tests/integration/service-task-trip/export-flow.test.mjs",
+          "tests/integration/service-task-trip/hosted-flow.test.mjs",
+          "tests/integration/service-task-trip/late-usage.test.mjs",
+          "tests/integration/service-task-trip/legacy-export.test.mjs",
+          "tests/integration/service-task-trip/lifecycle-current.test.mjs",
+          "tests/integration/service-task-trip/lock-order.test.mjs",
+          "tests/integration/service-task-trip/privacy-flow.test.mjs",
+          "tests/integration/service-task-trip/proposal-expiry.test.mjs",
+          "tests/integration/service-task-trip/repair.test.mjs",
+          "tests/integration/service-task-trip/role-vector.test.mjs",
+          "tests/integration/service-task-trip/runtime-guard.test.mjs",
+          "tests/integration/service-task-trip/settlement.test.mjs",
+        ] },
+    ],
   },
   // One disposable Supabase stack (GoTrue + PostgREST + all migrations); identity/RLS/Trip confirmation chain.
   // Migration 28 (VPJ-05) makes the database reject legacy confirmation digests, so against the full

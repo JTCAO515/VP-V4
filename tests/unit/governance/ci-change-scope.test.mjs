@@ -120,3 +120,12 @@ test('resolved-subject source and tests select the independent PG17 lane without
  assert.equal(selectCheckPlan(['lib/server/turn/planning-v2-model-request.ts'],'pull_request').dbLanes.includes('postgres-native-17'),false);
  for(const [files,event]of [[['unknown-file.xyz'],'pull_request'],[['README.md'],'workflow_dispatch'],[['.github/workflows/db-integration.yml'],'pull_request'],[['supabase/migrations/new.sql'],'pull_request']])assert.deepEqual(selectCheckPlan(files,event).dbLanes,DB_LANES);
 });
+
+
+test('Trip task, scoped host, provider, privacy, SQL and suite dependencies retain native17 coverage',()=>{
+ for(const file of ['lib/server/service-task-trip/contract.ts','lib/server/trip/scoped-edit/service.ts','lib/server/turn/scoped-edit/executor.ts','lib/server/model-gateway/adapters/provider-protocol.ts','lib/server/jobs/run-hosted-text-worker.mjs','lib/server/privacy/turn-data/export.ts','lib/server/privacy/conversation-data/contract.ts','supabase/migrations/new.sql','tests/contract/service-task-trip/contract.test.mjs','tests/integration/service-task-trip/settlement.test.mjs']){
+  const plan=selectCheckPlan([file],'pull_request');assert.ok(plan.dbLanes.includes('postgres-native-17'),file);assert.equal(plan.checks.contract,true);assert.equal(plan.checks.security,true);
+ }
+ for(const file of ['tests/integration/service-task-trip/native-db.mjs','tests/integration/service-task-trip/run-integration.mjs','tests/integration/service-task-trip/trip-privacy-front.sql'])assert.deepEqual(selectCheckPlan([file],'pull_request').dbLanes,DB_LANES,file);
+ for(const file of ['tests/integration/service-task-trip/unknown.test.mjs','unknown-trip-root.mjs'])assert.equal(selectCheckPlan([file],'pull_request').profile,'full',file);
+});

@@ -72,6 +72,7 @@ export function selectCheckPlan(files,eventName,forceFull=false){
    Object.assign(checks,{typecheck:true,test:true,unit:true,contract:true,security:true,flags:true});
    lanes.add('postgres');lanes.add('supabase-http-native');
    if(/^lib\/server\/(?:identity|privacy|auth)\//.test(f))for(const l of DB_LANES)lanes.add(l);
+   if(/^lib\/server\/(?:service-task-trip\/|trip\/scoped-edit\/|turn\/scoped-edit\/|model-gateway\/|jobs\/run-hosted-text-worker\.mjs$)/.test(f))lanes.add('postgres-native-17');
    if(f.startsWith('lib/server/model-gateway/'))checks.evals=true;
    if(f.startsWith('lib/server/knowledge/')||f.startsWith('lib/server/jobs/wiki')){lanes.add('postgres-native');lanes.add('postgres-native-17');lanes.add('supabase-http-ops');}
    if(f.startsWith('lib/server/ops/'))lanes.add('supabase-http-ops');continue;
@@ -79,6 +80,7 @@ export function selectCheckPlan(files,eventName,forceFull=false){
   if(f.startsWith('tests/integration/')){
    Object.assign(checks,{typecheck:true,unit:true,contract:true,security:true,integration:true});
    // Static conservative families; shared fixtures/unknown families require full lanes.
+   if(f.startsWith('tests/integration/service-task-trip/')&&!/\.test\.mjs$/.test(f)){for(const l of DB_LANES)lanes.add(l);continue;}
    if(f.startsWith('tests/integration/web-trip-continuity/')){lanes.add('supabase-http-native');checks.build=true;checks.browser=true;checks.e2e=true;continue;}
    if(/\/fixtures\//.test(f)){for(const l of DB_LANES)lanes.add(l);continue;}
    const classified=integrationClassification();if(classified.problems.length)return full('classification_error');
@@ -87,7 +89,7 @@ export function selectCheckPlan(files,eventName,forceFull=false){
    if(row?.lane==='test:integration')continue;
    return full('unmapped_integration_dependency');
   }
-  if(/^tests\/(?:unit|contract|security)\//.test(f)){if(f.startsWith('tests/contract/agent-grounded-result/'))lanes.add('postgres-native-17');Object.assign(checks,{typecheck:true,unit:true,contract:true,security:true});if(f.startsWith('tests/security/')){lanes.add('postgres');lanes.add('supabase-rls');lanes.add('supabase-http-native');}continue;}
+  if(/^tests\/(?:unit|contract|security)\//.test(f)){if(f.startsWith('tests/contract/service-task-trip/'))lanes.add('postgres-native-17');if(f.startsWith('tests/contract/agent-grounded-result/'))lanes.add('postgres-native-17');Object.assign(checks,{typecheck:true,unit:true,contract:true,security:true});if(f.startsWith('tests/security/')){lanes.add('postgres');lanes.add('supabase-rls');lanes.add('supabase-http-native');}continue;}
   if(f.startsWith('tests/e2e/')){Object.assign(checks,{typecheck:true,build:true,e2e:true,browser:true,assets:true});continue;}
   if(f.startsWith('evals/')){checks.evals=true;checks.contract=true;continue;}
   known=false;
