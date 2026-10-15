@@ -1,0 +1,20 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: profile_data_private.schema_v1() exact anchor
+
+3 !== 2
+
+    at replace (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/generate-lifecycle-pins.mjs:35:34)
+    at file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/generate-lifecycle-pins.mjs:49:4
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 3,
+  expected: 2,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v26.8.2

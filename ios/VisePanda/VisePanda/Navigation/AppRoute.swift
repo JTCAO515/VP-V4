@@ -35,42 +35,79 @@ struct TabRootView: View {
     var onOpenGoal: ((NativeJourneyGoalEntry) -> Void)?
     var switchBlocked = false
     var onSwitchBlock: ((Bool) -> Void)?
+    var onShowSamples: (() -> Void)? = nil
+    var frontendState: NativeFrontendState? = nil
+    var onShowAssistant: (() -> Void)? = nil
     @State private var router = RouterPath()
+#if DEBUG
+    @State private var frontendTool: NativeFrontendTool?
+#endif
 
     var body: some View {
         @Bindable var router = router
 
-        NavigationStack(path: $router.path) {
-            rootContent
-                .toolbar { shellToolbar }
-                .navigationDestination(for: AppRoute.self) { route in
-                    Group {
-                        switch route {
-                        case .entry(let entry):
-                            AppEntryView(entry: entry, isActive: isActive)
-                        case .journeyTrip(let selection):
-                            NativeTripView(initialTripID: selection.tripID, initialTripScope: selection.scope)
-                        case .today:
-                            TodayView()
-                        case .capability(let capability):
-                            CapabilityDetailView(capability: capability)
+        Group {
+            if frontendState != nil {
+                // Presentation routes are local to this tab and have no production AppRoute payload.
+                NavigationStack { rootContent.toolbar { shellToolbar } }
+            } else {
+                NavigationStack(path: $router.path) {
+                    rootContent
+                        .toolbar { shellToolbar }
+                        .navigationDestination(for: AppRoute.self) { route in
+                            Group {
+                                switch route {
+                                case .entry(let entry):
+                                    AppEntryView(entry: entry, isActive: isActive)
+                                case .journeyTrip(let selection):
+                                    NativeTripView(initialTripID: selection.tripID, initialTripScope: selection.scope)
+                                case .today:
+                                    TodayView()
+                                case .capability(let capability):
+                                    CapabilityDetailView(capability: capability)
+                                }
+                            }.toolbar { shellToolbar }
                         }
-                    }.toolbar { shellToolbar }
                 }
+            }
         }
         .environment(router)
+#if DEBUG
+        .sheet(item: $frontendTool) { tool in
+            NavigationStack {
+                Group {
+                    switch tool {
+                    case .expression: NativeFrontendExpressionView()
+                    case .place: NativePlaceActionsSampleExperience()
+                    }
+                }
+                .toolbar { ToolbarItem(placement: .cancellationAction) { Button("返回对话") { frontendTool = nil } } }
+            }
+        }
+#endif
         .onChange(of: rootResetID) { _, _ in router.reset() }
     }
 
     @ToolbarContentBuilder
     private var shellToolbar: some ToolbarContent {
         ToolbarItemGroup(placement: .topBarLeading) {
-            if let onSearch {
+            if let frontendState, let onShowAssistant {
+                Button(action: onShowAssistant) {
+                    HStack(spacing: 8) {
+                        Image("PandaMark").resizable().scaledToFit().frame(width: 30, height: 30).clipShape(Circle())
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(frontendState.assistantName).font(.headline)
+                            Text("本地体验示例").font(.caption2).foregroundStyle(.secondary)
+                        }
+                    }
+                }.accessibilityLabel("助手详情").accessibilityIdentifier("frontend.assistant.open")
+            }
+            if frontendState == nil, let onSearch {
                 Button(action: onSearch) {
                     Label("shell.search", systemImage: "magnifyingglass")
                 }.accessibilityIdentifier("shell.search.open")
             }
-            if let onEntry {
+            if frontendState == nil, let onEntry {
                 Menu {
                     ForEach(AppEntry.allCases.filter { $0 != .search }) { entry in
                         Button { onEntry(entry) } label: { Text(LocalizedStringKey(entry.titleKey)) }
@@ -83,6 +120,16 @@ struct TabRootView: View {
                             .disabled(switchBlocked)
                         Text(switchBlocked ? "shell.switch.pending" : "shell.switch.temporary")
                     }
+#if DEBUG
+                    if let onShowSamples {
+                        Divider()
+                        Button(action: onShowSamples) {
+                            Label("体验示例 / Interaction samples", systemImage: "play.rectangle")
+                        }
+                        .disabled(switchBlocked)
+                        .accessibilityIdentifier("native.samples.open")
+                    }
+#endif
                 } label: {
                     Label("shell.entries", systemImage: "line.3.horizontal")
                 }.accessibilityIdentifier("shell.entries.open")
@@ -90,18 +137,46 @@ struct TabRootView: View {
         }
     }
 
+    private func frontendChat(_ state: NativeFrontendState) -> some View {
+        Group {
+#if DEBUG
+            NativeFrontendChatView(state: state, onOpenExpression: { frontendTool = .expression }, onOpenPlace: { frontendTool = .place }, avatarImage: Image("MuseChatAvatarOriginal"), avatarScale: 1.6, avatarVerticalOffset: 0.39, onShowAssistant: onShowAssistant)
+#else
+            NativeFrontendChatView(state: state, avatarImage: Image("MuseChatAvatarOriginal"), avatarScale: 1.6, avatarVerticalOffset: 0.39, onShowAssistant: onShowAssistant)
+#endif
+        }
+        .toolbar(.hidden, for: .navigationBar)
+        .overlay(alignment: .top) {
+            LinearGradient(stops: [.init(color: Color(uiColor: .systemBackground), location: 0), .init(color: Color(uiColor: .systemBackground), location: 0.68), .init(color: .clear, location: 1)], startPoint: .top, endPoint: .bottom)
+                .frame(height: 56).ignoresSafeArea(edges: .top).allowsHitTesting(false)
+        }
+    }
+
     @ViewBuilder
     private var rootContent: some View {
-        switch tab {
-        case .vp: AskView(isActive: isActive, goalEntry: goalEntry, onSwitchBlock: onSwitchBlock)
-        case .journeys: NativeJourneysView(isActive: isActive, onOpenVP: onEntry.map { handler in { handler(.ask) } }, onOpenGoal: onOpenGoal)
-        case .library: NativeKnowledgeView(isActive: isActive)
-        case .memory: NativeMemoryHomeView(isActive:isActive,onSwitchBlock:onSwitchBlock)
-        case .tools: ToolsView()
-        case .trip: TripView()
-        case .ask: AskView(isActive: isActive, goalEntry: goalEntry, onSwitchBlock: onSwitchBlock)
-        case .explore: ExploreView(isActive: isActive)
-        case .profile: ProfileView()
+        if let frontendState {
+            Group {
+                switch tab {
+                case .vp: frontendChat(frontendState)
+                case .journeys: NativeFrontendJourneysView(state: frontendState)
+                case .library: NativeFrontendLibraryView(state: frontendState)
+                case .memory: NativeFrontendMemoryView(state: frontendState)
+                default: ContentUnavailableView("此入口属于旧版", systemImage: "square.grid.2x2")
+                }
+            }
+            .environment(frontendState)
+        } else {
+            switch tab {
+            case .vp: AskView(isActive: isActive, goalEntry: goalEntry, onSwitchBlock: onSwitchBlock)
+            case .journeys: NativeJourneysView(isActive: isActive, onOpenVP: onEntry.map { handler in { handler(.ask) } }, onOpenGoal: onOpenGoal)
+            case .library: NativeKnowledgeView(isActive: isActive)
+            case .memory: NativeMemoryHomeView(isActive:isActive,onSwitchBlock:onSwitchBlock)
+            case .tools: ToolsView()
+            case .trip: TripView()
+            case .ask: AskView(isActive: isActive, goalEntry: goalEntry, onSwitchBlock: onSwitchBlock)
+            case .explore: ExploreView(isActive: isActive)
+            case .profile: ProfileView()
+            }
         }
     }
 }
@@ -216,3 +291,10 @@ private struct GlobalSearchView: View {
         .onChange(of:settings.nativeSession.dataScope){_,_ in query=""}
     }
 }
+
+#if DEBUG
+private enum NativeFrontendTool: String, Identifiable {
+    case expression, place
+    var id: String { rawValue }
+}
+#endif

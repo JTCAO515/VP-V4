@@ -1,0 +1,20 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+'E2BIG' !== 0
+
+    at db (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios001-goal-return-sql-20261015/tests/integration/journey-entry/goal-return-current/kernel.mjs:16:142)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios001-goal-return-sql-20261015/tests/integration/journey-entry/goal-return-current/kernel.mjs:37:98 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 'E2BIG',
+  expected: 0,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v26.8.2

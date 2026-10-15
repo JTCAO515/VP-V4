@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
-import { readFileSync, readdirSync, mkdtempSync, rmSync, existsSync } from "node:fs";
+import { readFileSync, readdirSync, mkdtempSync, rmSync, existsSync, mkdirSync, chmodSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import {spawnSync} from "node:child_process";
 import {selectCheckPlan,DB_LANES} from "../../../scripts/ci-change-scope.mjs";
-import { EXCLUDED, LANES, executionMatrix, executionSteps, classify, parseNodeTestSummary, pinnedImages, stepProblems } from "../../../scripts/ci-suites/db-integration.mjs";
+import { EXCLUDED, LANES, executionMatrix, executionSteps, classify, isGated, parseNodeTestSummary, pinnedImages, stepProblems } from "../../../scripts/ci-suites/db-integration.mjs";
 
 const read = (path) => readFileSync(path, "utf8");
 
@@ -95,7 +95,7 @@ test("bounded CI shards preserve every logical step exactly once and reject malf
   const jobs = executionMatrix(Object.keys(LANES)).include;
   for (const lane of Object.keys(LANES)) {
     const own = jobs.filter(job => job.lane === lane);
-    assert.equal(own.length, lane === "supabase-http-native" ? 8 : 1);
+    assert.equal(own.length, lane === "supabase-http-native" ? 12 : 1);
     const selected = own.flatMap(job => executionSteps(lane, job.shard));
     assert.equal(new Set(selected).size, LANES[lane].steps.length);
     assert.equal(selected.length, LANES[lane].steps.length);
@@ -103,14 +103,14 @@ test("bounded CI shards preserve every logical step exactly once and reject malf
     for (const job of own) {
       const part = executionSteps(lane, job.shard);
       assert.ok(part.length > 0);
-      if (lane === "supabase-http-native") assert.ok(part.length <= 5, "Native HTTP job retains bounded capacity under unchanged 30m limit");
+      if (lane === "supabase-http-native") assert.ok(part.length <= 4, "Native HTTP job retains bounded capacity under unchanged 30m limit");
       assert.deepEqual(part, LANES[lane].steps.filter(step => part.includes(step)));
     }
     assert.deepEqual(executionSteps(lane), LANES[lane].steps);
   }
   for (const input of [null, [], ["unknown"], ["postgres", "postgres"], ["none", "postgres"]]) assert.throws(() => executionMatrix(input));
   assert.deepEqual(executionMatrix(["none"]).include, [{lane:"none",shard:"1/1",name:"lane (none)"}]);
-  for (const shard of ["0/8", "9/8", "1/3", "1/2", "2/2", "3/2", "1/4", "2/1", "1/1", "01/8", "1/08", "garbage"]) assert.throws(() => executionSteps("supabase-http-native", shard));
+  for (const shard of ["0/12", "13/12", "1/8", "0/8", "9/8", "1/3", "1/2", "2/2", "3/2", "1/4", "2/1", "1/1", "01/12", "1/012", "garbage"]) assert.throws(() => executionSteps("supabase-http-native", shard));
   assert.throws(() => executionSteps("postgres", "1/2"));
   assert.throws(() => executionSteps("unknown", "1/1"));
   assert.match(read(".github/workflows/db-integration.yml"), /timeout-minutes: 30/);
@@ -240,4 +240,138 @@ test("hosted worker prepares the identical GHCR database pin without ECR network
     assert.equal(result.status, status, result.stderr);
     assert.equal(result.stdout, `pull --platform linux/amd64 ${reference}\n` + (pull ? "" : `tag ${reference} public.ecr.aws/supabase/postgres:17.6.1.159\n`));
   }
+});
+
+test('resolved-subject PG17 lane is unique, explicit, bounded, and cannot weaken the old Wiki lane',()=>{
+ const file='tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs';
+ const ownership=Object.entries(LANES).flatMap(([lane,definition])=>definition.steps.flatMap(step=>step.files.filter(f=>f===file).map(()=>lane)));
+ assert.deepEqual(ownership,['postgres-native-17']);
+ assert.deepEqual(classify().rows.find(row=>row.file===file),{file,gated:true,lane:'postgres-native-17'});
+ assert.equal(LANES['postgres-native-17'].steps.length,2);assert.equal(LANES['postgres-native-17'].steps[0].env.AGENT005_NATIVE_PG,'1');assert.equal(LANES['postgres-native-17'].steps[0].concurrency,1);
+ assert.deepEqual(LANES['postgres-native'],{needs:['VP_WIKI_PG_BIN','VP_WIKI_PG_MODULE'],steps:[{name:'wiki-native-postgres',env:{},files:['tests/integration/knowledge/wiki-draft.test.mjs']}]});
+ const all=executionMatrix(DB_LANES).include;
+ assert.deepEqual(all.filter(job=>job.lane!=='postgres-native-17'),executionMatrix(DB_LANES.filter(lane=>lane!=='postgres-native-17')).include);
+ assert.deepEqual(all.filter(job=>job.lane==='postgres-native-17'),[{lane:'postgres-native-17',shard:'1/1',name:'lane (postgres-native-17)'}]);
+ assert.deepEqual(executionSteps('postgres-native-17','1/1'),LANES['postgres-native-17'].steps);assert.throws(()=>executionSteps('postgres-native-17','1/2'));
+ assert.equal(existsSync('tests/contract/agent-grounded-result/subject-binding-postgres.test.mjs'),false);
+});
+
+function pg17PreparationBody(){
+ const workflow=read('.github/workflows/db-integration.yml');
+ const match=workflow.match(/      - name: Prepare PostgreSQL 17 for resolved-subject integration\n        if: matrix\.lane == 'postgres-native-17'\n        shell: bash\n        run: \|\n([\s\S]*?)(?=      - uses:)/);
+ assert.ok(match,'only the new job prepares PostgreSQL17');
+ return match[1].split('\n').map(line=>line.startsWith('          ')?line.slice(10):line).join('\n');
+}
+
+test('cancellation PG proof has one explicit native17 owner and the lane cannot silently skip',()=>{
+ const file='tests/integration/qa-agent-cancellation/native-pg.test.mjs';
+ const owners=Object.entries(LANES).flatMap(([lane,definition])=>definition.steps.flatMap(step=>step.files.filter(f=>f===file).map(()=>lane)));
+ assert.deepEqual(owners,['postgres-native-17']);
+ assert.deepEqual(classify().rows.find(row=>row.file===file),{file,gated:true,lane:'postgres-native-17'});
+ assert.equal(LANES['postgres-native-17'].steps[0].env.QA_CANCEL_NATIVE_PG,'1');
+ assert.deepEqual(LANES['postgres-native-17'].steps[0].files,[
+  'tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs',file]);
+ assert.equal(LANES['postgres-native-17'].steps[0].concurrency,1);
+ assert.equal(isGated(file),true);
+});
+
+test('PG17 CI preparation retains the old Wiki job and uses official major17 without starting default services',()=>{
+ const body=pg17PreparationBody(),workflow=read('.github/workflows/db-integration.yml');
+ assert.equal(spawnSync('/bin/bash',['-n'],{input:body}).status,0);
+ assert.match(workflow,/- name: Prepare native PostgreSQL for the Wiki lane\n        if: matrix\.lane == 'postgres-native'\n/);
+ assert.match(workflow,/bin=\$\(ls -d \/usr\/lib\/postgresql\/\*\/bin \| sort -V \| tail -1\)/);
+ assert.match(body,/https:\/\/www\.postgresql\.org\/media\/keys\/ACCC4CF8\.asc/);assert.match(body,/URIs: https:\/\/apt\.postgresql\.org\/pub\/repos\/apt/);assert.match(body,/Suites: noble-pgdg/);
+ assert.match(body,/install -y --no-install-recommends postgresql-17/);assert.doesNotMatch(body,/apt-get[^\n]* install[^\n]* postgresql(?:\s|$)/);
+ assert.match(body,/create_main_cluster = false/);assert.match(body,/start_conf = 'manual'/);assert.match(body,/exit 101/);assert.match(body,/trap taskPgRestore EXIT/);
+ assert.match(body,/Dpkg::Options::=--force-confold/);assert.match(body,/NEEDRESTART_MODE=l/);assert.match(body,/pg@\$PG_CLIENT_VERSION/);
+ assert.doesNotMatch(body,/systemctl\s+(?:start|restart)|service\s+postgresql\s+(?:start|restart)|pg_createcluster|pg_ctl[^\n]* start/);
+});
+
+test('PG17 setup mock preserves existing files and propagates install/version failures without Linux or network execution',()=>{
+ const original=pg17PreparationBody();
+ for(const scenario of [
+  {name:'existing17',installed:true,status:0},
+  {name:'install17',present:true,status:0},
+  {name:'existing-official-source',present:true,official:true,status:0},
+  {name:'install-error',present:true,installStatus:7,status:7},
+  {name:'install-error-absent-files',installStatus:7,status:7},
+  {name:'wrong-major',present:true,version:'18.1',status:1},
+ ]){
+  const root=mkdtempSync(join(tmpdir(),'vp-native17-'));assert.match(root,/^[-A-Za-z0-9_/.]+$/);
+  const local=(path)=>join(root,path),paths=['usr/sbin/policy-rc.d','etc/postgresql-common/createcluster.conf','etc/apt/sources.list.d/agent005-pg17.sources','usr/share/postgresql-common/pgdg/agent005-pg17.asc'];
+  try{
+   for(const p of [...paths,'etc/os-release','etc/apt/sources.list','pgbin/postgres','pgcrypto.control','runtime/placeholder'])mkdirSync(local(p.lastIndexOf('/')<0?'':p.slice(0,p.lastIndexOf('/'))),{recursive:true});
+   writeFileSync(local('etc/os-release'),'VERSION_CODENAME=noble\n');writeFileSync(local('etc/apt/sources.list'),'');mkdirSync(local('runtime'),{recursive:true});mkdirSync(local('pgbin'),{recursive:true});
+   const originals=new Map();
+   if(scenario.present)for(const [i,p]of paths.entries()){const value=`original-${i}\n`;writeFileSync(local(p),value);chmodSync(local(p),i===0?0o755:0o640);originals.set(p,value);}
+   if(scenario.official)writeFileSync(local('etc/apt/sources.list.d/pgdg.sources'),'URIs: https://apt.postgresql.org/pub/repos/apt\n');
+   const createBinary=()=>{for(const name of ['postgres','initdb','pg_ctl']){writeFileSync(local('pgbin/'+name),name==='postgres'?"#!/bin/sh\nprintf 'postgres (PostgreSQL) 17.11\\n'\n":"#!/bin/sh\nexit 99\n");chmodSync(local('pgbin/'+name),0o755);}writeFileSync(local('pgcrypto.control'),'fixture only');};
+   if(scenario.installed)createBinary();
+   const body=original.replaceAll('/usr/lib/postgresql/17/bin',()=>local('pgbin')).replaceAll('/usr/share/postgresql/17/extension/pgcrypto.control',()=>local('pgcrypto.control')).replaceAll('/usr/sbin/',()=>local('usr/sbin/')).replaceAll('/usr/share/postgresql-common/',()=>local('usr/share/postgresql-common/')).replaceAll('/etc/',()=>local('etc/'));
+   const harness=String.raw`
+sudo() {
+  if [ "$1" = env ]; then shift; while [[ "$1" == *=* ]]; do export "$1"; shift; done; fi
+  "$@"
+}
+dpkg() { printf 'amd64\n'; }
+curl() { printf 'curl\n' >> "$CI_TEST_TRACE"; while [ "$1" != -o ]; do shift; done; shift; printf 'controlled public key fixture\n' > "$1"; }
+apt-get() {
+  printf 'apt %s\n' "$*" >> "$CI_TEST_TRACE"
+  case " $* " in
+    *' install '*)
+      grep -q 'exit 101' "$CI_TEST_ROOT/usr/sbin/policy-rc.d" || return 90
+      grep -q 'create_main_cluster = false' "$CI_TEST_ROOT/etc/postgresql-common/createcluster.conf" || return 91
+      if [ "$CI_TEST_INSTALL_STATUS" != 0 ]; then return "$CI_TEST_INSTALL_STATUS"; fi
+      printf '#!/bin/sh\nprintf "postgres (PostgreSQL) %s\\n"\n' "$CI_TEST_VERSION" > "$CI_TEST_ROOT/pgbin/postgres"
+      chmod +x "$CI_TEST_ROOT/pgbin/postgres"
+      for tool in initdb pg_ctl; do printf '#!/bin/sh\nexit 99\n' > "$CI_TEST_ROOT/pgbin/$tool"; chmod +x "$CI_TEST_ROOT/pgbin/$tool"; done
+      printf 'fixture\n' > "$CI_TEST_ROOT/pgcrypto.control"
+      ;;
+  esac
+}
+npm() {
+  printf 'npm %s\n' "$*" >> "$CI_TEST_TRACE"
+  while [ "$1" != --prefix ]; do shift; done; shift
+  mkdir -p "$1/node_modules/pg/lib"; printf 'controlled fixture\n' > "$1/node_modules/pg/lib/index.js"
+}
+`;
+   const output=local('github-env'),trace=local('trace');
+   const result=spawnSync('/bin/bash',['-c',harness+body],{encoding:'utf8',env:{...process.env,RUNNER_TEMP:local('runtime'),GITHUB_ENV:output,PG_CLIENT_VERSION:'8.13.1',CI_TEST_ROOT:root,CI_TEST_TRACE:trace,CI_TEST_INSTALL_STATUS:String(scenario.installStatus??0),CI_TEST_VERSION:scenario.version??'17.11'}});
+   assert.equal(result.status,scenario.status,scenario.name+': '+result.stderr);
+   for(const p of paths)if(originals.has(p))assert.equal(read(local(p)),originals.get(p),scenario.name+' restores '+p);else assert.equal(existsSync(local(p)),false,scenario.name+' removes temporary '+p);
+   const calls=existsSync(trace)?read(trace):'';
+   if(scenario.installed)assert.doesNotMatch(calls,/apt |curl/);else assert.match(calls,/apt update/);
+   if(scenario.official)assert.doesNotMatch(calls,/curl/);
+   if(scenario.status===0){assert.match(read(output),/VP_WIKI_PG_BIN=/);assert.match(read(output),/VP_WIKI_PG_MODULE=/);assert.match(calls,/pg@8\.13\.1/);}else{assert.equal(existsSync(output),false);assert.doesNotMatch(calls,/npm /);}
+   assert.deepEqual(readdirSync(local('runtime')).filter(name=>name.startsWith('agent005-pg17.')),[]);
+  }finally{rmSync(root,{recursive:true,force:true});}
+ }
+});
+
+test('the registered PG17 lane rejects a PG16 binary before any gated test can silently skip',()=>{
+ const root=mkdtempSync(join(tmpdir(),'vp-pg17-preflight-'));
+ try{
+  const binary=join(root,'postgres');writeFileSync(binary,"#!/bin/sh\nprintf 'postgres (PostgreSQL) 16.15\\n'\n");chmodSync(binary,0o755);
+  const result=spawnSync(process.execPath,['scripts/ci-suites/db-integration.mjs','--lane','postgres-native-17'],{encoding:'utf8',env:{...process.env,VP_WIKI_PG_BIN:root,VP_WIKI_PG_MODULE:'unused-preflight-fixture'}});
+  assert.notEqual(result.status,0);assert.match(result.stderr,/PostgreSQL 17 is required/);assert.doesNotMatch(result.stdout,/::group::/);
+ }finally{rmSync(root,{recursive:true,force:true});}
+});
+
+
+test('Trip PG17 registry enumerates the complete suite exactly once and runs its real expiry gate',()=>{
+ const prefix='tests/integration/service-task-trip/';
+ const files=readdirSync(prefix).filter(f=>f.endsWith('.test.mjs')).sort().map(f=>prefix+f);
+ const step=LANES['postgres-native-17'].steps[1];
+ assert.equal(step.name,'trip-service-task-native-17');assert.deepEqual(step.files,files);
+ assert.deepEqual(step.runner,[process.execPath,'--experimental-strip-types',prefix+'run-integration.mjs']);
+ for(const file of files){
+  const occurrences=Object.values(LANES).flatMap(l=>l.steps).flatMap(s=>s.files).filter(f=>f===file);
+  assert.equal(occurrences.length,1,file);assert.equal(classify().rows.find(r=>r.file===file).lane,'postgres-native-17');assert.equal(EXCLUDED[file],undefined);
+ }
+ const runner=read(prefix+'run-integration.mjs');
+ assert.match(runner,/VP_TRIP_PG_BIN:process.env.VP_TRIP_PG_BIN\?\?process.env.VP_WIKI_PG_BIN/);
+ assert.match(runner,/VP_TRIP_PG_MODULE:process.env.VP_TRIP_PG_MODULE\?\?process.env.VP_WIKI_PG_MODULE/);
+ assert.match(runner,/VP_TRIP_EXPIRY_TEST:'1'/);assert.ok(files.includes(prefix+'proposal-expiry.test.mjs'));
+ const result=spawnSync(process.execPath,[prefix+'run-integration.mjs'],{encoding:'utf8',env:{...process.env,VP_TRIP_PG_BIN:'',VP_TRIP_PG_MODULE:'',VP_WIKI_PG_BIN:'',VP_WIKI_PG_MODULE:''}});
+ assert.notEqual(result.status,0);assert.match(result.stderr,/no skip fallback/);
 });

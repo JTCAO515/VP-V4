@@ -1,0 +1,164 @@
+✖ shared last capacity serializes across text/Trip; cross actor/key/epoch/claim fields never authorize (2785.130834ms)
+✖ cancel/reject and exact confirmation races have one result; original manual edits have no new settlement (2396.427292ms)
+✖ original Sandbox grant revocation races with settlement; expired grant cannot settle or dispatch (2267.779625ms)
+✖ original export request/lease → versioned Trip source/page → strict current TS handler; no real artifact/key (2678.182292ms)
+✖ explicit Trip privacy preview/confirmed erase/recovery removes all owned scoped copies; v1 counts stay unchanged (2754.633209ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 0
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7522.667417
+
+✖ failing tests:
+
+test at tests/integration/service-task-trip/adversarial.test.mjs:10:1
+✖ shared last capacity serializes across text/Trip; cross actor/key/epoch/claim fields never authorize (2785.130834ms)
+  error: TRIP_SERVICE_TASK_SCHEMA_UNSUPPORTED
+      at /Users/jtsm5p/Documents/Codex/2026-10-13/v10-main/agent008-pg-client-20261015/node_modules/pg/lib/client.js:535:17
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async db (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/native-db.mjs:16:202)
+      at async query (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/fixture.mjs:5:35)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/adversarial.test.mjs:13:75)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    length: 321,
+    severity: 'ERROR',
+    code: 'P0001',
+    detail: undefined,
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: 'PL/pgSQL function turn_private.require_trip_runtime_v1() line 1 at RAISE\nSQL statement "SELECT turn_private.require_trip_runtime_v1()"\nPL/pgSQL function public.trip_service_task_owner_v1(uuid,text,jsonb) line 4 at PERFORM',
+    schema: undefined,
+    table: undefined,
+    column: undefined,
+    dataType: undefined,
+    constraint: undefined,
+    file: 'pl_exec.c',
+    line: '3911',
+    routine: 'exec_stmt_raise'
+  }
+
+test at tests/integration/service-task-trip/adversarial.test.mjs:21:1
+✖ cancel/reject and exact confirmation races have one result; original manual edits have no new settlement (2396.427292ms)
+  error: TRIP_SERVICE_TASK_SCHEMA_UNSUPPORTED
+      at /Users/jtsm5p/Documents/Codex/2026-10-13/v10-main/agent008-pg-client-20261015/node_modules/pg/lib/client.js:535:17
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async db (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/native-db.mjs:16:202)
+      at async query (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/fixture.mjs:5:35)
+      at async produceTripCandidate (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/producer-fixture.mjs:4:62)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/adversarial.test.mjs:24:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    length: 321,
+    severity: 'ERROR',
+    code: 'P0001',
+    detail: undefined,
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: 'PL/pgSQL function turn_private.require_trip_runtime_v1() line 1 at RAISE\nSQL statement "SELECT turn_private.require_trip_runtime_v1()"\nPL/pgSQL function public.trip_service_task_owner_v1(uuid,text,jsonb) line 4 at PERFORM',
+    schema: undefined,
+    table: undefined,
+    column: undefined,
+    dataType: undefined,
+    constraint: undefined,
+    file: 'pl_exec.c',
+    line: '3911',
+    routine: 'exec_stmt_raise'
+  }
+
+test at tests/integration/service-task-trip/adversarial.test.mjs:35:1
+✖ original Sandbox grant revocation races with settlement; expired grant cannot settle or dispatch (2267.779625ms)
+  error: TRIP_SERVICE_TASK_SCHEMA_UNSUPPORTED
+      at /Users/jtsm5p/Documents/Codex/2026-10-13/v10-main/agent008-pg-client-20261015/node_modules/pg/lib/client.js:535:17
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async db (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/native-db.mjs:16:202)
+      at async query (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/fixture.mjs:5:35)
+      at async produceTripCandidate (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/producer-fixture.mjs:4:62)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/adversarial.test.mjs:39:37)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    length: 321,
+    severity: 'ERROR',
+    code: 'P0001',
+    detail: undefined,
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: 'PL/pgSQL function turn_private.require_trip_runtime_v1() line 1 at RAISE\nSQL statement "SELECT turn_private.require_trip_runtime_v1()"\nPL/pgSQL function public.trip_service_task_owner_v1(uuid,text,jsonb) line 4 at PERFORM',
+    schema: undefined,
+    table: undefined,
+    column: undefined,
+    dataType: undefined,
+    constraint: undefined,
+    file: 'pl_exec.c',
+    line: '3911',
+    routine: 'exec_stmt_raise'
+  }
+
+test at tests/integration/service-task-trip/export-flow.test.mjs:10:1
+✖ original export request/lease → versioned Trip source/page → strict current TS handler; no real artifact/key (2678.182292ms)
+  error: TRIP_SERVICE_TASK_SCHEMA_UNSUPPORTED
+      at /Users/jtsm5p/Documents/Codex/2026-10-13/v10-main/agent008-pg-client-20261015/node_modules/pg/lib/client.js:535:17
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async db (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/native-db.mjs:16:202)
+      at async query (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/fixture.mjs:5:35)
+      at async produceTripCandidate (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/producer-fixture.mjs:4:62)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/export-flow.test.mjs:12:17)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    length: 321,
+    severity: 'ERROR',
+    code: 'P0001',
+    detail: undefined,
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: 'PL/pgSQL function turn_private.require_trip_runtime_v1() line 1 at RAISE\nSQL statement "SELECT turn_private.require_trip_runtime_v1()"\nPL/pgSQL function public.trip_service_task_owner_v1(uuid,text,jsonb) line 4 at PERFORM',
+    schema: undefined,
+    table: undefined,
+    column: undefined,
+    dataType: undefined,
+    constraint: undefined,
+    file: 'pl_exec.c',
+    line: '3911',
+    routine: 'exec_stmt_raise'
+  }
+
+test at tests/integration/service-task-trip/privacy-flow.test.mjs:10:1
+✖ explicit Trip privacy preview/confirmed erase/recovery removes all owned scoped copies; v1 counts stay unchanged (2754.633209ms)
+  error: TRIP_SERVICE_TASK_SCHEMA_UNSUPPORTED
+      at /Users/jtsm5p/Documents/Codex/2026-10-13/v10-main/agent008-pg-client-20261015/node_modules/pg/lib/client.js:535:17
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async db (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/native-db.mjs:16:202)
+      at async query (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/fixture.mjs:5:35)
+      at async produceTripCandidate (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/producer-fixture.mjs:4:62)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/privacy-flow.test.mjs:13:35)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    length: 321,
+    severity: 'ERROR',
+    code: 'P0001',
+    detail: undefined,
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: 'PL/pgSQL function turn_private.require_trip_runtime_v1() line 1 at RAISE\nSQL statement "SELECT turn_private.require_trip_runtime_v1()"\nPL/pgSQL function public.trip_service_task_owner_v1(uuid,text,jsonb) line 4 at PERFORM',
+    schema: undefined,
+    table: undefined,
+    column: undefined,
+    dataType: undefined,
+    constraint: undefined,
+    file: 'pl_exec.c',
+    line: '3911',
+    routine: 'exec_stmt_raise'
+  }

@@ -51,14 +51,13 @@ test("all three place question ids resolve to scene 'attraction'", async () => {
   }
 });
 
-test("a real published place statement flows through to a real answer, same as any other supported intent", async () => {
+test("a published place statement cannot assert an answer without a resolved place subject", async () => {
   const placeStatement = Object.freeze({ factId: "fact-museum", assertionId: "assertion-museum", assertion: { subjectId: "shanghai_museum", predicate: "opens_during", objectId: "opening_hours" }, sources: [{ sourceRevisionId: "22222222-2222-2222-2222-222222222222" }], text: "Shanghai Museum opens at 9am and closes at 5pm.", conditions: [], exclusions: [] });
   const placeAnswer = { action: "answer", coverage: "answered", summary: "Shanghai Museum opens at 9am.", citations: [{ pageKey: "fact-museum", quote: "opens at 9am" }], gaps: [] , conflicts: [] };
   const rpc = async () => ({ data: knowledgeReadResponse([placeStatement]), error: null });
   const placeIntent = { intent: "place_opening_hours", requestScope: "single", placeName: "Shanghai Museum" };
   const outcome = await runGroundedWikiSearch({ ...baseInput, intent: placeIntent, question: "When does Shanghai Museum open?" }, { ...jobDeps, rpc, fetch: async () => chatResponse(placeAnswer) }, new AbortController().signal);
-  assert.equal(outcome.kind, "answered");
-  assert.equal(outcome.summary, placeAnswer.summary);
+  assert.deepEqual(outcome, { kind: "unavailable", reason: "user_input_missing" });
 });
 
 test("maps the intent's question definition to the correct scene when calling knowledge_read_v1", async () => {
@@ -86,10 +85,13 @@ test("any other RPC-level error is provider_failure with its code preserved", as
   assert.deepEqual(outcome, { kind: "unavailable", reason: "provider_failure", providerCode: "KNOWLEDGE_UNAVAILABLE" });
 });
 
-test("real content exists but the search loop finds nothing relevant: retrieval_miss, distinct from missing_content", async () => {
+test("a model no-content assertion cannot hide a direct match to an authorized required claim", async () => {
   const rpc = async () => ({ data: knowledgeReadResponse([publishedStatement]), error: null });
   const outcome = await runGroundedWikiSearch(baseInput, { ...jobDeps, rpc, fetch: async () => chatResponse(noContentAnswer) }, new AbortController().signal);
-  assert.deepEqual(outcome, { kind: "unavailable", reason: "retrieval_miss" });
+  assert.equal(outcome.kind, "answered");
+  assert.equal(outcome.coverage, "answered");
+  assert.equal(outcome.summary, publishedStatement.text);
+  assert.equal(outcome.evidence.required[0].status, "covered");
 });
 
 test("a provider/model failure is provider_failure with the underlying error code", async () => {
@@ -120,9 +122,7 @@ test("a place-question answer never fabricates required-claim coverage: Evidence
   const rpc = async () => ({ data: knowledgeReadResponse([placeStatement]), error: null });
   const placeIntent = { intent: "place_opening_hours", requestScope: "single", placeName: "Shanghai Museum" };
   const outcome = await runGroundedWikiSearch({ ...baseInput, intent: placeIntent, question: "When does Shanghai Museum open?" }, { ...jobDeps, rpc, fetch: async () => chatResponse(placeAnswer) }, new AbortController().signal);
-  assert.equal(outcome.kind, "answered");
-  assert.deepEqual(outcome.evidence.required, []);
-  assert.deepEqual(outcome.evidence.background, [{ statementId: "fact-museum-2", publicationId: "assertion-museum-2", sourceIds: ["33333333-3333-3333-3333-333333333333"], span: "opens at 9am" }]);
+  assert.deepEqual(outcome, { kind: "unavailable", reason: "user_input_missing" });
 });
 
 test("budget_exhausted and cancelled pass through as their own terminal kinds, not folded into the six reason codes", async () => {

@@ -1,0 +1,864 @@
+{
+  "schemaVersion": 2,
+  "versions": {
+    "corpus": "wiki-agentic-search-eval/2",
+    "claims": "questions/1"
+  },
+  "harnessContract": "grounded-result-contract/2",
+  "commit": "92e5bf2960133e4fda850efb4d363c4d623835ff",
+  "mode": "fixture",
+  "note": "Fixture transport: elapsedMs measures this real code path's own overhead (parsing, validation, corpus scoring), not real network/model latency. usageTotalTokens is the fixture responses' declared usage, not a real bill. A real-model pass is a deliberate, separate follow-up -- see this eval's README.",
+  "counts": {
+    "total": 34,
+    "development": 17,
+    "holdout": 17,
+    "answered": 24,
+    "unavailable": 9,
+    "budgetExhausted": 1
+  },
+  "metrics": {
+    "coverageRatePercent": 72.7,
+    "overRefusalRatePercent": 27.3,
+    "p50ElapsedMs": 0.166,
+    "p95ElapsedMs": 0.668,
+    "totalTokens": 780
+  },
+  "baselineDivergence": [
+    {
+      "id": "place_address-zh",
+      "questionId": "place_address",
+      "locale": "zh",
+      "kind": "full_coverage",
+      "outcomeKind": "unavailable"
+    },
+    {
+      "id": "place_address-en",
+      "questionId": "place_address",
+      "locale": "en",
+      "kind": "full_coverage",
+      "outcomeKind": "unavailable"
+    },
+    {
+      "id": "place_opening_hours-zh",
+      "questionId": "place_opening_hours",
+      "locale": "zh",
+      "kind": "full_coverage",
+      "outcomeKind": "unavailable"
+    },
+    {
+      "id": "place_opening_hours-en",
+      "questionId": "place_opening_hours",
+      "locale": "en",
+      "kind": "full_coverage",
+      "outcomeKind": "unavailable"
+    },
+    {
+      "id": "place_address_and_hours-zh",
+      "questionId": "place_address_and_hours",
+      "locale": "zh",
+      "kind": "full_coverage",
+      "outcomeKind": "unavailable"
+    },
+    {
+      "id": "place_address_and_hours-en",
+      "questionId": "place_address_and_hours",
+      "locale": "en",
+      "kind": "full_coverage",
+      "outcomeKind": "unavailable"
+    },
+    {
+      "id": "diversity-retrieval-miss-en",
+      "questionId": "payment_card_acceptance",
+      "locale": "en",
+      "kind": "retrieval_miss",
+      "outcomeKind": "unavailable"
+    },
+    {
+      "id": "diversity-provider-failure-en",
+      "questionId": "connectivity_sim_documents",
+      "locale": "en",
+      "kind": "provider_failure",
+      "outcomeKind": "unavailable"
+    },
+    {
+      "id": "diversity-budget-exhausted-zh",
+      "questionId": "place_opening_hours",
+      "locale": "zh",
+      "kind": "budget_exhausted",
+      "outcomeKind": "budget_exhausted"
+    }
+  ],
+  "rows": [
+    {
+      "id": "rail_boarding_documents-zh",
+      "group": "development",
+      "questionId": "rail_boarding_documents",
+      "locale": "zh",
+      "kind": "full_coverage",
+      "outcomeKind": "answered",
+      "requiredCovered": 2,
+      "requiredTotal": 2,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": false,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "answered"
+      },
+      "legacyMatchesExpected": true,
+      "currentContractExpected": {
+        "kind": "answered"
+      },
+      "elapsedMs": 11.498,
+      "usageTotalTokens": 30
+    },
+    {
+      "id": "rail_boarding_documents-en",
+      "group": "holdout",
+      "questionId": "rail_boarding_documents",
+      "locale": "en",
+      "kind": "full_coverage",
+      "outcomeKind": "answered",
+      "requiredCovered": 2,
+      "requiredTotal": 2,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": false,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "answered"
+      },
+      "legacyMatchesExpected": true,
+      "currentContractExpected": {
+        "kind": "answered"
+      },
+      "elapsedMs": 0.436,
+      "usageTotalTokens": 30
+    },
+    {
+      "id": "payment_card_acceptance-zh",
+      "group": "holdout",
+      "questionId": "payment_card_acceptance",
+      "locale": "zh",
+      "kind": "full_coverage",
+      "outcomeKind": "answered",
+      "requiredCovered": 1,
+      "requiredTotal": 1,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": false,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "answered"
+      },
+      "legacyMatchesExpected": true,
+      "currentContractExpected": {
+        "kind": "answered"
+      },
+      "elapsedMs": 0.302,
+      "usageTotalTokens": 30
+    },
+    {
+      "id": "payment_card_acceptance-en",
+      "group": "development",
+      "questionId": "payment_card_acceptance",
+      "locale": "en",
+      "kind": "full_coverage",
+      "outcomeKind": "answered",
+      "requiredCovered": 1,
+      "requiredTotal": 1,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": false,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "answered"
+      },
+      "legacyMatchesExpected": true,
+      "currentContractExpected": {
+        "kind": "answered"
+      },
+      "elapsedMs": 0.311,
+      "usageTotalTokens": 30
+    },
+    {
+      "id": "payment_mobile_setup-zh",
+      "group": "development",
+      "questionId": "payment_mobile_setup",
+      "locale": "zh",
+      "kind": "full_coverage",
+      "outcomeKind": "answered",
+      "requiredCovered": 1,
+      "requiredTotal": 1,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": false,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "answered"
+      },
+      "legacyMatchesExpected": true,
+      "currentContractExpected": {
+        "kind": "answered"
+      },
+      "elapsedMs": 0.311,
+      "usageTotalTokens": 30
+    },
+    {
+      "id": "payment_mobile_setup-en",
+      "group": "holdout",
+      "questionId": "payment_mobile_setup",
+      "locale": "en",
+      "kind": "full_coverage",
+      "outcomeKind": "answered",
+      "requiredCovered": 1,
+      "requiredTotal": 1,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": false,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "answered"
+      },
+      "legacyMatchesExpected": true,
+      "currentContractExpected": {
+        "kind": "answered"
+      },
+      "elapsedMs": 0.593,
+      "usageTotalTokens": 30
+    },
+    {
+      "id": "payment_cash_access-zh",
+      "group": "holdout",
+      "questionId": "payment_cash_access",
+      "locale": "zh",
+      "kind": "full_coverage",
+      "outcomeKind": "answered",
+      "requiredCovered": 2,
+      "requiredTotal": 2,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": false,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "answered"
+      },
+      "legacyMatchesExpected": true,
+      "currentContractExpected": {
+        "kind": "answered"
+      },
+      "elapsedMs": 0.244,
+      "usageTotalTokens": 30
+    },
+    {
+      "id": "payment_cash_access-en",
+      "group": "development",
+      "questionId": "payment_cash_access",
+      "locale": "en",
+      "kind": "full_coverage",
+      "outcomeKind": "answered",
+      "requiredCovered": 2,
+      "requiredTotal": 2,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": false,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "answered"
+      },
+      "legacyMatchesExpected": true,
+      "currentContractExpected": {
+        "kind": "answered"
+      },
+      "elapsedMs": 0.189,
+      "usageTotalTokens": 30
+    },
+    {
+      "id": "payment_card_and_mobile-zh",
+      "group": "development",
+      "questionId": "payment_card_and_mobile",
+      "locale": "zh",
+      "kind": "full_coverage",
+      "outcomeKind": "answered",
+      "requiredCovered": 2,
+      "requiredTotal": 2,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": false,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "answered"
+      },
+      "legacyMatchesExpected": true,
+      "currentContractExpected": {
+        "kind": "answered"
+      },
+      "elapsedMs": 0.525,
+      "usageTotalTokens": 30
+    },
+    {
+      "id": "payment_card_and_mobile-en",
+      "group": "holdout",
+      "questionId": "payment_card_and_mobile",
+      "locale": "en",
+      "kind": "full_coverage",
+      "outcomeKind": "answered",
+      "requiredCovered": 2,
+      "requiredTotal": 2,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": false,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "answered"
+      },
+      "legacyMatchesExpected": true,
+      "currentContractExpected": {
+        "kind": "answered"
+      },
+      "elapsedMs": 0.309,
+      "usageTotalTokens": 30
+    },
+    {
+      "id": "payment_card_and_cash-zh",
+      "group": "holdout",
+      "questionId": "payment_card_and_cash",
+      "locale": "zh",
+      "kind": "full_coverage",
+      "outcomeKind": "answered",
+      "requiredCovered": 3,
+      "requiredTotal": 3,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": false,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "answered"
+      },
+      "legacyMatchesExpected": true,
+      "currentContractExpected": {
+        "kind": "answered"
+      },
+      "elapsedMs": 0.236,
+      "usageTotalTokens": 30
+    },
+    {
+      "id": "payment_card_and_cash-en",
+      "group": "development",
+      "questionId": "payment_card_and_cash",
+      "locale": "en",
+      "kind": "full_coverage",
+      "outcomeKind": "answered",
+      "requiredCovered": 3,
+      "requiredTotal": 3,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": false,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "answered"
+      },
+      "legacyMatchesExpected": true,
+      "currentContractExpected": {
+        "kind": "answered"
+      },
+      "elapsedMs": 0.166,
+      "usageTotalTokens": 30
+    },
+    {
+      "id": "payment_mobile_and_cash-zh",
+      "group": "development",
+      "questionId": "payment_mobile_and_cash",
+      "locale": "zh",
+      "kind": "full_coverage",
+      "outcomeKind": "answered",
+      "requiredCovered": 3,
+      "requiredTotal": 3,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": false,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "answered"
+      },
+      "legacyMatchesExpected": true,
+      "currentContractExpected": {
+        "kind": "answered"
+      },
+      "elapsedMs": 0.134,
+      "usageTotalTokens": 30
+    },
+    {
+      "id": "payment_mobile_and_cash-en",
+      "group": "holdout",
+      "questionId": "payment_mobile_and_cash",
+      "locale": "en",
+      "kind": "full_coverage",
+      "outcomeKind": "answered",
+      "requiredCovered": 3,
+      "requiredTotal": 3,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": false,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "answered"
+      },
+      "legacyMatchesExpected": true,
+      "currentContractExpected": {
+        "kind": "answered"
+      },
+      "elapsedMs": 0.127,
+      "usageTotalTokens": 30
+    },
+    {
+      "id": "payment_getting_started-zh",
+      "group": "holdout",
+      "questionId": "payment_getting_started",
+      "locale": "zh",
+      "kind": "full_coverage",
+      "outcomeKind": "answered",
+      "requiredCovered": 4,
+      "requiredTotal": 4,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": false,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "answered"
+      },
+      "legacyMatchesExpected": true,
+      "currentContractExpected": {
+        "kind": "answered"
+      },
+      "elapsedMs": 0.169,
+      "usageTotalTokens": 30
+    },
+    {
+      "id": "payment_getting_started-en",
+      "group": "development",
+      "questionId": "payment_getting_started",
+      "locale": "en",
+      "kind": "full_coverage",
+      "outcomeKind": "answered",
+      "requiredCovered": 4,
+      "requiredTotal": 4,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": false,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "answered"
+      },
+      "legacyMatchesExpected": true,
+      "currentContractExpected": {
+        "kind": "answered"
+      },
+      "elapsedMs": 0.119,
+      "usageTotalTokens": 30
+    },
+    {
+      "id": "connectivity_sim_documents-zh",
+      "group": "development",
+      "questionId": "connectivity_sim_documents",
+      "locale": "zh",
+      "kind": "full_coverage",
+      "outcomeKind": "answered",
+      "requiredCovered": 1,
+      "requiredTotal": 1,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": false,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "answered"
+      },
+      "legacyMatchesExpected": true,
+      "currentContractExpected": {
+        "kind": "answered"
+      },
+      "elapsedMs": 0.125,
+      "usageTotalTokens": 30
+    },
+    {
+      "id": "connectivity_sim_documents-en",
+      "group": "holdout",
+      "questionId": "connectivity_sim_documents",
+      "locale": "en",
+      "kind": "full_coverage",
+      "outcomeKind": "answered",
+      "requiredCovered": 1,
+      "requiredTotal": 1,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": false,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "answered"
+      },
+      "legacyMatchesExpected": true,
+      "currentContractExpected": {
+        "kind": "answered"
+      },
+      "elapsedMs": 0.109,
+      "usageTotalTokens": 30
+    },
+    {
+      "id": "connectivity_plan_allowances-zh",
+      "group": "holdout",
+      "questionId": "connectivity_plan_allowances",
+      "locale": "zh",
+      "kind": "full_coverage",
+      "outcomeKind": "answered",
+      "requiredCovered": 1,
+      "requiredTotal": 1,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": false,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "answered"
+      },
+      "legacyMatchesExpected": true,
+      "currentContractExpected": {
+        "kind": "answered"
+      },
+      "elapsedMs": 0.111,
+      "usageTotalTokens": 30
+    },
+    {
+      "id": "connectivity_plan_allowances-en",
+      "group": "development",
+      "questionId": "connectivity_plan_allowances",
+      "locale": "en",
+      "kind": "full_coverage",
+      "outcomeKind": "answered",
+      "requiredCovered": 1,
+      "requiredTotal": 1,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": false,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "answered"
+      },
+      "legacyMatchesExpected": true,
+      "currentContractExpected": {
+        "kind": "answered"
+      },
+      "elapsedMs": 0.089,
+      "usageTotalTokens": 30
+    },
+    {
+      "id": "connectivity_getting_started-zh",
+      "group": "development",
+      "questionId": "connectivity_getting_started",
+      "locale": "zh",
+      "kind": "full_coverage",
+      "outcomeKind": "answered",
+      "requiredCovered": 2,
+      "requiredTotal": 2,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": false,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "answered"
+      },
+      "legacyMatchesExpected": true,
+      "currentContractExpected": {
+        "kind": "answered"
+      },
+      "elapsedMs": 0.113,
+      "usageTotalTokens": 30
+    },
+    {
+      "id": "connectivity_getting_started-en",
+      "group": "holdout",
+      "questionId": "connectivity_getting_started",
+      "locale": "en",
+      "kind": "full_coverage",
+      "outcomeKind": "answered",
+      "requiredCovered": 2,
+      "requiredTotal": 2,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": false,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "answered"
+      },
+      "legacyMatchesExpected": true,
+      "currentContractExpected": {
+        "kind": "answered"
+      },
+      "elapsedMs": 0.255,
+      "usageTotalTokens": 30
+    },
+    {
+      "id": "place_address-zh",
+      "group": "holdout",
+      "questionId": "place_address",
+      "locale": "zh",
+      "kind": "full_coverage",
+      "outcomeKind": "unavailable",
+      "reason": "user_input_missing",
+      "requiredCovered": 0,
+      "requiredTotal": 0,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": true,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "answered"
+      },
+      "legacyMatchesExpected": false,
+      "currentContractExpected": {
+        "kind": "unavailable",
+        "reason": "user_input_missing"
+      },
+      "elapsedMs": 0.12,
+      "usageTotalTokens": 0
+    },
+    {
+      "id": "place_address-en",
+      "group": "development",
+      "questionId": "place_address",
+      "locale": "en",
+      "kind": "full_coverage",
+      "outcomeKind": "unavailable",
+      "reason": "user_input_missing",
+      "requiredCovered": 0,
+      "requiredTotal": 0,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": true,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "answered"
+      },
+      "legacyMatchesExpected": false,
+      "currentContractExpected": {
+        "kind": "unavailable",
+        "reason": "user_input_missing"
+      },
+      "elapsedMs": 0.102,
+      "usageTotalTokens": 0
+    },
+    {
+      "id": "place_opening_hours-zh",
+      "group": "development",
+      "questionId": "place_opening_hours",
+      "locale": "zh",
+      "kind": "full_coverage",
+      "outcomeKind": "unavailable",
+      "reason": "user_input_missing",
+      "requiredCovered": 0,
+      "requiredTotal": 0,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": true,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "answered"
+      },
+      "legacyMatchesExpected": false,
+      "currentContractExpected": {
+        "kind": "unavailable",
+        "reason": "user_input_missing"
+      },
+      "elapsedMs": 0.083,
+      "usageTotalTokens": 0
+    },
+    {
+      "id": "place_opening_hours-en",
+      "group": "holdout",
+      "questionId": "place_opening_hours",
+      "locale": "en",
+      "kind": "full_coverage",
+      "outcomeKind": "unavailable",
+      "reason": "user_input_missing",
+      "requiredCovered": 0,
+      "requiredTotal": 0,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": true,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "answered"
+      },
+      "legacyMatchesExpected": false,
+      "currentContractExpected": {
+        "kind": "unavailable",
+        "reason": "user_input_missing"
+      },
+      "elapsedMs": 0.119,
+      "usageTotalTokens": 0
+    },
+    {
+      "id": "place_address_and_hours-zh",
+      "group": "holdout",
+      "questionId": "place_address_and_hours",
+      "locale": "zh",
+      "kind": "full_coverage",
+      "outcomeKind": "unavailable",
+      "reason": "user_input_missing",
+      "requiredCovered": 0,
+      "requiredTotal": 0,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": true,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "answered"
+      },
+      "legacyMatchesExpected": false,
+      "currentContractExpected": {
+        "kind": "unavailable",
+        "reason": "user_input_missing"
+      },
+      "elapsedMs": 0.16,
+      "usageTotalTokens": 0
+    },
+    {
+      "id": "place_address_and_hours-en",
+      "group": "development",
+      "questionId": "place_address_and_hours",
+      "locale": "en",
+      "kind": "full_coverage",
+      "outcomeKind": "unavailable",
+      "reason": "user_input_missing",
+      "requiredCovered": 0,
+      "requiredTotal": 0,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": true,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "answered"
+      },
+      "legacyMatchesExpected": false,
+      "currentContractExpected": {
+        "kind": "unavailable",
+        "reason": "user_input_missing"
+      },
+      "elapsedMs": 0.095,
+      "usageTotalTokens": 0
+    },
+    {
+      "id": "diversity-missing-content-zh",
+      "group": "development",
+      "questionId": "payment_card_acceptance",
+      "locale": "zh",
+      "kind": "missing_content",
+      "outcomeKind": "unavailable",
+      "reason": "missing_content",
+      "requiredCovered": 0,
+      "requiredTotal": 1,
+      "structuredBaselineWouldAnswer": false,
+      "divergesFromBaseline": false,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "unavailable",
+        "reason": "missing_content"
+      },
+      "legacyMatchesExpected": true,
+      "currentContractExpected": {
+        "kind": "unavailable",
+        "reason": "missing_content"
+      },
+      "elapsedMs": 0.008,
+      "usageTotalTokens": 0
+    },
+    {
+      "id": "diversity-retrieval-miss-en",
+      "group": "holdout",
+      "questionId": "payment_card_acceptance",
+      "locale": "en",
+      "kind": "retrieval_miss",
+      "outcomeKind": "unavailable",
+      "reason": "retrieval_miss",
+      "requiredCovered": 0,
+      "requiredTotal": 1,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": true,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "unavailable",
+        "reason": "retrieval_miss"
+      },
+      "legacyMatchesExpected": true,
+      "currentContractExpected": {
+        "kind": "unavailable",
+        "reason": "retrieval_miss"
+      },
+      "elapsedMs": 0.121,
+      "usageTotalTokens": 0
+    },
+    {
+      "id": "diversity-partial-coverage-zh",
+      "group": "holdout",
+      "questionId": "rail_boarding_documents",
+      "locale": "zh",
+      "kind": "partial_coverage",
+      "outcomeKind": "answered",
+      "requiredCovered": 1,
+      "requiredTotal": 2,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": false,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "answered"
+      },
+      "legacyMatchesExpected": true,
+      "currentContractExpected": {
+        "kind": "answered"
+      },
+      "elapsedMs": 0.181,
+      "usageTotalTokens": 30
+    },
+    {
+      "id": "diversity-provider-failure-en",
+      "group": "development",
+      "questionId": "connectivity_sim_documents",
+      "locale": "en",
+      "kind": "provider_failure",
+      "outcomeKind": "unavailable",
+      "reason": "provider_failure",
+      "requiredCovered": 0,
+      "requiredTotal": 1,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": true,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "unavailable",
+        "reason": "provider_failure"
+      },
+      "legacyMatchesExpected": true,
+      "currentContractExpected": {
+        "kind": "unavailable",
+        "reason": "provider_failure"
+      },
+      "elapsedMs": 0.204,
+      "usageTotalTokens": 0
+    },
+    {
+      "id": "diversity-budget-exhausted-zh",
+      "group": "holdout",
+      "questionId": "place_opening_hours",
+      "locale": "zh",
+      "kind": "budget_exhausted",
+      "outcomeKind": "budget_exhausted",
+      "requiredCovered": 0,
+      "requiredTotal": 0,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": true,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "budget_exhausted"
+      },
+      "legacyMatchesExpected": true,
+      "currentContractExpected": {
+        "kind": "budget_exhausted"
+      },
+      "elapsedMs": 0.668,
+      "usageTotalTokens": 60
+    },
+    {
+      "id": "diversity-getting-started-partial-en",
+      "group": "development",
+      "questionId": "payment_getting_started",
+      "locale": "en",
+      "kind": "partial_coverage",
+      "outcomeKind": "answered",
+      "requiredCovered": 2,
+      "requiredTotal": 4,
+      "structuredBaselineWouldAnswer": true,
+      "divergesFromBaseline": false,
+      "matchesExpected": true,
+      "legacyExpected": {
+        "kind": "answered"
+      },
+      "legacyMatchesExpected": true,
+      "currentContractExpected": {
+        "kind": "answered"
+      },
+      "elapsedMs": 0.114,
+      "usageTotalTokens": 30
+    }
+  ],
+  "legacyVerdict": "FAIL",
+  "verdict": "PASS"
+}

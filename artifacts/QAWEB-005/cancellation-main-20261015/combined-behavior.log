@@ -1,0 +1,32 @@
+✔ browser-safe strict scope/version/state and acknowledgment do not promise cancellation (0.748667ms)
+✔ service only calls protected original-ID RPC; closed body rejects actor/turn/client status (0.801542ms)
+✔ unknown POST ACK retains original scope and recovery is read only, no admission/retry (0.169042ms)
+✔ uppercase original UUID POST decodes canonical SQL receipt and same-ID GET recovers (1.234833ms)
+✔ unknown uppercase POST ACK keeps original scope; canonicalization never accepts another UUID (0.517916ms)
+✔ accepted receipt stays pending and transport uses same-origin cookies without auth headers (1.64775ms)
+✔ version, owner/session, request, terminal-without-answer and unknown outcome fail closed (2.089792ms)
+✔ unknown ACK stays unknown and explicit original request recovery is GET only (0.32575ms)
+✔ policy consent is never inferred and server denial is preserved (0.766917ms)
+✔ only accepted versioned QA session policy permits submission (2.002041ms)
+✔ missing, mismatched and unknown quota authority fail closed; limit denial retains not_submitted (1.814292ms)
+✔ only temporary history errors retry; permission and successful malformed wire stop (0.696875ms)
+✔ reconciliation is a protected non-answer with original identity; unknown status and answer payload fail closed (0.843959ms)
+✔ cancellation uses only its independent five-field wire and closed original-ID POST (2.58ms)
+✔ cancellation scope uses canonical UUID case without replacing the original identity (0.295875ms)
+✔ cancellation transport401/403 invalidates identity/access without trusting JSON shape or ack (1.139584ms)
+✔ content-free identity survives reload and cannot be replaced by another UUID (1.117959ms)
+✔ different actor and logout clear recovery metadata without exposing old requests (0.090666ms)
+✔ only matching confirmed receipt clears unresolved identity (0.082333ms)
+✔ unavailable, malformed, silent write and cleanup failure all fail closed (0.119625ms)
+✔ stale actor mutation cannot delete or overwrite a new actor recovery identity (0.088833ms)
+✔ cancellation lookup/intent IDs stay separate from original admission and store no authority/result (0.209417ms)
+✔ definitely rejected stop resets only cancellation intent, never original admission identity (0.085916ms)
+✔ real HTTP route + SSR cookie cancellation keeps exact request, unknown ACK recovers by GET only (36.487042ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 324.586834

@@ -1,0 +1,20 @@
+trigger comparison ["export_private.core_artifacts_v1","conversation_core_copy_fence_v1","CREATE TRIGGER conversation_core_copy_fence_v1 BEFORE INSERT ON export_private.core_artifacts_v1 FOR EACH ROW EXECUTE FUNCTION conversation_data_private.guard_core_copy_v1()","conversation_data_private.guard_core_copy_v1()"] ["public.user_profiles","native_mobile_write_v2","CREATE TRIGGER native_mobile_write_v2 BEFORE INSERT OR DELETE OR UPDATE ON public.user_profiles FOR EACH ROW EXECUTE FUNCTION identity_private.guard_mobile_write_v2()","identity_private.guard_mobile_write_v2()"]
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+102 !== 0
+
+    at file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/generate-lifecycle-pins.mjs:48:121
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 102,
+  expected: 0,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v26.8.2

@@ -1,0 +1,83 @@
+✔ claimed answered cannot hide an unresolved required claim or add free prose (11.555375ms)
+✔ complete OPS_CONFLICT cannot display succeeded (0.66475ms)
+✔ zh: complete multiple obligations cannot be refused by a model no-content assertion (0.395375ms)
+✔ en: complete multiple obligations cannot be refused by a model no-content assertion (0.25075ms)
+✔ unknown fact (0.289459ms)
+✔ wrong quote (0.1985ms)
+✔ wrong subject cannot satisfy an exact required triple (0.585333ms)
+✔ display recheck excludes expired evidence (0.230042ms)
+✔ display recheck excludes source-revoked evidence (0.233375ms)
+✔ display recheck excludes missing evidence (0.336917ms)
+✔ display recheck excludes wrong-scope evidence (0.194167ms)
+✔ different projected wording remains unresolved under the existing variant gate, without asserting semantic contradiction (0.350209ms)
+✔ unlocalized model disagreement retains reliable statements with explicit uncertainty and no free model conflict prose (0.255125ms)
+✔ same fact with two agreeing published evidence chains stays answerable (0.167292ms)
+✔ conditions and exclusions cannot be removed by model summary or quote (0.218ms)
+✔ completion error: no successful display, one model call and one completion only (0.208708ms)
+✔ completion throw: no successful display, one model call and one completion only (0.138292ms)
+✔ completion unknown: no successful display, one model call and one completion only (0.131584ms)
+✔ completion wrong job: no successful display, one model call and one completion only (0.116041ms)
+✔ completion wrong status: no successful display, one model call and one completion only (0.149458ms)
+✔ completion cancelled: no successful display, one model call and one completion only (0.124291ms)
+✔ explicit receipt succeeds; a subsequent done poll does not run the model again (0.353209ms)
+✔ cancellation after model reply never completes successfully (0.249708ms)
+✔ done answer is rechecked after source withdrawal without a new model or completion (0.217125ms)
+✔ done legacy invented summary is replaced with current evidence text without running the model (0.21675ms)
+✔ unknown completion followed by a server pending poll does not repeat model or complete (0.17025ms)
+✔ long canonical statements keep every condition and exclusion within eight whole citation entries (0.186916ms)
+✔ bounded direct lookup reserves one result per obligation before repeated supporting sources (0.230584ms)
+✔ malformed persisted answer is failed without model or completing (0.275125ms)
+✔ explicit first-party resolved place subject with complete required facts answers; missing subject remains unavailable (0.422417ms)
+✔ resolved place partial answer retains reliable claim and names the missing obligation (0.122792ms)
+✔ a valid background citation cannot hide complete exact obligations from bounded fallback (0.485458ms)
+✔ model omission of a current place evidence variant cannot assert full coverage (0.1765ms)
+✔ variant guard compares assertion qualifiers outside the model-selected citation (0.138208ms)
+✔ structured value differences cannot be hidden by identical localized text (0.144458ms)
+✔ projected variants use JSONB object equality rather than JavaScript property order (0.12225ms)
+✔ fallback does not grant new evidence to a persisted result after its own sources were revoked (0.157125ms)
+✔ fallback filters eight withdrawn publications before capping so a ninth original current source answers (0.165416ms)
+✖ real job initial call consumes an owner-context resolved subject rather than dropping it (11.285167ms)
+✔ client subject without a matched server context cannot make a place answered (0.455166ms)
+✔ real job done replay accepts a requalified matched place context without rerunning the model (0.71575ms)
+✔ done replay rejects old turn without querying evidence or running a model (0.337459ms)
+✔ done replay rejects ambiguous branch without querying evidence or running a model (0.369042ms)
+✔ done replay rejects unavailable mapping without querying evidence or running a model (0.262ms)
+✔ done replay rejects invalid subject without querying evidence or running a model (0.230666ms)
+✔ ensure kind:unavailable is not_offered/unauthorized, never runs a search or completes (0.691375ms)
+✔ ensure kind:not_applicable is not_offered/not_blocked (0.075458ms)
+✔ ensure kind:pending (another caller already claimed it) reports pending without running a search (0.100083ms)
+✔ ensure kind:done surfaces the stored outcome without re-running the search (0.107208ms)
+✔ ensure kind:done with status failed/cancelled maps straight through (0.082166ms)
+✔ ensure kind:claimed runs the real search loop and completes the job with a succeeded outcome carrying the exact claimToken (10.734959ms)
+✔ a context-unavailable result is persisted only with a matching succeeded receipt (0.103792ms)
+✔ a claimed job whose complete() call fails to reach the server reports pending without displaying an unacknowledged outcome (0.461209ms)
+✔ an ensure call that throws or errors is not_offered/job_unavailable, never crashes (0.090917ms)
+ℹ tests 54
+ℹ suites 0
+ℹ pass 53
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 108.163834
+
+✖ failing tests:
+
+test at tests/contract/agent-grounded-result/subject-binding.test.mjs:15:1
+✖ real job initial call consumes an owner-context resolved subject rather than dropping it (11.285167ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'unavailable'
+  - 'answered'
+
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/contract/agent-grounded-result/subject-binding.test.mjs:17:46)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'unavailable',
+    expected: 'answered',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

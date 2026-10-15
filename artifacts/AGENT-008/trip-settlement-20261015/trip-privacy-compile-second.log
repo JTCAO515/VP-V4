@@ -1,0 +1,29 @@
+/Users/jtsm5p/Documents/Codex/2026-10-13/v10-main/agent008-pg-client-20261015/node_modules/pg/lib/client.js:535
+          Error.captureStackTrace(err)
+                ^
+
+error: column reference "oid" is ambiguous
+    at /Users/jtsm5p/Documents/Codex/2026-10-13/v10-main/agent008-pg-client-20261015/node_modules/pg/lib/client.js:535:17
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async db (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/native-db.mjs:16:135)
+    at async file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/generate-lifecycle-pins.mjs:20:2 {
+  length: 329,
+  severity: 'ERROR',
+  code: '42702',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: '8',
+  internalQuery: "select oid::regprocedure sig from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='turn_private' and proname like 'trip_privacy_%'",
+  where: 'PL/pgSQL function inline_code_block line 1 at FOR over SELECT rows',
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '835',
+  routine: 'scanRTEForColumn'
+}
+
+Node.js v26.8.2

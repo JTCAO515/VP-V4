@@ -1,0 +1,75 @@
+{
+  "scope": [
+    264,
+    249,
+    206,
+    246
+  ],
+  "criterionCountsAndCheckedStatesPreserved": true,
+  "externalDependenciesUnchanged": true,
+  "rows": [
+    {
+      "number": 206,
+      "taskId": "AGENT-005",
+      "title": "[AGENT-005] 回答引用获准知识并显示部分答案与缺口",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:planned",
+        "project:agent"
+      ],
+      "updatedAt": "2026-10-14T06:19:45Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/206",
+      "bodySha256": "9892463ba312c7c7da99e2a9212f0ff6a71b8a4b79b3484a274d1cbe5dfdb9e2",
+      "verified": true
+    },
+    {
+      "number": 264,
+      "taskId": "AGENT-013",
+      "title": "[AGENT-013] Harness 对真实问答改稿恢复和模型候选给出发布证据",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:planned",
+        "project:agent",
+        "work:quality-delivery"
+      ],
+      "updatedAt": "2026-10-14T06:19:48Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/264",
+      "bodySha256": "8547ef0afbb5779776fd23987d26f764a642a5cab3282cc74494b48e93c9dd55",
+      "verified": true
+    },
+    {
+      "number": 249,
+      "taskId": "AGENT-017",
+      "title": "[AGENT-017] 获准航班来源支持变化后的行程重验",
+      "labels": [
+        "enhancement",
+        "priority:P2",
+        "status:planned",
+        "project:agent"
+      ],
+      "updatedAt": "2026-10-14T06:19:51Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/249",
+      "bodySha256": "5c4938b8296e28b29947756638413f9778fc8967af19bbc00d60f34920d3d5d8",
+      "verified": true
+    },
+    {
+      "number": 246,
+      "taskId": "AGENT-019",
+      "title": "[AGENT-019] 客户试点与真实经营观察支撑下一步产品选择",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "ready-for-human",
+        "status:planned",
+        "project:agent",
+        "work:product-coordination"
+      ],
+      "updatedAt": "2026-10-14T06:19:54Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/246",
+      "bodySha256": "75c8af705bbfa7a2f936a422b4aad1f0d9b1ee11c8e552d4fc2e49cbc59647b9",
+      "verified": true
+    }
+  ]
+}

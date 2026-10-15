@@ -1,0 +1,36 @@
+✖ real job initial call consumes an owner-context resolved subject rather than dropping it (12.591875ms)
+✔ client subject without a matched server context cannot make a place answered (0.501917ms)
+✔ real job done replay accepts a requalified matched place context without rerunning the model (0.921125ms)
+✔ done replay rejects old turn without querying evidence or running a model (0.498167ms)
+✔ done replay rejects ambiguous branch without querying evidence or running a model (0.39425ms)
+✔ done replay rejects unavailable mapping without querying evidence or running a model (0.265167ms)
+✔ done replay rejects invalid subject without querying evidence or running a model (0.24175ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 6
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 93.324542
+
+✖ failing tests:
+
+test at tests/contract/agent-grounded-result/subject-binding.test.mjs:15:1
+✖ real job initial call consumes an owner-context resolved subject rather than dropping it (12.591875ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'unavailable'
+  - 'answered'
+
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/contract/agent-grounded-result/subject-binding.test.mjs:17:46)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'unavailable',
+    expected: 'answered',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

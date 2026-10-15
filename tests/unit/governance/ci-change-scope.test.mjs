@@ -7,6 +7,18 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { classifyChanges, detectScope, selectCheckPlan, detectPlan, DB_LANES } from '../../../scripts/ci-change-scope.mjs';
 
+test('cancellation source and the exact PG entry select native17 while the HTTP fixture stays ordinary integration',()=>{
+ for(const file of ['lib/server/qa-agent/cancellation/http.ts','lib/server/qa-agent/cancellation/service.ts',
+  'lib/qa-agent/cancellation-contract.ts','lib/server/qa-agent/config.ts',
+  'app/api/qa-agent/sessions/[sessionId]/messages/[requestId]/cancellation/route.ts',
+  'tests/contract/qa-agent-cancellation/uuid-case.test.mjs',
+  'tests/integration/qa-agent-cancellation/native-pg.test.mjs','tests/integration/qa-agent-cancellation/pg-proof.mjs']){
+  const plan=selectCheckPlan([file],'pull_request');assert.equal(plan.profile,'affected',file);assert.ok(plan.dbLanes.includes('postgres-native-17'),file);
+ }
+ const http=selectCheckPlan(['tests/integration/qa-agent-cancellation/http.test.mjs'],'pull_request');
+ assert.equal(http.checks.integration,true);assert.deepEqual(http.dbLanes,[]);
+});
+
 test('only bounded documentation pull requests use the smaller check set', () => {
   assert.equal(classifyChanges(['README.md', 'docs/agents/development-workflow.md',
     'docs/program/2026-09-05/issue-plan.json'], 'pull_request'), 'documentation');
@@ -88,4 +100,64 @@ test('actual registered test lane is selected while known Web failure coverage c
 test('wiki source imports select native PostgreSQL persistence and Ops readers without making all server full',()=>{
  for(const f of ['lib/server/knowledge/wiki/proposals.ts','lib/server/jobs/wiki-generation-job.ts']){const p=selectCheckPlan([f],'pull_request');assert.equal(p.profile,'affected');assert.ok(p.dbLanes.includes('postgres-native'));assert.ok(p.dbLanes.includes('supabase-http-ops'));}
  assert.equal(selectCheckPlan(['lib/server/turn/planning-v2-model-request.ts'],'pull_request').dbLanes.includes('postgres-native'),false);
+});
+
+test('static output tests always select their build prerequisite, while native and contract-only changes stay bounded',()=>{
+ for(const files of [
+  ['lib/server/media/speech/index.ts','tests/contract/agent-speech/speech.test.ts'],
+  ['lib/server/turn/planning-v2-model-request.ts'],
+  ['supabase/migrations/new.sql'],
+  ['lib/server/identity/request-guards.ts'],
+  ['components/canvas/Result.tsx'],
+ ]){
+  const plan=selectCheckPlan(files,'pull_request');
+  assert.equal(plan.checks.test,true,files.join(','));
+  assert.equal(plan.checks.build,true,files.join(','));
+ }
+ for(const files of [['ios/VisePanda/Features/Result.swift'],['tests/contract/agent-speech/speech.test.ts'],['README.md']]){
+  const plan=selectCheckPlan(files,'pull_request');
+  assert.equal(plan.checks.test,false,files.join(','));
+  assert.equal(plan.checks.build,false,files.join(','));
+ }
+});
+
+test('resolved-subject source and tests select the independent PG17 lane without losing existing gates',()=>{
+ for(const file of ['lib/server/knowledge/wiki/grounded-ai-assist.ts','lib/server/knowledge/wiki/grounded-ai-assist-job.ts','lib/server/knowledge/wiki/grounded-search.ts','lib/server/jobs/wiki-search-job.ts']){
+  const plan=selectCheckPlan([file],'pull_request');assert.equal(plan.profile,'affected');
+  for(const lane of ['postgres','postgres-native','postgres-native-17','supabase-http-native','supabase-http-ops'])assert.ok(plan.dbLanes.includes(lane),file+' selects '+lane);
+ }
+ const entry=selectCheckPlan(['tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs'],'pull_request');assert.deepEqual(entry.dbLanes,['postgres-native-17']);
+ const contract=selectCheckPlan(['tests/contract/agent-grounded-result/subject-binding.test.mjs'],'pull_request');assert.deepEqual(contract.dbLanes,['postgres-native-17']);assert.equal(contract.checks.contract,true);assert.equal(contract.checks.security,true);
+ for(const file of ['lib/server/turn/native-ai-assist-http.ts','app/api/chat/grounded/ai-assist/route.ts','lib/server/model-gateway/prompt/wiki-search.ts'])assert.ok(selectCheckPlan([file],'pull_request').dbLanes.includes('postgres-native-17'),file);
+ assert.equal(selectCheckPlan(['lib/server/turn/planning-v2-model-request.ts'],'pull_request').dbLanes.includes('postgres-native-17'),false);
+ for(const [files,event]of [[['unknown-file.xyz'],'pull_request'],[['README.md'],'workflow_dispatch'],[['.github/workflows/db-integration.yml'],'pull_request'],[['supabase/migrations/new.sql'],'pull_request']])assert.deepEqual(selectCheckPlan(files,event).dbLanes,DB_LANES);
+});
+
+
+test('Trip task, scoped host, provider, privacy, SQL and suite dependencies retain native17 coverage',()=>{
+ for(const file of ['lib/server/service-task-trip/contract.ts','lib/server/trip/scoped-edit/service.ts','lib/server/turn/scoped-edit/executor.ts','lib/server/model-gateway/adapters/provider-protocol.ts','lib/server/jobs/run-hosted-text-worker.mjs','lib/server/privacy/turn-data/export.ts','lib/server/privacy/conversation-data/contract.ts','supabase/migrations/new.sql','tests/contract/service-task-trip/contract.test.mjs','tests/integration/service-task-trip/settlement.test.mjs']){
+  const plan=selectCheckPlan([file],'pull_request');assert.ok(plan.dbLanes.includes('postgres-native-17'),file);assert.equal(plan.checks.contract,true);assert.equal(plan.checks.security,true);
+ }
+ for(const file of ['tests/integration/service-task-trip/native-db.mjs','tests/integration/service-task-trip/run-integration.mjs','tests/integration/service-task-trip/trip-privacy-front.sql'])assert.deepEqual(selectCheckPlan([file],'pull_request').dbLanes,DB_LANES,file);
+ for(const file of ['tests/integration/service-task-trip/unknown.test.mjs','unknown-trip-root.mjs'])assert.equal(selectCheckPlan([file],'pull_request').profile,'full',file);
+});
+
+test('exact QA cancellation dynamic route is affected with only its required Web and DB gates',()=>{
+ const file='app/api/qa-agent/sessions/[sessionId]/messages/[requestId]/cancellation/route.ts';
+ const plan=selectCheckPlan([file],'pull_request');assert.equal(plan.profile,'affected');
+ assert.deepEqual(plan.dbLanes,['postgres','postgres-native-17','supabase-rls','supabase-http-native']);
+ assert.deepEqual(plan.checks,{typecheck:true,build:true,test:true,unit:true,contract:true,integration:false,security:true,e2e:true,browser:true,evals:false,flags:true,assets:true});
+});
+
+test('exact shared QA cancellation contract is affected and retains client/server contract coverage',()=>{
+ const plan=selectCheckPlan(['lib/qa-agent/cancellation-contract.ts'],'pull_request');assert.equal(plan.profile,'affected');
+ assert.deepEqual(plan.dbLanes,['postgres-native-17','supabase-http-native']);
+ assert.deepEqual(plan.checks,{typecheck:true,build:true,test:true,unit:true,contract:true,integration:false,security:true,e2e:true,browser:true,evals:false,flags:true,assets:true});
+});
+
+test('cancellation exceptions never admit unknown bracket paths, unsafe paths or shared dependencies',()=>{
+ for(const file of ['app/api/qa-agent/sessions/[other]/messages/[requestId]/cancellation/route.ts','app/api/qa-agent/sessions/[sessionId]/messages/[requestId]/unknown/route.ts','app/api/qa-agent/sessions/[sessionId]/messages/[requestId]/cancellation/../route.ts','app/api/unknown/[id]/route.ts','lib/qa-agent/future-contract.ts','lib/qa-agent/cancellation-contract.ts$(id)','lib/qa-agent/cancellation-contract.ts/../future.ts']){
+  const plan=selectCheckPlan([file],'pull_request');assert.equal(plan.profile,'full',file);assert.deepEqual(plan.dbLanes,DB_LANES,file);assert.ok(Object.values(plan.checks).every(Boolean),file);
+ }
+ const mixed=selectCheckPlan(['lib/qa-agent/cancellation-contract.ts','unknown-runtime.ts'],'pull_request');assert.equal(mixed.profile,'full');assert.deepEqual(mixed.dbLanes,DB_LANES);
 });

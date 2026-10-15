@@ -1,0 +1,124 @@
+{
+  "scope": [
+    187,
+    203,
+    209,
+    216,
+    692,
+    693
+  ],
+  "original35TaskAcceptanceDependenciesUnchanged": true,
+  "original52MappingUnchanged": true,
+  "newFrontendOnlyTasks": {
+    "IOS-011": 692,
+    "IOS-012": 693
+  },
+  "html": {
+    "htmlPath": null,
+    "libraryId": "libfile_cfee5ae80ee08191847a4d8fafce1d04",
+    "fileId": "file_00000000d02c81f8afa0f952e74f1e56",
+    "filename": "VP-iOS-Muse-研究规划汇报.html",
+    "namespace": "cloud /workspace/shared, not a verified local Mac path",
+    "status": "Exact identifiers received from Main; library_read/prepare_materialize not exposed in current tool inventory",
+    "impact": "Only additional visual-detail verification; approved complete page coverage proceeds",
+    "researchExpanded": false
+  },
+  "rows": [
+    {
+      "number": 187,
+      "taskId": "PROGRAM",
+      "title": "[PROGRAM] VP-V4 三工程成果、依赖批次与交付总览",
+      "labels": [
+        "documentation",
+        "priority:P0",
+        "status:in-progress",
+        "governance",
+        "project:agent",
+        "work:product-coordination"
+      ],
+      "updatedAt": "2026-10-14T08:04:08Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/187",
+      "bodySha256": "b9c29837f93d07beb776db96e284ebb14c2d7974c7108fde2693084a37e77ab9",
+      "verified": true
+    },
+    {
+      "number": 203,
+      "taskId": "IOS-001",
+      "title": "[IOS-001] 首访委托和回访继续同一旅程目标",
+      "labels": [
+        "enhancement",
+        "priority:P0",
+        "status:in-progress",
+        "project:ios"
+      ],
+      "updatedAt": "2026-10-14T08:04:12Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/203",
+      "bodySha256": "9af573cdef2a844119d79dbb958d698660b70051b04d3223022fddf6b725f283",
+      "verified": true
+    },
+    {
+      "number": 209,
+      "taskId": "IOS-003",
+      "title": "[IOS-003] 地点发现保存消歧和导航保持同一准确实体",
+      "labels": [
+        "enhancement",
+        "priority:P0",
+        "status:in-progress",
+        "project:ios"
+      ],
+      "updatedAt": "2026-10-14T08:04:15Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/209",
+      "bodySha256": "773a52d9a08a8245916aa6a570af28d3ce43336c77bbc4ef5aa9ffb2c25c6ce1",
+      "verified": true
+    },
+    {
+      "number": 216,
+      "taskId": "IOS-005",
+      "title": "[IOS-005] 旅途中以可信中英表达和大字卡沟通",
+      "labels": [
+        "enhancement",
+        "priority:P0",
+        "status:in-progress",
+        "project:ios"
+      ],
+      "updatedAt": "2026-10-14T08:04:19Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/216",
+      "bodySha256": "860f17d8e865c427ad6f8fee68c74a9b7989598e2c29c4e4f79c8432c59702ae",
+      "verified": true
+    },
+    {
+      "number": 692,
+      "taskId": "IOS-011",
+      "title": "[IOS-011] 资料库与记忆前端共享对象、来源和偏好反馈",
+      "labels": [
+        "priority:P0",
+        "status:in-progress",
+        "project:ios"
+      ],
+      "updatedAt": "2026-10-14T08:04:26Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/692",
+      "bodySha256": "6d8c0250da3aaac94e154ac2c38819c50e2b0e1a1842e3b7573d7e40f367ab55",
+      "verified": true
+    },
+    {
+      "number": 693,
+      "taskId": "IOS-012",
+      "title": "[IOS-012] 助手头像详情展示状态活动权限待办与可跳过定制",
+      "labels": [
+        "priority:P0",
+        "status:in-progress",
+        "project:ios"
+      ],
+      "updatedAt": "2026-10-14T08:04:30Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/693",
+      "bodySha256": "8cd63dd56e9ac6d211ce8d266cfdcf9dcbf4dddf46c7e3bb6fe6c26b3a5fc444",
+      "verified": true
+    }
+  ],
+  "currentPathCorrection": {
+    "IOS-011": "ios/VisePanda/VisePanda/Features/Frontend/LibraryMemory/**",
+    "IOS-012": "ios/VisePanda/VisePanda/Features/Frontend/Assistant/**",
+    "receipt": "frontend-path-readback.json",
+    "note": "Earlier timestamped readback rows remain historical; current-plan and current bodies own corrected paths."
+  }
+}

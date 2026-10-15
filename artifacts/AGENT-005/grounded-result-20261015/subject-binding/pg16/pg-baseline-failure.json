@@ -1,0 +1,19 @@
+{
+  "file": "20261010020000_assistant_events.sql",
+  "error": "ASSISTANT_EVENTS_AFTER_DRIFT",
+  "guards": {
+    "profile_data_private.schema_v1()": true,
+    "result_data_private.infrastructure_supported_v1()": true,
+    "result_data_private.schema_supported_v1()": true,
+    "turn_data_private.schema_supported_v1()": true,
+    "turn_data_private.runtime_supported_v1()": true,
+    "conversation_data_private.schema_supported_v1()": true,
+    "export_private.profile_hooks_valid_v1()": true,
+    "turn_data_private.write_hooks_valid_v1()": true,
+    "turn_data_private.hooks_valid_v1()": true
+  },
+  "postgres": "PostgreSQL 16.15 (Homebrew) on aarch64-apple-darwin25.6.0, compiled by Apple clang version 21.0.0 (clang-2100.1.1.101), 64-bit",
+  "ownerTableAclDefault": "{postgres=arwdDxt/postgres}",
+  "requiredFrozenTableAcl": "{postgres=arwdDxtm/postgres}",
+  "pins": []
+}

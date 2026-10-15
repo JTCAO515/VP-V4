@@ -13,6 +13,11 @@ import test from "node:test";
 const ANON = ["public.research_intake_v1(jsonb)"];
 
 const AUTHENTICATED = [
+  "public.submit_trip_service_task_v1(uuid,jsonb,jsonb)",
+  "public.continue_trip_service_task_v1(uuid,uuid,uuid,uuid,text,text)",
+  "public.cancel_trip_service_task_v1(uuid)",
+  "public.trip_service_task_owner_v1(uuid,text,jsonb)",
+  "public.privacy_trip_service_task_v1(uuid,text,text,text,bigint)",
   "public.native_memory_command_v1(jsonb)",
   "public.read_assistant_message_sources_v2(uuid,uuid,uuid,uuid,integer)",
   "public.submit_assistant_message_sources_v2(uuid,uuid,uuid,uuid,text,text,text,uuid,integer,uuid,uuid,uuid,jsonb)",
@@ -59,6 +64,7 @@ const AUTHENTICATED = [
   "public.ops_wiki_read_v1(jsonb)",
   "public.ops_wiki_withdrawal_scan_v1(jsonb)",
   "public.qa_accept_policy_v1(uuid,text)",
+  "public.qa_cancellation_v1(text,uuid,uuid)",
   "public.qa_list_sessions_v1(integer)",
   "public.qa_read_message_v1(uuid,uuid)",
   "public.qa_read_policy_v1(uuid)",
@@ -83,6 +89,7 @@ const AUTHENTICATED = [
   "public.read_trip_directions_reference_v1(uuid)",
   "public.search_result_artifacts_v2(text,uuid)",
   "public.read_change_proposal_reference_v1(uuid,integer)",
+  "public.read_goal_return_reference_v1(uuid,uuid,uuid,integer,uuid,bigint,bigint)",
   "public.read_trip_change_proposal_reference_v1(uuid)",
   "public.read_task_result_reference_v1(uuid)",
   "public.search_result_artifacts_v1(text,uuid)",
@@ -148,9 +155,35 @@ test("repository functions grant EXECUTE to anon and authenticated only through 
     assert.deepEqual(sql(executable("authenticated")), [...AUTHENTICATED].sort());
   });
 
+  await t.test("current goal return grants only the public wrapper to authenticated", () => {
+    for (const role of ["anon", "authenticated", "service_role"]) {
+      assert.deepEqual(sql(`select has_function_privilege('${role}','public.read_goal_return_reference_v1(uuid,uuid,uuid,integer,uuid,bigint,bigint)'::regprocedure,'EXECUTE'),has_function_privilege('${role}','turn_private.goal_return_reference_v1(uuid,uuid,uuid,integer,uuid,bigint,bigint)'::regprocedure,'EXECUTE');`), [role === "authenticated" ? "t|f" : "f|f"], role);
+    }
+  });
+
+  await t.test("Trip task public RPCs and owner-only aliases retain exact three-role vectors", () => {
+    const vectors = {
+      "public.submit_trip_service_task_v1(uuid,jsonb,jsonb)": "f|t|f",
+      "public.continue_trip_service_task_v1(uuid,uuid,uuid,uuid,text,text)": "f|t|f",
+      "public.cancel_trip_service_task_v1(uuid)": "f|t|f",
+      "public.trip_service_task_owner_v1(uuid,text,jsonb)": "f|t|f",
+      "public.privacy_trip_service_task_v1(uuid,text,text,text,bigint)": "f|t|f",
+      "public.trip_service_task_worker_v1(text,jsonb)": "f|f|t",
+      "public.complete_text_work_before_trip_v1(uuid,uuid,text,text)": "f|f|f",
+      "public.submit_service_task_turn_before_trip_v1(uuid,uuid,uuid,uuid,text,text,uuid,integer,text,uuid)": "f|f|f",
+    };
+    for (const [signature, expected] of Object.entries(vectors)) {
+      assert.deepEqual(sql(`select has_function_privilege('anon','${signature}'::regprocedure,'EXECUTE'),has_function_privilege('authenticated','${signature}'::regprocedure,'EXECUTE'),has_function_privilege('service_role','${signature}'::regprocedure,'EXECUTE');`), [expected], signature);
+    }
+    for (const role of ["anon", "authenticated", "service_role"]) {
+      assert.deepEqual(sql(`select count(*) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='turn_private' and (p.proname like 'trip_privacy_%' or p.proname in ('trip_service_task_runtime_v1','require_trip_runtime_v1','complete_trip_clarification_v1','complete_trip_failure_v1','lock_trip_account_v1')) and has_function_privilege('${role}',p.oid,'EXECUTE');`), ["0"], role);
+    }
+  });
+
   await t.test("QA browser RPCs and worker RPCs keep disjoint exact role grants", () => {
     for (const fn of [
       "qa_accept_policy_v1(uuid,text)", "qa_list_sessions_v1(integer)",
+      "qa_cancellation_v1(text,uuid,uuid)",
       "qa_read_message_v1(uuid,uuid)", "qa_read_policy_v1(uuid)",
       "qa_read_session_v1(uuid)",
       "qa_submit_message_v1(uuid,uuid,uuid,uuid,text,text,uuid,text)",

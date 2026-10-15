@@ -1,0 +1,327 @@
+[
+  {
+    "number": 195,
+    "successor": 680,
+    "taskId": "AGENT-001",
+    "state": "closed",
+    "stateReason": "not_planned",
+    "title": "[SUPERSEDED → AGENT-001] [VPJ-07] 真实文本与持久任务执行基础",
+    "labels": [
+      "enhancement",
+      "wontfix",
+      "priority:P1",
+      "phase:R2",
+      "project:agent"
+    ],
+    "updatedAt": "2026-10-14T06:10:20Z",
+    "bodySha256": "55635fb48e62f8257ec62fc812cbec13a01ae6e3d9b1a9407949be84a818a54a",
+    "body": "# 规划迁移：由 AGENT-001 #680 承接\n\n本票按 `not_planned` 关闭仅表示当前规划已合并承接，**不是功能已交付或验收通过**。\n\n当前唯一执行任务：[AGENT-001 — 真实文本请求经持久执行返回可恢复回答](https://github.com/JTCAO515/VP-V4/issues/680)。原功能、有效完成项、未完成验收和子阶段依赖均已纳入该任务，禁止另起重复实现。\n\n原 GitHub 编号、评论、PR 与有效成果保留。完整迁移前正文/状态见 [replan-before.json](https://github.com/JTCAO515/VP-V4/blob/codex/vpv4-modular-entries-20261014/docs/product/VPV10-MODULAR-001/replan-before.json) 中 #195；最初52输入及更早历史见同目录 before.json。旧排期/旧六线程只作历史，不再作为开工指令。\n\n工程归属：agent；lead：agent 原实施 owner，Main 按现 lease 协调。当前依赖/优先级/检查按承接任务，原 source owner 与精确 lease 不因规划合并移交。\n",
+    "verified": true
+  },
+  {
+    "number": 205,
+    "successor": 359,
+    "taskId": "AGENT-004",
+    "state": "closed",
+    "stateReason": "not_planned",
+    "title": "[SUPERSEDED → AGENT-004] [VPJ-15] 首批旅程内容从来源登记到已审核可用",
+    "labels": [
+      "enhancement",
+      "wontfix",
+      "priority:P1",
+      "phase:R3",
+      "team:ai-knowledge",
+      "project:agent"
+    ],
+    "updatedAt": "2026-10-14T06:10:25Z",
+    "bodySha256": "cef9acfab94c170de9651fe2b9eb7827479ae939edb41dc7e11492fb8019b76e",
+    "body": "# 规划迁移：由 AGENT-004 #359 承接\n\n本票按 `not_planned` 关闭仅表示当前规划已合并承接，**不是功能已交付或验收通过**。\n\n当前唯一执行任务：[AGENT-004 — 旅程来源经审核形成可发布的知识变更](https://github.com/JTCAO515/VP-V4/issues/359)。原功能、有效完成项、未完成验收和子阶段依赖均已纳入该任务，禁止另起重复实现。\n\n原 GitHub 编号、评论、PR 与有效成果保留。完整迁移前正文/状态见 [replan-before.json](https://github.com/JTCAO515/VP-V4/blob/codex/vpv4-modular-entries-20261014/docs/product/VPV10-MODULAR-001/replan-before.json) 中 #205；最初52输入及更早历史见同目录 before.json。旧排期/旧六线程只作历史，不再作为开工指令。\n\n工程归属：agent；lead：agent 原实施 owner，Main 按现 lease 协调。当前依赖/优先级/检查按承接任务，原 source owner 与精确 lease 不因规划合并移交。\n",
+    "verified": true
+  },
+  {
+    "number": 360,
+    "successor": 206,
+    "taskId": "AGENT-005",
+    "state": "closed",
+    "stateReason": "not_planned",
+    "title": "[SUPERSEDED → AGENT-005] [VPJ-76] Ask检索已发布Wiki与原子声明并返回完整证据和具体缺口",
+    "labels": [
+      "enhancement",
+      "wontfix",
+      "priority:P1",
+      "phase:R3",
+      "project:agent"
+    ],
+    "updatedAt": "2026-10-14T06:10:31Z",
+    "bodySha256": "0d88e75305fed0c3cb96d80ad0b18ec2227a4ceeebe607265e5a4a71555b2c85",
+    "body": "# 规划迁移：由 AGENT-005 #206 承接\n\n本票按 `not_planned` 关闭仅表示当前规划已合并承接，**不是功能已交付或验收通过**。\n\n当前唯一执行任务：[AGENT-005 — 回答引用获准知识并显示部分答案与缺口](https://github.com/JTCAO515/VP-V4/issues/206)。原功能、有效完成项、未完成验收和子阶段依赖均已纳入该任务，禁止另起重复实现。\n\n原 GitHub 编号、评论、PR 与有效成果保留。完整迁移前正文/状态见 [replan-before.json](https://github.com/JTCAO515/VP-V4/blob/codex/vpv4-modular-entries-20261014/docs/product/VPV10-MODULAR-001/replan-before.json) 中 #360；最初52输入及更早历史见同目录 before.json。旧排期/旧六线程只作历史，不再作为开工指令。\n\n工程归属：agent；lead：agent 原实施 owner，Main 按现 lease 协调。当前依赖/优先级/检查按承接任务，原 source owner 与精确 lease 不因规划合并移交。\n",
+    "verified": true
+  },
+  {
+    "number": 367,
+    "successor": 208,
+    "taskId": "AGENT-006",
+    "state": "closed",
+    "stateReason": "not_planned",
+    "title": "[SUPERSEDED → AGENT-006] [VPJ-18 切片] 腾讯补查与双供应商受控降级",
+    "labels": [
+      "enhancement",
+      "wontfix",
+      "priority:P1",
+      "phase:R3",
+      "team:journey-experience",
+      "project:agent"
+    ],
+    "updatedAt": "2026-10-14T06:10:35Z",
+    "bodySha256": "4c5fb1731ccc08536e370902bee39647352b0598a8638368e5e190fc41b81294",
+    "body": "# 规划迁移：由 AGENT-006 #208 承接\n\n本票按 `not_planned` 关闭仅表示当前规划已合并承接，**不是功能已交付或验收通过**。\n\n当前唯一执行任务：[AGENT-006 — 地图供应商按用途和成本受控补查降级](https://github.com/JTCAO515/VP-V4/issues/208)。原功能、有效完成项、未完成验收和子阶段依赖均已纳入该任务，禁止另起重复实现。\n\n原 GitHub 编号、评论、PR 与有效成果保留。完整迁移前正文/状态见 [replan-before.json](https://github.com/JTCAO515/VP-V4/blob/codex/vpv4-modular-entries-20261014/docs/product/VPV10-MODULAR-001/replan-before.json) 中 #367；最初52输入及更早历史见同目录 before.json。旧排期/旧六线程只作历史，不再作为开工指令。\n\n工程归属：agent；lead：agent 原实施 owner，Main 按现 lease 协调。当前依赖/优先级/检查按承接任务，原 source owner 与精确 lease 不因规划合并移交。\n",
+    "verified": true
+  },
+  {
+    "number": 503,
+    "successor": 226,
+    "taskId": "AGENT-009",
+    "state": "closed",
+    "stateReason": "not_planned",
+    "title": "[SUPERSEDED → AGENT-009] [VPJ-34 切片 Q2] 一次官方测试购买到两端有效grant",
+    "labels": [
+      "enhancement",
+      "wontfix",
+      "priority:P1",
+      "phase:R4",
+      "team:platform-delivery",
+      "project:agent",
+      "work:shared-data"
+    ],
+    "updatedAt": "2026-10-14T06:10:40Z",
+    "bodySha256": "2b1021f2689aa13037a64c921feb81666d7edbd70247cfa97da03097ee732087",
+    "body": "# 规划迁移：由 AGENT-009 #226 承接\n\n本票按 `not_planned` 关闭仅表示当前规划已合并承接，**不是功能已交付或验收通过**。\n\n当前唯一执行任务：[AGENT-009 — 一次官方测试购买产生双端同源权益](https://github.com/JTCAO515/VP-V4/issues/226)。原功能、有效完成项、未完成验收和子阶段依赖均已纳入该任务，禁止另起重复实现。\n\n原 GitHub 编号、评论、PR 与有效成果保留。完整迁移前正文/状态见 [replan-before.json](https://github.com/JTCAO515/VP-V4/blob/codex/vpv4-modular-entries-20261014/docs/product/VPV10-MODULAR-001/replan-before.json) 中 #503；最初52输入及更早历史见同目录 before.json。旧排期/旧六线程只作历史，不再作为开工指令。\n\n工程归属：agent；lead：购买与权益原 domain owner。当前依赖/优先级/检查按承接任务，原 source owner 与精确 lease 不因规划合并移交。\n",
+    "verified": true
+  },
+  {
+    "number": 265,
+    "successor": 264,
+    "taskId": "AGENT-013",
+    "state": "closed",
+    "stateReason": "not_planned",
+    "title": "[SUPERSEDED → AGENT-013] [VPJ-68] Harness：少走路且保留已确认晚餐的局部改稿闭环",
+    "labels": [
+      "enhancement",
+      "wontfix",
+      "priority:P1",
+      "phase:R2",
+      "team:journey-experience",
+      "project:agent",
+      "work:quality-delivery"
+    ],
+    "updatedAt": "2026-10-14T06:10:48Z",
+    "bodySha256": "a872ea072d4279278caad07b2279de009c4592173ee10b9df4fb05981094e6d6",
+    "body": "# 规划迁移：由 AGENT-013 #264 承接\n\n本票按 `not_planned` 关闭仅表示当前规划已合并承接，**不是功能已交付或验收通过**。\n\n当前唯一执行任务：[AGENT-013 — Harness 对真实问答改稿恢复和模型候选给出发布证据](https://github.com/JTCAO515/VP-V4/issues/264)。原功能、有效完成项、未完成验收和子阶段依赖均已纳入该任务，禁止另起重复实现。\n\n原 GitHub 编号、评论、PR 与有效成果保留。完整迁移前正文/状态见 [replan-before.json](https://github.com/JTCAO515/VP-V4/blob/codex/vpv4-modular-entries-20261014/docs/product/VPV10-MODULAR-001/replan-before.json) 中 #265；最初52输入及更早历史见同目录 before.json。旧排期/旧六线程只作历史，不再作为开工指令。\n\n工程归属：agent；lead：agent 原实施 owner，Main 按现 lease 协调。当前依赖/优先级/检查按承接任务，原 source owner 与精确 lease 不因规划合并移交。\n",
+    "verified": true
+  },
+  {
+    "number": 266,
+    "successor": 264,
+    "taskId": "AGENT-013",
+    "state": "closed",
+    "stateReason": "not_planned",
+    "title": "[SUPERSEDED → AGENT-013] [VPJ-69] Harness：故障取消与重连不伪造成功或重复提交",
+    "labels": [
+      "enhancement",
+      "wontfix",
+      "priority:P1",
+      "phase:R2",
+      "team:ai-knowledge",
+      "project:agent",
+      "work:quality-delivery"
+    ],
+    "updatedAt": "2026-10-14T06:10:54Z",
+    "bodySha256": "a437f1916003aad95b9b60177517c4752162e496dffc1303aabed7369937c73d",
+    "body": "# 规划迁移：由 AGENT-013 #264 承接\n\n本票按 `not_planned` 关闭仅表示当前规划已合并承接，**不是功能已交付或验收通过**。\n\n当前唯一执行任务：[AGENT-013 — Harness 对真实问答改稿恢复和模型候选给出发布证据](https://github.com/JTCAO515/VP-V4/issues/264)。原功能、有效完成项、未完成验收和子阶段依赖均已纳入该任务，禁止另起重复实现。\n\n原 GitHub 编号、评论、PR 与有效成果保留。完整迁移前正文/状态见 [replan-before.json](https://github.com/JTCAO515/VP-V4/blob/codex/vpv4-modular-entries-20261014/docs/product/VPV10-MODULAR-001/replan-before.json) 中 #266；最初52输入及更早历史见同目录 before.json。旧排期/旧六线程只作历史，不再作为开工指令。\n\n工程归属：agent；lead：agent 原实施 owner，Main 按现 lease 协调。当前依赖/优先级/检查按承接任务，原 source owner 与精确 lease 不因规划合并移交。\n",
+    "verified": true
+  },
+  {
+    "number": 267,
+    "successor": 264,
+    "taskId": "AGENT-013",
+    "state": "closed",
+    "stateReason": "not_planned",
+    "title": "[SUPERSEDED → AGENT-013] [VPJ-70] Harness：只读模型或提示词候选的配对评测与校准",
+    "labels": [
+      "enhancement",
+      "wontfix",
+      "priority:P1",
+      "phase:R2",
+      "team:ai-knowledge",
+      "project:agent",
+      "work:quality-delivery"
+    ],
+    "updatedAt": "2026-10-14T06:10:58Z",
+    "bodySha256": "8b0f1171202e28872b0d25785f6861ad53dfdcccf6c1a6f2de8b93eb8eed5355",
+    "body": "# 规划迁移：由 AGENT-013 #264 承接\n\n本票按 `not_planned` 关闭仅表示当前规划已合并承接，**不是功能已交付或验收通过**。\n\n当前唯一执行任务：[AGENT-013 — Harness 对真实问答改稿恢复和模型候选给出发布证据](https://github.com/JTCAO515/VP-V4/issues/264)。原功能、有效完成项、未完成验收和子阶段依赖均已纳入该任务，禁止另起重复实现。\n\n原 GitHub 编号、评论、PR 与有效成果保留。完整迁移前正文/状态见 [replan-before.json](https://github.com/JTCAO515/VP-V4/blob/codex/vpv4-modular-entries-20261014/docs/product/VPV10-MODULAR-001/replan-before.json) 中 #267；最初52输入及更早历史见同目录 before.json。旧排期/旧六线程只作历史，不再作为开工指令。\n\n工程归属：agent；lead：agent 原实施 owner，Main 按现 lease 协调。当前依赖/优先级/检查按承接任务，原 source owner 与精确 lease 不因规划合并移交。\n",
+    "verified": true
+  },
+  {
+    "number": 268,
+    "successor": 264,
+    "taskId": "AGENT-013",
+    "state": "closed",
+    "stateReason": "not_planned",
+    "title": "[SUPERSEDED → AGENT-013] [VPJ-71] Harness：核心任务发布判定与能力停用恢复验收",
+    "labels": [
+      "enhancement",
+      "wontfix",
+      "priority:P1",
+      "phase:R5",
+      "team:ai-knowledge",
+      "project:agent",
+      "work:quality-delivery"
+    ],
+    "updatedAt": "2026-10-14T06:11:03Z",
+    "bodySha256": "605ca7e70f2402051094b2a93c4e2ddf9ca8b62f77409e7eb4ad391fe67fa52f",
+    "body": "# 规划迁移：由 AGENT-013 #264 承接\n\n本票按 `not_planned` 关闭仅表示当前规划已合并承接，**不是功能已交付或验收通过**。\n\n当前唯一执行任务：[AGENT-013 — Harness 对真实问答改稿恢复和模型候选给出发布证据](https://github.com/JTCAO515/VP-V4/issues/264)。原功能、有效完成项、未完成验收和子阶段依赖均已纳入该任务，禁止另起重复实现。\n\n原 GitHub 编号、评论、PR 与有效成果保留。完整迁移前正文/状态见 [replan-before.json](https://github.com/JTCAO515/VP-V4/blob/codex/vpv4-modular-entries-20261014/docs/product/VPV10-MODULAR-001/replan-before.json) 中 #268；最初52输入及更早历史见同目录 before.json。旧排期/旧六线程只作历史，不再作为开工指令。\n\n工程归属：agent；lead：agent 原实施 owner，Main 按现 lease 协调。当前依赖/优先级/检查按承接任务，原 source owner 与精确 lease 不因规划合并移交。\n",
+    "verified": true
+  },
+  {
+    "number": 250,
+    "successor": 249,
+    "taskId": "AGENT-017",
+    "state": "closed",
+    "stateReason": "not_planned",
+    "title": "[SUPERSEDED → AGENT-017] [VPJ-52] 授权航班状态与相关行程重验",
+    "labels": [
+      "enhancement",
+      "wontfix",
+      "priority:P2",
+      "phase:R5",
+      "team:journey-experience",
+      "project:agent"
+    ],
+    "updatedAt": "2026-10-14T06:11:09Z",
+    "bodySha256": "b609ca9a793138779e0ed4f5926d2314ecc08083deb0077464e28ed1d326e648",
+    "body": "# 规划迁移：由 AGENT-017 #249 承接\n\n本票按 `not_planned` 关闭仅表示当前规划已合并承接，**不是功能已交付或验收通过**。\n\n当前唯一执行任务：[AGENT-017 — 获准航班来源支持变化后的行程重验](https://github.com/JTCAO515/VP-V4/issues/249)。原功能、有效完成项、未完成验收和子阶段依赖均已纳入该任务，禁止另起重复实现。\n\n原 GitHub 编号、评论、PR 与有效成果保留。完整迁移前正文/状态见 [replan-before.json](https://github.com/JTCAO515/VP-V4/blob/codex/vpv4-modular-entries-20261014/docs/product/VPV10-MODULAR-001/replan-before.json) 中 #250；最初52输入及更早历史见同目录 before.json。旧排期/旧六线程只作历史，不再作为开工指令。\n\n工程归属：agent；lead：agent 原实施 owner，Main 按现 lease 协调。当前依赖/优先级/检查按承接任务，原 source owner 与精确 lease 不因规划合并移交。\n",
+    "verified": true
+  },
+  {
+    "number": 252,
+    "successor": 225,
+    "taskId": "AGENT-018",
+    "state": "closed",
+    "stateReason": "not_planned",
+    "title": "[SUPERSEDED → AGENT-018] [VPJ-54] 年订阅与交易深度升级的证据决策",
+    "labels": [
+      "enhancement",
+      "wontfix",
+      "priority:P2",
+      "phase:R5",
+      "team:platform-delivery",
+      "project:agent",
+      "work:product-coordination"
+    ],
+    "updatedAt": "2026-10-14T06:11:14Z",
+    "bodySha256": "876139372f9ff3790ef372e57a0cf5a17b1536b099e3a1431876c627a84e8c19",
+    "body": "# 规划迁移：由 AGENT-018 #225 承接\n\n本票按 `not_planned` 关闭仅表示当前规划已合并承接，**不是功能已交付或验收通过**。\n\n当前唯一执行任务：[AGENT-018 — 商品服务边界清楚并凭证据决定后续订阅升级](https://github.com/JTCAO515/VP-V4/issues/225)。原功能、有效完成项、未完成验收和子阶段依赖均已纳入该任务，禁止另起重复实现。\n\n原 GitHub 编号、评论、PR 与有效成果保留。完整迁移前正文/状态见 [replan-before.json](https://github.com/JTCAO515/VP-V4/blob/codex/vpv4-modular-entries-20261014/docs/product/VPV10-MODULAR-001/replan-before.json) 中 #252；最初52输入及更早历史见同目录 before.json。旧排期/旧六线程只作历史，不再作为开工指令。\n\n工程归属：agent；lead：商品策略原 owner。当前依赖/优先级/检查按承接任务，原 source owner 与精确 lease 不因规划合并移交。\n",
+    "verified": true
+  },
+  {
+    "number": 247,
+    "successor": 246,
+    "taskId": "AGENT-019",
+    "state": "closed",
+    "stateReason": "not_planned",
+    "title": "[SUPERSEDED → AGENT-019] [VPJ-47] 真实激活、付费与人工成本的经营观察",
+    "labels": [
+      "enhancement",
+      "wontfix",
+      "priority:P1",
+      "phase:R5",
+      "team:platform-delivery",
+      "project:agent",
+      "work:product-coordination"
+    ],
+    "updatedAt": "2026-10-14T06:11:19Z",
+    "bodySha256": "95c9e226a6be4e977ca5dd8c212faf057c9572b2c716eb4f8300051c7c86c389",
+    "body": "# 规划迁移：由 AGENT-019 #246 承接\n\n本票按 `not_planned` 关闭仅表示当前规划已合并承接，**不是功能已交付或验收通过**。\n\n当前唯一执行任务：[AGENT-019 — 客户试点与真实经营观察支撑下一步产品选择](https://github.com/JTCAO515/VP-V4/issues/246)。原功能、有效完成项、未完成验收和子阶段依赖均已纳入该任务，禁止另起重复实现。\n\n原 GitHub 编号、评论、PR 与有效成果保留。完整迁移前正文/状态见 [replan-before.json](https://github.com/JTCAO515/VP-V4/blob/codex/vpv4-modular-entries-20261014/docs/product/VPV10-MODULAR-001/replan-before.json) 中 #247；最初52输入及更早历史见同目录 before.json。旧排期/旧六线程只作历史，不再作为开工指令。\n\n工程归属：agent；lead：客户发现原 owner。当前依赖/优先级/检查按承接任务，原 source owner 与精确 lease 不因规划合并移交。\n",
+    "verified": true
+  },
+  {
+    "number": 507,
+    "successor": 201,
+    "taskId": "IOS-002",
+    "state": "closed",
+    "stateReason": "not_planned",
+    "title": "[SUPERSEDED → IOS-002] [VPJ-12 切片 I1] 单张截图接入真实同Trip确认链",
+    "labels": [
+      "enhancement",
+      "wontfix",
+      "priority:P1",
+      "phase:R2",
+      "team:ai-knowledge",
+      "project:ios"
+    ],
+    "updatedAt": "2026-10-14T06:11:24Z",
+    "bodySha256": "67f348be9a42e4fbe5e75d88fc17b82aa24c4ae48173829b27faa73977e454b7",
+    "body": "# 规划迁移：由 IOS-002 #201 承接\n\n本票按 `not_planned` 关闭仅表示当前规划已合并承接，**不是功能已交付或验收通过**。\n\n当前唯一执行任务：[IOS-002 — 单张截图经校正和明确确认加入同一 Trip](https://github.com/JTCAO515/VP-V4/issues/201)。原功能、有效完成项、未完成验收和子阶段依赖均已纳入该任务，禁止另起重复实现。\n\n原 GitHub 编号、评论、PR 与有效成果保留。完整迁移前正文/状态见 [replan-before.json](https://github.com/JTCAO515/VP-V4/blob/codex/vpv4-modular-entries-20261014/docs/product/VPV10-MODULAR-001/replan-before.json) 中 #507；最初52输入及更早历史见同目录 before.json。旧排期/旧六线程只作历史，不再作为开工指令。\n\n工程归属：ios；lead：ios 原实施 owner，Main 按现 lease 协调。当前依赖/优先级/检查按承接任务，原 source owner 与精确 lease 不因规划合并移交。\n",
+    "verified": true
+  },
+  {
+    "number": 363,
+    "successor": 209,
+    "taskId": "IOS-003",
+    "state": "closed",
+    "stateReason": "not_planned",
+    "title": "[SUPERSEDED → IOS-003] [VPJ-19 切片] 中英地点搜索、准确实体与地图同选中闭环",
+    "labels": [
+      "enhancement",
+      "wontfix",
+      "priority:P1",
+      "phase:R3",
+      "team:journey-experience",
+      "project:ios"
+    ],
+    "updatedAt": "2026-10-14T06:11:32Z",
+    "bodySha256": "e27cd3755a0e99741535529d7574f239b64c553d60942d561c561eae76e3ace3",
+    "body": "# 规划迁移：由 IOS-003 #209 承接\n\n本票按 `not_planned` 关闭仅表示当前规划已合并承接，**不是功能已交付或验收通过**。\n\n当前唯一执行任务：[IOS-003 — 地点发现保存消歧和导航保持同一准确实体](https://github.com/JTCAO515/VP-V4/issues/209)。原功能、有效完成项、未完成验收和子阶段依赖均已纳入该任务，禁止另起重复实现。\n\n原 GitHub 编号、评论、PR 与有效成果保留。完整迁移前正文/状态见 [replan-before.json](https://github.com/JTCAO515/VP-V4/blob/codex/vpv4-modular-entries-20261014/docs/product/VPV10-MODULAR-001/replan-before.json) 中 #363；最初52输入及更早历史见同目录 before.json。旧排期/旧六线程只作历史，不再作为开工指令。\n\n工程归属：ios；lead：ios 原实施 owner，Main 按现 lease 协调。当前依赖/优先级/检查按承接任务，原 source owner 与精确 lease 不因规划合并移交。\n",
+    "verified": true
+  },
+  {
+    "number": 364,
+    "successor": 209,
+    "taskId": "IOS-003",
+    "state": "closed",
+    "stateReason": "not_planned",
+    "title": "[SUPERSEDED → IOS-003] [VPJ-19 切片] 步行公交驾车比较与准确目的地导航交接",
+    "labels": [
+      "enhancement",
+      "wontfix",
+      "priority:P1",
+      "phase:R3",
+      "team:journey-experience",
+      "project:ios"
+    ],
+    "updatedAt": "2026-10-14T06:11:38Z",
+    "bodySha256": "2f651d2d0cc28205d338108c35d364ba5d39c18c27fe11db4a4f32855cf4716d",
+    "body": "# 规划迁移：由 IOS-003 #209 承接\n\n本票按 `not_planned` 关闭仅表示当前规划已合并承接，**不是功能已交付或验收通过**。\n\n当前唯一执行任务：[IOS-003 — 地点发现保存消歧和导航保持同一准确实体](https://github.com/JTCAO515/VP-V4/issues/209)。原功能、有效完成项、未完成验收和子阶段依赖均已纳入该任务，禁止另起重复实现。\n\n原 GitHub 编号、评论、PR 与有效成果保留。完整迁移前正文/状态见 [replan-before.json](https://github.com/JTCAO515/VP-V4/blob/codex/vpv4-modular-entries-20261014/docs/product/VPV10-MODULAR-001/replan-before.json) 中 #364；最初52输入及更早历史见同目录 before.json。旧排期/旧六线程只作历史，不再作为开工指令。\n\n工程归属：ios；lead：ios 原实施 owner，Main 按现 lease 协调。当前依赖/优先级/检查按承接任务，原 source owner 与精确 lease 不因规划合并移交。\n",
+    "verified": true
+  },
+  {
+    "number": 210,
+    "successor": 209,
+    "taskId": "IOS-003",
+    "state": "closed",
+    "stateReason": "not_planned",
+    "title": "[SUPERSEDED → IOS-003] [VPJ-20] 全局探索中的地点发现、保存和交给VP",
+    "labels": [
+      "enhancement",
+      "wontfix",
+      "priority:P1",
+      "phase:R3",
+      "team:journey-experience",
+      "project:ios"
+    ],
+    "updatedAt": "2026-10-14T06:11:43Z",
+    "bodySha256": "053e8eb8f6918297d5260ae0ee92bcfb4799414ff5e38db2968a8af5bed48c07",
+    "body": "# 规划迁移：由 IOS-003 #209 承接\n\n本票按 `not_planned` 关闭仅表示当前规划已合并承接，**不是功能已交付或验收通过**。\n\n当前唯一执行任务：[IOS-003 — 地点发现保存消歧和导航保持同一准确实体](https://github.com/JTCAO515/VP-V4/issues/209)。原功能、有效完成项、未完成验收和子阶段依赖均已纳入该任务，禁止另起重复实现。\n\n原 GitHub 编号、评论、PR 与有效成果保留。完整迁移前正文/状态见 [replan-before.json](https://github.com/JTCAO515/VP-V4/blob/codex/vpv4-modular-entries-20261014/docs/product/VPV10-MODULAR-001/replan-before.json) 中 #210；最初52输入及更早历史见同目录 before.json。旧排期/旧六线程只作历史，不再作为开工指令。\n\n工程归属：ios；lead：ios 原实施 owner，Main 按现 lease 协调。当前依赖/优先级/检查按承接任务，原 source owner 与精确 lease 不因规划合并移交。\n",
+    "verified": true
+  }
+]

@@ -1,0 +1,12 @@
+✔ shared last capacity serializes across text/Trip; cross actor/key/epoch/claim fields never authorize (3543.432875ms)
+✔ cancel/reject and exact confirmation races have one result; original manual edits have no new settlement (13220.287416ms)
+✔ original Sandbox grant revocation races with settlement; expired grant cannot settle or dispatch (15375.581083ms)
+✔ fixed runtime denies unknown functions/body/ACL/trigger state and replica-mode authority (3797.830792ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 32211.646708

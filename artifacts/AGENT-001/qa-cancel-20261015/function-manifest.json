@@ -1,0 +1,21 @@
+{
+  "signature": "public.qa_cancellation_v1(text,uuid,uuid)",
+  "before": "ABSENT; Main-created empty migration file",
+  "emptyBeforeSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "migration": "supabase/migrations/20261015043710_agent001_qa_cancellation.sql",
+  "afterSha256": "f7c1898b22c6be8f55851b87e3dcd9a7cbce24a187469f529de911658c8693ce",
+  "owner": "postgres (migration executor)",
+  "security": "DEFINER",
+  "search_path": "empty",
+  "execute": {
+    "authenticated": true,
+    "anon": false,
+    "PUBLIC": false,
+    "service_role": false
+  },
+  "privateHelpersCreated": [],
+  "newRetainedTables": [],
+  "existingAuthority": "public.cancel_chat_turn(uuid)",
+  "targetApply": "UNRUN/Main-owned",
+  "newSourceTextReturned": false
+}

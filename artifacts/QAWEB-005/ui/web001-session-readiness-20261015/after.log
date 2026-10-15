@@ -1,0 +1,26 @@
+(node:79519) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2m[WebServer] [22m(node:79523) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 12 tests using 1 worker
+
+(node:79524) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:79524) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:79524) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/e2e/qa-agent-ui/workspace.spec.mjs:405:1 › SDK owner replacement clears messages and aborts old in-flight work (640ms)
+  ✓   2 tests/e2e/qa-agent-ui/workspace.spec.mjs:543:3 › pre-consent query preserves notice through protected 403 and reload (3.4s)
+  ✓   3 tests/e2e/qa-agent-ui/workspace.spec.mjs:679:3 › explicit bookmark outside twenty-session list loads protected detail and joins list (366ms)
+  ✓   4 tests/e2e/qa-agent-ui/workspace.spec.mjs:679:3 › explicit bookmark outside twenty-session list retains RLS refusal (135ms)
+  ✓   5 tests/e2e/qa-agent-ui/workspace.spec.mjs:837:1 › ninth rejection keeps history and notice, prevents retries, and new session restores sending (3.4s)
+  ✓   6 tests/e2e/qa-agent-ui/workspace.spec.mjs:945:1 › pending history retries one temporary 503 and automatically reads answer without a second POST (4.3s)
+  ✓   7 tests/e2e/qa-agent-ui/workspace.spec.mjs:1183:1 › unknown ACK refresh restores only original UUID and late row is recovered with one POST (719ms)
+  ✓   8 tests/e2e/qa-agent-ui/workspace.spec.mjs:1276:1 › unknown ACK refresh finds matching history receipt and clears only its recovery marker (528ms)
+  ✓   9 tests/e2e/qa-agent-ui/workspace.spec.mjs:2044:1 › WEB001 URL Session changes and browser back-forward bind the visible conversation before sending (3.4s)
+  ✓  10 tests/e2e/qa-agent-ui/workspace.spec.mjs:2092:1 › WEB001 permission-denied send hides previously protected history and blocks further admission (601ms)
+  ✓  11 tests/e2e/qa-agent-ui/workspace.spec.mjs:2146:1 › WEB001 removing URL Session clears private selection and pending URL reads are fenced (459ms)
+  ✓  12 tests/e2e/qa-agent-ui/workspace.spec.mjs:2191:1 › WEB001 same actor tabs retain independent URL Session and submission destinations (543ms)
+
+  12 passed (19.4s)

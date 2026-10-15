@@ -1,0 +1,25 @@
+{
+  "task": "IOS-CHAT-MUSE-20261014",
+  "branch": "codex/ios-chat-muse-20261014",
+  "startHead": "59d92cc33bbdc0b161a7dc83e9688fb393529b68",
+  "statePatchCherryPick": "ba30a739e6530c2efbdc987a36fec1ac1ab53c75",
+  "mainExactStateCommit": "fedd8de8a70f6f014d41d3c3176dc6a9e6e47f71",
+  "localStateEqualsMain": false,
+  "difference": "prior945a confirmation guard/reset changes absent from originalde0 base; no shared correction performed",
+  "source": {
+    "ios/VisePanda/VisePanda/Features/Frontend/Chat/NativeFrontendChatView.swift": "5e82ef98c1b37c83e9060b848f60cc23fd674f0fa675ca094e231ac47841b20a",
+    "ios/VisePanda/VisePanda/Features/Frontend/Chat/NativeFrontendChatSheet.swift": "e869d97e342773430fbc3688396b6acfe8f7bc8c6350e19626c16e2f6cf99862",
+    "ios/VisePanda/VisePanda/Features/Frontend/Chat/NativeMuseChatHeader.swift": "caeb57457d5bb7314f19c1c6f9572297fe06214065019db0ef7157d47043b6e7"
+  },
+  "avatarOriginal": "a2bfdd463df05335d052c4485bfa613a422ef67a575aaacb2b886efd436cf29e",
+  "reference": "0856ac2c5b10fe441c7f134637b60c00fc1ab301ca31ff0f83e7c00e1977e96f",
+  "verification": {
+    "fullSwiftParse": "PASS",
+    "diff": "PASS",
+    "SDK": "prior in-flight command exit0 using exactMainState+signature-only composer/sidebar stubs; NOT actual integrated proof",
+    "newStateAssertions": "updated actual expectations and isolation/confirmation guards; NOT RUN per Main consolidation",
+    "fullApp/UI/assetCrop": "Main coordinated UNRUN here"
+  },
+  "root/PBX/assets/otherLeaf": "NO WRITE",
+  "old5Untracked": "PRESERVED"
+}
