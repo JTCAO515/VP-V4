@@ -1,0 +1,165 @@
+import Foundation
+import XCTest
+@testable import VisePanda
+
+nonisolated final class NativeTripAddressTests: XCTestCase {
+    @MainActor func testCodecDraftSourceExactConfirmationAndReadOnlyRecovery() async throws {
+        let decoder = JSONDecoder(), encoder = JSONEncoder()
+        func check(_ value: @autoclosure () throws -> Bool) throws { let result = try value(); XCTAssertTrue(result) }
+        func rejected<T: Decodable>(_ type: T.Type, _ json: String) {
+            XCTAssertNil(try? decoder.decode(type, from: Data(json.utf8)), json)
+        }
+        let original = "  广州市\n越秀区  "
+        let address = try NativeUserProvidedAddress(text: original)
+        try check(try decoder.decode(NativeUserProvidedAddress.self, from: encoder.encode(address)).text == original)
+        XCTAssertTrue(NativeAddressText.valid(String(repeating: "中", count: 500)))
+        XCTAssertTrue(!NativeAddressText.valid(String(repeating: "中", count: 501)))
+        XCTAssertTrue(!NativeAddressText.valid(String(repeating: "😀", count: 376)))
+        XCTAssertTrue(NativeAddressText.valid(String(repeating: "😀", count: 375)))
+        XCTAssertTrue(!NativeAddressText.valid("\u{0085}"))
+        XCTAssertTrue(!NativeAddressText.valid(" \u{3000}\u{feff}"))
+        XCTAssertTrue(!NativeAddressText.valid("中\u{000b}"))
+        rejected(NativeUserProvidedAddress.self, #"{"text":"中","source":"user_provided","verification":"verified"}"#)
+        rejected(NativeUserProvidedAddress.self, #"{"text":"中","source":"grounded","verification":"unverified"}"#)
+        rejected(NativeUserProvidedAddress.self, #"{"text":"中","source":"user_provided","verification":"unverified","extra":true}"#)
+        rejected(NativeUserProvidedAddress.self, #"{"text":"\ud800","source":"user_provided","verification":"unverified"}"#)
+        let old = try decoder.decode(NativeTripItem.self, from: Data(#"{"id":"i","dayId":"d","title":"title"}"#.utf8))
+        XCTAssertTrue(old.userAddress == nil)
+        let new = try decoder.decode(NativeTripItem.self, from: Data(#"{"id":"i","dayId":"d","title":"title","chineseAddress":{"text":"中","source":"user_provided","verification":"unverified"}}"#.utf8))
+        XCTAssertTrue(new.userAddress?.text == "中")
+        rejected(NativeTripItem.self, #"{"id":"i","dayId":"d","title":"title","chineseAddress":{"text":"中","source":"user_provided","verification":"verified"}}"#)
+        let clear = NativeTripOperation(kind: .setChineseAddress, dayId: "d", itemId: "i", addressText: .clear)
+        let encoded = try encoder.encode(clear)
+        try check((try JSONSerialization.jsonObject(with: encoded) as! [String:Any])["text"] is NSNull)
+        try check(try decoder.decode(NativeTripOperation.self, from: encoded) == clear)
+        let set = NativeTripOperation(kind: .setChineseAddress, dayId: "d", itemId: "i", addressText: .set(original))
+        try check(try decoder.decode(NativeTripOperation.self, from: encoder.encode(set)) == set)
+        let title = try encoder.encode(NativeTripOperation(kind: .setTitle, title: "new"))
+        try check((try JSONSerialization.jsonObject(with: title) as! [String:Any])["text"] == nil)
+        rejected(NativeTripOperation.self, #"{"kind":"set_item_chinese_address","dayId":"d","itemId":"i"}"#)
+        rejected(NativeTripOperation.self, #"{"kind":"set_item_chinese_address","dayId":"d","itemId":"i","text":" "}"#)
+        rejected(NativeTripOperation.self, #"{"kind":"set_item_chinese_address","dayId":"d","itemId":"i","text":"中","verification":"verified"}"#)
+        rejected(NativeTripOperation.self, #"{"kind":"set_title","title":"new","text":null}"#)
+        XCTAssertTrue(NativeAddressText.classify(["广州市越秀区 1号"]) == .containsChineseText)
+        XCTAssertTrue(NativeAddressText.classify(["1 Beijing Road"]) == .notChinese)
+        for lines in [[], [""], ["東京かな"], ["中文한글"], ["中文😀"], ["中文Ж"], ["\u{0000}"], [String(repeating: "中", count: 1400)]] {
+            XCTAssertTrue(NativeAddressText.classify(lines) == .unknown)
+        }
+        let actor = NativeDataScope(endpoint: "https://example.invalid", subject: "owner", mobileEpoch: 1, generation: 1)
+        let target = NativeTripSupportTarget(actor: actor, tripID: "11111111-1111-4111-8111-111111111111", tripVersion: 5, dayID: "d", itemID: "i")
+        let source = NativeTripSupportRead.SourceReference(sourceRevisionId: target.tripID, revisionLabel: "v1", snippetHash: String(repeating: "a", count: 64))
+        func read(_ status: NativeTripSupportStatus = .current, _ applicability: NativeTripSupportApplicability = .matched, expires: String = "2099-01-01T00:00:00Z", sources: Bool = true) -> NativeTripSupportRead {
+            let claim = NativeTripSupportClaim(claimType: "address", subjectId: "subject", value: .init(lines: ["广州"], locality: nil, countryCode: "CN", startsAt: nil, endsAt: nil, timeZone: nil), asOf: "2026-01-01T00:00:00Z", evidence: [.init(kind: "fact", factId: target.tripID, version: 1, reviewedAt: "2026-01-01T00:00:00Z", expiresAt: expires)])
+            let entry = NativeTripSupportRead.Entry(supportId: target.tripID, receiptId: target.tripID, placeReferenceId: target.tripID, version: 1, scope: .address, applicability: applicability, status: status, claimRevision: 1, payloadHash: String(repeating:"a",count:64), sourceDigest: String(repeating:"a",count:64), sourceRefs: sources ? [source] : [], claim: claim)
+            return .init(kind: "support", tripId: target.tripID, tripVersion: target.tripVersion, dayId: target.dayID, itemId: target.itemID, entries: [entry])
+        }
+        XCTAssertTrue(NativeTripAddressRead.references(read(), target: target, current: actor)?.count == 1)
+        XCTAssertTrue(NativeTripAddressRead.references(read(.revoked), target: target, current: actor)?.isEmpty == true)
+        XCTAssertTrue(NativeTripAddressRead.references(read(.current, .unverified), target: target, current: actor)?.isEmpty == true)
+        XCTAssertTrue(NativeTripAddressRead.references(read(expires:"2020-01-01T00:00:00Z"), target: target, current: actor)?.isEmpty == true)
+        XCTAssertTrue(NativeTripAddressRead.references(read(sources:false), target: target, current: actor)?.isEmpty == true)
+        XCTAssertTrue(NativeTripAddressRead.references(read(), target: target, current: nil) == nil)
+        let other = NativeTripSupportTarget(actor: actor, tripID: target.tripID, tripVersion: 6, dayID: "d", itemID: "i")
+        XCTAssertTrue(NativeTripAddressRead.references(read(), target: other, current: actor) == nil)
+        XCTAssertTrue(NativeTripAddressRead.references(nil, target: target, current: actor) == nil)
+        let summary = NativeTripSummary(id: target.tripID, title: "Trip", headVersion: 5, updatedAt: "2026-01-01T00:00:00Z")
+        let base = NativeTripDetail(version: 2, trip: summary, content: .init(days: [.init(id: "d", date: "2026-10-16", items: [new])]), hardLocks: .notEnabled, externalOrderStatus: .notConnected, confirmationState: "confirmed")
+        var draft = NativeTripDraft(base)
+        draft.days[0].items[0].userAddress = address
+        XCTAssertTrue(draft.patch.operations == [set])
+        XCTAssertTrue(base.content.days[0].items[0].userAddress?.text == "中") // Editing/cancel leaves confirmed bytes intact.
+        draft.days[0].items[0].userAddress = nil
+        XCTAssertTrue(draft.patch.operations == [clear])
+        draft = NativeTripDraft(base)
+        draft.days[0].items[0].title = "changed"
+        XCTAssertTrue(draft.patch.operations.count == 1 && draft.patch.operations[0].kind == .upsertItem)
+        XCTAssertTrue(draft.patch.operations[0].addressText == nil)
+        let proposal = NativeTripPending.Proposal(id: target.tripID, revision: 1, baseTripVersion: 5, status: "pending", createdAt: "2026-01-01T00:00:00Z", expiresAt: "2099-01-01T00:00:00Z", titleDiff: .init(before: "Trip", after: "Trip"), dayDiffs: [], patch: .init(expectedVersion: 5, operations: [set]), digest: "digest", stale: false, evidence: "", assumptions: "")
+        var confirmedItem = new; confirmedItem.userAddress = address
+        func confirmed(_ version: Int, _ item: NativeTripItem) -> NativeTripDetail {
+            .init(version: 2, trip: .init(id: target.tripID, title: "Trip", headVersion: version, updatedAt: "2026-01-01T00:00:00Z"), content: .init(days: [.init(id: "d", date: "2026-10-16", items: [item])]), hardLocks: .notEnabled, externalOrderStatus: .notConnected, confirmationState: "confirmed")
+        }
+        XCTAssertTrue(NativeTripAddressConfirmation.matches(confirmed(6, confirmedItem), proposal: proposal, resultingVersion: 6))
+        XCTAssertTrue(!NativeTripAddressConfirmation.matches(confirmed(7, confirmedItem), proposal: proposal, resultingVersion: 6))
+        XCTAssertTrue(!NativeTripAddressConfirmation.matches(confirmed(6, new), proposal: proposal, resultingVersion: 6))
+        XCTAssertTrue(!NativeTripAddressConfirmation.matches(base, proposal: proposal, resultingVersion: 6))
+        let pending = NativeTripPending(version: 2, trip: summary, proposal: proposal)
+        let recoveryPatch = proposal.patch
+        var reads = 0
+        let recovered = try await NativeTripAddressProposalRecovery.read(expected: recoveryPatch, retained: recoveryPatch, draft: recoveryPatch, tripID: target.tripID, current: { true }, get: { reads += 1; return pending })
+        XCTAssertTrue(reads == 1 && recovered.proposal.id == proposal.id)
+        let changed = NativeTripPatch(expectedVersion: recoveryPatch.expectedVersion, operations: [.init(kind: .setChineseAddress, dayId: "d", itemId: "i", addressText: .set("其他地址"))])
+        do {
+            _ = try await NativeTripAddressProposalRecovery.read(expected: changed, retained: recoveryPatch, draft: recoveryPatch, tripID: target.tripID, current: { true }, get: { reads += 1; return pending })
+            XCTFail("different address request must not read or send")
+        } catch { XCTAssertTrue(reads == 1) }
+        do {
+            _ = try await NativeTripAddressProposalRecovery.read(expected: recoveryPatch, retained: recoveryPatch, draft: recoveryPatch, tripID: target.tripID, current: { true }, get: { reads += 1; throw NativeDataError.sessionUnavailable })
+            XCTFail("failed read must stay unknown")
+        } catch { XCTAssertTrue(reads == 2) }
+        var sameActorAndVersion = true
+        do {
+            _ = try await NativeTripAddressProposalRecovery.read(expected: recoveryPatch, retained: recoveryPatch, draft: recoveryPatch, tripID: target.tripID, current: { sameActorAndVersion }, get: { reads += 1; sameActorAndVersion = false; return pending })
+            XCTFail("late actor/version result must not publish")
+        } catch { XCTAssertTrue(reads == 3) }
+        let canceled = Task { @MainActor in
+            withUnsafeCurrentTask { $0?.cancel() }
+            do {
+                _ = try await NativeTripAddressProposalRecovery.read(expected: recoveryPatch, retained: recoveryPatch, draft: recoveryPatch, tripID: target.tripID, current: { true }, get: { reads += 1; return pending })
+                XCTFail("canceled request must not read")
+            } catch { XCTAssertTrue(reads == 3) }
+        }
+        await canceled.value
+    }
+
+    @MainActor private func archiveContent(address: Any? = nil) -> [String: Any] {
+        var item: [String: Any] = ["id": "i", "dayId": "d", "title": "Confirmed item"]
+        if let address { item["chineseAddress"] = address }
+        return ["days": [["id": "d", "date": "2026-10-16", "items": [item]]]]
+    }
+
+    @MainActor func testArchiveContentAcceptsOldAndExactUnverifiedAddressWithoutChangingText() throws {
+        // The optional-address ArchiveDataRows integration is Main-owned, not present in this WT base.
+        XCTAssertNoThrow(try NativeArchiveDataRows.content(archiveContent()))
+        let text = "  广州市\n越秀区  "
+        let address: [String: Any] = ["text": text, "source": "user_provided", "verification": "unverified"]
+        let content = archiveContent(address: address)
+        let before = try JSONSerialization.data(withJSONObject: content, options: [.sortedKeys])
+        XCTAssertNoThrow(try NativeArchiveDataRows.content(content))
+        XCTAssertEqual(try JSONSerialization.data(withJSONObject: content, options: [.sortedKeys]), before)
+        let decoded = try JSONDecoder().decode(NativeTripContent.self, from: before)
+        XCTAssertEqual(decoded.days.first?.items.first?.userAddress?.text, text)
+    }
+
+    @MainActor func testArchiveContentRejectsNullForgedTagsExtraKeysAndMalformedTypes() throws {
+        let invalid: [Any] = [
+            NSNull(),
+            ["text": "广州", "source": "user_provided", "verification": "verified"],
+            ["text": "广州", "source": "grounded", "verification": "unverified"],
+            ["text": "广州", "source": "user_provided", "verification": "unverified", "extra": true],
+            ["text": "广州", "source": "user_provided"],
+            ["text": 123, "source": "user_provided", "verification": "unverified"],
+            "广州", ["广州"]
+        ]
+        for address in invalid {
+            XCTAssertThrowsError(try NativeArchiveDataRows.content(archiveContent(address: address)))
+        }
+        var extraItem: [String: Any] = ["id": "i", "dayId": "d", "title": "Confirmed item", "other": true]
+        XCTAssertThrowsError(try NativeArchiveDataRows.content(["days": [["id": "d", "date": "2026-10-16", "items": [extraItem]]]]))
+        extraItem.removeValue(forKey: "other")
+        extraItem["dayId"] = "another-day"
+        XCTAssertThrowsError(try NativeArchiveDataRows.content(["days": [["id": "d", "date": "2026-10-16", "items": [extraItem]]]]))
+    }
+
+    @MainActor func testArchiveContentEnforcesSharedScalarByteBlankAndControlLimits() throws {
+        func value(_ text: String) -> [String: Any] {
+            ["text": text, "source": "user_provided", "verification": "unverified"]
+        }
+        for text in [String(repeating: "中", count: 500), String(repeating: "😀", count: 375)] {
+            XCTAssertNoThrow(try NativeArchiveDataRows.content(archiveContent(address: value(text))))
+        }
+        for text in [String(repeating: "中", count: 501), String(repeating: "😀", count: 376), "", " \u{3000}\u{feff}", "中\u{000b}", "中\u{0085}"] {
+            XCTAssertThrowsError(try NativeArchiveDataRows.content(archiveContent(address: value(text))))
+        }
+    }
+}
