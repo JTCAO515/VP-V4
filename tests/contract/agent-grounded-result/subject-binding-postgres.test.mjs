@@ -72,7 +72,7 @@ run('full QA baseline lifecycle and only declared two-function append/rollback c
  const source=readFileSync(join('supabase/migrations',append),'utf8');
  await query('begin');await query('alter function public.read_grounded_ai_assist_context_v1(uuid) cost 99');
  await assert.rejects(query(source),/AGENT005_BEFORE_DEFINITION_MISMATCH/);await query('rollback');assert.deepEqual(await catalog(),baseline);
- const unaccepted=readFileSync(join(artifact,'context-function.before.sql'),'utf8').replace('create function','create or replace function').replace('as $$','as $$\n-- unaccepted fixture source drift');
+ const unaccepted=readFileSync(join(artifact,'context-function.before.sql'),'utf8').replace('create function','create or replace function').replace('as $$',()=> 'as $$\n-- unaccepted fixture source drift');
  await query('begin');await query(unaccepted);await assert.rejects(query(source),/AGENT005_BEFORE_DEFINITION_MISMATCH/);await query('rollback');assert.deepEqual(await catalog(),baseline);
  await query('begin');await query(source);await query('rollback');assert.deepEqual(await catalog(),baseline);
  await query('begin');await query(source);await query('commit');
