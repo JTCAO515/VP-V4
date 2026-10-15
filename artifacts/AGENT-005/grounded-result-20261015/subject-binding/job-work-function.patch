@@ -1,0 +1,30 @@
+--- public.grounded_ai_assist_work_v1(jsonb):before
++++ public.grounded_ai_assist_work_v1(jsonb):candidate
+@@ -1,4 +1,4 @@
+-create function public.grounded_ai_assist_work_v1(p_input jsonb)
++create or replace function public.grounded_ai_assist_work_v1(p_input jsonb)
+ returns jsonb language plpgsql security definer set search_path='' as $$
+ declare
+   u uuid; s uuid; action text; tid uuid;
+@@ -19,6 +19,7 @@
+     u := turn_private.text_owner();
+     s := (auth.jwt()->>'session_id')::uuid;
+     if not turn_private.lock_turn(tid, u, s) then return jsonb_build_object('kind', 'unavailable'); end if;
++    if public.read_grounded_ai_assist_context_v1(tid)->>'kind' is distinct from 'context' then return jsonb_build_object('kind','unavailable'); end if;
+ 
+     select * into g from turn_private.grounded_turns where turn_id = tid and owner_id = u;
+     if not found or g.original_outcome is distinct from 'blocked' then return jsonb_build_object('kind', 'not_applicable'); end if;
+@@ -58,6 +59,13 @@
+     then raise exception 'INVALID_INPUT'; end if;
+ 
+   u := turn_private.text_owner();
++  -- Resolve and authorize before taking the job row lock: context/root
++  -- locks precede job locks, matching ensure. Re-read the immutable identity
++  -- and token state under the row lock before any completion write.
++  select * into job from turn_private.grounded_ai_assist_jobs where id = (p_input->>'jobId')::uuid;
++  if not found then raise exception 'OPS_NOT_FOUND'; end if;
++  if job.owner_id <> u then raise exception 'UNAUTHENTICATED'; end if;
++  if public.read_grounded_ai_assist_context_v1(job.turn_id)->>'kind' is distinct from 'context' then return jsonb_build_object('kind','unavailable'); end if;
+   select * into job from turn_private.grounded_ai_assist_jobs where id = (p_input->>'jobId')::uuid for update;
+   if not found then raise exception 'OPS_NOT_FOUND'; end if;
+   if job.owner_id <> u then raise exception 'UNAUTHENTICATED'; end if;
