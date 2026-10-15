@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { userProvidedAddress } from "../../../lib/trip-user-address.ts";
 import { addressBindingKey, readCurrentAddressBinding } from "../../../components/trip-address/current-binding.ts";
 import { addressProposalChanges } from "../../../components/trip-address/review.ts";
 import { addressReviewBlocked } from "../../../components/trip-address/online-proposal.ts";
@@ -7,7 +8,7 @@ import type { LocalTripRead } from "../../../components/canvas/TripContentEditor
 import type { PendingProposalRead } from "../../../lib/server/identity/user-data-adapter.ts";
 const id = "11111111-1111-4111-8111-111111111111", pid = "22222222-2222-4222-8222-222222222222";
 const rootA = { identity: "A:session", key: "A:session:1", expiresAt: Date.now() + 60000 };
-const address = { text: "  上海 A座\n ", source: "user_provided", verification: "unverified" };
+const address = userProvidedAddress("  上海 A座\n ");
 const item = (dayId: string, withAddress = true) => ({ id: "item", dayId, title: "Place", ...(withAddress ? { chineseAddress: address } : {}) });
 function data(): LocalTripRead { return { trip: { id, title: "Trip", headVersion: 3, updatedAt: "2026-10-15T00:00:00Z" }, confirmationState: "confirmed", content: { days: [{ id: "A", date: "2026-10-16", items: [item("A")] }] } }; }
 function pending(before = [item("A")], after = [item("A", false)]): PendingProposalRead {
