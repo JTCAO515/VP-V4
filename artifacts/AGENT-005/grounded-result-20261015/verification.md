@@ -42,3 +42,5 @@ Real identity/RLS/provider/session/database persistence, production/QA deploymen
 Frozen place provenance check: cases.ts builds place cases with claims=[] and CorpusStatement has no subjectId; the synthetic-subject in the old RPC fixture is not a resolved entity. No resolved object was fabricated to make that eval green. Dedicated resolved-object positives/negatives are separate, explicit fixture premises.
 
 Current eval artifact frozen-current-contract-results.json retains all 34 rows, 17/17 development/holdout, original denominators and fixture-only p50/p95/declared-token metrics. Its git commit identifies the tested source/harness head. No performance or cost claim extends beyond that fixture process.
+
+Evidence formatting: full-base diff check detected whitespace emitted by the Node assertion reporter in raw logs. Text logs were whitespace-normalized for review; matching .raw.log.gz archives retain the original bytes, including original failures. Full-base diff check passed after this evidence-only correction.

@@ -27,10 +27,10 @@ test at evals/wiki-agentic-search/wiki-agentic-search.evals.test.ts:100:1
 ✖ real pipeline run over the frozen set: every scenario's outcome matches its ground truth, and the report is written (15.575417ms)
   AssertionError [ERR_ASSERTION]: place_address-zh: expected kind answered, got unavailable
   + actual - expected
-  
+
   + 'unavailable'
   - 'answered'
-  
+
       at TestContext.<anonymous> (file:///private/var/folders/d6/67d7jxn91td3yd6hjtgqh78h0000gn/T/agent005-evals-vqe2_1f6/evals/wiki-agentic-search/wiki-agentic-search.evals.test.ts:118:12)
       at async Test.run (node:internal/test_runner/test:1409:7)
       at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {

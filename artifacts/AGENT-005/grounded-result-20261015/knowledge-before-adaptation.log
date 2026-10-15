@@ -194,10 +194,10 @@ test at tests/contract/knowledge/wiki-grounded-ai-assist-job.test.mjs:80:1
 ✖ ensure kind:claimed, but the search loop itself throws, completes the job as failed with an errorCode instead of losing the claim (0.4955ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
   + actual - expected
-  
+
   + 'pending'
   - 'succeeded'
-  
+
       at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/contract/knowledge/wiki-grounded-ai-assist-job.test.mjs:91:10)
       at async Test.run (node:internal/test_runner/test:1409:7)
       at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
@@ -213,10 +213,10 @@ test at tests/contract/knowledge/wiki-grounded-ai-assist-job.test.mjs:96:1
 ✖ a claimed job whose complete() call itself fails to reach the server still returns the real outcome to the caller (0.622583ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
   + actual - expected
-  
+
   + 'pending'
   - 'succeeded'
-  
+
       at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/contract/knowledge/wiki-grounded-ai-assist-job.test.mjs:104:10)
       at async Test.run (node:internal/test_runner/test:1409:7)
       at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
@@ -232,10 +232,10 @@ test at tests/contract/knowledge/wiki-grounded-search.test.mjs:54:1
 ✖ a real published place statement flows through to a real answer, same as any other supported intent (12.924459ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
   + actual - expected
-  
+
   + 'unavailable'
   - 'answered'
-  
+
       at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/contract/knowledge/wiki-grounded-search.test.mjs:60:10)
       at async Test.run (node:internal/test_runner/test:1409:7)
       at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
@@ -251,7 +251,7 @@ test at tests/contract/knowledge/wiki-grounded-search.test.mjs:89:1
 ✖ real content exists but the search loop finds nothing relevant: retrieval_miss, distinct from missing_content (1.053292ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
   + actual - expected
-  
+
     {
   +   citations: [
   +     {
@@ -299,7 +299,7 @@ test at tests/contract/knowledge/wiki-grounded-search.test.mjs:89:1
   -   kind: 'unavailable',
   -   reason: 'retrieval_miss'
     }
-  
+
       at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/contract/knowledge/wiki-grounded-search.test.mjs:92:10)
       at async Test.run (node:internal/test_runner/test:1409:7)
       at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
@@ -315,10 +315,10 @@ test at tests/contract/knowledge/wiki-grounded-search.test.mjs:117:1
 ✖ a place-question answer never fabricates required-claim coverage: EvidencePack v2's required stays empty since this module resolves no subject (0.343084ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
   + actual - expected
-  
+
   + 'unavailable'
   - 'answered'
-  
+
       at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/contract/knowledge/wiki-grounded-search.test.mjs:123:10)
       at async Test.run (node:internal/test_runner/test:1409:7)
       at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
