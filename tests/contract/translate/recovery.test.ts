@@ -39,3 +39,23 @@ test('identity/content mismatches, unknown state and incomplete/late callback ev
   const value = projectTranslationRecovery({ ...identity, ...patch }, turn); assert.equal(value.state, 'unknown'); assert.equal(value.phrase, null);
  }
 });
+test('serialized recovery phrase has exactly the Native receipt seven fields with explicit null translations outside translated', () => {
+ const keys = ['turnId', 'sourceLocale', 'targetLocale', 'original', 'state', 'translation', 'backTranslation'].sort();
+ for (const patch of [
+  { status: 'accepted', output: null, outcome: null },
+  { status: 'cancelled', output: null, outcome: null },
+  { status: 'failed', output: null, outcome: null },
+  { status: 'completed', output: '{}' },
+  {},
+ ]) {
+  const value = JSON.parse(JSON.stringify(projectTranslationRecovery(identity, { ...turn, ...patch })));
+  assert.deepEqual(value.identity, identity); assert.deepEqual(Object.keys(value.phrase).sort(), keys);
+  assert.equal(value.phrase.turnId, identity.turnId); assert.equal(value.phrase.sourceLocale, identity.sourceLocale);
+  assert.equal(value.phrase.targetLocale, identity.targetLocale); assert.equal(value.phrase.original, input.text);
+  assert.equal(value.phrase.state, value.state);
+  if (value.state === 'translated') { assert.equal(typeof value.phrase.translation, 'string'); assert.equal(typeof value.phrase.backTranslation, 'string'); }
+  else { assert.equal(value.phrase.translation, null); assert.equal(value.phrase.backTranslation, null); }
+ }
+ const unknown = JSON.parse(JSON.stringify(projectTranslationRecovery(identity, null)));
+ assert.equal(unknown.state, 'unknown'); assert.equal(unknown.phrase, null);
+});

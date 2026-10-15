@@ -1,6 +1,7 @@
 # IOS-005 exact original translation recovery server
 
-Product source: `82b45d2f4373008bc03f38be3b21eb97412133fc`.
+Initial product source: `82b45d2f4373008bc03f38be3b21eb97412133fc`.
+Latest product increment: seven-field recovery phrase normalization in the commit containing the follow-up section below.
 Base: `4a628e4a6063d8a2263a36c51af55c8f811c3066` (QA).
 Branch: `codex/ios005-translation-recovery-server-20261016`.
 Owner chat: `01a14101-15e3-7300-ab83-322b45c0b11a`, verified project VPV10 `4f2191db-3e04-4042-94b5-ec94ff67b427`.
@@ -11,7 +12,7 @@ Actual local tooling: Node v26.8.2; PostgreSQL17.11 Homebrew; danger-full-access
 
 `GET /api/translate/recovery/{turnId}` accepts exactly seven query fields: threadId, idempotencyKey, policyId, noticeHash, sourceLocale, targetLocale, inputHash. UUID/hash strings are canonical lowercase; direction is zh/en with distinct locales. inputHash is SHA256 of the original user text UTF8 bytes, without trimming/normalization and without the translation prompt prefix. Neither original text nor actor identity is accepted in query.
 
-Reply: `{version:1,kind:"translation_recovery",identity,state,phrase}`. identity contains path turnId and the seven query fields. state is unknown/pending/translated/cancelled/unavailable/needs_review. `phrase` uses the existing projectTranslation shape, including original/sourceLocale/targetLocale/turnId and state; translated also includes translation/backTranslation. Unknown always has null phrase and no private content. Same original submission and identity survive; there is no new key/Turn or generation/admission call.
+Reply: `{version:1,kind:"translation_recovery",identity,state,phrase}`. identity contains path turnId and the seven query fields. state is unknown/pending/translated/cancelled/unavailable/needs_review. `phrase` normalizes the existing projectTranslation result to exactly seven fields: turnId/sourceLocale/targetLocale/original/state/translation/backTranslation. Non-translated phrases explicitly carry null translation and backTranslation. Unknown always has null phrase and no private content. Same original submission and identity survive; there is no new key/Turn or generation/admission call.
 
 The ordinary verified Bearer client's existing RLS selects exact owner/thread/turn/idempotency rows. Active native session, current accepted policy/notice, policy-scoped list_text_turns and exact read_text_turn are checked before and after. Complete local thread/turn/key/history-candidate/exact-text evidence must match across reads; policy/session are checked three times. Deleted/hidden/archived/missing or racing evidence cannot publish a positive result. Unknown is not proof of no submission, a failure, a refund, or permission to resubmit/clear the retained attempt.
 
@@ -21,8 +22,8 @@ Public endpoint is GET-only, no Cookie/Origin authority. Existing Supabase read 
 
 ## Verification
 
-- PASS `node --experimental-strip-types --test tests/contract/translate/*.test.ts tests/security/translate/recovery.test.ts`: 56/56, zero skip. Full local translation contract regression and recovery security negatives; `translation-regression.log`.
-- PASS focused new recovery contract/security: 33/33, zero skip; `recovery-tests.log`.
+- PASS `node --experimental-strip-types --test tests/contract/translate/*.test.ts tests/security/translate/recovery.test.ts`: 57/57, zero skip after seven-field follow-up. Full local translation contract regression and recovery security negatives; `translation-regression.log`.
+- PASS focused new recovery contract/security: 34/34, zero skip after follow-up; `recovery-tests.log`.
 - PASS `IOS005_NATIVE_PG=1 IOS005_PG_BIN=/opt/homebrew/opt/postgresql@17/bin IOS005_PG_MODULE=<existing read-only pg8.13.1 module> node --experimental-strip-types --test tests/security/translate/recovery-postgres.test.mjs`: 1/1, zero skip, current161 migration replay on owned PostgreSQL17.11; `owned-postgres.log`.
 - PASS `node node_modules/typescript/bin/tsc --noEmit --incremental false` (exit0, empty output).
 - PASS `node scripts/lint.mjs`: source policy880 files.
@@ -45,3 +46,11 @@ Earlier failures, fixed before source commit:
 UNRUN: managed Auth, actual PostgREST, deployed target, physical device/VoiceOver, real worker/provider completion, release and remote CI. Full build is not required for this GET server change; TSC and affected translation/security behavior were verified. Main owns CI registration, shared interfaces, integration, PR/merge and whole-Issue closure. No independent PR or Issue closure was performed here.
 
 Only six new source/test paths were committed. No old http.ts/contract.ts hunk, history v2, CoreTurn/native-http.ts, SQL/RLS/grant, provider/worker/config, shared fixture/CI/registry or HANDOFF edits. All old owner resources/dirty retained. Source writer is stopped after this commit; no in-flight product edits, no planned successor/source writer. Main receives exact future translation-recovery paths for integration; further implementation/repair only on Main's explicit scope. Final residual untracked path is the initial read-only node_modules symlink.
+
+## Seven-field follow-up accepted by Main
+
+Main initially reported a mismatch against an early Native receipt implementation, then explicitly withdrew that defect diagnosis after checking the final Native `cbf223da` consumer: it accepts both non-translated five-field phrases and seven-field phrases with explicit nulls. The original server82b wire was compatible; no original defect is claimed. The minimal normalization was already written when that correction arrived, so it was preserved as dirty and the actual diff/verification sent for Main's decision. Main explicitly accepted retaining it for a clearer stable server wire.
+
+The only additional source change is the new recovery-contract.ts phrase type and literal null mapping; the old projectTranslation/http/history and all authorization/SQL/RLS/metadata reads remain unchanged. One serialize→parse contract case asserts exactly seven fields and identity/state/original for pending/cancelled/failed/needs_review/translated; unknown remains null. Final affected regression57/57, focused34/34, TSC/lint/diff PASS. Prior56/56 and33/33 belong to82b and remain in the earlier artifact commits. Prior PG1/1 at82b is reused unchanged for the same read/authority graph; it was not rerun for literal null output mapping, as Main explicitly directed. No target evidence is added.
+
+After the follow-up commit/push the owner is again stopped, with no in-flight tools/planned source changes/successor writer. The same exact six new paths and artifact directory are released to Main for integration. Residual untracked node_modules symlink is unchanged.
