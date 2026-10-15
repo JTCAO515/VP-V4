@@ -34,3 +34,14 @@ test('stale actor mutation cannot delete or overwrite a new actor recovery ident
  assert.throws(()=>confirm(actor,identity,s));assert.equal(s.getItem(key),raw);
  assert.throws(()=>remember(actor,{...identity,requestId:other},s));assert.equal(s.getItem(key),raw);
 });
+test('cancellation lookup/intent IDs stay separate from original admission and store no authority/result',()=>{
+ const s=storage();remember(actor,identity,s);exports.rememberCancellationIdentity(actor,{...identity,requested:true,state:'cancelled',text:'private'},s);
+ confirm(actor,identity,s);assert.equal(s.getItem(key),null);
+ const value=JSON.parse(s.getItem(exports.CANCELLATION_IDENTITY_KEY));assert.deepEqual(value,{version:1,actorId:actor,requests:[{...identity,requested:true}]});
+ assert.equal(exports.readCancellationIdentities(actor,s)[0].requested,true);assert.throws(()=>exports.rememberCancellationIdentity(other,{...identity,requested:true},s));
+ clear(s);assert.equal(s.getItem(exports.CANCELLATION_IDENTITY_KEY),null);
+});
+test('definitely rejected stop resets only cancellation intent, never original admission identity',()=>{
+ const s=storage();remember(actor,identity,s);exports.rememberCancellationIdentity(actor,{...identity,requested:true},s);const original=s.getItem(key);
+ exports.releaseCancellationIntent(actor,identity,s);assert.equal(exports.readCancellationIdentities(actor,s)[0].requested,false);assert.equal(s.getItem(key),original);
+});

@@ -181,8 +181,9 @@ export const LANES = {
   // native Wiki environment unchanged; this independent lane requires major17.
   "postgres-native-17": {
     needs: ["VP_WIKI_PG_BIN", "VP_WIKI_PG_MODULE"],
-    steps: [{ name: "grounded-subject-native-17", concurrency: 1, env: { AGENT005_NATIVE_PG: "1" },
-      files: ["tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs"] }],
+    steps: [{ name: "subject-and-cancellation-native-17", concurrency: 1, env: { AGENT005_NATIVE_PG: "1", QA_CANCEL_NATIVE_PG: "1" },
+      files: ["tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs",
+        "tests/integration/qa-agent-cancellation/native-pg.test.mjs"] }],
   },
   // One disposable Supabase stack (GoTrue + PostgREST + all migrations); identity/RLS/Trip confirmation chain.
   // Migration 28 (VPJ-05) makes the database reject legacy confirmation digests, so against the full

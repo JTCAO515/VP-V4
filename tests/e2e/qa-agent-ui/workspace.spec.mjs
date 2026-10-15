@@ -21,6 +21,14 @@ async function fixture(page, context, hook = () => false, entry = {}) {
     const path = new URL(route.request().url()).pathname;
     const method = route.request().method();
     const fulfill = data => route.fulfill({contentType:'application/json',body:JSON.stringify(wire(data))});
+    if(path.endsWith('/cancellation')) {
+      const sid=path.split('/')[4],rid=path.split('/')[6];
+      if(entry.cancellation&&await entry.cancellation(route,{path,method,saved,sent,fulfill,sessionId:sid,requestId:rid}))return;
+      if(method==='POST')throw Error('Unexpected cancellation POST in existing fixture');
+      const found=saved.get(sid)?.find(message=>message.requestId===rid);
+      const state=!found?'not_observed':['pending','reconciliation_required'].includes(found.status)?'pending':'terminal';
+      return route.fulfill({contentType:'application/json',body:JSON.stringify({version:'qa-cancellation/1',sessionId:sid,requestId:rid,state,ack:['cancelled','terminal'].includes(state)?'observed':'unknown'})});
+    }
     if (await hook(route, { path, method, saved, sent, fulfill })) return;
     if(path.endsWith('/policy')) return fulfill({policy:{...policy,consentState:consented?'accepted':'not_accepted'}});
     if(path.endsWith('/consent')) { consented = true; return fulfill({policy:{...policy,consentState:consented?'accepted':'not_accepted'}}); }
@@ -583,4 +591,216 @@ test('WEB001 same actor tabs retain independent URL Session and submission desti
  await expect.poll(()=>destinations.length).toBe(2);expect(destinations).toEqual([{sessionId:idA,text:'Tab A question'},{sessionId:idB,text:'Tab B question'}]);
  await expect(page.getByRole('log')).toContainText('Tab A question');await expect(page.getByRole('log')).not.toContainText('Tab B question');await expect(other.getByRole('log')).not.toContainText('Tab A question');
  const bounds=await other.evaluate(()=>({width:document.documentElement.clientWidth,scroll:document.documentElement.scrollWidth}));expect(bounds.scroll).toBeLessThanOrEqual(bounds.width);await other.close();
+});
+
+const stopWire=(sessionId,requestId,state)=>({version:'qa-cancellation/1',sessionId,requestId,state,ack:['cancelled','terminal'].includes(state)?'observed':'unknown'});
+const cancellationKey='vp.qa.cancellation-target/v1';
+async function beginPending(page,context,options={}) {
+ let state='pending';const stops=[],reads=[];let original;
+ const h=await fixture(page,context,async(route,{path,method,saved,sent,fulfill})=>{
+  if(options.historyHook&&await options.historyHook(route,{path,method,saved,sent,fulfill}))return true;
+  if(method==='POST'&&path.endsWith('/messages')) {
+   original=route.request().postDataJSON();sent.push(original);saved.set(idA,[message(idA,original,null,'pending')]);
+   await fulfill({requestId:original.requestId,turnId:original.requestId,sessionId:idA,status:'pending',reused:false});return true;
+  }
+  return false;
+ },{cancellation:async(route,ctx)=>{
+  if(ctx.method==='POST') {stops.push({sessionId:ctx.sessionId,requestId:ctx.requestId,body:route.request().postDataJSON()});}
+  else reads.push(ctx.requestId);
+  if(options.cancelHook&&await options.cancelHook(route,{...ctx,state,original,setState:value=>{state=value;}}))return true;
+  if(ctx.method==='POST') {state='cancelled';ctx.saved.set(idA,[message(idA,original,null,'technical_failure')]);}
+  await route.fulfill({contentType:'application/json',body:JSON.stringify(stopWire(ctx.sessionId,ctx.requestId,state))});return true;
+ }});
+ await page.getByRole('button',{name:'Agree to the notice above'}).click();await expect(page.getByLabel('Message',{exact:true})).toBeEnabled();
+ await page.getByLabel('Message',{exact:true}).fill('Original pending question');await page.getByRole('button',{name:'Send',exact:true}).click();
+ await expect(page.getByRole('button',{name:'Stop this question',exact:true})).toBeVisible();return {...h,stops,reads,get original(){return original;},setState:value=>{state=value;}};
+}
+test('cancellation requires explicit confirmation and reads original stopped state after reload without resubmission',async({page,context})=>{
+ const h=await beginPending(page,context);
+ await page.getByRole('button',{name:'Stop this question',exact:true}).click();expect(h.stops).toHaveLength(0);
+ await page.getByRole('button',{name:'Back',exact:true}).click();expect(h.stops).toHaveLength(0);
+ await page.getByRole('button',{name:'Stop this question',exact:true}).click();await page.getByRole('button',{name:'Confirm stop',exact:true}).click();
+ await expect(page.getByText('Stopped.',{exact:true})).toBeVisible();expect(h.stops).toEqual([{sessionId:idA,requestId:h.original.requestId,body:{}}]);expect(h.sent).toHaveLength(1);
+ await page.reload();await expect(page.getByText('Stopped.',{exact:true})).toBeVisible();expect(h.stops).toHaveLength(1);expect(h.sent).toHaveLength(1);
+ expect(await page.evaluate(key=>sessionStorage.getItem(key),cancellationKey)).not.toContain('Original pending question');
+});
+test('unknown cancellation POST is recovered by original-ID GET after refresh, never automatically re-POSTed',async({page,context})=>{
+ let failed=false;
+ const h=await beginPending(page,context,{cancelHook:async(route,c)=>{
+  if(c.method==='POST') {failed=true;await route.abort();return true;}
+  if(failed) {await route.fulfill({contentType:'application/json',body:JSON.stringify(stopWire(c.sessionId,c.requestId,'not_observed'))});return true;}
+  return false;
+ }});
+ await page.getByRole('button',{name:'Stop this question',exact:true}).click();await page.getByRole('button',{name:'Confirm stop',exact:true}).click();
+ await expect(page.getByText(/Stopping is not confirmed|No stop result was observed/)).toBeVisible();await page.reload();
+ await expect(page.getByText('No stop result was observed. Keep checking the original request.',{exact:true})).toBeVisible();
+ await expect(page.getByRole('button',{name:'Stop this question',exact:true})).toHaveCount(0);expect(h.stops).toHaveLength(1);expect(h.sent).toHaveLength(1);
+ await page.getByRole('button',{name:'Check stop status',exact:true}).click();expect(h.stops).toHaveLength(1);expect(h.reads.every(id=>id===h.original.requestId)).toBe(true);
+});
+test('terminal cancellation read keeps the original answer and never posts a stop',async({page,context})=>{
+ let queries=0;
+ const h=await beginPending(page,context,{cancelHook:async(_route,c)=>{
+  if(c.method==='GET'&&++queries>=2) {c.setState('terminal');c.saved.set(idA,[message(idA,c.original,'Preserved answer')]);}return false;
+ }});
+ // Finish at confirmation preflight; the already-ended result must not be stopped.
+ await expect.poll(()=>h.reads.length).toBeGreaterThan(0);
+ await page.getByRole('button',{name:'Stop this question',exact:true}).click();await page.getByRole('button',{name:'Confirm stop',exact:true}).click();
+ await expect(page.getByRole('log')).toContainText('Preserved answer');expect(h.stops).toHaveLength(0);expect(h.sent).toHaveLength(1);
+});
+test('withdrawn generation consent still permits metadata-only stop of original observed request',async({page,context})=>{
+ let withdrawn=false;
+ const h=await beginPending(page,context,{historyHook:async(route,c)=>{
+  if(withdrawn&&c.path.endsWith('/policy')) {await c.fulfill({policy:{...policy,consentState:'withdrawn'}});return true;}
+  if(withdrawn&&c.method==='GET'&&c.path.endsWith(idA)) {await route.fulfill({status:403,contentType:'application/json',body:JSON.stringify(wire({error:{code:'DATA_POLICY_BLOCKED',ack:'not_submitted'}}))});return true;}
+  return false;
+ }});
+ await expect.poll(async()=>(JSON.parse(await page.evaluate(key=>sessionStorage.getItem(key),cancellationKey))?.requests.length??0)).toBe(1);
+ withdrawn=true;await page.reload();await expect(page.getByRole('button',{name:'Send',exact:true})).toBeDisabled();
+ await page.getByRole('button',{name:'Stop this question',exact:true}).click();await page.getByRole('button',{name:'Confirm stop',exact:true}).click();
+ await expect(page.getByText('Stopped.',{exact:true})).toBeVisible();expect(h.stops).toHaveLength(1);expect(h.sent).toHaveLength(1);await expect(page.getByRole('log')).not.toContainText('Original pending question');
+});
+test('cancellation not_submitted error does not confirm or erase unknown original message admission',async({page,context})=>{
+ const stops=[];
+ const {sent}=await fixture(page,context,async(route,c)=>{
+  if(c.method==='POST'&&c.path.endsWith('/messages')) {c.sent.push(route.request().postDataJSON());await route.abort();return true;}return false;
+ },{cancellation:async(route,c)=>{
+  if(c.method==='POST') {stops.push(c.requestId);await route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({version:'qa-cancellation/1',sessionId:c.sessionId,requestId:c.requestId,error:{code:'PROVIDER_UNAVAILABLE',ack:'not_submitted'}})});}
+  else await route.fulfill({contentType:'application/json',body:JSON.stringify(stopWire(c.sessionId,c.requestId,'not_observed'))});return true;
+ }});
+ await page.getByRole('button',{name:'Agree to the notice above'}).click();await expect(page.getByLabel('Message',{exact:true})).toBeEnabled();await page.getByLabel('Message',{exact:true}).fill('Unknown original admission');await page.getByRole('button',{name:'Send',exact:true}).click();
+ await page.getByRole('button',{name:'Stop this question',exact:true}).click();await page.getByRole('button',{name:'Confirm stop',exact:true}).click();await expect.poll(()=>stops.length).toBe(1);
+ expect(JSON.parse(await page.evaluate(key=>sessionStorage.getItem(key),recoveryKey)).requests[0].requestId).toBe(sent[0].requestId);
+ await page.reload();await expect(page.getByRole('button',{name:'Send',exact:true})).toBeDisabled();expect(sent).toHaveLength(1);expect(stops).toHaveLength(1);
+});
+test('cancellation permission refusal clears protected history and never claims stopped',async({page,context})=>{
+ let denied=false;
+ const h=await beginPending(page,context,{cancelHook:async(route,c)=>{
+  if(denied) {await route.fulfill({status:403,contentType:'application/json',body:JSON.stringify({version:'qa-cancellation/1',sessionId:c.sessionId,requestId:c.requestId,error:{code:'FORBIDDEN',ack:'not_submitted'}})});return true;}return false;
+ }});
+ denied=true;await page.getByRole('button',{name:'Stop this question',exact:true}).click();await page.getByRole('button',{name:'Confirm stop',exact:true}).click();
+ await expect(page.getByRole('region',{name:'Agent QA'}).getByRole('alert')).toBeVisible();await expect(page.getByRole('log')).toBeEmpty();await expect(page.getByText('Stopped.',{exact:true})).toHaveCount(0);expect(h.stops).toHaveLength(0);expect(h.sent).toHaveLength(1);
+});
+test('late cancellation receipt cannot land in another URL Session',async({page,context})=>{
+ let release;
+ const h=await beginPending(page,context,{cancelHook:async(route,c)=>{
+  if(c.method==='POST') {c.setState('cancelled');c.saved.set(idA,[message(idA,c.original,null,'technical_failure')]);await new Promise(resolve=>{release=resolve;});await route.fulfill({contentType:'application/json',body:JSON.stringify(stopWire(c.sessionId,c.requestId,'cancelled'))}).catch(()=>{});return true;}return false;
+ }});
+ await page.getByRole('button',{name:'Stop this question',exact:true}).click();await page.getByRole('button',{name:'Confirm stop',exact:true}).click();await expect.poll(()=>!!release).toBe(true);
+ await page.evaluate(id=>history.pushState(null,'',`/qa?locale=en&session=${id}`),idB);await expect(page.getByLabel('Message',{exact:true})).toBeEnabled();release();
+ await expect(page.getByText('Stopped.',{exact:true})).toHaveCount(0);await expect(page.getByRole('log')).not.toContainText('Original pending question');expect(h.stops).toHaveLength(1);expect(h.sent).toHaveLength(1);
+ await page.evaluate(id=>history.pushState(null,'',`/qa?locale=en&session=${id}`),idA);await expect(page.getByText('Stopped.',{exact:true})).toBeVisible();expect(h.stops).toHaveLength(1);
+});
+test('same actor tabs stop one original identity without duplicate POST or carrying question body',async({page,context})=>{
+ let state='pending',original;const stops=[];
+ const cancellation=async(route,c)=>{
+  if(c.method==='POST') {stops.push(c.requestId);state='cancelled';}
+  await route.fulfill({contentType:'application/json',body:JSON.stringify(stopWire(c.sessionId,c.requestId,state))});return true;
+ };
+ const hook=async(route,c)=>{
+  if(c.path.endsWith('/policy')) {await c.fulfill({policy:{...policy,consentState:'accepted'}});return true;}
+  if(c.method==='POST'&&c.path.endsWith('/messages')) {original=route.request().postDataJSON();c.sent.push(original);await c.fulfill({requestId:original.requestId,turnId:original.requestId,sessionId:idA,status:'pending',reused:false});return true;}
+  if(c.method==='GET'&&c.path.endsWith(idA)&&original) {await c.fulfill({session:session(idA),messages:[message(idA,original,null,state==='cancelled'?'technical_failure':'pending')]});return true;}
+  return false;
+ };
+ const first=await fixture(page,context,hook,{cancellation});await page.getByLabel('Message',{exact:true}).fill('One shared original');await page.getByRole('button',{name:'Send',exact:true}).click();await expect.poll(()=>!!original).toBe(true);
+ const other=await context.newPage();await other.setViewportSize({width:390,height:844});const second=await fixture(other,context,hook,{cancellation,ready:false});
+ await page.getByRole('button',{name:'Stop this question',exact:true}).click();await other.getByRole('button',{name:'Stop this question',exact:true}).click();
+ await Promise.all([page.evaluate(()=>[...document.querySelectorAll('button')].find(b=>b.textContent==='Confirm stop')?.click()),other.evaluate(()=>[...document.querySelectorAll('button')].find(b=>b.textContent==='Confirm stop')?.click())]);
+ await expect(page.getByText('Stopped.',{exact:true})).toBeVisible();await expect(other.getByText('Stopped.',{exact:true})).toBeVisible();expect(stops).toEqual([original.requestId]);expect(first.sent).toHaveLength(1);expect(second.sent).toHaveLength(0);await other.close();
+});
+test('cancellation recovery storage failure blocks only the stop POST and preserves original identity',async({page,context})=>{
+ await page.addInitScript(key=>{const original=Storage.prototype.setItem;Storage.prototype.setItem=function(k,v){if(k===key)throw new DOMException('Synthetic stop journal failure','SecurityError');return original.call(this,k,v);};},cancellationKey);
+ const h=await beginPending(page,context);await expect(page.getByText('Stop recovery storage is unavailable. Check the original request first.')).toBeVisible();await expect(page.getByRole('button',{name:'Stop this question',exact:true})).toBeDisabled();expect(h.stops).toHaveLength(0);expect(h.sent).toHaveLength(1);
+});
+test('actor change clears cancellation intent and fences the old actor late stop receipt',async({page,context})=>{
+ let changed=false,release;
+ const h=await beginPending(page,context,{historyHook:async(route,c)=>{
+  if(changed&&c.method==='GET'&&c.path.endsWith('/sessions')) {await c.fulfill({sessions:[session(idB)]});return true;}
+  if(changed&&c.path.endsWith(idA)) {await route.fulfill({status:403,contentType:'application/json',body:JSON.stringify(wire({error:{code:'FORBIDDEN',ack:'not_submitted'}}))});return true;}return false;
+ },cancelHook:async(route,c)=>{
+  if(c.method==='POST') {await new Promise(resolve=>{release=resolve;});await route.fulfill({contentType:'application/json',body:JSON.stringify(stopWire(c.sessionId,c.requestId,'cancelled'))}).catch(()=>{});return true;}return false;
+ }});
+ await page.getByRole('button',{name:'Stop this question',exact:true}).click();await page.getByRole('button',{name:'Confirm stop',exact:true}).click();await expect.poll(()=>!!release).toBe(true);
+ changed=true;await page.evaluate(owner=>{const ch=new BroadcastChannel('sb-127-auth-token');ch.postMessage({event:'SIGNED_IN',session:{user:{id:owner}}});setTimeout(()=>ch.close(),100);},idB);
+ await page.getByRole('button',{name:`Session ${idB}`,exact:true}).click();release();await expect(page.getByLabel('Message',{exact:true})).toBeEnabled();
+ await expect(page.getByText('Stopped.',{exact:true})).toHaveCount(0);await expect(page.getByRole('log')).not.toContainText('Original pending question');expect(await page.evaluate(key=>sessionStorage.getItem(key),cancellationKey)).toBeNull();expect(h.stops).toHaveLength(1);
+});
+test('late pending cancellation GET cannot overwrite a newer observed stop receipt',async({page,context})=>{
+ let release,gets=0;
+ const h=await beginPending(page,context,{cancelHook:async(route,c)=>{
+  if(c.method==='GET'&&++gets===1) {await new Promise(resolve=>{release=resolve;});await route.fulfill({contentType:'application/json',body:JSON.stringify(stopWire(c.sessionId,c.requestId,'pending'))}).catch(()=>{});return true;}return false;
+ }});
+ await expect.poll(()=>!!release).toBe(true);await page.getByRole('button',{name:'Stop this question',exact:true}).click();await page.getByRole('button',{name:'Confirm stop',exact:true}).click();await expect(page.getByText('Stopped.',{exact:true})).toBeVisible();release();
+ await page.waitForTimeout(100);await expect(page.getByText('Stopped.',{exact:true})).toBeVisible();expect(h.stops).toHaveLength(1);expect(h.sent).toHaveLength(1);
+});
+test('definite cancellation rejection permits only a newly confirmed stop, without repeating message admission',async({page,context})=>{
+ let rejected=false;
+ const h=await beginPending(page,context,{cancelHook:async(route,c)=>{
+  if(c.method==='POST'&&!rejected) {rejected=true;await route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({version:'qa-cancellation/1',sessionId:c.sessionId,requestId:c.requestId,error:{code:'PROVIDER_UNAVAILABLE',ack:'not_submitted'}})});return true;}return false;
+ }});
+ await page.getByRole('button',{name:'Stop this question',exact:true}).click();await page.getByRole('button',{name:'Confirm stop',exact:true}).click();await expect.poll(()=>h.stops.length).toBe(1);
+ await expect(page.getByRole('button',{name:'Stop this question',exact:true})).toBeVisible();expect(h.sent).toHaveLength(1);await expect(page.getByText('Stopped.',{exact:true})).toHaveCount(0);
+ await page.getByRole('button',{name:'Stop this question',exact:true}).click();expect(h.stops).toHaveLength(1);await page.getByRole('button',{name:'Confirm stop',exact:true}).click();
+ await expect(page.getByText('Stopped.',{exact:true})).toBeVisible();expect(h.stops).toHaveLength(2);expect(new Set(h.stops.map(entry=>entry.requestId)).size).toBe(1);expect(h.sent).toHaveLength(1);
+});
+test('review mutex unavailable with simultaneous pending GETs permits only original reads and zero stop POST',async({page,context})=>{
+ const waiters=[],posts=[];let holding=true;
+ const prior={requestId:earlierId,text:'Owned original pending'};
+ const hook=async(_route,c)=>{
+  if(c.path.endsWith('/policy')) {await c.fulfill({policy:{...policy,consentState:'accepted'}});return true;}
+  if(c.method==='GET'&&c.path.endsWith(idA)) {await c.fulfill({session:session(idA),messages:[message(idA,prior,null,'pending')]});return true;}return false;
+ };
+ const cancellation=async(route,c)=>{
+  if(c.method==='POST')posts.push(c.requestId);
+  if(holding)await new Promise(resolve=>waiters.push(resolve));
+  await route.fulfill({contentType:'application/json',body:JSON.stringify(stopWire(c.sessionId,c.requestId,'pending'))});return true;
+ };
+ await fixture(page,context,hook,{cancellation,ready:false});const other=await context.newPage();await fixture(other,context,hook,{cancellation,ready:false});
+ await expect.poll(()=>waiters.length).toBe(2);
+ await page.getByRole('button',{name:'Stop this question',exact:true}).click();await other.getByRole('button',{name:'Stop this question',exact:true}).click();
+ for(const tab of [page,other])await tab.evaluate(()=>Object.defineProperty(navigator,'locks',{configurable:true,value:undefined}));
+ await Promise.all([page.getByRole('button',{name:'Confirm stop',exact:true}).click(),other.getByRole('button',{name:'Confirm stop',exact:true}).click()]);
+ await expect.poll(()=>waiters.length).toBe(4);holding=false;waiters.forEach(resolve=>resolve());
+ for(const tab of [page,other]) {await expect(tab.getByText('This browser can only read the original request status. A stop cannot be submitted safely right now.')).toBeVisible();await expect(tab.getByRole('button',{name:'Stop this question',exact:true})).toBeDisabled();}
+ expect(posts).toHaveLength(0);await other.close();
+});
+for(const format of ['other-json','non-json','foreign-scope']) {
+ test(`review cancellation401 ${format} removes old private projection and both journals`,async({page,context})=>{
+  let denied=false;
+  const h=await beginPending(page,context,{cancelHook:async(route,c)=>{
+   if(denied) {
+    const body=format==='non-json'?'<html>unauthorized</html>':JSON.stringify(format==='foreign-scope'?{version:'qa-cancellation/1',sessionId:idB,requestId:idA,error:{code:'UNAUTHENTICATED',ack:'not_submitted'}}:{message:'unauthorized'});
+    await route.fulfill({status:401,contentType:format==='non-json'?'text/html':'application/json',body});return true;
+   }return false;
+  }});
+  await expect.poll(()=>h.reads.length).toBeGreaterThan(0);
+  denied=true;await page.getByRole('button',{name:'Stop this question',exact:true}).click();await page.getByRole('button',{name:'Confirm stop',exact:true}).click();
+  await expect(page.getByRole('link',{name:'Sign in',exact:true})).toBeVisible();await expect(page.getByRole('log')).toHaveCount(0);expect(h.stops).toHaveLength(0);
+  expect(await page.evaluate(key=>sessionStorage.getItem(key),cancellationKey)).toBeNull();expect(await page.evaluate(key=>sessionStorage.getItem(key),recoveryKey)).toBeNull();
+ });
+}
+test('review intent hint makes only listening peer query current canonical scope before showing stopped',async({page,context})=>{
+ let state='pending',releasePeer=false;const held=[],posts=[],peerReads=[];
+ const original={requestId:earlierId,text:'Shared original'};
+ const hook=async(_route,c)=>{if(c.path.endsWith('/policy')){await c.fulfill({policy:{...policy,consentState:'accepted'}});return true;}if(c.method==='GET'&&c.path.endsWith(idA)){await c.fulfill({session:session(idA),messages:[message(idA,original,null,'pending')]});return true;}return false;};
+ const entry=peer=>({ready:false,cancellation:async(route,c)=>{
+  if(c.method==='POST'){posts.push(c.requestId);state='cancelled';}
+  if(peer&&c.method==='GET'){peerReads.push(state);if(state==='cancelled'&&!releasePeer)await new Promise(resolve=>held.push(resolve));}
+  await route.fulfill({contentType:'application/json',body:JSON.stringify(stopWire(c.sessionId,c.requestId,state))});return true;
+ }});
+ await fixture(page,context,hook,entry(false));const other=await context.newPage();await fixture(other,context,hook,entry(true));await expect.poll(()=>peerReads.length).toBeGreaterThan(0);
+ await page.getByRole('button',{name:'Stop this question',exact:true}).click();await page.getByRole('button',{name:'Confirm stop',exact:true}).click();await expect(page.getByText('Stopped.',{exact:true})).toBeVisible();
+ await expect.poll(()=>held.length).toBeGreaterThan(0);await expect(other.getByText('Stopped.',{exact:true})).toHaveCount(0);
+ releasePeer=true;held.forEach(resolve=>resolve());await expect(other.getByText('Stopped.',{exact:true})).toBeVisible();expect(peerReads).toContain('cancelled');expect(posts).toEqual([original.requestId]);await other.close();
+});
+test('review history401 invalidates a held stop preflight before it can rebuild intent or POST',async({page,context})=>{
+ let expire=false,gets=0,release;
+ const h=await beginPending(page,context,{historyHook:async(route,c)=>{
+  if(expire&&c.method==='GET'&&c.path.endsWith(idA)) {await route.fulfill({status:401,contentType:'application/json',body:JSON.stringify(wire({error:{code:'UNAUTHENTICATED',ack:'not_submitted'}}))});return true;}return false;
+ },cancelHook:async(route,c)=>{
+  if(c.method==='GET'&&++gets>=2&&!release){await new Promise(resolve=>{release=resolve;});await route.fulfill({contentType:'application/json',body:JSON.stringify(stopWire(c.sessionId,c.requestId,'pending'))}).catch(()=>{});return true;}return false;
+ }});
+ await expect.poll(()=>h.reads.length).toBeGreaterThan(0);await page.getByRole('button',{name:'Stop this question',exact:true}).click();await page.getByRole('button',{name:'Confirm stop',exact:true}).click();await expect.poll(()=>!!release).toBe(true);
+ expire=true;await expect(page.getByRole('link',{name:'Sign in',exact:true})).toBeVisible({timeout:10000});release();await page.waitForTimeout(100);
+ expect(h.stops).toHaveLength(0);expect(await page.evaluate(key=>sessionStorage.getItem(key),cancellationKey)).toBeNull();expect(await page.evaluate(key=>sessionStorage.getItem(key),recoveryKey)).toBeNull();await expect(page.getByRole('log')).toHaveCount(0);
 });
