@@ -9,7 +9,13 @@ begin
  if u is null or sid is null then raise exception 'UNAUTHENTICATED';end if;
  -- Preserve the original cancellation capacity-lock -> mobile/account lock order.
  if p_action='cancel' then perform pg_advisory_xact_lock(hashtextextended(u::text,34));end if;
- u:=turn_private.text_owner();
+ -- The original identity guard plus the same live Auth-row checks as text_owner,
+ -- without its account-registration INSERT: GET stays metadata-read-only.
+ perform 1 from auth.users where id=u for key share nowait;
+ if not found then raise exception 'UNAUTHENTICATED';end if;
+ perform identity_private.guard_mobile_rpc_v2();
+ perform 1 from auth.sessions where id=sid and user_id=u for key share;
+ if not found then raise exception 'UNAUTHENTICATED';end if;
  perform 1 from public.chat_threads where id=p_thread_id and owner_id=u and status='active' and trip_id is null;
  if not found then raise exception 'FORBIDDEN';end if;
  select i.turn_id into turn_n from public.chat_turn_idempotency i

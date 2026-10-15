@@ -9,6 +9,7 @@ export type QaCancellationReceipt = Readonly<{
 export type QaCancellationErrorCode = "INVALID_INPUT" | "UNAUTHENTICATED" | "FORBIDDEN" | "PROVIDER_UNAVAILABLE";
 export type QaCancellationFailure = Readonly<{
   version: typeof QA_CANCELLATION_VERSION; sessionId: string; requestId: string;
+  /** not_submitted concerns THIS stop request, never the original message admission. */
   error: Readonly<{ code: QaCancellationErrorCode; ack: "not_submitted" | "unknown" }>;
 }>;
 const uuid = (v: unknown): v is string => typeof v === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(v);

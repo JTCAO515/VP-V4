@@ -25,7 +25,7 @@ export async function qaCancellationHTTP(request: NextRequest, sessionId: string
     const service=createQaCancellationService(async(name,params)=>{
       invoked=true;
       const result=await scope.run(()=>adapter.runGroundedAiAssist(rpc=>rpc(name,params)));
-      if("error" in result)throw new QaCancellationError(result.error==="UNAUTHENTICATED"?"UNAUTHENTICATED":"PROVIDER_UNAVAILABLE");
+      if("error" in result)throw new QaCancellationError(result.error==="UNAUTHENTICATED"?"UNAUTHENTICATED":"PROVIDER_UNAVAILABLE",result.error==="UNAUTHENTICATED"?"not_submitted":"unknown");
       return result.data;
     });
     const receipt=await service(request.method==="POST"?"cancel":"read",sessionId,requestId,input);
