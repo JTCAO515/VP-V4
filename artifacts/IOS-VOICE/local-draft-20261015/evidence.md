@@ -1,5 +1,16 @@
 # Local voice → current local draft
 
+## Current integration receipt — supersedes earlier candidate-only status
+
+Product registration committed as acf9cbd0c146ca32934ee82fe7d4d6a41c16af65 on the same branch. Main's explicit temporary lease covers only LocalVoice App/XCTest registration and the existing microphone/speech usage descriptions. Actual target Info path is VisePanda/NativeEnvironment.plist, not App/Info.plist. Before blobs matched accepted 774a0457 and current Main agent-main-20261014 HEAD 7dd363251577335064b9ba8d62ea6fc7e24d40dd, with no dirty change in either target file. Older ios-main-20261014 remains at historical 945a and is not current integration authority.
+
+Applied exact zero-context patches to the real product files; never copied/replaced a shadow project. Product PBX 5f33a917a7380ceafb8c9583441df019ecdf6ad0 → 4f02b2dc1c0be5776300329df9d82ea7b8e4be2d; actual target plist 02c4691ed7967e61316494beec90836040adac04 → 3e544782ad18ac9c3aac8b5605710bc135d82116. PBX structural comparison PASS: all previous objects, list order and target settings preserved; only eight registration objects and the root/App Sources/test Sources lists added. Plist structural comparison PASS: same keys and exactly the two existing usage-description values changed. Candidate reproduction helper now pins the accepted baseline and refuses unknown shared-file drift, so re-running it after integration cannot add duplicate registrations.
+
+PASS: real ios/VisePanda/VisePanda.xcodeproj / VisePanda App target build through XcodeBuildMCP, Debug simulator, CODE_SIGNING_ALLOWED=NO, 33.208 seconds, zero errors and six existing warnings outside the feature. PASS: build-for-testing of the same real project, only-testing:VisePandaTests/NativeLocalVoiceTests, zero errors; this compiles the actual registered relative test path without running the behavior suite. Own DerivedData and own simulator selector only; no simulator launch/permissions/microphone/recording this increment. Exact tool summaries and log paths: real-project-builds.json. The original 11 behavior + 3 source checks are unchanged and reused, not rerun. Original failures/UNRUN remain below. Effective model UNKNOWN.
+
+Stable source + actual registration are now complete for Main's exact-head review/CI/protected merge. No helper PR, deployment, cloud ASR, backend/Goal/Task or issue closure added. Lease will be returned with final clean HEAD; previous candidate-only statements below describe the earlier handoff stage.
+
+
 Base: 774a04573088306160908a8bae73cfd125bb6294. Isolated branch codex/ios-local-voice-20261015. Official VP-V10 projectId 4f2191db-3e04-4042-94b5-ec94ff67b427. Xcode 27.0 / iOS Simulator SDK 27.0. Requested model Sol 6.1/medium; effective configuration unavailable.
 
 Owned product paths: Frontend/LocalVoice/** plus the granted State input epoch/revision and Composer voice presentation hunks. No old Chat/ChatSheet, backend, Policy, SQL or shared audio core edits. Compatibility initializer/onVoice remains available; mic now presents the local capture sheet. Original hand-input/send/tool layout remains.
