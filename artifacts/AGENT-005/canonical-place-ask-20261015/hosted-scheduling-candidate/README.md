@@ -1,0 +1,7 @@
+# Hosted Place Ask scheduling candidate
+
+Shared source remains unmodified. Exact before blob `6f1ffdf1745e390ac810deff307308fa158d26d4` matches accepted707 ancestor ead. Only `lib/server/jobs/hosted-text-worker.ts` needs the candidate: import the owned typed seam, initialize a bounded resident scheduler, and reuse the existing job factory/journals for a second execution choice. Staging job, scoped worker, CLI, policy mode, gateway protocol, credentials and tariff remain their original implementations.
+
+The namespace planner generates an existing job/4 only for a qualified original current-input group when the legacy operator profile explicitly allows both current-input and knowledge execution. Metadata booleans are ignored; SQL is the provenance authority. Polls share the existing owner lane and alternate precedence with at most groupLimit retained rotation entries. Only an authoritative empty permits a single alternate poll. Nonempty outcomes, unknown/throw and abort cannot fall through, so each group has at most one nonempty outcome and keeps existing heartbeat counters. Each original job retains its exact content-free digest/journal and usage path.
+
+15 namespace tests, root typecheck and lint PASS. This is not an actual resident-to-SQL integration PASS: shared-source lease/application and the final coherent SQL input are still needed. No production shared files or SQL were changed while preparing this candidate.
