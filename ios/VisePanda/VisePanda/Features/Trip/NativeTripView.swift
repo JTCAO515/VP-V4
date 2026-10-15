@@ -386,13 +386,13 @@ struct NativeTripView: View {
         }
         .confirmationDialog(text("Save the reviewed proposal with these exact receipts?", "连同明确选择的回执保存已审阅提议？"),isPresented:$supportConfirmVisible,titleVisibility:.visible) {
             Button(text("Confirm proposal and selected references", "确认提议及所选参考")) {
-                if let reviewedReference,let reviewedSupportSelection { Task { await store.confirmSupported(reviewedReference:reviewedReference,reviewedSelection:reviewedSupportSelection,support:supportStore,using:session) } }
+                if let reviewedReference,let reviewedSupportSelection { Task { guard let current = store.pending, NativeTripAddressReview.evaluate(before: store.detail, pending: current).canConfirm else { return }; await store.confirmSupported(reviewedReference:reviewedReference,reviewedSelection:reviewedSupportSelection,support:supportStore,using:session) } }
             }
             Button(text("Keep reviewing", "继续审阅"),role:.cancel) {}
         } message: { Text(text("Only the reviewed patch and explicitly selected receipt IDs are adopted. Source status may require recheck; this does not verify the entire plan.", "仅采用已审阅修改和明确选择的回执ID。来源状态可能需要重核；不验证整份行程。")) }
         .confirmationDialog(text("Apply the reviewed proposal?", "应用刚刚审阅的提议？"), isPresented: $confirmVisible, titleVisibility: .visible) {
             Button(text("Confirm and save", "确认并保存")) {
-                if let reviewedReference { Task { await store.confirm(reviewedReference: reviewedReference, using: session) } }
+                if let reviewedReference { Task { guard let current = store.pending, NativeTripAddressReview.evaluate(before: store.detail, pending: current).canConfirm else { return }; await store.confirm(reviewedReference: reviewedReference, using: session) } }
             }
             Button(text("Keep reviewing", "继续审阅"), role: .cancel) {}
         } message: {
@@ -783,7 +783,8 @@ struct NativeTripView: View {
         catch { return true }
     }
     private func proposal(_ pending: NativeTripPending) -> some View {
-        VisePandaCard {
+        let addressReview = NativeTripAddressReview.evaluate(before: store.detail, pending: pending)
+        return VisePandaCard {
             VStack(alignment: .leading, spacing: 14) {
                 NavigationLink(text("Check this proposal's constraints", "核验这份提议的约束")) {
                     NativePlanFeasibilityView(session:session,tripStore:store,chinese:settings.selectedLocale == .zh)
@@ -803,6 +804,7 @@ struct NativeTripView: View {
                         Text(text("After: \(comparison.after)", "新内容：\(comparison.after)"))
                     }.accessibilityElement(children: .combine)
                 }
+                NativeTripAddressReviewView(review: addressReview, chinese: chinese)
                 Text(text("Expires: \(formattedExpiry(pending.proposal.expiresAt))", "到期：\(formattedExpiry(pending.proposal.expiresAt))"))
                     .font(.caption)
                 if pending.proposal.stale { Text(message("STALE_TRIP_VERSION")) }
@@ -817,12 +819,12 @@ struct NativeTripView: View {
                 if let selection=supportStore.selectionReference {
                     Button(text("Confirm with the selected references", "连同所选参考确认")) {
                         reviewedReference=store.confirmationReference;reviewedSupportSelection=selection;supportConfirmVisible=true
-                    }.disabled(supportRecoveryPending(tripID:pending.trip.id) || supportStore.confirmationUnknown || store.busy || !store.canEdit || pending.proposal.stale || store.detail?.trip.headVersion != pending.proposal.baseTripVersion)
+                    }.disabled(supportRecoveryPending(tripID:pending.trip.id) || supportStore.confirmationUnknown || store.busy || !store.canEdit || pending.proposal.stale || store.detail?.trip.headVersion != pending.proposal.baseTripVersion || !addressReview.canConfirm)
                 }
                 Button(text("Confirm this proposal", "确认此提议")) { reviewedReference = store.confirmationReference; confirmVisible = true }
                     .buttonStyle(.borderedProminent)
                     .accessibilityIdentifier("trip.proposal.confirm")
-                    .disabled(supportRecoveryPending(tripID:pending.trip.id) || !supportStore.selectedIDs.isEmpty || supportStore.confirmationUnknown || store.busy || !store.canEdit || pending.proposal.stale || store.notice == "STALE_TRIP_VERSION" || store.detail?.trip.headVersion != pending.proposal.baseTripVersion)
+                    .disabled(supportRecoveryPending(tripID:pending.trip.id) || !supportStore.selectedIDs.isEmpty || supportStore.confirmationUnknown || store.busy || !store.canEdit || pending.proposal.stale || store.notice == "STALE_TRIP_VERSION" || store.detail?.trip.headVersion != pending.proposal.baseTripVersion || !addressReview.canConfirm)
                 Button(text("Reject proposal; keep local draft", "拒绝提议并保留本机草稿")) { Task { await store.reject(using: session) } }
                     .accessibilityIdentifier("trip.proposal.reject").disabled(store.busy)
             }
