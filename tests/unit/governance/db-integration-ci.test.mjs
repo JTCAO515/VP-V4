@@ -5,7 +5,7 @@ import { join } from "node:path";
 import test from "node:test";
 import {spawnSync} from "node:child_process";
 import {selectCheckPlan,DB_LANES} from "../../../scripts/ci-change-scope.mjs";
-import { EXCLUDED, LANES, executionMatrix, executionSteps, classify, parseNodeTestSummary, pinnedImages, stepProblems } from "../../../scripts/ci-suites/db-integration.mjs";
+import { EXCLUDED, LANES, executionMatrix, executionSteps, classify, isGated, parseNodeTestSummary, pinnedImages, stepProblems } from "../../../scripts/ci-suites/db-integration.mjs";
 
 const read = (path) => readFileSync(path, "utf8");
 
@@ -262,6 +262,19 @@ function pg17PreparationBody(){
  assert.ok(match,'only the new job prepares PostgreSQL17');
  return match[1].split('\n').map(line=>line.startsWith('          ')?line.slice(10):line).join('\n');
 }
+
+test('cancellation PG proof has one explicit native17 owner and the lane cannot silently skip',()=>{
+ const file='tests/integration/qa-agent-cancellation/native-pg.test.mjs';
+ const owners=Object.entries(LANES).flatMap(([lane,definition])=>definition.steps.flatMap(step=>step.files.filter(f=>f===file).map(()=>lane)));
+ assert.deepEqual(owners,['postgres-native-17']);
+ assert.deepEqual(classify().rows.find(row=>row.file===file),{file,gated:true,lane:'postgres-native-17'});
+ assert.equal(LANES['postgres-native-17'].steps[0].env.QA_CANCEL_NATIVE_PG,'1');
+ assert.deepEqual(LANES['postgres-native-17'].steps[0].files,[
+  'tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs',file]);
+ assert.equal(LANES['postgres-native-17'].steps[0].concurrency,1);
+ assert.equal(isGated(file),true);
+});
+
 test('PG17 CI preparation retains the old Wiki job and uses official major17 without starting default services',()=>{
  const body=pg17PreparationBody(),workflow=read('.github/workflows/db-integration.yml');
  assert.equal(spawnSync('/bin/bash',['-n'],{input:body}).status,0);

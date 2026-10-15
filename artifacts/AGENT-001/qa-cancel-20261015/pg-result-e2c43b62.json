@@ -1,0 +1,83 @@
+{
+  "base": "22559396eec5cd47d3a4d3d2a2bd5e49d52c6c7c",
+  "nonce": "e2c43b62",
+  "root": "/private/tmp/a1c-e2c43b62-z1o0nn",
+  "server": "PG17.11 isolated native Unix socket; synthetic Auth claims, not GoTrue",
+  "cases": [
+    {
+      "label": "full source replay and candidate on isolated original roles, no fixture grants",
+      "status": "PASS"
+    },
+    {
+      "label": "not-observed GET never registers an account or creates request state",
+      "status": "PASS"
+    },
+    {
+      "label": "exact actor/session/request and QA lineage isolation",
+      "status": "PASS"
+    },
+    {
+      "label": "anonymous and service roles cannot execute owner cancellation bridge",
+      "status": "PASS"
+    },
+    {
+      "label": "request mapping resolves canonical Turn rather than trusting client turn identity",
+      "status": "PASS"
+    },
+    {
+      "label": "queued cancellation and duplicates preserve one original event, Trip and readback",
+      "status": "PASS"
+    },
+    {
+      "label": "withdrawn consent and disabled policy do not require generation reenrollment",
+      "status": "PASS"
+    },
+    {
+      "label": "disabled budget scope cannot prevent stopping an owned QA request",
+      "status": "PASS"
+    },
+    {
+      "label": "leased stop fences late publication",
+      "status": "PASS"
+    },
+    {
+      "label": "dispatched unknown cost remains untouched and cannot resurrect output",
+      "status": "PASS"
+    },
+    {
+      "label": "already terminal answer is preserved, not cancelled or rewritten",
+      "status": "PASS"
+    },
+    {
+      "label": "publish-first race reports canonical terminal",
+      "status": "PASS"
+    },
+    {
+      "label": "cancel-first race rejects late completion without fee rollback",
+      "status": "PASS"
+    },
+    {
+      "label": "revoked actor session cannot read or stop",
+      "status": "PASS"
+    }
+  ],
+  "cleanup": true,
+  "catalogPins": {
+    "functionsBefore": "d28488768b4e7c2535a1efa586fd8fb7e0e52664265e06462541e68467889883",
+    "functionsAfter": "d28488768b4e7c2535a1efa586fd8fb7e0e52664265e06462541e68467889883",
+    "tablesBefore": "7153b7f5536806bc5d8690c09582bd59091881c3f652c9db5295e014d3d3f3d8",
+    "tablesAfter": "7153b7f5536806bc5d8690c09582bd59091881c3f652c9db5295e014d3d3f3d8",
+    "sourceGuardsIncluded": "all original non-system pg_proc proacl/proconfig/prosecdef/prosrc hashes; only new qa_cancellation_v1 excluded"
+  },
+  "function": {
+    "anon": false,
+    "auth": true,
+    "owner": "postgres",
+    "service": false,
+    "searchPath": [
+      "search_path=\"\""
+    ],
+    "securityDefiner": true
+  },
+  "status": "PASS"
+}

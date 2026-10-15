@@ -59,6 +59,7 @@ const AUTHENTICATED = [
   "public.ops_wiki_read_v1(jsonb)",
   "public.ops_wiki_withdrawal_scan_v1(jsonb)",
   "public.qa_accept_policy_v1(uuid,text)",
+  "public.qa_cancellation_v1(text,uuid,uuid)",
   "public.qa_list_sessions_v1(integer)",
   "public.qa_read_message_v1(uuid,uuid)",
   "public.qa_read_policy_v1(uuid)",
@@ -158,6 +159,7 @@ test("repository functions grant EXECUTE to anon and authenticated only through 
   await t.test("QA browser RPCs and worker RPCs keep disjoint exact role grants", () => {
     for (const fn of [
       "qa_accept_policy_v1(uuid,text)", "qa_list_sessions_v1(integer)",
+      "qa_cancellation_v1(text,uuid,uuid)",
       "qa_read_message_v1(uuid,uuid)", "qa_read_policy_v1(uuid)",
       "qa_read_session_v1(uuid)",
       "qa_submit_message_v1(uuid,uuid,uuid,uuid,text,text,uuid,text)",

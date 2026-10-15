@@ -1,0 +1,19 @@
+(node:35419) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2m[WebServer] [22m(node:35421) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 5 tests using 1 worker
+
+(node:35422) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:35422) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:35422) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/e2e/qa-agent-ui/workspace.spec.mjs:2422:1 › unknown cancellation POST is recovered by original-ID GET after refresh, never automatically re-POSTed (844ms)
+  ✓  2 tests/e2e/qa-agent-ui/workspace.spec.mjs:2498:1 › withdrawn generation consent still permits metadata-only stop of original observed request (719ms)
+  ✓  3 tests/e2e/qa-agent-ui/workspace.spec.mjs:2552:1 › cancellation not_submitted error does not confirm or erase unknown original message admission (698ms)
+  ✓  4 tests/e2e/qa-agent-ui/workspace.spec.mjs:2714:1 › same actor tabs stop one original identity without duplicate POST or carrying question body (714ms)
+  ✓  5 tests/e2e/qa-agent-ui/workspace.spec.mjs:2944:1 › definite cancellation rejection permits only a newly confirmed stop, without repeating message admission (872ms)
+
+  5 passed (4.7s)

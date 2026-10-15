@@ -7,6 +7,18 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { classifyChanges, detectScope, selectCheckPlan, detectPlan, DB_LANES } from '../../../scripts/ci-change-scope.mjs';
 
+test('cancellation source and the exact PG entry select native17 while the HTTP fixture stays ordinary integration',()=>{
+ for(const file of ['lib/server/qa-agent/cancellation/http.ts','lib/server/qa-agent/cancellation/service.ts',
+  'lib/qa-agent/cancellation-contract.ts','lib/server/qa-agent/config.ts',
+  'app/api/qa-agent/sessions/[sessionId]/messages/[requestId]/cancellation/route.ts',
+  'tests/contract/qa-agent-cancellation/uuid-case.test.mjs',
+  'tests/integration/qa-agent-cancellation/native-pg.test.mjs','tests/integration/qa-agent-cancellation/pg-proof.mjs']){
+  assert.ok(selectCheckPlan([file],'pull_request').dbLanes.includes('postgres-native-17'),file);
+ }
+ const http=selectCheckPlan(['tests/integration/qa-agent-cancellation/http.test.mjs'],'pull_request');
+ assert.equal(http.checks.integration,true);assert.deepEqual(http.dbLanes,[]);
+});
+
 test('only bounded documentation pull requests use the smaller check set', () => {
   assert.equal(classifyChanges(['README.md', 'docs/agents/development-workflow.md',
     'docs/program/2026-09-05/issue-plan.json'], 'pull_request'), 'documentation');
