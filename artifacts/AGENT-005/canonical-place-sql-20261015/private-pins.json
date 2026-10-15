@@ -61,7 +61,7 @@
   },
   {
     "signature": "place_actions_private.ask_bound_v1(uuid,uuid)",
-    "md5": "7aa27dc30ad02bf6ca3d965a31b7ca6d",
+    "md5": "ac68607a76e98cae122bb80af6606ce2",
     "owner": "postgres",
     "acl": "{postgres=X/postgres}"
   },
@@ -84,6 +84,18 @@
     "acl": "{postgres=X/postgres}"
   },
   {
+    "signature": "place_actions_private.ask_text_projection_v1(uuid,boolean)",
+    "md5": "a394abb3450d2511dad83caa75b0397f",
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}"
+  },
+  {
+    "signature": "place_actions_private.ask_finish_capacity_v1(uuid,text,text)",
+    "md5": "ce986d7d8806651577966b9332b0e07f",
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}"
+  },
+  {
     "signature": "place_actions_private.ask_claim_current_v1(uuid)",
     "md5": "d96f2d8574a799f2ade051afbec70cdc",
     "owner": "postgres",
@@ -97,7 +109,7 @@
   },
   {
     "signature": "place_actions_private.ask_schema_v1()",
-    "md5": "0e3b7a84ca247c30e442bc14bb7fc8c1",
+    "md5": "40f119a5fc4d1bccfaa3d4c1746f5340",
     "owner": "postgres",
     "acl": "{postgres=X/postgres}"
   },

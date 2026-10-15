@@ -67,6 +67,11 @@ declare g turn_private.grounded_turns%rowtype;c turn_private.text_content%rowtyp
  if token is null then
   if auth.uid() is distinct from g.owner_id or auth.jwt()->>'session_id' is distinct from w.session_id::text then return null;end if;
   perform turn_private.text_owner();
+ elsif w.lease_token is distinct from token then return null;
+ end if;
+ if not turn_private.lock_trip_account_v1(g.owner_id) then return null;end if;
+ perform pg_advisory_xact_lock(hashtextextended(g.owner_id::text,34));
+ if token is null then
   if not turn_private.lock_turn(tid,g.owner_id,w.session_id) then return null;end if;
  else
   if not turn_private.lock_text_work(tid,token) then return null;end if;

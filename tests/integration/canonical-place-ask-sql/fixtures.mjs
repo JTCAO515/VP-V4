@@ -1,9 +1,12 @@
 import {randomUUID} from 'node:crypto';
-import {connect} from './db.mjs';
-const admin=await connect();
-export const query=(sql,params=[])=>admin.query(sql,params);
-export const scalar=async(sql,params=[])=>(await query(sql,params)).rows[0]?.value;
+import {connect as connectOwn} from './db.mjs';
 import assert from 'node:assert/strict';
+// Caller-supplied connection must target its own disposable synthetic PG only.
+export function canonicalFixturePorts(connect){
+ if(typeof connect!=='function')throw Error('owned PG connect factory required');
+let admin;
+const query=async(sql,params=[])=>{admin??=await connect();return admin.query(sql,params);};
+const scalar=async(sql,params=[])=>(await query(sql,params)).rows[0]?.value;
 async function actorRpc(actor,name,params={},role='authenticated'){
  assert.match(name,/^[a-z_][a-z0-9_]*$/);assert.ok(Object.keys(params).every(k=>/^p_[a-z0-9_]+$/.test(k)));
  const c=await connect();try{
@@ -27,13 +30,12 @@ async function sourceFixture(actor,reviewer,subject,variant=false){
  return {candidate,statement};
 }
 
-export {actorRpc,privileged,sourceFixture};
-export async function close(){await admin.end();}
-export async function fixture(contextMode='current_input_v1'){
- const [owner,reviewer]=Array.from({length:2},()=>({id:randomUUID(),session:randomUUID()}));
+async function close(){await admin?.end();}
+async function fixture(contextMode='current_input_v1',existingOwner=null){
+ const owner=existingOwner??{id:randomUUID(),session:randomUUID()},reviewer={id:randomUUID(),session:randomUUID()};
  for(const a of [owner,reviewer]){
-  await query('insert into auth.users(id) values($1)',[a.id]);await query('insert into auth.sessions(id,user_id) values($1,$2)',[a.session,a.id]);
-  await query('insert into identity_private.mobile_accounts(owner_id) values($1)',[a.id]);await query('insert into knowledge_review_private.members(actor_id,active) values($1,true)',[a.id]);
+  await query('insert into auth.users(id) values($1) on conflict do nothing',[a.id]);await query('insert into auth.sessions(id,user_id) values($1,$2) on conflict do nothing',[a.session,a.id]);
+  await query('insert into identity_private.mobile_accounts(owner_id) values($1) on conflict do nothing',[a.id]);await query('insert into knowledge_review_private.members(actor_id,active) values($1,true) on conflict do nothing',[a.id]);
  }
  await query('update knowledge_review_private.settings set enabled=true;update knowledge_review_private.publication_settings set enabled=true');
  const subject='fixture_'+randomUUID().replaceAll('-','');const source=await sourceFixture(owner,reviewer,subject);
@@ -61,3 +63,6 @@ export async function fixture(contextMode='current_input_v1'){
  const request={schemaVersion:'canonical-place-ask/1',submission,expectation};
  return {owner,reviewer,subject,source,st,canonical,trip,reference,refs,mapping,policy,submission,expectation,request,context};
 }
+ return {query,scalar,actorRpc,privileged,sourceFixture,close,fixture};
+}
+export const {query,scalar,actorRpc,privileged,sourceFixture,close,fixture}=canonicalFixturePorts(connectOwn);

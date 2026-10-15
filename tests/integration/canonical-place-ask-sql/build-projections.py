@@ -24,5 +24,7 @@ new="""if s.count_key='grounded' then
     elsif jsonb_typeof(v->'basis'->'publications') is distinct from 'array' or jsonb_array_length(v->'basis'->'publications')>0 then raise exception 'TURN_SOURCE_UNAVAILABLE';end if;
    end if;"""
 write(n,s.replace(old,new))
-n='export_private.core_turn_page_v1';s=(r/'before'/(n+'.sql')).read_text();s=s.replace("'schemaVersion','turn-core-export/1'","'schemaVersion',case when exists(select 1 from jsonb_array_elements(src->'snapshot'->'sources') selected_group cross join lateral jsonb_array_elements(selected_group->'rows') selected_row where selected_group->>'relation'='turn_private.grounded_turns' and selected_row ? 'selected_place_request') then 'turn-core-export/3' else 'turn-core-export/1' end");write(n,s)
+n='turn_private.trip_privacy_t_export_source_v1';s=(r/'before'/(n+'.sql')).read_text();assert old in s;write(n,s.replace(old,new))
+n='export_private.core_turn_page_v1';s=(r/'before'/(n+'.sql')).read_text();s=s.replace("'schemaVersion',case when ","'schemaVersion',case when exists(select 1 from jsonb_array_elements(src->'snapshot'->'sources') selected_group cross join lateral jsonb_array_elements(selected_group->'rows') selected_row where selected_group->>'relation'='turn_private.grounded_turns' and selected_row ? 'selected_place_request') then 'turn-core-export/3' when ",1)
+assert "'turn-core-export/3'" in s and "'turn-trip-core-export/1'" in s;write(n,s)
 n='turn_data_private.guard_source_v1';s=(r/'before'/(n+'.sql')).read_text();s=s.replace('begin\n',"begin\n if rel='turn_private.grounded_turns' and tg_op='UPDATE' and ov->'selected_place_request' is distinct from nv->'selected_place_request' then raise exception 'IMMUTABLE_BINDING';end if;\n",1);write(n,s)

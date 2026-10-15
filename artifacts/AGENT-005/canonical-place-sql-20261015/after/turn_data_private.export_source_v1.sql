@@ -8,6 +8,7 @@ AS $function$
 declare roots uuid[];msgs uuid[];arts uuid[];tasks uuid[];ex uuid[];g jsonb;refs jsonb;s record;v jsonb;r jsonb;group_rows jsonb[];groups_n jsonb[]:=array[]::jsonb[];ops jsonb[]:=array[]::jsonb[];fences jsonb[]:=array[]::jsonb[];source_keys jsonb[]:=array[]::jsonb[];op_n turn_data_private.operations_v1;key_count integer;sort_n text;
  auths jsonb:='[]';identity_n uuid;row_count_n integer:=0;byte_count_n integer:=0;item jsonb;witness jsonb;st text;
 begin
+ if exists(select 1 from turn_private.service_tasks where owner_id=u and expected_result='trip_modification') then perform turn_private.require_trip_runtime_v1();return turn_private.trip_privacy_t_export_source_v1(u);end if;
  if turn_data_private.runtime_supported_v1() is not true or turn_data_private.schema_supported_v1() is not true or u is null or not exists(select 1 from auth.users where id=u) then raise exception 'TURN_SOURCE_UNAVAILABLE';end if;
  select turn_data_private.union_ids_v1(array_agg(id)) into roots from(select id from public.turns where owner_id=u union select turn_id from turn_private.text_content where owner_id=u) a;
  if cardinality(roots)>10000 then raise exception 'TURN_CAPACITY';end if;
@@ -45,7 +46,7 @@ begin
       or v->'selected_place_request'->'originalReceipt'->'turnId' is distinct from v->'turn_id' or v->'selected_place_request'->'originalReceipt'->'serviceTaskId' is distinct from v->'task_id' then raise exception 'TURN_SOURCE_UNAVAILABLE';end if;
     elsif jsonb_typeof(v->'basis'->'publications') is distinct from 'array' or jsonb_array_length(v->'basis'->'publications')>0 then raise exception 'TURN_SOURCE_UNAVAILABLE';end if;
    end if;
-   r:=turn_data_private.export_row_v1(s.relation_name,v);row_count_n:=row_count_n+1;byte_count_n:=byte_count_n+octet_length(r::text);
+   r:=turn_data_private.export_row_v1(s.relation_name,case when s.relation_name='turn_private.service_tasks' then v-'trip_objective' else v end);row_count_n:=row_count_n+1;byte_count_n:=byte_count_n+octet_length(r::text);
    if row_count_n>10000 or byte_count_n>1000000 then raise exception 'TURN_CAPACITY';end if;
    group_rows:=array_append(group_rows,r);
    if v->>'policy_id' is not null and v->>'consent_id' is not null then auths:=auths||jsonb_build_array(jsonb_build_object('policyId',v->'policy_id','consentId',v->'consent_id'));end if;

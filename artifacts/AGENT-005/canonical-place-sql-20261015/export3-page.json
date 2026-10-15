@@ -1,24 +1,24 @@
 {
-  "owner": "2a66a42e-e3a5-4209-8270-2b7b3381bb07",
+  "owner": "ef8aa670-da80-4f03-ae1f-146ea963a185",
   "limit": 100,
-  "now": 1792054886579,
+  "now": 1792056885871,
   "page": {
     "items": [
       {
         "fences": [],
-        "ownerId": "2a66a42e-e3a5-4209-8270-2b7b3381bb07",
+        "ownerId": "ef8aa670-da80-4f03-ae1f-146ea963a185",
         "sources": [
           {
             "rows": [
               {
-                "id": "b6f7e2ff-5adf-4f02-9b64-358bb650668b",
+                "id": "0f36ffd4-67e7-4e9d-bbf1-a9ab04327322",
                 "state": "accepted",
-                "turn_id": "b3c65eb0-adaa-4386-b5ad-91c1bdc4d954",
+                "turn_id": "67e132d5-8b6c-4a10-9fdd-d0da13d3020a",
                 "event_id": "accepted",
-                "owner_id": "2a66a42e-e3a5-4209-8270-2b7b3381bb07",
+                "owner_id": "ef8aa670-da80-4f03-ae1f-146ea963a185",
                 "sequence": 1,
-                "thread_id": "220f92db-47af-4a1c-9047-bb421b33905e",
-                "created_at": "2026-10-15T09:01:26.313275+00:00",
+                "thread_id": "c94615b4-49ef-4756-9db0-bd29b20628a2",
+                "created_at": "2026-10-15T09:34:45.641164+00:00",
                 "event_type": "accepted",
                 "schema_version": "turn-sse-v1"
               }
@@ -29,11 +29,11 @@
             "rows": [
               {
                 "digest": "chat-state-control-v1",
-                "turn_id": "b3c65eb0-adaa-4386-b5ad-91c1bdc4d954",
-                "owner_id": "2a66a42e-e3a5-4209-8270-2b7b3381bb07",
-                "thread_id": "220f92db-47af-4a1c-9047-bb421b33905e",
-                "created_at": "2026-10-15T09:01:26.313275+00:00",
-                "idempotency_key": "89601611-c61b-454b-a612-a319affb1aeb"
+                "turn_id": "67e132d5-8b6c-4a10-9fdd-d0da13d3020a",
+                "owner_id": "ef8aa670-da80-4f03-ae1f-146ea963a185",
+                "thread_id": "c94615b4-49ef-4756-9db0-bd29b20628a2",
+                "created_at": "2026-10-15T09:34:45.641164+00:00",
+                "idempotency_key": "e26853ac-e23e-47e3-be1d-5f3c58d1ebb0"
               }
             ],
             "relation": "public.chat_turn_idempotency"
@@ -73,9 +73,9 @@
                 "basis": null,
                 "intent": null,
                 "locale": "en",
-                "task_id": "06a28ecf-9764-4ebb-9fb2-e9426d073838",
-                "turn_id": "b3c65eb0-adaa-4386-b5ad-91c1bdc4d954",
-                "owner_id": "2a66a42e-e3a5-4209-8270-2b7b3381bb07",
+                "task_id": "9509d86c-2ca2-4191-b170-dbfe6fb906ab",
+                "turn_id": "67e132d5-8b6c-4a10-9fdd-d0da13d3020a",
+                "owner_id": "ef8aa670-da80-4f03-ae1f-146ea963a185",
                 "place_name": null,
                 "completed_at": null,
                 "request_scope": null,
@@ -88,41 +88,41 @@
                   "basis": {
                     "city": "shanghai",
                     "scene": "attraction",
-                    "subjectId": "fixture_d0d10ae2ab9e48f0884c2a860567056f",
-                    "sourceDigest": "65d080b4010a2e266e2f952b75a8190dada1eae59ade037fe24e512fe4e01369"
+                    "subjectId": "fixture_e0815304b13341148636ab75a6fda4fc",
+                    "sourceDigest": "58ebf0e660f67be4f83c05cbf7beaf889b8e45d51b2a775d40f5ddff730bae61"
                   },
-                  "scopeId": "220f92db-47af-4a1c-9047-bb421b33905e",
+                  "scopeId": "c94615b4-49ef-4756-9db0-bd29b20628a2",
                   "operation": {
-                    "turnId": "b3c65eb0-adaa-4386-b5ad-91c1bdc4d954",
-                    "scopeId": "220f92db-47af-4a1c-9047-bb421b33905e",
+                    "turnId": "67e132d5-8b6c-4a10-9fdd-d0da13d3020a",
+                    "scopeId": "c94615b4-49ef-4756-9db0-bd29b20628a2",
                     "messageId": null,
                     "scopeKind": "thread",
-                    "operationId": "89601611-c61b-454b-a612-a319affb1aeb"
+                    "operationId": "e26853ac-e23e-47e3-be1d-5f3c58d1ebb0"
                   },
                   "scopeKind": "thread",
                   "expectation": {
                     "locale": "en",
-                    "tripId": "ba0aaa8f-ef2b-46db-9110-967e39d94e2d",
+                    "tripId": "8f78ec5c-00d8-40e3-9566-a82a82c39eab",
                     "provider": "amap",
                     "headVersion": 0,
-                    "referenceId": "a61ea2ba-db44-45e5-9180-f8704014bea6",
-                    "contextDigest": "ee12142d07cd24d222759cf9a927c032ecc150907b78558f5ab18a30ac8baa00",
-                    "mappingDigest": "37590e36e440e229726c382cb4e77266d92bd568939fa905451b4b3776279ce4",
-                    "providerPoiId": "self-only-7779cb55-3285-4703-9e40-abd85faf33a2",
-                    "canonicalPoiId": "6bf1b6eb-c0b3-4507-b130-a4744f0c59ef"
+                    "referenceId": "1ec31654-b42a-408e-a86d-02f07fc33d69",
+                    "contextDigest": "6938dff7526d8aac4eb5a4c267a4438de6c427ccd3c06b75675395598d38d6ca",
+                    "mappingDigest": "dd613f813d1ab92cedef4ff8130c659a64983ac0e2a4da75203a5b5f1379d576",
+                    "providerPoiId": "self-only-00ed1e4a-b390-423e-aaf0-9e943d606630",
+                    "canonicalPoiId": "3eb9a519-2bac-43fa-988a-432514e9c15b"
                   },
-                  "operationId": "89601611-c61b-454b-a612-a319affb1aeb",
-                  "requestDigest": "e4f0ea1884db11b3ac30f0a354489a4b56018c0c289e31847308dfc49145dfeb",
+                  "operationId": "e26853ac-e23e-47e3-be1d-5f3c58d1ebb0",
+                  "requestDigest": "6303aadc76b402945c4891b3197fbe517e24d17d310ad09cd5f4296adf4e162c",
                   "schemaVersion": "canonical-place-proof/1",
                   "originalReceipt": {
                     "kind": "accepted",
                     "reused": false,
-                    "turnId": "b3c65eb0-adaa-4386-b5ad-91c1bdc4d954",
+                    "turnId": "67e132d5-8b6c-4a10-9fdd-d0da13d3020a",
                     "version": 2,
                     "parentTurnId": null,
                     "relationship": "new_goal",
                     "scopeVersion": 1,
-                    "serviceTaskId": "06a28ecf-9764-4ebb-9fb2-e9426d073838"
+                    "serviceTaskId": "9509d86c-2ca2-4191-b170-dbfe6fb906ab"
                   }
                 }
               }
@@ -208,13 +208,13 @@
           {
             "rows": [
               {
-                "task_id": "06a28ecf-9764-4ebb-9fb2-e9426d073838",
-                "turn_id": "b3c65eb0-adaa-4386-b5ad-91c1bdc4d954",
-                "owner_id": "2a66a42e-e3a5-4209-8270-2b7b3381bb07",
+                "task_id": "9509d86c-2ca2-4191-b170-dbfe6fb906ab",
+                "turn_id": "67e132d5-8b6c-4a10-9fdd-d0da13d3020a",
+                "owner_id": "ef8aa670-da80-4f03-ae1f-146ea963a185",
                 "relationship": "new_goal",
                 "parent_turn_id": null,
-                "request_digest": "eb56ce46425ad10a132bc8587928453a29da21790b9aacf9e7e80d2978009f0d",
-                "idempotency_key": "89601611-c61b-454b-a612-a319affb1aeb"
+                "request_digest": "8cb906073e575b47d3daa8443a708454791d3738bc6e1431de3e16ee0cb9b7b5",
+                "idempotency_key": "e26853ac-e23e-47e3-be1d-5f3c58d1ebb0"
               }
             ],
             "relation": "turn_private.service_task_turns"
@@ -222,15 +222,15 @@
           {
             "rows": [
               {
-                "id": "06a28ecf-9764-4ebb-9fb2-e9426d073838",
-                "owner_id": "2a66a42e-e3a5-4209-8270-2b7b3381bb07",
-                "policy_id": "b51474b1-b003-4712-992d-fb262b5606e6",
-                "thread_id": "220f92db-47af-4a1c-9047-bb421b33905e",
-                "consent_id": "88bdd6e7-5f77-45cd-aa68-7c7ca32dad1f",
-                "created_at": "2026-10-15T09:01:26.320935+00:00",
+                "id": "9509d86c-2ca2-4191-b170-dbfe6fb906ab",
+                "owner_id": "ef8aa670-da80-4f03-ae1f-146ea963a185",
+                "policy_id": "1197e4bb-a9f8-4eea-9edd-0dbd22f5b4db",
+                "thread_id": "c94615b4-49ef-4756-9db0-bd29b20628a2",
+                "consent_id": "71ed275a-2f13-46c9-b01a-049a0b64869f",
+                "created_at": "2026-10-15T09:34:45.646977+00:00",
                 "goal_digest": "a1aa3e7afdab62fcea3d6540ad23b1f52cbb1c8f90845edb8af5ce2044238ac8",
-                "goal_turn_id": "b3c65eb0-adaa-4386-b5ad-91c1bdc4d954",
-                "last_turn_id": "b3c65eb0-adaa-4386-b5ad-91c1bdc4d954",
+                "goal_turn_id": "67e132d5-8b6c-4a10-9fdd-d0da13d3020a",
+                "last_turn_id": "67e132d5-8b6c-4a10-9fdd-d0da13d3020a",
                 "scope_version": 1,
                 "budget_scope_id": null,
                 "expected_result": "text_answer",
@@ -243,13 +243,13 @@
             "rows": [
               {
                 "locale": "en",
-                "turn_id": "b3c65eb0-adaa-4386-b5ad-91c1bdc4d954",
-                "owner_id": "2a66a42e-e3a5-4209-8270-2b7b3381bb07",
+                "turn_id": "67e132d5-8b6c-4a10-9fdd-d0da13d3020a",
+                "owner_id": "ef8aa670-da80-4f03-ae1f-146ea963a185",
                 "hidden_at": null,
-                "policy_id": "b51474b1-b003-4712-992d-fb262b5606e6",
-                "thread_id": "220f92db-47af-4a1c-9047-bb421b33905e",
-                "consent_id": "88bdd6e7-5f77-45cd-aa68-7c7ca32dad1f",
-                "created_at": "2026-10-15T09:01:26.333556+00:00",
+                "policy_id": "1197e4bb-a9f8-4eea-9edd-0dbd22f5b4db",
+                "thread_id": "c94615b4-49ef-4756-9db0-bd29b20628a2",
+                "consent_id": "71ed275a-2f13-46c9-b01a-049a0b64869f",
+                "created_at": "2026-10-15T09:34:45.657951+00:00",
                 "input_text": "What time does it open?",
                 "output_kind": null,
                 "output_text": null
@@ -266,12 +266,12 @@
               {
                 "state": "queued",
                 "attempt": 0,
-                "turn_id": "b3c65eb0-adaa-4386-b5ad-91c1bdc4d954",
+                "turn_id": "67e132d5-8b6c-4a10-9fdd-d0da13d3020a",
                 "lease_ms": 120000,
-                "owner_id": "2a66a42e-e3a5-4209-8270-2b7b3381bb07",
-                "created_at": "2026-10-15T09:01:26.336736+00:00",
+                "owner_id": "ef8aa670-da80-4f03-ae1f-146ea963a185",
+                "created_at": "2026-10-15T09:34:45.660501+00:00",
                 "expires_at": null,
-                "session_id": "a297104e-dcbc-4e80-af06-57bcd278294e",
+                "session_id": "9c267f08-91c4-4667-ab71-805e402f17a3",
                 "lease_token": null,
                 "max_attempts": 3,
                 "execution_mode": "text"
@@ -282,13 +282,13 @@
           {
             "rows": [
               {
-                "id": "b3c65eb0-adaa-4386-b5ad-91c1bdc4d954",
+                "id": "67e132d5-8b6c-4a10-9fdd-d0da13d3020a",
                 "status": "accepted",
                 "trip_id": null,
-                "owner_id": "2a66a42e-e3a5-4209-8270-2b7b3381bb07",
-                "thread_id": "220f92db-47af-4a1c-9047-bb421b33905e",
-                "created_at": "2026-10-15T09:01:26.313275+00:00",
-                "updated_at": "2026-10-15T09:01:26.313275+00:00"
+                "owner_id": "ef8aa670-da80-4f03-ae1f-146ea963a185",
+                "thread_id": "c94615b4-49ef-4756-9db0-bd29b20628a2",
+                "created_at": "2026-10-15T09:34:45.641164+00:00",
+                "updated_at": "2026-10-15T09:34:45.641164+00:00"
               }
             ],
             "relation": "public.turns"
@@ -315,8 +315,8 @@
         },
         "sourceAuthorities": [
           {
-            "policyId": "b51474b1-b003-4712-992d-fb262b5606e6",
-            "consentId": "88bdd6e7-5f77-45cd-aa68-7c7ca32dad1f"
+            "policyId": "1197e4bb-a9f8-4eea-9edd-0dbd22f5b4db",
+            "consentId": "71ed275a-2f13-46c9-b01a-049a0b64869f"
           }
         ],
         "sourceIdentityKeys": []
@@ -325,7 +325,7 @@
     "hasMore": false,
     "section": "snapshot",
     "nextCursor": null,
-    "sourceDigest": "5382dbe774c03348b3c8e209be3cef1282fbcc9ec00fcf7a834f5db795162c03",
+    "sourceDigest": "ed1b8b814168305bb5100eccb28c6010f0e84bad3f7309bae04137fbafd56d57",
     "schemaVersion": "turn-core-export/3",
     "sectionComplete": true
   }

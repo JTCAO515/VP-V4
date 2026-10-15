@@ -1,8 +1,8 @@
 {
   "postgres": "PostgreSQL 17.11 (Homebrew) on aarch64-apple-darwin27.0.0, compiled by Apple clang version 21.0.0 (clang-2100.3.34.2), 64-bit",
-  "migrationSha256": "5128204f8e20d84b3367d872e4bf3fe0899b87e1d2a32c628ae85eba4a26f691",
-  "baselineCatalogSha256": "633011d9f426f914121c1e43197fb3767dd1b53bf545ef0d1cf592505e7bc143",
-  "afterCatalogSha256": "9385d87eeeae3c2d03f93b5d2cdb61c4a46fddd9481f50f083c5b7fe7a72ea76",
+  "migrationSha256": "f7a230acc07ebfa63ce6b8639495d27c28fe298fad1d322264f436bf764da3f3",
+  "baselineCatalogSha256": "36e7d25bad4291e0213ef1f0fbb0bb0c19d0ac597fea4904381854aa62a58efd",
+  "afterCatalogSha256": "8ad72f3fd6422f69a5209d2376a13f99bdf385ef0447da45e8ce6ed87880284f",
   "changedFunctions": [
     "conversation_data_private.schema_supported_v1()",
     "conversation_data_private.source_v1(uuid, text, uuid)",
@@ -11,12 +11,16 @@
     "public.authorize_grounded_dispatch(uuid, uuid, uuid, text, text)",
     "public.authorize_text_dispatch(uuid, uuid, uuid, text)",
     "public.authorize_text_task_dispatch(uuid, uuid, uuid, text, text)",
+    "public.cancel_chat_turn(uuid)",
+    "public.claim_turn_work()",
     "public.complete_grounded_place_work(uuid, uuid, text, text, text, text)",
     "public.complete_text_work(uuid, uuid, text, text)",
     "public.grounded_ai_assist_work_v1(jsonb)",
+    "public.list_text_turns(uuid, integer)",
     "public.read_grounded_ai_assist_context_v1(uuid)",
     "public.read_grounded_turn(uuid)",
     "public.read_grounded_work(uuid, uuid)",
+    "public.read_text_turn(uuid)",
     "public.read_text_work(uuid, uuid)",
     "result_data_private.schema_supported_v1()",
     "result_data_private.source_v1(uuid, uuid)",
@@ -27,7 +31,9 @@
     "turn_data_private.schema_supported_v1()",
     "turn_data_private.source_v1(uuid, uuid)",
     "turn_private.claim_text_mode(uuid, uuid, text)",
-    "turn_private.complete_selected_grounded_work(uuid, uuid, text, text, text)"
+    "turn_private.complete_selected_grounded_work(uuid, uuid, text, text, text)",
+    "turn_private.trip_privacy_t_export_source_v1(uuid)",
+    "turn_private.trip_service_task_runtime_v1()"
   ],
   "newPrivateFunctions": [
     "place_actions_private.ask_answer_basis_shape_v1(jsonb)",
@@ -38,6 +44,7 @@
     "place_actions_private.ask_complete_v1(uuid, uuid, text, text, text, text)",
     "place_actions_private.ask_context_v1(uuid, uuid, uuid, jsonb)",
     "place_actions_private.ask_expectation_shape_v1(jsonb)",
+    "place_actions_private.ask_finish_capacity_v1(uuid, text, text)",
     "place_actions_private.ask_knowledge_scope_v1(jsonb)",
     "place_actions_private.ask_mapping_basis_v1(uuid, boolean)",
     "place_actions_private.ask_proof_shape_v1(jsonb)",
@@ -48,6 +55,7 @@
     "place_actions_private.ask_source_row_v1(text, jsonb)",
     "place_actions_private.ask_sources_v1(uuid, text)",
     "place_actions_private.ask_submit_v1(text)",
+    "place_actions_private.ask_text_projection_v1(uuid, boolean)",
     "place_actions_private.ask_uuid_v1(jsonb)"
   ],
   "newTables": 0,
@@ -63,6 +71,8 @@
   "rollbackExact": true,
   "dependencyDriftRejected": true,
   "unknownSchemaRejected": true,
+  "missingNewConstraintRejected": true,
+  "originalTripRuntimeTrue": true,
   "guards": [
     {
       "name": "profile",

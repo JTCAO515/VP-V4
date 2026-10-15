@@ -43,6 +43,7 @@ begin
  -- The generic output column never contains evidence, factual prose or source text.
  update turn_private.text_content set output_kind=outcome,output_text='reviewed-answer-v1' where turn_id=p_turn_id;
  perform turn_private.terminal(p_turn_id,case when outcome='technical_failure' then 'failed' when outcome='blocked' then 'unavailable' else 'completed' end,w.attempt);
+ if g.selected_place_request is not null then perform place_actions_private.ask_finish_capacity_v1(p_turn_id,outcome,'reviewed-answer-v1');end if;
  return jsonb_build_object('kind','finished');
 end $function$
 ;
