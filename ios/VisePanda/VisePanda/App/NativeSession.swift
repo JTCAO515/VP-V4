@@ -49,6 +49,7 @@ final class NativeSession {
     let offlineTrips=NativeOfflineTripStore()
     let deviceMaterials: NativeDeviceMaterials
     private(set) var exploreAskHandoff:NativeExploreAskHandoff?
+    private(set) var canonicalPlaceAskReferenceGeneration = UUID()
     private(set) var canonicalPlaceAskNavigation: NativeCanonicalPlaceAskCapture?
     private(set) var canonicalPlaceAskSelection: NativeCanonicalPlaceAskCapture?
     var canonicalPlaceAskPending: NativeCanonicalPlaceAskPending? {
@@ -184,35 +185,75 @@ final class NativeSession {
     }
 
     func prepareExploreAsk(_ handoff:NativeExploreAskHandoff) {
-        guard handoff.scope==dataScope,handoff.valid else{return};canonicalPlaceAskNavigation=nil;exploreAskHandoff=handoff
+        guard handoff.scope==dataScope,handoff.valid else{return};canonicalPlaceAskReferenceGeneration=UUID();canonicalPlaceAskNavigation=nil;exploreAskHandoff=handoff
     }
-    func clearExploreAsk(){exploreAskHandoff=nil; canonicalPlaceAskNavigation=nil}
+    func clearExploreAsk(){exploreAskHandoff=nil; canonicalPlaceAskNavigation=nil; canonicalPlaceAskReferenceGeneration=UUID()}
+    func invalidateCanonicalPlaceAskReference() { canonicalPlaceAskReferenceGeneration = UUID() }
 
     // Typed navigation only. No automatic message, Goal, Task or provider eligibility.
     func prepareCanonicalPlaceAsk(_ capture: NativeCanonicalPlaceAskCapture) {
         guard canonicalPlaceAskPending == nil, capture.current(scope: dataScope, locale: capture.expectation.locale) else { return }
         let expected = capture.expectation
+        canonicalPlaceAskReferenceGeneration = UUID()
         canonicalPlaceAskNavigation = capture
         exploreAskHandoff = .init(scope: capture.scope, tripID: expected.tripId, tripVersion: expected.headVersion,
                                  poiID: expected.selection.canonicalPoiId, provider: expected.selection.provider,
                                  providerPoiID: expected.selection.providerPoiId, name: capture.title)
     }
-    func recheckCanonicalPlaceAsk(_ original: NativeCanonicalPlaceAskCapture, locale: String) async throws -> NativeCanonicalPlaceAskCapture {
+    func recheckCanonicalPlaceAsk(_ original: NativeCanonicalPlaceAskCapture, locale: String) async throws -> NativeCanonicalPlaceAskRefresh {
         guard let scope = dataScope, original.scope == scope, !canonicalPlaceAskRecoveryRequired,
               ["zh", "en"].contains(locale) else { throw NativeDataError.staleSessionResponse }
+        guard original == canonicalPlaceAskNavigation || original == canonicalPlaceAskSelection else { throw NativeDataError.staleSessionResponse }
+        let generation = canonicalPlaceAskReferenceGeneration
         let expected = original.expectation
         let target = NativePlaceActionSelection(scope: scope, place: expected.selection, tripId: expected.tripId, baseVersion: expected.headVersion)
         let started = ProcessInfo.processInfo.systemUptime
         let contextBytes = try await placeActionRequest(tripId: target.tripId, body: NativePlaceActionWire.bytes([
             "action": "context", "expectedTripVersion": target.baseVersion,
             "selection": NativePlaceActionWire.place(target.place), "locale": locale]), actor: scope)
-        guard dataScope == scope, !Task.isCancelled else { throw NativeDataError.staleSessionResponse }
+        guard dataScope == scope, !Task.isCancelled, canonicalPlaceAskReferenceGeneration == generation,
+              original == canonicalPlaceAskNavigation || original == canonicalPlaceAskSelection else { throw NativeDataError.staleSessionResponse }
         let context = try NativePlaceActionContext.decode(contextBytes, expected: target)
         let bytes = try await placeActionRequest(tripId: target.tripId, body: NativePlaceActionWire.bytes([
             "action": "ask", "expectedTripVersion": target.baseVersion, "selection": NativePlaceActionWire.place(target.place),
             "expectedMappingDigest": context.mappingDigest, "locale": locale]), actor: scope)
-        guard dataScope == scope, !Task.isCancelled else { throw NativeDataError.staleSessionResponse }
-        return try NativeCanonicalPlaceAskCapture.decode(bytes, context: context, target: target, locale: locale, started: started)
+        guard dataScope == scope, !Task.isCancelled, canonicalPlaceAskReferenceGeneration == generation,
+              original == canonicalPlaceAskNavigation || original == canonicalPlaceAskSelection else { throw NativeDataError.staleSessionResponse }
+        return .init(original: original, capture: try NativeCanonicalPlaceAskCapture.decode(bytes, context: context, target: target, locale: locale, started: started), generation: generation)
+    }
+    @discardableResult func stageCanonicalPlaceAskRefresh(_ refresh: NativeCanonicalPlaceAskRefresh) -> Bool {
+        guard refresh.generation == canonicalPlaceAskReferenceGeneration,
+              refresh.original == canonicalPlaceAskNavigation || refresh.original == canonicalPlaceAskSelection,
+              refresh.original.scope == dataScope,
+              refresh.original.expectation.selection == refresh.capture.expectation.selection,
+              refresh.original.expectation.tripId == refresh.capture.expectation.tripId,
+              refresh.original.expectation.headVersion == refresh.capture.expectation.headVersion,
+              !canonicalPlaceAskRecoveryRequired else { return false }
+        prepareCanonicalPlaceAsk(refresh.capture)
+        return canonicalPlaceAskNavigation == refresh.capture
+    }
+    // A historical server proof names an exact reference to reread. It does not create current eligibility.
+    func recheckCanonicalPlaceAskHistory(_ proof: NativeCanonicalPlaceHistoryProof, locale: String) async throws -> NativeCanonicalPlaceAskHistoryRefresh {
+        guard let scope = dataScope, !canonicalPlaceAskRecoveryRequired, ["zh", "en"].contains(locale) else { throw NativeDataError.staleSessionResponse }
+        let generation = canonicalPlaceAskReferenceGeneration, expected = proof.expectation
+        let target = NativePlaceActionSelection(scope: scope, place: expected.selection, tripId: expected.tripId, baseVersion: expected.headVersion)
+        let started = ProcessInfo.processInfo.systemUptime
+        let contextBytes = try await placeActionRequest(tripId: target.tripId, body: NativePlaceActionWire.bytes([
+            "action": "context", "expectedTripVersion": target.baseVersion, "selection": NativePlaceActionWire.place(target.place), "locale": locale]), actor: scope)
+        guard dataScope == scope, canonicalPlaceAskReferenceGeneration == generation, !Task.isCancelled else { throw NativeDataError.staleSessionResponse }
+        let context = try NativePlaceActionContext.decode(contextBytes, expected: target)
+        let bytes = try await placeActionRequest(tripId: target.tripId, body: NativePlaceActionWire.bytes([
+            "action": "ask", "expectedTripVersion": target.baseVersion, "selection": NativePlaceActionWire.place(target.place),
+            "expectedMappingDigest": context.mappingDigest, "locale": locale]), actor: scope)
+        guard dataScope == scope, canonicalPlaceAskReferenceGeneration == generation, !Task.isCancelled else { throw NativeDataError.staleSessionResponse }
+        return .init(capture: try NativeCanonicalPlaceAskCapture.decode(bytes, context: context, target: target, locale: locale, started: started),
+                     generation: generation, operationID: proof.operationID, requestDigest: proof.requestDigest)
+    }
+    @discardableResult func stageCanonicalPlaceAskHistoryRefresh(_ refreshed: NativeCanonicalPlaceAskHistoryRefresh) -> Bool {
+        guard canonicalPlaceAskReferenceGeneration == refreshed.generation, refreshed.capture.scope == dataScope,
+              !canonicalPlaceAskRecoveryRequired else { return false }
+        prepareCanonicalPlaceAsk(refreshed.capture)
+        return canonicalPlaceAskNavigation == refreshed.capture
     }
     func adoptCanonicalPlaceAsk(navigationID: UUID, locale: String) throws {
         guard canonicalPlaceAskPending == nil, let navigation = exploreAskHandoff, navigation.id == navigationID,
@@ -225,7 +266,7 @@ final class NativeSession {
         canonicalPlaceAskSelection = capture
         clearExploreAsk()
     }
-    func discardCanonicalPlaceAskSelection() { if canonicalPlaceAskPending == nil { canonicalPlaceAskSelection = nil } }
+    func discardCanonicalPlaceAskSelection() { if canonicalPlaceAskPending == nil { canonicalPlaceAskSelection = nil; canonicalPlaceAskReferenceGeneration = UUID() } }
 
     func retainCanonicalPlaceAsk(_ pending: NativeCanonicalPlaceAskPending, policy: NativeTextPolicy) throws {
         guard askMode == .serviceTask, let capture = canonicalPlaceAskSelection, pending.scope == dataScope,
@@ -245,14 +286,20 @@ final class NativeSession {
         guard physical.canonicalPlaceAsk == stored, physical.pendingAsk == nil else { throw NativeDataError.staleSessionResponse }
         credential = updated
     }
-    func canonicalPlaceAskRequest(_ pending: NativeCanonicalPlaceAskPending) async throws -> Data {
+    func canonicalPlaceAskRequest(_ pending: NativeCanonicalPlaceAskPending, beforeSend: @escaping () -> Bool) async throws -> Data {
         guard askMode == .serviceTask, pending.scope == dataScope, canonicalPlaceAskPending == pending,
               let stored = credential?.canonicalPlaceAsk, stored.matches(pending.scope),
               try read(owner: pending.scope.subject).canonicalPlaceAsk == stored,
               let capture = canonicalPlaceAskSelection, capture.expectation == pending.expectation,
               capture.current(scope: dataScope, locale: pending.expectation.locale) else { throw NativeDataError.staleSessionResponse }
+        let generation = canonicalPlaceAskReferenceGeneration
         let path = "api/chat/native/v7/place-ask"
-        return try await dataRequest(prefix: path, path: path, method: "POST", body: pending.body)
+        return try await dataRequest(prefix: path, path: path, method: "POST", body: pending.body, beforeSend: {
+            self.dataScope == pending.scope && self.canonicalPlaceAskPending == pending
+                && self.canonicalPlaceAskReferenceGeneration == generation
+                && self.canonicalPlaceAskSelection == capture
+                && capture.current(scope: self.dataScope, locale: pending.expectation.locale) && beforeSend()
+        })
     }
     func readCanonicalPlaceAskReceipt(_ pending: NativeCanonicalPlaceAskPending) async throws -> Data {
         guard pending.scope == dataScope, canonicalPlaceAskPending == pending else { throw NativeDataError.staleSessionResponse }
@@ -2076,7 +2123,7 @@ final class NativeSession {
         return data
     }
 
-    private func dataRequest(prefix: String, path: String, method: String, body: Data? = nil, queryItems: [URLQueryItem] = []) async throws -> Data {
+    private func dataRequest(prefix: String, path: String, method: String, body: Data? = nil, queryItems: [URLQueryItem] = [], beforeSend: (() -> Bool)? = nil) async throws -> Data {
         guard enabled, !busy, let initial = dataScope else { throw NativeDataError.sessionUnavailable }
         let directionsProjection = path.hasPrefix("api/chat/native/v5/planning/directions/")
         let guardsTurnProjection = directionsProjection || method == "GET" && path.hasPrefix("api/chat/native/")
@@ -2117,6 +2164,7 @@ final class NativeSession {
         request.httpBody = body
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("Bearer \(credential.accessToken)", forHTTPHeaderField: "Authorization")
+        guard beforeSend?() ?? true else { throw NativeDataError.staleSessionResponse }
         let (data, response) = try await transport.data(for: request)
         guard dataScope == initial else { throw NativeDataError.staleSessionResponse }
         guard let http = response as? HTTPURLResponse else { throw NativeDataError.invalidResponse }
@@ -2527,7 +2575,7 @@ final class NativeSession {
         // No old credential authorizes I/O: local actor and projections are fenced immediately.
         if preservePendingJournals, credential?.canonicalPlaceAsk != nil {
             dataGeneration += 1; subject = nil; mobileEpoch = nil; displayName = nil
-            exploreAskHandoff = nil; canonicalPlaceAskNavigation = nil; canonicalPlaceAskSelection = nil
+            exploreAskHandoff = nil; canonicalPlaceAskNavigation = nil; canonicalPlaceAskSelection = nil; canonicalPlaceAskReferenceGeneration = UUID()
             failureCode = "canonicalPlaceAskRecoveryRequired"; status = "storageError"
             return false
         }
@@ -2582,7 +2630,7 @@ final class NativeSession {
         profileDataErasure=nil; profileDataProjectionFence.bind(nil)
         conversationDataErasure=nil
         memoryPreferences.clear()
-        exploreAskHandoff=nil; canonicalPlaceAskNavigation=nil; canonicalPlaceAskSelection=nil
+        exploreAskHandoff=nil; canonicalPlaceAskNavigation=nil; canonicalPlaceAskSelection=nil; canonicalPlaceAskReferenceGeneration=UUID()
         if let owner = credential?.subject ?? defaults.string(forKey: storageKey) ?? defaults.string(forKey: storageKey + ".pendingJournalCleanupOwner") ?? defaults.string(forKey: storageKey + ".recoveryCleanupOwner") {
             do { try eraseAssistantEventsCursor(owner: owner) }
             catch { failureCode="assistantEventsCursorCleanupRequired";status="storageError";return false }

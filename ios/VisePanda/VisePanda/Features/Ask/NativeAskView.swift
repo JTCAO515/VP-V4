@@ -5,6 +5,7 @@ struct NativeAskView: View {
     @Environment(AppSettings.self) private var settings
     @Environment(\.scenePhase) private var scenePhase
     @State private var store = NativeAskStore()
+    @State private var canonicalRecheckEpoch = UUID()
     @State private var reviewed = false
     @State private var showNotice = true
     @State private var showReviewedQuestion = false
@@ -16,6 +17,7 @@ struct NativeAskView: View {
 
     private var session: NativeSession { settings.nativeSession }
     private var visible: Bool { isActive && !showReviewedQuestion && planningRequest == nil && scenePhase == .active }
+    private var canonicalReadKey: String { "\(visible):\(String(describing: session.dataScope)):\(store.hasCanonicalSelectedResults)" }
     private var groundedReadKey: String { "\(visible):\(String(describing: session.dataScope)):\(store.pollKey)" }
     private var active: Bool { session.dataScope != nil && store.scope == session.dataScope }
 
@@ -125,6 +127,15 @@ struct NativeAskView: View {
                 if !store.busy { await store.reload(using: session) }
             }
         }
+        .task(id: canonicalReadKey) {
+            guard store.mode == .serviceTask, visible, store.hasCanonicalSelectedResults, let initial = session.dataScope else { return }
+            if !store.busy && !session.busy && !store.hasCurrentCanonicalSelected(scope: initial) { await store.reload(using: session) }
+            while !Task.isCancelled, visible, session.dataScope == initial, store.hasCanonicalSelectedResults {
+                do { try await Task.sleep(for: .seconds(store.canonicalSelectedRefreshDelay)) } catch { return }
+                guard !Task.isCancelled, visible, session.dataScope == initial else { return }
+                if !store.busy && !session.busy { await store.reload(using: session) }
+            }
+        }
         .task(id: groundedReadKey) {
             guard store.mode == .grounded else { return }
             store.reset(for: session.retainedDataScope)
@@ -144,9 +155,12 @@ struct NativeAskView: View {
                 do { try await Task.sleep(for: .seconds(delay)) } catch { return }
             } while !Task.isCancelled && visible && session.dataScope == initial
         }
-        .onChange(of: visible, initial: true) { _, value in store.canonicalSceneChanged(active: value) }
-        .onChange(of: settings.selectedLocale) { _, _ in store.invalidateCanonicalAdoption() }
-        .onDisappear { store.canonicalSceneChanged(active: false) }
+        .onChange(of: visible, initial: true) { _, value in
+            canonicalRecheckEpoch = UUID(); store.canonicalSceneChanged(active: value)
+            if !value { session.invalidateCanonicalPlaceAskReference() }
+        }
+        .onChange(of: settings.selectedLocale) { _, _ in canonicalRecheckEpoch = UUID(); store.invalidateCanonicalAdoption(); session.invalidateCanonicalPlaceAskReference() }
+        .onDisappear { canonicalRecheckEpoch = UUID(); store.canonicalSceneChanged(active: false); session.invalidateCanonicalPlaceAskReference() }
         .onChange(of: session.turnDataErasure?.id) { _, _ in
             guard let erased = session.turnDataErasure,
                   (try? session.communitySafetyActor()) == erased.actor else { return }
@@ -203,7 +217,38 @@ struct NativeAskView: View {
         .background(Color.vpSurface, in: RoundedRectangle(cornerRadius: 16))
     }
 
-    private func result(_ turn: NativeTextTurn) -> some View {
+    @ViewBuilder private func result(_ turn: NativeTextTurn) -> some View {
+        if store.mode == .serviceTask, store.canonicalSelectedTurnIDs.contains(turn.id) {
+            TimelineView(.periodic(from: .now, by: 1)) { _ in
+                VStack(alignment: .leading, spacing: 10) {
+                    Text(turn.input).font(.headline).textSelection(.enabled)
+                    HStack {
+                        Text(settings.selectedLocale == .zh ? "原任务状态：" : "Original Task status:")
+                        Text(LocalizedStringKey(label(turn)))
+                    }.font(.caption).foregroundStyle(Color.vpSecondaryText)
+                    if visible, store.canonicalSelectedCurrent(turn.id, scope: session.dataScope), let projection = turn.result, projection.projection == "current" {
+                        groundedResult(turn, projection, allowAiAssist: false)
+                    } else {
+                        Text(settings.selectedLocale == .zh ? "当前地点依据正在重新核对或不可用，已隐藏事实内容。原提问与操作回执保留。" : "The selected-place evidence is being rechecked or unavailable. Factual content is hidden; the original question and receipt are retained.")
+                            .accessibilityIdentifier("canonical-place.result.unavailable.\(turn.id)")
+                    }
+                    if let proof = store.canonicalSelectedProofs[turn.id] {
+                        Button(settings.selectedLocale == .zh ? "重读这个任务的同一地点引用" : "Reread this Task's exact place reference") {
+                            Task { await recheckCanonicalPlaceAskHistory(proof, turnID: turn.id) }
+                        }.disabled(!visible || store.busy || session.canonicalPlaceAskRecoveryRequired)
+                    }
+                    if turn.waiting {
+                        Button("ask.local.cancel") {
+                            guard visible else { return }
+                            Task { await store.cancel(turn, using: session) }
+                        }.disabled(store.busy).accessibilityIdentifier("canonical-place.cancel.\(turn.id)")
+                    }
+                }.frame(maxWidth: .infinity, alignment: .leading).padding(16)
+                    .background(Color.vpSurface, in: RoundedRectangle(cornerRadius: 16))
+            }
+        } else { legacyResult(turn) }
+    }
+    private func legacyResult(_ turn: NativeTextTurn) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(turn.input).font(.headline)
             if store.mode == .grounded, let result = turn.result {
@@ -254,7 +299,7 @@ struct NativeAskView: View {
         }
     }
 
-    @ViewBuilder private func groundedResult(_ turn: NativeTextTurn, _ result: NativeGroundedResult) -> some View {
+    @ViewBuilder private func groundedResult(_ turn: NativeTextTurn, _ result: NativeGroundedResult, allowAiAssist: Bool = true) -> some View {
         let chinese = turn.locale == "zh"
         if let intent = result.intent, NativeKnowledgeAnswer.definition(intent, subjectId: result.placeSubjectId) != nil {
             if let placeName = result.placeName { Text(verbatim: placeName).font(.subheadline.bold()) }
@@ -277,7 +322,7 @@ struct NativeAskView: View {
                 Text(chinese ? "当前无法重新核对原答案，已隐藏事实内容，请稍后重试。" : "The saved evidence cannot be rechecked right now. Factual content is hidden; try again later.")
                     .accessibilityIdentifier("grounded.unavailable")
             }
-            if result.originalOutcome == "blocked" { aiAssistPanel(turn, chinese: chinese) }
+            if result.originalOutcome == "blocked", allowAiAssist { aiAssistPanel(turn, chinese: chinese) }
         } else if result.placeResolution == "ambiguous" {
             Text(chinese ? "这个名称匹配到多个已审核景点。请提供完整官方名称，并核对所选城市；本模式不读取上一轮内容。" : "More than one reviewed attraction matches this name. Please provide its full official name and check the selected city; this mode does not read earlier messages.")
                 .accessibilityIdentifier("grounded.place-ambiguous")
@@ -416,6 +461,9 @@ struct NativeAskView: View {
             Text(canonicalPlaceAskMessage(notice, chinese: chinese)).font(.caption)
                 .accessibilityIdentifier("canonical-place.notice")
         }
+        if store.canonicalSelectedReadUnavailable {
+            Text(chinese ? "这次未读到可展示的当前地点依据，已隐藏事实内容。这不代表原任务未发生；请核对原操作与来源。" : "No displayable current place evidence was returned. Factual content is hidden; this does not prove the original Task did not occur. Check its original operation and sources.").font(.caption)
+        }
         if session.canonicalPlaceAskRecoveryRequired {
             VStack(alignment: .leading, spacing: 8) {
                 Text(chinese ? "原地点提问尚待核对。原请求已保留，不能新发或盲重试。" : "The original place question needs checking. Its request is retained; no new submission or blind retry is allowed.").font(.caption)
@@ -442,14 +490,30 @@ struct NativeAskView: View {
         }
     }
 
+    private func recheckCanonicalPlaceAskHistory(_ proof: NativeCanonicalPlaceHistoryProof, turnID: String) async {
+        let locale = settings.selectedLocale == .zh ? "zh" : settings.selectedLocale.rawValue
+        guard visible, !store.busy else { return }
+        canonicalRecheckEpoch = UUID(); let epoch = canonicalRecheckEpoch
+        do {
+            let refreshed = try await session.recheckCanonicalPlaceAskHistory(proof, locale: locale)
+            guard visible, epoch == canonicalRecheckEpoch,
+                  locale == (settings.selectedLocale == .zh ? "zh" : settings.selectedLocale.rawValue),
+                  store.canonicalSelectedProofs[turnID]?.operationID == refreshed.operationID,
+                  store.canonicalSelectedProofs[turnID]?.requestDigest == refreshed.requestDigest else { return }
+            store.invalidateCanonicalAdoption()
+            _ = session.stageCanonicalPlaceAskHistoryRefresh(refreshed)
+        } catch { store.canonicalRecheckFailed() }
+    }
+
     private func recheckCanonicalPlaceAsk(_ capture: NativeCanonicalPlaceAskCapture) async {
         let locale = settings.selectedLocale == .zh ? "zh" : "en"
         guard visible, !store.busy else { return }
+        canonicalRecheckEpoch = UUID(); let epoch = canonicalRecheckEpoch
         do {
             let refreshed = try await session.recheckCanonicalPlaceAsk(capture, locale: locale)
-            guard visible, locale == (settings.selectedLocale == .zh ? "zh" : "en") else { return }
+            guard visible, epoch == canonicalRecheckEpoch, locale == (settings.selectedLocale == .zh ? "zh" : "en") else { return }
             store.invalidateCanonicalAdoption()
-            session.prepareCanonicalPlaceAsk(refreshed) // Staged again; never auto-adopt or send.
+            _ = session.stageCanonicalPlaceAskRefresh(refreshed) // Identity CAS; never auto-adopt or send.
         } catch { store.canonicalRecheckFailed() }
     }
 

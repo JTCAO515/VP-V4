@@ -96,6 +96,25 @@ import Foundation
             }
             print("PASS: actual SQL ordinary-auth requestBytes/accepted/recovered through actual Native canonical + original receipt2 codecs")
         }
+        if CommandLine.arguments.count > 3 {
+            let source = try NativePlaceActionWire.object(Data(contentsOf: URL(fileURLWithPath: CommandLine.arguments[3])), maximum: 500_000)
+            let historyRaw = source["sqlTaskHistory"] as! [String: Any]
+            var envelope = historyRaw; envelope["version"] = 2 // Exactly the unchanged native-http projection.
+            let history = try JSONDecoder().decode(NativeCanonicalPlaceHistory.self, from: NativePlaceActionWire.bytes(envelope))
+            let row = history.turns.first { $0.selected }!
+            check(row.proof?.matches(row.turn) == true, "actual SQL history proof binds original Task/Turn")
+            let lifetime = try row.lifetime(elapsed: 0)
+            check(lifetime > 0 && lifetime <= 30, "canonical pronoun result uses original knowledge lifetime")
+            check(row.turn.result?.placeName == nil && row.turn.input == "What time does it open?", "no name/input fabrication")
+            rejects("old named-question decoder remains unchanged") { _ = try row.turn.result!.lifetime(for: row.turn, elapsed: 0) }
+            rejects("selected TTL expired") { _ = try row.lifetime(elapsed: 30) }
+            var bad = (historyRaw["turns"] as! [[String: Any]])[0]
+            var proof = bad["canonicalPlaceProof"] as! [String: Any]
+            var basis = proof["basis"] as! [String: Any]; basis["subjectId"] = "different_subject"; proof["basis"] = basis; bad["canonicalPlaceProof"] = proof
+            let wrong = try JSONDecoder().decode(NativeCanonicalPlaceHistoryRow.self, from: NativePlaceActionWire.bytes(bad))
+            rejects("foreign canonical subject cannot qualify facts") { _ = try wrong.lifetime(elapsed: 0) }
+            print("PASS: actual SQL pronoun history through Native Turn/proof/current knowledge lifetime; old decoder still rejects")
+        }
         print("PASS: \(count) actual Swift canonical capture/request/receipt/Root decisions; no network or admission")
     }
 }
