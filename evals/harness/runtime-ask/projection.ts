@@ -5,17 +5,29 @@ import { RuntimeFailure } from "../runtime-recovery/transport.ts";
 import type { AskRun } from "./contract.ts";
 
 export function selectedTurn(value: unknown, policy: unknown, run: AskRun, elapsed: number): SavedTurn | null {
-  if (!record(value) || value.version !== 4) throw new RuntimeFailure("MODEL_OUTPUT_INVALID");
-  let history;
-  try { history = parseGroundedHistory(run.context.ownerId, policy, value, run.context.policyId, elapsed); }
-  catch { throw new RuntimeFailure("MODEL_OUTPUT_INVALID"); }
-  const turn = history.turns.find(t => t.id === run.submission.turnId);
+  return qualifiedTurn(value, policy, run, elapsed).turn;
+}
+function selectBoundTurn(turns: readonly SavedTurn[], run: AskRun): SavedTurn | null {
+  const turn = turns.find(t => t.id === run.submission.turnId);
   if (!turn) return null;
   const s = run.submission;
   if (turn.threadId !== s.threadId || turn.taskId !== s.serviceTask.id || turn.parentId !== s.serviceTask.parentTurnId
     || turn.relationship !== s.serviceTask.relationship || turn.locale !== s.locale || turn.city !== s.city || turn.input !== s.text)
     throw new RuntimeFailure("SERVICE_TASK_CONFLICT");
   return turn;
+}
+
+/** Preserve the parser's remaining evidence lease, including parse time itself. */
+export function qualifiedTurn(value: unknown, policy: unknown, run: AskRun, elapsed: number) {
+  const observedAt = performance.now();
+  if (!record(value) || value.version !== 4) throw new RuntimeFailure("MODEL_OUTPUT_INVALID");
+  let history;
+  try { history = parseGroundedHistory(run.context.ownerId, policy, value, run.context.policyId, elapsed); }
+  catch { throw new RuntimeFailure("MODEL_OUTPUT_INVALID"); }
+  const expiresAt = observedAt + history.lifetimeMs;
+  const turn = selectBoundTurn(history.turns, run);
+  if (performance.now() >= expiresAt) throw new RuntimeFailure("DATA_EXPIRED");
+  return { turn, expiresAt };
 }
 
 /** Decode a finite Native v4 stream, then validate its current atomic snapshot

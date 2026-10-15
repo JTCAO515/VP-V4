@@ -4,6 +4,7 @@ import { runRuntimeAsk, askReportArtifacts } from "../../../evals/harness/runtim
 import { createNativeAskTransport, type AskTransport, type AskRequest } from "../../../evals/harness/runtime-ask/transport.ts";
 import type { AskRun } from "../../../evals/harness/runtime-ask/contract.ts";
 import { groundedEventFrames } from "../../../lib/server/turn/grounded-events.ts";
+import { parseAskSubmission } from "../../../evals/harness/runtime-ask/contract.ts";
 
 const id = (n: number) => `00000000-0000-4000-8000-${n.toString().padStart(12, "0")}`;
 function plan(caseId: AskRun["caseId"] = "H01"): AskRun {
@@ -123,6 +124,70 @@ test("final source qualification invalidation suppresses earlier current facts",
     return f.transport(r, s);
   });
   assert.equal(report.code, "DATA_EXPIRED"); assert.equal(report.outcome, "unknown"); assert.deepEqual(report.facts, []);
+});
+
+test("source lease expiring after final history but during final Trip read cannot disclose facts", async () => {
+  const f = boundary();
+  f.fact.expiresAt = "2026-10-15T01:00:00.200Z";
+  const report = await runRuntimeAsk(f.run, async (r, s) => {
+    if (r.port === "trip" && f.historyReads >= 3) {
+      const end = performance.now() + 250; while (performance.now() < end) { /* source lease expires, run deadline remains */ }
+    }
+    return f.transport(r, s);
+  });
+  assert.equal(report.code, "DATA_EXPIRED"); assert.equal(report.outcome, "unknown"); assert.deepEqual(report.facts, []);
+  assert.deepEqual(report.expectationComparison, { outcome: "unknown", factIds: "unknown", sourceRevisionIds: "unknown", gapIds: "unknown" });
+});
+
+test("foreign and malformed selected Trip replies stop before POST", async () => {
+  for (const kind of ["foreign", "body", "content", "version"]) {
+    const f = boundary();
+    const report = await runRuntimeAsk(f.run, async (r, s) => {
+      if (r.port !== "trip") return f.transport(r, s);
+      if (kind === "body") return Response.json({ arbitrary: "PRIVATE malformed body" });
+      return Response.json({ version: 2, trip: { id: kind === "foreign" ? id(90) : f.run.currentTripId, headVersion: kind === "version" ? "7" : 7 },
+        content: { title: "Private", days: kind === "content" ? [{ id: "bad", date: "not-a-date" }] : [] } });
+    });
+    assert.equal(report.outcome, "unknown", kind); assert.equal(report.submitDispatches, 0, kind); assert.deepEqual(report.facts, []);
+    assert.equal(report.code, kind === "foreign" ? "FORBIDDEN" : "MODEL_OUTPUT_INVALID");
+  }
+});
+
+test("frozen expectations compare actual outcomes/fact/source/gap IDs without inventing full grading proof", async () => {
+  for (const field of ["outcome", "factIds", "sourceRevisionIds", "gapIds"]) {
+    const run = plan(field === "gapIds" ? "H07" : "H01"), f = boundary(run);
+    if (field === "outcome") {
+      Object.assign(f.turn, { outcome: "blocked", status: "unavailable" });
+      Object.assign(f.turn.result, { intent: "unsupported", requestScope: "unknown", originalOutcome: "blocked", knowledge: null });
+      for (const key of ["placeName", "placeResolution", "placeSubjectId"]) Reflect.deleteProperty(f.turn.result, key);
+    } else if (field === "factIds") Object.assign(run.expectation, { factIds: [id(90)] });
+    else if (field === "sourceRevisionIds") Object.assign(run.expectation, { sourceRevisionIds: [id(90)] });
+    else Object.assign(run.expectation, { gapIds: ["another_gap"] });
+    const report = await runRuntimeAsk(run, f.transport);
+    assert.equal(report.expectationComparison[field as keyof typeof report.expectationComparison], "mismatched");
+    assert.equal(report.requiredModeVerdict, "NOT_RUN"); assert.equal(report.fullAcceptance, "NOT_RUN");
+    assert.ok(report.existingGrader === null || report.existingGrader.verdict === "NOT_RUN");
+  }
+  const f = boundary(), report = await runRuntimeAsk(f.run, f.transport);
+  assert.deepEqual(report.expectationComparison, { outcome: "matched", factIds: "matched", sourceRevisionIds: "matched", gapIds: "matched" });
+  assert.equal(report.existingGrader?.verdict, "NOT_RUN");
+});
+
+test("run and independent transport each execute the shared closed submission parser", async () => {
+  for (const kind of ["policy", "city", "hidden", "getter", "relation"]) {
+    const run = plan(), dto = structuredClone(run.submission); let getters = 0, fetches = 0;
+    if (kind === "policy") Object.assign(dto, { policyId: "invalid" });
+    if (kind === "city") Object.assign(dto, { city: "unsupported" });
+    if (kind === "hidden") Object.defineProperty(dto, "text", { enumerable: false });
+    if (kind === "getter") Object.defineProperty(dto.serviceTask, "id", { get() { getters++; return id(7); } });
+    if (kind === "relation") Object.assign(dto.serviceTask, { relationship: "new_goal", parentTurnId: id(90) });
+    assert.equal(parseAskSubmission(dto), null);
+    const f = boundary(), report = await runRuntimeAsk({ ...run, submission: dto }, f.transport);
+    assert.equal(report.code, "INVALID_INPUT"); assert.equal(f.requests.length, 0);
+    const bridge = createNativeAskTransport({ appOrigin: "https://ask.example.invalid", authorizedFetch: async () => { fetches++; return Response.json({}); } });
+    await assert.rejects(bridge({ port: "submit", body: dto, turnId: null, tripId: null, cursor: null }, new AbortController().signal));
+    assert.equal(fetches, 0); assert.equal(getters, 0);
+  }
 });
 
 test("Trip missing/incomplete version preserves unknown without inventing a complete empty collection", async () => {

@@ -23,6 +23,22 @@ const strings = (v: unknown, check: (x: unknown) => boolean, max: number): v is 
   return new Set(v).size === v.length;
 };
 
+/** One closed DTO validator; both run admission and the standalone bridge execute it. */
+export function parseAskSubmission(value: unknown): AskSubmission | null {
+  try {
+    if (!record(value) || !ownExact(value, ["threadId", "turnId", "idempotencyKey", "policyId", "locale", "city", "text", "serviceTask"])
+      || ![value.threadId, value.turnId, value.idempotencyKey, value.policyId].every(uuid)
+      || (value.locale !== "zh" && value.locale !== "en") || typeof value.city !== "string"
+      || !["shanghai", "beijing", "guangzhou", "chongqing"].includes(value.city) || !text(value.text, 4000)
+      || !record(value.serviceTask) || !ownExact(value.serviceTask, ["id", "scopeVersion", "relationship", "parentTurnId"])
+      || !uuid(value.serviceTask.id) || value.serviceTask.id === value.turnId || value.serviceTask.scopeVersion !== 1
+      || typeof value.serviceTask.relationship !== "string" || !["new_goal", "clarification", "repair"].includes(value.serviceTask.relationship)
+      || (value.serviceTask.relationship === "new_goal" ? value.serviceTask.parentTurnId !== null
+        : !uuid(value.serviceTask.parentTurnId) || value.serviceTask.parentTurnId === value.turnId)) return null;
+    return structuredClone(value) as AskSubmission;
+  } catch { return null; }
+}
+
 /** Native v4 submission DTO, current identity/notice, fixed development expectation
  * and technical bounds only. This declaration grants no session/consent/dispatch authority. */
 export function parseAskRun(value: unknown): AskRun | null {
@@ -33,15 +49,6 @@ export function parseAskRun(value: unknown): AskRun | null {
       || !record(value.context) || !ownExact(value.context, ["ownerId", "sessionId", "mobileEpoch", "policyId", "noticeVersion", "noticeHash", "contextDigest"])
       || ![value.context.ownerId, value.context.sessionId, value.context.policyId].every(uuid) || !integer(value.context.mobileEpoch, 1)
       || !text(value.context.noticeVersion, 100) || !hash(value.context.noticeHash) || !hash(value.context.contextDigest)
-      || !record(value.submission) || !ownExact(value.submission, ["threadId", "turnId", "idempotencyKey", "policyId", "locale", "city", "text", "serviceTask"])
-      || ![value.submission.threadId, value.submission.turnId, value.submission.idempotencyKey].every(uuid) || value.submission.policyId !== value.context.policyId
-      || (value.submission.locale !== "zh" && value.submission.locale !== "en") || typeof value.submission.city !== "string"
-      || !["shanghai", "beijing", "guangzhou", "chongqing"].includes(value.submission.city) || !text(value.submission.text, 4000)
-      || !record(value.submission.serviceTask) || !ownExact(value.submission.serviceTask, ["id", "scopeVersion", "relationship", "parentTurnId"])
-      || !uuid(value.submission.serviceTask.id) || value.submission.serviceTask.id === value.submission.turnId || value.submission.serviceTask.scopeVersion !== 1
-      || typeof value.submission.serviceTask.relationship !== "string" || !["new_goal", "clarification", "repair"].includes(value.submission.serviceTask.relationship)
-      || (value.submission.serviceTask.relationship === "new_goal" ? value.submission.serviceTask.parentTurnId !== null
-        : !uuid(value.submission.serviceTask.parentTurnId) || value.submission.serviceTask.parentTurnId === value.submission.turnId)
       || (value.currentTripId !== null && !uuid(value.currentTripId))
       || !record(value.expectation) || !ownExact(value.expectation, ["outcome", "factIds", "sourceRevisionIds", "gapIds"])
       || value.expectation.outcome !== ({ H01: "answered", H04: "clarification", H07: "partial" } as Record<string, string>)[value.caseId]
@@ -58,6 +65,8 @@ export function parseAskRun(value: unknown): AskRun | null {
       || !integer(value.bounds.maxTotalBytes, 1) || value.bounds.maxTotalBytes > 1048576 || value.bounds.maxTotalBytes < value.bounds.maxResponseBytes
       || !integer(value.bounds.maxReads, 1) || value.bounds.maxReads > 4096
       || !integer(value.bounds.maxEmptyReads) || value.bounds.maxEmptyReads > 64) return null;
-    return structuredClone(value) as AskRun;
+    const submission = parseAskSubmission(value.submission);
+    if (!submission || submission.policyId !== value.context.policyId) return null;
+    return { ...structuredClone(value), submission } as AskRun;
   } catch { return null; }
 }

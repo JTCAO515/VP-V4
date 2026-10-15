@@ -3,7 +3,7 @@ import { ownExact, record } from "../runtime-recovery/contract.ts";
 import { RuntimeFailure } from "../runtime-recovery/transport.ts";
 import { isFailureCode, FAILURE_TAXONOMY } from "../../../lib/server/contracts/errors/index.ts";
 import { uuid, integer } from "../../../lib/server/today/recovery/contract.ts";
-import type { AskRun, AskSubmission } from "./contract.ts";
+import { parseAskSubmission, type AskRun, type AskSubmission } from "./contract.ts";
 
 export type AskRequest = Readonly<{
   port: "session" | "policy" | "history" | "submit" | "events" | "trip";
@@ -27,22 +27,12 @@ export function createNativeAskTransport(options: Readonly<{ appOrigin: string; 
     if ((request.port === "events" ? !uuid(request.turnId) || !integer(request.cursor) : request.turnId !== null || request.cursor !== null)
       || (request.port === "trip" ? !uuid(request.tripId) : request.tripId !== null)
       || (request.port !== "submit" && request.body !== null)) throw new RuntimeFailure("INVALID_INPUT");
-    if (request.port === "submit") {
-      const b = request.body;
-      if (!record(b) || !ownExact(b, ["threadId", "turnId", "idempotencyKey", "policyId", "locale", "city", "text", "serviceTask"])
-        || ![b.threadId, b.turnId, b.idempotencyKey, b.policyId].every(uuid) || (b.locale !== "zh" && b.locale !== "en")
-        || typeof b.city !== "string" || !["shanghai", "beijing", "guangzhou", "chongqing"].includes(b.city)
-        || typeof b.text !== "string" || !b.text.trim() || b.text.length > 4000 || b.text.includes("\0")
-        || !record(b.serviceTask) || !ownExact(b.serviceTask, ["id", "scopeVersion", "relationship", "parentTurnId"])
-        || !uuid(b.serviceTask.id) || b.serviceTask.id === b.turnId || b.serviceTask.scopeVersion !== 1
-        || typeof b.serviceTask.relationship !== "string" || !["new_goal", "clarification", "repair"].includes(b.serviceTask.relationship)
-        || (b.serviceTask.relationship === "new_goal" ? b.serviceTask.parentTurnId !== null : !uuid(b.serviceTask.parentTurnId) || b.serviceTask.parentTurnId === b.turnId))
-        throw new RuntimeFailure("INVALID_INPUT");
-    }
+    const body = request.port === "submit" ? parseAskSubmission(request.body) : null;
+    if (request.port === "submit" && !body) throw new RuntimeFailure("INVALID_INPUT");
     const paths = { session: "/api/auth/native/v2/session", policy: "/api/chat/native/v4/policy", history: "/api/chat/native/v4/turns",
       submit: "/api/chat/native/v4/turns", events: `/api/chat/native/v4/turns/${request.turnId}/events`, trip: `/api/trips/native/v2/${request.tripId}` };
     return fetcher(app + paths[request.port], { method: request.port === "submit" ? "POST" : "GET", signal, redirect: "error", cache: "no-store",
-      ...(request.body ? { body: JSON.stringify(request.body), headers: { "Content-Type": "application/json" } }
+      ...(body ? { body: JSON.stringify(body), headers: { "Content-Type": "application/json" } }
         : request.port === "events" ? { headers: { "Last-Event-ID": String(request.cursor) } } : {}) });
   };
 }
