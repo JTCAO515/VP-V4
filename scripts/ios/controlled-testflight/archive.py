@@ -123,13 +123,17 @@ def verify_settings(entries, profile, number):
                     "CONFIGURATION": "Release", "PLATFORM_NAME": "iphoneos",
                     "IPHONEOS_DEPLOYMENT_TARGET": "17.0"}
         for key, value in expected.items():
-            if settings.get(key) != value:
+            # xcodebuild omits explicitly empty user settings from its JSON projection.
+            observed = settings.get(key, "") if key in checks.PROFILE_BUILD_SETTINGS else settings.get(key)
+            if observed != value:
                 raise Refusal(f"Effective {target} setting mismatch: {key}")
         if target == "VisePanda" and (settings.get("PRODUCT_BUNDLE_IDENTIFIER") != profile["bundleIdentifier"] or
                                       settings.get("MARKETING_VERSION") != profile["marketingVersion"]):
             raise Refusal("Effective app bundle/version mismatch")
-        summary[target] = {key: settings.get(key) for key in [*expected, "SDKROOT", "SDK_VERSION",
+        summary[target] = {key: settings.get(key, "") if key in checks.PROFILE_BUILD_SETTINGS else settings.get(key)
+                           for key in [*expected, "SDKROOT", "SDK_VERSION",
                                                             "PRODUCT_BUNDLE_IDENTIFIER", "MARKETING_VERSION"]}
+        summary[target]["emptyBackendSettingsOmittedByXcode"] = [key for key in checks.PROFILE_BUILD_SETTINGS if key not in settings]
     if not {"VisePanda", "ShareIntakeExtension"} <= seen:
         raise Refusal("Build settings omit the app or ShareIntakeExtension")
     return summary
@@ -268,6 +272,10 @@ def main():
                 "-destination", "generic/platform=iOS", "-derivedDataPath", str(products / "DerivedData"),
                 "-disableAutomaticPackageResolution", *overrides(profile, number)]
         settings = json.loads(run([*base, "-showBuildSettings", "-json"], env=env))
+        extension_settings = json.loads(run(["xcodebuild", "-project", checks.PROJECT,
+            "-target", "ShareIntakeExtension", "-configuration", "Release", "-sdk", "iphoneos",
+            *overrides(profile, number), "-showBuildSettings", "-json"], env=env))
+        settings.extend(extension_settings)
         manifest["effectiveBuildSettings"] = verify_settings(settings, profile, number)
         manifest["rollout"] = verify_rollout(products, env)
         manifest["sdkArchiveHashes"] = sdk
