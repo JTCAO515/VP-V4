@@ -645,7 +645,14 @@
         "notNull": false
       }
     ],
-    "hasOwner": true
+    "hasOwner": true,
+    "placeOnlyColumns": [
+      {
+        "name": "selected_place_request",
+        "type": "jsonb",
+        "notNull": true
+      }
+    ]
   },
   {
     "relation": "turn_private.planning_action_receipts",
