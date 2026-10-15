@@ -43,18 +43,35 @@ test('initial unloaded component never offers an enabled editor or a false missi
   assert.match(html, /Reading the current version/); assert.match(html, /disabled/); assert.doesNotMatch(html, /Not provided/);
 });
 test('original proposal diff renders authoritative raw before/after only for exact base/item/digest', () => {
-  const snapshot = address => ({ version: address ? 4 : 3, days: [{ id: 'day', items: [{ id: 'item', dayId: 'day', ...(address ? { chineseAddress: address } : {}) }] }] });
+  const snapshot = address => ({ version: address ? 4 : 3, days: [{ id: 'day', items: [{ id: 'item', dayId: 'day', title: 'Place', ...(address ? { chineseAddress: address } : {}) }] }] });
   const pending = { trip: { id: 'trip', headVersion: 3 }, proposal: { status: 'pending', stale: false, revision: 1, baseTripVersion: 3, digest: 'a'.repeat(64), before: snapshot(null), after: snapshot(manual), patch: { expectedVersion: 3, operations: [{ kind: 'set_item_chinese_address', dayId: 'day', itemId: 'item', text: manual.text }] } } };
   const render = p => renderToStaticMarkup(React.createElement(AddressProposalDiff, { context, locale: 'en', pending: p }));
   assert.match(render(pending), /Not provided/); assert.match(render(pending), /&lt;script&gt;/); assert.doesNotMatch(render(pending), /<button/);
   assert.equal(renderToStaticMarkup(React.createElement(AddressProposalDiff, { context: { ...context, tripVersion: 4 }, locale: 'en', pending })), '');
-  for (const change of [{ baseTripVersion: 2 }, { stale: true }, { digest: null }, { after: snapshot({ ...manual, verification: 'verified' }) }, { after: snapshot({ ...manual, text: 'different' }) }]) assert.equal(render({ ...pending, proposal: { ...pending.proposal, ...change } }), '');
+  for (const change of [{ baseTripVersion: 2 }, { stale: true }, { digest: null }, { after: snapshot({ ...manual, verification: 'verified' }) }, { after: { ...snapshot(manual), version: 5 } }]) assert.equal(render({ ...pending, proposal: { ...pending.proposal, ...change } }), '');
 });
 
 const { TripAddressSection } = await import('../../../components/trip-address/TripAddressSection.tsx');
 test('real Section starts fail closed until verified claims, without rendering stale item facts', () => {
   const data = { trip: { id: 'trip', headVersion: 3 }, confirmationState: 'confirmed', content: { days: [{ id: 'day', items: [{ id: 'item', title: 'OLD_ACTOR_PRIVATE_ITEM' }] }] } };
-  const html = renderToStaticMarkup(React.createElement(TripAddressSection, { tripId: 'trip', data, locale: 'en', pending: null, blocked: false, settledEpoch: 'initial', onPrepared: () => {}, onAddressBlockChange: () => {} }));
+  const html = renderToStaticMarkup(React.createElement(TripAddressSection, { tripId: 'trip', data, locale: 'en', pending: null, blocked: false, settledEpoch: 'initial', onPrepared: () => {}, onAddressRequestBlockChange: () => {}, onAddressConfirmBlockChange: () => {} }));
   assert.match(html, /unavailable for the current identity/);
   assert.doesNotMatch(html, /OLD_ACTOR_PRIVATE_ITEM|textarea|Not provided/);
+});
+
+test('actual diff renderer shows rollback removal, restored item and move target without any set operation', () => {
+  const saved = { id: 'item', dayId: 'day', title: 'Place', chineseAddress: manual };
+  const snapshot = (version, days) => ({ version, title: 'Trip', days });
+  const base = { trip: { id: 'trip', headVersion: 3 }, proposal: { status: 'pending', stale: false, revision: 1, baseTripVersion: 3, digest: 'a'.repeat(64), patch: { expectedVersion: 3, operations: [{ kind: 'delete_day', dayId: 'day' }] } } };
+  const cases = [
+    { before: snapshot(3, [{ id: 'day', items: [saved] }]), after: snapshot(4, [{ id: 'day', items: [{ ...saved, chineseAddress: undefined }] }]), target: context },
+    { before: snapshot(3, []), after: snapshot(4, [{ id: 'day', items: [saved] }]), target: context },
+    { before: snapshot(3, [{ id: 'day', items: [saved] }]), after: snapshot(4, [{ id: 'B', items: [{ ...saved, dayId: 'B' }] }]), target: { ...context, dayId: 'B' } },
+  ];
+  for (const sample of cases) {
+    const pending = { ...base, proposal: { ...base.proposal, before: sample.before, after: sample.after } };
+    const html = renderToStaticMarkup(React.createElement(AddressProposalDiff, { pending, context: sample.target, locale: 'en' }));
+    assert.match(html, /User provided · Unverified/); assert.match(html, /Not provided/); assert.match(html, /&lt;script&gt;/);
+    assert.doesNotMatch(html, /<button|<script>/);
+  }
 });

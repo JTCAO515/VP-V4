@@ -117,7 +117,9 @@ test("hidden address review blocks original Confirm including restored pending w
   assert.equal(addressReviewBlocked(read, true, reviewContext), false);
   assert.equal(addressReviewBlocked(null, false, reviewContext), false);
   const other = { ...read, proposal: { ...read.proposal, patch: { expectedVersion: 3, operations: [{ kind: "set_title" as const, title: "new title" }] } } };
-  assert.equal(addressReviewBlocked(other, false, reviewContext), false);
+  assert.equal(addressReviewBlocked(other, false, reviewContext), true); // Actual address changed even without a set operation.
+  const unchanged = { ...other, proposal: { ...other.proposal, after: { ...other.proposal.before!, version: 4 } } };
+  assert.equal(addressReviewBlocked(unchanged, false, reviewContext), false);
 });
 
 
@@ -129,7 +131,7 @@ test("reload's new authoritative version with old nonstale pending keeps origina
   assert.equal(addressReviewBlocked(read, true, { ...current, tripVersion: 4 }), true);
   assert.equal(addressReviewBlocked(read, true, { ...current, snapshotTripId: session }), true);
   assert.equal(addressReviewBlocked(read, true, { ...current, tripId: session }), true);
-  assert.equal(addressReviewBlocked(read, true, { ...current, items: [] }), true);
+  assert.equal(addressReviewBlocked(read, true, { ...current, items: [] }), false);
   for (const change of [{ baseTripVersion: 2 }, { stale: true }, { digest: null }, { patch: { ...read.proposal.patch, expectedVersion: 4 } }, { after: { ...read.proposal.after, version: 5 } }]) {
     assert.equal(addressReviewBlocked({ ...read, proposal: { ...read.proposal, ...change } } as typeof read, true, current), true);
   }
