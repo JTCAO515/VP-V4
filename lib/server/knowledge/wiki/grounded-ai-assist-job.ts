@@ -1,4 +1,4 @@
-import { isPlaceQuestionId, reviewedQuestionId } from "../claim/questions.ts";
+import { isPlaceQuestionId, reviewedQuestionId, questionDefinition } from "../claim/questions.ts";
 import { runGroundedAiAssist, type GroundedAiAssistContextRpc, type GroundedAiAssistInput, type GroundedAiAssistOutcome } from "./grounded-ai-assist.ts";
 import { revalidateGroundedWikiSearchResult, type GroundedSearchDependencies } from "./grounded-search.ts";
 
@@ -54,9 +54,19 @@ export async function runGroundedAiAssistJob(
         || typeof context.data.city !== "string" || typeof context.data.inputText !== "string"
         || (context.data.locale !== "zh" && context.data.locale !== "en")) return { status: "not_offered", reason: "unauthorized" };
       const id = reviewedQuestionId(context.data.intent);
-      if (!id || isPlaceQuestionId(id)) return { status: "not_offered", reason: "not_blocked" };
+      if (!id) return { status: "not_offered", reason: "not_blocked" };
+      const place = isPlaceQuestionId(id);
+      // Only the owner-authorized current context can bind a replayed place.
+      // Client input, persisted result text and a place name confer no subject.
+      if (place && (context.data.turnId !== turnId || context.data.placeResolution !== "matched"
+        || typeof context.data.placeName !== "string" || !context.data.placeName.trim()
+        || !questionDefinition(id, context.data.placeSubjectId))) return { status: "not_offered", reason: "not_blocked" };
+      const intent = place
+        ? { intent: id, requestScope: "single" as const, placeName: context.data.placeName as string, unansweredNeeds: [] }
+        : { intent: id, requestScope: "single" as const };
       const outcome = await revalidateGroundedWikiSearchResult({ ...searchInput, city: context.data.city,
-        locale: context.data.locale, question: context.data.inputText, intent: { intent: id, requestScope: "single" } },
+        locale: context.data.locale, question: context.data.inputText, intent,
+        ...(place ? { placeSubjectId: context.data.placeSubjectId as string } : {}) },
       stored.outcome, searchDependencies, signal);
       return signal.aborted ? { status: "cancelled" } : { status: "succeeded", outcome };
     } catch { return { status: "failed", errorCode: "MALFORMED_OUTCOME" }; }
