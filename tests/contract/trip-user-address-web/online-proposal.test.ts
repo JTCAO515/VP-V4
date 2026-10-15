@@ -182,3 +182,17 @@ test("current read refuses a new actor or route before callback and rejects late
   assert.equal(abandonLocalAddressIntent(ledger, "scope", record, true, () => true), false);
   assert.equal(ledger.size, 1);
 });
+
+
+test("parent current reader receives the captured live predicate and may fence each await without clearing unknown", async () => {
+  const draft = intent(), bytes = draft.bytes; let active = true, calls = 0;
+  const live = () => active;
+  const parentRead = async (current: () => boolean) => {
+    assert.equal(current, live); assert.equal(current(), true); calls++;
+    await Promise.resolve(); active = false;
+    if (!current()) return null; // Parent must not publish old data after identity/route replacement.
+    throw Error("must not publish");
+  };
+  await assert.rejects(readAddressCurrent(live, () => parentRead(live)), /CONTEXT_CHANGED/);
+  assert.equal(calls, 1); assert.equal(draft.bytes, bytes); assert.equal(draft.receipt, null);
+});
