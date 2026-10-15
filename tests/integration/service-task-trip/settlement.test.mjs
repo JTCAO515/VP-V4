@@ -1,0 +1,68 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {nativeDatabase} from './native-db.mjs';
+test('Trip ServiceTask: full historical SQL, rollback, default gates and role ACL', {skip:!process.env.VP_TRIP_PG_BIN,timeout:180000},async t=>{
+ const {db,upgrade}=await nativeDatabase(t);
+ console.log('preupgrade lifecycle',await db("select conversation_data_private.schema_supported_v1() conversation,turn_data_private.schema_supported_v1() turn"));
+ console.log('registry baseline',await db("select p.oid::regprocedure::text signature,encode(sha256(convert_to(p.prosrc,'UTF8')),'hex') source_hash from pg_proc p where p.oid in('conversation_data_private.sources_v1()'::regprocedure,'conversation_data_private.schema_supported_v1()'::regprocedure,'turn_data_private.sources_v1()'::regprocedure,'turn_data_private.schema_supported_v1()'::regprocedure) order by signature"));
+ await db('begin;'+upgrade+'rollback;');
+ assert.equal((await db("select to_regprocedure('public.submit_trip_service_task_v1(uuid,jsonb,jsonb)') is null absent"))[0].absent,true);
+ await db('begin;'+upgrade+'commit;');
+ assert.deepEqual((await db('select enabled,trip_enabled from turn_private.service_task_capacity_settings'))[0],{enabled:false,trip_enabled:false});
+ for(const role of ['anon','authenticated','service_role'])await assert.rejects(db(`set role ${role};select * from turn_private.service_tasks`),/permission denied/);
+ for(const role of ['anon','service_role'])await assert.rejects(db(`set role ${role};select public.submit_trip_service_task_v1(null,null,null)`),/permission denied/);
+ assert.equal((await db("select count(*)::integer n from pg_proc p join pg_namespace n on n.oid=p.pronamespace where p.proname in ('submit_trip_service_task_v1','trip_objective_current_v1') and not ('search_path=\"\"'=any(p.proconfig))"))[0].n,0);
+});
+
+import {fixturePorts} from './fixture.mjs';
+import {randomUUID as uuid} from 'node:crypto';
+test('ordinary owner → canonical goal → original worker candidate → exact original confirm → same-transaction capacity', {skip:!process.env.VP_TRIP_PG_BIN,timeout:180000},async t=>{
+ const {db,upgrade}=await nativeDatabase(t);await db('begin;'+upgrade+'commit;');
+ const f=fixturePorts(db),a=await f.workerFixture(),goal=await f.canonical(a);
+ await db('update turn_private.service_task_capacity_settings set trip_enabled=true');
+ const context=await f.prepare(a,goal);
+ await db('update turn_private.service_task_capacity_settings set trip_enabled=false');
+ assert.equal(context.kind,'scoped_edit_context/1');
+ const input={action:'ask',operationId:uuid(),basis:{contextId:context.contextId,contextDigest:context.contextDigest,baseVersion:0},text:'Move B to the second day'};
+ await assert.rejects(f.call(a,'submit_trip_service_task_v1',[a.trip,input,goal]),/TRIP_SERVICE_TASK_DISABLED/);
+ await db('update turn_private.service_task_capacity_settings set trip_enabled=true,enabled=true');
+ const admitted=await f.call(a,'submit_trip_service_task_v1',[a.trip,input,goal]);assert.equal(admitted.kind,'trip_service_task/1');
+ assert.equal((await f.call(a,'submit_trip_service_task_v1',[a.trip,input,goal])).taskId,admitted.taskId);
+ await assert.rejects(f.call(a,'submit_trip_service_task_v1',[a.trip,{...input,text:'different'},goal]),/IDEMPOTENCY_KEY_REUSE/);
+ assert.equal((await db(`select count(*)::int n from turn_private.service_task_capacity where task_id='${admitted.taskId}'`))[0].n,1);
+ const leased=await f.service('claim_scoped_trip_edit_work_v1',{p_owner_id:a.owner,p_policy_id:a.policy,p_scope_id:a.scope});assert.equal(leased.kind,'leased');
+ const read=await f.service('read_scoped_trip_edit_work_v1',{p_turn_id:leased.turnId,p_lease_token:leased.leaseToken});assert.equal(read.kind,'scoped_edit_input/1');
+ const p={p_binding:read.binding};
+ assert.equal((await f.service('scoped_trip_edit_budget_v1',{...p,p_effect:'reserve',p_reserved_micros:100,p_actual_micros:null,p_outcome:null})).kind,'reserved');
+ assert.equal((await f.service('scoped_trip_edit_budget_v1',{...p,p_effect:'dispatch',p_reserved_micros:null,p_actual_micros:null,p_outcome:null})).kind,'dispatched');
+ const edits=[{kind:'move_item',itemId:'b',toDayId:'d2'}];
+ const usage={inputTokens:10,outputTokens:5,totalTokens:15,cachedInputTokens:null,uncachedInputTokens:null,reasoningTokens:null,cost:'unknown'};
+ const output=await f.service('record_scoped_trip_edit_output_v1',{...p,p_output:{kind:'candidate',edits},p_usage:usage,p_actual_micros:20});assert.equal(output.kind,'saved_output');
+ assert.equal((await f.service('scoped_trip_edit_budget_v1',{...p,p_effect:'finish',p_reserved_micros:null,p_actual_micros:20,p_outcome:'settle'})).kind,'settled');
+ const patch=(await db(`select scoped_edit_private.candidate_patch_v1(c,'${input.operationId}','${read.binding.attemptId}','${JSON.stringify(edits)}') patch from scoped_edit_private.contexts_v1 c where id='${context.contextId}'`))[0].patch;
+ assert.equal((await f.service('complete_scoped_trip_edit_work_v1',{...p,p_patch:patch})).kind,'candidate_saved');
+ const select={action:'select_candidate',operationId:uuid(),basis:input.basis,askOperationId:input.operationId,candidateId:read.binding.attemptId};
+ const proposal=await f.call(a,'submit_scoped_trip_edit_v1',[a.trip,select]);assert.equal(proposal.kind,'scoped_edit_proposal/1');
+ assert.equal((await db(`select state from turn_private.service_task_capacity where task_id='${admitted.taskId}'`))[0].state,'reserved');
+ // Old text workers and a stale lease cannot settle or publish this Trip task.
+ assert.equal((await f.service('read_scoped_trip_edit_work_v1',{p_turn_id:leased.turnId,p_lease_token:uuid()})).kind,'pending');
+ for(const role of ['anon','authenticated'])await assert.rejects(db(`set request.jwt.claim.role='${role}';set role ${role};select public.trip_service_task_worker_v1('claim','{}')`),/permission denied/);
+ await assert.rejects(db(`set request.jwt.claim.role='service_role';set role service_role;select public.complete_text_work('${admitted.turnId}','${leased.leaseToken}','answered','wrong type')`),/SERVICE_TASK_SCOPE_CONFLICT/);
+ const sourceBefore=goal.goalVersion;
+ await db(`update turn_private.assistant_goals set scope_version=scope_version+1 where id='${goal.goalId}'`);
+ await assert.rejects(f.call(a,'confirm_and_apply_trip_proposal',[proposal.proposalId,uuid(),proposal.proposalDigest]),/STALE_BASIS/);
+ await db(`update turn_private.assistant_goals set scope_version=${sourceBefore} where id='${goal.goalId}'`);
+ // An error at settlement rolls back the ORIGINAL writer's Trip/snapshot/events.
+ await db(`create function turn_private.agent008_fail_settlement() returns trigger language plpgsql as $$begin if NEW.state='settled' then raise exception 'INJECTED_SETTLEMENT_FAILURE';end if;return NEW;end$$;create trigger agent008_fail_settlement before update on turn_private.service_task_capacity for each row execute function turn_private.agent008_fail_settlement();`);
+ await assert.rejects(f.call(a,'confirm_and_apply_trip_proposal',[proposal.proposalId,uuid(),proposal.proposalDigest]),/INJECTED_SETTLEMENT_FAILURE/);
+ assert.equal((await db(`select head_version from public.trips where id='${a.trip}'`))[0].head_version,0);
+ assert.equal((await db(`select count(*)::int n from public.trip_events where proposal_id='${proposal.proposalId}'`))[0].n,0);
+ assert.equal((await db(`select state from turn_private.service_task_capacity where task_id='${admitted.taskId}'`))[0].state,'reserved');
+ await db('drop trigger agent008_fail_settlement on turn_private.service_task_capacity;drop function turn_private.agent008_fail_settlement()');
+ const key=uuid();
+ const raced=await Promise.all([f.call(a,'confirm_and_apply_trip_proposal',[proposal.proposalId,key,proposal.proposalDigest]),f.call(a,'confirm_and_apply_trip_proposal',[proposal.proposalId,key,proposal.proposalDigest])]);assert.deepEqual(raced.sort(),['(already_applied,1)','(applied,1)']);
+ assert.equal((await db(`select state from turn_private.service_task_capacity where task_id='${admitted.taskId}'`))[0].state,'settled');
+ assert.equal(await f.call(a,'confirm_and_apply_trip_proposal',[proposal.proposalId,key,proposal.proposalDigest]),'(already_applied,1)');
+ assert.equal((await f.call(a,'cancel_trip_service_task_v1',[admitted.taskId])).kind,'committed');
+ assert.equal((await db(`select count(*)::int n from public.trip_events where proposal_id='${proposal.proposalId}'`))[0].n,1);
+});

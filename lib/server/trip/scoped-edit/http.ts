@@ -6,9 +6,9 @@ import { nativeRequestScope } from "../../identity/native-request.ts";
 import { createOfflineNativeAuthority } from "../../today/offline-native-authority.ts";
 import { opsRuntimeConfig } from "../../knowledge/review/local-workspace.ts";
 import { hasSameOrigin, isUuid } from "../../identity/request-guards.ts";
-import { parseScopedEditRequest } from "./contract.ts";
+import { parseScopedEditRequest, parseTripTaskRequest, parseTripTaskControl } from "./contract.ts";
 import { sameValue } from "./wire.ts";
-import { runScopedEdit, operationCandidates, assertScopedCandidates, operationProposal, assertOriginalScopedProposal, ScopedEditServiceError, type ScopedEditRPC } from "./service.ts";
+import { admitTripTask, runTripTaskControl, runScopedEdit, operationCandidates, assertScopedCandidates, operationProposal, assertOriginalScopedProposal, ScopedEditServiceError, type ScopedEditRPC } from "./service.ts";
 
 /** Ordinary caller-bound actor/RLS transport. No API request dispatches a model or
  * confirms a Proposal; worker publication and the existing confirm own those effects. */
@@ -23,7 +23,7 @@ export async function scopedTripEditHTTP(request: NextRequest, tripId: string, n
   try { return await scope.run(async () => {
     const raw = await scope.body(request, 24576); let parsed: unknown;
     try { parsed = JSON.parse(raw ?? "null"); } catch { return failure("INVALID_INPUT", 400); }
-    const input = parseScopedEditRequest(parsed); if (!input) return failure("INVALID_INPUT", 400);
+    const input = parseTripTaskRequest(parsed) ?? parseTripTaskControl(parsed) ?? parseScopedEditRequest(parsed); if (!input) return failure("INVALID_INPUT", 400);
     tripId = tripId.toLowerCase();
     const web = native ? null : createUserDataAdapter(request, config, scope.fetch);
     const adapter = native ? await createNativeTripDataAdapter(request, config, scope.fetch, scope.unavailable) : web;
@@ -46,10 +46,15 @@ export async function scopedTripEditHTTP(request: NextRequest, tripId: string, n
     if ("error" in before) return failure(before.error, before.error === "FORBIDDEN" ? 403 : 503);
     const snapshot = { version: before.data.trip.headVersion, title: before.data.trip.title, days: before.data.content.days };
     if ("operationId" in input) dispatchedOperation = input.operationId;
-    const data = await runScopedEdit(tripId, input, rpc, snapshot, Date.now()); scope.check();
-    const candidates = operationCandidates(data);
+    if (input.action === "trip_select") dispatchedOperation = input.selection.operationId;
+    const original = input.action === "trip_task" ? null
+      : input.action === "trip_context" || input.action === "trip_select" || input.action === "trip_read" ? await runTripTaskControl(tripId, input, rpc, snapshot, Date.now())
+      : await runScopedEdit(tripId, input, rpc, snapshot, Date.now());
+    if (input.action === "trip_task" && input.basis.baseVersion !== snapshot.version) throw new ScopedEditServiceError("STALE_TRIP_VERSION");
+    const data = input.action === "trip_task" ? await admitTripTask(tripId, input, rpc) : original!; scope.check();
+    const candidates = original ? operationCandidates(original) : null;
     if (candidates) assertScopedCandidates(candidates, snapshot, Date.now());
-    const receipt = operationProposal(data);
+    const receipt = original ? operationProposal(original) : null;
     if (receipt) {
       const original = await adapter.getPendingProposal(tripId, receipt.proposalId); scope.check();
       if ("error" in original) throw new ScopedEditServiceError("SCOPED_EDIT_RECEIPT_UNKNOWN");

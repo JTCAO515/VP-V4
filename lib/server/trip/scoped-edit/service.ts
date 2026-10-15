@@ -81,3 +81,5 @@ export function assertScopedCandidates(receipt: ScopedCandidatesReceipt, snapsho
     }
   } catch { fail("SCOPED_EDIT_RECEIPT_UNKNOWN"); }
 }
+
+export { admitTripTask, runTripTaskControl } from '../../service-task-trip/service.ts';
