@@ -1,5 +1,13 @@
 # Main canonical Native integration
 
+## Current accepted-UI integration
+
+Main normally merged accepted QA PR717 (`c1fc57a9`) and PR718 (`da86217c`) into this existing branch, yielding source `52e3bcf2ac82ecf2f267f82e71f193b753594d29`. This is local integration preparation; PR715 backend acceptance is still required before the pure Native QA PR.
+
+Actual complete App compilation at this source: **PASS 46.561s**, XcodeBuildMCP Debug/SDK27/minimum17 using the same Main-owned simulator/DD configuration. Six existing warnings in unchanged Profile/Knowledge/Feasibility code remain; no unrelated fix or test-matrix expansion. Build log: `~/Library/Developer/XcodeBuildMCP/workspaces/Documents-2025647e2650/logs/build_sim_2026-10-15T13-41-34-454Z_pid2509_73a505f1.log`.
+
+Byte comparison against the prior validated `7c5f3794` confirms PBX, NativeSession, canonical Ask models/store/views, journal source observer, original PlaceActionStore and canonical capture/pending source are unchanged. The sole adjacent change is the already-reviewed/accepted PR717 DEBUG place-sample locale fragment (5 additions/3 removals); production Ask/pending behavior is unchanged. The original nine behavior tests and fixed-source reviews below remain applicable. No new provider/Auth/device/release runtime acceptance is inferred from the compile.
+
 Code complete for this Native consumer slice. JT directly confirmed the exact three NativeAskMode lines were stopped/transferred, Main applied8e8ad9ce, original owner cherry-pickedaeff46f0 and ran actual product App/test build9/9 PASS on own resources. Owner evidence6b50d5e6 is retained; 476 App/PBX/assets/test inputs matched the earlier shadow exactly. The enum's future three-line lease was explicitly returned to Main after validation. This supersedes the old candidate-only dependency, not other environment UNRUN.
 
 Main normally merged acceptedQA4ff at32930f431f5c41c9661784b82d2af8bc531204c3. Sole PBX conflict consisted of Main-owned voice and canonical registration additions; both source/test sets are retained exactly once, plutil/diff PASS. Main actual XcodeBuildMCP test_sim on its own simulator8F6CA72C-73C0-45C0-8606-0543B1F725BD/profile/DD rebuilt the real combined App and test target and executed NativeCanonicalPlaceAskTests: **9 PASS,0failed,0skipped**,68.958s overall. Preserved raw build/test log, original32 existing warnings retained rather than widened into unrelated fixes.
