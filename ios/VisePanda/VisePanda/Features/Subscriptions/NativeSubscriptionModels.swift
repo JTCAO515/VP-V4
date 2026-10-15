@@ -17,6 +17,8 @@ struct NativeSubscriptionEntitlement: Equatable, Sendable {
     let environment: NativeSubscriptionEnvironment?
     let ownerID: String?
     let period: NativeSubscriptionPeriod?
+    let checkedAt: Date?
+    let lifetimeMs: Int
 }
 
 struct NativeSubscriptionCatalog: Equatable, Sendable {

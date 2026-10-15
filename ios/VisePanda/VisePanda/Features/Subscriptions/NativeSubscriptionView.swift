@@ -61,6 +61,9 @@ struct NativeSubscriptionView<Legacy: View, Controls: View>: View {
                     if value.environment == .sandbox {
                         Text(copy.provenance).font(.footnote)
                     }
+                    if let checkedAt = value.checkedAt {
+                        dateRow(copy.text("服务端上次核验", "Last server check"), checkedAt)
+                    }
                     if let period = value.period {
                         dateRow(copy.text("可信周期开始", "Verified period start"), period.purchaseAt)
                         dateRow(copy.text("可信周期结束", "Verified period end"), period.expiresAt)
