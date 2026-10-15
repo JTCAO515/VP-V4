@@ -64,6 +64,10 @@ import Foundation
         if case .notSubmitted = try decode(absent) { check(true,"not found is not accepted") } else { preconditionFailure() }
         let recovered:[String:Any] = ["schemaVersion":"canonical-place-ask/1","kind":"recovered","operation":operation,"receipt":accepted,"current":["kind":"unavailable","reason":"source_unavailable"],"readyForProvider":false]
         if case .accepted = try decode(recovered) { check(true,"receipt metadata independent of current eligibility") } else { preconditionFailure() }
+        var largeRecovered = recovered
+        largeRecovered["current"] = ["kind":"grounded","turn":["kind":"grounded_turn","schemaVersion":"grounded-turn/1","turnId":id(11),"serviceTaskId":id(14),"output":String(repeating:"旅",count:8000)]]
+        check(try! NativePlaceActionWire.bytes(largeRecovered).count > 24_000, "original read projection may exceed request cap")
+        if case .accepted = try decode(largeRecovered) { check(true, "large recovered receipt remains usable without promoting current content") } else { preconditionFailure() }
         let policy=NativeTextPolicy(id:id(13),provider:"qwen",recipient:"fixture",sourceRegion:"fixture",processingRegion:"fixture",storageRegion:"fixture",termsVersion:"fixture",noticeVersion:"fixture-notice",noticeHash:String(repeating:"f",count:64),noticeZh:"样例",noticeEn:"Fixture",retention:"retain_after_hide_v1",expiresAt:"2099-01-01T00:00:00Z",consentState:.accepted)
         let durable=try NativeCanonicalPlaceAskDurable(pending:pending,policy:policy)
         let saved=try JSONEncoder().encode(durable)

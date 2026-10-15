@@ -156,7 +156,8 @@ enum NativeCanonicalPlaceAskResponse {
               operation["turnId"] is NSNull || NativePlaceActionWire.id(operation["turnId"]) != nil else { throw NativeDataError.invalidResponse }
     }
     static func decode(_ bytes: Data, pending: NativeCanonicalPlaceAskPending, expectedDigest: String) throws -> Self {
-        let value = try NativePlaceActionWire.object(bytes, maximum: 24_000)
+        // POST input is capped at 24KB; recovered current projections retain the original bounded read size.
+        let value = try NativePlaceActionWire.object(bytes, maximum: 1_000_000)
         guard value["schemaVersion"] as? String == "canonical-place-ask/1",
               NativePlaceActionWire.boolean(value["readyForProvider"]) == false else { throw NativeDataError.invalidResponse }
         switch value["kind"] as? String {
