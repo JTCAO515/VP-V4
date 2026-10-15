@@ -1,0 +1,824 @@
+{
+  "owner": "748604ed-aac4-40e2-8190-819bb02568fd",
+  "limit": 100,
+  "now": 1792058989191,
+  "page": {
+    "items": [
+      {
+        "fences": [],
+        "ownerId": "748604ed-aac4-40e2-8190-819bb02568fd",
+        "sources": [
+          {
+            "rows": [
+              {
+                "id": "1070d252-27dd-47c0-9ec9-a6d651a98aee",
+                "state": "completed",
+                "turn_id": "78b9d528-b10d-4032-8c94-08e4c4004c3d",
+                "event_id": "worker-terminal-1",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
+                "sequence": 2,
+                "thread_id": "5fd7cd0e-b0d8-46d0-ab96-06a9f2125215",
+                "created_at": "2026-10-15T10:09:48.594736+00:00",
+                "event_type": "terminal",
+                "schema_version": "turn-sse-v1"
+              },
+              {
+                "id": "c0b9595a-b390-4e7d-acc7-36a3d930321c",
+                "state": "accepted",
+                "turn_id": "78b9d528-b10d-4032-8c94-08e4c4004c3d",
+                "event_id": "accepted",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
+                "sequence": 1,
+                "thread_id": "5fd7cd0e-b0d8-46d0-ab96-06a9f2125215",
+                "created_at": "2026-10-15T10:09:47.563941+00:00",
+                "event_type": "accepted",
+                "schema_version": "turn-sse-v1"
+              }
+            ],
+            "relation": "public.chat_turn_events"
+          },
+          {
+            "rows": [
+              {
+                "digest": "chat-state-control-v1",
+                "turn_id": "78b9d528-b10d-4032-8c94-08e4c4004c3d",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
+                "thread_id": "5fd7cd0e-b0d8-46d0-ab96-06a9f2125215",
+                "created_at": "2026-10-15T10:09:47.563941+00:00",
+                "idempotency_key": "b076f57a-e3e4-4e75-8da6-cec90a7114ed"
+              }
+            ],
+            "relation": "public.chat_turn_idempotency"
+          },
+          {
+            "rows": [],
+            "relation": "public.memory_consumer_receipts"
+          },
+          {
+            "rows": [
+              {
+                "model": "qwen3.7-plus-2026-05-26",
+                "status": "settled",
+                "task_id": "a5c03d81-c30a-4d65-97d6-daa518c1b227",
+                "provider": "qwen",
+                "scope_id": "7a510d4c-7510-46d9-b57c-cd49c71b35a9",
+                "attempt_id": "2219110b-b1c5-4918-8324-8a281df4ebdb",
+                "created_at": "2026-10-15T10:09:47.89109+00:00",
+                "updated_at": "2026-10-15T10:09:48.583072+00:00",
+                "actual_micros": "15",
+                "price_version": "synthetic-v1",
+                "reserved_micros": "100"
+              }
+            ],
+            "relation": "public.model_budget_attempts"
+          },
+          {
+            "rows": [],
+            "relation": "public.turn_feedback"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.assistant_message_source_receipts"
+          },
+          {
+            "rows": [
+              {
+                "id": "f075af20-077c-44ff-a87e-cb97d9e79434",
+                "locale": "en",
+                "goal_id": "33de1d52-474c-423c-8c72-6b250165209e",
+                "task_id": "a5c03d81-c30a-4d65-97d6-daa518c1b227",
+                "turn_id": null,
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
+                "sequence": "2",
+                "policy_id": "9c54be58-f5e4-4796-967b-f79634c9c4c6",
+                "consent_id": "09bad9f7-c84f-4974-8186-0aa449ddb3b6",
+                "created_at": "2026-10-15T10:09:47.454377+00:00",
+                "input_text": "Adjust the selected Trip day",
+                "relationship": "follow_up",
+                "scope_version": 2,
+                "request_digest": "661a06da15638ea11ebf1377449f4b595df8bcc125493f77f9865c03aeb64d48",
+                "conversation_id": "63358795-3d61-4001-9583-022da92f8a77",
+                "idempotency_key": "62a887c2-2b97-4773-a4bd-1e7a141ce407",
+                "parent_message_id": "705e30e7-ca73-495e-bc64-d1eabfbd597c"
+              }
+            ],
+            "relation": "turn_private.assistant_messages"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.assistant_travel_intakes"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.grounded_ai_assist_jobs"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.grounded_turns"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.planning_action_receipts"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.planning_comparisons"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.planning_intake_bindings"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.planning_model_dispatches"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.planning_observations"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.planning_v2_collector_origins"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.planning_v2_collector_outputs"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.planning_v2_completed_receipts"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.planning_v2_completion_proofs"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.planning_v2_execution_runs"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.planning_v2_external_call_windows"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.planning_v2_model_attempt_bindings"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.planning_v2_model_local_journal"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.planning_v2_place_checkpoints"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.planning_v2_result_claims"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.result_artifacts"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.result_events"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.result_revisions"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.service_task_capacity"
+          },
+          {
+            "rows": [
+              {
+                "task_id": "a5c03d81-c30a-4d65-97d6-daa518c1b227",
+                "turn_id": "78b9d528-b10d-4032-8c94-08e4c4004c3d",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
+                "relationship": "new_goal",
+                "parent_turn_id": null,
+                "request_digest": "48fd627200d8b1f4665e60925c40f4e2b36f7f07a82ecf9b8279164cf2146bd3",
+                "idempotency_key": "b076f57a-e3e4-4e75-8da6-cec90a7114ed"
+              }
+            ],
+            "relation": "turn_private.service_task_turns"
+          },
+          {
+            "rows": [
+              {
+                "id": "a5c03d81-c30a-4d65-97d6-daa518c1b227",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
+                "policy_id": "9c54be58-f5e4-4796-967b-f79634c9c4c6",
+                "thread_id": "5fd7cd0e-b0d8-46d0-ab96-06a9f2125215",
+                "consent_id": "09bad9f7-c84f-4974-8186-0aa449ddb3b6",
+                "created_at": "2026-10-15T10:09:47.66182+00:00",
+                "goal_digest": "beebd5a43335d24866b6255242c54eb95eddb854d3b4c625ef0f44a8d1d97e94",
+                "goal_turn_id": "78b9d528-b10d-4032-8c94-08e4c4004c3d",
+                "last_turn_id": "78b9d528-b10d-4032-8c94-08e4c4004c3d",
+                "scope_version": 1,
+                "trip_objective": {
+                  "goalId": "33de1d52-474c-423c-8c72-6b250165209e",
+                  "tripId": "673f5c8a-88b0-4b03-a610-aa963df0c8f5",
+                  "outcome": "rejected",
+                  "contextId": "508dcdd9-362b-452b-b067-424740b10296",
+                  "messageId": "f075af20-077c-44ff-a87e-cb97d9e79434",
+                  "proposalId": "f423df97-ac15-4c96-8560-9c3684015b30",
+                  "baseVersion": 0,
+                  "goalVersion": 2,
+                  "linkVersion": 1,
+                  "operationId": "b076f57a-e3e4-4e75-8da6-cec90a7114ed",
+                  "contextDigest": "8cf1d3e5f4c488128390cf1e0ab001772062ae0bc199d0d0418a99ff71e331c0",
+                  "requestDigest": "48fd627200d8b1f4665e60925c40f4e2b36f7f07a82ecf9b8279164cf2146bd3",
+                  "conversationId": "63358795-3d61-4001-9583-022da92f8a77",
+                  "proposalDigest": "trip-v2:09ff62e0555efe12503214608361a0c256c79cd3033216318e4b72f655ab6e25",
+                  "linkOperationId": "11844163-bf89-4bbc-9ff4-aecb30423327",
+                  "messageSequence": 2,
+                  "producerBinding": {
+                    "model": "qwen3.7-plus-2026-05-26",
+                    "taskId": "a5c03d81-c30a-4d65-97d6-daa518c1b227",
+                    "tripId": "673f5c8a-88b0-4b03-a610-aa963df0c8f5",
+                    "turnId": "78b9d528-b10d-4032-8c94-08e4c4004c3d",
+                    "ownerId": "748604ed-aac4-40e2-8190-819bb02568fd",
+                    "scopeId": "7a510d4c-7510-46d9-b57c-cd49c71b35a9",
+                    "policyId": "9c54be58-f5e4-4796-967b-f79634c9c4c6",
+                    "provider": "qwen",
+                    "attemptId": "2219110b-b1c5-4918-8324-8a281df4ebdb",
+                    "contextId": "508dcdd9-362b-452b-b067-424740b10296",
+                    "leaseToken": "1e60c5ef-6f88-45e1-9aeb-bdeb50639a58",
+                    "baseVersion": 0,
+                    "operationId": "b076f57a-e3e4-4e75-8da6-cec90a7114ed",
+                    "priceVersion": "synthetic-v1",
+                    "sourceDigest": "d30d73006297e3e391596fd46d8eaaf896602469fbd33afac9ec0e08c26324b3",
+                    "contextDigest": "8cf1d3e5f4c488128390cf1e0ab001772062ae0bc199d0d0418a99ff71e331c0"
+                  },
+                  "proposalRevision": 1
+                },
+                "budget_scope_id": "7a510d4c-7510-46d9-b57c-cd49c71b35a9",
+                "expected_result": "trip_modification",
+                "capacity_enforced": false
+              }
+            ],
+            "relation": "turn_private.service_tasks"
+          },
+          {
+            "rows": [
+              {
+                "locale": "en",
+                "turn_id": "78b9d528-b10d-4032-8c94-08e4c4004c3d",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
+                "hidden_at": null,
+                "policy_id": "9c54be58-f5e4-4796-967b-f79634c9c4c6",
+                "thread_id": "5fd7cd0e-b0d8-46d0-ab96-06a9f2125215",
+                "consent_id": "09bad9f7-c84f-4974-8186-0aa449ddb3b6",
+                "created_at": "2026-10-15T10:09:47.672126+00:00",
+                "input_text": "Move B to d2",
+                "output_kind": null,
+                "output_text": null
+              }
+            ],
+            "relation": "turn_private.text_content"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.text_dispatches"
+          },
+          {
+            "rows": [
+              {
+                "state": "completed",
+                "attempt": 1,
+                "turn_id": "78b9d528-b10d-4032-8c94-08e4c4004c3d",
+                "lease_ms": 120000,
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
+                "created_at": "2026-10-15T10:09:47.674693+00:00",
+                "expires_at": null,
+                "session_id": "2e1d7807-e335-4e5e-af0a-ad7deca66785",
+                "lease_token": null,
+                "max_attempts": 3,
+                "execution_mode": "scoped_trip_edit_v1"
+              }
+            ],
+            "relation": "turn_private.work"
+          },
+          {
+            "rows": [
+              {
+                "id": "78b9d528-b10d-4032-8c94-08e4c4004c3d",
+                "status": "completed",
+                "trip_id": "673f5c8a-88b0-4b03-a610-aa963df0c8f5",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
+                "thread_id": "5fd7cd0e-b0d8-46d0-ab96-06a9f2125215",
+                "created_at": "2026-10-15T10:09:47.563941+00:00",
+                "updated_at": "2026-10-15T10:09:48.704367+00:00"
+              }
+            ],
+            "relation": "public.turns"
+          },
+          {
+            "rows": [
+              {
+                "id": "508dcdd9-362b-452b-b067-424740b10296",
+                "input": {
+                  "scope": {
+                    "dayIds": [
+                      "d1",
+                      "d2"
+                    ],
+                    "itemIds": []
+                  },
+                  "locale": "en",
+                  "expectedHeadVersion": 0,
+                  "reservationBindings": []
+                },
+                "digest": "8cf1d3e5f4c488128390cf1e0ab001772062ae0bc199d0d0418a99ff71e331c0",
+                "trip_id": "673f5c8a-88b0-4b03-a610-aa963df0c8f5",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
+                "snapshot": {
+                  "days": [
+                    {
+                      "id": "d1",
+                      "date": "2026-10-08",
+                      "items": [
+                        {
+                          "id": "a",
+                          "dayId": "d1",
+                          "title": "A"
+                        },
+                        {
+                          "id": "b",
+                          "dayId": "d1",
+                          "title": "B"
+                        }
+                      ],
+                      "timeZone": "Etc/UTC"
+                    },
+                    {
+                      "id": "d2",
+                      "date": "2026-10-09",
+                      "items": [
+                        {
+                          "id": "z",
+                          "dayId": "d2",
+                          "title": "Z"
+                        }
+                      ],
+                      "timeZone": "Etc/UTC"
+                    }
+                  ],
+                  "title": "Synthetic Trip"
+                },
+                "fixed_ids": [],
+                "created_at": "2026-10-15T10:09:47.556463+00:00",
+                "expires_at": "2026-10-15T10:18:47.556463+00:00",
+                "locked_ids": [],
+                "actor_basis": {
+                  "epoch": 1,
+                  "ownerId": "748604ed-aac4-40e2-8190-819bb02568fd",
+                  "sessionId": "2e1d7807-e335-4e5e-af0a-ad7deca66785",
+                  "mobileSessionId": "2e1d7807-e335-4e5e-af0a-ad7deca66785",
+                  "sessionCreatedAt": "2026-10-15T10:09:47.407748+00:00"
+                },
+                "base_version": 0,
+                "source_basis": {
+                  "lockRevision": 0,
+                  "sourceDigest": "d30d73006297e3e391596fd46d8eaaf896602469fbd33afac9ec0e08c26324b3",
+                  "fixedBindings": [],
+                  "profileUpdatedAt": null,
+                  "memoryBasisDigest": "feaaa69d193c23b4b673dc295c28be6eddfbb11ada1e6c3f5834c5be122b6a0f",
+                  "reservationBasisDigest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+                }
+              }
+            ],
+            "relation": "scoped_edit_private.contexts_v1"
+          },
+          {
+            "rows": [
+              {
+                "usage": {
+                  "cost": "unknown",
+                  "inputTokens": 10,
+                  "totalTokens": 15,
+                  "outputTokens": 5,
+                  "reasoningTokens": null,
+                  "cachedInputTokens": null,
+                  "uncachedInputTokens": null
+                },
+                "output": {
+                  "kind": "candidate",
+                  "edits": [
+                    {
+                      "kind": "move_item",
+                      "itemId": "b",
+                      "toDayId": "d2"
+                    }
+                  ]
+                },
+                "binding": {
+                  "model": "qwen3.7-plus-2026-05-26",
+                  "taskId": "a5c03d81-c30a-4d65-97d6-daa518c1b227",
+                  "tripId": "673f5c8a-88b0-4b03-a610-aa963df0c8f5",
+                  "turnId": "78b9d528-b10d-4032-8c94-08e4c4004c3d",
+                  "ownerId": "748604ed-aac4-40e2-8190-819bb02568fd",
+                  "scopeId": "7a510d4c-7510-46d9-b57c-cd49c71b35a9",
+                  "policyId": "9c54be58-f5e4-4796-967b-f79634c9c4c6",
+                  "provider": "qwen",
+                  "attemptId": "2219110b-b1c5-4918-8324-8a281df4ebdb",
+                  "contextId": "508dcdd9-362b-452b-b067-424740b10296",
+                  "leaseToken": "1e60c5ef-6f88-45e1-9aeb-bdeb50639a58",
+                  "baseVersion": 0,
+                  "operationId": "b076f57a-e3e4-4e75-8da6-cec90a7114ed",
+                  "priceVersion": "synthetic-v1",
+                  "sourceDigest": "d30d73006297e3e391596fd46d8eaaf896602469fbd33afac9ec0e08c26324b3",
+                  "contextDigest": "8cf1d3e5f4c488128390cf1e0ab001772062ae0bc199d0d0418a99ff71e331c0"
+                },
+                "task_id": "a5c03d81-c30a-4d65-97d6-daa518c1b227",
+                "trip_id": "673f5c8a-88b0-4b03-a610-aa963df0c8f5",
+                "turn_id": "78b9d528-b10d-4032-8c94-08e4c4004c3d",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
+                "scope_id": "7a510d4c-7510-46d9-b57c-cd49c71b35a9",
+                "policy_id": "9c54be58-f5e4-4796-967b-f79634c9c4c6",
+                "attempt_id": "2219110b-b1c5-4918-8324-8a281df4ebdb",
+                "completion": {
+                  "kind": "candidate_saved",
+                  "binding": {
+                    "model": "qwen3.7-plus-2026-05-26",
+                    "taskId": "a5c03d81-c30a-4d65-97d6-daa518c1b227",
+                    "tripId": "673f5c8a-88b0-4b03-a610-aa963df0c8f5",
+                    "turnId": "78b9d528-b10d-4032-8c94-08e4c4004c3d",
+                    "ownerId": "748604ed-aac4-40e2-8190-819bb02568fd",
+                    "scopeId": "7a510d4c-7510-46d9-b57c-cd49c71b35a9",
+                    "policyId": "9c54be58-f5e4-4796-967b-f79634c9c4c6",
+                    "provider": "qwen",
+                    "attemptId": "2219110b-b1c5-4918-8324-8a281df4ebdb",
+                    "contextId": "508dcdd9-362b-452b-b067-424740b10296",
+                    "leaseToken": "1e60c5ef-6f88-45e1-9aeb-bdeb50639a58",
+                    "baseVersion": 0,
+                    "operationId": "b076f57a-e3e4-4e75-8da6-cec90a7114ed",
+                    "priceVersion": "synthetic-v1",
+                    "sourceDigest": "d30d73006297e3e391596fd46d8eaaf896602469fbd33afac9ec0e08c26324b3",
+                    "contextDigest": "8cf1d3e5f4c488128390cf1e0ab001772062ae0bc199d0d0418a99ff71e331c0"
+                  },
+                  "receipt": {
+                    "kind": "scoped_edit_candidates/1",
+                    "reused": false,
+                    "tripId": "673f5c8a-88b0-4b03-a610-aa963df0c8f5",
+                    "contextId": "508dcdd9-362b-452b-b067-424740b10296",
+                    "expiresAt": "2026-10-15T10:18:47.556Z",
+                    "candidates": [
+                      {
+                        "diff": {
+                          "changes": [
+                            {
+                              "kind": "moved",
+                              "after": {
+                                "id": "b",
+                                "dayId": "d2",
+                                "title": "B"
+                              },
+                              "before": {
+                                "id": "b",
+                                "dayId": "d1",
+                                "title": "B"
+                              },
+                              "itemId": "b"
+                            }
+                          ],
+                          "transferImpact": "pending",
+                          "preservedItemIds": [
+                            "a",
+                            "z"
+                          ],
+                          "walkingImprovement": "unverified",
+                          "externalOrderEffect": "none"
+                        },
+                        "edits": [
+                          {
+                            "kind": "move_item",
+                            "itemId": "b",
+                            "toDayId": "d2"
+                          }
+                        ],
+                        "candidateId": "2219110b-b1c5-4918-8324-8a281df4ebdb"
+                      }
+                    ],
+                    "baseVersion": 0,
+                    "operationId": "b076f57a-e3e4-4e75-8da6-cec90a7114ed",
+                    "returnScope": {
+                      "dayIds": [
+                        "d1",
+                        "d2"
+                      ],
+                      "itemIds": []
+                    },
+                    "contextDigest": "8cf1d3e5f4c488128390cf1e0ab001772062ae0bc199d0d0418a99ff71e331c0"
+                  }
+                },
+                "context_id": "508dcdd9-362b-452b-b067-424740b10296",
+                "known_usage": {
+                  "cost": "unknown",
+                  "inputTokens": 10,
+                  "totalTokens": 15,
+                  "outputTokens": 5,
+                  "reasoningTokens": null,
+                  "cachedInputTokens": null,
+                  "uncachedInputTokens": null
+                },
+                "candidate_id": "2219110b-b1c5-4918-8324-8a281df4ebdb",
+                "operation_id": "b076f57a-e3e4-4e75-8da6-cec90a7114ed",
+                "actual_micros": "15",
+                "known_outcome": "protocol_validated",
+                "paused_reason": null,
+                "candidate_patch": {
+                  "operations": [
+                    {
+                      "kind": "delete_item",
+                      "dayId": "d1",
+                      "itemId": "b"
+                    },
+                    {
+                      "kind": "upsert_item",
+                      "dayId": "d2",
+                      "title": "B",
+                      "itemId": "b"
+                    }
+                  ],
+                  "expectedVersion": 0
+                },
+                "known_actual_micros": "15"
+              }
+            ],
+            "relation": "scoped_edit_private.work_v1"
+          },
+          {
+            "rows": [
+              {
+                "binding": {
+                  "model": "qwen3.7-plus-2026-05-26",
+                  "taskId": "a5c03d81-c30a-4d65-97d6-daa518c1b227",
+                  "tripId": "673f5c8a-88b0-4b03-a610-aa963df0c8f5",
+                  "turnId": "78b9d528-b10d-4032-8c94-08e4c4004c3d",
+                  "ownerId": "748604ed-aac4-40e2-8190-819bb02568fd",
+                  "scopeId": "7a510d4c-7510-46d9-b57c-cd49c71b35a9",
+                  "policyId": "9c54be58-f5e4-4796-967b-f79634c9c4c6",
+                  "provider": "qwen",
+                  "attemptId": "2219110b-b1c5-4918-8324-8a281df4ebdb",
+                  "contextId": "508dcdd9-362b-452b-b067-424740b10296",
+                  "leaseToken": "1e60c5ef-6f88-45e1-9aeb-bdeb50639a58",
+                  "baseVersion": 0,
+                  "operationId": "b076f57a-e3e4-4e75-8da6-cec90a7114ed",
+                  "priceVersion": "synthetic-v1",
+                  "sourceDigest": "d30d73006297e3e391596fd46d8eaaf896602469fbd33afac9ec0e08c26324b3",
+                  "contextDigest": "8cf1d3e5f4c488128390cf1e0ab001772062ae0bc199d0d0418a99ff71e331c0"
+                },
+                "trip_id": "673f5c8a-88b0-4b03-a610-aa963df0c8f5",
+                "turn_id": "78b9d528-b10d-4032-8c94-08e4c4004c3d",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
+                "created_at": "2026-10-15T10:09:48.190286+00:00",
+                "request_id": "2219110b-b1c5-4918-8324-8a281df4ebdb",
+                "destination": {
+                  "model": "qwen3.7-plus-2026-05-26",
+                  "phase": "response_buffered",
+                  "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+                  "provider": "qwen",
+                  "observedAt": "2026-10-15T10:09:48.290Z",
+                  "invocationId": "6f622021-4dea-4c23-9a66-4403ccb3680b",
+                  "schemaVersion": "provider-destination/1",
+                  "configurationId": "6c675933-527c-4ed8-b649-d3c8d186c758",
+                  "configurationVersion": 1
+                },
+                "payload_digest": "2e63ae5fa03905c1c6d824f4b29b6cbb9ca51d304247f7e6f74bfbd230937f70",
+                "request_digest": "6b5174153f473f90ecb5b1ce131f952eccf198f2e0525c92ddf31d4b56b603cd"
+              }
+            ],
+            "relation": "scoped_edit_private.requests_v1"
+          },
+          {
+            "rows": [
+              {
+                "digest": "defaeee51076e3cf6649ac2451981878608e0a5bfb019b0f068b8781497cccf2",
+                "receipt": {
+                  "kind": "scoped_edit_candidates/1",
+                  "reused": false,
+                  "tripId": "673f5c8a-88b0-4b03-a610-aa963df0c8f5",
+                  "contextId": "508dcdd9-362b-452b-b067-424740b10296",
+                  "expiresAt": "2026-10-15T10:18:47.556Z",
+                  "candidates": [
+                    {
+                      "diff": {
+                        "changes": [
+                          {
+                            "kind": "moved",
+                            "after": {
+                              "id": "b",
+                              "dayId": "d2",
+                              "title": "B"
+                            },
+                            "before": {
+                              "id": "b",
+                              "dayId": "d1",
+                              "title": "B"
+                            },
+                            "itemId": "b"
+                          }
+                        ],
+                        "transferImpact": "pending",
+                        "preservedItemIds": [
+                          "a",
+                          "z"
+                        ],
+                        "walkingImprovement": "unverified",
+                        "externalOrderEffect": "none"
+                      },
+                      "edits": [
+                        {
+                          "kind": "move_item",
+                          "itemId": "b",
+                          "toDayId": "d2"
+                        }
+                      ],
+                      "candidateId": "2219110b-b1c5-4918-8324-8a281df4ebdb"
+                    }
+                  ],
+                  "baseVersion": 0,
+                  "operationId": "b076f57a-e3e4-4e75-8da6-cec90a7114ed",
+                  "returnScope": {
+                    "dayIds": [
+                      "d1",
+                      "d2"
+                    ],
+                    "itemIds": []
+                  },
+                  "contextDigest": "8cf1d3e5f4c488128390cf1e0ab001772062ae0bc199d0d0418a99ff71e331c0"
+                },
+                "trip_id": "673f5c8a-88b0-4b03-a610-aa963df0c8f5",
+                "mutation": {
+                  "text": "Move B to d2",
+                  "basis": {
+                    "contextId": "508dcdd9-362b-452b-b067-424740b10296",
+                    "baseVersion": 0,
+                    "contextDigest": "8cf1d3e5f4c488128390cf1e0ab001772062ae0bc199d0d0418a99ff71e331c0"
+                  },
+                  "action": "ask",
+                  "operationId": "b076f57a-e3e4-4e75-8da6-cec90a7114ed"
+                },
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
+                "cancelled": false,
+                "context_id": "508dcdd9-362b-452b-b067-424740b10296",
+                "created_at": "2026-10-15T10:09:47.657735+00:00",
+                "actor_basis": {
+                  "epoch": 1,
+                  "ownerId": "748604ed-aac4-40e2-8190-819bb02568fd",
+                  "sessionId": "2e1d7807-e335-4e5e-af0a-ad7deca66785",
+                  "mobileSessionId": "2e1d7807-e335-4e5e-af0a-ad7deca66785",
+                  "sessionCreatedAt": "2026-10-15T10:09:47.407748+00:00"
+                },
+                "proposal_id": null,
+                "operation_id": "b076f57a-e3e4-4e75-8da6-cec90a7114ed"
+              },
+              {
+                "digest": "bfe091aadb0793a9861aaebe0786f3adad977f53d3e27e51fb0120ab04a7a510",
+                "receipt": {
+                  "diff": {
+                    "changes": [
+                      {
+                        "kind": "moved",
+                        "after": {
+                          "id": "b",
+                          "dayId": "d2",
+                          "title": "B"
+                        },
+                        "before": {
+                          "id": "b",
+                          "dayId": "d1",
+                          "title": "B"
+                        },
+                        "itemId": "b"
+                      }
+                    ],
+                    "transferImpact": "pending",
+                    "preservedItemIds": [
+                      "a",
+                      "z"
+                    ],
+                    "walkingImprovement": "unverified",
+                    "externalOrderEffect": "none"
+                  },
+                  "kind": "scoped_edit_proposal/1",
+                  "reused": false,
+                  "tripId": "673f5c8a-88b0-4b03-a610-aa963df0c8f5",
+                  "contextId": "508dcdd9-362b-452b-b067-424740b10296",
+                  "expiresAt": "2026-10-15T10:18:47.556Z",
+                  "proposalId": "f423df97-ac15-4c96-8560-9c3684015b30",
+                  "baseVersion": 0,
+                  "operationId": "bb0acd34-d0eb-43a3-b5e8-8b1d78646fe4",
+                  "returnScope": {
+                    "dayIds": [
+                      "d1",
+                      "d2"
+                    ],
+                    "itemIds": []
+                  },
+                  "contextDigest": "8cf1d3e5f4c488128390cf1e0ab001772062ae0bc199d0d0418a99ff71e331c0",
+                  "proposalDigest": "trip-v2:09ff62e0555efe12503214608361a0c256c79cd3033216318e4b72f655ab6e25",
+                  "proposalRevision": 1
+                },
+                "trip_id": "673f5c8a-88b0-4b03-a610-aa963df0c8f5",
+                "mutation": {
+                  "basis": {
+                    "contextId": "508dcdd9-362b-452b-b067-424740b10296",
+                    "baseVersion": 0,
+                    "contextDigest": "8cf1d3e5f4c488128390cf1e0ab001772062ae0bc199d0d0418a99ff71e331c0"
+                  },
+                  "action": "select_candidate",
+                  "candidateId": "2219110b-b1c5-4918-8324-8a281df4ebdb",
+                  "operationId": "bb0acd34-d0eb-43a3-b5e8-8b1d78646fe4",
+                  "askOperationId": "b076f57a-e3e4-4e75-8da6-cec90a7114ed"
+                },
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
+                "cancelled": false,
+                "context_id": "508dcdd9-362b-452b-b067-424740b10296",
+                "created_at": "2026-10-15T10:09:48.80541+00:00",
+                "actor_basis": {
+                  "epoch": 1,
+                  "ownerId": "748604ed-aac4-40e2-8190-819bb02568fd",
+                  "sessionId": "2e1d7807-e335-4e5e-af0a-ad7deca66785",
+                  "mobileSessionId": "2e1d7807-e335-4e5e-af0a-ad7deca66785",
+                  "sessionCreatedAt": "2026-10-15T10:09:47.407748+00:00"
+                },
+                "proposal_id": "f423df97-ac15-4c96-8560-9c3684015b30",
+                "operation_id": "bb0acd34-d0eb-43a3-b5e8-8b1d78646fe4"
+              }
+            ],
+            "relation": "scoped_edit_private.operations_v1"
+          },
+          {
+            "rows": [
+              {
+                "patch": {
+                  "operations": [
+                    {
+                      "kind": "delete_item",
+                      "dayId": "d1",
+                      "itemId": "b"
+                    },
+                    {
+                      "kind": "upsert_item",
+                      "dayId": "d2",
+                      "title": "B",
+                      "itemId": "b"
+                    }
+                  ],
+                  "expectedVersion": 0
+                },
+                "trip_id": "673f5c8a-88b0-4b03-a610-aa963df0c8f5",
+                "owner_id": "748604ed-aac4-40e2-8190-819bb02568fd",
+                "context_id": "508dcdd9-362b-452b-b067-424740b10296",
+                "proposal_id": "f423df97-ac15-4c96-8560-9c3684015b30",
+                "base_version": 0,
+                "operation_id": "bb0acd34-d0eb-43a3-b5e8-8b1d78646fe4",
+                "proposal_digest": "trip-v2:09ff62e0555efe12503214608361a0c256c79cd3033216318e4b72f655ab6e25",
+                "proposal_revision": 1
+              }
+            ],
+            "relation": "scoped_edit_private.lineage_v1"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.assistant_directions_intakes_v1"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.directions_result_sources_v1"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.directions_operations_v1"
+          }
+        ],
+        "operations": [],
+        "sourceRows": {
+          "data": 16,
+          "fences": 0,
+          "operations": 0,
+          "sourceIdentityKeys": 0
+        },
+        "sourceAuthorities": [
+          {
+            "policyId": "9c54be58-f5e4-4796-967b-f79634c9c4c6",
+            "consentId": "09bad9f7-c84f-4974-8186-0aa449ddb3b6"
+          }
+        ],
+        "sourceIdentityKeys": []
+      }
+    ],
+    "hasMore": false,
+    "section": "snapshot",
+    "nextCursor": null,
+    "sourceDigest": "9d8e29bfed2ec165f7eb00f6eb57083934d3f82a8e13b8d9f19e0b4da1d1a911",
+    "schemaVersion": "turn-trip-core-export/1",
+    "sectionComplete": true
+  }
+}

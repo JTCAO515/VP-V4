@@ -1,0 +1,7 @@
+{
+  "status": "candidate_only_no_shared_write",
+  "base": "ead1efc19f2f540d9056eb37ed90333388b0c8a9",
+  "file": "lib/server/jobs/hosted-text-worker.ts",
+  "beforeBlob": "6f1ffdf1745e390ac810deff307308fa158d26d4",
+  "afterSHA256": "eec95793a5591563f225f0f9af815515aac9a9c27ddc30668611193697ac1a31"
+}

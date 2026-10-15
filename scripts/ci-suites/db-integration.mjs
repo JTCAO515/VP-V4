@@ -201,6 +201,10 @@ export const LANES = {
           "tests/integration/service-task-trip/runtime-guard.test.mjs",
           "tests/integration/service-task-trip/settlement.test.mjs",
         ] },
+      { name: "canonical-place-native-17", concurrency: 1,
+        env: { CANONICAL_PLACE_NATIVE_PG: "1", CANONICAL_PLACE_HTTP_NATIVE_PG: "1" },
+        files: ["tests/integration/canonical-place-ask-sql/postgres.test.mjs",
+          "tests/integration/canonical-place-ask-http/postgres.test.mjs"] },
     ],
   },
   // One disposable Supabase stack (GoTrue + PostgREST + all migrations); identity/RLS/Trip confirmation chain.

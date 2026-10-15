@@ -1,0 +1,56 @@
+{
+  "testedRef": "198c66bf644483da97b7663cc06e321d4747f1fb",
+  "acceptedLegacyBase": "ead1efc19f2f540d9056eb37ed90333388b0c8a9",
+  "runtime": "PostgreSQL 17.11 native, private0700 Unix sockets, no TCP",
+  "command": [
+    "node",
+    "tests/integration/service-task-trip/run-native-legacy.mjs",
+    "tests/integration/turn/text-work.test.mjs",
+    "tests/integration/scoped-edit/scoped-edit-postgres.test.mjs"
+  ],
+  "environment": {
+    "VP_TRIP_PG_BIN": "/opt/homebrew/opt/postgresql@17/bin",
+    "VP_TURN_DB_TEST": "1 (original runner sets it)",
+    "adapter": "original accepted native-legacy-bin/docker prepended by original runner; no Docker daemon fallback"
+  },
+  "inputs": [
+    {
+      "path": "tests/integration/service-task-trip/run-native-legacy.mjs",
+      "sha256": "4dc5084db6081cb2861b9444096e624e309a2a9eb923a5b53b868242d1b5f3a6"
+    },
+    {
+      "path": "tests/integration/service-task-trip/native-legacy-bin/docker",
+      "sha256": "ad8cc71edb03fe499c867a258b144774e78c9eb90b1765846994362805f94f8f"
+    },
+    {
+      "path": "tests/integration/turn/text-work.test.mjs",
+      "sha256": "5e1d16acaf4526d575dc41e3230b4a681f52f1d3c2c660c4bd17e03b6f322802"
+    },
+    {
+      "path": "tests/integration/scoped-edit/scoped-edit-postgres.test.mjs",
+      "sha256": "a49e500f23947a7ba1a34af9a91775e29069576d290f18abb455fe0c17e9f501"
+    },
+    {
+      "path": "supabase/migrations/20261015083120_agent005_canonical_place_ask.sql",
+      "sha256": "208472a066b9d8aa4ae1b06953448ed6eed362f85449dd71dadd9b78c1bb1ac7"
+    }
+  ],
+  "result": {
+    "tests": 59,
+    "pass": 59,
+    "fail": 0,
+    "skip": 0,
+    "exitCode": 0,
+    "durationMs": 54265.466084
+  },
+  "legacyTestsAndAdapterUnchangedFromAccepted707": true,
+  "productSourceChanged": false,
+  "runCount": 1,
+  "cleanupEvidence": "Original suites after-hooks assert successful native adapter rm; adapter stops only data directories recorded in its newly created private state; original runner finally removes its own state. Exit0 and no cleanup assertion failure.",
+  "limits": [
+    "C0 Auth/session rows and synthetic provider transports; not GoTrue or real provider",
+    "native PG17.11 is not managed target17.6 or Docker isolation evidence",
+    "No device/Web/9minute-expiry matrix rerun",
+    "Does not duplicate or replace the existing21-case evidence"
+  ]
+}
