@@ -1,7 +1,0 @@
-{
-  "path": "ios/VisePanda/VisePanda/Features/Ask/NativeAskModels.swift",
-  "beforeSHA256": "0181f41629bc8dd749cd9b8523b31089b191d2b2082bed759304569dba0cf453",
-  "afterSHA256": "58fa4520f063d73dd3acd7c086afd5b99d4340b1c9ea891fc1309a099a994841",
-  "applied": false,
-  "scope": "NativeAskMode three lines only; legacy schema1 body unchanged"
-}
