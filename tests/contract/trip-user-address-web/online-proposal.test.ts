@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { newAddressIntent, matchingAddressProposal, postAddressIntent, readAddressIntent } from "../../../components/trip-address/online-proposal.ts";
+import { newAddressIntent, matchingAddressProposal, postAddressIntent, readAddressIntent, addressIntentSettled, addressReviewBlocked } from "../../../components/trip-address/online-proposal.ts";
 import { AddressActorGate } from "../../../components/trip-address/actor.ts";
 const actor = "11111111-1111-4111-8111-111111111111", session = "22222222-2222-4222-8222-222222222222", proposalId = "33333333-3333-4333-8333-333333333333";
 const context = { actorKey: `${actor}:${session}:1`, tripId: actor, tripVersion: 3, dayId: "day", itemId: "item" };
@@ -95,4 +95,26 @@ test("claims expiry and 8s unknown claims timeout invalidate without late restor
   t.mock.timers.tick(8001);
   resolve({ ...claims, data: { claims: { ...claims.data.claims, exp: Date.now() / 1000 + 60 } } }); await late;
   assert.equal(gate.current(), null); gate.invalidate();
+});
+
+
+test("only exact authoritative terminal token settles a handed intent; old epoch/reset/read-failure do not", () => {
+  const draft = intent(); draft.receipt = { proposalId, revision: 1, baseTripVersion: 3 };
+  for (const epoch of ["unsettled", "", `rejected:${actor}`, `applied:${actor}`])
+    assert.equal(addressIntentSettled(draft, "handed", epoch, null), false);
+  for (const epoch of [`applied:${proposalId}`, `rejected:${proposalId}`]) {
+    assert.equal(addressIntentSettled(draft, "handed", epoch, null), true);
+    assert.equal(addressIntentSettled(draft, "handed", epoch, proposalId), false);
+    assert.equal(addressIntentSettled(draft, "unknown", epoch, null), false);
+  }
+  assert.equal(addressIntentSettled(intent(), "handed", `applied:${proposalId}`, null), false);
+});
+
+test("hidden address review blocks original Confirm including restored pending with no local ledger", () => {
+  const read = matchingAddressProposal(pending(), intent())!;
+  assert.equal(addressReviewBlocked(read, false), true);
+  assert.equal(addressReviewBlocked(read, true), false);
+  assert.equal(addressReviewBlocked(null, false), false);
+  const other = { ...read, proposal: { ...read.proposal, patch: { expectedVersion: 3, operations: [{ kind: "set_title" as const, title: "new title" }] } } };
+  assert.equal(addressReviewBlocked(other, false), false);
 });

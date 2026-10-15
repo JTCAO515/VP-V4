@@ -5,12 +5,12 @@ import type { LocalTripRead } from "../canvas/TripContentEditor";
 import { TripItemAddress } from "./TripItemAddress";
 import { AddressProposalDiff } from "./AddressProposalDiff";
 import { useAddressActor } from "./useAddressActor";
-import { newAddressIntent, postAddressIntent, readAddressIntent, type AddressIntent } from "./online-proposal";
+import { newAddressIntent, postAddressIntent, readAddressIntent, addressIntentSettled, addressReviewBlocked, type AddressIntent } from "./online-proposal";
 import type { AddressPrepare } from "./proposal";
 import type { AddressContext } from "./context";
 import styles from "./TripItemAddress.module.css";
 
-type InFlight = { intent: AddressIntent; phase: "posting" | "unknown" | "handed"; settledEpoch: string };
+type InFlight = { intent: AddressIntent; phase: "posting" | "unknown" | "handed" };
 export type TripAddressSectionProps = {
   tripId: string;
   data: LocalTripRead;
@@ -18,7 +18,7 @@ export type TripAddressSectionProps = {
   pending: PendingProposalRead | null;
   /** External pending/rollback/mutation/initial-reference and local-editor dirty/busy/unknown. Excludes this section's own lock. */
   blocked: boolean;
-  /** Changed by the original parent only after authoritative terminal/cancellation readback. */
+  /** Exact applied:<proposalId> or rejected:<proposalId> after authoritative terminal/cancellation readback. */
   settledEpoch: string;
   onPrepared: (proposal: PendingProposalRead) => void;
   /** Blocks other writers during dispatch/unknown ACK. Handed proposals use the original parent pending gate; Confirm stays available. */
@@ -38,7 +38,8 @@ export function TripAddressSection(props: TripAddressSectionProps) {
   const qualifiedRoot = !!actor && current()?.key === actor.key && props.data.trip.id === props.tripId && props.data.confirmationState === "confirmed";
   const retainedUnknown = !actor && [...intents.current.values()].some(record => record.intent.context.tripId === props.tripId && record.phase !== "handed");
   const ownBlocked = currentIntent !== undefined || retainedUnknown;
-  const parentLock = currentIntent !== undefined && currentIntent.phase !== "handed" || retainedUnknown;
+  const parentLock = currentIntent !== undefined && currentIntent.phase !== "handed" || retainedUnknown
+    || addressReviewBlocked(props.pending, qualifiedRoot);
   const contexts = useMemo(() => actor ? props.data.content.days.flatMap(day => (day.items ?? []).map(item => ({
     title: item.title, context: { actorKey: actor.key, tripId: props.tripId, tripVersion: props.data.trip.headVersion, dayId: day.id, itemId: item.id },
   }))) : [], [actor, props.tripId, props.data]);
@@ -63,8 +64,7 @@ export function TripAddressSection(props: TripAddressSectionProps) {
     if (!scope) return;
     const record = intents.current.get(scope);
     // A disappearing pending value alone is never a terminal receipt.
-    if (record?.phase === "handed" && record.settledEpoch !== props.settledEpoch
-      && record.intent.receipt && props.pending?.proposal.id !== record.intent.receipt.proposalId) {
+    if (record && addressIntentSettled(record.intent, record.phase, props.settledEpoch, props.pending?.proposal.id ?? null)) {
       intents.current.delete(scope); setRevision(n => n + 1);
     }
   }, [scope, props.settledEpoch, props.pending]);
@@ -86,7 +86,7 @@ export function TripAddressSection(props: TripAddressSectionProps) {
     const text = request.patch.operations[0].text;
     const intent = newAddressIntent(root.identity, request.context, text);
     if (JSON.stringify(request.patch.operations[0]) !== JSON.stringify(intent.operation)) throw Error("INVALID_ADDRESS_OPERATION");
-    const record: InFlight = { intent, phase: "posting", settledEpoch: liveProps.current.settledEpoch };
+    const record: InFlight = { intent, phase: "posting" };
     // Synchronous lock before the only POST; retained across auth/visibility/version fences.
     intents.current.set(key, record); setRevision(n => n + 1);
     liveProps.current.onAddressBlockChange(true);
