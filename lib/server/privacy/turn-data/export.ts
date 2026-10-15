@@ -62,6 +62,36 @@ function closedSourceGraph(sources: Sources,tripTask=false): boolean {
   const turns = new Set([...ids('public.turns', 'id'), ...ids('turn_private.text_content', 'turn_id')]);
   const tasks = ids('turn_private.service_tasks', 'id'), messages = ids('turn_private.assistant_messages', 'id');
   const artifacts = ids('turn_private.result_artifacts', 'id'), executions = ids('turn_private.planning_v2_execution_runs', 'id');
+  // Only selected Place ancestry uses this stricter graph. Legacy exports keep
+  // their original rules. A Task's chain must terminate at its actual goal Turn.
+  const taskLinks = new Map(rows('turn_private.service_task_turns').map(r => [r.turn_id,r]));
+  const sourceTurns = new Map(rows('public.turns').map(r => [r.id,r]));
+  const sourceTexts = new Map(rows('turn_private.text_content').map(r => [r.turn_id,r]));
+  const checkedLineage = new Set<string>();
+  function placeLineage(first: Record<string,unknown>, task: Record<string,unknown>): boolean {
+    let id = first.turn_id;
+    const seen = new Set<unknown>(), path: string[] = [];
+    for (;;) {
+      const key = `${task.id}:${id}`;
+      if (checkedLineage.has(key)) break;
+      if (seen.has(id)) return false;
+      seen.add(id);
+      const link = taskLinks.get(id), turn = sourceTurns.get(id), text = sourceTexts.get(id);
+      if (!link || !turn || !text || link.task_id !== task.id || link.owner_id !== task.owner_id
+        || turn.owner_id !== task.owner_id || text.owner_id !== task.owner_id
+        || turn.thread_id !== task.thread_id || text.thread_id !== task.thread_id
+        || text.policy_id !== task.policy_id || text.consent_id !== task.consent_id) return false;
+      path.push(key);
+      if (link.relationship === 'new_goal') {
+        if (link.parent_turn_id !== null || id !== task.goal_turn_id) return false;
+        break;
+      }
+      if (!['clarification','repair'].includes(String(link.relationship)) || !identifier(link.parent_turn_id)) return false;
+      id = link.parent_turn_id;
+    }
+    for (const key of path) checkedLineage.add(key);
+    return true;
+  }
   const linkedMessages = new Set([...rows('turn_private.service_tasks').flatMap(t=>validTripObjectiveExport(t,rows)?rows('turn_private.assistant_messages').filter(m=>m.task_id===t.id&&m.owner_id===t.owner_id&&(record(t.trip_objective)&&t.trip_objective.outcome==='erased'?m.goal_id===(t.trip_objective as Record<string,unknown>).goalId:m.id===(t.trip_objective as Record<string,unknown>)?.messageId)).map(m=>String(m.id)):[]),...rows('turn_private.planning_comparisons').map(r => String(r.message_id)),
     ...rows('turn_private.result_artifacts').map(r => String(r.input_message_id)),
     ...rows('turn_private.assistant_directions_intakes_v1').map(r => String(r.message_id))]);
@@ -89,7 +119,7 @@ function closedSourceGraph(sources: Sources,tripTask=false): boolean {
       if (!task || !text || !turn || !link || task.thread_id!==p.scopeId || text.thread_id!==p.scopeId || turn.thread_id!==p.scopeId
         || task.policy_id!==text.policy_id || task.consent_id!==text.consent_id || link.relationship!==receipt.relationship
         || link.parent_turn_id!==receipt.parentTurnId || row.scope_version!==receipt.scopeVersion || task.scope_version!==receipt.scopeVersion
-        || link.idempotency_key!==p.operationId || text.locale!==row.locale) return false;
+        || link.idempotency_key!==p.operationId || text.locale!==row.locale || !placeLineage(link,task)) return false;
     }
     if (spec.relation === 'turn_private.service_task_turns' && row.parent_turn_id !== null && !turns.has(String(row.parent_turn_id))) return false;
     // Planning's real submitter binds a follow_up message with turn_id=NULL.
