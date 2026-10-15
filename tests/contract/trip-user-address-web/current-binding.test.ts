@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { userProvidedAddress } from "../../../lib/trip-user-address.ts";
-import { addressBindingKey, readCurrentAddressBinding } from "../../../components/trip-address/current-binding.ts";
+import { addressBindingKey, addressTripBindingKey, readCurrentAddressBinding, type CurrentAddressTripBinding } from "../../../components/trip-address/current-binding.ts";
 import { addressProposalChanges } from "../../../components/trip-address/review.ts";
-import { addressReviewBlocked } from "../../../components/trip-address/online-proposal.ts";
+import { addressReviewBlocked, newAddressIntent, postAddressIntent, readAddressIntent } from "../../../components/trip-address/online-proposal.ts";
 import type { LocalTripRead } from "../../../components/canvas/TripContentEditor.tsx";
 import type { PendingProposalRead } from "../../../lib/server/identity/user-data-adapter.ts";
 const id = "11111111-1111-4111-8111-111111111111", pid = "22222222-2222-4222-8222-222222222222";
@@ -84,4 +84,52 @@ test("restored deleted address item and cross-day move review use union of origi
   const projection = addressProposalChanges(moved, { tripId: id, tripVersion: 3 });
   assert.equal(projection.kind, "ready"); if (projection.kind === "ready") assert.deepEqual(projection.changes.map(change => [change.dayId, change.before.kind, change.after.kind]), [["A", "provided", "missing"], ["B", "missing", "provided"]]);
   assert.equal(addressReviewBlocked(moved, true, { tripId: id, snapshotTripId: id, tripVersion: 3, items: [{ dayId: "A", itemId: "item" }] }), false);
+});
+
+
+test("lost POST ACK plus same-session resume retains GET recovery when parent pending is null but server has own pending", async () => {
+  const previous = globalThis.fetch, d = data(), next = { ...rootA, key: "A:session:next" };
+  const text = "北京 B座", draft = newAddressIntent(rootA.identity, { actorKey: rootA.key, tripId: id, tripVersion: 3, dayId: "A", itemId: "item" }, text);
+  const p = pending();
+  const own = { ...p, proposal: { ...p.proposal, patch: { expectedVersion: 3, operations: [draft.operation] }, after: { version: 4, title: "Trip", days: [{ id: "A", date: "2026-10-16", items: [{ ...item("A"), chineseAddress: userProvidedAddress(text) }] }] } } };
+  const calls: string[] = []; let tripLease: CurrentAddressTripBinding | null = null;
+  globalThis.fetch = (async (url: unknown, options?: RequestInit) => {
+    calls.push(options?.method ?? "GET");
+    if (options?.method === "POST") throw Error("lost ACK");
+    return Response.json(String(url).endsWith("/proposal") ? own : d);
+  }) as typeof fetch;
+  try {
+    await assert.rejects(postAddressIntent(draft, new AbortController().signal, () => true));
+    const originalBytes = draft.bytes;
+    // Strict full binding still fails: a 200 pending response is not proof of parent-null absence.
+    await assert.rejects(readCurrentAddressBinding(next, id, d, null, new AbortController().signal, () => next, lease => { tripLease = lease; }));
+    assert.deepEqual(tripLease, { actorKey: next.key, tripKey: addressTripBindingKey(id, d) });
+    const live = () => tripLease?.actorKey === next.key && tripLease.tripKey === addressTripBindingKey(id, d) && draft.identity === next.identity;
+    const recovered = await readAddressIntent(draft, new AbortController().signal, live);
+    assert.equal(recovered.proposal.id, pid); assert.equal(draft.bytes, originalBytes);
+    assert.deepEqual(calls, ["POST", "GET", "GET", "GET"]);
+  } finally { globalThis.fetch = previous; }
+});
+
+test("recovery-only Trip proof does not admit unrelated pending, a new actor denied by RLS, or a late root", async () => {
+  const previous = globalThis.fetch, d = data(), next = { ...rootA, key: "A:session:next" };
+  const draft = newAddressIntent(rootA.identity, { actorKey: rootA.key, tripId: id, tripVersion: 3, dayId: "A", itemId: "item" }, "北京 B座");
+  let tripLease: CurrentAddressTripBinding | null = null;
+  globalThis.fetch = (async (url: unknown) => Response.json(String(url).endsWith("/proposal") ? pending() : d)) as typeof fetch;
+  try {
+    await assert.rejects(readCurrentAddressBinding(next, id, d, null, new AbortController().signal, () => next, lease => { tripLease = lease; }));
+    assert.ok(tripLease);
+    // Server's unrelated rollback/current proposal cannot be adopted as this exact original request.
+    await assert.rejects(readAddressIntent(draft, new AbortController().signal, () => true));
+    assert.equal(draft.receipt, null);
+    tripLease = null;
+    const actorB = { ...next, identity: "B:session", key: "B:session:1" };
+    globalThis.fetch = (async () => Response.json({ error: { code: "FORBIDDEN" } }, { status: 403 })) as typeof fetch;
+    await assert.rejects(readCurrentAddressBinding(actorB, id, d, null, new AbortController().signal, () => actorB, lease => { tripLease = lease; }));
+    assert.equal(tripLease, null);
+    let live = true;
+    globalThis.fetch = (async () => { live = false; return Response.json(pending()); }) as typeof fetch;
+    await assert.rejects(readAddressIntent(draft, new AbortController().signal, () => live), /ROOT_CHANGED|CONTEXT_CHANGED/);
+    assert.equal(draft.receipt, null);
+  } finally { globalThis.fetch = previous; }
 });

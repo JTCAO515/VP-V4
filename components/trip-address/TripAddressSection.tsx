@@ -8,7 +8,7 @@ import { useAddressActor } from "./useAddressActor";
 import { newAddressIntent, postAddressIntent, readAddressIntent, matchingAddressProposal, addressIntentSettled, addressReviewBlocked, type AddressIntent } from "./online-proposal";
 import type { AddressPrepare } from "./proposal";
 import type { AddressContext } from "./context";
-import { addressBindingKey, readCurrentAddressBinding, type CurrentAddressBinding } from "./current-binding";
+import { addressBindingKey, addressTripBindingKey, readCurrentAddressBinding, type CurrentAddressBinding, type CurrentAddressTripBinding } from "./current-binding";
 import { addressProposalChanges } from "./review";
 import styles from "./TripItemAddress.module.css";
 
@@ -34,6 +34,9 @@ export function TripAddressSection(props: TripAddressSectionProps) {
   const [, setRevision] = useState(0);
   const [recovering, setRecovering] = useState(false);
   const [binding, setBinding] = useState<CurrentAddressBinding | null>(null);
+  const [tripBinding, setTripBinding] = useState<CurrentAddressTripBinding | null>(null);
+  const tripBindingRef = useRef(tripBinding); tripBindingRef.current = tripBinding;
+  const tripKey = addressTripBindingKey(props.tripId, props.data);
   const [bindingRefresh, setBindingRefresh] = useState(0);
   const bindingRef = useRef(binding); bindingRef.current = binding;
   const inputKey = addressBindingKey(props.tripId, props.data, props.pending);
@@ -43,6 +46,7 @@ export function TripAddressSection(props: TripAddressSectionProps) {
   const active = useRef(true);
   const scope = actor ? JSON.stringify([actor.identity, props.tripId]) : null;
   const currentIntent = scope ? intents.current.get(scope) : undefined;
+  const tripQualified = !!actor && current()?.key === actor.key && tripBinding?.actorKey === actor.key && tripBinding.tripKey === tripKey;
   const qualifiedRoot = !!actor && current()?.key === actor.key && binding?.actorKey === actor.key && binding.inputKey === inputKey
     && props.data.trip.id === props.tripId && props.data.confirmationState === "confirmed";
   const retainedUnknown = !actor && [...intents.current.values()].some(record => record.intent.context.tripId === props.tripId && record.phase !== "handed");
@@ -58,11 +62,14 @@ export function TripAddressSection(props: TripAddressSectionProps) {
   }))) : [], [actor, props.tripId, props.data]);
 
   useEffect(() => {
-    setBinding(null);
+    setBinding(null); setTripBinding(null);
     if (!actor || current()?.key !== actor.key || props.data.trip.id !== props.tripId || props.data.confirmationState !== "confirmed") return;
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 8000);
-    void readCurrentAddressBinding(actor, props.tripId, props.data, props.pending, controller.signal, current).then(lease => {
+    void readCurrentAddressBinding(actor, props.tripId, props.data, props.pending, controller.signal, current, lease => {
+      const p = liveProps.current;
+      if (!controller.signal.aborted && current()?.key === actor.key && addressTripBindingKey(p.tripId, p.data) === lease.tripKey) setTripBinding(lease);
+    }).then(lease => {
       const p = liveProps.current;
       if (!controller.signal.aborted && current()?.key === actor.key && addressBindingKey(p.tripId, p.data, p.pending) === lease.inputKey) setBinding(lease);
     }).catch(() => { /* Failed current-Cookie reads never qualify inherited parent data. */ }).finally(() => clearTimeout(timeout));
@@ -98,10 +105,12 @@ export function TripAddressSection(props: TripAddressSectionProps) {
     }
   }, [scope, props.settledEpoch, props.pending]);
 
-  const contextCurrent = useCallback((context: AddressContext, identity: string, allowOwn: boolean) => {
+  const contextCurrent = useCallback((context: AddressContext, identity: string, allowOwn: boolean, recoveryOnly = false) => {
     const p = liveProps.current, root = current();
-    if (!active.current || !root || root.identity !== identity || root.key !== context.actorKey
-      || bindingRef.current?.actorKey !== root.key || bindingRef.current.inputKey !== addressBindingKey(p.tripId, p.data, p.pending)
+    const bound = recoveryOnly
+      ? tripBindingRef.current?.actorKey === root?.key && tripBindingRef.current?.tripKey === addressTripBindingKey(p.tripId, p.data)
+      : bindingRef.current?.actorKey === root?.key && bindingRef.current?.inputKey === addressBindingKey(p.tripId, p.data, p.pending);
+    if (!bound || !active.current || !root || root.identity !== identity || root.key !== context.actorKey
       || p.tripId !== context.tripId || p.data.trip.id !== context.tripId || p.data.trip.headVersion !== context.tripVersion
       || p.data.confirmationState !== "confirmed" || !p.data.content.days.some(day => day.id === context.dayId && day.items?.some(item => item.id === context.itemId))
       || document.visibilityState === "hidden" || navigator.onLine === false) return false;
@@ -148,13 +157,13 @@ export function TripAddressSection(props: TripAddressSectionProps) {
     const root = current();
     if (!root || !scope || recovering || transport.current) return;
     const record = intents.current.get(scope);
-    if (!record || record.phase !== "unknown" || !qualifiedRoot || props.blocked
+    if (!record || record.phase !== "unknown" || !tripQualified || props.blocked
       || props.pending !== null && matchingAddressProposal(props.pending, record.intent) === null) return;
     const controller = new AbortController(); transport.current = controller; setRecovering(true);
     const key = scope;
     // Requalify same subject/session under the new ephemeral root; the original request bytes never change.
     const context = { ...record.intent.context, actorKey: root.key };
-    const live = () => !controller.signal.aborted && contextCurrent(context, record.intent.identity, true) && !liveProps.current.blocked
+    const live = () => !controller.signal.aborted && contextCurrent(context, record.intent.identity, true, true) && !liveProps.current.blocked
       && (!liveProps.current.pending || matchingAddressProposal(liveProps.current.pending, record.intent) !== null) && intents.current.get(key) === record;
     const timeout = setTimeout(() => controller.abort(), 8000);
     try {
@@ -166,8 +175,9 @@ export function TripAddressSection(props: TripAddressSectionProps) {
 
   const zh = props.locale === "zh";
   return <section className={styles.panel} aria-label={zh ? "当前行程地址" : "Current Trip addresses"} data-testid="trip-address-section">
-    {!qualifiedRoot ? <div role="status"><p>{zh ? "当前身份或确认版本地址暂不可用。" : "Addresses are unavailable for the current identity or confirmed version."}</p><button type="button" onClick={() => { setBinding(null); setBindingRefresh(n => n + 1); }}>{zh ? "重新读取当前行程与提案" : "Reread current Trip and proposal"}</button></div> : <>
-      {currentIntent?.phase === "unknown" ? <div role="status"><p>{zh ? "地址提案结果未知。保留原请求，仅重新读取原提案；不会重复提交。" : "Address proposal outcome unknown. Original request retained; recovery only rereads the original proposal."}</p><button type="button" disabled={recovering || props.blocked || props.pending !== null && matchingAddressProposal(props.pending, currentIntent.intent) === null || transport.current !== null} onClick={() => void recover()}>{zh ? "读取原提案状态" : "Read original proposal status"}</button></div> : null}
+      {tripQualified && currentIntent?.phase === "unknown" ? <div role="status"><p>{zh ? "地址提案结果未知。保留原请求，仅重新读取原提案；不会重复提交。" : "Address proposal outcome unknown. Original request retained; recovery only rereads the original proposal."}</p><button type="button" disabled={recovering || props.blocked || props.pending !== null && matchingAddressProposal(props.pending, currentIntent.intent) === null || transport.current !== null} onClick={() => void recover()}>{zh ? "读取原提案状态" : "Read original proposal status"}</button></div> : null}
+    {!qualifiedRoot ? <div role="status"><p>{zh ? "当前身份或确认版本地址暂不可用。" : "Addresses are unavailable for the current identity or confirmed version."}</p><button type="button" onClick={() => { setBinding(null); setTripBinding(null); setBindingRefresh(n => n + 1); }}>{zh ? "重新读取当前行程与提案" : "Reread current Trip and proposal"}</button></div> : <>
+
       {contexts.map(({ title, context }) => <section key={`${context.dayId}:${context.itemId}`} aria-label={title}>
         <h2>{title}</h2>
         <TripItemAddress context={context} locale={props.locale} blocked={props.blocked || props.pending !== null || ownBlocked} settledEpoch={props.settledEpoch} prepare={prepare} />
