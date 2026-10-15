@@ -535,3 +535,52 @@ test('unknown admission journal becomes confirmed durable reconciliation without
  await expect(page.getByRole('log')).toContainText(reconciliationText);await expect(page.getByRole('button',{name:'Resend original request'})).toHaveCount(0);await expect(page.getByRole('button',{name:'Send',exact:true})).toBeDisabled();
  expect(await page.evaluate(key=>sessionStorage.getItem(key),recoveryKey)).toBeNull();expect(sent).toHaveLength(1);
 });
+
+test('WEB001 URL Session changes and browser back-forward bind the visible conversation before sending',async({page,context})=>{
+ const destinations=[];
+ const {saved}=await fixture(page,context,async(route,{path,method})=>{if(method==='POST'&&path.endsWith('/messages'))destinations.push(path.split('/')[4]);return false;});
+ saved.set(idA,[message(idA,{requestId:earlierId,text:'Conversation A'},'Answer A')]);saved.set(idB,[message(idB,{requestId:policy.id,text:'Conversation B'},'Answer B')]);
+ await page.getByRole('button',{name:'Agree to the notice above'}).click();await expect(page.getByRole('log')).toContainText('Answer A');
+ await page.evaluate(id=>history.pushState(null,'',`/qa?locale=en&session=${id}`),idB);
+ await expect(page.getByRole('button',{name:`Session ${idB}`,exact:true})).toHaveAttribute('aria-current','true');await expect(page.getByRole('log')).toContainText('Answer B');await expect(page.getByRole('log')).not.toContainText('Answer A');
+ await page.getByLabel('Message',{exact:true}).fill('B only');await page.getByRole('button',{name:'Send',exact:true}).click();await expect(page.getByRole('log')).toContainText('Saved answer');expect(destinations).toEqual([idB]);
+ await page.goBack();await expect(page.getByRole('log')).toContainText('Answer A');await expect(page.getByRole('log')).not.toContainText('B only');
+ await page.goForward();await expect(page.getByRole('log')).toContainText('B only');
+});
+test('WEB001 permission-denied send hides previously protected history and blocks further admission',async({page,context})=>{
+ let denied=false;const attempts=[];
+ const {saved}=await fixture(page,context,async(route,{path,method})=>{
+  if(denied&&method==='POST'&&path.endsWith('/messages')) {attempts.push(route.request().postDataJSON());await route.fulfill({status:403,contentType:'application/json',body:JSON.stringify(wire({error:{code:'FORBIDDEN',ack:'not_submitted'}}))});return true;}
+  return false;
+ });
+ saved.set(idA,[message(idA,{requestId:earlierId,text:'Protected private history'},'Private prior answer')]);
+ await page.getByRole('button',{name:'Agree to the notice above'}).click();await expect(page.getByRole('log')).toContainText('Private prior answer');
+ denied=true;await page.getByLabel('Message',{exact:true}).fill('Write now denied');await page.getByRole('button',{name:'Send',exact:true}).click();
+ await expect(page.getByRole('region',{name:'Agent QA'}).getByRole('alert')).toBeVisible();await expect(page.getByRole('log')).toBeEmpty();await expect(page.getByRole('button',{name:'Send',exact:true})).toBeDisabled();expect(attempts).toHaveLength(1);
+});
+test('WEB001 removing URL Session clears private selection and pending URL reads are fenced',async({page,context})=>{
+ let release;
+ await fixture(page,context,async(route,{path,method,fulfill})=>{
+  if(path.endsWith('/policy')) {await fulfill({policy:{...policy,consentState:'accepted'}});return true;}
+  if(method==='GET'&&path.endsWith(idB)) {await new Promise(resolve=>{release=resolve;});await fulfill({session:session(idB),messages:[message(idB,{requestId:earlierId,text:'Late B'},'Private late B answer')]}).catch(()=>{});return true;}
+  return false;
+ });
+ await page.evaluate(id=>history.pushState(null,'',`/qa?locale=en&session=${id}`),idB);await expect.poll(()=>!!release).toBe(true);
+ await page.evaluate(()=>history.pushState(null,'','/qa?locale=en'));release();
+ await expect(page.getByRole('log')).toContainText('Select or create a session');await expect(page.getByRole('log')).not.toContainText('Private late B answer');await expect(page.getByRole('button',{name:'Send',exact:true})).toBeDisabled();
+});
+test('WEB001 same actor tabs retain independent URL Session and submission destinations',async({page,context})=>{
+ const other=await context.newPage(),destinations=[];
+ await other.setViewportSize({width:390,height:844});
+ const hook=async(route,{path,method,fulfill})=>{
+  if(path.endsWith('/policy')) {await fulfill({policy:{...policy,consentState:'accepted'}});return true;}
+  if(method==='POST'&&path.endsWith('/messages'))destinations.push({sessionId:path.split('/')[4],text:route.request().postDataJSON().text});
+  return false;
+ };
+ await fixture(page,context,hook);await fixture(other,context,hook,{url:`/qa?locale=en&session=${idB}`,select:false});
+ await page.getByLabel('Message',{exact:true}).fill('Tab A question');await other.getByLabel('Message',{exact:true}).fill('Tab B question');
+ await page.getByRole('button',{name:'Send',exact:true}).click();await other.getByRole('button',{name:'Send',exact:true}).click();
+ await expect.poll(()=>destinations.length).toBe(2);expect(destinations).toEqual([{sessionId:idA,text:'Tab A question'},{sessionId:idB,text:'Tab B question'}]);
+ await expect(page.getByRole('log')).toContainText('Tab A question');await expect(page.getByRole('log')).not.toContainText('Tab B question');await expect(other.getByRole('log')).not.toContainText('Tab A question');
+ const bounds=await other.evaluate(()=>({width:document.documentElement.clientWidth,scroll:document.documentElement.scrollWidth}));expect(bounds.scroll).toBeLessThanOrEqual(bounds.width);await other.close();
+});
