@@ -120,9 +120,58 @@ run('revocation between input and dispatch, after dispatch before completion and
 
 run('ordinary original admission/queue/lock bodies and all original ACL unchanged; only exact marked seams',async()=>{
  const current=JSON.parse(await snapshot());
+ const {createHash}=await import('node:crypto');
+ // Exact reviewed canonical source, never a hash learned from this live database.
+ const canonicalKnown={
+  "read_grounded_turn(uuid)": {
+    "beforePath": "artifacts/AGENT-005/canonical-place-sql-20261015/before/read_grounded_turn.sql",
+    "afterPath": "artifacts/AGENT-005/canonical-place-sql-20261015/after/read_grounded_turn.sql",
+    "beforeBodySha256": "e13c54c6ec54a88df05a6a27d4763dc6314ce6ab8b4ff077cc2591a0d0c29ae2",
+    "afterBodySha256": "5020da806fb7b141d4f4024560f10f60f13826b0b003ab2ca50c5286cc4e97fa"
+  },
+  "read_grounded_work(uuid,uuid)": {
+    "beforePath": "artifacts/AGENT-005/canonical-place-sql-20261015/before/read_grounded_work.sql",
+    "afterPath": "artifacts/AGENT-005/canonical-place-sql-20261015/after/read_grounded_work.sql",
+    "beforeBodySha256": "31a11ea361e96c6f80d8b9674d4686d06b16eaf5714d9c080343306134339189",
+    "afterBodySha256": "4b821f2adb7ed2d42e07234018f5246e8d875cd2cfefea786393a63d0b4654c9"
+  },
+  "authorize_grounded_dispatch(uuid,uuid,uuid,text,text)": {
+    "beforePath": "artifacts/AGENT-005/canonical-place-sql-20261015/before/authorize_grounded_dispatch.sql",
+    "afterPath": "artifacts/AGENT-005/canonical-place-sql-20261015/after/authorize_grounded_dispatch.sql",
+    "beforeBodySha256": "17c3500124a28c47f0ef5300c0f21b74518e1ca8f82737d0e3a3d398a9eeb87b",
+    "afterBodySha256": "be3ecbe0e909e416d9086233cc7dfef73be8663305347d51fecd0dd0bb195f59"
+  },
+  "complete_grounded_place_work(uuid,uuid,text,text,text,text)": {
+    "beforePath": "artifacts/AGENT-005/canonical-place-sql-20261015/before/complete_grounded_place_work.sql",
+    "afterPath": "artifacts/AGENT-005/canonical-place-sql-20261015/after/complete_grounded_place_work.sql",
+    "beforeBodySha256": "61a304f1bdbd4d2f304d66645335056c391b315f3d004aaf256ccd08eb407362",
+    "afterBodySha256": "7ffaef8cbb9a4cc07242782ec656d2fd369643b4f354103eda5d54467c577b7a"
+  },
+  "complete_grounded_work_with_needs(uuid,uuid,text,text,text)": {
+    "beforePath": "artifacts/AGENT-005/canonical-place-sql-20261015/before/complete_grounded_work_with_needs.sql",
+    "afterPath": "artifacts/AGENT-005/canonical-place-sql-20261015/after/complete_grounded_work_with_needs.sql",
+    "beforeBodySha256": "6070b265fcdaea45354b5cef911c98e8c3b5edd56bba77671db7eec60e51eeb9",
+    "afterBodySha256": "9cb498749cfd3a283f399eaa472f54d7633c5c03e8c2525cac87a0e9fa9b1fe7"
+  },
+  "turn_private.complete_selected_grounded_work(uuid,uuid,text,text,text)": {
+    "beforePath": "artifacts/AGENT-005/canonical-place-sql-20261015/before/turn_private.complete_selected_grounded_work.sql",
+    "afterPath": "artifacts/AGENT-005/canonical-place-sql-20261015/after/turn_private.complete_selected_grounded_work.sql",
+    "beforeBodySha256": "c3424ac656bdaabf14b1022e079e2ba3a9f6eb42bfd4655dc064a576419fce3c",
+    "afterBodySha256": "021d14fd11583600af6557ba0177b5bb36688bf3e59919b5f0cfcae86c4c7a52"
+  }
+};
+ const bodyHash=v=>createHash('sha256').update(v,'utf8').digest('hex');
  for(const key of Object.keys(baseline)){
   assert.equal(current[key].acl,baseline[key].acl,key+' original ACL');
   let body=current[key].body;
+  if(Object.hasOwn(canonicalKnown,key)){
+   const known=canonicalKnown[key],extract=p=>readFileSync(p,'utf8').match(/AS \$function\$([^]*?)\$function\$/)[1];
+   const approvedBefore=extract(known.beforePath),approvedAfter=extract(known.afterPath);
+   assert.equal(bodyHash(approvedBefore),known.beforeBodySha256,key+' reviewed canonical before source');
+   assert.equal(bodyHash(approvedAfter),known.afterBodySha256,key+' reviewed canonical after source');
+   assert.equal(body,approvedAfter,key+' exact reviewed selected-only successor body');
+   body=approvedBefore;
+  }
   body=body.replace(/ if exists\(select 1 from guide_private\.bindings_v1 where turn_id=p_turn_id\) and guide_private\.bound_v1\(p_turn_id,(?:null|p_lease_token)\) is null then return jsonb_build_object\('kind','blocked'\);end if;\n/g,'');
   body=body.replace(/ if exists\(select 1 from guide_private\.bindings_v1 where turn_id=p_turn_id\) then return guide_private\.place_complete_v1\(p_turn_id,p_lease_token,p_intent,p_request_scope,p_unanswered_needs,p_place_name\);end if;\n/g,'');
   body=body.replace(/ if exists\(select 1 from guide_private\.bindings_v1 where turn_id=p_turn_id\) and knowledge_review_private\.question_definition\(p_intent\) is not null and guide_private\.answer_basis_v1\(p_turn_id,p_lease_token,p_intent,p_subject\) is null then return jsonb_build_object\('kind','blocked'\);end if;\n/g,'');
