@@ -89,3 +89,16 @@ for(const mode of ['self','other-task','other-thread','other-text-thread','other
  if(mode==='wrong-root')task.goal_turn_id=current;
  assert.equal(decodeTurnExportPage(p,context.limit,context.owner,context.now),null);
 });
+
+import mixedSQL from './mixed-export3-page.json' with {type:'json'};
+import tripSQL from './trip-export-page.json' with {type:'json'};
+import sourceSchema from '../../../lib/server/privacy/turn-data/source-schema.json' with {type:'json'};
+for(const [name,fixture] of [['mixed Place/Trip',mixedSQL],['pure Trip',tripSQL]])test(`actual accepted707 ${name} SQL page retains all 43 sources and original digest`,()=>{
+ const p=fixture.page,tripOnly=p.schemaVersion==='turn-trip-core-export/1';
+ assert.equal(p.schemaVersion,name==='pure Trip'?'turn-trip-core-export/1':'turn-core-export/3');
+ assert.equal(p.items[0].sources.length,43);
+ for(const spec of sourceSchema.filter(s=>s.tripOnly))assert.ok(p.items[0].sources.find(g=>g.relation===spec.relation)?.rows.length>0,`original Trip source ${spec.relation} must remain present`);
+ const decoded=decodeTurnExportPage(p,fixture.limit,fixture.owner,fixture.now,tripOnly);
+ assert.ok(decoded);assert.deepEqual(decoded.items,p.items);
+ assert.equal(createHash('sha256').update(exportCanonical({snapshot:decoded.items}),'utf8').digest('hex'),decoded.sourceDigest);
+});
