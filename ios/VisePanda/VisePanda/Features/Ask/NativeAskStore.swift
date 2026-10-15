@@ -22,7 +22,9 @@ final class NativeAskStore {
     private(set) var canonicalSelectedReadUnavailable = false
     var hasCanonicalSelectedResults: Bool { !canonicalSelectedTurnIDs.isEmpty }
     func canonicalSelectedCurrent(_ turnID: String, scope current: NativeDataScope?) -> Bool {
-        current != nil && current == scope && canonicalSceneActive && (canonicalSelectedDeadlines[turnID].map { canonicalUptime() < $0 } ?? false)
+        current != nil && current == scope && canonicalSceneActive
+            && turns.first(where: { $0.id == turnID })?.result?.projection == "current"
+            && (canonicalSelectedDeadlines[turnID].map { canonicalUptime() < $0 } ?? false)
     }
     func hasCurrentCanonicalSelected(scope current: NativeDataScope?) -> Bool {
         canonicalSelectedTurnIDs.contains { canonicalSelectedCurrent($0, scope: current) }
