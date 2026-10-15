@@ -1,0 +1,22 @@
+{
+  "normalNativeAppendAndRollback": "PASS",
+  "knownMissingCheckStillRejected": "PASS",
+  "diagnosticContent": "guard names/booleans and server_version only",
+  "details": {
+    "guards": {
+      "turn_hooks": false,
+      "turn_schema": false,
+      "export_hooks": true,
+      "trip_runtime": false,
+      "turn_runtime": true,
+      "result_schema": false,
+      "profile_schema": false,
+      "selected_schema": false,
+      "turn_write_hooks": true,
+      "conversation_schema": false,
+      "result_infrastructure": true
+    },
+    "postgres": "17.11 (Homebrew)"
+  },
+  "supabaseFailureCause": "UNKNOWN pending official CI vector"
+}
