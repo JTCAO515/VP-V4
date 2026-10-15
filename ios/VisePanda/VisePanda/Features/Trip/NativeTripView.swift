@@ -855,6 +855,15 @@ struct NativeTripView: View {
                 items?.map { "\($0.title) · \($0.manualOrder.map(String.init) ?? unset)" }.joined(separator: " → ") ?? absent
             }
             return (orderText(day?.items), orderText(pending.proposal.after?.days.first(where: { $0.id == operation.dayId })?.items))
+        case .setChineseAddress:
+            let address = day?.items.first { $0.id == operation.itemId }?.userAddress?.text
+            let after: String
+            switch operation.addressText {
+            case .set(let value): after = value
+            case .clear: after = text("Not provided", "未提供")
+            case nil: after = text("Unavailable", "暂不可用")
+            }
+            return (address ?? text("Not provided", "未提供"), after + text("\nProvided by you · Unverified", "\n用户提供 · 未核验"))
         case .upsertDay:
             return (day.map { dayText($0.date, $0.timeZone) } ?? absent, dayText(operation.date ?? unset, operation.timeZone))
         case .deleteDay:
@@ -880,6 +889,7 @@ struct NativeTripView: View {
         case .upsertItem: text("Add or update item", "新增或修改项目")
         case .deleteItem: text("Remove item", "移除项目")
         case .reorderItems: text("Change item order", "更改项目顺序")
+        case .setChineseAddress: text("Change user-provided address", "更改用户补充地址")
         }
     }
 

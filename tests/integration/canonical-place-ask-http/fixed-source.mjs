@@ -1,5 +1,5 @@
 import {createHash} from 'node:crypto';
-import {readFileSync} from 'node:fs';
+import {readFileSync,readdirSync} from 'node:fs';
 import {resolve} from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 const repo=fileURLToPath(new URL('../../../',import.meta.url));
@@ -18,7 +18,8 @@ export async function fixedSource(){
  }
  const readSource=path=>{if(!contents.has(path))throw Error('Unpinned SQL input');return contents.get(path);};
  const append='supabase/migrations/20261015083120_agent005_canonical_place_ask.sql';
- if(new Set(manifest.migrations).size!==manifest.migrations.length||manifest.migrations.at(-1)!==append||manifest.migrations.some(p=>!p.startsWith('supabase/migrations/')||!contents.has(p)))throw Error('Incomplete fixed migration inventory');
+ const inventory=readdirSync(resolve(repo,'supabase/migrations')).filter(p=>p.endsWith('.sql')).sort().map(p=>'supabase/migrations/'+p);
+ if(new Set(manifest.migrations).size!==manifest.migrations.length||!manifest.migrations.includes(append)||JSON.stringify(manifest.migrations)!==JSON.stringify(inventory)||manifest.migrations.some(p=>!p.startsWith('supabase/migrations/')||!contents.has(p)))throw Error('Incomplete fixed migration inventory');
  for(const path of ['tests/integration/turn/fixtures/durable-work-schema.sql','tests/integration/canonical-place-ask-sql/fixtures.mjs','tests/integration/canonical-place-ask-sql/db.mjs'])readSource(path);
  const {canonicalFixturePorts}=await import(pathToFileURL(resolve(repo,'tests/integration/canonical-place-ask-sql/fixtures.mjs')).href);
  if(typeof canonicalFixturePorts!=='function')throw Error('Pinned SQL fixture lacks own-connection portable interface');
