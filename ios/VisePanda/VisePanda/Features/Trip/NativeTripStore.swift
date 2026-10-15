@@ -257,6 +257,48 @@ final class NativeTripStore {
         return true
     }
 
+    /// Address edits enter the existing draft, Proposal, unknown-ACK and visible diff flow.
+    func prepareAddressProposal(expectedTripVersion: Int, dayID: String, itemID: String,
+                                value: NativeAddressOperationText, using session: NativeSession) async -> Bool {
+        guard !busy, canEdit, pending == nil, pendingOfflineText == nil,
+              deletionRequest == nil, deletionReceipt == nil,
+              let actor = session.dataScope, scope == actor, let detail,
+              selectedID == detail.trip.id, detail.confirmationState == "confirmed",
+              detail.trip.headVersion == expectedTripVersion else { return false }
+        let patch = NativeTripPatch(expectedVersion: expectedTripVersion, operations: [
+            .init(kind: .setChineseAddress, dayId: dayID, itemId: itemID, addressText: value)
+        ])
+        if proposalOutcomeUnknown {
+            guard uncertainProposalPatch == patch, draft?.patch == patch else { return false }
+            await propose(using: session)
+            return scope == actor && session.dataScope == actor && pending?.proposal.patch == patch
+        }
+        guard draft == nil, await refreshForSharing(using: session), !Task.isCancelled,
+              scope == actor, session.dataScope == actor, canEdit, draft == nil, pending == nil,
+              let fresh = self.detail, fresh.trip.id == detail.trip.id,
+              fresh.confirmationState == "confirmed", fresh.trip.headVersion == expectedTripVersion,
+              let dayIndex = fresh.content.days.firstIndex(where: { $0.id == dayID }),
+              let itemIndex = fresh.content.days[dayIndex].items.firstIndex(where: { $0.id == itemID }) else { return false }
+        var prepared = NativeTripDraft(fresh)
+        do {
+            switch value {
+            case .clear: prepared.days[dayIndex].items[itemIndex].userAddress = nil
+            case .set(let text): prepared.days[dayIndex].items[itemIndex].userAddress = try NativeUserProvidedAddress(text: text)
+            }
+        } catch { return false }
+        guard prepared.patch == patch else { return false }
+        draft = prepared
+        await propose(using: session)
+        return scope == actor && session.dataScope == actor && !Task.isCancelled && pending?.proposal.patch == patch
+    }
+
+    /// The original confirmation retains its id/revision/digest and idempotency key.
+    func confirmAddressProposal(reviewedReference: String, using session: NativeSession) async {
+        guard pending?.proposal.patch.operations.count == 1,
+              pending?.proposal.patch.operations.first?.kind == .setChineseAddress else { return }
+        await confirm(reviewedReference: reviewedReference, using: session)
+    }
+
     var offlineTextPending:Bool{pendingOfflineText != nil}
     func proposeOfflineText(date:String,title:String,saveOffline:Bool,using session:NativeSession)async->Bool {
         guard !busy,canEdit,draft==nil,pending==nil,!proposalOutcomeUnknown,let detail,let scope=session.dataScope,self.scope==scope,detail.trip.id==selectedID,deletionRequest==nil,deletionReceipt==nil,saveOffline else{return false}
@@ -409,12 +451,15 @@ final class NativeTripStore {
             self.confirmationKeys[keyID] = key
             let result: NativeTripConfirmed = try await self.call(session, scope, path: "\(self.base)/\(pending.trip.id)/confirm", method: "POST", body: ConfirmBody(proposalId: proposal.id, idempotencyKey: key, digest: proposal.digest))
             guard result.version == 2, ["applied", "already_applied"].contains(result.outcome) else { throw NativeDataError.invalidResponse }
+            let addressOnly = proposal.patch.operations.contains { $0.kind == .setChineseAddress }
+            if addressOnly, result.resultingVersion != proposal.baseTripVersion + 1 { throw NativeDataError.invalidResponse }
             // Never infer the new content from the submitted patch or an HTTP success.
             self.pending = nil
             self.draft = nil
             try await self.loadList(session, scope)
             try await self.loadSelected(session, scope)
             guard let detail = self.detail, detail.trip.headVersion >= result.resultingVersion, detail.confirmationState == "confirmed" else { throw NativeDataError.invalidResponse }
+            if addressOnly, detail.trip.headVersion != result.resultingVersion { throw NativeDataError.invalidResponse }
             self.notice = "confirmed"
         }
     }
