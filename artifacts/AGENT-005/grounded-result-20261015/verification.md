@@ -2,8 +2,8 @@
 
 2026-10-15 Asia/Shanghai. Related to #206; this package does not close the full Issue.
 
-Base `ded26ad709027350433c78fc746fdd3d6aaff575`; source/test head `bd6840e1`.
-Writer: this dedicated chat/worktree. Main management files remain read-only. Main additionally leased exactly two existing Wiki contract tests and the frozen eval's assertion.subjectId fixture construction. No scenarios, qrels, holdout truth or thresholds changed.
+Base `ded26ad709027350433c78fc746fdd3d6aaff575`; source/test head `72b76c2e`.
+Writer: this dedicated chat/worktree. Main management files remain read-only. Main additionally leased exactly two existing Wiki contract tests and the frozen eval harness: assertion.subjectId fixture construction plus explicitly versioned current-versus-legacy contract reporting. No scenarios, qrels, holdout truth or thresholds changed.
 
 ## Changes and observations
 
@@ -27,9 +27,9 @@ Writer: this dedicated chat/worktree. Main management files remain read-only. Ma
 | pnpm lint | PASS, 843 source files |
 | pnpm docs:check | PASS |
 | git diff --check against accepted QA base | PASS |
-| claims + Wiki search/search safety/proposal safety eval suites | FAIL 11/12 tests; frozen pipeline stops at place_address-zh, expected answered vs current unavailable |
+| claims + Wiki search/search safety/proposal safety eval suites | PASS 12/12 under grounded-result-contract/2; all 34 frozen scenarios match current contract; legacy verdict remains FAIL (six unresolved-place rows) |
 
-Original knowledge contract run was 176/181 before the two leased old-test adaptations; that log is retained. Original eval failure was its synthetic-subject fixture, not matching the existing claim truth. After the single authorized fixture repair, the remaining failure is the unchanged optimistic place expectation. Eval runs used a disposable copied eval tree with the actual lib linked read-only, so legacy artifact-generating tests did not rewrite other owners' evidence. No eval failure was waived or converted to PASS.
+Original knowledge contract run was 176/181 before the two leased old-test adaptations; that log is retained. Original eval failure was its synthetic-subject fixture, not matching the existing claim truth. After the single authorized fixture repair, the remaining original-contract failure was the unchanged optimistic place expectation. Main then explicitly authorized a versioned harness-contract adaptation: unresolved place fixtures with no claim set expect user_input_missing under the current contract, while each row preserves the original expected/match and the report retains legacyVerdict FAIL. No expectation is derived from the actual result. Other frozen expectations are unchanged, including the genuinely off-topic retrieval-miss corpus. Eval runs used a disposable copied eval tree with the actual lib linked read-only, so legacy artifact-generating tests did not rewrite other owners' evidence. The original 11/12 failure logs remain; current-contract PASS is reported separately from legacy FAIL.
 
 Node v26.8.2, pnpm 9.15.9. Frozen offline install reused 108 packages, downloaded zero; no package/lock/global config changed. Existing GitHub account/keyring read and push succeeded; no credential contents recorded. Requested Sol/medium is not effective model/tier proof: effective/tier UNKNOWN.
 
@@ -40,3 +40,5 @@ The work_v1 SQL port exposes ensure/complete, without an original-operation read
 Real identity/RLS/provider/session/database persistence, production/QA deployment, ECS, fees, credentials, Native/Web rendering and physical devices are UNRUN here. No production/DB/provider operation ran. Formal exact-head Standards/Spec review, applicable CI and normal protected merge belong to Main. Full #206 acceptance remains open.
 
 Frozen place provenance check: cases.ts builds place cases with claims=[] and CorpusStatement has no subjectId; the synthetic-subject in the old RPC fixture is not a resolved entity. No resolved object was fabricated to make that eval green. Dedicated resolved-object positives/negatives are separate, explicit fixture premises.
+
+Current eval artifact frozen-current-contract-results.json retains all 34 rows, 17/17 development/holdout, original denominators and fixture-only p50/p95/declared-token metrics. Its git commit identifies the tested source/harness head. No performance or cost claim extends beyond that fixture process.
