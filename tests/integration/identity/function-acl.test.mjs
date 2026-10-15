@@ -83,6 +83,7 @@ const AUTHENTICATED = [
   "public.read_trip_directions_reference_v1(uuid)",
   "public.search_result_artifacts_v2(text,uuid)",
   "public.read_change_proposal_reference_v1(uuid,integer)",
+  "public.read_goal_return_reference_v1(uuid,uuid,uuid,integer,uuid,bigint,bigint)",
   "public.read_trip_change_proposal_reference_v1(uuid)",
   "public.read_task_result_reference_v1(uuid)",
   "public.search_result_artifacts_v1(text,uuid)",
@@ -146,6 +147,12 @@ test("repository functions grant EXECUTE to anon and authenticated only through 
 
   await t.test("authenticated executes exactly the reviewed caller list", () => {
     assert.deepEqual(sql(executable("authenticated")), [...AUTHENTICATED].sort());
+  });
+
+  await t.test("current goal return grants only the public wrapper to authenticated", () => {
+    for (const role of ["anon", "authenticated", "service_role"]) {
+      assert.deepEqual(sql(`select has_function_privilege('${role}','public.read_goal_return_reference_v1(uuid,uuid,uuid,integer,uuid,bigint,bigint)'::regprocedure,'EXECUTE'),has_function_privilege('${role}','turn_private.goal_return_reference_v1(uuid,uuid,uuid,integer,uuid,bigint,bigint)'::regprocedure,'EXECUTE');`), [role === "authenticated" ? "t|f" : "f|f"], role);
+    }
   });
 
   await t.test("QA browser RPCs and worker RPCs keep disjoint exact role grants", () => {

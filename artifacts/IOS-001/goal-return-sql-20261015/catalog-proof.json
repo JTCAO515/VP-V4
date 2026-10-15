@@ -1,0 +1,35 @@
+{
+  "results": [
+    {
+      "label": "unknown Turn runtime function",
+      "actual": "t|t|t|t|f",
+      "result": "PASS"
+    },
+    {
+      "label": "unknown source column",
+      "actual": "f|f|f|f|t",
+      "result": "PASS"
+    },
+    {
+      "label": "unknown original schema-function source",
+      "actual": "t|t|t|t|f",
+      "result": "PASS"
+    },
+    {
+      "label": "remove only new readers rollback preserves original guards and tables",
+      "result": "PASS"
+    }
+  ],
+  "originalReaderExecutableBodies": "identical",
+  "newFunctions": [
+    {
+      "signature": "public.read_goal_return_reference_v1(uuid,uuid,uuid,integer,uuid,bigint,bigint)",
+      "sha256": "01edbf5b8f0cdd9ed73230c6604925079d92d05e6d08ca6ae68267cc90420f7d"
+    },
+    {
+      "signature": "turn_private.goal_return_reference_v1(uuid,uuid,uuid,integer,uuid,bigint,bigint)",
+      "sha256": "94e86001928c4e289e1034cb63db16b0901318801b27dd5b20faae79e6955532"
+    }
+  ],
+  "tablesUnchanged": 265
+}
