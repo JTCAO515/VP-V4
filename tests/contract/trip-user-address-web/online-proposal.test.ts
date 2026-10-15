@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { newAddressIntent, matchingAddressProposal, postAddressIntent, readAddressIntent, addressIntentSettled, addressReviewBlocked } from "../../../components/trip-address/online-proposal.ts";
+import { newAddressIntent, matchingAddressProposal, postAddressIntent, readAddressIntent, addressIntentSettled, addressReviewBlocked, abandonLocalAddressIntent, readAddressCurrent } from "../../../components/trip-address/online-proposal.ts";
 import { AddressActorGate } from "../../../components/trip-address/actor.ts";
 const actor = "11111111-1111-4111-8111-111111111111", session = "22222222-2222-4222-8222-222222222222", proposalId = "33333333-3333-4333-8333-333333333333";
 const context = { actorKey: `${actor}:${session}:1`, tripId: actor, tripVersion: 3, dayId: "day", itemId: "item" };
@@ -135,4 +135,50 @@ test("reload's new authoritative version with old nonstale pending keeps origina
   for (const change of [{ baseTripVersion: 2 }, { stale: true }, { digest: null }, { patch: { ...read.proposal.patch, expectedVersion: 4 } }, { after: { ...read.proposal.after, version: 5 } }]) {
     assert.equal(addressReviewBlocked({ ...read, proposal: { ...read.proposal, ...change } } as typeof read, true, current), true);
   }
+});
+
+
+test("changed-head current read remains GET-only and never settles or clears the original unknown bytes", async () => {
+  const previous = globalThis.fetch, draft = intent(), originalBytes = draft.bytes;
+  const record = { intent: draft, phase: "unknown" }, ledger = new Map([["same-scope", record]]);
+  const calls: string[] = [];
+  globalThis.fetch = (async (_url: unknown, init?: RequestInit) => { calls.push(init?.method ?? "GET"); return Response.json({ trip: { id: actor, headVersion: 4 }, pending: null }); }) as typeof fetch;
+  try {
+    await readAddressCurrent(() => true, async () => { const response = await fetch(`/api/trips/${actor}`, { cache: "no-store", credentials: "same-origin" }); return response.json(); });
+    assert.equal(ledger.get("same-scope"), record); assert.equal(record.phase, "unknown");
+    assert.equal(draft.bytes, originalBytes); assert.equal(draft.receipt, null);
+    assert.deepEqual(calls, ["GET"]);
+  } finally { globalThis.fetch = previous; }
+});
+
+test("explicit local abandon clears only the confirmed same-scope unknown attempt and then reads without server undo", async () => {
+  const previous = globalThis.fetch, draft = intent(), other = intent();
+  const record = { intent: draft, phase: "unknown" }, sibling = { intent: other, phase: "unknown" };
+  const ledger = new Map([["same-scope", record], ["other-scope", sibling]]), originalBytes = draft.bytes;
+  assert.equal(abandonLocalAddressIntent(ledger, "same-scope", record, false, () => true), false);
+  assert.equal(draft.bytes, originalBytes);
+  assert.equal(abandonLocalAddressIntent(ledger, "same-scope", record, true, () => false), false); // Actor/route CAS changed.
+  assert.equal(abandonLocalAddressIntent(ledger, "other-scope", record, true, () => true), false);
+  assert.equal(ledger.size, 2);
+  assert.equal(abandonLocalAddressIntent(ledger, "same-scope", record, true, () => true), true);
+  assert.equal(ledger.has("same-scope"), false); assert.equal(draft.bytes, ""); assert.equal(ledger.get("other-scope"), sibling); assert.equal(other.bytes, originalBytes);
+  const calls: string[] = [];
+  globalThis.fetch = (async (url: unknown, init?: RequestInit) => { calls.push(`${init?.method ?? "GET"} ${url}`); return Response.json({ trip: { headVersion: 4 } }); }) as typeof fetch;
+  try {
+    await readAddressCurrent(() => true, async () => fetch(`/api/trips/${actor}`, { credentials: "same-origin", cache: "no-store" }));
+    assert.deepEqual(calls, [`GET /api/trips/${actor}`]);
+    assert.equal(draft.receipt, null); assert.equal(record.phase, "unknown"); // No forged server outcome.
+  } finally { globalThis.fetch = previous; }
+});
+
+test("current read refuses a new actor or route before callback and rejects late completion", async () => {
+  let calls = 0;
+  await assert.rejects(readAddressCurrent(() => false, async () => { calls++; }));
+  assert.equal(calls, 0);
+  let live = true;
+  await assert.rejects(readAddressCurrent(() => live, async () => { calls++; live = false; return { trip: { headVersion: 4 } }; }), /CONTEXT_CHANGED/);
+  assert.equal(calls, 1);
+  const record = { intent: intent(), phase: "handed" }, ledger = new Map([["scope", record]]);
+  assert.equal(abandonLocalAddressIntent(ledger, "scope", record, true, () => true), false);
+  assert.equal(ledger.size, 1);
 });

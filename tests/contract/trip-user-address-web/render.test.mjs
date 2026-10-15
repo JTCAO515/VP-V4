@@ -54,7 +54,7 @@ test('original proposal diff renders authoritative raw before/after only for exa
 const { TripAddressSection } = await import('../../../components/trip-address/TripAddressSection.tsx');
 test('real Section starts fail closed until verified claims, without rendering stale item facts', () => {
   const data = { trip: { id: 'trip', headVersion: 3 }, confirmationState: 'confirmed', content: { days: [{ id: 'day', items: [{ id: 'item', title: 'OLD_ACTOR_PRIVATE_ITEM' }] }] } };
-  const html = renderToStaticMarkup(React.createElement(TripAddressSection, { tripId: 'trip', data, locale: 'en', pending: null, blocked: false, settledEpoch: 'initial', onPrepared: () => {}, onAddressRequestBlockChange: () => {}, onAddressConfirmBlockChange: () => {} }));
+  const html = renderToStaticMarkup(React.createElement(TripAddressSection, { tripId: 'trip', data, locale: 'en', pending: null, blocked: false, settledEpoch: 'initial', onPrepared: () => {}, onReadCurrent: async () => {}, onAddressRequestBlockChange: () => {}, onAddressConfirmBlockChange: () => {} }));
   assert.match(html, /unavailable for the current identity/);
   assert.doesNotMatch(html, /OLD_ACTOR_PRIVATE_ITEM|textarea|Not provided/);
 });

@@ -81,3 +81,19 @@ export function addressReviewBlocked(pending: PendingProposalRead | null, qualif
   if (projection.kind === "unavailable") return projection.mayChangeAddress;
   return projection.changes.length > 0 && (!qualifiedRoot || current.snapshotTripId !== current.tripId);
 }
+
+/** Explicit local abandonment only; never rejection, server undo, or a success receipt. */
+export function abandonLocalAddressIntent<T extends { intent: AddressIntent; phase: string }>(ledger: Map<string, T>, key: string,
+  record: T, confirmed: boolean, live: () => boolean): boolean {
+  if (!confirmed || record.phase !== "unknown" || !live() || ledger.get(key) !== record) return false;
+  ledger.delete(key);
+  record.intent.bytes = "";
+  return true;
+}
+
+/** The parent owns its original GET-only reload and must fence its own publications too. */
+export async function readAddressCurrent(live: () => boolean, read: () => Promise<unknown>): Promise<void> {
+  if (!live()) throw Error("ADDRESS_CONTEXT_CHANGED");
+  await read();
+  if (!live()) throw Error("ADDRESS_CONTEXT_CHANGED");
+}

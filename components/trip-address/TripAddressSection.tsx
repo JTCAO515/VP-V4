@@ -5,7 +5,7 @@ import type { LocalTripRead } from "../canvas/TripContentEditor";
 import { TripItemAddress } from "./TripItemAddress";
 import { AddressProposalDiff } from "./AddressProposalDiff";
 import { useAddressActor } from "./useAddressActor";
-import { newAddressIntent, postAddressIntent, readAddressIntent, matchingAddressProposal, addressIntentSettled, addressReviewBlocked, type AddressIntent } from "./online-proposal";
+import { newAddressIntent, postAddressIntent, readAddressIntent, matchingAddressProposal, addressIntentSettled, addressReviewBlocked, abandonLocalAddressIntent, readAddressCurrent, type AddressIntent } from "./online-proposal";
 import type { AddressPrepare } from "./proposal";
 import type { AddressContext } from "./context";
 import { addressBindingKey, addressTripBindingKey, readCurrentAddressBinding, type CurrentAddressBinding, type CurrentAddressTripBinding } from "./current-binding";
@@ -23,6 +23,8 @@ export type TripAddressSectionProps = {
   /** Exact applied:<proposalId> or rejected:<proposalId> after authoritative terminal/cancellation readback. */
   settledEpoch: string;
   onPrepared: (proposal: PendingProposalRead) => void;
+  /** Original GET-only reloadAll, with parent actor/scope CAS on its own state publications. */
+  onReadCurrent: () => Promise<unknown>;
   /** Blocks other writers during dispatch/unknown ACK. Handed proposals use the original parent pending gate; Confirm stays available. */
   onAddressRequestBlockChange: (blocked: boolean) => void;
   /** Confirm-only guard. The parent must leave Reject/cancel/read enabled. */
@@ -33,6 +35,10 @@ export function TripAddressSection(props: TripAddressSectionProps) {
   const { actor, current } = useAddressActor();
   const [, setRevision] = useState(0);
   const [recovering, setRecovering] = useState(false);
+  const [readingCurrent, setReadingCurrent] = useState(false);
+  const readingCurrentRef = useRef(readingCurrent); readingCurrentRef.current = readingCurrent;
+  const [abandonFor, setAbandonFor] = useState<AddressIntent | null>(null);
+  const readAction = useRef(0);
   const [binding, setBinding] = useState<CurrentAddressBinding | null>(null);
   const [tripBinding, setTripBinding] = useState<CurrentAddressTripBinding | null>(null);
   const tripBindingRef = useRef(tripBinding); tripBindingRef.current = tripBinding;
@@ -46,12 +52,13 @@ export function TripAddressSection(props: TripAddressSectionProps) {
   const active = useRef(true);
   const scope = actor ? JSON.stringify([actor.identity, props.tripId]) : null;
   const currentIntent = scope ? intents.current.get(scope) : undefined;
+  const unknownHere = !!actor && current()?.key === actor.key && currentIntent?.phase === "unknown";
   const tripQualified = !!actor && current()?.key === actor.key && tripBinding?.actorKey === actor.key && tripBinding.tripKey === tripKey;
   const qualifiedRoot = !!actor && current()?.key === actor.key && binding?.actorKey === actor.key && binding.inputKey === inputKey
     && props.data.trip.id === props.tripId && props.data.confirmationState === "confirmed";
   const retainedUnknown = !actor && [...intents.current.values()].some(record => record.intent.context.tripId === props.tripId && record.phase !== "handed");
-  const ownBlocked = currentIntent !== undefined || retainedUnknown;
-  const requestLock = currentIntent !== undefined && currentIntent.phase !== "handed" || retainedUnknown;
+  const ownBlocked = readingCurrent || currentIntent !== undefined || retainedUnknown;
+  const requestLock = readingCurrent || currentIntent !== undefined && currentIntent.phase !== "handed" || retainedUnknown;
   const confirmLock = addressReviewBlocked(props.pending, qualifiedRoot, {
       tripId: props.tripId, snapshotTripId: props.data.trip.id, tripVersion: props.data.trip.headVersion,
       items: props.data.content.days.flatMap(day => (day.items ?? []).map(item => ({ dayId: day.id, itemId: item.id }))),
@@ -75,6 +82,10 @@ export function TripAddressSection(props: TripAddressSectionProps) {
     }).catch(() => { /* Failed current-Cookie reads never qualify inherited parent data. */ }).finally(() => clearTimeout(timeout));
     return () => { controller.abort(); clearTimeout(timeout); };
   }, [actor, inputKey, bindingRefresh, current]);
+
+  useEffect(() => {
+    readAction.current++; setReadingCurrent(false); setAbandonFor(null);
+  }, [actor?.key, props.tripId]);
 
   useEffect(() => {
     active.current = true;
@@ -110,7 +121,7 @@ export function TripAddressSection(props: TripAddressSectionProps) {
     const bound = recoveryOnly
       ? tripBindingRef.current?.actorKey === root?.key && tripBindingRef.current?.tripKey === addressTripBindingKey(p.tripId, p.data)
       : bindingRef.current?.actorKey === root?.key && bindingRef.current?.inputKey === addressBindingKey(p.tripId, p.data, p.pending);
-    if (!bound || !active.current || !root || root.identity !== identity || root.key !== context.actorKey
+    if (readingCurrentRef.current || !bound || !active.current || !root || root.identity !== identity || root.key !== context.actorKey
       || p.tripId !== context.tripId || p.data.trip.id !== context.tripId || p.data.trip.headVersion !== context.tripVersion
       || p.data.confirmationState !== "confirmed" || !p.data.content.days.some(day => day.id === context.dayId && day.items?.some(item => item.id === context.itemId))
       || document.visibilityState === "hidden" || navigator.onLine === false) return false;
@@ -173,9 +184,46 @@ export function TripAddressSection(props: TripAddressSectionProps) {
     finally { clearTimeout(timeout); if (transport.current === controller) transport.current = null; if (active.current) setRecovering(false); }
   }
 
+  async function readCurrent(abandon = false) {
+    const root = current();
+    if (!root || root.key !== actor?.key || !scope || readingCurrent) return;
+    const record = intents.current.get(scope);
+    if (!record || record.phase !== "unknown" || record.intent.identity !== root.identity) return;
+    const tripId = props.tripId, key = scope;
+    const live = () => active.current && current()?.key === root.key && current()?.identity === record.intent.identity
+      && liveProps.current.tripId === tripId && (abandon || intents.current.get(key) === record);
+    if (!live()) return;
+    if (abandon) {
+      if (abandonFor !== record.intent) return;
+      transport.current?.abort(); transport.current = null;
+      if (!abandonLocalAddressIntent(intents.current, key, record, true, live)) return;
+      setAbandonFor(null); setRevision(n => n + 1);
+    }
+    // A current read, or a changed head, never settles an unresolved attempt by itself.
+    bindingRef.current = null; tripBindingRef.current = null;
+    setBinding(null); setTripBinding(null); readingCurrentRef.current = true; setReadingCurrent(true);
+    const action = ++readAction.current;
+    liveProps.current.onAddressRequestBlockChange(true);
+    const read = liveProps.current.onReadCurrent;
+    try {
+      await readAddressCurrent(live, read);
+      if (live() && readAction.current === action) setBindingRefresh(n => n + 1);
+    } catch { /* Keep unknown bytes unless the user explicitly abandoned. Never report applied/rejected. */ }
+    finally { if (active.current && readAction.current === action) { readingCurrentRef.current = false; setReadingCurrent(false); } }
+  }
+
   const zh = props.locale === "zh";
   return <section className={styles.panel} aria-label={zh ? "当前行程地址" : "Current Trip addresses"} data-testid="trip-address-section">
-      {tripQualified && currentIntent?.phase === "unknown" ? <div role="status"><p>{zh ? "地址提案结果未知。保留原请求，仅重新读取原提案；不会重复提交。" : "Address proposal outcome unknown. Original request retained; recovery only rereads the original proposal."}</p><button type="button" disabled={recovering || props.blocked || props.pending !== null && matchingAddressProposal(props.pending, currentIntent.intent) === null || transport.current !== null} onClick={() => void recover()}>{zh ? "读取原提案状态" : "Read original proposal status"}</button></div> : null}
+    {unknownHere && currentIntent ? <div role="status">
+      <p>{zh ? "地址提案结果未知。原请求仍保留；读取当前行程不会自动认定原请求的结果。" : "Address proposal outcome unknown. Original request retained; reading the current Trip does not settle its outcome."}</p>
+      {tripQualified ? <button type="button" disabled={recovering || readingCurrent || props.blocked || props.pending !== null && matchingAddressProposal(props.pending, currentIntent.intent) === null || transport.current !== null} onClick={() => void recover()}>{zh ? "读取原提案状态" : "Read original proposal status"}</button> : null}
+      <button type="button" disabled={readingCurrent || recovering} onClick={() => void readCurrent()}>{zh ? "读取当前行程" : "Read current Trip"}</button>
+      {abandonFor === currentIntent.intent ? <div>
+        <p>{zh ? "确定放弃这次本地未决补充？这不会撤销或更改服务端结果，也不表示原请求失败。随后只读取当前行程。" : "Abandon this local unresolved addition? This does not undo or change the server result, or mean the original request failed. The current Trip will then be read."}</p>
+        <button type="button" disabled={readingCurrent || recovering} onClick={() => void readCurrent(true)}>{zh ? "确认放弃本地未决补充" : "Confirm local abandonment"}</button>
+        <button type="button" disabled={readingCurrent} onClick={() => setAbandonFor(null)}>{zh ? "保留未决请求" : "Keep unresolved request"}</button>
+      </div> : <button type="button" disabled={readingCurrent || recovering} onClick={() => setAbandonFor(currentIntent.intent)}>{zh ? "放弃本地未决补充（不会撤销服务端结果）" : "Abandon local unresolved addition (does not undo server result)"}</button>}
+    </div> : null}
     {!qualifiedRoot ? <div role="status"><p>{zh ? "当前身份或确认版本地址暂不可用。" : "Addresses are unavailable for the current identity or confirmed version."}</p><button type="button" onClick={() => { setBinding(null); setTripBinding(null); setBindingRefresh(n => n + 1); }}>{zh ? "重新读取当前行程与提案" : "Reread current Trip and proposal"}</button></div> : <>
 
       {contexts.map(({ title, context }) => <section key={`${context.dayId}:${context.itemId}`} aria-label={title}>
