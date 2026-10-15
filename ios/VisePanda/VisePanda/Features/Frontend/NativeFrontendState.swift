@@ -139,8 +139,11 @@ struct NativeFrontendMaterial: Identifiable { let id: String; var title: String;
 struct NativeFrontendMemory: Identifiable { let id: String; var title: String; var scope: String; let source: String }
 
 struct NativeFrontendBoundary: View {
+    @Environment(\.locale) private var locale
     var body: some View {
-        Label("体验示例 · 未连接真实服务", systemImage: "info.circle")
+        Label(locale.language.languageCode?.identifier == "zh"
+            ? "体验示例 · 未连接真实服务"
+            : "Local sample · Not connected to real services", systemImage: "info.circle")
             .font(.caption).foregroundStyle(.secondary).padding(.vertical, 6)
             .accessibilityIdentifier("frontend.sample.boundary")
     }
