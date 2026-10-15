@@ -16,7 +16,11 @@
       "conversation_schema": false,
       "result_infrastructure": true
     },
-    "postgres": "17.11 (Homebrew)"
+    "postgres": "17.11 (Homebrew)",
+    "trip_failure": {
+      "stage": "base_guard_or_unclassified",
+      "differences": []
+    }
   },
   "supabaseFailureCause": "UNKNOWN pending official CI vector"
 }
