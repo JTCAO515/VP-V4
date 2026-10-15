@@ -43,6 +43,54 @@ test("closed snapshot accepts reordered JSON but rejects every unknown/missing k
   visit(catalog);
 });
 
+test("closed input rejects hidden/symbol keys, accessors and non-plain objects without invoking getters", () => {
+  let getterCalls = 0;
+  const cases = [
+    (input) => Object.defineProperty(input, "hidden", { value: true }),
+    (input) => Object.defineProperty(input.products.subscription, "hidden", { value: true }),
+    (input) => { input[Symbol("extra")] = true; },
+    (input) => { input.researchOnly[Symbol("extra")] = true; },
+    (input) => Object.defineProperty(input, "schemaVersion", { get() { getterCalls++; return catalog.schemaVersion; }, enumerable: true }),
+    (input) => Object.defineProperty(input.products, "subscription", { get() { getterCalls++; return catalog.products.subscription; }, enumerable: true }),
+    (input) => Object.defineProperty(input.researchOnly, "0", { get() { getterCalls++; return catalog.researchOnly[0]; }, enumerable: true }),
+    (input) => Object.defineProperty(input, "schemaVersion", { value: catalog.schemaVersion, enumerable: false }),
+    (input) => Object.defineProperty(input.researchOnly, "0", { value: catalog.researchOnly[0], enumerable: false }),
+    (input) => Object.setPrototypeOf(input, { inherited: true }),
+    (input) => Object.setPrototypeOf(input.products.subscription, Date.prototype),
+    (input) => Object.setPrototypeOf(input.researchOnly, class CustomArray extends Array {}.prototype),
+    (input) => { input.products.subscription.period = new Map(Object.entries(input.products.subscription.period)); },
+    (input) => { input.researchOnly.length++; },
+    (input) => { delete input.researchOnly[0]; },
+  ];
+  for (const change of cases) {
+    const input = clone();
+    change(input);
+    assert.throws(() => validate(input));
+    assert.throws(() => presentation("en", input));
+    assert.throws(() => storekit(input));
+  }
+  assert.equal(getterCalls, 0);
+});
+
+test("closed input accepts plain/null-prototype JSON data and normal array length descriptors", () => {
+  function nullPrototypes(value) {
+    if (value === null || typeof value !== "object") return value;
+    const output = Array.isArray(value) ? [] : Object.create(null);
+    for (const [key, child] of Object.entries(value)) output[key] = nullPrototypes(child);
+    return output;
+  }
+  validate(nullPrototypes(clone()));
+  const nullArray = clone();
+  Object.setPrototypeOf(nullArray.researchOnly, null);
+  validate(nullArray);
+  validate(Object.freeze(clone()));
+  const input = clone();
+  assert.deepEqual(Object.getOwnPropertyDescriptor(input.researchOnly, "length"), {
+    value: catalog.researchOnly.length, writable: true, enumerable: false, configurable: false,
+  });
+  validate(input);
+});
+
 test("canonical graph is deeply immutable including all display projections", () => {
   function frozen(value) {
     if (value === null || typeof value !== "object") return;
