@@ -20,14 +20,14 @@ function raw(tx,family=tx,who=owner,changes={}){
 }
 export async function run(t){
  const resource=createOwnedPg({bin:process.env.SUBSCRIPTION_PG_BIN,module:process.env.SUBSCRIPTION_PG_MODULE});
- resource.start();
- let db=await resource.connect();let replacement;
- const fixture={cleanup:async()=>{if(replacement)await replacement.end();await resource.cleanup();}};
+ let db,replacement;
+ const fixture={cleanup:async()=>{try{if(replacement)await replacement.end();}finally{await resource.cleanup();}}};
  const query=(sql,values)=>db.query(sql,values);
  const apply=async(p,epoch)=>(await db.query('select subscription_development.apply_period_v1($1,$2) as r',[p,epoch])).rows[0].r;
  const read=async who=>(await db.query('select subscription_development.read_owner_v1($1) as r',[who])).rows[0].r;
  const fingerprint=async()=>digest((await db.query(`select jsonb_build_object('functions',(select jsonb_agg(pg_get_functiondef(oid) order by oid::regprocedure::text) from pg_proc where proname like 'storekit_%'), 'relations',(select jsonb_agg(row_to_json(c)) from (select relname,relacl,relrowsecurity,relforcerowsecurity from pg_class where oid='public.storekit_grants'::regclass)c),'constraints',(select jsonb_agg(pg_get_constraintdef(oid) order by conname) from pg_constraint where conrelid='public.storekit_grants'::regclass),'columns',(select jsonb_agg(row_to_json(a)) from (select attname,atttypid,attnotnull from pg_attribute where attrelid='public.storekit_grants'::regclass and attnum>0 order by attnum)a),'policies',(select jsonb_agg(row_to_json(p)) from (select * from pg_policies where tablename='storekit_grants')p),'rows',(select coalesce(jsonb_agg(to_jsonb(s)),'[]'::jsonb) from public.storekit_grants s)) as value`)).rows[0].value);
  try{
+  resource.start();db=await resource.connect();
   await db.query("create role anon; create role authenticated; create role service_role bypassrls; create schema auth; create function auth.uid() returns uuid language sql as 'select null::uuid'; create function auth.role() returns text language sql as 'select current_setting(''request.jwt.claim.role'',true)';");
   await db.query(legacy);const before=await fingerprint();
   await t.test('migration apply rollback leaves no schema, old table/functions/policy/data unchanged',async()=>{
