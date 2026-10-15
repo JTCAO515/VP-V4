@@ -1,0 +1,51 @@
+✔ full QA baseline lifecycle and only declared two-function append/rollback catalog proof (1355.184125ms)
+✔ real original Guide producer creates resolved blocked turn; ordinary owner context and real TS job execute without fixture grants (401.06425ms)
+✔ ordinary non-Guide submission and original resolver persist a matched subject; city mismatch does not borrow it (406.200375ms)
+✔ wrong actor, old turn, injected subject and duplicate completion cannot mutate another current binding/job (280.776542ms)
+✔ concurrent ordinary ensure and complete keep one original job/claim and no duplicated successful write (263.353458ms)
+✔ current source-withdrawal fences context, ensure and late completion (267.326ms)
+✔ current canonical-change fences context, ensure and late completion (254.960459ms)
+✔ current trip-head-change fences context, ensure and late completion (257.749458ms)
+✔ current reference-deletion fences context, ensure and late completion (257.046334ms)
+✔ current trip-deletion fences context, ensure and late completion (254.172334ms)
+✔ unknown completion ACK reconciles by the original done poll without another model or write (306.098417ms)
+✔ done read after actual source withdrawal cannot display stored success or run another model (289.628084ms)
+✔ client cancellation during the controlled model call never completes successfully or reruns on a fresh pending poll (260.92075ms)
+✖ deleted original session and a fresh same-owner session cannot revive the old selected binding (237.282333ms)
+✔ all declared lifecycle guards and original Guide/context/work ACL vectors remain intact after role/race/lifecycle cases (249.677208ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 14
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6017.093709
+
+✖ failing tests:
+
+test at tests/contract/agent-grounded-result/subject-binding-postgres.test.mjs:31:22
+✖ deleted original session and a fresh same-owner session cannot revive the old selected binding (237.282333ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /UNAUTHENTICATED/. Input:
+
+  'error: SESSION_REPLACED'
+
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/contract/agent-grounded-result/subject-binding-postgres.test.mjs:263:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: error: SESSION_REPLACED
+        at /Users/jtsm5p/Documents/Codex/2026-10-13/v10-main/agent008-pg-client-20261015/node_modules/pg/lib/client.js:535:17
+        at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+        at async actorRpc (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/contract/agent-grounded-result/subject-binding-postgres.test.mjs:92:17)
+        at async waitForActual (node:assert:615:5)
+        at async strict.rejects (node:assert:738:25)
+        at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/contract/agent-grounded-result/subject-binding-postgres.test.mjs:263:2)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:974:7),
+    expected: /UNAUTHENTICATED/,
+    operator: 'rejects',
+    diff: 'simple'
+  }

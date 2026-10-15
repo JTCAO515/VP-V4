@@ -1,0 +1,36 @@
+✔ only bounded documentation pull requests use the smaller check set (0.368834ms)
+✔ runtime, contracts, unknown files and both sides of moves retain full checks (0.141041ms)
+✔ the known product-planning set uses documentation checks, while a single runtime change retains full checks (0.039458ms)
+✔ actual Git comparison includes both sides of a runtime-to-document rename (301.365208ms)
+✔ missing, invalid or unavailable comparison inputs fall back to the complete gate (10.08975ms)
+✔ affected selector docs/backend/native/UI/SQL matrices preserve required real checks (0.800083ms)
+✔ CI policy changes and unknown/unavailable/manual inputs fail closed to the full superset (16.752417ms)
+✔ actual registered test lane is selected while known Web failure coverage cannot be narrowed away (5.603ms)
+✔ wiki source imports select native PostgreSQL persistence and Ops readers without making all server full (0.131292ms)
+✔ static output tests always select their build prerequisite, while native and contract-only changes stay bounded (0.146584ms)
+✔ resolved-subject source and tests select the independent PG17 lane without losing existing gates (5.506292ms)
+✔ every gated integration test file is in a DB integration lane or on the reasoned allowlist (11.433708ms)
+✔ a DB integration lane fails on skip, todo, cancel, failure, non-zero exit or a missing summary (0.486333ms)
+✔ DB Integration dynamically selects lanes with a stable fail-closed aggregate and real classification (25.885875ms)
+✔ deduplicated four PG workflows keep manual commands covered by the selected postgres step (0.906709ms)
+✔ every workflow declares least-privilege token permissions (1.688916ms)
+✔ the self-hosted iOS runner never executes fork pull request code (0.21575ms)
+✔ stable DB aggregate executes strict result predicates for empty/full/error/cancel states (30.565959ms)
+✔ native PR uses unsigned build or affected permission/data code tests; manual remains full (46.793416ms)
+✔ changed noncritical native test classes and unknown native sources are never omitted (33.091208ms)
+✔ bounded CI shards preserve every logical step exactly once and reject malformed partitions (0.566291ms)
+✔ CI matrix CLI and actual workflow projection fail before emitting an output on bad plans (451.645083ms)
+✔ pinned images pull only exact official GHCR digests and fail closed (59.129292ms)
+✔ security workflows prepare the exact official Node fixture before offline tests (16.326584ms)
+✔ hosted worker prepares the identical GHCR database pin without ECR network access (5.587333ms)
+✔ resolved-subject PG17 lane is unique, explicit, bounded, and cannot weaken the old Wiki lane (5.651459ms)
+✔ PG17 CI preparation retains the old Wiki job and uses official major17 without starting default services (2.699667ms)
+✔ PG17 setup mock preserves existing files and propagates install/version failures without Linux or network execution (1220.426917ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 28
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1957.411958

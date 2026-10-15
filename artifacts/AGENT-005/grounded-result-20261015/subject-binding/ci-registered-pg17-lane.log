@@ -1,0 +1,110 @@
+
+::group::postgres-native-17 / grounded-subject-native-17
+TAP version 13
+# Subtest: full QA baseline lifecycle and only declared two-function append/rollback catalog proof
+ok 1 - full QA baseline lifecycle and only declared two-function append/rollback catalog proof
+  ---
+  duration_ms: 1896.349292
+  type: 'test'
+  ...
+# Subtest: real original Guide producer creates resolved blocked turn; ordinary owner context and real TS job execute without fixture grants
+ok 2 - real original Guide producer creates resolved blocked turn; ordinary owner context and real TS job execute without fixture grants
+  ---
+  duration_ms: 475.395083
+  type: 'test'
+  ...
+# Subtest: ordinary non-Guide submission and original resolver persist a matched subject; city mismatch does not borrow it
+ok 3 - ordinary non-Guide submission and original resolver persist a matched subject; city mismatch does not borrow it
+  ---
+  duration_ms: 472.931459
+  type: 'test'
+  ...
+# Subtest: wrong actor, old turn, injected subject and duplicate completion cannot mutate another current binding/job
+ok 4 - wrong actor, old turn, injected subject and duplicate completion cannot mutate another current binding/job
+  ---
+  duration_ms: 347.998417
+  type: 'test'
+  ...
+# Subtest: concurrent ordinary ensure and complete keep one original job/claim and no duplicated successful write
+ok 5 - concurrent ordinary ensure and complete keep one original job/claim and no duplicated successful write
+  ---
+  duration_ms: 329.668875
+  type: 'test'
+  ...
+# Subtest: current source-withdrawal fences context, ensure and late completion
+ok 6 - current source-withdrawal fences context, ensure and late completion
+  ---
+  duration_ms: 348.508959
+  type: 'test'
+  ...
+# Subtest: current canonical-change fences context, ensure and late completion
+ok 7 - current canonical-change fences context, ensure and late completion
+  ---
+  duration_ms: 334.361583
+  type: 'test'
+  ...
+# Subtest: current trip-head-change fences context, ensure and late completion
+ok 8 - current trip-head-change fences context, ensure and late completion
+  ---
+  duration_ms: 347.361125
+  type: 'test'
+  ...
+# Subtest: current reference-deletion fences context, ensure and late completion
+ok 9 - current reference-deletion fences context, ensure and late completion
+  ---
+  duration_ms: 332.999958
+  type: 'test'
+  ...
+# Subtest: current trip-deletion fences context, ensure and late completion
+ok 10 - current trip-deletion fences context, ensure and late completion
+  ---
+  duration_ms: 328.60925
+  type: 'test'
+  ...
+# Subtest: unknown completion ACK reconciles by the original done poll without another model or write
+ok 11 - unknown completion ACK reconciles by the original done poll without another model or write
+  ---
+  duration_ms: 376.216291
+  type: 'test'
+  ...
+# Subtest: done read after actual source withdrawal cannot display stored success or run another model
+ok 12 - done read after actual source withdrawal cannot display stored success or run another model
+  ---
+  duration_ms: 356.27375
+  type: 'test'
+  ...
+# Subtest: client cancellation during the controlled model call never completes successfully or reruns on a fresh pending poll
+ok 13 - client cancellation during the controlled model call never completes successfully or reruns on a fresh pending poll
+  ---
+  duration_ms: 331.10775
+  type: 'test'
+  ...
+# Subtest: the original Guide command rejects changed input bytes instead of reusing an old selected context
+ok 14 - the original Guide command rejects changed input bytes instead of reusing an old selected context
+  ---
+  duration_ms: 295.466
+  type: 'test'
+  ...
+# Subtest: deleted original session and a fresh same-owner session cannot revive the old selected binding
+ok 15 - deleted original session and a fresh same-owner session cannot revive the old selected binding
+  ---
+  duration_ms: 312.883542
+  type: 'test'
+  ...
+# Subtest: all declared lifecycle guards and original Guide/context/work ACL vectors remain intact after role/race/lifecycle cases
+ok 16 - all declared lifecycle guards and original Guide/context/work ACL vectors remain intact after role/race/lifecycle cases
+  ---
+  duration_ms: 288.763125
+  type: 'test'
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 8002.846833
+::endgroup::
+VP_DB_INTEGRATION_RESULT {"lane":"postgres-native-17","step":"grounded-subject-native-17","files":1,"tests":16,"pass":16,"fail":0,"cancelled":0,"skipped":0,"todo":0,"runs":1,"seconds":8,"outcome":"passed","problems":[]}

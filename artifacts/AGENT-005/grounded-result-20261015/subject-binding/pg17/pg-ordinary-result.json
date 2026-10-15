@@ -1,0 +1,11 @@
+{
+  "role": "authenticated",
+  "producer": "submit_grounded_turn + original service-role worker resolver",
+  "matched": true,
+  "persistedSubject": true,
+  "guideBindingRows": 0,
+  "ordinaryOutcome": "answered",
+  "otherCityResolution": "unavailable",
+  "sourceScope": "shanghai only",
+  "GoTrue": "UNRUN"
+}
