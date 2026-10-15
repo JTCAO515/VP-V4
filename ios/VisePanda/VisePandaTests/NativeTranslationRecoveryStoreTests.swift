@@ -363,4 +363,32 @@ import Testing
         #expect(store.phrases.allSatisfy { $0.original != unrelatedBody })
         #expect(f.posts.count == 1)
     }
+
+    @Test func pendingPrivatePhraseThenUnknownNullHidesOriginalAndKeepsIdentity() async throws {
+        let f = TranslationStoreFixture(), store = f.makeStore()
+        await f.send(store)
+        let original = try #require(try f.journal.read(f.scope))
+        f.state = "pending"; f.nullPhrase = false
+        await store.load(scope: f.scope, request: f.request)
+        let previous = try #require(store.phrases.first)
+        #expect(previous.original == f.original && store.recoveryRecord == original)
+        f.state = "unknown"; f.nullPhrase = true
+        await store.load(scope: f.scope, request: f.request)
+        #expect(store.phrases.isEmpty && store.recoveredTurnID == nil && !store.phrases.contains(previous))
+        #expect(store.recoveryStatus == .unknown && store.hasUnresolvedRecovery)
+        #expect(try f.journal.read(f.scope) == original && f.vault.removes == 0 && f.posts.count == 1)
+    }
+
+    @Test func completedRecoveryThenHistoryMissingCannotResurrectPrivatePhrase() async throws {
+        let f = TranslationStoreFixture(), store = f.makeStore()
+        await f.send(store)
+        f.state = "translated"; f.nullPhrase = false
+        await store.load(scope: f.scope, request: f.request)
+        let previous = try #require(store.phrases.first)
+        #expect(try f.journal.read(f.scope) == nil)
+        #expect(!store.hasUnresolvedRecovery && store.recoveredTurnID == previous.id)
+        await store.load(scope: f.scope, request: f.request) // Current history has no such Turn.
+        #expect(store.phrases.isEmpty && store.recoveredTurnID == nil && !store.phrases.contains(previous))
+        #expect(f.gets == 1 && f.posts.count == 1 && f.vault.removes == 1)
+    }
 }

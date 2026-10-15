@@ -321,6 +321,12 @@ final class NativeTranslationStore {
 
     private func refresh(own: UUID, currentScope: CurrentScope?, request: Request) async throws {
         try check(own, currentScope)
+        // A previous recovery response is not authority for this new read. The
+        // current recovery GET or current history must qualify the phrase anew.
+        if let previous = recoveredPhrase {
+            phrases.removeAll { $0.id == previous.id }
+            recoveredPhrase = nil
+        }
         let data = try await request("api/translate/policy", "GET", nil)
         try check(own, currentScope)
         let reply = try JSONDecoder().decode(NativeTextPolicyReply.self, from: data)
@@ -366,6 +372,8 @@ final class NativeTranslationStore {
         }
         recoveryStatus = .checking
         let identity = original.identity
+        phrases.removeAll { $0.id == identity.turnId }
+        if recoveredPhrase?.id == identity.turnId { recoveredPhrase = nil }
         var components = URLComponents()
         components.path = "api/translate/recovery/" + identity.turnId
         components.queryItems = ["threadId": identity.threadId, "idempotencyKey": identity.idempotencyKey,
