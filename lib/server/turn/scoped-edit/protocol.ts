@@ -1,3 +1,4 @@
+import { omitOnlineUserAddresses } from "../../trip/address/egress.ts";
 import { createHash } from 'node:crypto';
 import { exact, record, uuid, digest, integer, type CandidateEdit } from '../../trip/scoped-edit/contract.ts';
 import { parseScopedContext, sameValue, type ScopedEditContext } from '../../trip/scoped-edit/wire.ts';
@@ -36,7 +37,7 @@ export function parseInput(v: unknown, lease: DurableTurnLease, now: number): Sc
 }
 /** Identity and recipient keys stay outside the prompt. Sources are never citations. */
 export function promptInput(input: ScopedInput): string {
-  return JSON.stringify({ask: input.text, locale: input.locale, trip: input.context.snapshot, scope: input.context.scope,
+  return JSON.stringify({ask: input.text, locale: input.locale, trip: omitOnlineUserAddresses(input.context.snapshot), scope: input.context.scope,
     lockedItemIds: input.context.lockedItemIds, fixedItemIds: input.context.fixedItemIds, profile: input.profile, memory: input.memory});
 }
 export function authorized(v: unknown, binding: ScopedBinding, effect: 'reserve' | 'dispatch' | 'publish'): boolean {

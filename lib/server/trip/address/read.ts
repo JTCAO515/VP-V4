@@ -18,13 +18,14 @@ export type OnlineItemAddressRead =
 
 /** Input is an ordinary authenticated current ItemSupport RPC result, never a source eligibility grant. */
 export function readOnlineItemAddress(context: AddressContext, manual: unknown, rawSupport: unknown, now = Date.now()): OnlineItemAddressRead {
+  const unavailable = (): OnlineItemAddressRead => ({ kind: 'addresses', context: { ...context }, userProvided: readUserProvidedAddress(manual), reference: { kind: 'unavailable' } });
   const decoded = decodeNativeSupportResult('read', rawSupport, context.tripId,
     { expectedTripVersion: context.tripVersion, dayId: context.dayId, itemId: context.itemId });
-  if (!decoded || typeof decoded !== 'object') return { kind: 'unavailable' };
+  if (!decoded || typeof decoded !== 'object') return unavailable();
   const value = decoded as { kind: string; entries?: Record<string, unknown>[] };
   if (value.kind === 'stale' || value.kind === 'conflict') return { kind: 'conflict' };
-  if (value.kind === 'blocked') return { kind: 'blocked' };
-  if (value.kind !== 'support' || !Array.isArray(value.entries)) return { kind: 'unavailable' };
+  if (value.kind === 'blocked') return unavailable();
+  if (value.kind !== 'support' || !Array.isArray(value.entries)) return unavailable();
   const addresses = value.entries.filter(entry => entry.scope === 'address_reference');
   const entries: AddressReference[] = [];
   for (const entry of addresses) {
