@@ -49,16 +49,16 @@ for (const name of ['expired', 'source-revoked', 'missing', 'wrong-scope']) test
   const out = await runGroundedWikiSearch(input, deps(statements, answer(statements), async () => read(++reads === 1 ? statements : [])), signal());
   assert.equal(reads, 2); assert.equal(out.kind, 'unavailable');
 });
-test('different wording for one triple is not a contradiction classifier', async () => {
+test('different projected wording remains unresolved under the existing variant gate, without asserting semantic contradiction', async () => {
   const alternative = { ...statements[0], factId: 'other', assertionId: 'other-a', text: 'Ask the merchant whether card payments are supported.' };
   const rows = [...statements, alternative];
   const out = await runGroundedWikiSearch(input, deps(rows), signal());
-  assert.equal(out.kind, 'answered'); assert.equal(out.coverage, 'answered'); assert.equal(out.conflicts.length, 0);
+  assert.equal(out.kind, 'answered'); assert.equal(out.coverage, 'partial'); assert.equal(out.summary, statements[1].text); assert.ok(out.conflicts[0].includes(claims[0].objectId));
 });
 test('unlocalized model disagreement retains reliable statements with explicit uncertainty and no free model conflict prose', async () => {
   const rows = [...statements, { ...statements[0], factId:'other', assertionId:'other-a',text:'Card acceptance varies by merchant.' }];
   const out = await runGroundedWikiSearch(input,deps(rows,answer(rows,{conflicts:['Invented private dispute']})),signal());
-  assert.equal(out.kind,'answered');assert.equal(out.coverage,'partial');assert.equal(out.summary,rows.map(s=>s.text).join('\n'));
+  assert.equal(out.kind,'answered');assert.equal(out.coverage,'partial');assert.equal(out.summary,statements[1].text);
   assert.ok(out.conflicts.length);assert.ok(out.gaps.length);assert.ok(!JSON.stringify(out).includes('private dispute'));
 });
 test('same fact with two agreeing published evidence chains stays answerable', async () => {
@@ -154,4 +154,45 @@ test('resolved place partial answer retains reliable claim and names the missing
   const rows=[{...statements[0],assertion:claim}];
   const out=await runGroundedWikiSearch(placeInput,deps(rows),signal());
   assert.equal(out.kind,'answered');assert.equal(out.coverage,'partial');assert.ok(out.gaps[0].includes('opening_hours'));
+});
+test('a valid background citation cannot hide complete exact obligations from bounded fallback', async () => {
+  const background={...statements[0],factId:'background',assertionId:'background-a',assertion:{...statements[0].assertion,subjectId:'other_subject'}};
+  const rows=[...statements,background];
+  const out=await runGroundedWikiSearch(input,deps(rows,answer([background])),signal());
+  assert.equal(out.kind,'answered');assert.equal(out.coverage,'answered');assert.equal(out.evidence.required.filter(c=>c.status==='covered').length,2);
+});
+test('model omission of a current place evidence variant cannot assert full coverage', async () => {
+  const placeInput={...input,intent:{intent:'place_address_and_hours',requestScope:'single',placeName:'Fixture Pavilion'},placeSubjectId:'fixture_pavilion'};
+  const required=questionDefinition(placeInput.intent.intent,placeInput.placeSubjectId).claims;
+  const rows=required.map((claim,i)=>({...statements[i],assertion:claim,text:i?'Open from 09:00 to 17:00.':'Address: Fixture Road 1.'}));
+  const variant={...rows[1],factId:'hours-variant',assertionId:'hours-variant-a',text:'Open from 11:00 to 18:00.'};
+  const out=await runGroundedWikiSearch(placeInput,deps([...rows,variant],answer(rows)),signal());
+  assert.equal(out.kind,'answered');assert.equal(out.coverage,'partial');assert.equal(out.summary,rows[0].text);
+  assert.equal(out.evidence.required[1].status,'unresolved');assert.ok(out.conflicts.some(c=>c.includes('opening_hours')));
+});
+test('variant guard compares assertion qualifiers outside the model-selected citation', async () => {
+  const rows=[...statements,{...statements[0],factId:'qualified',assertionId:'qualified-a',assertion:{...statements[0].assertion,conditions:['reservation_required']}}];
+  const out=await runGroundedWikiSearch(input,deps(rows,answer(statements)),signal());
+  assert.equal(out.coverage,'partial');assert.equal(out.summary,statements[1].text);assert.equal(out.evidence.required[0].status,'unresolved');
+});
+test('structured value differences cannot be hidden by identical localized text', async () => {
+  const placeInput={...input,intent:{intent:'place_address_and_hours',requestScope:'single',placeName:'Fixture Pavilion'},placeSubjectId:'fixture_pavilion'};
+  const required=questionDefinition(placeInput.intent.intent,placeInput.placeSubjectId).claims;
+  const rows=required.map((claim,i)=>({...statements[i],assertion:claim,...(i?{value:{startsAt:'2026-10-15T01:00:00Z',endsAt:'2026-10-15T09:00:00Z',timeZone:'Asia/Shanghai'}}:{})}));
+  const variant={...rows[1],factId:'value-variant',assertionId:'value-variant-a',value:{...rows[1].value,startsAt:'2026-10-15T03:00:00Z'}};
+  const out=await runGroundedWikiSearch(placeInput,deps([...rows,variant],answer(rows)),signal());
+  assert.equal(out.coverage,'partial');assert.equal(out.summary,rows[0].text);assert.equal(out.evidence.required[1].status,'unresolved');
+});
+test('projected variants use JSONB object equality rather than JavaScript property order', async () => {
+  const assertion=statements[0].assertion;
+  const support={...statements[0],factId:'ordered',assertionId:'ordered-a',assertion:{objectId:assertion.objectId,predicate:assertion.predicate,subjectId:assertion.subjectId}};
+  const out=await runGroundedWikiSearch(input,deps([...statements,support]),signal());
+  assert.equal(out.coverage,'answered');assert.equal(out.evidence.required[0].refs.length,2);
+});
+test('fallback does not grant new evidence to a persisted result after its own sources were revoked', async () => {
+  const stored=await runGroundedWikiSearch(input,deps(statements),signal());
+  const replacements=statements.map((s,i)=>({...s,factId:`new-${i}`,assertionId:`new-a-${i}`}));
+  const rpc=async()=>({data:{kind:'done',status:'succeeded',outcome:stored},error:null});
+  const out=await runGroundedAiAssistJob('turn',rpc,input,{...deps(replacements),fetch:async()=>{throw Error('must not run');},contextRpc:async()=>({data:context,error:null})},signal());
+  assert.equal(out.outcome.kind,'unavailable');
 });

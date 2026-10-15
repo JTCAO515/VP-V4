@@ -90,20 +90,26 @@ export async function runGroundedWikiSearch(
   // The existing corpus adapter discards subjectId. Retain it locally from
   // the same authorized response; never infer an entity from model prose.
   let subjects = new Map<string, string>();
+  let variants = new Map<string, string>();
   const scopedRpc: KnowledgeReadRpc = async (name, params) => {
     const reply = await dependencies.rpc(name, params);
     subjects = new Map();
+    variants = new Map();
     const data = reply.data;
     if (data && typeof data === "object" && "statements" in data && Array.isArray(data.statements)) {
       for (const row of data.statements) {
         if (row && typeof row === "object" && typeof row.factId === "string"
-          && row.assertion && typeof row.assertion.subjectId === "string") subjects.set(row.factId, row.assertion.subjectId);
+          && row.assertion && typeof row.assertion.subjectId === "string") {
+          subjects.set(row.factId, row.assertion.subjectId);
+          variants.set(row.factId, projectionVariant(row));
+        }
       }
     }
     return reply;
   };
   const corpusOutcome = await buildPublishedWikiCorpus(scopedRpc, { city: input.city, scene, locale: input.locale });
   const originalSubjects = subjects;
+  const originalVariants = variants;
   if (corpusOutcome.kind === "unavailable") {
     return { kind: "unavailable", reason: corpusOutcome.code === "KNOWLEDGE_DISABLED" ? "policy_denied" : "provider_failure", providerCode: corpusOutcome.code };
   }
@@ -116,7 +122,7 @@ export async function runGroundedWikiSearch(
   );
   switch (outcome.kind) {
     case "answered": {
-      return finalizeAnswer(input, signal, definition, scene, corpusOutcome, originalSubjects, scopedRpc, () => subjects, outcome);
+      return finalizeAnswer(input, signal, definition, scene, corpusOutcome, originalSubjects, originalVariants, scopedRpc, () => subjects, () => variants, outcome);
     }
     case "budget_exhausted":
       return { kind: "budget_exhausted", rounds: outcome.rounds, queries: outcome.queries, usage: outcome.usage };
@@ -131,8 +137,10 @@ async function finalizeAnswer(
   input: GroundedSearchInput, signal: AbortSignal,
   definition: ReturnType<typeof questionDefinition>, scene: string,
   corpusOutcome: Extract<PublishedCorpusOutcome, { kind: "corpus" }>, originalSubjects: ReadonlyMap<string, string>,
+  originalVariants: ReadonlyMap<string, string>,
   scopedRpc: KnowledgeReadRpc, currentSubjects: () => ReadonlyMap<string, string>,
-  outcome: Extract<WikiSearchJobOutcome, { kind: "answered" }>,
+  currentVariants: () => ReadonlyMap<string, string>,
+  outcome: Extract<WikiSearchJobOutcome, { kind: "answered" }>, allowLookup = true,
 ): Promise<GroundedSearchOutcome> {
   if (signal.aborted) return { kind: "cancelled", rounds: outcome.rounds, usage: outcome.usage };
   // No resolved place subject or conflict-to-claim relation is exposed by
@@ -159,27 +167,53 @@ async function finalizeAnswer(
     });
     return match ? [match] : [];
   });
-  const proposed = outcome.coverage === "no_content"
-    ? [...new Map([...primary, ...lookup].map((entry) => [entry.pageKey, entry])).values()].slice(0, 8)
-      .map((entry) => ({ pageKey: entry.pageKey, quote: entry.text }))
-    : outcome.citations;
-  const currentCitations = proposed.filter((citation) => {
+  const stillCurrent = (citation: WikiSearchCitation): boolean => {
     const previous = corpusOutcome.entries.find((entry) => entry.pageKey === citation.pageKey);
     const now = current.entries.find((entry) => entry.pageKey === citation.pageKey);
     const before = corpusOutcome.provenance.get(citation.pageKey);
     const after = current.provenance.get(citation.pageKey);
-    return previous && now && previous.text === now.text && before && after
+    return !!(previous && now && previous.text === now.text && before && after
       && originalSubjects.get(citation.pageKey) === currentSubjects().get(citation.pageKey)
+      && originalVariants.get(citation.pageKey) === currentVariants().get(citation.pageKey)
       && before.publicationId === after.publicationId && before.predicate === after.predicate
-      && before.objectId === after.objectId && JSON.stringify(before.sourceIds) === JSON.stringify(after.sourceIds);
-  });
+      && before.objectId === after.objectId && JSON.stringify(before.sourceIds) === JSON.stringify(after.sourceIds));
+  };
   // A free-text model disagreement cannot label a claim as conflicting.
   // Keep independently authorized statements and expose bounded uncertainty
   // without choosing one version or inventing a conflict resolver.
   const conflicts = outcome.conflicts.length ? [input.locale === "zh"
     ? "模型报告的分歧尚未定位到具体证据；请核对所列已发布资料。"
     : "Reported disagreement is not mapped to evidence; verify the listed published sources."] : [];
-  const citations = currentCitations.slice(0, 8);
+  // Reuse the resolver's unresolved_variants rule across the whole current
+  // exact-obligation set, including evidence the model did not cite. Compare
+  // the structured projection, not a semantic/NLP contradiction heuristic.
+  // Missing full bilingual expressions/value cannot prove complete equality;
+  // this gate detects distinctions observable in this authorized projection.
+  const unresolved = new Set<string>();
+  for (const claim of definition.claims) {
+    const candidates = current.entries.filter((entry) => {
+      const prov = current.provenance.get(entry.pageKey);
+      return prov && currentSubjects().get(entry.pageKey) === claim.subjectId
+        && prov.predicate === claim.predicate && prov.objectId === claim.objectId;
+    });
+    if (new Set(candidates.map((entry) => currentVariants().get(entry.pageKey))).size > 1) {
+      candidates.forEach((entry) => unresolved.add(entry.pageKey));
+      conflicts.push(input.locale === "zh" ? `存在未消歧的已发布证据变体：${claim.objectId}。`
+        : `Unresolved published evidence variants: ${claim.objectId}.`);
+    }
+  }
+  const modelHasRequired = outcome.citations.some((citation) => {
+    const prov = current.provenance.get(citation.pageKey);
+    return stillCurrent(citation) && !unresolved.has(citation.pageKey) && definition.claims.some((claim) => prov
+      && currentSubjects().get(citation.pageKey) === claim.subjectId
+      && prov.predicate === claim.predicate && prov.objectId === claim.objectId);
+  });
+  const proposed = allowLookup && (outcome.coverage === "no_content" || !modelHasRequired)
+    ? [...new Map([...primary, ...lookup].map((entry) => [entry.pageKey, entry])).values()].slice(0, 8)
+      .map((entry) => ({ pageKey: entry.pageKey, quote: entry.text }))
+    : outcome.citations;
+  const currentCitations = proposed.filter(stillCurrent);
+  const citations = currentCitations.filter((citation) => !unresolved.has(citation.pageKey)).slice(0, 8);
   // Only exact triples can satisfy obligations. The public provenance
   // contract remains unchanged; background retains its separate refs.
   const requiredProvenance = new Map([...current.provenance].filter(([id, prov]) => definition.claims.some((claim) =>
@@ -190,7 +224,7 @@ async function finalizeAnswer(
   const gaps = initialPack.required.filter((claim) => claim.status === "unresolved").map((claim) =>
     input.locale === "zh" ? `缺少获准证据：${claim.claimId}。请补充当前已发布资料。`
       : `Missing authorized evidence: ${claim.claimId}. Check current published information.`);
-  if (conflicts.length) gaps.push(input.locale === "zh" ? "分歧涉及哪些要求尚不明确；请先核对已发布资料。"
+  if (outcome.conflicts.length) gaps.push(input.locale === "zh" ? "分歧涉及哪些要求尚不明确；请先核对已发布资料。"
     : "The affected obligations are unknown; verify published sources before relying on the answer.");
   const requiredPack = buildEvidencePack(citations, requiredProvenance, definition.claims, gaps, conflicts);
   const allPack = buildEvidencePack(citations, current.provenance, [], gaps, conflicts);
@@ -212,11 +246,16 @@ export async function revalidateGroundedWikiSearchResult(
   const definition = questionDefinition(input.intent.intent, input.placeSubjectId);
   if (!definition) return { kind: "unavailable", reason: "user_input_missing" };
   let subjects = new Map<string, string>();
+  let variants = new Map<string, string>();
   const rpc: KnowledgeReadRpc = async (name, params) => {
     const reply = await dependencies.rpc(name, params);
     subjects = new Map();
+    variants = new Map();
     if (reply.data && typeof reply.data === "object" && "statements" in reply.data && Array.isArray(reply.data.statements)) {
-      for (const row of reply.data.statements) if (row && typeof row.factId === "string" && typeof row.assertion?.subjectId === "string") subjects.set(row.factId, row.assertion.subjectId);
+      for (const row of reply.data.statements) if (row && typeof row.factId === "string" && typeof row.assertion?.subjectId === "string") {
+        subjects.set(row.factId, row.assertion.subjectId);
+        variants.set(row.factId, projectionVariant(row));
+      }
     }
     return reply;
   };
@@ -232,6 +271,16 @@ export async function revalidateGroundedWikiSearchResult(
       ref.statementId === citation.pageKey && ref.publicationId === prov.publicationId
       && JSON.stringify(ref.sourceIds) === JSON.stringify(prov.sourceIds) && ref.span === citation.quote);
   });
-  return finalizeAnswer(input, signal, definition, definition.scene, corpus, subjects, rpc, () => subjects,
-    { ...outcome, citations });
+  return finalizeAnswer(input, signal, definition, definition.scene, corpus, subjects, variants, rpc, () => subjects, () => variants,
+    { ...outcome, citations }, false);
+}
+
+/** The RPC projection is data already qualified by the corpus parser. JSONB
+ * object key order is irrelevant; ordered arrays and omitted values stay exact. */
+function projectionVariant(row: Record<string, unknown>): string {
+  const canonical = (value: unknown): unknown => Array.isArray(value) ? value.map(canonical)
+    : value && typeof value === "object" ? Object.fromEntries(Object.entries(value)
+      .sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0).map(([key, field]) => [key, canonical(field)])) : value;
+  return JSON.stringify(canonical([row.assertion, { text: row.text, conditions: row.conditions, exclusions: row.exclusions },
+    Object.hasOwn(row, "value") ? row.value : null]));
 }
