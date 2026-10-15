@@ -7,8 +7,9 @@ import type { HttpProviderConfiguration } from "../../model-gateway/adapters/htt
 import { buildEvidencePack, type EvidencePack } from "./evidence-pack.ts";
 
 /** Published Wiki search with server-owned obligation coverage and a current
- * evidence gate for display text. Place questions without a resolved subject
- * cannot assert coverage; existing reasons and consumer unions stay intact. */
+ * evidence gate for display text. Place coverage requires an explicitly supplied
+ * first-party resolved placeSubjectId; a place name or a relevant hit is not
+ * entity resolution. Existing reasons and consumer unions stay intact. */
 
 export type GroundedSearchInput = Readonly<{
   intent: KnowledgeIntent;
@@ -62,10 +63,10 @@ const HARD_MAX_ROUNDS = 6;
  * and the frozen eval harness use that same fixed value). This never
  * lowers what a caller explicitly requested (a single-claim question keeps
  * its caller's existing budget unchanged) and never exceeds
- * runWikiSearchJob's own independently-enforced hard bound. Place
- * questions (requiredClaimCount 0, since this module never resolves a
- * placeSubjectId -- see the EvidencePack comment above) are unaffected,
- * matching that existing scope decision.
+ * runWikiSearchJob's own independently-enforced hard bound. An explicitly
+ * resolved place subject supplies the place question's real required claims
+ * and participates in the same tuning. Without that subject, the claim count
+ * is zero and this module cannot assert an answered place result.
  */
 export function tunedMaxRounds(requestedMaxRounds: number, requiredClaimCount: number): number {
   return Math.max(requestedMaxRounds, Math.min(HARD_MAX_ROUNDS, requiredClaimCount + 1));
