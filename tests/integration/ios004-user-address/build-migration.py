@@ -104,6 +104,26 @@ do $$begin
  or encode(sha256(convert_to((select prosrc from pg_proc where oid='export_private.trip_content_v1(jsonb)'::regprocedure),'UTF8')),'hex')<>%s then raise exception 'IOS004_SOURCE_DRIFT';end if;
 end $$;
 """%("'"+spinhash+"'","'"+ppinhash+"'","'"+export_pin+"'")
+# Keep existing same-item move/replace producers compatible with the closed new value.
+planned_scoped=[]
+for name,signature in [
+ ('manual_patch_v1','scoped_edit_private.manual_patch_v1(scoped_edit_private.contexts_v1,jsonb)'),
+ ('candidate_patch_v1','scoped_edit_private.candidate_patch_v1(scoped_edit_private.contexts_v1,uuid,uuid,jsonb)'),
+]:
+ start=src.index('create function scoped_edit_private.'+name+'(');a=src.index('as $$',start)+5;b=src.index('$$;',a)
+ body=src[a:b];assert observed[signature]['prosrc']==body,'scoped known-source drift'
+ definition=observed[signature]['definition'];anchor="(i-array['id','dayId','title','manualOrder'])"
+ assert definition.count(anchor)==1
+ changed=definition.replace(anchor,"(i-array['id','dayId','title','manualOrder','chineseAddress'])")
+ if name=='manual_patch_v1':
+  anchor="||(i-array['id','dayId','title','manualOrder','chineseAddress']));"
+  assert changed.count(anchor)==1
+  changed=changed.replace(anchor,anchor+"\n if i ? 'chineseAddress' then ops:=ops||jsonb_build_array(jsonb_build_object('kind','set_item_chinese_address','dayId',e->'toDayId','itemId',i->'id','text',ios004_address_private.checked_value_v1(i->'chineseAddress')->'text'));end if;")
+ # These definitions already use pg_get_functiondef's formatting; only body bytes change.
+ delimiter='AS $function$';a=changed.index(delimiter)+len(delimiter);b=changed.index('$function$',a)
+ planned_scoped.append({'signature':signature,'prosrc':changed[a:b],'definition':changed,'acl':observed[signature]['acl']})
+Path('artifacts/IOS-004/address-authority-20261016/planned-scoped-functions.json').write_text(json.dumps(planned_scoped,indent=2)+'\n')
+scoped_definitions='\n'.join(row['definition'].rstrip()+';' for row in planned_scoped)
 runtime_guard=''
 root=Path('artifacts/IOS-004/address-authority-20261016')
 if (root/'runtime-guard.after.sql').exists():
@@ -117,10 +137,11 @@ if (root/'runtime-guard.after.sql').exists():
  then raise exception 'IOS004_RUNTIME_SOURCE_DRIFT';end if;
  if turn_private.trip_service_task_runtime_v1() is not true then raise exception 'IOS004_RUNTIME_METADATA_DRIFT';end if;
  select * into f from pg_proc where oid='export_private.trip_content_v1(jsonb)'::regprocedure;
- if pg_get_userbyid(f.proowner)<>'postgres' or f.prosecdef or f.prokind<>'f' or f.provolatile<>'i'
+ if encode(sha256(convert_to(pg_get_functiondef(f.oid),'UTF8')),'hex')<>'7ba912329115dd2e72beaac6a6e65ee84d3ec5f5a57f5349fd495288f4a3d2b0'
+ or pg_get_userbyid(f.proowner)<>'postgres' or f.prosecdef or f.prokind<>'f' or f.provolatile<>'i'
  or f.proconfig is distinct from array['search_path=""']::text[] or f.proacl::text is distinct from '{postgres=X/postgres}'
  then raise exception 'IOS004_EXPORT_METADATA_DRIFT';end if;
 end $before$;\n"""%before
  runtime_guard=(root/'runtime-guard.after.sql').read_text()
-Path('supabase/migrations/20261015161024_ios004_online_user_address.sql').write_text(guard+helper+'\n'+snapshot+'\n\n'+patch+'\n\n'+export_definition+'\n\n'+destination_definition.rstrip()+';\n'+runtime_guard.rstrip()+';'+'\n')
+Path('supabase/migrations/20261015161024_ios004_online_user_address.sql').write_text(guard+helper+'\n'+snapshot+'\n\n'+patch+'\n\n'+export_definition+'\n\n'+destination_definition.rstrip()+';\n'+scoped_definitions+'\n'+runtime_guard.rstrip()+';'+'\n')
 print('PASS authored accepted source-qualified migration')
