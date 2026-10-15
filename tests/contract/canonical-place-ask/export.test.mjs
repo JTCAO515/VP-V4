@@ -51,3 +51,41 @@ test('actual SQL export3 page crosses the applied consumer without changing snap
  assert.ok(decoded);assert.deepEqual(decoded.items,page.items);
  assert.equal(createHash('sha256').update(exportCanonical({snapshot:decoded.items}),'utf8').digest('hex'),decoded.sourceDigest);
 });
+
+function lineageFixture(relationship='clarification') {
+ const p=structuredClone(page),groups=p.items[0].sources;
+ const rows=n=>groups.find(g=>g.relation===n).rows;
+ const selected=rows('turn_private.grounded_turns').find(r=>r.selected_place_request);
+ const current=selected.turn_id,parent='eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
+ const task=rows('turn_private.service_tasks').find(r=>r.id===selected.task_id);
+ for(const [table,key] of [['public.turns','id'],['turn_private.text_content','turn_id'],['turn_private.service_task_turns','turn_id']]) {
+  const original=rows(table).find(r=>r[key]===current),copy=structuredClone(original);copy[key]=parent;
+  if(table==='turn_private.text_content') {copy.output_kind=relationship==='repair'?'technical_failure':'clarification';copy.output_text='Original parent outcome';}
+  if(table==='turn_private.service_task_turns') {copy.relationship='new_goal';copy.parent_turn_id=null;}
+  rows(table).push(copy);rows(table).sort((a,b)=>String(a[key]).localeCompare(String(b[key])));p.items[0].sourceRows.data++;
+ }
+ task.goal_turn_id=parent;
+ const link=rows('turn_private.service_task_turns').find(r=>r.turn_id===current);
+ link.relationship=relationship;link.parent_turn_id=parent;
+ selected.selected_place_request.originalReceipt.relationship=relationship;
+ selected.selected_place_request.originalReceipt.parentTurnId=parent;
+ return {p,rows,selected,task,link,current,parent};
+}
+for(const relationship of ['clarification','repair'])test(`Place v3 accepts an actual same-Task ${relationship} parent`,()=>{
+ const {p}=lineageFixture(relationship);assert.ok(decodeTurnExportPage(p,context.limit,context.owner,context.now));
+});
+for(const mode of ['self','other-task','other-thread','other-text-thread','other-owner','missing-text','cycle','wrong-root'])test(`Place v3 rejects ${mode} parent lineage`,()=>{
+ const {p,rows,selected,task,link,current,parent}=lineageFixture();
+ const parentLink=rows('turn_private.service_task_turns').find(r=>r.turn_id===parent);
+ if(mode==='self') {link.parent_turn_id=current;selected.selected_place_request.originalReceipt.parentTurnId=current;}
+ if(mode==='other-task') {
+  const other=structuredClone(task);other.id='ffffffff-ffff-4fff-8fff-ffffffffffff';rows('turn_private.service_tasks').push(other);rows('turn_private.service_tasks').sort((a,b)=>a.id.localeCompare(b.id));p.items[0].sourceRows.data++;parentLink.task_id=other.id;
+ }
+ if(mode==='other-thread')rows('public.turns').find(r=>r.id===parent).thread_id='ffffffff-ffff-4fff-8fff-ffffffffffff';
+ if(mode==='other-text-thread')rows('turn_private.text_content').find(r=>r.turn_id===parent).thread_id='ffffffff-ffff-4fff-8fff-ffffffffffff';
+ if(mode==='other-owner')rows('public.turns').find(r=>r.id===parent).owner_id='ffffffff-ffff-4fff-8fff-ffffffffffff';
+ if(mode==='missing-text'){const group=p.items[0].sources.find(g=>g.relation==='turn_private.text_content');group.rows=group.rows.filter(r=>r.turn_id!==parent);p.items[0].sourceRows.data--;}
+ if(mode==='cycle'){parentLink.relationship='repair';parentLink.parent_turn_id=current;}
+ if(mode==='wrong-root')task.goal_turn_id=current;
+ assert.equal(decodeTurnExportPage(p,context.limit,context.owner,context.now),null);
+});
