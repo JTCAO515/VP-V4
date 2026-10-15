@@ -1,0 +1,155 @@
+{
+  "status": "PASS",
+  "validatorHead": "2976e8594d4d243eef6e21873df2e2e34a7d9238",
+  "compiledProductHead": "66890359f84e67bc26572f25ac45dcf5bd0c65c7",
+  "archiveRebuilt": false,
+  "originalManifest": "artifacts/IOS-TESTFLIGHT/controlled-20261015/evidence-20261015T1303-b9e2/manifest.json",
+  "originalManifestSHA256": "d25605256e603dbea1d233b54fece17923b660bde778bd7507d74060eb7d3e64",
+  "archivePath": "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/testflight-sample-package-20261015/artifacts/IOS-TESTFLIGHT/controlled-20261015/products-20261015T1303-b9e2/VisePanda.xcarchive",
+  "buildNumber": "20261015.120536",
+  "changedInputsSinceCompilation": [
+    "scripts/ios/controlled-testflight/archive.py",
+    "tests/contract/ios-controlled-testflight/test_archive.py"
+  ],
+  "sameProductInputs": true,
+  "sdkAfter": {
+    "map-11.2.100.zip": {
+      "sha256": "76b5d1695d801c8308400eb066df2ef3616e2d569592147734244a4a09a78c15",
+      "verifiedFrameworkFiles": 266
+    },
+    "foundation-1.9.0.zip": {
+      "sha256": "a2913ce2766af53e8bfffb01ee97c9165f71c9c7fd8c658d65ddc8ab4e1b1137",
+      "verifiedFrameworkFiles": 16
+    }
+  },
+  "productChecks": {
+    "appInfo": {
+      "CFBundleIdentifier": "space.go2china.VisePanda",
+      "CFBundleShortVersionString": "0.1.0",
+      "CFBundleVersion": "20261015.120536",
+      "MinimumOSVersion": "17.0",
+      "DTSDKName": "iphoneos27.0",
+      "DTXcode": "2700",
+      "DTXcodeBuild": "27A266a",
+      "DTPlatformName": "iphoneos",
+      "ITSAppUsesNonExemptEncryption": false,
+      "VisePandaNativeEnvironment": "",
+      "VisePandaStagingAPIOrigin": "",
+      "VisePandaNativeTaskContext": ""
+    },
+    "extensionInfo": {
+      "CFBundleIdentifier": "space.go2china.VisePanda.ShareIntakeExtension",
+      "CFBundleShortVersionString": "0.1.0",
+      "CFBundleVersion": "20261015.120536",
+      "MinimumOSVersion": "17.0",
+      "DTPlatformName": "iphoneos",
+      "DTSDKName": "iphoneos27.0",
+      "VisePandaNativeEnvironment": null,
+      "VisePandaStagingAPIOrigin": null,
+      "VisePandaNativeTaskContext": null,
+      "VisePandaAMapIOSKey": null
+    },
+    "privacyManifest": {
+      "tracking": false,
+      "accessedAPITypes": {
+        "NSPrivacyAccessedAPICategoryUserDefaults": [
+          "CA92.1"
+        ],
+        "NSPrivacyAccessedAPICategorySystemBootTime": [
+          "35F9.1"
+        ],
+        "NSPrivacyAccessedAPICategoryFileTimestamp": [
+          "C617.1"
+        ],
+        "NSPrivacyAccessedAPICategoryDiskSpace": [
+          "E174.1"
+        ]
+      },
+      "collectedDataTypes": [
+        {
+          "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeEmailAddress",
+          "linked": true,
+          "tracking": false,
+          "purposes": [
+            "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+          ]
+        },
+        {
+          "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeUserID",
+          "linked": true,
+          "tracking": false,
+          "purposes": [
+            "NSPrivacyCollectedDataTypePurposeAnalytics",
+            "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+          ]
+        },
+        {
+          "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeOtherUserContent",
+          "linked": true,
+          "tracking": false,
+          "purposes": [
+            "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+          ]
+        },
+        {
+          "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeCustomerSupport",
+          "linked": true,
+          "tracking": false,
+          "purposes": [
+            "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+          ]
+        },
+        {
+          "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeDeviceID",
+          "linked": false,
+          "tracking": false,
+          "purposes": [
+            "NSPrivacyCollectedDataTypePurposeAnalytics"
+          ]
+        },
+        {
+          "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeProductInteraction",
+          "linked": false,
+          "tracking": false,
+          "purposes": [
+            "NSPrivacyCollectedDataTypePurposeAnalytics"
+          ]
+        }
+      ],
+      "sha256": "f625ea093e2ffdde3fd3020a9da282bfbd92a02720061fd87584bfa6876567df",
+      "purposeStringLocales": {
+        "NSLocationWhenInUseUsageDescription": [
+          "en",
+          "zh-Hans"
+        ]
+      }
+    },
+    "purposeStrings": {
+      "NSLocationWhenInUseUsageDescription": "The built-in AMap map component can show your current position on the map. This version of VisePanda does not turn that on and does not use your location.",
+      "NSMicrophoneUsageDescription": "VisePanda records only when you start voice input for a local draft or translation. Stop or cancel to end recording. VisePanda 仅在你主动开始本地草稿或翻译语音输入时录音，停止或取消即可结束。",
+      "NSSpeechRecognitionUsageDescription": "VisePanda recognizes your recording on this device for you to review before using the text in a local draft or translation. If on-device recognition is unavailable, type instead. VisePanda 在本机识别录音，供你审阅后采用到本地草稿或翻译；本机识别不可用时请手动输入。"
+    },
+    "bundles": {
+      "Products/Applications/VisePanda.app": {
+        "executableSHA256": "6cf029c0fea4598d67c8bcdb23cbd78f32609ac8d7a1d7785dd10606946c5b17",
+        "infoSHA256": "9183cc4914710defd083d4800809b73445b6592f645786e6e0fcdc904683955d"
+      },
+      "Products/Applications/VisePanda.app/PlugIns/ShareIntakeExtension.appex": {
+        "executableSHA256": "4145bcd641b2d8d2e4cf4fd7c43bf0d7f22facb3593f2ce89ae8722612fa93a0",
+        "infoSHA256": "3471f78a371ebbecdbc31d386ae0fbe7dbaa4c119b9876d0aa4b191159124c80"
+      }
+    }
+  },
+  "binaryAndInfoHashesMatchOriginalManifest": true,
+  "originalManifestUnchanged": true,
+  "unitTests": {
+    "status": "PASS",
+    "count": 9,
+    "newNegatives": [
+      "extension wrong ID/version/minOS/platform/SDK/nonempty backend/AMap credential",
+      "post-precheck SDK raw ZIP and extracted file mutation"
+    ]
+  },
+  "checkedUTC": "2026-10-15T12:20:51.080702+00:00",
+  "limits": "Validator at new head checked old 66890359 compiled unsigned product; no new-head Archive or runtime claim."
+}

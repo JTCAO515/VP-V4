@@ -55,3 +55,23 @@ and network access, approval policy never. No credentials or real user data were
 Requested model/effort: Sol6.1 / medium; effective model/effort not exposed, **UNKNOWN**.
 Official `list_threads` readback confirms this chat `01a13f55-8f6b-7620-9554-82f0de225d6b`
 belongs to VP-V10 project ID `4f2191db-3e04-4042-94b5-ec94ff67b427`.
+
+## Fixed review follow-up: SDK and extension postchecks
+
+Validator source `2976e8594d4d243eef6e21873df2e2e34a7d9238` closes the two reviewed gaps:
+successful future runs revalidate both pinned SDK ZIPs and every extracted framework file
+before success, compare with the prebuild result, and record `sdkAfter`. Archived extension
+metadata now checks its exact bundle identifier, marketing/build versions, minimum OS,
+device platform/SDK, empty-or-absent backend keys and absent/empty AMap credential, recording
+`extensionInfo`. Build commands and product inputs are unchanged.
+
+- **PASS**: 9 contract tests, including extension wrong ID/version/minimum OS/platform/SDK,
+  each nonempty backend key and AMap credential; real disposable SDK ZIP and extracted-file
+  mutations after a passing precheck are refused by the postcheck.
+- **PASS**: new validator and post-SDK check on the preserved actual `66890359` Archive and
+  owner's SDK. App/extension executable and Info.plist hashes exactly match the original
+  success manifest, which remains unchanged. The extension has the expected identifier,
+  version `0.1.0 (20261015.120536)`, iOS 17 minimum, device SDK 27; all four backend/AMap
+  metadata keys are absent, as permitted. [Detailed postcheck result](postcheck-review-2976e859.json).
+- The 666 original inputs were compared: only the driver and its tests differ. No Archive
+  rebuild occurred and no new-head compilation or runtime acceptance is claimed.
