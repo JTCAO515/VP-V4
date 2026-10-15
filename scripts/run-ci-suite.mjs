@@ -10,7 +10,15 @@ if (!knownSuites.has(suite)) {
 }
 
 const testDirectory = suite === "evals" ? "evals" : `tests/${suite}`;
-const testFiles = collectTestFiles(testDirectory);
+let testFiles = collectTestFiles(testDirectory);
+if (suite === "integration") {
+  const { classify } = await import("./ci-suites/db-integration.mjs");
+  const { rows, problems } = classify();
+  if (problems.length) throw Error(problems.join("\n"));
+  const classification = new Map(rows.map(row => [row.file, row.lane]));
+  if (testFiles.some(file => !classification.has(file))) throw Error("Unclassified integration test");
+  testFiles = testFiles.filter(file => classification.get(file) === "test:integration");
+}
 const filesToRun = testFiles.length > 0 ? testFiles : ["scripts/ci-suites/scaffold.test.mjs"];
 
 const result = spawnSync(process.execPath, ["--experimental-strip-types", "--test", "--test-reporter=tap", ...filesToRun], {

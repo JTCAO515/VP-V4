@@ -5,7 +5,7 @@ import { join } from "node:path";
 import test from "node:test";
 import {spawnSync} from "node:child_process";
 import {selectCheckPlan,DB_LANES} from "../../../scripts/ci-change-scope.mjs";
-import { EXCLUDED, LANES, executionMatrix, executionSteps, classify, parseNodeTestSummary, pinnedImages, stepProblems } from "../../../scripts/ci-suites/db-integration.mjs";
+import { EXCLUDED, LANES, executionMatrix, executionSteps, classify, isGated, parseNodeTestSummary, pinnedImages, stepProblems } from "../../../scripts/ci-suites/db-integration.mjs";
 
 const read = (path) => readFileSync(path, "utf8");
 
@@ -262,6 +262,41 @@ function pg17PreparationBody(){
  assert.ok(match,'only the new job prepares PostgreSQL17');
  return match[1].split('\n').map(line=>line.startsWith('          ')?line.slice(10):line).join('\n');
 }
+
+test('cancellation PG proof has one native17 owner and never enters default integration',()=>{
+ const file='tests/integration/qa-agent-cancellation/native-pg.test.mjs';
+ const owners=Object.entries(LANES).flatMap(([lane,definition])=>definition.steps.flatMap(step=>step.files.filter(f=>f===file).map(()=>lane)));
+ assert.deepEqual(owners,['postgres-native-17']);
+ assert.deepEqual(classify().rows.find(row=>row.file===file),{file,gated:false,lane:'postgres-native-17'});
+ assert.ok(!classify().rows.filter(row=>row.lane==='test:integration').some(row=>row.file===file));
+ assert.deepEqual(LANES['postgres-native-17'].steps[0].files,[
+  'tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs',file]);
+ assert.equal(LANES['postgres-native-17'].steps[0].concurrency,1);
+ assert.match(read(file),/import '\.\/pg-proof\.mjs'/);
+ assert.equal(isGated(file),false);
+});
+
+test('actual default integration runner uses only its classified files and rejects an unknown gated test',()=>{
+ const root=mkdtempSync(join(tmpdir(),'vp-default-integration-'));
+ const put=(file,source)=>{const target=join(root,file);mkdirSync(join(target,'..'),{recursive:true});writeFileSync(target,source);};
+ try{
+  put('scripts/run-ci-suite.mjs',read('scripts/run-ci-suite.mjs'));
+  put('scripts/ci-suites/db-integration.mjs',read('scripts/ci-suites/db-integration.mjs'));
+  for(const definition of Object.values(LANES))for(const step of definition.steps)for(const file of step.files)
+   put(file,"throw Error('DB_LANE_MUST_NOT_RUN_IN_DEFAULT');\n");
+  for(const file of Object.keys(EXCLUDED))put(file,"throw Error('EXCLUDED_MUST_NOT_RUN_IN_DEFAULT');\n");
+  put('tests/integration/qa-agent-cancellation/native-pg.test.mjs',"throw Error('DB_LANE_MUST_NOT_RUN_IN_DEFAULT');\n");
+  put('tests/integration/plain.test.mjs',"import test from 'node:test';test('ordinary integration runs',()=>{});\n");
+  const env={...process.env,GITHUB_STEP_SUMMARY:'',VP_CI_SUITE:''};
+  delete env.NODE_TEST_CONTEXT;
+  const run=()=>spawnSync(process.execPath,['scripts/run-ci-suite.mjs','integration'],{cwd:root,encoding:'utf8',env});
+  const ordinary=run();assert.equal(ordinary.status,0,ordinary.stderr);assert.match(ordinary.stdout,/ordinary integration runs/);
+  assert.doesNotMatch(ordinary.stdout+ordinary.stderr,/DB_LANE_MUST_NOT_RUN_IN_DEFAULT/);assert.match(ordinary.stdout,/"testFiles":1/);
+  put('tests/integration/unregistered.test.mjs',"import test from 'node:test';test('unknown',{skip:true},()=>{});\n");
+  const unknown=run();assert.notEqual(unknown.status,0);assert.match(unknown.stderr,/neither in a db-integration lane nor in EXCLUDED/);
+  assert.doesNotMatch(unknown.stdout,/ordinary integration runs/);
+ }finally{rmSync(root,{recursive:true,force:true});}
+});
 test('PG17 CI preparation retains the old Wiki job and uses official major17 without starting default services',()=>{
  const body=pg17PreparationBody(),workflow=read('.github/workflows/db-integration.yml');
  assert.equal(spawnSync('/bin/bash',['-n'],{input:body}).status,0);
