@@ -17,6 +17,11 @@ export function addressTripBindingKey(tripId: string, data: LocalTripRead): stri
   return encoded({ tripId, trip: tripView(data) });
 }
 export type CurrentAddressTripBinding = Readonly<{ actorKey: string; tripKey: string }>;
+/** Existing address-bearing UI content may render only under this fresh current-Cookie Trip lease. */
+export function addressContentVisible(actor: AddressActor | null, current: AddressActor | null, lease: CurrentAddressTripBinding | null, tripKey: string): boolean {
+  return actor !== null && current !== null && actor.key === current.key && actor.identity === current.identity
+    && actor.expiresAt > Date.now() && lease?.actorKey === actor.key && lease.tripKey === tripKey;
+}
 export type CurrentAddressBinding = Readonly<{ actorKey: string; inputKey: string }>;
 
 /** A display lease from ordinary current-Cookie GETs, never an alternate Trip/pending store. */

@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { PendingProposalRead } from "../../lib/server/identity/user-data-adapter";
 import type { LocalTripRead } from "../canvas/TripContentEditor";
 import { TripItemAddress } from "./TripItemAddress";
@@ -8,7 +8,7 @@ import { useAddressActor } from "./useAddressActor";
 import { newAddressIntent, postAddressIntent, readAddressIntent, matchingAddressProposal, addressIntentSettled, addressReviewBlocked, abandonLocalAddressIntent, readAddressCurrent, type AddressIntent } from "./online-proposal";
 import type { AddressPrepare } from "./proposal";
 import type { AddressContext } from "./context";
-import { addressBindingKey, addressTripBindingKey, readCurrentAddressBinding, type CurrentAddressBinding, type CurrentAddressTripBinding } from "./current-binding";
+import { addressBindingKey, addressTripBindingKey, addressContentVisible, readCurrentAddressBinding, type CurrentAddressBinding, type CurrentAddressTripBinding } from "./current-binding";
 import { addressProposalChanges } from "./review";
 import styles from "./TripItemAddress.module.css";
 
@@ -29,6 +29,8 @@ export type TripAddressSectionProps = {
   onAddressRequestBlockChange: (blocked: boolean) => void;
   /** Confirm-only guard. The parent must leave Reject/cancel/read enabled. */
   onAddressConfirmBlockChange: (blocked: boolean) => void;
+  /** Fresh current-Cookie Trip content visibility, independent of pending/Confirm eligibility. */
+  onAddressContentVisibilityChange?: (visible: boolean) => void;
 };
 
 export function TripAddressSection(props: TripAddressSectionProps) {
@@ -53,7 +55,7 @@ export function TripAddressSection(props: TripAddressSectionProps) {
   const scope = actor ? JSON.stringify([actor.identity, props.tripId]) : null;
   const currentIntent = scope ? intents.current.get(scope) : undefined;
   const unknownHere = !!actor && current()?.key === actor.key && currentIntent?.phase === "unknown";
-  const tripQualified = !!actor && current()?.key === actor.key && tripBinding?.actorKey === actor.key && tripBinding.tripKey === tripKey;
+  const tripQualified = addressContentVisible(actor, current(), tripBinding, tripKey);
   const qualifiedRoot = !!actor && current()?.key === actor.key && binding?.actorKey === actor.key && binding.inputKey === inputKey
     && props.data.trip.id === props.tripId && props.data.confirmationState === "confirmed";
   const retainedUnknown = !actor && [...intents.current.values()].some(record => record.intent.context.tripId === props.tripId && record.phase !== "handed");
@@ -99,6 +101,12 @@ export function TripAddressSection(props: TripAddressSectionProps) {
     }
     if (changed) setRevision(n => n + 1);
   }, [actor?.key, props.tripId, props.data.trip.headVersion]);
+  useLayoutEffect(() => {
+    const publish = props.onAddressContentVisibilityChange;
+    publish?.(tripQualified);
+    return () => publish?.(false);
+  }, [tripQualified, props.onAddressContentVisibilityChange]);
+
   useEffect(() => {
     liveProps.current.onAddressRequestBlockChange(requestLock);
     return () => liveProps.current.onAddressRequestBlockChange(false);

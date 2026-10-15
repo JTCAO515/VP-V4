@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { userProvidedAddress } from "../../../lib/trip-user-address.ts";
-import { addressBindingKey, addressTripBindingKey, readCurrentAddressBinding, type CurrentAddressTripBinding } from "../../../components/trip-address/current-binding.ts";
+import { addressBindingKey, addressTripBindingKey, addressContentVisible, readCurrentAddressBinding, type CurrentAddressTripBinding } from "../../../components/trip-address/current-binding.ts";
 import { addressProposalChanges } from "../../../components/trip-address/review.ts";
 import { addressReviewBlocked, newAddressIntent, postAddressIntent, readAddressIntent } from "../../../components/trip-address/online-proposal.ts";
 import type { LocalTripRead } from "../../../components/canvas/TripContentEditor.tsx";
@@ -131,5 +131,31 @@ test("recovery-only Trip proof does not admit unrelated pending, a new actor den
     globalThis.fetch = (async () => { live = false; return Response.json(pending()); }) as typeof fetch;
     await assert.rejects(readAddressIntent(draft, new AbortController().signal, () => live), /ROOT_CHANGED|CONTEXT_CHANGED/);
     assert.equal(draft.receipt, null);
+  } finally { globalThis.fetch = previous; }
+});
+
+
+test("content visibility closes on actor/root/Trip invalidation even with null pending and reopens only after fresh exact Trip read", async () => {
+  const previous = globalThis.fetch, d = data(), key = addressTripBindingKey(id, d);
+  let lease: CurrentAddressTripBinding | null = null, count = 0;
+  globalThis.fetch = (async () => ++count % 2 === 1 ? Response.json(d) : Response.json({ error: { code: "PROPOSAL_NOT_CONFIRMABLE" } }, { status: 409 })) as typeof fetch;
+  try {
+    assert.equal(addressContentVisible(rootA, rootA, lease, key), false);
+    await readCurrentAddressBinding(rootA, id, d, null, new AbortController().signal, () => rootA, value => { lease = value; });
+    assert.equal(addressContentVisible(rootA, rootA, lease, key), true);
+    assert.equal(addressContentVisible(rootA, null, lease, key), false);
+    const actorB = { ...rootA, identity: "B:session", key: "B:session:1" };
+    assert.equal(addressContentVisible(actorB, actorB, lease, key), false);
+    globalThis.fetch = (async () => Response.json({ error: { code: "FORBIDDEN" } }, { status: 403 })) as typeof fetch;
+    await assert.rejects(readCurrentAddressBinding(actorB, id, d, null, new AbortController().signal, () => actorB, value => { lease = value; }));
+    assert.equal(addressContentVisible(actorB, actorB, lease, key), false);
+    const nextA = { ...rootA, key: "A:session:new" };
+    assert.equal(addressContentVisible(nextA, nextA, lease, key), false);
+    count = 0;
+    globalThis.fetch = (async () => ++count % 2 === 1 ? Response.json(d) : Response.json({ error: { code: "PROPOSAL_NOT_CONFIRMABLE" } }, { status: 409 })) as typeof fetch;
+    await readCurrentAddressBinding(nextA, id, d, null, new AbortController().signal, () => nextA, value => { lease = value; });
+    assert.equal(addressContentVisible(nextA, nextA, lease, key), true);
+    assert.equal(addressContentVisible(nextA, nextA, lease, addressTripBindingKey(id, { ...d, trip: { ...d.trip, headVersion: 4 } })), false);
+    assert.equal(addressContentVisible(nextA, nextA, lease, addressTripBindingKey("other-trip", d)), false);
   } finally { globalThis.fetch = previous; }
 });
