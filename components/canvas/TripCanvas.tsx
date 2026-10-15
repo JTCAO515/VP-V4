@@ -41,12 +41,17 @@ export function TripCanvas({ tripId, localTripEnabled = false, initialProposalRe
   const addressPatchHidden = manualPatchDraft.addressSensitive && !addressContentVisible;
   const [addressProposal, setAddressProposal] = useState<{ id: string; baseVersion: number } | null>(null);
   const [addressRejected, setAddressRejected] = useState("");
+  const addressStatePresent = addressRequestBlocked || manualPatchDraft.addressSensitive || addressProposal !== null
+    || data?.content.days.some(day => day.items?.some(item => item.chineseAddress !== undefined)) === true;
   const confirmKeys = useRef(new Map<string, string>());
   const requestGeneration = useRef(0);
   const copy = tripCanvasCopy[locale];
   function setManualPatch(text: string) {
+    // Classify a temporary view, including legal JSON Unicode escapes and unfinished edits.
+    // The original draft bytes are never normalized or replaced.
+    const markers = text.replace(/\\u([0-9a-f]{4})/gi, (_match, unit: string) => String.fromCharCode(Number.parseInt(unit, 16)));
     setManualPatchDraft(previous => ({ text, addressSensitive: text.length !== 0 && (previous.addressSensitive
-      || text.includes("set_item_chinese_address") || text.includes("chineseAddress")) }));
+      || markers.includes("set_item_chinese_address") || markers.includes("chineseAddress")) }));
   }
   const addressSettledEpoch = addressRejected || (addressProposal && data?.versions.some(version =>
     version.proposalId === addressProposal.id && version.eventType === "proposal_applied"
@@ -167,6 +172,11 @@ export function TripCanvas({ tripId, localTripEnabled = false, initialProposalRe
 
   async function refreshAfterMutation(response: Response, generation: number): Promise<void> {
     if (generation !== requestGeneration.current) return;
+    if (addressStatePresent) {
+      const current = await readCurrentForAddress(() => generation === requestGeneration.current);
+      if (generation === requestGeneration.current) setNotice(current && response.ok ? "proposalRefreshed" : response.ok ? "unavailable" : "proposalConflict");
+      return;
+    }
     if (response.status === 401) { setState("unauthenticated"); return; }
     const current = await reloadAll(generation).catch(() => null);
     if (generation !== requestGeneration.current) return;
@@ -300,7 +310,7 @@ export function TripCanvas({ tripId, localTripEnabled = false, initialProposalRe
       pending={pendingProposal} blocked={mutation !== null || pendingRollback !== null || initialProposalReference !== undefined || localEditorAddressBlocked}
       settledEpoch={addressSettledEpoch} onPrepared={addressPrepared} onAddressRequestBlockChange={setAddressRequestBlocked} onAddressConfirmBlockChange={setAddressConfirmationBlocked} onAddressContentVisibilityChange={setAddressContentVisible} onReadCurrent={readCurrentForAddress} />
     <div className={styles.live} aria-live="polite">{notice === "proposalUnavailable" ? tripProposalNoticeCopy[locale] : notice ? copy[notice] : null}</div>
-    {localTripEnabled ? <TripContentEditor key={tripId} data={data} pending={pendingProposal} locale={locale} onReload={() => addressRequestBlocked ? readCurrentForAddress(() => true) : reloadAll()} onPending={editorPending} onAddressBlockChange={setLocalEditorAddressBlocked} addressConfirmationBlocked={addressConfirmationBlocked} addressMutationBlocked={addressRequestBlocked} /> : null}
+    {localTripEnabled ? <TripContentEditor key={tripId} data={data} pending={pendingProposal} locale={locale} onReload={() => addressStatePresent ? readCurrentForAddress(() => true) : reloadAll()} onPending={editorPending} onAddressBlockChange={setLocalEditorAddressBlocked} addressConfirmationBlocked={addressConfirmationBlocked} addressMutationBlocked={addressRequestBlocked} /> : null}
     {!localTripEnabled && (pendingProposal ? <section className={styles.proposal} aria-labelledby="pending-proposal-title"><p className={styles.eyebrow}>{copy.pendingEyebrow}</p><h2 id="pending-proposal-title">{copy.pendingTitle} · v{pendingProposal.proposal.revision}</h2><p>{copy.pendingBody}</p><dl className={styles.diff}><div><dt>{copy.before}</dt><dd>{pendingProposal.proposal.titleDiff.before}</dd></div><div><dt>{copy.after}</dt><dd>{pendingProposal.proposal.titleDiff.after}</dd></div></dl>{pendingProposal.proposal.dayDiffs?.map((day) => <details key={day.dayId}><summary>{day.date}</summary><ul>{day.items.map((item) => <li key={item.itemId}>{item.title}</li>)}</ul></details>)}{pendingProposal.proposal.evidence === "not_recorded" ? <p className={styles.missing}>{copy.evidenceMissing}</p> : null}{pendingProposal.proposal.assumptions === "not_recorded" ? <p className={styles.missing}>{copy.assumptionsMissing}</p> : null}<p className={styles.meta}>{copy.proposalBase} v{pendingProposal.proposal.baseTripVersion} · {copy.expires} {new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" }).format(new Date(pendingProposal.proposal.expiresAt))}</p><div className={styles.proposalActions}><button className={styles.primary} type="button" disabled={mutation !== null || addressConfirmationBlocked || addressRequestBlocked} onClick={() => void confirmPendingProposal()}>{mutation === "confirming" ? copy.confirming : copy.confirm}</button><button className={styles.secondary} type="button" disabled={mutation !== null} onClick={() => void rejectPendingProposal()}>{mutation === "rejecting" ? copy.rejecting : copy.reject}</button></div>{pendingProposal.proposal.dayDiffs ? <form className={styles.revision} onSubmit={(event) => void reviseStructuredProposal(event)}><label htmlFor="proposal-patch">{copy.reviseLabel}</label><textarea id="proposal-patch" value={addressPatchHidden ? "" : manualPatch} disabled={mutation !== null || addressRequestBlocked || addressPatchHidden} onChange={(event) => setManualPatch(event.target.value)} /><button className={styles.button} type="submit" disabled={mutation !== null || addressRequestBlocked || addressPatchHidden}>{mutation === "revising" ? copy.revising : copy.revise}</button></form> : <form className={styles.revision} onSubmit={(event) => void revisePendingProposal(event)}><label htmlFor="proposal-title">{copy.reviseLabel}</label><input id="proposal-title" value={draftTitle} maxLength={160} required disabled={mutation !== null || addressRequestBlocked} onChange={(event) => setDraftTitle(event.target.value)} /><button className={styles.button} type="submit" disabled={mutation !== null || !draftTitle.trim() || addressRequestBlocked}>{mutation === "revising" ? copy.revising : copy.revise}</button></form>}</section> : <section className={styles.noProposal}><strong>{copy.noPendingTitle}</strong><p>{copy.noPendingBody}</p><form className={styles.revision} onSubmit={(event) => void createManualProposal(event)}><label htmlFor="manual-proposal-patch">{copy.reviseLabel}</label><textarea id="manual-proposal-patch" value={addressPatchHidden ? "" : manualPatch} disabled={mutation !== null || addressRequestBlocked || addressPatchHidden} onChange={(event) => setManualPatch(event.target.value)} /><button className={styles.button} type="submit" disabled={mutation !== null || addressRequestBlocked || addressPatchHidden}>{copy.revise}</button></form></section>)}
     {pendingRollback && !localTripEnabled && <section className={styles.proposal} aria-live="polite"><strong>{copy.restoreReady} {pendingRollback.targetVersion}</strong><p>{copy.restoreBody}</p><div className={styles.proposalActions}><button className={styles.primary} disabled={mutation !== null || addressRequestBlocked} onClick={() => void confirmRollback()}>{mutation === "confirming" ? copy.confirming : copy.confirmRestore}</button><button className={styles.secondary} disabled={mutation !== null} onClick={() => setPendingRollback(null)}>{copy.keepCurrent}</button></div></section>}
     {Boolean(data.unverifiedHistoryCount) && <p className={styles.notice}>{tripLocalEditorCopy[locale].legacyHistory}</p>}
