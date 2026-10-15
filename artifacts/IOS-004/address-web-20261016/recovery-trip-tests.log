@@ -1,0 +1,21 @@
+✔ current claims root must GET original Trip and exact pending before parent data receives a display lease (11.178875ms)
+✔ A payload cannot reappear under B claims when B's real Cookie Trip read is denied; returning A must reread (0.467333ms)
+✔ same-session revalidation also rereads and late root/version/digest changes cannot reuse a lease (0.51475ms)
+✔ no-pending display lease requires exact authoritative absence, never generic transport/409 failure (0.295041ms)
+✔ rollback clearing without setop renders removal from actual before/after (0.44ms)
+✔ restored deleted address item and cross-day move review use union of original snapshots, not current-item existence (0.167375ms)
+✔ lost POST ACK plus same-session resume retains GET recovery when parent pending is null but server has own pending (0.53375ms)
+✔ recovery-only Trip proof does not admit unrelated pending, a new actor denied by RLS, or a late root (0.78125ms)
+✔ rendered zh/en facts distinguish source/manual and unknown script, escape input (3.938333ms)
+✔ initial unloaded component never offers an enabled editor or a false missing result (25.115083ms)
+✔ original proposal diff renders authoritative raw before/after only for exact base/item/digest (1.244916ms)
+✔ real Section starts fail closed until verified claims, without rendering stale item facts (0.488417ms)
+✔ actual diff renderer shows rollback removal, restored item and move target without any set operation (0.42275ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 291.436708

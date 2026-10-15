@@ -1,0 +1,246 @@
+"use client";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import type { PendingProposalRead } from "../../lib/server/identity/user-data-adapter";
+import type { LocalTripRead } from "../canvas/TripContentEditor";
+import { TripItemAddress } from "./TripItemAddress";
+import { AddressProposalDiff } from "./AddressProposalDiff";
+import { useAddressActor } from "./useAddressActor";
+import { newAddressIntent, postAddressIntent, readAddressIntent, matchingAddressProposal, addressIntentSettled, addressReviewBlocked, abandonLocalAddressIntent, readAddressCurrent, type AddressIntent } from "./online-proposal";
+import type { AddressPrepare } from "./proposal";
+import type { AddressContext } from "./context";
+import { addressBindingKey, addressTripBindingKey, addressContentVisible, readCurrentAddressBinding, type CurrentAddressBinding, type CurrentAddressTripBinding } from "./current-binding";
+import { addressProposalChanges } from "./review";
+import styles from "./TripItemAddress.module.css";
+
+type InFlight = { intent: AddressIntent; phase: "posting" | "unknown" | "handed" };
+export type TripAddressSectionProps = {
+  tripId: string;
+  data: LocalTripRead;
+  locale: "zh" | "en";
+  pending: PendingProposalRead | null;
+  /** External pending/rollback/mutation/initial-reference and local-editor dirty/busy/unknown. Excludes this section's own lock. */
+  blocked: boolean;
+  /** Exact applied:<proposalId> or rejected:<proposalId> after authoritative terminal/cancellation readback. */
+  settledEpoch: string;
+  onPrepared: (proposal: PendingProposalRead) => void;
+  /** Original GET-only reloadAll, with parent actor/scope CAS on its own state publications. */
+  onReadCurrent: (current: () => boolean) => Promise<unknown>;
+  /** Blocks other writers during dispatch/unknown ACK. Handed proposals use the original parent pending gate; Confirm stays available. */
+  onAddressRequestBlockChange: (blocked: boolean) => void;
+  /** Confirm-only guard. The parent must leave Reject/cancel/read enabled. */
+  onAddressConfirmBlockChange: (blocked: boolean) => void;
+  /** Fresh current-Cookie Trip content visibility, independent of pending/Confirm eligibility. */
+  onAddressContentVisibilityChange?: (visible: boolean) => void;
+};
+
+export function TripAddressSection(props: TripAddressSectionProps) {
+  const { actor, current } = useAddressActor();
+  const [, setRevision] = useState(0);
+  const [recovering, setRecovering] = useState(false);
+  const [readingCurrent, setReadingCurrent] = useState(false);
+  const readingCurrentRef = useRef(readingCurrent); readingCurrentRef.current = readingCurrent;
+  const [abandonFor, setAbandonFor] = useState<AddressIntent | null>(null);
+  const readAction = useRef(0);
+  const [binding, setBinding] = useState<CurrentAddressBinding | null>(null);
+  const [tripBinding, setTripBinding] = useState<CurrentAddressTripBinding | null>(null);
+  const tripBindingRef = useRef(tripBinding); tripBindingRef.current = tripBinding;
+  const tripKey = addressTripBindingKey(props.tripId, props.data);
+  const [bindingRefresh, setBindingRefresh] = useState(0);
+  const bindingRef = useRef(binding); bindingRef.current = binding;
+  const inputKey = addressBindingKey(props.tripId, props.data, props.pending);
+  const intents = useRef(new Map<string, InFlight>());
+  const transport = useRef<AbortController | null>(null);
+  const liveProps = useRef(props); liveProps.current = props;
+  const active = useRef(true);
+  const scope = actor ? JSON.stringify([actor.identity, props.tripId]) : null;
+  const currentIntent = scope ? intents.current.get(scope) : undefined;
+  const unknownHere = !!actor && current()?.key === actor.key && currentIntent?.phase === "unknown";
+  const tripQualified = addressContentVisible(actor, current(), tripBinding, tripKey);
+  const qualifiedRoot = !!actor && current()?.key === actor.key && binding?.actorKey === actor.key && binding.inputKey === inputKey
+    && props.data.trip.id === props.tripId && props.data.confirmationState === "confirmed";
+  const retainedUnknown = !actor && [...intents.current.values()].some(record => record.intent.context.tripId === props.tripId && record.phase !== "handed");
+  const ownBlocked = readingCurrent || currentIntent !== undefined || retainedUnknown;
+  const requestLock = readingCurrent || currentIntent !== undefined && currentIntent.phase !== "handed" || retainedUnknown;
+  const confirmLock = addressReviewBlocked(props.pending, qualifiedRoot, {
+      tripId: props.tripId, snapshotTripId: props.data.trip.id, tripVersion: props.data.trip.headVersion,
+      items: props.data.content.days.flatMap(day => (day.items ?? []).map(item => ({ dayId: day.id, itemId: item.id }))),
+    });
+  const review = props.pending && qualifiedRoot ? addressProposalChanges(props.pending, { tripId: props.tripId, tripVersion: props.data.trip.headVersion }) : null;
+  const contexts = useMemo(() => actor ? props.data.content.days.flatMap(day => (day.items ?? []).map(item => ({
+    title: item.title, context: { actorKey: actor.key, tripId: props.tripId, tripVersion: props.data.trip.headVersion, dayId: day.id, itemId: item.id },
+  }))) : [], [actor, props.tripId, props.data]);
+
+  useEffect(() => {
+    setBinding(null); setTripBinding(null);
+    if (!actor || current()?.key !== actor.key || props.data.trip.id !== props.tripId || props.data.confirmationState !== "confirmed") return;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    void readCurrentAddressBinding(actor, props.tripId, props.data, props.pending, controller.signal, current, lease => {
+      const p = liveProps.current;
+      if (!controller.signal.aborted && current()?.key === actor.key && addressTripBindingKey(p.tripId, p.data) === lease.tripKey) setTripBinding(lease);
+    }).then(lease => {
+      const p = liveProps.current;
+      if (!controller.signal.aborted && current()?.key === actor.key && addressBindingKey(p.tripId, p.data, p.pending) === lease.inputKey) setBinding(lease);
+    }).catch(() => { /* Failed current-Cookie reads never qualify inherited parent data. */ }).finally(() => clearTimeout(timeout));
+    return () => { controller.abort(); clearTimeout(timeout); };
+  }, [actor, inputKey, bindingRefresh, current]);
+
+  useEffect(() => {
+    readAction.current++; setReadingCurrent(false); setAbandonFor(null);
+  }, [actor?.key, props.tripId]);
+
+  useEffect(() => {
+    active.current = true;
+    return () => { active.current = false; transport.current?.abort(); };
+  }, []);
+  useEffect(() => {
+    transport.current?.abort(); transport.current = null; setRecovering(false);
+    let changed = false;
+    for (const record of intents.current.values()) {
+      if (record.phase === "posting") { record.phase = "unknown"; changed = true; }
+    }
+    if (changed) setRevision(n => n + 1);
+  }, [actor?.key, props.tripId, props.data.trip.headVersion]);
+  useLayoutEffect(() => {
+    const publish = props.onAddressContentVisibilityChange;
+    publish?.(tripQualified);
+    return () => publish?.(false);
+  }, [tripQualified, props.onAddressContentVisibilityChange]);
+
+  useEffect(() => {
+    liveProps.current.onAddressRequestBlockChange(requestLock);
+    return () => liveProps.current.onAddressRequestBlockChange(false);
+  }, [requestLock]);
+  useEffect(() => {
+    liveProps.current.onAddressConfirmBlockChange(confirmLock);
+    return () => liveProps.current.onAddressConfirmBlockChange(false);
+  }, [confirmLock]);
+  useEffect(() => {
+    if (!scope) return;
+    const record = intents.current.get(scope);
+    // A disappearing pending value alone is never a terminal receipt.
+    if (record && addressIntentSettled(record.intent, record.phase, props.settledEpoch, props.pending?.proposal.id ?? null)) {
+      intents.current.delete(scope); setRevision(n => n + 1);
+    }
+  }, [scope, props.settledEpoch, props.pending]);
+
+  const contextCurrent = useCallback((context: AddressContext, identity: string, allowOwn: boolean, recoveryOnly = false) => {
+    const p = liveProps.current, root = current();
+    const bound = recoveryOnly
+      ? tripBindingRef.current?.actorKey === root?.key && tripBindingRef.current?.tripKey === addressTripBindingKey(p.tripId, p.data)
+      : bindingRef.current?.actorKey === root?.key && bindingRef.current?.inputKey === addressBindingKey(p.tripId, p.data, p.pending);
+    if (readingCurrentRef.current || !bound || !active.current || !root || root.identity !== identity || root.key !== context.actorKey
+      || p.tripId !== context.tripId || p.data.trip.id !== context.tripId || p.data.trip.headVersion !== context.tripVersion
+      || p.data.confirmationState !== "confirmed" || !p.data.content.days.some(day => day.id === context.dayId && day.items?.some(item => item.id === context.itemId))
+      || document.visibilityState === "hidden" || navigator.onLine === false) return false;
+    return allowOwn || !p.blocked && p.pending === null;
+  }, [current]);
+
+  const prepare: AddressPrepare = useCallback(async request => {
+    const root = current();
+    if (!root || !contextCurrent(request.context, root.identity, false)) throw Error("ADDRESS_CONTEXT_CHANGED");
+    const key = JSON.stringify([root.identity, request.context.tripId]);
+    if (intents.current.has(key) || request.patch.expectedVersion !== request.context.tripVersion || request.patch.operations.length !== 1) throw Error("ADDRESS_PREPARE_BLOCKED");
+    const text = request.patch.operations[0].text;
+    const intent = newAddressIntent(root.identity, request.context, text);
+    if (JSON.stringify(request.patch.operations[0]) !== JSON.stringify(intent.operation)) throw Error("INVALID_ADDRESS_OPERATION");
+    const record: InFlight = { intent, phase: "posting" };
+    // Synchronous lock before the only POST; retained across auth/visibility/version fences.
+    intents.current.set(key, record); setRevision(n => n + 1);
+    liveProps.current.onAddressRequestBlockChange(true);
+    const controller = new AbortController(); transport.current = controller;
+    const live = () => !controller.signal.aborted && contextCurrent(intent.context, intent.identity, true) && !liveProps.current.blocked
+      && (!liveProps.current.pending || liveProps.current.pending.proposal.id === intent.receipt?.proposalId) && intents.current.get(key) === record;
+    const timeout = setTimeout(() => {
+      controller.abort(); record.phase = "unknown";
+      if (transport.current === controller) transport.current = null;
+      if (active.current) setRevision(n => n + 1);
+    }, 8000);
+    try {
+      await postAddressIntent(intent, controller.signal, live);
+      const pending = await readAddressIntent(intent, controller.signal, live);
+      if (!live()) throw Error("ADDRESS_CONTEXT_CHANGED");
+      record.phase = "handed"; setRevision(n => n + 1);
+      liveProps.current.onPrepared(pending);
+    } catch (error) {
+      record.phase = "unknown";
+      if (active.current) setRevision(n => n + 1);
+      throw error;
+    } finally {
+      clearTimeout(timeout);
+      if (transport.current === controller) transport.current = null;
+    }
+  }, [current, contextCurrent]);
+
+  async function recover() {
+    const root = current();
+    if (!root || !scope || recovering || transport.current) return;
+    const record = intents.current.get(scope);
+    if (!record || record.phase !== "unknown" || !tripQualified
+      || props.pending !== null && matchingAddressProposal(props.pending, record.intent) === null) return;
+    const controller = new AbortController(); transport.current = controller; setRecovering(true);
+    const key = scope;
+    // GET-only recovery is independent of parent write/draft/error blocks. Root and exact intent fences still apply.
+    // Requalify same subject/session under the new ephemeral root; the original request bytes never change.
+    const context = { ...record.intent.context, actorKey: root.key };
+    const live = () => !controller.signal.aborted && contextCurrent(context, record.intent.identity, true, true)
+      && (!liveProps.current.pending || matchingAddressProposal(liveProps.current.pending, record.intent) !== null) && intents.current.get(key) === record;
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    try {
+      const pending = await readAddressIntent(record.intent, controller.signal, live);
+      if (live()) { record.phase = "handed"; setRevision(n => n + 1); liveProps.current.onPrepared(pending); }
+    } catch { /* Remain unknown. A failed GET is never permission to POST again. */ }
+    finally { clearTimeout(timeout); if (transport.current === controller) transport.current = null; if (active.current) setRecovering(false); }
+  }
+
+  async function readCurrent(abandon = false) {
+    const root = current();
+    if (!root || root.key !== actor?.key || !scope || readingCurrent) return;
+    const record = intents.current.get(scope);
+    if (!record || record.phase !== "unknown" || record.intent.identity !== root.identity) return;
+    const tripId = props.tripId, key = scope;
+    const live = () => active.current && current()?.key === root.key && current()?.identity === record.intent.identity
+      && liveProps.current.tripId === tripId && (abandon || intents.current.get(key) === record);
+    if (!live()) return;
+    if (abandon) {
+      if (abandonFor !== record.intent) return;
+      transport.current?.abort(); transport.current = null;
+      if (!abandonLocalAddressIntent(intents.current, key, record, true, live)) return;
+      setAbandonFor(null); setRevision(n => n + 1);
+    }
+    // A current read, or a changed head, never settles an unresolved attempt by itself.
+    bindingRef.current = null; tripBindingRef.current = null;
+    setBinding(null); setTripBinding(null); readingCurrentRef.current = true; setReadingCurrent(true);
+    const action = ++readAction.current;
+    liveProps.current.onAddressRequestBlockChange(true);
+    try {
+      await readAddressCurrent(live, () => liveProps.current.onReadCurrent(live));
+      if (live() && readAction.current === action) setBindingRefresh(n => n + 1);
+    } catch { /* Keep unknown bytes unless the user explicitly abandoned. Never report applied/rejected. */ }
+    finally { if (active.current && readAction.current === action) { readingCurrentRef.current = false; setReadingCurrent(false); } }
+  }
+
+  const zh = props.locale === "zh";
+  return <section className={styles.panel} aria-label={zh ? "当前行程地址" : "Current Trip addresses"} data-testid="trip-address-section">
+    {unknownHere && currentIntent ? <div role="status">
+      <p>{zh ? "地址提案结果未知。原请求仍保留；读取当前行程不会自动认定原请求的结果。" : "Address proposal outcome unknown. Original request retained; reading the current Trip does not settle its outcome."}</p>
+      {tripQualified ? <button type="button" disabled={recovering || readingCurrent || props.pending !== null && matchingAddressProposal(props.pending, currentIntent.intent) === null || transport.current !== null} onClick={() => void recover()}>{zh ? "读取原提案状态" : "Read original proposal status"}</button> : null}
+      <button type="button" disabled={readingCurrent || recovering} onClick={() => void readCurrent()}>{zh ? "读取当前行程" : "Read current Trip"}</button>
+      {abandonFor === currentIntent.intent ? <div>
+        <p>{zh ? "确定放弃这次本地未决补充？这不会撤销或更改服务端结果，也不表示原请求失败。随后只读取当前行程。" : "Abandon this local unresolved addition? This does not undo or change the server result, or mean the original request failed. The current Trip will then be read."}</p>
+        <button type="button" disabled={readingCurrent || recovering} onClick={() => void readCurrent(true)}>{zh ? "确认放弃本地未决补充" : "Confirm local abandonment"}</button>
+        <button type="button" disabled={readingCurrent} onClick={() => setAbandonFor(null)}>{zh ? "保留未决请求" : "Keep unresolved request"}</button>
+      </div> : <button type="button" disabled={readingCurrent || recovering} onClick={() => setAbandonFor(currentIntent.intent)}>{zh ? "放弃本地未决补充（不会撤销服务端结果）" : "Abandon local unresolved addition (does not undo server result)"}</button>}
+    </div> : null}
+    {!qualifiedRoot ? <div role="status"><p>{zh ? "当前身份或确认版本地址暂不可用。" : "Addresses are unavailable for the current identity or confirmed version."}</p><button type="button" onClick={() => { setBinding(null); setTripBinding(null); setBindingRefresh(n => n + 1); }}>{zh ? "重新读取当前行程与提案" : "Reread current Trip and proposal"}</button></div> : <>
+
+      {contexts.map(({ title, context }) => <section key={`${context.dayId}:${context.itemId}`} aria-label={title}>
+        <h2>{title}</h2>
+        <TripItemAddress context={context} locale={props.locale} blocked={props.blocked || props.pending !== null || ownBlocked} settledEpoch={props.settledEpoch} prepare={prepare} />
+      </section>)}
+      {props.pending && review?.kind === "ready" ? review.changes.map(change => <section key={`review:${change.dayId}:${change.itemId}`} aria-label={change.title}>
+        <h2>{change.title}</h2><AddressProposalDiff pending={props.pending!} context={{ actorKey: actor!.key, tripId: props.tripId, tripVersion: props.data.trip.headVersion, dayId: change.dayId, itemId: change.itemId }} locale={props.locale} />
+      </section>) : null}
+    </>}
+  </section>;
+}

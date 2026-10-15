@@ -1,0 +1,38 @@
+✔ current claims root must GET original Trip and exact pending before parent data receives a display lease (13.16025ms)
+✔ A payload cannot reappear under B claims when B's real Cookie Trip read is denied; returning A must reread (0.521208ms)
+✔ same-session revalidation also rereads and late root/version/digest changes cannot reuse a lease (0.560958ms)
+✔ no-pending display lease requires exact authoritative absence, never generic transport/409 failure (0.298125ms)
+✔ rollback clearing without setop renders removal from actual before/after (0.328958ms)
+✔ restored deleted address item and cross-day move review use union of original snapshots, not current-item existence (0.156084ms)
+✔ current source and manual addition retain separate provenance and original bytes (1.3465ms)
+✔ country/title do not grant Chinese observation and ambiguous lines stay unknown (0.163375ms)
+✔ stale versions/items, missing evidence, revoked, unmatched and expired sources fail closed (0.209208ms)
+✔ source transport failure differs from a successful empty/missing read (0.125458ms)
+✔ late response, route/actor change and unmount cannot publish into successor read (0.614083ms)
+✔ prepare uses only original versioned patch, preserves bytes, and never confirms or retries unknown ACK (0.357917ms)
+✔ online read binds exact item/version and preserves cookie GET/no-store/abort without model egress (10.876875ms)
+✔ real Cookie prepare POST preserves exact body then reads exact receipt id without confirm (11.949917ms)
+✔ unknown POST recovery only GETs and never clears original bytes or fabricates receipt on empty read (0.490209ms)
+✔ original pending validation rejects wrong receipt/revision/base/digest/extra ops/forged after (0.209ms)
+✔ actor/route replacement after await cannot adopt a POST receipt or pending diff (0.395125ms)
+✔ verified claims create ephemeral sub/session/generation root; unknown and late claims cannot restore it (0.577084ms)
+✔ claims expiry and 8s unknown claims timeout invalidate without late restore (0.785583ms)
+✔ only exact authoritative terminal token settles a handed intent; old epoch/reset/read-failure do not (0.124667ms)
+✔ hidden address review blocks original Confirm including restored pending with no local ledger (0.373834ms)
+✔ reload's new authoritative version with old nonstale pending keeps original Confirm locked (0.473375ms)
+✔ rendered zh/en facts distinguish source/manual and unknown script, escape input (4.034125ms)
+✔ initial unloaded component never offers an enabled editor or a false missing result (13.406083ms)
+✔ original proposal diff renders authoritative raw before/after only for exact base/item/digest (1.172042ms)
+✔ real Section starts fail closed until verified claims, without rendering stale item facts (0.56225ms)
+✔ actual diff renderer shows rollback removal, restored item and move target without any set operation (0.536083ms)
+✔ manual value preserves supplied bytes and cannot acquire verified provenance (0.835416ms)
+✔ bounded address input rejects blank, controls, malformed Unicode and overflow without clipping (0.208459ms)
+✔ Chinese text observation uses only real address content and leaves ambiguous scripts unknown (0.166208ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 278.826792

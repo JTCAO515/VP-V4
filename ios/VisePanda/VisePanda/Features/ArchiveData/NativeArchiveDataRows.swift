@@ -13,7 +13,11 @@ enum NativeArchiveDataRows {
                   let items = day["items"] as? [[String: Any]] else { throw NativeDataError.invalidResponse }
             if day.keys.contains("timeZone") { _ = try w.text(day["timeZone"], max: 160) }
             for item in items {
-                _ = try w.object(item, Set(["id", "dayId", "title"] + ["startsAt", "endsAt"].filter { item.keys.contains($0) }))
+                _ = try w.object(item, Set(["id", "dayId", "title"] + ["startsAt", "endsAt", "chineseAddress"].filter { item.keys.contains($0) }))
+                if item.keys.contains("chineseAddress") {
+                    let bytes = try JSONSerialization.data(withJSONObject: item["chineseAddress"] as Any, options: [.fragmentsAllowed])
+                    _ = try JSONDecoder().decode(NativeUserProvidedAddress.self, from: bytes)
+                }
                 _ = try w.text(item["id"], max: 160); _ = try w.text(item["title"], max: 160)
                 guard item["dayId"] as? String == dayID else { throw NativeDataError.invalidResponse }
                 for key in ["startsAt", "endsAt"] where item.keys.contains(key) { try instant(item[key]) }

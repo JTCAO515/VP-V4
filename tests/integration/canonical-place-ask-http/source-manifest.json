@@ -1,8 +1,8 @@
 {
   "schemaVersion": "canonical-place-http-sql-input/1",
   "acceptedBaseline": "ead1efc19f2f540d9056eb37ed90333388b0c8a9",
-  "reviewedSQLCheckpoint": "2c0b1934405a5531b2570acaf130abaa234e4f01",
-  "integratedCheckout": "31d81f42677767330d2f818cb15dd43684929902",
+  "reviewedSQLCheckpoint": "441e51dc210b2a678fcd5f6d5f9aa638f0c5020b",
+  "integratedCheckout": "f91a7640ea094c06b923f95472598c63a8e583c1",
   "files": {
     "supabase/migrations/20260824101500_v4_baseline.sql": "2296639fa00f329fe239032a31bfbec7e8d3458318fe04411ff8c625fdee8a78",
     "supabase/migrations/20260824104424_plat_conf_connection_probes.sql": "d56ace82f308e66e8796e461b944a9b308e1cfc9d033a24ab0752a06ac2edbcb",
@@ -164,6 +164,7 @@
     "supabase/migrations/20261015043710_agent001_qa_cancellation.sql": "f7c1898b22c6be8f55851b87e3dcd9a7cbce24a187469f529de911658c8693ce",
     "supabase/migrations/20261015055708_agent008_trip_service_task_settlement_current.sql": "cdbe97c1931cac1a077ae3f898377cb6ee552dada66a23a2490a9565e9134021",
     "supabase/migrations/20261015083120_agent005_canonical_place_ask.sql": "b64df5e6ea295cc55800529d45b14510fe0baa106db881abc490a3289e594723",
+    "supabase/migrations/20261015161024_ios004_online_user_address.sql": "62074a2fb1b56b35620f835b9a09f667e87d2a826ffc64cd3734e196ef997f4a",
     "tests/integration/turn/fixtures/durable-work-schema.sql": "a06fd58e9d599178d20dfe84d10418f839597448c6ae8634f993e0526a4363a4",
     "tests/integration/canonical-place-ask-sql/fixtures.mjs": "dd78e9a2d952b6597a7e3cede8fe496bda496662f6321a39889267aaa6d08283",
     "tests/integration/canonical-place-ask-sql/db.mjs": "001d9dffdebde3665af0a2c8de13841018bdb3a123a74770d5739c120bbc9acc"
@@ -328,6 +329,7 @@
     "supabase/migrations/20261015040456_agent005_resolved_subject_context.sql",
     "supabase/migrations/20261015043710_agent001_qa_cancellation.sql",
     "supabase/migrations/20261015055708_agent008_trip_service_task_settlement_current.sql",
-    "supabase/migrations/20261015083120_agent005_canonical_place_ask.sql"
+    "supabase/migrations/20261015083120_agent005_canonical_place_ask.sql",
+    "supabase/migrations/20261015161024_ios004_online_user_address.sql"
   ]
 }

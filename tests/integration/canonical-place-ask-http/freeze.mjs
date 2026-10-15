@@ -11,7 +11,7 @@ if(execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim()!==
 const append='supabase/migrations/20261015083120_agent005_canonical_place_ask.sql';
 const all=readdirSync(new URL('../../../supabase/migrations/',import.meta.url)).filter(p=>p.endsWith('.sql')).sort().map(p=>'supabase/migrations/'+p);
 if(!all.includes(append))throw Error('Reviewed canonical migration is not integrated');
-const migrations=[...all.filter(p=>p!==append),append];
+const migrations=all;
 const paths=[...migrations,'tests/integration/turn/fixtures/durable-work-schema.sql','tests/integration/canonical-place-ask-sql/fixtures.mjs','tests/integration/canonical-place-ask-sql/db.mjs'];
 execFileSync('git',['diff','--exit-code','HEAD','--',...paths],{cwd:repo,stdio:'pipe'});
 for(const path of paths)execFileSync('git',['ls-files','--error-unmatch',path],{cwd:repo,stdio:'pipe'});
