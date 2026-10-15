@@ -1,2 +1,0 @@
-VPJ plan passed: 83 tasks, 20 replacements, acyclic dependencies, contracts and archive hashes.
-AI Core and VPJ documentation baseline passed.
