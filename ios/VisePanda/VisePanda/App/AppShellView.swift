@@ -265,12 +265,18 @@ private enum NativeFrontendSheet: String, Identifiable {
 
 enum NativeFrontendRollout {
     static func enabled(arguments: [String] = ProcessInfo.processInfo.arguments) -> Bool {
+#if VP_CONTROLLED_SAMPLE
+        // This separately compiled TestFlight build stays in the labeled local
+        // experience even if a legacy launch argument is supplied.
+        return true
+#else
         if arguments.contains("-VisePandaLegacyShell") || arguments.contains("-V10RealServiceFrontend") { return false }
         if arguments.contains("-V10FrontendExperience") { return true }
 #if DEBUG
         return !arguments.contains("-VisePandaNativeAPI") && !arguments.contains("-VisePandaFourTabShell")
 #else
         return false
+#endif
 #endif
     }
 }
