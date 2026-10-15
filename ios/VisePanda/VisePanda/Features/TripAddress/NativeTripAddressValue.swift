@@ -3,6 +3,7 @@ import Foundation
 /// Exact online-only value. It never grants GroundedClaim or offline eligibility.
 struct NativeUserProvidedAddress: Codable, Equatable {
     let text: String
+    static func == (lhs: Self, rhs: Self) -> Bool { lhs.text.utf8.elementsEqual(rhs.text.utf8) }
     var source: String { "user_provided" }
     var verification: String { "unverified" }
     private enum CodingKeys: String, CodingKey { case text, source, verification }
@@ -58,4 +59,13 @@ enum NativeAddressText {
     }
 }
 
-enum NativeAddressOperationText: Equatable { case set(String), clear }
+enum NativeAddressOperationText: Equatable {
+    case set(String), clear
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        switch (lhs, rhs) {
+        case (.clear, .clear): return true
+        case (.set(let left), .set(let right)): return left.utf8.elementsEqual(right.utf8)
+        default: return false
+        }
+    }
+}
