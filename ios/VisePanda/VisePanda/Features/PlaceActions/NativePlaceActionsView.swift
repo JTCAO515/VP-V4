@@ -390,6 +390,7 @@ private struct NativePlaceActionsSample: View {
                 if review {
                     Text(t("Sample 差异：示例日期新增一个地点候选。", "Sample diff: add one place candidate to the sample day."))
                     Button(t("确认样例差异（仅内存）", "Confirm sample diff (memory only)")) { review = false; result = true }
+                        .disabled(unresolved)
                     Button(t("取消样例差异", "Cancel sample diff")) { review = false }
                 }
                 if result { Text(t("样例确认完成，真实行程未改变。", "Sample confirmation complete; no real Trip changed.")) }
