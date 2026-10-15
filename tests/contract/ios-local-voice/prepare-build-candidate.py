@@ -13,7 +13,8 @@ output = root / 'artifacts/IOS-VOICE/local-draft-20261015'
 output.mkdir(parents=True, exist_ok=True)
 project = root / 'ios/VisePanda/VisePanda.xcodeproj'
 pbx = project / 'project.pbxproj'
-before = pbx.read_text()
+accepted_base = '774a04573088306160908a8bae73cfd125bb6294'
+before = subprocess.check_output(['git', 'show', accepted_base + ':ios/VisePanda/VisePanda.xcodeproj/project.pbxproj'], cwd=root).decode()
 after = before
 names = ['NativeLocalVoiceContext', 'NativeLocalVoiceCapture', 'NativeLocalVoiceSheet']
 refs, builds = [], []
@@ -46,10 +47,12 @@ def candidate(path, old, new):
     def blob(text):
         return hashlib.sha1(b'blob ' + str(len(text.encode())).encode() + b'\0' + text.encode()).hexdigest()
     manifest.append(dict(path=label, before=blob(old), after=blob(new)))
+assert pbx.read_text() in (before, after), 'Shared PBX drift: do not overwrite or regenerate from unknown bytes'
 candidate(pbx, before, after)
 plist = root / 'ios/VisePanda/VisePanda/NativeEnvironment.plist'
-pold = plist.read_text()
+pold = subprocess.check_output(['git', 'show', accepted_base + ':ios/VisePanda/VisePanda/NativeEnvironment.plist'], cwd=root).decode()
 pnew = pold.replace('VisePanda records only when you choose to speak a phrase for translation. Release or cancel to stop. VisePanda 仅在你选择说话翻译时录音，松开或取消即可停止。', 'VisePanda records only when you start voice input for a local draft or translation. Stop or cancel to end recording. VisePanda 仅在你主动开始本地草稿或翻译语音输入时录音，停止或取消即可结束。').replace('VisePanda recognizes your selected recording on this device so you can review its text before translation. If local recognition is unavailable, type your phrase. VisePanda 在本机识别你选择的录音，供你核对文字后翻译；本机识别不可用时可输入短句。', 'VisePanda recognizes your recording on this device for you to review before using the text in a local draft or translation. If on-device recognition is unavailable, type instead. VisePanda 在本机识别录音，供你审阅后采用到本地草稿或翻译；本机识别不可用时请手动输入。')
+assert plist.read_text() in (pold, pnew), 'Shared plist drift: do not overwrite or regenerate from unknown bytes'
 candidate(plist, pold, pnew)
 (output / 'shared-candidates.json').write_text(json.dumps(manifest, indent=2) + '\n')
 # Disposable mirror uses the normal App/test targets and exactly the candidate PBX.
