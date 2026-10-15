@@ -273,8 +273,14 @@ final class NativeTripStore {
             await propose(using: session)
             return scope == actor && session.dataScope == actor && pending?.proposal.patch == patch
         }
-        guard draft == nil, await refreshForSharing(using: session), !Task.isCancelled,
-              scope == actor, session.dataScope == actor, canEdit, draft == nil, pending == nil,
+        func ownsAddressDraft() -> Bool {
+            guard let draft else { return true }
+            guard draft.tripId == detail.trip.id, draft.baseVersion == expectedTripVersion,
+                  draft.patch.operations.count == 1, let operation = draft.patch.operations.first else { return false }
+            return operation.kind == .setChineseAddress && operation.dayId == dayID && operation.itemId == itemID
+        }
+        guard ownsAddressDraft(), await refreshForSharing(using: session), !Task.isCancelled,
+              scope == actor, session.dataScope == actor, canEdit, ownsAddressDraft(), pending == nil,
               let fresh = self.detail, fresh.trip.id == detail.trip.id,
               fresh.confirmationState == "confirmed", fresh.trip.headVersion == expectedTripVersion,
               let dayIndex = fresh.content.days.firstIndex(where: { $0.id == dayID }),
@@ -459,7 +465,7 @@ final class NativeTripStore {
             try await self.loadList(session, scope)
             try await self.loadSelected(session, scope)
             guard let detail = self.detail, detail.trip.headVersion >= result.resultingVersion, detail.confirmationState == "confirmed" else { throw NativeDataError.invalidResponse }
-            if addressOnly, detail.trip.headVersion != result.resultingVersion { throw NativeDataError.invalidResponse }
+            if addressOnly, !NativeTripAddressConfirmation.matches(detail, proposal: proposal, resultingVersion: result.resultingVersion) { throw NativeDataError.invalidResponse }
             self.notice = "confirmed"
         }
     }

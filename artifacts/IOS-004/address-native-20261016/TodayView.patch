@@ -1,0 +1,18 @@
+--- a/ios/VisePanda/VisePanda/Features/Today/TodayView.swift
++++ b/ios/VisePanda/VisePanda/Features/Today/TodayView.swift
+@@ -180,13 +180,8 @@
+                     }
+                 }
+             }
+-            VisePandaCard {
+-                VStack(alignment: .leading, spacing: 10) {
+-                    Text(text("Chinese address", "中文地址")).font(.headline)
+-                    Text(text("No Chinese address is stored in this confirmed Trip version. Any address written in an item title remains visible above; check the exact place before travel.", "此确认版本没有单独保存中文地址。若项目标题写有地址，仍会显示在上方；出行前请核对准确地点。"))
+-                        .foregroundStyle(.secondary)
+-                        .accessibilityIdentifier("today.address.unavailable")
+-                }
++            if case .day(let day, _) = selection {
++                NativeTripAddressCard(detail: detail, day: day, store: store)
+             }
+             VisePandaCard {
+                 VStack(alignment: .leading, spacing: 10) {

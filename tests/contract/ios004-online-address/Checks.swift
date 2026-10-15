@@ -60,6 +60,27 @@ import Foundation
         let other = NativeTripSupportTarget(actor: actor, tripID: target.tripID, tripVersion: 6, dayID: "d", itemID: "i")
         precondition(NativeTripAddressRead.references(read(), target: other, current: actor) == nil)
         precondition(NativeTripAddressRead.references(nil, target: target, current: actor) == nil)
+        let summary = NativeTripSummary(id: target.tripID, title: "Trip", headVersion: 5, updatedAt: "2026-01-01T00:00:00Z")
+        let base = NativeTripDetail(version: 2, trip: summary, content: .init(days: [.init(id: "d", date: "2026-10-16", items: [new])]), hardLocks: .notEnabled, externalOrderStatus: .notConnected, confirmationState: "confirmed")
+        var draft = NativeTripDraft(base)
+        draft.days[0].items[0].userAddress = address
+        precondition(draft.patch.operations == [set])
+        precondition(base.content.days[0].items[0].userAddress?.text == "中") // Editing/cancel leaves confirmed bytes intact.
+        draft.days[0].items[0].userAddress = nil
+        precondition(draft.patch.operations == [clear])
+        draft = NativeTripDraft(base)
+        draft.days[0].items[0].title = "changed"
+        precondition(draft.patch.operations.count == 1 && draft.patch.operations[0].kind == .upsertItem)
+        precondition(draft.patch.operations[0].addressText == nil)
+        let proposal = NativeTripPending.Proposal(id: target.tripID, revision: 1, baseTripVersion: 5, status: "pending", createdAt: "2026-01-01T00:00:00Z", expiresAt: "2099-01-01T00:00:00Z", titleDiff: .init(before: "Trip", after: "Trip"), dayDiffs: [], patch: .init(expectedVersion: 5, operations: [set]), digest: "digest", stale: false, evidence: "", assumptions: "")
+        var confirmedItem = new; confirmedItem.userAddress = address
+        func confirmed(_ version: Int, _ item: NativeTripItem) -> NativeTripDetail {
+            .init(version: 2, trip: .init(id: target.tripID, title: "Trip", headVersion: version, updatedAt: "2026-01-01T00:00:00Z"), content: .init(days: [.init(id: "d", date: "2026-10-16", items: [item])]), hardLocks: .notEnabled, externalOrderStatus: .notConnected, confirmationState: "confirmed")
+        }
+        precondition(NativeTripAddressConfirmation.matches(confirmed(6, confirmedItem), proposal: proposal, resultingVersion: 6))
+        precondition(!NativeTripAddressConfirmation.matches(confirmed(7, confirmedItem), proposal: proposal, resultingVersion: 6))
+        precondition(!NativeTripAddressConfirmation.matches(confirmed(6, new), proposal: proposal, resultingVersion: 6))
+        precondition(!NativeTripAddressConfirmation.matches(base, proposal: proposal, resultingVersion: 6))
         print("PASS actual Native codec/DTO/op/source projection: old/new, forged tags, null/missing, scalar/byte/control, script, actor/version/TTL/source fences")
     }
 }

@@ -108,7 +108,7 @@ struct NativeTripAddressEditor: View {
         switch value { case .clear: text("Not provided", "未提供"); case .set(let value): value }
     }
     private func prepare() async {
-        guard current, !store.hasUncertainProposal else { return }
+        guard current else { return }
         let value: NativeAddressOperationText = clear ? .clear : .set(input)
         failed = false
         guard await store.prepareAddressProposal(expectedTripVersion: detail.trip.headVersion, dayID: dayID, itemID: item.id, value: value, using: session), current else { failed = true; return }
