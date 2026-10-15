@@ -1,6 +1,8 @@
 import type { NextRequest } from "next/server";
 import { nativeRequestScope } from "../../identity/native-request.ts";
 import { verifyNativeCredentials } from "../../identity/native-credentials.ts";
+import { getNativeRuntimeConfig, nativeTargetAllowed } from "../../identity/native-config.ts";
+import { getSupabasePublicConfig } from "../../identity/user-data-adapter.ts";
 import { getNativeTextConfig } from "../../turn/native-http.ts";
 import { getNativeAssistantConfig } from "../../turn/native-assistant-http.ts";
 import { parseCanonicalPlaceAsk, parseRecoveryKey, record, sameId, uuid } from "./contract.ts";
@@ -16,6 +18,14 @@ async function originalUtf8(request: Request, run: ReturnType<typeof nativeReque
     try { const text = new TextDecoder("utf-8", { fatal: true }).decode(bytesValue); return Buffer.from(text, "utf8").equals(bytesValue) ? text : null; }
     catch { return null; }
   } finally { void reader.cancel().catch(() => {}); try { reader.releaseLock(); } catch { /* request is ending */ } }
+}
+/** Receipt recovery retains the same operator-selected target without requiring
+ * a currently enabled generation policy. This grants no admission or dispatch. */
+function recoveryConfig(request: NextRequest) {
+  if (process.env.VISEPANDA_NATIVE_STAGING === "true" || process.env.VISEPANDA_NATIVE_PRODUCTION === "true")
+    return getNativeRuntimeConfig(request, "trip", "text");
+  const config = getSupabasePublicConfig();
+  return config && nativeTargetAllowed(config, request) ? config : null;
 }
 /** Native only; no client identity, subject, model, facts or qualification flag. */
 export async function canonicalPlaceAskHTTP(request: NextRequest): Promise<Response> {
@@ -38,13 +48,13 @@ export async function canonicalPlaceAskHTTP(request: NextRequest): Promise<Respo
       operation = parseRecoveryKey({ operationId: request.nextUrl.searchParams.get("operationId"), scopeKind: request.nextUrl.searchParams.get("scopeKind"), scopeId: request.nextUrl.searchParams.get("scopeId"), messageId: request.nextUrl.searchParams.get("messageId"), turnId: request.nextUrl.searchParams.get("turnId") });
       if (!operation) return fail("INVALID_INPUT", 400);
     }
-    // Reads retain the original base identity gate during admission rollback.
+    // Generation config is selected only for POST; GET retains the runtime identity gate.
     const configs = input && "conversationId" in input.submission ? [getNativeAssistantConfig(request)]
-      : input ? [getNativeTextConfig(request), getNativeTextConfig(request, true)] : [getNativeTextConfig(request)];
+      : [getNativeTextConfig(request), getNativeTextConfig(request, true)];
     // Match only operator-configured original policies; the request never picks
     // a database, recipient, mode upgrade or replacement consent.
-    const config = configs.find(value => value && (!input || sameId(input.submission.policyId, value.policyId))) ?? null;
-    if (!config || input && !sameId(input.submission.policyId, config.policyId)) return fail("DATA_POLICY_BLOCKED", 503);
+    const config = input ? configs.find(value => value && sameId(input.submission.policyId, value.policyId)) ?? null : recoveryConfig(request);
+    if (!config) return fail("DATA_POLICY_BLOCKED", 503);
     const actor = await scope.run(() => verifyNativeCredentials(request, config, scope.fetch, scope.unavailable));
     if (!actor) return fail("UNAUTHENTICATED", 401);
     const current = async () => {
