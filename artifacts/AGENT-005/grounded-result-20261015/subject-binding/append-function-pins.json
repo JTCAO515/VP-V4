@@ -1,0 +1,14 @@
+[
+  {
+    "signature": "public.read_grounded_ai_assist_context_v1(uuid)",
+    "arguments": "p_turn_id uuid",
+    "before": "c3d2d77a39fe8e27fec9f56a7cd7f5dd2120240a982308e62de7fd22e6a0dac7",
+    "after": "5bba47c26a3bcf314c2070a46df358d2d41f25988e4dcf674b2353909876409b"
+  },
+  {
+    "signature": "public.grounded_ai_assist_work_v1(jsonb)",
+    "arguments": "p_input jsonb",
+    "before": "3a14dd18658b474a48fc29e4b43f05a2a24ebaefb46acf8de8fd7ecd4c9c55b0",
+    "after": "338327a557d3558c039975823567200ab783d161e0dfe88448e7968cf4fe25e9"
+  }
+]
