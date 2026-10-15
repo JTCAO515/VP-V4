@@ -15,3 +15,13 @@ UNRUN: Main's shared authenticated GET/Session/PBX/entry integration; actual App
 Target execution settings: official VP-V10 project binding read back; requested Sol 6.1/medium, effective model/thinking/service tier not exposed and UNKNOWN. Existing local tools, SDK and authenticated GitHub issue reads worked. No secret was read/logged or added, no approval bypass or escalation was used, and no third-party/account operation was invoked.
 
 Integration is given in `MAIN-INTEGRATION.md`. Whole #225/#226 remain outside this native-slice completion claim. Main alone freezes/applies shared integration and records unified target acceptance.
+
+## Main-requested bounded read lease increment
+
+Current lease wire: B commit `ebd4fe0a70d67d3bc7fafb768f49b75c656bc34c`, clean contract SHA256 `4e2b4b65d8f481b9c91e29b1eff848e71ae16b318de61f87a9cb719db721841e`. Supersedes the pre-lease parser pin above; the original 17-test log is retained as history.
+
+PASS: 23 actual Swift Testing cases and actual iOS 17 SDK SwiftUI typecheck, `lease-verification.log`. Added strict checkedAt/lifetimeMs type/range/mandatory-field rejection; only active accepts positive lifetime, nonpositive states require 0; full round trip subtraction with injected ContinuousClock; response arriving at/after lease exhaustion; exact 1ms period-end boundary using integer milliseconds; same original checkedAt cannot extend the first deadline even after a failed refresh; new trusted check may provide a new lease; no device-Date input participates in positive eligibility. Historical none/expired/revoked use server-provided states and show last check time rather than recomputing from the client's calendar.
+
+PASS: `node --experimental-strip-types tests/contract/subscription-native/verify-producer-parity.mjs <catalogWT> <ledgerWT>` — exact actual catalog presentation output and six synthetic samples accepted by B's actual final closed parser, then decoded by Native. `producer-parity.log`. This is source/codec interoperability, not signature, target, persistent-ledger or Apple evidence.
+
+An initial lease test exposed Foundation floating-point addition at a 1ms half-open boundary (119ns overshoot); the codec now compares canonical wire milliseconds as bounded Int64. Existing App/target/8F/VoiceOver/real Sandbox/device/release UNRUN facts remain unchanged. Main retains all shared integration and acceptance responsibility.

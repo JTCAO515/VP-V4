@@ -16,7 +16,7 @@ struct NativeSubscriptionCopy {
     var provenance: String { text("仅显示服务端核验的 Sandbox 测试周期，不代表正式订阅；Xcode 本地测试另行区分。", "Shows only server-verified Sandbox test periods, not a production subscription. Xcode local testing is separate.") }
     func status(_ state: NativeSubscriptionStatus) -> String {
         switch state {
-        case .none: text("Sandbox：无已核实订阅", "Sandbox: no verified subscription")
+        case .none: text("Sandbox 上次读取：无已核实订阅", "Last Sandbox read: no verified subscription")
         case .active: text("Sandbox 测试周期生效中", "Sandbox test period active")
         case .expired: text("Sandbox 测试周期已到期", "Sandbox test period expired")
         case .revoked: text("Sandbox 测试周期已撤销", "Sandbox test period revoked")

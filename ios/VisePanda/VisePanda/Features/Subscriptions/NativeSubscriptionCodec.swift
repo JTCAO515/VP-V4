@@ -38,27 +38,30 @@ enum NativeSubscriptionCodec {
                          subscriptionDescription: string(subscription["description"]))
     }
 
-    static func entitlement(_ bytes: Data, scope: NativeSubscriptionScope, now: Date) throws -> NativeSubscriptionEntitlement {
+    static func entitlement(_ bytes: Data, scope: NativeSubscriptionScope) throws -> NativeSubscriptionEntitlement {
         guard scope.valid else { throw NativeSubscriptionError.invalidResponse }
         let v = try root(bytes, maximum: 8_192)
-        try keys(v, ["schemaVersion", "sourceEnvironment", "localTest", "ownerId", "catalogVersion", "policyVersion", "state", "period", "remainingCapacity", "purchaseEnabled", "runtimeCapacityEnabled"])
+        try keys(v, ["schemaVersion", "sourceEnvironment", "localTest", "ownerId", "catalogVersion", "policyVersion", "state", "period", "remainingCapacity", "purchaseEnabled", "runtimeCapacityEnabled", "checkedAt", "lifetimeMs"])
         guard v["schemaVersion"] as? String == "subscription-entitlement/1",
               try integer(v["catalogVersion"]) == 3, v["policyVersion"] as? String == policy,
               let rawState = v["state"] as? String, let state = NativeSubscriptionStatus(rawValue: rawState),
               v["remainingCapacity"] is NSNull,
               try !boolean(v["purchaseEnabled"]), try !boolean(v["runtimeCapacityEnabled"]),
               try !boolean(v["localTest"]) else { throw NativeSubscriptionError.invalidResponse }
+        let lifetime = try integer(v["lifetimeMs"], maximum: 300_000)
         if state == .unavailable || state == .reconciliationRequired {
-            guard v["ownerId"] is NSNull, v["period"] is NSNull, v["sourceEnvironment"] is NSNull else {
+            guard v["ownerId"] is NSNull, v["period"] is NSNull, v["sourceEnvironment"] is NSNull, v["checkedAt"] is NSNull, lifetime == 0 else {
                 throw NativeSubscriptionError.invalidResponse
             }
-            return .init(state: state, environment: nil, ownerID: nil, period: nil)
+            return .init(state: state, environment: nil, ownerID: nil, period: nil, checkedAt: nil, lifetimeMs: 0)
         }
         guard let owner = v["ownerId"] as? String, owner.lowercased() == scope.ownerID,
               v["sourceEnvironment"] as? String == "Sandbox" else { throw NativeSubscriptionError.invalidResponse }
+        let checkedAt = try date(v["checkedAt"])
+        guard state == .active ? lifetime > 0 : lifetime == 0 else { throw NativeSubscriptionError.invalidResponse }
         if state == .none {
             guard v["period"] is NSNull else { throw NativeSubscriptionError.invalidResponse }
-            return .init(state: state, environment: .sandbox, ownerID: scope.ownerID, period: nil)
+            return .init(state: state, environment: .sandbox, ownerID: scope.ownerID, period: nil, checkedAt: checkedAt, lifetimeMs: lifetime)
         }
         let p = try object(v["period"])
         try keys(p, ["transactionId", "originalTransactionId", "productId", "subscriptionGroupId", "purchaseAt", "expiresAt", "revokedAt", "descriptorId", "catalogVersion", "policyVersion"])
@@ -75,13 +78,14 @@ enum NativeSubscriptionCodec {
         guard purchase < end, (state == .revoked) == (revoked != nil), revoked.map({ $0 >= purchase }) ?? true else { throw NativeSubscriptionError.invalidResponse }
         // Half-open trusted period. Do not infer active from a device-local transaction or from HTTP success.
         if state == .active {
-            guard purchase <= now, now < end, end.timeIntervalSince(now) <= 366 * 24 * 3_600 else {
+            guard purchase <= checkedAt, checkedAt < end,
+                  Int64(lifetime) <= milliseconds(end) - milliseconds(checkedAt) else {
                 throw NativeSubscriptionError.invalidResponse
             }
         }
-        if state == .expired, end > now { throw NativeSubscriptionError.invalidResponse }
         return .init(state: state, environment: .sandbox, ownerID: scope.ownerID,
-                     period: .init(purchaseAt: purchase, expiresAt: end, revokedAt: revoked))
+                     period: .init(purchaseAt: purchase, expiresAt: end, revokedAt: revoked),
+                     checkedAt: checkedAt, lifetimeMs: lifetime)
     }
 
     /// Exact top-level envelope. Main's GET adapter must wrap either producer projection as {data: ...}.
@@ -112,16 +116,21 @@ enum NativeSubscriptionCodec {
         }
         return value.boolValue
     }
-    private static func integer(_ raw: Any?) throws -> Int {
+    private static func integer(_ raw: Any?, maximum: Int = 1_000) throws -> Int {
         guard let value = raw as? NSNumber, CFGetTypeID(value) != CFBooleanGetTypeID(),
               !["d", "f"].contains(String(cString: value.objCType)),
-              value.int64Value >= 0, value.int64Value <= 1_000 else { throw NativeSubscriptionError.invalidResponse }
+              value.int64Value >= 0, value.int64Value <= maximum else { throw NativeSubscriptionError.invalidResponse }
         return value.intValue
     }
     private static func decimalID(_ raw: Any?) throws -> String {
         let value = try string(raw, maximum: 32)
         guard value.utf8.allSatisfy({ (48...57).contains($0) }) else { throw NativeSubscriptionError.invalidResponse }
         return value
+    }
+    private static func milliseconds(_ date: Date) -> Int64 {
+        // Parsed wire dates are canonical whole milliseconds, bounded to 1970...2100.
+        // Integer comparison avoids Foundation's 0.000000119s addition error at an exact end.
+        Int64((date.timeIntervalSince1970 * 1_000).rounded())
     }
     private static func date(_ raw: Any?) throws -> Date {
         let value = try string(raw, maximum: 24)

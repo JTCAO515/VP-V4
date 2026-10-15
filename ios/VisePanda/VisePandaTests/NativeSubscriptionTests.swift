@@ -10,12 +10,13 @@ import Testing
     }
     private var wall: Date { Date(timeIntervalSince1970: 1_792_022_400) } // 2026-10-15T00:00:00Z
     private func envelope(_ value: [String: Any]) throws -> Data { try JSONSerialization.data(withJSONObject: ["data": value], options: [.sortedKeys]) }
-    private func fixture(_ locale: String = "en") throws -> Data {
+    private func fixture(_ locale: String = "en") throws -> Data { try fixtureFile("catalog-\(locale)") }
+    private func fixtureFile(_ name: String) throws -> Data {
         if let root = ProcessInfo.processInfo.environment["SUBSCRIPTION_FIXTURES"] {
-            return try Data(contentsOf: URL(fileURLWithPath: root).appendingPathComponent("catalog-\(locale).json"))
+            return try Data(contentsOf: URL(fileURLWithPath: root).appendingPathComponent("\(name).json"))
         }
         let url = try #require(Bundle(for: NativeSubscriptionFixtureAnchor.self).url(
-            forResource: "catalog-\(locale)", withExtension: "json", subdirectory: "SubscriptionNative"))
+            forResource: name, withExtension: "json", subdirectory: "SubscriptionNative"))
         return try Data(contentsOf: url)
     }
     private func catalog(_ locale: String = "en") throws -> [String: Any] {
@@ -32,10 +33,28 @@ import Testing
         return ["schemaVersion": "subscription-entitlement/1", "sourceEnvironment": noOwner ? NSNull() : "Sandbox",
             "localTest": false, "ownerId": noOwner ? NSNull() : owner, "catalogVersion": 3,
             "policyVersion": "subscription-development-policy/1", "state": state, "period": noPeriod ? NSNull() : period,
-            "remainingCapacity": NSNull(), "purchaseEnabled": false, "runtimeCapacityEnabled": false]
+            "remainingCapacity": NSNull(), "purchaseEnabled": false, "runtimeCapacityEnabled": false,
+            "checkedAt": noOwner ? NSNull() : "2026-10-15T00:00:00.000Z", "lifetimeMs": state == "active" ? 300_000 : 0]
     }
     private func decode(_ value: [String: Any], now: Date? = nil) throws -> NativeSubscriptionEntitlement {
-        try NativeSubscriptionCodec.entitlement(envelope(value), scope: scope, now: now ?? wall)
+        var value = value
+        if let now {
+            let formatter = ISO8601DateFormatter()
+            formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            value["checkedAt"] = formatter.string(from: now)
+        }
+        return try NativeSubscriptionCodec.entitlement(envelope(value), scope: scope)
+    }
+
+    @Test func allSixServerParserAcceptedSyntheticSamplesDecode() throws {
+        let samples = try #require(JSONSerialization.jsonObject(with: fixtureFile("producer-entitlements")) as? [[String: Any]])
+        #expect(samples.count == 6)
+        for sample in samples {
+            let bytes = try JSONSerialization.data(withJSONObject: sample)
+            let decoded = try NativeSubscriptionCodec.entitlement(bytes, scope: scope)
+            let data = try #require(sample["data"] as? [String: Any])
+            #expect(decoded.state.rawValue == data["state"] as? String)
+        }
     }
 
     @Test func sameProducerCatalogBothLocalesHasNoPriceOrBalance() throws {
@@ -81,7 +100,7 @@ import Testing
             #expect(throws: (any Error).self) { try decode(changed) }
         }
         for data in [Data(), Data("null".utf8), Data("{bad}".utf8), Data("{\"data\":null}".utf8), Data(repeating: 32, count: 65_537), try JSONSerialization.data(withJSONObject: ["data": value, "other": true])] {
-            #expect(throws: (any Error).self) { try NativeSubscriptionCodec.entitlement(data, scope: scope, now: wall) }
+            #expect(throws: (any Error).self) { try NativeSubscriptionCodec.entitlement(data, scope: scope) }
         }
     }
 
@@ -107,14 +126,14 @@ import Testing
     }
 
     @Test func halfOpenPeriodCannotBecomeActiveEarlyOrAfterExpiry() throws {
-        let value = snapshot()
+        var value = snapshot(); value["lifetimeMs"] = 1
         let start = try #require(ISO8601DateFormatter().date(from: "2026-10-01T00:00:00Z"))
         let end = try #require(ISO8601DateFormatter().date(from: "2026-11-01T00:00:00Z"))
         #expect(throws: (any Error).self) { try decode(value, now: start.addingTimeInterval(-0.001)) }
         #expect(try decode(value, now: start).state == .active)
         #expect(try decode(value, now: end.addingTimeInterval(-0.001)).state == .active)
         #expect(throws: (any Error).self) { try decode(value, now: end) }
-        #expect(throws: (any Error).self) { try decode(snapshot("expired"), now: start) }
+        #expect(try decode(snapshot("expired"), now: start).state == .expired) // Server state is not recomputed from a client calendar.
     }
 
     @Test func defaultIsRealUnavailableAndNeverSendsReads() async {
@@ -127,7 +146,7 @@ import Testing
 
     @Test func readOnlyReloadStateTransitionsAndFailureClearOldPrivateData() async throws {
         let fake = FakeSubscriptionPort(scope: scope, catalog: try fixture(), entitlement: try envelope(snapshot()))
-        let store = NativeSubscriptionStore(port: fake, now: { wall })
+        let store = NativeSubscriptionStore(port: fake)
         await store.reload(locale: .en)
         #expect(store.phase == .loaded)
         #expect(store.visibleEntitlement?.state == .active)
@@ -146,7 +165,7 @@ import Testing
 
     @Test func actorSwitchImmediatelyHidesLoadedInformationBeforeReload() async throws {
         let fake = FakeSubscriptionPort(scope: scope, catalog: try fixture(), entitlement: try envelope(snapshot()))
-        let store = NativeSubscriptionStore(port: fake, now: { wall })
+        let store = NativeSubscriptionStore(port: fake)
         await store.reload(locale: .en)
         fake.currentScope = .init(endpoint: scope.endpoint, ownerID: "00000000-0000-4000-8000-000000000002", mobileEpoch: 1, generation: 2)
         #expect(store.visibleEntitlement == nil)
@@ -158,7 +177,7 @@ import Testing
 
     @Test func endpointEpochAndGenerationDriftHideLoadedState() async throws {
         let fake = FakeSubscriptionPort(scope: scope, catalog: try fixture(), entitlement: try envelope(snapshot()))
-        let store = NativeSubscriptionStore(port: fake, now: { wall })
+        let store = NativeSubscriptionStore(port: fake)
         for changed in [NativeSubscriptionScope(endpoint: "https://other.invalid", ownerID: owner, mobileEpoch: 1, generation: 1), .init(endpoint: scope.endpoint, ownerID: owner, mobileEpoch: 2, generation: 1), .init(endpoint: scope.endpoint, ownerID: owner, mobileEpoch: 1, generation: 2)] {
             fake.currentScope = scope; await store.reload(locale: .en)
             #expect(store.visibleEntitlement != nil)
@@ -170,7 +189,7 @@ import Testing
     @Test func oldNonceCannotOverwriteNewerReadEvenForSameAccount() async throws {
         let fake = FakeSubscriptionPort(scope: scope, catalog: try fixture(), entitlement: try envelope(snapshot()))
         fake.holdEntitlement = true
-        let store = NativeSubscriptionStore(port: fake, now: { wall })
+        let store = NativeSubscriptionStore(port: fake)
         let first = Task { await store.reload(locale: .en) }
         while fake.pending == nil { await Task.yield() }
         #expect(store.phase == .loading)
@@ -188,7 +207,7 @@ import Testing
         for background in [false, true] {
             let fake = FakeSubscriptionPort(scope: scope, catalog: try fixture(), entitlement: try envelope(snapshot()))
             fake.holdEntitlement = true
-            let store = NativeSubscriptionStore(port: fake, now: { wall })
+            let store = NativeSubscriptionStore(port: fake)
             let task = Task { await store.reload(locale: .en) }
             while fake.pending == nil { await Task.yield() }
             if background { store.setForeground(false) } else { fake.currentScope = nil; store.invalidateIfScopeChanged() }
@@ -201,19 +220,19 @@ import Testing
     }
 
     @Test func expirationAtRenderHidesActiveWithoutInventingExpiredReceipt() async throws {
-        let clock = SubscriptionTestClock(wall)
+        let clock = SubscriptionTestClock()
         let fake = FakeSubscriptionPort(scope: scope, catalog: try fixture(), entitlement: try envelope(snapshot()))
-        let store = NativeSubscriptionStore(port: fake, now: { clock.value })
+        let store = NativeSubscriptionStore(port: fake, monotonicNow: { clock.value })
         await store.reload(locale: .en)
         #expect(store.visibleEntitlement?.state == .active)
-        clock.value = try #require(ISO8601DateFormatter().date(from: "2026-11-01T00:00:00Z"))
+        clock.value = clock.value.advanced(by: .seconds(300))
         #expect(store.visibleEntitlement == nil)
     }
 
     @Test func cancellationAndInvalidPayloadDoNotLeaveLoadedOrLoadingState() async throws {
         let fake = FakeSubscriptionPort(scope: scope, catalog: try fixture(), entitlement: try envelope(snapshot()))
         fake.holdEntitlement = true
-        let store = NativeSubscriptionStore(port: fake, now: { wall })
+        let store = NativeSubscriptionStore(port: fake)
         let task = Task { await store.reload(locale: .en) }
         while fake.pending == nil { await Task.yield() }
         task.cancel(); fake.resume(try envelope(snapshot()))
@@ -239,6 +258,93 @@ import Testing
         #expect(fake.requests.count == 1)
     }
 
+    @Test func closedReadLeaseRejectsMalformedOrExcessiveAuthority() throws {
+        for bad in [NSNull(), true, -1, 0, 300_001, 300_000.5, 1e100, "300000"] as [Any] {
+            var value = snapshot(); value["lifetimeMs"] = bad
+            #expect(throws: (any Error).self) { try decode(value) }
+        }
+        for bad in [NSNull(), true, "bad", "2026-10-15T00:00:00Z"] as [Any] {
+            var value = snapshot(); value["checkedAt"] = bad
+            #expect(throws: (any Error).self) { try decode(value) }
+        }
+        var closed = snapshot("unavailable"); closed["lifetimeMs"] = 1
+        #expect(throws: (any Error).self) { try decode(closed) }
+        closed = snapshot("reconciliation_required"); closed["checkedAt"] = "2026-10-15T00:00:00.000Z"
+        #expect(throws: (any Error).self) { try decode(closed) }
+        var active = snapshot(); active["checkedAt"] = "2026-10-31T23:59:59.999Z"; active["lifetimeMs"] = 2
+        #expect(throws: (any Error).self) { try decode(active) }
+        active["lifetimeMs"] = 1
+        #expect(try decode(active).state == .active)
+    }
+
+    @Test func fullRoundTripIsDeductedFromMonotonicLeaseAndCannotRefillOnReadback() async throws {
+        let clock = SubscriptionTestClock()
+        let start = clock.value
+        var value = snapshot(); value["lifetimeMs"] = 300
+        let fake = FakeSubscriptionPort(scope: scope, catalog: try fixture(), entitlement: try envelope(value))
+        fake.onRead = { clock.value = clock.value.advanced(by: .milliseconds(100)) }
+        let store = NativeSubscriptionStore(port: fake, monotonicNow: { clock.value })
+        await store.reload(locale: .en) // Two synthetic GETs consume 200ms; only 100ms remains.
+        #expect(store.visibleEntitlement?.state == .active)
+        clock.value = start.advanced(by: .milliseconds(299))
+        #expect(store.visibleEntitlement?.state == .active)
+        clock.value = start.advanced(by: .milliseconds(300))
+        #expect(store.visibleEntitlement == nil)
+        #expect(store.visibleEntitlement == nil) // Rendering cannot restart the lease.
+        store.invalidate()
+    }
+
+    @Test func responseArrivingAtOrAfterLeaseDeadlineIsUnavailable() async throws {
+        for lifetime in [199, 200] {
+            let clock = SubscriptionTestClock()
+            var value = snapshot(); value["lifetimeMs"] = lifetime
+            let fake = FakeSubscriptionPort(scope: scope, catalog: try fixture(), entitlement: try envelope(value))
+            fake.onRead = { clock.value = clock.value.advanced(by: .milliseconds(100)) }
+            let store = NativeSubscriptionStore(port: fake, monotonicNow: { clock.value })
+            await store.reload(locale: .en)
+            #expect(store.visibleEntitlement == nil)
+            #expect(store.phase == .unavailable)
+        }
+    }
+
+    @Test func repeatedReadWithSameOriginalCheckCannotExtendLeaseEvenAfterFailure() async throws {
+        let clock = SubscriptionTestClock()
+        let start = clock.value
+        let fake = FakeSubscriptionPort(scope: scope, catalog: try fixture(), entitlement: try envelope(snapshot()))
+        let store = NativeSubscriptionStore(port: fake, monotonicNow: { clock.value })
+        await store.reload(locale: .en)
+        clock.value = start.advanced(by: .seconds(200))
+        fake.fail = true
+        await store.reload(locale: .en)
+        #expect(store.visibleEntitlement == nil)
+        fake.fail = false
+        await store.reload(locale: .en) // A stale 300s value cannot restart the original check's lease.
+        #expect(store.visibleEntitlement?.state == .active)
+        clock.value = start.advanced(by: .seconds(300))
+        #expect(store.visibleEntitlement == nil)
+        await store.reload(locale: .en)
+        #expect(store.visibleEntitlement == nil)
+        #expect(store.phase == .unavailable)
+        var fresh = snapshot(); fresh["checkedAt"] = "2026-10-15T00:05:00.000Z"
+        fake.entitlement = try envelope(fresh)
+        await store.reload(locale: .en)
+        #expect(store.visibleEntitlement?.state == .active) // Only a new trusted server check may renew.
+    }
+
+    @Test func nonpositiveHistoricalStatesNeverCreateAReadLeaseOrAnActiveClaim() async throws {
+        for state in ["none", "expired", "revoked"] {
+            let clock = SubscriptionTestClock()
+            let fake = FakeSubscriptionPort(scope: scope, catalog: try fixture(), entitlement: try envelope(snapshot(state)))
+            let store = NativeSubscriptionStore(port: fake, monotonicNow: { clock.value })
+            await store.reload(locale: .en)
+            #expect(store.visibleEntitlement?.state.rawValue == state)
+            clock.value = clock.value.advanced(by: .seconds(300))
+            #expect(store.visibleEntitlement?.state.rawValue == state)
+            #expect(store.visibleEntitlement?.lifetimeMs == 0)
+            #expect(store.visibleEntitlement?.state != .active)
+        }
+    }
+
     @Test func localizedStatusNeverCallsUnknownAZeroOrAProductionSubscription() {
         for chinese in [false, true] {
             let copy = NativeSubscriptionCopy(chinese: chinese)
@@ -251,8 +357,7 @@ import Testing
 }
 
 @MainActor private final class SubscriptionTestClock {
-    var value: Date
-    init(_ value: Date) { self.value = value }
+    var value = ContinuousClock().now
 }
 
 @MainActor private final class FakeSubscriptionPort: NativeSubscriptionReadPort {
@@ -260,6 +365,7 @@ import Testing
     var catalog: Data
     var entitlement: Data
     var requests: [NativeSubscriptionRequest] = []
+    var onRead: (() -> Void)?
     var fail = false
     var holdEntitlement = false
     var pending: CheckedContinuation<Data, any Error>?
@@ -268,6 +374,7 @@ import Testing
     }
     func read(_ request: NativeSubscriptionRequest) async throws -> Data {
         requests.append(request)
+        onRead?()
         if fail { throw NativeSubscriptionError.unavailable }
         switch request.resource {
         case .catalog: return catalog
