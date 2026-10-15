@@ -15,6 +15,7 @@ Canvas mount contract:
   blocked={mutation !== null || pendingRollback !== null || initialProposalReference !== undefined || localEditorAddressBlocked}
   settledEpoch={addressSettledEpoch}
   onPrepared={setPendingProposal}
+  onReadCurrent={readCurrentAddressTrip} // original GET-only reloadAll with actor/scope CAS
   onAddressRequestBlockChange={setAddressRequestBlocked}
   onAddressConfirmBlockChange={setAddressConfirmBlocked}
 />
@@ -56,3 +57,14 @@ The root now separates two leases. A fresh exact current-Cookie Trip GET under t
 The unknown-request GET-only recovery control is outside the full-qualified display branch, but requires the recovery-only Trip lease and the original intent's exact subject/session identity, Trip/version/item and current-root CAS. It then calls only the original pending GET; exact original request operation/text/before/after/base/id/revision/digest checks must pass before handoff. Thus a lost POST ACK followed by pageshow/same-session generation change can recover its now-existing pending even while the parent's pending is null. Parent updates to the validated pending then trigger the strict full display qualification before its diff/Confirm becomes available. New actor denied by the Trip RLS GET gets neither lease nor recovery control. No Main shared hunk or new prop is needed.
 
 Targeted tests cover lost POST→resumed Trip proof→server own pending 200→GET-only handoff, retained original bytes/no second POST, unrelated pending rejection, B/RLS denial, late root rejection and unchanged strict null-pending absence proof. The earlier combined-state deadlock is recorded as a real failure; the absence check itself was not loosened. Main owns the actual pageshow/browser reproduction.
+
+
+## Explicit unknown-attempt current read / local abandonment
+
+New required prop: `onReadCurrent: () => Promise<unknown>`. Main implements this with its original GET-only current Trip/pending reload, fencing the parent's own publications by actor/session-root and route generation before/after awaits. Section also checks the same current verified claims root, exact original intent identity, current route and mounted owner around the callback; it does not adopt the callback result as a receipt or install a new Trip authority. Important: while an unknown attempt still exists, a read error/unavailable result must not unmount/reset the Section owner and thereby silently discard the unresolved bytes. Preserve it until a matching authoritative receipt or explicit abandonment.
+
+The unknown notice is now visible to the same verified subject/session and Trip even if parent data is an older head and the exact Trip display/recovery lease cannot be obtained. It exposes “Read current Trip” (only the new callback), and a separate local-abandon action with a second explicit confirm and a keep-request option. The GET-only original-proposal recovery button retains its stricter fresh exact Trip proof. B never sees or acts on A's ledger. A changed head, missing pending, failed read or auth revalidation never automatically clears the original attempt.
+
+Only the second explicit local-abandon confirmation may delete that same current unknown ledger entry and clear its stored request bytes. It does not call POST/reject/confirm/undo, does not assert failure/applied/rejected, and cannot delete another actor/Trip entry or a handed attempt. Then it calls only `onReadCurrent`. Existing cached display bindings are invalidated; any future new edit still requires fresh full current-Cookie Trip/pending qualification and authoritative no-pending. Actor/scope replacement while awaiting the current read prevents local adoption. Original POST bytes remain intact for the read-only action and for cancelled abandonment.
+
+Main hookup candidate is only the new JSX prop shown above, with its existing original reload callback wrapper; no shared file is modified here. No extra status API, persistent store or service cancellation is added. Targeted tests validate no extra POST, changed-head/missing-pending reads retain unknown bytes, explicit confirmation and same-scope CAS, sibling/handed retention, local byte clearing without server undo, and late root rejection. Main owns the actual advanced-head browser scenario and callback-publication behavior.
