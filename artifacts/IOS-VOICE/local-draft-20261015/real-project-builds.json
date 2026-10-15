@@ -1,0 +1,138 @@
+{
+  "app": {
+    "schema": "xcodebuildmcp.output.build-result",
+    "schemaVersion": "3",
+    "didError": false,
+    "error": null,
+    "data": {
+      "summary": {
+        "status": "SUCCEEDED",
+        "durationMs": 33208,
+        "target": "simulator"
+      },
+      "artifacts": {
+        "buildLogPath": "~/Library/Developer/XcodeBuildMCP/workspaces/Documents-2025647e2650/logs/build_sim_2026-10-15T08-11-13-580Z_pid5690_2df32583.log"
+      },
+      "diagnostics": {
+        "warnings": [
+          {
+            "message": "trailing closure in this context is confusable with the body of the statement; pass as a parenthesized argument to silence this warning",
+            "location": "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios-local-voice-20261015/ios/VisePanda/VisePanda/Features/Profile/NativeCoreExportStore.swift:19"
+          },
+          {
+            "message": "trailing closure in this context is confusable with the body of the statement; pass as a parenthesized argument to silence this warning",
+            "location": "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios-local-voice-20261015/ios/VisePanda/VisePanda/Features/Profile/NativeCoreExportStore.swift:21"
+          },
+          {
+            "message": "trailing closure in this context is confusable with the body of the statement; pass as a parenthesized argument to silence this warning",
+            "location": "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios-local-voice-20261015/ios/VisePanda/VisePanda/Features/Profile/NativeCoreExportStore.swift:33"
+          },
+          {
+            "message": "trailing closure in this context is confusable with the body of the statement; pass as a parenthesized argument to silence this warning",
+            "location": "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios-local-voice-20261015/ios/VisePanda/VisePanda/Features/Profile/NativeCoreExportStore.swift:60"
+          },
+          {
+            "message": "trailing closure in this context is confusable with the body of the statement; pass as a parenthesized argument to silence this warning",
+            "location": "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios-local-voice-20261015/ios/VisePanda/VisePanda/Features/Knowledge/NativeLibrarySources.swift:255"
+          },
+          {
+            "message": "trailing closure in this context is confusable with the body of the statement; pass as a parenthesized argument to silence this warning",
+            "location": "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios-local-voice-20261015/ios/VisePanda/VisePanda/Features/Trip/Feasibility/NativePlanFeasibilityModels.swift:81"
+          }
+        ],
+        "errors": []
+      }
+    },
+    "nextSteps": [
+      "Get built app path in simulator derived data: get_sim_app_path({ simulatorId: \"0B61CBDA-D714-42F8-B9AF-974B922F9971\", scheme: \"VisePanda\", platform: \"iOS Simulator\", derivedDataPath: \"/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios-local-voice-20261015/artifacts/IOS-VOICE/local-draft-20261015/DerivedData\" })"
+    ]
+  },
+  "tests": {
+    "schema": "xcodebuildmcp.output.build-result",
+    "schemaVersion": "3",
+    "didError": false,
+    "error": null,
+    "data": {
+      "summary": {
+        "status": "SUCCEEDED",
+        "durationMs": 8995,
+        "target": "simulator"
+      },
+      "artifacts": {
+        "buildLogPath": "~/Library/Developer/XcodeBuildMCP/workspaces/Documents-2025647e2650/logs/build_sim_2026-10-15T08-12-10-626Z_pid5690_5b28c495.log",
+        "testProductsPath": "~/Library/Developer/XcodeBuildMCP/workspaces/Documents-2025647e2650/test-products/build_sim_2026-10-15T08-12-10-625Z_pid5690_21aa5c70.xctestproducts",
+        "xctestrunPaths": [
+          "~/Library/Developer/XcodeBuildMCP/workspaces/Documents-2025647e2650/test-products/build_sim_2026-10-15T08-12-10-625Z_pid5690_21aa5c70.xctestproducts/Tests/0/VisePanda.xctestrun"
+        ]
+      },
+      "diagnostics": {
+        "warnings": [
+          {
+            "message": "no calls to throwing functions occur within 'try' expression [#UnnecessaryEffectMarker]",
+            "location": "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios-local-voice-20261015/ios/VisePanda/VisePandaTests/NativeConversationDataTests.swift:68"
+          },
+          {
+            "message": "'FeasibilityProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]",
+            "location": "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios-local-voice-20261015/ios/VisePanda/VisePandaTests/NativePlanFeasibilityTests.swift:86"
+          },
+          {
+            "message": "'SupportFlowProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]",
+            "location": "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios-local-voice-20261015/ios/VisePanda/VisePandaTests/NativeTripSupportTests.swift:172"
+          },
+          {
+            "message": "'MemoryDeleteFixtureProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]",
+            "location": "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios-local-voice-20261015/ios/VisePanda/VisePandaTests/NativeMemoryDeletionTests.swift:86"
+          },
+          {
+            "message": "'DeleteTestProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]",
+            "location": "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios-local-voice-20261015/ios/VisePanda/VisePandaTests/NativeDeviceMaterialDeleteTests.swift:141"
+          },
+          {
+            "message": "'ScreenshotProposalProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]",
+            "location": "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios-local-voice-20261015/ios/VisePanda/VisePandaTests/NativeScreenshotProposalRecoveryTests.swift:84"
+          },
+          {
+            "message": "'MaterialLogoutProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]",
+            "location": "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios-local-voice-20261015/ios/VisePanda/VisePandaTests/NativeScreenshotInboxTests.swift:207"
+          },
+          {
+            "message": "'AiAssistProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]",
+            "location": "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios-local-voice-20261015/ios/VisePanda/VisePandaTests/NativeAiAssistStateTests.swift:77"
+          },
+          {
+            "message": "'PendingAskProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]",
+            "location": "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios-local-voice-20261015/ios/VisePanda/VisePandaTests/NativeAskPersistenceTests.swift:282"
+          },
+          {
+            "message": "'TextStateProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]",
+            "location": "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios-local-voice-20261015/ios/VisePanda/VisePandaTests/NativeAskStateTests.swift:377"
+          },
+          {
+            "message": "'ObsoleteTaskProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]",
+            "location": "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios-local-voice-20261015/ios/VisePanda/VisePandaTests/NativeAskStateTests.swift:430"
+          },
+          {
+            "message": "'DelayedTripProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]",
+            "location": "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios-local-voice-20261015/ios/VisePanda/VisePandaTests/NativeTripStateTests.swift:422"
+          },
+          {
+            "message": "'ArchiveTripProtocol' inherits an unavailable 'Sendable' conformance; conforming here risks data races [#UnavailableSendableConformance]",
+            "location": "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios-local-voice-20261015/ios/VisePanda/VisePandaTests/NativeTripStateTests.swift:486"
+          },
+          {
+            "message": "no calls to throwing functions occur within 'try' expression [#UnnecessaryEffectMarker]",
+            "location": "macro expansion #expect:1"
+          },
+          {
+            "message": "'init(traitsFrom:)' was deprecated in iOS 17.0: Use UITraitCollection.init(mutations:) and UITraitCollection.modifyingTraits(_:) to create and modify trait collections [#DeprecatedDeclaration]",
+            "location": "/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios-local-voice-20261015/ios/VisePanda/VisePandaTests/AccessibilityContrastTests.swift:17"
+          }
+        ],
+        "errors": []
+      }
+    },
+    "nextSteps": [
+      "Run prepared tests: test_sim({ testProductsPath: \"~/Library/Developer/XcodeBuildMCP/workspaces/Documents-2025647e2650/test-products/build_sim_2026-10-15T08-12-10-625Z_pid5690_21aa5c70.xctestproducts\", simulatorId: \"0B61CBDA-D714-42F8-B9AF-974B922F9971\" })"
+    ]
+  }
+}
