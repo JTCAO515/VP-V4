@@ -7,6 +7,17 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { classifyChanges, detectScope, selectCheckPlan, detectPlan, DB_LANES } from '../../../scripts/ci-change-scope.mjs';
 
+test('canonical Place entry, producer, export and hosted paths retain required native17 validation',()=>{
+ for(const file of ['app/api/chat/native/v7/place-ask/route.ts','lib/server/knowledge/place-ask/http.ts',
+  'lib/server/privacy/turn-data/contract.ts','lib/server/privacy/turn-data/export.ts','lib/server/privacy/turn-data/source-schema.json',
+  'lib/server/jobs/hosted-text-worker.ts','tests/contract/canonical-place-ask/export.test.mjs',
+  'tests/integration/canonical-place-ask-sql/postgres.test.mjs','tests/integration/canonical-place-ask-http/postgres.test.mjs']){
+  const plan=selectCheckPlan([file],'pull_request');assert.equal(plan.profile,'affected',file);assert.ok(plan.dbLanes.includes('postgres-native-17'),file);
+ }
+ for(const file of ['tests/integration/canonical-place-ask-sql/unknown-helper.mjs','tests/integration/canonical-place-ask-http/unknown-helper.mjs'])
+  assert.equal(selectCheckPlan([file],'pull_request').profile,'full',file);
+});
+
 test('cancellation source and the exact PG entry select native17 while the HTTP fixture stays ordinary integration',()=>{
  for(const file of ['lib/server/qa-agent/cancellation/http.ts','lib/server/qa-agent/cancellation/service.ts',
   'lib/qa-agent/cancellation-contract.ts','lib/server/qa-agent/config.ts',

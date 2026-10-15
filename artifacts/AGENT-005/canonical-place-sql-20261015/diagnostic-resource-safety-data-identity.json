@@ -1,0 +1,97 @@
+{
+  "sentinelWasSyntheticOnly": true,
+  "realPriorClusterTouched": false,
+  "results": [
+    {
+      "script": "diagnose-guide-body-boundary.mjs",
+      "preInitFailure": "PASS",
+      "priorPointerBytesUnchanged": true,
+      "priorRootBytesUnchanged": true,
+      "stopNeverInvoked": true
+    },
+    {
+      "script": "diagnose-qualified-order.mjs",
+      "preInitFailure": "PASS",
+      "priorPointerBytesUnchanged": true,
+      "priorRootBytesUnchanged": true,
+      "stopNeverInvoked": true
+    },
+    {
+      "script": "diagnose-subject-order.mjs",
+      "preInitFailure": "PASS",
+      "priorPointerBytesUnchanged": true,
+      "priorRootBytesUnchanged": true,
+      "stopNeverInvoked": true
+    },
+    {
+      "script": "verify-default-function-acl.mjs",
+      "preInitFailure": "PASS",
+      "priorPointerBytesUnchanged": true,
+      "priorRootBytesUnchanged": true,
+      "stopNeverInvoked": true
+    },
+    {
+      "script": "diagnose-guard.mjs",
+      "preInitFailure": "PASS",
+      "priorPointerBytesUnchanged": true,
+      "priorRootBytesUnchanged": true,
+      "stopNeverInvoked": true
+    },
+    {
+      "script": "diagnose-trip-runtime.mjs",
+      "preInitFailure": "PASS",
+      "priorPointerBytesUnchanged": true,
+      "priorRootBytesUnchanged": true,
+      "stopNeverInvoked": true
+    },
+    {
+      "case": "required entry missing env",
+      "priorPointerAndRootUnchanged": true,
+      "stopNeverInvoked": true
+    },
+    {
+      "case": "initialized data replaced by ordinary directory without postmaster.pid",
+      "cleanupRejected": true,
+      "unknownMarkerPreserved": true,
+      "capturedInodePreserved": true
+    },
+    {
+      "case": "successful own startup, mutable own descriptor overwritten to prior sentinel",
+      "cleanupOnlyCapturedNonce": true
+    },
+    {
+      "case": "after_initdb",
+      "onlyThisRunRemoved": true,
+      "priorSentinelUntouched": true
+    },
+    {
+      "case": "after_start",
+      "onlyThisRunRemoved": true,
+      "priorSentinelUntouched": true
+    },
+    {
+      "case": "required entry success",
+      "onlyThisRunRemoved": true,
+      "priorSentinelUntouched": true,
+      "pointerRestoredOrUnknownPreserved": true
+    },
+    {
+      "case": "required entry after_initdb",
+      "onlyThisRunRemoved": true,
+      "priorSentinelUntouched": true,
+      "pointerRestoredOrUnknownPreserved": true
+    },
+    {
+      "case": "required entry after_start",
+      "onlyThisRunRemoved": true,
+      "priorSentinelUntouched": true,
+      "pointerRestoredOrUnknownPreserved": true
+    },
+    {
+      "case": "required entry replaced_pointer",
+      "onlyThisRunRemoved": true,
+      "priorSentinelUntouched": true,
+      "pointerRestoredOrUnknownPreserved": true
+    }
+  ]
+}

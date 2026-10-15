@@ -1,3 +1,4 @@
+import { planCanonicalPlaceHostedJob, createCanonicalPlaceGroupPoll } from "../knowledge/place-ask/hosted-scheduling.ts";
 import { createQaWorker, type QaWorkerConfiguration } from "../qa-agent/worker.ts";
 import { parseQaHostedProfile, planQaGroup, requireQaProfileTarget, type QaHostedProfile } from "../qa-agent/hosted-profile.ts";
 import { createQaContextInvoker } from "../qa-agent-context/executor-adapter.ts";
@@ -343,6 +344,7 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
   }
   const fetcher = dependencies.fetch ?? globalThis.fetch;
   const journaled = new Set<string>();
+  const pollPlaceGroup = createCanonicalPlaceGroupPoll(profile.groupLimit);
   const rpc = async (name: "hosted_worker_heartbeat" | "hosted_worker_ready_groups" | "qa_ready_groups_v2" | "hosted_planning_target_v1", parameters: Record<string, unknown>, signal: AbortSignal) => {
     if (process.env.VERCEL_ENV || signal.aborted) throw unavailable();
     const timeout = AbortSignal.any([signal, AbortSignal.timeout(10000)]);
@@ -408,23 +410,24 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
       }
       const job = planGroup(profile, group, dependencies.qwenEndpoint);
       if (!job) return null;
-      const digest = createHash("sha256").update(JSON.stringify(job)).digest("hex");
-      const poll = createStagingTextJob(job, {
-        workerCredential: dependencies.workerCredential, providerCredential: dependencies.providerCredential,
-        qwenEndpoint: dependencies.qwenEndpoint, recordDestination: dependencies.journal.destination,
-        recordUsage: (receipt, stop) => dependencies.journal.usage(digest, receipt, stop),
-        recordKnowledgeValidation: receipt => dependencies.journal.knowledge(digest, receipt),
-        ...(dependencies.fetch ? { fetch: dependencies.fetch } : {}),
-      });
-      return {
-        ownerId: job.ownerId,
-        // The exact job (ids, tariff; no secret/content) is journaled before its
-        // first claim so any later usage receipt is reconcilable against it.
-        poll: async stop => {
-          if (!journaled.has(digest)) { await dependencies.journal.job(digest, job); journaled.add(digest); }
+      const makePoll = (config: StagingTextJobConfig) => {
+        const digest = createHash("sha256").update(JSON.stringify(config)).digest("hex");
+        const poll = createStagingTextJob(config, {
+          workerCredential: dependencies.workerCredential, providerCredential: dependencies.providerCredential,
+          qwenEndpoint: dependencies.qwenEndpoint, recordDestination: dependencies.journal.destination,
+          recordUsage: (receipt, stop) => dependencies.journal.usage(digest, receipt, stop),
+          recordKnowledgeValidation: receipt => dependencies.journal.knowledge(digest, receipt),
+          ...(dependencies.fetch ? { fetch: dependencies.fetch } : {}),
+        });
+        return async (stop: AbortSignal) => {
+          if (!journaled.has(digest)) { await dependencies.journal.job(digest, config); journaled.add(digest); }
           return poll(stop);
-        },
+        };
       };
+      const ordinary = makePoll(job), selectedJob = planCanonicalPlaceHostedJob(profile, group, job);
+      if (!selectedJob) return { ownerId: job.ownerId, poll: ordinary };
+      const selected = makePoll(selectedJob), key = createHash("sha256").update(JSON.stringify(job)).digest("hex");
+      return { ownerId: job.ownerId, poll: stop => pollPlaceGroup(key, ordinary, selected, stop) };
     },
     record: dependencies.journal.event,
   }, signal);

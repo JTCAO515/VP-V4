@@ -1,0 +1,437 @@
+import { createQaWorker, type QaWorkerConfiguration } from "../qa-agent/worker.ts";
+import { parseQaHostedProfile, planQaGroup, requireQaProfileTarget, type QaHostedProfile } from "../qa-agent/hosted-profile.ts";
+import { createQaContextInvoker } from "../qa-agent-context/executor-adapter.ts";
+import { setTimeout as delay } from "node:timers/promises";
+import { createHash } from "node:crypto";
+import { createStagingTextJob, type StagingTextJobConfig, type StagingTextJobDependencies, type TextJobPricing } from "./staging-text-job.ts";
+import { PROTOCOL_MODELS } from "../model-gateway/adapters/provider-protocol.ts";
+import type { ValidatedUsageReceipt, ValidatedPlanningUsageReceipt } from "../model-gateway/budget/usage-receipt.ts";
+import type { KnowledgeValidationReceipt } from "../turn/text-worker.ts";
+import type { DestinationReceipt } from "../model-gateway/adapters/http-transport.ts";
+import { supabaseWorkerHeaders } from "./supabase-worker-headers.ts";
+import { createStagingPlanningJob, type StagingPlanningJobConfig } from "./staging-planning-job.ts";
+
+/**
+ * VPJ-07 #195 hosted text worker. One long-running trusted process (a small
+ * container, never a Vercel function) serves every owner/policy group that SQL
+ * reports as ready, instead of one hand-written owner/policy/job file.
+ *
+ * Authority is unchanged: each group is executed through the existing
+ * createStagingTextJob -> scoped claimer -> dispatch authorization -> durable
+ * budget -> atomic completion path. This module only chooses WHICH existing
+ * scoped job to run and adds an operator stop switch plus a content-free
+ * heartbeat. Missing/ambiguous budget scope, unknown mode or a policy endpoint
+ * other than the process's bound Qwen endpoint => the group is skipped, never
+ * guessed. SQL switch disabled => no discovery and no claim.
+ */
+
+export const HOSTED_STAGING_DATABASE_URL = "https://dzqdzetcctkhbrhlxxgn.supabase.co";
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const MODES = ["current_input_v1", "task_history_v1", "knowledge_intent_v1"] as const;
+export type HostedMode = (typeof MODES)[number];
+export type HostedTariff = Readonly<{
+  priceVersion: string;
+  pricing: TextJobPricing;
+  reservedMicros: number;
+  maxOutputTokens: number;
+  timeoutMs: number;
+  configurationId: string;
+  configurationVersion: number;
+}>;
+export type LegacyHostedWorkerProfile = Readonly<{
+  schemaVersion: "vpj07-hosted-text-worker/1" | "vpj07-hosted-text-worker/2";
+  pollIntervalMs: number;
+  maxLifetimeMs: number;
+  drainMs: number;
+  concurrency: number;
+  groupLimit: number;
+  modes: readonly HostedMode[];
+  qwen: HostedTariff;
+  /** v2 only; null keeps the planning producer off. No task text or credential. */
+  planning?: Readonly<{ ownerId: string; planningPolicyId: string; scopeId: string }> | null;
+}>;
+export type HostedWorkerProfile = LegacyHostedWorkerProfile | QaHostedProfile;
+export type ReadyGroup = Readonly<{
+  ownerId: string; policyId: string; contextMode: string; provider: string; endpoint: string;
+  scopes: readonly Readonly<{ scopeId: string; model: string; priceVersion: string }>[];
+}>;
+export type PollResult = "empty" | "finished" | "queued" | "unavailable";
+export type HeartbeatState = Readonly<{
+  phase: "started" | "polling" | "idle" | "disabled" | "draining" | "stopped";
+  result: PollResult | "disabled" | "skipped" | null;
+  polls: number; finished: number; unavailable: number; skipped: number;
+  stopReason: StopReason | null;
+}>;
+export type StopReason = "stopped" | "expired" | "unavailable";
+export type HostedEvent = Readonly<{
+  phase: "cycle"; cycle: number; groups: number; skipped: number; results: Readonly<Partial<Record<PollResult, number>>>;
+}> | Readonly<{ phase: "disabled" | "heartbeat-unavailable" | "discovery-unavailable" | "draining"; cycle: number }>;
+
+/** Strict, closed profile. Non-secret and content-free; secrets never enter it. */
+export function parseHostedWorkerProfile(raw: unknown): HostedWorkerProfile {
+  if (record(raw) && (raw.schemaVersion === "vpj07-hosted-text-worker/3" || raw.schemaVersion === "vpj07-hosted-text-worker/4")) return parseQaHostedProfile(raw);
+  if (!record(raw) || (raw.schemaVersion === "vpj07-hosted-text-worker/1"
+    ? Object.keys(raw).length !== 8 || Object.hasOwn(raw,"planning")
+    : raw.schemaVersion !== "vpj07-hosted-text-worker/2" || Object.keys(raw).length !== 9 || !Object.hasOwn(raw,"planning")
+      || (raw.planning !== null && (!record(raw.planning) || Object.keys(raw.planning).length !== 3
+        || ![raw.planning.ownerId,raw.planning.planningPolicyId,raw.planning.scopeId].every(id=>typeof id==="string"&&UUID.test(id)))))
+    || !int(raw.pollIntervalMs, 1000, 60000) || !int(raw.maxLifetimeMs, 60000, 86400000) || !int(raw.drainMs, 0, 60000)
+    || !int(raw.concurrency, 1, 8) || !int(raw.groupLimit, 1, 50)
+    || !Array.isArray(raw.modes) || raw.modes.length < 1 || raw.modes.length > 3 || new Set(raw.modes).size !== raw.modes.length
+    || !raw.modes.every(mode => (MODES as readonly unknown[]).includes(mode))
+    || !record(raw.qwen) || Object.keys(raw.qwen).length !== 7
+    || typeof raw.qwen.priceVersion !== "string" || !/^[A-Za-z0-9._-]{1,100}$/.test(raw.qwen.priceVersion)
+    || !int(raw.qwen.reservedMicros, 1, 1_000_000_000_000) || !int(raw.qwen.maxOutputTokens, 1, 4096)
+    || !int(raw.qwen.timeoutMs, 1, 60000) || typeof raw.qwen.configurationId !== "string" || !UUID.test(raw.qwen.configurationId)
+    || !int(raw.qwen.configurationVersion, 1, Number.MAX_SAFE_INTEGER)) throw unavailable();
+  const profile = raw as unknown as LegacyHostedWorkerProfile;
+  // Qualify the tariff/reservation once through the exact existing job validator.
+  createStagingTextJob(jobConfig(profile, "current_input_v1", NIL, NIL, NIL, "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"), {
+    workerCredential: () => null, providerCredential: () => null, recordDestination: async () => {},
+  });
+  return Object.freeze({ ...profile, ...(profile.schemaVersion === "vpj07-hosted-text-worker/2" ? {planning:profile.planning ? Object.freeze({
+    ownerId:profile.planning.ownerId.toLowerCase(),planningPolicyId:profile.planning.planningPolicyId.toLowerCase(),scopeId:profile.planning.scopeId.toLowerCase(),
+  }) : null} : {}),
+    modes: Object.freeze([...profile.modes]), qwen: Object.freeze({ ...profile.qwen, pricing: Object.freeze({ ...profile.qwen.pricing }) }) });
+}
+const NIL = "00000000-0000-4000-8000-000000000000";
+
+/** The exact existing job shape for one discovered group. */
+export function jobConfig(profile: LegacyHostedWorkerProfile, mode: HostedMode, ownerId: string, policyId: string, scopeId: string, endpoint: string): StagingTextJobConfig {
+  const tariff = profile.qwen;
+  const version = mode === "knowledge_intent_v1" ? "vpj07-staging-text-job/4" : mode === "task_history_v1" ? "vpj07-staging-text-job/2" : "vpj07-staging-text-job/1";
+  return {
+    schemaVersion: version, ...(mode === "current_input_v1" ? {} : { inputMode: mode }),
+    ownerId, policyId,
+    budget: { scopeId, priceVersion: tariff.priceVersion, reservedMicros: tariff.reservedMicros, maxOutputTokens: tariff.maxOutputTokens, timeoutMs: tariff.timeoutMs },
+    provider: { provider: "qwen", endpoint, configurationId: tariff.configurationId, configurationVersion: tariff.configurationVersion, timeoutMs: tariff.timeoutMs },
+    pricing: { ...tariff.pricing },
+  };
+}
+
+/** Select exactly one qualifying scope; anything else is a skipped group. */
+export function planGroup(profile: HostedWorkerProfile, raw: unknown, qwenEndpoint: string): StagingTextJobConfig | null {
+  if (profile.schemaVersion === "vpj07-hosted-text-worker/3" || profile.schemaVersion === "vpj07-hosted-text-worker/4") return null;
+  if (!record(raw) || typeof raw.ownerId !== "string" || !UUID.test(raw.ownerId) || typeof raw.policyId !== "string" || !UUID.test(raw.policyId)
+    || !profile.modes.includes(raw.contextMode as HostedMode) || raw.provider !== "qwen" || raw.endpoint !== qwenEndpoint
+    || !Array.isArray(raw.scopes)) return null;
+  const matching = raw.scopes.filter(scope => record(scope) && typeof scope.scopeId === "string" && UUID.test(scope.scopeId)
+    && scope.model === PROTOCOL_MODELS.qwen && scope.priceVersion === profile.qwen.priceVersion);
+  if (matching.length !== 1) return null;
+  return jobConfig(profile, raw.contextMode as HostedMode, raw.ownerId.toLowerCase(), raw.policyId.toLowerCase(), String(matching[0].scopeId).toLowerCase(), qwenEndpoint);
+}
+
+export type HostedLoopDependencies = Readonly<{
+  heartbeat: (state: HeartbeatState, signal: AbortSignal) => Promise<{ enabled: boolean } | null>;
+  readyGroups: (signal: AbortSignal) => Promise<readonly unknown[] | "disabled" | null>;
+  /** null => skip this group (unscoped, ambiguous, other mode/endpoint). */
+  workerFor: (group: unknown) => { ownerId: string; poll: (signal: AbortSignal) => Promise<PollResult> } | null;
+  record: (event: HostedEvent) => Promise<void>;
+  now?: () => number;
+  wait?: (milliseconds: number, signal: AbortSignal) => Promise<void>;
+}>;
+export type HostedLoopSettings = Readonly<{ pollIntervalMs: number; maxLifetimeMs: number; drainMs: number; concurrency: number; maxConsecutiveFailures?: number; pollDeadlineMs?: number; requireInitialDisabled?: boolean }>;
+export type HostedLoopResult = Readonly<{ reason: StopReason; polls: number; finished: number; unavailable: number; skipped: number }>;
+
+/**
+ * Resident loop. `signal` is a SOFT stop: no new heartbeat/discovery/claim;
+ * in-flight group polls get `drainMs` to finish before their own signal aborts
+ * (an aborted dispatch keeps its pending budget hold and its lease expires).
+ * Persistent SQL/transport unavailability exits so the orchestrator restarts
+ * the process with backoff instead of hot-looping.
+ */
+export async function runHostedTextLoop(settings: HostedLoopSettings, dependencies: HostedLoopDependencies, signal: AbortSignal): Promise<HostedLoopResult> {
+  const now = dependencies.now ?? Date.now;
+  const wait = dependencies.wait ?? (async (milliseconds: number, stop: AbortSignal) => { await delay(milliseconds, undefined, { signal: stop }).catch(() => {}); });
+  const maxFailures = settings.maxConsecutiveFailures ?? 5, pollDeadlineMs = settings.pollDeadlineMs ?? 150000;
+  const deadline = now() + settings.maxLifetimeMs;
+  const soft = new AbortController(), hard = new AbortController();
+  let reason: StopReason | null = null, drainTimer: ReturnType<typeof setTimeout> | undefined;
+  const stop = (why: StopReason) => {
+    if (!reason) reason = why;
+    if (soft.signal.aborted) return;
+    soft.abort();
+    drainTimer = setTimeout(() => hard.abort(), settings.drainMs);
+  };
+  const onSignal = () => stop("stopped");
+  signal.addEventListener("abort", onSignal, { once: true });
+  if (signal.aborted) onSignal();
+  const lifetime = setTimeout(() => stop("expired"), Math.max(0, deadline - now()));
+  const counts = { polls: 0, finished: 0, unavailable: 0, skipped: 0 };
+  let failures = 0, cycle = 0, lastResult: HeartbeatState["result"] = null, phase: HeartbeatState["phase"] = "started";
+  const beat = async (stopReason: StopReason | null = null) => {
+    try { return await dependencies.heartbeat({ phase: stopReason ? "stopped" : phase, result: lastResult, ...counts, stopReason }, stopReason ? hard.signal : soft.signal); }
+    catch { return null; }
+  };
+  const fail = async (event: "heartbeat-unavailable" | "discovery-unavailable") => {
+    failures++; counts.unavailable++; lastResult = "unavailable";
+    await dependencies.record({ phase: event, cycle }).catch(() => {});
+    if (failures >= maxFailures) stop("unavailable");
+    else await wait(Math.min(settings.pollIntervalMs * 2 ** Math.min(failures, 4), 60000), soft.signal);
+  };
+  try {
+    while (!soft.signal.aborted) {
+      if (now() >= deadline) { stop("expired"); break; }
+      cycle++;
+      const heartbeat = await beat();
+      if (soft.signal.aborted) break;
+      // File-secret startup is armed only after its first real SQL heartbeat
+      // confirms disabled. This closes the gap after the read-only precheck.
+      if (settings.requireInitialDisabled && cycle === 1 && heartbeat?.enabled !== false) {
+        stop("unavailable");
+        break;
+      }
+      if (!heartbeat) { await fail("heartbeat-unavailable"); continue; }
+      if (!heartbeat.enabled) {
+        failures = 0; phase = "disabled"; lastResult = "disabled";
+        await dependencies.record({ phase: "disabled", cycle }).catch(() => {});
+        await wait(settings.pollIntervalMs, soft.signal);
+        continue;
+      }
+      phase = "polling";
+      let groups: readonly unknown[] | "disabled" | null;
+      try { groups = await dependencies.readyGroups(soft.signal); } catch { groups = null; }
+      if (soft.signal.aborted) break;
+      if (groups === null || (groups !== "disabled" && !Array.isArray(groups))) { await fail("discovery-unavailable"); continue; }
+      if (groups === "disabled") { phase = "disabled"; lastResult = "disabled"; await wait(settings.pollIntervalMs, soft.signal); continue; }
+      counts.polls++;
+      // One owner's groups run sequentially: parallel reservations on one budget
+      // scope would trip its concurrency limit and burn bounded Turn attempts.
+      const byOwner = new Map<string, ((signal: AbortSignal) => Promise<PollResult>)[]>();
+      let skipped = 0;
+      for (const group of groups) {
+        let worker: ReturnType<HostedLoopDependencies["workerFor"]> = null;
+        try { worker = dependencies.workerFor(group); } catch { worker = null; }
+        if (!worker) { skipped++; continue; }
+        byOwner.set(worker.ownerId, [...(byOwner.get(worker.ownerId) ?? []), worker.poll]);
+      }
+      counts.skipped += skipped;
+      const results: PollResult[] = [];
+      const lanes = [...byOwner.values()];
+      await runLimited(lanes, settings.concurrency, async lane => {
+        for (const poll of lane) {
+          if (soft.signal.aborted) return;
+          results.push(await boundedPoll(poll, hard.signal, pollDeadlineMs));
+        }
+      });
+      const tally: Partial<Record<PollResult, number>> = {};
+      for (const result of results) tally[result] = (tally[result] ?? 0) + 1;
+      counts.finished += tally.finished ?? 0;
+      counts.unavailable += tally.unavailable ?? 0;
+      await dependencies.record({ phase: "cycle", cycle, groups: groups.length, skipped, results: tally }).catch(() => {});
+      const progressed = (tally.finished ?? 0) + (tally.queued ?? 0) > 0;
+      failures = results.length > 0 && (tally.unavailable ?? 0) === results.length ? failures + 1 : 0;
+      lastResult = progressed ? (tally.finished ? "finished" : "queued") : results.length ? (tally.unavailable ? "unavailable" : "empty") : skipped ? "skipped" : "empty";
+      if (failures >= maxFailures) { stop("unavailable"); break; }
+      if (!progressed) { phase = "idle"; await wait(settings.pollIntervalMs, soft.signal); }
+    }
+  } finally {
+    clearTimeout(lifetime);
+    signal.removeEventListener("abort", onSignal);
+  }
+  if (!reason) reason = "stopped";
+  phase = "draining";
+  clearTimeout(drainTimer);
+  hard.abort();
+  const result = { reason: reason as StopReason, ...counts };
+  // Best-effort final signal; the lease/heartbeat age already tells Ops if this fails.
+  const finalController = new AbortController(), finalTimer = setTimeout(() => finalController.abort(), 5000);
+  try { await dependencies.heartbeat({ phase: "stopped", result: lastResult, ...counts, stopReason: result.reason }, finalController.signal); } catch { /* retained */ }
+  finally { clearTimeout(finalTimer); }
+  return result;
+}
+
+async function boundedPoll(poll: (signal: AbortSignal) => Promise<PollResult>, parent: AbortSignal, deadlineMs: number): Promise<PollResult> {
+  if (parent.aborted) return "unavailable";
+  const controller = new AbortController(), abort = () => controller.abort();
+  parent.addEventListener("abort", abort, { once: true });
+  const timer = setTimeout(abort, deadlineMs);
+  try {
+    const result = await poll(controller.signal);
+    return ["empty", "finished", "queued", "unavailable"].includes(result) ? result : "unavailable";
+  } catch { return "unavailable"; }
+  finally { clearTimeout(timer); parent.removeEventListener("abort", abort); }
+}
+
+async function runLimited<T>(items: readonly T[], limit: number, run: (item: T) => Promise<void>) {
+  let next = 0;
+  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, async () => {
+    while (next < items.length) { const item = items[next++]; await run(item).catch(() => {}); }
+  }));
+}
+
+export type HostedJournal = Readonly<{
+  job: (digest: string, job: StagingTextJobConfig | QaWorkerConfiguration) => Promise<void>;
+  usage: (digest: string, receipt: ValidatedUsageReceipt, signal: AbortSignal) => Promise<void>;
+  knowledge: (digest: string, receipt: KnowledgeValidationReceipt) => Promise<void>;
+  destination: (receipt: DestinationReceipt, signal: AbortSignal) => Promise<void>;
+  event: (event: HostedEvent) => Promise<void>;
+  planningJob?: (digest: string, job: StagingPlanningJobConfig) => Promise<void>;
+  planningUsage?: (digest: string, receipt: ValidatedPlanningUsageReceipt, signal: AbortSignal) => Promise<void>;
+}>;
+export type HostedWorkerDependencies = Readonly<{
+  /** Operator composition binding; never read from discovery/job payloads. */
+  qaProjectRef?: string;
+  workerId: string;
+  build: string;
+  startedAt: string;
+  qwenEndpoint: string;
+  workerCredential: StagingTextJobDependencies["workerCredential"];
+  providerCredential: StagingTextJobDependencies["providerCredential"];
+  /** File-secret process only: no discovery until first SQL heartbeat is disabled. */
+  requireInitialDisabled?: boolean;
+  /** Separate process opt-in and secure key; v1 cannot accidentally consume it. */
+  planningEnabled?: boolean;
+  amapCredential?: () => string | null;
+  journal: HostedJournal;
+  /** Content-free liveness observer for an optional local health endpoint. */
+  onHeartbeat?: (ok: boolean, enabled: boolean | null) => void;
+  /** Test-only closed destination seam. The CLI never supplies it. */
+  fetch?: typeof globalThis.fetch;
+}>;
+
+export function getHostedWorkerDatabaseTarget(profile: HostedWorkerProfile, operatorProjectRef?: string): string {
+  if (profile.schemaVersion === "vpj07-hosted-text-worker/4") return requireQaProfileTarget(profile, operatorProjectRef ?? profile.projectRef).databaseUrl;
+  if (profile.schemaVersion === "vpj07-hosted-text-worker/3") throw unavailable();
+  return HOSTED_STAGING_DATABASE_URL;
+}
+
+/** Compose the loop with the real Staging service RPCs and existing scoped jobs. */
+export function createHostedTextWorker(profile: HostedWorkerProfile, dependencies: HostedWorkerDependencies) {
+  profile = parseHostedWorkerProfile(profile);
+  const databaseUrl = getHostedWorkerDatabaseTarget(profile, dependencies.qaProjectRef);
+  const qaTarget = profile.schemaVersion === "vpj07-hosted-text-worker/4" ? requireQaProfileTarget(profile, dependencies.qaProjectRef) : undefined;
+  if (typeof window !== "undefined" || !UUID.test(dependencies.workerId) || !/^[A-Za-z0-9._-]{1,64}$/.test(dependencies.build)
+    || !Number.isFinite(Date.parse(dependencies.startedAt)) || new Date(dependencies.startedAt).toISOString() !== dependencies.startedAt
+    || typeof dependencies.workerCredential !== "function" || typeof dependencies.providerCredential !== "function") throw unavailable();
+  const planningTarget = profile.schemaVersion === "vpj07-hosted-text-worker/2" ? profile.planning : null;
+  if (Boolean(planningTarget) !== (dependencies.planningEnabled === true)
+    || (planningTarget && (typeof dependencies.amapCredential !== "function" || typeof dependencies.journal.planningJob !== "function"
+      || typeof dependencies.journal.planningUsage !== "function"))) throw unavailable();
+  let planningJob: StagingPlanningJobConfig | null = null;
+  let planningPoll: ((signal: AbortSignal) => Promise<PollResult>) | null = null;
+  if (planningTarget) {
+    const amapKey = dependencies.amapCredential!();
+    if (typeof amapKey !== "string" || !/^[\x21-\x7e]{1,4096}$/.test(amapKey)) throw unavailable();
+    const tariff = profile.qwen;
+    planningJob = {schemaVersion:"vpj80-staging-planning-job/1",...planningTarget,
+      priceVersion:tariff.priceVersion,reservedMicros:tariff.reservedMicros,timeoutMs:tariff.timeoutMs,maxOutputTokens:tariff.maxOutputTokens,
+      provider:{provider:"qwen",endpoint:dependencies.qwenEndpoint,configurationId:tariff.configurationId,configurationVersion:tariff.configurationVersion,timeoutMs:tariff.timeoutMs},
+      pricing:{...tariff.pricing}};
+    const digest = createHash("sha256").update(JSON.stringify(planningJob)).digest("hex");
+    const poll = createStagingPlanningJob(planningJob,{
+      workerCredential:dependencies.workerCredential,providerCredential:dependencies.providerCredential,qwenEndpoint:dependencies.qwenEndpoint,
+      recordDestination:dependencies.journal.destination,recordUsage:(receipt,stop)=>dependencies.journal.planningUsage!(digest,receipt,stop),
+      authorizeExternalRead:async(lease,stop)=>{
+        const value=await rpc("hosted_planning_target_v1",{p_owner_id:planningTarget.ownerId,p_planning_policy_id:planningTarget.planningPolicyId,
+          p_scope_id:planningTarget.scopeId,p_price_version:tariff.priceVersion,p_reserved_micros:tariff.reservedMicros,
+          p_turn_id:lease.turnId,p_lease_token:lease.leaseToken},stop);
+        return record(value)&&value.kind === "ready";
+      },
+      mapsEnv:{AMAP_SEARCH_ENABLED:"true",AMAP_DETAIL_ENABLED:"true",AMAP_ROUTES_ENABLED:"true",AMAP_WEB_SERVICE_KEY:amapKey},
+      ...(dependencies.fetch ? {fetcher:dependencies.fetch}:{}),
+    });
+    let journaled = false;
+    planningPoll = async stop=>{
+      const ready = await rpc("hosted_planning_target_v1",{p_owner_id:planningTarget.ownerId,p_planning_policy_id:planningTarget.planningPolicyId,
+        p_scope_id:planningTarget.scopeId,p_price_version:tariff.priceVersion,p_reserved_micros:tariff.reservedMicros},stop);
+      if(!record(ready) || !["ready","idle"].includes(String(ready.kind)))return "unavailable";
+      if(ready.kind === "idle")return "empty";
+      if(!journaled){await dependencies.journal.planningJob!(digest,planningJob!);journaled=true;}
+      return poll(stop);
+    };
+  }
+  const fetcher = dependencies.fetch ?? globalThis.fetch;
+  const journaled = new Set<string>();
+  const rpc = async (name: "hosted_worker_heartbeat" | "hosted_worker_ready_groups" | "qa_ready_groups_v2" | "hosted_planning_target_v1", parameters: Record<string, unknown>, signal: AbortSignal) => {
+    if (process.env.VERCEL_ENV || signal.aborted) throw unavailable();
+    const timeout = AbortSignal.any([signal, AbortSignal.timeout(10000)]);
+    const secret = await dependencies.workerCredential(timeout);
+    if (typeof secret !== "string" || !/^[\x21-\x7e]{1,8192}$/.test(secret)) throw unavailable();
+    const response = await fetcher(databaseUrl + "/rest/v1/rpc/" + name, {
+      method: "POST", headers: supabaseWorkerHeaders(secret),
+      body: JSON.stringify(parameters), redirect: "manual", credentials: "omit", cache: "no-store", signal: timeout,
+    });
+    if (response.status !== 200 || response.headers.get("content-type")?.split(";")[0].trim() !== "application/json") {
+      try { await response.body?.cancel(); } catch { /* bounded */ }
+      throw unavailable();
+    }
+    const text = await response.text();
+    if (text.length > 262144) throw unavailable();
+    return JSON.parse(text) as unknown;
+  };
+  return (signal: AbortSignal) => runHostedTextLoop({ ...profile, requireInitialDisabled: dependencies.requireInitialDisabled === true }, {
+    heartbeat: async (state, stop) => {
+      const value = await rpc("hosted_worker_heartbeat", {
+        p_worker_id: dependencies.workerId, p_build: dependencies.build, p_started_at: dependencies.startedAt,
+        p_phase: state.phase, p_result: state.result, p_polls: state.polls, p_finished: state.finished,
+        p_unavailable: state.unavailable, p_skipped: state.skipped, p_stop_reason: state.stopReason,
+      }, stop).catch(() => null);
+      const ok = record(value) && value.kind === "ok" && typeof value.enabled === "boolean";
+      try { dependencies.onHeartbeat?.(ok, ok ? value.enabled as boolean : null); } catch { /* observer only */ }
+      return ok ? { enabled: value.enabled as boolean } : null;
+    },
+    readyGroups: async stop => {
+      // SQL qualifies the exact provider binding and unique matching scope
+      // before LIMIT; an unexecutable group cannot occupy the sole QA slot.
+      const qa = profile.schemaVersion === "vpj07-hosted-text-worker/4";
+      const discovery = qa ? "qa_ready_groups_v2" : "hosted_worker_ready_groups";
+      const parameters = qa ? { p_limit: profile.groupLimit, p_model: PROTOCOL_MODELS.qwen,
+        p_price_version: profile.qwen.priceVersion, p_endpoint: dependencies.qwenEndpoint } : { p_limit: profile.groupLimit };
+      const value = await rpc(discovery, parameters, stop);
+      if (record(value) && value.kind === "disabled") return "disabled";
+      if (!record(value) || value.kind !== "groups" || !Array.isArray(value.groups) || value.groups.length > profile.groupLimit) return null;
+      // This exact object is internal, never accepted from discovery JSON. The
+      // same owner lane serializes planning after that owner's text groups.
+      return planningTarget ? [...value.groups,planningTarget] : value.groups;
+    },
+    workerFor: group => {
+      if (planningTarget && group === planningTarget) return {ownerId:planningTarget.ownerId,poll:planningPoll!};
+      if (profile.schemaVersion === "vpj07-hosted-text-worker/4") {
+        const job = planQaGroup(profile, group, dependencies.qwenEndpoint);
+        if (!job) return null;
+        const digest = createHash("sha256").update(JSON.stringify(job)).digest("hex");
+        const poll = createQaWorker(job, {
+          workerCredential: dependencies.workerCredential, providerCredential: dependencies.providerCredential,
+          qwenEndpoint: dependencies.qwenEndpoint, recordDestination: dependencies.journal.destination,
+          recordUsage: (receipt, stop) => dependencies.journal.usage(digest, receipt, stop),
+          invokeContext: createQaContextInvoker(),
+          ...(dependencies.fetch ? { fetch: dependencies.fetch } : {}),
+        }, qaTarget);
+        return { ownerId: job.ownerId, poll: async stop => {
+          if (!journaled.has(digest)) { await dependencies.journal.job(digest, job); journaled.add(digest); }
+          const result = await poll(stop);
+          // Existing heartbeat vocabulary remains unchanged. SQL retains the
+          // dispatched attempt for explicit reconciliation, never a second send.
+          return result === "reconciliation_required" ? "unavailable" : result;
+        } };
+      }
+      const job = planGroup(profile, group, dependencies.qwenEndpoint);
+      if (!job) return null;
+      const digest = createHash("sha256").update(JSON.stringify(job)).digest("hex");
+      const poll = createStagingTextJob(job, {
+        workerCredential: dependencies.workerCredential, providerCredential: dependencies.providerCredential,
+        qwenEndpoint: dependencies.qwenEndpoint, recordDestination: dependencies.journal.destination,
+        recordUsage: (receipt, stop) => dependencies.journal.usage(digest, receipt, stop),
+        recordKnowledgeValidation: receipt => dependencies.journal.knowledge(digest, receipt),
+        ...(dependencies.fetch ? { fetch: dependencies.fetch } : {}),
+      });
+      return {
+        ownerId: job.ownerId,
+        // The exact job (ids, tariff; no secret/content) is journaled before its
+        // first claim so any later usage receipt is reconcilable against it.
+        poll: async stop => {
+          if (!journaled.has(digest)) { await dependencies.journal.job(digest, job); journaled.add(digest); }
+          return poll(stop);
+        },
+      };
+    },
+    record: dependencies.journal.event,
+  }, signal);
+}
+
+function int(value: unknown, minimum: number, maximum: number): value is number {
+  return typeof value === "number" && Number.isSafeInteger(value) && value >= minimum && value <= maximum;
+}
+function record(value: unknown): value is Record<string, unknown> { return value !== null && typeof value === "object" && !Array.isArray(value); }
+function unavailable(): Error { return new Error("Hosted text worker unavailable."); }

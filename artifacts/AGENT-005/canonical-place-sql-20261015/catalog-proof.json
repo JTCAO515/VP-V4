@@ -1,0 +1,116 @@
+{
+  "postgres": "PostgreSQL 17.11 (Homebrew) on aarch64-apple-darwin27.0.0, compiled by Apple clang version 21.0.0 (clang-2100.3.34.2), 64-bit",
+  "migrationSha256": "b64df5e6ea295cc55800529d45b14510fe0baa106db881abc490a3289e594723",
+  "baselineCatalogSha256": "36e7d25bad4291e0213ef1f0fbb0bb0c19d0ac597fea4904381854aa62a58efd",
+  "afterCatalogSha256": "58cd76ea54b15a21175aa8195c72ad063754b4899205d780feb3fa7766660931",
+  "changedFunctions": [
+    "conversation_data_private.schema_supported_v1()",
+    "conversation_data_private.source_v1(uuid, text, uuid)",
+    "export_private.core_turn_page_v1(jsonb)",
+    "profile_data_private.schema_v1()",
+    "public.authorize_grounded_dispatch(uuid, uuid, uuid, text, text)",
+    "public.authorize_text_dispatch(uuid, uuid, uuid, text)",
+    "public.authorize_text_task_dispatch(uuid, uuid, uuid, text, text)",
+    "public.cancel_chat_turn(uuid)",
+    "public.claim_turn_work()",
+    "public.complete_grounded_place_work(uuid, uuid, text, text, text, text)",
+    "public.complete_grounded_work_with_needs(uuid, uuid, text, text, text)",
+    "public.complete_text_work(uuid, uuid, text, text)",
+    "public.grounded_ai_assist_work_v1(jsonb)",
+    "public.list_text_turns(uuid, integer)",
+    "public.read_grounded_ai_assist_context_v1(uuid)",
+    "public.read_grounded_turn(uuid)",
+    "public.read_grounded_work(uuid, uuid)",
+    "public.read_text_turn(uuid)",
+    "public.read_text_work(uuid, uuid)",
+    "result_data_private.schema_supported_v1()",
+    "result_data_private.source_v1(uuid, uuid)",
+    "turn_data_private.export_row_v1(text, jsonb)",
+    "turn_data_private.export_source_v1(uuid)",
+    "turn_data_private.guard_source_v1()",
+    "turn_data_private.runtime_supported_v1()",
+    "turn_data_private.schema_supported_v1()",
+    "turn_data_private.source_v1(uuid, uuid)",
+    "turn_private.claim_text_mode(uuid, uuid, text)",
+    "turn_private.complete_selected_grounded_work(uuid, uuid, text, text, text)",
+    "turn_private.trip_privacy_t_export_source_v1(uuid)",
+    "turn_private.trip_service_task_runtime_v1()"
+  ],
+  "newPrivateFunctions": [
+    "place_actions_private.ask_answer_basis_shape_v1(jsonb)",
+    "place_actions_private.ask_basis_v1(uuid, uuid, jsonb)",
+    "place_actions_private.ask_bound_v1(uuid, uuid)",
+    "place_actions_private.ask_claim_basis_v1(uuid, integer, text, text, text, text)",
+    "place_actions_private.ask_claim_current_v1(uuid)",
+    "place_actions_private.ask_complete_v1(uuid, uuid, text, text, text, text)",
+    "place_actions_private.ask_context_v1(uuid, uuid, uuid, jsonb)",
+    "place_actions_private.ask_expectation_shape_v1(jsonb)",
+    "place_actions_private.ask_finish_capacity_v1(uuid, text, text)",
+    "place_actions_private.ask_history_root_v1(uuid)",
+    "place_actions_private.ask_knowledge_scope_v1(jsonb)",
+    "place_actions_private.ask_mapping_basis_v1(uuid, boolean)",
+    "place_actions_private.ask_proof_shape_v1(jsonb)",
+    "place_actions_private.ask_read_v1(jsonb)",
+    "place_actions_private.ask_receipt_v1(uuid, jsonb)",
+    "place_actions_private.ask_root_current_v1(uuid)",
+    "place_actions_private.ask_schema_v1()",
+    "place_actions_private.ask_source_row_v1(text, jsonb)",
+    "place_actions_private.ask_sources_v1(uuid, text)",
+    "place_actions_private.ask_submit_v1(text)",
+    "place_actions_private.ask_text_projection_v1(uuid, boolean)",
+    "place_actions_private.ask_uuid_v1(jsonb)"
+  ],
+  "newTables": 0,
+  "newConstraint": {
+    "relation": "turn_private.grounded_turns",
+    "conname": "grounded_selected_place_request_shape",
+    "definition": "CHECK (((selected_place_request IS NULL) OR place_actions_private.ask_proof_shape_v1(selected_place_request)))"
+  },
+  "oldFunctionMetadataUnchanged": true,
+  "tableAclRolesPoliciesDefaultsMembershipsUnchanged": true,
+  "ordinaryPlaceGuidePrivacyIngressDenied": true,
+  "privateHelperGrantsDenied": true,
+  "rollbackExact": true,
+  "dependencyDriftRejected": true,
+  "unknownSchemaRejected": true,
+  "missingNewConstraintRejected": true,
+  "originalTripRuntimeTrue": true,
+  "guards": [
+    {
+      "name": "profile",
+      "value": true
+    },
+    {
+      "name": "result infra",
+      "value": true
+    },
+    {
+      "name": "result",
+      "value": true
+    },
+    {
+      "name": "turn",
+      "value": true
+    },
+    {
+      "name": "runtime",
+      "value": true
+    },
+    {
+      "name": "conversation",
+      "value": true
+    },
+    {
+      "name": "export",
+      "value": true
+    },
+    {
+      "name": "write",
+      "value": true
+    },
+    {
+      "name": "hooks",
+      "value": true
+    }
+  ]
+}

@@ -1,0 +1,749 @@
+{
+  "now": 1792058989757,
+  "owner": "99d4dc9b-4636-4115-980b-4e950b81db1c",
+  "limit": 20,
+  "requestBytes": "{\"schemaVersion\":\"canonical-place-ask/1\",\"submission\":{\"threadId\":\"75fc14ef-bfb0-41d1-8c32-63842f63ace2\",\"turnId\":\"08134079-7085-4aaa-8b5c-1b9df812718e\",\"idempotencyKey\":\"312adbd4-c885-4dd7-bf21-d52555f234c9\",\"policyId\":\"91daf7aa-95c5-41c0-822f-5caaa8ae3415\",\"locale\":\"en\",\"text\":\"What time does it open?\",\"serviceTask\":{\"id\":\"616ee24f-9fe1-4b50-8719-7819077dea4f\",\"scopeVersion\":1,\"relationship\":\"new_goal\",\"parentTurnId\":null}},\"expectation\":{\"tripId\":\"f449cd23-779f-448a-a499-897a47214246\",\"headVersion\":0,\"canonicalPoiId\":\"a885244e-1ac7-42e7-8a64-2c3a183b89ed\",\"provider\":\"amap\",\"providerPoiId\":\"self-only-ab09382b-c146-4d4c-a554-a46edff731ef\",\"mappingDigest\":\"7abb1a0d152d07fe1c52cc226cfce0c12798689432f608186e792ba7ce46102a\",\"contextDigest\":\"fb667fa039dd9679bd27973265745fec804e624a3797c6887ae0c64de3257dc1\",\"referenceId\":\"1a9db063-ccbf-4485-ad7b-1f1afff0f9fd\",\"locale\":\"en\"}}",
+  "request": {
+    "schemaVersion": "canonical-place-ask/1",
+    "submission": {
+      "threadId": "75fc14ef-bfb0-41d1-8c32-63842f63ace2",
+      "turnId": "08134079-7085-4aaa-8b5c-1b9df812718e",
+      "idempotencyKey": "312adbd4-c885-4dd7-bf21-d52555f234c9",
+      "policyId": "91daf7aa-95c5-41c0-822f-5caaa8ae3415",
+      "locale": "en",
+      "text": "What time does it open?",
+      "serviceTask": {
+        "id": "616ee24f-9fe1-4b50-8719-7819077dea4f",
+        "scopeVersion": 1,
+        "relationship": "new_goal",
+        "parentTurnId": null
+      }
+    },
+    "expectation": {
+      "tripId": "f449cd23-779f-448a-a499-897a47214246",
+      "headVersion": 0,
+      "canonicalPoiId": "a885244e-1ac7-42e7-8a64-2c3a183b89ed",
+      "provider": "amap",
+      "providerPoiId": "self-only-ab09382b-c146-4d4c-a554-a46edff731ef",
+      "mappingDigest": "7abb1a0d152d07fe1c52cc226cfce0c12798689432f608186e792ba7ce46102a",
+      "contextDigest": "fb667fa039dd9679bd27973265745fec804e624a3797c6887ae0c64de3257dc1",
+      "referenceId": "1a9db063-ccbf-4485-ad7b-1f1afff0f9fd",
+      "locale": "en"
+    }
+  },
+  "accepted": {
+    "kind": "accepted",
+    "binding": {
+      "goalId": null,
+      "turnId": "08134079-7085-4aaa-8b5c-1b9df812718e",
+      "expectation": {
+        "locale": "en",
+        "tripId": "f449cd23-779f-448a-a499-897a47214246",
+        "provider": "amap",
+        "headVersion": 0,
+        "referenceId": "1a9db063-ccbf-4485-ad7b-1f1afff0f9fd",
+        "contextDigest": "fb667fa039dd9679bd27973265745fec804e624a3797c6887ae0c64de3257dc1",
+        "mappingDigest": "7abb1a0d152d07fe1c52cc226cfce0c12798689432f608186e792ba7ce46102a",
+        "providerPoiId": "self-only-ab09382b-c146-4d4c-a554-a46edff731ef",
+        "canonicalPoiId": "a885244e-1ac7-42e7-8a64-2c3a183b89ed"
+      },
+      "goalVersion": null,
+      "requestDigest": "be9d0b957322cea85c784077e63165418483b1886d2363ccbe04708ca169f501",
+      "serviceTaskId": "616ee24f-9fe1-4b50-8719-7819077dea4f"
+    },
+    "operation": {
+      "turnId": "08134079-7085-4aaa-8b5c-1b9df812718e",
+      "scopeId": "75fc14ef-bfb0-41d1-8c32-63842f63ace2",
+      "messageId": null,
+      "scopeKind": "thread",
+      "operationId": "312adbd4-c885-4dd7-bf21-d52555f234c9"
+    },
+    "schemaVersion": "canonical-place-ask/1",
+    "originalReceipt": {
+      "kind": "accepted",
+      "reused": false,
+      "turnId": "08134079-7085-4aaa-8b5c-1b9df812718e",
+      "version": 2,
+      "parentTurnId": null,
+      "relationship": "new_goal",
+      "scopeVersion": 1,
+      "serviceTaskId": "616ee24f-9fe1-4b50-8719-7819077dea4f"
+    },
+    "readyForProvider": false,
+    "currentEligibilityRequiresRead": true
+  },
+  "sqlRead": {
+    "kind": "text",
+    "input": "What time does it open?",
+    "locale": "en",
+    "output": "reviewed-answer-v1",
+    "result": {
+      "city": "shanghai",
+      "type": "reviewed_answer",
+      "intent": "place_opening_hours",
+      "knowledge": {
+        "scope": {
+          "city": "shanghai",
+          "scene": "attraction",
+          "locale": "en"
+        },
+        "answer": {
+          "claims": [
+            {
+              "id": "opening_hours",
+              "status": "covered",
+              "factIds": [
+                "57411385-ac7b-481d-a48e-9026e980db50"
+              ],
+              "reasons": []
+            }
+          ],
+          "outcome": "answered",
+          "subjectId": "fixture_42f21ea6732e4b1b83f18e99b96ef23a",
+          "questionId": "place_opening_hours",
+          "questionVersion": 1
+        },
+        "status": "available",
+        "purpose": "trip_planning",
+        "recipient": "first_party",
+        "territory": "CN-mainland",
+        "statements": [
+          {
+            "text": "Synthetic Gallery opens during the published dated window.",
+            "place": {
+              "names": {
+                "en": "Fixture Gallery b96ef23a",
+                "zh": "样例展馆b96ef23a"
+              }
+            },
+            "scope": {
+              "scene": "attraction",
+              "cities": [
+                "shanghai"
+              ],
+              "audience": "international_independent_traveler"
+            },
+            "value": {
+              "endsAt": "2026-10-15T09:00:00Z",
+              "startsAt": "2026-10-15T01:00:00Z",
+              "timeZone": "Asia/Shanghai"
+            },
+            "factId": "57411385-ac7b-481d-a48e-9026e980db50",
+            "sources": [
+              {
+                "uri": "urn:vpj15:synthetic:agent005",
+                "locator": "Local controlled test",
+                "publisher": "Synthetic author",
+                "sourceKey": "agent005-9bf49b53-3455-47e9-b5aa-1b67a9edf8ab",
+                "revisionLabel": "v1",
+                "sourceRevisionId": "1c9d4157-d5d3-454f-b438-d50aebb25d7e"
+              }
+            ],
+            "version": 1,
+            "assertion": {
+              "objectId": "opening_hours",
+              "predicate": "opens_during",
+              "subjectId": "fixture_42f21ea6732e4b1b83f18e99b96ef23a",
+              "conditions": [
+                "current_dated_window"
+              ],
+              "exclusions": [
+                "no_holiday_guarantee"
+              ]
+            },
+            "expiresAt": "2026-10-16T10:09:49.562+00:00",
+            "conditions": [
+              "Current dated window only"
+            ],
+            "exclusions": [
+              "No holiday guarantee"
+            ],
+            "reviewedAt": "2026-10-15T10:09:49.559274+00:00",
+            "assertionId": "0fcb9480-695f-444d-829d-0a422dd4d88b",
+            "publishedAt": "2026-10-15T10:09:49.566908+00:00",
+            "assertionRevision": 1
+          }
+        ],
+        "evaluatedAt": "2026-10-15T10:09:49.725706+00:00",
+        "schemaVersion": "knowledge-answer/1"
+      },
+      "placeName": null,
+      "projection": "current",
+      "completedAt": "2026-10-15T10:09:49.694156+00:00",
+      "requestScope": "single",
+      "placeSubjectId": "fixture_42f21ea6732e4b1b83f18e99b96ef23a",
+      "originalOutcome": "answered",
+      "placeResolution": "matched",
+      "unansweredNeeds": []
+    },
+    "turnId": "08134079-7085-4aaa-8b5c-1b9df812718e",
+    "outcome": "answered",
+    "schemaVersion": "text-turn-v1",
+    "canonicalPlaceProof": {
+      "basis": {
+        "city": "shanghai",
+        "scene": "attraction",
+        "subjectId": "fixture_42f21ea6732e4b1b83f18e99b96ef23a",
+        "sourceDigest": "15c100123de7cb4d16f1e6e9cf200dcb901b6cb95cb8bb0fe3e66d889483dc8c"
+      },
+      "scopeId": "75fc14ef-bfb0-41d1-8c32-63842f63ace2",
+      "operation": {
+        "turnId": "08134079-7085-4aaa-8b5c-1b9df812718e",
+        "scopeId": "75fc14ef-bfb0-41d1-8c32-63842f63ace2",
+        "messageId": null,
+        "scopeKind": "thread",
+        "operationId": "312adbd4-c885-4dd7-bf21-d52555f234c9"
+      },
+      "scopeKind": "thread",
+      "expectation": {
+        "locale": "en",
+        "tripId": "f449cd23-779f-448a-a499-897a47214246",
+        "provider": "amap",
+        "headVersion": 0,
+        "referenceId": "1a9db063-ccbf-4485-ad7b-1f1afff0f9fd",
+        "contextDigest": "fb667fa039dd9679bd27973265745fec804e624a3797c6887ae0c64de3257dc1",
+        "mappingDigest": "7abb1a0d152d07fe1c52cc226cfce0c12798689432f608186e792ba7ce46102a",
+        "providerPoiId": "self-only-ab09382b-c146-4d4c-a554-a46edff731ef",
+        "canonicalPoiId": "a885244e-1ac7-42e7-8a64-2c3a183b89ed"
+      },
+      "operationId": "312adbd4-c885-4dd7-bf21-d52555f234c9",
+      "requestDigest": "be9d0b957322cea85c784077e63165418483b1886d2363ccbe04708ca169f501",
+      "schemaVersion": "canonical-place-proof/1",
+      "originalReceipt": {
+        "kind": "accepted",
+        "reused": false,
+        "turnId": "08134079-7085-4aaa-8b5c-1b9df812718e",
+        "version": 2,
+        "parentTurnId": null,
+        "relationship": "new_goal",
+        "scopeVersion": 1,
+        "serviceTaskId": "616ee24f-9fe1-4b50-8719-7819077dea4f"
+      }
+    }
+  },
+  "sqlTextHistory": {
+    "kind": "history",
+    "turns": [
+      {
+        "input": "What time does it open?",
+        "locale": "en",
+        "output": "reviewed-answer-v1",
+        "result": {
+          "city": "shanghai",
+          "type": "reviewed_answer",
+          "intent": "place_opening_hours",
+          "knowledge": {
+            "scope": {
+              "city": "shanghai",
+              "scene": "attraction",
+              "locale": "en"
+            },
+            "answer": {
+              "claims": [
+                {
+                  "id": "opening_hours",
+                  "status": "covered",
+                  "factIds": [
+                    "57411385-ac7b-481d-a48e-9026e980db50"
+                  ],
+                  "reasons": []
+                }
+              ],
+              "outcome": "answered",
+              "subjectId": "fixture_42f21ea6732e4b1b83f18e99b96ef23a",
+              "questionId": "place_opening_hours",
+              "questionVersion": 1
+            },
+            "status": "available",
+            "purpose": "trip_planning",
+            "recipient": "first_party",
+            "territory": "CN-mainland",
+            "statements": [
+              {
+                "text": "Synthetic Gallery opens during the published dated window.",
+                "place": {
+                  "names": {
+                    "en": "Fixture Gallery b96ef23a",
+                    "zh": "样例展馆b96ef23a"
+                  }
+                },
+                "scope": {
+                  "scene": "attraction",
+                  "cities": [
+                    "shanghai"
+                  ],
+                  "audience": "international_independent_traveler"
+                },
+                "value": {
+                  "endsAt": "2026-10-15T09:00:00Z",
+                  "startsAt": "2026-10-15T01:00:00Z",
+                  "timeZone": "Asia/Shanghai"
+                },
+                "factId": "57411385-ac7b-481d-a48e-9026e980db50",
+                "sources": [
+                  {
+                    "uri": "urn:vpj15:synthetic:agent005",
+                    "locator": "Local controlled test",
+                    "publisher": "Synthetic author",
+                    "sourceKey": "agent005-9bf49b53-3455-47e9-b5aa-1b67a9edf8ab",
+                    "revisionLabel": "v1",
+                    "sourceRevisionId": "1c9d4157-d5d3-454f-b438-d50aebb25d7e"
+                  }
+                ],
+                "version": 1,
+                "assertion": {
+                  "objectId": "opening_hours",
+                  "predicate": "opens_during",
+                  "subjectId": "fixture_42f21ea6732e4b1b83f18e99b96ef23a",
+                  "conditions": [
+                    "current_dated_window"
+                  ],
+                  "exclusions": [
+                    "no_holiday_guarantee"
+                  ]
+                },
+                "expiresAt": "2026-10-16T10:09:49.562+00:00",
+                "conditions": [
+                  "Current dated window only"
+                ],
+                "exclusions": [
+                  "No holiday guarantee"
+                ],
+                "reviewedAt": "2026-10-15T10:09:49.559274+00:00",
+                "assertionId": "0fcb9480-695f-444d-829d-0a422dd4d88b",
+                "publishedAt": "2026-10-15T10:09:49.566908+00:00",
+                "assertionRevision": 1
+              }
+            ],
+            "evaluatedAt": "2026-10-15T10:09:49.7405+00:00",
+            "schemaVersion": "knowledge-answer/1"
+          },
+          "placeName": null,
+          "projection": "current",
+          "completedAt": "2026-10-15T10:09:49.694156+00:00",
+          "requestScope": "single",
+          "placeSubjectId": "fixture_42f21ea6732e4b1b83f18e99b96ef23a",
+          "originalOutcome": "answered",
+          "placeResolution": "matched",
+          "unansweredNeeds": []
+        },
+        "status": "completed",
+        "turnId": "08134079-7085-4aaa-8b5c-1b9df812718e",
+        "outcome": "answered",
+        "threadId": "75fc14ef-bfb0-41d1-8c32-63842f63ace2",
+        "createdAt": "2026-10-15T10:09:49.617634+00:00",
+        "canonicalPlaceProof": {
+          "basis": {
+            "city": "shanghai",
+            "scene": "attraction",
+            "subjectId": "fixture_42f21ea6732e4b1b83f18e99b96ef23a",
+            "sourceDigest": "15c100123de7cb4d16f1e6e9cf200dcb901b6cb95cb8bb0fe3e66d889483dc8c"
+          },
+          "scopeId": "75fc14ef-bfb0-41d1-8c32-63842f63ace2",
+          "operation": {
+            "turnId": "08134079-7085-4aaa-8b5c-1b9df812718e",
+            "scopeId": "75fc14ef-bfb0-41d1-8c32-63842f63ace2",
+            "messageId": null,
+            "scopeKind": "thread",
+            "operationId": "312adbd4-c885-4dd7-bf21-d52555f234c9"
+          },
+          "scopeKind": "thread",
+          "expectation": {
+            "locale": "en",
+            "tripId": "f449cd23-779f-448a-a499-897a47214246",
+            "provider": "amap",
+            "headVersion": 0,
+            "referenceId": "1a9db063-ccbf-4485-ad7b-1f1afff0f9fd",
+            "contextDigest": "fb667fa039dd9679bd27973265745fec804e624a3797c6887ae0c64de3257dc1",
+            "mappingDigest": "7abb1a0d152d07fe1c52cc226cfce0c12798689432f608186e792ba7ce46102a",
+            "providerPoiId": "self-only-ab09382b-c146-4d4c-a554-a46edff731ef",
+            "canonicalPoiId": "a885244e-1ac7-42e7-8a64-2c3a183b89ed"
+          },
+          "operationId": "312adbd4-c885-4dd7-bf21-d52555f234c9",
+          "requestDigest": "be9d0b957322cea85c784077e63165418483b1886d2363ccbe04708ca169f501",
+          "schemaVersion": "canonical-place-proof/1",
+          "originalReceipt": {
+            "kind": "accepted",
+            "reused": false,
+            "turnId": "08134079-7085-4aaa-8b5c-1b9df812718e",
+            "version": 2,
+            "parentTurnId": null,
+            "relationship": "new_goal",
+            "scopeVersion": 1,
+            "serviceTaskId": "616ee24f-9fe1-4b50-8719-7819077dea4f"
+          }
+        }
+      }
+    ]
+  },
+  "sqlTaskHistory": {
+    "kind": "history",
+    "turns": [
+      {
+        "input": "What time does it open?",
+        "locale": "en",
+        "output": "reviewed-answer-v1",
+        "result": {
+          "city": "shanghai",
+          "type": "reviewed_answer",
+          "intent": "place_opening_hours",
+          "knowledge": {
+            "scope": {
+              "city": "shanghai",
+              "scene": "attraction",
+              "locale": "en"
+            },
+            "answer": {
+              "claims": [
+                {
+                  "id": "opening_hours",
+                  "status": "covered",
+                  "factIds": [
+                    "57411385-ac7b-481d-a48e-9026e980db50"
+                  ],
+                  "reasons": []
+                }
+              ],
+              "outcome": "answered",
+              "subjectId": "fixture_42f21ea6732e4b1b83f18e99b96ef23a",
+              "questionId": "place_opening_hours",
+              "questionVersion": 1
+            },
+            "status": "available",
+            "purpose": "trip_planning",
+            "recipient": "first_party",
+            "territory": "CN-mainland",
+            "statements": [
+              {
+                "text": "Synthetic Gallery opens during the published dated window.",
+                "place": {
+                  "names": {
+                    "en": "Fixture Gallery b96ef23a",
+                    "zh": "样例展馆b96ef23a"
+                  }
+                },
+                "scope": {
+                  "scene": "attraction",
+                  "cities": [
+                    "shanghai"
+                  ],
+                  "audience": "international_independent_traveler"
+                },
+                "value": {
+                  "endsAt": "2026-10-15T09:00:00Z",
+                  "startsAt": "2026-10-15T01:00:00Z",
+                  "timeZone": "Asia/Shanghai"
+                },
+                "factId": "57411385-ac7b-481d-a48e-9026e980db50",
+                "sources": [
+                  {
+                    "uri": "urn:vpj15:synthetic:agent005",
+                    "locator": "Local controlled test",
+                    "publisher": "Synthetic author",
+                    "sourceKey": "agent005-9bf49b53-3455-47e9-b5aa-1b67a9edf8ab",
+                    "revisionLabel": "v1",
+                    "sourceRevisionId": "1c9d4157-d5d3-454f-b438-d50aebb25d7e"
+                  }
+                ],
+                "version": 1,
+                "assertion": {
+                  "objectId": "opening_hours",
+                  "predicate": "opens_during",
+                  "subjectId": "fixture_42f21ea6732e4b1b83f18e99b96ef23a",
+                  "conditions": [
+                    "current_dated_window"
+                  ],
+                  "exclusions": [
+                    "no_holiday_guarantee"
+                  ]
+                },
+                "expiresAt": "2026-10-16T10:09:49.562+00:00",
+                "conditions": [
+                  "Current dated window only"
+                ],
+                "exclusions": [
+                  "No holiday guarantee"
+                ],
+                "reviewedAt": "2026-10-15T10:09:49.559274+00:00",
+                "assertionId": "0fcb9480-695f-444d-829d-0a422dd4d88b",
+                "publishedAt": "2026-10-15T10:09:49.566908+00:00",
+                "assertionRevision": 1
+              }
+            ],
+            "evaluatedAt": "2026-10-15T10:09:49.755253+00:00",
+            "schemaVersion": "knowledge-answer/1"
+          },
+          "placeName": null,
+          "projection": "current",
+          "completedAt": "2026-10-15T10:09:49.694156+00:00",
+          "requestScope": "single",
+          "placeSubjectId": "fixture_42f21ea6732e4b1b83f18e99b96ef23a",
+          "originalOutcome": "answered",
+          "placeResolution": "matched",
+          "unansweredNeeds": []
+        },
+        "status": "completed",
+        "turnId": "08134079-7085-4aaa-8b5c-1b9df812718e",
+        "outcome": "answered",
+        "threadId": "75fc14ef-bfb0-41d1-8c32-63842f63ace2",
+        "createdAt": "2026-10-15T10:09:49.617634+00:00",
+        "parentTurnId": null,
+        "relationship": "new_goal",
+        "scopeVersion": 1,
+        "serviceTaskId": "616ee24f-9fe1-4b50-8719-7819077dea4f",
+        "canonicalPlaceProof": {
+          "basis": {
+            "city": "shanghai",
+            "scene": "attraction",
+            "subjectId": "fixture_42f21ea6732e4b1b83f18e99b96ef23a",
+            "sourceDigest": "15c100123de7cb4d16f1e6e9cf200dcb901b6cb95cb8bb0fe3e66d889483dc8c"
+          },
+          "scopeId": "75fc14ef-bfb0-41d1-8c32-63842f63ace2",
+          "operation": {
+            "turnId": "08134079-7085-4aaa-8b5c-1b9df812718e",
+            "scopeId": "75fc14ef-bfb0-41d1-8c32-63842f63ace2",
+            "messageId": null,
+            "scopeKind": "thread",
+            "operationId": "312adbd4-c885-4dd7-bf21-d52555f234c9"
+          },
+          "scopeKind": "thread",
+          "expectation": {
+            "locale": "en",
+            "tripId": "f449cd23-779f-448a-a499-897a47214246",
+            "provider": "amap",
+            "headVersion": 0,
+            "referenceId": "1a9db063-ccbf-4485-ad7b-1f1afff0f9fd",
+            "contextDigest": "fb667fa039dd9679bd27973265745fec804e624a3797c6887ae0c64de3257dc1",
+            "mappingDigest": "7abb1a0d152d07fe1c52cc226cfce0c12798689432f608186e792ba7ce46102a",
+            "providerPoiId": "self-only-ab09382b-c146-4d4c-a554-a46edff731ef",
+            "canonicalPoiId": "a885244e-1ac7-42e7-8a64-2c3a183b89ed"
+          },
+          "operationId": "312adbd4-c885-4dd7-bf21-d52555f234c9",
+          "requestDigest": "be9d0b957322cea85c784077e63165418483b1886d2363ccbe04708ca169f501",
+          "schemaVersion": "canonical-place-proof/1",
+          "originalReceipt": {
+            "kind": "accepted",
+            "reused": false,
+            "turnId": "08134079-7085-4aaa-8b5c-1b9df812718e",
+            "version": 2,
+            "parentTurnId": null,
+            "relationship": "new_goal",
+            "scopeVersion": 1,
+            "serviceTaskId": "616ee24f-9fe1-4b50-8719-7819077dea4f"
+          }
+        }
+      }
+    ]
+  },
+  "withdrawn": {
+    "now": 1792058989804,
+    "sqlRead": {
+      "kind": "text",
+      "input": "What time does it open?",
+      "locale": "en",
+      "output": "reviewed-answer-v1",
+      "result": {
+        "city": "shanghai",
+        "type": "reviewed_answer",
+        "intent": "place_opening_hours",
+        "knowledge": null,
+        "placeName": null,
+        "projection": "unavailable",
+        "completedAt": "2026-10-15T10:09:49.694156+00:00",
+        "requestScope": "single",
+        "placeSubjectId": "fixture_42f21ea6732e4b1b83f18e99b96ef23a",
+        "originalOutcome": "answered",
+        "placeResolution": "matched",
+        "unansweredNeeds": []
+      },
+      "turnId": "08134079-7085-4aaa-8b5c-1b9df812718e",
+      "outcome": "answered",
+      "schemaVersion": "text-turn-v1",
+      "canonicalPlaceProof": {
+        "basis": {
+          "city": "shanghai",
+          "scene": "attraction",
+          "subjectId": "fixture_42f21ea6732e4b1b83f18e99b96ef23a",
+          "sourceDigest": "15c100123de7cb4d16f1e6e9cf200dcb901b6cb95cb8bb0fe3e66d889483dc8c"
+        },
+        "scopeId": "75fc14ef-bfb0-41d1-8c32-63842f63ace2",
+        "operation": {
+          "turnId": "08134079-7085-4aaa-8b5c-1b9df812718e",
+          "scopeId": "75fc14ef-bfb0-41d1-8c32-63842f63ace2",
+          "messageId": null,
+          "scopeKind": "thread",
+          "operationId": "312adbd4-c885-4dd7-bf21-d52555f234c9"
+        },
+        "scopeKind": "thread",
+        "expectation": {
+          "locale": "en",
+          "tripId": "f449cd23-779f-448a-a499-897a47214246",
+          "provider": "amap",
+          "headVersion": 0,
+          "referenceId": "1a9db063-ccbf-4485-ad7b-1f1afff0f9fd",
+          "contextDigest": "fb667fa039dd9679bd27973265745fec804e624a3797c6887ae0c64de3257dc1",
+          "mappingDigest": "7abb1a0d152d07fe1c52cc226cfce0c12798689432f608186e792ba7ce46102a",
+          "providerPoiId": "self-only-ab09382b-c146-4d4c-a554-a46edff731ef",
+          "canonicalPoiId": "a885244e-1ac7-42e7-8a64-2c3a183b89ed"
+        },
+        "operationId": "312adbd4-c885-4dd7-bf21-d52555f234c9",
+        "requestDigest": "be9d0b957322cea85c784077e63165418483b1886d2363ccbe04708ca169f501",
+        "schemaVersion": "canonical-place-proof/1",
+        "originalReceipt": {
+          "kind": "accepted",
+          "reused": false,
+          "turnId": "08134079-7085-4aaa-8b5c-1b9df812718e",
+          "version": 2,
+          "parentTurnId": null,
+          "relationship": "new_goal",
+          "scopeVersion": 1,
+          "serviceTaskId": "616ee24f-9fe1-4b50-8719-7819077dea4f"
+        }
+      }
+    },
+    "sqlTextHistory": {
+      "kind": "history",
+      "turns": [
+        {
+          "input": "What time does it open?",
+          "locale": "en",
+          "output": "reviewed-answer-v1",
+          "result": {
+            "city": "shanghai",
+            "type": "reviewed_answer",
+            "intent": "place_opening_hours",
+            "knowledge": null,
+            "placeName": null,
+            "projection": "unavailable",
+            "completedAt": "2026-10-15T10:09:49.694156+00:00",
+            "requestScope": "single",
+            "placeSubjectId": "fixture_42f21ea6732e4b1b83f18e99b96ef23a",
+            "originalOutcome": "answered",
+            "placeResolution": "matched",
+            "unansweredNeeds": []
+          },
+          "status": "completed",
+          "turnId": "08134079-7085-4aaa-8b5c-1b9df812718e",
+          "outcome": "answered",
+          "threadId": "75fc14ef-bfb0-41d1-8c32-63842f63ace2",
+          "createdAt": "2026-10-15T10:09:49.617634+00:00",
+          "canonicalPlaceProof": {
+            "basis": {
+              "city": "shanghai",
+              "scene": "attraction",
+              "subjectId": "fixture_42f21ea6732e4b1b83f18e99b96ef23a",
+              "sourceDigest": "15c100123de7cb4d16f1e6e9cf200dcb901b6cb95cb8bb0fe3e66d889483dc8c"
+            },
+            "scopeId": "75fc14ef-bfb0-41d1-8c32-63842f63ace2",
+            "operation": {
+              "turnId": "08134079-7085-4aaa-8b5c-1b9df812718e",
+              "scopeId": "75fc14ef-bfb0-41d1-8c32-63842f63ace2",
+              "messageId": null,
+              "scopeKind": "thread",
+              "operationId": "312adbd4-c885-4dd7-bf21-d52555f234c9"
+            },
+            "scopeKind": "thread",
+            "expectation": {
+              "locale": "en",
+              "tripId": "f449cd23-779f-448a-a499-897a47214246",
+              "provider": "amap",
+              "headVersion": 0,
+              "referenceId": "1a9db063-ccbf-4485-ad7b-1f1afff0f9fd",
+              "contextDigest": "fb667fa039dd9679bd27973265745fec804e624a3797c6887ae0c64de3257dc1",
+              "mappingDigest": "7abb1a0d152d07fe1c52cc226cfce0c12798689432f608186e792ba7ce46102a",
+              "providerPoiId": "self-only-ab09382b-c146-4d4c-a554-a46edff731ef",
+              "canonicalPoiId": "a885244e-1ac7-42e7-8a64-2c3a183b89ed"
+            },
+            "operationId": "312adbd4-c885-4dd7-bf21-d52555f234c9",
+            "requestDigest": "be9d0b957322cea85c784077e63165418483b1886d2363ccbe04708ca169f501",
+            "schemaVersion": "canonical-place-proof/1",
+            "originalReceipt": {
+              "kind": "accepted",
+              "reused": false,
+              "turnId": "08134079-7085-4aaa-8b5c-1b9df812718e",
+              "version": 2,
+              "parentTurnId": null,
+              "relationship": "new_goal",
+              "scopeVersion": 1,
+              "serviceTaskId": "616ee24f-9fe1-4b50-8719-7819077dea4f"
+            }
+          }
+        }
+      ]
+    },
+    "sqlTaskHistory": {
+      "kind": "history",
+      "turns": [
+        {
+          "input": "What time does it open?",
+          "locale": "en",
+          "output": "reviewed-answer-v1",
+          "result": {
+            "city": "shanghai",
+            "type": "reviewed_answer",
+            "intent": "place_opening_hours",
+            "knowledge": null,
+            "placeName": null,
+            "projection": "unavailable",
+            "completedAt": "2026-10-15T10:09:49.694156+00:00",
+            "requestScope": "single",
+            "placeSubjectId": "fixture_42f21ea6732e4b1b83f18e99b96ef23a",
+            "originalOutcome": "answered",
+            "placeResolution": "matched",
+            "unansweredNeeds": []
+          },
+          "status": "completed",
+          "turnId": "08134079-7085-4aaa-8b5c-1b9df812718e",
+          "outcome": "answered",
+          "threadId": "75fc14ef-bfb0-41d1-8c32-63842f63ace2",
+          "createdAt": "2026-10-15T10:09:49.617634+00:00",
+          "parentTurnId": null,
+          "relationship": "new_goal",
+          "scopeVersion": 1,
+          "serviceTaskId": "616ee24f-9fe1-4b50-8719-7819077dea4f",
+          "canonicalPlaceProof": {
+            "basis": {
+              "city": "shanghai",
+              "scene": "attraction",
+              "subjectId": "fixture_42f21ea6732e4b1b83f18e99b96ef23a",
+              "sourceDigest": "15c100123de7cb4d16f1e6e9cf200dcb901b6cb95cb8bb0fe3e66d889483dc8c"
+            },
+            "scopeId": "75fc14ef-bfb0-41d1-8c32-63842f63ace2",
+            "operation": {
+              "turnId": "08134079-7085-4aaa-8b5c-1b9df812718e",
+              "scopeId": "75fc14ef-bfb0-41d1-8c32-63842f63ace2",
+              "messageId": null,
+              "scopeKind": "thread",
+              "operationId": "312adbd4-c885-4dd7-bf21-d52555f234c9"
+            },
+            "scopeKind": "thread",
+            "expectation": {
+              "locale": "en",
+              "tripId": "f449cd23-779f-448a-a499-897a47214246",
+              "provider": "amap",
+              "headVersion": 0,
+              "referenceId": "1a9db063-ccbf-4485-ad7b-1f1afff0f9fd",
+              "contextDigest": "fb667fa039dd9679bd27973265745fec804e624a3797c6887ae0c64de3257dc1",
+              "mappingDigest": "7abb1a0d152d07fe1c52cc226cfce0c12798689432f608186e792ba7ce46102a",
+              "providerPoiId": "self-only-ab09382b-c146-4d4c-a554-a46edff731ef",
+              "canonicalPoiId": "a885244e-1ac7-42e7-8a64-2c3a183b89ed"
+            },
+            "operationId": "312adbd4-c885-4dd7-bf21-d52555f234c9",
+            "requestDigest": "be9d0b957322cea85c784077e63165418483b1886d2363ccbe04708ca169f501",
+            "schemaVersion": "canonical-place-proof/1",
+            "originalReceipt": {
+              "kind": "accepted",
+              "reused": false,
+              "turnId": "08134079-7085-4aaa-8b5c-1b9df812718e",
+              "version": 2,
+              "parentTurnId": null,
+              "relationship": "new_goal",
+              "scopeVersion": 1,
+              "serviceTaskId": "616ee24f-9fe1-4b50-8719-7819077dea4f"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

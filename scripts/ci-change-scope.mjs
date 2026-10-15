@@ -60,7 +60,9 @@ export function selectCheckPlan(files,eventName,forceFull=false){
  const checks=baseChecks(),lanes=new Set();let known=true;
  for(const f of files){
   if(prose(f))continue;
-  if(['lib/server/turn/native-ai-assist-http.ts','app/api/chat/grounded/ai-assist/route.ts','lib/server/model-gateway/prompt/wiki-search.ts'].includes(f))lanes.add('postgres-native-17');
+  if(['lib/server/turn/native-ai-assist-http.ts','app/api/chat/grounded/ai-assist/route.ts','lib/server/model-gateway/prompt/wiki-search.ts',
+   'app/api/chat/native/v7/place-ask/route.ts','lib/server/privacy/turn-data/contract.ts','lib/server/privacy/turn-data/export.ts',
+   'lib/server/privacy/turn-data/source-schema.json','lib/server/jobs/hosted-text-worker.ts'].includes(f))lanes.add('postgres-native-17');
   if(f.startsWith('lib/server/qa-agent/cancellation/')||['lib/qa-agent/cancellation-contract.ts','lib/server/qa-agent/config.ts',qaCancellationRoute].includes(f))lanes.add('postgres-native-17');
   if(f==='package.json'||f==='pnpm-lock.yaml'||f==='tsconfig.json'||/^next\.config\./.test(f)||/^middleware\./.test(f))return full('shared_runtime_configuration');
   if(f.startsWith('supabase/')){for(const l of DB_LANES)lanes.add(l);Object.assign(checks,{typecheck:true,test:true,unit:true,contract:true,security:true,flags:true});continue;}
@@ -93,7 +95,7 @@ export function selectCheckPlan(files,eventName,forceFull=false){
    if(row?.lane==='test:integration')continue;
    return full('unmapped_integration_dependency');
   }
-  if(/^tests\/(?:unit|contract|security)\//.test(f)){if(f.startsWith('tests/contract/service-task-trip/')||f.startsWith('tests/contract/agent-grounded-result/')||f.startsWith('tests/contract/qa-agent-cancellation/'))lanes.add('postgres-native-17');Object.assign(checks,{typecheck:true,unit:true,contract:true,security:true});if(f.startsWith('tests/security/')){lanes.add('postgres');lanes.add('supabase-rls');lanes.add('supabase-http-native');}continue;}
+  if(/^tests\/(?:unit|contract|security)\//.test(f)){if(f.startsWith('tests/contract/service-task-trip/')||f.startsWith('tests/contract/agent-grounded-result/')||f.startsWith('tests/contract/qa-agent-cancellation/')||f.startsWith('tests/contract/canonical-place-ask/'))lanes.add('postgres-native-17');Object.assign(checks,{typecheck:true,unit:true,contract:true,security:true});if(f.startsWith('tests/security/')){lanes.add('postgres');lanes.add('supabase-rls');lanes.add('supabase-http-native');}continue;}
   if(f.startsWith('tests/e2e/')){Object.assign(checks,{typecheck:true,build:true,e2e:true,browser:true,assets:true});continue;}
   if(f.startsWith('evals/')){checks.evals=true;checks.contract=true;continue;}
   known=false;

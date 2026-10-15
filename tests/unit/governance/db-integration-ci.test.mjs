@@ -5,9 +5,35 @@ import { join } from "node:path";
 import test from "node:test";
 import {spawnSync} from "node:child_process";
 import {selectCheckPlan,DB_LANES} from "../../../scripts/ci-change-scope.mjs";
-import { EXCLUDED, LANES, executionMatrix, executionSteps, classify, isGated, parseNodeTestSummary, pinnedImages, stepProblems } from "../../../scripts/ci-suites/db-integration.mjs";
+import { EXCLUDED, LANES, executionMatrix, executionSteps, classify, isGated, parseNodeTestSummary, failedNodeTestNames, pinnedImages, stepProblems } from "../../../scripts/ci-suites/db-integration.mjs";
 
 const read = (path) => readFileSync(path, "utf8");
+
+test('failure evidence keeps early and nested TAP case names bounded without changing strict totals', () => {
+  const output = 'not ok 1 - early failure\n' + 'ok 2 - not ok is only a title here\n' + '    not ok 3 - nested failure\r\n' + '# fail 2\n';
+  assert.deepEqual(failedNodeTestNames(output), ['early failure', 'nested failure']);
+  assert.deepEqual(stepProblems(1, parseNodeTestSummary(output)), ['exit 1', 'no node:test summary / zero tests', 'fail=2']);
+  const many = Array.from({ length: 30 }, (_, i) => `not ok ${i + 1} - ${'x'.repeat(300)}`).join('\n');
+  const bounded = failedNodeTestNames(many);
+  assert.equal(bounded.length, 16);
+  assert.ok(bounded.every((name) => name.length === 240));
+  assert.deepEqual(failedNodeTestNames('ok 1 - success\n# fail 0\n'), []);
+});
+
+test('canonical Place SQL and HTTP entries have one mandatory native17 step without weakening existing steps',()=>{
+ const files=['tests/integration/canonical-place-ask-sql/postgres.test.mjs','tests/integration/canonical-place-ask-http/postgres.test.mjs'];
+ const lane=LANES['postgres-native-17'],step=lane.steps.find(s=>s.name==='canonical-place-native-17');
+ assert.ok(step);assert.deepEqual(step.files,files);assert.equal(step.concurrency,1);
+ assert.deepEqual(step.env,{CANONICAL_PLACE_NATIVE_PG:'1',CANONICAL_PLACE_HTTP_NATIVE_PG:'1'});
+ for(const file of files){
+  assert.equal(isGated(file),true);
+  assert.deepEqual(classify().rows.find(r=>r.file===file),{file,gated:true,lane:'postgres-native-17'});
+  assert.deepEqual(Object.entries(LANES).flatMap(([name,l])=>l.steps.flatMap(s=>s.files.filter(f=>f===file).map(()=>name))),['postgres-native-17']);
+  assert.equal(EXCLUDED[file],undefined);
+ }
+ assert.equal(lane.steps[0].env.QA_CANCEL_NATIVE_PG,'1');
+ assert.ok(lane.steps[1].files.includes('tests/integration/service-task-trip/proposal-expiry.test.mjs'));
+});
 
 test("every gated integration test file is in a DB integration lane or on the reasoned allowlist", () => {
   const { rows, problems } = classify();
@@ -247,7 +273,7 @@ test('resolved-subject PG17 lane is unique, explicit, bounded, and cannot weaken
  const ownership=Object.entries(LANES).flatMap(([lane,definition])=>definition.steps.flatMap(step=>step.files.filter(f=>f===file).map(()=>lane)));
  assert.deepEqual(ownership,['postgres-native-17']);
  assert.deepEqual(classify().rows.find(row=>row.file===file),{file,gated:true,lane:'postgres-native-17'});
- assert.equal(LANES['postgres-native-17'].steps.length,2);assert.equal(LANES['postgres-native-17'].steps[0].env.AGENT005_NATIVE_PG,'1');assert.equal(LANES['postgres-native-17'].steps[0].concurrency,1);
+ assert.deepEqual(LANES['postgres-native-17'].steps.map(s=>s.name),['subject-and-cancellation-native-17','trip-service-task-native-17','canonical-place-native-17']);assert.equal(LANES['postgres-native-17'].steps[0].env.AGENT005_NATIVE_PG,'1');assert.equal(LANES['postgres-native-17'].steps[0].concurrency,1);
  assert.deepEqual(LANES['postgres-native'],{needs:['VP_WIKI_PG_BIN','VP_WIKI_PG_MODULE'],steps:[{name:'wiki-native-postgres',env:{},files:['tests/integration/knowledge/wiki-draft.test.mjs']}]});
  const all=executionMatrix(DB_LANES).include;
  assert.deepEqual(all.filter(job=>job.lane!=='postgres-native-17'),executionMatrix(DB_LANES.filter(lane=>lane!=='postgres-native-17')).include);

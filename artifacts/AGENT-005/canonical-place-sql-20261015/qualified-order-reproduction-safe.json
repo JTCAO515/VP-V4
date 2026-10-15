@@ -1,0 +1,37 @@
+{
+  "sourceRef": "2c0b1934405a5531b2570acaf130abaa234e4f01",
+  "originalSharedTestChanged": false,
+  "originalSelector": "all .sql except mine",
+  "missingMigration": "20261003030000_vpj79_private_qualified_comparison.sql",
+  "missingFunctions": [
+    "turn_private.project_planning_qualified_comparison_v1(uuid,uuid,uuid,text,text,jsonb,text)",
+    "turn_private.valid_planning_qualified_comparison_v1(uuid,uuid,uuid,text,text,jsonb,text,jsonb)"
+  ],
+  "extraFunctions": [],
+  "failure": {
+    "guards": {
+      "turn_hooks": true,
+      "turn_schema": true,
+      "export_hooks": true,
+      "trip_runtime": false,
+      "turn_runtime": true,
+      "result_schema": true,
+      "profile_schema": true,
+      "selected_schema": true,
+      "turn_write_hooks": true,
+      "conversation_schema": true,
+      "result_infrastructure": true
+    },
+    "postgres": "17.11 (Homebrew)",
+    "trip_failure": {
+      "stage": "namespace_inventory",
+      "actual_hash": "c14ef9547af24d48f9069b7f09f8eb65aa1104e8fe43857b61fffcdf371d4005",
+      "actual_count": 243,
+      "expected_hash": "1f871f82b3d7831ee8fbcb0dcee666e0e383f2921210e2d632299c5b2f453695",
+      "expected_count": 245
+    }
+  },
+  "restore": "actual reviewed missing migration only",
+  "canonicalAfterActualMissingMigration": "PASS with unchanged strict namespace/ACL guards",
+  "managedPGOrGoTrue": false
+}

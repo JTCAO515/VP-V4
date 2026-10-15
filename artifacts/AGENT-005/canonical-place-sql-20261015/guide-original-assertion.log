@@ -1,0 +1,1 @@
+ORIGINAL_GUIDE_ASSERTION_FAILURE_REPRODUCED {"signature":"read_grounded_turn(uuid)","code":"ERR_ASSERTION","expectedSha256":"d678a6e2f321b3ebe7210cae6f4932b574b7a4a2620f5e9bc96faebfe25fbd82","actualSha256":"613183cf023dbcaba336ea32a81afb9e693c0fafc4b950aee0c527a8565368a6","message":"read_grounded_turn(uuid) ordinary body byte equivalence after removing marked-only seams"}

@@ -1,0 +1,21 @@
+{
+  "mainFixedRef": "3628fe0f9c64317bdecefaead840fb17181db01b",
+  "mainFixedBlob": "9c245d10f87dc05c20452ee2dce26479e4a8ecac",
+  "mainFixedSha256": "63129bbff282b7b79021d33f093f2a6c7591481b583cc6e06b2eb249c7aefc7e",
+  "originalSharedFileSha256BeforeAndAfter": "2c32845a2e31e7e3e994a9866b43b2b33de2796326dbeb7212875742b3b5e8f2",
+  "sharedFileWritten": false,
+  "method": "read-only Node module loader, exact Main bytes at original module URL; unchanged accepted native runner/adapter",
+  "relatedProductMigrationsProjectionFixtureAndAdapterDifferFromMain": false,
+  "tests": 4,
+  "pass": 4,
+  "fail": 0,
+  "skip": 0,
+  "durationMs": 15797.40375,
+  "runtime": "native PG17.11 on fresh private0700/noTCP own cluster, C0Auth",
+  "fullCurrentSuccessorChain": true,
+  "originalRollbackAndAbsenceAssertion": true,
+  "timeoutsAndNegativeAssertionsChanged": false,
+  "cleanup": "original after-hook adapter rm assertion and original runner finally completed exit0",
+  "remainingFifthCiFailure": "UNKNOWN, outside available official log tail",
+  "productSqlChanged": false
+}

@@ -1,0 +1,19 @@
+{
+  "baselineSha256": "b0e80fc9faf0bd094e1827e494cb101797403897a9aa3c1e02bf5ebeb10ba78b",
+  "baselineBlob": "e459a7aee5bd0400cfe3909e8eb25850f1999932",
+  "testedSourceSha256": "ccfc9860233e55dd599bd1565fa708798e85d20347b97555abe1d77ec4731ee6",
+  "stableSourceSha256": "f96ec7c8919eba7b2c2e7c35ad984cc1b2a13dc13a443e793fc03519fa7b8b8f",
+  "postRunChange": "only JSON literal whitespace formatting; fixed object parsed equal; node syntax and strict actual-case snapshot negatives verified afterward",
+  "tests": 13,
+  "pass": 13,
+  "fail": 0,
+  "skip": 0,
+  "durationMs": 41338.027625,
+  "allOriginalAssertionsAndCasesPreserved": true,
+  "newContracts": "six reviewed198 source pairs, hardcoded source-derived prosrc hashes, actual exact after, original normalization on exact before",
+  "unchangedEntries": 4,
+  "allOriginalAclComparisons": 10,
+  "productSqlChanged": false,
+  "realManaged17_6OrGoTrue": false,
+  "futureSharedHunkLease": "returned to Main; no inflight/planned writes"
+}

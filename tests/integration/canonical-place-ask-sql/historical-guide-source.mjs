@@ -1,0 +1,2 @@
+import {readFileSync} from 'node:fs';import {createHash} from 'node:crypto';
+export function historicalGuideSource(){const source=readFileSync('artifacts/AGENT-005/canonical-place-sql-20261015/guide-body-candidate/before.mjs','utf8');if(createHash('sha256').update(source).digest('hex')!=='b0e80fc9faf0bd094e1827e494cb101797403897a9aa3c1e02bf5ebeb10ba78b')throw Error('Historical Guide source pin mismatch');return source;}

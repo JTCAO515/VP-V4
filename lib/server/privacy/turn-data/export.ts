@@ -10,7 +10,7 @@ const tripExportSchema=[...originalSchema.map(s=>s.relation==='turn_private.serv
 import { exact, record, hash } from '../../guide/contract.ts';
 import { exportCanonical, type ExportHandler, type ExportLease, type ExportModuleReceipt, type ExportPage } from '../export-dispatcher.ts';
 import type { ExportDomainRPC } from '../export-worker.ts';
-import { identifier, positive, validSourceAuthorities, ERASED_KEYS, TURN_LIMITS } from './contract.ts';
+import { identifier, positive, validSourceAuthorities, validPlaceRequestProof, validPlaceAnswerBasis, ERASED_KEYS, TURN_LIMITS } from './contract.ts';
 import { validOperationRow } from './protocol.ts';
 
 export const TURN_EXPORT_SCHEMA = 'turn-core-export/1' as const;
@@ -62,6 +62,36 @@ function closedSourceGraph(sources: Sources,tripTask=false): boolean {
   const turns = new Set([...ids('public.turns', 'id'), ...ids('turn_private.text_content', 'turn_id')]);
   const tasks = ids('turn_private.service_tasks', 'id'), messages = ids('turn_private.assistant_messages', 'id');
   const artifacts = ids('turn_private.result_artifacts', 'id'), executions = ids('turn_private.planning_v2_execution_runs', 'id');
+  // Only selected Place ancestry uses this stricter graph. Legacy exports keep
+  // their original rules. A Task's chain must terminate at its actual goal Turn.
+  const taskLinks = new Map(rows('turn_private.service_task_turns').map(r => [r.turn_id,r]));
+  const sourceTurns = new Map(rows('public.turns').map(r => [r.id,r]));
+  const sourceTexts = new Map(rows('turn_private.text_content').map(r => [r.turn_id,r]));
+  const checkedLineage = new Set<string>();
+  function placeLineage(first: Record<string,unknown>, task: Record<string,unknown>): boolean {
+    let id = first.turn_id;
+    const seen = new Set<unknown>(), path: string[] = [];
+    for (;;) {
+      const key = `${task.id}:${id}`;
+      if (checkedLineage.has(key)) break;
+      if (seen.has(id)) return false;
+      seen.add(id);
+      const link = taskLinks.get(id), turn = sourceTurns.get(id), text = sourceTexts.get(id);
+      if (!link || !turn || !text || link.task_id !== task.id || link.owner_id !== task.owner_id
+        || turn.owner_id !== task.owner_id || text.owner_id !== task.owner_id
+        || turn.thread_id !== task.thread_id || text.thread_id !== task.thread_id
+        || text.policy_id !== task.policy_id || text.consent_id !== task.consent_id) return false;
+      path.push(key);
+      if (link.relationship === 'new_goal') {
+        if (link.parent_turn_id !== null || id !== task.goal_turn_id) return false;
+        break;
+      }
+      if (!['clarification','repair'].includes(String(link.relationship)) || !identifier(link.parent_turn_id)) return false;
+      id = link.parent_turn_id;
+    }
+    for (const key of path) checkedLineage.add(key);
+    return true;
+  }
   const linkedMessages = new Set([...rows('turn_private.service_tasks').flatMap(t=>validTripObjectiveExport(t,rows)?rows('turn_private.assistant_messages').filter(m=>m.task_id===t.id&&m.owner_id===t.owner_id&&(record(t.trip_objective)&&t.trip_objective.outcome==='erased'?m.goal_id===(t.trip_objective as Record<string,unknown>).goalId:m.id===(t.trip_objective as Record<string,unknown>)?.messageId)).map(m=>String(m.id)):[]),...rows('turn_private.planning_comparisons').map(r => String(r.message_id)),
     ...rows('turn_private.result_artifacts').map(r => String(r.input_message_id)),
     ...rows('turn_private.assistant_directions_intakes_v1').map(r => String(r.message_id))]);
@@ -78,6 +108,19 @@ function closedSourceGraph(sources: Sources,tripTask=false): boolean {
     if (spec.relation === 'turn_private.directions_result_sources_v1' && (!rows('turn_private.assistant_directions_intakes_v1').some(intake => intake.message_id === row.message_id && intake.task_turn_id === row.task_turn_id)
       || row.previous_artifact_id !== null && !artifacts.has(String(row.previous_artifact_id)))) return false;
     if (spec.relation === 'turn_private.service_tasks' && (!turns.has(String(row.goal_turn_id)) || !turns.has(String(row.last_turn_id)) || (tripTask?!validTripObjectiveExport(row,rows):Object.hasOwn(row,'trip_objective')))) return false;
+    if (spec.relation === 'turn_private.grounded_turns' && Object.hasOwn(row,'selected_place_request')) {
+      const p = row.selected_place_request;
+      if (!validPlaceRequestProof(p,row) || !validPlaceAnswerBasis(row.basis) || !record(p) || !record(p.originalReceipt)) return false;
+      const receipt=p.originalReceipt;
+      const task=rows('turn_private.service_tasks').find(t=>t.id===row.task_id && t.owner_id===row.owner_id);
+      const text=rows('turn_private.text_content').find(t=>t.turn_id===row.turn_id && t.owner_id===row.owner_id);
+      const turn=rows('public.turns').find(t=>t.id===row.turn_id && t.owner_id===row.owner_id);
+      const link=rows('turn_private.service_task_turns').find(t=>t.turn_id===row.turn_id && t.task_id===row.task_id && t.owner_id===row.owner_id);
+      if (!task || !text || !turn || !link || task.thread_id!==p.scopeId || text.thread_id!==p.scopeId || turn.thread_id!==p.scopeId
+        || task.policy_id!==text.policy_id || task.consent_id!==text.consent_id || link.relationship!==receipt.relationship
+        || link.parent_turn_id!==receipt.parentTurnId || row.scope_version!==receipt.scopeVersion || task.scope_version!==receipt.scopeVersion
+        || link.idempotency_key!==p.operationId || text.locale!==row.locale || !placeLineage(link,task)) return false;
+    }
     if (spec.relation === 'turn_private.service_task_turns' && row.parent_turn_id !== null && !turns.has(String(row.parent_turn_id))) return false;
     // Planning's real submitter binds a follow_up message with turn_id=NULL.
     // Outbound parent IDs are retained identities; SQL qualifies their owner, never exports their body by guess.
@@ -88,12 +131,19 @@ function closedSourceGraph(sources: Sources,tripTask=false): boolean {
   return true;
 }
 export function decodeTurnExportPage(v: unknown, limit: number, owner: string, now: number, tripTask=false): (ExportPage & { sourceDigest: string }) | null {
-  const exportSchema=tripTask?tripExportSchema:TURN_SOURCE_SCHEMA;
+  const place = record(v) && v.schemaVersion === 'turn-core-export/3';
+  let exportSchema=tripTask?tripExportSchema:TURN_SOURCE_SCHEMA;
   if (!identifier(owner) || !Number.isSafeInteger(limit) || limit < 1 || limit > 100 || !Number.isFinite(now)
     || !record(v) || !exact(v, ['schemaVersion', 'section', 'sourceDigest', 'items', 'hasMore', 'nextCursor', 'sectionComplete'])
-    || v.schemaVersion !== (tripTask?'turn-trip-core-export/1':TURN_EXPORT_SCHEMA) || v.section !== 'snapshot' || !hash(v.sourceDigest) || !Array.isArray(v.items) || v.items.length !== 1
+    || (!place && v.schemaVersion !== (tripTask?'turn-trip-core-export/1':TURN_EXPORT_SCHEMA)) || v.section !== 'snapshot' || !hash(v.sourceDigest) || !Array.isArray(v.items) || v.items.length !== 1
     || v.hasMore !== false || v.nextCursor !== null || v.sectionComplete !== true || Buffer.byteLength(JSON.stringify(v), 'utf8') > TURN_LIMITS.maxBytes) return null;
   const item = v.items[0];
+  if (place) {
+    if (!record(item) || !Array.isArray(item.sources)) return null;
+    // Inventory is exact and complete; a mixed snapshot never filters Trip rows.
+    tripTask = item.sources.length === tripExportSchema.length;
+    exportSchema = tripTask ? tripExportSchema : TURN_SOURCE_SCHEMA;
+  }
   if (!record(item) || !exact(item, ['ownerId', 'sources', 'operations', 'fences', 'sourceIdentityKeys', 'sourceRows', 'sourceAuthorities']) || item.ownerId !== owner
     || !validSourceAuthorities(item.sourceAuthorities)
     || !Array.isArray(item.sources) || item.sources.length !== exportSchema.length || !Array.isArray(item.operations) || !Array.isArray(item.fences)
@@ -101,13 +151,16 @@ export function decodeTurnExportPage(v: unknown, limit: number, owner: string, n
     || item.operations.length > TURN_LIMITS.tableRows || item.fences.length > TURN_LIMITS.tableRows || !record(item.sourceRows)
     || !exact(item.sourceRows, ['data', 'operations', 'fences', 'sourceIdentityKeys']) || item.sourceRows.operations !== item.operations.length
     || item.sourceRows.fences !== item.fences.length || item.sourceRows.sourceIdentityKeys !== item.sourceIdentityKeys.length) return null;
-  const sources: Sources = new Map(); let dataRows = 0;
+  const sources: Sources = new Map(); let dataRows = 0, placeRows = 0;
   for (const [index, spec] of exportSchema.entries()) {
     const group = item.sources[index];
     if (!record(group) || !exact(group, ['relation', 'rows']) || group.relation !== spec.relation || !Array.isArray(group.rows) || group.rows.length > TURN_LIMITS.tableRows) return null;
     let previous: Record<string, unknown> | null = null;
     for (const row of group.rows) {
-      if (!record(row) || !exact(row, spec.columns.map(c => c.name)) || !spec.columns.every(c => columnValue(row[c.name], c.type, c.notNull))
+      const extra = place && spec.relation === 'turn_private.grounded_turns' && record(row) && Object.hasOwn(row,'selected_place_request');
+      const columns = extra ? [...spec.columns,...(schema.find(s=>s.relation==='turn_private.grounded_turns')?.placeOnlyColumns ?? [])] : spec.columns;
+      if (extra) placeRows++;
+      if (!record(row) || !exact(row, columns.map(c => c.name)) || !columns.every(c => columnValue(row[c.name], c.type, c.notNull))
         || spec.hasOwner && row.owner_id !== owner || previous && !increasing(row, previous, spec)) return null;
       if (DIRECTION_TURN_SOURCE_SCHEMA.some(s => s.relation === spec.relation) && !validDirectionTurnExportRow(spec.relation, row)) return null;
       previous = row;
@@ -115,6 +168,7 @@ export function decodeTurnExportPage(v: unknown, limit: number, owner: string, n
     dataRows += group.rows.length; if (dataRows > TURN_LIMITS.tableRows) return null;
     sources.set(spec.relation, group.rows);
   }
+  if(place && placeRows === 0) return null;
   if(!tripTask&&(sources.get('turn_private.service_tasks')??[]).some(t=>t.expected_result==='trip_modification'))return null;
   if (item.sourceRows.data !== dataRows || dataRows + item.operations.length + item.fences.length + item.sourceIdentityKeys.length > TURN_LIMITS.tableRows || !closedSourceGraph(sources,tripTask)) return null;
   const authorityPairs = new Set<string>();

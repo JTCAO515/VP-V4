@@ -1,0 +1,8 @@
+{
+  "sharedPath": "tests/integration/turn/qualified-intake-comparison.test.mjs",
+  "beforeSha256": "2c32845a2e31e7e3e994a9866b43b2b33de2796326dbeb7212875742b3b5e8f2",
+  "afterSha256": "29972853116cec6052fc54b13895002828217fa75d6a4b0ca55f355aa1bebf06",
+  "sharedFileWritten": false,
+  "businessCasesAndAssertionsChanged": false,
+  "fifthFailure": "UNKNOWN"
+}

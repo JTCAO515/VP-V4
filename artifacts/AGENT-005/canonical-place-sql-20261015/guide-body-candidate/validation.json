@@ -1,0 +1,14 @@
+{
+  "sharedTestWritten": true,
+  "productSourceChanged": false,
+  "inputs": "actual new self-owned PG beforeGuide/fullCurrent snapshots",
+  "allTenOriginalAclComparisonsPass": true,
+  "allTenByteComparisonsWithOriginalNormalizerPass": true,
+  "sixBeforeAfterBodyContracts": "fixed reviewed198 source-derived constants, not live DB hashes",
+  "unknownSelectedBodyRejected": true,
+  "unknownUnmarkedBodyRejected": true,
+  "selfConsistentSourceAndBodyTamperRejected": true,
+  "unexpectedAclRejected": true,
+  "fullGuideBusinessCasesRerun": false,
+  "originalFileApplyLease": "Main transferred only the new canonical comparison seam to this owner"
+}
