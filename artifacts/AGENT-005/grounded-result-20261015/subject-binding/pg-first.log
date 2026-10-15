@@ -1,0 +1,18 @@
+✖ full QA baseline lifecycle and only declared two-function append/rollback catalog proof (552.102042ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1340.841333
+
+✖ failing tests:
+
+test at tests/contract/agent-grounded-result/subject-binding-postgres.test.mjs:31:22
+✖ full QA baseline lifecycle and only declared two-function append/rollback catalog proof (552.102042ms)
+  Error: baseline migration 20261010020000_assistant_events.sql: ASSISTANT_EVENTS_BASELINE_DRIFT
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/contract/agent-grounded-result/subject-binding-postgres.test.mjs:44:290)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestHook.run (node:internal/test_runner/test:1409:7)

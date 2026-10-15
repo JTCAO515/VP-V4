@@ -1,0 +1,31 @@
+{
+  "head": "48303721b27f1c215d65a0c16feab6ed2cbd578c",
+  "scope": "exact five-file Main lease; no other CI writer",
+  "files": [
+    {
+      "path": ".github/workflows/db-integration.yml",
+      "gitBlob": "77fcdf7a2370f00a3131ed739c22772e70735f81",
+      "sha256": "88a366abcf34474750f27b4ec02eb61fe1a381a6cd97858db48f8b6df74a4a85"
+    },
+    {
+      "path": "scripts/ci-suites/db-integration.mjs",
+      "gitBlob": "9b62c087f843e45ec1631deed604c33434233a17",
+      "sha256": "1b2244a123ebc9b1094b0f5429fae081d72465b20d01bcddd1012be2e11d2b19"
+    },
+    {
+      "path": "scripts/ci-change-scope.mjs",
+      "gitBlob": "2a3df6734298890c5f382cd93afee76dfa3c8f00",
+      "sha256": "e535c6541241bfe38ad2d5411e245612ca8ae59ef79f1e2ddaac7cb6156cd803"
+    },
+    {
+      "path": "tests/unit/governance/db-integration-ci.test.mjs",
+      "gitBlob": "63343d2bc804a647a4da3ecbd4f122b7b891af0b",
+      "sha256": "a4e2ff187702e6b36340f549db0f791a13aa62f5cd9ca238da7898c73505064f"
+    },
+    {
+      "path": "tests/unit/governance/ci-change-scope.test.mjs",
+      "gitBlob": "2a63c2970fe96a04d77f91c95aacd0f3feeeb9ce",
+      "sha256": "305e33b8d6be6680b77d7a0066e618eab4a22a77e1bdea1b37c1ca0aea759ff2"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+--- docs/contracts/wiki-agentic-search.md
++++ docs/contracts/wiki-agentic-search.md
+@@ -19,2 +19,10 @@
+-  Native/Web AI-assist context still lacks this resolved-subject input, so its
+-  real place flow is not claimed complete by the callable search tests.
++  Native/Web AI-assist job consumes an exact-turn matched subject only from
++  its existing owner-authorized context RPC, with the original parser shared
++  by initial execution and historical replay. The guarded resolved-subject
++  append reuses the original current reader/Guide guard and requalifies work
++  before completion; no client-supplied subject becomes authority. Local SQL
++  and controlled producer tests cover this already-resolved-turn path.
++  Generic canonical PlaceActions Ask still has navigation/draft references
++  without a persistent selected-canonical-to-turn binding. Guide admission
++  remains conditional on its original reviewed source/prompt-use proof and
++  existing permissions; no ordinary Guide EXECUTE grant is added.
+@@ -28,2 +36,3 @@
+-  results are requalified through read-only data; the existing cross-process
+-  stale-reclaim behavior is not resolved by this server-only correction.
++  results use the same current qualification path. Its inherited Guide guard
++  may invalidate its own expired metadata; the existing cross-process
++  stale-reclaim behavior is not resolved by this correction.

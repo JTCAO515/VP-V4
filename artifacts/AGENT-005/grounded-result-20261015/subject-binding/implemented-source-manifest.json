@@ -1,0 +1,20 @@
+{
+  "sourceHead": "33df7b39",
+  "files": [
+    {
+      "path": "lib/server/knowledge/wiki/grounded-ai-assist.ts",
+      "gitBlob": "9a99f0fc747abf859033524c690f074953a2be53",
+      "sha256": "70f21c0849204d5f4c234d65548190e28df5080f10d63a8f522217bd1a041efc",
+      "afterEvidence": "grounded-ai-assist.implemented.after.ts.txt"
+    },
+    {
+      "path": "lib/server/knowledge/wiki/grounded-ai-assist-job.ts",
+      "gitBlob": "b4752826168393f215afc9610223cb4ee6238a3d",
+      "sha256": "bfcd2440d3263bcffba5c93ce8890d044749ce45257c5b6d19a9470d7b7aafb2",
+      "afterEvidence": "grounded-ai-assist-job.implemented.after.ts.txt"
+    }
+  ],
+  "sqlState": "NOT_APPLIED_MAIN_WRITER",
+  "runtime": "UNRUN",
+  "scope": "existing_resolved_turn_ai_assist_only"
+}

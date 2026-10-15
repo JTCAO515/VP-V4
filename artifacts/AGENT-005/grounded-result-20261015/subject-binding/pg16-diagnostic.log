@@ -1,0 +1,138 @@
+✖ full QA baseline lifecycle and only declared two-function append/rollback catalog proof (873.933334ms)
+✖ real original Guide producer creates resolved blocked turn; ordinary owner context and real TS job execute without fixture grants (0.301042ms)
+✖ ordinary non-Guide submission and original resolver persist a matched subject; city mismatch does not borrow it (0.038083ms)
+✖ wrong actor, old turn, injected subject and duplicate completion cannot mutate another current binding/job (0.016ms)
+✖ concurrent ordinary ensure and complete keep one original job/claim and no duplicated successful write (0.022459ms)
+✖ current source-withdrawal fences context, ensure and late completion (0.015209ms)
+✖ current canonical-change fences context, ensure and late completion (0.015542ms)
+✖ current trip-head-change fences context, ensure and late completion (0.014ms)
+✖ current reference-deletion fences context, ensure and late completion (0.024041ms)
+✖ current trip-deletion fences context, ensure and late completion (0.027875ms)
+✖ unknown completion ACK reconciles by the original done poll without another model or write (0.012833ms)
+✖ done read after actual source withdrawal cannot display stored success or run another model (0.011791ms)
+✖ client cancellation during the controlled model call never completes successfully or reruns on a fresh pending poll (0.009583ms)
+✖ the original Guide command rejects changed input bytes instead of reusing an old selected context (0.009042ms)
+✖ deleted original session and a fresh same-owner session cannot revive the old selected binding (0.007875ms)
+✖ all declared lifecycle guards and original Guide/context/work ACL vectors remain intact after role/race/lifecycle cases (0.010583ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 0
+ℹ fail 16
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1677.076709
+
+✖ failing tests:
+
+test at tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:32:22
+✖ full QA baseline lifecycle and only declared two-function append/rollback catalog proof (873.933334ms)
+  Error: baseline migration 20261010020000_assistant_events.sql: ASSISTANT_EVENTS_AFTER_DRIFT
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:63:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestHook.run (node:internal/test_runner/test:1409:7)
+
+test at tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:32:22
+✖ real original Guide producer creates resolved blocked turn; ordinary owner context and real TS job execute without fixture grants (0.301042ms)
+  Error: baseline migration 20261010020000_assistant_events.sql: ASSISTANT_EVENTS_AFTER_DRIFT
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:63:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestHook.run (node:internal/test_runner/test:1409:7)
+
+test at tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:32:22
+✖ ordinary non-Guide submission and original resolver persist a matched subject; city mismatch does not borrow it (0.038083ms)
+  Error: baseline migration 20261010020000_assistant_events.sql: ASSISTANT_EVENTS_AFTER_DRIFT
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:63:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestHook.run (node:internal/test_runner/test:1409:7)
+
+test at tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:32:22
+✖ wrong actor, old turn, injected subject and duplicate completion cannot mutate another current binding/job (0.016ms)
+  Error: baseline migration 20261010020000_assistant_events.sql: ASSISTANT_EVENTS_AFTER_DRIFT
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:63:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestHook.run (node:internal/test_runner/test:1409:7)
+
+test at tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:32:22
+✖ concurrent ordinary ensure and complete keep one original job/claim and no duplicated successful write (0.022459ms)
+  Error: baseline migration 20261010020000_assistant_events.sql: ASSISTANT_EVENTS_AFTER_DRIFT
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:63:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestHook.run (node:internal/test_runner/test:1409:7)
+
+test at tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:32:22
+✖ current source-withdrawal fences context, ensure and late completion (0.015209ms)
+  Error: baseline migration 20261010020000_assistant_events.sql: ASSISTANT_EVENTS_AFTER_DRIFT
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:63:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestHook.run (node:internal/test_runner/test:1409:7)
+
+test at tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:32:22
+✖ current canonical-change fences context, ensure and late completion (0.015542ms)
+  Error: baseline migration 20261010020000_assistant_events.sql: ASSISTANT_EVENTS_AFTER_DRIFT
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:63:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestHook.run (node:internal/test_runner/test:1409:7)
+
+test at tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:32:22
+✖ current trip-head-change fences context, ensure and late completion (0.014ms)
+  Error: baseline migration 20261010020000_assistant_events.sql: ASSISTANT_EVENTS_AFTER_DRIFT
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:63:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestHook.run (node:internal/test_runner/test:1409:7)
+
+test at tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:32:22
+✖ current reference-deletion fences context, ensure and late completion (0.024041ms)
+  Error: baseline migration 20261010020000_assistant_events.sql: ASSISTANT_EVENTS_AFTER_DRIFT
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:63:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestHook.run (node:internal/test_runner/test:1409:7)
+
+test at tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:32:22
+✖ current trip-deletion fences context, ensure and late completion (0.027875ms)
+  Error: baseline migration 20261010020000_assistant_events.sql: ASSISTANT_EVENTS_AFTER_DRIFT
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:63:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestHook.run (node:internal/test_runner/test:1409:7)
+
+test at tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:32:22
+✖ unknown completion ACK reconciles by the original done poll without another model or write (0.012833ms)
+  Error: baseline migration 20261010020000_assistant_events.sql: ASSISTANT_EVENTS_AFTER_DRIFT
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:63:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestHook.run (node:internal/test_runner/test:1409:7)
+
+test at tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:32:22
+✖ done read after actual source withdrawal cannot display stored success or run another model (0.011791ms)
+  Error: baseline migration 20261010020000_assistant_events.sql: ASSISTANT_EVENTS_AFTER_DRIFT
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:63:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestHook.run (node:internal/test_runner/test:1409:7)
+
+test at tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:32:22
+✖ client cancellation during the controlled model call never completes successfully or reruns on a fresh pending poll (0.009583ms)
+  Error: baseline migration 20261010020000_assistant_events.sql: ASSISTANT_EVENTS_AFTER_DRIFT
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:63:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestHook.run (node:internal/test_runner/test:1409:7)
+
+test at tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:32:22
+✖ the original Guide command rejects changed input bytes instead of reusing an old selected context (0.009042ms)
+  Error: baseline migration 20261010020000_assistant_events.sql: ASSISTANT_EVENTS_AFTER_DRIFT
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:63:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestHook.run (node:internal/test_runner/test:1409:7)
+
+test at tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:32:22
+✖ deleted original session and a fresh same-owner session cannot revive the old selected binding (0.007875ms)
+  Error: baseline migration 20261010020000_assistant_events.sql: ASSISTANT_EVENTS_AFTER_DRIFT
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:63:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestHook.run (node:internal/test_runner/test:1409:7)
+
+test at tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:32:22
+✖ all declared lifecycle guards and original Guide/context/work ACL vectors remain intact after role/race/lifecycle cases (0.010583ms)
+  Error: baseline migration 20261010020000_assistant_events.sql: ASSISTANT_EVENTS_AFTER_DRIFT
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs:63:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestHook.run (node:internal/test_runner/test:1409:7)

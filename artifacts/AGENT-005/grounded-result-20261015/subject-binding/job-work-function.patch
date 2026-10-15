@@ -1,0 +1,15 @@
+--- job-work-function.before.sql
++++ job-work-function.after.sql
+@@ -1 +1 @@
+-create function public.grounded_ai_assist_work_v1(p_input jsonb)
++create or replace function public.grounded_ai_assist_work_v1(p_input jsonb)
+@@ -21,0 +22 @@
++    if public.read_grounded_ai_assist_context_v1(tid)->>'kind' is distinct from 'context' then return jsonb_build_object('kind','unavailable'); end if;
+@@ -60,0 +62,7 @@
++  -- Resolve and authorize before taking the job row lock: context/root
++  -- locks precede job locks, matching ensure. Re-read the immutable identity
++  -- and token state under the row lock before any completion write.
++  select * into job from turn_private.grounded_ai_assist_jobs where id = (p_input->>'jobId')::uuid;
++  if not found then raise exception 'OPS_NOT_FOUND'; end if;
++  if job.owner_id <> u then raise exception 'UNAUTHENTICATED'; end if;
++  if public.read_grounded_ai_assist_context_v1(job.turn_id)->>'kind' is distinct from 'context' then return jsonb_build_object('kind','unavailable'); end if;
