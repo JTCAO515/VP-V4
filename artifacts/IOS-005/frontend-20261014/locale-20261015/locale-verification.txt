@@ -1,2 +1,0 @@
-PASS: actual Expression/Sample selectors in en and zh-Hans
-PASS: dynamic payload, fixed fixture factory, authority/readiness/history guard source unchanged

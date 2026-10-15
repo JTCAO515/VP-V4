@@ -19,3 +19,42 @@ PASS:
 UNRUN here: full App build and visual simulator interaction, owned by Main's exclusive simulator window. Shared-panel English UI remains Main's integration responsibility. Real provider/Auth/independent semantics/device/VoiceOver acceptance remains outside this fixed-copy increment; #216 stays open.
 
 Integration: cherry-pick the correction commit only onto QA a767 or its descendant; do not merge this historical owner branch or reapply its accepted shared dependency.
+
+## Report-only consolidation
+
+The following original log bytes are preserved verbatim. No checks were rerun for this report-only change.
+
+## Preserved output: locale-verification.txt
+
+Original command: `python3 tests/contract/ios005-expression-ui/verify_locale.py`
+
+Original SHA-256: `3eeade12b77468351cd9eed916aed0631a90a80fc142033bcb8f4001f5402011`
+
+```text
+PASS: actual Expression/Sample selectors in en and zh-Hans
+PASS: dynamic payload, fixed fixture factory, authority/readiness/history guard source unchanged
+```
+
+## Preserved output: sdk-verification.txt
+
+Original command: `python3 tests/contract/ios005-expression-ui/verify.py`
+
+Original SHA-256: `82fcc27122651e974a5c26f4abc775f36f8627041ba243cc12f86062dc0e2587`
+
+```text
+PASS: explicit sample-origin bilingual labels; real recent/saved AI labels preserved
+PASS: actual phrase/presentation readiness and actor/consent/current-result negative predicates
+PASS: actual SwiftUI card, DEBUG sample and shared-state expression wrapper typecheck against installed iOS Simulator SDK (no Simulator boot or app build)
+PASS: full changed view syntax parse; runtime UI/provider/device remains UNRUN
+```
+
+## Preserved output: docs-check.txt
+
+Original command: `node scripts/docs-check.mjs`
+
+Original SHA-256: `6ef37bbdf6456c5d59627a6d18ba7bc78abdc2b026c8ef90e0b5bf6945ea553b`
+
+```text
+VPJ plan passed: 83 tasks, 20 replacements, acyclic dependencies, contracts and archive hashes.
+AI Core and VPJ documentation baseline passed.
+```
