@@ -13,11 +13,15 @@ const pendingView = (pending: PendingProposalRead | null) => pending ? { trip: {
 export function addressBindingKey(tripId: string, data: LocalTripRead, pending: PendingProposalRead | null): string {
   return encoded({ tripId, trip: tripView(data), pending: pendingView(pending) });
 }
+export function addressTripBindingKey(tripId: string, data: LocalTripRead): string {
+  return encoded({ tripId, trip: tripView(data) });
+}
+export type CurrentAddressTripBinding = Readonly<{ actorKey: string; tripKey: string }>;
 export type CurrentAddressBinding = Readonly<{ actorKey: string; inputKey: string }>;
 
 /** A display lease from ordinary current-Cookie GETs, never an alternate Trip/pending store. */
 export async function readCurrentAddressBinding(root: AddressActor, tripId: string, data: LocalTripRead, pending: PendingProposalRead | null,
-  signal: AbortSignal, current: () => AddressActor | null): Promise<CurrentAddressBinding> {
+  signal: AbortSignal, current: () => AddressActor | null, onTripQualified?: (lease: CurrentAddressTripBinding) => void): Promise<CurrentAddressBinding> {
   const check = () => { if (signal.aborted || current()?.key !== root.key) throw Error("ADDRESS_ROOT_CHANGED"); };
   const options: RequestInit = { cache: "no-store", credentials: "same-origin", redirect: "error", signal };
   check();
@@ -25,6 +29,9 @@ export async function readCurrentAddressBinding(root: AddressActor, tripId: stri
   const raw: unknown = await response.json(); check();
   if (!response.ok || !row(raw) || !row(raw.trip) || raw.trip.id !== tripId || raw.trip.headVersion !== data.trip.headVersion
     || raw.confirmationState !== "confirmed" || encoded(tripView(raw as unknown as LocalTripRead)) !== encoded(tripView(data))) throw Error("ADDRESS_TRIP_READ_UNAVAILABLE");
+  // Recovery-only proof: this does not establish pending absence, display eligibility or POST admission.
+  onTripQualified?.({ actorKey: root.key, tripKey: addressTripBindingKey(tripId, data) });
+  check();
   const suffix = pending ? `?proposalId=${encodeURIComponent(pending.proposal.id)}` : "";
   const read = await fetch(`/api/trips/${encodeURIComponent(tripId)}/proposal${suffix}`, options);
   const original: unknown = await read.json(); check();
