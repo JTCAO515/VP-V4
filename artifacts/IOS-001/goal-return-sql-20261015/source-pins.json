@@ -1,0 +1,12 @@
+{
+  "base": "22559396eec5cd47d3a4d3d2a2bd5e49d52c6c7c",
+  "oldProductSHA256": "15fd14818a09a1e0418aaf31deb639b7e6b9f269c51b3782410d536564e8596b",
+  "qaMigrationSHA256": "73b6fa9ee63ad48bdff43da4a1f88ddf19e28e46786948e30314a111bb25285d",
+  "candidateSHA256": "f4bcc8d953e4b6e27c3a582d84dc4d741c0acdcb8e5689598556c5b2ffb18c0f",
+  "newFunctions": [
+    "turn_private.goal_return_reference_v1(uuid,uuid,uuid,integer,uuid,bigint,bigint)",
+    "public.read_goal_return_reference_v1(uuid,uuid,uuid,integer,uuid,bigint,bigint)"
+  ],
+  "oldFunctionChanges": [],
+  "candidateStatus": "actual isolated PG17.11 catalog and behavior verified; target17.6/GoTrue UNRUN"
+}
