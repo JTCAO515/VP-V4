@@ -38,7 +38,7 @@ struct NativeSubscriptionView<Legacy: View, Controls: View>: View {
                 Text(copy.baseline).font(.footnote).foregroundStyle(.secondary)
             }
             if let catalog = store.catalog, catalog.locale == locale {
-                Section(copy.text("同源开发目录", "Shared development catalog")) {
+                Section(copy.text("月订阅", "Monthly subscription")) {
                     VStack(alignment: .leading, spacing: 6) {
                         Text(catalog.freeName).font(.headline)
                         Text(catalog.freeDescription)
@@ -48,7 +48,6 @@ struct NativeSubscriptionView<Legacy: View, Controls: View>: View {
                         Text(catalog.subscriptionDescription)
                     }.accessibilityElement(children: .combine)
                     Text(catalog.status).font(.footnote)
-                    Text("Catalog 3 · subscription-development-policy/1").font(.caption).foregroundStyle(.secondary)
                 }.accessibilityIdentifier("subscription.catalog")
             }
             Section(copy.text("当前可核状态", "Current verified status")) {
@@ -74,6 +73,8 @@ struct NativeSubscriptionView<Legacy: View, Controls: View>: View {
                     if value.state == .unavailable || value.state == .reconciliationRequired {
                         Text(copy.unavailableDetail).font(.footnote)
                     }
+                } else if scope == nil, store.currentScope == nil {
+                    Text(copy.signInToVerify).accessibilityIdentifier("subscription.status")
                 } else {
                     Text(copy.unavailable).accessibilityIdentifier("subscription.status")
                     Text(copy.unavailableDetail).font(.footnote)

@@ -136,7 +136,39 @@ import Testing
         #expect(try decode(snapshot("expired"), now: start).state == .expired) // Server state is not recomputed from a client calendar.
     }
 
-    @Test func defaultIsRealUnavailableAndNeverSendsReads() async {
+    @Test func anonymousCatalogUsesNoFakeScopeAndMakesZeroPrivateReads() async throws {
+        let fake = FakeSubscriptionPort(scope: nil, catalog: try fixture(), entitlement: try envelope(snapshot()))
+        let port = NativeSubscriptionSessionReadPort(scope: { fake.currentScope }, get: { try await fake.read($0) })
+        let store = NativeSubscriptionStore(port: port)
+        await store.reload(locale: .en)
+        #expect(store.catalog?.locale == .en)
+        #expect(store.visibleEntitlement == nil)
+        #expect(store.phase == .unavailable)
+        #expect(fake.requests.map(\.resource) == [.catalog(.en)])
+        #expect(fake.requests.allSatisfy { $0.scope == nil })
+        await #expect(throws: (any Error).self) {
+            try await port.read(.init(scope: nil, resource: .entitlement, nonce: UUID()))
+        }
+        #expect(fake.requests.count == 1) // The production port refuses private nil scope before GET.
+    }
+
+    @Test func publicCatalogSurvivesPrivateTransportAndMalformedSnapshotFailures() async throws {
+        let fake = FakeSubscriptionPort(scope: scope, catalog: try fixture(), entitlement: try envelope(snapshot()))
+        let store = NativeSubscriptionStore(port: fake)
+        fake.failEntitlement = true
+        await store.reload(locale: .en)
+        #expect(store.catalog?.locale == .en)
+        #expect(store.visibleEntitlement == nil)
+        #expect(store.phase == .unavailable)
+        fake.failEntitlement = false; fake.entitlement = Data("invalid".utf8)
+        await store.reload(locale: .en)
+        #expect(store.catalog?.locale == .en)
+        #expect(store.visibleEntitlement == nil)
+        #expect(store.phase == .unavailable)
+        #expect(fake.requests.filter { $0.resource == .entitlement }.allSatisfy { $0.scope == scope })
+    }
+
+    @Test func defaultIsUnavailableWithoutSyntheticFallback() async {
         let store = NativeSubscriptionStore()
         await store.reload(locale: .en)
         #expect(store.phase == .unavailable)
@@ -160,7 +192,7 @@ import Testing
         await store.reload(locale: .en)
         #expect(store.phase == .unavailable)
         #expect(store.visibleEntitlement == nil)
-        #expect(store.catalog == nil)
+        #expect(store.catalog?.locale == .en) // Public catalog has no account or entitlement fields.
     }
 
     @Test func actorSwitchImmediatelyHidesLoadedInformationBeforeReload() async throws {
@@ -170,7 +202,7 @@ import Testing
         fake.currentScope = .init(endpoint: scope.endpoint, ownerID: "00000000-0000-4000-8000-000000000002", mobileEpoch: 1, generation: 2)
         #expect(store.visibleEntitlement == nil)
         store.invalidateIfScopeChanged()
-        #expect(store.catalog == nil)
+        #expect(store.catalog?.locale == .en) // Public catalog has no account or entitlement fields.
         fake.currentScope = scope
         #expect(store.visibleEntitlement == nil)
     }
@@ -215,7 +247,7 @@ import Testing
             await task.value
             #expect(store.phase == .unavailable)
             #expect(store.visibleEntitlement == nil)
-            #expect(store.catalog == nil)
+            #expect(store.catalog?.locale == .en) // Public catalog has no account or entitlement fields.
         }
     }
 
@@ -367,9 +399,10 @@ import Testing
     var requests: [NativeSubscriptionRequest] = []
     var onRead: (() -> Void)?
     var fail = false
+    var failEntitlement = false
     var holdEntitlement = false
     var pending: CheckedContinuation<Data, any Error>?
-    init(scope: NativeSubscriptionScope, catalog: Data, entitlement: Data) {
+    init(scope: NativeSubscriptionScope?, catalog: Data, entitlement: Data) {
         currentScope = scope; self.catalog = catalog; self.entitlement = entitlement
     }
     func read(_ request: NativeSubscriptionRequest) async throws -> Data {
@@ -379,6 +412,7 @@ import Testing
         switch request.resource {
         case .catalog: return catalog
         case .entitlement:
+            if failEntitlement { throw NativeSubscriptionError.unavailable }
             if holdEntitlement { return try await withCheckedThrowingContinuation { pending = $0 } }
             try Task.checkCancellation()
             return entitlement

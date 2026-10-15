@@ -25,3 +25,13 @@ PASS: 23 actual Swift Testing cases and actual iOS 17 SDK SwiftUI typecheck, `le
 PASS: `node --experimental-strip-types tests/contract/subscription-native/verify-producer-parity.mjs <catalogWT> <ledgerWT>` — exact actual catalog presentation output and six synthetic samples accepted by B's actual final closed parser, then decoded by Native. `producer-parity.log`. This is source/codec interoperability, not signature, target, persistent-ledger or Apple evidence.
 
 An initial lease test exposed Foundation floating-point addition at a 1ms half-open boundary (119ns overshoot); the codec now compares canonical wire milliseconds as bounded Int64. Existing App/target/8F/VoiceOver/real Sandbox/device/release UNRUN facts remain unchanged. Main retains all shared integration and acceptance responsibility.
+
+## Main-requested public catalog independence
+
+API-first commit `16405319`: only catalog requests may omit scope; real SessionReadPort still rejects a nil private scope before its GET closure, and validates private scope before/after await. No shared source or producer file was changed.
+
+PASS: `python3 tests/contract/subscription-native/run.py` — 25 actual Swift Testing tests and the same actual iOS 17 SDK SwiftUI typecheck, recorded in `public-catalog-verification.log`. Exactly two new behavior cases: anonymous catalog through production SessionReadPort with no invented scope and zero private transport calls; public catalog remains visible after a private transport failure or malformed private snapshot. Prior actor-switch/background assertions now explicitly retain public catalog while requiring private state nil. All prior production codec/source/lease/1ms behavior still passes. No broader runtime matrix was added.
+
+The public catalog has its own locale/schema/current-request publication gate; stale public responses cannot pass a changed nonce/locale/foreground. Account changes synchronously hide private projection and may reuse already validated non-personal catalog. Unconfigured public port still throws unavailable; it does not manufacture catalog data. Private failure never becomes none/zero. Logged-out UI displays sign-in-to-verify copy and removes policy/version implementation metadata.
+
+Actual Main Profile/Session/PBX/GET integration, App/8F, VoiceOver, real Sandbox/device/release remain UNRUN by this owner. No new writer, package, fixture resource or producer source was added for this increment.

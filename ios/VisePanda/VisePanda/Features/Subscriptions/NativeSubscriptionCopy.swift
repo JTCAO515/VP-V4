@@ -4,6 +4,7 @@ struct NativeSubscriptionCopy {
     let chinese: Bool
     func text(_ zh: String, _ en: String) -> String { chinese ? zh : en }
     var title: String { text("订阅与权益", "Subscription and entitlements") }
+    var signInToVerify: String { text("登录后核验当前状态", "Sign in to verify current status") }
     var unavailable: String { text("当前订阅状态暂不可核实", "Current subscription status cannot be verified") }
     var unavailableDetail: String { text("尚未取得当前账号的可信权益。请稍后刷新；这不代表未订阅，也不代表余额为零。", "A trusted entitlement for this account is unavailable. Refresh later; this does not mean no subscription or a zero balance.") }
     var notPurchasable: String { text("尚不可购买", "Not available to purchase") }
