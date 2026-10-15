@@ -17,7 +17,8 @@ enum NativeSubscriptionLocale: String, Sendable { case zh, en }
 enum NativeSubscriptionResource: Equatable, Sendable { case catalog(NativeSubscriptionLocale), entitlement }
 
 struct NativeSubscriptionRequest: Equatable, Sendable {
-    let scope: NativeSubscriptionScope
+    /// Only public catalog reads may omit scope. Private entitlement reads must bind a valid scope.
+    let scope: NativeSubscriptionScope?
     let resource: NativeSubscriptionResource
     let nonce: UUID
 }
@@ -44,9 +45,16 @@ enum NativeSubscriptionError: Error { case unavailable, invalidResponse, staleRe
     var currentScope: NativeSubscriptionScope? { scope() }
 
     func read(_ request: NativeSubscriptionRequest) async throws -> Data {
-        guard request.scope.valid, currentScope == request.scope else { throw NativeSubscriptionError.staleResponse }
+        if case .entitlement = request.resource {
+            guard let captured = request.scope, captured.valid, currentScope == captured else {
+                throw NativeSubscriptionError.staleResponse
+            }
+        }
         let bytes = try await get(request)
-        guard !Task.isCancelled, currentScope == request.scope else { throw NativeSubscriptionError.staleResponse }
+        guard !Task.isCancelled else { throw NativeSubscriptionError.staleResponse }
+        if case .entitlement = request.resource {
+            guard currentScope == request.scope else { throw NativeSubscriptionError.staleResponse }
+        }
         return bytes
     }
 }
