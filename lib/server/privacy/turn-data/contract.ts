@@ -1,3 +1,4 @@
+import {TRIP_PRIVATE_SOURCE_KEYS,TRIP_OBJECTIVE_REDACTION_KEY} from '../../service-task-trip/privacy-contract.ts';
 import { createHash } from 'node:crypto';
 import { exact, record, hash } from '../../guide/contract.ts';
 import { identifier, positive, sortedIds, validSourceAuthorities, type SourceAuthority } from '../conversation-data/contract.ts';
@@ -79,3 +80,7 @@ export function validBinding(v: Record<string, unknown>, now: number, decided = 
     && Object.entries(TURN_BOUNDARIES[v.scope as TurnScope]).every(([k, values]) => JSON.stringify(boundaries[k]) === JSON.stringify(values))
     && v.allUserDataCompleted === false;
 }
+
+/** Explicit Trip privacy version only; original v1 count vectors are unchanged. */
+export const TRIP_ERASED_KEYS=[...ERASED_KEYS,...TRIP_PRIVATE_SOURCE_KEYS] as const;
+export const TRIP_REDACTED_KEYS=[...REDACTED_KEYS,TRIP_OBJECTIVE_REDACTION_KEY] as const;

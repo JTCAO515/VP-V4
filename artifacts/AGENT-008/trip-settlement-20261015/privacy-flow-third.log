@@ -1,0 +1,30 @@
+Trip privacy preview conversation {"kind":"preview","eligible":true,"conflicts":[],"eraseCounts":{"work":1,"goals":1,"turns":1,"events":2,"intakes":0,"threads":1,"feedback":0,"grounded":0,"messages":2,"planning":0,"tripWork":1,"artifacts":0,"goalLinks":1,"revisions":0,"assistJobs":0,"callWindows":0,"checkpoints":0,"idempotency":1,"tripLineage":0,"observations":0,"resultClaims":0,"resultEvents":0,"tripContexts":1,"tripRequests":0,"conversations":1,"executionRuns":0,"localJournals":0,"actionReceipts":0,"intakeBindings":0,"sourceReceipts":0,"tripOperations":1,"attemptBindings":0,"memoryConsumers":0,"modelDispatches":0,"collectorOrigins":0,"collectorOutputs":0,"completionProofs":0,"completedReceipts":0},"redactCounts":{"textBodies":1,"taskDigests":1,"tripObjectives":1}}
+✖ explicit Trip privacy preview/confirmed erase/recovery removes all owned scoped copies; v1 counts stay unchanged (2629.65075ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2694.199708
+
+✖ failing tests:
+
+test at tests/integration/service-task-trip/privacy-flow.test.mjs:17:1
+✖ explicit Trip privacy preview/confirmed erase/recovery removes all owned scoped copies; v1 counts stay unchanged (2629.65075ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert.ok(decodeTripPrivacyReply(r,target,erase,{ownerId:a.owner,sessionId:a.session,mobileEpoch:1},bytes,a.trip,Date.now()))
+
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/privacy-flow.test.mjs:28:9)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

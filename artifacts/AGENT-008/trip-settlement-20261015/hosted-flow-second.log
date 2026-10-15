@@ -1,0 +1,23 @@
+✖ real hosted composition → SQL clarification → same-task continuation → candidate → original exact confirm (4138.752375ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4290.883333
+
+✖ failing tests:
+
+test at tests/integration/service-task-trip/hosted-flow.test.mjs:8:1
+✖ real hosted composition → SQL clarification → same-task continuation → candidate → original exact confirm (4138.752375ms)
+  Error: Staging text job configuration unavailable.
+      at unavailable (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/lib/server/jobs/staging-text-job.ts:105:40)
+      at createStagingTextJob (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/lib/server/jobs/staging-text-job.ts:61:114)
+      at parseHostedWorkerProfile (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/lib/server/jobs/hosted-text-worker.ts:89:3)
+      at parseScopedHostedProfile (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/lib/server/turn/scoped-edit/hosted-job.ts:16:14)
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/hosted-flow.test.mjs:14:16)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
