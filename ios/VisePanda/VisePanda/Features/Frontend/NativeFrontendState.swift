@@ -149,14 +149,16 @@ struct NativeFrontendBoundary: View {
     }
 }
 struct NativeFrontendStatePanel: View {
+    @Environment(\.locale) private var locale
     let state: NativeFrontendState
+    private var copy: NativeLibraryMemoryCopy { .init(locale: locale) }
     var body: some View {
         switch state.screenState {
         case .ready: EmptyView()
-        case .empty: ContentUnavailableView("还没有内容", systemImage: "tray", description: Text("可以从对话开始，或返回正常样例。"))
-        case .loading: VStack { ProgressView(); Text("正在演示加载状态"); Button("取消加载") { state.screenState = .cancelled } }
-        case .failed: ContentUnavailableView { Label("暂时无法加载", systemImage: "wifi.exclamationmark") } description: { Text("这是本地失败示例，没有发送真实请求。") } actions: { Button("重试样例") { state.screenState = .ready } }
-        case .cancelled: VStack { Text("本次加载已取消"); Button("返回内容") { state.screenState = .ready } }
+        case .empty: ContentUnavailableView(copy("还没有内容", "No content yet"), systemImage: "tray", description: Text(copy("可以从对话开始，或返回正常样例。", "Start with a conversation, or return to the ready sample.")))
+        case .loading: VStack { ProgressView(); Text(copy("正在演示加载状态", "Showing a sample loading state")); Button(copy("取消加载", "Cancel loading")) { state.screenState = .cancelled } }
+        case .failed: ContentUnavailableView { Label(copy("暂时无法加载", "Unable to load right now"), systemImage: "wifi.exclamationmark") } description: { Text(copy("这是本地失败示例，没有发送真实请求。", "This is a local failure sample. No real request was sent.")) } actions: { Button(copy("重试样例", "Retry sample")) { state.screenState = .ready } }
+        case .cancelled: VStack { Text(copy("本次加载已取消", "Loading was cancelled")); Button(copy("返回内容", "Back to content")) { state.screenState = .ready } }
         }
     }
 }
