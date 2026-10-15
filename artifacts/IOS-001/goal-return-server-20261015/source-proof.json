@@ -1,0 +1,170 @@
+{
+  "base": "22559396eec5cd47d3a4d3d2a2bd5e49d52c6c7c",
+  "sourceCandidate": "2d07419a99458589e5bfe0e806e9e5e6107aa247",
+  "projectId": "4f2191db-3e04-4042-94b5-ec94ff67b427",
+  "threadId": "01a13d78-2393-70c3-8a5b-634e4f4b4b68",
+  "files": {
+    "lib/server/journey-entry/goal-return/contract.ts": "e17ec8ee3053a8941989bd61affc212f6e54bee0df3bf5d1b8b4373cea038107",
+    "lib/server/journey-entry/goal-return/http.ts": "06c27f7378344defaf227f887f1adeeabe047817116fe78d2c4b3381376a84e6",
+    "app/api/chat/native/v5/goal-return/route.ts": "024730a4c19992aba87862a05610ca8f3f7c5d6a376adf3b61d45de3d66a8322",
+    "tests/contract/journey-entry/goal-return/contract.test.mjs": "f9f98800644ce95698498a64fc27169ac29510b8c3f5c53011230d2bd7d4d074",
+    "tests/contract/journey-entry/goal-return/http.test.mjs": "c5a00d9010cea023f0a6546ee2f3619601ca87120d2e12448e5d873318acbc67",
+    "tests/contract/journey-entry/goal-return/actual-sql-receipt.test.mjs": "ba13605f9ef723324f53f2a2949fa83b581f48488ff7eefcc00a45b3f0e4b89c",
+    "tests/contract/journey-entry/goal-return/fixtures/actual-sql-receipt-pair.json": "00971888582d6cd784e35a8c660d604d587556a4c98ec3b42d658927ca761e1b"
+  },
+  "unchangedTransitiveDependencies": {
+    "lib/server/turn/native-http.ts": {
+      "sha256": "4fb50a965014cc80e350efa113ee1fbcdbfa97edddbe1e0aea4ec4c55f2af82c",
+      "matchesOriginal": true,
+      "matchesQA": true
+    },
+    "lib/server/identity/native-credentials.ts": {
+      "sha256": "e10462967462e359914e7f4a4fb925911ce33b8017570d06993bcf403c95281e",
+      "matchesOriginal": true,
+      "matchesQA": true
+    },
+    "lib/server/identity/native-request.ts": {
+      "sha256": "38b7d98dd280d5be96c4157fea1d28d1753610f5f408509a137f9df3dd9ca728",
+      "matchesOriginal": true,
+      "matchesQA": true
+    },
+    "lib/server/artifacts/result-v2-contract.ts": {
+      "sha256": "dc6f450fd4a400115c2f78dc724207e618d94a05ca677a679019479c0e59dc60",
+      "matchesOriginal": true,
+      "matchesQA": true
+    },
+    "lib/server/identity/request-guards.ts": {
+      "sha256": "396cf5b13fad5796e636dc04dd18b163459b5f272b7d708d3d6c79b41392c676",
+      "matchesOriginal": true,
+      "matchesQA": true
+    },
+    "lib/server/turn/feedback/contract.ts": {
+      "sha256": "4d8df3334f5bed6bace2352d9b83d2222552343e7e6957f18d924a941ddd69f6",
+      "matchesOriginal": true,
+      "matchesQA": true
+    },
+    "lib/server/privacy/contract.ts": {
+      "sha256": "d3f278f0f1bbcb2f61185c7438f1e89c0464a265a9306569bda04012910dd981",
+      "matchesOriginal": true,
+      "matchesQA": true
+    },
+    "lib/server/trip/patch/contract.ts": {
+      "sha256": "c9c019dc20d294231a1ca24de920f1ed100d2d03b63127e99fa1c2d21d16c1f3",
+      "matchesOriginal": true,
+      "matchesQA": true
+    },
+    "lib/server/artifacts/result-content.ts": {
+      "sha256": "af418c5b954b4bcca3f1794ca22f705bde5132ea49a339b59c92952925a24ad0",
+      "matchesOriginal": true,
+      "matchesQA": true
+    },
+    "lib/server/artifacts/result-contract.ts": {
+      "sha256": "dd37b663a424532c52ad58ffe8f7261782abbf342a591c221abc37686f9a468e",
+      "matchesOriginal": true,
+      "matchesQA": true
+    },
+    "lib/server/planning/directions/contract.ts": {
+      "sha256": "763874efb93c9ec3edbcb861bc561e2cce597b9384e18057ce55fa0e44d7904d",
+      "matchesOriginal": true,
+      "matchesQA": true
+    },
+    "lib/server/artifacts/change-proposal-reference.ts": {
+      "sha256": "194b055f7694e292d30d72f0abab2e9aa7e71d1a1fa0e5b474cf3f8a8f410c14",
+      "matchesOriginal": true,
+      "matchesQA": true
+    },
+    "lib/server/memory/travel-pace.ts": {
+      "sha256": "5c01f7113c907734012b0320879b4569b781b0059cda5e5ff603f2cbf112c609",
+      "matchesOriginal": true,
+      "matchesQA": true
+    },
+    "lib/server/planning/directions/domain.ts": {
+      "sha256": "537a162fd485c8b9d5d195d59940e16539163c09c08aa146e1338b15f71c82cb",
+      "matchesOriginal": true,
+      "matchesQA": true
+    },
+    "lib/server/identity/native-fetch.ts": {
+      "sha256": "b1210feb4fbfc101a29f41fe1ae2a75784c98ee962ff83a3dd45ce170a2a0ec4",
+      "matchesOriginal": true,
+      "matchesQA": true
+    },
+    "lib/server/identity/native-config.ts": {
+      "sha256": "3d772744c8e6c4563dc6a948c4c409c44c55c2a5d66f012af92288e4b79a8805",
+      "matchesOriginal": true,
+      "matchesQA": true
+    },
+    "lib/server/identity/user-data-adapter.ts": {
+      "sha256": "ef3bb707c4b73290e841e65151b472cb0306f916ecb8b07e10d6b078857af1e4",
+      "matchesOriginal": true,
+      "matchesQA": true
+    },
+    "lib/server/contracts/errors/index.ts": {
+      "sha256": "e90fc76b6098eb6511c63b44c0a21259421f4e0b17d251af64ae7ffd7b26d2da",
+      "matchesOriginal": true,
+      "matchesQA": true
+    },
+    "lib/server/privacy/profile-data/writer.ts": {
+      "sha256": "027e3a249ce6b8c3ec9efaa3beef19cd5cb683cdffe9c7cf5465df0c66dec355",
+      "matchesOriginal": true,
+      "matchesQA": true
+    },
+    "lib/server/privacy/profile-data/saved-fields.ts": {
+      "sha256": "4349ce16456a70058084ed60db4e03dd87abd287ba522e2c5e51547c70caf71d",
+      "matchesOriginal": true,
+      "matchesQA": true
+    },
+    "lib/server/privacy/profile-data/contract.ts": {
+      "sha256": "0482c398a46f6f43560fe034d94de6476066ffbe4ca934759c5ecf5528f00b5c",
+      "matchesOriginal": true,
+      "matchesQA": true
+    },
+    "lib/server/memory/compat.ts": {
+      "sha256": "8fa310df3fb3a7c90f99cd5b44d7692837ba4c64fbf99b938539eb3d2e358658",
+      "matchesOriginal": true,
+      "matchesQA": true
+    },
+    "lib/server/trip/lifecycle/operations.ts": {
+      "sha256": "bc899611a00d60b1ce8479fa7055824df3dbf074742db86c7d58a533e5617a17",
+      "matchesOriginal": true,
+      "matchesQA": true
+    },
+    "lib/server/trip/proposal/diff.ts": {
+      "sha256": "9d9c063637a321c11143ae72ee44d46ba4d968fe1aab528ffa20bf2c619c66b9",
+      "matchesOriginal": true,
+      "matchesQA": true
+    },
+    "lib/server/trip/snapshot/read.ts": {
+      "sha256": "18bee527a05a8bd3b53cba559b31be19fa779595850a3e405c68ac6b8cf27d40",
+      "matchesOriginal": true,
+      "matchesQA": true
+    },
+    "lib/server/trip/archive/operations.ts": {
+      "sha256": "a29ade602c1e9d918e985a4c43093df92434886c62eae6c0553fc4f4313cf1b4",
+      "matchesOriginal": true,
+      "matchesQA": true
+    },
+    "lib/server/trip/archive/contract.ts": {
+      "sha256": "d06bc0089aa33d146eaf1c41c4d6def106c59b7555e56de8c42a2e0fd4372880",
+      "matchesOriginal": true,
+      "matchesQA": true
+    },
+    "lib/server/trip/lifecycle/contract.ts": {
+      "sha256": "227cc2117c297814443229a7a133750086a463aaf2ffbebb352ef6a8c522bbcd",
+      "matchesOriginal": true,
+      "matchesQA": true
+    },
+    "lib/server/guide/contract.ts": {
+      "sha256": "d5c09366a5b4718317e0f4a4f68ff05470581899bddab5da5d59ec4a0baefea1",
+      "matchesOriginal": true,
+      "matchesQA": true
+    }
+  },
+  "historicalManifestSHA256": {
+    "MINIMAL-SOURCE-PINS.json": "6ca30956777744c0d67665af33dff07bf0c39d16fb7214c724c8b79fe532644b",
+    "TRANSITIVE-SOURCE-PROOF.json": "fc74babf2e79e53a7d16c699f2890565e40d6425bd7fa18a099591cdc40d6b72",
+    "QA-COMPATIBILITY.md": "0df3b7f389991c1f3de277a83829af9dd6999488e5064abaf508b6c253cb7515"
+  },
+  "sqlImported": false,
+  "currentTargetRuntime": "UNRUN",
+  "effectiveModelAndTier": "UNKNOWN"
+}

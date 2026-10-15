@@ -1,0 +1,5 @@
+{
+  "result": "FAIL",
+  "cause": "libpq treats relative socket as hostname; Darwin path limit on original long root",
+  "fixed": "same cluster safely stopped, moved to approved short private root and restarted; no second cluster"
+}
