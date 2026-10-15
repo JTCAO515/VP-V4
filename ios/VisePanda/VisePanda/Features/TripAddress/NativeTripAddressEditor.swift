@@ -44,11 +44,11 @@ struct NativeTripAddressEditor: View {
                 Text(text("Provided by you · Unverified. Source references remain separate.", "用户提供 · 未核验；来源参考单独保留。"))
                     .font(.footnote).foregroundStyle(.secondary)
                 TextEditor(text: $input).frame(minHeight: 120)
-                    .disabled(preparedReference != nil || store.hasUncertainProposal || !current)
+                    .disabled(preparedReference != nil || store.busy || store.hasUncertainProposal || !current)
                     .accessibilityIdentifier("trip.address.input")
                 if item.userAddress != nil {
                     Toggle(text("Remove this user-provided address", "移除此用户补充地址"), isOn: $clear)
-                        .disabled(preparedReference != nil || store.hasUncertainProposal || !current)
+                        .disabled(preparedReference != nil || store.busy || store.hasUncertainProposal || !current)
                 }
                 Text(text("Up to 500 Unicode scalars and 1500 UTF-8 bytes. Your original text is retained.", "最多 500 个 Unicode 标量、1500 个 UTF-8 字节，保留输入原文。"))
                     .font(.caption)

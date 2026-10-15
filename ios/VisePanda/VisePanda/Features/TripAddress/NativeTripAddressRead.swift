@@ -23,7 +23,9 @@ enum NativeTripAddressConfirmation {
     static func matches(_ detail: NativeTripDetail, proposal: NativeTripPending.Proposal, resultingVersion: Int) -> Bool {
         guard detail.confirmationState == "confirmed", detail.trip.headVersion == resultingVersion,
               resultingVersion == proposal.baseTripVersion + 1 else { return false }
-        return proposal.patch.operations.filter { $0.kind == .setChineseAddress }.allSatisfy { operation in
+        let operations = proposal.patch.operations.filter { $0.kind == .setChineseAddress }
+        guard !operations.isEmpty, proposal.patch.expectedVersion == proposal.baseTripVersion else { return false }
+        return operations.allSatisfy { operation in
             guard let day = detail.content.days.first(where: { $0.id == operation.dayId }),
                   let item = day.items.first(where: { $0.id == operation.itemId }) else { return false }
             switch operation.addressText {
@@ -32,5 +34,19 @@ enum NativeTripAddressConfirmation {
             case nil: return false
             }
         }
+    }
+}
+
+/// Recovery has only a read port. A transport failure cannot turn into another POST.
+enum NativeTripAddressProposalRecovery {
+    @MainActor static func read(expected: NativeTripPatch, retained: NativeTripPatch?, draft: NativeTripPatch?,
+                                tripID: String, current: () -> Bool,
+                                get: () async throws -> NativeTripPending) async throws -> NativeTripPending {
+        guard !Task.isCancelled, current(), expected == retained, expected == draft else { throw NativeDataError.staleSessionResponse }
+        let pending = try await get()
+        guard !Task.isCancelled, current(), pending.trip.id == tripID,
+              pending.proposal.patch == expected, pending.proposal.baseTripVersion == expected.expectedVersion,
+              pending.proposal.status == "pending", !pending.proposal.stale else { throw NativeDataError.invalidResponse }
+        return pending
     }
 }
