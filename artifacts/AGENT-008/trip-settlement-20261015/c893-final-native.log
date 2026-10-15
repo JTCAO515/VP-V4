@@ -1,0 +1,99 @@
+✔ shared last capacity serializes across text/Trip; cross actor/key/epoch/claim fields never authorize (5513.128959ms)
+✔ cancel/reject and exact confirmation races have one result; original manual edits have no new settlement (14838.792459ms)
+✔ original Sandbox grant revocation races with settlement; expired grant cannot settle or dispatch (15356.013625ms)
+✔ actual CLI entry selects only explicit Trip profile and runs the original loop to a real SQL candidate (9065.840084ms)
+C0 export enrollment: original D2 fixture explicit GRANT, production ACL unchanged
+Trip export page turn-trip-core-export/1 [
+  [ 'public.chat_turn_events', 2 ],
+  [ 'public.chat_turn_idempotency', 1 ],
+  [ 'public.memory_consumer_receipts', 0 ],
+  [ 'public.model_budget_attempts', 1 ],
+  [ 'public.turn_feedback', 0 ],
+  [ 'turn_private.assistant_message_source_receipts', 0 ],
+  [ 'turn_private.assistant_messages', 1 ],
+  [ 'turn_private.assistant_travel_intakes', 0 ],
+  [ 'turn_private.grounded_ai_assist_jobs', 0 ],
+  [ 'turn_private.grounded_turns', 0 ],
+  [ 'turn_private.planning_action_receipts', 0 ],
+  [ 'turn_private.planning_comparisons', 0 ],
+  [ 'turn_private.planning_intake_bindings', 0 ],
+  [ 'turn_private.planning_model_dispatches', 0 ],
+  [ 'turn_private.planning_observations', 0 ],
+  [ 'turn_private.planning_v2_collector_origins', 0 ],
+  [ 'turn_private.planning_v2_collector_outputs', 0 ],
+  [ 'turn_private.planning_v2_completed_receipts', 0 ],
+  [ 'turn_private.planning_v2_completion_proofs', 0 ],
+  [ 'turn_private.planning_v2_execution_runs', 0 ],
+  [ 'turn_private.planning_v2_external_call_windows', 0 ],
+  [ 'turn_private.planning_v2_model_attempt_bindings', 0 ],
+  [ 'turn_private.planning_v2_model_local_journal', 0 ],
+  [ 'turn_private.planning_v2_place_checkpoints', 0 ],
+  [ 'turn_private.planning_v2_result_claims', 0 ],
+  [ 'turn_private.result_artifacts', 0 ],
+  [ 'turn_private.result_events', 0 ],
+  [ 'turn_private.result_revisions', 0 ],
+  [ 'turn_private.service_task_capacity', 1 ],
+  [ 'turn_private.service_task_turns', 1 ],
+  [ 'turn_private.service_tasks', 1 ],
+  [ 'turn_private.text_content', 1 ],
+  [ 'turn_private.text_dispatches', 0 ],
+  [ 'turn_private.work', 1 ],
+  [ 'public.turns', 1 ],
+  [ 'scoped_edit_private.contexts_v1', 1 ],
+  [ 'scoped_edit_private.work_v1', 1 ],
+  [ 'scoped_edit_private.requests_v1', 1 ],
+  [ 'scoped_edit_private.operations_v1', 1 ],
+  [ 'scoped_edit_private.lineage_v1', 0 ],
+  [ 'turn_private.assistant_directions_intakes_v1', 0 ],
+  [ 'turn_private.directions_result_sources_v1', 0 ],
+  [ 'turn_private.directions_operations_v1', 0 ]
+]
+✔ original export request/lease → versioned Trip source/page → strict current TS handler; no real artifact/key (7211.460208ms)
+✔ real hosted composition → SQL clarification → same-task continuation → candidate → original exact confirm (12199.766041ms)
+✔ in-flight cancel/consent withdrawal stops results while the original known provider attempt reconciles once (9612.100542ms)
+✔ real legacy v1 text Task/receipt exports unchanged; mixed v1/v2 receipts keep their exact independent counter sets (7973.653875ms)
+✔ registered lifecycle keeps original guards; unknown columns and source functions stay denied (4229.428292ms)
+✔ source erase strips new metadata, releases pending capacity and permanently fences late work (4561.819917ms)
+actual scoped source conflicts {"conversation":["SCOPED_EDIT_REFERENCE"],"turn":["ACTIVE_WORK","CROSS_TURN_REFERENCE","SCOPED_EDIT_REFERENCE"]}
+✔ actual original privacy graph reports the retained scoped producer references honestly (3417.206125ms)
+✔ real account-row barrier: completion waits without capacity lock; owner cancel commits then stale completion cannot publish (5897.173167ms)
+✔ actual valid continuation selection commits while another completion waits account-first (7166.571166ms)
+Trip privacy preview conversation {"kind":"preview","eligible":true,"conflicts":[],"eraseCounts":{"work":1,"goals":1,"turns":1,"events":2,"intakes":0,"threads":1,"feedback":0,"grounded":0,"messages":2,"planning":0,"tripWork":1,"artifacts":0,"goalLinks":1,"revisions":0,"assistJobs":0,"callWindows":0,"checkpoints":0,"idempotency":1,"tripLineage":1,"observations":0,"resultClaims":0,"resultEvents":0,"tripContexts":1,"tripRequests":1,"conversations":1,"executionRuns":0,"localJournals":0,"actionReceipts":0,"intakeBindings":0,"sourceReceipts":0,"tripOperations":2,"attemptBindings":0,"memoryConsumers":0,"modelDispatches":0,"collectorOrigins":0,"collectorOutputs":0,"completionProofs":0,"completedReceipts":0},"redactCounts":{"textBodies":1,"taskDigests":1,"tripObjectives":1}}
+privacy receipt conversation {"state":"erased","erasedCounts":{"work":1,"goals":1,"turns":1,"events":2,"intakes":0,"threads":1,"feedback":0,"grounded":0,"messages":2,"planning":0,"tripWork":1,"artifacts":0,"goalLinks":1,"revisions":0,"assistJobs":0,"callWindows":0,"checkpoints":0,"idempotency":1,"tripLineage":1,"observations":0,"resultClaims":0,"resultEvents":0,"tripContexts":1,"tripRequests":1,"conversations":1,"executionRuns":0,"localJournals":0,"actionReceipts":0,"intakeBindings":0,"sourceReceipts":0,"tripOperations":2,"attemptBindings":0,"memoryConsumers":0,"modelDispatches":0,"collectorOrigins":0,"collectorOutputs":0,"completionProofs":0,"completedReceipts":0},"redactedCounts":{"textBodies":1,"taskDigests":1,"tripObjectives":1}}
+Trip graph source {"graph":{"turnIds":["f1941ff1-1464-413e-ba25-37c362a0adfe"],"messageIds":["9efa2474-b6fb-4b72-897c-cbdf855a58f0"],"artifactIds":[]},"conflicts":[],"retainedReferences":{"goalIds":["42dd12b7-e6bc-49cd-b5ae-65cf16f951a3"],"taskIds":["d0836373-949e-41c3-b3da-56e82b9635b6"],"tripIds":[],"memoryIds":[],"threadIds":["a86eb220-10f8-4593-9cdd-eac19d5a4d7b"],"conversationIds":["268ffec1-5610-4f54-9cd0-d3a122a3aeb2"]}}
+Trip privacy preview turn {"kind":"preview","eligible":true,"conflicts":[],"eraseCounts":{"work":1,"events":2,"intakes":0,"feedback":0,"grounded":0,"planning":0,"tripWork":1,"artifacts":0,"revisions":0,"assistJobs":0,"callWindows":0,"checkpoints":0,"idempotency":1,"tripLineage":1,"observations":0,"resultClaims":0,"resultEvents":0,"tripContexts":1,"tripRequests":1,"executionRuns":0,"localJournals":0,"actionReceipts":0,"intakeBindings":0,"sourceReceipts":0,"tripOperations":2,"attemptBindings":0,"memoryConsumers":0,"modelDispatches":0,"collectorOrigins":0,"collectorOutputs":0,"completionProofs":0,"completedReceipts":0},"redactCounts":{"textBodies":1,"taskDigests":1,"messageBodies":1,"tripObjectives":1}}
+privacy receipt turn {"state":"erased","erasedCounts":{"work":1,"events":2,"intakes":0,"feedback":0,"grounded":0,"planning":0,"tripWork":1,"artifacts":0,"revisions":0,"assistJobs":0,"callWindows":0,"checkpoints":0,"idempotency":1,"tripLineage":1,"observations":0,"resultClaims":0,"resultEvents":0,"tripContexts":1,"tripRequests":1,"executionRuns":0,"localJournals":0,"actionReceipts":0,"intakeBindings":0,"sourceReceipts":0,"tripOperations":2,"attemptBindings":0,"memoryConsumers":0,"modelDispatches":0,"collectorOrigins":0,"collectorOutputs":0,"completionProofs":0,"completedReceipts":0},"redactedCounts":{"textBodies":1,"taskDigests":1,"messageBodies":1,"tripObjectives":1}}
+✔ explicit Trip privacy preview/confirmed erase/recovery removes all owned scoped copies; v1 counts stay unchanged (9561.313917ms)
+✔ shared context remains explicitly ineligible and cannot erase another Task sources (4674.144208ms)
+✔ known-cost technical failure repairs within original Task/budget; unknown provider ACK never authorizes repair (12781.326875ms)
+✔ new RPC exact role matrix and private aliases preserve all negative capabilities (4024.998667ms)
+✔ fixed runtime denies unknown functions/body/ACL/trigger state and replica-mode authority (5807.153708ms)
+preupgrade lifecycle [ { conversation: true, turn: true } ]
+registry baseline [
+  {
+    signature: 'conversation_data_private.schema_supported_v1()',
+    source_hash: '236f8c22da3b7a93035c4b1758f2f25280d5137f2cb9e1aadecc5dcaa2839a02'
+  },
+  {
+    signature: 'conversation_data_private.sources_v1()',
+    source_hash: '27c19f5223b6fd5a0034ed29cab6912b7d43625bb4f27e542431f87f85b6f8c7'
+  },
+  {
+    signature: 'turn_data_private.schema_supported_v1()',
+    source_hash: '22a58d694c11726a04207df7acf09f4b2b03a558428930b7bb98fd8646578d09'
+  },
+  {
+    signature: 'turn_data_private.sources_v1()',
+    source_hash: 'dcc36222ad9b9e92438c6a1bb8d4ad16b2565e6018f8b88e083fbf7936cd567c'
+  }
+]
+✔ Trip ServiceTask: full historical SQL, rollback, default gates and role ACL (4085.33775ms)
+✔ ordinary owner → canonical goal → original worker candidate → exact original confirm → same-transaction capacity (5829.180292ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 35829.333792

@@ -1,0 +1,52 @@
+{
+  "businessHead": "c8939650effb47bb09ff01b283520111e1692b84",
+  "before": "f60c0244",
+  "files": {
+    "scripts/ci-suites/db-integration.mjs": {
+      "beforeBlob": "725fdbee95b0bf3fb303f5f0b332c2a510862948",
+      "afterBlob": "245aa1303e94b2a3fe54f941f0b238ef8a4c4ae0"
+    },
+    "scripts/ci-change-scope.mjs": {
+      "beforeBlob": "5255ffb97f99f02fbc8178c683c3f3d5df95fc4b",
+      "afterBlob": "4a8e995a6796762645fbde57453a24fa294293a4"
+    },
+    "tests/unit/governance/db-integration-ci.test.mjs": {
+      "beforeBlob": "633d31814041d977634e1a9767f2193cf1166a88",
+      "afterBlob": "e7906d09368981d2bed94e57f595a9bba42c6b80"
+    },
+    "tests/unit/governance/ci-change-scope.test.mjs": {
+      "beforeBlob": "ad8fcd0d21da55489a2d92d00af0ef6ad764de3d",
+      "afterBlob": "3e0dbcdd3a76d294748781bf97fb568d91ae4b12"
+    },
+    "tests/integration/identity/function-acl.test.mjs": {
+      "beforeBlob": "079b503fb853f74d5210ab36c41af19d395d7790",
+      "afterBlob": "a9f6b839c492e7334305f2b8e70dad427fd8b5a2"
+    },
+    "tests/integration/README.md": {
+      "beforeBlob": "d49ffc84bed2341f4a1d1b18f5d59cd4cc2e0f70",
+      "afterBlob": "52cce804a62ba5b9a5519f3e4ce13b0b021a704e"
+    }
+  },
+  "checks": {
+    "governance": "PASS 31, zero skips",
+    "typecheck": "PASS",
+    "lint": "PASS",
+    "docs": "PASS",
+    "diff": "PASS",
+    "repositoryAllowlistProjection": "PASS anon 1, authenticated 113; native fixture fixed pg_catalog/information_schema/auth excluded because platform ownership differs; full production ACL query unchanged",
+    "newRoleVectors": "PASS exact source SQL with array rows; six public, two owner aliases, private three-role denial",
+    "businessRegression": "REUSED unchanged c893 evidence, including original nine-minute expiry",
+    "ciNative17FullRunner": "UNRUN locally; registered for real GitHub CI",
+    "supabasePostgrestAcl": "UNRUN locally"
+  },
+  "retainedFailures": [
+    "global-acl: native platform ownership differs",
+    "global-acl-projection: information_schema also platform-owned",
+    "global-acl-final: repository projection passed; temporary harness object rows collapsed three identical column names; fixed by rowMode array in global-acl-vectors"
+  ],
+  "unchanged": [
+    ".github/workflows/db-integration.yml",
+    "scripts/run-ci-suite.mjs",
+    "all business source"
+  ]
+}
