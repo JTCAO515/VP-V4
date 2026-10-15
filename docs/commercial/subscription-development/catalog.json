@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "subscription-development/1",
+  "catalogVersion": 3,
+  "policyVersion": "subscription-development-policy/1",
+  "saleState": "development_only",
+  "products": {
+    "free": {
+      "kind": "free",
+      "purchasable": false,
+      "sharedBenefits": [
+        "explicit_cross_trip_preferences",
+        "trip_and_data_controls"
+      ]
+    },
+    "subscription": {
+      "kind": "auto_renewing",
+      "period": {
+        "unit": "month",
+        "value": 1
+      },
+      "durationAuthority": "apple_verified_period",
+      "storeKitProductId": null,
+      "price": null,
+      "purchasable": false,
+      "localTestProductId": "dev.visepanda.subscription.monthly",
+      "localSubscriptionGroupId": "dev.visepanda.subscription",
+      "sharedBenefits": [
+        "explicit_cross_trip_preferences",
+        "trip_and_data_controls"
+      ]
+    }
+  },
+  "serviceTaskCapacity": {
+    "state": "development_baseline_not_balance_or_sales_promise",
+    "unit": "complete_service_task",
+    "free": {
+      "period": {
+        "kind": "account_rolling",
+        "hours": 168,
+        "quantity": 4
+      },
+      "burst": {
+        "kind": "account_rolling",
+        "hours": 24,
+        "quantity": 2
+      }
+    },
+    "subscription": {
+      "period": {
+        "kind": "per_verified_period",
+        "quantity": 80
+      },
+      "burst": {
+        "kind": "account_rolling",
+        "hours": 24,
+        "quantity": 12
+      }
+    },
+    "windowPolicy": "count_all_tiers_committed_and_live_reservations_by_original_admission_time",
+    "windowBoundary": "exclude_at_or_before_now_minus_window",
+    "tierPolicy": "verified_active_subscription_else_free_no_stacking_or_exhaustion_fallback",
+    "settlement": "one_unit_only_on_validated_durable_agreed_outcome",
+    "clarificationAndRepair": "same_task_no_extra_unit_preserve_cumulative_internal_budget",
+    "partialPolicy": "retain_partial_release_reservation_no_unit_until_agreed_outcome_complete",
+    "amendmentPolicy": "new_scope_requires_explicit_new_goal_and_fresh_admission_not_automatic_charge",
+    "waitingTtlHours": 24,
+    "waitingTtlPolicy": "from_first_wait_not_extended_by_retries_clamped_to_verified_period_end",
+    "crossPeriodPolicy": "expire_reservation_revalidate_with_explicit_resume_no_automatic_next_period_debit",
+    "resumePolicy": "same_task_scope_and_internal_budget_one_lifetime_settlement",
+    "cancellationPolicy": "before_delivery_release_after_delivery_no_automatic_refund",
+    "repairAfterDelivery": "no_new_unit_existing_budget_and_current_authorization_required",
+    "unknownCostPolicy": "separate_attempt_reconciliation_never_assume_zero_or_charge_extra_unit"
+  },
+  "periodRules": {
+    "authority": "ledger_owner_verified_apple_purchase_and_expires",
+    "interval": "verified_purchase_inclusive_verified_expires_exclusive",
+    "clock": "trusted_server_and_verified_apple_never_device_calendar",
+    "identity": "ledger_owner_environment_account_subscription_and_verified_period",
+    "snapshot": "immutable_catalog_version_policy_version_and_capacity_per_period",
+    "renewal": "only_distinct_verified_period_may_allocate_capacity",
+    "earlyRenewal": "no_capacity_before_verified_period_start_no_legacy_queue_arithmetic",
+    "restoration": "original_period_and_consumption_no_new_capacity",
+    "refund": "revoke_matching_period_no_reallocation_or_other_period_mutation",
+    "expiry": "unused_capacity_does_not_carry",
+    "repeatedPeriod": "idempotent_no_refill_including_restore_refund_and_renewal_replay",
+    "legacy": "non_renewing_pass_remains_separate_unchanged"
+  },
+  "commercialPolicy": {
+    "paidScope": [
+      "pre_trip_research",
+      "constraint_checks",
+      "complex_coordination",
+      "ongoing_tasks"
+    ],
+    "freeScope": [
+      "basic_memory",
+      "correction",
+      "export_and_delete",
+      "usable_first_value"
+    ],
+    "ranking": "same_fit_rules_commission_never_boosts_organic_rank",
+    "disclosure": "commercial_exits_and_candidate_coverage",
+    "externalBooking": "independent_assistant_value_preserved",
+    "release": "verify_real_sku_storefront_price_tax_contract_and_cost_before_sales",
+    "annualSubscription": "research_requires_repeat_travel_value_cost_and_responsibility_evidence"
+  },
+  "promises": {
+    "unlimited": false,
+    "humanServiceIncluded": false
+  },
+  "researchOnly": [
+    "arrival_activation",
+    "post_purchase_activation",
+    "esim",
+    "payment_channels"
+  ]
+}
