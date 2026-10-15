@@ -25,13 +25,20 @@ enum NativeTripAddressReview {
     }
 
     static func evaluate(before: NativeTripDetail?, pending: NativeTripPending) -> Result {
-        guard let before, before.confirmationState == "confirmed", before.trip.id == pending.trip.id,
+        guard let before, before.trip.id == pending.trip.id,
               before.trip.headVersion == pending.proposal.baseTripVersion,
               pending.proposal.patch.expectedVersion == pending.proposal.baseTripVersion,
               let old = index(before.content) else { return .unavailable }
+        let hasAddress = old.values.contains { $0.address != nil }
+        let hasAddressOperation = pending.proposal.patch.operations.contains { $0.kind == .setChineseAddress }
+        // This is an address-only gate, not a new confirmation-state requirement for old proposals.
+        if before.confirmationState != "confirmed", hasAddress || hasAddressOperation { return .unavailable }
         guard let after = pending.proposal.after else {
+            // Legacy title/date/item operations cannot introduce an address into address-free content.
+            // Preserve first-confirm and old DTO behavior; explicit address writes still need after.
+            if !hasAddress && !hasAddressOperation { return .init(canConfirm: true, changes: []) }
             // Ordinary same-item upserts preserve address. A missing after-snapshot cannot attest
-            // deletion/rebuild, new-item restoration, or an explicit address operation.
+            // deletion/rebuild, possible restoration alongside existing addresses, or an address op.
             let possible = pending.proposal.patch.operations.contains { operation in
                 switch operation.kind {
                 case .setChineseAddress: return true
@@ -46,6 +53,7 @@ enum NativeTripAddressReview {
             return .init(canConfirm: !possible, changes: [])
         }
         guard let new = index(after) else { return .unavailable }
+        if before.confirmationState != "confirmed", new.values.contains(where: { $0.address != nil }) { return .unavailable }
         var changes: [Change] = []
         var removed = old.keys.filter { new[$0] == nil }
         var added = new.keys.filter { old[$0] == nil }
