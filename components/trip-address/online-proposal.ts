@@ -1,6 +1,6 @@
 import type { PendingProposalRead } from "../../lib/server/identity/user-data-adapter.ts";
 import { isUserAddressText, readUserProvidedAddress } from "../../lib/trip-user-address.ts";
-import { addressProposalReview } from "./review.ts";
+import { addressProposalChanges } from "./review.ts";
 import { addressOperation, type AddressContext, type AddressOperation } from "./context.ts";
 
 const row = (v: unknown): v is Record<string, unknown> => v !== null && typeof v === "object" && !Array.isArray(v);
@@ -71,20 +71,13 @@ export function addressIntentSettled(intent: AddressIntent, phase: string, epoch
     && (epoch === `applied:${id}` || epoch === `rejected:${id}`);
 }
 
-/** A pending address operation may confirm only while every address diff is visible in the current Trip. */
+/** Lock only Confirm when an actual address change lacks a current, visible review. */
 export function addressReviewBlocked(pending: PendingProposalRead | null, qualifiedRoot: boolean, current: Readonly<{
   tripId: string; snapshotTripId: string; tripVersion: number;
-  items: readonly Readonly<{ dayId: string; itemId: string }>[];
+  items?: readonly Readonly<{ dayId: string; itemId: string }>[];
 }>): boolean {
   if (!pending) return false;
-  const patch: unknown = pending.proposal.patch;
-  if (!row(patch) || !Array.isArray(patch.operations)) return false;
-  const addresses = patch.operations.filter(operation => row(operation) && operation.kind === "set_item_chinese_address");
-  if (addresses.length === 0) return false;
-  if (!qualifiedRoot || current.snapshotTripId !== current.tripId) return true;
-  return addresses.some(operation => {
-    if (!row(operation) || typeof operation.dayId !== "string" || typeof operation.itemId !== "string"
-      || !current.items.some(item => item.dayId === operation.dayId && item.itemId === operation.itemId)) return true;
-    return addressProposalReview(pending, { tripId: current.tripId, tripVersion: current.tripVersion, dayId: operation.dayId, itemId: operation.itemId }) === null;
-  });
+  const projection = addressProposalChanges(pending, current);
+  if (projection.kind === "unavailable") return projection.mayChangeAddress;
+  return projection.changes.length > 0 && (!qualifiedRoot || current.snapshotTripId !== current.tripId);
 }
