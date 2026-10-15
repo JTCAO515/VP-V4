@@ -36,9 +36,9 @@ LEGACY_NULL_GROUNDED_TURN_CONVERSATION_EXPORT_EXACT_JSON_BYTES_PASS
 test at tests/integration/canonical-place-ask-sql/selected-cases.mjs:219:1
 ✖ original synthetic Sandbox grant is rechecked atomically and completion/cancel serialize without capacity leakage (1708.403458ms)
   AssertionError [ERR_ASSERTION]: The input was expected to not match the regular expression /deadlock|40P01/. Input:
-  
+
   'error: deadlock detected'
-  
+
       at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-canonical-place-sql-20261015/tests/integration/canonical-place-ask-sql/selected-cases.mjs:230:339)
       at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
       at async Test.run (node:internal/test_runner/test:1409:7)
