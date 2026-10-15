@@ -17,9 +17,10 @@ export type LocalTripRead = {
 type Notice = "conflict" | "pending" | "unavailable" | "noChanges" | "stored" | "rejected";
 const snapshotOf = (data: LocalTripRead): TripSnapshot => structuredClone({ version: data.trip.headVersion, title: data.trip.title, days: data.content.days });
 
-export function TripContentEditor({ data, pending, locale, onReload, onPending }: {
+export function TripContentEditor({ data, pending, locale, onReload, onPending, onAddressBlockChange }: {
   data: LocalTripRead; pending: PendingProposalRead | null; locale: Locale;
   onReload: () => Promise<LocalTripRead | null>; onPending: (pending: PendingProposalRead | null) => void;
+  onAddressBlockChange?: (blocked: boolean) => void;
 }) {
   const copy = tripLocalEditorCopy[locale];
   const [base, setBase] = useState(() => snapshotOf(data));
@@ -27,6 +28,9 @@ export function TripContentEditor({ data, pending, locale, onReload, onPending }
   const [dirty, setDirty] = useState(false);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<Notice | null>(null);
+  const addressBlocked = dirty || busy || notice === "unavailable";
+  useEffect(() => { onAddressBlockChange?.(addressBlocked); }, [addressBlocked, onAddressBlockChange]);
+  useEffect(() => () => { onAddressBlockChange?.(false); }, [onAddressBlockChange]);
   const live = useRef(true);
   const reviewedDraft = useRef<string | null>(null);
   const keys = useRef(new Map<string, string>());
