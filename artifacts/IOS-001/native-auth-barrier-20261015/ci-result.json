@@ -1,0 +1,31 @@
+{
+  "headRevision": "de915955606435ed58dafe6f227d38fbedb2c64a",
+  "job": {
+    "id": 116242893642,
+    "head_sha": "de915955606435ed58dafe6f227d38fbedb2c64a",
+    "name": "lane (supabase-http-native / 3 of 8)",
+    "status": "completed",
+    "conclusion": "success"
+  },
+  "url": "https://github.com/JTCAO515/VP-V4/actions/runs/38679920110/job/116242893642",
+  "logTruncated": false,
+  "result": {
+    "lane": "supabase-http-native",
+    "step": "native-local-session",
+    "files": 1,
+    "tests": 1,
+    "pass": 1,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "runs": 1,
+    "seconds": 282,
+    "outcome": "passed",
+    "problems": []
+  },
+  "sourceChanged": false,
+  "rootCause": "UNKNOWN; same diagnostic head passed without a new repair",
+  "historicalFailure": "d445 Native HTTP 3/8 job 116229596641 retained; no timeout/assertion/guard relaxed",
+  "localAuthRuntime": "UNRUN; Docker daemon unavailable"
+}
