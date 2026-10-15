@@ -14,7 +14,11 @@ export async function verifyHosted(t,ports){
   const s=f.submission;
   const accepted=mode==='ordinary'?await ports.actorRpc(f.owner,'submit_service_task_turn',{p_thread_id:s.threadId,p_turn_id:s.turnId,p_idempotency_key:s.idempotencyKey,p_policy_id:s.policyId,p_locale:s.locale,p_text:s.text,p_task_id:s.serviceTask.id,p_scope_version:1,p_relationship:s.serviceTask.relationship,p_parent_turn_id:null}):await ports.actorRpc(f.owner,'grounded_ai_assist_work_v1',{p_input:{action:'selected_submit',requestBytes:JSON.stringify(f.request)}});assert.equal(accepted.kind,'accepted');
   const scope=randomUUID();
-  child.after(async()=>{await ports.actorRpc(f.owner,'cancel_chat_turn',{p_turn_id:f.submission.turnId});await ports.query('update public.model_budget_scopes set enabled=false where id=$1',[scope]);});
+  child.after(async()=>{
+   const work=(await ports.query('select state from turn_private.work where turn_id=$1',[f.submission.turnId])).rows[0];
+   if(['queued','leased'].includes(work?.state))await ports.actorRpc(f.owner,'cancel_chat_turn',{p_turn_id:f.submission.turnId});
+   await ports.query('update public.model_budget_scopes set enabled=false where id=$1',[scope]);
+  });
   await ports.query("insert into public.model_budget_scopes(id,owner_id,currency,limit_micros,task_limit_micros,task_attempt_limit,concurrency_limit,enabled,expires_at) values($1,$2,'CNY',1000000,100000,10,1,true,now()+interval '1 day')",[scope,f.owner.id]);
   await ports.query("insert into public.model_budget_provider_limits(scope_id,provider,model,price_version,limit_micros,attempt_limit_micros,enabled) values($1,'qwen',$2,'c0-http-hosted',1000000,1000,true)",[scope,PROTOCOL_MODELS.qwen]);
   await ports.actorRpc(null,'set_hosted_worker_enabled',{p_enabled:true,p_reason:'C0 own isolated fixture'},'service_role');
@@ -25,7 +29,7 @@ export async function verifyHosted(t,ports){
    if(request.url===endpoint){
     providerBodies.push(await request.json());assert.equal(request.headers.get('authorization'),'Bearer synthetic-provider-only');
     const value=mode==='ordinary'?{outcome:'answered',text:'C0 ordinary answer'}:{intent:'place_opening_hours',requestScope:'single',unansweredNeeds:[],placeName:'it'};
-    return Response.json({model:PROTOCOL_MODELS.qwen,choices:[{finish_reason:'stop',message:{role:'assistant',content:JSON.stringify(value)}}],usage:{prompt_tokens:80,completion_tokens:30,total_tokens:110}});
+    return Response.json({model:PROTOCOL_MODELS.qwen,choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:JSON.stringify(value)}}],usage:{prompt_tokens:80,completion_tokens:30,total_tokens:110}});
    }
    assert.equal(url.origin,HOSTED_STAGING_DATABASE_URL);assert.equal(request.headers.get('authorization'),'Bearer synthetic-service-only');
    const name=url.pathname.split('/').at(-1);assert.ok(rpcNames.has(name),'closed service RPC adapter');const params=await request.json();calls.push({name,params});
@@ -57,6 +61,7 @@ export async function verifyHosted(t,ports){
    if(mode==='source-withdrawn')assert.equal(calls.filter(c=>c.name==='complete_grounded_place_work').length,0);
    if(mode==='unknown-budget'){
     assert.equal(calls.filter(c=>c.name==='dispatch_model_budget').length,1);
+    const uncertainAt=calls.findIndex(c=>c.name==='dispatch_model_budget');assert.equal(calls.slice(uncertainAt+1).some(c=>c.name.startsWith('claim_')),false,'unknown budget ACK cannot fall through to another claimer');
     const attempts=(await ports.query('select status from public.model_budget_attempts where scope_id=$1',[scope])).rows;assert.deepEqual(attempts,[{status:'dispatched'}]);
    }
   }
