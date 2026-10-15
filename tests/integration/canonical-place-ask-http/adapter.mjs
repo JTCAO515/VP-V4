@@ -11,7 +11,7 @@ async function listen(t,handler){const server=createServer(handler);await new Pr
 export async function adapter(t,{actorRpc}) {
  const tokens=new Map(),events=[],faults=[];const key='synthetic-publishable-key-'+randomBytes(12).toString('hex');
  let origin;
- const reply=(res,status,value)=>{res.writeHead(status,{'content-type':'application/json'});res.end(JSON.stringify(value));};
+ const reply=(res,status,value)=>{res.writeHead(status,{'content-type':'application/json','x-supabase-api-version':'2024-01-01'});res.end(JSON.stringify(value));};
  origin=await listen(t,async(req,res)=>{
   try{
    const url=new URL(req.url,origin),path=url.pathname;
