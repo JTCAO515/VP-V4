@@ -29,7 +29,9 @@ struct NativeTranslationRecoveryIdentity: Equatable, Sendable, Encodable {
     }
 
     static func canonicalUUID(_ value: String) -> Bool {
-        UUID(uuidString: value)?.uuidString.lowercased() == value
+        let bytes = Array(value.utf8)
+        return bytes.count == 36 && UUID(uuidString: value)?.uuidString.lowercased() == value
+            && (49...53).contains(bytes[14]) && [56, 57, 97, 98].contains(bytes[19])
     }
     static func canonicalHash(_ value: String) -> Bool {
         value.utf8.count == 64 && value.utf8.allSatisfy { (48...57).contains($0) || (97...102).contains($0) }
