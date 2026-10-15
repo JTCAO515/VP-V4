@@ -248,4 +248,51 @@ nonisolated final class NativeTripAddressTests: XCTestCase {
         XCTAssertFalse(NativeTripAddressReview.evaluate(before: nil, pending: pending).canConfirm)
     }
 
+
+    @MainActor func testInitialVersionZeroFirstProposalWithoutAddressesPreservesConfirmation() throws {
+        var initial = reviewDetail([], version: 0)
+        initial.confirmationState = "initial"
+        let after = NativeTripContent(days: [.init(id: "d", date: "2026-10-16", items: [.init(id: "i", dayId: "d", title: "First item")])])
+        let operations: [NativeTripOperation] = [.init(kind: .upsertDay, dayId: "d", date: "2026-10-16"), .init(kind: .upsertItem, title: "First item", dayId: "d", itemId: "i")]
+        let known = NativeTripAddressReview.evaluate(before: initial, pending: reviewPending(initial, after: after, operations: operations))
+        XCTAssertTrue(known.canConfirm)
+        XCTAssertTrue(known.changes.isEmpty)
+        let unknown = NativeTripAddressReview.evaluate(before: initial, pending: reviewPending(initial, after: nil, operations: operations))
+        XCTAssertTrue(unknown.canConfirm)
+        XCTAssertTrue(unknown.changes.isEmpty)
+    }
+
+    @MainActor func testLegacyAddressFreeTitleDateAndItemEditsDoNotRequireNewAfterSnapshot() throws {
+        let operations: [NativeTripOperation] = [
+            .init(kind: .setTitle, title: "Changed"), .init(kind: .upsertDay, dayId: "d", date: "2026-10-17"),
+            .init(kind: .upsertItem, title: "Changed", dayId: "d", itemId: "i"),
+            .init(kind: .upsertItem, title: "Added", dayId: "d", itemId: "new"),
+            .init(kind: .deleteItem, dayId: "d", itemId: "i"), .init(kind: .deleteDay, dayId: "d")
+        ]
+        for state: String? in [nil, "initial", "confirmed"] {
+            var before = reviewDetail([.init(id: "d", date: "2026-10-16", items: [.init(id: "i", dayId: "d", title: "Item")])], version: state == "initial" ? 0 : 5)
+            before.confirmationState = state
+            for operation in operations {
+                let result = NativeTripAddressReview.evaluate(before: before, pending: reviewPending(before, after: nil, operations: [operation]))
+                XCTAssertTrue(result.canConfirm)
+                XCTAssertTrue(result.changes.isEmpty)
+            }
+            var after = before.content; after.days[0].date = "2026-10-17"; after.days[0].items[0].title = "Changed"
+            XCTAssertTrue(NativeTripAddressReview.evaluate(before: before, pending: reviewPending(before, after: after, operations: Array(operations.prefix(3)))).canConfirm)
+        }
+    }
+
+    @MainActor func testInitialOrLegacyAddressConcernStillFailsClosed() throws {
+        let address = try NativeUserProvidedAddress(text: "广州")
+        for state: String? in [nil, "initial"] {
+            var before = reviewDetail([], version: 0); before.confirmationState = state
+            let operation = NativeTripOperation(kind: .setChineseAddress, dayId: "d", itemId: "i", addressText: .set(address.text))
+            XCTAssertFalse(NativeTripAddressReview.evaluate(before: before, pending: reviewPending(before, after: nil, operations: [operation])).canConfirm)
+            let addressed = NativeTripContent(days: [.init(id: "d", date: "2026-10-16", items: [.init(id: "i", dayId: "d", title: "Item", userAddress: address)])])
+            XCTAssertFalse(NativeTripAddressReview.evaluate(before: before, pending: reviewPending(before, after: addressed, operations: [])).canConfirm)
+            before = reviewDetail(addressed.days, version: 0); before.confirmationState = state
+            XCTAssertFalse(NativeTripAddressReview.evaluate(before: before, pending: reviewPending(before, after: .init(days: []), operations: [.init(kind: .deleteDay, dayId: "d")])).canConfirm)
+        }
+    }
+
 }
