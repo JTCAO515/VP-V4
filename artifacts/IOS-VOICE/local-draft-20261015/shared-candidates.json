@@ -1,0 +1,12 @@
+[
+  {
+    "path": "ios/VisePanda/VisePanda.xcodeproj/project.pbxproj",
+    "before": "5f33a917a7380ceafb8c9583441df019ecdf6ad0",
+    "after": "00c8423a0ee53078b882f2403d0d634e75d6964e"
+  },
+  {
+    "path": "ios/VisePanda/VisePanda/NativeEnvironment.plist",
+    "before": "02c4691ed7967e61316494beec90836040adac04",
+    "after": "3e544782ad18ac9c3aac8b5605710bc135d82116"
+  }
+]
