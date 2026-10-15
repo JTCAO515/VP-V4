@@ -8,7 +8,7 @@ import {tmpdir} from 'node:os';
 export async function database(t,{bin,module,readSource,migrations}) {
  if(!bin||!module)throw Error('Explicit VP_WIKI_PG_BIN and VP_WIKI_PG_MODULE required');
  const version=execFileSync(join(bin,'postgres'),['--version'],{encoding:'utf8'}).trim();
- if(!/PostgreSQL\) 17\.11\b/.test(version))throw Error('Fixed PostgreSQL 17.11 required: '+version);
+ if(!/^postgres \(PostgreSQL\) 17\.[0-9]+\b/.test(version))throw Error('PostgreSQL major 17 required: '+version);
  const {Client}=createRequire(import.meta.url)(module);
  const root=mkdtempSync(join(tmpdir(),'a005http-'));chmodSync(root,0o700);
  const socket=join(root,'s'),data=join(root,'data');mkdirSync(socket,{mode:0o700});let running=false;
