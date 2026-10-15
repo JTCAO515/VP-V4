@@ -15,10 +15,10 @@ test at tests/integration/service-task-trip/settlement.test.mjs:17:1
 ✖ ordinary owner → canonical goal → original worker candidate → exact original confirm → same-transaction capacity (2498.322625ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
   + actual - expected
-  
+
   + '(applied,1)'
   - 'applied'
-  
+
       at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/settlement.test.mjs:45:122)
       at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
       at async Test.run (node:internal/test_runner/test:1409:7)
