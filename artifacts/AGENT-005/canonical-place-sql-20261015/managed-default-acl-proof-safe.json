@@ -1,0 +1,132 @@
+{
+  "postgres": "PostgreSQL 17.11 (Homebrew) on aarch64-apple-darwin27.0.0, compiled by Apple clang version 21.0.0 (clang-2100.3.34.2), 64-bit",
+  "defaultPrivileges": "Only local test public-schema function defaults grant anon/authenticated/service_role",
+  "before": [
+    {
+      "signature": "public.confirm_and_apply_trip_proposal(uuid,text,text)",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "hash": "a57aba0ecef562235a3993369246e3d14cf526526267d2c4941ea3f6ca212894",
+      "anon": false,
+      "authenticated": true,
+      "service": true
+    },
+    {
+      "signature": "public.create_trip_proposal_patch(uuid,jsonb)",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "hash": "a57aba0ecef562235a3993369246e3d14cf526526267d2c4941ea3f6ca212894",
+      "anon": false,
+      "authenticated": true,
+      "service": true
+    },
+    {
+      "signature": "public.native_session_v2(text,uuid)",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "hash": "a57aba0ecef562235a3993369246e3d14cf526526267d2c4941ea3f6ca212894",
+      "anon": false,
+      "authenticated": true,
+      "service": true
+    },
+    {
+      "signature": "public.read_trip_proposal_v2(uuid)",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "hash": "a57aba0ecef562235a3993369246e3d14cf526526267d2c4941ea3f6ca212894",
+      "anon": false,
+      "authenticated": true,
+      "service": true
+    },
+    {
+      "signature": "public.reject_trip_proposal_v2(uuid)",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "hash": "a57aba0ecef562235a3993369246e3d14cf526526267d2c4941ea3f6ca212894",
+      "anon": false,
+      "authenticated": true,
+      "service": true
+    }
+  ],
+  "unfixedFailure": {
+    "guards": {
+      "turn_hooks": true,
+      "turn_schema": true,
+      "export_hooks": true,
+      "trip_runtime": false,
+      "turn_runtime": true,
+      "result_schema": true,
+      "profile_schema": true,
+      "selected_schema": true,
+      "turn_write_hooks": true,
+      "conversation_schema": true,
+      "result_infrastructure": true
+    },
+    "postgres": "17.11 (Homebrew)",
+    "trip_failure": {
+      "stage": "function_metadata",
+      "differences": [
+        {
+          "field": "acl",
+          "signature": "public.confirm_and_apply_trip_proposal(uuid,text,text)",
+          "actual_hash": "a57aba0ecef562235a3993369246e3d14cf526526267d2c4941ea3f6ca212894",
+          "expected_hash": "16991e577a040ac9bfefba158650d388e56948cac5f72e4ef2e023144eb9fc6b"
+        },
+        {
+          "field": "acl",
+          "signature": "public.create_trip_proposal_patch(uuid,jsonb)",
+          "actual_hash": "a57aba0ecef562235a3993369246e3d14cf526526267d2c4941ea3f6ca212894",
+          "expected_hash": "16991e577a040ac9bfefba158650d388e56948cac5f72e4ef2e023144eb9fc6b"
+        },
+        {
+          "field": "acl",
+          "signature": "public.native_session_v2(text,uuid)",
+          "actual_hash": "a57aba0ecef562235a3993369246e3d14cf526526267d2c4941ea3f6ca212894",
+          "expected_hash": "16991e577a040ac9bfefba158650d388e56948cac5f72e4ef2e023144eb9fc6b"
+        }
+      ]
+    }
+  },
+  "after": [
+    {
+      "signature": "public.confirm_and_apply_trip_proposal(uuid,text,text)",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "hash": "16991e577a040ac9bfefba158650d388e56948cac5f72e4ef2e023144eb9fc6b",
+      "anon": false,
+      "authenticated": true,
+      "service": false
+    },
+    {
+      "signature": "public.create_trip_proposal_patch(uuid,jsonb)",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "hash": "16991e577a040ac9bfefba158650d388e56948cac5f72e4ef2e023144eb9fc6b",
+      "anon": false,
+      "authenticated": true,
+      "service": false
+    },
+    {
+      "signature": "public.native_session_v2(text,uuid)",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "hash": "16991e577a040ac9bfefba158650d388e56948cac5f72e4ef2e023144eb9fc6b",
+      "anon": false,
+      "authenticated": true,
+      "service": false
+    },
+    {
+      "signature": "public.read_trip_proposal_v2(uuid)",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "hash": "16991e577a040ac9bfefba158650d388e56948cac5f72e4ef2e023144eb9fc6b",
+      "anon": false,
+      "authenticated": true,
+      "service": false
+    },
+    {
+      "signature": "public.reject_trip_proposal_v2(uuid)",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "hash": "16991e577a040ac9bfefba158650d388e56948cac5f72e4ef2e023144eb9fc6b",
+      "anon": false,
+      "authenticated": true,
+      "service": false
+    }
+  ],
+  "originalFrozenAclRestored": true,
+  "defaultPrivilegesUnchanged": true,
+  "rollbackRestoresOriginalAcl": true,
+  "unexpectedAnonPublicGrantabilitySourceAndGrantorDelegationRejected": true,
+  "realGoTrueOrManagedPG": false
+}

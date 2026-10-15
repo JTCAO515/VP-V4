@@ -1,0 +1,11 @@
+{
+  "originalTestChanged": false,
+  "originalSelector": "all .sql except its own40456",
+  "replay": "same omitted40456, all successors loaded chronologically",
+  "observedMigration": "20261015083120_agent005_canonical_place_ask.sql",
+  "observedFailure": "CANONICAL_PLACE_BEFORE_DEFINITION_MISMATCH public.grounded_ai_assist_work_v1(jsonb)",
+  "failureIsExpectedGuardRefusal": true,
+  "repairOwner": "original subject owner via Main",
+  "proposedHistoricalBaseline": "files strictly before40456; original test still exercises40456 itself",
+  "GoTrueOrTargetProof": false
+}
