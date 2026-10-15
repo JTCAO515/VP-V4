@@ -4,6 +4,9 @@ import UIKit
 /// Main supplies the outer NavigationStack and shared four-tab fixture state.
 /// This leaf never creates a parallel conversation/domain store or transport.
 @MainActor struct NativeFrontendChatView: View {
+    private func copy(_ zh: String, _ en: String) -> String {
+        locale.language.languageCode?.identifier == "zh" ? zh : en
+    }
     let state: NativeFrontendState
     var onOpenExpression: (() -> Void)? = nil
     var onOpenPlace: (() -> Void)? = nil
@@ -66,7 +69,7 @@ import UIKit
                     .accessibilityHidden(sidebarVisible)
                 if sidebarVisible {
                     Button { closeSidebar() } label: { Color.black.opacity(0.18) }
-                        .buttonStyle(.plain).ignoresSafeArea().accessibilityLabel("关闭侧栏")
+                        .buttonStyle(.plain).ignoresSafeArea().accessibilityLabel(copy("关闭侧栏", "Close sidebar"))
                         .accessibilityIdentifier("muse.chat.sidebar.scrim")
                     NativeMuseChatSidebarView(state: state, onClose: closeSidebar)
                         .frame(width: min(geometry.size.width * 0.86, 360), height: geometry.size.height)
@@ -95,7 +98,7 @@ import UIKit
     }
     private func contextCard(_ text: String) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            Label("本次带入的样例上下文", systemImage: "link").font(.caption).foregroundStyle(.secondary)
+            Label(copy("本次带入的样例上下文", "Sample context for this conversation"), systemImage: "link").font(.caption).foregroundStyle(.secondary)
             if let materialText = state.libraryChatText(materialID: text, locale: locale) {
                 Text(materialText)
                     .font(.subheadline).textSelection(.enabled)
@@ -104,12 +107,12 @@ import UIKit
                     .font(.subheadline).textSelection(.enabled)
             }
             if let id = linkedJourneyID(for: text) {
-                Button("查看关联旅程") {
+                Button(copy("查看关联旅程", "View linked journey")) {
                     guard state.chatContext == text, linkedJourneyID(for: text) == id else { return }
                     state.openJourney(id)
                 }.font(.subheadline).accessibilityIdentifier("frontend.chat.journey")
             }
-            Button("暂时不用这段上下文") { state.chatContext = nil }
+            Button(copy("暂时不用这段上下文", "Skip this context for now")) { state.chatContext = nil }
                 .font(.caption).accessibilityIdentifier("frontend.chat.context.clear")
         }.cardSurface()
     }
@@ -117,7 +120,7 @@ import UIKit
         HStack(alignment: .top, spacing: 10) {
             if message.user { Spacer(minLength: typeSize.isAccessibilitySize ? 0 : 32) }
             VStack(alignment: .leading, spacing: 6) {
-                Text(message.user ? "你" : state.assistantName).font(.caption.weight(.medium)).foregroundStyle(.secondary)
+                Text(message.user ? copy("你", "You") : state.assistantName).font(.caption.weight(.medium)).foregroundStyle(.secondary)
                 Text(message.text).font(.body).textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
             }
             .padding(16).background(message.user ? Color.accentColor.opacity(0.08) : Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 20))
@@ -126,29 +129,29 @@ import UIKit
     }
     private var resultCard: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Label("一份可以继续调整的安排", systemImage: "doc.text").font(.headline)
+            Label(copy("一份可以继续调整的安排", "A plan you can keep refining"), systemImage: "doc.text").font(.headline)
             if let plan, let journey {
                 Text(plan.title).font(.title3.weight(.semibold))
                 Text(plan.content).font(.subheadline).foregroundStyle(.secondary)
                 ForEach(Array(journey.days.enumerated()), id: \.offset) { _, day in Text(day).font(.subheadline) }
-                Text("同一份本地样例 · 地点、路线和服务均未核实").font(.caption).foregroundStyle(.secondary)
+                Text(copy("同一份本地样例 · 地点、路线和服务均未核实", "Same local sample · Places, routes, and services are unverified")).font(.caption).foregroundStyle(.secondary)
                 ViewThatFits(in: .horizontal) {
                     HStack { materialButton(plan); confirmationButton }
                     VStack(alignment: .leading, spacing: 12) { materialButton(plan); confirmationButton }
                 }
-                Button("先不确认，继续聊聊") { state.cancelPlan() }
+                Button(copy("先不确认，继续聊聊", "Keep chatting without confirming")) { state.cancelPlan() }
                     .font(.subheadline).accessibilityIdentifier("frontend.chat.plan.skip")
             } else {
-                Text("样例资料或关联旅程不可用，不能确认。").foregroundStyle(.secondary)
+                Text(copy("样例资料或关联旅程不可用，不能确认。", "The sample material or linked journey is unavailable. Confirmation is not possible.")).foregroundStyle(.secondary)
             }
         }.cardSurface().accessibilityIdentifier("frontend.chat.plan")
     }
     private func materialButton(_ plan: NativeFrontendMaterial) -> some View {
-        Button("查看完整资料") { state.openMaterial(plan.id) }.buttonStyle(.bordered)
+        Button(copy("查看完整资料", "View full material")) { state.openMaterial(plan.id) }.buttonStyle(.bordered)
             .accessibilityIdentifier("frontend.chat.material")
     }
     private var confirmationButton: some View {
-        Button("查看变化并确认") { sheet = .confirmation }.buttonStyle(.borderedProminent)
+        Button(copy("查看变化并确认", "Review changes and confirm")) { sheet = .confirmation }.buttonStyle(.borderedProminent)
             .accessibilityIdentifier("frontend.chat.plan.review")
     }
     private var composer: some View {

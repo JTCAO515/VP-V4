@@ -2,6 +2,10 @@ import SwiftUI
 
 /// Three independent floating controls, not an opaque navigation-bar strip.
 struct NativeMuseChatHeader: View {
+    @Environment(\.locale) private var locale
+    private func copy(_ zh: String, _ en: String) -> String {
+        locale.language.languageCode?.identifier == "zh" ? zh : en
+    }
     var avatarImage: Image?
     var avatarScale: CGFloat
     /// Fraction of avatarSide, supplied by the original-image owner.
@@ -17,7 +21,7 @@ struct NativeMuseChatHeader: View {
                     Capsule().frame(width: 20, height: 1.7)
                     Capsule().frame(width: 20, height: 1.7)
                 }.frame(width: 46, height: 46)
-            }.floatingControl().accessibilityLabel("打开本地对话侧栏")
+            }.floatingControl().accessibilityLabel(copy("打开本地对话侧栏", "Open local conversation sidebar"))
                 .accessibilityIdentifier("muse.chat.sidebar.open")
             Spacer(minLength: 16)
             Button(action: assistant) {
@@ -40,11 +44,11 @@ struct NativeMuseChatHeader: View {
                         .background(.ultraThinMaterial, in: Capsule())
                 }
             }.buttonStyle(.plain)
-                .accessibilityLabel(avatarImage == nil ? "VisePanda 助手详情，原头像待接入" : "VisePanda 助手详情")
+                .accessibilityLabel(avatarImage == nil ? copy("VisePanda 助手详情，原头像待接入", "VisePanda assistant details, original avatar not yet available") : copy("VisePanda 助手详情", "VisePanda assistant details"))
                 .accessibilityIdentifier("muse.chat.assistant")
             Spacer(minLength: 16)
             Button(action: referral) { Image(systemName: "gift").font(.system(size: 21, weight: .regular)).frame(width: 46, height: 46) }
-                .floatingControl().accessibilityLabel("打开邀请页面")
+                .floatingControl().accessibilityLabel(copy("打开邀请页面", "Open invitation page"))
                 .accessibilityIdentifier("muse.chat.referral")
         }
         .foregroundStyle(.primary).padding(.horizontal, 18).padding(.top, 6)
@@ -60,12 +64,16 @@ private extension View {
 }
 
 struct NativeMuseChatReferralView: View {
+    @Environment(\.locale) private var locale
+    private func copy(_ zh: String, _ en: String) -> String {
+        locale.language.languageCode?.identifier == "zh" ? zh : en
+    }
     let close: () -> Void
     var body: some View {
         NavigationStack {
             Color(uiColor: .systemBackground)
-                .navigationTitle("邀请").navigationBarTitleDisplayMode(.inline)
-                .toolbar { ToolbarItem(placement: .cancellationAction) { Button("关闭", action: close) } }
+                .navigationTitle(copy("邀请", "Invite")).navigationBarTitleDisplayMode(.inline)
+                .toolbar { ToolbarItem(placement: .cancellationAction) { Button(copy("关闭", "Close"), action: close) } }
         }
     }
 }
