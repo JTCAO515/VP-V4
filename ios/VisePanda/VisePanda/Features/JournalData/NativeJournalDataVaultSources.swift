@@ -11,6 +11,7 @@ import Security
     private let current: () -> NativeCommunitySafetyActor?
     private let guide: (NativeDataScope) throws -> NativePlaceGuidePending?
     private let ask: () throws -> NativePendingAsk?
+    private let canonicalAsk: () throws -> NativeCanonicalPlaceAskDurable?
     private let askAbsent: (NativeCommunitySafetyActor) throws -> Bool
     private let companions: [NativeJournalDataSourceID: Companion]
     private let evidence: (NativeJournalDataSourceID, NativeCommunitySafetyActor) -> NativeJournalDataCompletion?
@@ -18,10 +19,11 @@ import Security
     init(vault: any NativeCredentialVault, current: @escaping () -> NativeCommunitySafetyActor?,
          guide: @escaping (NativeDataScope) throws -> NativePlaceGuidePending?,
          ask: @escaping () throws -> NativePendingAsk?,
+         canonicalAsk: @escaping () throws -> NativeCanonicalPlaceAskDurable? = { nil },
          askAbsent: @escaping (NativeCommunitySafetyActor) throws -> Bool,
          companions: [NativeJournalDataSourceID: Companion],
          evidence: @escaping (NativeJournalDataSourceID, NativeCommunitySafetyActor) -> NativeJournalDataCompletion?) {
-        self.vault = vault; self.current = current; self.guide = guide; self.ask = ask
+        self.vault = vault; self.current = current; self.guide = guide; self.ask = ask; self.canonicalAsk = canonicalAsk
         self.askAbsent = askAbsent; self.companions = companions; self.evidence = evidence
     }
     func completion(source: NativeJournalDataSourceID, actor: NativeCommunitySafetyActor) -> NativeJournalDataCompletion? {
@@ -218,16 +220,22 @@ import Security
             }
         }
         if selected == nil || selected == .ask { do {
-            try checked(actor); let value = try ask()
+            try checked(actor); let value = try ask(); let canonical = try canonicalAsk()
+            guard value == nil || canonical == nil else { throw NativeDataError.invalidResponse }
             let encoder = JSONEncoder(); encoder.outputFormatting = [.sortedKeys]
             let identity = try value.map { try encoder.encode($0) }
-            guard try value == ask() else { throw NativeDataError.staleSessionResponse }
+            guard try value == ask(), try canonical == canonicalAsk() else { throw NativeDataError.staleSessionResponse }
             try checked(actor)
             if let value, value.valid, value.mobileEpoch == scope.mobileEpoch, let identity {
                 var immutable = value; immutable.acknowledged = false
                 rows.append(.init(record: record(.ask, operation: value.request.idempotencyKey, action: value.mode.rawValue,
                     boundary: "credential_envelope_and_user_or_licensed_input_excluded"), originalIdentity: identity, operationIdentity: try encoder.encode(immutable)))
-            } else if value == nil { rows.append(empty(.ask, state: .absent)) }
+            } else if let canonical, canonical.matches(scope) {
+                let identity = try encoder.encode(canonical)
+                rows.append(.init(record: record(.ask, operation: try NativeCanonicalPlaceAskPending.restoring(body: canonical.body, scope: scope).operationID,
+                    action: "canonical-place-ask/1", boundary: "credential_envelope_and_user_or_licensed_input_excluded"),
+                    originalIdentity: identity, operationIdentity: identity))
+            } else if value == nil && canonical == nil { rows.append(empty(.ask, state: .absent)) }
             else { throw NativeDataError.invalidResponse }
         } catch { rows.append(empty(.ask, state: .unavailable)) } }
         for id in [NativeJournalDataSourceID.tripSupport, .deviceDelete, .readinessSave, .linkedTripDelete, .memoryDelete, .tripDelete, .assistantEventsCursor] {

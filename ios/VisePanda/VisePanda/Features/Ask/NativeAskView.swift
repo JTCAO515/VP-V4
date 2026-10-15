@@ -34,6 +34,7 @@ struct NativeAskView: View {
                         Button("ask.task.stop_previous") { Task { await store.stopPreviousRequest(using: session) } }
                             .disabled(store.busy).accessibilityIdentifier("native-ask.stop-previous")
                     }
+                    canonicalPlaceAskControls
                     if store.notice != nil { Text("ask.local.retry_hint").font(.footnote).accessibilityIdentifier("native-ask.error") }
                     Text("ask.local.history").font(.title2.bold())
                     TimelineView(.periodic(from: .now, by: 1)) { _ in
@@ -143,6 +144,9 @@ struct NativeAskView: View {
                 do { try await Task.sleep(for: .seconds(delay)) } catch { return }
             } while !Task.isCancelled && visible && session.dataScope == initial
         }
+        .onChange(of: visible, initial: true) { _, value in store.canonicalSceneChanged(active: value) }
+        .onChange(of: settings.selectedLocale) { _, _ in store.invalidateCanonicalAdoption() }
+        .onDisappear { store.canonicalSceneChanged(active: false) }
         .onChange(of: session.turnDataErasure?.id) { _, _ in
             guard let erased = session.turnDataErasure,
                   (try? session.communitySafetyActor()) == erased.actor else { return }
@@ -372,6 +376,83 @@ struct NativeAskView: View {
         }
     }
 
+    @ViewBuilder private var canonicalPlaceAskControls: some View {
+        let chinese = settings.selectedLocale == .zh
+        if let source = session.exploreAskHandoff, source.scope == session.dataScope {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(chinese ? "选中地点：\(source.name)" : "Selected place: \(source.name)")
+                if let capture = session.canonicalPlaceAskNavigation {
+                    TimelineView(.periodic(from: .now, by: 1)) { _ in
+                        let current = capture.current(scope: session.dataScope, locale: chinese ? "zh" : "en")
+                        Button(chinese ? "采用这个地点引用" : "Adopt this place reference") {
+                            guard visible else { return }
+                            store.adoptCanonicalPlaceAsk(navigationID: source.id, locale: chinese ? "zh" : "en", session: session)
+                        }.disabled(!visible || !current || store.busy || store.pending != nil || session.canonicalPlaceAskRecoveryRequired || store.mode != .serviceTask)
+                            .accessibilityIdentifier("canonical-place.adopt")
+                        if !current { Text(chinese ? "来源已过期或语言已变化。请回同一地点重新读取；原稿保留。" : "Source expired or language changed. Reread the same place; the draft is preserved.").font(.caption) }
+                    }
+                }
+                if store.mode != .serviceTask {
+                    Text(chinese ? "当前提问类型不支持这个地点引用。不会自动切换模式、创建目标或任务。" : "This question type does not support the place reference. Mode, Goal and Task are not changed automatically.").font(.caption)
+                }
+                if let capture = session.canonicalPlaceAskNavigation {
+                    Button(chinese ? "重读同一准确地点" : "Reread this exact place") { Task { await recheckCanonicalPlaceAsk(capture) } }
+                        .disabled(store.busy || !visible || session.canonicalPlaceAskRecoveryRequired)
+                }
+                Button(chinese ? "放弃这次导航引用" : "Discard navigation reference") { session.clearExploreAsk() }
+            }
+        }
+        if let capture = session.canonicalPlaceAskSelection {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(chinese ? "本次采用地点：\(capture.title)" : "Place for this question: \(capture.title)")
+                Text(chinese ? "仅带入第一方引用；不授予事实、供应商或知识使用资格。输入问题后由你明确发送。" : "First-party reference only, with no fact, provider or knowledge eligibility. Enter a question and send explicitly.").font(.caption)
+                Button(chinese ? "重读同一准确地点" : "Reread this exact place") { Task { await recheckCanonicalPlaceAsk(capture) } }
+                    .disabled(store.busy || !visible || session.canonicalPlaceAskRecoveryRequired)
+                Button(chinese ? "移除本次地点引用" : "Remove place reference") { session.discardCanonicalPlaceAskSelection(); store.invalidateCanonicalAdoption() }
+                    .disabled(store.busy || session.canonicalPlaceAskRecoveryRequired)
+            }
+        }
+        if let notice = store.notice, notice.hasPrefix("CANONICAL_PLACE_") {
+            Text(canonicalPlaceAskMessage(notice, chinese: chinese)).font(.caption)
+                .accessibilityIdentifier("canonical-place.notice")
+        }
+        if session.canonicalPlaceAskRecoveryRequired {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(chinese ? "原地点提问尚待核对。原请求已保留，不能新发或盲重试。" : "The original place question needs checking. Its request is retained; no new submission or blind retry is allowed.").font(.caption)
+                Button(chinese ? "只读取原提问回执" : "Read original receipt only") { Task { await store.recoverCanonicalPlaceAsk(using: session) } }
+                    .disabled(store.busy || !visible).accessibilityIdentifier("canonical-place.recover")
+            }
+        }
+    }
+
+    private func canonicalPlaceAskMessage(_ code: String, chinese: Bool) -> String {
+        switch code {
+        case "CANONICAL_PLACE_UNSUPPORTED", "CANONICAL_PLACE_original_submission_unsupported", "CANONICAL_PLACE_incompatible_task", "CANONICAL_PLACE_incompatible_goal":
+            return chinese ? "当前任务不支持这个地点提问。不会改换模式、新建目标或另建任务；原稿保留。" : "This Task does not support the place question. Mode, Goal and Task stay unchanged; the draft is preserved."
+        case "CANONICAL_PLACE_NOT_SUBMITTED":
+            return chinese ? "原操作读回暂未发现提交；这不授予重新提交许可。保留原请求，可继续读取原回执。" : "The original operation read found no submission. This does not authorize a resubmission. The original request is retained for receipt recovery."
+        case "CANONICAL_PLACE_RECOVERY_REQUIRED":
+            return chinese ? "原操作结果未知。只读原请求的回执，不新发、不重跑模型；原稿保留。" : "The original outcome is unknown. Read its receipt only; no new submission or model retry. The draft is preserved."
+        case "CANONICAL_PLACE_policy_denied", "CANONICAL_PLACE_unauthorized":
+            return chinese ? "当前身份或使用许可待重新核对。不会重新授权供应商，也不改原操作。" : "Identity or consent needs checking. No supplier permission is granted and the original operation is unchanged."
+        case "CANONICAL_PLACE_selection_changed", "CANONICAL_PLACE_selection_ambiguous", "CANONICAL_PLACE_source_unavailable", "CANONICAL_PLACE_RECHECK_REQUIRED":
+            return chinese ? "地点、映射、来源、语言或当前目标需重读。请明确重读同一地点并重新采用；不会猜测城市、替换地点或改写原稿。" : "Place, mapping, source, language or current goal needs checking. Reread and adopt the exact place; no city guess, replacement place or draft rewrite."
+        default:
+            return chinese ? "地点提问暂不可用。请核对原请求与来源；未确认原结果前不会重复发送。" : "Place Ask is unavailable. Check the original request and source; no duplicate send before the original result is resolved."
+        }
+    }
+
+    private func recheckCanonicalPlaceAsk(_ capture: NativeCanonicalPlaceAskCapture) async {
+        let locale = settings.selectedLocale == .zh ? "zh" : "en"
+        guard visible, !store.busy else { return }
+        do {
+            let refreshed = try await session.recheckCanonicalPlaceAsk(capture, locale: locale)
+            guard visible, locale == (settings.selectedLocale == .zh ? "zh" : "en") else { return }
+            store.invalidateCanonicalAdoption()
+            session.prepareCanonicalPlaceAsk(refreshed) // Staged again; never auto-adopt or send.
+        } catch { store.canonicalRecheckFailed() }
+    }
+
     private var composer: some View {
         VStack(spacing: 8) {
             if store.mode.usesTask {
@@ -380,7 +461,7 @@ struct NativeAskView: View {
                         .accessibilityIdentifier("native-ask.intent")
                     Spacer()
                     Button("ask.task.new") { store.startNewQuestion() }
-                        .disabled(!store.canStartNew)
+                        .disabled(!store.canStartNew || session.canonicalPlaceAskRecoveryRequired)
                         .accessibilityIdentifier("native-ask.new-question")
                 }
             }
@@ -403,9 +484,9 @@ struct NativeAskView: View {
                 Spacer()
                 Button(LocalizedStringKey(store.pending == nil ? "ask.send" : "ask.local.retry_original")) {
                     composing = false
-                    Task { await store.send(locale: settings.selectedLocale == .zh ? "zh" : settings.selectedLocale.rawValue, using: session) }
+                    guard visible else { return }; Task { await store.send(locale: settings.selectedLocale == .zh ? "zh" : settings.selectedLocale.rawValue, using: session) }
                 }
-                .buttonStyle(.borderedProminent).disabled(!store.canSend)
+                .buttonStyle(.borderedProminent).disabled(!store.canSend || session.canonicalPlaceAskRecoveryRequired || session.canonicalPlaceAskNavigation != nil)
                 .accessibilityIdentifier("native-ask.send")
             }
             if NativeRelativeOutline.make(from: store.draft, chinese: settings.selectedLocale == .zh) != nil {
