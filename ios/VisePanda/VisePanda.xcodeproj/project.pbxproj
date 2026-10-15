@@ -16,6 +16,10 @@
 		A20600000000000000000013 /* NativeCanonicalPlaceAskTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20600000000000000000003; };
 		A20600000000000000000011 /* NativeCanonicalPlaceAskCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20600000000000000000001; };
 		A20600000000000000000012 /* NativeCanonicalPlaceAskPending.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20600000000000000000002; };
+        F10C15000000000000000401 = {isa = PBXBuildFile; fileRef = F10C15000000000000000301; };
+        F10C15000000000000000203 /* NativeLocalVoiceSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10C15000000000000000103; };
+        F10C15000000000000000202 /* NativeLocalVoiceCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10C15000000000000000102; };
+        F10C15000000000000000201 /* NativeLocalVoiceContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10C15000000000000000101; };
         1241CFC7C5B0D7FC4D1E48BD /* NativeExperienceSampleHub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11C4956B0AA9DFB178BE5816; };
 		200000000000000000000001 /* VisePandaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000001 /* VisePandaApp.swift */; };
 		200000000000000000000002 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000002 /* AppSettings.swift */; };
@@ -518,6 +522,10 @@
 		A20600000000000000000003 /* NativeCanonicalPlaceAskTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ../../tests/contract/ios003-place-ui/canonical/NativeCanonicalPlaceAskTests.swift; sourceTree = SOURCE_ROOT; };
 		A20600000000000000000001 /* NativeCanonicalPlaceAskCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/PlacePresentation/Canonical/NativeCanonicalPlaceAskCapture.swift; sourceTree = SOURCE_ROOT; };
 		A20600000000000000000002 /* NativeCanonicalPlaceAskPending.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/PlacePresentation/Canonical/NativeCanonicalPlaceAskPending.swift; sourceTree = SOURCE_ROOT; };
+        F10C15000000000000000301 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "../../tests/contract/ios-local-voice/NativeLocalVoiceTests.swift"; sourceTree = SOURCE_ROOT; };
+        F10C15000000000000000103 /* NativeLocalVoiceSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/LocalVoice/NativeLocalVoiceSheet.swift; sourceTree = SOURCE_ROOT; };
+        F10C15000000000000000102 /* NativeLocalVoiceCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/LocalVoice/NativeLocalVoiceCapture.swift; sourceTree = SOURCE_ROOT; };
+        F10C15000000000000000101 /* NativeLocalVoiceContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/LocalVoice/NativeLocalVoiceContext.swift; sourceTree = SOURCE_ROOT; };
         11C4956B0AA9DFB178BE5816 /* NativeExperienceSampleHub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/NativeExperienceSamples/NativeExperienceSampleHub.swift; sourceTree = SOURCE_ROOT; };
 		300000000000000000000001 /* VisePandaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePandaApp.swift; sourceTree = "<group>"; };
 		300000000000000000000002 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
@@ -1025,6 +1033,9 @@
                 A20600000000000000000003,
                 A20600000000000000000001,
                 A20600000000000000000002,
+			F10C15000000000000000301,
+F10C15000000000000000101, F10C15000000000000000102, F10C15000000000000000103,
+
                 F435C61FA87AE46F7E1A1F03,
                 E5C56C774FBFC1973FE21F1E,
                 861DB024CEB0412EB5ADA936,
@@ -1239,6 +1250,9 @@
 			files = (
                 A20600000000000000000011 /* NativeCanonicalPlaceAskCapture.swift in Sources */,
                 A20600000000000000000012 /* NativeCanonicalPlaceAskPending.swift in Sources */,
+                F10C15000000000000000201,
+                F10C15000000000000000202,
+                F10C15000000000000000203,
                 F956A62603650C2D6438F1B7 /* NativeMuseChatSidebarView.swift in Sources */,
                 899BD3051970900EBE18021D /* NativeMuseChatComposerView.swift in Sources */,
                 684D8BA1F56881414D1ED1B9 /* NativeMuseChatComposerPolicy.swift in Sources */,
@@ -1358,7 +1372,7 @@ FAAB3A946EA0F180D0C047FA, 39679E2115C244EBC0A2E7B1, 2E678B6E23FFBB6AC16AF3E3, 29
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		800000000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A20600000000000000000013, B203200000000000000000008, B19720000000000000000000A,
+		800000000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A20600000000000000000013, F10C15000000000000000401, B203200000000000000000008, B19720000000000000000000A,
 				0BD4939F55027574D03C6C07 /* NativeAssistantEventsTests.swift in Sources */,
 AB9F95F58FBF649DAE1B75FF /* NativeJournalDataTests.swift in Sources */,
 210A5218D6BDE6B5029405EA,
