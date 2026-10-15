@@ -211,3 +211,144 @@ PASS: actual phrase/presentation readiness and actor/consent/current-result nega
 PASS: actual SwiftUI card, DEBUG sample and shared-state expression wrapper typecheck against installed iOS Simulator SDK (no Simulator boot or app build)
 PASS: full changed view syntax parse; runtime UI/provider/device remains UNRUN
 ```
+
+## Main P1 review correction: fresh read qualification
+
+Main identified two missing sequence cases in the initial ba42c895 implementation: a pending recovery phrase could survive a later unknown/null read, and a completed recovered phrase could be reinserted after the journal was cleared even when current history omitted that Turn.
+
+The Store now removes its previous transient recovered phrase before each refresh. Original GET reconciliation also hides that original Turn before reading. Only a qualified response in this read, or a current qualified history row after completion, may publish it again. Unknown/null retains durable identity but never republishes old private text. A completed original outside the recent window remains visible for its successful recovery read; a later history-only refresh that lacks the Turn hides it. No additional exact-read authority, route, wrapper or cache is introduced.
+
+New real sequence cases: pending private phrase -> unknown/null hides original and retains the exact journal; translated terminal -> journal cleared -> next history missing does not resurrect the original/card eligibility. All original 37 tests plus these two pass: 39 tests in two suites. This Store-only change is compiled/executed in Swift 6; unchanged View SDK evidence is reused. Main still owns full App/factory/transport/UI and actual-provider acceptance.
+
+Command: `python3 tests/contract/ios005-expression-ui/verify_recovery.py`
+
+- Current `ios/VisePanda/VisePanda/Features/Translation/NativeTranslationStore.swift` SHA-256: `78ac9cdf2ad263bece2a6df568d34174f86e48610f7a83b449da4683677ebd99`
+- Current `ios/VisePanda/VisePandaTests/NativeTranslationRecoveryStoreTests.swift` SHA-256: `ea32698a4ca8e848e9b0e889209b013322bb3746e62f57d24d87b8af8fdd4f9f`
+
+Output SHA-256: `b95bf6dc632f9c072c6e485933b32c197b7dfa851cb77a32164b026b6c632af5`
+
+```text
+Building for debugging...
+[Planning deferred tasks]
+[27 / 50]
+[28 / 51] VisePanda
+[38 / 94]
+[43 / 94]
+[47 / 94]
+[48 / 94]
+[52 / 94]
+[54 / 94]
+[57 / 94]
+[61 / 94]
+[63 / 94]
+[64 / 94]
+[71 / 94] VisePanda
+[79 / 94] VisePanda
+[84 / 95] VisePandaTests-product
+[85 / 101]
+[90 / 101] VisePandaTests-product
+[95 / 101] VisePandaTests-product
+[97 / 101] VisePandaTests-product
+Build complete! (8.12秒)
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite NativeTranslationTests started.
+◇ Suite NativeTranslationRecoveryStoreTests started.
+◇ Test scopeChangeDropsLateResponseAndPendingText() started.
+◇ Test savedHistoryClearDuringReadCannotPublishLateContent() started.
+◇ Test selectedSubmissionReconcilesSameIdentityAndRejectsOtherTripOrEditedText() started.
+◇ Test tripReaderDropsLateActorChangeAndExplicitClear() started.
+◇ Test cardRequiresBothTranslationsAndPreservesOriginal() started.
+◇ Test queryChangeAndLateOldReplyCannotOverwriteNewQueryPage() started.
+◇ Test tripOpaqueIDsAndNullFieldsHaveExactWire() started.
+◇ Test savedHistoryDropsLateScopeChangeAndRevokedFinalPolicy() started.
+◇ Test tripSelectionBindsOwnerVersionOpaquePathAndExactBytes() started.
+◇ Test selectedSubmissionDriftIsClosedAndNoConsentCannotPost() started.
+◇ Test searchPagesBindQueryAndExactReadKeepsOriginalPermissionWire() started.
+◇ Test withdrawalHidesCachedPhraseEvenIfNetworkFails() started.
+◇ Test queryEchoMismatchAndCanonicalUnicodeDifferenceFailClosed() started.
+◇ Test ambiguousSendReadsSameIdentityAndRejectsEditedInput() started.
+◇ Test searchPermissionWithdrawalAndExpiredReferenceNeverExposeRows() started.
+◇ Test savedHistoryAcceptsTwentyMaximumCJKPhrasesAndEscapedWire() started.
+◇ Test mismatchedReceiptAnd503RetainOriginalAndNeverBecomeNewSendEligibility() started.
+◇ Test policyNoticeAndWithdrawalHidePrivateTextButKeepDurableIdentity() started.
+◇ Test saveOrPhysicalReadbackFailurePreventsPOST(afterWrite:) started.
+◇ Test savedHistoryUsesMonotonicLifetimeIncludingRequestTime(delay:) started.
+◇ Test policyChangeDuringOriginalGETCannotExposeOrSettle(change:) started.
+◇ Test pendingPrivatePhraseThenUnknownNullHidesOriginalAndKeepsIdentity() started.
+◇ Test lostACKBackgroundAndRecreatedStoreReconcileSameIdentityWithoutExtraPOST() started.
+◇ Test lateActorChangeBeforeReconciliationCannotPublishOrComplete() started.
+◇ Test completedRecoveryThenHistoryMissingCannotResurrectPrivatePhrase() started.
+◇ Test utf8OriginalHashDoesNotNormalizeAndTripFieldsNeverPersist() started.
+◇ Test cancellationACKAndNullTerminalCannotProveCompletion() started.
+◇ Test noConsentNeverSubmits() started.
+◇ Test nullProjectionNeverSettlesEvenForTerminalState(state:) started.
+◇ Test savedHistoryPagesReplaceRowsAndOlderTranslationUsesFreshExactGET() started.
+◇ Test staleAbandonConfirmationCannotDiscardAnotherIdentity() started.
+◇ Test savedHistoryCannotOpenChangedExactContentOrPublishMalformedCursor() started.
+◇ Test actorEndpointAndEpochChangesNeverReadOriginalPrivatePhrase() started.
+◇ Test case passing 1 argument afterWrite → true to saveOrPhysicalReadbackFailurePreventsPOST(afterWrite:) started.
+◇ Test case passing 1 argument change → "notice" to policyChangeDuringOriginalGETCannotExposeOrSettle(change:) started.
+◇ Test case passing 1 argument delay → 21.0 to savedHistoryUsesMonotonicLifetimeIncludingRequestTime(delay:) started.
+◇ Test case passing 1 argument change → "consent" to policyChangeDuringOriginalGETCannotExposeOrSettle(change:) started.
+◇ Test case passing 1 argument delay → 20.0 to savedHistoryUsesMonotonicLifetimeIncludingRequestTime(delay:) started.
+◇ Test case passing 1 argument afterWrite → false to saveOrPhysicalReadbackFailurePreventsPOST(afterWrite:) started.
+◇ Test case passing 1 argument state → "cancelled" to nullProjectionNeverSettlesEvenForTerminalState(state:) started.
+◇ Test case passing 1 argument change → "policy" to policyChangeDuringOriginalGETCannotExposeOrSettle(change:) started.
+◇ Test case passing 1 argument state → "needs_review" to nullProjectionNeverSettlesEvenForTerminalState(state:) started.
+◇ Test replacedPhysicalRecordCannotBeClearedByLateOriginalTerminal() started.
+◇ Test exactTerminalGETRestoresOutsideHistoryWindowAndSettlesOnlyOriginalRecord() started.
+◇ Test lateCallbackAfterBackgroundCannotPublishOrComplete() started.
+◇ Test explicitLocalAbandonDoesNotCancelOrGenerate() started.
+◇ Test case passing 1 argument state → "unavailable" to nullProjectionNeverSettlesEvenForTerminalState(state:) started.
+◇ Test missingPhysicalRecordDoesNotProvePriorRequestNeverExisted() started.
+◇ Test case passing 1 argument state → "pending" to nullProjectionNeverSettlesEvenForTerminalState(state:) started.
+◇ Test case passing 1 argument delay → 19.0 to savedHistoryUsesMonotonicLifetimeIncludingRequestTime(delay:) started.
+◇ Test case passing 1 argument state → "unknown" to nullProjectionNeverSettlesEvenForTerminalState(state:) started.
+◇ Test latestHistoryCannotReplaceExactRecoveryProof(terminal:) started.
+◇ Test case passing 1 argument terminal → false to latestHistoryCannotReplaceExactRecoveryProof(terminal:) started.
+◇ Test case passing 1 argument terminal → true to latestHistoryCannotReplaceExactRecoveryProof(terminal:) started.
+✔ Test tripReaderDropsLateActorChangeAndExplicitClear() passed after 0.001 seconds.
+✔ Test queryChangeAndLateOldReplyCannotOverwriteNewQueryPage() passed after 0.001 seconds.
+✔ Test savedHistoryDropsLateScopeChangeAndRevokedFinalPolicy() passed after 0.002 seconds.
+✔ Test savedHistoryClearDuringReadCannotPublishLateContent() passed after 0.002 seconds.
+✔ Test scopeChangeDropsLateResponseAndPendingText() passed after 0.002 seconds.
+✔ Test selectedSubmissionDriftIsClosedAndNoConsentCannotPost() passed after 0.002 seconds.
+✔ Test searchPagesBindQueryAndExactReadKeepsOriginalPermissionWire() passed after 0.003 seconds.
+✔ Test withdrawalHidesCachedPhraseEvenIfNetworkFails() passed after 0.003 seconds.
+✔ Test tripSelectionBindsOwnerVersionOpaquePathAndExactBytes() passed after 0.004 seconds.
+✔ Test ambiguousSendReadsSameIdentityAndRejectsEditedInput() passed after 0.004 seconds.
+✔ Test searchPermissionWithdrawalAndExpiredReferenceNeverExposeRows() passed after 0.004 seconds.
+✔ Test queryEchoMismatchAndCanonicalUnicodeDifferenceFailClosed() passed after 0.004 seconds.
+✔ Test selectedSubmissionReconcilesSameIdentityAndRejectsOtherTripOrEditedText() passed after 0.004 seconds.
+✔ Test pendingPrivatePhraseThenUnknownNullHidesOriginalAndKeepsIdentity() passed after 0.011 seconds.
+✔ Test lostACKBackgroundAndRecreatedStoreReconcileSameIdentityWithoutExtraPOST() passed after 0.012 seconds.
+✔ Test lateActorChangeBeforeReconciliationCannotPublishOrComplete() passed after 0.013 seconds.
+✔ Test mismatchedReceiptAnd503RetainOriginalAndNeverBecomeNewSendEligibility() passed after 0.015 seconds.
+✔ Test savedHistoryAcceptsTwentyMaximumCJKPhrasesAndEscapedWire() passed after 0.047 seconds.
+✔ Test utf8OriginalHashDoesNotNormalizeAndTripFieldsNeverPersist() passed after 0.048 seconds.
+✔ Test completedRecoveryThenHistoryMissingCannotResurrectPrivatePhrase() passed after 0.050 seconds.
+✔ Test cancellationACKAndNullTerminalCannotProveCompletion() passed after 0.052 seconds.
+✔ Test noConsentNeverSubmits() passed after 0.056 seconds.
+✔ Test savedHistoryPagesReplaceRowsAndOlderTranslationUsesFreshExactGET() passed after 0.056 seconds.
+✔ Test saveOrPhysicalReadbackFailurePreventsPOST(afterWrite:) with 2 test cases passed after 0.057 seconds.
+✔ Test policyChangeDuringOriginalGETCannotExposeOrSettle(change:) with 3 test cases passed after 0.059 seconds.
+✔ Test staleAbandonConfirmationCannotDiscardAnotherIdentity() passed after 0.062 seconds.
+✔ Test replacedPhysicalRecordCannotBeClearedByLateOriginalTerminal() passed after 0.063 seconds.
+✔ Test actorEndpointAndEpochChangesNeverReadOriginalPrivatePhrase() passed after 0.064 seconds.
+✔ Test lateCallbackAfterBackgroundCannotPublishOrComplete() passed after 0.066 seconds.
+✔ Test missingPhysicalRecordDoesNotProvePriorRequestNeverExisted() passed after 0.069 seconds.
+✔ Test savedHistoryUsesMonotonicLifetimeIncludingRequestTime(delay:) with 3 test cases passed after 0.069 seconds.
+✔ Test nullProjectionNeverSettlesEvenForTerminalState(state:) with 5 test cases passed after 0.070 seconds.
+✔ Test exactTerminalGETRestoresOutsideHistoryWindowAndSettlesOnlyOriginalRecord() passed after 0.071 seconds.
+✔ Test savedHistoryCannotOpenChangedExactContentOrPublishMalformedCursor() passed after 0.072 seconds.
+✔ Test explicitLocalAbandonDoesNotCancelOrGenerate() passed after 0.072 seconds.
+✔ Test policyNoticeAndWithdrawalHidePrivateTextButKeepDurableIdentity() passed after 0.073 seconds.
+✔ Test latestHistoryCannotReplaceExactRecoveryProof(terminal:) with 2 test cases passed after 0.076 seconds.
+✔ Suite NativeTranslationRecoveryStoreTests passed after 0.077 seconds.
+✔ Test tripOpaqueIDsAndNullFieldsHaveExactWire() passed after 0.077 seconds.
+✔ Test cardRequiresBothTranslationsAndPreservesOriginal() passed after 0.077 seconds.
+✔ Suite NativeTranslationTests passed after 0.077 seconds.
+✔ Test run with 39 tests in 2 suites passed after 0.077 seconds.
+```
