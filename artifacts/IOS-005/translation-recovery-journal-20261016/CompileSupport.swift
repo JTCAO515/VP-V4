@@ -14,4 +14,3 @@ protocol NativeCredentialVault {
     func read(service: String, owner: String) -> (OSStatus, Data?)
     func remove(service: String, owner: String) -> OSStatus
 }
-

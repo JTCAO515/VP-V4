@@ -5,10 +5,10 @@ Building for debugging...
 [10 / 14] VisePanda
 [14 / 18] VisePandaTests-product
 error: SwiftCompile normal arm64 failed with a nonzero exit code. Command line:     cd /Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios005-translation-recovery-journal-20261016/artifacts/IOS-005/translation-recovery-journal-20261016
-    
+
 /Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios005-translation-recovery-journal-20261016/artifacts/IOS-005/translation-recovery-journal-20261016/Harness/Tests/VisePandaTests/NativeTranslationRecoveryJournalTests.swift:5:63: error: main actor-isolated initializer 'init(invocation:)' has different actor isolation from nonisolated overridden declaration
   3 | @testable import VisePanda
-  4 | 
+  4 |
   5 | final class NativeTranslationRecoveryJournalTests: XCTestCase {
     |                                                               `- error: main actor-isolated initializer 'init(invocation:)' has different actor isolation from nonisolated overridden declaration
   6 |     @MainActor private final class FakeVault: NativeCredentialVault {
@@ -19,12 +19,12 @@ error: SwiftCompile normal arm64 failed with a nonzero exit code. Command line: 
 110 |  */
 111 | - (instancetype)initWithInvocation:(nullable NSInvocation *)invocation;
     | `- note: overridden declaration is here
-112 | 
+112 |
 113 | /*!
 
 /Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios005-translation-recovery-journal-20261016/artifacts/IOS-005/translation-recovery-journal-20261016/Harness/Tests/VisePandaTests/NativeTranslationRecoveryJournalTests.swift:5:63: error: main actor-isolated initializer 'init(selector:)' has different actor isolation from nonisolated overridden declaration
   3 | @testable import VisePanda
-  4 | 
+  4 |
   5 | final class NativeTranslationRecoveryJournalTests: XCTestCase {
     |                                                               `- error: main actor-isolated initializer 'init(selector:)' has different actor isolation from nonisolated overridden declaration
   6 |     @MainActor private final class FakeVault: NativeCredentialVault {
@@ -35,19 +35,19 @@ error: SwiftCompile normal arm64 failed with a nonzero exit code. Command line: 
 120 |  */
 121 | - (instancetype)initWithSelector:(SEL)selector;
     | `- note: overridden declaration is here
-122 | 
+122 |
 123 | /*!
 
 /Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios005-translation-recovery-journal-20261016/artifacts/IOS-005/translation-recovery-journal-20261016/Harness/Tests/VisePandaTests/NativeTranslationRecoveryJournalTests.swift:5:63: error: main actor-isolated initializer 'init()' has different actor isolation from nonisolated overridden declaration
   3 | @testable import VisePanda
-  4 | 
+  4 |
   5 | final class NativeTranslationRecoveryJournalTests: XCTestCase {
     |                                                               `- error: main actor-isolated initializer 'init()' has different actor isolation from nonisolated overridden declaration
   6 |     @MainActor private final class FakeVault: NativeCredentialVault {
   7 |         var items: [String: Data] = [:]
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/objc/NSObject.h:66:1: note: overridden declaration is here
- 64 | 
+ 64 |
  65 | + (void)initialize;
  66 | - (instancetype)init
     | `- note: overridden declaration is here
