@@ -437,7 +437,7 @@ struct NativeTranslationCard: View {
                         Text(chinese ? "译文未就绪或无效，暂无可展示的大字译文。" : "Translation is not ready or is invalid. No large translation is available.")
                             .accessibilityIdentifier("translation.card.unavailable")
                     }
-                    Toggle("中文界面 / English interface", isOn: $chinese)
+                    Toggle(chinese ? "中文界面" : "Chinese interface", isOn: $chinese)
                         .accessibilityIdentifier("translation.card.language")
                 }.frame(maxWidth: .infinity, alignment: .leading).padding(24)
             }.background(Color.vpBackground)
@@ -457,6 +457,9 @@ struct NativeTranslationCard: View {
 #if DEBUG
 /// Local fixed fixtures only. Main may mount this leaf in the existing debug navigation.
 struct NativeTranslationSampleExperienceView: View {
+    @Environment(\.locale) private var locale
+    private var chinese: Bool { locale.language.languageCode?.identifier == "zh" }
+    private func copy(_ zh: String, _ en: String) -> String { chinese ? zh : en }
     @State private var source = "en"
     @State private var state = "translated"
     @State private var card: NativeTranslationPhrase?
@@ -464,32 +467,32 @@ struct NativeTranslationSampleExperienceView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                Text("Sample · 未连接翻译服务 / Translation service not connected")
+                Text(NativeTranslationCardOrigin.sample.label(chinese: chinese))
                     .font(.headline).accessibilityIdentifier("translation.sample.notice")
-                Text("固定示例，仅体验展示与返回；不会发送文字或生成翻译。 / Fixed examples for presentation and return only. No text is sent or translated.")
+                Text(copy("固定示例，仅体验展示与返回；不会发送文字或生成翻译。", "Fixed examples for presentation and return only. No text is sent or translated."))
                     .font(.subheadline)
-                Picker("示例方向 / Sample direction", selection: $source) {
+                Picker(copy("示例方向", "Sample direction"), selection: $source) {
                     Text("English → 中文").tag("en")
                     Text("中文 → English").tag("zh")
                 }.pickerStyle(.segmented).accessibilityIdentifier("translation.sample.direction")
-                Picker("示例状态 / Sample state", selection: $state) {
-                    Text("就绪 / Ready").tag("translated")
-                    Text("等待 / Pending").tag("pending")
-                    Text("不可用 / Unavailable").tag("unavailable")
-                    Text("未知 / Unknown").tag("unknown")
+                Picker(copy("示例状态", "Sample state"), selection: $state) {
+                    Text(copy("就绪", "Ready")).tag("translated")
+                    Text(copy("等待", "Pending")).tag("pending")
+                    Text(copy("不可用", "Unavailable")).tag("unavailable")
+                    Text(copy("未知", "Unknown")).tag("unknown")
                 }.pickerStyle(.menu).accessibilityIdentifier("translation.sample.state")
-                Text("原文 / Original").font(.headline)
+                Text(copy("原文", "Original")).font(.headline)
                 Text(Self.phrase(source: source, state: state).original).font(.title3)
-                Button("打开示例大字卡 / Open sample card") {
+                Button(copy("打开示例大字卡", "Open sample card")) {
                     card = Self.phrase(source: source, state: state)
                 }.buttonStyle(.borderedProminent).accessibilityIdentifier("translation.sample.open")
-                Text("完成后返回这里，示例选择保持不变。 / Done returns here and keeps your sample selection.")
+                Text(copy("完成后返回这里，示例选择保持不变。", "Done returns here and keeps your sample selection."))
                     .font(.footnote)
             }.frame(maxWidth: .infinity, alignment: .leading).padding()
         }
-        .navigationTitle("现场表达 Sample")
+        .navigationTitle(copy("现场表达样例", "Expression sample"))
         .fullScreenCover(item: $card) { phrase in
-            NativeTranslationCard(phrase: phrase, chinese: source == "en", origin: .sample)
+            NativeTranslationCard(phrase: phrase, chinese: chinese, origin: .sample)
         }
     }
 
