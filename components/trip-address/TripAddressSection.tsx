@@ -24,7 +24,7 @@ export type TripAddressSectionProps = {
   settledEpoch: string;
   onPrepared: (proposal: PendingProposalRead) => void;
   /** Original GET-only reloadAll, with parent actor/scope CAS on its own state publications. */
-  onReadCurrent: () => Promise<unknown>;
+  onReadCurrent: (current: () => boolean) => Promise<unknown>;
   /** Blocks other writers during dispatch/unknown ACK. Handed proposals use the original parent pending gate; Confirm stays available. */
   onAddressRequestBlockChange: (blocked: boolean) => void;
   /** Confirm-only guard. The parent must leave Reject/cancel/read enabled. */
@@ -212,9 +212,8 @@ export function TripAddressSection(props: TripAddressSectionProps) {
     setBinding(null); setTripBinding(null); readingCurrentRef.current = true; setReadingCurrent(true);
     const action = ++readAction.current;
     liveProps.current.onAddressRequestBlockChange(true);
-    const read = liveProps.current.onReadCurrent;
     try {
-      await readAddressCurrent(live, read);
+      await readAddressCurrent(live, () => liveProps.current.onReadCurrent(live));
       if (live() && readAction.current === action) setBindingRefresh(n => n + 1);
     } catch { /* Keep unknown bytes unless the user explicitly abandoned. Never report applied/rejected. */ }
     finally { if (active.current && readAction.current === action) { readingCurrentRef.current = false; setReadingCurrent(false); } }
