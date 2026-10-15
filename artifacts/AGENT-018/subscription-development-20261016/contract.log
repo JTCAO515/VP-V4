@@ -1,0 +1,15 @@
+✔ closed snapshot accepts reordered JSON but rejects every unknown/missing key and wrong type/value (8.893292ms)
+✔ canonical graph is deeply immutable including all display projections (0.301584ms)
+✔ monthly policy preserves Free source and complete-task semantics without inheriting legacy 720h (0.371208ms)
+✔ all consumers fail closed for unknown catalog versions or sales enabling input (0.185875ms)
+✔ zh/en display contains no policy numbers, balances, real SKU or sales price (0.1865ms)
+✔ StoreKit local monthly auto-renewable configuration is isolated and generated reproducibly (0.355084ms)
+✔ legacy catalog/generator/outputs retain pinned base bytes (0.581583ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 79.285042
