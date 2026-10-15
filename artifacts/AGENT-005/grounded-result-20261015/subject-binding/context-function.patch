@@ -1,18 +1,12 @@
---- public.read_grounded_ai_assist_context_v1(uuid):before
-+++ public.read_grounded_ai_assist_context_v1(uuid):candidate
-@@ -1,6 +1,6 @@
+--- context-function.before.sql
++++ context-function.after.sql
+@@ -1 +1 @@
 -create function public.read_grounded_ai_assist_context_v1(p_turn_id uuid)
 +create or replace function public.read_grounded_ai_assist_context_v1(p_turn_id uuid)
- returns jsonb language plpgsql security definer set search_path='' as $$
+@@ -3 +3 @@
 -declare u uuid:=turn_private.text_owner(); g turn_private.grounded_turns%rowtype; c turn_private.text_content%rowtype;
 +declare u uuid:=turn_private.text_owner(); g turn_private.grounded_turns%rowtype; c turn_private.text_content%rowtype; qualified jsonb;
- begin
-   if not turn_private.lock_turn(p_turn_id,u,(auth.jwt()->>'session_id')::uuid) then return jsonb_build_object('kind','unavailable'); end if;
-   select * into c from turn_private.text_content where turn_id=p_turn_id and owner_id=u and hidden_at is null;
-@@ -12,6 +12,24 @@
-   -- every required claim. It is never offered as a bypass when the
-   -- resolver's own judgement was answered or partial.
-   if g.original_outcome <> 'blocked' then return jsonb_build_object('kind','not_applicable'); end if;
+@@ -14,0 +15,17 @@
 +  -- Reuse the original current owner/session/consent/source read and its
 +  -- existing Guide-marked binding guard; do not mint a subject from a name,
 +  -- a client canonical ID, or model output at this integration point.
@@ -30,8 +24,7 @@
 +      or qualified->'result'->>'placeSubjectId' is distinct from g.place_subject_id
 +      or g.place_subject_id is null then return jsonb_build_object('kind','unavailable'); end if;
 +  end if;
-   return jsonb_build_object('kind','context','turnId',c.turn_id,'city',g.city,'locale',c.locale,
+@@ -16 +33,2 @@
 -    'intent',g.intent,'inputText',c.input_text,'placeName',g.place_name);
 +    'intent',g.intent,'inputText',c.input_text,'placeName',g.place_name,
 +    'placeSubjectId',g.place_subject_id,'placeResolution',g.place_resolution);
- end $$;
