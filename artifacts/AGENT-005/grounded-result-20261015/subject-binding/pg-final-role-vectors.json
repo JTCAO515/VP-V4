@@ -1,0 +1,65 @@
+{
+  "guards": {
+    "profile_data_private.schema_v1()": true,
+    "result_data_private.infrastructure_supported_v1()": true,
+    "result_data_private.schema_supported_v1()": true,
+    "turn_data_private.schema_supported_v1()": true,
+    "turn_data_private.runtime_supported_v1()": true,
+    "conversation_data_private.schema_supported_v1()": true,
+    "export_private.profile_hooks_valid_v1()": true,
+    "turn_data_private.write_hooks_valid_v1()": true,
+    "turn_data_private.hooks_valid_v1()": true
+  },
+  "vector": [
+    {
+      "signature": "grounded_ai_assist_work_v1(jsonb)",
+      "role": "anon",
+      "execute": false
+    },
+    {
+      "signature": "grounded_ai_assist_work_v1(jsonb)",
+      "role": "authenticated",
+      "execute": true
+    },
+    {
+      "signature": "grounded_ai_assist_work_v1(jsonb)",
+      "role": "service_role",
+      "execute": false
+    },
+    {
+      "signature": "guide_place_v1(uuid,jsonb)",
+      "role": "anon",
+      "execute": false
+    },
+    {
+      "signature": "guide_place_v1(uuid,jsonb)",
+      "role": "authenticated",
+      "execute": false
+    },
+    {
+      "signature": "guide_place_v1(uuid,jsonb)",
+      "role": "service_role",
+      "execute": false
+    },
+    {
+      "signature": "read_grounded_ai_assist_context_v1(uuid)",
+      "role": "anon",
+      "execute": false
+    },
+    {
+      "signature": "read_grounded_ai_assist_context_v1(uuid)",
+      "role": "authenticated",
+      "execute": true
+    },
+    {
+      "signature": "read_grounded_ai_assist_context_v1(uuid)",
+      "role": "service_role",
+      "execute": false
+    }
+  ],
+  "noFixtureGrants": true,
+  "subjects": 2,
+  "transport": "private Unix socket",
+  "GoTrue": "UNRUN",
+  "target": "UNRUN"
+}

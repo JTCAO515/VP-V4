@@ -1,0 +1,28 @@
+{
+  "baseline": "e3343a7c087706ba75f5e3dbcc3e8c205e869f07cc3a69ab2069261b012546d3",
+  "after": "b9ae7bb1b3de8ef2291986266d0b6bde556f7b8fc6b27726e3e94eb8f12c9a18",
+  "changedFunctions": [
+    {
+      "signature": "public.grounded_ai_assist_work_v1(jsonb)",
+      "source": "338327a557d3558c039975823567200ab783d161e0dfe88448e7968cf4fe25e9",
+      "metadata": "997fee312906dd2ae5137e1e42ffc4bc"
+    },
+    {
+      "signature": "public.read_grounded_ai_assist_context_v1(uuid)",
+      "source": "5bba47c26a3bcf314c2070a46df358d2d41f25988e4dcf674b2353909876409b",
+      "metadata": "4d16ea600601a3ca350bc2a34938fb70"
+    }
+  ],
+  "metadataUnchanged": true,
+  "guards": {
+    "profile_data_private.schema_v1()": true,
+    "result_data_private.infrastructure_supported_v1()": true,
+    "result_data_private.schema_supported_v1()": true,
+    "turn_data_private.schema_supported_v1()": true,
+    "turn_data_private.runtime_supported_v1()": true,
+    "conversation_data_private.schema_supported_v1()": true,
+    "export_private.profile_hooks_valid_v1()": true,
+    "turn_data_private.write_hooks_valid_v1()": true,
+    "turn_data_private.hooks_valid_v1()": true
+  }
+}

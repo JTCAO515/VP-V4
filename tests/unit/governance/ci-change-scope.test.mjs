@@ -108,3 +108,15 @@ test('static output tests always select their build prerequisite, while native a
   assert.equal(plan.checks.build,false,files.join(','));
  }
 });
+
+test('resolved-subject source and tests select the independent PG17 lane without losing existing gates',()=>{
+ for(const file of ['lib/server/knowledge/wiki/grounded-ai-assist.ts','lib/server/knowledge/wiki/grounded-ai-assist-job.ts','lib/server/knowledge/wiki/grounded-search.ts','lib/server/jobs/wiki-search-job.ts']){
+  const plan=selectCheckPlan([file],'pull_request');assert.equal(plan.profile,'affected');
+  for(const lane of ['postgres','postgres-native','postgres-native-17','supabase-http-native','supabase-http-ops'])assert.ok(plan.dbLanes.includes(lane),file+' selects '+lane);
+ }
+ const entry=selectCheckPlan(['tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs'],'pull_request');assert.deepEqual(entry.dbLanes,['postgres-native-17']);
+ const contract=selectCheckPlan(['tests/contract/agent-grounded-result/subject-binding.test.mjs'],'pull_request');assert.deepEqual(contract.dbLanes,['postgres-native-17']);assert.equal(contract.checks.contract,true);assert.equal(contract.checks.security,true);
+ for(const file of ['lib/server/turn/native-ai-assist-http.ts','app/api/chat/grounded/ai-assist/route.ts','lib/server/model-gateway/prompt/wiki-search.ts'])assert.ok(selectCheckPlan([file],'pull_request').dbLanes.includes('postgres-native-17'),file);
+ assert.equal(selectCheckPlan(['lib/server/turn/planning-v2-model-request.ts'],'pull_request').dbLanes.includes('postgres-native-17'),false);
+ for(const [files,event]of [[['unknown-file.xyz'],'pull_request'],[['README.md'],'workflow_dispatch'],[['.github/workflows/db-integration.yml'],'pull_request'],[['supabase/migrations/new.sql'],'pull_request']])assert.deepEqual(selectCheckPlan(files,event).dbLanes,DB_LANES);
+});
