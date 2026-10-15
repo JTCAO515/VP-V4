@@ -1,0 +1,26 @@
+✔ injected verifier/readback accepts accelerated Sandbox period and immutable version snapshot (2.156625ms)
+✔ renewal and revoked current evidence bind the original family without moving period (0.216708ms)
+✔ closed wire rejects unknown versions states, types, keys and private error fields (0.237083ms)
+✔ read errors and foreign snapshots fail closed; never none or zero (0.376208ms)
+✔ unknown ACK rejects and does not call the writer twice (0.32925ms)
+✔ transport bounded at 8192 UTF8 bytes; active requires bounded server lease, no client calendar (0.303416ms)
+✔ unconfigured and localTest paths perform zero port/credential/network/write calls (1.12625ms)
+✔ both signed sources reject owner, environment, SKU, type, dates, ownership and group mismatch (3.083084ms)
+✔ readback identity/date/revocation conflicts reject; old observation cannot un-revoke (0.527709ms)
+✔ bounded strict JWS, catalog and approved binding reject before verification (0.281334ms)
+✔ signature rejection and failed or malformed current readback never yield a candidate (0.36725ms)
+✔ async catalog/binding/ports mutation cannot change the frozen policy or verifier identity (0.553875ms)
+✔ readback mutation of prior SDK payload cannot make a different requested transaction agree (0.206ms)
+✔ SDK/catalog/ports getters are rejected without executing getter code (0.335417ms)
+✔ abort before verification calls zero ports; cancel after first verify never reads Apple (0.817125ms)
+✔ late verifier completion after abort never mints or starts readback (2.2595ms)
+✔ total deadline bounds stalled readback and ignores late completion without candidate (22.494291ms)
+✔ aborting a returned evidence lease refuses persistence before any SQL write (1.472375ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 138.344333

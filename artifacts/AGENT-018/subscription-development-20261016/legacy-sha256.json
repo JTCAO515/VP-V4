@@ -1,0 +1,14 @@
+{
+  "base": "61caa52a03cb59ff0075b8cf59c63994c30821e1",
+  "files": {
+    "lib/server/entitlements/journey-pass-catalog.ts": "8e199f06002b371c4309a422b72c25ce3c668e109939ed4189b28192a41b88e8",
+    "lib/server/entitlements/journey-pass-development.ts": "5adcb6e43739cc21a20dadd487f63b5c11f421bd1dcd79e17de8bba391c7c35c",
+    "docs/commercial/journey-pass-development-catalog.md": "f686f909186bae3912fa634e68936ed3e41eab95b705ecbe49f7f29978719b44",
+    "docs/commercial/journey-pass-development/alternative.storekit": "4fd0ea3f1ef13c237cecac50ed3242829f7f2030fbc7b6c2b9229678af9bea5c",
+    "docs/commercial/journey-pass-development/catalog.json": "2c8b9a39b95cc989597c72563d3bd89232b4449a3d640a86bed6d982a5f51826",
+    "docs/commercial/journey-pass-development/presentation.en.json": "3a3a2f87962f2cb03ab745d6a80d889508c5dc9e2fd79e8cee567021507e43ce",
+    "docs/commercial/journey-pass-development/presentation.zh.json": "75c0e332922e72cdd5ee29b00c71e4e249da43704d08f443b1989addafeb6afd",
+    "docs/commercial/journey-pass-development/reference.storekit": "ae982ccc13667afe0bcd0c66d306b3a8d8f4bdf18aa8a6b7318b192ec4ab353a",
+    "lib/server/entitlements/generate-development-config.mjs": "c753ce07e41eaf852472a8c796825ee8622c22fcd30a7635f7e13575218fdf2a"
+  }
+}

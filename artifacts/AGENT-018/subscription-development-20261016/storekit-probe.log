@@ -1,0 +1,29 @@
+<module-includes>:1:9: note: in file included from <module-includes>:1:
+1 | #import "Headers/StoreKitTest.h"
+  |         `- note: in file included from <module-includes>:1:
+2 | 
+
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks/StoreKitTest.framework/Headers/StoreKitTest.h:14:9: note: in file included from /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks/StoreKitTest.framework/Headers/StoreKitTest.h:14:
+12 | #import <StoreKitTest/SKTestError.h>
+13 | #import <StoreKitTest/SKTestSession.h>
+14 | #import <StoreKitTest/SKTestTransaction.h>
+   |         `- note: in file included from /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks/StoreKitTest.framework/Headers/StoreKitTest.h:14:
+15 | 
+16 | 
+
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks/StoreKitTest.framework/Headers/SKTestTransaction.h:34:32: warning: 'SKPaymentTransactionState' is deprecated: first deprecated in macOS 15.0 - Use PurchaseResult from Product.purchase(confirmIn:options:).
+32 | @property(nonatomic, readonly) NSDate *purchaseDate;
+33 | 
+34 | @property(nonatomic, readonly) SKPaymentTransactionState state;
+   |                                `- warning: 'SKPaymentTransactionState' is deprecated: first deprecated in macOS 15.0 - Use PurchaseResult from Product.purchase(confirmIn:options:).
+35 | 
+36 | @property(nonatomic, readonly) BOOL pendingPriceIncreaseConsent API_AVAILABLE(ios(15.4), macos(12.3), tvos(15.4), watchos(8.5), visionos(1.0)) NS_SWIFT_NAME(isPendingPriceIncreaseConsent);
+
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/StoreKit.framework/Headers/SKPaymentTransaction.h:14:28: note: 'SKPaymentTransactionState' has been explicitly marked deprecated here
+12 | @class SKPayment;
+13 | 
+14 | typedef NS_ENUM(NSInteger, SKPaymentTransactionState) {
+   |                            `- note: 'SKPaymentTransactionState' has been explicitly marked deprecated here
+15 |     SKPaymentTransactionStatePurchasing,    // Transaction is being added to the server queue.
+16 |     SKPaymentTransactionStatePurchased,     // Transaction is in queue, user has been charged.  Client should complete the transaction.
+tests/contract/subscription-development/probe-storekit.sh: line 27: 77723 Abort trap: 6           "$bundle/Contents/MacOS/monthly-probe" docs/commercial/subscription-development/monthly.storekit
