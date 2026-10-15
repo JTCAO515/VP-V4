@@ -1,0 +1,4 @@
+PASS: complete owned static-copy coverage, original payload/mutations/routes/guards/confirmation, English state actions (source contract; not UI taps)
+PASS: zh/en locale variants, all fixed tone labels/previews/feedback/statuses, unknown tone payload preserved
+PASS: persona bounds, normalization, isolated draft, 3 tone previews, local todo states/reset
+PASS: iOS Simulator SDK typecheck with actual shared frontend state and AppTab
