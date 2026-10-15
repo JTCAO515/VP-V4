@@ -2,6 +2,18 @@
 
 Issue #506; QA baseline `24570c2fb284b9c12577afc012720a56553b8f50`. Main integration uses the original Trip, Proposal, confirmation, snapshot and Support authorities. Implementation is complete; independent final-head review, applicable CI and protected merge are recorded in the PR.
 
+## Review repair boundary
+
+Initial fixed-head `9249dc23` review reported Standards3/Spec1, retained in formal review5537122827. The new sources requalify the original current-Cookie Trip/pending for every actor/generation, render actual snapshot address changes including implicit rollback removals and restored/moved items, and separate Confirm-only visibility gates from request locks so Reject/read remain available. Native adds the corresponding snapshot review and rechecks both ordinary/selected-reference confirmation paths, including dialog dispatch. Initial version0 and legacy address-free confirmation retain their original behavior. Only the new Native address values compare exact UTF-8 bytes; NFC/NFD variants are preserved distinctly.
+
+Main actual repair checks: combined TypeScript and focused contract/SSR **48/48 PASS, zero skips**; actual App target NativeTripAddressTests **12/12 PASS, zero skips, 73.716s** after the UTF-8 correction. Prior Archive5 evidence remains applicable to unchanged source. Final-source Web production build PASS (compile4.1s, TypeScript1.952s, 87 static pages). PostgreSQL migration/helper sources are unchanged from `441e51dc`, so Main's new PG entry and coherent canonical33 evidence remain applicable.
+
+Actual Next/Chrome repair fixture checks **10/10 PASS**, including A->B claims/Cookie switch with denied original Trip reads (no A address diff restored), fresh A requalification, rollback removal with no explicit address op, restoration of a currently absent addressed item, cross-day move, and usable original Reject/read paths. Only visible zh/en locale options were tested; legacy payload declarations are preserved but no legacy selectable UI flow is claimed. Cookie APIs/local JWT remain explicitly synthetic. A temporary attempt to select a nonexistent legacy option failed and was removed; no UI option or product capability was invented to pass it.
+
+CI at initial9249 failed the strict governance assertion that still enumerated three PG17 steps after the fourth address step was added (38 pass/1 fail across the CI invocation). Main updated the exact expected four-step inventory and asserted the new entry's flag/file/concurrency; actual affected governance suite **22/22 PASS**. Full original gate/skip/count/timeout behavior is unchanged. Original9249 hosted-worker, Simulator and Vercel succeeded; final-head CI and independent re-review remain required.
+
+Scoped SQL move/replace evidence calls the actual private functions on a constructed fixture context; the ordinary public Proposal/Confirm and two SDK readers are separate actual cases. The complete public ScopedEdit prepare/work/destination/publish pipeline with new addresses remains UNRUN. A source audit found no remaining old item-key allowlist in that pipeline; its original ACL/policy activation remains unchanged. This is not a target or managed-Auth claim.
+
 ## Actual checks
 
 - Native source `cf2cbdec` plus Main Today/Trip/offline-deny/PBX integration: full App Simulator builds PASS (62.2s initial, 39.9s after recovery fix). Main Archive strict optional-field integration and new `38d36dad` test class: actual App target XCTest PASS 9/9 (four NativeTripAddressTests and five existing NativeArchiveDataTests). XcodeBuildMCP test log `test_sim_parser-debug_2026-10-15T16-44-07-179Z_pid2509_f4300b06.log` records TEST BUILD/EXECUTE SUCCEEDED. Existing unrelated compiler/runtime warnings remain; no device/VoiceOver claim.
