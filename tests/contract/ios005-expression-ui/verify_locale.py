@@ -27,9 +27,16 @@ translation = (ROOT / TRANSLATION).read_text()
 expression = (ROOT / EXPRESSION).read_text()
 before = baseline(TRANSLATION)
 for marker in ['private func recentCardIsCurrent(', 'extension NativeTranslationPhrase {',
-               'fileprivate static func phrase(', 'enum NativeTranslationCardOrigin {',
+               'fileprivate static func phrase(',
                'private func loadSaved(']:
     assert block(before, marker) == block(translation, marker), marker
+# Recovery adds one explicit origin, while all previous sample/recent/saved copy
+# remains byte-identical. Its new label is executed by verify.py.
+origin = block(translation, 'enum NativeTranslationCardOrigin {')
+origin = origin.replace('case recent, saved, recovered, sample', 'case recent, saved, sample')
+origin = origin.replace('case .recent, .saved, .recovered:', 'case .recent, .saved:')
+origin = ''.join(line for line in origin.splitlines(keepends=True) if not line.strip().startswith('case .recovered:'))
+assert origin == block(before, 'enum NativeTranslationCardOrigin {')
 for payload in ['Text(translation)', 'Text(phrase.original)', 'Text(back)',
                 'Text(Self.phrase(source: source, state: state).original)']:
     assert payload in before and payload in translation

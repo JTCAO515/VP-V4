@@ -1,0 +1,42 @@
+✔ recovery query is closed, canonical and contains only original identity and UTF8 text digest (1.118375ms)
+✔ same original Turn projects pending then translated/failed/cancelled without changing identity (0.571916ms)
+✔ identity/content mismatches, unknown state and incomplete/late callback evidence never manufacture a terminal result (0.194167ms)
+✔ serialized recovery phrase has exactly the Native receipt seven fields with explicit null translations outside translated (0.1905ms)
+✔ actual SDK synthetic transport reads original pending then translated/failure/cancelled; only allowlisted reads (34.648458ms)
+✔ missing/removed chat_threads is unknown with null phrase and no private text (2.488541ms)
+✔ missing/removed turns is unknown with null phrase and no private text (1.899958ms)
+✔ missing/removed chat_turn_idempotency is unknown with null phrase and no private text (2.798542ms)
+✔ missing/removed list_text_turns is unknown with null phrase and no private text (2.5445ms)
+✔ missing/removed read_text_turn is unknown with null phrase and no private text (3.42575ms)
+✔ wrong chat_threads.status cannot publish (2.183125ms)
+✔ wrong turns.owner_id cannot publish (2.639042ms)
+✔ wrong turns.thread_id cannot publish (2.081375ms)
+✔ wrong chat_turn_idempotency.turn_id cannot publish (2.797167ms)
+✔ wrong chat_turn_idempotency.idempotency_key cannot publish (2.314083ms)
+✔ content identity mismatch keeps original attempt unknown (1.978667ms)
+✔ content identity mismatch keeps original attempt unknown (1.8775ms)
+✔ current policy id denial is 403, never unknown (2.445542ms)
+✔ current policy noticeHash denial is 403, never unknown (1.161709ms)
+✔ current policy consentState denial is 403, never unknown (0.892ms)
+✔ wrong current policy/notice query and session replacement keep original error semantics (0.762125ms)
+✔ malformed/unknown read_text_turn schema is unavailable, without private content (1.168042ms)
+✔ malformed/unknown chat_turn_idempotency schema is unavailable, without private content (0.937042ms)
+✔ malformed/unknown list_text_turns schema is unavailable, without private content (0.926209ms)
+✔ transport/permission error 403 does not become unknown (0.913625ms)
+✔ transport/permission error 503 does not become unknown (1.17175ms)
+✔ bounded upstream response fails closed (2.121917ms)
+✔ revalidation detects revocation/account/deletion/content race at read_text_policy (2.334ms)
+✔ revalidation detects revocation/account/deletion/content race at native_session_v2 (1.279541ms)
+✔ revalidation detects revocation/account/deletion/content race at chat_threads (1.515167ms)
+✔ revalidation detects revocation/account/deletion/content race at read_text_turn (1.503958ms)
+✔ abort and late callback cannot continue reads or publish (1.387458ms)
+✔ closed GET-only query, no ambient credentials and production refusal (0.635625ms)
+✔ delayed callback after client abort cannot issue a successor read or publish stale data (1.769208ms)
+ℹ tests 34
+ℹ suites 0
+ℹ pass 34
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 198.0225

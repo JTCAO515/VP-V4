@@ -77,6 +77,15 @@ final class NativeSession {
         let base = keychainService
         func service(_ suffix: String) -> (String) -> String { { base + suffix + $0 } }
         let companions: [NativeJournalDataSourceID: NativeJournalDataVaultSources.Companion] = [
+            .translationRecovery: .init(service: NativeTranslationRecoveryJournal.service, read: { actor in
+                guard try self.communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
+                return try self.translationRecoveryPersistence().read(actor.scope).map { pending in
+                    var record = metadata(.translationRecovery, operation: pending.identity.idempotencyKey,
+                        action: "translate", boundary: "submission_identity_only_no_original_translation_or_credentials")
+                    record.objectID = pending.identity.turnId
+                    return record
+                }
+            }),
             .assistantEventsCursor: .init(service: service(".assistant-events-cursor."), read: { actor in
                 guard try self.communitySafetyActor() == actor else { throw NativeDataError.staleSessionResponse }
                 return try self.assistantEventsCursorMetadata(actor: actor).map { value in
@@ -2102,8 +2111,39 @@ final class NativeSession {
         try await dataRequest(prefix: "api/memory/native/v1/travel-pace", path: path, method: method, body: body)
     }
 
+    /// The existing vault stays inside Session. A retained port never authorizes an old actor.
+    func translationRecoveryPersistence() -> any NativeTranslationRecoveryPersistence {
+        NativeTranslationSessionRecoveryPort(journal: .init(vault: vault), currentScope: { [weak self] in self?.dataScope },
+            observation: journalDataObservation(.translationRecovery))
+    }
+
     /// Translation always uses the current-input lane, independently of Ask mode.
     func translateRequest(path: String, method: String, body: Data? = nil) async throws -> Data {
+        if path.hasPrefix("api/translate/recovery/") {
+            guard method == "GET", body == nil,
+                  let parts = URLComponents(string: path), parts.scheme == nil, parts.host == nil,
+                  parts.fragment == nil, let items = parts.queryItems,
+                  items.count == 7, Set(items.map(\.name)) == NativeTranslationRecoveryIdentity.keys.subtracting(["turnId"]),
+                  items.allSatisfy({ $0.value != nil }) else { throw NativeDataError.invalidResponse }
+            let fields = Dictionary(uniqueKeysWithValues: items.map { ($0.name, $0.value!) })
+            let turn = String(parts.path.dropFirst("api/translate/recovery/".count))
+            let identity = try NativeTranslationRecoveryIdentity(threadId: fields["threadId"]!, turnId: turn,
+                idempotencyKey: fields["idempotencyKey"]!, policyId: fields["policyId"]!, noticeHash: fields["noticeHash"]!,
+                sourceLocale: fields["sourceLocale"]!, targetLocale: fields["targetLocale"]!, inputHash: fields["inputHash"]!)
+            guard parts.percentEncodedPath == "api/translate/recovery/" + identity.turnId else { throw NativeDataError.invalidResponse }
+            let actor = try? communitySafetyActor()
+            if let actor { turnDataProjectionFence.bind(actor) }
+            let ticket = try actor.map { try turnDataProjectionFence.capture($0, turnID: identity.turnId) }
+            let legacyVersion = turnDataProjectionFence.readVersion(turnID: identity.turnId)
+            let data = try await dataRequest(prefix: "api/translate/recovery", path: parts.path, method: "GET", queryItems: items)
+            if let ticket {
+                guard try communitySafetyActor() == ticket.actor, turnDataProjectionFence.accepts(ticket) else { throw NativeDataError.staleSessionResponse }
+            } else {
+                guard turnDataProjectionFence.readVersion(turnID: identity.turnId) == legacyVersion else { throw NativeDataError.staleSessionResponse }
+            }
+            guard data.count <= 32_768 else { throw NativeDataError.invalidResponse }
+            return data
+        }
         let data = try await dataRequest(prefix: "api/translate", path: path, method: method, body: body)
         guard data.count <= 1_000_000 else { throw NativeDataError.invalidResponse }
         return data
@@ -2646,6 +2686,8 @@ final class NativeSession {
                 // Noncredential cleanup index only. It cannot restore a session or authorize a journal read.
                 defaults.set(owner, forKey: storageKey + ".pendingJournalCleanupOwner")
             } else {
+                do { try NativeTranslationRecoveryJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
+                catch { failureCode="translationRecoveryJournalCleanupRequired"; status="storageError"; return false }
                 do { try NativeTurnDataJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
                 catch { failureCode="turnDataJournalCleanupRequired"; status="storageError"; return false }
                 do { try NativeResultDataJournal.erase(endpoint: endpoint?.absoluteString ?? "disabled", owner: owner, vault: vault) }
@@ -2742,6 +2784,41 @@ enum NativeDataError: Error {
 private struct NativeDataFailure: Decodable {
     struct Failure: Decodable { let code: String }
     let error: Failure
+}
+
+/// Session eligibility is live; journal owner/epoch identity alone is never a UI lease.
+@MainActor struct NativeTranslationSessionRecoveryPort: NativeTranslationRecoveryPersistence {
+    let journal: NativeTranslationRecoveryJournal
+    let currentScope: () -> NativeDataScope?
+    var observation: NativeJournalDataObservation? = nil
+
+    private func check(_ scope: NativeDataScope) throws {
+        guard currentScope() == scope else { throw NativeDataError.staleSessionResponse }
+    }
+    func read(_ scope: NativeDataScope) throws -> NativeTranslationRecoveryRecord? {
+        try check(scope)
+        let record = try journal.read(scope)
+        try check(scope)
+        return record
+    }
+    func retain(_ identity: NativeTranslationRecoveryIdentity, scope: NativeDataScope) throws -> NativeTranslationRecoveryRecord {
+        try check(scope)
+        let record = try journal.retain(identity, scope: scope)
+        try check(scope)
+        return record
+    }
+    func complete(_ original: NativeTranslationRecoveryRecord, verifiedReceipt: NativeTranslationRecoveryReceipt, scope: NativeDataScope) throws {
+        try check(scope)
+        let ticket = observation?.begin()
+        try journal.complete(original, verifiedReceipt: verifiedReceipt, scope: scope)
+        try check(scope)
+        observation?.finish(ticket, verifiedReceipt.identity.idempotencyKey)
+    }
+    func abandonLocally(_ original: NativeTranslationRecoveryRecord, scope: NativeDataScope) throws {
+        try check(scope)
+        try journal.abandonLocally(original, scope: scope)
+        try check(scope)
+    }
 }
 
 /// A synchronous storage boundary keeps write-before-send testable. Production

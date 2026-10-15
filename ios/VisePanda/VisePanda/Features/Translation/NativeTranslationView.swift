@@ -22,11 +22,18 @@ struct NativeTranslationView: View {
     @State private var tripSelection: NativeTranslationTripSelection?
     @State private var tripReturn: TranslationTripReturn?
     @State private var tripChanged = false
+    @State private var confirmLocalAbandon = false
+    @State private var reviewedAbandonRecord: NativeTranslationRecoveryRecord?
     private var session: NativeSession { settings.nativeSession }
     private var activeScope: NativeDataScope? { scenePhase == .active ? session.dataScope : nil }
     private func text(_ en: String, _ zh: String) -> String { settings.selectedLocale == .zh ? zh : en }
     private func request(_ path: String, _ method: String, _ body: Data?) async throws -> Data {
-        try await session.translateRequest(path: path, method: method, body: body)
+        try Task.checkCancellation()
+        guard let initial = activeScope else { throw NativeDataError.sessionUnavailable }
+        let data = try await session.translateRequest(path: path, method: method, body: body)
+        try Task.checkCancellation()
+        guard activeScope == initial else { throw NativeDataError.staleSessionResponse }
+        return data
     }
 
     var body: some View {
@@ -43,59 +50,51 @@ struct NativeTranslationView: View {
                     Text(text("Sign in in Profile to translate.", "请在「我的」登录后翻译。"))
                 }
                 policyView
+                if activeScope != nil, store.scope == activeScope { recoveryView }
                 tripSourceView
                 Picker(text("Translate", "翻译方向"), selection: $source) {
                     Text("English → 中文").tag("en")
                     Text("中文 → English").tag("zh")
-                }.pickerStyle(.segmented).disabled(store.pending != nil || store.busy)
+                }.pickerStyle(.segmented).disabled(store.hasUnresolvedRecovery || store.busy)
                 TextField(text("Phrase or chosen address", "短句或已选地址"), text: $input, axis: .vertical)
                     .lineLimit(3...8).textFieldStyle(.roundedBorder)
                     .focused($inputFocused)
-                    .disabled(tripSelection != nil || store.pending != nil || store.busy).accessibilityIdentifier("translation.input")
+                    .disabled(tripSelection != nil || store.hasUnresolvedRecovery || store.busy).accessibilityIdentifier("translation.input")
                 Text("\(input.utf16.count)/600").font(.caption).foregroundStyle(.secondary)
-                Button(text(store.pending == nil ? "Translate" : "Retry same request", store.pending == nil ? "翻译" : "重试同一请求")) {
+                Button(text("Translate", "翻译")) {
                     action?.cancel()
                     inputFocused = false
                     action = Task {
                         let selected = tripSelection
-                        // Resolve an ambiguous prior send from its original receipt before retrying.
-                        if store.pending != nil {
-                            await store.load(scope: activeScope, request: request)
-                            guard store.pending != nil else { return }
-                        }
+                        guard !store.hasUnresolvedRecovery, !Task.isCancelled else { return }
                         if let selected, !(await tripStore.revalidate(selected, currentScope: { activeScope }, request: request)) {
                             tripChanged = true
                             if store.pending == nil { tripSelection = nil; input = "" }
                             return
                         }
-                        await store.submit(text: input, sourceLocale: source, tripSelection: selected, request: request)
+                        guard !Task.isCancelled else { return }
+                        await store.submit(text: input, sourceLocale: source, tripSelection: selected, currentScope: { activeScope }, request: request)
                         for _ in 0..<30 {
-                            guard store.pending != nil, !Task.isCancelled, store.errorCode == nil else { break }
+                            guard store.recoveryRecord != nil, store.recoveryStatus == .pending, activeScope != nil,
+                                  !Task.isCancelled, store.errorCode == nil else { break }
                             do { try await Task.sleep(for: .seconds(2)) } catch { break }
-                            await store.load(scope: session.dataScope, request: request)
+                            await store.load(scope: activeScope, currentScope: { activeScope }, request: request)
                         }
                     }
                 }.buttonStyle(.borderedProminent)
-                    .disabled(store.busy || tripStore.busy || store.policy?.consentState != .accepted || input.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || input.utf16.count > 600)
+                    .disabled(store.hasUnresolvedRecovery || activeScope == nil || store.busy || tripStore.busy || store.policy?.consentState != .accepted || input.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || input.utf16.count > 600)
                     .accessibilityIdentifier("translation.submit")
                 if store.busy { ProgressView() }
-                if let pending = store.pending {
-                    Text(text("Submitted or awaiting confirmation. Refresh to read the saved result; retry keeps the same request ID.", "请求已提交或尚待确认。刷新可读取已存结果；重试保持同一请求编号。"))
-                    Button(text("Stop this request", "停止此请求")) {
-                        action?.cancel()
-                        action = Task { await store.cancel(request: request) }
-                    }.disabled(store.busy).accessibilityIdentifier("translation.cancel.\(pending.turnId)")
-                }
                 if store.errorCode != nil {
                     Text(text("Translation is unavailable or the request could not be confirmed. Check your connection and consent, then refresh. Previously loaded phrases remain readable when generation is unavailable.", "翻译暂不可用，或请求状态未确认。请检查网络及同意状态后刷新。生成不可用时，已加载短语仍可阅读。"))
                         .accessibilityIdentifier("translation.error")
                 }
                 Button(text("Refresh saved phrases", "刷新已存短语")) {
                     action?.cancel()
-                    action = Task { await store.load(scope: session.dataScope, request: request) }
+                    action = Task { await store.load(scope: activeScope, currentScope: { activeScope }, request: request) }
                 }.disabled(store.busy || session.dataScope == nil)
                 Text(text("Recent phrases", "最近短语")).font(.title2.bold())
-                Text(text("From your 20 most recent text requests. Original text and results are retained under the notice above. Reading them does not generate another translation.", "显示最近 20 次文字请求中的翻译。原文及结果按上方说明保留；阅读不会再次生成译文。"))
+                Text(text("Your 20 most recent text requests and any original request verified by recovery. Original text and results follow the notice above. Reading does not generate another translation.", "显示最近 20 次文字请求及通过原请求恢复核验的结果。原文及结果按上方说明保留；阅读不会再次生成译文。"))
                     .font(.caption).foregroundStyle(.secondary)
                 if activeScope != nil, store.scope == activeScope, store.policy?.consentState == .accepted {
                     ForEach(store.phrases) { phrase in phraseView(phrase) }
@@ -113,16 +112,30 @@ struct NativeTranslationView: View {
         .background(Color.vpBackground)
         .navigationTitle(text("Translation", "翻译"))
         .navigationBarTitleDisplayMode(.inline)
-        .task(id: activeScope) { await store.load(scope: activeScope, request: request) }
+        .task(id: activeScope) {
+            store.configureRecovery(session.translationRecoveryPersistence())
+            await store.load(scope: activeScope, currentScope: { activeScope }, request: request)
+        }
         .onChange(of: session.dataScope) { _, _ in
+            store.clear()
+            confirmLocalAbandon = false; reviewedAbandonRecord = nil
             action?.cancel(); historyAction?.cancel(); input = ""; savedQuery = ""; card = nil; savedCard = nil; savedHistory.clear(); savedDetail.clear()
             tripStore.clear(); tripSelection = nil; tripReturn = nil; tripChanged = false
+        }
+        .onChange(of: session.turnDataErasure?.id) { _, _ in
+            guard let erased = session.turnDataErasure,
+                  erased.scope == activeScope, (try? session.communitySafetyActor()) == erased.actor else { return }
+            action?.cancel(); historyAction?.cancel(); card = nil; savedCard = nil; confirmLocalAbandon = false; reviewedAbandonRecord = nil
+            input = ""; savedQuery = ""; tripStore.clear(); tripSelection = nil; tripReturn = nil
+            store.clear(); savedHistory.clear(); savedDetail.clear()
+            // Re-read authoritative source eligibility. Hiding a deleted projection is not completion.
+            action = Task { await store.load(scope: activeScope, currentScope: { activeScope }, request: request) }
         }
         .onChange(of: store.errorCode) { _, code in
             if code == "STALE_TRIP_VERSION" || code == "TRIP_SOURCE_CHANGED" { tripChanged = true; tripStore.clear(); card = nil }
         }
         .onChange(of: scenePhase) { _, phase in
-            if phase != .active { action?.cancel(); historyAction?.cancel(); card = nil; savedCard = nil; store.clear(); savedHistory.clear(); savedDetail.clear(); input = ""; savedQuery = ""; tripStore.clear(); tripSelection = nil; tripReturn = nil }
+            if phase != .active { action?.cancel(); historyAction?.cancel(); card = nil; savedCard = nil; confirmLocalAbandon = false; reviewedAbandonRecord = nil; store.clear(); savedHistory.clear(); savedDetail.clear(); input = ""; savedQuery = ""; tripStore.clear(); tripSelection = nil; tripReturn = nil }
         }
         .onChange(of: Array(savedQuery.utf8)) { _, _ in
             historyAction?.cancel(); savedHistory.clear(); savedDetail.clear(); savedCard = nil
@@ -131,9 +144,20 @@ struct NativeTranslationView: View {
             action?.cancel(); historyAction?.cancel()
             if savedCard == nil { savedHistory.clear(); savedDetail.clear() }
         }
+        .confirmationDialog(text("Discard local recovery only?", "仅放弃本地恢复？"), isPresented: $confirmLocalAbandon, titleVisibility: .visible) {
+            Button(text("Discard local recovery only", "仅放弃本地恢复"), role: .destructive) {
+                guard let reviewed = reviewedAbandonRecord else { return }
+                store.abandonLocalRecovery(reviewed, currentScope: { activeScope })
+                reviewedAbandonRecord = nil
+                input = ""; tripSelection = nil; tripStore.clear()
+            }
+            Button(text("Keep recovering", "继续保留恢复"), role: .cancel) { reviewedAbandonRecord = nil }
+        } message: {
+            Text(text("This removes only this device's recovery reference. It does not undo or guarantee stopping the server request. It will not generate again. Any new translation requires another explicit action.", "这只删除本机恢复引用，不会撤销服务端请求，也不保证请求已停止；不会自动再次生成。新翻译仍需你明确发起。"))
+        }
         .fullScreenCover(item: $card) { phrase in
             if recentCardIsCurrent(phrase) {
-                NativeTranslationCard(phrase: phrase, chinese: settings.selectedLocale == .zh, origin: .recent)
+                NativeTranslationCard(phrase: phrase, chinese: settings.selectedLocale == .zh, origin: store.recoveredTurnID == phrase.id ? .recovered : .recent)
             } else {
                 unavailableCard
             }
@@ -158,6 +182,45 @@ struct NativeTranslationView: View {
                 NativeTripView(initialTripID: target.tripID, initialTripScope: target.scope, initialTripVersion: target.version)
                     .toolbar { ToolbarItem(placement: .confirmationAction) { Button(text("Done", "完成")) { tripReturn = nil } } }
             }
+        }
+    }
+
+    private var recoveryView: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            if store.recoveryStatus != .idle {
+                Text(recoveryMessage).accessibilityIdentifier("translation.recovery.status")
+            }
+            if store.hasUnresolvedRecovery {
+                Button(text("Read original request status", "读取原请求状态")) {
+                    action?.cancel()
+                    action = Task { await store.load(scope: activeScope, currentScope: { activeScope }, request: request) }
+                }.disabled(store.busy || activeScope == nil).accessibilityIdentifier("translation.recovery.refresh")
+            }
+            if let original = store.recoveryRecord {
+                Button(text("Request stop, then check original status", "请求停止并核对原状态")) {
+                    action?.cancel()
+                    action = Task { await store.cancel(currentScope: { activeScope }, request: request) }
+                }.disabled(store.busy || activeScope == nil || store.policy?.consentState != .accepted)
+                    .accessibilityIdentifier("translation.cancel.\(original.identity.turnId)")
+                Button(text("Discard local recovery…", "放弃本地恢复…")) {
+                    reviewedAbandonRecord = original; confirmLocalAbandon = true
+                }
+                    .disabled(store.busy || activeScope == nil).accessibilityIdentifier("translation.recovery.abandon")
+            }
+        }
+    }
+
+    private var recoveryMessage: String {
+        switch store.recoveryStatus {
+        case .idle: ""
+        case .checking: text("Checking the original request. No new translation is generated.", "正在核对原请求，不会生成新翻译。")
+        case .pending: text("The original request is pending. Reading it keeps the same request identity.", "原请求尚在处理中，读取保持同一请求身份。")
+        case .unknown: text("The original request could not be confirmed. Its reference is kept; use read-only recovery, not a new send. Original input is not stored on this device.", "原请求状态未确认。恢复引用已保留，请只读恢复，不要重新发送。本机不会持久保存原文。")
+        case .storageFailed: text("Recovery storage is unavailable or could not be verified. Sending is disabled. Read status again; an earlier request may still exist.", "恢复存储不可用或无法核验，已禁止发送。请重新读取状态，之前的请求可能仍然存在。")
+        case .blocked: text("Current identity, policy or consent does not allow recovery. Private text is hidden; this does not prove the original request stopped.", "当前身份、条款或同意状态不允许恢复，私密文字已隐藏；这不代表原请求已停止。")
+        case .translated: text("The original translation was recovered. You can open its large card below.", "已恢复原译文，可在下方打开大字卡。")
+        case .cancelled: text("The original request reports cancelled. Only a verified original receipt settles local recovery.", "原请求报告已取消，仅核验通过的原回执可结束本地恢复。")
+        case .unavailable, .needsReview: text("The original request has no reliable translation card. Unconfirmed recovery references remain saved.", "原请求暂无可靠译文卡片，未确认的恢复引用继续保留。")
         }
     }
 
@@ -256,7 +319,7 @@ struct NativeTranslationView: View {
                     tripSelection = nil; tripStore.clear(); input = ""
                     savedCard = nil; historyAction?.cancel(); savedHistory.clear(); savedDetail.clear()
                     action?.cancel()
-                    action = Task { await store.consent(accept: policy.consentState != .accepted, request: request) }
+                    action = Task { await store.consent(accept: policy.consentState != .accepted, currentScope: { activeScope }, request: request) }
                 }.disabled(store.busy)
             }
         }
@@ -324,7 +387,7 @@ struct NativeTranslationView: View {
 
     @ViewBuilder private func phraseView(_ phrase: NativeTranslationPhrase) -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text(NativeTranslationCardOrigin.recent.label(chinese: settings.selectedLocale == .zh)).font(.caption).foregroundStyle(.secondary)
+            Text((store.recoveredTurnID == phrase.id ? NativeTranslationCardOrigin.recovered : .recent).label(chinese: settings.selectedLocale == .zh)).font(.caption).foregroundStyle(.secondary)
             Text(translationDirection(phrase, chinese: settings.selectedLocale == .zh)).font(.headline)
             Text(text("Original", "原文")).font(.caption).foregroundStyle(.secondary)
             Text(phrase.original).textSelection(.enabled)
@@ -354,12 +417,13 @@ extension NativeTranslationPhrase {
 }
 
 enum NativeTranslationCardOrigin {
-    case recent, saved, sample
+    case recent, saved, recovered, sample
 
     func label(chinese: Bool) -> String {
         switch self {
         case .recent: chinese ? "来源：当前账号最近的文字请求" : "Source: recent text request for this account"
         case .saved: chinese ? "来源：已存文字请求（已重新核对权限）" : "Source: saved text request (permission rechecked)"
+        case .recovered: chinese ? "来源：同一原请求的恢复读取" : "Source: recovery of the original request"
         case .sample: chinese ? "Sample · 未连接翻译服务" : "Sample · translation service not connected"
         }
     }
@@ -367,14 +431,14 @@ enum NativeTranslationCardOrigin {
     func translationLabel(chinese: Bool) -> String {
         switch self {
         case .sample: chinese ? "样例译文" : "Sample translation"
-        case .recent, .saved: chinese ? "译文 · AI 生成" : "Translation · AI-generated"
+        case .recent, .saved, .recovered: chinese ? "译文 · AI 生成" : "Translation · AI-generated"
         }
     }
 
     func backTranslationLabel(chinese: Bool) -> String {
         switch self {
         case .sample: chinese ? "样例回译" : "Sample back-translation"
-        case .recent, .saved: chinese ? "回译对照（AI 生成）" : "Back-translation (AI-generated)"
+        case .recent, .saved, .recovered: chinese ? "回译对照（AI 生成）" : "Back-translation (AI-generated)"
         }
     }
 
@@ -382,7 +446,7 @@ enum NativeTranslationCardOrigin {
         switch self {
         case .sample:
             chinese ? "原文、译文与回译均为固定本地样例，没有执行翻译，也不代表真实语义核验。" : "Original, translation and back-translation are fixed local examples. No translation or real semantic verification was performed."
-        case .recent, .saved:
+        case .recent, .saved, .recovered:
             chinese ? "请核对金额、否定、地点和过敏信息。回译不是独立核验，本卡不是认证翻译。原始输入来自手动文字还是行程字段，此结果未提供来源信息。" : "Check amounts, negation, places and allergies. Back-translation is not an independent check; this is not a certified translation. This result does not identify whether the original was typed or selected from a Trip."
         }
     }

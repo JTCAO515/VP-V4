@@ -24,6 +24,8 @@ ready = block(view, 'extension NativeTranslationPhrase {')
 origin = block(view, 'enum NativeTranslationCardOrigin {')
 gate = block(view, 'private func recentCardIsCurrent(').replace('private func', 'func', 1)
 checks = r'''
+precondition(NativeTranslationCardOrigin.recovered.label(chinese: false) == "Source: recovery of the original request")
+precondition(NativeTranslationCardOrigin.recovered.label(chinese: true) == "来源：同一原请求的恢复读取")
 precondition(NativeTranslationCardOrigin.sample.translationLabel(chinese: true) == "样例译文")
 precondition(NativeTranslationCardOrigin.sample.translationLabel(chinese: false) == "Sample translation")
 precondition(NativeTranslationCardOrigin.sample.backTranslationLabel(chinese: true) == "样例回译")
