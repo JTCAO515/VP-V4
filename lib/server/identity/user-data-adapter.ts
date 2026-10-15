@@ -1,3 +1,4 @@
+import type { UserProvidedChineseAddress } from "../../trip-user-address.ts";
 import { nativeFetch } from "./native-fetch.ts";
 import { profileSaveParameters } from "../privacy/profile-data/writer.ts";
 import { validSavedFields } from "../privacy/profile-data/saved-fields.ts";
@@ -32,7 +33,7 @@ export type TripSnapshot = Readonly<{
   updatedAt: string;
 }>;
 export type TripContentRead = Readonly<{
-  days: readonly (Readonly<{ id: string; date: string; timeZone?: string; items: readonly Readonly<{ id: string; dayId: string; title: string; startsAt?: string; endsAt?: string }>[] }>)[];
+  days: readonly (Readonly<{ id: string; date: string; timeZone?: string; items: readonly Readonly<{ id: string; dayId: string; title: string; startsAt?: string; endsAt?: string; chineseAddress?: UserProvidedChineseAddress }>[] }>)[];
 }>;
 export type TripAudit = Readonly<{
   verification?: "unknown";
