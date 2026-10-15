@@ -58,6 +58,11 @@ class ControlledArchiveTests(unittest.TestCase):
                   "PRODUCT_BUNDLE_IDENTIFIER": self.profile["bundleIdentifier"], "MARKETING_VERSION": "0.1.0"}
         entries = [{"target": name, "buildSettings": dict(values)} for name in ("VisePanda", "ShareIntakeExtension")]
         driver.verify_settings(entries, self.profile, "20261015.120000")
+        omitted = copy.deepcopy(entries)
+        for entry in omitted:
+            for key in driver.checks.PROFILE_BUILD_SETTINGS:
+                del entry["buildSettings"][key]
+        driver.verify_settings(omitted, self.profile, "20261015.120000")
         for key, bad in [("SWIFT_ACTIVE_COMPILATION_CONDITIONS", ""), ("CODE_SIGNING_ALLOWED", "YES"),
                          *( (key, "staging") for key in driver.checks.PROFILE_BUILD_SETTINGS)]:
             changed = copy.deepcopy(entries)
