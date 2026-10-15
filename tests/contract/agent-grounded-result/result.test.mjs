@@ -124,7 +124,7 @@ test('unknown completion followed by a server pending poll does not repeat model
 });
 test('long canonical statements keep every condition and exclusion within eight whole citation entries', async () => {
   const rows=statements.map((s,i)=>({...s,text:s.text+' '+`Evidence ${i} `.repeat(210),conditions:['Only under stated conditions'],exclusions:['No additional guarantee']}));
-  const action=answer(rows,{citations:rows.map(s=>({pageKey:s.factId,quote:s.text.slice(0,50)}))});
+  const action=answer(rows,{citations:rows.map(s=>({pageKey:s.factId,quote:s.text.slice(0,50).trim()}))});
   const out=await runGroundedWikiSearch(input,deps(rows,action),signal());
   assert.equal(out.kind,'answered');assert.equal(out.coverage,'answered');assert.ok(out.summary.length>1200);assert.ok(out.summary.length<=8*4000+7);
   for(const s of rows)assert.ok(out.summary.includes(s.text+'. '+s.conditions[0]+'. '+s.exclusions[0]));
