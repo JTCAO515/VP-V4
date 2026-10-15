@@ -1,0 +1,19 @@
+{
+  "actualGitCleanSource": {
+    "status": "PASS",
+    "fixture": true,
+    "inputFiles": 1
+  },
+  "actualGitDirtySource": {
+    "status": "PASS",
+    "observedRefusal": "Dirty source refused; commit intended inputs before building"
+  },
+  "nonempty-backend": {
+    "status": "PASS",
+    "observedRefusal": "All three backend settings must be present and exactly empty"
+  },
+  "missing-sample-flag": {
+    "status": "PASS",
+    "observedRefusal": "Only VP_CONTROLLED_SAMPLE compilation condition is permitted"
+  }
+}
