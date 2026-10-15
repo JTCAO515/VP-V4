@@ -90,6 +90,21 @@
     "kind": "f"
   },
   {
+    "signature": "public.complete_grounded_work_with_needs(uuid,uuid,text,text,text)",
+    "beforeMd5": "d6ded2cff60b4279e1ea0727efdfeb63",
+    "afterMd5": "67c16b419b0edd150ab76955f9ede4c6",
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres,service_role=X/postgres}",
+    "config": [
+      "search_path=\"\""
+    ],
+    "definer": true,
+    "volatility": "v",
+    "strict": false,
+    "parallel": "u",
+    "kind": "f"
+  },
+  {
     "signature": "public.complete_text_work(uuid,uuid,text,text)",
     "beforeMd5": "425c113442730cb4a9be19ad4eb94726",
     "afterMd5": "5f186272424a55937b61d4961f9b7e41",
@@ -348,7 +363,7 @@
   {
     "signature": "turn_data_private.runtime_supported_v1()",
     "beforeMd5": "8dbc85fa7e9af984e560d5ea56ced1e2",
-    "afterMd5": "4569828d1f2e9acdd7a5211a0b524d02",
+    "afterMd5": "40fb39518ac822835d7b9cd3ac9734c2",
     "owner": "postgres",
     "acl": "{postgres=X/postgres}",
     "config": [
@@ -408,7 +423,7 @@
   {
     "signature": "turn_private.complete_selected_grounded_work(uuid,uuid,text,text,text)",
     "beforeMd5": "b84a3ecaf3ecc17202953818ca439031",
-    "afterMd5": "ca1552d450f45001bca173ec6091ebdd",
+    "afterMd5": "91f970d2088849ff36dd42d2b07a8447",
     "owner": "postgres",
     "acl": "{postgres=X/postgres}",
     "config": [
@@ -439,7 +454,7 @@
   {
     "signature": "turn_private.trip_service_task_runtime_v1()",
     "beforeMd5": "65ff553822e922f5fedfc78ea8c4ebb7",
-    "afterMd5": "88099ddfabb956fac05321fef90f60dc",
+    "afterMd5": "d1841eb2d56ad2ac635058976b12f0ee",
     "owner": "postgres",
     "acl": "{postgres=X/postgres}",
     "config": [
