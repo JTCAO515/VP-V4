@@ -64,11 +64,16 @@ after(async()=>{
  if(!enabled)return;
  await admin?.end();
  if(started){execFileSync(join(bin,'pg_ctl'),['-D',data,'-m','fast','-w','stop'],{stdio:'pipe'});started=false;}
- if(nonce)rmSync(nonce,{recursive:true,force:true});
+ if(nonce){rmSync(nonce,{recursive:true,force:true});writeFileSync(join(artifact,'pg-cleanup.json'),JSON.stringify({selfOwnedNonceOnly:true,stoppedOwnDataDirectory:true,dataRemoved:true,listenAddresses:'',socketMode:'0700',sharedResourcesTouched:false},null,2)+'\n');}
 });
 run('full QA baseline lifecycle and only declared two-function append/rollback catalog proof',async()=>{
  assert.ok(Object.values(baselineGuards).every(v=>v===true),JSON.stringify(baselineGuards));
+ assert.equal(await scalar("select count(*)::int as value from pg_class c join pg_namespace n on n.oid=c.relnamespace where c.relkind in ('r','p') and n.nspname not like 'pg_%' and n.nspname<>'information_schema'"),265);
  const source=readFileSync(join('supabase/migrations',append),'utf8');
+ await query('begin');await query('alter function public.read_grounded_ai_assist_context_v1(uuid) cost 99');
+ await assert.rejects(query(source),/AGENT005_BEFORE_DEFINITION_MISMATCH/);await query('rollback');assert.deepEqual(await catalog(),baseline);
+ const unaccepted=readFileSync(join(artifact,'context-function.before.sql'),'utf8').replace('create function','create or replace function').replace('as $$','as $$\n-- unaccepted fixture source drift');
+ await query('begin');await query(unaccepted);await assert.rejects(query(source),/AGENT005_BEFORE_DEFINITION_MISMATCH/);await query('rollback');assert.deepEqual(await catalog(),baseline);
  await query('begin');await query(source);await query('rollback');assert.deepEqual(await catalog(),baseline);
  await query('begin');await query(source);await query('commit');
  const current=await catalog();const changed=current.functions.filter((row,i)=>row.source!==baseline.functions[i].source);
@@ -275,6 +280,7 @@ run('deleted original session and a fresh same-owner session cannot revive the o
 });
 run('all declared lifecycle guards and original Guide/context/work ACL vectors remain intact after role/race/lifecycle cases',async()=>{
  assert.deepEqual(await guardValues(),baselineGuards);assert.ok(Object.values(await guardValues()).every(v=>v===true));
+ assert.equal(await scalar('select count(*)::int value from auth.users'),2);
  const vector=(await query("select p.oid::regprocedure::text signature,r.role,has_function_privilege(r.role,p.oid,'EXECUTE') execute from pg_proc p cross join (values('anon'),('authenticated'),('service_role')) r(role) where p.oid=any(array['public.read_grounded_ai_assist_context_v1(uuid)'::regprocedure::oid,'public.grounded_ai_assist_work_v1(jsonb)'::regprocedure::oid,'public.guide_place_v1(uuid,jsonb)'::regprocedure::oid]) order by 1,2")).rows;
  assert.ok(vector.every(row=>row.execute===(row.role==='authenticated'&&!row.signature.startsWith('guide_place_v1'))));
  writeFileSync(join(artifact,'pg-final-role-vectors.json'),JSON.stringify({guards:await guardValues(),vector,noFixtureGrants:true,subjects:2,transport:'private Unix socket',GoTrue:'UNRUN',target:'UNRUN'},null,2)+'\n');
