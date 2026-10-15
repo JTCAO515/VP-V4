@@ -1,0 +1,28 @@
+{
+  "base": "2d6ca00098c4dda040c7035ffa585148e0cbc998",
+  "scope": "Four Main cancellation consumer review fixes; local source delivery only",
+  "fixes": [
+    "Missing Web Locks denies stop POST and keeps original-ID reads",
+    "Cancellation HTTP401/403 survives malformed or foreign body, ack stays unknown",
+    "Peer intent hint invokes current reader and canonical GET; hint carries no result",
+    "HTTP401 synchronously aborts and invalidates current operation before projection cleanup"
+  ],
+  "validation": {
+    "unit": "PASS 18 tests",
+    "browser": "PASS 8 distinct affected cases across r1/r2; no duplicate rerun counting",
+    "browser_r1": "5 passed, 3 failed because initial passive GET was denied before click; corrected test waits for initial read before injecting preflight401",
+    "browser_r2": "5 passed including corrected 3 denial formats and peer/read race cases",
+    "typescript": "PASS tsc --noEmit --incremental false",
+    "lint": "PASS scripts/lint.mjs (844 files)",
+    "production_build": "PASS Next webpack, synthetic local public Supabase configuration",
+    "target_auth_sql_provider_billing": "UNRUN; intercepted browser fixtures are not real QA target acceptance"
+  },
+  "reuse": "Unchanged original cancellation 14 distinct browser and 17 unit evidence retained at parent artifact directory; no full repeat required",
+  "delivery": "Local commit to Main; no GitHub TLS retries or alternate connection",
+  "source_sha256": {
+    "components/qa-agent/QaAgentWorkspace.tsx": "fe53467cdf91cc98d2383743f928567c0b4bead316085df77291e1373382082f",
+    "components/qa-agent/api.ts": "6701995776881c1e8aa95bb009c19e519d807e122af039579e7659772c74b6b4",
+    "tests/e2e/qa-agent-ui/adapter.test.mjs": "1c65a19b80ffb86b16fcf64b1d4ec71996d882c3907364c0eddaf8432b902129",
+    "tests/e2e/qa-agent-ui/workspace.spec.mjs": "25a17a05509be705570fffb3469294baaa54134930fce60c68b0b5f18381f74a"
+  }
+}

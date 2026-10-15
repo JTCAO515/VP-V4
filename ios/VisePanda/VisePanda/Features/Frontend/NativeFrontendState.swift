@@ -9,7 +9,10 @@ final class NativeFrontendState {
     var selectedJourneyID: String?
     var selectedMaterialID: String?
     var chatContext: String?
-    var draft = ""
+    // Local input fences are presentation identity, never backend authorization.
+    private(set) var localInputEpoch = UUID()
+    private(set) var localDraftRevision = UUID()
+    var draft = "" { didSet { localDraftRevision = UUID() } }
     var messages: [NativeFrontendMessage] = []
     private(set) var activeLocalConversationID = "local-current"
     private(set) var localConversations: [NativeFrontendConversation] = [
@@ -45,6 +48,7 @@ final class NativeFrontendState {
         chatContext = context; selectedTab = .vp; saveActiveLocalConversation()
     }
     func startLocalConversation() {
+        localInputEpoch = UUID()
         saveActiveLocalConversation()
         if messages.isEmpty && draft.isEmpty && chatContext == nil && !pendingConfirmation {
             selectedTab = .vp; return
@@ -56,6 +60,7 @@ final class NativeFrontendState {
     func selectLocalConversation(_ id: String) {
         guard id != activeLocalConversationID,
               let next = localConversations.first(where: { $0.id == id }) else { return }
+        localInputEpoch = UUID()
         saveActiveLocalConversation(); activateLocalConversation(next)
     }
     private func activateLocalConversation(_ next: NativeFrontendConversation) {
@@ -73,6 +78,7 @@ final class NativeFrontendState {
         }
     }
     func submit() {
+        localInputEpoch = UUID()
         let input = draft.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !input.isEmpty, input.count <= 2000 else { notice = "请输入 1–2000 个字符。"; return }
         messages.append(.init(id: UUID().uuidString, user: true, text: input))
@@ -100,6 +106,7 @@ final class NativeFrontendState {
     }
 #endif
     func reset() {
+        localInputEpoch = UUID()
         let fresh = NativeFrontendState()
         localConversations = fresh.localConversations; activeLocalConversationID = fresh.activeLocalConversationID
         journeys = fresh.journeys; materials = fresh.materials; memories = fresh.memories; messages = fresh.messages

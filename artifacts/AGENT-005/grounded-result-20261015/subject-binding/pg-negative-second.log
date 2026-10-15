@@ -1,0 +1,18 @@
+✔ full QA baseline lifecycle and only declared two-function append/rollback catalog proof (1311.486875ms)
+✔ real original Guide producer creates resolved blocked turn; ordinary owner context and real TS job execute without fixture grants (375.017959ms)
+✔ ordinary non-Guide submission and original resolver persist a matched subject; city mismatch does not borrow it (379.961083ms)
+✔ wrong actor, old turn, injected subject and duplicate completion cannot mutate another current binding/job (291.176125ms)
+✔ concurrent ordinary ensure and complete keep one original job/claim and no duplicated successful write (272.077166ms)
+✔ current source-withdrawal fences context, ensure and late completion (266.012209ms)
+✔ current canonical-change fences context, ensure and late completion (258.5735ms)
+✔ current trip-head-change fences context, ensure and late completion (256.180875ms)
+✔ current reference-deletion fences context, ensure and late completion (257.379416ms)
+✔ current trip-deletion fences context, ensure and late completion (257.297291ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4599.607125

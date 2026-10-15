@@ -1,0 +1,111 @@
+✖ shared last capacity serializes across text/Trip; cross actor/key/epoch/claim fields never authorize (4454.849208ms)
+✖ cancel/reject and exact confirmation races have one result; original manual edits have no new settlement (14764.30725ms)
+✔ original Sandbox grant revocation races with settlement; expired grant cannot settle or dispatch (15530.018958ms)
+C0 export enrollment: original D2 fixture explicit GRANT, production ACL unchanged
+Trip export page turn-trip-core-export/1 [
+  [ 'public.chat_turn_events', 2 ],
+  [ 'public.chat_turn_idempotency', 1 ],
+  [ 'public.memory_consumer_receipts', 0 ],
+  [ 'public.model_budget_attempts', 1 ],
+  [ 'public.turn_feedback', 0 ],
+  [ 'turn_private.assistant_message_source_receipts', 0 ],
+  [ 'turn_private.assistant_messages', 1 ],
+  [ 'turn_private.assistant_travel_intakes', 0 ],
+  [ 'turn_private.grounded_ai_assist_jobs', 0 ],
+  [ 'turn_private.grounded_turns', 0 ],
+  [ 'turn_private.planning_action_receipts', 0 ],
+  [ 'turn_private.planning_comparisons', 0 ],
+  [ 'turn_private.planning_intake_bindings', 0 ],
+  [ 'turn_private.planning_model_dispatches', 0 ],
+  [ 'turn_private.planning_observations', 0 ],
+  [ 'turn_private.planning_v2_collector_origins', 0 ],
+  [ 'turn_private.planning_v2_collector_outputs', 0 ],
+  [ 'turn_private.planning_v2_completed_receipts', 0 ],
+  [ 'turn_private.planning_v2_completion_proofs', 0 ],
+  [ 'turn_private.planning_v2_execution_runs', 0 ],
+  [ 'turn_private.planning_v2_external_call_windows', 0 ],
+  [ 'turn_private.planning_v2_model_attempt_bindings', 0 ],
+  [ 'turn_private.planning_v2_model_local_journal', 0 ],
+  [ 'turn_private.planning_v2_place_checkpoints', 0 ],
+  [ 'turn_private.planning_v2_result_claims', 0 ],
+  [ 'turn_private.result_artifacts', 0 ],
+  [ 'turn_private.result_events', 0 ],
+  [ 'turn_private.result_revisions', 0 ],
+  [ 'turn_private.service_task_capacity', 1 ],
+  [ 'turn_private.service_task_turns', 1 ],
+  [ 'turn_private.service_tasks', 1 ],
+  [ 'turn_private.text_content', 1 ],
+  [ 'turn_private.text_dispatches', 0 ],
+  [ 'turn_private.work', 1 ],
+  [ 'public.turns', 1 ],
+  [ 'scoped_edit_private.contexts_v1', 1 ],
+  [ 'scoped_edit_private.work_v1', 1 ],
+  [ 'scoped_edit_private.requests_v1', 1 ],
+  [ 'scoped_edit_private.operations_v1', 1 ],
+  [ 'scoped_edit_private.lineage_v1', 0 ],
+  [ 'turn_private.assistant_directions_intakes_v1', 0 ],
+  [ 'turn_private.directions_result_sources_v1', 0 ],
+  [ 'turn_private.directions_operations_v1', 0 ]
+]
+✔ original export request/lease → versioned Trip source/page → strict current TS handler; no real artifact/key (6136.761334ms)
+Trip privacy preview conversation {"kind":"preview","eligible":true,"conflicts":[],"eraseCounts":{"work":1,"goals":1,"turns":1,"events":2,"intakes":0,"threads":1,"feedback":0,"grounded":0,"messages":2,"planning":0,"tripWork":1,"artifacts":0,"goalLinks":1,"revisions":0,"assistJobs":0,"callWindows":0,"checkpoints":0,"idempotency":1,"tripLineage":0,"observations":0,"resultClaims":0,"resultEvents":0,"tripContexts":1,"tripRequests":1,"conversations":1,"executionRuns":0,"localJournals":0,"actionReceipts":0,"intakeBindings":0,"sourceReceipts":0,"tripOperations":1,"attemptBindings":0,"memoryConsumers":0,"modelDispatches":0,"collectorOrigins":0,"collectorOutputs":0,"completionProofs":0,"completedReceipts":0},"redactCounts":{"textBodies":1,"taskDigests":1,"tripObjectives":1}}
+privacy receipt conversation {"kind":"receipt","scope":"conversation-sensitive-data/1","state":"erased","rootId":"7bbe957e-49e2-40db-a8b9-6784ac5c8b40","ownerId":"c0d156d2-17cf-401f-b4fb-6b54426c624f","decision":{"graph":{"goalIds":["694b65da-36a5-4d20-a1f1-eaf1ff62d5ba"],"taskIds":["a01878ac-6ce9-4ce2-8bc6-cf7c46e49636"],"turnIds":["aebd6b0f-211f-4fbc-a4ec-12c9f34b5fff"],"threadIds":["f24c9c89-4653-4609-b78a-9f8dee1db8df"],"messageIds":["058c3c72-c8af-4500-8c3e-0908d0f5e855","51098dc1-59e6-49a9-92fa-863b2911faab"],"artifactIds":[],"tripTaskIds":["a01878ac-6ce9-4ce2-8bc6-cf7c46e49636"],"conversationIds":["7bbe957e-49e2-40db-a8b9-6784ac5c8b40"],"tripPrivacyTripIds":["34da694b-ac9c-40d8-853b-6f811d2f467d"]},"decidedAt":1792042306871,"sourceTrip":"not_modified","erasedCounts":{"work":1,"goals":1,"turns":1,"events":2,"intakes":0,"threads":1,"feedback":0,"grounded":0,"messages":2,"planning":0,"tripWork":1,"artifacts":0,"goalLinks":1,"revisions":0,"assistJobs":0,"callWindows":0,"checkpoints":0,"idempotency":1,"tripLineage":0,"observations":0,"resultClaims":0,"resultEvents":0,"tripContexts":1,"tripRequests":1,"conversations":1,"executionRuns":0,"localJournals":0,"actionReceipts":0,"intakeBindings":0,"sourceReceipts":0,"tripOperations":1,"attemptBindings":0,"memoryConsumers":0,"modelDispatches":0,"collectorOrigins":0,"collectorOutputs":0,"completionProofs":0,"completedReceipts":0},"requestDigest":"f7fd99ab66c7bb407d339b1771f67106d59050c4bf55b79e0e0b1fc588410420","explicitMemory":"not_modified","externalCopies":"not_erased","redactedCounts":{"textBodies":1,"taskDigests":1,"tripObjectives":1},"retainedCounts":{"tasks":1,"capacity":1,"taskTurns":1,"budgetAttempts":1,"textDispatches":0,"goalTripReceipts":1},"retainedFences":7,"clearedPreviews":0,"sourceConversation":"erased"},"rootKind":"conversation","expiresAt":1792042336554,"objectIds":[],"requestId":"2384c993-0487-4f6e-8713-5e86195daa10","sessionId":"b51811e3-8313-4d6f-ac34-9b22d6a7a156","boundaries":{"missing":["applied_or_unapplied_proposal_source_requires_original_flow","shared_cross_scope_or_active_work_rejected","readiness_guide_scoped_edit_notification_brief_links_rejected","existing_core_export_copies_require_original_cleanup","provider_and_external_copies_not_erased","backup_restore_and_old_device_acceptance_unverified"],"retained":["confirmed_trip_content_history_proposals","explicit_memory_profiles_receipts_consents","other_conversations_and_domains","minimal_task_capacity_budget_dispatch_link_receipts","permanent_entity_identity_and_operation_fences","original_source_policy_consent_authority_ids","inert_trip_goal_and_proposal_fences"],"eraseFields":["selected_conversation_goals_messages_intakes_source_receipts","exclusive_threads_turns_events_feedback","exclusive_results_all_revisions_events","closed_planning_grounded_worker_copies","selected_turn_memory_consumer_references","exclusive_trip_contexts_work_requests_operations_lineage"],"redactFields":["selected_private_text_input_output_permanently_hidden","selected_task_goal_digest_fixed_deleted_marker","trip_objective_scope_request_and_producer_references"]},"capturedAt":1792042306554,"mobileEpoch":1,"sourceDigest":"180f1547e3a4245e8ce1ac76ed8c6f3215e97c5876510637953c815d22da7877","previewDigest":"07b4310c655d3fcfc658143bd4e53e9e3587dc435f339cb82f6aa6b9e928062e","schemaVersion":"conversation-trip-data/1","sourceAuthorities":[{"policyId":"dfa2ebac-c3b2-4e70-8fe4-c72584ec4b5c","consentId":"6795becb-a92e-4917-a421-16f550375a96"}],"allUserDataCompleted":false}
+Trip graph source {"graph":{"turnIds":["dff37af1-4d0e-4834-9e1d-a863c301dffd"],"messageIds":["26132dbd-00ed-4643-8a81-7ad1fa89bda4"],"artifactIds":[]},"conflicts":[],"retainedReferences":{"goalIds":["3cbdbfe9-3e88-4569-ab52-6743558d453b"],"taskIds":["3c98a7ac-4116-4639-b97d-78011295a67d"],"tripIds":[],"memoryIds":[],"threadIds":["57a9f3dd-a9e9-4e34-94f4-fef29e840f86"],"conversationIds":["52d0d01d-7faf-4992-9854-daee10948dcb"]}}
+Trip privacy preview turn {"kind":"preview","eligible":true,"conflicts":[],"eraseCounts":{"work":1,"events":2,"intakes":0,"feedback":0,"grounded":0,"planning":0,"tripWork":1,"artifacts":0,"revisions":0,"assistJobs":0,"callWindows":0,"checkpoints":0,"idempotency":1,"tripLineage":0,"observations":0,"resultClaims":0,"resultEvents":0,"tripContexts":1,"tripRequests":1,"executionRuns":0,"localJournals":0,"actionReceipts":0,"intakeBindings":0,"sourceReceipts":0,"tripOperations":1,"attemptBindings":0,"memoryConsumers":0,"modelDispatches":0,"collectorOrigins":0,"collectorOutputs":0,"completionProofs":0,"completedReceipts":0},"redactCounts":{"textBodies":1,"taskDigests":1,"messageBodies":1,"tripObjectives":1}}
+privacy receipt turn {"kind":"receipt","scope":"turn-sensitive-data/1","state":"erased","turnId":"dff37af1-4d0e-4834-9e1d-a863c301dffd","ownerId":"05d8c3a2-bf0c-45f8-a0de-72b288ec9f5b","decision":{"graph":{"turnIds":["dff37af1-4d0e-4834-9e1d-a863c301dffd"],"messageIds":["26132dbd-00ed-4643-8a81-7ad1fa89bda4"],"artifactIds":[],"tripTaskIds":["3c98a7ac-4116-4639-b97d-78011295a67d"],"tripPrivacyTripIds":["a4658312-cc83-4e3d-aa21-c7651e6c8d21"]},"decidedAt":1792042309504,"parentData":"selected_digest_redacted","sourceTrip":"not_modified","sourceTurn":"erased","erasedCounts":{"work":1,"events":2,"intakes":0,"feedback":0,"grounded":0,"planning":0,"tripWork":1,"artifacts":0,"revisions":0,"assistJobs":0,"callWindows":0,"checkpoints":0,"idempotency":1,"tripLineage":0,"observations":0,"resultClaims":0,"resultEvents":0,"tripContexts":1,"tripRequests":1,"executionRuns":0,"localJournals":0,"actionReceipts":0,"intakeBindings":0,"sourceReceipts":0,"tripOperations":1,"attemptBindings":0,"memoryConsumers":0,"modelDispatches":0,"collectorOrigins":0,"collectorOutputs":0,"completionProofs":0,"completedReceipts":0},"financialData":"not_modified","requestDigest":"4061619c1ebeb41898f3add22ef0b10b305cb4f1e3b3a4da2d34830b6d8b2e95","explicitMemory":"not_modified","externalCopies":"not_erased","redactedCounts":{"textBodies":1,"taskDigests":1,"messageBodies":1,"tripObjectives":1},"retainedCounts":{"goals":1,"tasks":1,"turns":1,"threads":1,"capacity":1,"messages":1,"taskTurns":1,"conversations":1,"budgetAttempts":1,"textDispatches":0},"retainedFences":2,"clearedPreviews":0},"expiresAt":1792042338941,"objectIds":[],"requestId":"045cb51a-fc9e-430e-98a5-f6921126b7f8","sessionId":"d61d97b5-ad0b-4f05-8b1d-99af8cf4dbc0","boundaries":{"missing":["active_shared_cross_turn_and_mixed_result_references_blocked","guide_brief_proposal_knowledge_source_references_require_original_flow","mixed_core_export_copies_require_original_cleanup","provider_external_copies_not_erased","backup_restore_old_device_acceptance_unverified"],"retained":["turn_message_task_thread_conversation_goal_identity","other_turns_and_parent_contents_except_selected_root_task_digest","confirmed_trip_content_history_proposals","explicit_memory_profiles_receipts_consents","capacity_budget_dispatch_financial_metadata","permanent_identity_operation_fences","original_policy_consent_authority_ids","inert_trip_goal_and_proposal_fences"],"eraseFields":["selected_turn_events_feedback_idempotency","exclusive_result_revisions_events","selected_intakes_source_receipts","selected_grounded_planning_worker_sensitive_copies","selected_memory_consumer_references","exclusive_trip_contexts_work_requests_operations_lineage"],"redactFields":["selected_text_input_output_permanently_hidden","selected_message_input_fixed_deleted_marker","selected_root_task_digest_fixed_deleted_marker","trip_objective_scope_request_and_producer_references"]},"capturedAt":1792042308941,"mobileEpoch":1,"sourceDigest":"94b548bd6c3c1593d223f20d5c6479a816fe5614a9c53a43745654865a5881dd","previewDigest":"587b34b544558ad3d33486ebc24bcc8eab55690e4d64e99a4b70cbdcff771e9d","schemaVersion":"turn-trip-data/1","sourceAuthorities":[{"policyId":"e78a8f30-1bf7-4b6f-82ce-955f4b9cdcb0","consentId":"35826608-0ee0-42ef-8436-69ee3816dc74"}],"allUserDataCompleted":false}
+✔ explicit Trip privacy preview/confirmed erase/recovery removes all owned scoped copies; v1 counts stay unchanged (8200.171041ms)
+✔ fixed runtime denies unknown functions/body/ACL/trigger state and replica-mode authority (4825.644708ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 4
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 34841.206042
+
+✖ failing tests:
+
+test at tests/integration/service-task-trip/adversarial.test.mjs:10:1
+✖ shared last capacity serializes across text/Trip; cross actor/key/epoch/claim fields never authorize (4454.849208ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/adversarial.test.mjs:18:100)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /SESSION_REPLACED|UNAUTHENTICATED|FORBIDDEN/,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/integration/service-task-trip/adversarial.test.mjs:21:1
+✖ cancel/reject and exact confirmation races have one result; original manual edits have no new settlement (14764.30725ms)
+  error: PROPOSAL_NOT_CONFIRMABLE
+      at /Users/jtsm5p/Documents/Codex/2026-10-13/v10-main/agent008-pg-client-20261015/node_modules/pg/lib/client.js:535:17
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async db (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/native-db.mjs:16:202)
+      at async query (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/fixture.mjs:5:35)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/adversarial.test.mjs:29:85)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    length: 160,
+    severity: 'ERROR',
+    code: 'P0001',
+    detail: undefined,
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: 'PL/pgSQL function create_trip_proposal_patch(uuid,jsonb) line 9 at RAISE',
+    schema: undefined,
+    table: undefined,
+    column: undefined,
+    dataType: undefined,
+    constraint: undefined,
+    file: 'pl_exec.c',
+    line: '3911',
+    routine: 'exec_stmt_raise'
+  }

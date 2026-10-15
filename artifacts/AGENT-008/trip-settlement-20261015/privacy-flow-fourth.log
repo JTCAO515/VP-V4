@@ -1,0 +1,32 @@
+Trip privacy preview conversation {"kind":"preview","eligible":true,"conflicts":[],"eraseCounts":{"work":1,"goals":1,"turns":1,"events":2,"intakes":0,"threads":1,"feedback":0,"grounded":0,"messages":2,"planning":0,"tripWork":1,"artifacts":0,"goalLinks":1,"revisions":0,"assistJobs":0,"callWindows":0,"checkpoints":0,"idempotency":1,"tripLineage":0,"observations":0,"resultClaims":0,"resultEvents":0,"tripContexts":1,"tripRequests":0,"conversations":1,"executionRuns":0,"localJournals":0,"actionReceipts":0,"intakeBindings":0,"sourceReceipts":0,"tripOperations":1,"attemptBindings":0,"memoryConsumers":0,"modelDispatches":0,"collectorOrigins":0,"collectorOutputs":0,"completionProofs":0,"completedReceipts":0},"redactCounts":{"textBodies":1,"taskDigests":1,"tripObjectives":1}}
+privacy receipt conversation {"kind":"receipt","scope":"conversation-sensitive-data/1","state":"erased","rootId":"6573e63a-1a74-4a4d-9703-7316475e4840","ownerId":"1a7c4f7d-7ba0-4471-ba1c-0d004a4dfb92","decision":{"graph":{"goalIds":["d89d94f3-8b4d-42aa-aa6c-dc5684f52879"],"taskIds":["952e4236-6e0b-4d64-aab3-f309451e95a5"],"turnIds":["e686b19e-0bee-431f-944f-96bada6d79a7"],"threadIds":["917561b6-e942-45d0-a241-fe34e099c62b"],"messageIds":["0b8bf3c2-2e99-463a-88d8-91758b286ec5","1e4de492-0a74-4d46-bae1-63218d90f3f9"],"artifactIds":[],"tripTaskIds":["952e4236-6e0b-4d64-aab3-f309451e95a5"],"conversationIds":["6573e63a-1a74-4a4d-9703-7316475e4840"],"tripPrivacyTripIds":["693cd1ed-b066-480e-a4fe-8b232036cef9"]},"decidedAt":1792038920425,"sourceTrip":"not_modified","erasedCounts":{"work":1,"goals":1,"turns":1,"events":2,"intakes":0,"threads":1,"feedback":0,"grounded":0,"messages":2,"planning":0,"tripWork":1,"artifacts":0,"goalLinks":1,"revisions":0,"assistJobs":0,"callWindows":0,"checkpoints":0,"idempotency":1,"tripLineage":0,"observations":0,"resultClaims":0,"resultEvents":0,"tripContexts":1,"tripRequests":0,"conversations":1,"executionRuns":0,"localJournals":0,"actionReceipts":0,"intakeBindings":0,"sourceReceipts":0,"tripOperations":1,"attemptBindings":0,"memoryConsumers":0,"modelDispatches":0,"collectorOrigins":0,"collectorOutputs":0,"completionProofs":0,"completedReceipts":0},"requestDigest":"90a65dc0a30fb7c7538100157943d9f57480140f51bc7701fd2b0fa38310ff59","explicitMemory":"not_modified","externalCopies":"not_erased","redactedCounts":{"textBodies":1,"taskDigests":1,"tripObjectives":1},"retainedCounts":{"tasks":1,"capacity":1,"taskTurns":1,"budgetAttempts":1,"textDispatches":0,"goalTripReceipts":1},"retainedFences":7,"clearedPreviews":0,"sourceConversation":"erased"},"rootKind":"conversation","expiresAt":1792038950242,"objectIds":[],"requestId":"7d2bd756-5714-400e-8df9-fae805f74259","sessionId":"c5cf6846-3cd9-4ac5-9c97-4d3d8c131d89","boundaries":{"missing":["applied_or_unapplied_proposal_source_requires_original_flow","shared_cross_scope_or_active_work_rejected","readiness_guide_scoped_edit_notification_brief_links_rejected","existing_core_export_copies_require_original_cleanup","provider_and_external_copies_not_erased","backup_restore_and_old_device_acceptance_unverified"],"retained":["confirmed_trip_content_history_proposals","explicit_memory_profiles_receipts_consents","other_conversations_and_domains","minimal_task_capacity_budget_dispatch_link_receipts","permanent_entity_identity_and_operation_fences","original_source_policy_consent_authority_ids","inert_trip_goal_and_proposal_fences"],"eraseFields":["selected_conversation_goals_messages_intakes_source_receipts","exclusive_threads_turns_events_feedback","exclusive_results_all_revisions_events","closed_planning_grounded_worker_copies","selected_turn_memory_consumer_references","exclusive_trip_contexts_work_requests_operations_lineage"],"redactFields":["selected_private_text_input_output_permanently_hidden","selected_task_goal_digest_fixed_deleted_marker","trip_objective_scope_request_and_producer_references"]},"capturedAt":1792038920242,"mobileEpoch":1,"sourceDigest":"0e82eaada1cccbd90d3bbb4d71653f9d87ea9d03713bff510bb5883044702f49","previewDigest":"bc47ac801edd0c212c261ce22c1bff7ec9fe1f6bfc254f27f21ee3fc3f59a3d8","schemaVersion":"conversation-trip-data/1","sourceAuthorities":[{"policyId":"9f198bc2-4d32-4140-b857-e1b8a78f540c","consentId":"6ff3fae6-458b-4a53-8a40-5b84fdb1c0b9"}],"allUserDataCompleted":false}
+Trip privacy preview turn {"kind":"preview","eligible":false,"conflicts":["SOURCE_UNSUPPORTED"],"eraseCounts":{"work":1,"events":2,"intakes":0,"feedback":0,"grounded":0,"planning":0,"tripWork":1,"artifacts":0,"revisions":0,"assistJobs":0,"callWindows":0,"checkpoints":0,"idempotency":1,"tripLineage":0,"observations":0,"resultClaims":0,"resultEvents":0,"tripContexts":1,"tripRequests":0,"executionRuns":0,"localJournals":0,"actionReceipts":0,"intakeBindings":0,"sourceReceipts":0,"tripOperations":1,"attemptBindings":0,"memoryConsumers":0,"modelDispatches":0,"collectorOrigins":0,"collectorOutputs":0,"completionProofs":0,"completedReceipts":0},"redactCounts":{"textBodies":1,"taskDigests":1,"messageBodies":1,"tripObjectives":1}}
+✖ explicit Trip privacy preview/confirmed erase/recovery removes all owned scoped copies; v1 counts stay unchanged (2894.487209ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2958.517584
+
+✖ failing tests:
+
+test at tests/integration/service-task-trip/privacy-flow.test.mjs:17:1
+✖ explicit Trip privacy preview/confirmed erase/recovery removes all owned scoped copies; v1 counts stay unchanged (2894.487209ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  false !== true
+
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/privacy-flow.test.mjs:23:178)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

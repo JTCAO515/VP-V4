@@ -1,0 +1,19 @@
+{
+  "sourceHead": "a0554d52a41b592208ea77297cbc95f46b922d5d",
+  "qaBase": "f60c024441ec87e2dfe910c925a10119d99f62b4",
+  "files": {
+    "components/qa-agent/QaAgentWorkspace.tsx": "fe53467cdf91cc98d2383743f928567c0b4bead316085df77291e1373382082f",
+    "components/qa-agent/api.ts": "6701995776881c1e8aa95bb009c19e519d807e122af039579e7659772c74b6b4",
+    "components/qa-agent/pending-identity.ts": "9c43f92c5ea8345f0d972d62c498290b191d594b8f7c924326e6747c7091096a",
+    "lib/qa-agent/cancellation-contract.ts": "6203dab4c662d4cc958c25c1dae805b41f8d39347356ad0b4cbdfc9d653c8034",
+    "lib/server/qa-agent/cancellation/service.ts": "9ff05cd55f883cc7e2133bfba60225a9a79f168cfde334942d4653bb2fb3c2ff",
+    "lib/server/qa-agent/cancellation/http.ts": "e48a018d751f8f26afbd410f8f43390c3124fef9e76b66bd5aa90eee7b52a2ee",
+    "supabase/migrations/20261015043710_agent001_qa_cancellation.sql": "f7c1898b22c6be8f55851b87e3dcd9a7cbce24a187469f529de911658c8693ce",
+    "scripts/ci-suites/db-integration.mjs": "4d54bc01a7d626c04a5f2dc07afa0860afc78817429893a14ffbfe04666c1f74",
+    "scripts/ci-change-scope.mjs": "5e171fdb1944838be1c9178be4e7817a69a064b9fd6fc7c6b3b248c0118b4b7a",
+    "tests/integration/qa-agent-cancellation/native-pg.test.mjs": "61b7a6638a2268921268cc3c4f2bf2bed143273a921987153f95b9b47bd379a2",
+    "tests/integration/identity/function-acl.test.mjs": "9ad5ee5b2c149d2ac6b8993c68e3cfd92e454b3c50509c75ee88e1e38b161cfd"
+  },
+  "buildRawSha256": "3ae980729787a3583ada9b1cff27da6bde9bccf56c61e5fb976ce3e054da3a02",
+  "target": "UNRUN; controlled local source proof only"
+}

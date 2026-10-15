@@ -77,12 +77,12 @@ test("ensure kind:claimed runs the real search loop and completes the job with a
   assert.equal(completeInput.outcome.result.kind, "answered");
 });
 
-test("ensure kind:claimed, but the search loop itself throws, completes the job as failed with an errorCode instead of losing the claim", async () => {
+test("a context-unavailable result is persisted only with a matching succeeded receipt", async () => {
   let completeInput;
   const jobRpc = async (name, params) => {
     if (params.p_input.action === "ensure") return { data: { kind: "claimed", jobId, claimToken }, error: null };
     completeInput = params.p_input;
-    return { data: { kind: "failed", jobId }, error: null };
+    return { data: { kind: "succeeded", jobId }, error: null };
   };
   const contextRpc = async () => { throw new Error("context RPC network failure"); };
   const outcome = await runGroundedAiAssistJob(turnId, jobRpc, searchInput, { ...jobDeps, rpc: () => { throw new Error("must not call"); }, contextRpc }, new AbortController().signal);
@@ -93,7 +93,7 @@ test("ensure kind:claimed, but the search loop itself throws, completes the job 
   assert.equal(completeInput.outcome.kind, "succeeded");
 });
 
-test("a claimed job whose complete() call itself fails to reach the server still returns the real outcome to the caller", async () => {
+test("a claimed job whose complete() call fails to reach the server reports pending without displaying an unacknowledged outcome", async () => {
   const jobRpc = async (name, params) => {
     if (params.p_input.action === "ensure") return { data: { kind: "claimed", jobId, claimToken }, error: null };
     throw new Error("network down");
@@ -101,8 +101,7 @@ test("a claimed job whose complete() call itself fails to reach the server still
   const contextRpc = async () => ({ data: contextRow, error: null });
   const rpc = async () => ({ data: knowledgeReadResponse([{ factId: "f1", assertionId: "assertion-1", assertion: { subjectId: "international_card_payment", predicate: "requires_action", objectId: "merchant_acceptance_check" }, sources: [{ sourceRevisionId: "11111111-1111-1111-1111-111111111111" }], text: "Most large merchants accept international cards.", conditions: [], exclusions: [] }]), error: null });
   const outcome = await runGroundedAiAssistJob(turnId, jobRpc, searchInput, { ...jobDeps, rpc, contextRpc, fetch: async () => chatResponse(answer) }, new AbortController().signal);
-  assert.equal(outcome.status, "succeeded");
-  assert.equal(outcome.outcome.kind, "answered");
+  assert.deepEqual(outcome, { status: "pending" });
 });
 
 test("an ensure call that throws or errors is not_offered/job_unavailable, never crashes", async () => {

@@ -1,0 +1,36 @@
+{
+  "task": "WEB-001 cancellation consumer; related681",
+  "base": "59c184f9d497bac5d73c1835ba6f09816eca04af",
+  "sharedContract": {
+    "commit": "05bdfacab26602aac4931e7a6b0daba1805b00ec",
+    "gitBlob": "2da580f9610f88b3a1511c3d7befd8c074ab8830",
+    "sha256": "d5b39ac0284320d80fabf5cd57c81108e4597d51c90a2181342ca99a1769abc0",
+    "authority": "Main froze exact five fields/states/ack and authorized raw-byte import; no hand edits"
+  },
+  "backendSourceDependency": "05bdfaca +67ae8a89 actual service/HTTP/route; Main integrates final uppercase UUID fix and SQL, client does not own these files",
+  "sourceSha256": {
+    "components/qa-agent/QaAgentWorkspace.tsx": "70439559053f94199fede735313ef23eacf6c073fd9f37edfb48d94330037b91",
+    "components/qa-agent/api.ts": "c816002d81220924743ba31e261f74f490b40b206213cf0ddc424a0fa8d6bd88",
+    "components/qa-agent/pending-identity.ts": "9c43f92c5ea8345f0d972d62c498290b191d594b8f7c924326e6747c7091096a",
+    "components/qa-agent/QaAgentWorkspace.module.css": "7982daf94ece4dd72b3d33f8f9c9164be1ef4898d6ffc3699e8b4744fa7dc2cf"
+  },
+  "behavior": [
+    "Explicit stop confirmation; canonical original-ID GET before one closed-body{} POST. Independent qa-cancellation/1 strict scope/state/ack.",
+    "Only cancelled+observed displays Stopped. Terminal preserves saved history. Pending/not_observed/transport uncertainty only original-ID GET, no automatic repeat message/cancel POST or new UUID, no fee/refund claims.",
+    "Lookup/explicit-intent IDs in actor-scoped tab storage, no text/digest/credential/cancellation authority persisted. Message and cancellation namespaces remain separate; stop error not_submitted cannot confirm original admission.",
+    "Intent-only BroadcastChannel and same-origin navigator lock coordinate tabs; broadcast never claims a state. No peer body/session selection transfer.",
+    "Actual URL/ref/actor/epoch/abort and per-request read generations fence late scope/status responses. Generation consent/quota does not grant/deny metadata-only stop; backend remains authority.",
+    "Definite rejection of this cancellation POST resets only its intent so user can explicitly reconfirm same ID; never auto re-POST."
+  ],
+  "checks": {
+    "typecheck": "PASS",
+    "lint": "PASS",
+    "productionBuild": "PASS",
+    "unitProtocolPrivacy": "17 PASS / 0 FAIL / 0 SKIP",
+    "productionBrowserR2": "13 PASS / 0 FAIL:11 new cancellation scenarios plus2 existing relevant regressions",
+    "finalFocusedBrowser": "5 PASS after known-rejection improvement:4 affected reruns +1 new;14 distinct scenarios total, not sum of reruns"
+  },
+  "historicalFailure": "First7 browser cases6PASS/1FAIL: withdrawal test dereferenced null journal before polling completed; null-safe awaited predicate corrected. Original raw log retained.",
+  "target": "Production-compiled real QaAgentWorkspace with intercepted synthetic Auth/API. No true GoTrue, liveDB, provider, expense or applied SQL claim. Target remains UNRUN.",
+  "scope": "Four owned components/API/identity/CSS + exclusive tests/artifacts. Sole shared pure DTO imported raw. No backend/SQL/CI/env/lock/root/demo edits. Main owns coherent integration PR/review/CI/normalmerge;681 remains open."
+}

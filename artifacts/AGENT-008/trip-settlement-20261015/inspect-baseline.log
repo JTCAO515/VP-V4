@@ -1,0 +1,19 @@
+[
+  [ 'conversation_data_private.schema_supported_v1()', 56274 ],
+  [ 'conversation_data_private.sources_v1()', 10055 ],
+  [ 'profile_data_private.schema_v1()', 103483 ],
+  [ 'profile_data_private.sources_v1()', 2719 ],
+  [ 'result_data_private.infrastructure_supported_v1()', 3436 ],
+  [ 'result_data_private.schema_supported_v1()', 2141 ],
+  [ 'turn_data_private.runtime_supported_v1()', 15136 ],
+  [ 'turn_data_private.schema_supported_v1()', 24822 ],
+  [ 'turn_data_private.sources_v1()', 8824 ],
+  [ 'turn_data_private.write_hooks_valid_v1()', 2617 ]
+]
+conversation_data_private.schema_supported_v1() [ { result: false } ]
+profile_data_private.schema_v1() [ { result: false } ]
+result_data_private.infrastructure_supported_v1() [ { result: true } ]
+result_data_private.schema_supported_v1() [ { result: false } ]
+turn_data_private.runtime_supported_v1() [ { result: true } ]
+turn_data_private.schema_supported_v1() [ { result: false } ]
+turn_data_private.write_hooks_valid_v1() [ { result: true } ]

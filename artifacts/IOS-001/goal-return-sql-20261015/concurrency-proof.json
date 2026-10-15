@@ -1,0 +1,27 @@
+[
+  {
+    "case": "Original publisher source guard KEY SHARE NOWAIT rejects under Goal UPDATE fence",
+    "result": "PASS"
+  },
+  {
+    "case": "Original publisher retry after reader commit succeeds with complete new membership",
+    "result": "PASS"
+  },
+  {
+    "case": "Original choose waits and new immutable revision is observed after release",
+    "result": "PASS"
+  },
+  {
+    "case": "Original withdrawal serializes after discovery and rediscovery invalidates without older fallback",
+    "result": "PASS"
+  },
+  {
+    "case": "Busy original Goal NOWAIT returns uniform unavailable",
+    "result": "PASS"
+  },
+  {
+    "case": "Actual outer SQL timeout propagates cancellation, not success",
+    "result": "PASS",
+    "outerTimeout": "100ms fixture only; PostgREST5s UNRUN"
+  }
+]

@@ -56,11 +56,13 @@ import UIKit
                     }
                     .safeAreaInset(edge: .bottom, spacing: 0) { composer }
                 }
+                .accessibilityHidden(sidebarVisible)
                 NativeMuseChatHeader(avatarImage: avatarImage, avatarScale: avatarScale,
                     avatarVerticalOffset: avatarVerticalOffset,
                     sidebar: { dismissKeyboard(); withAnimation(.easeOut(duration: 0.2)) { sidebarVisible = true } },
                     assistant: { dismissKeyboard(); if let onShowAssistant { onShowAssistant() } else { sheet = .assistantUnavailable } },
                     referral: { dismissKeyboard(); sheet = .referral })
+                    .accessibilityHidden(sidebarVisible)
                 if sidebarVisible {
                     Button { closeSidebar() } label: { Color.black.opacity(0.18) }
                         .buttonStyle(.plain).ignoresSafeArea().accessibilityLabel("关闭侧栏")
@@ -93,8 +95,13 @@ import UIKit
     private func contextCard(_ text: String) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Label("本次带入的样例上下文", systemImage: "link").font(.caption).foregroundStyle(.secondary)
-            Text(state.journeys.first(where: { $0.id == text })?.title ?? text)
-                .font(.subheadline).textSelection(.enabled)
+            if let materialText = state.libraryChatText(materialID: text) {
+                Text(materialText)
+                    .font(.subheadline).textSelection(.enabled)
+            } else {
+                Text(state.journeys.first(where: { $0.id == text })?.title ?? text)
+                    .font(.subheadline).textSelection(.enabled)
+            }
             if let id = linkedJourneyID(for: text) {
                 Button("查看关联旅程") {
                     guard state.chatContext == text, linkedJourneyID(for: text) == id else { return }

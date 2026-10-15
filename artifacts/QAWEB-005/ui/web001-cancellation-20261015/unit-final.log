@@ -1,0 +1,25 @@
+✔ accepted receipt stays pending and transport uses same-origin cookies without auth headers (1.443041ms)
+✔ version, owner/session, request, terminal-without-answer and unknown outcome fail closed (1.860459ms)
+✔ unknown ACK stays unknown and explicit original request recovery is GET only (0.301542ms)
+✔ policy consent is never inferred and server denial is preserved (0.69875ms)
+✔ only accepted versioned QA session policy permits submission (1.978458ms)
+✔ missing, mismatched and unknown quota authority fail closed; limit denial retains not_submitted (1.804708ms)
+✔ only temporary history errors retry; permission and successful malformed wire stop (0.613542ms)
+✔ reconciliation is a protected non-answer with original identity; unknown status and answer payload fail closed (0.837541ms)
+✔ cancellation uses only its independent five-field wire and closed original-ID POST (1.992292ms)
+✔ cancellation scope uses canonical UUID case without replacing the original identity (0.253792ms)
+✔ content-free identity survives reload and cannot be replaced by another UUID (0.835208ms)
+✔ different actor and logout clear recovery metadata without exposing old requests (0.082ms)
+✔ only matching confirmed receipt clears unresolved identity (0.073083ms)
+✔ unavailable, malformed, silent write and cleanup failure all fail closed (0.106958ms)
+✔ stale actor mutation cannot delete or overwrite a new actor recovery identity (0.071959ms)
+✔ cancellation lookup/intent IDs stay separate from original admission and store no authority/result (0.143541ms)
+✔ definitely rejected stop resets only cancellation intent, never original admission identity (0.069125ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 189.565417

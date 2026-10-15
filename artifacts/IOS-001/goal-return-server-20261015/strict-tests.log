@@ -1,0 +1,13 @@
+✔ actual same-transaction SQL reference and original chosen artifact pass Server strict readback (1.060041ms)
+✔ exact scope and reference preserve int64 source sequence and explicit unknown (0.800417ms)
+✔ foreign scope, extra authority and noncanonical event sequences fail closed (0.283ms)
+✔ readable historical, stale, pending or wrong reference cannot be current decision (0.173833ms)
+✔ native GET rejects duplicate, extra, absent, malformed and forbidden browser headers before network (9.427166ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 107.641583

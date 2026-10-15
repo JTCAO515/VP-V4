@@ -1,0 +1,8 @@
+{
+  "selfOwnedNonceOnly": true,
+  "stoppedOwnDataDirectory": true,
+  "dataRemoved": true,
+  "listenAddresses": "",
+  "socketMode": "0700",
+  "sharedResourcesTouched": false
+}

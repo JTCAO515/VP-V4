@@ -1,0 +1,36 @@
+{
+  "baseHead": "afd08cc05a659f71bb6ad11d159eeddc3d3059e7",
+  "scope": [
+    "lib/server/service-task-trip/privacy.ts",
+    "tests/contract/service-task-trip/privacy.test.ts",
+    "tests/integration/service-task-trip/privacy-flow.test.mjs"
+  ],
+  "blobs": {
+    "lib/server/service-task-trip/privacy.ts": "beb6c69d20ca09e4015b07e5b4de0216fb70b173",
+    "tests/contract/service-task-trip/privacy.test.ts": "749fdfae886835fb1fc081813a2e8a504acdd514",
+    "tests/integration/service-task-trip/privacy-flow.test.mjs": "1c805e1be6c3d17ae403141d244143d7c2f9d902"
+  },
+  "failureBefore": "contract: erase missing identity group accepted (expected null); legacy v1 valid",
+  "checks": {
+    "contract": "PASS 7, zero skips; erase/recover missing, undefined, null, wrong type, missing sources, extra sources, duplicate identities, wrong owner, relation and PK shapes reject; service preserves TRIP_PRIVACY_ACK_UNKNOWN",
+    "nativePrivacy": "PASS 2, zero skips; real SQL five-source erase and recovered receipt valid; mutated missing/undefined/null/type/count/duplicate/owner reject; turn behavior and shared context reject preserved",
+    "typecheck": "PASS",
+    "lint": "PASS",
+    "docs": "PASS",
+    "diff": "PASS"
+  },
+  "retainedIntermediateFailures": [
+    "after: contract recover command fixture carried erase-only keys; corrected exact recover selection",
+    "typecheck: cloned readonly boundary fixture was typed mutable; copied arrays explicitly"
+  ],
+  "noSchemaChange": "SQL already emits decision.tripSourceIdentityKeys; no SQL or bucket or ledger changes",
+  "unmodifiedCILease": "six CI files and workflow remain untouched",
+  "qaDependency": "accepted QA8038942b noted; not merged into owner branch because CI files returned to Main; Main owns integration",
+  "reusedEvidence": "c893 business 20/59/25/9min tests unchanged, not rerun",
+  "unrun": [
+    "full GitHub CI on new exact head",
+    "Main exact-head delta review",
+    "protected merge",
+    "target/provider/GoTrue/human acceptance"
+  ]
+}

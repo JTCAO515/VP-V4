@@ -1,0 +1,9 @@
+{
+  "path": "lib/server/jobs/run-hosted-text-worker.mjs",
+  "beforeGitBlob": "edcc2b59e5b0ceeedc0d22ce64e70be3e61849ce",
+  "beforeSHA256": "33767056d730bc9197dc08d4d369affa473fbfe7cb7105269e40b6a7f639c1cf",
+  "afterSHA256": "1ecff7560372319f32658b55da996d61e653e5e5aac5ffddcc1fbf14e952add9",
+  "default": "off",
+  "environmentFlag": "VISEPANDA_HOSTED_TRIP_SERVICE_TASK_WORKER",
+  "profile": "vpj10-hosted-trip-service-task/1"
+}

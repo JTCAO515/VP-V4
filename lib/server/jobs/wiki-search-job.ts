@@ -117,7 +117,25 @@ export async function runWikiSearchJob(
     addUsage(usage, outcome.usage);
     const action = outcome.output as WikiSearchAction;
     if (action.action === "answer") {
-      return { kind: "answered", coverage: action.coverage, summary: action.summary, citations: action.citations, gaps: action.gaps, conflicts: action.conflicts, rounds: round, queries: orderedQueries, usage };
+      // Model prose and coverage are proposals, never evidence. Use a bounded
+      // direct lookup of the authorized corpus and keep complete statements
+      // (including conditions/exclusions), rather than a model-selected fragment.
+      const citations = action.citations.filter((citation) => input.corpus.some((entry) =>
+        entry.pageKey === citation.pageKey && entry.text.length < 4000 && entry.text.includes(citation.quote)));
+      if (action.coverage !== "no_content" && citations.length === 0) {
+        return { kind: "failed", errorCode: "MODEL_OUTPUT_INVALID", rounds: round, usage };
+      }
+      const selected = input.corpus.filter((entry) => citations.some((citation) => citation.pageKey === entry.pageKey));
+      return {
+        kind: "answered", coverage: selected.length ? "partial" : "no_content",
+        summary: selected.length ? selected.map((entry) => entry.text).join("\n")
+          : input.locale === "zh" ? "未找到可核验的引用。" : "No verifiable citation was found.",
+        citations, gaps: [],
+        // The protocol supplies no claim IDs for conflicts: retain only a
+        // nonfactual signal for the grounded consumer, never its free prose.
+        conflicts: action.conflicts.length ? [input.locale === "zh" ? "引用存在尚未定位的分歧。" : "Reported disagreement has no resolved evidence scope."] : [],
+        rounds: round, queries: orderedQueries, usage,
+      };
     }
     const normalizedQuery = action.query.trim();
     const duplicate = seenQueries.has(normalizedQuery.toLowerCase());
