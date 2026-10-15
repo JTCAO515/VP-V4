@@ -256,11 +256,17 @@ run('client cancellation during the controlled model call never completes succes
  assert.deepEqual(await h.run(controller.signal),{status:'cancelled'});assert.deepEqual(h.counters,{models:1,completes:0});
  assert.deepEqual(await h.run(),{status:'pending'});assert.deepEqual(h.counters,{models:1,completes:0});
 });
+run('the original Guide command rejects changed input bytes instead of reusing an old selected context',async()=>{
+ const f=await guideFixture();
+ await assert.rejects(privileged(f.owner,'guide_place_v1',{p_trip:f.trip,p_input:{...f.command,question:'Different user input for the original operation'}}),/IDEMPOTENCY_KEY_REUSE/);
+ const context=await actorRpc(f.owner,'read_grounded_ai_assist_context_v1',{p_turn_id:f.command.turnId});
+ assert.equal(context.kind,'context');assert.equal(context.inputText,f.command.question);assert.equal(context.placeSubjectId,f.subject);
+});
 run('deleted original session and a fresh same-owner session cannot revive the old selected binding',async()=>{
  const f=await guideFixture(),tid=f.command.turnId,claim=await actorRpc(f.owner,'grounded_ai_assist_work_v1',{p_input:{action:'ensure',turnId:tid}});
  assert.equal(claim.kind,'claimed');
  await query('delete from auth.sessions where id=$1',[f.owner.session]);
- await assert.rejects(actorRpc(f.owner,'read_grounded_ai_assist_context_v1',{p_turn_id:tid}),/UNAUTHENTICATED/);
+ await assert.rejects(actorRpc(f.owner,'read_grounded_ai_assist_context_v1',{p_turn_id:tid}),/SESSION_REPLACED/);
  const fresh={id:f.owner.id,session:randomUUID()};await query('insert into auth.sessions(id,user_id) values($1,$2)',[fresh.session,fresh.id]);
  assert.equal((await actorRpc(fresh,'read_grounded_ai_assist_context_v1',{p_turn_id:tid})).kind,'unavailable');
  assert.equal((await actorRpc(fresh,'grounded_ai_assist_work_v1',{p_input:{action:'ensure',turnId:tid}})).kind,'unavailable');
