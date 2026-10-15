@@ -1,0 +1,332 @@
+{
+  "owner": "2a66a42e-e3a5-4209-8270-2b7b3381bb07",
+  "limit": 100,
+  "now": 1792054886579,
+  "page": {
+    "items": [
+      {
+        "fences": [],
+        "ownerId": "2a66a42e-e3a5-4209-8270-2b7b3381bb07",
+        "sources": [
+          {
+            "rows": [
+              {
+                "id": "b6f7e2ff-5adf-4f02-9b64-358bb650668b",
+                "state": "accepted",
+                "turn_id": "b3c65eb0-adaa-4386-b5ad-91c1bdc4d954",
+                "event_id": "accepted",
+                "owner_id": "2a66a42e-e3a5-4209-8270-2b7b3381bb07",
+                "sequence": 1,
+                "thread_id": "220f92db-47af-4a1c-9047-bb421b33905e",
+                "created_at": "2026-10-15T09:01:26.313275+00:00",
+                "event_type": "accepted",
+                "schema_version": "turn-sse-v1"
+              }
+            ],
+            "relation": "public.chat_turn_events"
+          },
+          {
+            "rows": [
+              {
+                "digest": "chat-state-control-v1",
+                "turn_id": "b3c65eb0-adaa-4386-b5ad-91c1bdc4d954",
+                "owner_id": "2a66a42e-e3a5-4209-8270-2b7b3381bb07",
+                "thread_id": "220f92db-47af-4a1c-9047-bb421b33905e",
+                "created_at": "2026-10-15T09:01:26.313275+00:00",
+                "idempotency_key": "89601611-c61b-454b-a612-a319affb1aeb"
+              }
+            ],
+            "relation": "public.chat_turn_idempotency"
+          },
+          {
+            "rows": [],
+            "relation": "public.memory_consumer_receipts"
+          },
+          {
+            "rows": [],
+            "relation": "public.model_budget_attempts"
+          },
+          {
+            "rows": [],
+            "relation": "public.turn_feedback"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.assistant_message_source_receipts"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.assistant_messages"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.assistant_travel_intakes"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.grounded_ai_assist_jobs"
+          },
+          {
+            "rows": [
+              {
+                "city": "shanghai",
+                "basis": null,
+                "intent": null,
+                "locale": "en",
+                "task_id": "06a28ecf-9764-4ebb-9fb2-e9426d073838",
+                "turn_id": "b3c65eb0-adaa-4386-b5ad-91c1bdc4d954",
+                "owner_id": "2a66a42e-e3a5-4209-8270-2b7b3381bb07",
+                "place_name": null,
+                "completed_at": null,
+                "request_scope": null,
+                "scope_version": 1,
+                "original_outcome": null,
+                "place_resolution": null,
+                "place_subject_id": null,
+                "unanswered_needs": null,
+                "selected_place_request": {
+                  "basis": {
+                    "city": "shanghai",
+                    "scene": "attraction",
+                    "subjectId": "fixture_d0d10ae2ab9e48f0884c2a860567056f",
+                    "sourceDigest": "65d080b4010a2e266e2f952b75a8190dada1eae59ade037fe24e512fe4e01369"
+                  },
+                  "scopeId": "220f92db-47af-4a1c-9047-bb421b33905e",
+                  "operation": {
+                    "turnId": "b3c65eb0-adaa-4386-b5ad-91c1bdc4d954",
+                    "scopeId": "220f92db-47af-4a1c-9047-bb421b33905e",
+                    "messageId": null,
+                    "scopeKind": "thread",
+                    "operationId": "89601611-c61b-454b-a612-a319affb1aeb"
+                  },
+                  "scopeKind": "thread",
+                  "expectation": {
+                    "locale": "en",
+                    "tripId": "ba0aaa8f-ef2b-46db-9110-967e39d94e2d",
+                    "provider": "amap",
+                    "headVersion": 0,
+                    "referenceId": "a61ea2ba-db44-45e5-9180-f8704014bea6",
+                    "contextDigest": "ee12142d07cd24d222759cf9a927c032ecc150907b78558f5ab18a30ac8baa00",
+                    "mappingDigest": "37590e36e440e229726c382cb4e77266d92bd568939fa905451b4b3776279ce4",
+                    "providerPoiId": "self-only-7779cb55-3285-4703-9e40-abd85faf33a2",
+                    "canonicalPoiId": "6bf1b6eb-c0b3-4507-b130-a4744f0c59ef"
+                  },
+                  "operationId": "89601611-c61b-454b-a612-a319affb1aeb",
+                  "requestDigest": "e4f0ea1884db11b3ac30f0a354489a4b56018c0c289e31847308dfc49145dfeb",
+                  "schemaVersion": "canonical-place-proof/1",
+                  "originalReceipt": {
+                    "kind": "accepted",
+                    "reused": false,
+                    "turnId": "b3c65eb0-adaa-4386-b5ad-91c1bdc4d954",
+                    "version": 2,
+                    "parentTurnId": null,
+                    "relationship": "new_goal",
+                    "scopeVersion": 1,
+                    "serviceTaskId": "06a28ecf-9764-4ebb-9fb2-e9426d073838"
+                  }
+                }
+              }
+            ],
+            "relation": "turn_private.grounded_turns"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.planning_action_receipts"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.planning_comparisons"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.planning_intake_bindings"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.planning_model_dispatches"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.planning_observations"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.planning_v2_collector_origins"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.planning_v2_collector_outputs"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.planning_v2_completed_receipts"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.planning_v2_completion_proofs"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.planning_v2_execution_runs"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.planning_v2_external_call_windows"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.planning_v2_model_attempt_bindings"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.planning_v2_model_local_journal"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.planning_v2_place_checkpoints"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.planning_v2_result_claims"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.result_artifacts"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.result_events"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.result_revisions"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.service_task_capacity"
+          },
+          {
+            "rows": [
+              {
+                "task_id": "06a28ecf-9764-4ebb-9fb2-e9426d073838",
+                "turn_id": "b3c65eb0-adaa-4386-b5ad-91c1bdc4d954",
+                "owner_id": "2a66a42e-e3a5-4209-8270-2b7b3381bb07",
+                "relationship": "new_goal",
+                "parent_turn_id": null,
+                "request_digest": "eb56ce46425ad10a132bc8587928453a29da21790b9aacf9e7e80d2978009f0d",
+                "idempotency_key": "89601611-c61b-454b-a612-a319affb1aeb"
+              }
+            ],
+            "relation": "turn_private.service_task_turns"
+          },
+          {
+            "rows": [
+              {
+                "id": "06a28ecf-9764-4ebb-9fb2-e9426d073838",
+                "owner_id": "2a66a42e-e3a5-4209-8270-2b7b3381bb07",
+                "policy_id": "b51474b1-b003-4712-992d-fb262b5606e6",
+                "thread_id": "220f92db-47af-4a1c-9047-bb421b33905e",
+                "consent_id": "88bdd6e7-5f77-45cd-aa68-7c7ca32dad1f",
+                "created_at": "2026-10-15T09:01:26.320935+00:00",
+                "goal_digest": "a1aa3e7afdab62fcea3d6540ad23b1f52cbb1c8f90845edb8af5ce2044238ac8",
+                "goal_turn_id": "b3c65eb0-adaa-4386-b5ad-91c1bdc4d954",
+                "last_turn_id": "b3c65eb0-adaa-4386-b5ad-91c1bdc4d954",
+                "scope_version": 1,
+                "budget_scope_id": null,
+                "expected_result": "text_answer",
+                "capacity_enforced": false
+              }
+            ],
+            "relation": "turn_private.service_tasks"
+          },
+          {
+            "rows": [
+              {
+                "locale": "en",
+                "turn_id": "b3c65eb0-adaa-4386-b5ad-91c1bdc4d954",
+                "owner_id": "2a66a42e-e3a5-4209-8270-2b7b3381bb07",
+                "hidden_at": null,
+                "policy_id": "b51474b1-b003-4712-992d-fb262b5606e6",
+                "thread_id": "220f92db-47af-4a1c-9047-bb421b33905e",
+                "consent_id": "88bdd6e7-5f77-45cd-aa68-7c7ca32dad1f",
+                "created_at": "2026-10-15T09:01:26.333556+00:00",
+                "input_text": "What time does it open?",
+                "output_kind": null,
+                "output_text": null
+              }
+            ],
+            "relation": "turn_private.text_content"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.text_dispatches"
+          },
+          {
+            "rows": [
+              {
+                "state": "queued",
+                "attempt": 0,
+                "turn_id": "b3c65eb0-adaa-4386-b5ad-91c1bdc4d954",
+                "lease_ms": 120000,
+                "owner_id": "2a66a42e-e3a5-4209-8270-2b7b3381bb07",
+                "created_at": "2026-10-15T09:01:26.336736+00:00",
+                "expires_at": null,
+                "session_id": "a297104e-dcbc-4e80-af06-57bcd278294e",
+                "lease_token": null,
+                "max_attempts": 3,
+                "execution_mode": "text"
+              }
+            ],
+            "relation": "turn_private.work"
+          },
+          {
+            "rows": [
+              {
+                "id": "b3c65eb0-adaa-4386-b5ad-91c1bdc4d954",
+                "status": "accepted",
+                "trip_id": null,
+                "owner_id": "2a66a42e-e3a5-4209-8270-2b7b3381bb07",
+                "thread_id": "220f92db-47af-4a1c-9047-bb421b33905e",
+                "created_at": "2026-10-15T09:01:26.313275+00:00",
+                "updated_at": "2026-10-15T09:01:26.313275+00:00"
+              }
+            ],
+            "relation": "public.turns"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.assistant_directions_intakes_v1"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.directions_result_sources_v1"
+          },
+          {
+            "rows": [],
+            "relation": "turn_private.directions_operations_v1"
+          }
+        ],
+        "operations": [],
+        "sourceRows": {
+          "data": 8,
+          "fences": 0,
+          "operations": 0,
+          "sourceIdentityKeys": 0
+        },
+        "sourceAuthorities": [
+          {
+            "policyId": "b51474b1-b003-4712-992d-fb262b5606e6",
+            "consentId": "88bdd6e7-5f77-45cd-aa68-7c7ca32dad1f"
+          }
+        ],
+        "sourceIdentityKeys": []
+      }
+    ],
+    "hasMore": false,
+    "section": "snapshot",
+    "nextCursor": null,
+    "sourceDigest": "5382dbe774c03348b3c8e209be3cef1282fbcc9ec00fcf7a834f5db795162c03",
+    "schemaVersion": "turn-core-export/3",
+    "sectionComplete": true
+  }
+}
