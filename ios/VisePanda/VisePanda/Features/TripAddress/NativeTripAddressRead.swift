@@ -17,3 +17,20 @@ enum NativeTripAddressRead {
         }
     }
 }
+
+/// A receipt's exact confirmed projection is required; a later version cannot attest this proposal.
+enum NativeTripAddressConfirmation {
+    static func matches(_ detail: NativeTripDetail, proposal: NativeTripPending.Proposal, resultingVersion: Int) -> Bool {
+        guard detail.confirmationState == "confirmed", detail.trip.headVersion == resultingVersion,
+              resultingVersion == proposal.baseTripVersion + 1 else { return false }
+        return proposal.patch.operations.filter { $0.kind == .setChineseAddress }.allSatisfy { operation in
+            guard let day = detail.content.days.first(where: { $0.id == operation.dayId }),
+                  let item = day.items.first(where: { $0.id == operation.itemId }) else { return false }
+            switch operation.addressText {
+            case .set(let text): return item.userAddress?.text == text
+            case .clear: return item.userAddress == nil
+            case nil: return false
+            }
+        }
+    }
+}

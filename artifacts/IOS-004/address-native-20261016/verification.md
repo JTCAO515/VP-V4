@@ -1,0 +1,13 @@
+# IOS-004 Native online address
+
+Base: b39c899b941fd91119e16e55b879931642429676. Initial source: aa4d6811ec89c9ea0c2ec4c9ec4782eeb54780e1; successor commit carries this evidence and focused fixes.
+
+Implemented: existing online Support reader + exact actor/Trip version/day/item selection; current/matched, traceable source/evidence expiry; raw lines script observation; original user input codec and optional online DTO; original draft/Proposal/explicit Confirm/idempotency/readback flow. Address values remain user_provided/unverified. Malformed address DTO throws, making the read unavailable rather than missing or rewriting stored data. No Session, PBX, Today/TripView/offline source writes by this owner.
+
+PASS: `python3 tests/contract/ios004-online-address/run.py` compiles actual Foundation production source under Swift 6 and runs old/new DTO, forged/extra tags, lone-surrogate JSON rejection, null vs missing operation key, original text, byte/scalar/control limits, Chinese/Latin/ambiguous scripts, actor/version/current/matched/TTL/source qualification, draft set/clear, unrelated upsert omission, unchanged confirmed draft input and exact receipt/readback version/value negatives. Only scalar helper dependencies and exact source slices are supplied; no fake Session, authenticated transport, App or service success.
+
+PASS: `xcrun swiftc -frontend -parse` on four new feature files and the two changed Trip files; `git diff --check`.
+
+UNRUN: actual App SDK typecheck/build and interactive UI (Main owns PBX and serial build); actual backend Proposal persistence/confirmation integration; target DB/API/browser/device/VoiceOver/provider/release. Foundation tests do not prove real unknown-ACK transport behavior. Original Proposal flow retains its existing pending patch and confirmation key; new UI blocks further confirmation after a sent result and directs authoritative original-request readback. No live DB, provider, fee, location, model egress, offline permission, credentials, production or TestFlight changes.
+
+Main-only candidates: TodayView replaces only the old address placeholder with the real per-item card on the selected confirmed day. NativeTripView adds operation name and raw before/after/clear display cases. NativeOfflineTripStore adds only new-kind denial to two exhaustive switches; this requires Main's precise owner release before applying. The .before.swift/.patch/.after.swift files pin exact candidate bytes; no existing source file was edited for these candidates. PBX must register NativeTripAddressValue.swift, NativeTripAddressRead.swift, NativeTripAddressCard.swift, NativeTripAddressEditor.swift.

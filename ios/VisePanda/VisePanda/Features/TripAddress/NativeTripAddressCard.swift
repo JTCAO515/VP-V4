@@ -76,7 +76,7 @@ private struct NativeTripItemAddressView: View {
         }
         .accessibilityIdentifier("today.address.item.\(item.id)")
         .task(id: target) { await refresh() }
-        .onChange(of: target) { _, value in readGeneration = UUID(); support.bind(value) }
+        .onChange(of: target) { _, value in support.bind(value) }
         .onDisappear { readGeneration = UUID(); support.bind(nil) }
     }
     private func referenceLabel(_ lines: [String]) -> String {

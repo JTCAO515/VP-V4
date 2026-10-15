@@ -106,7 +106,7 @@ extension NativeTripOperation {
         var c = encoder.container(keyedBy: CodingKeys.self)
         try c.encode(kind, forKey: .kind)
         if kind == .setChineseAddress {
-            guard let addressText, let dayId, let itemId,
+            guard let addressText, let dayId, let itemId, NativeTripSupportTarget.item(dayId), NativeTripSupportTarget.item(itemId),
                   title == nil, date == nil, timeZone == nil, startsAt == nil, endsAt == nil, itemIds == nil else { throw NativeAddressValueError.invalid }
             try c.encode(dayId, forKey: .dayId); try c.encode(itemId, forKey: .itemId)
             switch addressText {
