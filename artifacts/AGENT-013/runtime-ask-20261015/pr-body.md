@@ -17,7 +17,7 @@ expectations and resource limits are fixed before invocation; holdout is exclude
 
 - **Before:** no runtime-ask directory at accepted QA ded26ad7; recorded H04 had
   originAuthentication NOT_VERIFIED and did not request/submit/read back Ask.
-  **After:** 16 direct tests drive the shipped module and bridge. One traverses
+  **After:** 20 direct tests at source 85a1e1eb drive the shipped module and bridge. One traverses
   actual Native identity/text/events handlers with intercepted SDK HTTP and
   in-memory synthetic signing keys; no live Auth/DB/provider is called.
 - Main's original Spec P1+2P2 / Standards P3 findings are retained. The fix retains
@@ -29,6 +29,10 @@ expectations and resource limits are fixed before invocation; holdout is exclude
   late response/abort, monotonic deadline, byte/read/request bounds, privacy
   and missing Trip completeness. Final source head 85a1e1eb; it also retains the
   existing parser's questionId and explicit identityAttestation unknown.
+- Current 85a1e1eb raw log: `review-fix-checks.log.gz`. Historical 1251881f/16 log remains
+  `local-checks.log.gz` and is not reused as current validation. Main's
+  source-equal integration also ran 57 combined tests (20 direct + 37 grounded)
+  and typecheck PASS; no local duplicate run is claimed.
 - Live Staging/provider/DB/fees/ECS/production, Web/physical-device and full #264
   acceptance NOT_RUN. Full collection, usage/cost/quota/key/context authority
   gaps remain unknown; no required-mode PASS or parent closure claim.

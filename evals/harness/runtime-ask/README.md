@@ -95,6 +95,12 @@ Required-mode verdict, Web consumer and complete #264 acceptance remain NOT_RUN.
 
 ## Main integration candidates
 
+Current source/test 85a1e1eb has 20 direct controlled tests and typecheck/lint/docs
+evidence in `review-fix-checks.log.gz`. `local-checks.log.gz` is the preserved
+historical 1251881f/16 log; it does not attest current source. Main's formal
+delta review found no remaining source defects; the documentation P3 awaits
+exact documentation-delta review, and PR-head CI remains a gate.
+
 No shared hookup is needed to call this exported driver. Main may import it into
 the existing Harness entry after obtaining that file's exact lease and pass the
 existing permitted actor-bound transport and fixed development invocation.
