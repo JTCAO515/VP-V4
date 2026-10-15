@@ -455,6 +455,7 @@ struct NativeAssistantConversationView: View {
     @State private var paceOperationBlocked = false
     @State private var memoryOperationBlocked=false
     @State private var selectedMemoryBasis:[NativeTravelMemoryReference]=[]
+    @State private var canonicalRecheckEpoch = UUID()
     @State private var canonicalPlaceAskRoot: NativeCanonicalPlaceAskRoot?
     @State private var canonicalPlaceAskNotice: String?
     @State private var draft = ""
@@ -974,6 +975,12 @@ struct NativeAssistantConversationView: View {
         .onChange(of: fiveResultSelection?.id) { _, _ in
             if let value=fiveResultSelection {lastViewedArtifact = .init(artifactId:value.artifactID,revision:value.revision);retainNavigation()}
         }
+        .onChange(of: resultActive) { _, active in
+            canonicalRecheckEpoch = UUID()
+            if !active { session.invalidateCanonicalPlaceAskReference() }
+        }
+        .onChange(of: settings.selectedLocale) { _, _ in canonicalRecheckEpoch = UUID(); session.invalidateCanonicalPlaceAskReference() }
+        .onDisappear { canonicalRecheckEpoch = UUID(); session.invalidateCanonicalPlaceAskReference() }
         .onChange(of: shellSwitchBlocked, initial: true) { _, blocked in onSwitchBlock?(blocked) }
         .onChange(of: session.busy) { wasBusy, isBusy in
             if wasBusy && !isBusy && session.dataScope != nil {
@@ -1184,11 +1191,12 @@ struct NativeAssistantConversationView: View {
     private func recheckCanonicalPlaceAsk(_ capture: NativeCanonicalPlaceAskCapture) async {
         let locale = chinese ? "zh" : "en"
         guard !busy, resultActive else { return }
+        canonicalRecheckEpoch = UUID(); let epoch = canonicalRecheckEpoch
         do {
             let refreshed = try await session.recheckCanonicalPlaceAsk(capture, locale: locale)
-            guard resultActive, locale == (chinese ? "zh" : "en") else { return }
+            guard resultActive, epoch == canonicalRecheckEpoch, locale == (chinese ? "zh" : "en") else { return }
             canonicalPlaceAskRoot = nil; canonicalPlaceAskNotice = nil
-            session.prepareCanonicalPlaceAsk(refreshed)
+            _ = session.stageCanonicalPlaceAskRefresh(refreshed)
         } catch { canonicalPlaceAskNotice = "recheck" }
     }
     private var currentCanonicalPlaceAskRoot: NativeCanonicalPlaceAskRoot {
