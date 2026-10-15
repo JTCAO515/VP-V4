@@ -2,33 +2,35 @@ import SwiftUI
 
 @MainActor
 struct NativeFrontendMemoryView: View {
+    @Environment(\.locale) private var locale
+    private var copy: NativeLibraryMemoryCopy { .init(locale: locale) }
     let state: NativeFrontendState
 
     var body: some View {
         List {
             Section {
-                NativeFrontendBoundary()
-                Text("VP 记得的旅行偏好").font(.headline)
-                Text("旅行偏好帮助理解旅行需求；助手人格控制表达方式，两者不同。这里的样例尚未用于真实回答。")
+                NativeLibraryMemoryBoundary()
+                Text(copy("VP 记得的旅行偏好", "Travel preferences VP remembers")).font(.headline)
+                Text(copy("旅行偏好帮助理解旅行需求；助手人格控制表达方式，两者不同。这里的样例尚未用于真实回答。", "Travel preferences describe your travel needs. Assistant personality controls how it responds. These are different. These samples have not been used for real answers."))
                     .font(.subheadline).foregroundStyle(.secondary)
             }
             if state.screenState != .ready {
-                NativeFrontendStatePanel(state: state)
-                if state.screenState == .empty { Button("返回正常样例") { state.screenState = .ready } }
+                NativeLibraryMemoryStatePanel(state: state)
+                if state.screenState == .empty { Button(copy("返回正常样例", "Return to sample")) { state.screenState = .ready } }
             } else if state.memories.isEmpty {
-                ContentUnavailableView("还没有旅行偏好", systemImage: "brain",
-                    description: Text("可从对话说明偏好，也可主动恢复本地样例。"))
-                Button("恢复偏好样例") { state.restoreLocalMemories() }
+                ContentUnavailableView(copy("还没有旅行偏好", "No travel preferences yet"), systemImage: "brain",
+                    description: Text(copy("可从对话说明偏好，也可主动恢复本地样例。", "Describe your preferences in chat, or explicitly restore the local sample.")))
+                Button(copy("恢复偏好样例", "Restore preference sample")) { state.restoreLocalMemories(locale: locale) }
                     .accessibilityIdentifier("frontend.memory.restore")
-                Button("开始对话") { state.openChat(context: "我想说明旅行偏好。") }
+                Button(copy("开始对话", "Start chat")) { state.openChat(context: copy("我想说明旅行偏好。", "I would like to describe my travel preferences.")) }
             } else {
-                Section("旅行偏好") {
+                Section(copy("旅行偏好", "Travel preference")) {
                     ForEach(state.memories) { memory in
                         NavigationLink(value: NativeFrontendMemoryRoute.detail(memoryID: memory.id)) {
                             VStack(alignment: .leading, spacing: 8) {
                                 Text(memory.title).font(.headline)
-                                Text("适用：\(memory.scope)").font(.subheadline)
-                                Text("来源：\(memory.source)").font(.caption).foregroundStyle(.secondary)
+                                Text(copy("适用：", "Applies to: ") + memory.scope).font(.subheadline)
+                                Text(copy("来源：", "Source: ") + memory.source).font(.caption).foregroundStyle(.secondary)
                             }.padding(.vertical, 6)
                         }
                         .buttonStyle(.plain)
@@ -36,9 +38,9 @@ struct NativeFrontendMemoryView: View {
                     }
                 }
             }
-            if let notice = state.notice { Section("近期本地反馈") { Text(notice).font(.subheadline) } }
+            if let notice = state.notice { Section(copy("近期本地反馈", "Recent local feedback")) { Text(notice).font(.subheadline) } }
         }
-        .navigationTitle("记忆")
+        .navigationTitle(copy("记忆", "Memory"))
         .navigationDestination(for: NativeFrontendMemoryRoute.self) { route in
             switch route {
             case .detail(let memoryID):
@@ -55,6 +57,8 @@ private enum NativeFrontendMemoryRoute: Hashable {
 
 @MainActor
 private struct NativeFrontendMemoryDetail: View {
+    @Environment(\.locale) private var locale
+    private var copy: NativeLibraryMemoryCopy { .init(locale: locale) }
     let state: NativeFrontendState
     let memoryID: String
     @Environment(\.dismiss) private var dismiss
@@ -63,31 +67,33 @@ private struct NativeFrontendMemoryDetail: View {
 
     var body: some View {
         List {
-            NativeFrontendBoundary()
+            NativeLibraryMemoryBoundary()
             if let memory = state.memories.first(where: { $0.id == memoryID }) {
-                Section("旅行偏好") { Text(memory.title).font(.headline) }
-                Section("适用范围") { Text(memory.scope); Text("这不是助手人格设定。只修改本地样例，真实记忆和真实回答不会改变。").font(.caption).foregroundStyle(.secondary) }
-                Section("来源") { Text(memory.source) }
+                Section(copy("旅行偏好", "Travel preference")) { Text(memory.title).font(.headline) }
+                Section(copy("适用范围", "Applies to")) { Text(memory.scope); Text(copy("这不是助手人格设定。只修改本地样例，真实记忆和真实回答不会改变。", "This is not an assistant personality setting. Only the local sample changes; real memories and answers remain unchanged.")).font(.caption).foregroundStyle(.secondary) }
+                Section(copy("来源", "Source")) { Text(memory.source) }
                 Section {
-                    Button("修正偏好") { editing = true }.accessibilityIdentifier("frontend.memory.edit")
-                    Button("带着偏好继续对话") { state.openChat(context: "旅行偏好（本地样例）：\(memory.title)；适用：\(memory.scope)") }
-                    Button("忘记这条偏好", role: .destructive) { forgetting = true }
+                    Button(copy("修正偏好", "Edit preference")) { editing = true }.accessibilityIdentifier("frontend.memory.edit")
+                    Button(copy("带着偏好继续对话", "Continue in chat with this preference")) { state.openChat(context: copy("旅行偏好（本地样例）：", "Travel preference (local sample): ") + memory.title + copy("；适用：", "; applies to: ") + memory.scope) }
+                    Button(copy("忘记这条偏好", "Forget this preference"), role: .destructive) { forgetting = true }
                         .accessibilityIdentifier("frontend.memory.forget")
                 }
-                if let notice = state.notice { Section("近期本地反馈") { Text(notice) } }
-            } else { ContentUnavailableView("这条样例已忘记", systemImage: "brain") }
+                if let notice = state.notice { Section(copy("近期本地反馈", "Recent local feedback")) { Text(notice) } }
+            } else { ContentUnavailableView(copy("这条样例已忘记", "Sample preference forgotten"), systemImage: "brain") }
         }
-        .navigationTitle("偏好详情").navigationBarTitleDisplayMode(.inline)
+        .navigationTitle(copy("偏好详情", "Preference details")).navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $editing) { NativeFrontendMemoryEditor(state: state, memoryID: memoryID) }
-        .alert("忘记这条本地偏好？", isPresented: $forgetting) {
-            Button("取消", role: .cancel) {}
-            Button("确认忘记", role: .destructive) { state.forgetLocalMemory(memoryID); dismiss() }
-        } message: { Text("确认后从当前本地样例中删除。不会请求真实服务，也不会删除真实记忆。") }
+        .alert(copy("忘记这条本地偏好？", "Forget this local preference?"), isPresented: $forgetting) {
+            Button(copy("取消", "Cancel"), role: .cancel) {}
+            Button(copy("确认忘记", "Confirm forgetting"), role: .destructive) { state.forgetLocalMemory(memoryID, locale: locale); dismiss() }
+        } message: { Text(copy("确认后从当前本地样例中删除。不会请求真实服务，也不会删除真实记忆。", "Confirmation removes it from the current local sample. No real service is called and no real memory is deleted.")) }
     }
 }
 
 @MainActor
 private struct NativeFrontendMemoryEditor: View {
+    @Environment(\.locale) private var locale
+    private var copy: NativeLibraryMemoryCopy { .init(locale: locale) }
     let state: NativeFrontendState
     let memoryID: String
     @Environment(\.dismiss) private var dismiss
@@ -104,6 +110,16 @@ private struct NativeFrontendMemoryEditor: View {
         _scope = State(initialValue: memory?.scope ?? "")
     }
 
+    private var correctionPreview: String {
+        let original = state.memories.first { $0.id == memoryID }
+        let unavailable = copy("已不可用", "Unavailable")
+        return copy("原偏好：", "Previous preference: ") + (original?.title ?? unavailable)
+            + "\n" + copy("新偏好：", "New preference: ") + title
+            + "\n" + copy("原范围：", "Previous scope: ") + (original?.scope ?? unavailable)
+            + "\n" + copy("新范围：", "New scope: ") + scope
+            + "\n" + copy("仅修改本地样例。", "Only the local sample changes.")
+    }
+
     private var valid: Bool {
         let text = title.trimmingCharacters(in: .whitespacesAndNewlines)
         let range = scope.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -113,29 +129,29 @@ private struct NativeFrontendMemoryEditor: View {
     var body: some View {
         NavigationStack {
             Form {
-                NativeFrontendBoundary()
-                Section("修正内容") {
-                    TextField("旅行偏好", text: $title, axis: .vertical)
+                NativeLibraryMemoryBoundary()
+                Section(copy("修正内容", "Correction")) {
+                    TextField(copy("旅行偏好", "Travel preference"), text: $title, axis: .vertical)
                         .accessibilityIdentifier("frontend.memory.title")
-                    TextField("适用范围", text: $scope, axis: .vertical)
+                    TextField(copy("适用范围", "Applies to"), text: $scope, axis: .vertical)
                         .accessibilityIdentifier("frontend.memory.scope")
-                    Text("偏好 1–500 字，范围 1–200 字。保存前需确认，取消会保留原内容。")
+                    Text(copy("偏好 1–500 字，范围 1–200 字。保存前需确认，取消会保留原内容。", "Preference: 1–500 characters. Scope: 1–200 characters. Confirm before saving; cancelling keeps the original."))
                         .font(.caption).foregroundStyle(.secondary)
                 }
                 if let error { Text(error).foregroundStyle(.red) }
-                Button("查看修改并确认") { confirming = true }.disabled(!valid)
+                Button(copy("查看修改并确认", "Review changes")) { confirming = true }.disabled(!valid)
                     .accessibilityIdentifier("frontend.memory.reviewCorrection")
             }
-            .navigationTitle("修正偏好").navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement: .cancellationAction) { Button("取消") { dismiss() } } }
-            .alert("确认本地修正？", isPresented: $confirming) {
-                Button("继续编辑", role: .cancel) {}
-                Button("确认修正") {
-                    if state.correctLocalMemory(memoryID, title: title, scope: scope) { dismiss() }
-                    else { error = "内容无效或原偏好已不可用，未修改。" }
+            .navigationTitle(copy("修正偏好", "Edit preference")).navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .cancellationAction) { Button(copy("取消", "Cancel")) { dismiss() } } }
+            .alert(copy("确认本地修正？", "Confirm local correction?"), isPresented: $confirming) {
+                Button(copy("继续编辑", "Keep editing"), role: .cancel) {}
+                Button(copy("确认修正", "Confirm correction")) {
+                    if state.correctLocalMemory(memoryID, title: title, scope: scope, locale: locale) { dismiss() }
+                    else { error = copy("内容无效或原偏好已不可用，未修改。", "Invalid content or preference no longer available. No changes made.") }
                 }
             } message: {
-                Text("原偏好：\(state.memories.first { $0.id == memoryID }?.title ?? "已不可用")\n新偏好：\(title)\n原范围：\(state.memories.first { $0.id == memoryID }?.scope ?? "已不可用")\n新范围：\(scope)\n仅修改本地样例。")
+                Text(correctionPreview)
             }
         }
     }
