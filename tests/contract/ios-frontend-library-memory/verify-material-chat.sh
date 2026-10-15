@@ -21,6 +21,8 @@ cases = re.findall(r'^    case (\w+)\s*$', app_tab, re.M)
 assert cases == ['vp', 'journeys', 'library', 'memory', 'trip', 'explore', 'ask', 'tools', 'profile']
 (out / 'AppTab.swift').write_text('enum AppTab {\n' + '\n'.join('    case ' + case for case in cases) + '\n}\n')
 PY
-swiftc -swift-version 6 -parse-as-library "$contract_work/State.swift" "$contract_work/AppTab.swift" "$contract_work/ActualChatAssociation.swift" ios/VisePanda/VisePanda/Features/Frontend/LibraryMemory/NativeFrontendLibraryActions.swift tests/contract/ios-frontend-library-memory/MaterialChatContract.swift -o "$contract_work/contract"
-"$contract_work/contract"
+for contract_source in MaterialChatContract StateContract LocaleContract; do
+    swiftc -swift-version 6 -parse-as-library "$contract_work/State.swift" "$contract_work/AppTab.swift" "$contract_work/ActualChatAssociation.swift" ios/VisePanda/VisePanda/Features/Frontend/LibraryMemory/NativeFrontendLibraryActions.swift "tests/contract/ios-frontend-library-memory/$contract_source.swift" -o "$contract_work/contract"
+    "$contract_work/contract"
+done
 git diff --check

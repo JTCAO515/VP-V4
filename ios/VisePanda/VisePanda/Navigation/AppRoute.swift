@@ -24,6 +24,7 @@ final class RouterPath {
 
 @MainActor
 struct TabRootView: View {
+    @Environment(\.locale) private var locale
     let tab: AppTab
     var isActive = true
     var onSearch: (() -> Void)?
@@ -81,7 +82,7 @@ struct TabRootView: View {
                     case .place: NativePlaceActionsSampleExperience()
                     }
                 }
-                .toolbar { ToolbarItem(placement: .cancellationAction) { Button("返回对话") { frontendTool = nil } } }
+                .toolbar { ToolbarItem(placement: .cancellationAction) { Button(locale.language.languageCode?.identifier == "zh" ? "返回对话" : "Back to chat") { frontendTool = nil } } }
             }
         }
 #endif
@@ -97,10 +98,10 @@ struct TabRootView: View {
                         Image("PandaMark").resizable().scaledToFit().frame(width: 30, height: 30).clipShape(Circle())
                         VStack(alignment: .leading, spacing: 2) {
                             Text(frontendState.assistantName).font(.headline)
-                            Text("本地体验示例").font(.caption2).foregroundStyle(.secondary)
+                            Text(locale.language.languageCode?.identifier == "zh" ? "本地体验示例" : "Local sample").font(.caption2).foregroundStyle(.secondary)
                         }
                     }
-                }.accessibilityLabel("助手详情").accessibilityIdentifier("frontend.assistant.open")
+                }.accessibilityLabel(locale.language.languageCode?.identifier == "zh" ? "助手详情" : "Assistant details").accessibilityIdentifier("frontend.assistant.open")
             }
             if frontendState == nil, let onSearch {
                 Button(action: onSearch) {
