@@ -1,5 +1,4 @@
-import { isPlaceQuestionId, reviewedQuestionId, questionDefinition } from "../claim/questions.ts";
-import { runGroundedAiAssist, type GroundedAiAssistContextRpc, type GroundedAiAssistInput, type GroundedAiAssistOutcome } from "./grounded-ai-assist.ts";
+import { runGroundedAiAssist, parseContext, type GroundedAiAssistContextRpc, type GroundedAiAssistInput, type GroundedAiAssistOutcome } from "./grounded-ai-assist.ts";
 import { revalidateGroundedWikiSearchResult, type GroundedSearchDependencies } from "./grounded-search.ts";
 
 /**
@@ -50,23 +49,16 @@ export async function runGroundedAiAssistJob(
     if (stored.status !== "succeeded" || stored.outcome.kind !== "answered") return stored;
     try {
       const context = await searchDependencies.contextRpc("read_grounded_ai_assist_context_v1", { p_turn_id: turnId });
-      if (context.error || !record(context.data) || context.data.kind !== "context"
-        || typeof context.data.city !== "string" || typeof context.data.inputText !== "string"
-        || (context.data.locale !== "zh" && context.data.locale !== "en")) return { status: "not_offered", reason: "unauthorized" };
-      const id = reviewedQuestionId(context.data.intent);
-      if (!id) return { status: "not_offered", reason: "not_blocked" };
-      const place = isPlaceQuestionId(id);
-      // Only the owner-authorized current context can bind a replayed place.
-      // Client input, persisted result text and a place name confer no subject.
-      if (place && (context.data.turnId !== turnId || context.data.placeResolution !== "matched"
-        || typeof context.data.placeName !== "string" || !context.data.placeName.trim()
-        || !questionDefinition(id, context.data.placeSubjectId))) return { status: "not_offered", reason: "not_blocked" };
-      const intent = place
-        ? { intent: id, requestScope: "single" as const, placeName: context.data.placeName as string, unansweredNeeds: [] }
-        : { intent: id, requestScope: "single" as const };
-      const outcome = await revalidateGroundedWikiSearchResult({ ...searchInput, city: context.data.city,
-        locale: context.data.locale, question: context.data.inputText, intent,
-        ...(place ? { placeSubjectId: context.data.placeSubjectId as string } : {}) },
+      if (context.error) return { status: "not_offered", reason: "unauthorized" };
+      // Initial execution and replay consume the same exact-turn server
+      // projection; neither client input nor stored prose resolves a place.
+      const resolved = parseContext(context.data, turnId);
+      if (resolved === "unauthorized") return { status: "not_offered", reason: "unauthorized" };
+      if (!resolved || resolved === "not_blocked") return { status: "not_offered", reason: "not_blocked" };
+      const outcome = await revalidateGroundedWikiSearchResult({ maxRounds: searchInput.maxRounds,
+        maxOutputTokens: searchInput.maxOutputTokens, timeoutMs: searchInput.timeoutMs, provider: searchInput.provider,
+        city: resolved.city, locale: resolved.locale, question: resolved.inputText, intent: resolved.intent,
+        ...(resolved.placeSubjectId ? { placeSubjectId: resolved.placeSubjectId } : {}) },
       stored.outcome, searchDependencies, signal);
       return signal.aborted ? { status: "cancelled" } : { status: "succeeded", outcome };
     } catch { return { status: "failed", errorCode: "MALFORMED_OUTCOME" }; }
