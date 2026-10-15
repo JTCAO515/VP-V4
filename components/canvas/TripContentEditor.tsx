@@ -17,11 +17,12 @@ export type LocalTripRead = {
 type Notice = "conflict" | "pending" | "unavailable" | "noChanges" | "stored" | "rejected";
 const snapshotOf = (data: LocalTripRead): TripSnapshot => structuredClone({ version: data.trip.headVersion, title: data.trip.title, days: data.content.days });
 
-export function TripContentEditor({ data, pending, locale, onReload, onPending, onAddressBlockChange, addressConfirmationBlocked = false }: {
+export function TripContentEditor({ data, pending, locale, onReload, onPending, onAddressBlockChange, addressConfirmationBlocked = false, addressMutationBlocked = false }: {
   data: LocalTripRead; pending: PendingProposalRead | null; locale: Locale;
   onReload: () => Promise<LocalTripRead | null>; onPending: (pending: PendingProposalRead | null) => void;
   onAddressBlockChange?: (blocked: boolean) => void;
   addressConfirmationBlocked?: boolean;
+  addressMutationBlocked?: boolean;
 }) {
   const copy = tripLocalEditorCopy[locale];
   const [base, setBase] = useState(() => snapshotOf(data));
@@ -44,10 +45,11 @@ export function TripContentEditor({ data, pending, locale, onReload, onPending, 
   }, [pendingIdentity, pendingStale]);
   const stale = dirty && base.version !== data.trip.headVersion;
   function reset(next = data) { const value = snapshotOf(next); setBase(value); setDraft(value); setDirty(false); reviewedDraft.current = null; }
-  function edit(value: TripSnapshot) { setDraft(value); setDirty(true); }
+  function edit(value: TripSnapshot) { if (addressMutationBlocked) return; setDraft(value); setDirty(true); }
   function dayEdit(id: string, update: (day: TripDay) => TripDay) { edit({ ...draft, days: draft.days.map(day => day.id === id ? update(day) : day) }); }
   async function loadLatest() { setBusy(true); try { await onReload(); } catch { if (live.current) setNotice("unavailable"); } finally { if (live.current) setBusy(false); } }
   async function propose(revise: boolean) {
+    if (addressMutationBlocked) return;
     const patch = draftTripPatch(base, draft);
     if (!patch.operations.length) { setNotice("noChanges"); return; }
     setBusy(true);
@@ -66,7 +68,7 @@ export function TripContentEditor({ data, pending, locale, onReload, onPending, 
     } catch { if (live.current) setNotice("unavailable"); } finally { if (live.current) setBusy(false); }
   }
   async function confirm() {
-    if (addressConfirmationBlocked) return;
+    if (addressConfirmationBlocked || addressMutationBlocked) return;
     if (!pending?.proposal.digest) return;
     const intent = pending.proposal;
     const id = intent.id + ":" + intent.digest;
@@ -95,14 +97,14 @@ export function TripContentEditor({ data, pending, locale, onReload, onPending, 
     <section className={styles.recorded}><h2>{data.confirmationState === "confirmed" ? copy.confirmed : data.confirmationState === "initial" ? copy.initial : copy.unknown} · v{data.trip.headVersion}</h2><SnapshotContent value={snapshotOf(data)} /><p>{data.hardLocks === "not_enabled" ? copy.locksNotEnabled : copy.locksUnknown} · {data.externalOrderStatus === "not_connected" ? copy.ordersNotConnected : copy.ordersUnknown}</p><button type="button" onClick={() => void loadLatest()} disabled={busy}>{copy.reload}</button></section>
     <div role="status" className={styles.note}>{stale ? copy.conflict : notice ? copy[notice] : null}</div>
     <section className={styles.draft}><h2>{copy.draft}</h2><p>{copy.base} {base.version}</p>
-      <label>{copy.tripTitle}<input value={draft.title} maxLength={160} disabled={busy} onChange={event => edit({ ...draft, title: event.target.value })} /></label>
-      {draft.days.map((day, index) => <fieldset key={day.id}><legend>{copy.date} {index + 1}</legend><div className={styles.row}><label>{copy.date}<input type="date" value={day.date} disabled={busy} onChange={event => dayEdit(day.id, previous => ({ ...previous, date: event.target.value }))} /></label><button type="button" disabled={busy} onClick={() => edit({ ...draft, days: draft.days.filter(value => value.id !== day.id) })}>{copy.remove}</button></div>
-        {(day.items ?? []).map(item => <div className={styles.row} key={item.id}><label>{copy.itemTitle}<input value={item.title} maxLength={160} disabled={busy} onChange={event => dayEdit(day.id, previous => ({ ...previous, items: previous.items?.map(value => value.id === item.id ? { ...value, title: event.target.value } : value) }))} /></label><button type="button" disabled={busy} onClick={() => dayEdit(day.id, previous => ({ ...previous, items: previous.items?.filter(value => value.id !== item.id) }))}>{copy.remove}</button></div>)}
-        <button type="button" disabled={busy} onClick={() => dayEdit(day.id, previous => ({ ...previous, items: [...(previous.items ?? []), { id: crypto.randomUUID(), dayId: day.id, title: copy.newItem }] }))}>{copy.addItem}</button>
+      <label>{copy.tripTitle}<input value={draft.title} maxLength={160} disabled={busy || addressMutationBlocked} onChange={event => edit({ ...draft, title: event.target.value })} /></label>
+      {draft.days.map((day, index) => <fieldset key={day.id}><legend>{copy.date} {index + 1}</legend><div className={styles.row}><label>{copy.date}<input type="date" value={day.date} disabled={busy || addressMutationBlocked} onChange={event => dayEdit(day.id, previous => ({ ...previous, date: event.target.value }))} /></label><button type="button" disabled={busy || addressMutationBlocked} onClick={() => edit({ ...draft, days: draft.days.filter(value => value.id !== day.id) })}>{copy.remove}</button></div>
+        {(day.items ?? []).map(item => <div className={styles.row} key={item.id}><label>{copy.itemTitle}<input value={item.title} maxLength={160} disabled={busy || addressMutationBlocked} onChange={event => dayEdit(day.id, previous => ({ ...previous, items: previous.items?.map(value => value.id === item.id ? { ...value, title: event.target.value } : value) }))} /></label><button type="button" disabled={busy || addressMutationBlocked} onClick={() => dayEdit(day.id, previous => ({ ...previous, items: previous.items?.filter(value => value.id !== item.id) }))}>{copy.remove}</button></div>)}
+        <button type="button" disabled={busy || addressMutationBlocked} onClick={() => dayEdit(day.id, previous => ({ ...previous, items: [...(previous.items ?? []), { id: crypto.randomUUID(), dayId: day.id, title: copy.newItem }] }))}>{copy.addItem}</button>
       </fieldset>)}
-      <div className={styles.actions}><button type="button" disabled={busy} onClick={() => { const last = draft.days.at(-1)?.date; const date = last ? new Date(last + "T12:00:00Z") : new Date(); if (last) date.setUTCDate(date.getUTCDate() + 1); edit({ ...draft, days: [...draft.days, { id: crypto.randomUUID(), date: date.toISOString().slice(0, 10), items: [] }] }); }}>{copy.addDay}</button><button type="button" disabled={busy || !dirty || Boolean(pending)} onClick={() => void propose(false)}>{copy.review}</button>{pending ? <button type="button" disabled={busy || !dirty} onClick={() => void propose(true)}>{copy.revise}</button> : null}<button type="button" disabled={busy || !dirty} onClick={() => reset()}>{copy.reset}</button></div>
+      <div className={styles.actions}><button type="button" disabled={busy || addressMutationBlocked} onClick={() => { const last = draft.days.at(-1)?.date; const date = last ? new Date(last + "T12:00:00Z") : new Date(); if (last) date.setUTCDate(date.getUTCDate() + 1); edit({ ...draft, days: [...draft.days, { id: crypto.randomUUID(), date: date.toISOString().slice(0, 10), items: [] }] }); }}>{copy.addDay}</button><button type="button" disabled={busy || !dirty || Boolean(pending) || addressMutationBlocked} onClick={() => void propose(false)}>{copy.review}</button>{pending ? <button type="button" disabled={busy || !dirty || addressMutationBlocked} onClick={() => void propose(true)}>{copy.revise}</button> : null}<button type="button" disabled={busy || !dirty || addressMutationBlocked} onClick={() => { if (!addressMutationBlocked) reset(); }}>{copy.reset}</button></div>
     </section>
-    {pending ? <section className={styles.pending}><h2>{copy.pending}</h2><p>{copy.proposalBase} {pending.proposal.baseTripVersion} · {copy.proposalRevision} {pending.proposal.revision}</p><div className={styles.diff}><div><h3>{copy.before}</h3>{pending.proposal.before ? <SnapshotContent value={pending.proposal.before} /> : <p>{pending.proposal.titleDiff.before}</p>}</div><div><h3>{copy.after}</h3>{pending.proposal.after ? <SnapshotContent value={pending.proposal.after} /> : <p>{pending.proposal.titleDiff.after}</p>}</div></div><div className={styles.actions}><button type="button" disabled={busy || pending.proposal.stale || !pending.proposal.digest || addressConfirmationBlocked} onClick={() => void confirm()}>{copy.confirm}</button><button type="button" disabled={busy} onClick={() => void reject()}>{copy.reject}</button></div></section> : null}
+    {pending ? <section className={styles.pending}><h2>{copy.pending}</h2><p>{copy.proposalBase} {pending.proposal.baseTripVersion} · {copy.proposalRevision} {pending.proposal.revision}</p><div className={styles.diff}><div><h3>{copy.before}</h3>{pending.proposal.before ? <SnapshotContent value={pending.proposal.before} /> : <p>{pending.proposal.titleDiff.before}</p>}</div><div><h3>{copy.after}</h3>{pending.proposal.after ? <SnapshotContent value={pending.proposal.after} /> : <p>{pending.proposal.titleDiff.after}</p>}</div></div><div className={styles.actions}><button type="button" disabled={busy || pending.proposal.stale || !pending.proposal.digest || addressConfirmationBlocked || addressMutationBlocked} onClick={() => void confirm()}>{copy.confirm}</button><button type="button" disabled={busy} onClick={() => void reject()}>{copy.reject}</button></div></section> : null}
   </section>;
 }
 function SnapshotContent({ value }: { value: TripSnapshot }) { return <div><strong>{value.title}</strong>{value.days.map(day => <div key={day.id}><h3>{day.date}{day.timeZone ? ` · ${day.timeZone}` : ""}</h3><ul>{(day.items ?? []).map(item => <li key={item.id}>{item.title}{item.startsAt ? ` · ${item.startsAt}` : ""}{item.endsAt ? ` – ${item.endsAt}` : ""}</li>)}</ul></div>)}</div>; }
