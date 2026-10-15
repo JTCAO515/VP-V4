@@ -8,6 +8,7 @@ import Observation
     private var entitlement: NativeSubscriptionEntitlement?
     private var capturedScope: NativeSubscriptionScope?
     private var nonce: UUID?
+    private var requestedLocale: NativeSubscriptionLocale?
     private var foreground = true
     private var expiryTask: Task<Void, Never>?
     private let port: any NativeSubscriptionReadPort
@@ -46,12 +47,12 @@ import Observation
     private func clearProjection(preservingReadFence: Bool) {
         if !preservingReadFence || readFence?.scope != port.currentScope { readFence = nil }
         nonce = nil
+        requestedLocale = nil
         expiryTask?.cancel()
         expiryTask = nil
         capturedScope = nil
         leaseStart = nil
         leaseDeadline = nil
-        catalog = nil
         entitlement = nil
         phase = .unavailable
     }
@@ -67,19 +68,29 @@ import Observation
 
     func reload(locale: NativeSubscriptionLocale) async {
         clearProjection(preservingReadFence: true)
-        guard foreground, let scope = port.currentScope, scope.valid else { return }
+        if catalog?.locale != locale { catalog = nil }
+        guard foreground else { return }
+        let scope = port.currentScope.flatMap { $0.valid ? $0 : nil }
         let requestNonce = UUID()
         nonce = requestNonce
+        requestedLocale = locale
         capturedScope = scope
-        phase = .loading
+        phase = scope == nil ? .unavailable : .loading
         defer {
             if nonce == requestNonce, phase == .loading { clearProjection(preservingReadFence: true) }
         }
         let requestStart = monotonicNow()
         do {
-            let catalogBytes = try await port.read(.init(scope: scope, resource: .catalog(locale), nonce: requestNonce))
-            guard owns(scope, requestNonce) else { return }
-            let nextCatalog = try NativeSubscriptionCodec.catalog(catalogBytes, locale: locale)
+            // Company catalog is public. Never invent an account to read it.
+            let bytes = try await port.read(.init(scope: nil, resource: .catalog(locale), nonce: requestNonce))
+            guard ownsPublic(locale, requestNonce) else { return }
+            catalog = try NativeSubscriptionCodec.catalog(bytes, locale: locale)
+        } catch {
+            // A prior validated public catalog of this locale may survive a transient read failure.
+            // It confers no private status, balance or purchase capability.
+        }
+        guard ownsPublic(locale, requestNonce), let scope, owns(scope, requestNonce) else { return }
+        do {
             let entitlementBytes = try await port.read(.init(scope: scope, resource: .entitlement, nonce: requestNonce))
             guard owns(scope, requestNonce) else { return }
             let nextEntitlement = try NativeSubscriptionCodec.entitlement(entitlementBytes, scope: scope)
@@ -97,7 +108,6 @@ import Observation
                 leaseStart = requestStart
                 leaseDeadline = deadline
             }
-            catalog = nextCatalog
             entitlement = nextEntitlement
             phase = .loaded
             armExpiry(scope: scope, nonce: requestNonce)
@@ -105,6 +115,10 @@ import Observation
             guard nonce == requestNonce, capturedScope == scope else { return }
             clearProjection(preservingReadFence: true)
         }
+    }
+
+    private func ownsPublic(_ locale: NativeSubscriptionLocale, _ requestNonce: UUID) -> Bool {
+        foreground && !Task.isCancelled && nonce == requestNonce && requestedLocale == locale
     }
 
     private func owns(_ scope: NativeSubscriptionScope, _ requestNonce: UUID) -> Bool {
