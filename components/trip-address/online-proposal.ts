@@ -62,3 +62,18 @@ export async function readAddressIntent(intent: AddressIntent, signal: AbortSign
   intent.receipt = { proposalId: proposal.proposal.id, revision: proposal.proposal.revision, baseTripVersion: proposal.proposal.baseTripVersion };
   return proposal;
 }
+
+/** Only the exact handed proposal's authoritative terminal token can settle its local intent. */
+export function addressIntentSettled(intent: AddressIntent, phase: string, epoch: string, pendingId: string | null): boolean {
+  const id = intent.receipt?.proposalId;
+  return phase === "handed" && id !== undefined && pendingId !== id
+    && (epoch === `applied:${id}` || epoch === `rejected:${id}`);
+}
+
+/** A reloaded pending address change also requires a visible, qualified review root before Confirm. */
+export function addressReviewBlocked(pending: PendingProposalRead | null, qualifiedRoot: boolean): boolean {
+  if (qualifiedRoot || !pending) return false;
+  const patch: unknown = pending.proposal.patch;
+  return row(patch) && Array.isArray(patch.operations)
+    && patch.operations.some(operation => row(operation) && operation.kind === "set_item_chinese_address");
+}
