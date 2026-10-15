@@ -1,5 +1,5 @@
 {
-  "sourceHead": "6325d3ad82a4f6f881de407da44668dc273e0ecc",
+  "sourceHead": "2138d8091379c193188cabd9b42fe3d429c13795",
   "shadow": "/private/tmp/ios003-canonical-shadow-5528f7d3",
   "candidateOnly": true,
   "modelsOriginalSHA256": "0181f41629bc8dd749cd9b8523b31089b191d2b2082bed759304569dba0cf453",
@@ -15,17 +15,23 @@
     "tests/contract/ios003-place-ui/canonical/NativeCanonicalPlaceAskTests.swift",
     "tests/contract/ios003-place-ui/canonical/probe.swift",
     "tests/contract/ios003-place-ui/canonical/run.py",
-    "tests/contract/ios003-place-ui/canonical/sql-history-positive.json"
+    "tests/contract/ios003-place-ui/canonical/sql-history-positive.json",
+    "tests/contract/ios003-place-ui/canonical/sql-pending-unavailable-history.json"
   ],
   "sourceSHA256": {
-    "ios/VisePanda/VisePanda/App/NativeSession.swift": "7c4627a7f25ec82c6d5dd6a2155edb76df449d6b42026aedcb9075b1b182b1da",
-    "ios/VisePanda/VisePanda/Features/Ask/NativeAskStore.swift": "9d6ab2be036bbbdcb51f2b54a707a0c00292be709290c4d390be2dbfc1e64fd8",
+    "ios/VisePanda/VisePanda/App/NativeSession.swift": "55e46fe451c914a600962c9af5c0a410c2ac2b5d99a7cf2ca43fe399645e073b",
+    "ios/VisePanda/VisePanda/Features/Ask/NativeAskStore.swift": "73d036539b0742d683b05caa8edfc529f1e09560f9316d43778f37b2a4f388ec",
     "ios/VisePanda/VisePanda/Features/Ask/NativeAskView.swift": "6e28c02350d9ac6fc5dde9b231f314bc4503159fe1048e09078f458059bed947",
     "ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift": "0bebc4ccefba5df10da60c28018a15f5e6a919ed1f4f976ac315c2072c1c53b5",
-    "ios/VisePanda/VisePanda/Features/PlacePresentation/Canonical/NativeCanonicalPlaceAskCapture.swift": "af51d25806bd463ae6015b96a6187ddcaf23a9f7a53c1233f7f2a07ec380b98a",
-    "tests/contract/ios003-place-ui/canonical/NativeCanonicalPlaceAskTests.swift": "b933dfc0505546320e2b40c4ef8508c570ffdaba89552ad3f4cea7e3fd9837a2",
+    "ios/VisePanda/VisePanda/Features/PlacePresentation/Canonical/NativeCanonicalPlaceAskCapture.swift": "61af360f4aa5767f8f66199db1d231fb98f708331392be68796abf0c8f635d58",
+    "tests/contract/ios003-place-ui/canonical/NativeCanonicalPlaceAskTests.swift": "e319feebbd5c6ae7feb3e0a4f9af15cd3efda25ab9974d5dc88195c08af43df0",
     "tests/contract/ios003-place-ui/canonical/probe.swift": "7f48ca4f335739496e965f70c48d9a18733d6b09654d44b400e3eb25eba7aa9a",
     "tests/contract/ios003-place-ui/canonical/run.py": "831d6f13c7374ac957a9f675d4bb8d8b949b2c29df6ef2980435f97710a406ac",
-    "tests/contract/ios003-place-ui/canonical/sql-history-positive.json": "d7d12809d3575c3846d72a6c141854f63b49269d7511142fa36f20b78bf1197a"
-  }
+    "tests/contract/ios003-place-ui/canonical/sql-history-positive.json": "5923ce1e4e5a3dc9b56cd98a210c35ed82093df3d9bb5475cbf99a9504fef2ad",
+    "tests/contract/ios003-place-ui/canonical/sql-pending-unavailable-history.json": "9ec1703a4fb904ea8930590792385264699691cfa5245766eda1df61921d8d17"
+  },
+  "shadowBaseHead": "6325d3ad82a4f6f881de407da44668dc273e0ecc",
+  "finalLog": "/private/tmp/ios003-canonical-shadow-tests-r5-20261015.log",
+  "finalCandidateTestResult": "9/9 PASS; TEST SUCCEEDED; 2.459 seconds test execution",
+  "sqlFixtureRef": "198c66bf644483da97b7663cc06e321d4747f1fb"
 }
