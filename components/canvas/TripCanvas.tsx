@@ -76,13 +76,15 @@ export function TripCanvas({ tripId, localTripEnabled = false, initialProposalRe
     return current;
   }
 
-  async function readPendingProposal(generation: number): Promise<PendingProposalRead | null> {
-    const response = await fetch(`/api/trips/${tripId}/proposal${initialProposalReference ? `?proposalId=${initialProposalReference.id}` : ""}`, { cache: "no-store" });
+  async function readPendingProposal(generation: number, requestedProposalId?: string): Promise<PendingProposalRead | null> {
+    const selectedId = requestedProposalId ?? initialProposalReference?.id;
+    const response = await fetch(`/api/trips/${tripId}/proposal${selectedId ? `?proposalId=${encodeURIComponent(selectedId)}` : ""}`, { cache: "no-store" });
     if (generation !== requestGeneration.current) return null;
     if (response.status === 401) { setState("unauthenticated"); return null; }
     if (response.status === 409) return null;
     if (!response.ok) throw new Error("proposal read unavailable");
     const pending = await response.json() as PendingProposalRead;
+    if (requestedProposalId && pending.proposal.id !== requestedProposalId) throw new Error("selected proposal unavailable");
     if (initialProposalReference && !matchesPlaceProposalReference(initialProposalReference, pending, tripId)) throw new Error("selected proposal unavailable");
     return generation === requestGeneration.current ? pending : null;
   }
@@ -134,8 +136,24 @@ export function TripCanvas({ tripId, localTripEnabled = false, initialProposalRe
       if (!response.ok) return setState(response.status === 401 ? "unauthenticated" : "unavailable");
       const pending = await response.json() as Omit<PendingRollback, "idempotencyKey">;
       if (generation !== requestGeneration.current) return;
-      if (localTripEnabled) await reloadAll(generation);
-      else setPendingRollback({ ...pending, idempotencyKey: crypto.randomUUID() });
+      if (typeof pending.digest === "string" && /^[a-f0-9]{64}$/.test(pending.digest)) {
+        const current = await reload(generation);
+        const proposal = await readPendingProposal(generation, pending.proposalId);
+        if (generation !== requestGeneration.current) return;
+        if (!current || !proposal || proposal.trip.id !== tripId
+          || current.trip.headVersion !== pending.baseTripVersion
+          || proposal.proposal.baseTripVersion !== pending.baseTripVersion
+          || proposal.proposal.digest !== pending.digest) throw new Error("rollback proposal unavailable");
+        setPendingRollback(null);
+        setPendingProposal(proposal);
+        setDraftTitle(proposal.proposal.titleDiff.after);
+        if (proposal.proposal.patch) setManualPatch(JSON.stringify(proposal.proposal.patch, null, 2));
+      } else {
+        const hasAddress = data?.content.days.some(day => day.items?.some(item => item.chineseAddress !== undefined));
+        if (hasAddress || data?.confirmationState === "confirmed") throw new Error("rollback address review unavailable");
+        if (localTripEnabled) await reloadAll(generation);
+        else setPendingRollback({ ...pending, idempotencyKey: crypto.randomUUID() });
+      }
     } catch { if (generation === requestGeneration.current) setState("unavailable"); } finally { if (generation === requestGeneration.current) setMutation(null); }
   }
 
@@ -174,6 +192,8 @@ export function TripCanvas({ tripId, localTripEnabled = false, initialProposalRe
     try {
       const response = await fetch(`/api/trips/${tripId}/proposal/reject`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ proposalId: pendingProposal.proposal.id }) });
       await refreshAfterMutation(response, generation);
+      if (generation === requestGeneration.current && response.ok && addressProposal?.id === pendingProposal.proposal.id)
+        setAddressRejected(`rejected:${pendingProposal.proposal.id}`);
     } catch { if (generation === requestGeneration.current) setNotice("unavailable"); } finally { if (generation === requestGeneration.current) setMutation(null); }
   }
 
@@ -228,7 +248,7 @@ export function TripCanvas({ tripId, localTripEnabled = false, initialProposalRe
     <TripDirectionsResult tripId={tripId} tripVersion={data.trip.headVersion} locale={locale} bindBlocked={mutation !== null || pendingProposal !== null || pendingRollback !== null || initialProposalReference !== undefined} onProposalCreated={proposal => { setPendingProposal(proposal); setDraftTitle(proposal.proposal.titleDiff.after); if (proposal.proposal.patch) setManualPatch(JSON.stringify(proposal.proposal.patch, null, 2)); }} />
     </fieldset>
     <TripAddressSection tripId={tripId} data={data} locale={locale === "zh" ? "zh" : "en"}
-      pending={pendingProposal} blocked={!localTripEnabled || mutation !== null || pendingRollback !== null || initialProposalReference !== undefined || localEditorAddressBlocked}
+      pending={pendingProposal} blocked={mutation !== null || pendingRollback !== null || initialProposalReference !== undefined || localEditorAddressBlocked}
       settledEpoch={addressSettledEpoch} onPrepared={addressPrepared} onAddressRequestBlockChange={setAddressRequestBlocked} onAddressConfirmBlockChange={setAddressConfirmationBlocked} />
     <fieldset disabled={addressRequestBlocked} style={{ display: "contents" }}>
     <div className={styles.live} aria-live="polite">{notice === "proposalUnavailable" ? tripProposalNoticeCopy[locale] : notice ? copy[notice] : null}</div>
