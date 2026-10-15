@@ -59,6 +59,7 @@ export function selectCheckPlan(files,eventName,forceFull=false){
  for(const f of files){
   if(prose(f))continue;
   if(['lib/server/turn/native-ai-assist-http.ts','app/api/chat/grounded/ai-assist/route.ts','lib/server/model-gateway/prompt/wiki-search.ts'].includes(f))lanes.add('postgres-native-17');
+  if(f.startsWith('lib/server/qa-agent/cancellation/')||['lib/qa-agent/cancellation-contract.ts','lib/server/qa-agent/config.ts','app/api/qa-agent/sessions/[sessionId]/messages/[requestId]/cancellation/route.ts'].includes(f))lanes.add('postgres-native-17');
   if(f==='package.json'||f==='pnpm-lock.yaml'||f==='tsconfig.json'||/^next\.config\./.test(f)||/^middleware\./.test(f))return full('shared_runtime_configuration');
   if(f.startsWith('supabase/')){for(const l of DB_LANES)lanes.add(l);Object.assign(checks,{typecheck:true,test:true,unit:true,contract:true,security:true,flags:true});continue;}
   if(f.startsWith('ios/')||f.startsWith('scripts/ios/'))continue; // Native workflow builds/tests changed iOS code; no unrelated Web/DB.
@@ -83,13 +84,14 @@ export function selectCheckPlan(files,eventName,forceFull=false){
    if(f.startsWith('tests/integration/service-task-trip/')&&!/\.test\.mjs$/.test(f)){for(const l of DB_LANES)lanes.add(l);continue;}
    if(f.startsWith('tests/integration/web-trip-continuity/')){lanes.add('supabase-http-native');checks.build=true;checks.browser=true;checks.e2e=true;continue;}
    if(/\/fixtures\//.test(f)){for(const l of DB_LANES)lanes.add(l);continue;}
+   if(f==='tests/integration/qa-agent-cancellation/pg-proof.mjs'){lanes.add('postgres-native-17');continue;}
    const classified=integrationClassification();if(classified.problems.length)return full('classification_error');
    const row=classified.rows.find(r=>r.file===f);
    if(row&&DB_LANES.includes(row.lane)){lanes.add(row.lane);continue;}
    if(row?.lane==='test:integration')continue;
    return full('unmapped_integration_dependency');
   }
-  if(/^tests\/(?:unit|contract|security)\//.test(f)){if(f.startsWith('tests/contract/service-task-trip/'))lanes.add('postgres-native-17');if(f.startsWith('tests/contract/agent-grounded-result/'))lanes.add('postgres-native-17');Object.assign(checks,{typecheck:true,unit:true,contract:true,security:true});if(f.startsWith('tests/security/')){lanes.add('postgres');lanes.add('supabase-rls');lanes.add('supabase-http-native');}continue;}
+  if(/^tests\/(?:unit|contract|security)\//.test(f)){if(f.startsWith('tests/contract/service-task-trip/')||f.startsWith('tests/contract/agent-grounded-result/')||f.startsWith('tests/contract/qa-agent-cancellation/'))lanes.add('postgres-native-17');Object.assign(checks,{typecheck:true,unit:true,contract:true,security:true});if(f.startsWith('tests/security/')){lanes.add('postgres');lanes.add('supabase-rls');lanes.add('supabase-http-native');}continue;}
   if(f.startsWith('tests/e2e/')){Object.assign(checks,{typecheck:true,build:true,e2e:true,browser:true,assets:true});continue;}
   if(f.startsWith('evals/')){checks.evals=true;checks.contract=true;continue;}
   known=false;
