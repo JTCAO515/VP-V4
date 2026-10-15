@@ -295,7 +295,7 @@ final class NativeSession {
         let generation = canonicalPlaceAskReferenceGeneration
         let path = "api/chat/native/v7/place-ask"
         return try await dataRequest(prefix: path, path: path, method: "POST", body: pending.body, beforeSend: {
-            self.dataScope == pending.scope && self.canonicalPlaceAskPending == pending
+            !Task.isCancelled && self.dataScope == pending.scope && self.canonicalPlaceAskPending == pending
                 && self.canonicalPlaceAskReferenceGeneration == generation
                 && self.canonicalPlaceAskSelection == capture
                 && capture.current(scope: self.dataScope, locale: pending.expectation.locale) && beforeSend()

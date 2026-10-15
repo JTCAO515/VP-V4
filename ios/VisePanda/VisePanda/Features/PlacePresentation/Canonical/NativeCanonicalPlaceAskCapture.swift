@@ -161,9 +161,20 @@ struct NativeCanonicalPlaceHistoryRow: Decodable {
         guard let proof, proof.matches(turn), let result = turn.result,
               result.type == "reviewed_answer", result.city == proof.city, result.placeName == nil,
               result.placeSubjectId == nil || result.placeSubjectId == proof.subjectID,
-              result.placeResolution == nil || result.placeResolution == "matched",
+              result.placeResolution == nil || result.placeResolution == "matched" || result.projection == "unavailable" && ["unavailable", "ambiguous"].contains(result.placeResolution ?? ""),
               result.originalOutcome == turn.outcome?.rawValue,
               elapsed.isFinite, elapsed >= 0, elapsed < 30 else { throw NativeDataError.invalidResponse }
+        if result.projection == "unavailable" {
+            // Owner-authorized Task metadata can outlive factual eligibility; it never enables cards.
+            guard result.knowledge == nil else { throw NativeDataError.invalidResponse }
+            if let completed = result.completedAt {
+                guard NativeKnowledgeRead.date(completed) != nil, turn.output == "reviewed-answer-v1" else { throw NativeDataError.invalidResponse }
+            } else {
+                guard turn.output == nil, result.originalOutcome == nil, result.intent == nil,
+                      result.unansweredNeeds == nil || result.unansweredNeeds?.isEmpty == true else { throw NativeDataError.invalidResponse }
+            }
+            return 30 - elapsed
+        }
         if let needs = result.unansweredNeeds {
             guard result.completedAt != nil, needs.count <= 6, Set(needs).count == needs.count,
                   (result.requestScope == "additional_needs") == !needs.isEmpty,
