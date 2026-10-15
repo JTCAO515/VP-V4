@@ -1,3 +1,4 @@
+import {validTripObjectiveExport} from '../../service-task-trip/export.ts';
 import { createHash } from 'node:crypto';
 import schema from './source-schema.json' with { type: 'json' };
 import { DIRECTION_TURN_SOURCE_SCHEMA, validDirectionTurnExportRow } from '../../planning/directions/turn-export-rows.ts';
@@ -55,7 +56,7 @@ function closedSourceGraph(sources: Sources): boolean {
   const turns = new Set([...ids('public.turns', 'id'), ...ids('turn_private.text_content', 'turn_id')]);
   const tasks = ids('turn_private.service_tasks', 'id'), messages = ids('turn_private.assistant_messages', 'id');
   const artifacts = ids('turn_private.result_artifacts', 'id'), executions = ids('turn_private.planning_v2_execution_runs', 'id');
-  const linkedMessages = new Set([...rows('turn_private.planning_comparisons').map(r => String(r.message_id)),
+  const linkedMessages = new Set([...rows('turn_private.service_tasks').filter(t=>validTripObjectiveExport(t,rows) && t.trip_objective !== null && (t.trip_objective as Record<string,unknown>).outcome !== 'erased').map(t=>String((t.trip_objective as Record<string,unknown>).messageId)),...rows('turn_private.planning_comparisons').map(r => String(r.message_id)),
     ...rows('turn_private.result_artifacts').map(r => String(r.input_message_id)),
     ...rows('turn_private.assistant_directions_intakes_v1').map(r => String(r.message_id))]);
   for (const spec of exportSchema) for (const row of rows(spec.relation)) {
@@ -70,7 +71,7 @@ function closedSourceGraph(sources: Sources): boolean {
     if (spec.relation === 'turn_private.directions_operations_v1' && !messages.has(String(row.source_message_id))) return false;
     if (spec.relation === 'turn_private.directions_result_sources_v1' && (!rows('turn_private.assistant_directions_intakes_v1').some(intake => intake.message_id === row.message_id && intake.task_turn_id === row.task_turn_id)
       || row.previous_artifact_id !== null && !artifacts.has(String(row.previous_artifact_id)))) return false;
-    if (spec.relation === 'turn_private.service_tasks' && (!turns.has(String(row.goal_turn_id)) || !turns.has(String(row.last_turn_id)))) return false;
+    if (spec.relation === 'turn_private.service_tasks' && (!turns.has(String(row.goal_turn_id)) || !turns.has(String(row.last_turn_id)) || !validTripObjectiveExport(row,rows))) return false;
     if (spec.relation === 'turn_private.service_task_turns' && row.parent_turn_id !== null && !turns.has(String(row.parent_turn_id))) return false;
     // Planning's real submitter binds a follow_up message with turn_id=NULL.
     // Outbound parent IDs are retained identities; SQL qualifies their owner, never exports their body by guess.

@@ -2027,6 +2027,11 @@
         "name": "capacity_enforced",
         "type": "boolean",
         "notNull": true
+      },
+      {
+        "name": "trip_objective",
+        "type": "jsonb",
+        "notNull": false
       }
     ],
     "hasOwner": true
