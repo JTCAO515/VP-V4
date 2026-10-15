@@ -13,6 +13,8 @@
 /* End PBXVariantGroup section */
 
 /* Begin PBXBuildFile section */
+		A20600000000000000000011 /* NativeCanonicalPlaceAskCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20600000000000000000001; };
+		A20600000000000000000012 /* NativeCanonicalPlaceAskPending.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20600000000000000000002; };
         1241CFC7C5B0D7FC4D1E48BD /* NativeExperienceSampleHub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11C4956B0AA9DFB178BE5816; };
 		200000000000000000000001 /* VisePandaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000001 /* VisePandaApp.swift */; };
 		200000000000000000000002 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000002 /* AppSettings.swift */; };
@@ -512,6 +514,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A20600000000000000000001 /* NativeCanonicalPlaceAskCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/PlacePresentation/Canonical/NativeCanonicalPlaceAskCapture.swift; sourceTree = SOURCE_ROOT; };
+		A20600000000000000000002 /* NativeCanonicalPlaceAskPending.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/PlacePresentation/Canonical/NativeCanonicalPlaceAskPending.swift; sourceTree = SOURCE_ROOT; };
         11C4956B0AA9DFB178BE5816 /* NativeExperienceSampleHub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/NativeExperienceSamples/NativeExperienceSampleHub.swift; sourceTree = SOURCE_ROOT; };
 		300000000000000000000001 /* VisePandaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePandaApp.swift; sourceTree = "<group>"; };
 		300000000000000000000002 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
@@ -1016,6 +1020,8 @@
 		600000000000000000000001 = {
 			isa = PBXGroup;
 			children = (
+                A20600000000000000000001,
+                A20600000000000000000002,
                 F435C61FA87AE46F7E1A1F03,
                 E5C56C774FBFC1973FE21F1E,
                 861DB024CEB0412EB5ADA936,
@@ -1228,6 +1234,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+                A20600000000000000000011 /* NativeCanonicalPlaceAskCapture.swift in Sources */,
+                A20600000000000000000012 /* NativeCanonicalPlaceAskPending.swift in Sources */,
                 F956A62603650C2D6438F1B7 /* NativeMuseChatSidebarView.swift in Sources */,
                 899BD3051970900EBE18021D /* NativeMuseChatComposerView.swift in Sources */,
                 684D8BA1F56881414D1ED1B9 /* NativeMuseChatComposerPolicy.swift in Sources */,
