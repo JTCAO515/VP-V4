@@ -7,7 +7,7 @@ export type Period = Readonly<{ transactionId: string; originalTransactionId: st
   descriptorId: string; catalogVersion: 3; policyVersion: "subscription-development-policy/1" }>;
 export type Snapshot = Readonly<{ schemaVersion: typeof SCHEMA; sourceEnvironment: "Sandbox" | "localTest" | null;
   localTest: boolean; ownerId: string | null; catalogVersion: 3; policyVersion: "subscription-development-policy/1";
-  state: State; period: Period | null; remainingCapacity: null; purchaseEnabled: false; runtimeCapacityEnabled: false }>;
+  checkedAt: string | null; lifetimeMs: number; state: State; period: Period | null; remainingCapacity: null; purchaseEnabled: false; runtimeCapacityEnabled: false }>;
 export const uuid = (v: unknown): v is string => typeof v === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(v);
 export const txid = (v: unknown): v is string => typeof v === "string" && /^[0-9]{1,32}$/.test(v);
 export const record = (v: unknown): v is Record<string, unknown> => v !== null && typeof v === "object" && !Array.isArray(v);
@@ -15,20 +15,21 @@ export const exact = (v: Record<string, unknown>, keys: readonly string[]) => Ob
 export const iso = (v: unknown): v is string => typeof v === "string" && Number.isFinite(Date.parse(v)) && new Date(v).toISOString() === v;
 export function closedSnapshot(state: "unavailable" | "reconciliation_required" = "unavailable"): Snapshot {
   return Object.freeze({ schemaVersion: SCHEMA, sourceEnvironment: null, localTest: false, ownerId: null,
-    catalogVersion: 3, policyVersion: "subscription-development-policy/1", state, period: null,
+    catalogVersion: 3, policyVersion: "subscription-development-policy/1", checkedAt: null, lifetimeMs: 0, state, period: null,
     remainingCapacity: null, purchaseEnabled: false, runtimeCapacityEnabled: false });
 }
 /** A parser is not proof of signature. Only the server reader produces active snapshots. */
 export const MAX_SNAPSHOT_BYTES = 8192;
-export function parseSnapshot(v: unknown, now = Date.now()): Snapshot | null {
-  if (!record(v) || !exact(v, ["schemaVersion", "sourceEnvironment", "localTest", "ownerId", "catalogVersion", "policyVersion", "state", "period", "remainingCapacity", "purchaseEnabled", "runtimeCapacityEnabled"])
+export function parseSnapshot(v: unknown): Snapshot | null {
+  if (!record(v) || !exact(v, ["schemaVersion", "sourceEnvironment", "localTest", "ownerId", "catalogVersion", "policyVersion", "checkedAt", "lifetimeMs", "state", "period", "remainingCapacity", "purchaseEnabled", "runtimeCapacityEnabled"])
     || v.schemaVersion !== SCHEMA || v.catalogVersion !== 3 || v.policyVersion !== "subscription-development-policy/1"
     || !states.includes(v.state as State) || v.remainingCapacity !== null || v.purchaseEnabled !== false || v.runtimeCapacityEnabled !== false
-    || typeof v.localTest !== "boolean") return null;
+    || typeof v.localTest !== "boolean" || !Number.isSafeInteger(v.lifetimeMs) || (v.lifetimeMs as number) < 0 || (v.lifetimeMs as number) > 300000) return null;
   if (v.state === "unavailable" || v.state === "reconciliation_required") {
-    if (v.ownerId !== null || v.period !== null || v.sourceEnvironment !== null || v.localTest) return null;
+    if (v.ownerId !== null || v.period !== null || v.sourceEnvironment !== null || v.localTest || v.checkedAt !== null || v.lifetimeMs !== 0) return null;
   } else {
-    if (!uuid(v.ownerId) || v.sourceEnvironment !== "Sandbox" || v.localTest) return null;
+    if (!uuid(v.ownerId) || v.sourceEnvironment !== "Sandbox" || v.localTest || !iso(v.checkedAt)
+      || (v.state === "active" ? v.lifetimeMs as number <= 0 : v.lifetimeMs !== 0)) return null;
     if (v.state === "none") { if (v.period !== null) return null; }
     else {
       const p = v.period;
@@ -39,15 +40,16 @@ export function parseSnapshot(v: unknown, now = Date.now()): Snapshot | null {
         || p.descriptorId !== `Sandbox:${p.transactionId}` || p.catalogVersion !== 3 || p.policyVersion !== v.policyVersion
         || (v.state === "revoked") !== (p.revokedAt !== null)
         || p.revokedAt !== null && p.revokedAt < p.purchaseAt
-        || v.state === "active" && (!Number.isSafeInteger(now) || Date.parse(p.purchaseAt) > now || Date.parse(p.expiresAt) <= now)
-        || v.state === "expired" && Date.parse(p.expiresAt) > now) return null;
+        || v.state === "active" && (v.checkedAt < p.purchaseAt || v.checkedAt >= p.expiresAt
+          || (v.lifetimeMs as number) > Date.parse(p.expiresAt) - Date.parse(v.checkedAt))) return null;
+      Object.freeze(p);
     }
   }
   return Object.freeze(v) as Snapshot;
 }
 
-/** Bound raw transport before parsing; client clock may close active display, never grant it. */
-export function decodeSnapshotText(raw: string, now = Date.now()): Snapshot | null {
+/** Bound transport. Consumers subtract RTT and use monotonic elapsed time, never device calendar. */
+export function decodeSnapshotText(raw: string): Snapshot | null {
   if (typeof raw !== "string" || new TextEncoder().encode(raw).byteLength > MAX_SNAPSHOT_BYTES) return null;
-  try { return parseSnapshot(JSON.parse(raw), now); } catch { return null; }
+  try { return parseSnapshot(JSON.parse(raw)); } catch { return null; }
 }
