@@ -14,3 +14,11 @@ test('existing lifecycle export accepts exact user address and rejects unsupport
   else await assert.rejects(()=>source.page('trips',null,50,signal),/unavailable/);
  }
 });
+
+import {archiveContent} from '../../../lib/server/privacy/archive-data/rows.ts';
+test('archive content preserves valid new address without accepting forged tags or unknown fields',()=>{
+ const content=(value:unknown)=>({days:[{id:'d',date:'2026-10-16',items:[{id:'i',dayId:'d',title:'Visit',chineseAddress:value}]}]});
+ assert.equal(archiveContent(content(address)),true);
+ for(const value of [{...address,verification:'verified'},{...address,extra:true},{...address,text:'　'},null])assert.equal(archiveContent(content(value)),false);
+ assert.equal(archiveContent({days:[{id:'d',date:'2026-10-16',items:[{id:'i',dayId:'d',title:'Visit'}]}]}),true);
+});

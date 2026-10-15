@@ -1,3 +1,4 @@
+import { readUserProvidedAddress } from "../../../trip-user-address.ts";
 import { exact, record, uuid, hash } from '../../guide/contract.ts';
 import { isLifecycleTrip, isLifecycleReceipt } from '../../trip/lifecycle/contract.ts';
 import { ARCHIVE_LIMITS, archiveScope, natural, positive, ids, sectionsFor, type ArchiveBinding } from './contract.ts';
@@ -10,7 +11,8 @@ export function archiveContent(v: unknown): boolean {
   return record(v) && exact(v, ['days']) && Array.isArray(v.days) && v.days.every(day => record(day)
     && known(day, ['id','date','items'], ['timeZone']) && text(day.id) && typeof day.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(day.date)
     && (!Object.hasOwn(day, 'timeZone') || text(day.timeZone)) && Array.isArray(day.items) && day.items.every(item => record(item)
-      && known(item, ['id','dayId','title'], ['startsAt','endsAt']) && text(item.id) && item.dayId === day.id && text(item.title)
+      && known(item, ['id','dayId','title'], ['startsAt','endsAt','chineseAddress'])
+      && (!Object.hasOwn(item, 'chineseAddress') || readUserProvidedAddress(item.chineseAddress).kind === 'provided') && text(item.id) && item.dayId === day.id && text(item.title)
       && ['startsAt','endsAt'].every(k => !Object.hasOwn(item, k) || instant(item[k]))));
 }
 export function archiveCursor(v: unknown, section: string, digest: string): boolean {
