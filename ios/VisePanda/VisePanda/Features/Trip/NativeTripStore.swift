@@ -260,7 +260,7 @@ final class NativeTripStore {
     /// Address edits enter the existing draft, Proposal, unknown-ACK and visible diff flow.
     func prepareAddressProposal(expectedTripVersion: Int, dayID: String, itemID: String,
                                 value: NativeAddressOperationText, using session: NativeSession) async -> Bool {
-        guard !busy, canEdit, pending == nil, pendingOfflineText == nil,
+        guard !busy, (canEdit || proposalOutcomeUnknown), pending == nil, pendingOfflineText == nil,
               deletionRequest == nil, deletionReceipt == nil,
               let actor = session.dataScope, scope == actor, let detail,
               selectedID == detail.trip.id, detail.confirmationState == "confirmed",
@@ -270,7 +270,17 @@ final class NativeTripStore {
         ])
         if proposalOutcomeUnknown {
             guard uncertainProposalPatch == patch, draft?.patch == patch else { return false }
-            await propose(using: session)
+            await perform(session) { scope in
+                let existing = try await NativeTripAddressProposalRecovery.read(
+                    expected: patch, retained: self.uncertainProposalPatch, draft: self.draft?.patch,
+                    tripID: detail.trip.id, current: {
+                        self.scope == actor && session.dataScope == actor && self.selectedID == detail.trip.id
+                            && self.detail?.trip.headVersion == expectedTripVersion
+                    }, get: { try await self.readPending(detail.trip.id, proposalID: nil, session, scope) })
+                self.pending = existing
+                self.proposalOutcomeUnknown = false; self.uncertainProposalPatch = nil
+                self.notice = "reviewRequired"
+            }
             return scope == actor && session.dataScope == actor && pending?.proposal.patch == patch
         }
         func ownsAddressDraft() -> Bool {

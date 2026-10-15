@@ -1,7 +1,7 @@
 import Foundation
 
 @main struct Checks {
-    static func main() throws {
+    @MainActor static func main() async throws {
         let decoder = JSONDecoder(), encoder = JSONEncoder()
         func check(_ value: @autoclosure () throws -> Bool) throws { let result = try value(); precondition(result) }
         func rejected<T: Decodable>(_ type: T.Type, _ json: String) {
@@ -81,6 +81,33 @@ import Foundation
         precondition(!NativeTripAddressConfirmation.matches(confirmed(7, confirmedItem), proposal: proposal, resultingVersion: 6))
         precondition(!NativeTripAddressConfirmation.matches(confirmed(6, new), proposal: proposal, resultingVersion: 6))
         precondition(!NativeTripAddressConfirmation.matches(base, proposal: proposal, resultingVersion: 6))
+        let pending = NativeTripPending(version: 2, trip: summary, proposal: proposal)
+        let recoveryPatch = proposal.patch
+        var reads = 0
+        let recovered = try await NativeTripAddressProposalRecovery.read(expected: recoveryPatch, retained: recoveryPatch, draft: recoveryPatch, tripID: target.tripID, current: { true }, get: { reads += 1; return pending })
+        precondition(reads == 1 && recovered.proposal.id == proposal.id)
+        let changed = NativeTripPatch(expectedVersion: recoveryPatch.expectedVersion, operations: [.init(kind: .setChineseAddress, dayId: "d", itemId: "i", addressText: .set("其他地址"))])
+        do {
+            _ = try await NativeTripAddressProposalRecovery.read(expected: changed, retained: recoveryPatch, draft: recoveryPatch, tripID: target.tripID, current: { true }, get: { reads += 1; return pending })
+            preconditionFailure("different address request must not read or send")
+        } catch { precondition(reads == 1) }
+        do {
+            _ = try await NativeTripAddressProposalRecovery.read(expected: recoveryPatch, retained: recoveryPatch, draft: recoveryPatch, tripID: target.tripID, current: { true }, get: { reads += 1; throw NativeDataError.sessionUnavailable })
+            preconditionFailure("failed read must stay unknown")
+        } catch { precondition(reads == 2) }
+        var sameActorAndVersion = true
+        do {
+            _ = try await NativeTripAddressProposalRecovery.read(expected: recoveryPatch, retained: recoveryPatch, draft: recoveryPatch, tripID: target.tripID, current: { sameActorAndVersion }, get: { reads += 1; sameActorAndVersion = false; return pending })
+            preconditionFailure("late actor/version result must not publish")
+        } catch { precondition(reads == 3) }
+        let canceled = Task { @MainActor in
+            withUnsafeCurrentTask { $0?.cancel() }
+            do {
+                _ = try await NativeTripAddressProposalRecovery.read(expected: recoveryPatch, retained: recoveryPatch, draft: recoveryPatch, tripID: target.tripID, current: { true }, get: { reads += 1; return pending })
+                preconditionFailure("canceled request must not read")
+            } catch { precondition(reads == 3) }
+        }
+        await canceled.value
         print("PASS actual Native codec/DTO/op/source projection: old/new, forged tags, null/missing, scalar/byte/control, script, actor/version/TTL/source fences")
     }
 }
