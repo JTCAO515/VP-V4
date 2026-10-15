@@ -48,13 +48,17 @@ replacement Turn/task or blind POST retry. No consent/login/registration/session
 creation/Trip creation/provider switch or token refresh endpoint is reachable.
 
 Only current final history supplies the reported outcome/fact/source/gap IDs.
-Stream output never authorizes publication or Trip application. Revoked/changed
+Final history retains `parseGroundedHistory.lifetimeMs` as a monotonic expiry;
+source validity is checked again after final Trip/session/policy reads and report
+construction, immediately before disclosure. Stream output never authorizes
+publication or Trip application. Revoked/changed
 policy, foreign identity/Turn/task, unavailable source projection or late response
 clears factual output. Answered, partial, clarification, blocked and technical
 failure retain the existing parser semantics; pending/cancelled work stays unknown.
 
 The expectation is cloned/frozen and included in a plan digest before requests;
-actual outcomes and evidence IDs are reported alongside it, without a new scorer.
+actual outcomes and evidence IDs are compared with it as matched/mismatched/unknown
+fields via the existing value comparator, without an aggregate or new scorer.
 The existing `gradeReadOnlyResult` only grades complete H01 fixture assertions.
 Because these ports cannot prove the full Trip collection, it receives incomplete
 evidence and remains NOT_RUN. H04/H07 have no new grading implementation.
@@ -80,7 +84,9 @@ Trip body, source URL/locator/publisher, notice or credentials. Requested contex
 digest is caller-bound, not runtime-attested. Native HTTP supplies current scope
 checks; controlled transport observations do not authenticate a real origin.
 
-Selected Trip comparison can be true/false only when both exact snapshots have
+Foreign IDs and malformed Trip envelopes/content terminate before submission.
+A well-formed explicit Trip with missing trusted head version, or a legitimate
+unavailable response, remains unknown. Selected Trip comparison can be true/false only when both exact snapshots have
 valid versions/content. Missing Trip ID, version, transport or completeness stays
 unknown. Native Trip list/current pointer does not prove a complete collection;
 there is no claim of zero Trips or whole-collection invariance. Original

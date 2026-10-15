@@ -20,10 +20,14 @@ expectations and resource limits are fixed before invocation; holdout is exclude
   **After:** 16 direct tests drive the shipped module and bridge. One traverses
   actual Native identity/text/events handlers with intercepted SDK HTTP and
   in-memory synthetic signing keys; no live Auth/DB/provider is called.
-- PASS: typecheck, lint, docs check, diff check. Covers actual path/ID order,
+- Main's original Spec P1+2P2 / Standards P3 findings are retained. The fix retains
+  source lifetime through final reads, rejects foreign/malformed Trip before
+  POST, compares frozen outcome/fact/source/gap fields and shares one DTO parser
+  while executing it at both boundaries. No fabricated complete grader trace.
+- PASS: 20 direct tests, typecheck, lint, docs check, diff check. Covers actual path/ID order,
   unknown ACK/no second POST, qualification/identity/source invalidation,
   late response/abort, monotonic deadline, byte/read/request bounds, privacy
-  and missing Trip completeness. Final source head 1251881f; it also retains the
+  and missing Trip completeness. Final source head 85a1e1eb; it also retains the
   existing parser's questionId and explicit identityAttestation unknown.
 - Live Staging/provider/DB/fees/ECS/production, Web/physical-device and full #264
   acceptance NOT_RUN. Full collection, usage/cost/quota/key/context authority

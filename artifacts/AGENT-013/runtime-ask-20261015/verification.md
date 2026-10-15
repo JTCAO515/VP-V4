@@ -2,10 +2,13 @@
 
 Accepted base: `ded26ad709027350433c78fc746fdd3d6aaff575`.
 Initial stable source/test head: `1b521b379fc64eb085e272438d9cd10630282404`.
-Final source/test head: `1251881fdc06286868abb048c8dfb851c5c71e38`.
+Pre-review source/test head: `1251881fdc06286868abb048c8dfb851c5c71e38`.
+Final review-fix source: `85a1e1ebae8ed3ed5e0cd6ef2a1c6873a32b198d`;
+see `review-fix.md` and `review-fix-checks.log.gz` for the 20-test delta evidence.
 Delta 1251881f adds only the parser's questionId and explicit identityAttestation
 unknown to the same sanitized report; 16 tests and typecheck remain PASS.
-Subsequent commits in this range only capture documentation/evidence.
+Evidence-only commits do not change tested source; include all source deltas in
+the complete accepted-base to final-head range.
 Original `3e98bf4f` recovery branch and PR704 were preserved. The clean original
 WT was switched to new `codex/agent013-runtime-ask-20261015` from accepted QA.
 New owned source is only `evals/harness/runtime-ask/**`, its contract test scope
