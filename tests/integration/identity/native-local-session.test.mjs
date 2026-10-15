@@ -109,14 +109,25 @@ test('real disposable Auth → HTTP → persistent mobile epoch → RLS and revo
     const schema=await fetch(state.API_URL+'/rest/v1/',{redirect:'error',headers:{apikey:key,Authorization:'Bearer '+a.body.accessToken},signal:AbortSignal.timeout(5000)});
     return schema.ok && Boolean((await schema.json()).paths?.['/rpc/'+barrierName]);
   },20000,'ordinary-role test RPC schema readiness');
-  const inFlightWrite=Promise.resolve(aClient.rpc(barrierName).abortSignal(AbortSignal.timeout(60000)));
+  let writeResult;
+  const inFlightWrite=Promise.resolve(aClient.rpc(barrierName).abortSignal(AbortSignal.timeout(60000))).then(result=>{writeResult=result;return result;});
   let replacing;
   try {
-    const writePid=Number(await waitUntil(()=>gate.sql(`select pid from pg_stat_activity where wait_event_type='Lock' and query like '%${barrierName}%' and ${gate.pid}=any(pg_blocking_pids(pid));`),20000,'actual write backend blocked by the unique test gate'));
+    const writePid=Number(await waitUntil(()=>{
+      if(writeResult!==undefined){
+        const code=typeof writeResult.error?.code==='string'&&/^[A-Z0-9_]{1,40}$/.test(writeResult.error.code)?writeResult.error.code:'unclassified';
+        throw new Error(`Actual write ended before reaching the unique gate (status=${Number.isInteger(writeResult.status)?writeResult.status:0},code=${code},error=${writeResult.error!==null})`);
+      }
+      return gate.sql(`select pid from pg_stat_activity where wait_event_type='Lock' and query like '%${barrierName}%' and ${gate.pid}=any(pg_blocking_pids(pid));`);
+    },20000,'actual write backend blocked by the unique test gate'));
     assert.ok(Number.isInteger(writePid) && writePid>0,'observed real write backend PID');
     replacing=call('login',{attemptId:attemptB},b.body.accessToken);
     const replacementPid=Number(await waitUntil(()=>gate.sql(`select pid from pg_stat_activity where wait_event_type='Lock' and query like '%native_session_v2%' and ${writePid}=any(pg_blocking_pids(pid));`),20000,'replacement backend blocked by that exact write backend'));
     assert.ok(Number.isInteger(replacementPid) && replacementPid>0 && replacementPid!==writePid,'replacement is blocked by the actual writer');
+  } catch(error) {
+    // Report only fixture backend IDs and lock categories, never query/JWT text.
+    t.diagnostic('OWN_WRITE_GATE '+gate.sql(`select coalesce(json_agg(json_build_object('pid',pid,'waitType',wait_event_type,'waitEvent',wait_event,'gateBlocks',${gate.pid}=any(pg_blocking_pids(pid)),'namedCall',position('${barrierName}' in query)>0))::text,'[]') from pg_stat_activity where ${gate.pid}=any(pg_blocking_pids(pid)) or position('${barrierName}' in query)>0;`));
+    throw error;
   } finally {
     await gate.release();
     await Promise.allSettled([inFlightWrite,...(replacing?[replacing]:[])]);
