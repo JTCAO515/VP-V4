@@ -1,0 +1,7 @@
+{
+  "schemaVersion": "canonical-place-http-sql-input/1",
+  "acceptedBaseline": "ead1efc19f2f540d9056eb37ed90333388b0c8a9",
+  "reviewedSQLCheckpoint": null,
+  "files": {},
+  "migrations": []
+}
