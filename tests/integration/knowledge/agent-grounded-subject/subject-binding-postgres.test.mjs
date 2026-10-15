@@ -41,7 +41,9 @@ before(async()=>{
  assert.equal(await scalar("select current_setting('listen_addresses') as value"),'');
  await query(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));
  await query("create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$; create schema extensions; create extension pgcrypto with schema extensions;");
- const migrations=readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&f!==append).sort();
+ // This historical append/rollback fixture starts at its actual predecessor,
+ // never at a later migration that already depends on the append under test.
+ const migrations=readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&f<append).sort();
  const inventory=[];
  for(const file of migrations){const source=readFileSync(join('supabase/migrations',file),'utf8');try{await query('begin');await query(source);await query('commit');inventory.push({file,sha256:createHash('sha256').update(source).digest('hex')});}catch(error){
    await query('rollback');

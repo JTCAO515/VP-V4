@@ -1,6 +1,6 @@
 {
   "postgres": "PostgreSQL 17.11 (Homebrew) on aarch64-apple-darwin27.0.0, compiled by Apple clang version 21.0.0 (clang-2100.3.34.2), 64-bit",
-  "migrationSha256": "208472a066b9d8aa4ae1b06953448ed6eed362f85449dd71dadd9b78c1bb1ac7",
+  "migrationSha256": "b64df5e6ea295cc55800529d45b14510fe0baa106db881abc490a3289e594723",
   "baselineCatalogSha256": "36e7d25bad4291e0213ef1f0fbb0bb0c19d0ac597fea4904381854aa62a58efd",
   "afterCatalogSha256": "58cd76ea54b15a21175aa8195c72ad063754b4899205d780feb3fa7766660931",
   "changedFunctions": [

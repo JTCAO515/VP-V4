@@ -377,6 +377,11 @@ export function parseNodeTestSummary(output) {
   return totals;
 }
 
+/** Repeat bounded TAP failure names at the end so provider log truncation cannot hide early cases. */
+export function failedNodeTestNames(output) {
+  return [...output.matchAll(/^\s*not ok \d+ - ([^\r\n]+)$/gm)].slice(0, 16).map((match) => match[1].slice(0, 240));
+}
+
 /** The lane policy: a clean exit is not enough — any skip/todo/cancel or a missing summary fails. */
 export function stepProblems(code, totals) {
   const problems = [];
@@ -490,7 +495,7 @@ async function runLane(lane, shard = null) {
       console.log("::endgroup::");
       const totals = parseNodeTestSummary(output);
       const problems = stepProblems(code, totals);
-      results.push({ lane, step: step.name, files: step.files.length, ...totals, seconds: Math.round((Date.now() - started) / 1000), outcome: problems.length ? "failed" : "passed", problems });
+      results.push({ lane, step: step.name, files: step.files.length, ...totals, seconds: Math.round((Date.now() - started) / 1000), outcome: problems.length ? "failed" : "passed", problems, ...(problems.length ? { failedTests: failedNodeTestNames(output) } : {}) });
     }
   } finally {
     if (stack) await stack.stop();

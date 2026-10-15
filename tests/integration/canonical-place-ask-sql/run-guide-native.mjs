@@ -1,0 +1,7 @@
+// Only the explicitly leased Guide SQL suite, on the accepted native-only adapter.
+import {spawn,spawnSync} from 'node:child_process';import {mkdtempSync,chmodSync,readdirSync,readFileSync,rmSync} from 'node:fs';import {resolve,join} from 'node:path';
+if(!process.env.VP_TRIP_PG_BIN)throw Error('Explicit owned native PG17 bin required');
+const state=mkdtempSync('/tmp/agent008-native-state-');chmodSync(state,0o700);const env={...process.env,VP_TRIP_NATIVE_STATE:state,VP_TURN_DB_TEST:'1',PATH:resolve('tests/integration/service-task-trip/native-legacy-bin')+':'+process.env.PATH};
+console.log('Guide full13: native17 private0700/noTCP, original assertions and accepted adapter; not managed17.6/GoTrue.');
+try{const code=await new Promise((resolve,reject)=>{const child=spawn(process.execPath,['--test','tests/integration/guide/place-guide-postgres.test.mjs'],{env,stdio:'inherit'});child.on('error',reject);child.on('exit',resolve);});process.exitCode=code??1;}
+finally{for(const file of readdirSync(state)){const {root,data}=JSON.parse(readFileSync(join(state,file),'utf8'));if(!root.startsWith('/tmp/agent008-native-pg-')||data!==join(root,'data'))throw Error('Not this runner owned native fixture');const result=spawnSync(join(env.VP_TRIP_PG_BIN,'pg_ctl'),['-D',data,'stop','-m','fast','-w']);if(result.status!==0)throw Error('Owned native Guide cleanup failed');rmSync(root,{recursive:true,force:true});}rmSync(state,{recursive:true,force:true});}

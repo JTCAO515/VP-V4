@@ -13,6 +13,28 @@ do $absent$begin
  if exists(select 1 from pg_attribute where attrelid='turn_private.grounded_turns'::regclass and attname='selected_place_request' and not attisdropped) then raise exception 'CANONICAL_PLACE_SLOT_ALREADY_EXISTS';end if;
  if exists(select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname||'.'||p.proname=any(array['place_actions_private.ask_knowledge_scope_v1','place_actions_private.ask_claim_basis_v1','place_actions_private.ask_mapping_basis_v1','place_actions_private.ask_sources_v1','place_actions_private.ask_uuid_v1','place_actions_private.ask_expectation_shape_v1','place_actions_private.ask_context_v1','place_actions_private.ask_basis_v1','place_actions_private.ask_proof_shape_v1','place_actions_private.ask_root_current_v1','place_actions_private.ask_bound_v1','place_actions_private.ask_receipt_v1','place_actions_private.ask_submit_v1','place_actions_private.ask_read_v1','place_actions_private.ask_history_root_v1','place_actions_private.ask_text_projection_v1','place_actions_private.ask_finish_capacity_v1','place_actions_private.ask_claim_current_v1','place_actions_private.ask_complete_v1','place_actions_private.ask_schema_v1','place_actions_private.ask_source_row_v1','place_actions_private.ask_answer_basis_shape_v1'])) then raise exception 'CANONICAL_PLACE_PRIVATE_FUNCTION_ALREADY_EXISTS';end if;
 end $absent$;
+-- Restore only five already-reviewed authenticated-only contracts.
+-- Public-schema default service EXECUTE is not a new accepted permission.
+do $acl_contract$
+declare spec record;p pg_proc;actual_meta jsonb;expected_acl jsonb;actual_acl jsonb;with_default_service jsonb;prior_path text:=current_setting('search_path');
+begin
+ perform pg_catalog.set_config('search_path','',true);
+ for spec in select key signature,value expected from jsonb_each('{"public.confirm_and_apply_trip_proposal(uuid,text,text)":{"source":"1103f421e240cb50f45d603b93e4b9cb4363ff0efa66aa1bc694b0d34014c3ee","definition":"fd5bfbca0bbc8116d3c21df4e1577144ff5879454d18e3237710d270ca2e7f52","owner":"postgres","secdef":true,"acl":"{postgres=X/postgres,authenticated=X/postgres}","config":["search_path=public","TimeZone=UTC"],"kind":"f","language":"plpgsql"},"public.create_trip_proposal_patch(uuid,jsonb)":{"source":"b07a3697dce2d77dc6066c14441e1ffcadb034d1b158014d23ff1f81cfc1a4b3","definition":"554cc86ac4b71f00f750f4e617cac73dbf2ded0dd3bff5f4643274f285256542","owner":"postgres","secdef":true,"acl":"{postgres=X/postgres,authenticated=X/postgres}","config":["search_path=pg_catalog, public, pg_temp"],"kind":"f","language":"plpgsql"},"public.native_session_v2(text,uuid)":{"source":"213e2e29b3d9eac1a73dd7bbf5afde3eb0b7de1a2d47d5073856ba3b8cded389","definition":"e6d68643eda3d65c6c1980e7599009d581d722554c22adc6b76df4208617851f","owner":"postgres","secdef":false,"acl":"{postgres=X/postgres,authenticated=X/postgres}","config":["search_path=\"\""],"kind":"f","language":"sql"},"public.read_trip_proposal_v2(uuid)":{"source":"6a7fec990eef1e980d22ae28b73f85d0ee2eae1119c1cc9f9de10c04602176ab","definition":"589cb8a0957e780fd0652fac99b97f402b6b08de20d0acabbca7e289d118b5f9","owner":"postgres","secdef":false,"acl":"{postgres=X/postgres,authenticated=X/postgres}","config":["search_path=\"\"","TimeZone=UTC"],"kind":"f","language":"sql"},"public.reject_trip_proposal_v2(uuid)":{"source":"e9eacb99ca1a23078a6f1be9cdf0444c73edd88213e15f7881aa66afe39005d7","definition":"6a92a7d8cfcec91f863f885a54ba08df0720149dc41c94db2bc4be242b042d24","owner":"postgres","secdef":true,"acl":"{postgres=X/postgres,authenticated=X/postgres}","config":["search_path=\"\""],"kind":"f","language":"plpgsql"}}'::jsonb) order by key loop
+  select * into p from pg_proc where oid=to_regprocedure(spec.signature);
+  select jsonb_build_object('source',encode(sha256(convert_to(p.prosrc,'UTF8')),'hex'),'definition',encode(sha256(convert_to(pg_get_functiondef(p.oid),'UTF8')),'hex'),'owner',pg_get_userbyid(p.proowner),'secdef',p.prosecdef,'acl',p.proacl::text,'config',p.proconfig,'kind',p.prokind::text,'language',l.lanname) into actual_meta from pg_language l where l.oid=p.prolang;
+  if p.oid is null or (actual_meta-'acl') is distinct from (spec.expected-'acl') then raise exception 'CANONICAL_PLACE_AUTH_ONLY_SOURCE_MISMATCH %',spec.signature;end if;
+  select jsonb_agg(v order by v::text collate "C") into expected_acl from(select jsonb_build_array(pg_get_userbyid(a.grantor),case when a.grantee=0 then 'PUBLIC' else pg_get_userbyid(a.grantee) end,a.privilege_type,a.is_grantable) v from aclexplode((spec.expected->>'acl')::aclitem[])a)q;
+  select jsonb_agg(v order by v::text collate "C") into actual_acl from(select jsonb_build_array(pg_get_userbyid(a.grantor),case when a.grantee=0 then 'PUBLIC' else pg_get_userbyid(a.grantee) end,a.privilege_type,a.is_grantable) v from aclexplode(coalesce(p.proacl,acldefault('f',p.proowner)))a)q;
+  select jsonb_agg(v order by v::text collate "C") into with_default_service from jsonb_array_elements(expected_acl||jsonb_build_array(jsonb_build_array('postgres','service_role','EXECUTE',false)))q(v);
+  if actual_acl is distinct from expected_acl and actual_acl is distinct from with_default_service then raise exception 'CANONICAL_PLACE_AUTH_ONLY_ACL_MISMATCH %',spec.signature;end if;
+ end loop;
+ -- All source and exact ACL tuples validate before any permission is narrowed.
+ for spec in select unnest(array['public.confirm_and_apply_trip_proposal(uuid,text,text)','public.create_trip_proposal_patch(uuid,jsonb)','public.native_session_v2(text,uuid)','public.read_trip_proposal_v2(uuid)','public.reject_trip_proposal_v2(uuid)']) signature loop
+  if exists(select 1 from pg_proc f cross join lateral aclexplode(f.proacl)a where f.oid=to_regprocedure(spec.signature) and a.grantee=(select oid from pg_roles where rolname='service_role') and a.privilege_type='EXECUTE') then execute format('revoke execute on function %s from service_role',spec.signature);end if;
+  if not has_function_privilege('authenticated',spec.signature,'EXECUTE') or has_function_privilege('anon',spec.signature,'EXECUTE') or has_function_privilege('service_role',spec.signature,'EXECUTE') then raise exception 'CANONICAL_PLACE_AUTH_ONLY_ROLE_MISMATCH %',spec.signature;end if;
+ end loop;
+ perform pg_catalog.set_config('search_path',prior_path,true);
+end $acl_contract$;
 -- Exact post-auth source qualification bodies from original reader/helpers.
 -- No new resolver and no identity substitution. Only called after original Root locks.
 CREATE OR REPLACE FUNCTION place_actions_private.ask_knowledge_scope_v1(p_input jsonb)
@@ -2041,6 +2063,49 @@ do $pins$declare spec jsonb;p pg_proc;begin
  is distinct from (spec-array['signature','beforeMd5','afterMd5']) then raise exception 'CANONICAL_PLACE_AFTER_DEFINITION_MISMATCH %',spec->>'signature';end if;
  end loop;
 end $pins$;
-do $guards$begin
- if place_actions_private.ask_schema_v1() is not true or profile_data_private.schema_v1() is not true or result_data_private.infrastructure_supported_v1() is not true or result_data_private.schema_supported_v1() is not true or turn_data_private.schema_supported_v1() is not true or turn_data_private.runtime_supported_v1() is not true or conversation_data_private.schema_supported_v1() is not true or export_private.profile_hooks_valid_v1() is not true or turn_data_private.write_hooks_valid_v1() is not true or turn_data_private.hooks_valid_v1() is not true or turn_private.trip_service_task_runtime_v1() is not true then raise exception 'CANONICAL_PLACE_LIFECYCLE_GUARD_MISMATCH';end if;
+-- Diagnostic only: this block cannot turn a failed original guard into success.
+do $guards$
+declare vector jsonb;detail jsonb;runtime_source text;expected_names jsonb;actual_names jsonb;expected_triggers jsonb;actual_triggers jsonb;manifest jsonb;entry record;field_name text;actual_meta jsonb;differences jsonb:='[]'::jsonb;expected_hash text;actual_hash text;
+begin
+ if place_actions_private.ask_schema_v1() is not true or profile_data_private.schema_v1() is not true or result_data_private.infrastructure_supported_v1() is not true or result_data_private.schema_supported_v1() is not true or turn_data_private.schema_supported_v1() is not true or turn_data_private.runtime_supported_v1() is not true or conversation_data_private.schema_supported_v1() is not true or export_private.profile_hooks_valid_v1() is not true or turn_data_private.write_hooks_valid_v1() is not true or turn_data_private.hooks_valid_v1() is not true or turn_private.trip_service_task_runtime_v1() is not true then
+  vector:=jsonb_build_object('selected_schema',place_actions_private.ask_schema_v1(),'profile_schema',profile_data_private.schema_v1(),'result_infrastructure',result_data_private.infrastructure_supported_v1(),'result_schema',result_data_private.schema_supported_v1(),'turn_schema',turn_data_private.schema_supported_v1(),'turn_runtime',turn_data_private.runtime_supported_v1(),'conversation_schema',conversation_data_private.schema_supported_v1(),'export_hooks',export_private.profile_hooks_valid_v1(),'turn_write_hooks',turn_data_private.write_hooks_valid_v1(),'turn_hooks',turn_data_private.hooks_valid_v1(),'trip_runtime',turn_private.trip_service_task_runtime_v1());
+  begin
+   -- Match the original runtime function's fixed empty-path deparse context.
+   perform pg_catalog.set_config('search_path','',true);
+   -- The original after-pin above already fixes this authored manifest source.
+   select prosrc into runtime_source from pg_proc where oid='turn_private.trip_service_task_runtime_v1()'::regprocedure;
+   expected_names:=replace((regexp_match(runtime_source,$rx$if names is distinct from '([^
+]+)'::jsonb$rx$))[1],chr(39)||chr(39),chr(39))::jsonb;
+   expected_triggers:=replace((regexp_match(runtime_source,$rx$if actual is distinct from '([^
+]+)'::jsonb$rx$))[1],chr(39)||chr(39),chr(39))::jsonb;
+   manifest:=replace((regexp_match(runtime_source,$rx$jsonb_each\('([^
+]+)'::jsonb\) loop$rx$))[1],chr(39)||chr(39),chr(39))::jsonb;
+ select jsonb_agg(p.oid::regprocedure::text order by p.oid::regprocedure::text collate "C") into actual_names from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace where n.nspname in('turn_private','scoped_edit_private');
+ select jsonb_agg(jsonb_build_object('relation',tgrelid::regclass::text,'name',tgname,'definition',pg_get_triggerdef(oid),'enabled',tgenabled::text,'function',tgfoid::regprocedure::text) order by tgrelid::regclass::text collate "C",tgname collate "C") into actual_triggers from pg_catalog.pg_trigger where not tgisinternal and tgname in('settle_trip_service_task','trip_proposal_terminal','trip_worker_terminal','trip_objective_text_erased','trip_objective_message_erased','trip_objective_trip_erased','trip_objective_account_erased','guard_text_capacity_scope','guard_metered_task_type','guard_metered_thread_trip','scoped_confirm_event','scoped_proposal_guard','trip_privacy_source_fence');
+   if current_setting('session_replication_role')<>'origin' then
+    detail:=jsonb_build_object('stage','replication_role','field','session_replication_role','expected_hash',encode(sha256(convert_to(to_jsonb('origin'::text)::text,'UTF8')),'hex'),'actual_hash',encode(sha256(convert_to(to_jsonb(current_setting('session_replication_role'))::text,'UTF8')),'hex'));
+   elsif actual_names is distinct from expected_names then
+    detail:=jsonb_build_object('stage','namespace_inventory','expected_count',jsonb_array_length(expected_names),'actual_count',jsonb_array_length(actual_names),'expected_hash',encode(sha256(convert_to(expected_names::text,'UTF8')),'hex'),'actual_hash',encode(sha256(convert_to(actual_names::text,'UTF8')),'hex'));
+   elsif actual_triggers is distinct from expected_triggers then
+    detail:=jsonb_build_object('stage','trigger_inventory','expected_count',jsonb_array_length(expected_triggers),'actual_count',jsonb_array_length(actual_triggers),'expected_hash',encode(sha256(convert_to(expected_triggers::text,'UTF8')),'hex'),'actual_hash',encode(sha256(convert_to(actual_triggers::text,'UTF8')),'hex'));
+   else
+    for entry in select key signature,value expected from jsonb_each(manifest) order by key loop
+     select jsonb_build_object('source',encode(sha256(convert_to(p.prosrc,'UTF8')),'hex'),'definition',encode(sha256(convert_to(pg_get_functiondef(p.oid),'UTF8')),'hex'),'owner',pg_get_userbyid(p.proowner),'secdef',p.prosecdef,'acl',p.proacl::text,'config',p.proconfig,'kind',p.prokind::text,'language',l.lanname) into actual_meta from pg_proc p join pg_language l on l.oid=p.prolang where p.oid=to_regprocedure(entry.signature);
+     for field_name in select jsonb_object_keys(entry.expected) order by 1 loop
+      if actual_meta->field_name is distinct from entry.expected->field_name then
+       expected_hash:=case when field_name in('source','definition') then entry.expected->>field_name else encode(sha256(convert_to((entry.expected->field_name)::text,'UTF8')),'hex') end;
+       actual_hash:=case when field_name in('source','definition') then actual_meta->>field_name else encode(sha256(convert_to((actual_meta->field_name)::text,'UTF8')),'hex') end;
+       differences:=differences||jsonb_build_array(jsonb_build_object('signature',entry.signature,'field',field_name,'expected_hash',expected_hash,'actual_hash',actual_hash));
+       exit when jsonb_array_length(differences)>=3;
+      end if;
+     end loop;
+     exit when jsonb_array_length(differences)>=3;
+    end loop;
+    detail:=jsonb_build_object('stage',case when jsonb_array_length(differences)>0 then 'function_metadata' else 'base_guard_or_unclassified' end,'differences',differences);
+   end if;
+  exception when others then
+   detail:=jsonb_build_object('stage','diagnostic_unavailable','sqlstate',SQLSTATE);
+  end;
+  raise exception 'CANONICAL_PLACE_LIFECYCLE_GUARD_MISMATCH %',jsonb_build_object('postgres',current_setting('server_version'),'guards',vector,'trip_failure',detail);
+ end if;
 end $guards$;
