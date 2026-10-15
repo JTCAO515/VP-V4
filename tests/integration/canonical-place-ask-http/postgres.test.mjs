@@ -6,6 +6,7 @@ import {canonicalPlaceAskHTTP} from '../../../lib/server/knowledge/place-ask/htt
 import {database} from './database.mjs';
 import {fixedSource} from './fixed-source.mjs';
 import {adapter,productionServer} from './adapter.mjs';
+import {verifyHosted} from './hosted-case.mjs';
 
 // Default integration discovery is gated. The explicit native17 step must set
 // the flag, require this entry, and require zero skipped tests.
@@ -61,5 +62,6 @@ else test('actual v7 HTTP / Supabase SDK / private PG17 ordinary-role admission 
   const requests=transport.events.filter(e=>e.owner===f.owner.id&&e.action==='selected_submit');assert.equal(requests.length,1,'unknown or revoked state never triggers another POST');
   assert.deepEqual(await counts(f),{turns:1,tasks:1,links:1,reservations:1});assert.deepEqual(await tripSnapshot(f),beforeTrip,'original Trip is unchanged');
  });
+ await verifyHosted(t,ports);
  console.log(JSON.stringify({marker:'C0_HTTP_SDK_REAL_PG_ORDINARY_ROLE',checkpoint:source.checkpoint,sourcePins:source.pins,database:db.settings,identity:'synthetic registered-token Auth/REST adapter; NOT GoTrue/PostgREST/target/provider'}));
 });

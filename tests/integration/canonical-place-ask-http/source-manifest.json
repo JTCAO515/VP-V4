@@ -1,8 +1,8 @@
 {
   "schemaVersion": "canonical-place-http-sql-input/1",
   "acceptedBaseline": "ead1efc19f2f540d9056eb37ed90333388b0c8a9",
-  "reviewedSQLCheckpoint": "db26afcc7b87d4a25a964826d96f14327c70395d",
-  "integratedCheckout": "04c06ab4b14e2f131be3a59f76553fb24f8907bd",
+  "reviewedSQLCheckpoint": "198c66bf644483da97b7663cc06e321d4747f1fb",
+  "integratedCheckout": "a42b416ed2184402859067b73d39580a7e655a2f",
   "files": {
     "supabase/migrations/20260824101500_v4_baseline.sql": "2296639fa00f329fe239032a31bfbec7e8d3458318fe04411ff8c625fdee8a78",
     "supabase/migrations/20260824104424_plat_conf_connection_probes.sql": "d56ace82f308e66e8796e461b944a9b308e1cfc9d033a24ab0752a06ac2edbcb",
@@ -163,9 +163,9 @@
     "supabase/migrations/20261015040456_agent005_resolved_subject_context.sql": "3fbe4111507a53e947e71f5dad20cd979a4bda49e4716be1a45733797d66f077",
     "supabase/migrations/20261015043710_agent001_qa_cancellation.sql": "f7c1898b22c6be8f55851b87e3dcd9a7cbce24a187469f529de911658c8693ce",
     "supabase/migrations/20261015055708_agent008_trip_service_task_settlement_current.sql": "cdbe97c1931cac1a077ae3f898377cb6ee552dada66a23a2490a9565e9134021",
-    "supabase/migrations/20261015083120_agent005_canonical_place_ask.sql": "f7a230acc07ebfa63ce6b8639495d27c28fe298fad1d322264f436bf764da3f3",
+    "supabase/migrations/20261015083120_agent005_canonical_place_ask.sql": "208472a066b9d8aa4ae1b06953448ed6eed362f85449dd71dadd9b78c1bb1ac7",
     "tests/integration/turn/fixtures/durable-work-schema.sql": "a06fd58e9d599178d20dfe84d10418f839597448c6ae8634f993e0526a4363a4",
-    "tests/integration/canonical-place-ask-sql/fixtures.mjs": "6cab76147e5fc271c6271384804de4a67b3f0e687ab241fafbba4f21bd6936ca",
+    "tests/integration/canonical-place-ask-sql/fixtures.mjs": "dd78e9a2d952b6597a7e3cede8fe496bda496662f6321a39889267aaa6d08283",
     "tests/integration/canonical-place-ask-sql/db.mjs": "001d9dffdebde3665af0a2c8de13841018bdb3a123a74770d5739c120bbc9acc"
   },
   "migrations": [
