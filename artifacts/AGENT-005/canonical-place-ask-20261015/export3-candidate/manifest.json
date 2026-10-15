@@ -1,6 +1,6 @@
 {
   "base": "124da5cf138c72ae4b7ae4f1116f1fad4f416ec0",
-  "status": "candidate_only_not_applied",
+  "status": "applied_after_accepted_upstream",
   "files": {
     "contract.ts": {
       "before": {
@@ -32,5 +32,6 @@
         "sha256": "42a478a41321b17a8c2b900214bede241e6ab348b3e1edf24ca3e9f6e3983553"
       }
     }
-  }
+  },
+  "acceptedUpstream": "ead1efc19f2f540d9056eb37ed90333388b0c8a9"
 }
