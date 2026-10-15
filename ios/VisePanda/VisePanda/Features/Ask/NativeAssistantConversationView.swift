@@ -455,6 +455,8 @@ struct NativeAssistantConversationView: View {
     @State private var paceOperationBlocked = false
     @State private var memoryOperationBlocked=false
     @State private var selectedMemoryBasis:[NativeTravelMemoryReference]=[]
+    @State private var canonicalPlaceAskRoot: NativeCanonicalPlaceAskRoot?
+    @State private var canonicalPlaceAskNotice: String?
     @State private var draft = ""
     @State private var planningDraft = ""
     @State private var showJourneyMaterials = false
@@ -656,19 +658,7 @@ struct NativeAssistantConversationView: View {
                 if !entryBlocking && session.dataScope != nil && (policy?.consentState == .accepted || selection.conversationID != nil) {
                     conversationControls
                 }
-                if let source=session.exploreAskHandoff,source.scope==session.dataScope,source.valid {
-                    Text(chinese ? "已选地点：\(source.name)。身份与行程版本需重新核对；尚未发出消息。":"Selected place: \(source.name). Identity and Trip version need rechecking; no message has been sent.")
-                    Button(chinese ? "明确采用为本次输入":"Use explicitly for this input"){
-                        guard pending==nil,selectedSources.pending==nil else{return}
-                        let input=exploreInput(source)
-                        guard input.utf16.count<=4000 else{return}
-                        draft=input
-                        if goalHasCurrentMessage{operation="follow_up"}
-                        session.clearExploreAsk()
-                    }.disabled(pending != nil || selectedSources.pending != nil || exploreInput(source).utf16.count>4000)
-                    if exploreInput(source).utf16.count>4000 {Text(chinese ? "请先缩短当前输入，再加入地点引用。":"Shorten the current input before adding the place reference.").font(.caption)}
-                    Button(chinese ? "放弃此来源交接":"Discard this source handoff"){session.clearExploreAsk()}
-                }
+                canonicalPlaceAskControls
                 if entryBlocking {
                     goalEntryStatus
                 } else if let policy {
@@ -1139,9 +1129,76 @@ struct NativeAssistantConversationView: View {
         }
     }
 
-    private func exploreInput(_ source:NativeExploreAskHandoff)->String {
-        let added=(chinese ? "请帮我讨论我明确选择的地点：":"Please help me discuss this explicitly selected place: ")+source.name+"\ncanonical POI: "+source.poiID+"\nTrip: "+source.tripID+" · v"+String(source.tripVersion)+"\nProvider: "+source.provider.rawValue+" / "+source.providerPoiID+"\nrecheck_required"
-        return draft.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty ? added:draft+"\n\n"+added
+    @ViewBuilder private var canonicalPlaceAskControls: some View {
+                if let source=session.exploreAskHandoff,source.scope==session.dataScope,source.valid {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(chinese ? "已选地点：\(source.name)。只带入引用，尚未发送问题。" : "Selected place: \(source.name). Reference only; no question has been sent.")
+                        if let capture = session.canonicalPlaceAskNavigation {
+                            TimelineView(.periodic(from: .now, by: 1)) { _ in
+                                let current = capture.current(scope: session.dataScope, locale: chinese ? "zh" : "en")
+                                Button(chinese ? "明确采用这个地点引用" : "Use this place reference explicitly") {
+                                    guard pending == nil, selectedSources.pending == nil, !busy,
+                                          policy?.consentState == .accepted, conversation != nil else { return }
+                                    do {
+                                        try session.adoptCanonicalPlaceAsk(navigationID: source.id, locale: chinese ? "zh" : "en")
+                                        canonicalPlaceAskRoot = currentCanonicalPlaceAskRoot
+                                        canonicalPlaceAskNotice = nil
+                                    } catch { canonicalPlaceAskNotice = "recheck" }
+                                }.disabled(!current || busy || pending != nil || selectedSources.pending != nil || policy?.consentState != .accepted || conversation == nil)
+                                if !current { Text(chinese ? "地点引用已过期或语言已变化。请返回同一地点重新读取；原稿保留。" : "The reference expired or the language changed. Return to the same place and reread; your draft is preserved.").font(.caption) }
+                            }
+                            Button(chinese ? "重读同一准确地点" : "Reread this exact place") { Task { await recheckCanonicalPlaceAsk(capture) } }.disabled(busy || session.canonicalPlaceAskRecoveryRequired)
+                        } else {
+                            Text(chinese ? "这个入口只有旧导航引用。请从同一地点重新读取完整引用后再采用。" : "This entry has only a legacy navigation reference. Reread the same place before adopting it.").font(.caption)
+                        }
+                        Button(chinese ? "放弃此来源交接" : "Discard this source handoff") { session.clearExploreAsk() }
+                    }
+                }
+                if let capture = session.canonicalPlaceAskSelection {
+                    TimelineView(.periodic(from: .now, by: 1)) { _ in
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(chinese ? "本次采用地点：\(capture.title)" : "Place selected for this question: \(capture.title)")
+                            Text(chinese ? "仅为第一方地点引用；不代表事实、供应商或知识使用授权。仍由你输入问题并明确发送。" : "First-party place reference only, not fact, supplier or knowledge-use authorization. Enter your question and send explicitly.").font(.caption)
+                            if !capture.current(scope: session.dataScope, locale: chinese ? "zh" : "en") || canonicalPlaceAskRoot != currentCanonicalPlaceAskRoot {
+                                Text(chinese ? "引用或当前对话目标已失效，请回同一地点重读并重新采用。不会自动改变目标或创建任务，原稿保留。" : "The reference or conversation goal changed. Reread and adopt the same place. No goal or Task is created automatically; the draft is preserved.").font(.caption)
+                            }
+                            Button(chinese ? "重读同一准确地点" : "Reread this exact place") { Task { await recheckCanonicalPlaceAsk(capture) } }.disabled(busy || session.canonicalPlaceAskRecoveryRequired)
+                            Button(chinese ? "移除本次地点引用" : "Remove this place reference") {
+                                session.discardCanonicalPlaceAskSelection(); canonicalPlaceAskRoot = nil
+                            }.disabled(busy || session.canonicalPlaceAskPending != nil)
+                        }
+                    }
+                }
+                if let retained = session.canonicalPlaceAskPending, retained.scope == session.dataScope {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(chinese ? "原地点提问结果待核；已保留原请求，不能新发或盲重试。" : "The original place question is unresolved. Its request is retained; no new submission or blind retry is allowed.").font(.caption)
+                        Button(chinese ? "只读取原提问回执" : "Read original question receipt only") { Task { await readCanonicalPlaceAskReceipt() } }.disabled(busy)
+                    }
+                }
+                if let canonicalPlaceAskNotice {
+                    Text(canonicalPlaceAskNotice == "original_submission_unsupported"
+                        ? (chinese ? "当前对话目标没有兼容的任务与 Turn 接口，暂不能发送地点提问。不会自动新建或转换任务，原稿保留。" : "This conversation has no compatible Task/Turn admission. Place Ask cannot be sent; no Task is created or converted, and the draft is preserved.")
+                        : (chinese ? "地点提问暂不可用。请核对原操作和来源；原稿保留。" : "Place Ask is unavailable. Check the original operation and source; the draft is preserved.")).font(.caption)
+                }
+    }
+    private func recheckCanonicalPlaceAsk(_ capture: NativeCanonicalPlaceAskCapture) async {
+        let locale = chinese ? "zh" : "en"
+        guard !busy, resultActive else { return }
+        do {
+            let refreshed = try await session.recheckCanonicalPlaceAsk(capture, locale: locale)
+            guard resultActive, locale == (chinese ? "zh" : "en") else { return }
+            canonicalPlaceAskRoot = nil; canonicalPlaceAskNotice = nil
+            session.prepareCanonicalPlaceAsk(refreshed)
+        } catch { canonicalPlaceAskNotice = "recheck" }
+    }
+    private var currentCanonicalPlaceAskRoot: NativeCanonicalPlaceAskRoot {
+        let related = ["follow_up", "amendment", "clarification"].contains(operation) ? goal : nil
+        let parent = related.flatMap { current in
+            conversation?.messages.last(where: { $0.goalId == current.goalId && $0.scopeVersion == current.scopeVersion })
+        }
+        return .init(conversationID: selection.conversationID, goalID: related?.goalId,
+                     goalVersion: related?.scopeVersion, parentMessageID: parent?.messageId,
+                     relationship: operation, locale: chinese ? "zh" : "en", policyID: policy?.id)
     }
 
     private var qualifiedMemoryBasis:[NativeTravelMemoryReference] {
@@ -1872,6 +1929,18 @@ struct NativeAssistantConversationView: View {
               boundScope == initial,
               conversation != nil || (pending != nil && pending?.conversationId == selection.conversationID) else { return }
         if let pending, pending.conversationId != selection.conversationID || pending.policyId != policy.id { return }
+        if session.canonicalPlaceAskNavigation != nil {
+            canonicalPlaceAskNotice = "original_submission_unsupported"
+            return
+        }
+        if session.canonicalPlaceAskPending != nil {
+            canonicalPlaceAskNotice = "unknown"
+            return
+        }
+        if let capture = session.canonicalPlaceAskSelection {
+            await sendCanonicalPlaceAsk(capture, initial: initial, policyID: policy.id)
+            return
+        }
         if !selectedSources.sources.empty || !selectedMemoryBasis.isEmpty || selectedSources.pending != nil {
             await sendSelectedSources(initial: initial, policyID: policy.id)
             return
@@ -1908,6 +1977,48 @@ struct NativeAssistantConversationView: View {
         busy = false
         await reload(replacing: true)
     }
+    private func sendCanonicalPlaceAsk(_ capture: NativeCanonicalPlaceAskCapture, initial: NativeDataScope, policyID: String) async {
+        guard isActive, scenePhase == .active, pending == nil, selectedSources.pending == nil,
+              selectedSources.sources.empty, selectedMemoryBasis.isEmpty,
+              canonicalPlaceAskRoot == currentCanonicalPlaceAskRoot,
+              capture.current(scope: initial, locale: chinese ? "zh" : "en"),
+              let conversation, conversation.conversationId == selection.conversationID else {
+            canonicalPlaceAskNotice = "recheck"; return
+        }
+        // Current assistant v5 submission has no compatible Task/Turn admission.
+        // Never switch to a plain Task sender or manufacture a Task to get a positive result.
+        canonicalPlaceAskNotice = "original_submission_unsupported"
+    }
+    private func readCanonicalPlaceAskReceipt() async {
+        guard !busy, isActive, scenePhase == .active, let initial = session.dataScope,
+              let retained = session.canonicalPlaceAskPending, retained.scope == initial else { return }
+        busy = true
+        defer { busy = false }
+        do {
+            let bytes = try await session.readCanonicalPlaceAskReceipt(retained)
+            await acceptCanonicalPlaceAsk(bytes, pending: retained, initial: initial)
+        } catch { if session.dataScope == initial { canonicalPlaceAskNotice = "unknown" } }
+    }
+    private func acceptCanonicalPlaceAsk(_ bytes: Data, pending retained: NativeCanonicalPlaceAskPending, initial: NativeDataScope) async {
+        guard session.dataScope == initial, !Task.isCancelled else { return }
+        do {
+            switch try NativeCanonicalPlaceAskResponse.decode(bytes, pending: retained, expectedDigest: retained.requestDigest) {
+            case .accepted(let originalReceipt, _):
+                let accepted = try JSONDecoder().decode(AssistantAccepted.self, from: originalReceipt)
+                guard accepted.version == 5, accepted.kind == "accepted", accepted.conversationId == retained.conversationID,
+                      accepted.messageId == retained.messageID else { throw NativeDataError.invalidResponse }
+                try session.acknowledgeCanonicalPlaceAsk(retained, receipt: bytes)
+                canonicalPlaceAskRoot = nil; canonicalPlaceAskNotice = nil
+                let submitted = try NativePlaceActionWire.object(retained.submission)
+                if draft.trimmingCharacters(in: .whitespacesAndNewlines) == submitted["text"] as? String { draft = "" }
+                if selection.conversationID == retained.conversationID { await reload(replacing: true) }
+            case .unknown: canonicalPlaceAskNotice = "unknown"
+            case .notSubmitted: canonicalPlaceAskNotice = "not_submitted"
+            case .unavailable(let reason): canonicalPlaceAskNotice = reason
+            }
+        } catch { canonicalPlaceAskNotice = "unknown" }
+    }
+
     private func sendSelectedSources(initial: NativeDataScope, policyID: String) async {
         let request: NativeSelectedMessageRequest
         if let retained=selectedSources.pending { request=retained }
