@@ -12,9 +12,10 @@ import type { SavedTurn } from "../../../lib/grounded/read-model.ts";
 export type AskReport = Readonly<{
   schemaVersion: "harness-runtime-ask/1"; caseId: AskRun["caseId"] | null; mode: AskRun["mode"] | "NOT_RUN";
   outcome: "answered" | "partial" | "clarification" | "blocked" | "technical_failure" | "unknown" | "NOT_RUN";
-  code: string | null; status: string | "unknown"; coverage: string | null; planDigest: string | null;
+  code: string | null; status: string | "unknown"; coverage: string | null; questionId: string | null; planDigest: string | null;
   binding: Readonly<{ ownerId: string; sessionId: string; turnId: string; taskId: string; threadId: string; policyId: string; idempotencyKey: string }> | null;
   expectation: AskRun["expectation"] | null; contextVerification: "caller_bound_not_attested";
+  identityAttestation: "unknown";
   facts: readonly Readonly<{ factId: string; sourceRevisionIds: readonly string[] }>[];
   gaps: readonly Readonly<{ claimId: string; reasons: readonly string[] }>[];
   selectedTripUnchanged: boolean | "unknown"; tripCollectionUnchanged: "unknown";
@@ -31,10 +32,10 @@ export async function runRuntimeAsk(input: unknown, transport?: AskTransport, si
   const run = parseAskRun(input);
   const base: AskReport = {
     schemaVersion: "harness-runtime-ask/1", caseId: run?.caseId ?? null, mode: "NOT_RUN", outcome: "NOT_RUN", code: run ? null : "INVALID_INPUT",
-    status: "unknown", coverage: null, planDigest: run ? hash(run) : null,
+    status: "unknown", coverage: null, questionId: null, planDigest: run ? hash(run) : null,
     binding: run ? { ownerId: run.context.ownerId, sessionId: run.context.sessionId, turnId: run.submission.turnId, taskId: run.submission.serviceTask.id,
       threadId: run.submission.threadId, policyId: run.context.policyId, idempotencyKey: run.submission.idempotencyKey } : null,
-    expectation: run?.expectation ?? null, contextVerification: "caller_bound_not_attested", facts: [], gaps: [], selectedTripUnchanged: "unknown",
+    expectation: run?.expectation ?? null, contextVerification: "caller_bound_not_attested", identityAttestation: "unknown", facts: [], gaps: [], selectedTripUnchanged: "unknown",
     tripCollectionUnchanged: "unknown", acknowledgement: "not_submitted", submitDispatches: 0, observations: [], policyRechecked: false,
     usage: "unknown", cost: "unknown", userQuotaDebit: "unknown", originalKeyReadback: "unknown",
     existingGrader: run?.caseId === "H01" ? gradeReadOnlyResult(null) : null, requiredModeVerdict: "NOT_RUN", fullAcceptance: "NOT_RUN",
@@ -124,7 +125,7 @@ export async function runRuntimeAsk(input: unknown, transport?: AskTransport, si
     : error instanceof RuntimeFailure ? error.code : "MODEL_OUTPUT_INVALID"; outcome = "unknown"; turn = null; }
   finally { clearTimeout(timer); signal.removeEventListener("abort", abort); }
   // Emit only currently validated factual/source IDs and canonical gap reasons; no input/answer/Trip/notice text.
-  return Object.freeze({ ...base, mode: run.mode, outcome, code, status: turn?.status ?? "unknown", coverage: turn?.coverage ?? null,
+  return Object.freeze({ ...base, mode: run.mode, outcome, code, status: turn?.status ?? "unknown", coverage: turn?.coverage ?? null, questionId: turn?.questionId ?? null,
     facts: Object.freeze((turn?.facts ?? []).map(f => Object.freeze({ factId: f.id, sourceRevisionIds: Object.freeze(f.sources.map(s => s.id)) }))),
     gaps: Object.freeze((turn?.claimGaps ?? []).map(g => Object.freeze({ claimId: g.id, reasons: Object.freeze([...g.reasons]) }))),
     selectedTripUnchanged, acknowledgement, submitDispatches: port.observations.filter(o => o.port === "submit").length,
