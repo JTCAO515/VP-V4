@@ -51,15 +51,6 @@ function BoundAddress({ context, locale, blocked, prepare, read = readOnlineAddr
     return () => controller.invalidate();
   }, [context, read, refresh]);
   const value = state.kind === "ready" && sameAddressContext(state.context, context) ? state.value : null;
-  // Evidence expiry immediately hides the old read; the next request must requalify it server-side.
-  useEffect(() => {
-    if (!value) return;
-    const deadlines = value.references.flatMap(reference => reference.claim.evidence.flatMap(receipt => "expiresAt" in receipt ? [Date.parse(receipt.expiresAt)] : []));
-    if (!deadlines.length) return;
-    const delay = Math.max(0, Math.min(...deadlines) - Date.now());
-    const timer = setTimeout(() => { setState({ kind: "loading", context }); setRefresh(n => n + 1); }, Math.min(delay, 2147483647));
-    return () => clearTimeout(timer);
-  }, [value, context]);
   const manual = value?.manual.kind === "provided" ? value.manual.address.text : null;
   const editable = value !== null && value.manual.kind !== "unsupported" && !blocked && !busy && notice !== "failed" && notice !== "prepared";
   async function submit(text: string | null) {
