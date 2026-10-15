@@ -1,0 +1,19 @@
+(node:42784) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[WebServer] (node:42788) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 5 tests using 1 worker
+
+(node:42791) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:42791) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:42791) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/e2e/qa-agent-ui/workspace.spec.mjs:3086:3 › review cancellation401 other-json removes old private projection and both journals (681ms)
+  ✓  2 tests/e2e/qa-agent-ui/workspace.spec.mjs:3086:3 › review cancellation401 non-json removes old private projection and both journals (644ms)
+  ✓  3 tests/e2e/qa-agent-ui/workspace.spec.mjs:3086:3 › review cancellation401 foreign-scope removes old private projection and both journals (647ms)
+  ✓  4 tests/e2e/qa-agent-ui/workspace.spec.mjs:3135:1 › review intent hint makes only listening peer query current canonical scope before showing stopped (529ms)
+  ✓  5 tests/e2e/qa-agent-ui/workspace.spec.mjs:3213:1 › review history401 invalidates a held stop preflight before it can rebuild intent or POST (2.6s)
+
+  5 passed (5.9s)

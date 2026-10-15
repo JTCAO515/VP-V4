@@ -1,0 +1,30 @@
+✖ fallback filters eight withdrawn publications before capping so a ninth original current source answers (11.223041ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 89.406167
+
+✖ failing tests:
+
+test at tests/contract/agent-grounded-result/result.test.mjs:199:1
+✖ fallback filters eight withdrawn publications before capping so a ninth original current source answers (11.223041ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'unavailable'
+  - 'answered'
+
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/contract/agent-grounded-result/result.test.mjs:207:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'unavailable',
+    expected: 'answered',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

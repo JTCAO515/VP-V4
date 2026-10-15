@@ -1,0 +1,12 @@
+✔ registered lifecycle keeps original guards; unknown columns and source functions stay denied (2422.797292ms)
+✔ source erase strips new metadata, releases pending capacity and permanently fences late work (2567.958625ms)
+actual scoped source conflicts {"conversation":["ACTIVE_WORK","SCOPED_EDIT_REFERENCE"],"turn":["ACTIVE_WORK","CROSS_TURN_REFERENCE","SCOPED_EDIT_REFERENCE"]}
+✔ actual original privacy graph reports the retained scoped producer references honestly (2464.849042ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7494.847417

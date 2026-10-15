@@ -1,0 +1,53 @@
+(node:30944) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2m[WebServer] [22m(node:30948) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 7 tests using 1 worker
+
+(node:30951) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30951) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:30951) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/e2e/qa-agent-ui/workspace.spec.mjs:971:1 › pending history retries one temporary 503 and automatically reads answer without a second POST (3.4s)
+  ✓  2 tests/e2e/qa-agent-ui/workspace.spec.mjs:2217:1 › WEB001 same actor tabs retain independent URL Session and submission destinations (439ms)
+  ✓  3 tests/e2e/qa-agent-ui/workspace.spec.mjs:2382:1 › cancellation requires explicit confirmation and reads original stopped state after reload without resubmission (829ms)
+  ✓  4 tests/e2e/qa-agent-ui/workspace.spec.mjs:2422:1 › unknown cancellation POST is recovered by original-ID GET after refresh, never automatically re-POSTed (786ms)
+  ✓  5 tests/e2e/qa-agent-ui/workspace.spec.mjs:2470:1 › terminal cancellation read keeps the original answer and never posts a stop (652ms)
+  ✘  6 tests/e2e/qa-agent-ui/workspace.spec.mjs:2498:1 › withdrawn generation consent still permits metadata-only stop of original observed request (509ms)
+(node:30989) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30989) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:30989) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  7 tests/e2e/qa-agent-ui/workspace.spec.mjs:2552:1 › cancellation not_submitted error does not confirm or erase unknown original message admission (660ms)
+
+
+  1) tests/e2e/qa-agent-ui/workspace.spec.mjs:2498:1 › withdrawn generation consent still permits metadata-only stop of original observed request › Expect "poll toBe"
+
+    TypeError: Cannot read properties of null (reading 'requests')
+
+      655 |   return false;
+      656 |  }});
+    > 657 |  await expect.poll(async()=>JSON.parse(await page.evaluate(key=>sessionStorage.getItem(key),cancellationKey)).requests.length).toBe(1);
+          |                                                                                                              ^
+      658 |  withdrawn=true;await page.reload();await expect(page.getByRole('button',{name:'Send',exact:true})).toBeDisabled();
+      659 |  await page.getByRole('button',{name:'Stop this question',exact:true}).click();await page.getByRole('button',{name:'Confirm stop',exact:true}).click();
+      660 |  await expect(page.getByText('Stopped.',{exact:true})).toBeVisible();expect(h.stops).toHaveLength(1);expect(h.sent).toHaveLength(1);await expect(page.getByRole('log')).not.toContainText('Original pending question');
+        at Object.generator (/Users/jtsm5p/Documents/Codex/VP-V10-worktrees/web001-session-readiness-20261015/tests/e2e/qa-agent-ui/workspace.spec.mjs:657:110)
+        at /Users/jtsm5p/Documents/Codex/VP-V10-worktrees/web001-session-readiness-20261015/tests/e2e/qa-agent-ui/workspace.spec.mjs:657:2
+
+    Error Context: artifacts/QAWEB-005/ui/playwright/workspace-withdrawn-genera-59d8f-f-original-observed-request/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    artifacts/QAWEB-005/ui/playwright/workspace-withdrawn-genera-59d8f-f-original-observed-request/trace.zip
+    Usage:
+
+        npx playwright show-trace artifacts/QAWEB-005/ui/playwright/workspace-withdrawn-genera-59d8f-f-original-observed-request/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/e2e/qa-agent-ui/workspace.spec.mjs:2498:1 › withdrawn generation consent still permits metadata-only stop of original observed request
+  6 passed (8.5s)

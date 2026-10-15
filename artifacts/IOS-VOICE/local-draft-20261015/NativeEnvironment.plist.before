@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>VisePandaAMapIOSKey</key>
+    <string>$(AMAP_IOS_DISPLAY_KEY)</string>
+    <key>VisePandaNativeEnvironment</key>
+    <string>$(VP_NATIVE_ENVIRONMENT)</string>
+    <key>VisePandaStagingAPIOrigin</key>
+    <string>$(VP_NATIVE_STAGING_API_ORIGIN)</string>
+    <key>VisePandaNativeTaskContext</key>
+    <string>$(VP_NATIVE_TASK_CONTEXT)</string>
+    <key>VisePandaFourTabShellEnabled</key>
+    <false/>
+    <key>CFBundleURLTypes</key>
+    <array><dict>
+        <key>CFBundleURLName</key><string>space.go2china.VisePanda.navigation</string>
+        <key>CFBundleURLSchemes</key><array><string>visepanda</string></array>
+    </dict></array>
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>The built-in AMap map component can show your current position on the map. This version of VisePanda does not turn that on and does not use your location.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>VisePanda records only when you choose to speak a phrase for translation. Release or cancel to stop. VisePanda 仅在你选择说话翻译时录音，松开或取消即可停止。</string>
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>VisePanda recognizes your selected recording on this device so you can review its text before translation. If local recognition is unavailable, type your phrase. VisePanda 在本机识别你选择的录音，供你核对文字后翻译；本机识别不可用时可输入短句。</string>
+</dict>
+</plist>

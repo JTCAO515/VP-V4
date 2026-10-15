@@ -1,0 +1,21 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: ERROR:  role "anon" already exists
+
+
+3 !== 0
+
+    at db (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios001-goal-return-sql-20261015/tests/integration/journey-entry/goal-return-current/kernel.mjs:16:142)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/ios001-goal-return-sql-20261015/tests/integration/journey-entry/goal-return-current/kernel.mjs:33:2 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 3,
+  expected: 0,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v26.8.2

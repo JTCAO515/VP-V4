@@ -1,0 +1,398 @@
+C0 native PostgreSQL adapter: original SQL suites unchanged; no Docker/target17.6/GoTrue claim.
+✔ append-only migration replay compiles under original schema (8798.156875ms)
+✖ manual candidate is unconfirmed until original exact writer; current scope snapshot and receipt are closed (292.043084ms)
+✖ sparse real reorder preserves unselected fields and slot; legacy edits preserve persisted order; rollback reloads order (262.493875ms)
+✖ selected move permits natural slot shift and retains all unselected fields and relative order (255.517541ms)
+✔ explicit lock CAS is distinct from manual edits and invalidates all older contexts (494.904125ms)
+✖ abandon before submit creates durable tombstone; committed proposal remains pending, never undo or reject (295.788ms)
+✔ direct RPC refuses invalid scope/source/client fields, cross actor and context swap (414.22925ms)
+✔ profile/Memory/session/source changes reject before original Trip write (970.211958ms)
+✔ same-transaction source changes after writer force deferred rollback (343.244416ms)
+✔ marked revision and successor cannot escape immutable lineage; expired context cleanup still blocks confirmation (375.224833ms)
+✖ real two-transaction submit/abandon races create one outcome with exact-body receipt recovery (1004.324625ms)
+✖ new capabilities default deny all roles and original archive/deletion/account cascades erase scope metadata (408.590166ms)
+✖ worker stays default pending without qualification; original queue and synthetic budget produce settled candidate with no Proposal (543.125292ms)
+✖ current consent/global stop/source gates prevent effects; lease reclaim reuses output and original budget attempt (304.542958ms)
+✖ typed add replace remove are constrained to current context sources and deterministic IDs (307.00925ms)
+✔ reservation preservation is explicit exact revision binding, unknown stays unavailable and changes invalidate confirmation (900.128458ms)
+✔ live TTL and bounded cleanup preserve lineage and never permit old candidate confirmation (830.546709ms)
+✔ exact export lease pages all scoped metadata sections; old inventory remains unenrolled partial (787.366917ms)
+✖ real TypeScript service consumes SQL context, immutable candidates, explicit selection and original exact proposal (376.44275ms)
+✖ provider destination uses exact current prompt/tuple/digest/configuration and phase order without network (310.860209ms)
+✖ actual executor uses real SQL budget/source/usage/candidate RPCs with a synthetic provider, recovers lost ACKs and creates no Proposal (315.223334ms)
+✖ marked proposal reader and operation become stale on source change before original confirmation (239.849833ms)
+✖ legacy intake-v2 remains a legal work mode with an existing row during scoped migration (344.002958ms)
+✖ known settled cannot-edit ends original task as declined; unknown usage cannot fake a refusal (303.996416ms)
+✖ composed candidate applies reorder before removal in the original operation order (316.983542ms)
+✔ durable owner consent gates input; exact retries reuse and changed text rejects (9905.342208ms)
+✔ cross-owner/session and ordinary roles cannot access private text or service dispatch (593.316667ms)
+✔ withdrawal persists across new clients and denies new attempts, late write and owner reads (491.533458ms)
+✔ recipient substitution, replay and policy revocation fail closed (521.884208ms)
+✔ atomic output maps all five business outcomes to correct terminal, once (2227.587833ms)
+✔ cancel and expired leases prevent late output; cancellation race has one terminal (1183.169375ms)
+✔ UTF-16 input/output limits and secret-bearing envelope alternatives are rejected (442.308625ms)
+✔ deletion hides but retains consented content without resurrecting recreated IDs (863.439167ms)
+✔ complete worker uses real SQL budget + controlled HTTP, persists validated outcomes and retains unknown charges (3352.664417ms)
+✖ thread/user deletion lock barriers roll back busy work without deadlock or false cancellation (5246.460625ms)
+✔ withdrawal at the final egress gate prevents HTTP even after budget dispatch (707.766916ms)
+✔ cancel while provider is in flight rejects late answer; unknown extra fields never persist (1306.454292ms)
+✔ unverified model usage retains the full budget hold instead of using the configured tariff (794.620791ms)
+✔ verified model charges survive business failures while unproved protocol failures remain pending (7861.863916ms)
+✔ scoped claimer leaves other owners, other policies and metadata-only work untouched (674.173709ms)
+✔ scoped and legacy claimers serialize; expired leases recover once and old tokens cannot dispatch (487.504959ms)
+✔ scoped claim refuses ordinary roles and leaves revoked or hidden content unleased (5495.950041ms)
+✖ scoped claim rolls back on deletion lock contention and can be disabled without changing retained records (5142.417291ms)
+✔ ServiceTask records exact request replay and a latest-parent clarification/repair chain (1138.534625ms)
+✔ development capacity serializes the last text slot and settles only a readable answer (886.775833ms)
+✔ U1 capacity cannot be relabeled as a Trip or reviewed-answer task (427.41975ms)
+✖ concurrent task relabel and capacity insert cannot commit a mismatched task (5146.147416ms)
+✖ concurrent capacity insert and Trip rebind cannot commit a metered Trip thread (5221.126833ms)
+✔ clarification and failed repair retain one task identity and re-admit after release (1125.660542ms)
+✔ partial text keeps readable output but releases capacity without a later settlement path (748.63775ms)
+✔ missing development capacity settings fail closed without a task or Turn (392.494167ms)
+✔ future and revoked Sandbox grants never authorize text capacity or late settlement (791.798125ms)
+✔ ServiceTask competing continuations and legacy v1/state admissions cannot split the task (723.946709ms)
+✔ ServiceTask shared cost is canonical for old Turn workers, pinned across scope changes and denied to ordinary roles (1203.073625ms)
+✔ ServiceTask withdrawal and physical deletion preserve hidden records but forbid continuation and dispatch (2539.052334ms)
+✔ ServiceTask and legacy Turn IDs cannot collide in either direction or concurrent creation (581.597084ms)
+✔ task history requires a new immutable policy and consent; legacy claimers leave it recoverable (891.611833ms)
+✔ task history is ordered and capped at four turns with exact replay at the bound (1312.228875ms)
+✔ task dispatch rejects a deleted intermediate ancestor or withdrawn consent after reading (2642.174ms)
+ℹ tests 59
+ℹ suites 0
+ℹ pass 39
+ℹ fail 20
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 75006.836667
+
+✖ failing tests:
+
+test at tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:29:22
+✖ manual candidate is unconfirmed until original exact writer; current scope snapshot and receipt are closed (292.043084ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'unknown'
+  - 'pending'
+
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:43:357)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'unknown',
+    expected: 'pending',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:29:22
+✖ sparse real reorder preserves unselected fields and slot; legacy edits preserve persisted order; rollback reloads order (262.493875ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  SCOPED_CONFIRM_GUARD
+  CONTEXT:  PL/pgSQL function scoped_edit_private.confirm_guard_v1() line 11 at RAISE
+
+
+  3 !== 0
+
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:9:58)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:46:192)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:29:22
+✖ selected move permits natural slot shift and retains all unselected fields and relative order (255.517541ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  SCOPED_CONFIRM_GUARD
+  CONTEXT:  PL/pgSQL function scoped_edit_private.confirm_guard_v1() line 11 at RAISE
+
+
+  3 !== 0
+
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:9:58)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:51:175)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:29:22
+✖ abandon before submit creates durable tombstone; committed proposal remains pending, never undo or reject (295.788ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  IDEMPOTENCY_KEY_REUSE
+  CONTEXT:  PL/pgSQL function public.submit_scoped_trip_edit_v1(uuid,jsonb) line 11 at RAISE
+
+
+  3 !== 0
+
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:9:58)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async submit (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:36:37)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:57:192)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:29:22
+✖ real two-transaction submit/abandon races create one outcome with exact-body receipt recovery (1004.324625ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  IDEMPOTENCY_KEY_REUSE
+  CONTEXT:  PL/pgSQL function public.abandon_scoped_trip_edit_operation_v1(uuid,jsonb) line 6 at RAISE
+
+
+  3 !== 0
+
+      at db (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:9:58)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async abandon (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:38:38)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:80:299)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:29:22
+✖ new capabilities default deny all roles and original archive/deletion/account cascades erase scope metadata (408.590166ms)
+  TypeError: Cannot read properties of null (reading 'proposalId')
+      at confirmProposalSQL (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:39:108)
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:86:243)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:29:22
+✖ worker stays default pending without qualification; original queue and synthetic budget produce settled candidate with no Proposal (543.125292ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  'idle' !== 'leased'
+
+      at leaseAsk (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:93:422)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:98:34)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'idle',
+    expected: 'leased',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:29:22
+✖ current consent/global stop/source gates prevent effects; lease reclaim reuses output and original budget attempt (304.542958ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  'idle' !== 'leased'
+
+      at leaseAsk (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:93:422)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:102:34)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'idle',
+    expected: 'leased',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:29:22
+✖ typed add replace remove are constrained to current context sources and deterministic IDs (307.00925ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  'idle' !== 'leased'
+
+      at leaseAsk (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:93:422)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:106:172)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'idle',
+    expected: 'leased',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:29:22
+✖ real TypeScript service consumes SQL context, immutable candidates, explicit selection and original exact proposal (376.44275ms)
+  Error: SCOPED_EDIT_RECEIPT_UNKNOWN
+      at fail (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/lib/server/trip/scoped-edit/service.ts:8:47)
+      at runScopedEdit (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/lib/server/trip/scoped-edit/service.ts:52:167)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:125:295)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:29:22
+✖ provider destination uses exact current prompt/tuple/digest/configuration and phase order without network (310.860209ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  'idle' !== 'leased'
+
+      at leaseAsk (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:93:422)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:129:268)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'idle',
+    expected: 'leased',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:29:22
+✖ actual executor uses real SQL budget/source/usage/candidate RPCs with a synthetic provider, recovers lost ACKs and creates no Proposal (315.223334ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  'idle' !== 'leased'
+
+      at leaseAsk (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:93:422)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:134:436)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'idle',
+    expected: 'leased',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:29:22
+✖ marked proposal reader and operation become stale on source change before original confirmation (239.849833ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+    {
+  +   current: false,
+  -   current: true,
+      kind: 'scoped_edit_current/1',
+      proposalId: '04ea8eb2-9eb1-465d-b72c-6b2ca824925c'
+    }
+
+      at TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:141:227)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { kind: 'scoped_edit_current/1', current: false, proposalId: '04ea8eb2-9eb1-465d-b72c-6b2ca824925c' },
+    expected: { kind: 'scoped_edit_current/1', proposalId: '04ea8eb2-9eb1-465d-b72c-6b2ca824925c', current: true },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:29:22
+✖ legacy intake-v2 remains a legal work mode with an existing row during scoped migration (344.002958ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  'idle' !== 'leased'
+
+      at leaseAsk (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:93:422)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:144:166)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'idle',
+    expected: 'leased',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:29:22
+✖ known settled cannot-edit ends original task as declined; unknown usage cannot fake a refusal (303.996416ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  'idle' !== 'leased'
+
+      at leaseAsk (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:93:422)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:147:34)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'idle',
+    expected: 'leased',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:29:22
+✖ composed candidate applies reorder before removal in the original operation order (316.983542ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  'idle' !== 'leased'
+
+      at leaseAsk (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:93:422)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/scoped-edit/scoped-edit-postgres.test.mjs:150:294)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'idle',
+    expected: 'leased',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/turn/text-work.test.mjs:15:22
+✖ thread/user deletion lock barriers roll back busy work without deadlock or false cancellation (5246.460625ms)
+  Error: transaction barrier timeout:
+      at Timeout._onTimeout (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/turn/text-work.test.mjs:172:79)
+      at listOnTimeout (node:internal/timers:685:17)
+      at process.processTimers (node:internal/timers:618:7)
+
+test at tests/integration/turn/text-work.test.mjs:15:22
+✖ scoped claim rolls back on deletion lock contention and can be disabled without changing retained records (5142.417291ms)
+  Error: transaction barrier timeout:
+      at Timeout._onTimeout (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/turn/text-work.test.mjs:172:79)
+      at listOnTimeout (node:internal/timers:685:17)
+      at process.processTimers (node:internal/timers:618:7)
+
+test at tests/integration/turn/text-work.test.mjs:15:22
+✖ concurrent task relabel and capacity insert cannot commit a mismatched task (5146.147416ms)
+  Error: transaction barrier timeout:
+      at Timeout._onTimeout (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/turn/text-work.test.mjs:172:79)
+      at listOnTimeout (node:internal/timers:685:17)
+      at process.processTimers (node:internal/timers:618:7)
+
+test at tests/integration/turn/text-work.test.mjs:15:22
+✖ concurrent capacity insert and Trip rebind cannot commit a metered Trip thread (5221.126833ms)
+  Error: transaction barrier timeout:
+      at Timeout._onTimeout (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/turn/text-work.test.mjs:172:79)
+      at listOnTimeout (node:internal/timers:685:17)
+      at process.processTimers (node:internal/timers:618:7)

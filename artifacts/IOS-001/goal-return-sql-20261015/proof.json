@@ -1,0 +1,103 @@
+[
+  {
+    "label": "Pending newest is unavailable",
+    "result": "PASS"
+  },
+  {
+    "label": "Ordinary authenticated original choice -> qualified reference",
+    "result": "PASS"
+  },
+  {
+    "label": "Wrong scope p_policy_id",
+    "result": "PASS"
+  },
+  {
+    "label": "Wrong scope p_conversation_id",
+    "result": "PASS"
+  },
+  {
+    "label": "Wrong scope p_goal_id",
+    "result": "PASS"
+  },
+  {
+    "label": "Wrong scope p_goal_version",
+    "result": "PASS"
+  },
+  {
+    "label": "Wrong scope p_parent_message_id",
+    "result": "PASS"
+  },
+  {
+    "label": "Wrong scope p_input_sequence",
+    "result": "PASS"
+  },
+  {
+    "label": "Replaced epoch rejects",
+    "result": "PASS"
+  },
+  {
+    "label": "Other authenticated actor cannot discover original owner choice",
+    "result": "PASS"
+  },
+  {
+    "label": "Effective ACL private/public",
+    "result": "PASS"
+  },
+  {
+    "label": "Old privacy gates after candidate",
+    "result": "PASS"
+  },
+  {
+    "label": "Missing owned head event rejects injection",
+    "result": "UNRUN",
+    "reason": "ERROR:  ASSISTANT_EVENT_ERASE_AUTHORITY\nCONTEXT:  PL/pgSQL function turn_private.retire_assistant_event_v1(uuid,bigint) line 10 at RAISE\nSQL statement \"SELECT turn_private.retire_assistant_event_v1(e.conversation_id,e.sequence)\"\nPL/pgSQL function turn_private.assistant_event_erase_source_v1() line 26 at PERFORM"
+  },
+  {
+    "label": "Foreign goal membership rejects complete scan",
+    "result": "PASS"
+  },
+  {
+    "label": "Duplicate ready/revised head rejects",
+    "result": "PASS"
+  },
+  {
+    "label": "Foreign head event rejects",
+    "result": "PASS"
+  },
+  {
+    "label": "Withdrawn latest rejects",
+    "result": "PASS"
+  },
+  {
+    "label": "Withdrawn consent rejects",
+    "result": "PASS"
+  },
+  {
+    "label": "Hidden source Turn rejects",
+    "result": "PASS"
+  },
+  {
+    "label": "Changed Task generation rejects",
+    "result": "PASS"
+  },
+  {
+    "label": "Newer pending never falls back to older chosen",
+    "result": "PASS"
+  },
+  {
+    "label": "Newest original publication event wins",
+    "result": "PASS"
+  },
+  {
+    "label": "64 full membership admits",
+    "result": "PASS"
+  },
+  {
+    "label": "65th nondecision sentinel rejects",
+    "result": "PASS"
+  },
+  {
+    "label": "Current input change invalidates original choice without fallback",
+    "result": "PASS"
+  }
+]

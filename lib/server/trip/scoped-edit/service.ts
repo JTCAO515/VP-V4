@@ -17,7 +17,7 @@ export function mappedError(message: string): string {
 }
 /** Stored procedure owns actor, CAS, locks, lifecycle and the sole Proposal producer.
  * Missing ACKs remain unknown; no transport failure authorizes replacement work. */
-export async function runScopedEdit(tripId: string, input: ScopedEditRequest, rpc: ScopedEditRPC, snapshot: TripSnapshot, now: number): Promise<ScopedReply> {
+export async function runScopedEdit(tripId: string, input: ScopedEditRequest, rpc: ScopedEditRPC, snapshot: TripSnapshot, now: number, tripTask = false): Promise<ScopedReply> {
   if (input.action === "context") {
     if (input.expectedHeadVersion !== snapshot.version) fail("STALE_TRIP_VERSION");
     try { selectedItems(snapshot, input.scope); } catch { fail("INVALID_INPUT"); }
@@ -32,7 +32,7 @@ export async function runScopedEdit(tripId: string, input: ScopedEditRequest, rp
   if (input.action === "read_operation") {
     const raw = await call(rpc, "read_scoped_trip_edit_operation_v1", { p_trip_id: tripId, p_operation_id: input.operationId });
     if (unavailable(raw)) return raw;
-    return parseScopedOperation(raw, tripId, input.operationId) ?? fail("SCOPED_EDIT_RECEIPT_UNKNOWN");
+    return parseScopedOperation(raw, tripId, input.operationId,tripTask) ?? fail("SCOPED_EDIT_RECEIPT_UNKNOWN");
   }
   if (input.action === "abandon") {
     const raw = await call(rpc, "abandon_scoped_trip_edit_operation_v1", { p_trip_id: tripId, p_input: input });
@@ -45,10 +45,10 @@ export async function runScopedEdit(tripId: string, input: ScopedEditRequest, rp
   }
   const raw = await call(rpc, "submit_scoped_trip_edit_v1", { p_trip_id: tripId, p_input: input });
   if (unavailable(raw)) return raw;
-  const receipt = parseScopedReceipt(raw, tripId, input.operationId);
+  const receipt = parseScopedReceipt(raw, tripId, input.operationId,tripTask);
   if (!receipt || input.action === "lock" && receipt.kind !== "scoped_edit_lock/1" || input.action === "select_candidate" && receipt.kind !== "scoped_edit_proposal/1" || input.action === "manual" && receipt.kind !== "scoped_edit_proposal/1" || input.action === "ask" && !["scoped_edit_pending/1", "scoped_edit_candidates/1", "scoped_edit_declined/1"].includes(receipt.kind) || receipt.baseVersion !== input.basis.baseVersion || (receipt.kind === "scoped_edit_lock/1" ? input.action !== "lock" || receipt.itemId !== input.itemId || receipt.locked !== input.locked : receipt.contextId !== input.basis.contextId || receipt.contextDigest !== input.basis.contextDigest)) fail("SCOPED_EDIT_RECEIPT_UNKNOWN");
   const operationRaw = await call(rpc, "read_scoped_trip_edit_operation_v1", { p_trip_id: tripId, p_operation_id: input.operationId });
-  const operation = parseScopedOperation(operationRaw, tripId, input.operationId);
+  const operation = parseScopedOperation(operationRaw, tripId, input.operationId,tripTask);
   if (!operation || !sameValue(operation.mutation, input) || !operation.receipt || !sameValue({ ...operation.receipt, reused: true }, { ...receipt!, reused: true })) fail("SCOPED_EDIT_RECEIPT_UNKNOWN");
   if (receipt!.kind === "scoped_edit_proposal/1" && operation!.state !== "pending") return operation!;
   return receipt!;
@@ -81,3 +81,5 @@ export function assertScopedCandidates(receipt: ScopedCandidatesReceipt, snapsho
     }
   } catch { fail("SCOPED_EDIT_RECEIPT_UNKNOWN"); }
 }
+
+export { admitTripTask, runTripTaskControl, continueTripTask } from '../../service-task-trip/service.ts';

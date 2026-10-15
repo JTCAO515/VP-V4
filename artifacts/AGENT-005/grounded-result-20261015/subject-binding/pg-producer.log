@@ -1,0 +1,42 @@
+✔ full QA baseline lifecycle and only declared two-function append/rollback catalog proof (1330.894333ms)
+✖ real original Guide producer creates resolved blocked turn; ordinary owner context and real TS job execute without fixture grants (12.345667ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 1
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2100.290833
+
+✖ failing tests:
+
+test at tests/contract/agent-grounded-result/subject-binding-postgres.test.mjs:31:22
+✖ real original Guide producer creates resolved blocked turn; ordinary owner context and real TS job execute without fixture grants (12.345667ms)
+  error: INVALID_INPUT
+      at /Users/jtsm5p/Documents/Codex/2026-10-13/v10-main/agent008-pg-client-20261015/node_modules/pg/lib/client.js:535:17
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async actorRpc (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/contract/agent-grounded-result/subject-binding-postgres.test.mjs:91:17)
+      at async sourceFixture (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/contract/agent-grounded-result/subject-binding-postgres.test.mjs:99:2)
+      at async guideFixture (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/contract/agent-grounded-result/subject-binding-postgres.test.mjs:112:15)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent005-grounded-result-20261015/tests/contract/agent-grounded-result/subject-binding-postgres.test.mjs:145:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    length: 352,
+    severity: 'ERROR',
+    code: 'P0001',
+    detail: undefined,
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: 'PL/pgSQL function knowledge_review_private.ops_review_workspace_publication_v1(jsonb) line 13 at RAISE\nPL/pgSQL function knowledge_review_private.ops_review_workspace_before_wiki_v1(jsonb) line 7 at RETURN\nPL/pgSQL function public.ops_review_workspace(jsonb) line 7 at RETURN',
+    schema: undefined,
+    table: undefined,
+    column: undefined,
+    dataType: undefined,
+    constraint: undefined,
+    file: 'pl_exec.c',
+    line: '3911',
+    routine: 'exec_stmt_raise'
+  }

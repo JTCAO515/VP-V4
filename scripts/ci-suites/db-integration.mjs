@@ -98,6 +98,7 @@ export const LANES = {
           "tests/integration/maps/foreground-traffic-postgres.test.mjs",
           "tests/integration/explore/place-actions-postgres.test.mjs",
           "tests/integration/scoped-edit/scoped-edit-postgres.test.mjs",
+          "tests/integration/journey-entry/goal-return-current/current.test.mjs",
           "tests/integration/memory/travel-pace.test.mjs",
           "tests/integration/notifications/storage.test.mjs",
           "tests/integration/notifications/delivery-postgres.test.mjs",
@@ -175,6 +176,32 @@ export const LANES = {
   "postgres-native": {
     needs: ["VP_WIKI_PG_BIN", "VP_WIKI_PG_MODULE"],
     steps: [{ name: "wiki-native-postgres", env: {}, files: ["tests/integration/knowledge/wiki-draft.test.mjs"] }],
+  },
+  // Full QA pins include PostgreSQL 17 MAINTAIN ACL metadata. Keep the old
+  // native Wiki environment unchanged; this independent lane requires major17.
+  "postgres-native-17": {
+    needs: ["VP_WIKI_PG_BIN", "VP_WIKI_PG_MODULE"],
+    steps: [{ name: "subject-and-cancellation-native-17", concurrency: 1, env: { AGENT005_NATIVE_PG: "1", QA_CANCEL_NATIVE_PG: "1" },
+      files: ["tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs",
+        "tests/integration/qa-agent-cancellation/native-pg.test.mjs"] },
+      { name: "trip-service-task-native-17", runner: node("tests/integration/service-task-trip/run-integration.mjs"), env: {},
+        files: [
+          "tests/integration/service-task-trip/adversarial.test.mjs",
+          "tests/integration/service-task-trip/cli-flow.test.mjs",
+          "tests/integration/service-task-trip/export-flow.test.mjs",
+          "tests/integration/service-task-trip/hosted-flow.test.mjs",
+          "tests/integration/service-task-trip/late-usage.test.mjs",
+          "tests/integration/service-task-trip/legacy-export.test.mjs",
+          "tests/integration/service-task-trip/lifecycle-current.test.mjs",
+          "tests/integration/service-task-trip/lock-order.test.mjs",
+          "tests/integration/service-task-trip/privacy-flow.test.mjs",
+          "tests/integration/service-task-trip/proposal-expiry.test.mjs",
+          "tests/integration/service-task-trip/repair.test.mjs",
+          "tests/integration/service-task-trip/role-vector.test.mjs",
+          "tests/integration/service-task-trip/runtime-guard.test.mjs",
+          "tests/integration/service-task-trip/settlement.test.mjs",
+        ] },
+    ],
   },
   // One disposable Supabase stack (GoTrue + PostgREST + all migrations); identity/RLS/Trip confirmation chain.
   // Migration 28 (VPJ-05) makes the database reject legacy confirmation digests, so against the full
@@ -270,7 +297,7 @@ export function executionMatrix(lanes) {
     || lanes.some(lane => lane !== "none" && !Object.hasOwn(LANES, lane))
     || lanes.includes("none") && lanes.length !== 1) throw Error("Invalid selected DB lanes");
   return { include: lanes.flatMap(lane => {
-    const count = lane === "supabase-http-native" ? 8 : 1;
+    const count = lane === "supabase-http-native" ? 12 : 1;
     return Array.from({ length: count }, (_, i) => ({ lane, shard: `${i + 1}/${count}`,
       name: count === 1 ? `lane (${lane})` : `lane (${lane} / ${i + 1} of ${count})` }));
   }) };
@@ -279,7 +306,7 @@ export function executionSteps(lane, shard = null) {
   if (!Object.hasOwn(LANES, lane)) throw Error("Unknown DB lane");
   const steps = LANES[lane].steps;
   if (shard === null) return steps;
-  const count = lane === "supabase-http-native" ? 8 : 1;
+  const count = lane === "supabase-http-native" ? 12 : 1;
   const match = /^([1-9][0-9]*)\/([1-9][0-9]*)$/.exec(shard);
   if (!match || Number(match[2]) !== count || Number(match[1]) > count)
     throw Error("Invalid DB lane shard");
@@ -381,6 +408,12 @@ function preflight(lane, needs) {
     if (need === "docker" && spawnSync("docker", ["info"], { stdio: "ignore" }).status !== 0) throw new Error(`[${lane}] Docker daemon is required`);
     if (need === "supabase" && spawnSync(supabaseCLI, ["--version"], { stdio: "ignore" }).status !== 0) throw new Error(`[${lane}] Supabase CLI is required (VP_SUPABASE_CLI or PATH)`);
     if (need.startsWith("VP_") && !process.env[need]) throw new Error(`[${lane}] ${need} must be set (see tests/integration/README.md)`);
+  }
+  if (lane === "postgres-native-17") {
+    const version = spawnSync(join(process.env.VP_WIKI_PG_BIN, "postgres"), ["--version"], { encoding: "utf8" });
+    if (version.status !== 0 || !/^postgres \(PostgreSQL\) 17\./.test(version.stdout ?? "")) {
+      throw Error("[postgres-native-17] PostgreSQL 17 is required; the full QA MAINTAIN ACL pin is not waived");
+    }
   }
   if (needs.includes("images")) {
     for (const image of pinnedImages()) {

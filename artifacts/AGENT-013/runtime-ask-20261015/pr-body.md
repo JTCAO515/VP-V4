@@ -1,0 +1,47 @@
+## Summary
+
+Related to #264 / AGENT-013. Existing H04 tooling only parsed supplied recordings;
+Harness now has a callable current-context Native v4 Ask acquisition driver.
+
+```text
+session/policy/history/selected Trip → explicit single submit
+  → original Turn events/readback → current eligibility/Trip → sanitized JSON + MD
+```
+
+Reuses Native submission DTOs, production grounded replay/history parsers and the
+existing incomplete H01 grader behavior. No automatic consent/session/Trip,
+unknown-ACK retry, provider switch, credentials or new writer/scorer. H01/H04/H07
+expectations and resource limits are fixed before invocation; holdout is excluded.
+
+## Evidence
+
+- **Before:** no runtime-ask directory at accepted QA ded26ad7; recorded H04 had
+  originAuthentication NOT_VERIFIED and did not request/submit/read back Ask.
+  **After:** 20 direct tests at source 85a1e1eb drive the shipped module and bridge. One traverses
+  actual Native identity/text/events handlers with intercepted SDK HTTP and
+  in-memory synthetic signing keys; no live Auth/DB/provider is called.
+- Main's original Spec P1+2P2 / Standards P3 findings are retained. The fix retains
+  source lifetime through final reads, rejects foreign/malformed Trip before
+  POST, compares frozen outcome/fact/source/gap fields and shares one DTO parser
+  while executing it at both boundaries. No fabricated complete grader trace.
+- PASS: 20 direct tests, typecheck, lint, docs check, diff check. Covers actual path/ID order,
+  unknown ACK/no second POST, qualification/identity/source invalidation,
+  late response/abort, monotonic deadline, byte/read/request bounds, privacy
+  and missing Trip completeness. Final source head 85a1e1eb; it also retains the
+  existing parser's questionId and explicit identityAttestation unknown.
+- Current 85a1e1eb raw log: `review-fix-checks.log.gz`. Historical 1251881f/16 log remains
+  `local-checks.log.gz` and is not reused as current validation. Main's
+  source-equal integration also ran 57 combined tests (20 direct + 37 grounded)
+  and typecheck PASS; no local duplicate run is claimed.
+- Live Staging/provider/DB/fees/ECS/production, Web/physical-device and full #264
+  acceptance NOT_RUN. Full collection, usage/cost/quota/key/context authority
+  gaps remain unknown; no required-mode PASS or parent closure claim.
+
+## Merge Danger
+
+**Door:** two-way. The module is explicitly invoked and has no live default.
+
+**Blast Radius:** Harness. The supplied ordinary-user transport owns actual
+credentials/target/session binding; an explicitly permitted invocation can
+submit to existing Ask, which may incur provider work outside this repo-only
+delivery. No mutation retry or new authority is added. Main owns shared hookup.

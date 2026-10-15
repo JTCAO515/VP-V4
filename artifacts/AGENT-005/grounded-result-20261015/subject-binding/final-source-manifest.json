@@ -1,0 +1,38 @@
+{
+  "productTsSourceHead": "33df7b39f3fc0cec1c322fcdc95b97c20d3bdba5",
+  "sqlBodySourceHead": "cc79aab1b33bb1fb163959338a5bb9955935a5af",
+  "integrationSourceHead": "c808976f477eb363f4b9422c99deedad19dabe04",
+  "baseQa": "22559396eec5cd47d3a4d3d2a2bd5e49d52c6c7c",
+  "files": [
+    {
+      "path": "lib/server/knowledge/wiki/grounded-ai-assist.ts",
+      "gitBlob": "9a99f0fc747abf859033524c690f074953a2be53",
+      "sha256": "70f21c0849204d5f4c234d65548190e28df5080f10d63a8f522217bd1a041efc"
+    },
+    {
+      "path": "lib/server/knowledge/wiki/grounded-ai-assist-job.ts",
+      "gitBlob": "b4752826168393f215afc9610223cb4ee6238a3d",
+      "sha256": "bfcd2440d3263bcffba5c93ce8890d044749ce45257c5b6d19a9470d7b7aafb2"
+    },
+    {
+      "path": "supabase/migrations/20261015040456_agent005_resolved_subject_context.sql",
+      "gitBlob": "129306d979b2c4a16faf234885a55e07f1e5a59a",
+      "sha256": "3fbe4111507a53e947e71f5dad20cd979a4bda49e4716be1a45733797d66f077"
+    },
+    {
+      "path": "tests/integration/knowledge/agent-grounded-subject/subject-binding-postgres.test.mjs",
+      "gitBlob": "66c89d9a91ad162258cd6d881748c5b30e581f5d",
+      "sha256": "70d6d30d807dbdcc5e053ec4a25af2ef266f628ac120c9af0a36ef36ac949286"
+    }
+  ],
+  "proof": {
+    "pg17_11": "16/16 PASS; 0 skip",
+    "pg16_15": "old baseline FAIL before append; no waived pin",
+    "ownedContract": "58/58 PASS; 0 skip",
+    "unchangedTs": "73/73 PASS reused",
+    "target": "UNRUN",
+    "registryChanges": "NONE",
+    "ciRegistration": "MAIN_PENDING",
+    "sharedDocCandidate": "MAIN_NOT_APPLIED"
+  }
+}

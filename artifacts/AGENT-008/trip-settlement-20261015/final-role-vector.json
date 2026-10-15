@@ -1,0 +1,103 @@
+{
+  "rpc": [
+    {
+      "signature": "public.submit_trip_service_task_v1(uuid,jsonb,jsonb)",
+      "owner": "postgres",
+      "secdef": true,
+      "config": [
+        "search_path=\"\"",
+        "TimeZone=UTC"
+      ],
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "anon": false,
+      "authenticated": true,
+      "service_role": false
+    },
+    {
+      "signature": "public.continue_trip_service_task_v1(uuid,uuid,uuid,uuid,text,text)",
+      "owner": "postgres",
+      "secdef": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "anon": false,
+      "authenticated": true,
+      "service_role": false
+    },
+    {
+      "signature": "public.cancel_trip_service_task_v1(uuid)",
+      "owner": "postgres",
+      "secdef": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "anon": false,
+      "authenticated": true,
+      "service_role": false
+    },
+    {
+      "signature": "public.trip_service_task_owner_v1(uuid,text,jsonb)",
+      "owner": "postgres",
+      "secdef": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "anon": false,
+      "authenticated": true,
+      "service_role": false
+    },
+    {
+      "signature": "public.privacy_trip_service_task_v1(uuid,text,text,text,bigint)",
+      "owner": "postgres",
+      "secdef": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "anon": false,
+      "authenticated": true,
+      "service_role": false
+    },
+    {
+      "signature": "public.trip_service_task_worker_v1(text,jsonb)",
+      "owner": "postgres",
+      "secdef": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "anon": false,
+      "authenticated": false,
+      "service_role": true
+    },
+    {
+      "signature": "public.complete_text_work_before_trip_v1(uuid,uuid,text,text)",
+      "owner": "postgres",
+      "secdef": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "acl": "{postgres=X/postgres}",
+      "anon": false,
+      "authenticated": false,
+      "service_role": false
+    },
+    {
+      "signature": "public.submit_service_task_turn_before_trip_v1(uuid,uuid,uuid,uuid,text,text,uuid,integer,text,uuid)",
+      "owner": "postgres",
+      "secdef": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "acl": "{postgres=X/postgres}",
+      "anon": false,
+      "authenticated": false,
+      "service_role": false
+    }
+  ],
+  "privateLeaks": 0,
+  "fixtureGrant": false
+}

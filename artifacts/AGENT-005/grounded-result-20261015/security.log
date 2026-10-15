@@ -1,0 +1,29 @@
+✔ RL-08 dry-runs licensed JSONL rows into bounded private candidates without Canonical IDs (1.237541ms)
+✔ RL-08 same source and hash is a no-op while changed rows are a conflict (0.146875ms)
+✔ RL-08 rejects model, Canonical-ID, unlicensed, malformed, or over-cap candidate import input (0.243458ms)
+✔ RL-08 rejects impossible calendar instants before source state changes (0.06225ms)
+✔ RL-08 rejects duplicate external IDs before recording the source manifest (0.070084ms)
+✔ RL-04 returns no executable card for stale, negative, or unsupported high-risk claims (2.074375ms)
+✔ rejects raw explanation fields before a result exists (0.177958ms)
+✔ rejects forged discriminated values and invalid time-window instants before rendering (0.110959ms)
+✔ RL-02 denies six ineligible or unknown retrieval fixtures before ranking (1.81525ms)
+✔ rejects content-bearing profile fields and non-deterministic timestamps before retrieval (0.251084ms)
+✔ RL-08 imports a replayed source row only as a private candidate (0.974583ms)
+✔ RL-08 rejects source replay drift before it can create a second candidate (0.386791ms)
+✔ RL-08 rejects an exact source replay under a different Candidate ID (0.115625ms)
+✔ RL-08 rejects non-RFC3339 and impossible calendar instants before import (0.059792ms)
+✔ RL-08 denies self-review and stale Change Set CAS without publishing a Fact (0.380709ms)
+✔ an independent current reviewer records one reviewed Fact with an eligibility event and audit, without a public projection (0.210417ms)
+✔ records explicit merge, split, tombstone, and source-delete outcomes as private audit events (0.180125ms)
+✔ RL-08 author cannot review their own private Fact draft (1.632666ms)
+✔ RL-08 audit failure rolls publication back without a Fact (0.094375ms)
+✔ RL-08 independent review yields only private metadata and never an Ops secret (0.090041ms)
+✔ RL-08 rejects impossible or timezone-less timestamps before a Draft exists (0.084791ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 76.083958
