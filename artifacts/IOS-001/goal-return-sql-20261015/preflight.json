@@ -1,0 +1,8 @@
+{
+  "auth": "synthetic SQL claims, not GoTrue",
+  "data": "/private/tmp/ios001-e3-sql-72dac37c-2a89-4f96-a0d9-d477d60d5bba/data",
+  "socket": "/private/tmp/ios001-e3-sql-72dac37c-2a89-4f96-a0d9-d477d60d5bba/socket",
+  "version": "17.11 (Homebrew)",
+  "listenAddresses": "",
+  "socketPermissions": "0700"
+}
