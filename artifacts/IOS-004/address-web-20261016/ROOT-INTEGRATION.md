@@ -79,3 +79,6 @@ Targeted production-predicate tests cover initial false, successful exact Trip r
 
 
 Latest reader interface: Section calls `onReadCurrent(live)` with the captured same actor/session-root, original local attempt and route predicate (or same-scope post-explicit-abandon predicate). Main's dedicated original GET-only reader must check it plus requestGeneration before/after each await, retain its 8s timeout, and publish original data/pending only after success. Read failures set a notice without unmounting/resetting this unknown-attempt owner or clearing prior pending/draft. Neither fresh-read success nor changed head/missing pending is an attempt settlement. Section's existing final CAS remains as a second guard; display/admission/fullbinding are unchanged.
+
+
+Recovery GET follow-up: the recovery entry/button and in-flight GET predicate no longer consult the parent's write/draft/error `blocked` flag. An old Editor unavailable notice must not prevent read-only original-intent reconciliation. Fresh prepare/POST still enforce the parent's block. All recovery-only Trip proof, actor/session/generation, current Trip/version/item, visibility, exact same ledger record, pending match, cancellation/transport and 8s checks remain. No POST/retry or automatic clearing is introduced; Main owns the actual Editor-Reject-error-to-GET browser regression.

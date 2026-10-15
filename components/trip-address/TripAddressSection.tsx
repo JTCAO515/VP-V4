@@ -176,13 +176,14 @@ export function TripAddressSection(props: TripAddressSectionProps) {
     const root = current();
     if (!root || !scope || recovering || transport.current) return;
     const record = intents.current.get(scope);
-    if (!record || record.phase !== "unknown" || !tripQualified || props.blocked
+    if (!record || record.phase !== "unknown" || !tripQualified
       || props.pending !== null && matchingAddressProposal(props.pending, record.intent) === null) return;
     const controller = new AbortController(); transport.current = controller; setRecovering(true);
     const key = scope;
+    // GET-only recovery is independent of parent write/draft/error blocks. Root and exact intent fences still apply.
     // Requalify same subject/session under the new ephemeral root; the original request bytes never change.
     const context = { ...record.intent.context, actorKey: root.key };
-    const live = () => !controller.signal.aborted && contextCurrent(context, record.intent.identity, true, true) && !liveProps.current.blocked
+    const live = () => !controller.signal.aborted && contextCurrent(context, record.intent.identity, true, true)
       && (!liveProps.current.pending || matchingAddressProposal(liveProps.current.pending, record.intent) !== null) && intents.current.get(key) === record;
     const timeout = setTimeout(() => controller.abort(), 8000);
     try {
@@ -223,7 +224,7 @@ export function TripAddressSection(props: TripAddressSectionProps) {
   return <section className={styles.panel} aria-label={zh ? "当前行程地址" : "Current Trip addresses"} data-testid="trip-address-section">
     {unknownHere && currentIntent ? <div role="status">
       <p>{zh ? "地址提案结果未知。原请求仍保留；读取当前行程不会自动认定原请求的结果。" : "Address proposal outcome unknown. Original request retained; reading the current Trip does not settle its outcome."}</p>
-      {tripQualified ? <button type="button" disabled={recovering || readingCurrent || props.blocked || props.pending !== null && matchingAddressProposal(props.pending, currentIntent.intent) === null || transport.current !== null} onClick={() => void recover()}>{zh ? "读取原提案状态" : "Read original proposal status"}</button> : null}
+      {tripQualified ? <button type="button" disabled={recovering || readingCurrent || props.pending !== null && matchingAddressProposal(props.pending, currentIntent.intent) === null || transport.current !== null} onClick={() => void recover()}>{zh ? "读取原提案状态" : "Read original proposal status"}</button> : null}
       <button type="button" disabled={readingCurrent || recovering} onClick={() => void readCurrent()}>{zh ? "读取当前行程" : "Read current Trip"}</button>
       {abandonFor === currentIntent.intent ? <div>
         <p>{zh ? "确定放弃这次本地未决补充？这不会撤销或更改服务端结果，也不表示原请求失败。随后只读取当前行程。" : "Abandon this local unresolved addition? This does not undo or change the server result, or mean the original request failed. The current Trip will then be read."}</p>
