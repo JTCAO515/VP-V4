@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "name": "testflight-controlled-sample",
+  "purpose": "Labeled local sample / 未连接真实服务. Unsigned device Archive only; signing, export and TestFlight operations belong to Main.",
+  "bundleIdentifier": "space.go2china.VisePanda",
+  "marketingVersion": "0.1.0",
+  "minimumOSVersion": "17.0",
+  "compilationConditions": ["VP_CONTROLLED_SAMPLE"],
+  "buildSettings": {
+    "VP_NATIVE_ENVIRONMENT": "",
+    "VP_NATIVE_STAGING_API_ORIGIN": "",
+    "VP_NATIVE_TASK_CONTEXT": ""
+  }
+}
