@@ -13,7 +13,7 @@ test('cancellation source and the exact PG entry select native17 while the HTTP 
   'app/api/qa-agent/sessions/[sessionId]/messages/[requestId]/cancellation/route.ts',
   'tests/contract/qa-agent-cancellation/uuid-case.test.mjs',
   'tests/integration/qa-agent-cancellation/native-pg.test.mjs','tests/integration/qa-agent-cancellation/pg-proof.mjs']){
-  assert.ok(selectCheckPlan([file],'pull_request').dbLanes.includes('postgres-native-17'),file);
+  const plan=selectCheckPlan([file],'pull_request');assert.equal(plan.profile,'affected',file);assert.ok(plan.dbLanes.includes('postgres-native-17'),file);
  }
  const http=selectCheckPlan(['tests/integration/qa-agent-cancellation/http.test.mjs'],'pull_request');
  assert.equal(http.checks.integration,true);assert.deepEqual(http.dbLanes,[]);
@@ -140,4 +140,24 @@ test('Trip task, scoped host, provider, privacy, SQL and suite dependencies reta
  }
  for(const file of ['tests/integration/service-task-trip/native-db.mjs','tests/integration/service-task-trip/run-integration.mjs','tests/integration/service-task-trip/trip-privacy-front.sql'])assert.deepEqual(selectCheckPlan([file],'pull_request').dbLanes,DB_LANES,file);
  for(const file of ['tests/integration/service-task-trip/unknown.test.mjs','unknown-trip-root.mjs'])assert.equal(selectCheckPlan([file],'pull_request').profile,'full',file);
+});
+
+test('exact QA cancellation dynamic route is affected with only its required Web and DB gates',()=>{
+ const file='app/api/qa-agent/sessions/[sessionId]/messages/[requestId]/cancellation/route.ts';
+ const plan=selectCheckPlan([file],'pull_request');assert.equal(plan.profile,'affected');
+ assert.deepEqual(plan.dbLanes,['postgres','postgres-native-17','supabase-rls','supabase-http-native']);
+ assert.deepEqual(plan.checks,{typecheck:true,build:true,test:true,unit:true,contract:true,integration:false,security:true,e2e:true,browser:true,evals:false,flags:true,assets:true});
+});
+
+test('exact shared QA cancellation contract is affected and retains client/server contract coverage',()=>{
+ const plan=selectCheckPlan(['lib/qa-agent/cancellation-contract.ts'],'pull_request');assert.equal(plan.profile,'affected');
+ assert.deepEqual(plan.dbLanes,['postgres-native-17','supabase-http-native']);
+ assert.deepEqual(plan.checks,{typecheck:true,build:true,test:true,unit:true,contract:true,integration:false,security:true,e2e:true,browser:true,evals:false,flags:true,assets:true});
+});
+
+test('cancellation exceptions never admit unknown bracket paths, unsafe paths or shared dependencies',()=>{
+ for(const file of ['app/api/qa-agent/sessions/[other]/messages/[requestId]/cancellation/route.ts','app/api/qa-agent/sessions/[sessionId]/messages/[requestId]/unknown/route.ts','app/api/qa-agent/sessions/[sessionId]/messages/[requestId]/cancellation/../route.ts','app/api/unknown/[id]/route.ts','lib/qa-agent/future-contract.ts','lib/qa-agent/cancellation-contract.ts$(id)','lib/qa-agent/cancellation-contract.ts/../future.ts']){
+  const plan=selectCheckPlan([file],'pull_request');assert.equal(plan.profile,'full',file);assert.deepEqual(plan.dbLanes,DB_LANES,file);assert.ok(Object.values(plan.checks).every(Boolean),file);
+ }
+ const mixed=selectCheckPlan(['lib/qa-agent/cancellation-contract.ts','unknown-runtime.ts'],'pull_request');assert.equal(mixed.profile,'full');assert.deepEqual(mixed.dbLanes,DB_LANES);
 });

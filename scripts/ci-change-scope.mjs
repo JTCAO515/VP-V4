@@ -49,21 +49,23 @@ const checkNames = ['typecheck','build','test','unit','contract','integration','
 const baseChecks = () => Object.fromEntries(checkNames.map(k=>[k,false]));
 const full = reason => ({version:1,profile:'full',reason,checks:Object.fromEntries(checkNames.map(k=>[k,true])),dbLanes:[...DB_LANES]});
 const prose = f => documents.has(f)||documentPatterns.some(p=>p.test(f))||/^docs\/.+\.md$/.test(f)||/^artifacts\/.+\.(?:md|log|log\.gz)$/.test(f);
+// Only this reviewed dynamic route may contain brackets; other paths retain the closed syntax.
+const qaCancellationRoute = 'app/api/qa-agent/sessions/[sessionId]/messages/[requestId]/cancellation/route.ts';
 /** Unknown/unsafe diff and CI policy itself always select the full superset. */
 export function selectCheckPlan(files,eventName,forceFull=false){
  if(forceFull||eventName!=='pull_request'||!Array.isArray(files)||files.length===0)return full('manual_push_or_unavailable_diff');
- if(files.some(f=>typeof f!=='string'||!/^[-A-Za-z0-9_./]+$/.test(f)||f.split('/').includes('..')))return full('unknown_path');
+ if(files.some(f=>typeof f!=='string'||(f!==qaCancellationRoute&&!/^[-A-Za-z0-9_./]+$/.test(f))||f.split('/').includes('..')))return full('unknown_path');
  if(files.some(f=>f.startsWith('.github/workflows/')||/^scripts\/(?:ci-change-scope|run-ci-suite|ci-suites\/)/.test(f)||/tests\/unit\/governance\/(?:ci-change-scope|db-integration-ci|ci-selected)/.test(f)))return full('ci_policy_changed');
  if(files.every(prose))return {version:1,profile:'documentation',reason:'prose_only',checks:baseChecks(),dbLanes:[]};
  const checks=baseChecks(),lanes=new Set();let known=true;
  for(const f of files){
   if(prose(f))continue;
   if(['lib/server/turn/native-ai-assist-http.ts','app/api/chat/grounded/ai-assist/route.ts','lib/server/model-gateway/prompt/wiki-search.ts'].includes(f))lanes.add('postgres-native-17');
-  if(f.startsWith('lib/server/qa-agent/cancellation/')||['lib/qa-agent/cancellation-contract.ts','lib/server/qa-agent/config.ts','app/api/qa-agent/sessions/[sessionId]/messages/[requestId]/cancellation/route.ts'].includes(f))lanes.add('postgres-native-17');
+  if(f.startsWith('lib/server/qa-agent/cancellation/')||['lib/qa-agent/cancellation-contract.ts','lib/server/qa-agent/config.ts',qaCancellationRoute].includes(f))lanes.add('postgres-native-17');
   if(f==='package.json'||f==='pnpm-lock.yaml'||f==='tsconfig.json'||/^next\.config\./.test(f)||/^middleware\./.test(f))return full('shared_runtime_configuration');
   if(f.startsWith('supabase/')){for(const l of DB_LANES)lanes.add(l);Object.assign(checks,{typecheck:true,test:true,unit:true,contract:true,security:true,flags:true});continue;}
   if(f.startsWith('ios/')||f.startsWith('scripts/ios/'))continue; // Native workflow builds/tests changed iOS code; no unrelated Web/DB.
-  if(f.startsWith('app/')||f.startsWith('components/')||f.startsWith('apps/ops/')||f.startsWith('public/')){
+  if(f==='lib/qa-agent/cancellation-contract.ts'||f.startsWith('app/')||f.startsWith('components/')||f.startsWith('apps/ops/')||f.startsWith('public/')){
    Object.assign(checks,{typecheck:true,build:true,test:true,unit:true,contract:true,security:true,e2e:true,browser:true,flags:true,assets:true});
    lanes.add(f.startsWith('apps/ops/')?'supabase-http-ops':'supabase-http-native');
    if(f.startsWith('app/api/')||f.startsWith('apps/ops/')){lanes.add('postgres');lanes.add('supabase-rls');}
