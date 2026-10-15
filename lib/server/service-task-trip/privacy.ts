@@ -15,7 +15,10 @@ function normalizeGraph(v:unknown,tripId?:string):Row|null{
 function normalizeCounts(v:unknown,keys:readonly string[],drop:readonly string[]):Row|null{
  if(!counts(v,keys))return null;const result={...v};for(const key of drop)delete result[key];return result;
 }
-function normalize(v:Row,target:Target,tripId?:string,owner?:unknown):Row|null{
+function normalize(v:Row,target:Target,tripId?:string,owner?:unknown,decision=false):Row|null{
+ // The explicit Trip conversation decision must carry its restore-fence identities.
+ // Validate before removing new fields for the strict legacy decoder.
+ if(target==='conversation'&&decision&&!Object.hasOwn(v,'tripSourceIdentityKeys'))return null;
  const expectedOwner=owner??v.ownerId;
  const result=structuredClone(v),erased=target==='turn'?TURN_ERASED:CONV_ERASED,redacted=target==='turn'?TURN_REDACTED:CONV_REDACTED;
  if(result.graph!==null&&Object.hasOwn(result,'graph')){const g=normalizeGraph(result.graph,tripId);if(!g)return null;result.graph=g;}
@@ -29,7 +32,7 @@ function normalize(v:Row,target:Target,tripId?:string,owner?:unknown):Row|null{
   const rels=['contexts_v1','work_v1','requests_v1','operations_v1','lineage_v1'];if(!record(v.erasedCounts)||!rels.every((rel,i)=>(totals['scoped_edit_private.'+rel]??0)===(v.erasedCounts as Row)[TRIP_PRIVATE_SOURCE_KEYS[i]]))return null;
   delete result.tripSourceIdentityKeys;
  }
- if(record(result.decision)){const d=normalize(result.decision,target,tripId,expectedOwner);if(!d)return null;result.decision=d;}
+ if(record(result.decision)){const d=normalize(result.decision,target,tripId,expectedOwner,true);if(!d)return null;result.decision=d;}
  if(record(result.boundaries))for(const [field,added] of Object.entries(TRIP_BOUNDARY_ADDITIONS)){
   const values=result.boundaries[field];if(!Array.isArray(values)||values.at(-1)!==added)return null;result.boundaries[field]=values.slice(0,-1);
  }
