@@ -621,6 +621,10 @@
     {
       "file": "20261013050429_qa_agent_web.sql",
       "sha256": "73b6fa9ee63ad48bdff43da4a1f88ddf19e28e46786948e30314a111bb25285d"
+    },
+    {
+      "file": "20261015024450_ios001_goal_return_current.sql",
+      "sha256": "f4bcc8d953e4b6e27c3a582d84dc4d741c0acdcb8e5689598556c5b2ffb18c0f"
     }
   ],
   "tableCount": 265,

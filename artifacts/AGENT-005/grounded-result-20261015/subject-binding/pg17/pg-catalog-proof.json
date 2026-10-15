@@ -1,6 +1,6 @@
 {
-  "baseline": "f36acc11a0a20cdb11b4cbc34a4d93789530f8add74226694771f105f72f4f8d",
-  "after": "7d3a281f1f9856b073e5da8f611fef950612c3eb91ef01cfca143225b0df8790",
+  "baseline": "e3343a7c087706ba75f5e3dbcc3e8c205e869f07cc3a69ab2069261b012546d3",
+  "after": "b9ae7bb1b3de8ef2291986266d0b6bde556f7b8fc6b27726e3e94eb8f12c9a18",
   "changedFunctions": [
     {
       "signature": "public.grounded_ai_assist_work_v1(jsonb)",
