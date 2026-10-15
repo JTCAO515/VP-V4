@@ -1,3 +1,5 @@
+> Current candidate pointer (2026-10-16): SQL was moved byte-identically outside automatic migrations to `lib/server/entitlements/subscription-ledger/development-schema.sql`. See [current candidate verification](candidate-sql/VERIFICATION.md) and [current hashes](candidate-sql/hashes.json). The historical source-head evidence below retains its original paths and facts; legacy runtime composition remains NOT_READY.
+
 # AGENT-009 subscription ledger development evidence
 
 Source head: `ccd6ce0c4c0d013e18d6e785d3022c86e32abb98`. Exact base: `61caa52a03cb59ff0075b8cf59c63994c30821e1`.
