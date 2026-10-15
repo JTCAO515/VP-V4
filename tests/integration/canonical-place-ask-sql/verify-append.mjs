@@ -1,4 +1,4 @@
-import assert from 'node:assert/strict';import {readFileSync,writeFileSync} from 'node:fs';import {createHash} from 'node:crypto';
+import assert from 'node:assert/strict';import {readFileSync,writeFileSync,readdirSync} from 'node:fs';import {createHash} from 'node:crypto';
 import {connect,root,resource} from './db.mjs';
 const c=await connect();const append=readFileSync('supabase/migrations/20261015083120_agent005_canonical_place_ask.sql','utf8');
 const catalog=async()=>({
@@ -37,4 +37,9 @@ try{
  await c.query('begin');await c.query('alter table turn_private.grounded_turns drop constraint grounded_selected_place_request_shape');assert.equal((await c.query('select place_actions_private.ask_schema_v1() value')).rows[0].value,false);assert.equal((await c.query('select turn_private.trip_service_task_runtime_v1() value')).rows[0].value,false);await c.query('rollback');assert.deepEqual(await catalog(),after);console.log('MISSING_NEW_CONSTRAINT_FAIL_CLOSED_AND_ORIGINAL_TRIP_RUNTIME_TRUE');
  writeFileSync(root+'/catalog-proof.json',JSON.stringify({postgres:(await c.query('select version() value')).rows[0].value,migrationSha256:createHash('sha256').update(append).digest('hex'),baselineCatalogSha256:h(baseline),afterCatalogSha256:h(after),changedFunctions:changed.map(x=>x.signature),newPrivateFunctions:added.map(x=>x.signature),newTables:0,newConstraint:newConstraints[0],oldFunctionMetadataUnchanged:true,tableAclRolesPoliciesDefaultsMembershipsUnchanged:true,ordinaryPlaceGuidePrivacyIngressDenied:true,privateHelperGrantsDenied:true,rollbackExact:true,dependencyDriftRejected:true,unknownSchemaRejected:true,missingNewConstraintRejected:true,originalTripRuntimeTrue:true,guards},null,2)+'\n');
  console.log('PRODUCT_APPEND_CATALOG_PASS',changed.length,'authored existing functions,',added.length,'private functions; all nine guards TRUE');
+ // Preserve the append's historical proof, then run consumers on the complete current chain.
+ for(const successor of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&f>'20261015083120_agent005_canonical_place_ask.sql').sort()){
+  try{await c.query('begin');await c.query(readFileSync('supabase/migrations/'+successor,'utf8'));await c.query('commit');}
+  catch(error){await c.query('rollback');throw error;}
+ }
 }catch(e){await c.query('rollback');throw e;}finally{await c.end();}
