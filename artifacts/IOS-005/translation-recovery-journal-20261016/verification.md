@@ -26,7 +26,7 @@ Cases exercise object recreation preserving physical original bytes/IDs; generat
 
 Historical FAIL: first App-equivalent default MainActor harness attempt exposed XCTest inherited initializer isolation. Fixed by explicitly nonisolated XCTestCase plus MainActor helper/test operations. Failure log retained. Initial non-default-isolation runs were 11/11 then 15/15; final same-isolation run supersedes them for source-level compatibility.
 
-PASS: git diff --check. docs:check result is recorded in docs-check.log.
+PASS: git diff --check against the implementation base after removing diagnostic-log trailing spaces and an extra support-file EOF blank line. The initial staged artifact whitespace failure was cosmetic and is retained here. PASS: docs:check; result is recorded in docs-check.log.
 
 UNRUN: complete App build, App XCTest target/PBX registration, 8F Simulator, physical device/VoiceOver, real Keychain/account lifecycle, managed Auth, real provider and target environment. Main owns App/Session/Store/lifecycle integration and final shared verification. Isolated FakeVault tests do not prove those results.
 
