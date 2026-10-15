@@ -1,0 +1,25 @@
+# Main canonical Native integration
+
+## Backend accepted; pure Native delivery
+
+PR715 final `f23ae9d751271d69f0a4f8a9a6d20f7a28b89002` passed all 22 applicable checks and both deployment statuses, then normally merged at `2026-10-15T15:17:53Z` into QA `64d410623f80e0597eef56dfd884a3909d8eb0b2`. Main normally merged that accepted QA into this branch as `b532c0cfb22edb050dd62dbafe49209368ff770c`. This supersedes the historical waiting statements below; it does not imply a shared database application or real target acceptance.
+
+The exact QA delta is now 25 files: 11 iOS, six Native contract files and eight Native evidence files. No backend, shared database, other project, script or CI code is included. Independent final boundary/source-reuse review at `f23…9bfd808d` returned Standards 0 / Spec 0; iOS and contract bytes are identical through the accepted-QA merge. Core/PBX blobs remain the original nine-test source, and the only adjacent sample locale fragment was separately accepted in PR717. Current App compile evidence at `52e3bcf2` remains applicable without an unrelated rerun.
+
+Original owner `f2df5500` (Main `4adbf272`) losslessly archived 28 obsolete candidate/shadow materials into Markdown, keeping allowed raw logs and actual contract inputs. Main independently extracted every payload and verified original Git bytes, length and SHA256. Source/tests/scripts/CI were unchanged. Existing check-policy evaluation of this pure delta is affected with no database lanes; the actual PR's exact-head CI remains required. No selector or gate was changed.
+
+## Current accepted-UI integration
+
+Main normally merged accepted QA PR717 (`c1fc57a9`) and PR718 (`da86217c`) into this existing branch, yielding source `52e3bcf2ac82ecf2f267f82e71f193b753594d29`. This is local integration preparation; PR715 backend acceptance is still required before the pure Native QA PR.
+
+Actual complete App compilation at this source: **PASS 46.561s**, XcodeBuildMCP Debug/SDK27/minimum17 using the same Main-owned simulator/DD configuration. Six existing warnings in unchanged Profile/Knowledge/Feasibility code remain; no unrelated fix or test-matrix expansion. Build log: `~/Library/Developer/XcodeBuildMCP/workspaces/Documents-2025647e2650/logs/build_sim_2026-10-15T13-41-34-454Z_pid2509_73a505f1.log`.
+
+Byte comparison against the prior validated `7c5f3794` confirms PBX, NativeSession, canonical Ask models/store/views, journal source observer, original PlaceActionStore and canonical capture/pending source are unchanged. The sole adjacent change is the already-reviewed/accepted PR717 DEBUG place-sample locale fragment (5 additions/3 removals); production Ask/pending behavior is unchanged. The original nine behavior tests and fixed-source reviews below remain applicable. No new provider/Auth/device/release runtime acceptance is inferred from the compile.
+
+Code complete for this Native consumer slice. JT directly confirmed the exact three NativeAskMode lines were stopped/transferred, Main applied8e8ad9ce, original owner cherry-pickedaeff46f0 and ran actual product App/test build9/9 PASS on own resources. Owner evidence6b50d5e6 is retained; 476 App/PBX/assets/test inputs matched the earlier shadow exactly. The enum's future three-line lease was explicitly returned to Main after validation. This supersedes the old candidate-only dependency, not other environment UNRUN.
+
+Main normally merged acceptedQA4ff at32930f431f5c41c9661784b82d2af8bc531204c3. Sole PBX conflict consisted of Main-owned voice and canonical registration additions; both source/test sets are retained exactly once, plutil/diff PASS. Main actual XcodeBuildMCP test_sim on its own simulator8F6CA72C-73C0-45C0-8606-0543B1F725BD/profile/DD rebuilt the real combined App and test target and executed NativeCanonicalPlaceAskTests: **9 PASS,0failed,0skipped**,68.958s overall. Preserved raw build/test log, original32 existing warnings retained rather than widened into unrelated fixes.
+
+Fixed97d6..8e Native source and PBX reviews found no Swift logic defect after the original final-fence/late-reference fixes. Both detected a boundary issue because separately authorized backend export5bb was included in the comparison. Main normally merged complete backend65b6b0b4 as331a240cd89dfb1a369de65073d71656aef81a74: finalbackenddiff0, Native paths only ios/canonicaltests/IOS003artifacts; iOS bytes from32930 to331a are identical. Independent boundary follow-up reviews0/0; original P2 and disposition remain in Main reports. Backend dependency is PR715 and is not called accepted until its normal QA merge; Native PR will targetQA only after that dependency is accepted.
+
+No model/default/runtime configuration/policy/fee/permission or shared database action. Existing ordinary Task HTTPv2/receipt2, v1 policy/consent/cancel, Root rawbytes persistence/onePOST/original-keyGET and source-lifetime-only facts are tested through controlled C0 transport/memory vault. Real Auth/SQL joint target/model/provider, physical device/VoiceOver/signing/upload/release remain UNRUN. Parent #203/#206/#506 completion is not implied.
