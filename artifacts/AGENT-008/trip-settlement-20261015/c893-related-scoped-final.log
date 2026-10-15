@@ -1,0 +1,34 @@
+C0 native PostgreSQL adapter: original SQL suites unchanged; no Docker/target17.6/GoTrue claim.
+✔ append-only migration replay compiles under original schema (8094.876042ms)
+✔ manual candidate is unconfirmed until original exact writer; current scope snapshot and receipt are closed (464.305042ms)
+✔ sparse real reorder preserves unselected fields and slot; legacy edits preserve persisted order; rollback reloads order (642.256166ms)
+✔ selected move permits natural slot shift and retains all unselected fields and relative order (290.699041ms)
+✔ explicit lock CAS is distinct from manual edits and invalidates all older contexts (472.811583ms)
+✔ abandon before submit creates durable tombstone; committed proposal remains pending, never undo or reject (539.539333ms)
+✔ direct RPC refuses invalid scope/source/client fields, cross actor and context swap (397.396458ms)
+✔ profile/Memory/session/source changes reject before original Trip write (963.292291ms)
+✔ same-transaction source changes after writer force deferred rollback (328.942542ms)
+✔ marked revision and successor cannot escape immutable lineage; expired context cleanup still blocks confirmation (368.487792ms)
+✔ real two-transaction submit/abandon races create one outcome with exact-body receipt recovery (2165.831417ms)
+✔ new capabilities default deny all roles and original archive/deletion/account cascades erase scope metadata (2025.765125ms)
+✔ worker stays default pending without qualification; original queue and synthetic budget produce settled candidate with no Proposal (1198.604583ms)
+✔ current consent/global stop/source gates prevent effects; lease reclaim reuses output and original budget attempt (1152.19175ms)
+✔ typed add replace remove are constrained to current context sources and deterministic IDs (1042.094125ms)
+✔ reservation preservation is explicit exact revision binding, unknown stays unavailable and changes invalidate confirmation (834.840917ms)
+✔ live TTL and bounded cleanup preserve lineage and never permit old candidate confirmation (849.278083ms)
+✔ exact export lease pages all scoped metadata sections; old inventory remains unenrolled partial (765.361041ms)
+✔ real TypeScript service consumes SQL context, immutable candidates, explicit selection and original exact proposal (1023.920334ms)
+✔ provider destination uses exact current prompt/tuple/digest/configuration and phase order without network (714.469708ms)
+✔ actual executor uses real SQL budget/source/usage/candidate RPCs with a synthetic provider, recovers lost ACKs and creates no Proposal (2836.763584ms)
+✔ marked proposal reader and operation become stale on source change before original confirmation (417.629625ms)
+✔ legacy intake-v2 remains a legal work mode with an existing row during scoped migration (519.25875ms)
+✔ known settled cannot-edit ends original task as declined; unknown usage cannot fake a refusal (901.193ms)
+✔ composed candidate applies reorder before removal in the original operation order (816.166125ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 30090.902042

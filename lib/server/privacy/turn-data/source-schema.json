@@ -2244,5 +2244,376 @@
       }
     ],
     "hasOwner": true
+  },
+  {
+    "relation": "scoped_edit_private.contexts_v1",
+    "countKey": "tripContexts",
+    "effect": "erase",
+    "pk": [
+      "id"
+    ],
+    "columns": [
+      {
+        "name": "id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "trip_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "base_version",
+        "type": "integer",
+        "notNull": true
+      },
+      {
+        "name": "input",
+        "type": "jsonb",
+        "notNull": true
+      },
+      {
+        "name": "snapshot",
+        "type": "jsonb",
+        "notNull": true
+      },
+      {
+        "name": "actor_basis",
+        "type": "jsonb",
+        "notNull": true
+      },
+      {
+        "name": "source_basis",
+        "type": "jsonb",
+        "notNull": true
+      },
+      {
+        "name": "locked_ids",
+        "type": "jsonb",
+        "notNull": true
+      },
+      {
+        "name": "fixed_ids",
+        "type": "jsonb",
+        "notNull": true
+      },
+      {
+        "name": "digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      },
+      {
+        "name": "expires_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      }
+    ],
+    "hasOwner": true,
+    "tripOnly": true
+  },
+  {
+    "relation": "scoped_edit_private.work_v1",
+    "countKey": "tripWork",
+    "effect": "erase",
+    "pk": [
+      "turn_id"
+    ],
+    "columns": [
+      {
+        "name": "turn_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "trip_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "task_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "operation_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "context_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "policy_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "scope_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "attempt_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "binding",
+        "type": "jsonb",
+        "notNull": false
+      },
+      {
+        "name": "output",
+        "type": "jsonb",
+        "notNull": false
+      },
+      {
+        "name": "usage",
+        "type": "jsonb",
+        "notNull": false
+      },
+      {
+        "name": "actual_micros",
+        "type": "bigint",
+        "notNull": false
+      },
+      {
+        "name": "paused_reason",
+        "type": "text",
+        "notNull": false
+      },
+      {
+        "name": "completion",
+        "type": "jsonb",
+        "notNull": false
+      },
+      {
+        "name": "candidate_id",
+        "type": "uuid",
+        "notNull": false
+      },
+      {
+        "name": "candidate_patch",
+        "type": "jsonb",
+        "notNull": false
+      },
+      {
+        "name": "known_usage",
+        "type": "jsonb",
+        "notNull": false
+      },
+      {
+        "name": "known_actual_micros",
+        "type": "bigint",
+        "notNull": false
+      },
+      {
+        "name": "known_outcome",
+        "type": "text",
+        "notNull": false
+      }
+    ],
+    "hasOwner": true,
+    "tripOnly": true
+  },
+  {
+    "relation": "scoped_edit_private.requests_v1",
+    "countKey": "tripRequests",
+    "effect": "erase",
+    "pk": [
+      "turn_id"
+    ],
+    "columns": [
+      {
+        "name": "turn_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "trip_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "binding",
+        "type": "jsonb",
+        "notNull": true
+      },
+      {
+        "name": "request_id",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "request_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "payload_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "destination",
+        "type": "jsonb",
+        "notNull": true
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      }
+    ],
+    "hasOwner": true,
+    "tripOnly": true
+  },
+  {
+    "relation": "scoped_edit_private.operations_v1",
+    "countKey": "tripOperations",
+    "effect": "erase",
+    "pk": [
+      "owner_id",
+      "operation_id"
+    ],
+    "columns": [
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "operation_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "trip_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "mutation",
+        "type": "jsonb",
+        "notNull": true
+      },
+      {
+        "name": "digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "actor_basis",
+        "type": "jsonb",
+        "notNull": true
+      },
+      {
+        "name": "context_id",
+        "type": "uuid",
+        "notNull": false
+      },
+      {
+        "name": "receipt",
+        "type": "jsonb",
+        "notNull": false
+      },
+      {
+        "name": "cancelled",
+        "type": "boolean",
+        "notNull": true
+      },
+      {
+        "name": "proposal_id",
+        "type": "uuid",
+        "notNull": false
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "notNull": true
+      }
+    ],
+    "hasOwner": true,
+    "tripOnly": true
+  },
+  {
+    "relation": "scoped_edit_private.lineage_v1",
+    "countKey": "tripLineage",
+    "effect": "erase",
+    "pk": [
+      "proposal_id"
+    ],
+    "columns": [
+      {
+        "name": "proposal_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "owner_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "trip_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "operation_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "context_id",
+        "type": "uuid",
+        "notNull": true
+      },
+      {
+        "name": "proposal_digest",
+        "type": "text",
+        "notNull": true
+      },
+      {
+        "name": "proposal_revision",
+        "type": "integer",
+        "notNull": true
+      },
+      {
+        "name": "base_version",
+        "type": "integer",
+        "notNull": true
+      },
+      {
+        "name": "patch",
+        "type": "jsonb",
+        "notNull": true
+      }
+    ],
+    "hasOwner": true,
+    "tripOnly": true
   }
 ]

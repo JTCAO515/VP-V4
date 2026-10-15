@@ -1,3 +1,4 @@
+import {TRIP_PRIVATE_SOURCE_KEYS,TRIP_OBJECTIVE_REDACTION_KEY} from '../../service-task-trip/privacy-contract.ts';
 import { createHash } from 'node:crypto';
 import { exact, record, hash, uuid } from '../../guide/contract.ts';
 
@@ -93,3 +94,7 @@ export function validGraph(v: unknown): v is ConversationGraph {
   return record(v) && exact(v, [...GRAPH_KEYS]) && GRAPH_KEYS.every(k => sortedIds(v[k]))
     && GRAPH_KEYS.reduce((n, k) => n + (v[k] as string[]).length, 0) <= CONVERSATION_LIMITS.entities;
 }
+
+/** Explicit Trip privacy version only; original v1 count vectors are unchanged. */
+export const TRIP_ERASED_KEYS=[...ERASED_KEYS,...TRIP_PRIVATE_SOURCE_KEYS] as const;
+export const TRIP_REDACTED_KEYS=[...REDACTED_KEYS,TRIP_OBJECTIVE_REDACTION_KEY] as const;

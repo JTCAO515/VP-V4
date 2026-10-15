@@ -1,0 +1,55 @@
+C0 export enrollment: original D2 fixture explicit GRANT, production ACL unchanged
+Trip export page turn-trip-core-export/1 [
+  [ 'public.chat_turn_events', 2 ],
+  [ 'public.chat_turn_idempotency', 1 ],
+  [ 'public.memory_consumer_receipts', 0 ],
+  [ 'public.model_budget_attempts', 1 ],
+  [ 'public.turn_feedback', 0 ],
+  [ 'turn_private.assistant_message_source_receipts', 0 ],
+  [ 'turn_private.assistant_messages', 1 ],
+  [ 'turn_private.assistant_travel_intakes', 0 ],
+  [ 'turn_private.grounded_ai_assist_jobs', 0 ],
+  [ 'turn_private.grounded_turns', 0 ],
+  [ 'turn_private.planning_action_receipts', 0 ],
+  [ 'turn_private.planning_comparisons', 0 ],
+  [ 'turn_private.planning_intake_bindings', 0 ],
+  [ 'turn_private.planning_model_dispatches', 0 ],
+  [ 'turn_private.planning_observations', 0 ],
+  [ 'turn_private.planning_v2_collector_origins', 0 ],
+  [ 'turn_private.planning_v2_collector_outputs', 0 ],
+  [ 'turn_private.planning_v2_completed_receipts', 0 ],
+  [ 'turn_private.planning_v2_completion_proofs', 0 ],
+  [ 'turn_private.planning_v2_execution_runs', 0 ],
+  [ 'turn_private.planning_v2_external_call_windows', 0 ],
+  [ 'turn_private.planning_v2_model_attempt_bindings', 0 ],
+  [ 'turn_private.planning_v2_model_local_journal', 0 ],
+  [ 'turn_private.planning_v2_place_checkpoints', 0 ],
+  [ 'turn_private.planning_v2_result_claims', 0 ],
+  [ 'turn_private.result_artifacts', 0 ],
+  [ 'turn_private.result_events', 0 ],
+  [ 'turn_private.result_revisions', 0 ],
+  [ 'turn_private.service_task_capacity', 1 ],
+  [ 'turn_private.service_task_turns', 1 ],
+  [ 'turn_private.service_tasks', 1 ],
+  [ 'turn_private.text_content', 1 ],
+  [ 'turn_private.text_dispatches', 0 ],
+  [ 'turn_private.work', 1 ],
+  [ 'public.turns', 1 ],
+  [ 'scoped_edit_private.contexts_v1', 1 ],
+  [ 'scoped_edit_private.work_v1', 1 ],
+  [ 'scoped_edit_private.requests_v1', 0 ],
+  [ 'scoped_edit_private.operations_v1', 1 ],
+  [ 'scoped_edit_private.lineage_v1', 0 ],
+  [ 'turn_private.assistant_directions_intakes_v1', 0 ],
+  [ 'turn_private.directions_result_sources_v1', 0 ],
+  [ 'turn_private.directions_operations_v1', 0 ]
+]
+✔ original export request/lease → versioned Trip source/page → strict current TS handler; no real artifact/key (3390.073375ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3472.44875

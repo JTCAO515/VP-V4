@@ -1,0 +1,10 @@
+✔ Trip ServiceTask: full historical SQL, rollback, default gates and role ACL (2226.576416ms)
+✔ ordinary owner → canonical goal → original worker candidate → exact original confirm → same-transaction capacity (2546.968166ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4813.339584

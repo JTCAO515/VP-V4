@@ -1,0 +1,42 @@
+{
+  "files": [
+    {
+      "path": "lib/server/privacy/turn-data/source-schema.json",
+      "sha256": "1629f0b1382aa08a6bc8dfbe5c2f49f9775991691819f593ea95a9f57b5917a1"
+    },
+    {
+      "path": "lib/server/privacy/turn-data/export.ts",
+      "sha256": "a39aecd74f7d4827f80a5b6a110da6080404c8c7bffcc6ef9dfd7dcc625ee3d5"
+    },
+    {
+      "path": "supabase/migrations/20261006060000_conversation_data.sql",
+      "sha256": "4e0cb6cad922c5198d5ad0bebf9c4510a5701680b25d407cb281b5a3e282b763"
+    },
+    {
+      "path": "supabase/migrations/20261007050000_turn_data.sql",
+      "sha256": "33b066b7846626a03c93b8e34656215d09bbe9cf6ecfffd8dd70200dc7f3f85d"
+    }
+  ],
+  "newField": {
+    "table": "turn_private.service_tasks",
+    "name": "trip_objective",
+    "type": "jsonb",
+    "notNull": false
+  },
+  "role": "original private ServiceTask authority, no new table/FK/queue",
+  "required": [
+    "conversation_data_private.sources_v1 exact service_tasks column append",
+    "conversation_data_private.schema_supported_v1 exact service_tasks column_specs append",
+    "turn_data_private.sources_v1 same column append",
+    "turn_data_private.schema_supported_v1 exact column metadata and derived registry digest update with audited before value",
+    "turn_data export source-schema.json exact nullable column append",
+    "validate graph uses existing assistant_messages.task_id owner-bound one-time link",
+    "account erase/Trip deletion/conversation erase late-worker/restore gating tests"
+  ],
+  "excluded": [
+    "no adopt unknown schema hash",
+    "no old migration edits",
+    "no hidden new bucket",
+    "no provider cost inferred from token count"
+  ]
+}

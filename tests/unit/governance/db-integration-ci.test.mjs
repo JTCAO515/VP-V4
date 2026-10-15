@@ -247,7 +247,7 @@ test('resolved-subject PG17 lane is unique, explicit, bounded, and cannot weaken
  const ownership=Object.entries(LANES).flatMap(([lane,definition])=>definition.steps.flatMap(step=>step.files.filter(f=>f===file).map(()=>lane)));
  assert.deepEqual(ownership,['postgres-native-17']);
  assert.deepEqual(classify().rows.find(row=>row.file===file),{file,gated:true,lane:'postgres-native-17'});
- assert.equal(LANES['postgres-native-17'].steps.length,1);assert.equal(LANES['postgres-native-17'].steps[0].env.AGENT005_NATIVE_PG,'1');assert.equal(LANES['postgres-native-17'].steps[0].concurrency,1);
+ assert.equal(LANES['postgres-native-17'].steps.length,2);assert.equal(LANES['postgres-native-17'].steps[0].env.AGENT005_NATIVE_PG,'1');assert.equal(LANES['postgres-native-17'].steps[0].concurrency,1);
  assert.deepEqual(LANES['postgres-native'],{needs:['VP_WIKI_PG_BIN','VP_WIKI_PG_MODULE'],steps:[{name:'wiki-native-postgres',env:{},files:['tests/integration/knowledge/wiki-draft.test.mjs']}]});
  const all=executionMatrix(DB_LANES).include;
  assert.deepEqual(all.filter(job=>job.lane!=='postgres-native-17'),executionMatrix(DB_LANES.filter(lane=>lane!=='postgres-native-17')).include);
@@ -355,4 +355,23 @@ test('the registered PG17 lane rejects a PG16 binary before any gated test can s
   const result=spawnSync(process.execPath,['scripts/ci-suites/db-integration.mjs','--lane','postgres-native-17'],{encoding:'utf8',env:{...process.env,VP_WIKI_PG_BIN:root,VP_WIKI_PG_MODULE:'unused-preflight-fixture'}});
   assert.notEqual(result.status,0);assert.match(result.stderr,/PostgreSQL 17 is required/);assert.doesNotMatch(result.stdout,/::group::/);
  }finally{rmSync(root,{recursive:true,force:true});}
+});
+
+
+test('Trip PG17 registry enumerates the complete suite exactly once and runs its real expiry gate',()=>{
+ const prefix='tests/integration/service-task-trip/';
+ const files=readdirSync(prefix).filter(f=>f.endsWith('.test.mjs')).sort().map(f=>prefix+f);
+ const step=LANES['postgres-native-17'].steps[1];
+ assert.equal(step.name,'trip-service-task-native-17');assert.deepEqual(step.files,files);
+ assert.deepEqual(step.runner,[process.execPath,'--experimental-strip-types',prefix+'run-integration.mjs']);
+ for(const file of files){
+  const occurrences=Object.values(LANES).flatMap(l=>l.steps).flatMap(s=>s.files).filter(f=>f===file);
+  assert.equal(occurrences.length,1,file);assert.equal(classify().rows.find(r=>r.file===file).lane,'postgres-native-17');assert.equal(EXCLUDED[file],undefined);
+ }
+ const runner=read(prefix+'run-integration.mjs');
+ assert.match(runner,/VP_TRIP_PG_BIN:process.env.VP_TRIP_PG_BIN\?\?process.env.VP_WIKI_PG_BIN/);
+ assert.match(runner,/VP_TRIP_PG_MODULE:process.env.VP_TRIP_PG_MODULE\?\?process.env.VP_WIKI_PG_MODULE/);
+ assert.match(runner,/VP_TRIP_EXPIRY_TEST:'1'/);assert.ok(files.includes(prefix+'proposal-expiry.test.mjs'));
+ const result=spawnSync(process.execPath,[prefix+'run-integration.mjs'],{encoding:'utf8',env:{...process.env,VP_TRIP_PG_BIN:'',VP_TRIP_PG_MODULE:'',VP_WIKI_PG_BIN:'',VP_WIKI_PG_MODULE:''}});
+ assert.notEqual(result.status,0);assert.match(result.stderr,/no skip fallback/);
 });

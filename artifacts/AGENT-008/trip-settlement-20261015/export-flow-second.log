@@ -1,0 +1,40 @@
+✖ original export request/lease → versioned Trip source/page → strict current TS handler; no real artifact/key (2949.274875ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3035.671042
+
+✖ failing tests:
+
+test at tests/integration/service-task-trip/export-flow.test.mjs:10:1
+✖ original export request/lease → versioned Trip source/page → strict current TS handler; no real artifact/key (2949.274875ms)
+  error: column reference "v" is ambiguous
+      at /Users/jtsm5p/Documents/Codex/2026-10-13/v10-main/agent008-pg-client-20261015/node_modules/pg/lib/client.js:535:17
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async db (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/native-db.mjs:16:202)
+      at async query (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/fixture.mjs:5:35)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/export-flow.test.mjs:19:13)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    length: 899,
+    severity: 'ERROR',
+    code: '42702',
+    detail: 'It could refer to either a PL/pgSQL variable or a table column.',
+    hint: undefined,
+    position: undefined,
+    internalPosition: '75',
+    internalQuery: "page:=jsonb_build_object('schemaVersion',case when (select count(distinct v->>'relation') from jsonb_array_elements(src->'snapshot'->'sources') v where v->>'relation'=any(array['scoped_edit_private.contexts_v1','scoped_edit_private.work_v1','scoped_edit_private.requests_v1','scoped_edit_private.operations_v1','scoped_edit_private.lineage_v1']))=5 then 'turn-trip-core-export/1' else 'turn-core-export/1' end,'section','snapshot','sourceDigest',src->'sourceDigest','items',jsonb_build_array(src->'snapshot'),'hasMore',false,'nextCursor',null,'sectionComplete',true)",
+    where: 'PL/pgSQL function export_private.core_turn_page_v1(jsonb) line 10 at assignment\nPL/pgSQL function public.privacy_core_export_v1(text,jsonb) line 11 at RETURN',
+    schema: undefined,
+    table: undefined,
+    column: undefined,
+    dataType: undefined,
+    constraint: undefined,
+    file: 'pl_comp.c',
+    line: '1138',
+    routine: 'plpgsql_post_column_ref'
+  }

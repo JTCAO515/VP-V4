@@ -1,0 +1,41 @@
+✖ explicit Trip privacy preview/confirmed erase/recovery removes all owned scoped copies; v1 counts stay unchanged (2377.393875ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2444.115625
+
+✖ failing tests:
+
+test at tests/integration/service-task-trip/privacy-flow.test.mjs:17:1
+✖ explicit Trip privacy preview/confirmed erase/recovery removes all owned scoped copies; v1 counts stay unchanged (2377.393875ms)
+  error: terminal turn cannot emit events
+      at /Users/jtsm5p/Documents/Codex/2026-10-13/v10-main/agent008-pg-client-20261015/node_modules/pg/lib/client.js:535:17
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async db (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/native-db.mjs:16:135)
+      at async query (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/fixture.mjs:5:35)
+      at async finished (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/privacy-flow.test.mjs:15:76)
+      at async TestContext.<anonymous> (file:///Users/jtsm5p/Documents/Codex/VP-V10-worktrees/agent008-trip-settlement-20261015/tests/integration/service-task-trip/privacy-flow.test.mjs:20:35)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    length: 485,
+    severity: 'ERROR',
+    code: 'P0001',
+    detail: undefined,
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: 'PL/pgSQL function turn_private.cancel_chat_turn_unmetered(uuid) line 13 at RAISE\nSQL statement "select *                from turn_private.cancel_chat_turn_unmetered(p_turn_id)"\nPL/pgSQL function public.cancel_chat_turn(uuid) line 7 at SQL statement\nSQL statement "SELECT public.cancel_chat_turn(s.last_turn_id)"\nPL/pgSQL function public.cancel_trip_service_task_v1(uuid) line 12 at PERFORM',
+    schema: undefined,
+    table: undefined,
+    column: undefined,
+    dataType: undefined,
+    constraint: undefined,
+    file: 'pl_exec.c',
+    line: '3911',
+    routine: 'exec_stmt_raise'
+  }
