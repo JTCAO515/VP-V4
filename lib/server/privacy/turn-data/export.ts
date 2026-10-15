@@ -1,8 +1,12 @@
+import {validTripPrivacyOperationRow} from '../../service-task-trip/privacy.ts';
+import {TRIP_PRIVATE_SOURCE_KEYS} from '../../service-task-trip/privacy-contract.ts';
 import {validTripObjectiveExport} from '../../service-task-trip/export.ts';
 import { createHash } from 'node:crypto';
 import schema from './source-schema.json' with { type: 'json' };
 import { DIRECTION_TURN_SOURCE_SCHEMA, validDirectionTurnExportRow } from '../../planning/directions/turn-export-rows.ts';
-const exportSchema = [...schema, ...DIRECTION_TURN_SOURCE_SCHEMA];
+const originalSchema=schema.filter(s=>!('tripOnly' in s&&s.tripOnly));
+const exportSchema=[...originalSchema,...DIRECTION_TURN_SOURCE_SCHEMA];
+const tripExportSchema=[...originalSchema,...schema.filter(s=>'tripOnly' in s&&s.tripOnly),...DIRECTION_TURN_SOURCE_SCHEMA];
 import { exact, record, hash } from '../../guide/contract.ts';
 import { exportCanonical, type ExportHandler, type ExportLease, type ExportModuleReceipt, type ExportPage } from '../export-dispatcher.ts';
 import type { ExportDomainRPC } from '../export-worker.ts';
@@ -12,6 +16,7 @@ import { validOperationRow } from './protocol.ts';
 export const TURN_EXPORT_SCHEMA = 'turn-core-export/1' as const;
 export const TURN_EXPORT_SECTIONS = ['snapshot'] as const;
 export const TURN_SOURCE_SCHEMA = exportSchema;
+export const TRIP_TURN_SOURCE_SCHEMA=tripExportSchema;
 const instant = (v: unknown): v is string => typeof v === 'string'
   && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|[+-]\d{2}:\d{2})$/.test(v) && Number.isFinite(Date.parse(v));
 /** Original JSON columns are data only. Bound every recursive walk, including imported source bytes. */
@@ -50,7 +55,8 @@ function increasing(row: Record<string, unknown>, prior: Record<string, unknown>
 }
 type Sources = Map<string, Record<string, unknown>[]>;
 /** Every ownerless row must resolve to this snapshot's qualified actual parent, never a guessed task. */
-function closedSourceGraph(sources: Sources): boolean {
+function closedSourceGraph(sources: Sources,tripTask=false): boolean {
+  const exportSchema=tripTask?tripExportSchema:TURN_SOURCE_SCHEMA;
   const rows = (table: string) => sources.get(table) ?? [];
   const ids = (table: string, key: string) => new Set(rows(table).map(r => String(r[key])));
   const turns = new Set([...ids('public.turns', 'id'), ...ids('turn_private.text_content', 'turn_id')]);
@@ -81,10 +87,11 @@ function closedSourceGraph(sources: Sources): boolean {
   }
   return true;
 }
-export function decodeTurnExportPage(v: unknown, limit: number, owner: string, now: number): (ExportPage & { sourceDigest: string }) | null {
+export function decodeTurnExportPage(v: unknown, limit: number, owner: string, now: number, tripTask=false): (ExportPage & { sourceDigest: string }) | null {
+  const exportSchema=tripTask?tripExportSchema:TURN_SOURCE_SCHEMA;
   if (!identifier(owner) || !Number.isSafeInteger(limit) || limit < 1 || limit > 100 || !Number.isFinite(now)
     || !record(v) || !exact(v, ['schemaVersion', 'section', 'sourceDigest', 'items', 'hasMore', 'nextCursor', 'sectionComplete'])
-    || v.schemaVersion !== TURN_EXPORT_SCHEMA || v.section !== 'snapshot' || !hash(v.sourceDigest) || !Array.isArray(v.items) || v.items.length !== 1
+    || v.schemaVersion !== (tripTask?'turn-trip-core-export/1':TURN_EXPORT_SCHEMA) || v.section !== 'snapshot' || !hash(v.sourceDigest) || !Array.isArray(v.items) || v.items.length !== 1
     || v.hasMore !== false || v.nextCursor !== null || v.sectionComplete !== true || Buffer.byteLength(JSON.stringify(v), 'utf8') > TURN_LIMITS.maxBytes) return null;
   const item = v.items[0];
   if (!record(item) || !exact(item, ['ownerId', 'sources', 'operations', 'fences', 'sourceIdentityKeys', 'sourceRows', 'sourceAuthorities']) || item.ownerId !== owner
@@ -108,7 +115,8 @@ export function decodeTurnExportPage(v: unknown, limit: number, owner: string, n
     dataRows += group.rows.length; if (dataRows > TURN_LIMITS.tableRows) return null;
     sources.set(spec.relation, group.rows);
   }
-  if (item.sourceRows.data !== dataRows || dataRows + item.operations.length + item.fences.length + item.sourceIdentityKeys.length > TURN_LIMITS.tableRows || !closedSourceGraph(sources)) return null;
+  if(!tripTask&&(sources.get('turn_private.service_tasks')??[]).some(t=>t.expected_result==='trip_modification'))return null;
+  if (item.sourceRows.data !== dataRows || dataRows + item.operations.length + item.fences.length + item.sourceIdentityKeys.length > TURN_LIMITS.tableRows || !closedSourceGraph(sources,tripTask)) return null;
   const authorityPairs = new Set<string>();
   for (const group of sources.values()) for (const row of group) {
     for (const [policyKey, consentKey] of [['policy_id', 'consent_id'], ['planning_policy_id', 'planning_consent_id']])
@@ -116,7 +124,7 @@ export function decodeTurnExportPage(v: unknown, limit: number, owner: string, n
   }
   let previousOperation = ''; const terminalSensitiveOperations = new Map<string, Record<string, number>>();
   for (const operation of item.operations) {
-    if (!record(operation) || !identifier(operation.requestId) || operation.requestId <= previousOperation || !validOperationRow(operation, owner, now)) return null;
+    if (!record(operation) || !identifier(operation.requestId) || operation.requestId <= previousOperation || !(tripTask?validTripPrivacyOperationRow(operation,owner,now):validOperationRow(operation, owner, now))) return null;
     previousOperation = operation.requestId;
     if (operation.scope === 'turn-sensitive-data/1' && operation.state === 'erased') {
       const decision = operation.decision as { erasedCounts: Record<string, number> };
@@ -136,7 +144,7 @@ export function decodeTurnExportPage(v: unknown, limit: number, owner: string, n
   for (const identity of item.sourceIdentityKeys) {
     if (!record(identity) || !exact(identity, ['requestId', 'relation', 'pk']) || !identifier(identity.requestId)
       || !terminalSensitiveOperations.has(identity.requestId) || typeof identity.relation !== 'string' || !record(identity.pk)) return null;
-    const spec = schema.find(s => s.relation === identity.relation && s.effect === 'erase');
+    const spec = (tripTask?schema:originalSchema).find(s => s.relation === identity.relation && s.effect === 'erase');
     const pk = identity.pk;
     if (!spec || !exact(pk, spec.pk) || 'owner_id' in pk && pk.owner_id !== owner || !spec.pk.every(key => {
       const column = spec.columns.find(c => c.name === key);
@@ -145,13 +153,13 @@ export function decodeTurnExportPage(v: unknown, limit: number, owner: string, n
     if (previousIdentity && (identity.requestId < previousIdentity.requestId
       || identity.requestId === previousIdentity.requestId && (identity.relation < previousIdentity.relation
         || identity.relation === previousIdentity.relation && !increasing(pk, previousIdentity.pk, spec)))) return null;
-    const actual = identityCounts.get(identity.requestId) ?? Object.fromEntries(ERASED_KEYS.map(k => [k, 0]));
+    const actual = identityCounts.get(identity.requestId) ?? Object.fromEntries([...ERASED_KEYS,...(tripTask?TRIP_PRIVATE_SOURCE_KEYS:[])].map(k => [k, 0]));
     actual[spec.countKey]++; identityCounts.set(identity.requestId, actual);
     previousIdentity = { requestId: identity.requestId, relation: identity.relation, pk };
   }
   // One immutable key per actual erased source row; omission cannot be disguised by a matching empty counter.
   for (const [requestId, erased] of terminalSensitiveOperations)
-    if (!ERASED_KEYS.every(k => (identityCounts.get(requestId)?.[k] ?? 0) === erased[k])) return null;
+    if (![...ERASED_KEYS,...(tripTask?TRIP_PRIVATE_SOURCE_KEYS:[])].every(k => (identityCounts.get(requestId)?.[k] ?? 0) === erased[k])) return null;
   return { items: structuredClone(v.items), sourceDigest: v.sourceDigest, hasMore: false, nextCursor: null, sectionComplete: true };
 }
 export type TurnExportHandler = ExportHandler & { progress(): { pages: number; rows: number; terminalSections: number }; matchesReceipt(receipt: ExportModuleReceipt | undefined): boolean };
@@ -168,7 +176,7 @@ export function turnExportHandler(lease: ExportLease, domain: ExportDomainRPC, n
     page: async (section, cursor, limit, signal) => {
       if (section !== 'snapshot' || cursor !== null || !Number.isSafeInteger(limit) || limit < 1 || limit > 100 || signal.aborted || captured && captured.limit !== limit) throw Error('Turn export unavailable');
       const v = await domain('turn_page', { requestId: lease.requestId, leaseId: lease.leaseId, generation: lease.generation, section, cursor, limit }, signal);
-      const decoded = decodeTurnExportPage(v, limit, lease.ownerId, now());
+      const decoded = decodeTurnExportPage(v, limit, lease.ownerId, now(),record(v)&&v.schemaVersion==='turn-trip-core-export/1');
       if (!decoded || signal.aborted) throw Error('Turn export unavailable');
       const encoded = exportCanonical({ snapshot: decoded.items }), sourceDigest = createHash('sha256').update(encoded, 'utf8').digest('hex');
       if (sourceDigest !== decoded.sourceDigest || captured && captured.encoded !== encoded) throw Error('Turn export unavailable');

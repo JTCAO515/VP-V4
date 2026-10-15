@@ -53,12 +53,12 @@ test('ordinary owner → canonical goal → original worker candidate → exact 
  await assert.rejects(f.call(a,'confirm_and_apply_trip_proposal',[proposal.proposalId,uuid(),proposal.proposalDigest]),/STALE_BASIS/);
  await db(`update turn_private.assistant_goals set scope_version=${sourceBefore} where id='${goal.goalId}'`);
  // An error at settlement rolls back the ORIGINAL writer's Trip/snapshot/events.
- await db(`create function turn_private.agent008_fail_settlement() returns trigger language plpgsql as $$begin if NEW.state='settled' then raise exception 'INJECTED_SETTLEMENT_FAILURE';end if;return NEW;end$$;create trigger agent008_fail_settlement before update on turn_private.service_task_capacity for each row execute function turn_private.agent008_fail_settlement();`);
- await assert.rejects(f.call(a,'confirm_and_apply_trip_proposal',[proposal.proposalId,uuid(),proposal.proposalDigest]),/INJECTED_SETTLEMENT_FAILURE/);
+ // Existing original LAUNCH fault hook fails AFTER Trip/event/settlement/idempotency.
+ const faultSQL=`set app.ai10_fault_at='trip_audit_events';set request.jwt.claim.role='authenticated';set request.jwt.claim.sub='${a.owner}';set request.jwt.claims='${JSON.stringify({role:'authenticated',is_anonymous:false,session_id:a.session})}';set role authenticated;select public.confirm_and_apply_trip_proposal('${proposal.proposalId}','${uuid()}','${proposal.proposalDigest}');`;
+ await assert.rejects(db(faultSQL),/AI10_FAULT_trip_audit_events/);
  assert.equal((await db(`select head_version from public.trips where id='${a.trip}'`))[0].head_version,0);
  assert.equal((await db(`select count(*)::int n from public.trip_events where proposal_id='${proposal.proposalId}'`))[0].n,0);
  assert.equal((await db(`select state from turn_private.service_task_capacity where task_id='${admitted.taskId}'`))[0].state,'reserved');
- await db('drop trigger agent008_fail_settlement on turn_private.service_task_capacity;drop function turn_private.agent008_fail_settlement()');
  const key=uuid();
  const raced=await Promise.all([f.call(a,'confirm_and_apply_trip_proposal',[proposal.proposalId,key,proposal.proposalDigest]),f.call(a,'confirm_and_apply_trip_proposal',[proposal.proposalId,key,proposal.proposalDigest])]);assert.deepEqual(raced.sort(),['(already_applied,1)','(applied,1)']);
  assert.equal((await db(`select state from turn_private.service_task_capacity where task_id='${admitted.taskId}'`))[0].state,'settled');

@@ -36,3 +36,9 @@ export function parseTripTaskControl(v:unknown):TripTaskControl|null {
 }
 import {parseScopedEditRequest} from '../trip/scoped-edit/contract.ts';
 function parseScopedControl(v:unknown,action:string){const p=parseScopedEditRequest(v);return p?.action===action;}
+
+export type TripTaskContinuation=Readonly<{schemaVersion:'trip-service-task/1';action:'trip_continue';taskId:string;parentTurnId:string;operationId:string;relationship:'clarification'|'repair';text:string}>;
+export function parseTripTaskContinuation(v:unknown):TripTaskContinuation|null{
+ return record(v)&&exact(v,['schemaVersion','action','taskId','parentTurnId','operationId','relationship','text'])&&v.schemaVersion==='trip-service-task/1'&&v.action==='trip_continue'
+ &&uuid(v.taskId)&&uuid(v.parentTurnId)&&uuid(v.operationId)&&['clarification','repair'].includes(String(v.relationship))&&typeof v.text==='string'&&v.text.trim().length>0&&v.text.length<=4000&&!v.text.includes('\0')?v as TripTaskContinuation:null;
+}

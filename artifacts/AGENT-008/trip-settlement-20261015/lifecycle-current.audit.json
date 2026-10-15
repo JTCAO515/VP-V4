@@ -91,7 +91,7 @@
     {
       "signature": "turn_data_private.runtime_supported_v1()",
       "before": "0d4b53ec4f732869aad9033c5bbc624d93d8728a3b6f57a89df54d59d1ffd1a4",
-      "after": "4547ffd69a1f631ee449354a0596156d84daee7cfa86a620332366ee9a17ea52",
+      "after": "e0faabedffc77fb2035e33275603a40674ef374e2c4a4a8003c47bbb804841df",
       "acl": "{postgres=X/postgres}",
       "replacements": [
         [
@@ -117,6 +117,18 @@
         [
           "\"turn_data_private.schema_supported_v1()\":\"73d47b42837fc6a228570e905e190063\"",
           "\"turn_data_private.schema_supported_v1()\":\"cbfc3fecfd9068bfd14b563eb50fcf55\""
+        ],
+        [
+          "\"public.privacy_turn_data_v1(text,text,bigint)\":\"ecff98df594e07be01d4494c678cbd46\"",
+          "\"public.privacy_turn_data_v1(text,text,bigint)\":\"433abb6b15269b0395bfec429985357e\""
+        ],
+        [
+          "\"turn_data_private.export_source_v1(uuid)\":\"e860e7761c0d7285284277477a53c8ca\"",
+          "\"turn_data_private.export_source_v1(uuid)\":\"a0b10afd69b0bd350095e81b8fcead72\""
+        ],
+        [
+          "\"export_private.core_turn_page_v1(jsonb)\":\"002edd469b59c83d7c7a570a30bdf7ed\"",
+          "\"export_private.core_turn_page_v1(jsonb)\":\"5beecd36c6e7b6a162b84a11e05583a2\""
         ]
       ]
     }

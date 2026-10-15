@@ -1,3 +1,4 @@
+import {persistTripClarification,persistTripTechnicalFailure} from '../../service-task-trip/service.ts';
 import { CostGuard } from '../../model-gateway/budget/index.ts';
 import { runWithDurableBudget, type BudgetRpc, type BudgetAttempt } from '../../model-gateway/budget/durable.ts';
 import { invokeScopedTripEditProtocol, type ProtocolTransport, type ProtocolUsage } from '../../model-gateway/adapters/provider-protocol.ts';
@@ -42,9 +43,9 @@ export async function executeScopedTripEdit(lease: DurableTurnLease, ports: Scop
       if(signal.aborted)return 'pending' as const;
       try {return valid(await ports.rpc('read_scoped_trip_edit_completion_v1',params,signal))&&!signal.aborted?'declined' as const:'pending' as const;} catch {return 'pending' as const;}
     };
-    const recover=async(s:AbortSignal):Promise<SavedOutput|null>=>savedOutput(await ports.rpc('read_scoped_trip_edit_output_v1',params,s),b);
+    const recover=async(s:AbortSignal):Promise<SavedOutput|null>=>savedOutput(await ports.rpc('read_scoped_trip_edit_output_v1',params,s),b,input!.taskMode==='trip_modification');
     const previous=await ports.rpc('read_scoped_trip_edit_output_v1',params,signal);
-    let output=savedOutput(previous,b);
+    let output=savedOutput(previous,b,input.taskMode==='trip_modification');
     if(output?.accounting==='pending'){
       // Recover already saved, priced output on the original attempt. Never
       // reserve/dispatch again, and never settle a guessed or missing charge.
@@ -62,7 +63,8 @@ export async function executeScopedTripEdit(lease: DurableTurnLease, ports: Scop
         const attempt:BudgetAttempt={scopeId:b.scopeId,ownerId:b.ownerId,taskId:b.taskId,attemptId:b.attemptId,provider:b.provider,model:b.model,priceVersion:b.priceVersion,reservedMicros:input.reservedMicros,timeoutMs:input.timeoutMs};
         await ports.recordUsage(validatedPlanningUsageReceipt({schemaVersion:'validated-planning-usage/1',attempt,turnId:b.turnId,policyId:b.policyId,usage:usage.usage,actualMicros:usage.actualMicros,observedAt:new Date(ports.now()).toISOString()},{taskId:b.taskId,turnId:b.turnId,planningPolicyId:b.policyId}),signal);
         await ports.rpc('scoped_trip_edit_budget_v1',{...params,p_effect:'finish',p_reserved_micros:null,p_actual_micros:usage.actualMicros,p_outcome:'settle'},signal).catch(()=>{});
-        return usage.outcome==='safety_blocked'?decline('safety_refused'):'pending';
+        if(usage.outcome==='safety_blocked')return decline('safety_refused');
+        return input.taskMode==='trip_modification'&&await persistTripTechnicalFailure(b,ports.rpc,signal)?'persisted':'pending';
       }
       // SQL accepts this only for a recorded safety-blocked outcome with settled
       // known usage. Missing or different evidence stays pending.
@@ -81,7 +83,7 @@ export async function executeScopedTripEdit(lease: DurableTurnLease, ports: Scop
       const guard=new CostGuard({windowMs:120000,perUserAttempts:8,perTaskAttempts:8,turnDeadlineMs:120000,maxModelSteps:1,maxToolSteps:1}).startTurn({userId:b.ownerId,taskId:b.taskId});
       if(guard.kind!=='turn')return 'pending';
       const result=await runWithDurableBudget(a,budget,async s=>{
-        const value=await invokeScopedTripEditProtocol({requestId:b.attemptId,text:promptInput(input!)},{provider:b.provider,endpoint:input!.endpoint,maxOutputTokens:input!.maxOutputTokens,timeoutMs:input!.timeoutMs},()=>allow('dispatch',s),guard,ports.transport,s);
+        const value=await invokeScopedTripEditProtocol({requestId:b.attemptId,text:promptInput(input!),...(input!.taskMode?{taskMode:input!.taskMode}:{})},{provider:b.provider,endpoint:input!.endpoint,maxOutputTokens:input!.maxOutputTokens,timeoutMs:input!.timeoutMs},()=>allow('dispatch',s),guard,ports.transport,s);
         // Invalid output may still have billable usage; do not invent a free call.
         const usage=value.usage;
         const priceable=value.kind==='protocol_validated'||value.kind==='unavailable'&&value.code==='SAFETY_BLOCKED';
@@ -93,9 +95,9 @@ export async function executeScopedTripEdit(lease: DurableTurnLease, ports: Scop
         const observed=savedUsage(await ports.rpc('read_scoped_trip_edit_usage_v1',params,s),b);
         if(!observed||observed.outcome!==(value.kind==='unavailable'?'safety_blocked':'protocol_validated')||!sameValue(observed.usage,usage)||observed.actualMicros!==actual)throw Error('Scoped usage acknowledgement unavailable');
         if(value.kind!=='protocol_validated')return {value,actualMicros:actual};
-        const parsed=parseScopedModelOutput(value.output);if(!parsed)return {value,actualMicros:actual};
+        const parsed=parseScopedModelOutput(value.output,input!.taskMode==='trip_modification');if(!parsed)return {value,actualMicros:actual};
         if(parsed.kind==='candidate')candidatePatch(input!,parsed.edits);
-        if(!await current(s))return {value,actualMicros:null};
+        if(!await current(s))return {value,actualMicros:input!.taskMode==='trip_modification'?actual:null};
         try { await ports.rpc('record_scoped_trip_edit_output_v1',{...params,p_output:parsed,p_usage:usage,p_actual_micros:actual},s); } catch { /* Read-only recovery; never replay provider. */ }
         const saved=await recover(s);
         if(!saved||!sameValue(saved.output,parsed)||!sameValue(saved.usage,usage)||saved.actualMicros!==actual)return {value,actualMicros:null};
@@ -106,6 +108,7 @@ export async function executeScopedTripEdit(lease: DurableTurnLease, ports: Scop
       output=await recover(signal);
     }
     if(!output||output.accounting!=='settled'||!await allow('publish',signal))return 'pending';
+    if(output.output.kind==='clarification')return input.taskMode==='trip_modification'&&await persistTripClarification(b,output.output.question,ports.rpc,signal)?'persisted':'pending';
     if(output.output.kind!=='candidate')return decline(output.output.reason);
     const patch=candidatePatch(input,output.output.edits);
     let completed:unknown;

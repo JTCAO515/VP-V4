@@ -15,9 +15,13 @@ try{
  const defs=await db(`select oid::regprocedure::text signature,prosrc,proacl::text acl,pg_get_functiondef(oid) definition from pg_proc where oid in(${signatures.map(s=>"'"+s+"'::regprocedure").join(',')})`);
  const catalog="select coalesce(jsonb_agg(jsonb_build_object('relation',n.nspname||'.'||c.relname,'columns',(select jsonb_agg(jsonb_build_array(a.attname,format_type(a.atttypid,a.atttypmod),a.attnotnull) order by a.attnum) from pg_attribute a where a.attrelid=c.oid and a.attnum>0 and not a.attisdropped),'constraints',(select jsonb_agg(pg_get_constraintdef(k.oid) order by k.conname) from pg_constraint k where k.conrelid=c.oid)) order by n.nspname,c.relname),'[]'::jsonb) from pg_class c join pg_namespace n on n.oid=c.relnamespace where c.relkind='r' and n.nspname not in('pg_catalog','information_schema','extensions','auth','result_data_private','storage','realtime','_realtime','vault','supabase_functions','supabase_migrations')";
  const before=(await db(catalog))[0].coalesce;
+ const originalAPIs=await db("select oid::regprocedure::text signature,prosrc,proacl::text acl,pg_get_functiondef(oid) definition from pg_proc where oid in('public.privacy_turn_data_v1(text,text,bigint)'::regprocedure,'public.privacy_conversation_data_v1(text,text,bigint)'::regprocedure,'turn_data_private.export_source_v1(uuid)'::regprocedure,'export_private.core_turn_page_v1(jsonb)'::regprocedure)");
  for(const sig of signatures.filter(s=>/supported|schema_v1/.test(s)))assert.equal((await db('select '+sig+' v'))[0].v,true,sig);
  await db('begin;'+upgrade.split(marker)[0]+'commit;');
- const after=(await db(catalog))[0].coalesce;assert.equal(before.length,after.length);
+ const after=(await db(catalog))[0].coalesce;
+ const changedAPIs=[];
+ if(upgrade.includes('-- AGENT008_TRIP_PRIVACY_VERSION_BEGIN')){const audited=JSON.parse(readFileSync('artifacts/AGENT-008/trip-settlement-20261015/trip-privacy-source.audit.json','utf8')).functions;
+ for(const old of originalAPIs){const actual=(await db("select prosrc,proacl::text acl,pg_get_functiondef(oid) definition from pg_proc where oid='"+old.signature+"'::regprocedure"))[0];const a=audited.find(a=>a.legacyOnlyTripRecordRefusal&&a.original===old.signature);assert.ok(a);assert.equal(sha(old.prosrc),a.before);assert.equal(sha(actual.prosrc),a.after);assert.equal(actual.acl,old.acl);assert.equal(actual.definition,old.definition.replace(old.prosrc,()=>actual.prosrc));changedAPIs.push({d:old,src:actual.prosrc,replacements:[[old.prosrc,actual.prosrc]]});}}assert.equal(before.length,after.length);
  const delta=[];
  for(let i=0;i<before.length;i++){
   const b=before[i],a=after[i];assert.equal(a.relation,b.relation);
@@ -57,7 +61,7 @@ try{
   changes.set(d.signature,{d,src,replacements});
  }
  const d=defs.find(d=>d.signature.includes('runtime_supported'));let src=d.prosrc;const replacements=[];
- for(const [sig,c] of changes){const old=JSON.stringify(sig)+':'+JSON.stringify(md5(c.d.definition));if(src.includes(old)){assert.equal(src.split(old).length,2);const n=JSON.stringify(sig)+':'+JSON.stringify(md5(c.replacements.reduce((definition,[a,b])=>definition.replace(a,()=>b),c.d.definition)));src=src.replace(old,()=>n);replacements.push([old,n]);}}
+ for(const [sig,c] of [...changes,...changedAPIs.map(c=>[c.d.signature,c])]){const old=JSON.stringify(sig)+':'+JSON.stringify(md5(c.d.definition));if(src.includes(old)){assert.equal(src.split(old).length,2);const n=JSON.stringify(sig)+':'+JSON.stringify(md5(c.replacements.reduce((definition,[a,b])=>definition.replace(a,()=>b),c.d.definition)));src=src.replace(old,()=>n);replacements.push([old,n]);}}
  changes.set(d.signature,{d,src,replacements});
  const lit=s=>"'"+s.replaceAll("'","''")+"'";
  const sql=[marker,'-- Fixed original source hashes and declared two-table delta only. No catalog adoption.'];

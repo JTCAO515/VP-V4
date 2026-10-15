@@ -64,4 +64,4 @@ export function validCandidateEdit(v: unknown): v is CandidateEdit {
   return v.kind === "add_item" && exact(v, ["kind", "sourceItemId", "toDayId"]) && identifier(v.sourceItemId) && identifier(v.toDayId);
 }
 
-export { parseTripTaskRequest, parseTripTaskControl } from '../../service-task-trip/contract.ts';
+export { parseTripTaskRequest, parseTripTaskControl, parseTripTaskContinuation } from '../../service-task-trip/contract.ts';

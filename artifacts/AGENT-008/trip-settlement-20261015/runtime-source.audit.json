@@ -1,0 +1,1224 @@
+{
+  "namespaces": [
+    "scoped_edit_private.candidate_patch_v1(scoped_edit_private.contexts_v1,uuid,uuid,jsonb)",
+    "scoped_edit_private.cleanup_expired_v1(integer)",
+    "scoped_edit_private.cleanup_trip_v1()",
+    "scoped_edit_private.confirm_guard_v1()",
+    "scoped_edit_private.context_wire_v1(scoped_edit_private.contexts_v1)",
+    "scoped_edit_private.current_v1(scoped_edit_private.contexts_v1)",
+    "scoped_edit_private.diff_v1(scoped_edit_private.contexts_v1,jsonb)",
+    "scoped_edit_private.enqueue_v1(scoped_edit_private.contexts_v1,uuid)",
+    "scoped_edit_private.export_metadata_v1(uuid,uuid,integer,text,integer)",
+    "scoped_edit_private.export_records_v1(uuid)",
+    "scoped_edit_private.guard_candidate_v1(scoped_edit_private.contexts_v1,jsonb,boolean)",
+    "scoped_edit_private.hash_v1(jsonb)",
+    "scoped_edit_private.immutable_v1()",
+    "scoped_edit_private.legacy_patch_v1(jsonb,jsonb)",
+    "scoped_edit_private.manual_patch_v1(scoped_edit_private.contexts_v1,jsonb)",
+    "scoped_edit_private.memory_basis_v1(uuid)",
+    "scoped_edit_private.prewrite_v1(uuid,text)",
+    "scoped_edit_private.proposal_guard_v1()",
+    "scoped_edit_private.publish_v1(scoped_edit_private.contexts_v1,uuid,jsonb)",
+    "scoped_edit_private.scope_v1(jsonb)",
+    "scoped_edit_private.select_v1(scoped_edit_private.contexts_v1,uuid,jsonb)",
+    "scoped_edit_private.select_without_trip_task_v1(scoped_edit_private.contexts_v1,uuid,jsonb)",
+    "scoped_edit_private.service_current_v1(scoped_edit_private.contexts_v1)",
+    "scoped_edit_private.settings_immutable_v1()",
+    "scoped_edit_private.source_v1(uuid,uuid,integer,jsonb)",
+    "scoped_edit_private.unavailable_v1(text)",
+    "scoped_edit_private.valid_candidate_edit_v1(jsonb)",
+    "scoped_edit_private.valid_mutation_v1(jsonb)",
+    "scoped_edit_private.valid_usage_v1(jsonb)",
+    "scoped_edit_private.work_current_before_trip_v1(jsonb)",
+    "scoped_edit_private.work_current_v1(jsonb)",
+    "scoped_edit_private.worker_policy_v1(uuid,uuid,uuid)",
+    "scoped_edit_private.worker_source_v1(scoped_edit_private.contexts_v1)",
+    "turn_private.act_directions_v1(uuid,uuid,text,jsonb,text)",
+    "turn_private.append_assistant_event_v1(text,text)",
+    "turn_private.assistant_delivery_source_v1(uuid,jsonb)",
+    "turn_private.assistant_event_eligible_v1(turn_private.assistant_events_v1,uuid)",
+    "turn_private.assistant_event_erase_authorized_v1(turn_private.assistant_events_v1)",
+    "turn_private.assistant_event_erase_source_v1()",
+    "turn_private.assistant_event_immutable_v1()",
+    "turn_private.assistant_event_link_v1(uuid,uuid,uuid)",
+    "turn_private.assistant_event_new_conversation_v1()",
+    "turn_private.assistant_event_source_hook_v1()",
+    "turn_private.assistant_task_member_v1(uuid,uuid,uuid)",
+    "turn_private.assistant_travel_current_basis_v1(uuid,uuid)",
+    "turn_private.bind_planning_travel_intake_v1(uuid,uuid,uuid,bigint,integer,integer,text,jsonb,jsonb,uuid,text)",
+    "turn_private.bind_planning_v2_model_attempt_v1(uuid,uuid,uuid,uuid,uuid,uuid,uuid,uuid,text,text,text,text,text)",
+    "turn_private.bound_task_history()",
+    "turn_private.cancel_chat_turn_unmetered(uuid)",
+    "turn_private.cancel_unclaimable_turn_v1(uuid,uuid)",
+    "turn_private.claim_directions_inline_v1(uuid,uuid)",
+    "turn_private.claim_planning_v2_place_v1(uuid,uuid,uuid,uuid,text,text)",
+    "turn_private.claim_text_mode(uuid,uuid,text)",
+    "turn_private.claim_trip_service_work_v1(uuid,uuid,uuid)",
+    "turn_private.collect_assistant_turn_events_v1(uuid)",
+    "turn_private.comparison_common_basis_state(turn_private.result_artifacts,turn_private.result_revisions)",
+    "turn_private.complete_directions_work_v1(uuid,uuid,text,text)",
+    "turn_private.complete_selected_grounded_work(uuid,uuid,text,text,text)",
+    "turn_private.complete_text_work_unmetered(uuid,uuid,text,text)",
+    "turn_private.complete_trip_clarification_v1(jsonb)",
+    "turn_private.complete_trip_failure_v1(jsonb)",
+    "turn_private.create_planning_v2_request_intent_v1(uuid,uuid,uuid,uuid,uuid,uuid,uuid,uuid,text,text,text,text,text,uuid,text,text,text,bigint)",
+    "turn_private.directions_append_patch_v1(jsonb,jsonb,date,text,integer)",
+    "turn_private.directions_current_basis_v1(uuid,uuid)",
+    "turn_private.directions_domain_state_v1(uuid,uuid,jsonb)",
+    "turn_private.directions_erase_authorized_v1(uuid,jsonb)",
+    "turn_private.directions_exact_v1(jsonb,text[])",
+    "turn_private.directions_export_page_v1(uuid,text,uuid,integer)",
+    "turn_private.directions_export_source_digest_v1(uuid)",
+    "turn_private.directions_history_readable_v1(uuid,uuid,integer,uuid)",
+    "turn_private.directions_initial_projection_v1(jsonb,text)",
+    "turn_private.directions_input_v1(text,jsonb)",
+    "turn_private.directions_integer_v1(jsonb,numeric,numeric)",
+    "turn_private.directions_options_v1(jsonb,text)",
+    "turn_private.directions_parents_v1(text,jsonb)",
+    "turn_private.directions_read_intake_v1(uuid,uuid,uuid,uuid)",
+    "turn_private.directions_relative_projection_v1(jsonb,text,text)",
+    "turn_private.directions_schema_members_v1()",
+    "turn_private.directions_source_witness_v1(uuid,text,jsonb)",
+    "turn_private.directions_strings_v1(jsonb,integer,integer)",
+    "turn_private.directions_task_output_v1(text,boolean)",
+    "turn_private.directions_text_v1(jsonb,integer)",
+    "turn_private.directions_uuid_v1(jsonb)",
+    "turn_private.directions_write_basis_v1(uuid,uuid,uuid,uuid)",
+    "turn_private.erase_directions_witness_v1(uuid,jsonb)",
+    "turn_private.erase_trip_objective_v1(uuid)",
+    "turn_private.explicit_intake_memory_binding_v1(uuid,jsonb)",
+    "turn_private.guard_directions_export_source_v1()",
+    "turn_private.guard_directions_linked_parent_v1()",
+    "turn_private.guard_directions_operation_v1()",
+    "turn_private.guard_directions_source_delete_v1()",
+    "turn_private.guard_goal_terminal_scope_v1()",
+    "turn_private.guard_goal_trip_deletion_v1()",
+    "turn_private.guard_metered_task_type()",
+    "turn_private.guard_metered_thread_trip()",
+    "turn_private.guard_planning_v2_checkpoint_v1()",
+    "turn_private.guard_planning_v2_local_journal_v1()",
+    "turn_private.guard_planning_v2_model_binding_v1()",
+    "turn_private.guard_text_capacity_scope()",
+    "turn_private.hide_text_content()",
+    "turn_private.immutable_directions_source_v1()",
+    "turn_private.immutable_planning_consent_v1()",
+    "turn_private.immutable_planning_intake_binding_v1()",
+    "turn_private.immutable_planning_policy_v1()",
+    "turn_private.immutable_text_policy()",
+    "turn_private.immutable_travel_intake_v1()",
+    "turn_private.journeys_goal_index_snapshot_v1(uuid)",
+    "turn_private.legacy_result_basis_state_v2(turn_private.result_artifacts,turn_private.result_revisions)",
+    "turn_private.lock_assistant_delivery_v1(uuid,jsonb,jsonb)",
+    "turn_private.lock_directions_witness_v1(uuid,text,jsonb,jsonb)",
+    "turn_private.lock_text_work(uuid,uuid)",
+    "turn_private.lock_turn(uuid,uuid,uuid)",
+    "turn_private.planning_action_basis(uuid,uuid,uuid,jsonb)",
+    "turn_private.planning_policy_current(uuid)",
+    "turn_private.planning_v2_binding_bytes_v1(jsonb)",
+    "turn_private.planning_v2_checkpoint_basis_v1(uuid,uuid,uuid,uuid,text,text)",
+    "turn_private.planning_v2_collector_principal(uuid)",
+    "turn_private.planning_v2_completed_current(uuid)",
+    "turn_private.planning_v2_content_digest(jsonb)",
+    "turn_private.planning_v2_exact_model_basis(uuid,uuid,uuid,uuid,uuid,uuid,uuid,uuid,text,text,text,text,text)",
+    "turn_private.planning_v2_immutable_collector_record()",
+    "turn_private.planning_v2_integer_bytes_v1(jsonb,bigint,boolean)",
+    "turn_private.planning_v2_journal_wire_v1(turn_private.planning_v2_model_local_journal)",
+    "turn_private.planning_v2_json_string_v1(text)",
+    "turn_private.planning_v2_local_observation_v1(jsonb,text,uuid,text)",
+    "turn_private.planning_v2_model_attempt_v1(uuid,uuid)",
+    "turn_private.planning_v2_model_binding_basis_v1(uuid,uuid,uuid,uuid,uuid,uuid,uuid,uuid,text,text,text,text,text)",
+    "turn_private.planning_v2_run_basis(uuid,uuid,uuid,uuid,text,text)",
+    "turn_private.planning_v2_server_ms_v1(timestamp with time zone)",
+    "turn_private.planning_v2_usage_cost(jsonb,jsonb)",
+    "turn_private.planning_v2_valid_ms_v1(jsonb)",
+    "turn_private.project_planning_qualified_comparison_v1(uuid,uuid,uuid,text,text,jsonb,text)",
+    "turn_private.project_result_display_v2(jsonb,text)",
+    "turn_private.proposal_reference_current_v1(uuid,uuid,integer,jsonb)",
+    "turn_private.publish_result_v1(uuid,uuid,integer,uuid,uuid,uuid,uuid,uuid,integer,integer,jsonb,jsonb)",
+    "turn_private.publish_result_v2(uuid,uuid,integer,uuid,uuid,uuid,uuid,uuid,integer,integer,jsonb,jsonb,jsonb,boolean)",
+    "turn_private.qa_consumer_window_v1(jsonb,text)",
+    "turn_private.qa_history_v1(uuid)",
+    "turn_private.qa_link_mode_v1()",
+    "turn_private.qa_lock_work_v1(uuid,uuid)",
+    "turn_private.qualify_assistant_selected_sources_v2(uuid,jsonb,text,boolean)",
+    "turn_private.read_planning_qualified_intake_v1(uuid,uuid,uuid)",
+    "turn_private.read_planning_v2_checkpoints_v1(uuid,uuid,uuid,uuid,text,text)",
+    "turn_private.read_planning_v2_model_binding_v1(uuid,uuid,uuid,uuid,uuid,uuid,uuid,uuid,text,text,text,text,text)",
+    "turn_private.read_planning_v2_request_journal_v1(uuid,uuid,uuid,uuid,uuid,uuid,uuid,uuid,text,text,text,text,text,uuid,text,text,text)",
+    "turn_private.record_planning_v2_response_v1(uuid,uuid,uuid,uuid,uuid,uuid,uuid,uuid,text,text,text,text,text,uuid,text,bigint,jsonb,jsonb)",
+    "turn_private.record_planning_v2_send_ack_v1(uuid,uuid,uuid,uuid,uuid,uuid,uuid,uuid,text,text,text,text,text,uuid,text,bigint,jsonb)",
+    "turn_private.reject_assistant_source_receipt_update_v2()",
+    "turn_private.reject_result_revision_update()",
+    "turn_private.reject_unavailable_intake_completion_v1()",
+    "turn_private.release_trip_objective_v1(uuid,text)",
+    "turn_private.require_text_task()",
+    "turn_private.require_trip_runtime_v1()",
+    "turn_private.reserve_model_budget_unbound(uuid,uuid,uuid,uuid,text,text,text,bigint)",
+    "turn_private.reserve_service_task_capacity(uuid,uuid)",
+    "turn_private.result_basis_state(turn_private.result_artifacts,turn_private.result_revisions)",
+    "turn_private.result_domain_state_v2(uuid,uuid,uuid,integer,jsonb)",
+    "turn_private.result_evidence_current_v2(jsonb)",
+    "turn_private.result_int_v2(jsonb,integer)",
+    "turn_private.result_state_v2(turn_private.result_artifacts,turn_private.result_revisions)",
+    "turn_private.result_summary_v2(jsonb)",
+    "turn_private.result_title_v2(jsonb)",
+    "turn_private.result_translation_projection_v2(uuid,uuid)",
+    "turn_private.result_uuid_v2(jsonb)",
+    "turn_private.retire_assistant_delivery_v1(uuid,jsonb,jsonb)",
+    "turn_private.retire_assistant_event_v1(uuid,bigint)",
+    "turn_private.save_planning_v2_place_v1(uuid,uuid,uuid,uuid,text,text,jsonb)",
+    "turn_private.saved_translation_candidate_v1(uuid,uuid,uuid)",
+    "turn_private.serialize_planning_v2_request_v1(jsonb,uuid,jsonb)",
+    "turn_private.settle_trip_service_task_v1()",
+    "turn_private.submit_directions_v1(uuid,uuid,jsonb,text)",
+    "turn_private.submit_service_task_turn_unmetered(uuid,uuid,uuid,uuid,text,text,uuid,integer,text,uuid)",
+    "turn_private.task_history(uuid)",
+    "turn_private.terminal(uuid,text,integer)",
+    "turn_private.text_owner()",
+    "turn_private.text_policy_current(uuid)",
+    "turn_private.translation_numbers_v2(text)",
+    "turn_private.trip_confirmation_enter_v1(uuid)",
+    "turn_private.trip_objective_current_v1(uuid,jsonb)",
+    "turn_private.trip_objective_source_erased_v1()",
+    "turn_private.trip_privacy_assert_redacted_v1(uuid,jsonb)",
+    "turn_private.trip_privacy_c_api_v1(text,text,bigint)",
+    "turn_private.trip_privacy_c_binding_v1(conversation_data_private.operations_v1)",
+    "turn_private.trip_privacy_c_boundaries_v1(text)",
+    "turn_private.trip_privacy_c_erase_source_v1(uuid,jsonb)",
+    "turn_private.trip_privacy_c_input_v1(jsonb,text,boolean)",
+    "turn_private.trip_privacy_c_lock_source_v1(uuid,jsonb)",
+    "turn_private.trip_privacy_c_preview_v1(conversation_data_private.operations_v1)",
+    "turn_private.trip_privacy_c_receipt_v1(conversation_data_private.operations_v1)",
+    "turn_private.trip_privacy_c_related_v1(text,jsonb,jsonb,uuid[])",
+    "turn_private.trip_privacy_c_source_v1(uuid,text,uuid)",
+    "turn_private.trip_privacy_c_sources_v1()",
+    "turn_private.trip_privacy_c_zero_counts_v1(text)",
+    "turn_private.trip_privacy_context_ids_v1(jsonb)",
+    "turn_private.trip_privacy_documents_v1(text,jsonb)",
+    "turn_private.trip_privacy_erase_order_v1()",
+    "turn_private.trip_privacy_exclusive_v1(uuid,jsonb)",
+    "turn_private.trip_privacy_export_predicate_v1(text)",
+    "turn_private.trip_privacy_goal_writer_v1(uuid,uuid,integer,text)",
+    "turn_private.trip_privacy_graph_v1(uuid,jsonb,jsonb)",
+    "turn_private.trip_privacy_ids_v1(jsonb,jsonb)",
+    "turn_private.trip_privacy_related_v1(text,jsonb,jsonb)",
+    "turn_private.trip_privacy_t_api_v1(text,text,bigint)",
+    "turn_private.trip_privacy_t_binding_v1(turn_data_private.operations_v1)",
+    "turn_private.trip_privacy_t_boundaries_v1(text)",
+    "turn_private.trip_privacy_t_erase_source_v1(uuid,jsonb)",
+    "turn_private.trip_privacy_t_export_source_v1(uuid)",
+    "turn_private.trip_privacy_t_graph_source_v1(uuid,uuid)",
+    "turn_private.trip_privacy_t_input_v1(jsonb,text,boolean)",
+    "turn_private.trip_privacy_t_lock_source_v1(uuid,jsonb)",
+    "turn_private.trip_privacy_t_preview_v1(turn_data_private.operations_v1)",
+    "turn_private.trip_privacy_t_receipt_v1(turn_data_private.operations_v1)",
+    "turn_private.trip_privacy_t_related_v1(text,jsonb,jsonb,jsonb,uuid[],uuid)",
+    "turn_private.trip_privacy_t_source_v1(uuid,uuid)",
+    "turn_private.trip_privacy_t_sources_v1()",
+    "turn_private.trip_privacy_t_zero_counts_v1(text)",
+    "turn_private.trip_proposal_terminal_v1()",
+    "turn_private.trip_rejection_enter_v1(uuid)",
+    "turn_private.trip_service_task_runtime_v1()",
+    "turn_private.trip_worker_terminal_v1()",
+    "turn_private.unknown_planning_v2_model_attempt_v1(uuid,uuid,uuid,uuid,uuid,uuid,uuid,uuid,text,text,text,text,text)",
+    "turn_private.unknown_planning_v2_place_v1(uuid,uuid,uuid,uuid,text,text)",
+    "turn_private.unknown_planning_v2_request_v1(uuid,uuid,uuid,uuid,uuid,uuid,uuid,uuid,text,text,text,text,text,uuid,text,bigint,text)",
+    "turn_private.valid_assistant_selected_sources_v2(jsonb)",
+    "turn_private.valid_comparison_v1(jsonb)",
+    "turn_private.valid_current_v2_completion_proof(uuid)",
+    "turn_private.valid_current_v2_publication_proof(uuid,uuid,integer,uuid,uuid,uuid,uuid,uuid,integer,integer,jsonb,jsonb)",
+    "turn_private.valid_directions_intake_v1(jsonb)",
+    "turn_private.valid_directions_relative_v1(jsonb,jsonb)",
+    "turn_private.valid_explicit_travel_intake_v1(jsonb)",
+    "turn_private.valid_planning_comparison_v1(jsonb,jsonb,text)",
+    "turn_private.valid_planning_observation_v1(text,jsonb)",
+    "turn_private.valid_planning_qualified_comparison_v1(uuid,uuid,uuid,text,text,jsonb,text,jsonb)",
+    "turn_private.valid_planning_v2_place_v1(jsonb,text)",
+    "turn_private.valid_proposal_reference_v1(jsonb)",
+    "turn_private.valid_result_content_v2(jsonb)",
+    "turn_private.valid_result_draft_v2(jsonb)",
+    "turn_private.valid_result_evidence_v2(jsonb)",
+    "turn_private.valid_text(text,integer)",
+    "turn_private.valid_travel_directions_v1(jsonb)",
+    "turn_private.validate_planning_v2_output_v1(jsonb,jsonb)"
+  ],
+  "functions": {
+    "conversation_data_private.schema_supported_v1()": {
+      "source": "36ed281b0292d7e192bd1819c185fe1e366f85fd6d3b1157ff0ed0076d740073",
+      "definition": "62bb93135b4ec8d36e4e06e25c69449ad31c41da25633e581e8fd2d95115ad49",
+      "owner": "postgres",
+      "secdef": false,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "conversation_data_private.sources_v1()": {
+      "source": "c3e03e5e3a17c3a147ab6386db5a6f62f774ae1ab2dab2723e545a92fbeb8f87",
+      "definition": "b52789041c1f6344681de7cf1128f8427a8f8da6163c175f3ed3d31be5a49fe3",
+      "owner": "postgres",
+      "secdef": false,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "sql"
+    },
+    "export_private.core_turn_page_v1(jsonb)": {
+      "source": "9638fd1974c989dc6ea0b33b96418bd98ee2e60b2b603afcfdaedb668a79c93c",
+      "definition": "1053eb1a0283d3acff941705263331f2b24bd8cc2a18bc2d1c3a2d496d6233bf",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "profile_data_private.schema_v1()": {
+      "source": "65de87772d673ce6fe8ca2d81fecc087bac8f00897c73ce816d97c63f805accb",
+      "definition": "b02eedecc414ceacbd21cbece3bb73d4ef3443a98540d684171272cd9a55b139",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "public.cancel_trip_service_task_v1(uuid)": {
+      "source": "4f7b0111dc43beb95cf1aa47385a025272f10be20c72d3ad9286688331f8bc34",
+      "definition": "250aa55dd2de6de9e361bc6e2a28fe4667b480e67cd23e431ccb3d90f18bab16",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "public.complete_text_work(uuid,uuid,text,text)": {
+      "source": "92a4897718905ae02021c7f09a84d79ca625a43e3b4cf36a795b6985dcf232a3",
+      "definition": "4ad911d7565462b7628632e04bc1c394423728699c44b3856bd44bc974adab62",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "public.complete_text_work_before_trip_v1(uuid,uuid,text,text)": {
+      "source": "d1c84c6e193be0c40ca5e6a166a35e8920c98101a83e98d08807df83b56aa01b",
+      "definition": "5ba958a4ec9f120b3d9345bdc6e858a528c92773a18dd4d175876eef6eae34ac",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "public.confirm_and_apply_trip_proposal(uuid,text,text)": {
+      "source": "1103f421e240cb50f45d603b93e4b9cb4363ff0efa66aa1bc694b0d34014c3ee",
+      "definition": "fd5bfbca0bbc8116d3c21df4e1577144ff5879454d18e3237710d270ca2e7f52",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "config": [
+        "search_path=public",
+        "TimeZone=UTC"
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "public.continue_trip_service_task_v1(uuid,uuid,uuid,uuid,text,text)": {
+      "source": "af5b1ff841ee087eb03e127a588bc718e565c6d2a5227a15ebd9e69b168a14a8",
+      "definition": "2e32fe8c09ef2197e6cd7b7e1dc4648d1b6a1bacd10591c7fe6fa98245a0bf63",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "public.privacy_conversation_data_v1(text,text,bigint)": {
+      "source": "08911b36b9b2b697137340ce703e0f7f34123fa0d3f2d4ffcc207969238e1f38",
+      "definition": "0ebd5821d350bc8b7d642a3ef953d60a639f55645b0669a1515ce90936a1a466",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "public.privacy_trip_service_task_v1(uuid,text,text,text,bigint)": {
+      "source": "70445f3d1225acfcf5fde564ef5e10184a47ea416b1617630427b070c3b8fe85",
+      "definition": "93dce215ccc9953f856761f6c9cfe9333f55d006d01d547e5c6243b8f43df835",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "public.privacy_turn_data_v1(text,text,bigint)": {
+      "source": "fcce2e5d1fd62ff7b8df12d9b802ab6e544970218db7d44b7de7f6852178b506",
+      "definition": "f490fa61b5895a05a396189a7532594b0f54a02b8ced1fe5013674eaaab2d065",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "public.record_scoped_trip_edit_destination_v1(jsonb,jsonb,text,text,text,text)": {
+      "source": "0f884f11c8193870e03891f1c75b7729da88154b6af1d09aa5f027b11d5b26e6",
+      "definition": "181a4f1adc4dc0f39c52efa0ffe73a5654826d7e0d1da478a1c1d1d8d46410f0",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "public.record_scoped_trip_edit_output_v1(jsonb,jsonb,jsonb,bigint)": {
+      "source": "043dcc5ec3c4ff054110652431cbbf715d04c67c1c56ebee6f73d7f60b8287e4",
+      "definition": "4b4c8d48023fcc5a470397c4ee0e7cccead6375c61d54be968b726a16cfec4d7",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "public.reject_trip_proposal_v2(uuid)": {
+      "source": "e9eacb99ca1a23078a6f1be9cdf0444c73edd88213e15f7881aa66afe39005d7",
+      "definition": "6a92a7d8cfcec91f863f885a54ba08df0720149dc41c94db2bc4be242b042d24",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "public.submit_scoped_trip_edit_v1(uuid,jsonb)": {
+      "source": "e1ee7eec4e7ec8f44bc4229cb7765bc69ddd28b0a92a4a30974e7381179a935e",
+      "definition": "e846d5e6cccdf65d0468c6e29d09593e8518fe66a033153a570944493aff380d",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\"",
+        "TimeZone=UTC"
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "public.submit_service_task_turn(uuid,uuid,uuid,uuid,text,text,uuid,integer,text,uuid)": {
+      "source": "4fb0ed000d86bcbc0026b19c178a209e6be5eb31eaf8e1af7c9fca4346cc09e4",
+      "definition": "9bd65215f762c72ac55b3def008b6a04a439f5b0db46b900cde7c042f8eda208",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "public.submit_service_task_turn_before_trip_v1(uuid,uuid,uuid,uuid,text,text,uuid,integer,text,uuid)": {
+      "source": "bdc09cc23961cbf19bccbd77cdf0f6da35e6baa61d3c23287c158f902fe14f4d",
+      "definition": "41b7ce0a4f214dbc4427c8eaa14741268aadb041d72471ae0579006f84220844",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "public.submit_trip_service_task_v1(uuid,jsonb,jsonb)": {
+      "source": "8caef8d04f5c4063c534578d47758ad7af32158a143a39c297ae958ec7f0c2ee",
+      "definition": "ec542d0c2a59a97eb22167b978cae4bafdde67144c805e3aa4d69ca1e6ba40e5",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "config": [
+        "search_path=\"\"",
+        "TimeZone=UTC"
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "public.trip_service_task_owner_v1(uuid,text,jsonb)": {
+      "source": "dca60293c53dc1cfe229972b350573c57151429eebd4830094cb491759344d71",
+      "definition": "9f7e5d4aa742d0820cd8eb161f1d0b32ea9aeba1674e91506baaa900c6572cea",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "public.trip_service_task_worker_v1(text,jsonb)": {
+      "source": "0ff682aea690ea5657b0131071d9f0bee4c5178a0eb650ebf45afbe265ccc6d0",
+      "definition": "1b3a29e245f57e5fe6fef34de2460c1013781246864c6dd7e52a9760cc839ef3",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "result_data_private.schema_supported_v1()": {
+      "source": "e5ca02b2fa685bb8918ae5f7f9268fab9898c75f70c0e42ecd6e8fa7c600b60e",
+      "definition": "5f96cfcc3f532e5a0cba5770e6a147568ed18ac9a7e9c54ef8312429931d80b9",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "sql"
+    },
+    "scoped_edit_private.select_v1(scoped_edit_private.contexts_v1,uuid,jsonb)": {
+      "source": "04f34e8b9b7ee7f5fac0f28e7c45620686ac90dd411989a86641355bb544917b",
+      "definition": "905e8500ad8312bd616e4414d8371da47a72de68c0c348e761055b0d47295690",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "scoped_edit_private.select_without_trip_task_v1(scoped_edit_private.contexts_v1,uuid,jsonb)": {
+      "source": "22810261257daae720128b48baa243d19a7ac06a86b7ef26a0c7e1cad0fc4d7a",
+      "definition": "9bd534ed2636be39204b2a4d51ab1ec7d405aad9a6e9b90df192f426d22abd2b",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "scoped_edit_private.work_current_before_trip_v1(jsonb)": {
+      "source": "62ab7d2d3ecd7fe21cebc4893356260818620e115e2f8b49d0b54fabb124a954",
+      "definition": "0387cd1e9fcf35341dafbd40b0d2ff28c600a3c11e675a838a08a65ba46375f9",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "scoped_edit_private.work_current_v1(jsonb)": {
+      "source": "6946de9cc55a43e9139d49b44b9584599308fb34b030d2d5dbb2a7bd5294fb0d",
+      "definition": "4c9d81c1964ec565600ed628da837cd6210d0b5ffd8148f1a8136b8fba9989b9",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_data_private.export_source_v1(uuid)": {
+      "source": "449ae3446b37820e052316f26ea61cf762ee2ed7d64ab45ed50492fa800ed988",
+      "definition": "6bbc855cd8bee180bc78d7cd40c21294e9bc722578705119eb1b0357514221dd",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\"",
+        "TimeZone=UTC"
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_data_private.runtime_supported_v1()": {
+      "source": "e0faabedffc77fb2035e33275603a40674ef374e2c4a4a8003c47bbb804841df",
+      "definition": "7744f468e78fa66e37b60002b290dc02dfba72581517d6e8eb2414ea1ae272cf",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_data_private.schema_supported_v1()": {
+      "source": "e69348c46acc9b504eb927e08f076dc1119b369125628b35f58a4d959392a14d",
+      "definition": "95d509f267bff516b0ff12c917c717304bd92348cff144aa66143a966aec1002",
+      "owner": "postgres",
+      "secdef": false,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_data_private.sources_v1()": {
+      "source": "dc1b2c9ed5fcd9c6e30e40d8adc95372746329e6a83c763c6faa303662b6043f",
+      "definition": "329faa06852b93a03394971fcdbae9ebbbb33fb36f011dae601bdbbc08801651",
+      "owner": "postgres",
+      "secdef": false,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "sql"
+    },
+    "turn_private.claim_trip_service_work_v1(uuid,uuid,uuid)": {
+      "source": "d434de225ee118f7b6f261d2e9a397fc53b52c65df6d4410cbe76e41d8209437",
+      "definition": "c048e33d1ad2494841c403844b271b8cdf37fa8815f6eec92922a52a7a97fd4c",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.complete_trip_clarification_v1(jsonb)": {
+      "source": "8c1c01fc7b7836dd873802ef684cfb7aeafc430590935bf8df83217d5b7136a3",
+      "definition": "0ad1c44862bcc760c9a77bbc40ca095c314e7ee57cbdfe57e8cabd73c7ca8e4f",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.complete_trip_failure_v1(jsonb)": {
+      "source": "3258483c842d30e09cf54cb83cad9255677814dd032b614362569233b179af44",
+      "definition": "2be570aaeb438f49b7f65054458608d5d981f5cc979c37d0a66e000ef547799f",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.erase_trip_objective_v1(uuid)": {
+      "source": "df03e313a777d6a54336dfb3c41775797d4f751e89a971ce35e8fd57b5a1ead8",
+      "definition": "5c007576fab2f5a6ba62468613f5650677d0c6a059570a689ed9242057cad780",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.guard_metered_task_type()": {
+      "source": "355146a0abedc9184af8dcac133f64ff7780970ad8ab492d89582cf0284d1434",
+      "definition": "56b7a2ffeb20419a8a1577dfe10cbc365642bae57379e652370b5de1677512cf",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.guard_text_capacity_scope()": {
+      "source": "de0f75a39faf2a6b59f43d9526960aa86a8f5433d319e5b291e6284800d78bb7",
+      "definition": "10e160586d2b5ff3916838a5c8858e21081136d92e328e34bc153dc14e5e782e",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.release_trip_objective_v1(uuid,text)": {
+      "source": "0e7610af03d7d8bb7b42e45f33616828a47b9267ceb45474feabd4ae7a33d785",
+      "definition": "c267a4af9250991eee440ffeef0a96f929603055cd48012803c2398e86d22d2b",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.require_trip_runtime_v1()": {
+      "source": "cb7d777bfab26df07eae28f81839cd92c100f726003e866a12127384168321c3",
+      "definition": "d7d90d306e7222922b818b657dcb864d3b745a6eac7342b4e441038fb81fd448",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.settle_trip_service_task_v1()": {
+      "source": "87d234e69a97378cbdb0d2dca9bc3755ab6006647e444a7247ec39c1ed9b9f5d",
+      "definition": "6a76a991b79fd86bb55f5f5bc185a1d28f495d2700ebddb5cf63c560a5fd3e69",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.trip_confirmation_enter_v1(uuid)": {
+      "source": "5a125bbd0a98e28d3357e5a42c870c467b7863847f6e8109d87be081f8c32eaf",
+      "definition": "b3bca2bcd4231218ec85554bf2acf1344393f71d46bb642deae0409ab2129d7b",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.trip_objective_current_v1(uuid,jsonb)": {
+      "source": "0fff692e0126fe97e226620d59c690e6d933d55c7c2adf1fea7b8238bcb7a63c",
+      "definition": "a95108313b4f7470ddd8257d10a88277390c0a6bfe2a9159b14a45773df922c4",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.trip_objective_source_erased_v1()": {
+      "source": "736f2f269df6aebf4116b574df1b52e9b5458e051f08cf7fc7f31916653f6730",
+      "definition": "a20e2d1b92061d1ed52fdc2c7c3464f71477f464339013e048f090040c72453f",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.trip_privacy_assert_redacted_v1(uuid,jsonb)": {
+      "source": "3a79209e4c7b85811b66af217d1e91947282fda7c202f4a7699161384f1d1141",
+      "definition": "35a99ffc1834003d3404379c71eba51e0481c3544a1d966969f1f7e1b8f52a99",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.trip_privacy_c_api_v1(text,text,bigint)": {
+      "source": "d12eb42bc60364f558d0ef0972a39c7391e3668f973699ea018ca1ad40a5d1e6",
+      "definition": "f753b43a2952121a0a9d3eaa730a768d65274b5fe9b037a5cd4594eabdb1c4e1",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.trip_privacy_c_binding_v1(conversation_data_private.operations_v1)": {
+      "source": "b4e68c59d62000570e8828f97b77023c973ef734dbc3e9e57a761b597b3171fd",
+      "definition": "f2d11513600630a6c0dbdb197fb844937926336d3d23856f470fd22349880676",
+      "owner": "postgres",
+      "secdef": false,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "sql"
+    },
+    "turn_private.trip_privacy_c_boundaries_v1(text)": {
+      "source": "1fd2d8d93e8f09f41e7f3d5dd7fb33811753580fedcfdfa235b6268e3f65c577",
+      "definition": "38af1deafa2e9e95cb2e3e6605255b572d6997e9ba71e9f34bff87d637ccd6b0",
+      "owner": "postgres",
+      "secdef": false,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "sql"
+    },
+    "turn_private.trip_privacy_c_erase_source_v1(uuid,jsonb)": {
+      "source": "ec7a09e9a67d5b7cf5425575eeff1fe7358d21adffd40e2857b26c1835575c49",
+      "definition": "6f565afa93ce93894608ae6de9723497ae2815cc8fc0fc6f823a26168acfebe4",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.trip_privacy_c_input_v1(jsonb,text,boolean)": {
+      "source": "e5c6a74a50c0286b6a88f79fa914b1e21a9e36b127e65325678d1b56ef7428d7",
+      "definition": "bf03ccabf2cd465a3d830cb9712e37825ef088d9baa954515631959cfd0003c4",
+      "owner": "postgres",
+      "secdef": false,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.trip_privacy_c_lock_source_v1(uuid,jsonb)": {
+      "source": "80c1e50bc27350bd5f7571f04f5b1d4757be7a8142ec468a5f781edb8940f6cb",
+      "definition": "1c4361609f4b2228cc66b23b6b2219e7ed5ca815a488ac8e583c9e32e1b787dd",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.trip_privacy_c_preview_v1(conversation_data_private.operations_v1)": {
+      "source": "5cedf322ee5b91bccb9eb58b6d0179081e456d19db8359fb33d6dc6038da4fad",
+      "definition": "babec065cfad16b2b8762702e65d5ea1c51c673a4ee3ad181f4e717c607e050d",
+      "owner": "postgres",
+      "secdef": false,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "sql"
+    },
+    "turn_private.trip_privacy_c_receipt_v1(conversation_data_private.operations_v1)": {
+      "source": "552300cfb8a4de3dd2b75140a03e0d6c9ce057f18fd690d762ec98259c3721dd",
+      "definition": "2f7e1ebe166bcb1796f4ccf35eaaac67364d267401173bfd6e4c3e03fa1e4649",
+      "owner": "postgres",
+      "secdef": false,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "sql"
+    },
+    "turn_private.trip_privacy_c_related_v1(text,jsonb,jsonb,uuid[])": {
+      "source": "35fd7bc644e3379513ac6fa4b943e18a49f489e46112e45ed083ed3fd40ddc0e",
+      "definition": "987cb19cf7c701805de3cf3f39fe26fef8dc61c8e1adb0e450f95bd9812f356d",
+      "owner": "postgres",
+      "secdef": false,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "sql"
+    },
+    "turn_private.trip_privacy_c_source_v1(uuid,text,uuid)": {
+      "source": "ccdafc6c986e93a3fca6c89e671af8629c9f02c35070ff30fac78a314241de2c",
+      "definition": "8c18903df5b012fb3f7b83d4fbbfe2b01dd1adac314f62c23a77b94d6712e298",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.trip_privacy_c_sources_v1()": {
+      "source": "1d1ef705c7e50d6cca0f09e9ed35882749af899b459e53ec87569956d3ae547b",
+      "definition": "22cf9b214f088c4f443b3acecdba86d343e071019abc8a222ee61973231307e5",
+      "owner": "postgres",
+      "secdef": false,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "sql"
+    },
+    "turn_private.trip_privacy_c_zero_counts_v1(text)": {
+      "source": "7ee376967c765ed61e83f45aee21205c63deca3345baac4fc19e459b820bb5c5",
+      "definition": "8496ad4b1f83262d398a06e016e73a950a6d3b70ebcbc3713864f997adfd8d7c",
+      "owner": "postgres",
+      "secdef": false,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "sql"
+    },
+    "turn_private.trip_privacy_context_ids_v1(jsonb)": {
+      "source": "b229fdbf5965dbaecf6ece84423979164c624b4089c49f9478ef04fc538f0367",
+      "definition": "e27f5564010b30d01a6b7144746f4e16988d02174cce388465291742ee3b514a",
+      "owner": "postgres",
+      "secdef": false,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "sql"
+    },
+    "turn_private.trip_privacy_documents_v1(text,jsonb)": {
+      "source": "94b4210d563a274c43def10b00820cec9c607c9e28eb5fa7256547fe764cb752",
+      "definition": "b16204cc60688ac3d76397bec6d5b8c076df2a494a0912918d645ec62dd71ad6",
+      "owner": "postgres",
+      "secdef": false,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "sql"
+    },
+    "turn_private.trip_privacy_erase_order_v1()": {
+      "source": "ad5e5a8b648b1d772918da5bd1e9fb2706eac5257fcab1d2abd4d0aed5f42916",
+      "definition": "e8964da2fb7e7835a8f8cfaae3197440f30f9f45cbccbda930adcf3e7f7d04e5",
+      "owner": "postgres",
+      "secdef": false,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "sql"
+    },
+    "turn_private.trip_privacy_exclusive_v1(uuid,jsonb)": {
+      "source": "6c20bfc9b3f0ee88c261513305984aaf674f8440a3e52f9deddf608ea9a2f60f",
+      "definition": "59a7ab1cf42a102bd88af2732b7be1a4abc5f4b70c72962d257f3f73c8b391f5",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.trip_privacy_export_predicate_v1(text)": {
+      "source": "f1d2c46476d8d0c1c9498516467728ed79d6f8afdd0dd4fb624d217686d2db67",
+      "definition": "ae476f93b1277f9cd31e2c956026bca374d5f147762a29f57b5772bf3c344576",
+      "owner": "postgres",
+      "secdef": false,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "sql"
+    },
+    "turn_private.trip_privacy_goal_writer_v1(uuid,uuid,integer,text)": {
+      "source": "4d1543c2f40f5871306376a36ebfe5db3d06e60be5e0f3f762d50a98a0355435",
+      "definition": "2d66fadc45f75418f71903c504b5c4e9c278fb6bbc7466ef572ac3a03d3be046",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "sql"
+    },
+    "turn_private.trip_privacy_graph_v1(uuid,jsonb,jsonb)": {
+      "source": "d5d0ee8b1fa63eb1ab1734fcfbc727d213e647a2e6c7549a0bf0aa3e34fb60cd",
+      "definition": "a1af81f9b77ee81ad299e9848b3bdad29dc5c67830e0df5cdc811a794e15c7be",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.trip_privacy_ids_v1(jsonb,jsonb)": {
+      "source": "6000c4e6ab1bc25333f5cebb8be651e01ccb143f38942643cd817ad101f40bed",
+      "definition": "8cddff307148d94b53db80aa91ffb36be9f326295d5d3a4fa977163f17f6fad3",
+      "owner": "postgres",
+      "secdef": false,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "sql"
+    },
+    "turn_private.trip_privacy_related_v1(text,jsonb,jsonb)": {
+      "source": "851b860752d54f2aff29d4c895d1e8a3501eb96d4a7083cce9c1c39d82f1b1cc",
+      "definition": "3d87e2451b704d0657cb50b02577eced83db90afdf762d31b958b84fe86573fe",
+      "owner": "postgres",
+      "secdef": false,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.trip_privacy_t_api_v1(text,text,bigint)": {
+      "source": "3755afa756fe8b07ab06fe91cbac93d734c21a95923dd5da82e35b076a215173",
+      "definition": "c35750ff83c4fcb51c2171c4aa3a2a0e5bcbb4f2720addab22aa1e2abf3b6dbc",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.trip_privacy_t_binding_v1(turn_data_private.operations_v1)": {
+      "source": "941f7faa8f1901752921cb3d02465b4caf9967605c62e7826e5f49ae880cae31",
+      "definition": "c71df5220bb4d77500c0021afd1e1d3a6cafdcf56ae592dee5235a2b671a96ff",
+      "owner": "postgres",
+      "secdef": false,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "sql"
+    },
+    "turn_private.trip_privacy_t_boundaries_v1(text)": {
+      "source": "34f27c3a816fcbe6596ca51d4ccfea26716a45b48ac3ab6061878906cf08f810",
+      "definition": "16ad0d60536a047b25ec9a5a81880ba256f624d133bbc7eeb43dc13d63179f36",
+      "owner": "postgres",
+      "secdef": false,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "sql"
+    },
+    "turn_private.trip_privacy_t_erase_source_v1(uuid,jsonb)": {
+      "source": "04b3db6ae2fda44454098ff202dfa037dd930aa5bb077c7784723d4a7aaa535e",
+      "definition": "d24173a0e3f26f8de46d81f50cf722e8859df5b053b204a77ee4fc6975dc2b7c",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.trip_privacy_t_export_source_v1(uuid)": {
+      "source": "087bc2a7d0634365761f3b0675e9cd0d5b6948dbadcc44de938d1bbc923213b7",
+      "definition": "ed8bd8f82b0152e875313d6277939b90558d60cfa8e9eb6002b80dc36230b5f6",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\"",
+        "TimeZone=UTC"
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.trip_privacy_t_graph_source_v1(uuid,uuid)": {
+      "source": "3d0353c7d03f6a6d454c9313a1d49ae1881f2331ce3ba2acea7a12ad72a2bb1d",
+      "definition": "c85d0c12afe0c32eb7f915bfc37c4b36e0eb01e97436976ee0cba7303ded6acd",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.trip_privacy_t_input_v1(jsonb,text,boolean)": {
+      "source": "99170d42480e6b0ab38189cfacf3e7b6c8ee9c2566a2b9457245f7609c443cfb",
+      "definition": "1cc6f2b24be37681c34a7a1185f848f6075d07a7be2f5d0f72ed3b8d5dde6931",
+      "owner": "postgres",
+      "secdef": false,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.trip_privacy_t_lock_source_v1(uuid,jsonb)": {
+      "source": "30a34dabf84c743fa94b723e8d229ef4b137a3b93537374d72541e488c3f0c5a",
+      "definition": "3f946d064538fccb032f962de32922fc58761e184b8c3f0729990c1b2dfaecc0",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.trip_privacy_t_preview_v1(turn_data_private.operations_v1)": {
+      "source": "036af124420f9323dcf06411bb61f145f9fcd6c1a8d971d351d8452a5ad84b9e",
+      "definition": "297ca68a415ae56fad544c6d86054f26876263865f089ba9d97441378e198862",
+      "owner": "postgres",
+      "secdef": false,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "sql"
+    },
+    "turn_private.trip_privacy_t_receipt_v1(turn_data_private.operations_v1)": {
+      "source": "027254463fd070aa3e043bcc701f29b4e831862d5e208ffd531883700fa3cc64",
+      "definition": "c4a712e9b7c943cad80ad094e445555704d4881fd9abbff0806c0cb880f03eb9",
+      "owner": "postgres",
+      "secdef": false,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "sql"
+    },
+    "turn_private.trip_privacy_t_related_v1(text,jsonb,jsonb,jsonb,uuid[],uuid)": {
+      "source": "51ec58c6390d677d0e5550ee050489e1e7f3433031a0c0f41ede217a61fbd8ff",
+      "definition": "60b032f5277028aa900c45daf3c9f366e451b4c47d9d6af87b6552d1689fe42e",
+      "owner": "postgres",
+      "secdef": false,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "sql"
+    },
+    "turn_private.trip_privacy_t_source_v1(uuid,uuid)": {
+      "source": "de8469c5f7734a67787611b1c28d16a5b3dfccf7e2c98871355a9e203fd2855a",
+      "definition": "3168690a65296b5e364babd1a329d9d0c62748c0a65457a55cc762cdc43ea685",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.trip_privacy_t_sources_v1()": {
+      "source": "3de9abcad0096f7cbfae4c6396629bdd146f66966ad2ef005d5359bcf80ae25b",
+      "definition": "227c4f5ef4b04ae6705b7c80fe06a9637e5cf31781e05645a4682f059343ca4f",
+      "owner": "postgres",
+      "secdef": false,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "sql"
+    },
+    "turn_private.trip_privacy_t_zero_counts_v1(text)": {
+      "source": "af569cc7138504274eee2e9d3afd9e6b9fc91afba17f91424adca2f973eb36c3",
+      "definition": "afdfb6a24950bcec3277ca4d3c12448ce7c3c3bdcd69d748c33d0892f525b39f",
+      "owner": "postgres",
+      "secdef": false,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "sql"
+    },
+    "turn_private.trip_proposal_terminal_v1()": {
+      "source": "333c0b488c082646f314c3777984169ad3cb92fc2d3b56e2fa60ad948f66ee5f",
+      "definition": "28b7fdff870a0c4375972b0a4f3519ae761b9fa6ef71d2a2d1d84a1c51640f74",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.trip_rejection_enter_v1(uuid)": {
+      "source": "4e76621361b624b2673feaf589cbf6565d71a3f0ad1f7c93d3dd1d6612d3a1f7",
+      "definition": "89ab0af9cf517979ef0d4c1ef13d8b85367030117269750b9989a047a7395f88",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    },
+    "turn_private.trip_worker_terminal_v1()": {
+      "source": "a194a664ee1f8c1fb6802dddfe5f9f825f4013d1b2345a2053082c92262354ae",
+      "definition": "1042b636e4830e1394dfeb25119bee63554efc095f3ffc24ff0750618fafe7fd",
+      "owner": "postgres",
+      "secdef": true,
+      "acl": "{postgres=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "kind": "f",
+      "language": "plpgsql"
+    }
+  }
+}

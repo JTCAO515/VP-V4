@@ -6,23 +6,24 @@ import { PROTOCOL_MODELS } from '../../model-gateway/adapters/provider-protocol.
 import { createTextJobPrice } from '../../jobs/staging-text-job.ts';
 import { runDurableTurnWork } from '../durable-worker.ts';
 import { HOSTED_STAGING_DATABASE_URL, parseHostedWorkerProfile, runHostedTextLoop, type HostedWorkerProfile, type HostedWorkerDependencies, type PollResult } from '../../jobs/hosted-text-worker.ts';
-import { SCOPED_TRIP_EDIT_PROMPT } from './model-output.ts';
+import { SCOPED_TRIP_EDIT_PROMPT, TRIP_SERVICE_TASK_PROMPT } from './model-output.ts';
 import { executeScopedTripEdit, type ScopedRpc } from './executor.ts';
 import { authorized, validBinding, parseInput, scopedRequestIdentity, type ScopedInput } from './protocol.ts';
 import { exact, record, uuid } from '../../trip/scoped-edit/contract.ts';
-export type ScopedHostedProfile = Readonly<{schemaVersion:'vpj10-hosted-scoped-edit/1';loop:HostedWorkerProfile;target:Readonly<{ownerId:string;policyId:string;scopeId:string}>}>;
+export type ScopedHostedProfile = Readonly<{schemaVersion:'vpj10-hosted-scoped-edit/1'|'vpj10-hosted-trip-service-task/1';loop:HostedWorkerProfile;target:Readonly<{ownerId:string;policyId:string;scopeId:string}>}>;
 export function parseScopedHostedProfile(v: unknown): ScopedHostedProfile {
-  if(!record(v)||!exact(v,['schemaVersion','loop','target'])||v.schemaVersion!=='vpj10-hosted-scoped-edit/1'||!record(v.target)||!exact(v.target,['ownerId','policyId','scopeId'])||![v.target.ownerId,v.target.policyId,v.target.scopeId].every(uuid))throw Error('Scoped host unavailable');
+  if(!record(v)||!exact(v,['schemaVersion','loop','target'])||!['vpj10-hosted-scoped-edit/1','vpj10-hosted-trip-service-task/1'].includes(String(v.schemaVersion))||!record(v.target)||!exact(v.target,['ownerId','policyId','scopeId'])||![v.target.ownerId,v.target.policyId,v.target.scopeId].every(uuid))throw Error('Scoped host unavailable');
   const loop=parseHostedWorkerProfile(v.loop);
   if(loop.schemaVersion!=='vpj07-hosted-text-worker/1')throw Error('Scoped host unavailable');
-  return Object.freeze({schemaVersion:'vpj10-hosted-scoped-edit/1',loop,target:Object.freeze({...v.target})}) as ScopedHostedProfile;
+  return Object.freeze({schemaVersion:v.schemaVersion,loop,target:Object.freeze({...v.target})}) as ScopedHostedProfile;
 }
-const rpcs=new Set(['hosted_worker_heartbeat','hosted_scoped_trip_edit_target_v1','claim_scoped_trip_edit_work_v1','read_scoped_trip_edit_work_v1','authorize_scoped_trip_edit_effect_v1','scoped_trip_edit_budget_v1','read_scoped_trip_edit_output_v1','record_scoped_trip_edit_output_v1','record_scoped_trip_edit_usage_v1','read_scoped_trip_edit_usage_v1','complete_scoped_trip_edit_work_v1','read_scoped_trip_edit_completion_v1','record_scoped_trip_edit_destination_v1','pause_scoped_trip_edit_work_v1']);
+const rpcs=new Set(['complete_trip_service_failure_v1','complete_trip_service_clarification_v1','hosted_worker_heartbeat','hosted_scoped_trip_edit_target_v1','claim_scoped_trip_edit_work_v1','read_scoped_trip_edit_work_v1','authorize_scoped_trip_edit_effect_v1','scoped_trip_edit_budget_v1','read_scoped_trip_edit_output_v1','record_scoped_trip_edit_output_v1','record_scoped_trip_edit_usage_v1','read_scoped_trip_edit_usage_v1','complete_scoped_trip_edit_work_v1','read_scoped_trip_edit_completion_v1','record_scoped_trip_edit_destination_v1','pause_scoped_trip_edit_work_v1']);
 /** Explicit opt-in composition of the existing host loop, work queue, budget and
  * provider adapter. No key discovery, scheduler, fallback or default enabled mode. */
-export function createHostedScopedEditWorker(raw:ScopedHostedProfile,deps:HostedWorkerDependencies & Readonly<{scopedEditEnabled?:boolean}>) {
+export function createHostedScopedEditWorker(raw:ScopedHostedProfile,deps:HostedWorkerDependencies & Readonly<{scopedEditEnabled?:boolean;tripServiceTaskEnabled?:boolean}>) {
   const profile=parseScopedHostedProfile(raw), tariff=profile.loop.qwen, target=profile.target;
-  if(deps.scopedEditEnabled!==true||typeof window!=='undefined'||process.env.VERCEL_ENV||!uuid(deps.workerId)||!/^[A-Za-z0-9._-]{1,64}$/.test(deps.build)||!Number.isFinite(Date.parse(deps.startedAt))||new Date(deps.startedAt).toISOString()!==deps.startedAt||typeof deps.workerCredential!=='function'||typeof deps.providerCredential!=='function'||typeof deps.journal.planningUsage!=='function')throw Error('Scoped host unavailable');
+  const tripTask=profile.schemaVersion==='vpj10-hosted-trip-service-task/1';
+  if((tripTask?deps.tripServiceTaskEnabled:deps.scopedEditEnabled)!==true||typeof window!=='undefined'||process.env.VERCEL_ENV||!uuid(deps.workerId)||!/^[A-Za-z0-9._-]{1,64}$/.test(deps.build)||!Number.isFinite(Date.parse(deps.startedAt))||new Date(deps.startedAt).toISOString()!==deps.startedAt||typeof deps.workerCredential!=='function'||typeof deps.providerCredential!=='function'||typeof deps.journal.planningUsage!=='function')throw Error('Scoped host unavailable');
   const pricing=createTextJobPrice(tariff.pricing);
   const configDigest=createHash('sha256').update(JSON.stringify(profile)).digest('hex');
   const fetcher=deps.fetch??fetch;
@@ -32,7 +33,9 @@ export function createHostedScopedEditWorker(raw:ScopedHostedProfile,deps:Hosted
     try {
       const key=await scope.run(()=>Promise.resolve(deps.workerCredential(scope.signal)));
       if(typeof key!=='string'||!/^[\x21-\x7e]{1,8192}$/.test(key))throw Error('Scoped credential unavailable');
-      const response=await scope.run(()=>fetcher(HOSTED_STAGING_DATABASE_URL+'/rest/v1/rpc/'+name,{method:'POST',headers:supabaseWorkerHeaders(key),body:JSON.stringify(params),redirect:'manual',credentials:'omit',cache:'no-store',signal:scope.signal}));
+      const wireName=tripTask&&name!=='hosted_worker_heartbeat'?'trip_service_task_worker_v1':name;
+      const wireParams=wireName===name?params:{p_method:name==='hosted_scoped_trip_edit_target_v1'?'target':name==='claim_scoped_trip_edit_work_v1'?'claim':name,p_input:params};
+      const response=await scope.run(()=>fetcher(HOSTED_STAGING_DATABASE_URL+'/rest/v1/rpc/'+wireName,{method:'POST',headers:supabaseWorkerHeaders(key),body:JSON.stringify(wireParams),redirect:'manual',credentials:'omit',cache:'no-store',signal:scope.signal}));
       if(response.redirected||response.status!==200||response.headers.get('content-type')?.split(';')[0].trim()!=='application/json'||!response.body){await response.body?.cancel().catch(()=>{});throw Error('Scoped RPC unavailable');}
       const reader=response.body.getReader(),chunks:Uint8Array[]=[];let bytes=0;
       try {for(;;){const part=await scope.run(()=>reader.read());if(part.done)break;if((bytes+=part.value.byteLength)>262144)throw Error('Scoped RPC limit');chunks.push(part.value);}scope.check();return JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(Buffer.concat(chunks))) as unknown;}
@@ -60,7 +63,7 @@ export function createHostedScopedEditWorker(raw:ScopedHostedProfile,deps:Hosted
         if(name==='read_scoped_trip_edit_work_v1'&&record(value)&&validBinding(value.binding)){
           if(value.binding.ownerId!==target.ownerId||value.binding.policyId!==target.policyId||value.binding.scopeId!==target.scopeId||value.binding.priceVersion!==tariff.priceVersion||value.endpoint!==deps.qwenEndpoint||value.timeoutMs!==tariff.timeoutMs||value.reservedMicros!==tariff.reservedMicros||value.maxOutputTokens!==tariff.maxOutputTokens)throw Error('Scoped host binding unavailable');
           const checked=parseInput(value,lease,Date.now());
-          if(!checked)throw Error('Scoped current input unavailable');
+          if(!checked||tripTask!==(checked.taskMode==='trip_modification'))throw Error('Scoped current input unavailable');
           currentBinding=checked.binding;currentInput=checked;
         }
         return value;
@@ -78,7 +81,7 @@ export function createHostedScopedEditWorker(raw:ScopedHostedProfile,deps:Hosted
       const wrapped:typeof transport=async request=>{
         if(!validBinding(currentBinding)||!currentInput)throw Error('Scoped request unavailable');
         const body=JSON.parse(request.body);
-        if(!record(body)||!exact(body,['model','messages','stream','max_tokens','enable_thinking','response_format'])||body.model!==PROTOCOL_MODELS.qwen||body.stream!==false||body.max_tokens!==tariff.maxOutputTokens||body.enable_thinking!==false||!Array.isArray(body.messages)||body.messages.length!==2||!record(body.messages[0])||body.messages[0].content!==SCOPED_TRIP_EDIT_PROMPT)throw Error('Scoped request unavailable');
+        if(!record(body)||!exact(body,['model','messages','stream','max_tokens','enable_thinking','response_format'])||body.model!==PROTOCOL_MODELS.qwen||body.stream!==false||body.max_tokens!==tariff.maxOutputTokens||body.enable_thinking!==false||!Array.isArray(body.messages)||body.messages.length!==2||!record(body.messages[0])||body.messages[0].content!==(currentInput?.taskMode==='trip_modification'?TRIP_SERVICE_TASK_PROMPT:SCOPED_TRIP_EDIT_PROMPT))throw Error('Scoped request unavailable');
         requestIdentity=scopedRequestIdentity(currentInput);
         if(request.body!==requestIdentity.body)throw Error('Scoped canonical request unavailable');
         return transport(request);

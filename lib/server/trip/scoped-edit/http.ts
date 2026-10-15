@@ -1,3 +1,4 @@
+import {parseTripPrivacyRequest,runTripPrivacyRequest} from '../../service-task-trip/privacy.ts';
 import { NextResponse, type NextRequest } from "next/server.js";
 import { createNativeTripDataAdapter, createUserDataAdapter } from "../../identity/user-data-adapter.ts";
 import { getNativeRuntimeConfig } from "../../identity/native-config.ts";
@@ -6,16 +7,17 @@ import { nativeRequestScope } from "../../identity/native-request.ts";
 import { createOfflineNativeAuthority } from "../../today/offline-native-authority.ts";
 import { opsRuntimeConfig } from "../../knowledge/review/local-workspace.ts";
 import { hasSameOrigin, isUuid } from "../../identity/request-guards.ts";
-import { parseScopedEditRequest, parseTripTaskRequest, parseTripTaskControl } from "./contract.ts";
+import { parseScopedEditRequest, parseTripTaskRequest, parseTripTaskControl, parseTripTaskContinuation } from "./contract.ts";
 import { sameValue } from "./wire.ts";
-import { admitTripTask, runTripTaskControl, runScopedEdit, operationCandidates, assertScopedCandidates, operationProposal, assertOriginalScopedProposal, ScopedEditServiceError, type ScopedEditRPC } from "./service.ts";
+import { admitTripTask, continueTripTask, runTripTaskControl, runScopedEdit, operationCandidates, assertScopedCandidates, operationProposal, assertOriginalScopedProposal, ScopedEditServiceError, type ScopedEditRPC } from "./service.ts";
 
 /** Ordinary caller-bound actor/RLS transport. No API request dispatches a model or
  * confirms a Proposal; worker publication and the existing confirm own those effects. */
 export async function scopedTripEditHTTP(request: NextRequest, tripId: string, native: boolean) {
   let dispatchedOperation: string | null = null;
+  let privacyRequest: {requestId:string;target:string}|null=null;
   const reply = (v: unknown, status = 200) => NextResponse.json(v, { status, headers: { "Cache-Control": "private, no-store", Vary: native ? "Authorization" : "Cookie" } });
-  const failure = (code: string, status = 503) => reply({ error: { code }, ...(dispatchedOperation ? { operationId: dispatchedOperation, acknowledgement: "unknown", recoveryAction: "read_original_operation" } : {}) }, status);
+  const failure = (code: string, status = 503) => reply({ error: { code }, ...(privacyRequest?{requestId:privacyRequest.requestId,privacyTarget:privacyRequest.target,acknowledgement:"unknown",recoveryAction:"recover_original_privacy_request"}:dispatchedOperation ? { operationId: dispatchedOperation, acknowledgement: "unknown", recoveryAction: "read_original_operation" } : {}) }, status);
   if (request.method !== "POST" || !isUuid(tripId) || request.nextUrl.searchParams.size || (native ? request.headers.has("cookie") || request.headers.has("origin") : request.headers.has("authorization") || !hasSameOrigin(request.headers.get("origin"), request.nextUrl))) return failure("INVALID_INPUT", 400);
   const config = native ? getNativeRuntimeConfig(request, "trip", "trip") : opsRuntimeConfig(request, { ...process.env, OPS_LOCAL_REVIEW: process.env.KNOWLEDGE_LOCAL_READ, OPS_STAGING_REVIEW: process.env.KNOWLEDGE_STAGING_READ });
   if (!config) return failure("PROVIDER_UNAVAILABLE");
@@ -23,7 +25,7 @@ export async function scopedTripEditHTTP(request: NextRequest, tripId: string, n
   try { return await scope.run(async () => {
     const raw = await scope.body(request, 24576); let parsed: unknown;
     try { parsed = JSON.parse(raw ?? "null"); } catch { return failure("INVALID_INPUT", 400); }
-    const input = parseTripTaskRequest(parsed) ?? parseTripTaskControl(parsed) ?? parseScopedEditRequest(parsed); if (!input) return failure("INVALID_INPUT", 400);
+    const input = parseTripPrivacyRequest(parsed) ?? parseTripTaskRequest(parsed) ?? parseTripTaskContinuation(parsed) ?? parseTripTaskControl(parsed) ?? parseScopedEditRequest(parsed); if (!input) return failure("INVALID_INPUT", 400);
     tripId = tripId.toLowerCase();
     const web = native ? null : createUserDataAdapter(request, config, scope.fetch);
     const adapter = native ? await createNativeTripDataAdapter(request, config, scope.fetch, scope.unavailable) : web;
@@ -47,11 +49,12 @@ export async function scopedTripEditHTTP(request: NextRequest, tripId: string, n
     const snapshot = { version: before.data.trip.headVersion, title: before.data.trip.title, days: before.data.content.days };
     if ("operationId" in input) dispatchedOperation = input.operationId;
     if (input.action === "trip_select") dispatchedOperation = input.selection.operationId;
-    const original = input.action === "trip_task" ? null
+    const original = input.action === "trip_task" || input.action === "trip_continue" || input.action === "trip_privacy" ? null
       : input.action === "trip_context" || input.action === "trip_select" || input.action === "trip_read" ? await runTripTaskControl(tripId, input, rpc, snapshot, Date.now())
       : await runScopedEdit(tripId, input, rpc, snapshot, Date.now());
     if (input.action === "trip_task" && input.basis.baseVersion !== snapshot.version) throw new ScopedEditServiceError("STALE_TRIP_VERSION");
-    const data = input.action === "trip_task" ? await admitTripTask(tripId, input, rpc) : original!; scope.check();
+    if(input.action==="trip_privacy")privacyRequest={requestId:String(input.command.requestId),target:input.target};
+    const data = input.action === "trip_privacy" ? await runTripPrivacyRequest(tripId,input,rpc,actor.data) : input.action === "trip_task" ? await admitTripTask(tripId, input, rpc) : input.action === "trip_continue" ? await continueTripTask(tripId,input,rpc) : original!; scope.check();
     const candidates = original ? operationCandidates(original) : null;
     if (candidates) assertScopedCandidates(candidates, snapshot, Date.now());
     const receipt = original ? operationProposal(original) : null;
