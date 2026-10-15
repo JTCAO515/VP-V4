@@ -8,6 +8,7 @@ import SwiftUI
     let onExpression: () -> Void
     let onPlace: () -> Void
     let onVoice: () -> Void
+    @Environment(\.locale) private var locale
     @FocusState private var composerFocused: Bool
     @State private var voicePresentation: NativeLocalVoicePresentation?
 
@@ -39,15 +40,15 @@ import SwiftUI
                 tools
                 // Single-line field: Return and the send button share the same guard.
                 // The binding retains the complete draft, including over-limit input.
-                TextField("开始聊天", text: $editable.draft)
+                TextField(localized(.start), text: $editable.draft)
                     .font(.body)
                     .frame(minWidth: 44, minHeight: 44)
                     .layoutPriority(1)
                     .focused($composerFocused)
                     .submitLabel(.send)
                     .onSubmit { submitDraft() }
-                    .accessibilityLabel("开始聊天")
-                    .accessibilityHint("输入本地样例消息，回车发送；键盘工具栏可收起键盘。")
+                    .accessibilityLabel(localized(.start))
+                    .accessibilityHint(localized(.inputHint))
                     .accessibilityIdentifier("frontend.chat.composer")
                 if NativeMuseChatComposerPolicy.showsVoice(for: state.draft) {
                     Button {
@@ -57,7 +58,7 @@ import SwiftUI
                         Image(systemName: "waveform").font(.system(size: 20, weight: .medium))
                             .frame(width: 44, height: 44)
                     }
-                    .accessibilityLabel("设备端语音输入")
+                    .accessibilityLabel(localized(.voice))
                     .accessibilityIdentifier("frontend.chat.voice")
                 } else {
                     Button { submitDraft() } label: {
@@ -68,7 +69,7 @@ import SwiftUI
                             .frame(width: 44, height: 44)
                     }
                     .disabled(!canSubmit)
-                    .accessibilityLabel("发送本地样例消息")
+                    .accessibilityLabel(localized(.send))
                     .accessibilityIdentifier("frontend.chat.send")
                 }
             }
@@ -78,7 +79,7 @@ import SwiftUI
             .overlay { Capsule().strokeBorder(Color.primary.opacity(0.08), lineWidth: 1) }
 
             if state.draft.count > NativeMuseChatComposerPolicy.maximumCharacters {
-                Text("请缩短到2000个字符以内，原文不会截断。")
+                Text(localized(.limit))
                     .font(.caption).foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -92,27 +93,31 @@ import SwiftUI
             ToolbarItemGroup(placement: .keyboard) {
                 if composerFocused {
                     Spacer()
-                    Button("完成") { composerFocused = false }
-                        .accessibilityLabel("完成输入，收起键盘")
+                    Button(localized(.done)) { composerFocused = false }
+                        .accessibilityLabel(localized(.dismissKeyboard))
                         .accessibilityIdentifier("frontend.chat.composer.done")
                 }
             }
         }
     }
 
+    private func localized(_ text: NativeMuseChatComposerText) -> String {
+        text.value(locale: locale)
+    }
+
     private var tools: some View {
         Menu {
-            Button { openTool(onAttach) } label: { Label("附件 · 本地样例", systemImage: "paperclip") }
+            Button { openTool(onAttach) } label: { Label(localized(.attachment), systemImage: "paperclip") }
                 .accessibilityIdentifier("frontend.chat.attachment")
-            Button { openTool(onExpression) } label: { Label("表达 · 本地样例", systemImage: "character.bubble") }
+            Button { openTool(onExpression) } label: { Label(localized(.expression), systemImage: "character.bubble") }
                 .accessibilityIdentifier("frontend.chat.expression")
-            Button { openTool(onPlace) } label: { Label("地点 · 本地样例", systemImage: "mappin") }
+            Button { openTool(onPlace) } label: { Label(localized(.place), systemImage: "mappin") }
                 .accessibilityIdentifier("frontend.chat.place")
         } label: {
             Image(systemName: "plus").font(.system(size: 20, weight: .medium))
                 .frame(width: 44, height: 44)
         }
-        .accessibilityLabel("添加附件、表达或地点 · 本地样例")
+        .accessibilityLabel(localized(.tools))
         .accessibilityIdentifier("frontend.chat.composer.tools")
     }
 
