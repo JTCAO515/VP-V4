@@ -1,5 +1,41 @@
 # VPJ-76 (#360) — agentic search over published Wiki content, first slice
 
+## Current correction — AGENT-005 / #206 (2026-10-15)
+
+This section supersedes the historical slices below where they allowed a place
+answer without a resolved subject or treated model output as factual coverage.
+It adds no source permission, provider activation or publication authority.
+
+- `runGroundedWikiSearch` validates citations and derives required coverage from
+  current authorized statements and exact subject/predicate/object obligations.
+  Display text retains each selected statement's complete conditions and
+  exclusions; a model's free-form summary cannot add facts. Valid partial
+  evidence keeps its supported portion with explicit gaps. Multiple differently
+  worded sources are not automatically classified as contradictory.
+- An optional `placeSubjectId` is explicitly trusted first-party resolver input,
+  never a model or name-similarity inference. Place questions without that input
+  return `unavailable / user_input_missing`; with it, address/hours obligations
+  use the existing ontology and current subject-bound evidence. The actual
+  Native/Web AI-assist context still lacks this resolved-subject input, so its
+  real place flow is not claimed complete by the callable search tests.
+- Source qualification is read again before disclosure. A model `no_content`
+  result may receive a bounded direct lookup of existing authorized obligations;
+  complete evidence must not be refused solely because the model missed it.
+  Lookup and canonical output remain bounded and never truncate a condition.
+- AI-assist completion is successful only after a matching `{kind, jobId}`
+  receipt. Errors or unknown acknowledgements stay pending without another
+  completion write, model call or `ensure` call used as readback. Historical
+  results are requalified through read-only data; the existing cross-process
+  stale-reclaim behavior is not resolved by this server-only correction.
+- The versioned current-input evaluation contract preserves original frozen
+  inputs, cases, qrels, holdout membership, thresholds and denominator. Reports
+  retain legacy expected/match and current expected/match separately, including
+  the original unresolved-place failures. Newly resolved-subject positives use
+  explicit separate fixtures and do not invent authority for legacy inputs.
+
+Real provider, target persistence, identity, Native/Web and release acceptance
+remain separate from controlled producer tests; the broader #206 stays open.
+
 Status: core loop mechanism implemented and verified with an injected
 transport (fixture model, no real provider call, no real Staging). Real
 model semantic quality, real Ask-path integration, and iOS/Web readback
