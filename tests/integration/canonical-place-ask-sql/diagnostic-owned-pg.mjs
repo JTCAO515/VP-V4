@@ -4,8 +4,8 @@ import {spawnSync,execFileSync} from 'node:child_process';import {join} from 'no
 export const diagnosticArtifactRoot='artifacts/AGENT-005/canonical-place-sql-20261015';
 export function createDiagnosticPg({bin=process.env.VP_WIKI_PG_BIN,module=process.env.VP_WIKI_PG_MODULE}={}){
  if(!bin||!module)throw Error('Explicit diagnostic PG17 bin/module required before allocation');
- const runRoot=mkdtempSync(join(tmpdir(),'a005-diagnostic-'));chmodSync(runRoot,0o700);const nonce=join(runRoot,'pg'),socket=join(nonce,'s'),data=join(nonce,'data'),descriptorPath=join(runRoot,'resource.json');mkdirSync(nonce,{mode:0o700});mkdirSync(socket,{mode:0o700});
- const ownership=[runRoot,nonce,socket].map(path=>{const s=lstatSync(path);return {path,dev:s.dev,ino:s.ino};});const descriptor=Object.freeze({nonce,socket,data,bin,projectId:'4f2191db-3e04-4042-94b5-ec94ff67b427',permissions:'danger-full-access; approval never',effectiveModel:'UNKNOWN'});let closed=false,launched=false;
+ const runRoot=mkdtempSync(join(tmpdir(),'a005-diagnostic-'));chmodSync(runRoot,0o700);const nonce=join(runRoot,'pg'),socket=join(nonce,'s'),data=join(nonce,'data'),descriptorPath=join(runRoot,'resource.json');mkdirSync(nonce,{mode:0o700});mkdirSync(socket,{mode:0o700});mkdirSync(data,{mode:0o700});
+ const ownership=[runRoot,nonce,socket,data].map(path=>{const s=lstatSync(path);return {path,dev:s.dev,ino:s.ino};});const descriptor=Object.freeze({nonce,socket,data,bin,projectId:'4f2191db-3e04-4042-94b5-ec94ff67b427',permissions:'danger-full-access; approval never',effectiveModel:'UNKNOWN'});let closed=false,launched=false;
  writeFileSync(descriptorPath,JSON.stringify(descriptor),{mode:0o600,flag:'wx'});
  return Object.freeze({descriptor,descriptorPath,
   bootstrap(source,{preserveSnapshots=false}={}){
