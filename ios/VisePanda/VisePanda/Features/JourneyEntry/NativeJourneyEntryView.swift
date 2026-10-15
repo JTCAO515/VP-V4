@@ -10,6 +10,11 @@ struct NativeJourneyEntryView: View {
     let memoryVersions: [Int]
     let canContinue: Bool
     let hasResult: Bool
+    var goalReturn: NativeJourneyGoalReturnContext? = nil
+    var currentGoalReturn: () -> NativeJourneyGoalReturnContext? = { nil }
+    var discoverGoalReturn: ((NativeJourneyGoalReturnWire.Scope, NativeCommunitySafetyActor) async throws -> Data)? = nil
+    var openGoalDecision: ((String, Int) -> Void)? = nil
+    @Environment(AppSettings.self) private var settings
     @Binding var idea: String
     let continueIdea: () -> Void
     let openMaterials: () -> Void
@@ -34,8 +39,13 @@ struct NativeJourneyEntryView: View {
                     Text(t("本次明确选用的可用记忆版本：", "Eligible Memory versions explicitly selected for this request: ")
                          + memoryVersions.map(String.init).joined(separator: ", ")).font(.footnote)
                 }
-                Text(t("上次决定以已保存成果为准；未读取时不作推断。", "Your saved result is the basis for the last decision; it is unknown until read."))
-                    .font(.footnote)
+                if let goalReturn, let discoverGoalReturn, let openGoalDecision {
+                    NativeJourneyGoalReturnView(selection: goalReturn, currentSelection: currentGoalReturn,
+                        session: settings.nativeSession, chinese: chinese, discover: discoverGoalReturn, open: openGoalDecision)
+                } else {
+                    Text(t("上次决定以已保存成果为准；未读取时不作推断。", "Your saved result is the basis for the last decision; it is unknown until read."))
+                        .font(.footnote)
+                }
             } else {
                 Text(t("一句想法就可以开始，日期可未定。先保留目标，再查看可保存的方向。", "Begin with one idea; dates can stay open. Keep the goal first, then explore directions you can save."))
             }
