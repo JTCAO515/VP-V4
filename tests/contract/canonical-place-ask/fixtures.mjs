@@ -6,6 +6,6 @@ export const assistantRequest={schemaVersion:'canonical-place-ask/1',submission:
 export const taskOperation={operationId:ids.op,scopeKind:'thread',scopeId:ids.thread,messageId:null,turnId:ids.turn};
 export const assistantOperation={operationId:ids.op,scopeKind:'conversation',scopeId:ids.conversation,messageId:ids.message,turnId:null};
 export function receipt(bytes=JSON.stringify(taskRequest)){
- return {schemaVersion:'canonical-place-ask/1',kind:'accepted',operation:taskOperation,originalReceipt:{version:3,kind:'accepted',turnId:ids.turn,reused:false,serviceTaskId:ids.task,scopeVersion:1,relationship:'new_goal',parentTurnId:null},binding:{turnId:ids.turn,serviceTaskId:ids.task,goalId:null,goalVersion:null,requestDigest:createHash('sha256').update(bytes,'utf8').digest('hex'),expectation},readyForProvider:false,currentEligibilityRequiresRead:true};
+ return {schemaVersion:'canonical-place-ask/1',kind:'accepted',operation:taskOperation,originalReceipt:{version:2,kind:'accepted',turnId:ids.turn,reused:false,serviceTaskId:ids.task,scopeVersion:1,relationship:'new_goal',parentTurnId:null},binding:{turnId:ids.turn,serviceTaskId:ids.task,goalId:null,goalVersion:null,requestDigest:createHash('sha256').update(bytes,'utf8').digest('hex'),expectation},readyForProvider:false,currentEligibilityRequiresRead:true};
 }
 export const clone=v=>structuredClone(v);
