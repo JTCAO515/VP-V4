@@ -205,6 +205,9 @@ export const LANES = {
         env: { CANONICAL_PLACE_NATIVE_PG: "1", CANONICAL_PLACE_HTTP_NATIVE_PG: "1" },
         files: ["tests/integration/canonical-place-ask-sql/postgres.test.mjs",
           "tests/integration/canonical-place-ask-http/postgres.test.mjs"] },
+      { name: "ios004-user-address-native-17", concurrency: 1,
+        env: { IOS004_NATIVE_PG: "1" },
+        files: ["tests/integration/ios004-user-address/postgres.test.mjs"] },
     ],
   },
   // One disposable Supabase stack (GoTrue + PostgREST + all migrations); identity/RLS/Trip confirmation chain.
