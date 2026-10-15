@@ -31,6 +31,18 @@ struct NativeTranslationRecoveryRecord: Equatable, Sendable {
     static func service(_ endpoint: String) -> String { "com.visepanda.native.local-session.v2.translation-recovery." + endpoint }
     static let maximumBytes = 4096
 
+    /// Explicit logout/account cleanup hook, owned by Session. This deliberately
+    /// removes the exact fixed service even when its old epoch or payload is corrupt.
+    /// Never use for transient auth/network errors or as a completion/abandon shortcut.
+    static func erase(endpoint: String, owner: String, vault: any NativeCredentialVault) throws {
+        let status = vault.remove(service: service(endpoint), owner: owner)
+        guard status == errSecSuccess || status == errSecItemNotFound else {
+            throw NativeTranslationRecoveryError.storageFailure
+        }
+        let (readStatus, bytes) = vault.read(service: service(endpoint), owner: owner)
+        guard readStatus == errSecItemNotFound, bytes == nil else { throw NativeTranslationRecoveryError.storageFailure }
+    }
+
     private func validate(_ scope: NativeDataScope) throws {
         guard NativeTranslationRecoveryIdentity.canonicalUUID(scope.subject), scope.mobileEpoch > 0,
               scope.mobileEpoch <= 9_007_199_254_740_991, scope.endpoint.utf8.count <= 2048,
