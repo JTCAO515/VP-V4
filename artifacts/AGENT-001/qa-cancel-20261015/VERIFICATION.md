@@ -26,7 +26,12 @@ PASS: 34 selected contract + affected original QA service/read/capacity/reconcil
 cases; full repository TypeScript and source lint (847 files); diff checks. Original
 qa-agent/1 projection and model/worker/identity/Native/Trip code were not changed.
 
-Proof command: node --experimental-strip-types tests/integration/qa-agent-cancellation/pg-proof.mjs
+CI/node:test entry: node --experimental-strip-types --test tests/integration/qa-agent-cancellation/pg-proof.mjs
+Optional test-only QA_CANCEL_PG_BIN selects the installed private PG17 bin directory.
+Darwin defaults to the approved Homebrew PG17; Linux can use /usr/lib/postgresql/17/bin.
+This explicit file is not automatically collected as a generic network test; Main
+CI owner assigns the existing isolated DB lane. No CI file is edited here.
+PGPASSWORD/PGSERVICE are excluded and PGPASSFILE=/dev/null prevents credential lookup.
 It creates only a unique /private/tmp/a1c-<nonce>-* 0700 data root, short private Unix
 socket, no TCP, and always stops its own pg_ctl data/PID. All recorded proof instances
 were stopped; synthetic data/logs retained for diagnosis. It never uses Docker, Stage,

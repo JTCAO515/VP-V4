@@ -1,15 +1,15 @@
 import assert from 'node:assert/strict';
 import {spawn} from 'node:child_process';
 import {mkdtemp,mkdir,chmod,readFile,readdir,writeFile} from 'node:fs/promises';
-import {randomUUID} from 'node:crypto';
+import {randomUUID,createHash} from 'node:crypto';
 import {join,resolve} from 'node:path';
-const pg=process.env.QA_CANCEL_PG_BIN??'/opt/homebrew/opt/postgresql@17/bin';
-const nonce=randomUUID().slice(0,8),root=await mkdtemp('/private/tmp/a1c-'+nonce+'-'),data=join(root,'data'),socket=join(root,'s');
+const pg=process.env.QA_CANCEL_PG_BIN??(process.platform==='darwin'?'/opt/homebrew/opt/postgresql@17/bin':'/usr/lib/postgresql/17/bin');
+const nonce=randomUUID().slice(0,8),root=await mkdtemp((process.platform==='darwin'?'/private/tmp':'/tmp')+'/a1c-'+nonce+'-'),data=join(root,'data'),socket=join(root,'s');
 await chmod(root,0o700);await mkdir(socket,{mode:0o700});let started=false;
 const base='22559396eec5cd47d3a4d3d2a2bd5e49d52c6c7c';
 const result={base,nonce,root,server:'PG17.11 isolated native Unix socket; synthetic Auth claims, not GoTrue',cases:[],cleanup:false};
-async function command(bin,args,input='',env={}){return new Promise((resolve,reject)=>{const child=spawn(bin,args,{env:{...process.env,...env},stdio:['pipe','pipe','pipe']});let out='',err='';child.stdout.on('data',b=>out+=b);child.stderr.on('data',b=>err+=b);child.on('error',reject);child.on('close',code=>resolve({code,out,err}));child.stdin.on('error',()=>{});child.stdin.end(input);});}
-const db=async(sql,app='qa-cancel-proof')=>{const r=await command(join(pg,'psql'),['-X','-q','-At','-v','ON_ERROR_STOP=1','-h',socket,'-U','postgres','-d','postgres'],"set statement_timeout='8s';set lock_timeout='5s';\n"+sql,{PGAPPNAME:app});assert.equal(r.code,0,r.err.slice(-1600));return r.out.trim();};
+async function command(bin,args,input='',env={}){return new Promise((resolve,reject)=>{const child=spawn(bin,args,{env:{...process.env,PGSERVICE:undefined,PGSERVICEFILE:undefined,PGPASSFILE:'/dev/null',PGPASSWORD:undefined,...env},stdio:['pipe','pipe','pipe']});let out='',err='';child.stdout.on('data',b=>out+=b);child.stderr.on('data',b=>err+=b);child.on('error',reject);child.on('close',code=>resolve({code,out,err}));child.stdin.on('error',()=>{});child.stdin.end(input);});}
+const db=async(sql,app='qa-cancel-proof')=>{const r=await command(join(pg,'psql'),['-X','-q','-At','-v','ON_ERROR_STOP=1','-h',socket,'-p','5432','-U','postgres','-d','postgres'],"set statement_timeout='8s';set lock_timeout='5s';\n"+sql,{PGAPPNAME:app});assert.equal(r.code,0,r.err.slice(-1600));return r.out.trim();};
 const lit=v=>v===null?'null':typeof v==='number'?String(v):"'"+String(v).replaceAll("'","''")+"'";
 const actorSQL=a=>`set request.jwt.claim.sub='${a.owner}';set request.jwt.claims='${JSON.stringify({session_id:a.session})}';set request.headers='{"origin":"https://synthetic.invalid","cookie":"fixture"}';set role authenticated;`;
 const expr=(fn,p)=>'public.'+fn+'('+Object.entries(p).map(([k,v])=>k+'=>'+lit(v)).join(',')+')';
@@ -36,7 +36,7 @@ const budgetSnapshot=a=>db(`select coalesce(jsonb_agg(to_jsonb(x) order by attem
 async function waitSleeping(app){for(let i=0;i<80;i++){if(await db(`select exists(select 1 from pg_stat_activity where application_name='${app}' and wait_event='PgSleep');`)==='t')return;await new Promise(r=>setTimeout(r,10));}throw Error('Owned race did not reach its locked sleep');}
 try{
  const init=await command(join(pg,'initdb'),['-D',data,'-U','postgres','-A','trust','--no-locale','-E','UTF8']);assert.equal(init.code,0,init.err);
- const boot=await command(join(pg,'pg_ctl'),['-D',data,'-l',join(root,'server.log'),'-o',`-c listen_addresses= -c unix_socket_directories=${socket} -c unix_socket_permissions=0700`,'-w','start']);assert.equal(boot.code,0,boot.err);started=true;
+ const boot=await command(join(pg,'pg_ctl'),['-D',data,'-l',join(root,'server.log'),'-o',`-c listen_addresses= -c unix_socket_directories=${socket} -c unix_socket_permissions=0700 -p 5432`,'-w','start']);assert.equal(boot.code,0,boot.err);started=true;
  assert.equal(await db('show listen_addresses;'),'');assert.equal(await db('show unix_socket_permissions;'),'0700');
  let sql=await readFile('tests/integration/turn/fixtures/durable-work-schema.sql','utf8');sql+="\ncreate function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;\n";
  const names=await command('git',['ls-tree','-r','--name-only',base,'supabase/migrations']);assert.equal(names.code,0,names.err);
@@ -49,7 +49,7 @@ try{
  const beforeTables=await tableAcl();
  assert.equal(await db("select to_regprocedure('public.qa_cancellation_v1(text,uuid,uuid)') is null;"),'t');
  const beforeAcl=await acl();
- await db(await readFile('supabase/migrations/20261015043710_agent001_qa_cancellation.sql','utf8'));assert.equal(await acl(),beforeAcl,'all existing function ACL/config/source unchanged');assert.equal(await tableAcl(),beforeTables,'all existing table/view/sequence ACL and RLS unchanged');
+ await db(await readFile('supabase/migrations/20261015043710_agent001_qa_cancellation.sql','utf8'));const afterAcl=await acl(),afterTables=await tableAcl();assert.equal(afterAcl,beforeAcl,'all existing function ACL/config/source unchanged');assert.equal(afterTables,beforeTables,'all existing table/view/sequence ACL and RLS unchanged');const sha=s=>createHash('sha256').update(s).digest('hex');result.catalogPins={functionsBefore:sha(beforeAcl),functionsAfter:sha(afterAcl),tablesBefore:sha(beforeTables),tablesAfter:sha(afterTables),sourceGuardsIncluded:'all original non-system pg_proc proacl/proconfig/prosecdef/prosrc hashes; only new qa_cancellation_v1 excluded'};
  const attrs=JSON.parse(await db("select jsonb_build_object('owner',pg_get_userbyid(proowner),'securityDefiner',prosecdef,'searchPath',proconfig,'auth',has_function_privilege('authenticated',oid,'EXECUTE'),'anon',has_function_privilege('anon',oid,'EXECUTE'),'service',has_function_privilege('service_role',oid,'EXECUTE')) from pg_proc where oid='public.qa_cancellation_v1(text,uuid,uuid)'::regprocedure;"));
  assert.equal(attrs.owner,'postgres');assert.equal(attrs.securityDefiner,true);assert.deepEqual(attrs.searchPath,['search_path=""']);assert.equal(attrs.auth,true);assert.equal(attrs.anon,false);assert.equal(attrs.service,false);result.function=attrs;
  pass('full source replay and candidate on isolated original roles, no fixture grants');
