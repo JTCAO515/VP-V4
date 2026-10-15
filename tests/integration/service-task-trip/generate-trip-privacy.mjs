@@ -27,6 +27,12 @@ try{
  const mapping={...common};for(const [a,b] of newNames)if(a.startsWith((kind==='c'?'conversation_data_private':'turn_data_private')+'.'))mapping[a]=b;
  if(s.schema==='public')mapping[s.schema+'.'+s.name]=newNames.get(s.schema+'.'+s.name);
  for(const [a,b] of Object.entries(mapping))body=body.replaceAll(a,b);
+ if(s.name==='export_source_v1')body=body.replace("for k in select unnest(array[","for k in select unnest(array[");
+ if(s.name==='export_source_v1'){
+ const identityLoop="for s in select * from turn_private.trip_privacy_t_sources_v1() where effect='erase' order by relation_name collate \"C\" loop";
+ const identityVersion="if not recovery_private.exact_v1(op_n.decision->'erasedCounts',array(select jsonb_object_keys(case when op_n.decision->'graph' ? 'tripTaskIds' then turn_private.trip_privacy_t_zero_counts_v1('erase') else turn_data_private.zero_counts_v1('erase') end))) then raise exception 'TURN_SOURCE_UNAVAILABLE';end if;\n  for s in select * from turn_private.trip_privacy_t_sources_v1() where effect='erase' and(op_n.decision->'graph' ? 'tripTaskIds' or relation_name not like 'scoped_edit_private.%') order by relation_name collate \"C\" loop";
+ assert.equal(body.split(identityLoop).length,2);body=body.replace(identityLoop,()=>identityVersion);
+ }
  if(s.name==='export_source_v1'){
  body=body.replaceAll("'turn-core-export/1'","'turn-trip-core-export/1'");
  body=body.replace('where m.turn_id=any(roots) or exists(',"where m.turn_id=any(roots) or exists(select 1 from turn_private.service_tasks st where st.goal_turn_id=any(roots) and st.owner_id=u and st.expected_result='trip_modification' and st.id=m.task_id) or exists(");
@@ -47,6 +53,8 @@ try{
   else body=body.replace("select coalesce(array_agg(id order by id),array[]::uuid[]) into ex", "if not turn_private.trip_privacy_exclusive_v1(u,g) then bad:=array_append(bad,'SCOPED_EDIT_REFERENCE');end if;\n select coalesce(array_agg(id order by id),array[]::uuid[]) into ex");
   const inc=kind==='c'?"if spec.count_key='tasks' and actual_n->'trip_objective'->>'outcome' is distinct from 'erased' then redact_n:=jsonb_set(redact_n,'{tripObjectives}',to_jsonb((redact_n->>'tripObjectives')::integer+1));end if;":"if spec.count_key='tasks' and v->'trip_objective'->>'outcome' is distinct from 'erased' then redact_n:=jsonb_set(redact_n,'{tripObjectives}',to_jsonb((redact_n->>'tripObjectives')::integer+1));end if;";
   body=body.replace(kind==='c'?"   if actual_n->>'policy_id'":"   if v->>'policy_id'",'   '+inc+'\n'+(kind==='c'?"   if actual_n->>'policy_id'":"   if v->>'policy_id'"));
+  if(kind==='c')body=body.replace("if actual_n->>'proposal_id' is not null or","if actual_n->>'proposal_id' is not null and spec.relation_name not in('scoped_edit_private.operations_v1','scoped_edit_private.lineage_v1') or");
+  if(kind==='t')body=body.replace("if v->>'proposal_id' is not null or","if v->>'proposal_id' is not null and spec.relation_name not in('scoped_edit_private.operations_v1','scoped_edit_private.lineage_v1') or");
   if(kind==='t')body=body.replace('turn_data_private.json_references_v1(v)',"turn_data_private.json_references_v1(case when spec.relation_name='turn_private.service_tasks' then v-'trip_objective' else v end)");
  }
  if(s.name==='lock_source_v1')body=body.replace(kind==='c'?"select pk into pk_n from turn_private.trip_privacy_c_sources_v1()":"select * into spec from turn_private.trip_privacy_t_sources_v1()",kind==='c'?"select pk into pk_n from turn_private.trip_privacy_c_sources_v1()":"select * into spec from turn_private.trip_privacy_t_sources_v1()");
@@ -55,7 +63,7 @@ try{
   // Compute the declared count before the original hide invokes the actual erasure trigger.
   body=body.replace('declare ', 'declare objectives_n integer;');
   body=body.replace('begin\n perform',`begin\n select count(*) into objectives_n from turn_private.service_tasks where id=any(privacy_private.linked_delete_array_v1(${kind==='c'?"source_n":"src"}->'graph'->'tripTaskIds')) and owner_id=u and trip_objective->>'outcome'<>'erased';\n perform`);
-  body=body.replace(kind==='c'?" if actual_erase is distinct":" if ec is distinct",(kind==='c'?" actual_redact:=jsonb_set(actual_redact,'{tripObjectives}',to_jsonb(objectives_n));\n if actual_erase is distinct":" rc:=jsonb_set(rc,'{tripObjectives}',to_jsonb(objectives_n));\n if ec is distinct"));
+  body=body.replace(kind==='c'?" if actual_erase is distinct":" if ec is distinct",(kind==='c'?" perform turn_private.trip_privacy_require_erased_v1(u,source_n->'graph');actual_redact:=jsonb_set(actual_redact,'{tripObjectives}',to_jsonb(objectives_n));\n if actual_erase is distinct":" perform turn_private.trip_privacy_require_erased_v1(u,src->'graph');rc:=jsonb_set(rc,'{tripObjectives}',to_jsonb(objectives_n));\n if ec is distinct"));
  }
  if(s.schema==='public')body=body.replace('from jsonb_each(r.graph);',"from jsonb_each(r.graph) where key not in('tripTaskIds','tripPrivacyTripIds');");
  if(s.name==='binding_v1'||s.schema==='public')body=body.replaceAll(kind==='c'?"'conversation-data/1'":"'turn-data/1'",kind==='c'?"'conversation-trip-data/1'":"'turn-trip-data/1'");
@@ -73,8 +81,10 @@ try{
  }
  const originalExport=specs.find(s=>s.schema==='turn_data_private'&&s.name==='export_source_v1');
  const exportHook="begin\n if exists(select 1 from turn_private.service_tasks where owner_id=u and expected_result='trip_modification') then perform turn_private.require_trip_runtime_v1();return turn_private.trip_privacy_t_export_source_v1(u);end if;";
- const exportAfter=originalExport.prosrc.replace('begin',()=>exportHook);
- output.push(`do $dispatch$declare f record;begin select prosrc,proacl,pg_get_functiondef(oid) definition into f from pg_proc where oid=${lit(originalExport.signature)}::regprocedure;if encode(sha256(convert_to(f.prosrc,'UTF8')),'hex')<>${lit(sha(originalExport.prosrc))} then raise exception 'TRIP_EXPORT_DISPATCH_DRIFT';end if;execute overlay(f.definition placing ${lit(exportHook)} from position('begin' in f.definition) for 5);if(select proacl from pg_proc where oid=${lit(originalExport.signature)}::regprocedure) is distinct from f.proacl then raise exception 'TRIP_EXPORT_DISPATCH_ACL_DRIFT';end if;end $dispatch$;`);
+ const legacyRow="r:=turn_data_private.export_row_v1(s.relation_name,v);row_count_n:=row_count_n+1;",legacyProjection="r:=turn_data_private.export_row_v1(s.relation_name,case when s.relation_name='turn_private.service_tasks' then v-'trip_objective' else v end);row_count_n:=row_count_n+1;";
+ assert.equal(originalExport.prosrc.split(legacyRow).length,2);
+ const exportAfter=originalExport.prosrc.replace('begin',()=>exportHook).replace(legacyRow,()=>legacyProjection);
+ output.push(`do $dispatch$declare f record;begin select prosrc,proacl,pg_get_functiondef(oid) definition into f from pg_proc where oid=${lit(originalExport.signature)}::regprocedure;if encode(sha256(convert_to(f.prosrc,'UTF8')),'hex')<>${lit(sha(originalExport.prosrc))} then raise exception 'TRIP_EXPORT_DISPATCH_DRIFT';end if;execute replace(overlay(f.definition placing ${lit(exportHook)} from position('begin' in f.definition) for 5),${lit(legacyRow)},${lit(legacyProjection)});if(select proacl from pg_proc where oid=${lit(originalExport.signature)}::regprocedure) is distinct from f.proacl then raise exception 'TRIP_EXPORT_DISPATCH_ACL_DRIFT';end if;end $dispatch$;`);
  audit.push({original:originalExport.signature,before:sha(originalExport.prosrc),after:sha(exportAfter),legacyOnlyTripRecordRefusal:true,tripOnlyExportDispatch:true});
  const pageAnchor="'schemaVersion','turn-core-export/1'",pageReplacement="'schemaVersion',case when (select count(distinct group_n.value->>'relation') from jsonb_array_elements(src->'snapshot'->'sources') as group_n(value) where group_n.value->>'relation'=any(array['scoped_edit_private.contexts_v1','scoped_edit_private.work_v1','scoped_edit_private.requests_v1','scoped_edit_private.operations_v1','scoped_edit_private.lineage_v1']))=5 then 'turn-trip-core-export/1' else 'turn-core-export/1' end";
  assert.equal(corePage.prosrc.split(pageAnchor).length,2);const pageAfter=corePage.prosrc.replace(pageAnchor,()=>pageReplacement);

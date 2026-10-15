@@ -72,3 +72,12 @@ create function turn_private.trip_privacy_goal_writer_v1(goal uuid,u uuid,curren
  and not exists(select 1 from turn_private.assistant_messages newer where newer.goal_id=g.id and newer.owner_id=u and newer.relationship in('goal_start','amendment') and newer.scope_version>w.scope_version)
  and not exists(select 1 from generate_series(w.scope_version+1,current_version) v where (select count(*) from turn_private.assistant_goal_trip_receipts r where r.goal_id=g.id and r.owner_id=u and r.conversation_id=g.conversation_id and r.source_kind='native_user_confirmed' and r.before_goal_scope_version=v-1 and r.after_goal_scope_version=v)<>1))
 $$;
+create function turn_private.trip_privacy_require_erased_v1(u uuid,g jsonb) returns void language plpgsql stable security definer set search_path='' as $$
+declare s turn_private.service_tasks%rowtype;source_task_id uuid;begin
+ foreach source_task_id in array privacy_private.linked_delete_array_v1(g->'tripTaskIds') loop
+ select * into s from turn_private.service_tasks where service_tasks.id=source_task_id and owner_id=u and expected_result='trip_modification';
+ if not found or s.trip_objective->>'schemaVersion' is distinct from 'trip-service-task-erased/1' or s.trip_objective->>'outcome' is distinct from 'erased'
+ or not recovery_private.exact_v1(s.trip_objective,array['schemaVersion','outcome','goalId']||case when s.trip_objective ? 'proposalId' then array['proposalId'] else array[]::text[] end)
+ or not recovery_private.uuid_v1(s.trip_objective->'goalId') or s.trip_objective ? 'proposalId' and not recovery_private.uuid_v1(s.trip_objective->'proposalId') then raise exception 'TRIP_OBJECTIVE_ERASURE_INCOMPLETE';end if;
+ end loop;
+end $$;

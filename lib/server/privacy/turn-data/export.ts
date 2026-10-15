@@ -6,7 +6,7 @@ import schema from './source-schema.json' with { type: 'json' };
 import { DIRECTION_TURN_SOURCE_SCHEMA, validDirectionTurnExportRow } from '../../planning/directions/turn-export-rows.ts';
 const originalSchema=schema.filter(s=>!('tripOnly' in s&&s.tripOnly));
 const exportSchema=[...originalSchema,...DIRECTION_TURN_SOURCE_SCHEMA];
-const tripExportSchema=[...originalSchema,...schema.filter(s=>'tripOnly' in s&&s.tripOnly),...DIRECTION_TURN_SOURCE_SCHEMA];
+const tripExportSchema=[...originalSchema.map(s=>s.relation==='turn_private.service_tasks'?{...s,columns:[...s.columns,{name:'trip_objective',type:'jsonb',notNull:false}]}:s),...schema.filter(s=>'tripOnly' in s&&s.tripOnly),...DIRECTION_TURN_SOURCE_SCHEMA];
 import { exact, record, hash } from '../../guide/contract.ts';
 import { exportCanonical, type ExportHandler, type ExportLease, type ExportModuleReceipt, type ExportPage } from '../export-dispatcher.ts';
 import type { ExportDomainRPC } from '../export-worker.ts';
@@ -62,7 +62,7 @@ function closedSourceGraph(sources: Sources,tripTask=false): boolean {
   const turns = new Set([...ids('public.turns', 'id'), ...ids('turn_private.text_content', 'turn_id')]);
   const tasks = ids('turn_private.service_tasks', 'id'), messages = ids('turn_private.assistant_messages', 'id');
   const artifacts = ids('turn_private.result_artifacts', 'id'), executions = ids('turn_private.planning_v2_execution_runs', 'id');
-  const linkedMessages = new Set([...rows('turn_private.service_tasks').filter(t=>validTripObjectiveExport(t,rows) && t.trip_objective !== null && (t.trip_objective as Record<string,unknown>).outcome !== 'erased').map(t=>String((t.trip_objective as Record<string,unknown>).messageId)),...rows('turn_private.planning_comparisons').map(r => String(r.message_id)),
+  const linkedMessages = new Set([...rows('turn_private.service_tasks').flatMap(t=>validTripObjectiveExport(t,rows)?rows('turn_private.assistant_messages').filter(m=>m.task_id===t.id&&m.owner_id===t.owner_id&&(record(t.trip_objective)&&t.trip_objective.outcome==='erased'?m.goal_id===(t.trip_objective as Record<string,unknown>).goalId:m.id===(t.trip_objective as Record<string,unknown>)?.messageId)).map(m=>String(m.id)):[]),...rows('turn_private.planning_comparisons').map(r => String(r.message_id)),
     ...rows('turn_private.result_artifacts').map(r => String(r.input_message_id)),
     ...rows('turn_private.assistant_directions_intakes_v1').map(r => String(r.message_id))]);
   for (const spec of exportSchema) for (const row of rows(spec.relation)) {
@@ -77,7 +77,7 @@ function closedSourceGraph(sources: Sources,tripTask=false): boolean {
     if (spec.relation === 'turn_private.directions_operations_v1' && !messages.has(String(row.source_message_id))) return false;
     if (spec.relation === 'turn_private.directions_result_sources_v1' && (!rows('turn_private.assistant_directions_intakes_v1').some(intake => intake.message_id === row.message_id && intake.task_turn_id === row.task_turn_id)
       || row.previous_artifact_id !== null && !artifacts.has(String(row.previous_artifact_id)))) return false;
-    if (spec.relation === 'turn_private.service_tasks' && (!turns.has(String(row.goal_turn_id)) || !turns.has(String(row.last_turn_id)) || !validTripObjectiveExport(row,rows))) return false;
+    if (spec.relation === 'turn_private.service_tasks' && (!turns.has(String(row.goal_turn_id)) || !turns.has(String(row.last_turn_id)) || (tripTask?!validTripObjectiveExport(row,rows):Object.hasOwn(row,'trip_objective')))) return false;
     if (spec.relation === 'turn_private.service_task_turns' && row.parent_turn_id !== null && !turns.has(String(row.parent_turn_id))) return false;
     // Planning's real submitter binds a follow_up message with turn_id=NULL.
     // Outbound parent IDs are retained identities; SQL qualifies their owner, never exports their body by guess.
@@ -144,7 +144,9 @@ export function decodeTurnExportPage(v: unknown, limit: number, owner: string, n
   for (const identity of item.sourceIdentityKeys) {
     if (!record(identity) || !exact(identity, ['requestId', 'relation', 'pk']) || !identifier(identity.requestId)
       || !terminalSensitiveOperations.has(identity.requestId) || typeof identity.relation !== 'string' || !record(identity.pk)) return null;
-    const spec = (tripTask?schema:originalSchema).find(s => s.relation === identity.relation && s.effect === 'erase');
+    const originalCounts=terminalSensitiveOperations.get(identity.requestId)!;
+    const tripOperation=TRIP_PRIVATE_SOURCE_KEYS.every(k=>Object.hasOwn(originalCounts,k));
+    const spec = (tripOperation?schema:originalSchema).find(s => s.relation === identity.relation && s.effect === 'erase');
     const pk = identity.pk;
     if (!spec || !exact(pk, spec.pk) || 'owner_id' in pk && pk.owner_id !== owner || !spec.pk.every(key => {
       const column = spec.columns.find(c => c.name === key);
@@ -153,13 +155,14 @@ export function decodeTurnExportPage(v: unknown, limit: number, owner: string, n
     if (previousIdentity && (identity.requestId < previousIdentity.requestId
       || identity.requestId === previousIdentity.requestId && (identity.relation < previousIdentity.relation
         || identity.relation === previousIdentity.relation && !increasing(pk, previousIdentity.pk, spec)))) return null;
-    const actual = identityCounts.get(identity.requestId) ?? Object.fromEntries([...ERASED_KEYS,...(tripTask?TRIP_PRIVATE_SOURCE_KEYS:[])].map(k => [k, 0]));
+    const actual = identityCounts.get(identity.requestId) ?? Object.fromEntries([...ERASED_KEYS,...(tripOperation?TRIP_PRIVATE_SOURCE_KEYS:[])].map(k => [k, 0]));
+    if(!Object.hasOwn(actual,spec.countKey))return null;
     actual[spec.countKey]++; identityCounts.set(identity.requestId, actual);
     previousIdentity = { requestId: identity.requestId, relation: identity.relation, pk };
   }
   // One immutable key per actual erased source row; omission cannot be disguised by a matching empty counter.
   for (const [requestId, erased] of terminalSensitiveOperations)
-    if (![...ERASED_KEYS,...(tripTask?TRIP_PRIVATE_SOURCE_KEYS:[])].every(k => (identityCounts.get(requestId)?.[k] ?? 0) === erased[k])) return null;
+    if (!(TRIP_PRIVATE_SOURCE_KEYS.every(k=>Object.hasOwn(erased,k))?[...ERASED_KEYS,...TRIP_PRIVATE_SOURCE_KEYS]:ERASED_KEYS).every(k => (identityCounts.get(requestId)?.[k] ?? 0) === erased[k])) return null;
   return { items: structuredClone(v.items), sourceDigest: v.sourceDigest, hasMore: false, nextCursor: null, sectionComplete: true };
 }
 export type TurnExportHandler = ExportHandler & { progress(): { pages: number; rows: number; terminalSections: number }; matchesReceipt(receipt: ExportModuleReceipt | undefined): boolean };
