@@ -14,7 +14,7 @@ writeFileSync(join(root,'local-resource.json'),JSON.stringify({nonce,socket,data
 const c=new Client({host:socket,user:'postgres',database:'postgres'});await c.connect();
 await c.query(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));
 await c.query("create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$; create schema extensions; create extension pgcrypto with schema extensions;");
-for(const f of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&f!=='20261015083120_agent005_canonical_place_ask.sql').sort()){
+for(const f of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&f<'20261015083120_agent005_canonical_place_ask.sql').sort()){
  try{await c.query('begin');await c.query(readFileSync('supabase/migrations/'+f,'utf8'));await c.query('commit');}catch(e){console.error(f,e.message);await c.query('rollback');throw e;}
 }
 const requested=[...JSON.parse(readFileSync(join(root,'function-pins.json'),'utf8')),...JSON.parse(readFileSync(join(root,'dependency-pins.json'),'utf8'))].map(p=>p.signature);
