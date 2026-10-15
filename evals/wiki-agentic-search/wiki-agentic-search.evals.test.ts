@@ -39,7 +39,7 @@ function knowledgeReadResponse(scenario: Scenario) {
     status: scenario.corpus.length > 0 ? "available" : "no_eligible_content",
     statements: scenario.corpus.map((entry) => ({
       factId: entry.factId, version: 1, assertionId: entry.assertionId, assertionRevision: 1,
-      assertion: { subjectId: "synthetic-subject", predicate: entry.predicate, objectId: entry.objectId },
+      assertion: { subjectId: scenario.claims.find((claim) => claim.predicate === entry.predicate && claim.objectId === entry.objectId)?.subjectId ?? "synthetic-subject", predicate: entry.predicate, objectId: entry.objectId },
       text: entry.text[scenario.locale], conditions: [], exclusions: [],
       sources: [{ sourceRevisionId: entry.sourceId, sourceKey: entry.factId, revisionLabel: "r1", publisher: "Synthetic", uri: "urn:synthetic", locator: "p1" }],
     })),
@@ -83,8 +83,22 @@ type Row = Readonly<{
   id: string; group: string; questionId: string; locale: string; kind: string;
   outcomeKind: string; reason?: string; requiredCovered: number; requiredTotal: number;
   structuredBaselineWouldAnswer: boolean; divergesFromBaseline: boolean; matchesExpected: boolean;
+  legacyExpected: Scenario["expected"]; legacyMatchesExpected: boolean;
+  currentContractExpected: Scenario["expected"];
   elapsedMs: number; usageTotalTokens: number;
 }>;
+
+// Version the harness contract, not frozen case truth. These place fixtures
+// explicitly have claims=[] and supply no resolved subject. Their old answered
+// expectation lacked an obligation set; no entity authority is added here.
+const CURRENT_HARNESS_CONTRACT = "grounded-result-contract/2";
+function currentContractExpected(scenario: Scenario): Scenario["expected"] {
+  if (isPlaceQuestionId(scenario.questionId) && scenario.claims.length === 0
+    && (scenario.kind === "full_coverage" || scenario.kind === "partial_coverage")) {
+    return { kind: "unavailable", reason: "user_input_missing" };
+  }
+  return scenario.expected;
+}
 
 test("34 frozen scenarios cover every real question definition (zh+en) plus every non-gate terminal, split development/holdout without overlap", () => {
   assert.equal(scenarios.length, 34);
@@ -106,8 +120,11 @@ test("real pipeline run over the frozen set: every scenario's outcome matches it
     const outcome: GroundedSearchOutcome = await runGroundedWikiSearch(input, { ...deps, rpc, fetch: fetchFor(scenario) }, new AbortController().signal);
     const elapsedMs = performance.now() - started;
 
-    const kindMatches = outcome.kind === scenario.expected.kind;
-    const reasonMatches = !(outcome.kind === "unavailable" && scenario.expected.reason) || outcome.reason === scenario.expected.reason;
+    const expected = currentContractExpected(scenario);
+    const kindMatches = outcome.kind === expected.kind;
+    const reasonMatches = !(outcome.kind === "unavailable" && expected.reason) || outcome.reason === expected.reason;
+    const legacyMatchesExpected = outcome.kind === scenario.expected.kind
+      && (!(outcome.kind === "unavailable" && scenario.expected.reason) || outcome.reason === scenario.expected.reason);
     let requiredCovered = 0;
     let coverageMatches = true;
     if (outcome.kind === "answered") {
@@ -115,8 +132,8 @@ test("real pipeline run over the frozen set: every scenario's outcome matches it
       if (scenario.kind === "full_coverage" && scenario.claims.length > 0) coverageMatches = requiredCovered === scenario.claims.length;
     }
     const matchesExpected = kindMatches && reasonMatches && coverageMatches;
-    assert.equal(outcome.kind, scenario.expected.kind, `${scenario.id}: expected kind ${scenario.expected.kind}, got ${outcome.kind}`);
-    assert.ok(reasonMatches, `${scenario.id}: expected reason ${scenario.expected.reason}, got ${outcome.kind === "unavailable" ? outcome.reason : "n/a"}`);
+    assert.equal(outcome.kind, expected.kind, `${scenario.id}: current contract expected kind ${expected.kind}, got ${outcome.kind}`);
+    assert.ok(reasonMatches, `${scenario.id}: current contract expected reason ${expected.reason}, got ${outcome.kind === "unavailable" ? outcome.reason : "n/a"}`);
     assert.ok(coverageMatches, `${scenario.id}: full_coverage scenario should cover every required claim (${requiredCovered}/${scenario.claims.length})`);
     // Structured/direct-lookup baseline (VPJ-76 acceptance: "记录同批结构化/直接读取baseline和本路径实测差异"):
     // knowledge_read_v1 already scoped the corpus before this module ever runs, so a
@@ -135,6 +152,7 @@ test("real pipeline run over the frozen set: every scenario's outcome matches it
       outcomeKind: outcome.kind, reason: outcome.kind === "unavailable" ? outcome.reason : undefined,
       requiredCovered, requiredTotal: scenario.claims.length,
       structuredBaselineWouldAnswer, divergesFromBaseline, matchesExpected,
+      legacyExpected: scenario.expected, legacyMatchesExpected: legacyMatchesExpected && coverageMatches, currentContractExpected: expected,
       elapsedMs: Math.round(elapsedMs * 1000) / 1000,
       usageTotalTokens: "usage" in outcome ? outcome.usage.totalTokens : 0,
     });
@@ -153,17 +171,18 @@ test("real pipeline run over the frozen set: every scenario's outcome matches it
   try { commit = execFileSync("git", ["rev-parse", "HEAD"], { cwd: new URL("../../", import.meta.url), encoding: "utf8" }).trim(); } catch { /* an exported source tree has no commit */ }
 
   const report = {
-    schemaVersion: 1, versions, commit, mode: "fixture" as const,
+    schemaVersion: 2, versions, harnessContract: CURRENT_HARNESS_CONTRACT, commit, mode: "fixture" as const,
     note: "Fixture transport: elapsedMs measures this real code path's own overhead (parsing, validation, corpus scoring), not real network/model latency. usageTotalTokens is the fixture responses' declared usage, not a real bill. A real-model pass is a deliberate, separate follow-up -- see this eval's README.",
     counts: { total: rows.length, development: rows.filter((r) => r.group === "development").length, holdout: rows.filter((r) => r.group === "holdout").length, answered: answered.length, unavailable: rows.filter((r) => r.outcomeKind === "unavailable").length, budgetExhausted: rows.filter((r) => r.outcomeKind === "budget_exhausted").length },
     metrics: { coverageRatePercent: coverageRate, overRefusalRatePercent: overRefusalRate, p50ElapsedMs: percentile(50), p95ElapsedMs: percentile(95), totalTokens },
     baselineDivergence: rows.filter((r) => r.divergesFromBaseline).map((r) => ({ id: r.id, questionId: r.questionId, locale: r.locale, kind: r.kind, outcomeKind: r.outcomeKind })),
     rows,
+    legacyVerdict: rows.every((r) => r.legacyMatchesExpected) ? "PASS" : "FAIL",
     verdict: rows.every((r) => r.matchesExpected) ? "PASS" : "FAIL",
   };
   mkdirSync(outputDirectory, { recursive: true });
   writeFileSync(new URL("results.json", outputDirectory), `${JSON.stringify(report, null, 2)}\n`);
   const zh = rows.filter((r) => r.locale === "zh").length, en = rows.filter((r) => r.locale === "en").length;
-  writeFileSync(new URL("summary.md", outputDirectory), `# VPJ-76 冻结评测集（fixture 模式）\n\n34 个场景：中文${zh}条，英文${en}条；development ${report.counts.development}条，holdout ${report.counts.holdout}条。\n\n覆盖率 ${coverageRate}%，过拒答率 ${overRefusalRate}%（相对同批结构化/直接读取baseline，共${overRefused.length}条分歧，均为刻意构造的 retrieval_miss/budget_exhausted 场景）。p50 ${percentile(50)}ms / p95 ${percentile(95)}ms（fixture transport，非真实网络/模型延迟）。累计 usage token：${totalTokens}（fixture声明值，非真实计费）。\n\n判定：${report.verdict}。真实模型一轮已做（GLM，见 ../wiki-frozen-eval-real-model-20260916/verification.md）；真实数据库一轮仍未做，见本目录 README。\n\n${rows.map((r) => `- ${r.id} [${r.group}]: ${r.kind} → ${r.outcomeKind}${r.reason ? "/" + r.reason : ""}${r.requiredTotal ? ` (covered ${r.requiredCovered}/${r.requiredTotal})` : ""}`).join("\n")}\n`);
+  writeFileSync(new URL("summary.md", outputDirectory), `# VPJ-76 冻结评测集（fixture 模式）\n\n34 个场景：中文${zh}条，英文${en}条；development ${report.counts.development}条，holdout ${report.counts.holdout}条。\n\n覆盖率 ${coverageRate}%，过拒答率 ${overRefusalRate}%（相对同批结构化/直接读取baseline，共${overRefused.length}条分歧，包含未解析地点对象、retrieval_miss 与 budget_exhausted；分母与原baseline保持不变）。p50 ${percentile(50)}ms / p95 ${percentile(95)}ms（fixture transport，非真实网络/模型延迟）。累计 usage token：${totalTokens}（fixture声明值，非真实计费）。\n\n当前合同 ${CURRENT_HARNESS_CONTRACT} 判定：${report.verdict}；原冻结预期判定：${report.legacyVerdict}（保留原差异，不将原FAIL称为PASS）。真实模型一轮已做（GLM，见 ../wiki-frozen-eval-real-model-20260916/verification.md）；真实数据库一轮仍未做，见本目录 README。\n\n${rows.map((r) => `- ${r.id} [${r.group}]: ${r.kind} → ${r.outcomeKind}${r.reason ? "/" + r.reason : ""}${r.requiredTotal ? ` (covered ${r.requiredCovered}/${r.requiredTotal})` : ""}; legacy=${r.legacyExpected.kind}/${r.legacyExpected.reason ?? ""} match=${r.legacyMatchesExpected}; current=${r.currentContractExpected.kind}/${r.currentContractExpected.reason ?? ""} match=${r.matchesExpected}`).join("\n")}\n`);
   assert.equal(report.verdict, "PASS");
 });

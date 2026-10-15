@@ -1,44 +1,19 @@
 import { questionDefinition, isPlaceQuestionId } from "../claim/questions.ts";
 import type { KnowledgeIntent } from "../claim/intent.ts";
-import { buildPublishedWikiCorpus, type KnowledgeReadRpc } from "./published-corpus.ts";
-import { runWikiSearchJob, type WikiSearchJobDependencies } from "../../jobs/wiki-search-job.ts";
+import { buildPublishedWikiCorpus, type KnowledgeReadRpc, type PublishedCorpusOutcome } from "./published-corpus.ts";
+import { runWikiSearchJob, type WikiSearchJobDependencies, type WikiSearchJobOutcome } from "../../jobs/wiki-search-job.ts";
 import type { WikiSearchCitation } from "../../model-gateway/prompt/wiki-search.ts";
 import type { HttpProviderConfiguration } from "../../model-gateway/adapters/http-transport.ts";
 import { buildEvidencePack, type EvidencePack } from "./evidence-pack.ts";
 
-/**
- * VPJ-76 (#360) slice 3: the glue between an already-recognized
- * KnowledgeIntent (the existing knowledge_intent_v1 path -- not
- * re-implemented here) and the agentic search loop. Turns
- * {intent, city, locale} into the {city, scene, locale} scope
- * buildPublishedWikiCorpus needs, short-circuits before spending a model
- * call when there is nothing published to search, and otherwise runs the
- * loop.
- *
- * Place questions (place_address / place_opening_hours /
- * place_address_and_hours) ARE supported (slice 6), despite needing a
- * resolved placeSubjectId for questionDefinition()'s own claims-coverage
- * path (grounded-turn/1, a different and stricter consumer) -- this
- * module only needs the *scene* ("attraction", hardcoded for every place
- * question in questionDefinition() regardless of subjectId), not a
- * resolved subject, because the search loop finds the relevant published
- * content itself rather than requiring it be pre-identified. See slice 6
- * in docs/contracts/wiki-agentic-search.md for the reasoning. city comes
- * from the caller's existing Trip context, never from free-text
- * recognition.
- *
- * Slice 4: every non-answered terminal collapses into VPJ-76's own
- * required six-way reason taxonomy (missing_content / retrieval_miss /
- * user_input_missing / capability_unsupported / policy_denied /
- * provider_failure), rather than the ad-hoc kinds slice 3 shipped with
- * (unsupported_intent / no_content / corpus_unavailable). This is a
- * deliberate breaking change to a type this session introduced two
- * commits ago -- nothing outside this session's own three slices calls
- * runGroundedWikiSearch yet, so there is no real caller to break.
- */
+/** Published Wiki search with server-owned obligation coverage and a current
+ * evidence gate for display text. Place questions without a resolved subject
+ * cannot assert coverage; existing reasons and consumer unions stay intact. */
 
 export type GroundedSearchInput = Readonly<{
   intent: KnowledgeIntent;
+  /** First-party resolver output only; never derived from model/name similarity. */
+  placeSubjectId?: string;
   question: string;
   city: string;
   locale: "zh" | "en";
@@ -104,22 +79,30 @@ export async function runGroundedWikiSearch(
   // doesn't cover that kind of question at all -- two different reasons,
   // not one generic "can't handle this".
   if (input.intent.intent === "clarification") return { kind: "unavailable", reason: "user_input_missing" };
-  // Place questions bypass questionDefinition() entirely: that function
-  // requires a resolved placeSubjectId (for grounded-turn/1's own
-  // claims-coverage checks) and returns null without one, but the scene it
-  // would return is a hardcoded "attraction" regardless of subjectId --
-  // the only piece this module actually needs.
-  // Required-claim coverage (EvidencePack v2) needs a fixed claim set. Place
-  // questions have none here -- their claims are only resolvable once a
-  // subject is chosen, which (per the comment above) this module never
-  // does; their EvidencePack.required stays empty, matching that same
-  // existing scope decision rather than inventing subject resolution here.
+  // Preserve the scoped corpus read for place questions, but do not invent
+  // the resolved subject required by questionDefinition's obligation set.
   const isPlace = isPlaceQuestionId(input.intent.intent);
-  const definition = isPlace ? null : questionDefinition(input.intent.intent);
+  const definition = questionDefinition(input.intent.intent, input.placeSubjectId);
   const scene = isPlace ? "attraction" : definition?.scene;
   if (!scene) return { kind: "unavailable", reason: "capability_unsupported" };
 
-  const corpusOutcome = await buildPublishedWikiCorpus(dependencies.rpc, { city: input.city, scene, locale: input.locale });
+  // The existing corpus adapter discards subjectId. Retain it locally from
+  // the same authorized response; never infer an entity from model prose.
+  let subjects = new Map<string, string>();
+  const scopedRpc: KnowledgeReadRpc = async (name, params) => {
+    const reply = await dependencies.rpc(name, params);
+    subjects = new Map();
+    const data = reply.data;
+    if (data && typeof data === "object" && "statements" in data && Array.isArray(data.statements)) {
+      for (const row of data.statements) {
+        if (row && typeof row === "object" && typeof row.factId === "string"
+          && row.assertion && typeof row.assertion.subjectId === "string") subjects.set(row.factId, row.assertion.subjectId);
+      }
+    }
+    return reply;
+  };
+  const corpusOutcome = await buildPublishedWikiCorpus(scopedRpc, { city: input.city, scene, locale: input.locale });
+  const originalSubjects = subjects;
   if (corpusOutcome.kind === "unavailable") {
     return { kind: "unavailable", reason: corpusOutcome.code === "KNOWLEDGE_DISABLED" ? "policy_denied" : "provider_failure", providerCode: corpusOutcome.code };
   }
@@ -131,16 +114,9 @@ export async function runGroundedWikiSearch(
     dependencies, signal,
   );
   switch (outcome.kind) {
-    case "answered":
-      // Real content existed (corpus was non-empty) but the search loop
-      // itself came up empty -- that's a retrieval miss, not "no content
-      // exists" (missing_content) and not a real answer (empty citations).
-      if (outcome.coverage === "no_content") return { kind: "unavailable", reason: "retrieval_miss" };
-      return {
-        kind: "answered", coverage: outcome.coverage, summary: outcome.summary, citations: outcome.citations, gaps: outcome.gaps, conflicts: outcome.conflicts,
-        evidence: buildEvidencePack(outcome.citations, corpusOutcome.provenance, definition?.claims ?? [], outcome.gaps, outcome.conflicts),
-        rounds: outcome.rounds, queries: outcome.queries, usage: outcome.usage,
-      };
+    case "answered": {
+      return finalizeAnswer(input, signal, definition, scene, corpusOutcome, originalSubjects, scopedRpc, () => subjects, outcome);
+    }
     case "budget_exhausted":
       return { kind: "budget_exhausted", rounds: outcome.rounds, queries: outcome.queries, usage: outcome.usage };
     case "cancelled":
@@ -148,4 +124,113 @@ export async function runGroundedWikiSearch(
     case "failed":
       return { kind: "unavailable", reason: "provider_failure", providerCode: outcome.errorCode };
   }
+}
+
+async function finalizeAnswer(
+  input: GroundedSearchInput, signal: AbortSignal,
+  definition: ReturnType<typeof questionDefinition>, scene: string,
+  corpusOutcome: Extract<PublishedCorpusOutcome, { kind: "corpus" }>, originalSubjects: ReadonlyMap<string, string>,
+  scopedRpc: KnowledgeReadRpc, currentSubjects: () => ReadonlyMap<string, string>,
+  outcome: Extract<WikiSearchJobOutcome, { kind: "answered" }>,
+): Promise<GroundedSearchOutcome> {
+  if (signal.aborted) return { kind: "cancelled", rounds: outcome.rounds, usage: outcome.usage };
+  // No resolved place subject or conflict-to-claim relation is exposed by
+  // this port. Do not invent an obligation or choose a conflicting side.
+  if (!definition) return { kind: "unavailable", reason: "user_input_missing" };
+  const current = await buildPublishedWikiCorpus(scopedRpc, { city: input.city, scene, locale: input.locale });
+  if (signal.aborted) return { kind: "cancelled", rounds: outcome.rounds, usage: outcome.usage };
+  if (current.kind === "unavailable") return { kind: "unavailable", reason: current.code === "KNOWLEDGE_DISABLED" ? "policy_denied" : "provider_failure" };
+  // A no-content proposal gets one bounded direct lookup of obligations,
+  // so complete eligible evidence cannot be refused just by model choice.
+  const lookup = corpusOutcome.entries.filter((entry) => {
+    const prov = corpusOutcome.provenance.get(entry.pageKey);
+    return entry.text.length < 4000 && definition.claims.some((claim) => prov
+      && originalSubjects.get(entry.pageKey) === claim.subjectId
+      && prov.predicate === claim.predicate && prov.objectId === claim.objectId);
+  });
+  // Reserve one match per obligation before extra sources; keep the original
+  // eight-citation bound even when a no-content proposal needs direct lookup.
+  const primary = definition.claims.flatMap((claim) => {
+    const match = lookup.find((entry) => {
+      const prov = corpusOutcome.provenance.get(entry.pageKey);
+      return prov && originalSubjects.get(entry.pageKey) === claim.subjectId
+        && prov.predicate === claim.predicate && prov.objectId === claim.objectId;
+    });
+    return match ? [match] : [];
+  });
+  const proposed = outcome.coverage === "no_content"
+    ? [...new Map([...primary, ...lookup].map((entry) => [entry.pageKey, entry])).values()].slice(0, 8)
+      .map((entry) => ({ pageKey: entry.pageKey, quote: entry.text }))
+    : outcome.citations;
+  const currentCitations = proposed.filter((citation) => {
+    const previous = corpusOutcome.entries.find((entry) => entry.pageKey === citation.pageKey);
+    const now = current.entries.find((entry) => entry.pageKey === citation.pageKey);
+    const before = corpusOutcome.provenance.get(citation.pageKey);
+    const after = current.provenance.get(citation.pageKey);
+    return previous && now && previous.text === now.text && before && after
+      && originalSubjects.get(citation.pageKey) === currentSubjects().get(citation.pageKey)
+      && before.publicationId === after.publicationId && before.predicate === after.predicate
+      && before.objectId === after.objectId && JSON.stringify(before.sourceIds) === JSON.stringify(after.sourceIds);
+  });
+  // A free-text model disagreement cannot label a claim as conflicting.
+  // Keep independently authorized statements and expose bounded uncertainty
+  // without choosing one version or inventing a conflict resolver.
+  const conflicts = outcome.conflicts.length ? [input.locale === "zh"
+    ? "模型报告的分歧尚未定位到具体证据；请核对所列已发布资料。"
+    : "Reported disagreement is not mapped to evidence; verify the listed published sources."] : [];
+  const citations = currentCitations.slice(0, 8);
+  // Only exact triples can satisfy obligations. The public provenance
+  // contract remains unchanged; background retains its separate refs.
+  const requiredProvenance = new Map([...current.provenance].filter(([id, prov]) => definition.claims.some((claim) =>
+    currentSubjects().get(id) === claim.subjectId && prov.predicate === claim.predicate && prov.objectId === claim.objectId)));
+  const initialPack = buildEvidencePack(citations, requiredProvenance, definition.claims, [], conflicts);
+  const coveredIds = new Set(initialPack.required.flatMap((claim) => claim.refs.map((ref) => ref.statementId)));
+  if (coveredIds.size === 0) return { kind: "unavailable", reason: current.entries.length ? "retrieval_miss" : "missing_content" };
+  const gaps = initialPack.required.filter((claim) => claim.status === "unresolved").map((claim) =>
+    input.locale === "zh" ? `缺少获准证据：${claim.claimId}。请补充当前已发布资料。`
+      : `Missing authorized evidence: ${claim.claimId}. Check current published information.`);
+  if (conflicts.length) gaps.push(input.locale === "zh" ? "分歧涉及哪些要求尚不明确；请先核对已发布资料。"
+    : "The affected obligations are unknown; verify published sources before relying on the answer.");
+  const requiredPack = buildEvidencePack(citations, requiredProvenance, definition.claims, gaps, conflicts);
+  const allPack = buildEvidencePack(citations, current.provenance, [], gaps, conflicts);
+  const evidence: EvidencePack = { ...requiredPack, background: allPack.background.filter((ref) => !coveredIds.has(ref.statementId)) };
+  // Reconstruct both display text and coverage from current evidence. A
+  // model's claimed answer cannot bypass the card's required-claim gate.
+  const summary = [...new Set(current.entries.filter((entry) => coveredIds.has(entry.pageKey)).map((entry) => entry.text))].join("\n");
+  return {
+    kind: "answered", coverage: gaps.length ? "partial" : "answered", summary, citations, gaps, conflicts, evidence,
+    rounds: outcome.rounds, queries: outcome.queries, usage: outcome.usage,
+  };
+}
+
+/** Recheck a persisted answer through the same final gate, without a model or write. */
+export async function revalidateGroundedWikiSearchResult(
+  input: GroundedSearchInput, outcome: Extract<GroundedSearchOutcome, { kind: "answered" }>,
+  dependencies: GroundedSearchDependencies, signal: AbortSignal,
+): Promise<GroundedSearchOutcome> {
+  const definition = questionDefinition(input.intent.intent, input.placeSubjectId);
+  if (!definition) return { kind: "unavailable", reason: "user_input_missing" };
+  let subjects = new Map<string, string>();
+  const rpc: KnowledgeReadRpc = async (name, params) => {
+    const reply = await dependencies.rpc(name, params);
+    subjects = new Map();
+    if (reply.data && typeof reply.data === "object" && "statements" in reply.data && Array.isArray(reply.data.statements)) {
+      for (const row of reply.data.statements) if (row && typeof row.factId === "string" && typeof row.assertion?.subjectId === "string") subjects.set(row.factId, row.assertion.subjectId);
+    }
+    return reply;
+  };
+  const corpus = await buildPublishedWikiCorpus(rpc, { city: input.city, scene: definition.scene, locale: input.locale });
+  if (corpus.kind === "unavailable") return { kind: "unavailable", reason: corpus.code === "KNOWLEDGE_DISABLED" ? "policy_denied" : "provider_failure" };
+  // Current provenance must match the persisted chain; a new publication is
+  // not an authorization to replay an old source revision as current fact.
+  const refs = [...outcome.evidence.required.flatMap((claim) => claim.refs), ...outcome.evidence.background];
+  const citations = outcome.citations.filter((citation) => {
+    const prov = corpus.provenance.get(citation.pageKey);
+    const entry = corpus.entries.find((row) => row.pageKey === citation.pageKey);
+    return prov && entry && entry.text.length < 4000 && entry.text.includes(citation.quote) && refs.some((ref) =>
+      ref.statementId === citation.pageKey && ref.publicationId === prov.publicationId
+      && JSON.stringify(ref.sourceIds) === JSON.stringify(prov.sourceIds) && ref.span === citation.quote);
+  });
+  return finalizeAnswer(input, signal, definition, definition.scene, corpus, subjects, rpc, () => subjects,
+    { ...outcome, citations });
 }
