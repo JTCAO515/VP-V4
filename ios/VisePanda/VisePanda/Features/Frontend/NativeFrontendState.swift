@@ -151,7 +151,9 @@ struct NativeFrontendBoundary: View {
 struct NativeFrontendStatePanel: View {
     @Environment(\.locale) private var locale
     let state: NativeFrontendState
-    private var copy: NativeLibraryMemoryCopy { .init(locale: locale) }
+    private func copy(_ chinese: String, _ english: String) -> String {
+        locale.language.languageCode?.identifier == "zh" ? chinese : english
+    }
     var body: some View {
         switch state.screenState {
         case .ready: EmptyView()
