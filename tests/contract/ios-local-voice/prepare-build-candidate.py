@@ -23,7 +23,7 @@ for index, name in enumerate(names, 1):
     refs.append(ref); builds.append(build)
     after = after.replace('/* Begin PBXFileReference section */', f'/* Begin PBXFileReference section */\n        {ref} /* {name}.swift */ = {{isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Frontend/LocalVoice/{name}.swift; sourceTree = SOURCE_ROOT; }};', 1)
     after = after.replace('/* Begin PBXBuildFile section */', f'/* Begin PBXBuildFile section */\n        {build} /* {name}.swift in Sources */ = {{isa = PBXBuildFile; fileRef = {ref}; }};', 1)
-after = after.replace('600000000000000000000001 = {\n\t\t\tisa = PBXGroup;\n\t\t\tchildren = (', '600000000000000000000001 = {\n\t\t\tisa = PBXGroup;\n\t\t\tchildren = (' + ', '.join(refs) + ', ', 1)
+after = after.replace('600000000000000000000001 = {\n\t\t\tisa = PBXGroup;\n\t\t\tchildren = (', '600000000000000000000001 = {\n\t\t\tisa = PBXGroup;\n\t\t\tchildren = (' + ', '.join(refs) + ',\n', 1)
 # Anchor the main application source phase only.
 anchor = 'files = (\n                F956A62603650C2D6438F1B7'
 assert anchor in after
@@ -32,7 +32,7 @@ ref, build = 'F10C15000000000000000301', 'F10C15000000000000000401'
 test_path = '../../tests/contract/ios-local-voice/NativeLocalVoiceTests.swift'
 after = after.replace('/* Begin PBXFileReference section */', f'/* Begin PBXFileReference section */\n        {ref} = {{isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "{test_path}"; sourceTree = SOURCE_ROOT; }};', 1)
 after = after.replace('/* Begin PBXBuildFile section */', f'/* Begin PBXBuildFile section */\n        {build} = {{isa = PBXBuildFile; fileRef = {ref}; }};', 1)
-after = after.replace('600000000000000000000001 = {\n\t\t\tisa = PBXGroup;\n\t\t\tchildren = (', f'600000000000000000000001 = {{\n\t\t\tisa = PBXGroup;\n\t\t\tchildren = ({ref}, ', 1)
+after = after.replace('600000000000000000000001 = {\n\t\t\tisa = PBXGroup;\n\t\t\tchildren = (', f'600000000000000000000001 = {{\n\t\t\tisa = PBXGroup;\n\t\t\tchildren = ({ref},\n', 1)
 after = after.replace('800000000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (', f'800000000000000000000003 /* Sources */ = {{isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = ({build}, ', 1)
 assert all(after.count(x) == 3 for x in refs)
 
@@ -42,7 +42,7 @@ def candidate(path, old, new):
     prefix = path.name
     (output / (prefix + '.before')).write_text(old)
     (output / (prefix + '.after')).write_text(new)
-    (output / (prefix + '.patch')).write_text(''.join(difflib.unified_diff(old.splitlines(True), new.splitlines(True), fromfile='a/' + label, tofile='b/' + label)))
+    (output / (prefix + '.patch')).write_text(''.join(difflib.unified_diff(old.splitlines(True), new.splitlines(True), fromfile='a/' + label, tofile='b/' + label, n=0)))
     def blob(text):
         return hashlib.sha1(b'blob ' + str(len(text.encode())).encode() + b'\0' + text.encode()).hexdigest()
     manifest.append(dict(path=label, before=blob(old), after=blob(new)))
