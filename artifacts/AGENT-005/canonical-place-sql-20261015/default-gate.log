@@ -1,0 +1,9 @@
+﹣ canonical Place native PG17: INCOMPLETE without explicit CANONICAL_PLACE_NATIVE_PG=1 (0.223417ms) # SKIP
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 1
+ℹ todo 0
+ℹ duration_ms 36.256709

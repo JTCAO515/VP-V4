@@ -1,0 +1,128 @@
+[
+  {
+    "signature": "place_actions_private.ask_knowledge_scope_v1(jsonb)",
+    "md5": "ad3ddf5b7fbb9ec0707839fd90a4ee0e",
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}"
+  },
+  {
+    "signature": "place_actions_private.ask_claim_basis_v1(uuid,integer,text,text,text,text)",
+    "md5": "7a5f5f39df867b3f5acc955cbdf1fdc7",
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}"
+  },
+  {
+    "signature": "place_actions_private.ask_mapping_basis_v1(uuid,boolean)",
+    "md5": "94a1150b5b0317d6846cc59bf82b5370",
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}"
+  },
+  {
+    "signature": "place_actions_private.ask_sources_v1(uuid,text)",
+    "md5": "530ef5eb23fec70848f9cccfff8b8ac0",
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}"
+  },
+  {
+    "signature": "place_actions_private.ask_uuid_v1(jsonb)",
+    "md5": "066dc88985a646779d15631868f3c305",
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}"
+  },
+  {
+    "signature": "place_actions_private.ask_expectation_shape_v1(jsonb)",
+    "md5": "7cb40d35337699714f6311ee823ac369",
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}"
+  },
+  {
+    "signature": "place_actions_private.ask_context_v1(uuid,uuid,uuid,jsonb)",
+    "md5": "a1a1024a6bbbf0296a865fd5b90028ec",
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}"
+  },
+  {
+    "signature": "place_actions_private.ask_basis_v1(uuid,uuid,jsonb)",
+    "md5": "d09f1c0d4e187ecc4909f66ef1e57221",
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}"
+  },
+  {
+    "signature": "place_actions_private.ask_proof_shape_v1(jsonb)",
+    "md5": "5d82e494e9ecff5e6b382a8b8356876f",
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}"
+  },
+  {
+    "signature": "place_actions_private.ask_root_current_v1(uuid)",
+    "md5": "dfca1ddd1510481264ac29b1c5293c73",
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}"
+  },
+  {
+    "signature": "place_actions_private.ask_bound_v1(uuid,uuid)",
+    "md5": "ac68607a76e98cae122bb80af6606ce2",
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}"
+  },
+  {
+    "signature": "place_actions_private.ask_receipt_v1(uuid,jsonb)",
+    "md5": "9e0f09b48af817b3c6bdea10a3221f32",
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}"
+  },
+  {
+    "signature": "place_actions_private.ask_submit_v1(text)",
+    "md5": "9107e6dcd77c984baae7142f3e80aecb",
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}"
+  },
+  {
+    "signature": "place_actions_private.ask_read_v1(jsonb)",
+    "md5": "f95be881531d54930217a0f8cc34a6c1",
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}"
+  },
+  {
+    "signature": "place_actions_private.ask_text_projection_v1(uuid,boolean)",
+    "md5": "a394abb3450d2511dad83caa75b0397f",
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}"
+  },
+  {
+    "signature": "place_actions_private.ask_finish_capacity_v1(uuid,text,text)",
+    "md5": "ce986d7d8806651577966b9332b0e07f",
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}"
+  },
+  {
+    "signature": "place_actions_private.ask_claim_current_v1(uuid)",
+    "md5": "d96f2d8574a799f2ade051afbec70cdc",
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}"
+  },
+  {
+    "signature": "place_actions_private.ask_complete_v1(uuid,uuid,text,text,text,text)",
+    "md5": "fd7964023f426f265341b8cd812d891b",
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}"
+  },
+  {
+    "signature": "place_actions_private.ask_schema_v1()",
+    "md5": "40f119a5fc4d1bccfaa3d4c1746f5340",
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}"
+  },
+  {
+    "signature": "place_actions_private.ask_source_row_v1(text,jsonb)",
+    "md5": "4df32105d8356e04b61bf349939a6b72",
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}"
+  },
+  {
+    "signature": "place_actions_private.ask_answer_basis_shape_v1(jsonb)",
+    "md5": "d2d8f9fab03a2177c9fb01dc95752647",
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}"
+  }
+]

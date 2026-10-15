@@ -1,0 +1,79 @@
+[
+  {
+    "signature": "public.knowledge_read_v1(jsonb)",
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+    "config": [
+      "search_path=\"\""
+    ],
+    "definer": true,
+    "volatility": "v",
+    "strict": false,
+    "parallel": "u",
+    "kind": "f",
+    "beforeMd5": "7d9a93adb2a2720ff0ba850c6d915b94",
+    "afterMd5": "7d9a93adb2a2720ff0ba850c6d915b94"
+  },
+  {
+    "signature": "trip_support_private.claim_basis(uuid,integer,text,text,text,text)",
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}",
+    "config": [
+      "search_path=\"\""
+    ],
+    "definer": true,
+    "volatility": "v",
+    "strict": false,
+    "parallel": "u",
+    "kind": "f",
+    "beforeMd5": "21696c24994d04ce2001e7f738ea8931",
+    "afterMd5": "21696c24994d04ce2001e7f738ea8931"
+  },
+  {
+    "signature": "trip_support_private.mapping_basis(uuid,boolean)",
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}",
+    "config": [
+      "search_path=\"\""
+    ],
+    "definer": true,
+    "volatility": "v",
+    "strict": false,
+    "parallel": "u",
+    "kind": "f",
+    "beforeMd5": "198b6de668c7c97ff76e6989c7957baa",
+    "afterMd5": "198b6de668c7c97ff76e6989c7957baa"
+  },
+  {
+    "signature": "place_actions_private.sources_v1(uuid,text)",
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}",
+    "config": [
+      "search_path=\"\"",
+      "TimeZone=UTC"
+    ],
+    "definer": true,
+    "volatility": "v",
+    "strict": false,
+    "parallel": "u",
+    "kind": "f",
+    "beforeMd5": "a10d27e8d2715013a3c1fb0d72aa8255",
+    "afterMd5": "a10d27e8d2715013a3c1fb0d72aa8255"
+  },
+  {
+    "signature": "public.read_place_action_context_v1(uuid,jsonb)",
+    "owner": "postgres",
+    "acl": "{postgres=X/postgres}",
+    "config": [
+      "search_path=\"\"",
+      "TimeZone=UTC"
+    ],
+    "definer": true,
+    "volatility": "v",
+    "strict": false,
+    "parallel": "u",
+    "kind": "f",
+    "beforeMd5": "6ce494ff7d850f6ffc0c694c7d5e7cb5",
+    "afterMd5": "6ce494ff7d850f6ffc0c694c7d5e7cb5"
+  }
+]
