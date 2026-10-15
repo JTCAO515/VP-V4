@@ -1,0 +1,28 @@
+{
+  "issue": 681,
+  "task": "WEB-001",
+  "base": "22559396eec5cd47d3a4d3d2a2bd5e49d52c6c7c",
+  "sourceSha256": "103efdea9209a7ded913380056bac7dd16cb2a1142d7468e6561ec246b43c00d",
+  "changes": [
+    "URL Session changes/back-forward now select through existing protected detail. Removing the parameter clears private selection. Native URL and synchronous selection ref fence submission/results before effects settle.",
+    "Any permission-denied 403 clears protected history and readiness, preserving real notice/consent. Existing 401/unknown-ACK/reconciliation/quota/actor rules remain."
+  ],
+  "checks": {
+    "baseline": "2 FAIL at unchanged22559396 production component: URL/UI mismatch and POST403 stale private history",
+    "fixedProductionBrowser": "12 PASS / 0 FAIL / 0 SKIP for focused Session/navigation/permission and relevant existing recovery regressions",
+    "mobileTab": "1 PASS with second same-actor tab390x844 and independent Session/body destinations; no horizontal overflow",
+    "decoderAndIdentityUnit": "13 PASS / 0 FAIL / 0 SKIP",
+    "typecheck": "PASS",
+    "lint": "PASS",
+    "productionBuild": "PASS",
+    "docsCheck": "PASS",
+    "diff": "PASS"
+  },
+  "beforeRawSha256": "edf1ac3e466e6f61ae5efade0c0fab329748df01f706f14159a13a5d8d33cca9",
+  "scope": "Production-built real QaAgentWorkspace exercised with synthetic cookies/API. No sample/demo replacement or real Auth/DB/provider/billing claim.",
+  "remaining": [
+    "Real authenticated target Session persistence/provider/multi-turn acceptance UNRUN pending Main target handoff/readiness",
+    "No cancellation action or distinct cancellation/source-eligibility fields exist in current qa-agent/1; existing cancellation is neutral technical_failure, not a fabricated cancel/source capability. Shared contract belongs Main/backend."
+  ],
+  "ownership": "Only QaAgentWorkspace.tsx plus exclusive QA tests/evidence. app/page/Auth/server/SQL/CI/env/lockfiles untouched. Originalqaw WT/d8 local commits and generatedAGENTS dirty preserved."
+}
