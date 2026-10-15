@@ -2,12 +2,12 @@
 
 Own scope: only this test directory. The actual production v7 handler and original Supabase SDK run behind real loopback HTTP listeners. Auth/REST is a strict **C0 synthetic identity adapter**, not GoTrue or PostgREST: complete pre-registered tokens select fixed actor/session pairs, arbitrary decoded claims cannot select actors, and only the existing session and selected-submit/read RPC routes are exposed. Each RPC executes the real SQL body with `SET LOCAL ROLE authenticated` in a real transaction. No production wrapper, grants, provider, target environment or real user credentials are added.
 
-The PostgreSQL cluster is independently initialized with explicit PG17.11 and pg-client paths, a unique 0700 Unix socket, and no TCP listener. It never reads another owner's cluster resource. Runtime consumes only migration/helper files in the coherent integrated checkout after every byte is verified against versioned `source-manifest.json`; every loaded SHA256 is emitted. It accepts no source-commit environment override and needs no private Git objects or draft fetch. Main freezes the manifest only after integrating/reviewing the SQL checkpoint; arbitrary working files are never executed. The SQL owner's portable fixture factory receives only this test's own connection function.
+The PostgreSQL cluster is independently initialized with explicit PostgreSQL major-17 and pg-client paths, a unique 0700 Unix socket, and no TCP listener. It never reads another owner's cluster resource. Runtime consumes only migration/helper files in the coherent integrated checkout after every byte is verified against versioned `source-manifest.json`; every loaded SHA256 is emitted. It accepts no source-commit environment override and needs no private Git objects or draft fetch. Main freezes the manifest only after integrating/reviewing the SQL checkpoint; arbitrary working files are never executed. The SQL owner's portable fixture factory receives only this test's own connection function.
 
 After Main integrates and reviews the final SQL checkpoint, freeze the exact source bytes with `node tests/integration/canonical-place-ask-http/freeze.mjs REVIEWED_SQL_SHA INTEGRATED_HEAD_SHA`, then commit the generated manifest. The freeze requires unchanged HEAD and clean, tracked SQL/helper inputs. Run the required native17 entry:
 
 ```sh
-VP_WIKI_PG_BIN=/path/to/pg17.11/bin \
+VP_WIKI_PG_BIN=/path/to/pg17/bin \
 VP_WIKI_PG_MODULE=/path/to/pg/lib/index.js \
 CANONICAL_PLACE_HTTP_NATIVE_PG=1 \
 node --experimental-strip-types --test tests/integration/canonical-place-ask-http/postgres.test.mjs
@@ -28,3 +28,7 @@ The same isolated PG17.11 entry now runs the original six HTTP scenarios and fiv
 The first resident run exposed an incomplete synthetic model envelope (missing required choice index). The second run reached both successful positive assertions but its cleanup incorrectly called Cancel on terminal Turns. Those original failures are preserved as compressed raw logs alongside the final pass. Only test helpers were corrected; the production protocol and permissions were not relaxed. Cleanup now cancels queued/leased work and stops only this test's resources.
 
 This is C0 synthetic Auth/REST identity plus real ordinary/service-role PostgreSQL and production consumer code. It is not GoTrue/PostgREST, a real provider, full SQL formal review, a target release, Native UI or user acceptance. Main owns the final native17 required/zero-skip CI registration. Shared hosted-file future write ownership has returned to Main.
+
+## PostgreSQL version contract
+
+The helper accepts PostgreSQL major 17, matching the existing native17 CI provision and SQL integration inspector; it does not pin an unprovisioned patch release. The actual server version remains in the emitted database evidence. The local runtime evidence above was executed on 17.11 only; acceptance by the major-version check does not claim full runtime verification on another patch. All catalog/ACL checks, fixed-source SHA validation, required zero-skip entry, no-TCP socket and 0700 assertions remain unchanged.
