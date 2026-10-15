@@ -7,12 +7,13 @@ import {database} from './database.mjs';
 import {fixedSource} from './fixed-source.mjs';
 import {adapter,productionServer} from './adapter.mjs';
 
-// Explicitly fail when invoked without the reviewed input/dependencies. This is
-// a native17 integration entry, not a default unit-suite or SKIP-as-PASS path.
-test('actual v7 HTTP / Supabase SDK / private PG17 ordinary-role admission and recovery',async t=>{
+// Default integration discovery is gated. The explicit native17 step must set
+// the flag, require this entry, and require zero skipped tests.
+if(process.env.CANONICAL_PLACE_HTTP_NATIVE_PG!=='1')test('canonical HTTP native17 requires explicit activation',{skip:true},()=>{});
+else test('actual v7 HTTP / Supabase SDK / private PG17 ordinary-role admission and recovery',async t=>{
  const cleanup=[],owned={after:fn=>cleanup.push(fn)};
  t.after(async()=>{for(const fn of cleanup.reverse())await fn();});
- const source=await fixedSource(owned,process.env.CANONICAL_SQL_CHECKPOINT);
+ const source=await fixedSource();
  const db=await database(owned,{bin:process.env.VP_WIKI_PG_BIN,module:process.env.VP_WIKI_PG_MODULE,...source});
  const ports=source.canonicalFixturePorts(db.connect);owned.after(()=>ports.close());
  const transport=await adapter(owned,ports);
