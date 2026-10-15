@@ -1,5 +1,6 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {readFileSync} from 'node:fs';import {resolve} from 'node:path';
-import {ROOT,SHARED_REF,binding,plan,sha,observation,sharedBaseline} from '../../../scripts/qa-agent-independent-init/prepare.mjs';
+import {prepare} from './frozen-fixture.mjs';
+const {ROOT,SHARED_REF,binding,plan,sha,observation,sharedBaseline}=prepare;
 const now=Date.parse('2026-10-13T11:30:00Z');
 const envelope=()=>({schemaVersion:'qa-shared-observation/1',projectRef:SHARED_REF,authority:'main-controlled-readonly',observedAt:new Date(now).toISOString(),migrations:sharedBaseline().baseline75});
 test('approved shared target is explicit default; arbitrary ref and URL never fallback',()=>{assert.equal(binding(SHARED_REF).projectRef,SHARED_REF);assert.match(binding(SHARED_REF).bindingDigest,/^[a-f0-9]{64}$/);for(const ref of [undefined,'','abcdefghijklmnopqrst','bad'])assert.throws(()=>binding(ref));assert.throws(()=>binding(SHARED_REF,'https://other.supabase.co'));const p=plan(SHARED_REF);assert.equal(p.mode,'existing-shared');assert.equal(p.fromVersions.length,75);assert.equal(p.ddlOrder.length,80);assert.ok(p.readiness.reasons.includes('FRESH_MAIN_OBSERVATION_REQUIRED'));assert.equal(p.apply,false);assert.equal(p.network,false);});
