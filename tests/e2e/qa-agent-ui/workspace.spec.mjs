@@ -743,3 +743,64 @@ test('definite cancellation rejection permits only a newly confirmed stop, witho
  await page.getByRole('button',{name:'Stop this question',exact:true}).click();expect(h.stops).toHaveLength(1);await page.getByRole('button',{name:'Confirm stop',exact:true}).click();
  await expect(page.getByText('Stopped.',{exact:true})).toBeVisible();expect(h.stops).toHaveLength(2);expect(new Set(h.stops.map(entry=>entry.requestId)).size).toBe(1);expect(h.sent).toHaveLength(1);
 });
+test('review mutex unavailable with simultaneous pending GETs permits only original reads and zero stop POST',async({page,context})=>{
+ const waiters=[],posts=[];let holding=true;
+ const prior={requestId:earlierId,text:'Owned original pending'};
+ const hook=async(_route,c)=>{
+  if(c.path.endsWith('/policy')) {await c.fulfill({policy:{...policy,consentState:'accepted'}});return true;}
+  if(c.method==='GET'&&c.path.endsWith(idA)) {await c.fulfill({session:session(idA),messages:[message(idA,prior,null,'pending')]});return true;}return false;
+ };
+ const cancellation=async(route,c)=>{
+  if(c.method==='POST')posts.push(c.requestId);
+  if(holding)await new Promise(resolve=>waiters.push(resolve));
+  await route.fulfill({contentType:'application/json',body:JSON.stringify(stopWire(c.sessionId,c.requestId,'pending'))});return true;
+ };
+ await fixture(page,context,hook,{cancellation,ready:false});const other=await context.newPage();await fixture(other,context,hook,{cancellation,ready:false});
+ await expect.poll(()=>waiters.length).toBe(2);
+ await page.getByRole('button',{name:'Stop this question',exact:true}).click();await other.getByRole('button',{name:'Stop this question',exact:true}).click();
+ for(const tab of [page,other])await tab.evaluate(()=>Object.defineProperty(navigator,'locks',{configurable:true,value:undefined}));
+ await Promise.all([page.getByRole('button',{name:'Confirm stop',exact:true}).click(),other.getByRole('button',{name:'Confirm stop',exact:true}).click()]);
+ await expect.poll(()=>waiters.length).toBe(4);holding=false;waiters.forEach(resolve=>resolve());
+ for(const tab of [page,other]) {await expect(tab.getByText('This browser can only read the original request status. A stop cannot be submitted safely right now.')).toBeVisible();await expect(tab.getByRole('button',{name:'Stop this question',exact:true})).toBeDisabled();}
+ expect(posts).toHaveLength(0);await other.close();
+});
+for(const format of ['other-json','non-json','foreign-scope']) {
+ test(`review cancellation401 ${format} removes old private projection and both journals`,async({page,context})=>{
+  let denied=false;
+  const h=await beginPending(page,context,{cancelHook:async(route,c)=>{
+   if(denied) {
+    const body=format==='non-json'?'<html>unauthorized</html>':JSON.stringify(format==='foreign-scope'?{version:'qa-cancellation/1',sessionId:idB,requestId:idA,error:{code:'UNAUTHENTICATED',ack:'not_submitted'}}:{message:'unauthorized'});
+    await route.fulfill({status:401,contentType:format==='non-json'?'text/html':'application/json',body});return true;
+   }return false;
+  }});
+  await expect.poll(()=>h.reads.length).toBeGreaterThan(0);
+  denied=true;await page.getByRole('button',{name:'Stop this question',exact:true}).click();await page.getByRole('button',{name:'Confirm stop',exact:true}).click();
+  await expect(page.getByRole('link',{name:'Sign in',exact:true})).toBeVisible();await expect(page.getByRole('log')).toHaveCount(0);expect(h.stops).toHaveLength(0);
+  expect(await page.evaluate(key=>sessionStorage.getItem(key),cancellationKey)).toBeNull();expect(await page.evaluate(key=>sessionStorage.getItem(key),recoveryKey)).toBeNull();
+ });
+}
+test('review intent hint makes only listening peer query current canonical scope before showing stopped',async({page,context})=>{
+ let state='pending',releasePeer=false;const held=[],posts=[],peerReads=[];
+ const original={requestId:earlierId,text:'Shared original'};
+ const hook=async(_route,c)=>{if(c.path.endsWith('/policy')){await c.fulfill({policy:{...policy,consentState:'accepted'}});return true;}if(c.method==='GET'&&c.path.endsWith(idA)){await c.fulfill({session:session(idA),messages:[message(idA,original,null,'pending')]});return true;}return false;};
+ const entry=peer=>({ready:false,cancellation:async(route,c)=>{
+  if(c.method==='POST'){posts.push(c.requestId);state='cancelled';}
+  if(peer&&c.method==='GET'){peerReads.push(state);if(state==='cancelled'&&!releasePeer)await new Promise(resolve=>held.push(resolve));}
+  await route.fulfill({contentType:'application/json',body:JSON.stringify(stopWire(c.sessionId,c.requestId,state))});return true;
+ }});
+ await fixture(page,context,hook,entry(false));const other=await context.newPage();await fixture(other,context,hook,entry(true));await expect.poll(()=>peerReads.length).toBeGreaterThan(0);
+ await page.getByRole('button',{name:'Stop this question',exact:true}).click();await page.getByRole('button',{name:'Confirm stop',exact:true}).click();await expect(page.getByText('Stopped.',{exact:true})).toBeVisible();
+ await expect.poll(()=>held.length).toBeGreaterThan(0);await expect(other.getByText('Stopped.',{exact:true})).toHaveCount(0);
+ releasePeer=true;held.forEach(resolve=>resolve());await expect(other.getByText('Stopped.',{exact:true})).toBeVisible();expect(peerReads).toContain('cancelled');expect(posts).toEqual([original.requestId]);await other.close();
+});
+test('review history401 invalidates a held stop preflight before it can rebuild intent or POST',async({page,context})=>{
+ let expire=false,gets=0,release;
+ const h=await beginPending(page,context,{historyHook:async(route,c)=>{
+  if(expire&&c.method==='GET'&&c.path.endsWith(idA)) {await route.fulfill({status:401,contentType:'application/json',body:JSON.stringify(wire({error:{code:'UNAUTHENTICATED',ack:'not_submitted'}}))});return true;}return false;
+ },cancelHook:async(route,c)=>{
+  if(c.method==='GET'&&++gets>=2&&!release){await new Promise(resolve=>{release=resolve;});await route.fulfill({contentType:'application/json',body:JSON.stringify(stopWire(c.sessionId,c.requestId,'pending'))}).catch(()=>{});return true;}return false;
+ }});
+ await expect.poll(()=>h.reads.length).toBeGreaterThan(0);await page.getByRole('button',{name:'Stop this question',exact:true}).click();await page.getByRole('button',{name:'Confirm stop',exact:true}).click();await expect.poll(()=>!!release).toBe(true);
+ expire=true;await expect(page.getByRole('link',{name:'Sign in',exact:true})).toBeVisible({timeout:10000});release();await page.waitForTimeout(100);
+ expect(h.stops).toHaveLength(0);expect(await page.evaluate(key=>sessionStorage.getItem(key),cancellationKey)).toBeNull();expect(await page.evaluate(key=>sessionStorage.getItem(key),recoveryKey)).toBeNull();await expect(page.getByRole('log')).toHaveCount(0);
+});

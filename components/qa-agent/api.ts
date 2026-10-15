@@ -64,6 +64,10 @@ async function cancellation(sessionId: string, requestId: string, signal: AbortS
     signal: AbortSignal.any([signal, AbortSignal.timeout(20_000)]),
     ...(stop ? { headers: { "content-type": "application/json" }, body: "{}" } : {}),
   });
+  // Transport identity/access rejection is authoritative even if a proxy returns
+  // HTML, a foreign scope or another JSON error shape. Its body is never a
+  // cancellation receipt or a not_submitted acknowledgement.
+  if (response.status === 401 || response.status === 403) throw new ApiError(response.status, response.status === 401 ? "UNAUTHENTICATED" : "FORBIDDEN", "unknown");
   let value: unknown;
   try { value = await response.json(); } catch { throw new ApiError(response.status || 502, "CANCELLATION_UNCONFIRMED"); }
   if (!response.ok) {

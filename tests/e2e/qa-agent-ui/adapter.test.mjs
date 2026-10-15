@@ -91,3 +91,10 @@ test('cancellation scope uses canonical UUID case without replacing the original
  assert.equal((await f.api.stop(sessionId.toUpperCase(),requestId.toUpperCase(),new AbortController().signal)).requestId,requestId);
  assert.ok(f.seen[0].url.includes(`/sessions/${sessionId}/messages/${requestId}/cancellation`));
 });
+test('cancellation transport401/403 invalidates identity/access without trusting JSON shape or ack',async()=>{
+ for(const status of [401,403]) {
+  for(const [body,brokenJson] of [[{message:'proxy denial'},false],[{version:'qa-cancellation/1',sessionId:rid,requestId:sid,error:{code:'UNAUTHENTICATED',ack:'not_submitted'}},false],[{},true]]) {
+   const f=fixture(body,status,brokenJson);await assert.rejects(f.api.readCancellation(sid,rid,new AbortController().signal),error=>error.status===status&&error.ack==='unknown'&&error.code===(status===401?'UNAUTHENTICATED':'FORBIDDEN'));
+  }
+ }
+});
