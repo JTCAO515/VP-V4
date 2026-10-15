@@ -26,3 +26,15 @@ test('legacy absent values stay absent; deletion removes address',()=>{
  const saved=applyPatch(base,set(address));
  assert.deepEqual(applyPatch(saved,{expectedVersion:4,operations:[{kind:'delete_item',dayId:'d',itemId:'i'}]}).days[0].items,[]);
 });
+
+import {describeProposalDiff} from '../../../lib/server/trip/proposal/diff.ts';
+import {snapshotRestorePatch} from '../../../lib/server/trip/snapshot/read.ts';
+test('address-only proposal exposes exact before/after with clear and restore diff',()=>{
+ const diff=describeProposalDiff(base,set(address));
+ assert.deepEqual(diff.dayDiffs[0].items[0],{kind:'changed',itemId:'i',title:'Visit',beforeChineseAddress:null,afterChineseAddress:{text:address,source:'user_provided',verification:'unverified'}});
+ const cleared=describeProposalDiff(diff.next,set(null,4));
+ assert.equal(cleared.dayDiffs[0].items[0].beforeChineseAddress?.text,address);
+ assert.equal(cleared.dayDiffs[0].items[0].afterChineseAddress,null);
+ const restored=applyPatch(cleared.next,snapshotRestorePatch(cleared.next,diff.next));
+ assert.equal(restored.days[0].items![0].chineseAddress?.text,address);
+});

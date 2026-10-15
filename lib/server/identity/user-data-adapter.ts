@@ -1,3 +1,4 @@
+import { readOnlineItemAddress, type OnlineItemAddressRead } from "../trip/address/read.ts";
 import type { UserProvidedChineseAddress } from "../../trip-user-address.ts";
 import { nativeFetch } from "./native-fetch.ts";
 import { profileSaveParameters } from "../privacy/profile-data/writer.ts";
@@ -794,6 +795,31 @@ function createDataOperations(
       },
     };
   };
+  const readTripItemAddressSupport = async (
+    tripId: string, expectedTripVersion: number, dayId: string, itemId: string,
+  ): Promise<AdapterResult<OnlineItemAddressRead>> => {
+    const actor = await authenticated();
+    if ("error" in actor) return { error: actor.error };
+    if (!Number.isSafeInteger(expectedTripVersion) || expectedTripVersion < 0
+      || !/^[A-Za-z0-9_-]{1,64}$/.test(dayId) || !/^[A-Za-z0-9_-]{1,64}$/.test(itemId)) return { error: "INVALID_INPUT" };
+    const before = await getTrip(tripId);
+    if ("error" in before) return before;
+    if (before.data.trip.headVersion !== expectedTripVersion) return { data: { kind: "conflict" } };
+    const item = before.data.content.days.find(day => day.id === dayId)?.items.find(value => value.id === itemId);
+    if (!item) return { data: { kind: "blocked" } };
+    const support = await client.rpc("read_trip_item_support_v1", {
+      p_trip: tripId, p_expected_trip_version: expectedTripVersion, p_day: dayId, p_item: itemId,
+    });
+    if (support.error) return { data: { kind: "unavailable" } };
+    const after = await getTrip(tripId);
+    if ("error" in after) return after;
+    if (after.data.trip.headVersion !== expectedTripVersion) return { data: { kind: "conflict" } };
+    const currentActor = await authenticated();
+    if ("error" in currentActor) return currentActor;
+    if (currentActor.data !== actor.data) return { error: "UNAUTHENTICATED" };
+    return { data: readOnlineItemAddress({ tripId, tripVersion: expectedTripVersion, dayId, itemId }, item.chineseAddress, support.data) };
+  };
+
   const getTripPlaces = async (
     tripId: string,
   ): Promise<AdapterResult<readonly TripPlaceReference[]>> => {
@@ -1370,6 +1396,7 @@ function createDataOperations(
     listTrips,
     createTrip,
     getTrip,
+    readTripItemAddressSupport,
     getTripPlaces,
     getTripActions,
     getPendingProposal,

@@ -1,6 +1,7 @@
+import type { UserProvidedChineseAddress } from "../../../trip-user-address.ts";
 import { applyPatch, assertTripSnapshot, type TripItem, type TripPatch, type TripPatchOperation, type TripSnapshot } from "../patch/contract.ts";
 
-export type ProposalItemDiff = Readonly<{ kind: "added" | "removed" | "changed" | "reordered"; itemId: string; title: string }>;
+export type ProposalItemDiff = Readonly<{ kind: "added" | "removed" | "changed" | "reordered"; itemId: string; title: string; beforeChineseAddress?: UserProvidedChineseAddress | null; afterChineseAddress?: UserProvidedChineseAddress | null }>;
 export type ProposalDayDiff = Readonly<{ kind: "added" | "removed" | "changed"; dayId: string; date: string; items: readonly ProposalItemDiff[] }>;
 export type ProposalDiff = Readonly<{ next: TripSnapshot; dayDiffs: readonly ProposalDayDiff[] }>;
 
@@ -39,10 +40,15 @@ function itemDiffs(before: readonly TripItem[], after: readonly TripItem[]): rea
     if (!previous && next) return [freezeItem("added", next)];
     if (previous && !next) return [freezeItem("removed", previous)];
     if (!previous || !next) return [];
-    if (previous.title === next.title && previous.startsAt === next.startsAt && previous.endsAt === next.endsAt) return previous.manualOrder === next.manualOrder ? [] : [freezeItem("reordered", next)];
-    return [freezeItem("changed", next)];
+    if (previous.title === next.title && previous.startsAt === next.startsAt && previous.endsAt === next.endsAt && JSON.stringify(previous.chineseAddress) === JSON.stringify(next.chineseAddress)) return previous.manualOrder === next.manualOrder ? [] : [freezeItem("reordered", next)];
+    return [freezeItem("changed", next, previous)];
   }));
 }
 
-function freezeItem(kind: ProposalItemDiff["kind"], item: TripItem): ProposalItemDiff { return Object.freeze({ kind, itemId: item.id, title: item.title }); }
+function freezeItem(kind: ProposalItemDiff["kind"], item: TripItem, previous?: TripItem): ProposalItemDiff {
+  const before = kind === "removed" ? item.chineseAddress : previous?.chineseAddress;
+  const after = kind === "removed" ? undefined : item.chineseAddress;
+  const changed = JSON.stringify(before) !== JSON.stringify(after);
+  return Object.freeze({ kind, itemId: item.id, title: item.title, ...(changed ? { beforeChineseAddress: before ?? null, afterChineseAddress: after ?? null } : {}) });
+}
 function freezeDay(day: ProposalDayDiff): ProposalDayDiff { return Object.freeze({ ...day, items: Object.freeze([...day.items]) }); }
