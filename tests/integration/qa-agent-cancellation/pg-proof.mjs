@@ -2,13 +2,14 @@ import assert from 'node:assert/strict';
 import {spawn} from 'node:child_process';
 import {mkdtemp,mkdir,chmod,readFile,readdir,writeFile} from 'node:fs/promises';
 import {randomUUID,createHash} from 'node:crypto';
-import {join,resolve} from 'node:path';
-const pg=process.env.QA_CANCEL_PG_BIN??(process.platform==='darwin'?'/opt/homebrew/opt/postgresql@17/bin':'/usr/lib/postgresql/17/bin');
+import {join,resolve,isAbsolute} from 'node:path';
+const pg=process.env.QA_CANCEL_PG_BIN??process.env.VP_WIKI_PG_BIN??(process.platform==='darwin'?'/opt/homebrew/opt/postgresql@17/bin':'/usr/lib/postgresql/17/bin');
+if(!pg||!isAbsolute(pg))throw Error('PG17 binary directory must be an explicit absolute path');
 const nonce=randomUUID().slice(0,8),root=await mkdtemp((process.platform==='darwin'?'/private/tmp':'/tmp')+'/a1c-'+nonce+'-'),data=join(root,'data'),socket=join(root,'s');
 await chmod(root,0o700);await mkdir(socket,{mode:0o700});let started=false;
-const base='22559396eec5cd47d3a4d3d2a2bd5e49d52c6c7c';
-const result={base,nonce,root,server:'PG17.11 isolated native Unix socket; synthetic Auth claims, not GoTrue',cases:[],cleanup:false};
-async function command(bin,args,input='',env={}){return new Promise((resolve,reject)=>{const child=spawn(bin,args,{env:{...process.env,PGSERVICE:undefined,PGSERVICEFILE:undefined,PGPASSFILE:'/dev/null',PGPASSWORD:undefined,...env},stdio:['pipe','pipe','pipe']});let out='',err='';child.stdout.on('data',b=>out+=b);child.stderr.on('data',b=>err+=b);child.on('error',reject);child.on('close',code=>resolve({code,out,err}));child.stdin.on('error',()=>{});child.stdin.end(input);});}
+const resultPath=resolve(process.env.QA_CANCEL_PG_RESULT??join(root,'result.json'));
+const result={nonce,root,resultPath,server:'PG17.11 isolated native Unix socket; synthetic Auth claims, not GoTrue',cases:[],cleanup:false};
+async function command(bin,args,input='',env={}){return new Promise((resolve,reject)=>{const child=spawn(bin,args,{env:{...process.env,PGOPTIONS:undefined,PGHOSTADDR:undefined,PGSERVICE:undefined,PGSERVICEFILE:undefined,PGPASSFILE:'/dev/null',PGPASSWORD:undefined,...env},stdio:['pipe','pipe','pipe']});let out='',err='';child.stdout.on('data',b=>out+=b);child.stderr.on('data',b=>err+=b);child.on('error',reject);child.on('close',code=>resolve({code,out,err}));child.stdin.on('error',()=>{});child.stdin.end(input);});}
 const db=async(sql,app='qa-cancel-proof')=>{const r=await command(join(pg,'psql'),['-X','-q','-At','-v','ON_ERROR_STOP=1','-h',socket,'-p','5432','-U','postgres','-d','postgres'],"set statement_timeout='8s';set lock_timeout='5s';\n"+sql,{PGAPPNAME:app});assert.equal(r.code,0,r.err.slice(-1600));return r.out.trim();};
 const lit=v=>v===null?'null':typeof v==='number'?String(v):"'"+String(v).replaceAll("'","''")+"'";
 const actorSQL=a=>`set request.jwt.claim.sub='${a.owner}';set request.jwt.claims='${JSON.stringify({session_id:a.session})}';set request.headers='{"origin":"https://synthetic.invalid","cookie":"fixture"}';set role authenticated;`;
@@ -35,21 +36,30 @@ async function dispatched(a){const lease=await rpc('qa_claim_work_v1',{p_owner_i
 const budgetSnapshot=a=>db(`select coalesce(jsonb_agg(to_jsonb(x) order by attempt_id),'[]') from public.model_budget_attempts x where scope_id='${a.scope}';`);
 async function waitSleeping(app){for(let i=0;i<80;i++){if(await db(`select exists(select 1 from pg_stat_activity where application_name='${app}' and wait_event='PgSleep');`)==='t')return;await new Promise(r=>setTimeout(r,10));}throw Error('Owned race did not reach its locked sleep');}
 try{
+ const version=await command(join(pg,'postgres'),['--version']);assert.equal(version.code,0,version.err);assert.match(version.out,/PostgreSQL\) 17\./);result.pgVersion=version.out.trim();
  const init=await command(join(pg,'initdb'),['-D',data,'-U','postgres','-A','trust','--no-locale','-E','UTF8']);assert.equal(init.code,0,init.err);
  const boot=await command(join(pg,'pg_ctl'),['-D',data,'-l',join(root,'server.log'),'-o',`-c listen_addresses= -c unix_socket_directories=${socket} -c unix_socket_permissions=0700 -p 5432`,'-w','start']);assert.equal(boot.code,0,boot.err);started=true;
  assert.equal(await db('show listen_addresses;'),'');assert.equal(await db('show unix_socket_permissions;'),'0700');
+ const sourceRef=(await command('git',['rev-parse','HEAD'])).out.trim();
+ const clean=await command('git',['diff','--quiet','HEAD','--','supabase/migrations']);assert.equal(clean.code,0,'SQL must match this candidate commit');
+ const names=await command('git',['ls-tree','-r','--name-only',sourceRef,'supabase/migrations']);assert.equal(names.code,0,names.err);
+ const tracked=names.out.trim().split('\n').filter(n=>n.endsWith('.sql')).sort();
+ const actual=(await readdir('supabase/migrations')).filter(n=>n.endsWith('.sql')).map(n=>'supabase/migrations/'+n).sort();assert.deepEqual(actual,tracked,'do not silently miss untracked/extra candidate migrations');
+ const sources=[];for(const path of tracked){const source=await command('git',['show',sourceRef+':'+path]);assert.equal(source.code,0,source.err);sources.push({path,sql:source.out});}
+ const sha=s=>createHash('sha256').update(s).digest('hex');result.source={commit:sourceRef,migrations:sources.map(s=>({path:s.path,sha256:sha(s.sql)}))};
  let sql=await readFile('tests/integration/turn/fixtures/durable-work-schema.sql','utf8');sql+="\ncreate function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;\n";
- const names=await command('git',['ls-tree','-r','--name-only',base,'supabase/migrations']);assert.equal(names.code,0,names.err);
- for(const name of names.out.trim().split('\n').filter(n=>n.endsWith('.sql')).sort()){
-  const original=await command('git',['show',base+':'+name]);assert.equal(original.code,0,original.err);sql+='\nbegin;\n'+original.out+'\ncommit;\n';
- }
- await db(sql);
  const acl=()=>db("select coalesce(jsonb_agg(x order by x.name),'[]') from (select n.nspname||'.'||p.proname||'('||pg_get_function_identity_arguments(p.oid)||')' name,p.proacl,p.prosecdef,p.proconfig,md5(p.prosrc) source from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname not in ('pg_catalog','information_schema') and p.proname<>'qa_cancellation_v1') x;");
  const tableAcl=()=>db("select coalesce(jsonb_agg(x order by x.name),'[]') from (select n.nspname||'.'||c.relname name,c.relacl,c.relrowsecurity,c.relforcerowsecurity from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname not in ('pg_catalog','information_schema') and c.relkind in ('r','p','v','m','S')) x;");
- const beforeTables=await tableAcl();
- assert.equal(await db("select to_regprocedure('public.qa_cancellation_v1(text,uuid,uuid)') is null;"),'t');
- const beforeAcl=await acl();
- await db(await readFile('supabase/migrations/20261015043710_agent001_qa_cancellation.sql','utf8'));const afterAcl=await acl(),afterTables=await tableAcl();assert.equal(afterAcl,beforeAcl,'all existing function ACL/config/source unchanged');assert.equal(afterTables,beforeTables,'all existing table/view/sequence ACL and RLS unchanged');const sha=s=>createHash('sha256').update(s).digest('hex');result.catalogPins={functionsBefore:sha(beforeAcl),functionsAfter:sha(afterAcl),tablesBefore:sha(beforeTables),tablesAfter:sha(afterTables),sourceGuardsIncluded:'all original non-system pg_proc proacl/proconfig/prosecdef/prosrc hashes; only new qa_cancellation_v1 excluded'};
+ let installed=false;
+ for(const entry of sources){
+  if(entry.path.endsWith('/20261015043710_agent001_qa_cancellation.sql')){
+   await db(sql);sql='';assert.equal(await db("select to_regprocedure('public.qa_cancellation_v1(text,uuid,uuid)') is null;"),'t');
+   const beforeAcl=await acl(),beforeTables=await tableAcl();await db('begin;'+entry.sql+'commit;');const afterAcl=await acl(),afterTables=await tableAcl();
+   assert.equal(afterAcl,beforeAcl,'all existing function ACL/config/source unchanged');assert.equal(afterTables,beforeTables,'all existing table/view/sequence ACL and RLS unchanged');
+   result.catalogPins={functionsBefore:sha(beforeAcl),functionsAfter:sha(afterAcl),tablesBefore:sha(beforeTables),tablesAfter:sha(afterTables),sourceGuardsIncluded:'all original non-system pg_proc proacl/proconfig/prosecdef/prosrc hashes; only new qa_cancellation_v1 excluded'};installed=true;
+  }else sql+='\nbegin;\n'+entry.sql+'\ncommit;\n';
+ }
+ if(sql)await db(sql);assert.equal(installed,true,'current candidate must include the actual allocated cancellation migration');
  const attrs=JSON.parse(await db("select jsonb_build_object('owner',pg_get_userbyid(proowner),'securityDefiner',prosecdef,'searchPath',proconfig,'auth',has_function_privilege('authenticated',oid,'EXECUTE'),'anon',has_function_privilege('anon',oid,'EXECUTE'),'service',has_function_privilege('service_role',oid,'EXECUTE')) from pg_proc where oid='public.qa_cancellation_v1(text,uuid,uuid)'::regprocedure;"));
  assert.equal(attrs.owner,'postgres');assert.equal(attrs.securityDefiner,true);assert.deepEqual(attrs.searchPath,['search_path=""']);assert.equal(attrs.auth,true);assert.equal(attrs.anon,false);assert.equal(attrs.service,false);result.function=attrs;
  pass('full source replay and candidate on isolated original roles, no fixture grants');
@@ -81,4 +91,4 @@ try{
  await db(`delete from auth.sessions where id='${b.session}';`);await assert.rejects(stop(b),/UNAUTHENTICATED|SESSION_REPLACED/);pass('revoked actor session cannot read or stop');
  result.status='PASS';
 }catch(error){result.status='FAIL';result.error=String(error.stack);console.error(error);process.exitCode=1;}
-finally{if(started){const stop=await command(join(pg,'pg_ctl'),['-D',data,'-m','fast','-w','stop']);result.cleanup=stop.code===0;assert.equal(stop.code,0,stop.err);}await writeFile('artifacts/AGENT-001/qa-cancel-20261015/pg-result-'+nonce+'.json',JSON.stringify(result,null,2)+'\n');console.log('OWN PG STOP '+result.cleanup);}
+finally{if(started){const stop=await command(join(pg,'pg_ctl'),['-D',data,'-m','fast','-w','stop']);result.cleanup=stop.code===0;assert.equal(stop.code,0,stop.err);}await writeFile(resultPath,JSON.stringify(result,null,2)+'\n',{mode:0o600,flag:'wx'});console.log('RESULT '+resultPath);console.log('OWN PG STOP '+result.cleanup);}

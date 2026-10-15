@@ -10,6 +10,9 @@ export class QaCancellationError extends Error {
 export function createQaCancellationService(rpc: Rpc) {
   return async (action: "read" | "cancel", sessionId: string, requestId: string, input?: unknown) => {
     if (!uuid(sessionId) || !uuid(requestId) || (action === "cancel" && (!record(input) || !exact(input, [])))) throw new QaCancellationError("INVALID_INPUT");
+    // PostgreSQL uuid values serialize canonically; preserve UUID identity while
+    // decoding against the same canonical scope, including uppercase URLs.
+    sessionId=sessionId.toLowerCase();requestId=requestId.toLowerCase();
     let result;
     try { result = await rpc("qa_cancellation_v1", { p_action: action, p_thread_id: sessionId, p_request_id: requestId }); }
     catch (error) { if(error instanceof QaCancellationError)throw error; throw new QaCancellationError("PROVIDER_UNAVAILABLE", "unknown"); }
